@@ -545,7 +545,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     } else {
       // shift vector
       for(int a = 0; a < 3; ++a) {
-        rhs.beta_u(m,a,k,j,i) = z4c.vB_u(m,a,k,j,i);
+        rhs.beta_u(m,a,k,j,i) = Lbeta_u(a) + z4c.vB_u(m,a,k,j,i);
       }
       // advective derivative of shift
       for(int a = 0; a < 3; ++a) {
