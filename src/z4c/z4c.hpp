@@ -48,7 +48,10 @@ struct Z4cTaskIDs {
   TaskID crecv;
   TaskID restu;
   TaskID ptrck;
+  TaskID ahfind;
   TaskID weyl_scalar;
+  TaskID waveform;
+  TaskID dg_ddd;
   TaskID wave_extr;
   TaskID weyl_rest;
   TaskID weyl_send;
@@ -56,6 +59,8 @@ struct Z4cTaskIDs {
   TaskID weyl_recv;
   TaskID csendweyl;
   TaskID crecvweyl;
+  TaskID adm_integrand;
+  TaskID adm_quantities;
 };
 
 namespace z4c {
@@ -116,6 +121,9 @@ class Z4c {
   DvceArray5D<Real> coarse_u0; // coarse representation of z4c solution
   DvceArray5D<Real> u_weyl; // weyl scalars
   DvceArray5D<Real> coarse_u_weyl; // coarse representation of weyl scalars
+  DvceArray5D<Real> u_adm_ints; // adm integrands
+  DvceArray5D<Real> coarse_u_adm_ints; // coarse representation of adm integrands
+  DvceArray5D<Real> u_dg; // derivative of metric for horizon finder and adm quantities
 
   // puncture location
   Real ppos[3] = {0.,0.,0.}; // later on initiate from input file
@@ -141,6 +149,12 @@ class Z4c {
     AthenaTensor<Real, TensorSymm::NONE, 3, 0> ipsi4;
   };
   Wave_Extr_vars weyl;
+
+  struct ADM_INTEGRANDs {
+    AthenaTensor<Real, TensorSymm::NONE, 3, 0> eadm;
+    AthenaTensor<Real, TensorSymm::NONE, 3, 1> padm;
+  };
+  ADM_INTEGRANDs adm_ints;
 
   struct Z4c_vars {
     AthenaTensor<Real, TensorSymm::NONE, 3, 0> chi;     // conf. factor
@@ -174,6 +188,8 @@ class Z4c {
   };
   Matter_vars mat;
 
+  AthenaTensor<Real, TensorSymm::SYM2, 3, 3> dg_ddd; // derivative of spatial metric
+
   struct Options {
     Real chi_psi_power;   // chi = psi^N, N = chi_psi_power
     // puncture's floor value for chi, use max(chi, chi_div_floor)
@@ -206,15 +222,18 @@ class Z4c {
 
     // Boundary extrapolation order
     int extrap_order;
+
+    // Running with Apparent Horizon Finder or not
+    bool ahfind;
   };
   Options opt;
   Real diss;              // Dissipation parameter
 
   // Boundary communication buffers and functions for u
-  BoundaryValuesCC *pbval_u;
+  MeshBoundaryValuesCC *pbval_u;
 
   // Boundary communication buffers for the weyl scalar
-  BoundaryValuesCC *pbval_weyl;
+  MeshBoundaryValuesCC *pbval_weyl;
 
   // following only used for time-evolving flow
   Real dtnew;
@@ -223,11 +242,16 @@ class Z4c {
 
   // geodesic grid for wave extr
   std::vector<std::unique_ptr<SphericalGrid>> spherical_grids;
+  // geodesic grid for wave extr
+  std::vector<std::unique_ptr<SphericalGrid>> adm_spherical_grids;
+
   // array storing waveform at each radii
   HostArray3D<Real> psi_out;
+  HostArray2D<Real> eadm_out;
   Real waveform_dt;
   Real last_output_time;
   int nrad; // number of radii to perform wave extraction
+  int nrad_adm; // number of radii to calculate adm quantities
 
   // functions
   void AssembleZ4cTasks(std::map<std::string, std::shared_ptr<TaskList>> tl);
@@ -251,12 +275,21 @@ class Z4c {
 
   TaskStatus Z4cToADM_(Driver *d, int stage);
   TaskStatus ADMConstraints_(Driver *d, int stage);
+  TaskStatus CalculateDg(Driver *d, int stage);
   TaskStatus Z4cBoundaryRHS(Driver *d, int stage);
   TaskStatus RestrictU(Driver *d, int stage);
   TaskStatus RestrictWeyl(Driver *d, int stage);
   TaskStatus PunctureTracker(Driver *d, int stage);
+<<<<<<< HEAD
   TaskStatus CalcWeylScalar(Driver *d, int stage);
+  TaskStatus CalcAdmIntegrands(Driver *d, int stage);
   TaskStatus CalcWaveForm(Driver *d, int stage);
+  TaskStatus CalcAdmQuantities(Driver *d, int stage);
+=======
+  TaskStatus FindAH(Driver *d, int stage);
+  TaskStatus CalcWeylScalar_(Driver *d, int stage);
+  TaskStatus CalcWaveForm_(Driver *d, int stage);
+>>>>>>> horizon_find
 
   template <int NGHOST>
   TaskStatus CalcRHS(Driver *d, int stage);
@@ -268,9 +301,13 @@ class Z4c {
   void ADMConstraints(MeshBlockPack *pmbp);
   template <int NGHOST>
   void Z4cWeyl(MeshBlockPack *pmbp);
+  template <int NGHOST>
+  void Z4cAdmIntegrand(MeshBlockPack *pmbp);
   void WaveExtr(MeshBlockPack *pmbp);
+  void ADMQuantities(MeshBlockPack *pmbp);
   void AlgConstr(MeshBlockPack *pmbp);
-
+  template <int NGHOST>
+  void MetricPartial(MeshBlockPack *pmbp);
   // amr criteria
   Z4c_AMR *pz4c_amr{nullptr};
 

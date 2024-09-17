@@ -62,8 +62,12 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   u1("u1 z4c",1,1,1,1,1),
   u_rhs("u_rhs z4c",1,1,1,1,1),
   u_weyl("u_weyl",1,1,1,1,1),
+  u_dg("u_dg",1,1,1,1,1),
   coarse_u_weyl("coarse_u_weyl",1,1,1,1,1),
+  u_adm_ints("u_adm_ints",1,1,1,1,1),
+  coarse_u_adm_ints("coarse_u_adm_ints",1,1,1,1,1),
   psi_out("psi_out",1,1,1),
+  eadm_out("eadm_out",1,1),
   pz4c_amr(new Z4c_AMR(this,pin)) {
   // (1) read time-evolution option [already error checked in driver constructor]
   // Then initialize memory and algorithms for reconstruction and Riemann solvers
@@ -84,6 +88,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   Kokkos::realloc(u1,    nmb, (nz4c), ncells3, ncells2, ncells1);
   Kokkos::realloc(u_rhs, nmb, (nz4c), ncells3, ncells2, ncells1);
   Kokkos::realloc(u_weyl,    nmb, (2), ncells3, ncells2, ncells1);
+  Kokkos::realloc(u_adm_ints,    nmb, (4), ncells3, ncells2, ncells1);
 
   con.C.InitWithShallowSlice(u_con, I_CON_C);
   con.H.InitWithShallowSlice(u_con, I_CON_H);
@@ -119,6 +124,9 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   weyl.rpsi4.InitWithShallowSlice (u_weyl, 0);
   weyl.ipsi4.InitWithShallowSlice (u_weyl, 1);
 
+  adm_ints.eadm.InitWithShallowSlice (u_adm_ints, 0);
+  adm_ints.padm.InitWithShallowSlice (u_adm_ints, 1, 3);
+
   opt.chi_psi_power = pin->GetOrAddReal("z4c", "chi_psi_power", -4.0);
   opt.chi_div_floor = pin->GetOrAddReal("z4c", "chi_div_floor", -1000.0);
   opt.diss = pin->GetOrAddReal("z4c", "diss", 0.0);
@@ -146,7 +154,15 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
       pin->GetOrAddInteger("z4c", "extrap_order", 2))));
 
   diss = opt.diss*pow(2., -2.*indcs.ng)*(indcs.ng % 2 == 0 ? -1. : 1.);
+
+
+  // for now hard wire ahfind to be true for testing
+  opt.ahfind = true;
+  if (opt.ahfind) Kokkos::realloc(u_dg,nmb, (6), ncells3, ncells2, ncells1);
+  dg_ddd.InitWithShallowSlice (u_dg, 0, 5);
   }
+
+
 
   // allocate memory for conserved variables on coarse mesh
   if (ppack->pmesh->multilevel) {
@@ -156,19 +172,19 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     int nccells3 = (indcs.cnx3 > 1)? (indcs.cnx3 + 2*(indcs.ng)) : 1;
     Kokkos::realloc(coarse_u0, nmb, (nz4c), nccells3, nccells2, nccells1);
     Kokkos::realloc(coarse_u_weyl, nmb, (2), nccells3, nccells2, nccells1);
+    Kokkos::realloc(coarse_u_adm_ints, nmb, (4), nccells3, nccells2, nccells1);
   }
   Kokkos::Profiling::popRegion();
 
   // allocate boundary buffers for conserved (cell-centered) variables
   Kokkos::Profiling::pushRegion("Buffers");
-  pbval_u = new BoundaryValuesCC(ppack, pin, true);
+  pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
   pbval_u->InitializeBuffers((nz4c));
-  pbval_weyl = new BoundaryValuesCC(ppack, pin, true);
+  pbval_weyl = new MeshBoundaryValuesCC(ppack, pin, true);
   pbval_weyl->InitializeBuffers((2));
   Kokkos::Profiling::popRegion();
 
   // wave extraction spheres
-  // TODO(@hzhu): Read radii from input file
   auto &grids = spherical_grids;
   // set nrad_wave_extraction = 0 to turn off wave extraction
   nrad = pin->GetOrAddReal("z4c", "nrad_wave_extraction", 1);
@@ -181,6 +197,19 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   mkdir("waveforms",0775);
   waveform_dt = pin->GetOrAddReal("z4c", "waveform_dt", 1);
   last_output_time = 0;
+
+  // adm energy spheres
+  auto &adm_grids = adm_spherical_grids;
+  // set nrad_adm_energy = 0 to turn off adm energy calculation
+  // for now evaluate the adm quantities whenever the waveforms are calculated
+  nrad_adm = pin->GetOrAddReal("z4c", "nrad_adm", 1);
+  int nlev_adm = pin->GetOrAddReal("z4c", "adm_nlev", 10);
+  Kokkos::realloc(eadm_out,nrad_adm,4);
+  for (int i=1; i<=nrad_adm; i++) {
+    Real rad = pin->GetOrAddReal("z4c", "adm_radius_"+std::to_string(i), 10);
+    adm_grids.push_back(std::make_unique<SphericalGrid>(ppack, nlev_adm, rad));
+  }
+  mkdir("adm_quantities",0775);
 }
 
 //----------------------------------------------------------------------------------------
@@ -235,6 +264,49 @@ void Z4c::AlgConstr(MeshBlockPack *pmbp) {
     }
   });
 }
+
+
+template <int NGHOST>
+void Z4c::MetricPartial(MeshBlockPack *pmbp) {
+  // capture variables for the kernel
+  auto &indcs = pmbp->pmesh->mb_indcs;
+  auto &size = pmbp->pmb->mb_size;
+  int &is = indcs.is; int &ie = indcs.ie;
+  int &js = indcs.js; int &je = indcs.je;
+  int &ks = indcs.ks; int &ke = indcs.ke;
+  int &nghost = indcs.ng;
+  auto &u_dg = pmbp->pz4c->dg_ddd;
+
+  //For GLOOPS
+  int nmb = pmbp->nmb_thispack;
+
+  // Initialize dg_ddd container
+  int ncells1 = indcs.nx1 + 2*nghost;
+  int ncells2 = indcs.nx2 + 2*nghost;
+  int ncells3 = indcs.nx3 + 2*nghost;
+
+  auto &adm = pmbp->padm->adm;
+  par_for("compute metric derivative",DevExeSpace(),0,nmb-1,ks,ke,js,je,is,ie,
+  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    Real idx[] = {size.d_view(m).dx1, size.d_view(m).dx2, size.d_view(m).dx3};
+    // -----------------------------------------------------------------------------------
+    // derivatives
+    //
+    // first derivatives of g
+    for(int c = 0; c < 3; ++c)
+    for(int a = 0; a < 3; ++a)
+    for(int b = a; b < 3; ++b) {
+      dg_ddd(m,a,b,c,k,j,i) = Dx<NGHOST>(c, idx, adm.g_dd, m,a,b,k,j,i);
+    }
+  });
+}
+
+template void Z4c::MetricPartial<2>(MeshBlockPack *pmbp);
+template void Z4c::MetricPartial<3>(MeshBlockPack *pmbp);
+template void Z4c::MetricPartial<4>(MeshBlockPack *pmbp);
+
+
+
 //----------------------------------------------------------------------------------------
 // destructor
 Z4c::~Z4c() {

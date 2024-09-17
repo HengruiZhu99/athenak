@@ -50,6 +50,7 @@ add_executable(
 
         geodesic-grid/geodesic_grid.cpp
         geodesic-grid/spherical_grid.cpp
+        geodesic-grid/gauss_legendre.cpp
 
         hydro/hydro.cpp
         hydro/hydro_fluxes.cpp
@@ -77,6 +78,20 @@ add_executable(
         mhd/mhd_newdt.cpp
         mhd/mhd_tasks.cpp
         mhd/mhd_update.cpp
+
+        z4c/z4c.cpp
+        z4c/z4c_adm.cpp
+        z4c/z4c_calcrhs.cpp
+        z4c/z4c_newdt.cpp
+        z4c/z4c_tasks.cpp
+        z4c/z4c_update.cpp
+        z4c/z4c_gauge.cpp
+        z4c/z4c_Sbc.cpp
+        z4c/z4c_calculate_weyl_scalars.cpp
+        z4c/z4c_wave_extr.cpp
+        z4c/z4c_puncture_tracker.cpp
+        z4c/z4c_amr.cpp
+        z4c/z4c_ahfind.cpp
 
 	outputs/io_wrapper.cpp
         outputs/outputs.cpp
@@ -119,6 +134,15 @@ add_executable(
         radiation/radiation_tetrad.cpp
         radiation/radiation_update.cpp
 
+        shearing_box/orbital_advection.cpp
+        shearing_box/orbital_advection_cc.cpp
+        shearing_box/orbital_advection_fc.cpp
+        shearing_box/shearing_box.cpp
+        shearing_box/shearing_box_cc.cpp
+        shearing_box/shearing_box_fc.cpp
+        shearing_box/shearing_box_srcterms.cpp
+        shearing_box/shearing_box_tasks.cpp
+
         srcterms/srcterms.cpp
         srcterms/srcterms_newdt.cpp
         srcterms/turb_driver.cpp
@@ -137,9 +161,11 @@ add_executable(
         z4c/z4c_gauge.cpp
         z4c/z4c_Sbc.cpp
         z4c/z4c_calculate_weyl_scalars.cpp
+        z4c/z4c_calc_adm_integrands.cpp
         z4c/z4c_wave_extr.cpp
         z4c/z4c_puncture_tracker.cpp
         z4c/z4c_amr.cpp
+        z4c/z4c_adm_quantities.cpp
 )
 
 # custom problem generator to be included in compile
