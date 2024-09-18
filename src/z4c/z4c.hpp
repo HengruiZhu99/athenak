@@ -10,6 +10,7 @@
 
 #include <map>
 #include <memory>    // make_unique, unique_ptr
+#include <list>
 #include <string>
 #include <vector>
 #include "athena.hpp"
@@ -24,6 +25,7 @@
 // forward declarations
 class Coordinates;
 class Driver;
+class CompactObjectTracker;
 
 //----------------------------------------------------------------------------------------
 //! \struct Z4cTaskIDs
@@ -99,14 +101,14 @@ class Z4c {
   // Names of costraint variables
   static char const * const Constraint_names[ncon];
   // Indices of matter fields
-  enum {
+  /*enum {
     I_MAT_RHO,
     I_MAT_SX, I_MAT_SY, I_MAT_SZ,
     I_MAT_SXX, I_MAT_SXY, I_MAT_SXZ, I_MAT_SYY, I_MAT_SYZ, I_MAT_SZZ,
     nmat
   };
   // Names of matter variables
-  static char const * const Matter_names[nmat];
+  static char const * const Matter_names[nmat];*/
 
   // data
   // flags to denote relativistic dynamics
@@ -121,12 +123,6 @@ class Z4c {
   DvceArray5D<Real> u_adm_ints; // adm integrands
   DvceArray5D<Real> coarse_u_adm_ints; // coarse representation of adm integrands
 
-  // puncture location
-  Real ppos[3] = {0.,0.,0.}; // later on initiate from input file
-#if TWO_PUNCTURES
-  // second puncture location
-  Real ppos2[3] = {0.,0.,0.}; // later on initiate from input file
-#endif
   struct ADM_vars {
     AthenaTensor<Real, TensorSymm::NONE, 3, 0> psi4;
     AthenaTensor<Real, TensorSymm::SYM2, 3, 2> g_dd;
@@ -176,12 +172,12 @@ class Z4c {
   Constraint_vars con;
 
   // aliases for the matter variables
-  struct Matter_vars {
+  /*struct Matter_vars {
     AthenaTensor<Real, TensorSymm::NONE, 3, 0> rho;       // matter energy density
     AthenaTensor<Real, TensorSymm::NONE, 3, 1> vS_d;       // matter momentum density
     AthenaTensor<Real, TensorSymm::SYM2, 3, 2> vS_dd;      // matter stress tensor
   };
-  Matter_vars mat;
+  Matter_vars mat;*/
 
   struct Options {
     Real chi_psi_power;   // chi = psi^N, N = chi_psi_power
@@ -213,6 +209,10 @@ class Z4c {
     // shock avoiding lapse as in Albubierre 1997
     bool shock_avoid_lapse;
 
+    // Enable BSSN if false (disable theta)
+    bool use_z4c;
+    // Apply the Sommerfeld condition for user BCs.
+    bool user_Sbc;
     // Boundary extrapolation order
     int extrap_order;
   };
@@ -236,15 +236,15 @@ class Z4c {
   std::vector<std::unique_ptr<SphericalGrid>> adm_spherical_grids;
 
   // array storing waveform at each radii
-  HostArray3D<Real> psi_out;
   HostArray2D<Real> eadm_out;
+  Real * psi_out;
   Real waveform_dt;
   Real last_output_time;
   int nrad; // number of radii to perform wave extraction
   int nrad_adm; // number of radii to calculate adm quantities
 
   // functions
-  void AssembleZ4cTasks(std::map<std::string, std::shared_ptr<TaskList>> tl);
+  void QueueZ4cTasks();
   TaskStatus InitRecv(Driver *d, int stage);
   TaskStatus ClearRecv(Driver *d, int stage);
   TaskStatus ClearSend(Driver *d, int stage);
@@ -263,12 +263,13 @@ class Z4c {
   TaskStatus ApplyPhysicalBCs(Driver *d, int stage);
   TaskStatus EnforceAlgConstr(Driver *d, int stage);
 
-  TaskStatus Z4cToADM_(Driver *d, int stage);
+  TaskStatus ConvertZ4cToADM(Driver *d, int stage);
+  TaskStatus UpdateExcisionMasks(Driver *d, int stage);
   TaskStatus ADMConstraints_(Driver *d, int stage);
   TaskStatus Z4cBoundaryRHS(Driver *d, int stage);
   TaskStatus RestrictU(Driver *d, int stage);
   TaskStatus RestrictWeyl(Driver *d, int stage);
-  TaskStatus PunctureTracker(Driver *d, int stage);
+  TaskStatus TrackCompactObjects(Driver *d, int stage);
   TaskStatus CalcWeylScalar(Driver *d, int stage);
   TaskStatus CalcAdmIntegrands(Driver *d, int stage);
   TaskStatus CalcWaveForm(Driver *d, int stage);
@@ -290,14 +291,12 @@ class Z4c {
   void ADMQuantities(MeshBlockPack *pmbp);
   void AlgConstr(MeshBlockPack *pmbp);
 
-  // amr criteria
-  Z4c_AMR *pz4c_amr{nullptr};
+  Z4c_AMR *pamr;
+  std::list<CompactObjectTracker> ptracker;
 
  private:
   MeshBlockPack* pmy_pack;  // ptr to MeshBlockPack containing this Z4c
 };
-
-
 
 } // namespace z4c
 #endif //Z4C_Z4C_HPP_

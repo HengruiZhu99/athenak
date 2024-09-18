@@ -17,7 +17,7 @@
 
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
-#include "adm/adm.hpp"
+#include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
 #include "coordinates/cell_locations.hpp"
 
@@ -37,7 +37,6 @@ void Z4c::Z4cAdmIntegrand(MeshBlockPack *pmbp) {
   int &ks = indcs.ks; int &ke = indcs.ke;
   int nmb = pmbp->nmb_thispack;
 
-  auto &z4c = pmbp->pz4c->z4c;
   auto &adm = pmbp->padm->adm;
   auto &adm_ints = pmbp->pz4c->adm_ints;
   auto &u_adm_ints = pmbp->pz4c->u_adm_ints;
@@ -45,8 +44,6 @@ void Z4c::Z4cAdmIntegrand(MeshBlockPack *pmbp) {
 
   par_for("z4c_adm_integrand",DevExeSpace(),0,nmb-1,ks,ke,js,je,is,ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    // Simplify constants (2 & sqrt 2 factors) featured in re/im[psi4]
-    const Real FR4 = 0.25;
     Real &x1min = size.d_view(m).x1min;
     Real &x1max = size.d_view(m).x1max;
     int nx1 = indcs.nx1;
@@ -64,11 +61,8 @@ void Z4c::Z4cAdmIntegrand(MeshBlockPack *pmbp) {
 
     // Scalars
     Real detg = 0.0;         // det(g)
-    Real R = 0.0;
     Real dotp1 = 0.0;
-    Real dotp2 = 0.0;
     Real K = 0.0;            // trace of extrinsic curvature
-    Real KK = 0.0;           // K^a_b K^b_a
 
     // Vectors
     AthenaScratchTensor<Real, TensorSymm::NONE, 3, 1> uvec;
@@ -151,7 +145,7 @@ void Z4c::Z4cAdmIntegrand(MeshBlockPack *pmbp) {
 
     for(int a = 0; a < 3; ++a) {
       for(int b = 0; b < 3; ++b) {
-        uvec_d(a) += adm_g_dd(m,a,b,k,j,i)*uvec(b);
+        uvec_d(a) += adm.g_dd(m,a,b,k,j,i)*uvec(b);
       }
     }
 
@@ -162,7 +156,7 @@ void Z4c::Z4cAdmIntegrand(MeshBlockPack *pmbp) {
       }
     }
     adm_ints.eadm(m,k,j,i) /= 16 * M_PI;
-
+    /*
     for(int c = 0; c < 3; ++ c) {
       adm_ints.padm(m,c,k,j,i) = 0;
       for(int a = 0; a < 3; ++a) {
@@ -170,6 +164,7 @@ void Z4c::Z4cAdmIntegrand(MeshBlockPack *pmbp) {
       }
       adm_ints.padm(m,c,k,j,i) /= 8 * M_PI;
     }
+    */
   });
 }
 

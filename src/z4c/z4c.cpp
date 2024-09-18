@@ -6,7 +6,9 @@
 //! \file z4c.cpp
 //! \brief implementation of Z4c class constructor and assorted other functions
 
+#include <math.h>
 #include <sys/stat.h>  // mkdir
+
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -18,9 +20,10 @@
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "bvals/bvals.hpp"
+#include "z4c/compact_object_tracker.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
-#include "adm/adm.hpp"
+#include "coordinates/adm.hpp"
 
 namespace z4c {
 
@@ -44,11 +47,11 @@ char const * const Z4c::Constraint_names[Z4c::ncon] = {
   "con_Mx", "con_My", "con_Mz",
 };
 
-char const * const Z4c::Matter_names[Z4c::nmat] = {
+/*char const * const Z4c::Matter_names[Z4c::nmat] = {
   "mat_rho",
   "mat_Sx", "mat_Sy", "mat_Sz",
   "mat_Sxx", "mat_Sxy", "mat_Sxz", "mat_Syy", "mat_Syz", "mat_Szz",
-};
+};*/
 
 //----------------------------------------------------------------------------------------
 // constructor, initializes data structures and parameters
@@ -56,7 +59,7 @@ char const * const Z4c::Matter_names[Z4c::nmat] = {
 Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   pmy_pack(ppack),
   u_con("u_con",1,1,1,1,1),
-  u_mat("u_mat",1,1,1,1,1),
+  //u_mat("u_mat",1,1,1,1,1),
   u0("u0 z4c",1,1,1,1,1),
   coarse_u0("coarse u0 z4c",1,1,1,1,1),
   u1("u1 z4c",1,1,1,1,1),
@@ -65,9 +68,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   coarse_u_weyl("coarse_u_weyl",1,1,1,1,1),
   u_adm_ints("u_adm_ints",1,1,1,1,1),
   coarse_u_adm_ints("coarse_u_adm_ints",1,1,1,1,1),
-  psi_out("psi_out",1,1,1),
   eadm_out("eadm_out",1,1),
-  pz4c_amr(new Z4c_AMR(this,pin)) {
+  pamr(new Z4c_AMR(pin)) {
   // (1) read time-evolution option [already error checked in driver constructor]
   // Then initialize memory and algorithms for reconstruction and Riemann solvers
   std::string evolution_t = pin->GetString("time","evolution");
@@ -148,6 +150,10 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.shock_avoid_lapse = pin->GetOrAddBoolean("z4c", "shock_avoid_lapse", 0);
 
 
+  opt.use_z4c = pin->GetOrAddBoolean("z4c", "use_z4c", true);
+
+  opt.user_Sbc = pin->GetOrAddBoolean("z4c", "user_Sbc", false);
+
   opt.extrap_order = fmax(2,fmin(indcs.ng,fmin(4,
       pin->GetOrAddInteger("z4c", "extrap_order", 2))));
 
@@ -183,7 +189,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     Real rad = pin->GetOrAddReal("z4c", "extraction_radius_"+std::to_string(i), 10);
     grids.push_back(std::make_unique<SphericalGrid>(ppack, nlev, rad));
   }
-  Kokkos::realloc(psi_out,nrad,77,2);
+  // TODO(@dur566): Why is the size of psi_out hardcoded?
+  psi_out = new Real[nrad*77*2];
   mkdir("waveforms",0775);
   waveform_dt = pin->GetOrAddReal("z4c", "waveform_dt", 1);
   last_output_time = 0;
@@ -200,6 +207,16 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     adm_grids.push_back(std::make_unique<SphericalGrid>(ppack, nlev_adm, rad));
   }
   // mkdir("adm_quantities",0775);
+  // Construct the compact object trackers
+  int n = 0;
+  while (true) {
+    if (pin->DoesParameterExist("z4c", "co_" + std::to_string(n) + "_type")) {
+      ptracker.emplace_back(pmy_pack->pmesh, pin, n);
+      n++;
+    } else {
+      break;
+    }
+  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -221,7 +238,6 @@ void Z4c::AlgConstr(MeshBlockPack *pmbp) {
   int nmb = pmbp->nmb_thispack;
 
   auto &z4c = pmbp->pz4c->z4c;
-  auto &opt = pmbp->pz4c->opt;
   par_for("Alg constr loop",DevExeSpace(),
   0,nmb-1,ksg,keg,jsg,jeg,isg,ieg,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
@@ -257,9 +273,10 @@ void Z4c::AlgConstr(MeshBlockPack *pmbp) {
 //----------------------------------------------------------------------------------------
 // destructor
 Z4c::~Z4c() {
+  delete[] psi_out;
   delete pbval_u;
   delete pbval_weyl;
-  delete pz4c_amr;
+  delete pamr;
 }
 
 } // namespace z4c
