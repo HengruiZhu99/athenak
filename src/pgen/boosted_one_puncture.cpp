@@ -1,7 +1,7 @@
 //========================================================================================
 // AthenaXXX astrophysical plasma code
-// Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
-// Licensed under the 3-clause BSD License (the "LICENSE")
+// Copyright(C) ...
+// Licensed under the 3-clause BSD License
 //========================================================================================
 //! \file z4c_one_puncture.cpp
 //  \brief Problem generator for a single puncture placed at the origin of the domain
@@ -10,10 +10,10 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
-#include <iostream>   // endl
-#include <limits>     // numeric_limits::max()
+#include <iostream>
+#include <limits>
 #include <memory>
-#include <string>     // c_str(), string
+#include <string>
 #include <vector>
 
 #include "athena.hpp"
@@ -28,16 +28,9 @@
 void ADMOnePunctureBoosted(MeshBlockPack *pmbp, ParameterInput *pin);
 void RefinementCondition(MeshBlockPack* pmbp);
 
-KOKKOS_INLINE_FUNCTION
-AthenaScratchTensor<Real, TensorSymm::SYM2, 4, 2> 
-inverse(AthenaScratchTensor<Real, TensorSymm::SYM2, 4, 2> matrix);
-
-KOKKOS_INLINE_FUNCTION
-void LorentzBoost(Real vx1, Real vx2, Real vx3, AthenaScratchTensor<Real, TensorSymm::SYM2, 4, 2> &lambda);
-
 //----------------------------------------------------------------------------------------
 //! \fn ProblemGenerator::UserProblem_()
-//! \brief Problem Generator for single puncture
+//! \brief Problem Generator for single boosted puncture
 void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   user_ref_func  = RefinementCondition;
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
@@ -71,16 +64,15 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   }
   std::cout<<"OnePuncture initialized."<<std::endl;
 
-
   return;
 }
 
 //----------------------------------------------------------------------------------------
-//! \fn void ADMOnePuncture(MeshBlockPack *pmbp, ParameterInput *pin)
-//! \brief Initialize ADM vars to single boosted puncture (no spin), based on 1909.02997
+//! \fn void ADMOnePunctureBoosted(MeshBlockPack *pmbp, ParameterInput *pin)
+//! \brief Initialize ADM vars to single boosted puncture (no spin), based on the given equations
 
 void ADMOnePunctureBoosted(MeshBlockPack *pmbp, ParameterInput *pin) {
-  // capture variables for the kernel
+  // Capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
   int &is = indcs.is; int &ie = indcs.ie;
@@ -95,15 +87,16 @@ void ADMOnePunctureBoosted(MeshBlockPack *pmbp, ParameterInput *pin) {
   Real center_x1 = pin->GetOrAddReal("problem", "punc_center_x1", 0.);
   Real center_x2 = pin->GetOrAddReal("problem", "punc_center_x2", 0.);
   Real center_x3 = pin->GetOrAddReal("problem", "punc_center_x3", 0.);
-  Real vx1 = pin->GetOrAddReal("problem", "punc_velocity_x1", 0.);
-  Real vx2 = pin->GetOrAddReal("problem", "punc_velocity_x2", 0.);
-  Real vx3 = pin->GetOrAddReal("problem", "punc_velocity_x3", 0.);
+  Real vx1 = pin->GetOrAddReal("problem", "punc_velocity_x1", 0.5); // Example velocity
+  Real vx2 = pin->GetOrAddReal("problem", "punc_velocity_x2", 0.0);
+  Real vx3 = pin->GetOrAddReal("problem", "punc_velocity_x3", 0.0);
 
   adm::ADM::ADM_vars &adm = pmbp->padm->adm;
 
   par_for("pgen one puncture",
   DevExeSpace(),0,nmb-1,ksg,keg,jsg,jeg,isg,ieg,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    // Compute cell-centered coordinates
     Real &x1min = size.d_view(m).x1min;
     Real &x1max = size.d_view(m).x1max;
     int nx1 = indcs.nx1;
@@ -119,159 +112,121 @@ void ADMOnePunctureBoosted(MeshBlockPack *pmbp, ParameterInput *pin) {
     int nx3 = indcs.nx3;
     Real x3v = CellCenterX(k-ks, nx3, x3min, x3max);
 
+    // Shift coordinates to black hole center
     x1v -= center_x1;
     x2v -= center_x2;
     x3v -= center_x3;
 
-    // velocity magnitude for now assuming only vx1 is non-zero! Do a rotation later
-    Real vel = std::sqrt(std::pow(vx1,2) + std::pow(vx2,2) + std::pow(vx3,2));
+    // Velocity magnitude
+    Real vel = std::sqrt(vx1*vx1 + vx2*vx2 + vx3*vx3);
 
-    // boost factor
-    Real Gamma = 1/std::sqrt(1-std::pow(vel,2));
+    // Lorentz factor
+    Real Gamma = 1.0 / std::sqrt(1.0 - vel * vel);
 
-    // coordinate in the comoving frame (x0)
-    Real x0[4];
-    Real xinit[4] = {0,x1v,x2v,x3v};
+    // Coordinates in comoving frame (x0)
+    Real x0[4]; // x0[0] = t0, x0[1] = x0, x0[2] = y0, x0[3] = z0
 
-    x0[1] = xinit[1]*Gamma;
-    x0[2] = xinit[2];
-    x0[3] = xinit[3];
+    // Lorentz transformation along x-direction
+    x0[1] = Gamma * (x1v - vel * 0.0); // At t = 0
+    x0[0] = -vel * x0[1]; // t0 = -v * x0
+    x0[2] = x2v;
+    x0[3] = x3v;
 
-    // radial coordinate in comoving frame
-    Real r0 = std::sqrt(std::pow(x0[1],2) + std::pow(x0[2],2) + std::pow(x0[3],2));
+    // Radial coordinate in comoving frame
+    Real r0 = std::sqrt(x0[1]*x0[1] + x0[2]*x0[2] + x0[3]*x0[3]);
 
-    // conformal factor and lapse in comoving frame; equation 2 from arXiv:0810.4735
-    Real psi0 = 1.0 + 0.5*m0/r0;
-    Real alpha0 = (1 - 0.5*m0/r0)/psi0;
+    // Compute psi0 and its derivative
+    Real psi0 = 1.0 + m0 / (2.0 * r0);
+    Real psi0_prime = -m0 / (2.0 * r0 * r0);
 
-    // B0 as in equation 4 from arXiv:0810.4735
-    Real B0 = std::sqrt(std::pow(Gamma,2)*(1-std::pow(vel,2)*std::pow(alpha0,2)*std::pow(psi0,-4)));
+    // Compute A and its derivative
+    Real A = 1.0 - m0 / (2.0 * r0);
+    Real A_prime = m0 / (2.0 * r0 * r0);
 
-    // adm metric in the code frame
-    for(int a = 0; a < 3; ++a) {
-      adm.g_dd(m,a,a,k,j,i) = std::pow(psi0,4);
-    }
-    adm.g_dd(m,0,0,k,j,i) *= std::pow(B0,2);
+    // Compute alpha0 and its derivative
+    Real alpha0 = A / psi0;
+    Real alpha0_prime = (A_prime * psi0 - A * psi0_prime) / (psi0 * psi0);
 
-    // Gauge variables in the code frame
-    // adm.alpha(m,k,j,i) = alpha0/B0;
-    adm.beta_u(m,0,k,j,i) = (std::pow(alpha0,2)-std::pow(psi0,4))
-                          /(std::pow(psi0,4)-std::pow(alpha0,2)*std::pow(vel,2))*vel;
+    // Compute psi0^4 and alpha0^2
+    Real psi0_4 = psi0 * psi0 * psi0 * psi0;
+    Real alpha0_2 = alpha0 * alpha0;
 
+    // Compute B0^2 and B0
+    Real B0_squared = Gamma * Gamma * (1.0 - vel * vel * alpha0_2 / psi0_4);
+    Real B0 = std::sqrt(B0_squared);
 
+    // Compute the lapse function alpha
+    Real alpha = alpha0 / B0;
 
-    // extrinsic curvature
-    Real alpha0p = 4*m0/std::pow(m0+2*r0,2);
-    Real second_term =
-    ((4 * std::pow(vel, 2) * std::pow((m0 - 2 * r0), 2)) / std::pow((m0 + 2 * r0), 3) +
-    (4 * std::pow(vel, 2) * (m0 - 2 * r0)) / std::pow((m0 + 2 * r0), 2) -
-    (m0 * std::pow((m0 + 2 * r0), 3)) / (4 * std::pow(r0, 5))) /
-    ((1 + m0 / (2 * r0)) * (1 + m0 / (2 * r0)) * (1 + m0 / (2 * r0)) * (1 + m0 / (2 * r0)) -
-    (std::pow(vel, 2) * std::pow((m0 - 2 * r0), 2)) / std::pow((m0 + 2 * r0), 2));
+    // Compute the shift vector beta^i (only beta^x is non-zero)
+    Real num_beta = alpha0_2 - psi0_4;
+    Real den_beta = psi0_4 - alpha0_2 * vel * vel;
+    Real beta_x = (num_beta / den_beta) * vel;
+    Real beta_y = 0.0;
+    Real beta_z = 0.0;
 
-    adm.vK_dd(m,0,0,k,j,i) = Gamma * Gamma * B0 * x1v * vel / r0 * (2 * alpha0p - alpha0 / 2 * second_term);
-    adm.vK_dd(m,1,1,k,j,i) = 2 * Gamma * Gamma * x1v * vel * alpha0 * (- m0 / (2 * r0 * r0)) / (psi0 * B0 * r0);
-    adm.vK_dd(m,2,2,k,j,i) = 2 * Gamma * Gamma * x1v * vel * alpha0 * (- m0 / (2 * r0 * r0)) / (psi0 * B0 * r0);
-    adm.vK_dd(m,0,1,k,j,i) = B0 * x2v * vel / r0 * (alpha0p - alpha0 / 2 * second_term);
-    adm.vK_dd(m,0,2,k,j,i) = B0 * x3v * vel / r0 * (alpha0p - alpha0 / 2 * second_term);
+    // Compute s and its derivative
+    Real s = den_beta; // s = psi0^4 - alpha0^2 * v^2
+    Real psi0_prime_4 = 4.0 * psi0 * psi0 * psi0 * psi0_prime;
+    Real alpha0_prime_2 = 2.0 * alpha0 * alpha0_prime;
+    Real s_prime = psi0_prime_4 - alpha0_prime_2 * vel * vel;
+    Real ln_s_prime = s_prime / s;
+
+    // Compute extrinsic curvature components
+    Real x = x1v;
+    Real y = x2v;
+    Real z = x3v;
+    Real r = r0;
+
+    // K_xx
+    Real prefactor_xx = Gamma * Gamma * B0 * x * vel / r;
+    Real expr_xx = 2.0 * alpha0_prime - (alpha0 / 2.0) * ln_s_prime;
+    Real K_xx = prefactor_xx * expr_xx;
+
+    // K_yy and K_zz
+    Real num_yy = 2.0 * Gamma * Gamma * x * vel * alpha0 * psi0_prime;
+    Real den_yy = psi0 * B0 * r;
+    Real K_yy = num_yy / den_yy;
+    Real K_zz = K_yy;
+
+    // K_xy and K_xz
+    Real prefactor_xy = B0 * vel / r;
+    Real expr_xy = alpha0_prime - (alpha0 / 2.0) * ln_s_prime;
+    Real K_xy = prefactor_xy * y * expr_xy;
+    Real K_xz = prefactor_xy * z * expr_xy;
+
+    // K_yz is zero due to symmetry
+    Real K_yz = 0.0;
+
+    // Set the ADM variables in the data structures
+
+    // Lapse function
+    adm.alpha(m,k,j,i) = alpha;
+
+    // Shift vector components
+    adm.beta_u(m,0,k,j,i) = beta_x;
+    adm.beta_u(m,1,k,j,i) = beta_y;
+    adm.beta_u(m,2,k,j,i) = beta_z;
+
+    // Spatial metric components gamma_{ij}
+    adm.g_dd(m,0,0,k,j,i) = psi0_4 * B0_squared;
+    adm.g_dd(m,1,1,k,j,i) = psi0_4;
+    adm.g_dd(m,2,2,k,j,i) = psi0_4;
+    adm.g_dd(m,0,1,k,j,i) = 0.0;
+    adm.g_dd(m,0,2,k,j,i) = 0.0;
+    adm.g_dd(m,1,2,k,j,i) = 0.0;
+
+    // Extrinsic curvature components K_{ij}
+    adm.vK_dd(m,0,0,k,j,i) = K_xx;
+    adm.vK_dd(m,1,1,k,j,i) = K_yy;
+    adm.vK_dd(m,2,2,k,j,i) = K_zz;
+    adm.vK_dd(m,0,1,k,j,i) = K_xy;
+    adm.vK_dd(m,0,2,k,j,i) = K_xz;
+    adm.vK_dd(m,1,2,k,j,i) = K_yz;
   });
 }
 
-KOKKOS_INLINE_FUNCTION
-void LorentzBoost(Real vx1, Real vx2, Real vx3, AthenaScratchTensor<Real, TensorSymm::SYM2, 4, 2> &lambda) {
-  lambda.ZeroClear();
-  // Velocity magnitude squared
-  Real vsq = SQR(vx1)+SQR(vx2)+SQR(vx3);
-  if (vsq == 0) {
-    for (int a = 0; a < 4; ++a) {
-     lambda(a,a) = 1;
-    }
-  } else {
-    // Calculate Lorentz factor
-    Real gamma = 1/sqrt(1-vsq);
-
-    lambda(0,0) = gamma;
-    lambda(0,1) = -gamma*vx1;
-    lambda(0,2) = -gamma*vx2;
-    lambda(0,3) = -gamma*vx3;
-
-    lambda(1,1) = 1 + (gamma-1)*SQR(vx1)/vsq;
-    lambda(2,2) = 1 + (gamma-1)*SQR(vx2)/vsq;
-    lambda(3,3) = 1 + (gamma-1)*SQR(vx3)/vsq;
-    lambda(1,2) = (gamma-1)*vx1*vx2/vsq;
-    lambda(1,3) = (gamma-1)*vx1*vx3/vsq;
-    lambda(2,3) = (gamma-1)*vx2*vx3/vsq;
-  }
-}
-
-KOKKOS_INLINE_FUNCTION
-AthenaScratchTensor<Real, TensorSymm::SYM2, 4, 2> 
-inverse(AthenaScratchTensor<Real, TensorSymm::SYM2, 4, 2> matrix) {
-    AthenaScratchTensor<Real, TensorSymm::SYM2, 4, 2> inv;
-    Real det = 0;
-
-    // Calculate the determinant using the formula for a 4x4 matrix
-    det = matrix(0,0) * (matrix(1,1) * (matrix(2,2) * matrix(3,3) - matrix(2,3) * matrix(3,2)) -
-                          matrix(1,2) * (matrix(2,1) * matrix(3,3) - matrix(2,3) * matrix(3,1)) +
-                          matrix(1,3) * (matrix(2,1) * matrix(3,2) - matrix(2,2) * matrix(3,1))) -
-          matrix(0,1) * (matrix(1,0) * (matrix(2,2) * matrix(3,3) - matrix(2,3) * matrix(3,2)) -
-                          matrix(1,2) * (matrix(2,0) * matrix(3,3) - matrix(2,3) * matrix(3,0)) +
-                          matrix(1,3) * (matrix(2,0) * matrix(3,2) - matrix(2,2) * matrix(3,0))) +
-          matrix(0,2) * (matrix(1,0) * (matrix(2,1) * matrix(3,3) - matrix(2,3) * matrix(3,1)) -
-                          matrix(1,1) * (matrix(2,0) * matrix(3,3) - matrix(2,3) * matrix(3,0)) +
-                          matrix(1,3) * (matrix(2,0) * matrix(3,1) - matrix(2,1) * matrix(3,0))) -
-          matrix(0,3) * (matrix(1,0) * (matrix(2,1) * matrix(3,2) - matrix(2,2) * matrix(3,1)) -
-                          matrix(1,1) * (matrix(2,0) * matrix(3,2) - matrix(2,2) * matrix(3,0)) +
-                          matrix(1,2) * (matrix(2,0) * matrix(3,1) - matrix(2,1) * matrix(3,0)));
-
-    // Calculate the inverse using the formula for a 4x4 matrix
-    inv(0,0) = (matrix(1,1) * (matrix(2,2) * matrix(3,3) - matrix(2,3) * matrix(3,2)) -
-                     matrix(1,2) * (matrix(2,1) * matrix(3,3) - matrix(2,3) * matrix(3,1)) +
-                     matrix(1,3) * (matrix(2,1) * matrix(3,2) - matrix(2,2) * matrix(3,1))) /
-                    det;
-    inv(0,1) = -(matrix(0,1) * (matrix(2,2) * matrix(3,3) - matrix(2,3) * matrix(3,2)) -
-                      matrix(0,2) * (matrix(2,1) * matrix(3,3) - matrix(2,3) * matrix(3,1)) +
-                      matrix(0,3) * (matrix(2,1) * matrix(3,2) - matrix(2,2) * matrix(3,1))) /
-                    det;
-    inv(0,2) = (matrix(0,1) * (matrix(1,2) * matrix(3,3) - matrix(1,3) * matrix(3,2)) -
-                     matrix(0,2) * (matrix(1,1) * matrix(3,3) - matrix(1,3) * matrix(3,1)) +
-                     matrix(0,3) * (matrix(1,1) * matrix(3,2) - matrix(1,2) * matrix(3,1))) /
-                    det;
-    inv(0,3) = -(matrix(0,1) * (matrix(1,2) * matrix(2,3) - matrix(1,3) * matrix(2,2)) -
-                     matrix(0,2) * (matrix(1,1) * matrix(2,3) - matrix(1,3) * matrix(2,1)) +
-                     matrix(0,3) * (matrix(1,1) * matrix(2,2) - matrix(1,2) * matrix(2,1))) /
-                    det;
-
-    inv(1,1) = (matrix(0,0) * (matrix(2,2) * matrix(3,3) - matrix(2,3) * matrix(3,2)) -
-                     matrix(0,2) * (matrix(2,0) * matrix(3,3) - matrix(2,3) * matrix(3,0)) +
-                     matrix(0,3) * (matrix(2,0) * matrix(3,2) - matrix(2,2) * matrix(3,0))) /
-                    det;
-    inv(1,2) = -(matrix(0,0) * (matrix(1,2) * matrix(3,3) - matrix(1,3) * matrix(3,2)) -
-                      matrix(0,2) * (matrix(1,0) * matrix(3,3) - matrix(1,3) * matrix(3,0)) +
-                      matrix(0,3) * (matrix(1,0) * matrix(3,2) - matrix(1,2) * matrix(3,0))) /
-                    det;
-    inv(1,3) = (matrix(0,0) * (matrix(1,2) * matrix(2,3) - matrix(1,3) * matrix(2,2)) -
-                     matrix(0,2) * (matrix(1,0) * matrix(2,3) - matrix(1,3) * matrix(2,0)) +
-                     matrix(0,3) * (matrix(1,0) * matrix(2,2) - matrix(1,2) * matrix(2,0))) /
-                    det;
-
-    inv(2,2) = (matrix(0,0) * (matrix(1,1) * matrix(3,3) - matrix(1,3) * matrix(3,1)) -
-                     matrix(0,1) * (matrix(1,0) * matrix(3,3) - matrix(1,3) * matrix(3,0)) +
-                     matrix(0,3) * (matrix(1,0) * matrix(3,1) - matrix(1,1) * matrix(3,0))) /
-                    det;
-    inv(2,3) = -(matrix(0,0) * (matrix(1,1) * matrix(2,3) - matrix(1,3) * matrix(2,1)) -
-                      matrix(0,1) * (matrix(1,0) * matrix(2,3) - matrix(1,3) * matrix(2,0)) +
-                      matrix(0,3) * (matrix(1,0) * matrix(2,1) - matrix(1,1) * matrix(2,0))) /
-                    det;
-
-    inv(3,3) = (matrix(0,0) * (matrix(1,1) * matrix(2,2) - matrix(1,2) * matrix(2,1)) -
-                     matrix(0,1) * (matrix(1,0) * matrix(2,2) - matrix(1,2) * matrix(2,0)) +
-                     matrix(0,2) * (matrix(1,0) * matrix(2,1) - matrix(1,1) * matrix(2,0))) /
-                    det;
-    return inv;
-}
-
-// how decide the refinement
+// Refinement condition
 void RefinementCondition(MeshBlockPack* pmbp) {
   pmbp->pz4c->pamr->Refine(pmbp);
 }

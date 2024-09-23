@@ -44,8 +44,16 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   }
 
   BoostedPunctureIsotropic(pmbp, pin);
-  pmbp->pz4c->Z4cToADM(pmbp);
-  pmbp->pz4c->GaugePreCollapsedLapse(pmbp, pin);
+  switch (indcs.ng) {
+    case 2: pmbp->pz4c->ADMToZ4c<2>(pmbp, pin);
+            break;
+    case 3: pmbp->pz4c->ADMToZ4c<3>(pmbp, pin);
+            break;
+    case 4: pmbp->pz4c->ADMToZ4c<4>(pmbp, pin);
+            break;
+  }
+  // pmbp->pz4c->Z4cToADM(pmbp);
+  // pmbp->pz4c->GaugePreCollapsedLapse(pmbp, pin);
   switch (indcs.ng) {
     case 2: pmbp->pz4c->ADMConstraints<2>(pmbp);
             break;
@@ -55,7 +63,6 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
             break;
   }
   std::cout<<"OnePuncture initialized."<<std::endl;
-
 
   return;
 }
@@ -130,23 +137,25 @@ void BoostedPunctureIsotropic(MeshBlockPack *pmbp, ParameterInput *pin) {
     // conformal factor Equation 13 in arxiv:1410.8607
     Real psi = 1.0 + 0.5*m0/r;
 
-    // z4c conformal factor in boosted frame;
-    z4c.chi(m,k,j,i) = std::pow(psi,opt.chi_psi_power);
+    // adm metric in the boosted frame
+    adm.g_dd(m,0,0,k,j,i) = gamma * gamma * (1.0 - 16.0 * std::pow(m0 - 2 * r, 2) * std::pow(r, 4) * std::pow(v, 2) / std::pow(m0 + 2 * r, 6));
+    adm.g_dd(m,1,1,k,j,i) = 1;
+    adm.g_dd(m,2,2,k,j,i) = 1;
+
+    adm.g_dd(m,0,0,k,j,i) *= std::pow(psi,4);
+    adm.g_dd(m,1,1,k,j,i) *= std::pow(psi,4);
+    adm.g_dd(m,2,2,k,j,i) *= std::pow(psi,4);
+
 
     // shift in boosted frame
     Real B = std::sqrt(std::pow(m0 + 2 * r, 6) - 16.0 * std::pow(m0 - 2 * r, 2) * std::pow(r, 4) * std::pow(v, 2));
-    z4c.beta_u(m,0,k,j,i) = - m0 * v * (std::pow(m0, 2) + 6.0 * m0 * r + 16.0 * std::pow(r, 2)) * 
+    adm.beta_u(m,0,k,j,i) = - m0 * v * (std::pow(m0, 2) + 6.0 * m0 * r + 16.0 * std::pow(r, 2)) * 
                 (std::pow(m0, 3) + 6.0 * std::pow(m0, 2) * r + 8.0 * m0 * std::pow(r, 2) + 16.0 * std::pow(r, 3)) / 
                 pow(B, 2);
 
-    // z4c conformal metric in the boosted frame
-    z4c.g_dd(m,0,0,k,j,i) = gamma * gamma * (1.0 - 16.0 * std::pow(m0 - 2 * r, 2) * std::pow(r, 4) * std::pow(v, 2) / std::pow(m0 + 2 * r, 6));
-    z4c.g_dd(m,1,1,k,j,i) = 1;
-    z4c.g_dd(m,2,2,k,j,i) = 1;
-
-    // trace of extrinsic curvature (theta=0 at the initial data)
-    z4c.vKhat(m,k,j,i) = 32.0 * gamma * m0 * v * 
-           ((std::pow(m + 2.0 * r, 7) - 32.0 * std::pow(m0 - 2.0 * r, 2) * (m0 - r) * std::pow(r, 4) * std::pow(v, 2)) * 
+    // trace of extrinsic curvature
+    Real K = 32.0 * gamma * m0 * v * 
+           ((std::pow(m0 + 2.0 * r, 7) - 32.0 * std::pow(m0 - 2.0 * r, 2) * (m0 - r) * std::pow(r, 4) * std::pow(v, 2)) * 
            std::pow(r, 2) * x) / (std::pow(m0 + 2.0 * r, 3) * std::pow(B, 3));
 
     // some auxiliary numbers
@@ -158,12 +167,19 @@ void BoostedPunctureIsotropic(MeshBlockPack *pmbp, ParameterInput *pin) {
     // non-vanishing component of the trace-free conformal extrinsic curvature
     // may need additional factors of psi^2 here. 
     // may need to also lorentz contract x
-    z4c.vA_dd(m,1,1,k,j,i) = gamma * m0 * v * (m0 - 4.0 * r) * std::pow(m0 + 2.0 * r, 3) * B * C * x / (3.0 * D * std::pow(r, 4)) * std::pow(psi, -6);
-    z4c.vA_dd(m,2,2,k,j,i) = gamma * m0 * v * (m0 - 4.0 * r) * std::pow(m0 + 2.0 * r, 3) * B * C * x / (3.0 * D * std::pow(r, 4)) * std::pow(psi, -6);
-    z4c.vA_dd(m,0,0,k,j,i) = -2.0 * std::pow(gamma, 3) * m0 * v * (m0 - 4.0 * r) * C * x / (3.0 * std::pow(m0 + 2.0 * r, 3) * B * std::pow(r, 4)) * std::pow(psi, -6);
+    AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> A_tilda_dd;
+    A_tilda_dd(0,0) = -2.0 * std::pow(gamma, 3) * m0 * v * (m0 - 4.0 * r) * C * x / (3.0 * std::pow(m0 + 2.0 * r, 3) * B * std::pow(r, 4));
+    A_tilda_dd(1,1) = gamma * m0 * v * (m0 - 4.0 * r) * std::pow(m0 + 2.0 * r, 3) * B * C * x / (3.0 * D * std::pow(r, 4));
+    A_tilda_dd(2,2) = A_tilda_dd(1,1);
 
-    z4c.vA_dd(m,0,1,k,j,i) = -gamma * m0 * v * (m0 - 4.0 * r) * std::pow(m0 + 2.0 * r, 3) * y / (2.0 * B * std::pow(r, 4)) * std::pow(psi, -6);
-    z4c.vA_dd(m,0,2,k,j,i) = -gamma * m0 * v * (m0 - 4.0 * r) * std::pow(m0 + 2.0 * r, 3) * z / (2.0 * B * std::pow(r, 4)) * std::pow(psi, -6);
+    A_tilda_dd(0,1) = -gamma * m0 * v * (m0 - 4.0 * r) * std::pow(m0 + 2.0 * r, 3) * y / (2.0 * B * std::pow(r, 4));
+    A_tilda_dd(0,2) = -gamma * m0 * v * (m0 - 4.0 * r) * std::pow(m0 + 2.0 * r, 3) * z / (2.0 * B * std::pow(r, 4));
+    A_tilda_dd(1,2) = 0;
+
+    for (int a = 0; a < 3; ++a)
+    for (int b = 0; b < 3; ++b) {
+      adm.vK_dd(m,a,b,k,j,i) = 1.0/3.0*adm.g_dd(m,a,b,k,j,i)*K + std::pow(psi,-2)*A_tilda_dd(a,b);
+    }
   });
 }
 
