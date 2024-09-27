@@ -77,16 +77,14 @@ void Z4c::Z4cAdmIntegrand(MeshBlockPack *pmbp) {
     // Rank 2
     // inverse of conf. metric
     AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> g_uu;
-    AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> K_ud;        // extrinsic curvature
+    AthenaScratchTensor<Real, TensorSymm::NONE, 3, 2> K_ud;        // extrinsic curvature
 
     // Rank 3
     AthenaScratchTensor<Real, TensorSymm::SYM2,  3, 3> dg_ddd;      // metric 1st drvts
 
-    // Rank 4
     for (int a = 0; a < 3; ++a)
     for (int b = a; b < 3; ++b) {
       g_uu(a,b) = 0.0;
-      K_ud(a,b) = 0.0;
     }
 
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
@@ -120,6 +118,7 @@ void Z4c::Z4cAdmIntegrand(MeshBlockPack *pmbp) {
 
     for(int a = 0; a < 3; ++a) {
       for(int b = 0; b < 3; ++b) {
+        K_ud(a,b) = 0.0;
         for(int c = 0; c < 3; ++c) {
           K_ud(a,b) += g_uu(a,c) * adm.vK_dd(m,c,b,k,j,i);
         }
