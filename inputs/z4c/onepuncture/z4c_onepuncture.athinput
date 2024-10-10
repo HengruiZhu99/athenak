@@ -9,28 +9,28 @@ basename  = z4c      # problem ID: basename of output filenames
 
 <mesh>
 nghost    = 2          # Number of ghost cells
-nx1       = 20        # Number of zones in X1-direction
-x1min     = -20       # minimum value of X1
-x1max     = 20        # maximum value of X1
+nx1       = 80        # Number of zones in X1-direction
+x1min     = -3       # minimum value of X1
+x1max     = 3        # maximum value of X1
 ix1_bc    = outflow   # inner-X1 boundary flag
 ox1_bc    = outflow   # outer-X1 boundary flag
 
-nx2       = 20        # Number of zones in X2-direction
-x2min     = -20      # minimum value of X2
-x2max     = 20       # maximum value of X2
+nx2       = 80        # Number of zones in X2-direction
+x2min     = -3      # minimum value of X2
+x2max     = 3       # maximum value of X2
 ix2_bc    = outflow   # inner-X2 boundary flag
 ox2_bc    = outflow   # outer-X2 boundary flag
 
-nx3       = 20        # Number of zones in X3-direction
-x3min     = -20       # minimum value of X3
-x3max     = 20        # maximum value of X3
+nx3       = 80       # Number of zones in X3-direction
+x3min     = -3       # minimum value of X3
+x3max     = 3        # maximum value of X3
 ix3_bc    = outflow   # inner-X3 boundary flag
 ox3_bc    = outflow   # outer-X3 boundary flag
 
 <meshblock>
-nx1       = 20         # Number of cells in each MeshBlock, X1-dir
-nx2       = 20         # Number of cells in each MeshBlock, X2-dir
-nx3       = 20           # Number of cells in each MeshBlock, X3-dir
+nx1       = 80         # Number of cells in each MeshBlock, X1-dir
+nx2       = 80         # Number of cells in each MeshBlock, X2-dir
+nx3       = 80           # Number of cells in each MeshBlock, X3-dir
 
 <time>
 evolution  = dynamic    # dynamic/kinematic/static
@@ -41,7 +41,13 @@ tlim       = 100        # time limit
 ndiag      = 1          # cycles between diagostic output
 
 <z4c>
-diss       = 1.
+diss       = 0.5
+nco             = 1
+co_0_x          = 0.
+co_0_type = BH
+dump_horizon_0  = true
+co_0_dump_radius = 2
+horizon_0_Nx     = 40
 
 <problem>
 pgen_name = z4c_one_puncture
