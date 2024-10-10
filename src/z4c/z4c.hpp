@@ -142,6 +142,8 @@ class Z4c {
     // puncture's floor value for chi, use max(chi, chi_div_floor)
     // in non-differentiated chi
     Real chi_div_floor;
+    Real chi_min_floor;   // minimum of chi, only used in slow-start-lapse
+    // where a square root is necessary.
     Real diss;            // amount of numerical dissipation
     Real eps_floor;       // a small number O(10^-12)
     // Constraint damping parameters
@@ -152,12 +154,19 @@ class Z4c {
     Real lapse_harmonicf;
     Real lapse_harmonic;
     Real lapse_advect;
+    // slow start lapse condition
+    bool slow_start_lapse;
+    Real ssl_damping_amp;
+    Real ssl_damping_time;
     // Gauge condition for the shift
     Real shift_ggamma;
     Real shift_alpha2ggamma;
     Real shift_hh;
     Real shift_advect;
     Real shift_eta;
+    // turn on shift damping smoothly
+    bool slow_roll_eta;
+    Real turn_on_time;
     // Enable BSSN if false (disable theta)
     bool use_z4c;
     // Apply the Sommerfeld condition for user BCs.

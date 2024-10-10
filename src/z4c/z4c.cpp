@@ -122,6 +122,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 
   opt.chi_psi_power = pin->GetOrAddReal("z4c", "chi_psi_power", -4.0);
   opt.chi_div_floor = pin->GetOrAddReal("z4c", "chi_div_floor", -1000.0);
+  opt.chi_min_floor = pin->GetOrAddReal("z4c", "chi_min_floor", 1e-12);
   opt.diss = pin->GetOrAddReal("z4c", "diss", 0.0);
   opt.eps_floor = pin->GetOrAddReal("z4c", "eps_floor", 1e-12);
   opt.damp_kappa1 = pin->GetOrAddReal("z4c", "damp_kappa1", 0.0);
@@ -131,9 +132,12 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.lapse_harmonic = pin->GetOrAddReal("z4c", "lapse_harmonic", 0.0);
   opt.lapse_oplog = pin->GetOrAddReal("z4c", "lapse_oplog", 2.0);
   opt.lapse_advect = pin->GetOrAddReal("z4c", "lapse_advect", 1.0);
+  opt.slow_start_lapse = pin->GetOrAddBoolean("z4c", "slow_start_lapse", false);
+  opt.ssl_damping_amp = pin->GetOrAddReal("z4c", "ssl_damping_amp", 0.6);
+  opt.ssl_damping_time = pin->GetOrAddReal("z4c", "ssl_damping_time", 20.0);
+
   opt.shift_ggamma = pin->GetOrAddReal("z4c", "shift_Gamma", 1.0);
   opt.shift_advect = pin->GetOrAddReal("z4c", "shift_advect", 1.0);
-
   opt.shift_alpha2ggamma = pin->GetOrAddReal("z4c", "shift_alpha2Gamma", 0.0);
   opt.shift_hh = pin->GetOrAddReal("z4c", "shift_H", 0.0);
 
