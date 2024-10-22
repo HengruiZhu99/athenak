@@ -31,6 +31,9 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   int &is = indcs.is; int &ie = indcs.ie;
   int &js = indcs.js; int &je = indcs.je;
   int &ks = indcs.ks; int &ke = indcs.ke;
+  int ncells1 = indcs.nx1 + 2*(indcs.ng);
+  int ncells2 = indcs.nx2 + 2*(indcs.ng);
+  int ncells3 = indcs.nx3 + 2*(indcs.ng);
 
   int nmb = pmy_pack->nmb_thispack;
 
