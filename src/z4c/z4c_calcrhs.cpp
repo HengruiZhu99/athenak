@@ -8,7 +8,7 @@
 
 #include <math.h>
 
-//#include <algorithm>
+#include <algorithm>
 //#include <cinttypes>
 #include <iostream>
 //#include <limits>
@@ -554,7 +554,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     rhs.alpha(m,k,j,i) = opt.lapse_advect * Lalpha
                        - f * z4c.alpha(m,k,j,i) * z4c.vKhat(m,k,j,i);
     if (opt.slow_start_lapse) {
-      Real W = pow(max(z4c.chi(m,k,j,i),opt.chi_min_floor),0.5);
+      Real W = pow(std::max(z4c.chi(m,k,j,i),opt.chi_min_floor),0.5);
       rhs.alpha(m,k,j,i) += opt.ssl_damping_amp*(W-z4c.alpha(m,k,j,i))*W*exp(-0.5*pow(time_now/
                             (opt.ssl_damping_time),2));
     }
