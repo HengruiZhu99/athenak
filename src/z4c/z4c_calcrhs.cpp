@@ -48,7 +48,6 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   DvceArray5D<Real> u_ddg_dddd("u_ddg_dddd", nmb, 36, ncells3, ncells2, ncells1);
   AthenaTensor<Real, TensorSymm::SYM22, 3, 4> ddg_dddd;
   ddg_dddd.InitWithShallowSlice(u_ddg_dddd, 0, 35);
-
   // ===================================================================================
   // Main RHS calculation
   //
@@ -238,9 +237,9 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     for(int c = 0; c < 3; ++c)
     for(int d = c; d < 3; ++d)
     for(int a = 0; a < 3; ++a) {
-      ddg_dddd(m,k,j,i,a,a,c,d) = Dxx<NGHOST>(a, idx, z4c.g_dd, m,c,d,k,j,i);
+      ddg_dddd(m,a,a,c,d,k,j,i) = Dxx<NGHOST>(a, idx, z4c.g_dd, m,c,d,k,j,i);
       for(int b = a + 1; b < 3; ++b) {
-        ddg_dddd(m,k,j,i,a,b,c,d) = Dxy<NGHOST>(a, b, idx, z4c.g_dd, m,c,d,k,j,i);
+        ddg_dddd(m,a,b,c,d,k,j,i) = Dxy<NGHOST>(a, b, idx, z4c.g_dd, m,c,d,k,j,i);
       }
     }
 
@@ -324,7 +323,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       }
       for(int c = 0; c < 3; ++c)
       for(int d = 0; d < 3; ++d) {
-        R_dd(a,b) -= 0.5*g_uu(c,d)*ddg_dddd(m,k,j,i,c,d,a,b);
+        R_dd(a,b) -= 0.5*g_uu(c,d)*ddg_dddd(m,c,d,a,b,k,j,i);
       }
       for(int c = 0; c < 3; ++c)
       for(int d = 0; d < 3; ++d)
