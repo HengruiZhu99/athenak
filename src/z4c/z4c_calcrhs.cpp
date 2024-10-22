@@ -42,6 +42,10 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   Tmunu::Tmunu_vars tmunu;
   if (!is_vacuum) tmunu = pmy_pack->ptmunu->tmunu;
 
+  DvceArray5D<Real> u_ddg_dddd("u_ddg_dddd", nmb, 36, ncells3, ncells2, ncells1);
+  AthenaTensor<Real, TensorSymm::SYM22, 3, 4> ddg_dddd;
+  ddg_dddd.InitWithShallowSlice(u_ddg_dddd, 0, 35);
+
   // ===================================================================================
   // Main RHS calculation
   //
@@ -104,7 +108,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     AthenaScratchTensor<Real, TensorSymm::ISYM2, 3, 3> ddbeta_ddu;
 
     // metric 2nd drvts
-    AthenaScratchTensor<Real, TensorSymm::SYM22, 3, 4> ddg_dddd;
+    // AthenaScratchTensor<Real, TensorSymm::SYM22, 3, 4> ddg_dddd;
 
     // Lie derivative of Gamma
     AthenaScratchTensor<Real, TensorSymm::NONE, 3, 1> LGam_u;
@@ -231,9 +235,9 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     for(int c = 0; c < 3; ++c)
     for(int d = c; d < 3; ++d)
     for(int a = 0; a < 3; ++a) {
-      ddg_dddd(a,a,c,d) = Dxx<NGHOST>(a, idx, z4c.g_dd, m,c,d,k,j,i);
+      ddg_dddd(m,k,j,i,a,a,c,d) = Dxx<NGHOST>(a, idx, z4c.g_dd, m,c,d,k,j,i);
       for(int b = a + 1; b < 3; ++b) {
-        ddg_dddd(a,b,c,d) = Dxy<NGHOST>(a, b, idx, z4c.g_dd, m,c,d,k,j,i);
+        ddg_dddd(m,k,j,i,a,b,c,d) = Dxy<NGHOST>(a, b, idx, z4c.g_dd, m,c,d,k,j,i);
       }
     }
 
@@ -317,7 +321,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       }
       for(int c = 0; c < 3; ++c)
       for(int d = 0; d < 3; ++d) {
-        R_dd(a,b) -= 0.5*g_uu(c,d)*ddg_dddd(c,d,a,b);
+        R_dd(a,b) -= 0.5*g_uu(c,d)*ddg_dddd(m,k,j,i,c,d,a,b);
       }
       for(int c = 0; c < 3; ++c)
       for(int d = 0; d < 3; ++d)
