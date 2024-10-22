@@ -23,6 +23,10 @@ enum class TensorSymm {
 };
 
 
+using sub_DvceArray5D_4D = decltype(Kokkos::subview(
+                           std::declval<DvceArray5D<Real>>(),
+                           Kokkos::ALL,std::make_pair(0,36),
+                           Kokkos::ALL,Kokkos::ALL,Kokkos::ALL));
 using sub_DvceArray5D_2D = decltype(Kokkos::subview(
                            std::declval<DvceArray5D<Real>>(),
                            Kokkos::ALL,std::make_pair(0,6),
@@ -80,7 +84,7 @@ class AthenaHostTensor<T, sym, ndim, 0> {
   sub_HostArray5D_0D data_;
 };
 //----------------------------------------------------------------------------------------
-// rank 1 AthenaTensor, e.g., the lapse
+// rank 1 AthenaHostTensor, e.g., the lapse
 template<typename T, TensorSymm sym, int ndim>
 class AthenaHostTensor<T, sym, ndim, 1> {
  public:
@@ -105,7 +109,7 @@ class AthenaHostTensor<T, sym, ndim, 1> {
   sub_HostArray5D_1D data_;
 };
 //----------------------------------------------------------------------------------------
-// rank 2 AthenaTensor, e.g., the metric or the extrinsic curvature
+// rank 2 AthenaHostTensor, e.g., the metric or the extrinsic curvature
 template<typename T, TensorSymm sym, int ndim>
 class AthenaHostTensor<T, sym, ndim, 2> {
  public:
@@ -273,6 +277,89 @@ AthenaTensor<T, sym, ndim, 2>::AthenaTensor() {
       for(int b = a; b < ndim; ++b) {
         idxmap_[a][b] = ndof_++;
         idxmap_[b][a] = idxmap_[a][b];
+      }
+      break;
+  }
+}
+
+//----------------------------------------------------------------------------------------
+// rank 4 AthenaTensor, e.g., the metric or the extrinsic curvature
+template<typename T, TensorSymm sym, int ndim>
+class AthenaTensor<T, sym, ndim, 4> {
+ public:
+  AthenaTensor();
+  // the default destructor/copy operators are sufficient
+  ~AthenaTensor() = default;
+  AthenaTensor(AthenaTensor<T, sym, ndim, 4> const &) = default;
+  AthenaTensor<T, sym, ndim, 4> & operator=
+  (AthenaTensor<T, sym, ndim, 4> const &) = default;
+
+  int idxmap(int const a, int const b, int const c, int const d) const {
+    return idxmap_[a][b][c][d];
+  }
+  // operators to access the data
+  KOKKOS_INLINE_FUNCTION
+  decltype(auto) operator() (int const m, int const a, int const b, int const c, int const d,
+                             int const k, int const j, int const i) const {
+    return data_(m,idxmap_[a][b][c][d],k,j,i);
+  }
+  //KOKKOS_INLINE_FUNCTION
+  void InitWithShallowSlice(DvceArray5D<Real> src, const int indx1, const int indx2) {
+    data_ = Kokkos::subview(src, Kokkos::ALL, std::make_pair(indx1, indx2+1),
+                                 Kokkos::ALL, Kokkos::ALL, Kokkos::ALL);
+  }
+
+ private:
+  sub_DvceArray5D_4D data_;
+  int idxmap_[3][3][3][3];
+  int ndof_;
+};
+
+//----------------------------------------------------------------------------------------
+// Implementation details
+// They are all duplicated to account for dim 0
+template<typename T, TensorSymm sym, int ndim>
+AthenaTensor<T, sym, ndim, 4>::AthenaTensor() {
+  switch(sym) {
+    case TensorSymm::NONE:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = 0; b < ndim; ++b)
+      for(int c = 0; c < ndim; ++c)
+      for(int d = 0; d < ndim; ++d) {
+        idxmap_[a][b][c][d] = ndof_++;
+      }
+      break;
+    case TensorSymm::SYM2:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = 0; b < ndim; ++b)
+      for(int c = 0; c < ndim; ++c)
+      for(int d = c; d < ndim; ++d) {
+        idxmap_[a][b][c][d] = ndof_++;
+        idxmap_[a][b][d][c] = idxmap_[a][b][c][d];
+      }
+      break;
+    case TensorSymm::ISYM2:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = a; b < ndim; ++b)
+      for(int c = 0; c < ndim; ++c)
+      for(int d = 0; d < ndim; ++d) {
+        idxmap_[a][b][c][d] = ndof_++;
+        idxmap_[b][a][c][d] = idxmap_[a][b][c][d];
+      }
+      break;
+    case TensorSymm::SYM22:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = a; b < ndim; ++b)
+      for(int c = 0; c < ndim; ++c)
+      for(int d = c; d < ndim; ++d) {
+        idxmap_[a][b][c][d] = ndof_++;
+        idxmap_[b][a][c][d] = idxmap_[a][b][c][d];
+        idxmap_[a][b][d][c] = idxmap_[a][b][c][d];
+        idxmap_[b][a][d][c] = idxmap_[a][b][c][d];
       }
       break;
   }
