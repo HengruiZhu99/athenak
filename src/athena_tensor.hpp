@@ -278,7 +278,6 @@ AthenaTensor<T, sym, ndim, 2>::AthenaTensor() {
   }
 }
 
-
 // Here tensors are defined as static 1D arrays, with compile-time dimension calculated as
 // dim**rank
 // this is the abstract base class
@@ -542,5 +541,286 @@ AthenaPointTensor<T, sym, ndim, 4>::AthenaPointTensor() {
       break;
   }
 }
+
+// Here tensors are defined as static 1D arrays, with compile-time dimension calculated as
+// dim**rank
+// this is the abstract base class
+template<typename T, TensorSymm sym, int ndim, int rank>
+class AthenaScratchTensor;
+
+//----------------------------------------------------------------------------------------
+// rank 0 AthenaScratchTensor: spatially 0D vector and co-vector fields
+// This is a 1D AthenaScratchTensor
+template<typename T, TensorSymm sym, int ndim>
+class AthenaScratchTensor<T, sym, ndim, 0> {
+ public:
+  // the default constructor/destructor/copy operators are sufficient
+  AthenaScratchTensor() = default;
+  ~AthenaScratchTensor() = default;
+  AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 0> const &) = default;
+  AthenaScratchTensor<T, sym, ndim, 0> & operator=
+  (AthenaScratchTensor<T, sym, ndim, 0> const &) = default;
+
+  KOKKOS_INLINE_FUNCTION
+  decltype(auto) operator()(int const i) const {
+    return data_(i);
+  }
+  KOKKOS_INLINE_FUNCTION
+  void NewAthenaScratchTensor(const TeamMember_t &member, int scr_level, int nx) {
+    data_ = ScrArray1D<T>(member.team_scratch(scr_level), nx);
+  }
+  KOKKOS_INLINE_FUNCTION
+  void ZeroClear() {
+    Kokkos::Experimental::local_deep_copy(data_, 0.);
+  }
+ private:
+  ScrArray1D<T> data_;
+};
+
+//----------------------------------------------------------------------------------------
+// rank 1 AthenaScratchTensor: spatially 0D vector and co-vector fields
+// This is a 1D AthenaScratchTensor
+template<typename T, TensorSymm sym, int ndim>
+class AthenaScratchTensor<T, sym, ndim, 1> {
+ public:
+  // the default constructor/destructor/copy operators are sufficient
+  AthenaScratchTensor() = default;
+  ~AthenaScratchTensor() = default;
+  AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 1> const &) = default;
+  AthenaScratchTensor<T, sym, ndim, 1> & operator=
+  (AthenaScratchTensor<T, sym, ndim, 1> const &) = default;
+
+  KOKKOS_INLINE_FUNCTION
+  decltype(auto) operator()(int const a, int const i) const {
+    return data_(a, i);
+  }
+  KOKKOS_INLINE_FUNCTION
+  void NewAthenaScratchTensor(const TeamMember_t & member, int scr_level, int nx) {
+    data_ = ScrArray2D<T>(member.team_scratch(scr_level), ndim, nx);
+  }
+  KOKKOS_INLINE_FUNCTION
+  void ZeroClear() {
+    Kokkos::Experimental::local_deep_copy(data_, 0.);
+  }
+ private:
+  ScrArray2D<T> data_;
+};
+
+//----------------------------------------------------------------------------------------
+// rank 2 AthenaScratchTensor
+// This is a 1D AthenaScratchTensor
+template<typename T, TensorSymm sym, int ndim>
+class AthenaScratchTensor<T, sym, ndim, 2> {
+ public:
+  KOKKOS_INLINE_FUNCTION
+  AthenaScratchTensor();
+  // the default destructor/copy operators are sufficient
+  ~AthenaScratchTensor() = default;
+  AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 2> const &) = default;
+  AthenaScratchTensor<T, sym, ndim, 2> & operator=
+  (AthenaScratchTensor<T, sym, ndim, 2> const &) = default;
+  KOKKOS_INLINE_FUNCTION
+  int idxmap(int const a, int const b) const {
+    return idxmap_[a][b];
+  }
+  KOKKOS_INLINE_FUNCTION
+  decltype(auto) operator()(int const a, int const b, int const i) const {
+    return data_(idxmap_[a][b], i);
+  }
+  KOKKOS_INLINE_FUNCTION
+  void NewAthenaScratchTensor(const TeamMember_t & member, int scr_level, int nx) {
+    data_ = ScrArray2D<T>(member.team_scratch(scr_level), ndof_, nx);
+  }
+  KOKKOS_INLINE_FUNCTION
+  void ZeroClear() {
+    Kokkos::Experimental::local_deep_copy(data_, 0);
+  }
+
+ private:
+  ScrArray2D<T> data_;
+  int idxmap_[ndim][ndim];
+  int ndof_;
+};
+
+//----------------------------------------------------------------------------------------
+// Implementation details
+template<typename T, TensorSymm sym, int ndim>
+AthenaScratchTensor<T, sym, ndim, 2>::AthenaScratchTensor() {
+switch(sym) {
+    case TensorSymm::NONE:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = 0; b < ndim; ++b) {
+        idxmap_[a][b] = ndof_++;
+      }
+      break;
+    case TensorSymm::SYM2:
+    case TensorSymm::ISYM2:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = a; b < ndim; ++b) {
+        idxmap_[a][b] = ndof_++;
+        idxmap_[b][a] = idxmap_[a][b];
+      }
+      break;
+  }
+}
+
+//----------------------------------------------------------------------------------------
+// rank 3 AthenaScratchTensor
+// This is a 1D AthenaScratchTensor
+template<typename T, TensorSymm sym, int ndim>
+class AthenaScratchTensor<T, sym, ndim, 3> {
+ public:
+  KOKKOS_INLINE_FUNCTION
+  AthenaScratchTensor();
+  // the default destructor/copy operators are sufficient
+  ~AthenaScratchTensor() = default;
+  AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 3> const &) = default;
+  AthenaScratchTensor<T, sym, ndim, 3> & operator=
+  (AthenaScratchTensor<T, sym, ndim, 3> const &) = default;
+  KOKKOS_INLINE_FUNCTION
+  int idxmap(int const a, int const b, int const c) const {
+    return idxmap_[a][b][c];
+  }
+  KOKKOS_INLINE_FUNCTION
+  decltype(auto) operator()(int const a, int const b, int const c, int const i) const {
+    return data_(idxmap_[a][b][c], i);
+  }
+  KOKKOS_INLINE_FUNCTION
+  void NewAthenaScratchTensor(const TeamMember_t & member, int scr_level, int nx) {
+    data_ = ScrArray2D<T>(member.team_scratch(scr_level), ndof_, nx);
+  }
+  KOKKOS_INLINE_FUNCTION
+  void ZeroClear() {
+    Kokkos::Experimental::local_deep_copy(data_, 0);
+  }
+
+ private:
+  ScrArray2D<T> data_;
+  int idxmap_[ndim][ndim][ndim];
+  int ndof_;
+};
+
+//----------------------------------------------------------------------------------------
+// Implementation details
+template<typename T, TensorSymm sym, int ndim>
+AthenaScratchTensor<T, sym, ndim, 3>::AthenaScratchTensor() {
+  switch(sym) {
+    case TensorSymm::NONE:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = 0; b < ndim; ++b)
+      for(int c = 0; c < ndim; ++c) {
+        idxmap_[a][b][c] = ndof_++;
+      }
+      break;
+    case TensorSymm::SYM2:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = 0; b < ndim; ++b)
+      for(int c = b; c < ndim; ++c) {
+        idxmap_[a][b][c] = ndof_++;
+        idxmap_[a][c][b] = idxmap_[a][b][c];
+      }
+      break;
+    case TensorSymm::ISYM2:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = a; b < ndim; ++b)
+      for(int c = 0; c < ndim; ++c) {
+        idxmap_[a][b][c] = ndof_++;
+        idxmap_[b][a][c] = idxmap_[a][b][c];
+      }
+      break;
+  }
+}
+
+//----------------------------------------------------------------------------------------
+// rank 4 AthenaScratchTensor
+// This is a 1D AthenaScratchTensor
+template<typename T, TensorSymm sym, int ndim>
+class AthenaScratchTensor<T, sym, ndim, 4> {
+ public:
+  KOKKOS_INLINE_FUNCTION
+  AthenaScratchTensor();
+  // the default destructor/copy operators are sufficient
+  ~AthenaScratchTensor() = default;
+  AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 4> const &) = default;
+  AthenaScratchTensor<T, sym, ndim, 4> & operator=
+  (AthenaScratchTensor<T, sym, ndim, 4> const &) = default;
+  KOKKOS_INLINE_FUNCTION
+  int idxmap(int const a, int const b, int const c, int const d) const {
+    return idxmap_[a][b][c][d];
+  }
+  KOKKOS_INLINE_FUNCTION
+  decltype(auto) operator()(int const a, int const b,
+                            int const c, int const d, int const i) const {
+    return data_(idxmap_[a][b][c][d], i);
+  }
+  KOKKOS_INLINE_FUNCTION
+  void NewAthenaScratchTensor(const TeamMember_t & member, int scr_level, int nx) {
+    data_ = ScrArray2D<T>(member.team_scratch(scr_level), ndof_, nx);
+  }
+  KOKKOS_INLINE_FUNCTION
+  void ZeroClear() {
+    Kokkos::Experimental::local_deep_copy(data_, 0);
+  }
+
+ private:
+  ScrArray2D<T> data_;
+  int idxmap_[ndim][ndim][ndim][ndim];
+  int ndof_;
+};
+
+//----------------------------------------------------------------------------------------
+// Implementation details
+template<typename T, TensorSymm sym, int ndim>
+AthenaScratchTensor<T, sym, ndim, 4>::AthenaScratchTensor() {
+  switch(sym) {
+    case TensorSymm::NONE:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = 0; b < ndim; ++b)
+      for(int c = 0; c < ndim; ++c)
+      for(int d = 0; d < ndim; ++d) {
+        idxmap_[a][b][c][d] = ndof_++;
+      }
+      break;
+    case TensorSymm::SYM2:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = 0; b < ndim; ++b)
+      for(int c = 0; c < ndim; ++c)
+      for(int d = c; d < ndim; ++d) {
+        idxmap_[a][b][c][d] = ndof_++;
+        idxmap_[a][b][d][c] = idxmap_[a][b][c][d];
+      }
+      break;
+    case TensorSymm::ISYM2:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = a; b < ndim; ++b)
+      for(int c = 0; c < ndim; ++c)
+      for(int d = 0; d < ndim; ++d) {
+        idxmap_[a][b][c][d] = ndof_++;
+        idxmap_[b][a][c][d] = idxmap_[a][b][c][d];
+      }
+      break;
+    case TensorSymm::SYM22:
+      ndof_ = 0;
+      for(int a = 0; a < ndim; ++a)
+      for(int b = a; b < ndim; ++b)
+      for(int c = 0; c < ndim; ++c)
+      for(int d = c; d < ndim; ++d) {
+        idxmap_[a][b][c][d] = ndof_++;
+        idxmap_[b][a][c][d] = idxmap_[a][b][c][d];
+        idxmap_[a][b][d][c] = idxmap_[a][b][c][d];
+        idxmap_[b][a][d][c] = idxmap_[a][b][c][d];
+      }
+      break;
+  }
+}
+
 
 #endif // ATHENA_TENSOR_HPP_
