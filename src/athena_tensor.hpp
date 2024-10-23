@@ -646,6 +646,7 @@ class AthenaScratchTensor<T, sym, ndim, 2> {
 // Implementation details
 template<typename T, TensorSymm sym, int ndim>
 AthenaScratchTensor<T, sym, ndim, 2>::AthenaScratchTensor() {
+// change switch to if else const expr
 switch(sym) {
     case TensorSymm::NONE:
       ndof_ = 0;
