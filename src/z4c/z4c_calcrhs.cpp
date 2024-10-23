@@ -65,10 +65,11 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   par_for_outer("z4c rhs loop",DevExeSpace(), scr_size, scr_level, 0, nteam - 1,
   KOKKOS_LAMBDA(TeamMember_t member, const int team) {
     par_for_inner(member, 0, team_size - 1, [&](const int t) {
-      int m = (member.league_rank())/nkji;
-      int k = (member.league_rank() - m*nkji)/nji;
-      int j = (member.league_rank() - m*nkji - k*nji)/ni;
-      int i = (member.league_rank() - m*nkji - k*nji - j*ni) + is;
+      int index = team_size * team + t;
+      int m = (index)/nkji;
+      int k = (index - m*nkji)/nji;
+      int j = (index - m*nkji - k*nji)/ni;
+      int i = (index - m*nkji - k*nji - j*ni) + is;
       j += js;
       k += ks;
 
