@@ -283,20 +283,20 @@ AthenaTensor<T, sym, ndim, 2>::AthenaTensor() {
 // dim**rank
 // this is the abstract base class
 template<typename T, TensorSymm sym, int ndim, int rank>
-class AthenaScratchTensor;
+class AthenaPointTensor;
 
 //----------------------------------------------------------------------------------------
-// rank 1 AthenaScratchTensor: spatially 0D vector and co-vector fields
-// This is a 1D AthenaScratchTensor
+// rank 1 AthenaPointTensor: spatially 0D vector and co-vector fields
+// This is a 1D AthenaPointTensor
 template<typename T, TensorSymm sym, int ndim>
-class AthenaScratchTensor<T, sym, ndim, 1> {
+class AthenaPointTensor<T, sym, ndim, 1> {
  public:
   // the default constructor/destructor/copy operators are sufficient
-  AthenaScratchTensor() = default;
-  ~AthenaScratchTensor() = default;
-  AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 1> const &) = default;
-  AthenaScratchTensor<T, sym, ndim, 1> & operator=
-  (AthenaScratchTensor<T, sym, ndim, 1> const &) = default;
+  AthenaPointTensor() = default;
+  ~AthenaPointTensor() = default;
+  AthenaPointTensor(AthenaPointTensor<T, sym, ndim, 1> const &) = default;
+  AthenaPointTensor<T, sym, ndim, 1> & operator=
+  (AthenaPointTensor<T, sym, ndim, 1> const &) = default;
 
   KOKKOS_INLINE_FUNCTION
   Real operator()(int const a) const {
@@ -318,18 +318,18 @@ class AthenaScratchTensor<T, sym, ndim, 1> {
 };
 
 //----------------------------------------------------------------------------------------
-// rank 2 AthenaScratchTensor
-// This is a 0D AthenaScratchTensor
+// rank 2 AthenaPointTensor
+// This is a 0D AthenaPointTensor
 template<typename T, TensorSymm sym, int ndim>
-class AthenaScratchTensor<T, sym, ndim, 2> {
+class AthenaPointTensor<T, sym, ndim, 2> {
  public:
   KOKKOS_INLINE_FUNCTION
-  AthenaScratchTensor();
+  AthenaPointTensor();
   // the default destructor/copy operators are sufficient
-  ~AthenaScratchTensor() = default;
-  AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 2> const &) = default;
-  AthenaScratchTensor<T, sym, ndim, 2> & operator=
-  (AthenaScratchTensor<T, sym, ndim, 2> const &) = default;
+  ~AthenaPointTensor() = default;
+  AthenaPointTensor(AthenaPointTensor<T, sym, ndim, 2> const &) = default;
+  AthenaPointTensor<T, sym, ndim, 2> & operator=
+  (AthenaPointTensor<T, sym, ndim, 2> const &) = default;
   KOKKOS_INLINE_FUNCTION
   int idxmap(int const a, int const b) const {
     return idxmap_[a][b];
@@ -359,7 +359,7 @@ class AthenaScratchTensor<T, sym, ndim, 2> {
 // Implementation details
 template<typename T, TensorSymm sym, int ndim>
 KOKKOS_INLINE_FUNCTION
-AthenaScratchTensor<T, sym, ndim, 2>::AthenaScratchTensor() {
+AthenaPointTensor<T, sym, ndim, 2>::AthenaPointTensor() {
 switch(sym) {
     case TensorSymm::NONE:
       ndof_ = 0;
@@ -381,18 +381,18 @@ switch(sym) {
 }
 
 //----------------------------------------------------------------------------------------
-// rank 3 AthenaScratchTensor
-// This is a 0D AthenaScratchTensor
+// rank 3 AthenaPointTensor
+// This is a 0D AthenaPointTensor
 template<typename T, TensorSymm sym, int ndim>
-class AthenaScratchTensor<T, sym, ndim, 3> {
+class AthenaPointTensor<T, sym, ndim, 3> {
  public:
   KOKKOS_INLINE_FUNCTION
-  AthenaScratchTensor();
+  AthenaPointTensor();
   // the default destructor/copy operators are sufficient
-  ~AthenaScratchTensor() = default;
-  AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 3> const &) = default;
-  AthenaScratchTensor<T, sym, ndim, 3> & operator=
-  (AthenaScratchTensor<T, sym, ndim, 3> const &) = default;
+  ~AthenaPointTensor() = default;
+  AthenaPointTensor(AthenaPointTensor<T, sym, ndim, 3> const &) = default;
+  AthenaPointTensor<T, sym, ndim, 3> & operator=
+  (AthenaPointTensor<T, sym, ndim, 3> const &) = default;
   KOKKOS_INLINE_FUNCTION
   int idxmap(int const a, int const b, int const c) const {
     return idxmap_[a][b][c];
@@ -422,7 +422,7 @@ class AthenaScratchTensor<T, sym, ndim, 3> {
 // Implementation details
 template<typename T, TensorSymm sym, int ndim>
 KOKKOS_INLINE_FUNCTION
-AthenaScratchTensor<T, sym, ndim, 3>::AthenaScratchTensor() {
+AthenaPointTensor<T, sym, ndim, 3>::AthenaPointTensor() {
   switch(sym) {
     case TensorSymm::NONE:
       ndof_ = 0;
@@ -454,18 +454,18 @@ AthenaScratchTensor<T, sym, ndim, 3>::AthenaScratchTensor() {
 }
 
 //----------------------------------------------------------------------------------------
-// rank 4 AthenaScratchTensor
-// This is a 0D AthenaScratchTensor
+// rank 4 AthenaPointTensor
+// This is a 0D AthenaPointTensor
 template<typename T, TensorSymm sym, int ndim>
-class AthenaScratchTensor<T, sym, ndim, 4> {
+class AthenaPointTensor<T, sym, ndim, 4> {
  public:
   KOKKOS_INLINE_FUNCTION
-  AthenaScratchTensor();
+  AthenaPointTensor();
   // the default destructor/copy operators are sufficient
-  ~AthenaScratchTensor() = default;
-  AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 4> const &) = default;
-  AthenaScratchTensor<T, sym, ndim, 4> & operator=
-  (AthenaScratchTensor<T, sym, ndim, 4> const &) = default;
+  ~AthenaPointTensor() = default;
+  AthenaPointTensor(AthenaPointTensor<T, sym, ndim, 4> const &) = default;
+  AthenaPointTensor<T, sym, ndim, 4> & operator=
+  (AthenaPointTensor<T, sym, ndim, 4> const &) = default;
   KOKKOS_INLINE_FUNCTION
   int idxmap(int const a, int const b, int const c, int const d) const {
     return idxmap_[a][b][c][d];
@@ -497,7 +497,7 @@ class AthenaScratchTensor<T, sym, ndim, 4> {
 // Implementation details
 template<typename T, TensorSymm sym, int ndim>
 KOKKOS_INLINE_FUNCTION
-AthenaScratchTensor<T, sym, ndim, 4>::AthenaScratchTensor() {
+AthenaPointTensor<T, sym, ndim, 4>::AthenaPointTensor() {
   switch(sym) {
     case TensorSymm::NONE:
       ndof_ = 0;
