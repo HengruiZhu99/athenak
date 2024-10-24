@@ -680,13 +680,22 @@ class AthenaScratchTensor<T, sym, ndim, 3> {
   AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 3> const &) = default;
   AthenaScratchTensor<T, sym, ndim, 3> & operator=
   (AthenaScratchTensor<T, sym, ndim, 3> const &) = default;
+
   KOKKOS_INLINE_FUNCTION
-  int idxmap(int const a, int const b, int const c) const {
-    return idxmap_[a][b][c];
-  }
-  KOKKOS_INLINE_FUNCTION
-  decltype(auto) operator()(int const a, int const b, int const c, int const i) const {
-    return data_(idxmap_[a][b][c], i);
+  decltype(auto) operator()(int a, int b, int c, int const i) const {
+    if constexpr (sym == TensorSymm::NONE) {
+      return data_(ndim * ndim * a + ndim * b + c, i);
+    } else if constexpr (sym == TensorSymm::SYM2) {
+      if (b < c) {
+        std::swap(b, c);
+      }
+      return data_(a*(ndim + 1)*ndim/2 + c*( 2*ndim - c +1)/2 + b - c,i);
+    } else if constexpr (sym == TensorSymm::ISYM2) {
+      if (a < b) {
+        std::swap(a, b);
+      }
+      return data_((b*(2*ndim - b +1)/2 + a - b)*ndim + c,i);
+    }
   }
   KOKKOS_INLINE_FUNCTION
   void NewAthenaScratchTensor(const TeamMember_t & member, int scr_level, int nx) {
@@ -699,7 +708,6 @@ class AthenaScratchTensor<T, sym, ndim, 3> {
 
  private:
   ScrArray2D<T> data_;
-  int idxmap_[ndim][ndim][ndim];
   int ndof_;
 };
 
@@ -709,30 +717,13 @@ template<typename T, TensorSymm sym, int ndim>
 AthenaScratchTensor<T, sym, ndim, 3>::AthenaScratchTensor() {
   switch(sym) {
     case TensorSymm::NONE:
-      ndof_ = 0;
-      for(int a = 0; a < ndim; ++a)
-      for(int b = 0; b < ndim; ++b)
-      for(int c = 0; c < ndim; ++c) {
-        idxmap_[a][b][c] = ndof_++;
-      }
+      ndof_ = ndim * ndim * ndim;
       break;
     case TensorSymm::SYM2:
-      ndof_ = 0;
-      for(int a = 0; a < ndim; ++a)
-      for(int b = 0; b < ndim; ++b)
-      for(int c = b; c < ndim; ++c) {
-        idxmap_[a][b][c] = ndof_++;
-        idxmap_[a][c][b] = idxmap_[a][b][c];
-      }
+      ndof_ = ndim * (ndim + 1)*ndim/2;
       break;
     case TensorSymm::ISYM2:
-      ndof_ = 0;
-      for(int a = 0; a < ndim; ++a)
-      for(int b = a; b < ndim; ++b)
-      for(int c = 0; c < ndim; ++c) {
-        idxmap_[a][b][c] = ndof_++;
-        idxmap_[b][a][c] = idxmap_[a][b][c];
-      }
+      ndof_ = ndim * (ndim + 1)*ndim/2;
       break;
   }
 }
@@ -787,10 +778,10 @@ template<typename T, TensorSymm sym, int ndim>
 AthenaScratchTensor<T, sym, ndim, 4>::AthenaScratchTensor() {
   switch(sym) {
     case TensorSymm::NONE:
-      ndof_ = 81;
+      ndof_ = ndim*ndim*ndim*ndim;
       break;
     case TensorSymm::SYM22:
-      ndof_ = 36;
+      ndof_ = (ndim + 1)*ndim/2 * (ndim + 1)*ndim/2;
       break;
   }
 }
