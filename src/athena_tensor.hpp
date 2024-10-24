@@ -619,13 +619,17 @@ class AthenaScratchTensor<T, sym, ndim, 2> {
   AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 2> const &) = default;
   AthenaScratchTensor<T, sym, ndim, 2> & operator=
   (AthenaScratchTensor<T, sym, ndim, 2> const &) = default;
+
   KOKKOS_INLINE_FUNCTION
-  int idxmap(int const a, int const b) const {
-    return idxmap_[a][b];
-  }
-  KOKKOS_INLINE_FUNCTION
-  decltype(auto) operator()(int const a, int const b, int const i) const {
-    return data_(idxmap_[a][b], i);
+  decltype(auto) operator()(int a, int b, int i) const {
+    if constexpr (sym == TensorSymm::NONE) {
+      return data_(ndim * a + b, i);
+    } else {
+      if (a < b) {
+        Kokkos::kokkos_swap(a, b);
+      }
+      return data_(b*( 2*ndim - b +1)/2 + a - b, i);
+    }
   }
   KOKKOS_INLINE_FUNCTION
   void NewAthenaScratchTensor(const TeamMember_t & member, int scr_level, int nx) {
@@ -638,7 +642,6 @@ class AthenaScratchTensor<T, sym, ndim, 2> {
 
  private:
   ScrArray2D<T> data_;
-  int idxmap_[ndim][ndim];
   int ndof_;
 };
 
@@ -649,20 +652,11 @@ AthenaScratchTensor<T, sym, ndim, 2>::AthenaScratchTensor() {
 // change switch to if else const expr
 switch(sym) {
     case TensorSymm::NONE:
-      ndof_ = 0;
-      for(int a = 0; a < ndim; ++a)
-      for(int b = 0; b < ndim; ++b) {
-        idxmap_[a][b] = ndof_++;
-      }
+      ndof_ = ndim * ndim;
       break;
     case TensorSymm::SYM2:
     case TensorSymm::ISYM2:
-      ndof_ = 0;
-      for(int a = 0; a < ndim; ++a)
-      for(int b = a; b < ndim; ++b) {
-        idxmap_[a][b] = ndof_++;
-        idxmap_[b][a] = idxmap_[a][b];
-      }
+      ndof_ = (ndim + 1)*ndim/2;
       break;
   }
 }
@@ -720,8 +714,6 @@ AthenaScratchTensor<T, sym, ndim, 3>::AthenaScratchTensor() {
       ndof_ = ndim * ndim * ndim;
       break;
     case TensorSymm::SYM2:
-      ndof_ = ndim * (ndim + 1)*ndim/2;
-      break;
     case TensorSymm::ISYM2:
       ndof_ = ndim * (ndim + 1)*ndim/2;
       break;
