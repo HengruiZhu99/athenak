@@ -67,9 +67,9 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
 
   par_for_outer("z4c rhs loop",DevExeSpace(), scr_size, scr_level, 0, nteam - 1,
   KOKKOS_LAMBDA(TeamMember_t member, const int team) {
-
+    // Define scratch arrays to be used in the following calculations
     // inverse of conf. metric
-    // AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> g_uu;
+    AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> g_uu;
     // inverse of A
     AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> A_uu;
     // g^cd A_ac A_db
@@ -79,16 +79,16 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     // Ricci tensor, conformal contribution
     AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> Rphi_dd;
     // 2nd differential of the lapse
-    // AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> Ddalpha_dd;
+    AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> Ddalpha_dd;
     // 2nd differential of phi
     AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> Ddphi_dd;
 
-    // g_uu.NewAthenaScratchTensor(member, scr_level, team_size);
+    g_uu.NewAthenaScratchTensor(member, scr_level, team_size);
     A_uu.NewAthenaScratchTensor(member, scr_level, team_size);
     AA_dd.NewAthenaScratchTensor(member, scr_level, team_size);
     R_dd.NewAthenaScratchTensor(member, scr_level, team_size);
     Rphi_dd.NewAthenaScratchTensor(member, scr_level, team_size);
-    //Ddalpha_dd.NewAthenaScratchTensor(member, scr_level, team_size);
+    Ddalpha_dd.NewAthenaScratchTensor(member, scr_level, team_size);
     Ddphi_dd.NewAthenaScratchTensor(member, scr_level, team_size);
 
     // Christoffel symbols of 1st kind
@@ -110,7 +110,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     ddg_dddd.NewAthenaScratchTensor(member, scr_level, team_size);
 
     // lapse 2nd drvts
-    // AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> ddalpha_dd;
+    AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> ddalpha_dd;
     // shift 1st drvts
     AthenaScratchTensor<Real, TensorSymm::NONE, 3, 2> dbeta_du;
     // chi 2nd drvts
@@ -118,10 +118,18 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     // Gamma 1st drvts
     AthenaScratchTensor<Real, TensorSymm::NONE, 3, 2> dGam_du;
 
-    // ddalpha_dd.NewAthenaScratchTensor(member, scr_level, team_size);
+    ddalpha_dd.NewAthenaScratchTensor(member, scr_level, team_size);
     dbeta_du.NewAthenaScratchTensor(member, scr_level, team_size);
     ddchi_dd.NewAthenaScratchTensor(member, scr_level, team_size);
     dGam_du.NewAthenaScratchTensor(member, scr_level, team_size);
+
+    // Lie derivative of conf. 3-metric
+    AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> Lg_dd;
+    // Lie derivative of A
+    AthenaScratchTensor<Real, TensorSymm::SYM2, 3, 2> LA_dd;
+
+    Lg_dd.NewAthenaScratchTensor(member, scr_level, team_size);
+    LA_dd.NewAthenaScratchTensor(member, scr_level, team_size);
 
     par_for_inner(member, 0, team_size - 1, [&](const int t) {
       int index = team_size * team + t;
@@ -131,36 +139,10 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       int i = (index - m*nkji - k*nji - j*ni) + is;
       j += js;
       k += ks;
-
-      // Define scratch arrays to be used in the following calculations
-
       // Gamma computed from the metric
       AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> Gamma_u;
       // Covariant derivative of A
       AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> DA_u;
-
-      // inverse of conf. metric
-      AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> g_uu;
-      // inverse of A
-      // AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> A_uu;
-      // g^cd A_ac A_db
-      // AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> AA_dd;
-      // Ricci tensor
-      // AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> R_dd;
-      // Ricci tensor, conformal contribution
-      // AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> Rphi_dd;
-      // 2nd differential of the lapse
-      AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> Ddalpha_dd;
-      // 2nd differential of phi
-      // AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> Ddphi_dd;
-
-      // Christoffel symbols of 1st kind
-      // AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> Gamma_ddd;
-      // Christoffel symbols of 2nd kind
-      // AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> Gamma_udd;
-
-      // auxiliary derivatives
-
       // lapse 1st drvts
       AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> dalpha_d;
       // 2nd "divergence" of beta
@@ -174,32 +156,10 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       // Theta 1st drvts
       AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> dTheta_d;
 
-      // lapse 2nd drvts
-      AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> ddalpha_dd;
-      // shift 1st drvts
-      // AthenaPointTensor<Real, TensorSymm::NONE, 3, 2> dbeta_du;
-      // chi 2nd drvts
-      // AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> ddchi_dd;
-      // Gamma 1st drvts
-      AthenaPointTensor<Real, TensorSymm::NONE, 3, 2> dGam_du;
-
-      // metric 1st drvts
-      // AthenaPointTensor<Real, TensorSymm::SYM2,  3, 3> dg_ddd;
-      // shift 2nd drvts
-      // AthenaPointTensor<Real, TensorSymm::ISYM2, 3, 3> ddbeta_ddu;
-
-      // metric 2nd drvts
-      // AthenaPointTensor<Real, TensorSymm::SYM22, 3, 4> ddg_dddd;
-
       // Lie derivative of Gamma
       AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> LGam_u;
       // Lie derivative of the shift
       AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> Lbeta_u;
-
-      // Lie derivative of conf. 3-metric
-      AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> Lg_dd;
-      // Lie derivative of A
-      AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> LA_dd;
 
       Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
 
@@ -236,7 +196,6 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       Real S = 0.0;
       // Trace of Ddalpha_dd
       Real Ddalpha = 0.0;
-
       // d_a beta^a
       Real dbeta = 0.0;
 
@@ -254,8 +213,8 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       // Symmetric tensors
       for (int a = 0; a < 3; ++a)
       for (int b = a; b < 3; ++b) {
-        Lg_dd(a,b) = 0.0;
-        LA_dd(a,b) = 0.0;
+        Lg_dd(a,b,t) = 0.0;
+        LA_dd(a,b,t) = 0.0;
         AA_dd(a,b,t) = 0.0;
         R_dd(a,b,t) = 0.0;
         A_uu(a,b,t) = 0.0;
@@ -279,7 +238,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       for(int a = 0; a < 3; ++a)
       for(int b = 0; b < 3; ++b) {
         dbeta_du(b,a,t) = Dx<NGHOST>(b, idx, z4c.beta_u, m,a,k,j,i);
-        dGam_du(b,a) = Dx<NGHOST>(b, idx, z4c.vGam_u,  m,a,k,j,i);
+        dGam_du(b,a,t) = Dx<NGHOST>(b, idx, z4c.vGam_u,  m,a,k,j,i);
       }
 
       // Tensors
@@ -294,11 +253,11 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       //
       // Scalars
       for(int a = 0; a < 3; ++a) {
-        ddalpha_dd(a,a) = Dxx<NGHOST>(a, idx, z4c.alpha, m,k,j,i);
+        ddalpha_dd(a,a,t) = Dxx<NGHOST>(a, idx, z4c.alpha, m,k,j,i);
         ddchi_dd(a,a,t) = Dxx<NGHOST>(a, idx, z4c.chi,   m,k,j,i);
 
         for(int b = a + 1; b < 3; ++b) {
-          ddalpha_dd(a,b) = Dxy<NGHOST>(a, b, idx, z4c.alpha, m,k,j,i);
+          ddalpha_dd(a,b,t) = Dxy<NGHOST>(a, b, idx, z4c.alpha, m,k,j,i);
           ddchi_dd(a,b,t) = Dxy<NGHOST>(a, b, idx, z4c.chi,   m,k,j,i);
         }
       }
@@ -348,8 +307,8 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       for(int a = 0; a < 3; ++a)
       for(int b = a; b < 3; ++b)
       for(int c = 0; c < 3; ++c) {
-        Lg_dd(a,b) += Lx<NGHOST>(c, idx, z4c.beta_u, z4c.g_dd, m,c,a,b,k,j,i);
-        LA_dd(a,b) += Lx<NGHOST>(c, idx, z4c.beta_u, z4c.vA_dd, m,c,a,b,k,j,i);
+        Lg_dd(a,b,t) += Lx<NGHOST>(c, idx, z4c.beta_u, z4c.g_dd, m,c,a,b,k,j,i);
+        LA_dd(a,b,t) += Lx<NGHOST>(c, idx, z4c.beta_u, z4c.vA_dd, m,c,a,b,k,j,i);
       }
 
       // -----------------------------------------------------------------------------------
@@ -366,8 +325,8 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       adm::SpatialInv(1.0/detg,
                 z4c.g_dd(m,0,0,k,j,i), z4c.g_dd(m,0,1,k,j,i), z4c.g_dd(m,0,2,k,j,i),
                 z4c.g_dd(m,1,1,k,j,i), z4c.g_dd(m,1,2,k,j,i), z4c.g_dd(m,2,2,k,j,i),
-                &g_uu(0,0), &g_uu(0,1), &g_uu(0,2),
-                &g_uu(1,1), &g_uu(1,2), &g_uu(2,2));
+                &g_uu(0,0,t), &g_uu(0,1,t), &g_uu(0,2,t),
+                &g_uu(1,1,t), &g_uu(1,2,t), &g_uu(2,2,t));
 
       // -----------------------------------------------------------------------------------
       // Christoffel symbols
@@ -381,13 +340,13 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       for(int a = 0; a < 3; ++a)
       for(int b = a; b < 3; ++b)
       for(int d = 0; d < 3; ++d) {
-        Gamma_udd(c,a,b,t) += g_uu(c,d)*Gamma_ddd(d,a,b,t);
+        Gamma_udd(c,a,b,t) += g_uu(c,d,t)*Gamma_ddd(d,a,b,t);
       }
       // Gamma's computed from the conformal metric (not evolved)
       for(int a = 0; a < 3; ++a)
       for(int b = 0; b < 3; ++b)
       for(int c = 0; c < 3; ++c) {
-        Gamma_u(a) += g_uu(b,c)*Gamma_udd(a,b,c,t);
+        Gamma_u(a) += g_uu(b,c,t)*Gamma_udd(a,b,c,t);
       }
 
       // -----------------------------------------------------------------------------------
@@ -396,18 +355,18 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       for(int a = 0; a < 3; ++a)
       for(int b = a; b < 3; ++b) {
         for(int c = 0; c < 3; ++c) {
-          R_dd(a,b,t) += 0.5*(z4c.g_dd(m,c,a,k,j,i)*dGam_du(b,c) +
-                            z4c.g_dd(m,c,b,k,j,i)*dGam_du(a,c) +
+          R_dd(a,b,t) += 0.5*(z4c.g_dd(m,c,a,k,j,i)*dGam_du(b,c,t) +
+                            z4c.g_dd(m,c,b,k,j,i)*dGam_du(a,c,t) +
                             Gamma_u(c)*(Gamma_ddd(a,b,c,t) + Gamma_ddd(b,a,c,t)));
         }
         for(int c = 0; c < 3; ++c)
         for(int d = 0; d < 3; ++d) {
-          R_dd(a,b,t) -= 0.5*g_uu(c,d)*ddg_dddd(c,d,a,b,t);
+          R_dd(a,b,t) -= 0.5*g_uu(c,d,t)*ddg_dddd(c,d,a,b,t);
         }
         for(int c = 0; c < 3; ++c)
         for(int d = 0; d < 3; ++d)
         for(int e = 0; e < 3; ++e) {
-          R_dd(a,b,t) += g_uu(c,d)*(
+          R_dd(a,b,t) += g_uu(c,d,t)*(
               Gamma_udd(e,c,a,t)*Gamma_ddd(b,e,d,t) +
               Gamma_udd(e,c,b,t)*Gamma_ddd(a,e,d,t) +
               Gamma_udd(e,a,d,t)*Gamma_ddd(e,c,b,t));
@@ -440,7 +399,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
         Rphi_dd(a,b,t) = 4.*dphi_d(a)*dphi_d(b) - 2.*Ddphi_dd(a,b,t);
         for(int c = 0; c < 3; ++c)
         for(int d = 0; d < 3; ++d) {
-          Rphi_dd(a,b,t) -= 2.*z4c.g_dd(m,a,b,k,j,i) * g_uu(c,d)*(Ddphi_dd(c,d,t) +
+          Rphi_dd(a,b,t) -= 2.*z4c.g_dd(m,a,b,k,j,i) * g_uu(c,d,t)*(Ddphi_dd(c,d,t) +
               2.*dphi_d(c)*dphi_d(d));
         }
       }
@@ -461,7 +420,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       if(!is_vacuum) {
         for (int a = 0; a < 3; ++a)
         for (int b = 0; b < 3; ++b) {
-          S += oopsi4 * g_uu(a,b) * tmunu.S_dd(m,a,b,k,j,i);
+          S += oopsi4 * g_uu(a,b,t) * tmunu.S_dd(m,a,b,k,j,i);
         }
       }
 
@@ -471,12 +430,12 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       // beforehand.
       for(int a = 0; a < 3; ++a)
       for(int b = 0; b < 3; ++b) {
-        Ddalpha_dd(a,b) = ddalpha_dd(a,b)
+        Ddalpha_dd(a,b,t) = ddalpha_dd(a,b,t)
                         - 2.*(dphi_d(a)*dalpha_d(b) + dphi_d(b)*dalpha_d(a));
         for(int c = 0; c < 3; ++c) {
-          Ddalpha_dd(a,b) -= Gamma_udd(c,a,b,t)*dalpha_d(c);
+          Ddalpha_dd(a,b,t) -= Gamma_udd(c,a,b,t)*dalpha_d(c);
           for(int d = 0; d < 3; ++d) {
-              Ddalpha_dd(a,b) += 2.*z4c.g_dd(m,a,b,k,j,i) * g_uu(c,d)
+              Ddalpha_dd(a,b,t) += 2.*z4c.g_dd(m,a,b,k,j,i) * g_uu(c,d,t)
               * dphi_d(c) * dalpha_d(d);
           }
         }
@@ -484,7 +443,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
 
       for(int a = 0; a < 3; ++a)
       for(int b = 0; b < 3; ++b) {
-        Ddalpha += oopsi4 * g_uu(a,b) * Ddalpha_dd(a,b);
+        Ddalpha += oopsi4 * g_uu(a,b,t) * Ddalpha_dd(a,b,t);
       }
 
       // -----------------------------------------------------------------------------------
@@ -494,23 +453,23 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       for(int b = a; b < 3; ++b)
       for(int c = 0; c < 3; ++c)
       for(int d = 0; d < 3; ++d) {
-        AA_dd(a,b,t) += g_uu(c,d) * z4c.vA_dd(m,a,c,k,j,i) * z4c.vA_dd(m,d,b,k,j,i);
+        AA_dd(a,b,t) += g_uu(c,d,t) * z4c.vA_dd(m,a,c,k,j,i) * z4c.vA_dd(m,d,b,k,j,i);
       }
       for(int a = 0; a < 3; ++a)
       for(int b = 0; b < 3; ++b) {
-        AA += g_uu(a,b) * AA_dd(a,b,t);
+        AA += g_uu(a,b,t) * AA_dd(a,b,t);
       }
       for(int a = 0; a < 3; ++a)
       for(int b = a; b < 3; ++b)
       for(int c = 0; c < 3; ++c)
       for(int d = 0; d < 3; ++d) {
-        A_uu(a,b,t) += g_uu(a,c) * g_uu(b,d) * z4c.vA_dd(m,c,d,k,j,i);
+        A_uu(a,b,t) += g_uu(a,c,t) * g_uu(b,d,t) * z4c.vA_dd(m,c,d,k,j,i);
       }
       // TODO(JMF): dchi_d/chi_guarded is opt.chi_psi_power * dphi_d.
       for(int a = 0; a < 3; ++a) {
         for(int b = 0; b < 3; ++b) {
             DA_u(a) -= (3./2.) * A_uu(a,b,t) * dchi_d(b) / chi_guarded;
-            DA_u(a) -= (1./3.) * g_uu(a,b) * (2.*dKhat_d(b) + dTheta_d(b));
+            DA_u(a) -= (1./3.) * g_uu(a,b,t) * (2.*dKhat_d(b) + dTheta_d(b));
         }
         for(int b = 0; b < 3; ++b)
         for(int c = 0; c < 3; ++c) {
@@ -523,7 +482,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       //
       for(int a = 0; a < 3; ++a)
       for(int b = 0; b < 3; ++b) {
-        R += oopsi4 * g_uu(a,b) * (R_dd(a,b,t) + Rphi_dd(a,b,t));
+        R += oopsi4 * g_uu(a,b,t) * (R_dd(a,b,t) + Rphi_dd(a,b,t));
       }
 
       // -----------------------------------------------------------------------------------
@@ -550,9 +509,9 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       for(int a = 0; a < 3; ++a) {
         LGam_u(a) += (2./3.) * Gamma_u(a) * dbeta;
         for(int b = 0; b < 3; ++b) {
-          LGam_u(a) += g_uu(a,b) * ddbeta_d(b) - Gamma_u(b) * dbeta_du(b,a,t);
+          LGam_u(a) += g_uu(a,b,t) * ddbeta_d(b) - Gamma_u(b) * dbeta_du(b,a,t);
           for(int c = 0; c < 3; ++c) {
-            LGam_u(a) += g_uu(b,c) * ddbeta_ddu(b,c,a,t);
+            LGam_u(a) += g_uu(b,c,t) * ddbeta_ddu(b,c,a,t);
           }
         }
       }
@@ -560,18 +519,18 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       // Finalize Lg_dd and LA_dd
       for(int a = 0; a < 3; ++a)
       for(int b = a; b < 3; ++b) {
-        Lg_dd(a,b) -= (2./3.) * z4c.g_dd(m,a,b,k,j,i) * dbeta;
+        Lg_dd(a,b,t) -= (2./3.) * z4c.g_dd(m,a,b,k,j,i) * dbeta;
         for(int c = 0; c < 3; ++c) {
-          Lg_dd(a,b) += dbeta_du(a,c,t) * z4c.g_dd(m,b,c,k,j,i);
-          Lg_dd(a,b) += dbeta_du(b,c,t) * z4c.g_dd(m,a,c,k,j,i);
+          Lg_dd(a,b,t) += dbeta_du(a,c,t) * z4c.g_dd(m,b,c,k,j,i);
+          Lg_dd(a,b,t) += dbeta_du(b,c,t) * z4c.g_dd(m,a,c,k,j,i);
         }
       }
       for(int a = 0; a < 3; ++a)
       for(int b = a; b < 3; ++b) {
-        LA_dd(a,b) -= (2./3.) * z4c.vA_dd(m,a,b,k,j,i) * dbeta;
+        LA_dd(a,b,t) -= (2./3.) * z4c.vA_dd(m,a,b,k,j,i) * dbeta;
         for(int c = 0; c < 3; ++c) {
-          LA_dd(a,b) += dbeta_du(b,c,t) * z4c.vA_dd(m,a,c,k,j,i);
-          LA_dd(a,b) += dbeta_du(a,c,t) * z4c.vA_dd(m,b,c,k,j,i);
+          LA_dd(a,b,t) += dbeta_du(b,c,t) * z4c.vA_dd(m,a,c,k,j,i);
+          LA_dd(a,b,t) += dbeta_du(a,c,t) * z4c.vA_dd(m,b,c,k,j,i);
         }
       }
 
@@ -607,7 +566,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
           // Matter term
           if(!is_vacuum) {
             rhs.vGam_u(m,a,k,j,i) -= 16.*M_PI * z4c.alpha(m,k,j,i)
-                                * g_uu(a,b) * tmunu.S_d(m,b,k,j,i);
+                                * g_uu(a,b,t) * tmunu.S_d(m,b,k,j,i);
           }
         }
       }
@@ -616,14 +575,14 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       for(int a = 0; a < 3; ++a)
       for(int b = a; b < 3; ++b) {
         rhs.g_dd(m,a,b,k,j,i) = - 2. * z4c.alpha(m,k,j,i) * z4c.vA_dd(m,a,b,k,j,i)
-                        + Lg_dd(a,b);
+                        + Lg_dd(a,b,t);
         rhs.vA_dd(m,a,b,k,j,i) = oopsi4 *
-            (-Ddalpha_dd(a,b) + z4c.alpha(m,k,j,i) * (R_dd(a,b,t) + Rphi_dd(a,b,t)));
+            (-Ddalpha_dd(a,b,t) + z4c.alpha(m,k,j,i) * (R_dd(a,b,t) + Rphi_dd(a,b,t)));
         rhs.vA_dd(m,a,b,k,j,i) -= (1./3.) * z4c.g_dd(m,a,b,k,j,i)
                               * (-Ddalpha + z4c.alpha(m,k,j,i)*R);
         rhs.vA_dd(m,a,b,k,j,i) += z4c.alpha(m,k,j,i) * (K*z4c.vA_dd(m,a,b,k,j,i)
                               - 2.*AA_dd(a,b,t));
-        rhs.vA_dd(m,a,b,k,j,i) += LA_dd(a,b);
+        rhs.vA_dd(m,a,b,k,j,i) += LA_dd(a,b,t);
         // Matter term
         if(!is_vacuum) {
           rhs.vA_dd(m,a,b,k,j,i) -= 8.*M_PI * z4c.alpha(m,k,j,i) *
@@ -651,7 +610,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
                             SQR(z4c.alpha(m,k,j,i)) * z4c.vGam_u(m,a,k,j,i);
         for(int b = 0; b < 3; ++b) {
           rhs.beta_u(m,a,k,j,i) += opt.shift_hh * z4c.alpha(m,k,j,i) *
-            chi_guarded * (0.5 * z4c.alpha(m,k,j,i) * dchi_d(b) - dalpha_d(b)) * g_uu(a,b);
+            chi_guarded * (0.5 * z4c.alpha(m,k,j,i) * dchi_d(b) - dalpha_d(b)) * g_uu(a,b,t);
         }
       }
     });
