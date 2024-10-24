@@ -750,15 +750,23 @@ class AthenaScratchTensor<T, sym, ndim, 4> {
   AthenaScratchTensor(AthenaScratchTensor<T, sym, ndim, 4> const &) = default;
   AthenaScratchTensor<T, sym, ndim, 4> & operator=
   (AthenaScratchTensor<T, sym, ndim, 4> const &) = default;
+
   KOKKOS_INLINE_FUNCTION
-  int idxmap(int const a, int const b, int const c, int const d) const {
-    return idxmap_[a][b][c][d];
+  decltype(auto) operator()(int a, int b,
+                            int c, int d, int const i) const {
+    if constexpr (sym == TensorSymm::NONE) {
+      return data_(ndim * ndim * ndim * a + ndim * ndim * b + ndim * c + d, i);
+    } else if constexpr (sym == TensorSymm::SYM22) {
+      if (a < b) {
+        std::swap(a, b);
+      }
+      if (c < d) {
+        std::swap(c, d);
+      }
+      return data_((b*( 2*ndim - b +1)/2 + a - b)*(ndim + 1)*ndim/2 + d*( 2*ndim - d +1)/2 + c - d,i);
+    }
   }
-  KOKKOS_INLINE_FUNCTION
-  decltype(auto) operator()(int const a, int const b,
-                            int const c, int const d, int const i) const {
-    return data_(idxmap_[a][b][c][d], i);
-  }
+
   KOKKOS_INLINE_FUNCTION
   void NewAthenaScratchTensor(const TeamMember_t & member, int scr_level, int nx) {
     data_ = ScrArray2D<T>(member.team_scratch(scr_level), ndof_, nx);
@@ -770,7 +778,6 @@ class AthenaScratchTensor<T, sym, ndim, 4> {
 
  private:
   ScrArray2D<T> data_;
-  int idxmap_[ndim][ndim][ndim][ndim];
   int ndof_;
 };
 
@@ -780,45 +787,10 @@ template<typename T, TensorSymm sym, int ndim>
 AthenaScratchTensor<T, sym, ndim, 4>::AthenaScratchTensor() {
   switch(sym) {
     case TensorSymm::NONE:
-      ndof_ = 0;
-      for(int a = 0; a < ndim; ++a)
-      for(int b = 0; b < ndim; ++b)
-      for(int c = 0; c < ndim; ++c)
-      for(int d = 0; d < ndim; ++d) {
-        idxmap_[a][b][c][d] = ndof_++;
-      }
-      break;
-    case TensorSymm::SYM2:
-      ndof_ = 0;
-      for(int a = 0; a < ndim; ++a)
-      for(int b = 0; b < ndim; ++b)
-      for(int c = 0; c < ndim; ++c)
-      for(int d = c; d < ndim; ++d) {
-        idxmap_[a][b][c][d] = ndof_++;
-        idxmap_[a][b][d][c] = idxmap_[a][b][c][d];
-      }
-      break;
-    case TensorSymm::ISYM2:
-      ndof_ = 0;
-      for(int a = 0; a < ndim; ++a)
-      for(int b = a; b < ndim; ++b)
-      for(int c = 0; c < ndim; ++c)
-      for(int d = 0; d < ndim; ++d) {
-        idxmap_[a][b][c][d] = ndof_++;
-        idxmap_[b][a][c][d] = idxmap_[a][b][c][d];
-      }
+      ndof_ = 81;
       break;
     case TensorSymm::SYM22:
-      ndof_ = 0;
-      for(int a = 0; a < ndim; ++a)
-      for(int b = a; b < ndim; ++b)
-      for(int c = 0; c < ndim; ++c)
-      for(int d = c; d < ndim; ++d) {
-        idxmap_[a][b][c][d] = ndof_++;
-        idxmap_[b][a][c][d] = idxmap_[a][b][c][d];
-        idxmap_[a][b][d][c] = idxmap_[a][b][c][d];
-        idxmap_[b][a][d][c] = idxmap_[a][b][c][d];
-      }
+      ndof_ = 36;
       break;
   }
 }
