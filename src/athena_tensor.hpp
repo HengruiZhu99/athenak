@@ -687,12 +687,12 @@ class AthenaScratchTensor<T, sym, ndim, 3> {
       return data_(ndim * ndim * a + ndim * b + c, i);
     } else if constexpr (sym == TensorSymm::SYM2) {
       if (b < c) {
-        std::swap(b, c);
+        Kokkos::kokkos_swap(b, c);
       }
       return data_(a*(ndim + 1)*ndim/2 + c*( 2*ndim - c +1)/2 + b - c,i);
     } else if constexpr (sym == TensorSymm::ISYM2) {
       if (a < b) {
-        std::swap(a, b);
+        Kokkos::kokkos_swap(a, b);
       }
       return data_((b*(2*ndim - b +1)/2 + a - b)*ndim + c,i);
     }
@@ -749,10 +749,10 @@ class AthenaScratchTensor<T, sym, ndim, 4> {
       return data_(ndim * ndim * ndim * a + ndim * ndim * b + ndim * c + d, i);
     } else if constexpr (sym == TensorSymm::SYM22) {
       if (a < b) {
-        std::swap(a, b);
+        Kokkos::kokkos_swap(a, b);
       }
       if (c < d) {
-        std::swap(c, d);
+        Kokkos::kokkos_swap(c, d);
       }
       return data_((b*( 2*ndim - b +1)/2 + a - b)*(ndim + 1)*ndim/2 + d*( 2*ndim - d +1)/2 + c - d,i);
     }
