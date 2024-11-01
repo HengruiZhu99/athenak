@@ -158,6 +158,7 @@ class Z4c {
     bool slow_start_lapse;
     Real ssl_damping_amp;
     Real ssl_damping_time;
+    Real ssl_damping_index;
     // Gauge condition for the shift
     Real shift_ggamma;
     Real shift_alpha2ggamma;

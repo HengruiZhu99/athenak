@@ -39,7 +39,6 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   auto &opt = pmy_pack->pz4c->opt;
   Real beta_dt = (pdriver->beta[stage-1])*(pmy_pack->pmesh->dt);
   Real time = pmy_pack->pmesh->time;
-  Real time_now = time+beta_dt;
 
   bool is_vacuum = (pmy_pack->ptmunu == nullptr) ? true : false;
   Tmunu::Tmunu_vars tmunu;
@@ -555,7 +554,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
                        - f * z4c.alpha(m,k,j,i) * z4c.vKhat(m,k,j,i);
     if (opt.slow_start_lapse) {
       Real W = pow(std::max(z4c.chi(m,k,j,i),opt.chi_min_floor),0.5);
-      rhs.alpha(m,k,j,i) += opt.ssl_damping_amp*(W-z4c.alpha(m,k,j,i))*W*exp(-0.5*pow(time_now/
+      rhs.alpha(m,k,j,i) += opt.ssl_damping_amp*(W-z4c.alpha(m,k,j,i))*pow(W,opt.ssl_damping_index)*exp(-0.5*pow(time/
                             (opt.ssl_damping_time),2));
     }
     // shift vector
