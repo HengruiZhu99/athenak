@@ -263,6 +263,6 @@ void HorizonDump::ETK_setup_parfile(const Real BH_radius_guess, char parfilename
       fprintf(etk_parfile,
               "AHFinderDirect::initial_guess_method[1]                = \"read from named file\"\n"
               "AHFinderDirect::initial_guess__read_from_named_file__file_name[1] = \"AHET_out_horizon_BH_M_ahf_ihf_diags/latest_ah_surface.gp\"\n");
-  }
-  fclose(etk_parfile);*/
+  }*/
+  fclose(etk_parfile);
 }
