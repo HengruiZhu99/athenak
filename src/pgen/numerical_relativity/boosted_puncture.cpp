@@ -131,7 +131,7 @@ void ADMOnePunctureBoosted(MeshBlockPack *pmbp, ParameterInput *pin) {
     Real z0 = z;
 
     // Radial coordinate in comoving frame
-    Real r0 = std::max(std::sqrt(x0*x0 + y0*y0 + z0*z0),1e-10);
+    Real r0 = std::sqrt(x0*x0 + y0*y0 + z0*z0);
 
     // Compute psi0 and its derivative
     Real psi0 = 1.0 + m0 / (2.0 * r0);
