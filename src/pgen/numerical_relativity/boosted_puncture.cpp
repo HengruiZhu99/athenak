@@ -30,7 +30,7 @@ void RefinementCondition(MeshBlockPack* pmbp);
 
 //----------------------------------------------------------------------------------------
 //! \fn ProblemGenerator::UserProblem_()
-//! \brief Problem Generator for single boosted puncture
+//! \brief Problem Generator for single puncture
 void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   user_ref_func  = RefinementCondition;
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
@@ -64,15 +64,16 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   }
   std::cout<<"OnePuncture initialized."<<std::endl;
 
+
   return;
 }
 
 //----------------------------------------------------------------------------------------
-//! \fn void ADMOnePunctureBoosted(MeshBlockPack *pmbp, ParameterInput *pin)
-//! \brief Initialize ADM vars to single boosted puncture (no spin), based on the given equations
+//! \fn void ADMOnePuncture(MeshBlockPack *pmbp, ParameterInput *pin)
+//! \brief Initialize ADM vars to single boosted puncture (no spin), based on 1909.02997
 
 void ADMOnePunctureBoosted(MeshBlockPack *pmbp, ParameterInput *pin) {
-  // Capture variables for the kernel
+  // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
   int &is = indcs.is; int &ie = indcs.ie;
@@ -83,126 +84,93 @@ void ADMOnePunctureBoosted(MeshBlockPack *pmbp, ParameterInput *pin) {
   int jsg = js-indcs.ng; int jeg = je+indcs.ng;
   int ksg = ks-indcs.ng; int keg = ke+indcs.ng;
   int nmb = pmbp->nmb_thispack;
-  Real m0 = pin->GetOrAddReal("problem", "punc_rest_mass", 1.);
+  Real m0 = pin->GetOrAddReal("problem", "punc_ADM_mass", 1.);
   Real center_x1 = pin->GetOrAddReal("problem", "punc_center_x1", 0.);
   Real center_x2 = pin->GetOrAddReal("problem", "punc_center_x2", 0.);
   Real center_x3 = pin->GetOrAddReal("problem", "punc_center_x3", 0.);
-  Real vx1 = pin->GetOrAddReal("problem", "punc_velocity_x1", 0.5); // Example velocity
-  Real vx2 = pin->GetOrAddReal("problem", "punc_velocity_x2", 0.0);
-  Real vx3 = pin->GetOrAddReal("problem", "punc_velocity_x3", 0.0);
+  Real vx1 = pin->GetOrAddReal("problem", "punc_velocity_x1", 0.);
+  Real vx2 = pin->GetOrAddReal("problem", "punc_velocity_x2", 0.);
+  Real vx3 = pin->GetOrAddReal("problem", "punc_velocity_x3", 0.);
 
   adm::ADM::ADM_vars &adm = pmbp->padm->adm;
 
   par_for("pgen one puncture",
   DevExeSpace(),0,nmb-1,ksg,keg,jsg,jeg,isg,ieg,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    // Compute cell-centered coordinates
     Real &x1min = size.d_view(m).x1min;
     Real &x1max = size.d_view(m).x1max;
     int nx1 = indcs.nx1;
-    Real x = CellCenterX(i-is, nx1, x1min, x1max);
+    Real x1v = CellCenterX(i-is, nx1, x1min, x1max);
 
     Real &x2min = size.d_view(m).x2min;
     Real &x2max = size.d_view(m).x2max;
     int nx2 = indcs.nx2;
-    Real y = CellCenterX(j-js, nx2, x2min, x2max);
+    Real x2v = CellCenterX(j-js, nx2, x2min, x2max);
 
     Real &x3min = size.d_view(m).x3min;
     Real &x3max = size.d_view(m).x3max;
     int nx3 = indcs.nx3;
-    Real z = CellCenterX(k-ks, nx3, x3min, x3max);
+    Real x3v = CellCenterX(k-ks, nx3, x3min, x3max);
 
-    // Shift coordinates to black hole center
-    x -= center_x1;
-    y -= center_x2;
-    z -= center_x3;
+    x1v -= center_x1;
+    x2v -= center_x2;
+    x3v -= center_x3;
 
-    // Velocity magnitude
-    Real vel = std::sqrt(vx1*vx1 + vx2*vx2 + vx3*vx3);
+    // velocity magnitude for now assuming only vx1 is non-zero! Do a rotation later
+    Real vel = std::sqrt(std::pow(vx1,2) + std::pow(vx2,2) + std::pow(vx3,2));
 
-    // Lorentz factor
-    Real Gamma = 1.0 / std::sqrt(1.0 - vel * vel);
+    // boost factor
+    Real Gamma = 1/std::sqrt(1-std::pow(vel,2));
 
-    // Coordinates in comoving frame (x0)
-    // Lorentz transformation along x-direction
-    // TODO (@hzhu): Add rotation here.
-    Real x0 = Gamma * x; // At t = 0
-    Real y0 = y;
-    Real z0 = z;
+    // coordinate in the comoving frame (x0)
+    Real x0[4];
+    Real xinit[4] = {0,x1v,x2v,x3v};
 
-    // Radial coordinate in comoving frame
-    Real r0 = std::sqrt(x0*x0 + y0*y0 + z0*z0);
+    x0[1] = xinit[1]*Gamma;
+    x0[2] = xinit[2];
+    x0[3] = xinit[3];
 
-    // Compute psi0 and its derivative
-    Real psi0 = 1.0 + m0 / (2.0 * r0);
-    Real psi0_prime = -m0 / (2.0 * r0 * r0);
+    // radial coordinate in comoving frame
+    Real r0 = std::sqrt(std::pow(x0[1],2) + std::pow(x0[2],2) + std::pow(x0[3],2));
 
-    // Compute A and its derivative
-    Real A = 1.0 - m0 / (2.0 * r0);
-    Real A_prime = m0 / (2.0 * r0 * r0);
+    // conformal factor and lapse in comoving frame; equation 2 from arXiv:0810.4735
+    Real psi0 = 1.0 + 0.5*m0/r0;
+    Real alpha0 = (1 - 0.5*m0/r0)/psi0;
 
-    // Compute alpha0 and its derivative
-    Real alpha0 = A / psi0;
-    Real alpha0_prime = (A_prime * psi0 - A * psi0_prime) / (psi0 * psi0);
+    // B0 as in equation 4 from arXiv:0810.4735
+    Real B0 = std::sqrt(std::pow(Gamma,2)*(1-std::pow(vel,2)*std::pow(alpha0,2)*std::pow(psi0,-4)));
 
-    // Compute psi0^4 and alpha0^2
-    Real psi0_4 = psi0 * psi0 * psi0 * psi0;
-    Real alpha0_2 = alpha0 * alpha0;
+    // adm metric in the code frame
+    for(int a = 0; a < 3; ++a) {
+      adm.g_dd(m,a,a,k,j,i) = std::pow(psi0,4);
+    }
+    adm.g_dd(m,0,0,k,j,i) *= std::pow(B0,2);
 
-    // Compute B0^2 and B0
-    Real B0_squared = Gamma * Gamma * (1.0 - vel * vel * alpha0_2 / psi0_4);
-    Real B0 = std::sqrt(B0_squared);
+    // Gauge variables in the code frame
+    // adm.alpha(m,k,j,i) = alpha0/B0;
+    adm.beta_u(m,0,k,j,i) = (std::pow(alpha0,2)-std::pow(psi0,4))
+                          /(std::pow(psi0,4)-std::pow(alpha0,2)*std::pow(vel,2))*vel;
 
-    // Compute the lapse function alpha
-    adm.alpha(m,k,j,i) = alpha0 / B0;
 
-    // Compute the shift vector beta^i (only beta^x is non-zero)
-    Real num_beta = alpha0_2 - psi0_4;
-    Real den_beta = psi0_4 - alpha0_2 * vel * vel;
-    // Shift vector components
-    adm.beta_u(m,0,k,j,i) = (num_beta / den_beta) * vel;
-    adm.beta_u(m,1,k,j,i) = 0;
-    adm.beta_u(m,2,k,j,i) = 0;
 
-    // Spatial metric components gamma_{ij}
-    adm.g_dd(m,0,0,k,j,i) = psi0_4 * B0_squared;
-    adm.g_dd(m,1,1,k,j,i) = psi0_4;
-    adm.g_dd(m,2,2,k,j,i) = psi0_4;
-    adm.g_dd(m,0,1,k,j,i) = 0.0;
-    adm.g_dd(m,0,2,k,j,i) = 0.0;
-    adm.g_dd(m,1,2,k,j,i) = 0.0;
+    // extrinsic curvature
+    Real alpha0p = 4*m0/std::pow(m0+2*r0,2);
+    Real second_term =
+    ((4 * std::pow(vel, 2) * std::pow((m0 - 2 * r0), 2)) / std::pow((m0 + 2 * r0), 3) +
+    (4 * std::pow(vel, 2) * (m0 - 2 * r0)) / std::pow((m0 + 2 * r0), 2) -
+    (m0 * std::pow((m0 + 2 * r0), 3)) / (4 * std::pow(r0, 5))) /
+    ((1 + m0 / (2 * r0)) * (1 + m0 / (2 * r0)) * (1 + m0 / (2 * r0)) * (1 + m0 / (2 * r0)) -
+    (std::pow(vel, 2) * std::pow((m0 - 2 * r0), 2)) / std::pow((m0 + 2 * r0), 2));
 
-    // Compute extrinsic curvature components
-    // Compute s and its derivative
-    Real s = den_beta; // s = psi0^4 - alpha0^2 * v^2
-    Real psi0_prime_4 = 4.0 * psi0 * psi0 * psi0 * psi0_prime;
-    Real alpha0_prime_2 = 2.0 * alpha0 * alpha0_prime;
-    Real s_prime = psi0_prime_4 - alpha0_prime_2 * vel * vel;
-    Real ln_s_prime = s_prime / s;
-
-    // K_xx
-    Real prefactor_xx = Gamma * Gamma * B0 * x * vel / r0;
-    Real expr_xx = 2.0 * alpha0_prime - (alpha0 / 2.0) * ln_s_prime;
-    adm.vK_dd(m,0,0,k,j,i) = prefactor_xx * expr_xx;
-
-    // K_yy and K_zz
-    Real num_yy = 2.0 * Gamma * Gamma * x * vel * alpha0 * psi0_prime;
-    Real den_yy = psi0 * B0 * r0;
-    adm.vK_dd(m,1,1,k,j,i)  = num_yy / den_yy;
-    adm.vK_dd(m,2,2,k,j,i)  = adm.vK_dd(m,1,1,k,j,i);
-
-    // K_xy and K_xz
-    Real prefactor_xy = B0 * vel / r0;
-    Real expr_xy = alpha0_prime - (alpha0 / 2.0) * ln_s_prime;
-    adm.vK_dd(m,0,1,k,j,i) = prefactor_xy * y * expr_xy;
-    adm.vK_dd(m,0,2,k,j,i) = prefactor_xy * z * expr_xy;
-
-    // K_yz is zero due to symmetry
-    adm.vK_dd(m,1,2,k,j,i) = 0.0;
+    adm.vK_dd(m,0,0,k,j,i) = Gamma * Gamma * B0 * x1v * vel / r0 * (2 * alpha0p - alpha0 / 2 * second_term);
+    adm.vK_dd(m,1,1,k,j,i) = 2 * Gamma * Gamma * x1v * vel * alpha0 * (- m0 / (2 * r0 * r0)) / (psi0 * B0 * r0);
+    adm.vK_dd(m,2,2,k,j,i) = 2 * Gamma * Gamma * x1v * vel * alpha0 * (- m0 / (2 * r0 * r0)) / (psi0 * B0 * r0);
+    adm.vK_dd(m,0,1,k,j,i) = B0 * x2v * vel / r0 * (alpha0p - alpha0 / 2 * second_term);
+    adm.vK_dd(m,0,2,k,j,i) = B0 * x3v * vel / r0 * (alpha0p - alpha0 / 2 * second_term);
   });
 }
 
-// Refinement condition
+// how decide the refinement
 void RefinementCondition(MeshBlockPack* pmbp) {
   pmbp->pz4c->pamr->Refine(pmbp);
 }
