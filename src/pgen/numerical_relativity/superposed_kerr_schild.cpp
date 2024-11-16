@@ -163,8 +163,8 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     case 4: pmbp->pz4c->ADMToZ4c<4>(pmbp, pin);
             break;
   }
-  pmbp->pz4c->Z4cToADM(pmbp);
-  pmbp->pz4c->GaugePreCollapsedLapse(pmbp, pin);
+  // pmbp->pz4c->Z4cToADM(pmbp);
+  // pmbp->pz4c->GaugePreCollapsedLapse(pmbp, pin);
   switch (indcs.ng) {
     case 2: pmbp->pz4c->ADMConstraints<2>(pmbp);
             break;
@@ -338,194 +338,104 @@ int four_metric_to_three_metric(const struct four_metric &met,
   Real det = adm::SpatialDet(gam.gxx, gam.gxy, gam.gxz,
                                    gam.gyy, gam.gyz, gam.gzz);
 
-  /* If determinant is not >0  something is wrong with the metric */
-  /* This could occur during the transition to merger at certain points
-     so here we restart to Minkowski */
-  if (!(det > 0)) {
-    //std::fprintf(stderr, "det < 0: %e\n", det);
-    //std::fprintf(stderr, "%e %e %e\n", gam.gxx, gam.gxy, gam.gxz);
-    //std::fprintf(stderr, "%e %e %e\n", gam.gyy, gam.gyz, gam.gzz);
-    //std::fflush(stderr);
-    Kokkos::printf("det < 0: %e\n" // NOLINT
-                   "%e %e %e\n"
-                   "%e %e %e\n",
-                   det, gam.gxx, gam.gxy, gam.gxz, gam.gyy, gam.gyz, gam.gzz);
-    det = 1.0;
-    gam.gxx = 1.0;
-    gam.gxy = 0.0;
-    gam.gxz = 0.0;
-    gam.gyy = 1.0;
-    gam.gyz = 0.0;
-    gam.gzz = 1.0;
-    Real betadownx = 0.0;
-    Real betadowny = 0.0;
-    Real betadownz = 0.0;
+  /* Compute components if detg is not <0 */
+  Real betadownx = met.g.tx;
+  Real betadowny = met.g.ty;
+  Real betadownz = met.g.tz;
 
-    Real dbetadownxx = 0.0;
-    Real dbetadownyx = 0.0;
-    Real dbetadownzx = 0.0;
+  Real dbetadownxx = met.g_x.tx;
+  Real dbetadownyx = met.g_x.ty;
+  Real dbetadownzx = met.g_x.tz;
 
-    Real dbetadownxy = 0.0;
-    Real dbetadownyy = 0.0;
-    Real dbetadownzy = 0.0;
+  Real dbetadownxy = met.g_y.tx;
+  Real dbetadownyy = met.g_y.ty;
+  Real dbetadownzy = met.g_y.tz;
 
-    Real dbetadownxz = 0.0;
-    Real dbetadownyz = 0.0;
-    Real dbetadownzz = 0.0;
+  Real dbetadownxz = met.g_z.tx;
+  Real dbetadownyz = met.g_z.ty;
+  Real dbetadownzz = met.g_z.tz;
 
-    Real dtgxx = 0.0;
-    Real dtgxy = 0.0;
-    Real dtgxz = 0.0;
-    Real dtgyy = 0.0;
-    Real dtgyz = 0.0;
-    Real dtgzz = 0.0;
+  Real dtgxx = met.g_t.xx;
+  Real dtgxy = met.g_t.xy;
+  Real dtgxz = met.g_t.xz;
+  Real dtgyy = met.g_t.yy;
+  Real dtgyz = met.g_t.yz;
+  Real dtgzz = met.g_t.zz;
 
-    Real dgxxx = 0.0;
-    Real dgxyx = 0.0;
-    Real dgxzx = 0.0;
-    Real dgyyx = 0.0;
-    Real dgyzx = 0.0;
-    Real dgzzx = 0.0;
+  Real dgxxx = met.g_x.xx;
+  Real dgxyx = met.g_x.xy;
+  Real dgxzx = met.g_x.xz;
+  Real dgyyx = met.g_x.yy;
+  Real dgyzx = met.g_x.yz;
+  Real dgzzx = met.g_x.zz;
 
-    Real dgxxy = 0.0;
-    Real dgxyy = 0.0;
-    Real dgxzy = 0.0;
-    Real dgyyy = 0.0;
-    Real dgyzy = 0.0;
-    Real dgzzy = 0.0;
+  Real dgxxy = met.g_y.xx;
+  Real dgxyy = met.g_y.xy;
+  Real dgxzy = met.g_y.xz;
+  Real dgyyy = met.g_y.yy;
+  Real dgyzy = met.g_y.yz;
+  Real dgzzy = met.g_y.zz;
 
-    Real dgxxz = 0.0;
-    Real dgxyz = 0.0;
-    Real dgxzz = 0.0;
-    Real dgyyz = 0.0;
-    Real dgyzz = 0.0;
-    Real dgzzz = 0.0;
+  Real dgxxz = met.g_z.xx;
+  Real dgxyz = met.g_z.xy;
+  Real dgxzz = met.g_z.xz;
+  Real dgyyz = met.g_z.yy;
+  Real dgyzz = met.g_z.yz;
+  Real dgzzz = met.g_z.zz;
 
-    Real idetgxx = -gam.gyz * gam.gyz + gam.gyy * gam.gzz;
-    Real idetgxy = gam.gxz * gam.gyz - gam.gxy * gam.gzz;
-    Real idetgxz = -(gam.gxz * gam.gyy) + gam.gxy * gam.gyz;
-    Real idetgyy = -gam.gxz * gam.gxz + gam.gxx * gam.gzz;
-    Real idetgyz = gam.gxy * gam.gxz - gam.gxx * gam.gyz;
-    Real idetgzz = -gam.gxy * gam.gxy + gam.gxx * gam.gyy;
-    Real invgxx = idetgxx / det;
-    Real invgxy = idetgxy / det;
-    Real invgxz = idetgxz / det;
-    Real invgyy = idetgyy / det;
-    Real invgyz = idetgyz / det;
-    Real invgzz = idetgzz / det;
+  Real idetgxx = -gam.gyz * gam.gyz + gam.gyy * gam.gzz;
+  Real idetgxy = gam.gxz * gam.gyz - gam.gxy * gam.gzz;
+  Real idetgxz = -(gam.gxz * gam.gyy) + gam.gxy * gam.gyz;
+  Real idetgyy = -gam.gxz * gam.gxz + gam.gxx * gam.gzz;
+  Real idetgyz = gam.gxy * gam.gxz - gam.gxx * gam.gyz;
+  Real idetgzz = -gam.gxy * gam.gxy + gam.gxx * gam.gyy;
 
-    gam.betax = 0.0;
-    gam.betay = 0.0;
-    gam.betaz = 0.0;
+  Real invgxx = idetgxx / det;
+  Real invgxy = idetgxy / det;
+  Real invgxz = idetgxz / det;
+  Real invgyy = idetgyy / det;
+  Real invgyz = idetgyz / det;
+  Real invgzz = idetgzz / det;
 
-    gam.alpha = 1.0;
-    gam.kxx = 0.0;
-    gam.kxy = 0.0;
-    gam.kxz = 0.0;
-    gam.kyy = 0.0;
-    gam.kyz = 0.0;
-    gam.kzz = 0.0;
+  gam.betax =
+    betadownx * invgxx + betadowny * invgxy + betadownz * invgxz;
 
-  } else {
-    /* Compute components if detg is not <0 */
-    Real betadownx = met.g.tx;
-    Real betadowny = met.g.ty;
-    Real betadownz = met.g.tz;
+  gam.betay =
+    betadownx * invgxy + betadowny * invgyy + betadownz * invgyz;
 
-    Real dbetadownxx = met.g_x.tx;
-    Real dbetadownyx = met.g_x.ty;
-    Real dbetadownzx = met.g_x.tz;
+  gam.betaz =
+    betadownx * invgxz + betadowny * invgyz + betadownz * invgzz;
 
-    Real dbetadownxy = met.g_y.tx;
-    Real dbetadownyy = met.g_y.ty;
-    Real dbetadownzy = met.g_y.tz;
-
-    Real dbetadownxz = met.g_z.tx;
-    Real dbetadownyz = met.g_z.ty;
-    Real dbetadownzz = met.g_z.tz;
-
-    Real dtgxx = met.g_t.xx;
-    Real dtgxy = met.g_t.xy;
-    Real dtgxz = met.g_t.xz;
-    Real dtgyy = met.g_t.yy;
-    Real dtgyz = met.g_t.yz;
-    Real dtgzz = met.g_t.zz;
-
-    Real dgxxx = met.g_x.xx;
-    Real dgxyx = met.g_x.xy;
-    Real dgxzx = met.g_x.xz;
-    Real dgyyx = met.g_x.yy;
-    Real dgyzx = met.g_x.yz;
-    Real dgzzx = met.g_x.zz;
-
-    Real dgxxy = met.g_y.xx;
-    Real dgxyy = met.g_y.xy;
-    Real dgxzy = met.g_y.xz;
-    Real dgyyy = met.g_y.yy;
-    Real dgyzy = met.g_y.yz;
-    Real dgzzy = met.g_y.zz;
-
-    Real dgxxz = met.g_z.xx;
-    Real dgxyz = met.g_z.xy;
-    Real dgxzz = met.g_z.xz;
-    Real dgyyz = met.g_z.yy;
-    Real dgyzz = met.g_z.yz;
-    Real dgzzz = met.g_z.zz;
-
-    Real idetgxx = -gam.gyz * gam.gyz + gam.gyy * gam.gzz;
-    Real idetgxy = gam.gxz * gam.gyz - gam.gxy * gam.gzz;
-    Real idetgxz = -(gam.gxz * gam.gyy) + gam.gxy * gam.gyz;
-    Real idetgyy = -gam.gxz * gam.gxz + gam.gxx * gam.gzz;
-    Real idetgyz = gam.gxy * gam.gxz - gam.gxx * gam.gyz;
-    Real idetgzz = -gam.gxy * gam.gxy + gam.gxx * gam.gyy;
-
-    Real invgxx = idetgxx / det;
-    Real invgxy = idetgxy / det;
-    Real invgxz = idetgxz / det;
-    Real invgyy = idetgyy / det;
-    Real invgyz = idetgyz / det;
-    Real invgzz = idetgzz / det;
-
-    gam.betax =
-      betadownx * invgxx + betadowny * invgxy + betadownz * invgxz;
-
-    gam.betay =
-      betadownx * invgxy + betadowny * invgyy + betadownz * invgyz;
-
-    gam.betaz =
-      betadownx * invgxz + betadowny * invgyz + betadownz * invgzz;
-
-    Real b2 =
-      betadownx * gam.betax + betadowny * gam.betay +
-      betadownz * gam.betaz;
+  Real b2 =
+    betadownx * gam.betax + betadowny * gam.betay +
+    betadownz * gam.betaz;
 
 
-    gam.alpha = sqrt(fabs(b2 - met.g.tt));
+  gam.alpha = sqrt(fabs(b2 - met.g.tt));
 
-    gam.kxx = -(-2 * dbetadownxx - gam.betax * dgxxx - gam.betay * dgxxy -
-      gam.betaz * dgxxz + 2 * (gam.betax * dgxxx + gam.betay * dgxyx +
-        gam.betaz * dgxzx) + dtgxx) / (2. * gam.alpha);
+  gam.kxx = -(-2 * dbetadownxx - gam.betax * dgxxx - gam.betay * dgxxy -
+    gam.betaz * dgxxz + 2 * (gam.betax * dgxxx + gam.betay * dgxyx +
+      gam.betaz * dgxzx) + dtgxx) / (2. * gam.alpha);
 
-    gam.kxy = -(-dbetadownxy - dbetadownyx + gam.betax * dgxxy -
-      gam.betaz * dgxyz + gam.betaz * dgxzy + gam.betay * dgyyx +
-      gam.betaz * dgyzx + dtgxy) / (2. * gam.alpha);
+  gam.kxy = -(-dbetadownxy - dbetadownyx + gam.betax * dgxxy -
+    gam.betaz * dgxyz + gam.betaz * dgxzy + gam.betay * dgyyx +
+    gam.betaz * dgyzx + dtgxy) / (2. * gam.alpha);
 
-    gam.kxz = -(-dbetadownxz - dbetadownzx + gam.betax * dgxxz +
-      gam.betay * dgxyz - gam.betay * dgxzy + gam.betay * dgyzx +
-      gam.betaz * dgzzx + dtgxz) / (2. * gam.alpha);
+  gam.kxz = -(-dbetadownxz - dbetadownzx + gam.betax * dgxxz +
+    gam.betay * dgxyz - gam.betay * dgxzy + gam.betay * dgyzx +
+    gam.betaz * dgzzx + dtgxz) / (2. * gam.alpha);
 
-    gam.kyy = -(-2 * dbetadownyy - gam.betax * dgyyx - gam.betay * dgyyy -
-      gam.betaz * dgyyz + 2 * (gam.betax * dgxyy + gam.betay * dgyyy +
-        gam.betaz * dgyzy) + dtgyy) / (2. * gam.alpha);
+  gam.kyy = -(-2 * dbetadownyy - gam.betax * dgyyx - gam.betay * dgyyy -
+    gam.betaz * dgyyz + 2 * (gam.betax * dgxyy + gam.betay * dgyyy +
+      gam.betaz * dgyzy) + dtgyy) / (2. * gam.alpha);
 
-    gam.kyz = -(-dbetadownyz - dbetadownzy + gam.betax * dgxyz +
-      gam.betax * dgxzy + gam.betay * dgyyz - gam.betax * dgyzx +
-      gam.betaz * dgzzy + dtgyz) / (2. * gam.alpha);
+  gam.kyz = -(-dbetadownyz - dbetadownzy + gam.betax * dgxyz +
+    gam.betax * dgxzy + gam.betay * dgyyz - gam.betax * dgyzx +
+    gam.betaz * dgzzy + dtgyz) / (2. * gam.alpha);
 
-    gam.kzz = -(-2 * dbetadownzz - gam.betax * dgzzx - gam.betay * dgzzy -
-      gam.betaz * dgzzz + 2 * (gam.betax * dgxzz + gam.betay * dgyzz +
-        gam.betaz * dgzzz) + dtgzz) / (2. * gam.alpha);
-  }
+  gam.kzz = -(-2 * dbetadownzz - gam.betax * dgzzx - gam.betay * dgzzy -
+    gam.betaz * dgzzz + 2 * (gam.betax * dgxzz + gam.betay * dgyzz +
+      gam.betaz * dgzzz) + dtgzz) / (2. * gam.alpha);
   return 0;
 }
 
@@ -569,25 +479,30 @@ void SuperposedBBH(const Real time, const Real x, const Real y, const Real z,
   Real xi2x = traj_array[X2];
   Real xi2y = traj_array[Y2];
   Real xi2z = traj_array[Z2];
-  Real v1x  = traj_array[VX1] + 1e-40;
-  Real v1y  = traj_array[VY1] + 1e-40;
-  Real v1z  = traj_array[VZ1] + 1e-40;
-  Real v2x =  traj_array[VX2] + 1e-40;
-  Real v2y =  traj_array[VY2] + 1e-40;
-  Real v2z =  traj_array[VZ2] + 1e-40;
+  Real v1x  = traj_array[VX1];
+  // Real v1y  = traj_array[VY1];
+  // Real v1z  = traj_array[VZ1];
+  Real v2x =  traj_array[VX2];
+  // Real v2y =  traj_array[VY2];
+  // Real v2z =  traj_array[VZ2];
 
-  Real v2  =  sqrt( v2x * v2x + v2y * v2y + v2z * v2z );
-  Real v1  =  sqrt( v1x * v1x + v1y * v1y + v1z * v1z );
+  // Real v2  =  sqrt( v2x * v2x + v2y * v2y + v2z * v2z );
+  // Real v1  =  sqrt( v1x * v1x + v1y * v1y + v1z * v1z );
 
   // replace this with the superposed boosted puncture solution
+  // metric for the first black hole
+  Real gamma = 1/sqrt(1-v1x*v1x);
+  Real x0 = gamma*((x-xi1x)-v*time);
+  Real y0 = y - xi1y;
+  Real z0 = z - xi1z;
+  Real r0 = pow(x0*x0 + y0*y0 + z0*z0,0.5);
+  Real psi0 = 1 + 0.5/r0;
+  Real alpha0 = (1-0.5/r0)/psi0;
+  Real B02 = gamma*gamma*(1-v*v*alpha0*alpha0*pow(psi0,-4));
 
-  Real r = pow(x*x + y*y + z*z,0.5);
-  Real psi0 = 1 + 0.5/r;
-  Real alpha0 = (1-0.5/r)/psi0;
-  /* Initialize the flat part */
   Real eta[4][4] = {
-    {-pow(alpha0,2),0,0,0},
-    {0,pow(psi0,4),0,0},
+    {-gamma*gamma*(pow(alpha0,2)-pow(psi0,4)*pow(v,2)),gamma*gamma*v*(pow(alpha0,2)-pow(psi0,4)),0,0},
+    {gamma*gamma*v*(pow(alpha0,2)-pow(psi0,4)),pow(psi0,4)*B02,0,0},
     {0,0,pow(psi0,4),0},
     {0,0,0,pow(psi0,4)}
   };
@@ -596,6 +511,11 @@ void SuperposedBBH(const Real time, const Real x, const Real y, const Real z,
       gcov[i][j] = eta[i][j];
     }
   }
+
+  // metric for the second black hole
+
+  // subtract minkowski
+
   return;
 }
 
