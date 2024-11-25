@@ -20,19 +20,18 @@
 #include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
 
-#define h 5e-7
+#define h 5e-5 // choose to be smaller than the grid resolution yet not too small
 #define D2(comp, h) ((met_p1.g).comp - (met_m1.g).comp) / (2*h)
 
 namespace {
 
 enum {
-  TT, XX, YY, ZZ, NDIM
+  TT, XX, YY, ZZ
 };
 
 enum {
   X1, Y1, Z1,
   VX1, VY1, VZ1,
-  AX1, AY1, AZ1,
   M1T, NPARAM
 };
 
@@ -83,7 +82,7 @@ struct adm_var {
 struct bh_pgen {
   Real x1, y1, z1;
   Real vx1, vy1, vz1;
-  Real m1, ax1, ay1, az1;
+  Real m1;
 };
 
 struct bh_pgen bh;
@@ -97,9 +96,7 @@ void numerical_4metric(const Real t, const Real x, const Real y,
 
 // 3+1 decomposition of the spacetime variables
 KOKKOS_INLINE_FUNCTION
-int four_metric_to_three_metric(const Real t, const Real x, const Real y,
-    const Real z, const struct four_metric &met, struct adm_var &gam,
-    const bh_pgen& bh_);
+int four_metric_to_three_metric(const struct four_metric &met, struct adm_var &gam);
 
 // Change slicing to boosted slice
 // t0,x0,y0,z0 are the corresponding coordinate in the unboosted frame
@@ -115,13 +112,8 @@ KOKKOS_INLINE_FUNCTION
 void SpaceTimeMetric(const Real t, const Real x, const Real y, const Real z,
                 struct four_metric &met, const bh_pgen& bh_);
 
-KOKKOS_INLINE_FUNCTION
-void BHPuncture(const Real x0[4], const Real mass, Real gcov[NDIM][NDIM]);
-
-KOKKOS_INLINE_FUNCTION
-Real EvaluateLapse(const Real x0[4], const bh_pgen& bh_);
-
 // call this to set the u_adm array
+KOKKOS_INLINE_FUNCTION
 void SetADMVariables(MeshBlockPack *pmbp);
 
 // how to perform AMR
@@ -139,7 +131,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   if (restart) return;
 
   // location
-  bh.x1 = pin->GetOrAddReal("problem", "bh_x", -10.0);
+  bh.x1 = pin->GetOrAddReal("problem", "bh_x", 0.0);
   bh.y1 = pin->GetOrAddReal("problem", "bh_y", 0.0);
   bh.z1 = pin->GetOrAddReal("problem", "bh_z", 0.0);
 
@@ -150,9 +142,6 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
 
   // mass and spin
   bh.m1 = pin->GetOrAddReal("problem", "bh_bare_mass", 1.0);
-  bh.ax1 = pin->GetOrAddReal("problem", "bh_ax", 0.0);
-  bh.ay1 = pin->GetOrAddReal("problem", "bh_ay", 0.0);
-  bh.az1 = pin->GetOrAddReal("problem", "bh_az", 0.0);
 
   // capture variables for the kernel
   auto &indcs = pmy_mesh_->mb_indcs;
@@ -165,6 +154,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
 
   // Initialize ADM variables -------------------------------
   SetADMVariables(pmbp);
+  // convert to (Z4c) evolution variables
   switch (indcs.ng) {
     case 2: pmbp->pz4c->ADMToZ4c<2>(pmbp, pin);
             break;
@@ -173,8 +163,14 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     case 4: pmbp->pz4c->ADMToZ4c<4>(pmbp, pin);
             break;
   }
+
+  // set ADM psi4
   pmbp->pz4c->Z4cToADM(pmbp);
-  pmbp->pz4c->GaugePreCollapsedLapse(pmbp, pin);
+
+  // set pre-collapsed lapse function
+  // pmbp->pz4c->GaugePreCollapsedLapse(pmbp, pin);
+
+  // calculate constraints on the initial data slice
   switch (indcs.ng) {
     case 2: pmbp->pz4c->ADMConstraints<2>(pmbp);
             break;
@@ -183,8 +179,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     case 4: pmbp->pz4c->ADMConstraints<4>(pmbp);
             break;
   }
-  std::cout<<"Single Black Hole initialized."<<std::endl;
-
+  std::cout<<"Kerr-Schild Initialized."<<std::endl;
   return;
 }
 
@@ -205,7 +200,7 @@ void SetADMVariables(MeshBlockPack *pmbp) {
 
   auto& bh_ = bh;
 
-  par_for("update_adm_vars", DevExeSpace(), 0,nmb-1,0,(n3-1),0,(n2-1),0,(n1-1),
+  par_for("set_adm_vars", DevExeSpace(), 0,nmb-1,0,(n3-1),0,(n2-1),0,(n1-1),
   KOKKOS_LAMBDA(int m, int k, int j, int i) {
     Real &x1min = size.d_view(m).x1min;
     Real &x1max = size.d_view(m).x1max;
@@ -224,7 +219,7 @@ void SetADMVariables(MeshBlockPack *pmbp) {
     numerical_4metric(tt, x1v, x2v, x3v, met4, bh_);
 
     /* Transform 4D metric to 3+1 variables*/
-    four_metric_to_three_metric(tt, x1v, x2v, x3v, met4, met3, bh_);
+    four_metric_to_three_metric(met4, met3);
 
     /* Load (Cartesian) components of the metric and curvature */
     // g_ab
@@ -235,8 +230,17 @@ void SetADMVariables(MeshBlockPack *pmbp) {
     adm.g_dd(m,1,2,k,j,i) = met3.gyz;
     adm.g_dd(m,2,2,k,j,i) = met3.gzz;
 
-    adm.vK_dd(m,0,0,k,j,i) = met3.kxx;
-    adm.vK_dd(m,0,1,k,j,i) = met3.kxy;
+    Real r = sqrt(x1v*x1v + x2v*x2v + x3v*x3v);
+    Real H = 1 / r;
+    // Compute the null vector l_mu
+    Real l_lower[4];
+    l_lower[0] = 1.0;
+    l_lower[1] = x1v/r;
+    l_lower[2] = x2v/r;
+    l_lower[3] = x3v/r;
+
+    adm.vK_dd(m,0,0,k,j,i) = met3.kxx; //2*H*met3.alpha/r*(1 - (2 + H) * l_lower[1]*l_lower[1]);//met3.kxx;
+    adm.vK_dd(m,0,1,k,j,i) = 2*H*met3.alpha/r*(- (2 + H) * l_lower[1]*l_lower[2]); // met3.kxy;
     adm.vK_dd(m,0,2,k,j,i) = met3.kxz;
     adm.vK_dd(m,1,1,k,j,i) = met3.kyy;
     adm.vK_dd(m,1,2,k,j,i) = met3.kyz;
@@ -321,9 +325,8 @@ void numerical_4metric(const Real t, const Real x, const Real y,
 }
 
 KOKKOS_INLINE_FUNCTION
-int four_metric_to_three_metric(const Real t, const Real x, const Real y,
-    const Real z, const struct four_metric &met, struct adm_var &gam,
-    const bh_pgen& bh_) {
+int four_metric_to_three_metric(const struct four_metric &met,
+                                struct adm_var &gam) {
   /* Check determinant first */
   gam.gxx = met.g.xx;
   gam.gxy = met.g.xy;
@@ -332,10 +335,19 @@ int four_metric_to_three_metric(const Real t, const Real x, const Real y,
   gam.gyz = met.g.yz;
   gam.gzz = met.g.zz;
 
-  Real det = adm::SpatialDet(gam.gxx, gam.gxy, gam.gxz,
+  // determinant of spatial metric
+  Real detg = adm::SpatialDet(gam.gxx, gam.gxy, gam.gxz,
                                    gam.gyy, gam.gyz, gam.gzz);
 
-  /* Compute components if detg is not <0 */
+  // inverse spatial metric
+  Real invgxx, invgxy, invgxz, invgyy, invgyz, invgzz;
+  adm::SpatialInv(1.0/detg,
+        gam.gxx, gam.gxy, gam.gxz,
+        gam.gyy, gam.gyz, gam.gzz,
+        &invgxx, &invgxy, &invgxz,
+        &invgyy, &invgyz, &invgzz);
+
+  // shift vector and its derivatives with lower indices
   Real betadownx = met.g.tx;
   Real betadowny = met.g.ty;
   Real betadownz = met.g.tz;
@@ -352,6 +364,7 @@ int four_metric_to_three_metric(const Real t, const Real x, const Real y,
   Real dbetadownyz = met.g_z.ty;
   Real dbetadownzz = met.g_z.tz;
 
+  // derivatives of the spatial metric
   Real dtgxx = met.g_t.xx;
   Real dtgxy = met.g_t.xy;
   Real dtgxz = met.g_t.xz;
@@ -380,20 +393,7 @@ int four_metric_to_three_metric(const Real t, const Real x, const Real y,
   Real dgyzz = met.g_z.yz;
   Real dgzzz = met.g_z.zz;
 
-  Real idetgxx = -gam.gyz * gam.gyz + gam.gyy * gam.gzz;
-  Real idetgxy = gam.gxz * gam.gyz - gam.gxy * gam.gzz;
-  Real idetgxz = -(gam.gxz * gam.gyy) + gam.gxy * gam.gyz;
-  Real idetgyy = -gam.gxz * gam.gxz + gam.gxx * gam.gzz;
-  Real idetgyz = gam.gxy * gam.gxz - gam.gxx * gam.gyz;
-  Real idetgzz = -gam.gxy * gam.gxy + gam.gxx * gam.gyy;
-
-  Real invgxx = idetgxx / det;
-  Real invgxy = idetgxy / det;
-  Real invgxz = idetgxz / det;
-  Real invgyy = idetgyy / det;
-  Real invgyz = idetgyz / det;
-  Real invgzz = idetgzz / det;
-
+  // shift with indices raised
   gam.betax =
     betadownx * invgxx + betadowny * invgxy + betadownz * invgxz;
 
@@ -407,99 +407,74 @@ int four_metric_to_three_metric(const Real t, const Real x, const Real y,
     betadownx * gam.betax + betadowny * gam.betay +
     betadownz * gam.betaz;
 
-  // specify alpha by hand if using isotropic coordinate
-  // otherwise cannot specify the sign to guarantee smoothness
-  if (true) {
-    // black hole location
-    Real xi1x = bh_.x1;
-    Real xi1y = bh_.y1;
-    Real xi1z = bh_.z1;
+  gam.alpha = sqrt(fabs(b2 - met.g.tt));
 
-    // velocity
-    Real vel[3];
-    vel[0] = bh_.vx1;
-    vel[1] = bh_.vy1;
-    vel[2] = bh_.vz1;
-
-    // coordinate frame where BH is at the origin at t=0
-    Real xboosted[4];
-    xboosted[0] = t;
-    xboosted[1] = x-xi1x;
-    xboosted[2] = y-xi1y;
-    xboosted[3] = z-xi1z;
-
-    // rest frame where the analytical metric is evaluated
-    Real x0[4];
-    
-    // evaluate coordinate in the rest frame
-    BoostSlice(vel, xboosted, x0);
-    gam.alpha = EvaluateLapse(x0, bh_);
-  } else {
-    gam.alpha = sqrt(fabs(b2 - met.g.tt));
-  }
-
-  gam.kxx = -(-2 * dbetadownxx - gam.betax * dgxxx - gam.betay * dgxxy -
+  // gam.kxx = - 1/(2. * gam.alpha) * (dtgxx - (2*dbetadownxx
+  //            - 2 * gam.betax * (-dgxxx + 2 * dgxxx)
+  //            - 2 * gam.betay * (-dgxxy + 2 * dgxyx)
+  //            - 2 * gam.betaz * (-dgxxz + 2 * dgxzx)));
+  gam.kxx = -(-2 * dbetadownxx +  (- gam.betax * dgxxx - gam.betay * dgxxy -
     gam.betaz * dgxxz + 2 * (gam.betax * dgxxx + gam.betay * dgxyx +
-      gam.betaz * dgxzx) + dtgxx) / (2. * gam.alpha);
+      gam.betaz * dgxzx)) + dtgxx) / (2. * gam.alpha);
 
-  gam.kxy = -(-dbetadownxy - dbetadownyx + gam.betax * dgxxy -
+  gam.kxy = -(-dbetadownxy - dbetadownyx + (gam.betax * dgxxy -
     gam.betaz * dgxyz + gam.betaz * dgxzy + gam.betay * dgyyx +
-    gam.betaz * dgyzx + dtgxy) / (2. * gam.alpha);
+    gam.betaz * dgyzx) + dtgxy) / (2. * gam.alpha);
 
-  gam.kxz = -(-dbetadownxz - dbetadownzx + gam.betax * dgxxz +
+  gam.kxz = -(-dbetadownxz - dbetadownzx + (gam.betax * dgxxz +
     gam.betay * dgxyz - gam.betay * dgxzy + gam.betay * dgyzx +
-    gam.betaz * dgzzx + dtgxz) / (2. * gam.alpha);
+    gam.betaz * dgzzx) + dtgxz) / (2. * gam.alpha);
 
-  gam.kyy = -(-2 * dbetadownyy - gam.betax * dgyyx - gam.betay * dgyyy -
+  gam.kyy = -(-2 * dbetadownyy - gam.betax * dgyyx +  (- gam.betay * dgyyy -
     gam.betaz * dgyyz + 2 * (gam.betax * dgxyy + gam.betay * dgyyy +
-      gam.betaz * dgyzy) + dtgyy) / (2. * gam.alpha);
+      gam.betaz * dgyzy)) + dtgyy) / (2. * gam.alpha);
 
-  gam.kyz = -(-dbetadownyz - dbetadownzy + gam.betax * dgxyz +
+  gam.kyz = -(-dbetadownyz - dbetadownzy + (gam.betax * dgxyz +
     gam.betax * dgxzy + gam.betay * dgyyz - gam.betax * dgyzx +
-    gam.betaz * dgzzy + dtgyz) / (2. * gam.alpha);
+    gam.betaz * dgzzy) + dtgyz) / (2. * gam.alpha);
 
-  gam.kzz = -(-2 * dbetadownzz - gam.betax * dgzzx - gam.betay * dgzzy -
+  gam.kzz = -(-2 * dbetadownzz - gam.betax * dgzzx +  (- gam.betay * dgzzy -
     gam.betaz * dgzzz + 2 * (gam.betax * dgxzz + gam.betay * dgyzz +
-      gam.betaz * dgzzz) + dtgzz) / (2. * gam.alpha);
+      gam.betaz * dgzzz)) + dtgzz) / (2. * gam.alpha);
   return 0;
 }
 
 KOKKOS_INLINE_FUNCTION
-void BHPuncture(const Real x0[4], const Real mass, Real gcov[NDIM][NDIM]) {
-  Real r0 = std::pow(x0[1]*x0[1]+x0[2]*x0[2]+x0[3]*x0[3],0.5);
-  Real psi0 = 1 + 0.5*mass/r0;
-  Real alpha0 = (1 - 0.5*mass/r0)/psi0;
-  gcov[0][0] = -std::pow(alpha0,2);
-  gcov[0][1] =  0.;
-  gcov[0][2] =  0.;
-  gcov[0][3] =  0.;
+void KerrSchild(const Real x0[4], const Real mass, Real gcov[4][4]) {
+  // Extract spatial coordinates (KS solution is time-independent)
+  Real x = x0[1];
+  Real y = x0[2];
+  Real z = x0[3];
 
-  gcov[1][0] =  0.;
-  gcov[1][1] =  std::pow(psi0,4);
-  gcov[1][2] =  0.;
-  gcov[1][3] =  0.;
+  // Compute auxiliary quantities
+  Real r2 = x*x + y*y + z*z;
 
-  gcov[2][0] =  0.;
-  gcov[2][1] =  0.;
-  gcov[2][2] =  std::pow(psi0,4);
-  gcov[2][3] =  0.;
+  Real r = sqrt(r2);
 
-  gcov[3][0] =  0.;
-  gcov[3][1] =  0.;
-  gcov[3][2] =  0.;
-  gcov[3][3] =  std::pow(psi0,4);
-}
+  // Compute f function
+  Real H = mass / r;
 
-KOKKOS_INLINE_FUNCTION
-Real EvaluateLapse(const Real x0[4], const bh_pgen& bh_) {
-  Real mass = bh_.m1;
-  Real r0 = std::pow(x0[1]*x0[1]+x0[2]*x0[2]+x0[3]*x0[3],0.5);
-  Real psi0 = 1 + 0.5*mass/r0;
-  Real alpha0 = (1 - 0.5*mass/r0)/psi0;
-  Real v2 = bh_.vx1*bh_.vx1 + bh_.vy1*bh_.vy1 + bh_.vz1*bh_.vz1;
-  Real gamma2 = 1/(1-v2);
-  Real B0 = std::pow(fabs(gamma2*(1-v2*std::pow(alpha0,2)*std::pow(psi0,-4))),0.5);
-  return alpha0/B0;
+  // Compute the null vector l_mu
+  Real l_lower[4];
+  l_lower[0] = 1.0;
+  l_lower[1] = x/r;
+  l_lower[2] = y/r;
+  l_lower[3] = z/r;
+
+  // Minkowski metric in Cartesian coordinates
+  Real eta[4][4] = {
+    {-1.0, 0.0, 0.0, 0.0},
+    { 0.0, 1.0, 0.0, 0.0},
+    { 0.0, 0.0, 1.0, 0.0},
+    { 0.0, 0.0, 0.0, 1.0}
+  };
+
+  // Compute the Kerr-Schild metric: g_mu_nu = eta_mu_nu + f l_mu l_nu
+  for (int mu = 0; mu < 4; mu++) {
+    for (int nu = 0; nu < 4; nu++) {
+      gcov[mu][nu] = eta[mu][nu] + 2 * H * l_lower[mu] * l_lower[nu];
+    }
+  }
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -510,9 +485,9 @@ void SpaceTimeMetric(const Real t,
                 struct four_metric &met,
                 const bh_pgen& bh_) {
   // black hole location
-  Real xi1x = bh_.x1;
-  Real xi1y = bh_.y1;
-  Real xi1z = bh_.z1;
+  Real cx1 = bh_.x1;
+  Real cy1 = bh_.y1;
+  Real cz1 = bh_.z1;
 
   Real mass = bh_.m1;
 
@@ -524,10 +499,10 @@ void SpaceTimeMetric(const Real t,
 
   // coordinate frame where BH is at the origin at t=0
   Real xboosted[4];
-  xboosted[0] = t;
-  xboosted[1] = x-xi1x;
-  xboosted[2] = y-xi1y;
-  xboosted[3] = z-xi1z;
+  xboosted[0] = t - 0.0;
+  xboosted[1] = x - cx1;
+  xboosted[2] = y - cy1;
+  xboosted[3] = z - cz1;
 
   // rest frame where the analytical metric is evaluated
   Real x0[4];
@@ -535,20 +510,16 @@ void SpaceTimeMetric(const Real t,
   // evaluate coordinate in the rest frame
   BoostSlice(vel, xboosted, x0);
 
-  // Two functions, one to evaluate the new Lorentz boosted coordinate, another to perform the lorentz boost
-  // for arbitrary four velocity. For now just do the boost along x direction. 
+  Real grest[4][4];
+  Real gcov[4][4];
 
-  Real grest[NDIM][NDIM];
-  Real gcov[NDIM][NDIM];
+  // evaluate the metric in terms of the x0 frame
+  KerrSchild(x0,mass,grest);
 
-  // change between puncture and KerrSchild coordinate, for now only puncture implemented
-  if (true) {
-    BHPuncture(x0, mass, grest);
-  }
-
+  // boost metric component into the boosted frame
   BoostMetric(vel, grest, gcov);
-  // Lorentz Boost the metric
 
+  // fill in the met
   met.g.tt = gcov[TT][TT];
   met.g.tx = gcov[TT][XX];
   met.g.ty = gcov[TT][YY];
@@ -559,14 +530,24 @@ void SpaceTimeMetric(const Real t,
   met.g.yy = gcov[YY][YY];
   met.g.yz = gcov[YY][ZZ];
   met.g.zz = gcov[ZZ][ZZ];
-
   return;
 }
+
 
 KOKKOS_INLINE_FUNCTION
 void BoostSlice(const Real beta[3], const Real x_in[4], Real x_out[4]) {
   // Compute beta^2
   Real beta2 = beta[0]*beta[0] + beta[1]*beta[1] + beta[2]*beta[2];
+
+  // Check for unphysical beta (beta^2 >= 1)
+  if (beta2 >= 1.0) {
+    std::cout << "Error: velocity exceeding speed of light" << std::endl;
+    // Handle error: set x_out to NaN (Not a Number)
+    for (int i = 0; i < 4; ++i) {
+      x_out[i] = NAN;
+    }
+    return;
+  }
 
   // If beta^2 is zero (no boost), copy x_in to x_out
   if (beta2 == 0.0) {
@@ -601,6 +582,7 @@ void BoostMetric(const Real beta[3], const Real gcov[4][4], Real g_out[4][4]) {
 
   // Check for unphysical beta (beta^2 >= 1)
   if (beta2 >= 1.0) {
+    std::cout << "Error: velocity exceeding speed of light" << std::endl;
     // Handle error: set g_out to NaN (Not a Number)
     for (int mu = 0; mu < 4; ++mu) {
       for (int nu = 0; nu < 4; ++nu) {
