@@ -697,24 +697,23 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
       outvars.emplace_back("r02_ff",moments_offset+2,&(derived_var));
       outvars.emplace_back("r03_ff",moments_offset+3,&(derived_var));
       outvars.emplace_back("r11_ff",moments_offset+4,&(derived_var));
-      outvars.emplace_back("r12_ff",moments_offset+5,&(derived_var));
-      outvars.emplace_back("r13_ff",moments_offset+6,&(derived_var));
-      outvars.emplace_back("r22_ff",moments_offset+7,&(derived_var));
-      outvars.emplace_back("r23_ff",moments_offset+8,&(derived_var));
-      outvars.emplace_back("r33_ff",moments_offset+9,&(derived_var));
+      outvars.emplace_back("r12_ff", moments_offset + 5, &(derived_var));
+      outvars.emplace_back("r13_ff", moments_offset + 6, &(derived_var));
+      outvars.emplace_back("r22_ff", moments_offset + 7, &(derived_var));
+      outvars.emplace_back("r23_ff", moments_offset + 8, &(derived_var));
+      outvars.emplace_back("r33_ff", moments_offset + 9, &(derived_var));
     }
     // Z4c Diagnostics
     if (variable.compare("z4c_diag") == 0) {
       out_params.contains_derived = true;
-      const char* z4c_diag_names[16] = {
-        "z4c_Kretschmann",
-        "z4c_Exx", "z4c_Exy", "z4c_Exz", "z4c_Eyy", "z4c_Eyz", "z4c_Ezz",
-        "z4c_Bxx", "z4c_Bxy", "z4c_Bxz", "z4c_Byy", "z4c_Byz", "z4c_Bzz",
-        "z4c_Px", "z4c_Py", "z4c_Pz"
-      };
+      const char *z4c_diag_names[16] = {
+          "z4c_Kretschmann", "z4c_Exx", "z4c_Exy", "z4c_Exz", "z4c_Eyy", "z4c_Eyz",
+          "z4c_Ezz",         "z4c_Bxx", "z4c_Bxy", "z4c_Bxz", "z4c_Byy", "z4c_Byz",
+          "z4c_Bzz",         "z4c_Px",  "z4c_Py",  "z4c_Pz"};
 
       for (int i = 0; i < 16; ++i) {
-        // out_params.n_derived offsets the index if other derived vars are in the same block
+        // out_params.n_derived offsets the index if other derived vars are in the same
+        // block
         outvars.emplace_back(z4c_diag_names[i], out_params.n_derived + i, &(derived_var));
       }
       out_params.n_derived += 16;

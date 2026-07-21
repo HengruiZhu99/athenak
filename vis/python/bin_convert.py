@@ -1736,9 +1736,6 @@ def write_athdf(filename, fdata, varsize_bytes=4, locsize_bytes=8):
 
     # extract Mesh/MeshBlock parameters
     nmb = fdata["n_mbs"]
-    Nx1 = fdata["Nx1"]  # noqa: F841
-    Nx2 = fdata["Nx2"]
-    Nx3 = fdata["Nx3"]
     nx1 = fdata["nx1_mb"]
     nx2 = fdata["nx2_mb"]
     nx3 = fdata["nx3_mb"]
@@ -1747,13 +1744,6 @@ def write_athdf(filename, fdata, varsize_bytes=4, locsize_bytes=8):
     nx3_out = fdata["nx3_out_mb"]
 
     number_of_moments = fdata.get("number_of_moments", 1)
-
-    # check dimensionality/slicing
-    two_d = Nx2 != 1 and Nx3 == 1
-    three_d = Nx3 != 1
-    x1slice = nx1_out == 1
-    x2slice = nx2_out == 1 and (two_d or three_d)
-    x3slice = nx3_out == 1 and three_d
 
     # keep variable order but separate out magnetic field
     vars_without_b = [v for v in fdata["var_names"] if "bcc" not in v]
@@ -1796,16 +1786,16 @@ def write_athdf(filename, fdata, varsize_bytes=4, locsize_bytes=8):
 
         # 3. Dynamically calculate the output coordinates
         start_x1 = geometry[0] + offset1 * dx1
-        x1f[mb]  = np.linspace(start_x1, start_x1 + nx1_out * dx1, nx1_out + 1)
-        x1v[mb]  = 0.5 * (x1f[mb][1:] + x1f[mb][:-1])
+        x1f[mb] = np.linspace(start_x1, start_x1 + nx1_out * dx1, nx1_out + 1)
+        x1v[mb] = 0.5 * (x1f[mb][1:] + x1f[mb][:-1])
 
         start_x2 = geometry[2] + offset2 * dx2
-        x2f[mb]  = np.linspace(start_x2, start_x2 + nx2_out * dx2, nx2_out + 1)
-        x2v[mb]  = 0.5 * (x2f[mb][1:] + x2f[mb][:-1])
+        x2f[mb] = np.linspace(start_x2, start_x2 + nx2_out * dx2, nx2_out + 1)
+        x2v[mb] = 0.5 * (x2f[mb][1:] + x2f[mb][:-1])
 
         start_x3 = geometry[4] + offset3 * dx3
-        x3f[mb]  = np.linspace(start_x3, start_x3 + nx3_out * dx3, nx3_out + 1)
-        x3v[mb]  = 0.5 * (x3f[mb][1:] + x3f[mb][:-1])
+        x3f[mb] = np.linspace(start_x3, start_x3 + nx3_out * dx3, nx3_out + 1)
+        x3v[mb] = 0.5 * (x3f[mb][1:] + x3f[mb][:-1])
 
     # set dataset names and number of variables
     dataset_names = [np.array("uov", dtype="|S21")]
