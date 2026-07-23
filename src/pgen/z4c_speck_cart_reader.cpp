@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <sstream>
@@ -1009,8 +1010,12 @@ void WriteConstraintSummary(ParameterInput *pin, Mesh *pm,
   if (global_variable::my_rank != 0) {
     return;
   }
-  std::string fname = pin->GetString("job", "basename");
-  fname.append("-speck-cart-constraints.dat");
+  std::string fname = pin->GetOrAddString(
+      "problem", "constraint_summary_file", "AUTO");
+  if (fname == "AUTO") {
+    fname = pin->GetString("job", "basename");
+    fname.append("-speck-cart-constraints.dat");
+  }
   FILE *pfile = std::fopen(fname.c_str(), "r");
   if (pfile != nullptr) {
     pfile = std::freopen(fname.c_str(), "a", pfile);
@@ -1025,7 +1030,7 @@ void WriteConstraintSummary(ParameterInput *pin, Mesh *pm,
   if (pfile == nullptr) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl
-              << "SpECK cart constraint output file could not be opened"
+              << "imported-ADM constraint output file could not be opened"
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -1072,60 +1077,158 @@ void SpeckCartConstraintReport(ParameterInput *pin, Mesh *pm) {
   EnforceConstraintThresholds(pin, summary);
 }
 
-void WriteAdmPsi4XyPlane(ParameterInput *pin, MeshBlockPack *pmbp) {
+void WriteImportedAdmPlane(ParameterInput *pin, MeshBlockPack *pmbp,
+                           const bool xy_plane) {
+  const char *path_key = xy_plane ? "xy_plane_output" : "xz_plane_output";
+  const char *coordinate_key = xy_plane ? "xy_plane_z" : "xz_plane_y";
   const std::string path =
-      pin->GetOrAddString("problem", "xy_plane_output", "EMPTY");
+      pin->GetOrAddString("problem", path_key, "EMPTY");
   if (path == "EMPTY" || path.empty()) {
     return;
   }
   if (global_variable::my_rank != 0) {
     return;
   }
-  const Real z_plane = pin->GetOrAddReal("problem", "xy_plane_z", 0.0);
+  const Real plane_coordinate =
+      pin->GetOrAddReal("problem", coordinate_key, 0.0);
   const std::filesystem::path output_path(path);
   if (!output_path.parent_path().empty()) {
     std::filesystem::create_directories(output_path.parent_path());
   }
   std::ofstream output(path);
   if (!output) {
-    throw std::runtime_error("failed to open xy-plane output: " + path);
+    throw std::runtime_error("failed to open imported-ADM plane output: " +
+                             path);
   }
   auto host_adm =
       Kokkos::create_mirror_view_and_copy(HostMemSpace(), pmbp->padm->u_adm);
+  auto host_z4c =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), pmbp->pz4c->u0);
+  auto host_constraints =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), pmbp->pz4c->u_con);
   pmbp->pmb->mb_size.sync_host();
+  pmbp->pmb->mb_gid.sync_host();
+  pmbp->pmb->mb_lev.sync_host();
   auto size = pmbp->pmb->mb_size.h_view;
+  auto gids = pmbp->pmb->mb_gid.h_view;
+  auto levels = pmbp->pmb->mb_lev.h_view;
   auto &indcs = pmbp->pmesh->mb_indcs;
-  output << "# x y z adm_psi4 block i j k\n";
+  output << std::setprecision(17);
+  output << "# x y z psi alpha beta_norm H M_norm C_norm Z_norm "
+            "level gid block i j k\n";
   for (int m = 0; m < pmbp->nmb_thispack; ++m) {
-    int k_plane = indcs.ks;
-    Real best = std::numeric_limits<Real>::infinity();
-    for (int k = indcs.ks; k <= indcs.ke; ++k) {
-      const Real z =
-          CellCenterX(k - indcs.ks, indcs.nx3, size(m).x3min,
-                      size(m).x3max);
-      const Real distance = std::abs(z - z_plane);
-      if (distance < best) {
-        best = distance;
-        k_plane = k;
+    const Real block_min = xy_plane ? size(m).x3min : size(m).x2min;
+    const Real block_max = xy_plane ? size(m).x3max : size(m).x2max;
+    const Real block_dx = xy_plane ? size(m).dx3 : size(m).dx2;
+    if (plane_coordinate < block_min || plane_coordinate > block_max) {
+      continue;
+    }
+    const int normal_begin = xy_plane ? indcs.ks : indcs.js;
+    const int normal_n = xy_plane ? indcs.nx3 : indcs.nx2;
+    const int samples = std::min(8, normal_n);
+    const Real fractional_index =
+        (plane_coordinate - block_min) / block_dx - 0.5;
+    int sample_start =
+        static_cast<int>(std::floor(fractional_index)) - samples / 2 + 1;
+    sample_start = std::max(0, std::min(normal_n - samples, sample_start));
+    std::vector<Real> normal_weights(static_cast<std::size_t>(samples), 1.0);
+    for (int a = 0; a < samples; ++a) {
+      const Real node_a = static_cast<Real>(sample_start + a);
+      for (int b = 0; b < samples; ++b) {
+        if (a == b) {
+          continue;
+        }
+        const Real node_b = static_cast<Real>(sample_start + b);
+        normal_weights[static_cast<std::size_t>(a)] *=
+            (fractional_index - node_b) / (node_a - node_b);
       }
     }
-    for (int j = indcs.js; j <= indcs.je; ++j) {
-      const Real y =
-          CellCenterX(j - indcs.js, indcs.nx2, size(m).x2min,
-                      size(m).x2max);
-      for (int i = indcs.is; i <= indcs.ie; ++i) {
-        const Real x =
-            CellCenterX(i - indcs.is, indcs.nx1, size(m).x1min,
-                        size(m).x1max);
-        const Real z =
-            CellCenterX(k_plane - indcs.ks, indcs.nx3, size(m).x3min,
-                        size(m).x3max);
-        output << x << ' ' << y << ' ' << z << ' '
-               << host_adm(m, adm::ADM::I_ADM_PSI4, k_plane, j, i) << ' '
-               << m << ' ' << i << ' ' << j << ' ' << k_plane << '\n';
+    const int normal_index =
+        normal_begin +
+        std::clamp(static_cast<int>(std::llround(fractional_index)),
+                   0,
+                   normal_n - 1);
+    const auto interpolate =
+        [&](const auto &view, const int variable, const int k, const int j,
+            const int i) {
+          Real value = 0.0;
+          for (int sample = 0; sample < samples; ++sample) {
+            const int index = normal_begin + sample_start + sample;
+            const int sample_k = xy_plane ? index : k;
+            const int sample_j = xy_plane ? j : index;
+            value += normal_weights[static_cast<std::size_t>(sample)] *
+                     view(m, variable, sample_k, sample_j, i);
+          }
+          return value;
+        };
+    const int k_begin = xy_plane ? normal_index : indcs.ks;
+    const int k_end = xy_plane ? normal_index : indcs.ke;
+    const int j_begin = xy_plane ? indcs.js : normal_index;
+    const int j_end = xy_plane ? indcs.je : normal_index;
+    for (int k = k_begin; k <= k_end; ++k) {
+      const Real z = xy_plane
+                         ? plane_coordinate
+                         : CellCenterX(k - indcs.ks, indcs.nx3,
+                                       size(m).x3min, size(m).x3max);
+      for (int j = j_begin; j <= j_end; ++j) {
+        const Real y = xy_plane
+                           ? CellCenterX(j - indcs.js, indcs.nx2,
+                                         size(m).x2min, size(m).x2max)
+                           : plane_coordinate;
+        for (int i = indcs.is; i <= indcs.ie; ++i) {
+          const Real x =
+              CellCenterX(i - indcs.is, indcs.nx1, size(m).x1min,
+                          size(m).x1max);
+          const Real psi4 =
+              interpolate(host_adm, adm::ADM::I_ADM_PSI4, k, j, i);
+          const Real psi = std::pow(psi4, 0.25);
+          const Real alpha = interpolate(
+              host_z4c, z4c::Z4c::I_Z4C_ALPHA, k, j, i);
+          const Real bx =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_BETAX, k, j, i);
+          const Real by =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_BETAY, k, j, i);
+          const Real bz =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_BETAZ, k, j, i);
+          const Real gxx =
+              interpolate(host_adm, adm::ADM::I_ADM_GXX, k, j, i);
+          const Real gxy =
+              interpolate(host_adm, adm::ADM::I_ADM_GXY, k, j, i);
+          const Real gxz =
+              interpolate(host_adm, adm::ADM::I_ADM_GXZ, k, j, i);
+          const Real gyy =
+              interpolate(host_adm, adm::ADM::I_ADM_GYY, k, j, i);
+          const Real gyz =
+              interpolate(host_adm, adm::ADM::I_ADM_GYZ, k, j, i);
+          const Real gzz =
+              interpolate(host_adm, adm::ADM::I_ADM_GZZ, k, j, i);
+          const Real beta_squared =
+              gxx * bx * bx + gyy * by * by + gzz * bz * bz +
+              2.0 * gxy * bx * by + 2.0 * gxz * bx * bz +
+              2.0 * gyz * by * bz;
+          const Real hamiltonian =
+              interpolate(host_constraints, z4c::Z4c::I_CON_H, k, j, i);
+          const Real momentum_squared =
+              interpolate(host_constraints, z4c::Z4c::I_CON_M, k, j, i);
+          const Real c_squared =
+              interpolate(host_constraints, z4c::Z4c::I_CON_C, k, j, i);
+          const Real z_squared =
+              interpolate(host_constraints, z4c::Z4c::I_CON_Z, k, j, i);
+          output << x << ' ' << y << ' ' << z << ' ' << psi << ' '
+                 << alpha << ' '
+                 << std::sqrt(std::max(Real{0.0}, beta_squared)) << ' '
+                 << hamiltonian << ' '
+                 << std::sqrt(std::max(Real{0.0}, momentum_squared)) << ' '
+                 << std::sqrt(std::max(Real{0.0}, c_squared)) << ' '
+                 << std::sqrt(std::max(Real{0.0}, z_squared))
+                 << ' ' << levels(m) - pmbp->pmesh->root_level << ' '
+                 << gids(m) << ' ' << m << ' ' << i << ' ' << j << ' '
+                 << k << '\n';
       }
     }
   }
+}
+
 }
 
 } // namespace
@@ -1172,6 +1275,19 @@ void ProblemGenerator::Z4cSpeckCartReader(ParameterInput *pin,
     std::exit(EXIT_FAILURE);
   }
 
+  Z4cFinalizeImportedAdm(pin);
+
+  if (global_variable::my_rank == 0) {
+    std::cout << "Initialized Z4c from SpECK cart data: " << filename
+              << " labels=" << labels.size() << " grid=("
+              << metadata.numpoints[0] << "," << metadata.numpoints[1]
+              << "," << metadata.numpoints[2] << ")" << std::endl;
+  }
+}
+
+void ProblemGenerator::Z4cFinalizeImportedAdm(ParameterInput *pin) {
+  pgen_final_func = SpeckCartConstraintReport;
+  MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
   switch (pmy_mesh_->mb_indcs.ng) {
     case 2:
       pmbp->pz4c->ADMToZ4c<2>(pmbp, pin);
@@ -1194,20 +1310,18 @@ void ProblemGenerator::Z4cSpeckCartReader(ParameterInput *pin,
   const ConstraintSummary summary = ComputeConstraintSummary(pmy_mesh_);
   EnforceConstraintThresholds(pin, summary);
   try {
-    WriteAdmPsi4XyPlane(pin, pmbp);
+    WriteImportedAdmPlane(pin, pmbp, true);
+    WriteImportedAdmPlane(pin, pmbp, false);
   } catch (const std::exception &error) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl
-              << "Failed to write AthenaK SpECK cart xy-plane diagnostic: "
+              << "Failed to write AthenaK imported-ADM plane diagnostic: "
               << error.what() << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
   if (global_variable::my_rank == 0) {
-    std::cout << "Initialized Z4c from SpECK cart data: " << filename
-              << " labels=" << labels.size() << " grid=("
-              << metadata.numpoints[0] << "," << metadata.numpoints[1]
-              << "," << metadata.numpoints[2] << ")"
+    std::cout << "Converted imported ADM data to Z4c"
               << " C_rms=" << summary.c_rms << " H_rms=" << summary.h_rms
               << " M_rms=" << summary.m_rms << " Z_rms=" << summary.z_rms
               << std::endl;

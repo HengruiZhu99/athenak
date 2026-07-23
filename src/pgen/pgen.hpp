@@ -81,6 +81,7 @@ class ProblemGenerator {
   void Z4cBoostedPuncture(ParameterInput *pin, const bool restart);
   void Z4cLinearWave(ParameterInput *pin, const bool restart);
   void Z4cSpeckCartReader(ParameterInput *pin, const bool restart);
+  void Z4cFinalizeImportedAdm(ParameterInput *pin);
   void SelfGravity(ParameterInput *pin, const bool restart);
   void BinaryGravity(ParameterInput *pin, const bool restart);
   void BECollapse(ParameterInput *pin, const bool restart);

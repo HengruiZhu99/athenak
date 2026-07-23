@@ -147,6 +147,27 @@ else()
 	set(TWO_PUNCTURES 0)
 endif()
 
+if (${PROBLEM} STREQUAL "z4c_irisk_xcts")
+  get_filename_component(_IRISK_DEFAULT_ROOT "${CMAKE_SOURCE_DIR}/../bbhk" ABSOLUTE)
+  set(IRISK_ROOT "${_IRISK_DEFAULT_ROOT}" CACHE PATH
+      "IrisK source tree providing the AthenaK spectral interpolator")
+  set(IRISK_INTERPOLATOR_LIBRARY
+      "${IRISK_ROOT}/build/serial-clang/src/libiris_athenak_interpolator.a"
+      CACHE FILEPATH "Built IrisK AthenaK spectral interpolation library")
+  set(_IRISK_INTERPOLATOR_HEADER
+      "${IRISK_ROOT}/src/initial_data/handoff/irisk_athenak_spectral_interpolator.h")
+  if (NOT EXISTS "${_IRISK_INTERPOLATOR_HEADER}" OR
+      NOT EXISTS "${IRISK_INTERPOLATOR_LIBRARY}")
+    message(FATAL_ERROR
+      "z4c_irisk_xcts requires IrisK's spectral interpolation library. "
+      "Build target iris_athenak_interpolator in IrisK and set IRISK_ROOT / "
+      "IRISK_INTERPOLATOR_LIBRARY if it is not in the default serial-clang build.")
+  endif()
+  target_include_directories(athena PRIVATE
+      "${IRISK_ROOT}/src/initial_data/handoff")
+  target_link_libraries(athena PUBLIC "${IRISK_INTERPOLATOR_LIBRARY}")
+endif()
+
 if (${PROBLEM} STREQUAL "z4c_spectre_bbh")
   # Load binary black hole initial data from the SpECTRE code:
   # https://spectre-code.org
