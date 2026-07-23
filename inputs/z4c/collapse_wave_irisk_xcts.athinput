@@ -1,0 +1,95 @@
+# AthenaK Z4c load of an IrisK filled-sphere collapse-wave XCTS ADM export.
+# Configure AthenaK with: cmake -DPROBLEM=z4c_irisk_xcts ...
+
+<comment>
+problem = IrisK compact collapsing-wave XCTS data
+reference = ../bbhk/inputs/xcts/collapse_wave_xcts_export.athinput
+
+<job>
+basename = collapse_wave_irisk_xcts
+
+<mesh>
+nghost = 4
+nx1 = 48
+x1min = -7.0
+x1max = 7.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 48
+x2min = -7.0
+x2max = 7.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 48
+x3min = -7.0
+x3max = 7.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 48
+nx2 = 48
+nx3 = 48
+
+# AthenaK owns this refinement layout. Add, remove, or overlap <refined_regionN>
+# regions as needed; IrisK's linked interpolator samples every resulting block.
+<mesh_refinement>
+refinement = static
+max_nmb_per_rank = 2048
+
+<refined_region1>
+level = 1
+x1min = -7.0
+x1max = 7.0
+x2min = -7.0
+x2max = 7.0
+x3min = -7.0
+x3max = 7.0
+
+# A second level in the positive octant exercises genuine coarse/fine SMR
+# interfaces while retaining an exactly identical physical refinement layout
+# at every convergence resolution.
+<refined_region2>
+level = 2
+x1min = 0.0
+x1max = 7.0
+x2min = 0.0
+x2max = 7.0
+x3min = 0.0
+x3max = 7.0
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.25
+nlim = 0
+tlim = 0.0
+ndiag = 1
+
+<z4c>
+diss = 0.0
+excise_chi = 0.0
+spatial_order = 6
+
+<problem>
+pgen_name = z4c_irisk_xcts
+# IrisK's interpolation library evaluates its nodal DG representation at every
+# cell and ghost center in this root/static-AMR mesh. No matching uniform export
+# grid is required; all requested points must lie inside IrisK's outer sphere.
+irisk_adm_spectral_file = ../bbhk/collapse_wave_xcts.adm_spectral
+require_ghost_coverage = true
+write_constraint_summary = true
+constraint_summary_file = collapse_wave_irisk_xcts-constraints.dat
+fail_if_c_rms_above = 1.0e300
+fail_if_h_rms_above = 1.0e300
+fail_if_m_rms_above = 1.0e300
+fail_if_z_rms_above = 1.0e300
+xy_plane_output = EMPTY
+xy_plane_z = 0.0
+xz_plane_output = EMPTY
+xz_plane_y = 0.0
+
+<output1>
+file_type = hst
+data_format = %24.16e
+dt = -1.0

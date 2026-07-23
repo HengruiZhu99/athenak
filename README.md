@@ -37,6 +37,9 @@ Other pages give instructions for running the code.
 
 Since AthenaK is very similar to Athena++, the [Athena++ documention](https://github.com/PrincetonUniversity/athena/wiki) may also be helpful.
 
+The repository also includes an [IrisK XCTS-to-Z4c import path](docs/irisk_xcts_import.md)
+that spectrally interpolates constrained data onto arbitrary AMR meshblocks.
+
 ## Tutorials ##
 
 A seperate GitHUb repo contains a variety of [Tutorials](https://github.com/IAS-Astrophysics/athenak-gallery) with detailed instructions on how to use AthenaK to solve specific problems.
