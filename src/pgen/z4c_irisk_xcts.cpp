@@ -46,6 +46,24 @@ struct ConstraintSummary {
   std::exit(EXIT_FAILURE);
 }
 
+std::filesystem::path ResolveSpectralInputPath(const std::string &filename) {
+  std::error_code error;
+  std::filesystem::path resolved =
+      std::filesystem::absolute(filename, error).lexically_normal();
+  if (error) {
+    Fail("cannot resolve IrisK spectral data path '" + filename +
+         "' from AthenaK's launch directory: " + error.message());
+  }
+  resolved = std::filesystem::weakly_canonical(resolved, error);
+  if (error || !std::filesystem::is_regular_file(resolved)) {
+    Fail("IrisK spectral data file does not exist or is not a regular file: " +
+         resolved.string() +
+         " (relative problem/irisk_adm_spectral_file paths are resolved "
+         "before -d, against AthenaK's launch directory)");
+  }
+  return resolved;
+}
+
 void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
                              IrisAthenakSpectralInterpolator *interpolator) {
   auto &u_adm = pmbp->padm->u_adm;
@@ -491,11 +509,17 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   if (filename == "EMPTY" || filename.empty()) {
     Fail("z4c_irisk_xcts requires problem.irisk_adm_spectral_file");
   }
+  const std::filesystem::path resolved_filename =
+      ResolveSpectralInputPath(filename);
+  const std::string resolved_filename_string = resolved_filename.string();
+  const std::uintmax_t spectral_file_bytes =
+      std::filesystem::file_size(resolved_filename);
   IrisAthenakSpectralInterpolator *interpolator = nullptr;
   std::array<char, 1024> error{};
-  if (IrisAthenakSpectralOpen(filename.c_str(), &interpolator, error.data(),
-                              error.size()) != 0) {
-    Fail(std::string("failed to open IrisK spectral data: ") + error.data());
+  if (IrisAthenakSpectralOpen(resolved_filename_string.c_str(), &interpolator,
+                              error.data(), error.size()) != 0) {
+    Fail("failed to open IrisK spectral data '" + resolved_filename_string +
+         "': " + error.data());
   }
   FillAdmFromIrisSpectral(pmbp, interpolator);
   IrisAthenakSpectralClose(interpolator);
@@ -505,7 +529,8 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   // pre-collapsed lapse.
   Z4cFinalizeImportedAdm(pin);
   if (global_variable::my_rank == 0) {
-    std::cout << "Initialized Z4c from IrisK spectral XCTS data: " << filename
-              << std::endl;
+    std::cout << "Initialized Z4c from IrisK spectral XCTS data: "
+              << resolved_filename_string
+              << " bytes=" << spectral_file_bytes << std::endl;
   }
 }

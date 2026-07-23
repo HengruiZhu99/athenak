@@ -2,6 +2,16 @@
 # This input uses dimensionless gauge coefficients and dchi-driven AMR.  AthenaK
 # requires a finite level budget up front; increase num_levels/max_ref_lev together
 # when a longer DSS cascade is needed.
+#
+# Launch from a sibling athenak repository root after running IrisK's
+# collapse_wave_xcts_export.athinput:
+#   env OMP_NUM_THREADS=1 KOKKOS_NUM_THREADS=1 \
+#     ./build_irisk_xcts/src/athena \
+#     -i inputs/z4c/collapse_wave_irisk_xcts_critical.athinput \
+#     -d ../collapse-wave-data/athenak-critical-A1
+#
+# The initial-data path is resolved before AthenaK applies -d. Override
+# problem/irisk_adm_spectral_file with an absolute path for another layout.
 
 <comment>
 problem = IrisK compact collapsing-wave XCTS data with dchi AMR
@@ -97,7 +107,7 @@ num_horizons = 0
 
 <problem>
 pgen_name = z4c_irisk_xcts
-irisk_adm_spectral_file = ../bbhk/collapse_wave_xcts.adm_spectral
+irisk_adm_spectral_file = ../collapse-wave-data/collapse_wave_xcts_A1_N6.adm_spectral
 require_ghost_coverage = true
 write_constraint_summary = true
 constraint_summary_file = collapse_wave_irisk_xcts_critical-constraints.dat
@@ -112,3 +122,9 @@ xz_plane_output = EMPTY
 file_type = hst
 data_format = %24.16e
 dt = 0.01
+
+# Retain restart points while tuning toward threshold. The imported IrisK file
+# is needed only for a fresh start; AthenaK restarts restore evolved Z4c data.
+<output2>
+file_type = rst
+dt = 0.1
