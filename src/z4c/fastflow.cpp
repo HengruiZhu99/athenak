@@ -127,6 +127,17 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
                                             "wait_until_punc_are_close_" + n_str, 0);
   use_puncture_massweighted_center = pin->GetOrAddBoolean("fastflow",
                                      "use_puncture_massweighted_center_" + n_str, 0);
+  use_minimum_lapse_center = pin->GetOrAddBoolean(
+      "fastflow", "use_minimum_lapse_center_" + n_str, false);
+  if (use_minimum_lapse_center &&
+      (use_puncture >= 0 || use_puncture_massweighted_center)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "use_minimum_lapse_center_" << n_str
+              << " is mutually exclusive with puncture-based FastFlow centers"
+              << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
   // Timer
   start_time = pin->GetOrAddReal("fastflow", "start_time_" + n_str,
@@ -487,6 +498,10 @@ void FastFlow::InitialGuess() {
     center[0] = pos[0];
     center[1] = pos[1];
     center[2] = pos[2];
+  }
+
+  if (use_minimum_lapse_center) {
+    MinimumLapseCenter(&center[0], &center[1], &center[2]);
   }
 
   // Take a0 either from previous or from input value
@@ -1589,4 +1604,89 @@ bool FastFlow::PuncAreClose() {
   Real const mass = PuncSumMasses();
   Real const maxdist = PuncMaxDistance();
   return (maxdist < merger_distance * mass);
+}
+
+//----------------------------------------------------------------------------------------
+//! \fn void FastFlow::MinimumLapseCenter(Real *xc, Real *yc, Real *zc)
+//! \brief Set the center to the active cell with the global minimum lapse.
+void FastFlow::MinimumLapseCenter(Real *xc, Real *yc, Real *zc) {
+  auto &indcs = pmbp->pmesh->mb_indcs;
+  const int nx1 = indcs.nx1;
+  const int nx2 = indcs.nx2;
+  const int nx3 = indcs.nx3;
+  const int is = indcs.is;
+  const int js = indcs.js;
+  const int ks = indcs.ks;
+  const int nkji = nx3 * nx2 * nx1;
+  const int nji = nx2 * nx1;
+  const int nmkji = pmbp->nmb_thispack * nkji;
+  auto alpha = pmbp->pz4c->z4c.alpha;
+
+  using MinLoc = Kokkos::MinLoc<Real, int>;
+  MinLoc::value_type local_min;
+  Kokkos::parallel_reduce(
+      "FastFlow minimum lapse center",
+      Kokkos::RangePolicy<DevExeSpace>(0, nmkji),
+      KOKKOS_LAMBDA(const int idx, MinLoc::value_type &minimum) {
+        const int m = idx / nkji;
+        const int k0 = (idx - m * nkji) / nji;
+        const int j0 = (idx - m * nkji - k0 * nji) / nx1;
+        const int i = (idx - m * nkji - k0 * nji - j0 * nx1) + is;
+        const int j = j0 + js;
+        const int k = k0 + ks;
+        const Real lapse = alpha(m, k, j, i);
+        if (lapse < minimum.val) {
+          minimum.val = lapse;
+          minimum.loc = idx;
+        }
+      },
+      MinLoc(local_min));
+
+  const bool local_minimum_is_valid =
+      local_min.loc >= 0 && local_min.loc < nmkji &&
+      std::isfinite(local_min.val);
+  Real minimum_lapse =
+      local_minimum_is_valid ? local_min.val
+                             : std::numeric_limits<Real>::max();
+  int owner_rank = global_variable::my_rank;
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &minimum_lapse, 1, MPI_ATHENA_REAL, MPI_MIN,
+                MPI_COMM_WORLD);
+  int candidate_rank =
+      (local_minimum_is_valid && local_min.val == minimum_lapse)
+          ? global_variable::my_rank
+          : std::numeric_limits<int>::max();
+  MPI_Allreduce(&candidate_rank, &owner_rank, 1, MPI_INT, MPI_MIN,
+                MPI_COMM_WORLD);
+#endif
+  if (!std::isfinite(minimum_lapse) ||
+      minimum_lapse == std::numeric_limits<Real>::max()) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "FastFlow could not locate a finite lapse minimum"
+              << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  Real minimum_position[3] = {0.0, 0.0, 0.0};
+  if (global_variable::my_rank == owner_rank) {
+    const int m = local_min.loc / nkji;
+    const int k0 = (local_min.loc - m * nkji) / nji;
+    const int j0 = (local_min.loc - m * nkji - k0 * nji) / nx1;
+    const int i0 = local_min.loc - m * nkji - k0 * nji - j0 * nx1;
+    pmbp->pmb->mb_size.sync_host();
+    auto size = pmbp->pmb->mb_size.h_view;
+    minimum_position[0] =
+        CellCenterX(i0, nx1, size(m).x1min, size(m).x1max);
+    minimum_position[1] =
+        CellCenterX(j0, nx2, size(m).x2min, size(m).x2max);
+    minimum_position[2] =
+        CellCenterX(k0, nx3, size(m).x3min, size(m).x3max);
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Bcast(minimum_position, 3, MPI_ATHENA_REAL, owner_rank, MPI_COMM_WORLD);
+#endif
+  *xc = minimum_position[0];
+  *yc = minimum_position[1];
+  *zc = minimum_position[2];
 }

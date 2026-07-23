@@ -493,6 +493,8 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   // elliptically solved XCTS lapse and shift rather than imposing a puncture
   // pre-collapsed lapse.
   Z4cFinalizeImportedAdm(pin);
-  std::cout << "Initialized Z4c from IrisK spectral XCTS data: " << filename
-            << std::endl;
+  if (global_variable::my_rank == 0) {
+    std::cout << "Initialized Z4c from IrisK spectral XCTS data: " << filename
+              << std::endl;
+  }
 }

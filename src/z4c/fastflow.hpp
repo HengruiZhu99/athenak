@@ -82,6 +82,7 @@ class FastFlow {
   int use_puncture; // n surface follows the puncture tracker if use_puncture[n] > 0
   Real merger_distance; // Distance in M at which BHs are considered as merged
   bool use_puncture_massweighted_center;
+  bool use_minimum_lapse_center;
 
   // Start and Stop times for each surface
   Real start_time;
@@ -181,6 +182,7 @@ class FastFlow {
   Real PuncSumMasses();
   void PuncWeightedMassCentralPoint(Real *xc, Real *yc, Real *zc);
   bool PuncAreClose();
+  void MinimumLapseCenter(Real *xc, Real *yc, Real *zc);
 };
 
 #endif  // Z4C_FASTFLOW_HPP_

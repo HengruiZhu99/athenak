@@ -54,5 +54,11 @@ Unlike puncture initial data, the loader does not apply
 `GaugePreCollapsedLapse`: the elliptically solved XCTS lapse and shift are part
 of the constrained data and are retained.
 
+For collapse evolutions without puncture trackers, FastFlow can follow the
+global active-cell lapse minimum by setting
+`fastflow.use_minimum_lapse_center_N = true` for horizon `N`. This option is
+mutually exclusive with `use_puncture_N` and
+`use_puncture_massweighted_center_N`.
+
 The IrisK pgen already supplies all data needed here. The separate experimental
 native CTS/multigrid implementation in AthenaK is not used by this import path.
