@@ -175,7 +175,7 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
 
 void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   // set number of and names of history variables for z4c
-  pdata->nhist = 9;
+  pdata->nhist = 10;
   pdata->label[0] = "C-norm2";
   pdata->label[1] = "H-norm2";
   pdata->label[2] = "M-norm2";
@@ -185,6 +185,8 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->label[6] = "Mz-norm2";
   pdata->label[7] = "Theta-norm2";
   pdata->label[8] = "Volume";
+  pdata->label[9] = "max_abs_K";
+  pdata->reduction[9] = HistoryData::Reduction::max;
 
   // capture class variabels for kernel
   auto &u0_ = pm->pmb_pack->pz4c->u0;
@@ -194,7 +196,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   auto &adm = pm->pmb_pack->padm->adm;
 
   auto &size = pm->pmb_pack->pmb->mb_size;
-  int &nhist_ = pdata->nhist;
+  constexpr int nsum = 9;
   auto &opt = pm->pmb_pack->pz4c->opt;
 
   // loop over all MeshBlocks in this pack
@@ -247,8 +249,8 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       hvars.the_array[8] = 0;
     }
 
-    // fill rest of the_array with zeros, if nhist < NHISTORY_VARIABLES
-    for (int n=nhist_; n<NHISTORY_VARIABLES; ++n) {
+    // max|K| is reduced separately below.
+    for (int n=nsum; n<NHISTORY_VARIABLES; ++n) {
       hvars.the_array[n] = 0.0;
     }
 
@@ -257,9 +259,25 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   }, Kokkos::Sum<array_sum::GlobalSum>(sum_this_mb));
 
   // store data into hdata array
-  for (int n=0; n<pdata->nhist; ++n) {
+  for (int n=0; n<nsum; ++n) {
     pdata->hdata[n] = sum_this_mb.the_array[n];
   }
+  Real max_abs_K = 0.0;
+  Kokkos::parallel_reduce(
+      "Z4cHistoryMaxAbsK",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+      KOKKOS_LAMBDA(const int &idx, Real &rank_max_abs_K) {
+        int m = idx / nkji;
+        int k = (idx - m * nkji) / nji;
+        int j = (idx - m * nkji - k * nji) / nx1;
+        int i = (idx - m * nkji - k * nji - j * nx1) + is;
+        k += ks;
+        j += js;
+        const Real K = z4c.vKhat(m, k, j, i) + 2.0 * z4c.vTheta(m, k, j, i);
+        rank_max_abs_K = fmax(rank_max_abs_K, fabs(K));
+      },
+      Kokkos::Max<Real>(max_abs_K));
+  pdata->hdata[9] = max_abs_K;
 
   return;
 }
@@ -381,14 +399,24 @@ void HistoryOutput::LoadMHDHistoryData(HistoryData *pdata, Mesh *pm) {
 
 void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   for (auto &data : hist_data) {
-    // first, perform in-place sum over all MPI ranks
+    // First reduce over all MPI ranks. Most history variables are extensive sums,
+    // while diagnostics such as max|K| require a different operation.
 #if MPI_PARALLEL_ENABLED
-    if (global_variable::my_rank == 0) {
-      MPI_Reduce(MPI_IN_PLACE, &(data.hdata[0]), data.nhist, MPI_ATHENA_REAL,
-         MPI_SUM, 0, MPI_COMM_WORLD);
-    } else {
-      MPI_Reduce(&(data.hdata[0]), &(data.hdata[0]), data.nhist,
-         MPI_ATHENA_REAL, MPI_SUM, 0, MPI_COMM_WORLD);
+    for (int n = 0; n < data.nhist; ++n) {
+      MPI_Op op = MPI_SUM;
+      if (data.reduction[n] == HistoryData::Reduction::max) {
+        op = MPI_MAX;
+      } else if (data.reduction[n] == HistoryData::Reduction::min) {
+        op = MPI_MIN;
+      }
+      if (global_variable::my_rank == 0) {
+        MPI_Reduce(MPI_IN_PLACE, &(data.hdata[n]), 1, MPI_ATHENA_REAL,
+                   op, 0, MPI_COMM_WORLD);
+      } else {
+        Real unused_receive = 0.0;
+        MPI_Reduce(&(data.hdata[n]), &unused_receive, 1, MPI_ATHENA_REAL,
+                   op, 0, MPI_COMM_WORLD);
+      }
     }
 #endif
 

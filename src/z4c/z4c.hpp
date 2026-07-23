@@ -154,6 +154,8 @@ class Z4c {
     // Constraint damping parameters
     Real damp_kappa1;
     Real damp_kappa2;
+    // If true, damp_kappa1 and target_kappa1 are dimensionless multipliers of max|K|.
+    bool damp_kappa1_max_K;
     // Gauge conditions for the lapse
     Real lapse_oplog;
     Real lapse_harmonicf;
@@ -176,6 +178,8 @@ class Z4c {
     Real shift_hh;
     Real shift_advect;
     Real shift_eta;
+    // If true, shift_eta is a dimensionless multiplier of max|K|.
+    bool shift_eta_max_K;
     // slow start shift condition
     Real sss_damping_amp;
     Real sss_damping_time;

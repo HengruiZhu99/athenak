@@ -189,13 +189,20 @@ struct OutputMeshBlockInfo {
 //  \brief  container for history data for different physics modules
 
 struct HistoryData {
+  enum class Reduction { sum, max, min };
+
   int nhist;
   PhysicsModule physics;
   std::string label[NHISTORY_VARIABLES];
   Real hdata[NHISTORY_VARIABLES];
+  Reduction reduction[NHISTORY_VARIABLES];
   bool header_written;
   // constructor
-  explicit HistoryData(PhysicsModule name) : physics(name), header_written(false) {}
+  explicit HistoryData(PhysicsModule name) : physics(name), header_written(false) {
+    for (auto &op : reduction) {
+      op = Reduction::sum;
+    }
+  }
 };
 
 //----------------------------------------------------------------------------------------

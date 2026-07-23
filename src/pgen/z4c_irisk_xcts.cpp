@@ -28,6 +28,7 @@
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_amr.hpp"
 
 namespace {
 
@@ -50,6 +51,10 @@ void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
   auto &u_adm = pmbp->padm->u_adm;
   HostArray5D<Real>::HostMirror host_u_adm = create_mirror(u_adm);
   HostArray5D<Real>::HostMirror host_u_z4c = create_mirror(pmbp->pz4c->u0);
+  // The spectral export contains ADM fields plus lapse and shift, but not Theta or the
+  // telegraph flux B_i.  Initialize every Z4c-only field deterministically before
+  // ADMToZ4c overwrites the conformal geometry and curvature variables.
+  Kokkos::deep_copy(host_u_z4c, 0.0);
   adm::ADM::ADMhost_vars host_adm;
   host_adm.g_dd.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_GXX,
                                      adm::ADM::I_ADM_GZZ);
@@ -434,6 +439,10 @@ void WriteImportedAdmPlane(ParameterInput *pin, MeshBlockPack *pmbp,
 
 } // namespace
 
+void IrisXctsRefinementCondition(MeshBlockPack *pmbp) {
+  pmbp->pz4c->pamr->Refine(pmbp);
+}
+
 void ProblemGenerator::Z4cFinalizeImportedAdm(ParameterInput *pin) {
   pgen_final_func = IrisXctsConstraintReport;
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
@@ -469,6 +478,8 @@ void ProblemGenerator::Z4cFinalizeImportedAdm(ParameterInput *pin) {
 }
 
 void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
+  // Enroll on both fresh starts and restarts so adaptive runs retain their criterion.
+  user_ref_func = IrisXctsRefinementCondition;
   if (restart)
     return;
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;

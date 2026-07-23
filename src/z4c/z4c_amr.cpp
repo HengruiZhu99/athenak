@@ -33,7 +33,7 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
   } else if (ref_method == "chi") {
     method = Chi;
     chi_thresh = pin->GetOrAddReal("z4c_amr", "chi_min", 0.2);
-  } else if (ref_method == "dchi") {
+  } else if (ref_method == "dchi" || ref_method == "dchi_max") {
     method = dChi;
     dchi_thresh = pin->GetOrAddReal("z4c_amr", "dchi_max", 0.01);
   } else {
@@ -53,8 +53,20 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
       break;
     }
   }
-  int max_level = pin->GetOrAddInteger("mesh_refinement", "num_levels", 1);
-  max_ref_lev = pin->GetOrAddInteger("z4c_amr","max_ref_lev",max_level);
+  // num_levels includes root level 0, so the largest physical refinement level is
+  // num_levels - 1.  AthenaK's mesh tree enforces the same hard upper bound.
+  int num_levels = pin->GetOrAddInteger("mesh_refinement", "num_levels", 1);
+  max_ref_lev =
+      pin->GetOrAddInteger("z4c_amr", "max_ref_lev", num_levels - 1);
+  if ((method == Chi || method == dChi) &&
+      (max_ref_lev < 0 || max_ref_lev >= num_levels)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+              << __LINE__ << std::endl
+              << "<z4c_amr>/max_ref_lev must be between 0 and "
+              << num_levels - 1 << " for <mesh_refinement>/num_levels="
+              << num_levels << ", but is " << max_ref_lev << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 }
 
 // 1: refines, -1: de-refines, 0: does nothing
@@ -213,9 +225,11 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
   int I_Z4C_CHI  = pmbp->pz4c->I_Z4C_CHI;
   // note: we need this to prevent capture by this in the lambda expr.
   auto dchi_thresh = this->dchi_thresh;
+  auto root_lev = pmesh->root_level;
+  auto max_ref_lev = this->max_ref_lev;
 
   par_for_outer(
-    "Z4c_AMR::ChiMin", DevExeSpace(), 0, 0, 0, (nmb - 1),
+    "Z4c_AMR::DchiMax", DevExeSpace(), 0, 0, 0, (nmb - 1),
     KOKKOS_LAMBDA(TeamMember_t tmember, const int m) {
       Real team_dmax;
       Kokkos::parallel_reduce(
@@ -226,6 +240,9 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
           int i = (idx - k * nji - j * nx1) + is;
           j += js;
           k += ks;
+          // This is 2*dx*|grad(chi)| on an isotropic mesh, not |grad(chi)|.
+          // Since chi is dimensionless, the indicator is dimensionless and follows a
+          // self-similar feature without introducing a preferred physical length.
           Real d2 = SQR(u0(m,I_Z4C_CHI,k,j,i+1) - u0(m,I_Z4C_CHI,k,j,i-1));
           d2 += SQR(u0(m,I_Z4C_CHI,k,j+1,i) - u0(m,I_Z4C_CHI,k,j-1,i));
           d2 += SQR(u0(m,I_Z4C_CHI,k+1,j,i) - u0(m,I_Z4C_CHI,k-1,j,i));
@@ -244,6 +261,19 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
   // sync host and device
   refine_flag.template modify<DevExeSpace>();
   refine_flag.template sync<HostMemSpace>();
+
+  // Honor the Z4c-specific cap as well as AthenaK's mesh-tree num_levels cap.
+  for (int m = 0; m < nmb; ++m) {
+    int level = pmesh->lloc_eachmb[m + mbs].level - root_lev;
+    if (level > max_ref_lev) {
+      refine_flag.h_view(m + mbs) = -1;
+    } else if (level == max_ref_lev && refine_flag.h_view(m + mbs) == 1) {
+      refine_flag.h_view(m + mbs) = 0;
+    }
+  }
+
+  refine_flag.template modify<HostMemSpace>();
+  refine_flag.template sync<DevExeSpace>();
 }
 
 // Enforce some minimum resolution within a certain spherical region

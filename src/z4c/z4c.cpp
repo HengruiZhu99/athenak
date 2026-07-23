@@ -127,6 +127,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.eps_floor = pin->GetOrAddReal("z4c", "eps_floor", 1e-12);
   opt.damp_kappa1 = pin->GetOrAddReal("z4c", "damp_kappa1", 0.0);
   opt.damp_kappa2 = pin->GetOrAddReal("z4c", "damp_kappa2", 0.0);
+  opt.damp_kappa1_max_K =
+      pin->GetOrAddBoolean("z4c", "damp_kappa1_max_K", false);
   // Gauge conditions (default to moving puncture gauge)
   opt.lapse_harmonicf = pin->GetOrAddReal("z4c", "lapse_harmonicf", 1.0);
   opt.lapse_harmonic = pin->GetOrAddReal("z4c", "lapse_harmonic", 0.0);
@@ -148,6 +150,22 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.shift_alpha2ggamma = pin->GetOrAddReal("z4c", "shift_alpha2Gamma", 0.0);
   opt.shift_hh = pin->GetOrAddReal("z4c", "shift_H", 0.0);
   opt.shift_eta = pin->GetOrAddReal("z4c", "shift_eta", 2.0);
+  opt.shift_eta_max_K = pin->GetOrAddBoolean("z4c", "shift_eta_max_K", false);
+
+  if (opt.telegraph_tau <= 0.0) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "<z4c>/telegraph_tau must be positive, but is "
+              << opt.telegraph_tau << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.telegraph_kappa < 0.0) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "<z4c>/telegraph_kappa must be nonnegative, but is "
+              << opt.telegraph_kappa << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   opt.use_z4c = pin->GetOrAddBoolean("z4c", "use_z4c", true);
 

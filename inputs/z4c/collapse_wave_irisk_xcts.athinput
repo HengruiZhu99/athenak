@@ -70,10 +70,31 @@ ndiag = 1
 diss = 0.0
 excise_chi = 0.0
 spatial_order = 6
-telegraph_lapse = false
+# Pure, scale-invariant telegraph lapse.  Zeroing both algebraic lapse drivers
+# avoids adding the default 1+log term to the telegraph system.
+lapse_oplog = 0.0
+lapse_harmonic = 0.0
+lapse_advect = 1.0
+slow_start_lapse = false
+telegraph_lapse = true
 telegraph_max_K = true
 telegraph_tau = 0.1
 telegraph_kappa = 0.1
+
+# shift_eta is dimensionless when shift_eta_max_K=true; the effective damping
+# coefficient is shift_eta*max|K|.
+shift_eta = 2.0
+shift_eta_max_K = true
+shift_advect = 1.0
+sss_damping_amp = 0.0
+
+# Critical-collapse runs currently disable Z4c damping.  If enabled later,
+# damp_kappa1 and target_kappa1 are dimensionless multipliers of max|K|.
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+damp_kappa1_max_K = true
+roll_kappa = false
+target_kappa1 = 0.0
 
 # Disabled by default for interpolation/convergence tests. Set num_horizons=1
 # for an evolution to center horizon 0 on the global active-cell lapse minimum.

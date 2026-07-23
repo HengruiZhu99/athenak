@@ -44,8 +44,8 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   Tmunu::Tmunu_vars tmunu;
   if (!is_vacuum) tmunu = pmy_pack->ptmunu->tmunu;
 
-  // Gaussian roll for kappa1 (host-side; capture by value into kernels)
-
+  // Gaussian roll for the kappa1 input coefficient (host-side; capture by value).
+  // In max-|K| mode both endpoints are dimensionless multipliers.
   Real kappa1_effective = opt.damp_kappa1;
   if (opt.roll_kappa && time >= opt.kappa_roll_start_time) {
     // Gaussian stitch: S(t0)=1, S→0 as t→\infty
@@ -55,17 +55,21 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     kappa1_effective = opt.target_kappa1
                       + (opt.damp_kappa1 - opt.target_kappa1) * S;
   }
-  const Real kappa1_eff = kappa1_effective;
-
-  Real telegraph_eta = 1.0 / opt.telegraph_tau;
-  if (opt.telegraph_lapse && opt.telegraph_max_K) {
+  // A fixed inverse-length coefficient injects a preferred physical scale.  Compute one
+  // global curvature scale per RHS call and share it between every opt-in scale-invariant
+  // gauge/damping term.
+  const bool use_max_K_scale =
+      (opt.telegraph_lapse && opt.telegraph_max_K) ||
+      opt.shift_eta_max_K || opt.damp_kappa1_max_K;
+  Real max_abs_K = 1.0;
+  if (use_max_K_scale) {
     const int nmkji = nmb * nx3 * nx2 * nx1;
     const int nkji = nx3 * nx2 * nx1;
     const int nji = nx2 * nx1;
-    Real max_abs_K = 0.0;
+    max_abs_K = 0.0;
 
     Kokkos::parallel_reduce(
-        "z4c telegraph max abs K",
+        "z4c global max abs K",
         Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
         KOKKOS_LAMBDA(const int &idx, Real &mb_max_abs_K) {
           int m = idx / nkji;
@@ -84,9 +88,23 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     MPI_Allreduce(MPI_IN_PLACE, &max_abs_K, 1, MPI_ATHENA_REAL, MPI_MAX,
                   MPI_COMM_WORLD);
 #endif
-    telegraph_eta *= max_abs_K;
   }
-  const Real telegraph_eta_eff = telegraph_eta;
+  const Real kappa1_eff =
+      kappa1_effective * (opt.damp_kappa1_max_K ? max_abs_K : 1.0);
+  const Real shift_eta_eff =
+      opt.shift_eta * (opt.shift_eta_max_K ? max_abs_K : 1.0);
+
+  // B_i is dimensionless in alpha_t = chi div(B).  In scale-invariant mode,
+  //
+  //   (partial_t - beta^j partial_j) B_i
+  //       = -(max|K|/tau) B_i + (kappa/tau) partial_i alpha,
+  //
+  // where tau and kappa are dimensionless.  Keeping the gradient coefficient separate
+  // is essential: multiplying the entire bracket by max|K| would require kappa to carry
+  // a dynamically changing length scale and would freeze the gauge when max|K| = 0.
+  const Real telegraph_damping =
+      (opt.telegraph_max_K ? max_abs_K : 1.0) / opt.telegraph_tau;
+  const Real telegraph_gradient = opt.telegraph_kappa / opt.telegraph_tau;
 
   // ===================================================================================
   // Main RHS calculation
@@ -721,8 +739,8 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
           for (int a = 0; a < 3; ++a) {
             rhs.vB_d(m, a, k, j, i) =
                 opt.lapse_advect * LB_d(a) +
-                telegraph_eta_eff *
-                    (-z4c.vB_d(m, a, k, j, i) + opt.telegraph_kappa * dalpha_d(a));
+                -telegraph_damping * z4c.vB_d(m, a, k, j, i) +
+                telegraph_gradient * dalpha_d(a);
           }
         }
         Real const shift_gamma =
@@ -736,7 +754,8 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
         for (int a = 0; a < 3; ++a) {
           rhs.beta_u(m, a, k, j, i) =
               shift_gamma * z4c.vGam_u(m, a, k, j, i) + opt.shift_advect * Lbeta_u(a);
-          rhs.beta_u(m, a, k, j, i) -= opt.shift_eta * z4c.beta_u(m, a, k, j, i);
+          rhs.beta_u(m, a, k, j, i) -=
+              shift_eta_eff * z4c.beta_u(m, a, k, j, i);
           // FORCE beta = 0
           // rhs.beta_u(m,a,k,j,i) = 0;
         }
