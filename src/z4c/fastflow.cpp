@@ -34,6 +34,39 @@
 #include "coordinates/cell_locations.hpp"
 #include "utils/inline_interpolator.hpp"
 
+namespace {
+
+using MinimumLapseLocation = Kokkos::MinLoc<Real, int>;
+
+template <typename AlphaView>
+struct MinimumLapseLocationFunctor {
+  AlphaView alpha;
+  int nx1;
+  int is;
+  int js;
+  int ks;
+  int nkji;
+  int nji;
+
+  KOKKOS_INLINE_FUNCTION
+  void operator()(const int idx,
+                  MinimumLapseLocation::value_type &minimum) const {
+    const int m = idx / nkji;
+    const int k0 = (idx - m * nkji) / nji;
+    const int j0 = (idx - m * nkji - k0 * nji) / nx1;
+    const int i = (idx - m * nkji - k0 * nji - j0 * nx1) + is;
+    const int j = j0 + js;
+    const int k = k0 + ks;
+    const Real lapse = alpha(m, k, j, i);
+    if (lapse < minimum.val) {
+      minimum.val = lapse;
+      minimum.loc = idx;
+    }
+  }
+};
+
+}  // namespace
+
 //----------------------------------------------------------------------------------------
 //! \fn FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput * pin, int n)
 //! \brief Constructor for FastFlow class.
@@ -1622,25 +1655,13 @@ void FastFlow::MinimumLapseCenter(Real *xc, Real *yc, Real *zc) {
   const int nmkji = pmbp->nmb_thispack * nkji;
   auto alpha = pmbp->pz4c->z4c.alpha;
 
-  using MinLoc = Kokkos::MinLoc<Real, int>;
-  MinLoc::value_type local_min;
+  MinimumLapseLocation::value_type local_min;
   Kokkos::parallel_reduce(
       "FastFlow minimum lapse center",
       Kokkos::RangePolicy<DevExeSpace>(0, nmkji),
-      KOKKOS_LAMBDA(const int idx, MinLoc::value_type &minimum) {
-        const int m = idx / nkji;
-        const int k0 = (idx - m * nkji) / nji;
-        const int j0 = (idx - m * nkji - k0 * nji) / nx1;
-        const int i = (idx - m * nkji - k0 * nji - j0 * nx1) + is;
-        const int j = j0 + js;
-        const int k = k0 + ks;
-        const Real lapse = alpha(m, k, j, i);
-        if (lapse < minimum.val) {
-          minimum.val = lapse;
-          minimum.loc = idx;
-        }
-      },
-      MinLoc(local_min));
+      MinimumLapseLocationFunctor<decltype(alpha)>{
+          alpha, nx1, is, js, ks, nkji, nji},
+      MinimumLapseLocation(local_min));
 
   const bool local_minimum_is_valid =
       local_min.loc >= 0 && local_min.loc < nmkji &&
