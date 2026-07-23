@@ -65,6 +65,18 @@ struct MinimumLapseLocationFunctor {
   }
 };
 
+template <typename MeshBlockSizeView>
+struct MinimumCellSpacingFunctor {
+  MeshBlockSizeView size;
+
+  KOKKOS_INLINE_FUNCTION
+  void operator()(const int m, Real &minimum) const {
+    const Real block_minimum =
+        Kokkos::fmin(size(m).dx1, Kokkos::fmin(size(m).dx2, size(m).dx3));
+    minimum = Kokkos::fmin(minimum, block_minimum);
+  }
+};
+
 }  // namespace
 
 //----------------------------------------------------------------------------------------
@@ -171,11 +183,30 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
               << std::endl;
     exit(EXIT_FAILURE);
   }
+  use_finest_dx_initial_radius = pin->GetOrAddBoolean(
+      "fastflow", "use_finest_dx_initial_radius_" + n_str, false);
+  finest_dx_initial_radius_factor = pin->GetOrAddReal(
+      "fastflow", "finest_dx_initial_radius_factor_" + n_str, 12.5);
+  if (!std::isfinite(finest_dx_initial_radius_factor) ||
+      finest_dx_initial_radius_factor <= 0.0) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "finest_dx_initial_radius_factor_" << n_str
+              << " must be finite and positive" << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
   // Timer
   start_time = pin->GetOrAddReal("fastflow", "start_time_" + n_str,
                                                  std::numeric_limits<double>::max());
   stop_time = pin->GetOrAddReal("fastflow", "stop_time_" + n_str, -1.0);
+  find_interval = pin->GetOrAddInteger("fastflow", "find_interval_" + n_str, 1);
+  if (find_interval <= 0) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "find_interval_" << n_str << " must be positive" << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
   // Grid and quadrature weights.
   gl_grid = new GaussLegendreGrid(pmbp, ntheta, 1.0); // unit-sphere
@@ -410,7 +441,7 @@ FastFlow::~FastFlow() {
 //! \brief Output summary and shape file, for each horizon.
 void FastFlow::Write(int iter, Real time) {
   if (ioproc) {
-    if ((time < start_time) || (time > stop_time)) return;
+    if (!IsInSearchWindow(time)) return;
     if (wait_until_punc_are_close && !(PuncAreClose())) return;
 
     // Summary file
@@ -462,10 +493,27 @@ void FastFlow::Write(int iter, Real time) {
 }
 
 //----------------------------------------------------------------------------------------
+//! \fn bool FastFlow::ShouldSearch(int cycle, Real time)
+//! \brief Return whether this accepted cycle is scheduled for a horizon search.
+bool FastFlow::ShouldSearch(int cycle, Real time) {
+  if (!IsInSearchWindow(time) || cycle < 0 || cycle % find_interval != 0) {
+    return false;
+  }
+  return !(wait_until_punc_are_close && !(PuncAreClose()));
+}
+
+//----------------------------------------------------------------------------------------
+//! \fn bool FastFlow::IsInSearchWindow(Real time)
+//! \brief Interpret a negative stop time as an unbounded search window.
+bool FastFlow::IsInSearchWindow(Real time) const {
+  return time >= start_time && (stop_time < 0.0 || time <= stop_time);
+}
+
+//----------------------------------------------------------------------------------------
 //! \fn void FastFlow::Find(int iter, Real time)
 //! \brief Search for the horizons
 void FastFlow::Find(int iter, Real time) {
-  if ((time < start_time) || (time > stop_time)) return;
+  if (!IsInSearchWindow(time)) return;
   if (wait_until_punc_are_close && !(PuncAreClose())) return;
   if (verbose && ioproc) {
     fprintf(pofile_verbose, "time=%.4f, cycle=%d\n", time, iter);
@@ -507,7 +555,7 @@ void FastFlow::InitialGuess() {
     // make radius a bit larger than half the distance between any of the punctures
     Real largedist = PuncMaxDistance(use_puncture);
     Real mass = pmbp->pz4c->ptracker[use_puncture]->GetMass();
-    if (ah_found && last_a0 > 0) {
+    if (last_a0 > 0) {
       a0.h_view(0) = last_a0 * expand_guess;
     } else {
       a0.h_view(0) = Kokkos::fmax(0.5 * mass, Kokkos::fmin(mass, 0.5 * largedist));
@@ -538,10 +586,17 @@ void FastFlow::InitialGuess() {
   }
 
   // Take a0 either from previous or from input value
-  if (ah_found && last_a0 > 0) {
+  if (last_a0 > 0) {
     a0.h_view(0) = last_a0 * expand_guess;
   } else {
-    a0.h_view(0) = Kokkos::sqrt(4.0 * M_PI) * initial_radius;
+    Real guess_radius = initial_radius;
+    if (use_finest_dx_initial_radius) {
+      guess_radius = finest_dx_initial_radius_factor * MinimumActiveCellSpacing();
+    }
+    a0.h_view(0) = Kokkos::sqrt(4.0 * M_PI) * guess_radius;
+    if (verbose && ioproc) {
+      fprintf(pofile_verbose, "initial radius = %.15e\n", guess_radius);
+    }
   }
   // Sync to device
   a0.template modify<HostMemSpace>();
@@ -553,13 +608,38 @@ void FastFlow::InitialGuess() {
 }
 
 //----------------------------------------------------------------------------------------
+//! \fn Real FastFlow::MinimumActiveCellSpacing()
+//! \brief Return the minimum active cell spacing over every MPI rank.
+Real FastFlow::MinimumActiveCellSpacing() {
+  auto size = pmbp->pmb->mb_size.d_view;
+  Real minimum = std::numeric_limits<Real>::infinity();
+  Kokkos::parallel_reduce(
+      "FastFlow minimum active cell spacing",
+      Kokkos::RangePolicy<DevExeSpace>(0, pmbp->nmb_thispack),
+      MinimumCellSpacingFunctor<decltype(size)>{size},
+      Kokkos::Min<Real>(minimum));
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &minimum, 1, MPI_ATHENA_REAL, MPI_MIN,
+                MPI_COMM_WORLD);
+#endif
+  if (!std::isfinite(minimum) || minimum <= 0.0) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "FastFlow could not determine a finite positive cell spacing"
+              << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  return minimum;
+}
+
+//----------------------------------------------------------------------------------------
 //! \fn void FastFlow::MetricDerivatives(Real time)
 //! \brief Compute drvts of ADM metric at MB level.
 template <int NGHOST>
 void FastFlow::MetricDerivatives(Real time) {
   // Check whether derivatives have to be computed
   // if (use_stored_metric_drvts) return;
-  if((time < start_time) || (time > stop_time)) return;
+  if (!IsInSearchWindow(time)) return;
   if (wait_until_punc_are_close && !(PuncAreClose())) return;
 
   // Explicitely capture the variables for the Kokkos kernel.

@@ -44,6 +44,7 @@ class FastFlow {
   // Default Destructor for FastFlow object (closes output file)
   ~FastFlow();
 
+  bool ShouldSearch(int cycle, Real time);
   void Find(int iter, Real time); // main functionality for finding AH
   void Write(int iter, Real time); // function for result writing
   template <int NGHOST>
@@ -83,10 +84,13 @@ class FastFlow {
   Real merger_distance; // Distance in M at which BHs are considered as merged
   bool use_puncture_massweighted_center;
   bool use_minimum_lapse_center;
+  bool use_finest_dx_initial_radius;
+  Real finest_dx_initial_radius_factor;
 
   // Start and Stop times for each surface
   Real start_time;
   Real stop_time;
+  int find_interval;
 
  private:
   int npunct; // Number of punctures
@@ -157,6 +161,8 @@ class FastFlow {
   // Functions used in the fast-flow algorithm
   void FastFlowLoop();
   void InitialGuess();
+  bool IsInSearchWindow(Real time) const;
+  Real MinimumActiveCellSpacing();
 
   // Pointers to MeshBlockPack and ParameterInput
   MeshBlockPack *pmbp;

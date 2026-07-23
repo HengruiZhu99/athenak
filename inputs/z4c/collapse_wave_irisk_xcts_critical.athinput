@@ -22,28 +22,28 @@ basename = collapse_wave_irisk_xcts_critical
 
 <mesh>
 nghost = 4
-nx1 = 48
-x1min = -7.0
-x1max = 7.0
+nx1 = 64
+x1min = -14.0
+x1max = 14.0
 ix1_bc = outflow
 ox1_bc = outflow
-nx2 = 48
-x2min = -7.0
-x2max = 7.0
+nx2 = 64
+x2min = -14.0
+x2max = 14.0
 ix2_bc = outflow
 ox2_bc = outflow
-nx3 = 48
-x3min = -7.0
-x3max = 7.0
+nx3 = 64
+x3min = -14.0
+x3max = 14.0
 ix3_bc = outflow
 ox3_bc = outflow
 
-# Small blocks keep successively shrinking central features affordable.  The
-# static convergence input retains its larger 48^3 blocks.
+# The initially uniform root grid has 4^3 MeshBlocks. Small blocks keep
+# successively shrinking central features affordable.
 <meshblock>
-nx1 = 8
-nx2 = 8
-nx3 = 8
+nx1 = 16
+nx2 = 16
+nx3 = 16
 
 <mesh_refinement>
 refinement = adaptive
@@ -72,7 +72,7 @@ ndiag = 1
 
 <z4c>
 spatial_order = 6
-diss = 0.0
+diss = 0.02
 excise_chi = 0.0
 floor_chi = false
 
@@ -85,46 +85,58 @@ telegraph_lapse = true
 telegraph_max_K = true
 # In max-|K| mode tau and kappa are dimensionless:
 # B_i,t = -(max|K|/tau) B_i + (kappa/tau) d_i alpha.
-telegraph_tau = 0.1
-telegraph_kappa = 0.1
+telegraph_tau = 1.0
+telegraph_kappa = 1.0
 
 # The effective shift damping is shift_eta*max|K|.
+shift_Gamma = 1.0
+shift_alpha2Gamma = 0.0
+shift_H = 0.0
 shift_eta = 2.0
 shift_eta_max_K = true
 shift_advect = 1.0
 sss_damping_amp = 0.0
 
-# Disabled for the planned critical-collapse run.  Enabling max-K scaling makes
-# both damp_kappa1 and target_kappa1 dimensionless multipliers.
-damp_kappa1 = 0.0
+# Max-K scaling makes damp_kappa1 and target_kappa1 dimensionless multipliers.
+damp_kappa1 = 0.02
 damp_kappa2 = 0.0
 damp_kappa1_max_K = true
 roll_kappa = false
-target_kappa1 = 0.0
+target_kappa1 = 0.02
 
 <fastflow>
-num_horizons = 0
+num_horizons = 1
+ntheta = 5
+lmax = 4
+flow_iterations_0 = 100
+# Before a horizon is found, r_guess=12.5*dx_min.  This follows the dchi=0.02
+# Schwarzschild calibration and shrinks geometrically as central AMR deepens.
+initial_radius_0 = 1.0
+use_finest_dx_initial_radius_0 = true
+finest_dx_initial_radius_factor_0 = 12.5
+# Search accepted states every eight cycles. A negative stop time is unbounded.
+find_interval_0 = 8
+start_time_0 = 0.0
+stop_time_0 = -1.0
+use_puncture_0 = -1
+use_puncture_massweighted_center_0 = false
+use_minimum_lapse_center_0 = true
 
 <problem>
 pgen_name = z4c_irisk_xcts
 irisk_adm_spectral_file = ../collapse-wave-data/collapse_wave_xcts_A1_N6.adm_spectral
-require_ghost_coverage = true
 write_constraint_summary = true
 constraint_summary_file = collapse_wave_irisk_xcts_critical-constraints.dat
-fail_if_c_rms_above = 1.0e300
-fail_if_h_rms_above = 1.0e300
-fail_if_m_rms_above = 1.0e300
-fail_if_z_rms_above = 1.0e300
 xy_plane_output = EMPTY
 xz_plane_output = EMPTY
 
 <output1>
 file_type = hst
 data_format = %24.16e
-dt = 0.01
+dcycle = 1
 
 # Retain restart points while tuning toward threshold. The imported IrisK file
 # is needed only for a fresh start; AthenaK restarts restore evolved Z4c data.
 <output2>
 file_type = rst
-dt = 0.1
+dcycle = 64
