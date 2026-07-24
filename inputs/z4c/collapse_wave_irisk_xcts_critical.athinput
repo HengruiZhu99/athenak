@@ -140,3 +140,32 @@ dcycle = 1
 <output2>
 file_type = rst
 dcycle = 64
+
+<output3>
+file_type = bin
+variable = z4c_alpha
+dcycle = 1
+slice_x3 = 0.0
+id = lapse_xy
+
+<output4>
+file_type = bin
+variable = z4c_alpha
+dcycle = 1
+slice_x2 = 0.0
+id = lapse_xz
+
+# Four-ghost sixth-order curvature diagnostics.
+<output5>
+file_type = bin
+variable = z4c_diag
+dcycle = 8
+slice_x3 = 0.0
+id = z4c_diag_xy
+
+<output6>
+file_type = bin
+variable = z4c_diag
+dcycle = 8
+slice_x2 = 0.0
+id = z4c_diag_xz
