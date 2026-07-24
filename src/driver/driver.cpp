@@ -59,6 +59,7 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
   impl_src("ru",1,1,1,1,1,1),
   tlim(-1.0),
   nlim(-1),
+  nmb_total_limit(-1),
   ndiag(1),
   pwall_clock_(ptimer),
   wall_time(wtlim),
@@ -86,7 +87,15 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
     integrator = pin->GetOrAddString("time", "integrator", "rk2");
     tlim = pin->GetReal("time", "tlim");
     nlim = pin->GetOrAddInteger("time", "nlim", -1);
+    nmb_total_limit = pin->GetOrAddInteger("time", "nmb_total_limit", -1);
     ndiag = pin->GetOrAddInteger("time", "ndiag", 1);
+    if (nmb_total_limit == 0 || nmb_total_limit < -1) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl
+                << "<time>/nmb_total_limit must be -1 or a positive integer"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
 
     if (integrator == "rk1") {
       // RK1: first-order Runge-Kutta / the forward Euler (FE) method
@@ -388,6 +397,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
       elapsed_time = UpdateWallClock();
     }
     while ((pmesh->time < tlim) && (pmesh->ncycle < nlim || nlim < 0) &&
+           (pmesh->nmb_total < nmb_total_limit || nmb_total_limit < 0) &&
            (elapsed_time < wall_time)) {
       if (global_variable::my_rank == 0) {OutputCycleDiagnostics(pmesh);}
 
@@ -486,12 +496,17 @@ void Driver::Finalize(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
         std::cout << std::endl << "Terminating on cycle limit" << std::endl;
       } else if (pmesh->time >= tlim) {
         std::cout << std::endl << "Terminating on time limit" << std::endl;
+      } else if (nmb_total_limit > 0 &&
+                 pmesh->nmb_total >= nmb_total_limit) {
+        std::cout << std::endl << "Terminating on MeshBlock total limit"
+                  << std::endl;
       } else {
         std::cout << std::endl << "Terminating on wall clock limit" << std::endl;
       }
 
       std::cout << "time=" << pmesh->time << " cycle=" << pmesh->ncycle << std::endl;
-      std::cout << "tlim=" << tlim << " nlim=" << nlim << std::endl;
+      std::cout << "tlim=" << tlim << " nlim=" << nlim
+                << " nmb_total_limit=" << nmb_total_limit << std::endl;
 
       if (pmesh->adaptive) {
         std::cout << std::endl << "Current number of MeshBlocks = " << pmesh->nmb_total

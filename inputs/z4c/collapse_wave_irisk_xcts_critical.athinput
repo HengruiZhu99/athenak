@@ -23,18 +23,18 @@ basename = collapse_wave_irisk_xcts_critical
 <mesh>
 nghost = 4
 nx1 = 64
-x1min = -14.0
-x1max = 14.0
+x1min = -32.0
+x1max = 32.0
 ix1_bc = outflow
 ox1_bc = outflow
 nx2 = 64
-x2min = -14.0
-x2max = 14.0
+x2min = -32.0
+x2max = 32.0
 ix2_bc = outflow
 ox2_bc = outflow
 nx3 = 64
-x3min = -14.0
-x3max = 14.0
+x3min = -32.0
+x3max = 32.0
 ix3_bc = outflow
 ox3_bc = outflow
 
@@ -48,10 +48,28 @@ nx3 = 16
 <mesh_refinement>
 refinement = adaptive
 # This is a per-rank preallocation and therefore a memory/performance tuning knob.
-max_nmb_per_rank = 768
+max_nmb_per_rank = 1024
 num_levels = 12
 ncycle_check = 1
 refinement_interval = 1
+
+<refined_region1>
+level = 1
+x1min = -16.0
+x1max = 16.0
+x2min = -16.0
+x2max = 16.0
+x3min = -16.0
+x3max = 16.0
+
+<refined_region2>
+level = 2
+x1min = -8.0
+x1max = 8.0
+x2min = -8.0
+x2max = 8.0
+x3min = -8.0
+x3max = 8.0
 
 <amr_criterion0>
 method = user
@@ -67,7 +85,8 @@ evolution = dynamic
 integrator = rk4
 cfl_number = 0.20
 nlim = -1
-tlim = 5.0
+tlim = 10.0
+nmb_total_limit = 768
 ndiag = 1
 
 <z4c>

@@ -175,7 +175,7 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
 
 void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   // set number of and names of history variables for z4c
-  pdata->nhist = 10;
+  pdata->nhist = 11;
   pdata->label[0] = "C-norm2";
   pdata->label[1] = "H-norm2";
   pdata->label[2] = "M-norm2";
@@ -186,7 +186,9 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->label[7] = "Theta-norm2";
   pdata->label[8] = "Volume";
   pdata->label[9] = "max_abs_K";
+  pdata->label[10] = "nmb_total";
   pdata->reduction[9] = HistoryData::Reduction::max;
+  pdata->reduction[10] = HistoryData::Reduction::max;
 
   // capture class variabels for kernel
   auto &u0_ = pm->pmb_pack->pz4c->u0;
@@ -278,6 +280,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       },
       Kokkos::Max<Real>(max_abs_K));
   pdata->hdata[9] = max_abs_K;
+  pdata->hdata[10] = static_cast<Real>(pm->nmb_total);
 
   return;
 }

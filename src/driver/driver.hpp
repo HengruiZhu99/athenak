@@ -35,6 +35,7 @@ class Driver {
   // folowing data only relevant for runs involving time evolution
   Real tlim;      // stopping time
   int nlim;       // cycle-limit
+  int nmb_total_limit; // global MeshBlock-count limit
   int ndiag;      // cycles between output of diagnostic information
   // variables for various SSP and ImEx RK integrators
   std::string integrator;          // integrator name (rk1, rk2, rk3)
