@@ -65,8 +65,10 @@ class FastFlow {
   Real center[3]; // Center around which the horizon is searched
 
   // Fast-Flow parameters
-  Real hmean_tol; // for convergence
-  Real mass_tol; // for convergence
+  Real hmean_tol; // fail-closed ceiling for the integrated expansion
+  Real mass_tol; // optional legacy absolute mass-change tolerance
+  Real mass_relative_tol; // scale-free mass-change convergence tolerance
+  Real dimensionless_hrms_tol; // tolerance for <H^2> times mean-radius squared
   int flow_iterations; // number of flow iterations
   Real flow_alpha_beta_const; // alpha & beta constants in the iteration formula
                               // Eqs. (43) & (44) of https://arxiv.org/pdf/gr-qc/9707050

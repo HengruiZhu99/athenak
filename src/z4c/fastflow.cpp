@@ -127,6 +127,22 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   // Convergence parameters
   hmean_tol = pin->GetOrAddReal("fastflow", "hmean_tol_" + n_str, 100.);
   mass_tol = pin->GetOrAddReal("fastflow", "mass_tol_" + n_str, 1e-2);
+  mass_relative_tol =
+      pin->GetOrAddReal("fastflow", "mass_relative_tol_" + n_str, 1e-4);
+  dimensionless_hrms_tol =
+      pin->GetOrAddReal("fastflow", "dimensionless_hrms_tol_" + n_str, 3e-2);
+  if (!(Kokkos::isfinite(mass_tol)) || mass_tol < 0.0 ||
+      !(Kokkos::isfinite(mass_relative_tol)) || mass_relative_tol <= 0.0 ||
+      !(Kokkos::isfinite(dimensionless_hrms_tol)) ||
+      dimensionless_hrms_tol <= 0.0) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "FastFlow convergence tolerances must be finite, with "
+                 "mass_tol >= 0, mass_relative_tol > 0, and "
+                 "dimensionless_hrms_tol > 0"
+              << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
   // Output booleans
   verbose = pin->GetOrAddBoolean("fastflow", "verbose", false);
@@ -919,8 +935,19 @@ void FastFlow::FastFlowLoop() {
       break;
     }
 
-    // End flow when mass difference is small
-    if (Kokkos::fabs(mass_prev-mass) < mass_tol) {
+    // A small absolute mass change alone is not scale invariant and can accept
+    // the first flow iterate whenever M_AH < mass_tol. Require at least two
+    // surface evaluations, a relative (or explicitly enabled legacy absolute)
+    // mass plateau, and a scale-free expansion residual. Since hrms is
+    // <H^2>_surface, hrms * meanradius^2 is dimensionless.
+    const Real mass_change = Kokkos::fabs(mass_prev - mass);
+    const Real relative_mass_change = mass_change / mass;
+    const Real dimensionless_hrms = hrms * meanradius * meanradius;
+    const bool mass_converged =
+        relative_mass_change < mass_relative_tol ||
+        (mass_tol > 0.0 && mass_change < mass_tol);
+    if (k > 0 && mass_converged &&
+        dimensionless_hrms < dimensionless_hrms_tol) {
       ah_found = true;
       break;
     }

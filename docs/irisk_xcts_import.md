@@ -116,6 +116,14 @@ first accepted search, after AthenaK has entered the directory selected by
 `-d`. All horizon artifacts therefore share the same run directory as the
 history, restart, and slice outputs.
 
+FastFlow confirmation is scale aware. It requires at least two flow
+evaluations, a relative horizon-mass plateau, and
+`hrms * meanradius^2 < dimensionless_hrms_tol_N`, where `hrms` is the
+surface mean of the squared outgoing expansion. `mass_tol_N` remains an
+optional legacy absolute tolerance and may be set to zero; critical-collapse
+inputs use only `mass_relative_tol_N`. This prevents a small candidate with
+`M_AH < mass_tol_N` from being accepted on the first flow iterate.
+
 The critical-collapse example enables two accepted-step stopping conditions.
 A confirmed FastFlow surface terminates the collapse side immediately after
 scheduled output. The dispersive side is checked every eight cycles after
