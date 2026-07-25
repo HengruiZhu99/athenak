@@ -111,6 +111,11 @@ global active-cell lapse minimum by setting
 mutually exclusive with `use_puncture_N` and
 `use_puncture_massweighted_center_N`.
 
+FastFlow opens its summary, verbose, grid, and harmonic output lazily on the
+first accepted search, after AthenaK has entered the directory selected by
+`-d`. All horizon artifacts therefore share the same run directory as the
+history, restart, and slice outputs.
+
 The critical-collapse example enables two accepted-step stopping conditions.
 A confirmed FastFlow surface terminates the collapse side immediately after
 scheduled output. The dispersive side is checked every eight cycles after

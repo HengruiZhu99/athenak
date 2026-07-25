@@ -312,112 +312,10 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
     ioproc = true;
   #endif
 
-  if (ioproc) {
-    // Summary file
-    bool new_file = true;
-    if (access(ofname_summary.c_str(), F_OK) == 0) {
-      new_file = false;
-    }
-    pofile_summary = fopen(ofname_summary.c_str(), "a");
-    if (NULL == pofile_summary) {
-      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-            << std::endl
-            << "Could not open file '" << pofile_summary << "' for writing!" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-    if (new_file) {
-      fprintf(pofile_summary, "# 1:iter 2:time 3:mass 4:Sx 5:Sy 6:Sz 7:S 8:area "
-                               "9:hrms 10:hmean 11:meanradius 12:minradius\n");
-      fflush(pofile_summary);
-    }
-
-    if (output_grid) {
-      pofile_grid = fopen(ofname_grid.c_str(), "w");
-      if (NULL == pofile_grid) {
-        std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-            << std::endl
-            << "Could not open file '" << pofile_grid << "' for writing!" << std::endl;
-        exit(EXIT_FAILURE);
-      }
-
-      // Header
-      fprintf(pofile_grid, "# 1:Theta\t2:Phi\t3:Weight\n");
-
-      // Print grid to the output file.
-      for (int p = 0; p < nangles; ++p) {
-        const Real theta = gl_grid->polar_pos.h_view(p,0);
-        const Real phi   = gl_grid->polar_pos.h_view(p,1);
-        const Real weight = gl_grid->int_weights.h_view(p);
-        fprintf(pofile_grid, "%.15e %.15e %.15e\n", theta, phi, weight);
-      }
-      fclose(pofile_grid);
-    }
-
-    if (output_ylm) {
-      pofile_ylm = fopen(ofname_ylm.c_str(), "w");
-      if (NULL == pofile_ylm) {
-        std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-          << std::endl
-          << "Could not open file '" << pofile_ylm << "' for writing!" << std::endl;
-        exit(EXIT_FAILURE);
-      }
-
-      // Header
-      fprintf(pofile_ylm, "# 1:Theta\t2:Phi\t3:l\t4:m\t5:Y0\t6:Yc\t7:Ys\t8:dY0dth\t"
-                   "9:dYcdth\t10:dYsdth\t11:dYcdphi\t12:dYsdphi\t13:dY0dth2\t"
-                   "14:dYcdth2\t15:dYsdth2\t16:dYcdph2\t17:dYsdph2\t18:dYcdthdphi\t"
-                   "19:dYsdthdphi\n");
-
-      for (int l = 0; l <= lmax; ++l) {
-        for (int m = 0; m <= l; ++m) {
-          for (int p = 0; p < nangles; ++p) {
-            const Real theta = gl_grid->polar_pos.h_view(p,0);
-            const Real phi   = gl_grid->polar_pos.h_view(p,1);
-
-            if (m == 0) {
-              fprintf(pofile_ylm, "%.15e %.15e %d %d %.15e %.15e %.15e %.15e %.15e %.15e"
-                                "%.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e\n",
-                      theta, phi, l, m, Y0.h_view(p,l), 0.0, 0.0,
-                      dY0dth.h_view(p,l), 0.0, 0.0, 0.0, 0.0,
-                      dY0dth2.h_view(p,l), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-            } else {
-              const int l1 = lmindex(l,m,lmax);
-              fprintf(pofile_ylm, "%.15e %.15e %d %d %.15e %.15e %.15e %.15e %.15e %.15e"
-                                "%.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e\n",
-                      theta, phi, l, m,
-                      0.0,
-                      Yc.h_view(p,l1),
-                      Ys.h_view(p,l1),
-                      0.0,
-                      dYcdth.h_view(p,l1),
-                      dYsdth.h_view(p,l1),
-                      dYcdph.h_view(p,l1),
-                      dYsdph.h_view(p,l1),
-                      0.0,
-                      dYcdth2.h_view(p,l1),
-                      dYsdth2.h_view(p,l1),
-                      dYcdph2.h_view(p,l1),
-                      dYsdph2.h_view(p,l1),
-                      dYcdthdph.h_view(p,l1),
-                      dYsdthdph.h_view(p,l1)
-                      );
-            }
-          }
-        }
-      }
-      fclose(pofile_ylm);
-    }
-
-    if (verbose) {
-      pofile_verbose = fopen(ofname_verbose.c_str(), "a");
-      if (NULL == pofile_verbose) {
-        std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-            << std::endl
-            << "Could not open file '" << pofile_verbose << "' for writing!" << std::endl;
-        exit(EXIT_FAILURE);
-      }
-    }
-  }
+  // Output is opened lazily on the first accepted horizon search.  The run
+  // directory is selected after physics modules (and therefore FastFlow) are
+  // constructed, so opening relative paths here would place persistent files
+  // in the launch directory instead of the requested run directory.
 }
 
 //----------------------------------------------------------------------------------------
@@ -428,18 +326,135 @@ FastFlow::~FastFlow() {
   delete gl_grid;
 
   // Close files
-  if (ioproc) {
+  if (pofile_summary != nullptr) {
     fclose(pofile_summary);
-    if (verbose) {
-      fclose(pofile_verbose);
+  }
+  if (pofile_verbose != nullptr) {
+    fclose(pofile_verbose);
+  }
+}
+
+//----------------------------------------------------------------------------------------
+//! \fn void FastFlow::InitializeOutputFiles()
+//! \brief Open FastFlow output after AthenaK has entered the requested run directory.
+void FastFlow::InitializeOutputFiles() {
+  if (output_files_initialized) {
+    return;
+  }
+  if (!ioproc) {
+    output_files_initialized = true;
+    return;
+  }
+
+  const bool new_summary = (access(ofname_summary.c_str(), F_OK) != 0);
+  pofile_summary = fopen(ofname_summary.c_str(), "a");
+  if (pofile_summary == nullptr) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "Could not open file '" << ofname_summary << "' for writing!"
+              << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  if (new_summary) {
+    fprintf(pofile_summary, "# 1:iter 2:time 3:mass 4:Sx 5:Sy 6:Sz 7:S 8:area "
+                             "9:hrms 10:hmean 11:meanradius 12:minradius\n");
+    fflush(pofile_summary);
+  }
+
+  if (output_grid) {
+    pofile_grid = fopen(ofname_grid.c_str(), "w");
+    if (pofile_grid == nullptr) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl
+                << "Could not open file '" << ofname_grid << "' for writing!"
+                << std::endl;
+      exit(EXIT_FAILURE);
+    }
+
+    fprintf(pofile_grid, "# 1:Theta\t2:Phi\t3:Weight\n");
+    for (int p = 0; p < nangles; ++p) {
+      const Real theta = gl_grid->polar_pos.h_view(p,0);
+      const Real phi = gl_grid->polar_pos.h_view(p,1);
+      const Real weight = gl_grid->int_weights.h_view(p);
+      fprintf(pofile_grid, "%.15e %.15e %.15e\n", theta, phi, weight);
+    }
+    fclose(pofile_grid);
+    pofile_grid = nullptr;
+  }
+
+  if (output_ylm) {
+    pofile_ylm = fopen(ofname_ylm.c_str(), "w");
+    if (pofile_ylm == nullptr) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl
+                << "Could not open file '" << ofname_ylm << "' for writing!"
+                << std::endl;
+      exit(EXIT_FAILURE);
+    }
+
+    fprintf(pofile_ylm, "# 1:Theta\t2:Phi\t3:l\t4:m\t5:Y0\t6:Yc\t7:Ys\t8:dY0dth\t"
+                 "9:dYcdth\t10:dYsdth\t11:dYcdphi\t12:dYsdphi\t13:dY0dth2\t"
+                 "14:dYcdth2\t15:dYsdth2\t16:dYcdph2\t17:dYsdph2\t18:dYcdthdphi\t"
+                 "19:dYsdthdphi\n");
+
+    for (int l = 0; l <= lmax; ++l) {
+      for (int m = 0; m <= l; ++m) {
+        for (int p = 0; p < nangles; ++p) {
+          const Real theta = gl_grid->polar_pos.h_view(p,0);
+          const Real phi = gl_grid->polar_pos.h_view(p,1);
+
+          if (m == 0) {
+            fprintf(pofile_ylm, "%.15e %.15e %d %d %.15e %.15e %.15e %.15e %.15e %.15e"
+                              "%.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e\n",
+                    theta, phi, l, m, Y0.h_view(p,l), 0.0, 0.0,
+                    dY0dth.h_view(p,l), 0.0, 0.0, 0.0, 0.0,
+                    dY0dth2.h_view(p,l), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+          } else {
+            const int l1 = lmindex(l,m,lmax);
+            fprintf(pofile_ylm, "%.15e %.15e %d %d %.15e %.15e %.15e %.15e %.15e %.15e"
+                              "%.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e\n",
+                    theta, phi, l, m,
+                    0.0,
+                    Yc.h_view(p,l1),
+                    Ys.h_view(p,l1),
+                    0.0,
+                    dYcdth.h_view(p,l1),
+                    dYsdth.h_view(p,l1),
+                    dYcdph.h_view(p,l1),
+                    dYsdph.h_view(p,l1),
+                    0.0,
+                    dYcdth2.h_view(p,l1),
+                    dYsdth2.h_view(p,l1),
+                    dYcdph2.h_view(p,l1),
+                    dYsdph2.h_view(p,l1),
+                    dYcdthdph.h_view(p,l1),
+                    dYsdthdph.h_view(p,l1));
+          }
+        }
+      }
+    }
+    fclose(pofile_ylm);
+    pofile_ylm = nullptr;
+  }
+
+  if (verbose) {
+    pofile_verbose = fopen(ofname_verbose.c_str(), "a");
+    if (pofile_verbose == nullptr) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl
+                << "Could not open file '" << ofname_verbose << "' for writing!"
+                << std::endl;
+      exit(EXIT_FAILURE);
     }
   }
+  output_files_initialized = true;
 }
 
 //----------------------------------------------------------------------------------------
 //! \fn void FastFlow::Write(int iter, Real time)
 //! \brief Output summary and shape file, for each horizon.
 void FastFlow::Write(int iter, Real time) {
+  InitializeOutputFiles();
   if (ioproc) {
     if (!IsInSearchWindow(time)) return;
     if (wait_until_punc_are_close && !(PuncAreClose())) return;
@@ -515,6 +530,7 @@ bool FastFlow::IsInSearchWindow(Real time) const {
 void FastFlow::Find(int iter, Real time) {
   if (!IsInSearchWindow(time)) return;
   if (wait_until_punc_are_close && !(PuncAreClose())) return;
+  InitializeOutputFiles();
   if (verbose && ioproc) {
     fprintf(pofile_verbose, "time=%.4f, cycle=%d\n", time, iter);
   }

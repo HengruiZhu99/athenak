@@ -176,11 +176,13 @@ class FastFlow {
   std::string ofname_verbose;
   std::string ofname_ylm;
   std::string ofname_grid;
-  FILE *pofile_summary;
-  FILE *pofile_shape;
-  FILE *pofile_verbose;
-  FILE *pofile_ylm;
-  FILE *pofile_grid;
+  bool output_files_initialized = false;
+  FILE *pofile_summary = nullptr;
+  FILE *pofile_shape = nullptr;
+  FILE *pofile_verbose = nullptr;
+  FILE *pofile_ylm = nullptr;
+  FILE *pofile_grid = nullptr;
+  void InitializeOutputFiles();
 
   // Functions to interface with puncture tracker
   Real PuncMaxDistance();
