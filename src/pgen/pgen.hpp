@@ -20,6 +20,7 @@ using UserBoundaryFnPtr = void (*)(Mesh* pm);
 using UserSrctermFnPtr = void (*)(Mesh* pm, const Real bdt);
 using UserRefinementFnPtr = void (*)(MeshBlockPack* pmbp);
 using UserHistoryFnPtr = void (*)(HistoryData *pdata, Mesh *pm);
+using UserStoppingCondition = std::function<std::string(Mesh *pm)>;
 
 //----------------------------------------------------------------------------------------
 //! \class ProblemGenerator
@@ -53,6 +54,9 @@ class ProblemGenerator {
   UserSrctermFnPtr user_srcs_func=nullptr;
   UserRefinementFnPtr user_ref_func=nullptr;
   UserHistoryFnPtr user_hist_func=nullptr;
+  // Return an empty string to continue or a human-readable reason to stop
+  // after the current accepted step and its scheduled outputs.
+  UserStoppingCondition user_stopping_condition;
 
   // predefined problem generator functions (default test suite)
   void CallProblemGenerator(ParameterInput *pin, bool is_restart);

@@ -147,13 +147,21 @@ pgen_name = z4c_irisk_xcts
 irisk_adm_spectral_file = ../collapse-wave-data/collapse_wave_xcts_A1_N6.adm_spectral
 write_constraint_summary = true
 constraint_summary_file = collapse_wave_irisk_xcts_critical-constraints.dat
+stop_on_horizon = true
+stop_on_dispersion = true
+termination_check_interval = 8
+# A radius-7 pulse has left the support-scale central region by t=20.
+dispersion_min_time = 20.0
+dispersion_window = 16
+dispersion_global_decay = 0.05
+dispersion_window_decay = 0.5
 xy_plane_output = EMPTY
 xz_plane_output = EMPTY
 
 <output1>
 file_type = hst
 data_format = %24.16e
-dcycle = 1
+dcycle = 8
 
 # Retain restart points while tuning toward threshold. The imported IrisK file
 # is needed only for a fresh start; AthenaK restarts restore evolved Z4c data.

@@ -14,6 +14,8 @@
 #include "coordinates/adm.hpp"
 #include "utils/finite_diff.hpp"
 
+class Mesh;
+
 struct Z4cCurvatureDiagnostics {
   bool valid = false;
   Real kretschmann = 0.0;
@@ -296,5 +298,16 @@ KOKKOS_INLINE_FUNCTION Z4cCurvatureDiagnostics ComputeZ4cCurvatureDiagnostics(
   }
   return result;
 }
+
+struct Z4cGlobalCurvatureMaxima {
+  Real max_abs_k = 0.0;
+  Real max_kretschmann = 0.0;
+  bool finite = true;
+};
+
+// Compute MPI-global active-zone maxima. This is intended for infrequent
+// stopping-condition checks; regular history output retains its own local
+// reductions and lets HistoryOutput perform the MPI reduction.
+Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaxima(Mesh *pm);
 
 #endif  // Z4C_CURVATURE_DIAGNOSTICS_HPP_

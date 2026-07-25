@@ -48,6 +48,8 @@ class Driver {
   Real gamma;                      // gamma value for the IMEX_new integrator
   Kokkos::Timer* pwall_clock_;     // timer for tracking the wall clock
   Real wall_time;
+  bool user_stop;
+  std::string user_stop_reason;
 
   // functions
   void ExecuteTaskList(Mesh *pm, std::string tl, int stage);

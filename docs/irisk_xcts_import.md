@@ -111,5 +111,16 @@ global active-cell lapse minimum by setting
 mutually exclusive with `use_puncture_N` and
 `use_puncture_massweighted_center_N`.
 
+The critical-collapse example enables two accepted-step stopping conditions.
+A confirmed FastFlow surface terminates the collapse side immediately after
+scheduled output. The dispersive side is checked every eight cycles after
+`t=20`: both MPI-global `maxKretsch` and `max_abs_K` must fall below five
+percent of their run-wide peaks, while the maxima over the second half of a
+16-sample window must be no more than half those over the first half.
+Constraint and curvature diagnostics must remain finite. These conservative
+conditions survive restart through persisted peak values; the full observation
+window is deliberately rebuilt after restart. Cases that satisfy neither
+condition continue to the ordinary time or MeshBlock limit.
+
 The IrisK pgen already supplies all data needed here. The separate experimental
 native CTS/multigrid implementation in AthenaK is not used by this import path.

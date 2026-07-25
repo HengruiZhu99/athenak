@@ -63,6 +63,8 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
   ndiag(1),
   pwall_clock_(ptimer),
   wall_time(wtlim),
+  user_stop(false),
+  user_stop_reason(),
   nmb_updated_(0),
   npart_updated_(0),
   lb_efficiency_(0) {
@@ -432,6 +434,12 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
             static_cast<float>(pmesh->nmb_total);
       }
 
+      std::string step_stop_reason;
+      if (pmesh->pgen->user_stopping_condition) {
+        step_stop_reason =
+            pmesh->pgen->user_stopping_condition(pmesh);
+      }
+
       // Test for/make outputs
       for (auto &out : pout->pout_list) {
         // compare at floating point (32-bit) precision to reduce effect of round off
@@ -445,6 +453,12 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
           out->LoadOutputData(pmesh);
           out->WriteOutputFile(pmesh, pin);
         }
+      }
+
+      if (!step_stop_reason.empty()) {
+        user_stop = true;
+        user_stop_reason = step_stop_reason;
+        break;
       }
 
       // AMR
@@ -492,7 +506,10 @@ void Driver::Finalize(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
     if (global_variable::my_rank == 0) {
       // Print diagnostic messages related to the end of the simulation
       OutputCycleDiagnostics(pmesh);
-      if (pmesh->ncycle == nlim) {
+      if (user_stop) {
+        std::cout << std::endl << "Terminating on user stopping condition: "
+                  << user_stop_reason << std::endl;
+      } else if (pmesh->ncycle == nlim) {
         std::cout << std::endl << "Terminating on cycle limit" << std::endl;
       } else if (pmesh->time >= tlim) {
         std::cout << std::endl << "Terminating on time limit" << std::endl;

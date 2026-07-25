@@ -10,11 +10,14 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <deque>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <memory>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -29,6 +32,8 @@
 #include "pgen/pgen.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
+#include "z4c/curvature_diagnostics.hpp"
+#include "z4c/fastflow.hpp"
 
 namespace {
 
@@ -294,6 +299,206 @@ void EnforceConstraintThresholds(ParameterInput *pin,
   }
 }
 
+bool FiniteConstraintSummary(const ConstraintSummary &summary) {
+  return std::isfinite(summary.c_rms) && std::isfinite(summary.h_rms) &&
+         std::isfinite(summary.m_rms) && std::isfinite(summary.z_rms) &&
+         std::isfinite(summary.volume) && summary.volume > 0.0;
+}
+
+class CollapseTerminationMonitor {
+ public:
+  explicit CollapseTerminationMonitor(ParameterInput *pin)
+      : pin_(pin),
+        stop_on_horizon_(
+            pin->GetOrAddBoolean("problem", "stop_on_horizon", false)),
+        stop_on_dispersion_(
+            pin->GetOrAddBoolean("problem", "stop_on_dispersion", false)),
+        check_interval_(
+            pin->GetOrAddInteger("problem", "termination_check_interval", 8)),
+        minimum_time_(
+            pin->GetOrAddReal("problem", "dispersion_min_time", 20.0)),
+        window_size_(
+            pin->GetOrAddInteger("problem", "dispersion_window", 16)),
+        global_decay_(
+            pin->GetOrAddReal("problem", "dispersion_global_decay", 0.05)),
+        window_decay_(
+            pin->GetOrAddReal("problem", "dispersion_window_decay", 0.5)),
+        peak_kretschmann_(pin->GetOrAddReal(
+            "problem", "termination_peak_maxKretsch", 0.0)),
+        peak_abs_k_(pin->GetOrAddReal(
+            "problem", "termination_peak_max_abs_K", 0.0)) {
+    if (check_interval_ < 1) {
+      Fail("problem.termination_check_interval must be positive");
+    }
+    if (minimum_time_ < 0.0 || !std::isfinite(minimum_time_)) {
+      Fail("problem.dispersion_min_time must be finite and nonnegative");
+    }
+    if (window_size_ < 4) {
+      Fail("problem.dispersion_window must be at least four");
+    }
+    if (!(global_decay_ > 0.0 && global_decay_ < 1.0) ||
+        !(window_decay_ > 0.0 && window_decay_ < 1.0)) {
+      Fail("problem dispersion decay factors must lie strictly between zero and one");
+    }
+  }
+
+  std::string Check(Mesh *pm) {
+    bool horizon_found = false;
+    Real horizon_time = -1.0;
+    if (stop_on_horizon_) {
+      for (const auto &finder : pm->pmb_pack->pz4c->pfastflow) {
+        if (finder->time_first_found >= 0.0) {
+          horizon_found = true;
+          horizon_time = finder->time_first_found;
+          break;
+        }
+      }
+    }
+    if (!horizon_found &&
+        (!stop_on_dispersion_ ||
+         pm->ncycle % check_interval_ != 0)) {
+      return {};
+    }
+
+    const Z4cGlobalCurvatureMaxima maxima =
+        ComputeZ4cGlobalCurvatureMaxima(pm);
+    const ConstraintSummary constraints = ComputeConstraintSummary(pm);
+    if (!maxima.finite || !FiniteConstraintSummary(constraints)) {
+      Fail("nonfinite curvature or constraint diagnostic in collapse termination monitor");
+    }
+    if (horizon_found) {
+      WriteTermination(pm, "collapse", maxima, constraints);
+      std::ostringstream reason;
+      reason << "confirmed apparent horizon at t=" << horizon_time;
+      return reason.str();
+    }
+    peak_kretschmann_ =
+        std::max(peak_kretschmann_, maxima.max_kretschmann);
+    peak_abs_k_ = std::max(peak_abs_k_, maxima.max_abs_k);
+    pin_->SetReal("problem", "termination_peak_maxKretsch",
+                  peak_kretschmann_);
+    pin_->SetReal("problem", "termination_peak_max_abs_K", peak_abs_k_);
+    Push(&kretschmann_, maxima.max_kretschmann);
+    Push(&abs_k_, maxima.max_abs_k);
+
+    if (pm->time < minimum_time_ ||
+        static_cast<int>(kretschmann_.size()) < window_size_) {
+      return {};
+    }
+    const int half = window_size_ / 2;
+    const Real first_kretschmann =
+        MaxRange(kretschmann_, 0, half);
+    const Real second_kretschmann =
+        MaxRange(kretschmann_, half, window_size_);
+    const Real first_abs_k = MaxRange(abs_k_, 0, half);
+    const Real second_abs_k =
+        MaxRange(abs_k_, half, window_size_);
+    const bool curvature_decayed =
+        peak_kretschmann_ > 0.0 &&
+        maxima.max_kretschmann <= global_decay_ * peak_kretschmann_ &&
+        second_kretschmann <= window_decay_ * first_kretschmann;
+    const bool extrinsic_curvature_decayed =
+        peak_abs_k_ > 0.0 &&
+        maxima.max_abs_k <= global_decay_ * peak_abs_k_ &&
+        second_abs_k <= window_decay_ * first_abs_k;
+    if (!curvature_decayed || !extrinsic_curvature_decayed) {
+      return {};
+    }
+
+    WriteTermination(pm, "dispersal", maxima, constraints);
+    std::ostringstream reason;
+    reason << "sustained dispersal at t=" << pm->time
+           << " maxKretsch/peak="
+           << maxima.max_kretschmann / peak_kretschmann_
+           << " max_abs_K/peak=" << maxima.max_abs_k / peak_abs_k_;
+    return reason.str();
+  }
+
+  bool enabled() const {
+    return stop_on_horizon_ || stop_on_dispersion_;
+  }
+
+ private:
+  void Push(std::deque<Real> *values, Real value) {
+    values->push_back(value);
+    while (static_cast<int>(values->size()) > window_size_) {
+      values->pop_front();
+    }
+  }
+
+  static Real MaxRange(const std::deque<Real> &values,
+                       int begin, int end) {
+    Real result = 0.0;
+    for (int index = begin; index < end; ++index) {
+      result = std::max(result, values[static_cast<std::size_t>(index)]);
+    }
+    return result;
+  }
+
+  void WriteTermination(
+      Mesh *pm, const std::string &outcome,
+      const Z4cGlobalCurvatureMaxima &maxima,
+      const ConstraintSummary &constraints) const {
+    if (global_variable::my_rank != 0) {
+      return;
+    }
+    const std::string filename =
+        pin_->GetString("job", "basename") + ".termination.json";
+    std::ofstream output(filename);
+    if (!output) {
+      Fail("could not write collapse termination record: " + filename);
+    }
+    output << std::setprecision(17)
+           << "{\n"
+           << "  \"schema_version\": 1,\n"
+           << "  \"outcome\": \"" << outcome << "\",\n"
+           << "  \"time\": " << pm->time << ",\n"
+           << "  \"cycle\": " << pm->ncycle << ",\n"
+           << "  \"maxKretsch\": " << maxima.max_kretschmann << ",\n"
+           << "  \"max_abs_K\": " << maxima.max_abs_k << ",\n"
+           << "  \"C_rms\": " << constraints.c_rms << ",\n"
+           << "  \"H_rms\": " << constraints.h_rms << ",\n"
+           << "  \"M_rms\": " << constraints.m_rms << ",\n"
+           << "  \"Z_rms\": " << constraints.z_rms << ",\n"
+           << "  \"volume\": " << constraints.volume << "\n"
+           << "}\n";
+  }
+
+  ParameterInput *pin_;
+  bool stop_on_horizon_;
+  bool stop_on_dispersion_;
+  int check_interval_;
+  Real minimum_time_;
+  int window_size_;
+  Real global_decay_;
+  Real window_decay_;
+  Real peak_kretschmann_;
+  Real peak_abs_k_;
+  std::deque<Real> kretschmann_;
+  std::deque<Real> abs_k_;
+};
+
+void ConfigureCollapseTermination(ProblemGenerator *problem,
+                                  ParameterInput *pin, Mesh *pm) {
+  auto monitor = std::make_shared<CollapseTerminationMonitor>(pin);
+  if (!monitor->enabled()) {
+    return;
+  }
+  if (pm->pmb_pack->pz4c == nullptr || pm->pmb_pack->padm == nullptr) {
+    Fail("collapse termination requires Z4c and ADM");
+  }
+  if (pin->GetOrAddBoolean("problem", "stop_on_horizon", false) &&
+      pm->pmb_pack->pz4c->pfastflow.empty()) {
+    Fail("problem.stop_on_horizon=true requires at least one FastFlow horizon");
+  }
+  if (pin->GetOrAddBoolean("problem", "stop_on_dispersion", false) &&
+      pm->pmb_pack->pz4c->opt.fd_stencil != 4) {
+    Fail("problem.stop_on_dispersion=true requires sixth-order Z4c with four ghosts");
+  }
+  problem->user_stopping_condition =
+      [monitor](Mesh *mesh) { return monitor->Check(mesh); };
+}
+
 void IrisXctsConstraintReport(ParameterInput *pin, Mesh *pm) {
   if (pm->pmb_pack->pz4c == nullptr) {
     return;
@@ -498,6 +703,7 @@ void ProblemGenerator::Z4cFinalizeImportedAdm(ParameterInput *pin) {
 void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   // Enroll on both fresh starts and restarts so adaptive runs retain their criterion.
   user_ref_func = IrisXctsRefinementCondition;
+  ConfigureCollapseTermination(this, pin, pmy_mesh_);
   if (restart)
     return;
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
