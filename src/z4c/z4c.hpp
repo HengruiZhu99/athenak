@@ -156,6 +156,8 @@ class Z4c {
     Real damp_kappa2;
     // If true, damp_kappa1 and target_kappa1 are dimensionless multipliers of max|K|.
     bool damp_kappa1_max_K;
+    // Compute the volume-global maximum Kretschmann scalar in Z4c history output.
+    bool history_kretschmann;
     // Gauge conditions for the lapse
     Real lapse_oplog;
     Real lapse_harmonicf;

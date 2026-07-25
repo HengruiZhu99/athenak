@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
 
@@ -20,6 +21,7 @@
 #include "eos/eos.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
+#include "z4c/curvature_diagnostics.hpp"
 #include "z4c/z4c.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
@@ -174,8 +176,9 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
 //  Data is stored in a Real array defined in derived class.
 
 void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
+  auto &opt = pm->pmb_pack->pz4c->opt;
   // set number of and names of history variables for z4c
-  pdata->nhist = 11;
+  pdata->nhist = opt.history_kretschmann ? 12 : 11;
   pdata->label[0] = "C-norm2";
   pdata->label[1] = "H-norm2";
   pdata->label[2] = "M-norm2";
@@ -189,6 +192,11 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->label[10] = "nmb_total";
   pdata->reduction[9] = HistoryData::Reduction::max;
   pdata->reduction[10] = HistoryData::Reduction::max;
+  if (opt.history_kretschmann) {
+    // History headers retain ten characters, so keep this stable short label.
+    pdata->label[11] = "maxKretsch";
+    pdata->reduction[11] = HistoryData::Reduction::max;
+  }
 
   // capture class variabels for kernel
   auto &u0_ = pm->pmb_pack->pz4c->u0;
@@ -199,7 +207,6 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 
   auto &size = pm->pmb_pack->pmb->mb_size;
   constexpr int nsum = 9;
-  auto &opt = pm->pmb_pack->pz4c->opt;
 
   // loop over all MeshBlocks in this pack
   auto &indcs = pm->pmb_pack->pmesh->mb_indcs;
@@ -281,6 +288,34 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       Kokkos::Max<Real>(max_abs_K));
   pdata->hdata[9] = max_abs_K;
   pdata->hdata[10] = static_cast<Real>(pm->nmb_total);
+  if (opt.history_kretschmann) {
+    Real max_kretschmann = 0.0;
+    Kokkos::parallel_reduce(
+        "Z4cHistoryMaxKretschmann",
+        Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+        KOKKOS_LAMBDA(const int &idx, Real &rank_max_kretschmann) {
+          const int m = idx / nkji;
+          int k = (idx - m * nkji) / nji;
+          int j = (idx - m * nkji - k * nji) / nx1;
+          const int i = (idx - m * nkji - k * nji - j * nx1) + is;
+          k += ks;
+          j += js;
+          const Real inverse_spacing[3] = {
+              1.0 / size.d_view(m).dx1,
+              1.0 / size.d_view(m).dx2,
+              1.0 / size.d_view(m).dx3};
+          const auto diagnostic = ComputeZ4cCurvatureDiagnostics<4, false>(
+              adm.g_dd, adm.vK_dd, inverse_spacing, m, k, j, i);
+          if (!diagnostic.valid) {
+            rank_max_kretschmann = std::numeric_limits<Real>::infinity();
+          } else {
+            rank_max_kretschmann =
+                fmax(rank_max_kretschmann, diagnostic.kretschmann);
+          }
+        },
+        Kokkos::Max<Real>(max_kretschmann));
+    pdata->hdata[11] = max_kretschmann;
+  }
 
   return;
 }

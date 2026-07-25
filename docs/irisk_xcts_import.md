@@ -94,8 +94,13 @@ sets constraint damping to zero and uses the dimensionless two-cell `dchi`
 indicator for AMR. AthenaK requires a finite level budget; the example reserves
 physical levels 0 through 11.
 
-Z4c history includes the MPI-global `max_abs_K`. Dimensionless constraint
-monitors can be formed as
+Z4c history includes the MPI-global `max_abs_K`. The critical-collapse example
+also opts into `history_kretschmann=true`, which adds the MPI-global
+`maxKretsch` column using the four-ghost, sixth-order vacuum-curvature
+diagnostic. This full-volume reduction is disabled by default and requires
+`spatial_order=6`.
+
+Dimensionless constraint monitors can be formed as
 `sqrt(H-norm2/Volume)/max_abs_K^2`,
 `sqrt(M-norm2/Volume)/max_abs_K^2`, and
 `sqrt(Theta-norm2/Volume)/max_abs_K`, guarding the initial `max_abs_K=0` case.

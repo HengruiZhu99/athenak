@@ -129,6 +129,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.damp_kappa2 = pin->GetOrAddReal("z4c", "damp_kappa2", 0.0);
   opt.damp_kappa1_max_K =
       pin->GetOrAddBoolean("z4c", "damp_kappa1_max_K", false);
+  opt.history_kretschmann =
+      pin->GetOrAddBoolean("z4c", "history_kretschmann", false);
   // Gauge conditions (default to moving puncture gauge)
   opt.lapse_harmonicf = pin->GetOrAddReal("z4c", "lapse_harmonicf", 1.0);
   opt.lapse_harmonic = pin->GetOrAddReal("z4c", "lapse_harmonic", 0.0);
@@ -195,6 +197,14 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
               << "<z4c>/spatial_order=" << opt.spatial_order
               << " requires at least " << opt.fd_stencil
               << " ghost cells, but <mesh>/nghost=" << indcs.ng << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.history_kretschmann && opt.fd_stencil != 4) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "<z4c>/history_kretschmann=true requires "
+              << "<z4c>/spatial_order=6 and at least four ghost cells"
+              << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
