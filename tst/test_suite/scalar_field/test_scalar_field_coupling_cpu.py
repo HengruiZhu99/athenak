@@ -9,6 +9,7 @@ import test_suite.testutils as testutils
 
 
 _INPUT_FILE = "inputs/scalar_field_coupling.athinput"
+_DEFAULT_INPUT_FILE = "inputs/scalar_field_coupling_default.athinput"
 _MHD_INPUT_FILE = "inputs/scalar_field_mhd_coupling.athinput"
 _MASS = 0.7
 _AMPLITUDE = 0.2
@@ -37,6 +38,25 @@ _SX = 14
 _SY = 15
 _SZ = 16
 _TMUNU_COLUMNS = (_SXX, _SXY, _SXZ, _SYY, _SYZ, _SZZ, _ENERGY, _SX, _SY, _SZ)
+
+
+def test_scalar_field_backreaction_defaults_off():
+    """An omitted backreaction switch must leave Z4c unsourced."""
+    basename = "scalar_field_coupling_default"
+    diagnostic = Path(f"{basename}-coupling.dat")
+    diagnostic.unlink(missing_ok=True)
+
+    try:
+        assert testutils.run(
+            _DEFAULT_INPUT_FILE,
+            [f"job/basename={basename}"],
+        )
+        row = athena_read.error_dat(diagnostic)[0]
+        assert int(row[_BACKREACTION]) == 0
+        for column in (_KHAT, _THETA) + _TMUNU_COLUMNS:
+            assert row[column] == pytest.approx(0.0, abs=_ABS_TOL)
+    finally:
+        testutils.cleanup()
 
 
 @pytest.mark.parametrize("backreaction", (False, True), ids=("off", "on"))

@@ -38,7 +38,7 @@ ScalarField::ScalarField(MeshBlockPack *ppack, ParameterInput *pin)
       spatial_order(2),
       fd_stencil(2),
       extrap_order(2),
-      backreaction(true),
+      backreaction(false),
       excision(false),
       diss(0.0),
       dtnew(std::numeric_limits<float>::max()),
@@ -95,8 +95,8 @@ ScalarField::ScalarField(MeshBlockPack *ppack, ParameterInput *pin)
     FatalInput("<scalar_field>/lambda must be nonnegative.");
   }
   potential = PotentialData(potential_type, mass, quartic);
-  backreaction = pin->GetOrAddBoolean(
-      "scalar_field", "backreaction", ppack->pz4c != nullptr);
+  backreaction =
+      pin->GetOrAddBoolean("scalar_field", "backreaction", false);
   if (backreaction && ppack->pz4c == nullptr) {
     FatalInput("<scalar_field>/backreaction=true requires Z4c.");
   }

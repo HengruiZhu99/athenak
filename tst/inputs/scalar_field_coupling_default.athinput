@@ -1,0 +1,72 @@
+# One forward-Euler step with scalar backreaction intentionally left unspecified
+
+<job>
+basename = scalar_field_coupling_default
+
+<mesh>
+nghost = 2
+nx1 = 4
+x1min = 0.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+
+nx2 = 4
+x2min = 0.0
+x2max = 1.0
+ix2_bc = periodic
+ox2_bc = periodic
+
+nx3 = 4
+x3min = 0.0
+x3max = 1.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 4
+nx2 = 4
+nx3 = 4
+
+<mesh_refinement>
+refinement = none
+
+<coord>
+general_rel = true
+minkowski = true
+
+<z4c>
+spatial_order = 2
+diss = 0.0
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+use_z4c = true
+lapse_harmonicf = 0.0
+lapse_harmonic = 0.0
+lapse_oplog = 0.0
+lapse_advect = 0.0
+shift_Gamma = 0.0
+shift_alpha2Gamma = 0.0
+shift_H = 0.0
+shift_advect = 0.0
+shift_eta = 0.0
+
+<scalar_field>
+field_type = real
+potential = free
+mass = 0.7
+lambda = 0.0
+diss = 0.0
+spatial_order = 2
+
+<time>
+evolution = dynamic
+integrator = rk1
+cfl_number = 0.1
+nlim = 1
+tlim = 1.0
+ndiag = 1
+
+<problem>
+pgen_name = scalar_field_coupling
+amplitude = 0.2
