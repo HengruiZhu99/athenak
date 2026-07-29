@@ -1,0 +1,99 @@
+# Smooth temporal relaxation of a uniform scalar inside fixed Kerr-Schild excision.
+
+<job>
+basename = scalar_field_excision
+
+<mesh>
+nghost = 2
+nx1 = 64
+x1min = -2.0
+x1max = 2.0
+ix1_bc = periodic
+ox1_bc = periodic
+
+nx2 = 1
+x2min = -0.5
+x2max = 0.5
+ix2_bc = periodic
+ox2_bc = periodic
+
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 16
+nx2 = 1
+nx3 = 1
+
+<mesh_refinement>
+refinement = none
+
+<coord>
+general_rel = true
+minkowski = false
+a = 0.0
+excise = true
+excision_scheme = fixed
+smooth_excision = true
+tdamp = 0.2
+
+<adm>
+dynamic = false
+
+<scalar_field>
+field_type = real
+potential = free
+mass = 0.0
+lambda = 0.0
+backreaction = false
+diss = 0.0
+spatial_order = 2
+excision_phi = 0.0
+excision_pi = 0.0
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = -1
+tlim = 0.05
+ndiag = 1
+
+<problem>
+pgen_name = scalar_field_oscillator
+test_case = smooth_excision
+amplitude = 1.0
+
+<output1>
+file_type = tab
+variable = sf_phi0
+id = sf_phi0
+data_format = %.17e
+slice_x2 = 0.0
+slice_x3 = 0.0
+dt = 0.05
+
+<output2>
+file_type = tab
+variable = sf_pi0
+id = sf_pi0
+data_format = %.17e
+slice_x2 = 0.0
+slice_x3 = 0.0
+dt = 0.05
+
+<output3>
+file_type = tab
+variable = sf_energy
+id = sf_energy
+data_format = %.17e
+slice_x2 = 0.0
+slice_x3 = 0.0
+dt = 0.05
+
+<output4>
+file_type = hst
+dt = 0.05

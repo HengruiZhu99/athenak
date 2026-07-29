@@ -56,8 +56,10 @@ class ADM {
 
   DvceArray5D<Real> u_adm;                                // adm variables
   bool is_dynamic;                                        // is the metric time dependent?
+  Real metric_time;                                       // time represented by adm
 
   void (*SetADMVariables)(MeshBlockPack *pm);
+  void SetADMVariablesAtTime(MeshBlockPack *pm, Real time);
 
   static void SetADMVariablesToKerrSchild(MeshBlockPack *pm);
 

@@ -49,6 +49,9 @@ void Coordinates::SetExcisionMasks(DvceArray4D<bool> &excision_floor,
   //                   each face of this cell is <= excision_radius, mask the cell.
   par_for("set_excision", DevExeSpace(), 0, nmb1, 0, (n3-1), 0, (n2-1), 0, (n1-1),
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    excision_floor(m,k,j,i) = false;
+    excision_flux(m,k,j,i) = false;
+
     // NOTE(@pdmullen): In some instances, calls to x? will access coordinate information
     // for which there is *no corresponding logical counterpart*, however, the
     // LeftEdgeX/CellCenterX functions can handle "out-of-range" queries.

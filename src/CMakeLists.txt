@@ -25,6 +25,7 @@ add_executable(
         bvals/physics/hydro_bcs.cpp
         bvals/physics/bfield_bcs.cpp
         bvals/physics/radiation_bcs.cpp
+        bvals/physics/scalar_field_bcs.cpp
         bvals/physics/z4c_bcs.cpp
 
         coordinates/adm.cpp
@@ -123,6 +124,9 @@ add_executable(
         pgen/tests/mri3d.cpp
         pgen/tests/shock_tube.cpp
         pgen/tests/shwave.cpp
+        pgen/tests/scalar_field_coupling.cpp
+        pgen/tests/scalar_field_oscillator.cpp
+        pgen/tests/scalar_field_plane_wave.cpp
         pgen/tests/rad_beam.cpp
         pgen/tests/rad_linear_wave.cpp
         pgen/tests/z4c_boosted_puncture.cpp
@@ -130,6 +134,7 @@ add_executable(
 
         pgen/unit_tests/eos_compose.cpp
         pgen/unit_tests/gauss_legendre.cpp
+        pgen/unit_tests/scalar_field.cpp
 
         radiation/radiation.cpp
         radiation/radiation_fluxes.cpp
@@ -138,6 +143,13 @@ add_executable(
         radiation/radiation_tasks.cpp
         radiation/radiation_tetrad.cpp
         radiation/radiation_update.cpp
+
+        scalar_field/scalar_field.cpp
+        scalar_field/scalar_field_calcrhs.cpp
+        scalar_field/scalar_field_newdt.cpp
+        scalar_field/scalar_field_tasks.cpp
+        scalar_field/scalar_field_tmunu.cpp
+        scalar_field/scalar_field_update.cpp
 
         shearing_box/orbital_advection.cpp
         shearing_box/orbital_advection_cc.cpp

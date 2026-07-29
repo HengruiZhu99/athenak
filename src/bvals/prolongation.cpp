@@ -97,8 +97,27 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
 
           // restrict in 2D
           if (!(three_d)) {
-            ca(m,v,kl,j,i) = 0.25*(a(m,v,kl,finej  ,finei) + a(m,v,kl,finej  ,finei+1)
-                                 + a(m,v,kl,finej+1,finei) + a(m,v,kl,finej+1,finei+1));
+            if (!is_z4c) {
+              ca(m,v,kl,j,i) =
+                  0.25*(a(m,v,kl,finej,finei) + a(m,v,kl,finej,finei+1)
+                      + a(m,v,kl,finej+1,finei)
+                      + a(m,v,kl,finej+1,finei+1));
+            } else {
+              switch (indcs.ng) {
+                case 2:
+                  ca(m,v,kl,j,i) = RestrictInterpolation<2>(
+                      m, v, kl, finej, finei, nx1, nx2, nx3,
+                      multi_d, three_d, a, restrict_2nd, restrict_4th,
+                      restrict_4th_edge);
+                  break;
+                case 4:
+                  ca(m,v,kl,j,i) = RestrictInterpolation<4>(
+                      m, v, kl, finej, finei, nx1, nx2, nx3,
+                      multi_d, three_d, a, restrict_2nd, restrict_4th,
+                      restrict_4th_edge);
+                  break;
+              }
+            }
           // restrict in 3D
           } else {
             if (!is_z4c) {
@@ -109,11 +128,15 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
                 + a(m,v,finek+1,finej+1,finei) + a(m,v,finek+1,finej+1,finei+1));
             } else {
                 switch (indcs.ng) {
-                  case 2: ca(m,v,k,j,i) = RestrictInterpolation<2>(m,v,finek,finej,finei,
-                              nx1,nx2,nx3,a,restrict_2nd,restrict_4th,restrict_4th_edge);
+                  case 2: ca(m,v,k,j,i) = RestrictInterpolation<2>(
+                              m,v,finek,finej,finei,nx1,nx2,nx3,
+                              multi_d,three_d,a,restrict_2nd,restrict_4th,
+                              restrict_4th_edge);
                           break;
-                  case 4: ca(m,v,k,j,i) = RestrictInterpolation<4>(m,v,finek,finej,finei,
-                              nx1,nx2,nx3,a,restrict_2nd,restrict_4th,restrict_4th_edge);
+                  case 4: ca(m,v,k,j,i) = RestrictInterpolation<4>(
+                              m,v,finek,finej,finei,nx1,nx2,nx3,
+                              multi_d,three_d,a,restrict_2nd,restrict_4th,
+                              restrict_4th_edge);
                           break;
                 }
             }
@@ -195,10 +218,10 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
         } else {
           switch (indcs.ng) {
             case 2: HighOrderProlongCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
-                                          ca,a,prolong_2nd);
+                                          multi_d,three_d,ca,a,prolong_2nd);
                     break;
             case 4: HighOrderProlongCC<4>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
-                                          ca,a,prolong_4th);
+                                          multi_d,three_d,ca,a,prolong_4th);
                     break;
           }
         }

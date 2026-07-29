@@ -29,6 +29,7 @@
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
 #include "radiation/radiation.hpp"
+#include "scalar_field/scalar_field.hpp"
 #include "srcterms/turb_driver.hpp"
 //#include "outputs.hpp"
 
@@ -66,8 +67,9 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
   adm::ADM* padm = pm->pmb_pack->padm;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
   radiation::Radiation* prad = pm->pmb_pack->prad;
+  scalar_field::ScalarField* pscalar = pm->pmb_pack->pscalar;
   TurbulenceDriver* pturb=pm->pmb_pack->pturb;
-  int nhydro=0, nmhd=0, nrad=0, nforce=3, nadm=0, nz4c=0;
+  int nhydro=0, nmhd=0, nrad=0, nforce=3, nadm=0, nz4c=0, nsf=0;
   if (phydro != nullptr) {
     nhydro = phydro->nhydro + phydro->nscalars;
   }
@@ -82,6 +84,9 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
   // if the spacetime is evolved, we do not need to checkpoint/recover the ADM variables
   if (prad != nullptr) {
     nrad = prad->prgeo->nangles;
+  }
+  if (pscalar != nullptr) {
+    nsf = pscalar->nvar;
   }
 
   // Note for restarts, outarrays are dimensioned (m,n,k,j,i)
@@ -123,6 +128,11 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
     Kokkos::deep_copy(outarray_adm, Kokkos::subview(padm->u_adm, std::make_pair(0,nmb),
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL));
   }
+  if (pscalar != nullptr) {
+    Kokkos::realloc(outarray_sf, nmb, nsf, nout3, nout2, nout1);
+    Kokkos::deep_copy(outarray_sf, Kokkos::subview(pscalar->u0, std::make_pair(0,nmb),
+                      Kokkos::ALL, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL));
+  }
 
   // calculate max/min number of MeshBlocks across all ranks
   noutmbs_max = pm->nmb_eachrank[0];
@@ -149,7 +159,9 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   TurbulenceDriver* pturb=pm->pmb_pack->pturb;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
   adm::ADM* padm = pm->pmb_pack->padm;
-  int nhydro=0, nmhd=0, nrad=0, nforce=3, nz4c=0, nadm=0, nco=0, nhorizon=0;
+  scalar_field::ScalarField* pscalar = pm->pmb_pack->pscalar;
+  int nhydro=0, nmhd=0, nrad=0, nforce=3, nz4c=0, nadm=0, nsf=0;
+  int nco=0, nhorizon=0;
   if (phydro != nullptr) {
     nhydro = phydro->nhydro + phydro->nscalars;
   }
@@ -165,6 +177,9 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     nhorizon = pz4c->phorizon_dump.size();
   } else if (padm != nullptr) {
     nadm = padm->nadm;
+  }
+  if (pscalar != nullptr) {
+    nsf = pscalar->nvar;
   }
   bool single_file_per_rank = out_params.single_file_per_rank;
   std::string fname;
@@ -298,6 +313,9 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     data_size += nout1*nout2*nout3*nz4c*sizeof(Real);   // z4c u0
   } else if (padm != nullptr) {
     data_size += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
+  }
+  if (pscalar != nullptr) {
+    data_size += nout1*nout2*nout3*nsf*sizeof(Real);    // scalar field u0
   }
   if (global_variable::my_rank == 0 || single_file_per_rank) {
     resfile.Write_any_type(&(data_size), sizeof(IOWrapperSizeT), "byte",
@@ -629,6 +647,45 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
       }
     }
     offset_myrank += nout1*nout2*nout3*nadm*sizeof(Real); // adm u_adm
+    myoffset = offset_myrank;
+  }
+
+  if (pscalar != nullptr) {
+    for (int m=0; m<noutmbs_max; ++m) {
+      // every rank has a MB to write, so write collectively
+      if (m < noutmbs_min) {
+        // get ptr to cell-centered MeshBlock data
+        auto mbptr = Kokkos::subview(outarray_sf, m, Kokkos::ALL, Kokkos::ALL,
+                                     Kokkos::ALL, Kokkos::ALL);
+        size_t mbcnt = mbptr.size();
+        if (resfile.Write_any_type_at_all(mbptr.data(), mbcnt, myoffset, "Real",
+                                          single_file_per_rank) != mbcnt) {
+          std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                    << std::endl
+                    << "cell-centered scalar-field data not written correctly"
+                    << " to rst file, restart file is broken." << std::endl;
+          exit(EXIT_FAILURE);
+        }
+        myoffset += data_size;
+
+      // some ranks are finished writing, so use non-collective write
+      } else if (m < pm->nmb_thisrank) {
+        // get ptr to MeshBlock data
+        auto mbptr = Kokkos::subview(outarray_sf, m, Kokkos::ALL, Kokkos::ALL,
+                                     Kokkos::ALL, Kokkos::ALL);
+        size_t mbcnt = mbptr.size();
+        if (resfile.Write_any_type_at(mbptr.data(), mbcnt, myoffset, "Real",
+                                      single_file_per_rank) != mbcnt) {
+          std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                    << std::endl
+                    << "cell-centered scalar-field data not written correctly"
+                    << " to rst file, restart file is broken." << std::endl;
+          exit(EXIT_FAILURE);
+        }
+        myoffset += data_size;
+      }
+    }
+    offset_myrank += nout1*nout2*nout3*nsf*sizeof(Real); // scalar field u0
     myoffset = offset_myrank;
   }
 

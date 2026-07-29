@@ -47,15 +47,15 @@ void Z4c::QueueZ4cTasks() {
   switch (fd_stencil) {
     case 2:
       pnr->QueueTask(&Z4c::CalcRHS<2>, this, Z4c_CalcRHS, "Z4c_CalcRHS",
-                     Task_Run, {Z4c_CopyU}, {MHD_SetTmunu});
+                     Task_Run, {Z4c_CopyU}, {MHD_AddTmunu, SF_AddTmunu});
       break;
     case 3:
       pnr->QueueTask(&Z4c::CalcRHS<3>, this, Z4c_CalcRHS, "Z4c_CalcRHS",
-                     Task_Run, {Z4c_CopyU}, {MHD_SetTmunu});
+                     Task_Run, {Z4c_CopyU}, {MHD_AddTmunu, SF_AddTmunu});
       break;
     case 4:
       pnr->QueueTask(&Z4c::CalcRHS<4>, this, Z4c_CalcRHS, "Z4c_CalcRHS",
-                     Task_Run, {Z4c_CopyU}, {MHD_SetTmunu});
+                     Task_Run, {Z4c_CopyU}, {MHD_AddTmunu, SF_AddTmunu});
       break;
     default:
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
@@ -84,7 +84,7 @@ void Z4c::QueueZ4cTasks() {
   pnr->QueueTask(&Z4c::EnforceAlgConstr, this, Z4c_AlgC, "Z4c_AlgC", Task_Run,
                  {Z4c_Prolong});
   pnr->QueueTask(&Z4c::ConvertZ4cToADM, this, Z4c_Z4c2ADM, "Z4c_Z4c2ADM",
-                 Task_Run, {Z4c_AlgC});
+                 Task_Run, {Z4c_AlgC}, {SF_CalcRHS, SF_AddTmunu});
   if (pmy_pack->pdyngr != nullptr) {
     pnr->QueueTask(&Z4c::UpdateExcisionMasks, this, Z4c_Excise, "Z4c_Excise", Task_Run,
                    {Z4c_Z4c2ADM}, {Z4c_FastFlow});
@@ -102,8 +102,7 @@ void Z4c::QueueZ4cTasks() {
   /*pnr->QueueTask(&Z4c::Z4cToADM, this, Z4c_Z4c2ADM, "Z4c_Z4c2ADM", Task_End,
                  {Z4c_ClearR});*/
   pnr->QueueTask(&Z4c::ADMConstraints_, this, Z4c_ADMC, "Z4c_ADMC", Task_End,
-  //               {Z4c_Z4c2ADM});
-                 {Z4c_ClearR});
+                 {Z4c_ClearR}, {MHD_AddTmunu, SF_AddTmunu});
   pnr->QueueTask(&Z4c::CalcWeylScalar, this, Z4c_Weyl, "Z4c_Weyl", Task_End, {Z4c_ADMC});
   pnr->QueueTask(&Z4c::RestrictWeyl, this, Z4c_RestW, "Z4c_RestW", Task_End, {Z4c_Weyl});
   pnr->QueueTask(&Z4c::SendWeyl, this, Z4c_SendW, "Z4c_SendW", Task_End, {Z4c_RestW});
@@ -211,7 +210,8 @@ TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::EnforceAlgConstr(Driver *pdrive, int stage) {
-  if (pmy_pack->pdyngr != nullptr || stage == pdrive->nexp_stages) {
+  if (pmy_pack->pdyngr != nullptr || pmy_pack->pscalar != nullptr ||
+      stage == pdrive->nexp_stages) {
     AlgConstr(pmy_pack);
   }
   return TaskStatus::complete;
@@ -222,7 +222,8 @@ TaskStatus Z4c::EnforceAlgConstr(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ConvertZ4cToADM(Driver *pdrive, int stage) {
-  if (pmy_pack->pdyngr != nullptr || stage == pdrive->nexp_stages) {
+  if (pmy_pack->pdyngr != nullptr || pmy_pack->pscalar != nullptr ||
+      stage == pdrive->nexp_stages) {
     Z4cToADM(pmy_pack);
   }
   return TaskStatus::complete;

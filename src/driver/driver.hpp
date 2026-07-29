@@ -42,6 +42,7 @@ class Driver {
   int nexp_stages;                 // number of explicit stages (both SSP-RK and ImEx)
   Real gam0[4], gam1[4], beta[4];  // weights and fractional timestep per explicit stage
   Real delta[4];                   // weights for updating the intermediate stage (u1)
+  Real stage_abscissa[4];          // RHS evaluation times as fractions of dt
   Real a_twid[4][4], a_impl;       // matrix elements for implicit stages in ImEx
   Real cfl_limit;                  // maximum CFL number for integrator
   Real gamma;                      // gamma value for the IMEX_new integrator
@@ -54,6 +55,8 @@ class Driver {
   void Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout);
   void Finalize(Mesh *pmesh, ParameterInput *pin, Outputs *pout);
   void InitBoundaryValuesAndPrimitives(Mesh *pm);
+  Real StageTime(const Mesh *pm, int stage) const;
+  Real StageEndTime(const Mesh *pm, int stage) const;
 
  private:
   Kokkos::Timer run_time_;      // generalized timer for cpu/gpu/etc

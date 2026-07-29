@@ -19,6 +19,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "radiation/radiation.hpp"
+#include "scalar_field/scalar_field.hpp"
 #include "refinement_criteria.hpp"
 #include "utils/utils.hpp"
 
@@ -87,6 +88,19 @@ RefinementCriteria::RefinementCriteria(Mesh *pm, ParameterInput *pin) :
       std::cout<<"### FATAL ERROR in "<<__FILE__<<" at line "<<__LINE__<<std::endl;
       Kokkos::abort("radiation refinement variable used but <radiation> not defined");
     }
+    if ((it->rvariable.compare(0, 3, "sf_") == 0) &&
+        (pm->pmb_pack->pscalar == nullptr)) {
+      std::cout<<"### FATAL ERROR in "<<__FILE__<<" at line "<<__LINE__<<std::endl;
+      Kokkos::abort(
+          "Scalar-field refinement variable used but <scalar_field> not defined");
+    }
+    if (pm->pmb_pack->pscalar != nullptr &&
+        pm->pmb_pack->pscalar->ncomponents == 1 &&
+        (it->rvariable == "sf_phi1" || it->rvariable == "sf_pi1" ||
+         it->rvariable == "sf_charge")) {
+      std::cout<<"### FATAL ERROR in "<<__FILE__<<" at line "<<__LINE__<<std::endl;
+      Kokkos::abort("Imaginary or charge refinement variable requested for real scalar");
+    }
   }
 
   // count number of derived variables used for refinement
@@ -151,6 +165,42 @@ void RefinementCriteria::SetRefinementData(MeshBlockPack* pmbp, bool count_deriv
         }
       // radiation coordinate frame energy density R^0^0
       } else if (it->rvariable.compare("rad_coord_e") == 0) {
+        if (count_derived) {
+          nderived += 1;
+        } else if (load_derived) {
+          ComputeDerivedVariable(it->rvariable, iderived, pmbp, dvars);
+          iderived += 1;
+        } else {
+          it->rdata = Kokkos::subview(dvars, ALL, iderived, ALL, ALL, ALL);
+          iderived += 1;
+        }
+      } else if (it->rvariable.compare("sf_phi0") == 0) {
+        if (!(count_derived) && !(load_derived)) {
+          int n = static_cast<int>(scalar_field::ScalarField::I_SF_PHI0);
+          it->rdata = Kokkos::subview(
+              pmbp->pscalar->u0, ALL, n, ALL, ALL, ALL);
+        }
+      } else if (it->rvariable.compare("sf_pi0") == 0) {
+        if (!(count_derived) && !(load_derived)) {
+          int n = static_cast<int>(scalar_field::ScalarField::I_SF_PI0);
+          it->rdata = Kokkos::subview(
+              pmbp->pscalar->u0, ALL, n, ALL, ALL, ALL);
+        }
+      } else if (it->rvariable.compare("sf_phi1") == 0) {
+        if (!(count_derived) && !(load_derived)) {
+          int n = static_cast<int>(scalar_field::ScalarField::I_SF_PHI1);
+          it->rdata = Kokkos::subview(
+              pmbp->pscalar->u0, ALL, n, ALL, ALL, ALL);
+        }
+      } else if (it->rvariable.compare("sf_pi1") == 0) {
+        if (!(count_derived) && !(load_derived)) {
+          int n = static_cast<int>(scalar_field::ScalarField::I_SF_PI1);
+          it->rdata = Kokkos::subview(
+              pmbp->pscalar->u0, ALL, n, ALL, ALL, ALL);
+        }
+      } else if (it->rvariable.compare("sf_amplitude") == 0 ||
+                 it->rvariable.compare("sf_energy") == 0 ||
+                 it->rvariable.compare("sf_charge") == 0) {
         if (count_derived) {
           nderived += 1;
         } else if (load_derived) {

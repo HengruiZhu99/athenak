@@ -193,7 +193,8 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
         if (opar.variable.compare("mhd_w") == 0 ||
             opar.variable.compare("mhd_u") == 0 ||
             opar.variable.compare("hydro_w") == 0 ||
-            opar.variable.compare("hydro_u") == 0) {
+            opar.variable.compare("hydro_u") == 0 ||
+            opar.variable.compare("sf") == 0) {
           std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "PDF output block '" << opar.block_name
               << "' cannot output variable '" << opar.variable << "'."
@@ -268,6 +269,16 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
           opar.bin2_max = 1;
           opar.nbin2 = 0;
           opar.logscale2 = true;
+        }
+        if (opar.variable_2 == "mhd_w" || opar.variable_2 == "mhd_u" ||
+            opar.variable_2 == "hydro_w" || opar.variable_2 == "hydro_u" ||
+            opar.variable_2 == "sf") {
+          std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+                    << __LINE__ << std::endl << "PDF output block '"
+                    << opar.block_name << "' cannot output variable '"
+                    << opar.variable_2 << "'. The variable must be a single variable "
+                    << "not a variable group" << std::endl;
+          exit(EXIT_FAILURE);
         }
         pnode = new PDFOutput(pin,pm,opar);
         pout_list.insert(pout_list.begin(),pnode);

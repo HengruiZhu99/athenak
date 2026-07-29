@@ -76,7 +76,8 @@ class DynGRMHD {
   // container to hold names of TaskIDs
   DynGRMHDTaskIDs id;
 
-  TaskStatus SetTmunu(Driver *d, int stage);
+  TaskStatus AddTmunu(Driver *d, int stage);
+  TaskStatus AddTmunuFinal(Driver *d, int stage);
   TaskStatus SetADMVariables(Driver *d, int stage);
   TaskStatus UpdateExcisionMasks(Driver *d, int stage);
   TaskStatus ApplyPhysicalBCs(Driver *d, int stage);

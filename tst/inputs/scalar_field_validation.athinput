@@ -1,0 +1,67 @@
+# Focused scalar-field input validation, boundary, and timestep regression
+
+<job>
+basename = scalar_field_validation
+
+<mesh>
+nghost = 4
+nx1 = 8
+x1min = 0.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+
+nx2 = 1
+x2min = -0.5
+x2max = 0.5
+ix2_bc = periodic
+ox2_bc = periodic
+
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 4
+nx2 = 1
+nx3 = 1
+
+<mesh_refinement>
+refinement = none
+max_nmb_per_rank = 64
+
+<coord>
+general_rel = true
+minkowski = true
+a = 0.0
+excise = false
+smooth_excision = false
+
+<adm>
+dynamic = false
+
+<scalar_field>
+field_type = real
+potential = free
+mass = 0.7
+lambda = 0.0
+backreaction = false
+diss = 0.0
+spatial_order = 2
+excision_tdamp = 1.0
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.4
+nlim = 0
+tlim = 100.0
+ndiag = 1
+
+<problem>
+pgen_name = scalar_field_oscillator
+test_case = real_free
+amplitude = 0.2
+lapse = 1.0

@@ -29,6 +29,7 @@
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
 #include "particles/particles.hpp"
+#include "scalar_field/scalar_field.hpp"
 #include "units/units.hpp"
 #include "meshblock_pack.hpp"
 
@@ -54,6 +55,7 @@ MeshBlockPack::MeshBlockPack(Mesh *pm, int igids, int igide) :
 MeshBlockPack::~MeshBlockPack() {
   if (ppart  != nullptr) {delete ppart;}
   if (pnr    != nullptr) {delete pnr;}
+  if (pscalar != nullptr) {delete pscalar;}
   if (pdyngr != nullptr) {delete pdyngr;}
   if (ptmunu != nullptr) {delete ptmunu;}
   if (padm   != nullptr) {delete padm;}
@@ -117,7 +119,8 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     phydro = new hydro::Hydro(this, pin);
     nphysics++;
     if (!(pin->DoesBlockExist("mhd")) && !(pin->DoesBlockExist("radiation")) &&
-        !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) ) {
+        !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) &&
+        !(pin->DoesBlockExist("scalar_field"))) {
       phydro->AssembleHydroTasks(tl_map);
     }
   } else {
@@ -130,7 +133,8 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     pmhd = new mhd::MHD(this, pin);
     nphysics++;
     if (!(pin->DoesBlockExist("hydro")) && !(pin->DoesBlockExist("radiation")) &&
-        !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) ) {
+        !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) &&
+        !(pin->DoesBlockExist("scalar_field"))) {
       pmhd->AssembleMHDTasks(tl_map);
     }
   } else {
@@ -166,6 +170,19 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
   // (5) RADIATION
   // Create radiation physics module.  Create tasklist.
   if (pin->DoesBlockExist("radiation")) {
+    const bool evolves_fluid =
+        !pin->GetOrAddBoolean("radiation", "fixed_fluid", false);
+    const bool has_fluid =
+        pin->DoesBlockExist("hydro") || pin->DoesBlockExist("mhd");
+    const bool has_relativistic_metric =
+        pin->DoesBlockExist("adm") || pin->DoesBlockExist("z4c");
+    if (evolves_fluid && has_fluid && has_relativistic_metric) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+                << __LINE__ << std::endl
+                << "Coupled radiation-fluid evolution is not compatible with "
+                << "ADM/Z4c task assembly." << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
     prad = new radiation::Radiation(this, pin);
     nphysics++;
     prad->AssembleRadTasks(tl_map);
@@ -211,7 +228,16 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     }
   }
 
-  // (8) Dynamical Spacetime and Matter (MHD TODO)
+  // (8) CANONICAL SCALAR FIELD
+  // Construct after ADM/Z4c so it can share the physical metric and FD order.
+  if (pin->DoesBlockExist("scalar_field")) {
+    pscalar = new scalar_field::ScalarField(this, pin);
+    nphysics++;
+  } else {
+    pscalar = nullptr;
+  }
+
+  // (9) Dynamical Spacetime and Matter (MHD TODO)
   if ((pin->DoesBlockExist("z4c") || pin->DoesBlockExist("adm")) &&
       (pin->DoesBlockExist("hydro")) ) {
     std::cout << "Dynamical metric and hydro not compatible; use MHD instead  "
@@ -221,6 +247,10 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
   if ((pin->DoesBlockExist("z4c") || pin->DoesBlockExist("adm")) &&
       (pin->DoesBlockExist("mhd")) ) {
     pdyngr = dyngr::BuildDynGRMHD(this, pin);
+  }
+  const bool scalar_backreacts =
+      (pz4c != nullptr && pscalar != nullptr && pscalar->backreaction);
+  if (pdyngr != nullptr || scalar_backreacts) {
     ptmunu = new Tmunu(this, pin);
   }
 
@@ -229,7 +259,7 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     pnr->AssembleNumericalRelativityTasks(tl_map);
   }
 
-  // (9) PARTICLES
+  // (10) PARTICLES
   // Create particles module.  Create tasklist.
   if (pin->DoesBlockExist("particles")) {
     ppart = new particles::Particles(this, pin);

@@ -1,0 +1,44 @@
+# AthenaK input for device-side canonical scalar-field algebra unit tests
+
+<job>
+basename = ut_scalar_field
+
+<mesh>
+nghost = 2
+nx1 = 4
+x1min = -1.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+
+nx2 = 1
+x2min = -0.5
+x2max = 0.5
+ix2_bc = periodic
+ox2_bc = periodic
+
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 4
+nx2 = 1
+nx3 = 1
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.25
+nlim = 0
+tlim = 0.0
+ndiag = 1
+
+# The always-built unit-test pgen only needs a minimal existing physics module.
+<z4c>
+spatial_order = 2
+
+<problem>
+pgen_name = scalar_field_unit_tests

@@ -12,8 +12,10 @@
 #include <vector>
 
 #include "numerical_relativity.hpp"
-#include "z4c/z4c.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
+#include "scalar_field/scalar_field.hpp"
+#include "z4c/tmunu.hpp"
+#include "z4c/z4c.hpp"
 
 namespace numrel {
 
@@ -40,6 +42,8 @@ std::vector<QueuedTask>& NumericalRelativity::SelectQueue(TaskLocation loc) {
 PhysicsDependency NumericalRelativity::NeedsPhysics(TaskName task) {
   if (task < MHD_NTASKS) {
     return Phys_MHD;
+  } else if (task < SF_NTASKS) {
+    return Phys_ScalarField;
   } else if (task < Z4c_NTASKS) {
     return Phys_Z4c;
   } else {
@@ -53,6 +57,8 @@ bool NumericalRelativity::DependencyAvailable(PhysicsDependency dep) {
       return true;
     case Phys_MHD:
       return pmy_pack->pdyngr != nullptr;
+    case Phys_ScalarField:
+      return pmy_pack->pscalar != nullptr;
     case Phys_Z4c:
       return pmy_pack->pz4c != nullptr;
     default:
@@ -155,8 +161,14 @@ void NumericalRelativity::PrintMissingTasks(std::vector<QueuedTask> &queue) {
 void NumericalRelativity::AssembleNumericalRelativityTasks(
        std::map<std::string, std::shared_ptr<TaskList>>& tl) {
   // Assemble the task lists for all physics modules
+  if (pmy_pack->ptmunu != nullptr && pmy_pack->pz4c != nullptr) {
+    pmy_pack->ptmunu->QueueTmunuTasks();
+  }
   if (pmy_pack->pdyngr != nullptr) {
     pmy_pack->pdyngr->QueueDynGRMHDTasks();
+  }
+  if (pmy_pack->pscalar != nullptr) {
+    pmy_pack->pscalar->QueueScalarFieldTasks();
   }
   if (pmy_pack->pz4c != nullptr) {
     pmy_pack->pz4c->QueueZ4cTasks();

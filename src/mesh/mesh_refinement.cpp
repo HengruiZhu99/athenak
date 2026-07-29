@@ -28,6 +28,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "radiation/radiation.hpp"
+#include "scalar_field/scalar_field.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
@@ -110,6 +111,9 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
   if (pm->pmb_pack->pz4c != nullptr) {
     ncc_tosend += (pm->pmb_pack->pz4c->nz4c);
   }
+  if (pm->pmb_pack->pscalar != nullptr) {
+    ncc_tosend += pm->pmb_pack->pscalar->nvar;
+  }
   int nmb = std::max((pm->pmb_pack->nmb_thispack), (pm->nmb_maxperrank));
   // number of cells per MB, including ghost zones
   int ncells = (pm->mb_indcs.nx1 + 2*pm->mb_indcs.ng);
@@ -163,6 +167,9 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     }
     if (pmbp->pz4c != nullptr) {
       (void) pmbp->pz4c->NewTimeStep(pdriver, pdriver->nexp_stages);
+    }
+    if (pmbp->pscalar != nullptr) {
+      (void) pmbp->pscalar->NewTimeStep(pdriver, pdriver->nexp_stages);
     }
 
     nmb_created += nnew;
@@ -510,6 +517,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   radiation::Radiation* prad = pm->pmb_pack->prad;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
   adm::ADM* padm = pm->pmb_pack->padm;
+  scalar_field::ScalarField* pscalar = pm->pmb_pack->pscalar;
   // derefine (if needed)
   if (ndel > 0) {
     if (phydro != nullptr) {
@@ -524,6 +532,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (pz4c != nullptr) {
       DerefineCCSameRank(pz4c->u0, pz4c->coarse_u0);
+    }
+    if (pscalar != nullptr) {
+      DerefineCCSameRank(pscalar->u0, pscalar->coarse_u0);
     }
   }
 
@@ -545,6 +556,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   } else if (padm != nullptr) {
     CopyCC(padm->u_adm);
   }
+  if (pscalar != nullptr) {
+    CopyCC(pscalar->u0);
+  }
   // Step 7.
   // Copy evolved physics variables for MBs flagged for refinement from source fine array
   // to target coarse array, when both are on same rank.
@@ -561,6 +575,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (pz4c != nullptr) {
       CopyForRefinementCC(pz4c->u0, pz4c->coarse_u0);
+    }
+    if (pscalar != nullptr) {
+      CopyForRefinementCC(pscalar->u0, pscalar->coarse_u0);
     }
   }
 
@@ -596,6 +613,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (pz4c != nullptr) {
       RefineCC(new_to_old, pz4c->u0, pz4c->coarse_u0, true);
+    }
+    if (pscalar != nullptr) {
+      RefineCC(new_to_old, pscalar->u0, pscalar->coarse_u0, true);
     }
   }
 
@@ -648,7 +668,10 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   if ((nnew > 0) || (ndel > 0)) {
     // With dynGRMHD, recalculate ADM variables
     if ((pz4c == nullptr) && (padm != nullptr)) {
-      padm->SetADMVariables(pm->pmb_pack);
+      padm->SetADMVariablesAtTime(pm->pmb_pack, pm->time);
+      if (pm->pmb_pack->pcoord->coord_data.bh_excise) {
+        pm->pmb_pack->pcoord->UpdateExcisionMasks();
+      }
     }
     // With radiation, compute tetrads and associated mesh arrays
     if (prad != nullptr) {
@@ -1057,10 +1080,10 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
         } else {
           switch (indcs.ng) {
             case 2: HighOrderProlongCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
-                                          ca,a,prolong_2nd);
+                                          multi_d,three_d,ca,a,prolong_2nd);
                     break;
             case 4: HighOrderProlongCC<4>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
-                                          ca,a,prolong_4th);
+                                          multi_d,three_d,ca,a,prolong_4th);
                     break;
           }
         }
@@ -1171,12 +1194,30 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
   auto& restrict_2nd = weights.restrict_2nd;
   auto& restrict_4th = weights.restrict_4th;
   auto& restrict_4th_edge = weights.restrict_4th_edge;
+  const bool multi_d = pmy_mesh->multi_d;
+  const bool three_d = pmy_mesh->three_d;
   // restrict in 1D
   if (pmy_mesh->one_d) {
     par_for("restrictCC-1D",DevExeSpace(), 0,nmb-1, 0,nvar-1, cis,cie,
     KOKKOS_LAMBDA(const int m, const int n, const int i) {
       int finei = 2*i - cis;  // correct when cis=is
-      cu(m,n,cks,cjs,i) = 0.5*(u(m,n,cks,cjs,finei) + u(m,n,cks,cjs,finei+1));
+      if (!is_z4c) {
+        cu(m,n,cks,cjs,i) =
+            0.5*(u(m,n,cks,cjs,finei) + u(m,n,cks,cjs,finei+1));
+      } else {
+        switch (indcs.ng) {
+          case 2:
+            cu(m,n,cks,cjs,i) = RestrictInterpolation<2>(
+                m,n,cks,cjs,finei,nx1,nx2,nx3,multi_d,three_d,u,
+                restrict_2nd,restrict_4th,restrict_4th_edge);
+            break;
+          case 4:
+            cu(m,n,cks,cjs,i) = RestrictInterpolation<4>(
+                m,n,cks,cjs,finei,nx1,nx2,nx3,multi_d,three_d,u,
+                restrict_2nd,restrict_4th,restrict_4th_edge);
+            break;
+        }
+      }
     });
   // restrict in 2D
   } else if (pmy_mesh->two_d) {
@@ -1184,8 +1225,24 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
     KOKKOS_LAMBDA(const int m, const int n, const int j, const int i) {
       int finei = 2*i - cis;  // correct when cis=is
       int finej = 2*j - cjs;  // correct when cjs=js
-      cu(m,n,cks,j,i) = 0.25*(u(m,n,cks,finej  ,finei) + u(m,n,cks,finej  ,finei+1)
-                            + u(m,n,cks,finej+1,finei) + u(m,n,cks,finej+1,finei+1));
+      if (!is_z4c) {
+        cu(m,n,cks,j,i) =
+            0.25*(u(m,n,cks,finej,finei) + u(m,n,cks,finej,finei+1)
+                + u(m,n,cks,finej+1,finei) + u(m,n,cks,finej+1,finei+1));
+      } else {
+        switch (indcs.ng) {
+          case 2:
+            cu(m,n,cks,j,i) = RestrictInterpolation<2>(
+                m,n,cks,finej,finei,nx1,nx2,nx3,multi_d,three_d,u,
+                restrict_2nd,restrict_4th,restrict_4th_edge);
+            break;
+          case 4:
+            cu(m,n,cks,j,i) = RestrictInterpolation<4>(
+                m,n,cks,finej,finei,nx1,nx2,nx3,multi_d,three_d,u,
+                restrict_2nd,restrict_4th,restrict_4th_edge);
+            break;
+        }
+      }
     });
 
   // restrict in 3D
@@ -1203,11 +1260,15 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
                 + u(m,n,finek+1,finej+1,finei) + u(m,n,finek+1,finej+1,finei+1));
       } else {
         switch (indcs.ng) {
-          case 2: cu(m,n,k,j,i) = RestrictInterpolation<2>(m,n,finek,finej,finei,
-                          nx1,nx2,nx3,u,restrict_2nd,restrict_4th,restrict_4th_edge);
+          case 2: cu(m,n,k,j,i) = RestrictInterpolation<2>(
+                          m,n,finek,finej,finei,nx1,nx2,nx3,
+                          multi_d,three_d,u,restrict_2nd,restrict_4th,
+                          restrict_4th_edge);
                   break;
-          case 4: cu(m,n,k,j,i) = RestrictInterpolation<4>(m,n,finek,finej,finei,
-                          nx1,nx2,nx3,u,restrict_2nd,restrict_4th,restrict_4th_edge);
+          case 4: cu(m,n,k,j,i) = RestrictInterpolation<4>(
+                          m,n,finek,finej,finei,nx1,nx2,nx3,
+                          multi_d,three_d,u,restrict_2nd,restrict_4th,
+                          restrict_4th_edge);
                   break;
         }
       }

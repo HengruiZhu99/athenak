@@ -21,7 +21,7 @@
     #error NHISTORY > NREDUCTION in outputs.hpp
 #endif
 
-#define NOUTPUT_CHOICES 173
+#define NOUTPUT_CHOICES 181
 // choices for output variables used in <ouput> blocks in input file
 // TO ADD MORE CHOICES:
 //   - add more strings to array below, change NOUTPUT_CHOICES above appropriately
@@ -106,7 +106,11 @@ static const char *var_choice[NOUTPUT_CHOICES] = {
   "z4c_Exx", "z4c_Exy", "z4c_Exz", "z4c_Eyy", "z4c_Eyz", "z4c_Ezz",
   "z4c_Bxx", "z4c_Bxy", "z4c_Bxz", "z4c_Byy", "z4c_Byz", "z4c_Bzz",
   "z4c_Px", "z4c_Py", "z4c_Pz",
-  "z4c_diag"
+  "z4c_diag",
+
+  // canonical scalar field (173-180)
+  "sf_phi0", "sf_pi0", "sf_phi1", "sf_pi1", "sf",
+  "sf_amplitude", "sf_energy", "sf_charge"
 };
 
 
@@ -252,7 +256,7 @@ class BaseTypeOutput {
   // for restarts, where dims are (m,n,k,j,i)
   HostArray5D<Real> outarray;
   HostArray5D<Real> outarray_hyd, outarray_mhd, outarray_rad,
-                    outarray_force, outarray_z4c, outarray_adm;
+                    outarray_force, outarray_z4c, outarray_adm, outarray_sf;
   HostFaceFld4D<Real> outfield;  // FC output field on host
   std::vector<int> noutmbs;   // with MPI, number of output MBs across all ranks
   int noutmbs_min;            // with MPI, minimum number of output MBs across all ranks
@@ -292,6 +296,7 @@ class HistoryOutput : public BaseTypeOutput {
   void LoadHydroHistoryData(HistoryData *pdata, Mesh *pm);
   void LoadMHDHistoryData(HistoryData *pdata, Mesh *pm);
   void LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm);
+  void LoadScalarHistoryData(HistoryData *pdata, Mesh *pm);
   void WriteOutputFile(Mesh *pm, ParameterInput *pin) override;
 };
 

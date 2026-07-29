@@ -13,16 +13,20 @@
 #include <string> // string
 
 #include "athena.hpp"
+#include "coordinates/adm.hpp"
+#include "coordinates/coordinates.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "outputs/outputs.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
+#include "z4c/tmunu.hpp"
 #include "z4c/z4c.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "ion-neutral/ion-neutral.hpp"
 #include "radiation/radiation.hpp"
+#include "scalar_field/scalar_field.hpp"
 #include "driver.hpp"
 
 #if MPI_PARALLEL_ENABLED
@@ -65,6 +69,10 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
   nmb_updated_(0),
   npart_updated_(0),
   lb_efficiency_(0) {
+  for (int stage = 0; stage < 4; ++stage) {
+    stage_abscissa[stage] = 0.0;
+  }
+
   // set time-evolution option (no default)
   {
     std::string evolution_t = pin->GetString("time","evolution");
@@ -276,7 +284,47 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
          << "Valid choices are [rk1,rk2,rk3,rk4,imex2,imex3]." << std::endl;
       exit(EXIT_FAILURE);
     }
+
+    // Recover the nonautonomous RHS evaluation times from the same low-storage
+    // recurrence used by every explicit physics module.  This is more robust than
+    // maintaining a separate table, especially for the non-monotone RK4 abscissae.
+    Real state_time = 0.0;
+    Real register_time = 0.0;
+    for (int stage = 0; stage < nexp_stages; ++stage) {
+      if (integrator == "rk4") {
+        if (stage == 0) {
+          register_time = state_time;
+        } else {
+          register_time += delta[stage]*state_time;
+        }
+      } else if (stage == 0) {
+        register_time = state_time;
+      }
+      stage_abscissa[stage] = state_time;
+      state_time = gam0[stage]*state_time + gam1[stage]*register_time +
+                   beta[stage];
+    }
   }
+}
+
+//----------------------------------------------------------------------------------------
+//! \brief Return the physical time at which one explicit-stage RHS is evaluated.
+
+Real Driver::StageTime(const Mesh *pm, const int stage) const {
+  if (stage < 1 || stage > nexp_stages) {
+    return pm->time;
+  }
+  return pm->time + stage_abscissa[stage - 1]*pm->dt;
+}
+
+//----------------------------------------------------------------------------------------
+//! \brief Return the physical time represented by the state after an explicit stage.
+
+Real Driver::StageEndTime(const Mesh *pm, const int stage) const {
+  if (stage < nexp_stages) {
+    return StageTime(pm, stage + 1);
+  }
+  return pm->time + pm->dt;
 }
 
 //----------------------------------------------------------------------------------------
@@ -318,6 +366,7 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
   mhd::MHD *pmhd = pmesh->pmb_pack->pmhd;
   radiation::Radiation *prad = pmesh->pmb_pack->prad;
   z4c::Z4c *pz4c = pmesh->pmb_pack->pz4c;
+  scalar_field::ScalarField *pscalar = pmesh->pmb_pack->pscalar;
   if (time_evolution != TimeEvolution::tstatic) {
     if (phydro != nullptr) {
       (void) pmesh->pmb_pack->phydro->NewTimeStep(this, nexp_stages);
@@ -330,6 +379,9 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     }
     if (pz4c != nullptr) {
       (void) pmesh->pmb_pack->pz4c->NewTimeStep(this, nexp_stages);
+    }
+    if (pscalar != nullptr) {
+      (void) pscalar->NewTimeStep(this, nexp_stages);
     }
 
     pmesh->NewTimeStep(tlim);
@@ -562,6 +614,16 @@ Real Driver::UpdateWallClock() {
 void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
   // Note: with MPI, sends on ALL MBs must be complete before receives execute
 
+  // Prescribed dynamic metrics are external state, so synchronize them before any
+  // primitives, scalar diagnostics, or ghost-zone work reads ADM data.
+  if (pm->pmb_pack->padm != nullptr && pm->pmb_pack->pz4c == nullptr &&
+      pm->pmb_pack->padm->is_dynamic) {
+    pm->pmb_pack->padm->SetADMVariablesAtTime(pm->pmb_pack, pm->time);
+    if (pm->pmb_pack->pcoord->coord_data.bh_excise) {
+      pm->pmb_pack->pcoord->UpdateExcisionMasks();
+    }
+  }
+
   // Initialize Z4c
   z4c::Z4c *pz4c = pm->pmb_pack->pz4c;
   if (pz4c != nullptr) {
@@ -574,6 +636,22 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
     (void) pz4c->Z4cBoundaryRHS(this, 0);
     (void) pz4c->ApplyPhysicalBCs(this, 0);
     (void) pz4c->Prolongate(this, 0);
+    if (pm->pmb_pack->pscalar != nullptr) {
+      (void) pz4c->ConvertZ4cToADM(this, nexp_stages);
+    }
+  }
+
+  // Initialize scalar fields after the physical ADM metric is current.
+  scalar_field::ScalarField *pscalar = pm->pmb_pack->pscalar;
+  if (pscalar != nullptr) {
+    (void) pscalar->RestrictU(this, 0);
+    (void) pscalar->InitRecv(this, -1);
+    (void) pscalar->SendU(this, 0);
+    (void) pscalar->ClearSend(this, -1);
+    (void) pscalar->ClearRecv(this, -1);
+    (void) pscalar->RecvU(this, 0);
+    (void) pscalar->ApplyPhysicalBCs(this, 0);
+    (void) pscalar->Prolongate(this, 0);
   }
 
   // Initialize HYDRO: ghost zones and primitive variables (everywhere)
@@ -640,6 +718,18 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
     (void) prad->RecvI(this, 0);
     (void) prad->ApplyPhysicalBCs(this, 0);
     (void) prad->Prolongate(this, 0);
+  }
+
+  // Assemble deterministic initial matter data after all fields and primitives are valid.
+  Tmunu *ptmunu = pm->pmb_pack->ptmunu;
+  if (ptmunu != nullptr) {
+    (void) ptmunu->Clear(this, 0);
+    if (pdyngr != nullptr) {
+      (void) pdyngr->AddTmunu(this, 0);
+    }
+    if (pscalar != nullptr) {
+      (void) pscalar->AddTmunu(this, 0);
+    }
   }
 
   return;

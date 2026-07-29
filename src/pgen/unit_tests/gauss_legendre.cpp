@@ -47,10 +47,9 @@ void ProblemGenerator::GaussLegendre(ParameterInput *pin, const bool restart) {
   // test that the cross integral of spherical harmonics are delta functions.
   // First initialize 10 random pairs of l and m, with 0 <= l <=ntheta.
 
-  std::random_device os_seed;
-  const u32 seed = os_seed();
-
-  engine generator( seed );
+  // A fixed seed keeps the regression reproducible across platforms and CI runs.
+  const u32 seed = 0;
+  engine generator(seed);
   std::uniform_int_distribution< u32 > distribute_l( 1, ntheta-1);
 
   std::vector<int> ls;
@@ -64,7 +63,7 @@ void ProblemGenerator::GaussLegendre(ParameterInput *pin, const bool restart) {
     ms.push_back(m);
   }
 
-  double ylmR1,ylmI1,ylmR2,ylmI2;
+  Real ylmR1,ylmI1,ylmR2,ylmI2;
   double int_r, int_i;
   bool failed = false;
   double max_err = 0;

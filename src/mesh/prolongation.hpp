@@ -235,18 +235,36 @@ KOKKOS_INLINE_FUNCTION
 Real ProlongInterpolation(const int m, const int v, int k, int j, int i,
                             const int nx1, const int nx2, const int nx3,
                             const bool offsetk, const bool offsetj, const bool offseti,
+                        const bool multi_d, const bool three_d,
                         const DvceArray5D<Real> &ca, const DualArray3D<Real> &weights) {
   // interpolated value at new grid point
   Real ivals = 0;
 
-  for (int kk=0; kk<NGHOST+1; kk++) {
-    for (int jj=0; jj<NGHOST+1; jj++) {
+  const int nk = three_d ? NGHOST + 1 : 1;
+  const int nj = multi_d ? NGHOST + 1 : 1;
+  for (int kk=0; kk<nk; kk++) {
+    for (int jj=0; jj<nj; jj++) {
       for (int ii=0; ii<NGHOST+1; ii++) {
         int wghti = (offseti) ? NGHOST-ii : ii;
         int wghtj = (offsetj) ? NGHOST-jj : jj;
         int wghtk = (offsetk) ? NGHOST-kk : kk;
-        ivals += weights.d_view(wghtk,wghtj,wghti)*ca(m,v,
-                    k-NGHOST/2+kk,j-NGHOST/2+jj,i-NGHOST/2+ii);
+        Real weight = 0.0;
+        if (three_d) {
+          weight = weights.d_view(wghtk, wghtj, wghti);
+        } else if (multi_d) {
+          for (int inactive_k=0; inactive_k<NGHOST+1; ++inactive_k) {
+            weight += weights.d_view(inactive_k, wghtj, wghti);
+          }
+        } else {
+          for (int inactive_k=0; inactive_k<NGHOST+1; ++inactive_k) {
+            for (int inactive_j=0; inactive_j<NGHOST+1; ++inactive_j) {
+              weight += weights.d_view(inactive_k, inactive_j, wghti);
+            }
+          }
+        }
+        const int ck = three_d ? k-NGHOST/2+kk : k;
+        const int cj = multi_d ? j-NGHOST/2+jj : j;
+        ivals += weight*ca(m, v, ck, cj, i-NGHOST/2+ii);
       }
     }
   }
@@ -262,27 +280,37 @@ template <int NGHOST>
 KOKKOS_INLINE_FUNCTION
 void HighOrderProlongCC(const int m, const int v, const int k, const int j, const int i,
                const int fk, const int fj, const int fi, const int nx1, const int nx2,
-               const int nx3, const DvceArray5D<Real> &ca, const DvceArray5D<Real> &a,
+               const int nx3, const bool multi_d, const bool three_d,
+               const DvceArray5D<Real> &ca, const DvceArray5D<Real> &a,
                const DualArray3D<Real> &weights) {
   // stencil size for interpolator
   a(m,v,fk  ,fj  ,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                        false,false,false, ca, weights);
+      false, false, false, multi_d, three_d, ca, weights);
   a(m,v,fk  ,fj  ,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                        false,false, true, ca, weights);
-  a(m,v,fk  ,fj+1,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                        false, true,false, ca, weights);
-  a(m,v,fk  ,fj+1,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                        false, true, true, ca, weights);
-  a(m,v,fk+1,fj  ,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true,false,false, ca, weights);
-  a(m,v,fk+1,fj  ,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true,false, true, ca, weights);
-  a(m,v,fk+1,fj+1,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true, true,false, ca, weights);
-  a(m,v,fk+1,fj+1,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true, true, true, ca, weights);
+      false, false, true, multi_d, three_d, ca, weights);
+  if (multi_d) {
+    a(m,v,fk,fj+1,fi) = ProlongInterpolation<NGHOST>(
+        m, v, k, j, i, nx1, nx2, nx3, false, true, false,
+        multi_d, three_d, ca, weights);
+    a(m,v,fk,fj+1,fi+1) = ProlongInterpolation<NGHOST>(
+        m, v, k, j, i, nx1, nx2, nx3, false, true, true,
+        multi_d, three_d, ca, weights);
+  }
+  if (three_d) {
+    a(m,v,fk+1,fj,fi) = ProlongInterpolation<NGHOST>(
+        m, v, k, j, i, nx1, nx2, nx3, true, false, false,
+        multi_d, three_d, ca, weights);
+    a(m,v,fk+1,fj,fi+1) = ProlongInterpolation<NGHOST>(
+        m, v, k, j, i, nx1, nx2, nx3, true, false, true,
+        multi_d, three_d, ca, weights);
+    a(m,v,fk+1,fj+1,fi) = ProlongInterpolation<NGHOST>(
+        m, v, k, j, i, nx1, nx2, nx3, true, true, false,
+        multi_d, three_d, ca, weights);
+    a(m,v,fk+1,fj+1,fi+1) = ProlongInterpolation<NGHOST>(
+        m, v, k, j, i, nx1, nx2, nx3, true, true, true,
+        multi_d, three_d, ca, weights);
+  }
   return;
 }
 
 #endif // MESH_PROLONGATION_HPP_
-

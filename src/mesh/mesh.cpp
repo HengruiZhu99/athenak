@@ -27,6 +27,7 @@
 #include "diffusion/conduction.hpp"
 #include "radiation/radiation.hpp"
 #include "particles/particles.hpp"
+#include "scalar_field/scalar_field.hpp"
 #include "srcterms/srcterms.hpp"
 #include "outputs/io_wrapper.hpp"
 
@@ -621,6 +622,10 @@ void Mesh::NewTimeStep(const Real tlim) {
   // z4c timestep
   if (pmb_pack->pz4c != nullptr) {
     dt = std::min(dt, (cfl_no)*(pmb_pack->pz4c->dtnew) );
+  }
+  // scalar-field timestep
+  if (pmb_pack->pscalar != nullptr) {
+    dt = std::min(dt, (cfl_no)*(pmb_pack->pscalar->dtnew));
   }
   // Radiation timestep
   if (pmb_pack->prad != nullptr) {

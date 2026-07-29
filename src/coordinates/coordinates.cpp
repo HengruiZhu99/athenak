@@ -29,7 +29,8 @@ Coordinates::Coordinates(ParameterInput *pin, MeshBlockPack *ppack) :
   // Check for relativistic dynamics
   // WGC: idea for handling new EOS
   is_dynamical_relativistic = (pin->DoesBlockExist("adm") || pin->DoesBlockExist("z4c"))
-                         && (pin->DoesBlockExist("hydro") || pin->DoesBlockExist("mhd"));
+      && (pin->DoesBlockExist("hydro") || pin->DoesBlockExist("mhd") ||
+          pin->DoesBlockExist("scalar_field"));
   if(!is_dynamical_relativistic) {
     is_special_relativistic = pin->GetOrAddBoolean("coord","special_rel",false);
     is_general_relativistic = pin->GetOrAddBoolean("coord","general_rel",false);
@@ -55,12 +56,17 @@ Coordinates::Coordinates(ParameterInput *pin, MeshBlockPack *ppack) :
 
     if (coord_data.bh_excise) {
       // Set the density and pressure to which cells inside the excision radius will
-      // be reset to.  Primitive velocities will be set to zero.
-      coord_data.dexcise = pin->GetReal("coord","dexcise");
-      if (is_dynamical_relativistic) {
-        coord_data.texcise = pin->GetReal("coord", "texcise");
-      } else {
-        coord_data.pexcise = pin->GetReal("coord", "pexcise");
+      // be reset to.  These targets are fluid-specific; scalar-only excision does not
+      // require artificial density, pressure, or temperature parameters.
+      const bool has_fluid =
+          pin->DoesBlockExist("hydro") || pin->DoesBlockExist("mhd");
+      if (has_fluid) {
+        coord_data.dexcise = pin->GetReal("coord","dexcise");
+        if (is_dynamical_relativistic) {
+          coord_data.texcise = pin->GetReal("coord", "texcise");
+        } else {
+          coord_data.pexcise = pin->GetReal("coord", "pexcise");
+        }
       }
 
       coord_data.flux_excise_r = (pin->DoesBlockExist("radiation")) ?
@@ -108,6 +114,8 @@ Coordinates::Coordinates(ParameterInput *pin, MeshBlockPack *ppack) :
       int ncells3 = (indcs.nx3 > 1)? (indcs.nx3 + 2*(indcs.ng)) : 1;
       Kokkos::realloc(excision_floor, nmb, ncells3, ncells2, ncells1);
       Kokkos::realloc(excision_flux, nmb, ncells3, ncells2, ncells1);
+      Kokkos::deep_copy(excision_floor, false);
+      Kokkos::deep_copy(excision_flux, false);
       if (coord_data.excision_scheme == ExcisionScheme::fixed) {
         SetExcisionMasks(excision_floor, excision_flux);
       }

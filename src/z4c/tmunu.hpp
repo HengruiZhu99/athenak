@@ -14,8 +14,10 @@
 #include "athena_tensor.hpp"
 #include "mesh/mesh.hpp"
 #include "eos/primitive-solver/ps_types.hpp"
+#include "tasklist/task_list.hpp"
 
 // forward declarations
+class Driver;
 class MeshBlockPack;
 
 //! \class Tmunu
@@ -23,6 +25,9 @@ class Tmunu {
  public:
   Tmunu(MeshBlockPack *ppack, ParameterInput *pin);
   ~Tmunu();
+  void QueueTmunuTasks();
+  TaskStatus Clear(Driver *driver, int stage);
+  TaskStatus ClearFinal(Driver *driver, int stage);
 
   // Indices of Tmunu variables
   enum {

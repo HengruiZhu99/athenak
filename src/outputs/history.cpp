@@ -7,6 +7,7 @@
 //  \brief writes history output data, volume-averaged quantities that are output
 //         frequently in time to trace their evolution.
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <iomanip>
@@ -20,9 +21,122 @@
 #include "eos/eos.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
+#include "scalar_field/scalar_field.hpp"
+#include "utils/finite_diff.hpp"
 #include "z4c/z4c.hpp"
 #include "coordinates/adm.hpp"
+#include "coordinates/coordinates.hpp"
 #include "outputs.hpp"
+
+namespace {
+
+template <int NGHOST>
+void LoadScalarHistoryWithStencil(HistoryData *pdata, Mesh *pm) {
+  auto &scalar = *(pm->pmb_pack->pscalar);
+  auto &state = scalar.u0;
+  auto &adm_vars = pm->pmb_pack->padm->adm;
+  auto &size = pm->pmb_pack->pmb->mb_size;
+  auto &indcs = pm->pmb_pack->pmesh->mb_indcs;
+
+  const int is = indcs.is;
+  const int js = indcs.js;
+  const int ks = indcs.ks;
+  const int nx1 = indcs.nx1;
+  const int nx2 = indcs.nx2;
+  const int nx3 = indcs.nx3;
+  const int nmb = pm->pmb_pack->nmb_thispack;
+  const int ndim = 1 + static_cast<int>(pm->multi_d) +
+                   static_cast<int>(pm->three_d);
+  const int ncomponents = scalar.ncomponents;
+  const int nhist = pdata->nhist;
+  const int nkji = nx3*nx2*nx1;
+  const int nji = nx2*nx1;
+  const int nmkji = nmb*nkji;
+  const scalar_field::PotentialData potential = scalar.potential;
+  const bool use_excision = scalar.excision;
+  auto &excision_mask = pm->pmb_pack->pcoord->excision_floor;
+
+  array_sum::GlobalSum scalar_sum;
+  Kokkos::parallel_reduce(
+      "scalar history sums",
+      Kokkos::RangePolicy<DevExeSpace>(0, nmkji),
+      KOKKOS_LAMBDA(const int idx, array_sum::GlobalSum &sum) {
+        const int m = idx/nkji;
+        const int k_offset = (idx - m*nkji)/nji;
+        const int j_offset = (idx - m*nkji - k_offset*nji)/nx1;
+        const int i_offset =
+            idx - m*nkji - k_offset*nji - j_offset*nx1;
+        const int k = k_offset + ks;
+        const int j = j_offset + js;
+        const int i = i_offset + is;
+
+        if (use_excision && excision_mask(m, k, j, i)) {
+          array_sum::GlobalSum point;
+          for (int n = 0; n < NHISTORY_VARIABLES; ++n) {
+            point.the_array[n] = 0.0;
+          }
+          sum += point;
+          return;
+        }
+
+        const Real inverse_dx[3] = {
+          Real(1.0)/size.d_view(m).dx1,
+          Real(1.0)/size.d_view(m).dx2,
+          Real(1.0)/size.d_view(m).dx3
+        };
+        Real phi[2] = {0.0, 0.0};
+        Real pi[2] = {0.0, 0.0};
+        Real gradient[2][3] = {
+          {0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0}
+        };
+        for (int component = 0; component < ncomponents; ++component) {
+          const int iphi = 2*component;
+          phi[component] = state(m, iphi, k, j, i);
+          pi[component] = state(m, iphi + 1, k, j, i);
+          for (int direction = 0; direction < ndim; ++direction) {
+            gradient[component][direction] =
+                Dx<NGHOST>(
+                    direction, inverse_dx, state, m, iphi, k, j, i);
+          }
+        }
+
+        const Real metric[6] = {
+          adm_vars.g_dd(m, 0, 0, k, j, i),
+          adm_vars.g_dd(m, 0, 1, k, j, i),
+          adm_vars.g_dd(m, 0, 2, k, j, i),
+          adm_vars.g_dd(m, 1, 1, k, j, i),
+          adm_vars.g_dd(m, 1, 2, k, j, i),
+          adm_vars.g_dd(m, 2, 2, k, j, i)
+        };
+        const scalar_field::MatterPoint matter =
+            scalar_field::ComputeMatter(
+                ncomponents, phi, pi, gradient, metric, potential);
+        Real inverse_metric[6];
+        Real determinant;
+        scalar_field::InvertMetric(metric, inverse_metric, &determinant);
+        const Real proper_volume =
+            size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3 *
+            sqrt(fabs(determinant));
+
+        array_sum::GlobalSum point;
+        point.the_array[0] = proper_volume*matter.energy;
+        if (ncomponents == 2) {
+          point.the_array[1] = proper_volume*matter.charge;
+        }
+        for (int n = nhist; n < NHISTORY_VARIABLES; ++n) {
+          point.the_array[n] = 0.0;
+        }
+        sum += point;
+      },
+      Kokkos::Sum<array_sum::GlobalSum>(scalar_sum));
+
+  for (int n = 0; n < pdata->nhist; ++n) {
+    pdata->hdata[n] = scalar_sum.the_array[n];
+  }
+}
+
+}  // namespace
 
 //----------------------------------------------------------------------------------------
 // Constructor: also calls BaseTypeOutput base class constructor
@@ -40,6 +154,9 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
     }
     if (pm->pmb_pack->pmhd != nullptr) {
       hist_data.emplace_back(PhysicsModule::MagnetoHydroDynamics);
+    }
+    if (pm->pmb_pack->pscalar != nullptr) {
+      hist_data.emplace_back(PhysicsModule::ScalarFieldDynamics);
     }
     if (pm->pgen->user_hist) {
       hist_data.emplace_back(PhysicsModule::UserDefined);
@@ -64,6 +181,8 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
       LoadMHDHistoryData(&data, pm);
     } else if (data.physics == PhysicsModule::SpaceTimeDynamics) {
       LoadZ4cHistoryData(&data, pm);
+    } else if (data.physics == PhysicsModule::ScalarFieldDynamics) {
+      LoadScalarHistoryData(&data, pm);
     } else if (data.physics == PhysicsModule::UserDefined) {
       (pm->pgen->user_hist_func)(&data, pm);
     }
@@ -166,6 +285,34 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
   }
 
   return;
+}
+
+//----------------------------------------------------------------------------------------
+//! \fn void HistoryOutput::LoadScalarHistoryData()
+//  \brief Integrate scalar Eulerian energy and complex Noether charge with proper volume.
+
+void HistoryOutput::LoadScalarHistoryData(HistoryData *pdata, Mesh *pm) {
+  const bool is_complex = pm->pmb_pack->pscalar->ncomponents == 2;
+  pdata->nhist = is_complex ? 2 : 1;
+  pdata->label[0] = "sf-energy";
+  if (is_complex) {
+    pdata->label[1] = "sf-charge";
+  }
+
+  const int fd_stencil = pm->pmb_pack->pscalar->fd_stencil;
+  if (fd_stencil == 2) {
+    LoadScalarHistoryWithStencil<2>(pdata, pm);
+  } else if (fd_stencil == 3) {
+    LoadScalarHistoryWithStencil<3>(pdata, pm);
+  } else if (fd_stencil == 4) {
+    LoadScalarHistoryWithStencil<4>(pdata, pm);
+  } else {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+              << __LINE__ << std::endl
+              << "Scalar history received an unsupported finite-difference stencil."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -404,6 +551,9 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
           break;
         case PhysicsModule::MagnetoHydroDynamics:
           fname.append(".mhd");
+          break;
+        case PhysicsModule::ScalarFieldDynamics:
+          fname.append(".scalar");
           break;
         case PhysicsModule::SpaceTimeDynamics:
           fname.append(".z4c");

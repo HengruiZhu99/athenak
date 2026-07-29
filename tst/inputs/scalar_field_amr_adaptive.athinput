@@ -1,0 +1,73 @@
+# Real scalar wave with field-driven adaptive refinement in two dimensions
+
+<job>
+basename = scalar_field_amr_adaptive
+
+<mesh>
+nghost = 2
+nx1 = 32
+x1min = 0.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+
+nx2 = 32
+x2min = 0.0
+x2max = 1.0
+ix2_bc = periodic
+ox2_bc = periodic
+
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 1
+
+<mesh_refinement>
+refinement = adaptive
+max_nmb_per_rank = 128
+num_levels = 2
+ncycle_check = 1
+refinement_interval = 1
+
+<amr_criterion0>
+method = min_max
+variable = sf_phi0
+value_max = 8.0e-4
+
+<coord>
+general_rel = true
+minkowski = true
+
+<adm>
+dynamic = false
+
+<scalar_field>
+field_type = real
+potential = free
+mass = 0.7
+lambda = 0.0
+backreaction = false
+diss = 0.0
+spatial_order = 2
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.2
+nlim = -1
+tlim = 0.12
+ndiag = 10
+
+<problem>
+pgen_name = scalar_field_plane_wave
+
+<output1>
+file_type = hst
+data_format = %.16e
+dt = 10.0

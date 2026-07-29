@@ -28,6 +28,7 @@ char const * const ADM::ADM_names[ADM::nadm] = {
 // constructor: initializes data structures and parameters
 ADM::ADM(MeshBlockPack *ppack, ParameterInput *pin):
     u_adm("u_adm",1,1,1,1,1),
+    metric_time(ppack->pmesh->time),
     SetADMVariables(&ADM::SetADMVariablesToKerrSchild),
     pmy_pack(ppack) {
   is_dynamic = pin->GetOrAddBoolean("adm" , "dynamic", false);
@@ -57,6 +58,21 @@ ADM::ADM(MeshBlockPack *ppack, ParameterInput *pin):
 //----------------------------------------------------------------------------------------
 // destructor
 ADM::~ADM() {}
+
+//----------------------------------------------------------------------------------------
+//! \brief Refresh prescribed ADM data at an explicit physical time.
+//!
+//! New callbacks can read metric_time.  Temporarily exposing the same value through
+//! Mesh::time preserves existing callbacks that capture Mesh::time on the host before
+//! launching their device kernel.
+
+void ADM::SetADMVariablesAtTime(MeshBlockPack *pmbp, const Real time) {
+  const Real saved_time = pmbp->pmesh->time;
+  metric_time = time;
+  pmbp->pmesh->time = time;
+  SetADMVariables(pmbp);
+  pmbp->pmesh->time = saved_time;
+}
 
 //----------------------------------------------------------------------------------------
 void ADM::SetADMVariablesToKerrSchild(MeshBlockPack *pmbp) {

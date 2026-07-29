@@ -178,7 +178,8 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::QueueDynGRMHDTasks() {
   pnr->QueueTask(&MHD::InitRecv, pmhd, MHD_Recv, "MHD_Recv", Task_Start);
 
   // Run task list
-  pnr->QueueTask(&MHD::CopyCons, pmhd, MHD_CopyU, "MHD_CopyU", Task_Run);
+  pnr->QueueTask(&MHD::CopyCons, pmhd, MHD_CopyU, "MHD_CopyU", Task_Run,
+                 {}, {SF_SetADM});
 
   // Select which CalculateFlux function to add based on rsolver_method.
   // CalcFlux requires metric in flux - must happen before z4ctoadm updates the metric
@@ -196,8 +197,8 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::QueueDynGRMHDTasks() {
 
   // Now the rest of the MHD run tasks
   if (pz4c != nullptr) {
-    pnr->QueueTask(&DynGRMHD::SetTmunu, this, MHD_SetTmunu, "MHD_SetTmunu",
-                   Task_Run, {MHD_CopyU});
+    pnr->QueueTask(&DynGRMHD::AddTmunu, this, MHD_AddTmunu, "MHD_AddTmunu",
+                   Task_Run, {MHD_CopyU, Tmunu_Clear});
   }
   pnr->QueueTask(&MHD::SendFlux, pmhd, MHD_SendFlux, "MHD_SendFlux",
                  Task_Run, {MHD_Flux});
@@ -205,7 +206,7 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::QueueDynGRMHDTasks() {
                  Task_Run, {MHD_SendFlux});
   if (pz4c != nullptr) {
     pnr->QueueTask(&MHD::RKUpdate, pmhd, MHD_ExplRK, "MHD_ExplRK", Task_Run,
-                   {MHD_RecvFlux, MHD_SetTmunu});
+                   {MHD_RecvFlux, MHD_AddTmunu});
   } else {
     pnr->QueueTask(&MHD::RKUpdate, pmhd, MHD_ExplRK, "MHD_ExplRK", Task_Run,
                    {MHD_RecvFlux});
@@ -242,6 +243,10 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::QueueDynGRMHDTasks() {
   // End task list
   pnr->QueueTask(&MHD::ClearSend, pmhd, MHD_ClearS, "MHD_ClearS", Task_End);
   pnr->QueueTask(&MHD::ClearRecv, pmhd, MHD_ClearR, "MHD_ClearR", Task_End);
+  if (pz4c != nullptr) {
+    pnr->QueueTask(&DynGRMHD::AddTmunuFinal, this, MHD_AddTmunu,
+                   "MHD_AddTmunuFinal", Task_End, {Tmunu_Clear});
+  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -252,12 +257,6 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::PrimToConInit(int is, int ie, int js, i
                                                     int ks, int ke) {
   eos.PrimToCons(pmy_pack->pmhd->w0, pmy_pack->pmhd->bcc0, pmy_pack->pmhd->u0,
                  is, ie, js, je, ks, ke);
-  if (pmy_pack->ptmunu != nullptr) {
-    bool fixed = fixed_evolution;
-    fixed_evolution = false;
-    SetTmunu(nullptr, 0);
-    fixed_evolution = fixed;
-  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -407,13 +406,9 @@ TaskStatus DynGRMHD::ApplyPhysicalBCs(Driver *pdrive, int stage) {
 }
 
 //----------------------------------------------------------------------------------------
-//! \fn  TaskStatus DynGRMHD::SetTmunu(Driver *pdrive, int stage)
-//! \brief Add the perfect fluid contribution to the stress-energy tensor. This is assumed
-//!  to be the first contribution, so it sets the values rather than adding.
-TaskStatus DynGRMHD::SetTmunu(Driver *pdrive, int stage) {
-  if (fixed_evolution) {
-    return TaskStatus::complete;
-  }
+//! \fn TaskStatus DynGRMHD::AddTmunu(Driver *pdrive, int stage)
+//! \brief Add the GRMHD contribution to the shared stress-energy accumulator.
+TaskStatus DynGRMHD::AddTmunu(Driver *pdrive, int stage) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   //auto &size  = pmy_pack->pmb->mb_size;
   int &is = indcs.is; int &ie = indcs.ie;
@@ -460,11 +455,12 @@ TaskStatus DynGRMHD::SetTmunu(Driver *pdrive, int stage) {
     }
     Real bsq = (Bsq + Bv*Bv)*(iW*iW);
 
-    tmunu.E(m, k, j, i) = (cons(m, IEN, k, j, i) + cons(m, IDN, k, j, i))*ivol;
+    tmunu.E(m, k, j, i) +=
+        (cons(m, IEN, k, j, i) + cons(m, IDN, k, j, i))*ivol;
     for (int a = 0; a < 3; ++a) {
-      tmunu.S_d(m, a, k, j, i) = cons(m, IM1 + a, k, j, i)*ivol;
+      tmunu.S_d(m, a, k, j, i) += cons(m, IM1 + a, k, j, i)*ivol;
       for (int b = a; b < 3; ++b) {
-        tmunu.S_dd(m, a, b, k, j, i) =
+        tmunu.S_dd(m, a, b, k, j, i) +=
               cons(m, IM1 + a, k, j, i)*ivol*v_d[b]*iW
               - (B_d[a] + Bv*v_d[a])*SQR(iW)*B_d[b]
               + (prim(m, IPR, k, j, i) + 0.5*bsq)*adm.g_dd(m, a, b, k, j, i);
@@ -475,11 +471,22 @@ TaskStatus DynGRMHD::SetTmunu(Driver *pdrive, int stage) {
 }
 
 //----------------------------------------------------------------------------------------
+//! \brief Refresh GRMHD matter after the final RK stage for diagnostics and output.
+
+TaskStatus DynGRMHD::AddTmunuFinal(Driver *pdrive, int stage) {
+  if (stage != pdrive->nexp_stages) {
+    return TaskStatus::complete;
+  }
+  return AddTmunu(pdrive, stage);
+}
+
+//----------------------------------------------------------------------------------------
 //! \fn void DynGRMHD::SetADMVariables
 //! \brief
 
 TaskStatus DynGRMHD::SetADMVariables(Driver *pdrive, int stage) {
-  pmy_pack->padm->SetADMVariables(pmy_pack);
+  pmy_pack->padm->SetADMVariablesAtTime(
+      pmy_pack, pdrive->StageEndTime(pmy_pack->pmesh, stage));
   return TaskStatus::complete;
 }
 
@@ -557,7 +564,10 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::AddCoordTermsEOS(const DvceArray5D<Real
                     &g3u[S11], &g3u[S12], &g3u[S13], &g3u[S22], &g3u[S23], &g3u[S33]);
 
     // Calculate the metric derivatives
-    Real idx[] = {1./size.d_view(m).dx1, 1./size.d_view(m).dx2, 1./size.d_view(m).dx3};
+    Real idx[3];
+    idx[0] = Real(1.0)/size.d_view(m).dx1;
+    idx[1] = Real(1.0)/size.d_view(m).dx2;
+    idx[2] = Real(1.0)/size.d_view(m).dx3;
     Real dalpha_d[3] = {0.};
     for (int a = 0; a < ndim; a++) {
       dalpha_d[a] = Dx<NGHOST>(a, idx, adm.alpha, m, k, j, i);

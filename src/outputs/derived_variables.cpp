@@ -13,6 +13,7 @@
 //!   - magnitude of current density J^2  [non-relativistic]
 
 #include <algorithm>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>   // std::string, to_string()
@@ -21,6 +22,7 @@
 #include "parameter_input.hpp"
 #include "coordinates/cartesian_ks.hpp"
 #include "coordinates/cell_locations.hpp"
+#include "coordinates/coordinates.hpp"
 #include "geodesic-grid/geodesic_grid.hpp"
 #include "mesh/mesh.hpp"
 #include "eos/eos.hpp"
@@ -29,6 +31,7 @@
 #include "radiation/radiation.hpp"
 #include "radiation/radiation_tetrad.hpp"
 #include "particles/particles.hpp"
+#include "scalar_field/scalar_field.hpp"
 #include "outputs.hpp"
 #include "utils/current.hpp"
 #include "utils/finite_diff.hpp"
@@ -73,6 +76,84 @@ void ComputeUcBcFromPrimitive(const Real uu1, const Real uu2, const Real uu3,
   }
 }
 
+namespace {
+
+template <int NGHOST>
+void ComputeScalarDerived(Mesh *pm, DvceArray5D<Real> derived,
+                          const int derived_index, const int output_kind) {
+  auto &scalar = *(pm->pmb_pack->pscalar);
+  auto &state = scalar.u0;
+  auto &adm_vars = pm->pmb_pack->padm->adm;
+  auto &size = pm->pmb_pack->pmb->mb_size;
+  auto &indcs = pm->mb_indcs;
+
+  const int is = indcs.is;
+  const int ie = indcs.ie;
+  const int js = indcs.js;
+  const int je = indcs.je;
+  const int ks = indcs.ks;
+  const int ke = indcs.ke;
+  const int nmb = pm->pmb_pack->nmb_thispack;
+  const int ndim = 1 + static_cast<int>(pm->multi_d) +
+                   static_cast<int>(pm->three_d);
+  const int ncomponents = scalar.ncomponents;
+  const scalar_field::PotentialData potential = scalar.potential;
+  const bool use_excision = scalar.excision;
+  auto &excision_mask = pm->pmb_pack->pcoord->excision_floor;
+
+  par_for(
+      "scalar derived output", DevExeSpace(), 0, nmb - 1, ks, ke, js, je, is, ie,
+      KOKKOS_LAMBDA(int m, int k, int j, int i) {
+        const Real idx[3] = {Real(1.0)/size.d_view(m).dx1,
+                             Real(1.0)/size.d_view(m).dx2,
+                             Real(1.0)/size.d_view(m).dx3};
+        Real phi[2] = {0.0, 0.0};
+        Real pi[2] = {0.0, 0.0};
+        Real gradient[2][3] = {
+          {0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0}
+        };
+        for (int component = 0; component < ncomponents; ++component) {
+          const int iphi = 2*component;
+          phi[component] = state(m, iphi, k, j, i);
+          pi[component] = state(m, iphi + 1, k, j, i);
+          for (int direction = 0; direction < ndim; ++direction) {
+            gradient[component][direction] =
+                Dx<NGHOST>(direction, idx, state, m, iphi, k, j, i);
+          }
+        }
+
+        if (output_kind != 0 && use_excision &&
+            excision_mask(m, k, j, i)) {
+          derived(m, derived_index, k, j, i) = 0.0;
+          return;
+        }
+
+        const Real metric[6] = {
+          adm_vars.g_dd(m, 0, 0, k, j, i),
+          adm_vars.g_dd(m, 0, 1, k, j, i),
+          adm_vars.g_dd(m, 0, 2, k, j, i),
+          adm_vars.g_dd(m, 1, 1, k, j, i),
+          adm_vars.g_dd(m, 1, 2, k, j, i),
+          adm_vars.g_dd(m, 2, 2, k, j, i)
+        };
+        const scalar_field::MatterPoint matter =
+            scalar_field::ComputeMatter(
+                ncomponents, phi, pi, gradient, metric, potential);
+
+        if (output_kind == 0) {
+          derived(m, derived_index, k, j, i) =
+              scalar_field::FieldAmplitude(ncomponents, phi);
+        } else if (output_kind == 1) {
+          derived(m, derived_index, k, j, i) = matter.energy;
+        } else {
+          derived(m, derived_index, k, j, i) = matter.charge;
+        }
+      });
+}
+
+}  // namespace
+
 //----------------------------------------------------------------------------------------
 // BaseTypeOutput::ComputeDerivedVariable()
 
@@ -95,6 +176,36 @@ void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm) {
   // derived variable index
   int &i_dv = out_params.i_derived;
   int &n_dv = out_params.n_derived;
+
+  // canonical scalar-field amplitude, Eulerian energy, and Noether charge density
+  if (name.compare("sf_amplitude") == 0 ||
+      name.compare("sf_energy") == 0 ||
+      name.compare("sf_charge") == 0) {
+    if (derived_var.extent(4) <= 1) {
+      Kokkos::realloc(derived_var, nmb_alloc, n_dv, n3, n2, n1);
+    }
+    int output_kind = 0;
+    if (name.compare("sf_energy") == 0) {
+      output_kind = 1;
+    } else if (name.compare("sf_charge") == 0) {
+      output_kind = 2;
+    }
+
+    if (pm->pmb_pack->pscalar->fd_stencil == 2) {
+      ComputeScalarDerived<2>(pm, derived_var, i_dv, output_kind);
+    } else if (pm->pmb_pack->pscalar->fd_stencil == 3) {
+      ComputeScalarDerived<3>(pm, derived_var, i_dv, output_kind);
+    } else if (pm->pmb_pack->pscalar->fd_stencil == 4) {
+      ComputeScalarDerived<4>(pm, derived_var, i_dv, output_kind);
+    } else {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+                << __LINE__ << std::endl
+                << "Scalar output received an unsupported finite-difference stencil."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    i_dv += 1;
+  }
 
   // temperature = pressure / density
   if (name.compare("temperature") == 0) {
@@ -1290,8 +1401,9 @@ void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm) {
         KOKKOS_LAMBDA(int m, int k, int j, int i) {
           const int NGHOST = 4;
 
-          Real idx[] = {1.0 / size.d_view(m).dx1, 1.0 / size.d_view(m).dx2,
-                        1.0 / size.d_view(m).dx3};
+          Real idx[] = {Real(1.0)/size.d_view(m).dx1,
+                        Real(1.0)/size.d_view(m).dx2,
+                        Real(1.0)/size.d_view(m).dx3};
 
           // Scalars
           Real detg = 0.0;

@@ -170,26 +170,24 @@ void PDFOutput::LoadOutputData(Mesh *pm) {
     ComputeDerivedVariable(out_params.variable_2, pm);
   }
 
-  // Pointer for initial determination
-  DvceArray5D<Real> *u0_ptr = nullptr;
-
-  if (pm->pmb_pack->phydro != nullptr) {
-    u0_ptr = &(pm->pmb_pack->phydro->u0);
-  } else if (pm->pmb_pack->pmhd != nullptr) {
-    u0_ptr = &(pm->pmb_pack->pmhd->u0);
-  } else if (pm->pmb_pack->pz4c != nullptr) {
-    u0_ptr = &(pm->pmb_pack->pz4c->u0);
+  // Only a mass-weighted PDF needs fluid density.  Unweighted PDFs can use any
+  // registered output, including a scalar field on a fixed ADM background.
+  DvceArray5D<Real> density;
+  if (pdf_data.mass_weighted) {
+    if (pm->pmb_pack->phydro != nullptr) {
+      density = pm->pmb_pack->phydro->u0;
+    } else if (pm->pmb_pack->pmhd != nullptr) {
+      density = pm->pmb_pack->pmhd->u0;
+    } else {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+                << __LINE__ << std::endl
+                << "A mass-weighted PDF requires a Hydro or MHD density."
+                << std::endl;
+      exit(EXIT_FAILURE);
+    }
+  } else {
+    density = *(outvars.front().data_ptr);
   }
-
-  // Check if a valid module was found
-  if (u0_ptr == nullptr) {
-    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-              << std::endl << "No physics module found" << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  // Now assign the reference
-  DvceArray5D<Real> &u0_ = *u0_ptr;
 
   // capture class variables for kernel
   auto &size = pm->pmb_pack->pmb->mb_size;
@@ -205,8 +203,8 @@ void PDFOutput::LoadOutputData(Mesh *pm) {
 
   int nmb = pm->pmb_pack->nmb_thispack;
   int nx1 = indcs.nx1 + 2*indcs.ng;
-  int nx2 = indcs.nx2 + 2*indcs.ng;
-  int nx3 = indcs.nx3 + 2*indcs.ng;
+  int nx2 = (indcs.nx2 > 1) ? indcs.nx2 + 2*indcs.ng : 1;
+  int nx3 = (indcs.nx3 > 1) ? indcs.nx3 + 2*indcs.ng : 1;
 
   // Copy MeshBlock data from host to device
   DvceArray5D<Real> outvars_device("outvars_device", outvars.size(), nmb, nx3, nx2, nx1);
@@ -282,7 +280,7 @@ void PDFOutput::LoadOutputData(Mesh *pm) {
     Real weight = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3;
     weight *= mass_weighted == false
               ? 1.0
-              : u0_(m, IDN, k, j, i);
+              : density(m, IDN, k, j, i);
     res(y_bin, x_bin) += weight;
   });
 

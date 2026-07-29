@@ -22,6 +22,7 @@
 // Forward declarations
 namespace z4c {class Z4c;}
 namespace dyngr {class DynGRMHD;}
+namespace scalar_field {class ScalarField;}
 class ADM;
 class Tmunu;
 class MeshBlockPack;
@@ -32,7 +33,7 @@ enum TaskName {
   MHD_Recv,
   MHD_CopyU,
   MHD_Flux,
-  MHD_SetTmunu,
+  MHD_AddTmunu,
   MHD_SendFlux,
   MHD_RecvFlux,
   MHD_ExplRK,
@@ -56,6 +57,23 @@ enum TaskName {
   MHD_ClearS,
   MHD_ClearR,
   MHD_NTASKS,
+
+  SF_Recv,
+  SF_SetADM,
+  SF_CopyU,
+  SF_CalcRHS,
+  SF_AddTmunu,
+  SF_ExplRK,
+  SF_RestU,
+  SF_SendU,
+  SF_RecvU,
+  SF_BCS,
+  SF_Prolong,
+  SF_SetADMFinal,
+  SF_Newdt,
+  SF_ClearS,
+  SF_ClearR,
+  SF_NTASKS,
 
   Z4c_Recv,
   Z4c_IRecvW,
@@ -88,12 +106,16 @@ enum TaskName {
   Z4c_FastFlow,
   Z4c_CCE,
   Z4c_DumpHorizon,
-  Z4c_NTASKS
+  Z4c_NTASKS,
+
+  Tmunu_Clear,
+  NR_NTASKS
 };
 
 enum PhysicsDependency {
   Phys_None,
   Phys_MHD,
+  Phys_ScalarField,
   Phys_Z4c
 };
 

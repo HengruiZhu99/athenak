@@ -24,6 +24,7 @@
 #include "mhd/mhd.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "coordinates/adm.hpp"
+#include "scalar_field/scalar_field.hpp"
 #include "z4c/tmunu.hpp"
 #include "z4c/z4c.hpp"
 #include "srcterms/srcterms.hpp"
@@ -160,6 +161,7 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
        << "Output of Tmunu variable requested in <output> block '"
        << out_params.block_name << "' but no Tmunu object has been constructed."
        << std::endl << "Input file is likely missing a <adm> block" << std::endl;
+    exit(EXIT_FAILURE);
   }
   if ((ivar>=154) && (ivar<156) && (pm->pmb_pack->ppart == nullptr)) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << std::endl
@@ -175,6 +177,21 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
        << std::endl << "Input file is likely missing corresponding block" << std::endl;
     exit(EXIT_FAILURE);
   }
+  if ((ivar>=173) && (ivar<181) && (pm->pmb_pack->pscalar == nullptr)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << std::endl
+       << "Output of scalar-field variable requested in <output> block '"
+       << out_params.block_name << "' but no ScalarField object has been constructed."
+       << std::endl << "Input file is likely missing a <scalar_field> block" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  if ((ivar == 175 || ivar == 176 || ivar == 180) &&
+      pm->pmb_pack->pscalar->ncomponents != 2) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << std::endl
+       << "Variable '" << out_params.variable << "' in block '"
+       << out_params.block_name << "' requires a complex scalar field, but "
+       << "<scalar_field>/field_type is real." << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
 
   // Now load STL vector of output variables
@@ -187,6 +204,82 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
   if (out_params.file_type == "pdf") {
     if (out_params.nbin2 > 1) {
       variables.push_back(out_params.variable_2);
+    }
+  }
+
+  // A two-dimensional PDF has a second independently selected variable.  Apply the
+  // same storage and field-type checks used above before dispatch dereferences it.
+  if (variables.size() > 1) {
+    const std::string &secondary = variables[1];
+    int secondary_index = -1;
+    for (int i = 0; i < NOUTPUT_CHOICES; ++i) {
+      if (secondary == var_choice[i]) {
+        secondary_index = i;
+      }
+    }
+    if (secondary_index < 0) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+                << __LINE__ << std::endl
+                << "Variable '" << secondary << "' in block '"
+                << out_params.block_name << "' in input file is not a valid choice"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+
+    bool available = true;
+    if (secondary_index < 16) {
+      available = pm->pmb_pack->phydro != nullptr;
+    } else if (secondary_index < 50) {
+      available = pm->pmb_pack->pmhd != nullptr;
+    } else if (secondary_index == 50) {
+      available = pm->pmb_pack->pturb != nullptr;
+    } else if (secondary_index == 51) {
+      available = pm->pmb_pack->prad != nullptr;
+    } else if (secondary_index == 52 || secondary_index == 53) {
+      available = pm->pmb_pack->prad != nullptr &&
+                  (pm->pmb_pack->phydro != nullptr ||
+                   pm->pmb_pack->pmhd != nullptr);
+    } else if (secondary_index < 68) {
+      available = pm->pmb_pack->prad != nullptr &&
+                  pm->pmb_pack->phydro != nullptr;
+    } else if (secondary_index < 88) {
+      available = pm->pmb_pack->prad != nullptr &&
+                  pm->pmb_pack->pmhd != nullptr;
+    } else if (secondary_index < 106) {
+      available = pm->pmb_pack->padm != nullptr;
+    } else if (secondary_index < 143) {
+      available = pm->pmb_pack->pz4c != nullptr;
+    } else if (secondary_index < 154) {
+      available = pm->pmb_pack->ptmunu != nullptr;
+    } else if (secondary_index < 156) {
+      available = pm->pmb_pack->ppart != nullptr;
+    } else if (secondary_index < 173) {
+      available = pm->pmb_pack->pz4c != nullptr;
+    } else {
+      available = pm->pmb_pack->pscalar != nullptr;
+    }
+    if (secondary_index == 38) {
+      available = available && pm->pmb_pack->pdyngr != nullptr;
+    }
+    if (!available) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+                << __LINE__ << std::endl
+                << "Output variable '" << secondary << "' in block '"
+                << out_params.block_name
+                << "' requires a physics module that is not constructed."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    if ((secondary_index == 175 || secondary_index == 176 ||
+         secondary_index == 180) &&
+        pm->pmb_pack->pscalar->ncomponents != 2) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+                << __LINE__ << std::endl
+                << "Variable '" << secondary << "' in block '"
+                << out_params.block_name
+                << "' requires a complex scalar field, but "
+                << "<scalar_field>/field_type is real." << std::endl;
+      std::exit(EXIT_FAILURE);
     }
   }
 
@@ -615,6 +708,40 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
       outvars.emplace_back("force1",0,&(pm->pmb_pack->pturb->force));
       outvars.emplace_back("force2",1,&(pm->pmb_pack->pturb->force));
       outvars.emplace_back("force3",2,&(pm->pmb_pack->pturb->force));
+    }
+
+    // canonical scalar-field evolved variables
+    if (variable.compare("sf_phi0") == 0 ||
+        variable.compare("sf") == 0) {
+      outvars.emplace_back("sf_phi0", scalar_field::ScalarField::I_SF_PHI0,
+                           &(pm->pmb_pack->pscalar->u0));
+    }
+    if (variable.compare("sf_pi0") == 0 ||
+        variable.compare("sf") == 0) {
+      outvars.emplace_back("sf_pi0", scalar_field::ScalarField::I_SF_PI0,
+                           &(pm->pmb_pack->pscalar->u0));
+    }
+    if ((variable.compare("sf_phi1") == 0 ||
+         variable.compare("sf") == 0) &&
+        pm->pmb_pack->pscalar->ncomponents == 2) {
+      outvars.emplace_back("sf_phi1", scalar_field::ScalarField::I_SF_PHI1,
+                           &(pm->pmb_pack->pscalar->u0));
+    }
+    if ((variable.compare("sf_pi1") == 0 ||
+         variable.compare("sf") == 0) &&
+        pm->pmb_pack->pscalar->ncomponents == 2) {
+      outvars.emplace_back("sf_pi1", scalar_field::ScalarField::I_SF_PI1,
+                           &(pm->pmb_pack->pscalar->u0));
+    }
+
+    // canonical scalar-field derived variables
+    if (variable.compare("sf_amplitude") == 0 ||
+        variable.compare("sf_energy") == 0 ||
+        variable.compare("sf_charge") == 0) {
+      out_params.contains_derived = true;
+      out_params.n_derived += 1;
+      int i_derived = out_params.n_derived - 1;
+      outvars.emplace_back(variable, i_derived, &(derived_var));
     }
 
     // ADM variables, excluding gauge

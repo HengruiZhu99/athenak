@@ -1,0 +1,66 @@
+# Real scalar wave crossing fixed coarse/fine interfaces in two dimensions
+
+<job>
+basename = scalar_field_amr_static
+
+<mesh>
+nghost = 4
+nx1 = 32
+x1min = 0.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+
+nx2 = 32
+x2min = 0.0
+x2max = 1.0
+ix2_bc = periodic
+ox2_bc = periodic
+
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 1
+
+<mesh_refinement>
+refinement = static
+
+<refined_region1>
+level = 1
+x1min = 0.375
+x1max = 0.625
+x2min = 0.375
+x2max = 0.625
+
+<coord>
+general_rel = true
+minkowski = true
+
+<adm>
+dynamic = false
+
+<scalar_field>
+field_type = real
+potential = free
+mass = 0.7
+lambda = 0.0
+backreaction = false
+diss = 0.0
+spatial_order = 4
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.2
+nlim = -1
+tlim = 0.12
+ndiag = 10
+
+<problem>
+pgen_name = scalar_field_plane_wave
