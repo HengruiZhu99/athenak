@@ -75,6 +75,10 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   u_rhs("u_rhs z4c",1,1,1,1,1),
   u_weyl("u_weyl",1,1,1,1,1),
   coarse_u_weyl("coarse_u_weyl",1,1,1,1,1),
+  characteristic_bc_diag("z4c characteristic bc diagnostics", 11),
+  characteristic_bc_invalid(
+      "z4c characteristic bc invalid and boundary blocks",
+      11 + 3*std::max((ppack->nmb_thispack),(ppack->pmesh->nmb_maxperrank))),
   pamr(new Z4c_AMR(pin)) {
   // (1) read time-evolution option [already error checked in driver constructor]
   // Then initialize memory and algorithms for reconstruction and Riemann solvers
@@ -203,6 +207,25 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.shift_eta = pin->GetOrAddReal("z4c", "shift_eta", 2.0);
 
   opt.use_z4c = pin->GetOrAddBoolean("z4c", "use_z4c", true);
+  const std::string boundary_rhs =
+      pin->GetOrAddString("z4c", "boundary_rhs", "sommerfeld");
+  if (boundary_rhs == "sommerfeld") {
+    opt.boundary_rhs_mode = boundary_rhs_sommerfeld;
+  } else if (boundary_rhs == "characteristic_cpbc") {
+    opt.boundary_rhs_mode = boundary_rhs_characteristic_cpbc;
+  } else {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "Unknown <z4c>/boundary_rhs = " << boundary_rhs
+              << ". Supported values are sommerfeld and characteristic_cpbc."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  opt.characteristic_bc_diagnostics =
+      pin->GetOrAddBoolean("z4c", "characteristic_bc_diagnostics", false);
+  opt.characteristic_bc_diagnostic_interval =
+      pin->GetOrAddInteger("z4c", "characteristic_bc_diagnostic_interval", 100);
+  opt.characteristic_bc_max_energy_density =
+      pin->GetOrAddReal("z4c", "characteristic_bc_max_energy_density", 1.0e-12);
   use_analytic_background = pin->GetOrAddBoolean("z4c", "use_analytic_background",
                                                  false);
   evolve_gauge_residual = pin->GetOrAddBoolean("z4c", "evolve_gauge_residual",
@@ -215,6 +238,39 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
                                                 false);
 
   opt.user_Sbc = pin->GetOrAddBoolean("z4c", "user_Sbc", false);
+
+  if (opt.boundary_rhs_mode == boundary_rhs_characteristic_cpbc) {
+    const Real tol = 64.0*std::numeric_limits<Real>::epsilon();
+    const bool supported =
+        opt.use_z4c &&
+        use_analytic_background &&
+        evolve_lapse_residual &&
+        evolve_shift_residual &&
+        opt.residual_gauge_mode == residual_gauge_background_adapted &&
+        !opt.telegraph_lapse &&
+        fabs(opt.chi_psi_power + 4.0) <= tol &&
+        fabs(opt.lapse_advect - 1.0) <= tol &&
+        fabs(opt.shift_advect - 1.0) <= tol &&
+        fabs(opt.shift_alpha2ggamma) <= tol &&
+        fabs(opt.shift_hh) <= tol &&
+        fabs(opt.sss_damping_amp) <= tol &&
+        ppack->pmesh->mb_indcs.ng == 4 &&
+        opt.characteristic_bc_diagnostic_interval > 0 &&
+        isfinite(opt.characteristic_bc_max_energy_density) &&
+        opt.characteristic_bc_max_energy_density >= 0.0;
+    if (!supported) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl
+                << "characteristic_cpbc currently requires use_z4c=true, "
+                << "use_analytic_background=true, background_adapted evolved "
+                << "lapse and shift residuals, chi_psi_power=-4, unit lapse/shift "
+                << "advection, telegraph_lapse=false, shift_alpha2Gamma=0, and "
+                << "shift_H=0, sss_damping_amp=0, nghost=4, and a finite nonnegative "
+                << "characteristic_bc_max_energy_density, with a positive "
+                << "diagnostic interval." << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
 
   opt.excise_chi = pin->GetOrAddReal("z4c", "excise_chi", 0.0625);
   opt.history_excise_ks_horizon =

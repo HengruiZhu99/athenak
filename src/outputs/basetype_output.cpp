@@ -175,6 +175,15 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
        << std::endl << "Input file is likely missing corresponding block" << std::endl;
     exit(EXIT_FAILURE);
   }
+  if (ivar == 173 && (pm->pmb_pack->pz4c == nullptr)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "Output of residual Z4c variables requested in <output> block '"
+              << out_params.block_name
+              << "' but no Z4c object has been constructed." << std::endl
+              << "Input file is likely missing a <z4c> block" << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
 
   // Now load STL vector of output variables
@@ -656,6 +665,12 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
       if (out_params.variable.compare("z4c") == 0 ||
           out_params.variable.compare(z4c::Z4c::Z4c_names[v]) == 0) {
         outvars.emplace_back(z4c::Z4c::Z4c_names[v], v, &(pm->pmb_pack->pz4c->u_full));
+      }
+    }
+    if (out_params.variable.compare("z4c_residual") == 0) {
+      for (int v = 0; v < z4c::Z4c::nz4c; ++v) {
+        outvars.emplace_back(
+            z4c::Z4c::Z4c_names[v], v, &(pm->pmb_pack->pz4c->u0));
       }
     }
 

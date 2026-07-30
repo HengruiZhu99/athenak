@@ -1,5 +1,28 @@
 # Large-radius residual Z4c sponge: Aurora validation
 
+## Post-validation correction (2026-07-30)
+
+The evolved-gauge amplification reported below was caused by timestep
+stiffness in that coarse pulse deck, not by the sponge.  Those runs used
+`dt=2.4M` and `shift_eta=2`, so SSPRK3 advances the local shift term at
+`z=-4.8`, outside its negative-real-axis stability interval.  Adding the
+full sponge rate changes the per-step magnitude from `10.712` to
+`11.9133125`; the predicted ten-step sponge/control ratio is `2.89481`,
+matching the measured `2.897`.
+
+Corrected CPBC runs `8716020` (control) and `8716030` (sponge), with that
+unrelated stiff shift damping disabled, give at `t=24M`:
+
+- `Theta-max` ratio `0.2230898`;
+- `beta-res` ratio `0.2230194`;
+- `Gam-res` ratio `0.2232663`;
+- all-field `res-outer` ratio `0.2232612`;
+
+against `exp(-24/16)=0.2231302`.  The original claim that the all-field
+sponge itself amplifies a coupled residual-shift mode is therefore withdrawn.
+The later CPBC implementation and its complete validation are documented in
+`analysis/z4c_characteristic/aurora/validation_report.md`.
+
 ## Configuration
 
 - Source commit: `5c9c20c53abd1e66d96d59af5904aad110c6c818`
@@ -45,6 +68,21 @@ The initialization log reports:
 
 These are the exact expected values for the quintic ramp and `tau = 16 M`.
 
+For an axis-aligned, outward, asymptotic unit-speed mode, the integrated
+damping exponent before the boundary is
+
+```text
+(integral_512^640 smootherstep((r-512)/128) dr + 1024-640) / 16
+= (64 + 384) / 16
+= 28.
+```
+
+Thus the corresponding straight-ray attenuation estimate is
+`exp(-28) = 6.9144e-13`.  An asymptotic `sqrt(2)` gauge mode traversing the
+same radial path has the estimate `exp(-28/sqrt(2)) = 2.5200e-9`.  These are
+profile integrals, not substitutes for the evolved production smoke or
+boundary-reflection measurements.
+
 ## One-node pulse tests
 
 All accepted pulse jobs used 12 MPI ranks on one Aurora node and completed
@@ -79,8 +117,9 @@ Jobs:
 - Radial sponge: `8714169`
 
 The seeded Theta pulse is damped correctly at early times: at `t = 7.2 M`, the
-ratio is `0.6376`, consistent with `exp(-7.2/16) = 0.6376`. However, a coupled
-residual-shift mode grows faster with the all-field sponge:
+ratio is `0.6376`, consistent with `exp(-7.2/16) = 0.6376`. The original
+coarse harness nevertheless appeared to show a residual-shift mode growing
+faster with the all-field sponge:
 
 | Diagnostic at `t = 24 M` | Control | Sponge |
 | --- | ---: | ---: |
@@ -100,11 +139,11 @@ The more likely boundary defect is that the placeholder RHS condition is not
 the characteristic decomposition of the complete Z4c plus gauge principal
 part.
 
-This result means that the sink operator is implemented with the correct sign
-and timescale, but uniform damping of all evolved residuals is not by itself a
-complete cure for the known evolved residual-gauge instability. A
-background-consistent characteristic/constraint-preserving boundary condition
-or a correction to the residual gauge subsystem remains a separate follow-up.
+As corrected above, this was the exact SSPRK3 amplification expected from the
+unstable `shift_eta*dt` value. It is not evidence of a sponge coupling defect.
+A background-consistent characteristic/constraint-preserving boundary
+condition nevertheless remains necessary to replace the placeholder
+Sommerfeld treatment and control actual incoming boundary characteristics.
 
 A complete follow-up should derive the face-normal characteristic fields and
 speeds for the exact Z4c, lapse, and shift choices used here. Outgoing modes
@@ -148,11 +187,9 @@ profile, isolated damping rate, and 32-node initialization path all pass their
 targeted checks. The source has the intended sign and produces the measured
 `exp(-t/16)` attenuation without timestep stiffness.
 
-The broader claim that damping all 25 residual fields is sufficient to make
-the existing boundary treatment safe is **not established**. In the evolved
-residual-gauge pulse test, the sponge increased an exterior shift mode by a
-factor of about 2.9 at `t = 24 M`, despite correctly damping Theta. The
-one-cycle production smoke is too short to measure a material central-density
-or trajectory difference. This implementation is therefore suitable for
-controlled follow-up runs, but should not yet be described as a complete
-production boundary-condition cure.
+The source implementation, sign, timescale, and all-field damping are
+validated. The original factor-2.9 counterexample is invalid for the reason
+given in the post-validation correction. Damping alone is still not a
+mathematical outer boundary condition, and the one-cycle production smoke was
+too short to assess stellar observables; those questions are handled by the
+separate characteristic-CPBC validation.

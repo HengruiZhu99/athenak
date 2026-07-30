@@ -172,6 +172,10 @@ a = 0.0
 excise = false
 
 <z4c>
+boundary_rhs = characteristic_cpbc
+extrap_order = 4
+characteristic_bc_diagnostics = true
+characteristic_bc_max_energy_density = 1.0e-12
 use_analytic_background = true
 evolve_gauge_residual = true
 evolve_lapse_residual = true

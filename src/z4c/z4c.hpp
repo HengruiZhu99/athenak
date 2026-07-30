@@ -147,6 +147,8 @@ class Z4c {
 
   static constexpr int residual_gauge_standard_subtract = 0;
   static constexpr int residual_gauge_background_adapted = 1;
+  static constexpr int boundary_rhs_sommerfeld = 0;
+  static constexpr int boundary_rhs_characteristic_cpbc = 1;
 
   // aliases for the constraints
   struct Constraint_vars {
@@ -209,6 +211,11 @@ class Z4c {
 
     // Enable BSSN if false (disable theta)
     bool use_z4c;
+    // Physical-boundary RHS treatment.
+    int boundary_rhs_mode;
+    bool characteristic_bc_diagnostics;
+    int characteristic_bc_diagnostic_interval;
+    Real characteristic_bc_max_energy_density;
     // Apply the Sommerfeld condition for user BCs.
     bool user_Sbc;
     // Boundary extrapolation order
@@ -238,6 +245,25 @@ class Z4c {
   };
   Options opt;
   Real diss;              // Dissipation parameter
+  // Persistent device scratch for the characteristic boundary validation and
+  // optional diagnostics.  Keeping these views here avoids an allocation and
+  // device synchronization on every RK stage.
+  DvceArray1D<Real> characteristic_bc_diag;
+  // The first 11 entries are invalid-state counters.  The disjoint tail holds
+  // three interleaved compact boundary-MeshBlock lists, so the fused kernels
+  // can reuse this already-captured device view without adding a pointer to
+  // their register footprint.
+  DualArray1D<int> characteristic_bc_invalid;
+  // Compact, orientation-specific lists of local MeshBlocks that touch a
+  // physical boundary.  Interior blocks never enter the expensive CPBC
+  // kernels; the host cache is refreshed only after the boundary layout
+  // changes (for example after AMR/load balancing).
+  int characteristic_bc_boundary_block_count[3] = {-1,-1,-1};
+  bool characteristic_bc_announced = false;
+  bool characteristic_bc_performance_valid = false;
+  Real characteristic_bc_kernel_seconds = 0.0;
+  Real characteristic_bc_volume_rhs_seconds = 0.0;
+  Real characteristic_bc_max_rank_fraction = 0.0;
 
   // Boundary communication buffers and functions for u
   MeshBoundaryValuesCC *pbval_u;

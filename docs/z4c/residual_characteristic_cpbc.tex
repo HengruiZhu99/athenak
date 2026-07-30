@@ -1,0 +1,774 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,bm,booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\newcommand{\dtzero}{\partial_0}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\tf}{\mathrm{TF}}
+
+\title{A From-Scratch Characteristic Decomposition and Boundary Treatment\\
+for AthenaK's Background-Subtracted Z4c System}
+\author{Implementation note for \texttt{z4c\_tov\_ks}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This note derives the face-normal characteristic variables used by AthenaK's
+residual-Z4c boundary kernel directly from the equations implemented in
+\texttt{src/z4c/z4c\_calcrhs.cpp}.  No characteristic formula is imported from
+a paper.  Starting from the zero-residual Fr\'echet symbol, the derivation
+retains the distinct full-state and analytic-background shift advections and
+obtains the exact frozen-coefficient quasilinear symbol at a finite residual.
+It produces ten incoming propagating modes at each open face: four scalar,
+four vector, and two tensor modes.  The note also specifies the
+method-of-lines compatibility condition, field projections, finite
+differences, fused GPU ownership, input validation, and the limitations of the
+present \(L=1\), planar treatment.
+\end{abstract}
+
+\section{Implemented residual equations and scope}
+
+Let a bar denote the analytic background and let
+\[
+  \delta u = u-\bar u
+\]
+denote the stored residual.  For the geometric Z4c variables AthenaK evaluates
+the residual right-hand side as
+\[
+  {\cal R}_{\rm res}(\delta u)
+  ={\cal R}(\bar u+\delta u)-{\cal R}(\bar u),
+  \label{eq:residual}
+\]
+using identical finite-difference stencils for both terms.  Matter is included
+only in the full term and is required to be vacuum or atmosphere at a physical
+boundary.  The supported gauge path is the code's
+\texttt{background\_adapted} path,
+\begin{align}
+ \dtzero\,\delta\alpha &=-L\,\delta\hat K
+                  +\hbox{lower-order damping}, \label{eq:lapse}\\
+ \dtzero\,\delta\beta^i &=G\,\delta\tilde\Gamma^i
+                  +\hbox{lower-order damping}, \label{eq:shift}
+\end{align}
+where, at zero residual,
+\begin{align}
+ \dtzero &\equiv \partial_t-\bar\beta^i\partial_i,\\
+ N&\equiv\bar\alpha,\qquad C\equiv\bar\chi,\\
+ L&\equiv f_{\rm res}\,\bar\alpha
+       \left(f_{\rm oplog}f_{\rm harmonicf}
+             +f_{\rm harmonic}\bar\alpha\right),\\
+ G&\equiv \texttt{shift\_Gamma}.
+\end{align}
+The present validity domain has unit lapse and shift advection, no telegraph
+lapse, \texttt{shift\_H=0}, \texttt{shift\_alpha2Gamma=0}, and no
+time-dependent slow-start shift driver.  The production choice has
+\(\chi=\psi^{-4}\), \(L=2N\) asymptotically, and \(G=1\).
+
+The first calculation below is the exact principal symbol of the Fr\'echet
+derivative
+\[
+  D{\cal R}_{\rm res}(0)\,[\delta u].
+  \label{eq:frechet}
+\]
+It supplies a simple independently checkable base point.  The implemented
+kernel also uses the finite-residual extension derived next.  In both cases an
+exact analytic background is invariant, and boundary data are never obtained
+by extrapolating the large background fields.
+
+\subsection{Audit of the finite-residual principal symbol}
+
+It is important not to confuse Equation~\eqref{eq:frechet} with the
+quasilinear principal symbol at an arbitrary, finite residual.  The geometric
+part of AthenaK evaluates the full-state operator minus a prescribed
+background source.  Its principal coefficients at finite residual are
+therefore the reconstructed full lapse, conformal factor, metric, and shift.
+The background-adapted gauge equations, on the other hand, deliberately
+advect the residual lapse and shift with the background shift.  Consequently
+the exact finite-residual symbol has two normal advection coefficients,
+\[
+  b_f=s_i\beta_{\rm full}^i,\qquad
+  b_b=s_i\bar\beta^i,
+\]
+In this subsection
+\[
+ C=\chi_{\rm full},\qquad N=\alpha_{\rm full},
+\]
+while \(L\) remains the analytic-background-adapted lapse driver and \(G\)
+remains the configured residual shift driver.  The symbol is not obtained by
+simply replacing every barred field in the zero-residual formulas by a full
+field.
+
+This can be checked directly before computing any eigenvectors.  In a
+full-conformal-metric orthonormal frame, add \(b_f\) to the diagonal entries of the
+geometric scalar variables and add \(b_b\) to the \(d_\alpha\) and
+\(d_{\beta s}\) entries.  The scalar characteristic polynomial becomes
+\begin{align}
+ \det(\lambda I-A_S^{\rm finite})
+={}&\big[(\lambda-b_f)^2-CN^2\big]^2\\
+ &\times\big[(\lambda-b_f)(\lambda-b_b)-CL\big]\\
+ &\times\big[(\lambda-b_f)(\lambda-b_b)-\tfrac43G\big].
+ \label{eq:finite-scalar-polynomial}
+\end{align}
+The vector polynomial is
+\[
+ \det(\lambda I-A_V^{\rm finite})
+ =\big[(\lambda-b_f)^2-CN^2\big]
+  \big[(\lambda-b_f)(\lambda-b_b)-G\big],
+ \label{eq:finite-vector-polynomial}
+\]
+while the tensor roots remain \(b_f\pm N\sqrt C\).  Thus, for example, the
+finite-residual lapse roots are
+\[
+ \lambda_{L,\pm}=\frac{b_f+b_b}{2}
+  \mathbin{\pm}\frac12\sqrt{(b_f-b_b)^2+4CL}.
+\]
+These factorizations and the left eigensystem in
+Section~\ref{sec:finite-rows} were derived from the two advections actually
+present in \texttt{z4c\_calcrhs.cpp}.  The implementation reconstructs the
+full state before the volume RHS, builds its face frame from the full
+conformal metric, and evaluates \(C=\chi_{\rm full}\),
+\(N=\alpha_{\rm full}\), and \(b_f\) from that state.  Only \(L\) and \(b_b\)
+come from the analytic-background-adapted gauge.  It therefore applies the
+exact finite-residual frozen principal projectors, rather than merely
+substituting full fields into the zero-residual rows.
+
+\section{Face frame and normal reduction}
+
+At a boundary point choose the outward full-conformal-unit covector \(s_i\),
+\[
+ \tilde\gamma_{\rm full}^{ij}s_i s_j=1,
+\]
+and two deterministic orthonormal tangent vectors \(q_A^i\), \(A=1,2\).
+All components below are in this local frozen-coefficient frame.  Thus the
+full conformal metric is \(\delta_{ij}\), while the factors \(N\) and \(C\)
+are retained.  Define
+\[
+ \partial_s=s^i\partial_i,\qquad
+ b_f=s_i\beta_{\rm full}^i,\qquad b_b=s_i\bar\beta^i.
+\]
+Only normal derivatives are retained in the principal symbol.
+
+Write
+\[
+ k=\delta\hat K,\quad
+ \theta=\delta\Theta,\quad
+ A_{ij}=\delta\tilde A_{ij},\quad
+ \Gamma_i=\delta_{ij}\delta\tilde\Gamma^j,
+\]
+and introduce the normal reduction variables
+\begin{align}
+ d_\chi&=\partial_s\delta\chi,&
+ d_\alpha&=\partial_s\delta\alpha,&
+ d_{\beta i}&=\partial_s\delta\beta_i,\\
+ d_{ss}&=\partial_s\left(
+    \delta\tilde\gamma_{ss}
+    -\frac13\delta\tilde\gamma^i{}_i\right),&
+ d_{sA}&=\partial_s\delta\tilde\gamma_{sA},&
+ d_{AB}^{\tf}&=\partial_s\delta\tilde\gamma_{AB}^{\tf}.
+\end{align}
+The algebraic trace is projected out of \(A_{ss}\) in the implementation:
+\[
+ A_{ss}\longrightarrow
+ A_{ss}-\frac13 A^i{}_i.
+\]
+The trace and the remaining purely tangential zero-speed fields are not
+prescribed by this normal boundary system.
+
+\section{Principal geometric terms from the code}
+
+\subsection{Conformal and physical Ricci terms}
+
+The second-derivative terms assembled by
+\texttt{ComputeGeometryData} give, in the one-dimensional normal reduction,
+\begin{align}
+ \delta\tilde R_{ss}
+   &=\partial_s\Gamma_s-\frac12\partial_s^2
+       \delta\tilde\gamma_{ss},\\
+ \delta\tilde R_{sA}
+   &=\frac12\partial_s\Gamma_A-\frac12\partial_s^2
+       \delta\tilde\gamma_{sA},\\
+ \delta\tilde R_{AB}
+   &=-\frac12\partial_s^2\delta\tilde\gamma_{AB}.
+\end{align}
+For \(\chi=\psi^{-4}\), \(\phi=-\tfrac14\log\chi\).  Keeping only
+second derivatives in the code's \(R^\phi_{ij}\) gives
+\[
+ \delta R^\phi_{ij}
+ =\frac{1}{2C}\partial_i\partial_j\delta\chi
+  +\frac{1}{2C}\delta_{ij}\partial_s^2\delta\chi,
+\]
+and hence
+\[
+ \delta R^\phi_{ss}=\frac1C\partial_s^2\delta\chi,\qquad
+ \delta R^\phi_{AB}=\frac{1}{2C}\delta_{AB}
+                    \partial_s^2\delta\chi,\qquad
+ \delta R^\phi=\frac2C\partial_s^2\delta\chi.
+\]
+The principal Hamiltonian term used in the \(\Theta\) equation is therefore
+\[
+ \delta H
+ =C\,\partial_s\Gamma_s+2\,\partial_s^2\delta\chi,
+ \label{eq:hamiltonian-principal}
+\]
+after imposing the conformal determinant projection.
+
+\subsection{Principal evolution equations}
+
+Reading the coefficients from the residual RHS and using the Ricci terms
+above yields
+\begin{align}
+ \dtzero k
+   &=-C\,\partial_s d_\alpha,\\
+ \dtzero\theta
+   &=\frac12NC\,\partial_s\Gamma_s+N\,\partial_s d_\chi,\\
+ \dtzero A_{ss}
+   &=\frac23NC\,\partial_s\Gamma_s
+     +\frac13N\,\partial_s d_\chi
+     -\frac12NC\,\partial_s d_{ss}
+     -\frac23C\,\partial_s d_\alpha,\\
+ \dtzero\Gamma_s
+   &=-\frac43N\,\partial_s k-\frac23N\,\partial_s\theta
+     +\frac43\partial_s d_{\beta s},\\
+ \dtzero d_\chi
+   &=\frac23CN\,\partial_s k+\frac43CN\,\partial_s\theta
+     -\frac23C\,\partial_s d_{\beta s},\\
+ \dtzero d_{ss}
+   &=-2N\,\partial_s A_{ss}+\frac43\partial_s d_{\beta s},\\
+ \dtzero d_\alpha
+   &=-L\,\partial_s k,\\
+ \dtzero d_{\beta s}
+   &=G\,\partial_s\Gamma_s.
+ \label{eq:scalar-evolution}
+\end{align}
+For each tangent direction,
+\begin{align}
+ \dtzero A_{sA}
+   &=\frac12NC\,\partial_s\Gamma_A
+     -\frac12NC\,\partial_s d_{sA},\\
+ \dtzero\Gamma_A&=\partial_s d_{\beta A},\\
+ \dtzero d_{sA}&=-2N\,\partial_s A_{sA}
+                       +\partial_s d_{\beta A},\\
+ \dtzero d_{\beta A}&=G\,\partial_s\Gamma_A.
+ \label{eq:vector-evolution}
+\end{align}
+For each of the two tangential trace-free polarizations,
+\begin{align}
+ \dtzero A_{AB}^{\tf}
+   &=-\frac12NC\,\partial_s d_{AB}^{\tf},\\
+ \dtzero d_{AB}^{\tf}
+   &=-2N\,\partial_s A_{AB}^{\tf}.
+ \label{eq:tensor-evolution}
+\end{align}
+
+\section{Block principal symbols}
+
+Define
+\[
+ U_S=(k,\theta,A_{ss},\Gamma_s,d_\chi,d_{ss},
+      d_\alpha,d_{\beta s})^T.
+\]
+Equations~\eqref{eq:scalar-evolution} have
+\(\dtzero U_S=M_S\partial_s U_S\), where
+{\small
+\[
+M_S=
+\begin{pmatrix}
+0&0&0&0&0&0&-C&0\\
+0&0&0&NC/2&N&0&0&0\\
+0&0&0&2NC/3&N/3&-NC/2&-2C/3&0\\
+-4N/3&-2N/3&0&0&0&0&0&4/3\\
+2CN/3&4CN/3&0&0&0&0&0&-2C/3\\
+0&0&-2N&0&0&0&0&4/3\\
+-L&0&0&0&0&0&0&0\\
+0&0&0&G&0&0&0&0
+\end{pmatrix}.
+\]
+}
+With \(U_V=(A_{sA},\Gamma_A,d_{sA},d_{\beta A})^T\) and
+\(U_T=(A_{AB}^{\tf},d_{AB}^{\tf})^T\),
+\[
+M_V=
+\begin{pmatrix}
+0&NC/2&-NC/2&0\\
+0&0&0&1\\
+-2N&0&0&1\\
+0&G&0&0
+\end{pmatrix},
+\qquad
+M_T=
+\begin{pmatrix}
+0&-NC/2\\
+-2N&0
+\end{pmatrix}.
+\]
+Direct determinants, not a literature formula, give
+\begin{align}
+ \det(\lambda I-M_S)
+  &=(\lambda^2-CL)(\lambda^2-\tfrac43G)
+    (\lambda^2-CN^2)^2,\\
+ \det(\lambda I-M_V)
+  &=(\lambda^2-G)(\lambda^2-CN^2),\\
+ \det(\lambda I-M_T)
+  &=\lambda^2-CN^2.
+\end{align}
+The normal characteristic speeds relative to \(\dtzero\) are consequently
+\[
+ c_L=\sqrt{CL},\qquad
+ c_{SL}=\sqrt{\frac43G},\qquad
+ c_{ST}=\sqrt G,\qquad
+ c_P=N\sqrt C.
+\]
+
+\section{Zero-residual characteristic covectors}
+
+Let \(\epsilon=\pm1\) label eigenvalue \(+\!c\) or \(-\!c\).
+The following are left eigenvectors, so
+\[
+ w^\epsilon=\ell^\epsilon U,\qquad
+ \ell^\epsilon M=\epsilon c\,\ell^\epsilon.
+\]
+Arbitrary nonzero rescalings of individual rows are immaterial.
+
+\subsection{Scalar modes}
+
+Define the cone-separation denominators
+\[
+ D_L=3CL-4G,\qquad D_P=3CN^2-4G.
+\]
+The lapse pair is
+\[
+ w_L^\epsilon=-\epsilon\sqrt{\frac LC}\,k+d_\alpha.
+\]
+The longitudinal-shift pair is
+\begin{align}
+ w_{SL}^{\epsilon}
+ ={}&\frac{4GN}{D_L}k+\frac{2GN}{D_P}\theta
+ +\epsilon\frac{2\sqrt{3G}(CN^2-G)}{D_P}\Gamma_s\\
+ &+\epsilon\frac{\sqrt{3G}N^2}{D_P}d_\chi
+ -\epsilon\frac{2\sqrt{3G}CN}{D_L}d_\alpha
+ +d_{\beta s}.
+\end{align}
+Two independent light/constraint pairs are
+\begin{align}
+ w_{P1}^{\epsilon}
+   &=\epsilon\sqrt C\,\theta+\frac C2\Gamma_s+d_\chi,\\
+ w_{P2}^{\epsilon}
+   &=\epsilon\left(
+       \frac{4}{3\sqrt C}k+\frac{2}{3\sqrt C}\theta
+       -\frac{2}{\sqrt C}A_{ss}\right)-\Gamma_s+d_{ss}.
+\end{align}
+\subsection{Vector and tensor modes}
+
+For each \(A=1,2\),
+\begin{align}
+ w_{ST,A}^{\epsilon}
+   &=\epsilon\sqrt G\,\Gamma_A+d_{\beta A},\\
+ w_{P,A}^{\epsilon}
+   &=-\epsilon\frac{2}{\sqrt C}A_{sA}-\Gamma_A+d_{sA}.
+\end{align}
+For each of the \(+\) and \(\times\) TT polarizations,
+\[
+ w_{TT}^{\epsilon}
+   =-\epsilon\frac{2}{\sqrt C}A_{AB}^{\tf}+d_{AB}^{\tf}.
+\]
+These comprise four scalar, four vector, and two tensor incoming members.
+
+\section{Exact finite-residual covectors}
+\label{sec:finite-rows}
+
+The finite-residual rows follow directly by solving the left nullspaces of
+the matrices audited in
+Equations~\eqref{eq:finite-scalar-polynomial} and
+\eqref{eq:finite-vector-polynomial}.  For any positive driver \(Q\), define
+\begin{align}
+ \lambda_Q^\epsilon
+ &=\frac{b_f+b_b}{2}
+   +\frac{\epsilon}{2}\sqrt{(b_f-b_b)^2+4Q},\\
+ \mu_Q^\epsilon&=\lambda_Q^\epsilon-b_f,\qquad
+ \delta_Q^\epsilon=\lambda_Q^\epsilon-b_b.
+\end{align}
+Thus \(\mu_Q^\epsilon\delta_Q^\epsilon=Q\).  The two physical roots are
+\[
+ \lambda_P^\epsilon=b_f+\epsilon N\sqrt C.
+\]
+
+\subsection{Finite scalar rows}
+
+The lapse row is
+\[
+ w_L^\epsilon=-\frac{\delta_{CL}^\epsilon}{C}k+d_\alpha.
+\]
+For the longitudinal shift put \(Q=4G/3\),
+\(\mu=\mu_Q^\epsilon\), and \(\delta=\delta_Q^\epsilon\).  A row normalized
+to unit \(d_{\beta s}\) coefficient is
+\begin{align}
+ w_{SL}^\epsilon={}&
+ \frac{N\delta^2}{CL-\mu\delta}\,k
+ +\frac{N\mu\delta}{2(CN^2-\mu^2)}\,\theta\\
+ &+\frac{\delta(4CN^2-3\mu^2)}
+             {4(CN^2-\mu^2)}\,\Gamma_s
+ +\frac{N^2\delta}{2(CN^2-\mu^2)}\,d_\chi\\
+ &-\frac{CN\delta}{CL-\mu\delta}\,d_\alpha+d_{\beta s}.
+\end{align}
+The GPU implementation multiplies this row by
+\((CL-\mu\delta)(CN^2-\mu^2)\).  This leaves the eigenspace and boundary
+condition unchanged while avoiding large intermediate coefficients near a
+supported but nondegenerate cone separation.
+The two light rows are unchanged except that their coordinate eigenvalues
+are \(\lambda_P^\epsilon\):
+\begin{align}
+ w_{P1}^{\epsilon}
+   &=\epsilon\sqrt C\,\theta+\frac C2\Gamma_s+d_\chi,\\
+ w_{P2}^{\epsilon}
+   &=\epsilon\left(
+       \frac{4}{3\sqrt C}k+\frac{2}{3\sqrt C}\theta
+       -\frac{2}{\sqrt C}A_{ss}\right)-\Gamma_s+d_{ss}.
+\end{align}
+Setting \(b_f=b_b\) reduces these rows algebraically to the zero-residual
+rows above, up to arbitrary nonzero normalization.
+
+\subsection{Finite vector and tensor rows}
+
+For each tangent direction the transverse-shift roots use \(Q=G\):
+\[
+ w_{ST,A}^{\epsilon}
+ =\delta_G^\epsilon\Gamma_A+d_{\beta A}.
+\]
+The constraint and radiative rows retain their zero-residual form,
+\begin{align}
+ w_{P,A}^{\epsilon}
+   &=-\epsilon\frac{2}{\sqrt C}A_{sA}-\Gamma_A+d_{sA},\\
+ w_{TT}^{\epsilon}
+   &=-\epsilon\frac{2}{\sqrt C}A_{AB}^{\tf}+d_{AB}^{\tf},
+\end{align}
+with coordinate eigenvalue \(\lambda_P^\epsilon\).
+
+\section{Constraint and radiative meaning of the light-speed rows}
+
+The light-speed rows above can be related directly to the principal Z4
+constraint subsystem; this is a useful check that they are not merely
+light-speed eigenvectors of the main evolution system.  In the frozen
+full-conformal orthonormal frame, the conformal connection constraint is
+\[
+ Z_s=\frac12(\Gamma_s-d_{ss}),\qquad
+ Z_A=\frac12(\Gamma_A-d_{sA}).
+\]
+The normal principal parts of the Hamiltonian and momentum constraints are
+\begin{align}
+ H&=C\,\partial_s\Gamma_s+2\,\partial_s d_\chi,\\
+ M_s&=\partial_s A_{ss}
+      -\frac23\partial_s(k+2\theta),\\
+ M_A&=\partial_s A_{sA}.
+\end{align}
+Taking a normal derivative of the incoming (\(\epsilon=+1\)) light-speed
+rows gives the identities
+\begin{align}
+ 2\,\partial_s w_{P,1}^{+}
+   &=H+2\sqrt C\,\partial_s\theta,\\
+ \partial_s w_{P,2}^{+}
+   &=-\frac{2}{\sqrt C}\left(M_s+\partial_s\theta\right)
+     -2\,\partial_s Z_s,\\
+ \partial_s w_{P,A}^{+}
+   &=-\frac{2}{\sqrt C}M_A-2\,\partial_s Z_A.
+\end{align}
+Thus the two scalar and two vector rows are spatial primitives of the four
+incoming principal constraint characteristics, up to fixed nonzero
+normalizations.  Prescribing them supplies the constraint sector and does
+not consume an outgoing main-system characteristic.
+
+For a tangential trace-free metric perturbation \(h_{AB}^{\tf}\), freeze the
+shift for this local check and use
+\[
+ A_{AB}^{\tf}=-\frac{1}{2N}\partial_t h_{AB}^{\tf}
+ \quad\hbox{and}\quad
+ d_{AB}^{\tf}=\partial_s h_{AB}^{\tf}.
+\]
+The incoming radiative row is therefore
+\[
+ w_{TT}^{+}
+ =\partial_s h_{AB}^{\tf}
+  +\frac{1}{N\sqrt C}\partial_t h_{AB}^{\tf}.
+\]
+It vanishes for a purely outgoing normal wave.  The incoming Weyl scalar
+\(\Psi_0^{\rm res}\) has, at principal order, one further outgoing-null
+derivative of this row (plus tangential and lower-order curvature terms).
+Consequently homogeneous \(w_{TT}^{+}=0\) is the \(L=1\) maximally
+dissipative condition compatible with zero residual \(\Psi_0\).  It is
+stronger than merely requiring a constant incoming waveform, but it is not
+the higher-order auxiliary-field absorption hierarchy.
+
+\section{Which sign is incoming?}
+
+For an eigenmode of the complete finite-residual normal symbol with eigenvalue
+\(\lambda\), the outward coordinate transport velocity is
+\[
+ v_{\rm out}=-\lambda.
+\]
+A negative \(v_{\rm out}\) moves from the boundary into the domain.  Therefore
+the member is incoming when
+\[
+ \lambda>0.
+\]
+The code evaluates all four root pairs and requires
+\(\lambda^+>0\), \(\lambda^-<0\) for each.  Thus precisely every
+\(\epsilon=+1\) member is incoming: ten modes per open face.  It fails rather
+than silently changing the mode count.
+
+\section{Method-of-lines boundary compatibility}
+
+For a perturbation whose residual has compact support away from the boundary,
+the desired homogeneous continuum datum is
+\[
+ w^+_{\rm res}=0.
+\]
+The method-of-lines compatibility condition is its time derivative, not a
+cell-scale damping equation:
+\[
+ \partial_t w^+_{\rm res}=0.
+ \label{eq:target}
+\]
+If the initial data satisfy the homogeneous datum, this preserves it.  More
+generally it preserves the incoming characteristic datum already present at
+the start of the evolution.  The distinction matters when the residual
+contains a stationary Coulomb or matter near field: such a solution can have
+nonzero incoming and outgoing \emph{principal} amplitudes whose fluxes
+balance, even though it contains no incoming dynamical wave.  Forcing that
+amplitude itself to zero would change the stationary solution and launch a
+boundary transient.
+At the first active boundary cell the kernel forms \(w^+\) solely from stored
+residual fields and their inward, second-order normal derivatives.  It also
+forms the rate already supplied by the complete volume RHS and any
+problem-generator source:
+\[
+ \dot w^+_{\rm vol}
+ =\ell_p^+\,p_{\rm rhs}
+  +\ell_d^+\,\partial_s q_{\rm rhs}.
+ \label{eq:volume-rate}
+\]
+Here \(p=(k,\theta,A,\Gamma)\) and
+\(q=(\chi,\tilde\gamma,\alpha,\beta)\).  Because
+Equation~\eqref{eq:volume-rate} uses the already assembled residual RHS, it
+retains the implemented nonlinear and lower-order constraint damping,
+background subtraction, gauge damping, Kreiss--Oliger/source contributions,
+and radiative terms; the boundary kernel does not reimplement them.
+The left rows, frame, and characteristic speeds are held fixed while this
+method-of-lines rate is formed.  This is the standard frozen-local
+quasilinear boundary operator: its lower-order data are the complete
+nonlinear volume/source rate, not a linearized or background-extrapolated
+surrogate.  A time derivative of the local eigensystem is intentionally not
+part of the frozen operator.
+
+The implemented \(L=1\) planar target is therefore
+\[
+ \dot w^+_{\rm target}=0.
+\]
+It supplies no time-dependent incoming characteristic data.  In particular,
+the implementation does \emph{not} use the rejected grid-scale relaxation
+\(\dot w^+=-\lambda^+w^+/\Delta_s\).  That relaxation gives the correct fixed
+point for compact perturbations but is inconsistent with a stationary
+nonzero residual near field and was observed to inject a returning TDE
+transient.  The adopted equation is a method-of-lines/Bj{\o}rhus
+compatibility condition, not a hard overwrite of a ghost cell or active
+field.
+
+To preserve the code's second-order evolution structure, corrections are
+applied only to the momentum-like RHS variables:
+\[
+ (\hat K,\Theta,\tilde A_{ij},\tilde\Gamma^i)_{\rm rhs}.
+\]
+The RHS values for \(\chi,\tilde\gamma_{ij},\alpha,\beta^i\), all tangential
+zero-speed fields, and all auxiliary \(B_i\) remain those of the volume
+operator.  In the scalar block the four equations
+\[
+ L_p^+\,\delta p_{\rm rhs}
+ =\dot{\bm w}_{\rm target}^+-\dot{\bm w}_{\rm vol}^+
+\]
+are solved by the closed sparse triangular map implied by the displayed rows;
+no augmented matrix or runtime eigensolve is allocated in a GPU thread.  In
+each vector block,
+\begin{align}
+ \delta\Gamma_{A,\rm rhs}
+   &=\frac{r_{ST,A}}{\delta_G^+},\\
+ \delta A_{sA,\rm rhs}
+   &=-\frac{\sqrt C}{2}
+       \left(r_{P,A}+\delta\Gamma_{A,\rm rhs}\right),
+\end{align}
+and in each tensor block
+\[
+ \delta A_{AB,\rm rhs}^{\tf}
+   =-\frac{\sqrt C}{2}r_{TT}.
+\]
+Here each \(r\) is target rate minus volume rate.
+
+This prescription supplies data only for the incoming members.  ``Outgoing
+unchanged'' means that their state and volume RHS are not independently
+prescribed at the boundary.  Because a second-order-in-space system is updated
+through its momentum variables, an \(A\)- or \(\Gamma\)-RHS correction appears
+algebraically in both signs if one differentiates both characteristic
+amplitudes in time.  It would be incorrect to claim that both outgoing
+\emph{characteristic rates} and all configuration-variable RHSs can
+simultaneously remain unchanged.  The adopted compatibility form is the
+standard non-overdetermining choice for the second-order system.
+
+\section{Cartesian reconstruction and GPU kernel}
+
+The scalar, vector, and tensor corrections are reconstructed without a
+temporary array.  For example, the trace-free curvature correction is
+\begin{align}
+ \delta A_{ij}^{\rm corr}
+={}&\delta A_{ss}
+ \left(s_i s_j-\frac12q_{1i}q_{1j}-\frac12q_{2i}q_{2j}\right)\\
+&+\sum_A\delta A_{sA}(s_iq_{Aj}+q_{Ai}s_j)\\
+&+\delta A_+
+  (q_{1i}q_{1j}-q_{2i}q_{2j})
+ +\delta A_\times(q_{1i}q_{2j}+q_{2i}q_{1j}).
+\end{align}
+The analogous vector reconstruction is
+\[
+ \delta\Gamma^i_{\rm corr}
+ =\delta\Gamma_s s^i+\delta\Gamma_1q_1^i+\delta\Gamma_2q_2^i.
+\]
+
+There are three disjoint orientation kernels and at most three GPU launches
+per boundary application.  Each launch handles both signs of that coordinate
+face and all characteristic sectors in one thread.  Before the launches, a
+host scan of the six boundary flags builds three persistent compact lists
+containing only local MeshBlocks that touch a physical face in the
+corresponding orientation.  The lists are copied to the device only when AMR
+or load balancing changes their contents; an orientation with an empty list
+is not launched.  Thus interior MeshBlocks incur no CPBC device work and no
+runtime field-sized temporary is allocated.
+The \(x^1\) launch owns every cell incident on an \(x^1\) physical face; the
+\(x^2\) launch skips those cells, and the \(x^3\) launch skips cells already
+incident on \(x^1\) or \(x^2\).  At an edge or corner the owning thread
+constructs one normalized composite covector from all incident outward face
+covectors.  Consequently no two kernels write the same cell even though an
+edge/corner MeshBlock may occur in more than one compact list.
+
+No analytic-background ghost extrapolation enters a characteristic
+amplitude.  The local frame and geometric coefficients are read from the
+reconstructed full state at the active cell; the analytic background supplies
+only the gauge driver and background-shift advection identified explicitly
+above.  Residual ghost extrapolation remains enabled for the centered volume
+and KO stencils.
+The physical ghost fill is distinct from the active-cell characteristic
+correction.  For the default linear extrapolation, an outer \(x^1\) ghost
+layer is
+\[
+ u_{i_e+\delta}=u_{i_e}
+   +\delta\left(u_{i_e}-u_{i_e-1}\right),
+ \qquad \delta=1,\ldots,n_g ,
+\]
+with analogous quadratic and cubic formulas when
+\texttt{extrap\_order} is three or four.  AthenaK performs the physical
+face sweeps in the fixed order \(x^1,x^2,x^3\), each over the full transverse
+range including ghost indices.  Edge and corner ghosts therefore receive the
+ordered tensor-product polynomial extension: an \(x^1x^2\) edge is extended
+first in \(x^1\) and then in \(x^2\), while an \(x^1x^2x^3\) corner is
+extended successively in all three directions.  A direction that is an
+internal MeshBlock interface is instead supplied by neighbor exchange or AMR
+prolongation.  The SYCL queue is in order, so these face sweeps do not race.
+
+This separation also exposes a discrete-accuracy caveat.  Linear
+extrapolation gives an \(O(h^2)\) ghost value, but inserting that value in a
+centered first derivative at the last active cell can leave an \(O(h)\)
+boundary derivative.  The characteristic correction removes the resulting
+incoming component from the corrected momentum-like rates, but it deliberately
+does not replace the outgoing and tangential volume rates.  Their local
+truncation error can therefore generate a reflected pulse even when the
+reported enforcement residual is at roundoff.  This construction is not
+claimed to be an SBP--SAT energy estimate with a proven high-order boundary
+closure.  The interior reflected-characteristic test measures that effect
+independently of the boundary enforcement diagnostic; quadratic/cubic
+extrapolation or a compatible one-sided/SBP derivative closure must be used if
+the requested convergence and reflection gates fail.
+
+The composite-normal treatment at an active edge or corner is a deterministic
+discrete closure.  It avoids applying incompatible face projectors
+sequentially, but it is not asserted to be the exact continuum
+multidimensional CPBC at a measure-zero nonsmooth boundary point.  Oblique
+edge/corner pulses and repeated-run checksums test this closure directly.
+
+\section{Finite differences, checks, and reproducibility}
+
+For an incident coordinate direction with side
+\(\sigma_i=\pm1\), the active-cell derivative is
+\[
+ \partial_i f
+ =\frac{\sigma_i}{2\Delta x_i}
+  \left(3f_0-4f_{-\sigma_i}+f_{-2\sigma_i}\right).
+\]
+Nonincident components of a non-axis-aligned metric normal use the centered
+second-order derivative.  The same rule is applied to the residual fields and
+to their complete RHS.
+
+Startup and first-use checks require finite positive \(N,C,L,G\), a
+positive-definite full conformal metric (tested by all three leading principal
+minors), real separated roots, exactly one incoming member of every pair, an
+enrolled analytic-background callback, and the supported gauge parameters.
+Every boundary component of \(E,S_i,S_{ij}\) must be finite and below the
+configured atmosphere threshold.  Degenerate finite-residual lapse/shift or
+light/shift separations are rejected.  Diagnostics report maxima of incoming
+gauge, constraint, and radiative amplitudes, compatibility error, correction
+size, shift-to-cone ratio, invalid cells, the maximum compact boundary-block
+counts by orientation, fused-kernel wall time, the measured full residual-Z4c
+RHS wall time, and their ratio.  Timing samples fence the ordered device queue
+only when diagnostics are requested; the normal production path introduces
+no timing synchronization.
+
+The executable symbolic check is
+\[
+\texttt{analysis/z4c\_characteristic/derive\_residual\_characteristics.py}.
+\]
+It constructs both the zero-residual and hybrid finite-residual
+\(M_S,M_V,M_T\) blocks from the equations displayed here and verifies:
+\begin{enumerate}
+ \item every closed-form left eigenpair;
+ \item the three factored characteristic polynomials;
+ \item \(LR-I=0\) in exact arithmetic;
+ \item idempotence of the incoming projector;
+ \item annihilation of that projector by every outgoing left eigenvector;
+ \item all right eigenpairs; and
+ \item invertibility of the four-variable scalar RHS compatibility map.
+\end{enumerate}
+The symbolic check proves the finite-residual characteristic polynomials and
+left eigenpairs.  The dependency-light numerical companion additionally
+checks \(LR-I\), projector idempotence, outgoing preservation, and right
+eigenpairs below \(10^{-12}\) for randomized distinct \(b_f,b_b\).  The
+samples include the production asymptotic choice \(C=N=G=1,\ L=2\), plus
+actual Schwarzschild and spinning Kerr--Schild metrics and composite corner
+normals.  Spin does not add a symbol parameter after transforming the
+arbitrary positive-definite local conformal metric to its orthonormal face
+frame.
+
+\section{Limitations}
+
+This is complete incoming-sector coverage for the implemented frozen residual
+system, but it is an \(L=1\) planar condition.  It is not the higher-order
+auxiliary-field absorption hierarchy sometimes also called a ``full''
+radiative CPBC.  It assumes a stationary analytic background at the physical
+boundary.  The principal projectors are exact at finite residual, but their
+coefficients and frame are frozen during each local compatibility operation;
+time derivatives of the projectors themselves are not added as separate
+lower-order data.  The already assembled full-minus-background volume RHS
+does retain the implemented nonlinear geometry, constraint damping, gauge
+damping, source, and KO terms.  Coincident gauge/light cones are
+mathematically diagonalizable in some parameter limits, but the displayed
+closed form is singular there, so this implementation rejects those limits
+instead of using an unverified limiting basis.  Matter must not reach the
+boundary.
+
+For initially homogeneous incoming data, the condition preserves zero
+incoming modes of the residual system.  For a nonzero stationary residual
+near field, it preserves the frozen incoming datum rather than erasing the
+near field; consequently it should be described as ``no incoming dynamical
+data'', not as a pointwise guarantee that every incoming principal amplitude
+vanishes.  It does not make a finite outer boundary causally irrelevant:
+discretization error, tangential derivatives omitted by the frozen normal
+symbol, AMR interfaces, and lower-order coefficient/frame variation can still
+reflect.  Those effects are measured by the plane-pulse, exact-background,
+small-boundary TDE, and production smoke tests rather than assumed away.
+
+\end{document}

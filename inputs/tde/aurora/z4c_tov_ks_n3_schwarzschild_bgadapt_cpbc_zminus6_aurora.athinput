@@ -1,0 +1,225 @@
+# One-close-face residual-Z4c TDE boundary discriminator.  The lower-z
+# boundary is 6 M from the stellar center and about 5.53 M from its initial
+# surface.  The fastest asymptotic gauge cone therefore completes a round
+# trip in about 8 M.  The other five faces cannot return a signal to the star
+# during this t=30 M run.  Runtime overrides select Sommerfeld or CPBC only.
+#
+# This deck deliberately disables every outer sponge source.  Keep the
+# legacy face geometry selected so radial-profile validity checks do not
+# constrain this small domain.
+
+<job>
+basename = z4c_tov_ks_n3_schwarzschild_bgadapt_cpbc_zminus6_aurora
+
+<mesh>
+nghost = 4
+nx1 = 160
+x1min = -48.0
+x1max = 72.0
+ix1_bc = outflow
+ox1_bc = outflow
+
+nx2 = 128
+x2min = -48.0
+x2max = 48.0
+ix2_bc = outflow
+ox2_bc = outflow
+
+nx3 = 64
+x3min = -6.0
+x3max = 42.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 32
+nx2 = 32
+nx3 = 32
+
+<mesh_refinement>
+refinement = adaptive
+num_levels = 7
+refinement_interval = 2
+max_nmb_per_rank = 192
+
+<amr_criterion0>
+method = user
+
+<refined_region1>
+level = 4
+x1min = -5.0
+x1max = 5.0
+x2min = -5.0
+x2max = 5.0
+x3min = -5.0
+x3max = 5.0
+
+<refined_region2>
+level = 4
+x1min = 36.0
+x1max = 44.0
+x2min = -4.0
+x2max = 4.0
+x3min = -4.0
+x3max = 4.0
+
+<refined_region3>
+level = 5
+x1min = 38.0
+x1max = 42.0
+x2min = -2.0
+x2max = 2.0
+x3min = -2.0
+x3max = 2.0
+
+<refined_region4>
+level = 6
+x1min = 39.0
+x1max = 41.0
+x2min = -1.0
+x2max = 1.0
+x3min = -1.0
+x3max = 1.0
+
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = 0.3
+nlim = -1
+tlim = 30.0
+ndiag = 20
+
+<mhd>
+evolution = dynamic
+eos = ideal
+dyn_eos = ideal
+dyn_error = reset_floor
+reconstruct = wenoz
+rsolver = llf
+fofc_method = llf
+gamma = 1.3333333333333333
+dfloor = 1.0e-16
+pfloor = 1.0e-22
+dthreshold = 1.0
+gamma_max = 10.0
+fofc = false
+
+<adm>
+
+<coord>
+general_rel = true
+is_dynamical = true
+a = 0.0
+excise = false
+
+<z4c>
+boundary_rhs = sommerfeld
+extrap_order = 4
+characteristic_bc_diagnostics = false
+characteristic_bc_diagnostic_interval = 20
+characteristic_bc_max_energy_density = 1.0e-12
+use_analytic_background = true
+evolve_gauge_residual = true
+evolve_lapse_residual = true
+evolve_shift_residual = true
+residual_gauge = background_adapted
+residual_lapse_f = 1.0
+residual_lapse_damping = 0.0
+residual_shift_damping = 0.0
+diss = 0.5
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+lapse_harmonic = 0.0
+lapse_oplog = 2.0
+lapse_advect = 1.0
+shift_Gamma = 1.0
+shift_advect = 1.0
+shift_eta = 2.0
+history_excise_ks_horizon = true
+rhs_term_debug = false
+rhs_term_debug_stride = 200
+
+<problem>
+pgen_name = z4c_tov_ks
+user_hist = true
+metric_diag_history = true
+
+bh_mass = 1.0
+bh_spin = 0.0
+bh_center_x1 = 0.0
+bh_center_x2 = 0.0
+bh_center_x3 = 0.0
+use_direct_z4c_background = true
+
+outer_sponge_enabled = false
+outer_sponge_geometry = face
+outer_sponge_width = 0.0
+outer_sponge_rate = 0.0
+
+star_center_x1 = 40.0
+star_center_x2 = 0.0
+star_center_x3 = 0.0
+star_boost_x = -0.1
+star_boost_y = 0.0
+star_boost_z = 0.0
+isotropic = true
+
+rhoc = 1.236298759450e-04
+kappa = 3.639390619285e-05
+npoints = 200000
+dr = 1.0e-5
+rho_cut = 1.0e-16
+excision_damp_rate = 50.0
+excision_freeze_radius = 1.0
+excision_ramp_radius = 1.4
+excision_atmo_density = 1.0e-16
+excision_atmo_energy = 1.0e-22
+
+amr_rho_slope_refine = true
+amr_rho_slope_threshold = 0.25
+amr_rho_min = 1.0e-10
+amr_bh_exclusion_radius = 3.0
+amr_bh_refine_radius = 3.0
+amr_bh_derefine_radius = 4.0
+amr_bh_refine_level = 4
+amr_star_refine = true
+amr_star_refine_radius = 0.71
+amr_star_derefine_radius = 0.95
+amr_star_refine_level = 6
+amr_star_track_rhomax = true
+amr_star_track_rho_floor = 1.0e-10
+
+b_norm = 0.0
+pcut = 0.04
+use_pcut_rel = true
+magindex = 1.0
+
+<output1>
+file_type = hst
+dt = 0.05
+data_format = %20.15e
+
+<output2>
+file_type = log
+dcycle = 100
+
+<output3>
+file_type = rst
+dt = 1000.0
+single_file_per_rank = true
+
+<output4>
+file_type = bin
+variable = mhd_w_bcc
+id = xy_mhd
+dt = 0.5
+slice_x3 = 0.0
+
+# The x-z plane resolves the lower-z face normal.  Direct residual output
+# avoids full-minus-background cancellation in the independent projection.
+<output5>
+file_type = bin
+variable = z4c_residual
+id = xz_z4c
+dt = 0.25
+slice_x2 = 0.0

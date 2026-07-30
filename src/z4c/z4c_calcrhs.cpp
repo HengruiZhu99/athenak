@@ -1004,6 +1004,7 @@ template <int NGHOST>
 //! \fn void Z4c::CalcRHS(Driver *pdriver, int stage)
 //! \brief compute rhs of the z4c equations
 TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
+  Kokkos::Timer rhs_timer;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   int &is = indcs.is; int &ie = indcs.ie;
@@ -1017,6 +1018,18 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   auto &bg = pz4c->bg;
   auto &rhs = pz4c->rhs;
   auto &opt = pz4c->opt;
+  const bool measure_characteristic_cost =
+      opt.boundary_rhs_mode == boundary_rhs_characteristic_cpbc &&
+      opt.characteristic_bc_diagnostics &&
+      opt.characteristic_bc_diagnostic_interval > 1 &&
+      stage == pdriver->nexp_stages &&
+      pmy_pack->pmesh->ncycle %
+          opt.characteristic_bc_diagnostic_interval ==
+          opt.characteristic_bc_diagnostic_interval - 1;
+  if (measure_characteristic_cost) {
+    Kokkos::fence();
+    rhs_timer.reset();
+  }
   
   Real time = pmy_pack->pmesh->time;
   bool use_analytic_background =
@@ -1222,6 +1235,10 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       u_rhs(m,n,k,j,i) += Diss<NGHOST>(a, idx, u0, m, n, k, j, i)*diss;
     }
   });
+  if (measure_characteristic_cost) {
+    Kokkos::fence();
+    characteristic_bc_volume_rhs_seconds = rhs_timer.seconds();
+  }
   if (opt.rhs_term_debug && use_analytic_background && stage == 1 &&
       (pmy_pack->pmesh->ncycle %
        std::max(1, opt.rhs_term_debug_stride)) == 0) {

@@ -1,0 +1,654 @@
+#!/bin/bash -l
+#PBS -A MHDTidal
+#PBS -N z4c_cpbc
+#PBS -l select=1
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -l place=scatter
+#PBS -q debug-scaling
+#PBS -j oe
+
+set -euo pipefail
+
+REPO_DIR="${REPO_DIR:?REPO_DIR must point to the clean Flare worktree}"
+PROJECT_ROOT="${PROJECT_ROOT:-/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation}"
+BUILD_DIR="${BUILD_DIR:?BUILD_DIR must point to the CPBC build}"
+ATHENA_EXE="${ATHENA_EXE:-${BUILD_DIR}/src/athena}"
+REFERENCE_ATHENA_EXE="${REFERENCE_ATHENA_EXE:-}"
+CASE_NAME="${CASE_NAME:?CASE_NAME must be provided with qsub -v}"
+VALIDATION_KIND="${VALIDATION_KIND:-athena}"
+INPUT_DECK="${INPUT_DECK:-}"
+RUN_ROOT="${RUN_ROOT:-${PROJECT_ROOT}/runs/characteristic_cpbc}"
+RANKS_PER_NODE="${RANKS_PER_NODE:-12}"
+ATHENA_WALLTIME="${ATHENA_WALLTIME:-00:50:00}"
+MESH_ONLY="${MESH_ONLY:-0}"
+PRODUCTION_SMOKE="${PRODUCTION_SMOKE:-0}"
+ATHENA_EXTRA_ARGS="${ATHENA_EXTRA_ARGS:-}"
+PULSE_RESOLUTION="${PULSE_RESOLUTION:-128}"
+PULSE_CENTER="${PULSE_CENTER:-3.0}"
+PULSE_TLIM="${PULSE_TLIM:-12.0}"
+PULSE_EXTRAP_ORDER="${PULSE_EXTRAP_ORDER:-4}"
+PULSE_CONTROL_ROOT="${PULSE_CONTROL_ROOT:-}"
+PULSE_CPBC_ROOT="${PULSE_CPBC_ROOT:-}"
+PULSE_OBLIQUE_DIMENSIONS="${PULSE_OBLIQUE_DIMENSIONS:-3}"
+PULSE_OBLIQUE_SIDE="${PULSE_OBLIQUE_SIDE:-1}"
+PULSE_OBLIQUE_REPEATS="${PULSE_OBLIQUE_REPEATS:-2}"
+PULSE_OBLIQUE_FAMILY="${PULSE_OBLIQUE_FAMILY:-tt_cross}"
+OBLIQUE_REANALYSIS_ROOT="${OBLIQUE_REANALYSIS_ROOT:-}"
+REFERENCE_LWAVE_ROOT="${REFERENCE_LWAVE_ROOT:-}"
+REFERENCE_BOOSTED_ROOT="${REFERENCE_BOOSTED_ROOT:-}"
+
+if type module >/dev/null 2>&1; then
+  module reset >/dev/null 2>&1 || true
+  module load oneapi >/dev/null 2>&1 ||
+    module load oneapi/release >/dev/null 2>&1 || true
+fi
+
+export MPICH_GPU_SUPPORT_ENABLED="${MPICH_GPU_SUPPORT_ENABLED:-1}"
+export SYCL_DEVICE_FILTER="${SYCL_DEVICE_FILTER:-level_zero:gpu}"
+export ONEAPI_DEVICE_SELECTOR="${ONEAPI_DEVICE_SELECTOR:-level_zero:gpu}"
+export ZE_FLAT_DEVICE_HIERARCHY="${ZE_FLAT_DEVICE_HIERARCHY:-COMPOSITE}"
+# PBS exports OMP_NUM_THREADS=ncpus (208 on Aurora) into the job environment.
+# This validation uses one host thread per MPI rank; do not inherit that value.
+export OMP_NUM_THREADS="${CPBC_OMP_NUM_THREADS:-1}"
+
+CPU_BIND="${CPU_BIND:-list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100}"
+NNODES="$(wc -l < "${PBS_NODEFILE}")"
+NTOTRANKS="$((NNODES * RANKS_PER_NODE))"
+RUN_DIR="${RUN_ROOT}/${CASE_NAME}"
+
+if [[ -e "${RUN_DIR}" ]]; then
+  echo "ERROR: refusing to reuse existing run directory ${RUN_DIR}" >&2
+  exit 1
+fi
+mkdir -p "${RUN_DIR}"
+
+{
+  echo "job_id=${PBS_JOBID}"
+  echo "case=${CASE_NAME}"
+  echo "validation_kind=${VALIDATION_KIND}"
+  echo "source_head=$(git -C "${REPO_DIR}" rev-parse HEAD)"
+  echo "staged_diff_sha256=$(git -C "${REPO_DIR}" diff --cached --binary |
+    sha256sum | awk '{print $1}')"
+  echo "athena_exe=${ATHENA_EXE}"
+  echo "athena_sha256=$(sha256sum "${ATHENA_EXE}" | awk '{print $1}')"
+  if [[ -n ${REFERENCE_ATHENA_EXE} ]]; then
+    echo "reference_athena_exe=${REFERENCE_ATHENA_EXE}"
+    echo "reference_athena_sha256=$(sha256sum "${REFERENCE_ATHENA_EXE}" |
+      awk '{print $1}')"
+  fi
+  echo "nodes=${NNODES}"
+  echo "ranks_per_node=${RANKS_PER_NODE}"
+  echo "input_deck=${INPUT_DECK}"
+  echo "athena_walltime=${ATHENA_WALLTIME}"
+  echo "mesh_only=${MESH_ONLY}"
+  echo "production_smoke=${PRODUCTION_SMOKE}"
+  echo "athena_extra_args=${ATHENA_EXTRA_ARGS}"
+  echo "mpich_gpu_support_enabled=${MPICH_GPU_SUPPORT_ENABLED}"
+  echo "sycl_device_filter=${SYCL_DEVICE_FILTER}"
+  echo "oneapi_device_selector=${ONEAPI_DEVICE_SELECTOR}"
+  echo "ze_flat_device_hierarchy=${ZE_FLAT_DEVICE_HIERARCHY}"
+  echo "omp_num_threads=${OMP_NUM_THREADS}"
+} > "${RUN_DIR}/run_metadata.txt"
+cp "${BUILD_DIR}/CMakeCache.txt" "${RUN_DIR}/CMakeCache.txt"
+
+case "${VALIDATION_KIND}" in
+  athena)
+    if [[ -z ${INPUT_DECK} ]]; then
+      echo "INPUT_DECK is required for VALIDATION_KIND=athena" >&2
+      exit 2
+    fi
+    cp "${INPUT_DECK}" "${RUN_DIR}/"
+    read -r -a ATHENA_EXTRA_ARGV <<< "${ATHENA_EXTRA_ARGS//:/ }"
+    ATHENA_MODE_ARGV=()
+    LAUNCH_RANKS="${NTOTRANKS}"
+    LAUNCH_PPN="${RANKS_PER_NODE}"
+    if [[ "${MESH_ONLY}" == "1" ]]; then
+      ATHENA_MODE_ARGV=(-m)
+      LAUNCH_RANKS=1
+      LAUNCH_PPN=1
+    fi
+    cd "${RUN_DIR}"
+    mpiexec -n "${LAUNCH_RANKS}" -ppn "${LAUNCH_PPN}" \
+      --cpu-bind "${CPU_BIND}" gpu_tile_compact.sh \
+      "${ATHENA_EXE}" -i "${INPUT_DECK}" -d "${RUN_DIR}" \
+      -t "${ATHENA_WALLTIME}" "${ATHENA_MODE_ARGV[@]}" \
+      "${ATHENA_EXTRA_ARGV[@]}" 2>&1 | tee athena.stdout
+    if [[ "${PRODUCTION_SMOKE}" == "1" ]]; then
+      python3 "${REPO_DIR}/analysis/z4c_characteristic/check_production_smoke.py" \
+        "${RUN_DIR}" | tee production_smoke_check.log
+    fi
+    ;;
+  pulse_suite)
+    cd "${REPO_DIR}"
+    python3 analysis/z4c_characteristic/check_residual_characteristics_numeric.py |
+      tee "${RUN_DIR}/algebra.log"
+    if python3 -c 'import sympy' >/dev/null 2>&1; then
+      python3 analysis/z4c_characteristic/derive_residual_characteristics.py |
+        tee "${RUN_DIR}/symbolic_algebra.log"
+    fi
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      scripts/run_z4c_characteristic_pulses.sh \
+      "${ATHENA_EXE}" "${RUN_DIR}/pulses" \
+      "${PULSE_RESOLUTION}" "${PULSE_CENTER}" "${PULSE_TLIM}" |
+      tee "${RUN_DIR}/pulse_suite.log"
+    ;;
+  pure_backgrounds)
+    cd "${REPO_DIR}"
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      scripts/run_z4c_cpbc_pure_backgrounds.sh \
+      "${ATHENA_EXE}" "${RUN_DIR}/backgrounds" |
+      tee "${RUN_DIR}/pure_backgrounds.log"
+    ;;
+  cpbc_compaction_parity)
+    if [[ -z ${REFERENCE_ATHENA_EXE} ||
+          ! -x ${REFERENCE_ATHENA_EXE} ]]; then
+      echo "REFERENCE_ATHENA_EXE must name the executable before compaction" >&2
+      exit 2
+    fi
+    input="${REPO_DIR}/inputs/tests/z4c_characteristic_cpbc_plane_pulse.athinput"
+    for specification in \
+        "reference:${REFERENCE_ATHENA_EXE}" "candidate:${ATHENA_EXE}"; do
+      IFS=: read -r label executable <<< "${specification}"
+      case_root="${RUN_DIR}/${label}"
+      mkdir -p "${case_root}"
+      mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+        "${executable}" -i "${input}" -d "${case_root}" \
+        mesh/nx1=256 meshblock/nx1=64 \
+        time/tlim=12.0 \
+        problem/characteristic_test_family=constraint_scalar_theta \
+        problem/characteristic_test_axis=1 \
+        problem/characteristic_test_side=1 \
+        problem/characteristic_test_center=3.0 \
+        z4c/extrap_order=4 \
+        >"${case_root}/stdout.log" 2>&1
+    done
+    compared=0
+    while IFS= read -r reference_file; do
+      relative="${reference_file#${RUN_DIR}/reference/}"
+      candidate_file="${RUN_DIR}/candidate/${relative}"
+      if [[ ! -f ${candidate_file} ]]; then
+        echo "candidate is missing ${relative}" >&2
+        exit 1
+      fi
+      cmp "${reference_file}" "${candidate_file}"
+      sha256sum "${reference_file}" "${candidate_file}"
+      compared=$((compared + 1))
+    done < <(find "${RUN_DIR}/reference" -maxdepth 1 -type f \
+      \( -name '*.bin' -o -name '*.hst' \) | sort)
+    if [[ ${compared} -lt 2 ]]; then
+      echo "compaction parity found too few binary/history outputs" >&2
+      exit 1
+    fi
+    grep -q "boundary_blocks_max=2,0,0" \
+      "${RUN_DIR}/candidate/stdout.log"
+    if grep -Eq "FATAL|nonfinite|invalid.*=[1-9]" \
+        "${RUN_DIR}/candidate/stdout.log"; then
+      echo "candidate compaction run reported an invalid state" >&2
+      exit 1
+    fi
+    echo "CPBC compact launch is byte-identical across ${compared} outputs"
+    cd "${REPO_DIR}"
+    python3 analysis/z4c_characteristic/check_residual_characteristics_numeric.py |
+      tee "${RUN_DIR}/algebra.log"
+    if python3 -c 'import sympy' >/dev/null 2>&1; then
+      python3 analysis/z4c_characteristic/derive_residual_characteristics.py |
+        tee "${RUN_DIR}/symbolic_algebra.log"
+    fi
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      scripts/run_z4c_cpbc_pure_backgrounds.sh \
+      "${ATHENA_EXE}" "${RUN_DIR}/backgrounds" |
+      tee "${RUN_DIR}/pure_backgrounds.log"
+    ;;
+  unsupported_gauge)
+    cd "${REPO_DIR}"
+    mkdir -p "${RUN_DIR}/unsupported"
+    set +e
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      "${ATHENA_EXE}" \
+      -i inputs/tests/z4c_characteristic_cpbc_plane_pulse.athinput \
+      -d "${RUN_DIR}/unsupported" \
+      z4c/boundary_rhs=characteristic_cpbc \
+      z4c/lapse_advect=0.5 \
+      >"${RUN_DIR}/unsupported_gauge.log" 2>&1
+    unsupported_status=$?
+    set -e
+    if [[ ${unsupported_status} -eq 0 ]]; then
+      echo "unsupported CPBC gauge was accepted" >&2
+      exit 1
+    fi
+    grep -q "characteristic_cpbc currently requires" \
+      "${RUN_DIR}/unsupported_gauge.log"
+    echo "unsupported CPBC gauge rejected as required (status=${unsupported_status})"
+    ;;
+  legacy_parity)
+    if [[ ! -d ${REFERENCE_LWAVE_ROOT} ||
+          ! -d ${REFERENCE_BOOSTED_ROOT} ]]; then
+      echo "legacy_parity requires valid REFERENCE_LWAVE_ROOT and "\
+"REFERENCE_BOOSTED_ROOT" >&2
+      exit 2
+    fi
+    input="${REPO_DIR}/tst/inputs/lwave_z4c.athinput"
+    for specification in "second_r32:2:32" "second_r64:2:64" \
+                         "sixth_r64:4:64"; do
+      IFS=: read -r label nghost resolution <<< "${specification}"
+      case_root="${RUN_DIR}/${label}"
+      reference_file="${REFERENCE_LWAVE_ROOT}/${label}/z4c_lin_wave-errs.dat"
+      if [[ ! -f ${reference_file} ]]; then
+        echo "missing legacy wave reference ${reference_file}" >&2
+        exit 2
+      fi
+      mkdir -p "${case_root}"
+      block_size="$((resolution / 8))"
+      mpiexec -n 12 -ppn 12 --cpu-bind "${CPU_BIND}" \
+        gpu_tile_compact.sh \
+        "${ATHENA_EXE}" -i "${input}" -d "${case_root}" \
+        "mesh/nghost=${nghost}" \
+        "mesh/nx1=${resolution}" "mesh/nx2=${resolution}" \
+        "mesh/nx3=${resolution}" \
+        "meshblock/nx1=${block_size}" "meshblock/nx2=${block_size}" \
+        "meshblock/nx3=${block_size}" \
+        mesh_refinement/max_nmb_per_rank=4096 \
+        problem/kx1=1 problem/kx2=1 problem/kx3=1 \
+        >"${case_root}/athena.stdout" 2>&1
+      grep -q "Number of parallel ranks = 12" \
+        "${case_root}/athena.stdout"
+      grep -q "Current number of MeshBlocks = 3200" \
+        "${case_root}/athena.stdout"
+      grep -Eq \
+        "[1-9][0-9]* MeshBlocks created, [1-9][0-9]* deleted by AMR" \
+        "${case_root}/athena.stdout"
+      grep -Eq \
+        "[1-9][0-9]* communicated for load balancing" \
+        "${case_root}/athena.stdout"
+      candidate_file="${case_root}/z4c_lin_wave-errs.dat"
+      cmp "${reference_file}" "${candidate_file}"
+      sha256sum "${reference_file}" "${candidate_file}"
+    done
+
+    input="${REPO_DIR}/tst/inputs/z4c_boosted.athinput"
+    case_root="${RUN_DIR}/boosted"
+    reference_file="${REFERENCE_BOOSTED_ROOT}/boosted/boosted.z4c.user.hst"
+    if [[ ! -f ${reference_file} ]]; then
+      echo "missing boosted reference ${reference_file}" >&2
+      exit 2
+    fi
+    mkdir -p "${case_root}"
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      "${ATHENA_EXE}" -i "${input}" -d "${case_root}" \
+      job/basename=boosted >"${case_root}/athena.stdout" 2>&1
+    candidate_file="${case_root}/boosted.z4c.user.hst"
+    cmp "${reference_file}" "${candidate_file}"
+    sha256sum "${reference_file}" "${candidate_file}"
+
+    if grep -R -i -E \
+        "FATAL|nonfinite|MPI.*error|SYCL.*error|ZE_RESULT|PI_ERROR|out of memory|bad_alloc|segmentation fault" \
+        "${RUN_DIR}" --include='athena.stdout'; then
+      echo "final legacy parity run reported an invalid state" >&2
+      exit 1
+    fi
+    python3 - "${RUN_DIR}" <<'PY' | tee "${RUN_DIR}/legacy_parity.log"
+import math
+import pathlib
+import re
+import sys
+
+root = pathlib.Path(sys.argv[1])
+
+def wave_error(label):
+    path = root / label / "z4c_lin_wave-errs.dat"
+    rows = [
+        line.split() for line in path.read_text().splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    if len(rows) != 1:
+        raise SystemExit("{}: expected one error row".format(path))
+    return float(rows[0][4])
+
+coarse = wave_error("second_r32")
+fine = wave_error("second_r64")
+sixth = wave_error("sixth_r64")
+ratio = fine / coarse
+
+path = root / "boosted" / "boosted.z4c.user.hst"
+lines = path.read_text().splitlines()
+labels = {
+    match.group(2): int(match.group(1)) - 1
+    for match in re.finditer(r"\[(\d+)\]=(\S+)", lines[1])
+}
+rows = [
+    [float(value) for value in line.split()]
+    for line in lines[2:]
+    if line.strip() and not line.lstrip().startswith("#")
+]
+required = (
+    "C-norm2", "H-norm2", "M-norm2", "Z-norm2", "Mx-norm2",
+    "My-norm2", "Mz-norm2", "Theta-norm",
+)
+if len(rows) < 4 or any(label not in labels for label in required):
+    raise SystemExit("boosted-puncture history is incomplete")
+boosted = {label: rows[3][labels[label]] for label in required}
+values = (coarse, fine, ratio, sixth) + tuple(boosted.values())
+if not all(math.isfinite(value) for value in values):
+    raise SystemExit("legacy parity result is nonfinite")
+print(
+    "PASS byte_exact=4 second_r32={:.8e} second_r64={:.8e} "
+    "ratio={:.8e} sixth_r64={:.8e} {}".format(
+        coarse, fine, ratio, sixth,
+        " ".join("{}={:.8e}".format(label, boosted[label])
+                 for label in required)))
+PY
+    ;;
+  legacy_lwave)
+    input="${REPO_DIR}/tst/inputs/lwave_z4c.athinput"
+    for specification in "second_r32:2:32" "second_r64:2:64" \
+                         "sixth_r64:4:64"; do
+      IFS=: read -r label nghost resolution <<< "${specification}"
+      case_root="${RUN_DIR}/${label}"
+      mkdir -p "${case_root}"
+      block_size="$((resolution / 8))"
+      mpiexec -n "${NTOTRANKS}" -ppn "${RANKS_PER_NODE}" \
+        --cpu-bind "${CPU_BIND}" gpu_tile_compact.sh \
+        "${ATHENA_EXE}" -i "${input}" -d "${case_root}" \
+        "mesh/nghost=${nghost}" \
+        "mesh/nx1=${resolution}" "mesh/nx2=${resolution}" \
+        "mesh/nx3=${resolution}" \
+        "meshblock/nx1=${block_size}" "meshblock/nx2=${block_size}" \
+        "meshblock/nx3=${block_size}" \
+        mesh_refinement/max_nmb_per_rank=4096 \
+        problem/kx1=1 problem/kx2=1 problem/kx3=1 \
+        >"${case_root}/athena.stdout" 2>&1
+    done
+    python3 - "${RUN_DIR}" <<'PY' | tee "${RUN_DIR}/legacy_lwave.log"
+import pathlib
+import math
+import sys
+
+root = pathlib.Path(sys.argv[1])
+
+def error(label):
+    paths = list((root / label).glob("*-errs.dat"))
+    if len(paths) != 1:
+        raise SystemExit("{}: expected one error file".format(label))
+    rows = [
+        line.split() for line in paths[0].read_text().splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    if len(rows) != 1:
+        raise SystemExit("{}: expected one error row".format(paths[0]))
+    return float(rows[0][4])
+
+coarse = error("second_r32")
+fine = error("second_r64")
+sixth = error("sixth_r64")
+ratio = fine / coarse
+print("second_r32={:.8e} second_r64={:.8e} ratio={:.8e} "
+      "sixth_r64={:.8e}".format(coarse, fine, ratio, sixth))
+if fine > 3.5e-11 or ratio > 0.25 or sixth > 6.0e-12:
+    raise SystemExit("legacy Z4c linear-wave threshold failed")
+if not all(math.isfinite(value) for value in (coarse, fine, ratio, sixth)):
+    raise SystemExit("legacy Z4c linear-wave result is nonfinite")
+PY
+    ;;
+  legacy_boosted)
+    input="${REPO_DIR}/tst/inputs/z4c_boosted.athinput"
+    case_root="${RUN_DIR}/boosted"
+    mkdir -p "${case_root}"
+    mpiexec -n "${NTOTRANKS}" -ppn "${RANKS_PER_NODE}" \
+      --cpu-bind "${CPU_BIND}" gpu_tile_compact.sh \
+      "${ATHENA_EXE}" -i "${input}" -d "${case_root}" \
+      job/basename=boosted >"${case_root}/athena.stdout" 2>&1
+    python3 - "${case_root}" <<'PY' | tee "${RUN_DIR}/legacy_boosted.log"
+import pathlib
+import math
+import re
+import sys
+
+root = pathlib.Path(sys.argv[1])
+paths = list(root.glob("*.z4c.user.hst"))
+if len(paths) != 1:
+    raise SystemExit("expected one Z4c history file")
+lines = paths[0].read_text().splitlines()
+labels = {
+    match.group(2): int(match.group(1)) - 1
+    for match in re.finditer(r"\[(\d+)\]=(\S+)", lines[1])
+}
+rows = [
+    [float(value) for value in line.split()]
+    for line in lines[2:]
+    if line.strip() and not line.lstrip().startswith("#")
+]
+if len(rows) < 4:
+    raise SystemExit("boosted-puncture history has fewer than four rows")
+limits = {
+    "C-norm2": 1.85e-2, "H-norm2": 4.7e-3, "M-norm2": 1.4e-3,
+    "Z-norm2": 3.2e-3, "Mx-norm2": 1.1e-3, "My-norm2": 4.5e-4,
+    "Mz-norm2": 4.5e-4, "Theta-norm": 3.1e-5,
+}
+values = {label: rows[3][labels[label]] for label in limits}
+print(" ".join("{}={:.8e}".format(label, values[label])
+               for label in limits))
+failures = [
+    "{}={:.8e}>{:.8e}".format(label, values[label], limit)
+    for label, limit in limits.items()
+    if not math.isfinite(values[label]) or values[label] > limit
+]
+if failures:
+    raise SystemExit("legacy boosted-puncture thresholds failed: " +
+                     ", ".join(failures))
+PY
+    ;;
+  corner_determinism)
+    cd "${REPO_DIR}"
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      scripts/run_z4c_cpbc_corner_determinism.sh \
+      "${ATHENA_EXE}" "${RUN_DIR}/corner" |
+      tee "${RUN_DIR}/corner_determinism.log"
+    ;;
+  oblique_pulse)
+    cd "${REPO_DIR}"
+    CPBC_OBLIQUE_SIDE="${PULSE_OBLIQUE_SIDE}" \
+    CPBC_OBLIQUE_REPEATS="${PULSE_OBLIQUE_REPEATS}" \
+    CPBC_OBLIQUE_FAMILY="${PULSE_OBLIQUE_FAMILY}" \
+    Z4C_BOUNDARY_RHS="${Z4C_BOUNDARY_RHS:-characteristic_cpbc}" \
+    Z4C_CONTROL_ROOT="${PULSE_CONTROL_ROOT}" \
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      scripts/run_z4c_cpbc_oblique_pulse.sh \
+      "${ATHENA_EXE}" "${RUN_DIR}/oblique" \
+      "${PULSE_RESOLUTION}" "${PULSE_OBLIQUE_DIMENSIONS}" |
+      tee "${RUN_DIR}/oblique_pulse.log"
+    ;;
+  oblique_convergence)
+    cd "${REPO_DIR}"
+    for dimensions in 2 3; do
+      geometry="edge"
+      if [[ ${dimensions} == 3 ]]; then
+        geometry="corner"
+      fi
+      for resolution in 24 48 96; do
+        case_root="${RUN_DIR}/${geometry}_r${resolution}"
+        boundary_cells="$((resolution / 6))"
+        CPBC_OBLIQUE_SIDE=1 \
+        CPBC_OBLIQUE_REPEATS=1 \
+        CPBC_OBLIQUE_BOUNDARY_CELLS="${boundary_cells}" \
+        CPBC_OBLIQUE_FAMILY=tt_cross \
+        CPBC_OBLIQUE_WIDTH=2.0 \
+        CPBC_OBLIQUE_TRANSVERSE_WIDTH=2.0 \
+        CPBC_OBLIQUE_TLIM=16.0 \
+        mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+          scripts/run_z4c_cpbc_oblique_pulse.sh \
+          "${ATHENA_EXE}" "${case_root}" "${resolution}" "${dimensions}" |
+          tee "${RUN_DIR}/${geometry}_r${resolution}.log"
+      done
+      python3 analysis/z4c_characteristic/check_oblique_convergence.py \
+        "${RUN_DIR}/${geometry}_r24/repeat1/interior_reflection.txt" \
+        "${RUN_DIR}/${geometry}_r48/repeat1/interior_reflection.txt" \
+        "${RUN_DIR}/${geometry}_r96/repeat1/interior_reflection.txt" \
+        --minimum-order 1.8 |
+        tee "${RUN_DIR}/${geometry}_convergence.log"
+    done
+    ;;
+  oblique_reanalysis)
+    if [[ -z ${OBLIQUE_REANALYSIS_ROOT} ||
+          ! -d ${OBLIQUE_REANALYSIS_ROOT} ]]; then
+      echo "OBLIQUE_REANALYSIS_ROOT must name an existing convergence run" >&2
+      exit 2
+    fi
+    cd "${REPO_DIR}"
+    for dimensions in 2 3; do
+      geometry="edge"
+      if [[ ${dimensions} == 3 ]]; then
+        geometry="corner"
+      fi
+      for resolution in 24 48 96; do
+        source_case="${OBLIQUE_REANALYSIS_ROOT}/${geometry}_r${resolution}"
+        initial="$(find "${source_case}/repeat1" -name '*.bin' -type f |
+          sort | head -1)"
+        final="$(find "${source_case}/repeat1" -name '*.bin' -type f |
+          sort | tail -1)"
+        control_final="$(find "${source_case}/far_reference" -name '*.bin' \
+          -type f | sort | tail -1)"
+        if [[ -z ${initial} || -z ${final} || ${initial} == "${final}" ||
+              -z ${control_final} ]]; then
+          echo "missing source binary for ${geometry} r${resolution}" >&2
+          exit 1
+        fi
+        # The original diagnostic removed four cells at every resolution,
+        # changing the physical integration region.  The 4/8/16 sequence
+        # below keeps a fixed 8/3 M exclusion from every Cartesian face.
+        boundary_cells="$((resolution / 6))"
+        output="${RUN_DIR}/${geometry}_r${resolution}_fixed_window.txt"
+        python3 analysis/z4c_characteristic/check_oblique_pulse_binary.py \
+          "${initial}" "${final}" tt_cross "${dimensions}" 1 \
+          --control-final "${control_final}" \
+          --boundary-cells "${boundary_cells}" \
+          --maximum-ratio 1.0 > "${output}"
+        cat "${output}"
+      done
+      python3 analysis/z4c_characteristic/check_oblique_convergence.py \
+        "${RUN_DIR}/${geometry}_r24_fixed_window.txt" \
+        "${RUN_DIR}/${geometry}_r48_fixed_window.txt" \
+        "${RUN_DIR}/${geometry}_r96_fixed_window.txt" \
+        --minimum-order 1.8 |
+        tee "${RUN_DIR}/${geometry}_fixed_window_convergence.log"
+    done
+    ;;
+  ghost_accuracy)
+    cd "${REPO_DIR}"
+    python3 analysis/z4c_characteristic/check_residual_characteristics_numeric.py |
+      tee "${RUN_DIR}/algebra.log"
+    for order in 2 3 4; do
+      CPBC_AXES=1 \
+      CPBC_SIDES="-1 1" \
+      CPBC_FAMILIES="lapse shift_longitudinal constraint_scalar_theta tt_cross" \
+      CPBC_EXTRAP_ORDER="${order}" \
+      CPBC_MAX_INTERIOR_RATIO=1.0 \
+      mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+        scripts/run_z4c_characteristic_pulses.sh \
+        "${ATHENA_EXE}" "${RUN_DIR}/order${order}" \
+        128 3.0 12.0 |
+        tee "${RUN_DIR}/order${order}.log"
+    done
+    CPBC_AXES=1 \
+    CPBC_SIDES="-1 1" \
+    CPBC_FAMILIES="lapse shift_longitudinal constraint_scalar_theta tt_cross" \
+    CPBC_EXTRAP_ORDER=2 \
+    CPBC_HALF_WIDTH=32.0 \
+    CPBC_MAX_INTERIOR_RATIO=1.0 \
+    Z4C_CHECK_BOUNDARY_DIAGNOSTIC=0 \
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      scripts/run_z4c_characteristic_pulses.sh \
+      "${ATHENA_EXE}" "${RUN_DIR}/far_reference" \
+      512 3.0 12.0 |
+      tee "${RUN_DIR}/far_reference.log"
+    ;;
+  boundary_ab)
+    cd "${REPO_DIR}"
+    families="lapse shift_longitudinal constraint_scalar_theta constraint_scalar_z shift_transverse_1 shift_transverse_2 constraint_transverse_1 constraint_transverse_2 tt_plus tt_cross"
+    pulse_axes="${PULSE_AXES:-1}"
+    far_resolution="$((4 * PULSE_RESOLUTION))"
+    control_root="${PULSE_CONTROL_ROOT:-${RUN_DIR}/far_reference}"
+    cpbc_root="${PULSE_CPBC_ROOT:-${RUN_DIR}/cpbc}"
+    if [[ -z ${PULSE_CONTROL_ROOT} ]]; then
+      CPBC_AXES="${pulse_axes}" \
+      CPBC_SIDES="-1 1" \
+      CPBC_FAMILIES="${families}" \
+      CPBC_EXTRAP_ORDER="${PULSE_EXTRAP_ORDER}" \
+      CPBC_HALF_WIDTH=32.0 \
+      CPBC_MAX_INTERIOR_RATIO=1.0 \
+      Z4C_CHECK_BOUNDARY_DIAGNOSTIC=0 \
+      mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+        scripts/run_z4c_characteristic_pulses.sh \
+        "${ATHENA_EXE}" "${control_root}" \
+        "${far_resolution}" 3.0 12.0 |
+        tee "${RUN_DIR}/far_reference.log"
+    elif [[ ! -d ${control_root} ]]; then
+      echo "PULSE_CONTROL_ROOT does not exist: ${control_root}" >&2
+      exit 2
+    fi
+    if [[ -z ${PULSE_CPBC_ROOT} ]]; then
+      CPBC_AXES="${pulse_axes}" \
+      CPBC_SIDES="-1 1" \
+      CPBC_FAMILIES="${families}" \
+      CPBC_EXTRAP_ORDER="${PULSE_EXTRAP_ORDER}" \
+      CPBC_MAX_INTERIOR_RATIO=1.0 \
+      Z4C_CONTROL_ROOT="${control_root}" \
+      mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+        scripts/run_z4c_characteristic_pulses.sh \
+        "${ATHENA_EXE}" "${cpbc_root}" \
+        "${PULSE_RESOLUTION}" 3.0 12.0 |
+        tee "${RUN_DIR}/cpbc.log"
+    elif [[ ! -d ${cpbc_root} ]]; then
+      echo "PULSE_CPBC_ROOT does not exist: ${cpbc_root}" >&2
+      exit 2
+    fi
+    CPBC_AXES="${pulse_axes}" \
+    CPBC_SIDES="-1 1" \
+    CPBC_FAMILIES="${families}" \
+    CPBC_EXTRAP_ORDER="${PULSE_EXTRAP_ORDER}" \
+    CPBC_MAX_INTERIOR_RATIO=1.0 \
+    Z4C_BOUNDARY_RHS=sommerfeld \
+    Z4C_CONTROL_ROOT="${control_root}" \
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      scripts/run_z4c_characteristic_pulses.sh \
+      "${ATHENA_EXE}" "${RUN_DIR}/sommerfeld" \
+      "${PULSE_RESOLUTION}" 3.0 12.0 |
+      tee "${RUN_DIR}/sommerfeld.log"
+    python3 analysis/z4c_characteristic/compare_boundary_reflection.py \
+      "${cpbc_root}" "${RUN_DIR}/sommerfeld" |
+      tee "${RUN_DIR}/comparison.log"
+    ;;
+  pulse_convergence)
+    cd "${REPO_DIR}"
+    families="lapse shift_longitudinal constraint_scalar_theta constraint_scalar_z shift_transverse_1 shift_transverse_2 constraint_transverse_1 constraint_transverse_2 tt_plus tt_cross"
+    pulse_axes="${PULSE_AXES:?PULSE_AXES is required for pulse_convergence}"
+    far_resolution="$((4 * PULSE_RESOLUTION))"
+    CPBC_AXES="${pulse_axes}" \
+    CPBC_SIDES="-1 1" \
+    CPBC_FAMILIES="${families}" \
+    CPBC_EXTRAP_ORDER="${PULSE_EXTRAP_ORDER}" \
+    CPBC_HALF_WIDTH=32.0 \
+    CPBC_MAX_INTERIOR_RATIO=1.0 \
+    Z4C_CHECK_BOUNDARY_DIAGNOSTIC=0 \
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      scripts/run_z4c_characteristic_pulses.sh \
+      "${ATHENA_EXE}" "${RUN_DIR}/far_reference" \
+      "${far_resolution}" 3.0 12.0 |
+      tee "${RUN_DIR}/far_reference.log"
+    CPBC_AXES="${pulse_axes}" \
+    CPBC_SIDES="-1 1" \
+    CPBC_FAMILIES="${families}" \
+    CPBC_EXTRAP_ORDER="${PULSE_EXTRAP_ORDER}" \
+    CPBC_MAX_INTERIOR_RATIO=1.0 \
+    Z4C_CONTROL_ROOT="${RUN_DIR}/far_reference" \
+    mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
+      scripts/run_z4c_characteristic_pulses.sh \
+      "${ATHENA_EXE}" "${RUN_DIR}/cpbc" \
+      "${PULSE_RESOLUTION}" 3.0 12.0 |
+      tee "${RUN_DIR}/cpbc.log"
+    ;;
+  *)
+    echo "unsupported VALIDATION_KIND=${VALIDATION_KIND}" >&2
+    exit 2
+    ;;
+esac

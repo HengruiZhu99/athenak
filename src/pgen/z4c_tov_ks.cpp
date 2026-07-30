@@ -58,6 +58,15 @@ Real outer_sponge_damping_time = 0.0;
 Real outer_sponge_test_theta_pulse_amplitude = 0.0;
 Real outer_sponge_test_theta_pulse_radius = 0.0;
 Real outer_sponge_test_theta_pulse_width = 0.0;
+int characteristic_test_family = 0;
+int characteristic_test_axis = 0;
+int characteristic_test_side = 1;
+Real characteristic_test_amplitude = 0.0;
+Real characteristic_test_center = 0.0;
+Real characteristic_test_width = 0.0;
+bool characteristic_test_oblique = false;
+int characteristic_test_oblique_dimensions = 3;
+Real characteristic_test_transverse_width = 0.0;
 Real star_center_x1 = 8.0;
 Real star_center_x2 = 0.0;
 Real star_center_x3 = 0.0;
@@ -1903,6 +1912,232 @@ void SeedOuterSpongeThetaPulse(Mesh *pm) {
   }
 }
 
+void SeedCharacteristicPlanePulse(Mesh *pm) {
+  if (characteristic_test_family == 0 ||
+      characteristic_test_amplitude == 0.0) {
+    return;
+  }
+
+  auto *pmbp = pm->pmb_pack;
+  auto &indcs = pm->mb_indcs;
+  auto &size = pmbp->pmb->mb_size;
+  auto &u0 = pmbp->pz4c->u0;
+  const int is = indcs.is;
+  const int ie = indcs.ie;
+  const int js = indcs.js;
+  const int je = indcs.je;
+  const int ks = indcs.ks;
+  const int ke = indcs.ke;
+  const int nmb = pmbp->nmb_thispack;
+
+  // Right eigenvectors dual to the from-scratch left basis in
+  // analysis/z4c_characteristic/derive_residual_characteristics.py, evaluated
+  // at the supported Minkowski test gauge C=N=G=1, L=2.  These are the
+  // negative-eigenvalue members, which propagate outward toward a face whose
+  // normal is selected below.
+  Real p_k = 0.0;
+  Real p_theta = 0.0;
+  Real p_A = 0.0;
+  Real p_gamma = 0.0;
+  Real d_chi = 0.0;
+  Real d_metric = 0.0;
+  Real d_alpha = 0.0;
+  Real d_beta = 0.0;
+  const Real sqrt_two = sqrt(2.0);
+  const Real sqrt_three = sqrt(3.0);
+  switch (characteristic_test_family) {
+    case 1:  // lapse
+      p_k = sqrt_two/4.0;
+      p_A = sqrt_two/6.0;
+      p_gamma = 1.0;
+      d_chi = -0.5;
+      d_metric = 1.0;
+      d_alpha = 0.5;
+      d_beta = -sqrt_two/2.0;
+      break;
+    case 2:  // longitudinal shift
+      p_gamma = -sqrt_three/3.0;
+      d_chi = sqrt_three/6.0;
+      d_metric = -sqrt_three/3.0;
+      d_beta = 0.5;
+      break;
+    case 3:  // scalar light/Theta-Hamiltonian
+      p_theta = -0.5;
+      p_A = -1.0/6.0;
+      p_gamma = 1.0;
+      d_metric = 1.0;
+      d_beta = -1.0;
+      break;
+    case 4:  // scalar light/longitudinal-Z
+      p_A = 0.25;
+      d_metric = 0.5;
+      break;
+    case 5:  // transverse shift, tangent 1
+    case 6:  // transverse shift, tangent 2
+      p_gamma = -0.5;
+      d_metric = -0.5;
+      d_beta = 0.5;
+      break;
+    case 7:  // transverse constraint, tangent 1
+    case 8:  // transverse constraint, tangent 2
+      p_A = 0.25;
+      d_metric = 0.5;
+      break;
+    case 9:   // TT plus
+    case 10:  // TT cross
+      p_A = 0.25;
+      d_metric = 0.5;
+      break;
+    default:
+      return;
+  }
+
+  const int axis = characteristic_test_axis;
+  const int side = characteristic_test_side;
+  const int tangent1_axis = axis == 0 ? 1 : 0;
+  const int tangent2_axis = 3 - axis - tangent1_axis;
+  int cross_sign = 1;
+  if ((axis == 0 && tangent1_axis == 2) ||
+      (axis == 1 && tangent1_axis == 0) ||
+      (axis == 2 && tangent1_axis == 1)) {
+    cross_sign = -1;
+  }
+  const int tangent2_sign = side*cross_sign;
+  const int family = characteristic_test_family;
+  const Real amplitude = characteristic_test_amplitude;
+  const Real center = characteristic_test_center;
+  const Real width = characteristic_test_width;
+  const bool oblique = characteristic_test_oblique;
+  const int oblique_dimensions = characteristic_test_oblique_dimensions;
+  const Real transverse_width = characteristic_test_transverse_width;
+
+  par_for("z4c_tov_ks_characteristic_plane_pulse",DevExeSpace(),0,nmb-1,
+          ks,ke,js,je,is,ie,
+          KOKKOS_LAMBDA(int m, int k, int j, int i) {
+    Real coordinate[3] = {
+      CellCenterX(i-indcs.is,indcs.nx1,size.d_view(m).x1min,
+                  size.d_view(m).x1max),
+      CellCenterX(j-indcs.js,indcs.nx2,size.d_view(m).x2min,
+                  size.d_view(m).x2max),
+      CellCenterX(k-indcs.ks,indcs.nx3,size.d_view(m).x3min,
+                  size.d_view(m).x3max)};
+
+    Real normal[3] = {0.0,0.0,0.0};
+    Real tangent1[3] = {0.0,0.0,0.0};
+    Real tangent2[3] = {0.0,0.0,0.0};
+    if (oblique && oblique_dimensions == 3) {
+      const Real inv_sqrt_three = 1.0/sqrt(3.0);
+      const Real inv_sqrt_six = 1.0/sqrt(6.0);
+      normal[0] = side*inv_sqrt_three;
+      normal[1] = side*inv_sqrt_three;
+      normal[2] = side*inv_sqrt_three;
+      tangent1[0] = 2.0*inv_sqrt_six;
+      tangent1[1] = -inv_sqrt_six;
+      tangent1[2] = -inv_sqrt_six;
+      tangent2[1] = side/sqrt(2.0);
+      tangent2[2] = -side/sqrt(2.0);
+    } else if (oblique) {
+      const Real inv_sqrt_two = 1.0/sqrt(2.0);
+      normal[0] = side*inv_sqrt_two;
+      normal[1] = side*inv_sqrt_two;
+      tangent1[0] = inv_sqrt_two;
+      tangent1[1] = -inv_sqrt_two;
+      tangent2[2] = -side;
+    } else {
+      normal[axis] = side;
+      tangent1[tangent1_axis] = 1.0;
+      tangent2[tangent2_axis] = tangent2_sign;
+    }
+    Real outward_coordinate = 0.0;
+    Real transverse_radius_sq = 0.0;
+    for (int a = 0; a < 3; ++a) {
+      outward_coordinate += normal[a]*coordinate[a];
+    }
+    for (int a = 0; a < 3; ++a) {
+      const Real transverse_coordinate =
+          coordinate[a]-outward_coordinate*normal[a];
+      transverse_radius_sq += SQR(transverse_coordinate);
+    }
+    const Real q = (outward_coordinate-center)/width;
+    Real profile = amplitude*exp(-0.5*q*q);
+    if (oblique) {
+      profile *= exp(-0.5*transverse_radius_sq/SQR(transverse_width));
+    }
+    const Real profile_derivative = -q*profile/width;
+
+    if (family <= 4) {
+      u0(m,z4c::Z4c::I_Z4C_CHI,k,j,i) += d_chi*profile;
+      u0(m,z4c::Z4c::I_Z4C_ALPHA,k,j,i) += d_alpha*profile;
+      u0(m,z4c::Z4c::I_Z4C_KHAT,k,j,i) += p_k*profile_derivative;
+      u0(m,z4c::Z4c::I_Z4C_THETA,k,j,i) += p_theta*profile_derivative;
+      for (int a = 0; a < 3; ++a) {
+        u0(m,z4c::Z4c::I_Z4C_GAMX+a,k,j,i) +=
+            p_gamma*profile_derivative*normal[a];
+        u0(m,z4c::Z4c::I_Z4C_BETAX+a,k,j,i) += d_beta*profile*normal[a];
+        for (int b = a; b < 3; ++b) {
+          const int offset = (a == 0) ? b : ((a == 1) ? b + 2 : 5);
+          const Real scalar_tensor =
+              normal[a]*normal[b] -
+              0.5*(tangent1[a]*tangent1[b]+tangent2[a]*tangent2[b]);
+          u0(m,z4c::Z4c::I_Z4C_GXX+offset,k,j,i) +=
+              d_metric*profile*scalar_tensor;
+          u0(m,z4c::Z4c::I_Z4C_AXX+offset,k,j,i) +=
+              p_A*profile_derivative*scalar_tensor;
+        }
+      }
+    } else if (family <= 8) {
+      const Real *tangent = (family == 5 || family == 7) ?
+                            tangent1 : tangent2;
+      for (int a = 0; a < 3; ++a) {
+        u0(m,z4c::Z4c::I_Z4C_GAMX+a,k,j,i) +=
+            p_gamma*profile_derivative*tangent[a];
+        u0(m,z4c::Z4c::I_Z4C_BETAX+a,k,j,i) += d_beta*profile*tangent[a];
+        for (int b = a; b < 3; ++b) {
+          const int offset = (a == 0) ? b : ((a == 1) ? b + 2 : 5);
+          const Real vector_tensor =
+              normal[a]*tangent[b]+tangent[a]*normal[b];
+          u0(m,z4c::Z4c::I_Z4C_GXX+offset,k,j,i) +=
+              d_metric*profile*vector_tensor;
+          u0(m,z4c::Z4c::I_Z4C_AXX+offset,k,j,i) +=
+              p_A*profile_derivative*vector_tensor;
+        }
+      }
+    } else {
+      for (int a = 0; a < 3; ++a) {
+        for (int b = a; b < 3; ++b) {
+          const int offset = (a == 0) ? b : ((a == 1) ? b + 2 : 5);
+          Real tensor = 0.0;
+          if (family == 9) {
+            tensor = tangent1[a]*tangent1[b]-tangent2[a]*tangent2[b];
+          } else {
+            tensor = tangent1[a]*tangent2[b]+tangent2[a]*tangent1[b];
+          }
+          u0(m,z4c::Z4c::I_Z4C_GXX+offset,k,j,i) += d_metric*profile*tensor;
+          u0(m,z4c::Z4c::I_Z4C_AXX+offset,k,j,i) +=
+              p_A*profile_derivative*tensor;
+        }
+      }
+    }
+  });
+
+  pmbp->pz4c->ReconstructFullState();
+  pmbp->pz4c->EnforceAlgConstrOn(pmbp->pz4c->full);
+  pmbp->pz4c->RecastResidualState();
+  pmbp->pz4c->PrescribeGaugeResidual();
+  pmbp->pz4c->ReconstructFullState();
+  pmbp->pz4c->Z4cToADM(pmbp);
+  if (global_variable::my_rank == 0) {
+    std::cout << "CHARACTERISTIC_TEST_PULSE family=" << family
+              << " axis=" << axis + 1
+              << " side=" << side
+              << " oblique=" << oblique
+              << " oblique_dimensions=" << oblique_dimensions
+              << " amplitude=" << amplitude
+              << " center=" << center
+              << " width=" << width << std::endl;
+  }
+}
+
 template <class TOVEOS>
 KOKKOS_INLINE_FUNCTION
 Real MagneticPressureProfile(const TOVEOS &eos, const tov::TOVStar &tov_star,
@@ -2454,6 +2689,36 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       pin->GetOrAddReal("problem", "outer_sponge_test_theta_pulse_radius", 0.0);
   outer_sponge_test_theta_pulse_width =
       pin->GetOrAddReal("problem", "outer_sponge_test_theta_pulse_width", 0.0);
+  const std::string characteristic_test_family_name =
+      pin->GetOrAddString("problem", "characteristic_test_family", "none");
+  const char *characteristic_names[] = {
+    "none", "lapse", "shift_longitudinal", "constraint_scalar_theta",
+    "constraint_scalar_z", "shift_transverse_1", "shift_transverse_2",
+    "constraint_transverse_1", "constraint_transverse_2",
+    "tt_plus", "tt_cross"};
+  characteristic_test_family = -1;
+  for (int n = 0; n < 11; ++n) {
+    if (characteristic_test_family_name == characteristic_names[n]) {
+      characteristic_test_family = n;
+    }
+  }
+  characteristic_test_axis =
+      pin->GetOrAddInteger("problem", "characteristic_test_axis", 1) - 1;
+  characteristic_test_side =
+      pin->GetOrAddInteger("problem", "characteristic_test_side", 1);
+  characteristic_test_amplitude =
+      pin->GetOrAddReal("problem", "characteristic_test_amplitude", 0.0);
+  characteristic_test_center =
+      pin->GetOrAddReal("problem", "characteristic_test_center", 0.0);
+  characteristic_test_width =
+      pin->GetOrAddReal("problem", "characteristic_test_width", 0.0);
+  characteristic_test_oblique =
+      pin->GetOrAddBoolean("problem", "characteristic_test_oblique", false);
+  characteristic_test_oblique_dimensions =
+      pin->GetOrAddInteger(
+          "problem", "characteristic_test_oblique_dimensions", 3);
+  characteristic_test_transverse_width =
+      pin->GetOrAddReal("problem", "characteristic_test_transverse_width", 1.0);
 
   const bool legacy_sponge_valid =
       std::isfinite(outer_sponge_width) && outer_sponge_width >= 0.0 &&
@@ -2508,6 +2773,33 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "Outer-sponge Theta pulse requires finite amplitude "
               << "and radius and a finite, positive width." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  const bool characteristic_test_requested =
+      characteristic_test_family != 0 || characteristic_test_amplitude != 0.0;
+  const bool characteristic_test_valid =
+      characteristic_test_family >= 0 &&
+      characteristic_test_axis >= 0 && characteristic_test_axis < 3 &&
+      (characteristic_test_side == -1 || characteristic_test_side == 1) &&
+      std::isfinite(characteristic_test_amplitude) &&
+      std::isfinite(characteristic_test_center) &&
+      std::isfinite(characteristic_test_width) &&
+      std::isfinite(characteristic_test_transverse_width) &&
+      (!characteristic_test_oblique ||
+       (characteristic_test_transverse_width > 0.0 &&
+        (characteristic_test_oblique_dimensions == 2 ||
+         characteristic_test_oblique_dimensions == 3))) &&
+      (!characteristic_test_requested ||
+       (characteristic_test_family > 0 &&
+        characteristic_test_amplitude != 0.0 &&
+        characteristic_test_width > 0.0));
+  if (!characteristic_test_valid) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "Characteristic pulse test requires a supported family, "
+              << "axis in [1,3], side = +/-1, finite nonzero amplitude, and "
+              << "finite positive widths; an oblique pulse requires "
+              << "oblique_dimensions = 2 or 3." << std::endl;
     exit(EXIT_FAILURE);
   }
   if (global_variable::my_rank == 0) {
@@ -2607,6 +2899,14 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
               << std::endl;
     exit(EXIT_FAILURE);
   }
+  if (characteristic_test_requested &&
+      (!pure_background || !use_minkowski_background)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "Characteristic plane pulses require pure_background=true "
+              << "and the Minkowski test background (bh_mass=0)." << std::endl;
+    exit(EXIT_FAILURE);
+  }
   metric_diag_history =
       pin->GetOrAddBoolean("problem", "metric_diag_history", false) ||
       std::getenv("ATHENA_METRIC_DIAG_HISTORY") != nullptr;
@@ -2633,6 +2933,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   if (pure_background) {
     SetupPureBackground(pin, pmy_mesh_);
     SeedOuterSpongeThetaPulse(pmy_mesh_);
+    SeedCharacteristicPlanePulse(pmy_mesh_);
     return;
   }
 
