@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <deque>
@@ -37,12 +38,25 @@
 
 namespace {
 
-struct ConstraintSummary {
+struct ConstraintRegionSummary {
   Real c_rms = 0.0;
   Real h_rms = 0.0;
   Real m_rms = 0.0;
   Real z_rms = 0.0;
   Real volume = 0.0;
+  Real h_linf = 0.0;
+  Real m_linf = 0.0;
+  std::uint64_t cell_count = 0;
+};
+
+struct ConstraintSummary {
+  // Coordinate-volume RMS is the direct discrete comparison to IrisK's q=10
+  // element quadrature.  Proper-volume RMS is retained separately for the
+  // existing AthenaK convention.
+  ConstraintRegionSummary coordinate_box;
+  ConstraintRegionSummary proper_box;
+  ConstraintRegionSummary coordinate_support;
+  ConstraintRegionSummary proper_support;
 };
 
 [[noreturn]] void Fail(const std::string &message) {
@@ -171,7 +185,9 @@ void RecomputeAdmConstraints(MeshBlockPack *pmbp) {
   }
 }
 
-ConstraintSummary ComputeConstraintSummary(Mesh *pm) {
+ConstraintRegionSummary ComputeConstraintRegionSummary(Mesh *pm,
+                                                        const Real radius,
+                                                        const bool proper_volume) {
   MeshBlockPack *pmbp = pm->pmb_pack;
   auto &indcs = pm->mb_indcs;
   const int nx1 = indcs.nx1;
@@ -189,7 +205,7 @@ ConstraintSummary ComputeConstraintSummary(Mesh *pm) {
 
   array_sum::GlobalSum local_sum;
   Kokkos::parallel_reduce(
-      "irisk_xcts_constraint_summary",
+      "irisk_xcts_constraint_region_summary",
       Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
       KOKKOS_LAMBDA(const int idx, array_sum::GlobalSum &sum) {
         const int m = idx / nkji;
@@ -198,6 +214,16 @@ ConstraintSummary ComputeConstraintSummary(Mesh *pm) {
         const int i = (idx - m * nkji - k0 * nji - j0 * nx1) + is;
         const int j = j0 + js;
         const int k = k0 + ks;
+        const Real x = size.d_view(m).x1min +
+                       (static_cast<Real>(i - is) + 0.5) *
+                           size.d_view(m).dx1;
+        const Real y = size.d_view(m).x2min +
+                       (static_cast<Real>(j - js) + 0.5) *
+                           size.d_view(m).dx2;
+        const Real z = size.d_view(m).x3min +
+                       (static_cast<Real>(k - ks) + 0.5) *
+                           size.d_view(m).dx3;
+        const bool in_region = x * x + y * y + z * z <= radius * radius;
         const Real detg = adm::SpatialDet(
             adm_vars.g_dd(m, 0, 0, k, j, i),
             adm_vars.g_dd(m, 0, 1, k, j, i),
@@ -205,37 +231,102 @@ ConstraintSummary ComputeConstraintSummary(Mesh *pm) {
             adm_vars.g_dd(m, 1, 1, k, j, i),
             adm_vars.g_dd(m, 1, 2, k, j, i),
             adm_vars.g_dd(m, 2, 2, k, j, i));
-        const Real vol = size.d_view(m).dx1 * size.d_view(m).dx2 *
-                         size.d_view(m).dx3 *
-                         Kokkos::sqrt(Kokkos::abs(detg));
+        const Real coordinate_vol = size.d_view(m).dx1 * size.d_view(m).dx2 *
+                                    size.d_view(m).dx3;
+        const Real vol = coordinate_vol *
+                         (proper_volume ? Kokkos::sqrt(Kokkos::abs(detg))
+                                        : Real{1.0});
         array_sum::GlobalSum cell_sum;
-        cell_sum.the_array[0] =
-            vol * u_con(m, z4c::Z4c::I_CON_C, k, j, i);
-        cell_sum.the_array[1] =
-            vol * SQR(u_con(m, z4c::Z4c::I_CON_H, k, j, i));
-        cell_sum.the_array[2] =
-            vol * u_con(m, z4c::Z4c::I_CON_M, k, j, i);
-        cell_sum.the_array[3] =
-            vol * u_con(m, z4c::Z4c::I_CON_Z, k, j, i);
-        cell_sum.the_array[4] = vol;
-        for (int n = 5; n < NREDUCTION_VARIABLES; ++n) {
+        cell_sum.the_array[0] = in_region
+                                    ? vol * u_con(m, z4c::Z4c::I_CON_C, k, j, i)
+                                    : 0.0;
+        cell_sum.the_array[1] = in_region
+                                    ? vol * SQR(u_con(m, z4c::Z4c::I_CON_H, k, j, i))
+                                    : 0.0;
+        cell_sum.the_array[2] = in_region
+                                    ? vol * u_con(m, z4c::Z4c::I_CON_M, k, j, i)
+                                    : 0.0;
+        cell_sum.the_array[3] = in_region
+                                    ? vol * u_con(m, z4c::Z4c::I_CON_Z, k, j, i)
+                                    : 0.0;
+        cell_sum.the_array[4] = in_region ? vol : 0.0;
+        cell_sum.the_array[5] = in_region ? 1.0 : 0.0;
+        for (int n = 6; n < NREDUCTION_VARIABLES; ++n) {
           cell_sum.the_array[n] = 0.0;
         }
         sum += cell_sum;
       },
       Kokkos::Sum<array_sum::GlobalSum>(local_sum));
 
-  Real totals[5];
-  for (int n = 0; n < 5; ++n) {
+  Real totals[6];
+  for (int n = 0; n < 6; ++n) {
     totals[n] = local_sum.the_array[n];
   }
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, totals, 5, MPI_ATHENA_REAL, MPI_SUM,
+  MPI_Allreduce(MPI_IN_PLACE, totals, 6, MPI_ATHENA_REAL, MPI_SUM,
                 MPI_COMM_WORLD);
 #endif
 
-  ConstraintSummary summary;
+  Real h_linf = 0.0;
+  Real m_linf = 0.0;
+  Kokkos::parallel_reduce(
+      "irisk_xcts_constraint_region_h_linf",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        const int m = idx / nkji;
+        const int k0 = (idx - m * nkji) / nji;
+        const int j0 = (idx - m * nkji - k0 * nji) / nx1;
+        const int i = (idx - m * nkji - k0 * nji - j0 * nx1) + is;
+        const int j = j0 + js;
+        const int k = k0 + ks;
+        const Real x = size.d_view(m).x1min +
+                       (static_cast<Real>(i - is) + 0.5) * size.d_view(m).dx1;
+        const Real y = size.d_view(m).x2min +
+                       (static_cast<Real>(j - js) + 0.5) * size.d_view(m).dx2;
+        const Real z = size.d_view(m).x3min +
+                       (static_cast<Real>(k - ks) + 0.5) * size.d_view(m).dx3;
+        if (x * x + y * y + z * z <= radius * radius) {
+          maximum = Kokkos::max(maximum,
+                                Kokkos::abs(u_con(m, z4c::Z4c::I_CON_H, k, j, i)));
+        }
+      },
+      Kokkos::Max<Real>(h_linf));
+  Kokkos::parallel_reduce(
+      "irisk_xcts_constraint_region_m_linf",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        const int m = idx / nkji;
+        const int k0 = (idx - m * nkji) / nji;
+        const int j0 = (idx - m * nkji - k0 * nji) / nx1;
+        const int i = (idx - m * nkji - k0 * nji - j0 * nx1) + is;
+        const int j = j0 + js;
+        const int k = k0 + ks;
+        const Real x = size.d_view(m).x1min +
+                       (static_cast<Real>(i - is) + 0.5) * size.d_view(m).dx1;
+        const Real y = size.d_view(m).x2min +
+                       (static_cast<Real>(j - js) + 0.5) * size.d_view(m).dx2;
+        const Real z = size.d_view(m).x3min +
+                       (static_cast<Real>(k - ks) + 0.5) * size.d_view(m).dx3;
+        if (x * x + y * y + z * z <= radius * radius) {
+          maximum = Kokkos::max(
+              maximum,
+              Kokkos::sqrt(Kokkos::max(Real{0.0},
+                                        u_con(m, z4c::Z4c::I_CON_M, k, j, i))));
+        }
+      },
+      Kokkos::Max<Real>(m_linf));
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &h_linf, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &m_linf, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+#endif
+
+  ConstraintRegionSummary summary;
   summary.volume = totals[4];
+  summary.cell_count = static_cast<std::uint64_t>(totals[5]);
+  summary.h_linf = h_linf;
+  summary.m_linf = m_linf;
   if (summary.volume > 0.0) {
     summary.c_rms = std::sqrt(totals[0] / summary.volume);
     summary.h_rms = std::sqrt(totals[1] / summary.volume);
@@ -243,6 +334,19 @@ ConstraintSummary ComputeConstraintSummary(Mesh *pm) {
     summary.z_rms = std::sqrt(totals[3] / summary.volume);
   }
   return summary;
+}
+
+ConstraintSummary ComputeConstraintSummary(Mesh *pm) {
+  constexpr Real kSupportRadius = 1.0;
+  constexpr Real kWholeBoxRadius = std::numeric_limits<Real>::infinity();
+  return {.coordinate_box =
+              ComputeConstraintRegionSummary(pm, kWholeBoxRadius, false),
+          .proper_box =
+              ComputeConstraintRegionSummary(pm, kWholeBoxRadius, true),
+          .coordinate_support =
+              ComputeConstraintRegionSummary(pm, kSupportRadius, false),
+          .proper_support =
+              ComputeConstraintRegionSummary(pm, kSupportRadius, true)};
 }
 
 void WriteConstraintSummary(ParameterInput *pin, Mesh *pm,
@@ -262,20 +366,31 @@ void WriteConstraintSummary(ParameterInput *pin, Mesh *pm,
   } else {
     file = std::fopen(filename.c_str(), "w");
     if (file != nullptr) {
-      std::fprintf(file,
-                   "# Nx1  Nx2  Nx3   Ncycle  C_rms  H_rms  M_rms  Z_rms  "
-                   "Volume\n");
+      std::fprintf(
+          file,
+          "# Nx1 Nx2 Nx3 Ncycle region weighting sampled_volume cell_count "
+          "C_rms H_rms M_rms Z_rms H_linf M_linf\n");
     }
   }
   if (file == nullptr) {
     Fail("IrisK constraint output file could not be opened: " + filename);
   }
-  std::fprintf(file,
-               "%04d  %04d  %04d  %05d  %.16e  %.16e  %.16e  %.16e  "
-               "%.16e\n",
-               pm->mesh_indcs.nx1, pm->mesh_indcs.nx2,
-               pm->mesh_indcs.nx3, pm->ncycle, summary.c_rms,
-               summary.h_rms, summary.m_rms, summary.z_rms, summary.volume);
+  const auto write_region = [&](const char *region, const char *weighting,
+                                const ConstraintRegionSummary &values) {
+    std::fprintf(file,
+                 "%04d %04d %04d %05d %s %s %.16e %llu %.16e %.16e %.16e "
+                 "%.16e %.16e %.16e\n",
+                 pm->mesh_indcs.nx1, pm->mesh_indcs.nx2,
+                 pm->mesh_indcs.nx3, pm->ncycle, region, weighting,
+                 values.volume,
+                 static_cast<unsigned long long>(values.cell_count),
+                 values.c_rms, values.h_rms, values.m_rms, values.z_rms,
+                 values.h_linf, values.m_linf);
+  };
+  write_region("box", "coordinate", summary.coordinate_box);
+  write_region("box", "proper", summary.proper_box);
+  write_region("r<=1", "coordinate", summary.coordinate_support);
+  write_region("r<=1", "proper", summary.proper_support);
   std::fclose(file);
 }
 
@@ -289,20 +404,29 @@ void EnforceConstraintThresholds(ParameterInput *pin,
       "problem", "fail_if_m_rms_above", std::numeric_limits<Real>::infinity());
   const Real z_threshold = pin->GetOrAddReal(
       "problem", "fail_if_z_rms_above", std::numeric_limits<Real>::infinity());
-  if (summary.c_rms > c_threshold || summary.h_rms > h_threshold ||
-      summary.m_rms > m_threshold || summary.z_rms > z_threshold) {
-    Fail("IrisK imported constraints exceeded threshold: C=" +
-         std::to_string(summary.c_rms) +
-         " H=" + std::to_string(summary.h_rms) +
-         " M=" + std::to_string(summary.m_rms) +
-         " Z=" + std::to_string(summary.z_rms));
+  const auto &box = summary.proper_box;
+  if (box.c_rms > c_threshold || box.h_rms > h_threshold ||
+      box.m_rms > m_threshold || box.z_rms > z_threshold) {
+    Fail("IrisK imported proper-volume box constraints exceeded threshold: C=" +
+         std::to_string(box.c_rms) + " H=" + std::to_string(box.h_rms) +
+         " M=" + std::to_string(box.m_rms) + " Z=" +
+         std::to_string(box.z_rms));
   }
 }
 
-bool FiniteConstraintSummary(const ConstraintSummary &summary) {
+bool FiniteConstraintRegionSummary(const ConstraintRegionSummary &summary) {
   return std::isfinite(summary.c_rms) && std::isfinite(summary.h_rms) &&
          std::isfinite(summary.m_rms) && std::isfinite(summary.z_rms) &&
-         std::isfinite(summary.volume) && summary.volume > 0.0;
+         std::isfinite(summary.volume) && std::isfinite(summary.h_linf) &&
+         std::isfinite(summary.m_linf) && summary.volume > 0.0 &&
+         summary.cell_count > 0;
+}
+
+bool FiniteConstraintSummary(const ConstraintSummary &summary) {
+  return FiniteConstraintRegionSummary(summary.coordinate_box) &&
+         FiniteConstraintRegionSummary(summary.proper_box) &&
+         FiniteConstraintRegionSummary(summary.coordinate_support) &&
+         FiniteConstraintRegionSummary(summary.proper_support);
 }
 
 class CollapseTerminationMonitor {
@@ -448,6 +572,7 @@ class CollapseTerminationMonitor {
     if (!output) {
       Fail("could not write collapse termination record: " + filename);
     }
+    const auto &proper_box = constraints.proper_box;
     output << std::setprecision(17)
            << "{\n"
            << "  \"schema_version\": 1,\n"
@@ -456,11 +581,12 @@ class CollapseTerminationMonitor {
            << "  \"cycle\": " << pm->ncycle << ",\n"
            << "  \"maxKretsch\": " << maxima.max_kretschmann << ",\n"
            << "  \"max_abs_K\": " << maxima.max_abs_k << ",\n"
-           << "  \"C_rms\": " << constraints.c_rms << ",\n"
-           << "  \"H_rms\": " << constraints.h_rms << ",\n"
-           << "  \"M_rms\": " << constraints.m_rms << ",\n"
-           << "  \"Z_rms\": " << constraints.z_rms << ",\n"
-           << "  \"volume\": " << constraints.volume << "\n"
+           << "  \"constraint_weighting\": \"proper_volume\",\n"
+           << "  \"C_rms\": " << proper_box.c_rms << ",\n"
+           << "  \"H_rms\": " << proper_box.h_rms << ",\n"
+           << "  \"M_rms\": " << proper_box.m_rms << ",\n"
+           << "  \"Z_rms\": " << proper_box.z_rms << ",\n"
+           << "  \"volume\": " << proper_box.volume << "\n"
            << "}\n";
   }
 
@@ -512,9 +638,17 @@ void IrisXctsConstraintReport(ParameterInput *pin, Mesh *pm) {
 }
 
 void WriteImportedAdmPlane(ParameterInput *pin, MeshBlockPack *pmbp,
-                           const bool xy_plane) {
-  const char *path_key = xy_plane ? "xy_plane_output" : "xz_plane_output";
-  const char *coordinate_key = xy_plane ? "xy_plane_z" : "xz_plane_y";
+                           const bool xy_plane, const bool negative_side) {
+  const char *path_key = xy_plane
+                             ? (negative_side ? "xy_plane_output_minus"
+                                              : "xy_plane_output")
+                             : (negative_side ? "xz_plane_output_minus"
+                                              : "xz_plane_output");
+  const char *coordinate_key = xy_plane
+                                   ? (negative_side ? "xy_plane_z_minus"
+                                                    : "xy_plane_z")
+                                   : (negative_side ? "xz_plane_y_minus"
+                                                    : "xz_plane_y");
   const std::string path =
       pin->GetOrAddString("problem", path_key, "EMPTY");
   if (path == "EMPTY" || path.empty() || global_variable::my_rank != 0) {
@@ -545,7 +679,8 @@ void WriteImportedAdmPlane(ParameterInput *pin, MeshBlockPack *pmbp,
   auto levels = pmbp->pmb->mb_lev.h_view;
   auto &indcs = pmbp->pmesh->mb_indcs;
   output << std::setprecision(17);
-  output << "# x y z psi alpha beta_norm H M_norm C_norm Z_norm "
+  output << "# x y z psi alpha beta_norm trK gxx_minus_one gxy Kxx Kxy "
+            "chi Khat Theta Gam_norm A_norm B_norm H M_norm C_norm Z_norm "
             "level gid block i j k\n";
   for (int m = 0; m < pmbp->nmb_thispack; ++m) {
     const Real block_min = xy_plane ? size(m).x3min : size(m).x2min;
@@ -635,10 +770,67 @@ void WriteImportedAdmPlane(ParameterInput *pin, MeshBlockPack *pmbp,
               gxx * bx * bx + gyy * by * by + gzz * bz * bz +
               2.0 * gxy * bx * by + 2.0 * gxz * bx * bz +
               2.0 * gyz * by * bz;
+          const Real determinant =
+              gxx * (gyy * gzz - gyz * gyz) -
+              gxy * (gxy * gzz - gxz * gyz) +
+              gxz * (gxy * gyz - gxz * gyy);
+          const Real kxx =
+              interpolate(host_adm, adm::ADM::I_ADM_KXX, k, j, i);
+          const Real kxy =
+              interpolate(host_adm, adm::ADM::I_ADM_KXY, k, j, i);
+          const Real kxz =
+              interpolate(host_adm, adm::ADM::I_ADM_KXZ, k, j, i);
+          const Real kyy =
+              interpolate(host_adm, adm::ADM::I_ADM_KYY, k, j, i);
+          const Real kyz =
+              interpolate(host_adm, adm::ADM::I_ADM_KYZ, k, j, i);
+          const Real kzz =
+              interpolate(host_adm, adm::ADM::I_ADM_KZZ, k, j, i);
+          const Real trace_k =
+              ((gyy * gzz - gyz * gyz) * kxx +
+               (gxx * gzz - gxz * gxz) * kyy +
+               (gxx * gyy - gxy * gxy) * kzz +
+               2.0 * (gxz * gyz - gxy * gzz) * kxy +
+               2.0 * (gxy * gyz - gxz * gyy) * kxz +
+               2.0 * (gxy * gxz - gxx * gyz) * kyz) /
+              determinant;
+          const Real gamx =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_GAMX, k, j, i);
+          const Real gamy =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_GAMY, k, j, i);
+          const Real gamz =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_GAMZ, k, j, i);
+          const Real axx =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_AXX, k, j, i);
+          const Real axy =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_AXY, k, j, i);
+          const Real axz =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_AXZ, k, j, i);
+          const Real ayy =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_AYY, k, j, i);
+          const Real ayz =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_AYZ, k, j, i);
+          const Real azz =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_AZZ, k, j, i);
+          const Real bxi =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_BX, k, j, i);
+          const Real byi =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_BY, k, j, i);
+          const Real bzi =
+              interpolate(host_z4c, z4c::Z4c::I_Z4C_BZ, k, j, i);
           output
               << x << ' ' << y << ' ' << z << ' ' << std::pow(psi4, 0.25)
               << ' ' << alpha << ' '
               << std::sqrt(std::max(Real{0.0}, beta_squared)) << ' '
+              << trace_k << ' ' << gxx - 1.0 << ' ' << gxy << ' ' << kxx
+              << ' ' << kxy << ' '
+              << interpolate(host_z4c, z4c::Z4c::I_Z4C_CHI, k, j, i) << ' '
+              << interpolate(host_z4c, z4c::Z4c::I_Z4C_KHAT, k, j, i) << ' '
+              << interpolate(host_z4c, z4c::Z4c::I_Z4C_THETA, k, j, i) << ' '
+              << std::sqrt(gamx * gamx + gamy * gamy + gamz * gamz) << ' '
+              << std::sqrt(axx * axx + ayy * ayy + azz * azz +
+                           2.0 * (axy * axy + axz * axz + ayz * ayz)) << ' '
+              << std::sqrt(bxi * bxi + byi * byi + bzi * bzi) << ' '
               << interpolate(host_constraints, z4c::Z4c::I_CON_H, k, j, i)
               << ' '
               << std::sqrt(std::max(
@@ -687,15 +879,23 @@ void ProblemGenerator::Z4cFinalizeImportedAdm(ParameterInput *pin) {
   const ConstraintSummary summary = ComputeConstraintSummary(pmy_mesh_);
   EnforceConstraintThresholds(pin, summary);
   try {
-    WriteImportedAdmPlane(pin, pmbp, true);
-    WriteImportedAdmPlane(pin, pmbp, false);
+    WriteImportedAdmPlane(pin, pmbp, true, false);
+    WriteImportedAdmPlane(pin, pmbp, true, true);
+    WriteImportedAdmPlane(pin, pmbp, false, false);
+    WriteImportedAdmPlane(pin, pmbp, false, true);
   } catch (const std::exception &error) {
     Fail(std::string("failed to write imported-ADM plane: ") + error.what());
   }
   if (global_variable::my_rank == 0) {
+    const auto &proper_box = summary.proper_box;
+    const auto &coordinate_support = summary.coordinate_support;
     std::cout << "Converted imported ADM data to Z4c"
-              << " C_rms=" << summary.c_rms << " H_rms=" << summary.h_rms
-              << " M_rms=" << summary.m_rms << " Z_rms=" << summary.z_rms
+              << " proper_box_C_rms=" << proper_box.c_rms
+              << " proper_box_H_rms=" << proper_box.h_rms
+              << " proper_box_M_rms=" << proper_box.m_rms
+              << " proper_box_Z_rms=" << proper_box.z_rms
+              << " coordinate_support_H_rms=" << coordinate_support.h_rms
+              << " coordinate_support_M_rms=" << coordinate_support.m_rms
               << std::endl;
   }
 }
