@@ -573,6 +573,36 @@ transient.  The adopted equation is a method-of-lines/Bj{\o}rhus
 compatibility condition, not a hard overwrite of a ghost cell or active
 field.
 
+\subsection{Runtime source selection and validated provenance}
+
+The runtime selector \texttt{boundary\_rhs} now defaults to
+\texttt{characteristic\_cpbc}.  Within that boundary operator,
+\texttt{characteristic\_bc\_source} selects the compatibility target:
+\texttt{zero\_rate} is the default and imposes
+\(\dot w^+_{\rm target}=0\), while
+\texttt{tangential\_principal} selects the separate experimental target
+formed from the frozen tangential and mixed principal terms.  The generic
+\texttt{boundary\_rhs=characteristic\_cpbc} path therefore retains the
+validated zero-rate behavior unless the experimental source is requested
+explicitly.  The tangential-principal source has not been validated in the
+TDE evolution and must not be identified with the result reported for the
+zero-rate source.
+
+The exact recovered \texttt{src/z4c/z4c\_Sbc.cpp} snapshot corresponding to
+the validated zero-rate executable has SHA-256
+\begin{center}
+\texttt{5abb0ef3c22c8f989b5916d277676b0a}\\
+\texttt{2a7ef993540edfe917c3e74d1b76a2c8}
+\end{center}
+and Git blob \texttt{437fe5be205f8a2130f85f68ec75f3500d50cb1b}.
+The archived executable used for the validation has SHA-256
+\begin{center}
+\texttt{cd7cefef042ff075e85688dd3ec08dca}\\
+\texttt{243df479d50b91e0439dd8a20da46478}.
+\end{center}
+These identifiers record the already tested implementation; introducing the
+runtime split does not constitute a new validation of either source mode.
+
 To preserve the code's second-order evolution structure, corrections are
 applied only to the momentum-like RHS variables:
 \[

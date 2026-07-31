@@ -110,12 +110,17 @@ the ghost closure, and all sign conventions are stated in
 - Clean worktree:
   `/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc`
 - Branch: `codex/z4c-characteristic-cpbc`
+- Exact recovered validated zero-rate source snapshot
+  (`src/z4c/z4c_Sbc.cpp`) SHA-256:
+  `5abb0ef3c22c8f989b5916d277676b0a2a7ef993540edfe917c3e74d1b76a2c8`
+- Git blob for that recovered source snapshot:
+  `437fe5be205f8a2130f85f68ec75f3500d50cb1b`
 - Current uncommitted harness/test patch SHA-256 (including the new
   single-run analyzer and excluding this self-referential results report):
   `e428cb97322d0b47e37085c588a47b466f3d09541fc5ea85b8db2090c6ee8993`
 - Production-pgen build:
   `/flare/MHDTidal/hzhu/tde_n3_validation/build/aurora-intel-gpu-characteristic-cpbc`
-- Current zero-rate production-pgen executable SHA-256:
+- Archived validated zero-rate production-pgen executable SHA-256:
   `cd7cefef042ff075e85688dd3ec08dca243df479d50b91e0439dd8a20da46478`
 - Clean tangential-principal candidate SHA-256:
   `298646be8918a7778329510eefb617cf9458ffe11056688c4f5f881434f9999e`
@@ -146,9 +151,43 @@ The final `make -j64` relink completed successfully at 10:18 UTC on
 also verified that the build-tree executable and archived executable are
 byte-identical.
 
-The three fused CPBC orientation kernels in the current zero-rate build
-compile at SIMD32 with 256 registers and approximately 4, 10, and 6 spill
-slots.  (The three adjacent 6, 14, and 18-slot kernels are the retained
+The recovered source hash and Git blob above identify the exact zero-rate
+boundary source used to build the validated archived executable; they are
+recorded separately from the later tangential-principal source.
+
+### Runtime boundary and source selection
+
+`boundary_rhs` now defaults to `characteristic_cpbc`.  The generic
+`boundary_rhs=characteristic_cpbc` path retains the validated zero-rate
+behavior.  Its compatibility target is selected separately through
+`characteristic_bc_source`:
+
+- `zero_rate` is the default and imposes the tested
+  `d_t w_in = 0` target;
+- `tangential_principal` retains the separate experimental principal-source
+  target and must be requested explicitly.
+
+The tangential-principal source has not been validated in a TDE run.  This
+runtime split and default change do not themselves constitute a new
+validation run, and none of the scientific comparisons below are attributed
+to the tangential-principal source.
+
+The source split was checked locally in a clean Release/Serial
+`PROBLEM=z4c_tov_ks` build on 2026-07-30.  Both explicit source modes passed
+the Minkowski, Schwarzschild, and `a=0.9` Kerr--Schild exact-background
+smokes.  The maximum reported residual was `7.99360578e-15` for zero-rate and
+`2.22044605e-14` for tangential-principal; all enforcement errors were below
+`3.3e-31`.  A source-free input selected
+`boundary_rhs=characteristic_cpbc` with `source=zero_rate`, an invalid source
+name was rejected, the numeric characteristic check passed all 103 cases
+(`algebra_error=7.51026332e-14`, `frame_error=1.66533454e-15`), and an
+explicit legacy Sommerfeld mesh smoke completed.  These are build/parser and
+exact-background checks, not a replacement for an Aurora GPU or TDE
+validation of the new source-selection code.
+
+The three fused CPBC orientation kernels in the archived validated zero-rate
+build compile at SIMD32 with 256 registers and approximately 4, 10, and 6
+spill slots.  (The three adjacent 6, 14, and 18-slot kernels are the retained
 Sommerfeld path.)  The NGHOST=4 volume RHS kernel spills about 177 slots and
 several existing production kernels spill more.
 This static comparison is not the performance gate; the required measured
@@ -354,9 +393,12 @@ At 32 nodes/384 ranks this is 3--4 MeshBlocks per rank, below
 
 ## Legacy-regression audit
 
-The current patch leaves the default `boundary_rhs=sommerfeld`, and its new
-volume-RHS timer is inactive unless CPBC is selected.  Nevertheless, strict
-regressions are being measured rather than inferred.
+The historical regression audit below used an earlier candidate for which
+`boundary_rhs` defaulted to `sommerfeld`; its volume-RHS timer was inactive
+unless CPBC was selected.  The current runtime default is
+`boundary_rhs=characteristic_cpbc`, selecting the validated zero-rate source.
+The historical numbers below have not been rerun for that new default; they
+establish byte-identical parity for the explicitly selected Sommerfeld path.
 
 The first 12-rank 3-D AMR wave job (`8715925`) is finite and second-order
 convergent:
@@ -380,7 +422,7 @@ Theta-norm=3.17222000e-5
 ```
 
 These misses are not hidden or reclassified as upstream-threshold passes.  To
-test the actual regression requirement ("default path unchanged"), an
+isolate whether the patch changed the explicitly selected Sommerfeld path, an
 untouched `4dacc5b9` executable was built with identical compiler flags
 (SHA-256
 `c7159aa03cea403e1bf3ee00d92f13086457a10f3871d38ea65df41234ab2fa0`).
@@ -402,9 +444,10 @@ SHA-256 2ede4e9c4503197bba4597724774db25b97ef137a78f7dba9cebe58169f9beed
 
 Thus this Aurora compiler/base branch does not meet two absolute upstream
 reference tolerances, but the CPBC patch introduces no change whatsoever in
-the tested default-periodic/Sommerfeld data.  The second-order AMR/MPI wave
+the tested explicit-periodic/Sommerfeld data.  The second-order AMR/MPI wave
 convergence gate passes, and exact baseline parity proves the requested
-backward compatibility.
+Sommerfeld-path backward compatibility.  This statement is not a validation
+of the newly selected zero-rate default.
 
 ## Radial-sponge isolation
 

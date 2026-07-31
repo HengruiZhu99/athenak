@@ -13,6 +13,7 @@ dimensions=${4:-3}
 side=${CPBC_OBLIQUE_SIDE:-1}
 family=${CPBC_OBLIQUE_FAMILY:-tt_cross}
 boundary_rhs=${Z4C_BOUNDARY_RHS:-characteristic_cpbc}
+characteristic_bc_source=${Z4C_CHARACTERISTIC_BC_SOURCE:-zero_rate}
 # An L=1 face-normal condition is not exact for a pulse incident obliquely on
 # two or three planar faces.  This suite checks finite evolution and repeated
 # edge/corner ownership; normal-incidence reflection is gated separately.
@@ -140,6 +141,7 @@ if [[ -z ${control_root} ]]; then
   "${athena_exe}" -i "${input_file}" -d "${control_root}" \
     "${control_mesh[@]}" "${common_args[@]}" \
     z4c/boundary_rhs=characteristic_cpbc \
+    "z4c/characteristic_bc_source=${characteristic_bc_source}" \
     z4c/characteristic_bc_diagnostics=false \
     >"${control_root}/stdout.log" 2>&1
 elif [[ ! -d ${control_root} ]]; then
@@ -159,6 +161,7 @@ for repeat in $(seq 1 "${repeat_count}"); do
   "${athena_exe}" -i "${input_file}" -d "${run_dir}" \
     "${small_mesh[@]}" "${common_args[@]}" \
     "z4c/boundary_rhs=${boundary_rhs}" \
+    "z4c/characteristic_bc_source=${characteristic_bc_source}" \
     >"${run_dir}/stdout.log" 2>&1
   initial=$(find "${run_dir}" -name '*.bin' -type f | sort | head -1)
   final=$(find "${run_dir}" -name '*.bin' -type f | sort | tail -1)
