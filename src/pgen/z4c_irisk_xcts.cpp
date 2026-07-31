@@ -59,10 +59,27 @@ struct ConstraintSummary {
   ConstraintRegionSummary proper_support;
 };
 
+constexpr std::array<char, 24> kVolumeOutputMagic{
+    'A', 'T', 'H', 'E', 'N', 'A', '_', 'I', 'R', 'I', 'S', 'K',
+    '_', 'V', 'O', 'L', 'U', 'M', 'E', '1', '\r', '\n', '\0', '\0'};
+constexpr std::uint32_t kVolumeOutputVersion = 1;
+constexpr std::uint32_t kVolumeOutputEndianTag = 0x01020304U;
+constexpr std::uint32_t kVolumeOutputIntegerCount = 5;
+constexpr std::uint32_t kVolumeOutputRealCount = 51;
+
 [[noreturn]] void Fail(const std::string &message) {
   std::cout << "### FATAL ERROR in " << __FILE__ << std::endl
             << message << std::endl;
   std::exit(EXIT_FAILURE);
+}
+
+template <typename T>
+void WriteVolumeScalar(std::ofstream &output, const T &value) {
+  output.write(reinterpret_cast<const char *>(&value),
+               static_cast<std::streamsize>(sizeof(T)));
+  if (!output) {
+    throw std::runtime_error("failed while writing IrisK active-cell volume");
+  }
 }
 
 std::filesystem::path ResolveSpectralInputPath(const std::string &filename) {
@@ -637,6 +654,176 @@ void IrisXctsConstraintReport(ParameterInput *pin, Mesh *pm) {
   EnforceConstraintThresholds(pin, summary);
 }
 
+void WriteImportedActiveCellVolume(ParameterInput *pin, MeshBlockPack *pmbp) {
+  const std::string path =
+      pin->GetOrAddString("problem", "volume_output", "EMPTY");
+  if (path == "EMPTY" || path.empty()) {
+    return;
+  }
+  if (global_variable::nranks != 1) {
+    throw std::runtime_error(
+        "problem.volume_output currently requires exactly one MPI rank; "
+        "rank-local volume files are not a complete active-cell box");
+  }
+
+  const std::filesystem::path output_path(path);
+  if (!output_path.parent_path().empty()) {
+    std::filesystem::create_directories(output_path.parent_path());
+  }
+  std::ofstream output(output_path, std::ios::binary | std::ios::trunc);
+  if (!output) {
+    throw std::runtime_error("failed to open active-cell volume output: " +
+                             output_path.string());
+  }
+
+  auto host_adm =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), pmbp->padm->u_adm);
+  auto host_z4c =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), pmbp->pz4c->u0);
+  auto host_constraints =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), pmbp->pz4c->u_con);
+  pmbp->pmb->mb_size.sync_host();
+  pmbp->pmb->mb_gid.sync_host();
+  auto size = pmbp->pmb->mb_size.h_view;
+  auto gids = pmbp->pmb->mb_gid.h_view;
+  auto &indcs = pmbp->pmesh->mb_indcs;
+
+  const std::uint64_t block_count =
+      static_cast<std::uint64_t>(pmbp->nmb_thispack);
+  const std::uint64_t nx1 = static_cast<std::uint64_t>(indcs.nx1);
+  const std::uint64_t nx2 = static_cast<std::uint64_t>(indcs.nx2);
+  const std::uint64_t nx3 = static_cast<std::uint64_t>(indcs.nx3);
+  const std::uint64_t cell_count = block_count * nx1 * nx2 * nx3;
+
+  output.write(kVolumeOutputMagic.data(),
+               static_cast<std::streamsize>(kVolumeOutputMagic.size()));
+  WriteVolumeScalar(output, kVolumeOutputVersion);
+  WriteVolumeScalar(output, kVolumeOutputEndianTag);
+  WriteVolumeScalar(output, kVolumeOutputIntegerCount);
+  WriteVolumeScalar(output, kVolumeOutputRealCount);
+  WriteVolumeScalar(output, block_count);
+  WriteVolumeScalar(output, nx1);
+  WriteVolumeScalar(output, nx2);
+  WriteVolumeScalar(output, nx3);
+  WriteVolumeScalar(output, cell_count);
+  const std::string labels =
+      "int32:gid,block,i,j,k\n"
+      "float64:x,y,z,gxx,gxy,gxz,gyy,gyz,gzz,Kxx,Kxy,Kxz,Kyy,Kyz,Kzz,"
+      "psi,alpha,betax,betay,betaz,"
+      "z4c_chi,z4c_gxx,z4c_gxy,z4c_gxz,z4c_gyy,z4c_gyz,z4c_gzz,"
+      "z4c_Khat,z4c_Axx,z4c_Axy,z4c_Axz,z4c_Ayy,z4c_Ayz,z4c_Azz,"
+      "z4c_Gamx,z4c_Gamy,z4c_Gamz,z4c_Theta,z4c_alpha,"
+      "z4c_betax,z4c_betay,z4c_betaz,z4c_Bx,z4c_By,z4c_Bz,"
+      "H,M_norm,C_norm,Z_norm,sqrt_gamma,coordinate_cell_volume\n";
+  const std::uint64_t label_bytes =
+      static_cast<std::uint64_t>(labels.size());
+  WriteVolumeScalar(output, label_bytes);
+  output.write(labels.data(), static_cast<std::streamsize>(labels.size()));
+  if (!output) {
+    throw std::runtime_error("failed while writing active-cell volume header");
+  }
+
+  std::array<double, kVolumeOutputRealCount> record{};
+  for (int m = 0; m < pmbp->nmb_thispack; ++m) {
+    const double coordinate_cell_volume =
+        static_cast<double>(size(m).dx1 * size(m).dx2 * size(m).dx3);
+    for (int k = indcs.ks; k <= indcs.ke; ++k) {
+      const std::int32_t local_k = static_cast<std::int32_t>(k - indcs.ks);
+      const double z =
+          CellCenterX(local_k, indcs.nx3, size(m).x3min, size(m).x3max);
+      for (int j = indcs.js; j <= indcs.je; ++j) {
+        const std::int32_t local_j = static_cast<std::int32_t>(j - indcs.js);
+        const double y =
+            CellCenterX(local_j, indcs.nx2, size(m).x2min, size(m).x2max);
+        for (int i = indcs.is; i <= indcs.ie; ++i) {
+          const std::int32_t local_i = static_cast<std::int32_t>(i - indcs.is);
+          const double x =
+              CellCenterX(local_i, indcs.nx1, size(m).x1min, size(m).x1max);
+          const double gxx = host_adm(m, adm::ADM::I_ADM_GXX, k, j, i);
+          const double gxy = host_adm(m, adm::ADM::I_ADM_GXY, k, j, i);
+          const double gxz = host_adm(m, adm::ADM::I_ADM_GXZ, k, j, i);
+          const double gyy = host_adm(m, adm::ADM::I_ADM_GYY, k, j, i);
+          const double gyz = host_adm(m, adm::ADM::I_ADM_GYZ, k, j, i);
+          const double gzz = host_adm(m, adm::ADM::I_ADM_GZZ, k, j, i);
+          const double determinant =
+              adm::SpatialDet(gxx, gxy, gxz, gyy, gyz, gzz);
+          const double psi4 = host_adm(m, adm::ADM::I_ADM_PSI4, k, j, i);
+          if (!(std::isfinite(determinant) && determinant > 0.0 &&
+                std::isfinite(psi4) && psi4 > 0.0)) {
+            throw std::runtime_error(
+                "active-cell volume encountered invalid ADM metric or psi4");
+          }
+
+          std::size_t field = 0;
+          record[field++] = x;
+          record[field++] = y;
+          record[field++] = z;
+          for (int variable = adm::ADM::I_ADM_GXX;
+               variable <= adm::ADM::I_ADM_GZZ; ++variable) {
+            record[field++] = host_adm(m, variable, k, j, i);
+          }
+          for (int variable = adm::ADM::I_ADM_KXX;
+               variable <= adm::ADM::I_ADM_KZZ; ++variable) {
+            record[field++] = host_adm(m, variable, k, j, i);
+          }
+          record[field++] = std::pow(psi4, 0.25);
+          record[field++] =
+              host_z4c(m, z4c::Z4c::I_Z4C_ALPHA, k, j, i);
+          for (int variable = z4c::Z4c::I_Z4C_BETAX;
+               variable <= z4c::Z4c::I_Z4C_BETAZ; ++variable) {
+            record[field++] = host_z4c(m, variable, k, j, i);
+          }
+          for (int variable = 0; variable < z4c::Z4c::nz4c; ++variable) {
+            record[field++] = host_z4c(m, variable, k, j, i);
+          }
+          record[field++] =
+              host_constraints(m, z4c::Z4c::I_CON_H, k, j, i);
+          record[field++] = std::sqrt(std::max(
+              0.0, static_cast<double>(
+                       host_constraints(m, z4c::Z4c::I_CON_M, k, j, i))));
+          record[field++] = std::sqrt(std::max(
+              0.0, static_cast<double>(
+                       host_constraints(m, z4c::Z4c::I_CON_C, k, j, i))));
+          record[field++] = std::sqrt(std::max(
+              0.0, static_cast<double>(
+                       host_constraints(m, z4c::Z4c::I_CON_Z, k, j, i))));
+          record[field++] = std::sqrt(determinant);
+          record[field++] = coordinate_cell_volume;
+          if (field != record.size() ||
+              !std::all_of(record.begin(), record.end(),
+                           [](const double value) {
+                             return std::isfinite(value);
+                           })) {
+            throw std::runtime_error(
+                "active-cell volume encountered invalid or incomplete data");
+          }
+
+          const std::array<std::int32_t, kVolumeOutputIntegerCount> indices{
+              static_cast<std::int32_t>(gids(m)),
+              static_cast<std::int32_t>(m),
+              local_i,
+              local_j,
+              local_k};
+          output.write(reinterpret_cast<const char *>(indices.data()),
+                       static_cast<std::streamsize>(
+                           indices.size() * sizeof(indices.front())));
+          output.write(reinterpret_cast<const char *>(record.data()),
+                       static_cast<std::streamsize>(
+                           record.size() * sizeof(record.front())));
+          if (!output) {
+            throw std::runtime_error(
+                "failed while writing active-cell volume payload");
+          }
+        }
+      }
+    }
+  }
+  output.close();
+  if (!output) {
+    throw std::runtime_error("failed to finalize active-cell volume output");
+  }
+}
+
 void WriteImportedAdmPlane(ParameterInput *pin, MeshBlockPack *pmbp,
                            const bool xy_plane, const bool negative_side) {
   const char *path_key = xy_plane
@@ -879,6 +1066,7 @@ void ProblemGenerator::Z4cFinalizeImportedAdm(ParameterInput *pin) {
   const ConstraintSummary summary = ComputeConstraintSummary(pmy_mesh_);
   EnforceConstraintThresholds(pin, summary);
   try {
+    WriteImportedActiveCellVolume(pin, pmbp);
     WriteImportedAdmPlane(pin, pmbp, true, false);
     WriteImportedAdmPlane(pin, pmbp, true, true);
     WriteImportedAdmPlane(pin, pmbp, false, false);

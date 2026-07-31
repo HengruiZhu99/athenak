@@ -76,6 +76,37 @@ coordinate slices after ADM-to-Z4c conversion. The files contain `psi`,
 provenance. An eight-point normal interpolant prevents the slice coordinate
 from changing when MeshBlock resolution changes.
 
+For initialization-only full-box analysis, set
+`problem.volume_output` to a file path. The default value `EMPTY` disables the
+output and preserves the existing initialization path. The writer runs after
+`ADMToZ4c`, the ADM round trip, and `ADMConstraints`, and stores active cells
+only. It currently requires exactly one MPI rank and fails clearly if a
+multi-rank run requests the output.
+
+The version-1 binary begins with the 24-byte magic
+`ATHENA_IRISK_VOLUME1\r\n\0\0`, followed by native-endian scalar header
+fields:
+
+```text
+uint32 version, endian_tag, integer_count, real_count
+uint64 meshblock_count, nx1_per_block, nx2_per_block, nx3_per_block,
+       active_cell_count, label_bytes
+char[label_bytes] field labels
+```
+
+Each active-cell record then contains five `int32` values
+`gid, block, i, j, k` and 51 `float64` values in the order stated by the
+header labels. The local active-cell indices start at zero; ghosts are not
+written. The floating-point payload contains exact Cartesian cell centers,
+all six physical `gamma_ij`, all six `K_ij`, `psi`, lapse, three shift
+components, all 25 Z4c fields, `H`, `|M|`, `C`, `Z`, `sqrt(gamma)`, and the
+coordinate cell volume. Thus coordinate-volume weights are the final field
+and proper-volume weights are their product with `sqrt(gamma)`. Squared
+AthenaK monitor fields are converted to nonnegative magnitudes before output.
+The format intentionally retains `float64`; AthenaK's general `bin` output
+downcasts field payloads to `float` and is not suitable for adjacent-order
+spectral differences.
+
 For convergence with a fixed physical SMR hierarchy, keep the root/refinement
 regions unchanged and increase both `mesh.nx*` and `meshblock.nx*` together.
 This holds the 15-block topology in the example fixed while increasing the
