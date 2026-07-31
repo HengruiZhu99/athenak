@@ -59,6 +59,11 @@ enum CharacteristicInvalid {
   CPBC_NINVALID = 11
 };
 
+template <bool Value>
+struct CharacteristicSourceTag {
+  static constexpr bool value = Value;
+};
+
 KOKKOS_INLINE_FUNCTION
 Real BoundaryRoundoffTolerance() {
   return sizeof(Real) == sizeof(float) ? 1.0e-5 : 1.0e-12;
@@ -324,6 +329,7 @@ void AtomicDiagnosticMax(const DvceArray1D<Real> &diag, int index, Real value,
   }
 }
 
+template <bool TangentialPrincipal>
 KOKKOS_INLINE_FUNCTION
 int ApplyResidualCharacteristicBC(
     const DvceArray5D<Real> &u, const DvceArray5D<Real> &u_full,
@@ -448,7 +454,8 @@ int ApplyResidualCharacteristicBC(
   if (!(isfinite(inv_h)) || inv_h <= 0.0) return CPBC_INVALID_SPACING;
 
   Real derivative_metric[3][3], derivative_rhs_metric[3][3];
-  Real centered_derivative_A[3][3], centered_second_metric[3][3];
+  Real centered_derivative_A[3][3] = {};
+  Real centered_second_metric[3][3] = {};
   Real residual_A[3][3], rhs_A[3][3];
   for (int a = 0; a < 3; ++a) {
     for (int b = a; b < 3; ++b) {
@@ -456,31 +463,36 @@ int ApplyResidualCharacteristicBC(
       int aoffset = Z4c::I_Z4C_AXX + SymmetricOffset(a,b);
       Real dg = NormalDerivative(u,m,goffset,k,j,i,normal_u,side,idx);
       Real drg = NormalDerivative(u_rhs,m,goffset,k,j,i,normal_u,side,idx);
-      Real da = CenteredNormalDerivative4(
-          u,m,aoffset,k,j,i,normal_u,idx);
-      Real ddg = CenteredNormalSecondDerivative4(
-          u,m,goffset,k,j,i,normal_u,idx);
       Real avalue = u(m,aoffset,k,j,i);
       Real arhs = u_rhs(m,aoffset,k,j,i);
       derivative_metric[a][b] = derivative_metric[b][a] = dg;
       derivative_rhs_metric[a][b] = derivative_rhs_metric[b][a] = drg;
-      centered_derivative_A[a][b] = centered_derivative_A[b][a] = da;
-      centered_second_metric[a][b] = centered_second_metric[b][a] = ddg;
+      if constexpr (TangentialPrincipal) {
+        const Real da = CenteredNormalDerivative4(
+            u,m,aoffset,k,j,i,normal_u,idx);
+        const Real ddg = CenteredNormalSecondDerivative4(
+            u,m,goffset,k,j,i,normal_u,idx);
+        centered_derivative_A[a][b] = centered_derivative_A[b][a] = da;
+        centered_second_metric[a][b] = centered_second_metric[b][a] = ddg;
+      }
       residual_A[a][b] = residual_A[b][a] = avalue;
       rhs_A[a][b] = rhs_A[b][a] = arhs;
     }
   }
   Real derivative_beta[3], derivative_rhs_beta[3];
-  Real centered_derivative_Gamma[3], centered_second_beta[3];
+  Real centered_derivative_Gamma[3] = {};
+  Real centered_second_beta[3] = {};
   for (int a = 0; a < 3; ++a) {
     derivative_beta[a] = NormalDerivative(
         u,m,Z4c::I_Z4C_BETAX+a,k,j,i,normal_u,side,idx);
     derivative_rhs_beta[a] = NormalDerivative(
         u_rhs,m,Z4c::I_Z4C_BETAX+a,k,j,i,normal_u,side,idx);
-    centered_derivative_Gamma[a] = CenteredNormalDerivative4(
-        u,m,Z4c::I_Z4C_GAMX+a,k,j,i,normal_u,idx);
-    centered_second_beta[a] = CenteredNormalSecondDerivative4(
-        u,m,Z4c::I_Z4C_BETAX+a,k,j,i,normal_u,idx);
+    if constexpr (TangentialPrincipal) {
+      centered_derivative_Gamma[a] = CenteredNormalDerivative4(
+          u,m,Z4c::I_Z4C_GAMX+a,k,j,i,normal_u,idx);
+      centered_second_beta[a] = CenteredNormalSecondDerivative4(
+          u,m,Z4c::I_Z4C_BETAX+a,k,j,i,normal_u,idx);
+    }
   }
 
   const Real derivative_metric_trace = TensorTrace(derivative_metric,g_uu);
@@ -528,28 +540,36 @@ int ApplyResidualCharacteristicBC(
     scalar_d_rhs[3] += normal_d[a]*derivative_rhs_beta[a];
   }
 
-  Real scalar_p_normal[4], scalar_d_normal[4];
-  scalar_p_normal[0] = CenteredNormalDerivative4(
-      u,m,Z4c::I_Z4C_KHAT,k,j,i,normal_u,idx);
-  scalar_p_normal[1] = CenteredNormalDerivative4(
-      u,m,Z4c::I_Z4C_THETA,k,j,i,normal_u,idx);
-  scalar_p_normal[2] =
-      ProjectTensor(centered_derivative_A,normal_u,normal_u) -
-      centered_derivative_A_trace/3.0;
-  scalar_p_normal[3] = 0.0;
-  scalar_d_normal[0] = CenteredNormalSecondDerivative4(
-      u,m,Z4c::I_Z4C_CHI,k,j,i,normal_u,idx);
-  scalar_d_normal[1] =
-      ProjectTensor(centered_second_metric,normal_u,normal_u) -
-      centered_second_metric_trace/3.0;
-  scalar_d_normal[2] = CenteredNormalSecondDerivative4(
-      u,m,Z4c::I_Z4C_ALPHA,k,j,i,normal_u,idx);
-  scalar_d_normal[3] = 0.0;
-  for (int a = 0; a < 3; ++a) {
-    scalar_p_normal[3] += normal_d[a]*centered_derivative_Gamma[a];
-    scalar_d_normal[3] += normal_d[a]*centered_second_beta[a];
+  Real scalar_p_normal[4] = {};
+  Real scalar_d_normal[4] = {};
+  if constexpr (TangentialPrincipal) {
+    scalar_p_normal[0] = CenteredNormalDerivative4(
+        u,m,Z4c::I_Z4C_KHAT,k,j,i,normal_u,idx);
+    scalar_p_normal[1] = CenteredNormalDerivative4(
+        u,m,Z4c::I_Z4C_THETA,k,j,i,normal_u,idx);
+    scalar_p_normal[2] =
+        ProjectTensor(centered_derivative_A,normal_u,normal_u) -
+        centered_derivative_A_trace/3.0;
+    scalar_d_normal[0] = CenteredNormalSecondDerivative4(
+        u,m,Z4c::I_Z4C_CHI,k,j,i,normal_u,idx);
+    scalar_d_normal[1] =
+        ProjectTensor(centered_second_metric,normal_u,normal_u) -
+        centered_second_metric_trace/3.0;
+    scalar_d_normal[2] = CenteredNormalSecondDerivative4(
+        u,m,Z4c::I_Z4C_ALPHA,k,j,i,normal_u,idx);
+    for (int a = 0; a < 3; ++a) {
+      scalar_p_normal[3] += normal_d[a]*centered_derivative_Gamma[a];
+      scalar_d_normal[3] += normal_d[a]*centered_second_beta[a];
+    }
   }
 
+  Real principal_A_rhs[3][3] = {};
+  Real principal_Gamma_rhs[3] = {};
+  Real principal_metric_normal_rhs[3][3] = {};
+  Real principal_beta_normal_rhs[3] = {};
+  Real scalar_p_principal[4] = {};
+  Real scalar_d_principal[4] = {};
+  if constexpr (TangentialPrincipal) {
   // Build the complete frozen principal RHS from the same NGHOST=4 centered
   // differences as the volume operator.  Subtracting its face-normal part
   // below leaves exactly the tangential principal boundary datum; nonlinear,
@@ -635,8 +655,6 @@ int ApplyResidualCharacteristicBC(
     principal_theta_rhs += beta_full_u[a]*gradient_theta[a];
   }
 
-  Real principal_A_rhs[3][3];
-  Real principal_Gamma_rhs[3];
   Real ricci_principal[3][3];
   Real lapse_ricci_tf_argument[3][3];
   for (int a = 0; a < 3; ++a) {
@@ -691,8 +709,6 @@ int ApplyResidualCharacteristicBC(
         (2.0/3.0)*alpha*raised_gradient_theta;
   }
 
-  Real principal_metric_normal_rhs[3][3];
-  Real principal_beta_normal_rhs[3];
   Real principal_chi_normal_rhs = normal_advection_chi;
   Real principal_alpha_normal_rhs = normal_advection_alpha;
   Real normal_gradient_divergence_beta = 0.0;
@@ -738,18 +754,20 @@ int ApplyResidualCharacteristicBC(
       TensorTrace(principal_A_rhs,g_uu);
   const Real principal_metric_normal_rhs_trace =
       TensorTrace(principal_metric_normal_rhs,g_uu);
-  Real scalar_p_principal[4] = {
-    principal_k_rhs,principal_theta_rhs,
-    ProjectTensor(principal_A_rhs,normal_u,normal_u) -
-        principal_A_rhs_trace/3.0,0.0};
-  Real scalar_d_principal[4] = {
-    principal_chi_normal_rhs,
-    ProjectTensor(principal_metric_normal_rhs,normal_u,normal_u) -
-        principal_metric_normal_rhs_trace/3.0,
-    principal_alpha_normal_rhs,0.0};
+  scalar_p_principal[0] = principal_k_rhs;
+  scalar_p_principal[1] = principal_theta_rhs;
+  scalar_p_principal[2] =
+      ProjectTensor(principal_A_rhs,normal_u,normal_u) -
+      principal_A_rhs_trace/3.0;
+  scalar_d_principal[0] = principal_chi_normal_rhs;
+  scalar_d_principal[1] =
+      ProjectTensor(principal_metric_normal_rhs,normal_u,normal_u) -
+      principal_metric_normal_rhs_trace/3.0;
+  scalar_d_principal[2] = principal_alpha_normal_rhs;
   for (int a = 0; a < 3; ++a) {
     scalar_p_principal[3] += normal_d[a]*principal_Gamma_rhs[a];
     scalar_d_principal[3] += normal_d[a]*principal_beta_normal_rhs[a];
+  }
   }
 
   Real left_p[4][4] = {};
@@ -837,8 +855,14 @@ int ApplyResidualCharacteristicBC(
       normal_principal_rate += scalar_d_normal[1];
       full_principal_rate += scalar_d_principal[1];
     }
-    normal_principal_rate *= scalar_lambda_in[mode];
-    target_rate[mode] = full_principal_rate-normal_principal_rate;
+    if constexpr (TangentialPrincipal) {
+      normal_principal_rate *= scalar_lambda_in[mode];
+      target_rate[mode] = full_principal_rate-normal_principal_rate;
+    } else {
+      // Byte-recovered zero-rate target used by the validated cd7cefef...
+      // executable: homogeneous incoming characteristic data have zero rate.
+      target_rate[mode] = 0.0;
+    }
     scalar_residual[mode] = target_rate[mode] - rate;
     AtomicDiagnosticMax(diag, mode < 2 ? CPBC_GAUGE_AMPLITUDE :
                         CPBC_CONSTRAINT_AMPLITUDE,
@@ -990,8 +1014,8 @@ int ApplyResidualCharacteristicBC(
     Real gauge_full_principal_rate =
         transverse_delta_bg*vector_p_principal[1] +
         vector_d_principal[1];
-    Real gauge_target =
-        gauge_full_principal_rate-gauge_normal_principal_rate;
+    Real gauge_target = TangentialPrincipal ?
+        gauge_full_principal_rate-gauge_normal_principal_rate : 0.0;
     Real gauge_residual = gauge_target-gauge_rate;
     Real delta_gamma = gauge_residual/transverse_delta_bg;
 
@@ -1012,8 +1036,8 @@ int ApplyResidualCharacteristicBC(
     Real constraint_full_principal_rate =
         -2.0*vector_p_principal[0]/sqrt_chi -
         vector_p_principal[1] + vector_d_principal[0];
-    Real constraint_target =
-        constraint_full_principal_rate-constraint_normal_principal_rate;
+    Real constraint_target = TangentialPrincipal ?
+        constraint_full_principal_rate-constraint_normal_principal_rate : 0.0;
     Real constraint_residual = constraint_target-constraint_rate;
     Real delta_A =
         -0.5*sqrt_chi*(constraint_residual + delta_gamma);
@@ -1116,8 +1140,8 @@ int ApplyResidualCharacteristicBC(
     Real radiation_full_principal_rate =
         -2.0*A_principal_component/sqrt_chi +
         metric_principal_normal_derivative;
-    Real radiation_target =
-        radiation_full_principal_rate-radiation_normal_principal_rate;
+    Real radiation_target = TangentialPrincipal ?
+        radiation_full_principal_rate-radiation_normal_principal_rate : 0.0;
     Real radiation_residual = radiation_target-radiation_rate;
     tensor_correction[polarization] = -0.5*sqrt_chi*radiation_residual;
     Real corrected_radiation_rate =
@@ -1408,12 +1432,24 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   const Options opt_ = opt;
   const Real time = pm->time;
 
-  // The kernels have disjoint ownership.  X1 owns every cell incident on an X1
+  // Compile separate kernels for the validated zero-rate source and the
+  // experimental tangential-principal source. This keeps the latter's larger
+  // stencil and register footprint out of the default kernel.
+  auto launch_characteristic_kernels = [&](auto source_tag) {
+  constexpr bool tangential_principal = decltype(source_tag)::value;
+  const char *x1_kernel = tangential_principal ?
+      "z4c_cpbc_tangential_principal_x1" : "z4c_cpbc_zero_rate_x1";
+  const char *x2_kernel = tangential_principal ?
+      "z4c_cpbc_tangential_principal_x2" : "z4c_cpbc_zero_rate_x2";
+  const char *x3_kernel = tangential_principal ?
+      "z4c_cpbc_tangential_principal_x3" : "z4c_cpbc_zero_rate_x3";
+
+  // The kernels have disjoint ownership. X1 owns every cell incident on an X1
   // physical face; X2 skips those cells; X3 skips both X1 and X2 incidents.
   // The normal itself includes every incident face, so edges/corners use a
   // symmetric composite normal without racing multiple device writes.
   if (characteristic_bc_boundary_block_count[0] > 0) {
-    par_for("z4c_cpbc_x1",DevExeSpace(),
+    par_for(x1_kernel,DevExeSpace(),
     0,characteristic_bc_boundary_block_count[0]-1,ks,ke,js,je,
     KOKKOS_LAMBDA(int m, int k, int j) {
     m = invalid_(CPBC_NINVALID + 3*m);
@@ -1439,7 +1475,8 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
       }
       Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
                      1.0/size.d_view(m).dx3};
-      int status = ApplyResidualCharacteristicBC(
+      int status =
+          ApplyResidualCharacteristicBC<tangential_principal>(
           u_,full_,bg_,rhs_,matter_,has_matter,opt_,diag_,time,
           m,k,j,point_i,side,idx,collect_diagnostics);
       if (collect_diagnostics && status != CPBC_VALID) {
@@ -1450,7 +1487,7 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   }
 
   if (characteristic_bc_boundary_block_count[1] > 0) {
-    par_for("z4c_cpbc_x2",DevExeSpace(),
+    par_for(x2_kernel,DevExeSpace(),
     0,characteristic_bc_boundary_block_count[1]-1,ks,ke,is,ie,
     KOKKOS_LAMBDA(int m, int k, int i) {
     m = invalid_(CPBC_NINVALID + 3*m + 1);
@@ -1475,7 +1512,8 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
       }
       Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
                      1.0/size.d_view(m).dx3};
-      int status = ApplyResidualCharacteristicBC(
+      int status =
+          ApplyResidualCharacteristicBC<tangential_principal>(
           u_,full_,bg_,rhs_,matter_,has_matter,opt_,diag_,time,
           m,k,point_j,i,side,idx,collect_diagnostics);
       if (collect_diagnostics && status != CPBC_VALID) {
@@ -1486,7 +1524,7 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   }
 
   if (characteristic_bc_boundary_block_count[2] > 0) {
-    par_for("z4c_cpbc_x3",DevExeSpace(),
+    par_for(x3_kernel,DevExeSpace(),
     0,characteristic_bc_boundary_block_count[2]-1,js,je,is,ie,
     KOKKOS_LAMBDA(int m, int j, int i) {
     m = invalid_(CPBC_NINVALID + 3*m + 2);
@@ -1509,7 +1547,8 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
       int side[3] = {0,0,outer == 0 ? -1 : 1};
       Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
                      1.0/size.d_view(m).dx3};
-      int status = ApplyResidualCharacteristicBC(
+      int status =
+          ApplyResidualCharacteristicBC<tangential_principal>(
           u_,full_,bg_,rhs_,matter_,has_matter,opt_,diag_,time,
           m,point_k,j,i,side,idx,collect_diagnostics);
       if (collect_diagnostics && status != CPBC_VALID) {
@@ -1517,6 +1556,14 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
       }
     }
     });
+  }
+  };
+
+  if (opt.characteristic_bc_source_mode ==
+      characteristic_bc_source_tangential_principal) {
+    launch_characteristic_kernels(CharacteristicSourceTag<true>{});
+  } else {
+    launch_characteristic_kernels(CharacteristicSourceTag<false>{});
   }
 
   if (measure_performance) {
@@ -1620,6 +1667,10 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
     if (global_variable::my_rank == 0) {
       std::cout << "Z4C_CHARACTERISTIC_CPBC time=" << pm->time
                 << " cycle=" << pm->ncycle
+                << " source="
+                << (opt.characteristic_bc_source_mode ==
+                            characteristic_bc_source_tangential_principal ?
+                        "tangential_principal" : "zero_rate")
                 << " incoming_modes=10"
                 << " boundary_blocks_max="
                 << max_boundary_block_count[0] << ","

@@ -226,6 +226,9 @@ def main():
     require_input_value(input_values, "mesh_refinement", "num_levels", 14)
     require_input_value(input_values, "mesh_refinement", "max_nmb_per_rank", 16)
     require_input_value(input_values, "z4c", "boundary_rhs", "characteristic_cpbc")
+    require_input_value(
+        input_values, "z4c", "characteristic_bc_source", "zero_rate"
+    )
     require_input_value(input_values, "z4c", "extrap_order", 4)
     require_input_value(input_values, "z4c", "characteristic_bc_diagnostics", "true")
     require_input_value(input_values, "problem", "outer_sponge_geometry", "radial")

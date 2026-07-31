@@ -149,6 +149,8 @@ class Z4c {
   static constexpr int residual_gauge_background_adapted = 1;
   static constexpr int boundary_rhs_sommerfeld = 0;
   static constexpr int boundary_rhs_characteristic_cpbc = 1;
+  static constexpr int characteristic_bc_source_zero_rate = 0;
+  static constexpr int characteristic_bc_source_tangential_principal = 1;
 
   // aliases for the constraints
   struct Constraint_vars {
@@ -213,6 +215,7 @@ class Z4c {
     bool use_z4c;
     // Physical-boundary RHS treatment.
     int boundary_rhs_mode;
+    int characteristic_bc_source_mode;
     bool characteristic_bc_diagnostics;
     int characteristic_bc_diagnostic_interval;
     Real characteristic_bc_max_energy_density;

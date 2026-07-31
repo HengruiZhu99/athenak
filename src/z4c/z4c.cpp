@@ -208,7 +208,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 
   opt.use_z4c = pin->GetOrAddBoolean("z4c", "use_z4c", true);
   const std::string boundary_rhs =
-      pin->GetOrAddString("z4c", "boundary_rhs", "sommerfeld");
+      pin->GetOrAddString("z4c", "boundary_rhs", "characteristic_cpbc");
   if (boundary_rhs == "sommerfeld") {
     opt.boundary_rhs_mode = boundary_rhs_sommerfeld;
   } else if (boundary_rhs == "characteristic_cpbc") {
@@ -217,6 +217,21 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "Unknown <z4c>/boundary_rhs = " << boundary_rhs
               << ". Supported values are sommerfeld and characteristic_cpbc."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  const std::string characteristic_bc_source = pin->GetOrAddString(
+      "z4c", "characteristic_bc_source", "zero_rate");
+  if (characteristic_bc_source == "zero_rate") {
+    opt.characteristic_bc_source_mode = characteristic_bc_source_zero_rate;
+  } else if (characteristic_bc_source == "tangential_principal") {
+    opt.characteristic_bc_source_mode =
+        characteristic_bc_source_tangential_principal;
+  } else {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "Unknown <z4c>/characteristic_bc_source = "
+              << characteristic_bc_source
+              << ". Supported values are zero_rate and tangential_principal."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -241,6 +256,9 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 
   if (opt.boundary_rhs_mode == boundary_rhs_characteristic_cpbc) {
     const Real tol = 64.0*std::numeric_limits<Real>::epsilon();
+    const bool tangential_principal =
+        opt.characteristic_bc_source_mode ==
+        characteristic_bc_source_tangential_principal;
     const bool supported =
         opt.use_z4c &&
         use_analytic_background &&
@@ -254,7 +272,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
         fabs(opt.shift_alpha2ggamma) <= tol &&
         fabs(opt.shift_hh) <= tol &&
         fabs(opt.sss_damping_amp) <= tol &&
-        ppack->pmesh->mb_indcs.ng == 4 &&
+        (!tangential_principal || ppack->pmesh->mb_indcs.ng == 4) &&
         opt.characteristic_bc_diagnostic_interval > 0 &&
         isfinite(opt.characteristic_bc_max_energy_density) &&
         opt.characteristic_bc_max_energy_density >= 0.0;
@@ -265,9 +283,10 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
                 << "use_analytic_background=true, background_adapted evolved "
                 << "lapse and shift residuals, chi_psi_power=-4, unit lapse/shift "
                 << "advection, telegraph_lapse=false, shift_alpha2Gamma=0, and "
-                << "shift_H=0, sss_damping_amp=0, nghost=4, and a finite nonnegative "
+                << "shift_H=0, sss_damping_amp=0, and a finite nonnegative "
                 << "characteristic_bc_max_energy_density, with a positive "
-                << "diagnostic interval." << std::endl;
+                << "diagnostic interval. The tangential-principal mode also "
+                << "requires nghost=4." << std::endl;
       std::exit(EXIT_FAILURE);
     }
   }

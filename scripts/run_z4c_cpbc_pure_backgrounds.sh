@@ -11,6 +11,7 @@ run_root=$2
 source_root=$(cd "$(dirname "$0")/.." && pwd)
 input_file="${source_root}/inputs/tests/z4c_characteristic_cpbc_purebg.athinput"
 checker="${source_root}/analysis/z4c_characteristic/check_pure_background.py"
+characteristic_bc_source=${Z4C_CHARACTERISTIC_BC_SOURCE:-zero_rate}
 mkdir -p "${run_root}"
 
 backgrounds=(minkowski schwarzschild kerr_a09)
@@ -53,6 +54,7 @@ for background in "${backgrounds[@]}"; do
 
   echo "CPBC exact background ${background}"
   "${athena_exe}" -i "${input_file}" -d "${run_dir}" \
+    "z4c/characteristic_bc_source=${characteristic_bc_source}" \
     problem/outer_sponge_enabled=false \
     problem/outer_sponge_geometry=radial \
     problem/outer_sponge_start_radius=4.0 \
