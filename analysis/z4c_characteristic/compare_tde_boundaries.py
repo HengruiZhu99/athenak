@@ -2,11 +2,11 @@
 """Compare small-boundary TDE runs against a far-boundary reference.
 
 The acceptance observable is the full-metric, background-shift-adapted
-projection of all eight incoming gauge and constraint characteristics on
-matched leaf cells after the configured fastest-gauge round-trip time.
-Direct residual-component differences on a fixed physical slice, global
-histories, density, and STAR_TRACK trajectories are retained as independent
-secondary diagnostics.
+projection of all ten incoming gauge, constraint, and radiative
+characteristics on matched leaf cells after the configured fastest-gauge
+round-trip time. Direct residual-component differences on a fixed physical
+slice, global histories, density, and STAR_TRACK trajectories are retained
+as independent secondary diagnostics.
 """
 
 import argparse
@@ -61,7 +61,9 @@ CHARACTERISTIC_GROUPS = {
         "constraint_scalar_theta", "constraint_scalar_z",
         "constraint_transverse_1", "constraint_transverse_2",
     ),
+    "radiative": ("tt_plus", "tt_cross"),
 }
+REQUIRED_IMPROVEMENT_GROUPS = ("gauge", "constraint")
 
 
 def symmetric_name(prefix, first, second):
@@ -87,7 +89,7 @@ def load_history(root):
     labels = {}
     for match in re.finditer(r"\[(\d+)\]=(\S+)", lines[1]):
         labels[match.group(2)] = int(match.group(1)) - 1
-    required = ("time", "rho-max") + REQUIRED_RETURN_LABELS
+    required = ("time", "rho-max", "bad-metric") + REQUIRED_RETURN_LABELS
     missing = [label for label in required if label not in labels]
     if missing:
         raise SystemExit(
@@ -105,6 +107,13 @@ def load_history(root):
         raise SystemExit("{}: no history rows".format(path))
     data = np.asarray(rows)
     order = np.argsort(data[:, labels["time"]])
+    bad_metric = data[order, labels["bad-metric"]]
+    if np.any(bad_metric != 0.0):
+        first = int(np.flatnonzero(bad_metric != 0.0)[0])
+        raise SystemExit(
+            "{}: nonzero bad-metric={} at t={:.16g}".format(
+                path, bad_metric[first],
+                data[order, labels["time"]][first]))
     return {
         label: data[order, index] for label, index in labels.items()
     }
@@ -116,32 +125,38 @@ def load_track(root):
         path = root / "stdout.log"
     if not path.exists():
         raise SystemExit("{}: missing Athena stdout".format(root))
-    text = path.read_text(encoding="utf-8")
-    radius_matches = ISOTROPIC_RADIUS_PATTERN.findall(text)
+    radius_matches = []
+    rows = []
+    with path.open(encoding="utf-8", errors="replace") as stream:
+        for line in stream:
+            radius_match = ISOTROPIC_RADIUS_PATTERN.search(line)
+            if radius_match is not None:
+                radius_matches.append(radius_match.group("radius"))
+            match = TRACK_PATTERN.search(line)
+            if match is None:
+                continue
+            values = {
+                key: float(match.group(key))
+                for key in ("time", "x", "y", "z", "rho")
+            }
+            valid = float(match.group("valid"))
+            if not all(math.isfinite(value) for value in values.values()):
+                raise SystemExit("{}: nonfinite STAR_TRACK row".format(path))
+            if not math.isfinite(valid) or valid != 1.0:
+                raise SystemExit("{}: invalid STAR_TRACK row".format(path))
+            if values["rho"] <= 0.0:
+                raise SystemExit(
+                    "{}: nonpositive STAR_TRACK density".format(path))
+            rows.append((
+                values["time"], values["x"], values["y"], values["z"],
+                values["rho"],
+            ))
     if len(radius_matches) != 1:
         raise SystemExit(
             "{}: expected one initialized isotropic stellar radius".format(path))
     stellar_radius = float(radius_matches[0])
     if not math.isfinite(stellar_radius) or stellar_radius <= 0.0:
         raise SystemExit("{}: invalid isotropic stellar radius".format(path))
-    rows = []
-    for match in TRACK_PATTERN.finditer(text):
-        values = {
-            key: float(match.group(key))
-            for key in ("time", "x", "y", "z", "rho")
-        }
-        valid = float(match.group("valid"))
-        if not all(math.isfinite(value) for value in values.values()):
-            raise SystemExit("{}: nonfinite STAR_TRACK row".format(path))
-        if not math.isfinite(valid) or valid != 1.0:
-            raise SystemExit("{}: invalid STAR_TRACK row".format(path))
-        if values["rho"] <= 0.0:
-            raise SystemExit(
-                "{}: nonpositive STAR_TRACK density".format(path))
-        rows.append((
-            values["time"], values["x"], values["y"], values["z"],
-            values["rho"],
-        ))
     if len(rows) < 2:
         raise SystemExit("{}: insufficient valid STAR_TRACK rows".format(path))
     data = np.asarray(rows)
@@ -330,15 +345,47 @@ def slice_series(root, arguments):
             raise SystemExit("{}: nonfinite output time".format(path))
         series.append((time, path))
     series.sort(key=lambda item: (item[0], item[1].name))
-    duplicate_times = [
-        series[index][0] for index in range(1, len(series))
-        if abs(series[index][0] - series[index - 1][0]) <= 1.0e-12
-    ]
-    if duplicate_times:
-        raise SystemExit(
-            "{}: duplicate residual-slice times {}".format(
-                root, duplicate_times))
-    return series
+    deduplicated = []
+    layout_keys = (
+        "level", "logical_location", "plane_axes", "fixed_axis",
+        "column_min", "column_max", "row_min", "row_max",
+        "ncolumn", "nrow",
+    )
+    for time, path in series:
+        if (
+            not deduplicated
+            or abs(time - deduplicated[-1][0]) > 1.0e-12
+        ):
+            deduplicated.append((time, path))
+            continue
+        previous_path = deduplicated[-1][1]
+        previous_time, previous_blocks = read_slice_binary(
+            previous_path, arguments)
+        current_time, current_blocks = read_slice_binary(path, arguments)
+        identical = (
+            abs(previous_time - current_time) <= 1.0e-12
+            and len(previous_blocks) == len(current_blocks)
+        )
+        if identical:
+            for previous, current in zip(previous_blocks, current_blocks):
+                if any(previous[key] != current[key] for key in layout_keys):
+                    identical = False
+                    break
+                if any(
+                    not np.array_equal(
+                        previous["fields"][name], current["fields"][name])
+                    for name in Z4C_VARIABLES
+                ):
+                    identical = False
+                    break
+        if not identical:
+            raise SystemExit(
+                "{}: conflicting residual slices at time {}: {}, {}".format(
+                    root, time, previous_path.name, path.name))
+        # Restarts can write the same state at both the end of one segment
+        # and the beginning of the next.  Retain the later output number.
+        deduplicated[-1] = (time, path)
+    return deduplicated
 
 
 def sample_points(arguments):
@@ -532,8 +579,8 @@ def project_tensor(tensor, left, right):
     return np.einsum("...i,...ij,...j->...", left, tensor, right)
 
 
-def characteristic_fields(block, arguments):
-    """Project the eight incoming gauge/constraint modes on one slice block."""
+def characteristic_fields(block, arguments, include_outgoing=False):
+    """Project all ten incoming modes, and optionally their outgoing partners."""
     fields = {
         name: np.asarray(value, dtype=np.float64)
         for name, value in block["fields"].items()
@@ -648,19 +695,34 @@ def characteristic_fields(block, arguments):
         beta_full_normal + beta_bg_normal
         + np.sqrt(beta_difference ** 2 + 4.0 * chi * lapse_driver)
     )
+    lapse_root_out = 0.5 * (
+        beta_full_normal + beta_bg_normal
+        - np.sqrt(beta_difference ** 2 + 4.0 * chi * lapse_driver)
+    )
     shift_long_root = 0.5 * (
         beta_full_normal + beta_bg_normal
         + np.sqrt(beta_difference ** 2 + (16.0 / 3.0) * shift_driver)
     )
+    shift_long_root_out = 0.5 * (
+        beta_full_normal + beta_bg_normal
+        - np.sqrt(beta_difference ** 2 + (16.0 / 3.0) * shift_driver)
+    )
     shift_transverse_root = 0.5 * (
         beta_full_normal + beta_bg_normal
         + np.sqrt(beta_difference ** 2 + 4.0 * shift_driver)
+    )
+    shift_transverse_root_out = 0.5 * (
+        beta_full_normal + beta_bg_normal
+        - np.sqrt(beta_difference ** 2 + 4.0 * shift_driver)
     )
     if (
         np.any(alpha <= 0.0) or np.any(chi <= 0.0)
         or np.any(lapse_root <= 0.0)
         or np.any(shift_long_root <= 0.0)
         or np.any(shift_transverse_root <= 0.0)
+        or np.any(lapse_root_out >= 0.0)
+        or np.any(shift_long_root_out >= 0.0)
+        or np.any(shift_transverse_root_out >= 0.0)
     ):
         raise SystemExit("invalid characteristic coefficient in TDE slice")
 
@@ -671,6 +733,11 @@ def characteristic_fields(block, arguments):
         chi * lapse_driver - shift_mu * shift_delta_bg
     )
     light_shift_separation = chi * alpha ** 2 - shift_mu ** 2
+    shift_mu_out = shift_long_root_out - beta_full_normal
+    shift_delta_bg_out = shift_long_root_out - beta_bg_normal
+    light_shift_separation_out = (
+        chi * alpha ** 2 - shift_mu_out ** 2
+    )
     shift_q = (4.0 / 3.0) * shift_driver
 
     left_lapse_p0 = -(lapse_root - beta_bg_normal) / chi
@@ -717,6 +784,39 @@ def characteristic_fields(block, arguments):
             + scalar_d[1]
         ),
     }
+    outgoing = {
+        "lapse": (
+            -(lapse_root_out - beta_bg_normal) * scalar_p[0] / chi
+            + scalar_d[2]
+        ),
+        "shift_longitudinal": (
+            alpha * shift_delta_bg_out ** 2
+            * light_shift_separation_out * scalar_p[0]
+            + 0.5 * alpha * shift_q
+            * lapse_shift_separation * scalar_p[1]
+            + 0.25 * shift_delta_bg_out
+            * (4.0 * chi * alpha ** 2 - 3.0 * shift_mu_out ** 2)
+            * lapse_shift_separation * scalar_p[3]
+            + 0.5 * alpha ** 2 * shift_delta_bg_out
+            * lapse_shift_separation * scalar_d[0]
+            - chi * alpha * shift_delta_bg_out
+            * light_shift_separation_out * scalar_d[2]
+            + lapse_shift_separation
+            * light_shift_separation_out * scalar_d[3]
+        ),
+        "constraint_scalar_theta": (
+            -sqrt_chi * scalar_p[1]
+            + 0.5 * chi * scalar_p[3]
+            + scalar_d[0]
+        ),
+        "constraint_scalar_z": (
+            -4.0 * scalar_p[0] / (3.0 * sqrt_chi)
+            - 2.0 * scalar_p[1] / (3.0 * sqrt_chi)
+            + 2.0 * scalar_p[2] / sqrt_chi
+            - scalar_p[3]
+            + scalar_d[1]
+        ),
+    }
     for number, (tangent_d, tangent_u) in enumerate((
         (tangent1_d, tangent1_u), (tangent2_d, tangent2_u)
     ), start=1):
@@ -737,6 +837,35 @@ def characteristic_fields(block, arguments):
             - gamma_tangent
             + metric_normal_tangent
         )
+        outgoing["shift_transverse_{}".format(number)] = (
+            (shift_transverse_root_out - beta_bg_normal) * gamma_tangent
+            + beta_tangent
+        )
+        outgoing["constraint_transverse_{}".format(number)] = (
+            2.0 * a_normal_tangent / sqrt_chi
+            - gamma_tangent
+            + metric_normal_tangent
+        )
+    a_tangent1_tangent1 = project_tensor(
+        residual_a, tangent1_u, tangent1_u)
+    a_tangent2_tangent2 = project_tensor(
+        residual_a, tangent2_u, tangent2_u)
+    dsg_tangent1_tangent1 = project_tensor(
+        metric_derivative, tangent1_u, tangent1_u)
+    dsg_tangent2_tangent2 = project_tensor(
+        metric_derivative, tangent2_u, tangent2_u)
+    a_plus = 0.5 * (a_tangent1_tangent1 - a_tangent2_tangent2)
+    dsg_plus = 0.5 * (
+        dsg_tangent1_tangent1 - dsg_tangent2_tangent2)
+    a_cross = project_tensor(residual_a, tangent1_u, tangent2_u)
+    dsg_cross = project_tensor(
+        metric_derivative, tangent1_u, tangent2_u)
+    result["tt_plus"] = -2.0 * a_plus / sqrt_chi + dsg_plus
+    result["tt_cross"] = -2.0 * a_cross / sqrt_chi + dsg_cross
+    outgoing["tt_plus"] = 2.0 * a_plus / sqrt_chi + dsg_plus
+    outgoing["tt_cross"] = 2.0 * a_cross / sqrt_chi + dsg_cross
+    if include_outgoing:
+        return result, outgoing, grid_column, grid_row
     return result, grid_column, grid_row
 
 
@@ -930,13 +1059,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("far", type=pathlib.Path)
     parser.add_argument("sommerfeld", type=pathlib.Path)
-    parser.add_argument("cpbc", type=pathlib.Path)
-    parser.add_argument("cpbc_sponge", type=pathlib.Path)
+    parser.add_argument("cpbc", type=pathlib.Path, nargs="?")
+    parser.add_argument("cpbc_sponge", type=pathlib.Path, nargs="?")
     parser.add_argument("--round-trip-time", type=float, default=11.5)
+    parser.add_argument("--required-end-time", type=float, default=30.0)
     parser.add_argument("--maximum-density-fraction", type=float, default=0.01)
     parser.add_argument(
         "--maximum-trajectory-radii", type=float, default=0.1)
     parser.add_argument("--minimum-return-improvement", type=float, default=10.0)
+    parser.add_argument(
+        "--maximum-family-degradation", type=float, default=0.1)
     parser.add_argument("--slice-x-min", type=float, default=32.0)
     parser.add_argument("--slice-x-max", type=float, default=45.0)
     parser.add_argument("--slice-y-half-width", type=float, default=6.0)
@@ -969,6 +1101,13 @@ def main():
         math.isfinite(args.round_trip_time) and args.round_trip_time >= 0.0
     ):
         raise SystemExit("round-trip time must be finite and nonnegative")
+    if (
+        not math.isfinite(args.required_end_time)
+        or args.required_end_time < args.round_trip_time
+    ):
+        raise SystemExit(
+            "required end time must be finite and no earlier than the "
+            "round-trip time")
     finite_parameters = (
         args.background_mass, args.background_spin,
         args.background_center_x, args.background_center_y,
@@ -985,6 +1124,16 @@ def main():
         or args.shift_driver <= 0.0
         or args.characteristic_block_margin < 1
         or args.maximum_unresolved_normal <= 0.0
+        or not math.isfinite(args.maximum_density_fraction)
+        or args.maximum_density_fraction < 0.0
+        or not math.isfinite(args.maximum_trajectory_radii)
+        or args.maximum_trajectory_radii < 0.0
+        or not math.isfinite(args.minimum_return_improvement)
+        or args.minimum_return_improvement <= 0.0
+        or not math.isfinite(args.minimum_sommerfeld_slice_rms)
+        or args.minimum_sommerfeld_slice_rms < 0.0
+        or not math.isfinite(args.maximum_family_degradation)
+        or args.maximum_family_degradation < 0.0
     ):
         raise SystemExit("invalid characteristic-projection parameter")
     if args.boundary_axis - 1 not in PLANE_AXES[args.slice_plane]:
@@ -995,11 +1144,33 @@ def main():
     roots = {
         "far": args.far,
         "sommerfeld": args.sommerfeld,
-        "cpbc": args.cpbc,
-        "cpbc_sponge": args.cpbc_sponge,
     }
+    if args.cpbc is not None:
+        roots["cpbc"] = args.cpbc
+    if args.cpbc_sponge is not None:
+        roots["cpbc_sponge"] = args.cpbc_sponge
+    evaluated_names = tuple(name for name in roots if name != "far")
     histories = {name: load_history(root) for name, root in roots.items()}
     tracks = {name: load_track(root) for name, root in roots.items()}
+    slice_end_times = {}
+    for name, root in roots.items():
+        series = slice_series(root, args)
+        slice_end_times[name] = series[-1][0]
+        coverage = {
+            "history": float(histories[name]["time"][-1]),
+            "STAR_TRACK": float(tracks[name][0][-1]),
+            args.slice_id: float(slice_end_times[name]),
+        }
+        incomplete = {
+            source: end_time for source, end_time in coverage.items()
+            if end_time + 1.0e-10 < args.required_end_time
+        }
+        if incomplete:
+            raise SystemExit(
+                "{} does not cover required end time t={:.8g}: {}".format(
+                    name, args.required_end_time, ", ".join(
+                        "{}={:.8g}".format(source, end_time)
+                        for source, end_time in sorted(incomplete.items()))))
     initialized_radii = {
         name: tracks[name][2] for name in roots
     }
@@ -1023,7 +1194,7 @@ def main():
     )
 
     metrics = {}
-    for name in ("sommerfeld", "cpbc", "cpbc_sponge"):
+    for name in evaluated_names:
         history_fields, density = history_differences(
             histories["far"], histories[name], args.round_trip_time,
             return_labels)
@@ -1092,7 +1263,7 @@ def main():
                     name))
 
     failures = []
-    for group in CHARACTERISTIC_GROUPS:
+    for group in REQUIRED_IMPROVEMENT_GROUPS:
         sommerfeld_rms = (
             metrics["sommerfeld"]["characteristic_groups"][group]["rms"])
         if sommerfeld_rms < args.minimum_sommerfeld_slice_rms:
@@ -1102,7 +1273,9 @@ def main():
                 "floor {:.6g}".format(
                     group, sommerfeld_rms,
                     args.minimum_sommerfeld_slice_rms))
-    for name in ("cpbc", "cpbc_sponge"):
+    for name in evaluated_names:
+        if name == "sommerfeld":
+            continue
         density = metrics[name]["density"]
         trajectory = metrics[name]["trajectory"]
         for group in CHARACTERISTIC_GROUPS:
@@ -1114,7 +1287,10 @@ def main():
             print(
                 "{} {}_characteristic_rms_improvement={:.8e}".format(
                     name, group, improvement))
-            if improvement < args.minimum_return_improvement:
+            if (
+                group in REQUIRED_IMPROVEMENT_GROUPS
+                and improvement < args.minimum_return_improvement
+            ):
                 failures.append(
                     "{} {} return improvement {:.6g} is below {:.6g}".
                     format(name, group, improvement,
@@ -1125,14 +1301,21 @@ def main():
                     "characteristic_modes"][mode]["rms"]
                 case_rms = metrics[name]["characteristic_modes"][mode]["rms"]
                 improvement = sommerfeld_rms / max(case_rms, 1.0e-300)
+                maximum_case_rms = max(
+                    (1.0 + args.maximum_family_degradation) * sommerfeld_rms,
+                    args.minimum_sommerfeld_slice_rms,
+                )
                 print(
                     "{} {}_characteristic_rms_improvement={:.8e}".format(
                         name, mode, improvement))
-                if improvement < args.minimum_return_improvement:
+                if case_rms > maximum_case_rms:
                     failures.append(
-                        "{} {} return improvement {:.6g} is below {:.6g}".
-                        format(name, mode, improvement,
-                               args.minimum_return_improvement))
+                        "{} {} RMS {:.6g} exceeds the allowed {:.6g} "
+                        "(Sommerfeld {:.6g}, maximum degradation {:.3g})".
+                        format(
+                            name, mode, case_rms, maximum_case_rms,
+                            sommerfeld_rms,
+                            args.maximum_family_degradation))
         if density >= args.maximum_density_fraction:
             failures.append(
                 "{} density difference {:.6g} exceeds {:.6g}".format(

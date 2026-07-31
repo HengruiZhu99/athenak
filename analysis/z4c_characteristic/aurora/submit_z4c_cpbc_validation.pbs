@@ -18,6 +18,7 @@ REFERENCE_ATHENA_EXE="${REFERENCE_ATHENA_EXE:-}"
 CASE_NAME="${CASE_NAME:?CASE_NAME must be provided with qsub -v}"
 VALIDATION_KIND="${VALIDATION_KIND:-athena}"
 INPUT_DECK="${INPUT_DECK:-}"
+RESTART_FILE="${RESTART_FILE:-}"
 RUN_ROOT="${RUN_ROOT:-${PROJECT_ROOT}/runs/characteristic_cpbc}"
 RANKS_PER_NODE="${RANKS_PER_NODE:-12}"
 ATHENA_WALLTIME="${ATHENA_WALLTIME:-00:50:00}"
@@ -56,12 +57,133 @@ CPU_BIND="${CPU_BIND:-list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77
 NNODES="$(wc -l < "${PBS_NODEFILE}")"
 NTOTRANKS="$((NNODES * RANKS_PER_NODE))"
 RUN_DIR="${RUN_ROOT}/${CASE_NAME}"
-
-if [[ -e "${RUN_DIR}" ]]; then
-  echo "ERROR: refusing to reuse existing run directory ${RUN_DIR}" >&2
-  exit 1
+METADATA_CPBC_AXES="${CPBC_AXES:-1 2 3}"
+METADATA_CPBC_FAMILIES="${CPBC_FAMILIES:-all_ten}"
+if [[ ${VALIDATION_KIND} == "boundary_ab" ||
+      ${VALIDATION_KIND} == "pulse_convergence" ]]; then
+  METADATA_CPBC_AXES="${PULSE_AXES:-1}"
+  METADATA_CPBC_FAMILIES="lapse shift_longitudinal constraint_scalar_theta constraint_scalar_z shift_transverse_1 shift_transverse_2 constraint_transverse_1 constraint_transverse_2 tt_plus tt_cross"
 fi
-mkdir -p "${RUN_DIR}"
+
+case "${VALIDATION_KIND}" in
+  athena|pulse_suite|pure_backgrounds|cpbc_compaction_parity|\
+unsupported_gauge|legacy_parity|legacy_lwave|legacy_boosted|\
+corner_determinism|oblique_pulse|oblique_convergence|\
+oblique_reanalysis|ghost_accuracy|boundary_ab|pulse_convergence)
+    ;;
+  *)
+    echo "unsupported VALIDATION_KIND=${VALIDATION_KIND}" >&2
+    exit 2
+    ;;
+esac
+
+if [[ ! -d ${REPO_DIR} ]] ||
+    ! git -C "${REPO_DIR}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "REPO_DIR is not a Git worktree: ${REPO_DIR}" >&2
+  exit 2
+fi
+if [[ ! -d ${BUILD_DIR} || ! -r ${BUILD_DIR}/CMakeCache.txt ]]; then
+  echo "BUILD_DIR is missing a readable CMakeCache.txt: ${BUILD_DIR}" >&2
+  exit 2
+fi
+if [[ ! -x ${ATHENA_EXE} ]]; then
+  echo "ATHENA_EXE is not executable: ${ATHENA_EXE}" >&2
+  exit 2
+fi
+if [[ -n ${REFERENCE_ATHENA_EXE} && ! -x ${REFERENCE_ATHENA_EXE} ]]; then
+  echo "REFERENCE_ATHENA_EXE is not executable: ${REFERENCE_ATHENA_EXE}" >&2
+  exit 2
+fi
+
+if [[ -n ${RESTART_FILE} ]]; then
+  if [[ ${VALIDATION_KIND} != "athena" ]]; then
+    echo "ERROR: RESTART_FILE is supported only for VALIDATION_KIND=athena" >&2
+    exit 2
+  fi
+  if [[ ! -d ${RUN_DIR}/rst || ! -f ${RESTART_FILE} ]]; then
+    echo "ERROR: restart requires existing run dir and file: "\
+"${RUN_DIR}, ${RESTART_FILE}" >&2
+    exit 2
+  fi
+  restart_real="$(realpath -e -- "${RESTART_FILE}")"
+  restart_root="$(realpath -e -- "${RUN_DIR}/rst")"
+  case "${restart_real}" in
+    "${restart_root}"/*)
+      RESTART_FILE="${restart_real}"
+      ;;
+    *)
+      echo "ERROR: restart file must be inside ${RUN_DIR}/rst: "\
+"${RESTART_FILE}" >&2
+      exit 2
+      ;;
+  esac
+  if [[ $(basename "$(dirname "${RESTART_FILE}")") != "rank_00000000" ]]; then
+    echo "ERROR: RESTART_FILE must name the rank_00000000 base restart: "\
+"${RESTART_FILE}" >&2
+    exit 2
+  fi
+  restart_name="$(basename "${RESTART_FILE}")"
+  restart_rank_count="$(
+    find "${restart_root}" -mindepth 2 -maxdepth 2 -type f \
+      -name "${restart_name}" -size +0c | wc -l
+  )"
+  restart_dir_count="$(
+    find "${restart_root}" -mindepth 1 -maxdepth 1 -type d \
+      -name 'rank_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]' | wc -l
+  )"
+  if [[ ${restart_rank_count} -ne ${NTOTRANKS} ||
+        ${restart_dir_count} -ne ${NTOTRANKS} ]]; then
+    echo "ERROR: incomplete restart cohort ${restart_name}: "\
+"files=${restart_rank_count}, rank_dirs=${restart_dir_count}, "\
+"expected=${NTOTRANKS}" >&2
+    exit 2
+  fi
+  METADATA_PATH="${RUN_DIR}/run_metadata.restart.${PBS_JOBID%%.*}.txt"
+else
+  if [[ ${VALIDATION_KIND} == "athena" &&
+        ( -z ${INPUT_DECK} || ! -r ${INPUT_DECK} ) ]]; then
+    echo "INPUT_DECK must name a readable file for VALIDATION_KIND=athena" >&2
+    exit 2
+  fi
+  if [[ ${VALIDATION_KIND} == "cpbc_compaction_parity" &&
+        -z ${REFERENCE_ATHENA_EXE} ]]; then
+    echo "REFERENCE_ATHENA_EXE is required for compaction parity" >&2
+    exit 2
+  fi
+  if [[ ${VALIDATION_KIND} == "legacy_parity" &&
+        ( ! -d ${REFERENCE_LWAVE_ROOT} ||
+          ! -d ${REFERENCE_BOOSTED_ROOT} ) ]]; then
+    echo "legacy_parity requires valid reference roots" >&2
+    exit 2
+  fi
+  if [[ ${VALIDATION_KIND} == "oblique_reanalysis" &&
+        ( -z ${OBLIQUE_REANALYSIS_ROOT} ||
+          ! -d ${OBLIQUE_REANALYSIS_ROOT} ) ]]; then
+    echo "OBLIQUE_REANALYSIS_ROOT must name an existing run" >&2
+    exit 2
+  fi
+  if [[ ${VALIDATION_KIND} == "boundary_ab" ]]; then
+    if [[ -n ${PULSE_CONTROL_ROOT} && ! -d ${PULSE_CONTROL_ROOT} ]]; then
+      echo "PULSE_CONTROL_ROOT does not exist: ${PULSE_CONTROL_ROOT}" >&2
+      exit 2
+    fi
+    if [[ -n ${PULSE_CPBC_ROOT} && ! -d ${PULSE_CPBC_ROOT} ]]; then
+      echo "PULSE_CPBC_ROOT does not exist: ${PULSE_CPBC_ROOT}" >&2
+      exit 2
+    fi
+  fi
+  if [[ ${VALIDATION_KIND} == "pulse_convergence" &&
+        -z ${PULSE_AXES:-} ]]; then
+    echo "PULSE_AXES is required for pulse_convergence" >&2
+    exit 2
+  fi
+  if [[ -e "${RUN_DIR}" ]]; then
+    echo "ERROR: refusing to reuse existing run directory ${RUN_DIR}" >&2
+    exit 1
+  fi
+  mkdir -p "${RUN_DIR}"
+  METADATA_PATH="${RUN_DIR}/run_metadata.txt"
+fi
 
 {
   echo "job_id=${PBS_JOBID}"
@@ -69,6 +191,8 @@ mkdir -p "${RUN_DIR}"
   echo "validation_kind=${VALIDATION_KIND}"
   echo "source_head=$(git -C "${REPO_DIR}" rev-parse HEAD)"
   echo "staged_diff_sha256=$(git -C "${REPO_DIR}" diff --cached --binary |
+    sha256sum | awk '{print $1}')"
+  echo "unstaged_diff_sha256=$(git -C "${REPO_DIR}" diff --binary |
     sha256sum | awk '{print $1}')"
   echo "athena_exe=${ATHENA_EXE}"
   echo "athena_sha256=$(sha256sum "${ATHENA_EXE}" | awk '{print $1}')"
@@ -80,25 +204,45 @@ mkdir -p "${RUN_DIR}"
   echo "nodes=${NNODES}"
   echo "ranks_per_node=${RANKS_PER_NODE}"
   echo "input_deck=${INPUT_DECK}"
+  echo "restart_file=${RESTART_FILE}"
   echo "athena_walltime=${ATHENA_WALLTIME}"
   echo "mesh_only=${MESH_ONLY}"
   echo "production_smoke=${PRODUCTION_SMOKE}"
   echo "athena_extra_args=${ATHENA_EXTRA_ARGS}"
+  echo "pulse_resolution=${PULSE_RESOLUTION}"
+  echo "pulse_center=${PULSE_CENTER}"
+  echo "pulse_tlim=${PULSE_TLIM}"
+  echo "pulse_extrap_order=${PULSE_EXTRAP_ORDER}"
+  echo "cpbc_axes=${METADATA_CPBC_AXES}"
+  echo "cpbc_sides=${CPBC_SIDES:--1 1}"
+  echo "cpbc_families=${METADATA_CPBC_FAMILIES}"
   echo "mpich_gpu_support_enabled=${MPICH_GPU_SUPPORT_ENABLED}"
   echo "sycl_device_filter=${SYCL_DEVICE_FILTER}"
   echo "oneapi_device_selector=${ONEAPI_DEVICE_SELECTOR}"
   echo "ze_flat_device_hierarchy=${ZE_FLAT_DEVICE_HIERARCHY}"
   echo "omp_num_threads=${OMP_NUM_THREADS}"
-} > "${RUN_DIR}/run_metadata.txt"
+} > "${METADATA_PATH}"
 cp "${BUILD_DIR}/CMakeCache.txt" "${RUN_DIR}/CMakeCache.txt"
 
 case "${VALIDATION_KIND}" in
   athena)
-    if [[ -z ${INPUT_DECK} ]]; then
+    if [[ -z ${INPUT_DECK} && -z ${RESTART_FILE} ]]; then
       echo "INPUT_DECK is required for VALIDATION_KIND=athena" >&2
       exit 2
     fi
-    cp "${INPUT_DECK}" "${RUN_DIR}/"
+    ATHENA_SOURCE_ARGV=()
+    TEE_ARGV=()
+    if [[ -n ${RESTART_FILE} ]]; then
+      if [[ "${MESH_ONLY}" == "1" ]]; then
+        echo "MESH_ONLY is incompatible with RESTART_FILE" >&2
+        exit 2
+      fi
+      ATHENA_SOURCE_ARGV=(-r "${RESTART_FILE}")
+      TEE_ARGV=(-a)
+    else
+      cp "${INPUT_DECK}" "${RUN_DIR}/"
+      ATHENA_SOURCE_ARGV=(-i "${INPUT_DECK}")
+    fi
     read -r -a ATHENA_EXTRA_ARGV <<< "${ATHENA_EXTRA_ARGS//:/ }"
     ATHENA_MODE_ARGV=()
     LAUNCH_RANKS="${NTOTRANKS}"
@@ -111,9 +255,9 @@ case "${VALIDATION_KIND}" in
     cd "${RUN_DIR}"
     mpiexec -n "${LAUNCH_RANKS}" -ppn "${LAUNCH_PPN}" \
       --cpu-bind "${CPU_BIND}" gpu_tile_compact.sh \
-      "${ATHENA_EXE}" -i "${INPUT_DECK}" -d "${RUN_DIR}" \
+      "${ATHENA_EXE}" "${ATHENA_SOURCE_ARGV[@]}" -d "${RUN_DIR}" \
       -t "${ATHENA_WALLTIME}" "${ATHENA_MODE_ARGV[@]}" \
-      "${ATHENA_EXTRA_ARGV[@]}" 2>&1 | tee athena.stdout
+      "${ATHENA_EXTRA_ARGV[@]}" 2>&1 | tee "${TEE_ARGV[@]}" athena.stdout
     if [[ "${PRODUCTION_SMOKE}" == "1" ]]; then
       python3 "${REPO_DIR}/analysis/z4c_characteristic/check_production_smoke.py" \
         "${RUN_DIR}" | tee production_smoke_check.log
@@ -127,6 +271,7 @@ case "${VALIDATION_KIND}" in
       python3 analysis/z4c_characteristic/derive_residual_characteristics.py |
         tee "${RUN_DIR}/symbolic_algebra.log"
     fi
+    CPBC_EXTRAP_ORDER="${PULSE_EXTRAP_ORDER}" \
     mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
       scripts/run_z4c_characteristic_pulses.sh \
       "${ATHENA_EXE}" "${RUN_DIR}/pulses" \
@@ -580,7 +725,7 @@ PY
       mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
         scripts/run_z4c_characteristic_pulses.sh \
         "${ATHENA_EXE}" "${control_root}" \
-        "${far_resolution}" 3.0 12.0 |
+        "${far_resolution}" "${PULSE_CENTER}" "${PULSE_TLIM}" |
         tee "${RUN_DIR}/far_reference.log"
     elif [[ ! -d ${control_root} ]]; then
       echo "PULSE_CONTROL_ROOT does not exist: ${control_root}" >&2
@@ -596,7 +741,7 @@ PY
       mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
         scripts/run_z4c_characteristic_pulses.sh \
         "${ATHENA_EXE}" "${cpbc_root}" \
-        "${PULSE_RESOLUTION}" 3.0 12.0 |
+        "${PULSE_RESOLUTION}" "${PULSE_CENTER}" "${PULSE_TLIM}" |
         tee "${RUN_DIR}/cpbc.log"
     elif [[ ! -d ${cpbc_root} ]]; then
       echo "PULSE_CPBC_ROOT does not exist: ${cpbc_root}" >&2
@@ -612,7 +757,7 @@ PY
     mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
       scripts/run_z4c_characteristic_pulses.sh \
       "${ATHENA_EXE}" "${RUN_DIR}/sommerfeld" \
-      "${PULSE_RESOLUTION}" 3.0 12.0 |
+      "${PULSE_RESOLUTION}" "${PULSE_CENTER}" "${PULSE_TLIM}" |
       tee "${RUN_DIR}/sommerfeld.log"
     python3 analysis/z4c_characteristic/compare_boundary_reflection.py \
       "${cpbc_root}" "${RUN_DIR}/sommerfeld" |
@@ -633,7 +778,7 @@ PY
     mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
       scripts/run_z4c_characteristic_pulses.sh \
       "${ATHENA_EXE}" "${RUN_DIR}/far_reference" \
-      "${far_resolution}" 3.0 12.0 |
+      "${far_resolution}" "${PULSE_CENTER}" "${PULSE_TLIM}" |
       tee "${RUN_DIR}/far_reference.log"
     CPBC_AXES="${pulse_axes}" \
     CPBC_SIDES="-1 1" \
@@ -644,7 +789,7 @@ PY
     mpiexec -n 1 -ppn 1 --cpu-bind list:1-8 gpu_tile_compact.sh \
       scripts/run_z4c_characteristic_pulses.sh \
       "${ATHENA_EXE}" "${RUN_DIR}/cpbc" \
-      "${PULSE_RESOLUTION}" 3.0 12.0 |
+      "${PULSE_RESOLUTION}" "${PULSE_CENTER}" "${PULSE_TLIM}" |
       tee "${RUN_DIR}/cpbc.log"
     ;;
   *)

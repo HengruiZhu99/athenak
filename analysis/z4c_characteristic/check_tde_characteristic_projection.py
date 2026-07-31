@@ -44,8 +44,9 @@ def main():
     fields["z4c_Axx"] = linear(0.03)
     fields["z4c_Axy"] = linear(-0.04)
     fields["z4c_Axz"] = linear(0.05)
-    fields["z4c_Ayy"] = linear(-0.015)
-    fields["z4c_Azz"] = linear(-0.015)
+    fields["z4c_Ayy"] = linear(-0.025)
+    fields["z4c_Ayz"] = linear(0.025)
+    fields["z4c_Azz"] = linear(-0.005)
     fields["z4c_Gamx"] = linear(0.02)
     fields["z4c_Gamy"] = linear(-0.06)
     fields["z4c_Gamz"] = linear(0.08)
@@ -89,8 +90,9 @@ def main():
         lapse_harmonic=0.0,
         shift_driver=1.0,
     )
-    measured, measured_x, measured_y = MODULE.characteristic_fields(
-        block, arguments)
+    measured, measured_outgoing, measured_x, measured_y = (
+        MODULE.characteristic_fields(
+            block, arguments, include_outgoing=True))
     center = (ny // 2, nx // 2)
     if not (
         math.isclose(measured_x[center], center_x, abs_tol=1.0e-14)
@@ -110,13 +112,25 @@ def main():
         beta_full + beta_bg
         + math.sqrt(beta_difference ** 2 + 4.0 * chi * lapse_driver)
     )
+    lapse_root_out = 0.5 * (
+        beta_full + beta_bg
+        - math.sqrt(beta_difference ** 2 + 4.0 * chi * lapse_driver)
+    )
     shift_long_root = 0.5 * (
         beta_full + beta_bg
         + math.sqrt(beta_difference ** 2 + 16.0 * shift_driver / 3.0)
     )
+    shift_long_root_out = 0.5 * (
+        beta_full + beta_bg
+        - math.sqrt(beta_difference ** 2 + 16.0 * shift_driver / 3.0)
+    )
     shift_transverse_root = 0.5 * (
         beta_full + beta_bg
         + math.sqrt(beta_difference ** 2 + 4.0 * shift_driver)
+    )
+    shift_transverse_root_out = 0.5 * (
+        beta_full + beta_bg
+        - math.sqrt(beta_difference ** 2 + 4.0 * shift_driver)
     )
     shift_mu = shift_long_root - beta_full
     shift_delta_bg = shift_long_root - beta_bg
@@ -124,6 +138,9 @@ def main():
         chi * lapse_driver - shift_mu * shift_delta_bg
     )
     light_shift_separation = chi * alpha ** 2 - shift_mu ** 2
+    shift_mu_out = shift_long_root_out - beta_full
+    shift_delta_bg_out = shift_long_root_out - beta_bg
+    light_shift_separation_out = chi * alpha ** 2 - shift_mu_out ** 2
     shift_q = 4.0 * shift_driver / 3.0
 
     p = (0.11, -0.07, 0.03, 0.02)
@@ -163,10 +180,67 @@ def main():
         "constraint_transverse_2": (
             -2.0 * 0.05 / sqrt_chi - 0.08 - 0.011
         ),
+        "tt_plus": -2.0 * (-0.01) / sqrt_chi + 0.001,
+        "tt_cross": -2.0 * 0.025 / sqrt_chi + 0.009,
     }
+    expected_outgoing = {
+        "lapse": (
+            -(lapse_root_out - beta_bg) * p[0] / chi + d[2]
+        ),
+        "shift_longitudinal": (
+            alpha * shift_delta_bg_out ** 2
+            * light_shift_separation_out * p[0]
+            + 0.5 * alpha * shift_q * lapse_shift_separation * p[1]
+            + 0.25 * shift_delta_bg_out
+            * (4.0 * chi * alpha ** 2 - 3.0 * shift_mu_out ** 2)
+            * lapse_shift_separation * p[3]
+            + 0.5 * alpha ** 2 * shift_delta_bg_out
+            * lapse_shift_separation * d[0]
+            - chi * alpha * shift_delta_bg_out
+            * light_shift_separation_out * d[2]
+            + lapse_shift_separation * light_shift_separation_out * d[3]
+        ),
+        "constraint_scalar_theta": (
+            -sqrt_chi * p[1] + 0.5 * chi * p[3] + d[0]
+        ),
+        "constraint_scalar_z": (
+            -4.0 * p[0] / (3.0 * sqrt_chi)
+            - 2.0 * p[1] / (3.0 * sqrt_chi)
+            + 2.0 * p[2] / sqrt_chi - p[3] + d[1]
+        ),
+        "shift_transverse_1": (
+            (shift_transverse_root_out - beta_bg) * (-0.06) - 0.023
+        ),
+        "shift_transverse_2": (
+            (shift_transverse_root_out - beta_bg) * 0.08 + 0.019
+        ),
+        "constraint_transverse_1": (
+            2.0 * (-0.04) / sqrt_chi - (-0.06) + 0.012
+        ),
+        "constraint_transverse_2": (
+            2.0 * 0.05 / sqrt_chi - 0.08 - 0.011
+        ),
+        "tt_plus": 2.0 * (-0.01) / sqrt_chi + 0.001,
+        "tt_cross": 2.0 * 0.025 / sqrt_chi + 0.009,
+    }
+    if set(measured) != set(expected):
+        raise SystemExit(
+            "synthetic characteristic modes differ: measured={} expected={}".
+            format(sorted(measured), sorted(expected)))
+    if set(measured_outgoing) != set(expected_outgoing):
+        raise SystemExit(
+            "synthetic outgoing modes differ: measured={} expected={}".
+            format(
+                sorted(measured_outgoing), sorted(expected_outgoing)))
     maximum_error = max(
-        abs(measured[name][center] - value)
-        for name, value in expected.items()
+        max(
+            abs(measured[name][center] - value)
+            for name, value in expected.items()
+        ),
+        max(
+            abs(measured_outgoing[name][center] - value)
+            for name, value in expected_outgoing.items()
+        ),
     )
 
     # Rotate the same local state so the normal is z and the resolved slice is
@@ -190,8 +264,9 @@ def main():
     fields_xz["z4c_Azz"] = linear_z(0.03)
     fields_xz["z4c_Axz"] = linear_z(-0.04)
     fields_xz["z4c_Ayz"] = linear_z(0.05)
-    fields_xz["z4c_Axx"] = linear_z(-0.015)
-    fields_xz["z4c_Ayy"] = linear_z(-0.015)
+    fields_xz["z4c_Axx"] = linear_z(-0.025)
+    fields_xz["z4c_Axy"] = linear_z(0.025)
+    fields_xz["z4c_Ayy"] = linear_z(-0.005)
     fields_xz["z4c_Gamz"] = linear_z(0.02)
     fields_xz["z4c_Gamx"] = linear_z(-0.06)
     fields_xz["z4c_Gamy"] = linear_z(0.08)
@@ -222,18 +297,34 @@ def main():
     arguments_xz = types.SimpleNamespace(**vars(arguments))
     arguments_xz.boundary_axis = 3
     arguments_xz.slice_fixed_coordinate = 0.0
-    measured_xz, measured_x, measured_z = MODULE.characteristic_fields(
-        block_xz, arguments_xz)
+    measured_xz, measured_xz_outgoing, measured_x, measured_z = (
+        MODULE.characteristic_fields(
+            block_xz, arguments_xz, include_outgoing=True))
     if not (
         math.isclose(measured_x[center], 0.0, abs_tol=1.0e-14)
         and math.isclose(measured_z[center], center_x, abs_tol=1.0e-14)
     ):
         raise SystemExit("synthetic x-z characteristic cell is not centered")
+    if set(measured_xz) != set(expected):
+        raise SystemExit(
+            "synthetic x-z characteristic modes differ: "
+            "measured={} expected={}".format(
+                sorted(measured_xz), sorted(expected)))
+    if set(measured_xz_outgoing) != set(expected_outgoing):
+        raise SystemExit(
+            "synthetic x-z outgoing modes differ: "
+            "measured={} expected={}".format(
+                sorted(measured_xz_outgoing),
+                sorted(expected_outgoing)))
     maximum_error = max(
         maximum_error,
         max(
             abs(measured_xz[name][center] - value)
             for name, value in expected.items()
+        ),
+        max(
+            abs(measured_xz_outgoing[name][center] - value)
+            for name, value in expected_outgoing.items()
         ),
     )
     background_arguments = types.SimpleNamespace(**vars(arguments))
@@ -261,8 +352,9 @@ def main():
                 maximum_error))
     print(
         "PASS tde_characteristic_projection_error={:.8e} "
-        "background_error={:.8e} modes={}".format(
-            maximum_error, background_error, len(expected))
+        "background_error={:.8e} incoming_modes={} outgoing_modes={}".format(
+            maximum_error, background_error, len(expected),
+            len(expected_outgoing))
     )
 
 

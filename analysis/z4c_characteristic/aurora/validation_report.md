@@ -105,16 +105,22 @@ the ghost closure, and all sign conventions are stated in
 
 - Base commit: `4dacc5b98b078e09fd76e9f70ae7d9ba662986d5`
   (`origin/project/bg_subtract` when the clean worktree was created).
+- Resumed WIP checkpoint and current `HEAD`:
+  `2325fc2de6efff07f9ddff846b19735243fb0a3b`.
 - Clean worktree:
   `/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc`
 - Branch: `codex/z4c-characteristic-cpbc`
-- Current staged implementation/test diff SHA-256 (excluding this
-  self-referential results report):
-  `afffe8b469a50d4d8249cd5663def40666bbd390f436ec28191df8414f12fde5`
+- Current uncommitted harness/test patch SHA-256 (including the new
+  single-run analyzer and excluding this self-referential results report):
+  `e428cb97322d0b47e37085c588a47b466f3d09541fc5ea85b8db2090c6ee8993`
 - Production-pgen build:
   `/flare/MHDTidal/hzhu/tde_n3_validation/build/aurora-intel-gpu-characteristic-cpbc`
 - Current zero-rate production-pgen executable SHA-256:
   `cd7cefef042ff075e85688dd3ec08dca243df479d50b91e0439dd8a20da46478`
+- Clean tangential-principal candidate SHA-256:
+  `298646be8918a7778329510eefb617cf9458ffe11056688c4f5f881434f9999e`
+- Immutable tangential-principal candidate:
+  `/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/executables/athena_cpbc_tangential_principal_298646be8918a777`
 - Archived rejected cell-relaxation executable SHA-256:
   `bca5f8e0837c6a85d36539d27baca6e08be913a5a21350a8164f904084cbd038`
 - Built-in-pgens regression build:
@@ -128,6 +134,8 @@ the ghost closure, and all sign conventions are stated in
 - Build command: `make -j64`.
 - Production build log:
   `/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/build_logs/cpbc_zero_rate_make_j64_20260730.log`
+- Clean tangential-principal build log:
+  `/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/build_logs/cpbc_tangential_principal_clean_make_j64_20260730.log`
 - Built-in-pgens build log:
   `/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/build_logs/cpbc_builtins_final_make_j64_20260730.log`
 - Final built-in-pgens relink log:
@@ -598,41 +606,565 @@ level 6: 384
 The failed predecessor `8717932` was only a one-rank mesh-only capacity
 limit (`max_nmb_per_rank=192` versus 2756); the corrected preflight used
 4096 and did not change the evolution deck.  No thin-z evolution has yet
-been submitted.  The next validation action is the immutable-executable
-Sommerfeld control, followed by the matching zero-rate CPBC run only if the
-control reproducibly shows a causally timed material boundary artifact.
+been completed.  The immutable-executable Sommerfeld control was submitted
+to `debug-scaling` as 32-node job `8718120` and was initially queued.  The
+exact command was
 
-The TDE comparator now reads x-y, x-z, or y-z residual slices and supports
-boundary axes 1--3.  Its rotated synthetic x-z check passes for the existing
-eight gauge/constraint projections.  The two independent TT/radiative
-projections are not yet implemented in this comparator, so no future TDE
-result is complete until those modes and their synthetic expectations are
-added.
+```text
+qsub -N z4c_somm_zm6 -l select=32 \
+  -v REPO_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc,BUILD_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/build/aurora-intel-gpu-characteristic-cpbc,ATHENA_EXE=/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/executables/athena_cpbc_zero_rate_cd7cefef042ff075,CASE_NAME=zminus6_sommerfeld_archived_20260730,VALIDATION_KIND=athena,INPUT_DECK=/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc/inputs/tde/aurora/z4c_tov_ks_n3_schwarzschild_bgadapt_cpbc_zminus6_aurora.athinput,RANKS_PER_NODE=12,ATHENA_WALLTIME=00:53:00,ATHENA_EXTRA_ARGS=z4c/boundary_rhs=sommerfeld:z4c/extrap_order=4:problem/outer_sponge_enabled=false \
+  analysis/z4c_characteristic/aurora/submit_z4c_cpbc_validation.pbs
+```
 
-The current experimental tangential-principal implementation built
-successfully with `make -j64`; its executable SHA-256 is
-`483325ce59992648fc8efcb92fcc9f3bd437c35d01faad0291cf89a1c31e4b2e`.
-This executable has not passed the pulse, exact-background, corner,
-reflection, TDE, or performance gates and must not be described as a
-validated CPBC.
+Immediately before submission the immutable executable SHA-256 was verified
+as `cd7cefef042ff075e85688dd3ec08dca243df479d50b91e0439dd8a20da46478`.
+Job `8718120` waited 48 minutes, started at `2026-07-30 15:39:53 UTC`, and
+verified the requested 32-node/384-rank mesh, exact executable hash, source
+`HEAD`, order 4, and disabled sponge.  Aurora then raised a device page fault
+immediately after cycle 0:
+
+```text
+Segmentation fault from GPU ... type: 0 (NotPresent) ... access: 1 (Write),
+banned: 1, aborting.
+... rank 362 died from signal 6
+```
+
+PBS recorded `Exit_status=143` and seven seconds of wall time.  Only the
+initial history rows and `00000` slices exist, so this is a preserved
+infrastructure/device failure and supplies no Sommerfeld physics evidence.
+Its run directory is
+`/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/runs/characteristic_cpbc/zminus6_sommerfeld_archived_20260730`.
+The scheduler-joined output was copied into that directory as
+`pbs_output.o8718120`; its SHA-256 is
+`829688e62223ef4c05c65ed4b6ad4f619b19ec4487f34660806c438a33cd86bf`.
+
+After the failed job reached terminal state, the identical sequential retry
+was submitted as debug-scaling job `8718377` with a fresh run directory:
+
+```text
+qsub -N z4c_somm_zm6r1 -l select=32 \
+  -v REPO_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc,BUILD_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/build/aurora-intel-gpu-characteristic-cpbc,ATHENA_EXE=/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/executables/athena_cpbc_zero_rate_cd7cefef042ff075,CASE_NAME=zminus6_sommerfeld_archived_retry1_20260730,VALIDATION_KIND=athena,INPUT_DECK=/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc/inputs/tde/aurora/z4c_tov_ks_n3_schwarzschild_bgadapt_cpbc_zminus6_aurora.athinput,RANKS_PER_NODE=12,ATHENA_WALLTIME=00:53:00,ATHENA_EXTRA_ARGS=z4c/boundary_rhs=sommerfeld:z4c/extrap_order=4:problem/outer_sponge_enabled=false \
+  analysis/z4c_characteristic/aurora/submit_z4c_cpbc_validation.pbs
+```
+
+The retry ID is
+`8718377.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov`; it was initially
+queued.  Job `8718120` was not cancelled or resized.
+
+### Reproduced archived-executable Sommerfeld failure
+
+Retry `8718377` started at `2026-07-30 15:55:27 UTC` and reproduced a
+catastrophic, lower-z-localized Sommerfeld failure.  The finite onset is
+visible in the independently located Hamiltonian maximum:
+
+| time | H maximum | x | y | z |
+|---:|---:|---:|---:|---:|
+| `7.00313` | `31.8178` | `-0.0703125` | `0.445312` | `-5.97656` |
+| `7.05234` | `39.3038` | `-0.0703125` | `0.445312` | `-5.97656` |
+| `7.10156` | `44.4944` | `2.17969` | `-0.0703125` | `-5.97656` |
+| `7.15078` | `69.0354` | `2.03906` | `0.0703125` | `-5.97656` |
+
+Thus the growing maximum sits in the first cell layer at the only close
+physical face.  The problem history is finite through `t=7.15078125`; the
+first nonfinite history row is `t=7.2`, where the direct diagnostic also
+reports `H=inf`.  STAR_TRACK first reaches the atmosphere floor at
+approximately `t=7.270313`.  This destructive onset is close to the
+predeclared `8--9M` fastest-gauge round-trip estimate and is much earlier
+than any return from the other five faces.  It is therefore the required
+material, causally timed boundary artifact rather than merely a measurable
+reflected pulse.
+
+The run produced at least 29 finite pre-failure x-z residual slices and more
+than 100 total x-z slices.  After the failure was fully established, the
+user explicitly authorized early termination rather than spending the
+remaining allocation evolving nonfinite data.  `qdel 8718377` was issued;
+PBS recorded `Exit_status=271` after approximately 53 minutes.  The run
+directory and its histories, slices, copied input, metadata, and
+`athena.stdout` are preserved at
+`/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/runs/characteristic_cpbc/zminus6_sommerfeld_archived_retry1_20260730`.
+
+The Sommerfeld-first gate is now open.  The previously proven all-ten pulse
+suite for the same archived zero-rate executable is job `8717147`, so the
+user directed the immediate same-executable/same-domain CPBC comparison.
+An unstarted one-node pulse job for the newer experimental executable,
+`8718570`, was cancelled while still queued and created no run directory.
+The archived CPBC TDE comparison was then submitted as job `8718576`:
+
+```text
+qsub -N z4c_cpbc_zm6 -l select=32 \
+  -v REPO_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc,BUILD_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/build/aurora-intel-gpu-characteristic-cpbc,ATHENA_EXE=/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/executables/athena_cpbc_zero_rate_cd7cefef042ff075,CASE_NAME=zminus6_cpbc_archived_20260730,VALIDATION_KIND=athena,INPUT_DECK=/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc/inputs/tde/aurora/z4c_tov_ks_n3_schwarzschild_bgadapt_cpbc_zminus6_aurora.athinput,RANKS_PER_NODE=12,ATHENA_WALLTIME=00:53:00,ATHENA_EXTRA_ARGS=z4c/boundary_rhs=characteristic_cpbc:z4c/extrap_order=4:problem/outer_sponge_enabled=false \
+  analysis/z4c_characteristic/aurora/submit_z4c_cpbc_validation.pbs
+```
+
+The only intentional evolution difference from the successful Sommerfeld
+retry is `boundary_rhs`; both use the byte-identical archived executable,
+order 4, disabled sponge, input, ranks, placement policy, and wall limits.
+Job `8718576` was initially queued and started at
+`2026-07-30 16:56:31 UTC`.
+
+At the user's request, subsequent segments use Athena's restart path with an
+internal `-t 00:50:00` limit so final outputs and a new checkpoint are
+written before the one-hour PBS limit.  The first segment had already
+started fresh with its recorded `00:53:00` internal limit when this request
+arrived, and no restart existed at that time, so it was neither killed nor
+duplicated.  The submission helper now supports an explicit `RESTART_FILE`:
+it requires the existing case directory and checkpoint, invokes `athena -r`,
+appends rather than overwrites `athena.stdout`, and writes a job-specific
+`run_metadata.restart.<jobid>.txt`.  Fresh runs retain the strict refusal to
+reuse any existing case directory.  Local and Aurora `bash -n` checks pass.
+
+Heartbeat automation `monitor-aurora-cpbc-tde` checks this job and run once
+per hour.  It may submit exactly one sequential 32-node restart with the
+same executable and physics arguments only after a clean below-`t=30`
+termination, a valid latest checkpoint, and confirmation that no live job
+is using the case.  It must stop rather than restart on nonfinite,
+bad-metric, MPI, SYCL, or checkpoint errors.
+
+The first live checkpoint at `2026-07-30 17:40 UTC` was healthy at
+`t=6.2015625`: `H-norm2=1.56996140e-5`,
+`M-norm2=4.10210206e-6`, `rho-max=1.23580692e-4`, and `bad-metric=0`.
+The Hamiltonian maximum was `9.13556e-4` near the star rather than the
+Sommerfeld lower-face value of order `10^1` by `t=7`.  No GPU, MPI, SYCL, or
+nonfinite signature was present.  Twenty-four x-z slices had been written.
+All 384 rank-local restart members were present while the live job was
+finishing its output phase; they are not eligible for restart use until PBS
+terminates cleanly and their completeness is rechecked.
+
+The first archived-CPBC segment subsequently terminated cleanly on its
+internal wall-clock limit.  PBS job `8718576` recorded `Exit_status=0`,
+`resources_used.walltime=00:57:34`, and obit time
+`2026-07-30 17:55:07 UTC`.  Its final history row is finite at
+`t=6.500390625`: `H-norm2=1.65408346e-5`,
+`M-norm2=3.43603718e-6`, and `bad-metric=0`.  The final reported Hamiltonian
+maximum is `8.05063e-4` at `(36.2578,-3.72656,2.92969)`, near the star rather
+than the close lower-z face, and the final `rho_max=1.235100e-4`.  The
+complete stdout contains no nonfinite, bad-metric, MPI, SYCL, or GPU-fault
+signature and ends with `Terminating on wall clock limit`.
+
+After PBS termination, restart generation `00001` contained exactly one
+nonempty member for each of the 384 ranks.  The rank-zero template passed to
+Athena is
+`rst/rank_00000000/z4c_tov_ks_n3_schwarzschild_bgadapt_cpbc_zminus6_aurora.00001.rst`;
+its SHA-256 is
+`2e2c2269a84e7cc8d6c345a43147a14f0cb86cedeafd3b2f570c866272852f15`.
+Source inspection and the existing production restart harness confirm that
+supplying the rank-zero path causes each MPI rank to substitute its own
+`rank_XXXXXXXX` directory.
+
+With no live job using the case and the archived executable reverified as
+`cd7cefef042ff075e85688dd3ec08dca243df479d50b91e0439dd8a20da46478`,
+the first 50-minute restart segment was submitted as job `8718778`:
+
+```text
+qsub -N z4c_cpbc_zm6r1 -l select=32 \
+  -v REPO_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc,BUILD_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/build/aurora-intel-gpu-characteristic-cpbc,ATHENA_EXE=/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/executables/athena_cpbc_zero_rate_cd7cefef042ff075,CASE_NAME=zminus6_cpbc_archived_20260730,VALIDATION_KIND=athena,RESTART_FILE=/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/runs/characteristic_cpbc/zminus6_cpbc_archived_20260730/rst/rank_00000000/z4c_tov_ks_n3_schwarzschild_bgadapt_cpbc_zminus6_aurora.00001.rst,RANKS_PER_NODE=12,ATHENA_WALLTIME=00:50:00,ATHENA_EXTRA_ARGS=z4c/boundary_rhs=characteristic_cpbc:z4c/extrap_order=4:problem/outer_sponge_enabled=false \
+  analysis/z4c_characteristic/aurora/submit_z4c_cpbc_validation.pbs
+```
+
+At `2026-07-30 17:58 UTC`, job `8718778` was queued in
+`debug-scaling`.  It is sequential with the completed first segment and
+reuses the identical run, executable, rank count, boundary condition,
+extrapolation order, and disabled-sponge configuration.
+
+Job `8718778` started at `2026-07-30 18:08:13 UTC`.  At
+`2026-07-30 18:28 UTC` it was running at `t=9.499219`, beyond the
+Sommerfeld control's first catastrophic lower-face growth at approximately
+`t=7.0` and first nonfinite history near `t=7.2`.  The latest complete
+history row at `t=9.45` remains finite with
+`H-norm2=4.77603731e-6`, `M-norm2=9.94985107e-7`, and
+`bad-metric=0`; `rho_max` remains approximately `1.241e-4`.  The appended
+stdout contains no nonfinite, bad-metric, MPI, SYCL, or GPU-fault
+signature.  This is already a qualitative survival improvement over the
+matched archived-executable Sommerfeld control, but the run must continue
+to `t=30` and the independent all-ten-family comparison remains pending.
+
+The first restart segment then terminated cleanly on its internal
+50-minute limit.  PBS job `8718778` recorded `Exit_status=0`,
+`resources_used.walltime=00:52:00`, and obit time
+`2026-07-30 19:01:14 UTC`.  Its final history row at `t=14.002734375`
+remains finite with `H-norm2=8.10899445e-7`,
+`M-norm2=1.68814050e-7`, `bad-metric=0`, and
+`rho_max=1.245926e-4`.  The final Hamiltonian maximum,
+`1.21269e-4` at `(44.3438,-6.28125,-5.90625)`, is on the close-face
+layer but is approximately five orders of magnitude below the matched
+Sommerfeld value during its failure.  No nonfinite, bad-metric, MPI, SYCL,
+GPU, or restart error was found.
+
+Restart generation `00002` contains exactly 384 nonempty rank members.  Its
+rank-zero template has SHA-256
+`9e0563086ed4a499b2748ad1d64c0e071e4213598d8b859ef1e02adaa63e2147`.
+After PBS fully released job `8718778`, the executable hash was reverified,
+no live job was using the case, and the next sequential segment was
+submitted as job `8718933`:
+
+```text
+qsub -N z4c_cpbc_zm6r2 -l select=32 \
+  -v REPO_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc,BUILD_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/build/aurora-intel-gpu-characteristic-cpbc,ATHENA_EXE=/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/executables/athena_cpbc_zero_rate_cd7cefef042ff075,CASE_NAME=zminus6_cpbc_archived_20260730,VALIDATION_KIND=athena,RESTART_FILE=/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/runs/characteristic_cpbc/zminus6_cpbc_archived_20260730/rst/rank_00000000/z4c_tov_ks_n3_schwarzschild_bgadapt_cpbc_zminus6_aurora.00002.rst,RANKS_PER_NODE=12,ATHENA_WALLTIME=00:50:00,ATHENA_EXTRA_ARGS=z4c/boundary_rhs=characteristic_cpbc:z4c/extrap_order=4:problem/outer_sponge_enabled=false \
+  analysis/z4c_characteristic/aurora/submit_z4c_cpbc_validation.pbs
+```
+
+At `2026-07-30 19:02 UTC`, job `8718933` was queued in
+`debug-scaling`.
+
+Job `8718933` started at `2026-07-30 19:12:34 UTC`.  At
+`2026-07-30 20:00 UTC` it was still running at `t=19.74727`.  The latest
+complete history row at `t=19.7015625` remains finite with
+`H-norm2=4.14081869e-7`, `M-norm2=8.25550121e-8`, and
+`bad-metric=0`; `rho_max` is approximately `1.260e-4`.  No nonfinite,
+bad-metric, MPI, SYCL, GPU, or restart error is present.  Because the job
+was still live, no further restart was submitted at this checkpoint.
+
+Segment `8718933` subsequently terminated cleanly.  PBS recorded
+`Exit_status=0`, `resources_used.walltime=00:52:42`, and obit time
+`2026-07-30 20:06:18 UTC`.  The final history row at
+`t=19.75078125` remains finite with `H-norm2=4.11994481e-7`,
+`M-norm2=8.20895725e-8`, `bad-metric=0`, and
+`rho_max=1.260673e-4`.  The close-face Hamiltonian maximum is still bounded
+at `1.22624e-4`; stdout ends on the internal wall-clock limit with no
+nonfinite, bad-metric, MPI, SYCL, GPU, or restart error.
+
+Restart generation `00003` contains exactly 384 nonempty rank members.  Its
+rank-zero template has SHA-256
+`fd4f5fd317c89f65e095cdd6f432fbef1751816851be8ab4455b3fd184c2610b`.
+After revalidating the executable and confirming that no live CPBC job was
+using the case, the next sequential segment was submitted as job `8719210`:
+
+```text
+qsub -N z4c_cpbc_zm6r3 -l select=32 \
+  -v REPO_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/worktrees/athenak_characteristic_cpbc,BUILD_DIR=/flare/MHDTidal/hzhu/tde_n3_validation/build/aurora-intel-gpu-characteristic-cpbc,ATHENA_EXE=/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/executables/athena_cpbc_zero_rate_cd7cefef042ff075,CASE_NAME=zminus6_cpbc_archived_20260730,VALIDATION_KIND=athena,RESTART_FILE=/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/runs/characteristic_cpbc/zminus6_cpbc_archived_20260730/rst/rank_00000000/z4c_tov_ks_n3_schwarzschild_bgadapt_cpbc_zminus6_aurora.00003.rst,RANKS_PER_NODE=12,ATHENA_WALLTIME=00:50:00,ATHENA_EXTRA_ARGS=z4c/boundary_rhs=characteristic_cpbc:z4c/extrap_order=4:problem/outer_sponge_enabled=false \
+  analysis/z4c_characteristic/aurora/submit_z4c_cpbc_validation.pbs
+```
+
+At `2026-07-30 21:01 UTC`, job `8719210` was queued in
+`debug-scaling`.
+
+Job `8719210` started at `2026-07-30 21:11:49 UTC` and reached the requested
+`t=30` without consuming its full internal wall-clock allowance.  PBS
+recorded `Exit_status=0`, `resources_used.walltime=00:34:42`, and obit time
+`2026-07-30 21:47:30 UTC`.  The final history row is finite with
+`H-norm2=1.09007383e-7`, `M-norm2=2.56217870e-8`,
+`bad-metric=0`, and `rho_max=1.28672199e-4`.  The star tracker remains
+valid at `(35.37305,-0.005859,-0.005859)`.  The final Hamiltonian maximum is
+`1.20496e-4` at `(44.3438,-6.28125,-5.90625)`; this close-face residual
+remains bounded through more than three nominal gauge round trips.  Stdout
+ends with `Terminating on time limit` and contains no nonfinite, bad-metric,
+MPI, SYCL, GPU, or restart error.  No further segment was submitted.
+Hourly automation `monitor-aurora-cpbc-tde` was paused after target
+completion.
+
+### Archived-executable thin-z CPBC comparison
+
+The completed run establishes a strong qualitative difference from the
+byte-identical archived-executable Sommerfeld control: Sommerfeld developed
+order-10 to order-100 lower-face Hamiltonian maxima, nonfinite histories,
+and a density-floor stellar state beginning at `t=7.0--7.27`, whereas the
+zero-rate CPBC case remains finite with a close-face maximum near
+`1.2e-4` through `t=30`.
+
+The independent all-ten-family analyzer was run on the causal
+`t=6.5--7.15` stellar/return window (`x=32--45`, `z=-6--6`).  This window
+retains a resolvable face-normal metric frame and does not use boundary
+enforcement diagnostics.  The logs are
+`analyze_zminus6_sommerfeld_causal_6p5_7p15_20260730.log`
+(SHA-256
+`380c58c27faf947ff36d0f994ac18d503d245c1dab7bd2e380f477c29f99af49`)
+and `analyze_zminus6_cpbc_causal_6p5_7p15_20260730.log`
+(SHA-256
+`f04b710b4fcf1bc466b680b8a6d1204b7b140ee5d533f1558548b203e14ae71d`)
+under the project `build_logs` directory.
+
+The maximum raw incoming RMS ratios in that pre-nonfinite slice window are:
+
+| Incoming family | Sommerfeld/CPBC |
+|---|---:|
+| lapse | `1.000036` |
+| longitudinal shift | `1.014123` |
+| transverse shift 1 | `1.078244` |
+| transverse shift 2 | `1.577494` |
+| scalar constraint Theta | `1.020440` |
+| scalar constraint Z | `1.114506` |
+| transverse constraint 1 | `1.022379` |
+| transverse constraint 2 | `1.147016` |
+| TT plus | `1.752773` |
+| TT cross | `1.000010` |
+
+These raw values include the legitimate stationary stellar near field and
+are not a far-reference-subtracted returning signal.  They must not be
+reported as satisfying the tenfold reflection gate.  They show that the two
+runs remain nearly identical in the star region through the last finite
+Sommerfeld residual slice at `t=7.00313`; the catastrophic divergence
+appears immediately afterward in the global histories and at the close
+face:
+
+| Causal-window diagnostic | Sommerfeld maximum | CPBC maximum | Sommerfeld/CPBC |
+|---|---:|---:|---:|
+| `Theta-max` | `3.85857e-2` | `2.01625e-5` | `1.914e3` |
+| `alpha-res` | `1.08070e-2` | `9.49331e-6` | `1.138e3` |
+| `beta-res` | `3.24569e-4` | `3.59848e-6` | `9.020e1` |
+| `Gam-res` | `3.20782e-3` | `2.44045e-5` | `1.314e2` |
+| `C-norm2` | `5.10348e1` | `1.65408e-5` | `3.085e6` |
+| `H-norm2` | `4.76992e1` | `1.30876e-5` | `3.645e6` |
+| `M-norm2` | `3.13449` | `3.43604e-6` | `9.122e5` |
+| `Z-norm2` | `5.02851e-2` | `4.87999e-10` | `1.030e8` |
+| `Theta-norm` | `4.32375e-5` | `1.51984e-8` | `2.845e3` |
+
+A requested lower-face-only characteristic projection used
+`x=-6--6`, `z=-6---3`.  The evolved Sommerfeld inverse-metric normal
+developed an out-of-xz-plane component of `1.00845e-3` at the failure
+slice, exceeding the analyzer's geometric resolvability guard.  The
+projection was therefore rejected rather than silently assuming a
+coordinate-aligned normal.  Raw coordinate-bearing histories and stdout
+still localize the failure at the first lower-z cell layer.  A future
+fully three-dimensional residual output would be required to project the
+all-ten face modes after that metric tilt develops.
+
+The late CPBC-only projection over `t=27--30` contains 13 slices and all ten
+incoming/outgoing families.  Its log is
+`analyze_zminus6_cpbc_late_27_30_20260730.log`, SHA-256
+`24ddd2d0cdba5fe7e975d785e8c4d2a7ccd7ae6b0f1644e2dd1c5c4298105856`.
+The maximum incoming RMS values remain bounded:
+
+| Incoming family | Late CPBC maximum RMS |
+|---|---:|
+| lapse | `3.22520e-6` |
+| longitudinal shift | `3.45682e-6` |
+| transverse shift 1 | `1.83089e-6` |
+| transverse shift 2 | `8.37305e-9` |
+| scalar constraint Theta | `6.41182e-6` |
+| scalar constraint Z | `1.07866e-6` |
+| transverse constraint 1 | `1.69201e-6` |
+| transverse constraint 2 | `1.08745e-8` |
+| TT plus | `1.34214e-6` |
+| TT cross | `8.72326e-8` |
+
+Restarted runs emit the same state at both sides of a segment boundary.
+The CPBC dataset contains duplicate slice times at `6.50039`, `14.0027`,
+and `19.7508`; each pair has the same mesh layout and exactly zero field
+difference, although its binary header and whole-file hash differ.  The
+reader now collapses only field-identical duplicate-time slices and rejects
+any conflicting pair.  Interval-restricted history analysis likewise
+checks finiteness inside the requested interval, permitting finite
+pre-failure Sommerfeld analysis while still preserving its later nonfinite
+rows.  Python compilation, `git diff --check`, and the 20-row analytic
+projection test pass after these reader changes; the projection error is
+`9.02056208e-17`.
+
+This archived zero-rate CPBC result is not a final acceptance result.  The
+existing far reference has different thin-z geometry, only the earlier
+slice orientation, and no executable parity at `t=30`; it cannot supply the
+required matched returning-signal, density, or trajectory subtraction for
+this case.  Consequently the tenfold group gate, per-family 10% gate,
+central-density 1% gate, and `0.1 R_star` trajectory gate remain
+unassessed.  A matched far-boundary reference with x-z residual outputs is
+required if the archived candidate is to be evaluated against those
+criteria.  The newer tangential-principal executable is a separate,
+still-unvalidated candidate and is not represented by this TDE result.
+
+The independent TDE comparator now reads x-y, x-z, or y-z residual slices
+and supports boundary axes 1--3.  It projects all ten incoming families from
+the same independently reconstructed full-conformal-metric face frame.  The
+two radiative projections are
+
+```text
+tt_plus  = -2 A_plus/sqrt(chi) + d_s g_plus
+tt_cross = -2 A_cross/sqrt(chi) + d_s g_cross
+```
+
+where the plus and cross components use the two deterministic metric-unit
+tangents returned by that frame.  Both the x-y and rotated x-z synthetic
+fixtures contain nonzero TT curvature and normal-metric-derivative
+contributions.  On Aurora they pass all ten closed-form expectations with
+maximum incoming error `8.32667268e-17`; the independent Schwarzschild
+background reconstruction error remains exactly zero.  The projector also
+implements the ten outgoing partners using the independently transcribed
+negative-root rows from the boundary kernel.  Expanded closed-form xy/xz
+fixtures exercise all 20 rows and pass on Aurora with maximum error
+`9.02056208e-17`.  The comparator applies the tenfold improvement gate to the
+gauge and constraint groups and separately rejects any individual family
+whose RMS is more than 10% above its matched Sommerfeld value.  Its CPBC and
+CPBC-plus-sponge positional inputs are now optional, so the required
+Sommerfeld-first control can be analyzed and reported independently without
+supplying duplicate placeholder cases.
+
+The optional-case path was exercised end to end on the completed far and
+Sommerfeld-only x-y datasets without rerunning either evolution.  Five
+matched slices and at least 55,888 cells per slice reproduce the earlier
+gauge RMS `5.40074273e-8` and constraint RMS `3.83203235e-7`, while adding
+radiative RMS `1.15740417e-8`.  The separate TT values are
+`tt_plus=1.15740417e-8` and `tt_cross=2.25161618e-10`; all ten modes are
+printed independently.  The exact output is
+`/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/build_logs/compare_tde_boundaries_ten_mode_sommerfeld_smoke_20260730.log`
+with SHA-256
+`fedf2d7d9567e960d3e7e41eac3227c08916c4af3e59b6109abbf97dd835d9c2`.
+
+`analysis/z4c_characteristic/analyze_tde_boundary_series.py` is the
+single-run companion for causal diagnosis.  On every selected x-z residual
+slice it reports RMS and Linf for each incoming and outgoing lapse,
+longitudinal-shift, two transverse-shift, two scalar-constraint, two
+transverse-constraint, and two TT modes.  Each Linf includes its physical
+`x,y,z` cell center, and the final summary retains the time and coordinates
+of the run-wide maximum for every direction/family.  The same per-slice and
+run-wide coordinate-bearing summaries cover residual Theta, Khat, all three
+Gamma components, lapse, and all three shifts.  It also reports the selected
+interval's central-density and bad-metric histories, Hamiltonian and
+momentum norms (including components), STAR_TRACK motion, and a fatal/MPI/
+SYCL error scan.  It uses the same full-metric frame, exact background
+reconstruction, slice-normal resolvability check, and block-edge derivative
+exclusion as the matched comparator; it does not use a boundary-kernel
+diagnostic.  STAR_TRACK and error scans now stream stdout line by line rather
+than loading the entire file; this was required once the intentionally
+continued post-failure control log reached approximately 1.7 GB.  Optional
+asymmetric row bounds allow a lower-face-only x-z window that excludes the
+black-hole/excision region, where open-face sign-straddling assumptions are
+not applicable.
+
+As an end-to-end reader/projection smoke, the analyzer processed the
+completed far-reference x-y slices over `t=13.0`--`13.5`, selected at least
+74 leaf blocks and 55,888 post-margin cells per slice, emitted all 20
+per-direction/family rows plus all summaries, found finite histories and
+zero error signatures.  The 107-line machine-readable log is
+`/lus/flare/projects/MHDTidal/hzhu/tde_n3_validation/build_logs/analyze_tde_boundary_series_full_smoke_20260730.log`
+with SHA-256
+`0b902b3f41aae7f9f57c83e0e1b88870c000345b014d334396d145a85301f6ff`.
+
+The reduced-gate PBS path was statically preflighted but not submitted while
+the control is queued.  This audit found that `PULSE_EXTRAP_ORDER` was
+declared by the PBS harness but was not exported to the pulse-suite child
+process, which would have silently selected that script's order-2 default.
+The harness now passes it explicitly as `CPBC_EXTRAP_ORDER`, records the
+resolution, center, end time, extrapolation order, axes, sides, and family
+selection in `run_metadata.txt`, and records both staged and unstaged patch
+hashes.  Local and Aurora `bash -n` checks pass.  The prepared reduced suite
+will set `CPBC_AXES=1`, retain both default signs and all ten default
+families, and use the requested order 4; no candidate job has been launched.
+
+The experimental tangential-principal implementation was rebuilt from a
+clean build tree with `source ~/athenak_env` and `make -j64`.  The build
+completed successfully with no compiler error; the resulting executable
+SHA-256 is
+`298646be8918a7778329510eefb617cf9458ffe11056688c4f5f881434f9999e`
+and the build-tree/archive copies are byte-identical.  The earlier
+incremental checkpoint build had SHA-256
+`483325ce59992648fc8efcb92fcc9f3bd437c35d01faad0291cf89a1c31e4b2e`
+and is superseded as validation provenance.
+
+The clean device link reports SIMD32/256-register spill counts of
+approximately 78, 82, and 79 slots for the three tangential-principal CPBC
+orientation kernels, compared with 6, 14, and 18 for the adjacent retained
+Sommerfeld kernels.  This material regression is explicitly unresolved.
+The clean executable has not yet passed the pulse, exact-background, corner,
+reflection, TDE, or measured-performance gates and must not be described as
+a validated CPBC.
+
+### Tangential-principal static audit
+
+A term-by-term source audit against `src/z4c/z4c_calcrhs.cpp` confirms that
+the experimental target reconstructs the same NGHOST=4 centered first,
+second, and mixed derivatives used by the volume RHS.  Its frozen principal
+operator retains full-state shift advection for the geometric variables and
+analytic-background shift advection for the background-adapted lapse and
+shift.  It includes the conformal Ricci/lapse trace-free terms, the
+Hamiltonian principal terms, the Gamma-driver Laplacian and grad-div terms,
+and the normal derivatives of the configuration-variable principal RHSs.
+For each incoming row the implemented target is
+
+```text
+full frozen principal characteristic rate
+  - lambda_in * normal derivative of that characteristic
+```
+
+so the remainder is the tangential and mixed principal datum.  The correction
+solves only for the momentum-like RHS variables `Khat`, `Theta`, `A_ij`, and
+`Gamma^i`.  It does not separately assign an outgoing characteristic or
+overwrite the lapse, shift, conformal metric, chi, or auxiliary-B RHS.  As is
+unavoidable in this second-order formulation, changing a momentum-like RHS
+also changes the algebraically evaluated outgoing rate; that is not an
+independent outgoing prescription.
+
+This audit does not establish a nonlinear constraint/Psi0 boundary hierarchy.
+The target intentionally contains only the frozen principal tangential
+terms, not separately derived nonlinear constraint or residual-Psi0
+lower-order terms.  The implementation must therefore continue to be called
+an experimental tangential-principal CPBC.  Static agreement does not
+substitute for the pending pulse, exact-background, oblique determinism, and
+TDE gates.
+
+## Archived thin-z CPBC/Sommerfeld comparison artifacts
+
+The matched archived-executable comparison is complete.  The Sommerfeld
+reproducer (`8718377`) develops a lower-z-localized instability at
+`t/M ~= 7`, has its first nonfinite history row at `t/M = 7.2`, and shortly
+afterward loses the stellar density tracker to the atmosphere floor.  The
+zero-rate characteristic-CPBC run (`8718576`, `8718778`, `8718933`, and
+`8719210`) exits every segment cleanly and reaches `t/M = 30`.  At the exact
+finite history sample `t/M = 7.1015625`, the Sommerfeld/CPBC ratios are
+`5.296842e6` for `H-norm2`, `1.320728e6` for `M-norm2`, and `3.3223e3` for
+`Theta-norm`.  The CPBC endpoint has `H-norm2 = 1.0900738e-7`,
+`M-norm2 = 2.5621787e-8`, close-face `Hmax = 1.20496e-4`, and zero
+bad-metric count.  The supported claim is specific: the archived zero-rate
+CPBC cures the observed Sommerfeld instability in this thin-z configuration.
+
+The orbital-plane morphology analysis reads all 61 CPBC `xy_mhd` density
+slices.  The half-maximum effective core radius stays within `-0.63%` to
+`+1.24%` of its initial value, the density-weighted principal-axis ratio
+stays in `[1.0005, 1.0748]`, and the centered normalized shape difference
+stays below `0.0738`.  At `t/M = 30`, these diagnostics are
+`R_half = 0.0831065 M`, `a/b = 1.02819`, and shape difference `0.0442`.
+The selected Sommerfeld slice is `t/M = 7.00313`, where
+`rho_max = 1.236772e-4` is physical rather than floor-dominated.  No CPBC
+density slice exists at that exact time; the nearest stored CPBC slice is
+`t/M = 7.50234`, offset by `0.49921 M`, and is labeled as such.  The density
+evidence establishes continuity of the two-dimensional orbital-plane core,
+not the unobserved full three-dimensional stellar shape.
+
+The committed report and reproducibility artifacts are:
+
+- `docs/z4c/tde_boundary_comparison.tex` and the compiled six-page
+  `docs/z4c/tde_boundary_comparison.pdf` (PDF SHA-256
+  `88c90982e391c4d6ec5f31e2ea8041d10f6c02556e55ef00f35cdbbb97517d3d`);
+- `docs/z4c/figures/tde_boundary_constraint_histories.pdf`,
+  `tde_boundary_residual_histories.pdf`, and
+  `tde_boundary_theta_slice_t7.pdf`;
+- `docs/z4c/figures/tde_stellar_morphology_cpbc_vs_sommerfeld.pdf`
+  (SHA-256
+  `b1af7d25d1522f4e415c76a5816d9f206fc4124dfc6d6658edc7b03ff205c5bf`);
+- `docs/z4c/figures/tde_stellar_morphology_metrics.csv` (SHA-256
+  `c7e713617cccc37fed4972289763bf1176dd5392c42f99998609d67891787757`).
+
+The final cleanup also hardens the formal comparator and launch harness.  The
+comparator now requires history, STAR_TRACK, and residual-slice coverage
+through a finite required end time (default `30 M`), rejects any nonzero
+bad-metric history, and validates every numeric acceptance threshold against
+NaN or invalid ranges.  The single-run analyzer recognizes explicit
+nonfinite, bad-metric, GPU page-fault, and device-lost signatures.  The PBS
+harness performs kind/repository/build/executable/input/restart preflight
+before creating a run directory, requires a rank-0 base restart inside the
+case `rst/` tree, verifies a complete nonempty rank-local restart cohort, and
+records the effective pulse axes/families/center/end time.  The harness passes
+`bash -n`; Python sources compile; the 20-row incoming/outgoing projection
+test passes with maximum error `9.02056208e-17`; and an invalid-kind preflight
+test exits with status 2 without creating a case directory.
 
 ## Pending acceptance gates
 
-1. Reproduce a material, causally attributable Sommerfeld/extrapolation
-   artifact in the smallest clean no-sponge TDE domain.
-2. Run the immutable old Sommerfeld/zero-rate-CPBC A/B on that selected
-   domain and report all ten independently projected incoming families.
-3. Audit and validate the multidimensional normal/tangential principal
+The material Sommerfeld failure and the immutable archived-executable
+Sommerfeld/zero-rate-CPBC evolutions on the selected thin-z domain are now
+complete.  Remaining gates are:
+
+1. Run the matched thin-z far-boundary reference with x-z residual outputs
+   and executable parity, then evaluate the all-ten returning-signal,
+   density, and trajectory gates.
+2. Audit and validate the multidimensional normal/tangential principal
    split before using the experimental executable for a TDE claim.
-4. Demonstrate at least tenfold returning gauge/constraint reduction, no
+3. Demonstrate at least tenfold returning gauge/constraint reduction, no
    family more than 10% worse than Sommerfeld, central-density difference
    below 1%, and trajectory difference below `0.1 R_star`.
-5. Pass all controlled pulse reflections below 2%, exact backgrounds below
+4. Pass all controlled pulse reflections below 2%, exact backgrounds below
    `1e-12`, corner determinism, and second-order convergence.
-6. Measure CPBC kernel cost below 3% of the Z4c volume RHS.
-7. Complete the 32-node production-input smoke with the `512--640M`,
+5. Measure CPBC kernel cost below 3% of the Z4c volume RHS.
+6. Complete the 32-node production-input smoke with the `512--640M`,
    `tau=16M` sponge and the final candidate.
-8. Rerun default-path parity regressions with the final executable, then
+7. Rerun default-path parity regressions with the final executable, then
    perform the final source/report audit before any release push.
 
 ## Failed or superseded harness attempts
