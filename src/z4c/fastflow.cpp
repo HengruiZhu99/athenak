@@ -559,6 +559,7 @@ bool FastFlow::IsInSearchWindow(Real time) const {
 void FastFlow::Find(int iter, Real time) {
   if (!IsInSearchWindow(time)) return;
   if (wait_until_punc_are_close && !(PuncAreClose())) return;
+  last_search_cycle = iter;
   InitializeOutputFiles();
   if (verbose && ioproc) {
     fprintf(pofile_verbose, "time=%.4f, cycle=%d\n", time, iter);

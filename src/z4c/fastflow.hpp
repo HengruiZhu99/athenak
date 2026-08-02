@@ -58,6 +58,7 @@ class FastFlow {
 
   // Some of the main parameters in the fast-flow algorithm
   bool ah_found; // Horizon found
+  int last_search_cycle = -1; // latest accepted evolution cycle searched
   Real time_first_found; // Time, when horizon first found
   Real initial_radius; // Initial guess for the radius of the horizon
   Real rr_min; // Minimum radius

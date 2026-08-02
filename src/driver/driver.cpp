@@ -348,10 +348,12 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
 
   //---- Step 3.  Cycle through output Types and load data / write files.
   if (!res_flag) { // only write outputs at the beginning of the run
+    Kokkos::Timer output_timer;
     for (auto &out : pout->pout_list) {
       out->LoadOutputData(pmesh);
       out->WriteOutputFile(pmesh, pin);
     }
+    output_time_ += output_timer.seconds();
   }
 
   //---- Step 4.  Initialize various counters, timers, etc.
@@ -441,6 +443,8 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
       }
 
       // Test for/make outputs
+      Kokkos::Timer output_timer;
+      bool wrote_output = false;
       for (auto &out : pout->pout_list) {
         // compare at floating point (32-bit) precision to reduce effect of round off
         float time_32 = static_cast<float>(pmesh->time);
@@ -452,7 +456,11 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
             ((dcycle_ > 0) && ((pmesh->ncycle)%(dcycle_) == 0)) ) {
           out->LoadOutputData(pmesh);
           out->WriteOutputFile(pmesh, pin);
+          wrote_output = true;
         }
+      }
+      if (wrote_output) {
+        output_time_ += output_timer.seconds();
       }
 
       if (!step_stop_reason.empty()) {
@@ -483,10 +491,12 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
 void Driver::Finalize(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
   // cycle through output Types and load data / write files
   //  This design allows for asynchronous outputs to implemented in the future.
+  Kokkos::Timer output_timer;
   for (auto &out : pout->pout_list) {
     out->LoadOutputData(pmesh);
     out->WriteOutputFile(pmesh, pin);
   }
+  output_time_ += output_timer.seconds();
 
   // call any problem specific functions to do work after main loop
   if (pmesh->pgen->pgen_final_func != nullptr) {
@@ -494,6 +504,14 @@ void Driver::Finalize(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
   }
 
   float exe_time = run_time_.seconds();
+  Real maximum_output_time = output_time_;
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &maximum_output_time, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+#endif
+  if (global_variable::my_rank == 0) {
+    std::cout << "output wall time = " << maximum_output_time << std::endl;
+  }
 
   if (time_evolution != TimeEvolution::tstatic) {
 #if MPI_PARALLEL_ENABLED

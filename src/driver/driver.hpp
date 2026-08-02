@@ -60,6 +60,7 @@ class Driver {
 
  private:
   Kokkos::Timer run_time_;      // generalized timer for cpu/gpu/etc
+  Real output_time_ = 0.0;      // cumulative wall time spent loading/writing outputs
   std::uint64_t nmb_updated_;   // running total of MB updated during run
   std::uint64_t npart_updated_; // running total of particles updated during run
   float lb_efficiency_;         // measure of how efficient was load balancing

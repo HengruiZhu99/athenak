@@ -13,6 +13,8 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <Kokkos_Timer.hpp>
+
 #include "athena.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
@@ -324,6 +326,7 @@ TaskStatus Z4c::FindHorizon(Driver *pdrive, int stage) {
     const Real accepted_time = pmy_pack->pmesh->time + pmy_pack->pmesh->dt;
     for (auto & pahf : pfastflow) {
       if (!pahf->ShouldSearch(accepted_cycle, accepted_time)) continue;
+      Kokkos::Timer horizon_timer;
       switch (indcs.ng) {
         case 2: pahf->MetricDerivatives<2>(accepted_time); break;
         case 3: pahf->MetricDerivatives<3>(accepted_time); break;
@@ -331,6 +334,16 @@ TaskStatus Z4c::FindHorizon(Driver *pdrive, int stage) {
       }
       pahf->Find(accepted_cycle, accepted_time);
       pahf->Write(accepted_cycle, accepted_time);
+      Real horizon_seconds = horizon_timer.seconds();
+#if MPI_PARALLEL_ENABLED
+      MPI_Allreduce(MPI_IN_PLACE, &horizon_seconds, 1, MPI_ATHENA_REAL, MPI_MAX,
+                    MPI_COMM_WORLD);
+#endif
+      if (global_variable::my_rank == 0) {
+        std::cout << "FastFlow wall time: cycle=" << accepted_cycle
+                  << " time=" << accepted_time
+                  << " seconds=" << horizon_seconds << std::endl;
+      }
     }
   }
   return TaskStatus::complete;

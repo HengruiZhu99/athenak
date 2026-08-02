@@ -23,6 +23,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/curvature_diagnostics.hpp"
+#include "z4c/fastflow.hpp"
 #include "z4c/z4c.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
@@ -182,7 +183,9 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   const int kretschmann_index = opt.history_kretschmann ? 11 : -1;
   const int max_refinement_level_index = opt.history_kretschmann ? 12 : 11;
   const int max_meshblocks_per_rank_index = max_refinement_level_index + 1;
-  pdata->nhist = max_meshblocks_per_rank_index + 1;
+  const int horizon_status_index = max_meshblocks_per_rank_index + 1;
+  const int horizon_last_search_cycle_index = horizon_status_index + 1;
+  pdata->nhist = horizon_last_search_cycle_index + 1;
   pdata->label[0] = "C-norm2";
   pdata->label[1] = "H-norm2";
   pdata->label[2] = "M-norm2";
@@ -203,8 +206,12 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   }
   pdata->label[max_refinement_level_index] = "maxRefLev";
   pdata->label[max_meshblocks_per_rank_index] = "maxNmbRank";
+  pdata->label[horizon_status_index] = "ahStatus";
+  pdata->label[horizon_last_search_cycle_index] = "ahLastCyc";
   pdata->reduction[max_refinement_level_index] = HistoryData::Reduction::max;
   pdata->reduction[max_meshblocks_per_rank_index] = HistoryData::Reduction::max;
+  pdata->reduction[horizon_status_index] = HistoryData::Reduction::max;
+  pdata->reduction[horizon_last_search_cycle_index] = HistoryData::Reduction::max;
 
   // capture class variabels for kernel
   auto &u0_ = pm->pmb_pack->pz4c->u0;
@@ -335,6 +342,14 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       static_cast<Real>(max_refinement_level);
   pdata->hdata[max_meshblocks_per_rank_index] =
       static_cast<Real>(pm->pmb_pack->nmb_thispack);
+  pdata->hdata[horizon_status_index] = 0.0;
+  pdata->hdata[horizon_last_search_cycle_index] = -1.0;
+  if (!pm->pmb_pack->pz4c->pfastflow.empty()) {
+    pdata->hdata[horizon_status_index] =
+        pm->pmb_pack->pz4c->pfastflow[0]->ah_found ? 1.0 : 0.0;
+    pdata->hdata[horizon_last_search_cycle_index] = static_cast<Real>(
+        pm->pmb_pack->pz4c->pfastflow[0]->last_search_cycle);
+  }
 
   return;
 }

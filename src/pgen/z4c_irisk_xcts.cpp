@@ -130,6 +130,9 @@ void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
   const std::size_t nx = static_cast<std::size_t>(ieg - isg + 1);
   const std::size_t ny = static_cast<std::size_t>(jeg - jsg + 1);
   const std::size_t nz = static_cast<std::size_t>(keg - ksg + 1);
+  Real minimum_psi4 = std::numeric_limits<Real>::infinity();
+  Real minimum_lapse = std::numeric_limits<Real>::infinity();
+  int invalid_fields = 0;
 
   for (int m = 0; m < pmbp->nmb_thispack; ++m) {
     std::vector<double> x(nx), y(ny), z(nz);
@@ -162,6 +165,19 @@ void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
                     ny * static_cast<std::size_t>(k - ksg));
           const double *value =
               values.data() + point * IRISK_ATHENAK_ADM_VARIABLE_COUNT;
+          for (int variable = 0; variable < IRISK_ATHENAK_ADM_VARIABLE_COUNT;
+               ++variable) {
+            invalid_fields |= !std::isfinite(value[variable]);
+          }
+          if (std::isfinite(value[12])) {
+            minimum_psi4 = std::min(minimum_psi4,
+                                    static_cast<Real>(value[12]));
+          }
+          if (std::isfinite(value[13])) {
+            minimum_lapse = std::min(minimum_lapse,
+                                     static_cast<Real>(value[13]));
+          }
+          invalid_fields |= !(value[12] > 0.0) || !(value[13] > 0.0);
           host_adm.g_dd(m, 0, 0, k, j, i) = value[0];
           host_adm.g_dd(m, 0, 1, k, j, i) = value[1];
           host_adm.g_dd(m, 0, 2, k, j, i) = value[2];
@@ -180,6 +196,26 @@ void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
             host_adm.beta_u(m, component, k, j, i) = value[14 + component];
           }
         }
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &invalid_fields, 1, MPI_INT, MPI_MAX,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &minimum_psi4, 1, MPI_ATHENA_REAL, MPI_MIN,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &minimum_lapse, 1, MPI_ATHENA_REAL, MPI_MIN,
+                MPI_COMM_WORLD);
+#endif
+  if (invalid_fields != 0 || !std::isfinite(minimum_psi4) ||
+      !std::isfinite(minimum_lapse) || minimum_psi4 <= 0.0 ||
+      minimum_lapse <= 0.0) {
+    Fail("IrisK spectral import contains nonfinite fields or a nonpositive "
+         "conformal factor/lapse");
+  }
+  if (global_variable::my_rank == 0) {
+    std::cout << std::setprecision(17)
+              << "IrisK import field gates: finite=true min_psi4="
+              << minimum_psi4 << " min_lapse=" << minimum_lapse
+              << std::endl;
   }
   Kokkos::deep_copy(u_adm, host_u_adm);
   Kokkos::deep_copy(pmbp->pz4c->u0, host_u_z4c);
