@@ -1407,15 +1407,11 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
       stage == pdriver->nexp_stages &&
       pm->ncycle % opt.characteristic_bc_diagnostic_interval ==
           opt.characteristic_bc_diagnostic_interval - 1;
-  // Invalid cells must be detected on every boundary update, not only when
-  // the optional amplitude diagnostics are sampled.  The counter array is
-  // tiny; resetting and auditing it every stage prevents an invalid cell from
-  // silently receiving an uncorrected volume RHS for several cycles.
-  auto invalid_counts_ = Kokkos::subview(
-      characteristic_bc_invalid.d_view,
-      std::make_pair(0,static_cast<int>(CPBC_NINVALID)));
-  Kokkos::deep_copy(DevExeSpace(),invalid_counts_,0);
   if (collect_diagnostics) {
+    auto invalid_counts_ = Kokkos::subview(
+        characteristic_bc_invalid.d_view,
+        std::make_pair(0,static_cast<int>(CPBC_NINVALID)));
+    Kokkos::deep_copy(DevExeSpace(),invalid_counts_,0);
     Kokkos::deep_copy(DevExeSpace(),characteristic_bc_diag,0.0);
     Kokkos::fence();
   } else if (measure_performance) {
@@ -1483,7 +1479,7 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
           ApplyResidualCharacteristicBC<tangential_principal>(
           u_,full_,bg_,rhs_,matter_,has_matter,opt_,diag_,time,
           m,k,j,point_i,side,idx,collect_diagnostics);
-      if (status != CPBC_VALID) {
+      if (collect_diagnostics && status != CPBC_VALID) {
         Kokkos::atomic_add(&invalid_(status),1);
       }
     }
@@ -1520,7 +1516,7 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
           ApplyResidualCharacteristicBC<tangential_principal>(
           u_,full_,bg_,rhs_,matter_,has_matter,opt_,diag_,time,
           m,k,point_j,i,side,idx,collect_diagnostics);
-      if (status != CPBC_VALID) {
+      if (collect_diagnostics && status != CPBC_VALID) {
         Kokkos::atomic_add(&invalid_(status),1);
       }
     }
@@ -1555,7 +1551,7 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
           ApplyResidualCharacteristicBC<tangential_principal>(
           u_,full_,bg_,rhs_,matter_,has_matter,opt_,diag_,time,
           m,point_k,j,i,side,idx,collect_diagnostics);
-      if (status != CPBC_VALID) {
+      if (collect_diagnostics && status != CPBC_VALID) {
         Kokkos::atomic_add(&invalid_(status),1);
       }
     }
@@ -1570,62 +1566,9 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
     launch_characteristic_kernels(CharacteristicSourceTag<false>{});
   }
 
-  Kokkos::fence();
-  const Real elapsed_kernel_seconds = kernel_timer.seconds();
-  auto invalid_h = Kokkos::create_mirror_view_and_copy(
-      HostMemSpace(),invalid_counts_);
-  int invalid_counts[CPBC_NINVALID];
-  for (int n = 0; n < CPBC_NINVALID; ++n) {
-    invalid_counts[n] = invalid_h(n);
-  }
-  int invalid_count = 0;
-  for (int n = 1; n < CPBC_NINVALID; ++n) {
-    invalid_count += invalid_counts[n];
-  }
-  if (invalid_count != 0) {
-    auto bg_h = Kokkos::create_mirror_view_and_copy(HostMemSpace(),u_bg);
-    std::cout << "### FATAL ERROR: characteristic_cpbc rank "
-                << global_variable::my_rank << " found "
-                << invalid_count
-                << " boundary cells with an invalid metric, gauge driver, "
-                << "cone separation, characteristic speed, or excessive "
-                << "matter energy density."
-                << " metric_det="
-                << invalid_counts[CPBC_INVALID_METRIC_DETERMINANT]
-                << " metric_normal="
-                << invalid_counts[CPBC_INVALID_METRIC_NORMAL]
-                << " metric_tangent1="
-                << invalid_counts[CPBC_INVALID_METRIC_TANGENT1]
-                << " metric_tangent2="
-                << invalid_counts[CPBC_INVALID_METRIC_TANGENT2]
-                << " matter=" << invalid_counts[CPBC_INVALID_MATTER]
-                << " coefficient="
-                << invalid_counts[CPBC_INVALID_COEFFICIENT]
-                << " speed=" << invalid_counts[CPBC_INVALID_SPEED]
-                << " cones="
-                << invalid_counts[CPBC_INVALID_CONE_SEPARATION]
-                << " spacing=" << invalid_counts[CPBC_INVALID_SPACING]
-                << " scalar_map="
-                << invalid_counts[CPBC_INVALID_SCALAR_MAP]
-                << " sample_bg={chi:"
-                << bg_h(0,I_Z4C_CHI,ks,js,is)
-                << ",gxx:" << bg_h(0,I_Z4C_GXX,ks,js,is)
-                << ",gxy:" << bg_h(0,I_Z4C_GXY,ks,js,is)
-                << ",gxz:" << bg_h(0,I_Z4C_GXZ,ks,js,is)
-                << ",gyy:" << bg_h(0,I_Z4C_GYY,ks,js,is)
-                << ",gyz:" << bg_h(0,I_Z4C_GYZ,ks,js,is)
-                << ",gzz:" << bg_h(0,I_Z4C_GZZ,ks,js,is)
-                << ",alpha:" << bg_h(0,I_Z4C_ALPHA,ks,js,is)
-              << "}" << std::endl;
-#if MPI_PARALLEL_ENABLED
-    MPI_Abort(MPI_COMM_WORLD,EXIT_FAILURE);
-#endif
-    std::exit(EXIT_FAILURE);
-  }
-
   if (measure_performance) {
     Kokkos::fence();
-    Real max_kernel_seconds = elapsed_kernel_seconds;
+    Real max_kernel_seconds = kernel_timer.seconds();
     Real max_volume_rhs_seconds = characteristic_bc_volume_rhs_seconds;
     Real max_rank_fraction =
         characteristic_bc_volume_rhs_seconds > 0.0 ?
@@ -1648,7 +1591,63 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   }
 
   if (collect_diagnostics) {
-    Real max_diagnostic_kernel_seconds = elapsed_kernel_seconds;
+    Kokkos::fence();
+    Real max_diagnostic_kernel_seconds = kernel_timer.seconds();
+    auto invalid_h = Kokkos::create_mirror_view_and_copy(
+        HostMemSpace(),characteristic_bc_invalid.d_view);
+    int invalid_counts[CPBC_NINVALID];
+    for (int n = 0; n < CPBC_NINVALID; ++n) {
+      invalid_counts[n] = invalid_h(n);
+    }
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE,invalid_counts,CPBC_NINVALID,MPI_INT,MPI_SUM,
+                  MPI_COMM_WORLD);
+#endif
+    int invalid_count = 0;
+    for (int n = 1; n < CPBC_NINVALID; ++n) {
+      invalid_count += invalid_counts[n];
+    }
+    if (invalid_count != 0) {
+      if (global_variable::my_rank == 0) {
+        auto bg_h =
+            Kokkos::create_mirror_view_and_copy(HostMemSpace(),u_bg);
+        std::cout << "### FATAL ERROR: characteristic_cpbc found "
+                  << invalid_count
+                  << " boundary cells with an invalid metric, gauge driver, "
+                  << "cone separation, characteristic speed, or excessive "
+                  << "matter energy density."
+                  << " metric_det="
+                  << invalid_counts[CPBC_INVALID_METRIC_DETERMINANT]
+                  << " metric_normal="
+                  << invalid_counts[CPBC_INVALID_METRIC_NORMAL]
+                  << " metric_tangent1="
+                  << invalid_counts[CPBC_INVALID_METRIC_TANGENT1]
+                  << " metric_tangent2="
+                  << invalid_counts[CPBC_INVALID_METRIC_TANGENT2]
+                  << " matter=" << invalid_counts[CPBC_INVALID_MATTER]
+                  << " coefficient="
+                  << invalid_counts[CPBC_INVALID_COEFFICIENT]
+                  << " speed=" << invalid_counts[CPBC_INVALID_SPEED]
+                  << " cones="
+                  << invalid_counts[CPBC_INVALID_CONE_SEPARATION]
+                  << " spacing=" << invalid_counts[CPBC_INVALID_SPACING]
+                  << " scalar_map="
+                  << invalid_counts[CPBC_INVALID_SCALAR_MAP]
+                  << " sample_bg={chi:"
+                  << bg_h(0,I_Z4C_CHI,ks,js,is)
+                  << ",gxx:" << bg_h(0,I_Z4C_GXX,ks,js,is)
+                  << ",gxy:" << bg_h(0,I_Z4C_GXY,ks,js,is)
+                  << ",gxz:" << bg_h(0,I_Z4C_GXZ,ks,js,is)
+                  << ",gyy:" << bg_h(0,I_Z4C_GYY,ks,js,is)
+                  << ",gyz:" << bg_h(0,I_Z4C_GYZ,ks,js,is)
+                  << ",gzz:" << bg_h(0,I_Z4C_GZZ,ks,js,is)
+                  << ",alpha:" << bg_h(0,I_Z4C_ALPHA,ks,js,is)
+                  << "}"
+                  << std::endl;
+      }
+      std::exit(EXIT_FAILURE);
+    }
+
     auto diag_h =
         Kokkos::create_mirror_view_and_copy(HostMemSpace(),characteristic_bc_diag);
     Real values[CPBC_NDIAG];
