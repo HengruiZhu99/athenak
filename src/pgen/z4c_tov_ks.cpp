@@ -1486,6 +1486,8 @@ void FillTOVPrimitivesAndADM(ParameterInput *pin, Mesh *pmy_mesh, TOVEOS &eos,
   Real pfloor = pin->GetOrAddReal("mhd", "pfloor", tov_star.pfloor);
   constexpr bool use_ye = tov::UsesYe<TOVEOS>;
   Real ye_atmo = pin->GetOrAddReal("mhd", "s0_atmosphere", 0.5);
+  bool boost_atmosphere =
+      pin->GetOrAddBoolean("problem", "boost_atmosphere", false);
   int nvars = pmbp->pmhd->nmhd;
   int nscalars = pmbp->pmhd->nscalars;
   Real lorentz = 1.0/std::sqrt(fmax(1.0e-16, 1.0 - SQR(star_boost_mag)));
@@ -1494,6 +1496,7 @@ void FillTOVPrimitivesAndADM(ParameterInput *pin, Mesh *pmy_mesh, TOVEOS &eos,
   const Real star_center_x3_l = star_center_x3;
   const Real star_boost_mag_l = star_boost_mag;
   const bool star_isotropic_l = star_isotropic;
+  const bool boost_atmosphere_l = boost_atmosphere;
   const Real star_rot_00_l = star_rot_00;
   const Real star_rot_01_l = star_rot_01;
   const Real star_rot_02_l = star_rot_02;
@@ -1536,6 +1539,7 @@ void FillTOVPrimitivesAndADM(ParameterInput *pin, Mesh *pmy_mesh, TOVEOS &eos,
 
     w0(m,IDN,k,j,i) = fmax(rho, dfloor);
     w0(m,IPR,k,j,i) = fmax(p, pfloor);
+    const bool stellar_matter = (rho > dfloor);
     SetYeScalar(std::integral_constant<bool, use_ye>{}, eos, w0, rho, ye_atmo,
                 nscalars, nvars, m, k, j, i);
 
@@ -1568,9 +1572,15 @@ void FillTOVPrimitivesAndADM(ParameterInput *pin, Mesh *pmy_mesh, TOVEOS &eos,
       Real u0 = lorentz/fmax(alp, 1.0e-16);
       Real ui_par = lorentz*star_boost_mag_l/fmax(alp, 1.0e-16);
       Real uu_par = ui_par + u0*beta_par;
-      w0(m,IVX,k,j,i) = uu_par*star_rot_00_l;
-      w0(m,IVY,k,j,i) = uu_par*star_rot_01_l;
-      w0(m,IVZ,k,j,i) = uu_par*star_rot_02_l;
+      if (stellar_matter || boost_atmosphere_l) {
+        w0(m,IVX,k,j,i) = uu_par*star_rot_00_l;
+        w0(m,IVY,k,j,i) = uu_par*star_rot_01_l;
+        w0(m,IVZ,k,j,i) = uu_par*star_rot_02_l;
+      } else {
+        w0(m,IVX,k,j,i) = 0.0;
+        w0(m,IVY,k,j,i) = 0.0;
+        w0(m,IVZ,k,j,i) = 0.0;
+      }
     } else {
       w0(m,IVX,k,j,i) = 0.0;
       w0(m,IVY,k,j,i) = 0.0;

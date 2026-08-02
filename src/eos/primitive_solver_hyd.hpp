@@ -133,8 +133,23 @@ class PrimitiveSolverHydro {
         pmy_pack(pp), nerrs(0) {
     SetPolicyParams(block, pin);
     Real mb = ps.GetEOS().GetBaryonMass();
-    ps.GetEOSMutable().SetDensityFloor(pin->GetOrAddReal(block, "dfloor", (FLT_MIN))/mb);
-    ps.GetEOSMutable().SetTemperatureFloor(pin->GetOrAddReal(block, "tfloor", (FLT_MIN)));
+    Real dfloor = pin->GetOrAddReal(block, "dfloor", (FLT_MIN));
+    ps.GetEOSMutable().SetDensityFloor(dfloor/mb);
+
+    // The ideal-gas primitive solver floors temperature rather than pressure.
+    // When a pressure floor is supplied without an explicit temperature floor,
+    // choose T_atm so that p(rho_atm, T_atm) equals that pressure floor.  This
+    // keeps the runtime reset state consistent with the atmosphere initialized
+    // by problem generators that use <mhd>/pfloor.
+    Real tfloor_default = FLT_MIN;
+    if constexpr(std::is_same_v<Primitive::IdealGas, EOSPolicy>) {
+      if (pin->DoesParameterExist(block, "pfloor") && dfloor > 0.0) {
+        Real pfloor = pin->GetReal(block, "pfloor");
+        tfloor_default = ps.GetEOS().GetTemperatureFromP(dfloor/mb, pfloor, nullptr);
+      }
+    }
+    ps.GetEOSMutable().SetTemperatureFloor(
+        pin->GetOrAddReal(block, "tfloor", tfloor_default));
     ps.GetEOSMutable().SetThreshold(pin->GetOrAddReal(block, "dthreshold", 1.0));
     ps.tol = pin->GetOrAddReal(block, "c2p_tol", 1e-15);
     ps.GetRootSolverMutable().iterations = pin->GetOrAddInteger(block, "c2p_iter", 50);
