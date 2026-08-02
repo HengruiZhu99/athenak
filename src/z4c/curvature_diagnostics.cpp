@@ -48,7 +48,7 @@ Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaxima(Mesh *pm) {
       },
       Kokkos::Max<Real>(max_abs_k));
 
-  Real max_kretschmann = 0.0;
+  Real max_abs_kretschmann = 0.0;
   Kokkos::parallel_reduce(
       "GlobalCurvatureMaxKretschmann",
       Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
@@ -68,19 +68,19 @@ Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaxima(Mesh *pm) {
         if (!diagnostic.valid) {
           result = std::numeric_limits<Real>::infinity();
         } else {
-          result = fmax(result, diagnostic.kretschmann);
+          result = fmax(result, fabs(diagnostic.kretschmann));
         }
       },
-      Kokkos::Max<Real>(max_kretschmann));
+      Kokkos::Max<Real>(max_abs_kretschmann));
 
-  Real values[2] = {max_abs_k, max_kretschmann};
+  Real values[2] = {max_abs_k, max_abs_kretschmann};
 #if MPI_PARALLEL_ENABLED
   MPI_Allreduce(MPI_IN_PLACE, values, 2, MPI_ATHENA_REAL, MPI_MAX,
                 MPI_COMM_WORLD);
 #endif
   Z4cGlobalCurvatureMaxima maxima;
   maxima.max_abs_k = values[0];
-  maxima.max_kretschmann = values[1];
+  maxima.max_abs_kretschmann = values[1];
   maxima.finite =
       Kokkos::isfinite(values[0]) && Kokkos::isfinite(values[1]);
   return maxima;

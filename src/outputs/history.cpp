@@ -7,6 +7,7 @@
 //  \brief writes history output data, volume-averaged quantities that are output
 //         frequently in time to trace their evolution.
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <iomanip>
@@ -178,7 +179,10 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
 void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   auto &opt = pm->pmb_pack->pz4c->opt;
   // set number of and names of history variables for z4c
-  pdata->nhist = opt.history_kretschmann ? 12 : 11;
+  const int kretschmann_index = opt.history_kretschmann ? 11 : -1;
+  const int max_refinement_level_index = opt.history_kretschmann ? 12 : 11;
+  const int max_meshblocks_per_rank_index = max_refinement_level_index + 1;
+  pdata->nhist = max_meshblocks_per_rank_index + 1;
   pdata->label[0] = "C-norm2";
   pdata->label[1] = "H-norm2";
   pdata->label[2] = "M-norm2";
@@ -194,9 +198,13 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->reduction[10] = HistoryData::Reduction::max;
   if (opt.history_kretschmann) {
     // History headers retain ten characters, so keep this stable short label.
-    pdata->label[11] = "maxKretsch";
-    pdata->reduction[11] = HistoryData::Reduction::max;
+    pdata->label[kretschmann_index] = "maxAbsKret";
+    pdata->reduction[kretschmann_index] = HistoryData::Reduction::max;
   }
+  pdata->label[max_refinement_level_index] = "maxRefLev";
+  pdata->label[max_meshblocks_per_rank_index] = "maxNmbRank";
+  pdata->reduction[max_refinement_level_index] = HistoryData::Reduction::max;
+  pdata->reduction[max_meshblocks_per_rank_index] = HistoryData::Reduction::max;
 
   // capture class variabels for kernel
   auto &u0_ = pm->pmb_pack->pz4c->u0;
@@ -289,11 +297,11 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->hdata[9] = max_abs_K;
   pdata->hdata[10] = static_cast<Real>(pm->nmb_total);
   if (opt.history_kretschmann) {
-    Real max_kretschmann = 0.0;
+    Real max_abs_kretschmann = 0.0;
     Kokkos::parallel_reduce(
         "Z4cHistoryMaxKretschmann",
         Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
-        KOKKOS_LAMBDA(const int &idx, Real &rank_max_kretschmann) {
+        KOKKOS_LAMBDA(const int &idx, Real &rank_max_abs_kretschmann) {
           const int m = idx / nkji;
           int k = (idx - m * nkji) / nji;
           int j = (idx - m * nkji - k * nji) / nx1;
@@ -307,15 +315,26 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
           const auto diagnostic = ComputeZ4cCurvatureDiagnostics<4, false>(
               adm.g_dd, adm.vK_dd, inverse_spacing, m, k, j, i);
           if (!diagnostic.valid) {
-            rank_max_kretschmann = std::numeric_limits<Real>::infinity();
+            rank_max_abs_kretschmann = std::numeric_limits<Real>::infinity();
           } else {
-            rank_max_kretschmann =
-                fmax(rank_max_kretschmann, diagnostic.kretschmann);
+            rank_max_abs_kretschmann =
+                fmax(rank_max_abs_kretschmann, fabs(diagnostic.kretschmann));
           }
         },
-        Kokkos::Max<Real>(max_kretschmann));
-    pdata->hdata[11] = max_kretschmann;
+        Kokkos::Max<Real>(max_abs_kretschmann));
+    pdata->hdata[kretschmann_index] = max_abs_kretschmann;
   }
+  int max_refinement_level = 0;
+  const int first_local_gid = pm->gids_eachrank[global_variable::my_rank];
+  for (int m = 0; m < pm->pmb_pack->nmb_thispack; ++m) {
+    max_refinement_level = std::max(
+        max_refinement_level,
+        pm->lloc_eachmb[first_local_gid + m].level - pm->root_level);
+  }
+  pdata->hdata[max_refinement_level_index] =
+      static_cast<Real>(max_refinement_level);
+  pdata->hdata[max_meshblocks_per_rank_index] =
+      static_cast<Real>(pm->pmb_pack->nmb_thispack);
 
   return;
 }

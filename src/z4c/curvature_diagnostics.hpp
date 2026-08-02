@@ -301,7 +301,7 @@ KOKKOS_INLINE_FUNCTION Z4cCurvatureDiagnostics ComputeZ4cCurvatureDiagnostics(
 
 struct Z4cGlobalCurvatureMaxima {
   Real max_abs_k = 0.0;
-  Real max_kretschmann = 0.0;
+  Real max_abs_kretschmann = 0.0;
   bool finite = true;
 };
 

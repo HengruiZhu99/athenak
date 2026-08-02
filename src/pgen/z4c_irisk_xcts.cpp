@@ -11,7 +11,6 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
-#include <deque>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
@@ -454,28 +453,33 @@ class CollapseTerminationMonitor {
             pin->GetOrAddBoolean("problem", "stop_on_horizon", false)),
         stop_on_dispersion_(
             pin->GetOrAddBoolean("problem", "stop_on_dispersion", false)),
+        max_meshblocks_per_rank_stop_(pin->GetOrAddInteger(
+            "problem", "max_meshblocks_per_rank_stop", 0)),
         check_interval_(
             pin->GetOrAddInteger("problem", "termination_check_interval", 8)),
         minimum_time_(
-            pin->GetOrAddReal("problem", "dispersion_min_time", 20.0)),
-        window_size_(
-            pin->GetOrAddInteger("problem", "dispersion_window", 16)),
+            pin->GetOrAddReal("problem", "dispersion_min_time", 10.0)),
         global_decay_(
             pin->GetOrAddReal("problem", "dispersion_global_decay", 0.05)),
         window_decay_(
             pin->GetOrAddReal("problem", "dispersion_window_decay", 0.5)),
-        peak_kretschmann_(pin->GetOrAddReal(
-            "problem", "termination_peak_maxKretsch", 0.0)),
+        peak_abs_kretschmann_(pin->GetOrAddReal(
+            "problem", "termination_peak_maxAbsKret", 0.0)),
         peak_abs_k_(pin->GetOrAddReal(
             "problem", "termination_peak_max_abs_K", 0.0)) {
+    // Consume the superseded sample-count key so older decks remain parseable;
+    // dispersal authority below uses the fixed coordinate-time windows [8,9]
+    // and [9,10] instead.
+    [[maybe_unused]] const int legacy_window_size =
+        pin_->GetOrAddInteger("problem", "dispersion_window", 16);
     if (check_interval_ < 1) {
       Fail("problem.termination_check_interval must be positive");
     }
-    if (minimum_time_ < 0.0 || !std::isfinite(minimum_time_)) {
-      Fail("problem.dispersion_min_time must be finite and nonnegative");
+    if (max_meshblocks_per_rank_stop_ < 0) {
+      Fail("problem.max_meshblocks_per_rank_stop must be nonnegative");
     }
-    if (window_size_ < 4) {
-      Fail("problem.dispersion_window must be at least four");
+    if (minimum_time_ < 10.0 || !std::isfinite(minimum_time_)) {
+      Fail("problem.dispersion_min_time must be finite and at least 10");
     }
     if (!(global_decay_ > 0.0 && global_decay_ < 1.0) ||
         !(window_decay_ > 0.0 && window_decay_ < 1.0)) {
@@ -495,9 +499,18 @@ class CollapseTerminationMonitor {
         }
       }
     }
-    if (!horizon_found &&
-        (!stop_on_dispersion_ ||
-         pm->ncycle % check_interval_ != 0)) {
+    int max_meshblocks_per_rank = pm->pmb_pack->nmb_thispack;
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, &max_meshblocks_per_rank, 1, MPI_INT, MPI_MAX,
+                  MPI_COMM_WORLD);
+#endif
+    const bool meshblock_capacity_reached =
+        max_meshblocks_per_rank_stop_ > 0 &&
+        max_meshblocks_per_rank >= max_meshblocks_per_rank_stop_;
+    // The resource guard is checked every cycle so the configured 180-block
+    // clean stop cannot be skipped on the way to AthenaK's hard 200-block cap.
+    if (!horizon_found && !meshblock_capacity_reached &&
+        pm->ncycle % check_interval_ != 0) {
       return {};
     }
 
@@ -508,36 +521,49 @@ class CollapseTerminationMonitor {
       Fail("nonfinite curvature or constraint diagnostic in collapse termination monitor");
     }
     if (horizon_found) {
-      WriteTermination(pm, "collapse", maxima, constraints);
+      WriteTermination(pm, "collapse", maxima, constraints,
+                       max_meshblocks_per_rank);
       std::ostringstream reason;
       reason << "confirmed apparent horizon at t=" << horizon_time;
       return reason.str();
     }
-    peak_kretschmann_ =
-        std::max(peak_kretschmann_, maxima.max_kretschmann);
-    peak_abs_k_ = std::max(peak_abs_k_, maxima.max_abs_k);
-    pin_->SetReal("problem", "termination_peak_maxKretsch",
-                  peak_kretschmann_);
-    pin_->SetReal("problem", "termination_peak_max_abs_K", peak_abs_k_);
-    Push(&kretschmann_, maxima.max_kretschmann);
-    Push(&abs_k_, maxima.max_abs_k);
-
-    if (pm->time < minimum_time_ ||
-        static_cast<int>(kretschmann_.size()) < window_size_) {
+    if (meshblock_capacity_reached) {
+      WriteTermination(pm, "meshblock_capacity", maxima, constraints,
+                       max_meshblocks_per_rank);
+      std::ostringstream reason;
+      reason << "maximum per-rank MeshBlock occupancy reached "
+             << max_meshblocks_per_rank;
+      return reason.str();
+    }
+    if (!stop_on_dispersion_) {
       return {};
     }
-    const int half = window_size_ / 2;
-    const Real first_kretschmann =
-        MaxRange(kretschmann_, 0, half);
-    const Real second_kretschmann =
-        MaxRange(kretschmann_, half, window_size_);
-    const Real first_abs_k = MaxRange(abs_k_, 0, half);
-    const Real second_abs_k =
-        MaxRange(abs_k_, half, window_size_);
+    peak_abs_kretschmann_ =
+        std::max(peak_abs_kretschmann_, maxima.max_abs_kretschmann);
+    peak_abs_k_ = std::max(peak_abs_k_, maxima.max_abs_k);
+    pin_->SetReal("problem", "termination_peak_maxAbsKret",
+                  peak_abs_kretschmann_);
+    pin_->SetReal("problem", "termination_peak_max_abs_K", peak_abs_k_);
+    observations_.push_back(
+        {pm->time, maxima.max_abs_kretschmann, maxima.max_abs_k});
+
+    if (pm->time < minimum_time_) {
+      return {};
+    }
+    Real first_abs_kretschmann = 0.0;
+    Real second_abs_kretschmann = 0.0;
+    Real first_abs_k = 0.0;
+    Real second_abs_k = 0.0;
+    if (!MaxWindow(8.0, 9.0, &first_abs_kretschmann, &first_abs_k) ||
+        !MaxWindow(9.0, 10.0, &second_abs_kretschmann, &second_abs_k)) {
+      return {};
+    }
     const bool curvature_decayed =
-        peak_kretschmann_ > 0.0 &&
-        maxima.max_kretschmann <= global_decay_ * peak_kretschmann_ &&
-        second_kretschmann <= window_decay_ * first_kretschmann;
+        peak_abs_kretschmann_ > 0.0 &&
+        maxima.max_abs_kretschmann <=
+            global_decay_ * peak_abs_kretschmann_ &&
+        second_abs_kretschmann <=
+            window_decay_ * first_abs_kretschmann;
     const bool extrinsic_curvature_decayed =
         peak_abs_k_ > 0.0 &&
         maxima.max_abs_k <= global_decay_ * peak_abs_k_ &&
@@ -546,40 +572,50 @@ class CollapseTerminationMonitor {
       return {};
     }
 
-    WriteTermination(pm, "dispersal", maxima, constraints);
+    WriteTermination(pm, "dispersal", maxima, constraints,
+                     max_meshblocks_per_rank);
     std::ostringstream reason;
     reason << "sustained dispersal at t=" << pm->time
-           << " maxKretsch/peak="
-           << maxima.max_kretschmann / peak_kretschmann_
+           << " maxAbsKret/peak="
+           << maxima.max_abs_kretschmann / peak_abs_kretschmann_
            << " max_abs_K/peak=" << maxima.max_abs_k / peak_abs_k_;
     return reason.str();
   }
 
   bool enabled() const {
-    return stop_on_horizon_ || stop_on_dispersion_;
+    return stop_on_horizon_ || stop_on_dispersion_ ||
+           max_meshblocks_per_rank_stop_ > 0;
   }
 
  private:
-  void Push(std::deque<Real> *values, Real value) {
-    values->push_back(value);
-    while (static_cast<int>(values->size()) > window_size_) {
-      values->pop_front();
-    }
-  }
+  struct CurvatureObservation {
+    Real time;
+    Real max_abs_kretschmann;
+    Real max_abs_k;
+  };
 
-  static Real MaxRange(const std::deque<Real> &values,
-                       int begin, int end) {
-    Real result = 0.0;
-    for (int index = begin; index < end; ++index) {
-      result = std::max(result, values[static_cast<std::size_t>(index)]);
+  bool MaxWindow(Real begin, Real end, Real *max_abs_kretschmann,
+                 Real *max_abs_k) const {
+    bool found = false;
+    *max_abs_kretschmann = 0.0;
+    *max_abs_k = 0.0;
+    for (const auto &observation : observations_) {
+      if (observation.time < begin || observation.time > end) {
+        continue;
+      }
+      found = true;
+      *max_abs_kretschmann =
+          std::max(*max_abs_kretschmann, observation.max_abs_kretschmann);
+      *max_abs_k = std::max(*max_abs_k, observation.max_abs_k);
     }
-    return result;
+    return found;
   }
 
   void WriteTermination(
       Mesh *pm, const std::string &outcome,
       const Z4cGlobalCurvatureMaxima &maxima,
-      const ConstraintSummary &constraints) const {
+      const ConstraintSummary &constraints,
+      int max_meshblocks_per_rank) const {
     if (global_variable::my_rank != 0) {
       return;
     }
@@ -592,11 +628,14 @@ class CollapseTerminationMonitor {
     const auto &proper_box = constraints.proper_box;
     output << std::setprecision(17)
            << "{\n"
-           << "  \"schema_version\": 1,\n"
+           << "  \"schema_version\": 2,\n"
            << "  \"outcome\": \"" << outcome << "\",\n"
            << "  \"time\": " << pm->time << ",\n"
            << "  \"cycle\": " << pm->ncycle << ",\n"
-           << "  \"maxKretsch\": " << maxima.max_kretschmann << ",\n"
+           << "  \"max_meshblocks_per_rank\": "
+           << max_meshblocks_per_rank << ",\n"
+           << "  \"max_abs_Kretschmann\": "
+           << maxima.max_abs_kretschmann << ",\n"
            << "  \"max_abs_K\": " << maxima.max_abs_k << ",\n"
            << "  \"constraint_weighting\": \"proper_volume\",\n"
            << "  \"C_rms\": " << proper_box.c_rms << ",\n"
@@ -610,15 +649,14 @@ class CollapseTerminationMonitor {
   ParameterInput *pin_;
   bool stop_on_horizon_;
   bool stop_on_dispersion_;
+  int max_meshblocks_per_rank_stop_;
   int check_interval_;
   Real minimum_time_;
-  int window_size_;
   Real global_decay_;
   Real window_decay_;
-  Real peak_kretschmann_;
+  Real peak_abs_kretschmann_;
   Real peak_abs_k_;
-  std::deque<Real> kretschmann_;
-  std::deque<Real> abs_k_;
+  std::vector<CurvatureObservation> observations_;
 };
 
 void ConfigureCollapseTermination(ProblemGenerator *problem,

@@ -125,21 +125,27 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   }
 
   // Convergence parameters
-  hmean_tol = pin->GetOrAddReal("fastflow", "hmean_tol_" + n_str, 100.);
+  // Consume the legacy key for input compatibility, but do not use a fixed
+  // dimensionful integrated-expansion ceiling as a horizon-authority gate.
+  [[maybe_unused]] const Real legacy_hmean_tol =
+      pin->GetOrAddReal("fastflow", "hmean_tol_" + n_str, 100.);
   mass_tol = pin->GetOrAddReal("fastflow", "mass_tol_" + n_str, 1e-2);
   mass_relative_tol =
       pin->GetOrAddReal("fastflow", "mass_relative_tol_" + n_str, 1e-4);
   dimensionless_hrms_tol =
       pin->GetOrAddReal("fastflow", "dimensionless_hrms_tol_" + n_str, 3e-2);
+  minimum_radius_cells =
+      pin->GetOrAddReal("fastflow", "minimum_radius_cells_" + n_str, 0.0);
   if (!(Kokkos::isfinite(mass_tol)) || mass_tol < 0.0 ||
       !(Kokkos::isfinite(mass_relative_tol)) || mass_relative_tol <= 0.0 ||
       !(Kokkos::isfinite(dimensionless_hrms_tol)) ||
-      dimensionless_hrms_tol <= 0.0) {
+      dimensionless_hrms_tol <= 0.0 ||
+      !(Kokkos::isfinite(minimum_radius_cells)) || minimum_radius_cells < 0.0) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl
               << "FastFlow convergence tolerances must be finite, with "
                  "mass_tol >= 0, mass_relative_tol > 0, and "
-                 "dimensionless_hrms_tol > 0"
+                 "dimensionless_hrms_tol > 0, and minimum_radius_cells >= 0"
               << std::endl;
     exit(EXIT_FAILURE);
   }
@@ -373,7 +379,9 @@ void FastFlow::InitializeOutputFiles() {
   }
   if (new_summary) {
     fprintf(pofile_summary, "# 1:iter 2:time 3:mass 4:Sx 5:Sy 6:Sz 7:S 8:area "
-                             "9:hrms 10:hmean 11:meanradius 12:minradius\n");
+                             "9:hrms 10:hmean 11:meanradius 12:minradius "
+                             "13:min_cell_spacing 14:minradius_cells "
+                             "15:relative_mass_change 16:flow_evaluations\n");
     fflush(pofile_summary);
   }
 
@@ -477,7 +485,8 @@ void FastFlow::Write(int iter, Real time) {
 
     // Summary file
     fprintf(pofile_summary, "%d %g ", iter, time);
-    fprintf(pofile_summary, "%.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e",
+    fprintf(pofile_summary, "%.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e "
+                           "%.15e %.15e %.15e %.15e",
         ah_prop[hmass],
         ah_prop[hSx],
         ah_prop[hSy],
@@ -487,7 +496,11 @@ void FastFlow::Write(int iter, Real time) {
         ah_prop[hhrms],
         ah_prop[hhmean],
         ah_prop[hmeanradius],
-        ah_prop[hminradius]);
+        ah_prop[hminradius],
+        ah_prop[hminimumcellspacing],
+        ah_prop[hminradiuscells],
+        ah_prop[hrelativemasschange],
+        ah_prop[hflowevaluations]);
     fprintf(pofile_summary, "\n");
     fflush(pofile_summary);
 
@@ -837,6 +850,7 @@ void FastFlow::FastFlowLoop() {
   Real Sz = 0;
   Real S = 0;
   bool failed = false;
+  const Real minimum_cell_spacing = MinimumActiveCellSpacing();
 
   if (verbose && ioproc) {
     fprintf(pofile_verbose, "\nSearching for horizon %d\n", nh);
@@ -907,28 +921,19 @@ void FastFlow::FastFlowLoop() {
       fflush(pofile_verbose);
     }
 
-    if (Kokkos::fabs(hmean) > hmean_tol) {
+    if (!Kokkos::isfinite(meanradius) || meanradius <= 0.0 ||
+        !Kokkos::isfinite(rr_min) || rr_min <= 0.0) {
       if (verbose && ioproc) {
-        fprintf(pofile_verbose, "Failed, hmean > %f\n", hmean_tol);
-        fflush(pofile_verbose);
-      }
-      failed = true;
-      break;
-     }
-
-    if (meanradius < 0.) {
-      if (verbose && ioproc) {
-        fprintf(pofile_verbose, "Failed, meanradius < 0\n");
+        fprintf(pofile_verbose, "Failed, nonfinite/nonpositive horizon radius\n");
         fflush(pofile_verbose);
       }
       failed = true;
       break;
     }
 
-    // Check to prevent horizon radius blow up and mass = 0
-    if (mass < 1.0e-10) {
+    if (!Kokkos::isfinite(mass) || mass <= 0.0) {
       if (verbose && ioproc) {
-        fprintf(pofile_verbose, "Failed mass < 1e-10\n");
+        fprintf(pofile_verbose, "Failed, nonfinite/nonpositive horizon mass\n");
         fflush(pofile_verbose);
       }
       failed = true;
@@ -943,11 +948,13 @@ void FastFlow::FastFlowLoop() {
     const Real mass_change = Kokkos::fabs(mass_prev - mass);
     const Real relative_mass_change = mass_change / mass;
     const Real dimensionless_hrms = hrms * meanradius * meanradius;
+    const Real minradius_cells = rr_min / minimum_cell_spacing;
     const bool mass_converged =
         relative_mass_change < mass_relative_tol ||
         (mass_tol > 0.0 && mass_change < mass_tol);
     if (k > 0 && mass_converged &&
-        dimensionless_hrms < dimensionless_hrms_tol) {
+        dimensionless_hrms < dimensionless_hrms_tol &&
+        minradius_cells >= minimum_radius_cells) {
       ah_found = true;
       break;
     }
@@ -965,6 +972,10 @@ void FastFlow::FastFlowLoop() {
     ah_prop[hhmean] = hmean;
     ah_prop[hmeanradius] = meanradius;
     ah_prop[hminradius] = rr_min;
+    ah_prop[hminimumcellspacing] = minimum_cell_spacing;
+    ah_prop[hminradiuscells] = rr_min / minimum_cell_spacing;
+    ah_prop[hrelativemasschange] = Kokkos::fabs(mass_prev - mass) / mass;
+    ah_prop[hflowevaluations] = static_cast<Real>(fastflow_iter + 1);
     ah_prop[hSx] = Sx;
     ah_prop[hSy] = Sy;
     ah_prop[hSz] = Sz;
