@@ -119,6 +119,10 @@ int main(int argc, char *argv[]) {
 #endif  // MPI_PARALLEL_ENABLED
 
   Kokkos::initialize(argc, argv);
+  if (global_variable::my_rank == 0) {
+    std::cout << "AthenaK Kokkos default execution space: "
+              << Kokkos::DefaultExecutionSpace::name() << std::endl;
+  }
 
   //--- Step 2. --------------------------------------------------------------------------
   // Check for command line options and respond.

@@ -381,7 +381,8 @@ void FastFlow::InitializeOutputFiles() {
     fprintf(pofile_summary, "# 1:iter 2:time 3:mass 4:Sx 5:Sy 6:Sz 7:S 8:area "
                              "9:hrms 10:hmean 11:meanradius 12:minradius "
                              "13:min_cell_spacing 14:minradius_cells "
-                             "15:relative_mass_change 16:flow_evaluations\n");
+                             "15:relative_mass_change 16:flow_evaluations "
+                             "17:accepted\n");
     fflush(pofile_summary);
   }
 
@@ -486,7 +487,7 @@ void FastFlow::Write(int iter, Real time) {
     // Summary file
     fprintf(pofile_summary, "%d %g ", iter, time);
     fprintf(pofile_summary, "%.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e "
-                           "%.15e %.15e %.15e %.15e",
+                           "%.15e %.15e %.15e %.15e %d",
         ah_prop[hmass],
         ah_prop[hSx],
         ah_prop[hSy],
@@ -500,7 +501,8 @@ void FastFlow::Write(int iter, Real time) {
         ah_prop[hminimumcellspacing],
         ah_prop[hminradiuscells],
         ah_prop[hrelativemasschange],
-        ah_prop[hflowevaluations]);
+        ah_prop[hflowevaluations],
+        ah_found ? 1 : 0);
     fprintf(pofile_summary, "\n");
     fflush(pofile_summary);
 

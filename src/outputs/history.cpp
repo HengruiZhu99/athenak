@@ -185,7 +185,8 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   const int max_meshblocks_per_rank_index = max_refinement_level_index + 1;
   const int horizon_status_index = max_meshblocks_per_rank_index + 1;
   const int horizon_last_search_cycle_index = horizon_status_index + 1;
-  pdata->nhist = horizon_last_search_cycle_index + 1;
+  const int cycle_index = horizon_last_search_cycle_index + 1;
+  pdata->nhist = cycle_index + 1;
   pdata->label[0] = "C-norm2";
   pdata->label[1] = "H-norm2";
   pdata->label[2] = "M-norm2";
@@ -208,10 +209,12 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->label[max_meshblocks_per_rank_index] = "maxNmbRank";
   pdata->label[horizon_status_index] = "ahStatus";
   pdata->label[horizon_last_search_cycle_index] = "ahLastCyc";
+  pdata->label[cycle_index] = "cycle";
   pdata->reduction[max_refinement_level_index] = HistoryData::Reduction::max;
   pdata->reduction[max_meshblocks_per_rank_index] = HistoryData::Reduction::max;
   pdata->reduction[horizon_status_index] = HistoryData::Reduction::max;
   pdata->reduction[horizon_last_search_cycle_index] = HistoryData::Reduction::max;
+  pdata->reduction[cycle_index] = HistoryData::Reduction::max;
 
   // capture class variabels for kernel
   auto &u0_ = pm->pmb_pack->pz4c->u0;
@@ -350,6 +353,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
     pdata->hdata[horizon_last_search_cycle_index] = static_cast<Real>(
         pm->pmb_pack->pz4c->pfastflow[0]->last_search_cycle);
   }
+  pdata->hdata[cycle_index] = static_cast<Real>(pm->ncycle);
 
   return;
 }

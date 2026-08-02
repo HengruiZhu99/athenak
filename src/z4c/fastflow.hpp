@@ -154,7 +154,7 @@ class FastFlow {
     hnvar
   };
   static constexpr int kHnvar = 15;
-  Real ah_prop[kHnvar]; // Array of horizon quantities
+  Real ah_prop[kHnvar]{}; // Array of horizon quantities
 
   // 5D Device array for the metric derivatives
   DvceArray5D<Real> dg;
