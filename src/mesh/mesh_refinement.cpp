@@ -16,6 +16,7 @@
 #include <iostream>
 #include <cmath>     // abs
 #include <algorithm> // sort
+#include <sstream>
 #include <utility>   // pair
 
 #include "athena.hpp"
@@ -49,6 +50,7 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
   ncyc_check_amr(1),
   refinement_interval(5),
   prolong_prims(false),
+  clean_stop_on_max_nmb_per_rank(false),
   refine_flag("rflag",pm->nmb_total),
   ncyc_since_ref("cyc_since_ref",pm->nmb_total),
 #if MPI_PARALLEL_ENABLED
@@ -66,6 +68,8 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
     if (pin->DoesParameterExist("mesh_refinement", "prolong_primitives")) {
       prolong_prims = pin->GetBoolean("mesh_refinement", "prolong_primitives");
     }
+    clean_stop_on_max_nmb_per_rank = pin->GetOrAddBoolean(
+        "mesh_refinement", "clean_stop_on_max_nmb_per_rank", false);
   }
 
   // allocate arrays for AMR, add RefinementCriteria object
@@ -145,6 +149,39 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
   // indicated by the refine_flag[m] value being true (1) for any m.
   int nnew = 0, ndel = 0;
   UpdateMeshBlockTree(nnew, ndel);
+
+  // UpdateMeshBlockTree applies the complete 2:1-balanced regrid to the logical tree,
+  // including refinements induced at neighboring blocks.  Before allocating or moving
+  // any fields, preflight the equal-cost load balance used by RedistAndRefineMeshBlocks.
+  // If the proposed occupancy exceeds the fixed per-rank allocation, reconstruct the
+  // previous accepted tree from its unchanged LogicalLocation list and let Driver::Finalize
+  // flush every configured output, including restart files.
+  const int proposed_nmb_total = pmy_mesh->nmb_total + nnew - ndel;
+  const int proposed_max_nmb_per_rank =
+      (proposed_nmb_total + global_variable::nranks - 1) / global_variable::nranks;
+  if (clean_stop_on_max_nmb_per_rank &&
+      proposed_max_nmb_per_rank > pmy_mesh->nmb_maxperrank) {
+    pmy_mesh->ptree = std::make_unique<MeshBlockTree>(pmy_mesh);
+    pmy_mesh->ptree->CreateRootGrid();
+    for (int i = 0; i < pmy_mesh->nmb_total; ++i) {
+      pmy_mesh->ptree->AddNodeWithoutRefinement(pmy_mesh->lloc_eachmb[i]);
+    }
+
+    int current_max_nmb_per_rank = 0;
+    for (int rank = 0; rank < global_variable::nranks; ++rank) {
+      current_max_nmb_per_rank =
+          std::max(current_max_nmb_per_rank, pmy_mesh->nmb_eachrank[rank]);
+    }
+    std::ostringstream reason;
+    reason << "clean AMR capacity stop: proposed regrid requires "
+           << proposed_max_nmb_per_rank << " MeshBlocks per rank, exceeding "
+           << "<mesh_refinement>/max_nmb_per_rank=" << pmy_mesh->nmb_maxperrank
+           << "; retained accepted mesh at " << current_max_nmb_per_rank
+           << " MeshBlocks per rank and flushing final outputs for restart";
+    pdriver->user_stop = true;
+    pdriver->user_stop_reason = reason.str();
+    return;
+  }
 
   // Refine/derefine mesh and evolved data, set boundary conditions/timestep on new mesh
   if (nnew != 0 || ndel != 0) { // at least one (de)refinement flagged
