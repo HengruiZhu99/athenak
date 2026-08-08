@@ -1107,7 +1107,7 @@ void FastFlow::RadiiFromSphericalHarmonics() {
   // Step 2: Compute the global minimum.
   rr_min = std::numeric_limits<Real>::infinity();
   Kokkos::parallel_reduce("FastFlow_sphradii",
-  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles-1),
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles),
   KOKKOS_LAMBDA(const int &p, Real &lmin) {
     lmin = Kokkos::min(lmin, rr_(p));
   }, Kokkos::Min<Real>(rr_min));
@@ -1206,7 +1206,7 @@ void FastFlow::SurfaceIntegrals() {
 
   // Loop over surface points
   Kokkos::parallel_reduce("FastFlow_surfintegrals",
-  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles-1),
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles),
   KOKKOS_LAMBDA(const int &p,
                 Real& area,
                 Real& coarea,
