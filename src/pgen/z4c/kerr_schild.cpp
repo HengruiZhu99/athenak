@@ -108,6 +108,13 @@ void KerrSchild(MeshBlockPack *pmbp, ParameterInput *pin) {
     Real &x3max = size.d_view(m).x3max;
     Real x3v = CellCenterX(k-ks, indcs.nx3, x3min, x3max);
 
+    // The Kerr-Schild analytic metric is centered at the requested puncture
+    // location.  Keeping these parameters unused makes a displaced control
+    // silently initialize the black hole at the grid origin.
+    x1v -= center_x1;
+    x2v -= center_x2;
+    x3v -= center_x3;
+
     ComputeADMDecomposition(x1v, x2v, x3v, minkowski, a,
       &adm.alpha(m,k,j,i),
       &adm.beta_u(m,0,k,j,i), &adm.beta_u(m,1,k,j,i), &adm.beta_u(m,2,k,j,i),
