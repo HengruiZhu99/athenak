@@ -320,18 +320,12 @@ TaskStatus Z4c::TrackCompactObjects(Driver *pdrive, int stage) {
 }
 
 TaskStatus Z4c::FindHorizon(Driver *pdrive, int stage) {
-  auto &indcs = pmy_pack->pmesh->mb_indcs;
   if (stage == pdrive->nexp_stages) {
     const int accepted_cycle = pmy_pack->pmesh->ncycle + 1;
     const Real accepted_time = pmy_pack->pmesh->time + pmy_pack->pmesh->dt;
     for (auto & pahf : pfastflow) {
       if (!pahf->ShouldSearch(accepted_cycle, accepted_time)) continue;
       Kokkos::Timer horizon_timer;
-      switch (indcs.ng) {
-        case 2: pahf->MetricDerivatives<2>(accepted_time); break;
-        case 3: pahf->MetricDerivatives<3>(accepted_time); break;
-        case 4: pahf->MetricDerivatives<4>(accepted_time); break;
-      }
       pahf->Find(accepted_cycle, accepted_time);
       pahf->Write(accepted_cycle, accepted_time);
       Real horizon_seconds = horizon_timer.seconds();

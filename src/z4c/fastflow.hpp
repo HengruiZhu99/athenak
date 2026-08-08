@@ -48,8 +48,6 @@ class FastFlow {
   void Find(int iter, Real time); // main functionality for finding AH
   void Write(int iter, Real time); // function for result writing
   template <int NGHOST>
-  void MetricDerivatives(Real time); // compute the metric derivatives
-  template <int NGHOST>
   void MetricInterp();
   void ComputeSphericalHarmonics();
   void RadiiFromSphericalHarmonics();
@@ -132,9 +130,10 @@ class FastFlow {
     ihrms,
     ihmean,
     iSx, iSy, iSz,
+    icoverage,
     invar
   };
-  static constexpr int kInvar = 7;
+  static constexpr int kInvar = 8;
   Real integrals[kInvar]; // Array of surface integrals
 
   // Indexes of horizon quantities
@@ -156,11 +155,15 @@ class FastFlow {
   static constexpr int kHnvar = 15;
   Real ah_prop[kHnvar]{}; // Array of horizon quantities
 
-  // 5D Device array for the metric derivatives
-  DvceArray5D<Real> dg;
-
   // Vectors to hold the DvceArray1D interpolated values of GaussLegendreGrid
   DvceArray2D<Real> g_interp, K_interp, dg_interp;
+
+  // Terminal diagnostics are retained for both accepted and failed searches.
+  Real last_coverage_fraction = 0.0;
+  Real last_dimensionless_hrms = 0.0;
+  // 0 accepted, 1 iteration limit, 2 coverage, 3 area, 4 surface integral,
+  // 5 radius, 6 mass.
+  int last_failure_code = 0;
 
   // Flag points
   DualArray1D<int> havepoint;

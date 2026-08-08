@@ -92,7 +92,7 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   dYcdph2("dYcdph2",1,1), dYsdph2("dYsdph2",1,1),
   a0("a0",1), ac("ac",1), as("as",1),
   rr("rr",1), rr_dth("rr_dth",1), rr_dph("rr_dph",1),
-  rho("rho",1), dg("dg",1,1,1,1,1), g_interp("g_interp",1,1),
+  rho("rho",1), g_interp("g_interp",1,1),
   K_interp("K_interp",1,1), dg_interp("dg_interp",1,1),
   pmbp(pmbp), pin(pin) {
   nh = n; // The n-th horizon
@@ -274,17 +274,6 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   Kokkos::realloc(K_interp, (NEXCURV), nangles);
   Kokkos::realloc(dg_interp, (NDRVSSPMETRIC), nangles);
 
-  // The number of meshblocks on this rank (nmb_thispack) can change at runtime
-  // with adaptive mesh refinement and load balancing (e.g. a boosted puncture
-  // dragging the refined region across ranks). To prevent this allocate more
-  // memory based in the max. nmb. of MBs per rank from startup.
-  auto &indcs = pmbp->pmesh->mb_indcs;
-  int nmb = std::max((pmbp->nmb_thispack), (pmbp->pmesh->nmb_maxperrank));
-  int ncells1 = indcs.nx1 + 2 * (indcs.ng);
-  int ncells2 = indcs.nx2 + 2 * (indcs.ng);
-  int ncells3 = indcs.nx3 + 2 * (indcs.ng);
-  Kokkos::realloc(dg, nmb, (NDRVSSPMETRIC), ncells3, ncells2, ncells1);
-
   // Array computed in surface integrals.
   Kokkos::realloc(rho, nangles);
 
@@ -382,7 +371,8 @@ void FastFlow::InitializeOutputFiles() {
                              "9:hrms 10:hmean 11:meanradius 12:minradius "
                              "13:min_cell_spacing 14:minradius_cells "
                              "15:relative_mass_change 16:flow_evaluations "
-                             "17:accepted\n");
+                             "17:accepted 18:dimensionless_hrms "
+                             "19:coverage_fraction 20:failure_code\n");
     fflush(pofile_summary);
   }
 
@@ -487,7 +477,7 @@ void FastFlow::Write(int iter, Real time) {
     // Summary file
     fprintf(pofile_summary, "%d %g ", iter, time);
     fprintf(pofile_summary, "%.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e "
-                           "%.15e %.15e %.15e %.15e %d",
+                           "%.15e %.15e %.15e %.15e %d %.15e %.15e %d",
         ah_prop[hmass],
         ah_prop[hSx],
         ah_prop[hSy],
@@ -502,7 +492,10 @@ void FastFlow::Write(int iter, Real time) {
         ah_prop[hminradiuscells],
         ah_prop[hrelativemasschange],
         ah_prop[hflowevaluations],
-        ah_found ? 1 : 0);
+        ah_found ? 1 : 0,
+        last_dimensionless_hrms,
+        last_coverage_fraction,
+        last_failure_code);
     fprintf(pofile_summary, "\n");
     fflush(pofile_summary);
 
@@ -681,63 +674,6 @@ Real FastFlow::MinimumActiveCellSpacing() {
 }
 
 //----------------------------------------------------------------------------------------
-//! \fn void FastFlow::MetricDerivatives(Real time)
-//! \brief Compute drvts of ADM metric at MB level.
-template <int NGHOST>
-void FastFlow::MetricDerivatives(Real time) {
-  // Check whether derivatives have to be computed
-  // if (use_stored_metric_drvts) return;
-  if (!IsInSearchWindow(time)) return;
-  if (wait_until_punc_are_close && !(PuncAreClose())) return;
-
-  // Explicitely capture the variables for the Kokkos kernel.
-  auto &adm = pmbp->padm->adm;
-  auto &dg_ = dg;
-  auto &indcs = pmbp->pmesh->mb_indcs;
-  auto &size = pmbp->pmb->mb_size;
-  int nmb = pmbp->nmb_thispack;
-  int &is = indcs.is; int &ie = indcs.ie;
-  int &js = indcs.js; int &je = indcs.je;
-  int &ks = indcs.ks; int &ke = indcs.ke;
-
-  par_for("FastFlow_metric_derivatives",DevExeSpace(),0,nmb-1,ks,ke,js,je,is,ie,
-  KOKKOS_LAMBDA(int m, int k, int j, int i) {
-    // Grid spacing
-    Real idx[] = {1.0 / size.d_view(m).dx1, 1.0 / size.d_view(m).dx2,
-                  1.0 / size.d_view(m).dx3};
-
-    // x-derivative
-    dg_(m,D1S11,k,j,i) = Dx<NGHOST>(0, idx, adm.g_dd, m, 0, 0, k, j, i);
-    dg_(m,D1S12,k,j,i) = Dx<NGHOST>(0, idx, adm.g_dd, m, 0, 1, k, j, i);
-    dg_(m,D1S13,k,j,i) = Dx<NGHOST>(0, idx, adm.g_dd, m, 0, 2, k, j, i);
-    dg_(m,D1S22,k,j,i) = Dx<NGHOST>(0, idx, adm.g_dd, m, 1, 1, k, j, i);
-    dg_(m,D1S23,k,j,i) = Dx<NGHOST>(0, idx, adm.g_dd, m, 1, 2, k, j, i);
-    dg_(m,D1S33,k,j,i) = Dx<NGHOST>(0, idx, adm.g_dd, m, 2, 2, k, j, i);
-
-    // y-derivative
-    dg_(m,D2S11,k,j,i) = Dx<NGHOST>(1, idx, adm.g_dd, m, 0, 0, k, j, i);
-    dg_(m,D2S12,k,j,i) = Dx<NGHOST>(1, idx, adm.g_dd, m, 0, 1, k, j, i);
-    dg_(m,D2S13,k,j,i) = Dx<NGHOST>(1, idx, adm.g_dd, m, 0, 2, k, j, i);
-    dg_(m,D2S22,k,j,i) = Dx<NGHOST>(1, idx, adm.g_dd, m, 1, 1, k, j, i);
-    dg_(m,D2S23,k,j,i) = Dx<NGHOST>(1, idx, adm.g_dd, m, 1, 2, k, j, i);
-    dg_(m,D2S33,k,j,i) = Dx<NGHOST>(1, idx, adm.g_dd, m, 2, 2, k, j, i);
-
-    // z-derivative
-    dg_(m,D3S11,k,j,i) = Dx<NGHOST>(2, idx, adm.g_dd, m, 0, 0, k, j, i);
-    dg_(m,D3S12,k,j,i) = Dx<NGHOST>(2, idx, adm.g_dd, m, 0, 1, k, j, i);
-    dg_(m,D3S13,k,j,i) = Dx<NGHOST>(2, idx, adm.g_dd, m, 0, 2, k, j, i);
-    dg_(m,D3S22,k,j,i) = Dx<NGHOST>(2, idx, adm.g_dd, m, 1, 1, k, j, i);
-    dg_(m,D3S23,k,j,i) = Dx<NGHOST>(2, idx, adm.g_dd, m, 1, 2, k, j, i);
-    dg_(m,D3S33,k,j,i) = Dx<NGHOST>(2, idx, adm.g_dd, m, 2, 2, k, j, i);
-  });
-
-  return;
-}
-template void FastFlow::MetricDerivatives<2>(Real time);
-template void FastFlow::MetricDerivatives<3>(Real time);
-template void FastFlow::MetricDerivatives<4>(Real time);
-
-//----------------------------------------------------------------------------------------
 //! \fn void FastFlow::MetricInterp(MeshBlock *pmb)
 //! \brief Interpolate metric on the surface n.
 //!        Flag here the surface points contained (on this rank).
@@ -764,7 +700,6 @@ void FastFlow::MetricInterp() {
   // Explicitely capture the variables for the Kokkos kernel.
   auto &polar_pos = gl_grid->polar_pos;
   auto &u_adm = pmbp->padm->u_adm;
-  auto &dg_ = dg;
   auto &gi_ = g_interp;
   auto &Ki_ = K_interp;
   auto &dgi_ = dg_interp;
@@ -821,9 +756,16 @@ void FastFlow::MetricInterp() {
         Ki_(b,p) = InterpolateLagrange<NGHOST>(u_adm, Kind[b], indcs, ind_and_wghts);
       }
 
-      // Metric derivatives
-      for (int c = 0; c < NDRVSSPMETRIC; ++c) {
-        dgi_(c,p) = InterpolateLagrange<NGHOST>(dg_, c, indcs, ind_and_wghts);
+      // Differentiate the same metric interpolant used above.  The previous
+      // path interpolated a separately differenced array whose ghost zones
+      // were never populated, so surfaces crossing MeshBlock boundaries could
+      // depend on undefined data.
+      for (int direction = 0; direction < NDIM; ++direction) {
+        for (int component = 0; component < NSPMETRIC; ++component) {
+          dgi_(direction * NSPMETRIC + component, p) =
+              InterpolateLagrangeDerivative<NGHOST>(
+                  u_adm, gind[component], direction, indcs, ind_and_wghts);
+        }
       }
     }
   });
@@ -841,6 +783,10 @@ template void FastFlow::MetricInterp<4>();
 //! \brief Fast Flow loop for horizon n.
 void FastFlow::FastFlowLoop() {
   ah_found = false;
+  last_failure_code = 1;  // Iteration limit unless superseded below.
+  last_coverage_fraction = 0.0;
+  last_dimensionless_hrms = NAN;
+  for (int v = 0; v < hnvar; ++v) ah_prop[v] = NAN;
 
   Real meanradius = a0.h_view(0) / Kokkos::sqrt(4.0*M_PI);
   Real mass = 0;
@@ -852,7 +798,9 @@ void FastFlow::FastFlowLoop() {
   Real Sy = 0;
   Real Sz = 0;
   Real S = 0;
+  Real relative_mass_change = NAN;
   bool failed = false;
+  bool have_terminal_metrics = false;
   const Real minimum_cell_spacing = MinimumActiveCellSpacing();
 
   if (verbose && ioproc) {
@@ -860,7 +808,8 @@ void FastFlow::FastFlowLoop() {
     fprintf(pofile_verbose, "center = (%f, %f, %f)\n", center[0], center[1], center[2]);
     fprintf(pofile_verbose, "r_mean = %f\n", meanradius);
     fprintf(pofile_verbose, " iter      area            mass         meanradius"
-                   "       minradius        hmean            Sx              Sy"
+                   "       minradius        hmean            hrms_r2"
+                   "       rel_dmass        coverage         Sx              Sy"
                    "              Sz             S\n");
   }
 
@@ -869,6 +818,17 @@ void FastFlow::FastFlowLoop() {
 
     // Step 1: Compute radius r = a_lm Y_lm.
     RadiiFromSphericalHarmonics();
+    meanradius = a0.h_view(0) / Kokkos::sqrt(4.0 * M_PI);
+    if (!Kokkos::isfinite(meanradius) || meanradius <= 0.0 ||
+        !Kokkos::isfinite(rr_min) || rr_min <= 0.0) {
+      last_failure_code = 5;
+      if (verbose && ioproc) {
+        fprintf(pofile_verbose, "Failed, nonfinite/nonpositive horizon radius\n");
+        fflush(pofile_verbose);
+      }
+      failed = true;
+      break;
+    }
 
     // Step 2: Interpolate metric onto the surface.
     auto &indcs = pmbp->pmesh->mb_indcs;
@@ -885,28 +845,41 @@ void FastFlow::FastFlowLoop() {
     SurfaceIntegrals();
 
     area  = integrals[iarea];
-    hrms  = integrals[ihrms]/area;
-    hmean = integrals[ihmean];
-    Sx = integrals[iSx] / (8 * M_PI);
-    Sy = integrals[iSy] / (8 * M_PI);
-    Sz = integrals[iSz] / (8 * M_PI);
-    S  = Kokkos::sqrt(SQR(Sx) + SQR(Sy) + SQR(Sz));
-
-    meanradius = a0.h_view(0) / Kokkos::sqrt(4.0 * M_PI);
-
-    // Step 4: Check that we get a finite result.
-    if (!(Kokkos::isfinite(area))) {
+    last_coverage_fraction = integrals[icoverage] / static_cast<Real>(nangles);
+    if (Kokkos::fabs(integrals[icoverage] - static_cast<Real>(nangles)) > 0.5) {
+      last_failure_code = 2;
       if (verbose && ioproc) {
-        fprintf(pofile_verbose, "Failed, Area not finite\n");
+        fprintf(pofile_verbose,
+                "Failed, surface coverage %.15e (claimed points %.0f of %d)\n",
+                last_coverage_fraction, integrals[icoverage], nangles);
         fflush(pofile_verbose);
       }
       failed = true;
       break;
     }
 
-    if (!(Kokkos::isfinite(hmean))) {
+    if (!Kokkos::isfinite(area) || area <= 0.0) {
+      last_failure_code = 3;
       if (verbose && ioproc) {
-        fprintf(pofile_verbose, "Failed, hmean not finite\n");
+        fprintf(pofile_verbose, "Failed, area nonfinite/nonpositive\n");
+        fflush(pofile_verbose);
+      }
+      failed = true;
+      break;
+    }
+
+    hrms  = integrals[ihrms] / area;
+    hmean = integrals[ihmean];
+    Sx = integrals[iSx] / (8 * M_PI);
+    Sy = integrals[iSy] / (8 * M_PI);
+    Sz = integrals[iSz] / (8 * M_PI);
+    S  = Kokkos::sqrt(SQR(Sx) + SQR(Sy) + SQR(Sz));
+
+    if (!Kokkos::isfinite(hrms) || !Kokkos::isfinite(hmean) ||
+        !Kokkos::isfinite(S)) {
+      last_failure_code = 4;
+      if (verbose && ioproc) {
+        fprintf(pofile_verbose, "Failed, nonfinite expansion/spin integral\n");
         fflush(pofile_verbose);
       }
       failed = true;
@@ -917,24 +890,8 @@ void FastFlow::FastFlowLoop() {
     mass_prev = mass;
     mass = Kokkos::sqrt(area / (16.0 * M_PI));
 
-    if (verbose && ioproc) {
-      fprintf(pofile_verbose, "%3d %15.7e %15.7e %15.7e %15.7e %15.7e"
-                              " %15.7e %15.7e %15.7e %15.7e\n",
-              k, area, mass, meanradius, rr_min, hmean, Sx, Sy, Sz, S);
-      fflush(pofile_verbose);
-    }
-
-    if (!Kokkos::isfinite(meanradius) || meanradius <= 0.0 ||
-        !Kokkos::isfinite(rr_min) || rr_min <= 0.0) {
-      if (verbose && ioproc) {
-        fprintf(pofile_verbose, "Failed, nonfinite/nonpositive horizon radius\n");
-        fflush(pofile_verbose);
-      }
-      failed = true;
-      break;
-    }
-
     if (!Kokkos::isfinite(mass) || mass <= 0.0) {
+      last_failure_code = 6;
       if (verbose && ioproc) {
         fprintf(pofile_verbose, "Failed, nonfinite/nonpositive horizon mass\n");
         fflush(pofile_verbose);
@@ -949,16 +906,29 @@ void FastFlow::FastFlowLoop() {
     // mass plateau, and a scale-free expansion residual. Since hrms is
     // <H^2>_surface, hrms * meanradius^2 is dimensionless.
     const Real mass_change = Kokkos::fabs(mass_prev - mass);
-    const Real relative_mass_change = mass_change / mass;
-    const Real dimensionless_hrms = hrms * meanradius * meanradius;
+    relative_mass_change = mass_change / mass;
+    last_dimensionless_hrms = hrms * meanradius * meanradius;
     const Real minradius_cells = rr_min / minimum_cell_spacing;
+    have_terminal_metrics = true;
+
+    if (verbose && ioproc) {
+      fprintf(pofile_verbose, "%3d %15.7e %15.7e %15.7e %15.7e %15.7e"
+                              " %15.7e %15.7e %15.7e %15.7e %15.7e"
+                              " %15.7e %15.7e\n",
+              k, area, mass, meanradius, rr_min, hmean,
+              last_dimensionless_hrms, relative_mass_change,
+              last_coverage_fraction, Sx, Sy, Sz, S);
+      fflush(pofile_verbose);
+    }
+
     const bool mass_converged =
         relative_mass_change < mass_relative_tol ||
         (mass_tol > 0.0 && mass_change < mass_tol);
     if (k > 0 && mass_converged &&
-        dimensionless_hrms < dimensionless_hrms_tol &&
+        last_dimensionless_hrms < dimensionless_hrms_tol &&
         minradius_cells >= minimum_radius_cells) {
       ah_found = true;
+      last_failure_code = 0;
       break;
     }
 
@@ -966,9 +936,9 @@ void FastFlow::FastFlowLoop() {
     UpdateFlowSpectralComponents();
   }
 
-  if (ah_found) {
-    last_a0 = a0.h_view(0);
-
+  // Failed searches keep their terminal metrics so the summary is diagnostic;
+  // shape coefficients remain authoritative only for accepted searches.
+  if (have_terminal_metrics) {
     ah_prop[harea] = area;
     ah_prop[hcoarea] = integrals[icoarea];
     ah_prop[hhrms] = hrms;
@@ -977,13 +947,17 @@ void FastFlow::FastFlowLoop() {
     ah_prop[hminradius] = rr_min;
     ah_prop[hminimumcellspacing] = minimum_cell_spacing;
     ah_prop[hminradiuscells] = rr_min / minimum_cell_spacing;
-    ah_prop[hrelativemasschange] = Kokkos::fabs(mass_prev - mass) / mass;
+    ah_prop[hrelativemasschange] = relative_mass_change;
     ah_prop[hflowevaluations] = static_cast<Real>(fastflow_iter + 1);
     ah_prop[hSx] = Sx;
     ah_prop[hSy] = Sy;
     ah_prop[hSz] = Sz;
-    ah_prop[hS]  = S;
-    ah_prop[hmass] = Kokkos::sqrt( SQR(mass) + 0.25*SQR(S/mass) ); // Christodoulu mass
+    ah_prop[hS] = S;
+    ah_prop[hmass] = Kokkos::sqrt(SQR(mass) + 0.25 * SQR(S / mass));
+  }
+
+  if (ah_found) {
+    last_a0 = a0.h_view(0);
   }
 
   if (verbose && ioproc) {
@@ -994,6 +968,12 @@ void FastFlow::FastFlowLoop() {
       fprintf(pofile_verbose, " minradius = %f\n", rr_min);
       fprintf(pofile_verbose, " hrms = %f\n", hrms);
       fprintf(pofile_verbose, " hmean = %f\n", hmean);
+      fprintf(pofile_verbose, " dimensionless_hrms = %.15e\n",
+              last_dimensionless_hrms);
+      fprintf(pofile_verbose, " relative_mass_change = %.15e\n",
+              relative_mass_change);
+      fprintf(pofile_verbose, " coverage_fraction = %.15e\n",
+              last_coverage_fraction);
       fprintf(pofile_verbose, " Sx = %f\n", Sx);
       fprintf(pofile_verbose, " Sy = %f\n", Sy);
       fprintf(pofile_verbose, " Sz = %f\n", Sz);
@@ -1234,7 +1214,8 @@ void FastFlow::SurfaceIntegrals() {
                 Real& hmean,
                 Real& Sx,
                 Real& Sy,
-                Real& Sz) {
+                Real& Sz,
+                Real& coverage) {
     // Derivatives of (r,theta,phi) w.r.t (x,y,z)
     AthenaPointTensor<Real, TensorSymm::NONE, NDIM, 1> drdi;
     AthenaPointTensor<Real, TensorSymm::NONE, NDIM, 1> dthetadi;
@@ -1267,6 +1248,7 @@ void FastFlow::SurfaceIntegrals() {
     AthenaPointTensor<Real, TensorSymm::SYM2, NDIM, 2> nnF;
 
     if (havepoint_.d_view(p)) {
+      coverage += 1.0;
       Real const theta = polar_pos.d_view(p,0);
       Real const sinth = Kokkos::sin(theta);
       Real const costh = Kokkos::cos(theta);
@@ -1562,7 +1544,8 @@ void FastFlow::SurfaceIntegrals() {
      Kokkos::Sum<Real>(integrals[ihmean]),
      Kokkos::Sum<Real>(integrals[iSx]),
      Kokkos::Sum<Real>(integrals[iSy]),
-     Kokkos::Sum<Real>(integrals[iSz]));
+     Kokkos::Sum<Real>(integrals[iSz]),
+     Kokkos::Sum<Real>(integrals[icoverage]));
 
   #if MPI_PARALLEL_ENABLED
     MPI_Allreduce(MPI_IN_PLACE,integrals,invar,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
