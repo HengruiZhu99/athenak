@@ -344,6 +344,36 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND athena_stored_domain_bounds_unit_test)
 
   add_executable(
+      athena_z4c_shared_geometry_policy_unit_test
+      tst/unit/z4c/shared_geometry_policy_test.cpp)
+  target_include_directories(
+      athena_z4c_shared_geometry_policy_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_shared_geometry_policy_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_shared_geometry_policy
+      COMMAND athena_z4c_shared_geometry_policy_unit_test)
+
+  add_test(
+      NAME athena.z4c_policy_migration
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_policy_migration_test.py
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+
+  add_test(
+      NAME athena.z4c_rhs_policy_production
+      COMMAND
+      ${CMAKE_COMMAND}
+      -DATHENA=$<TARGET_FILE:athena>
+      -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+      -DTEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/z4c_rhs_policy_production
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_rhs_policy_production_test.cmake)
+
+  add_executable(
       athena_pdf_validation_unit_test
       tst/unit/outputs/pdf_validation_test.cpp)
   target_include_directories(

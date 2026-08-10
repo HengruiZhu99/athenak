@@ -15,12 +15,27 @@ device cell loops must not capture or branch on the runtime symmetry mode.
 
 ## Current staged availability
 
-The common dispatch and fail-fast configuration interface are present, but the stored-domain,
-RHS, AMR, restart-carrier, diagnostic, initial-data, and horizon integration slices are not all
-integrated yet. Consequently, this milestone rejects every `cartoon_so2` problem generator
-before allocation. The later Cartoon Kerr adapter slice will enable its pgen only after its
-coordinate/component map and collapsed storage have focused tests. Do not interpret the public
-mode parser as a qualified evolution backend.
+The common dispatch, fail-fast configuration, restart carrier, collapsed stored bounds, PDF
+policy, and shared Z4c derivative kernels are present. The common RHS (including Gamma, gauge,
+and dissipation), constraints, fixed-second-order Sommerfeld condition, curvature diagnostics,
+derived/history curvature consumers, and Weyl calculation are separately instantiated for all
+three supported stencils. The migration accounts for all 61 original logical raw-FD sites: 58
+are owned by the shared policy (one ADM initialization site arrived in the earlier storage
+slice), while the three remaining live raw calls are confined to the Cartesian-only dynamical
+GRMHD matter path.
+
+AMR, axis interpolation/history, initial data, and horizon integration are not all integrated
+or qualified yet. Consequently, this milestone still rejects every `cartoon_so2` problem
+generator before allocation. The later Cartoon Kerr adapter slice will enable its pgen only
+after its coordinate/component map and collapsed storage have focused tests. Do not interpret
+the public mode parser or compiled kernel readiness as a qualified evolution backend.
+
+The existing output lifecycle writes the initial history and derived-variable records before
+ADM scratch is initialized. Consequently, `maxAbsKret` is `inf` and cellwise curvature values
+are `NaN` in the `t=0` records even in the pre-migration Cartesian executable; records emitted
+after initialization are finite. Qualification must either move/guard that initial diagnostic
+or treat the initial record as unavailable. Kernel migration tests retain an explicit sentinel
+for this limitation and must not be read as claiming that every output record is finite.
 
 ## Preallocation contract
 
