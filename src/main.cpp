@@ -55,6 +55,21 @@
 #include <hip/hip_runtime.h>
 #endif
 
+namespace {
+
+std::string FindZ4cRestartCommandLineOverride(const int argc, char *argv[]) {
+  const std::string prefix = std::string(z4c::kZ4cRestartBlock) + "/";
+  for (int i = 1; i < argc; ++i) {
+    const std::string argument(argv[i]);
+    if (argument.rfind(prefix, 0) == 0 && argument.find('=') != std::string::npos) {
+      return argument;
+    }
+  }
+  return "";
+}
+
+}  // namespace
+
 //----------------------------------------------------------------------------------------
 //! \fn int main(int argc, char *argv[])
 //! \brief Athena main program
@@ -284,6 +299,27 @@ int main(int argc, char *argv[]) {
     pinput->LoadFromFile(infile);
     infile.Close();
     pinput->CheckBlockNames();
+  }
+  if (res_flag && !z4c_restart_snapshot.present) {
+    const std::string command_line_carrier =
+        FindZ4cRestartCommandLineOverride(argc, argv);
+    if (pinput->DoesBlockExist(z4c::kZ4cRestartBlock) ||
+        !command_line_carrier.empty()) {
+      std::cerr << "### FATAL ERROR: restart origin has no immutable <"
+                << z4c::kZ4cRestartBlock
+                << "> carrier; post-capture carrier injection is forbidden";
+      if (!command_line_carrier.empty()) {
+        const std::size_t separator = command_line_carrier.find('=');
+        const std::size_t key_start =
+            std::string(z4c::kZ4cRestartBlock).size() + 1;
+        std::cerr << ": <" << z4c::kZ4cRestartBlock << ">/"
+                  << command_line_carrier.substr(key_start, separator - key_start)
+                  << " requested='" << command_line_carrier.substr(separator + 1)
+                  << "'";
+      }
+      std::cerr << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
   }
   pinput->ModifyFromCmdline(argc, argv);
   if (!res_flag && pinput->DoesBlockExist(z4c::kZ4cRestartBlock)) {

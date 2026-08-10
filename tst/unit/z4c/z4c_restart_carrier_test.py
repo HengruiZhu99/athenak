@@ -2,9 +2,12 @@
 """Production-path roundtrip and override tests for the Z4c restart carrier."""
 
 import argparse
+import io
 import re
 import shutil
+import struct
 import subprocess
+import tarfile
 from pathlib import Path
 
 
@@ -64,11 +67,98 @@ def replace_value(data, key, old, new):
     return replaced
 
 
+def replace_block_value(data, block, key, new):
+    marker = b"<par_end>\n"
+    text_end = data.index(marker) + len(marker)
+    prefix = data[:text_end]
+    suffix = data[text_end:]
+    block_start = prefix.index(f"<{block}>\n".encode())
+    block_end = prefix.find(b"#-------------------------", block_start)
+    if block_end < 0:
+        block_end = len(prefix)
+    section = prefix[block_start:block_end]
+    pattern = re.compile(rb"(" + re.escape(key.encode()) + rb"\s*=\s*)\S+")
+    replaced, count = pattern.subn(rb"\g<1>" + new.encode(), section, count=1)
+    if count != 1:
+        raise RuntimeError(f"could not replace <{block}>/{key}")
+    return prefix[:block_start] + replaced + prefix[block_end:] + suffix
+
+
+def mutate_binary_dimension(data, target, expected, replacement):
+    marker = b"<par_end>\n"
+    header_start = data.index(marker) + len(marker)
+    # Default Athena Real is double. The restart header writes two ints, a nine-Real
+    # RegionSize, then two 19-int RegionIndcs objects without padding between writes.
+    global_indcs = header_start + 2 * 4 + 9 * 8
+    meshblock_indcs = global_indcs + 19 * 4
+    offsets = {
+        "mesh/nx1": global_indcs + 4,
+        "mesh/nx2": global_indcs + 8,
+        "mesh/nx3": global_indcs + 12,
+        "meshblock/nx1": meshblock_indcs + 4,
+        "meshblock/nx2": meshblock_indcs + 8,
+        "meshblock/nx3": meshblock_indcs + 12,
+    }
+    offset = offsets[target]
+    actual = struct.unpack_from("=i", data, offset)[0]
+    if actual != expected:
+        raise RuntimeError(
+            f"unexpected binary {target}={actual}; expected {expected} at offset {offset}"
+        )
+    changed = bytearray(data)
+    struct.pack_into("=i", changed, offset, replacement)
+    return bytes(changed)
+
+
+def run_build(command, cwd, timeout):
+    result = subprocess.run(
+        [str(item) for item in command], cwd=cwd, check=False,
+        capture_output=True, text=True, timeout=timeout,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"legacy fixture build failed for {' '.join(map(str, command))}:\n"
+            f"{result.stdout}\n{result.stderr}"
+        )
+
+
+def build_legacy_athena(source_dir, work_dir, base_commit):
+    legacy_source = work_dir / "legacy_base_source"
+    legacy_build = work_dir / "legacy_base_build"
+    legacy_source.mkdir()
+    archive = subprocess.run(
+        ["git", "-C", str(source_dir), "archive", "--format=tar", base_commit],
+        check=False, capture_output=True, timeout=30,
+    )
+    if archive.returncode != 0:
+        raise RuntimeError(f"could not export legacy base {base_commit}: {archive.stderr!r}")
+    with tarfile.open(fileobj=io.BytesIO(archive.stdout), mode="r:") as stream:
+        stream.extractall(legacy_source)
+    archived_kokkos = legacy_source / "kokkos"
+    if archived_kokkos.exists():
+        shutil.rmtree(archived_kokkos)
+    archived_kokkos.symlink_to((source_dir / "kokkos").resolve(), target_is_directory=True)
+    run_build(
+        ["cmake", "-S", legacy_source, "-B", legacy_build,
+         "-DCMAKE_BUILD_TYPE=Debug", "-DAthena_ENABLE_MPI=OFF",
+         "-DAthena_ENABLE_OPENMP=OFF", "-DAthena_BUILD_UNIT_TESTS=OFF"],
+        work_dir, 120,
+    )
+    run_build(["cmake", "--build", legacy_build, "--target", "athena", "-j2"],
+              work_dir, 600)
+    executable = legacy_build / "src" / "athena"
+    if not executable.is_file():
+        raise RuntimeError("legacy base build omitted src/athena")
+    return executable
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--athena", required=True, type=Path)
     parser.add_argument("--input", required=True, type=Path)
     parser.add_argument("--work-dir", required=True, type=Path)
+    parser.add_argument("--source-dir", required=True, type=Path)
+    parser.add_argument("--legacy-base", required=True)
     args = parser.parse_args()
 
     if args.work_dir.exists():
@@ -114,8 +204,19 @@ def main():
         ("z4c/coordinate_map=signed_rho_z_suppressed_y_v1", "z4c", "coordinate_map",
          "cartesian_xyz", "signed_rho_z_suppressed_y_v1"),
         ("z4c/symmetry_schema=2", "z4c", "symmetry_schema", "1", "2"),
+        ("z4c/restart_symmetry=cartoon_so2", "z4c", "restart_symmetry",
+         "cartesian3d", "cartoon_so2"),
+        ("z4c/restart_coordinate_map=signed_rho_z_suppressed_y_v1", "z4c",
+         "restart_coordinate_map", "cartesian_xyz", "signed_rho_z_suppressed_y_v1"),
+        ("z4c/restart_symmetry_schema=2", "z4c", "restart_symmetry_schema", "1", "2"),
         ("z4c/spatial_order=2", "z4c", "spatial_order", "-1", "2"),
         ("mesh/nghost=3", "z4c", "effective_spatial_order", "2", "4"),
+        ("mesh/nx1=16", "mesh", "nx1", "8", "16"),
+        ("mesh/nx2=8", "mesh", "nx2", "4", "8"),
+        ("mesh/nx3=8", "mesh", "nx3", "4", "8"),
+        ("meshblock/nx1=8", "meshblock", "nx1", "4", "8"),
+        ("meshblock/nx2=8", "meshblock", "nx2", "4", "8"),
+        ("meshblock/nx3=8", "meshblock", "nx3", "4", "8"),
         ("z4c_restart/carrier_schema=2", "z4c_restart", "carrier_schema", "1", "2"),
         ("z4c_restart/symmetry=cartoon_so2", "z4c_restart", "symmetry",
          "cartesian3d", "cartoon_so2"),
@@ -183,6 +284,81 @@ def main():
     if "Root grid" in output:
         raise RuntimeError("FastFlow -i override reached Mesh construction")
 
+    alias_overlays = (
+        ("restart_symmetry", "cartoon_so2", "cartesian3d"),
+        ("restart_coordinate_map", "signed_rho_z_suppressed_y_v1", "cartesian_xyz"),
+        ("restart_symmetry_schema", "2", "1"),
+    )
+    for key, requested, stored in alias_overlays:
+        overlay = args.work_dir / f"{key}_override.athinput"
+        overlay.write_text(f"<z4c>\n{key} = {requested}\n")
+        output = run(
+            [args.athena, "-r", restart, "-i", overlay],
+            args.work_dir, False,
+            (f"<z4c>/{key}", f"stored='{stored}'", f"requested='{requested}'"),
+        )
+        if "Root grid" in output:
+            raise RuntimeError(f"alias -i override {key} reached Mesh construction")
+
+    for key, requested, stored in (("nx1", "16", "8"),
+                                   ("nx2", "8", "4"),
+                                   ("nx3", "8", "4")):
+        overlay = args.work_dir / f"mesh_{key}_override.athinput"
+        overlay.write_text(f"<mesh>\n{key} = {requested}\n")
+        output = run(
+            [args.athena, "-r", restart, "-i", overlay], args.work_dir, False,
+            (f"<mesh>/{key}", f"stored='{stored}'", f"requested='{requested}'"),
+        )
+        if "Root grid" in output:
+            raise RuntimeError(f"mesh -i override {key} reached Mesh construction")
+
+    # Every global and MeshBlock dimension in the binary header is checked against the
+    # immutable text carrier before root-grid arithmetic or tree allocation.
+    for target, expected, replacement in (
+        ("mesh/nx1", 8, 16),
+        ("mesh/nx2", 4, 8),
+        ("mesh/nx3", 4, 8),
+        ("meshblock/nx1", 4, 8),
+        ("meshblock/nx2", 4, 8),
+        ("meshblock/nx3", 4, 8),
+    ):
+        corrupted = args.work_dir / f"binary_{target.replace('/', '_')}.rst"
+        corrupted.write_bytes(
+            mutate_binary_dimension(restart_data, target, expected, replacement)
+        )
+        output = run(
+            [args.athena, "-r", corrupted], args.work_dir, False,
+            ("immutable Z4c binary restart validation failed", f"<{target}>",
+             f"stored='{expected}'", f"binary='{replacement}'"),
+        )
+        if "Root grid" in output or "AssembleZ4cTasks" in output:
+            raise RuntimeError(f"binary {target} mismatch reached allocation:\n{output}")
+
+    # A self-consistent collapsed text identity cannot be paired with a 3-D binary tree.
+    collapsed = restart_data
+    for block, key, value in (
+        ("z4c", "symmetry", "cartoon_so2"),
+        ("z4c", "coordinate_map", "signed_rho_z_suppressed_y_v1"),
+        ("z4c", "restart_symmetry", "cartoon_so2"),
+        ("z4c", "restart_coordinate_map", "signed_rho_z_suppressed_y_v1"),
+        ("z4c_restart", "symmetry", "cartoon_so2"),
+        ("z4c_restart", "coordinate_map", "signed_rho_z_suppressed_y_v1"),
+        ("z4c_restart", "mesh_nx3", "1"),
+        ("z4c_restart", "meshblock_nx3", "1"),
+        ("mesh", "nx3", "1"),
+        ("meshblock", "nx3", "1"),
+    ):
+        collapsed = replace_block_value(collapsed, block, key, value)
+    collapsed_restart = args.work_dir / "collapsed_text_3d_binary.rst"
+    collapsed_restart.write_bytes(collapsed)
+    output = run(
+        [args.athena, "-r", collapsed_restart], args.work_dir, False,
+        ("immutable Z4c binary restart validation failed", "<mesh/nx3>",
+         "stored='1'", "binary='4'"),
+    )
+    if "Root grid" in output or "AssembleZ4cTasks" in output:
+        raise RuntimeError("collapsed/3-D restart mismatch reached allocation")
+
     # A same-length partial-carrier corruption is rejected during restart-origin capture.
     partial = args.work_dir / "partial.rst"
     partial.write_bytes(replace_once(restart_data, b"central_last_cycle",
@@ -247,16 +423,68 @@ def main():
                          restored):
             raise RuntimeError(f"restored restart omitted {key.decode()}={value.decode()}")
 
-    # Removing only the text carrier emulates a legacy Cartesian restart. Binary payload
-    # offsets remain self-describing because ParameterInput stops at <par_end>.
-    legacy = args.work_dir / "legacy.rst"
+    # Exercise a genuine carrier-free restart produced by the exact pre-carrier base,
+    # rather than relying only on a carrier-stripped current fixture.
+    legacy_athena = build_legacy_athena(args.source_dir, args.work_dir,
+                                        args.legacy_base)
+    base_origin = args.work_dir / "base_origin"
+    base_origin.mkdir()
+    run([legacy_athena, "-i", args.input, "-d", base_origin], args.work_dir, True,
+        ("AssembleZ4cTasks", "Terminating on cycle limit"))
+    base_restart = base_origin / "rst" / "z4c_restart_carrier.00000.rst"
+    if not base_restart.is_file() or b"<z4c_restart>" in base_restart.read_bytes():
+        raise RuntimeError("exact legacy base did not produce a carrier-free restart")
+    marker = b"<par_end>\n"
+    base_restart_data = base_restart.read_bytes()
+    if (restart_data[restart_data.index(marker) + len(marker):] !=
+            base_restart_data[base_restart_data.index(marker) + len(marker):]):
+        raise RuntimeError("restart carrier changed the post-<par_end> binary payload")
+    legacy_upgrade = args.work_dir / "legacy_upgrade"
+    legacy_upgrade.mkdir()
+    run([args.athena, "-r", base_restart, "-d", legacy_upgrade],
+        args.work_dir, True, ("AssembleZ4cTasks",))
+    upgraded_restarts = sorted((legacy_upgrade / "rst").glob("*.rst"))
+    if not upgraded_restarts or b"<z4c_restart>" not in upgraded_restarts[0].read_bytes():
+        raise RuntimeError("compatible legacy restart was not upgraded with a carrier")
+
     block_start = restart_data.index(b"<z4c_restart>\n")
     block_end = restart_data.index(b"#------------------------- PAR_DUMP", block_start)
+    complete_carrier = args.work_dir / "complete_carrier_override.athinput"
+    complete_carrier.write_bytes(restart_data[block_start:block_end])
+    output = run(
+        [args.athena, "-r", base_restart, "-i", complete_carrier],
+        args.work_dir, False,
+        ("restart origin has no immutable <z4c_restart> carrier",
+         "post-capture carrier injection is forbidden"),
+    )
+    if "Root grid" in output or "AssembleZ4cTasks" in output:
+        raise RuntimeError("legacy -i carrier injection reached Mesh construction")
+    output = run(
+        [args.athena, "-r", base_restart,
+         "z4c_restart/central_proper_time=9"],
+        args.work_dir, False,
+        ("restart origin has no immutable <z4c_restart> carrier",
+         "<z4c_restart>/central_proper_time", "requested='9'"),
+    )
+    if "Root grid" in output or "AssembleZ4cTasks" in output:
+        raise RuntimeError("legacy CLI carrier injection reached Mesh construction")
+
+    # Keep a carrier-stripped fixture as a direct format test as well. Binary payload
+    # offsets remain self-describing because ParameterInput stops at <par_end>.
+    legacy = args.work_dir / "legacy.rst"
     legacy.write_bytes(restart_data[:block_start] + restart_data[block_end:])
     legacy_run = args.work_dir / "legacy_run"
     legacy_run.mkdir()
     run([args.athena, "-r", legacy, "-d", legacy_run], args.work_dir, True,
         ("AssembleZ4cTasks",))
+    output = run(
+        [args.athena, "-r", legacy, "-i", complete_carrier],
+        args.work_dir, False,
+        ("restart origin has no immutable <z4c_restart> carrier",
+         "post-capture carrier injection is forbidden"),
+    )
+    if "Root grid" in output:
+        raise RuntimeError("stripped legacy carrier injection reached Mesh construction")
 
     fresh_reserved = args.work_dir / "fresh_reserved.athinput"
     fresh_reserved.write_bytes(

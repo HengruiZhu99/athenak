@@ -11,6 +11,7 @@
 #include <limits>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "parameter_input.hpp"
@@ -112,6 +113,8 @@ Z4cRestartResult RequireKeys(ParameterInput *pin) {
   for (const char *key : {
            "carrier_schema", "symmetry", "coordinate_map", "symmetry_schema",
            "requested_spatial_order", "effective_spatial_order", "stencil_width",
+           "mesh_nx1", "mesh_nx2", "mesh_nx3", "meshblock_nx1",
+           "meshblock_nx2", "meshblock_nx3",
            "central_schema", "central_proper_time", "central_previous_lapse",
            "central_last_cycle", "central_last_time", "fastflow_schema",
            "fastflow_coefficient_count", "fastflow_coefficients",
@@ -170,6 +173,12 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
   READ_INTEGER("requested_spatial_order", state->requested_spatial_order)
   READ_INTEGER("effective_spatial_order", state->effective_spatial_order)
   READ_INTEGER("stencil_width", state->config.stencil_width)
+  READ_INTEGER("mesh_nx1", state->mesh.nx1)
+  READ_INTEGER("mesh_nx2", state->mesh.nx2)
+  READ_INTEGER("mesh_nx3", state->mesh.nx3)
+  READ_INTEGER("meshblock_nx1", state->mesh.meshblock_nx1)
+  READ_INTEGER("meshblock_nx2", state->mesh.meshblock_nx2)
+  READ_INTEGER("meshblock_nx3", state->mesh.meshblock_nx3)
 
   const bool map_matches_mode =
       (state->config.mode == Z4cSymmetryMode::cartesian3d &&
@@ -178,6 +187,16 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
        state->config.coordinate_map == Z4cCoordinateMap::signed_rho_z_suppressed_y_v1);
   if (!map_matches_mode || state->config.schema != Z4cSymmetryConfig::kCurrentSchema) {
     return Invalid("inconsistent symmetry/map/schema in <z4c_restart>");
+  }
+  if (state->mesh.nx1 <= 0 || state->mesh.nx2 <= 0 || state->mesh.nx3 <= 0 ||
+      state->mesh.meshblock_nx1 <= 0 || state->mesh.meshblock_nx2 <= 0 ||
+      state->mesh.meshblock_nx3 <= 0) {
+    return Invalid("invalid mesh dimensions in <z4c_restart>");
+  }
+  if (state->config.mode == Z4cSymmetryMode::cartoon_so2 &&
+      (state->mesh.nx3 != 1 || state->mesh.meshblock_nx3 != 1)) {
+    return Invalid("collapsed Cartoon geometry requires <z4c_restart>/mesh_nx3=1 "
+                   "and <z4c_restart>/meshblock_nx3=1");
   }
   const int nghost = pin->GetInteger("mesh", "nghost");
   const int expected_order =
@@ -299,6 +318,12 @@ Z4cRestartResult CompareCarrierParameters(ParameterInput *pin,
   COMPARE_INTEGER("requested_spatial_order", stored.requested_spatial_order)
   COMPARE_INTEGER("effective_spatial_order", stored.effective_spatial_order)
   COMPARE_INTEGER("stencil_width", stored.config.stencil_width)
+  COMPARE_INTEGER("mesh_nx1", stored.mesh.nx1)
+  COMPARE_INTEGER("mesh_nx2", stored.mesh.nx2)
+  COMPARE_INTEGER("mesh_nx3", stored.mesh.nx3)
+  COMPARE_INTEGER("meshblock_nx1", stored.mesh.meshblock_nx1)
+  COMPARE_INTEGER("meshblock_nx2", stored.mesh.meshblock_nx2)
+  COMPARE_INTEGER("meshblock_nx3", stored.mesh.meshblock_nx3)
   COMPARE_INTEGER("central_schema", stored.central.schema)
   COMPARE_DOUBLE("central_proper_time", stored.central.proper_time)
   COMPARE_DOUBLE("central_previous_lapse", stored.central.previous_lapse)
@@ -340,12 +365,17 @@ Z4cRestartResult CompareCarrierParameters(ParameterInput *pin,
 
 Z4cRestartState MakeDefaultZ4cRestartState(const Z4cSymmetryConfig &config,
                                            const int requested_spatial_order,
-                                           const int nghost) {
+                                           const int nghost, const int nx1,
+                                           const int nx2, const int nx3,
+                                           const int meshblock_nx1,
+                                           const int meshblock_nx2,
+                                           const int meshblock_nx3) {
   Z4cRestartState state;
   state.config = config;
   state.requested_spatial_order = requested_spatial_order;
   state.effective_spatial_order =
       EffectiveZ4cSpatialOrder(requested_spatial_order, nghost);
+  state.mesh = {nx1, nx2, nx3, meshblock_nx1, meshblock_nx2, meshblock_nx3};
   return state;
 }
 
@@ -414,6 +444,45 @@ Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
                    EffectiveZ4cSpatialOrder(requested_order, nghost));
   if (!result.valid) return result;
 
+  // These aliases are emitted for compatibility with validation consumers. They are
+  // identity-bearing too: check every present copy before canonical restoration.
+  if (pin->DoesParameterExist("z4c", "restart_symmetry")) {
+    result = Compare("z4c", "restart_symmetry",
+                     std::string(ToString(snapshot.state.config.mode)),
+                     pin->GetString("z4c", "restart_symmetry"));
+    if (!result.valid) return result;
+  }
+  if (pin->DoesParameterExist("z4c", "restart_coordinate_map")) {
+    result = Compare("z4c", "restart_coordinate_map",
+                     std::string(ToString(snapshot.state.config.coordinate_map)),
+                     pin->GetString("z4c", "restart_coordinate_map"));
+    if (!result.valid) return result;
+  }
+  if (pin->DoesParameterExist("z4c", "restart_symmetry_schema")) {
+    result = Compare("z4c", "restart_symmetry_schema", snapshot.state.config.schema,
+                     pin->GetInteger("z4c", "restart_symmetry_schema"));
+    if (!result.valid) return result;
+  }
+
+  for (const auto &dimension : {
+           std::make_pair("nx1", snapshot.state.mesh.nx1),
+           std::make_pair("nx2", snapshot.state.mesh.nx2),
+           std::make_pair("nx3", snapshot.state.mesh.nx3)}) {
+    result = Compare("mesh", dimension.first, dimension.second,
+                     pin->GetInteger("mesh", dimension.first));
+    if (!result.valid) return result;
+  }
+  for (const auto &dimension : {
+           std::make_pair("nx1", snapshot.state.mesh.meshblock_nx1),
+           std::make_pair("nx2", snapshot.state.mesh.meshblock_nx2),
+           std::make_pair("nx3", snapshot.state.mesh.meshblock_nx3)}) {
+    const int requested = pin->DoesParameterExist("meshblock", dimension.first)
+                              ? pin->GetInteger("meshblock", dimension.first)
+                              : pin->GetInteger("mesh", dimension.first);
+    result = Compare("meshblock", dimension.first, dimension.second, requested);
+    if (!result.valid) return result;
+  }
+
   StoreZ4cRestartState(pin, snapshot.state);
   pin->SetString("z4c", "symmetry", ToString(snapshot.state.config.mode));
   pin->SetString("z4c", "coordinate_map", ToString(snapshot.state.config.coordinate_map));
@@ -423,6 +492,45 @@ Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
   pin->SetString("z4c", "restart_coordinate_map",
                  ToString(snapshot.state.config.coordinate_map));
   pin->SetInteger("z4c", "restart_symmetry_schema", snapshot.state.config.schema);
+  pin->SetInteger("mesh", "nx1", snapshot.state.mesh.nx1);
+  pin->SetInteger("mesh", "nx2", snapshot.state.mesh.nx2);
+  pin->SetInteger("mesh", "nx3", snapshot.state.mesh.nx3);
+  pin->SetInteger("meshblock", "nx1", snapshot.state.mesh.meshblock_nx1);
+  pin->SetInteger("meshblock", "nx2", snapshot.state.mesh.meshblock_nx2);
+  pin->SetInteger("meshblock", "nx3", snapshot.state.mesh.meshblock_nx3);
+  return {true, ""};
+}
+
+Z4cRestartResult ValidateZ4cRestartBinaryDimensions(
+    ParameterInput *pin, const int nx1, const int nx2, const int nx3,
+    const int meshblock_nx1, const int meshblock_nx2,
+    const int meshblock_nx3) {
+  if (!pin->DoesBlockExist(kZ4cRestartBlock)) return {true, ""};
+  Z4cRestartState stored;
+  auto result = ReadState(pin, &stored);
+  if (!result.valid) return result;
+  for (const auto &dimension : {
+           std::make_pair("mesh/nx1", std::make_pair(stored.mesh.nx1, nx1)),
+           std::make_pair("mesh/nx2", std::make_pair(stored.mesh.nx2, nx2)),
+           std::make_pair("mesh/nx3", std::make_pair(stored.mesh.nx3, nx3)),
+           std::make_pair("meshblock/nx1",
+                          std::make_pair(stored.mesh.meshblock_nx1, meshblock_nx1)),
+           std::make_pair("meshblock/nx2",
+                          std::make_pair(stored.mesh.meshblock_nx2, meshblock_nx2)),
+           std::make_pair("meshblock/nx3",
+                          std::make_pair(stored.mesh.meshblock_nx3, meshblock_nx3))}) {
+    if (dimension.second.first != dimension.second.second) {
+      return Invalid(std::string("binary restart dimension <") + dimension.first +
+                     "> conflicts with immutable carrier: stored='" +
+                     std::to_string(dimension.second.first) + "' binary='" +
+                     std::to_string(dimension.second.second) + "'");
+    }
+  }
+  if (stored.config.mode == Z4cSymmetryMode::cartoon_so2 &&
+      (nx3 != 1 || meshblock_nx3 != 1)) {
+    return Invalid("binary restart is not collapsed in x3 for immutable "
+                   "<z4c_restart>/symmetry='cartoon_so2'");
+  }
   return {true, ""};
 }
 
@@ -437,6 +545,12 @@ void StoreZ4cRestartState(ParameterInput *pin, const Z4cRestartState &state) {
   pin->SetInteger(kZ4cRestartBlock, "effective_spatial_order",
                   state.effective_spatial_order);
   pin->SetInteger(kZ4cRestartBlock, "stencil_width", state.config.stencil_width);
+  pin->SetInteger(kZ4cRestartBlock, "mesh_nx1", state.mesh.nx1);
+  pin->SetInteger(kZ4cRestartBlock, "mesh_nx2", state.mesh.nx2);
+  pin->SetInteger(kZ4cRestartBlock, "mesh_nx3", state.mesh.nx3);
+  pin->SetInteger(kZ4cRestartBlock, "meshblock_nx1", state.mesh.meshblock_nx1);
+  pin->SetInteger(kZ4cRestartBlock, "meshblock_nx2", state.mesh.meshblock_nx2);
+  pin->SetInteger(kZ4cRestartBlock, "meshblock_nx3", state.mesh.meshblock_nx3);
   pin->SetInteger(kZ4cRestartBlock, "central_schema", state.central.schema);
   pin->SetString(kZ4cRestartBlock, "central_proper_time",
                  FormatDouble(state.central.proper_time));

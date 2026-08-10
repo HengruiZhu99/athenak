@@ -211,7 +211,10 @@ void ValidateAndStoreZ4cSymmetry(ParameterInput *pin, MeshBlockPack *pack) {
                                     ? pin->GetInteger("z4c", "spatial_order")
                                     : 2 * (pack->pmesh->mb_indcs.ng - 1);
     pack->z4c_restart_state = z4c::MakeDefaultZ4cRestartState(
-        validation.config, requested_order, pack->pmesh->mb_indcs.ng);
+        validation.config, requested_order, pack->pmesh->mb_indcs.ng,
+        pack->pmesh->mesh_indcs.nx1, pack->pmesh->mesh_indcs.nx2,
+        pack->pmesh->mesh_indcs.nx3, pack->pmesh->mb_indcs.nx1,
+        pack->pmesh->mb_indcs.nx2, pack->pmesh->mb_indcs.nx3);
   }
 }
 

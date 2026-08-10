@@ -18,6 +18,7 @@
 #include "coordinates/cell_locations.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
+#include "z4c/z4c_restart.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -368,6 +369,18 @@ void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
   hdos += sizeof(Real);
   std::memcpy(&ncycle, &(headerdata[hdos]), sizeof(int));
   delete [] headerdata;
+
+  // The text ParameterDump is immutable restart identity. Check the binary topology
+  // immediately after decoding the fixed-size header and before root-grid arithmetic,
+  // tree construction, or any dimension-dependent allocation.
+  const auto dimensions = z4c::ValidateZ4cRestartBinaryDimensions(
+      pin, mesh_indcs.nx1, mesh_indcs.nx2, mesh_indcs.nx3, mb_indcs.nx1,
+      mb_indcs.nx2, mb_indcs.nx3);
+  if (!dimensions.valid) {
+    std::cerr << "### FATAL ERROR: immutable Z4c binary restart validation failed: "
+              << dimensions.error << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   // calculate the number of MeshBlocks at root level in each dir
   nmb_rootx1 = mesh_indcs.nx1/mb_indcs.nx1;

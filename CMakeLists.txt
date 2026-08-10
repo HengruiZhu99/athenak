@@ -346,7 +346,9 @@ if (Athena_BUILD_UNIT_TESTS)
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_restart_carrier_test.py
       --athena $<TARGET_FILE:athena>
       --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_restart_carrier.athinput
-      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_restart_carrier_test)
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_restart_carrier_test
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR}
+      --legacy-base ea59e07ce7026b8b06720c7cb32bfe6788652978)
 endif()
 
 install( TARGETS athena DESTINATION bin )

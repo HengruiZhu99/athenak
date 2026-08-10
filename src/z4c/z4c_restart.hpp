@@ -48,6 +48,16 @@ struct Z4cM0FastFlowRestartState {
   bool converged = false;
 };
 
+//! Text-declared topology which must agree with the binary restart header.
+struct Z4cMeshRestartState {
+  int nx1 = 1;
+  int nx2 = 1;
+  int nx3 = 1;
+  int meshblock_nx1 = 1;
+  int meshblock_nx2 = 1;
+  int meshblock_nx3 = 1;
+};
+
 struct Z4cRestartState {
   static constexpr int kCurrentCarrierSchema = 1;
 
@@ -55,6 +65,7 @@ struct Z4cRestartState {
   Z4cSymmetryConfig config;
   int requested_spatial_order = 2;
   int effective_spatial_order = 2;
+  Z4cMeshRestartState mesh;
   Z4cCentralRestartState central;
   Z4cM0FastFlowRestartState fastflow;
 };
@@ -71,11 +82,16 @@ struct Z4cRestartResult {
 
 Z4cRestartState MakeDefaultZ4cRestartState(const Z4cSymmetryConfig &config,
                                            int requested_spatial_order,
-                                           int nghost);
+                                           int nghost, int nx1, int nx2, int nx3,
+                                           int meshblock_nx1, int meshblock_nx2,
+                                           int meshblock_nx3);
 Z4cRestartResult CaptureZ4cRestartSnapshot(ParameterInput *pin,
                                            Z4cRestartSnapshot *snapshot);
 Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
     ParameterInput *pin, const Z4cRestartSnapshot &snapshot);
+Z4cRestartResult ValidateZ4cRestartBinaryDimensions(
+    ParameterInput *pin, int nx1, int nx2, int nx3, int meshblock_nx1,
+    int meshblock_nx2, int meshblock_nx3);
 void StoreZ4cRestartState(ParameterInput *pin, const Z4cRestartState &state);
 
 }  // namespace z4c
