@@ -27,6 +27,12 @@ enum class CartoonDirection : int {
 struct Cartesian3D {};
 struct CartoonSO2 {};
 
+//! Tensor component tables are valid only when both indices have the same variance.
+enum class TensorVariance { all_lower, all_upper };
+
+//! Exact-axis diagnostic samples are distinct from nonzero production cell centers.
+enum class CartoonAxisLocation { cell_centered, diagnostic_axis };
+
 template <typename Symmetry, int NGHOST>
 class DerivativeProvider;
 
@@ -88,7 +94,9 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
                        m_, component, k_, j_, i_);
   }
 
-  template <typename TensorField>
+  //! `Variance` must describe an all-lower or all-upper symmetric Cartesian tensor.
+  //! Mixed-index tensors require their own generator action and cannot use this table.
+  template <TensorVariance Variance, typename TensorField>
   KOKKOS_INLINE_FUNCTION Real TensorFirst(const int derivative_direction,
                                           const int first_component,
                                           const int second_component,
@@ -97,7 +105,8 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
                       first_component, second_component, k_, j_, i_);
   }
 
-  template <typename TensorField>
+  //! `Variance` must describe an all-lower or all-upper symmetric Cartesian tensor.
+  template <TensorVariance Variance, typename TensorField>
   KOKKOS_INLINE_FUNCTION Real TensorSecond(const int first_direction,
                                            const int second_direction,
                                            const int first_component,
@@ -143,7 +152,8 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
     return derivative;
   }
 
-  template <typename VelocityField, typename TensorField>
+  //! `Variance` must describe an all-lower or all-upper symmetric Cartesian tensor.
+  template <TensorVariance Variance, typename VelocityField, typename TensorField>
   KOKKOS_INLINE_FUNCTION Real TensorAdvective(const int first_component,
                                               const int second_component,
                                               const VelocityField &velocity,
@@ -185,9 +195,10 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
 //! Every geometry-dependent formula and regularized return below is therefore
 //! reviewer-pending, including parity, divergence, and suppressed advection.
 //!
-//! `axis_tolerance` identifies samples that are mathematically on the axis (for example an
-//! interpolated diagnostic at rho=0). It must not include the innermost cell centers of the
-//! even, cell-centered signed-rho production grid.
+//! Near-axis cell centers use parity-projected polynomial fits in s=rho^2. The fit uses
+//! `NGHOST` positive/negative pairs, giving order 2*(NGHOST-1), and covers the innermost
+//! `NGHOST` half-cell layers. Exact-axis diagnostic limits use a separate location tag;
+//! no floating tolerance can silently turn a nonzero production cell into the axis.
 template <int NGHOST>
 class DerivativeProvider<CartoonSO2, NGHOST> {
  public:
@@ -196,15 +207,19 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
 
   KOKKOS_INLINE_FUNCTION
   DerivativeProvider(const Real inverse_spacing[3], const Real rho,
-                     const Real axis_tolerance, const int m, const int k,
+                     const CartoonAxisLocation axis_location, const int m, const int k,
                      const int j, const int i)
-      : rho_(rho), axis_tolerance_(axis_tolerance), m_(m), k_(k), j_(j), i_(i) {
+      : rho_(rho), axis_location_(axis_location), m_(m), k_(k), j_(j), i_(i) {
     for (int d = 0; d < 3; ++d) {
       inverse_spacing_[d] = inverse_spacing[d];
     }
   }
 
   KOKKOS_INLINE_FUNCTION static constexpr int ScalarParity() { return 1; }
+
+  KOKKOS_INLINE_FUNCTION static constexpr int RegularizedHalfCellLayers() {
+    return NGHOST;
+  }
 
   KOKKOS_INLINE_FUNCTION static constexpr int VectorParity(const int component) {
     return (component == ZDirection()) ? 1 : -1;
@@ -238,6 +253,9 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     if (OnAxis()) {
       return ActiveSecond(RhoDirection(), RhoDirection(), field);
     }
+    if (NearAxisCell()) {
+      return 2.0 * PhysicalRadialDerivative(EvenFit(field));
+    }
     return ActiveFirst(RhoDirection(), field) / rho_;
   }
 
@@ -256,6 +274,12 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
         return -ActiveFirst(RhoDirection(), SuppressedDirection(), field);
       }
       return ActiveFirst(RhoDirection(), RhoDirection(), field);
+    }
+    if (NearAxisCell()) {
+      if (component == RhoDirection()) {
+        return -OddCoefficientFit(field, SuppressedDirection()).value;
+      }
+      return OddCoefficientFit(field, RhoDirection()).value;
     }
     if (component == RhoDirection()) {
       return -Value(field, SuppressedDirection()) / rho_;
@@ -280,7 +304,9 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     return VectorMixedSuppressed(active_direction, component, field);
   }
 
-  template <typename TensorField>
+  //! `Variance` must describe an all-lower or all-upper symmetric Cartesian tensor.
+  //! Mixed-index tensors require their own generator action and cannot use this table.
+  template <TensorVariance Variance, typename TensorField>
   KOKKOS_INLINE_FUNCTION Real TensorFirst(const int derivative_direction,
                                           const int first_component,
                                           const int second_component,
@@ -296,11 +322,22 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
       if (OnAxis()) {
         return 0.0;
       }
+      if (NearAxisCell()) {
+        return sign * rho_ *
+               QuadraticCoefficientFit(field, RhoDirection(), SuppressedDirection())
+                   .value;
+      }
       return sign * Value(field, RhoDirection(), SuppressedDirection()) / rho_;
     }
     if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
       if (OnAxis()) {
         return 0.0;
+      }
+      if (NearAxisCell()) {
+        return rho_ * QuadraticDifferenceFit(
+                          field, RhoDirection(), RhoDirection(), SuppressedDirection(),
+                          SuppressedDirection())
+                          .value;
       }
       return (Value(field, RhoDirection(), RhoDirection()) -
               Value(field, SuppressedDirection(), SuppressedDirection())) / rho_;
@@ -309,18 +346,25 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
       if (OnAxis()) {
         return -ActiveFirst(RhoDirection(), SuppressedDirection(), ZDirection(), field);
       }
+      if (NearAxisCell()) {
+        return -OddCoefficientFit(field, SuppressedDirection(), ZDirection()).value;
+      }
       return -Value(field, SuppressedDirection(), ZDirection()) / rho_;
     }
     if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
       if (OnAxis()) {
         return ActiveFirst(RhoDirection(), RhoDirection(), ZDirection(), field);
       }
+      if (NearAxisCell()) {
+        return OddCoefficientFit(field, RhoDirection(), ZDirection()).value;
+      }
       return Value(field, RhoDirection(), ZDirection()) / rho_;
     }
     return 0.0;
   }
 
-  template <typename TensorField>
+  //! `Variance` must describe an all-lower or all-upper symmetric Cartesian tensor.
+  template <TensorVariance Variance, typename TensorField>
   KOKKOS_INLINE_FUNCTION Real TensorSecond(const int first_direction,
                                            const int second_direction,
                                            const int first_component,
@@ -345,6 +389,11 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     if (OnAxis()) {
       return 2.0 * ActiveFirst(RhoDirection(), RhoDirection(), field) +
              ActiveFirst(ZDirection(), ZDirection(), field);
+    }
+    if (NearAxisCell()) {
+      return ActiveFirst(RhoDirection(), RhoDirection(), field) +
+             ActiveFirst(ZDirection(), ZDirection(), field) +
+             OddCoefficientFit(field, RhoDirection()).value;
     }
     return ActiveFirst(RhoDirection(), RhoDirection(), field) +
            ActiveFirst(ZDirection(), ZDirection(), field) +
@@ -375,7 +424,8 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
                             VectorFirst(SuppressedDirection(), component, field);
   }
 
-  template <typename VelocityField, typename TensorField>
+  //! `Variance` must describe an all-lower or all-upper symmetric Cartesian tensor.
+  template <TensorVariance Variance, typename VelocityField, typename TensorField>
   KOKKOS_INLINE_FUNCTION Real TensorAdvective(const int first_component,
                                               const int second_component,
                                               const VelocityField &velocity,
@@ -386,8 +436,8 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
                                first_component, second_component, k_, j_, i_);
     }
     return derivative + Value(velocity, SuppressedDirection()) *
-                            TensorFirst(SuppressedDirection(), first_component,
-                                        second_component, field);
+                            TensorFirst<Variance>(SuppressedDirection(), first_component,
+                                                  second_component, field);
   }
 
   template <typename ComponentField>
@@ -415,12 +465,269 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
   }
 
   KOKKOS_INLINE_FUNCTION bool OnAxis() const {
-    return fabs(rho_) <= axis_tolerance_;
+    return axis_location_ == CartoonAxisLocation::diagnostic_axis;
+  }
+
+  KOKKOS_INLINE_FUNCTION int NearestInteger(const Real value) const {
+    return static_cast<int>(value + (value < 0.0 ? -0.5 : 0.5));
+  }
+
+  KOKKOS_INLINE_FUNCTION bool NearAxisCell() const {
+    if (OnAxis()) return false;
+    const Real half_cell_index = 2.0 * rho_ * inverse_spacing_[RhoDirection()];
+    const int rounded_index = NearestInteger(half_cell_index);
+    const Real grid_tolerance = (sizeof(Real) == sizeof(float)) ? 1.0e-4 : 1.0e-10;
+    const bool is_half_cell = fabs(half_cell_index - rounded_index) <= grid_tolerance;
+    const int absolute_index = rounded_index < 0 ? -rounded_index : rounded_index;
+    return is_half_cell && (absolute_index % 2 == 1) &&
+           absolute_index <= 2 * NGHOST - 1;
   }
 
   KOKKOS_INLINE_FUNCTION static bool IsComponentPair(const int a, const int b,
                                                      const int c, const int d) {
     return (a == c && b == d) || (a == d && b == c);
+  }
+
+  struct RadialFit {
+    Real value;
+    Real derivative;
+  };
+
+  KOKKOS_INLINE_FUNCTION int AxisIndexSum() const {
+    const Real half_cell_index = 2.0 * rho_ * inverse_spacing_[RhoDirection()];
+    return 2 * i_ - NearestInteger(half_cell_index);
+  }
+
+  KOKKOS_INLINE_FUNCTION int PositiveLayerIndex(const int layer) const {
+    return (AxisIndexSum() + 1) / 2 + layer;
+  }
+
+  KOKKOS_INLINE_FUNCTION int NegativeLayerIndex(const int layer) const {
+    return AxisIndexSum() - PositiveLayerIndex(layer);
+  }
+
+  KOKKOS_INLINE_FUNCTION RadialFit FitRadialSamples(const Real samples[NGHOST]) const {
+    const Real target = SQR(rho_ * inverse_spacing_[RhoDirection()]);
+    RadialFit fit{0.0, 0.0};
+    for (int point = 0; point < NGHOST; ++point) {
+      const Real point_radius = static_cast<Real>(point) + 0.5;
+      const Real point_s = point_radius * point_radius;
+      Real basis = 1.0;
+      for (int other = 0; other < NGHOST; ++other) {
+        if (other == point) continue;
+        const Real other_radius = static_cast<Real>(other) + 0.5;
+        const Real other_s = other_radius * other_radius;
+        basis *= (target - other_s) / (point_s - other_s);
+      }
+      Real basis_derivative = 0.0;
+      for (int differentiated = 0; differentiated < NGHOST; ++differentiated) {
+        if (differentiated == point) continue;
+        const Real differentiated_radius = static_cast<Real>(differentiated) + 0.5;
+        const Real differentiated_s = differentiated_radius * differentiated_radius;
+        Real term = 1.0 / (point_s - differentiated_s);
+        for (int other = 0; other < NGHOST; ++other) {
+          if (other == point || other == differentiated) continue;
+          const Real other_radius = static_cast<Real>(other) + 0.5;
+          const Real other_s = other_radius * other_radius;
+          term *= (target - other_s) / (point_s - other_s);
+        }
+        basis_derivative += term;
+      }
+      fit.value += basis * samples[point];
+      fit.derivative += basis_derivative * samples[point];
+    }
+    return fit;
+  }
+
+  template <typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ProjectedScalar(const ScalarField &field,
+                                              const int layer) const {
+    return 0.5 * (field(m_, k_, j_, PositiveLayerIndex(layer)) +
+                  field(m_, k_, j_, NegativeLayerIndex(layer)));
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real ProjectedVector(const VectorField &field,
+                                              const int component,
+                                              const int layer) const {
+    const int parity = VectorParity(component);
+    return 0.5 * (field(m_, component, k_, j_, PositiveLayerIndex(layer)) +
+                  parity * field(m_, component, k_, j_, NegativeLayerIndex(layer)));
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real ProjectedTensor(const TensorField &field, const int a,
+                                              const int b, const int layer) const {
+    const int parity = TensorParity(a, b);
+    return 0.5 * (field(m_, a, b, k_, j_, PositiveLayerIndex(layer)) +
+                  parity * field(m_, a, b, k_, j_, NegativeLayerIndex(layer)));
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real ProjectedVectorDerivative(
+      const VectorField &field, const int direction, const int component,
+      const int layer) const {
+    const int parity = VectorParity(component);
+    const int positive = PositiveLayerIndex(layer);
+    const int negative = NegativeLayerIndex(layer);
+    return 0.5 *
+           (Dx<NGHOST>(direction, inverse_spacing_, field, m_, component, k_, j_,
+                       positive) +
+            parity * Dx<NGHOST>(direction, inverse_spacing_, field, m_, component, k_,
+                                j_, negative));
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real ProjectedTensorDerivative(
+      const TensorField &field, const int direction, const int a, const int b,
+      const int layer) const {
+    const int parity = TensorParity(a, b);
+    const int positive = PositiveLayerIndex(layer);
+    const int negative = NegativeLayerIndex(layer);
+    return 0.5 *
+           (Dx<NGHOST>(direction, inverse_spacing_, field, m_, a, b, k_, j_, positive) +
+            parity * Dx<NGHOST>(direction, inverse_spacing_, field, m_, a, b, k_, j_,
+                                negative));
+  }
+
+  template <typename ScalarField>
+  KOKKOS_INLINE_FUNCTION RadialFit EvenFit(const ScalarField &field) const {
+    Real samples[NGHOST];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      samples[layer] = ProjectedScalar(field, layer);
+    }
+    return FitRadialSamples(samples);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION RadialFit EvenFit(const VectorField &field,
+                                          const int component) const {
+    Real samples[NGHOST];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      samples[layer] = ProjectedVector(field, component, layer);
+    }
+    return FitRadialSamples(samples);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit EvenFit(const TensorField &field, const int a,
+                                          const int b) const {
+    Real samples[NGHOST];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      samples[layer] = ProjectedTensor(field, a, b, layer);
+    }
+    return FitRadialSamples(samples);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION RadialFit OddCoefficientFit(const VectorField &field,
+                                                     const int component) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
+      samples[layer] = ProjectedVector(field, component, layer) / radius;
+    }
+    return FitRadialSamples(samples);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit OddCoefficientFit(const TensorField &field,
+                                                     const int a, const int b) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
+      samples[layer] = ProjectedTensor(field, a, b, layer) / radius;
+    }
+    return FitRadialSamples(samples);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION RadialFit OddDerivativeCoefficientFit(
+      const VectorField &field, const int direction, const int component) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
+      samples[layer] =
+          ProjectedVectorDerivative(field, direction, component, layer) / radius;
+    }
+    return FitRadialSamples(samples);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit OddDerivativeCoefficientFit(
+      const TensorField &field, const int direction, const int a, const int b) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
+      samples[layer] =
+          ProjectedTensorDerivative(field, direction, a, b, layer) / radius;
+    }
+    return FitRadialSamples(samples);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit QuadraticCoefficientFit(
+      const TensorField &field, const int a, const int b) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
+      samples[layer] = ProjectedTensor(field, a, b, layer) / (radius * radius);
+    }
+    return FitRadialSamples(samples);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit QuadraticDifferenceFit(
+      const TensorField &field, const int a, const int b, const int c,
+      const int d) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
+      samples[layer] =
+          (ProjectedTensor(field, a, b, layer) - ProjectedTensor(field, c, d, layer)) /
+          (radius * radius);
+    }
+    return FitRadialSamples(samples);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit QuadraticDerivativeFit(
+      const TensorField &field, const int direction, const int a, const int b) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
+      samples[layer] = ProjectedTensorDerivative(field, direction, a, b, layer) /
+                       (radius * radius);
+    }
+    return FitRadialSamples(samples);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit QuadraticDifferenceDerivativeFit(
+      const TensorField &field, const int direction, const int a, const int b,
+      const int c, const int d) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    for (int layer = 0; layer < NGHOST; ++layer) {
+      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
+      samples[layer] =
+          (ProjectedTensorDerivative(field, direction, a, b, layer) -
+           ProjectedTensorDerivative(field, direction, c, d, layer)) /
+          (radius * radius);
+    }
+    return FitRadialSamples(samples);
+  }
+
+  KOKKOS_INLINE_FUNCTION Real PhysicalRadialDerivative(const RadialFit &fit) const {
+    return fit.derivative * inverse_spacing_[RhoDirection()] *
+           inverse_spacing_[RhoDirection()];
   }
 
   template <typename ScalarField>
@@ -505,6 +812,13 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
       }
       return 0.0;
     }
+    if (NearAxisCell()) {
+      if (component == ZDirection()) {
+        return 2.0 * PhysicalRadialDerivative(EvenFit(field, component));
+      }
+      const RadialFit coefficient = OddCoefficientFit(field, component);
+      return 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+    }
     const Real radial_derivative = ActiveFirst(RhoDirection(), component, field);
     if (component == ZDirection()) {
       return radial_derivative / rho_;
@@ -533,6 +847,14 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
                                       ? SuppressedDirection()
                                       : RhoDirection();
     const Real sign = (component == RhoDirection()) ? -1.0 : 1.0;
+    if (NearAxisCell()) {
+      if (active_direction == RhoDirection()) {
+        const RadialFit coefficient = OddCoefficientFit(field, rotated_component);
+        return sign * 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+      }
+      return sign *
+             OddDerivativeCoefficientFit(field, active_direction, rotated_component).value;
+    }
     const Real derivative = ActiveFirst(active_direction, rotated_component, field);
     Real result = sign * derivative / rho_;
     if (active_direction == RhoDirection()) {
@@ -562,6 +884,34 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
                             field);
       }
       return 0.0;
+    }
+
+    if (NearAxisCell()) {
+      if (a == RhoDirection() && b == RhoDirection()) {
+        const RadialFit component = EvenFit(field, a, b);
+        const RadialFit difference = QuadraticDifferenceFit(
+            field, RhoDirection(), RhoDirection(), SuppressedDirection(),
+            SuppressedDirection());
+        return 2.0 * PhysicalRadialDerivative(component) - 2.0 * difference.value;
+      }
+      if (a == SuppressedDirection() && b == SuppressedDirection()) {
+        const RadialFit component = EvenFit(field, a, b);
+        const RadialFit difference = QuadraticDifferenceFit(
+            field, RhoDirection(), RhoDirection(), SuppressedDirection(),
+            SuppressedDirection());
+        return 2.0 * PhysicalRadialDerivative(component) + 2.0 * difference.value;
+      }
+      if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+        const RadialFit coefficient = QuadraticCoefficientFit(field, a, b);
+        return 2.0 * rho_ * rho_ * PhysicalRadialDerivative(coefficient) -
+               2.0 * coefficient.value;
+      }
+      if (IsComponentPair(a, b, RhoDirection(), ZDirection()) ||
+          IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
+        const RadialFit coefficient = OddCoefficientFit(field, a, b);
+        return 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+      }
+      return 2.0 * PhysicalRadialDerivative(EvenFit(field, a, b));
     }
 
     const Real radial_derivative = ActiveFirst(RhoDirection(), a, b, field);
@@ -595,6 +945,71 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
                                                     TensorField &field) const {
     if (OnAxis()) {
       return TensorMixedSuppressedAxis(active_direction, a, b, field);
+    }
+
+    if (NearAxisCell()) {
+      if (active_direction == RhoDirection()) {
+        if (a == RhoDirection() && b == RhoDirection()) {
+          const RadialFit coefficient = QuadraticCoefficientFit(
+              field, RhoDirection(), SuppressedDirection());
+          return -2.0 * coefficient.value -
+                 4.0 * rho_ * rho_ * PhysicalRadialDerivative(coefficient);
+        }
+        if (a == SuppressedDirection() && b == SuppressedDirection()) {
+          const RadialFit coefficient = QuadraticCoefficientFit(
+              field, RhoDirection(), SuppressedDirection());
+          return 2.0 * coefficient.value +
+                 4.0 * rho_ * rho_ * PhysicalRadialDerivative(coefficient);
+        }
+        if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+          const RadialFit difference = QuadraticDifferenceFit(
+              field, RhoDirection(), RhoDirection(), SuppressedDirection(),
+              SuppressedDirection());
+          return difference.value +
+                 2.0 * rho_ * rho_ * PhysicalRadialDerivative(difference);
+        }
+        if (IsComponentPair(a, b, RhoDirection(), ZDirection())) {
+          const RadialFit coefficient =
+              OddCoefficientFit(field, SuppressedDirection(), ZDirection());
+          return -2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+        }
+        if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
+          const RadialFit coefficient =
+              OddCoefficientFit(field, RhoDirection(), ZDirection());
+          return 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+        }
+        return 0.0;
+      }
+
+      if (a == RhoDirection() && b == RhoDirection()) {
+        return -2.0 * rho_ *
+               QuadraticDerivativeFit(field, active_direction, RhoDirection(),
+                                      SuppressedDirection())
+                   .value;
+      }
+      if (a == SuppressedDirection() && b == SuppressedDirection()) {
+        return 2.0 * rho_ *
+               QuadraticDerivativeFit(field, active_direction, RhoDirection(),
+                                      SuppressedDirection())
+                   .value;
+      }
+      if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+        return rho_ * QuadraticDifferenceDerivativeFit(
+                          field, active_direction, RhoDirection(), RhoDirection(),
+                          SuppressedDirection(), SuppressedDirection())
+                          .value;
+      }
+      if (IsComponentPair(a, b, RhoDirection(), ZDirection())) {
+        return -OddDerivativeCoefficientFit(field, active_direction,
+                                            SuppressedDirection(), ZDirection())
+                    .value;
+      }
+      if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
+        return OddDerivativeCoefficientFit(field, active_direction, RhoDirection(),
+                                           ZDirection())
+            .value;
+      }
+      return 0.0;
     }
 
     if (a == RhoDirection() && b == RhoDirection()) {
@@ -681,7 +1096,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
 
   Real inverse_spacing_[3];
   Real rho_;
-  Real axis_tolerance_;
+  CartoonAxisLocation axis_location_;
   int m_;
   int k_;
   int j_;
