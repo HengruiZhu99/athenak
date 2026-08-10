@@ -211,12 +211,13 @@ double OracleDissipation(const double h, const double rho, const double z) {
 struct ErrorSummary {
   double derivative = 0.0;
   double dissipation = 0.0;
-  double isotropy_composite = 0.0;
   double family[3] = {0.0, 0.0, 0.0};
   int family_worst_result[3] = {-1, -1, -1};
   int worst_result = -1;
   double worst_expected = 0.0;
   double worst_observed = 0.0;
+  std::array<double, kNumResults> observed{};
+  std::array<double, kNumResults> oracle{};
 };
 
 bool IsIsotropySensitiveResult(const int result) {
@@ -227,6 +228,73 @@ bool IsIsotropySensitiveResult(const int result) {
   const bool radial_plane_component =
       component == 0 || component == 2 || component == 5;
   return radial_plane_component && (operation <= 3 || operation == 6);
+}
+
+template <int NGHOST>
+std::array<int, 2 * (NGHOST + 1)> SignedNearAxisOffsets() {
+  std::array<int, 2 * (NGHOST + 1)> offsets{};
+  int output = 0;
+  for (int layer = 0; layer <= NGHOST; ++layer) offsets[output++] = layer;
+  for (int layer = 0; layer <= NGHOST; ++layer) offsets[output++] = -layer - 1;
+  return offsets;
+}
+
+int LayerFromOffset(const int radial_offset) {
+  return radial_offset >= 0 ? radial_offset : -radial_offset - 1;
+}
+
+template <int NGHOST>
+const char *LayerRegion(const int radial_offset) {
+  return LayerFromOffset(radial_offset) < NGHOST ? "fitted" : "raw-transition";
+}
+
+template <int NGHOST>
+constexpr double FitDerivativeRowOneNorm() {
+  if constexpr (NGHOST == 2) return 1.0;
+  if constexpr (NGHOST == 3) return 1.5;
+  return 2.5;
+}
+
+template <int NGHOST>
+constexpr double IndependentNoiseCoefficientNormBound() {
+  // At a fitted node, 1/r_l^2 contributes at most 4/h^2. The largest
+  // derivative composite contributes 4*(rho/h)^2 times the Lagrange-row
+  // one-norm, while a two-component nonderivative difference contributes at
+  // most 16. A factor two covers the manufactured advection multiplier and
+  // the result is rounded upward to a power-of-two audit bound. The raw
+  // transition has smaller reciprocal-radius and Dx coefficient norms.
+  constexpr double outer_radius = static_cast<double>(NGHOST) - 0.5;
+  constexpr double fitted_bound =
+      2.0 * (16.0 * outer_radius * outer_radius *
+                 FitDerivativeRowOneNorm<NGHOST>() +
+             16.0);
+  if constexpr (NGHOST == 2) {
+    static_assert(fitted_bound < 128.0);
+    return 128.0;
+  }
+  if constexpr (NGHOST == 3) {
+    static_assert(fitted_bound < 512.0);
+    return 512.0;
+  }
+  static_assert(fitted_bound < 1024.0);
+  return 1024.0;
+}
+
+constexpr double RoundoffNoiseUlps() {
+  // Two ulps remain representable in a float field without making its much
+  // larger epsilon dominate this stress test. Double precision retains the
+  // original 64-ulp probe to expose cancellation below truncation error.
+  return sizeof(Real) == sizeof(float) ? 2.0 : 64.0;
+}
+
+template <int NGHOST>
+constexpr double NoiseCoefficientSafety() {
+  // Float gets 50% evaluation slack for short device arithmetic; double gets
+  // 25%. This is intentionally distinct from merely scaling the old constant
+  // by the much larger float epsilon.
+  constexpr double evaluation_slack =
+      sizeof(Real) == sizeof(float) ? 1.5 : 1.25;
+  return evaluation_slack * IndependentNoiseCoefficientNormBound<NGHOST>();
 }
 
 std::string ResultName(const int result) {
@@ -328,7 +396,9 @@ ErrorSummary MeasureSample(const double h, const double rho_offset,
         ScalarField scalar{state};
         VectorField vector{state};
         TensorField tensor{state};
-        const Real inverse_spacing[3] = {1.0 / h, 1.0 / h, 1.0 / h};
+        const Real inverse_spacing[3] = {
+            static_cast<Real>(1.0 / h), static_cast<Real>(1.0 / h),
+            static_cast<Real>(1.0 / h)};
         z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST> derivative(
             inverse_spacing, rho_sample, axis_location, 0, 0, sample_j, sample_i);
 
@@ -440,13 +510,14 @@ ErrorSummary MeasureSample(const double h, const double rho_offset,
   expected[74] = OracleDissipation<NGHOST>(h, rho_sample, represented_z);
 
   ErrorSummary summary;
+  for (int result = 0; result < kNumResults; ++result) {
+    summary.observed[result] = result_host(result);
+    summary.oracle[result] = expected[result];
+  }
   for (int result = 0; result < kNumResults - 1; ++result) {
     const double error =
         fabs(static_cast<double>(result_host(result)) - expected[result]);
     const int family = (result < 10) ? 0 : ((result < 32) ? 1 : 2);
-    if (IsIsotropySensitiveResult(result)) {
-      summary.isotropy_composite = fmax(summary.isotropy_composite, error);
-    }
     if (error > summary.family[family]) {
       summary.family[family] = error;
       summary.family_worst_result[family] = result;
@@ -505,7 +576,9 @@ bool CheckFullApiAndCartesianDelegation(const double rho_sample) {
         ScalarField scalar{state};
         VectorField vector{state};
         TensorField tensor{state};
-        const Real inverse_spacing[3] = {1.0 / h, 1.0 / h, 1.0 / h};
+        const Real inverse_spacing[3] = {
+            static_cast<Real>(1.0 / h), static_cast<Real>(1.0 / h),
+            static_cast<Real>(1.0 / h)};
         z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST> cartoon(
             inverse_spacing, rho_sample, z4c::CartoonAxisLocation::cell_centered, 0,
             sample_k, sample_j, sample_i);
@@ -804,6 +877,105 @@ bool CheckFullApiAndCartesianDelegation(const double rho_sample) {
 }
 
 template <int NGHOST>
+bool CheckMinimalFitReach() {
+  using Provider = z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST>;
+  constexpr int axial_extent = 2 * NGHOST + 1;
+  constexpr int targets = 2 * NGHOST;
+  // The radial extent is exactly the fitted-side sample set, with no radial
+  // ghosts. Every operation below is a suppressed composite whose fitted
+  // branch needs only those samples (and, for z-mixed terms, axial ghosts).
+  // Kokkos debug bounds therefore catches any extra or mirrored radial read.
+  DvceArray5D<Real> state("minimal Cartoon fit reach state", 2, kNumVariables, 1,
+                          axial_extent, NGHOST);
+  auto host = Kokkos::create_mirror_view(state);
+  for (int block = 0; block < 2; ++block) {
+    for (int j = 0; j < axial_extent; ++j) {
+      const double z = static_cast<double>(j - NGHOST);
+      for (int i = 0; i < NGHOST; ++i) {
+        const double rho = block == 0
+                               ? static_cast<double>(i) + 0.5
+                               : static_cast<double>(i - NGHOST) + 0.5;
+        const ManufacturedFields fields = EvaluateManufacturedFields(rho, z, 0.0);
+        host(block, kScalarOffset, 0, j, i) = fields.scalar.value;
+        for (int component = 0; component < 3; ++component) {
+          host(block, kVectorOffset + component, 0, j, i) =
+              fields.vector[component].value;
+        }
+        for (int first = 0; first < 3; ++first) {
+          for (int second = first; second < 3; ++second) {
+            host(block, kTensorOffset + SymmetricIndex(first, second), 0, j, i) =
+                fields.tensor[first][second].value;
+          }
+        }
+      }
+    }
+  }
+  Kokkos::deep_copy(state, host);
+
+  DvceArray1D<Real> results("minimal Cartoon fit reach results", targets);
+  Kokkos::parallel_for(
+      "minimal Cartoon fit reach", Kokkos::RangePolicy<DevExeSpace>(0, targets),
+      KOKKOS_LAMBDA(const int target) {
+        const int block = target / NGHOST;
+        const int layer = target % NGHOST;
+        const int side_sign = block == 0 ? 1 : -1;
+        const int sample_i = block == 0 ? layer : NGHOST - 1 - layer;
+        const Real rho = side_sign * (static_cast<Real>(layer) + 0.5);
+        const Real inverse_spacing[3] = {1.0, 1.0, 1.0};
+        ScalarField scalar{state};
+        VectorField vector{state};
+        TensorField tensor{state};
+        Provider derivative(inverse_spacing, rho,
+                            z4c::CartoonAxisLocation::cell_centered, block, 0,
+                            NGHOST, sample_i);
+        Real sum = derivative.ScalarSecond(kSuppressed, kSuppressed, scalar);
+        for (int component = 0; component < 3; ++component) {
+          sum += derivative.VectorFirst(kSuppressed, component, vector);
+          sum += derivative.VectorSecond(kSuppressed, kSuppressed, component, vector);
+          sum += derivative.VectorSecond(kRho, kSuppressed, component, vector);
+          sum += derivative.VectorSecond(kSuppressed, kRho, component, vector);
+          sum += derivative.VectorSecond(kZ, kSuppressed, component, vector);
+          sum += derivative.VectorSecond(kSuppressed, kZ, component, vector);
+        }
+        for (int first = 0; first < 3; ++first) {
+          for (int second = 0; second < 3; ++second) {
+            sum += derivative.template TensorFirst<
+                z4c::TensorVariance::all_lower>(kSuppressed, first, second, tensor);
+            sum += derivative.template TensorSecond<
+                z4c::TensorVariance::all_lower>(kSuppressed, kSuppressed, first,
+                                                second, tensor);
+            sum += derivative.template TensorSecond<
+                z4c::TensorVariance::all_lower>(kRho, kSuppressed, first, second,
+                                                tensor);
+            sum += derivative.template TensorSecond<
+                z4c::TensorVariance::all_lower>(kSuppressed, kRho, first, second,
+                                                tensor);
+            sum += derivative.template TensorSecond<
+                z4c::TensorVariance::all_lower>(kZ, kSuppressed, first, second,
+                                                tensor);
+            sum += derivative.template TensorSecond<
+                z4c::TensorVariance::all_lower>(kSuppressed, kZ, first, second,
+                                                tensor);
+          }
+        }
+        results(target) = sum;
+      });
+  Kokkos::fence();
+  const auto result_host =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), results);
+  for (int target = 0; target < targets; ++target) {
+    if (!std::isfinite(result_host(target))) {
+      std::cerr << "order " << 2 * (NGHOST - 1)
+                << " minimal-fit reach returned a non-finite value at side="
+                << (target < NGHOST ? "+" : "-")
+                << " layer=" << target % NGHOST << '\n';
+      return false;
+    }
+  }
+  return true;
+}
+
+template <int NGHOST>
 bool CheckBlockBoundaryReach() {
   using Provider = z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST>;
   static_assert(Provider::MaximumRegularizationOffset() == NGHOST - 1,
@@ -912,9 +1084,10 @@ bool CheckBlockBoundaryReach() {
 template <int NGHOST>
 bool CheckOrder() {
   constexpr int order = 2 * (NGHOST - 1);
+  const auto near_axis_offsets = SignedNearAxisOffsets<NGHOST>();
   // The negative sample is the pi-rotated signed-plane image of the positive sample.
   // Both are compared to independently rotated full-Cartesian jet derivatives.
-  if (!CheckBlockBoundaryReach<NGHOST>() ||
+  if (!CheckMinimalFitReach<NGHOST>() || !CheckBlockBoundaryReach<NGHOST>() ||
       !CheckFullApiAndCartesianDelegation<NGHOST>(0.5) ||
       !CheckFullApiAndCartesianDelegation<NGHOST>(-0.5)) {
     return false;
@@ -946,8 +1119,9 @@ bool CheckOrder() {
     }
   }
 
-  constexpr int near_axis_offsets[4] = {0, 1, -1, -2};
   for (const int radial_offset : near_axis_offsets) {
+    const int layer = LayerFromOffset(radial_offset);
+    const double rho_over_h = radial_offset + 0.5;
     const ErrorSummary near_coarse = MeasureSample<NGHOST>(
         0.125, 0.0625, radial_offset, 0.25,
         z4c::CartoonAxisLocation::cell_centered);
@@ -965,7 +1139,9 @@ bool CheckOrder() {
           near_order >= order - 0.25 &&
           near_fine.derivative <= near_fine_tolerance)) {
       std::cerr << "order " << order << " near-axis convergence failed at rho/h="
-                << radial_offset + 0.5 << ": coarse=" << near_coarse.derivative
+                << rho_over_h << " layer=" << layer
+                << " region=" << LayerRegion<NGHOST>(radial_offset)
+                << ": coarse=" << near_coarse.derivative
                 << " medium=" << near_medium.derivative
                 << " fine=" << near_fine.derivative << " observed order=" << near_order
                 << " worst=" << ResultName(near_fine.worst_result)
@@ -981,7 +1157,9 @@ bool CheckOrder() {
             near_medium.family[family] < near_coarse.family[family] &&
             family_order >= order - 0.25)) {
         std::cerr << "order " << order << " near-axis " << family_names[family]
-                  << " family failed at rho/h=" << radial_offset + 0.5
+                  << " family failed at rho/h=" << rho_over_h
+                  << " layer=" << layer
+                  << " region=" << LayerRegion<NGHOST>(radial_offset)
                   << ": coarse=" << near_coarse.family[family]
                   << " medium=" << near_medium.family[family]
                   << " fine=" << near_fine.family[family]
@@ -990,11 +1168,22 @@ bool CheckOrder() {
         return false;
       }
     }
+    std::cout << "order=" << order << " rho/h=" << rho_over_h
+              << " layer=" << layer
+              << " region=" << LayerRegion<NGHOST>(radial_offset)
+              << " clean_observed_order=" << near_order
+              << " finest_error=" << near_fine.derivative
+              << " worst_result=" << ResultName(near_fine.worst_result)
+              << " expected=" << near_fine.worst_expected
+              << " observed=" << near_fine.worst_observed << '\n';
   }
 
-  const double roundoff_noise = 64.0 * std::numeric_limits<Real>::epsilon();
+  const double roundoff_noise =
+      RoundoffNoiseUlps() * std::numeric_limits<Real>::epsilon();
   for (int noise_phase = 0; noise_phase < 8; ++noise_phase) {
     for (const int radial_offset : near_axis_offsets) {
+      const int layer = LayerFromOffset(radial_offset);
+      const double rho_over_h = radial_offset + 0.5;
       const ErrorSummary noisy_coarse = MeasureSample<NGHOST>(
           0.125, 0.0625, radial_offset, 0.25,
           z4c::CartoonAxisLocation::cell_centered, roundoff_noise, noise_phase);
@@ -1008,13 +1197,16 @@ bool CheckOrder() {
           std::log2(noisy_medium.derivative / noisy_fine.derivative);
       const double noise_bound =
           200.0 * std::pow(0.03125, order) * (1.0 + fabs(noisy_fine.worst_expected)) +
-          1000.0 * roundoff_noise / (0.03125 * 0.03125);
+          NoiseCoefficientSafety<NGHOST>() * roundoff_noise /
+              (0.03125 * 0.03125);
       if (!std::isfinite(noisy_fine.derivative) ||
           !(noisy_fine.derivative < noisy_medium.derivative &&
             noisy_medium.derivative < noisy_coarse.derivative &&
             noisy_order >= order - 0.5 && noisy_fine.derivative <= noise_bound)) {
         std::cerr << "order " << order << " parity-noise stability failed at rho/h="
-                  << radial_offset + 0.5 << " phase=" << noise_phase
+                  << rho_over_h << " layer=" << layer
+                  << " region=" << LayerRegion<NGHOST>(radial_offset)
+                  << " phase=" << noise_phase
                   << " coarse=" << noisy_coarse.derivative
                   << " medium=" << noisy_medium.derivative
                   << " fine=" << noisy_fine.derivative
@@ -1034,6 +1226,8 @@ bool CheckOrder() {
   constexpr double independent_noise_h = 0.03125;
   for (int noise_phase = 0; noise_phase < 8; ++noise_phase) {
     for (const int radial_offset : near_axis_offsets) {
+      const int layer = LayerFromOffset(radial_offset);
+      const double rho_over_h = radial_offset + 0.5;
       const ErrorSummary clean = MeasureSample<NGHOST>(
           independent_noise_h, 0.5 * independent_noise_h, radial_offset, 0.25,
           z4c::CartoonAxisLocation::cell_centered);
@@ -1042,20 +1236,25 @@ bool CheckOrder() {
           z4c::CartoonAxisLocation::cell_centered, roundoff_noise, noise_phase,
           true);
       const double amplification_bound =
-          5000.0 * roundoff_noise /
+          NoiseCoefficientSafety<NGHOST>() * roundoff_noise /
           (independent_noise_h * independent_noise_h);
-      const double amplification =
-          fabs(noisy.isotropy_composite - clean.isotropy_composite);
-      if (!std::isfinite(noisy.isotropy_composite) ||
-          amplification > amplification_bound) {
-        std::cerr << "order " << order
-                  << " independent tensor-noise amplification failed at rho/h="
-                  << radial_offset + 0.5 << " phase=" << noise_phase
-                  << " clean isotropy error=" << clean.isotropy_composite
-                  << " noisy isotropy error=" << noisy.isotropy_composite
-                  << " amplification=" << amplification
-                  << " bound=" << amplification_bound << '\n';
-        return false;
+      for (int result = 0; result < kNumResults; ++result) {
+        if (!IsIsotropySensitiveResult(result)) continue;
+        const double clean_value = clean.observed[result];
+        const double noisy_value = noisy.observed[result];
+        const double amplification = fabs(noisy_value - clean_value);
+        if (!std::isfinite(noisy_value) || amplification > amplification_bound) {
+          std::cerr << "order " << order
+                    << " independent tensor-noise amplification failed at rho/h="
+                    << rho_over_h << " layer=" << layer
+                    << " region=" << LayerRegion<NGHOST>(radial_offset)
+                    << " phase=" << noise_phase << " result=" << ResultName(result)
+                    << " index=" << result << " clean=" << clean_value
+                    << " noisy=" << noisy_value << " oracle=" << clean.oracle[result]
+                    << " amplification=" << amplification
+                    << " bound=" << amplification_bound << '\n';
+          return false;
+        }
       }
     }
   }
