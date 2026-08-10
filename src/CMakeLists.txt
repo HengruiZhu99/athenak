@@ -130,6 +130,8 @@ add_executable(
 
         pgen/unit_tests/eos_compose.cpp
         pgen/unit_tests/gauss_legendre.cpp
+    pgen/unit_tests/z4c_cartoon_derivatives.cpp
+    pgen/unit_tests/z4c_cartoon_derivatives_kernels.cpp
 
         radiation/radiation.cpp
         radiation/radiation_fluxes.cpp

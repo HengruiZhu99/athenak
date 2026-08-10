@@ -31,8 +31,10 @@ z4c::Z4cValidationInput ValidCartoonInput() {
   input.root_blocks_x1 = 2;
   input.x1min = -24.0;
   input.x1max = 24.0;
-  input.problem_generator = "future_audited_cartoon_kerr";
-  input.accepted_cartoon_problem_generator = true;
+  input.problem_generator = "z4c_cartoon_derivatives";
+  input.cartoon_derivative_check_only_present = true;
+  input.cartoon_derivative_check_only_valid = true;
+  input.cartoon_derivative_check_only = true;
   return input;
 }
 
@@ -93,6 +95,8 @@ bool CheckNonpositiveSpatialOrderFallback() {
       input.requested_spatial_order = -1;
       if (input.requested_symmetry == "cartesian3d") {
         input.coordinate_map = "cartesian_xyz";
+        input.problem_generator = "none";
+        input.cartoon_derivative_check_only_present = false;
       }
       const auto result = z4c::ValidateZ4cSymmetry(input);
       if (!result.valid || result.config.stencil_width != nghost) return false;
@@ -174,7 +178,7 @@ bool CheckConsumerAndOutputFailures() {
     } else {
       input.outputs.push_back({"output7", file_type});
     }
-    if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
+    if (!Rejects(input, "check_only rejects Athena output blocks")) return false;
   }
   auto input = ValidCartoonInput();
   input.outputs.push_back({"output7", "mystery"});
@@ -204,11 +208,21 @@ bool CheckConsumerAndOutputFailures() {
   pdf.pdf_input.bin2_min = 0.1;
   pdf.pdf_input.bin2_max = 1.0;
   input.outputs.push_back(pdf);
-  if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
+  if (!Rejects(input, "check_only rejects Athena output blocks")) return false;
   return true;
 }
 
 bool CheckRestartAndPgenFailures() {
+  auto cartesian = z4c::Z4cValidationInput{};
+  cartesian.z4c_enabled = true;
+  cartesian.problem_generator = "z4c_cartoon_derivatives";
+  cartesian.cartoon_derivative_check_only_present = true;
+  cartesian.cartoon_derivative_check_only_valid = true;
+  cartesian.cartoon_derivative_check_only = true;
+  if (!Rejects(cartesian, "requires cartoon_so2")) return false;
+  cartesian.restart_origin = true;
+  if (!Rejects(cartesian, "check_only rejects restart")) return false;
+
   auto input = ValidCartoonInput();
   input.restart_metadata_present = true;
   input.restart_symmetry = "cartesian3d";
@@ -235,12 +249,31 @@ bool CheckRestartAndPgenFailures() {
   input.restart_symmetry = "cartoon_so2";
   input.restart_coordinate_map = "signed_rho_z_suppressed_y_v1";
   input.restart_schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
-  if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
+  if (!Rejects(input, "check_only rejects restart")) return false;
 
   input = ValidCartoonInput();
-  input.accepted_cartoon_problem_generator = false;
+  input.restart_carrier_present = true;
+  if (!Rejects(input, "check_only rejects restart")) return false;
+
+  input = ValidCartoonInput();
+  input.restart_origin = true;
+  if (!Rejects(input, "check_only rejects restart")) return false;
+
+  input = ValidCartoonInput();
+  input.cartoon_derivative_check_only = false;
+  if (!Rejects(input, "not the staged check_only")) return false;
+
+  input = ValidCartoonInput();
+  input.cartoon_derivative_check_only_valid = false;
+  if (!Rejects(input, "must be an explicit boolean")) return false;
+
+  input = ValidCartoonInput();
   input.problem_generator = "z4c_linear_wave";
-  if (!Rejects(input, "no audited cartoon_so2 adapter")) return false;
+  if (!Rejects(input, "not the staged check_only")) return false;
+
+  input = ValidCartoonInput();
+  input.multilevel = true;
+  if (!Rejects(input, "rejects AMR/SMR")) return false;
   return true;
 }
 

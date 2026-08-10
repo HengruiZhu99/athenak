@@ -49,6 +49,7 @@ Mesh::Mesh(ParameterInput *pin) :
   two_d(false),
   three_d(false),
   multi_d(false),
+  restart_origin(false),
   nprtcl_thisrank(0),
   nprtcl_total(0),
   dtold(0.),

@@ -6,6 +6,8 @@
 //! \file meshblock_pack.cpp
 //  \brief implementation of constructor and functions in MeshBlockPack class
 
+#include <algorithm>
+#include <cctype>
 #include <cstdlib>
 #include <iostream>
 #include <utility>
@@ -184,6 +186,8 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
       pin->DoesParameterExist("z4c", "restart_symmetry_schema");
   input.restart_metadata_present =
       has_restart_symmetry || has_restart_map || has_restart_schema;
+  input.restart_carrier_present = pin->DoesBlockExist(z4c::kZ4cRestartBlock);
+  input.restart_origin = mesh.restart_origin;
   if (input.restart_metadata_present) {
     input.restart_symmetry = has_restart_symmetry
                                  ? pin->GetString("z4c", "restart_symmetry")
@@ -203,8 +207,21 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
                                 ? pin->GetString("problem", "pgen_name")
                                 : "none";
 #endif
-  // The pgen/Kerr slice changes this only after its stored bounds and tensor map pass.
-  input.accepted_cartoon_problem_generator = false;
+  input.cartoon_derivative_check_only_present =
+      pin->DoesParameterExist("problem", "check_only");
+  if (input.cartoon_derivative_check_only_present) {
+    std::string raw_check_only = pin->GetString("problem", "check_only");
+    std::transform(raw_check_only.begin(), raw_check_only.end(),
+                   raw_check_only.begin(), [](const unsigned char character) {
+                     return static_cast<char>(std::tolower(character));
+                   });
+    input.cartoon_derivative_check_only_valid =
+        raw_check_only == "true" || raw_check_only == "false" ||
+        raw_check_only == "1" || raw_check_only == "0";
+    input.cartoon_derivative_check_only =
+        raw_check_only == "true" || raw_check_only == "1";
+  }
+  input.multilevel = mesh.multilevel;
   return input;
 }
 

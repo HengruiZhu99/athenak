@@ -1,0 +1,183 @@
+#!/usr/bin/env python3
+"""Fail-closed source, generator, target-shape, and coverage gates for Cartoon MMS."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+
+PROVIDER_SHA = "50a88d96cb9640c393982124d439b7a693c103d4735b5c9ce7daac84a3114055"
+FINITE_DIFF_SHA = "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42"
+BASE = "949ccd7828adf18a122c352996aa1a6393d762e7"
+BASE_ORACLE_SHA = "03699d48a07aad3b928fba75a45b6ae0d1b1ed78a16b57e16fc0e93fc163d84c"
+CATEGORIES = {"lightweight_structural", "runtime_mms", "retained_oracle",
+              "static_source"}
+REQUIRED_COVERAGE = {
+    "LEG-PARITY-METADATA": ("lightweight_structural", "athena.z4c_cartoon_mms_structure", "1400-1418"),
+    "LEG-PI-ROTATION": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "1420-1490"),
+    "LEG-FIELD-JET-ORACLE": ("retained_oracle", "athena_cartoon_derivatives_unit_test", "101-181"),
+    "LEG-DISS-ORACLE": ("retained_oracle", "athena_cartoon_derivatives_unit_test", "196-214"),
+    "LEG-NOISE-DELTA": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "336-360"),
+    "LEG-SAMPLE-RESULT-SPACE": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "364-575"),
+    "LEG-FULL-CARTOON-API": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "579-919"),
+    "LEG-CARTESIAN-DELEGATION": ("static_source", "athena.z4c_cartoon_mms_static", "579-919"),
+    "LEG-VARIANCE-INSTANTIATION": ("lightweight_structural", "athena.z4c_cartoon_mms_structure", "579-919"),
+    "LEG-MINIMAL-FIT-REACH-NG2/3/4": ("lightweight_structural", "athena.z4c_cartoon_mms_structure", "922-1018"),
+    "LEG-BLOCK-EDGE-REACH-NG2/3/4": ("lightweight_structural", "athena.z4c_cartoon_mms_structure", "1021-1124"),
+    "LEG-FIXED-RAW-POS/NEG-NG2/3/4": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "1127-1176"),
+    "LEG-REGULAR-CONV-NG2/3/4": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "1191-1220"),
+    "LEG-FITTED-RAW-CONV-NG2/3/4": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "1222-1284"),
+    "LEG-SHARED-PARITY-NOISE-NG2/3/4": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "1286-1354"),
+    "LEG-INDEPENDENT-TENSOR-NOISE-NG2/3/4": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "1356-1379"),
+    "LEG-DIAGNOSTIC-AXIS-NG2/3/4": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "1381-1397"),
+    "LEG-DISS-EXACTLY-ONCE-NG2/3/4": ("lightweight_structural", "athena.z4c_cartoon_mms_static", "1381-1397"),
+    "LEG-ORDER-AGGREGATION-NG2/3/4": ("retained_oracle", "athena_cartoon_derivatives_unit_test", "1179-1505"),
+}
+
+
+def digest(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise RuntimeError(message)
+
+
+def lambda_bodies(source: str) -> list[str]:
+    bodies = []
+    cursor = 0
+    while True:
+        start = source.find("KOKKOS_LAMBDA", cursor)
+        if start < 0:
+            return bodies
+        brace = source.find("{", start)
+        require(brace >= 0, "KOKKOS_LAMBDA lacks a body")
+        depth = 1
+        end = brace + 1
+        while end < len(source) and depth:
+            depth += (source[end] == "{") - (source[end] == "}")
+            end += 1
+        require(depth == 0, "unterminated KOKKOS_LAMBDA body")
+        bodies.append(source[brace:end])
+        cursor = end
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--source-dir", type=Path, required=True)
+    args = parser.parse_args()
+    root = args.source_dir.resolve()
+    provider = root / "src/z4c/cartoon_derivatives.hpp"
+    finite_diff = root / "src/utils/finite_diff.hpp"
+    require(digest(provider.read_bytes()) == PROVIDER_SHA, "provider hash changed")
+    require(digest(finite_diff.read_bytes()) == FINITE_DIFF_SHA,
+            "generated finite_diff.hpp hash changed")
+    base_oracle = subprocess.check_output(
+        ["git", "show", f"{BASE}:tst/unit/z4c/cartoon_derivatives_test.cpp"], cwd=root)
+    require(digest(base_oracle) == BASE_ORACLE_SHA, "frozen standalone source changed")
+
+    pgen = (root / "src/pgen/unit_tests/z4c_cartoon_derivatives.cpp").read_text()
+    kernels = (root / "src/pgen/unit_tests/z4c_cartoon_derivatives_kernels.cpp").read_text()
+    require("template <" not in pgen and "if constexpr" not in pgen and
+            "KOKKOS_LAMBDA" not in pgen, "pgen entry is not non-templated host-only")
+    require(kernels.count("RunMmsOrder<2>") == 1 and
+            kernels.count("RunMmsOrder<3>") == 1 and
+            kernels.count("RunMmsOrder<4>") == 1,
+            "host dispatcher does not own exactly three order calls")
+    require("DispatchCartoonZ4cKernel" in kernels and
+            "switch (config.stencil_width)" not in kernels and
+            "switch (fd_stencil)" not in kernels,
+            "MMS bypasses the compiled production Cartoon host dispatcher")
+    for body in lambda_bodies(kernels):
+        require("Z4cSymmetryMode" not in body and "spatial_order" not in body and
+                "z4c_symmetry" not in body,
+                "device lambda captures or branches on runtime symmetry/order")
+    require("constexpr int kResults = 171;" in kernels,
+            "runtime operator inventory is not exactly 171")
+    require("TensorVariance::all_lower" in kernels and
+            "TensorVariance::all_upper" in kernels, "both tensor variances are required")
+    require("Real observed[kResults]" not in kernels and
+            "Real expected[kResults]" not in kernels and
+            "AnalyticOracle oracle" not in kernels,
+            "production MMS kernel has an O(171) thread-local oracle/result array")
+    series = json.loads((root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json").read_text())
+    require(series.get("count") == 171 and len(series.get("series", [])) == 171 and
+            [item["index"] for item in series["series"]] == list(range(171)) and
+            len({item["name"] for item in series["series"]}) == 171,
+            "generated runtime series inventory is not exact and ordered")
+    classifications = [item["classification"] for item in series["series"]]
+    require(classifications.count("truncating") == 149 and
+            classifications.count("exact_identity") == 12 and
+            classifications.count("exact_discrete") == 10,
+            "exact/truncating series classes differ from the frozen inventory")
+    independent = [item for item in series["series"]
+                   if "independent" in item["noise_lanes"]]
+    require(len(independent) == 60 and all(item["name"].startswith((
+                "tensor.lower.0.0.", "tensor.lower.0.2.", "tensor.lower.2.2.",
+                "tensor.upper.0.0.", "tensor.upper.0.2.",
+                "tensor.upper.2.2.")) for item in independent),
+            "independent tensor-noise affected-series inventory changed")
+    require("(x,z,Y)" in (root / "tst/unit/z4c/generate_z4c_cartoon_derivative_oracle.py").read_text()
+            or "(X,Z,Y)" in kernels, "coordinate permutation is not documented")
+
+    cmake = (root / "CMakeLists.txt").read_text()
+    require(re.search(r"athena_cartoon_derivatives_unit_test\s+EXCLUDE_FROM_ALL", cmake),
+            "heavy standalone is not EXCLUDE_FROM_ALL")
+    require("NAME athena.z4c_cartoon_mms_structure" in cmake,
+            "ordinary lightweight structural CTest is missing")
+    require("NAME athena_cartoon_derivatives_unit_test" not in cmake,
+            "heavy standalone was registered as routine CTest")
+    driver = (root / "tst/test_suite/unit_tests/test_z4c_cartoon_derivatives.py").read_text()
+
+    coverage_path = root / "tst/unit/z4c/z4c_cartoon_mms_coverage.json"
+    coverage = json.loads(coverage_path.read_text())
+    actual = {entry["id"]: (entry["category"], entry["owner"],
+                             entry["source_range"])
+              for entry in coverage["checks"]}
+    require(len(actual) == len(coverage["checks"]), "duplicate primary legacy ID")
+    require(actual == REQUIRED_COVERAGE,
+            "legacy coverage IDs/categories/owners/ranges differ from frozen inventory")
+    require(len(actual) == 19, "legacy coverage must contain exactly 19 primary IDs")
+    require(all(category in CATEGORIES for category, _, _ in actual.values()),
+            "unknown primary coverage category")
+    registered = {
+        "athena.z4c_cartoon_mms_structure":
+            "NAME athena.z4c_cartoon_mms_structure" in cmake,
+        "athena.z4c_cartoon_mms_generated_reference":
+            "NAME athena.z4c_cartoon_mms_generated_reference" in cmake,
+        "athena.z4c_cartoon_mms_static":
+            "NAME athena.z4c_cartoon_mms_static" in cmake,
+        "athena_cartoon_derivatives_unit_test": bool(re.search(
+            r"athena_cartoon_derivatives_unit_test\s+EXCLUDE_FROM_ALL", cmake)),
+        "test_z4c_cartoon_derivatives.py":
+            (root / "tst/test_suite/unit_tests/test_z4c_cartoon_derivatives.py").is_file()
+            and "if __name__ == \"__main__\":" in driver,
+    }
+    require(set(coverage["owners"]) == set(registered),
+            "coverage owner inventory differs from frozen targets")
+    require(all(registered.values()),
+            "coverage owner is not registered by CMake or the campaign driver")
+    require(coverage["frozen_source_sha256"] == BASE_ORACLE_SHA,
+            "coverage source hash is not frozen")
+
+    require(not re.search(r"\bcmake\b", driver, re.IGNORECASE),
+            "campaign driver contains a build-system invocation")
+    require(not re.search(r"openmp", driver, re.IGNORECASE),
+            "campaign driver contains forbidden OpenMP lane")
+    print("Cartoon MMS static and coverage gates passed")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except RuntimeError as error:
+        print(f"FAIL: {error}", file=sys.stderr)
+        raise SystemExit(1)

@@ -81,12 +81,17 @@ struct Z4cValidationInput {
   std::vector<Z4cOutputValidationRequest> outputs;
 
   bool restart_metadata_present = false;
+  bool restart_carrier_present = false;
+  bool restart_origin = false;
   std::string restart_symmetry;
   std::string restart_coordinate_map;
   int restart_schema = 0;
 
   std::string problem_generator;
-  bool accepted_cartoon_problem_generator = false;
+  bool cartoon_derivative_check_only_present = false;
+  bool cartoon_derivative_check_only_valid = false;
+  bool cartoon_derivative_check_only = false;
+  bool multilevel = false;
 };
 
 //! Result returned without throwing, aborting, or allocating device storage.
@@ -100,6 +105,13 @@ const char *ToString(Z4cSymmetryMode mode);
 const char *ToString(Z4cCoordinateMap coordinate_map);
 int EffectiveZ4cSpatialOrder(int requested_spatial_order, int nghost);
 Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input);
+
+using Z4cCartoonKernelEntry = void (*)(void *context);
+//! Compiled host-only Cartoon stencil dispatch without Cartesian instantiation.
+void DispatchCartoonZ4cKernel(const Z4cSymmetryConfig &config, void *context,
+                              Z4cCartoonKernelEntry order2,
+                              Z4cCartoonKernelEntry order4,
+                              Z4cCartoonKernelEntry order6);
 
 //! Return the target associated with a separately compiled policy/stencil pair.
 template <typename Symmetry, int NGHOST>

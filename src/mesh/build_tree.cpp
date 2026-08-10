@@ -31,6 +31,7 @@
 //! read from input file.  Also does initial load balance based on simple cost estimate.
 
 void Mesh::BuildTreeFromScratch(ParameterInput *pin) {
+  restart_origin = false;
   // calculate the number of MeshBlocks at root level in each dir
   nmb_rootx1 = mesh_indcs.nx1/mb_indcs.nx1;
   nmb_rootx2 = mesh_indcs.nx2/mb_indcs.nx2;
@@ -315,6 +316,7 @@ void Mesh::BuildTreeFromScratch(ParameterInput *pin) {
 
 void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
                                                      bool single_file_per_rank) {
+  restart_origin = true;
   // At this point, the restartfile is already open and the ParameterInput (input file)
   // data has already been read in main(). Thus the file pointer is set to after <par_end>
   // following must be identical to calculation of headeroffset (excluding size of

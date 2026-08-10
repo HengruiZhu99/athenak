@@ -1,0 +1,52 @@
+# Input-selected manufactured-solution check for the production SO(2) derivative provider.
+
+<job>
+basename = z4c_cartoon_derivatives
+
+<mesh>
+nghost = 2
+nx1 = 32
+x1min = -2.0
+x1max = 2.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 32
+x2min = -2.0
+x2max = 2.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 1
+
+<mesh_refinement>
+refinement = none
+
+<time>
+evolution = static
+integrator = rk2
+cfl_number = 0.1
+nlim = 0
+tlim = 0.0
+ndiag = 1
+
+<z4c>
+symmetry = cartoon_so2
+coordinate_map = signed_rho_z_suppressed_y_v1
+symmetry_schema = 1
+spatial_order = 2
+telegraph_tau = 0.1
+telegraph_kappa = 0.1
+
+<problem>
+pgen_name = z4c_cartoon_derivatives
+check_only = true
+noise_phase = 3
+output_directory = .

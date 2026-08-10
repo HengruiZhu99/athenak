@@ -434,6 +434,17 @@ def main():
     base_restart = base_origin / "rst" / "z4c_restart_carrier.00000.rst"
     if not base_restart.is_file() or b"<z4c_restart>" in base_restart.read_bytes():
         raise RuntimeError("exact legacy base did not produce a carrier-free restart")
+    mms_overlay = args.work_dir / "legacy_mms_override.athinput"
+    mms_overlay.write_text(
+        "<problem>\npgen_name = z4c_cartoon_derivatives\ncheck_only = true\n"
+    )
+    output = run(
+        [args.athena, "-r", base_restart, "-i", mms_overlay], args.work_dir, False,
+        ("Z4c preallocation validation failed",
+         "z4c_cartoon_derivatives check_only rejects restart"),
+    )
+    if "AssembleZ4cTasks" in output or "Setup complete, executing task list(s)" in output:
+        raise RuntimeError("genuine legacy restart MMS injection reached physics allocation")
     marker = b"<par_end>\n"
     base_restart_data = base_restart.read_bytes()
     if (restart_data[restart_data.index(marker) + len(marker):] !=

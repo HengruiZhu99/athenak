@@ -294,8 +294,11 @@ if (Athena_BUILD_UNIT_TESTS)
 
   enable_testing()
   find_package(PythonInterp 3 REQUIRED)
+  # Low-frequency qualification only: each order has its own translation unit to
+  # bound compiler memory, and the expensive grid convergence is driven by the
+  # input-selected production MMS rather than routine CTest.
   add_executable(
-      athena_cartoon_derivatives_unit_test
+      athena_cartoon_derivatives_unit_test EXCLUDE_FROM_ALL
       tst/unit/z4c/cartoon_derivatives_test.cpp
       tst/unit/z4c/cartoon_derivatives_order2_test.cpp
       tst/unit/z4c/cartoon_derivatives_order4_test.cpp
@@ -306,9 +309,40 @@ if (Athena_BUILD_UNIT_TESTS)
       ${CMAKE_CURRENT_SOURCE_DIR}/src
       ${CMAKE_CURRENT_BINARY_DIR})
   target_link_libraries(athena_cartoon_derivatives_unit_test PRIVATE Kokkos::kokkos)
+
+  add_executable(
+      athena_cartoon_mms_structure_unit_test
+      tst/unit/z4c/cartoon_mms_structure_test.cpp)
+  target_include_directories(
+      athena_cartoon_mms_structure_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(athena_cartoon_mms_structure_unit_test PRIVATE Kokkos::kokkos)
   add_test(
-      NAME athena.cartoon_derivatives
-      COMMAND athena_cartoon_derivatives_unit_test)
+      NAME athena.z4c_cartoon_mms_structure
+      COMMAND athena_cartoon_mms_structure_unit_test)
+  add_test(
+      NAME athena.z4c_cartoon_mms_static
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_mms_static_test.py
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  add_executable(
+      athena_cartoon_mms_generated_reference_unit_test
+      tst/unit/z4c/z4c_cartoon_mms_generated_reference_test.cpp)
+  target_include_directories(
+      athena_cartoon_mms_generated_reference_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_cartoon_mms_generated_reference_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_cartoon_mms_generated_reference
+      COMMAND athena_cartoon_mms_generated_reference_unit_test
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_derivatives_reference.json)
 
   add_executable(
       athena_z4c_symmetry_dispatch_unit_test

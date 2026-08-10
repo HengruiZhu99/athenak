@@ -1000,6 +1000,14 @@ bool CheckMinimalFitReach() {
             sum += derivative.template TensorSecond<
                 z4c::TensorVariance::all_lower>(kSuppressed, kZ, first, second,
                                                 tensor);
+            // Compile and execute both variance specializations on the same bounded
+            // fitted view.  Their suppressed-index signs differ for mixed components,
+            // so this is a real provider/API instantiation rather than a source marker.
+            sum += derivative.template TensorFirst<
+                z4c::TensorVariance::all_upper>(kSuppressed, first, second, tensor);
+            sum += derivative.template TensorSecond<
+                z4c::TensorVariance::all_upper>(kSuppressed, kSuppressed, first,
+                                                second, tensor);
           }
         }
         results(target) = sum;

@@ -207,6 +207,7 @@ telegraph_tau = -1
 
 <problem>
 pgen_name = constructor_side_effect_sentinel
+@PROBLEM_EXTRA@
 
 @EXTRA_BLOCKS@
 ]=])
@@ -216,8 +217,41 @@ function(run_cartoon_reject case_name expected_diagnostic z4c_extra extra_blocks
   set(NX3 1)
   set(Z4C_EXTRA "${z4c_extra}")
   set(EXTRA_BLOCKS "${extra_blocks}")
+  set(PROBLEM_EXTRA "")
   string(CONFIGURE "${cartoon_template}" input_text @ONLY)
   run_input("${case_name}" "${input_text}" FALSE "${expected_diagnostic}")
+endfunction()
+
+function(run_cartoon_mms_reject case_name pgen_name check_only expected_diagnostic
+         z4c_extra extra_blocks)
+  set(CASE_NAME "${case_name}")
+  set(NX3 1)
+  set(Z4C_EXTRA "${z4c_extra}")
+  set(EXTRA_BLOCKS "${extra_blocks}")
+  if("${check_only}" STREQUAL "")
+    set(PROBLEM_EXTRA "")
+  else()
+    set(PROBLEM_EXTRA "check_only = ${check_only}")
+  endif()
+  string(CONFIGURE "${cartoon_template}" input_text @ONLY)
+  string(REPLACE "pgen_name = constructor_side_effect_sentinel"
+                 "pgen_name = ${pgen_name}" input_text "${input_text}")
+  run_input("${case_name}" "${input_text}" FALSE "${expected_diagnostic}")
+endfunction()
+
+function(run_cartoon_mms_positive case_name extra_blocks)
+  file(READ "${SOURCE_DIR}/tst/inputs/z4c_cartoon_derivatives.athinput" input_text)
+  string(REPLACE "basename = z4c_cartoon_derivatives"
+                 "basename = prealloc_${case_name}" input_text "${input_text}")
+  string(REPLACE "nx1 = 32" "nx1 = 8" input_text "${input_text}")
+  string(REPLACE "nx2 = 32" "nx2 = 8" input_text "${input_text}")
+  string(REPLACE "nx1 = 16" "nx1 = 4" input_text "${input_text}")
+  string(REPLACE "nx2 = 16" "nx2 = 4" input_text "${input_text}")
+  string(APPEND input_text "\n${extra_blocks}\n")
+  run_input("${case_name}" "${input_text}" TRUE "")
+  if(NOT EXISTS "${TEST_DIR}/prealloc_${case_name}.mms.json")
+    message(FATAL_ERROR "${case_name}: exact built-in pgen did not execute")
+  endif()
 endfunction()
 
 function(run_cartoon_pdf_reject case_name expected_diagnostic pdf_parameters)
@@ -250,9 +284,62 @@ run_input(
     bad_nx3 "${bad_nx3_input}" FALSE
     "cartoon_so2 requires mesh/nx3=meshblock/nx3=1")
 
+# The sole check-only exception is exact and remains before every constructor side effect.
+run_cartoon_mms_reject(
+    mms_missing_check z4c_cartoon_derivatives ""
+    "problem generator 'z4c_cartoon_derivatives' is not the staged check_only Cartoon derivative MMS"
+    "" "")
+run_cartoon_mms_positive(mms_exact_positive "")
+run_cartoon_mms_positive(
+    mms_exact_inactive_output
+    "<output1>\nfile_type = cart\ndcycle = 0\ndt = 0.0")
+run_cartoon_mms_reject(
+    mms_false_check z4c_cartoon_derivatives false
+    "problem generator 'z4c_cartoon_derivatives' is not the staged check_only Cartoon derivative MMS"
+    "" "")
+run_cartoon_mms_reject(
+    mms_malformed_check z4c_cartoon_derivatives maybe
+    "<problem>/check_only must be an explicit boolean for z4c_cartoon_derivatives"
+    "" "")
+run_cartoon_mms_reject(
+    mms_near_name z4c_cartoon_derivative true
+    "problem generator 'z4c_cartoon_derivative' is not the staged check_only Cartoon derivative MMS"
+    "" "")
+run_cartoon_mms_reject(
+    mms_case_name Z4c_Cartoon_Derivatives true
+    "problem generator 'Z4c_Cartoon_Derivatives' is not the staged check_only Cartoon derivative MMS"
+    "" "")
+run_cartoon_mms_reject(
+    mms_restart_carrier z4c_cartoon_derivatives true
+    "z4c_cartoon_derivatives check_only rejects restart"
+    "restart_symmetry = cartoon_so2\nrestart_coordinate_map = signed_rho_z_suppressed_y_v1\nrestart_symmetry_schema = 1"
+    "")
+run_cartoon_mms_reject(
+    mms_restart_block_injection z4c_cartoon_derivatives true
+    "z4c_cartoon_derivatives check_only rejects restart"
+    "" "<z4c_restart>\ncarrier_schema = 1")
+run_cartoon_mms_reject(
+    mms_active_output z4c_cartoon_derivatives true
+    "z4c_cartoon_derivatives check_only rejects Athena output blocks"
+    "" "<output1>\nfile_type = tab\ndcycle = 1\nvariable = z4c_chi")
+run_cartoon_mms_reject(
+    mms_static_refinement z4c_cartoon_derivatives true
+    "z4c_cartoon_derivatives check_only rejects AMR/SMR"
+    "" "<mesh_refinement>\nrefinement = static")
+run_cartoon_mms_reject(
+    mms_adaptive_refinement z4c_cartoon_derivatives true
+    "z4c_cartoon_derivatives check_only rejects AMR/SMR"
+    "" "<mesh_refinement>\nrefinement = adaptive")
+
 foreach(physics hydro mhd ion-neutral radiation turb_driving particles)
   run_cartoon_reject(
       "physics_${physics}" "cartoon_so2 vacuum Z4c forbids <${physics}> physics"
+      "" "<${physics}>\nsentinel = true")
+endforeach()
+foreach(physics hydro mhd ion-neutral radiation turb_driving particles)
+  run_cartoon_mms_reject(
+      "mms_physics_${physics}" z4c_cartoon_derivatives true
+      "cartoon_so2 vacuum Z4c forbids <${physics}> physics"
       "" "<${physics}>\nsentinel = true")
 endforeach()
 
@@ -271,6 +358,26 @@ run_cartoon_reject(
     "" "<cce>\nnum_radii = 1")
 run_cartoon_reject(
     fastflow "cartoon_so2 does not support FastFlow before the m=0 Cartoon adapter is integrated"
+    "" "<fastflow>\nnum_horizons = 1")
+run_cartoon_mms_reject(
+    mms_tracker z4c_cartoon_derivatives true
+    "cartoon_so2 does not support compact-object tracker co_0_type"
+    "co_0_type = BH" "")
+run_cartoon_mms_reject(
+    mms_horizon_dump z4c_cartoon_derivatives true
+    "cartoon_so2 does not support horizon dump dump_horizon_0"
+    "dump_horizon_0 = true" "")
+run_cartoon_mms_reject(
+    mms_wave z4c_cartoon_derivatives true
+    "cartoon_so2 does not support Z4c wave extraction"
+    "nrad_wave_extraction = 1" "")
+run_cartoon_mms_reject(
+    mms_cce z4c_cartoon_derivatives true
+    "cartoon_so2 does not support CCE extraction"
+    "" "<cce>\nnum_radii = 1")
+run_cartoon_mms_reject(
+    mms_fastflow z4c_cartoon_derivatives true
+    "cartoon_so2 does not support FastFlow before the m=0 Cartoon adapter is integrated"
     "" "<fastflow>\nnum_horizons = 1")
 foreach(legacy_key
         center_x_0
@@ -361,7 +468,7 @@ run_cartoon_pdf_reject(
     "variable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_alpha\nnbin2 = 8\nbin2_min = 1.7976931348623155e308\nbin2_max = 1.7976931348623157e308")
 run_cartoon_reject(
     pdf_maximum_checked_without_allocation
-    "problem generator 'constructor_side_effect_sentinel' has no audited cartoon_so2 adapter"
+    "problem generator 'constructor_side_effect_sentinel' is not the staged check_only Cartoon derivative MMS"
     "" "<output1>\nfile_type = pdf\ndcycle = 1\nid = max_no_alloc\nvariable = z4c_chi\nnbin = 4094\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_alpha\nnbin2 = 4094\nbin2_min = 0.1\nbin2_max = 1.0")
 if(IS_DIRECTORY "${TEST_DIR}/pdf_max_no_alloc_z4c_alpha")
   message(FATAL_ERROR
@@ -378,16 +485,16 @@ foreach(file_type tab hst log vtk pdf bin rst)
   endif()
   run_cartoon_reject(
       "output_supported_${file_type}"
-      "problem generator 'constructor_side_effect_sentinel' has no audited cartoon_so2 adapter"
+      "problem generator 'constructor_side_effect_sentinel' is not the staged check_only Cartoon derivative MMS"
       "" "${output_options}")
 endforeach()
 run_cartoon_reject(
     output_disabled
-    "problem generator 'constructor_side_effect_sentinel' has no audited cartoon_so2 adapter"
+    "problem generator 'constructor_side_effect_sentinel' is not the staged check_only Cartoon derivative MMS"
     "" "<output1>\nfile_type = cart\ndcycle = 0\ndt = 1.0")
 run_cartoon_reject(
     output_disabled_dt
-    "problem generator 'constructor_side_effect_sentinel' has no audited cartoon_so2 adapter"
+    "problem generator 'constructor_side_effect_sentinel' is not the staged check_only Cartoon derivative MMS"
     "" "<output1>\nfile_type = cart\ndt = 0.0")
 
 # Restart carrier spellings are collected now, while matching metadata remains staged at pgen.
@@ -402,12 +509,12 @@ run_cartoon_reject(
     "restart_symmetry = cartoon_so2" "")
 run_cartoon_reject(
     restart_match
-    "problem generator 'constructor_side_effect_sentinel' has no audited cartoon_so2 adapter"
+    "problem generator 'constructor_side_effect_sentinel' is not the staged check_only Cartoon derivative MMS"
     "restart_symmetry = cartoon_so2\nrestart_coordinate_map = signed_rho_z_suppressed_y_v1\nrestart_symmetry_schema = 1"
     "")
 run_cartoon_reject(
     pgen_gate
-    "problem generator 'constructor_side_effect_sentinel' has no audited cartoon_so2 adapter"
+    "problem generator 'constructor_side_effect_sentinel' is not the staged check_only Cartoon derivative MMS"
     "" "")
 
 message(STATUS "Z4c production preallocation process tests passed")

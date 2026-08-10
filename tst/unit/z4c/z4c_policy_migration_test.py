@@ -174,8 +174,12 @@ def main() -> int:
             "collapsed physical boundary path does not stop before x3 faces")
 
     validator = (source_dir / "src/mesh/meshblock_pack.cpp").read_text(encoding="utf-8")
-    require("input.accepted_cartoon_problem_generator = false;" in validator,
-            "universal Cartoon pgen gate was opened before the pgen slice")
+    require('input.problem_generator == "z4c_cartoon_derivatives"' in
+            (source_dir / "src/z4c/z4c_symmetry.cpp").read_text(encoding="utf-8"),
+            "Cartoon pgen gate is not restricted to the derivative MMS")
+    require('pin->GetString("problem", "check_only")' in validator and
+            "cartoon_derivative_check_only_valid" in validator,
+            "Cartoon derivative MMS lacks strict check_only parsing")
 
     print("Z4c policy migration ownership and host-dispatch contract passed")
     return 0

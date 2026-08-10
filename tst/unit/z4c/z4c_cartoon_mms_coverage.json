@@ -1,0 +1,34 @@
+{
+  "schema": "athenak_z4c_cartoon_mms_legacy_coverage_v1",
+  "frozen_base": "949ccd7828adf18a122c352996aa1a6393d762e7",
+  "frozen_source": "tst/unit/z4c/cartoon_derivatives_test.cpp",
+  "frozen_source_sha256": "03699d48a07aad3b928fba75a45b6ae0d1b1ed78a16b57e16fc0e93fc163d84c",
+  "owners": [
+    "athena.z4c_cartoon_mms_structure",
+    "athena.z4c_cartoon_mms_generated_reference",
+    "athena.z4c_cartoon_mms_static",
+    "athena_cartoon_derivatives_unit_test",
+    "test_z4c_cartoon_derivatives.py"
+  ],
+  "checks": [
+    {"id":"LEG-PARITY-METADATA","category":"lightweight_structural","owner":"athena.z4c_cartoon_mms_structure","source_range":"1400-1418","retained_duplicate":true},
+    {"id":"LEG-PI-ROTATION","category":"runtime_mms","owner":"test_z4c_cartoon_derivatives.py","source_range":"1420-1490","retained_duplicate":true},
+    {"id":"LEG-FIELD-JET-ORACLE","category":"retained_oracle","owner":"athena_cartoon_derivatives_unit_test","source_range":"101-181","retained_duplicate":false},
+    {"id":"LEG-DISS-ORACLE","category":"retained_oracle","owner":"athena_cartoon_derivatives_unit_test","source_range":"196-214","retained_duplicate":false},
+    {"id":"LEG-NOISE-DELTA","category":"runtime_mms","owner":"test_z4c_cartoon_derivatives.py","source_range":"336-360","retained_duplicate":true},
+    {"id":"LEG-SAMPLE-RESULT-SPACE","category":"runtime_mms","owner":"test_z4c_cartoon_derivatives.py","source_range":"364-575","retained_duplicate":true},
+    {"id":"LEG-FULL-CARTOON-API","category":"runtime_mms","owner":"test_z4c_cartoon_derivatives.py","source_range":"579-919","retained_duplicate":true},
+    {"id":"LEG-CARTESIAN-DELEGATION","category":"static_source","owner":"athena.z4c_cartoon_mms_static","source_range":"579-919","retained_duplicate":true},
+    {"id":"LEG-VARIANCE-INSTANTIATION","category":"lightweight_structural","owner":"athena.z4c_cartoon_mms_structure","source_range":"579-919","retained_duplicate":true},
+    {"id":"LEG-MINIMAL-FIT-REACH-NG2/3/4","category":"lightweight_structural","owner":"athena.z4c_cartoon_mms_structure","source_range":"922-1018","retained_duplicate":true},
+    {"id":"LEG-BLOCK-EDGE-REACH-NG2/3/4","category":"lightweight_structural","owner":"athena.z4c_cartoon_mms_structure","source_range":"1021-1124","retained_duplicate":true},
+    {"id":"LEG-FIXED-RAW-POS/NEG-NG2/3/4","category":"runtime_mms","owner":"test_z4c_cartoon_derivatives.py","source_range":"1127-1176","retained_duplicate":true},
+    {"id":"LEG-REGULAR-CONV-NG2/3/4","category":"runtime_mms","owner":"test_z4c_cartoon_derivatives.py","source_range":"1191-1220","retained_duplicate":true},
+    {"id":"LEG-FITTED-RAW-CONV-NG2/3/4","category":"runtime_mms","owner":"test_z4c_cartoon_derivatives.py","source_range":"1222-1284","retained_duplicate":true},
+    {"id":"LEG-SHARED-PARITY-NOISE-NG2/3/4","category":"runtime_mms","owner":"test_z4c_cartoon_derivatives.py","source_range":"1286-1354","retained_duplicate":true},
+    {"id":"LEG-INDEPENDENT-TENSOR-NOISE-NG2/3/4","category":"runtime_mms","owner":"test_z4c_cartoon_derivatives.py","source_range":"1356-1379","retained_duplicate":true},
+    {"id":"LEG-DIAGNOSTIC-AXIS-NG2/3/4","category":"runtime_mms","owner":"test_z4c_cartoon_derivatives.py","source_range":"1381-1397","retained_duplicate":true},
+    {"id":"LEG-DISS-EXACTLY-ONCE-NG2/3/4","category":"lightweight_structural","owner":"athena.z4c_cartoon_mms_static","source_range":"1381-1397","retained_duplicate":true},
+    {"id":"LEG-ORDER-AGGREGATION-NG2/3/4","category":"retained_oracle","owner":"athena_cartoon_derivatives_unit_test","source_range":"1179-1505","retained_duplicate":false}
+  ]
+}

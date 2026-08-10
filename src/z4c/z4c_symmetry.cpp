@@ -99,6 +99,27 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
     if (!pdf_plan.valid) return Invalid(config, pdf_plan.error);
   }
 
+  // This exact pgen is a Cartoon-only, fresh-start, check-only exception.  Enforce
+  // those immutable facts before the Cartesian early return as well, so a genuine
+  // carrier-free Cartesian restart cannot inject the pgen through -i/CLI and reach
+  // Mesh/Z4c allocation before its own defensive restart check.
+  const bool derivative_pgen = input.problem_generator == "z4c_cartoon_derivatives";
+  if (derivative_pgen && input.cartoon_derivative_check_only_present &&
+      !input.cartoon_derivative_check_only_valid) {
+    return Invalid(config,
+                   "<problem>/check_only must be an explicit boolean for "
+                   "z4c_cartoon_derivatives");
+  }
+  if (derivative_pgen && (input.restart_origin || input.restart_metadata_present ||
+                          input.restart_carrier_present)) {
+    return Invalid(config,
+                   "z4c_cartoon_derivatives check_only rejects restart");
+  }
+  if (derivative_pgen && config.mode != Z4cSymmetryMode::cartoon_so2) {
+    return Invalid(config,
+                   "z4c_cartoon_derivatives check_only requires cartoon_so2");
+  }
+
   if (config.mode == Z4cSymmetryMode::cartesian3d) {
     if (input.coordinate_map_specified && input.coordinate_map != "cartesian_xyz") {
       return Invalid(config, "cartesian3d requires coordinate_map=cartesian_xyz");
@@ -190,12 +211,51 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
                    "restart symmetry/map/schema metadata conflicts with cartoon_so2");
   }
 
-  if (!input.accepted_cartoon_problem_generator) {
+  if (derivative_pgen &&
+      input.cartoon_derivative_check_only_present &&
+      !input.cartoon_derivative_check_only_valid) {
+    return Invalid(config,
+                   "<problem>/check_only must be an explicit boolean for "
+                   "z4c_cartoon_derivatives");
+  }
+  const bool derivative_check = derivative_pgen &&
+                                input.cartoon_derivative_check_only_present &&
+                                input.cartoon_derivative_check_only_valid &&
+                                input.cartoon_derivative_check_only;
+  if (!derivative_check) {
     return Invalid(config, "problem generator '" + input.problem_generator +
-                               "' has no audited cartoon_so2 adapter");
+                               "' is not the staged check_only Cartoon derivative MMS");
+  }
+  if (input.multilevel) {
+    return Invalid(config,
+                   "z4c_cartoon_derivatives check_only rejects AMR/SMR");
+  }
+  if (!input.outputs.empty()) {
+    return Invalid(config,
+                   "z4c_cartoon_derivatives check_only rejects Athena output blocks");
   }
 
   return {true, config, ""};
+}
+
+void DispatchCartoonZ4cKernel(const Z4cSymmetryConfig &config, void *context,
+                              Z4cCartoonKernelEntry order2,
+                              Z4cCartoonKernelEntry order4,
+                              Z4cCartoonKernelEntry order6) {
+  if (config.mode != Z4cSymmetryMode::cartoon_so2) {
+    std::cerr << "### FATAL ERROR: Cartoon-only host dispatch received symmetry="
+              << ToString(config.mode) << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  switch (config.stencil_width) {
+    case 2: order2(context); return;
+    case 3: order4(context); return;
+    case 4: order6(context); return;
+    default:
+      std::cerr << "### FATAL ERROR: Cartoon-only host dispatch received stencil_width="
+                << config.stencil_width << std::endl;
+      std::exit(EXIT_FAILURE);
+  }
 }
 
 template <typename Symmetry, int NGHOST>
