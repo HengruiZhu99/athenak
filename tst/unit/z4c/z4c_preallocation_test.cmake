@@ -220,6 +220,17 @@ function(run_cartoon_reject case_name expected_diagnostic z4c_extra extra_blocks
   run_input("${case_name}" "${input_text}" FALSE "${expected_diagnostic}")
 endfunction()
 
+function(run_cartoon_pdf_reject case_name expected_diagnostic pdf_parameters)
+  set(pdf_block
+      "<output1>\nfile_type = pdf\ndcycle = 1\nid = reject_${case_name}\n${pdf_parameters}")
+  run_cartoon_reject("${case_name}" "${expected_diagnostic}" "" "${pdf_block}")
+  file(GLOB pdf_side_effects "${TEST_DIR}/pdf_reject_${case_name}*")
+  if(pdf_side_effects)
+    message(FATAL_ERROR
+        "${case_name}: rejected PDF reached allocation/output construction: ${pdf_side_effects}")
+  endif()
+endfunction()
+
 # Production collection of common configuration and every incompatible physics block.
 run_cartoon_reject(
     bad_mode "<z4c>/symmetry must be cartesian3d or cartoon_so2, not 'helical'"
@@ -303,6 +314,51 @@ run_cartoon_reject(
     pdf_variable_zero_nbin
     "<output1> PDF variable_2 requires nbin2 in [1,4094]"
     "" "<output1>\nfile_type = pdf\ndcycle = 1\nvariable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_chi\nnbin2 = 0")
+
+# Symmetric primary/second-axis validation must fail in AddPhysics before the
+# pgen or PDF constructor.  Unique IDs make output side effects mechanically visible.
+run_cartoon_pdf_reject(
+    pdf_primary_missing_min "<output1> PDF requires bin_min"
+    "variable = z4c_chi\nnbin = 8\nbin_max = 1.0")
+run_cartoon_pdf_reject(
+    pdf_primary_missing_max "<output1> PDF requires bin_max"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 0.1")
+run_cartoon_pdf_reject(
+    pdf_second_missing_min "<output1> PDF variable_2 requires explicit bin2_min"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_alpha\nnbin2 = 8\nbin2_max = 1.0")
+run_cartoon_pdf_reject(
+    pdf_second_missing_max "<output1> PDF variable_2 requires explicit bin2_max"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_alpha\nnbin2 = 8\nbin2_min = 0.1")
+run_cartoon_pdf_reject(
+    pdf_primary_equal "<output1> primary axis requires bin_min < bin_max"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 0.1")
+run_cartoon_pdf_reject(
+    pdf_primary_reversed "<output1> primary axis requires bin_min < bin_max"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 1.0\nbin_max = 0.1")
+run_cartoon_pdf_reject(
+    pdf_second_equal "<output1> second axis requires bin_min < bin_max"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_alpha\nnbin2 = 8\nbin2_min = 0.1\nbin2_max = 0.1")
+run_cartoon_pdf_reject(
+    pdf_second_reversed "<output1> second axis requires bin_min < bin_max"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_alpha\nnbin2 = 8\nbin2_min = 1.0\nbin2_max = 0.1")
+run_cartoon_pdf_reject(
+    pdf_primary_negative_log "<output1> primary axis logarithmic bin_min must be positive"
+    "variable = z4c_chi\nnbin = 8\nbin_min = -0.1\nbin_max = 1.0")
+run_cartoon_pdf_reject(
+    pdf_second_negative_log "<output1> second axis logarithmic bin_min must be positive"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_alpha\nnbin2 = 8\nbin2_min = -0.1\nbin2_max = 1.0")
+run_cartoon_pdf_reject(
+    pdf_primary_nonfinite_step "<output1> primary axis bin step must be finite and positive"
+    "variable = z4c_chi\nnbin = 8\nbin_min = -1.7976931348623157e308\nbin_max = 1.7976931348623157e308\nlogscale = false")
+run_cartoon_pdf_reject(
+    pdf_second_nonfinite_step "<output1> second axis bin step must be finite and positive"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_alpha\nnbin2 = 8\nbin2_min = -1.7976931348623157e308\nbin2_max = 1.7976931348623157e308\nlogscale2 = false")
+run_cartoon_pdf_reject(
+    pdf_primary_zero_log_step "<output1> primary axis bin step must be finite and positive"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 1.7976931348623155e308\nbin_max = 1.7976931348623157e308")
+run_cartoon_pdf_reject(
+    pdf_second_zero_log_step "<output1> second axis bin step must be finite and positive"
+    "variable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_alpha\nnbin2 = 8\nbin2_min = 1.7976931348623155e308\nbin2_max = 1.7976931348623157e308")
 run_cartoon_reject(
     pdf_maximum_checked_without_allocation
     "problem generator 'constructor_side_effect_sentinel' has no audited cartoon_so2 adapter"

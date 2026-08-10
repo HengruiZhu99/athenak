@@ -84,10 +84,24 @@ bool CheckInvalidCounts() {
   auto missing = Valid();
   missing.has_nbin = false;
   if (!Rejects(missing, "requires nbin")) return false;
+  missing = Valid();
+  missing.has_bin_min = false;
+  if (!Rejects(missing, "requires bin_min")) return false;
+  missing = Valid();
+  missing.has_bin_max = false;
+  if (!Rejects(missing, "requires bin_max")) return false;
   auto second_missing = Valid();
   second_missing.variable_2_specified = true;
   second_missing.has_variable_2 = true;
   if (!Rejects(second_missing, "explicit nbin2")) return false;
+  second_missing = Valid();
+  AddSecond(&second_missing);
+  second_missing.has_bin2_min = false;
+  if (!Rejects(second_missing, "explicit bin2_min")) return false;
+  second_missing = Valid();
+  AddSecond(&second_missing);
+  second_missing.has_bin2_max = false;
+  if (!Rejects(second_missing, "explicit bin2_max")) return false;
   auto empty_second = Valid();
   empty_second.variable_2_specified = true;
   if (!Rejects(empty_second, "non-empty")) return false;
@@ -121,12 +135,66 @@ bool CheckBounds() {
   input.bin_max = input.bin_min / 2.0;
   if (!Rejects(input, "bin_min < bin_max")) return false;
   input = Valid();
+  AddSecond(&input);
+  input.bin2_max = input.bin2_min;
+  if (!Rejects(input, "bin_min < bin_max")) return false;
+  input = Valid();
+  AddSecond(&input);
+  input.bin2_max = input.bin2_min / 2.0;
+  if (!Rejects(input, "bin_min < bin_max")) return false;
+  input = Valid();
   input.bin_min = 0.0;
+  if (!Rejects(input, "positive")) return false;
+  input = Valid();
+  input.bin_min = -0.125;
   if (!Rejects(input, "positive")) return false;
   input = Valid();
   AddSecond(&input);
   input.bin2_min = 0.0;
   if (!Rejects(input, "positive")) return false;
+  input = Valid();
+  AddSecond(&input);
+  input.bin2_min = -0.25;
+  if (!Rejects(input, "positive")) return false;
+
+  // Finite ordered linear bounds can still overflow their subtraction.
+  input = Valid();
+  input.logscale = false;
+  input.bin_min = -std::numeric_limits<double>::max();
+  input.bin_max = std::numeric_limits<double>::max();
+  if (!Rejects(input, "step must be finite and positive")) return false;
+  input = Valid();
+  AddSecond(&input);
+  input.logscale2 = false;
+  input.bin2_min = -std::numeric_limits<double>::max();
+  input.bin2_max = std::numeric_limits<double>::max();
+  if (!Rejects(input, "step must be finite and positive")) return false;
+
+  // Distinct finite logarithmic bounds can map to the same rounded logarithm.
+  const double largest = std::numeric_limits<double>::max();
+  const double below_largest = std::nextafter(largest, 0.0);
+  input = Valid();
+  input.bin_min = below_largest;
+  input.bin_max = largest;
+  if (!Rejects(input, "step must be finite and positive")) return false;
+  input = Valid();
+  AddSecond(&input);
+  input.bin2_min = below_largest;
+  input.bin2_max = largest;
+  if (!Rejects(input, "step must be finite and positive")) return false;
+
+  // A finite positive linear span can underflow to a zero step after division.
+  input = Valid();
+  input.logscale = false;
+  input.bin_min = 0.0;
+  input.bin_max = std::numeric_limits<double>::denorm_min();
+  if (!Rejects(input, "step must be finite and positive")) return false;
+  input = Valid();
+  AddSecond(&input);
+  input.logscale2 = false;
+  input.bin2_min = 0.0;
+  input.bin2_max = std::numeric_limits<double>::denorm_min();
+  if (!Rejects(input, "step must be finite and positive")) return false;
   return true;
 }
 
