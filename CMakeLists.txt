@@ -34,6 +34,7 @@ endif()
 option(Athena_SINGLE_PRECISION "Compile for single precision" OFF)
 option(Athena_ENABLE_MPI "Compile with MPI parallelism enabled" OFF)
 option(Athena_ENABLE_OPENMP "Compile with OpenMP parallelism enabled" OFF)
+option(Athena_BUILD_UNIT_TESTS "Build isolated C++ unit-test executables" OFF)
 set(PROBLEM built_in_pgens CACHE STRING "Name of problem generator function")
 
 #------ set macros exported to config.hpp ------------------------------------------------
@@ -284,5 +285,22 @@ target_include_directories(athena PUBLIC
 )
 
 configure_file(config.hpp.in config.hpp)
+
+if (Athena_BUILD_UNIT_TESTS)
+  enable_testing()
+  add_executable(
+      athena_cartoon_derivatives_unit_test
+      EXCLUDE_FROM_ALL
+      tst/unit/z4c/cartoon_derivatives_test.cpp)
+  target_include_directories(
+      athena_cartoon_derivatives_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(athena_cartoon_derivatives_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.cartoon_derivatives
+      COMMAND athena_cartoon_derivatives_unit_test)
+endif()
 
 install( TARGETS athena DESTINATION bin )

@@ -1,0 +1,693 @@
+//========================================================================================
+// AthenaK astrophysical fluid dynamics & numerical relativity code
+// Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the AthenaK collaboration
+// Licensed under the 3-clause BSD License, see LICENSE file for details
+//========================================================================================
+//! \file cartoon_derivatives.hpp
+//! \brief Tensor-aware Cartesian and SO(2) derivative providers for vacuum Z4c.
+
+#ifndef Z4C_CARTOON_DERIVATIVES_HPP_
+#define Z4C_CARTOON_DERIVATIVES_HPP_
+
+#include <math.h>
+
+#include "athena.hpp"
+#include "utils/finite_diff.hpp"
+
+namespace z4c {
+
+//! Coordinate directions used by the signed-meridional Cartoon mapping.
+enum class CartoonDirection : int {
+  rho = 0,        //!< x1: signed cylindrical radius on the active plane
+  z = 1,          //!< x2: physical symmetry-axis coordinate
+  suppressed = 2 //!< x3: suppressed azimuthal Cartesian direction
+};
+
+//! Tags select separately compiled symmetry-policy kernels on the host.
+struct Cartesian3D {};
+struct CartoonSO2 {};
+
+template <typename Symmetry, int NGHOST>
+class DerivativeProvider;
+
+//! Cartesian derivative policy.
+//!
+//! This specialization intentionally contains no replacement stencils. Each operation
+//! delegates directly to AthenaK's generated finite-difference implementation so the
+//! existing three-dimensional path retains exactly the same numerical operators.
+template <int NGHOST>
+class DerivativeProvider<Cartesian3D, NGHOST> {
+ public:
+  static_assert(NGHOST >= 2 && NGHOST <= 4,
+                "Z4c derivatives support NGHOST=2, 3, or 4");
+
+  KOKKOS_INLINE_FUNCTION
+  DerivativeProvider(const Real inverse_spacing[3], const int m, const int k,
+                     const int j, const int i)
+      : m_(m), k_(k), j_(j), i_(i) {
+    for (int d = 0; d < 3; ++d) {
+      inverse_spacing_[d] = inverse_spacing[d];
+    }
+  }
+
+  template <typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ScalarFirst(const int derivative_direction,
+                                          ScalarField &field) const {
+    return Dx<NGHOST>(derivative_direction, inverse_spacing_, field, m_, k_, j_, i_);
+  }
+
+  template <typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ScalarSecond(const int first_direction,
+                                           const int second_direction,
+                                           ScalarField &field) const {
+    if (first_direction == second_direction) {
+      return Dxx<NGHOST>(first_direction, inverse_spacing_, field, m_, k_, j_, i_);
+    }
+    return Dxy<NGHOST>(first_direction, second_direction, inverse_spacing_, field,
+                       m_, k_, j_, i_);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorFirst(const int derivative_direction,
+                                          const int component,
+                                          VectorField &field) const {
+    return Dx<NGHOST>(derivative_direction, inverse_spacing_, field, m_, component,
+                      k_, j_, i_);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorSecond(const int first_direction,
+                                           const int second_direction,
+                                           const int component,
+                                           VectorField &field) const {
+    if (first_direction == second_direction) {
+      return Dxx<NGHOST>(first_direction, inverse_spacing_, field, m_, component,
+                         k_, j_, i_);
+    }
+    return Dxy<NGHOST>(first_direction, second_direction, inverse_spacing_, field,
+                       m_, component, k_, j_, i_);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorFirst(const int derivative_direction,
+                                          const int first_component,
+                                          const int second_component,
+                                          TensorField &field) const {
+    return Dx<NGHOST>(derivative_direction, inverse_spacing_, field, m_,
+                      first_component, second_component, k_, j_, i_);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorSecond(const int first_direction,
+                                           const int second_direction,
+                                           const int first_component,
+                                           const int second_component,
+                                           TensorField &field) const {
+    if (first_direction == second_direction) {
+      return Dxx<NGHOST>(first_direction, inverse_spacing_, field, m_,
+                         first_component, second_component, k_, j_, i_);
+    }
+    return Dxy<NGHOST>(first_direction, second_direction, inverse_spacing_, field,
+                       m_, first_component, second_component, k_, j_, i_);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorDivergence(VectorField &field) const {
+    Real divergence = 0.0;
+    for (int d = 0; d < 3; ++d) {
+      divergence += VectorFirst(d, d, field);
+    }
+    return divergence;
+  }
+
+  template <typename VelocityField, typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ScalarAdvective(const VelocityField &velocity,
+                                              const ScalarField &field) const {
+    Real derivative = 0.0;
+    for (int d = 0; d < 3; ++d) {
+      derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
+                               k_, j_, i_);
+    }
+    return derivative;
+  }
+
+  template <typename VelocityField, typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorAdvective(const int component,
+                                              const VelocityField &velocity,
+                                              const VectorField &field) const {
+    Real derivative = 0.0;
+    for (int d = 0; d < 3; ++d) {
+      derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
+                               component, k_, j_, i_);
+    }
+    return derivative;
+  }
+
+  template <typename VelocityField, typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorAdvective(const int first_component,
+                                              const int second_component,
+                                              const VelocityField &velocity,
+                                              const TensorField &field) const {
+    Real derivative = 0.0;
+    for (int d = 0; d < 3; ++d) {
+      derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
+                               first_component, second_component, k_, j_, i_);
+    }
+    return derivative;
+  }
+
+  template <typename ComponentField>
+  KOKKOS_INLINE_FUNCTION Real ComponentDissipation(const int component,
+                                                   ComponentField &field) const {
+    Real dissipation = 0.0;
+    for (int d = 0; d < 3; ++d) {
+      dissipation += Diss<NGHOST>(d, inverse_spacing_, field, m_, component,
+                                  k_, j_, i_);
+    }
+    return dissipation;
+  }
+
+ private:
+  Real inverse_spacing_[3];
+  int m_;
+  int k_;
+  int j_;
+  int i_;
+};
+
+//! Analytic SO(2) Cartoon derivative policy on the signed x1-x2 meridional plane.
+//!
+//! The formulas in this specialization come from the independent, production-code-free
+//! derivation in `signed_rho_so2_identity_note.md`. They follow from the Killing relation
+//! for xi=-y*d_x+x*d_y with component order (x,z,y)=(x1,x2,x3). The note explicitly
+//! requires an independent numerical-relativity review of all signs and axis limits before
+//! production integration; this provider must remain outside the RHS until that review.
+//! Every geometry-dependent formula and regularized return below is therefore
+//! reviewer-pending, including parity, divergence, and suppressed advection.
+//!
+//! `axis_tolerance` identifies samples that are mathematically on the axis (for example an
+//! interpolated diagnostic at rho=0). It must not include the innermost cell centers of the
+//! even, cell-centered signed-rho production grid.
+template <int NGHOST>
+class DerivativeProvider<CartoonSO2, NGHOST> {
+ public:
+  static_assert(NGHOST >= 2 && NGHOST <= 4,
+                "Z4c derivatives support NGHOST=2, 3, or 4");
+
+  KOKKOS_INLINE_FUNCTION
+  DerivativeProvider(const Real inverse_spacing[3], const Real rho,
+                     const Real axis_tolerance, const int m, const int k,
+                     const int j, const int i)
+      : rho_(rho), axis_tolerance_(axis_tolerance), m_(m), k_(k), j_(j), i_(i) {
+    for (int d = 0; d < 3; ++d) {
+      inverse_spacing_[d] = inverse_spacing[d];
+    }
+  }
+
+  KOKKOS_INLINE_FUNCTION static constexpr int ScalarParity() { return 1; }
+
+  KOKKOS_INLINE_FUNCTION static constexpr int VectorParity(const int component) {
+    return (component == ZDirection()) ? 1 : -1;
+  }
+
+  KOKKOS_INLINE_FUNCTION static constexpr int TensorParity(const int first_component,
+                                                           const int second_component) {
+    return VectorParity(first_component) * VectorParity(second_component);
+  }
+
+  template <typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ScalarFirst(const int derivative_direction,
+                                          ScalarField &field) const {
+    if (derivative_direction == SuppressedDirection()) {
+      return 0.0;
+    }
+    return ActiveFirst(derivative_direction, field);
+  }
+
+  template <typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ScalarSecond(const int first_direction,
+                                           const int second_direction,
+                                           ScalarField &field) const {
+    if (first_direction != SuppressedDirection() &&
+        second_direction != SuppressedDirection()) {
+      return ActiveSecond(first_direction, second_direction, field);
+    }
+    if (first_direction != second_direction) {
+      return 0.0;
+    }
+    if (OnAxis()) {
+      return ActiveSecond(RhoDirection(), RhoDirection(), field);
+    }
+    return ActiveFirst(RhoDirection(), field) / rho_;
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorFirst(const int derivative_direction,
+                                          const int component,
+                                          VectorField &field) const {
+    if (derivative_direction != SuppressedDirection()) {
+      return ActiveFirst(derivative_direction, component, field);
+    }
+    if (component == ZDirection()) {
+      return 0.0;
+    }
+    if (OnAxis()) {
+      if (component == RhoDirection()) {
+        return -ActiveFirst(RhoDirection(), SuppressedDirection(), field);
+      }
+      return ActiveFirst(RhoDirection(), RhoDirection(), field);
+    }
+    if (component == RhoDirection()) {
+      return -Value(field, SuppressedDirection()) / rho_;
+    }
+    return Value(field, RhoDirection()) / rho_;
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorSecond(const int first_direction,
+                                           const int second_direction,
+                                           const int component,
+                                           VectorField &field) const {
+    const bool first_suppressed = first_direction == SuppressedDirection();
+    const bool second_suppressed = second_direction == SuppressedDirection();
+    if (!first_suppressed && !second_suppressed) {
+      return ActiveSecond(first_direction, second_direction, component, field);
+    }
+    if (first_suppressed && second_suppressed) {
+      return VectorSecondSuppressed(component, field);
+    }
+    const int active_direction = first_suppressed ? second_direction : first_direction;
+    return VectorMixedSuppressed(active_direction, component, field);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorFirst(const int derivative_direction,
+                                          const int first_component,
+                                          const int second_component,
+                                          TensorField &field) const {
+    if (derivative_direction != SuppressedDirection()) {
+      return ActiveFirst(derivative_direction, first_component, second_component, field);
+    }
+    const int a = first_component;
+    const int b = second_component;
+    if ((a == RhoDirection() && b == RhoDirection()) ||
+        (a == SuppressedDirection() && b == SuppressedDirection())) {
+      const Real sign = (a == RhoDirection()) ? -2.0 : 2.0;
+      if (OnAxis()) {
+        return 0.0;
+      }
+      return sign * Value(field, RhoDirection(), SuppressedDirection()) / rho_;
+    }
+    if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+      if (OnAxis()) {
+        return 0.0;
+      }
+      return (Value(field, RhoDirection(), RhoDirection()) -
+              Value(field, SuppressedDirection(), SuppressedDirection())) / rho_;
+    }
+    if (IsComponentPair(a, b, RhoDirection(), ZDirection())) {
+      if (OnAxis()) {
+        return -ActiveFirst(RhoDirection(), SuppressedDirection(), ZDirection(), field);
+      }
+      return -Value(field, SuppressedDirection(), ZDirection()) / rho_;
+    }
+    if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
+      if (OnAxis()) {
+        return ActiveFirst(RhoDirection(), RhoDirection(), ZDirection(), field);
+      }
+      return Value(field, RhoDirection(), ZDirection()) / rho_;
+    }
+    return 0.0;
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorSecond(const int first_direction,
+                                           const int second_direction,
+                                           const int first_component,
+                                           const int second_component,
+                                           TensorField &field) const {
+    const bool first_suppressed = first_direction == SuppressedDirection();
+    const bool second_suppressed = second_direction == SuppressedDirection();
+    if (!first_suppressed && !second_suppressed) {
+      return ActiveSecond(first_direction, second_direction, first_component,
+                          second_component, field);
+    }
+    if (first_suppressed && second_suppressed) {
+      return TensorSecondSuppressed(first_component, second_component, field);
+    }
+    const int active_direction = first_suppressed ? second_direction : first_direction;
+    return TensorMixedSuppressed(active_direction, first_component, second_component,
+                                 field);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorDivergence(VectorField &field) const {
+    if (OnAxis()) {
+      return 2.0 * ActiveFirst(RhoDirection(), RhoDirection(), field) +
+             ActiveFirst(ZDirection(), ZDirection(), field);
+    }
+    return ActiveFirst(RhoDirection(), RhoDirection(), field) +
+           ActiveFirst(ZDirection(), ZDirection(), field) +
+           Value(field, RhoDirection()) / rho_;
+  }
+
+  template <typename VelocityField, typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ScalarAdvective(const VelocityField &velocity,
+                                              const ScalarField &field) const {
+    Real derivative = 0.0;
+    for (int d = RhoDirection(); d <= ZDirection(); ++d) {
+      derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
+                               k_, j_, i_);
+    }
+    return derivative;
+  }
+
+  template <typename VelocityField, typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorAdvective(const int component,
+                                              const VelocityField &velocity,
+                                              VectorField &field) const {
+    Real derivative = 0.0;
+    for (int d = RhoDirection(); d <= ZDirection(); ++d) {
+      derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
+                               component, k_, j_, i_);
+    }
+    return derivative + Value(velocity, SuppressedDirection()) *
+                            VectorFirst(SuppressedDirection(), component, field);
+  }
+
+  template <typename VelocityField, typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorAdvective(const int first_component,
+                                              const int second_component,
+                                              const VelocityField &velocity,
+                                              TensorField &field) const {
+    Real derivative = 0.0;
+    for (int d = RhoDirection(); d <= ZDirection(); ++d) {
+      derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
+                               first_component, second_component, k_, j_, i_);
+    }
+    return derivative + Value(velocity, SuppressedDirection()) *
+                            TensorFirst(SuppressedDirection(), first_component,
+                                        second_component, field);
+  }
+
+  template <typename ComponentField>
+  KOKKOS_INLINE_FUNCTION Real ComponentDissipation(const int component,
+                                                   ComponentField &field) const {
+    Real dissipation = 0.0;
+    for (int d = RhoDirection(); d <= ZDirection(); ++d) {
+      dissipation += Diss<NGHOST>(d, inverse_spacing_, field, m_, component,
+                                  k_, j_, i_);
+    }
+    return dissipation;
+  }
+
+ private:
+  KOKKOS_INLINE_FUNCTION static constexpr int RhoDirection() {
+    return static_cast<int>(CartoonDirection::rho);
+  }
+
+  KOKKOS_INLINE_FUNCTION static constexpr int ZDirection() {
+    return static_cast<int>(CartoonDirection::z);
+  }
+
+  KOKKOS_INLINE_FUNCTION static constexpr int SuppressedDirection() {
+    return static_cast<int>(CartoonDirection::suppressed);
+  }
+
+  KOKKOS_INLINE_FUNCTION bool OnAxis() const {
+    return fabs(rho_) <= axis_tolerance_;
+  }
+
+  KOKKOS_INLINE_FUNCTION static bool IsComponentPair(const int a, const int b,
+                                                     const int c, const int d) {
+    return (a == c && b == d) || (a == d && b == c);
+  }
+
+  template <typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real Value(const ScalarField &field) const {
+    return field(m_, k_, j_, i_);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real Value(const VectorField &field, const int component) const {
+    return field(m_, component, k_, j_, i_);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real Value(const TensorField &field, const int first_component,
+                                    const int second_component) const {
+    return field(m_, first_component, second_component, k_, j_, i_);
+  }
+
+  template <typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ActiveFirst(const int direction, ScalarField &field) const {
+    return Dx<NGHOST>(direction, inverse_spacing_, field, m_, k_, j_, i_);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real ActiveFirst(const int direction, const int component,
+                                          VectorField &field) const {
+    return Dx<NGHOST>(direction, inverse_spacing_, field, m_, component, k_, j_, i_);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real ActiveFirst(const int direction, const int first_component,
+                                          const int second_component,
+                                          TensorField &field) const {
+    return Dx<NGHOST>(direction, inverse_spacing_, field, m_, first_component,
+                      second_component, k_, j_, i_);
+  }
+
+  template <typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ActiveSecond(const int first_direction,
+                                           const int second_direction,
+                                           ScalarField &field) const {
+    if (first_direction == second_direction) {
+      return Dxx<NGHOST>(first_direction, inverse_spacing_, field, m_, k_, j_, i_);
+    }
+    return Dxy<NGHOST>(first_direction, second_direction, inverse_spacing_, field,
+                       m_, k_, j_, i_);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real ActiveSecond(const int first_direction,
+                                           const int second_direction,
+                                           const int component,
+                                           VectorField &field) const {
+    if (first_direction == second_direction) {
+      return Dxx<NGHOST>(first_direction, inverse_spacing_, field, m_, component,
+                         k_, j_, i_);
+    }
+    return Dxy<NGHOST>(first_direction, second_direction, inverse_spacing_, field,
+                       m_, component, k_, j_, i_);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real ActiveSecond(const int first_direction,
+                                           const int second_direction,
+                                           const int first_component,
+                                           const int second_component,
+                                           TensorField &field) const {
+    if (first_direction == second_direction) {
+      return Dxx<NGHOST>(first_direction, inverse_spacing_, field, m_, first_component,
+                         second_component, k_, j_, i_);
+    }
+    return Dxy<NGHOST>(first_direction, second_direction, inverse_spacing_, field,
+                       m_, first_component, second_component, k_, j_, i_);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorSecondSuppressed(const int component,
+                                                     VectorField &field) const {
+    if (OnAxis()) {
+      if (component == ZDirection()) {
+        return ActiveSecond(RhoDirection(), RhoDirection(), component, field);
+      }
+      return 0.0;
+    }
+    const Real radial_derivative = ActiveFirst(RhoDirection(), component, field);
+    if (component == ZDirection()) {
+      return radial_derivative / rho_;
+    }
+    return radial_derivative / rho_ - Value(field, component) / (rho_ * rho_);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorMixedSuppressed(const int active_direction,
+                                                    const int component,
+                                                    VectorField &field) const {
+    if (component == ZDirection()) {
+      return 0.0;
+    }
+    if (OnAxis()) {
+      if (active_direction == RhoDirection()) {
+        return 0.0;
+      }
+      const int rotated_component = (component == RhoDirection())
+                                        ? SuppressedDirection()
+                                        : RhoDirection();
+      const Real sign = (component == RhoDirection()) ? -1.0 : 1.0;
+      return sign * ActiveSecond(RhoDirection(), ZDirection(), rotated_component, field);
+    }
+    const int rotated_component = (component == RhoDirection())
+                                      ? SuppressedDirection()
+                                      : RhoDirection();
+    const Real sign = (component == RhoDirection()) ? -1.0 : 1.0;
+    const Real derivative = ActiveFirst(active_direction, rotated_component, field);
+    Real result = sign * derivative / rho_;
+    if (active_direction == RhoDirection()) {
+      result -= sign * Value(field, rotated_component) / (rho_ * rho_);
+    }
+    return result;
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorSecondSuppressed(const int a, const int b,
+                                                     TensorField &field) const {
+    if (OnAxis()) {
+      if (a == RhoDirection() && b == RhoDirection()) {
+        return ActiveSecond(RhoDirection(), RhoDirection(),
+                            SuppressedDirection(), SuppressedDirection(), field);
+      }
+      if (a == SuppressedDirection() && b == SuppressedDirection()) {
+        return ActiveSecond(RhoDirection(), RhoDirection(),
+                            RhoDirection(), RhoDirection(), field);
+      }
+      if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+        return -ActiveSecond(RhoDirection(), RhoDirection(), RhoDirection(),
+                             SuppressedDirection(), field);
+      }
+      if (a == ZDirection() && b == ZDirection()) {
+        return ActiveSecond(RhoDirection(), RhoDirection(), ZDirection(), ZDirection(),
+                            field);
+      }
+      return 0.0;
+    }
+
+    const Real radial_derivative = ActiveFirst(RhoDirection(), a, b, field);
+    if (a == RhoDirection() && b == RhoDirection()) {
+      return radial_derivative / rho_ -
+             2.0 * (Value(field, RhoDirection(), RhoDirection()) -
+                    Value(field, SuppressedDirection(), SuppressedDirection())) /
+                 (rho_ * rho_);
+    }
+    if (a == SuppressedDirection() && b == SuppressedDirection()) {
+      return radial_derivative / rho_ +
+             2.0 * (Value(field, RhoDirection(), RhoDirection()) -
+                    Value(field, SuppressedDirection(), SuppressedDirection())) /
+                 (rho_ * rho_);
+    }
+    if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+      return radial_derivative / rho_ -
+             4.0 * Value(field, RhoDirection(), SuppressedDirection()) /
+                 (rho_ * rho_);
+    }
+    if (IsComponentPair(a, b, RhoDirection(), ZDirection()) ||
+        IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
+      return radial_derivative / rho_ - Value(field, a, b) / (rho_ * rho_);
+    }
+    return radial_derivative / rho_;
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorMixedSuppressed(const int active_direction,
+                                                    const int a, const int b,
+                                                    TensorField &field) const {
+    if (OnAxis()) {
+      return TensorMixedSuppressedAxis(active_direction, a, b, field);
+    }
+
+    if (a == RhoDirection() && b == RhoDirection()) {
+      Real result = -2.0 * ActiveFirst(active_direction, RhoDirection(),
+                                       SuppressedDirection(), field) / rho_;
+      if (active_direction == RhoDirection()) {
+        result += 2.0 * Value(field, RhoDirection(), SuppressedDirection()) /
+                  (rho_ * rho_);
+      }
+      return result;
+    }
+    if (a == SuppressedDirection() && b == SuppressedDirection()) {
+      Real result = 2.0 * ActiveFirst(active_direction, RhoDirection(),
+                                      SuppressedDirection(), field) / rho_;
+      if (active_direction == RhoDirection()) {
+        result -= 2.0 * Value(field, RhoDirection(), SuppressedDirection()) /
+                  (rho_ * rho_);
+      }
+      return result;
+    }
+    if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+      Real result = (ActiveFirst(active_direction, RhoDirection(), RhoDirection(), field) -
+                     ActiveFirst(active_direction, SuppressedDirection(),
+                                 SuppressedDirection(), field)) / rho_;
+      if (active_direction == RhoDirection()) {
+        result -= (Value(field, RhoDirection(), RhoDirection()) -
+                   Value(field, SuppressedDirection(), SuppressedDirection())) /
+                  (rho_ * rho_);
+      }
+      return result;
+    }
+    if (IsComponentPair(a, b, RhoDirection(), ZDirection())) {
+      Real result = -ActiveFirst(active_direction, SuppressedDirection(), ZDirection(),
+                                 field) / rho_;
+      if (active_direction == RhoDirection()) {
+        result += Value(field, SuppressedDirection(), ZDirection()) /
+                  (rho_ * rho_);
+      }
+      return result;
+    }
+    if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
+      Real result = ActiveFirst(active_direction, RhoDirection(), ZDirection(), field) /
+                    rho_;
+      if (active_direction == RhoDirection()) {
+        result -= Value(field, RhoDirection(), ZDirection()) / (rho_ * rho_);
+      }
+      return result;
+    }
+    return 0.0;
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorMixedSuppressedAxis(const int active_direction,
+                                                        const int a, const int b,
+                                                        TensorField &field) const {
+    if (active_direction == RhoDirection()) {
+      if (a == RhoDirection() && b == RhoDirection()) {
+        return -ActiveSecond(RhoDirection(), RhoDirection(), RhoDirection(),
+                             SuppressedDirection(), field);
+      }
+      if (a == SuppressedDirection() && b == SuppressedDirection()) {
+        return ActiveSecond(RhoDirection(), RhoDirection(), RhoDirection(),
+                            SuppressedDirection(), field);
+      }
+      if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+        return 0.5 * (ActiveSecond(RhoDirection(), RhoDirection(),
+                                  RhoDirection(), RhoDirection(), field) -
+                      ActiveSecond(RhoDirection(), RhoDirection(),
+                                   SuppressedDirection(), SuppressedDirection(), field));
+      }
+      return 0.0;
+    }
+
+    if (IsComponentPair(a, b, RhoDirection(), ZDirection())) {
+      return -ActiveSecond(RhoDirection(), ZDirection(), SuppressedDirection(),
+                           ZDirection(), field);
+    }
+    if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
+      return ActiveSecond(RhoDirection(), ZDirection(), RhoDirection(), ZDirection(),
+                          field);
+    }
+    return 0.0;
+  }
+
+  Real inverse_spacing_[3];
+  Real rho_;
+  Real axis_tolerance_;
+  int m_;
+  int k_;
+  int j_;
+  int i_;
+};
+
+}  // namespace z4c
+
+#endif  // Z4C_CARTOON_DERIVATIVES_HPP_
