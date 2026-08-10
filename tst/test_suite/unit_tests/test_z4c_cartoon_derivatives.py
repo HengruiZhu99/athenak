@@ -125,6 +125,33 @@ def expected_case_files(ranks: int) -> set[str]:
                               for rank in range(ranks)}
 
 
+def verify_no_evolution(case_id: str, stdout_text: str,
+                        result: dict[str, object]) -> None:
+    sentinels = (result.get("initial_cycle"), result.get("pgen_final_cycle"),
+                 result.get("initial_time"), result.get("pgen_final_time"))
+    if sentinels != (0, 0, 0, 0):
+        raise RuntimeError(f"case {case_id} pgen cycle/time sentinel changed")
+    states = re.findall(r"time=([^\s]+)\s+cycle=([+-]?\d+)", stdout_text)
+    if any(float(time_value) != 0.0 or int(cycle) != 0
+           for time_value, cycle in states):
+        raise RuntimeError(f"case {case_id} executed a physical evolution step")
+
+
+def self_test_no_evolution_parser() -> None:
+    sentinels = {"initial_cycle": 0, "pgen_final_cycle": 0,
+                 "initial_time": 0, "pgen_final_time": 0}
+    observed_static_stdout = (
+        "Cartoon derivative MMS passed: order=2 cells=1024 max_error=0 "
+        "axis_error=0\n")
+    verify_no_evolution("self-test-static", observed_static_stdout, sentinels)
+    try:
+        verify_no_evolution("self-test-nonzero",
+                            observed_static_stdout + "time=0.125 cycle=1\n", sentinels)
+    except RuntimeError:
+        return
+    raise RuntimeError("no-evolution parser accepted a nonzero stdout record")
+
+
 def verified_complete(case: Path, identity: dict[str, object]) -> bool:
     manifest_path = case / "manifest.json"
     if not manifest_path.is_file() or manifest_path.is_symlink():
@@ -192,18 +219,13 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     if completed.returncode:
         raise RuntimeError(f"case {key} failed with exit {completed.returncode}: {case}")
     stdout_text = (case / "stdout.txt").read_text(encoding="utf-8", errors="replace")
-    final_states = re.findall(r"time=([^\s]+)\s+cycle=(\d+)", stdout_text)
-    if not final_states or int(final_states[-1][1]) != 0 or float(final_states[-1][0]) != 0.0:
-        raise RuntimeError(f"case {key} executed a physical evolution step")
     raw_result = case / f"{basename}.mms.json"
     raw_csv = case / f"{basename}.mms.csv"
     probes_csv = case / f"{basename}.mms.probes.csv"
     result = json.loads(raw_result.read_text(encoding="utf-8"))
     if result.get("status") != "pass" or result.get("operator_count") != 171:
         raise RuntimeError(f"case {key} did not produce the complete passing 171-series set")
-    if (result.get("initial_cycle"), result.get("pgen_final_cycle"),
-            result.get("initial_time"), result.get("pgen_final_time")) != (0, 0, 0, 0):
-        raise RuntimeError(f"case {key} pgen cycle/time sentinel changed")
+    verify_no_evolution(key, stdout_text, result)
     if result.get("backend") != args.require_backend:
         raise RuntimeError(f"case {key} backend {result.get('backend')} != {args.require_backend}")
     if result.get("owned_cells") != resolution * resolution or \
@@ -545,6 +567,9 @@ def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
 
 
 def main() -> int:
+    if sys.argv[1:] == ["--self-test-no-evolution-parser"]:
+        self_test_no_evolution_parser()
+        return 0
     parser = argparse.ArgumentParser()
     parser.add_argument("--athena", type=Path, required=True)
     parser.add_argument("--input", type=Path)
