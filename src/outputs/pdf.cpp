@@ -26,7 +26,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <type_traits>
 #include <utility>
 
 #include "athena.hpp"
@@ -40,6 +39,7 @@
 #include "z4c/z4c_symmetry.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "outputs.hpp"
+#include "pdf_accumulate.hpp"
 
 // ScatterView is not part of Kokkos core interface
 #include "Kokkos_ScatterView.hpp"
@@ -236,68 +236,20 @@ void PDFOutput::LoadOutputData(Mesh *pm) {
   bool logscale2 = pdf_data.logscale2;
   bool mass_weighted = pdf_data.mass_weighted;
 
-  auto accumulate = [&](auto symmetry_tag) {
-    constexpr bool is_cartoon = decltype(symmetry_tag)::value;
-    par_for("pdf", DevExeSpace(),0,nmb-1,ks,ke,js,je,is,ie,
-    KOKKOS_LAMBDA(int m, int k, int j, int i) {
-      auto &x_val = outvars_device(0, m, k, j, i);
-      int x_bin = -1;
-      // First handle edge cases explicitly
-      if (x_val < bins(0)) {
-        x_bin = 0;
-      } else if (x_val >= bins(nbin_)) {
-        x_bin = nbin_ + 1;
-      } else {
-        if (logscale == false) {
-          x_bin = static_cast<int>((x_val - bins(0)) / step_size) + 1;
-        } else if (logscale == true) {
-          x_bin = static_cast<int>(std::log10(x_val / bins(0)) / step_size) + 1;
-        }
-      }
-      // needs to be zero as for the 1D histogram we need 0 as first index of the 2D
-      // result array
-      int y_bin = 0;
-      if (pdf_dimension == 2) {
-        auto &y_val = outvars_device(1, m, k, j, i);
-
-        y_bin = -1; // reset to impossible value
-        // First handle edge cases explicitly
-        if (y_val < bins2(0)) {
-          y_bin = 0;
-        } else if (y_val >= bins2(nbin2_)) {
-          y_bin = nbin2_ + 1;
-        } else {
-          // for lin and log directly pick index
-          if (logscale2 == false) {
-            y_bin = static_cast<int>((y_val - bins2(0)) / step_size2) + 1;
-          } else if (logscale2 == true) {
-            y_bin = static_cast<int>(std::log10(y_val/bins2(0)) / step_size2) + 1;
-          }
-        }
-      }
-      auto res = scatter.access();
-      Real weight;
-      if constexpr (is_cartoon) {
-        const Real rho = CellCenterX(i - is, indcs.nx1,
-                                     size.d_view(m).x1min, size.d_view(m).x1max);
-        // The full signed-rho plane is evolved. The positive half is the unique
-        // cylindrical fine-cell owner; the negative partner must not be counted again.
-        weight = pdf::CartoonCylindricalFineCellMeasure(
-            rho, size.d_view(m).dx1, size.d_view(m).dx2);
-        if (weight == 0.0) return;
-      } else {
-        weight = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3;
-      }
-      weight *= mass_weighted == false
-                    ? 1.0
-                    : u0_(m, IDN, k, j, i);
-      res(y_bin, x_bin) += weight;
-    });
-  };
+  auto size_device = size.d_view;
   if (pm->pmb_pack->z4c_symmetry.mode == z4c::Z4cSymmetryMode::cartoon_so2) {
-    accumulate(std::true_type{});
+    const pdf::CartoonPdfCellMeasure<decltype(size_device)> cell_measure{
+        size_device, indcs.nx1, is};
+    pdf::AccumulatePdfHistogram(
+        cell_measure, outvars_device, u0_, bins, bins2, scatter, nmb,
+        ks, ke, js, je, is, ie, nbin_, nbin2_, pdf_dimension,
+        step_size, step_size2, logscale, logscale2, mass_weighted);
   } else {
-    accumulate(std::false_type{});
+    const pdf::CartesianPdfCellMeasure<decltype(size_device)> cell_measure{size_device};
+    pdf::AccumulatePdfHistogram(
+        cell_measure, outvars_device, u0_, bins, bins2, scatter, nmb,
+        ks, ke, js, je, is, ie, nbin_, nbin2_, pdf_dimension,
+        step_size, step_size2, logscale, logscale2, mass_weighted);
   }
 
   // "reduce" results from scatter view to original view.

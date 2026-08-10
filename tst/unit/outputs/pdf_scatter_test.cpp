@@ -15,7 +15,9 @@
 
 #include <Kokkos_Core.hpp>
 
+#include "mesh/mesh.hpp"
 #include "outputs/outputs.hpp"
+#include "outputs/pdf_accumulate.hpp"
 
 namespace {
 
@@ -145,6 +147,68 @@ bool RunCylindricalHistogramOracle() {
          result(0, 4) == 0.0 && result(0, 5) == 0.0;
 }
 
+bool RunProductionAccumulator(const bool cartoon, const bool has_second_axis) {
+  PDFData data(SmallPlan(has_second_axis));
+  constexpr int cells = 8;
+  const int dimension = has_second_axis ? 2 : 1;
+  DvceArray5D<Real> outvars(
+      "production pdf staged variables", dimension, 1, 1, 1, cells);
+  DvceArray5D<Real> state("production pdf state", 1, 1, 1, 1, cells);
+  Kokkos::View<RegionSize*> size("production pdf block size", 1);
+  auto outvars_host = Kokkos::create_mirror_view(outvars);
+  auto state_host = Kokkos::create_mirror_view(state);
+  auto size_host = Kokkos::create_mirror_view(size);
+  auto bins_host = Kokkos::create_mirror_view(data.bins);
+  auto bins2_host = Kokkos::create_mirror_view(data.bins2);
+  for (int i = 0; i < cells; ++i) {
+    outvars_host(0, 0, 0, 0, i) = 1.5;
+    if (has_second_axis) outvars_host(1, 0, 0, 0, i) = 1.5;
+    state_host(0, 0, 0, 0, i) = 1.0;
+  }
+  size_host(0) = {-2.0, -0.5, -0.5, 2.0, 0.5, 0.5, 0.5, 0.5, 1.0};
+  for (int i = 0; i <= data.nbin; ++i) bins_host(i) = static_cast<Real>(i);
+  if (has_second_axis) {
+    for (int i = 0; i <= data.nbin2; ++i) bins2_host(i) = static_cast<Real>(i);
+  }
+  Kokkos::deep_copy(outvars, outvars_host);
+  Kokkos::deep_copy(state, state_host);
+  Kokkos::deep_copy(size, size_host);
+  Kokkos::deep_copy(data.bins, bins_host);
+  if (has_second_axis) Kokkos::deep_copy(data.bins2, bins2_host);
+  Kokkos::deep_copy(data.result_, 0.0);
+
+  if (cartoon) {
+    const pdf::CartoonPdfCellMeasure<decltype(size)> measure{size, cells, 0};
+    pdf::AccumulatePdfHistogram(
+        measure, outvars, state, data.bins, data.bins2, data.scatter_result,
+        1, 0, 0, 0, 0, 0, cells - 1, data.nbin, data.nbin2,
+        data.pdf_dimension, data.step_size, data.step_size2,
+        data.logscale, data.logscale2, data.mass_weighted);
+  } else {
+    const pdf::CartesianPdfCellMeasure<decltype(size)> measure{size};
+    pdf::AccumulatePdfHistogram(
+        measure, outvars, state, data.bins, data.bins2, data.scatter_result,
+        1, 0, 0, 0, 0, 0, cells - 1, data.nbin, data.nbin2,
+        data.pdf_dimension, data.step_size, data.step_size2,
+        data.logscale, data.logscale2, data.mass_weighted);
+  }
+  Kokkos::Experimental::contribute(data.result_, data.scatter_result);
+  Kokkos::fence();
+  auto result =
+      Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), data.result_);
+  constexpr Real pi = 3.1415926535897932384626433832795;
+  const Real expected = cartoon ? 2.0 * pi : 2.0;
+  const Real tolerance = 128.0 * std::numeric_limits<Real>::epsilon() * expected;
+  for (int row = 0; row < static_cast<int>(result.extent(0)); ++row) {
+    for (int column = 0; column < static_cast<int>(result.extent(1)); ++column) {
+      const Real oracle = (row == (has_second_axis ? 2 : 0) && column == 2)
+                              ? expected : 0.0;
+      if (std::abs(result(row, column) - oracle) > tolerance) return false;
+    }
+  }
+  return true;
+}
+
 bool MeetsCudaRequirement(const bool require_cuda) {
   if (!require_cuda) return true;
 #if defined(KOKKOS_ENABLE_CUDA)
@@ -165,7 +229,11 @@ int main(int argc, char *argv[]) {
   Kokkos::initialize(argc, argv);
   const bool cuda_requirement_met = MeetsCudaRequirement(require_cuda);
   const bool passed = cuda_requirement_met && RunRace(false) && RunRace(true) &&
-                      RunCylindricalHistogramOracle();
+                      RunCylindricalHistogramOracle() &&
+                      RunProductionAccumulator(false, false) &&
+                      RunProductionAccumulator(false, true) &&
+                      RunProductionAccumulator(true, false) &&
+                      RunProductionAccumulator(true, true);
   const std::string backend = Kokkos::DefaultExecutionSpace::name();
   Kokkos::finalize();
   if (!cuda_requirement_met) {
@@ -173,7 +241,7 @@ int main(int argc, char *argv[]) {
               << "DefaultExecutionSpace=Cuda, got " << backend << "\n";
   }
   if (!passed) return EXIT_FAILURE;
-  std::cout << "PDF 1-D/2-D scatter races and cylindrical oracle passed on "
-            << backend << "\n";
+  std::cout << "PDF production Cartesian/Cartoon 1-D/2-D accumulation, scatter races, "
+            << "and cylindrical oracle passed on " << backend << "\n";
   return EXIT_SUCCESS;
 }
