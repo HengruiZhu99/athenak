@@ -18,7 +18,10 @@
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
 #include "coordinates/adm.hpp"
+#include "z4c/cartoon_derivatives.hpp"
+#include "z4c/weyl_tetrad.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_symmetry.hpp"
 #include "coordinates/cell_locations.hpp"
 
 namespace z4c {
@@ -27,8 +30,8 @@ namespace z4c {
 // \brief compute the weyl scalars given the adm variables and matter state
 //
 // This function operates only on the interior points of the MeshBlock
-template <int NGHOST>
-void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
+template <typename Symmetry, int NGHOST>
+void Z4c::Z4cWeylImpl(MeshBlockPack *pmbp) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
@@ -59,7 +62,10 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
     Real &x3min = size.d_view(m).x3min;
     Real &x3max = size.d_view(m).x3max;
     int nx3 = indcs.nx3;
-    Real x3v = CellCenterX(k-ks, nx3, x3min, x3max);
+    Real x3v = 0.0;
+    if constexpr (std::is_same_v<Symmetry, Cartesian3D>) {
+      x3v = CellCenterX(k-ks, nx3, x3min, x3max);
+    }
 
     // Scalars
     Real detg = 0.0;         // det(g)
@@ -135,6 +141,8 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
     }
 
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+        idx, size.d_view, indcs.nx1, is, m, k, j, i);
     // -----------------------------------------------------------------------------------
     // derivatives
     //
@@ -142,8 +150,12 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
     for(int c = 0; c < 3; ++c)
     for(int a = 0; a < 3; ++a)
     for(int b = 0; b < 3; ++b) {
-      dg_ddd(c,a,b) = Dx<NGHOST>(c, idx, adm.g_dd, m,a,b,k,j,i);
-      dK_ddd(c,a,b) = Dx<NGHOST>(c, idx, adm.vK_dd, m,a,b,k,j,i);
+      dg_ddd(c,a,b) =
+          derivatives.template TensorFirst<TensorVariance::all_lower>(
+              c, a, b, adm.g_dd);
+      dK_ddd(c,a,b) =
+          derivatives.template TensorFirst<TensorVariance::all_lower>(
+              c, a, b, adm.vK_dd);
     }
     // second derivatives of g
     for(int a = 0; a < 3; ++a)
@@ -151,9 +163,13 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
     for(int c = 0; c < 3; ++c)
     for(int d = c; d < 3; ++d) {
       if(a == b) {
-        ddg_dddd(a,b,c,d) = Dxx<NGHOST>(a, idx, adm.g_dd, m,c,d,k,j,i);
+        ddg_dddd(a,b,c,d) =
+            derivatives.template TensorSecond<TensorVariance::all_lower>(
+                a, b, c, d, adm.g_dd);
       } else {
-        ddg_dddd(a,b,c,d) = Dxy<NGHOST>(a, b, idx, adm.g_dd, m,c,d,k,j,i);
+        ddg_dddd(a,b,c,d) =
+            derivatives.template TensorSecond<TensorVariance::all_lower>(
+                a, b, c, d, adm.g_dd);
       }
     }
 
@@ -259,18 +275,7 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
     //     uvec = radial vec
     //     vvec = theta vec
     //     wvec = phi vec
-    Real xx = x1v;
-    if(SQR(x1v) +  SQR(x2v) < 1e-10)
-      xx = xx + 1e-8;
-    uvec(0) = xx;
-    uvec(1) = x2v;
-    uvec(2) = x3v;
-    vvec(0) = xx*x3v;
-    vvec(1) = x2v*x3v;
-    vvec(2) = -SQR(xx)-SQR(x2v);
-    wvec(0) = x2v*-1.0;
-    wvec(1) = xx;
-    wvec(2) = 0.0;
+    InitializeWeylTetradSeed<Symmetry>(x1v, x2v, x3v, uvec, vvec, wvec);
 
     //Gram-Schmidt orthonormalisation with spacetime metric.
 
@@ -411,6 +416,21 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
   });
 }
 
+template <int NGHOST>
+void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
+  if (pmbp->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
+    Z4cWeylImpl<CartoonSO2, NGHOST>(pmbp);
+  } else {
+    Z4cWeylImpl<Cartesian3D, NGHOST>(pmbp);
+  }
+}
+
+template void Z4c::Z4cWeylImpl<Cartesian3D, 2>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<Cartesian3D, 3>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<Cartesian3D, 4>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<CartoonSO2, 2>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<CartoonSO2, 3>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<CartoonSO2, 4>(MeshBlockPack *);
 template void Z4c::Z4cWeyl<2>(MeshBlockPack *pmbp);
 template void Z4c::Z4cWeyl<3>(MeshBlockPack *pmbp);
 template void Z4c::Z4cWeyl<4>(MeshBlockPack *pmbp);
