@@ -32,14 +32,14 @@ Consequently its provider-plane values are
 For the symmetric tensor, the six stored provider-plane components are
 \[
  (T_{\rho\rho},T_{\rho z},T_{\rho Y},T_{zz},T_{zY},T_{YY})
-=(P+Q\rho^2,U\rho,H\rho^2,Z,W\rho,P).
+ =(P+Q\rho^2,U\rho,H\rho^2,Z,W\rho,P).
+\]
 Here
 \begin{align*}
 P&=E(1.10+0.12z+0.05s),&Q&=E(-0.30+0.07z-0.04s+0.02z^2),\\
 H&=E(0.21-0.05z+0.03s),&U&=E(-0.17+0.09z+0.02s),\\
 W&=E(0.14+0.04z-0.03s),&Z&=E(0.90-0.11z+0.08s-0.02sz).
 \end{align*}
-\]
 The nonzero $C,H,W$ sectors exercise twist.  Under the independent $\pi$ rotation,
 provider component signs are $(-,+,-)$, and at the true axis the oracle enforces
 $V_\rho=V_Y=T_{\rho z}=T_{zY}=T_{\rho Y}=0$ and
@@ -213,7 +213,9 @@ CUDA UUID binding, saturation classifications, failures, and data-linked plots.
 \subsection{Exact build and runtime interface}
 Both routine builds target only \texttt{athena}, with the built-in pgen dispatcher,
 MPI enabled, OpenMP disabled, unit tests disabled, Release mode, and parallelism
-eight.  The CPU cache requires Kokkos Serial on/CUDA off.  The CUDA cache requires
+eight.  Both explicitly require \texttt{Athena\_SINGLE\_PRECISION=OFF}; this
+qualification is Real64 and does not generalize its tolerances to float.  The CPU
+cache requires Kokkos Serial on/CUDA off.  The CUDA cache requires
 \texttt{cc}/\texttt{CC}, CUDA lambda/constexpr, Serial off, and Ampere80.  The
 checksum-bound campaign command is
 \begin{quote}\ttfamily

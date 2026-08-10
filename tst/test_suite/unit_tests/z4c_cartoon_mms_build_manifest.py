@@ -71,7 +71,8 @@ def validate_cache(path: Path, backend: str) -> dict[str, str]:
     values = cache_values(path)
     required = {"CMAKE_BUILD_TYPE": "Release", "Athena_ENABLE_MPI": "ON",
                 "Athena_ENABLE_OPENMP": "OFF", "Athena_BUILD_UNIT_TESTS": "OFF",
-                "PROBLEM": "built_in_pgens", "Kokkos_ENABLE_OPENMP": "OFF",
+                "Athena_SINGLE_PRECISION": "OFF", "PROBLEM": "built_in_pgens",
+                "Kokkos_ENABLE_OPENMP": "OFF",
                 "Kokkos_ENABLE_TESTS": "OFF"}
     required.update({"Kokkos_ENABLE_CUDA": "ON", "Kokkos_ENABLE_CUDA_LAMBDA": "ON",
                      "Kokkos_ENABLE_CUDA_CONSTEXPR": "ON",
@@ -129,7 +130,8 @@ def create(args: argparse.Namespace) -> None:
     build = load_record(args.build_record.resolve(), "build")
     exact_flags = ["-DCMAKE_BUILD_TYPE=Release", "-DPROBLEM=built_in_pgens",
                    "-DAthena_ENABLE_MPI=ON", "-DAthena_ENABLE_OPENMP=OFF",
-                   "-DAthena_BUILD_UNIT_TESTS=OFF", "-DKokkos_ENABLE_OPENMP=OFF",
+                   "-DAthena_BUILD_UNIT_TESTS=OFF", "-DAthena_SINGLE_PRECISION=OFF",
+                   "-DKokkos_ENABLE_OPENMP=OFF",
                    "-DKokkos_ENABLE_TESTS=OFF"]
     exact_flags += (["-DCMAKE_C_COMPILER=cc", "-DCMAKE_CXX_COMPILER=CC",
                      "-DKokkos_ENABLE_CUDA=ON", "-DKokkos_ENABLE_CUDA_LAMBDA=ON",

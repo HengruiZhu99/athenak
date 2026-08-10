@@ -18,6 +18,17 @@ BASE = "949ccd7828adf18a122c352996aa1a6393d762e7"
 BASE_ORACLE_SHA = "03699d48a07aad3b928fba75a45b6ae0d1b1ed78a16b57e16fc0e93fc163d84c"
 CATEGORIES = {"lightweight_structural", "runtime_mms", "retained_oracle",
               "static_source"}
+CHECKSUM_PATHS = {
+    "tst/unit/z4c/generate_z4c_cartoon_derivative_oracle.py",
+    "src/pgen/unit_tests/z4c_cartoon_derivatives_oracle.hpp",
+    "tst/unit/z4c/z4c_cartoon_derivatives_reference.json",
+    "tst/unit/z4c/z4c_cartoon_derivatives_series.json",
+    "tst/unit/z4c/z4c_cartoon_mms_coverage.json",
+    "tst/inputs/z4c_cartoon_derivatives.athinput",
+    "tst/test_suite/unit_tests/test_z4c_cartoon_derivatives.py",
+    "tst/unit/z4c/z4c_cartoon_mms_static_test.py",
+    "reports/axisymmetric_cartoon_z4c_arxiv2607/sections/cartoon_derivative_mms.tex",
+}
 REQUIRED_COVERAGE = {
     "LEG-PARITY-METADATA": ("lightweight_structural", "athena.z4c_cartoon_mms_structure", "1400-1418"),
     "LEG-PI-ROTATION": ("runtime_mms", "test_z4c_cartoon_derivatives.py", "1420-1490"),
@@ -82,6 +93,12 @@ def main() -> int:
     base_oracle = subprocess.check_output(
         ["git", "show", f"{BASE}:tst/unit/z4c/cartoon_derivatives_test.cpp"], cwd=root)
     require(digest(base_oracle) == BASE_ORACLE_SHA, "frozen standalone source changed")
+    generated = subprocess.run(
+        [sys.executable,
+         str(root / "tst/unit/z4c/generate_z4c_cartoon_derivative_oracle.py"),
+         "--root", str(root), "--check"], check=False)
+    require(generated.returncode == 0,
+            "pinned SymPy generator --check failed or its dependency is unavailable")
 
     pgen = (root / "src/pgen/unit_tests/z4c_cartoon_derivatives.cpp").read_text()
     kernels = (root / "src/pgen/unit_tests/z4c_cartoon_derivatives_kernels.cpp").read_text()
@@ -99,8 +116,14 @@ def main() -> int:
         require("Z4cSymmetryMode" not in body and "spatial_order" not in body and
                 "z4c_symmetry" not in body,
                 "device lambda captures or branches on runtime symmetry/order")
-    require("constexpr int kResults = 171;" in kernels,
+    require("constexpr int kResults = 171;" in kernels and
+            "constexpr int kVariables = 10;" in kernels,
             "runtime operator inventory is not exactly 171")
+    require("std::array<double, kResults - kVariables> errors" in kernels and
+            "diagnostic_axis_operator_count" in kernels and
+            "diagnostic_axis_nonfinite" in kernels and
+            ",diagnostic_axis,axis,0,diagnostic_axis," in kernels,
+            "true-axis probe is not bound to the explicit per-operator inventory")
     require("TensorVariance::all_lower" in kernels and
             "TensorVariance::all_upper" in kernels, "both tensor variances are required")
     require("Real observed[kResults]" not in kernels and
@@ -135,17 +158,31 @@ def main() -> int:
     require("NAME athena_cartoon_derivatives_unit_test" not in cmake,
             "heavy standalone was registered as routine CTest")
     driver = (root / "tst/test_suite/unit_tests/test_z4c_cartoon_derivatives.py").read_text()
+    wrapper = (root / "tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py").read_text()
+    require("local_rank % len(records)" not in wrapper and
+            "exactly one visible device per rank" in wrapper and
+            '"binding_verified"' in wrapper,
+            "CUDA rank wrapper does not fail closed on concrete one-device binding")
+    require("execution_environment_sha256" in driver and
+            "actual != expected |" in driver and
+            "axis_names = operator_names[:161]" in driver and
+            "len(axis_rows) != 161" in driver,
+            "case resume does not bind environment and exact file inventory")
 
     coverage_path = root / "tst/unit/z4c/z4c_cartoon_mms_coverage.json"
     coverage = json.loads(coverage_path.read_text())
+    retained_false = {"LEG-FIELD-JET-ORACLE", "LEG-DISS-ORACLE",
+                      "LEG-ORDER-AGGREGATION-NG2/3/4"}
+    required_coverage = {identifier: (*properties, identifier not in retained_false)
+                         for identifier, properties in REQUIRED_COVERAGE.items()}
     actual = {entry["id"]: (entry["category"], entry["owner"],
-                             entry["source_range"])
+                             entry["source_range"], entry["retained_duplicate"])
               for entry in coverage["checks"]}
     require(len(actual) == len(coverage["checks"]), "duplicate primary legacy ID")
-    require(actual == REQUIRED_COVERAGE,
-            "legacy coverage IDs/categories/owners/ranges differ from frozen inventory")
+    require(actual == required_coverage,
+            "legacy coverage IDs/categories/owners/ranges/retention differ from frozen inventory")
     require(len(actual) == 19, "legacy coverage must contain exactly 19 primary IDs")
-    require(all(category in CATEGORIES for category, _, _ in actual.values()),
+    require(all(category in CATEGORIES for category, _, _, _ in actual.values()),
             "unknown primary coverage category")
     registered = {
         "athena.z4c_cartoon_mms_structure":
@@ -166,6 +203,22 @@ def main() -> int:
             "coverage owner is not registered by CMake or the campaign driver")
     require(coverage["frozen_source_sha256"] == BASE_ORACLE_SHA,
             "coverage source hash is not frozen")
+    require(coverage.get("schema") == "athenak_z4c_cartoon_mms_legacy_coverage_v1" and
+            coverage.get("frozen_base") == BASE and
+            coverage.get("frozen_source") ==
+            "tst/unit/z4c/cartoon_derivatives_test.cpp",
+            "coverage schema/base/source identity differs from frozen inventory")
+
+    checksum_manifest = json.loads(
+        (root / "tst/unit/z4c/z4c_cartoon_mms_checksums.json").read_text())
+    files = checksum_manifest.get("files", {})
+    require(checksum_manifest.get("schema") ==
+            "athenak_z4c_cartoon_mms_checksums_v1" and
+            set(files) == CHECKSUM_PATHS,
+            "MMS checksum manifest does not bind the exact frozen source set")
+    require(all(digest((root / relative).read_bytes()) == expected
+                for relative, expected in files.items()),
+            "MMS checksum-bound source artifact changed")
 
     require(not re.search(r"\bcmake\b", driver, re.IGNORECASE),
             "campaign driver contains a build-system invocation")

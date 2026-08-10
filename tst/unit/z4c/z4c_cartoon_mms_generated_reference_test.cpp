@@ -66,6 +66,71 @@ bool Lookup(const std::string &name, const z4c_mms::AnalyticOracle &oracle,
   return false;
 }
 
+struct SplitOracle {
+  z4c_mms::FieldValues fields;
+  z4c_mms::ScalarOracle scalar;
+  z4c_mms::VectorOracle vector[3];
+  z4c_mms::TensorOracle tensor[6];
+};
+
+void EvaluateSplitOracle(const Real x, const Real y, const Real z,
+                         SplitOracle *oracle) {
+  z4c_mms::EvaluateFieldValues(x, y, z, oracle->fields);
+  z4c_mms::EvaluateScalarOracle(x, y, z, oracle->scalar);
+  z4c_mms::EvaluateVectorOracle0(x, y, z, oracle->vector[0]);
+  z4c_mms::EvaluateVectorOracle1(x, y, z, oracle->vector[1]);
+  z4c_mms::EvaluateVectorOracle2(x, y, z, oracle->vector[2]);
+  z4c_mms::EvaluateTensorOracle0(x, y, z, oracle->tensor[0]);
+  z4c_mms::EvaluateTensorOracle1(x, y, z, oracle->tensor[1]);
+  z4c_mms::EvaluateTensorOracle2(x, y, z, oracle->tensor[2]);
+  z4c_mms::EvaluateTensorOracle3(x, y, z, oracle->tensor[3]);
+  z4c_mms::EvaluateTensorOracle4(x, y, z, oracle->tensor[4]);
+  z4c_mms::EvaluateTensorOracle5(x, y, z, oracle->tensor[5]);
+}
+
+bool LookupSplit(const std::string &name, const SplitOracle &oracle, Real *value) {
+  if (name == "scalar") {
+    *value = oracle.fields.scalar;
+    return true;
+  }
+  int a = 0, b = 0, c = 0, consumed = 0;
+  if (std::sscanf(name.c_str(), "scalar_first[%d]%n", &a, &consumed) == 1 &&
+      consumed == static_cast<int>(name.size()) && a >= 0 && a < 3) {
+    *value = oracle.scalar.first[a]; return true;
+  }
+  if (std::sscanf(name.c_str(), "scalar_second[%d][%d]%n", &a, &b, &consumed) == 2 &&
+      consumed == static_cast<int>(name.size()) && a >= 0 && a < 3 && b >= 0 && b < 3) {
+    *value = oracle.scalar.second[a][b]; return true;
+  }
+  if (std::sscanf(name.c_str(), "vector[%d]%n", &a, &consumed) == 1 &&
+      consumed == static_cast<int>(name.size()) && a >= 0 && a < 3) {
+    *value = oracle.fields.vector[a]; return true;
+  }
+  if (std::sscanf(name.c_str(), "vector_first[%d][%d]%n", &a, &b, &consumed) == 2 &&
+      consumed == static_cast<int>(name.size()) && a >= 0 && a < 3 && b >= 0 && b < 3) {
+    *value = oracle.vector[a].first[b]; return true;
+  }
+  if (std::sscanf(name.c_str(), "vector_second[%d][%d][%d]%n", &a, &b, &c,
+                  &consumed) == 3 && consumed == static_cast<int>(name.size()) &&
+      a >= 0 && a < 3 && b >= 0 && b < 3 && c >= 0 && c < 3) {
+    *value = oracle.vector[a].second[b][c]; return true;
+  }
+  if (std::sscanf(name.c_str(), "tensor[%d]%n", &a, &consumed) == 1 &&
+      consumed == static_cast<int>(name.size()) && a >= 0 && a < 6) {
+    *value = oracle.fields.tensor[a]; return true;
+  }
+  if (std::sscanf(name.c_str(), "tensor_first[%d][%d]%n", &a, &b, &consumed) == 2 &&
+      consumed == static_cast<int>(name.size()) && a >= 0 && a < 6 && b >= 0 && b < 3) {
+    *value = oracle.tensor[a].first[b]; return true;
+  }
+  if (std::sscanf(name.c_str(), "tensor_second[%d][%d][%d]%n", &a, &b, &c,
+                  &consumed) == 3 && consumed == static_cast<int>(name.size()) &&
+      a >= 0 && a < 6 && b >= 0 && b < 3 && c >= 0 && c < 3) {
+    *value = oracle.tensor[a].second[b][c]; return true;
+  }
+  return false;
+}
+
 bool ParseStrictLongDouble(const std::string &token, long double *value) {
   try {
     std::size_t consumed = 0;
@@ -107,6 +172,7 @@ int main(int argc, char **argv) {
       "\"([a-zA-Z_0-9\\[\\]]+)\"\\s*:\\s*\"([^\"]+)\"");
   std::string line;
   z4c_mms::AnalyticOracle oracle{};
+  SplitOracle split{};
   bool have_point = false;
   bool in_values = false;
   int points = 0;
@@ -131,6 +197,7 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
       }
       z4c_mms::EvaluateAnalyticOracle(point[0], point[1], point[2], oracle);
+      EvaluateSplitOracle(point[0], point[1], point[2], &split);
       have_point = true;
       ++points;
     } else if (have_point && std::regex_search(line, values_start)) {
@@ -140,7 +207,9 @@ int main(int argc, char **argv) {
       names_this_point.clear();
     } else if (in_values && std::regex_search(line, match, value_pattern)) {
       Real observed = 0.0;
+      Real split_observed = 0.0;
       if (!Lookup(match[1].str(), oracle, &observed) ||
+          !LookupSplit(match[1].str(), split, &split_observed) ||
           !names_this_point.insert(match[1].str()).second) {
         std::cerr << "unknown/duplicate generated reference key\n";
         return EXIT_FAILURE;
@@ -154,8 +223,11 @@ int main(int argc, char **argv) {
                                           std::abs(static_cast<long double>(observed))});
       const long double tolerance =
           256.0L * std::numeric_limits<Real>::epsilon() * scale;
-      if (!std::isfinite(observed) ||
-          std::abs(static_cast<long double>(observed) - reference) > tolerance) {
+      if (!std::isfinite(observed) || !std::isfinite(split_observed) ||
+          std::abs(static_cast<long double>(observed) - reference) > tolerance ||
+          std::abs(static_cast<long double>(split_observed) - reference) > tolerance ||
+          std::abs(static_cast<long double>(split_observed) -
+                   static_cast<long double>(observed)) > tolerance) {
         std::cerr << "generated reference mismatch at " << match[1].str() << '\n';
         return EXIT_FAILURE;
       }

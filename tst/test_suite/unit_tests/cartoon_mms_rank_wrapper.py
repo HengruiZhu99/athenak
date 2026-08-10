@@ -25,30 +25,28 @@ def local_rank_value() -> int:
     return 0
 
 
-def selected_gpu() -> tuple[str | None, str | None]:
-    visible = os.environ.get("CUDA_VISIBLE_DEVICES", "")
-    if visible.startswith("GPU-"):
-        selected = visible.split(",")[0]
-    else:
-        selected = None
+def selected_gpu() -> tuple[str, str, str]:
+    visible = os.environ.get("CUDA_VISIBLE_DEVICES")
+    if visible is None:
+        raise RuntimeError("CUDA_VISIBLE_DEVICES is unset")
+    devices = [item.strip() for item in visible.split(",")]
+    if len(devices) != 1 or not devices[0] or devices[0] in {"-1", "NoDevFiles"}:
+        raise RuntimeError(
+            "CUDA qualification requires exactly one visible device per rank")
+    selected = devices[0]
     try:
         lines = subprocess.check_output(
-            ["nvidia-smi", "--query-gpu=uuid,name", "--format=csv,noheader"],
+            ["nvidia-smi", f"--id={selected}", "--query-gpu=uuid,name",
+             "--format=csv,noheader"],
             text=True, stderr=subprocess.STDOUT).splitlines()
-    except (OSError, subprocess.CalledProcessError):
-        return selected, None
-    if not lines:
-        return selected, None
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise RuntimeError(
+            f"cannot resolve visible CUDA device {selected!r} to a UUID") from error
     records = [tuple(part.strip() for part in line.split(",", 1)) for line in lines]
-    if selected:
-        match = next((record for record in records if record[0] == selected), None)
-        return match if match else (selected, None)
-    if visible:
-        first = visible.split(",")[0]
-        if first.isdigit() and int(first) < len(records):
-            return records[int(first)]
-    local_rank = local_rank_value()
-    return records[local_rank % len(records)]
+    if len(records) != 1 or len(records[0]) != 2 or not all(records[0]):
+        raise RuntimeError(
+            f"visible CUDA device {selected!r} did not resolve to exactly one UUID/name")
+    return selected, records[0][0], records[0][1]
 
 
 def main() -> int:
@@ -62,13 +60,18 @@ def main() -> int:
     if not args.command:
         raise SystemExit("missing Athena command")
     rank = rank_value()
-    uuid, gpu_name = selected_gpu()
-    if args.require_cuda and not uuid:
-        raise SystemExit("CUDA qualification requires a rank-local GPU UUID")
+    visible_token = uuid = gpu_name = None
+    if args.require_cuda:
+        try:
+            visible_token, uuid, gpu_name = selected_gpu()
+        except RuntimeError as error:
+            raise SystemExit(str(error)) from error
     record = {"rank": rank, "local_rank": local_rank_value(),
               "hostname": socket.gethostname(),
               "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
-              "selected_uuid": uuid, "gpu_name": gpu_name}
+              "visible_device_token": visible_token,
+              "selected_uuid": uuid, "gpu_name": gpu_name,
+              "binding_verified": bool(args.require_cuda)}
     args.evidence_dir.mkdir(parents=True, exist_ok=True)
     path = args.evidence_dir / f"rank_binding_{rank:04d}.json"
     descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)

@@ -26,6 +26,18 @@ import uuid
 SCHEMA = "athenak_z4c_cartoon_derivative_mms_campaign_v1"
 REDUCTION_TOLERANCE_FACTOR = 4096.0
 SATURATION_FACTOR = 4096.0
+CASE_ENVIRONMENT_KEYS = (
+    "CUDA_DEVICE_ORDER", "CUDA_VISIBLE_DEVICES", "KOKKOS_NUM_DEVICES",
+    "KOKKOS_NUM_THREADS", "OMPI_COMM_WORLD_SIZE", "PMIX_NAMESPACE",
+    "PMI_SIZE", "SLURM_CPU_BIND", "SLURM_GPU_BIND", "SLURM_GPUS",
+    "SLURM_GPUS_ON_NODE", "SLURM_JOB_GPUS", "SLURM_JOB_ID",
+    "SLURM_JOB_NODELIST", "SLURM_NNODES", "SLURM_NTASKS",
+    "SLURM_NTASKS_PER_NODE", "SLURM_STEP_GPUS", "SLURM_STEP_ID",
+)
+CASE_FIXED_FILES = {
+    "input.athinput", "stdout.txt", "stderr.txt", "cartoon_mms.mms.json",
+    "cartoon_mms.mms.csv", "cartoon_mms.mms.probes.csv", "result.json",
+}
 
 
 def sha256(path: Path) -> str:
@@ -98,14 +110,39 @@ def launcher_command(launcher: str, ranks: int) -> list[str]:
     return words + [str(ranks)]
 
 
+def execution_environment() -> dict[str, str]:
+    return {name: os.environ[name] for name in CASE_ENVIRONMENT_KEYS
+            if name in os.environ}
+
+
+def canonical_digest(value: object) -> str:
+    return hashlib.sha256(json.dumps(value, sort_keys=True,
+                                     separators=(",", ":")).encode()).hexdigest()
+
+
+def expected_case_files(ranks: int) -> set[str]:
+    return CASE_FIXED_FILES | {f"rank_binding_{rank:04d}.json"
+                              for rank in range(ranks)}
+
+
 def verified_complete(case: Path, identity: dict[str, object]) -> bool:
     manifest_path = case / "manifest.json"
-    if not manifest_path.exists():
+    if not manifest_path.is_file() or manifest_path.is_symlink():
         return False
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if manifest.get("state") != "complete" or manifest.get("identity") != identity:
+    if (set(manifest) != {"schema", "state", "identity", "files"} or
+            manifest.get("schema") != SCHEMA or manifest.get("state") != "complete" or
+            manifest.get("identity") != identity or
+            not isinstance(manifest.get("files"), dict)):
         return False
-    return all((case / name).is_file() and sha256(case / name) == digest
+    expected = expected_case_files(int(identity["ranks"]))
+    if set(manifest["files"]) != expected:
+        return False
+    actual = {entry.name for entry in case.iterdir()}
+    if actual != expected | {"manifest.json"}:
+        return False
+    return all((case / name).is_file() and not (case / name).is_symlink() and
+               sha256(case / name) == digest
                for name, digest in manifest["files"].items())
 
 
@@ -114,8 +151,11 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     nghost = order // 2 + 1
     domain_hash = hashlib.sha256(json.dumps(args.domain).encode()).hexdigest()[:10]
     key = f"o{order}-ng{nghost}-n{resolution}-p{phase}-r{args.ranks}-d{domain_hash}"
-    case_uuid = str(uuid.uuid5(uuid.NAMESPACE_URL,
-                               json.dumps([SCHEMA, source, key], sort_keys=True)))
+    case_environment = execution_environment()
+    environment_sha256 = canonical_digest(case_environment)
+    case_uuid = str(uuid.uuid5(
+        uuid.NAMESPACE_URL,
+        json.dumps([SCHEMA, source, key, case_environment], sort_keys=True)))
     case = args.output / f"{key}-{case_uuid}"
     basename = "cartoon_mms"
     rendered = render_input(args.input, order, resolution, phase, basename, args.domain)
@@ -131,7 +171,8 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
                 "ranks": args.ranks, "backend_required": args.require_backend,
                 "build_manifest_sha256": sha256(args.build_manifest),
                 "rank_wrapper_sha256": sha256(args.rank_wrapper),
-                "domain": args.domain}
+                "domain": args.domain, "execution_environment": case_environment,
+                "execution_environment_sha256": environment_sha256}
     if case.exists():
         if verified_complete(case, identity):
             resumed = json.loads((case / "result.json").read_text(encoding="utf-8"))
@@ -176,8 +217,13 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     if args.require_backend == "Cuda":
         uuids = [item["selected_uuid"] for item in bindings]
         if (args.ranks != 4 or None in uuids or len(set(uuids)) != 4 or
+                any(item.get("binding_verified") is not True or
+                    item.get("cuda_visible_devices") !=
+                    item.get("visible_device_token") or
+                    not item.get("visible_device_token") for item in bindings) or
                 any("A100" not in (item.get("gpu_name") or "") for item in bindings)):
-            raise RuntimeError(f"case {key} requires four distinct CUDA UUIDs")
+            raise RuntimeError(
+                f"case {key} requires four concrete, distinct CUDA UUID bindings")
     rows = list(csv.DictReader(raw_csv.open(encoding="utf-8")))
     operator_set = {row["operator"] for row in rows}
     operator_names = result.get("operator_names")
@@ -194,12 +240,27 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
        any(not math.isfinite(float(row["raw_error"])) for row in probe_rows) or \
        any(not row["layer_index"] or not row["classification"] for row in probe_rows):
         raise RuntimeError(f"case {key} has incomplete raw probe/layer records")
+    axis_rows = [row for row in probe_rows if row["mask"] == "diagnostic_axis"]
+    axis_names = operator_names[:161]
+    axis_errors = [float(row["raw_error"]) for row in axis_rows]
+    if (len(axis_rows) != 161 or [row["operator"] for row in axis_rows] != axis_names or
+            any(row["side"] != "axis" or row["classification"] != "diagnostic_axis" or
+                row["layer_index"] != "0" for row in axis_rows) or
+            any(not math.isfinite(error) for error in axis_errors) or
+            result.get("diagnostic_axis_operator_count") != 161 or
+            result.get("diagnostic_axis_nonfinite") != 0 or
+            not math.isfinite(float(result.get("diagnostic_axis_linf", math.nan))) or
+            max(axis_errors) != float(result["diagnostic_axis_linf"]) or
+            max(axis_errors) > float(result["diagnostic_axis_tolerance"])):
+        raise RuntimeError(f"case {key} lacks the exact finite 161-series true-axis probe")
     result.update({"case_id": key, "case_uuid": case_uuid, "phase": phase,
                    "resolution": resolution, "elapsed_seconds": time.time() - started,
                    "csv_sha256": sha256(raw_csv),
                    "probes_csv_sha256": sha256(probes_csv),
                    "operator_names": operator_names,
                    "rank_bindings": bindings,
+                   "execution_environment": case_environment,
+                   "execution_environment_sha256": environment_sha256,
                    "output_bytes": raw_csv.stat().st_size + probes_csv.stat().st_size})
     (case / "result.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n",
                                       encoding="utf-8")
@@ -209,6 +270,8 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     files["cartoon_mms.mms.probes.csv"] = sha256(probes_csv)
     for binding in sorted(case.glob("rank_binding_*.json")):
         files[binding.name] = sha256(binding)
+    if set(files) != expected_case_files(args.ranks):
+        raise RuntimeError(f"case {key} produced an unexpected file inventory")
     write_atomic(case / "manifest.json", {"schema": SCHEMA, "state": "complete",
                                            "identity": identity, "files": files})
     result["case_manifest_sha256"] = sha256(case / "manifest.json")
@@ -521,9 +584,12 @@ def main() -> int:
     required_build_keys = {"schema", "source_commit", "source_tree", "kokkos_commit",
                            "source_clean", "backend", "executable_sha256",
                            "configure_cache_sha256", "compiler", "kokkos_runtime",
-                           "configure", "build", "translation_units", "slowest_tus"}
+                           "configure", "build", "translation_units", "slowest_tus",
+                           "configure_cache_contract"}
     if not required_build_keys.issubset(build) or not build["source_clean"]:
         raise RuntimeError("immutable build manifest is incomplete or not clean")
+    if build["configure_cache_contract"].get("Athena_SINGLE_PRECISION") != "OFF":
+        raise RuntimeError("Cartoon derivative MMS qualification is frozen to Real64")
     if build["executable_sha256"] != sha256(args.athena):
         raise RuntimeError("Athena executable does not match immutable build manifest")
     if args.require_backend is None:
@@ -592,13 +658,14 @@ def main() -> int:
                               "convergence_plot.tex", "preflight.json")}
     if rank_evidence is not None:
         convergence_artifacts.update(rank_evidence)
+    campaign_environment = execution_environment()
     write_atomic(args.output / "campaign.json", {"schema": SCHEMA, "source": source,
                                                   "build_manifest": build,
                                                   "build_manifest_sha256":
                                                   sha256(args.build_manifest),
-                                                  "environment": {name: os.environ[name]
-                                                                  for name in sorted(os.environ)
-                                                                  if name.startswith(("SLURM_", "PMI_", "OMPI_", "CUDA_", "KOKKOS_"))},
+                                                  "environment": campaign_environment,
+                                                  "environment_sha256":
+                                                  canonical_digest(campaign_environment),
                                                   "ranks": args.ranks,
                                                   "backend": args.require_backend,
                                                   "reduction_tolerance_factor":

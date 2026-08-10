@@ -508,8 +508,14 @@ std::uint64_t HashCellId(std::uint64_t value) {
   return value ^ (value >> 31);
 }
 
+struct AxisProbeResult {
+  std::array<double, kResults - kVariables> errors{};
+  double maximum = 0.0;
+  long long nonfinite = 0;
+};
+
 template <int NGHOST>
-double RunDiagnosticAxisProbe() {
+AxisProbeResult RunDiagnosticAxisProbe() {
   constexpr int n = 2 * NGHOST + 9;
   constexpr int center = n / 2;
   constexpr Real spacing = 0.03125;
@@ -550,11 +556,19 @@ double RunDiagnosticAxisProbe() {
             axis_errors, axis_errors, axis_deltas, axis_deltas);
       });
   auto errors = Kokkos::create_mirror_view_and_copy(HostMemSpace(), axis_errors);
-  double maximum = 0.0;
-  for (int result = 0; result < kResults - kVariables; ++result) {
-    maximum = std::max(maximum, static_cast<double>(errors(0, result)));
+  AxisProbeResult axis;
+  for (int operator_index = 0; operator_index < kResults - kVariables;
+       ++operator_index) {
+    const double error = static_cast<double>(errors(0, operator_index));
+    if (!std::isfinite(error)) {
+      ++axis.nonfinite;
+      axis.errors[operator_index] = std::numeric_limits<double>::infinity();
+    } else {
+      axis.errors[operator_index] = error;
+      axis.maximum = std::max(axis.maximum, error);
+    }
   }
-  return maximum;
+  return axis;
 }
 
 template <int NGHOST>
@@ -925,12 +939,15 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
       }
     }
   }
-  const double axis_error = RunDiagnosticAxisProbe<NGHOST>();
-  double global_axis_error = axis_error;
+  AxisProbeResult axis = RunDiagnosticAxisProbe<NGHOST>();
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, &global_axis_error, 1, MPI_DOUBLE, MPI_MAX,
+  MPI_Allreduce(MPI_IN_PLACE, axis.errors.data(), kResults - kVariables,
+                MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &axis.nonfinite, 1, MPI_LONG_LONG, MPI_MAX,
                 MPI_COMM_WORLD);
 #endif
+  axis.maximum = 0.0;
+  for (const double error : axis.errors) axis.maximum = std::max(axis.maximum, error);
 
   long long nonfinite = 0;
   double maximum_error = 0.0;
@@ -958,8 +975,8 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
   bool failed = !ownership_valid || nonfinite != 0 ||
                       maximum_noise_delta > noise_bound ||
                       maximum_rotation_residual > rotation_bound ||
-                      !std::isfinite(global_axis_error) ||
-                      global_axis_error > axis_tolerance ||
+                      axis.nonfinite != 0 || !std::isfinite(axis.maximum) ||
+                      axis.maximum > axis_tolerance ||
                       mesh->ncycle != initial_cycle || mesh->time != initial_time;
 
   int io_failure = 0;
@@ -1099,6 +1116,10 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
                << ordered_errors[global_id * kResults + result] << '\n';
       }
     }
+    for (int result = 0; result < kResults - kVariables; ++result) {
+      probes << names[result] << ",diagnostic_axis,axis,0,diagnostic_axis,0,0,0,0,-1,"
+             << std::setprecision(17) << axis.errors[result] << '\n';
+    }
     probes.close();
     if (!probes) io_failure = 1;
     std::ofstream json(json_path);
@@ -1134,8 +1155,11 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
          << ",\n  \"noise_delta_bound\": " << noise_bound
          << ",\n  \"maximum_rotation_residual\": " << maximum_rotation_residual
          << ",\n  \"rotation_residual_bound\": " << rotation_bound
-         << ",\n  \"diagnostic_axis_linf\": " << global_axis_error
+         << ",\n  \"diagnostic_axis_linf\": " << axis.maximum
          << ",\n  \"diagnostic_axis_tolerance\": " << axis_tolerance
+         << ",\n  \"diagnostic_axis_operator_count\": "
+         << kResults - kVariables
+         << ",\n  \"diagnostic_axis_nonfinite\": " << axis.nonfinite
          << ",\n  \"nonfinite_count\": " << nonfinite
          << ",\n  \"cell_mask\": \"each active cell exactly once; cylindrical rho>0 only\",\n"
          << "  \"csv\": \"" << csv_path.filename().string() << "\",\n"
@@ -1149,13 +1173,13 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
                 << " noise_bound=" << noise_bound
                 << " rotation_residual=" << maximum_rotation_residual
                 << " rotation_bound=" << rotation_bound
-                << " axis_error=" << global_axis_error
+                << " axis_error=" << axis.maximum
                 << " axis_tolerance=" << axis_tolerance << '\n';
     }
     if (!failed) {
       std::cout << "Cartoon derivative MMS passed: order=" << 2 * (NGHOST - 1)
                 << " cells=" << owned_cells << " max_error=" << maximum_error
-                << " axis_error=" << global_axis_error << '\n';
+                << " axis_error=" << axis.maximum << '\n';
     }
   }
 #if MPI_PARALLEL_ENABLED
