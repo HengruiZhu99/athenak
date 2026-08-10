@@ -296,7 +296,10 @@ if (Athena_BUILD_UNIT_TESTS)
   find_package(PythonInterp 3 REQUIRED)
   add_executable(
       athena_cartoon_derivatives_unit_test
-      tst/unit/z4c/cartoon_derivatives_test.cpp)
+      tst/unit/z4c/cartoon_derivatives_test.cpp
+      tst/unit/z4c/cartoon_derivatives_order2_test.cpp
+      tst/unit/z4c/cartoon_derivatives_order4_test.cpp
+      tst/unit/z4c/cartoon_derivatives_order6_test.cpp)
   target_include_directories(
       athena_cartoon_derivatives_unit_test
       PRIVATE
