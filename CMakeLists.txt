@@ -369,15 +369,26 @@ if (Athena_BUILD_UNIT_TESTS)
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_policy_migration_test.py
       --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
 
-  add_test(
-      NAME athena.z4c_rhs_policy_production
-      COMMAND
-      ${CMAKE_COMMAND}
-      -DATHENA=$<TARGET_FILE:athena>
-      -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
-      -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-      -DTEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/z4c_rhs_policy_production
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_rhs_policy_production_test.cmake)
+  # These byte-for-byte Cartesian goldens were independently reviewed only for
+  # GNU Real64 Serial/OpenMP.  Do not register them on CUDA: device sin/cos and
+  # fused arithmetic need not reproduce GNU host bytes, and this host regression
+  # must never be mistaken for the dedicated CUDA Cartoon execution gate below.
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
+     NOT Athena_SINGLE_PRECISION AND NOT Kokkos_ENABLE_CUDA AND
+     (Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_OPENMP))
+    add_test(
+        NAME athena.z4c_rhs_policy_production_host_exact
+        COMMAND
+        ${CMAKE_COMMAND}
+        -DATHENA=$<TARGET_FILE:athena>
+        -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
+        -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+        -DTEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/z4c_rhs_policy_production
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_rhs_policy_production_test.cmake)
+    set_tests_properties(
+        athena.z4c_rhs_policy_production_host_exact
+        PROPERTIES LABELS "host-exact-regression")
+  endif()
 
   add_test(
       NAME athena.z4c_cartoon_production_kernels
@@ -387,7 +398,7 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND $<TARGET_FILE:athena> --z4c-cartoon-kernel-test --require-cuda)
   set_tests_properties(
       athena.z4c_cartoon_production_kernels_cuda_required
-      PROPERTIES LABELS "cuda-required")
+      PROPERTIES LABELS "cuda-required;cartoon-production-kernels")
   if(NOT Kokkos_ENABLE_CUDA)
     set_tests_properties(
         athena.z4c_cartoon_production_kernels_cuda_required
@@ -397,7 +408,7 @@ if (Athena_BUILD_UNIT_TESTS)
         COMMAND $<TARGET_FILE:athena> --z4c-cartoon-kernel-test --require-cuda)
     set_tests_properties(
         athena.z4c_cartoon_cuda_requirement_rejects_host
-        PROPERTIES WILL_FAIL TRUE)
+        PROPERTIES WILL_FAIL TRUE LABELS "host-negative")
   endif()
 
   add_executable(

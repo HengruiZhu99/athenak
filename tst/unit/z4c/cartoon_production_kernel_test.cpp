@@ -322,14 +322,27 @@ bool CheckSommerfeldFaces(MeshBlockPack *pack) {
       z4c::Z4c::I_Z4C_AZZ, z4c::Z4c::I_Z4C_GAMX,
       z4c::Z4c::I_Z4C_GAMY, z4c::Z4c::I_Z4C_GAMZ,
       z4c::Z4c::I_Z4C_THETA};
-  // These four samples prove both signed-rho and both z far-face kernels executed.
+  const auto updated = [&](const int j, const int i) {
+    for (const int component : updated_components) {
+      const Real value = rhs(0, component, 0, j, i);
+      if (!Finite(value) || value == kSentinel) return false;
+    }
+    return true;
+  };
+  // Cover every cell of both signed-rho and both axial faces.  Corners belong to
+  // both ranges and are deliberately checked twice.  The production x2 kernels
+  // are enqueued after x1, so their final corner value has deterministic ownership.
+  for (int j = indcs.js; j <= indcs.je; ++j) {
+    if (!updated(j, indcs.is) || !updated(j, indcs.ie)) return false;
+  }
+  for (int i = indcs.is; i <= indcs.ie; ++i) {
+    if (!updated(indcs.js, i) || !updated(indcs.je, i)) return false;
+  }
+
+  // Retain independent analytic samples on the midpoint of every active face.
   for (const auto &point : {std::pair<int, int>{middle_j, indcs.is},
                             {middle_j, indcs.ie}, {indcs.js, middle_i},
                             {indcs.je, middle_i}}) {
-    for (const int component : updated_components) {
-      const Real value = rhs(0, component, 0, point.first, point.second);
-      if (!Finite(value) || value == kSentinel) return false;
-    }
     // Independent fixed-order-2 oracle for Theta=c*(rho^2-z^2/2):
     // Theta_t = -Theta/r - (rho/r)*d_rho Theta - (z/r)*d_z Theta.
     const Real rho = CellCenterX(point.second - indcs.is, indcs.nx1,
