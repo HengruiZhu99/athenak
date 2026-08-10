@@ -70,7 +70,9 @@ struct SplitOracle {
   z4c_mms::FieldValues fields;
   z4c_mms::ScalarOracle scalar;
   z4c_mms::VectorOracle vector[3];
+  z4c_mms::VectorOracle vector_generic[3];
   z4c_mms::TensorOracle tensor[6];
+  z4c_mms::TensorOracle tensor_generic[6];
 };
 
 void EvaluateSplitOracle(const Real x, const Real y, const Real z,
@@ -86,14 +88,25 @@ void EvaluateSplitOracle(const Real x, const Real y, const Real z,
   z4c_mms::EvaluateTensorOracle3(x, y, z, oracle->tensor[3]);
   z4c_mms::EvaluateTensorOracle4(x, y, z, oracle->tensor[4]);
   z4c_mms::EvaluateTensorOracle5(x, y, z, oracle->tensor[5]);
+  for (int component = 0; component < 3; ++component) {
+    z4c_mms::EvaluateVectorOracle(component, x, y, z,
+                                  oracle->vector_generic[component]);
+  }
+  for (int component = 0; component < 6; ++component) {
+    z4c_mms::EvaluateTensorOracle(component, x, y, z,
+                                  oracle->tensor_generic[component]);
+  }
 }
 
-bool LookupSplit(const std::string &name, const SplitOracle &oracle, Real *value) {
+bool LookupSplit(const std::string &name, const SplitOracle &oracle,
+                 const bool generic, Real *value) {
   if (name == "scalar") {
     *value = oracle.fields.scalar;
     return true;
   }
   int a = 0, b = 0, c = 0, consumed = 0;
+  const auto *vector = generic ? oracle.vector_generic : oracle.vector;
+  const auto *tensor = generic ? oracle.tensor_generic : oracle.tensor;
   if (std::sscanf(name.c_str(), "scalar_first[%d]%n", &a, &consumed) == 1 &&
       consumed == static_cast<int>(name.size()) && a >= 0 && a < 3) {
     *value = oracle.scalar.first[a]; return true;
@@ -108,12 +121,12 @@ bool LookupSplit(const std::string &name, const SplitOracle &oracle, Real *value
   }
   if (std::sscanf(name.c_str(), "vector_first[%d][%d]%n", &a, &b, &consumed) == 2 &&
       consumed == static_cast<int>(name.size()) && a >= 0 && a < 3 && b >= 0 && b < 3) {
-    *value = oracle.vector[a].first[b]; return true;
+    *value = vector[a].first[b]; return true;
   }
   if (std::sscanf(name.c_str(), "vector_second[%d][%d][%d]%n", &a, &b, &c,
                   &consumed) == 3 && consumed == static_cast<int>(name.size()) &&
       a >= 0 && a < 3 && b >= 0 && b < 3 && c >= 0 && c < 3) {
-    *value = oracle.vector[a].second[b][c]; return true;
+    *value = vector[a].second[b][c]; return true;
   }
   if (std::sscanf(name.c_str(), "tensor[%d]%n", &a, &consumed) == 1 &&
       consumed == static_cast<int>(name.size()) && a >= 0 && a < 6) {
@@ -121,12 +134,12 @@ bool LookupSplit(const std::string &name, const SplitOracle &oracle, Real *value
   }
   if (std::sscanf(name.c_str(), "tensor_first[%d][%d]%n", &a, &b, &consumed) == 2 &&
       consumed == static_cast<int>(name.size()) && a >= 0 && a < 6 && b >= 0 && b < 3) {
-    *value = oracle.tensor[a].first[b]; return true;
+    *value = tensor[a].first[b]; return true;
   }
   if (std::sscanf(name.c_str(), "tensor_second[%d][%d][%d]%n", &a, &b, &c,
                   &consumed) == 3 && consumed == static_cast<int>(name.size()) &&
       a >= 0 && a < 6 && b >= 0 && b < 3 && c >= 0 && c < 3) {
-    *value = oracle.tensor[a].second[b][c]; return true;
+    *value = tensor[a].second[b][c]; return true;
   }
   return false;
 }
@@ -208,8 +221,10 @@ int main(int argc, char **argv) {
     } else if (in_values && std::regex_search(line, match, value_pattern)) {
       Real observed = 0.0;
       Real split_observed = 0.0;
+      Real generic_observed = 0.0;
       if (!Lookup(match[1].str(), oracle, &observed) ||
-          !LookupSplit(match[1].str(), split, &split_observed) ||
+          !LookupSplit(match[1].str(), split, false, &split_observed) ||
+          !LookupSplit(match[1].str(), split, true, &generic_observed) ||
           !names_this_point.insert(match[1].str()).second) {
         std::cerr << "unknown/duplicate generated reference key\n";
         return EXIT_FAILURE;
@@ -224,10 +239,14 @@ int main(int argc, char **argv) {
       const long double tolerance =
           256.0L * std::numeric_limits<Real>::epsilon() * scale;
       if (!std::isfinite(observed) || !std::isfinite(split_observed) ||
+          !std::isfinite(generic_observed) ||
           std::abs(static_cast<long double>(observed) - reference) > tolerance ||
           std::abs(static_cast<long double>(split_observed) - reference) > tolerance ||
+          std::abs(static_cast<long double>(generic_observed) - reference) > tolerance ||
           std::abs(static_cast<long double>(split_observed) -
-                   static_cast<long double>(observed)) > tolerance) {
+                   static_cast<long double>(observed)) > tolerance ||
+          std::abs(static_cast<long double>(generic_observed) -
+                   static_cast<long double>(split_observed)) > tolerance) {
         std::cerr << "generated reference mismatch at " << match[1].str() << '\n';
         return EXIT_FAILURE;
       }
