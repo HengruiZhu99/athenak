@@ -10,8 +10,11 @@
 #include <iostream>
 #include <utility>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "athena.hpp"
+#include "config.hpp"
 #include "parameter_input.hpp"
 #include "mesh.hpp"
 #include "driver/driver.hpp"
@@ -31,6 +34,171 @@
 #include "particles/particles.hpp"
 #include "units/units.hpp"
 #include "meshblock_pack.hpp"
+#include "z4c/z4c_symmetry.hpp"
+
+namespace {
+
+bool IsActiveOutput(ParameterInput *pin, const std::string &block_name) {
+  if (pin->DoesParameterExist(block_name, "dcycle")) {
+    return pin->GetInteger(block_name, "dcycle") != 0;
+  }
+  return pin->DoesParameterExist(block_name, "dt") &&
+         pin->GetReal(block_name, "dt") > 0.0;
+}
+
+bool HasAnySecondPdfKey(ParameterInput *pin, const std::string &block_name) {
+  for (const char *key : {"bin2_min", "bin2_max", "nbin2", "logscale2"}) {
+    if (pin->DoesParameterExist(block_name, key)) return true;
+  }
+  return false;
+}
+
+z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
+                                                  const Mesh &mesh) {
+  z4c::Z4cValidationInput input;
+  input.z4c_enabled = pin->DoesBlockExist("z4c");
+  if (input.z4c_enabled) {
+    input.requested_symmetry = pin->DoesParameterExist("z4c", "symmetry")
+                                   ? pin->GetString("z4c", "symmetry")
+                                   : "cartesian3d";
+    input.coordinate_map_specified =
+        pin->DoesParameterExist("z4c", "coordinate_map");
+    if (input.coordinate_map_specified) {
+      input.coordinate_map = pin->GetString("z4c", "coordinate_map");
+    }
+    input.schema_specified = pin->DoesParameterExist("z4c", "symmetry_schema");
+    if (input.schema_specified) {
+      input.schema = pin->GetInteger("z4c", "symmetry_schema");
+    }
+  }
+
+  input.nghost = mesh.mb_indcs.ng;
+  const int default_spatial_order = 2 * (input.nghost - 1);
+  input.spatial_order = input.z4c_enabled &&
+                                pin->DoesParameterExist("z4c", "spatial_order")
+                            ? pin->GetInteger("z4c", "spatial_order")
+                            : default_spatial_order;
+  input.mesh_nx1 = mesh.mesh_indcs.nx1;
+  input.mesh_nx2 = mesh.mesh_indcs.nx2;
+  input.mesh_nx3 = mesh.mesh_indcs.nx3;
+  input.meshblock_nx3 = mesh.mb_indcs.nx3;
+  input.root_blocks_x1 = mesh.nmb_rootx1;
+  input.x1min = mesh.mesh_size.x1min;
+  input.x1max = mesh.mesh_size.x1max;
+
+  for (const char *block : {"hydro", "mhd", "ion-neutral", "radiation",
+                            "turb_driving", "particles"}) {
+    if (pin->DoesBlockExist(block)) input.incompatible_physics.emplace_back(block);
+  }
+
+  if (input.z4c_enabled) {
+    for (const auto &line : pin->block) {
+      if (line.block_name != "z4c") continue;
+      for (const auto &parameter : line.line) {
+        const std::string &name = parameter.param_name;
+        if (name.rfind("co_", 0) == 0 &&
+            name.size() > 5 && name.compare(name.size() - 5, 5, "_type") == 0) {
+          input.incompatible_consumers.emplace_back("compact-object tracker " + name);
+        }
+        if (name.rfind("dump_horizon_", 0) == 0 &&
+            pin->GetBoolean("z4c", name)) {
+          input.incompatible_consumers.emplace_back("horizon dump " + name);
+        }
+      }
+    }
+    if (pin->DoesParameterExist("z4c", "nrad_wave_extraction") &&
+        pin->GetReal("z4c", "nrad_wave_extraction") > 0.0) {
+      input.incompatible_consumers.emplace_back("Z4c wave extraction");
+    }
+  }
+  if (pin->DoesParameterExist("cce", "num_radii") &&
+      pin->GetInteger("cce", "num_radii") > 0) {
+    input.incompatible_consumers.emplace_back("CCE extraction");
+  }
+  if (pin->DoesParameterExist("fastflow", "num_horizons") &&
+      pin->GetInteger("fastflow", "num_horizons") > 0) {
+    input.incompatible_consumers.emplace_back(
+        "FastFlow before the m=0 Cartoon adapter is integrated");
+  }
+  for (const auto &block : pin->block) {
+    if (block.block_name != "fastflow") continue;
+    for (const auto &parameter : block.line) {
+      const std::string &name = parameter.param_name;
+      if (name.rfind("center_", 0) == 0 || name.rfind("use_puncture_", 0) == 0 ||
+          name.rfind("wait_until_punc_are_close_", 0) == 0 ||
+          name.rfind("use_puncture_massweighted_center_", 0) == 0) {
+        input.incompatible_consumers.emplace_back("legacy FastFlow key " + name);
+      }
+    }
+  }
+
+  for (const auto &block : pin->block) {
+    if (block.block_name.rfind("output", 0) != 0 ||
+        !IsActiveOutput(pin, block.block_name)) {
+      continue;
+    }
+    z4c::Z4cOutputValidationRequest output;
+    output.block_name = block.block_name;
+    output.file_type = pin->DoesParameterExist(block.block_name, "file_type")
+                           ? pin->GetString(block.block_name, "file_type")
+                           : "";
+    if (output.file_type == "pdf") {
+      output.mass_weighted =
+          pin->DoesParameterExist(block.block_name, "mass_weighted") &&
+          pin->GetBoolean(block.block_name, "mass_weighted");
+      output.has_variable_2 =
+          pin->DoesParameterExist(block.block_name, "variable_2");
+      output.has_nbin2 = pin->DoesParameterExist(block.block_name, "nbin2");
+      if (output.has_nbin2) output.nbin2 = pin->GetInteger(block.block_name, "nbin2");
+      output.has_any_second_axis_key = HasAnySecondPdfKey(pin, block.block_name);
+    }
+    input.outputs.push_back(output);
+  }
+
+  const bool has_restart_symmetry =
+      pin->DoesParameterExist("z4c", "restart_symmetry");
+  const bool has_restart_map =
+      pin->DoesParameterExist("z4c", "restart_coordinate_map");
+  const bool has_restart_schema =
+      pin->DoesParameterExist("z4c", "restart_symmetry_schema");
+  input.restart_metadata_present =
+      has_restart_symmetry || has_restart_map || has_restart_schema;
+  if (input.restart_metadata_present) {
+    input.restart_symmetry = has_restart_symmetry
+                                 ? pin->GetString("z4c", "restart_symmetry")
+                                 : "";
+    input.restart_coordinate_map = has_restart_map
+                                       ? pin->GetString("z4c", "restart_coordinate_map")
+                                       : "";
+    input.restart_schema = has_restart_schema
+                               ? pin->GetInteger("z4c", "restart_symmetry_schema")
+                               : 0;
+  }
+
+#if USER_PROBLEM_ENABLED
+  input.problem_generator = PROBLEM_GENERATOR;
+#else
+  input.problem_generator = pin->DoesParameterExist("problem", "pgen_name")
+                                ? pin->GetString("problem", "pgen_name")
+                                : "none";
+#endif
+  // The pgen/Kerr slice changes this only after its stored bounds and tensor map pass.
+  input.accepted_cartoon_problem_generator = false;
+  return input;
+}
+
+void ValidateAndStoreZ4cSymmetry(ParameterInput *pin, MeshBlockPack *pack) {
+  const auto validation =
+      z4c::ValidateZ4cSymmetry(CollectZ4cValidationInput(pin, *pack->pmesh));
+  if (!validation.valid) {
+    std::cerr << "### FATAL ERROR in " << __FILE__ << ": Cartoon preallocation "
+              << "validation failed: " << validation.error << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  pack->z4c_symmetry = validation.config;
+}
+
+}  // namespace
 
 //----------------------------------------------------------------------------------------
 // MeshBlockPack constructor:
@@ -99,6 +267,8 @@ void MeshBlockPack::AddCoordinates(ParameterInput *pin) {
 // <blocks> are present in the input file.  Called from main().
 
 void MeshBlockPack::AddPhysics(ParameterInput *pin) {
+  ValidateAndStoreZ4cSymmetry(pin, this);
+
   int nphysics = 0;
   TaskID none(0);
 

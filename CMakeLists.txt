@@ -314,6 +314,20 @@ if (Athena_BUILD_UNIT_TESTS)
   add_test(
       NAME athena.z4c_symmetry_dispatch
       COMMAND athena_z4c_symmetry_dispatch_unit_test)
+
+  add_executable(
+      athena_z4c_symmetry_validation_unit_test
+      tst/unit/z4c/z4c_symmetry_validation_test.cpp
+      src/z4c/z4c_symmetry.cpp)
+  target_include_directories(
+      athena_z4c_symmetry_validation_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(athena_z4c_symmetry_validation_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_symmetry_validation
+      COMMAND athena_z4c_symmetry_validation_unit_test)
 endif()
 
 install( TARGETS athena DESTINATION bin )

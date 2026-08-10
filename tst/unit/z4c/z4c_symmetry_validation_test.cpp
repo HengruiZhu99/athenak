@@ -1,0 +1,202 @@
+//========================================================================================
+// AthenaK astrophysical fluid dynamics & numerical relativity code
+// Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the AthenaK collaboration
+// Licensed under the 3-clause BSD License, see LICENSE file for details
+//========================================================================================
+//! \file z4c_symmetry_validation_test.cpp
+//! \brief Allocation-free negative tests for the Cartoon configuration contract.
+
+#include <cstdlib>
+#include <iostream>
+#include <string>
+
+#include "z4c/z4c_symmetry.hpp"
+
+namespace {
+
+z4c::Z4cValidationInput ValidCartoonInput() {
+  z4c::Z4cValidationInput input;
+  input.requested_symmetry = "cartoon_so2";
+  input.coordinate_map_specified = true;
+  input.coordinate_map = "signed_rho_z_suppressed_y_v1";
+  input.schema_specified = true;
+  input.schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
+  input.z4c_enabled = true;
+  input.nghost = 4;
+  input.spatial_order = 6;
+  input.mesh_nx1 = 64;
+  input.mesh_nx2 = 64;
+  input.mesh_nx3 = 1;
+  input.meshblock_nx3 = 1;
+  input.root_blocks_x1 = 2;
+  input.x1min = -24.0;
+  input.x1max = 24.0;
+  input.problem_generator = "future_audited_cartoon_kerr";
+  input.accepted_cartoon_problem_generator = true;
+  return input;
+}
+
+bool Rejects(const z4c::Z4cValidationInput &input, const std::string &needle) {
+  const auto result = z4c::ValidateZ4cSymmetry(input);
+  return !result.valid && result.error.find(needle) != std::string::npos;
+}
+
+bool CheckDefaultCartesian() {
+  z4c::Z4cValidationInput input;
+  input.incompatible_physics = {"hydro"};
+  input.outputs.push_back({"output1", "cart"});
+  const auto result = z4c::ValidateZ4cSymmetry(input);
+  return result.valid &&
+         result.config.mode == z4c::Z4cSymmetryMode::cartesian3d &&
+         result.config.coordinate_map == z4c::Z4cCoordinateMap::cartesian_xyz;
+}
+
+bool CheckStencilDispatch() {
+  for (const int spatial_order : {2, 4, 6}) {
+    auto input = ValidCartoonInput();
+    input.spatial_order = spatial_order;
+    const auto result = z4c::ValidateZ4cSymmetry(input);
+    if (!result.valid || result.config.stencil_width != spatial_order / 2 + 1) {
+      return false;
+    }
+  }
+  auto input = ValidCartoonInput();
+  input.spatial_order = 8;
+  if (!Rejects(input, "spatial_order")) return false;
+  input = ValidCartoonInput();
+  input.nghost = 2;
+  if (!Rejects(input, "ghost cells")) return false;
+  return true;
+}
+
+bool CheckMeshAndPhysicsFailures() {
+  auto input = ValidCartoonInput();
+  input.requested_symmetry = "bad_mode";
+  if (!Rejects(input, "cartesian3d or cartoon_so2")) return false;
+  input = ValidCartoonInput();
+  input.z4c_enabled = false;
+  if (!Rejects(input, "requires the <z4c>")) return false;
+  input = ValidCartoonInput();
+  input.mesh_nx3 = 2;
+  if (!Rejects(input, "nx3=meshblock/nx3=1")) return false;
+  input = ValidCartoonInput();
+  input.meshblock_nx3 = 2;
+  if (!Rejects(input, "nx3=meshblock/nx3=1")) return false;
+  input = ValidCartoonInput();
+  input.mesh_nx2 = 1;
+  if (!Rejects(input, "x1-x2")) return false;
+  input = ValidCartoonInput();
+  input.mesh_nx1 = 63;
+  if (!Rejects(input, "even")) return false;
+  input = ValidCartoonInput();
+  input.root_blocks_x1 = 1;
+  if (!Rejects(input, "root x1 MeshBlocks")) return false;
+  input = ValidCartoonInput();
+  input.x1max = 23.0;
+  if (!Rejects(input, "x1min=-x1max")) return false;
+  input = ValidCartoonInput();
+  input.coordinate_map = "cartesian_xyz";
+  if (!Rejects(input, "coordinate_map")) return false;
+  input = ValidCartoonInput();
+  input.schema = 99;
+  if (!Rejects(input, "symmetry_schema")) return false;
+
+  for (const char *block : {"hydro", "mhd", "ion-neutral", "radiation",
+                            "turb_driving", "particles"}) {
+    input = ValidCartoonInput();
+    input.incompatible_physics.emplace_back(block);
+    if (!Rejects(input, block)) return false;
+  }
+  return true;
+}
+
+bool CheckConsumerAndOutputFailures() {
+  for (const char *consumer : {"compact-object tracker", "Z4c wave extraction",
+                               "CCE extraction", "horizon dump", "legacy FastFlow"}) {
+    auto input = ValidCartoonInput();
+    input.incompatible_consumers.emplace_back(consumer);
+    if (!Rejects(input, consumer)) return false;
+  }
+
+  for (const char *file_type : {"cart", "sph", "cbin", "pvtk", "trk"}) {
+    auto input = ValidCartoonInput();
+    input.outputs.push_back({"output7", file_type});
+    if (!Rejects(input, std::string("file_type=") + file_type)) return false;
+  }
+  for (const char *file_type : {"tab", "hst", "log", "vtk", "pdf", "bin", "rst"}) {
+    auto input = ValidCartoonInput();
+    input.outputs.push_back({"output7", file_type});
+    if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
+  }
+  auto input = ValidCartoonInput();
+  input.outputs.push_back({"output7", "mystery"});
+  if (!Rejects(input, "supported Cartoon types")) return false;
+
+  input = ValidCartoonInput();
+  input.outputs.push_back({"output7", "pdf", true});
+  if (!Rejects(input, "mass_weighted=true")) return false;
+  input = ValidCartoonInput();
+  z4c::Z4cOutputValidationRequest pdf{"output7", "pdf"};
+  pdf.has_any_second_axis_key = true;
+  input.outputs.push_back(pdf);
+  if (!Rejects(input, "require variable_2")) return false;
+  input = ValidCartoonInput();
+  pdf = {"output7", "pdf"};
+  pdf.has_variable_2 = true;
+  input.outputs.push_back(pdf);
+  if (!Rejects(input, "nbin2>=1")) return false;
+  input = ValidCartoonInput();
+  pdf.has_nbin2 = true;
+  pdf.nbin2 = 1;
+  input.outputs.push_back(pdf);
+  if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
+  return true;
+}
+
+bool CheckRestartAndPgenFailures() {
+  auto input = ValidCartoonInput();
+  input.restart_metadata_present = true;
+  input.restart_symmetry = "cartesian3d";
+  input.restart_coordinate_map = "cartesian_xyz";
+  input.restart_schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
+  if (!Rejects(input, "restart")) return false;
+
+  input = ValidCartoonInput();
+  input.restart_metadata_present = true;
+  input.restart_symmetry = "cartoon_so2";
+  input.restart_coordinate_map = "wrong";
+  input.restart_schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
+  if (!Rejects(input, "restart")) return false;
+
+  input = ValidCartoonInput();
+  input.restart_metadata_present = true;
+  input.restart_symmetry = "cartoon_so2";
+  input.restart_coordinate_map = "signed_rho_z_suppressed_y_v1";
+  input.restart_schema = 99;
+  if (!Rejects(input, "restart")) return false;
+
+  input = ValidCartoonInput();
+  input.restart_metadata_present = true;
+  input.restart_symmetry = "cartoon_so2";
+  input.restart_coordinate_map = "signed_rho_z_suppressed_y_v1";
+  input.restart_schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
+  if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
+
+  input = ValidCartoonInput();
+  input.accepted_cartoon_problem_generator = false;
+  input.problem_generator = "z4c_linear_wave";
+  if (!Rejects(input, "no audited cartoon_so2 adapter")) return false;
+  return true;
+}
+
+}  // namespace
+
+int main() {
+  const bool passed = CheckDefaultCartesian() && CheckStencilDispatch() &&
+                      CheckMeshAndPhysicsFailures() &&
+                      CheckConsumerAndOutputFailures() &&
+                      CheckRestartAndPgenFailures();
+  if (!passed) return EXIT_FAILURE;
+  std::cout << "Z4c Cartoon preallocation validation tests passed\n";
+  return EXIT_SUCCESS;
+}

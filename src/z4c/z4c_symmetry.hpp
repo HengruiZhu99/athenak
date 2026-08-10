@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace z4c {
 
@@ -45,8 +46,59 @@ struct Z4cKernelDispatchTarget {
   int stencil_width;
 };
 
+//! Output facts collected before output wrappers or physics modules are constructed.
+struct Z4cOutputValidationRequest {
+  std::string block_name;
+  std::string file_type;
+  bool mass_weighted = false;
+  bool has_variable_2 = false;
+  bool has_nbin2 = false;
+  int nbin2 = 0;
+  bool has_any_second_axis_key = false;
+};
+
+//! Host snapshot consumed by the allocation-free Cartoon validator.
+struct Z4cValidationInput {
+  std::string requested_symmetry = "cartesian3d";
+  bool coordinate_map_specified = false;
+  std::string coordinate_map;
+  bool schema_specified = false;
+  int schema = Z4cSymmetryConfig::kCurrentSchema;
+
+  bool z4c_enabled = false;
+  int nghost = 2;
+  int spatial_order = 2;
+  int mesh_nx1 = 1;
+  int mesh_nx2 = 1;
+  int mesh_nx3 = 1;
+  int meshblock_nx3 = 1;
+  int root_blocks_x1 = 1;
+  double x1min = 0.0;
+  double x1max = 1.0;
+
+  std::vector<std::string> incompatible_physics;
+  std::vector<std::string> incompatible_consumers;
+  std::vector<Z4cOutputValidationRequest> outputs;
+
+  bool restart_metadata_present = false;
+  std::string restart_symmetry;
+  std::string restart_coordinate_map;
+  int restart_schema = 0;
+
+  std::string problem_generator;
+  bool accepted_cartoon_problem_generator = false;
+};
+
+//! Result returned without throwing, aborting, or allocating device storage.
+struct Z4cValidationResult {
+  bool valid = false;
+  Z4cSymmetryConfig config;
+  std::string error;
+};
+
 const char *ToString(Z4cSymmetryMode mode);
 const char *ToString(Z4cCoordinateMap coordinate_map);
+Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input);
 
 //! Return the target associated with a separately compiled policy/stencil pair.
 template <typename Symmetry, int NGHOST>

@@ -6,6 +6,11 @@
 //! \file z4c_symmetry.cpp
 //! \brief Separately compiled host targets for Z4c symmetry/stencil dispatch.
 
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <sstream>
+#include <string>
 #include <type_traits>
 
 #include "z4c/cartoon_derivatives.hpp"
@@ -31,6 +36,165 @@ const char *ToString(const Z4cCoordinateMap coordinate_map) {
       return "signed_rho_z_suppressed_y_v1";
   }
   return "invalid";
+}
+
+namespace {
+
+Z4cValidationResult Invalid(const Z4cSymmetryConfig &config,
+                            const std::string &message) {
+  return {false, config, message};
+}
+
+bool IsSupportedOutput(const std::string &file_type) {
+  return file_type == "tab" || file_type == "hst" || file_type == "log" ||
+         file_type == "vtk" || file_type == "pdf" || file_type == "bin" ||
+         file_type == "rst";
+}
+
+bool IsRejectedOutput(const std::string &file_type) {
+  return file_type == "cart" || file_type == "sph" || file_type == "cbin" ||
+         file_type == "pvtk" || file_type == "trk";
+}
+
+}  // namespace
+
+Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
+  Z4cSymmetryConfig config;
+  if (input.requested_symmetry == "cartesian3d") {
+    config.mode = Z4cSymmetryMode::cartesian3d;
+    config.coordinate_map = Z4cCoordinateMap::cartesian_xyz;
+  } else if (input.requested_symmetry == "cartoon_so2") {
+    config.mode = Z4cSymmetryMode::cartoon_so2;
+    config.coordinate_map = Z4cCoordinateMap::signed_rho_z_suppressed_y_v1;
+  } else {
+    return Invalid(config, "<z4c>/symmetry must be cartesian3d or cartoon_so2, not '" +
+                               input.requested_symmetry + "'");
+  }
+
+  if (input.z4c_enabled) {
+    if (input.spatial_order != 2 && input.spatial_order != 4 &&
+        input.spatial_order != 6) {
+      return Invalid(config, "<z4c>/spatial_order must be 2, 4, or 6");
+    }
+    config.stencil_width = input.spatial_order / 2 + 1;
+    if (input.nghost < config.stencil_width) {
+      std::ostringstream message;
+      message << "<z4c>/spatial_order=" << input.spatial_order
+              << " requires at least " << config.stencil_width
+              << " ghost cells, but <mesh>/nghost=" << input.nghost;
+      return Invalid(config, message.str());
+    }
+  }
+
+  if (config.mode == Z4cSymmetryMode::cartesian3d) {
+    if (input.coordinate_map_specified && input.coordinate_map != "cartesian_xyz") {
+      return Invalid(config, "cartesian3d requires coordinate_map=cartesian_xyz");
+    }
+    if (input.schema_specified &&
+        input.schema != Z4cSymmetryConfig::kCurrentSchema) {
+      return Invalid(config, "unsupported <z4c>/symmetry_schema for cartesian3d");
+    }
+    if (input.restart_metadata_present &&
+        (input.restart_symmetry != "cartesian3d" ||
+         input.restart_coordinate_map != "cartesian_xyz" ||
+         input.restart_schema != Z4cSymmetryConfig::kCurrentSchema)) {
+      return Invalid(config, "restart symmetry metadata conflicts with cartesian3d");
+    }
+    return {true, config, ""};
+  }
+
+  if (!input.z4c_enabled) {
+    return Invalid(config, "cartoon_so2 requires the <z4c> physics block");
+  }
+  if (input.coordinate_map_specified &&
+      input.coordinate_map != "signed_rho_z_suppressed_y_v1") {
+    return Invalid(config,
+                   "cartoon_so2 requires coordinate_map="
+                   "signed_rho_z_suppressed_y_v1");
+  }
+  if (input.schema_specified &&
+      input.schema != Z4cSymmetryConfig::kCurrentSchema) {
+    return Invalid(config, "unsupported <z4c>/symmetry_schema for cartoon_so2");
+  }
+
+  if (input.mesh_nx3 != 1 || input.meshblock_nx3 != 1) {
+    return Invalid(config, "cartoon_so2 requires mesh/nx3=meshblock/nx3=1");
+  }
+  if (input.mesh_nx2 <= 1) {
+    return Invalid(config, "cartoon_so2 requires an active x1-x2 meridional plane");
+  }
+  if (input.mesh_nx1 <= 0 || input.mesh_nx1 % 2 != 0) {
+    return Invalid(config, "cartoon_so2 requires positive even <mesh>/nx1");
+  }
+  if (input.root_blocks_x1 <= 0 || input.root_blocks_x1 % 2 != 0) {
+    return Invalid(config,
+                   "cartoon_so2 requires an even number of root x1 MeshBlocks so no "
+                   "block straddles the internal axis");
+  }
+  const double symmetry_scale =
+      std::max({1.0, std::abs(input.x1min), std::abs(input.x1max)});
+  const double symmetry_tolerance =
+      32.0 * std::numeric_limits<double>::epsilon() * symmetry_scale;
+  if (!std::isfinite(input.x1min) || !std::isfinite(input.x1max) ||
+      !(input.x1min < 0.0) || !(input.x1max > 0.0) ||
+      std::abs(input.x1min + input.x1max) > symmetry_tolerance) {
+    return Invalid(config,
+                   "cartoon_so2 requires finite cell-centered x1min=-x1max around "
+                   "the internal axis");
+  }
+
+  if (!input.incompatible_physics.empty()) {
+    return Invalid(config, "cartoon_so2 vacuum Z4c forbids <" +
+                               input.incompatible_physics.front() + "> physics");
+  }
+  if (!input.incompatible_consumers.empty()) {
+    return Invalid(config, "cartoon_so2 does not support " +
+                               input.incompatible_consumers.front());
+  }
+
+  for (const auto &output : input.outputs) {
+    if (IsRejectedOutput(output.file_type)) {
+      return Invalid(config, "cartoon_so2 rejects file_type=" + output.file_type +
+                                 " in <" + output.block_name +
+                                 "> before output construction");
+    }
+    if (!IsSupportedOutput(output.file_type)) {
+      return Invalid(config, "unknown file_type='" + output.file_type + "' in <" +
+                                 output.block_name +
+                                 ">; supported Cartoon types are "
+                                 "tab,hst,log,vtk,pdf,bin,rst");
+    }
+    if (output.file_type == "pdf") {
+      if (output.mass_weighted) {
+        return Invalid(config,
+                       "cartoon_so2 rejects PDF mass_weighted=true: vacuum Z4c "
+                       "component zero is chi, not density");
+      }
+      if (!output.has_variable_2 && output.has_any_second_axis_key) {
+        return Invalid(config,
+                       "Cartoon PDF second-axis keys require variable_2");
+      }
+      if (output.has_variable_2 && (!output.has_nbin2 || output.nbin2 <= 0)) {
+        return Invalid(config,
+                       "Cartoon PDF variable_2 requires explicit nbin2>=1");
+      }
+    }
+  }
+
+  if (input.restart_metadata_present &&
+      (input.restart_symmetry != "cartoon_so2" ||
+       input.restart_coordinate_map != "signed_rho_z_suppressed_y_v1" ||
+       input.restart_schema != Z4cSymmetryConfig::kCurrentSchema)) {
+    return Invalid(config,
+                   "restart symmetry/map/schema metadata conflicts with cartoon_so2");
+  }
+
+  if (!input.accepted_cartoon_problem_generator) {
+    return Invalid(config, "problem generator '" + input.problem_generator +
+                               "' has no audited cartoon_so2 adapter");
+  }
+
+  return {true, config, ""};
 }
 
 template <typename Symmetry, int NGHOST>
