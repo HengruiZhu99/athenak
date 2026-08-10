@@ -17,6 +17,7 @@
 #include "coordinates/coordinates.hpp"
 #include "driver/driver.hpp"
 #include "tasklist/task_list.hpp"
+#include "z4c/z4c_symmetry.hpp"
 
 // Forward declarations
 class MeshBlock;
@@ -74,6 +75,9 @@ class MeshBlockPack {
   radiation::Radiation *prad=nullptr;
   std::vector<z4c::CCE *> pz4c_cce;
   particles::Particles *ppart=nullptr;
+
+  // Immutable host-selected Z4c geometry and finite-difference dispatch target.
+  z4c::Z4cSymmetryConfig z4c_symmetry;
 
   // units (needed to convert code units to cgs for, e.g., cooling or radiation)
   units::Units *punit=nullptr;
