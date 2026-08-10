@@ -25,6 +25,7 @@
 #include "z4c/tmunu.hpp"
 #include "tasklist/numerical_relativity.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_restart.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "z4c/cce/cce.hpp"
 #include "diffusion/viscosity.hpp"
@@ -196,6 +197,22 @@ void ValidateAndStoreZ4cSymmetry(ParameterInput *pin, MeshBlockPack *pack) {
     std::exit(EXIT_FAILURE);
   }
   pack->z4c_symmetry = validation.config;
+  if (pin->DoesBlockExist(z4c::kZ4cRestartBlock)) {
+    z4c::Z4cRestartSnapshot snapshot;
+    const auto restart = z4c::CaptureZ4cRestartSnapshot(pin, &snapshot);
+    if (!restart.valid || !snapshot.present) {
+      std::cerr << "### FATAL ERROR in " << __FILE__
+                << ": invalid Z4c restart carrier: " << restart.error << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    pack->z4c_restart_state = snapshot.state;
+  } else {
+    const int requested_order = pin->DoesParameterExist("z4c", "spatial_order")
+                                    ? pin->GetInteger("z4c", "spatial_order")
+                                    : 2 * (pack->pmesh->mb_indcs.ng - 1);
+    pack->z4c_restart_state = z4c::MakeDefaultZ4cRestartState(
+        validation.config, requested_order, pack->pmesh->mb_indcs.ng);
+  }
 }
 
 }  // namespace

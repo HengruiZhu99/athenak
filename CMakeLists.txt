@@ -288,6 +288,7 @@ configure_file(config.hpp.in config.hpp)
 
 if (Athena_BUILD_UNIT_TESTS)
   enable_testing()
+  find_package(PythonInterp 3 REQUIRED)
   add_executable(
       athena_cartoon_derivatives_unit_test
       tst/unit/z4c/cartoon_derivatives_test.cpp)
@@ -337,6 +338,15 @@ if (Athena_BUILD_UNIT_TESTS)
       -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
       -DTEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/z4c_preallocation_test
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_preallocation_test.cmake)
+
+  add_test(
+      NAME athena.z4c_restart_carrier
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_restart_carrier_test.py
+      --athena $<TARGET_FILE:athena>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_restart_carrier.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_restart_carrier_test)
 endif()
 
 install( TARGETS athena DESTINATION bin )

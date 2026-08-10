@@ -28,6 +28,7 @@
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_restart.hpp"
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
 //#include "outputs.hpp"
@@ -200,6 +201,22 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   }
   pin->SetInteger(out_params.block_name, "file_number", out_params.file_number);
   pin->SetReal(out_params.block_name, "last_time", out_params.last_time);
+  if (pz4c != nullptr) {
+    pm->pmb_pack->z4c_restart_state.config = pm->pmb_pack->z4c_symmetry;
+    z4c::StoreZ4cRestartState(pin, pm->pmb_pack->z4c_restart_state);
+    pin->SetString("z4c", "symmetry",
+                   z4c::ToString(pm->pmb_pack->z4c_symmetry.mode));
+    pin->SetString("z4c", "coordinate_map",
+                   z4c::ToString(pm->pmb_pack->z4c_symmetry.coordinate_map));
+    pin->SetInteger("z4c", "symmetry_schema",
+                    pm->pmb_pack->z4c_symmetry.schema);
+    pin->SetString("z4c", "restart_symmetry",
+                   z4c::ToString(pm->pmb_pack->z4c_symmetry.mode));
+    pin->SetString("z4c", "restart_coordinate_map",
+                   z4c::ToString(pm->pmb_pack->z4c_symmetry.coordinate_map));
+    pin->SetInteger("z4c", "restart_symmetry_schema",
+                    pm->pmb_pack->z4c_symmetry.schema);
+  }
 
   // create string holding input parameters (copy of input file)
   std::stringstream ost;

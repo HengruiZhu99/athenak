@@ -40,6 +40,7 @@
 #include "outputs/outputs.hpp"
 #include "driver/driver.hpp"
 #include "utils/utils.hpp"
+#include "z4c/z4c_restart.hpp"
 
 // MPI/OpenMP headers
 #if MPI_PARALLEL_ENABLED
@@ -235,6 +236,7 @@ int main(int argc, char *argv[]) {
   // With MPI, the input is read by every rank in parallel using MPI-IO.
 
   ParameterInput* pinput = new ParameterInput;
+  z4c::Z4cRestartSnapshot z4c_restart_snapshot;
   IOWrapper infile, restartfile;
   // read parameters from restart file
   bool single_file_per_rank = false; // DBF: flag for single_file_per_rank for rst files
@@ -266,6 +268,13 @@ int main(int argc, char *argv[]) {
     // read parameters from restart file
     restartfile.Open(restart_file.c_str(),IOWrapper::FileMode::read,single_file_per_rank);
     pinput->LoadFromFile(restartfile, single_file_per_rank);
+    const auto capture =
+        z4c::CaptureZ4cRestartSnapshot(pinput, &z4c_restart_snapshot);
+    if (!capture.valid) {
+      std::cerr << "### FATAL ERROR: invalid restart-origin Z4c carrier: "
+                << capture.error << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
   }
 
   // read parameters from input file.  If both -r and -i are specified, this will
@@ -277,6 +286,20 @@ int main(int argc, char *argv[]) {
     pinput->CheckBlockNames();
   }
   pinput->ModifyFromCmdline(argc, argv);
+  if (!res_flag && pinput->DoesBlockExist(z4c::kZ4cRestartBlock)) {
+    std::cerr << "### FATAL ERROR: <" << z4c::kZ4cRestartBlock
+              << "> is an internal restart-only carrier" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (res_flag && z4c_restart_snapshot.present) {
+    const auto restore =
+        z4c::ValidateAndRestoreZ4cRestartSnapshot(pinput, z4c_restart_snapshot);
+    if (!restore.valid) {
+      std::cerr << "### FATAL ERROR: immutable Z4c restart validation failed: "
+                << restore.error << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
 
   // Dump input parameters and quit if code was run with -n option.
   if (narg_flag) {
