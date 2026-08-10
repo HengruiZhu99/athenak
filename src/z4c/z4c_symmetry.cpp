@@ -38,6 +38,10 @@ const char *ToString(const Z4cCoordinateMap coordinate_map) {
   return "invalid";
 }
 
+int EffectiveZ4cSpatialOrder(const int requested_spatial_order, const int nghost) {
+  return requested_spatial_order > 0 ? requested_spatial_order : 2 * (nghost - 1);
+}
+
 namespace {
 
 Z4cValidationResult Invalid(const Z4cSymmetryConfig &config,
@@ -72,14 +76,15 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
   }
 
   if (input.z4c_enabled) {
-    if (input.spatial_order != 2 && input.spatial_order != 4 &&
-        input.spatial_order != 6) {
+    const int spatial_order =
+        EffectiveZ4cSpatialOrder(input.requested_spatial_order, input.nghost);
+    if (spatial_order != 2 && spatial_order != 4 && spatial_order != 6) {
       return Invalid(config, "<z4c>/spatial_order must be 2, 4, or 6");
     }
-    config.stencil_width = input.spatial_order / 2 + 1;
+    config.stencil_width = spatial_order / 2 + 1;
     if (input.nghost < config.stencil_width) {
       std::ostringstream message;
-      message << "<z4c>/spatial_order=" << input.spatial_order
+      message << "effective <z4c>/spatial_order=" << spatial_order
               << " requires at least " << config.stencil_width
               << " ghost cells, but <mesh>/nghost=" << input.nghost;
       return Invalid(config, message.str());

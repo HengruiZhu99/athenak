@@ -23,7 +23,7 @@ z4c::Z4cValidationInput ValidCartoonInput() {
   input.schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
   input.z4c_enabled = true;
   input.nghost = 4;
-  input.spatial_order = 6;
+  input.requested_spatial_order = 6;
   input.mesh_nx1 = 64;
   input.mesh_nx2 = 64;
   input.mesh_nx3 = 1;
@@ -54,19 +54,51 @@ bool CheckDefaultCartesian() {
 bool CheckStencilDispatch() {
   for (const int spatial_order : {2, 4, 6}) {
     auto input = ValidCartoonInput();
-    input.spatial_order = spatial_order;
+    input.requested_spatial_order = spatial_order;
     const auto result = z4c::ValidateZ4cSymmetry(input);
     if (!result.valid || result.config.stencil_width != spatial_order / 2 + 1) {
       return false;
     }
   }
   auto input = ValidCartoonInput();
-  input.spatial_order = 8;
+  input.requested_spatial_order = 8;
   if (!Rejects(input, "spatial_order")) return false;
   input = ValidCartoonInput();
   input.nghost = 2;
   if (!Rejects(input, "ghost cells")) return false;
   return true;
+}
+
+bool CheckNonpositiveSpatialOrderFallback() {
+  for (const int nghost : {2, 3, 4}) {
+    const int expected_order = 2 * (nghost - 1);
+    if (z4c::EffectiveZ4cSpatialOrder(-1, nghost) != expected_order) return false;
+
+    for (const char *symmetry : {"cartesian3d", "cartoon_so2"}) {
+      auto input = ValidCartoonInput();
+      input.requested_symmetry = symmetry;
+      input.nghost = nghost;
+      input.requested_spatial_order = -1;
+      if (input.requested_symmetry == "cartesian3d") {
+        input.coordinate_map = "cartesian_xyz";
+      }
+      const auto result = z4c::ValidateZ4cSymmetry(input);
+      if (!result.valid || result.config.stencil_width != nghost) return false;
+    }
+  }
+
+  // This is the sentinel used by the shipped one-puncture input deck.
+  auto input = z4c::Z4cValidationInput{};
+  input.z4c_enabled = true;
+  input.nghost = 4;
+  input.requested_spatial_order = -1;
+  const auto shipped_deck = z4c::ValidateZ4cSymmetry(input);
+  if (!shipped_deck.valid || shipped_deck.config.stencil_width != 4) return false;
+
+  input.requested_spatial_order = 0;
+  if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
+  input.requested_spatial_order = 8;
+  return Rejects(input, "spatial_order");
 }
 
 bool CheckMeshAndPhysicsFailures() {
@@ -193,6 +225,7 @@ bool CheckRestartAndPgenFailures() {
 
 int main() {
   const bool passed = CheckDefaultCartesian() && CheckStencilDispatch() &&
+                      CheckNonpositiveSpatialOrderFallback() &&
                       CheckMeshAndPhysicsFailures() &&
                       CheckConsumerAndOutputFailures() &&
                       CheckRestartAndPgenFailures();

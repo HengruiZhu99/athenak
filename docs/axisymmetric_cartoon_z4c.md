@@ -33,7 +33,9 @@ Before units or any physics object is constructed, `cartoon_so2` requires:
   between cell centers and no root block straddles it;
 - `coordinate_map=signed_rho_z_suppressed_y_v1` when the map is specified, and
   `symmetry_schema=1` when the schema is specified;
-- a spatial order of 2, 4, or 6 with enough ghost cells for stencil widths 2, 3, or 4;
+- an effective spatial order of 2, 4, or 6 with enough ghost cells for stencil widths 2, 3,
+  or 4; as in the existing Cartesian path, a requested order less than or equal to zero uses
+  `2*(mesh/nghost-1)`, so `nghost=2,3,4` select orders 2, 4, and 6 respectively;
 - no compact-object tracker, Cartesian wave extraction, CCE extraction, Cartesian horizon dump,
   legacy tracker-dependent FastFlow option, or pre-m=0 FastFlow construction;
 - only `tab`, `hst`, `log`, `vtk`, unweighted `pdf`, `bin`, and `rst` output types; and

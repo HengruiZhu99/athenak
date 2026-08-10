@@ -67,7 +67,7 @@ struct Z4cValidationInput {
 
   bool z4c_enabled = false;
   int nghost = 2;
-  int spatial_order = 2;
+  int requested_spatial_order = 2;
   int mesh_nx1 = 1;
   int mesh_nx2 = 1;
   int mesh_nx3 = 1;
@@ -98,6 +98,7 @@ struct Z4cValidationResult {
 
 const char *ToString(Z4cSymmetryMode mode);
 const char *ToString(Z4cCoordinateMap coordinate_map);
+int EffectiveZ4cSpatialOrder(int requested_spatial_order, int nghost);
 Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input);
 
 //! Return the target associated with a separately compiled policy/stencil pair.

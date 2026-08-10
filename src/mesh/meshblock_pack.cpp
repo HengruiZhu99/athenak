@@ -74,10 +74,10 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
 
   input.nghost = mesh.mb_indcs.ng;
   const int default_spatial_order = 2 * (input.nghost - 1);
-  input.spatial_order = input.z4c_enabled &&
-                                pin->DoesParameterExist("z4c", "spatial_order")
-                            ? pin->GetInteger("z4c", "spatial_order")
-                            : default_spatial_order;
+  input.requested_spatial_order =
+      input.z4c_enabled && pin->DoesParameterExist("z4c", "spatial_order")
+          ? pin->GetInteger("z4c", "spatial_order")
+          : default_spatial_order;
   input.mesh_nx1 = mesh.mesh_indcs.nx1;
   input.mesh_nx2 = mesh.mesh_indcs.nx2;
   input.mesh_nx3 = mesh.mesh_indcs.nx3;

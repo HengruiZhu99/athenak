@@ -25,6 +25,7 @@
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
+#include "z4c/z4c_symmetry.hpp"
 #include "coordinates/adm.hpp"
 #include "utils/cart_grid.hpp"
 
@@ -181,8 +182,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   int const default_spatial_order = 2 * (indcs.ng - 1);
   int const requested_spatial_order = pin->GetOrAddInteger("z4c", "spatial_order",
                                                            default_spatial_order);
-  opt.spatial_order = (requested_spatial_order > 0) ? requested_spatial_order
-                                                    : default_spatial_order;
+  opt.spatial_order = EffectiveZ4cSpatialOrder(requested_spatial_order, indcs.ng);
   if (opt.spatial_order != 2 && opt.spatial_order != 4 && opt.spatial_order != 6) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl
