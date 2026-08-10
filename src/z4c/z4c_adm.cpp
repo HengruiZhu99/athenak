@@ -138,8 +138,6 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     // Usage of Dx: pmbp->pz4c->Dx(blockn, posvar, k,j,i, dir, nghost, dx, quantity);
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
-    const Real rho = CellCenterX(i - indcs.is, indcs.nx1,
-                                 size.d_view(m).x1min, size.d_view(m).x1max);
     /*AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> g_uu;
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> Gamma_udd;
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> dg_ddd;
@@ -179,26 +177,17 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
     for (int c = 0; c < 3; ++c) {
       z4c.vGam_u(m, a, k, j, i) += g_uu(b, c)*Gamma_udd(a, b, c);
     }*/
-    if constexpr (std::is_same_v<Symmetry, CartoonSO2>) {
-      DerivativeProvider<CartoonSO2, FD_STENCIL> derivatives(
-          idx, rho, CartoonAxisLocation::cell_centered, m, k, j, i);
-      for (int a = 0; a < 3; ++a) {
-        z4c.vGam_u(m, a, k, j, i) = 0.0;
-        for (int b = 0; b < 3; ++b) {
-          z4c.vGam_u(m, a, k, j, i) -=
-              derivatives.template TensorFirst<TensorVariance::all_upper>(
-                  b, b, a, g3u);
-        }
-      }
-    } else {
-      DerivativeProvider<Cartesian3D, FD_STENCIL> derivatives(idx, m, k, j, i);
-      for (int a = 0; a < 3; ++a) {
-        z4c.vGam_u(m, a, k, j, i) = 0.0;
-        for (int b = 0; b < 3; ++b) {
-          z4c.vGam_u(m, a, k, j, i) -=
-              derivatives.template TensorFirst<TensorVariance::all_upper>(
-                  b, b, a, g3u);
-        }
+    // Keep the compile-time symmetry branch in the named device helper.  The
+    // Kokkos lambda references z4c and g3u unconditionally, avoiding nvcc's
+    // extended-lambda first-capture restriction for if-constexpr bodies.
+    auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, FD_STENCIL>(
+        idx, size.d_view, indcs.nx1, indcs.is, m, k, j, i);
+    for (int a = 0; a < 3; ++a) {
+      z4c.vGam_u(m, a, k, j, i) = 0.0;
+      for (int b = 0; b < 3; ++b) {
+        z4c.vGam_u(m, a, k, j, i) -=
+            derivatives.template TensorFirst<TensorVariance::all_upper>(
+                b, b, a, g3u);
       }
     }
   });

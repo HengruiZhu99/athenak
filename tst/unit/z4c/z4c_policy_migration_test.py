@@ -84,6 +84,7 @@ def main() -> int:
         ],
         "src/z4c/z4c_adm.cpp": [
             "ADMConstraintsImpl<CartoonSO2, NGHOST>",
+            "MakeCellCenteredDerivativeProvider<Symmetry, FD_STENCIL>",
             "TensorVariance::all_lower",
         ],
         "src/z4c/z4c_Sbc.cpp": [
@@ -108,6 +109,18 @@ def main() -> int:
         text = (source_dir / relative).read_text(encoding="utf-8")
         for marker in markers:
             require(marker in text, f"missing {marker!r} in {relative}")
+
+    # nvcc forbids first-capturing z4c/g3u inside an if-constexpr in its extended
+    # device lambda.  Keep that compile-time choice inside the named derivative
+    # factory and make all field captures unconditional in the Gamma kernel.
+    adm_source = strip_comments_preserving_lines(
+        (source_dir / "src/z4c/z4c_adm.cpp").read_text(encoding="utf-8"))
+    gamma_launch = adm_source.index('par_for("initialize Gamma"')
+    gamma_body = next(
+        body for body in kokkos_lambda_bodies(adm_source[gamma_launch:])
+        if "MakeCellCenteredDerivativeProvider" in body)
+    require("if constexpr" not in gamma_body,
+            "ADM-to-Z4c Gamma device lambda reintroduced constexpr first-captures")
 
     # Curvature consumers formerly hard-coded stencil four.  Freeze the intentional
     # semantic correction: every consumer now dispatches the configured 2/3/4 stencil.

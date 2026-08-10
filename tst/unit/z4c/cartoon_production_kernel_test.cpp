@@ -240,6 +240,42 @@ bool CheckRhs(MeshBlockPack *pack, const bool minkowski) {
 }
 
 template <int STENCIL>
+bool CheckAdmToZ4c(MeshBlockPack *pack, ParameterInput *input) {
+  pack->pz4c->ADMToZ4c<STENCIL>(pack, input);
+  Kokkos::fence();
+  auto converted = Kokkos::create_mirror_view_and_copy(
+      Kokkos::HostSpace(), pack->pz4c->u0);
+  const auto &indcs = pack->pmesh->mb_indcs;
+  Real maximum_gamma = 0.0;
+  for (int j = indcs.js; j <= indcs.je; ++j) {
+    for (int i = indcs.is; i <= indcs.ie; ++i) {
+      for (int n = 0; n < z4c::Z4c::nz4c; ++n) {
+        if (!Finite(converted(0, n, 0, j, i))) return false;
+      }
+      for (int component = 0; component < 3; ++component) {
+        maximum_gamma = std::max(
+            maximum_gamma,
+            std::abs(converted(0, z4c::Z4c::I_Z4C_GAMX + component, 0, j, i)));
+      }
+    }
+  }
+  if (!(maximum_gamma > 1.0e-8)) return false;
+
+  const int left = indcs.is + 2;
+  const int right = indcs.ie - 2;
+  const int j = indcs.js + indcs.nx2 / 2 + 1;
+  const Real tolerance = 3.0e-9;
+  for (const int component : {0, 2}) {
+    if (!NearlyEqual(
+            converted(0, z4c::Z4c::I_Z4C_GAMX + component, 0, j, left),
+            -converted(0, z4c::Z4c::I_Z4C_GAMX + component, 0, j, right),
+            tolerance)) return false;
+  }
+  return NearlyEqual(converted(0, z4c::Z4c::I_Z4C_GAMY, 0, j, left),
+                     converted(0, z4c::Z4c::I_Z4C_GAMY, 0, j, right), tolerance);
+}
+
+template <int STENCIL>
 bool CheckConstraints(MeshBlockPack *pack, const bool minkowski) {
   z4c::ADMConstraintsImpl<z4c::CartoonSO2, STENCIL>(pack);
   Kokkos::fence();
@@ -418,6 +454,11 @@ bool RunStencil() {
     return false;
   }
 
+  FillFields(pack, false);
+  if (!CheckAdmToZ4c<STENCIL>(pack, &input)) {
+    std::cerr << "STENCIL=" << STENCIL << " ADM-to-Z4c conversion failed\n";
+    return false;
+  }
   FillFields(pack, false);
   if (!CheckRhs<STENCIL>(pack, false)) {
     std::cerr << "STENCIL=" << STENCIL << " nontrivial RHS failed\n";
