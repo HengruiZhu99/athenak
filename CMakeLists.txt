@@ -290,7 +290,6 @@ if (Athena_BUILD_UNIT_TESTS)
   enable_testing()
   add_executable(
       athena_cartoon_derivatives_unit_test
-      EXCLUDE_FROM_ALL
       tst/unit/z4c/cartoon_derivatives_test.cpp)
   target_include_directories(
       athena_cartoon_derivatives_unit_test

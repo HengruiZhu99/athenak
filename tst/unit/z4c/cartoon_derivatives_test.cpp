@@ -10,7 +10,9 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <string>
+#include <vector>
 
 #include "athena.hpp"
 #include "z4c/cartoon_derivatives.hpp"
@@ -209,12 +211,52 @@ double OracleDissipation(const double h, const double rho, const double z) {
 struct ErrorSummary {
   double derivative = 0.0;
   double dissipation = 0.0;
+  double isotropy_composite = 0.0;
+  double family[3] = {0.0, 0.0, 0.0};
+  int family_worst_result[3] = {-1, -1, -1};
+  int worst_result = -1;
+  double worst_expected = 0.0;
+  double worst_observed = 0.0;
 };
+
+bool IsIsotropySensitiveResult(const int result) {
+  if (result < 32 || result >= 74) return false;
+  const int tensor_offset = result - 32;
+  const int component = tensor_offset / 7;
+  const int operation = tensor_offset % 7;
+  const bool radial_plane_component =
+      component == 0 || component == 2 || component == 5;
+  return radial_plane_component && (operation <= 3 || operation == 6);
+}
+
+std::string ResultName(const int result) {
+  constexpr const char *scalar_names[10] = {
+      "scalar.dx", "scalar.dz", "scalar.dy", "scalar.dxx", "scalar.dxz",
+      "scalar.dzz", "scalar.dyy", "scalar.dxy", "scalar.dzy", "scalar.advective"};
+  constexpr const char *vector_names[7] = {
+      "dy", "dyy", "dxy", "dzy", "dx", "dxz", "advective"};
+  constexpr const char *tensor_names[7] = {
+      "dy", "dyy", "dxy", "dzy", "dx", "dxz", "advective"};
+  if (result < 10) return scalar_names[result];
+  if (result < 31) {
+    const int offset = result - 10;
+    return "vector[" + std::to_string(offset / 7) + "]." + vector_names[offset % 7];
+  }
+  if (result == 31) return "vector.divergence";
+  if (result < 74) {
+    const int offset = result - 32;
+    return "tensor[" + std::to_string(offset / 7) + "]." + tensor_names[offset % 7];
+  }
+  return "state.dissipation";
+}
 
 template <int NGHOST>
 ErrorSummary MeasureSample(const double h, const double rho_offset,
                            const int radial_index_offset, const double z_sample,
-                           const double axis_tolerance) {
+                           const z4c::CartoonAxisLocation axis_location,
+                           const double noise_amplitude = 0.0,
+                           const int noise_phase = 0,
+                           const bool independent_component_noise = false) {
   constexpr int n = 64;
   constexpr int center = n / 2;
   const int sample_i = center + radial_index_offset;
@@ -229,14 +271,50 @@ ErrorSummary MeasureSample(const double h, const double rho_offset,
     for (int i = 0; i < n; ++i) {
       const double rho = rho_offset + (i - center) * h;
       const ManufacturedFields fields = EvaluateManufacturedFields(rho, z, 0.0);
-      host(0, kScalarOffset, 0, j, i) = fields.scalar.value;
+      const int radial_layer = static_cast<int>(std::floor(std::abs(rho / h)));
+      const int axial_layer = std::abs(j - center);
+      const auto pattern = [&](const int component_key) {
+        return static_cast<double>(
+                   (17 * radial_layer + 13 * axial_layer + 7 * noise_phase +
+                    5 * component_key + 3 * component_key * component_key) %
+                       23 -
+                   11) /
+               11.0;
+      };
+      const double shared_pattern = pattern(0);
+      const double even_noise = noise_amplitude * shared_pattern;
+      const double odd_noise = noise_amplitude * rho * shared_pattern;
+      const double quadratic_noise = noise_amplitude * rho * rho * shared_pattern;
+      host(0, kScalarOffset, 0, j, i) = fields.scalar.value + even_noise;
       for (int component = 0; component < 3; ++component) {
-        host(0, kVectorOffset + component, 0, j, i) = fields.vector[component].value;
+        const double component_pattern =
+            independent_component_noise ? pattern(1 + component) : shared_pattern;
+        const double component_noise =
+            (component == kZ) ? noise_amplitude * component_pattern
+                              : noise_amplitude * rho * component_pattern;
+        host(0, kVectorOffset + component, 0, j, i) =
+            fields.vector[component].value + component_noise;
       }
       for (int first = 0; first < 3; ++first) {
         for (int second = first; second < 3; ++second) {
+          double noise = 0.0;
+          if (independent_component_noise) {
+            const double component_pattern =
+                pattern(4 + SymmetricIndex(first, second));
+            const bool odd_component =
+                (first == kZ) != (second == kZ);
+            noise = noise_amplitude * component_pattern *
+                    (odd_component ? rho : 1.0);
+          } else {
+            if (first == 0 && second == 0) noise = even_noise + quadratic_noise;
+            if (first == 0 && second == 1) noise = odd_noise;
+            if (first == 0 && second == 2) noise = quadratic_noise;
+            if (first == 1 && second == 1) noise = even_noise;
+            if (first == 1 && second == 2) noise = -odd_noise;
+            if (first == 2 && second == 2) noise = even_noise - quadratic_noise;
+          }
           host(0, kTensorOffset + SymmetricIndex(first, second), 0, j, i) =
-              fields.tensor[first][second].value;
+              fields.tensor[first][second].value + noise;
         }
       }
     }
@@ -252,7 +330,7 @@ ErrorSummary MeasureSample(const double h, const double rho_offset,
         TensorField tensor{state};
         const Real inverse_spacing[3] = {1.0 / h, 1.0 / h, 1.0 / h};
         z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST> derivative(
-            inverse_spacing, rho_sample, axis_tolerance, 0, 0, sample_j, sample_i);
+            inverse_spacing, rho_sample, axis_location, 0, 0, sample_j, sample_i);
 
         results(0) = derivative.ScalarFirst(kRho, scalar);
         results(1) = derivative.ScalarFirst(kZ, scalar);
@@ -286,17 +364,25 @@ ErrorSummary MeasureSample(const double h, const double rho_offset,
           const int first = tensor_first[component];
           const int second = tensor_second[component];
           const int base = 32 + 7 * component;
-          results(base) = derivative.TensorFirst(kSuppressed, first, second, tensor);
+          results(base) = derivative.template TensorFirst<z4c::TensorVariance::all_lower>(
+              kSuppressed, first, second, tensor);
           results(base + 1) =
-              derivative.TensorSecond(kSuppressed, kSuppressed, first, second, tensor);
+              derivative.template TensorSecond<z4c::TensorVariance::all_lower>(
+                  kSuppressed, kSuppressed, first, second, tensor);
           results(base + 2) =
-              derivative.TensorSecond(kRho, kSuppressed, first, second, tensor);
+              derivative.template TensorSecond<z4c::TensorVariance::all_lower>(
+                  kRho, kSuppressed, first, second, tensor);
           results(base + 3) =
-              derivative.TensorSecond(kZ, kSuppressed, first, second, tensor);
-          results(base + 4) = derivative.TensorFirst(kRho, first, second, tensor);
+              derivative.template TensorSecond<z4c::TensorVariance::all_lower>(
+                  kZ, kSuppressed, first, second, tensor);
+          results(base + 4) = derivative.template TensorFirst<z4c::TensorVariance::all_lower>(
+              kRho, first, second, tensor);
           results(base + 5) =
-              derivative.TensorSecond(kRho, kZ, first, second, tensor);
-          results(base + 6) = derivative.TensorAdvective(first, second, vector, tensor);
+              derivative.template TensorSecond<z4c::TensorVariance::all_lower>(
+                  kRho, kZ, first, second, tensor);
+          results(base + 6) =
+              derivative.template TensorAdvective<z4c::TensorVariance::all_lower>(
+                  first, second, vector, tensor);
         }
         results(74) = derivative.ComponentDissipation(kScalarOffset, state);
       });
@@ -355,53 +441,638 @@ ErrorSummary MeasureSample(const double h, const double rho_offset,
 
   ErrorSummary summary;
   for (int result = 0; result < kNumResults - 1; ++result) {
-    summary.derivative =
-        fmax(summary.derivative, fabs(static_cast<double>(result_host(result)) -
-                                      expected[result]));
+    const double error =
+        fabs(static_cast<double>(result_host(result)) - expected[result]);
+    const int family = (result < 10) ? 0 : ((result < 32) ? 1 : 2);
+    if (IsIsotropySensitiveResult(result)) {
+      summary.isotropy_composite = fmax(summary.isotropy_composite, error);
+    }
+    if (error > summary.family[family]) {
+      summary.family[family] = error;
+      summary.family_worst_result[family] = result;
+    }
+    if (error > summary.derivative) {
+      summary.derivative = error;
+      summary.worst_result = result;
+      summary.worst_expected = expected[result];
+      summary.worst_observed = result_host(result);
+    }
   }
   summary.dissipation = fabs(static_cast<double>(result_host(74)) - expected[74]);
   return summary;
 }
 
 template <int NGHOST>
-bool CheckOrder() {
-  constexpr int order = 2 * (NGHOST - 1);
-  const ErrorSummary coarse = MeasureSample<NGHOST>(0.125, 0.0, 4, 0.25, 0.0);
-  const ErrorSummary fine = MeasureSample<NGHOST>(0.0625, 0.0, 8, 0.25, 0.0);
-  const double required_ratio = std::pow(2.0, order - 1.0);
-  if (!(fine.derivative < coarse.derivative &&
-        coarse.derivative / fine.derivative > required_ratio)) {
-    std::cerr << "order " << order << " convergence failed: coarse="
-              << coarse.derivative << " fine=" << fine.derivative
-              << " ratio=" << coarse.derivative / fine.derivative << '\n';
+bool CheckFullApiAndCartesianDelegation(const double rho_sample) {
+  constexpr int n = 32;
+  constexpr int center = n / 2;
+  constexpr int kFullResults = 171;
+  const double h = 0.0625;
+  const double z_sample = 0.25;
+  const int sample_i = center + static_cast<int>(std::llround(rho_sample / h));
+  const int sample_j = center + static_cast<int>(std::llround(z_sample / h));
+  const int sample_k = center;
+
+  DvceArray5D<Real> state("cartoon full api state", 1, kNumVariables, n, n, n);
+  auto host = Kokkos::create_mirror_view(state);
+  for (int k = 0; k < n; ++k) {
+    const double y = (k - center) * h;
+    for (int j = 0; j < n; ++j) {
+      const double z = (j - center) * h;
+      for (int i = 0; i < n; ++i) {
+        const double rho = (i - center) * h;
+        const ManufacturedFields fields = EvaluateManufacturedFields(rho, z, y);
+        host(0, kScalarOffset, k, j, i) = fields.scalar.value;
+        for (int component = 0; component < 3; ++component) {
+          host(0, kVectorOffset + component, k, j, i) = fields.vector[component].value;
+        }
+        for (int first = 0; first < 3; ++first) {
+          for (int second = first; second < 3; ++second) {
+            host(0, kTensorOffset + SymmetricIndex(first, second), k, j, i) =
+                fields.tensor[first][second].value;
+          }
+        }
+      }
+    }
+  }
+  Kokkos::deep_copy(state, host);
+
+  DvceArray1D<Real> results("cartoon full api results", kFullResults);
+  DvceArray1D<int> cartesian_mismatches("cartesian delegation mismatches", 1);
+  Kokkos::parallel_for(
+      "cartoon full api", Kokkos::RangePolicy<DevExeSpace>(0, 1),
+      KOKKOS_LAMBDA(const int) {
+        ScalarField scalar{state};
+        VectorField vector{state};
+        TensorField tensor{state};
+        const Real inverse_spacing[3] = {1.0 / h, 1.0 / h, 1.0 / h};
+        z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST> cartoon(
+            inverse_spacing, rho_sample, z4c::CartoonAxisLocation::cell_centered, 0,
+            sample_k, sample_j, sample_i);
+        z4c::DerivativeProvider<z4c::Cartesian3D, NGHOST> cartesian(
+            inverse_spacing, 0, sample_k, sample_j, sample_i);
+
+        int output = 0;
+        for (int direction = 0; direction < 3; ++direction) {
+          results(output++) = cartoon.ScalarFirst(direction, scalar);
+        }
+        for (int first_direction = 0; first_direction < 3; ++first_direction) {
+          for (int second_direction = 0; second_direction < 3; ++second_direction) {
+            results(output++) =
+                cartoon.ScalarSecond(first_direction, second_direction, scalar);
+          }
+        }
+        results(output++) = cartoon.ScalarAdvective(vector, scalar);
+        for (int component = 0; component < 3; ++component) {
+          for (int direction = 0; direction < 3; ++direction) {
+            results(output++) = cartoon.VectorFirst(direction, component, vector);
+          }
+        }
+        for (int component = 0; component < 3; ++component) {
+          for (int first_direction = 0; first_direction < 3; ++first_direction) {
+            for (int second_direction = 0; second_direction < 3; ++second_direction) {
+              results(output++) = cartoon.VectorSecond(first_direction, second_direction,
+                                                       component, vector);
+            }
+          }
+        }
+        results(output++) = cartoon.VectorDivergence(vector);
+        for (int component = 0; component < 3; ++component) {
+          results(output++) = cartoon.VectorAdvective(component, vector, vector);
+        }
+        for (int first = 0; first < 3; ++first) {
+          for (int second = 0; second < 3; ++second) {
+            for (int direction = 0; direction < 3; ++direction) {
+              results(output++) =
+                  cartoon.template TensorFirst<z4c::TensorVariance::all_lower>(
+                      direction, first, second, tensor);
+            }
+          }
+        }
+        for (int first = 0; first < 3; ++first) {
+          for (int second = 0; second < 3; ++second) {
+            for (int first_direction = 0; first_direction < 3; ++first_direction) {
+              for (int second_direction = 0; second_direction < 3; ++second_direction) {
+                results(output++) =
+                    cartoon.template TensorSecond<z4c::TensorVariance::all_lower>(
+                        first_direction, second_direction, first, second, tensor);
+              }
+            }
+          }
+        }
+        for (int first = 0; first < 3; ++first) {
+          for (int second = 0; second < 3; ++second) {
+            results(output++) =
+                cartoon.template TensorAdvective<z4c::TensorVariance::all_lower>(
+                    first, second, vector, tensor);
+          }
+        }
+        results(output++) = cartoon.ComponentDissipation(kScalarOffset, state);
+
+        int mismatches = 0;
+        for (int direction = 0; direction < 3; ++direction) {
+          mismatches += cartesian.ScalarFirst(direction, scalar) !=
+                        Dx<NGHOST>(direction, inverse_spacing, scalar, 0, sample_k,
+                                   sample_j, sample_i);
+        }
+        for (int first_direction = 0; first_direction < 3; ++first_direction) {
+          for (int second_direction = 0; second_direction < 3; ++second_direction) {
+            const Real direct = (first_direction == second_direction)
+                                    ? Dxx<NGHOST>(first_direction, inverse_spacing, scalar,
+                                                 0, sample_k, sample_j, sample_i)
+                                    : Dxy<NGHOST>(first_direction, second_direction,
+                                                 inverse_spacing, scalar, 0, sample_k,
+                                                 sample_j, sample_i);
+            mismatches +=
+                cartesian.ScalarSecond(first_direction, second_direction, scalar) != direct;
+          }
+        }
+        Real direct_scalar_advection = 0.0;
+        for (int direction = 0; direction < 3; ++direction) {
+          direct_scalar_advection += Lx<NGHOST>(direction, inverse_spacing, vector, scalar,
+                                               0, direction, sample_k, sample_j, sample_i);
+        }
+        mismatches += cartesian.ScalarAdvective(vector, scalar) != direct_scalar_advection;
+        Real direct_divergence = 0.0;
+        for (int component = 0; component < 3; ++component) {
+          for (int direction = 0; direction < 3; ++direction) {
+            mismatches += cartesian.VectorFirst(direction, component, vector) !=
+                          Dx<NGHOST>(direction, inverse_spacing, vector, 0, component,
+                                     sample_k, sample_j, sample_i);
+          }
+          direct_divergence += Dx<NGHOST>(component, inverse_spacing, vector, 0,
+                                          component, sample_k, sample_j, sample_i);
+          for (int first_direction = 0; first_direction < 3; ++first_direction) {
+            for (int second_direction = 0; second_direction < 3; ++second_direction) {
+              const Real direct =
+                  (first_direction == second_direction)
+                      ? Dxx<NGHOST>(first_direction, inverse_spacing, vector, 0, component,
+                                   sample_k, sample_j, sample_i)
+                      : Dxy<NGHOST>(first_direction, second_direction, inverse_spacing,
+                                   vector, 0, component, sample_k, sample_j, sample_i);
+              mismatches += cartesian.VectorSecond(first_direction, second_direction,
+                                                   component, vector) != direct;
+            }
+          }
+          Real direct_advection = 0.0;
+          for (int direction = 0; direction < 3; ++direction) {
+            direct_advection += Lx<NGHOST>(direction, inverse_spacing, vector, vector, 0,
+                                          direction, component, sample_k, sample_j,
+                                          sample_i);
+          }
+          mismatches +=
+              cartesian.VectorAdvective(component, vector, vector) != direct_advection;
+        }
+        mismatches += cartesian.VectorDivergence(vector) != direct_divergence;
+        for (int first = 0; first < 3; ++first) {
+          for (int second = 0; second < 3; ++second) {
+            for (int direction = 0; direction < 3; ++direction) {
+              mismatches +=
+                  cartesian.template TensorFirst<z4c::TensorVariance::all_lower>(
+                      direction, first, second, tensor) !=
+                  Dx<NGHOST>(direction, inverse_spacing, tensor, 0, first, second,
+                             sample_k, sample_j, sample_i);
+            }
+            for (int first_direction = 0; first_direction < 3; ++first_direction) {
+              for (int second_direction = 0; second_direction < 3; ++second_direction) {
+                const Real direct =
+                    (first_direction == second_direction)
+                        ? Dxx<NGHOST>(first_direction, inverse_spacing, tensor, 0, first,
+                                     second, sample_k, sample_j, sample_i)
+                        : Dxy<NGHOST>(first_direction, second_direction, inverse_spacing,
+                                     tensor, 0, first, second, sample_k, sample_j,
+                                     sample_i);
+                mismatches +=
+                    cartesian.template TensorSecond<z4c::TensorVariance::all_lower>(
+                        first_direction, second_direction, first, second, tensor) != direct;
+              }
+            }
+            Real direct_advection = 0.0;
+            for (int direction = 0; direction < 3; ++direction) {
+              direct_advection += Lx<NGHOST>(direction, inverse_spacing, vector, tensor, 0,
+                                            direction, first, second, sample_k, sample_j,
+                                            sample_i);
+            }
+            mismatches +=
+                cartesian.template TensorAdvective<z4c::TensorVariance::all_lower>(
+                    first, second, vector, tensor) != direct_advection;
+          }
+        }
+        Real direct_dissipation = 0.0;
+        for (int direction = 0; direction < 3; ++direction) {
+          direct_dissipation += Diss<NGHOST>(direction, inverse_spacing, state, 0,
+                                             kScalarOffset, sample_k, sample_j, sample_i);
+        }
+        mismatches += cartesian.ComponentDissipation(kScalarOffset, state) !=
+                      direct_dissipation;
+        mismatches +=
+            cartoon.template TensorFirst<z4c::TensorVariance::all_upper>(
+                kSuppressed, 0, 2, tensor) !=
+            cartoon.template TensorFirst<z4c::TensorVariance::all_lower>(
+                kSuppressed, 0, 2, tensor);
+        mismatches +=
+            cartoon.template TensorSecond<z4c::TensorVariance::all_upper>(
+                kRho, kSuppressed, 0, 2, tensor) !=
+            cartoon.template TensorSecond<z4c::TensorVariance::all_lower>(
+                kRho, kSuppressed, 0, 2, tensor);
+        mismatches +=
+            cartoon.template TensorAdvective<z4c::TensorVariance::all_upper>(
+                0, 2, vector, tensor) !=
+            cartoon.template TensorAdvective<z4c::TensorVariance::all_lower>(
+                0, 2, vector, tensor);
+        cartesian_mismatches(0) = mismatches;
+      });
+  Kokkos::fence();
+
+  const auto result_host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), results);
+  const auto mismatch_host =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), cartesian_mismatches);
+  if (mismatch_host(0) != 0) {
+    std::cerr << "Cartesian delegation or tensor-variance instantiation had "
+              << mismatch_host(0) << " bitwise mismatches at rho=" << rho_sample
+              << '\n';
     return false;
   }
 
-  const ErrorSummary positive_near_axis =
-      MeasureSample<NGHOST>(0.0625, 0.03125, 0, 0.25, 0.0);
-  const ErrorSummary negative_near_axis =
-      MeasureSample<NGHOST>(0.0625, 0.03125, -1, 0.25, 0.0);
-  const ErrorSummary axis = MeasureSample<NGHOST>(0.03125, 0.0, 0, 0.25, 1.0e-14);
-  const double near_axis_tolerance =
-      (order == 2) ? 0.25 : ((order == 4) ? 0.02 : 0.002);
+  const ManufacturedFields oracle =
+      EvaluateManufacturedFields(rho_sample, z_sample, 0.0);
+  std::vector<double> expected;
+  std::vector<std::string> names;
+  auto append = [&](const std::string &name, const double value) {
+    names.push_back(name);
+    expected.push_back(value);
+  };
+  for (int direction = 0; direction < 3; ++direction) {
+    append("scalar.first." + std::to_string(direction), oracle.scalar.first[direction]);
+  }
+  for (int first_direction = 0; first_direction < 3; ++first_direction) {
+    for (int second_direction = 0; second_direction < 3; ++second_direction) {
+      append("scalar.second." + std::to_string(first_direction) + "." +
+                 std::to_string(second_direction),
+             oracle.scalar.second[first_direction][second_direction]);
+    }
+  }
+  double scalar_advection = 0.0;
+  for (int direction = 0; direction < 3; ++direction) {
+    scalar_advection += oracle.vector[direction].value * oracle.scalar.first[direction];
+  }
+  append("scalar.advective", scalar_advection);
+  for (int component = 0; component < 3; ++component) {
+    for (int direction = 0; direction < 3; ++direction) {
+      append("vector." + std::to_string(component) + ".first." +
+                 std::to_string(direction),
+             oracle.vector[component].first[direction]);
+    }
+  }
+  for (int component = 0; component < 3; ++component) {
+    for (int first_direction = 0; first_direction < 3; ++first_direction) {
+      for (int second_direction = 0; second_direction < 3; ++second_direction) {
+        append("vector." + std::to_string(component) + ".second." +
+                   std::to_string(first_direction) + "." +
+                   std::to_string(second_direction),
+               oracle.vector[component].second[first_direction][second_direction]);
+      }
+    }
+  }
+  double divergence = 0.0;
+  for (int component = 0; component < 3; ++component) {
+    divergence += oracle.vector[component].first[component];
+  }
+  append("vector.divergence", divergence);
+  for (int component = 0; component < 3; ++component) {
+    double advection = 0.0;
+    for (int direction = 0; direction < 3; ++direction) {
+      advection +=
+          oracle.vector[direction].value * oracle.vector[component].first[direction];
+    }
+    append("vector." + std::to_string(component) + ".advective", advection);
+  }
+  for (int first = 0; first < 3; ++first) {
+    for (int second = 0; second < 3; ++second) {
+      for (int direction = 0; direction < 3; ++direction) {
+        append("tensor." + std::to_string(first) + "." + std::to_string(second) +
+                   ".first." + std::to_string(direction),
+               oracle.tensor[first][second].first[direction]);
+      }
+    }
+  }
+  for (int first = 0; first < 3; ++first) {
+    for (int second = 0; second < 3; ++second) {
+      for (int first_direction = 0; first_direction < 3; ++first_direction) {
+        for (int second_direction = 0; second_direction < 3; ++second_direction) {
+          append("tensor." + std::to_string(first) + "." + std::to_string(second) +
+                     ".second." + std::to_string(first_direction) + "." +
+                     std::to_string(second_direction),
+                 oracle.tensor[first][second].second[first_direction][second_direction]);
+        }
+      }
+    }
+  }
+  for (int first = 0; first < 3; ++first) {
+    for (int second = 0; second < 3; ++second) {
+      double advection = 0.0;
+      for (int direction = 0; direction < 3; ++direction) {
+        advection += oracle.vector[direction].value *
+                     oracle.tensor[first][second].first[direction];
+      }
+      append("tensor." + std::to_string(first) + "." + std::to_string(second) +
+                 ".advective",
+             advection);
+    }
+  }
+  append("state.dissipation", OracleDissipation<NGHOST>(h, rho_sample, z_sample));
+  if (expected.size() != kFullResults) {
+    std::cerr << "internal full-API result count mismatch\n";
+    return false;
+  }
+
+  constexpr int order = 2 * (NGHOST - 1);
+  for (int result = 0; result < kFullResults; ++result) {
+    const double absolute_tolerance =
+        (result == kFullResults - 1) ? 2.0e-10 : 100.0 * std::pow(h, order);
+    const double tolerance = absolute_tolerance + 2.0e-8 * fabs(expected[result]);
+    const double error = fabs(result_host(result) - expected[result]);
+    if (error > tolerance) {
+      std::cerr << "full API order " << order << " failed at rho=" << rho_sample
+                << " result=" << names[result] << " expected=" << expected[result]
+                << " observed=" << result_host(result) << " error=" << error
+                << " tolerance=" << tolerance << '\n';
+      return false;
+    }
+  }
+  return true;
+}
+
+template <int NGHOST>
+bool CheckBlockBoundaryReach() {
+  using Provider = z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST>;
+  static_assert(Provider::MaximumRegularizationOffset() == NGHOST - 1,
+                "near-axis fit must stay within the ordinary stencil reach");
+  constexpr int radial_extent = 3 * NGHOST;
+  constexpr int axial_extent = 2 * NGHOST + 1;
+  constexpr int targets = 2 * NGHOST;
+  DvceArray5D<Real> state("block-local Cartoon reach state", 2, kNumVariables, 1,
+                          axial_extent, radial_extent);
+  auto host = Kokkos::create_mirror_view(state);
+  for (int block = 0; block < 2; ++block) {
+    for (int j = 0; j < axial_extent; ++j) {
+      const double z = static_cast<double>(j - NGHOST);
+      for (int i = 0; i < radial_extent; ++i) {
+        const double rho = block == 0
+                               ? static_cast<double>(i - NGHOST) + 0.5
+                               : static_cast<double>(i - 2 * NGHOST) + 0.5;
+        const ManufacturedFields fields = EvaluateManufacturedFields(rho, z, 0.0);
+        host(block, kScalarOffset, 0, j, i) = fields.scalar.value;
+        for (int component = 0; component < 3; ++component) {
+          host(block, kVectorOffset + component, 0, j, i) =
+              fields.vector[component].value;
+        }
+        for (int first = 0; first < 3; ++first) {
+          for (int second = first; second < 3; ++second) {
+            host(block, kTensorOffset + SymmetricIndex(first, second), 0, j, i) =
+                fields.tensor[first][second].value;
+          }
+        }
+      }
+    }
+  }
+  Kokkos::deep_copy(state, host);
+
+  DvceArray1D<Real> results("block-local Cartoon reach results", targets);
+  Kokkos::parallel_for(
+      "block-local Cartoon reach", Kokkos::RangePolicy<DevExeSpace>(0, targets),
+      KOKKOS_LAMBDA(const int target) {
+        const int block = target / NGHOST;
+        const int layer = target % NGHOST;
+        const int side_sign = block == 0 ? 1 : -1;
+        const int sample_i = block == 0 ? NGHOST + layer
+                                        : 2 * NGHOST - 1 - layer;
+        const Real rho = side_sign * (static_cast<Real>(layer) + 0.5);
+        const Real inverse_spacing[3] = {1.0, 1.0, 1.0};
+        ScalarField scalar{state};
+        VectorField vector{state};
+        TensorField tensor{state};
+        Provider derivative(inverse_spacing, rho,
+                            z4c::CartoonAxisLocation::cell_centered, block, 0,
+                            NGHOST, sample_i);
+        Real sum = derivative.ScalarAdvective(vector, scalar);
+        for (int direction = 0; direction < 3; ++direction) {
+          sum += derivative.ScalarFirst(direction, scalar);
+          for (int second_direction = 0; second_direction < 3;
+               ++second_direction) {
+            sum += derivative.ScalarSecond(direction, second_direction, scalar);
+          }
+        }
+        sum += derivative.VectorDivergence(vector);
+        for (int component = 0; component < 3; ++component) {
+          sum += derivative.VectorAdvective(component, vector, vector);
+          for (int direction = 0; direction < 3; ++direction) {
+            sum += derivative.VectorFirst(direction, component, vector);
+            for (int second_direction = 0; second_direction < 3;
+                 ++second_direction) {
+              sum += derivative.VectorSecond(direction, second_direction, component,
+                                             vector);
+            }
+          }
+        }
+        for (int first = 0; first < 3; ++first) {
+          for (int second = 0; second < 3; ++second) {
+            sum += derivative.template TensorAdvective<
+                z4c::TensorVariance::all_lower>(first, second, vector, tensor);
+            for (int direction = 0; direction < 3; ++direction) {
+              sum += derivative.template TensorFirst<
+                  z4c::TensorVariance::all_lower>(direction, first, second, tensor);
+              for (int second_direction = 0; second_direction < 3;
+                   ++second_direction) {
+                sum += derivative.template TensorSecond<
+                    z4c::TensorVariance::all_lower>(direction, second_direction,
+                                                    first, second, tensor);
+              }
+            }
+          }
+        }
+        sum += derivative.ComponentDissipation(kScalarOffset, state);
+        results(target) = sum;
+      });
+  Kokkos::fence();
+  const auto result_host =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), results);
+  for (int target = 0; target < targets; ++target) {
+    if (!std::isfinite(result_host(target))) {
+      std::cerr << "order " << 2 * (NGHOST - 1)
+                << " block-boundary reach returned a non-finite value at side="
+                << (target < NGHOST ? "+" : "-")
+                << " layer=" << target % NGHOST << '\n';
+      return false;
+    }
+  }
+  return true;
+}
+
+template <int NGHOST>
+bool CheckOrder() {
+  constexpr int order = 2 * (NGHOST - 1);
+  // The negative sample is the pi-rotated signed-plane image of the positive sample.
+  // Both are compared to independently rotated full-Cartesian jet derivatives.
+  if (!CheckBlockBoundaryReach<NGHOST>() ||
+      !CheckFullApiAndCartesianDelegation<NGHOST>(0.5) ||
+      !CheckFullApiAndCartesianDelegation<NGHOST>(-0.5)) {
+    return false;
+  }
+  const ErrorSummary coarse = MeasureSample<NGHOST>(
+      0.125, 0.0, 4, 0.25, z4c::CartoonAxisLocation::cell_centered);
+  const ErrorSummary fine = MeasureSample<NGHOST>(
+      0.0625, 0.0, 8, 0.25, z4c::CartoonAxisLocation::cell_centered);
+  const double observed_order = std::log2(coarse.derivative / fine.derivative);
+  if (!(fine.derivative < coarse.derivative && observed_order >= order - 0.15)) {
+    std::cerr << "order " << order << " convergence failed: coarse="
+              << coarse.derivative << " fine=" << fine.derivative
+              << " observed order=" << observed_order << " worst="
+              << ResultName(fine.worst_result) << " expected=" << fine.worst_expected
+              << " observed=" << fine.worst_observed << '\n';
+    return false;
+  }
+  constexpr const char *family_names[3] = {"scalar", "vector", "tensor"};
+  for (int family = 0; family < 3; ++family) {
+    const double family_order = std::log2(coarse.family[family] / fine.family[family]);
+    if (!(fine.family[family] < coarse.family[family] &&
+          family_order >= order - 0.15)) {
+      std::cerr << "order " << order << " " << family_names[family]
+                << " family convergence failed: coarse=" << coarse.family[family]
+                << " fine=" << fine.family[family]
+                << " observed order=" << family_order << " worst="
+                << ResultName(fine.family_worst_result[family]) << '\n';
+      return false;
+    }
+  }
+
+  constexpr int near_axis_offsets[4] = {0, 1, -1, -2};
+  for (const int radial_offset : near_axis_offsets) {
+    const ErrorSummary near_coarse = MeasureSample<NGHOST>(
+        0.125, 0.0625, radial_offset, 0.25,
+        z4c::CartoonAxisLocation::cell_centered);
+    const ErrorSummary near_medium = MeasureSample<NGHOST>(
+        0.0625, 0.03125, radial_offset, 0.25,
+        z4c::CartoonAxisLocation::cell_centered);
+    const ErrorSummary near_fine = MeasureSample<NGHOST>(
+        0.03125, 0.015625, radial_offset, 0.25,
+        z4c::CartoonAxisLocation::cell_centered);
+    const double near_order = std::log2(near_medium.derivative / near_fine.derivative);
+    const double near_fine_tolerance =
+        200.0 * std::pow(0.03125, order) * (1.0 + fabs(near_fine.worst_expected));
+    if (!(near_fine.derivative < near_medium.derivative &&
+          near_medium.derivative < near_coarse.derivative &&
+          near_order >= order - 0.25 &&
+          near_fine.derivative <= near_fine_tolerance)) {
+      std::cerr << "order " << order << " near-axis convergence failed at rho/h="
+                << radial_offset + 0.5 << ": coarse=" << near_coarse.derivative
+                << " medium=" << near_medium.derivative
+                << " fine=" << near_fine.derivative << " observed order=" << near_order
+                << " worst=" << ResultName(near_fine.worst_result)
+                << " expected=" << near_fine.worst_expected
+                << " observed=" << near_fine.worst_observed
+                << " normalized tolerance=" << near_fine_tolerance << '\n';
+      return false;
+    }
+    for (int family = 0; family < 3; ++family) {
+      const double family_order =
+          std::log2(near_medium.family[family] / near_fine.family[family]);
+      if (!(near_fine.family[family] < near_medium.family[family] &&
+            near_medium.family[family] < near_coarse.family[family] &&
+            family_order >= order - 0.25)) {
+        std::cerr << "order " << order << " near-axis " << family_names[family]
+                  << " family failed at rho/h=" << radial_offset + 0.5
+                  << ": coarse=" << near_coarse.family[family]
+                  << " medium=" << near_medium.family[family]
+                  << " fine=" << near_fine.family[family]
+                  << " observed order=" << family_order << " worst="
+                  << ResultName(near_fine.family_worst_result[family]) << '\n';
+        return false;
+      }
+    }
+  }
+
+  const double roundoff_noise = 64.0 * std::numeric_limits<Real>::epsilon();
+  for (int noise_phase = 0; noise_phase < 8; ++noise_phase) {
+    for (const int radial_offset : {0, -1}) {
+      const ErrorSummary noisy_coarse = MeasureSample<NGHOST>(
+          0.125, 0.0625, radial_offset, 0.25,
+          z4c::CartoonAxisLocation::cell_centered, roundoff_noise, noise_phase);
+      const ErrorSummary noisy_medium = MeasureSample<NGHOST>(
+          0.0625, 0.03125, radial_offset, 0.25,
+          z4c::CartoonAxisLocation::cell_centered, roundoff_noise, noise_phase);
+      const ErrorSummary noisy_fine = MeasureSample<NGHOST>(
+          0.03125, 0.015625, radial_offset, 0.25,
+          z4c::CartoonAxisLocation::cell_centered, roundoff_noise, noise_phase);
+      const double noisy_order =
+          std::log2(noisy_medium.derivative / noisy_fine.derivative);
+      const double noise_bound =
+          200.0 * std::pow(0.03125, order) * (1.0 + fabs(noisy_fine.worst_expected)) +
+          1000.0 * roundoff_noise / (0.03125 * 0.03125);
+      if (!std::isfinite(noisy_fine.derivative) ||
+          !(noisy_fine.derivative < noisy_medium.derivative &&
+            noisy_medium.derivative < noisy_coarse.derivative &&
+            noisy_order >= order - 0.5 && noisy_fine.derivative <= noise_bound)) {
+        std::cerr << "order " << order << " parity-noise stability failed at rho/h="
+                  << radial_offset + 0.5 << " phase=" << noise_phase
+                  << " coarse=" << noisy_coarse.derivative
+                  << " medium=" << noisy_medium.derivative
+                  << " fine=" << noisy_fine.derivative
+                  << " observed order=" << noisy_order
+                  << " worst=" << ResultName(noisy_fine.worst_result)
+                  << " expected=" << noisy_fine.worst_expected
+                  << " observed=" << noisy_fine.worst_observed
+                  << " noise bound=" << noise_bound << '\n';
+        return false;
+      }
+    }
+  }
+
+  // Independent even perturbations in T_xx, T_xy, and T_yy deliberately do not
+  // cancel in the isotropy differences. The composite may amplify roundoff by
+  // O(h^-2), but it must remain finite and within that explicit bound.
+  constexpr double independent_noise_h = 0.03125;
+  for (int noise_phase = 0; noise_phase < 8; ++noise_phase) {
+    for (const int radial_offset : near_axis_offsets) {
+      const ErrorSummary clean = MeasureSample<NGHOST>(
+          independent_noise_h, 0.5 * independent_noise_h, radial_offset, 0.25,
+          z4c::CartoonAxisLocation::cell_centered);
+      const ErrorSummary noisy = MeasureSample<NGHOST>(
+          independent_noise_h, 0.5 * independent_noise_h, radial_offset, 0.25,
+          z4c::CartoonAxisLocation::cell_centered, roundoff_noise, noise_phase,
+          true);
+      const double amplification_bound =
+          5000.0 * roundoff_noise /
+          (independent_noise_h * independent_noise_h);
+      const double amplification =
+          fabs(noisy.isotropy_composite - clean.isotropy_composite);
+      if (!std::isfinite(noisy.isotropy_composite) ||
+          amplification > amplification_bound) {
+        std::cerr << "order " << order
+                  << " independent tensor-noise amplification failed at rho/h="
+                  << radial_offset + 0.5 << " phase=" << noise_phase
+                  << " clean isotropy error=" << clean.isotropy_composite
+                  << " noisy isotropy error=" << noisy.isotropy_composite
+                  << " amplification=" << amplification
+                  << " bound=" << amplification_bound << '\n';
+        return false;
+      }
+    }
+  }
+
+  const ErrorSummary axis = MeasureSample<NGHOST>(
+      0.03125, 0.0, 0, 0.25, z4c::CartoonAxisLocation::diagnostic_axis);
   const double axis_tolerance = (order == 2) ? 0.02 : ((order == 4) ? 2.0e-4 : 2.0e-6);
   const double dissipation_tolerance = 2.0e-10;
-  if (positive_near_axis.derivative > near_axis_tolerance ||
-      negative_near_axis.derivative > near_axis_tolerance ||
-      axis.derivative > axis_tolerance ||
+  if (axis.derivative > axis_tolerance ||
       coarse.dissipation > dissipation_tolerance ||
       fine.dissipation > dissipation_tolerance ||
-      positive_near_axis.dissipation > dissipation_tolerance ||
-      negative_near_axis.dissipation > dissipation_tolerance ||
       axis.dissipation > dissipation_tolerance) {
-    std::cerr << "order " << order << " axis/dissipation check failed: +axis="
-              << positive_near_axis.derivative << " -axis="
-              << negative_near_axis.derivative << " axis=" << axis.derivative
-              << " max diss="
-              << fmax(fmax(coarse.dissipation, fine.dissipation),
-                      fmax(positive_near_axis.dissipation,
-                           negative_near_axis.dissipation))
-              << '\n';
+    std::cerr << "order " << order << " axis/dissipation check failed: axis="
+              << axis.derivative << " worst=" << ResultName(axis.worst_result)
+              << " expected=" << axis.worst_expected
+              << " observed=" << axis.worst_observed << " max diss="
+              << fmax(coarse.dissipation, fine.dissipation) << '\n';
     return false;
   }
   return true;
@@ -409,7 +1080,10 @@ bool CheckOrder() {
 
 bool CheckParity() {
   using Provider = z4c::DerivativeProvider<z4c::CartoonSO2, 2>;
-  if (Provider::ScalarParity() != 1 || Provider::VectorParity(0) != -1 ||
+  if (Provider::RegularizedHalfCellLayers() != 2 ||
+      Provider::MaximumRegularizationOffset() != 1 ||
+      Provider::ScalarParity() != 1 ||
+      Provider::VectorParity(0) != -1 ||
       Provider::VectorParity(1) != 1 || Provider::VectorParity(2) != -1) {
     return false;
   }
@@ -424,13 +1098,86 @@ bool CheckParity() {
   return true;
 }
 
+bool CheckIndependentPiRotation() {
+  constexpr int rotation_sign[3] = {-1, 1, -1};
+  const ManufacturedFields positive = EvaluateManufacturedFields(0.5, 0.25, 0.0);
+  const ManufacturedFields negative = EvaluateManufacturedFields(-0.5, 0.25, 0.0);
+  const double tolerance = 2.0e-14;
+  auto agrees = [&](const double actual, const double expected) {
+    return fabs(actual - expected) <= tolerance * (1.0 + fabs(expected));
+  };
+
+  if (!agrees(negative.scalar.value, positive.scalar.value)) return false;
+  for (int direction = 0; direction < 3; ++direction) {
+    if (!agrees(negative.scalar.first[direction],
+                rotation_sign[direction] * positive.scalar.first[direction])) {
+      return false;
+    }
+    for (int second_direction = 0; second_direction < 3; ++second_direction) {
+      if (!agrees(negative.scalar.second[direction][second_direction],
+                  rotation_sign[direction] * rotation_sign[second_direction] *
+                      positive.scalar.second[direction][second_direction])) {
+        return false;
+      }
+    }
+  }
+  for (int component = 0; component < 3; ++component) {
+    if (!agrees(negative.vector[component].value,
+                rotation_sign[component] * positive.vector[component].value)) {
+      return false;
+    }
+    for (int direction = 0; direction < 3; ++direction) {
+      if (!agrees(negative.vector[component].first[direction],
+                  rotation_sign[component] * rotation_sign[direction] *
+                      positive.vector[component].first[direction])) {
+        return false;
+      }
+      for (int second_direction = 0; second_direction < 3; ++second_direction) {
+        if (!agrees(negative.vector[component].second[direction][second_direction],
+                    rotation_sign[component] * rotation_sign[direction] *
+                        rotation_sign[second_direction] *
+                        positive.vector[component].second[direction][second_direction])) {
+          return false;
+        }
+      }
+    }
+  }
+  for (int first = 0; first < 3; ++first) {
+    for (int second = 0; second < 3; ++second) {
+      const int tensor_sign = rotation_sign[first] * rotation_sign[second];
+      if (!agrees(negative.tensor[first][second].value,
+                  tensor_sign * positive.tensor[first][second].value)) {
+        return false;
+      }
+      for (int direction = 0; direction < 3; ++direction) {
+        if (!agrees(negative.tensor[first][second].first[direction],
+                    tensor_sign * rotation_sign[direction] *
+                        positive.tensor[first][second].first[direction])) {
+          return false;
+        }
+        for (int second_direction = 0; second_direction < 3; ++second_direction) {
+          if (!agrees(negative.tensor[first][second].second[direction][second_direction],
+                      tensor_sign * rotation_sign[direction] *
+                          rotation_sign[second_direction] *
+                          positive.tensor[first][second]
+                              .second[direction][second_direction])) {
+            return false;
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+
 }  // namespace
 
 int main(int argc, char *argv[]) {
   Kokkos::initialize(argc, argv);
   bool passed = false;
   {
-    passed = CheckParity() && CheckOrder<2>() && CheckOrder<3>() && CheckOrder<4>();
+    passed = CheckParity() && CheckIndependentPiRotation() && CheckOrder<2>() &&
+             CheckOrder<3>() && CheckOrder<4>();
   }
   Kokkos::finalize();
   if (!passed) {
