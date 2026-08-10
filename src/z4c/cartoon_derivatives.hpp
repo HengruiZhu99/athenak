@@ -195,9 +195,11 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
 //! Every geometry-dependent formula and regularized return below is therefore
 //! reviewer-pending, including parity, divergence, and suppressed advection.
 //!
-//! Near-axis cell centers use parity-projected polynomial fits in s=rho^2. The fit uses
-//! `NGHOST` positive/negative pairs, giving order 2*(NGHOST-1), and covers the innermost
-//! `NGHOST` half-cell layers. Exact-axis diagnostic limits use a separate location tag;
+//! Near-axis cell centers use side-local, parity-mapped polynomial fits in s=rho^2. The
+//! fit uses `NGHOST` samples on the target side, giving order 2*(NGHOST-1), and covers
+//! the innermost `NGHOST` half-cell layers with maximum radial reach `NGHOST-1`. Thus an
+//! internal axis at a MeshBlock boundary needs no wider communication than the existing
+//! finite-difference stencil. Exact-axis diagnostic limits use a separate location tag;
 //! no floating tolerance can silently turn a nonzero production cell into the axis.
 template <int NGHOST>
 class DerivativeProvider<CartoonSO2, NGHOST> {
@@ -219,6 +221,10 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
 
   KOKKOS_INLINE_FUNCTION static constexpr int RegularizedHalfCellLayers() {
     return NGHOST;
+  }
+
+  KOKKOS_INLINE_FUNCTION static constexpr int MaximumRegularizationOffset() {
+    return NGHOST - 1;
   }
 
   KOKKOS_INLINE_FUNCTION static constexpr int VectorParity(const int component) {
@@ -493,17 +499,20 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     Real derivative;
   };
 
-  KOKKOS_INLINE_FUNCTION int AxisIndexSum() const {
+  KOKKOS_INLINE_FUNCTION int TargetSideSign() const {
     const Real half_cell_index = 2.0 * rho_ * inverse_spacing_[RhoDirection()];
-    return 2 * i_ - NearestInteger(half_cell_index);
+    return NearestInteger(half_cell_index) < 0 ? -1 : 1;
   }
 
-  KOKKOS_INLINE_FUNCTION int PositiveLayerIndex(const int layer) const {
-    return (AxisIndexSum() + 1) / 2 + layer;
+  KOKKOS_INLINE_FUNCTION int TargetLayer() const {
+    const Real half_cell_index = 2.0 * rho_ * inverse_spacing_[RhoDirection()];
+    const int rounded_index = NearestInteger(half_cell_index);
+    const int absolute_index = rounded_index < 0 ? -rounded_index : rounded_index;
+    return (absolute_index - 1) / 2;
   }
 
-  KOKKOS_INLINE_FUNCTION int NegativeLayerIndex(const int layer) const {
-    return AxisIndexSum() - PositiveLayerIndex(layer);
+  KOKKOS_INLINE_FUNCTION int SideLayerIndex(const int layer) const {
+    return i_ + TargetSideSign() * (layer - TargetLayer());
   }
 
   KOKKOS_INLINE_FUNCTION RadialFit FitRadialSamples(const Real samples[NGHOST]) const {
@@ -540,61 +549,48 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
   }
 
   template <typename ScalarField>
-  KOKKOS_INLINE_FUNCTION Real ProjectedScalar(const ScalarField &field,
-                                              const int layer) const {
-    return 0.5 * (field(m_, k_, j_, PositiveLayerIndex(layer)) +
-                  field(m_, k_, j_, NegativeLayerIndex(layer)));
+  KOKKOS_INLINE_FUNCTION Real MappedScalar(const ScalarField &field,
+                                           const int layer) const {
+    return field(m_, k_, j_, SideLayerIndex(layer));
   }
 
   template <typename VectorField>
-  KOKKOS_INLINE_FUNCTION Real ProjectedVector(const VectorField &field,
-                                              const int component,
-                                              const int layer) const {
-    const int parity = VectorParity(component);
-    return 0.5 * (field(m_, component, k_, j_, PositiveLayerIndex(layer)) +
-                  parity * field(m_, component, k_, j_, NegativeLayerIndex(layer)));
+  KOKKOS_INLINE_FUNCTION Real MappedVector(const VectorField &field,
+                                           const int component, const int layer) const {
+    const int parity = TargetSideSign() < 0 ? VectorParity(component) : 1;
+    return parity * field(m_, component, k_, j_, SideLayerIndex(layer));
   }
 
   template <typename TensorField>
-  KOKKOS_INLINE_FUNCTION Real ProjectedTensor(const TensorField &field, const int a,
-                                              const int b, const int layer) const {
-    const int parity = TensorParity(a, b);
-    return 0.5 * (field(m_, a, b, k_, j_, PositiveLayerIndex(layer)) +
-                  parity * field(m_, a, b, k_, j_, NegativeLayerIndex(layer)));
+  KOKKOS_INLINE_FUNCTION Real MappedTensor(const TensorField &field, const int a,
+                                           const int b, const int layer) const {
+    const int parity = TargetSideSign() < 0 ? TensorParity(a, b) : 1;
+    return parity * field(m_, a, b, k_, j_, SideLayerIndex(layer));
   }
 
   template <typename VectorField>
-  KOKKOS_INLINE_FUNCTION Real ProjectedVectorDerivative(
+  KOKKOS_INLINE_FUNCTION Real MappedVectorDerivative(
       const VectorField &field, const int direction, const int component,
       const int layer) const {
-    const int parity = VectorParity(component);
-    const int positive = PositiveLayerIndex(layer);
-    const int negative = NegativeLayerIndex(layer);
-    return 0.5 *
-           (Dx<NGHOST>(direction, inverse_spacing_, field, m_, component, k_, j_,
-                       positive) +
-            parity * Dx<NGHOST>(direction, inverse_spacing_, field, m_, component, k_,
-                                j_, negative));
+    const int parity = TargetSideSign() < 0 ? VectorParity(component) : 1;
+    return parity * Dx<NGHOST>(direction, inverse_spacing_, field, m_, component, k_,
+                               j_, SideLayerIndex(layer));
   }
 
   template <typename TensorField>
-  KOKKOS_INLINE_FUNCTION Real ProjectedTensorDerivative(
+  KOKKOS_INLINE_FUNCTION Real MappedTensorDerivative(
       const TensorField &field, const int direction, const int a, const int b,
       const int layer) const {
-    const int parity = TensorParity(a, b);
-    const int positive = PositiveLayerIndex(layer);
-    const int negative = NegativeLayerIndex(layer);
-    return 0.5 *
-           (Dx<NGHOST>(direction, inverse_spacing_, field, m_, a, b, k_, j_, positive) +
-            parity * Dx<NGHOST>(direction, inverse_spacing_, field, m_, a, b, k_, j_,
-                                negative));
+    const int parity = TargetSideSign() < 0 ? TensorParity(a, b) : 1;
+    return parity * Dx<NGHOST>(direction, inverse_spacing_, field, m_, a, b, k_, j_,
+                               SideLayerIndex(layer));
   }
 
   template <typename ScalarField>
   KOKKOS_INLINE_FUNCTION RadialFit EvenFit(const ScalarField &field) const {
     Real samples[NGHOST];
     for (int layer = 0; layer < NGHOST; ++layer) {
-      samples[layer] = ProjectedScalar(field, layer);
+      samples[layer] = MappedScalar(field, layer);
     }
     return FitRadialSamples(samples);
   }
@@ -604,7 +600,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
                                           const int component) const {
     Real samples[NGHOST];
     for (int layer = 0; layer < NGHOST; ++layer) {
-      samples[layer] = ProjectedVector(field, component, layer);
+      samples[layer] = MappedVector(field, component, layer);
     }
     return FitRadialSamples(samples);
   }
@@ -614,7 +610,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
                                           const int b) const {
     Real samples[NGHOST];
     for (int layer = 0; layer < NGHOST; ++layer) {
-      samples[layer] = ProjectedTensor(field, a, b, layer);
+      samples[layer] = MappedTensor(field, a, b, layer);
     }
     return FitRadialSamples(samples);
   }
@@ -626,7 +622,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
     for (int layer = 0; layer < NGHOST; ++layer) {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
-      samples[layer] = ProjectedVector(field, component, layer) / radius;
+      samples[layer] = MappedVector(field, component, layer) / radius;
     }
     return FitRadialSamples(samples);
   }
@@ -638,7 +634,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
     for (int layer = 0; layer < NGHOST; ++layer) {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
-      samples[layer] = ProjectedTensor(field, a, b, layer) / radius;
+      samples[layer] = MappedTensor(field, a, b, layer) / radius;
     }
     return FitRadialSamples(samples);
   }
@@ -651,7 +647,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     for (int layer = 0; layer < NGHOST; ++layer) {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
       samples[layer] =
-          ProjectedVectorDerivative(field, direction, component, layer) / radius;
+          MappedVectorDerivative(field, direction, component, layer) / radius;
     }
     return FitRadialSamples(samples);
   }
@@ -664,7 +660,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     for (int layer = 0; layer < NGHOST; ++layer) {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
       samples[layer] =
-          ProjectedTensorDerivative(field, direction, a, b, layer) / radius;
+          MappedTensorDerivative(field, direction, a, b, layer) / radius;
     }
     return FitRadialSamples(samples);
   }
@@ -676,7 +672,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
     for (int layer = 0; layer < NGHOST; ++layer) {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
-      samples[layer] = ProjectedTensor(field, a, b, layer) / (radius * radius);
+      samples[layer] = MappedTensor(field, a, b, layer) / (radius * radius);
     }
     return FitRadialSamples(samples);
   }
@@ -690,7 +686,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     for (int layer = 0; layer < NGHOST; ++layer) {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
       samples[layer] =
-          (ProjectedTensor(field, a, b, layer) - ProjectedTensor(field, c, d, layer)) /
+          (MappedTensor(field, a, b, layer) - MappedTensor(field, c, d, layer)) /
           (radius * radius);
     }
     return FitRadialSamples(samples);
@@ -703,7 +699,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
     for (int layer = 0; layer < NGHOST; ++layer) {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
-      samples[layer] = ProjectedTensorDerivative(field, direction, a, b, layer) /
+      samples[layer] = MappedTensorDerivative(field, direction, a, b, layer) /
                        (radius * radius);
     }
     return FitRadialSamples(samples);
@@ -718,8 +714,8 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     for (int layer = 0; layer < NGHOST; ++layer) {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
       samples[layer] =
-          (ProjectedTensorDerivative(field, direction, a, b, layer) -
-           ProjectedTensorDerivative(field, direction, c, d, layer)) /
+          (MappedTensorDerivative(field, direction, a, b, layer) -
+           MappedTensorDerivative(field, direction, c, d, layer)) /
           (radius * radius);
     }
     return FitRadialSamples(samples);
