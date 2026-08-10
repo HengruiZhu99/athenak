@@ -258,9 +258,9 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
         // check and set second variable option.
         if (pin->DoesParameterExist(opar.block_name,"variable_2")) {
           opar.variable_2 = pin->GetString(opar.block_name, "variable_2");
-          opar.bin2_min = pin->GetOrAddReal(opar.block_name,"bin2_min",0);
-          opar.bin2_max = pin->GetOrAddReal(opar.block_name,"bin2_max",1);
-          opar.nbin2 = pin->GetOrAddInteger(opar.block_name,"nbin2",0);
+          opar.bin2_min = pin->GetReal(opar.block_name,"bin2_min");
+          opar.bin2_max = pin->GetReal(opar.block_name,"bin2_max");
+          opar.nbin2 = pin->GetInteger(opar.block_name,"nbin2");
           opar.logscale2 = pin->GetOrAddBoolean(opar.block_name,"logscale2",true);
         } else {
           opar.variable_2 = "";

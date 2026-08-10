@@ -10,9 +10,12 @@
 #define Z4C_Z4C_SYMMETRY_HPP_
 
 #include <cstdlib>
+#include <cstddef>
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "outputs/pdf_validation.hpp"
 
 namespace z4c {
 
@@ -50,11 +53,7 @@ struct Z4cKernelDispatchTarget {
 struct Z4cOutputValidationRequest {
   std::string block_name;
   std::string file_type;
-  bool mass_weighted = false;
-  bool has_variable_2 = false;
-  bool has_nbin2 = false;
-  int nbin2 = 0;
-  bool has_any_second_axis_key = false;
+  pdf::ValidationInput pdf_input;
 };
 
 //! Host snapshot consumed by the allocation-free Cartoon validator.
@@ -75,6 +74,7 @@ struct Z4cValidationInput {
   int root_blocks_x1 = 1;
   double x1min = 0.0;
   double x1max = 1.0;
+  std::size_t real_bytes = sizeof(double);
 
   std::vector<std::string> incompatible_physics;
   std::vector<std::string> incompatible_consumers;

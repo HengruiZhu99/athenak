@@ -26,6 +26,8 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <type_traits>
+#include <utility>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -34,17 +36,56 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/stored_domain_bounds.hpp"
+#include "z4c/z4c_symmetry.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "outputs.hpp"
 
 // ScatterView is not part of Kokkos core interface
 #include "Kokkos_ScatterView.hpp"
+
+namespace {
+
+pdf::AllocationPlan CheckedPdfPlan(const OutputParameters &op, const Mesh *pm) {
+  pdf::ValidationInput input;
+  input.block_name = op.block_name;
+  input.variable_2_specified = !op.variable_2.empty();
+  input.has_variable_2 = !op.variable_2.empty();
+  input.has_nbin = true;
+  input.has_bin_min = true;
+  input.has_bin_max = true;
+  input.nbin = op.nbin;
+  input.bin_min = op.bin_min;
+  input.bin_max = op.bin_max;
+  input.logscale = op.logscale;
+  input.has_nbin2 = input.has_variable_2;
+  input.has_bin2_min = input.has_variable_2;
+  input.has_bin2_max = input.has_variable_2;
+  input.nbin2 = op.nbin2;
+  input.bin2_min = op.bin2_min;
+  input.bin2_max = op.bin2_max;
+  input.logscale2 = op.logscale2;
+  input.has_any_second_axis_key = input.has_variable_2;
+  input.mass_weighted = op.mass_weighted;
+  const bool cartoon = pm->pmb_pack->z4c_symmetry.mode ==
+                       z4c::Z4cSymmetryMode::cartoon_so2;
+  auto plan = pdf::Validate(input, sizeof(Real), cartoon);
+  if (!plan.valid) {
+    std::cerr << "### FATAL ERROR: checked PDF construction failed: "
+              << plan.error << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  return plan;
+}
+
+}  // namespace
 
 
 //----------------------------------------------------------------------------------------
 // Constructor: also calls BaseTypeOutput base class constructor
 // this is not right yet
 PDFOutput::PDFOutput(ParameterInput *pin, Mesh *pm, OutputParameters op) :
-  BaseTypeOutput(pin, pm, op) , pdf_data(op.nbin2 == 0 ? 1 : 2, op.nbin, op.nbin2) {
+  BaseTypeOutput(pin, pm, op), pdf_data(CheckedPdfPlan(op, pm)) {
   // create directories for outputs
   // create a new directory for each pdf
   std::string dir_name;
@@ -58,21 +99,6 @@ PDFOutput::PDFOutput(ParameterInput *pin, Mesh *pm, OutputParameters op) :
 
   pdf_data.mass_weighted = op.mass_weighted;
   pdf_data.logscale = op.logscale;
-
-  // throw an error if the user tries to use logscale
-  // with a negative bin_min for both 1D and 2D
-  if (op.logscale && op.bin_min <= 0.0) {
-    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-      << std::endl << "logscale is true but bin_min <= 0.0" << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  if (op.logscale2 && op.bin2_min <= 0.0 && pdf_data.pdf_dimension == 2) {
-    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-      << std::endl << "logscale2 is true but bin2_min <= 0.0" << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
 
   // Create bins for the pdf
   // Create mirror view on host
@@ -96,14 +122,6 @@ PDFOutput::PDFOutput(ParameterInput *pin, Mesh *pm, OutputParameters op) :
   Kokkos::deep_copy(pdf_data.bins, bins_host);
   Kokkos::fence();
 
-  // Update the step size in pdf_data
-  pdf_data.step_size = op.logscale ?
-                       (std::log10(op.bin_max) - std::log10(op.bin_min)) / op.nbin :
-                       (op.bin_max - op.bin_min) / op.nbin;
-
-
-
-
   // Create second bins for the pdf if 2D
   if (pdf_data.pdf_dimension == 2) {
     pdf_data.logscale2 = op.logscale2;
@@ -126,30 +144,7 @@ PDFOutput::PDFOutput(ParameterInput *pin, Mesh *pm, OutputParameters op) :
     Kokkos::deep_copy(pdf_data.bins2, bins2_host);
     Kokkos::fence();
 
-    if (pdf_data.pdf_dimension == 2 &&
-        static_cast<int>(pdf_data.bins2.extent(0)) != op.nbin2 + 1) {
-      std::cerr << "Error: pdf_data.bins2 size mismatch. Expected size: "
-                << op.nbin2 + 1 << ", Actual size: " << pdf_data.bins2.extent(0)
-                << std::endl;
-      exit(EXIT_FAILURE);
-    }
-
-
-    // Update the step size for bins2
-    pdf_data.step_size2 = op.logscale2 ?
-                         (std::log10(op.bin2_max) - std::log10(op.bin2_min)) / op.nbin2 :
-                         (op.bin2_max - op.bin2_min) / op.nbin2;
   }
-
-
-  if (pdf_data.pdf_dimension == 2) {
-    pdf_data.result_ = DvceArray2D<Real>("result", op.nbin2+2, op.nbin+2);
-  } else if (pdf_data.pdf_dimension == 1) {
-    pdf_data.result_ = DvceArray2D<Real>("result", 1, op.nbin+2);
-  }
-  pdf_data.scatter_result = Kokkos::Experimental::ScatterView<Real **, LayoutWrapper>(
-    pdf_data.result_
-  );
 }
 
 
@@ -199,33 +194,33 @@ void PDFOutput::LoadOutputData(Mesh *pm) {
   int is = indcs.is; int ie = indcs.ie;
   int js = indcs.js; int je = indcs.je;
   int ks = indcs.ks; int ke = indcs.ke;
+  const auto bounds = z4c::MakeStoredDomainBounds(indcs);
 
   auto result  = pdf_data.result_;
   auto scatter = pdf_data.scatter_result;
 
   int nmb = pm->pmb_pack->nmb_thispack;
-  int nx1 = indcs.nx1 + 2*indcs.ng;
-  int nx2 = indcs.nx2 + 2*indcs.ng;
-  int nx3 = indcs.nx3 + 2*indcs.ng;
+  if (static_cast<int>(outvars.size()) != pdf_data.pdf_dimension) {
+    std::cerr << "### FATAL ERROR: PDF staged-variable count does not match the "
+              << "validated PDF dimension" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   // Copy MeshBlock data from host to device
-  DvceArray5D<Real> outvars_device("outvars_device", outvars.size(), nmb, nx3, nx2, nx1);
+  DvceArray5D<Real> outvars_device("outvars_device", outvars.size(), nmb,
+                                   bounds.n3, bounds.n2, bounds.n1);
   for (std::size_t i = 0; i < outvars.size(); ++i) {
-      auto d_slice = Kokkos::subview(*(outvars[i].data_ptr),
-      Kokkos::ALL(), outvars[i].data_index, Kokkos::ALL(), Kokkos::ALL(), Kokkos::ALL());
-      auto d_target_slice = Kokkos::subview(outvars_device, i,
-      Kokkos::ALL(), Kokkos::ALL(), Kokkos::ALL(), Kokkos::ALL());
-      Kokkos::deep_copy(d_target_slice, d_slice);
+    auto d_slice = Kokkos::subview(*(outvars[i].data_ptr),
+        std::make_pair(0, nmb), outvars[i].data_index,
+        Kokkos::ALL(), Kokkos::ALL(), Kokkos::ALL());
+    auto d_target_slice = Kokkos::subview(outvars_device, i,
+        Kokkos::ALL(), Kokkos::ALL(), Kokkos::ALL(), Kokkos::ALL());
+    Kokkos::deep_copy(d_target_slice, d_slice);
   }
   Kokkos::fence();
 
-  //
-
-  // Reset ScatterView from previous output
-  scatter.reset();
-  // Also reset the histogram from previous call.
-  // Currently still required for consistent results between host and device backends, see
-  // https://github.com/kokkos/kokkos/issues/6363
+  // The explicit nonduplicated ScatterView aliases result, so zero the one histogram
+  // allocation exactly once before accumulation.
   Kokkos::deep_copy(result, 0);
   Kokkos::fence();
 
@@ -241,56 +236,74 @@ void PDFOutput::LoadOutputData(Mesh *pm) {
   bool logscale2 = pdf_data.logscale2;
   bool mass_weighted = pdf_data.mass_weighted;
 
-  par_for("pdf", DevExeSpace(),0,nmb-1,ks,ke,js,je,is,ie,
-  KOKKOS_LAMBDA(int m, int k, int j, int i) {
-    auto &x_val = outvars_device(0, m, k, j, i);
-    int x_bin = -1;
-    // First handle edge cases explicitly
-    if (x_val < bins(0)) {
-      x_bin = 0;
-    } else if (x_val >= bins(nbin_)) {
-      x_bin = nbin_ + 1;
-    } else {
-      if (logscale == false) {
-        x_bin = static_cast<int>((x_val - bins(0)) / step_size) + 1;
-      } else if (logscale == true) {
-        x_bin = static_cast<int>(std::log10(x_val / bins(0)) / step_size) + 1;
-      }
-    }
-    // needs to be zero as for the 1D histogram we need 0 as first index of the 2D
-    // result array
-    int y_bin = 0;
-    if (pdf_dimension == 2) {
-      auto &y_val = outvars_device(1, m, k, j, i);
-
-      y_bin = -1; // reset to impossible value
+  auto accumulate = [&](auto symmetry_tag) {
+    constexpr bool is_cartoon = decltype(symmetry_tag)::value;
+    par_for("pdf", DevExeSpace(),0,nmb-1,ks,ke,js,je,is,ie,
+    KOKKOS_LAMBDA(int m, int k, int j, int i) {
+      auto &x_val = outvars_device(0, m, k, j, i);
+      int x_bin = -1;
       // First handle edge cases explicitly
-      if (y_val < bins2(0)) {
-        y_bin = 0;
-      } else if (y_val >= bins2(nbin2_)) {
-        y_bin = nbin2_ + 1;
+      if (x_val < bins(0)) {
+        x_bin = 0;
+      } else if (x_val >= bins(nbin_)) {
+        x_bin = nbin_ + 1;
       } else {
-        // for lin and log directly pick index
-        if (logscale2 == false) {
-          y_bin = static_cast<int>((y_val - bins2(0)) / step_size2) + 1;
-        } else if (logscale2 == true) {
-          y_bin = static_cast<int>(std::log10(y_val/bins2(0)) / step_size2) + 1;
+        if (logscale == false) {
+          x_bin = static_cast<int>((x_val - bins(0)) / step_size) + 1;
+        } else if (logscale == true) {
+          x_bin = static_cast<int>(std::log10(x_val / bins(0)) / step_size) + 1;
         }
       }
-    }
-    auto res = scatter.access();
-    Real weight = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3;
-    weight *= mass_weighted == false
-              ? 1.0
-              : u0_(m, IDN, k, j, i);
-    res(y_bin, x_bin) += weight;
-  });
+      // needs to be zero as for the 1D histogram we need 0 as first index of the 2D
+      // result array
+      int y_bin = 0;
+      if (pdf_dimension == 2) {
+        auto &y_val = outvars_device(1, m, k, j, i);
+
+        y_bin = -1; // reset to impossible value
+        // First handle edge cases explicitly
+        if (y_val < bins2(0)) {
+          y_bin = 0;
+        } else if (y_val >= bins2(nbin2_)) {
+          y_bin = nbin2_ + 1;
+        } else {
+          // for lin and log directly pick index
+          if (logscale2 == false) {
+            y_bin = static_cast<int>((y_val - bins2(0)) / step_size2) + 1;
+          } else if (logscale2 == true) {
+            y_bin = static_cast<int>(std::log10(y_val/bins2(0)) / step_size2) + 1;
+          }
+        }
+      }
+      auto res = scatter.access();
+      Real weight;
+      if constexpr (is_cartoon) {
+        const Real rho = CellCenterX(i - is, indcs.nx1,
+                                     size.d_view(m).x1min, size.d_view(m).x1max);
+        // The full signed-rho plane is evolved. The positive half is the unique
+        // cylindrical fine-cell owner; the negative partner must not be counted again.
+        weight = pdf::CartoonCylindricalFineCellMeasure(
+            rho, size.d_view(m).dx1, size.d_view(m).dx2);
+        if (weight == 0.0) return;
+      } else {
+        weight = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3;
+      }
+      weight *= mass_weighted == false
+                    ? 1.0
+                    : u0_(m, IDN, k, j, i);
+      res(y_bin, x_bin) += weight;
+    });
+  };
+  if (pm->pmb_pack->z4c_symmetry.mode == z4c::Z4cSymmetryMode::cartoon_so2) {
+    accumulate(std::true_type{});
+  } else {
+    accumulate(std::false_type{});
+  }
 
   // "reduce" results from scatter view to original view.
   // May be a no-op depending on backend.
-  Kokkos::Experimental::contribute(result, scatter); //.KokkosView()
-  // Kokkos::Experimental::contribute(result.KokkosView(), scatter);
-  Kokkos::fence(); // May not be required
+  Kokkos::Experimental::contribute(result, scatter);
+  Kokkos::fence();
 
   // Now reduce over ranks
 #if MPI_PARALLEL_ENABLED

@@ -330,6 +330,63 @@ if (Athena_BUILD_UNIT_TESTS)
       NAME athena.z4c_symmetry_validation
       COMMAND athena_z4c_symmetry_validation_unit_test)
 
+  add_executable(
+      athena_stored_domain_bounds_unit_test
+      tst/unit/z4c/stored_domain_bounds_test.cpp)
+  target_include_directories(
+      athena_stored_domain_bounds_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(athena_stored_domain_bounds_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.stored_domain_bounds
+      COMMAND athena_stored_domain_bounds_unit_test)
+
+  add_executable(
+      athena_pdf_validation_unit_test
+      tst/unit/outputs/pdf_validation_test.cpp)
+  target_include_directories(
+      athena_pdf_validation_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(athena_pdf_validation_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.pdf_validation
+      COMMAND athena_pdf_validation_unit_test)
+
+  add_executable(
+      athena_pdf_scatter_unit_test
+      tst/unit/outputs/pdf_scatter_test.cpp)
+  target_include_directories(
+      athena_pdf_scatter_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(athena_pdf_scatter_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.pdf_scatter_backend
+      COMMAND athena_pdf_scatter_unit_test)
+  if(Kokkos_ENABLE_OPENMP)
+    foreach(pdf_threads 1 2 8)
+      add_test(
+          NAME athena.pdf_scatter_openmp_${pdf_threads}
+          COMMAND athena_pdf_scatter_unit_test)
+      set_tests_properties(
+          athena.pdf_scatter_openmp_${pdf_threads}
+          PROPERTIES ENVIRONMENT "OMP_NUM_THREADS=${pdf_threads}")
+    endforeach()
+  endif()
+  add_test(
+      NAME athena.pdf_scatter_cuda_required
+      COMMAND athena_pdf_scatter_unit_test --require-cuda)
+  set_tests_properties(
+      athena.pdf_scatter_cuda_required PROPERTIES LABELS "cuda-required")
+  if(NOT Kokkos_ENABLE_CUDA)
+    set_tests_properties(athena.pdf_scatter_cuda_required PROPERTIES DISABLED TRUE)
+  endif()
+
   add_test(
       NAME athena.z4c_preallocation
       COMMAND

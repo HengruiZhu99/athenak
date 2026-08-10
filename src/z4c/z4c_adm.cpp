@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <type_traits>
 
 // Athena++ headers
 #include "parameter_input.hpp"
@@ -20,6 +21,9 @@
 #include "mesh/mesh.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/stored_domain_bounds.hpp"
+#include "z4c/cartoon_derivatives.hpp"
+#include "z4c/z4c_symmetry.hpp"
 #include "z4c/tmunu.hpp"
 #include "coordinates/cell_locations.hpp"
 
@@ -46,21 +50,12 @@ namespace z4c {
 //
 // The Z4c variables will be set on the whole MeshBlock with the exception of
 // the Gamma's that can only be set in the interior of the MeshBlock.
-template <int FD_STENCIL>
+template <typename Symmetry, int FD_STENCIL>
 void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
-  int &is = indcs.is; int &ie = indcs.ie;
-  int &js = indcs.js; int &je = indcs.je;
-  int &ks = indcs.ks; int &ke = indcs.ke;
-  int isg = is-indcs.ng; int ieg = ie+indcs.ng;
-  int jsg = js-indcs.ng; int jeg = je+indcs.ng;
-  int ksg = ks-indcs.ng; int keg = ke+indcs.ng;
-
-  int ncells1 = indcs.nx1 + 2*(indcs.ng);
-  int ncells2 = indcs.nx2 + 2*(indcs.ng);
-  int ncells3 = indcs.nx3 + 2*(indcs.ng);
+  const auto bounds = MakeStoredDomainBounds(indcs);
   int nmb = pmbp->nmb_thispack;
 
   auto &z4c = pmbp->pz4c->z4c;
@@ -68,7 +63,7 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
   auto &opt = pmbp->pz4c->opt;
   // 2 1D scratch array and 1 2D scratch array
   par_for("initialize z4c fields",DevExeSpace(),
-  0,nmb-1,ksg,keg,jsg,jeg,isg,ieg,
+  0,nmb-1,bounds.ks,bounds.ke,bounds.js,bounds.je,bounds.is,bounds.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> Kt_dd;
     Real detg = adm::SpatialDet(adm.g_dd(m,0,0,k,j,i), adm.g_dd(m,0,1,k,j,i),
@@ -101,12 +96,12 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
   });
   Kokkos::fence();
 
-  DvceArray5D<Real> g_uu("g_uu", nmb, 6, ncells3, ncells2, ncells1);
+  DvceArray5D<Real> g_uu("g_uu", nmb, 6, bounds.n3, bounds.n2, bounds.n1);
   AthenaTensor<Real, TensorSymm::SYM2, 3, 2> g3u;
   g3u.InitWithShallowSlice(g_uu, 0, 5);
   // GLOOP
   par_for("invert z4c metric",DevExeSpace(),
-  0,nmb-1,ksg,keg,jsg,jeg,isg,ieg,
+  0,nmb-1,bounds.ks,bounds.ke,bounds.js,bounds.je,bounds.is,bounds.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i){
     Real detg = adm::SpatialDet(z4c.g_dd(m,0,0,k,j,i), z4c.g_dd(m,0,1,k,j,i),
                                 z4c.g_dd(m,0,2,k,j,i), z4c.g_dd(m,1,1,k,j,i),
@@ -138,10 +133,13 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
                             Kokkos::ALL, Kokkos::ALL, Kokkos::ALL);
   sub_DvceArray5D_0D g_22 = Kokkos::subview(g_uu, Kokkos::ALL, 5,
                             Kokkos::ALL, Kokkos::ALL, Kokkos::ALL);*/
-  par_for("initialize Gamma",DevExeSpace(),0,nmb-1,ks,ke,js,je,is,ie,
+  par_for("initialize Gamma",DevExeSpace(),0,nmb-1,indcs.ks,indcs.ke,
+          indcs.js,indcs.je,indcs.is,indcs.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     // Usage of Dx: pmbp->pz4c->Dx(blockn, posvar, k,j,i, dir, nghost, dx, quantity);
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    const Real rho = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min, size.d_view(m).x1max);
     /*AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> g_uu;
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> Gamma_udd;
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> dg_ddd;
@@ -181,10 +179,26 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
     for (int c = 0; c < 3; ++c) {
       z4c.vGam_u(m, a, k, j, i) += g_uu(b, c)*Gamma_udd(a, b, c);
     }*/
-    for (int a = 0; a < 3; ++a) {
-      z4c.vGam_u(m, a, k, j, i) = 0.0;
-      for (int b = 0; b < 3; ++b) {
-        z4c.vGam_u(m, a, k, j, i) -= Dx<FD_STENCIL>(b, idx, g3u, m, b, a, k, j, i);
+    if constexpr (std::is_same_v<Symmetry, CartoonSO2>) {
+      DerivativeProvider<CartoonSO2, FD_STENCIL> derivatives(
+          idx, rho, CartoonAxisLocation::cell_centered, m, k, j, i);
+      for (int a = 0; a < 3; ++a) {
+        z4c.vGam_u(m, a, k, j, i) = 0.0;
+        for (int b = 0; b < 3; ++b) {
+          z4c.vGam_u(m, a, k, j, i) -=
+              derivatives.template TensorFirst<TensorVariance::all_upper>(
+                  b, b, a, g3u);
+        }
+      }
+    } else {
+      DerivativeProvider<Cartesian3D, FD_STENCIL> derivatives(idx, m, k, j, i);
+      for (int a = 0; a < 3; ++a) {
+        z4c.vGam_u(m, a, k, j, i) = 0.0;
+        for (int b = 0; b < 3; ++b) {
+          z4c.vGam_u(m, a, k, j, i) -=
+              derivatives.template TensorFirst<TensorVariance::all_upper>(
+                  b, b, a, g3u);
+        }
       }
     }
   });
@@ -194,22 +208,16 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
 
 template <int NGHOST>
 void Z4c::ADMToZ4c(MeshBlockPack *pmbp, ParameterInput *pin) {
-  switch (pmbp->pz4c->opt.fd_stencil) {
-    case 2:
-      ADMToZ4cImpl<2>(pmbp, pin);
-      break;
-    case 3:
-      ADMToZ4cImpl<3>(pmbp, pin);
-      break;
-    case 4:
-      ADMToZ4cImpl<4>(pmbp, pin);
-      break;
-    default:
-      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-                << std::endl
-                << "Unsupported Z4c finite-difference stencil selector "
-                << pmbp->pz4c->opt.fd_stencil << std::endl;
-      std::exit(EXIT_FAILURE);
+  if (pmbp->pz4c->opt.fd_stencil != NGHOST) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "Z4c ADM conversion dispatch mismatch: requested "
+              << pmbp->pz4c->opt.fd_stencil << " but called " << NGHOST << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (pmbp->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
+    ADMToZ4cImpl<CartoonSO2, NGHOST>(pmbp, pin);
+  } else {
+    ADMToZ4cImpl<Cartesian3D, NGHOST>(pmbp, pin);
   }
 }
 template void Z4c::ADMToZ4c<2>(MeshBlockPack *pmbp, ParameterInput *pin);
@@ -223,13 +231,7 @@ template void Z4c::ADMToZ4c<4>(MeshBlockPack *pmbp, ParameterInput *pin);
 void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
-  int &is = indcs.is; int &ie = indcs.ie;
-  int &js = indcs.js; int &je = indcs.je;
-  int &ks = indcs.ks; int &ke = indcs.ke;
-  //For GLOOPS
-  int isg = is-indcs.ng; int ieg = ie+indcs.ng;
-  int jsg = js-indcs.ng; int jeg = je+indcs.ng;
-  int ksg = ks-indcs.ng; int keg = ke+indcs.ng;
+  const auto bounds = MakeStoredDomainBounds(indcs);
 
   int nmb = pmbp->nmb_thispack;
 
@@ -237,7 +239,7 @@ void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
   auto &adm = pmbp->padm->adm;
   auto &opt = pmbp->pz4c->opt;
   par_for("initialize z4c fields",DevExeSpace(),
-  0,nmb-1,ksg,keg,jsg,jeg,isg,ieg,
+  0,nmb-1,bounds.ks,bounds.ke,bounds.js,bounds.je,bounds.is,bounds.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     adm.psi4(m,k,j,i) = pow(z4c.chi(m,k,j,i), 4./opt.chi_psi_power);
 

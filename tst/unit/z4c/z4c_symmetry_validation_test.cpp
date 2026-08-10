@@ -41,6 +41,18 @@ bool Rejects(const z4c::Z4cValidationInput &input, const std::string &needle) {
   return !result.valid && result.error.find(needle) != std::string::npos;
 }
 
+z4c::Z4cOutputValidationRequest ValidPdfOutput() {
+  z4c::Z4cOutputValidationRequest output{"output7", "pdf"};
+  output.pdf_input.block_name = output.block_name;
+  output.pdf_input.has_nbin = true;
+  output.pdf_input.has_bin_min = true;
+  output.pdf_input.has_bin_max = true;
+  output.pdf_input.nbin = 8;
+  output.pdf_input.bin_min = 0.1;
+  output.pdf_input.bin_max = 1.0;
+  return output;
+}
+
 bool CheckDefaultCartesian() {
   z4c::Z4cValidationInput input;
   input.incompatible_physics = {"hydro"};
@@ -157,7 +169,11 @@ bool CheckConsumerAndOutputFailures() {
   }
   for (const char *file_type : {"tab", "hst", "log", "vtk", "pdf", "bin", "rst"}) {
     auto input = ValidCartoonInput();
-    input.outputs.push_back({"output7", file_type});
+    if (std::string(file_type) == "pdf") {
+      input.outputs.push_back(ValidPdfOutput());
+    } else {
+      input.outputs.push_back({"output7", file_type});
+    }
     if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
   }
   auto input = ValidCartoonInput();
@@ -165,21 +181,28 @@ bool CheckConsumerAndOutputFailures() {
   if (!Rejects(input, "supported Cartoon types")) return false;
 
   input = ValidCartoonInput();
-  input.outputs.push_back({"output7", "pdf", true});
+  auto pdf = ValidPdfOutput();
+  pdf.pdf_input.mass_weighted = true;
+  input.outputs.push_back(pdf);
   if (!Rejects(input, "mass_weighted=true")) return false;
   input = ValidCartoonInput();
-  z4c::Z4cOutputValidationRequest pdf{"output7", "pdf"};
-  pdf.has_any_second_axis_key = true;
+  pdf = ValidPdfOutput();
+  pdf.pdf_input.has_any_second_axis_key = true;
   input.outputs.push_back(pdf);
   if (!Rejects(input, "require variable_2")) return false;
   input = ValidCartoonInput();
-  pdf = {"output7", "pdf"};
-  pdf.has_variable_2 = true;
+  pdf = ValidPdfOutput();
+  pdf.pdf_input.variable_2_specified = true;
+  pdf.pdf_input.has_variable_2 = true;
   input.outputs.push_back(pdf);
-  if (!Rejects(input, "nbin2>=1")) return false;
+  if (!Rejects(input, "explicit nbin2")) return false;
   input = ValidCartoonInput();
-  pdf.has_nbin2 = true;
-  pdf.nbin2 = 1;
+  pdf.pdf_input.has_nbin2 = true;
+  pdf.pdf_input.nbin2 = 1;
+  pdf.pdf_input.has_bin2_min = true;
+  pdf.pdf_input.has_bin2_max = true;
+  pdf.pdf_input.bin2_min = 0.1;
+  pdf.pdf_input.bin2_max = 1.0;
   input.outputs.push_back(pdf);
   if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
   return true;

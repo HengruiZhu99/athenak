@@ -102,6 +102,38 @@ endforeach()
 run_cartesian(cart_explicit_2 2 2)
 run_cartesian(cart_explicit_4 3 4)
 run_cartesian(cart_explicit_6 4 6)
+
+# Construct real one- and two-axis PDFs through the production output factory on
+# collapsed Cartesian storage.  Directory creation is a constructor sentinel;
+# the nbin2=1 case freezes the shared second-axis predicate and staging count.
+foreach(pdf_dimension 1 2)
+  set(input_text "${cartesian_base}")
+  string(REPLACE "basename = z4c_preallocation"
+                 "basename = prealloc_cart_pdf_${pdf_dimension}d"
+                 input_text "${input_text}")
+  set(pdf_block
+      "\n<output1>\nfile_type = pdf\ndcycle = 1\nid = production_${pdf_dimension}d\nvariable = z4c_chi\nnbin = 4\nbin_min = 0.1\nbin_max = 1.1\nlogscale = false")
+  if(pdf_dimension EQUAL 2)
+    string(APPEND pdf_block
+           "\nvariable_2 = z4c_alpha\nnbin2 = 1\nbin2_min = 0.1\nbin2_max = 1.1\nlogscale2 = false")
+  endif()
+  string(APPEND input_text "${pdf_block}\n")
+  run_input("cart_pdf_${pdf_dimension}d" "${input_text}" TRUE "")
+  set(pdf_directory "${TEST_DIR}/pdf_production_${pdf_dimension}d")
+  if(pdf_dimension EQUAL 2)
+    string(APPEND pdf_directory "_z4c_alpha")
+  endif()
+  if(NOT IS_DIRECTORY "${pdf_directory}")
+    message(FATAL_ERROR
+        "cart_pdf_${pdf_dimension}d: production PDF constructor was not reached")
+  endif()
+  if(NOT EXISTS
+     "${pdf_directory}/prealloc_cart_pdf_${pdf_dimension}d.bins.pdf")
+    message(FATAL_ERROR
+        "cart_pdf_${pdf_dimension}d: collapsed PDF staging/write was not reached")
+  endif()
+endforeach()
+
 run_cartesian_reject(
     cart_invalid_positive 4 8 "<z4c>/spatial_order must be 2, 4, or 6")
 run_cartesian_reject(
@@ -257,27 +289,41 @@ run_cartoon_reject(
     "" "<output1>\ndcycle = 1")
 run_cartoon_reject(
     pdf_mass_weighted
-    "cartoon_so2 rejects PDF mass_weighted=true: vacuum Z4c component zero is chi, not density"
-    "" "<output1>\nfile_type = pdf\ndcycle = 1\nmass_weighted = true")
+    "<output1> PDF mass_weighted=true is unsupported for vacuum Z4c"
+    "" "<output1>\nfile_type = pdf\ndcycle = 1\nvariable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nmass_weighted = true")
 run_cartoon_reject(
     pdf_second_axis_without_variable
-    "Cartoon PDF second-axis keys require variable_2"
-    "" "<output1>\nfile_type = pdf\ndcycle = 1\nnbin2 = 2")
+    "<output1> PDF second-axis keys require variable_2"
+    "" "<output1>\nfile_type = pdf\ndcycle = 1\nvariable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nnbin2 = 2")
 run_cartoon_reject(
     pdf_variable_without_nbin
-    "Cartoon PDF variable_2 requires explicit nbin2>=1"
-    "" "<output1>\nfile_type = pdf\ndcycle = 1\nvariable_2 = z4c_chi")
+    "<output1> PDF variable_2 requires explicit nbin2"
+    "" "<output1>\nfile_type = pdf\ndcycle = 1\nvariable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_chi")
 run_cartoon_reject(
     pdf_variable_zero_nbin
-    "Cartoon PDF variable_2 requires explicit nbin2>=1"
-    "" "<output1>\nfile_type = pdf\ndcycle = 1\nvariable_2 = z4c_chi\nnbin2 = 0")
+    "<output1> PDF variable_2 requires nbin2 in [1,4094]"
+    "" "<output1>\nfile_type = pdf\ndcycle = 1\nvariable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_chi\nnbin2 = 0")
+run_cartoon_reject(
+    pdf_maximum_checked_without_allocation
+    "problem generator 'constructor_side_effect_sentinel' has no audited cartoon_so2 adapter"
+    "" "<output1>\nfile_type = pdf\ndcycle = 1\nid = max_no_alloc\nvariable = z4c_chi\nnbin = 4094\nbin_min = 0.1\nbin_max = 1.0\nvariable_2 = z4c_alpha\nnbin2 = 4094\nbin2_min = 0.1\nbin2_max = 1.0")
+if(IS_DIRECTORY "${TEST_DIR}/pdf_max_no_alloc_z4c_alpha")
+  message(FATAL_ERROR
+      "pdf_maximum_checked_without_allocation: PDF constructor allocated storage")
+endif()
 
 # Supported and disabled outputs must survive collection and reach the universal pgen gate.
 foreach(file_type tab hst log vtk pdf bin rst)
+  if(file_type STREQUAL "pdf")
+    set(output_options
+        "<output1>\nfile_type = pdf\ndcycle = 1\nvariable = z4c_chi\nnbin = 8\nbin_min = 0.1\nbin_max = 1.0")
+  else()
+    set(output_options "<output1>\nfile_type = ${file_type}\ndcycle = 1")
+  endif()
   run_cartoon_reject(
       "output_supported_${file_type}"
       "problem generator 'constructor_side_effect_sentinel' has no audited cartoon_so2 adapter"
-      "" "<output1>\nfile_type = ${file_type}\ndcycle = 1")
+      "" "${output_options}")
 endforeach()
 run_cartoon_reject(
     output_disabled

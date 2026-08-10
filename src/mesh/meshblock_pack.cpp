@@ -86,6 +86,7 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
   input.root_blocks_x1 = mesh.nmb_rootx1;
   input.x1min = mesh.mesh_size.x1min;
   input.x1max = mesh.mesh_size.x1max;
+  input.real_bytes = sizeof(Real);
 
   for (const char *block : {"hydro", "mhd", "ion-neutral", "radiation",
                             "turb_driving", "particles"}) {
@@ -144,14 +145,33 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
                            ? pin->GetString(block.block_name, "file_type")
                            : "";
     if (output.file_type == "pdf") {
-      output.mass_weighted =
+      auto &pdf = output.pdf_input;
+      pdf.block_name = block.block_name;
+      pdf.mass_weighted =
           pin->DoesParameterExist(block.block_name, "mass_weighted") &&
           pin->GetBoolean(block.block_name, "mass_weighted");
-      output.has_variable_2 =
+      pdf.variable_2_specified =
           pin->DoesParameterExist(block.block_name, "variable_2");
-      output.has_nbin2 = pin->DoesParameterExist(block.block_name, "nbin2");
-      if (output.has_nbin2) output.nbin2 = pin->GetInteger(block.block_name, "nbin2");
-      output.has_any_second_axis_key = HasAnySecondPdfKey(pin, block.block_name);
+      pdf.has_variable_2 =
+          pdf.variable_2_specified &&
+          !pin->GetString(block.block_name, "variable_2").empty();
+      pdf.has_nbin = pin->DoesParameterExist(block.block_name, "nbin");
+      pdf.has_bin_min = pin->DoesParameterExist(block.block_name, "bin_min");
+      pdf.has_bin_max = pin->DoesParameterExist(block.block_name, "bin_max");
+      if (pdf.has_nbin) pdf.nbin = pin->GetInteger(block.block_name, "nbin");
+      if (pdf.has_bin_min) pdf.bin_min = pin->GetReal(block.block_name, "bin_min");
+      if (pdf.has_bin_max) pdf.bin_max = pin->GetReal(block.block_name, "bin_max");
+      pdf.logscale = !pin->DoesParameterExist(block.block_name, "logscale") ||
+                     pin->GetBoolean(block.block_name, "logscale");
+      pdf.has_nbin2 = pin->DoesParameterExist(block.block_name, "nbin2");
+      pdf.has_bin2_min = pin->DoesParameterExist(block.block_name, "bin2_min");
+      pdf.has_bin2_max = pin->DoesParameterExist(block.block_name, "bin2_max");
+      if (pdf.has_nbin2) pdf.nbin2 = pin->GetInteger(block.block_name, "nbin2");
+      if (pdf.has_bin2_min) pdf.bin2_min = pin->GetReal(block.block_name, "bin2_min");
+      if (pdf.has_bin2_max) pdf.bin2_max = pin->GetReal(block.block_name, "bin2_max");
+      pdf.logscale2 = !pin->DoesParameterExist(block.block_name, "logscale2") ||
+                      pin->GetBoolean(block.block_name, "logscale2");
+      pdf.has_any_second_axis_key = HasAnySecondPdfKey(pin, block.block_name);
     }
     input.outputs.push_back(output);
   }

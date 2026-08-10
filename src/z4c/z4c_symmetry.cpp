@@ -91,6 +91,14 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
     }
   }
 
+  for (const auto &output : input.outputs) {
+    if (output.file_type != "pdf") continue;
+    const auto pdf_plan = pdf::Validate(
+        output.pdf_input, input.real_bytes,
+        config.mode == Z4cSymmetryMode::cartoon_so2);
+    if (!pdf_plan.valid) return Invalid(config, pdf_plan.error);
+  }
+
   if (config.mode == Z4cSymmetryMode::cartesian3d) {
     if (input.coordinate_map_specified && input.coordinate_map != "cartesian_xyz") {
       return Invalid(config, "cartesian3d requires coordinate_map=cartesian_xyz");
@@ -170,19 +178,7 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
                                  "tab,hst,log,vtk,pdf,bin,rst");
     }
     if (output.file_type == "pdf") {
-      if (output.mass_weighted) {
-        return Invalid(config,
-                       "cartoon_so2 rejects PDF mass_weighted=true: vacuum Z4c "
-                       "component zero is chi, not density");
-      }
-      if (!output.has_variable_2 && output.has_any_second_axis_key) {
-        return Invalid(config,
-                       "Cartoon PDF second-axis keys require variable_2");
-      }
-      if (output.has_variable_2 && (!output.has_nbin2 || output.nbin2 <= 0)) {
-        return Invalid(config,
-                       "Cartoon PDF variable_2 requires explicit nbin2>=1");
-      }
+      // The shared allocation-free PDF contract was already checked above.
     }
   }
 

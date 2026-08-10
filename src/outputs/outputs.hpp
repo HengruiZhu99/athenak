@@ -15,6 +15,7 @@
 
 #include "athena.hpp"
 #include "io_wrapper.hpp"
+#include "outputs/pdf_validation.hpp"
 
 #define NHISTORY_VARIABLES 20
 #if NHISTORY_VARIABLES > NREDUCTION_VARIABLES
@@ -321,6 +322,17 @@ class CoarsenedBinaryOutput : public BaseTypeOutput {
 //! \struct PDFData
 //  \brief  container for PDF data
 
+namespace pdf {
+
+KOKKOS_INLINE_FUNCTION
+Real CartoonCylindricalFineCellMeasure(const Real rho, const Real dx1,
+                                       const Real dx2) {
+  constexpr Real two_pi = 6.283185307179586476925286766559;
+  return rho > 0.0 ? two_pi * rho * dx1 * dx2 : 0.0;
+}
+
+}  // namespace pdf
+
 struct PDFData {
   int pdf_dimension;
   int nbin, nbin2;
@@ -333,12 +345,31 @@ struct PDFData {
   bool logscale, logscale2;
 
   DvceArray2D<Real> result_; // resulting histogram
-  Kokkos::Experimental::ScatterView<Real **, LayoutWrapper> scatter_result;
+  using ScatterResult = Kokkos::Experimental::ScatterView<
+      Real **, LayoutWrapper, typename DvceArray2D<Real>::device_type,
+      Kokkos::Experimental::ScatterSum,
+      Kokkos::Experimental::ScatterNonDuplicated,
+      Kokkos::Experimental::ScatterAtomic>;
+  ScatterResult scatter_result;
 
-  PDFData(int dim, int nbinVal, int nbin2Val)
-    : pdf_dimension(dim), nbin(nbinVal), nbin2(nbin2Val),
-      bins("bins", nbin + 1), bins2("bins2", nbin2 + 1),
-      bins_written(false), mass_weighted(false), logscale(false), logscale2(false) {
+  explicit PDFData(const pdf::AllocationPlan &plan)
+    : pdf_dimension(plan.dimension), nbin(plan.nbin), nbin2(plan.nbin2),
+      bins("bins", plan.bins_extent),
+      bins2(plan.has_second_axis
+                ? Kokkos::View<Real*>("bins2", plan.bins2_extent)
+                : Kokkos::View<Real*>()),
+      bins_written(false), step_size(plan.step_size), step_size2(plan.step_size2),
+      mass_weighted(false), logscale(false), logscale2(false),
+      result_("result", plan.result_extent2, plan.result_extent1),
+      scatter_result(Kokkos::Experimental::create_scatter_view(
+          Kokkos::Experimental::ScatterSum{},
+          Kokkos::Experimental::ScatterNonDuplicated{},
+          Kokkos::Experimental::ScatterAtomic{}, result_)) {
+    if (!plan.valid || scatter_result.subview().data() != result_.data() ||
+        scatter_result.subview().extent(0) != result_.extent(0) ||
+        scatter_result.subview().extent(1) != result_.extent(1)) {
+      Kokkos::abort("PDF ScatterNonDuplicated ownership contract failed");
+    }
   }
 };
 

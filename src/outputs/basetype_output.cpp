@@ -185,7 +185,7 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
 
   variables.push_back(out_params.variable);
   if (out_params.file_type == "pdf") {
-    if (out_params.nbin2 > 1) {
+    if (pdf::HasSecondAxis(!out_params.variable_2.empty(), out_params.nbin2)) {
       variables.push_back(out_params.variable_2);
     }
   }

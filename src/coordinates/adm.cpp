@@ -15,6 +15,7 @@
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/stored_domain_bounds.hpp"
 
 namespace adm {
 char const * const ADM::ADM_names[ADM::nadm] = {
@@ -34,18 +35,16 @@ ADM::ADM(MeshBlockPack *ppack, ParameterInput *pin):
 
   int nmb = std::max((ppack->nmb_thispack), (ppack->pmesh->nmb_maxperrank));
   auto &indcs = pmy_pack->pmesh->mb_indcs;
-  int ncells1 = indcs.nx1 + 2*(indcs.ng);
-  int ncells2 = (indcs.nx2 > 1)? (indcs.nx2 + 2*(indcs.ng)) : 1;
-  int ncells3 = (indcs.nx3 > 1)? (indcs.nx3 + 2*(indcs.ng)) : 1;
+  const auto bounds = z4c::MakeStoredDomainBounds(indcs);
 
   if (pmy_pack->pz4c == nullptr) {
-    Kokkos::realloc(u_adm, nmb, nadm, ncells3, ncells2, ncells1);
+    Kokkos::realloc(u_adm, nmb, nadm, bounds.n3, bounds.n2, bounds.n1);
     adm.alpha.InitWithShallowSlice(u_adm, I_ADM_ALPHA);
     adm.beta_u.InitWithShallowSlice(u_adm, I_ADM_BETAX, I_ADM_BETAZ);
   } else {
     // Lapse and shift are stored in the Z4c class
     z4c::Z4c * pz4c = pmy_pack->pz4c;
-    Kokkos::realloc(u_adm, nmb, nadm - 4, ncells3, ncells2, ncells1);
+    Kokkos::realloc(u_adm, nmb, nadm - 4, bounds.n3, bounds.n2, bounds.n1);
     adm.alpha.InitWithShallowSlice(pz4c->u0, pz4c->I_Z4C_ALPHA);
     adm.beta_u.InitWithShallowSlice(pz4c->u0, pz4c->I_Z4C_BETAX, pz4c->I_Z4C_BETAZ);
   }
@@ -65,13 +64,11 @@ void ADM::SetADMVariablesToKerrSchild(MeshBlockPack *pmbp) {
   auto &adm = pmbp->padm->adm;
   auto &size = pmbp->pmb->mb_size;
   auto &indcs = pmbp->pmesh->mb_indcs;
-  int &ng = indcs.ng;
   int is = indcs.is, js = indcs.js, ks = indcs.ks;
   int nmb = pmbp->nmb_thispack;
-  int n1 = indcs.nx1 + 2*ng;
-  int n2 = (indcs.nx2 > 1) ? (indcs.nx2 + 2*ng) : 1;
-  int n3 = (indcs.nx3 > 1) ? (indcs.nx3 + 2*ng) : 1;
-  par_for("update_adm_vars", DevExeSpace(), 0,nmb-1,0,(n3-1),0,(n2-1),0,(n1-1),
+  const auto bounds = z4c::MakeStoredDomainBounds(indcs);
+  par_for("update_adm_vars", DevExeSpace(), 0,nmb-1,bounds.ks,bounds.ke,
+          bounds.js,bounds.je,bounds.is,bounds.ie,
   KOKKOS_LAMBDA(int m, int k, int j, int i) {
     Real &x1min = size.d_view(m).x1min;
     Real &x1max = size.d_view(m).x1max;

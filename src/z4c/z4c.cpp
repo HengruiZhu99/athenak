@@ -26,6 +26,7 @@
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
 #include "z4c/z4c_symmetry.hpp"
+#include "z4c/stored_domain_bounds.hpp"
 #include "coordinates/adm.hpp"
 #include "utils/cart_grid.hpp"
 
@@ -79,17 +80,14 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   // int nmb = ppack->nmb_thispack;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   {
-  int ncells1 = indcs.nx1 + 2*(indcs.ng);
-  int ncells2 = (indcs.nx2 > 1)? (indcs.nx2 + 2*(indcs.ng)) : 1;
-  int ncells3 = (indcs.nx3 > 1)? (indcs.nx3 + 2*(indcs.ng)) : 1;
+  const auto bounds = MakeStoredDomainBounds(indcs);
   Kokkos::Profiling::pushRegion("Tensor fields");
-  Kokkos::realloc(u_con, nmb, (ncon), ncells3, ncells2, ncells1);
-  // Matter commented out
-  // kokkos::realloc(u_mat, nmb, (N_MAT), ncells3, ncells2, ncells1);
-  Kokkos::realloc(u0,    nmb, (nz4c), ncells3, ncells2, ncells1);
-  Kokkos::realloc(u1,    nmb, (nz4c), ncells3, ncells2, ncells1);
-  Kokkos::realloc(u_rhs, nmb, (nz4c), ncells3, ncells2, ncells1);
-  Kokkos::realloc(u_weyl,    nmb, (2), ncells3, ncells2, ncells1);
+  Kokkos::realloc(u_con, nmb, (ncon), bounds.n3, bounds.n2, bounds.n1);
+  // Matter storage is currently disabled.
+  Kokkos::realloc(u0,    nmb, (nz4c), bounds.n3, bounds.n2, bounds.n1);
+  Kokkos::realloc(u1,    nmb, (nz4c), bounds.n3, bounds.n2, bounds.n1);
+  Kokkos::realloc(u_rhs, nmb, (nz4c), bounds.n3, bounds.n2, bounds.n1);
+  Kokkos::realloc(u_weyl,    nmb, (2), bounds.n3, bounds.n2, bounds.n1);
 
   con.C.InitWithShallowSlice(u_con, I_CON_C);
   con.H.InitWithShallowSlice(u_con, I_CON_H);
@@ -219,11 +217,11 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   // allocate memory for conserved variables on coarse mesh
   if (ppack->pmesh->multilevel) {
     auto &indcs = pmy_pack->pmesh->mb_indcs;
-    int nccells1 = indcs.cnx1 + 2*(indcs.ng);
-    int nccells2 = (indcs.cnx2 > 1)? (indcs.cnx2 + 2*(indcs.ng)) : 1;
-    int nccells3 = (indcs.cnx3 > 1)? (indcs.cnx3 + 2*(indcs.ng)) : 1;
-    Kokkos::realloc(coarse_u0, nmb, (nz4c), nccells3, nccells2, nccells1);
-    Kokkos::realloc(coarse_u_weyl, nmb, (2), nccells3, nccells2, nccells1);
+    const auto coarse_bounds = MakeCoarseStoredDomainBounds(indcs);
+    Kokkos::realloc(coarse_u0, nmb, (nz4c), coarse_bounds.n3,
+                    coarse_bounds.n2, coarse_bounds.n1);
+    Kokkos::realloc(coarse_u_weyl, nmb, (2), coarse_bounds.n3,
+                    coarse_bounds.n2, coarse_bounds.n1);
   }
   Kokkos::Profiling::popRegion();
 
@@ -299,19 +297,13 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 void Z4c::AlgConstr(MeshBlockPack *pmbp) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
-  int &is = indcs.is; int &ie = indcs.ie;
-  int &js = indcs.js; int &je = indcs.je;
-  int &ks = indcs.ks; int &ke = indcs.ke;
-  //For GLOOPS
-  int isg = is-indcs.ng; int ieg = ie+indcs.ng;
-  int jsg = js-indcs.ng; int jeg = je+indcs.ng;
-  int ksg = ks-indcs.ng; int keg = ke+indcs.ng;
+  const auto bounds = MakeStoredDomainBounds(indcs);
 
   int nmb = pmbp->nmb_thispack;
 
   auto &z4c = pmbp->pz4c->z4c;
   par_for("Alg constr loop",DevExeSpace(),
-  0,nmb-1,ksg,keg,jsg,jeg,isg,ieg,
+  0,nmb-1,bounds.ks,bounds.ke,bounds.js,bounds.je,bounds.is,bounds.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     Real detg = adm::SpatialDet(z4c.g_dd(m,0,0,k,j,i), z4c.g_dd(m,0,1,k,j,i),
                               z4c.g_dd(m,0,2,k,j,i),z4c.g_dd(m,1,1,k,j,i),
