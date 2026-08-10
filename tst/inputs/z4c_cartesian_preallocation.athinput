@@ -1,0 +1,43 @@
+# Minimal ordinary-executable input for Z4c preallocation compatibility tests.
+
+<job>
+basename = z4c_preallocation
+
+<mesh>
+nghost = 2
+nx1 = 8
+x1min = -1.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 4
+x2min = -0.5
+x2max = 0.5
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+
+<meshblock>
+nx1 = 4
+nx2 = 4
+nx3 = 1
+
+<time>
+evolution = dynamic
+integrator = rk2
+cfl_number = 0.1
+nlim = 0
+tlim = 0.0
+ndiag = 1
+
+<z4c>
+spatial_order = -1
+
+<problem>
+pgen_name = z4c_linear_wave
+amp = 1.0e-8
+kx1 = 1
+kx2 = 1
+kx3 = 0

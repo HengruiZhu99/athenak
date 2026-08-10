@@ -191,7 +191,7 @@ void ValidateAndStoreZ4cSymmetry(ParameterInput *pin, MeshBlockPack *pack) {
   const auto validation =
       z4c::ValidateZ4cSymmetry(CollectZ4cValidationInput(pin, *pack->pmesh));
   if (!validation.valid) {
-    std::cerr << "### FATAL ERROR in " << __FILE__ << ": Cartoon preallocation "
+    std::cerr << "### FATAL ERROR in " << __FILE__ << ": Z4c preallocation "
               << "validation failed: " << validation.error << std::endl;
     std::exit(EXIT_FAILURE);
   }

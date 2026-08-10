@@ -328,6 +328,15 @@ if (Athena_BUILD_UNIT_TESTS)
   add_test(
       NAME athena.z4c_symmetry_validation
       COMMAND athena_z4c_symmetry_validation_unit_test)
+
+  add_test(
+      NAME athena.z4c_preallocation
+      COMMAND
+      ${CMAKE_COMMAND}
+      -DATHENA=$<TARGET_FILE:athena>
+      -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+      -DTEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/z4c_preallocation_test
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_preallocation_test.cmake)
 endif()
 
 install( TARGETS athena DESTINATION bin )
