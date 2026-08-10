@@ -994,7 +994,7 @@ bool CheckOrder() {
 
   const double roundoff_noise = 64.0 * std::numeric_limits<Real>::epsilon();
   for (int noise_phase = 0; noise_phase < 8; ++noise_phase) {
-    for (const int radial_offset : {0, -1}) {
+    for (const int radial_offset : near_axis_offsets) {
       const ErrorSummary noisy_coarse = MeasureSample<NGHOST>(
           0.125, 0.0625, radial_offset, 0.25,
           z4c::CartoonAxisLocation::cell_centered, roundoff_noise, noise_phase);
