@@ -51,6 +51,7 @@ struct VectorField {
 
 struct PointVector {
   Real values[3] = {};
+  KOKKOS_INLINE_FUNCTION
   Real &operator()(const int component) { return values[component]; }
 };
 
@@ -86,6 +87,20 @@ bool CheckWeylTetradComponentMap() {
     }
   }
   return true;
+}
+
+bool CheckWeylCoordinatePolicy() {
+  Kokkos::View<Real *> coordinates("Weyl x3 coordinate policy", 2);
+  Kokkos::parallel_for(
+      "Weyl x3 coordinate policy", Kokkos::RangePolicy<>(0, 1),
+      KOKKOS_LAMBDA(const int) {
+        coordinates(0) = z4c::WeylX3Coordinate<z4c::CartoonSO2>(
+            37, 11, 1, -9.0, 13.0);
+        coordinates(1) = z4c::WeylX3Coordinate<z4c::Cartesian3D>(
+            3, 1, 4, -2.0, 2.0);
+      });
+  auto host = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), coordinates);
+  return host(0) == 0.0 && host(1) == 0.5;
 }
 
 void FillAxisymmetricTensorPair(DvceArray5D<Real> metric,
@@ -365,7 +380,8 @@ bool CheckSharedGeometry(const bool minkowski) {
 
 int main(int argc, char *argv[]) {
   Kokkos::initialize(argc, argv);
-  const bool passed = CheckWeylTetradComponentMap() &&
+  const bool passed = CheckWeylCoordinatePolicy() &&
+                      CheckWeylTetradComponentMap() &&
       CheckGaugeVectorFamilies<2>() && CheckGaugeVectorFamilies<3>() &&
       CheckGaugeVectorFamilies<4>() && CheckSharedGeometry<2>(true) &&
       CheckSharedGeometry<3>(true) &&

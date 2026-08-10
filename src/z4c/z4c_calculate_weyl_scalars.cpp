@@ -62,10 +62,7 @@ void Z4c::Z4cWeylImpl(MeshBlockPack *pmbp) {
     Real &x3min = size.d_view(m).x3min;
     Real &x3max = size.d_view(m).x3max;
     int nx3 = indcs.nx3;
-    Real x3v = 0.0;
-    if constexpr (std::is_same_v<Symmetry, Cartesian3D>) {
-      x3v = CellCenterX(k-ks, nx3, x3min, x3max);
-    }
+    const Real x3v = WeylX3Coordinate<Symmetry>(k, ks, nx3, x3min, x3max);
 
     // Scalars
     Real detg = 0.0;         // det(g)

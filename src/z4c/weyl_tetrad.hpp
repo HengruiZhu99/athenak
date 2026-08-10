@@ -12,9 +12,24 @@
 #include <type_traits>
 
 #include "athena.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "z4c/cartoon_derivatives.hpp"
 
 namespace z4c {
+
+template <typename Symmetry>
+KOKKOS_INLINE_FUNCTION Real WeylX3Coordinate(const int k, const int ks,
+                                              const int nx3,
+                                              const Real x3min,
+                                              const Real x3max) {
+  if constexpr (std::is_same_v<Symmetry, Cartesian3D>) {
+    return CellCenterX(k - ks, nx3, x3min, x3max);
+  } else {
+    static_assert(std::is_same_v<Symmetry, CartoonSO2>,
+                  "Unknown Z4c Weyl coordinate symmetry policy");
+    return 0.0;
+  }
+}
 
 template <typename Symmetry, typename Vector>
 KOKKOS_INLINE_FUNCTION void InitializeWeylTetradSeed(

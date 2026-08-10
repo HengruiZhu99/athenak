@@ -94,6 +94,7 @@ def main() -> int:
         "src/z4c/z4c_calculate_weyl_scalars.cpp": [
             "Z4cWeylImpl<CartoonSO2, 2>",
             "TensorVariance::all_lower",
+            "WeylX3Coordinate<Symmetry>",
             "InitializeWeylTetradSeed<Symmetry>",
         ],
         "src/outputs/derived_variables.cpp": [
@@ -121,6 +122,18 @@ def main() -> int:
         if "MakeCellCenteredDerivativeProvider" in body)
     require("if constexpr" not in gamma_body,
             "ADM-to-Z4c Gamma device lambda reintroduced constexpr first-captures")
+
+    # Keep the symmetry-dependent x3 coordinate choice in a named device helper.
+    # nvcc rejects first-capturing k inside an if-constexpr in this extended lambda.
+    weyl_source = strip_comments_preserving_lines(
+        (source_dir / "src/z4c/z4c_calculate_weyl_scalars.cpp").read_text(
+            encoding="utf-8"))
+    weyl_launch = weyl_source.index('par_for("z4c_weyl_scalar"')
+    weyl_body = next(
+        body for body in kokkos_lambda_bodies(weyl_source[weyl_launch:])
+        if "WeylX3Coordinate<Symmetry>" in body)
+    require("if constexpr" not in weyl_body,
+            "Weyl device lambda reintroduced constexpr first-captures")
 
     # Curvature consumers formerly hard-coded stencil four.  Freeze the intentional
     # semantic correction: every consumer now dispatches the configured 2/3/4 stencil.
