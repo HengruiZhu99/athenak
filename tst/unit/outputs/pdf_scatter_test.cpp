@@ -149,7 +149,7 @@ bool MeetsCudaRequirement(const bool require_cuda) {
   if (!require_cuda) return true;
 #if defined(KOKKOS_ENABLE_CUDA)
   return std::is_same_v<Kokkos::DefaultExecutionSpace, Kokkos::Cuda> &&
-         Kokkos::DefaultExecutionSpace::name() == "Cuda";
+         std::string(Kokkos::DefaultExecutionSpace::name()) == "Cuda";
 #else
   return false;
 #endif
