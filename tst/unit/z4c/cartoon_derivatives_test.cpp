@@ -106,19 +106,25 @@ ManufacturedFields EvaluateManufacturedFields(const double rho_value,
   const Jet3 y = Coordinate(y_value, kSuppressed);
   const Jet3 s = x * x + y * y;
   const Jet3 s2 = s * s;
+  const Jet3 s3 = s2 * s;
   const Jet3 s4 = s2 * s2;
 
   // These coefficient functions are deliberately unrelated to the production provider.
-  // Their high polynomial degree leaves nonzero truncation error at orders 2, 4, and 6.
+  // The odd vector/tensor sectors contain s, s^2, and s^3 terms so first-raw
+  // quotients expose their generic transition orders 1, 3, and 5 respectively.
   const Jet3 f = Constant(0.7) + 0.23 * s + 0.11 * s2 + 0.017 * s4 +
                  0.31 * z + 0.09 * z * z + 0.07 * s * z;
-  const Jet3 a = Constant(0.4) + 0.13 * s + 0.021 * s4 + 0.05 * z;
-  const Jet3 b = Constant(-0.2) + 0.08 * s + 0.014 * s4 - 0.03 * z;
+  const Jet3 a = Constant(0.4) + 0.13 * s + 0.031 * s2 + 0.006 * s3 +
+                 0.021 * s4 + 0.05 * z;
+  const Jet3 b = Constant(-0.2) + 0.08 * s - 0.027 * s2 + 0.005 * s3 +
+                 0.014 * s4 - 0.03 * z;
   const Jet3 c = Constant(0.6) + 0.19 * s + 0.012 * s4 + 0.04 * z * z;
   const Jet3 p = Constant(1.1) + 0.12 * s + 0.016 * s4 + 0.02 * z;
   const Jet3 q = Constant(0.9) - 0.07 * s + 0.011 * s4 + 0.03 * z * z;
-  const Jet3 r = Constant(0.3) + 0.09 * s + 0.013 * s4 + 0.04 * z;
-  const Jet3 u = Constant(-0.17) + 0.06 * s + 0.009 * s4 - 0.02 * z;
+  const Jet3 r = Constant(0.3) + 0.09 * s + 0.023 * s2 - 0.004 * s3 +
+                 0.013 * s4 + 0.04 * z;
+  const Jet3 u = Constant(-0.17) + 0.06 * s - 0.019 * s2 + 0.003 * s3 +
+                 0.009 * s4 - 0.02 * z;
   const Jet3 v = Constant(0.22) + 0.05 * s + 0.008 * s4 + 0.01 * z;
   const Jet3 w = Constant(-0.14) + 0.04 * s + 0.007 * s4 - 0.015 * z;
 
@@ -249,6 +255,15 @@ const char *LayerRegion(const int radial_offset) {
 }
 
 template <int NGHOST>
+constexpr int ExpectedNearAxisOrder(const int layer) {
+  constexpr int fitted_order = 2 * (NGHOST - 1);
+  // At fixed rho/h, a raw odd quotient divides the O(h^p) centered-Dx error
+  // by rho=O(h), so the generic transition order is p-1. Fitted composites
+  // retain p; fixed nonzero physical rho is checked separately at p.
+  return layer < NGHOST ? fitted_order : fitted_order - 1;
+}
+
+template <int NGHOST>
 constexpr double FitDerivativeRowOneNorm() {
   if constexpr (NGHOST == 2) return 1.0;
   if constexpr (NGHOST == 3) return 1.5;
@@ -316,6 +331,33 @@ std::string ResultName(const int result) {
     return "tensor[" + std::to_string(offset / 7) + "]." + tensor_names[offset % 7];
   }
   return "state.dissipation";
+}
+
+bool CheckDirectNoiseDeltas(const ErrorSummary &clean, const ErrorSummary &noisy,
+                            const bool isotropy_only, const double bound,
+                            const int order, const double rho_over_h,
+                            const int layer, const char *region,
+                            const int noise_phase, const double h,
+                            const char *noise_kind) {
+  for (int result = 0; result < kNumResults; ++result) {
+    if (isotropy_only && !IsIsotropySensitiveResult(result)) continue;
+    const double clean_value = clean.observed[result];
+    const double noisy_value = noisy.observed[result];
+    const double amplification = fabs(noisy_value - clean_value);
+    if (!std::isfinite(noisy_value) || amplification > bound) {
+      std::cerr << "order " << order << " " << noise_kind
+                << " noise amplification failed at rho/h=" << rho_over_h
+                << " layer=" << layer << " region=" << region
+                << " phase=" << noise_phase << " h=" << h
+                << " result=" << ResultName(result) << " index=" << result
+                << " clean=" << clean_value << " noisy=" << noisy_value
+                << " oracle=" << clean.oracle[result]
+                << " amplification=" << amplification << " bound=" << bound
+                << '\n';
+      return false;
+    }
+  }
+  return true;
 }
 
 template <int NGHOST>
@@ -1082,6 +1124,58 @@ bool CheckBlockBoundaryReach() {
 }
 
 template <int NGHOST>
+bool CheckFixedRadiusRawConvergence(const double rho_sample) {
+  constexpr int order = 2 * (NGHOST - 1);
+  constexpr double coarse_h = 0.125;
+  constexpr double medium_h = 0.0625;
+  constexpr double fine_h = 0.03125;
+  const ErrorSummary coarse = MeasureSample<NGHOST>(
+      coarse_h, rho_sample, 0, 0.25, z4c::CartoonAxisLocation::cell_centered);
+  const ErrorSummary medium = MeasureSample<NGHOST>(
+      medium_h, rho_sample, 0, 0.25, z4c::CartoonAxisLocation::cell_centered);
+  const ErrorSummary fine = MeasureSample<NGHOST>(
+      fine_h, rho_sample, 0, 0.25, z4c::CartoonAxisLocation::cell_centered);
+  const double observed_order = std::log2(medium.derivative / fine.derivative);
+  const double fine_tolerance =
+      200.0 * std::pow(fine_h, order) * (1.0 + fabs(fine.worst_expected));
+  if (!(fine.derivative < medium.derivative && medium.derivative < coarse.derivative &&
+        observed_order >= order - 0.15 && fine.derivative <= fine_tolerance)) {
+    std::cerr << "order " << order
+              << " fixed-radius raw convergence failed at rho=" << rho_sample
+              << ": coarse=" << coarse.derivative << " medium=" << medium.derivative
+              << " fine=" << fine.derivative << " observed order=" << observed_order
+              << " worst=" << ResultName(fine.worst_result)
+              << " expected=" << fine.worst_expected
+              << " observed=" << fine.worst_observed
+              << " tolerance=" << fine_tolerance << '\n';
+    return false;
+  }
+  constexpr const char *family_names[3] = {"scalar", "vector", "tensor"};
+  for (int family = 0; family < 3; ++family) {
+    const double family_order = std::log2(medium.family[family] / fine.family[family]);
+    if (!(fine.family[family] < medium.family[family] &&
+          medium.family[family] < coarse.family[family] &&
+          family_order >= order - 0.15)) {
+      std::cerr << "order " << order << " fixed-radius raw " << family_names[family]
+                << " family failed at rho=" << rho_sample
+                << ": coarse=" << coarse.family[family]
+                << " medium=" << medium.family[family]
+                << " fine=" << fine.family[family]
+                << " observed order=" << family_order << " worst="
+                << ResultName(fine.family_worst_result[family]) << '\n';
+      return false;
+    }
+  }
+  std::cout << "order=" << order << " rho=" << rho_sample
+            << " region=raw-fixed-radius observed_order=" << observed_order
+            << " finest_error=" << fine.derivative
+            << " worst_result=" << ResultName(fine.worst_result)
+            << " expected=" << fine.worst_expected
+            << " observed=" << fine.worst_observed << '\n';
+  return true;
+}
+
+template <int NGHOST>
 bool CheckOrder() {
   constexpr int order = 2 * (NGHOST - 1);
   const auto near_axis_offsets = SignedNearAxisOffsets<NGHOST>();
@@ -1089,7 +1183,9 @@ bool CheckOrder() {
   // Both are compared to independently rotated full-Cartesian jet derivatives.
   if (!CheckMinimalFitReach<NGHOST>() || !CheckBlockBoundaryReach<NGHOST>() ||
       !CheckFullApiAndCartesianDelegation<NGHOST>(0.5) ||
-      !CheckFullApiAndCartesianDelegation<NGHOST>(-0.5)) {
+      !CheckFullApiAndCartesianDelegation<NGHOST>(-0.5) ||
+      !CheckFixedRadiusRawConvergence<NGHOST>(0.5) ||
+      !CheckFixedRadiusRawConvergence<NGHOST>(-0.5)) {
     return false;
   }
   const ErrorSummary coarse = MeasureSample<NGHOST>(
@@ -1119,28 +1215,39 @@ bool CheckOrder() {
     }
   }
 
-  for (const int radial_offset : near_axis_offsets) {
+  constexpr int signed_point_count = 2 * (NGHOST + 1);
+  std::array<ErrorSummary, signed_point_count> layer_coarse{};
+  std::array<ErrorSummary, signed_point_count> layer_medium{};
+  std::array<ErrorSummary, signed_point_count> layer_fine{};
+  for (int point = 0; point < signed_point_count; ++point) {
+    const int radial_offset = near_axis_offsets[point];
     const int layer = LayerFromOffset(radial_offset);
+    const int expected_order = ExpectedNearAxisOrder<NGHOST>(layer);
     const double rho_over_h = radial_offset + 0.5;
-    const ErrorSummary near_coarse = MeasureSample<NGHOST>(
+    ErrorSummary &near_coarse = layer_coarse[point];
+    ErrorSummary &near_medium = layer_medium[point];
+    ErrorSummary &near_fine = layer_fine[point];
+    near_coarse = MeasureSample<NGHOST>(
         0.125, 0.0625, radial_offset, 0.25,
         z4c::CartoonAxisLocation::cell_centered);
-    const ErrorSummary near_medium = MeasureSample<NGHOST>(
+    near_medium = MeasureSample<NGHOST>(
         0.0625, 0.03125, radial_offset, 0.25,
         z4c::CartoonAxisLocation::cell_centered);
-    const ErrorSummary near_fine = MeasureSample<NGHOST>(
+    near_fine = MeasureSample<NGHOST>(
         0.03125, 0.015625, radial_offset, 0.25,
         z4c::CartoonAxisLocation::cell_centered);
     const double near_order = std::log2(near_medium.derivative / near_fine.derivative);
     const double near_fine_tolerance =
-        200.0 * std::pow(0.03125, order) * (1.0 + fabs(near_fine.worst_expected));
+        200.0 * std::pow(0.03125, expected_order) *
+        (1.0 + fabs(near_fine.worst_expected));
     if (!(near_fine.derivative < near_medium.derivative &&
           near_medium.derivative < near_coarse.derivative &&
-          near_order >= order - 0.25 &&
+          near_order >= expected_order - 0.25 &&
           near_fine.derivative <= near_fine_tolerance)) {
       std::cerr << "order " << order << " near-axis convergence failed at rho/h="
                 << rho_over_h << " layer=" << layer
                 << " region=" << LayerRegion<NGHOST>(radial_offset)
+                << " expected order=" << expected_order
                 << ": coarse=" << near_coarse.derivative
                 << " medium=" << near_medium.derivative
                 << " fine=" << near_fine.derivative << " observed order=" << near_order
@@ -1155,11 +1262,12 @@ bool CheckOrder() {
           std::log2(near_medium.family[family] / near_fine.family[family]);
       if (!(near_fine.family[family] < near_medium.family[family] &&
             near_medium.family[family] < near_coarse.family[family] &&
-            family_order >= order - 0.25)) {
+            family_order >= expected_order - 0.25)) {
         std::cerr << "order " << order << " near-axis " << family_names[family]
                   << " family failed at rho/h=" << rho_over_h
                   << " layer=" << layer
                   << " region=" << LayerRegion<NGHOST>(radial_offset)
+                  << " expected order=" << expected_order
                   << ": coarse=" << near_coarse.family[family]
                   << " medium=" << near_medium.family[family]
                   << " fine=" << near_fine.family[family]
@@ -1171,6 +1279,7 @@ bool CheckOrder() {
     std::cout << "order=" << order << " rho/h=" << rho_over_h
               << " layer=" << layer
               << " region=" << LayerRegion<NGHOST>(radial_offset)
+              << " expected_order=" << expected_order
               << " clean_observed_order=" << near_order
               << " finest_error=" << near_fine.derivative
               << " worst_result=" << ResultName(near_fine.worst_result)
@@ -1181,8 +1290,10 @@ bool CheckOrder() {
   const double roundoff_noise =
       RoundoffNoiseUlps() * std::numeric_limits<Real>::epsilon();
   for (int noise_phase = 0; noise_phase < 8; ++noise_phase) {
-    for (const int radial_offset : near_axis_offsets) {
+    for (int point = 0; point < signed_point_count; ++point) {
+      const int radial_offset = near_axis_offsets[point];
       const int layer = LayerFromOffset(radial_offset);
+      const int expected_order = ExpectedNearAxisOrder<NGHOST>(layer);
       const double rho_over_h = radial_offset + 0.5;
       const ErrorSummary noisy_coarse = MeasureSample<NGHOST>(
           0.125, 0.0625, radial_offset, 0.25,
@@ -1196,16 +1307,39 @@ bool CheckOrder() {
       const double noisy_order =
           std::log2(noisy_medium.derivative / noisy_fine.derivative);
       const double noise_bound =
-          200.0 * std::pow(0.03125, order) * (1.0 + fabs(noisy_fine.worst_expected)) +
+          200.0 * std::pow(0.03125, expected_order) *
+              (1.0 + fabs(noisy_fine.worst_expected)) +
           NoiseCoefficientSafety<NGHOST>() * roundoff_noise /
               (0.03125 * 0.03125);
+      const double coarse_delta_bound =
+          NoiseCoefficientSafety<NGHOST>() * roundoff_noise / (0.125 * 0.125);
+      const double medium_delta_bound =
+          NoiseCoefficientSafety<NGHOST>() * roundoff_noise / (0.0625 * 0.0625);
+      const double fine_delta_bound =
+          NoiseCoefficientSafety<NGHOST>() * roundoff_noise / (0.03125 * 0.03125);
+      if (!CheckDirectNoiseDeltas(
+              layer_coarse[point], noisy_coarse, false, coarse_delta_bound, order,
+              rho_over_h, layer, LayerRegion<NGHOST>(radial_offset), noise_phase,
+              0.125, "shared-parity") ||
+          !CheckDirectNoiseDeltas(
+              layer_medium[point], noisy_medium, false, medium_delta_bound, order,
+              rho_over_h, layer, LayerRegion<NGHOST>(radial_offset), noise_phase,
+              0.0625, "shared-parity") ||
+          !CheckDirectNoiseDeltas(
+              layer_fine[point], noisy_fine, false, fine_delta_bound, order,
+              rho_over_h, layer, LayerRegion<NGHOST>(radial_offset), noise_phase,
+              0.03125, "shared-parity")) {
+        return false;
+      }
       if (!std::isfinite(noisy_fine.derivative) ||
           !(noisy_fine.derivative < noisy_medium.derivative &&
             noisy_medium.derivative < noisy_coarse.derivative &&
-            noisy_order >= order - 0.5 && noisy_fine.derivative <= noise_bound)) {
+            noisy_order >= expected_order - 0.5 &&
+            noisy_fine.derivative <= noise_bound)) {
         std::cerr << "order " << order << " parity-noise stability failed at rho/h="
                   << rho_over_h << " layer=" << layer
                   << " region=" << LayerRegion<NGHOST>(radial_offset)
+                  << " expected order=" << expected_order
                   << " phase=" << noise_phase
                   << " coarse=" << noisy_coarse.derivative
                   << " medium=" << noisy_medium.derivative
@@ -1225,12 +1359,10 @@ bool CheckOrder() {
   // O(h^-2), but it must remain finite and within that explicit bound.
   constexpr double independent_noise_h = 0.03125;
   for (int noise_phase = 0; noise_phase < 8; ++noise_phase) {
-    for (const int radial_offset : near_axis_offsets) {
+    for (int point = 0; point < signed_point_count; ++point) {
+      const int radial_offset = near_axis_offsets[point];
       const int layer = LayerFromOffset(radial_offset);
       const double rho_over_h = radial_offset + 0.5;
-      const ErrorSummary clean = MeasureSample<NGHOST>(
-          independent_noise_h, 0.5 * independent_noise_h, radial_offset, 0.25,
-          z4c::CartoonAxisLocation::cell_centered);
       const ErrorSummary noisy = MeasureSample<NGHOST>(
           independent_noise_h, 0.5 * independent_noise_h, radial_offset, 0.25,
           z4c::CartoonAxisLocation::cell_centered, roundoff_noise, noise_phase,
@@ -1238,23 +1370,11 @@ bool CheckOrder() {
       const double amplification_bound =
           NoiseCoefficientSafety<NGHOST>() * roundoff_noise /
           (independent_noise_h * independent_noise_h);
-      for (int result = 0; result < kNumResults; ++result) {
-        if (!IsIsotropySensitiveResult(result)) continue;
-        const double clean_value = clean.observed[result];
-        const double noisy_value = noisy.observed[result];
-        const double amplification = fabs(noisy_value - clean_value);
-        if (!std::isfinite(noisy_value) || amplification > amplification_bound) {
-          std::cerr << "order " << order
-                    << " independent tensor-noise amplification failed at rho/h="
-                    << rho_over_h << " layer=" << layer
-                    << " region=" << LayerRegion<NGHOST>(radial_offset)
-                    << " phase=" << noise_phase << " result=" << ResultName(result)
-                    << " index=" << result << " clean=" << clean_value
-                    << " noisy=" << noisy_value << " oracle=" << clean.oracle[result]
-                    << " amplification=" << amplification
-                    << " bound=" << amplification_bound << '\n';
-          return false;
-        }
+      if (!CheckDirectNoiseDeltas(
+              layer_fine[point], noisy, true, amplification_bound, order,
+              rho_over_h, layer, LayerRegion<NGHOST>(radial_offset), noise_phase,
+              independent_noise_h, "independent-component")) {
+        return false;
       }
     }
   }
