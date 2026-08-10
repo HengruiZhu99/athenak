@@ -16,6 +16,14 @@ if sp.__version__ != "1.14.0":
 
 
 COMPONENTS = ((0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2))
+EXACT_PLANE_ALGEBRAIC = {
+    "vector.0.first.2", "vector.2.first.2",
+    "tensor.lower.0.0.first.2", "tensor.lower.0.1.first.2",
+    "tensor.lower.0.2.first.2", "tensor.lower.1.2.first.2",
+    "tensor.lower.2.2.first.2", "tensor.upper.0.0.first.2",
+    "tensor.upper.0.1.first.2", "tensor.upper.0.2.first.2",
+    "tensor.upper.1.2.first.2", "tensor.upper.2.2.first.2",
+}
 # Conventional Cartesian points (x,y,z).  The meridional production plane is y=0;
 # these cover signed generic points, the true axis, every fitted half-cell family,
 # first raw layers, and the frozen +/-0.5 physical-radius targets.
@@ -276,6 +284,8 @@ def render_series(symbols: tuple[sp.Symbol, ...],
             classification = "exact_discrete"
         elif sp.simplify(expression.subs(y, 0)) == 0:
             classification = "exact_identity"
+        elif name in EXACT_PLANE_ALGEBRAIC:
+            classification = "exact_plane_algebraic"
         else:
             classification = "truncating"
         independent = name.startswith((
@@ -289,6 +299,9 @@ def render_series(symbols: tuple[sp.Symbol, ...],
                         "classification": classification,
                         "noise_lanes": noise_lanes,
                         "convergence_lanes": convergence_lanes})
+    assert {record["name"] for record in records
+            if record["classification"] == "exact_plane_algebraic"} == \
+        EXACT_PLANE_ALGEBRAIC
     return json.dumps({"schema": "athenak_z4c_cartoon_mms_series_v1",
                        "count": 171, "series": records},
                       indent=2, sort_keys=True) + "\n"

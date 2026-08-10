@@ -997,13 +997,14 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
     const auto json_path = output_directory / (basename + ".mms.json");
     std::ofstream csv(csv_path);
     if (!csv.is_open()) io_failure = 1;
-    csv << "operator,mask,count,nonfinite,l1,l2,linfinity,cyl_count,cyl_l1,"
-           "cyl_l2,cyl_linfinity,shared_l1,shared_l2,shared_linfinity,"
+    csv << "operator,mask,count,nonfinite,l1,l2,linfinity,cyl_count,"
+           "cylindrical_applicable,cyl_l1,cyl_l2,cyl_linfinity,shared_l1,shared_l2,"
+           "shared_linfinity,"
            "shared_delta_l1,shared_delta_l2,shared_delta_linfinity,"
            "independent_l1,independent_l2,independent_linfinity,"
            "independent_delta_l1,independent_delta_l2,"
            "independent_delta_linfinity,rotation_linfinity,target_abs_rho,"
-           "actual_abs_rho,mask_xor\n";
+           "radius_applicable,actual_abs_rho,mask_xor\n";
     const char *region_names[kRegions] = {
         "regular_negative", "regular_positive",
         "fitted_layer_0_negative", "fitted_layer_0_positive",
@@ -1040,7 +1041,13 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
               independent_delta_record.nonfinite)
           << ',' << std::setprecision(17) << l1 << ',' << l2
           << ',' << record.maximum << ',' << record.cylindrical_count << ','
-          << cyl_l1 << ',' << cyl_l2 << ',' << record.cylindrical_maximum << ','
+          << (record.cylindrical_count > 0 ? "true" : "false") << ',';
+      if (record.cylindrical_count > 0) {
+        csv << cyl_l1 << ',' << cyl_l2 << ',' << record.cylindrical_maximum;
+      } else {
+        csv << ",,";
+      }
+      csv << ','
           << norm_l1(shared_record) << ',' << norm_l2(shared_record) << ','
           << shared_record.maximum << ',' << norm_l1(shared_delta_record) << ','
           << norm_l2(shared_delta_record) << ',' << shared_delta_record.maximum << ','
@@ -1051,9 +1058,9 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
           << rotation_residual[result] << ',';
       if (std::string(mask).find("fixed_rho_") == 0) {
         const int fixed_layer = static_cast<int>(std::floor(0.5 / mesh->mesh_size.dx1));
-        csv << 0.5 << ',' << (fixed_layer + 0.5) * mesh->mesh_size.dx1;
+        csv << 0.5 << ",true," << (fixed_layer + 0.5) * mesh->mesh_size.dx1;
       } else {
-        csv << "nan,nan";
+        csv << ",false,";
       }
       csv << ',' << std::hex << record.mask_xor << std::dec << '\n';
     };
@@ -1075,7 +1082,8 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
     if (!csv) io_failure = 1;
     std::ofstream probes(probes_path);
     if (!probes.is_open()) io_failure = 1;
-    probes << "operator,mask,side,layer_index,classification,target_rho,"
+    probes << "operator,mask,side,layer_index,classification,target_rho_applicable,"
+              "target_rho,"
               "actual_rho,target_z,actual_z,global_cell_id,raw_error\n";
     const int global_center = mesh->mesh_indcs.nx1 / 2;
     const int probe_j = mesh->mesh_indcs.nx2 / 2;
@@ -1086,15 +1094,16 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
       const int side = region_index % 2;
       int layer = 0;
       const char *classification = "regular";
+      bool target_rho_applicable = true;
       double target_rho = side == 0 ? -1.0 : 1.0;
       if (region_index >= 2 && region_index <= 9) {
         layer = (region_index - 2) / 2;
         classification = "fitted";
-        target_rho = std::numeric_limits<double>::quiet_NaN();
+        target_rho_applicable = false;
       } else if (region_index == 10 || region_index == 11) {
         layer = NGHOST;
         classification = "raw_transition";
-        target_rho = std::numeric_limits<double>::quiet_NaN();
+        target_rho_applicable = false;
       } else if (region_index == 12 || region_index == 13) {
         layer = static_cast<int>(std::floor(0.5 / mesh->mesh_size.dx1));
         classification = "fixed_radius";
@@ -1111,13 +1120,18 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
       for (int result = 0; result < kResults; ++result) {
         probes << names[result] << ',' << region_names[region_index] << ','
                << (side == 0 ? "negative" : "positive") << ',' << layer << ','
-               << classification << ',' << std::setprecision(17) << target_rho << ','
+               << classification << ','
+               << (target_rho_applicable ? "true," : "false,")
+               << std::setprecision(17);
+        if (target_rho_applicable) probes << target_rho;
+        probes << ','
                << actual_rho << ',' << 0.0 << ',' << actual_z << ',' << global_id << ','
                << ordered_errors[global_id * kResults + result] << '\n';
       }
     }
     for (int result = 0; result < kResults - kVariables; ++result) {
-      probes << names[result] << ",diagnostic_axis,axis,0,diagnostic_axis,0,0,0,0,-1,"
+      probes << names[result]
+             << ",diagnostic_axis,axis,0,diagnostic_axis,true,0,0,0,0,-1,"
              << std::setprecision(17) << axis.errors[result] << '\n';
     }
     probes.close();

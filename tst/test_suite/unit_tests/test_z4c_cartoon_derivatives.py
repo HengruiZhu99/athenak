@@ -19,6 +19,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import uuid
 
@@ -26,6 +27,10 @@ import uuid
 SCHEMA = "athenak_z4c_cartoon_derivative_mms_campaign_v1"
 REDUCTION_TOLERANCE_FACTOR = 4096.0
 SATURATION_FACTOR = 4096.0
+DIAGNOSTIC_RESOLUTIONS = (32, 64, 128, 256)
+PRESERVED_JOB_56586376_BYTES = 715_807_842
+PRESERVED_JOB_56586376_CONVERGENCE_SHA256 = \
+    "fdb4222c246b49d4df3c8ef40688dafacfd7983d5f090a2fe148d051538778a0"
 CASE_ENVIRONMENT_KEYS = (
     "CUDA_DEVICE_ORDER", "CUDA_VISIBLE_DEVICES", "KOKKOS_NUM_DEVICES",
     "KOKKOS_NUM_THREADS", "OMPI_COMM_WORLD_SIZE", "PMIX_NAMESPACE",
@@ -38,6 +43,21 @@ CASE_FIXED_FILES = {
     "input.athinput", "stdout.txt", "stderr.txt", "cartoon_mms.mms.json",
     "cartoon_mms.mms.csv", "cartoon_mms.mms.probes.csv", "result.json",
 }
+NORM_FIELDS = {
+    "operator", "mask", "count", "nonfinite", "l1", "l2", "linfinity",
+    "cyl_count", "cylindrical_applicable", "cyl_l1", "cyl_l2",
+    "cyl_linfinity", "shared_l1", "shared_l2", "shared_linfinity",
+    "shared_delta_l1", "shared_delta_l2", "shared_delta_linfinity",
+    "independent_l1", "independent_l2", "independent_linfinity",
+    "independent_delta_l1", "independent_delta_l2",
+    "independent_delta_linfinity", "rotation_linfinity", "target_abs_rho",
+    "radius_applicable", "actual_abs_rho", "mask_xor",
+}
+PROBE_FIELDS = {
+    "operator", "mask", "side", "layer_index", "classification",
+    "target_rho_applicable", "target_rho", "actual_rho", "target_z", "actual_z",
+    "global_cell_id", "raw_error",
+}
 
 
 def sha256(path: Path) -> str:
@@ -46,6 +66,109 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def load_json_strict(path: Path) -> object:
+    def reject_constant(token: str) -> None:
+        raise ValueError(f"nonfinite JSON token {token}")
+    return json.loads(path.read_text(encoding="utf-8"), parse_constant=reject_constant)
+
+
+def finite_value(row: dict[str, str], field: str) -> float:
+    if field not in row or row[field] == "":
+        raise RuntimeError(f"missing applicable numeric field {field}")
+    value = float(row[field])
+    if not math.isfinite(value):
+        raise RuntimeError(f"nonfinite numeric field {field}")
+    return value
+
+
+def integer_value(row: dict[str, str], field: str, minimum: int = 0) -> int:
+    if not re.fullmatch(r"[+-]?\d+", row.get(field, "")):
+        raise RuntimeError(f"malformed integer field {field}")
+    value = int(row[field])
+    if value < minimum:
+        raise RuntimeError(f"out-of-range integer field {field}")
+    return value
+
+
+def boolean_value(row: dict[str, str], field: str) -> bool:
+    if row.get(field) not in {"true", "false"}:
+        raise RuntimeError(f"malformed applicability field {field}")
+    return row[field] == "true"
+
+
+def validate_norm_row(row: dict[str, str]) -> None:
+    if set(row) != NORM_FIELDS or not row.get("operator") or not row.get("mask"):
+        raise RuntimeError("norm CSV schema differs from the frozen exact field set")
+    count = integer_value(row, "count", 1)
+    if integer_value(row, "nonfinite") != 0:
+        raise RuntimeError("norm CSV reports a nonfinite computation")
+    cyl_count = integer_value(row, "cyl_count")
+    if cyl_count > count:
+        raise RuntimeError("cylindrical count exceeds uniform count")
+    for field in ("l1", "l2", "linfinity", "shared_l1",
+                  "shared_l2", "shared_linfinity", "shared_delta_l1",
+                  "shared_delta_l2", "shared_delta_linfinity", "independent_l1",
+                  "independent_l2", "independent_linfinity", "independent_delta_l1",
+                  "independent_delta_l2", "independent_delta_linfinity",
+                  "rotation_linfinity"):
+        finite_value(row, field)
+    cylindrical = boolean_value(row, "cylindrical_applicable")
+    if cylindrical != (cyl_count > 0):
+        raise RuntimeError("cylindrical applicability/count disagreement")
+    for field in ("cyl_l1", "cyl_l2", "cyl_linfinity"):
+        if cylindrical:
+            finite_value(row, field)
+        elif row.get(field) != "":
+            raise RuntimeError("inapplicable cylindrical norm must be blank")
+    radius = boolean_value(row, "radius_applicable")
+    expected_radius = row["mask"].startswith("fixed_rho_")
+    if radius != expected_radius:
+        raise RuntimeError("radius applicability/mask disagreement")
+    for field in ("target_abs_rho", "actual_abs_rho"):
+        if radius:
+            finite_value(row, field)
+        elif row.get(field) != "":
+            raise RuntimeError("inapplicable radius metadata must be blank")
+    if not re.fullmatch(r"[0-9a-f]+", row.get("mask_xor", "")):
+        raise RuntimeError("malformed mask_xor")
+
+
+def expected_probe_metadata(mask: str) -> tuple[str, str, bool]:
+    if mask == "diagnostic_axis":
+        return "axis", "diagnostic_axis", True
+    side = "negative" if mask.endswith("negative") or "negative_" in mask \
+        else "positive"
+    if mask.startswith("fitted_layer_"):
+        return side, "fitted", False
+    if mask.startswith("raw_transition_"):
+        return side, "raw_transition", False
+    if mask.startswith("fixed_rho_"):
+        return side, "fixed_radius", True
+    if mask.startswith("regular_"):
+        return side, "regular", True
+    raise RuntimeError(f"unknown probe mask {mask}")
+
+
+def validate_probe_row(row: dict[str, str]) -> None:
+    if set(row) != PROBE_FIELDS or not row.get("operator"):
+        raise RuntimeError("probe CSV schema differs from the frozen exact field set")
+    side, classification, target_applicable = expected_probe_metadata(row["mask"])
+    if row["side"] != side or row["classification"] != classification:
+        raise RuntimeError("probe side/classification disagrees with mask")
+    integer_value(row, "layer_index")
+    global_id = integer_value(row, "global_cell_id", -1)
+    if (classification == "diagnostic_axis") != (global_id == -1):
+        raise RuntimeError("probe global-cell applicability disagreement")
+    if boolean_value(row, "target_rho_applicable") != target_applicable:
+        raise RuntimeError("probe target-rho applicability disagreement")
+    if target_applicable:
+        finite_value(row, "target_rho")
+    elif row.get("target_rho") != "":
+        raise RuntimeError("inapplicable target_rho must be blank")
+    for field in ("actual_rho", "target_z", "actual_z", "raw_error"):
+        finite_value(row, field)
 
 
 def write_atomic(path: Path, value: object) -> None:
@@ -94,6 +217,86 @@ def render_input(base: Path, order: int, resolution: int, phase: int,
     ):
         text = replace_parameter(text, block, key, value)
     return text
+
+
+def rate_policy(order: int, mask: str, lane: str, norm: str,
+                probe_classification: str | None = None) -> tuple[float, float]:
+    expected = float(order)
+    margin = 0.15 if lane == "clean" else 0.5
+    if probe_classification == "raw_transition" or mask.startswith("raw_transition"):
+        expected = float(order - 1)
+        margin = 0.25 if lane == "clean" else 0.5
+    elif probe_classification == "fitted" or mask.startswith("fitted_layer_"):
+        margin = 0.25 if lane == "clean" else 0.5
+    elif mask == "full_signed_plane":
+        if norm in ("l1", "cyl_l1", "cyl_l2"):
+            expected = float(order)
+        elif norm == "l2":
+            expected = order - 0.5
+        else:
+            expected = float(order - 1)
+        margin = 0.25 if lane == "clean" else 0.5
+    return expected, margin
+
+
+def evaluate_rate_samples(values: list[dict[str, float]], expected: float,
+                          margin: float, lane: str) -> dict[str, object]:
+    rates: list[float | None] = []
+    rate_status = []
+    prefix_rates = []
+    absorbing = False
+    unsaturated_prefix = 0
+    for coarse, fine in zip(values, values[1:]):
+        floor = SATURATION_FACTOR * sys.float_info.epsilon * max(1.0, coarse["error"])
+        if lane != "clean":
+            floor = max(floor, 8.0 * max(coarse["direct_delta"],
+                                         fine["direct_delta"]))
+        if absorbing or fine["error"] <= floor:
+            absorbing = True
+            rates.append(None)
+            rate_status.append("saturated")
+        elif fine["error"] > 0.0 and coarse["error"] >= fine["error"]:
+            rate = math.log(coarse["error"] / fine["error"]) / \
+                math.log(fine["resolution"] / coarse["resolution"])
+            rates.append(rate)
+            rate_status.append("rate")
+            prefix_rates.append(rate)
+            unsaturated_prefix += 1
+        else:
+            rates.append(None)
+            rate_status.append("nonmonotone")
+            prefix_rates.append(float("-inf"))
+            unsaturated_prefix += 1
+    passed = (unsaturated_prefix >= 2 and
+              min(float(value) for value in prefix_rates[-2:]) >= expected - margin)
+    return {"rates": rates, "unsaturated_prefix_ratios": unsaturated_prefix,
+            "rate_status": rate_status, "saturation_absorbing": absorbing,
+            "passed": passed}
+
+
+def output_forecast(resolutions_by_order: dict[int, tuple[int, ...]], phases: list[int],
+                    ranks: int, rank_comparison: bool) -> dict[str, int]:
+    norm_rows = 0
+    probe_rows = 0
+    case_count = 0
+    for order, resolutions in resolutions_by_order.items():
+        nghost = order // 2 + 1
+        cases = len(resolutions) * len(phases)
+        case_count += cases
+        norm_rows += cases * 171 * (7 + 2 * nghost)
+        probe_rows += cases * (171 * (6 + 2 * nghost) + 161)
+    case_products = (norm_rows * 2048 + probe_rows * 1024 +
+                     case_count * (5 + ranks) * 1024 * 1024)
+    aggregate_products = norm_rows * 8192 + probe_rows * 4096 + 128 * 1024 * 1024
+    comparison_products = 512 * 1024 * 1024 if rank_comparison else 0
+    total = case_products + aggregate_products + comparison_products
+    if min(case_count, norm_rows, probe_rows, total) <= 0:
+        raise RuntimeError("invalid checked output forecast inventory")
+    return {"case_count": case_count, "norm_rows": norm_rows,
+            "probe_rows": probe_rows, "case_products": case_products,
+            "aggregate_products": aggregate_products,
+            "rank_comparison_products": comparison_products,
+            "estimated_output_bytes_upper_bound": total}
 
 
 def git_value(root: Path, *arguments: str) -> str:
@@ -150,6 +353,109 @@ def self_test_no_evolution_parser() -> None:
     except RuntimeError:
         return
     raise RuntimeError("no-evolution parser accepted a nonzero stdout record")
+
+
+def expect_runtime_error(action, label: str) -> None:
+    try:
+        action()
+    except (RuntimeError, ValueError):
+        return
+    raise RuntimeError(f"CPU-audit self-test accepted {label}")
+
+
+def self_test_cpu_audit_policy() -> None:
+    """Exercise the audit plumbing without launching Athena or creating a campaign."""
+    if rate_policy(6, "fitted_layer_0_negative", "clean", "l1") != (6.0, 0.25):
+        raise RuntimeError("fitted clean margin is not p-0.25")
+    if rate_policy(4, "raw_transition_positive", "clean", "raw_error",
+                   "raw_transition") != (3.0, 0.25):
+        raise RuntimeError("raw-probe policy is not p-1 with the clean margin")
+    if rate_policy(4, "full_signed_plane", "clean", "cyl_l2") != (4.0, 0.25):
+        raise RuntimeError("full-plane cylindrical L2 policy is not p")
+    if rate_policy(4, "full_signed_plane", "clean", "cyl_linfinity") != (3.0, 0.25):
+        raise RuntimeError("full-plane cylindrical Linfinity policy is not p-1")
+
+    # Immutable examples are copied from convergence.json in CPU job 56586376.
+    o2_miss = [
+        {"resolution": 32, "error": 4.182343874808808e-4, "direct_delta": 0.0},
+        {"resolution": 64, "error": 1.6220836147908628e-4, "direct_delta": 0.0},
+        {"resolution": 128, "error": 5.573831257431492e-5, "direct_delta": 0.0},
+        {"resolution": 256, "error": 1.77800308574143e-5, "direct_delta": 0.0},
+    ]
+    miss = evaluate_rate_samples(o2_miss, 2.0, 0.25, "clean")
+    if miss["passed"] or miss["rate_status"] != ["rate", "rate", "rate"]:
+        raise RuntimeError("pre-floor order-2 miss was hidden or reclassified")
+    o6_roundoff = [
+        {"resolution": 32, "error": 6.0337018612239125e-9, "direct_delta": 0.0},
+        {"resolution": 64, "error": 4.7733002365378305e-11, "direct_delta": 0.0},
+        {"resolution": 128, "error": 3.7376593184852193e-13, "direct_delta": 0.0},
+        {"resolution": 256, "error": 5.558874451157167e-15, "direct_delta": 0.0},
+    ]
+    saturated = evaluate_rate_samples(o6_roundoff, 6.0, 0.25, "clean")
+    if (saturated["passed"] or saturated["rate_status"] !=
+            ["rate", "saturated", "saturated"] or
+            saturated["unsaturated_prefix_ratios"] != 1):
+        raise RuntimeError("absorbing saturation invented or re-entered a rate")
+
+    valid_norm = {field: "" for field in NORM_FIELDS}
+    valid_norm.update({"operator": "scalar.first.0", "mask": "regular_negative",
+                       "count": "16", "nonfinite": "0", "cyl_count": "0",
+                       "cylindrical_applicable": "false",
+                       "radius_applicable": "false", "mask_xor": "0"})
+    for field in ("l1", "l2", "linfinity", "shared_l1", "shared_l2",
+                  "shared_linfinity", "shared_delta_l1", "shared_delta_l2",
+                  "shared_delta_linfinity", "independent_l1", "independent_l2",
+                  "independent_linfinity", "independent_delta_l1",
+                  "independent_delta_l2", "independent_delta_linfinity",
+                  "rotation_linfinity"):
+        valid_norm[field] = "0"
+    validate_norm_row(valid_norm)
+    for label, edit in (
+        ("NaN numeric metadata", {"l1": "nan"}),
+        ("infinite numeric metadata", {"l2": "inf"}),
+        ("applicable blank cylindrical metadata",
+         {"cyl_count": "1", "cylindrical_applicable": "true"}),
+        ("inapplicable populated cylindrical metadata", {"cyl_l1": "0"}),
+        ("radius applicability disagreement", {"radius_applicable": "true"}),
+        ("missing schema field", {"mask_xor": None}),
+    ):
+        candidate = dict(valid_norm)
+        for key, value in edit.items():
+            if value is None:
+                candidate.pop(key)
+            else:
+                candidate[key] = value
+        expect_runtime_error(lambda row=candidate: validate_norm_row(row), label)
+
+    valid_probe = {"operator": "scalar.first.0", "mask": "raw_transition_negative",
+                   "side": "negative", "layer_index": "2",
+                   "classification": "raw_transition",
+                   "target_rho_applicable": "false", "target_rho": "",
+                   "actual_rho": "-0.1", "target_z": "0", "actual_z": "0",
+                   "global_cell_id": "7", "raw_error": "0"}
+    validate_probe_row(valid_probe)
+    for label, edit in (
+        ("nonfinite probe error", {"raw_error": "-inf"}),
+        ("inapplicable populated target", {"target_rho": "-0.1"}),
+        ("probe applicability disagreement", {"target_rho_applicable": "true"}),
+        ("probe classification disagreement", {"classification": "fitted"}),
+    ):
+        candidate = {**valid_probe, **edit}
+        expect_runtime_error(lambda row=candidate: validate_probe_row(row), label)
+
+    with tempfile.TemporaryDirectory(prefix="cartoon-mms-audit-") as directory:
+        nonfinite = Path(directory) / "nonfinite.json"
+        nonfinite.write_text('{"value": NaN}\n', encoding="utf-8")
+        expect_runtime_error(lambda: load_json_strict(nonfinite), "nonfinite JSON")
+
+    forecast = output_forecast({order: DIAGNOSTIC_RESOLUTIONS for order in (2, 4, 6)},
+                               list(range(8)), 4, False)
+    if (forecast["case_count"] != 96 or
+            forecast["estimated_output_bytes_upper_bound"] != 4_313_219_072 or
+            forecast["estimated_output_bytes_upper_bound"] <=
+            PRESERVED_JOB_56586376_BYTES or
+            len(PRESERVED_JOB_56586376_CONVERGENCE_SHA256) != 64):
+        raise RuntimeError("output forecast/audit anchor differs from frozen CPU evidence")
 
 
 def verified_complete(case: Path, identity: dict[str, object]) -> bool:
@@ -222,7 +528,9 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     raw_result = case / f"{basename}.mms.json"
     raw_csv = case / f"{basename}.mms.csv"
     probes_csv = case / f"{basename}.mms.probes.csv"
-    result = json.loads(raw_result.read_text(encoding="utf-8"))
+    result = load_json_strict(raw_result)
+    if not isinstance(result, dict):
+        raise RuntimeError(f"case {key} result JSON is not an object")
     if result.get("status") != "pass" or result.get("operator_count") != 171:
         raise RuntimeError(f"case {key} did not produce the complete passing 171-series set")
     verify_no_evolution(key, stdout_text, result)
@@ -247,6 +555,8 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
             raise RuntimeError(
                 f"case {key} requires four concrete, distinct CUDA UUID bindings")
     rows = list(csv.DictReader(raw_csv.open(encoding="utf-8")))
+    for row in rows:
+        validate_norm_row(row)
     operator_set = {row["operator"] for row in rows}
     operator_names = result.get("operator_names")
     if (not isinstance(operator_names, list) or len(operator_names) != 171 or
@@ -258,6 +568,8 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
            float(row["independent_delta_linfinity"]) > noise_bound for row in rows):
         raise RuntimeError(f"case {key} exceeds frozen direct noise-delta bound")
     probe_rows = list(csv.DictReader(probes_csv.open(encoding="utf-8")))
+    for row in probe_rows:
+        validate_probe_row(row)
     if {row["operator"] for row in probe_rows} != operator_set or \
        any(not math.isfinite(float(row["raw_error"])) for row in probe_rows) or \
        any(not row["layer_index"] or not row["classification"] for row in probe_rows):
@@ -302,136 +614,183 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
 
 def convergence_gate(cases: list[dict[str, object]], output: Path,
                      series_manifest: Path) -> None:
-    inventory = json.loads(series_manifest.read_text(encoding="utf-8"))
-    classes = {item["name"]: item["classification"] for item in inventory["series"]}
-    convergence_lanes = {item["name"]: item["convergence_lanes"]
-                         for item in inventory["series"]}
-    if inventory.get("count") != 171 or len(classes) != 171:
+    inventory = load_json_strict(series_manifest)
+    if not isinstance(inventory, dict) or inventory.get("count") != 171:
         raise RuntimeError("series manifest does not enumerate exactly 171 operators")
-    grouped = {}
+    metadata = {item["name"]: item for item in inventory["series"]}
+    if len(metadata) != 171:
+        raise RuntimeError("series manifest has duplicate operators")
+    grouped: dict[tuple[object, ...], list[dict[str, float]]] = {}
     exact_records = []
     failures = []
+    seen_norm_rows = set()
+    seen_probe_rows = set()
+
+    def add_sample(key: tuple[object, ...], sample: dict[str, float]) -> None:
+        grouped.setdefault(key, []).append(sample)
+
     for result in cases:
         case = output / f"{result['case_id']}-{result['case_uuid']}"
-        rows = csv.DictReader((case / "cartoon_mms.mms.csv").open(encoding="utf-8"))
+        order = int(result["spatial_order"])
+        resolution = int(result["resolution"])
+        phase = int(result["phase"])
+        noise_bound = float(result["noise_delta_bound"])
+        rows = list(csv.DictReader(
+            (case / "cartoon_mms.mms.csv").open(encoding="utf-8")))
         for row in rows:
-            operator = row["operator"]
-            classification = classes.get(operator)
-            if classification is None:
-                failures.append(f"unknown operator {operator}")
+            identity = (order, resolution, phase, row["operator"], row["mask"])
+            if identity in seen_norm_rows:
+                failures.append(f"duplicate norm row {identity}")
                 continue
-            order = int(result["spatial_order"])
-            resolution = int(result["resolution"])
-            phase = int(result["phase"])
-            mask = row["mask"]
+            seen_norm_rows.add(identity)
+            item = metadata.get(row["operator"])
+            if item is None:
+                failures.append(f"unknown operator {row['operator']}")
+                continue
+            classification = item["classification"]
             if classification != "truncating":
-                bound = 2.0e-10 if classification == "exact_discrete" else (
-                    SATURATION_FACTOR * sys.float_info.epsilon * resolution * resolution)
-                passed = float(row["linfinity"]) <= bound
-                exact_records.append({"order": order, "phase": phase,
-                                      "resolution": resolution, "operator": operator,
-                                      "mask": mask, "classification": classification,
-                                      "value": float(row["linfinity"]), "bound": bound,
-                                      "passed": passed})
+                bound = (2.0e-10 if classification == "exact_discrete" else
+                         SATURATION_FACTOR * sys.float_info.epsilon *
+                         resolution * resolution)
+                delta_values = {lane: finite_value(row, f"{lane}_delta_linfinity")
+                                for lane in item["noise_lanes"]}
+                passed = finite_value(row, "linfinity") <= bound and \
+                    all(value <= noise_bound for value in delta_values.values())
+                exact_records.append({
+                    "source": "norm", "order": order, "phase": phase,
+                    "resolution": resolution, "operator": row["operator"],
+                    "mask": row["mask"], "classification": classification,
+                    "value": finite_value(row, "linfinity"), "bound": bound,
+                    "direct_delta_linfinity": delta_values,
+                    "direct_delta_bound": noise_bound, "passed": passed})
                 if not passed:
-                    failures.append(f"exact gate failed {operator} {mask} N={resolution}")
+                    failures.append(
+                        f"exact norm gate failed {row['operator']} {row['mask']} "
+                        f"N={resolution}")
                 continue
             clean_norms = ["l1", "l2", "linfinity"]
-            if int(row["cyl_count"]) > 0:
+            if boolean_value(row, "cylindrical_applicable"):
                 clean_norms += ["cyl_l1", "cyl_l2", "cyl_linfinity"]
-            for norm in clean_norms:
-                grouped.setdefault((order, phase, operator + "|" + mask,
-                                    "clean", norm), []).append(
-                    (resolution, float(row[norm]), 0.0))
-            for lane in ("shared", "independent"):
-                if lane not in convergence_lanes[operator]:
-                    continue
-                for norm in ("l1", "l2", "linfinity"):
-                    grouped.setdefault((order, phase, operator + "|" + mask,
-                                        lane, norm), []).append(
-                        (resolution, float(row[f"{lane}_{norm}"]),
-                         float(row[f"{lane}_delta_{norm}"])))
+            for lane in item["convergence_lanes"]:
+                norms = clean_norms if lane == "clean" else ["l1", "l2", "linfinity"]
+                for norm in norms:
+                    error_field = norm if lane == "clean" else f"{lane}_{norm}"
+                    delta_field = None if lane == "clean" else f"{lane}_delta_{norm}"
+                    add_sample(("norm", order, phase,
+                                row["operator"] + "|" + row["mask"], lane, norm),
+                               {"resolution": resolution,
+                                "error": finite_value(row, error_field),
+                                "direct_delta": 0.0 if delta_field is None else
+                                finite_value(row, delta_field)})
+
+        probes = list(csv.DictReader(
+            (case / "cartoon_mms.mms.probes.csv").open(encoding="utf-8")))
+        for row in probes:
+            if row["classification"] == "diagnostic_axis":
+                continue
+            identity = (order, resolution, phase, row["operator"], row["mask"],
+                        row["side"], row["layer_index"])
+            if identity in seen_probe_rows:
+                failures.append(f"duplicate raw probe row {identity}")
+                continue
+            seen_probe_rows.add(identity)
+            item = metadata.get(row["operator"])
+            if item is None:
+                failures.append(f"unknown raw-probe operator {row['operator']}")
+                continue
+            classification = item["classification"]
+            if classification != "truncating":
+                bound = (2.0e-10 if classification == "exact_discrete" else
+                         SATURATION_FACTOR * sys.float_info.epsilon *
+                         resolution * resolution)
+                value = finite_value(row, "raw_error")
+                passed = value <= bound
+                exact_records.append({
+                    "source": "probe", "order": order, "phase": phase,
+                    "resolution": resolution, "operator": row["operator"],
+                    "mask": row["mask"], "side": row["side"],
+                    "layer_index": integer_value(row, "layer_index"),
+                    "classification": classification, "value": value,
+                    "bound": bound, "passed": passed})
+                if not passed:
+                    failures.append(
+                        f"exact probe gate failed {row['operator']} {row['mask']} "
+                        f"N={resolution}")
+                continue
+            series = "|".join((row["operator"], row["mask"], row["side"],
+                               row["layer_index"]))
+            add_sample(("probe", order, phase, series, "clean", "raw_error"),
+                       {"resolution": resolution,
+                        "error": finite_value(row, "raw_error"),
+                        "direct_delta": 0.0,
+                        "probe_classification": row["classification"]})
+
     records = []
-    epsilon = sys.float_info.epsilon
-    for key, values in grouped.items():
-        order, phase, series, lane, norm = key
-        values.sort()
-        if len(values) != 4:
-            failures.append(f"{key}: expected four resolutions")
+    for key, all_values in grouped.items():
+        source, order, phase, series, lane, norm = key
+        all_values.sort(key=lambda item: item["resolution"])
+        if tuple(item["resolution"] for item in all_values) != DIAGNOSTIC_RESOLUTIONS:
+            failures.append(f"{key}: expected the four diagnostic resolutions")
             continue
-        mask = series.split("|")[-1]
-        expected = order
-        margin = 0.15 if lane == "clean" else 0.5
-        if mask.startswith("raw_transition"):
-            expected = order - 1
-            margin = 0.25 if lane == "clean" else 0.5
-        elif mask == "full_signed_plane":
-            if norm in ("l1", "cyl_l1", "cyl_l2"):
-                expected = order
-            elif norm == "l2":
-                expected = order - 0.5
-            else:
-                expected = order - 1
-            margin = 0.25 if lane == "clean" else 0.5
-        ratios = []
-        for (coarse_n, coarse, coarse_delta), (fine_n, fine, fine_delta) in zip(
-                values, values[1:]):
-            arithmetic_floor = SATURATION_FACTOR * epsilon * max(1.0, coarse)
-            noise_floor = 8.0 * max(coarse_delta, fine_delta) if lane != "clean" else 0.0
-            if fine <= max(arithmetic_floor, noise_floor):
-                ratios.append(None)
-            elif fine > 0.0 and coarse >= fine:
-                ratios.append(math.log(coarse / fine) / math.log(fine_n / coarse_n))
-            else:
-                ratios.append(float("-inf"))
-        unsaturated = [rate for rate in ratios if rate is not None]
-        passed = len(unsaturated) >= 2 and min(unsaturated[-2:]) >= expected - margin
-        records.append({"order": order, "phase": phase, "series": series,
-                        "lane": lane, "norm": norm, "expected": expected,
-                        "samples": [{"resolution": n, "error": error,
-                                     "direct_delta": delta}
-                                    for n, error, delta in values],
-                        "rates": ratios, "passed": passed})
-        if not passed:
-            failures.append(f"{key}: rates={ratios}, expected>={expected-margin}")
-    records.sort(key=lambda item: (item["order"], item["phase"], item["series"],
-                                   item["lane"], item["norm"]))
+        selected = all_values
+        mask = series.split("|")[1]
+        probe_classification = (selected[0].get("probe_classification")
+                                if selected else None)
+        expected, margin = rate_policy(order, mask, lane, norm,
+                                       probe_classification)
+        evaluation = evaluate_rate_samples(selected, expected, margin, lane)
+        if not evaluation["passed"]:
+            failures.append(
+                f"{key}: rates={evaluation['rates']} "
+                f"status={evaluation['rate_status']} "
+                f"expected>={expected-margin}")
+        record = {"source": source, "order": order, "phase": phase,
+                  "series": series, "lane": lane, "norm": norm,
+                  "expected": expected, "margin": margin,
+                  "diagnostic_resolutions": list(DIAGNOSTIC_RESOLUTIONS),
+                  "samples": selected}
+        record.update(evaluation)
+        records.append(record)
+
+    records.sort(key=lambda item: (item["order"], item["phase"], item["source"],
+                                   item["series"], item["lane"], item["norm"]))
     exact_records.sort(key=lambda item: (item["order"], item["phase"],
-                                         item["resolution"], item["operator"],
-                                         item["mask"]))
+                                         item["resolution"], item["source"],
+                                         item["operator"], item["mask"]))
     table_rows = []
     for record in records:
         samples = record["samples"]
-        for index, rate in enumerate(record["rates"]):
+        for index, status in enumerate(record.get("rate_status", [])):
+            rate = record["rates"][index]
             table_rows.append({
-                "order": record["order"], "phase": record["phase"],
-                "series": record["series"], "lane": record["lane"],
-                "norm": record["norm"], "coarse_resolution":
-                samples[index]["resolution"], "fine_resolution":
-                samples[index + 1]["resolution"], "coarse_error":
-                f"{samples[index]['error']:.17g}", "fine_error":
-                f"{samples[index + 1]['error']:.17g}", "coarse_direct_delta":
-                f"{samples[index]['direct_delta']:.17g}", "fine_direct_delta":
-                f"{samples[index + 1]['direct_delta']:.17g}", "observed_rate":
-                "saturated" if rate is None else f"{rate:.17g}",
+                "source": record["source"], "order": record["order"],
+                "phase": record["phase"], "series": record["series"],
+                "lane": record["lane"], "norm": record["norm"],
+                "coarse_resolution": samples[index]["resolution"],
+                "fine_resolution": samples[index + 1]["resolution"],
+                "coarse_error": f"{samples[index]['error']:.17g}",
+                "fine_error": f"{samples[index + 1]['error']:.17g}",
+                "coarse_direct_delta": f"{samples[index]['direct_delta']:.17g}",
+                "fine_direct_delta": f"{samples[index + 1]['direct_delta']:.17g}",
+                "rate_status": status,
+                "observed_rate": "" if rate is None else f"{rate:.17g}",
                 "expected_rate": f"{record['expected']:.17g}",
                 "passed": int(record["passed"]),
             })
-    fields = ["order", "phase", "series", "lane", "norm", "coarse_resolution",
-              "fine_resolution", "coarse_error", "fine_error",
-              "coarse_direct_delta", "fine_direct_delta", "observed_rate",
+    fields = ["source", "order", "phase", "series", "lane", "norm",
+              "coarse_resolution", "fine_resolution", "coarse_error", "fine_error",
+              "coarse_direct_delta", "fine_direct_delta", "rate_status", "observed_rate",
               "expected_rate", "passed"]
     csv_path = output / "convergence.csv"
     data_path = output / "convergence_rates.pgfplots.dat"
     write_csv_atomic(csv_path, fields, table_rows)
-    # The whitespace-delimited PGFPlots source is intentionally a numeric projection;
-    # series names remain in the checksum-bound CSV/JSON and cannot confuse TeX parsing.
     plot_rows = [{"order": row["order"], "phase": row["phase"],
-                  "lane_id": {"clean": 0, "shared": 1, "independent": 2}[row["lane"]],
+                  "lane_id": {"clean": 0, "shared": 1,
+                              "independent": 2}[row["lane"]],
                   "fine_resolution": row["fine_resolution"],
                   "observed_rate": row["observed_rate"],
                   "expected_rate": row["expected_rate"], "passed": row["passed"]}
-                 for row in table_rows if row["observed_rate"] != "saturated"]
+                 for row in table_rows if row["rate_status"] == "rate"]
     plot_fields = ["order", "phase", "lane_id", "fine_resolution",
                    "observed_rate", "expected_rate", "passed"]
     write_csv_atomic(data_path, plot_fields, plot_rows, delimiter=" ")
@@ -442,20 +801,16 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
         "xmode=log,log basis x=2,legend pos=south east]\n"
         "\\addplot+[only marks,mark size=.35pt] table[x=fine_resolution,"
         "y=observed_rate] {convergence_rates.pgfplots.dat};\n"
-        "\\addlegendentry{all unsaturated reviewed series}\n"
+        "\\addlegendentry{diagnostic unsaturated series}\n"
         "\\end{axis}\n\\end{tikzpicture}\n", encoding="utf-8")
-    write_atomic(output / "convergence.json", {"schema": SCHEMA,
-                                                "series_manifest_sha256":
-                                                sha256(series_manifest),
-                                                "records": records,
-                                                "exact_records": exact_records,
-                                                "artifacts": {
-                                                    "convergence.csv": sha256(csv_path),
-                                                    "convergence_rates.pgfplots.dat":
-                                                    sha256(data_path),
-                                                    "convergence_plot.tex":
-                                                    sha256(plot_path)},
-                                                "failures": failures})
+    write_atomic(output / "convergence.json", {
+        "schema": SCHEMA, "series_manifest_sha256": sha256(series_manifest),
+        "diagnostic_resolutions": list(DIAGNOSTIC_RESOLUTIONS),
+        "records": records, "exact_records": exact_records,
+        "artifacts": {"convergence.csv": sha256(csv_path),
+                      "convergence_rates.pgfplots.dat": sha256(data_path),
+                      "convergence_plot.tex": sha256(plot_path)},
+        "failures": failures})
     if failures:
         raise RuntimeError("convergence gates failed; see convergence.json")
 
@@ -499,11 +854,13 @@ def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
             if baseline is None:
                 failures.append(f"{key} missing row {row_key}")
                 continue
-            exact_fields = ("count", "nonfinite", "cyl_count", "linfinity",
+            exact_fields = ("count", "nonfinite", "cyl_count",
+                            "cylindrical_applicable", "linfinity",
                             "cyl_linfinity", "shared_linfinity",
                             "shared_delta_linfinity", "independent_linfinity",
                             "independent_delta_linfinity", "rotation_linfinity",
-                            "target_abs_rho", "actual_abs_rho", "mask_xor")
+                            "target_abs_rho", "radius_applicable", "actual_abs_rho",
+                            "mask_xor")
             exact = all(row[field] == baseline[field] for field in exact_fields)
             tolerance = (REDUCTION_TOLERANCE_FACTOR * sys.float_info.epsilon *
                          max(1.0, math.log2(int(current["resolution"]) ** 2)))
@@ -544,7 +901,8 @@ def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
             for probe_id, row in current_probe_index.items():
                 baseline = other_probe_index[probe_id]
                 if any(row[field] != baseline[field] for field in
-                       ("target_rho", "actual_rho", "target_z", "actual_z",
+                       ("target_rho_applicable", "target_rho", "actual_rho",
+                        "target_z", "actual_z",
                         "global_cell_id", "raw_error")):
                     failures.append(f"probe value differs for {key} {probe_id}")
                     break
@@ -570,6 +928,9 @@ def main() -> int:
     if sys.argv[1:] == ["--self-test-no-evolution-parser"]:
         self_test_no_evolution_parser()
         return 0
+    if sys.argv[1:] == ["--self-test-cpu-audit-policy"]:
+        self_test_cpu_audit_policy()
+        return 0
     parser = argparse.ArgumentParser()
     parser.add_argument("--athena", type=Path, required=True)
     parser.add_argument("--input", type=Path)
@@ -589,13 +950,13 @@ def main() -> int:
     parser.add_argument("--compare-campaign", type=Path)
     args = parser.parse_args()
     if (set(args.orders) != {2, 4, 6} or len(args.orders) != 3 or
-            set(args.resolutions) != {32, 64, 128, 256} or
+            set(args.resolutions) != set(DIAGNOSTIC_RESOLUTIONS) or
             len(args.resolutions) != 4 or set(args.phases) != set(range(8)) or
             len(args.phases) != 8):
-        raise RuntimeError("qualification requires exactly orders 2/4/6, resolutions "
+        raise RuntimeError("diagnostics require exactly orders 2/4/6, resolutions "
                            "32/64/128/256, and phases 0..7")
     args.orders = [2, 4, 6]
-    args.resolutions = [32, 64, 128, 256]
+    args.resolutions = list(DIAGNOSTIC_RESOLUTIONS)
     args.phases = list(range(8))
     root = Path(__file__).resolve().parents[3]
     if args.input is None:
@@ -605,7 +966,9 @@ def main() -> int:
                          (root / "tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py")).resolve()
     args.build_manifest = (args.build_manifest or
                            (args.athena.parent / "mms_build_manifest.json")).resolve()
-    build = json.loads(args.build_manifest.read_text(encoding="utf-8"))
+    build = load_json_strict(args.build_manifest)
+    if not isinstance(build, dict):
+        raise RuntimeError("build manifest is not an object")
     required_build_keys = {"schema", "source_commit", "source_tree", "kokkos_commit",
                            "source_clean", "backend", "executable_sha256",
                            "configure_cache_sha256", "compiler", "kokkos_runtime",
@@ -630,10 +993,10 @@ def main() -> int:
        max(1.0, abs(args.x1min), abs(args.x1max)) or args.x1max <= 1.0:
         raise RuntimeError("domain must be finite, ordered, and signed-rho symmetric")
     args.input = args.input.resolve()
+    resolutions_by_order = {order: DIAGNOSTIC_RESOLUTIONS for order in args.orders}
     args.output = args.output.resolve()
     if args.output.exists() and not args.output.is_dir():
         raise RuntimeError("output is not a directory")
-    args.output.mkdir(parents=True, exist_ok=True)
     source = {"commit": git_value(root, "rev-parse", "HEAD"),
               "tree": git_value(root, "rev-parse", "HEAD^{tree}"),
               "kokkos": git_value(root, "rev-parse", "HEAD:kokkos")}
@@ -644,30 +1007,31 @@ def main() -> int:
             build["kokkos_commit"] != source["kokkos"]):
         raise RuntimeError("build manifest source identity does not match driver checkout")
     series_manifest = root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json"
-    series_inventory = json.loads(series_manifest.read_text(encoding="utf-8"))
+    series_inventory = load_json_strict(series_manifest)
+    if not isinstance(series_inventory, dict):
+        raise RuntimeError("series manifest is not an object")
     expected_operators = [item["name"] for item in series_inventory.get("series", [])]
     if series_inventory.get("count") != 171 or len(expected_operators) != 171 or \
        len(set(expected_operators)) != 171:
         raise RuntimeError("frozen runtime series manifest is not exactly 171 unique entries")
-    case_count = len(args.orders) * len(args.resolutions) * len(args.phases)
-    estimated_bytes = 0
-    for order in args.orders:
-        nghost = order // 2 + 1
-        csv_rows = 171 * (7 + 2 * nghost)
-        probe_rows = 171 * (6 + 2 * nghost)
-        estimated_bytes += len(args.resolutions) * len(args.phases) * (
-            csv_rows * 768 + probe_rows * 384 + (2 + args.ranks) * 1024 * 1024)
-    preflight = {"schema": SCHEMA, "state": "preflight", "case_count": case_count,
-                 "estimated_output_bytes_upper_bound": estimated_bytes,
-                 "free_bytes_before_campaign": shutil.disk_usage(args.output).free,
+    forecast = output_forecast(resolutions_by_order, args.phases, args.ranks,
+                               args.compare_campaign is not None)
+    disk_anchor = args.output
+    while not disk_anchor.exists() and disk_anchor != disk_anchor.parent:
+        disk_anchor = disk_anchor.parent
+    free_bytes = shutil.disk_usage(disk_anchor).free
+    preflight = {"schema": SCHEMA, "state": "preflight", **forecast,
+                 "free_bytes_before_campaign": free_bytes,
                  "orders": args.orders, "resolutions": args.resolutions,
+                 "resolutions_by_order": resolutions_by_order,
                  "phases": args.phases, "ranks": args.ranks,
                  "series_manifest_sha256": sha256(series_manifest)}
-    if preflight["free_bytes_before_campaign"] < 2 * estimated_bytes:
+    if free_bytes < 2 * forecast["estimated_output_bytes_upper_bound"]:
         raise RuntimeError("campaign output forecast exceeds half the available space")
+    args.output.mkdir(parents=True, exist_ok=True)
     write_atomic(args.output / "preflight.json", preflight)
     cases = [run_case(args, root, source, order, resolution, phase)
-             for order in args.orders for resolution in args.resolutions
+             for order in args.orders for resolution in resolutions_by_order[order]
              for phase in args.phases]
     for result in cases:
         if result.get("operator_names") != expected_operators:
@@ -693,6 +1057,8 @@ def main() -> int:
                                                   canonical_digest(campaign_environment),
                                                   "ranks": args.ranks,
                                                   "backend": args.require_backend,
+                                                  "diagnostic_resolutions":
+                                                  list(DIAGNOSTIC_RESOLUTIONS),
                                                   "reduction_tolerance_factor":
                                                   REDUCTION_TOLERANCE_FACTOR,
                                                   "convergence_artifacts":

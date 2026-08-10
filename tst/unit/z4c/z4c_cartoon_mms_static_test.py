@@ -136,8 +136,9 @@ def main() -> int:
             len({item["name"] for item in series["series"]}) == 171,
             "generated runtime series inventory is not exact and ordered")
     classifications = [item["classification"] for item in series["series"]]
-    require(classifications.count("truncating") == 149 and
+    require(classifications.count("truncating") == 137 and
             classifications.count("exact_identity") == 12 and
+            classifications.count("exact_plane_algebraic") == 12 and
             classifications.count("exact_discrete") == 10,
             "exact/truncating series classes differ from the frozen inventory")
     independent = [item for item in series["series"]
@@ -168,6 +169,14 @@ def main() -> int:
             "axis_names = operator_names[:161]" in driver and
             "len(axis_rows) != 161" in driver,
             "case resume does not bind environment and exact file inventory")
+    for self_test in ("--self-test-no-evolution-parser",
+                      "--self-test-cpu-audit-policy"):
+        completed = subprocess.run(
+            [sys.executable, "-B",
+             str(root / "tst/test_suite/unit_tests/test_z4c_cartoon_derivatives.py"),
+             self_test], check=False)
+        require(completed.returncode == 0,
+                f"campaign driver self-test failed: {self_test}")
 
     coverage_path = root / "tst/unit/z4c/z4c_cartoon_mms_coverage.json"
     coverage = json.loads(coverage_path.read_text())
