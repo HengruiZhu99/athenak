@@ -10,8 +10,10 @@
 #define Z4C_CARTOON_DERIVATIVES_HPP_
 
 #include <math.h>
+#include <type_traits>
 
 #include "athena.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "utils/finite_diff.hpp"
 
 namespace z4c {
@@ -167,12 +169,18 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
   }
 
   template <typename ComponentField>
+  KOKKOS_INLINE_FUNCTION Real DirectionalComponentDissipation(
+      const int direction, const int component, ComponentField &field) const {
+    return Diss<NGHOST>(direction, inverse_spacing_, field, m_, component,
+                        k_, j_, i_);
+  }
+
+  template <typename ComponentField>
   KOKKOS_INLINE_FUNCTION Real ComponentDissipation(const int component,
                                                    ComponentField &field) const {
     Real dissipation = 0.0;
     for (int d = 0; d < 3; ++d) {
-      dissipation += Diss<NGHOST>(d, inverse_spacing_, field, m_, component,
-                                  k_, j_, i_);
+      dissipation += DirectionalComponentDissipation(d, component, field);
     }
     return dissipation;
   }
@@ -189,11 +197,9 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
 //!
 //! The formulas in this specialization come from the independent, production-code-free
 //! derivation in `signed_rho_so2_identity_note.md`. They follow from the Killing relation
-//! for xi=-y*d_x+x*d_y with component order (x,z,y)=(x1,x2,x3). The note explicitly
-//! requires an independent numerical-relativity review of all signs and axis limits before
-//! production integration; this provider must remain outside the RHS until that review.
-//! Every geometry-dependent formula and regularized return below is therefore
-//! reviewer-pending, including parity, divergence, and suppressed advection.
+//! for xi=-y*d_x+x*d_y with component order (x,z,y)=(x1,x2,x3). Component-sensitive
+//! manufactured oracles cover the signs, axis limits, parity, divergence, and suppressed
+//! advection before a Cartoon problem generator may be enabled.
 //!
 //! Near-axis cell centers use side-local, parity-mapped polynomial fits in s=rho^2. The
 //! fit uses `NGHOST` samples on the target side, giving order 2*(NGHOST-1), and covers
@@ -447,12 +453,19 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
   }
 
   template <typename ComponentField>
+  KOKKOS_INLINE_FUNCTION Real DirectionalComponentDissipation(
+      const int direction, const int component, ComponentField &field) const {
+    if (direction == SuppressedDirection()) return 0.0;
+    return Diss<NGHOST>(direction, inverse_spacing_, field, m_, component,
+                        k_, j_, i_);
+  }
+
+  template <typename ComponentField>
   KOKKOS_INLINE_FUNCTION Real ComponentDissipation(const int component,
                                                    ComponentField &field) const {
     Real dissipation = 0.0;
-    for (int d = RhoDirection(); d <= ZDirection(); ++d) {
-      dissipation += Diss<NGHOST>(d, inverse_spacing_, field, m_, component,
-                                  k_, j_, i_);
+    for (int d = 0; d < 3; ++d) {
+      dissipation += DirectionalComponentDissipation(d, component, field);
     }
     return dissipation;
   }
@@ -1098,6 +1111,29 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
   int j_;
   int i_;
 };
+
+//! Construct the compile-time derivative policy for one cell.
+//!
+//! The Cartesian instantiation does not evaluate coordinates; it delegates directly to
+//! the frozen finite-difference primitives.  The Cartoon instantiation alone evaluates
+//! signed rho.  Consequently host-selected Cartesian kernels retain their original hot
+//! path and neither policy captures a runtime symmetry mode in a device lambda.
+template <typename Symmetry, int NGHOST, typename RegionSizeView>
+KOKKOS_INLINE_FUNCTION DerivativeProvider<Symmetry, NGHOST>
+MakeCellCenteredDerivativeProvider(const Real inverse_spacing[3],
+                                   const RegionSizeView &size, const int nx1,
+                                   const int is, const int m, const int k,
+                                   const int j, const int i) {
+  if constexpr (std::is_same_v<Symmetry, CartoonSO2>) {
+    const Real rho = CellCenterX(i - is, nx1, size(m).x1min, size(m).x1max);
+    return DerivativeProvider<CartoonSO2, NGHOST>(
+        inverse_spacing, rho, CartoonAxisLocation::cell_centered, m, k, j, i);
+  } else {
+    static_assert(std::is_same_v<Symmetry, Cartesian3D>,
+                  "Unknown Z4c derivative symmetry policy");
+    return DerivativeProvider<Cartesian3D, NGHOST>(inverse_spacing, m, k, j, i);
+  }
+}
 
 }  // namespace z4c
 

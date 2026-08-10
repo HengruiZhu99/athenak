@@ -13,7 +13,9 @@
 
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
+#include "z4c/cartoon_derivatives.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_symmetry.hpp"
 #include "coordinates/cell_locations.hpp"
 
 namespace z4c {
@@ -21,6 +23,7 @@ namespace z4c {
 //----------------------------------------------------------------------------------------
 //! \fn void Z4c::Z4cSommerfeld
 //! \brief apply Sommerfeld BCs to the given set of points
+template <typename Symmetry>
 KOKKOS_INLINE_FUNCTION
 static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
     const RegionIndcs &indcs, const DualArray1D<RegionSize> &size,
@@ -45,6 +48,8 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> s_u;
 
   Real idx[] = {1./size.d_view(m).dx1, 1./size.d_view(m).dx2, 1./size.d_view(m).dx3};
+  auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, 2>(
+      idx, size.d_view, indcs.nx1, indcs.is, m, k, j, i);
 
   // -------------------------------------------------------------------------------------
   // First derivatives
@@ -52,18 +57,20 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   // be necessary for stability in Athena++.
   //
   for (int a = 0; a < 3; a++) {
-    dKhat_d(a) = Dx<2>(a, idx, z4c.vKhat, m, k, j, i);
-    dTheta_d(a) = Dx<2>(a, idx, z4c.vTheta, m, k, j, i);
+    dKhat_d(a) = derivatives.ScalarFirst(a, z4c.vKhat);
+    dTheta_d(a) = derivatives.ScalarFirst(a, z4c.vTheta);
   }
   for (int a = 0; a < 3; a++) {
     for (int b = 0; b < 3; b++) {
-      dGam_du(b,a) = Dx<2>(b, idx, z4c.vGam_u, m, a, k, j, i);
+      dGam_du(b,a) = derivatives.VectorFirst(b, a, z4c.vGam_u);
     }
   }
   for (int a = 0; a < 3; a++) {
     for (int b = a; b < 3; b++) {
       for (int c = 0; c < 3; c++) {
-        dA_ddd(c, a, b) = Dx<2>(c, idx, z4c.vA_dd, m, a, b, k, j, i);
+        dA_ddd(c, a, b) =
+            derivatives.template TensorFirst<TensorVariance::all_lower>(
+                c, a, b, z4c.vA_dd);
       }
     }
   }
@@ -80,7 +87,10 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
 
   Real x1v = CellCenterX(i-indcs.is, indcs.nx1, x1min, x1max);
   Real x2v = CellCenterX(j-indcs.js, indcs.nx2, x2min, x2max);
-  Real x3v = CellCenterX(k-indcs.ks, indcs.nx3, x3min, x3max);
+  Real x3v = 0.0;
+  if constexpr (std::is_same_v<Symmetry, Cartesian3D>) {
+    x3v = CellCenterX(k-indcs.ks, indcs.nx3, x3min, x3max);
+  }
 
   Real r = sqrt(SQR(x1v) + SQR(x2v) + SQR(x3v));
   s_u(0) = x1v/r;
@@ -124,7 +134,8 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
 //---------------------------------------------------------------------------------------
 //! \fn TaskStatus Z4c::Z4cBoundaryRHS
 //! \brief placeholder for the Sommerfield Boundary conditions for z4c
-TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
+template <typename Symmetry>
+TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
   auto &pm = pmy_pack->pmesh;
   auto &mb_bcs = pmy_pack->pmb->mb_bcs;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
@@ -158,11 +169,11 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, j, is);
+            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, j, is);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, j, is);
+              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, j, is);
             }
           break;
         default:
@@ -173,11 +184,11 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, j, ie);
+            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, j, ie);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, j, ie);
+              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, j, ie);
             }
           break;
         default:
@@ -200,11 +211,11 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, js, i);
+            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, js, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, js, i);
+              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, js, i);
             }
           break;
         default:
@@ -215,17 +226,20 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, je, i);
+            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, je, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, m, k, je, i);
+              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, je, i);
             }
           break;
         default:
           break;
       }
     });
+  }
+  if constexpr (std::is_same_v<Symmetry, CartoonSO2>) {
+    return TaskStatus::complete;
   }
   if (pm->mesh_bcs[BoundaryFace::inner_x3] == BoundaryFlag::outflow
       || pm->mesh_bcs[BoundaryFace::inner_x3] == BoundaryFlag::diode
@@ -242,11 +256,11 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, m, ks, j, i);
+            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, ks, j, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, m, ks, j, i);
+              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, ks, j, i);
             }
           break;
         default:
@@ -257,11 +271,11 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld(z4c_, rhs_, indcs, size, m, ke, j, i);
+            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, ke, j, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld(z4c_, rhs_, indcs, size, m, ke, j, i);
+              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, ke, j, i);
             }
           break;
         default:
@@ -273,5 +287,15 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
 
   return TaskStatus::complete;
 }
+
+TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
+  if (pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
+    return Z4cBoundaryRHSImpl<CartoonSO2>(pdriver, stage);
+  }
+  return Z4cBoundaryRHSImpl<Cartesian3D>(pdriver, stage);
+}
+
+template TaskStatus Z4c::Z4cBoundaryRHSImpl<Cartesian3D>(Driver *, int);
+template TaskStatus Z4c::Z4cBoundaryRHSImpl<CartoonSO2>(Driver *, int);
 
 } // end namespace z4c

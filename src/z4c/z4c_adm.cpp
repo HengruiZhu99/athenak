@@ -271,7 +271,7 @@ void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
 //
 // The constraints are set only in the MeshBlock interior, because derivatives
 // of the ADM quantities are needed to compute them.
-template <int FD_STENCIL>
+template <typename Symmetry, int FD_STENCIL>
 void ADMConstraintsImpl(MeshBlockPack *pmbp) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
@@ -308,6 +308,8 @@ void ADMConstraintsImpl(MeshBlockPack *pmbp) {
     AthenaPointTensor<Real, TensorSymm::SYM22, 3, 4> ddg_dddd;
 
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, FD_STENCIL>(
+        idx, size.d_view, indcs.nx1, is, m, k, j, i);
 
     // -----------------------------------------------------------------------------------
     // derivatives
@@ -316,7 +318,9 @@ void ADMConstraintsImpl(MeshBlockPack *pmbp) {
     for(int c = 0; c < 3; ++c)
     for(int a = 0; a < 3; ++a)
     for(int b = a; b < 3; ++b) {
-      dg_ddd(c,a,b) = Dx<FD_STENCIL>(c, idx, adm.g_dd, m,a,b,k,j,i);
+      dg_ddd(c,a,b) =
+          derivatives.template TensorFirst<TensorVariance::all_lower>(
+              c, a, b, adm.g_dd);
     }
 
     // second derivatives of g
@@ -325,9 +329,13 @@ void ADMConstraintsImpl(MeshBlockPack *pmbp) {
     for(int c = 0; c < 3; ++c)
     for(int d = c; d < 3; ++d) {
       if(a == b) {
-        ddg_dddd(a,a,c,d) = Dxx<FD_STENCIL>(a, idx, adm.g_dd, m,c,d,k,j,i);
+        ddg_dddd(a,a,c,d) =
+            derivatives.template TensorSecond<TensorVariance::all_lower>(
+                a, a, c, d, adm.g_dd);
       } else {
-        ddg_dddd(a,b,c,d) = Dxy<FD_STENCIL>(a, b, idx, adm.g_dd, m,c,d,k,j,i);
+        ddg_dddd(a,b,c,d) =
+            derivatives.template TensorSecond<TensorVariance::all_lower>(
+                a, b, c, d, adm.g_dd);
       }
     }
 
@@ -436,6 +444,8 @@ void ADMConstraintsImpl(MeshBlockPack *pmbp) {
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> DK_udd;
 
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, FD_STENCIL>(
+        idx, size.d_view, indcs.nx1, is, m, k, j, i);
 
     // -----------------------------------------------------------------------------------
     // derivatives
@@ -444,13 +454,17 @@ void ADMConstraintsImpl(MeshBlockPack *pmbp) {
     for(int c = 0; c < 3; ++c)
     for(int a = 0; a < 3; ++a)
     for(int b = a; b < 3; ++b) {
-      dg_ddd(c,a,b) = Dx<FD_STENCIL>(c, idx, adm.g_dd, m,a,b,k,j,i);
-      dK_ddd(c,a,b) = Dx<FD_STENCIL>(c, idx, adm.vK_dd, m,a,b,k,j,i);
+      dg_ddd(c,a,b) =
+          derivatives.template TensorFirst<TensorVariance::all_lower>(
+              c, a, b, adm.g_dd);
+      dK_ddd(c,a,b) =
+          derivatives.template TensorFirst<TensorVariance::all_lower>(
+              c, a, b, adm.vK_dd);
     }
 
     // first derivative of psi4
     for (int a =0; a < 3; ++a) {
-      dpsi4_d(a) = Dx<FD_STENCIL>(a, idx, adm.psi4, m, k, j, i);
+      dpsi4_d(a) = derivatives.ScalarFirst(a, adm.psi4);
     }
 
     // -----------------------------------------------------------------------------------
@@ -568,24 +582,24 @@ void ADMConstraintsImpl(MeshBlockPack *pmbp) {
 
 template <int NGHOST>
 void Z4c::ADMConstraints(MeshBlockPack *pmbp) {
-  switch (pmbp->pz4c->opt.fd_stencil) {
-    case 2:
-      ADMConstraintsImpl<2>(pmbp);
-      break;
-    case 3:
-      ADMConstraintsImpl<3>(pmbp);
-      break;
-    case 4:
-      ADMConstraintsImpl<4>(pmbp);
-      break;
-    default:
-      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-                << std::endl
-                << "Unsupported Z4c finite-difference stencil selector "
-                << pmbp->pz4c->opt.fd_stencil << std::endl;
-      std::exit(EXIT_FAILURE);
+  if (pmbp->pz4c->opt.fd_stencil != NGHOST) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "Z4c constraint dispatch mismatch: requested "
+              << pmbp->pz4c->opt.fd_stencil << " but called " << NGHOST << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (pmbp->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
+    ADMConstraintsImpl<CartoonSO2, NGHOST>(pmbp);
+  } else {
+    ADMConstraintsImpl<Cartesian3D, NGHOST>(pmbp);
   }
 }
+template void ADMConstraintsImpl<Cartesian3D, 2>(MeshBlockPack *);
+template void ADMConstraintsImpl<Cartesian3D, 3>(MeshBlockPack *);
+template void ADMConstraintsImpl<Cartesian3D, 4>(MeshBlockPack *);
+template void ADMConstraintsImpl<CartoonSO2, 2>(MeshBlockPack *);
+template void ADMConstraintsImpl<CartoonSO2, 3>(MeshBlockPack *);
+template void ADMConstraintsImpl<CartoonSO2, 4>(MeshBlockPack *);
 template void Z4c::ADMConstraints<2>(MeshBlockPack *pmbp);
 template void Z4c::ADMConstraints<3>(MeshBlockPack *pmbp);
 template void Z4c::ADMConstraints<4>(MeshBlockPack *pmbp);

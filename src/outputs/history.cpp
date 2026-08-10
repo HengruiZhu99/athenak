@@ -25,8 +25,72 @@
 #include "z4c/curvature_diagnostics.hpp"
 #include "z4c/fastflow.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_symmetry.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
+
+namespace {
+
+template <typename Symmetry, int NGHOST>
+Real Z4cHistoryMaxKretschmann(Mesh *pm) {
+  auto &indcs = pm->mb_indcs;
+  const int nx1 = indcs.nx1;
+  const int nx2 = indcs.nx2;
+  const int nx3 = indcs.nx3;
+  const int is = indcs.is;
+  const int js = indcs.js;
+  const int ks = indcs.ks;
+  const int nmkji = pm->pmb_pack->nmb_thispack * nx3 * nx2 * nx1;
+  const int nkji = nx3 * nx2 * nx1;
+  const int nji = nx2 * nx1;
+  auto &adm = pm->pmb_pack->padm->adm;
+  auto &size = pm->pmb_pack->pmb->mb_size;
+  Real maximum = 0.0;
+  Kokkos::parallel_reduce(
+      "Z4cHistoryMaxKretschmann",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+      KOKKOS_LAMBDA(const int idx, Real &rank_maximum) {
+        const int m = idx / nkji;
+        int k = (idx - m * nkji) / nji;
+        int j = (idx - m * nkji - k * nji) / nx1;
+        const int i = (idx - m * nkji - k * nji - j * nx1) + is;
+        k += ks;
+        j += js;
+        const Real inverse_spacing[3] = {
+            1.0 / size.d_view(m).dx1,
+            1.0 / size.d_view(m).dx2,
+            1.0 / size.d_view(m).dx3};
+        auto derivatives = z4c::MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+            inverse_spacing, size.d_view, nx1, is, m, k, j, i);
+        const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST, false>(
+            derivatives, adm.g_dd, adm.vK_dd, m, k, j, i);
+        rank_maximum = diagnostic.valid
+                           ? fmax(rank_maximum, fabs(diagnostic.kretschmann))
+                           : std::numeric_limits<Real>::infinity();
+      },
+      Kokkos::Max<Real>(maximum));
+  return maximum;
+}
+
+Real DispatchZ4cHistoryMaxKretschmann(Mesh *pm) {
+  const auto &config = pm->pmb_pack->z4c_symmetry;
+  const bool cartoon = config.mode == z4c::Z4cSymmetryMode::cartoon_so2;
+  switch (config.stencil_width) {
+    case 2:
+      return cartoon ? Z4cHistoryMaxKretschmann<z4c::CartoonSO2, 2>(pm)
+                     : Z4cHistoryMaxKretschmann<z4c::Cartesian3D, 2>(pm);
+    case 3:
+      return cartoon ? Z4cHistoryMaxKretschmann<z4c::CartoonSO2, 3>(pm)
+                     : Z4cHistoryMaxKretschmann<z4c::Cartesian3D, 3>(pm);
+    case 4:
+      return cartoon ? Z4cHistoryMaxKretschmann<z4c::CartoonSO2, 4>(pm)
+                     : Z4cHistoryMaxKretschmann<z4c::Cartesian3D, 4>(pm);
+    default:
+      return std::numeric_limits<Real>::infinity();
+  }
+}
+
+}  // namespace
 
 //----------------------------------------------------------------------------------------
 // Constructor: also calls BaseTypeOutput base class constructor
@@ -307,32 +371,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->hdata[9] = max_abs_K;
   pdata->hdata[10] = static_cast<Real>(pm->nmb_total);
   if (opt.history_kretschmann) {
-    Real max_abs_kretschmann = 0.0;
-    Kokkos::parallel_reduce(
-        "Z4cHistoryMaxKretschmann",
-        Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
-        KOKKOS_LAMBDA(const int &idx, Real &rank_max_abs_kretschmann) {
-          const int m = idx / nkji;
-          int k = (idx - m * nkji) / nji;
-          int j = (idx - m * nkji - k * nji) / nx1;
-          const int i = (idx - m * nkji - k * nji - j * nx1) + is;
-          k += ks;
-          j += js;
-          const Real inverse_spacing[3] = {
-              1.0 / size.d_view(m).dx1,
-              1.0 / size.d_view(m).dx2,
-              1.0 / size.d_view(m).dx3};
-          const auto diagnostic = ComputeZ4cCurvatureDiagnostics<4, false>(
-              adm.g_dd, adm.vK_dd, inverse_spacing, m, k, j, i);
-          if (!diagnostic.valid) {
-            rank_max_abs_kretschmann = std::numeric_limits<Real>::infinity();
-          } else {
-            rank_max_abs_kretschmann =
-                fmax(rank_max_abs_kretschmann, fabs(diagnostic.kretschmann));
-          }
-        },
-        Kokkos::Max<Real>(max_abs_kretschmann));
-    pdata->hdata[kretschmann_index] = max_abs_kretschmann;
+    pdata->hdata[kretschmann_index] = DispatchZ4cHistoryMaxKretschmann(pm);
   }
   int max_refinement_level = 0;
   const int first_local_gid = pm->gids_eachrank[global_variable::my_rank];

@@ -13,8 +13,10 @@
 #include "mesh/mesh.hpp"
 #include "z4c/curvature_diagnostics.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_symmetry.hpp"
 
-Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaxima(Mesh *pm) {
+template <typename Symmetry, int NGHOST>
+Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaximaImpl(Mesh *pm) {
   auto *pmbp = pm->pmb_pack;
   auto &indcs = pm->mb_indcs;
   const int nx1 = indcs.nx1;
@@ -63,8 +65,10 @@ Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaxima(Mesh *pm) {
             1.0 / size.d_view(m).dx1,
             1.0 / size.d_view(m).dx2,
             1.0 / size.d_view(m).dx3};
-        const auto diagnostic = ComputeZ4cCurvatureDiagnostics<4, false>(
-            adm.g_dd, adm.vK_dd, inverse_spacing, m, k, j, i);
+        auto derivatives = z4c::MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+            inverse_spacing, size.d_view, nx1, is, m, k, j, i);
+        const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST, false>(
+            derivatives, adm.g_dd, adm.vK_dd, m, k, j, i);
         if (!diagnostic.valid) {
           result = std::numeric_limits<Real>::infinity();
         } else {
@@ -84,4 +88,25 @@ Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaxima(Mesh *pm) {
   maxima.finite =
       Kokkos::isfinite(values[0]) && Kokkos::isfinite(values[1]);
   return maxima;
+}
+
+Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaxima(Mesh *pm) {
+  const auto &config = pm->pmb_pack->z4c_symmetry;
+  const bool cartoon = config.mode == z4c::Z4cSymmetryMode::cartoon_so2;
+  switch (config.stencil_width) {
+    case 2:
+      return cartoon
+                 ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CartoonSO2, 2>(pm)
+                 : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::Cartesian3D, 2>(pm);
+    case 3:
+      return cartoon
+                 ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CartoonSO2, 3>(pm)
+                 : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::Cartesian3D, 3>(pm);
+    case 4:
+      return cartoon
+                 ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CartoonSO2, 4>(pm)
+                 : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::Cartesian3D, 4>(pm);
+    default:
+      return {0.0, 0.0, false};
+  }
 }

@@ -16,16 +16,18 @@
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
 #include "coordinates/adm.hpp"
+#include "z4c/cartoon_derivatives.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_symmetry.hpp"
 #include "z4c/tmunu.hpp"
 #include "coordinates/cell_locations.hpp"
 
 namespace z4c {
 
-template <int NGHOST>
+template <typename Symmetry, int NGHOST>
 //! \fn void Z4c::CalcRHS(Driver *pdriver, int stage)
 //! \brief compute rhs of the z4c equations
-TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
+TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   int &is = indcs.is; int &ie = indcs.ie;
@@ -168,6 +170,8 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
 
         Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                       1 / size.d_view(m).dx3};
+        auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+            idx, size.d_view, nx1, is, m, k, j, i);
 
         // -----------------------------------------------------------------------------------
         // Initialize everything to zero
@@ -222,22 +226,24 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
         //
         // Scalars
         for (int a = 0; a < 3; ++a) {
-          dalpha_d(a) = Dx<NGHOST>(a, idx, z4c.alpha, m, k, j, i);
-          dchi_d(a) = Dx<NGHOST>(a, idx, z4c.chi, m, k, j, i);
+          dalpha_d(a) = derivatives.ScalarFirst(a, z4c.alpha);
+          dchi_d(a) = derivatives.ScalarFirst(a, z4c.chi);
         }
 
         // Vectors
         for (int a = 0; a < 3; ++a)
           for (int b = 0; b < 3; ++b) {
-            dbeta_du(b, a) = Dx<NGHOST>(b, idx, z4c.beta_u, m, a, k, j, i);
-            dGam_du(b, a) = Dx<NGHOST>(b, idx, z4c.vGam_u, m, a, k, j, i);
+            dbeta_du(b, a) = derivatives.VectorFirst(b, a, z4c.beta_u);
+            dGam_du(b, a) = derivatives.VectorFirst(b, a, z4c.vGam_u);
           }
 
         // Tensors
         for (int a = 0; a < 3; ++a)
           for (int b = a; b < 3; ++b)
             for (int c = 0; c < 3; ++c) {
-              dg_ddd(c, a, b) = Dx<NGHOST>(c, idx, z4c.g_dd, m, a, b, k, j, i);
+              dg_ddd(c, a, b) =
+                  derivatives.template TensorFirst<TensorVariance::all_lower>(
+                      c, a, b, z4c.g_dd);
             }
 
         // -----------------------------------------------------------------------------------
@@ -245,21 +251,23 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
         //
         // Scalars
         for (int a = 0; a < 3; ++a) {
-          ddalpha_dd(a, a) = Dxx<NGHOST>(a, idx, z4c.alpha, m, k, j, i);
-          ddchi_dd(a, a) = Dxx<NGHOST>(a, idx, z4c.chi, m, k, j, i);
+          ddalpha_dd(a, a) = derivatives.ScalarSecond(a, a, z4c.alpha);
+          ddchi_dd(a, a) = derivatives.ScalarSecond(a, a, z4c.chi);
 
           for (int b = a + 1; b < 3; ++b) {
-            ddalpha_dd(a, b) = Dxy<NGHOST>(a, b, idx, z4c.alpha, m, k, j, i);
-            ddchi_dd(a, b) = Dxy<NGHOST>(a, b, idx, z4c.chi, m, k, j, i);
+            ddalpha_dd(a, b) = derivatives.ScalarSecond(a, b, z4c.alpha);
+            ddchi_dd(a, b) = derivatives.ScalarSecond(a, b, z4c.chi);
           }
         }
 
         // Vectors
         for (int c = 0; c < 3; ++c)
           for (int a = 0; a < 3; ++a) {
-            ddbeta_ddu(a, a, c) = Dxx<NGHOST>(a, idx, z4c.beta_u, m, c, k, j, i);
+            ddbeta_ddu(a, a, c) =
+                derivatives.VectorSecond(a, a, c, z4c.beta_u);
             for (int b = a + 1; b < 3; ++b) {
-              ddbeta_ddu(a, b, c) = Dxy<NGHOST>(a, b, idx, z4c.beta_u, m, c, k, j, i);
+              ddbeta_ddu(a, b, c) =
+                  derivatives.VectorSecond(a, b, c, z4c.beta_u);
             }
           }
 
@@ -267,9 +275,13 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
         for (int c = 0; c < 3; ++c)
           for (int d = c; d < 3; ++d)
             for (int a = 0; a < 3; ++a) {
-              ddg_dddd(a, a, c, d) = Dxx<NGHOST>(a, idx, z4c.g_dd, m, c, d, k, j, i);
+              ddg_dddd(a, a, c, d) =
+                  derivatives.template TensorSecond<TensorVariance::all_lower>(
+                      a, a, c, d, z4c.g_dd);
               for (int b = a + 1; b < 3; ++b) {
-                ddg_dddd(a, b, c, d) = Dxy<NGHOST>(a, b, idx, z4c.g_dd, m, c, d, k, j, i);
+                ddg_dddd(a, b, c, d) =
+                    derivatives.template TensorSecond<TensorVariance::all_lower>(
+                        a, b, c, d, z4c.g_dd);
               }
             }
 
@@ -279,20 +291,20 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
 
         //
         // Scalars
-        for (int a = 0; a < 3; ++a) {
-          Lchi += Lx<NGHOST>(a, idx, z4c.beta_u, z4c.chi, m, a, k, j, i);
-          LKhat += Lx<NGHOST>(a, idx, z4c.beta_u, z4c.vKhat, m, a, k, j, i);
-          LTheta += Lx<NGHOST>(a, idx, z4c.beta_u, z4c.vTheta, m, a, k, j, i);
-        }
+        Lchi = derivatives.ScalarAdvective(z4c.beta_u, z4c.chi);
+        LKhat = derivatives.ScalarAdvective(z4c.beta_u, z4c.vKhat);
+        LTheta = derivatives.ScalarAdvective(z4c.beta_u, z4c.vTheta);
 
         // Tensors
         for (int a = 0; a < 3; ++a)
           for (int b = a; b < 3; ++b)
-            for (int c = 0; c < 3; ++c) {
-              Lg_dd(a, b) +=
-                  Lx<NGHOST>(c, idx, z4c.beta_u, z4c.g_dd, m, c, a, b, k, j, i);
-              LA_dd(a, b) +=
-                  Lx<NGHOST>(c, idx, z4c.beta_u, z4c.vA_dd, m, c, a, b, k, j, i);
+            {
+              Lg_dd(a, b) =
+                  derivatives.template TensorAdvective<TensorVariance::all_lower>(
+                      a, b, z4c.beta_u, z4c.g_dd);
+              LA_dd(a, b) =
+                  derivatives.template TensorAdvective<TensorVariance::all_lower>(
+                      a, b, z4c.beta_u, z4c.vA_dd);
             }
 
         // -----------------------------------------------------------------------------------
@@ -561,41 +573,46 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
 
         Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                       1 / size.d_view(m).dx3};
+        auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+            idx, size.d_view, nx1, is, m, k, j, i);
         Real dbeta = 0.0;
         Real chi_guarded = (z4c.chi(m, k, j, i) > opt.chi_div_floor) ? z4c.chi(m, k, j, i)
                                                                      : opt.chi_div_floor;
 
         for (int a = 0; a < 3; ++a) {
-          dalpha_d(a) = Dx<NGHOST>(a, idx, z4c.alpha, m, k, j, i);
-          dchi_d(a) = Dx<NGHOST>(a, idx, z4c.chi, m, k, j, i);
-          dKhat_d(a) = Dx<NGHOST>(a, idx, z4c.vKhat, m, k, j, i);
-          dTheta_d(a) = Dx<NGHOST>(a, idx, z4c.vTheta, m, k, j, i);
+          dalpha_d(a) = derivatives.ScalarFirst(a, z4c.alpha);
+          dchi_d(a) = derivatives.ScalarFirst(a, z4c.chi);
+          dKhat_d(a) = derivatives.ScalarFirst(a, z4c.vKhat);
+          dTheta_d(a) = derivatives.ScalarFirst(a, z4c.vTheta);
         }
 
         for (int a = 0; a < 3; ++a)
           for (int b = 0; b < 3; ++b) {
-            dbeta_du(b, a) = Dx<NGHOST>(b, idx, z4c.beta_u, m, a, k, j, i);
-            dGam_du(b, a) = Dx<NGHOST>(b, idx, z4c.vGam_u, m, a, k, j, i);
+            dbeta_du(b, a) = derivatives.VectorFirst(b, a, z4c.beta_u);
+            dGam_du(b, a) = derivatives.VectorFirst(b, a, z4c.vGam_u);
           }
 
         for (int a = 0; a < 3; ++a)
           for (int b = a; b < 3; ++b)
             for (int c = 0; c < 3; ++c) {
-              dg_ddd(c, a, b) = Dx<NGHOST>(c, idx, z4c.g_dd, m, a, b, k, j, i);
+              dg_ddd(c, a, b) =
+                  derivatives.template TensorFirst<TensorVariance::all_lower>(
+                      c, a, b, z4c.g_dd);
             }
 
         for (int c = 0; c < 3; ++c)
           for (int a = 0; a < 3; ++a) {
-            ddbeta_ddu(a, a, c) = Dxx<NGHOST>(a, idx, z4c.beta_u, m, c, k, j, i);
+            ddbeta_ddu(a, a, c) =
+                derivatives.VectorSecond(a, a, c, z4c.beta_u);
             for (int b = a + 1; b < 3; ++b) {
-              ddbeta_ddu(a, b, c) = Dxy<NGHOST>(a, b, idx, z4c.beta_u, m, c, k, j, i);
+              ddbeta_ddu(a, b, c) =
+                  derivatives.VectorSecond(a, b, c, z4c.beta_u);
             }
           }
 
-        for (int a = 0; a < 3; ++a)
-          for (int b = 0; b < 3; ++b) {
-            LGam_u(b) += Lx<NGHOST>(a, idx, z4c.beta_u, z4c.vGam_u, m, a, b, k, j, i);
-          }
+        for (int b = 0; b < 3; ++b) {
+          LGam_u(b) = derivatives.VectorAdvective(b, z4c.beta_u, z4c.vGam_u);
+        }
 
         Real detg =
             adm::SpatialDet(z4c.g_dd(m, 0, 0, k, j, i), z4c.g_dd(m, 0, 1, k, j, i),
@@ -691,6 +708,8 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
 
         Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                       1 / size.d_view(m).dx3};
+        auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+            idx, size.d_view, nx1, is, m, k, j, i);
         Real Lalpha = 0.0;
         Real dB = 0.0;
         Real const alpha = z4c.alpha(m, k, j, i);
@@ -708,19 +727,25 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
                         &g_uu(1, 1), &g_uu(1, 2), &g_uu(2, 2));
 
         for (int a = 0; a < 3; ++a) {
-          dalpha_d(a) = Dx<NGHOST>(a, idx, z4c.alpha, m, k, j, i);
-          dchi_d(a) = Dx<NGHOST>(a, idx, z4c.chi, m, k, j, i);
-          Lalpha += Lx<NGHOST>(a, idx, z4c.beta_u, z4c.alpha, m, a, k, j, i);
+          dalpha_d(a) = derivatives.ScalarFirst(a, z4c.alpha);
+          dchi_d(a) = derivatives.ScalarFirst(a, z4c.chi);
         }
+        Lalpha = derivatives.ScalarAdvective(z4c.beta_u, z4c.alpha);
 
-        for (int a = 0; a < 3; ++a)
-          for (int b = 0; b < 3; ++b) {
-            Lbeta_u(b) += Lx<NGHOST>(a, idx, z4c.beta_u, z4c.beta_u, m, a, b, k, j, i);
-            if (opt.telegraph_lapse) {
-              dB += g_uu(a, b) * Dx<NGHOST>(a, idx, z4c.vB_d, m, b, k, j, i);
-              LB_d(b) += Lx<NGHOST>(a, idx, z4c.beta_u, z4c.vB_d, m, a, b, k, j, i);
+        for (int b = 0; b < 3; ++b) {
+          Lbeta_u(b) = derivatives.VectorAdvective(b, z4c.beta_u, z4c.beta_u);
+          if (opt.telegraph_lapse) {
+            LB_d(b) = derivatives.VectorAdvective(b, z4c.beta_u, z4c.vB_d);
+          }
+        }
+        // Preserve the legacy Cartesian a-major accumulation order exactly.
+        if (opt.telegraph_lapse) {
+          for (int a = 0; a < 3; ++a) {
+            for (int b = 0; b < 3; ++b) {
+              dB += g_uu(a, b) * derivatives.VectorFirst(a, b, z4c.vB_d);
             }
           }
+        }
 
         // lapse function
         Real const f = opt.lapse_oplog * opt.lapse_harmonicf + opt.lapse_harmonic * alpha;
@@ -779,14 +804,32 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   DevExeSpace(),0,nmb-1,0,nz4c-1,ks,ke,js,je,is,ie,
   KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
-    for(int a = 0; a < 3; ++a) {
-      u_rhs(m,n,k,j,i) += Diss<NGHOST>(a, idx, u0, m, n, k, j, i)*diss;
+    auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+        idx, size.d_view, nx1, is, m, k, j, i);
+    // Keep the established multiply-then-accumulate order for Cartesian roundoff.
+    for (int direction = 0; direction < 3; ++direction) {
+      u_rhs(m,n,k,j,i) +=
+          derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
     }
   });
 
   return TaskStatus::complete;
 }
 
+template <int NGHOST>
+TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
+  if (pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
+    return CalcRHSImpl<CartoonSO2, NGHOST>(pdriver, stage);
+  }
+  return CalcRHSImpl<Cartesian3D, NGHOST>(pdriver, stage);
+}
+
+template TaskStatus Z4c::CalcRHSImpl<Cartesian3D, 2>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<Cartesian3D, 3>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<Cartesian3D, 4>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<CartoonSO2, 2>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<CartoonSO2, 3>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<CartoonSO2, 4>(Driver *, int);
 template TaskStatus Z4c::CalcRHS<2>(Driver *pdriver, int stage);
 template TaskStatus Z4c::CalcRHS<3>(Driver *pdriver, int stage);
 template TaskStatus Z4c::CalcRHS<4>(Driver *pdriver, int stage);

@@ -12,7 +12,7 @@
 #include "athena.hpp"
 #include "athena_tensor.hpp"
 #include "coordinates/adm.hpp"
-#include "utils/finite_diff.hpp"
+#include "z4c/cartoon_derivatives.hpp"
 
 class Mesh;
 
@@ -33,11 +33,12 @@ int Z4cSymmetricComponent(const int a, const int b) {
   return 5;
 }
 
-template <int NGHOST, bool COMPUTE_POYNTING = true, typename MetricView,
-          typename ExtrinsicCurvatureView>
+template <int NGHOST, bool COMPUTE_POYNTING = true, typename Symmetry,
+          typename MetricView, typename ExtrinsicCurvatureView>
 KOKKOS_INLINE_FUNCTION Z4cCurvatureDiagnostics ComputeZ4cCurvatureDiagnostics(
-    MetricView metric, ExtrinsicCurvatureView extrinsic_curvature,
-    const Real inverse_spacing[3], const int m, const int k, const int j, const int i) {
+    z4c::DerivativeProvider<Symmetry, NGHOST> &derivatives, MetricView metric,
+    ExtrinsicCurvatureView extrinsic_curvature, const int m, const int k,
+    const int j, const int i) {
   Z4cCurvatureDiagnostics result;
 
   AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> inverse_metric;
@@ -91,9 +92,11 @@ KOKKOS_INLINE_FUNCTION Z4cCurvatureDiagnostics ComputeZ4cCurvatureDiagnostics(
     for (int a = 0; a < 3; ++a) {
       for (int b = 0; b < 3; ++b) {
         metric_derivative(c, a, b) =
-            Dx<NGHOST>(c, inverse_spacing, metric, m, a, b, k, j, i);
+            derivatives.template TensorFirst<z4c::TensorVariance::all_lower>(
+                c, a, b, metric);
         extrinsic_derivative(c, a, b) =
-            Dx<NGHOST>(c, inverse_spacing, extrinsic_curvature, m, a, b, k, j, i);
+            derivatives.template TensorFirst<z4c::TensorVariance::all_lower>(
+                c, a, b, extrinsic_curvature);
       }
     }
   }
@@ -102,9 +105,8 @@ KOKKOS_INLINE_FUNCTION Z4cCurvatureDiagnostics ComputeZ4cCurvatureDiagnostics(
       for (int c = 0; c < 3; ++c) {
         for (int d = c; d < 3; ++d) {
           metric_second_derivative(a, b, c, d) =
-              (a == b)
-                  ? Dxx<NGHOST>(a, inverse_spacing, metric, m, c, d, k, j, i)
-                  : Dxy<NGHOST>(a, b, inverse_spacing, metric, m, c, d, k, j, i);
+              derivatives.template TensorSecond<z4c::TensorVariance::all_lower>(
+                  a, b, c, d, metric);
         }
       }
     }
