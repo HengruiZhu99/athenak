@@ -100,6 +100,78 @@ foreach(stencil 2 4 6)
       "order ${stencil} numeric fingerprints: state=${state_sha256} "
       "diagnostic=${diagnostic_sha256} history=${history_sha256} "
       "waveform=${waveform_sha256}")
+
+  # Reproduce the reviewer's exact-base comparison deck as a separate run.  Its
+  # stable basename is part of the binary/text bytes, and the low-order derived
+  # output is deliberately absent because the base implementation reads outside
+  # its valid stencil at orders 2 and 4.  This makes state/history/Weyl raw-file
+  # equality a real gate instead of weakening it to decoded-value equivalence.
+  set(base_case_dir "${TEST_DIR}/exact_base_order${stencil}")
+  file(MAKE_DIRECTORY "${base_case_dir}")
+  string(REPLACE "basename = z4c_rhs_policy_o${stencil}"
+                 "basename = cmp_o${stencil}" base_comparison_input "${input_text}")
+  string(REGEX REPLACE
+      "<output2>\nfile_type = bin\nvariable = z4c_diag\ndcycle = 1\nid = diagnostics\n"
+      "" base_comparison_input "${base_comparison_input}")
+  # The exact-base state/history/Weyl comparison did not enable the curvature
+  # history column; keep the independent order-6 diagnostic run above unchanged.
+  string(REPLACE "history_kretschmann = true\n" ""
+                 base_comparison_input "${base_comparison_input}")
+  set(base_comparison_file "${base_case_dir}/input.athinput")
+  file(WRITE "${base_comparison_file}" "${base_comparison_input}")
+  execute_process(
+      COMMAND "${ATHENA}" -i "${base_comparison_file}"
+      WORKING_DIRECTORY "${base_case_dir}"
+      RESULT_VARIABLE base_comparison_result
+      OUTPUT_VARIABLE base_comparison_stdout
+      ERROR_VARIABLE base_comparison_stderr
+      TIMEOUT 60)
+  if(NOT base_comparison_result EQUAL 0)
+    message(FATAL_ERROR
+        "order ${stencil} exact-base comparison run failed "
+        "(${base_comparison_result}):\n${base_comparison_stdout}\n"
+        "${base_comparison_stderr}")
+  endif()
+
+  if(stencil EQUAL 6)
+    # The sixth-order base diagnostic is valid and was byte-identical in the
+    # independent base-vs-tip review.  Re-run with that review's exact basename
+    # so serialization bytes, not only decoded values, are frozen.
+    set(base_diagnostic_dir "${TEST_DIR}/exact_base_diagnostic_order6")
+    file(MAKE_DIRECTORY "${base_diagnostic_dir}")
+    string(REPLACE "basename = z4c_rhs_policy_o6"
+                   "basename = cmp_diag_o6" base_diagnostic_input "${input_text}")
+    set(base_diagnostic_file "${base_diagnostic_dir}/input.athinput")
+    file(WRITE "${base_diagnostic_file}" "${base_diagnostic_input}")
+    execute_process(
+        COMMAND "${ATHENA}" -i "${base_diagnostic_file}"
+        WORKING_DIRECTORY "${base_diagnostic_dir}"
+        RESULT_VARIABLE base_diagnostic_result
+        OUTPUT_VARIABLE base_diagnostic_stdout
+        ERROR_VARIABLE base_diagnostic_stderr
+        TIMEOUT 60)
+    if(NOT base_diagnostic_result EQUAL 0)
+      message(FATAL_ERROR
+          "order 6 exact-base diagnostic run failed (${base_diagnostic_result}):\n"
+          "${base_diagnostic_stdout}\n${base_diagnostic_stderr}")
+    endif()
+  endif()
 endforeach()
+
+execute_process(
+    COMMAND "${PYTHON_EXECUTABLE}"
+            "${SOURCE_DIR}/tst/unit/z4c/z4c_rhs_policy_regression.py"
+            --athena "${ATHENA}"
+            --source-dir "${SOURCE_DIR}"
+            --test-dir "${TEST_DIR}"
+    RESULT_VARIABLE regression_result
+    OUTPUT_VARIABLE regression_output
+    ERROR_VARIABLE regression_error)
+if(NOT regression_result EQUAL 0)
+  message(FATAL_ERROR
+      "Cartesian production numeric regression failed (${regression_result}):\n"
+      "${regression_output}\n${regression_error}")
+endif()
+message(STATUS "${regression_output}")
 
 message(STATUS "Cartesian production RHS/constraints/Sbc/diagnostics/Weyl orders passed")

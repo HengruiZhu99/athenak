@@ -287,6 +287,11 @@ target_include_directories(athena PUBLIC
 configure_file(config.hpp.in config.hpp)
 
 if (Athena_BUILD_UNIT_TESTS)
+  target_sources(
+      athena PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/cartoon_production_kernel_test.cpp)
+  target_compile_definitions(athena PRIVATE ATHENA_Z4C_KERNEL_TESTS=1)
+
   enable_testing()
   find_package(PythonInterp 3 REQUIRED)
   add_executable(
@@ -369,9 +374,31 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND
       ${CMAKE_COMMAND}
       -DATHENA=$<TARGET_FILE:athena>
+      -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
       -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
       -DTEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/z4c_rhs_policy_production
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_rhs_policy_production_test.cmake)
+
+  add_test(
+      NAME athena.z4c_cartoon_production_kernels
+      COMMAND $<TARGET_FILE:athena> --z4c-cartoon-kernel-test)
+  add_test(
+      NAME athena.z4c_cartoon_production_kernels_cuda_required
+      COMMAND $<TARGET_FILE:athena> --z4c-cartoon-kernel-test --require-cuda)
+  set_tests_properties(
+      athena.z4c_cartoon_production_kernels_cuda_required
+      PROPERTIES LABELS "cuda-required")
+  if(NOT Kokkos_ENABLE_CUDA)
+    set_tests_properties(
+        athena.z4c_cartoon_production_kernels_cuda_required
+        PROPERTIES DISABLED TRUE)
+    add_test(
+        NAME athena.z4c_cartoon_cuda_requirement_rejects_host
+        COMMAND $<TARGET_FILE:athena> --z4c-cartoon-kernel-test --require-cuda)
+    set_tests_properties(
+        athena.z4c_cartoon_cuda_requirement_rejects_host
+        PROPERTIES WILL_FAIL TRUE)
+  endif()
 
   add_executable(
       athena_pdf_validation_unit_test

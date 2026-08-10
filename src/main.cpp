@@ -42,6 +42,10 @@
 #include "utils/utils.hpp"
 #include "z4c/z4c_restart.hpp"
 
+#if defined(ATHENA_Z4C_KERNEL_TESTS)
+#include "../tst/unit/z4c/cartoon_production_kernel_test.hpp"
+#endif
+
 // MPI/OpenMP headers
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -139,6 +143,24 @@ int main(int argc, char *argv[]) {
     std::cout << "AthenaK Kokkos default execution space: "
               << Kokkos::DefaultExecutionSpace::name() << std::endl;
   }
+
+#if defined(ATHENA_Z4C_KERNEL_TESTS)
+  bool run_cartoon_kernel_test = false;
+  bool require_cartoon_cuda = false;
+  for (int i = 1; i < argc; ++i) {
+    const std::string argument(argv[i]);
+    if (argument == "--z4c-cartoon-kernel-test") run_cartoon_kernel_test = true;
+    if (argument == "--require-cuda") require_cartoon_cuda = true;
+  }
+  if (run_cartoon_kernel_test) {
+    const int status = RunCartoonProductionKernelTest(require_cartoon_cuda);
+    Kokkos::finalize();
+#if MPI_PARALLEL_ENABLED
+    MPI_Finalize();
+#endif
+    return status;
+  }
+#endif
 
   //--- Step 2. --------------------------------------------------------------------------
   // Check for command line options and respond.
