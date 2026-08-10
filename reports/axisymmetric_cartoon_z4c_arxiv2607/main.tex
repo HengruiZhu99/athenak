@@ -1,0 +1,13 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,longtable}
+\newif\ifmmsplots
+\IfFileExists{tikz.sty}{\usepackage{tikz}\usepackage{pgfplots}
+  \pgfplotsset{compat=1.18}\mmsplotstrue}{\mmsplotsfalse}
+\title{Axisymmetric Cartoon Z4c: Derivative MMS Evidence}
+\author{AthenaK verification record}
+\date{2026-08-10}
+\begin{document}
+\maketitle
+\input{sections/cartoon_derivative_mms}
+\end{document}
