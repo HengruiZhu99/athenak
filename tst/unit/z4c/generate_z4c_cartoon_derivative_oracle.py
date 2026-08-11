@@ -623,12 +623,27 @@ def verify_fit_tables() -> list[dict[str, object]]:
                             abs(sp.N(polynomial.subs(target, evaluated), 50)) /
                             (sp.Rational(point) + sp.Rational(1, 2)) ** power
                             for point, polynomial in enumerate(derivatives))
+                        construction_norm = sum(
+                            abs(sp.N(
+                                (sp.S.One / (nodes[point] - nodes[differentiated])) *
+                                sp.prod((evaluated - nodes[other]) /
+                                        (nodes[point] - nodes[other])
+                                        for other in range(nghost)
+                                        if other not in (point, differentiated)), 50)) /
+                            (sp.Rational(point) + sp.Rational(1, 2)) ** power
+                            for point in range(nghost)
+                            for differentiated in range(nghost)
+                            if differentiated != point)
                         assert value_norm <= sp.Rational(5, 4) * 2 ** power
                         assert derivative_norm <= (sp.Rational(5, 4) *
                                                    COEFFICIENTS[str(nghost)][derivative_name])
+                        assert construction_norm <= (sp.Rational(5, 4) *
+                                                     COEFFICIENTS[str(nghost)]
+                                                     [derivative_name])
                         fixtures.append({"nghost": nghost, "layer": layer,
                                          "sign": sign, "band_endpoint": endpoint,
-                                         "power": power})
+                                         "power": power,
+                                         "construction_condition_checked": True})
     return fixtures
 
 
@@ -721,6 +736,9 @@ def render_series(symbols: tuple[sp.Symbol, ...],
     fit_fixtures = verify_fit_tables()
     return json.dumps({"schema": "athenak_z4c_cartoon_mms_series_v1",
                        "count": 171,
+                       "contract_errata": {
+                           "scalar.second.0.0":
+                           "active radial Dxx; scalar.second.2.2 owns 2 EvenP"},
                        "roundoff_policy": {
                            "binary64_epsilon_hex": float.fromhex("0x1.0000000000000p-52").hex(),
                            "operation_caps": OPERATION_CAPS,
@@ -739,6 +757,7 @@ def render_series(symbols: tuple[sp.Symbol, ...],
                            "global_slack_rational": "2",
                            "global_slack_hex": upward_hex(sp.Rational(2)),
                            "fit_fixture_count": len(fit_fixtures),
+                           "fit_construction_condition_checked": True,
                            "fit_fixture_sha256": hashlib.sha256(
                                json.dumps(fit_fixtures, sort_keys=True,
                                           separators=(",", ":")).encode()).hexdigest(),

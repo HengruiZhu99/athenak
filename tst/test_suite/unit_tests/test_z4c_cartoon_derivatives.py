@@ -29,6 +29,9 @@ SCHEMA = "athenak_z4c_cartoon_derivative_mms_campaign_v1"
 REDUCTION_TOLERANCE_FACTOR = 4096.0
 SATURATION_FACTOR = 4096.0
 DIAGNOSTIC_RESOLUTIONS = (32, 64, 128, 256)
+QUALIFICATION_DOMAIN = (-2.0, 2.0, -2.0, 2.0)
+CERTIFIED_COORDINATE_LIMIT = 3.0
+EXPECTED_CASES = 3 * 4 * 8
 PRESERVED_JOB_56586376_BYTES = 715_807_842
 PRESERVED_JOB_56586376_CONVERGENCE_SHA256 = \
     "fdb4222c246b49d4df3c8ef40688dafacfd7983d5f090a2fe148d051538778a0"
@@ -64,6 +67,94 @@ PROBE_FIELDS = {
     "target_rho_applicable", "target_rho", "actual_rho", "target_z", "actual_z",
     "global_cell_id", "raw_error",
 }
+EXPECTED_COEFFICIENT_RATIONALS = {
+    "2": {"C1": "1", "C2": "4", "CM": "1", "CU": "4", "CKO": "16",
+          "CE": "1", "CO": "4/3", "CQ": "20/9"},
+    "3": {"C1": "3/2", "C2": "16/3", "CM": "9/4", "CU": "19/6",
+          "CKO": "64", "CE": "3/2", "CO": "28/15", "CQ": "226/75"},
+    "4": {"C1": "11/6", "C2": "272/45", "CM": "121/36", "CU": "3",
+          "CKO": "256", "CE": "5/2", "CO": "76/35", "CQ": "12598/3675"},
+}
+FAMILY_MAPPING_SHA256 = "16b31c7da2defe5c55e221eefde44cb8936f8caf92fb46cef15a7703b7848667"
+BLOCK_POWERS = {
+    "dx": (1, 0, 0), "div_dx": (1, 0, 0), "dz": (0, 1, 0),
+    "div_dz": (0, 1, 0), "dxx": (2, 0, 0), "dzz": (0, 2, 0),
+    "dxz": (1, 1, 0), "value_over_r": (0, 0, -1),
+    "div_value_over_r": (0, 0, -1), "value_over_r2": (0, 0, -2),
+    "dx_over_r": (1, 0, -1), "dz_over_r": (0, 1, -1),
+    "active_over_r": (1, 0, -1), "even_derivative": (2, 0, 0),
+    "odd_value": (1, 0, 0), "div_odd_value": (1, 0, 0),
+    "rho_odd_derivative": (3, 0, 1), "odd_active_value": (2, 0, 0),
+    "quad_value": (2, 0, 0), "rho_quad_value": (2, 0, 1),
+    "rho2_quad_derivative": (4, 0, 2), "rho_quad_active_value": (3, 0, 1),
+    "ko": (1, 0, 0), "up": (1, 0, 0),
+}
+MASK_WEIGHT_POLICY = {"uniform": "one", "cylindrical": "positive_rho"}
+
+
+def json_integer(record: dict[str, object], field: str, minimum: int = 0) -> int:
+    value = record.get(field)
+    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+        raise RuntimeError(f"JSON field {field} is not an integer >= {minimum}")
+    return value
+
+
+def json_number(record: dict[str, object], field: str,
+                minimum: float | None = None) -> float:
+    value = record.get(field)
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise RuntimeError(f"JSON field {field} is not a finite number")
+    number = float(value)
+    if not math.isfinite(number) or (minimum is not None and number < minimum):
+        raise RuntimeError(f"JSON field {field} is outside its finite range")
+    return number
+
+
+def validate_result_numbers(result: dict[str, object]) -> None:
+    for field in ("spatial_order", "nghost", "nx1", "nx2", "nx3", "mpi_ranks",
+                  "initial_cycle", "pgen_final_cycle", "owned_cells",
+                  "operator_count", "diagnostic_axis_operator_count",
+                  "diagnostic_axis_nonfinite", "nonfinite_count"):
+        json_integer(result, field)
+    for field in ("initial_time", "pgen_final_time", "noise_amplitude",
+                  "maximum_error", "maximum_noise_delta", "noise_delta_bound",
+                  "maximum_rotation_residual", "rotation_residual_bound",
+                  "diagnostic_axis_linf", "diagnostic_axis_tolerance"):
+        json_number(result, field, 0.0)
+
+
+def validate_certified_domain(domain: tuple[float, float, float, float],
+                              resolutions_by_order: dict[int, tuple[int, ...]],
+                              qualification: bool) -> dict[str, object]:
+    if (len(domain) != 4 or any(not math.isfinite(value) for value in domain) or
+            not (domain[0] < domain[1] and domain[2] < domain[3]) or
+            abs(domain[0] + domain[1]) > 32 * sys.float_info.epsilon *
+            max(1.0, abs(domain[0]), abs(domain[1]))):
+        raise RuntimeError("domain must be finite, ordered, and signed-rho symmetric")
+    if qualification and tuple(domain) != QUALIFICATION_DOMAIN:
+        raise RuntimeError("qualification domain is frozen to [-2,2]x[-2,2]")
+    reaches = []
+    for order, resolutions in resolutions_by_order.items():
+        nghost = order // 2 + 1
+        for resolution in resolutions:
+            if resolution <= 0:
+                raise RuntimeError("resolution pool contains a nonpositive entry")
+            hx = (domain[1] - domain[0]) / resolution
+            hz = (domain[3] - domain[2]) / resolution
+            rho_reach = max(abs(domain[0] - (nghost - 0.5) * hx),
+                            abs(domain[1] + (nghost - 0.5) * hx))
+            z_reach = max(abs(domain[2] - (nghost - 0.5) * hz),
+                          abs(domain[3] + (nghost - 0.5) * hz))
+            if rho_reach >= CERTIFIED_COORDINATE_LIMIT or \
+               z_reach >= CERTIFIED_COORDINATE_LIMIT:
+                raise RuntimeError("active plus maximum ghost reach leaves the certified "
+                                   "|rho|,|z|<3 manufactured-field envelope")
+            reaches.append({"order": order, "resolution": resolution,
+                            "rho_reach": rho_reach, "z_reach": z_reach})
+    return {"domain": list(domain), "strict_coordinate_limit":
+            CERTIFIED_COORDINATE_LIMIT,
+            "maximum_rho_reach": max(item["rho_reach"] for item in reaches),
+            "maximum_z_reach": max(item["z_reach"] for item in reaches)}
 
 
 def up(value: float) -> float:
@@ -223,6 +314,48 @@ def validate_probe_row(row: dict[str, str]) -> None:
         raise RuntimeError("inapplicable target_rho must be blank")
     for field in ("actual_rho", "target_z", "actual_z", "raw_error"):
         finite_value(row, field)
+
+
+def validate_probe_geometry(row: dict[str, str], order: int, resolution: int,
+                            domain: tuple[float, float, float, float]) -> None:
+    validate_probe_row(row)
+    classification = row["classification"]
+    layer = integer_value(row, "layer_index")
+    if classification == "diagnostic_axis":
+        if (layer != 0 or finite_value(row, "actual_rho") != 0.0 or
+                finite_value(row, "target_z") != 0.0 or
+                finite_value(row, "actual_z") != 0.0):
+            raise RuntimeError("diagnostic-axis probe is not at the true axis/center")
+        return
+    h = (domain[1] - domain[0]) / resolution
+    hz = (domain[3] - domain[2]) / resolution
+    actual_rho = finite_value(row, "actual_rho")
+    actual_z = finite_value(row, "actual_z")
+    expected_layer = math.floor(abs(actual_rho / h))
+    if (layer != expected_layer or (row["side"] == "positive") != (actual_rho > 0.0)):
+        raise RuntimeError("probe layer/side differs from physical geometry")
+    expected_actual_z = domain[2] + (resolution // 2 + 0.5) * hz
+    if finite_value(row, "target_z") != 0.0 or actual_z != expected_actual_z:
+        raise RuntimeError("probe z target/actual differs from cell-center geometry")
+    nghost = order // 2 + 1
+    if classification == "fitted":
+        match = re.fullmatch(r"fitted_layer_(\d+)_(negative|positive)", row["mask"])
+        if match is None or int(match.group(1)) != layer or layer >= nghost:
+            raise RuntimeError("fitted probe mask/layer differs from provider geometry")
+    elif classification == "raw_transition":
+        if layer != nghost:
+            raise RuntimeError("raw-transition probe is not at NGHOST")
+    elif classification == "fixed_radius":
+        if layer != math.floor(0.5 / h):
+            raise RuntimeError("fixed-radius probe layer differs from rho=0.5 target")
+    elif classification == "regular":
+        if layer != math.floor(1.0 / h):
+            raise RuntimeError("regular probe layer differs from rho=1 target")
+    else:
+        raise RuntimeError("unknown probe geometry classification")
+    expected_rho = (-1.0 if row["side"] == "negative" else 1.0) * (layer + 0.5) * h
+    if actual_rho != expected_rho:
+        raise RuntimeError("probe actual_rho differs from selected cell center")
 
 
 def expected_masks(order: int) -> list[str]:
@@ -462,7 +595,7 @@ def block_bounds(block_record: dict[str, object], maxima: dict[str, float],
 
 def cell_clean_floor(item: dict[str, object], policy: dict[str, object],
                      order: int, h: float, hz: float, radius: float,
-                     fitted: bool) -> float:
+                     fitted: bool) -> dict[str, object]:
     epsilon = float.fromhex(str(policy["binary64_epsilon_hex"]))
     maxima = {name: policy_number(value) for name, value in
               dict(policy["field_maxima"]).items()}
@@ -474,26 +607,41 @@ def cell_clean_floor(item: dict[str, object], policy: dict[str, object],
     coefficients["fit_safety"] = float.fromhex(str(policy["fit_safety_hex"]))
     family = dict(item["roundoff_family"])
     blocks = list(family["active"]) + list(family["fitted" if fitted else "raw"])
-    production = []
+    propagated_terms = []
+    arithmetic_terms = []
     magnitudes = []
     for block_record in blocks:
         bound, propagated, operations = block_bounds(
             dict(block_record), maxima, errors, coefficients, h, hz, radius)
         magnitudes.append(bound)
-        production.append(up_add(propagated, up_mul(
-            gamma(operations, epsilon), up_add(bound, propagated))))
-    production_sum = sum_up(production)
-    if len(production) > 1:
-        production_sum = up_add(
-            production_sum,
-            up_mul(gamma(len(production) - 1, epsilon), sum_up(magnitudes + production)))
+        propagated_terms.append(propagated)
+        arithmetic_terms.append(up_mul(gamma(operations, epsilon),
+                                       up_add(bound, propagated)))
+    propagated_sum = sum_up(propagated_terms)
+    arithmetic_sum = sum_up(arithmetic_terms)
+    if len(blocks) > 1:
+        arithmetic_sum = up_add(
+            arithmetic_sum, up_mul(gamma(len(blocks) - 1, epsilon),
+                                   sum_up(magnitudes + propagated_terms +
+                                          arithmetic_terms)))
+    production_sum = up_add(propagated_sum, arithmetic_sum)
     oracle_bound = float.fromhex(str(item["oracle_bound_hex"]))
     oracle_roundoff = up_mul(gamma(256, epsilon), oracle_bound)
     final_magnitude = sum_up([sum_up(magnitudes), oracle_bound,
                               production_sum, oracle_roundoff])
     subtraction = up_mul(gamma(1, epsilon), final_magnitude)
-    return up_mul(float.fromhex(str(policy["global_slack_hex"])),
-                  sum_up([production_sum, oracle_roundoff, subtraction]))
+    clean_floor = up_mul(float.fromhex(str(policy["global_slack_hex"])),
+                         sum_up([production_sum, oracle_roundoff, subtraction]))
+    return {"family_sha256": canonical_digest(family),
+            "coefficient_row_sha256": canonical_digest(coefficient_row),
+            "fit_fixture_sha256": policy["fit_fixture_sha256"],
+            "branch": "fitted" if fitted else "raw",
+            "h": h, "hz": hz, "abs_rho": radius,
+            "block_count": len(blocks), "production_magnitude": sum_up(magnitudes),
+            "propagated_input": propagated_sum,
+            "production_roundoff": arithmetic_sum,
+            "oracle_bound": oracle_bound, "oracle_roundoff": oracle_roundoff,
+            "subtraction_roundoff": subtraction, "clean_floor": clean_floor}
 
 
 def mask_radial_indices(mask: str, order: int, resolution: int,
@@ -521,38 +669,57 @@ def mask_radial_indices(mask: str, order: int, resolution: int,
 
 def aggregate_clean_floor(item: dict[str, object], policy: dict[str, object],
                           order: int, resolution: int, mask: str, norm: str,
-                          domain: tuple[float, float, float, float]) -> float:
+                          domain: tuple[float, float, float, float]) -> dict[str, object]:
     h = (domain[1] - domain[0]) / resolution
     hz = (domain[3] - domain[2]) / resolution
     radial = mask_radial_indices(mask, order, resolution, domain)
     cylindrical = norm.startswith("cyl_")
     if cylindrical:
         radial = [entry for entry in radial if entry[2]]
-    floors = [cell_clean_floor(item, policy, order, h, hz, radius, fitted)
-              for radius, fitted, _ in radial]
+    cells = [cell_clean_floor(item, policy, order, h, hz, radius, fitted)
+             for radius, fitted, _ in radial]
+    floors = [float(cell["clean_floor"]) for cell in cells]
     weights = [radius if cylindrical else 1.0 for radius, _, _ in radial]
     denominator = sum_up(weights)
     if norm in {"l1", "cyl_l1"}:
-        return up_div(sum_up([up_mul(weight, value)
-                              for weight, value in zip(weights, floors)]), denominator)
-    if norm in {"l2", "cyl_l2"}:
+        clean_floor = up_div(sum_up([up_mul(weight, value)
+                                     for weight, value in zip(weights, floors)]),
+                             denominator)
+    elif norm in {"l2", "cyl_l2"}:
         mean_square = up_div(sum_up([up_mul(weight, up_mul(value, value))
                                      for weight, value in zip(weights, floors)]),
                              denominator)
-        return up(math.sqrt(mean_square))
-    if norm in {"linfinity", "cyl_linfinity", "raw_error"}:
-        return max(floors)
-    raise RuntimeError(f"unknown coefficient-floor norm {norm}")
+        clean_floor = up(math.sqrt(mean_square))
+    elif norm in {"linfinity", "cyl_linfinity", "raw_error"}:
+        clean_floor = max(floors)
+    else:
+        raise RuntimeError(f"unknown coefficient-floor norm {norm}")
+    component_names = ("production_magnitude", "propagated_input",
+                       "production_roundoff", "oracle_roundoff",
+                       "subtraction_roundoff")
+    components = {name: max(float(cell[name]) for cell in cells)
+                  for name in component_names}
+    return {"family_sha256": cells[0]["family_sha256"], "norm": norm,
+            "coefficient_row_sha256": cells[0]["coefficient_row_sha256"],
+            "fit_fixture_sha256": cells[0]["fit_fixture_sha256"],
+            "mask_weight": "positive_rho" if cylindrical else "uniform",
+            "radial_sample_count": len(cells),
+            "fitted_count": sum(cell["branch"] == "fitted" for cell in cells),
+            "raw_count": sum(cell["branch"] == "raw" for cell in cells),
+            **components, "clean_floor": clean_floor}
 
 
 def probe_clean_floor(item: dict[str, object], policy: dict[str, object], order: int,
                       resolution: int, row: dict[str, str],
-                      domain: tuple[float, float, float, float]) -> float:
+                      domain: tuple[float, float, float, float]) -> dict[str, object]:
     h = (domain[1] - domain[0]) / resolution
     hz = (domain[3] - domain[2]) / resolution
     radius = abs(finite_value(row, "actual_rho"))
-    return cell_clean_floor(item, policy, order, h, hz, radius,
-                            row["classification"] == "fitted")
+    layer = math.floor(radius / h)
+    fitted = layer < order // 2 + 1
+    record = cell_clean_floor(item, policy, order, h, hz, radius, fitted)
+    return {**record, "norm": "raw_error", "mask_weight": "point",
+            "layer_index": layer}
 
 
 def evaluate_rate_samples(values: list[dict[str, float]], expected: float,
@@ -560,6 +727,7 @@ def evaluate_rate_samples(values: list[dict[str, float]], expected: float,
     rates: list[float | None] = []
     rate_status = []
     prefix_rates = []
+    nonmonotone_intervals = []
     for sample in values:
         if (not math.isfinite(sample["error"]) or sample["error"] <= 0.0 or
                 not math.isfinite(sample["clean_floor"]) or sample["clean_floor"] <= 0.0):
@@ -570,29 +738,58 @@ def evaluate_rate_samples(values: list[dict[str, float]], expected: float,
                 raise RuntimeError("noisy rate sample requires a finite direct delta")
             sample["applied_floor"] = max(sample["clean_floor"],
                                            up_mul(8.0, sample["direct_delta"]))
+        sample["floor_application"] = {
+            "clean_floor": sample["clean_floor"],
+            "direct_delta": sample["direct_delta"],
+            "noisy_delta_floor": 0.0 if lane == "clean" else
+            up_mul(8.0, sample["direct_delta"]),
+            "applied_floor": sample["applied_floor"]}
     saturated_at = next((index for index, sample in enumerate(values)
                          if sample["error"] <= sample["applied_floor"]), len(values))
     for index in range(1, saturated_at):
         if values[index]["error"] > values[index - 1]["error"]:
-            raise RuntimeError("pre-floor convergence error increased")
+            nonmonotone_intervals.append(index - 1)
     for index, (coarse, fine) in enumerate(zip(values, values[1:])):
         if index + 1 >= saturated_at:
             rates.append(None)
-            rate_status.append("saturated")
+            rate_status.append("excluded_saturated")
+        elif index in nonmonotone_intervals:
+            rates.append(None)
+            rate_status.append("excluded_pre_floor_nonmonotone")
         else:
             rate = math.log(coarse["error"] / fine["error"]) / \
                 math.log(fine["resolution"] / coarse["resolution"])
             rates.append(rate)
-            rate_status.append("rate")
+            rate_status.append("included_rate")
             prefix_rates.append(rate)
     unsaturated_prefix = len(prefix_rates)
-    passed = (unsaturated_prefix >= 2 and
+    passed = (not nonmonotone_intervals and unsaturated_prefix >= 2 and
               min(float(value) for value in prefix_rates[-2:]) >= expected - margin)
+    if nonmonotone_intervals:
+        reason = "pre_floor_nonmonotone"
+    elif unsaturated_prefix < 2:
+        reason = "saturated_insufficient" if saturated_at < len(values) else \
+            "insufficient_ratios"
+    elif not passed:
+        reason = "rate_miss"
+    else:
+        reason = "pass"
+    interval_reasons = []
+    for index, status in enumerate(rate_status):
+        interval_reasons.append({
+            "coarse_resolution": values[index]["resolution"],
+            "fine_resolution": values[index + 1]["resolution"],
+            "status": status,
+            "reason": {"included_rate": "finite_unsaturated_interval",
+                       "excluded_saturated": "fine_endpoint_at_or_below_floor",
+                       "excluded_pre_floor_nonmonotone":
+                       "fine_error_exceeds_coarse_error"}[status]})
     return {"rates": rates, "unsaturated_prefix_ratios": unsaturated_prefix,
             "rate_status": rate_status, "saturation_absorbing": saturated_at < len(values),
             "saturated_at_resolution": None if saturated_at == len(values) else
             values[saturated_at]["resolution"],
-            "passed": passed}
+            "interval_reasons": interval_reasons,
+            "outcome_reason": reason, "passed": passed}
 
 
 def output_forecast(resolutions_by_order: dict[int, tuple[int, ...]], phases: list[int],
@@ -642,6 +839,43 @@ def execution_environment() -> dict[str, str]:
 def canonical_digest(value: object) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True,
                                      separators=(",", ":")).encode()).hexdigest()
+
+
+def validate_semantic_tables(powers: dict[str, tuple[int, int, int]],
+                             weights: dict[str, str]) -> None:
+    if powers != BLOCK_POWERS:
+        raise RuntimeError("h/z/rho power table differs from the frozen family map")
+    if weights != {"uniform": "one", "cylindrical": "positive_rho"}:
+        raise RuntimeError("mask weight policy differs from the frozen contract")
+
+
+def validate_roundoff_inventory(inventory: dict[str, object]) -> None:
+    policy = inventory.get("roundoff_policy")
+    series = inventory.get("series")
+    if not isinstance(policy, dict) or not isinstance(series, list) or len(series) != 171:
+        raise RuntimeError("coefficient floor inventory is incomplete")
+    rationals = {order: {name: value.get("rational")
+                         for name, value in dict(row).items()}
+                 for order, row in dict(policy.get("coefficients", {})).items()}
+    if rationals != EXPECTED_COEFFICIENT_RATIONALS:
+        raise RuntimeError("coefficient table differs from the frozen finite contract")
+    for order, row in dict(policy["coefficients"]).items():
+        for name, value in dict(row).items():
+            rational = Fraction(str(value["rational"]))
+            nearest = float(rational)
+            expected_hex = (math.nextafter(nearest, math.inf)
+                            if Fraction.from_float(nearest) < rational else nearest).hex()
+            if value.get("hex") != expected_hex:
+                raise RuntimeError(f"coefficient {order}/{name} is not exact upward binary64")
+    families = [[item.get("name"), item.get("roundoff_family")] for item in series]
+    if canonical_digest(families) != FAMILY_MAPPING_SHA256:
+        raise RuntimeError("171-row roundoff-family mapping differs from the frozen map")
+    kinds = {str(block["kind"]).removeprefix("product_")
+             for item in series for branch in ("active", "fitted", "raw")
+             for block in dict(item["roundoff_family"])[branch]}
+    if not kinds <= set(BLOCK_POWERS):
+        raise RuntimeError("roundoff family uses an unclassified h/rho power")
+    validate_semantic_tables(BLOCK_POWERS, MASK_WEIGHT_POLICY)
 
 
 def expected_case_files(ranks: int) -> set[str]:
@@ -708,7 +942,7 @@ def self_test_cpu_audit_policy() -> None:
          "clean_floor": 1.0e-30},
     ]
     miss = evaluate_rate_samples(o2_miss, 2.0, 0.25, "clean")
-    if miss["passed"] or miss["rate_status"] != ["rate", "rate", "rate"]:
+    if miss["passed"] or miss["rate_status"] != ["included_rate"] * 3:
         raise RuntimeError("pre-floor order-2 miss was hidden or reclassified")
     o6_roundoff = [
         {"resolution": 32, "error": 6.0337018612239125e-9, "direct_delta": 0.0,
@@ -722,7 +956,7 @@ def self_test_cpu_audit_policy() -> None:
     ]
     saturated = evaluate_rate_samples(o6_roundoff, 6.0, 0.25, "clean")
     if (saturated["passed"] or saturated["rate_status"] !=
-            ["rate", "saturated", "saturated"] or
+            ["included_rate", "excluded_saturated", "excluded_saturated"] or
             saturated["unsaturated_prefix_ratios"] != 1):
         raise RuntimeError("absorbing saturation invented or re-entered a rate")
 
@@ -739,6 +973,15 @@ def self_test_cpu_audit_policy() -> None:
                   "rotation_linfinity"):
         valid_norm[field] = "0"
     validate_norm_row(valid_norm)
+    legacy_norm = {key: value for key, value in valid_norm.items()
+                   if key not in {"cylindrical_applicable", "radius_applicable"}}
+    legacy_norm.update({"cyl_l1": "nan", "cyl_l2": "nan",
+                        "cyl_linfinity": "nan", "target_abs_rho": "nan",
+                        "actual_abs_rho": "nan"})
+    normalized_norm, _ = normalize_legacy_norm_row(legacy_norm)
+    if any(normalized_norm[field] != valid_norm[field] for field in
+           ("l1", "l2", "linfinity", "shared_l1", "independent_l1")):
+        raise RuntimeError("legacy norm normalization changed numerical evidence")
     for label, edit in (
         ("NaN numeric metadata", {"l1": "nan"}),
         ("infinite numeric metadata", {"l2": "inf"}),
@@ -757,12 +1000,19 @@ def self_test_cpu_audit_policy() -> None:
         expect_runtime_error(lambda row=candidate: validate_norm_row(row), label)
 
     valid_probe = {"operator": "scalar.first.0", "mask": "raw_transition_negative",
-                   "side": "negative", "layer_index": "2",
+                   "side": "negative", "layer_index": "3",
                    "classification": "raw_transition",
                    "target_rho_applicable": "false", "target_rho": "",
-                   "actual_rho": "-0.1", "target_z": "0", "actual_z": "0",
+                   "actual_rho": "-0.4375", "target_z": "0", "actual_z": "0.0625",
                    "global_cell_id": "7", "raw_error": "0"}
     validate_probe_row(valid_probe)
+    validate_probe_geometry(valid_probe, 4, 32, QUALIFICATION_DOMAIN)
+    legacy_probe = {key: value for key, value in valid_probe.items()
+                    if key != "target_rho_applicable"}
+    legacy_probe["target_rho"] = "nan"
+    normalized_probe, _ = normalize_legacy_probe_row(legacy_probe)
+    if normalized_probe["raw_error"] != valid_probe["raw_error"]:
+        raise RuntimeError("legacy probe normalization changed raw error")
     for label, edit in (
         ("nonfinite probe error", {"raw_error": "-inf"}),
         ("inapplicable populated target", {"target_rho": "-0.1"}),
@@ -771,6 +1021,18 @@ def self_test_cpu_audit_policy() -> None:
     ):
         candidate = {**valid_probe, **edit}
         expect_runtime_error(lambda row=candidate: validate_probe_row(row), label)
+    for label, edit in (
+        ("fitted mask/layer mismatch", {"mask": "fitted_layer_1_negative",
+                                        "classification": "fitted",
+                                        "layer_index": "0", "actual_rho": "-0.0625"}),
+        ("raw transition away from NGHOST", {"layer_index": "2",
+                                             "actual_rho": "-0.3125"}),
+        ("probe z mismatch", {"actual_z": "0"}),
+    ):
+        candidate = {**valid_probe, **edit}
+        expect_runtime_error(
+            lambda row=candidate: validate_probe_geometry(
+                row, 4, 32, QUALIFICATION_DOMAIN), label)
 
     fixed_keys = {probe_series_identity({**valid_probe,
                                         "mask": "fixed_rho_negative_0.5",
@@ -813,6 +1075,24 @@ def self_test_cpu_audit_policy() -> None:
             expect_runtime_error(lambda path=nonfinite: load_json_strict(path),
                                  f"nonfinite {label} JSON")
 
+    valid_result = {field: 0 for field in
+                    ("spatial_order", "nghost", "nx1", "nx2", "nx3", "mpi_ranks",
+                     "initial_cycle", "pgen_final_cycle", "owned_cells",
+                     "operator_count", "diagnostic_axis_operator_count",
+                     "diagnostic_axis_nonfinite", "nonfinite_count")}
+    valid_result.update({field: 0.0 for field in
+                         ("initial_time", "pgen_final_time", "noise_amplitude",
+                          "maximum_error", "maximum_noise_delta", "noise_delta_bound",
+                          "maximum_rotation_residual", "rotation_residual_bound",
+                          "diagnostic_axis_linf", "diagnostic_axis_tolerance")})
+    validate_result_numbers(valid_result)
+    for field, bad in (("noise_delta_bound", "NaN"),
+                       ("diagnostic_axis_linf", "1.0"),
+                       ("maximum_error", math.inf), ("operator_count", 171.0)):
+        candidate = {**valid_result, field: bad}
+        expect_runtime_error(lambda value=candidate: validate_result_numbers(value),
+                             f"typed finite result mutation {field}")
+
     forecast = output_forecast({order: DIAGNOSTIC_RESOLUTIONS for order in (2, 4, 6)},
                                list(range(8)), 4, False)
     if (forecast["case_count"] != 96 or
@@ -827,13 +1107,52 @@ def self_test_cpu_audit_policy() -> None:
         raise RuntimeError("output forecast/audit anchor differs from frozen CPU evidence")
 
     root = Path(__file__).resolve().parents[3]
+    load_search_manifest(root / "tst/inputs/z4c_cartoon_mms_search_manifest.json")
     inventory = load_json_strict(
         root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json")
     if not isinstance(inventory, dict) or not isinstance(inventory.get("roundoff_policy"), dict):
         raise RuntimeError("coefficient-floor self-test lacks its generated policy")
     metadata = {item["name"]: item for item in inventory["series"]}
     policy = inventory["roundoff_policy"]
+    validate_roundoff_inventory(inventory)
     domain = (-2.0, 2.0, -2.0, 2.0)
+
+    # One compact table-driven mutation loop owns every frozen coefficient,
+    # family row, h/rho exponent and mask-weight declaration.
+    for order, row in EXPECTED_COEFFICIENT_RATIONALS.items():
+        for coefficient in row:
+            for field, replacement in (("rational", "0"), ("hex", "0x0.0p+0")):
+                mutated = json.loads(json.dumps(inventory))
+                mutated["roundoff_policy"]["coefficients"][order][coefficient][field] = \
+                    replacement
+                expect_runtime_error(
+                    lambda value=mutated: validate_roundoff_inventory(value),
+                    f"coefficient mutation {order}/{coefficient}/{field}")
+    for index in range(171):
+        mutated = json.loads(json.dumps(inventory))
+        mutated["series"][index]["roundoff_family"]["source_branch"] += "_mutated"
+        expect_runtime_error(lambda value=mutated: validate_roundoff_inventory(value),
+                             f"family mapping mutation {index}")
+    for kind, powers in BLOCK_POWERS.items():
+        for component in range(3):
+            changed = dict(BLOCK_POWERS)
+            replacement = list(powers)
+            replacement[component] += 1
+            changed[kind] = tuple(replacement)
+            expect_runtime_error(
+                lambda value=changed: validate_semantic_tables(value, MASK_WEIGHT_POLICY),
+                f"h/rho power mutation {kind}/{component}")
+    for weight in MASK_WEIGHT_POLICY:
+        changed = dict(MASK_WEIGHT_POLICY)
+        changed[weight] += "_mutated"
+        expect_runtime_error(
+            lambda value=changed: validate_semantic_tables(BLOCK_POWERS, value),
+            f"mask-weight mutation {weight}")
+    validate_certified_domain(domain, {2: (32,), 4: (32,), 6: (32,)}, True)
+    expect_runtime_error(
+        lambda: validate_certified_domain((-2.9, 2.9, -2.0, 2.0),
+                                          {6: (32,)}, False),
+        "domain outside certified active-plus-ghost reach")
 
     advection = metadata["tensor.lower.0.1.advective"]
     advection_values = []
@@ -846,13 +1165,29 @@ def self_test_cpu_audit_policy() -> None:
         advection_values.append({
             "resolution": resolution, "error": error, "direct_delta": 0.0,
             "clean_floor": probe_clean_floor(
-                advection, policy, 2, resolution, row, domain)})
+                advection, policy, 2, resolution, row, domain)["clean_floor"]})
     advection_gate = evaluate_rate_samples(advection_values, 2.0, 0.15, "clean")
     if (advection_gate["passed"] or
-            advection_gate["rate_status"] != ["rate", "rate"]):
+            advection_gate["rate_status"] != ["included_rate", "included_rate"]):
         raise RuntimeError("order-2 regular advection miss was hidden by the floor")
 
     fitted_tensor = metadata["tensor.lower.0.2.second.0.2"]
+    for order in (4, 6):
+        for resolution, expected_branch in ((16, "fitted"), (32, "raw")):
+            h = 4.0 / resolution
+            layer = math.floor(0.5 / h)
+            for side in (-1.0, 1.0):
+                row = {field: "" for field in PROBE_FIELDS}
+                row["actual_rho"] = str(side * (layer + 0.5) * h)
+                row["classification"] = "fixed_radius"
+                observed = probe_clean_floor(fitted_tensor, policy, order,
+                                             resolution, row, domain)
+                direct = cell_clean_floor(fitted_tensor, policy, order, h, h,
+                                           abs(float(row["actual_rho"])),
+                                           expected_branch == "fitted")
+                if (observed["branch"] != expected_branch or
+                        observed["clean_floor"] != direct["clean_floor"]):
+                    raise RuntimeError("fixed probe floor selected semantic label, not geometry")
     fitted_values = []
     for resolution, error in zip((256, 512, 1024),
                                  (1.1391698318701828e-10,
@@ -862,10 +1197,10 @@ def self_test_cpu_audit_policy() -> None:
             "resolution": resolution, "error": error, "direct_delta": 0.0,
             "clean_floor": aggregate_clean_floor(
                 fitted_tensor, policy, 2, resolution,
-                "fitted_layer_0_negative", "l1", domain)})
+                "fitted_layer_0_negative", "l1", domain)["clean_floor"]})
     fitted_gate = evaluate_rate_samples(fitted_values, 2.0, 0.25, "clean")
     if (fitted_gate["passed"] or
-            fitted_gate["rate_status"] != ["saturated", "saturated"]):
+            fitted_gate["rate_status"] != ["excluded_saturated"] * 2):
         raise RuntimeError("order-2 fitted saturation re-entered after the floor")
 
     scalar_second = metadata["scalar.second.0.0"]
@@ -877,7 +1212,7 @@ def self_test_cpu_audit_policy() -> None:
             "resolution": resolution, "error": error, "direct_delta": 0.0,
             "clean_floor": aggregate_clean_floor(
                 scalar_second, policy, 6, resolution,
-                "fitted_layer_2_negative", "l1", domain)})
+                "fitted_layer_2_negative", "l1", domain)["clean_floor"]})
     scalar_gate = evaluate_rate_samples(scalar_values, 6.0, 0.25, "clean")
     if scalar_gate["passed"]:
         raise RuntimeError("order-6 coarse fitted miss became a false pass")
@@ -885,7 +1220,7 @@ def self_test_cpu_audit_policy() -> None:
     shared_values[-1]["direct_delta"] = 2.3347311319430147e-11
     shared_gate = evaluate_rate_samples(shared_values, 6.0, 0.5, "shared")
     if (shared_values[-1]["applied_floor"] < 1.8677849055544118e-10 or
-            shared_gate["rate_status"][-1] != "saturated"):
+            shared_gate["rate_status"][-1] != "excluded_saturated"):
         raise RuntimeError("shared-noise floor does not absorb the frozen N128 anchor")
 
     high_floor = [{"resolution": 32, "error": 1.0, "direct_delta": 0.0,
@@ -894,7 +1229,9 @@ def self_test_cpu_audit_policy() -> None:
                    "clean_floor": 2.0},
                   {"resolution": 128, "error": 0.25, "direct_delta": 0.0,
                    "clean_floor": 2.0}]
-    if evaluate_rate_samples(high_floor, 2.0, 0.25, "clean")["passed"]:
+    high_outcome = evaluate_rate_samples(high_floor, 2.0, 0.25, "clean")
+    if high_outcome["passed"] or high_outcome["outcome_reason"] != \
+       "saturated_insufficient":
         raise RuntimeError("a high floor produced a passing ratio")
     increasing = [{"resolution": 32, "error": 1.0, "direct_delta": 0.0,
                    "clean_floor": 1.0e-12},
@@ -902,17 +1239,19 @@ def self_test_cpu_audit_policy() -> None:
                    "clean_floor": 1.0e-12},
                   {"resolution": 128, "error": 1.0, "direct_delta": 0.0,
                    "clean_floor": 1.0e-12}]
-    expect_runtime_error(lambda: evaluate_rate_samples(increasing, 2.0, 0.25,
-                                                        "clean"),
-                         "pre-floor increase")
+    nonmonotone = evaluate_rate_samples(increasing, 2.0, 0.25, "clean")
+    if nonmonotone["passed"] or nonmonotone["outcome_reason"] != \
+       "pre_floor_nonmonotone":
+        raise RuntimeError("pre-floor increase was not retained as a hard failure")
     for errors in ((1.0, 0.25, 0.5, 0.125),
                    (1.0, 0.25, 0.0625, 0.125)):
         samples = [{"resolution": resolution, "error": error,
                     "direct_delta": 0.0, "clean_floor": 1.0e-12}
                    for resolution, error in zip(DIAGNOSTIC_RESOLUTIONS, errors)]
-        expect_runtime_error(
-            lambda values=samples: evaluate_rate_samples(values, 2.0, 0.25, "clean"),
-            "middle/trailing pre-floor increase")
+        outcome = evaluate_rate_samples(samples, 2.0, 0.25, "clean")
+        if outcome["passed"] or outcome["outcome_reason"] != \
+           "pre_floor_nonmonotone":
+            raise RuntimeError("middle/trailing increase was not retained")
 
 
 def verified_complete(case: Path, identity: dict[str, object]) -> bool:
@@ -995,6 +1334,7 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     result = load_json_strict(raw_result)
     if not isinstance(result, dict):
         raise RuntimeError(f"case {key} result JSON is not an object")
+    validate_result_numbers(result)
     if result.get("status") != "pass" or result.get("operator_count") != 171:
         raise RuntimeError(f"case {key} did not produce the complete passing 171-series set")
     verify_no_evolution(key, stdout_text, result)
@@ -1029,23 +1369,16 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
             len(set(operator_names)) != 171 or operator_set != set(operator_names) or
             any(int(row["nonfinite"]) for row in rows)):
         raise RuntimeError(f"case {key} has incomplete or nonfinite CSV series")
-    noise_bound = float(result["noise_delta_bound"])
-    if any(float(row["shared_delta_linfinity"]) > noise_bound or
-           float(row["independent_delta_linfinity"]) > noise_bound for row in rows):
+    noise_bound = json_number(result, "noise_delta_bound", 0.0)
+    if any(finite_value(row, "shared_delta_linfinity") > noise_bound or
+           finite_value(row, "independent_delta_linfinity") > noise_bound for row in rows):
         raise RuntimeError(f"case {key} exceeds frozen direct noise-delta bound")
     probe_rows = list(csv.DictReader(probes_csv.open(encoding="utf-8")))
     for row in probe_rows:
         validate_probe_row(row)
     validate_case_inventory(order, operator_names, rows, probe_rows)
-    radial_spacing = (args.domain[1] - args.domain[0]) / resolution
     for row in probe_rows:
-        if row["classification"] == "diagnostic_axis":
-            continue
-        actual_rho = finite_value(row, "actual_rho")
-        actual_layer = math.floor(abs(actual_rho / radial_spacing))
-        if (integer_value(row, "layer_index") != actual_layer or
-                (row["side"] == "positive") != (actual_rho > 0.0)):
-            raise RuntimeError(f"case {key} probe layer/side differs from geometry")
+        validate_probe_geometry(row, order, resolution, args.domain)
     for row in rows:
         radial = mask_radial_indices(row["mask"], order, resolution, args.domain)
         expected_count = len(radial) * resolution
@@ -1059,16 +1392,15 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
         raise RuntimeError(f"case {key} has incomplete raw probe/layer records")
     axis_rows = [row for row in probe_rows if row["mask"] == "diagnostic_axis"]
     axis_names = operator_names[:161]
-    axis_errors = [float(row["raw_error"]) for row in axis_rows]
+    axis_errors = [finite_value(row, "raw_error") for row in axis_rows]
     if (len(axis_rows) != 161 or [row["operator"] for row in axis_rows] != axis_names or
             any(row["side"] != "axis" or row["classification"] != "diagnostic_axis" or
                 row["layer_index"] != "0" for row in axis_rows) or
             any(not math.isfinite(error) for error in axis_errors) or
             result.get("diagnostic_axis_operator_count") != 161 or
             result.get("diagnostic_axis_nonfinite") != 0 or
-            not math.isfinite(float(result.get("diagnostic_axis_linf", math.nan))) or
-            max(axis_errors) != float(result["diagnostic_axis_linf"]) or
-            max(axis_errors) > float(result["diagnostic_axis_tolerance"])):
+            max(axis_errors) != json_number(result, "diagnostic_axis_linf", 0.0) or
+            max(axis_errors) > json_number(result, "diagnostic_axis_tolerance", 0.0)):
         raise RuntimeError(f"case {key} lacks the exact finite 161-series true-axis probe")
     if resumed_result is not None:
         if (resumed_result.get("csv_sha256") != sha256(raw_csv) or
@@ -1108,11 +1440,153 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     return result
 
 
-def convergence_gate(cases: list[dict[str, object]], output: Path,
-                     series_manifest: Path) -> None:
+def normalize_legacy_norm_row(row: dict[str, str]) -> tuple[dict[str, str], list[str]]:
+    normalized = dict(row)
+    actions = []
+    if "cylindrical_applicable" not in normalized:
+        applicable = integer_value(normalized, "cyl_count") > 0
+        normalized["cylindrical_applicable"] = str(applicable).lower()
+        actions.append("derived_cylindrical_applicability")
+        if not applicable:
+            for field in ("cyl_l1", "cyl_l2", "cyl_linfinity"):
+                if normalized.get(field, "").lower() == "nan":
+                    normalized[field] = ""
+                    actions.append(f"blanked_inapplicable_{field}")
+    if "radius_applicable" not in normalized:
+        applicable = normalized.get("mask", "").startswith("fixed_rho_")
+        normalized["radius_applicable"] = str(applicable).lower()
+        actions.append("derived_radius_applicability")
+        if not applicable:
+            for field in ("target_abs_rho", "actual_abs_rho"):
+                if normalized.get(field, "").lower() == "nan":
+                    normalized[field] = ""
+                    actions.append(f"blanked_inapplicable_{field}")
+    validate_norm_row(normalized)
+    return normalized, actions
+
+
+def normalize_legacy_probe_row(row: dict[str, str]) -> tuple[dict[str, str], list[str]]:
+    normalized = dict(row)
+    actions = []
+    if "target_rho_applicable" not in normalized:
+        applicable = normalized.get("classification") in {"fixed_radius", "regular",
+                                                            "diagnostic_axis"}
+        normalized["target_rho_applicable"] = str(applicable).lower()
+        actions.append("derived_target_rho_applicability")
+        if not applicable and normalized.get("target_rho", "").lower() == "nan":
+            normalized["target_rho"] = ""
+            actions.append("blanked_inapplicable_target_rho")
+    validate_probe_row(normalized)
+    return normalized, actions
+
+
+def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
+                                                    dict[str, object]]:
+    preserved_convergence = raw_root / "results/ranks2/convergence.json"
+    preserved_evidence = raw_root / "evidence/cpu-ranks2.json"
+    if (sha256(preserved_convergence) != PRESERVED_JOB_56586376_CONVERGENCE_SHA256 or
+            sha256(preserved_evidence) != PRESERVED_JOB_56586376_EVIDENCE_SHA256):
+        raise RuntimeError("replay root is not immutable job56586376 evidence")
+    if not isinstance(load_json_strict(preserved_convergence), dict) or \
+       not isinstance(load_json_strict(preserved_evidence), dict):
+        raise RuntimeError("preserved convergence/wrapper evidence is malformed")
+    manifests = sorted((raw_root / "results/ranks2").glob("o*/manifest.json"))
+    if len(manifests) != EXPECTED_CASES:
+        raise RuntimeError("replay requires exactly 96 complete case manifests")
+    expected = {(order, resolution, phase) for order in (2, 4, 6)
+                for resolution in DIAGNOSTIC_RESOLUTIONS for phase in range(8)}
+    observed = set()
+    case_bindings = []
+    cases = []
+    verified_case_bytes = 0
+    for manifest_path in manifests:
+        case = manifest_path.parent
+        manifest = load_json_strict(manifest_path)
+        if (not isinstance(manifest, dict) or manifest.get("schema") != SCHEMA or
+                manifest.get("state") != "complete" or
+                set(manifest) != {"schema", "state", "identity", "files"} or
+                not isinstance(manifest.get("files"), dict)):
+            raise RuntimeError(f"replay case {case.name} has a malformed manifest")
+        files = manifest["files"]
+        actual = {entry.name for entry in case.iterdir()}
+        if actual != set(files) | {"manifest.json"}:
+            raise RuntimeError(f"replay case {case.name} file inventory differs")
+        for name, digest in files.items():
+            path = case / name
+            if (not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest) or
+                    not path.is_file() or path.is_symlink() or sha256(path) != digest):
+                raise RuntimeError(f"replay case {case.name} failed hash verification: {name}")
+            verified_case_bytes += path.stat().st_size
+        verified_case_bytes += manifest_path.stat().st_size
+        manifest_sha = sha256(manifest_path)
+        stored_result = load_json_strict(case / "result.json")
+        if not isinstance(stored_result, dict):
+            raise RuntimeError(f"replay case {case.name} result is not an object")
+        validate_result_numbers(stored_result)
+        if set(files) != expected_case_files(json_integer(stored_result, "mpi_ranks", 1)):
+            raise RuntimeError(f"replay case {case.name} file set differs from exact schema")
+        result = dict(stored_result)
+        order = json_integer(result, "spatial_order", 2)
+        resolution = json_integer(result, "resolution", 1)
+        phase = json_integer(result, "phase")
+        observed.add((order, resolution, phase))
+        case_id, case_uuid = result.get("case_id"), result.get("case_uuid")
+        if (not isinstance(case_id, str) or not isinstance(case_uuid, str) or
+                case.name != f"{case_id}-{case_uuid}"):
+            raise RuntimeError("replay case directory differs from result id/uuid")
+        identity = manifest["identity"]
+        if (not isinstance(identity, dict) or identity.get("case_id") != case_id or
+                identity.get("uuid") != case_uuid or
+                identity.get("ranks") != result.get("mpi_ranks") or
+                identity.get("domain") != result.get("domain") or
+                identity.get("execution_environment_sha256") !=
+                result.get("execution_environment_sha256")):
+            raise RuntimeError(f"replay case {case_id} manifest/result identity differs")
+        bindings = stored_result.get("rank_bindings")
+        operators = stored_result.get("operator_names")
+        if (not isinstance(bindings, list) or
+                len(bindings) != json_integer(stored_result, "mpi_ranks", 1) or
+                not isinstance(operators, list) or len(operators) != 171 or
+                len(set(operators)) != 171):
+            raise RuntimeError(f"replay case {case_id} result inventory is incomplete")
+        for binding_record in bindings:
+            validate_rank_binding(binding_record)
+        if (stored_result.get("case_id") != case_id or
+                stored_result.get("case_uuid") != case_uuid or
+                json_integer(stored_result, "resolution", 1) != resolution or
+                json_integer(stored_result, "phase") != phase or
+                stored_result.get("csv_sha256") != files.get("cartoon_mms.mms.csv") or
+                stored_result.get("probes_csv_sha256") !=
+                files.get("cartoon_mms.mms.probes.csv")):
+            raise RuntimeError(f"replay case {case_id} result identity differs")
+        result["case_manifest_sha256"] = manifest_sha
+        result["_replay_case_directory"] = str(case)
+        cases.append(result)
+        case_bindings.append({"case_id": case_id, "case_uuid": case_uuid,
+                              "manifest_sha256": manifest_sha,
+                              "identity": manifest["identity"], "files": files})
+    if observed != expected:
+        raise RuntimeError("replay cases differ from exact 2/4/6 x 32/64/128/256 x 8")
+    binding = {"schema": "athenak_z4c_cartoon_mms_replay_binding_v1",
+               "raw_root": str(raw_root),
+               "preserved_convergence_sha256": sha256(preserved_convergence),
+               "preserved_wrapper_evidence_sha256": sha256(preserved_evidence),
+               "raw_identity_sha256": canonical_digest(
+                   [manifest["identity"] for manifest in
+                    (load_json_strict(path) for path in manifests)]),
+               "case_count": len(cases), "verified_case_bytes": verified_case_bytes,
+               "cases": case_bindings}
+    return cases, binding
+
+
+def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Path,
+                     series_manifest: Path,
+                     resolutions_by_order: dict[int, tuple[int, ...]],
+                     allow_legacy_nullable: bool = False) -> list[str]:
     inventory = load_json_strict(series_manifest)
     if not isinstance(inventory, dict) or inventory.get("count") != 171:
         raise RuntimeError("series manifest does not enumerate exactly 171 operators")
+    validate_roundoff_inventory(inventory)
     metadata = {item["name"]: item for item in inventory["series"]}
     if len(metadata) != 171:
         raise RuntimeError("series manifest has duplicate operators")
@@ -1126,20 +1600,33 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
     failures = []
     seen_norm_rows = set()
     seen_probe_rows = set()
-    floor_cache: dict[tuple[object, ...], float] = {}
+    floor_cache: dict[tuple[object, ...], dict[str, object]] = {}
+    floor_evidence: dict[str, dict[str, object]] = {}
+    normalization_actions: set[str] = set()
 
     def add_sample(key: tuple[object, ...], sample: dict[str, float]) -> None:
         grouped.setdefault(key, []).append(sample)
 
     for result in cases:
-        case = output / f"{result['case_id']}-{result['case_uuid']}"
+        case = (Path(str(result["_replay_case_directory"]))
+                if "_replay_case_directory" in result else
+                case_root / f"{result['case_id']}-{result['case_uuid']}")
         order = int(result["spatial_order"])
         resolution = int(result["resolution"])
         phase = int(result["phase"])
         domain = tuple(float(value) for value in result["domain"])
-        noise_bound = float(result["noise_delta_bound"])
-        rows = list(csv.DictReader(
+        noise_bound = json_number(result, "noise_delta_bound", 0.0)
+        raw_rows = list(csv.DictReader(
             (case / "cartoon_mms.mms.csv").open(encoding="utf-8")))
+        rows = []
+        for raw_row in raw_rows:
+            if allow_legacy_nullable:
+                row, actions = normalize_legacy_norm_row(raw_row)
+                normalization_actions.update(actions)
+            else:
+                row = raw_row
+                validate_norm_row(row)
+            rows.append(row)
         for row in rows:
             identity = (order, resolution, phase, row["operator"], row["mask"])
             if identity in seen_norm_rows:
@@ -1184,17 +1671,34 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
                     if floor_key not in floor_cache:
                         floor_cache[floor_key] = aggregate_clean_floor(
                             item, policy, order, resolution, row["mask"], norm, domain)
-                    clean_floor = floor_cache[floor_key]
+                    floor_record = floor_cache[floor_key]
+                    floor_id = canonical_digest(floor_key)
+                    floor_evidence.setdefault(floor_id, {
+                        "floor_id": floor_id, "operator": row["operator"],
+                        "order": order, "resolution": resolution,
+                        "mask": row["mask"], "norm": norm,
+                        "domain": list(domain), **floor_record})
                     add_sample(("norm", order, phase,
                                 row["operator"] + "|" + row["mask"], lane, norm),
                                {"resolution": resolution,
                                 "error": finite_value(row, error_field),
                                 "direct_delta": 0.0 if delta_field is None else
                                 finite_value(row, delta_field),
-                                "clean_floor": clean_floor})
+                                "clean_floor": floor_record["clean_floor"],
+                                "floor_id": floor_id})
 
-        probes = list(csv.DictReader(
+        raw_probes = list(csv.DictReader(
             (case / "cartoon_mms.mms.probes.csv").open(encoding="utf-8")))
+        probes = []
+        for raw_probe in raw_probes:
+            if allow_legacy_nullable:
+                row, actions = normalize_legacy_probe_row(raw_probe)
+                normalization_actions.update(actions)
+            else:
+                row = raw_probe
+                validate_probe_row(row)
+            validate_probe_geometry(row, order, resolution, domain)
+            probes.append(row)
         for row in probes:
             if row["classification"] == "diagnostic_axis":
                 continue
@@ -1228,12 +1732,20 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
                         f"N={resolution}")
                 continue
             series = probe_series_identity(row)
+            floor_record = probe_clean_floor(
+                item, policy, order, resolution, row, domain)
+            floor_id = canonical_digest((row["operator"], order, resolution,
+                                         row["mask"], row["side"], domain))
+            floor_evidence.setdefault(floor_id, {
+                "floor_id": floor_id, "operator": row["operator"],
+                "order": order, "resolution": resolution, "mask": row["mask"],
+                "side": row["side"], "domain": list(domain), **floor_record})
             add_sample(("probe", order, phase, series, "clean", "raw_error"),
                        {"resolution": resolution,
                         "error": finite_value(row, "raw_error"),
                         "direct_delta": 0.0,
-                        "clean_floor": probe_clean_floor(
-                            item, policy, order, resolution, row, domain),
+                        "clean_floor": floor_record["clean_floor"],
+                        "floor_id": floor_id,
                         "probe_classification": row["classification"],
                         "layer_index": integer_value(row, "layer_index"),
                         "target_rho": None if not boolean_value(
@@ -1247,8 +1759,19 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
     for key, all_values in grouped.items():
         source, order, phase, series, lane, norm = key
         all_values.sort(key=lambda item: item["resolution"])
-        if tuple(item["resolution"] for item in all_values) != DIAGNOSTIC_RESOLUTIONS:
-            failures.append(f"{key}: expected the four diagnostic resolutions")
+        required = tuple(resolutions_by_order[order])
+        observed = tuple(item["resolution"] for item in all_values)
+        if observed != required:
+            reason = f"incomplete_resolution_set expected={required} observed={observed}"
+            failures.append(f"{key}: {reason}")
+            records.append({"source": source, "order": order, "phase": phase,
+                            "series": series, "lane": lane, "norm": norm,
+                            "expected": None, "margin": None,
+                            "diagnostic_resolutions": list(required),
+                            "samples": all_values, "rates": [],
+                            "rate_status": [], "interval_reasons": [],
+                            "outcome_reason": "incomplete_resolution_set",
+                            "outcome_detail": reason, "passed": False})
             continue
         selected = all_values
         mask = series.split("|")[1]
@@ -1265,7 +1788,7 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
         record = {"source": source, "order": order, "phase": phase,
                   "series": series, "lane": lane, "norm": norm,
                   "expected": expected, "margin": margin,
-                  "diagnostic_resolutions": list(DIAGNOSTIC_RESOLUTIONS),
+                  "diagnostic_resolutions": list(required),
                   "samples": selected}
         record.update(evaluation)
         records.append(record)
@@ -1293,6 +1816,7 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
                 "coarse_floor": f"{samples[index]['applied_floor']:.17g}",
                 "fine_floor": f"{samples[index + 1]['applied_floor']:.17g}",
                 "rate_status": status,
+                "interval_reason": record["interval_reasons"][index]["reason"],
                 "observed_rate": "" if rate is None else f"{rate:.17g}",
                 "expected_rate": f"{record['expected']:.17g}",
                 "passed": int(record["passed"]),
@@ -1300,7 +1824,7 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
     fields = ["source", "order", "phase", "series", "lane", "norm",
               "coarse_resolution", "fine_resolution", "coarse_error", "fine_error",
               "coarse_direct_delta", "fine_direct_delta", "coarse_floor", "fine_floor",
-              "rate_status", "observed_rate",
+              "rate_status", "interval_reason", "observed_rate",
               "expected_rate", "passed"]
     csv_path = output / "convergence.csv"
     data_path = output / "convergence_rates.pgfplots.dat"
@@ -1311,7 +1835,7 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
                   "fine_resolution": row["fine_resolution"],
                   "observed_rate": row["observed_rate"],
                   "expected_rate": row["expected_rate"], "passed": row["passed"]}
-                 for row in table_rows if row["rate_status"] == "rate"]
+                 for row in table_rows if row["rate_status"] == "included_rate"]
     plot_fields = ["order", "phase", "lane_id", "fine_resolution",
                    "observed_rate", "expected_rate", "passed"]
     write_csv_atomic(data_path, plot_fields, plot_rows, delimiter=" ")
@@ -1326,16 +1850,20 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
         "\\end{axis}\n\\end{tikzpicture}\n", encoding="utf-8")
     write_atomic(output / "convergence.json", {
         "schema": SCHEMA, "series_manifest_sha256": sha256(series_manifest),
-        "diagnostic_resolutions": list(DIAGNOSTIC_RESOLUTIONS),
+        "diagnostic_resolutions_by_order": {str(order): list(values)
+                                             for order, values in
+                                             resolutions_by_order.items()},
         "coefficient_floor_policy_sha256": canonical_digest(policy),
         "coefficient_floor_complexity": "O(171*nx1); active-z multiplicity analytic",
+        "floor_decompositions": sorted(floor_evidence.values(),
+                                       key=lambda item: item["floor_id"]),
+        "legacy_normalization_actions": sorted(normalization_actions),
         "records": records, "exact_records": exact_records,
         "artifacts": {"convergence.csv": sha256(csv_path),
                       "convergence_rates.pgfplots.dat": sha256(data_path),
                       "convergence_plot.tex": sha256(plot_path)},
         "failures": failures})
-    if failures:
-        raise RuntimeError("convergence gates failed; see convergence.json")
+    return failures
 
 
 def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
@@ -1467,6 +1995,101 @@ def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
             "reference_case_manifest_sha256": reference_case_manifests}
 
 
+def load_search_manifest(path: Path) -> dict[str, object]:
+    value = load_json_strict(path)
+    expected_pools = {
+        "2": [32, 64, 128, 256, 512, 1024, 2048, 4096],
+        "4": [32, 64, 128, 256],
+        "6": [32, 48, 64, 80, 96, 112, 128, 160, 192, 256],
+    }
+    required = {"schema", "status", "diagnostic_resolutions", "resolution_pools",
+                "staged_evaluation_pools", "existing_evidence",
+                "pending_execution_stages", "qualification_domain",
+                "qualification_windows",
+                "minimum_consecutive_unsaturated_ratios", "thresholds", "floor_policy",
+                "exact_series_treatment", "evidence_lifecycle", "series_binding",
+                "lifecycle_transitions"}
+    evidence = value.get("evidence_lifecycle", {}) if isinstance(value, dict) else {}
+    if (not isinstance(value, dict) or set(value) != required or
+            value.get("schema") != "athenak_z4c_cartoon_mms_prospective_search_v1" or
+            value.get("status") != "prospective_unselected" or
+            value.get("resolution_pools") != expected_pools or
+            value.get("diagnostic_resolutions") != list(DIAGNOSTIC_RESOLUTIONS) or
+            value.get("existing_evidence") != {
+                "2": list(DIAGNOSTIC_RESOLUTIONS), "4": list(DIAGNOSTIC_RESOLUTIONS),
+                "6": list(DIAGNOSTIC_RESOLUTIONS)} or
+            value.get("qualification_domain") != list(QUALIFICATION_DOMAIN) or
+            value.get("qualification_windows") is not None or
+            value.get("minimum_consecutive_unsaturated_ratios") != 2 or
+            value.get("series_binding") != {
+                "count": 171,
+                "class_counts": {"truncating": 137, "exact_identity": 12,
+                                 "exact_plane_algebraic": 12, "exact_discrete": 10},
+                "manifest_sha256":
+                "eda57946cce1af9ae3acfb439c9d89e21b8980bbf48a9f375e8948e527ac2ba8"} or
+            evidence != {"state": "checked_in_template", "source_commit": None,
+                         "source_tree": None, "executable_sha256": None,
+                         "result_sha256": None,
+                         "input_sha256":
+                         "10375d51677fc0544969271919b2d6a3b9c26d97e8899c2a6b429b01fe381bc0",
+                         "oracle_header_sha256":
+                         "57d8e9edd333e0450b94caf415df5ecdda917138de6514f77c9fa506269ebaf3",
+                         "oracle_reference_sha256":
+                         "4e3b61961097af105b915169c29f7f19e577218ec73061bb94204b7dbdfa43ad"} or
+            value.get("lifecycle_transitions") != {
+                "checked_in_template": "source/tree/executable/result are null",
+                "prelaunch_bound": "fill source/tree/executable and retain result null",
+                "postrun_finalized":
+                "fill result hash after immutable case manifests close"}):
+        raise RuntimeError("prospective search manifest differs from the frozen unselected schema")
+    flattened = {order: [resolution for stage in value["staged_evaluation_pools"][order]
+                         for resolution in stage] for order in expected_pools}
+    if flattened != expected_pools:
+        raise RuntimeError("prospective staged stopping differs from the fixed pools")
+    if value["pending_execution_stages"] != {
+            "2": [[512, 1024], [2048], [4096]], "4": [],
+            "6": [[48, 80, 96], [112, 160, 192]]}:
+        raise RuntimeError("prospective execution stages would rerun existing evidence")
+    return value
+
+
+def replay_campaign(raw_root: Path, analysis_output: Path, root: Path,
+                    series_manifest: Path, prospective_search: bool) -> int:
+    raw_root = raw_root.resolve()
+    analysis_output = analysis_output.resolve()
+    if not raw_root.is_dir() or analysis_output == raw_root or \
+       raw_root in analysis_output.parents:
+        raise RuntimeError("replay analysis output must be outside the read-only raw root")
+    cases, binding = verify_replay_campaign(raw_root)
+    domains = {tuple(float(value) for value in case.get("domain", ())) for case in cases}
+    if len(domains) != 1:
+        raise RuntimeError("replay cases do not share one explicit domain")
+    resolutions = {order: DIAGNOSTIC_RESOLUTIONS for order in (2, 4, 6)}
+    certification = validate_certified_domain(domains.pop(), resolutions, True)
+    if analysis_output.exists() and any(analysis_output.iterdir()):
+        raise RuntimeError("replay analysis output must be absent or empty")
+    analysis_output.mkdir(parents=True, exist_ok=True)
+    failures = convergence_gate(cases, raw_root, analysis_output, series_manifest,
+                                resolutions, allow_legacy_nullable=True)
+    artifacts = {name: sha256(analysis_output / name) for name in
+                 ("convergence.json", "convergence.csv",
+                  "convergence_rates.pgfplots.dat", "convergence_plot.tex")}
+    if prospective_search:
+        search = load_search_manifest(
+            root / "tst/inputs/z4c_cartoon_mms_search_manifest.json")
+        write_atomic(analysis_output / "prospective_search_manifest.json", {
+            **search, "raw_evidence_binding_sha256": canonical_digest(binding)})
+        artifacts["prospective_search_manifest.json"] = sha256(
+            analysis_output / "prospective_search_manifest.json")
+    write_atomic(analysis_output / "replay_manifest.json", {
+        **binding, "analysis_policy_source_commit": git_value(root, "rev-parse", "HEAD"),
+        "analysis_policy_source_tree": git_value(root, "rev-parse", "HEAD^{tree}"),
+        "series_manifest_sha256": sha256(series_manifest),
+        "domain_certification": certification, "artifacts": artifacts,
+        "failures": failures, "passed": not failures})
+    return 1 if failures else 0
+
+
 def main() -> int:
     if sys.argv[1:] == ["--self-test-no-evolution-parser"]:
         self_test_no_evolution_parser()
@@ -1475,12 +2098,12 @@ def main() -> int:
         self_test_cpu_audit_policy()
         return 0
     parser = argparse.ArgumentParser()
-    parser.add_argument("--athena", type=Path, required=True)
+    parser.add_argument("--athena", type=Path)
     parser.add_argument("--input", type=Path)
-    parser.add_argument("--launcher", required=True)
-    parser.add_argument("--ranks", type=int, choices=(2, 4), required=True)
+    parser.add_argument("--launcher")
+    parser.add_argument("--ranks", type=int, choices=(2, 4))
     parser.add_argument("--orders", type=int, nargs="+", default=(2, 4, 6))
-    parser.add_argument("--resolutions", type=int, nargs="+", default=(32, 64, 128, 256))
+    parser.add_argument("--resolutions", type=int, nargs="+")
     parser.add_argument("--phases", type=int, nargs="+", default=tuple(range(8)))
     parser.add_argument("--require-backend", choices=("Serial", "Cuda"))
     parser.add_argument("--build-manifest", type=Path)
@@ -1489,9 +2112,33 @@ def main() -> int:
     parser.add_argument("--x1max", type=float, default=2.0)
     parser.add_argument("--x2min", type=float, default=-2.0)
     parser.add_argument("--x2max", type=float, default=2.0)
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--replay-campaign", type=Path)
+    parser.add_argument("--analysis-output", type=Path)
+    parser.add_argument("--prospective-search", action="store_true")
+    parser.add_argument("--diagnostic-only", action="store_true")
     parser.add_argument("--compare-campaign", type=Path)
     args = parser.parse_args()
+    root = Path(__file__).resolve().parents[3]
+    series_manifest = root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json"
+    if args.replay_campaign is not None:
+        if args.analysis_output is None or any(value is not None for value in
+                                               (args.athena, args.launcher, args.ranks,
+                                                args.output)):
+            raise RuntimeError("replay requires only RAW_ROOT and a separate analysis output")
+        return replay_campaign(args.replay_campaign, args.analysis_output, root,
+                               series_manifest, args.prospective_search)
+    if args.analysis_output is not None:
+        raise RuntimeError("--analysis-output is valid only with --replay-campaign")
+    if args.athena is None or args.launcher is None or args.ranks is None or \
+       args.output is None:
+        raise RuntimeError("campaign requires athena, launcher, ranks, and output")
+    if args.prospective_search:
+        raise RuntimeError("prospective search is read-only and requires --replay-campaign")
+    search = load_search_manifest(root / "tst/inputs/z4c_cartoon_mms_search_manifest.json")
+    if args.resolutions is None:
+        args.resolutions = list(DIAGNOSTIC_RESOLUTIONS)
+    resolutions_by_order = {order: DIAGNOSTIC_RESOLUTIONS for order in (2, 4, 6)}
     if (set(args.orders) != {2, 4, 6} or len(args.orders) != 3 or
             set(args.resolutions) != set(DIAGNOSTIC_RESOLUTIONS) or
             len(args.resolutions) != 4 or set(args.phases) != set(range(8)) or
@@ -1499,9 +2146,9 @@ def main() -> int:
         raise RuntimeError("diagnostics require exactly orders 2/4/6, resolutions "
                            "32/64/128/256, and phases 0..7")
     args.orders = [2, 4, 6]
-    args.resolutions = list(DIAGNOSTIC_RESOLUTIONS)
+    args.resolutions = sorted({resolution for values in resolutions_by_order.values()
+                               for resolution in values})
     args.phases = list(range(8))
-    root = Path(__file__).resolve().parents[3]
     if args.input is None:
         args.input = root / "tst/inputs/z4c_cartoon_derivatives.athinput"
     args.athena = args.athena.resolve()
@@ -1530,13 +2177,8 @@ def main() -> int:
     if args.require_backend == "Cuda" and args.ranks != 4:
         raise RuntimeError("CUDA+MPI qualification requires exactly four ranks")
     args.domain = (args.x1min, args.x1max, args.x2min, args.x2max)
-    if not all(math.isfinite(value) for value in args.domain) or \
-       not (args.x1min < args.x1max and args.x2min < args.x2max) or \
-       abs(args.x1min + args.x1max) > 32 * sys.float_info.epsilon * \
-       max(1.0, abs(args.x1min), abs(args.x1max)) or args.x1max <= 1.0:
-        raise RuntimeError("domain must be finite, ordered, and signed-rho symmetric")
+    certification = validate_certified_domain(args.domain, resolutions_by_order, True)
     args.input = args.input.resolve()
-    resolutions_by_order = {order: DIAGNOSTIC_RESOLUTIONS for order in args.orders}
     args.output = args.output.resolve()
     if args.output.exists() and not args.output.is_dir():
         raise RuntimeError("output is not a directory")
@@ -1549,7 +2191,6 @@ def main() -> int:
             build["source_tree"] != source["tree"] or
             build["kokkos_commit"] != source["kokkos"]):
         raise RuntimeError("build manifest source identity does not match driver checkout")
-    series_manifest = root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json"
     series_inventory = load_json_strict(series_manifest)
     if not isinstance(series_inventory, dict):
         raise RuntimeError("series manifest is not an object")
@@ -1568,6 +2209,10 @@ def main() -> int:
                  "orders": args.orders, "resolutions": args.resolutions,
                  "resolutions_by_order": resolutions_by_order,
                  "phases": args.phases, "ranks": args.ranks,
+                 "campaign_mode": "diagnostic_only",
+                 "domain_certification": certification,
+                 "search_manifest_sha256": sha256(
+                     root / "tst/inputs/z4c_cartoon_mms_search_manifest.json"),
                  "series_manifest_sha256": sha256(series_manifest)}
     if free_bytes < 2 * forecast["estimated_output_bytes_upper_bound"]:
         raise RuntimeError("campaign output forecast exceeds half the available space")
@@ -1579,9 +2224,10 @@ def main() -> int:
     for result in cases:
         if result.get("operator_names") != expected_operators:
             raise RuntimeError(f"{result['case_id']} operator ordering differs from frozen 171-series manifest")
-    convergence_gate(cases, args.output, series_manifest)
+    failures = convergence_gate(cases, args.output, args.output, series_manifest,
+                                resolutions_by_order)
     rank_evidence = None
-    if args.compare_campaign:
+    if args.compare_campaign and not failures:
         rank_evidence = compare_rank_campaigns(
             cases, args.output, args.compare_campaign.resolve())
     convergence_artifacts = {name: sha256(args.output / name) for name in
@@ -1607,7 +2253,7 @@ def main() -> int:
                                                   "convergence_artifacts":
                                                   convergence_artifacts,
                                                   "cases": cases})
-    return 0
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":

@@ -25,6 +25,7 @@ CHECKSUM_PATHS = {
     "tst/unit/z4c/z4c_cartoon_derivatives_series.json",
     "tst/unit/z4c/z4c_cartoon_mms_coverage.json",
     "tst/inputs/z4c_cartoon_derivatives.athinput",
+    "tst/inputs/z4c_cartoon_mms_search_manifest.json",
     "tst/test_suite/unit_tests/test_z4c_cartoon_derivatives.py",
     "tst/unit/z4c/z4c_cartoon_mms_static_test.py",
     "reports/axisymmetric_cartoon_z4c_arxiv2607/sections/cartoon_derivative_mms.tex",
@@ -135,6 +136,10 @@ def main() -> int:
             [item["index"] for item in series["series"]] == list(range(171)) and
             len({item["name"] for item in series["series"]}) == 171,
             "generated runtime series inventory is not exact and ordered")
+    require(series.get("contract_errata") == {
+                "scalar.second.0.0":
+                "active radial Dxx; scalar.second.2.2 owns 2 EvenP"},
+            "scalar Dxx contract erratum is absent or changed")
     classifications = [item["classification"] for item in series["series"]]
     require(classifications.count("truncating") == 137 and
             classifications.count("exact_identity") == 12 and
@@ -149,6 +154,7 @@ def main() -> int:
                        for name, value in policy.get("field_maxima", {}).items()}
     require(policy.get("binary64_epsilon_hex") == float.fromhex("0x1p-52").hex() and
             policy.get("fit_fixture_count") == 108 and
+            policy.get("fit_construction_condition_checked") is True and
             coefficient_rationals == {
                 "2": {"C1": "1", "C2": "4", "CM": "1", "CU": "4",
                       "CKO": "16", "CE": "1", "CO": "4/3", "CQ": "20/9"},
@@ -164,6 +170,20 @@ def main() -> int:
                 "tensor.1.1": "249/100", "tensor.1.2": "159/100",
                 "tensor.2.2": "191/100"},
             "coefficient-aware floor tables differ from the frozen finite contract")
+    search = json.loads(
+        (root / "tst/inputs/z4c_cartoon_mms_search_manifest.json").read_text())
+    require(search.get("resolution_pools") == {
+                "2": [32, 64, 128, 256, 512, 1024, 2048, 4096],
+                "4": [32, 64, 128, 256],
+                "6": [32, 48, 64, 80, 96, 112, 128, 160, 192, 256]} and
+            search.get("qualification_windows") is None and
+            search.get("qualification_domain") == [-2.0, 2.0, -2.0, 2.0] and
+            search.get("series_binding", {}).get("class_counts") == {
+                "truncating": 137, "exact_identity": 12,
+                "exact_plane_algebraic": 12, "exact_discrete": 10} and
+            search.get("pending_execution_stages", {}).get("6") ==
+            [[48, 80, 96], [112, 160, 192]],
+            "prospective search pools/lifecycle differ from the frozen unselected plan")
     split_counts = policy.get("split_function_operation_counts", {})
     require(len(split_counts) == 24 and
             all(count <= (128 if name.startswith("field.") else 256)

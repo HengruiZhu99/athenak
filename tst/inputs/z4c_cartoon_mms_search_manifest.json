@@ -1,0 +1,79 @@
+{
+  "diagnostic_resolutions": [
+    32,
+    64,
+    128,
+    256
+  ],
+  "exact_series_treatment": {
+    "exact_discrete": "absolute_bound_only",
+    "exact_identity": "absolute_bound_only",
+    "exact_plane_algebraic": "absolute_bound_only"
+  },
+  "evidence_lifecycle": {
+    "executable_sha256": null,
+    "input_sha256": "10375d51677fc0544969271919b2d6a3b9c26d97e8899c2a6b429b01fe381bc0",
+    "oracle_header_sha256": "57d8e9edd333e0450b94caf415df5ecdda917138de6514f77c9fa506269ebaf3",
+    "oracle_reference_sha256": "4e3b61961097af105b915169c29f7f19e577218ec73061bb94204b7dbdfa43ad",
+    "result_sha256": null,
+    "source_commit": null,
+    "source_tree": null,
+    "state": "checked_in_template"
+  },
+  "floor_policy": {
+    "absorbing_suffix": true,
+    "clean": "coefficient_family_floor",
+    "noisy": "max(clean,8*direct_delta)"
+  },
+  "lifecycle_transitions": {
+    "checked_in_template": "source/tree/executable/result are null",
+    "prelaunch_bound": "fill source/tree/executable and retain result null",
+    "postrun_finalized": "fill result hash after immutable case manifests close"
+  },
+  "minimum_consecutive_unsaturated_ratios": 2,
+  "existing_evidence": {
+    "2": [32, 64, 128, 256],
+    "4": [32, 64, 128, 256],
+    "6": [32, 64, 128, 256]
+  },
+  "pending_execution_stages": {
+    "2": [[512, 1024], [2048], [4096]],
+    "4": [],
+    "6": [[48, 80, 96], [112, 160, 192]]
+  },
+  "qualification_domain": [
+    -2.0,
+    2.0,
+    -2.0,
+    2.0
+  ],
+  "qualification_windows": null,
+  "resolution_pools": {
+    "2": [32, 64, 128, 256, 512, 1024, 2048, 4096],
+    "4": [32, 64, 128, 256],
+    "6": [32, 48, 64, 80, 96, 112, 128, 160, 192, 256]
+  },
+  "schema": "athenak_z4c_cartoon_mms_prospective_search_v1",
+  "series_binding": {
+    "class_counts": {
+      "exact_discrete": 10,
+      "exact_identity": 12,
+      "exact_plane_algebraic": 12,
+      "truncating": 137
+    },
+    "count": 171,
+    "manifest_sha256": "eda57946cce1af9ae3acfb439c9d89e21b8980bbf48a9f375e8948e527ac2ba8"
+  },
+  "staged_evaluation_pools": {
+    "2": [[32, 64, 128, 256], [512, 1024], [2048], [4096]],
+    "4": [[32, 64, 128, 256]],
+    "6": [[32, 48, 64, 80, 96], [112, 128, 160, 192, 256]]
+  },
+  "status": "prospective_unselected",
+  "thresholds": {
+    "clean_fitted_margin": 0.25,
+    "clean_raw_margin": 0.25,
+    "clean_regular_margin": 0.15,
+    "noisy_margin": 0.5
+  }
+}
