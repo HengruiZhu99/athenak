@@ -172,17 +172,22 @@ def main() -> int:
             "coefficient-aware floor tables differ from the frozen finite contract")
     search = json.loads(
         (root / "tst/inputs/z4c_cartoon_mms_search_manifest.json").read_text())
-    require(search.get("resolution_pools") == {
+    require(search.get("schema") == "athenak_z4c_cartoon_mms_search_v2" and
+            search.get("state") == "checked_in_template" and
+            search.get("policy", {}).get("resolution_pools") == {
                 "2": [32, 64, 128, 256, 512, 1024, 2048, 4096],
                 "4": [32, 64, 128, 256],
                 "6": [32, 48, 64, 80, 96, 112, 128, 160, 192, 256]} and
-            search.get("qualification_windows") is None and
+            search.get("qualification_window") is None and
             search.get("qualification_domain") == [-2.0, 2.0, -2.0, 2.0] and
-            search.get("series_binding", {}).get("class_counts") == {
+            search.get("policy", {}).get("class_counts") == {
                 "truncating": 137, "exact_identity": 12,
                 "exact_plane_algebraic": 12, "exact_discrete": 10} and
-            search.get("pending_execution_stages", {}).get("6") ==
-            [[48, 80, 96], [112, 160, 192]],
+            search.get("stages", {}).get("o6_phase0_stage1", {}).get("tuples") ==
+            [[6, 48, 0], [6, 80, 0], [6, 96, 0]] and
+            search.get("immutable_roots", {}).get("job56586376", {}).get(
+                "case_manifest_set_sha256") ==
+            "d2aa1ff2ff9b68302170e0271d3f6fca150d86acb183f9d89af62965427d2aa3",
             "prospective search pools/lifecycle differ from the frozen unselected plan")
     split_counts = policy.get("split_function_operation_counts", {})
     require(len(split_counts) == 24 and

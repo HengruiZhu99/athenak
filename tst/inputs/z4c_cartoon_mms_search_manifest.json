@@ -1,79 +1,180 @@
 {
-  "diagnostic_resolutions": [
-    32,
-    64,
-    128,
-    256
-  ],
-  "exact_series_treatment": {
-    "exact_discrete": "absolute_bound_only",
-    "exact_identity": "absolute_bound_only",
-    "exact_plane_algebraic": "absolute_bound_only"
-  },
-  "evidence_lifecycle": {
-    "executable_sha256": null,
-    "input_sha256": "10375d51677fc0544969271919b2d6a3b9c26d97e8899c2a6b429b01fe381bc0",
-    "oracle_header_sha256": "57d8e9edd333e0450b94caf415df5ecdda917138de6514f77c9fa506269ebaf3",
-    "oracle_reference_sha256": "4e3b61961097af105b915169c29f7f19e577218ec73061bb94204b7dbdfa43ad",
-    "result_sha256": null,
-    "source_commit": null,
-    "source_tree": null,
-    "state": "checked_in_template"
-  },
-  "floor_policy": {
-    "absorbing_suffix": true,
-    "clean": "coefficient_family_floor",
-    "noisy": "max(clean,8*direct_delta)"
-  },
-  "lifecycle_transitions": {
-    "checked_in_template": "source/tree/executable/result are null",
-    "prelaunch_bound": "fill source/tree/executable and retain result null",
-    "postrun_finalized": "fill result hash after immutable case manifests close"
-  },
-  "minimum_consecutive_unsaturated_ratios": 2,
-  "existing_evidence": {
-    "2": [32, 64, 128, 256],
-    "4": [32, 64, 128, 256],
-    "6": [32, 64, 128, 256]
-  },
-  "pending_execution_stages": {
-    "2": [[512, 1024], [2048], [4096]],
-    "4": [],
-    "6": [[48, 80, 96], [112, 160, 192]]
-  },
-  "qualification_domain": [
-    -2.0,
-    2.0,
-    -2.0,
-    2.0
-  ],
-  "qualification_windows": null,
-  "resolution_pools": {
-    "2": [32, 64, 128, 256, 512, 1024, 2048, 4096],
-    "4": [32, 64, 128, 256],
-    "6": [32, 48, 64, 80, 96, 112, 128, 160, 192, 256]
-  },
-  "schema": "athenak_z4c_cartoon_mms_prospective_search_v1",
-  "series_binding": {
+  "schema": "athenak_z4c_cartoon_mms_search_v2",
+  "state": "checked_in_template",
+  "qualification_domain": [-2.0, 2.0, -2.0, 2.0],
+  "qualification_window": null,
+  "policy": {
+    "diagnostic_resolutions": [32, 64, 128, 256],
+    "resolution_pools": {
+      "2": [32, 64, 128, 256, 512, 1024, 2048, 4096],
+      "4": [32, 64, 128, 256],
+      "6": [32, 48, 64, 80, 96, 112, 128, 160, 192, 256]
+    },
+    "minimum_consecutive_unsaturated_ratios": 2,
+    "clean_floor": "coefficient_family_floor",
+    "noisy_floor": "max(clean,8*direct_delta)",
+    "exact_treatment": "absolute_bound_only",
+    "series_count": 171,
     "class_counts": {
-      "exact_discrete": 10,
+      "truncating": 137,
       "exact_identity": 12,
       "exact_plane_algebraic": 12,
-      "truncating": 137
+      "exact_discrete": 10
     },
-    "count": 171,
-    "manifest_sha256": "eda57946cce1af9ae3acfb439c9d89e21b8980bbf48a9f375e8948e527ac2ba8"
+    "series_manifest_sha256": "eda57946cce1af9ae3acfb439c9d89e21b8980bbf48a9f375e8948e527ac2ba8",
+    "input_sha256": "10375d51677fc0544969271919b2d6a3b9c26d97e8899c2a6b429b01fe381bc0",
+    "oracle_header_sha256": "57d8e9edd333e0450b94caf415df5ecdda917138de6514f77c9fa506269ebaf3",
+    "oracle_reference_sha256": "4e3b61961097af105b915169c29f7f19e577218ec73061bb94204b7dbdfa43ad"
   },
-  "staged_evaluation_pools": {
-    "2": [[32, 64, 128, 256], [512, 1024], [2048], [4096]],
-    "4": [[32, 64, 128, 256]],
-    "6": [[32, 48, 64, 80, 96], [112, 128, 160, 192, 256]]
+  "immutable_roots": {
+    "job56586376": {
+      "kind": "complete_diagnostic_matrix",
+      "source_commit": "e29413e15fbe86d105fe27096113dffbcdd0eede",
+      "source_tree": "be855bfae9f5d12908a5bee1cbbbf0033c7894ef",
+      "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf",
+      "executable_sha256": "cd0c60d84198c157dd536c6b349ae13fd6f9fb559f40eb8dbc3c8102464e8c09",
+      "build_manifest_sha256": "60356b252d40b3657b07c681ed6dcc72d94a5be341455a4dce42ba8978a0a06d",
+      "build_record_sha256": "69c236d67283272c8877685f5e5d533efa10a302b4ffd4eb66a7656f90d64f31",
+      "convergence_sha256": "fdb4222c246b49d4df3c8ef40688dafacfd7983d5f090a2fe148d051538778a0",
+      "wrapper_sha256": "347b210b251e6100413ffef5f691edb684b79a2b41fcb6c8757b8a6233fb1869",
+      "log_sha256": "47522f4f70ad34d15c994e969f84c6e395dd434bcd5e238fff5f719ef2dd43b1",
+      "case_manifest_set_sha256": "d2aa1ff2ff9b68302170e0271d3f6fca150d86acb183f9d89af62965427d2aa3",
+      "backend": "Serial",
+      "ranks": 2,
+      "orders": [2, 4, 6],
+      "resolutions": [32, 64, 128, 256],
+      "phases": [0, 1, 2, 3, 4, 5, 6, 7],
+      "case_count": 96,
+      "status": "complete_cases_failed_aggregate"
+    },
+    "job56587561": {
+      "kind": "phase0_characterization_attempt",
+      "source_commit": "e29413e15fbe86d105fe27096113dffbcdd0eede",
+      "source_tree": "be855bfae9f5d12908a5bee1cbbbf0033c7894ef",
+      "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf",
+      "executable_sha256": "cd0c60d84198c157dd536c6b349ae13fd6f9fb559f40eb8dbc3c8102464e8c09",
+      "build_manifest_sha256": "60356b252d40b3657b07c681ed6dcc72d94a5be341455a4dce42ba8978a0a06d",
+      "canonical_inventory_sha256": "b884d46e636e2beea8ca5eaa7f85d4745968c4a1465c371a70fc8765c4441c6d",
+      "file_count": 35,
+      "total_bytes": 4533784,
+      "provenance_script_sha256": "3777033e59f479e0b0ff94267151a0e23822ef7dc8b434582b0de5566ba2ef6e",
+      "inputs_manifest_sha256": "f1e57e81242f60f3a08397260910d8162a7135fd91034d655e75c115964e8e56",
+      "slurm_sha256": "a0cdaac94b49e9d188c14d8ce79448f6c7f7b6e9782ee7b09d9f8af78b9b6e9f",
+      "backend": "Serial",
+      "ranks": 2,
+      "bounded_characterization": [
+        {
+          "tuple": [4, 16, 0],
+          "input_sha256": "6782287196bc15187c43ab2768fd6d67288f5ece2c19b923b0a5d2235054018d",
+          "raw_json_sha256": "f4a86203e85ac97c95b3b0a7811ef4732cddd98504152fbd467d988ce4ace030",
+          "csv_sha256": "532844a60de2ebc31a545a5bebe75b23fdbcc10b1adab038db34d24d96f08846",
+          "probes_sha256": "44411de98fb689f7717d0c5ec12aabcb324d7694910dccd7164c48a0e9f6b653",
+          "stdout_sha256": "b1d5e6998c26d9ddab73ccab6f522e26ebc71e310c691bf02e3e1f6d1eda069e",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "time_sha256": "efc91b800068f5996c9ff0effb645a65aad37cabce87a06120bd53b5be7f2d58",
+          "status": "bounded_characterization_only"
+        },
+        {
+          "tuple": [6, 16, 0],
+          "input_sha256": "c249ed8a36627ff930a9b1e4a4b4dd08f69a418c78e47ce72d68a3f4da4cc25a",
+          "raw_json_sha256": "558920c5d75ed88016124ef366eed3a97e131410f2fb4bb79358a2260b2536d9",
+          "csv_sha256": "dbb4e0006852dcdbe55d2e61bce77271b63a9189fb824cacfaa7085ad7479d66",
+          "probes_sha256": "550455448f0fa4768a042710922adfdf6843df1fb4301825a6b9eda4a15a91f8",
+          "stdout_sha256": "6f169d659d85121c99b05b378d5de10471478dcfbb474b7f5299920d04ef6f28",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "time_sha256": "13ff4116b24459ae12bdf161691a8c60a1a8daea273195f999befc69cedbaf47",
+          "status": "bounded_characterization_only"
+        }
+      ],
+      "completed": [
+        {
+          "tuple": [2, 512, 0],
+          "input_sha256": "f8b66a34b7777137389fe4ec840bdde30600aa18987601dd4cc37a77a6af3090",
+          "raw_json_sha256": "26559987aeb913ceadb19f4693b087a6d1323c46d7a8cca12685279ce6e10750",
+          "csv_sha256": "530beb1ef052f39f694a0beada588d70aa5fcb8820e5a569fc228bf13b938f01",
+          "probes_sha256": "f9a480c122a4695fefe4a9a95733dc87332a413d42ca54393f8b8f25c9799d86",
+          "stdout_sha256": "928b90773d020a7ca60327f46797191e32db4287efb7eac3659a838f8db78a49",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "time_sha256": "366db5a17e24c270b3a1ee480902f8e7cb786b4ed67889c7eae832bd4f6ecf94",
+          "status": "complete"
+        },
+        {
+          "tuple": [2, 1024, 0],
+          "input_sha256": "1a7e0be6ead93ab4b75881a5c2cca21c47a8b56faff45a393b3d398c95307c48",
+          "raw_json_sha256": "a54f89c2b88b951fe716693a3240f4d27437c39a581771fcd7ea1c95a7f38b3e",
+          "csv_sha256": "270e815e6f13eef5857fad2e3267114b9bf9a9ac5c629b9f33428c64eaed5fac",
+          "probes_sha256": "d291720306f117fe133c1a4efa8b0c8dfb254ffbf909e3082c8b9cd46ed3cae2",
+          "stdout_sha256": "d142366544c0cf9636606c58b1523254f7b781d099c54491ed55cf0ff9528c93",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "time_sha256": "806448bcd0f05ff1f263ee2ee69de5c1b3143b3cbd4bd8273bd83f77d2e1d773",
+          "status": "complete"
+        }
+      ],
+      "attempts": [
+        {
+          "tuple": [2, 2048, 0],
+          "attempt": 1,
+          "input_sha256": "688f1fdfcb1b0df67bc982eb749279f2088a3b5ac638fe505a420982290391a9",
+          "stdout_sha256": "beda9fa2eefd6c435f466e61021b627f3ca49996b392d4ce5133600124c8dfb5",
+          "stderr_sha256": "4ab1d6ef1db7c9d7881ec01c90de43d5a9ae938e101b86b0e503060bae88e36d",
+          "time_sha256": "6381b083668b960171ed64c13927e73edc018431497b7f9241c04ba494060732",
+          "resource_peak_rss_kib": 26377500,
+          "exit": "0:125",
+          "status": "out_of_memory",
+          "retry": "blocked_pending_reviewed_resource_decision"
+        }
+      ]
+    }
   },
-  "status": "prospective_unselected",
-  "thresholds": {
-    "clean_fitted_margin": 0.25,
-    "clean_raw_margin": 0.25,
-    "clean_regular_margin": 0.15,
-    "noisy_margin": 0.5
+  "stages": {
+    "o2_phase0_continuation": {
+      "tuples": [[2, 2048, 0], [2, 4096, 0]],
+      "state": "blocked_pending_resource_decision",
+      "advance": "sequential_only",
+      "stop_reasons": ["resource_failure", "integrity_failure"],
+      "rerun_completed": false
+    },
+    "o6_phase0_stage1": {
+      "tuples": [[6, 48, 0], [6, 80, 0], [6, 96, 0]],
+      "state": "authorized_missing_phase0",
+      "advance": "all_tuples_complete_then_independent_review",
+      "stop_reasons": ["resource_failure", "integrity_failure"],
+      "rerun_completed": false
+    },
+    "o6_phase0_stage2": {
+      "tuples": [[6, 112, 0], [6, 160, 0], [6, 192, 0]],
+      "state": "blocked_pending_stage1_review",
+      "advance": "all_tuples_complete_then_independent_review",
+      "stop_reasons": ["resource_failure", "integrity_failure"],
+      "rerun_completed": false
+    },
+    "qualification_extra_phases": {
+      "tuples": [],
+      "state": "blocked_until_window_freeze",
+      "advance": "owner_and_independent_review_only",
+      "stop_reasons": ["resource_failure", "integrity_failure"],
+      "rerun_completed": false
+    }
+  },
+  "materialization": {
+    "stage_id": null,
+    "source_commit": null,
+    "source_tree": null,
+    "kokkos_commit": null,
+    "executable_sha256": null,
+    "build_manifest_sha256": null,
+    "input_sha256": null,
+    "oracle_header_sha256": null,
+    "series_manifest_sha256": null,
+    "backend": null,
+    "ranks": null,
+    "domain": null,
+    "attempt_id": null,
+    "immutable_root_bindings": [],
+    "attempts": [],
+    "case_manifest_sha256": [],
+    "stop_reason": null,
+    "result_set_sha256": null,
+    "analysis_sha256": null
   }
 }

@@ -597,6 +597,7 @@ def roundoff_branches(name: str) -> dict[str, object]:
 
 def verify_fit_tables() -> list[dict[str, object]]:
     fixtures = []
+    derivative_distinguished = False
     tolerance = sp.Rational(1, 10**10)
     for nghost in (2, 3, 4):
         nodes = [(sp.Rational(layer) + sp.Rational(1, 2)) ** 2
@@ -620,9 +621,9 @@ def verify_fit_tables() -> list[dict[str, object]]:
                                          (sp.Rational(point) + sp.Rational(1, 2)) ** power
                                          for point, polynomial in enumerate(basis))
                         derivative_norm = sum(
-                            abs(sp.N(polynomial.subs(target, evaluated), 50)) /
+                            abs(sp.N(derivative.subs(target, evaluated), 50)) /
                             (sp.Rational(point) + sp.Rational(1, 2)) ** power
-                            for point, polynomial in enumerate(derivatives))
+                            for point, derivative in enumerate(derivatives))
                         construction_norm = sum(
                             abs(sp.N(
                                 (sp.S.One / (nodes[point] - nodes[differentiated])) *
@@ -634,6 +635,7 @@ def verify_fit_tables() -> list[dict[str, object]]:
                             for point in range(nghost)
                             for differentiated in range(nghost)
                             if differentiated != point)
+                        derivative_distinguished |= derivative_norm != value_norm
                         assert value_norm <= sp.Rational(5, 4) * 2 ** power
                         assert derivative_norm <= (sp.Rational(5, 4) *
                                                    COEFFICIENTS[str(nghost)][derivative_name])
@@ -644,6 +646,7 @@ def verify_fit_tables() -> list[dict[str, object]]:
                                          "sign": sign, "band_endpoint": endpoint,
                                          "power": power,
                                          "construction_condition_checked": True})
+    assert derivative_distinguished
     return fixtures
 
 
