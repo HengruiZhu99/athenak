@@ -111,7 +111,8 @@ Z4cRestartResult InvalidType(ParameterInput *pin, const char *key,
                  "'; expected " + type);
 }
 
-Z4cRestartResult RequireKeys(ParameterInput *pin) {
+Z4cRestartResult RequireKeys(ParameterInput *pin,
+                             const bool enforce_schema_shape = true) {
   for (const char *key : {
            "carrier_schema", "symmetry", "coordinate_map", "symmetry_schema",
            "requested_spatial_order", "effective_spatial_order", "stencil_width",
@@ -142,7 +143,7 @@ Z4cRestartResult RequireKeys(ParameterInput *pin) {
                      ">/fastflow_time_first_found");
     }
   } else if (fastflow_schema == 1) {
-    if (Has(pin, "fastflow_time_first_found")) {
+    if (enforce_schema_shape && Has(pin, "fastflow_time_first_found")) {
       return Invalid("legacy <z4c_restart>/fastflow_schema=1 must not contain "
                      "fastflow_time_first_found");
     }
@@ -458,7 +459,9 @@ Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
   if (!pin->DoesBlockExist(kZ4cRestartBlock)) {
     return Invalid("restart override removed authoritative <z4c_restart> carrier");
   }
-  auto result = RequireKeys(pin);
+  // Preserve immutable-origin conflict diagnostics before interpreting an
+  // override that changes the FastFlow schema shape. ReadState below remains strict.
+  auto result = RequireKeys(pin, false);
   if (!result.valid) return result;
   result = CompareCarrierParameters(pin, snapshot.state);
   if (!result.valid) return result;
