@@ -1,5 +1,195 @@
 {
   "count": 171,
+  "roundoff_policy": {
+    "binary64_epsilon_hex": "0x1.0000000000000p-52",
+    "coefficients": {
+      "2": {
+        "C1": {
+          "hex": "0x1.0000000000000p+0",
+          "rational": "1"
+        },
+        "C2": {
+          "hex": "0x1.0000000000000p+2",
+          "rational": "4"
+        },
+        "CE": {
+          "hex": "0x1.0000000000000p+0",
+          "rational": "1"
+        },
+        "CKO": {
+          "hex": "0x1.0000000000000p+4",
+          "rational": "16"
+        },
+        "CM": {
+          "hex": "0x1.0000000000000p+0",
+          "rational": "1"
+        },
+        "CO": {
+          "hex": "0x1.5555555555556p+0",
+          "rational": "4/3"
+        },
+        "CQ": {
+          "hex": "0x1.1c71c71c71c72p+1",
+          "rational": "20/9"
+        },
+        "CU": {
+          "hex": "0x1.0000000000000p+2",
+          "rational": "4"
+        }
+      },
+      "3": {
+        "C1": {
+          "hex": "0x1.8000000000000p+0",
+          "rational": "3/2"
+        },
+        "C2": {
+          "hex": "0x1.5555555555556p+2",
+          "rational": "16/3"
+        },
+        "CE": {
+          "hex": "0x1.8000000000000p+0",
+          "rational": "3/2"
+        },
+        "CKO": {
+          "hex": "0x1.0000000000000p+6",
+          "rational": "64"
+        },
+        "CM": {
+          "hex": "0x1.2000000000000p+1",
+          "rational": "9/4"
+        },
+        "CO": {
+          "hex": "0x1.ddddddddddddep+0",
+          "rational": "28/15"
+        },
+        "CQ": {
+          "hex": "0x1.81b4e81b4e81cp+1",
+          "rational": "226/75"
+        },
+        "CU": {
+          "hex": "0x1.9555555555556p+1",
+          "rational": "19/6"
+        }
+      },
+      "4": {
+        "C1": {
+          "hex": "0x1.d555555555556p+0",
+          "rational": "11/6"
+        },
+        "C2": {
+          "hex": "0x1.82d82d82d82d9p+2",
+          "rational": "272/45"
+        },
+        "CE": {
+          "hex": "0x1.4000000000000p+1",
+          "rational": "5/2"
+        },
+        "CKO": {
+          "hex": "0x1.0000000000000p+8",
+          "rational": "256"
+        },
+        "CM": {
+          "hex": "0x1.ae38e38e38e39p+1",
+          "rational": "121/36"
+        },
+        "CO": {
+          "hex": "0x1.15f15f15f15f2p+1",
+          "rational": "76/35"
+        },
+        "CQ": {
+          "hex": "0x1.b6c9987c45f05p+1",
+          "rational": "12598/3675"
+        },
+        "CU": {
+          "hex": "0x1.8000000000000p+1",
+          "rational": "3"
+        }
+      }
+    },
+    "field_maxima": {
+      "scalar": {
+        "hex": "0x1.4cccccccccccdp+2",
+        "rational": "26/5"
+      },
+      "tensor.0.0": {
+        "hex": "0x1.6b851eb851eb9p+3",
+        "rational": "284/25"
+      },
+      "tensor.0.1": {
+        "hex": "0x1.dc28f5c28f5c3p+0",
+        "rational": "93/50"
+      },
+      "tensor.0.2": {
+        "hex": "0x1.6ae147ae147afp+2",
+        "rational": "567/100"
+      },
+      "tensor.1.1": {
+        "hex": "0x1.3eb851eb851ecp+1",
+        "rational": "249/100"
+      },
+      "tensor.1.2": {
+        "hex": "0x1.970a3d70a3d71p+0",
+        "rational": "159/100"
+      },
+      "tensor.2.2": {
+        "hex": "0x1.e8f5c28f5c290p+0",
+        "rational": "191/100"
+      },
+      "vector.0": {
+        "hex": "0x1.b1eb851eb851fp+2",
+        "rational": "339/50"
+      },
+      "vector.1": {
+        "hex": "0x1.547ae147ae148p+1",
+        "rational": "133/50"
+      },
+      "vector.2": {
+        "hex": "0x1.0333333333334p+2",
+        "rational": "81/20"
+      }
+    },
+    "fit_fixture_count": 108,
+    "fit_fixture_sha256": "35168a3bdff0c490eba9a6a2d9403a6c21a3156487116afd535e9627faf2f9ba",
+    "fit_safety_hex": "0x1.4000000000000p+0",
+    "fit_safety_rational": "5/4",
+    "global_slack_hex": "0x1.0000000000000p+1",
+    "global_slack_rational": "2",
+    "operation_caps": {
+      "active": 128,
+      "advection": 384,
+      "divergence": 192,
+      "field_fill": 128,
+      "fit": 384,
+      "oracle": 256,
+      "raw": 192
+    },
+    "split_function_operation_counts": {
+      "field.scalar": 38,
+      "field.tensor_a": 75,
+      "field.tensor_b": 82,
+      "field.vector": 65,
+      "scalar.first": 64,
+      "scalar.second": 95,
+      "tensor.0.first": 120,
+      "tensor.0.second": 227,
+      "tensor.1.first": 77,
+      "tensor.1.second": 146,
+      "tensor.2.first": 102,
+      "tensor.2.second": 191,
+      "tensor.3.first": 56,
+      "tensor.3.second": 74,
+      "tensor.4.first": 76,
+      "tensor.4.second": 157,
+      "tensor.5.first": 120,
+      "tensor.5.second": 235,
+      "vector.0.first": 96,
+      "vector.0.second": 158,
+      "vector.1.first": 55,
+      "vector.1.second": 80,
+      "vector.2.first": 87,
+      "vector.2.second": 168
+    }
+  },
   "schema": "athenak_z4c_cartoon_mms_series_v1",
   "series": [
     {
@@ -12,7 +202,26 @@
       "name": "scalar.first.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.b5c28f5c28f5dp+2",
+      "oracle_bound_rational": "171/25",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "scalar"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "scalar_first"
+      }
     },
     {
       "classification": "truncating",
@@ -24,7 +233,26 @@
       "name": "scalar.first.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a810624dd2f1bp+2",
+      "oracle_bound_rational": "3313/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "scalar"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "scalar_first"
+      }
     },
     {
       "classification": "exact_identity",
@@ -35,7 +263,18 @@
       "name": "scalar.first.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "scalar_first"
+      }
     },
     {
       "classification": "truncating",
@@ -47,7 +286,26 @@
       "name": "scalar.second.0.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.6fdf3b645a1cbp+3",
+      "oracle_bound_rational": "1437/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "scalar"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "scalar_second"
+      }
     },
     {
       "classification": "truncating",
@@ -59,7 +317,26 @@
       "name": "scalar.second.0.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.13b645a1cac09p+3",
+      "oracle_bound_rational": "1077/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "scalar"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "scalar_second"
+      }
     },
     {
       "classification": "exact_identity",
@@ -70,7 +347,18 @@
       "name": "scalar.second.0.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "scalar_second"
+      }
     },
     {
       "classification": "truncating",
@@ -82,7 +370,26 @@
       "name": "scalar.second.1.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.6d8adab9f559cp+3",
+      "oracle_bound_rational": "14279/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "scalar"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "scalar_second"
+      }
     },
     {
       "classification": "exact_identity",
@@ -93,7 +400,18 @@
       "name": "scalar.second.1.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "scalar_second"
+      }
     },
     {
       "classification": "truncating",
@@ -105,7 +423,34 @@
       "name": "scalar.second.2.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.23d70a3d70a3ep+1",
+      "oracle_bound_rational": "57/25",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "scalar"
+            ],
+            "kind": "even_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "scalar"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "scalar_second"
+      }
     },
     {
       "classification": "truncating",
@@ -117,7 +462,37 @@
       "name": "scalar.advective",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.dd9b3d07c84b6p+4",
+      "oracle_bound_rational": "37313/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "scalar"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "scalar"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "scalar_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -129,7 +504,26 @@
       "name": "vector.0.first.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.c9fbe76c8b43ap+2",
+      "oracle_bound_rational": "1789/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_first"
+      }
     },
     {
       "classification": "truncating",
@@ -141,7 +535,26 @@
       "name": "vector.0.first.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.27df3b645a1cbp+3",
+      "oracle_bound_rational": "4623/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -152,7 +565,34 @@
       "name": "vector.0.first.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.599999999999ap+0",
+      "oracle_bound_rational": "27/20",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_first"
+      }
     },
     {
       "classification": "truncating",
@@ -164,7 +604,26 @@
       "name": "vector.1.first.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.4d4fdf3b645a2p+1",
+      "oracle_bound_rational": "651/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.1"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_first"
+      }
     },
     {
       "classification": "truncating",
@@ -176,7 +635,26 @@
       "name": "vector.1.first.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ea7ef9db22d0fp+1",
+      "oracle_bound_rational": "479/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.1"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_first"
+      }
     },
     {
       "classification": "exact_identity",
@@ -187,7 +665,18 @@
       "name": "vector.1.first.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_first"
+      }
     },
     {
       "classification": "truncating",
@@ -199,7 +688,26 @@
       "name": "vector.2.first.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.53d70a3d70a3ep+2",
+      "oracle_bound_rational": "531/100",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_first"
+      }
     },
     {
       "classification": "truncating",
@@ -211,7 +719,26 @@
       "name": "vector.2.first.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.2f5c28f5c28f6p+2",
+      "oracle_bound_rational": "237/50",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -222,7 +749,34 @@
       "name": "vector.2.first.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.2147ae147ae15p+1",
+      "oracle_bound_rational": "113/50",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_first"
+      }
     },
     {
       "classification": "truncating",
@@ -234,7 +788,26 @@
       "name": "vector.0.second.0.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.c3d07c84b5dcdp+3",
+      "oracle_bound_rational": "17649/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -246,7 +819,26 @@
       "name": "vector.0.second.0.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.4941205bc01a4p+3",
+      "oracle_bound_rational": "25723/2500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -258,7 +850,41 @@
       "name": "vector.0.second.0.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.51eb851eb851fp+0",
+      "oracle_bound_rational": "33/25",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -270,7 +896,26 @@
       "name": "vector.0.second.1.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ec226809d4952p+3",
+      "oracle_bound_rational": "9612/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -282,7 +927,35 @@
       "name": "vector.0.second.1.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.947ae147ae148p+0",
+      "oracle_bound_rational": "79/50",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "direction": 1,
+            "kind": "odd_active_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "dz_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -294,7 +967,41 @@
       "name": "vector.0.second.2.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.1604189374bc7p+1",
+      "oracle_bound_rational": "543/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -306,7 +1013,26 @@
       "name": "vector.1.second.0.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.604ea4a8c154dp+2",
+      "oracle_bound_rational": "6881/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.1"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -318,7 +1044,26 @@
       "name": "vector.1.second.0.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.de4f765fd8adbp+1",
+      "oracle_bound_rational": "4671/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.1"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "exact_identity",
@@ -329,7 +1074,18 @@
       "name": "vector.1.second.0.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -341,7 +1097,26 @@
       "name": "vector.1.second.1.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.9b8bac710cb2ap+2",
+      "oracle_bound_rational": "4019/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.1"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "exact_identity",
@@ -352,7 +1127,18 @@
       "name": "vector.1.second.1.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -364,7 +1150,34 @@
       "name": "vector.1.second.2.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.bc6a7ef9db22ep-1",
+      "oracle_bound_rational": "217/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "vector.1"
+            ],
+            "kind": "even_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.1"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -376,7 +1189,26 @@
       "name": "vector.2.second.0.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.472b020c49ba6p+3",
+      "oracle_bound_rational": "1278/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -388,7 +1220,26 @@
       "name": "vector.2.second.0.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.c353f7ced9169p+2",
+      "oracle_bound_rational": "1763/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -400,7 +1251,41 @@
       "name": "vector.2.second.0.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.1604189374bc7p+1",
+      "oracle_bound_rational": "543/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -412,7 +1297,26 @@
       "name": "vector.2.second.1.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a72b020c49ba6p+2",
+      "oracle_bound_rational": "1653/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -424,7 +1328,35 @@
       "name": "vector.2.second.1.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.8a7ef9db22d0fp+1",
+      "oracle_bound_rational": "1541/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "direction": 1,
+            "kind": "odd_active_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "dz_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -436,7 +1368,41 @@
       "name": "vector.2.second.2.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.51eb851eb851fp+0",
+      "oracle_bound_rational": "33/25",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_second"
+      }
     },
     {
       "classification": "truncating",
@@ -448,7 +1414,49 @@
       "name": "vector.divergence",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.25c28f5c28f5dp+3",
+      "oracle_bound_rational": "459/50",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "div_dx",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1"
+            ],
+            "kind": "div_dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "div_odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "kind": "div_value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_divergence"
+      }
     },
     {
       "classification": "truncating",
@@ -460,7 +1468,55 @@
       "name": "vector.0.advective",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.42d8793dd97f7p+5",
+      "oracle_bound_rational": "403557/10000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "vector.0"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "vector.0"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "vector.2"
+            ],
+            "kind": "product_odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "vector.2"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -472,7 +1528,37 @@
       "name": "vector.1.advective",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.e356eac860569p+3",
+      "oracle_bound_rational": "377609/25000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "vector.1"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "vector.1"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -484,7 +1570,55 @@
       "name": "vector.2.advective",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a2b9a176ddacfp+4",
+      "oracle_bound_rational": "327129/12500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "vector.2"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "vector.2"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "vector.0"
+            ],
+            "kind": "product_odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "vector.0"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "vector_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -498,7 +1632,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ce5604189374cp+3",
+      "oracle_bound_rational": "1806/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -512,7 +1665,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.cc395810624dep+3",
+      "oracle_bound_rational": "7191/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -524,7 +1696,34 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.e3d70a3d70a3ep+1",
+      "oracle_bound_rational": "189/50",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "rho_quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "value_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -538,7 +1737,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.bfc504816f007p+4",
+      "oracle_bound_rational": "17491/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -552,7 +1770,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.1cb295e9e1b09p+4",
+      "oracle_bound_rational": "11121/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -566,7 +1803,49 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ed0e560418938p+1",
+      "oracle_bound_rational": "963/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "quad_value",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "rho2_quad_derivative",
+            "scale": "4"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 0,
+            "kind": "active_over_r",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -580,7 +1859,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.7ff972474538fp+4",
+      "oracle_bound_rational": "14999/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -594,7 +1892,36 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.35810624dd2f2p+2",
+      "oracle_bound_rational": "1209/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "rho_quad_active_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "active_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -608,7 +1935,50 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ae978d4fdf3b7p+1",
+      "oracle_bound_rational": "841/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "even_derivative",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -622,7 +1992,55 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ea295e9e1b08ap+5",
+      "oracle_bound_rational": "306351/5000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.0.0"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.0.0"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.2"
+            ],
+            "kind": "product_rho_quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.2"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -634,7 +2052,26 @@
       "name": "tensor.lower.0.1.first.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.9b22d0e560419p+1",
+      "oracle_bound_rational": "803/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -646,7 +2083,26 @@
       "name": "tensor.lower.0.1.first.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.404189374bc6bp+1",
+      "oracle_bound_rational": "1251/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -657,7 +2113,34 @@
       "name": "tensor.lower.0.1.first.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.0f5c28f5c28f6p-1",
+      "oracle_bound_rational": "53/100",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -669,7 +2152,26 @@
       "name": "tensor.lower.0.1.second.0.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.889a027525461p+2",
+      "oracle_bound_rational": "3834/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -681,7 +2183,26 @@
       "name": "tensor.lower.0.1.second.0.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.112d77318fc51p+2",
+      "oracle_bound_rational": "10671/2500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -693,7 +2214,42 @@
       "name": "tensor.lower.0.1.second.0.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a1cac083126eap-1",
+      "oracle_bound_rational": "102/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "direction": 0,
+            "kind": "active_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -705,7 +2261,26 @@
       "name": "tensor.lower.0.1.second.1.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.04816f0068db9p+2",
+      "oracle_bound_rational": "2544/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -717,7 +2292,36 @@
       "name": "tensor.lower.0.1.second.1.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.5a1cac083126fp-1",
+      "oracle_bound_rational": "169/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "direction": 1,
+            "kind": "odd_active_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "direction": 1,
+            "kind": "active_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -729,7 +2333,41 @@
       "name": "tensor.lower.0.1.second.2.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ba5e353f7cedap-1",
+      "oracle_bound_rational": "108/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -741,7 +2379,55 @@
       "name": "tensor.lower.0.1.advective",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a0617c1bda512p+3",
+      "oracle_bound_rational": "130119/10000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.0.1"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.0.1"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.1.2"
+            ],
+            "kind": "product_odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.1.2"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -755,7 +2441,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.eac083126e979p+2",
+      "oracle_bound_rational": "1917/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -769,7 +2474,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.d04189374bc6bp+2",
+      "oracle_bound_rational": "3627/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -781,7 +2505,36 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.9333333333334p+1",
+      "oracle_bound_rational": "63/20",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "rho_quad_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -795,7 +2548,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.edbf487fcb924p+3",
+      "oracle_bound_rational": "19287/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -809,7 +2581,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.4154c985f06f7p+3",
+      "oracle_bound_rational": "6276/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -823,7 +2614,53 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.b1eb851eb851fp+1",
+      "oracle_bound_rational": "339/100",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "quad_value",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "rho2_quad_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "direction": 0,
+            "kind": "active_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -837,7 +2674,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.7068db8bac711p+3",
+      "oracle_bound_rational": "14391/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -851,7 +2707,38 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.1666666666667p+2",
+      "oracle_bound_rational": "87/20",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "direction": 1,
+            "kind": "rho_quad_active_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "direction": 1,
+            "kind": "active_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -865,7 +2752,48 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.7e76c8b439582p+1",
+      "oracle_bound_rational": "747/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "rho2_quad_derivative",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "4"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -879,7 +2807,57 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.3223c21187e7dp+5",
+      "oracle_bound_rational": "1913373/50000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.0.2"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "product_rho_quad_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -891,7 +2869,26 @@
       "name": "tensor.lower.1.1.first.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.12f1a9fbe76c9p+1",
+      "oracle_bound_rational": "537/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -903,7 +2900,26 @@
       "name": "tensor.lower.1.1.first.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a395810624dd3p+1",
+      "oracle_bound_rational": "1639/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_identity",
@@ -914,7 +2930,18 @@
       "name": "tensor.lower.1.1.first.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -926,7 +2953,26 @@
       "name": "tensor.lower.1.1.second.0.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.6339c0ebedfa5p+1",
+      "oracle_bound_rational": "3469/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -938,7 +2984,26 @@
       "name": "tensor.lower.1.1.second.0.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.671de69ad42c4p+1",
+      "oracle_bound_rational": "3507/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "exact_identity",
@@ -949,7 +3014,18 @@
       "name": "tensor.lower.1.1.second.0.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -961,7 +3037,26 @@
       "name": "tensor.lower.1.1.second.1.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.51c432ca57a79p+2",
+      "oracle_bound_rational": "6597/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "exact_identity",
@@ -972,7 +3067,18 @@
       "name": "tensor.lower.1.1.second.1.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -984,7 +3090,34 @@
       "name": "tensor.lower.1.1.second.2.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.6e978d4fdf3b7p-1",
+      "oracle_bound_rational": "179/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "even_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -996,7 +3129,37 @@
       "name": "tensor.lower.1.1.advective",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.96c0d6f544bb2p+3",
+      "oracle_bound_rational": "39722/3125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.1.1"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.1.1"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -1008,7 +3171,26 @@
       "name": "tensor.lower.1.2.first.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.7d2f1a9fbe76dp+1",
+      "oracle_bound_rational": "1489/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1020,7 +3202,26 @@
       "name": "tensor.lower.1.2.first.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.0395810624dd3p+1",
+      "oracle_bound_rational": "507/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -1031,7 +3232,34 @@
       "name": "tensor.lower.1.2.first.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.3d70a3d70a3d8p-1",
+      "oracle_bound_rational": "31/50",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1043,7 +3271,26 @@
       "name": "tensor.lower.1.2.second.0.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.8226809d49519p+2",
+      "oracle_bound_rational": "3771/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1055,7 +3302,26 @@
       "name": "tensor.lower.1.2.second.0.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.e0f9096bb98c8p+1",
+      "oracle_bound_rational": "4697/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1067,7 +3333,42 @@
       "name": "tensor.lower.1.2.second.0.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ba5e353f7cedap-1",
+      "oracle_bound_rational": "108/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "direction": 0,
+            "kind": "active_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1079,7 +3380,26 @@
       "name": "tensor.lower.1.2.second.1.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.9b573eab367a1p+1",
+      "oracle_bound_rational": "4017/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1091,7 +3411,36 @@
       "name": "tensor.lower.1.2.second.1.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ab020c49ba5e4p-1",
+      "oracle_bound_rational": "417/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "direction": 1,
+            "kind": "odd_active_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "direction": 1,
+            "kind": "active_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1103,7 +3452,41 @@
       "name": "tensor.lower.1.2.second.2.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a1cac083126eap-1",
+      "oracle_bound_rational": "102/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1115,7 +3498,55 @@
       "name": "tensor.lower.1.2.advective",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.62872b020c49cp+3",
+      "oracle_bound_rational": "11079/1000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.1.2"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.1.2"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.1"
+            ],
+            "kind": "product_odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.1"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -1129,7 +3560,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.fdf3b645a1cadp+0",
+      "oracle_bound_rational": "249/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1143,7 +3593,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.34bc6a7ef9db3p+1",
+      "oracle_bound_rational": "603/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -1155,7 +3624,34 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.e3d70a3d70a3ep+1",
+      "oracle_bound_rational": "189/50",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "rho_quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "value_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1169,7 +3665,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.2acd9e83e425bp+1",
+      "oracle_bound_rational": "1459/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1183,7 +3698,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.4467381d7dbf5p+1",
+      "oracle_bound_rational": "1584/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1197,7 +3731,49 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ed0e560418938p+1",
+      "oracle_bound_rational": "963/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "quad_value",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "rho2_quad_derivative",
+            "scale": "4"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 0,
+            "kind": "active_over_r",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1211,7 +3787,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.e6b50b0f27bb3p+1",
+      "oracle_bound_rational": "4753/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1225,7 +3820,36 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.35810624dd2f2p+2",
+      "oracle_bound_rational": "1209/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "rho_quad_active_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "active_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1239,7 +3863,50 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.3ced916872b03p+1",
+      "oracle_bound_rational": "619/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "even_derivative",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1253,7 +3920,55 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.99ea897635e75p+3",
+      "oracle_bound_rational": "320247/25000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.2.2"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.2.2"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.2"
+            ],
+            "kind": "product_rho_quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.2"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -1267,7 +3982,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ce5604189374cp+3",
+      "oracle_bound_rational": "1806/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1281,7 +4015,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.cc395810624dep+3",
+      "oracle_bound_rational": "7191/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -1293,7 +4046,34 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.e3d70a3d70a3ep+1",
+      "oracle_bound_rational": "189/50",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "rho_quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "value_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1307,7 +4087,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.bfc504816f007p+4",
+      "oracle_bound_rational": "17491/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1321,7 +4120,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.1cb295e9e1b09p+4",
+      "oracle_bound_rational": "11121/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1335,7 +4153,49 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ed0e560418938p+1",
+      "oracle_bound_rational": "963/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "quad_value",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "rho2_quad_derivative",
+            "scale": "4"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 0,
+            "kind": "active_over_r",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1349,7 +4209,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.7ff972474538fp+4",
+      "oracle_bound_rational": "14999/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1363,7 +4242,36 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.35810624dd2f2p+2",
+      "oracle_bound_rational": "1209/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "rho_quad_active_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "active_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1377,7 +4285,50 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ae978d4fdf3b7p+1",
+      "oracle_bound_rational": "841/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "even_derivative",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1391,7 +4342,55 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ea295e9e1b08ap+5",
+      "oracle_bound_rational": "306351/5000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.0.0"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.0.0"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.2"
+            ],
+            "kind": "product_rho_quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.2"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -1403,7 +4402,26 @@
       "name": "tensor.upper.0.1.first.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.9b22d0e560419p+1",
+      "oracle_bound_rational": "803/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1415,7 +4433,26 @@
       "name": "tensor.upper.0.1.first.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.404189374bc6bp+1",
+      "oracle_bound_rational": "1251/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -1426,7 +4463,34 @@
       "name": "tensor.upper.0.1.first.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.0f5c28f5c28f6p-1",
+      "oracle_bound_rational": "53/100",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1438,7 +4502,26 @@
       "name": "tensor.upper.0.1.second.0.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.889a027525461p+2",
+      "oracle_bound_rational": "3834/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1450,7 +4533,26 @@
       "name": "tensor.upper.0.1.second.0.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.112d77318fc51p+2",
+      "oracle_bound_rational": "10671/2500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1462,7 +4564,42 @@
       "name": "tensor.upper.0.1.second.0.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a1cac083126eap-1",
+      "oracle_bound_rational": "102/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "direction": 0,
+            "kind": "active_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1474,7 +4611,26 @@
       "name": "tensor.upper.0.1.second.1.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.04816f0068db9p+2",
+      "oracle_bound_rational": "2544/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1486,7 +4642,36 @@
       "name": "tensor.upper.0.1.second.1.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.5a1cac083126fp-1",
+      "oracle_bound_rational": "169/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "direction": 1,
+            "kind": "odd_active_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "direction": 1,
+            "kind": "active_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1498,7 +4683,41 @@
       "name": "tensor.upper.0.1.second.2.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ba5e353f7cedap-1",
+      "oracle_bound_rational": "108/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1510,7 +4729,55 @@
       "name": "tensor.upper.0.1.advective",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a0617c1bda512p+3",
+      "oracle_bound_rational": "130119/10000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.0.1"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.0.1"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.1.2"
+            ],
+            "kind": "product_odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.1.2"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -1524,7 +4791,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.eac083126e979p+2",
+      "oracle_bound_rational": "1917/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1538,7 +4824,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.d04189374bc6bp+2",
+      "oracle_bound_rational": "3627/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -1550,7 +4855,36 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.9333333333334p+1",
+      "oracle_bound_rational": "63/20",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "rho_quad_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1564,7 +4898,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.edbf487fcb924p+3",
+      "oracle_bound_rational": "19287/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1578,7 +4931,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.4154c985f06f7p+3",
+      "oracle_bound_rational": "6276/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1592,7 +4964,53 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.b1eb851eb851fp+1",
+      "oracle_bound_rational": "339/100",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "quad_value",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "rho2_quad_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "direction": 0,
+            "kind": "active_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1606,7 +5024,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.7068db8bac711p+3",
+      "oracle_bound_rational": "14391/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1620,7 +5057,38 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.1666666666667p+2",
+      "oracle_bound_rational": "87/20",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "direction": 1,
+            "kind": "rho_quad_active_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "direction": 1,
+            "kind": "active_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1634,7 +5102,48 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.7e76c8b439582p+1",
+      "oracle_bound_rational": "747/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "rho2_quad_derivative",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "4"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1648,7 +5157,57 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.3223c21187e7dp+5",
+      "oracle_bound_rational": "1913373/50000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.0.2"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "product_rho_quad_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -1660,7 +5219,26 @@
       "name": "tensor.upper.1.1.first.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.12f1a9fbe76c9p+1",
+      "oracle_bound_rational": "537/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1672,7 +5250,26 @@
       "name": "tensor.upper.1.1.first.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a395810624dd3p+1",
+      "oracle_bound_rational": "1639/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_identity",
@@ -1683,7 +5280,18 @@
       "name": "tensor.upper.1.1.first.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1695,7 +5303,26 @@
       "name": "tensor.upper.1.1.second.0.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.6339c0ebedfa5p+1",
+      "oracle_bound_rational": "3469/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1707,7 +5334,26 @@
       "name": "tensor.upper.1.1.second.0.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.671de69ad42c4p+1",
+      "oracle_bound_rational": "3507/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "exact_identity",
@@ -1718,7 +5364,18 @@
       "name": "tensor.upper.1.1.second.0.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1730,7 +5387,26 @@
       "name": "tensor.upper.1.1.second.1.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.51c432ca57a79p+2",
+      "oracle_bound_rational": "6597/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "exact_identity",
@@ -1741,7 +5417,18 @@
       "name": "tensor.upper.1.1.second.1.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1753,7 +5440,34 @@
       "name": "tensor.upper.1.1.second.2.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.6e978d4fdf3b7p-1",
+      "oracle_bound_rational": "179/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "even_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1765,7 +5479,37 @@
       "name": "tensor.upper.1.1.advective",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.96c0d6f544bb2p+3",
+      "oracle_bound_rational": "39722/3125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.1.1"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.1.1"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -1777,7 +5521,26 @@
       "name": "tensor.upper.1.2.first.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.7d2f1a9fbe76dp+1",
+      "oracle_bound_rational": "1489/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1789,7 +5552,26 @@
       "name": "tensor.upper.1.2.first.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.0395810624dd3p+1",
+      "oracle_bound_rational": "507/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -1800,7 +5582,34 @@
       "name": "tensor.upper.1.2.first.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.3d70a3d70a3d8p-1",
+      "oracle_bound_rational": "31/50",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1812,7 +5621,26 @@
       "name": "tensor.upper.1.2.second.0.0",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.8226809d49519p+2",
+      "oracle_bound_rational": "3771/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1824,7 +5652,26 @@
       "name": "tensor.upper.1.2.second.0.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.e0f9096bb98c8p+1",
+      "oracle_bound_rational": "4697/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1836,7 +5683,42 @@
       "name": "tensor.upper.1.2.second.0.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ba5e353f7cedap-1",
+      "oracle_bound_rational": "108/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "direction": 0,
+            "kind": "active_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1848,7 +5730,26 @@
       "name": "tensor.upper.1.2.second.1.1",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.9b573eab367a1p+1",
+      "oracle_bound_rational": "4017/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1860,7 +5761,36 @@
       "name": "tensor.upper.1.2.second.1.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ab020c49ba5e4p-1",
+      "oracle_bound_rational": "417/500",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "direction": 1,
+            "kind": "odd_active_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "direction": 1,
+            "kind": "active_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1872,7 +5802,41 @@
       "name": "tensor.upper.1.2.second.2.2",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.a1cac083126eap-1",
+      "oracle_bound_rational": "102/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "rho_odd_derivative",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1884,7 +5848,55 @@
       "name": "tensor.upper.1.2.advective",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.62872b020c49cp+3",
+      "oracle_bound_rational": "11079/1000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.1.2"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.1.2"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.1"
+            ],
+            "kind": "product_odd_value",
+            "scale": "1"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.1"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "1"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "truncating",
@@ -1898,7 +5910,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.fdf3b645a1cadp+0",
+      "oracle_bound_rational": "249/125",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1912,7 +5943,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.34bc6a7ef9db3p+1",
+      "oracle_bound_rational": "603/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "exact_plane_algebraic",
@@ -1924,7 +5974,34 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.e3d70a3d70a3ep+1",
+      "oracle_bound_rational": "189/50",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "rho_quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "value_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_first"
+      }
     },
     {
       "classification": "truncating",
@@ -1938,7 +6015,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.2acd9e83e425bp+1",
+      "oracle_bound_rational": "1459/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dxx",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1952,7 +6048,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.4467381d7dbf5p+1",
+      "oracle_bound_rational": "1584/625",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dxz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1966,7 +6081,49 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.ed0e560418938p+1",
+      "oracle_bound_rational": "963/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "quad_value",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "rho2_quad_derivative",
+            "scale": "4"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 0,
+            "kind": "active_over_r",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1980,7 +6137,26 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.e6b50b0f27bb3p+1",
+      "oracle_bound_rational": "4753/1250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dzz",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -1994,7 +6170,36 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.35810624dd2f2p+2",
+      "oracle_bound_rational": "1209/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "rho_quad_active_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "active_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -2008,7 +6213,50 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.3ced916872b03p+1",
+      "oracle_bound_rational": "619/250",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [],
+        "fitted": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "even_derivative",
+            "scale": "2"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "kind": "dx_over_r",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.0",
+              "tensor.2.2"
+            ],
+            "kind": "value_over_r2",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_second"
+      }
     },
     {
       "classification": "truncating",
@@ -2022,7 +6270,55 @@
       "noise_lanes": [
         "shared",
         "independent"
-      ]
+      ],
+      "oracle_bound_hex": "0x1.99ea897635e75p+3",
+      "oracle_bound_rational": "320247/25000",
+      "oracle_operation_count": 256,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0",
+              "tensor.2.2"
+            ],
+            "direction": 0,
+            "kind": "up",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1",
+              "tensor.2.2"
+            ],
+            "direction": 1,
+            "kind": "up",
+            "scale": "1"
+          }
+        ],
+        "fitted": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.2"
+            ],
+            "kind": "product_rho_quad_value",
+            "scale": "2"
+          }
+        ],
+        "fitted_t": "runtime_target_layer",
+        "raw": [
+          {
+            "components": [
+              "vector.2",
+              "tensor.0.2"
+            ],
+            "kind": "product_value_over_r",
+            "scale": "2"
+          }
+        ],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "tensor_advection"
+      }
     },
     {
       "classification": "exact_discrete",
@@ -2033,7 +6329,35 @@
       "name": "state.0.dissipation",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 0,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "scalar"
+            ],
+            "direction": 0,
+            "kind": "ko",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "scalar"
+            ],
+            "direction": 1,
+            "kind": "ko",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "dissipation"
+      }
     },
     {
       "classification": "exact_discrete",
@@ -2044,7 +6368,35 @@
       "name": "state.1.dissipation",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 0,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.0"
+            ],
+            "direction": 0,
+            "kind": "ko",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.0"
+            ],
+            "direction": 1,
+            "kind": "ko",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "dissipation"
+      }
     },
     {
       "classification": "exact_discrete",
@@ -2055,7 +6407,35 @@
       "name": "state.2.dissipation",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 0,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.1"
+            ],
+            "direction": 0,
+            "kind": "ko",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.1"
+            ],
+            "direction": 1,
+            "kind": "ko",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "dissipation"
+      }
     },
     {
       "classification": "exact_discrete",
@@ -2066,7 +6446,35 @@
       "name": "state.3.dissipation",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 0,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "vector.2"
+            ],
+            "direction": 0,
+            "kind": "ko",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "vector.2"
+            ],
+            "direction": 1,
+            "kind": "ko",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "dissipation"
+      }
     },
     {
       "classification": "exact_discrete",
@@ -2077,7 +6485,35 @@
       "name": "state.4.dissipation",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 0,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "direction": 0,
+            "kind": "ko",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.0"
+            ],
+            "direction": 1,
+            "kind": "ko",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "dissipation"
+      }
     },
     {
       "classification": "exact_discrete",
@@ -2088,7 +6524,35 @@
       "name": "state.5.dissipation",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 0,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "direction": 0,
+            "kind": "ko",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.1"
+            ],
+            "direction": 1,
+            "kind": "ko",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "dissipation"
+      }
     },
     {
       "classification": "exact_discrete",
@@ -2099,7 +6563,35 @@
       "name": "state.6.dissipation",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 0,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 0,
+            "kind": "ko",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.0.2"
+            ],
+            "direction": 1,
+            "kind": "ko",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "dissipation"
+      }
     },
     {
       "classification": "exact_discrete",
@@ -2110,7 +6602,35 @@
       "name": "state.7.dissipation",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 0,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "direction": 0,
+            "kind": "ko",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.1.1"
+            ],
+            "direction": 1,
+            "kind": "ko",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "dissipation"
+      }
     },
     {
       "classification": "exact_discrete",
@@ -2121,7 +6641,35 @@
       "name": "state.8.dissipation",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 0,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "direction": 0,
+            "kind": "ko",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.1.2"
+            ],
+            "direction": 1,
+            "kind": "ko",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "dissipation"
+      }
     },
     {
       "classification": "exact_discrete",
@@ -2132,7 +6680,35 @@
       "name": "state.9.dissipation",
       "noise_lanes": [
         "shared"
-      ]
+      ],
+      "oracle_bound_hex": "0x0.0p+0",
+      "oracle_bound_rational": "0",
+      "oracle_operation_count": 0,
+      "roundoff_family": {
+        "active": [
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "direction": 0,
+            "kind": "ko",
+            "scale": "1"
+          },
+          {
+            "components": [
+              "tensor.2.2"
+            ],
+            "direction": 1,
+            "kind": "ko",
+            "scale": "1"
+          }
+        ],
+        "fitted": [],
+        "fitted_t": "runtime_target_layer",
+        "raw": [],
+        "raw_class": "outside_regularized_half_cell_layers",
+        "source_branch": "dissipation"
+      }
     }
   ]
 }

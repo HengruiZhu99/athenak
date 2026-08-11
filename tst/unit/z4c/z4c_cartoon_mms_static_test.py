@@ -141,6 +141,46 @@ def main() -> int:
             classifications.count("exact_plane_algebraic") == 12 and
             classifications.count("exact_discrete") == 10,
             "exact/truncating series classes differ from the frozen inventory")
+    policy = series.get("roundoff_policy", {})
+    coefficient_rationals = {
+        order: {name: value["rational"] for name, value in row.items()}
+        for order, row in policy.get("coefficients", {}).items()}
+    field_rationals = {name: value["rational"]
+                       for name, value in policy.get("field_maxima", {}).items()}
+    require(policy.get("binary64_epsilon_hex") == float.fromhex("0x1p-52").hex() and
+            policy.get("fit_fixture_count") == 108 and
+            coefficient_rationals == {
+                "2": {"C1": "1", "C2": "4", "CM": "1", "CU": "4",
+                      "CKO": "16", "CE": "1", "CO": "4/3", "CQ": "20/9"},
+                "3": {"C1": "3/2", "C2": "16/3", "CM": "9/4", "CU": "19/6",
+                      "CKO": "64", "CE": "3/2", "CO": "28/15", "CQ": "226/75"},
+                "4": {"C1": "11/6", "C2": "272/45", "CM": "121/36",
+                      "CU": "3", "CKO": "256", "CE": "5/2", "CO": "76/35",
+                      "CQ": "12598/3675"}} and
+            field_rationals == {
+                "scalar": "26/5", "vector.0": "339/50", "vector.1": "133/50",
+                "vector.2": "81/20", "tensor.0.0": "284/25",
+                "tensor.0.1": "93/50", "tensor.0.2": "567/100",
+                "tensor.1.1": "249/100", "tensor.1.2": "159/100",
+                "tensor.2.2": "191/100"},
+            "coefficient-aware floor tables differ from the frozen finite contract")
+    split_counts = policy.get("split_function_operation_counts", {})
+    require(len(split_counts) == 24 and
+            all(count <= (128 if name.startswith("field.") else 256)
+                for name, count in split_counts.items()) and
+            all(set(item.get("roundoff_family", {})) ==
+                {"source_branch", "fitted_t", "raw_class", "active", "fitted", "raw"}
+                for item in series["series"]),
+            "split-operation caps or 171-row roundoff-family mapping are incomplete")
+    by_name = {item["name"]: item["roundoff_family"] for item in series["series"]}
+    require([block["kind"] for block in
+             by_name["tensor.lower.0.2.second.0.2"]["fitted"]] ==
+            ["quad_value", "rho2_quad_derivative"] and
+            [block["kind"] for block in
+             by_name["tensor.lower.0.1.advective"]["active"]] == ["up", "up"] and
+            by_name["tensor.lower.0.1.advective"]["raw"][0]["components"] ==
+            ["vector.2", "tensor.1.2"],
+            "quadratic/advection family, rho powers, or component permutation changed")
     independent = [item for item in series["series"]
                    if "independent" in item["noise_lanes"]]
     require(len(independent) == 60 and all(item["name"].startswith((
@@ -169,6 +209,9 @@ def main() -> int:
             "axis_names = operator_names[:161]" in driver and
             "len(axis_rows) != 161" in driver,
             "case resume does not bind environment and exact file inventory")
+    require("O(171*nx1)" in driver and "max(1.0, coarse[\"error\"])" not in driver and
+            "clean_floor" in driver and "saturated_at_resolution" in driver,
+            "driver does not use the finite O(nx1) absorbing coefficient floor")
     for self_test in ("--self-test-no-evolution-parser",
                       "--self-test-cpu-audit-policy"):
         completed = subprocess.run(

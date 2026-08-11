@@ -161,6 +161,17 @@ $L_1,L_2,L_\infty$; cylindrical $L_1,L_2$ expect $p$ and cylindrical $L_\infty$
 expects $p-1$.  Region-filtered regular/fitted masks expect $p$, and the raw mask
 expects $p-1$.
 
+Roundoff saturation is decided by a checksum-bound binary64 coefficient audit,
+not by the observed error.  The generated inventory fixes the field maxima, the
+$C_1,C_2,C_M,C_U,C_{\rm KO},C_E,C_O,C_Q$ row norms, operation caps,
+analytic-oracle bounds, and one source-family row for every result.  The driver
+evaluates these bounds in outward-rounded arithmetic over the one-dimensional
+radial mask ($O(171N_\rho)$ work; axial multiplicity is analytic), aggregates
+them with the same uniform or positive-$\rho$ cylindrical weights as the error,
+and uses $\max(F_{\rm clean},8\Delta)$ for a noisy lane.  Once a resolution is
+below its floor, every finer point is an absorbing inconclusive suffix; it cannot
+create a passing ratio or re-enter after saturation.
+
 \subsection{Controlled perturbations}
 Let $\ell$ be the absolute radial layer, $j$ the axial index, $c$ a component
 index, and $q\in[0,7]$ the phase.  The deterministic pattern is

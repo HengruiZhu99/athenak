@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from fractions import Fraction
 import hashlib
 import json
 import math
@@ -31,6 +32,11 @@ DIAGNOSTIC_RESOLUTIONS = (32, 64, 128, 256)
 PRESERVED_JOB_56586376_BYTES = 715_807_842
 PRESERVED_JOB_56586376_CONVERGENCE_SHA256 = \
     "fdb4222c246b49d4df3c8ef40688dafacfd7983d5f090a2fe148d051538778a0"
+PRESERVED_JOB_56586376_EVIDENCE_SHA256 = \
+    "347b210b251e6100413ffef5f691edb684b79a2b41fcb6c8757b8a6233fb1869"
+PRESERVED_JOB_56586376_LOG_SHA256 = \
+    "47522f4f70ad34d15c994e969f84c6e395dd434bcd5e238fff5f719ef2dd43b1"
+PRESERVED_JOB_56586376_AUDIT_COUNTS = (63_880, 18_508, 4_512, 3_696)
 CASE_ENVIRONMENT_KEYS = (
     "CUDA_DEVICE_ORDER", "CUDA_VISIBLE_DEVICES", "KOKKOS_NUM_DEVICES",
     "KOKKOS_NUM_THREADS", "OMPI_COMM_WORLD_SIZE", "PMIX_NAMESPACE",
@@ -58,6 +64,48 @@ PROBE_FIELDS = {
     "target_rho_applicable", "target_rho", "actual_rho", "target_z", "actual_z",
     "global_cell_id", "raw_error",
 }
+
+
+def up(value: float) -> float:
+    if not math.isfinite(value) or value < 0.0:
+        raise RuntimeError("coefficient floor arithmetic became invalid")
+    return math.nextafter(value, math.inf) if value > 0.0 else 0.0
+
+
+def up_add(first: float, second: float) -> float:
+    return up(first + second)
+
+
+def up_mul(first: float, second: float) -> float:
+    return up(first * second)
+
+
+def up_div(first: float, second: float) -> float:
+    if second <= 0.0:
+        raise RuntimeError("coefficient floor division requires a positive denominator")
+    return up(first / second)
+
+
+def gamma(operation_count: int, epsilon: float) -> float:
+    product = up_mul(float(operation_count), epsilon)
+    if product >= 1.0:
+        raise RuntimeError("coefficient floor gamma is not representable")
+    denominator = math.nextafter(1.0 - product, -math.inf)
+    return up_div(product, denominator)
+
+
+def sum_up(values: list[float]) -> float:
+    result = 0.0
+    for value in values:
+        result = up_add(result, value)
+    return result
+
+
+def policy_number(record: dict[str, object]) -> float:
+    value = float.fromhex(str(record["hex"]))
+    if value < float(Fraction(str(record["rational"]))):
+        raise RuntimeError("roundoff policy constant was not rounded upward")
+    return value
 
 
 def sha256(path: Path) -> str:
@@ -164,16 +212,77 @@ def validate_probe_row(row: dict[str, str]) -> None:
     if boolean_value(row, "target_rho_applicable") != target_applicable:
         raise RuntimeError("probe target-rho applicability disagreement")
     if target_applicable:
-        finite_value(row, "target_rho")
+        target = finite_value(row, "target_rho")
+        expected_target = (0.0 if classification == "diagnostic_axis" else
+                           (-1.0 if side == "negative" else 1.0))
+        if classification == "fixed_radius":
+            expected_target *= 0.5
+        if target != expected_target:
+            raise RuntimeError("probe target_rho differs from its semantic mask")
     elif row.get("target_rho") != "":
         raise RuntimeError("inapplicable target_rho must be blank")
     for field in ("actual_rho", "target_z", "actual_z", "raw_error"):
         finite_value(row, field)
 
 
+def expected_masks(order: int) -> list[str]:
+    nghost = order // 2 + 1
+    masks = ["full_signed_plane", "regular_negative", "regular_positive"]
+    masks += [f"fitted_layer_{layer}_{side}" for layer in range(nghost)
+              for side in ("negative", "positive")]
+    masks += ["raw_transition_negative", "raw_transition_positive",
+              "fixed_rho_negative_0.5", "fixed_rho_positive_0.5"]
+    return masks
+
+
+def probe_series_identity(row: dict[str, str]) -> str:
+    fields = [row["operator"], row["mask"], row["side"]]
+    if row["classification"] in {"fitted", "raw_transition"}:
+        fields.append(row["layer_index"])
+    return "|".join(fields)
+
+
+def validate_case_inventory(order: int, operator_names: list[str],
+                            rows: list[dict[str, str]],
+                            probes: list[dict[str, str]]) -> None:
+    masks = expected_masks(order)
+    expected_norm = {(operator, mask) for operator in operator_names for mask in masks}
+    actual_norm = [(row["operator"], row["mask"]) for row in rows]
+    if len(actual_norm) != len(set(actual_norm)) or set(actual_norm) != expected_norm:
+        raise RuntimeError("case norm rows differ from the exact operator/mask inventory")
+    nonaxis_masks = [mask for mask in masks if mask != "full_signed_plane"]
+    expected_nonaxis = {(operator, mask) for operator in operator_names
+                        for mask in nonaxis_masks}
+    actual_nonaxis = [(row["operator"], row["mask"]) for row in probes
+                      if row["mask"] != "diagnostic_axis"]
+    if (len(actual_nonaxis) != len(set(actual_nonaxis)) or
+            set(actual_nonaxis) != expected_nonaxis):
+        raise RuntimeError("case probes differ from the exact non-axis inventory")
+    axis = [row["operator"] for row in probes if row["mask"] == "diagnostic_axis"]
+    if axis != operator_names[:161]:
+        raise RuntimeError("case probes differ from the ordered 161-axis inventory")
+
+
+def validate_rank_binding(binding: object) -> None:
+    fields = {"rank", "local_rank", "hostname", "cuda_visible_devices",
+              "visible_device_token", "selected_uuid", "gpu_name",
+              "binding_verified"}
+    if (not isinstance(binding, dict) or set(binding) != fields or
+            not isinstance(binding["rank"], int) or binding["rank"] < 0 or
+            not isinstance(binding["local_rank"], int) or binding["local_rank"] < 0 or
+            not isinstance(binding["hostname"], str) or not binding["hostname"] or
+            not isinstance(binding["binding_verified"], bool)):
+        raise RuntimeError("rank binding differs from the exact evidence schema")
+    for field in ("cuda_visible_devices", "visible_device_token",
+                  "selected_uuid", "gpu_name"):
+        if binding[field] is not None and not isinstance(binding[field], str):
+            raise RuntimeError(f"rank binding field {field} is neither string nor null")
+
+
 def write_atomic(path: Path, value: object) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n",
+    temporary.write_text(json.dumps(value, indent=2, sort_keys=True,
+                                    allow_nan=False) + "\n",
                          encoding="utf-8")
     os.replace(temporary, path)
 
@@ -239,38 +348,250 @@ def rate_policy(order: int, mask: str, lane: str, norm: str,
     return expected, margin
 
 
+def linear_block_value(kind: str, components: list[str], scale: float,
+                       values: dict[str, float], coefficients: dict[str, float],
+                       h: float, hz: float, radius: float,
+                       direction: int | None) -> float:
+    component = sum_up([values[name] for name in components])
+    c1, c2, cm = (coefficients[name] for name in ("C1", "C2", "CM"))
+    fit = coefficients["fit_safety"]
+    if kind in {"dx", "div_dx"}:
+        value = up_div(up_mul(c1, component), h)
+    elif kind in {"dz", "div_dz"}:
+        value = up_div(up_mul(c1, component), hz)
+    elif kind == "dxx":
+        value = up_div(up_div(up_mul(c2, component), h), h)
+    elif kind == "dzz":
+        value = up_div(up_div(up_mul(c2, component), hz), hz)
+    elif kind == "dxz":
+        value = up_div(up_div(up_mul(cm, component), h), hz)
+    elif kind in {"value_over_r", "div_value_over_r"}:
+        value = up_div(component, radius)
+    elif kind == "value_over_r2":
+        value = up_div(up_div(component, radius), radius)
+    elif kind == "dx_over_r":
+        value = up_div(up_div(up_mul(c1, component), h), radius)
+    elif kind == "dz_over_r":
+        value = up_div(up_div(up_mul(c1, component), hz), radius)
+    elif kind == "active_over_r":
+        spacing = h if direction == 0 else hz
+        value = up_div(up_div(up_mul(c1, component), spacing), radius)
+    elif kind == "even_derivative":
+        value = up_div(up_div(up_mul(up_mul(fit, coefficients["CE"]), component), h), h)
+    elif kind in {"odd_value", "div_odd_value"}:
+        value = up_div(up_mul(up_mul(fit, 2.0), component), h)
+    elif kind == "rho_odd_derivative":
+        numerator = up_mul(up_mul(fit, coefficients["CO"]), component)
+        value = up_mul(radius, up_div(up_div(up_div(numerator, h), h), h))
+    elif kind == "odd_active_value":
+        spacing = h if direction == 0 else hz
+        derivative = up_div(up_mul(c1, component), spacing)
+        value = up_div(up_mul(up_mul(fit, 2.0), derivative), h)
+    elif kind == "quad_value":
+        value = up_div(up_div(up_mul(up_mul(fit, 4.0), component), h), h)
+    elif kind == "rho_quad_value":
+        quad = up_div(up_div(up_mul(up_mul(fit, 4.0), component), h), h)
+        value = up_mul(radius, quad)
+    elif kind == "rho2_quad_derivative":
+        derivative = up_mul(up_mul(fit, coefficients["CQ"]), component)
+        for _ in range(4):
+            derivative = up_div(derivative, h)
+        value = up_mul(up_mul(radius, radius), derivative)
+    elif kind == "rho_quad_active_value":
+        spacing = h if direction == 0 else hz
+        derivative = up_div(up_mul(c1, component), spacing)
+        quad = up_div(up_div(up_mul(up_mul(fit, 4.0), derivative), h), h)
+        value = up_mul(radius, quad)
+    elif kind == "ko":
+        spacing = h if direction == 0 else hz
+        value = up_div(up_mul(coefficients["CKO"], component), spacing)
+    else:
+        raise RuntimeError(f"unknown linear coefficient-floor block {kind}")
+    return up_mul(scale, value)
+
+
+def block_bounds(block_record: dict[str, object], maxima: dict[str, float],
+                 errors: dict[str, float], coefficients: dict[str, float],
+                 h: float, hz: float, radius: float) -> tuple[float, float, int]:
+    kind = str(block_record["kind"])
+    components = [str(value) for value in block_record["components"]]
+    scale = float(Fraction(str(block_record["scale"])))
+    direction = block_record.get("direction")
+    direction_value = None if direction is None else int(direction)
+    if kind == "up":
+        velocity, field = components
+        spacing = h if direction_value == 0 else hz
+        derivative_b = up_div(up_mul(coefficients["CU"], maxima[field]), spacing)
+        derivative_e = up_div(up_mul(coefficients["CU"], errors[field]), spacing)
+        bound = up_mul(scale, up_mul(maxima[velocity], derivative_b))
+        propagated = up_mul(scale, sum_up([
+            up_mul(errors[velocity], derivative_b),
+            up_mul(maxima[velocity], derivative_e),
+            up_mul(errors[velocity], derivative_e)]))
+        return bound, propagated, 384
+    product = kind.startswith("product_")
+    base_kind = kind[len("product_"):] if product else kind
+    if product:
+        velocity, *field_components = components
+        field_b = linear_block_value(base_kind, field_components, scale, maxima,
+                                     coefficients, h, hz, radius, direction_value)
+        field_e = linear_block_value(base_kind, field_components, scale, errors,
+                                     coefficients, h, hz, radius, direction_value)
+        bound = up_mul(maxima[velocity], field_b)
+        propagated = sum_up([up_mul(errors[velocity], field_b),
+                             up_mul(maxima[velocity], field_e),
+                             up_mul(errors[velocity], field_e)])
+        return bound, propagated, 384
+    bound = linear_block_value(base_kind, components, scale, maxima, coefficients,
+                               h, hz, radius, direction_value)
+    propagated = linear_block_value(base_kind, components, scale, errors, coefficients,
+                                    h, hz, radius, direction_value)
+    if base_kind.startswith("div_"):
+        operations = 192
+    elif ("over_r" in base_kind or base_kind.startswith("value_over") or
+          base_kind.startswith("active_over")):
+        operations = 192
+    elif base_kind in {"even_derivative", "odd_value", "rho_odd_derivative",
+                       "odd_active_value", "quad_value", "rho_quad_value",
+                       "rho2_quad_derivative", "rho_quad_active_value"}:
+        operations = 384
+    else:
+        operations = 128
+    return bound, propagated, operations
+
+
+def cell_clean_floor(item: dict[str, object], policy: dict[str, object],
+                     order: int, h: float, hz: float, radius: float,
+                     fitted: bool) -> float:
+    epsilon = float.fromhex(str(policy["binary64_epsilon_hex"]))
+    maxima = {name: policy_number(value) for name, value in
+              dict(policy["field_maxima"]).items()}
+    field_gamma = gamma(int(dict(policy["operation_caps"])["field_fill"]), epsilon)
+    errors = {name: up_mul(field_gamma, value) for name, value in maxima.items()}
+    coefficient_row = dict(dict(policy["coefficients"])[str(order // 2 + 1)])
+    coefficients = {name: policy_number(value) for name, value in
+                    coefficient_row.items()}
+    coefficients["fit_safety"] = float.fromhex(str(policy["fit_safety_hex"]))
+    family = dict(item["roundoff_family"])
+    blocks = list(family["active"]) + list(family["fitted" if fitted else "raw"])
+    production = []
+    magnitudes = []
+    for block_record in blocks:
+        bound, propagated, operations = block_bounds(
+            dict(block_record), maxima, errors, coefficients, h, hz, radius)
+        magnitudes.append(bound)
+        production.append(up_add(propagated, up_mul(
+            gamma(operations, epsilon), up_add(bound, propagated))))
+    production_sum = sum_up(production)
+    if len(production) > 1:
+        production_sum = up_add(
+            production_sum,
+            up_mul(gamma(len(production) - 1, epsilon), sum_up(magnitudes + production)))
+    oracle_bound = float.fromhex(str(item["oracle_bound_hex"]))
+    oracle_roundoff = up_mul(gamma(256, epsilon), oracle_bound)
+    final_magnitude = sum_up([sum_up(magnitudes), oracle_bound,
+                              production_sum, oracle_roundoff])
+    subtraction = up_mul(gamma(1, epsilon), final_magnitude)
+    return up_mul(float.fromhex(str(policy["global_slack_hex"])),
+                  sum_up([production_sum, oracle_roundoff, subtraction]))
+
+
+def mask_radial_indices(mask: str, order: int, resolution: int,
+                        domain: tuple[float, float, float, float]) -> \
+        list[tuple[float, bool, bool]]:
+    h = (domain[1] - domain[0]) / resolution
+    nghost = order // 2 + 1
+    fixed_layer = math.floor(0.5 / h)
+    selected = []
+    for index in range(resolution):
+        radius = domain[0] + (index + 0.5) * h
+        layer = math.floor(abs(radius / h))
+        side = "positive" if radius > 0.0 else "negative"
+        include = mask == "full_signed_plane"
+        include |= mask == f"fitted_layer_{layer}_{side}" and layer < nghost
+        include |= mask == f"raw_transition_{side}" and layer == nghost
+        include |= mask == f"regular_{side}" and layer > nghost and abs(radius) >= 0.75
+        include |= mask == f"fixed_rho_{side}_0.5" and layer == fixed_layer
+        if include:
+            selected.append((abs(radius), layer < nghost, radius > 0.0))
+    if not selected:
+        raise RuntimeError(f"coefficient-floor mask is empty: {mask}")
+    return selected
+
+
+def aggregate_clean_floor(item: dict[str, object], policy: dict[str, object],
+                          order: int, resolution: int, mask: str, norm: str,
+                          domain: tuple[float, float, float, float]) -> float:
+    h = (domain[1] - domain[0]) / resolution
+    hz = (domain[3] - domain[2]) / resolution
+    radial = mask_radial_indices(mask, order, resolution, domain)
+    cylindrical = norm.startswith("cyl_")
+    if cylindrical:
+        radial = [entry for entry in radial if entry[2]]
+    floors = [cell_clean_floor(item, policy, order, h, hz, radius, fitted)
+              for radius, fitted, _ in radial]
+    weights = [radius if cylindrical else 1.0 for radius, _, _ in radial]
+    denominator = sum_up(weights)
+    if norm in {"l1", "cyl_l1"}:
+        return up_div(sum_up([up_mul(weight, value)
+                              for weight, value in zip(weights, floors)]), denominator)
+    if norm in {"l2", "cyl_l2"}:
+        mean_square = up_div(sum_up([up_mul(weight, up_mul(value, value))
+                                     for weight, value in zip(weights, floors)]),
+                             denominator)
+        return up(math.sqrt(mean_square))
+    if norm in {"linfinity", "cyl_linfinity", "raw_error"}:
+        return max(floors)
+    raise RuntimeError(f"unknown coefficient-floor norm {norm}")
+
+
+def probe_clean_floor(item: dict[str, object], policy: dict[str, object], order: int,
+                      resolution: int, row: dict[str, str],
+                      domain: tuple[float, float, float, float]) -> float:
+    h = (domain[1] - domain[0]) / resolution
+    hz = (domain[3] - domain[2]) / resolution
+    radius = abs(finite_value(row, "actual_rho"))
+    return cell_clean_floor(item, policy, order, h, hz, radius,
+                            row["classification"] == "fitted")
+
+
 def evaluate_rate_samples(values: list[dict[str, float]], expected: float,
                           margin: float, lane: str) -> dict[str, object]:
     rates: list[float | None] = []
     rate_status = []
     prefix_rates = []
-    absorbing = False
-    unsaturated_prefix = 0
-    for coarse, fine in zip(values, values[1:]):
-        floor = SATURATION_FACTOR * sys.float_info.epsilon * max(1.0, coarse["error"])
+    for sample in values:
+        if (not math.isfinite(sample["error"]) or sample["error"] <= 0.0 or
+                not math.isfinite(sample["clean_floor"]) or sample["clean_floor"] <= 0.0):
+            raise RuntimeError("rate sample/error floor must be finite and positive")
+        sample["applied_floor"] = sample["clean_floor"]
         if lane != "clean":
-            floor = max(floor, 8.0 * max(coarse["direct_delta"],
-                                         fine["direct_delta"]))
-        if absorbing or fine["error"] <= floor:
-            absorbing = True
+            if not math.isfinite(sample["direct_delta"]) or sample["direct_delta"] < 0.0:
+                raise RuntimeError("noisy rate sample requires a finite direct delta")
+            sample["applied_floor"] = max(sample["clean_floor"],
+                                           up_mul(8.0, sample["direct_delta"]))
+    saturated_at = next((index for index, sample in enumerate(values)
+                         if sample["error"] <= sample["applied_floor"]), len(values))
+    for index in range(1, saturated_at):
+        if values[index]["error"] > values[index - 1]["error"]:
+            raise RuntimeError("pre-floor convergence error increased")
+    for index, (coarse, fine) in enumerate(zip(values, values[1:])):
+        if index + 1 >= saturated_at:
             rates.append(None)
             rate_status.append("saturated")
-        elif fine["error"] > 0.0 and coarse["error"] >= fine["error"]:
+        else:
             rate = math.log(coarse["error"] / fine["error"]) / \
                 math.log(fine["resolution"] / coarse["resolution"])
             rates.append(rate)
             rate_status.append("rate")
             prefix_rates.append(rate)
-            unsaturated_prefix += 1
-        else:
-            rates.append(None)
-            rate_status.append("nonmonotone")
-            prefix_rates.append(float("-inf"))
-            unsaturated_prefix += 1
+    unsaturated_prefix = len(prefix_rates)
     passed = (unsaturated_prefix >= 2 and
               min(float(value) for value in prefix_rates[-2:]) >= expected - margin)
     return {"rates": rates, "unsaturated_prefix_ratios": unsaturated_prefix,
-            "rate_status": rate_status, "saturation_absorbing": absorbing,
+            "rate_status": rate_status, "saturation_absorbing": saturated_at < len(values),
+            "saturated_at_resolution": None if saturated_at == len(values) else
+            values[saturated_at]["resolution"],
             "passed": passed}
 
 
@@ -377,19 +698,27 @@ def self_test_cpu_audit_policy() -> None:
 
     # Immutable examples are copied from convergence.json in CPU job 56586376.
     o2_miss = [
-        {"resolution": 32, "error": 4.182343874808808e-4, "direct_delta": 0.0},
-        {"resolution": 64, "error": 1.6220836147908628e-4, "direct_delta": 0.0},
-        {"resolution": 128, "error": 5.573831257431492e-5, "direct_delta": 0.0},
-        {"resolution": 256, "error": 1.77800308574143e-5, "direct_delta": 0.0},
+        {"resolution": 32, "error": 4.182343874808808e-4, "direct_delta": 0.0,
+         "clean_floor": 1.0e-30},
+        {"resolution": 64, "error": 1.6220836147908628e-4, "direct_delta": 0.0,
+         "clean_floor": 1.0e-30},
+        {"resolution": 128, "error": 5.573831257431492e-5, "direct_delta": 0.0,
+         "clean_floor": 1.0e-30},
+        {"resolution": 256, "error": 1.77800308574143e-5, "direct_delta": 0.0,
+         "clean_floor": 1.0e-30},
     ]
     miss = evaluate_rate_samples(o2_miss, 2.0, 0.25, "clean")
     if miss["passed"] or miss["rate_status"] != ["rate", "rate", "rate"]:
         raise RuntimeError("pre-floor order-2 miss was hidden or reclassified")
     o6_roundoff = [
-        {"resolution": 32, "error": 6.0337018612239125e-9, "direct_delta": 0.0},
-        {"resolution": 64, "error": 4.7733002365378305e-11, "direct_delta": 0.0},
-        {"resolution": 128, "error": 3.7376593184852193e-13, "direct_delta": 0.0},
-        {"resolution": 256, "error": 5.558874451157167e-15, "direct_delta": 0.0},
+        {"resolution": 32, "error": 6.0337018612239125e-9, "direct_delta": 0.0,
+         "clean_floor": 1.0e-30},
+        {"resolution": 64, "error": 4.7733002365378305e-11, "direct_delta": 0.0,
+         "clean_floor": 1.0e-30},
+        {"resolution": 128, "error": 3.7376593184852193e-13, "direct_delta": 0.0,
+         "clean_floor": 1.0e-12},
+        {"resolution": 256, "error": 5.558874451157167e-15, "direct_delta": 0.0,
+         "clean_floor": 1.0e-12},
     ]
     saturated = evaluate_rate_samples(o6_roundoff, 6.0, 0.25, "clean")
     if (saturated["passed"] or saturated["rate_status"] !=
@@ -443,10 +772,46 @@ def self_test_cpu_audit_policy() -> None:
         candidate = {**valid_probe, **edit}
         expect_runtime_error(lambda row=candidate: validate_probe_row(row), label)
 
+    fixed_keys = {probe_series_identity({**valid_probe,
+                                        "mask": "fixed_rho_negative_0.5",
+                                        "classification": "fixed_radius",
+                                        "layer_index": str(layer)})
+                  for layer in (4, 8, 16, 32)}
+    regular_keys = {probe_series_identity({**valid_probe,
+                                          "mask": "regular_negative",
+                                          "classification": "regular",
+                                          "layer_index": str(layer)})
+                    for layer in (8, 16, 32, 64)}
+    fitted_keys = {probe_series_identity({**valid_probe,
+                                         "mask": "fitted_layer_0_negative",
+                                         "classification": "fitted",
+                                         "layer_index": str(layer)})
+                   for layer in (0, 1)}
+    if len(fixed_keys) != 1 or len(regular_keys) != 1 or len(fitted_keys) != 2:
+        raise RuntimeError("probe series identity uses a resolution-dependent target layer")
+
+    inventory_operator = ["scalar.first.0"]
+    inventory_rows = [{"operator": inventory_operator[0], "mask": mask}
+                      for mask in expected_masks(2)]
+    inventory_probes = [{"operator": inventory_operator[0], "mask": mask}
+                        for mask in expected_masks(2) if mask != "full_signed_plane"]
+    inventory_probes.append({"operator": inventory_operator[0],
+                             "mask": "diagnostic_axis"})
+    validate_case_inventory(2, inventory_operator, inventory_rows, inventory_probes)
+    expect_runtime_error(
+        lambda: validate_case_inventory(2, inventory_operator,
+                                        inventory_rows[:-1], inventory_probes),
+        "missing whole operator/mask series")
+
     with tempfile.TemporaryDirectory(prefix="cartoon-mms-audit-") as directory:
-        nonfinite = Path(directory) / "nonfinite.json"
-        nonfinite.write_text('{"value": NaN}\n', encoding="utf-8")
-        expect_runtime_error(lambda: load_json_strict(nonfinite), "nonfinite JSON")
+        for label, token in (("resume manifest", "NaN"),
+                             ("resumed result", "NaN"),
+                             ("rank binding", "Infinity"),
+                             ("reference campaign", "-Infinity")):
+            nonfinite = Path(directory) / (label.replace(" ", "_") + ".json")
+            nonfinite.write_text('{"value": ' + token + '}\n', encoding="utf-8")
+            expect_runtime_error(lambda path=nonfinite: load_json_strict(path),
+                                 f"nonfinite {label} JSON")
 
     forecast = output_forecast({order: DIAGNOSTIC_RESOLUTIONS for order in (2, 4, 6)},
                                list(range(8)), 4, False)
@@ -454,15 +819,112 @@ def self_test_cpu_audit_policy() -> None:
             forecast["estimated_output_bytes_upper_bound"] != 4_313_219_072 or
             forecast["estimated_output_bytes_upper_bound"] <=
             PRESERVED_JOB_56586376_BYTES or
-            len(PRESERVED_JOB_56586376_CONVERGENCE_SHA256) != 64):
+            any(len(value) != 64 for value in
+                (PRESERVED_JOB_56586376_CONVERGENCE_SHA256,
+                 PRESERVED_JOB_56586376_EVIDENCE_SHA256,
+                 PRESERVED_JOB_56586376_LOG_SHA256)) or
+            PRESERVED_JOB_56586376_AUDIT_COUNTS != (63_880, 18_508, 4_512, 3_696)):
         raise RuntimeError("output forecast/audit anchor differs from frozen CPU evidence")
+
+    root = Path(__file__).resolve().parents[3]
+    inventory = load_json_strict(
+        root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json")
+    if not isinstance(inventory, dict) or not isinstance(inventory.get("roundoff_policy"), dict):
+        raise RuntimeError("coefficient-floor self-test lacks its generated policy")
+    metadata = {item["name"]: item for item in inventory["series"]}
+    policy = inventory["roundoff_policy"]
+    domain = (-2.0, 2.0, -2.0, 2.0)
+
+    advection = metadata["tensor.lower.0.1.advective"]
+    advection_values = []
+    for resolution, error in zip((256, 512, 1024),
+                                 (7.2582313459523817e-7,
+                                  2.4344003218823573e-7,
+                                  6.8603908651154732e-8)):
+        row = {field: "" for field in PROBE_FIELDS}
+        row.update({"actual_rho": "-1", "classification": "regular"})
+        advection_values.append({
+            "resolution": resolution, "error": error, "direct_delta": 0.0,
+            "clean_floor": probe_clean_floor(
+                advection, policy, 2, resolution, row, domain)})
+    advection_gate = evaluate_rate_samples(advection_values, 2.0, 0.15, "clean")
+    if (advection_gate["passed"] or
+            advection_gate["rate_status"] != ["rate", "rate"]):
+        raise RuntimeError("order-2 regular advection miss was hidden by the floor")
+
+    fitted_tensor = metadata["tensor.lower.0.2.second.0.2"]
+    fitted_values = []
+    for resolution, error in zip((256, 512, 1024),
+                                 (1.1391698318701828e-10,
+                                  7.0795043411548894e-12,
+                                  9.324645886704154e-12)):
+        fitted_values.append({
+            "resolution": resolution, "error": error, "direct_delta": 0.0,
+            "clean_floor": aggregate_clean_floor(
+                fitted_tensor, policy, 2, resolution,
+                "fitted_layer_0_negative", "l1", domain)})
+    fitted_gate = evaluate_rate_samples(fitted_values, 2.0, 0.25, "clean")
+    if (fitted_gate["passed"] or
+            fitted_gate["rate_status"] != ["saturated", "saturated"]):
+        raise RuntimeError("order-2 fitted saturation re-entered after the floor")
+
+    scalar_second = metadata["scalar.second.0.0"]
+    scalar_values = []
+    scalar_errors = (3.769623255979633e-7, 1.9004190833079248e-8,
+                     3.6095301648934983e-10, 5.9150357934579329e-12)
+    for resolution, error in zip((16, 32, 64, 128), scalar_errors):
+        scalar_values.append({
+            "resolution": resolution, "error": error, "direct_delta": 0.0,
+            "clean_floor": aggregate_clean_floor(
+                scalar_second, policy, 6, resolution,
+                "fitted_layer_2_negative", "l1", domain)})
+    scalar_gate = evaluate_rate_samples(scalar_values, 6.0, 0.25, "clean")
+    if scalar_gate["passed"]:
+        raise RuntimeError("order-6 coarse fitted miss became a false pass")
+    shared_values = [dict(value) for value in scalar_values]
+    shared_values[-1]["direct_delta"] = 2.3347311319430147e-11
+    shared_gate = evaluate_rate_samples(shared_values, 6.0, 0.5, "shared")
+    if (shared_values[-1]["applied_floor"] < 1.8677849055544118e-10 or
+            shared_gate["rate_status"][-1] != "saturated"):
+        raise RuntimeError("shared-noise floor does not absorb the frozen N128 anchor")
+
+    high_floor = [{"resolution": 32, "error": 1.0, "direct_delta": 0.0,
+                   "clean_floor": 2.0},
+                  {"resolution": 64, "error": 0.5, "direct_delta": 0.0,
+                   "clean_floor": 2.0},
+                  {"resolution": 128, "error": 0.25, "direct_delta": 0.0,
+                   "clean_floor": 2.0}]
+    if evaluate_rate_samples(high_floor, 2.0, 0.25, "clean")["passed"]:
+        raise RuntimeError("a high floor produced a passing ratio")
+    increasing = [{"resolution": 32, "error": 1.0, "direct_delta": 0.0,
+                   "clean_floor": 1.0e-12},
+                  {"resolution": 64, "error": 2.0, "direct_delta": 0.0,
+                   "clean_floor": 1.0e-12},
+                  {"resolution": 128, "error": 1.0, "direct_delta": 0.0,
+                   "clean_floor": 1.0e-12}]
+    expect_runtime_error(lambda: evaluate_rate_samples(increasing, 2.0, 0.25,
+                                                        "clean"),
+                         "pre-floor increase")
+    for errors in ((1.0, 0.25, 0.5, 0.125),
+                   (1.0, 0.25, 0.0625, 0.125)):
+        samples = [{"resolution": resolution, "error": error,
+                    "direct_delta": 0.0, "clean_floor": 1.0e-12}
+                   for resolution, error in zip(DIAGNOSTIC_RESOLUTIONS, errors)]
+        expect_runtime_error(
+            lambda values=samples: evaluate_rate_samples(values, 2.0, 0.25, "clean"),
+            "middle/trailing pre-floor increase")
 
 
 def verified_complete(case: Path, identity: dict[str, object]) -> bool:
     manifest_path = case / "manifest.json"
     if not manifest_path.is_file() or manifest_path.is_symlink():
         return False
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    try:
+        manifest = load_json_strict(manifest_path)
+    except (ValueError, RuntimeError):
+        return False
+    if not isinstance(manifest, dict):
+        return False
     if (set(manifest) != {"schema", "state", "identity", "files"} or
             manifest.get("schema") != SCHEMA or manifest.get("state") != "complete" or
             manifest.get("identity") != identity or
@@ -506,24 +968,26 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
                 "rank_wrapper_sha256": sha256(args.rank_wrapper),
                 "domain": args.domain, "execution_environment": case_environment,
                 "execution_environment_sha256": environment_sha256}
-    if case.exists():
-        if verified_complete(case, identity):
-            resumed = json.loads((case / "result.json").read_text(encoding="utf-8"))
-            resumed["case_manifest_sha256"] = sha256(case / "manifest.json")
-            return resumed
-        raise RuntimeError(f"refusing incomplete or mismatched case directory: {case}")
-    case.mkdir(parents=True)
-    (case / "input.athinput").write_text(rendered, encoding="utf-8")
-    write_atomic(case / "manifest.json", {"schema": SCHEMA, "state": "running",
-                                           "identity": identity})
-    environment = os.environ.copy()
     started = time.time()
-    with (case / "stdout.txt").open("wb") as stdout, \
-         (case / "stderr.txt").open("wb") as stderr:
-        completed = subprocess.run(command, cwd=case, env=environment,
-                                   stdout=stdout, stderr=stderr, check=False)
-    if completed.returncode:
-        raise RuntimeError(f"case {key} failed with exit {completed.returncode}: {case}")
+    resumed_result = None
+    if case.exists():
+        if not verified_complete(case, identity):
+            raise RuntimeError(f"refusing incomplete or mismatched case directory: {case}")
+        resumed_result = load_json_strict(case / "result.json")
+        if not isinstance(resumed_result, dict):
+            raise RuntimeError(f"case {key} resumed result is not an object")
+    else:
+        case.mkdir(parents=True)
+        (case / "input.athinput").write_text(rendered, encoding="utf-8")
+        write_atomic(case / "manifest.json", {"schema": SCHEMA, "state": "running",
+                                               "identity": identity})
+        environment = os.environ.copy()
+        with (case / "stdout.txt").open("wb") as stdout, \
+             (case / "stderr.txt").open("wb") as stderr:
+            completed = subprocess.run(command, cwd=case, env=environment,
+                                       stdout=stdout, stderr=stderr, check=False)
+        if completed.returncode:
+            raise RuntimeError(f"case {key} failed with exit {completed.returncode}: {case}")
     stdout_text = (case / "stdout.txt").read_text(encoding="utf-8", errors="replace")
     raw_result = case / f"{basename}.mms.json"
     raw_csv = case / f"{basename}.mms.csv"
@@ -539,10 +1003,12 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     if result.get("owned_cells") != resolution * resolution or \
        result.get("ownership_sequence") != "[0,N*N) exactly once":
         raise RuntimeError(f"case {key} failed exact MPI ownership proof")
-    bindings = [json.loads(path.read_text(encoding="utf-8"))
+    bindings = [load_json_strict(path)
                 for path in sorted(case.glob("rank_binding_*.json"))]
-    if len(bindings) != args.ranks or sorted(item["rank"] for item in bindings) != \
-       list(range(args.ranks)):
+    for binding in bindings:
+        validate_rank_binding(binding)
+    if (len(bindings) != args.ranks or
+            sorted(item["rank"] for item in bindings) != list(range(args.ranks))):
         raise RuntimeError(f"case {key} lacks one binding record per MPI rank")
     if args.require_backend == "Cuda":
         uuids = [item["selected_uuid"] for item in bindings]
@@ -570,6 +1036,23 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     probe_rows = list(csv.DictReader(probes_csv.open(encoding="utf-8")))
     for row in probe_rows:
         validate_probe_row(row)
+    validate_case_inventory(order, operator_names, rows, probe_rows)
+    radial_spacing = (args.domain[1] - args.domain[0]) / resolution
+    for row in probe_rows:
+        if row["classification"] == "diagnostic_axis":
+            continue
+        actual_rho = finite_value(row, "actual_rho")
+        actual_layer = math.floor(abs(actual_rho / radial_spacing))
+        if (integer_value(row, "layer_index") != actual_layer or
+                (row["side"] == "positive") != (actual_rho > 0.0)):
+            raise RuntimeError(f"case {key} probe layer/side differs from geometry")
+    for row in rows:
+        radial = mask_radial_indices(row["mask"], order, resolution, args.domain)
+        expected_count = len(radial) * resolution
+        expected_cyl_count = sum(1 for _, _, positive in radial if positive) * resolution
+        if (integer_value(row, "count") != expected_count or
+                integer_value(row, "cyl_count") != expected_cyl_count):
+            raise RuntimeError(f"case {key} mask counts differ from exact geometry")
     if {row["operator"] for row in probe_rows} != operator_set or \
        any(not math.isfinite(float(row["raw_error"])) for row in probe_rows) or \
        any(not row["layer_index"] or not row["classification"] for row in probe_rows):
@@ -587,6 +1070,17 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
             max(axis_errors) != float(result["diagnostic_axis_linf"]) or
             max(axis_errors) > float(result["diagnostic_axis_tolerance"])):
         raise RuntimeError(f"case {key} lacks the exact finite 161-series true-axis probe")
+    if resumed_result is not None:
+        if (resumed_result.get("csv_sha256") != sha256(raw_csv) or
+                resumed_result.get("probes_csv_sha256") != sha256(probes_csv) or
+                resumed_result.get("operator_names") != operator_names or
+                resumed_result.get("rank_bindings") != bindings or
+                tuple(resumed_result.get("domain", ())) != tuple(args.domain) or
+                resumed_result.get("execution_environment_sha256") !=
+                environment_sha256):
+            raise RuntimeError(f"case {key} resumed evidence differs from its result")
+        resumed_result["case_manifest_sha256"] = sha256(case / "manifest.json")
+        return resumed_result
     result.update({"case_id": key, "case_uuid": case_uuid, "phase": phase,
                    "resolution": resolution, "elapsed_seconds": time.time() - started,
                    "csv_sha256": sha256(raw_csv),
@@ -595,8 +1089,10 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
                    "rank_bindings": bindings,
                    "execution_environment": case_environment,
                    "execution_environment_sha256": environment_sha256,
+                   "domain": args.domain,
                    "output_bytes": raw_csv.stat().st_size + probes_csv.stat().st_size})
-    (case / "result.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n",
+    (case / "result.json").write_text(json.dumps(result, indent=2, sort_keys=True,
+                                                  allow_nan=False) + "\n",
                                       encoding="utf-8")
     files = {name: sha256(case / name) for name in
              ("input.athinput", "stdout.txt", "stderr.txt", "cartoon_mms.mms.json",
@@ -620,11 +1116,17 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
     metadata = {item["name"]: item for item in inventory["series"]}
     if len(metadata) != 171:
         raise RuntimeError("series manifest has duplicate operators")
+    policy = inventory.get("roundoff_policy")
+    if (not isinstance(policy, dict) or
+            policy.get("binary64_epsilon_hex") != sys.float_info.epsilon.hex() or
+            policy.get("fit_fixture_count") != 108):
+        raise RuntimeError("series manifest lacks the frozen binary64 floor policy")
     grouped: dict[tuple[object, ...], list[dict[str, float]]] = {}
     exact_records = []
     failures = []
     seen_norm_rows = set()
     seen_probe_rows = set()
+    floor_cache: dict[tuple[object, ...], float] = {}
 
     def add_sample(key: tuple[object, ...], sample: dict[str, float]) -> None:
         grouped.setdefault(key, []).append(sample)
@@ -634,6 +1136,7 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
         order = int(result["spatial_order"])
         resolution = int(result["resolution"])
         phase = int(result["phase"])
+        domain = tuple(float(value) for value in result["domain"])
         noise_bound = float(result["noise_delta_bound"])
         rows = list(csv.DictReader(
             (case / "cartoon_mms.mms.csv").open(encoding="utf-8")))
@@ -676,12 +1179,19 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
                 for norm in norms:
                     error_field = norm if lane == "clean" else f"{lane}_{norm}"
                     delta_field = None if lane == "clean" else f"{lane}_delta_{norm}"
+                    floor_key = (row["operator"], order, resolution, row["mask"],
+                                 norm, domain)
+                    if floor_key not in floor_cache:
+                        floor_cache[floor_key] = aggregate_clean_floor(
+                            item, policy, order, resolution, row["mask"], norm, domain)
+                    clean_floor = floor_cache[floor_key]
                     add_sample(("norm", order, phase,
                                 row["operator"] + "|" + row["mask"], lane, norm),
                                {"resolution": resolution,
                                 "error": finite_value(row, error_field),
                                 "direct_delta": 0.0 if delta_field is None else
-                                finite_value(row, delta_field)})
+                                finite_value(row, delta_field),
+                                "clean_floor": clean_floor})
 
         probes = list(csv.DictReader(
             (case / "cartoon_mms.mms.probes.csv").open(encoding="utf-8")))
@@ -717,13 +1227,21 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
                         f"exact probe gate failed {row['operator']} {row['mask']} "
                         f"N={resolution}")
                 continue
-            series = "|".join((row["operator"], row["mask"], row["side"],
-                               row["layer_index"]))
+            series = probe_series_identity(row)
             add_sample(("probe", order, phase, series, "clean", "raw_error"),
                        {"resolution": resolution,
                         "error": finite_value(row, "raw_error"),
                         "direct_delta": 0.0,
-                        "probe_classification": row["classification"]})
+                        "clean_floor": probe_clean_floor(
+                            item, policy, order, resolution, row, domain),
+                        "probe_classification": row["classification"],
+                        "layer_index": integer_value(row, "layer_index"),
+                        "target_rho": None if not boolean_value(
+                            row, "target_rho_applicable") else
+                        finite_value(row, "target_rho"),
+                        "actual_rho": finite_value(row, "actual_rho"),
+                        "target_z": finite_value(row, "target_z"),
+                        "actual_z": finite_value(row, "actual_z")})
 
     records = []
     for key, all_values in grouped.items():
@@ -772,6 +1290,8 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
                 "fine_error": f"{samples[index + 1]['error']:.17g}",
                 "coarse_direct_delta": f"{samples[index]['direct_delta']:.17g}",
                 "fine_direct_delta": f"{samples[index + 1]['direct_delta']:.17g}",
+                "coarse_floor": f"{samples[index]['applied_floor']:.17g}",
+                "fine_floor": f"{samples[index + 1]['applied_floor']:.17g}",
                 "rate_status": status,
                 "observed_rate": "" if rate is None else f"{rate:.17g}",
                 "expected_rate": f"{record['expected']:.17g}",
@@ -779,7 +1299,8 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
             })
     fields = ["source", "order", "phase", "series", "lane", "norm",
               "coarse_resolution", "fine_resolution", "coarse_error", "fine_error",
-              "coarse_direct_delta", "fine_direct_delta", "rate_status", "observed_rate",
+              "coarse_direct_delta", "fine_direct_delta", "coarse_floor", "fine_floor",
+              "rate_status", "observed_rate",
               "expected_rate", "passed"]
     csv_path = output / "convergence.csv"
     data_path = output / "convergence_rates.pgfplots.dat"
@@ -806,6 +1327,8 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
     write_atomic(output / "convergence.json", {
         "schema": SCHEMA, "series_manifest_sha256": sha256(series_manifest),
         "diagnostic_resolutions": list(DIAGNOSTIC_RESOLUTIONS),
+        "coefficient_floor_policy_sha256": canonical_digest(policy),
+        "coefficient_floor_complexity": "O(171*nx1); active-z multiplicity analytic",
         "records": records, "exact_records": exact_records,
         "artifacts": {"convergence.csv": sha256(csv_path),
                       "convergence_rates.pgfplots.dat": sha256(data_path),
@@ -818,7 +1341,15 @@ def convergence_gate(cases: list[dict[str, object]], output: Path,
 def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
                            reference_root: Path) -> dict[str, object]:
     reference_campaign_path = reference_root / "campaign.json"
-    reference = json.loads(reference_campaign_path.read_text(encoding="utf-8"))
+    reference = load_json_strict(reference_campaign_path)
+    campaign_fields = {"schema", "source", "build_manifest",
+                       "build_manifest_sha256", "environment", "environment_sha256",
+                       "ranks", "backend", "diagnostic_resolutions",
+                       "reduction_tolerance_factor", "convergence_artifacts", "cases"}
+    if (not isinstance(reference, dict) or set(reference) != campaign_fields or
+            reference.get("schema") != SCHEMA or
+            not isinstance(reference.get("cases"), list)):
+        raise RuntimeError("reference campaign differs from the exact evidence schema")
     reference_case_manifests = [item.get("case_manifest_sha256")
                                 for item in reference.get("cases", [])]
     if (not reference_case_manifests or None in reference_case_manifests or
@@ -841,6 +1372,8 @@ def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
             (current_dir / "cartoon_mms.mms.csv").open(encoding="utf-8")))
         other_rows = list(csv.DictReader(
             (other_dir / "cartoon_mms.mms.csv").open(encoding="utf-8")))
+        for row in current_rows + other_rows:
+            validate_norm_row(row)
         indexed = {(row["operator"], row["mask"]): row for row in other_rows}
         current_index = {(row["operator"], row["mask"]): row for row in current_rows}
         if (len(current_index) != len(current_rows) or len(indexed) != len(other_rows) or
@@ -889,6 +1422,14 @@ def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
             (current_dir / "cartoon_mms.mms.probes.csv").open(encoding="utf-8")))
         other_probes = list(csv.DictReader(
             (other_dir / "cartoon_mms.mms.probes.csv").open(encoding="utf-8")))
+        for row in current_probes + other_probes:
+            validate_probe_row(row)
+        validate_case_inventory(int(current["spatial_order"]),
+                                list(current["operator_names"]),
+                                current_rows, current_probes)
+        validate_case_inventory(int(other["spatial_order"]),
+                                list(other["operator_names"]),
+                                other_rows, other_probes)
         probe_key = lambda row: (row["operator"], row["mask"], row["side"],
                                  row["layer_index"], row["classification"])
         current_probe_index = {probe_key(row): row for row in current_probes}
@@ -908,6 +1449,8 @@ def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
                     break
         for label, result in (("current", current), ("reference", other)):
             bindings = result.get("rank_bindings", [])
+            for binding in bindings:
+                validate_rank_binding(binding)
             expected_ranks = int(result.get("mpi_ranks", 0))
             if (len(bindings) != expected_ranks or
                     sorted(item.get("rank") for item in bindings) !=

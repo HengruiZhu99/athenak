@@ -25,83 +25,126 @@ struct VectorOracle { Real first[3]; Real second[3][3]; };
 struct TensorOracle { Real first[3]; Real second[3][3]; };
 
 KOKKOS_INLINE_FUNCTION
-void EvaluateFieldValues(const Real x, const Real y, const Real z,
+void EvaluateFieldValuesScalar(const Real x, const Real y, const Real z,
+                FieldValues &oracle) {
+  const Real t0 = pow(x, 2);
+  const Real t1 = pow(y, 2);
+  oracle.scalar = ((11.0/100.0)*t0 + (11.0/100.0)*t1 + (3.0/100.0)*pow(z, 3) - z*((7.0/100.0)*t0 + (7.0/100.0)*t1) + (17.0/100.0)*z + 1)*exp(-1.0/5.0*t0 - 1.0/5.0*t1 - 1.0/5.0*pow(z, 2));
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateFieldValuesVector(const Real x, const Real y, const Real z,
+                FieldValues &oracle) {
+  const Real t0 = pow(x, 2);
+  const Real t1 = pow(y, 2);
+  const Real t2 = pow(z, 2);
+  const Real t3 = (9.0/100.0)*t0 + (9.0/100.0)*t1 - 1.0/25.0*t2 + (13.0/100.0)*z + 7.0/10.0;
+  const Real t4 = exp(-1.0/5.0*t0 - 1.0/5.0*t1 - 1.0/5.0*t2);
+  const Real t5 = t4*x;
+  const Real t6 = (7.0/100.0)*t0 + (7.0/100.0)*t1 + (1.0/50.0)*t2 - 2.0/25.0*z + 3.0/10.0;
+  const Real t7 = t4*y;
+  oracle.vector[0] = t3*t5 - t6*t7;
+  oracle.vector[1] = t4*(-3.0/50.0*t0 - 3.0/50.0*t1 + z*((1.0/20.0)*t0 + (1.0/20.0)*t1) + (19.0/100.0)*z - 1.0/5.0);
+  oracle.vector[2] = t3*t7 + t5*t6;
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateFieldValuesTensorA(const Real x, const Real y, const Real z,
                 FieldValues &oracle) {
   const Real t0 = pow(x, 2);
   const Real t1 = pow(y, 2);
   const Real t2 = pow(z, 2);
   const Real t3 = exp(-1.0/5.0*t0 - 1.0/5.0*t1 - 1.0/5.0*t2);
-  const Real t4 = (7.0/100.0)*t0 + (7.0/100.0)*t1;
-  const Real t5 = (9.0/100.0)*t0 + (9.0/100.0)*t1 - 1.0/25.0*t2 + (13.0/100.0)*z + 7.0/10.0;
+  const Real t4 = (3.0/100.0)*t0 + (3.0/100.0)*t1;
+  const Real t5 = t4 - 1.0/20.0*z + 21.0/100.0;
   const Real t6 = t3*x;
-  const Real t7 = (1.0/50.0)*t2 + t4 - 2.0/25.0*z + 3.0/10.0;
-  const Real t8 = t3*y;
-  const Real t9 = (1.0/20.0)*t0 + (1.0/20.0)*t1;
-  const Real t10 = t3*(t9 + (3.0/25.0)*z + 11.0/10.0);
-  const Real t11 = (3.0/100.0)*t0 + (3.0/100.0)*t1;
-  const Real t12 = t11 - 1.0/20.0*z + 21.0/100.0;
-  const Real t13 = t6*y;
-  const Real t14 = 2*t12*t13;
-  const Real t15 = -1.0/25.0*t0 - 1.0/25.0*t1 + (1.0/50.0)*t2 + (7.0/100.0)*z - 3.0/10.0;
-  const Real t16 = t15*t3;
-  const Real t17 = (1.0/50.0)*t0 + (1.0/50.0)*t1;
-  const Real t18 = t17 + (9.0/100.0)*z - 17.0/100.0;
-  const Real t19 = -t11 + (1.0/25.0)*z + 7.0/50.0;
-  oracle.scalar = t3*((11.0/100.0)*t0 + (11.0/100.0)*t1 - t4*z + (3.0/100.0)*pow(z, 3) + (17.0/100.0)*z + 1);
-  oracle.vector[0] = t5*t6 - t7*t8;
-  oracle.vector[1] = t3*(-3.0/50.0*t0 - 3.0/50.0*t1 + t9*z + (19.0/100.0)*z - 1.0/5.0);
-  oracle.vector[2] = t5*t8 + t6*t7;
-  oracle.tensor[0] = t0*t16 + t10 - t14;
-  oracle.tensor[1] = t18*t6 - t19*t8;
-  oracle.tensor[2] = t12*t3*(t0 - t1) + t13*t15;
-  oracle.tensor[3] = t3*((2.0/25.0)*t0 + (2.0/25.0)*t1 - t17*z - 11.0/100.0*z + 9.0/10.0);
-  oracle.tensor[4] = t18*t8 + t19*t6;
-  oracle.tensor[5] = t1*t16 + t10 + t14;
+  const Real t7 = t3*(-1.0/25.0*t0 - 1.0/25.0*t1 + (1.0/50.0)*t2 + (7.0/100.0)*z - 3.0/10.0);
+  oracle.tensor[0] = t0*t7 + t3*((1.0/20.0)*t0 + (1.0/20.0)*t1 + (3.0/25.0)*z + 11.0/10.0) - 2*t5*t6*y;
+  oracle.tensor[1] = -t3*y*(-t4 + (1.0/25.0)*z + 7.0/50.0) + t6*((1.0/50.0)*t0 + (1.0/50.0)*t1 + (9.0/100.0)*z - 17.0/100.0);
+  oracle.tensor[2] = t3*t5*(t0 - t1) + t7*x*y;
 }
 
 KOKKOS_INLINE_FUNCTION
-void EvaluateScalarOracle(const Real x, const Real y, const Real z,
+void EvaluateFieldValuesTensorB(const Real x, const Real y, const Real z,
+                FieldValues &oracle) {
+  const Real t0 = pow(x, 2);
+  const Real t1 = pow(y, 2);
+  const Real t2 = pow(z, 2);
+  const Real t3 = exp(-1.0/5.0*t0 - 1.0/5.0*t1 - 1.0/5.0*t2);
+  const Real t4 = (1.0/50.0)*t0 + (1.0/50.0)*t1;
+  const Real t5 = (3.0/100.0)*t0 + (3.0/100.0)*t1;
+  const Real t6 = t3*x;
+  oracle.tensor[3] = t3*((2.0/25.0)*t0 + (2.0/25.0)*t1 - t4*z - 11.0/100.0*z + 9.0/10.0);
+  oracle.tensor[4] = t3*y*(t4 + (9.0/100.0)*z - 17.0/100.0) + t6*(-t5 + (1.0/25.0)*z + 7.0/50.0);
+  oracle.tensor[5] = t1*t3*(-1.0/25.0*t0 - 1.0/25.0*t1 + (1.0/50.0)*t2 + (7.0/100.0)*z - 3.0/10.0) + t3*((1.0/20.0)*t0 + (1.0/20.0)*t1 + (3.0/25.0)*z + 11.0/10.0) + 2*t6*y*(t5 - 1.0/20.0*z + 21.0/100.0);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateFieldValues(const Real x, const Real y, const Real z,
+                         FieldValues &oracle) {
+  EvaluateFieldValuesScalar(x, y, z, oracle);
+  EvaluateFieldValuesVector(x, y, z, oracle);
+  EvaluateFieldValuesTensorA(x, y, z, oracle);
+  EvaluateFieldValuesTensorB(x, y, z, oracle);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateScalarOracleFirst(const Real x, const Real y, const Real z,
                 ScalarOracle &oracle) {
   const Real t0 = (7.0/50.0)*z;
   const Real t1 = pow(x, 2);
   const Real t2 = pow(y, 2);
   const Real t3 = pow(z, 2);
   const Real t4 = exp(-1.0/5.0*t1 - 1.0/5.0*t2 - 1.0/5.0*t3);
-  const Real t5 = pow(z, 3);
-  const Real t6 = (7.0/100.0)*t1 + (7.0/100.0)*t2;
-  const Real t7 = t4*((11.0/100.0)*t1 + (11.0/100.0)*t2 + (3.0/100.0)*t5 - t6*z + (17.0/100.0)*z + 1);
-  const Real t8 = (2.0/5.0)*t7;
-  const Real t9 = (2.0/5.0)*z;
-  const Real t10 = 7*z;
-  const Real t11 = t10 - 11;
-  const Real t12 = 4*t11;
-  const Real t13 = t1 + t2;
-  const Real t14 = 11*t1 - t10*t13 + 11*t2 + 3*t5 + 17*z + 100;
-  const Real t15 = (1.0/5.0)*t14;
-  const Real t16 = 55 - 35*z;
-  const Real t17 = (1.0/250.0)*t4;
-  const Real t18 = 2*z;
-  const Real t19 = 7*t1 + 7*t2 - 9*t3;
-  const Real t20 = t17*(t11*t18 + t14*t9 + t19 - 52);
-  const Real t21 = t20*x;
-  const Real t22 = (1.0/125.0)*t4*x*y*((11.0/5.0)*t1 - 7.0/5.0*t13*z + (11.0/5.0)*t2 + (3.0/5.0)*t5 + (87.0/5.0)*z - 2);
-  const Real t23 = t20*y;
-  oracle.first[0] = t4*(-t0*x + (11.0/50.0)*x) - t8*x;
-  oracle.first[1] = t4*((9.0/100.0)*t3 - t6 + 17.0/100.0) - t7*t9;
-  oracle.first[2] = t4*(-t0*y + (11.0/50.0)*y) - t8*y;
-  oracle.second[0][0] = t17*(t1*t12 + t15*(2*t1 - 5) + t16);
-  oracle.second[0][1] = t21;
-  oracle.second[0][2] = t22;
-  oracle.second[1][0] = t21;
-  oracle.second[1][1] = t17*(t15*(2*t3 - 5) + t18*(t19 - 17) + 45*z);
-  oracle.second[1][2] = t23;
-  oracle.second[2][0] = t22;
-  oracle.second[2][1] = t23;
-  oracle.second[2][2] = t17*(t12*t2 + t15*(2*t2 - 5) + t16);
+  const Real t5 = (7.0/100.0)*t1 + (7.0/100.0)*t2;
+  const Real t6 = (2.0/5.0)*t4*((11.0/100.0)*t1 + (11.0/100.0)*t2 - t5*z + (3.0/100.0)*pow(z, 3) + (17.0/100.0)*z + 1);
+  oracle.first[0] = t4*(-t0*x + (11.0/50.0)*x) - t6*x;
+  oracle.first[1] = t4*((9.0/100.0)*t3 - t5 + 17.0/100.0) - t6*z;
+  oracle.first[2] = t4*(-t0*y + (11.0/50.0)*y) - t6*y;
 }
 
 KOKKOS_INLINE_FUNCTION
-void EvaluateVectorOracle0(const Real x, const Real y, const Real z,
+void EvaluateScalarOracleSecond(const Real x, const Real y, const Real z,
+                ScalarOracle &oracle) {
+  const Real t0 = pow(x, 2);
+  const Real t1 = 7*z;
+  const Real t2 = t1 - 11;
+  const Real t3 = 4*t2;
+  const Real t4 = pow(y, 2);
+  const Real t5 = pow(z, 3);
+  const Real t6 = t0 + t4;
+  const Real t7 = 11*t0 - t1*t6 + 11*t4 + 3*t5 + 17*z + 100;
+  const Real t8 = (1.0/5.0)*t7;
+  const Real t9 = 55 - 35*z;
+  const Real t10 = pow(z, 2);
+  const Real t11 = exp(-1.0/5.0*t0 - 1.0/5.0*t10 - 1.0/5.0*t4);
+  const Real t12 = (1.0/250.0)*t11;
+  const Real t13 = 2*z;
+  const Real t14 = 7*t0 - 9*t10 + 7*t4;
+  const Real t15 = t12*(t13*t2 + t14 + (2.0/5.0)*t7*z - 52);
+  const Real t16 = t15*x;
+  const Real t17 = (1.0/125.0)*t11*x*y*((11.0/5.0)*t0 + (11.0/5.0)*t4 + (3.0/5.0)*t5 - 7.0/5.0*t6*z + (87.0/5.0)*z - 2);
+  const Real t18 = t15*y;
+  oracle.second[0][0] = t12*(t0*t3 + t8*(2*t0 - 5) + t9);
+  oracle.second[0][1] = t16;
+  oracle.second[0][2] = t17;
+  oracle.second[1][0] = t16;
+  oracle.second[1][1] = t12*(t13*(t14 - 17) + t8*(2*t10 - 5) + 45*z);
+  oracle.second[1][2] = t18;
+  oracle.second[2][0] = t17;
+  oracle.second[2][1] = t18;
+  oracle.second[2][2] = t12*(t3*t4 + t8*(2*t4 - 5) + t9);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateScalarOracle(const Real x, const Real y, const Real z,
+                          ScalarOracle &oracle) {
+  EvaluateScalarOracleFirst(x, y, z, oracle);
+  EvaluateScalarOracleSecond(x, y, z, oracle);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateVectorOracle0First(const Real x, const Real y, const Real z,
                 VectorOracle &oracle) {
   const Real t0 = pow(x, 2);
   const Real t1 = pow(y, 2);
@@ -113,91 +156,120 @@ void EvaluateVectorOracle0(const Real x, const Real y, const Real z,
   const Real t7 = t3*t6;
   const Real t8 = x*y;
   const Real t9 = (2.0/5.0)*t4;
-  const Real t10 = x*z;
-  const Real t11 = pow(x, 3);
-  const Real t12 = t0*y;
-  const Real t13 = 9*t0 + 9*t1 - 4*t2 + 13*z + 70;
-  const Real t14 = t13*x;
-  const Real t15 = 8*z;
-  const Real t16 = 2*t2;
-  const Real t17 = 7*t0 + 7*t1 - t15 + t16 + 30;
-  const Real t18 = 5*y;
-  const Real t19 = t17*t18;
-  const Real t20 = 2*t13;
-  const Real t21 = 2*t17;
-  const Real t22 = (1.0/1250.0)*t3;
-  const Real t23 = t8*z;
-  const Real t24 = t0*z;
-  const Real t25 = z - 2;
-  const Real t26 = 40*t25;
-  const Real t27 = t15 - 13;
-  const Real t28 = 10*z;
-  const Real t29 = t17*y;
-  const Real t30 = (1.0/2500.0)*t3*(10*t0*t27 - 4*t10*t29 + 4*t13*t24 - t13*t28 + 140*t23 - 180*t24 + t26*t8 - 200*z + 325);
-  const Real t31 = t1*x;
-  const Real t32 = 5*t17;
-  const Real t33 = t22*(t12*t20 - 180*t12 - t13*t18 - t21*t31 + 140*t31 + t32*x - 175*x + 225*y);
-  const Real t34 = y*z;
-  const Real t35 = t27*x;
-  const Real t36 = -5*t14;
-  const Real t37 = t1*z;
-  const Real t38 = 2*t14;
-  const Real t39 = t22*(20*t1*t25 + t18*t35 - t21*t37 - 90*t23 + t32*z + t34*t38 + 70*t37 - 50*z + 100);
-  const Real t40 = pow(y, 3);
   oracle.first[0] = (9.0/50.0)*t0*t3 - t0*t9 - 7.0/50.0*t3*x*y + t4 + (2.0/5.0)*t7*t8;
-  oracle.first[1] = -t10*t9 + (2.0/5.0)*t3*t6*y*z + t3*x*(13.0/100.0 - t5) - t3*y*((1.0/25.0)*z - 2.0/25.0);
+  oracle.first[1] = (2.0/5.0)*t3*t6*y*z + t3*x*(13.0/100.0 - t5) - t3*y*((1.0/25.0)*z - 2.0/25.0) - t9*x*z;
   oracle.first[2] = (2.0/5.0)*t1*t3*t6 - 7.0/50.0*t1*t3 + (9.0/50.0)*t3*x*y - t7 - t8*t9;
-  oracle.second[0][0] = t22*(t11*t20 - 180*t11 - t12*t21 + 140*t12 - 15*t14 + t19 + 675*x - 175*y);
-  oracle.second[0][1] = t30;
-  oracle.second[0][2] = t33;
-  oracle.second[1][0] = t30;
-  oracle.second[1][1] = t22*(t14*t16 - t16*t29 + t19 + t26*t34 + t28*t35 + t36 - 100*x - 50*y);
-  oracle.second[1][2] = t39;
-  oracle.second[2][0] = t33;
-  oracle.second[2][1] = t39;
-  oracle.second[2][2] = t22*(t1*t38 - t21*t40 + 15*t29 - 180*t31 + t36 + 140*t40 + 225*x - 525*y);
 }
 
 KOKKOS_INLINE_FUNCTION
-void EvaluateVectorOracle1(const Real x, const Real y, const Real z,
+void EvaluateVectorOracle0Second(const Real x, const Real y, const Real z,
+                VectorOracle &oracle) {
+  const Real t0 = pow(x, 3);
+  const Real t1 = pow(x, 2);
+  const Real t2 = t1*y;
+  const Real t3 = pow(y, 2);
+  const Real t4 = pow(z, 2);
+  const Real t5 = 9*t1 + 9*t3 - 4*t4 + 13*z + 70;
+  const Real t6 = t5*x;
+  const Real t7 = 8*z;
+  const Real t8 = 2*t4;
+  const Real t9 = 7*t1 + 7*t3 - t7 + t8 + 30;
+  const Real t10 = 5*y;
+  const Real t11 = t10*t9;
+  const Real t12 = 2*t5;
+  const Real t13 = 2*t9;
+  const Real t14 = exp(-1.0/5.0*t1 - 1.0/5.0*t3 - 1.0/5.0*t4);
+  const Real t15 = (1.0/1250.0)*t14;
+  const Real t16 = x*y;
+  const Real t17 = t16*z;
+  const Real t18 = t1*z;
+  const Real t19 = z - 2;
+  const Real t20 = 40*t19;
+  const Real t21 = t7 - 13;
+  const Real t22 = 10*z;
+  const Real t23 = t9*y;
+  const Real t24 = (1.0/2500.0)*t14*(10*t1*t21 + t16*t20 + 140*t17 + 4*t18*t5 - 180*t18 - t22*t5 - 4*t23*x*z - 200*z + 325);
+  const Real t25 = t3*x;
+  const Real t26 = 5*t9;
+  const Real t27 = t15*(-t10*t5 + t12*t2 - t13*t25 - 180*t2 + 140*t25 + t26*x - 175*x + 225*y);
+  const Real t28 = y*z;
+  const Real t29 = t21*x;
+  const Real t30 = -5*t6;
+  const Real t31 = t3*z;
+  const Real t32 = 2*t6;
+  const Real t33 = t15*(t10*t29 - t13*t31 - 90*t17 + 20*t19*t3 + t26*z + t28*t32 + 70*t31 - 50*z + 100);
+  const Real t34 = pow(y, 3);
+  oracle.second[0][0] = t15*(t0*t12 - 180*t0 + t11 - t13*t2 + 140*t2 - 15*t6 + 675*x - 175*y);
+  oracle.second[0][1] = t24;
+  oracle.second[0][2] = t27;
+  oracle.second[1][0] = t24;
+  oracle.second[1][1] = t15*(t11 + t20*t28 + t22*t29 - t23*t8 + t30 + t6*t8 - 100*x - 50*y);
+  oracle.second[1][2] = t33;
+  oracle.second[2][0] = t27;
+  oracle.second[2][1] = t33;
+  oracle.second[2][2] = t15*(-t13*t34 + 15*t23 - 180*t25 + t3*t32 + t30 + 140*t34 + 225*x - 525*y);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateVectorOracle0(const Real x, const Real y, const Real z,
+                           VectorOracle &oracle) {
+  EvaluateVectorOracle0First(x, y, z, oracle);
+  EvaluateVectorOracle0Second(x, y, z, oracle);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateVectorOracle1First(const Real x, const Real y, const Real z,
                 VectorOracle &oracle) {
   const Real t0 = (1.0/10.0)*z;
   const Real t1 = pow(x, 2);
   const Real t2 = pow(y, 2);
-  const Real t3 = pow(z, 2);
-  const Real t4 = exp(-1.0/5.0*t1 - 1.0/5.0*t2 - 1.0/5.0*t3);
-  const Real t5 = t4*x;
-  const Real t6 = (1.0/20.0)*t1 + (1.0/20.0)*t2;
-  const Real t7 = -3.0/125.0*t1 - 3.0/125.0*t2 + (2.0/5.0)*t6*z + (19.0/250.0)*z - 2.0/25.0;
-  const Real t8 = t4*t7;
-  const Real t9 = 5*z;
-  const Real t10 = 6*t1 + 6*t2 - t9*(t1 + t2);
-  const Real t11 = t10 - 19*z + 20;
-  const Real t12 = t9 - 6;
-  const Real t13 = 20*t12;
-  const Real t14 = 150 - 125*z;
-  const Real t15 = (1.0/1250.0)*t4;
-  const Real t16 = 10*z;
-  const Real t17 = t15*(-25*t1 - 2*t11*z - t12*t16 - 25*t2 + 30);
-  const Real t18 = t17*x;
-  const Real t19 = -1.0/625.0*t5*y*(t10 + 31*z - 40);
-  const Real t20 = t17*y;
-  oracle.first[0] = t4*(t0*x - 3.0/25.0*x) - t5*t7;
-  oracle.first[1] = t4*(t6 + 19.0/100.0) - t8*z;
-  oracle.first[2] = t4*(t0*y - 3.0/25.0*y) - t8*y;
-  oracle.second[0][0] = t15*(-t1*t13 - t11*(2*t1 - 5) - t14);
-  oracle.second[0][1] = t18;
-  oracle.second[0][2] = t19;
-  oracle.second[1][0] = t18;
-  oracle.second[1][1] = -t15*(t11*(2*t3 - 5) + t16*(5*t1 + 5*t2 + 19));
-  oracle.second[1][2] = t20;
-  oracle.second[2][0] = t19;
-  oracle.second[2][1] = t20;
-  oracle.second[2][2] = t15*(-t11*(2*t2 - 5) - t13*t2 - t14);
+  const Real t3 = exp(-1.0/5.0*t1 - 1.0/5.0*t2 - 1.0/5.0*pow(z, 2));
+  const Real t4 = (1.0/20.0)*t1 + (1.0/20.0)*t2;
+  const Real t5 = (2.0/5.0)*t3*(-3.0/50.0*t1 - 3.0/50.0*t2 + t4*z + (19.0/100.0)*z - 1.0/5.0);
+  oracle.first[0] = t3*(t0*x - 3.0/25.0*x) - t5*x;
+  oracle.first[1] = t3*(t4 + 19.0/100.0) - t5*z;
+  oracle.first[2] = t3*(t0*y - 3.0/25.0*y) - t5*y;
 }
 
 KOKKOS_INLINE_FUNCTION
-void EvaluateVectorOracle2(const Real x, const Real y, const Real z,
+void EvaluateVectorOracle1Second(const Real x, const Real y, const Real z,
+                VectorOracle &oracle) {
+  const Real t0 = pow(x, 2);
+  const Real t1 = pow(y, 2);
+  const Real t2 = 5*z;
+  const Real t3 = 6*t0 + 6*t1 - t2*(t0 + t1);
+  const Real t4 = t3 - 19*z + 20;
+  const Real t5 = t2 - 6;
+  const Real t6 = 20*t5;
+  const Real t7 = 150 - 125*z;
+  const Real t8 = pow(z, 2);
+  const Real t9 = exp(-1.0/5.0*t0 - 1.0/5.0*t1 - 1.0/5.0*t8);
+  const Real t10 = (1.0/1250.0)*t9;
+  const Real t11 = 10*z;
+  const Real t12 = t10*(-25*t0 - 25*t1 - t11*t5 - 2*t4*z + 30);
+  const Real t13 = t12*x;
+  const Real t14 = -1.0/625.0*t9*x*y*(t3 + 31*z - 40);
+  const Real t15 = t12*y;
+  oracle.second[0][0] = t10*(-t0*t6 - t4*(2*t0 - 5) - t7);
+  oracle.second[0][1] = t13;
+  oracle.second[0][2] = t14;
+  oracle.second[1][0] = t13;
+  oracle.second[1][1] = -t10*(t11*(5*t0 + 5*t1 + 19) + t4*(2*t8 - 5));
+  oracle.second[1][2] = t15;
+  oracle.second[2][0] = t14;
+  oracle.second[2][1] = t15;
+  oracle.second[2][2] = t10*(-t1*t6 - t4*(2*t1 - 5) - t7);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateVectorOracle1(const Real x, const Real y, const Real z,
+                           VectorOracle &oracle) {
+  EvaluateVectorOracle1First(x, y, z, oracle);
+  EvaluateVectorOracle1Second(x, y, z, oracle);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateVectorOracle2First(const Real x, const Real y, const Real z,
                 VectorOracle &oracle) {
   const Real t0 = pow(x, 2);
   const Real t1 = pow(y, 2);
@@ -210,45 +282,61 @@ void EvaluateVectorOracle2(const Real x, const Real y, const Real z,
   const Real t8 = (2.0/5.0)*t7;
   const Real t9 = x*y;
   const Real t10 = (2.0/5.0)*t6;
-  const Real t11 = x*z;
-  const Real t12 = pow(x, 3);
-  const Real t13 = t0*y;
-  const Real t14 = 8*z;
-  const Real t15 = 2*t2;
-  const Real t16 = 7*t0 + 7*t1 - t14 + t15 + 30;
-  const Real t17 = t16*x;
-  const Real t18 = 9*t0 + 9*t1 - 4*t2 + 13*z + 70;
-  const Real t19 = 5*t18;
-  const Real t20 = -t19*y;
-  const Real t21 = 2*t16;
-  const Real t22 = 2*t18;
-  const Real t23 = (1.0/1250.0)*t3;
-  const Real t24 = t9*z;
-  const Real t25 = z - 2;
-  const Real t26 = t14 - 13;
-  const Real t27 = 5*t16;
-  const Real t28 = t23*(2*t0*t16*z - 20*t0*t25 - 70*t0*z + 2*t18*x*y*z - 90*t24 + 5*t26*x*y - t27*z + 50*z - 100);
-  const Real t29 = 180*t1;
-  const Real t30 = t1*x;
-  const Real t31 = t23*(t13*t21 - 140*t13 - t19*x + t22*t30 - t27*y - t29*x + 225*x + 175*y);
-  const Real t32 = 40*t25;
-  const Real t33 = 10*z;
-  const Real t34 = -5*t17;
-  const Real t35 = t18*y;
-  const Real t36 = (1.0/2500.0)*t3*(4*t1*t18*z + 10*t1*t26 + 4*t16*x*y*z - t18*t33 - 140*t24 - t29*z - t32*t9 - 200*z + 325);
-  const Real t37 = pow(y, 3);
   oracle.first[0] = -t0*t10 + t0*t4 + (9.0/50.0)*t3*x*y + t6 - t8*t9;
-  oracle.first[1] = -t10*t11 + t3*x*((1.0/25.0)*z - 2.0/25.0) + t3*y*(13.0/100.0 - t5) - t8*y*z;
+  oracle.first[1] = -t10*x*z + t3*x*((1.0/25.0)*z - 2.0/25.0) + t3*y*(13.0/100.0 - t5) - t8*y*z;
   oracle.first[2] = (9.0/50.0)*t1*t3 - t1*t8 - t10*t9 + t4*t9 + t7;
-  oracle.second[0][0] = t23*(t12*t21 - 140*t12 + t13*t22 - 180*t13 - 15*t17 + t20 + 525*x + 225*y);
-  oracle.second[0][1] = t28;
-  oracle.second[0][2] = t31;
-  oracle.second[1][0] = t28;
-  oracle.second[1][1] = t23*(-t11*t32 + t15*t17 + t15*t35 + t20 + t26*t33*y + t34 + 50*x - 100*y);
-  oracle.second[1][2] = t36;
-  oracle.second[2][0] = t31;
-  oracle.second[2][1] = t36;
-  oracle.second[2][2] = t23*(2*t1*t17 + t22*t37 - 140*t30 + t34 - 15*t35 - 180*t37 + 175*x + 675*y);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateVectorOracle2Second(const Real x, const Real y, const Real z,
+                VectorOracle &oracle) {
+  const Real t0 = pow(x, 3);
+  const Real t1 = pow(x, 2);
+  const Real t2 = t1*y;
+  const Real t3 = 8*z;
+  const Real t4 = pow(y, 2);
+  const Real t5 = pow(z, 2);
+  const Real t6 = 2*t5;
+  const Real t7 = 7*t1 - t3 + 7*t4 + t6 + 30;
+  const Real t8 = t7*x;
+  const Real t9 = 9*t1 + 9*t4 - 4*t5 + 13*z + 70;
+  const Real t10 = 5*t9;
+  const Real t11 = -t10*y;
+  const Real t12 = 2*t7;
+  const Real t13 = 2*t9;
+  const Real t14 = exp(-1.0/5.0*t1 - 1.0/5.0*t4 - 1.0/5.0*t5);
+  const Real t15 = (1.0/1250.0)*t14;
+  const Real t16 = x*y;
+  const Real t17 = t16*z;
+  const Real t18 = z - 2;
+  const Real t19 = t3 - 13;
+  const Real t20 = 5*t7;
+  const Real t21 = t15*(-20*t1*t18 + 2*t1*t7*z - 70*t1*z - 90*t17 + 5*t19*x*y - t20*z + 2*t9*x*y*z + 50*z - 100);
+  const Real t22 = 180*t4;
+  const Real t23 = t4*x;
+  const Real t24 = t15*(-t10*x + t12*t2 + t13*t23 - 140*t2 - t20*y - t22*x + 225*x + 175*y);
+  const Real t25 = 40*t18;
+  const Real t26 = 10*z;
+  const Real t27 = -5*t8;
+  const Real t28 = t9*y;
+  const Real t29 = (1.0/2500.0)*t14*(-t16*t25 - 140*t17 + 10*t19*t4 - t22*z - t26*t9 + 4*t4*t9*z + 4*t7*x*y*z - 200*z + 325);
+  const Real t30 = pow(y, 3);
+  oracle.second[0][0] = t15*(t0*t12 - 140*t0 + t11 + t13*t2 - 180*t2 - 15*t8 + 525*x + 225*y);
+  oracle.second[0][1] = t21;
+  oracle.second[0][2] = t24;
+  oracle.second[1][0] = t21;
+  oracle.second[1][1] = t15*(t11 + t19*t26*y - t25*x*z + t27 + t28*t6 + t6*t8 + 50*x - 100*y);
+  oracle.second[1][2] = t29;
+  oracle.second[2][0] = t24;
+  oracle.second[2][1] = t29;
+  oracle.second[2][2] = t15*(t13*t30 - 140*t23 + t27 - 15*t28 - 180*t30 + 2*t4*t8 + 175*x + 675*y);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateVectorOracle2(const Real x, const Real y, const Real z,
+                           VectorOracle &oracle) {
+  EvaluateVectorOracle2First(x, y, z, oracle);
+  EvaluateVectorOracle2Second(x, y, z, oracle);
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -260,126 +348,156 @@ void EvaluateVectorOracle(const int component, const Real x, const Real y,
 }
 
 KOKKOS_INLINE_FUNCTION
-void EvaluateTensorOracle0(const Real x, const Real y, const Real z,
+void EvaluateTensorOracle0First(const Real x, const Real y, const Real z,
                 TensorOracle &oracle) {
   const Real t0 = pow(x, 2);
   const Real t1 = pow(y, 2);
   const Real t2 = pow(z, 2);
   const Real t3 = exp(-1.0/5.0*t0 - 1.0/5.0*t1 - 1.0/5.0*t2);
-  const Real t4 = pow(x, 3);
-  const Real t5 = t3*t4;
-  const Real t6 = (3.0/25.0)*t3;
-  const Real t7 = t0*y;
-  const Real t8 = (1.0/50.0)*t0 + (1.0/50.0)*t1 + (6.0/125.0)*z + 11.0/25.0;
-  const Real t9 = 2*t3;
-  const Real t10 = (3.0/100.0)*t0 + (3.0/100.0)*t1 - 1.0/20.0*z + 21.0/100.0;
+  const Real t4 = t3*pow(x, 3);
+  const Real t5 = (3.0/25.0)*t3;
+  const Real t6 = t3*x;
+  const Real t7 = (1.0/50.0)*t0 + (1.0/50.0)*t1 + (6.0/125.0)*z + 11.0/25.0;
+  const Real t8 = 2*t3;
+  const Real t9 = (3.0/100.0)*t0 + (3.0/100.0)*t1 - 1.0/20.0*z + 21.0/100.0;
+  const Real t10 = t9*y;
   const Real t11 = -1.0/25.0*t0 - 1.0/25.0*t1 + (1.0/50.0)*t2 + (7.0/100.0)*z - 3.0/10.0;
   const Real t12 = (2.0/5.0)*t11;
   const Real t13 = t0*t3;
-  const Real t14 = t3*t8;
-  const Real t15 = x*y;
-  const Real t16 = t15*z;
-  const Real t17 = t13*y;
-  const Real t18 = 450*t15;
-  const Real t19 = pow(x, 4);
-  const Real t20 = 125*t1;
-  const Real t21 = t4*y;
-  const Real t22 = 3*t0 + 3*t1 - 5*z + 21;
-  const Real t23 = 5*t0;
-  const Real t24 = 5*t1 + t23 + 12*z + 110;
-  const Real t25 = 2*t24;
-  const Real t26 = 4*t22;
-  const Real t27 = 4*t0;
-  const Real t28 = 4*t1;
-  const Real t29 = 2*t2;
-  const Real t30 = t27 + t28 - t29 - 7*z + 30;
-  const Real t31 = 2*t30;
-  const Real t32 = (1.0/1250.0)*t3;
-  const Real t33 = 50*x;
-  const Real t34 = 50*y;
-  const Real t35 = t4*z;
-  const Real t36 = 60*y;
-  const Real t37 = t0*z;
-  const Real t38 = 4*z + 7;
-  const Real t39 = x*z;
-  const Real t40 = 10*t22;
-  const Real t41 = y*z;
-  const Real t42 = t22*t27;
-  const Real t43 = 10*t30;
-  const Real t44 = t32*(-t0*t34 + t25*t39 - t31*t35 - t33*z + 40*t35 + t36*t37 - 5*t38*t4 + 25*t38*x + t39*t43 + t40*t41 - t41*t42 - 60*x + 125*y);
-  const Real t45 = t0*t1;
-  const Real t46 = t32*(t0*t40 - 225*t0 + t1*t40 - t1*t42 - 225*t1 + t15*t25 + t15*t43 - 300*t15 - t21*t31 + 80*t21 + 120*t45 + 125*z - 525);
-  const Real t47 = -5*t0*t30;
-  const Real t48 = t32*(40*t0*y*z - t1*t33 + 60*t1*x*z - t22*t28*t39 + 10*t22*x*z - t23*t38*y + 2*t24*y*z - t31*t7*z - t34*z - t36 + 125*x);
-  const Real t49 = pow(y, 3);
-  oracle.first[0] = (4.0/5.0)*t0*t10*t3*y - t10*t9*y + 2*t11*t3*x - t12*t5 - t3*t8*x + (1.0/10.0)*t3*x - 2.0/25.0*t5 - t6*t7;
-  oracle.first[1] = (4.0/5.0)*t10*t16*t3 - t12*t13*z + t13*((1.0/25.0)*z + 7.0/100.0) - t14*z + (1.0/10.0)*t3*x*y + t6;
-  oracle.first[2] = (4.0/5.0)*t1*t10*t3*x - t1*t6*x - t10*t9*x - t12*t17 - t14*y - 2.0/25.0*t17 + (1.0/10.0)*t3*y;
-  oracle.second[0][0] = t32*(t0*t25 + 25*t0*t30 - 725*t0 + 30*t15*t22 - t18 - t19*t31 + 80*t19 + 50*t2 - t20 - t21*t26 + 120*t21 + 115*z - 1175);
-  oracle.second[0][1] = t44;
-  oracle.second[0][2] = t46;
-  oracle.second[1][0] = t44;
-  oracle.second[1][1] = t32*(-t0*t29*t30 + 25*t0 - 25*t1 - t15*t2*t26 - 100*t16 + 2*t2*t24 + 10*t22*x*y - 10*t37*t38 - t47 - 180*z - 550);
-  oracle.second[1][2] = t48;
-  oracle.second[2][0] = t46;
-  oracle.second[2][1] = t48;
-  oracle.second[2][2] = t32*(80*t0*t1 - 125*t0 + 2*t1*t24 - t18 - t20 + 30*t22*x*y - t26*t49*x - t31*t45 - t47 + 120*t49*x - 60*z - 425);
+  const Real t14 = t3*t7;
+  const Real t15 = t13*y;
+  oracle.first[0] = (4.0/5.0)*t0*t3*t9*y - t0*t5*y - t10*t8 + 2*t11*t3*x - t12*t4 + (1.0/10.0)*t3*x - 2.0/25.0*t4 - t6*t7;
+  oracle.first[1] = (4.0/5.0)*t10*t6*z - t12*t13*z + t13*((1.0/25.0)*z + 7.0/100.0) - t14*z + (1.0/10.0)*t3*x*y + t5;
+  oracle.first[2] = (4.0/5.0)*t1*t3*t9*x - t1*t5*x - t12*t15 - t14*y - 2.0/25.0*t15 + (1.0/10.0)*t3*y - t8*t9*x;
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle0Second(const Real x, const Real y, const Real z,
+                TensorOracle &oracle) {
+  const Real t0 = x*y;
+  const Real t1 = 450*t0;
+  const Real t2 = pow(x, 2);
+  const Real t3 = pow(x, 4);
+  const Real t4 = pow(y, 2);
+  const Real t5 = 125*t4;
+  const Real t6 = pow(z, 2);
+  const Real t7 = pow(x, 3);
+  const Real t8 = t7*y;
+  const Real t9 = 3*t2 + 3*t4 - 5*z + 21;
+  const Real t10 = 5*t2;
+  const Real t11 = t10 + 5*t4 + 12*z + 110;
+  const Real t12 = 2*t11;
+  const Real t13 = 4*t9;
+  const Real t14 = 4*t2;
+  const Real t15 = 4*t4;
+  const Real t16 = 2*t6;
+  const Real t17 = t14 + t15 - t16 - 7*z + 30;
+  const Real t18 = 2*t17;
+  const Real t19 = (1.0/1250.0)*exp(-1.0/5.0*t2 - 1.0/5.0*t4 - 1.0/5.0*t6);
+  const Real t20 = 50*x;
+  const Real t21 = 50*y;
+  const Real t22 = t7*z;
+  const Real t23 = 60*y;
+  const Real t24 = t2*z;
+  const Real t25 = 4*z + 7;
+  const Real t26 = x*z;
+  const Real t27 = 10*t9;
+  const Real t28 = y*z;
+  const Real t29 = t14*t9;
+  const Real t30 = 10*t17;
+  const Real t31 = t19*(t12*t26 - t18*t22 - t2*t21 - t20*z + 40*t22 + t23*t24 - 5*t25*t7 + 25*t25*x + t26*t30 + t27*t28 - t28*t29 - 60*x + 125*y);
+  const Real t32 = t2*t4;
+  const Real t33 = t19*(t0*t12 + t0*t30 - 300*t0 - t18*t8 + t2*t27 - 225*t2 + t27*t4 - t29*t4 + 120*t32 - 225*t4 + 80*t8 + 125*z - 525);
+  const Real t34 = -5*t17*t2;
+  const Real t35 = t19*(-t10*t25*y + 2*t11*y*z - t15*t26*t9 - t18*t2*t28 + 40*t2*y*z - t20*t4 - t21*z - t23 + 60*t4*x*z + 10*t9*x*z + 125*x);
+  const Real t36 = pow(y, 3);
+  oracle.second[0][0] = t19*(30*t0*t9 - t1 + t12*t2 - t13*t8 + 25*t17*t2 - t18*t3 - 725*t2 + 80*t3 - t5 + 50*t6 + 120*t8 + 115*z - 1175);
+  oracle.second[0][1] = t31;
+  oracle.second[0][2] = t33;
+  oracle.second[1][0] = t31;
+  oracle.second[1][1] = t19*(-t0*t13*t6 - 100*t0*z + 2*t11*t6 - t16*t17*t2 + 25*t2 - 10*t24*t25 - t34 - 25*t4 + 10*t9*x*y - 180*z - 550);
+  oracle.second[1][2] = t35;
+  oracle.second[2][0] = t33;
+  oracle.second[2][1] = t35;
+  oracle.second[2][2] = t19*(-t1 + 2*t11*t4 - t13*t36*x - t18*t32 + 80*t2*t4 - 125*t2 - t34 + 120*t36*x - t5 + 30*t9*x*y - 60*z - 425);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle0(const Real x, const Real y, const Real z,
+                           TensorOracle &oracle) {
+  EvaluateTensorOracle0First(x, y, z, oracle);
+  EvaluateTensorOracle0Second(x, y, z, oracle);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle1First(const Real x, const Real y, const Real z,
+                TensorOracle &oracle) {
+  const Real t0 = pow(x, 2);
+  const Real t1 = pow(y, 2);
+  const Real t2 = exp(-1.0/5.0*t0 - 1.0/5.0*t1 - 1.0/5.0*pow(z, 2));
+  const Real t3 = (1.0/25.0)*t2;
+  const Real t4 = t2*((1.0/50.0)*t0 + (1.0/50.0)*t1 + (9.0/100.0)*z - 17.0/100.0);
+  const Real t5 = -3.0/100.0*t0 - 3.0/100.0*t1 + (1.0/25.0)*z + 7.0/50.0;
+  const Real t6 = t2*t5;
+  const Real t7 = (2.0/5.0)*t6;
+  const Real t8 = (2.0/5.0)*t4;
+  const Real t9 = t3*y;
+  const Real t10 = t8*x;
+  oracle.first[0] = t0*t3 - t0*t8 + (3.0/50.0)*t2*x*y + t4 + t7*x*y;
+  oracle.first[1] = -t10*z + (2.0/5.0)*t2*t5*y*z + (9.0/100.0)*t2*x - t9;
+  oracle.first[2] = (3.0/50.0)*t1*t2 + t1*t7 - t10*y - t6 + t9*x;
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle1Second(const Real x, const Real y, const Real z,
+                TensorOracle &oracle) {
+  const Real t0 = pow(x, 3);
+  const Real t1 = pow(x, 2);
+  const Real t2 = t1*y;
+  const Real t3 = 2*t1;
+  const Real t4 = pow(y, 2);
+  const Real t5 = 2*t4;
+  const Real t6 = t3 + t5 + 9*z - 17;
+  const Real t7 = t6*x;
+  const Real t8 = 4*z;
+  const Real t9 = 3*t1 + 3*t4 - t8 - 14;
+  const Real t10 = 5*t9;
+  const Real t11 = -t10*y;
+  const Real t12 = t9*y;
+  const Real t13 = pow(z, 2);
+  const Real t14 = exp(-1.0/5.0*t1 - 1.0/5.0*t13 - 1.0/5.0*t4);
+  const Real t15 = (1.0/1250.0)*t14;
+  const Real t16 = x*y;
+  const Real t17 = t16*z;
+  const Real t18 = 40*z;
+  const Real t19 = (1.0/2500.0)*t14*(-t1*t18 + t1*t6*t8 - 90*t1 + t16*t8*t9 + 40*t16 - 60*t17 - 10*t6*z + 225);
+  const Real t20 = t4*x;
+  const Real t21 = t6*y;
+  const Real t22 = t15*(-t10*x - 40*t2 - 60*t20 + t21*t3 - 5*t21 + t5*t9*x + 75*x + 50*y);
+  const Real t23 = -5*t7;
+  const Real t24 = 2*t13;
+  const Real t25 = t15*(-t10*z - 45*t16 - 20*t17 + 2*t4*t9*z - 30*t4*z + 20*t4 + 2*t6*x*y*z - 50);
+  const Real t26 = pow(y, 3);
+  oracle.second[0][0] = t15*(2*t0*t6 - 40*t0 + t11 + t12*t3 - 60*t2 - 15*t7 + 150*x + 75*y);
+  oracle.second[0][1] = t19;
+  oracle.second[0][2] = t22;
+  oracle.second[1][0] = t19;
+  oracle.second[1][1] = t15*(t11 + t12*t24 + t18*y + t23 + t24*t7 - 90*x*z);
+  oracle.second[1][2] = t25;
+  oracle.second[2][0] = t22;
+  oracle.second[2][1] = t25;
+  oracle.second[2][2] = t15*(-15*t12 - 40*t20 + t23 + 2*t26*t9 - 60*t26 + t5*t7 + 50*x + 225*y);
 }
 
 KOKKOS_INLINE_FUNCTION
 void EvaluateTensorOracle1(const Real x, const Real y, const Real z,
-                TensorOracle &oracle) {
-  const Real t0 = pow(x, 2);
-  const Real t1 = pow(y, 2);
-  const Real t2 = pow(z, 2);
-  const Real t3 = exp(-1.0/5.0*t0 - 1.0/5.0*t1 - 1.0/5.0*t2);
-  const Real t4 = (1.0/25.0)*t3;
-  const Real t5 = t3*((1.0/50.0)*t0 + (1.0/50.0)*t1 + (9.0/100.0)*z - 17.0/100.0);
-  const Real t6 = x*y;
-  const Real t7 = -3.0/100.0*t0 - 3.0/100.0*t1 + (1.0/25.0)*z + 7.0/50.0;
-  const Real t8 = t3*t7;
-  const Real t9 = (2.0/5.0)*t8;
-  const Real t10 = (2.0/5.0)*t5;
-  const Real t11 = t4*y;
-  const Real t12 = x*z;
-  const Real t13 = pow(x, 3);
-  const Real t14 = t0*y;
-  const Real t15 = 2*t0;
-  const Real t16 = 2*t1;
-  const Real t17 = t15 + t16 + 9*z - 17;
-  const Real t18 = t17*x;
-  const Real t19 = 4*z;
-  const Real t20 = 3*t0 + 3*t1 - t19 - 14;
-  const Real t21 = 5*t20;
-  const Real t22 = -t21*y;
-  const Real t23 = t20*y;
-  const Real t24 = (1.0/1250.0)*t3;
-  const Real t25 = t6*z;
-  const Real t26 = 40*z;
-  const Real t27 = (1.0/2500.0)*t3*(t0*t17*t19 - t0*t26 - 90*t0 - 10*t17*z + t19*t20*t6 - 60*t25 + 40*t6 + 225);
-  const Real t28 = t1*x;
-  const Real t29 = t17*y;
-  const Real t30 = t24*(-40*t14 + t15*t29 + t16*t20*x - t21*x - 60*t28 - 5*t29 + 75*x + 50*y);
-  const Real t31 = -5*t18;
-  const Real t32 = 2*t2;
-  const Real t33 = t24*(2*t1*t20*z - 30*t1*z + 20*t1 + 2*t17*x*y*z - t21*z - 20*t25 - 45*t6 - 50);
-  const Real t34 = pow(y, 3);
-  oracle.first[0] = -t0*t10 + t0*t4 + (3.0/50.0)*t3*x*y + t5 + t6*t9;
-  oracle.first[1] = -t10*t12 - t11 + (2.0/5.0)*t3*t7*y*z + (9.0/100.0)*t3*x;
-  oracle.first[2] = (3.0/50.0)*t1*t3 + t1*t9 - t10*t6 + t11*x - t8;
-  oracle.second[0][0] = t24*(2*t13*t17 - 40*t13 - 60*t14 + t15*t23 - 15*t18 + t22 + 150*x + 75*y);
-  oracle.second[0][1] = t27;
-  oracle.second[0][2] = t30;
-  oracle.second[1][0] = t27;
-  oracle.second[1][1] = t24*(-90*t12 + t18*t32 + t22 + t23*t32 + t26*y + t31);
-  oracle.second[1][2] = t33;
-  oracle.second[2][0] = t30;
-  oracle.second[2][1] = t33;
-  oracle.second[2][2] = t24*(t16*t18 + 2*t20*t34 - 15*t23 - 40*t28 + t31 - 60*t34 + 50*x + 225*y);
+                           TensorOracle &oracle) {
+  EvaluateTensorOracle1First(x, y, z, oracle);
+  EvaluateTensorOracle1Second(x, y, z, oracle);
 }
 
 KOKKOS_INLINE_FUNCTION
-void EvaluateTensorOracle2(const Real x, const Real y, const Real z,
+void EvaluateTensorOracle2First(const Real x, const Real y, const Real z,
                 TensorOracle &oracle) {
   const Real t0 = pow(x, 2);
   const Real t1 = pow(y, 2);
@@ -390,139 +508,186 @@ void EvaluateTensorOracle2(const Real x, const Real y, const Real z,
   const Real t6 = (3.0/100.0)*t0 + (3.0/100.0)*t1 - 1.0/20.0*z + 21.0/100.0;
   const Real t7 = -1.0/25.0*t0 - 1.0/25.0*t1 + (1.0/50.0)*t2 + (7.0/100.0)*z - 3.0/10.0;
   const Real t8 = t3*t7;
-  const Real t9 = (2.0/5.0)*t8*y;
-  const Real t10 = t3*t5;
-  const Real t11 = (2.0/5.0)*t10*t6;
-  const Real t12 = x*z;
-  const Real t13 = 125*z;
-  const Real t14 = pow(x, 3);
-  const Real t15 = 3*t0 + 3*t1 - 5*z + 21;
-  const Real t16 = 20*t15;
-  const Real t17 = 60*t5;
-  const Real t18 = 4*t0;
-  const Real t19 = 4*t1;
-  const Real t20 = 2*t2;
-  const Real t21 = t18 + t19 - t20 - 7*z + 30;
-  const Real t22 = 2*t21;
-  const Real t23 = t15*t5;
-  const Real t24 = 5*t23;
-  const Real t25 = x*y;
-  const Real t26 = -15*t21*x*y + t24 + 300*t25;
-  const Real t27 = (1.0/1250.0)*t3;
-  const Real t28 = 4*z;
-  const Real t29 = t28 + 7;
-  const Real t30 = 10*t29;
-  const Real t31 = y*z;
-  const Real t32 = t18*t21;
-  const Real t33 = (1.0/2500.0)*t3;
-  const Real t34 = t33*(-t0*t30*y + 80*t0*y*z - t12*t16 - t12*t17 + 4*t15*t5*x*z + 10*t21*y*z + 25*t29*y - t31*t32 + 50*t5*x - 250*x);
-  const Real t35 = 10*t21;
-  const Real t36 = t33*(160*t0*t1 + t0*t35 - 300*t0 - t1*t32 + t1*t35 - 300*t1 + 50*t2 + 4*t23*t25 - 120*t25*t5 + 175*z - 750);
-  const Real t37 = 50*t5;
-  const Real t38 = t21*t25;
-  const Real t39 = t33*(-t1*t30*x + 80*t1*x*z - t12*t19*t21 + t12*t35 + t16*t31 - t17*t31 + t23*t28*y + 25*t29*x + t37*y + 250*y);
-  const Real t40 = pow(y, 3);
-  oracle.first[0] = -2.0/25.0*t0*t4 - t0*t9 - t11*x + (3.0/50.0)*t3*t5*x + 2*t3*t6*x + t3*t7*y;
-  oracle.first[1] = -1.0/20.0*t10 - t11*z - t12*t9 + t3*x*y*((1.0/25.0)*z + 7.0/100.0);
-  oracle.first[2] = -2.0/25.0*t1*t3*x - 2.0/5.0*t1*t8*x - t11*y + (3.0/50.0)*t3*t5*y + t3*t7*x - 2*t4*t6;
-  oracle.second[0][0] = t27*(2*t0*t15*t5 - t0*t16 - t0*t17 + 450*t0 - t13 - t14*t22*y + 80*t14*y - t26 + 525);
-  oracle.second[0][1] = t34;
-  oracle.second[0][2] = t36;
-  oracle.second[1][0] = t34;
-  oracle.second[1][1] = t27*(t20*t23 - t20*t38 - t24 - t25*t30*z + 50*t25 + t37*z + 5*t38);
-  oracle.second[1][2] = t39;
-  oracle.second[2][0] = t36;
-  oracle.second[2][1] = t39;
-  oracle.second[2][2] = t27*(2*t1*t15*t5 + 20*t1*t15 - t1*t17 - 450*t1 + t13 - t22*t40*x - t26 + 80*t40*x - 525);
+  const Real t9 = t8*y;
+  const Real t10 = (2.0/5.0)*x;
+  const Real t11 = t3*t5;
+  const Real t12 = t11*t6;
+  const Real t13 = (2.0/5.0)*t12;
+  oracle.first[0] = -2.0/25.0*t0*t4 - 2.0/5.0*t0*t9 - t10*t12 + (3.0/50.0)*t3*t5*x + 2*t3*t6*x + t3*t7*y;
+  oracle.first[1] = -t10*t9*z - 1.0/20.0*t11 - t13*z + t3*x*y*((1.0/25.0)*z + 7.0/100.0);
+  oracle.first[2] = -2.0/25.0*t1*t3*x - 2.0/5.0*t1*t8*x - t13*y + (3.0/50.0)*t3*t5*y + t3*t7*x - 2*t4*t6;
 }
 
 KOKKOS_INLINE_FUNCTION
-void EvaluateTensorOracle3(const Real x, const Real y, const Real z,
+void EvaluateTensorOracle2Second(const Real x, const Real y, const Real z,
+                TensorOracle &oracle) {
+  const Real t0 = pow(x, 2);
+  const Real t1 = 125*z;
+  const Real t2 = pow(x, 3);
+  const Real t3 = pow(y, 2);
+  const Real t4 = 3*t0 + 3*t3 - 5*z + 21;
+  const Real t5 = 20*t4;
+  const Real t6 = t0 - t3;
+  const Real t7 = 60*t6;
+  const Real t8 = 4*t0;
+  const Real t9 = 4*t3;
+  const Real t10 = pow(z, 2);
+  const Real t11 = 2*t10;
+  const Real t12 = -t11 + t8 + t9 - 7*z + 30;
+  const Real t13 = 2*t12;
+  const Real t14 = t4*t6;
+  const Real t15 = 5*t14;
+  const Real t16 = x*y;
+  const Real t17 = -15*t12*x*y + t15 + 300*t16;
+  const Real t18 = exp(-1.0/5.0*t0 - 1.0/5.0*t10 - 1.0/5.0*t3);
+  const Real t19 = (1.0/1250.0)*t18;
+  const Real t20 = 4*z;
+  const Real t21 = t20 + 7;
+  const Real t22 = 10*t21;
+  const Real t23 = x*z;
+  const Real t24 = y*z;
+  const Real t25 = t12*t8;
+  const Real t26 = (1.0/2500.0)*t18;
+  const Real t27 = t26*(-t0*t22*y + 80*t0*y*z + 10*t12*y*z + 25*t21*y - t23*t5 - t23*t7 - t24*t25 + 4*t4*t6*x*z + 50*t6*x - 250*x);
+  const Real t28 = 10*t12;
+  const Real t29 = t26*(t0*t28 + 160*t0*t3 - 300*t0 + 50*t10 + 4*t14*t16 - 120*t16*t6 - t25*t3 + t28*t3 - 300*t3 + 175*z - 750);
+  const Real t30 = 50*t6;
+  const Real t31 = t12*t16;
+  const Real t32 = t26*(-t12*t23*t9 + t14*t20*y + 25*t21*x - t22*t3*x + t23*t28 + t24*t5 - t24*t7 + 80*t3*x*z + t30*y + 250*y);
+  const Real t33 = pow(y, 3);
+  oracle.second[0][0] = t19*(2*t0*t4*t6 - t0*t5 - t0*t7 + 450*t0 - t1 - t13*t2*y - t17 + 80*t2*y + 525);
+  oracle.second[0][1] = t27;
+  oracle.second[0][2] = t29;
+  oracle.second[1][0] = t27;
+  oracle.second[1][1] = t19*(t11*t14 - t11*t31 - t15 - t16*t22*z + 50*t16 + t30*z + 5*t31);
+  oracle.second[1][2] = t32;
+  oracle.second[2][0] = t29;
+  oracle.second[2][1] = t32;
+  oracle.second[2][2] = t19*(t1 - t13*t33*x - t17 + 2*t3*t4*t6 + 20*t3*t4 - t3*t7 - 450*t3 + 80*t33*x - 525);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle2(const Real x, const Real y, const Real z,
+                           TensorOracle &oracle) {
+  EvaluateTensorOracle2First(x, y, z, oracle);
+  EvaluateTensorOracle2Second(x, y, z, oracle);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle3First(const Real x, const Real y, const Real z,
                 TensorOracle &oracle) {
   const Real t0 = (1.0/25.0)*z;
   const Real t1 = pow(x, 2);
   const Real t2 = pow(y, 2);
-  const Real t3 = pow(z, 2);
-  const Real t4 = exp(-1.0/5.0*t1 - 1.0/5.0*t2 - 1.0/5.0*t3);
-  const Real t5 = t4*x;
-  const Real t6 = (1.0/50.0)*t1 + (1.0/50.0)*t2;
-  const Real t7 = (4.0/125.0)*t1 + (4.0/125.0)*t2 - 2.0/5.0*t6*z - 11.0/250.0*z + 9.0/25.0;
-  const Real t8 = t4*t7;
-  const Real t9 = 2*t1;
-  const Real t10 = 2*z;
-  const Real t11 = 8*t1 - t10*(t1 + t2) + 8*t2;
-  const Real t12 = t11 - 11*z + 90;
-  const Real t13 = z - 4;
-  const Real t14 = 40*t13;
-  const Real t15 = 200 - 50*z;
-  const Real t16 = (1.0/1250.0)*t4;
-  const Real t17 = t16*(10*t1 + t10*t12 + 20*t13*z + 10*t2 + 5);
-  const Real t18 = t17*x;
-  const Real t19 = (1.0/625.0)*t5*y*(t11 + 9*z + 10);
-  const Real t20 = 2*t2;
-  const Real t21 = t17*y;
-  oracle.first[0] = t4*(-t0*x + (4.0/25.0)*x) - t5*t7;
-  oracle.first[1] = t4*(-t6 - 11.0/100.0) - t8*z;
-  oracle.first[2] = t4*(-t0*y + (4.0/25.0)*y) - t8*y;
-  oracle.second[0][0] = t16*(t1*t14 + t12*(t9 - 5) + t15);
-  oracle.second[0][1] = t18;
-  oracle.second[0][2] = t19;
-  oracle.second[1][0] = t18;
-  oracle.second[1][1] = t16*(t12*(2*t3 - 5) + 10*z*(t20 + t9 + 11));
+  const Real t3 = exp(-1.0/5.0*t1 - 1.0/5.0*t2 - 1.0/5.0*pow(z, 2));
+  const Real t4 = (1.0/50.0)*t1 + (1.0/50.0)*t2;
+  const Real t5 = (2.0/5.0)*t3*((2.0/25.0)*t1 + (2.0/25.0)*t2 - t4*z - 11.0/100.0*z + 9.0/10.0);
+  oracle.first[0] = t3*(-t0*x + (4.0/25.0)*x) - t5*x;
+  oracle.first[1] = t3*(-t4 - 11.0/100.0) - t5*z;
+  oracle.first[2] = t3*(-t0*y + (4.0/25.0)*y) - t5*y;
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle3Second(const Real x, const Real y, const Real z,
+                TensorOracle &oracle) {
+  const Real t0 = pow(x, 2);
+  const Real t1 = 2*t0;
+  const Real t2 = pow(y, 2);
+  const Real t3 = 2*z;
+  const Real t4 = 8*t0 + 8*t2 - t3*(t0 + t2);
+  const Real t5 = t4 - 11*z + 90;
+  const Real t6 = z - 4;
+  const Real t7 = 40*t6;
+  const Real t8 = 200 - 50*z;
+  const Real t9 = pow(z, 2);
+  const Real t10 = exp(-1.0/5.0*t0 - 1.0/5.0*t2 - 1.0/5.0*t9);
+  const Real t11 = (1.0/1250.0)*t10;
+  const Real t12 = t11*(10*t0 + 10*t2 + t3*t5 + 20*t6*z + 5);
+  const Real t13 = t12*x;
+  const Real t14 = (1.0/625.0)*t10*x*y*(t4 + 9*z + 10);
+  const Real t15 = 2*t2;
+  const Real t16 = t12*y;
+  oracle.second[0][0] = t11*(t0*t7 + t5*(t1 - 5) + t8);
+  oracle.second[0][1] = t13;
+  oracle.second[0][2] = t14;
+  oracle.second[1][0] = t13;
+  oracle.second[1][1] = t11*(t5*(2*t9 - 5) + 10*z*(t1 + t15 + 11));
+  oracle.second[1][2] = t16;
+  oracle.second[2][0] = t14;
+  oracle.second[2][1] = t16;
+  oracle.second[2][2] = t11*(t2*t7 + t5*(t15 - 5) + t8);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle3(const Real x, const Real y, const Real z,
+                           TensorOracle &oracle) {
+  EvaluateTensorOracle3First(x, y, z, oracle);
+  EvaluateTensorOracle3Second(x, y, z, oracle);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle4First(const Real x, const Real y, const Real z,
+                TensorOracle &oracle) {
+  const Real t0 = pow(x, 2);
+  const Real t1 = pow(y, 2);
+  const Real t2 = exp(-1.0/5.0*t0 - 1.0/5.0*t1 - 1.0/5.0*pow(z, 2));
+  const Real t3 = (3.0/50.0)*t2;
+  const Real t4 = -3.0/100.0*t0 - 3.0/100.0*t1 + (1.0/25.0)*z + 7.0/50.0;
+  const Real t5 = x*y;
+  const Real t6 = (1.0/50.0)*t0 + (1.0/50.0)*t1 + (9.0/100.0)*z - 17.0/100.0;
+  const Real t7 = (2.0/5.0)*t2*t6;
+  const Real t8 = (2.0/5.0)*t2*t4;
+  oracle.first[0] = -t0*t3 - t0*t8 + t2*t4 + (1.0/25.0)*t2*x*y - t5*t7;
+  oracle.first[1] = (1.0/25.0)*t2*x + (9.0/100.0)*t2*y - t7*y*z - t8*x*z;
+  oracle.first[2] = (1.0/25.0)*t1*t2 - t1*t7 + t2*t6 - t3*t5 - t5*t8;
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle4Second(const Real x, const Real y, const Real z,
+                TensorOracle &oracle) {
+  const Real t0 = pow(x, 3);
+  const Real t1 = pow(x, 2);
+  const Real t2 = 4*z;
+  const Real t3 = pow(y, 2);
+  const Real t4 = 3*t1 - t2 + 3*t3 - 14;
+  const Real t5 = 2*t1;
+  const Real t6 = 2*t3;
+  const Real t7 = t5 + t6 + 9*z - 17;
+  const Real t8 = 5*t7;
+  const Real t9 = t8*y;
+  const Real t10 = 2*t4;
+  const Real t11 = pow(z, 2);
+  const Real t12 = exp(-1.0/5.0*t1 - 1.0/5.0*t11 - 1.0/5.0*t3);
+  const Real t13 = (1.0/1250.0)*t12;
+  const Real t14 = x*y;
+  const Real t15 = t4*t5;
+  const Real t16 = t13*(30*t1*z - 20*t1 - 20*t14*z - 45*t14 - t15*z + 5*t4*z + 2*t7*x*y*z + 50);
+  const Real t17 = 40*x;
+  const Real t18 = t13*(60*t1*y - t15*y - t17*t3 + 2*t3*t7*x + 5*t4*y - t8*x + 50*x - 75*y);
+  const Real t19 = -5*t4*x;
+  const Real t20 = t4*x;
+  const Real t21 = (1.0/2500.0)*t12*(-40*t14 - t2*t20*y + 4*t3*t7*z - 40*t3*z - 90*t3 - 10*t7*z + 60*x*y*z + 225);
+  const Real t22 = pow(y, 3);
+  oracle.second[0][0] = t13*(-t0*t10 + 60*t0 + 2*t1*t7*y - 40*t1*y + 15*t4*x - t9 - 225*x + 50*y);
+  oracle.second[0][1] = t16;
+  oracle.second[0][2] = t18;
+  oracle.second[1][0] = t16;
+  oracle.second[1][1] = t13*(-t10*t11*x + 2*t11*t7*y - t17*z - t19 - t9 - 90*y*z);
   oracle.second[1][2] = t21;
-  oracle.second[2][0] = t19;
+  oracle.second[2][0] = t18;
   oracle.second[2][1] = t21;
-  oracle.second[2][2] = t16*(t12*(t20 - 5) + t14*t2 + t15);
+  oracle.second[2][2] = t13*(-t19 - t20*t6 + 2*t22*t7 - 40*t22 + 60*t3*x - 15*t7*y - 75*x + 150*y);
 }
 
 KOKKOS_INLINE_FUNCTION
 void EvaluateTensorOracle4(const Real x, const Real y, const Real z,
-                TensorOracle &oracle) {
-  const Real t0 = pow(x, 2);
-  const Real t1 = pow(y, 2);
-  const Real t2 = pow(z, 2);
-  const Real t3 = exp(-1.0/5.0*t0 - 1.0/5.0*t1 - 1.0/5.0*t2);
-  const Real t4 = (3.0/50.0)*t3;
-  const Real t5 = -3.0/100.0*t0 - 3.0/100.0*t1 + (1.0/25.0)*z + 7.0/50.0;
-  const Real t6 = x*y;
-  const Real t7 = (1.0/50.0)*t0 + (1.0/50.0)*t1 + (9.0/100.0)*z - 17.0/100.0;
-  const Real t8 = (2.0/5.0)*t3*t7;
-  const Real t9 = (2.0/5.0)*t3*t5;
-  const Real t10 = y*z;
-  const Real t11 = pow(x, 3);
-  const Real t12 = 4*z;
-  const Real t13 = 3*t0 + 3*t1 - t12 - 14;
-  const Real t14 = 2*t0;
-  const Real t15 = 2*t1;
-  const Real t16 = t14 + t15 + 9*z - 17;
-  const Real t17 = 5*t16;
-  const Real t18 = t17*y;
-  const Real t19 = 2*t13;
-  const Real t20 = (1.0/1250.0)*t3;
-  const Real t21 = t13*t14;
-  const Real t22 = t20*(30*t0*z - 20*t0 + 5*t13*z + 2*t16*x*y*z - t21*z - 20*t6*z - 45*t6 + 50);
-  const Real t23 = 40*x;
-  const Real t24 = t20*(60*t0*y + 2*t1*t16*x - t1*t23 + 5*t13*y - t17*x - t21*y + 50*x - 75*y);
-  const Real t25 = -5*t13*x;
-  const Real t26 = t13*x;
-  const Real t27 = (1.0/2500.0)*t3*(4*t1*t16*z - 40*t1*z - 90*t1 - t12*t26*y - 10*t16*z - 40*t6 + 60*x*y*z + 225);
-  const Real t28 = pow(y, 3);
-  oracle.first[0] = -t0*t4 - t0*t9 + t3*t5 + (1.0/25.0)*t3*x*y - t6*t8;
-  oracle.first[1] = -t10*t8 + (1.0/25.0)*t3*x + (9.0/100.0)*t3*y - t9*x*z;
-  oracle.first[2] = (1.0/25.0)*t1*t3 - t1*t8 + t3*t7 - t4*t6 - t6*t9;
-  oracle.second[0][0] = t20*(2*t0*t16*y - 40*t0*y - t11*t19 + 60*t11 + 15*t13*x - t18 - 225*x + 50*y);
-  oracle.second[0][1] = t22;
-  oracle.second[0][2] = t24;
-  oracle.second[1][0] = t22;
-  oracle.second[1][1] = t20*(-90*t10 + 2*t16*t2*y - t18 - t19*t2*x - t23*z - t25);
-  oracle.second[1][2] = t27;
-  oracle.second[2][0] = t24;
-  oracle.second[2][1] = t27;
-  oracle.second[2][2] = t20*(60*t1*x - t15*t26 + 2*t16*t28 - 15*t16*y - t25 - 40*t28 - 75*x + 150*y);
+                           TensorOracle &oracle) {
+  EvaluateTensorOracle4First(x, y, z, oracle);
+  EvaluateTensorOracle4Second(x, y, z, oracle);
 }
 
 KOKKOS_INLINE_FUNCTION
-void EvaluateTensorOracle5(const Real x, const Real y, const Real z,
+void EvaluateTensorOracle5First(const Real x, const Real y, const Real z,
                 TensorOracle &oracle) {
   const Real t0 = pow(x, 2);
   const Real t1 = pow(y, 2);
@@ -532,52 +697,67 @@ void EvaluateTensorOracle5(const Real x, const Real y, const Real z,
   const Real t5 = t4*x;
   const Real t6 = (1.0/50.0)*t0 + (1.0/50.0)*t1 + (6.0/125.0)*z + 11.0/25.0;
   const Real t7 = (3.0/100.0)*t0 + (3.0/100.0)*t1 - 1.0/20.0*z + 21.0/100.0;
-  const Real t8 = t0*y;
+  const Real t8 = t3*y;
   const Real t9 = (4.0/5.0)*t7;
-  const Real t10 = -1.0/25.0*t0 - 1.0/25.0*t1 + (1.0/50.0)*t2 + (7.0/100.0)*z - 3.0/10.0;
-  const Real t11 = (2.0/5.0)*t10;
-  const Real t12 = t3*z;
-  const Real t13 = x*y;
-  const Real t14 = pow(y, 3);
-  const Real t15 = t14*t3;
-  const Real t16 = 60*z;
-  const Real t17 = 125*t0;
-  const Real t18 = pow(x, 3);
-  const Real t19 = 3*t0 + 3*t1 - 5*z + 21;
-  const Real t20 = 30*t13*t19;
-  const Real t21 = 5*t1;
-  const Real t22 = 5*t0 + t21 + 12*z + 110;
-  const Real t23 = 4*t0;
-  const Real t24 = 2*t2;
-  const Real t25 = 4*t1 + t23 - t24 - 7*z + 30;
-  const Real t26 = -5*t1*t25;
-  const Real t27 = t0*t1;
-  const Real t28 = 2*t25;
-  const Real t29 = (1.0/1250.0)*t3;
-  const Real t30 = 50*z;
-  const Real t31 = 4*z + 7;
-  const Real t32 = 10*t19;
-  const Real t33 = t32*z;
-  const Real t34 = t1*x;
-  const Real t35 = t28*z;
-  const Real t36 = t29*(4*t0*t19*y*z + 50*t0*y + 40*t1*x*z - t16*t8 - t21*t31*x + 2*t22*x*z - t30*x - t33*y - t34*t35 - 60*x - 125*y);
-  const Real t37 = t14*x;
-  const Real t38 = 2*t22;
-  const Real t39 = t29*(-t0*t32 + 225*t0 + t1*t19*t23 - t1*t32 + 225*t1 + 10*t13*t25 + t13*t38 - 300*t13 - 120*t27 - t28*t37 + 80*t37 - 125*z + 525);
-  const Real t40 = t29*(4*t1*t19*x*z + 50*t1*x - 5*t14*t31 - t14*t35 + 40*t14*z - t16*t34 + 2*t22*y*z + 10*t25*y*z - t30*y + 25*t31*y - t33*x - 125*x - 60*y);
-  const Real t41 = pow(y, 4);
-  oracle.first[0] = (3.0/25.0)*t0*t3*y - t11*t5 - t3*t6*x + 2*t3*t7*y - t3*t8*t9 + (1.0/10.0)*t3*x - 2.0/25.0*t5;
-  oracle.first[1] = t1*t3*((1.0/25.0)*z + 7.0/100.0) - t11*t4*z - t12*t13*t9 - t12*t6 - 1.0/10.0*t3*x*y + (3.0/25.0)*t3;
-  oracle.first[2] = (3.0/25.0)*t1*t3*x + 2*t10*t3*y - t11*t15 - 2.0/25.0*t15 - t3*t6*y + 2*t3*t7*x + (1.0/10.0)*t3*y - t5*t9;
-  oracle.second[0][0] = t29*(80*t0*t1 + 2*t0*t22 - 125*t1 - t16 - t17 + 4*t18*t19*y - 120*t18*y - t20 - t26 - t27*t28 + 450*x*y - 425);
-  oracle.second[0][1] = t36;
-  oracle.second[0][2] = t39;
-  oracle.second[1][0] = t36;
-  oracle.second[1][1] = t29*(-25*t0 - t1*t24*t25 - 10*t1*t31*z + 25*t1 - t13*t32 + 4*t19*t2*x*y + 2*t2*t22 - t26 + 100*x*y*z - 180*z - 550);
-  oracle.second[1][2] = t40;
-  oracle.second[2][0] = t39;
-  oracle.second[2][1] = t40;
-  oracle.second[2][2] = t29*(25*t1*t25 + t1*t38 - 725*t1 + 450*t13 - t17 + 4*t19*t37 + 50*t2 - t20 - t28*t41 - 120*t37 + 80*t41 + 115*z - 1175);
+  const Real t10 = t8*t9;
+  const Real t11 = -1.0/25.0*t0 - 1.0/25.0*t1 + (1.0/50.0)*t2 + (7.0/100.0)*z - 3.0/10.0;
+  const Real t12 = (2.0/5.0)*t11;
+  const Real t13 = t3*pow(y, 3);
+  oracle.first[0] = -t0*t10 + (3.0/25.0)*t0*t3*y - t12*t5 - t3*t6*x + 2*t3*t7*y + (1.0/10.0)*t3*x - 2.0/25.0*t5;
+  oracle.first[1] = t1*t3*((1.0/25.0)*z + 7.0/100.0) - t10*x*z - t12*t4*z - t3*t6*z - 1.0/10.0*t3*x*y + (3.0/25.0)*t3;
+  oracle.first[2] = (3.0/25.0)*t1*t3*x + 2*t11*t3*y - t12*t13 - 2.0/25.0*t13 + 2*t3*t7*x + (1.0/10.0)*t3*y - t5*t9 - t6*t8;
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle5Second(const Real x, const Real y, const Real z,
+                TensorOracle &oracle) {
+  const Real t0 = 60*z;
+  const Real t1 = pow(x, 2);
+  const Real t2 = 125*t1;
+  const Real t3 = pow(y, 2);
+  const Real t4 = pow(x, 3);
+  const Real t5 = 3*t1 + 3*t3 - 5*z + 21;
+  const Real t6 = x*y;
+  const Real t7 = 30*t5*t6;
+  const Real t8 = 5*t3;
+  const Real t9 = 5*t1 + t8 + 12*z + 110;
+  const Real t10 = 4*t1;
+  const Real t11 = pow(z, 2);
+  const Real t12 = 2*t11;
+  const Real t13 = t10 - t12 + 4*t3 - 7*z + 30;
+  const Real t14 = -5*t13*t3;
+  const Real t15 = t1*t3;
+  const Real t16 = 2*t13;
+  const Real t17 = (1.0/1250.0)*exp(-1.0/5.0*t1 - 1.0/5.0*t11 - 1.0/5.0*t3);
+  const Real t18 = 50*z;
+  const Real t19 = 4*z + 7;
+  const Real t20 = 10*t5;
+  const Real t21 = t20*z;
+  const Real t22 = t3*x;
+  const Real t23 = t16*z;
+  const Real t24 = t17*(-t0*t1*y + 4*t1*t5*y*z + 50*t1*y - t18*x - t19*t8*x - t21*y - t22*t23 + 40*t3*x*z + 2*t9*x*z - 60*x - 125*y);
+  const Real t25 = pow(y, 3);
+  const Real t26 = t25*x;
+  const Real t27 = 2*t9;
+  const Real t28 = t17*(-t1*t20 + 225*t1 + t10*t3*t5 + 10*t13*t6 - 120*t15 - t16*t26 - t20*t3 + 80*t26 + t27*t6 + 225*t3 - 300*t6 - 125*z + 525);
+  const Real t29 = t17*(-t0*t22 + 10*t13*y*z - t18*y - 5*t19*t25 + 25*t19*y - t21*x - t23*t25 + 40*t25*z + 4*t3*t5*x*z + 50*t3*x + 2*t9*y*z - 125*x - 60*y);
+  const Real t30 = pow(y, 4);
+  oracle.second[0][0] = t17*(-t0 + 80*t1*t3 + 2*t1*t9 - t14 - t15*t16 - t2 - 125*t3 + 4*t4*t5*y - 120*t4*y - t7 + 450*x*y - 425);
+  oracle.second[0][1] = t24;
+  oracle.second[0][2] = t28;
+  oracle.second[1][0] = t24;
+  oracle.second[1][1] = t17*(-25*t1 + 4*t11*t5*x*y + 2*t11*t9 - t12*t13*t3 - t14 - 10*t19*t3*z - t20*t6 + 25*t3 + 100*x*y*z - 180*z - 550);
+  oracle.second[1][2] = t29;
+  oracle.second[2][0] = t28;
+  oracle.second[2][1] = t29;
+  oracle.second[2][2] = t17*(50*t11 + 25*t13*t3 - t16*t30 - t2 + 4*t26*t5 - 120*t26 + t27*t3 - 725*t3 + 80*t30 + 450*t6 - t7 + 115*z - 1175);
+}
+
+KOKKOS_INLINE_FUNCTION
+void EvaluateTensorOracle5(const Real x, const Real y, const Real z,
+                           TensorOracle &oracle) {
+  EvaluateTensorOracle5First(x, y, z, oracle);
+  EvaluateTensorOracle5Second(x, y, z, oracle);
 }
 
 KOKKOS_INLINE_FUNCTION
