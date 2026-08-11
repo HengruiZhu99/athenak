@@ -214,7 +214,8 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
   // This reusable analytic pgen supplies ordinary production evolution for both
   // Cartesian and Cartoon storage. Its parameter/topology checks remain inside
   // the pgen, while all allocation-free gates above apply unchanged here.
-  if (input.problem_generator == "kerr_puncture") {
+  if (input.problem_generator == "kerr_puncture" ||
+      input.problem_generator == "z4c_irisk_xcts") {
     return {true, config, ""};
   }
 

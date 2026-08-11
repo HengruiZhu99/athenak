@@ -30,6 +30,7 @@
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
 #include "pgen.hpp"
+#include "pgen_defaults.hpp"
 
 
 //----------------------------------------------------------------------------------------
@@ -923,7 +924,9 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
   UserProblem(pin, is_restart);
 #else
   // else read name of built-in pgen from <problem> block in input file, and call
-  std::string pgen_fun_name = pin->GetOrAddString("problem", "pgen_name", "none");
+  const char *default_pgen = DefaultInputSelectedPgen(PROBLEM_GENERATOR);
+  std::string pgen_fun_name =
+      pin->GetOrAddString("problem", "pgen_name", default_pgen);
 
   if (pgen_fun_name.compare("advection") == 0) {
     Advection(pin, is_restart);
@@ -967,6 +970,10 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     Z4cCartoonDerivatives(pin, is_restart);
   } else if (pgen_fun_name.compare("kerr_puncture") == 0) {
     ConfigureKerrPuncture(this, pmy_mesh_, pin, is_restart);
+#if IRISK_INTERPOLATOR_ENABLED
+  } else if (pgen_fun_name.compare("z4c_irisk_xcts") == 0) {
+    Z4cIrisXcts(pin, is_restart);
+#endif
 
   } else {
     // name not set on command line or input file, print warning and quit

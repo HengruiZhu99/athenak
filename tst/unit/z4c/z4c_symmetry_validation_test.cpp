@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 
+#include "pgen/pgen_defaults.hpp"
 #include "z4c/z4c_symmetry.hpp"
 
 namespace {
@@ -310,6 +311,52 @@ bool CheckKerrPunctureProductionAdmission() {
   return Rejects(input, "not the staged check_only");
 }
 
+bool CheckIrisImporterProductionAdmission() {
+  auto input = ValidCartoonInput();
+  // Historical PROBLEM=z4c_irisk_xcts builds omit problem/pgen_name. Both
+  // preallocation validation and runtime dispatch consume this shared default.
+  if (std::string(DefaultInputSelectedPgen("z4c_irisk_xcts")) !=
+          "z4c_irisk_xcts" ||
+      std::string(DefaultInputSelectedPgen("none")) != "none") {
+    return false;
+  }
+  input.problem_generator = DefaultInputSelectedPgen("z4c_irisk_xcts");
+  input.cartoon_derivative_check_only_present = false;
+  input.cartoon_derivative_check_only_valid = false;
+  input.cartoon_derivative_check_only = false;
+  input.multilevel = true;
+  input.outputs = {{"output1", "hst"}, {"output2", "rst"},
+                   {"output3", "bin"}};
+  auto result = z4c::ValidateZ4cSymmetry(input);
+  if (!result.valid ||
+      result.config.mode != z4c::Z4cSymmetryMode::cartoon_so2) {
+    return false;
+  }
+
+  // A restart uses persisted Z4c fields, but must still match every immutable
+  // Cartoon carrier before the importer can re-enroll its AMR criterion.
+  input.restart_origin = true;
+  input.restart_metadata_present = true;
+  input.restart_symmetry = "cartoon_so2";
+  input.restart_coordinate_map = "signed_rho_z_suppressed_y_v1";
+  input.restart_schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
+  if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
+  input.restart_coordinate_map = "cartesian_xyz";
+  if (!Rejects(input, "restart")) return false;
+
+  input = ValidCartoonInput();
+  input.problem_generator = "z4c_irisk_xcts";
+  input.cartoon_derivative_check_only_present = false;
+  input.incompatible_physics = {"hydro"};
+  if (!Rejects(input, "hydro")) return false;
+  input.incompatible_physics.clear();
+  input.incompatible_consumers = {"legacy FastFlow"};
+  if (!Rejects(input, "legacy FastFlow")) return false;
+  input.incompatible_consumers.clear();
+  input.root_blocks_x1 = 1;
+  return Rejects(input, "root x1 MeshBlocks");
+}
+
 }  // namespace
 
 int main() {
@@ -318,7 +365,8 @@ int main() {
                       CheckMeshAndPhysicsFailures() &&
                       CheckConsumerAndOutputFailures() &&
                       CheckRestartAndPgenFailures() &&
-                      CheckKerrPunctureProductionAdmission();
+                      CheckKerrPunctureProductionAdmission() &&
+                      CheckIrisImporterProductionAdmission();
   if (!passed) return EXIT_FAILURE;
   std::cout << "Z4c Cartoon preallocation validation tests passed\n";
   return EXIT_SUCCESS;

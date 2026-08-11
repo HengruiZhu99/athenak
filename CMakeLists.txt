@@ -35,6 +35,8 @@ option(Athena_SINGLE_PRECISION "Compile for single precision" OFF)
 option(Athena_ENABLE_MPI "Compile with MPI parallelism enabled" OFF)
 option(Athena_ENABLE_OPENMP "Compile with OpenMP parallelism enabled" OFF)
 option(Athena_BUILD_UNIT_TESTS "Build isolated C++ unit-test executables" OFF)
+option(Athena_ENABLE_IRISK_INTERPOLATOR
+       "Enable the input-selected IrisK spectral ADM importer" OFF)
 set(PROBLEM built_in_pgens CACHE STRING "Name of problem generator function")
 
 #------ set macros exported to config.hpp ------------------------------------------------
@@ -79,11 +81,23 @@ else()
 endif()
 
 #set user problem generator flag
-if (NOT ${PROBLEM} STREQUAL "built_in_pgens")
+if (${PROBLEM} STREQUAL "z4c_irisk_xcts")
+  # Preserve the historical custom-PROBLEM spelling, but route it through the
+  # same named entry point used by built_in_pgens.
+  set(Athena_ENABLE_IRISK_INTERPOLATOR ON CACHE BOOL
+      "Enable the input-selected IrisK spectral ADM importer" FORCE)
+endif()
+if (NOT ${PROBLEM} STREQUAL "built_in_pgens" AND
+    NOT ${PROBLEM} STREQUAL "z4c_irisk_xcts")
   message(STATUS "Including user-specified problem generator file: ${PROBLEM}")
   set(USER_PROBLEM_ENABLED 1)
 else()
   set(USER_PROBLEM_ENABLED 0)
+endif()
+if (Athena_ENABLE_IRISK_INTERPOLATOR)
+  set(IRISK_INTERPOLATOR_ENABLED 1)
+else()
+  set(IRISK_INTERPOLATOR_ENABLED 0)
 endif()
 
 #------ set various Kokkos option --------------------------------------------------------
@@ -135,7 +149,7 @@ else()
 	set(TWO_PUNCTURES 0)
 endif()
 
-if (${PROBLEM} STREQUAL "z4c_irisk_xcts")
+if (Athena_ENABLE_IRISK_INTERPOLATOR)
   get_filename_component(_IRISK_DEFAULT_ROOT "${CMAKE_SOURCE_DIR}/../bbhk" ABSOLUTE)
   set(IRISK_ROOT "${_IRISK_DEFAULT_ROOT}" CACHE PATH
       "IrisK source tree providing the AthenaK spectral interpolator")
@@ -147,7 +161,8 @@ if (${PROBLEM} STREQUAL "z4c_irisk_xcts")
   if (NOT EXISTS "${_IRISK_INTERPOLATOR_HEADER}" OR
       NOT EXISTS "${IRISK_INTERPOLATOR_LIBRARY}")
     message(FATAL_ERROR
-      "z4c_irisk_xcts requires IrisK's spectral interpolation library. "
+      "Athena_ENABLE_IRISK_INTERPOLATOR requires IrisK's spectral "
+      "interpolation library. "
       "Build target iris_athenak_interpolator in IrisK and set IRISK_ROOT / "
       "IRISK_INTERPOLATOR_LIBRARY if it is not in the default serial-clang build.")
   endif()
@@ -371,6 +386,13 @@ if (Athena_BUILD_UNIT_TESTS)
   add_test(
       NAME athena.z4c_symmetry_validation
       COMMAND athena_z4c_symmetry_validation_unit_test)
+
+  add_test(
+      NAME athena.z4c_irisk_import_static
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_irisk_import_static_test.py
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
 
   add_test(
       NAME athena.z4c_kerr_puncture_reference

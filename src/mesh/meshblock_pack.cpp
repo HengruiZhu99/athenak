@@ -35,6 +35,7 @@
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
 #include "particles/particles.hpp"
+#include "pgen/pgen_defaults.hpp"
 #include "units/units.hpp"
 #include "meshblock_pack.hpp"
 #include "z4c/z4c_symmetry.hpp"
@@ -223,9 +224,10 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
 #if USER_PROBLEM_ENABLED
   input.problem_generator = PROBLEM_GENERATOR;
 #else
+  const char *default_pgen = DefaultInputSelectedPgen(PROBLEM_GENERATOR);
   input.problem_generator = pin->DoesParameterExist("problem", "pgen_name")
                                 ? pin->GetString("problem", "pgen_name")
-                                : "none";
+                                : default_pgen;
 #endif
   input.cartoon_derivative_check_only_present =
       pin->DoesParameterExist("problem", "check_only");

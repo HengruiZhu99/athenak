@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "artifact_format": "IRIS_ATHENAK_SPECTRAL_ADM_PROVENANCE_V1",
+  "family": "brill_gaussian",
+  "branch": "unique_time_symmetric",
+  "amplitude": -0.047,
+  "source_faithful": true,
+  "solver": {
+    "converged": true,
+    "radial_points": 32,
+    "angular_points": 16,
+    "radial_scale": 3.0,
+    "adm_mass": 1.0,
+    "reciprocal_condition": 0.01,
+    "forward_error": 1e-12,
+    "backward_error": 1e-14
+  },
+  "residuals": {
+    "nonlinear": null,
+    "hamiltonian": 1e-10,
+    "momentum_max": null,
+    "momentum_r": null,
+    "momentum_theta": null,
+    "maximal_lapse": null,
+    "minimum_lapse": null,
+    "oversampled_hamiltonian": null,
+    "oversampled_momentum_r": null,
+    "oversampled_momentum_theta": null,
+    "oversampled_maximal_lapse": null
+  },
+  "export": {
+    "order": 8,
+    "block_count": 31,
+    "nodes_per_block": 512,
+    "variable_count": 17,
+    "reconciled_traces": true
+  },
+  "artifacts": {
+    "source": {
+      "identifier": "synthetic-static-fixture",
+      "path": "/immutable/source.tar",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "executable": {
+      "path": "/immutable/iris_brill_wave_export_study",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "input": {
+      "path": "/immutable/brill_figure3.input",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+    },
+    "coefficients": {
+      "description": "psi_minus_one_rational_sine_even_radial_major_angular_fast",
+      "schema": "IRIS_BRILL_WAVE_STATE_V1",
+      "path": null,
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+    },
+    "adm_payload": {
+      "path": "/immutable/brill_A-0.047000000_rho0_5.000000000.adm_spectral",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+    }
+  }
+}

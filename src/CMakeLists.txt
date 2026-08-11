@@ -190,11 +190,16 @@ add_executable(
         z4c/cce/cce.cpp
 )
 
+if (Athena_ENABLE_IRISK_INTERPOLATOR)
+  target_sources(athena PRIVATE pgen/z4c_irisk_xcts.cpp)
+endif()
+
 # custom problem generator to be included in compile
 # specify on command line using '-D PROBLEM=file' where 'file' is name of file in
 # pgen/ directory (not including .cpp extension)
 
-if (NOT ${PROBLEM} STREQUAL "built_in_pgens")
+if (NOT ${PROBLEM} STREQUAL "built_in_pgens" AND
+    NOT ${PROBLEM} STREQUAL "z4c_irisk_xcts")
   target_sources(athena
       PRIVATE
           pgen/${PROBLEM}.cpp

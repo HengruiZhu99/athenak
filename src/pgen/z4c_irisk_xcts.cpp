@@ -1162,7 +1162,7 @@ void ProblemGenerator::Z4cFinalizeImportedAdm(ParameterInput *pin) {
   }
 }
 
-void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
+void ProblemGenerator::Z4cIrisXcts(ParameterInput *pin, const bool restart) {
   // Enroll on both fresh starts and restarts so adaptive runs retain their criterion.
   user_ref_func = IrisXctsRefinementCondition;
   ConfigureCollapseTermination(this, pin, pmy_mesh_);
