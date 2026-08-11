@@ -26,6 +26,11 @@ import uuid
 
 
 SCHEMA = "athenak_z4c_cartoon_derivative_mms_campaign_v1"
+CAMPAIGN_FIELDS = {"schema", "source", "build_manifest", "build_manifest_sha256",
+                   "environment", "environment_sha256", "ranks", "backend",
+                   "campaign_mode", "accepted_window_sha256",
+                   "window_execution_sha256", "diagnostic_resolutions",
+                   "reduction_tolerance_factor", "convergence_artifacts", "cases"}
 REDUCTION_TOLERANCE_FACTOR = 4096.0
 SATURATION_FACTOR = 4096.0
 DIAGNOSTIC_RESOLUTIONS = (32, 64, 128, 256)
@@ -225,8 +230,16 @@ def load_json_strict(path: Path) -> object:
         if not math.isfinite(value):
             raise ValueError(f"overflowing JSON number {token}")
         return value
+    def unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        value = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError(f"duplicate JSON key {key}")
+            value[key] = item
+        return value
     value = json.loads(path.read_text(encoding="utf-8"),
-                       parse_constant=reject_constant, parse_float=finite_float)
+                       parse_constant=reject_constant, parse_float=finite_float,
+                       object_pairs_hook=unique_object)
     def reject_nested_nonfinite(item: object) -> None:
         if isinstance(item, float) and not math.isfinite(item):
             raise ValueError("nested nonfinite JSON number")
@@ -828,6 +841,52 @@ def evaluate_rate_samples(values: list[dict[str, float]], expected: float,
             "outcome_reason": reason, "passed": passed}
 
 
+def evaluate_legacy_rate_samples(values: list[dict[str, float]], expected: float,
+                                 margin: float, lane: str) -> dict[str, object]:
+    """Frozen pre-coefficient-floor evaluator used for job56586376 only."""
+    rates: list[float | None] = []
+    statuses = []
+    usable = []
+    absorbing = False
+    for coarse, fine in zip(values, values[1:]):
+        if (not math.isfinite(coarse["error"]) or coarse["error"] <= 0.0 or
+                not math.isfinite(fine["error"]) or fine["error"] <= 0.0):
+            raise RuntimeError("legacy rate errors must be finite and positive")
+        floor = SATURATION_FACTOR * sys.float_info.epsilon * \
+            max(1.0, coarse["error"])
+        if lane != "clean":
+            if (not math.isfinite(coarse["direct_delta"]) or
+                    not math.isfinite(fine["direct_delta"]) or
+                    min(coarse["direct_delta"], fine["direct_delta"]) < 0.0):
+                raise RuntimeError("legacy noisy rate requires finite direct deltas")
+            floor = max(floor, 8.0 * max(coarse["direct_delta"],
+                                         fine["direct_delta"]))
+        if absorbing or fine["error"] <= floor:
+            absorbing = True
+            rates.append(None)
+            statuses.append("legacy_saturated")
+        elif coarse["error"] >= fine["error"]:
+            rate = math.log(coarse["error"] / fine["error"]) / \
+                math.log(fine["resolution"] / coarse["resolution"])
+            rates.append(rate)
+            statuses.append("legacy_rate")
+            usable.append(rate)
+        else:
+            rates.append(None)
+            statuses.append("legacy_nonmonotone")
+            usable.append(float("-inf"))
+    passed = len(usable) >= 2 and min(usable[-2:]) >= expected - margin
+    if passed:
+        outcome = "pass"
+    elif len(usable) < 2:
+        outcome = "legacy_inconclusive"
+    else:
+        outcome = "legacy_rate_miss"
+    return {"rates": rates, "rate_status": statuses,
+            "usable_prefix_ratios": len(usable), "saturation_absorbing": absorbing,
+            "outcome_reason": outcome, "passed": passed}
+
+
 def output_forecast(resolutions_by_order: dict[int, tuple[int, ...]], phases: list[int],
                     ranks: int, rank_comparison: bool,
                     run_tuples: list[tuple[int, int, int]] | None = None) -> dict[str, int]:
@@ -924,6 +983,21 @@ def validate_roundoff_inventory(inventory: dict[str, object]) -> None:
     validate_semantic_tables(BLOCK_POWERS, MASK_WEIGHT_POLICY)
 
 
+def bound_directory_inventory(directory: Path) -> list[dict[str, object]]:
+    if not directory.is_dir() or directory.is_symlink():
+        raise RuntimeError("evidence directory is missing or a symlink")
+    files = sorted(path for path in directory.rglob("*") if path.is_file())
+    if any(path.is_symlink() for path in files):
+        raise RuntimeError("evidence directory contains a file symlink")
+    return [{"path": str(path.relative_to(directory)), "sha256": sha256(path),
+             "bytes": path.stat().st_size} for path in files]
+
+
+def require_exact_root_entries(directory: Path, expected: set[str], label: str) -> None:
+    if {entry.name for entry in directory.iterdir()} != expected:
+        raise RuntimeError(f"{label} contains an unclaimed entry")
+
+
 def expected_case_files(ranks: int) -> set[str]:
     return CASE_FIXED_FILES | {f"rank_binding_{rank:04d}.json"
                               for rank in range(ranks)}
@@ -1005,6 +1079,17 @@ def self_test_cpu_audit_policy() -> None:
             ["included_rate", "excluded_saturated", "excluded_saturated"] or
             saturated["unsaturated_prefix_ratios"] != 1):
         raise RuntimeError("absorbing saturation invented or re-entered a rate")
+    legacy_low = [{"resolution": item["resolution"], "error": item["error"],
+                   "direct_delta": 0.0, "clean_floor": 1.0e-30}
+                  for item in o6_roundoff]
+    legacy_high = [{**item, "clean_floor": 1.0e-8} for item in legacy_low]
+    legacy_first = evaluate_legacy_rate_samples(legacy_low, 6.0, 0.25, "clean")
+    legacy_second = evaluate_legacy_rate_samples(legacy_high, 6.0, 0.25, "clean")
+    new_low = evaluate_rate_samples(legacy_low, 6.0, 0.25, "clean")
+    new_high = evaluate_rate_samples(legacy_high, 6.0, 0.25, "clean")
+    if (legacy_first != legacy_second or
+            new_low["rate_status"] == new_high["rate_status"]):
+        raise RuntimeError("coefficient floor altered the immutable legacy classifier")
 
     valid_norm = {field: "" for field in NORM_FIELDS}
     valid_norm.update({"operator": "scalar.first.0", "mask": "regular_negative",
@@ -1171,6 +1256,29 @@ def self_test_cpu_audit_policy() -> None:
         candidate = {**valid_result, field: bad}
         expect_runtime_error(lambda value=candidate: validate_result_numbers(value),
                              f"typed finite result mutation {field}")
+    with tempfile.TemporaryDirectory(prefix="cartoon-mms-resume-") as directory:
+        raw_path = Path(directory) / "raw.json"
+        result_path = Path(directory) / "result.json"
+        raw_resume = {**valid_result, "status": "pass", "mpi_ranks": 1,
+                      "operator_count": 171}
+        environment = {"SLURM_NTASKS": "1"}
+        binding = {"rank": 0, "local_rank": 0, "hostname": "fixture",
+                   "cuda_visible_devices": None, "visible_device_token": None,
+                   "selected_uuid": None, "gpu_name": None,
+                   "binding_verified": True}
+        resumed = {**raw_resume, "case_id": "fixture", "case_uuid": str(uuid.uuid4()),
+                   "phase": 0, "resolution": 32, "elapsed_seconds": 0.0,
+                   "csv_sha256": "1" * 64, "probes_csv_sha256": "2" * 64,
+                   "operator_names": [f"operator.{index}" for index in range(171)],
+                   "rank_bindings": [binding], "execution_environment": environment,
+                   "execution_environment_sha256": canonical_digest(environment),
+                   "domain": list(QUALIFICATION_DOMAIN), "output_bytes": 0}
+        write_atomic(raw_path, raw_resume)
+        write_atomic(result_path, resumed)
+        load_augmented_result(raw_path, result_path)
+        write_atomic(result_path, {**resumed, "status": "fail"})
+        expect_runtime_error(lambda: load_augmented_result(raw_path, result_path),
+                             "coherently rehashed resumed raw/result disagreement")
 
     forecast = output_forecast({order: DIAGNOSTIC_RESOLUTIONS for order in (2, 4, 6)},
                                list(range(8)), 4, False)
@@ -1210,68 +1318,200 @@ def self_test_cpu_audit_policy() -> None:
                                          "2" * 64, "3" * 64, "4" * 64,
                                          "Serial", 2, fake_roots[:1]),
         "incomplete immutable-root merge")
-    lifecycle_attempts = [{"tuple": [6, 48, 0], "status": "complete",
-                           "case_manifest_sha256": "5" * 64,
-                           "reason": "case_complete"}]
+    lifecycle_attempts = [
+        {"tuple": item, "status": "complete",
+         "case_manifest_sha256": str(index + 5) * 64,
+         "reason": "case_complete"}
+        for index, item in enumerate([[6, 48, 0], [6, 80, 0], [6, 96, 0]])]
     transition_search_stage(materialized, "stage_finalized", lifecycle_attempts,
                             "stage_complete_pending_numerical_review")
     transition_search_stage(materialized, "analysis_finalized", lifecycle_attempts,
                             "numerical_failures_retained", "6" * 64)
     if materialized["materialization"]["analysis_sha256"] != "6" * 64:
         raise RuntimeError("search postrun lifecycle did not bind analysis")
+    authorized = [[6, 48, 0], [6, 80, 0], [6, 96, 0]]
+    for failed_index in range(3):
+        partial = materialize_search_stage(
+            search, "o6_phase0_stage1", fake_source, "f" * 64, "1" * 64,
+            "2" * 64, "3" * 64, "4" * 64, "Serial", 2, fake_roots)
+        partial_attempts = []
+        for index, item in enumerate(authorized):
+            status = ("complete" if index < failed_index else
+                      "failed" if index == failed_index else
+                      "not_attempted_after_stop")
+            partial_attempts.append({
+                "tuple": item, "status": status,
+                "case_manifest_sha256": (str(index + 1) * 64
+                                         if status == "complete" else None),
+                "reason": status})
+        transition_search_stage(partial, "stage_partial", partial_attempts,
+                                "integrity_or_resource_failure")
+        if stage_missing_tuples(partial) != [tuple(item)
+                                             for item in authorized[failed_index:]]:
+            raise RuntimeError("partial stage continuation would rerun completed work")
+    with tempfile.TemporaryDirectory(prefix="cartoon-mms-stage-header-") as directory:
+        stage_fixture = materialize_search_stage(
+            search, "o6_phase0_stage1", fake_source, "f" * 64, "1" * 64,
+            sha256(root / "tst/inputs/z4c_cartoon_derivatives.athinput"),
+            sha256(root / "src/pgen/unit_tests/z4c_cartoon_derivatives_oracle.hpp"),
+            sha256(root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json"),
+            "Serial", 2, fake_roots)
+        transition_search_stage(stage_fixture, "stage_finalized", lifecycle_attempts,
+                                "stage_complete_pending_offline_analysis")
+        stage_path = Path(directory) / "search_stage_manifest.json"
+        write_atomic(stage_path, stage_fixture)
+        campaign_fixture = stage_campaign_record(stage_fixture, stage_path, [], [])
+        validate_stage_identity(stage_fixture, campaign_fixture, search, fake_roots)
+        for label, field, value in (
+            ("stage source", "source", {**fake_source, "commit": "0" * 40}),
+            ("stage executable", "executable_sha256", "0" * 64),
+            ("stage backend", "backend", "Cuda"),
+            ("stage ranks", "ranks", 4),
+            ("stage old-root binding", "immutable_root_bindings", fake_roots[:1])):
+            expect_runtime_error(
+                lambda key=field, replacement=value: validate_stage_identity(
+                    stage_fixture, {**campaign_fixture, key: replacement},
+                    search, fake_roots), label)
+        input_mutation = json.loads(json.dumps(stage_fixture))
+        input_mutation["materialization"]["input_sha256"] = "0" * 64
+        expect_runtime_error(
+            lambda: validate_stage_identity(
+                input_mutation, {**campaign_fixture, "input_sha256": "0" * 64},
+                search, fake_roots), "stage input")
+        expected_entries = {"search_stage_manifest.json"}
+        require_exact_root_entries(Path(directory), expected_entries,
+                                   "stage fixture root")
+        (Path(directory) / "unexpected").write_text("unclaimed", encoding="utf-8")
+        expect_runtime_error(
+            lambda: require_exact_root_entries(
+                Path(directory), expected_entries, "stage fixture root"),
+            "stage extra root entry")
+    rank_campaign = {field: None for field in CAMPAIGN_FIELDS}
+    rank_campaign.update({"schema": SCHEMA, "source": fake_source,
+                          "build_manifest_sha256": "f" * 64,
+                          "ranks": 2, "backend": "Serial",
+                          "campaign_mode": "accepted_frozen_window",
+                          "accepted_window_sha256": "7" * 64, "cases": []})
+    validate_rank_campaign_header(rank_campaign, 4, "accepted_frozen_window",
+                                  "7" * 64, fake_source, "Serial", "f" * 64)
+    for label, mutation in (
+        ("rank campaign purpose", {"campaign_mode": "diagnostic_only"}),
+        ("rank campaign window", {"accepted_window_sha256": "8" * 64}),
+        ("rank campaign schema", {"unexpected": None})):
+        expect_runtime_error(
+            lambda value={**rank_campaign, **mutation}: validate_rank_campaign_header(
+                value, 4, "accepted_frozen_window", "7" * 64, fake_source,
+                "Serial", "f" * 64), label)
     prior_tuples = {(order, resolution, phase) for order in (2, 4, 6)
                     for resolution in DIAGNOSTIC_RESOLUTIONS for phase in range(8)}
     prior_tuples.update({(2, 512, 0), (2, 1024, 0)})
     missing = [(6, 48, phase) for phase in range(8)]
-    window = {
-        "schema": "athenak_z4c_cartoon_mms_window_v1",
-        "state": "accepted_frozen_window", "purpose": "characterization_completion",
-        "search_template_sha256": sha256(
-            root / "tst/inputs/z4c_cartoon_mms_search_manifest.json"),
-        "candidate_manifest_sha256": "7" * 64,
-        "source_commit": fake_source["commit"], "source_tree": fake_source["tree"],
-        "kokkos_commit": fake_source["kokkos"], "executable_sha256": "1" * 64,
-        "build_manifest_sha256": "f" * 64, "input_sha256": "2" * 64,
-        "oracle_header_sha256": "3" * 64, "series_manifest_sha256": "4" * 64,
-        "qualification_window": {"6": [48]},
-        "selected_extra_points": [[6, 48]],
-        "execution_tuples": [list(item) for item in missing],
-        "prior_complete_tuples_sha256": canonical_digest(sorted(prior_tuples)),
-        "review": {"artifact_sha256": "8" * 64, "accepted": True}}
-    observed_missing = validate_frozen_window(
-        window, window["search_template_sha256"], fake_source, "f" * 64,
-        "1" * 64, "2" * 64, "3" * 64, "4" * 64, prior_tuples)
-    if observed_missing != missing:
-        raise RuntimeError("accepted frozen window did not produce exact missing tuples")
-    for label, mutation in (
-        ("unreviewed frozen window", {"state": "candidate_unreviewed"}),
-        ("rejected frozen window", {"review": {"artifact_sha256": "8" * 64,
-                                                "accepted": False}}),
-        ("mismatched frozen window", {"execution_tuples":
-                                       [list(item) for item in missing[:-1]]})):
-        candidate = {**window, **mutation}
+    with tempfile.TemporaryDirectory(prefix="cartoon-mms-window-") as directory:
+        authorization = Path(directory)
+        selected = [[6, 48]]
+        qualification_window = {"6": [48]}
+        candidate = {
+            "schema": "athenak_z4c_cartoon_mms_window_v1",
+            "state": "candidate_resolved", "purpose": "characterization_completion",
+            "qualification_window": qualification_window,
+            "selected_extra_points": selected,
+            "execution_tuples": [list(item) for item in missing],
+            "source_policy_commit": fake_source["commit"],
+            "source_policy_tree": fake_source["tree"],
+            "search_template_sha256": sha256(
+                root / "tst/inputs/z4c_cartoon_mms_search_manifest.json"),
+            "series_manifest_sha256": "4" * 64,
+            "immutable_root_bindings": fake_roots,
+            "observed_tuples_sha256": "9" * 64,
+            "resolutions_by_order": {"6": [32, 48, 64]},
+            "domain_certification": {"domain": list(QUALIFICATION_DOMAIN)},
+            "convergence_sha256": "a" * 64, "numerical_failures": [],
+            "qualification_claim": None, "backend_intent": "Serial",
+            "ranks_intent": [2, 4]}
+        candidate_path = authorization / "candidate_manifest.json"
+        write_atomic(candidate_path, candidate)
+        review_artifact = {
+            "schema": "athenak_z4c_cartoon_mms_window_review_v1",
+            "disposition": "ACCEPT", "candidate_manifest_sha256": sha256(candidate_path),
+            "source_policy_commit": fake_source["commit"],
+            "source_policy_tree": fake_source["tree"],
+            "purpose": "characterization_completion",
+            "selected_extra_points": selected,
+            "qualification_window": qualification_window,
+            "backend": "Serial", "ranks": [2, 4]}
+        review_path = authorization / "review_artifact.json"
+        write_atomic(review_path, review_artifact)
+        window = {
+            "schema": "athenak_z4c_cartoon_mms_window_v1",
+            "state": "accepted_frozen_window",
+            "purpose": "characterization_completion",
+            "search_template_sha256": candidate["search_template_sha256"],
+            "candidate_manifest_path": candidate_path.name,
+            "candidate_manifest_sha256": sha256(candidate_path),
+            "source_commit": fake_source["commit"], "source_tree": fake_source["tree"],
+            "kokkos_commit": fake_source["kokkos"], "executable_sha256": "1" * 64,
+            "build_manifest_sha256": "f" * 64, "input_sha256": "2" * 64,
+            "oracle_header_sha256": "3" * 64, "series_manifest_sha256": "4" * 64,
+            "qualification_window": qualification_window,
+            "selected_extra_points": selected,
+            "execution_tuples": [list(item) for item in missing],
+            "prior_complete_tuples_sha256": canonical_digest(sorted(prior_tuples)),
+            "backend": "Serial", "ranks": [2, 4],
+            "immutable_root_bindings_sha256": canonical_digest(fake_roots),
+            "observed_tuples_sha256": "9" * 64,
+            "convergence_sha256": "a" * 64,
+            "review": {"artifact_path": review_path.name,
+                       "artifact_sha256": sha256(review_path)}}
+        observed_missing = validate_frozen_window(
+            window, window["search_template_sha256"], fake_source, "f" * 64,
+            "1" * 64, "2" * 64, "3" * 64, "4" * 64, prior_tuples,
+            authorization, "Serial", 2)
+        if observed_missing != missing:
+            raise RuntimeError("accepted frozen window did not produce exact missing tuples")
+        for label, mutation in (
+            ("unreviewed frozen window", {"state": "candidate_unreviewed"}),
+            ("fake candidate hash", {"candidate_manifest_sha256": "7" * 64}),
+            ("fake review hash", {"review": {"artifact_path": review_path.name,
+                                              "artifact_sha256": "8" * 64}}),
+            ("mismatched frozen window", {"execution_tuples":
+                                           [list(item) for item in missing[:-1]]})):
+            expect_runtime_error(
+                lambda value={**window, **mutation}: validate_frozen_window(
+                    value, window["search_template_sha256"], fake_source, "f" * 64,
+                    "1" * 64, "2" * 64, "3" * 64, "4" * 64, prior_tuples,
+                    authorization, "Serial", 2), label)
+        fresh = sorted(
+            {(order, resolution, phase) for order in (2, 4, 6)
+             for resolution in DIAGNOSTIC_RESOLUTIONS for phase in range(8)} |
+            {(6, 48, phase) for phase in range(8)})
+        candidate.update({"purpose": "final_qualification",
+                          "execution_tuples": [list(item) for item in fresh]})
+        write_atomic(candidate_path, candidate)
+        review_artifact.update({"purpose": "final_qualification",
+                                "candidate_manifest_sha256": sha256(candidate_path)})
+        write_atomic(review_path, review_artifact)
+        final_window = {
+            **window, "purpose": "final_qualification",
+            "candidate_manifest_sha256": sha256(candidate_path),
+            "execution_tuples": [list(item) for item in fresh],
+            "prior_complete_tuples_sha256": canonical_digest([]),
+            "review": {"artifact_path": review_path.name,
+                       "artifact_sha256": sha256(review_path)}}
+        if validate_frozen_window(
+                final_window, window["search_template_sha256"], fake_source, "f" * 64,
+                "1" * 64, "2" * 64, "3" * 64, "4" * 64, set(), authorization,
+                "Serial", 4) != fresh:
+            raise RuntimeError("final frozen window did not require a fresh complete matrix")
         expect_runtime_error(
-            lambda value=candidate: validate_frozen_window(
-                value, window["search_template_sha256"], fake_source, "f" * 64,
-                "1" * 64, "2" * 64, "3" * 64, "4" * 64, prior_tuples),
-            label)
-    fresh = sorted(
-        {(order, resolution, phase) for order in (2, 4, 6)
-         for resolution in DIAGNOSTIC_RESOLUTIONS for phase in range(8)} |
-        {(6, 48, phase) for phase in range(8)})
-    final_window = {**window, "purpose": "final_qualification",
-                    "execution_tuples": [list(item) for item in fresh],
-                    "prior_complete_tuples_sha256": canonical_digest([])}
-    if validate_frozen_window(
-            final_window, window["search_template_sha256"], fake_source, "f" * 64,
-            "1" * 64, "2" * 64, "3" * 64, "4" * 64, set()) != fresh:
-        raise RuntimeError("final frozen window did not require a fresh complete matrix")
-    expect_runtime_error(
-        lambda: validate_frozen_window(
-            {**final_window, "purpose": "characterization_completion"},
-            window["search_template_sha256"], fake_source, "f" * 64,
-            "1" * 64, "2" * 64, "3" * 64, "4" * 64, set()),
-        "cross-used final window")
+            lambda: validate_frozen_window(
+                {**final_window, "purpose": "characterization_completion"},
+                window["search_template_sha256"], fake_source, "f" * 64,
+                "1" * 64, "2" * 64, "3" * 64, "4" * 64, set(), authorization,
+                "Serial", 2), "cross-used final window")
+        duplicate = authorization / "duplicate.json"
+        duplicate.write_text('{"schema":"x","schema":"y"}\n', encoding="utf-8")
+        expect_runtime_error(lambda: load_json_strict(duplicate),
+                             "duplicate-key authorization JSON")
     ledger_fixture = merge_case_ledgers(
         [{"spatial_order": 2, "resolution": 256, "phase": 0}],
         [{"spatial_order": 2, "resolution": 512, "phase": 0}])
@@ -1574,7 +1814,12 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
             max(axis_errors) > json_number(result, "diagnostic_axis_tolerance", 0.0)):
         raise RuntimeError(f"case {key} lacks the exact finite 161-series true-axis probe")
     if resumed_result is not None:
-        if (resumed_result.get("csv_sha256") != sha256(raw_csv) or
+        validate_augmented_result(result, resumed_result)
+        if (resumed_result.get("case_id") != key or
+                resumed_result.get("case_uuid") != case_uuid or
+                resumed_result.get("phase") != phase or
+                resumed_result.get("resolution") != resolution or
+                resumed_result.get("csv_sha256") != sha256(raw_csv) or
                 resumed_result.get("probes_csv_sha256") != sha256(probes_csv) or
                 resumed_result.get("operator_names") != operator_names or
                 resumed_result.get("rank_bindings") != bindings or
@@ -1594,6 +1839,7 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
                    "execution_environment_sha256": environment_sha256,
                    "domain": args.domain,
                    "output_bytes": raw_csv.stat().st_size + probes_csv.stat().st_size})
+    validate_augmented_result(load_json_strict(raw_result), result)
     (case / "result.json").write_text(json.dumps(result, indent=2, sort_keys=True,
                                                   allow_nan=False) + "\n",
                                       encoding="utf-8")
@@ -1656,6 +1902,51 @@ def validate_raw_result_projection(raw: object, augmented: object) -> None:
             set(augmented) != set(raw) | RAW_RESULT_FIELDS or
             any(augmented[key] != value for key, value in raw.items())):
         raise RuntimeError("raw Athena JSON is not an exact augmented-result projection")
+
+
+def validate_augmented_result(raw: object, augmented: object) -> None:
+    validate_raw_result_projection(raw, augmented)
+    if not isinstance(augmented, dict):
+        raise RuntimeError("augmented result is not an object")
+    validate_result_numbers(augmented)
+    if (not isinstance(augmented.get("case_id"), str) or
+            not isinstance(augmented.get("case_uuid"), str) or
+            not isinstance(augmented.get("execution_environment"), dict) or
+            any(not isinstance(key, str) or not isinstance(value, str)
+                for key, value in augmented["execution_environment"].items()) or
+            augmented.get("execution_environment_sha256") != canonical_digest(
+                augmented["execution_environment"]) or
+            any(not re.fullmatch(r"[0-9a-f]{64}", str(augmented.get(field, "")))
+                for field in ("csv_sha256", "probes_csv_sha256"))):
+        raise RuntimeError("augmented result identity/environment is malformed")
+    try:
+        uuid.UUID(augmented["case_uuid"])
+    except (ValueError, TypeError, AttributeError) as error:
+        raise RuntimeError("augmented result UUID is malformed") from error
+    json_integer(augmented, "phase")
+    json_integer(augmented, "resolution", 1)
+    json_integer(augmented, "output_bytes")
+    json_number(augmented, "elapsed_seconds", 0.0)
+    names = augmented.get("operator_names")
+    bindings = augmented.get("rank_bindings")
+    domain = augmented.get("domain")
+    if (not isinstance(names, list) or len(names) != 171 or
+            len(set(names)) != 171 or any(not isinstance(name, str) for name in names) or
+            not isinstance(bindings, list) or
+            len(bindings) != json_integer(augmented, "mpi_ranks", 1) or
+            not isinstance(domain, (list, tuple)) or len(domain) != 4 or
+            any(isinstance(value, bool) or not isinstance(value, (int, float)) or
+                not math.isfinite(float(value)) for value in domain)):
+        raise RuntimeError("augmented result inventory/domain is malformed")
+    for binding in bindings:
+        validate_rank_binding(binding)
+
+
+def load_augmented_result(raw_path: Path, result_path: Path) -> dict[str, object]:
+    raw = load_json_strict(raw_path)
+    result = load_json_strict(result_path)
+    validate_augmented_result(raw, result)
+    return result
 
 
 def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
@@ -1969,21 +2260,72 @@ def verify_characterization_root(raw_root: Path,
     return binding, cases
 
 
+def validate_stage_identity(stage: object, campaign: object,
+                            template: dict[str, object],
+                            expected_root_bindings: list[dict[str, object]]) -> \
+        tuple[dict[str, object], dict[str, str]]:
+    campaign_fields = {"schema", "state", "stage_manifest_sha256", "source",
+                       "build_manifest_sha256", "executable_sha256", "input_sha256",
+                       "oracle_header_sha256", "series_manifest_sha256", "backend",
+                       "ranks", "domain", "immutable_root_bindings", "cases",
+                       "failed_case_inventories"}
+    if (not isinstance(stage, dict) or stage.get("state") not in
+            {"stage_partial", "stage_finalized"} or set(stage) != set(template) or
+            any(stage[key] != template[key] for key in template
+                if key not in {"state", "materialization"}) or
+            not isinstance(campaign, dict) or set(campaign) != campaign_fields or
+            campaign.get("state") != stage.get("state") or
+            not isinstance(campaign.get("cases"), list)):
+        raise RuntimeError("completed stage lifecycle/campaign is malformed")
+    material = stage.get("materialization")
+    root = Path(__file__).resolve().parents[3]
+    if (not isinstance(material, dict) or
+            set(material) != set(template["materialization"]) or
+            material.get("immutable_root_bindings") != expected_root_bindings or
+            material.get("input_sha256") != sha256(
+                root / "tst/inputs/z4c_cartoon_derivatives.athinput") or
+            material.get("oracle_header_sha256") != sha256(
+                root / "src/pgen/unit_tests/z4c_cartoon_derivatives_oracle.hpp") or
+            material.get("series_manifest_sha256") != sha256(
+                root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json") or
+            material.get("domain") != list(QUALIFICATION_DOMAIN)):
+        raise RuntimeError("stage materialization identity differs")
+    material_source = {"commit": material.get("source_commit"),
+                       "tree": material.get("source_tree"),
+                       "kokkos": material.get("kokkos_commit")}
+    if (campaign.get("source") != material_source or
+            campaign.get("build_manifest_sha256") !=
+            material.get("build_manifest_sha256") or
+            campaign.get("executable_sha256") != material.get("executable_sha256") or
+            campaign.get("input_sha256") != material.get("input_sha256") or
+            campaign.get("oracle_header_sha256") !=
+            material.get("oracle_header_sha256") or
+            campaign.get("series_manifest_sha256") !=
+            material.get("series_manifest_sha256") or
+            campaign.get("backend") != material.get("backend") or
+            campaign.get("ranks") != material.get("ranks") or
+            campaign.get("domain") != material.get("domain") or
+            campaign.get("immutable_root_bindings") != expected_root_bindings):
+        raise RuntimeError("stage campaign/materialization identity differs")
+    return material, material_source
+
+
 def verify_stage_campaign_root(raw_root: Path,
-                               template: dict[str, object]) -> \
-        tuple[list[dict[str, object]], dict[str, object]]:
+                               template: dict[str, object],
+                               expected_root_bindings: list[dict[str, object]]) -> \
+        tuple[list[dict[str, object]], dict[str, object],
+              list[tuple[int, int, int]]]:
     if not raw_root.is_dir() or raw_root.is_symlink():
         raise RuntimeError("completed stage root is missing or a symlink")
     stage_path = raw_root / "search_stage_manifest.json"
     campaign_path = raw_root / "stage_campaign.json"
     stage = load_json_strict(stage_path)
     campaign = load_json_strict(campaign_path)
-    if (not isinstance(stage, dict) or stage.get("state") != "stage_finalized" or
-            not isinstance(campaign, dict) or campaign.get("state") != "stage_finalized" or
-            campaign.get("stage_manifest_sha256") != sha256(stage_path) or
-            not isinstance(campaign.get("cases"), list)):
-        raise RuntimeError("completed stage lifecycle/campaign is malformed")
-    stage_id = stage.get("materialization", {}).get("stage_id")
+    material, material_source = validate_stage_identity(
+        stage, campaign, template, expected_root_bindings)
+    if campaign.get("stage_manifest_sha256") != sha256(stage_path):
+        raise RuntimeError("stage campaign does not bind its materialization")
+    stage_id = material.get("stage_id")
     expected_tuples = [tuple(item) for item in
                        template["stages"].get(stage_id, {}).get("tuples", [])]
     cases = []
@@ -1996,13 +2338,14 @@ def verify_stage_campaign_root(raw_root: Path,
             raise RuntimeError("completed stage case is not an object")
         case = raw_root / f"{augmented.get('case_id')}-{augmented.get('case_uuid')}"
         manifest = load_json_strict(case / "manifest.json")
+        identity = manifest.get("identity", {}) if isinstance(manifest, dict) else {}
         if (not isinstance(manifest, dict) or
                 augmented.get("case_manifest_sha256") != sha256(case / "manifest.json") or
-                not verified_complete(case, manifest.get("identity", {}))):
+                not verified_complete(case, identity)):
             raise RuntimeError("completed stage case manifest/files changed")
         stored = load_json_strict(case / "result.json")
         raw = load_json_strict(case / "cartoon_mms.mms.json")
-        validate_raw_result_projection(raw, stored)
+        validate_augmented_result(raw, stored)
         if augmented != {**stored,
                          "case_manifest_sha256": sha256(case / "manifest.json")}:
             raise RuntimeError("completed stage campaign/result differs")
@@ -2010,6 +2353,23 @@ def verify_stage_campaign_root(raw_root: Path,
         order, resolution, phase = (json_integer(stored, "spatial_order", 2),
                                     json_integer(stored, "resolution", 1),
                                     json_integer(stored, "phase"))
+        expected_input = render_input(
+            Path(__file__).resolve().parents[3] /
+            "tst/inputs/z4c_cartoon_derivatives.athinput", order, resolution,
+            phase, "cartoon_mms", tuple(material["domain"]))
+        if (identity.get("source") != material_source or
+                identity.get("athena_sha256") != material.get("executable_sha256") or
+                identity.get("build_manifest_sha256") !=
+                material.get("build_manifest_sha256") or
+                identity.get("input_sha256") !=
+                hashlib.sha256(expected_input.encode()).hexdigest() or
+                identity.get("backend_required") != material.get("backend") or
+                identity.get("ranks") != material.get("ranks") or
+                list(identity.get("domain", ())) != material.get("domain") or
+                stored.get("backend") != material.get("backend") or
+                stored.get("mpi_ranks") != material.get("ranks") or
+                list(stored.get("domain", ())) != material.get("domain")):
+            raise RuntimeError("stage case identity differs from materialization")
         rows = list(csv.DictReader(
             (case / "cartoon_mms.mms.csv").open(encoding="utf-8")))
         probes = list(csv.DictReader(
@@ -2025,16 +2385,200 @@ def verify_stage_campaign_root(raw_root: Path,
         result["_evidence_source"] = f"stage:{stage_id}"
         cases.append(result)
         observed.append((order, resolution, phase))
-    if observed != expected_tuples:
-        raise RuntimeError("completed stage tuples differ from authorization")
-    material = stage["materialization"]
+    attempts = material.get("attempts")
+    if (not isinstance(attempts, list) or
+            [item.get("tuple") for item in attempts] !=
+            [list(item) for item in expected_tuples] or
+            any(set(item) != {"tuple", "status", "case_manifest_sha256", "reason"} or
+                item.get("status") not in
+                {"complete", "failed", "not_attempted_after_stop"}
+                for item in attempts)):
+        raise RuntimeError("stage attempt ledger differs from authorization")
+    completed_tuples = [tuple(item["tuple"]) for item in attempts
+                        if item.get("status") == "complete"]
+    missing_tuples = stage_missing_tuples(stage)
+    failed_indices = [index for index, item in enumerate(attempts)
+                      if item.get("status") == "failed"]
+    if (len(failed_indices) > 1 or
+            (failed_indices and any(item.get("status") != "not_attempted_after_stop"
+                                    for item in attempts[failed_indices[0] + 1:]))):
+        raise RuntimeError("stage attempt ledger continued after failure")
+    if observed != completed_tuples or (stage["state"] == "stage_finalized" and
+                                        missing_tuples):
+        raise RuntimeError("completed stage tuples differ from attempt ledger")
     if (material.get("result_set_sha256") != canonical_digest(
             [case["case_manifest_sha256"] for case in cases]) or
-            material.get("stop_reason") != "stage_complete_pending_offline_analysis"):
+            [item.get("case_manifest_sha256") for item in attempts
+             if item.get("status") == "complete"] !=
+            [case["case_manifest_sha256"] for case in cases] or
+            (stage["state"] == "stage_finalized") !=
+            (material.get("stop_reason") ==
+             "stage_complete_pending_offline_analysis")):
         raise RuntimeError("completed stage result-set/stop reason changed")
     binding = {"root": str(raw_root), "stage_id": stage_id,
+               "state": stage["state"],
                "stage_manifest_sha256": sha256(stage_path),
                "stage_campaign_sha256": sha256(campaign_path),
+               "case_manifest_sha256": [case["case_manifest_sha256"] for case in cases],
+               "completed_tuples": [list(item) for item in completed_tuples],
+               "missing_tuples": [list(item) for item in missing_tuples]}
+    expected_root_entries = {"preflight.json", "search_stage_manifest.json",
+                             "stage_campaign.json"}
+    for case in cases:
+        directory = raw_root / f"{case['case_id']}-{case['case_uuid']}"
+        expected_root_entries.add(directory.name)
+    failed_inventories = campaign.get("failed_case_inventories")
+    if not isinstance(failed_inventories, list):
+        raise RuntimeError("stage failed-case inventory is malformed")
+    for item in failed_inventories:
+        if (not isinstance(item, dict) or set(item) != {"directory", "files"} or
+                not isinstance(item["directory"], str) or
+                "/" in item["directory"] or not isinstance(item["files"], list)):
+            raise RuntimeError("stage failed-case inventory schema differs")
+        directory = raw_root / item["directory"]
+        if bound_directory_inventory(directory) != item["files"]:
+            raise RuntimeError("stage failed-case evidence changed")
+        expected_root_entries.add(item["directory"])
+    require_exact_root_entries(raw_root, expected_root_entries, "stage root")
+    return cases, binding, missing_tuples
+
+
+def verify_window_campaign_root(
+        raw_root: Path, expected_root_bindings: list[dict[str, object]],
+        completed_tuples: set[tuple[int, int, int]], template_sha256: str) -> \
+        tuple[list[dict[str, object]], dict[str, object]]:
+    execution_path = raw_root / "frozen_window_execution.json"
+    campaign_path = raw_root / "window_campaign.json"
+    execution = load_json_strict(execution_path)
+    campaign = load_json_strict(campaign_path)
+    execution_fields = {"schema", "state", "purpose", "attempt_id",
+                        "accepted_window_sha256", "accepted_review", "source",
+                        "build_manifest_sha256", "executable_sha256", "input_sha256",
+                        "oracle_header_sha256", "series_manifest_sha256", "backend",
+                        "ranks", "domain", "immutable_root_bindings",
+                        "execution_tuples", "attempts", "result_set_sha256",
+                        "stop_reason", "authorization_files"}
+    campaign_fields = {"schema", "state", "purpose", "accepted_window_sha256",
+                       "execution_manifest_sha256", "source", "build_manifest_sha256",
+                       "executable_sha256", "input_sha256", "oracle_header_sha256",
+                       "series_manifest_sha256", "backend", "ranks", "domain",
+                       "immutable_root_bindings", "cases", "qualification_claim"}
+    if (not isinstance(execution, dict) or set(execution) != execution_fields or
+            execution.get("schema") !=
+            "athenak_z4c_cartoon_mms_window_execution_v1" or
+            execution.get("state") != "execution_finalized" or
+            execution.get("purpose") != "characterization_completion" or
+            execution.get("immutable_root_bindings") != expected_root_bindings or
+            not isinstance(campaign, dict) or set(campaign) != campaign_fields or
+            campaign.get("state") != "execution_finalized" or
+            campaign.get("purpose") != "characterization_completion" or
+            campaign.get("execution_manifest_sha256") != sha256(execution_path) or
+            campaign.get("qualification_claim") is not None):
+        raise RuntimeError("characterization-completion lifecycle schema differs")
+    for field in ("source", "build_manifest_sha256", "executable_sha256",
+                  "input_sha256", "oracle_header_sha256", "series_manifest_sha256",
+                  "backend", "ranks", "domain", "immutable_root_bindings"):
+        if campaign.get(field) != execution.get(field):
+            raise RuntimeError("completion campaign/execution identity differs")
+    authorization = raw_root / "authorization"
+    files = execution.get("authorization_files")
+    if (not isinstance(files, dict) or set(files) !=
+            {"accepted_window.json", "candidate_manifest.json", "review_artifact.json"} or
+            any(sha256(authorization / name) != digest for name, digest in files.items())):
+        raise RuntimeError("completion authorization artifacts changed")
+    accepted_path = authorization / "accepted_window.json"
+    accepted = load_json_strict(accepted_path)
+    if (not isinstance(accepted, dict) or
+            accepted.get("immutable_root_bindings_sha256") !=
+            canonical_digest(expected_root_bindings) or
+            execution.get("accepted_review") != accepted.get("review")):
+        raise RuntimeError("completion accepted window uses different immutable roots")
+    required = validate_frozen_window(
+        accepted, template_sha256, execution["source"],
+        execution["build_manifest_sha256"], execution["executable_sha256"],
+        execution["input_sha256"], execution["oracle_header_sha256"],
+        execution["series_manifest_sha256"], completed_tuples, authorization,
+        execution["backend"], execution["ranks"])
+    if (sha256(accepted_path) != execution["accepted_window_sha256"] or
+            campaign.get("accepted_window_sha256") !=
+            execution["accepted_window_sha256"] or
+            [tuple(item) for item in execution["execution_tuples"]] != required):
+        raise RuntimeError("completion accepted-window binding differs")
+    attempts = execution.get("attempts")
+    if (not isinstance(attempts, list) or
+            [tuple(item.get("tuple", ())) for item in attempts] != required or
+            any(set(item) != {"tuple", "status", "case_manifest_sha256", "reason"} or
+                item.get("status") != "complete" or
+                not re.fullmatch(r"[0-9a-f]{64}",
+                                 str(item.get("case_manifest_sha256", "")))
+                for item in attempts) or
+            execution.get("stop_reason") !=
+            "accepted_window_execution_complete_pending_merged_analysis"):
+        raise RuntimeError("completion attempt ledger differs")
+    expected_operators = [item["name"] for item in load_json_strict(
+        Path(__file__).resolve().parents[3] /
+        "tst/unit/z4c/z4c_cartoon_derivatives_series.json")["series"]]
+    cases = []
+    observed = []
+    for augmented in campaign["cases"]:
+        case = raw_root / f"{augmented.get('case_id')}-{augmented.get('case_uuid')}"
+        manifest = load_json_strict(case / "manifest.json")
+        identity = manifest.get("identity", {}) if isinstance(manifest, dict) else {}
+        if (not isinstance(augmented, dict) or not verified_complete(case, identity) or
+                augmented.get("case_manifest_sha256") != sha256(case / "manifest.json")):
+            raise RuntimeError("completion case manifest differs")
+        stored = load_augmented_result(case / "cartoon_mms.mms.json",
+                                       case / "result.json")
+        if augmented != {**stored,
+                         "case_manifest_sha256": sha256(case / "manifest.json")}:
+            raise RuntimeError("completion campaign/result differs")
+        order, resolution, phase = (json_integer(stored, "spatial_order", 2),
+                                    json_integer(stored, "resolution", 1),
+                                    json_integer(stored, "phase"))
+        expected_input = render_input(
+            Path(__file__).resolve().parents[3] /
+            "tst/inputs/z4c_cartoon_derivatives.athinput", order, resolution,
+            phase, "cartoon_mms", tuple(execution["domain"]))
+        if (identity.get("source") != execution["source"] or
+                identity.get("athena_sha256") != execution["executable_sha256"] or
+                identity.get("build_manifest_sha256") !=
+                execution["build_manifest_sha256"] or
+                identity.get("input_sha256") !=
+                hashlib.sha256(expected_input.encode()).hexdigest() or
+                identity.get("backend_required") != execution["backend"] or
+                identity.get("ranks") != execution["ranks"] or
+                list(identity.get("domain", ())) != execution["domain"]):
+            raise RuntimeError("completion case identity differs")
+        rows = list(csv.DictReader(
+            (case / "cartoon_mms.mms.csv").open(encoding="utf-8")))
+        probes = list(csv.DictReader(
+            (case / "cartoon_mms.mms.probes.csv").open(encoding="utf-8")))
+        for row in rows:
+            validate_norm_row(row)
+            validate_norm_geometry(row, order, resolution, tuple(stored["domain"]))
+        for row in probes:
+            validate_probe_geometry(row, order, resolution, tuple(stored["domain"]))
+        validate_case_inventory(order, expected_operators, rows, probes)
+        result = dict(augmented)
+        result["_replay_case_directory"] = str(case)
+        result["_evidence_source"] = "characterization_completion"
+        cases.append(result)
+        observed.append((order, resolution, phase))
+    if (observed != required or
+            execution.get("result_set_sha256") != canonical_digest(
+                [case["case_manifest_sha256"] for case in cases]) or
+            [item["case_manifest_sha256"] for item in attempts] !=
+            [case["case_manifest_sha256"] for case in cases]):
+        raise RuntimeError("completion result set differs from accepted window")
+    expected_entries = (
+        {"preflight.json", "frozen_window_execution.json",
+         "window_campaign.json", "authorization"} |
+        {f"{case['case_id']}-{case['case_uuid']}" for case in cases})
+    require_exact_root_entries(raw_root, expected_entries, "completion root")
+    binding = {"root": str(raw_root), "purpose": "characterization_completion",
+               "execution_sha256": sha256(execution_path),
+               "campaign_sha256": sha256(campaign_path),
+               "accepted_window_sha256": sha256(accepted_path),
                "case_manifest_sha256": [case["case_manifest_sha256"] for case in cases]}
     return cases, binding
 
@@ -2236,6 +2780,7 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
                             "diagnostic_resolutions": list(required),
                             "samples": all_values, "rates": [],
                             "rate_status": [], "interval_reasons": [],
+                            "legacy_evaluation": None,
                             "outcome_reason": "incomplete_resolution_set",
                             "outcome_detail": reason, "passed": False})
             continue
@@ -2245,6 +2790,8 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
                                 if selected else None)
         expected, margin = rate_policy(order, mask, lane, norm,
                                        probe_classification)
+        legacy_evaluation = evaluate_legacy_rate_samples(
+            selected, expected, margin, lane)
         evaluation = evaluate_rate_samples(selected, expected, margin, lane)
         if not evaluation["passed"]:
             failures.append(
@@ -2255,7 +2802,7 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
                   "series": series, "lane": lane, "norm": norm,
                   "expected": expected, "margin": margin,
                   "diagnostic_resolutions": list(required),
-                  "samples": selected}
+                  "samples": selected, "legacy_evaluation": legacy_evaluation}
         record.update(evaluation)
         records.append(record)
 
@@ -2315,7 +2862,7 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
         "\\addlegendentry{diagnostic unsaturated series}\n"
         "\\end{axis}\n\\end{tikzpicture}\n", encoding="utf-8")
     inconclusive_reasons = {"saturated_insufficient", "insufficient_ratios"}
-    partition = {
+    coefficient_partition = {
         "norm_inconclusive": sum(record["source"] == "norm" and
                                  not record["passed"] and
                                  record.get("outcome_reason") in inconclusive_reasons
@@ -2333,6 +2880,28 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
                                record.get("outcome_reason") not in inconclusive_reasons
                                for record in records),
     }
+    legacy_partition = {
+        "norm_inconclusive": sum(
+            record["source"] == "norm" and
+            record.get("legacy_evaluation", {}).get("outcome_reason") ==
+            "legacy_inconclusive" for record in records
+            if record.get("legacy_evaluation") is not None),
+        "norm_rate_miss": sum(
+            record["source"] == "norm" and
+            record.get("legacy_evaluation", {}).get("outcome_reason") ==
+            "legacy_rate_miss" for record in records
+            if record.get("legacy_evaluation") is not None),
+        "probe_inconclusive": sum(
+            record["source"] == "probe" and
+            record.get("legacy_evaluation", {}).get("outcome_reason") ==
+            "legacy_inconclusive" for record in records
+            if record.get("legacy_evaluation") is not None),
+        "probe_rate_miss": sum(
+            record["source"] == "probe" and
+            record.get("legacy_evaluation", {}).get("outcome_reason") ==
+            "legacy_rate_miss" for record in records
+            if record.get("legacy_evaluation") is not None),
+    }
     write_atomic(output / "convergence.json", {
         "schema": SCHEMA, "series_manifest_sha256": sha256(series_manifest),
         "diagnostic_resolutions_by_order": {str(order): list(values)
@@ -2345,7 +2914,8 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
                                        key=lambda item: item["floor_id"]),
         "legacy_normalization_actions": sorted(normalization_actions),
         "records": records, "exact_records": exact_records,
-        "pre_floor_partition": partition,
+        "legacy_pre_coefficient_floor_partition": legacy_partition,
+        "coefficient_floor_partition": coefficient_partition,
         "artifacts": {"convergence.csv": sha256(csv_path),
                       "convergence_rates.pgfplots.dat": sha256(data_path),
                       "convergence_plot.tex": sha256(plot_path)},
@@ -2353,18 +2923,33 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
     return failures
 
 
+def validate_rank_campaign_header(reference: object, current_ranks: int,
+                                  campaign_mode: str,
+                                  accepted_window_sha256: str | None,
+                                  source: dict[str, str], backend: str,
+                                  build_manifest_sha256: str) -> None:
+    if (not isinstance(reference, dict) or set(reference) != CAMPAIGN_FIELDS or
+            reference.get("schema") != SCHEMA or
+            not isinstance(reference.get("cases"), list) or
+            reference.get("campaign_mode") != campaign_mode or
+            reference.get("accepted_window_sha256") != accepted_window_sha256 or
+            reference.get("source") != source or reference.get("backend") != backend or
+            reference.get("build_manifest_sha256") != build_manifest_sha256 or
+            {reference.get("ranks"), current_ranks} != {2, 4}):
+        raise RuntimeError("reference campaign differs from the exact evidence schema")
+
+
 def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
-                           reference_root: Path) -> dict[str, object]:
+                           reference_root: Path, current_ranks: int,
+                           campaign_mode: str,
+                           accepted_window_sha256: str | None,
+                           source: dict[str, str], backend: str,
+                           build_manifest_sha256: str) -> dict[str, object]:
     reference_campaign_path = reference_root / "campaign.json"
     reference = load_json_strict(reference_campaign_path)
-    campaign_fields = {"schema", "source", "build_manifest",
-                       "build_manifest_sha256", "environment", "environment_sha256",
-                       "ranks", "backend", "diagnostic_resolutions",
-                       "reduction_tolerance_factor", "convergence_artifacts", "cases"}
-    if (not isinstance(reference, dict) or set(reference) != campaign_fields or
-            reference.get("schema") != SCHEMA or
-            not isinstance(reference.get("cases"), list)):
-        raise RuntimeError("reference campaign differs from the exact evidence schema")
+    validate_rank_campaign_header(reference, current_ranks, campaign_mode,
+                                  accepted_window_sha256, source, backend,
+                                  build_manifest_sha256)
     reference_case_manifests = [item.get("case_manifest_sha256")
                                 for item in reference.get("cases", [])]
     if (not reference_case_manifests or None in reference_case_manifests or
@@ -2373,6 +2958,11 @@ def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
         raise RuntimeError("reference campaign does not bind every case manifest")
     reference_cases = {(item["spatial_order"], item["resolution"], item["phase"]): item
                        for item in reference["cases"]}
+    current_keys = {(item["spatial_order"], item["resolution"], item["phase"])
+                    for item in cases}
+    if (len(reference_cases) != len(reference["cases"]) or
+            len(current_keys) != len(cases) or set(reference_cases) != current_keys):
+        raise RuntimeError("rank campaigns do not contain the same exact tuple set")
     comparisons = []
     failures = []
     for current in cases:
@@ -2574,24 +3164,42 @@ def materialize_search_stage(template: dict[str, object], stage_id: str,
                      "ranks": ranks, "domain": list(QUALIFICATION_DOMAIN),
                      "attempt_id": str(uuid.uuid4()),
                      "immutable_root_bindings": root_bindings})
-    if (len(root_bindings) != 2 or {item.get("name") for item in root_bindings} !=
-            {"job56586376", "job56587561"}):
-        raise RuntimeError("stage materialization requires both immutable prior roots")
+    names = {item.get("name") for item in root_bindings}
+    if (len(root_bindings) not in (2, 3) or
+            not {"job56586376", "job56587561"}.issubset(names) or
+            (len(root_bindings) == 3 and
+             len([name for name in names if str(name).startswith("partial:")]) != 1)):
+        raise RuntimeError("stage materialization requires exact prior/partial roots")
     return value
 
 
 def transition_search_stage(value: dict[str, object], state: str,
                             attempts: list[dict[str, object]], stop_reason: str,
                             analysis_sha256: str | None = None) -> None:
-    allowed = {"prelaunch_bound": {"stage_finalized"},
+    allowed = {"prelaunch_bound": {"stage_partial", "stage_finalized"},
+               "stage_partial": {"stage_finalized"},
                "stage_finalized": {"analysis_finalized"}}
     if state not in allowed.get(str(value.get("state")), set()):
         raise RuntimeError("invalid search-manifest lifecycle transition")
     material = value["materialization"]
+    expected_tuples = value["stages"][material["stage_id"]]["tuples"]
     for attempt in attempts:
         if (set(attempt) != {"tuple", "status", "case_manifest_sha256", "reason"} or
-                attempt["status"] not in {"complete", "failed"}):
+                attempt["status"] not in
+                {"complete", "failed", "not_attempted_after_stop"}):
             raise RuntimeError("stage attempt differs from exact lifecycle schema")
+    if ([item["tuple"] for item in attempts] != expected_tuples or
+            sum(item["status"] == "failed" for item in attempts) > 1 or
+            any(item["case_manifest_sha256"] is not None
+                for item in attempts if item["status"] != "complete") or
+            any(not re.fullmatch(r"[0-9a-f]{64}", str(item["case_manifest_sha256"]))
+                for item in attempts if item["status"] == "complete")):
+        raise RuntimeError("stage attempt ledger does not cover exact authorized tuples")
+    failed = next((index for index, item in enumerate(attempts)
+                   if item["status"] == "failed"), None)
+    if failed is not None and any(item["status"] != "not_attempted_after_stop"
+                                  for item in attempts[failed + 1:]):
+        raise RuntimeError("stage attempted work after its first failure")
     value["state"] = state
     material["attempts"] = attempts
     completed = [item["case_manifest_sha256"] for item in attempts
@@ -2600,6 +3208,34 @@ def transition_search_stage(value: dict[str, object], state: str,
     material["result_set_sha256"] = canonical_digest(completed)
     material["stop_reason"] = stop_reason
     material["analysis_sha256"] = analysis_sha256
+
+
+def stage_campaign_record(stage: dict[str, object], stage_path: Path,
+                          cases: list[dict[str, object]],
+                          failed_case_inventories: list[dict[str, object]]) -> \
+        dict[str, object]:
+    material = stage["materialization"]
+    return {"schema": SCHEMA, "state": stage["state"],
+            "stage_manifest_sha256": sha256(stage_path),
+            "source": {"commit": material["source_commit"],
+                       "tree": material["source_tree"],
+                       "kokkos": material["kokkos_commit"]},
+            "build_manifest_sha256": material["build_manifest_sha256"],
+            "executable_sha256": material["executable_sha256"],
+            "input_sha256": material["input_sha256"],
+            "oracle_header_sha256": material["oracle_header_sha256"],
+            "series_manifest_sha256": material["series_manifest_sha256"],
+            "backend": material["backend"], "ranks": material["ranks"],
+            "domain": material["domain"],
+            "immutable_root_bindings": material["immutable_root_bindings"],
+            "cases": cases, "failed_case_inventories": failed_case_inventories}
+
+
+def stage_missing_tuples(stage: dict[str, object]) -> list[tuple[int, int, int]]:
+    material = stage.get("materialization", {})
+    attempts = material.get("attempts", []) if isinstance(material, dict) else []
+    return [tuple(item["tuple"]) for item in attempts
+            if item.get("status") in {"failed", "not_attempted_after_stop"}]
 
 
 def verify_stage_roots(specifications: list[str] | None) -> \
@@ -2633,14 +3269,17 @@ def validate_frozen_window(value: object, template_sha256: str,
                            source: dict[str, str], build_manifest_sha256: str,
                            executable_sha256: str, input_sha256: str,
                            oracle_sha256: str, series_sha256: str,
-                           completed_tuples: set[tuple[int, int, int]]) -> \
+                           completed_tuples: set[tuple[int, int, int]],
+                           authorization_root: Path, backend: str, ranks: int) -> \
         list[tuple[int, int, int]]:
     fields = {"schema", "state", "purpose", "search_template_sha256",
-              "candidate_manifest_sha256",
+              "candidate_manifest_path", "candidate_manifest_sha256",
               "source_commit", "source_tree", "kokkos_commit", "executable_sha256",
               "build_manifest_sha256", "input_sha256", "oracle_header_sha256",
               "series_manifest_sha256", "qualification_window", "selected_extra_points",
-              "execution_tuples", "prior_complete_tuples_sha256", "review"}
+              "execution_tuples", "prior_complete_tuples_sha256", "backend", "ranks",
+              "immutable_root_bindings_sha256", "observed_tuples_sha256",
+              "convergence_sha256", "review"}
     if (not isinstance(value, dict) or set(value) != fields or
             value.get("schema") != "athenak_z4c_cartoon_mms_window_v1" or
             value.get("state") != "accepted_frozen_window" or
@@ -2655,14 +3294,20 @@ def validate_frozen_window(value: object, template_sha256: str,
             value.get("input_sha256") != input_sha256 or
             value.get("oracle_header_sha256") != oracle_sha256 or
             value.get("series_manifest_sha256") != series_sha256 or
+            value.get("backend") != backend or
+            value.get("ranks") != ([4] if backend == "Cuda" else [2, 4]) or
+            ranks not in value.get("ranks", []) or
             not isinstance(value.get("qualification_window"), dict)):
         raise RuntimeError("accepted frozen-window identity/schema differs")
     review = value.get("review")
-    if (not isinstance(review, dict) or set(review) != {"artifact_sha256", "accepted"} or
-            review.get("accepted") is not True or
+    if (not isinstance(review, dict) or
+            set(review) != {"artifact_path", "artifact_sha256"} or
             not re.fullmatch(r"[0-9a-f]{64}", str(review.get("artifact_sha256", ""))) or
             not re.fullmatch(r"[0-9a-f]{64}", str(value.get("candidate_manifest_sha256", "")))):
         raise RuntimeError("frozen window lacks independent accepted review binding")
+    if (value.get("candidate_manifest_path") != "candidate_manifest.json" or
+            review.get("artifact_path") != "review_artifact.json"):
+        raise RuntimeError("authorization artifact filenames are not canonical")
     if value.get("prior_complete_tuples_sha256") != canonical_digest(
             sorted(completed_tuples)):
         raise RuntimeError("frozen window prior-complete ledger differs")
@@ -2695,6 +3340,69 @@ def validate_frozen_window(value: object, template_sha256: str,
                        for order in sorted({item[0] for item in selected})}
     if value["qualification_window"] != expected_window:
         raise RuntimeError("frozen qualification window differs from selected points")
+    def bound_path(token: object) -> Path:
+        if not isinstance(token, str):
+            raise RuntimeError("authorization artifact path is not a string")
+        relative = Path(token)
+        if relative.is_absolute() or ".." in relative.parts:
+            raise RuntimeError("authorization artifact path escapes its root")
+        path = (authorization_root / relative).resolve()
+        if authorization_root.resolve() not in path.parents or not path.is_file() or \
+           path.is_symlink():
+            raise RuntimeError("authorization artifact is missing, escaped, or a symlink")
+        return path
+    candidate_path = bound_path(value.get("candidate_manifest_path"))
+    review_path = bound_path(review.get("artifact_path"))
+    if (sha256(candidate_path) != value["candidate_manifest_sha256"] or
+            sha256(review_path) != review["artifact_sha256"]):
+        raise RuntimeError("candidate or review artifact digest changed")
+    candidate = load_json_strict(candidate_path)
+    review_artifact = load_json_strict(review_path)
+    candidate_fields = {
+        "schema", "state", "purpose", "qualification_window",
+        "selected_extra_points", "execution_tuples", "source_policy_commit",
+        "source_policy_tree", "search_template_sha256", "series_manifest_sha256",
+        "immutable_root_bindings", "observed_tuples_sha256",
+        "resolutions_by_order", "domain_certification", "convergence_sha256",
+        "numerical_failures", "qualification_claim", "backend_intent",
+        "ranks_intent"}
+    if (not isinstance(candidate, dict) or set(candidate) != candidate_fields or
+            candidate.get("schema") != "athenak_z4c_cartoon_mms_window_v1" or
+            candidate.get("state") != "candidate_resolved" or
+            candidate.get("purpose") != value["purpose"] or
+            candidate.get("qualification_window") != value["qualification_window"] or
+            candidate.get("selected_extra_points") != raw_selected or
+            candidate.get("execution_tuples") != raw_execution or
+            candidate.get("source_policy_commit") != source["commit"] or
+            candidate.get("source_policy_tree") != source["tree"] or
+            candidate.get("search_template_sha256") != template_sha256 or
+            candidate.get("series_manifest_sha256") != series_sha256 or
+            candidate.get("backend_intent") != backend or
+            candidate.get("ranks_intent") != value["ranks"] or
+            canonical_digest(candidate.get("immutable_root_bindings")) !=
+            value.get("immutable_root_bindings_sha256") or
+            candidate.get("observed_tuples_sha256") !=
+            value.get("observed_tuples_sha256") or
+            candidate.get("convergence_sha256") != value.get("convergence_sha256") or
+            candidate.get("qualification_claim") is not None):
+        raise RuntimeError("resolved candidate does not project into accepted window")
+    review_fields = {"schema", "disposition", "candidate_manifest_sha256",
+                     "source_policy_commit", "source_policy_tree", "purpose",
+                     "selected_extra_points", "qualification_window", "backend",
+                     "ranks"}
+    if (not isinstance(review_artifact, dict) or set(review_artifact) != review_fields or
+            review_artifact.get("schema") !=
+            "athenak_z4c_cartoon_mms_window_review_v1" or
+            review_artifact.get("disposition") != "ACCEPT" or
+            review_artifact.get("candidate_manifest_sha256") != sha256(candidate_path) or
+            review_artifact.get("source_policy_commit") != source["commit"] or
+            review_artifact.get("source_policy_tree") != source["tree"] or
+            review_artifact.get("purpose") != value["purpose"] or
+            review_artifact.get("selected_extra_points") != raw_selected or
+            review_artifact.get("qualification_window") != value["qualification_window"] or
+            review_artifact.get("backend") != backend or
+            review_artifact.get("ranks") != value["ranks"]):
+        raise RuntimeError("independent review artifact did not accept this candidate")
     if value["purpose"] == "characterization_completion":
         required = sorted((order, resolution, phase)
                           for order, resolution in selected for phase in range(8)
@@ -2732,12 +3440,12 @@ def replay_campaign(raw_root: Path, analysis_output: Path, root: Path,
     failures = convergence_gate(cases, raw_root, analysis_output, series_manifest,
                                 resolutions, allow_legacy_nullable=True)
     convergence = load_json_strict(analysis_output / "convergence.json")
-    partition = convergence.get("pre_floor_partition", {})
+    partition = convergence.get("legacy_pre_coefficient_floor_partition", {})
     observed_partition = tuple(partition.get(name) for name in
                                ("norm_inconclusive", "norm_rate_miss",
                                 "probe_inconclusive", "probe_rate_miss"))
     if observed_partition != PRESERVED_JOB_56586376_AUDIT_COUNTS:
-        raise RuntimeError(f"job56586376 pre-floor partition changed: "
+        raise RuntimeError(f"job56586376 legacy pre-coefficient-floor partition changed: "
                            f"{observed_partition}")
     artifacts = {name: sha256(analysis_output / name) for name in
                  ("convergence.json", "convergence.csv",
@@ -2772,10 +3480,30 @@ def analyze_search(immutable_specs: list[str] | None, stage_specs: list[str] | N
     template = load_search_manifest(
         root / "tst/inputs/z4c_cartoon_mms_search_manifest.json")
     stage_cases = []
+    completed_tuples = {
+        (int(case["spatial_order"]), int(case["resolution"]), int(case["phase"]))
+        for case in diagnostic_cases + characterization_cases}
     for raw_path in stage_specs or []:
-        cases, binding = verify_stage_campaign_root(Path(raw_path).resolve(), template)
+        stage_root = Path(raw_path).resolve()
+        if (stage_root / "window_campaign.json").is_file():
+            cases, binding = verify_window_campaign_root(
+                stage_root, bindings, completed_tuples,
+                sha256(root / "tst/inputs/z4c_cartoon_mms_search_manifest.json"))
+            missing = []
+            name = "window:characterization_completion"
+        else:
+            cases, binding, missing = verify_stage_campaign_root(
+                stage_root, template, bindings)
+            name = (f"partial:{binding['stage_id']}" if missing else
+                    f"stage:{binding['stage_id']}")
         stage_cases.extend(cases)
-        bindings.append({"name": f"stage:{binding['stage_id']}",
+        for case in cases:
+            item = (int(case["spatial_order"]), int(case["resolution"]),
+                    int(case["phase"]))
+            if item in completed_tuples:
+                raise RuntimeError("immutable search evidence roots overlap")
+            completed_tuples.add(item)
+        bindings.append({"name": name,
                          "root": binding["root"],
                          "binding_sha256": canonical_digest(binding)})
     cases = merge_case_ledgers(diagnostic_cases, characterization_cases, stage_cases)
@@ -2816,8 +3544,8 @@ def analyze_search(immutable_specs: list[str] | None, stage_specs: list[str] | N
         "domain_certification": certification,
         "convergence_sha256": sha256(analysis_output / "convergence.json"),
         "numerical_failures": failures,
-        "qualification_claim": None,
-        "review": {"artifact_sha256": None, "accepted": False}})
+        "qualification_claim": None, "backend_intent": None,
+        "ranks_intent": None})
     return 0
 
 
@@ -2885,7 +3613,7 @@ def main() -> int:
     frozen_window_purpose = None
     if args.frozen_window_manifest is not None:
         if (args.diagnostic_only or args.characterization_stage is not None or
-                args.compare_campaign is not None or args.orders != (2, 4, 6) or
+                args.orders != (2, 4, 6) or
                 args.resolutions is not None or args.phases != tuple(range(8))):
             raise RuntimeError("frozen-window selection comes only from the accepted manifest")
         frozen_window = load_json_strict(args.frozen_window_manifest.resolve())
@@ -2896,6 +3624,9 @@ def main() -> int:
         if frozen_window_purpose not in {
                 "characterization_completion", "final_qualification"}:
             raise RuntimeError("frozen-window purpose is missing or unsupported")
+        if (args.compare_campaign is not None and
+                frozen_window_purpose != "final_qualification"):
+            raise RuntimeError("rank comparison is allowed only for final qualification")
         run_tuples = []
         for item in frozen_window["execution_tuples"]:
             if (not isinstance(item, list) or len(item) != 3 or
@@ -2913,8 +3644,6 @@ def main() -> int:
             for order in args.orders}
         campaign_mode = "accepted_frozen_window"
     elif args.characterization_stage is not None:
-        if args.stage_root:
-            raise RuntimeError("stage roots are not accepted by characterization execution")
         if (args.diagnostic_only or args.compare_campaign is not None or
                 args.orders != (2, 4, 6) or
                 args.resolutions is not None or args.phases != tuple(range(8))):
@@ -2991,6 +3720,7 @@ def main() -> int:
             build["kokkos_commit"] != source["kokkos"]):
         raise RuntimeError("build manifest source identity does not match driver checkout")
     frozen_window_sha256 = None
+    continuation_cases = []
     if frozen_window is not None:
         immutable_root_bindings = []
         completed_tuples = set()
@@ -3002,10 +3732,12 @@ def main() -> int:
                  int(case["phase"]))
                 for case in diagnostic_cases + characterization_cases}
             for stage_root in args.stage_root or []:
-                stage_cases, binding = verify_stage_campaign_root(
-                    Path(stage_root).resolve(), search)
+                stage_cases, binding, missing = verify_stage_campaign_root(
+                    Path(stage_root).resolve(), search, immutable_root_bindings)
                 immutable_root_bindings.append({
-                    "name": f"stage:{binding['stage_id']}", "root": binding["root"],
+                    "name": (f"partial:{binding['stage_id']}" if missing else
+                             f"stage:{binding['stage_id']}"),
+                    "root": binding["root"],
                     "binding_sha256": canonical_digest(binding)})
                 for case in stage_cases:
                     item = (int(case["spatial_order"]), int(case["resolution"]),
@@ -3015,19 +3747,45 @@ def main() -> int:
                     completed_tuples.add(item)
         elif args.immutable_root or args.stage_root:
             raise RuntimeError("final qualification cannot consume old-source roots")
+        if (frozen_window_purpose == "characterization_completion" and
+                frozen_window.get("immutable_root_bindings_sha256") !=
+                canonical_digest(immutable_root_bindings)):
+            raise RuntimeError("accepted characterization window binds different roots")
         validated_tuples = validate_frozen_window(
             frozen_window,
             sha256(root / "tst/inputs/z4c_cartoon_mms_search_manifest.json"),
             source, sha256(args.build_manifest), sha256(args.athena),
             sha256(args.input),
             sha256(root / "src/pgen/unit_tests/z4c_cartoon_derivatives_oracle.hpp"),
-            sha256(series_manifest), completed_tuples)
+            sha256(series_manifest), completed_tuples,
+            args.frozen_window_manifest.resolve().parent,
+            args.require_backend, args.ranks)
         if validated_tuples != run_tuples:
             raise RuntimeError("frozen-window tuple selection changed after identity validation")
         frozen_window_sha256 = sha256(args.frozen_window_manifest.resolve())
     elif args.characterization_stage is not None:
         immutable_root_bindings, _, _ = verify_stage_roots(
             args.immutable_root)
+        if args.stage_root:
+            if len(args.stage_root) != 1:
+                raise RuntimeError("stage continuation requires exactly one partial root")
+            continuation_cases, binding, missing = verify_stage_campaign_root(
+                Path(args.stage_root[0]).resolve(), search, immutable_root_bindings)
+            if not missing or binding["stage_id"] != args.characterization_stage:
+                raise RuntimeError("stage continuation root has no matching missing tuples")
+            immutable_root_bindings.append({
+                "name": f"partial:{binding['stage_id']}", "root": binding["root"],
+                "binding_sha256": canonical_digest(binding)})
+            run_tuples = missing
+            args.orders = sorted({item[0] for item in run_tuples})
+            args.resolutions = sorted({item[1] for item in run_tuples})
+            args.phases = sorted({item[2] for item in run_tuples})
+            resolutions_by_order = {
+                order: tuple(sorted({item[1] for item in run_tuples
+                                     if item[0] == order}))
+                for order in args.orders}
+            certification = validate_certified_domain(
+                args.domain, resolutions_by_order, True)
     else:
         if args.immutable_root or args.stage_root:
             raise RuntimeError("immutable roots require characterization or frozen-window mode")
@@ -3061,6 +3819,39 @@ def main() -> int:
     if free_bytes < 2 * forecast["estimated_output_bytes_upper_bound"]:
         raise RuntimeError("campaign output forecast exceeds half the available space")
     args.output.mkdir(parents=True, exist_ok=True)
+    authorization_files = None
+    if frozen_window is not None:
+        authorization = args.output / "authorization"
+        authorization.mkdir(exist_ok=True)
+        source_files = {
+            "accepted_window.json": args.frozen_window_manifest.resolve(),
+            "candidate_manifest.json":
+            args.frozen_window_manifest.resolve().parent /
+            frozen_window["candidate_manifest_path"],
+            "review_artifact.json":
+            args.frozen_window_manifest.resolve().parent /
+            frozen_window["review"]["artifact_path"]}
+        for name, source_path in source_files.items():
+            destination = authorization / name
+            if destination.exists():
+                if sha256(destination) != sha256(source_path):
+                    raise RuntimeError("resumed authorization artifact changed")
+            else:
+                shutil.copy2(source_path, destination)
+        authorization_files = {name: sha256(authorization / name)
+                               for name in source_files}
+    resumed_stage_cases = []
+    for prior in continuation_cases:
+        source_directory = Path(str(prior["_replay_case_directory"]))
+        destination = args.output / source_directory.name
+        if destination.exists():
+            if bound_directory_inventory(destination) != \
+               bound_directory_inventory(source_directory):
+                raise RuntimeError("continued stage copied-case evidence changed")
+        else:
+            shutil.copytree(source_directory, destination)
+        resumed_stage_cases.append({key: value for key, value in prior.items()
+                                    if not key.startswith("_")})
     stage_manifest_path = args.output / "search_stage_manifest.json"
     stage_manifest = None
     window_execution_path = args.output / "frozen_window_execution.json"
@@ -3086,7 +3877,8 @@ def main() -> int:
     elif frozen_window is not None:
         window_execution = {
             "schema": "athenak_z4c_cartoon_mms_window_execution_v1",
-            "state": "prelaunch_bound", "attempt_id": str(uuid.uuid4()),
+            "state": "prelaunch_bound", "purpose": frozen_window_purpose,
+            "attempt_id": str(uuid.uuid4()),
             "accepted_window_sha256": frozen_window_sha256,
             "accepted_review": frozen_window["review"],
             "source": source, "build_manifest_sha256": sha256(args.build_manifest),
@@ -3095,9 +3887,12 @@ def main() -> int:
             "oracle_header_sha256": sha256(
                 root / "src/pgen/unit_tests/z4c_cartoon_derivatives_oracle.hpp"),
             "series_manifest_sha256": sha256(series_manifest),
+            "backend": args.require_backend, "ranks": args.ranks,
+            "domain": list(args.domain),
             "immutable_root_bindings": immutable_root_bindings,
             "execution_tuples": [list(item) for item in run_tuples],
-            "attempts": [], "result_set_sha256": None, "stop_reason": None}
+            "attempts": [], "result_set_sha256": None, "stop_reason": None,
+            "authorization_files": authorization_files}
         if window_execution_path.exists():
             existing = load_json_strict(window_execution_path)
             if (not isinstance(existing, dict) or
@@ -3109,9 +3904,17 @@ def main() -> int:
         else:
             write_atomic(window_execution_path, window_execution)
     write_atomic(args.output / "preflight.json", preflight)
-    cases = []
-    attempts = []
-    for order, resolution, phase in run_tuples:
+    cases = list(resumed_stage_cases)
+    prior_case_hashes = {
+        (int(case["spatial_order"]), int(case["resolution"]), int(case["phase"])):
+        case["case_manifest_sha256"] for case in resumed_stage_cases}
+    attempts = [{"tuple": list(item), "status": "complete",
+                 "case_manifest_sha256": prior_case_hashes[tuple(item)],
+                 "reason": "reused_verified_partial_stage"}
+                for item in search["stages"].get(
+                    args.characterization_stage, {}).get("tuples", [])
+                if tuple(item) in prior_case_hashes]
+    for tuple_index, (order, resolution, phase) in enumerate(run_tuples):
         try:
             result = run_case(args, root, source, order, resolution, phase)
             cases.append(result)
@@ -3125,9 +3928,25 @@ def main() -> int:
             if stage_manifest is None and window_execution is None:
                 raise
             if stage_manifest is not None:
-                transition_search_stage(stage_manifest, "stage_finalized", attempts,
+                attempts.extend({"tuple": list(item),
+                                 "status": "not_attempted_after_stop",
+                                 "case_manifest_sha256": None,
+                                 "reason": "stopped_after_prior_failure"}
+                                for item in run_tuples[tuple_index + 1:])
+                transition_search_stage(stage_manifest, "stage_partial", attempts,
                                         "integrity_or_resource_failure")
                 write_atomic(stage_manifest_path, stage_manifest)
+                complete_directories = {
+                    f"{case['case_id']}-{case['case_uuid']}" for case in cases}
+                failed_case_inventories = [
+                    {"directory": entry.name,
+                     "files": bound_directory_inventory(entry)}
+                    for entry in args.output.iterdir()
+                    if entry.is_dir() and entry.name not in complete_directories]
+                write_atomic(args.output / "stage_campaign.json",
+                             stage_campaign_record(
+                                 stage_manifest, stage_manifest_path, cases,
+                                 failed_case_inventories))
             else:
                 window_execution.update({
                     "state": "execution_failed", "attempts": attempts,
@@ -3144,11 +3963,9 @@ def main() -> int:
         transition_search_stage(stage_manifest, "stage_finalized", attempts,
                                 "stage_complete_pending_offline_analysis")
         write_atomic(stage_manifest_path, stage_manifest)
-        write_atomic(args.output / "stage_campaign.json", {
-            "schema": SCHEMA, "state": "stage_finalized",
-            "stage_manifest_sha256": sha256(stage_manifest_path),
-            "source": source, "build_manifest_sha256": sha256(args.build_manifest),
-            "cases": cases})
+        write_atomic(args.output / "stage_campaign.json",
+                     stage_campaign_record(stage_manifest, stage_manifest_path,
+                                           cases, []))
         return 0
     if window_execution is not None:
         window_execution.update({
@@ -3165,6 +3982,13 @@ def main() -> int:
                 "execution_manifest_sha256": sha256(window_execution_path),
                 "source": source,
                 "build_manifest_sha256": sha256(args.build_manifest),
+                "executable_sha256": sha256(args.athena),
+                "input_sha256": sha256(args.input),
+                "oracle_header_sha256": sha256(
+                    root / "src/pgen/unit_tests/z4c_cartoon_derivatives_oracle.hpp"),
+                "series_manifest_sha256": sha256(series_manifest),
+                "backend": args.require_backend, "ranks": args.ranks,
+                "domain": list(args.domain),
                 "immutable_root_bindings": immutable_root_bindings,
                 "cases": cases, "qualification_claim": None})
             return 0
@@ -3175,9 +3999,11 @@ def main() -> int:
                                     if frozen_window_purpose == "final_qualification"
                                     else "single_source_diagnostic"))
     rank_evidence = None
-    if args.compare_campaign and not failures:
+    if args.compare_campaign:
         rank_evidence = compare_rank_campaigns(
-            cases, args.output, args.compare_campaign.resolve())
+            cases, args.output, args.compare_campaign.resolve(), args.ranks,
+            campaign_mode, frozen_window_sha256, source, args.require_backend,
+            sha256(args.build_manifest))
     convergence_artifacts = {name: sha256(args.output / name) for name in
                              ("convergence.json", "convergence.csv",
                               "convergence_rates.pgfplots.dat",
