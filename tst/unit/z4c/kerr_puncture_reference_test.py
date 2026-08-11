@@ -4,16 +4,59 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import math
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 
 import numpy as np
 
 
 PACKED = ((0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2))
+
+
+def check_python_subprocess_contract() -> None:
+    """Reject bare nested Python commands and verify interpreter identity."""
+    source_path = Path(__file__).resolve()
+    tree = ast.parse(source_path.read_text(), filename=str(source_path))
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call) or not node.args:
+            continue
+        function = node.func
+        if not (isinstance(function, ast.Attribute)
+                and isinstance(function.value, ast.Name)
+                and function.value.id == "subprocess"):
+            continue
+        command = node.args[0]
+        if not isinstance(command, (ast.List, ast.Tuple)) or not command.elts:
+            continue
+        executable = command.elts[0]
+        if (isinstance(executable, ast.Constant)
+                and isinstance(executable.value, str)
+                and Path(executable.value).name in {"python", "python3"}):
+            raise AssertionError(
+                f"line {node.lineno}: nested bare Python command bypasses "
+                "the CTest interpreter")
+
+    probe = subprocess.run(
+        [sys.executable, "-c",
+         "import json,sys; print(json.dumps({"
+         "'executable': sys.executable, 'version': list(sys.version_info[:3])}))"],
+        check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    identity = json.loads(probe.stdout)
+    expected_executable = Path(sys.executable).resolve(strict=True)
+    actual_executable = Path(identity["executable"]).resolve(strict=True)
+    if actual_executable != expected_executable:
+        raise AssertionError(
+            "nested Python interpreter changed: "
+            f"{actual_executable} != {expected_executable}")
+    if identity["version"] != list(sys.version_info[:3]):
+        raise AssertionError(
+            f"nested Python version changed: {identity['version']} != "
+            f"{list(sys.version_info[:3])}")
 
 
 def unpack(values: list[float]) -> np.ndarray:
@@ -302,10 +345,11 @@ def main() -> int:
     parser.add_argument("--source-dir", type=Path, required=True)
     args = parser.parse_args()
     source = args.source_dir.resolve()
+    check_python_subprocess_contract()
     reference = source / "tst/unit/z4c/kerr_puncture_reference.json"
     generator = source / "tst/unit/z4c/generate_kerr_puncture_reference.py"
-    subprocess.run(["python3", str(generator), "--check", "--output", str(reference)],
-                   check=True)
+    subprocess.run([sys.executable, str(generator), "--check", "--output",
+                    str(reference)], check=True)
     payload = json.loads(reference.read_text(),
                          parse_constant=lambda value: (_ for _ in ()).throw(
                              ValueError(f"nonfinite JSON token {value}")))
