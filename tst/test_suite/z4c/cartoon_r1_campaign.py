@@ -610,12 +610,19 @@ def import_binary_reader(source: Path):
     return bin_convert.read_binary
 
 
-def final_binary_groups(run_dir: Path, reader) -> dict[str, list[tuple[int, Any]]]:
-    files = sorted(run_dir.glob("bin/rank_*/*.bin"))
-    require(files, f"per-rank binary evidence is missing: {run_dir}")
-    loaded = [(path, reader(path)) for path in files]
+def binary_dump_number(path: Path) -> int:
+    match = re.search(r"\.(\d{5})\.bin$", path.name)
+    require(match is not None, f"malformed binary dump filename: {path}")
+    return int(match.group(1))
+
+
+def select_final_binary_groups(
+        loaded: list[tuple[Path, Any]]) -> dict[str, list[tuple[int, Any]]]:
+    require(loaded, "per-rank binary evidence is empty")
     final_cycle = max(int(data["cycle"]) for _, data in loaded)
-    groups: dict[str, list[tuple[int, Any]]] = {name: [] for name in FIELD_GROUPS}
+    candidates: dict[str, list[tuple[int, int, Any, Path]]] = {
+        name: [] for name in FIELD_GROUPS
+    }
     for path, data in loaded:
         if int(data["cycle"]) != final_cycle:
             continue
@@ -625,10 +632,26 @@ def final_binary_groups(run_dir: Path, reader) -> dict[str, list[tuple[int, Any]
         matches = [name for name, marker in FIELD_GROUPS.items()
                    if marker in data["var_names"]]
         require(len(matches) == 1, f"ambiguous binary variable inventory: {path}")
-        groups[matches[0]].append((rank, data))
-    for name, records in groups.items():
-        require(records, f"final binary group {name} is missing: {run_dir}")
+        candidates[matches[0]].append((binary_dump_number(path), rank, data, path))
+    groups: dict[str, list[tuple[int, Any]]] = {}
+    for name, records in candidates.items():
+        require(records, f"final binary group {name} is missing")
+        final_dump = max(record[0] for record in records)
+        selected = [record for record in records if record[0] == final_dump]
+        ranks = [record[1] for record in selected]
+        require(len(ranks) == len(set(ranks)),
+                f"duplicate rank in final {name} dump {final_dump:05d}")
+        times = {float(record[2]["time"]) for record in selected}
+        require(len(times) == 1 and all(math.isfinite(value) for value in times),
+                f"inconsistent times in final {name} dump {final_dump:05d}")
+        groups[name] = [(rank, data) for _, rank, data, _ in selected]
     return groups
+
+
+def final_binary_groups(run_dir: Path, reader) -> dict[str, list[tuple[int, Any]]]:
+    files = sorted(run_dir.glob("bin/rank_*/*.bin"))
+    require(files, f"per-rank binary evidence is missing: {run_dir}")
+    return select_final_binary_groups([(path, reader(path)) for path in files])
 
 
 def block_map(records: list[tuple[int, Any]]) -> dict[tuple[int, ...], tuple[int, Any, int]]:
@@ -738,6 +761,13 @@ def latest_restart(run_dir: Path) -> tuple[Path, dict[str, str]]:
     return max(records, key=lambda item: int(item[1]["central_last_cycle"]))
 
 
+def amr_activity(log_text: str) -> tuple[int, int]:
+    records = [(int(created), int(deleted)) for created, deleted in re.findall(
+        r"(\d+) MeshBlocks created, (\d+) deleted by AMR", log_text)]
+    return (max((record[0] for record in records), default=0),
+            max((record[1] for record in records), default=0))
+
+
 def collect_case(state: dict[str, Any], name: str, reader) -> dict[str, Any]:
     root = Path(state["source"]["path"])
     run_dir = Path(state["cases"][name]["log_path"]).parent
@@ -755,9 +785,7 @@ def collect_case(state: dict[str, Any], name: str, reader) -> dict[str, Any]:
     volume_relative_error = abs(volume - logged_volume) / max(abs(volume), 1.0)
     log_text = Path(state["cases"][name]["log_path"]).read_text(
         encoding="utf-8", errors="replace")
-    created = [int(value) for value in re.findall(r"(\d+) MeshBlocks created", log_text)]
-    deleted = [int(value) for _, value in re.findall(
-        r"(\d+) MeshBlocks created, (\d+) MeshBlocks deleted", log_text)]
+    created, deleted = amr_activity(log_text)
     evidence_files = {
         str(path.relative_to(run_dir)): sha256(path)
         for path in sorted(run_dir.rglob("*")) if path.is_file()
@@ -772,8 +800,8 @@ def collect_case(state: dict[str, Any], name: str, reader) -> dict[str, Any]:
         "restart_sha256": sha256(restart_path),
         "volume_oracle": volume,
         "volume_relative_error": volume_relative_error,
-        "amr_created": max(created, default=0),
-        "amr_deleted": max(deleted, default=0),
+        "amr_created": created,
+        "amr_deleted": deleted,
         "evidence_files": evidence_files,
         "source_path": str(root),
     }
@@ -930,6 +958,38 @@ def self_test() -> None:
     validate_inputs()
     validate_source_contract(SCRIPT_DIR.parents[2])
     import numpy as np  # pylint: disable=import-outside-toplevel
+    synthetic_loaded: list[tuple[Path, Any]] = []
+    for group, marker in FIELD_GROUPS.items():
+        for dump in (4, 5):
+            data = {"cycle": 4, "time": 0.3, "var_names": [marker],
+                    "mb_logical": np.array([[0, 0, 0, 0]], dtype=np.int32),
+                    "tag": f"{group}-{dump}"}
+            path = Path("/synthetic/bin/rank_00000000") / (
+                f"synthetic.{group}.{dump:05d}.bin")
+            synthetic_loaded.append((path, data))
+    selected = select_final_binary_groups(synthetic_loaded)
+    require(all(len(records) == 1 and records[0][1]["tag"].endswith("-5")
+                for records in selected.values()),
+            "cross-dump repeated blocks did not select the latest dump")
+    block_map(selected["z4c"])
+    duplicate_data = {"cycle": 4, "time": 0.3,
+                      "var_names": [FIELD_GROUPS["z4c"]],
+                      "mb_logical": np.array([[0, 0, 0, 0]], dtype=np.int32)}
+    duplicate_path = (Path("/synthetic/bin/rank_00000001") /
+                      "synthetic.z4c.00005.bin")
+    duplicate_selected = select_final_binary_groups(
+        synthetic_loaded + [(duplicate_path, duplicate_data)])
+    try:
+        block_map(duplicate_selected["z4c"])
+    except RuntimeError as error:
+        require("duplicate logical MeshBlock" in str(error),
+                "wrong same-snapshot ownership failure")
+    else:
+        raise RuntimeError("same-snapshot duplicate MeshBlock was accepted")
+    require(amr_activity(
+        "Current number of MeshBlocks = 4\n"
+        "0 MeshBlocks created, 12 deleted by AMR\n") == (0, 12),
+        "Athena AMR activity line was not parsed exactly")
     flat = np.ones((1, 4, 4), dtype=np.float64)
     zero = np.zeros_like(flat)
     flat_data = {"mb_geometry": [np.array([-2.0, 2.0, -3.0, 3.0, -0.5, 0.5])],
