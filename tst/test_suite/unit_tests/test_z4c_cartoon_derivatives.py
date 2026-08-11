@@ -1207,12 +1207,18 @@ def self_test_cpu_audit_policy() -> None:
             Counter(zero_actions)["blanked_inapplicable_cyl_l2"] != 1 or
             Counter(zero_actions)["blanked_inapplicable_cyl_linfinity"] != 1):
         raise RuntimeError("legacy exact-zero cylindrical norms did not normalize")
+    applicable_zero = {**legacy_norm, "cyl_count": "1", "cyl_l1": "0",
+                       "cyl_l2": "1", "cyl_linfinity": "1"}
+    normalized_applicable, applicable_actions = normalize_legacy_norm_row(
+        applicable_zero)
+    if (any(normalized_applicable[field] != applicable_zero[field] for field in
+            ("cyl_l1", "cyl_l2", "cyl_linfinity")) or
+            any(action.startswith("blanked_inapplicable_cyl_")
+                for action in applicable_actions)):
+        raise RuntimeError("legacy applicable cylindrical zero was altered")
     for label, row in (
         ("legacy inapplicable nonexact zero", {**zero_cylindrical, "cyl_l1": "0.0"}),
-        ("legacy inapplicable other token", {**zero_cylindrical, "cyl_l2": "1"}),
-        ("legacy applicable exact zero",
-         {**legacy_norm, "cyl_count": "1", "cyl_l1": "0", "cyl_l2": "1",
-          "cyl_linfinity": "1"})):
+        ("legacy inapplicable other token", {**zero_cylindrical, "cyl_l2": "1"})):
         expect_runtime_error(lambda value=row: normalize_legacy_norm_row(value), label)
     audited_counts = Counter(PRESERVED_JOB_56586376_NORMALIZATION_COUNTS)
     validate_preserved_job56586376_normalization_counts(audited_counts)
@@ -2522,9 +2528,6 @@ def normalize_legacy_norm_row(row: dict[str, str]) -> tuple[dict[str, str], list
                 else:
                     raise RuntimeError(
                         f"legacy inapplicable {field} is neither NaN nor exact zero")
-        elif any(normalized.get(field) == "0"
-                 for field in ("cyl_l1", "cyl_l2", "cyl_linfinity")):
-            raise RuntimeError("legacy applicable cylindrical norm is exact zero")
     if "radius_applicable" not in normalized:
         applicable = normalized.get("mask", "").startswith("fixed_rho_")
         normalized["radius_applicable"] = str(applicable).lower()
