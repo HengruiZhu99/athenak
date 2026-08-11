@@ -118,6 +118,12 @@ def declared_thresholds() -> dict[str, float]:
     }
 
 
+def require_horizon_user_amr_criterion(
+        blocks: dict[str, dict[str, str]], label: str) -> None:
+    """Require the sole generic AMR criterion that calls the Kerr/Z4c hook."""
+    r1.require_user_amr_criterion(blocks, label)
+
+
 def validate_template() -> None:
     blocks = r1.parse_athinput(TEMPLATE)
     r1.require(blocks["problem"].get("pgen_name") == "kerr_puncture",
@@ -134,6 +140,7 @@ def validate_template() -> None:
                blocks["mesh_refinement"].get("num_levels") == "3" and
                blocks["z4c_amr"].get("max_ref_lev") == "2",
                "R2 template omits the short two-level AMR refinement")
+    require_horizon_user_amr_criterion(blocks, "R2 horizon template")
     r1.require(blocks["mesh"].get("nx1") == "128" and
                blocks["mesh"].get("nx2") == "128" and
                blocks["meshblock"].get("nx1") == "32" and
@@ -183,6 +190,13 @@ def validate_source_contract(source: Path) -> None:
     cmake = (source / "src/CMakeLists.txt").read_text(encoding="utf-8")
     allocation = (source / "src/mesh/meshblock_pack.cpp").read_text(
         encoding="utf-8")
+    criteria = (source / "src/mesh/refinement_criteria.cpp").read_text(
+        encoding="utf-8")
+    refinement = (source / "src/mesh/mesh_refinement.cpp").read_text(
+        encoding="utf-8")
+    pgen = (source / "src/pgen/pgen.cpp").read_text(encoding="utf-8")
+    kerr = (source / "src/pgen/z4c/kerr_puncture.cpp").read_text(
+        encoding="utf-8")
     markers = (
         'GetOrAddInteger("fastflow", "lmax", 4)',
         'GetOrAddInteger("fastflow", "ntheta", 12)',
@@ -209,6 +223,16 @@ def validate_source_contract(source: Path) -> None:
     r1.require("FastFlow before the m=0 Cartoon adapter is integrated" not in
                allocation,
                "pre-allocation policy still rejects the integrated m=0 FastFlow")
+    callback_chain = (
+        ('method.compare("user") == 0', criteria),
+        ('pmy_mesh->pgen->user_ref_func(pmbp)', refinement),
+        ('ConfigureKerrPuncture(this, pmy_mesh_, pin, is_restart)', pgen),
+        ('generator->user_ref_func = KerrPunctureRefinementCondition', kerr),
+        ('pack->pz4c->pamr->Refine(pack)', kerr),
+    )
+    for marker, source_text in callback_chain:
+        r1.require(marker in source_text,
+                   f"R2 user-AMR callback chain marker disappeared: {marker}")
     header_anchor = 'std::fprintf(output_, "# cycle'
     r1.require(header_anchor in cpp, "horizon output header disappeared")
     header_start = cpp.index(header_anchor)
@@ -951,6 +975,28 @@ def synthetic_observations() -> dict[str, Any]:
 
 def self_test() -> None:
     validate_template()
+    validate_source_contract(SCRIPT_DIR.parents[2])
+    valid_criterion = {"amr_criterion0": {"method": "user"}}
+    require_horizon_user_amr_criterion(valid_criterion,
+                                       "synthetic R2 horizon input")
+    for invalid_criterion in (
+            {},
+            {"amr_criterion": {"method": "user"}},
+            {"amr_criterion1": {"method": "user"}},
+            {"amr_criterion0": {"method": "location"}},
+            {"amr_criterion0": {"method": "user", "value_max": "1"}},
+            {"amr_criterion0": {"method": "user"},
+             "amr_criterion1": {"method": "user"}},
+    ):
+        try:
+            require_horizon_user_amr_criterion(
+                invalid_criterion, "synthetic R2 horizon input")
+        except RuntimeError as error:
+            r1.require("exactly <amr_criterion0>/method=user" in str(error),
+                       "wrong R2 AMR criterion contract failure")
+        else:
+            raise RuntimeError(
+                "R2 AMR criterion contract accepted missing/renamed/wrong/extra input")
     for physical, physical_spec in PHYSICAL_CASES.items():
         for basis, angular in BASIS_LEVELS.items():
             rendered = r1.parse_athinput_text(render_attempt(physical, basis),
