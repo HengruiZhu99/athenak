@@ -83,6 +83,14 @@ def design() -> dict[str, Any]:
                 "required_import_coordinate_map":
                     "CartoonIrisInterpolationCoordinates:(x1,0,x2)"},
             "prospective execution contract changed")
+    require(result["initial_data"].get("provenance_artifacts") == {
+                "source": {"basename": "axisymmetric_wave_2607.md",
+                           "location": "provenance", "size": 8577},
+                "executable": {"basename": "iris_brill_wave_export_study",
+                               "location": "provenance", "size": 1896008},
+                "input": {"basename": "input.txt", "location": "root",
+                          "size": 1289}},
+            "Brill provenance relocation contract changed")
     expected = {"n128": (128, 128), "n192": (192, 192),
                 "n256": (256, 256)}
     require(set(result["resolutions"]) == set(expected),
@@ -194,8 +202,79 @@ def require_hash(value: Any, label: str) -> str:
     return value
 
 
+def resolved_provenance_artifact(label: str, record: dict[str, Any],
+                                 contract: dict[str, Any],
+                                 artifact_root: Path) -> Path:
+    """Resolve one authenticated sidecar path without weakening its binding."""
+    embedded_value = record.get("path")
+    require(isinstance(embedded_value, str) and embedded_value,
+            f"malformed external Brill provenance path: {label}")
+    embedded = Path(embedded_value)
+    require(embedded.is_absolute() and ".." not in embedded.parts,
+            f"external Brill provenance path traversal: {label}")
+    require(embedded.name == contract["basename"],
+            f"external Brill provenance basename mismatch: {label}")
+    expected_size = contract["size"]
+    expected_hash = record["sha256"]
+
+    # Preserve the producer's exact path whenever the original immutable file
+    # is still available.  A stale producer path does not authorize a search
+    # outside the explicit artifact root below.
+    if (os.path.lexists(embedded) and not embedded.is_symlink() and
+            embedded.is_file() and embedded.stat().st_size == expected_size and
+            sha256(embedded) == expected_hash):
+        return embedded.resolve(strict=True)
+
+    require(os.path.lexists(artifact_root) and not artifact_root.is_symlink() and
+            artifact_root.is_dir(),
+            "immutable Brill artifact root is missing, invalid, or a symlink")
+    root = artifact_root.resolve(strict=True)
+    location = contract["location"]
+    if location == "root":
+        candidates = [artifact_root / contract["basename"]]
+    else:
+        require(location == "provenance",
+                f"unknown Brill provenance location: {label}")
+        provenance = artifact_root / "provenance"
+        require(os.path.lexists(provenance) and not provenance.is_symlink() and
+                provenance.is_dir(),
+                "immutable Brill provenance directory is missing or a symlink")
+        candidates = []
+        for directory, directories, files in os.walk(provenance,
+                                                     followlinks=False):
+            parent = Path(directory)
+            candidates.extend(parent / name for name in directories + files
+                              if name == contract["basename"])
+    require(candidates, f"missing relocated Brill provenance artifact: {label}")
+    require(len(candidates) == 1,
+            f"ambiguous relocated Brill provenance artifact: {label}")
+    candidate = candidates[0]
+    require(os.path.lexists(candidate),
+            f"missing relocated Brill provenance artifact: {label}")
+    require(not candidate.is_symlink() and candidate.is_file(),
+            "relocated Brill provenance artifact is not a regular nonsymlink "
+            f"file or resolves outside artifact root: {label}")
+    resolved = candidate.resolve(strict=True)
+    try:
+        relative = resolved.relative_to(root)
+    except ValueError as error:
+        raise RuntimeError(
+            f"relocated Brill provenance artifact is outside artifact root: {label}") from error
+    cursor = artifact_root
+    for part in candidate.relative_to(artifact_root).parts:
+        cursor = cursor / part
+        require(not cursor.is_symlink(),
+                f"relocated Brill provenance artifact uses a symlink/outside path: {label}")
+    require(relative.parts and candidate.stat().st_size == expected_size,
+            f"relocated Brill provenance artifact size mismatch: {label}")
+    require(sha256(candidate) == expected_hash,
+            f"relocated Brill provenance artifact hash mismatch: {label}")
+    return resolved
+
+
 def validate_handoff(payload: Path, sidecar: Path,
-                     expected: dict[str, Any]) -> dict[str, Any]:
+                     expected: dict[str, Any],
+                     artifact_root: Path) -> dict[str, Any]:
     require(payload.is_file(), f"missing Brill payload: {payload}")
     require(sidecar.is_file(), f"missing Brill sidecar: {sidecar}")
     require(sidecar.name == payload.name + ".manifest.json",
@@ -261,10 +340,19 @@ def validate_handoff(payload: Path, sidecar: Path,
             expected["coefficient_sha256"] and
             expected["irisk_commit"] in artifacts["source"].get("identifier", ""),
             "Brill payload/coefficient/source binding mismatch")
+    relocation = expected.get("provenance_artifacts")
+    require(isinstance(relocation, dict) and set(relocation) ==
+            {"source", "executable", "input"},
+            "Brill provenance relocation inventory is not exact")
     for label in ("source", "executable", "input"):
-        bound = Path(artifacts[label]["path"])
-        require(bound.is_file() and sha256(bound) == artifacts[label]["sha256"],
-                f"external Brill provenance artifact changed: {label}")
+        contract = relocation[label]
+        require(isinstance(contract, dict) and set(contract) ==
+                {"basename", "location", "size"} and
+                contract["location"] in {"root", "provenance"} and
+                isinstance(contract["size"], int) and contract["size"] > 0,
+                f"malformed Brill provenance relocation contract: {label}")
+        resolved_provenance_artifact(label, artifacts[label], contract,
+                                     artifact_root)
     return manifest
 
 
@@ -354,6 +442,7 @@ def prepare(args: argparse.Namespace) -> None:
     cache = args.cmake_cache.resolve()
     payload = args.payload.resolve()
     sidecar = args.sidecar.resolve()
+    artifact_root = args.artifact_root
     figure = args.paper_figure.resolve()
     output = args.output.resolve()
     validate_source_contract(source)
@@ -361,7 +450,8 @@ def prepare(args: argparse.Namespace) -> None:
             "campaign preparation requires a clean source checkout")
     require(executable.is_file(), f"missing AthenaK executable: {executable}")
     validate_cache(cache, source)
-    manifest = validate_handoff(payload, sidecar, spec["initial_data"])
+    manifest = validate_handoff(payload, sidecar, spec["initial_data"],
+                                artifact_root)
     validate_paper_figure(figure, spec["paper_reference"]["figure_sha256"])
     require(not output.exists() or not any(output.iterdir()),
             "campaign output root already contains evidence")
@@ -397,6 +487,7 @@ def prepare(args: argparse.Namespace) -> None:
             "sidecar_source_path": str(sidecar),
             "sidecar_archive_path": str(archived_sidecar.resolve()),
             "sidecar_sha256": sha256(archived_sidecar),
+            "artifact_root": str(artifact_root.resolve(strict=True)),
             "manifest": manifest,
         },
         "paper_figure": {"source_path": str(figure),
@@ -712,42 +803,133 @@ def self_test() -> None:
         "topology"), "topology")
     with tempfile.TemporaryDirectory(prefix="cartoon-r4-brill-") as directory:
         root = Path(directory)
-        payload = root / "brill.adm_spectral"
-        sidecar = root / "brill.adm_spectral.manifest.json"
-        source = root / "source.md"
-        executable = root / "iris"
-        input_path = root / "input.txt"
+        handoff = root / "handoff"
+        original = root / "producer"
+        artifact_root = root / "immutable"
+        provenance = artifact_root / "provenance"
+        handoff.mkdir()
+        original.mkdir()
+        provenance.mkdir(parents=True)
+        payload = handoff / "brill.adm_spectral"
+        sidecar = handoff / "brill.adm_spectral.manifest.json"
+        source = original / "source.md"
+        executable = original / "iris"
+        input_path = original / "input.txt"
         for path, content in ((payload, b"payload"), (source, b"source"),
                               (executable, b"exe"), (input_path, b"input")):
             path.write_bytes(content)
+        relocated = {"source": provenance / source.name,
+                     "executable": provenance / executable.name,
+                     "input": artifact_root / input_path.name}
+        for label, producer in (("source", source),
+                                ("executable", executable),
+                                ("input", input_path)):
+            shutil.copyfile(producer, relocated[label])
         expected = dict(spec["initial_data"])
         expected.update({"payload_sha256": sha256(payload),
                          "sidecar_sha256": "", "coefficient_sha256": "4" * 64})
+        expected["provenance_artifacts"] = {
+            "source": {"basename": source.name, "location": "provenance",
+                       "size": source.stat().st_size},
+            "executable": {"basename": executable.name,
+                           "location": "provenance",
+                           "size": executable.stat().st_size},
+            "input": {"basename": input_path.name, "location": "root",
+                      "size": input_path.stat().st_size},
+        }
         manifest = synthetic_manifest(payload, source, executable, input_path,
                                       expected["payload_sha256"])
-        sidecar.write_text(json.dumps(manifest, sort_keys=True) + "\n",
-                           encoding="utf-8")
-        expected["sidecar_sha256"] = sha256(sidecar)
-        validate_handoff(payload, sidecar, expected)
+        def authenticate(value: dict[str, Any]) -> dict[str, Any]:
+            sidecar.write_text(json.dumps(value, sort_keys=True) + "\n",
+                               encoding="utf-8")
+            result = dict(expected)
+            result["sidecar_sha256"] = sha256(sidecar)
+            return result
+
+        expected = authenticate(manifest)
+        immutable_sidecar = sidecar.read_bytes()
+        immutable_sidecar_hash = sha256(sidecar)
+        validate_handoff(payload, sidecar, expected, artifact_root)
+        source.write_bytes(b"sourcf")
+        validate_handoff(payload, sidecar, expected, artifact_root)
+        source.write_bytes(b"source")
+        source.unlink()
+        executable.unlink()
+        input_path.unlink()
+        validate_handoff(payload, sidecar, expected, artifact_root)
+        require(sidecar.read_bytes() == immutable_sidecar and
+                sha256(sidecar) == immutable_sidecar_hash,
+                "relocation rewrote the authenticated sidecar")
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, expected, root / "absent-artifact-root"),
+                       "artifact root is missing")
         missing = root / "missing.adm_spectral"
-        expect_failure(lambda: validate_handoff(missing, sidecar, expected),
+        expect_failure(lambda: validate_handoff(
+            missing, sidecar, expected, artifact_root),
                        "missing Brill payload")
         payload.write_bytes(b"changed")
-        expect_failure(lambda: validate_handoff(payload, sidecar, expected),
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, expected, artifact_root),
                        "payload hash mismatch")
         payload.write_bytes(b"payload")
+
+        held_source = root / "held-source"
+        relocated["source"].rename(held_source)
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, expected, artifact_root),
+                       "missing relocated")
+        held_source.rename(relocated["source"])
+        duplicate = provenance / "nested" / source.name
+        duplicate.parent.mkdir()
+        shutil.copyfile(relocated["source"], duplicate)
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, expected, artifact_root),
+                       "ambiguous relocated")
+        duplicate.unlink()
+        duplicate.parent.rmdir()
+        good_source = relocated["source"].read_bytes()
+        relocated["source"].write_bytes(b"sourcf")
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, expected, artifact_root), "hash mismatch")
+        relocated["source"].write_bytes(good_source + b"x")
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, expected, artifact_root), "size mismatch")
+        relocated["source"].write_bytes(good_source)
+        outside = root / source.name
+        relocated["source"].rename(outside)
+        relocated["source"].symlink_to(outside)
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, expected, artifact_root), "outside artifact root")
+        relocated["source"].unlink()
+        outside.rename(relocated["source"])
+
+        traversal = json.loads(json.dumps(manifest))
+        traversal["artifacts"]["source"]["path"] = "/abs/../source.md"
+        traversal_expected = authenticate(traversal)
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, traversal_expected, artifact_root), "traversal")
+        wrong_name = json.loads(json.dumps(manifest))
+        wrong_name["artifacts"]["source"]["path"] = "/abs/wrong.md"
+        wrong_expected = authenticate(wrong_name)
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, wrong_expected, artifact_root),
+                       "basename mismatch")
+        expected = authenticate(manifest)
         sidecar.write_text('{"amplitude": NaN}\n', encoding="utf-8")
         bad = dict(expected)
         bad["sidecar_sha256"] = sha256(sidecar)
-        expect_failure(lambda: validate_handoff(payload, sidecar, bad),
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, bad, artifact_root),
                        "nonfinite JSON")
         sidecar.write_text('{"a": 1, "a": 2}\n', encoding="utf-8")
         bad["sidecar_sha256"] = sha256(sidecar)
-        expect_failure(lambda: validate_handoff(payload, sidecar, bad),
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, bad, artifact_root),
                        "duplicate JSON key")
         sidecar.write_text('{broken\n', encoding="utf-8")
         bad["sidecar_sha256"] = sha256(sidecar)
-        expect_failure(lambda: validate_handoff(payload, sidecar, bad),
+        expect_failure(lambda: validate_handoff(
+            payload, sidecar, bad, artifact_root),
                        "invalid strict JSON")
         cache = root / "CMakeCache.txt"
         cache.write_text("A:BOOL=ON\nA:BOOL=OFF\n", encoding="utf-8")
@@ -782,6 +964,7 @@ def main() -> int:
     make.add_argument("--cmake-cache", required=True, type=Path)
     make.add_argument("--payload", required=True, type=Path)
     make.add_argument("--sidecar", required=True, type=Path)
+    make.add_argument("--artifact-root", required=True, type=Path)
     make.add_argument("--paper-figure", required=True, type=Path)
     make.add_argument("--output", required=True, type=Path)
     run = subparsers.add_parser("run-case")
