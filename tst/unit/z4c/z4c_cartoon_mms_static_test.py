@@ -258,8 +258,10 @@ def main() -> int:
             "saturated_at_resolution" in driver and
             'sample["error"] < 0.0' in driver and
             "def evaluate_legacy_rate_samples" in driver and
-            'rates.append(float("-inf"))' in driver and
+            'usable.append(float("-inf"))' in driver and
             '"saturation_absorbing": False' in driver and
+            "validate_finite_text_product(csv_path)" in driver and
+            "validate_finite_text_product(data_path)" in driver and
             "legacy_pre_coefficient_floor_partition" in driver and
             "coefficient_floor_partition" in driver,
             "driver does not use the finite O(nx1) absorbing coefficient floor")

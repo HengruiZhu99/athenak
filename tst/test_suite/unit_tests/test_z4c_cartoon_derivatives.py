@@ -536,6 +536,14 @@ def write_csv_atomic(path: Path, fieldnames: list[str], rows: list[dict[str, obj
     os.replace(temporary, path)
 
 
+def validate_finite_text_product(path: Path) -> None:
+    tokens = {token.strip('"').lower() for token in
+              re.split(r"[,\s]+", path.read_text(encoding="utf-8"))}
+    if tokens & {"nan", "inf", "+inf", "-inf", "infinity",
+                 "+infinity", "-infinity"}:
+        raise RuntimeError(f"text product {path.name} contains nonfinite data")
+
+
 def replace_parameter(text: str, block: str, key: str, value: object) -> str:
     pattern = re.compile(rf"(?ms)(^<{re.escape(block)}>\s*$)(.*?)(?=^<|\Z)")
     match = pattern.search(text)
@@ -933,7 +941,7 @@ def evaluate_legacy_rate_samples(values: list[dict[str, float]], expected: float
             statuses.append("legacy_rate")
             usable.append(rate)
         else:
-            rates.append(float("-inf"))
+            rates.append(None)
             statuses.append("legacy_nonmonotone")
             usable.append(float("-inf"))
     passed = len(usable) >= 2 and min(usable[-2:]) >= expected - margin
@@ -1215,10 +1223,28 @@ def self_test_cpu_audit_policy() -> None:
         {"resolution": 256, "error": 0.5, "direct_delta": 0.0}]
     nonmonotone = evaluate_legacy_rate_samples(
         legacy_nonmonotone, 1.0, 0.0, "clean")
-    if (nonmonotone["rates"] != [float("-inf"), 1.0, 1.0] or
+    literal_old_gate_rates = [float("-inf"), 1.0, 1.0]
+    literal_old_pass = (len(literal_old_gate_rates) >= 2 and
+                        min(literal_old_gate_rates[-2:]) >= 1.0)
+    if (nonmonotone["rates"] != [None, 1.0, 1.0] or
             nonmonotone["rate_status"][0] != "legacy_nonmonotone" or
-            not nonmonotone["passed"]):
-        raise RuntimeError("legacy nonmonotone interval no longer records -inf")
+            nonmonotone["usable_prefix_ratios"] != len(literal_old_gate_rates) or
+            nonmonotone["passed"] != literal_old_pass or
+            nonmonotone["outcome_reason"] != "pass"):
+        raise RuntimeError("legacy nonmonotone archive changed the old gate outcome")
+    with tempfile.TemporaryDirectory(prefix="cartoon-mms-legacy-finite-") as directory:
+        strict_legacy = Path(directory) / "legacy.json"
+        write_atomic(strict_legacy, nonmonotone)
+        if load_json_strict(strict_legacy) != nonmonotone:
+            raise RuntimeError("strict legacy serialization changed its payload")
+        for name, delimiter in (("legacy.csv", ","), ("legacy.dat", " ")):
+            path = Path(directory) / name
+            write_csv_atomic(path, ["observed_rate", "rate_status", "reason"], [{
+                "observed_rate": "", "rate_status": "legacy_nonmonotone",
+                "reason": "fine_error_exceeds_coarse_error"}], delimiter=delimiter)
+            validate_finite_text_product(path)
+            if "legacy_nonmonotone" not in path.read_text(encoding="utf-8"):
+                raise RuntimeError("legacy text serialization exposed nonfinite data")
     for label, mutation in (
         ("negative legacy error", {"error": -1.0}),
         ("nonfinite legacy delta", {"direct_delta": float("inf")})):
@@ -3781,6 +3807,8 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
     plot_fields = ["order", "phase", "lane_id", "fine_resolution",
                    "observed_rate", "expected_rate", "passed"]
     write_csv_atomic(data_path, plot_fields, plot_rows, delimiter=" ")
+    validate_finite_text_product(csv_path)
+    validate_finite_text_product(data_path)
     plot_path = output / "convergence_plot.tex"
     plot_path.write_text(
         "\\begin{tikzpicture}\n"
