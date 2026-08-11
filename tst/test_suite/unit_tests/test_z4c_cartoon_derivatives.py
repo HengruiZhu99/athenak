@@ -1320,6 +1320,35 @@ def self_test_cpu_audit_policy() -> None:
     expect_runtime_error(
         lambda: validate_raw_result_projection(raw, {**augmented, "extra": 1}),
         "augmented result extra field")
+    legacy_result = {key: value for key, value in augmented.items()
+                     if key != "domain"}
+    legacy_identity = {"domain": list(QUALIFICATION_DOMAIN)}
+    legacy_normalizations = [normalize_preserved_job56586376_result(
+        raw, legacy_result, legacy_identity) for _ in range(EXPECTED_CASES)]
+    if (len(legacy_normalizations) != EXPECTED_CASES or
+            any(result.get("domain") != list(QUALIFICATION_DOMAIN) or
+                action != "derived_domain_from_authenticated_manifest_identity"
+                for result, action in legacy_normalizations)):
+        raise RuntimeError("96-case legacy-domain fixture did not normalize exactly")
+    expect_runtime_error(
+        lambda: validate_raw_result_projection(raw, legacy_result),
+        "legacy replay shape used on current projection path")
+    for label, stored, identity in (
+        ("existing legacy domain", augmented, legacy_identity),
+        ("conflicting legacy domain",
+         {**legacy_result, "domain": [-1.0, 1.0, -2.0, 2.0]}, legacy_identity),
+        ("missing authenticated identity domain", legacy_result, {}),
+        ("noncanonical authenticated identity domain", legacy_result,
+         {"domain": [-1.0, 1.0, -2.0, 2.0]}),
+        ("other missing legacy result key",
+         {key: value for key, value in legacy_result.items() if key != "case_id"},
+         legacy_identity),
+        ("extra legacy result key", {**legacy_result, "extra": None}, legacy_identity),
+        ("differing legacy raw value",
+         {**legacy_result, "operator_count": 170}, legacy_identity)):
+        expect_runtime_error(
+            lambda result=stored, manifest=identity:
+            normalize_preserved_job56586376_result(raw, result, manifest), label)
     manifest_fixture = [{"path": "a/manifest.json", "sha256": "0" * 64}]
     fixture_digest = canonical_digest(manifest_fixture)
     require_canonical_digest(manifest_fixture, fixture_digest, "fixture manifest")
@@ -2483,6 +2512,19 @@ def validate_raw_result_projection(raw: object, augmented: object) -> None:
         raise RuntimeError("raw Athena JSON is not an exact augmented-result projection")
 
 
+def normalize_preserved_job56586376_result(
+        raw: object, stored: object,
+        manifest_identity: object) -> tuple[dict[str, object], str]:
+    if (not isinstance(raw, dict) or not isinstance(stored, dict) or
+            not isinstance(manifest_identity, dict) or "domain" in raw or
+            set(stored) != (set(raw) | RAW_RESULT_FIELDS) - {"domain"} or
+            manifest_identity.get("domain") != list(QUALIFICATION_DOMAIN)):
+        raise RuntimeError("legacy replay result is not the exact missing-domain shape")
+    normalized = {**stored, "domain": list(QUALIFICATION_DOMAIN)}
+    validate_raw_result_projection(raw, normalized)
+    return normalized, "derived_domain_from_authenticated_manifest_identity"
+
+
 def validate_augmented_result(raw: object, augmented: object) -> None:
     validate_raw_result_projection(raw, augmented)
     if not isinstance(augmented, dict):
@@ -2737,6 +2779,7 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
     observed = set()
     case_bindings = []
     cases = []
+    legacy_normalization_actions = []
     verified_case_bytes = 0
     for manifest_path in manifests:
         case = manifest_path.parent
@@ -2758,11 +2801,11 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
             verified_case_bytes += path.stat().st_size
         verified_case_bytes += manifest_path.stat().st_size
         manifest_sha = sha256(manifest_path)
-        stored_result = load_json_strict(case / "result.json")
+        legacy_stored_result = load_json_strict(case / "result.json")
         raw_result = load_json_strict(case / "cartoon_mms.mms.json")
-        if not isinstance(stored_result, dict):
-            raise RuntimeError(f"replay case {case.name} result is not an object")
-        validate_raw_result_projection(raw_result, stored_result)
+        stored_result, normalization_action = normalize_preserved_job56586376_result(
+            raw_result, legacy_stored_result, manifest.get("identity"))
+        legacy_normalization_actions.append(normalization_action)
         validate_result_numbers(stored_result)
         json_number(stored_result, "elapsed_seconds", 0.0)
         json_integer(stored_result, "output_bytes")
@@ -2849,6 +2892,10 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
                               "identity": manifest["identity"], "files": files})
     if observed != expected:
         raise RuntimeError("replay cases differ from exact 2/4/6 x 32/64/128/256 x 8")
+    if (len(legacy_normalization_actions) != EXPECTED_CASES or
+            set(legacy_normalization_actions) != {
+                "derived_domain_from_authenticated_manifest_identity"}):
+        raise RuntimeError("replay legacy-domain normalization accounting differs")
     binding = {"schema": "athenak_z4c_cartoon_mms_replay_binding_v1",
                "raw_root": str(raw_root),
                "preserved_convergence_sha256":
@@ -2858,6 +2905,10 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
                "preserved_convergence_negative_infinity":
                PRESERVED_JOB_56586376_CONVERGENCE_NEGATIVE_INFINITY,
                "preserved_convergence_trust": "opaque_failed_report_not_imported",
+               "legacy_result_normalization_actions": sorted(
+                   set(legacy_normalization_actions)),
+               "legacy_result_normalization_count":
+               len(legacy_normalization_actions),
                "preserved_wrapper_evidence_sha256": sha256(preserved_evidence),
                "preserved_log_sha256": sha256(preserved_log),
                "build_record_sha256": sha256(build_record),
