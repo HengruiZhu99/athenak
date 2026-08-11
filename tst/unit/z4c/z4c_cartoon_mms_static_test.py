@@ -256,6 +256,7 @@ def main() -> int:
             "shared case verifier, partial lineage, or immutable rank/auth guard is missing")
     require("O(171*nx1)" in driver and "clean_floor" in driver and
             "saturated_at_resolution" in driver and
+            'sample["error"] < 0.0' in driver and
             "def evaluate_legacy_rate_samples" in driver and
             'rates.append(float("-inf"))' in driver and
             '"saturation_absorbing": False' in driver and

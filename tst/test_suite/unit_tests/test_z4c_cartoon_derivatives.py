@@ -843,9 +843,10 @@ def evaluate_rate_samples(values: list[dict[str, float]], expected: float,
     prefix_rates = []
     nonmonotone_intervals = []
     for sample in values:
-        if (not math.isfinite(sample["error"]) or sample["error"] <= 0.0 or
+        if (not math.isfinite(sample["error"]) or sample["error"] < 0.0 or
                 not math.isfinite(sample["clean_floor"]) or sample["clean_floor"] <= 0.0):
-            raise RuntimeError("rate sample/error floor must be finite and positive")
+            raise RuntimeError(
+                "rate sample error must be finite/nonnegative and floor positive")
         sample["applied_floor"] = sample["clean_floor"]
         if lane != "clean":
             if not math.isfinite(sample["direct_delta"]) or sample["direct_delta"] < 0.0:
@@ -1149,6 +1150,34 @@ def self_test_cpu_audit_policy() -> None:
             ["included_rate", "excluded_saturated", "excluded_saturated"] or
             saturated["unsaturated_prefix_ratios"] != 1):
         raise RuntimeError("absorbing saturation invented or re-entered a rate")
+    positive_series = [
+        {"resolution": resolution, "error": 4.0 ** (-index),
+         "direct_delta": 0.0, "clean_floor": 1.0e-12}
+        for index, resolution in enumerate((32, 64, 128, 256))]
+    zero_first = evaluate_rate_samples(
+        [{**sample, "error": 0.0} if index == 0 else sample
+         for index, sample in enumerate(positive_series)], 2.0, 0.25, "clean")
+    zero_middle = evaluate_rate_samples(
+        [{**sample, "error": 0.0} if index == 1 else sample
+         for index, sample in enumerate(positive_series)], 2.0, 0.25, "clean")
+    zero_fine = evaluate_rate_samples(
+        [{**sample, "error": 0.0} if index == 3 else sample
+         for index, sample in enumerate(positive_series)], 2.0, 0.25, "clean")
+    if (zero_first["rates"] != [None, None, None] or zero_first["passed"] or
+            zero_first["outcome_reason"] != "saturated_insufficient" or
+            zero_middle["rates"] != [None, None, None] or zero_middle["passed"] or
+            zero_middle["outcome_reason"] != "saturated_insufficient" or
+            zero_fine["rates"] != [2.0, 2.0, None] or not zero_fine["passed"] or
+            zero_fine["rate_status"] != ["included_rate", "included_rate",
+                                          "excluded_saturated"] or
+            not zero_fine["saturation_absorbing"]):
+        raise RuntimeError("coefficient-aware zero-error saturation semantics changed")
+    for label, value in (("negative coefficient-aware error", -1.0),
+                         ("nonfinite coefficient-aware error", float("inf"))):
+        expect_runtime_error(
+            lambda error=value: evaluate_rate_samples(
+                [{**positive_series[0], "error": error}, *positive_series[1:]],
+                2.0, 0.25, "clean"), label)
     legacy_low = [{"resolution": item["resolution"], "error": item["error"],
                    "direct_delta": 0.0, "clean_floor": 1.0e-30}
                   for item in o6_roundoff]
