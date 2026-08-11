@@ -394,6 +394,20 @@ if (Athena_BUILD_UNIT_TESTS)
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_irisk_import_static_test.py
       --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
 
+  add_executable(
+      athena_z4c_irisk_coordinate_map_unit_test
+      tst/unit/z4c/z4c_irisk_coordinate_map_test.cpp)
+  target_include_directories(
+      athena_z4c_irisk_coordinate_map_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_irisk_coordinate_map_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_irisk_coordinate_map
+      COMMAND athena_z4c_irisk_coordinate_map_unit_test)
+
   add_test(
       NAME athena.z4c_kerr_puncture_reference
       COMMAND

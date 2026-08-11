@@ -50,6 +50,9 @@ def main() -> int:
         encoding="utf-8")
     importer = (root / "src/pgen/z4c_irisk_xcts.cpp").read_text(
         encoding="utf-8")
+    coordinate_map = (
+        root / "src/pgen/z4c_irisk_coordinate_map.hpp").read_text(
+            encoding="utf-8")
     symmetry = (root / "src/z4c/z4c_symmetry.cpp").read_text(
         encoding="utf-8")
 
@@ -101,6 +104,25 @@ def main() -> int:
             "interpolation call was duplicated")
     require(importer.count("IrisAthenakSpectralOpen") == 1,
             "payload open call was duplicated")
+    for token in (
+            "CartoonIrisInterpolationCoordinates",
+            "IrisTensorProductDimensions<Map>",
+            "IrisPointIndex<Map>",
+            "ScalarFromPhysicalCartesian<Map>",
+            "SymmetricTensorFromPhysicalCartesian<Map>",
+            "VectorFromPhysicalCartesian<Map>"):
+        require(token in importer,
+                f"importer does not apply reviewed Iris map seam {token}")
+    require("template <z4c_irisk::AdmMap Map>" in importer and
+            "SelectAdmMap(pmbp->z4c_symmetry)" in importer,
+            "Iris map is not selected once before compile-time mapped loops")
+    require("return {code_x1, Scalar{0}, code_x2};" in coordinate_map,
+            "Cartoon Iris point is not physical (X,Y,Z)=(x1,0,x2)")
+    require("return {physical[0], physical[2], physical[1]};" in
+            coordinate_map,
+            "Cartoon Iris vector map is not (X,Y,Z)->(X,Z,Y)")
+    require("physical[5], physical[4], physical[3]" in coordinate_map,
+            "Cartoon Iris symmetric-tensor map changed")
     for token in ("std::filesystem::absolute", "weakly_canonical",
                   "is_regular_file", "irisk_adm_spectral_file"):
         require(token in importer, f"fail-closed payload path check lost {token}")

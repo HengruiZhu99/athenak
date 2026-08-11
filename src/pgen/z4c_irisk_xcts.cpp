@@ -30,6 +30,7 @@
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
+#include "pgen/z4c_irisk_coordinate_map.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
 #include "z4c/curvature_diagnostics.hpp"
@@ -99,8 +100,9 @@ std::filesystem::path ResolveSpectralInputPath(const std::string &filename) {
   return resolved;
 }
 
-void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
-                             IrisAthenakSpectralInterpolator *interpolator) {
+template <z4c_irisk::AdmMap Map>
+void FillAdmFromIrisSpectralMapped(
+    MeshBlockPack *pmbp, IrisAthenakSpectralInterpolator *interpolator) {
   auto &u_adm = pmbp->padm->u_adm;
   HostArray5D<Real>::HostMirror host_u_adm = create_mirror(u_adm);
   HostArray5D<Real>::HostMirror host_u_z4c = create_mirror(pmbp->pz4c->u0);
@@ -135,34 +137,51 @@ void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
   int invalid_fields = 0;
 
   for (int m = 0; m < pmbp->nmb_thispack; ++m) {
-    std::vector<double> x(nx), y(ny), z(nz);
+    constexpr bool cartoon =
+        Map == z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1;
+    const auto iris_dimensions =
+        z4c_irisk::IrisTensorProductDimensions<Map>(nx, ny, nz);
+    std::vector<double> x(iris_dimensions[0]);
+    std::vector<double> y(iris_dimensions[1]);
+    std::vector<double> z(iris_dimensions[2]);
     for (int i = isg; i <= ieg; ++i) {
       x[static_cast<std::size_t>(i - isg)] =
           CellCenterX(i - indcs.is, indcs.nx1, size(m).x1min, size(m).x1max);
     }
-    for (int j = jsg; j <= jeg; ++j) {
-      y[static_cast<std::size_t>(j - jsg)] =
-          CellCenterX(j - indcs.js, indcs.nx2, size(m).x2min, size(m).x2max);
+    if constexpr (cartoon) {
+      y[0] = z4c_irisk::CartoonIrisInterpolationCoordinates(0.0, 0.0, 0.0)[1];
+      for (int j = jsg; j <= jeg; ++j) {
+        z[static_cast<std::size_t>(j - jsg)] =
+            CellCenterX(j - indcs.js, indcs.nx2, size(m).x2min, size(m).x2max);
+      }
+    } else {
+      for (int j = jsg; j <= jeg; ++j) {
+        y[static_cast<std::size_t>(j - jsg)] =
+            CellCenterX(j - indcs.js, indcs.nx2, size(m).x2min, size(m).x2max);
+      }
+      for (int k = ksg; k <= keg; ++k) {
+        z[static_cast<std::size_t>(k - ksg)] =
+            CellCenterX(k - indcs.ks, indcs.nx3, size(m).x3min, size(m).x3max);
+      }
     }
-    for (int k = ksg; k <= keg; ++k) {
-      z[static_cast<std::size_t>(k - ksg)] =
-          CellCenterX(k - indcs.ks, indcs.nx3, size(m).x3min, size(m).x3max);
-    }
-    std::vector<double> values(nx * ny * nz * IRISK_ATHENAK_ADM_VARIABLE_COUNT);
+    std::vector<double> values(iris_dimensions[0] * iris_dimensions[1] *
+                               iris_dimensions[2] *
+                               IRISK_ATHENAK_ADM_VARIABLE_COUNT);
     std::array<char, 1024> error{};
     if (IrisAthenakSpectralInterpolateCartesian(
-            interpolator, nx, ny, nz, x.data(), y.data(), z.data(),
-            values.data(), error.data(), error.size()) != 0) {
+            interpolator, iris_dimensions[0], iris_dimensions[1],
+            iris_dimensions[2], x.data(), y.data(), z.data(), values.data(),
+            error.data(), error.size()) != 0) {
       Fail(std::string("IrisK spectral interpolation failed: ") + error.data());
     }
 
     for (int k = ksg; k <= keg; ++k)
       for (int j = jsg; j <= jeg; ++j)
         for (int i = isg; i <= ieg; ++i) {
-          const std::size_t point =
-              static_cast<std::size_t>(i - isg) +
-              nx * (static_cast<std::size_t>(j - jsg) +
-                    ny * static_cast<std::size_t>(k - ksg));
+          const std::size_t point = z4c_irisk::IrisPointIndex<Map>(
+              static_cast<std::size_t>(i - isg),
+              static_cast<std::size_t>(j - jsg),
+              static_cast<std::size_t>(k - ksg), nx, ny);
           const double *value =
               values.data() + point * IRISK_ATHENAK_ADM_VARIABLE_COUNT;
           for (int variable = 0; variable < IRISK_ATHENAK_ADM_VARIABLE_COUNT;
@@ -178,22 +197,34 @@ void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
                                      static_cast<Real>(value[13]));
           }
           invalid_fields |= !(value[12] > 0.0) || !(value[13] > 0.0);
-          host_adm.g_dd(m, 0, 0, k, j, i) = value[0];
-          host_adm.g_dd(m, 0, 1, k, j, i) = value[1];
-          host_adm.g_dd(m, 0, 2, k, j, i) = value[2];
-          host_adm.g_dd(m, 1, 1, k, j, i) = value[3];
-          host_adm.g_dd(m, 1, 2, k, j, i) = value[4];
-          host_adm.g_dd(m, 2, 2, k, j, i) = value[5];
-          host_adm.vK_dd(m, 0, 0, k, j, i) = value[6];
-          host_adm.vK_dd(m, 0, 1, k, j, i) = value[7];
-          host_adm.vK_dd(m, 0, 2, k, j, i) = value[8];
-          host_adm.vK_dd(m, 1, 1, k, j, i) = value[9];
-          host_adm.vK_dd(m, 1, 2, k, j, i) = value[10];
-          host_adm.vK_dd(m, 2, 2, k, j, i) = value[11];
-          host_adm.psi4(m, k, j, i) = value[12];
-          host_adm.alpha(m, k, j, i) = value[13];
+          const auto metric =
+              z4c_irisk::SymmetricTensorFromPhysicalCartesian<Map>(
+                  std::array<double, 6>{value[0], value[1], value[2], value[3],
+                                        value[4], value[5]});
+          const auto curvature =
+              z4c_irisk::SymmetricTensorFromPhysicalCartesian<Map>(
+                  std::array<double, 6>{value[6], value[7], value[8], value[9],
+                                        value[10], value[11]});
+          const auto shift = z4c_irisk::VectorFromPhysicalCartesian<Map>(
+              std::array<double, 3>{value[14], value[15], value[16]});
+          host_adm.g_dd(m, 0, 0, k, j, i) = metric[0];
+          host_adm.g_dd(m, 0, 1, k, j, i) = metric[1];
+          host_adm.g_dd(m, 0, 2, k, j, i) = metric[2];
+          host_adm.g_dd(m, 1, 1, k, j, i) = metric[3];
+          host_adm.g_dd(m, 1, 2, k, j, i) = metric[4];
+          host_adm.g_dd(m, 2, 2, k, j, i) = metric[5];
+          host_adm.vK_dd(m, 0, 0, k, j, i) = curvature[0];
+          host_adm.vK_dd(m, 0, 1, k, j, i) = curvature[1];
+          host_adm.vK_dd(m, 0, 2, k, j, i) = curvature[2];
+          host_adm.vK_dd(m, 1, 1, k, j, i) = curvature[3];
+          host_adm.vK_dd(m, 1, 2, k, j, i) = curvature[4];
+          host_adm.vK_dd(m, 2, 2, k, j, i) = curvature[5];
+          host_adm.psi4(m, k, j, i) =
+              z4c_irisk::ScalarFromPhysicalCartesian<Map>(value[12]);
+          host_adm.alpha(m, k, j, i) =
+              z4c_irisk::ScalarFromPhysicalCartesian<Map>(value[13]);
           for (int component = 0; component < 3; ++component) {
-            host_adm.beta_u(m, component, k, j, i) = value[14 + component];
+            host_adm.beta_u(m, component, k, j, i) = shift[component];
           }
         }
   }
@@ -219,6 +250,29 @@ void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
   }
   Kokkos::deep_copy(u_adm, host_u_adm);
   Kokkos::deep_copy(pmbp->pz4c->u0, host_u_z4c);
+}
+
+void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
+                             IrisAthenakSpectralInterpolator *interpolator) {
+  // Resolve cartesian3d versus cartoon_so2 once on the host; mapped field loops
+  // below are compile-time specializations and add no evolution-time branch.
+  z4c_irisk::AdmMap map;
+  try {
+    map = z4c_irisk::SelectAdmMap(pmbp->z4c_symmetry);
+  } catch (const std::invalid_argument &error) {
+    Fail(error.what());
+  }
+  switch (map) {
+    case z4c_irisk::AdmMap::cartesian_xyz:
+      FillAdmFromIrisSpectralMapped<z4c_irisk::AdmMap::cartesian_xyz>(
+          pmbp, interpolator);
+      return;
+    case z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1:
+      FillAdmFromIrisSpectralMapped<
+          z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1>(pmbp, interpolator);
+      return;
+  }
+  Fail("invalid IrisK ADM coordinate map");
 }
 
 void RecomputeAdmConstraints(MeshBlockPack *pmbp) {
