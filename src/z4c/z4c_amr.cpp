@@ -245,7 +245,9 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
           // self-similar feature without introducing a preferred physical length.
           Real d2 = SQR(u0(m,I_Z4C_CHI,k,j,i+1) - u0(m,I_Z4C_CHI,k,j,i-1));
           d2 += SQR(u0(m,I_Z4C_CHI,k,j+1,i) - u0(m,I_Z4C_CHI,k,j-1,i));
-          d2 += SQR(u0(m,I_Z4C_CHI,k+1,j,i) - u0(m,I_Z4C_CHI,k-1,j,i));
+          if (nx3 > 1) {
+            d2 += SQR(u0(m,I_Z4C_CHI,k+1,j,i) - u0(m,I_Z4C_CHI,k-1,j,i));
+          }
           dmax = fmax((sqrt(d2)), dmax);
         },
         Kokkos::Max<Real>(team_dmax));

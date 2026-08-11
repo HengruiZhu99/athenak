@@ -232,6 +232,25 @@ void ProlongFCInternal(const int m, const int fk, const int fj, const int fi,
 
 template <int NGHOST>
 KOKKOS_INLINE_FUNCTION
+Real ProlongWeight1D(const int n, const bool offset) {
+  if constexpr (NGHOST == 2) {
+    constexpr Real w[3] = {0.15625, 0.9375, -0.09375};
+    return w[offset ? NGHOST-n : n];
+  } else if constexpr (NGHOST == 3) {
+    // Cubic interpolation from coarse cells i-1,...,i+2 to i-/+1/4.
+    constexpr Real wl[4] = {15.0/128.0, 135.0/128.0, -27.0/128.0, 5.0/128.0};
+    constexpr Real wr[4] = {-7.0/128.0, 105.0/128.0, 35.0/128.0, -5.0/128.0};
+    return offset ? wr[n] : wl[n];
+  } else {
+    static_assert(NGHOST == 4, "Z4c prolongation supports nghost=2, 3, or 4");
+    constexpr Real w[5] = {-0.02197265625, 0.205078125, 0.9228515625,
+                           -0.123046875, 0.01708984375};
+    return w[offset ? NGHOST-n : n];
+  }
+}
+
+template <int NGHOST>
+KOKKOS_INLINE_FUNCTION
 Real ProlongInterpolation(const int m, const int v, int k, int j, int i,
                             const int nx1, const int nx2, const int nx3,
                             const bool offsetk, const bool offsetj, const bool offseti,
@@ -239,14 +258,30 @@ Real ProlongInterpolation(const int m, const int v, int k, int j, int i,
   // interpolated value at new grid point
   Real ivals = 0;
 
-  for (int kk=0; kk<NGHOST+1; kk++) {
+  // A collapsed direction has one stored cell and no ghost layers.  Interpolate only
+  // in the active plane; this is the 2-D tensor product of the same 1-D rule.  The
+  // established 3-D coefficient tables remain the Cartesian path for NGHOST=2 and 4.
+  const bool collapsed_x3 = (nx3 == 1);
+  const int nk = collapsed_x3 ? 1 : NGHOST+1;
+  for (int kk=0; kk<nk; kk++) {
     for (int jj=0; jj<NGHOST+1; jj++) {
       for (int ii=0; ii<NGHOST+1; ii++) {
         int wghti = (offseti) ? NGHOST-ii : ii;
         int wghtj = (offsetj) ? NGHOST-jj : jj;
         int wghtk = (offsetk) ? NGHOST-kk : kk;
-        ivals += weights.d_view(wghtk,wghtj,wghti)*ca(m,v,
-                    k-NGHOST/2+kk,j-NGHOST/2+jj,i-NGHOST/2+ii);
+        Real weight;
+        if constexpr (NGHOST == 3) {
+          weight = ProlongWeight1D<NGHOST>(ii, offseti) *
+                   ProlongWeight1D<NGHOST>(jj, offsetj);
+          if (!collapsed_x3) weight *= ProlongWeight1D<NGHOST>(kk, offsetk);
+        } else if (collapsed_x3) {
+          weight = ProlongWeight1D<NGHOST>(ii, offseti) *
+                   ProlongWeight1D<NGHOST>(jj, offsetj);
+        } else {
+          weight = weights.d_view(wghtk,wghtj,wghti);
+        }
+        const int ck = collapsed_x3 ? k : k-NGHOST/2+kk;
+        ivals += weight*ca(m,v,ck,j-NGHOST/2+jj,i-NGHOST/2+ii);
       }
     }
   }
@@ -273,16 +308,17 @@ void HighOrderProlongCC(const int m, const int v, const int k, const int j, cons
                                                         false, true,false, ca, weights);
   a(m,v,fk  ,fj+1,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
                                                         false, true, true, ca, weights);
-  a(m,v,fk+1,fj  ,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true,false,false, ca, weights);
-  a(m,v,fk+1,fj  ,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true,false, true, ca, weights);
-  a(m,v,fk+1,fj+1,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true, true,false, ca, weights);
-  a(m,v,fk+1,fj+1,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true, true, true, ca, weights);
+  if (nx3 > 1) {
+    a(m,v,fk+1,fj  ,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1,nx2,nx3,
+                                                           true,false,false, ca, weights);
+    a(m,v,fk+1,fj  ,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1,nx2,nx3,
+                                                           true,false, true, ca, weights);
+    a(m,v,fk+1,fj+1,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1,nx2,nx3,
+                                                           true, true,false, ca, weights);
+    a(m,v,fk+1,fj+1,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1,nx2,nx3,
+                                                           true, true, true, ca, weights);
+  }
   return;
 }
 
 #endif // MESH_PROLONGATION_HPP_
-

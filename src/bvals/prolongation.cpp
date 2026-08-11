@@ -197,6 +197,9 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
             case 2: HighOrderProlongCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
                                           ca,a,prolong_2nd);
                     break;
+            case 3: HighOrderProlongCC<3>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
+                                          ca,a,prolong_4th);
+                    break;
             case 4: HighOrderProlongCC<4>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
                                           ca,a,prolong_4th);
                     break;

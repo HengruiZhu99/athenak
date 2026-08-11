@@ -13,6 +13,7 @@
 //! called in main() *after* physics modules are added
 
 #include <cstdint>   // int32_t
+#include <cstdlib>   // exit
 #include <iostream>
 #include <cmath>     // abs
 #include <algorithm> // sort
@@ -38,6 +39,45 @@
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
 #endif
+
+namespace {
+
+// A signed-rho Cartoon tree must remain invariant under rho -> -rho.  Reconcile the
+// globally gathered flags before any counts or tree mutation; refinement wins over hold,
+// and hold wins over derefinement, so symmetry never discards requested resolution.
+void ReconcileCartoonRefinementFlags(Mesh *pmesh, MeshBlockTree *tree) {
+  if (pmesh->pmb_pack == nullptr ||
+      pmesh->pmb_pack->z4c_symmetry.mode != z4c::Z4cSymmetryMode::cartoon_so2) {
+    return;
+  }
+
+  auto &refine_flag = pmesh->pmr->refine_flag;
+  for (int gid = 0; gid < pmesh->nmb_total; ++gid) {
+    const LogicalLocation &loc = pmesh->lloc_eachmb[gid];
+    LogicalLocation mirror = loc;
+    const int nradial = pmesh->nmb_rootx1 << (loc.level - pmesh->root_level);
+    mirror.lx1 = nradial - 1 - loc.lx1;
+    MeshBlockTree *mirror_block = tree->FindMeshBlock(mirror);
+    if (mirror_block == nullptr || mirror_block->GetLevel() != mirror.level ||
+        mirror_block->GetGID() < 0 || mirror_block->GetGID() >= pmesh->nmb_total) {
+      std::cerr << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl
+                << "Cartoon AMR found a pre-existing asymmetric signed-rho tree at "
+                << "level=" << loc.level << ", lx1=" << loc.lx1
+                << ", lx2=" << loc.lx2 << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    const int mirror_gid = mirror_block->GetGID();
+    if (gid < mirror_gid) {
+      const int reconciled =
+          std::max(refine_flag.h_view(gid), refine_flag.h_view(mirror_gid));
+      refine_flag.h_view(gid) = reconciled;
+      refine_flag.h_view(mirror_gid) = reconciled;
+    }
+  }
+}
+
+}  // namespace
 
 //----------------------------------------------------------------------------------------
 // MeshRefinement constructor:
@@ -281,6 +321,7 @@ void MeshRefinement::CheckForRefinement(MeshBlockPack* pmbp) {
                    MPI_INT, refine_flag.h_view.data(), pmy_mesh->nmb_eachrank,
                    pmy_mesh->gids_eachrank, MPI_INT, MPI_COMM_WORLD);
 #endif
+  ReconcileCartoonRefinementFlags(pmy_mesh, pmy_mesh->ptree.get());
   // sync host array with device
   refine_flag.template modify<HostMemSpace>();
   refine_flag.template sync<DevExeSpace>();
@@ -1095,6 +1136,9 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
           switch (indcs.ng) {
             case 2: HighOrderProlongCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
                                           ca,a,prolong_2nd);
+                    break;
+            case 3: HighOrderProlongCC<3>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
+                                          ca,a,prolong_4th);
                     break;
             case 4: HighOrderProlongCC<4>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
                                           ca,a,prolong_4th);
