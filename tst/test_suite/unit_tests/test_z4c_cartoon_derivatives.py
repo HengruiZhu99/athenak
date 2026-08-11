@@ -35,6 +35,18 @@ CAMPAIGN_FIELDS = {"schema", "source", "build_manifest", "build_manifest_sha256"
 REDUCTION_TOLERANCE_FACTOR = 4096.0
 SATURATION_FACTOR = 4096.0
 DIAGNOSTIC_RESOLUTIONS = (32, 64, 128, 256)
+DECLARED_RESOLUTION_POOLS = {
+    2: (32, 64, 128, 256, 512, 1024, 2048, 4096),
+    4: (32, 64, 128, 256),
+    6: (32, 48, 64, 80, 96, 112, 128, 160, 192, 256),
+}
+TEMPLATE_MESHBLOCK_NX1 = 16
+TEMPLATE_MESHBLOCK_NX2 = 16
+MESHBLOCK_IDENTITY_FIELDS = (
+    "meshblock_nx1", "meshblock_nx2", "root_blocks_x1", "root_blocks_x2",
+    "root_meshblocks", "meshblocks_per_rank", "axis_block_boundary_x1",
+    "expected_owned_cells",
+)
 QUALIFICATION_DOMAIN = (-2.0, 2.0, -2.0, 2.0)
 CERTIFIED_COORDINATE_LIMIT = 3.0
 EXPECTED_CASES = 3 * 4 * 8
@@ -102,7 +114,7 @@ PREFLIGHT_FIELDS = {
     "estimated_output_bytes_upper_bound", "free_bytes_before_campaign", "orders",
     "resolutions", "resolutions_by_order", "phases", "ranks", "campaign_mode",
     "stage_id", "frozen_window_sha256", "run_tuples", "domain_certification",
-    "search_manifest_sha256", "series_manifest_sha256",
+    "meshblock_topologies", "search_manifest_sha256", "series_manifest_sha256",
 }
 CASE_ENVIRONMENT_KEYS = (
     "CUDA_DEVICE_ORDER", "CUDA_VISIBLE_DEVICES", "KOKKOS_NUM_DEVICES",
@@ -563,13 +575,94 @@ def replace_parameter(text: str, block: str, key: str, value: object) -> str:
     return text[:match.start(2)] + body + text[match.end(2):]
 
 
+def select_meshblock_nx1(order: int, resolution: int) -> int:
+    if order not in DECLARED_RESOLUTION_POOLS or resolution <= 0:
+        raise RuntimeError("meshblock selection requires order 2/4/6 and positive N")
+    minimum = 2 * (order // 2 + 1)
+    for cells in range(TEMPLATE_MESHBLOCK_NX1, minimum - 1, -1):
+        if resolution % cells == 0 and (resolution // cells) % 2 == 0:
+            return cells
+    raise RuntimeError("no supported meshblock/nx1 gives even root x1 topology")
+
+
+def meshblock_topology(order: int, resolution: int, ranks: int) -> dict[str, int]:
+    if order not in DECLARED_RESOLUTION_POOLS or resolution <= 0:
+        raise RuntimeError("meshblock topology requires order 2/4/6 and positive N")
+    if resolution % TEMPLATE_MESHBLOCK_NX2 != 0:
+        raise RuntimeError("MMS topology requires nx2 divisible by 16")
+    if resolution not in DECLARED_RESOLUTION_POOLS[order]:
+        raise RuntimeError("resolution is outside the frozen MMS candidate pool")
+    if ranks <= 0:
+        raise RuntimeError("MMS topology requires a positive MPI rank count")
+    nx1 = select_meshblock_nx1(order, resolution)
+    blocks_x1 = resolution // nx1
+    blocks_x2 = resolution // TEMPLATE_MESHBLOCK_NX2
+    total = blocks_x1 * blocks_x2
+    if blocks_x1 % 2 != 0 or total % ranks != 0:
+        raise RuntimeError("MMS topology is not even-axis and MPI ownership divisible")
+    if ranks not in (2, 4):
+        raise RuntimeError("MMS topology is restricted to MPI2/MPI4")
+    return {"meshblock_nx1": nx1, "meshblock_nx2": TEMPLATE_MESHBLOCK_NX2,
+            "root_blocks_x1": blocks_x1, "root_blocks_x2": blocks_x2,
+            "root_meshblocks": total, "meshblocks_per_rank": total // ranks,
+            "axis_block_boundary_x1": blocks_x1 // 2,
+            "expected_owned_cells": resolution * resolution}
+
+
+def rendered_integer(text: str, block: str, key: str) -> int:
+    block_pattern = re.compile(
+        rf"(?ms)^<{re.escape(block)}>\s*$.*?(?=^<|\Z)")
+    blocks = block_pattern.findall(text)
+    if len(blocks) != 1:
+        raise RuntimeError(f"rendered input requires one <{block}> block")
+    values = re.findall(rf"(?m)^\s*{re.escape(key)}\s*=\s*([^#\s]+)\s*$",
+                        blocks[0])
+    if len(values) != 1 or re.fullmatch(r"[0-9]+", values[0]) is None:
+        raise RuntimeError(f"rendered input requires one integer {block}/{key}")
+    return int(values[0])
+
+
+def validate_rendered_topology(text: str, order: int, resolution: int,
+                               ranks: int) -> dict[str, int]:
+    expected = meshblock_topology(order, resolution, ranks)
+    observed = {
+        "global_nx1": rendered_integer(text, "mesh", "nx1"),
+        "global_nx2": rendered_integer(text, "mesh", "nx2"),
+        "global_nx3": rendered_integer(text, "mesh", "nx3"),
+        "meshblock_nx1": rendered_integer(text, "meshblock", "nx1"),
+        "meshblock_nx2": rendered_integer(text, "meshblock", "nx2"),
+        "meshblock_nx3": rendered_integer(text, "meshblock", "nx3"),
+    }
+    if (observed != {"global_nx1": resolution, "global_nx2": resolution,
+                     "global_nx3": 1,
+                     "meshblock_nx1": expected["meshblock_nx1"],
+                     "meshblock_nx2": expected["meshblock_nx2"],
+                     "meshblock_nx3": 1} or
+            resolution % observed["meshblock_nx1"] != 0 or
+            resolution % observed["meshblock_nx2"] != 0 or
+            expected["root_blocks_x1"] <= 0 or
+            expected["root_blocks_x1"] % 2 != 0 or
+            expected["axis_block_boundary_x1"] * 2 !=
+            expected["root_blocks_x1"] or
+            expected["root_blocks_x1"] * expected["root_blocks_x2"] !=
+            expected["root_meshblocks"] or
+            expected["root_meshblocks"] % ranks != 0 or
+            expected["expected_owned_cells"] != resolution * resolution):
+        raise RuntimeError("rendered meshblock topology differs from exact inventory")
+    return expected
+
+
 def render_input(base: Path, order: int, resolution: int, phase: int,
                  basename: str, domain: tuple[float, float, float, float]) -> str:
+    if order not in DECLARED_RESOLUTION_POOLS or \
+       resolution not in DECLARED_RESOLUTION_POOLS[order]:
+        raise RuntimeError("input rendering is restricted to the frozen candidate pools")
     text = base.read_text(encoding="utf-8")
     nghost = order // 2 + 1
     for block, key, value in (
         ("job", "basename", basename), ("mesh", "nghost", nghost),
         ("mesh", "nx1", resolution), ("mesh", "nx2", resolution),
+        ("meshblock", "nx1", select_meshblock_nx1(order, resolution)),
         ("z4c", "spatial_order", order), ("problem", "noise_phase", phase),
         ("problem", "output_directory", "."),
         ("mesh", "x1min", domain[0]), ("mesh", "x1max", domain[1]),
@@ -1165,6 +1258,97 @@ def expect_runtime_error(action, label: str) -> None:
 def self_test_cpu_audit_policy() -> None:
     """Exercise the audit plumbing without launching Athena or creating a campaign."""
     root = Path(__file__).resolve().parents[3]
+    template = root / "tst/inputs/z4c_cartoon_derivatives.athinput"
+    expected_nx1 = {
+        2: {resolution: 16 for resolution in DECLARED_RESOLUTION_POOLS[2]},
+        4: {resolution: 16 for resolution in DECLARED_RESOLUTION_POOLS[4]},
+        6: {32: 16, 48: 12, 64: 16, 80: 10, 96: 16,
+            112: 14, 128: 16, 160: 16, 192: 16, 256: 16},
+    }
+    def legacy_render(order: int, resolution: int, phase: int) -> str:
+        text = template.read_text(encoding="utf-8")
+        nghost = order // 2 + 1
+        for block, key, value in (
+            ("job", "basename", "cartoon_mms"), ("mesh", "nghost", nghost),
+            ("mesh", "nx1", resolution), ("mesh", "nx2", resolution),
+            ("z4c", "spatial_order", order), ("problem", "noise_phase", phase),
+            ("problem", "output_directory", "."),
+            ("mesh", "x1min", QUALIFICATION_DOMAIN[0]),
+            ("mesh", "x1max", QUALIFICATION_DOMAIN[1]),
+            ("mesh", "x2min", QUALIFICATION_DOMAIN[2]),
+            ("mesh", "x2max", QUALIFICATION_DOMAIN[3]),
+        ):
+            text = replace_parameter(text, block, key, value)
+        return text
+
+    legacy_diagnostic_hashes = []
+    for order, resolutions in DECLARED_RESOLUTION_POOLS.items():
+        if set(expected_nx1[order]) != set(resolutions):
+            raise RuntimeError("meshblock fixture does not cover an exact declared pool")
+        for resolution in resolutions:
+            rendered = render_input(template, order, resolution, 0, "cartoon_mms",
+                                    QUALIFICATION_DOMAIN)
+            if select_meshblock_nx1(order, resolution) != expected_nx1[order][resolution]:
+                raise RuntimeError("meshblock divisor selection differs from frozen table")
+            for ranks in (2, 4):
+                topology = meshblock_topology(order, resolution, ranks)
+                parsed = validate_rendered_topology(rendered, order, resolution, ranks)
+                if (topology["meshblock_nx1"] != expected_nx1[order][resolution] or
+                        parsed != topology or
+                        topology["root_blocks_x1"] % 2 != 0 or
+                        topology["root_meshblocks"] % ranks != 0 or
+                        topology["meshblocks_per_rank"] !=
+                        topology["root_meshblocks"] // ranks):
+                    raise RuntimeError("meshblock topology is not even/divisible")
+            if resolution in DIAGNOSTIC_RESOLUTIONS:
+                for phase in range(8):
+                    current = render_input(template, order, resolution, phase,
+                                           "cartoon_mms", QUALIFICATION_DOMAIN)
+                    legacy = legacy_render(order, resolution, phase)
+                    current_sha = hashlib.sha256(current.encode()).hexdigest()
+                    legacy_sha = hashlib.sha256(legacy.encode()).hexdigest()
+                    if current != legacy or current_sha != legacy_sha:
+                        raise RuntimeError("one of 96 original diagnostic decks changed")
+                    legacy_diagnostic_hashes.append(
+                        {"tuple": [order, resolution, phase], "sha256": legacy_sha})
+    if (len(legacy_diagnostic_hashes) != 96 or
+            canonical_digest(legacy_diagnostic_hashes) !=
+            "4c0dfbb8bbeb8447a66f55509e1978e3537b09d3dd7432986a18df29045bc28a"):
+        raise RuntimeError("96-input legacy byte/SHA inventory changed")
+    failed_v5_input = legacy_render(6, 48, 0)
+    repaired_n48 = render_input(template, 6, 48, 0, "cartoon_mms",
+                                QUALIFICATION_DOMAIN)
+    if (hashlib.sha256(failed_v5_input.encode()).hexdigest() !=
+            "3abf212c290ff351e8834277ca583217504749c03c7a38ca4fe036bdc36830fb" or
+            rendered_integer(failed_v5_input, "meshblock", "nx1") != 16 or
+            rendered_integer(repaired_n48, "meshblock", "nx1") != 12 or
+            {resolution: rendered_integer(
+                render_input(template, 6, resolution, 0, "cartoon_mms",
+                             QUALIFICATION_DOMAIN), "meshblock", "nx1")
+             for resolution in (48, 80, 96, 112)} !=
+            {48: 12, 80: 10, 96: 16, 112: 14}):
+        raise RuntimeError("v5 failed-input or repaired exception table changed")
+    expect_runtime_error(
+        lambda: validate_rendered_topology(failed_v5_input, 6, 48, 2),
+        "exact v5 odd-root-block input")
+    expect_runtime_error(lambda: select_meshblock_nx1(8, 32),
+                         "unsupported spatial order")
+    expect_runtime_error(lambda: select_meshblock_nx1(6, 0),
+                         "nonpositive resolution")
+    expect_runtime_error(lambda: select_meshblock_nx1(6, 17),
+                         "empty eligible divisor set")
+    expect_runtime_error(lambda: meshblock_topology(6, 50, 2),
+                         "nx2-indivisible resolution")
+    expect_runtime_error(lambda: meshblock_topology(6, 48, 8),
+                         "rank-incompatible total")
+    expect_runtime_error(
+        lambda: validate_rendered_topology(
+            repaired_n48.replace("nx1 = 12\n", "", 1), 6, 48, 2),
+        "missing rendered meshblock key")
+    expect_runtime_error(
+        lambda: validate_rendered_topology(
+            repaired_n48.replace("nx1 = 12\n", "nx1 = 12\nnx1 = 12\n", 1),
+            6, 48, 2), "duplicate rendered meshblock key")
     if rate_policy(6, "fitted_layer_0_negative", "clean", "l1") != (6.0, 0.25):
         raise RuntimeError("fitted clean margin is not p-0.25")
     if rate_policy(4, "raw_transition_positive", "clean", "raw_error",
@@ -1731,7 +1915,8 @@ def self_test_cpu_audit_policy() -> None:
                    "--evidence-dir", ".", "--", str(executable), "-i",
                    "input.athinput"]
         identity = {"input_sha256": hashlib.sha256(rendered.encode()).hexdigest(),
-                    "rank_wrapper_sha256": sha256(wrapper), "command": command}
+                    "rank_wrapper_sha256": sha256(wrapper), "command": command,
+                    **meshblock_topology(2, 32, 2)}
         stored = {"rank_bindings": bindings}
         validate_case_launch_provenance(
             case, identity, stored, sha256(executable), "Serial", 2,
@@ -1748,7 +1933,8 @@ def self_test_cpu_audit_policy() -> None:
         input_path.write_text(rendered, encoding="utf-8")
         for label, mutation in (
             ("wrapper digest mutation", {"rank_wrapper_sha256": "0" * 64}),
-            ("command mutation", {"command": command[:-1] + ["wrong.input"]})):
+            ("command mutation", {"command": command[:-1] + ["wrong.input"]}),
+            ("meshblock topology mutation", {"meshblock_nx1": 8})):
             expect_runtime_error(
                 lambda edit=mutation: validate_case_launch_provenance(
                     case, {**identity, **edit}, stored, sha256(executable),
@@ -2083,6 +2269,9 @@ def self_test_cpu_audit_policy() -> None:
         "phases": [0], "ranks": 2, "campaign_mode": "accepted_frozen_window",
         "stage_id": None, "frozen_window_sha256": "7" * 64,
         "run_tuples": [list(item) for item in aggregate_required],
+        "meshblock_topologies": [
+            {"tuple": list(item), **meshblock_topology(item[0], item[1], 2)}
+            for item in aggregate_required],
         "domain_certification": validate_certified_domain(
             QUALIFICATION_DOMAIN, {2: aggregate_resolutions}, True),
         "series_manifest_sha256": "4" * 64,
@@ -2138,6 +2327,7 @@ def self_test_cpu_audit_policy() -> None:
         "mutated final preflight")
     for label, mutation in (
         ("zeroed final forecast", {"estimated_output_bytes_upper_bound": 0}),
+        ("wrong final meshblock topology", {"meshblock_topologies": []}),
         ("wrong final search manifest", {"search_manifest_sha256": "0" * 64})):
         expect_runtime_error(
             lambda edit=mutation: validate_final_reference_aggregates(
@@ -2537,6 +2727,7 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     case = args.output / f"{key}-{case_uuid}"
     basename = "cartoon_mms"
     rendered = render_input(args.input, order, resolution, phase, basename, args.domain)
+    topology = validate_rendered_topology(rendered, order, resolution, args.ranks)
     wrapper = args.rank_wrapper
     wrapped = [sys.executable, str(wrapper), "--evidence-dir", "."]
     if args.require_backend == "Cuda":
@@ -2550,7 +2741,7 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
                 "build_manifest_sha256": sha256(args.build_manifest),
                 "rank_wrapper_sha256": sha256(args.rank_wrapper),
                 "domain": args.domain, "execution_environment": case_environment,
-                "execution_environment_sha256": environment_sha256}
+                "execution_environment_sha256": environment_sha256, **topology}
     started = time.time()
     resumed_result = None
     if case.exists():
@@ -2913,12 +3104,16 @@ def validate_case_launch_provenance(
         phase: int, input_template: Path, rank_wrapper: Path) -> None:
     expected_input = render_input(input_template, order, resolution, phase,
                                   "cartoon_mms", domain)
+    expected_topology = validate_rendered_topology(
+        expected_input, order, resolution, ranks)
     input_path = case / "input.athinput"
     if (identity.get("input_sha256") !=
             hashlib.sha256(expected_input.encode()).hexdigest() or
             sha256(input_path) != identity.get("input_sha256") or
             input_path.read_text(encoding="utf-8") != expected_input or
-            identity.get("rank_wrapper_sha256") != sha256(rank_wrapper)):
+            identity.get("rank_wrapper_sha256") != sha256(rank_wrapper) or
+            any(identity.get(field) != expected_topology[field]
+                for field in MESHBLOCK_IDENTITY_FIELDS)):
         raise RuntimeError("case input/wrapper provenance differs")
     command = identity.get("command")
     wrapper_tail = [str(rank_wrapper), "--evidence-dir", "."] + \
@@ -4137,6 +4332,9 @@ def validate_final_reference_aggregates(
     forecast = output_forecast(
         {int(order): tuple(values) for order, values in resolutions_by_order.items()},
         expected_phases, reference_ranks, rank_comparison, required)
+    expected_topologies = [
+        {"tuple": list(item), **meshblock_topology(item[0], item[1], reference_ranks)}
+        for item in required]
     if (not isinstance(preflight, dict) or set(preflight) != PREFLIGHT_FIELDS or
             preflight.get("schema") != SCHEMA or preflight.get("state") != "preflight" or
             preflight.get("orders") != expected_orders or
@@ -4148,6 +4346,7 @@ def validate_final_reference_aggregates(
             preflight.get("stage_id") is not None or
             preflight.get("frozen_window_sha256") != accepted_window_sha256 or
             preflight.get("run_tuples") != [list(item) for item in required] or
+            preflight.get("meshblock_topologies") != expected_topologies or
             preflight.get("domain_certification") != expected_certification or
             preflight.get("series_manifest_sha256") !=
             execution["series_manifest_sha256"] or
@@ -4505,9 +4704,8 @@ def load_search_manifest(path: Path) -> dict[str, object]:
     policy = value.get("policy")
     if (not isinstance(policy, dict) or policy.get("diagnostic_resolutions") !=
             list(DIAGNOSTIC_RESOLUTIONS) or policy.get("resolution_pools") != {
-                "2": [32, 64, 128, 256, 512, 1024, 2048, 4096],
-                "4": [32, 64, 128, 256],
-                "6": [32, 48, 64, 80, 96, 112, 128, 160, 192, 256]} or
+                str(order): list(resolutions)
+                for order, resolutions in DECLARED_RESOLUTION_POOLS.items()} or
             policy.get("minimum_consecutive_unsaturated_ratios") != 2 or
             policy.get("series_count") != 171):
         raise RuntimeError("search policy/pools differ from the frozen contract")
@@ -5322,6 +5520,12 @@ def main() -> int:
                  "stage_id": args.characterization_stage,
                  "frozen_window_sha256": frozen_window_sha256,
                  "run_tuples": [list(item) for item in run_tuples],
+                 "meshblock_topologies": [
+                     {"tuple": list(item), **validate_rendered_topology(
+                         render_input(args.input, item[0], item[1], item[2],
+                                      "cartoon_mms", tuple(args.domain)),
+                         item[0], item[1], args.ranks)}
+                     for item in run_tuples],
                  "domain_certification": certification,
                  "search_manifest_sha256": sha256(
                      root / "tst/inputs/z4c_cartoon_mms_search_manifest.json"),
