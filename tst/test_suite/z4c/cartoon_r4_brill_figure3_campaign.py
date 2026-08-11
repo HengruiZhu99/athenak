@@ -4,7 +4,10 @@
 This is deliberately a campaign driver, not a scheduler framework.  It binds
 one input-selected AthenaK executable to the accepted IrisK 48x32 handoff,
 renders exactly three 2-D Cartoon inputs, launches them in the declared order,
-and emits machine-readable central-curvature and completeness evidence.
+and emits machine-readable central-curvature and completeness evidence.  Its
+bounded comparison subcommand samples both a selected Athena curve and each
+frozen published vector centerline on 1025 inclusive, uniformly spaced points
+over their explicit common proper-time interval.
 """
 
 from __future__ import annotations
@@ -18,6 +21,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -31,6 +35,21 @@ TEMPLATE = SCRIPT_DIR / "cartoon_r4_brill_figure3.athinput"
 DESIGN_PATH = SCRIPT_DIR / "cartoon_r4_brill_figure3_campaign.json"
 STATE_SCHEMA = "athenak_cartoon_r4_brill_figure3_campaign_v1"
 ANALYSIS_SCHEMA = "athenak_cartoon_r4_brill_figure3_analysis_v1"
+PUBLISHED_COMPARISON_SCHEMA = "athenak_cartoon_r4_figure3_published_comparison_v1"
+PUBLISHED_CURVES_SHA256 = (
+    "947f92f72af32caf631d5efe9d720c7c56800b2e4578dcb6bcc26107cabc8adf")
+PUBLISHED_METADATA_SHA256 = (
+    "b623b340ded776acb4165c8d69fc79a41d41a92dc5f459b131cab8a94927859d")
+PUBLISHED_SERIES = ("bamps", "prague", "sphGR")
+PUBLISHED_CURVE_HEADER = (
+    "series", "index", "form_x_pt", "form_y_pt", "page_x_pt", "page_y_pt",
+    "tau", "log10_abs_I", "abs_I", "original_pdf_vertex")
+ATHENA_CURVE_HEADER = (
+    "resolution", "cycle", "coordinate_time", "proper_time",
+    "abs_kretschmann_I", "log10_abs_kretschmann_I", "axis_lapse",
+    "normalized_H", "normalized_M", "meshblocks", "max_refinement_level",
+    "max_meshblocks_per_rank")
+PUBLISHED_COMPARISON_SAMPLES = 1025
 PAYLOAD_SENTINEL = "__IRISK_BRILL_FIGURE3_PAYLOAD__"
 
 
@@ -65,6 +84,148 @@ def atomic_json(path: Path, value: dict[str, Any]) -> None:
 
 def git(root: Path, *arguments: str) -> str:
     return r1.git(root, *arguments)
+
+
+def require_file_hash(path: Path, expected: str, label: str) -> str:
+    require(path.is_file() and not path.is_symlink(), f"{label} is not a regular file")
+    require(re.fullmatch(r"[0-9a-f]{64}", expected) is not None,
+            f"{label} expected hash is malformed")
+    actual = sha256(path)
+    require(actual == expected, f"{label} hash mismatch")
+    return actual
+
+
+def strict_csv_rows(path: Path, header: tuple[str, ...], label: str
+                    ) -> list[dict[str, str]]:
+    with path.open("r", encoding="utf-8", newline="") as stream:
+        reader = csv.DictReader(stream)
+        require(reader.fieldnames is not None and
+                tuple(reader.fieldnames) == header and
+                len(set(reader.fieldnames)) == len(reader.fieldnames),
+                f"{label} CSV inventory is not exact")
+        rows = list(reader)
+    require(rows and all(None not in row and set(row) == set(header) for row in rows),
+            f"{label} CSV contains a malformed record")
+    return rows
+
+
+def finite_float(token: str, label: str) -> float:
+    try:
+        value = float(token)
+    except ValueError as error:
+        raise RuntimeError(f"{label} is malformed") from error
+    require(math.isfinite(value), f"{label} is nonfinite")
+    return value
+
+
+def finite_integer(token: str, label: str) -> int:
+    value = finite_float(token, label)
+    require(value.is_integer(), f"{label} is not integral")
+    return int(value)
+
+
+def read_published_curves(path: Path, expected_hash: str,
+                          metadata_path: Path, metadata_hash: str
+                          ) -> tuple[dict[str, dict[str, list[float]]],
+                                     dict[str, Any]]:
+    require_file_hash(path, expected_hash, "published vector-curves CSV")
+    require_file_hash(metadata_path, metadata_hash, "published vector metadata")
+    metadata = strict_load(metadata_path)
+    require(set(metadata) == {"axis_transform", "independent_render_check",
+                              "inventory", "schema", "scientific_binding",
+                              "source", "tools", "uncertainty"} and
+            metadata["schema"] ==
+            "axisymmetric-cartoon.figure3-published-vector-curves.v1",
+            "published vector metadata schema/inventory changed")
+    binding = metadata["scientific_binding"]
+    require(binding.get("A") == -0.047 and binding.get("rho0") == 5.0 and
+            binding.get("family") == "Brill" and
+            binding.get("series") == list(PUBLISHED_SERIES) and
+            binding.get("recovered_quantity") ==
+            "rendered PDF polyline centerlines",
+            "published vector scientific binding changed")
+    require(metadata["source"].get("paper") == "arXiv:2607.10843v1" and
+            metadata["source"].get("figure") == 3 and
+            metadata["source"].get("contains_embedded_original_numeric_data")
+            is False,
+            "published vector source binding changed")
+    uncertainty = metadata["uncertainty"]
+    for key in ("coordinate_only_log10_abs_I_half_unit",
+                "coordinate_only_tau_half_unit"):
+        require(isinstance(uncertainty.get(key), (int, float)) and
+                math.isfinite(float(uncertainty[key])) and
+                float(uncertainty[key]) > 0.0,
+                f"published vector uncertainty {key} is invalid")
+    rows = strict_csv_rows(path, PUBLISHED_CURVE_HEADER, "published vector-curves")
+    curves = {name: {"tau": [], "log10_abs_I": []} for name in PUBLISHED_SERIES}
+    expected_index = {name: 0 for name in PUBLISHED_SERIES}
+    for number, row in enumerate(rows, 2):
+        series = row["series"]
+        require(series in curves, f"unexpected published series at row {number}")
+        require(row["original_pdf_vertex"] in {"true", "false"},
+                f"malformed published vertex flag at row {number}")
+        index = finite_integer(row["index"], f"published index at row {number}")
+        require(index == expected_index[series],
+                f"noncontiguous published index for {series}")
+        expected_index[series] += 1
+        for key in ("form_x_pt", "form_y_pt", "page_x_pt", "page_y_pt"):
+            finite_float(row[key], f"published {key} at row {number}")
+        tau = finite_float(row["tau"], f"published tau at row {number}")
+        log_value = finite_float(row["log10_abs_I"],
+                                 f"published log10 curvature at row {number}")
+        absolute = finite_float(row["abs_I"],
+                                f"published curvature at row {number}")
+        require(absolute > 0.0 and
+                abs(math.log10(absolute) - log_value) <= 5.0e-14,
+                f"published linear/log curvature mismatch at row {number}")
+        curve = curves[series]
+        require(not curve["tau"] or tau > curve["tau"][-1],
+                f"published {series} proper time is not strictly increasing")
+        curve["tau"].append(tau)
+        curve["log10_abs_I"].append(log_value)
+    require(all(len(curves[name]["tau"]) >= 2 for name in PUBLISHED_SERIES),
+            "published vector series inventory is incomplete")
+    return curves, metadata
+
+
+def read_athena_curve(path: Path, expected_hash: str,
+                      resolution: str) -> dict[str, list[float]]:
+    require(resolution in {"n128", "n192", "n256"},
+            "requested Athena resolution is invalid")
+    require_file_hash(path, expected_hash, "Athena central curve CSV")
+    rows = strict_csv_rows(path, ATHENA_CURVE_HEADER, "Athena central curve")
+    curves: dict[str, dict[str, list[float]]] = {}
+    for number, row in enumerate(rows, 2):
+        name = row["resolution"]
+        require(name in {"n128", "n192", "n256"},
+                f"unexpected Athena resolution at row {number}")
+        curve = curves.setdefault(name, {"tau": [], "log10_abs_I": []})
+        for key in ("cycle", "meshblocks", "max_refinement_level",
+                    "max_meshblocks_per_rank"):
+            value = finite_integer(row[key], f"Athena {key} at row {number}")
+            require(value >= 0, f"negative Athena {key} at row {number}")
+        for key in ("coordinate_time", "axis_lapse"):
+            finite_float(row[key], f"Athena {key} at row {number}")
+        for key in ("normalized_H", "normalized_M"):
+            if row[key]:
+                finite_float(row[key], f"Athena {key} at row {number}")
+        tau = finite_float(row["proper_time"],
+                           f"Athena proper time at row {number}")
+        absolute = finite_float(row["abs_kretschmann_I"],
+                                f"Athena curvature at row {number}")
+        log_value = finite_float(row["log10_abs_kretschmann_I"],
+                                 f"Athena log10 curvature at row {number}")
+        require(absolute > 0.0 and
+                abs(math.log10(absolute) - log_value) <= 5.0e-13,
+                f"Athena linear/log curvature mismatch at row {number}")
+        require(not curve["tau"] or tau > curve["tau"][-1],
+                f"Athena {name} proper time is not strictly increasing")
+        curve["tau"].append(tau)
+        curve["log10_abs_I"].append(log_value)
+    require(set(curves) == {"n128", "n192", "n256"} and
+            all(len(curves[name]["tau"]) >= 2 for name in curves),
+            "Athena resolution inventory is not exact")
+    return curves[resolution]
 
 
 def design() -> dict[str, Any]:
@@ -581,6 +742,149 @@ def linear_value(x: list[float], y: list[float], point: float) -> float:
     return y[low] + fraction * (y[high] - y[low])
 
 
+def peak_on_interval(curve: dict[str, list[float]], start: float,
+                     end: float) -> tuple[float, float]:
+    points = [start, end]
+    points.extend(point for point in curve["tau"] if start < point < end)
+    values = [(linear_value(curve["tau"], curve["log10_abs_I"], point), point)
+              for point in points]
+    # Prefer the earlier time for a flat peak so the result is deterministic.
+    return max(values, key=lambda item: (item[0], -item[1]))
+
+
+def write_published_comparison_grid(
+        path: Path,
+        records: list[tuple[str, int, float, float, float, float, float, bool]]
+        ) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.writer(stream, lineterminator="\n")
+        writer.writerow(("published_series", "grid_index", "proper_time",
+                         "published_centerline_log10_abs_I",
+                         "athena_current_gauge_log10_abs_I",
+                         "athena_minus_published_log10_abs_I",
+                         "published_coordinate_uncertainty_log10_abs_I",
+                         "outside_coordinate_uncertainty"))
+        for record in records:
+            writer.writerow((*record[:-1], "true" if record[-1] else "false"))
+
+
+def compare_published_curves(published_csv: Path, published_metadata: Path,
+                             athena_csv: Path, athena_hash: str,
+                             resolution: str, output: Path,
+                             published_csv_hash: str = PUBLISHED_CURVES_SHA256,
+                             published_metadata_hash: str =
+                             PUBLISHED_METADATA_SHA256) -> dict[str, Any]:
+    published, metadata = read_published_curves(
+        published_csv, published_csv_hash, published_metadata,
+        published_metadata_hash)
+    athena = read_athena_curve(athena_csv, athena_hash, resolution)
+    log_uncertainty = float(
+        metadata["uncertainty"]["coordinate_only_log10_abs_I_half_unit"])
+    tau_uncertainty = float(
+        metadata["uncertainty"]["coordinate_only_tau_half_unit"])
+    metrics: dict[str, Any] = {}
+    grid_records: list[
+        tuple[str, int, float, float, float, float, float, bool]] = []
+    for name in PUBLISHED_SERIES:
+        reference = published[name]
+        start = max(reference["tau"][0], athena["tau"][0])
+        end = min(reference["tau"][-1], athena["tau"][-1])
+        require(start < end, f"{name} and Athena curves have no explicit overlap")
+        grid = [start + (end - start) * index /
+                (PUBLISHED_COMPARISON_SAMPLES - 1)
+                for index in range(PUBLISHED_COMPARISON_SAMPLES)]
+        reference_values = [linear_value(reference["tau"],
+                                         reference["log10_abs_I"], point)
+                            for point in grid]
+        athena_values = [linear_value(athena["tau"], athena["log10_abs_I"], point)
+                         for point in grid]
+        residuals = [trial - paper for paper, trial in
+                     zip(reference_values, athena_values)]
+        rms = math.sqrt(sum(value * value for value in residuals) /
+                        PUBLISHED_COMPARISON_SAMPLES)
+        maximum = max(abs(value) for value in residuals)
+        paper_peak, paper_peak_time = peak_on_interval(reference, start, end)
+        athena_peak, athena_peak_time = peak_on_interval(athena, start, end)
+        peak_ratio = 10.0 ** (athena_peak - paper_peak)
+        require(math.isfinite(peak_ratio), f"{name} peak curvature ratio is nonfinite")
+        metrics[name] = {
+            "overlap_start_proper_time": start,
+            "overlap_end_proper_time": end,
+            "interpolation_grid": {
+                "kind": "uniform_in_proper_time_inclusive",
+                "samples": PUBLISHED_COMPARISON_SAMPLES,
+            },
+            "published_time_coverage_fraction":
+                (end - start) / (reference["tau"][-1] - reference["tau"][0]),
+            "athena_time_coverage_fraction":
+                (end - start) / (athena["tau"][-1] - athena["tau"][0]),
+            "log10_curvature_rms_error": rms,
+            "log10_curvature_max_abs_error": maximum,
+            "published_peak": {"proper_time": paper_peak_time,
+                               "log10_abs_I": paper_peak,
+                               "abs_I": 10.0 ** paper_peak},
+            "athena_peak": {"proper_time": athena_peak_time,
+                            "log10_abs_I": athena_peak,
+                            "abs_I": 10.0 ** athena_peak},
+            "peak_log10_value_offset": athena_peak - paper_peak,
+            "peak_abs_I_ratio": peak_ratio,
+            "peak_proper_time_offset": athena_peak_time - paper_peak_time,
+            "uncertainty_aware_flags": {
+                "basis": "published_vector_coordinate_serialization_only",
+                "rms_exceeds_log10_coordinate_half_unit": rms > log_uncertainty,
+                "max_exceeds_log10_coordinate_half_unit": maximum > log_uncertainty,
+                "peak_value_offset_exceeds_log10_coordinate_half_unit":
+                    abs(athena_peak - paper_peak) > log_uncertainty,
+                "peak_time_offset_exceeds_tau_coordinate_half_unit":
+                    abs(athena_peak_time - paper_peak_time) > tau_uncertainty,
+                "grid_fraction_outside_log10_coordinate_half_unit":
+                    sum(abs(value) > log_uncertainty for value in residuals) /
+                    PUBLISHED_COMPARISON_SAMPLES,
+            },
+        }
+        grid_records.extend((name, index, point, paper, trial, residual,
+                             log_uncertainty, abs(residual) > log_uncertainty)
+                            for index, (point, paper, trial, residual) in enumerate(
+                                zip(grid, reference_values, athena_values, residuals)))
+    grid_path = output.with_name(output.stem + "_grid.csv")
+    write_published_comparison_grid(grid_path, grid_records)
+    result = {
+        "schema": PUBLISHED_COMPARISON_SCHEMA,
+        "status": "quantitative_comparison_only_not_qualification",
+        "qualification_claim": "current_gauge_analogue_only",
+        "inputs": {
+            "published_vector_curves": {"path": str(published_csv.resolve()),
+                                        "sha256": published_csv_hash},
+            "published_vector_metadata": {"path": str(published_metadata.resolve()),
+                                          "sha256": published_metadata_hash},
+            "athena_current_gauge_curve": {"path": str(athena_csv.resolve()),
+                                           "sha256": athena_hash,
+                                           "resolution": resolution},
+        },
+        "interpretation": {
+            "published_data_kind": "rendered PDF polyline centerlines",
+            "published_data_are_raw_simulation_samples": False,
+            "coordinate_uncertainty_only": True,
+            "current_gauge_caveat":
+                ("AthenaK uses the frozen campaign's current gauge and is an "
+                 "analogue, not an exact gauge-matched reproduction."),
+            "use_limit": metadata["uncertainty"]["use_limit"],
+        },
+        "metrics": metrics,
+        "plot_data": {"path": str(grid_path.resolve()), "sha256": sha256(grid_path)},
+    }
+    atomic_json(output, result)
+    return result
+
+
+def compare_published(args: argparse.Namespace) -> None:
+    compare_published_curves(
+        args.published_csv.resolve(), args.published_metadata.resolve(),
+        args.athena_csv.resolve(), args.athena_sha256, args.resolution,
+        args.output.resolve())
+
+
 def curve_error(reference: dict[str, list[float]],
                 trial: dict[str, list[float]], start: float, end: float,
                 samples: int) -> float:
@@ -716,10 +1020,13 @@ def analyze(args: argparse.Namespace) -> None:
     write_curve_csv(curve_path, cases, state["execution_order"])
     comparison = {
         "claim": "current_gauge_analogue_only",
-        "paper_curve_machine_readable": False,
+        "paper_raw_curve_machine_readable": False,
+        "published_rendered_vector_centerline_available": True,
         "paper_figure_sha256": state["paper_figure"]["sha256"],
-        "warning": ("No published machine-readable curve is available; the paper "
-                    "PDF is retained but is not digitized or represented as data."),
+        "warning": ("No authors' raw curve samples are available. A separately "
+                    "authenticated rendered-vector centerline freeze may be compared "
+                    "with the compare-published subcommand, subject to its gauge and "
+                    "coordinate-uncertainty caveats."),
         "common_proper_time_start": common_start,
         "common_proper_time_end": common_end, "sample_count": samples,
         "low_medium_normalized_l2": low_medium,
@@ -938,6 +1245,102 @@ def self_test() -> None:
                        "axisKret": [1.0, 2.0, 1.0]}
     require(curve_error(synthetic_curve, synthetic_curve, 0.0, 2.0, 5) == 0.0,
             "curve comparison oracle failed")
+    with tempfile.TemporaryDirectory(prefix="cartoon-r4-published-compare-") as directory:
+        root = Path(directory)
+        published_csv = root / "published.csv"
+        metadata_path = root / "metadata.json"
+        athena_csv = root / "athena.csv"
+        output = root / "comparison.json"
+        metadata = {
+            "axis_transform": {}, "independent_render_check": {}, "inventory": {},
+            "schema": "axisymmetric-cartoon.figure3-published-vector-curves.v1",
+            "scientific_binding": {
+                "A": -0.047, "rho0": 5.0, "family": "Brill",
+                "series": list(PUBLISHED_SERIES),
+                "recovered_quantity": "rendered PDF polyline centerlines",
+            },
+            "source": {"paper": "arXiv:2607.10843v1", "figure": 3,
+                       "contains_embedded_original_numeric_data": False},
+            "tools": {},
+            "uncertainty": {
+                "coordinate_only_log10_abs_I_half_unit": 1.0e-6,
+                "coordinate_only_tau_half_unit": 2.0e-6,
+                "use_limit": "synthetic rendered-centerline fixture",
+            },
+        }
+        atomic_json(metadata_path, metadata)
+
+        def write_published() -> None:
+            with published_csv.open("w", encoding="utf-8", newline="") as stream:
+                writer = csv.writer(stream, lineterminator="\n")
+                writer.writerow(PUBLISHED_CURVE_HEADER)
+                for name in PUBLISHED_SERIES:
+                    for index, (tau, log_value) in enumerate(
+                            ((0.0, 0.0), (1.0, 1.0), (2.0, 0.0))):
+                        writer.writerow((name, index, tau, log_value, tau, log_value,
+                                         tau, log_value, 10.0 ** log_value, "true"))
+
+        def write_athena(times: tuple[float, ...], offset: float = 0.0,
+                         nonfinite: bool = False) -> None:
+            with athena_csv.open("w", encoding="utf-8", newline="") as stream:
+                writer = csv.writer(stream, lineterminator="\n")
+                writer.writerow(ATHENA_CURVE_HEADER)
+                for resolution in ("n128", "n192", "n256"):
+                    for index, (tau, base) in enumerate(
+                            zip(times, (0.0, 1.0, 0.0))):
+                        bad = nonfinite and resolution == "n256" and index == 1
+                        log_value: float | str = "nan" if bad else base + offset
+                        absolute = "nan" if bad else 10.0 ** float(log_value)
+                        writer.writerow((resolution, index, tau, tau, absolute,
+                                         log_value, 1.0, "", "", 4, 0, 4))
+
+        write_published()
+        write_athena((0.0, 1.0, 2.0))
+        published_hash = sha256(published_csv)
+        metadata_hash = sha256(metadata_path)
+        exact = compare_published_curves(
+            published_csv, metadata_path, athena_csv, sha256(athena_csv), "n256",
+            output, published_hash, metadata_hash)
+        require(all(record["log10_curvature_rms_error"] == 0.0 and
+                    record["log10_curvature_max_abs_error"] == 0.0 and
+                    record["peak_log10_value_offset"] == 0.0 and
+                    record["peak_proper_time_offset"] == 0.0
+                    for record in exact["metrics"].values()),
+                "exact published-curve comparison fixture failed")
+        exact_hashes = (sha256(output), sha256(output.with_name(
+            output.stem + "_grid.csv")))
+        compare_published_curves(
+            published_csv, metadata_path, athena_csv, sha256(athena_csv), "n256",
+            output, published_hash, metadata_hash)
+        require(exact_hashes == (sha256(output), sha256(output.with_name(
+                    output.stem + "_grid.csv"))),
+                "published-curve comparison is not byte deterministic")
+        write_athena((0.0, 1.0, 2.0), offset=0.25)
+        offset = compare_published_curves(
+            published_csv, metadata_path, athena_csv, sha256(athena_csv), "n256",
+            output, published_hash, metadata_hash)
+        require(all(abs(record["log10_curvature_rms_error"] - 0.25) < 1.0e-15 and
+                    abs(record["log10_curvature_max_abs_error"] - 0.25) < 1.0e-15 and
+                    abs(record["peak_log10_value_offset"] - 0.25) < 1.0e-15 and
+                    record["uncertainty_aware_flags"][
+                        "max_exceeds_log10_coordinate_half_unit"] is True
+                    for record in offset["metrics"].values()),
+                "offset published-curve comparison fixture failed")
+        write_athena((3.0, 4.0, 5.0))
+        expect_failure(lambda: compare_published_curves(
+            published_csv, metadata_path, athena_csv, sha256(athena_csv), "n256",
+            output, published_hash, metadata_hash), "no explicit overlap")
+        write_athena((0.0, 1.0, 2.0), nonfinite=True)
+        expect_failure(lambda: compare_published_curves(
+            published_csv, metadata_path, athena_csv, sha256(athena_csv), "n256",
+            output, published_hash, metadata_hash), "nonfinite")
+        write_athena((0.0, 1.0, 2.0))
+        authenticated_hash = sha256(athena_csv)
+        with athena_csv.open("a", encoding="utf-8") as stream:
+            stream.write("mutation\n")
+        expect_failure(lambda: compare_published_curves(
+            published_csv, metadata_path, athena_csv, authenticated_hash, "n256",
+            output, published_hash, metadata_hash), "hash mismatch")
     synthetic_state = {
         "schema": STATE_SCHEMA, "source": {}, "executable": {},
         "cmake_cache": {}, "design": {}, "initial_data": {},
@@ -972,6 +1375,14 @@ def main() -> int:
     run.add_argument("--case", required=True)
     inspect = subparsers.add_parser("analyze")
     inspect.add_argument("--state", required=True, type=Path)
+    compare = subparsers.add_parser("compare-published")
+    compare.add_argument("--published-csv", required=True, type=Path)
+    compare.add_argument("--published-metadata", required=True, type=Path)
+    compare.add_argument("--athena-csv", required=True, type=Path)
+    compare.add_argument("--athena-sha256", required=True)
+    compare.add_argument("--resolution", required=True,
+                         choices=("n128", "n192", "n256"))
+    compare.add_argument("--output", required=True, type=Path)
     subparsers.add_parser("self-test")
     args = parser.parse_args()
     if args.action == "prepare":
@@ -980,6 +1391,8 @@ def main() -> int:
         run_case(args)
     elif args.action == "analyze":
         analyze(args)
+    elif args.action == "compare-published":
+        compare_published(args)
     else:
         self_test()
     return 0
