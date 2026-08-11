@@ -323,7 +323,7 @@ void Driver::ExecuteTaskList(Mesh *pm, std::string tl, int stage) {
 
 void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool res_flag) {
   //---- Step 1.  Set conserved variables in ghost zones for all physics
-  InitBoundaryValuesAndPrimitives(pmesh);
+  InitBoundaryValuesAndPrimitives(pmesh, res_flag);
 
   //---- Step 2.  Compute time step (if problem involves time evolution)
   hydro::Hydro *phydro = pmesh->pmb_pack->phydro;
@@ -636,12 +636,17 @@ Real Driver::UpdateWallClock() {
 //! \brief Sets boundary conditions on conserved and initializes primitives.  Used both
 //! on initialization, and when new MBs created with AMR.
 
-void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
+void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
+                                             bool preserve_restored_z4c) {
   // Note: with MPI, sends on ALL MBs must be complete before receives execute
 
   // Initialize Z4c
   z4c::Z4c *pz4c = pm->pmb_pack->pz4c;
-  if (pz4c != nullptr) {
+  // Restart files contain the complete, post-algebraic-projection Z4c u0,
+  // including ghost zones.  Reconstructing those ghosts here would change the
+  // restored evolution state before its first RHS.  AMR-created blocks use the
+  // default false value and continue through the normal initialization path.
+  if (pz4c != nullptr && !preserve_restored_z4c) {
     (void) pz4c->RestrictU(this, 0);
     (void) pz4c->InitRecv(this, -1);  // stage < 0 suppresses InitFluxRecv
     (void) pz4c->SendU(this, 0);

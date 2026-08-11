@@ -197,12 +197,35 @@ def main() -> int:
     driver = (source_dir / "src/driver/driver.cpp").read_text(encoding="utf-8")
     initialize = driver[driver.index("void Driver::Initialize(Mesh"):
                         driver.index("void Driver::Execute(Mesh")]
-    require(initialize.index("InitBoundaryValuesAndPrimitives(pmesh)") <
+    require(initialize.index("InitBoundaryValuesAndPrimitives(pmesh, res_flag)") <
             initialize.index("pz4c->ConvertZ4cToADM(this, nexp_stages)") <
             initialize.index("pz4c->ADMConstraints_(this, nexp_stages)") <
             initialize.index("UpdateCartoonCentralState(pmesh, res_flag)") <
             initialize.index("for (auto &out : pout->pout_list)"),
             "central initialization does not follow fresh ADM/constraints")
+    driver_header = (source_dir / "src/driver/driver.hpp").read_text(encoding="utf-8")
+    boundary_init = driver[driver.index("void Driver::InitBoundaryValuesAndPrimitives"):
+                           driver.index("// Initialize HYDRO")]
+    refinement = (source_dir / "src/mesh/mesh_refinement.cpp").read_text(
+        encoding="utf-8")
+    require("bool preserve_restored_z4c = false" in driver_header and
+            "bool preserve_restored_z4c)" in boundary_init,
+            "Z4c restart-preservation flag is not explicit and default-false")
+    require("if (pz4c != nullptr && !preserve_restored_z4c)" in boundary_init,
+            "restart preservation does not guard exactly the Z4c initialization branch")
+    for required in ("RestrictU", "InitRecv", "SendU", "ClearSend", "ClearRecv",
+                     "RecvU", "Z4cBoundaryRHS", "ApplyPhysicalBCs", "Prolongate"):
+        require(f"pz4c->{required}" in boundary_init,
+                f"fresh/AMR Z4c initialization lost {required}")
+    initialization_order = [boundary_init.index(f"pz4c->{required}") for required in
+                            ("RestrictU", "InitRecv", "SendU", "ClearSend",
+                             "ClearRecv", "RecvU", "Z4cBoundaryRHS",
+                             "ApplyPhysicalBCs", "Prolongate")]
+    require(initialization_order == sorted(initialization_order),
+            "fresh/AMR Z4c boundary initialization order changed")
+    require("InitBoundaryValuesAndPrimitives(pmy_mesh);" in refinement and
+            "InitBoundaryValuesAndPrimitives(pmy_mesh," not in refinement,
+            "AMR-created blocks do not use default-false Z4c initialization")
     execute = driver[driver.index("void Driver::Execute(Mesh"):
                      driver.index("void Driver::Finalize(Mesh")]
     require(execute.index('ExecuteTaskList(pmesh, "after_stagen", stage)') <
@@ -213,6 +236,11 @@ def main() -> int:
             execute.index("for (auto &out : pout->pout_list)"),
             "accepted-step central sampling is not post-task/post-time and pre-output")
     tasks = (source_dir / "src/z4c/z4c_tasks.cpp").read_text(encoding="utf-8")
+    task_order = [tasks.index(marker) for marker in
+                  ('"Z4c_RestU"', '"Z4c_SendU"', '"Z4c_RecvU"', '"Z4c_BCS"',
+                   '"Z4c_Prolong"', '"Z4c_AlgC"', '"Z4c_Z4c2ADM"')]
+    require(task_order == sorted(task_order),
+            "normal Z4c boundary/projection/ADM task order changed")
     require(tasks.index("&Z4c::ConvertZ4cToADM") <
             tasks.index("&Z4c::ADMConstraints_") and
             '"Z4c_Z4c2ADM",\n                 Task_Run' in tasks and
