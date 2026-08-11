@@ -56,8 +56,8 @@ def replace_once(data, old, new):
     return data.replace(old, new, 1)
 
 
-def replace_value(data, key, old, new):
-    if len(old) != len(new):
+def replace_value(data, key, old, new, require_same_length=True):
+    if require_same_length and len(old) != len(new):
         raise RuntimeError(f"value replacement changes length for {key}")
     pattern = re.compile(rb"(" + re.escape(key.encode()) + rb"\s*=\s*)" +
                          re.escape(old.encode()) + rb"(\s)")
@@ -82,6 +82,80 @@ def replace_block_value(data, block, key, new):
     if count != 1:
         raise RuntimeError(f"could not replace <{block}>/{key}")
     return prefix[:block_start] + replaced + prefix[block_end:] + suffix
+
+
+def remove_legacy_fastflow_time_key(data):
+    """Remove the sole canonical schema-2-only key from a legacy fixture."""
+    marker = b"<par_end>\n"
+    text_end = data.index(marker) + len(marker)
+    prefix = data[:text_end]
+    suffix = data[text_end:]
+    block_marker = b"<z4c_restart>\n"
+    if prefix.count(block_marker) != 1:
+        raise RuntimeError("expected exactly one <z4c_restart> block")
+    block_start = prefix.index(block_marker)
+    block_end = prefix.find(b"#-------------------------", block_start)
+    if block_end < 0:
+        block_end = len(prefix)
+    section = prefix[block_start:block_end]
+
+    key = b"fastflow_time_first_found"
+    key_line_pattern = re.compile(
+        rb"^[ \t]*" + key + rb"\b[^\r\n]*(?:\r?\n|\Z)", re.MULTILINE)
+    key_lines = key_line_pattern.findall(section)
+    if len(key_lines) != 1:
+        raise RuntimeError(
+            "expected exactly one legacy FastFlow time key line; "
+            f"found {len(key_lines)}"
+        )
+    valid_line_pattern = re.compile(
+        rb"^[ \t]*" + key +
+        rb"[ \t]*=[ \t]*-1[ \t]*(?:#[ \t]*Updated[ \t]+during[ \t]+run"
+        rb"[ \t]+time)?[ \t]*(?:\r?\n|\Z)"
+    )
+    if valid_line_pattern.fullmatch(key_lines[0]) is None:
+        raise RuntimeError(
+            "legacy FastFlow time key must have value -1 and only the canonical "
+            "'Updated during run time' comment"
+        )
+    changed = section.replace(key_lines[0], b"", 1)
+    if key_line_pattern.search(changed) is not None:
+        raise RuntimeError("legacy FastFlow time key removal left a duplicate key")
+    return prefix[:block_start] + changed + prefix[block_end:] + suffix
+
+
+def test_legacy_fastflow_time_key_removal():
+    binary = b"\0binary fastflow_time_first_found = 7\0"
+
+    def fixture(*lines):
+        return (b"<z4c_restart>\nfastflow_schema = 1\n" + b"".join(lines) +
+                b"fastflow_converged = 0\n"
+                b"#------------------------- PAR_DUMP\n<par_end>\n" + binary)
+
+    for line in (
+        b"fastflow_time_first_found = -1\n",
+        b"\tfastflow_time_first_found\t = \t-1  "
+        b"#  Updated  during run time \t\r\n",
+    ):
+        changed = remove_legacy_fastflow_time_key(fixture(line))
+        header, payload = changed.split(b"<par_end>\n", 1)
+        if b"fastflow_time_first_found" in header or payload != binary:
+            raise RuntimeError("legacy FastFlow time fixture removal was not isolated")
+
+    invalid = (
+        fixture(),
+        fixture(b"fastflow_time_first_found = -1\n",
+                b"fastflow_time_first_found = -1\n"),
+        fixture(b"fastflow_time_first_found = 0\n"),
+        fixture(b"fastflow_time_first_found -1\n"),
+        fixture(b"fastflow_time_first_found = -1 # unexpected comment\n"),
+    )
+    for candidate in invalid:
+        try:
+            remove_legacy_fastflow_time_key(candidate)
+        except RuntimeError:
+            continue
+        raise RuntimeError("malformed legacy FastFlow time fixture was accepted")
 
 
 def mutate_binary_dimension(data, target, expected, replacement):
@@ -153,6 +227,7 @@ def build_legacy_athena(source_dir, work_dir, base_commit):
 
 
 def main():
+    test_legacy_fastflow_time_key_removal()
     parser = argparse.ArgumentParser()
     parser.add_argument("--athena", required=True, type=Path)
     parser.add_argument("--input", required=True, type=Path)
@@ -434,11 +509,7 @@ def main():
     # Exact inactive schema-1 state is the sole m=0 migration path.  It carries no
     # first-found key and is upgraded to current schema 2 with an explicit -1 value.
     legacy_fastflow_data = replace_value(restart_data, "fastflow_schema", "2", "1")
-    legacy_fastflow_data, removed = re.subn(
-        rb"^\s*fastflow_time_first_found\s*=\s*\S+\s*$\n?", b"",
-        legacy_fastflow_data, count=1, flags=re.MULTILINE)
-    if removed != 1:
-        raise RuntimeError("could not remove legacy FastFlow time key")
+    legacy_fastflow_data = remove_legacy_fastflow_time_key(legacy_fastflow_data)
     legacy_fastflow = args.work_dir / "legacy_fastflow_schema1.rst"
     legacy_fastflow.write_bytes(legacy_fastflow_data)
     legacy_fastflow_run = args.work_dir / "legacy_fastflow_schema1_run"
@@ -530,7 +601,8 @@ def main():
         ("fastflow_time_first_found", "-1", "07"),
         ("fastflow_converged", "0", "1"),
     ):
-        seeded_data = replace_value(seeded_data, key, old, new)
+        seeded_data = replace_value(
+            seeded_data, key, old, new, require_same_length=False)
     seeded = args.work_dir / "seeded.rst"
     seeded.write_bytes(seeded_data)
     seeded_run = args.work_dir / "seeded_run"
