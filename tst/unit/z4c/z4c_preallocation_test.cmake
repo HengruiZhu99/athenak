@@ -254,6 +254,53 @@ function(run_cartoon_mms_positive case_name extra_blocks)
   endif()
 endfunction()
 
+function(run_internal_restart_carrier_reject case_name)
+  set(CASE_NAME "${case_name}")
+  set(NX3 1)
+  set(Z4C_EXTRA "")
+  set(PROBLEM_EXTRA "check_only = true")
+  set(EXTRA_BLOCKS "<z4c_restart>\ncarrier_schema = 1")
+  string(CONFIGURE "${cartoon_template}" input_text @ONLY)
+  string(REPLACE "pgen_name = constructor_side_effect_sentinel"
+                 "pgen_name = z4c_cartoon_derivatives" input_text "${input_text}")
+  set(input_file "${TEST_DIR}/${case_name}.athinput")
+  file(WRITE "${input_file}" "${input_text}")
+  execute_process(
+      COMMAND "${ATHENA}" -i "${input_file}"
+      WORKING_DIRECTORY "${TEST_DIR}"
+      RESULT_VARIABLE result
+      OUTPUT_VARIABLE standard_output
+      ERROR_VARIABLE standard_error
+      TIMEOUT 15)
+  set(output "${standard_output}\n${standard_error}")
+  if("${result}" STREQUAL "0")
+    message(FATAL_ERROR "${case_name}: internal restart carrier was accepted")
+  endif()
+  set(expected
+      "### FATAL ERROR: <z4c_restart> is an internal restart-only carrier")
+  string(FIND "${output}" "${expected}" diagnostic_found)
+  if(diagnostic_found EQUAL -1)
+    message(FATAL_ERROR
+        "${case_name}: expected diagnostic '${expected}', got:\n${output}")
+  endif()
+  foreach(forbidden
+          "Z4c preallocation validation failed"
+          "AssembleZ4cTasks"
+          "Problem generator name could not be found"
+          "Setup complete, executing task list(s)")
+    string(FIND "${output}" "${forbidden}" forbidden_found)
+    if(NOT forbidden_found EQUAL -1)
+      message(FATAL_ERROR
+          "${case_name}: later side effect '${forbidden}' was observed")
+    endif()
+  endforeach()
+  file(GLOB output_side_effects "${TEST_DIR}/prealloc_${case_name}*")
+  if(output_side_effects)
+    message(FATAL_ERROR
+        "${case_name}: internal-carrier rejection left output side effects")
+  endif()
+endfunction()
+
 function(run_cartoon_pdf_reject case_name expected_diagnostic pdf_parameters)
   set(pdf_block
       "<output1>\nfile_type = pdf\ndcycle = 1\nid = reject_${case_name}\n${pdf_parameters}")
@@ -312,15 +359,14 @@ run_cartoon_mms_reject(
     mms_case_name Z4c_Cartoon_Derivatives true
     "problem generator 'Z4c_Cartoon_Derivatives' is not the staged check_only Cartoon derivative MMS"
     "" "")
+# Runtime-shaped restart markers reach the MMS-specific gate.  A literal
+# internal carrier is rejected earlier by main, before AddPhysics.
 run_cartoon_mms_reject(
     mms_restart_carrier z4c_cartoon_derivatives true
     "z4c_cartoon_derivatives check_only rejects restart"
     "restart_symmetry = cartoon_so2\nrestart_coordinate_map = signed_rho_z_suppressed_y_v1\nrestart_symmetry_schema = 1"
     "")
-run_cartoon_mms_reject(
-    mms_restart_block_injection z4c_cartoon_derivatives true
-    "z4c_cartoon_derivatives check_only rejects restart"
-    "" "<z4c_restart>\ncarrier_schema = 1")
+run_internal_restart_carrier_reject(mms_restart_block_injection)
 run_cartoon_mms_reject(
     mms_active_output z4c_cartoon_derivatives true
     "z4c_cartoon_derivatives check_only rejects Athena output blocks"
@@ -329,10 +375,12 @@ run_cartoon_mms_reject(
     mms_static_refinement z4c_cartoon_derivatives true
     "z4c_cartoon_derivatives check_only rejects AMR/SMR"
     "" "<mesh_refinement>\nrefinement = static")
+# Satisfy the generic adaptive-Mesh resource precondition so this fixture
+# reaches the intended MMS preallocation gate.
 run_cartoon_mms_reject(
     mms_adaptive_refinement z4c_cartoon_derivatives true
     "z4c_cartoon_derivatives check_only rejects AMR/SMR"
-    "" "<mesh_refinement>\nrefinement = adaptive")
+    "" "<mesh_refinement>\nrefinement = adaptive\nmax_nmb_per_rank = 8")
 
 foreach(physics hydro mhd ion-neutral radiation turb_driving particles)
   run_cartoon_reject(
