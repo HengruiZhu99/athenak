@@ -1686,13 +1686,45 @@ def self_test_cpu_audit_policy() -> None:
     aggregate_execution = {"series_manifest_sha256": "4" * 64,
                            "domain": list(QUALIFICATION_DOMAIN)}
     aggregate_required = [(2, 32, 0)]
+    aggregate_policy_sha = "5" * 64
+    aggregate_floor_id = "6" * 64
+    aggregate_record_keys = {
+        ("norm", 2, 0, "scalar.first.0|full_signed_plane", "clean", norm)
+        for norm in ("l1", "l2")}
+    aggregate_exact_key = (
+        "norm", 2, 0, 32, "scalar.first.1", "full_signed_plane", None, None)
+    aggregate_record = {
+        "source": "norm", "order": 2, "phase": 0,
+        "series": "scalar.first.0|full_signed_plane", "lane": "clean",
+        "norm": "l1", "diagnostic_resolutions": [32],
+        "samples": [{"resolution": 32, "floor_id": aggregate_floor_id}],
+        "legacy_evaluation": {"outcome_reason": "pass"},
+        "outcome_reason": "pass", "passed": True}
+    aggregate_records = [aggregate_record,
+                         {**aggregate_record, "norm": "l2"}]
+    aggregate_exact = {
+        "source": "norm", "order": 2, "phase": 0, "resolution": 32,
+        "operator": "scalar.first.1", "mask": "full_signed_plane",
+        "passed": True}
+    aggregate_partition = {
+        "norm_inconclusive": 0, "norm_rate_miss": 0,
+        "probe_inconclusive": 0, "probe_rate_miss": 0}
     aggregate_convergence = {field: None for field in CONVERGENCE_FIELDS}
     aggregate_convergence.update({
         "schema": SCHEMA, "series_manifest_sha256": "4" * 64,
         "diagnostic_resolutions_by_order": {"2": [32]},
+        "coefficient_floor_policy_sha256": aggregate_policy_sha,
+        "coefficient_floor_complexity":
+            "O(171*nx1); active-z multiplicity analytic",
+        "legacy_normalization_actions": [],
         "evidence_scope": "fresh_single_source_final_qualification",
         "artifacts": internal_artifacts, "failures": [], "passed": True,
-        "records": [], "exact_records": []})
+        "records": aggregate_records, "exact_records": [aggregate_exact],
+        "floor_decompositions": [{"floor_id": aggregate_floor_id}],
+        "legacy_pre_coefficient_floor_partition": aggregate_partition,
+        "coefficient_floor_partition": aggregate_partition})
+    aggregate_forecast = output_forecast(
+        {2: (32,)}, [0], 2, False, aggregate_required)
     aggregate_preflight = {field: 0 for field in PREFLIGHT_FIELDS}
     aggregate_preflight.update({
         "schema": SCHEMA, "state": "preflight", "orders": [2],
@@ -1702,12 +1734,18 @@ def self_test_cpu_audit_policy() -> None:
         "run_tuples": [[2, 32, 0]],
         "domain_certification": validate_certified_domain(
             QUALIFICATION_DOMAIN, {2: (32,)}, True),
-        "series_manifest_sha256": "4" * 64})
+        "series_manifest_sha256": "4" * 64,
+        "search_manifest_sha256": sha256(
+            root / "tst/inputs/z4c_cartoon_mms_search_manifest.json"),
+        "free_bytes_before_campaign":
+            2 * aggregate_forecast["estimated_output_bytes_upper_bound"],
+        **aggregate_forecast})
     if reference_artifact_files(aggregate_artifacts) != FINAL_CONVERGENCE_ARTIFACTS:
         raise RuntimeError("current writer/reference artifact schema differs")
     validate_final_reference_aggregates(
         aggregate_convergence, aggregate_preflight, aggregate_artifacts,
-        aggregate_execution, 2, "7" * 64, aggregate_required)
+        aggregate_execution, 2, "7" * 64, aggregate_required,
+        aggregate_record_keys, {aggregate_exact_key}, aggregate_policy_sha, False)
     for label, mutation in (
         ("failed reference convergence", {"failures": ["rate miss"],
                                            "passed": False}),
@@ -1720,13 +1758,42 @@ def self_test_cpu_audit_policy() -> None:
             lambda edit=mutation: validate_final_reference_aggregates(
                 {**aggregate_convergence, **edit}, aggregate_preflight,
                 aggregate_artifacts, aggregate_execution, 2, "7" * 64,
-                aggregate_required), label)
+                aggregate_required, aggregate_record_keys, {aggregate_exact_key},
+                aggregate_policy_sha, False), label)
+    for label, mutation in (
+        ("empty convergence inventory", {"records": []}),
+        ("truncated convergence inventory", {"records": aggregate_records[:1]}),
+        ("duplicate convergence inventory",
+         {"records": [aggregate_record, aggregate_record]}),
+        ("empty exact inventory", {"exact_records": []}),
+        ("inconsistent convergence partition",
+         {"coefficient_floor_partition":
+          {**aggregate_partition, "norm_rate_miss": 1}}),
+        ("wrong coefficient policy",
+         {"coefficient_floor_policy_sha256": "0" * 64})):
+        expect_runtime_error(
+            lambda edit=mutation: validate_final_reference_aggregates(
+                {**aggregate_convergence, **edit}, aggregate_preflight,
+                aggregate_artifacts, aggregate_execution, 2, "7" * 64,
+                aggregate_required, aggregate_record_keys, {aggregate_exact_key},
+                aggregate_policy_sha, False), label)
     expect_runtime_error(
         lambda: validate_final_reference_aggregates(
             aggregate_convergence,
             {**aggregate_preflight, "run_tuples": []}, aggregate_artifacts,
-            aggregate_execution, 2, "7" * 64, aggregate_required),
+            aggregate_execution, 2, "7" * 64, aggregate_required,
+            aggregate_record_keys, {aggregate_exact_key}, aggregate_policy_sha,
+            False),
         "mutated final preflight")
+    for label, mutation in (
+        ("zeroed final forecast", {"estimated_output_bytes_upper_bound": 0}),
+        ("wrong final search manifest", {"search_manifest_sha256": "0" * 64})):
+        expect_runtime_error(
+            lambda edit=mutation: validate_final_reference_aggregates(
+                aggregate_convergence, {**aggregate_preflight, **edit},
+                aggregate_artifacts, aggregate_execution, 2, "7" * 64,
+                aggregate_required, aggregate_record_keys, {aggregate_exact_key},
+                aggregate_policy_sha, False), label)
     expect_runtime_error(
         lambda: reference_artifact_files(
             {key: value for key, value in aggregate_artifacts.items()
@@ -3475,7 +3542,10 @@ def validate_final_reference_aggregates(
         convergence: object, preflight: object, artifacts: dict[str, object],
         execution: dict[str, object], reference_ranks: int,
         accepted_window_sha256: str,
-        required: list[tuple[int, int, int]]) -> None:
+        required: list[tuple[int, int, int]],
+        expected_record_keys: set[tuple[object, ...]],
+        expected_exact_keys: set[tuple[object, ...]],
+        expected_policy_sha256: str, rank_comparison: bool) -> None:
     internal_artifacts = {name: artifacts[name] for name in
                           ("convergence.csv", "convergence_rates.pgfplots.dat",
                            "convergence_plot.tex")}
@@ -3483,18 +3553,93 @@ def validate_final_reference_aggregates(
         str(order): sorted({resolution for item_order, resolution, _ in required
                             if item_order == order})
         for order in sorted({item[0] for item in required})}
+    records = convergence.get("records") if isinstance(convergence, dict) else None
+    exact_records = (convergence.get("exact_records")
+                     if isinstance(convergence, dict) else None)
+    valid_records = (records if isinstance(records, list) and
+                     all(isinstance(item, dict) for item in records) else [])
+    valid_exact = (exact_records if isinstance(exact_records, list) and
+                   all(isinstance(item, dict) for item in exact_records) else [])
+    record_keys = [
+        (item.get("source"), item.get("order"), item.get("phase"),
+         item.get("series"), item.get("lane"), item.get("norm"))
+        for item in valid_records]
+    exact_keys = [
+        (item.get("source"), item.get("order"), item.get("phase"),
+         item.get("resolution"), item.get("operator"), item.get("mask"),
+         item.get("side"), item.get("layer_index"))
+        for item in valid_exact]
+    floor_decompositions = (convergence.get("floor_decompositions")
+                            if isinstance(convergence, dict) else None)
+    floor_ids = ([] if not isinstance(floor_decompositions, list) else
+                 [item.get("floor_id") for item in floor_decompositions
+                  if isinstance(item, dict)])
+    referenced_floors = {
+        sample.get("floor_id") for record in valid_records
+        for sample in record.get("samples", [])
+        if isinstance(sample, dict)}
+    legacy_outcomes = [
+        (item, item.get("legacy_evaluation")
+         if isinstance(item.get("legacy_evaluation"), dict) else {})
+        for item in valid_records]
+    legacy_partition = {
+        "norm_inconclusive": sum(
+            item.get("source") == "norm" and
+            legacy.get("outcome_reason") ==
+            "legacy_inconclusive" for item, legacy in legacy_outcomes),
+        "norm_rate_miss": sum(
+            item.get("source") == "norm" and
+            legacy.get("outcome_reason") ==
+            "legacy_rate_miss" for item, legacy in legacy_outcomes),
+        "probe_inconclusive": sum(
+            item.get("source") == "probe" and
+            legacy.get("outcome_reason") ==
+            "legacy_inconclusive" for item, legacy in legacy_outcomes),
+        "probe_rate_miss": sum(
+            item.get("source") == "probe" and
+            legacy.get("outcome_reason") ==
+            "legacy_rate_miss" for item, legacy in legacy_outcomes)}
+    zero_partition = {name: 0 for name in legacy_partition}
     if (not isinstance(convergence, dict) or set(convergence) != CONVERGENCE_FIELDS or
             convergence.get("schema") != SCHEMA or
             convergence.get("series_manifest_sha256") !=
             execution["series_manifest_sha256"] or
             convergence.get("diagnostic_resolutions_by_order") !=
             resolutions_by_order or
+            convergence.get("coefficient_floor_policy_sha256") !=
+            expected_policy_sha256 or
+            convergence.get("coefficient_floor_complexity") !=
+            "O(171*nx1); active-z multiplicity analytic" or
+            convergence.get("legacy_normalization_actions") != [] or
             convergence.get("evidence_scope") !=
             "fresh_single_source_final_qualification" or
             convergence.get("artifacts") != internal_artifacts or
             convergence.get("failures") != [] or convergence.get("passed") is not True or
-            not isinstance(convergence.get("records"), list) or
-            not isinstance(convergence.get("exact_records"), list)):
+            not expected_record_keys or not expected_exact_keys or
+            len(record_keys) != len(expected_record_keys) or
+            set(record_keys) != expected_record_keys or
+            len(exact_keys) != len(expected_exact_keys) or
+            set(exact_keys) != expected_exact_keys or
+            any(item.get("passed") is not True or
+                item.get("outcome_reason") != "pass" or
+                not isinstance(item.get("samples"), list) or
+                len(item["samples"]) != len(
+                    resolutions_by_order[str(item.get("order"))]) or
+                {sample.get("resolution") for sample in item["samples"]
+                 if isinstance(sample, dict)} !=
+                set(resolutions_by_order[str(item.get("order"))]) or
+                item.get("diagnostic_resolutions") !=
+                resolutions_by_order[str(item.get("order"))]
+                for item in valid_records) or
+            any(item.get("passed") is not True for item in valid_exact) or
+            any(not isinstance(value, str) or
+                re.fullmatch(r"[0-9a-f]{64}", value) is None
+                for value in floor_ids) or
+            len(floor_ids) != len(set(floor_ids)) or
+            set(floor_ids) != referenced_floors or
+            convergence.get("legacy_pre_coefficient_floor_partition") !=
+            legacy_partition or
+            convergence.get("coefficient_floor_partition") != zero_partition):
         raise RuntimeError("rank-reference convergence result is not a passing fresh final")
     expected_orders = sorted({item[0] for item in required})
     expected_resolutions = sorted({item[1] for item in required})
@@ -3503,6 +3648,9 @@ def validate_final_reference_aggregates(
         tuple(execution["domain"]),
         {int(order): tuple(values) for order, values in resolutions_by_order.items()},
         True)
+    forecast = output_forecast(
+        {int(order): tuple(values) for order, values in resolutions_by_order.items()},
+        expected_phases, reference_ranks, rank_comparison, required)
     if (not isinstance(preflight, dict) or set(preflight) != PREFLIGHT_FIELDS or
             preflight.get("schema") != SCHEMA or preflight.get("state") != "preflight" or
             preflight.get("orders") != expected_orders or
@@ -3516,7 +3664,15 @@ def validate_final_reference_aggregates(
             preflight.get("run_tuples") != [list(item) for item in required] or
             preflight.get("domain_certification") != expected_certification or
             preflight.get("series_manifest_sha256") !=
-            execution["series_manifest_sha256"]):
+            execution["series_manifest_sha256"] or
+            preflight.get("search_manifest_sha256") != sha256(
+                Path(__file__).resolve().parents[3] /
+                "tst/inputs/z4c_cartoon_mms_search_manifest.json") or
+            any(preflight.get(name) != value for name, value in forecast.items()) or
+            isinstance(preflight.get("free_bytes_before_campaign"), bool) or
+            not isinstance(preflight.get("free_bytes_before_campaign"), int) or
+            preflight["free_bytes_before_campaign"] <
+            2 * forecast["estimated_output_bytes_upper_bound"]):
         raise RuntimeError("rank-reference preflight identity differs")
 
 
@@ -3592,9 +3748,13 @@ def verify_rank_reference_root(
             execution.get("accepted_review") != accepted.get("review") or
             [tuple(item) for item in execution.get("execution_tuples", [])] != required):
         raise RuntimeError("rank-reference accepted-window binding differs")
-    expected_operators = [item["name"] for item in load_json_strict(
+    series_inventory = load_json_strict(
         Path(__file__).resolve().parents[3] /
-        "tst/unit/z4c/z4c_cartoon_derivatives_series.json")["series"]]
+        "tst/unit/z4c/z4c_cartoon_derivatives_series.json")
+    expected_operators = [item["name"] for item in series_inventory["series"]]
+    metadata = {item["name"]: item for item in series_inventory["series"]}
+    expected_record_keys: set[tuple[object, ...]] = set()
+    expected_exact_keys: set[tuple[object, ...]] = set()
     verified_cases = []
     for advertised in reference["cases"]:
         if not isinstance(advertised, dict):
@@ -3604,7 +3764,7 @@ def verify_rank_reference_root(
         phase = json_integer(advertised, "phase")
         case = reference_root / \
             f"{advertised.get('case_id')}-{advertised.get('case_uuid')}"
-        stored, _, _, manifest_sha = verify_complete_case_evidence(
+        stored, rows, probes, manifest_sha = verify_complete_case_evidence(
             case, source, build_manifest_sha256, execution["executable_sha256"],
             backend, reference["ranks"], tuple(execution["domain"]), order,
             resolution, phase, expected_operators,
@@ -3614,6 +3774,34 @@ def verify_rank_reference_root(
             "tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py")
         if advertised != {**stored, "case_manifest_sha256": manifest_sha}:
             raise RuntimeError("rank-reference campaign/result differs")
+        for row in rows:
+            item = metadata[row["operator"]]
+            if item["classification"] != "truncating":
+                expected_exact_keys.add((
+                    "norm", order, phase, resolution, row["operator"], row["mask"],
+                    None, None))
+                continue
+            clean_norms = ["l1", "l2", "linfinity"]
+            if boolean_value(row, "cylindrical_applicable"):
+                clean_norms += ["cyl_l1", "cyl_l2", "cyl_linfinity"]
+            for lane in item["convergence_lanes"]:
+                norms = clean_norms if lane == "clean" else ["l1", "l2", "linfinity"]
+                for norm in norms:
+                    expected_record_keys.add((
+                        "norm", order, phase, row["operator"] + "|" + row["mask"],
+                        lane, norm))
+        for row in probes:
+            if row["classification"] == "diagnostic_axis":
+                continue
+            item = metadata[row["operator"]]
+            if item["classification"] != "truncating":
+                expected_exact_keys.add((
+                    "probe", order, phase, resolution, row["operator"], row["mask"],
+                    row["side"], integer_value(row, "layer_index")))
+            else:
+                expected_record_keys.add((
+                    "probe", order, phase, probe_series_identity(row), "clean",
+                    "raw_error"))
         verified_cases.append(advertised)
     attempts = execution.get("attempts")
     manifests = [case["case_manifest_sha256"] for case in verified_cases]
@@ -3638,7 +3826,9 @@ def verify_rank_reference_root(
     preflight = load_json_strict(reference_root / "preflight.json")
     validate_final_reference_aggregates(
         convergence, preflight, artifacts, execution, reference["ranks"],
-        str(accepted_window_sha256), required)
+        str(accepted_window_sha256), required, expected_record_keys,
+        expected_exact_keys, canonical_digest(series_inventory["roundoff_policy"]),
+        OPTIONAL_RANK_ARTIFACTS <= set(artifacts))
     expected_entries = ({"campaign.json", "frozen_window_execution.json",
                          "authorization"} | artifact_files |
                         {f"{case['case_id']}-{case['case_uuid']}"

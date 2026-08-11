@@ -241,6 +241,9 @@ def main() -> int:
             "def validate_stage_lineage" in driver and
             "def validate_case_launch_provenance" in driver and
             "def validate_final_reference_aggregates" in driver and
+            "expected_record_keys" in driver and
+            "expected_exact_keys" in driver and
+            'preflight.get("search_manifest_sha256")' in driver and
             '"fresh_single_source_final_qualification"' in driver and
             "require_exact_regular_files(authorization" in driver,
             "shared case verifier, partial lineage, or immutable rank/auth guard is missing")
