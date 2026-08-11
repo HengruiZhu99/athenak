@@ -113,6 +113,16 @@ def main() -> int:
             "switch (config.stencil_width)" not in kernels and
             "switch (fd_stencil)" not in kernels,
             "MMS bypasses the compiled production Cartoon host dispatcher")
+    device_kernels = kernels[kernels.index("template <z4c::TensorVariance"):
+                             kernels.index("std::vector<std::string> ResultNames()")]
+    require("KOKKOS_INLINE_FUNCTION\nint TensorFirstIndex" in kernels and
+            "KOKKOS_INLINE_FUNCTION\nint TensorSecondIndex" in kernels and
+            "return component < 3 ? 0 : (component < 5 ? 1 : 2);" in kernels and
+            "return component == 0 ? 0 : ((component == 1 || component == 3) ? 1 : 2);"
+            in kernels and
+            "kTensorFirst[" not in device_kernels and
+            "kTensorSecond[" not in device_kernels,
+            "symmetric tensor mapping is not scalar and device-callable")
     for body in lambda_bodies(kernels):
         require("Z4cSymmetryMode" not in body and "spatial_order" not in body and
                 "z4c_symmetry" not in body,

@@ -50,6 +50,16 @@ constexpr int kTensorFirst[6] = {0, 0, 0, 1, 1, 2};
 constexpr int kTensorSecond[6] = {0, 1, 2, 1, 2, 2};
 
 KOKKOS_INLINE_FUNCTION
+int TensorFirstIndex(const int component) {
+  return component < 3 ? 0 : (component < 5 ? 1 : 2);
+}
+
+KOKKOS_INLINE_FUNCTION
+int TensorSecondIndex(const int component) {
+  return component == 0 ? 0 : ((component == 1 || component == 3) ? 1 : 2);
+}
+
+KOKKOS_INLINE_FUNCTION
 int SymmetricIndex(int first, int second) {
   if (first > second) {
     const int swap = first;
@@ -213,8 +223,8 @@ KOKKOS_INLINE_FUNCTION void EvaluateTensorComponents(
   for (int component = 0; component < 6; ++component) {
     z4c_mms::TensorOracle oracle;
     z4c_mms::EvaluateTensorOracle(component, rho, 0.0, z, oracle);
-    const int first_component = kTensorFirst[component];
-    const int second_component = kTensorSecond[component];
+    const int first_component = TensorFirstIndex(component);
+    const int second_component = TensorSecondIndex(component);
     const int component_base = base + 10 * component;
     for (int direction = 0; direction < 3; ++direction) {
       StoreComparison(
@@ -230,8 +240,8 @@ KOKKOS_INLINE_FUNCTION void EvaluateTensorComponents(
           shared_deltas, independent_deltas);
     }
     for (int direction = 0; direction < 6; ++direction) {
-      const int first = kTensorFirst[direction];
-      const int second = kTensorSecond[direction];
+      const int first = TensorFirstIndex(direction);
+      const int second = TensorSecondIndex(direction);
       StoreComparison(
           local, component_base + 3 + direction,
           derivative.template TensorSecond<Variance>(
@@ -288,8 +298,8 @@ KOKKOS_INLINE_FUNCTION void EvaluateAndStorePoint(
                     independent_errors, shared_deltas, independent_deltas);
   }
   for (int direction = 0; direction < 6; ++direction) {
-    const int first = kTensorFirst[direction];
-    const int second = kTensorSecond[direction];
+    const int first = TensorFirstIndex(direction);
+    const int second = TensorSecondIndex(direction);
     StoreComparison(local, 3 + direction,
                     derivative.ScalarSecond(first, second, clean_scalar),
                     derivative.ScalarSecond(first, second, shared_scalar),
@@ -323,8 +333,8 @@ KOKKOS_INLINE_FUNCTION void EvaluateAndStorePoint(
           shared_deltas, independent_deltas);
     }
     for (int direction = 0; direction < 6; ++direction) {
-      const int first = kTensorFirst[direction];
-      const int second = kTensorSecond[direction];
+      const int first = TensorFirstIndex(direction);
+      const int second = TensorSecondIndex(direction);
       StoreComparison(
           local, 19 + 6 * component + direction,
           derivative.VectorSecond(first, second, component, clean_vector),
