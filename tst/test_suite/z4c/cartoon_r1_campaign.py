@@ -186,6 +186,14 @@ def render_athinput(blocks: dict[str, dict[str, str]],
     return "\n".join(lines)
 
 
+def require_user_amr_criterion(blocks: dict[str, dict[str, str]],
+                               label: str) -> None:
+    criteria = {name: values for name, values in blocks.items()
+                if name.startswith("amr_criterion")}
+    require(criteria == {"amr_criterion0": {"method": "user"}},
+            f"{label} requires exactly <amr_criterion0>/method=user")
+
+
 def validate_inputs() -> None:
     fixed = parse_athinput(TEMPLATES["fixed"])
     amr = parse_athinput(TEMPLATES["amr"])
@@ -221,6 +229,7 @@ def validate_inputs() -> None:
             amr["mesh_refinement"].get("refinement_interval") == "1" and
             amr["z4c_amr"].get("method") == "dchi_max",
             "AMR input does not exercise per-cycle production refinement")
+    require_user_amr_criterion(amr, "AMR input")
     require(float(overlay["z4c_amr"]["dchi_max"]) >= 1.0e9,
             "derefinement overlay does not force the structural gate")
 
@@ -232,6 +241,8 @@ def validate_source_contract(source: Path) -> None:
     symmetry = (source / "src/z4c/z4c_symmetry.cpp").read_text(encoding="utf-8")
     amr = (source / "src/z4c/z4c_amr.cpp").read_text(encoding="utf-8")
     refinement = (source / "src/mesh/mesh_refinement.cpp").read_text(encoding="utf-8")
+    criteria = (source / "src/mesh/refinement_criteria.cpp").read_text(
+        encoding="utf-8")
     mesh = (source / "src/mesh/mesh.cpp").read_text(encoding="utf-8")
     tree = (source / "src/mesh/build_tree.cpp").read_text(encoding="utf-8")
     outputs = (source / "src/outputs/outputs.cpp").read_text(encoding="utf-8")
@@ -256,6 +267,10 @@ def validate_source_contract(source: Path) -> None:
         ('GetOrAddString("z4c_amr", "method"', amr),
         ('GetOrAddReal("z4c_amr", "dchi_max"', amr),
         ('GetOrAddInteger("z4c_amr", "max_ref_lev"', amr),
+        ('it->block_name.compare(0, 13, "amr_criterion") == 0', criteria),
+        ('method.compare("user") == 0', criteria),
+        ('No <amr_criterion> blocks were found in input file', criteria),
+        ('pmy_mesh->pgen->user_ref_func(pmbp)', refinement),
         ('GetOrAddString("mesh_refinement","refinement","none")', mesh),
         ('GetOrAddReal("mesh_refinement", "refinement_interval"', refinement),
         ('DoesParameterExist("mesh_refinement", "max_nmb_per_rank"', tree),
@@ -943,6 +958,23 @@ def self_test() -> None:
             pass
         else:
             raise RuntimeError("strict Athena input parser accepted malformed records")
+    valid_criterion = {"amr_criterion0": {"method": "user"}}
+    require_user_amr_criterion(valid_criterion, "synthetic AMR input")
+    for invalid_criterion in (
+            {},
+            {"amr_criterion0": {"method": "location"}},
+            {"amr_criterion0": {"method": "user", "value_max": "1"}},
+            {"amr_criterion1": {"method": "user"}},
+            {"amr_criterion0": {"method": "user"},
+             "amr_criterion1": {"method": "user"}},
+    ):
+        try:
+            require_user_amr_criterion(invalid_criterion, "synthetic AMR input")
+        except RuntimeError as error:
+            require("exactly <amr_criterion0>/method=user" in str(error),
+                    "wrong AMR criterion contract failure")
+        else:
+            raise RuntimeError("AMR criterion contract accepted missing/wrong input")
     validate_observations(synthetic_observations(), "Cuda", 4)
     mirrored = {(lx1, lx2, 0, 1): (lx1 + lx2) % 4
                 for lx1 in range(4) for lx2 in range(4)}
