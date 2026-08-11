@@ -57,7 +57,8 @@ FASTFLOW_KEYS = (
     "fastflow_surface_mode", "fastflow_selected_branch", "fastflow_center_count",
     "fastflow_center_z0", "fastflow_center_z1", "fastflow_status",
     "fastflow_failure_code", "fastflow_last_search_cycle",
-    "fastflow_last_search_time", "fastflow_converged",
+    "fastflow_last_search_time", "fastflow_time_first_found",
+    "fastflow_converged",
 )
 RESTART_CONTINUATION_KEYS = (*r1.CENTRAL_KEYS, *FASTFLOW_KEYS)
 FIELD_MARKERS = {
@@ -609,13 +610,17 @@ def selected_row(rows: list[dict[str, Any]],
                         carrier["fastflow_coefficients"].split(",")]
         center = float(carrier["fastflow_center_z0"])
         search_time = float(carrier["fastflow_last_search_time"])
+        first_found = float(carrier["fastflow_time_first_found"])
     except ValueError as error:
         raise RuntimeError("malformed selected FastFlow restart values") from error
     r1.require(count == len(selected["coefficients"]) == len(coefficients) and
                all(math.isfinite(value) for value in coefficients) and
                all(left == right for left, right in
                    zip(coefficients, selected["coefficients"])) and
-               center == selected["center_z"] and search_time == selected["time"],
+               center == selected["center_z"] and search_time == selected["time"] and
+               math.isfinite(first_found) and first_found >= 0.0 and
+               first_found <= search_time and
+               first_found == min(row["time"] for row in rows if row["accepted"]),
                "selected horizon output and restart carrier disagree")
     return selected
 
@@ -915,7 +920,7 @@ def synthetic_observations() -> dict[str, Any]:
             "axisKret": 2.0,
         }.items()}
         carrier = {key: "0" for key in r1.RESTART_KEYS}
-        carrier.update({"fastflow_schema": "1",
+        carrier.update({"fastflow_schema": "2",
                         "fastflow_coefficient_count": str(len(selected["coefficients"])),
                         "fastflow_coefficients": ",".join(
                             format(value, ".17g") for value in selected["coefficients"]),
@@ -927,6 +932,7 @@ def synthetic_observations() -> dict[str, Any]:
                         "fastflow_failure_code": "none",
                         "fastflow_last_search_cycle": "3",
                         "fastflow_last_search_time": "0.1",
+                        "fastflow_time_first_found": "0.1",
                         "fastflow_converged": "1"})
         observations[name] = {
             "status": "complete", "spec": spec, "history": history,
