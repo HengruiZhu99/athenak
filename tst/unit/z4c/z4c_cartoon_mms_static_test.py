@@ -247,7 +247,8 @@ def main() -> int:
             driver and
             "verify_preserved_job56586376_failed_convergence" in driver and
             "normalize_preserved_job56586376_result" in driver and
-            '"legacy_result_normalization_count"' in driver and
+            "PRESERVED_JOB_56586376_NORMALIZATION_COUNTS" in driver and
+            '"legacy_csv_normalization_counts"' in driver and
             "load_json_strict(preserved_convergence)" not in driver and
             'preflight.get("search_manifest_sha256")' in driver and
             '"fresh_single_source_final_qualification"' in driver and

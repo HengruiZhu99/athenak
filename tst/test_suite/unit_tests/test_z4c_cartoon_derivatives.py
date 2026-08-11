@@ -8,6 +8,7 @@ Athena executable is checksum-bound and reused for the complete backend matrix.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import csv
 from fractions import Fraction
 import hashlib
@@ -49,6 +50,17 @@ PRESERVED_JOB_56586376_LOG_SHA256 = \
 PRESERVED_JOB_56586376_AUDIT_COUNTS = (63_880, 18_508, 4_512, 3_696)
 PRESERVED_JOB_56586376_MANIFEST_SET_SHA256 = \
     "d2aa1ff2ff9b68302170e0271d3f6fca150d86acb183f9d89af62965427d2aa3"
+PRESERVED_JOB_56586376_NORMALIZATION_COUNTS = {
+    "derived_cylindrical_applicability": 213_408,
+    "derived_radius_applicability": 213_408,
+    "derived_target_rho_applicability": 212_448,
+    "blanked_inapplicable_target_abs_rho": 180_576,
+    "blanked_inapplicable_actual_abs_rho": 180_576,
+    "blanked_inapplicable_target_rho": 131_328,
+    "blanked_inapplicable_cyl_l1": 98_496,
+    "blanked_inapplicable_cyl_l2": 98_496,
+    "blanked_inapplicable_cyl_linfinity": 98_496,
+}
 PRESERVED_JOB_56587561_INVENTORY_SHA256 = \
     "b884d46e636e2beea8ca5eaa7f85d4745968c4a1465c371a70fc8765c4441c6d"
 RAW_RESULT_FIELDS = {
@@ -1186,6 +1198,35 @@ def self_test_cpu_audit_policy() -> None:
     if any(normalized_norm[field] != valid_norm[field] for field in
            ("l1", "l2", "linfinity", "shared_l1", "independent_l1")):
         raise RuntimeError("legacy norm normalization changed numerical evidence")
+    zero_cylindrical = {**legacy_norm, "cyl_l1": "0", "cyl_l2": "0",
+                        "cyl_linfinity": "0"}
+    normalized_zero, zero_actions = normalize_legacy_norm_row(zero_cylindrical)
+    if (any(normalized_zero[field] != "" for field in
+            ("cyl_l1", "cyl_l2", "cyl_linfinity")) or
+            Counter(zero_actions)["blanked_inapplicable_cyl_l1"] != 1 or
+            Counter(zero_actions)["blanked_inapplicable_cyl_l2"] != 1 or
+            Counter(zero_actions)["blanked_inapplicable_cyl_linfinity"] != 1):
+        raise RuntimeError("legacy exact-zero cylindrical norms did not normalize")
+    for label, row in (
+        ("legacy inapplicable nonexact zero", {**zero_cylindrical, "cyl_l1": "0.0"}),
+        ("legacy inapplicable other token", {**zero_cylindrical, "cyl_l2": "1"}),
+        ("legacy applicable exact zero",
+         {**legacy_norm, "cyl_count": "1", "cyl_l1": "0", "cyl_l2": "1",
+          "cyl_linfinity": "1"})):
+        expect_runtime_error(lambda value=row: normalize_legacy_norm_row(value), label)
+    audited_counts = Counter(PRESERVED_JOB_56586376_NORMALIZATION_COUNTS)
+    validate_preserved_job56586376_normalization_counts(audited_counts)
+    for action in PRESERVED_JOB_56586376_NORMALIZATION_COUNTS:
+        changed = audited_counts.copy()
+        changed[action] += 1
+        expect_runtime_error(
+            lambda counts=changed:
+            validate_preserved_job56586376_normalization_counts(counts),
+            f"mutated replay normalization count {action}")
+    expect_runtime_error(
+        lambda: validate_preserved_job56586376_normalization_counts(
+            audited_counts + Counter({"unexpected_action": 1})),
+        "unexpected replay normalization action")
     for label, edit in (
         ("NaN numeric metadata", {"l1": "nan"}),
         ("infinite numeric metadata", {"l2": "inf"}),
@@ -2474,9 +2515,16 @@ def normalize_legacy_norm_row(row: dict[str, str]) -> tuple[dict[str, str], list
         actions.append("derived_cylindrical_applicability")
         if not applicable:
             for field in ("cyl_l1", "cyl_l2", "cyl_linfinity"):
-                if normalized.get(field, "").lower() == "nan":
+                token = normalized.get(field, "")
+                if token.lower() == "nan" or token == "0":
                     normalized[field] = ""
                     actions.append(f"blanked_inapplicable_{field}")
+                else:
+                    raise RuntimeError(
+                        f"legacy inapplicable {field} is neither NaN nor exact zero")
+        elif any(normalized.get(field) == "0"
+                 for field in ("cyl_l1", "cyl_l2", "cyl_linfinity")):
+            raise RuntimeError("legacy applicable cylindrical norm is exact zero")
     if "radius_applicable" not in normalized:
         applicable = normalized.get("mask", "").startswith("fixed_rho_")
         normalized["radius_applicable"] = str(applicable).lower()
@@ -2523,6 +2571,12 @@ def normalize_preserved_job56586376_result(
     normalized = {**stored, "domain": list(QUALIFICATION_DOMAIN)}
     validate_raw_result_projection(raw, normalized)
     return normalized, "derived_domain_from_authenticated_manifest_identity"
+
+
+def validate_preserved_job56586376_normalization_counts(
+        counts: Counter[str]) -> None:
+    if dict(counts) != PRESERVED_JOB_56586376_NORMALIZATION_COUNTS:
+        raise RuntimeError("replay legacy normalization accounting differs")
 
 
 def validate_augmented_result(raw: object, augmented: object) -> None:
@@ -2779,7 +2833,8 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
     observed = set()
     case_bindings = []
     cases = []
-    legacy_normalization_actions = []
+    legacy_result_normalization_actions = []
+    legacy_csv_normalization_counts: Counter[str] = Counter()
     verified_case_bytes = 0
     for manifest_path in manifests:
         case = manifest_path.parent
@@ -2805,7 +2860,7 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
         raw_result = load_json_strict(case / "cartoon_mms.mms.json")
         stored_result, normalization_action = normalize_preserved_job56586376_result(
             raw_result, legacy_stored_result, manifest.get("identity"))
-        legacy_normalization_actions.append(normalization_action)
+        legacy_result_normalization_actions.append(normalization_action)
         validate_result_numbers(stored_result)
         json_number(stored_result, "elapsed_seconds", 0.0)
         json_integer(stored_result, "output_bytes")
@@ -2857,12 +2912,14 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
         rows = []
         for row in csv.DictReader(
                 (case / "cartoon_mms.mms.csv").open(encoding="utf-8")):
-            normalized, _ = normalize_legacy_norm_row(row)
+            normalized, actions = normalize_legacy_norm_row(row)
+            legacy_csv_normalization_counts.update(actions)
             rows.append(normalized)
         probes = []
         for row in csv.DictReader(
                 (case / "cartoon_mms.mms.probes.csv").open(encoding="utf-8")):
-            normalized, _ = normalize_legacy_probe_row(row)
+            normalized, actions = normalize_legacy_probe_row(row)
+            legacy_csv_normalization_counts.update(actions)
             validate_probe_geometry(normalized, order, resolution,
                                     tuple(float(value) for value in result["domain"]))
             probes.append(normalized)
@@ -2892,10 +2949,12 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
                               "identity": manifest["identity"], "files": files})
     if observed != expected:
         raise RuntimeError("replay cases differ from exact 2/4/6 x 32/64/128/256 x 8")
-    if (len(legacy_normalization_actions) != EXPECTED_CASES or
-            set(legacy_normalization_actions) != {
+    if (len(legacy_result_normalization_actions) != EXPECTED_CASES or
+            set(legacy_result_normalization_actions) != {
                 "derived_domain_from_authenticated_manifest_identity"}):
         raise RuntimeError("replay legacy-domain normalization accounting differs")
+    validate_preserved_job56586376_normalization_counts(
+        legacy_csv_normalization_counts)
     binding = {"schema": "athenak_z4c_cartoon_mms_replay_binding_v1",
                "raw_root": str(raw_root),
                "preserved_convergence_sha256":
@@ -2906,9 +2965,11 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
                PRESERVED_JOB_56586376_CONVERGENCE_NEGATIVE_INFINITY,
                "preserved_convergence_trust": "opaque_failed_report_not_imported",
                "legacy_result_normalization_actions": sorted(
-                   set(legacy_normalization_actions)),
+                   set(legacy_result_normalization_actions)),
                "legacy_result_normalization_count":
-               len(legacy_normalization_actions),
+               len(legacy_result_normalization_actions),
+               "legacy_csv_normalization_counts": dict(sorted(
+                   legacy_csv_normalization_counts.items())),
                "preserved_wrapper_evidence_sha256": sha256(preserved_evidence),
                "preserved_log_sha256": sha256(preserved_log),
                "build_record_sha256": sha256(build_record),
