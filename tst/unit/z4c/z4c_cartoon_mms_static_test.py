@@ -262,7 +262,9 @@ def main() -> int:
             '"saturation_absorbing": False' in driver and
             "validate_finite_text_product(csv_path)" in driver and
             "validate_finite_text_product(data_path)" in driver and
-            "legacy_pre_coefficient_floor_partition" in driver and
+            "historical_interval_local_pre_coefficient_floor_partition" in driver and
+            "prospective_absorbing_pre_coefficient_floor_partition" in driver and
+            "evaluate_prospective_absorbing_legacy_rate_samples" in driver and
             "coefficient_floor_partition" in driver,
             "driver does not use the finite O(nx1) absorbing coefficient floor")
     for self_test in ("--self-test-no-evolution-parser",

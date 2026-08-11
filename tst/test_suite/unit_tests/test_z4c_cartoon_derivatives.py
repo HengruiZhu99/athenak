@@ -47,7 +47,10 @@ PRESERVED_JOB_56586376_EVIDENCE_SHA256 = \
     "347b210b251e6100413ffef5f691edb684b79a2b41fcb6c8757b8a6233fb1869"
 PRESERVED_JOB_56586376_LOG_SHA256 = \
     "47522f4f70ad34d15c994e969f84c6e395dd434bcd5e238fff5f719ef2dd43b1"
-PRESERVED_JOB_56586376_AUDIT_COUNTS = (63_880, 18_508, 4_512, 3_696)
+PRESERVED_JOB_56586376_HISTORICAL_INTERVAL_LOCAL_PARTITION = \
+    (62_384, 20_004, 4_256, 3_952)
+PRESERVED_JOB_56586376_PROSPECTIVE_ABSORBING_PARTITION = \
+    (63_880, 18_508, 4_512, 3_696)
 PRESERVED_JOB_56586376_MANIFEST_SET_SHA256 = \
     "d2aa1ff2ff9b68302170e0271d3f6fca150d86acb183f9d89af62965427d2aa3"
 PRESERVED_JOB_56586376_NORMALIZATION_COUNTS = {
@@ -88,7 +91,9 @@ CONVERGENCE_FIELDS = {
     "schema", "series_manifest_sha256", "diagnostic_resolutions_by_order",
     "coefficient_floor_policy_sha256", "coefficient_floor_complexity",
     "evidence_scope", "floor_decompositions", "legacy_normalization_actions",
-    "records", "exact_records", "legacy_pre_coefficient_floor_partition",
+    "records", "exact_records",
+    "historical_interval_local_pre_coefficient_floor_partition",
+    "prospective_absorbing_pre_coefficient_floor_partition",
     "coefficient_floor_partition", "artifacts", "failures", "passed",
 }
 PREFLIGHT_FIELDS = {
@@ -956,6 +961,47 @@ def evaluate_legacy_rate_samples(values: list[dict[str, float]], expected: float
             "outcome_reason": outcome, "passed": passed}
 
 
+def evaluate_prospective_absorbing_legacy_rate_samples(
+        values: list[dict[str, float]], expected: float, margin: float,
+        lane: str) -> dict[str, object]:
+    """Prospective old-floor audit with first-saturation absorption."""
+    if any(not math.isfinite(sample["error"]) or sample["error"] < 0.0 or
+           not math.isfinite(sample["direct_delta"]) or
+           sample["direct_delta"] < 0.0 for sample in values):
+        raise RuntimeError("prospective audit inputs must be finite and nonnegative")
+    rates: list[float | None] = []
+    statuses = []
+    usable = []
+    absorbing = False
+    for coarse, fine in zip(values, values[1:]):
+        floor = SATURATION_FACTOR * sys.float_info.epsilon * \
+            max(1.0, coarse["error"])
+        if lane != "clean":
+            floor = max(floor, 8.0 * max(coarse["direct_delta"],
+                                         fine["direct_delta"]))
+        if absorbing or fine["error"] <= floor:
+            absorbing = True
+            rates.append(None)
+            statuses.append("prospective_absorbed")
+        elif fine["error"] > 0.0 and coarse["error"] >= fine["error"]:
+            rate = math.log(coarse["error"] / fine["error"]) / \
+                math.log(fine["resolution"] / coarse["resolution"])
+            rates.append(rate)
+            statuses.append("prospective_rate")
+            usable.append(rate)
+        else:
+            rates.append(None)
+            statuses.append("prospective_nonmonotone")
+            usable.append(float("-inf"))
+    passed = len(usable) >= 2 and min(usable[-2:]) >= expected - margin
+    outcome = ("pass" if passed else
+               "legacy_inconclusive" if len(usable) < 2 else "legacy_rate_miss")
+    return {"rates": rates, "rate_status": statuses,
+            "usable_prefix_ratios": len(usable),
+            "saturation_absorbing": absorbing,
+            "outcome_reason": outcome, "passed": passed}
+
+
 def output_forecast(resolutions_by_order: dict[int, tuple[int, ...]], phases: list[int],
                     ranks: int, rank_comparison: bool,
                     run_tuples: list[tuple[int, int, int]] | None = None) -> dict[str, int]:
@@ -1245,6 +1291,32 @@ def self_test_cpu_audit_policy() -> None:
             validate_finite_text_product(path)
             if "legacy_nonmonotone" not in path.read_text(encoding="utf-8"):
                 raise RuntimeError("legacy text serialization exposed nonfinite data")
+    rsn_samples = [
+        {"resolution": 32, "error": 1.0, "direct_delta": 0.0,
+         "clean_floor": 1.0e-12},
+        {"resolution": 64, "error": 0.5, "direct_delta": 0.0,
+         "clean_floor": 1.0e-12},
+        {"resolution": 128, "error": 0.0, "direct_delta": 0.0,
+         "clean_floor": 1.0e-12},
+        {"resolution": 256, "error": 0.25, "direct_delta": 0.0,
+         "clean_floor": 1.0e-12}]
+    rsn_historical = evaluate_legacy_rate_samples(
+        rsn_samples, 1.0, 0.0, "clean")
+    rsn_prospective = evaluate_prospective_absorbing_legacy_rate_samples(
+        rsn_samples, 1.0, 0.0, "clean")
+    rsn_coefficient = evaluate_rate_samples(
+        rsn_samples, 1.0, 0.0, "clean")
+    if (rsn_historical["rate_status"] !=
+            ["legacy_rate", "legacy_saturated", "legacy_nonmonotone"] or
+            rsn_historical["outcome_reason"] != "legacy_rate_miss" or
+            rsn_prospective["outcome_reason"] != "legacy_inconclusive" or
+            rsn_prospective["usable_prefix_ratios"] != 1 or
+            rsn_coefficient["outcome_reason"] != "saturated_insufficient" or
+            rsn_coefficient["rate_status"] !=
+            ["included_rate", "excluded_saturated", "excluded_saturated"]):
+        raise RuntimeError("RSN dual-partition classification changed")
+    json.dumps({"historical": rsn_historical, "prospective": rsn_prospective,
+                "coefficient": rsn_coefficient}, allow_nan=False)
     for label, mutation in (
         ("negative legacy error", {"error": -1.0}),
         ("nonfinite legacy delta", {"direct_delta": float("inf")})):
@@ -1700,18 +1772,33 @@ def self_test_cpu_audit_policy() -> None:
                 (PRESERVED_JOB_56586376_CONVERGENCE_SHA256,
                  PRESERVED_JOB_56586376_EVIDENCE_SHA256,
                  PRESERVED_JOB_56586376_LOG_SHA256)) or
-            PRESERVED_JOB_56586376_AUDIT_COUNTS != (63_880, 18_508, 4_512, 3_696)):
+            PRESERVED_JOB_56586376_HISTORICAL_INTERVAL_LOCAL_PARTITION !=
+            (62_384, 20_004, 4_256, 3_952) or
+            PRESERVED_JOB_56586376_PROSPECTIVE_ABSORBING_PARTITION !=
+            (63_880, 18_508, 4_512, 3_696)):
         raise RuntimeError("output forecast/audit anchor differs from frozen CPU evidence")
     partition_names = ("norm_inconclusive", "norm_rate_miss",
                        "probe_inconclusive", "probe_rate_miss")
-    frozen_partition = dict(zip(
-        partition_names, PRESERVED_JOB_56586376_AUDIT_COUNTS))
-    validate_preserved_job56586376_legacy_partition(frozen_partition)
+    historical_partition = dict(zip(
+        partition_names,
+        PRESERVED_JOB_56586376_HISTORICAL_INTERVAL_LOCAL_PARTITION))
+    prospective_partition = dict(zip(
+        partition_names,
+        PRESERVED_JOB_56586376_PROSPECTIVE_ABSORBING_PARTITION))
+    validate_preserved_job56586376_dual_partitions(
+        historical_partition, prospective_partition)
     for name in partition_names:
         expect_runtime_error(
-            lambda field=name: validate_preserved_job56586376_legacy_partition(
-                {**frozen_partition, field: frozen_partition[field] + 1}),
-            f"mutated frozen legacy partition {name}")
+            lambda field=name: validate_preserved_job56586376_dual_partitions(
+                {**historical_partition,
+                 field: historical_partition[field] + 1}, prospective_partition),
+            f"mutated historical partition {name}")
+        expect_runtime_error(
+            lambda field=name: validate_preserved_job56586376_dual_partitions(
+                historical_partition,
+                {**prospective_partition,
+                 field: prospective_partition[field] + 1}),
+            f"mutated prospective partition {name}")
 
     root = Path(__file__).resolve().parents[3]
     search = load_search_manifest(root / "tst/inputs/z4c_cartoon_mms_search_manifest.json")
@@ -1981,7 +2068,10 @@ def self_test_cpu_audit_policy() -> None:
         "records": aggregate_records, "exact_records": aggregate_exact_records,
         "floor_decompositions": sorted(
             aggregate_floors, key=lambda item: item["floor_id"]),
-        "legacy_pre_coefficient_floor_partition": aggregate_partition,
+        "historical_interval_local_pre_coefficient_floor_partition":
+            aggregate_partition,
+        "prospective_absorbing_pre_coefficient_floor_partition":
+            aggregate_partition,
         "coefficient_floor_partition": aggregate_partition})
     aggregate_forecast = output_forecast(
         {2: aggregate_resolutions}, [0], 2, False, aggregate_required)
@@ -2680,12 +2770,23 @@ def validate_preserved_job56586376_normalization_counts(
         raise RuntimeError("replay legacy normalization accounting differs")
 
 
-def validate_preserved_job56586376_legacy_partition(partition: object) -> None:
-    if not isinstance(partition, dict) or tuple(partition.get(name) for name in
-            ("norm_inconclusive", "norm_rate_miss",
-             "probe_inconclusive", "probe_rate_miss")) != \
-            PRESERVED_JOB_56586376_AUDIT_COUNTS:
-        raise RuntimeError("job56586376 legacy pre-coefficient-floor partition changed")
+def validate_preserved_job56586376_dual_partitions(
+        historical: object, prospective: object) -> None:
+    names = ("norm_inconclusive", "norm_rate_miss",
+             "probe_inconclusive", "probe_rate_miss")
+    historical_tuple = (tuple(historical.get(name) for name in names)
+                        if isinstance(historical, dict) else ())
+    prospective_tuple = (tuple(prospective.get(name) for name in names)
+                         if isinstance(prospective, dict) else ())
+    if (historical_tuple !=
+            PRESERVED_JOB_56586376_HISTORICAL_INTERVAL_LOCAL_PARTITION or
+            prospective_tuple !=
+            PRESERVED_JOB_56586376_PROSPECTIVE_ABSORBING_PARTITION or
+            historical_tuple[0] + historical_tuple[1] !=
+            prospective_tuple[0] + prospective_tuple[1] or
+            historical_tuple[2] + historical_tuple[3] !=
+            prospective_tuple[2] + prospective_tuple[3]):
+        raise RuntimeError("job56586376 dual pre-coefficient-floor partitions changed")
 
 
 def validate_augmented_result(raw: object, augmented: object) -> None:
@@ -3721,6 +3822,9 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
                         "actual_z": finite_value(row, "actual_z")})
 
     records = []
+    prospective_partition = {
+        "norm_inconclusive": 0, "norm_rate_miss": 0,
+        "probe_inconclusive": 0, "probe_rate_miss": 0}
     for key, all_values in grouped.items():
         source, order, phase, series, lane, norm = key
         all_values.sort(key=lambda item: item["resolution"])
@@ -3747,6 +3851,12 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
                                        probe_classification)
         legacy_evaluation = evaluate_legacy_rate_samples(
             selected, expected, margin, lane)
+        prospective_evaluation = evaluate_prospective_absorbing_legacy_rate_samples(
+            selected, expected, margin, lane)
+        if prospective_evaluation["outcome_reason"] == "legacy_inconclusive":
+            prospective_partition[f"{source}_inconclusive"] += 1
+        elif prospective_evaluation["outcome_reason"] == "legacy_rate_miss":
+            prospective_partition[f"{source}_rate_miss"] += 1
         evaluation = evaluate_rate_samples(selected, expected, margin, lane)
         if not evaluation["passed"]:
             failures.append(
@@ -3871,7 +3981,10 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
                                        key=lambda item: item["floor_id"]),
         "legacy_normalization_actions": sorted(normalization_actions),
         "records": records, "exact_records": exact_records,
-        "legacy_pre_coefficient_floor_partition": legacy_partition,
+        "historical_interval_local_pre_coefficient_floor_partition":
+            legacy_partition,
+        "prospective_absorbing_pre_coefficient_floor_partition":
+            prospective_partition,
         "coefficient_floor_partition": coefficient_partition,
         "artifacts": {"convergence.csv": sha256(csv_path),
                       "convergence_rates.pgfplots.dat": sha256(data_path),
@@ -3957,6 +4070,17 @@ def validate_final_reference_aggregates(
             item.get("source") == "probe" and
             legacy.get("outcome_reason") ==
             "legacy_rate_miss" for item, legacy in legacy_outcomes)}
+    prospective_partition = {
+        "norm_inconclusive": 0, "norm_rate_miss": 0,
+        "probe_inconclusive": 0, "probe_rate_miss": 0}
+    for item in valid_records:
+        prospective = evaluate_prospective_absorbing_legacy_rate_samples(
+            item.get("samples", []), item.get("expected"), item.get("margin"),
+            item.get("lane"))
+        if prospective["outcome_reason"] == "legacy_inconclusive":
+            prospective_partition[f"{item['source']}_inconclusive"] += 1
+        elif prospective["outcome_reason"] == "legacy_rate_miss":
+            prospective_partition[f"{item['source']}_rate_miss"] += 1
     zero_partition = {name: 0 for name in legacy_partition}
     if (not isinstance(convergence, dict) or set(convergence) != CONVERGENCE_FIELDS or
             convergence.get("schema") != SCHEMA or
@@ -3995,8 +4119,12 @@ def validate_final_reference_aggregates(
                 for value in floor_ids) or
             len(floor_ids) != len(set(floor_ids)) or
             set(floor_ids) != referenced_floors or
-            convergence.get("legacy_pre_coefficient_floor_partition") !=
+            convergence.get(
+                "historical_interval_local_pre_coefficient_floor_partition") !=
             legacy_partition or
+            convergence.get(
+                "prospective_absorbing_pre_coefficient_floor_partition") !=
+            prospective_partition or
             convergence.get("coefficient_floor_partition") != zero_partition):
         raise RuntimeError("rank-reference convergence result is not a passing fresh final")
     expected_orders = sorted({item[0] for item in required})
@@ -4776,8 +4904,12 @@ def replay_campaign(raw_root: Path, analysis_output: Path, root: Path,
     failures = convergence_gate(cases, raw_root, analysis_output, series_manifest,
                                 resolutions, allow_legacy_nullable=True)
     convergence = load_json_strict(analysis_output / "convergence.json")
-    partition = convergence.get("legacy_pre_coefficient_floor_partition", {})
-    validate_preserved_job56586376_legacy_partition(partition)
+    historical_partition = convergence.get(
+        "historical_interval_local_pre_coefficient_floor_partition", {})
+    prospective_partition = convergence.get(
+        "prospective_absorbing_pre_coefficient_floor_partition", {})
+    validate_preserved_job56586376_dual_partitions(
+        historical_partition, prospective_partition)
     artifacts = {name: sha256(analysis_output / name) for name in
                  ("convergence.json", "convergence.csv",
                   "convergence_rates.pgfplots.dat", "convergence_plot.tex")}
