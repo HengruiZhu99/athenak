@@ -11,6 +11,7 @@
 
 #include <cstdio>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -25,6 +26,7 @@ class Mesh;
 class MeshBlock;
 class MeshBlockPack;
 class ParameterInput;
+namespace z4c { class CartoonM0FastFlow; }
 
 // Enum variables for extrinsic curvature and
 // the metric derivatives.
@@ -106,7 +108,8 @@ class FastFlow {
   int fastflow_iter = 0;
 
   // Pointer to Gauss-Legendre object
-  GaussLegendreGrid *gl_grid;
+  GaussLegendreGrid *gl_grid = nullptr;
+  std::unique_ptr<z4c::CartoonM0FastFlow> cartoon_m0;
 
   // Arrays of spherical harmonics and derivatives
   DualArray2D<Real> Y0, Yc, Ys;

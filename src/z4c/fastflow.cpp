@@ -23,6 +23,7 @@
 #endif
 
 #include "fastflow.hpp"
+#include "z4c/cartoon_m0_fastflow.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
@@ -96,6 +97,40 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   K_interp("K_interp",1,1), dg_interp("dg_interp",1,1),
   pmbp(pmbp), pin(pin) {
   nh = n; // The n-th horizon
+  if (pmbp->z4c_symmetry.mode == z4c::Z4cSymmetryMode::cartoon_so2) {
+    cartoon_m0 = std::make_unique<z4c::CartoonM0FastFlow>(pmbp, pin, n);
+    ah_found = cartoon_m0->Found();
+    last_search_cycle = cartoon_m0->LastSearchCycle();
+    time_first_found = cartoon_m0->TimeFirstFound();
+    initial_radius = cartoon_m0->InitialRadius();
+    rr_min = cartoon_m0->MinimumRadius();
+    expand_guess = 1.0;
+    center[0] = 0.0;
+    center[1] = 0.0;
+    center[2] = cartoon_m0->SelectedCenterZ();
+    mass_tol = 0.0;
+    mass_relative_tol = 0.0;
+    dimensionless_hrms_tol = 0.0;
+    minimum_radius_cells = 0.0;
+    flow_iterations = cartoon_m0->Iterations();
+    flow_alpha_beta_const = 0.0;
+    verbose = false;
+    output_ylm = false;
+    output_grid = false;
+    lmax = cartoon_m0->Lmax();
+    ntheta = cartoon_m0->Ntheta();
+    nangles = ntheta;
+    use_puncture = -1;
+    merger_distance = 0.0;
+    use_puncture_massweighted_center = false;
+    use_minimum_lapse_center = false;
+    use_finest_dx_initial_radius = false;
+    finest_dx_initial_radius_factor = 0.0;
+    start_time = cartoon_m0->StartTime();
+    stop_time = cartoon_m0->StopTime();
+    find_interval = cartoon_m0->FindInterval();
+    return;
+  }
   std::string n_str = std::to_string(nh);
 
   // Read parameter input variables.
@@ -469,6 +504,10 @@ void FastFlow::InitializeOutputFiles() {
 //! \fn void FastFlow::Write(int iter, Real time)
 //! \brief Output summary and shape file, for each horizon.
 void FastFlow::Write(int iter, Real time) {
+  if (cartoon_m0) {
+    cartoon_m0->Write(iter, time);
+    return;
+  }
   InitializeOutputFiles();
   if (ioproc) {
     if (!IsInSearchWindow(time)) return;
@@ -535,6 +574,7 @@ void FastFlow::Write(int iter, Real time) {
 //! \fn bool FastFlow::ShouldSearch(int cycle, Real time)
 //! \brief Return whether this accepted cycle is scheduled for a horizon search.
 bool FastFlow::ShouldSearch(int cycle, Real time) {
+  if (cartoon_m0) return cartoon_m0->ShouldSearch(cycle, time);
   if (!IsInSearchWindow(time) || cycle < 0 || cycle % find_interval != 0) {
     return false;
   }
@@ -552,6 +592,17 @@ bool FastFlow::IsInSearchWindow(Real time) const {
 //! \fn void FastFlow::Find(int iter, Real time)
 //! \brief Search for the horizons
 void FastFlow::Find(int iter, Real time) {
+  if (cartoon_m0) {
+    cartoon_m0->Find(iter, time);
+    ah_found = cartoon_m0->Found();
+    last_search_cycle = cartoon_m0->LastSearchCycle();
+    time_first_found = cartoon_m0->TimeFirstFound();
+    rr_min = cartoon_m0->MinimumRadius();
+    center[0] = 0.0;
+    center[1] = 0.0;
+    center[2] = cartoon_m0->SelectedCenterZ();
+    return;
+  }
   if (!IsInSearchWindow(time)) return;
   if (wait_until_punc_are_close && !(PuncAreClose())) return;
   last_search_cycle = iter;
