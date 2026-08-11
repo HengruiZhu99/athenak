@@ -62,6 +62,29 @@ WINDOW_EXECUTION_FIELDS = {
     "ranks", "domain", "immutable_root_bindings", "execution_tuples", "attempts",
     "result_set_sha256", "stop_reason", "authorization_files",
 }
+FINAL_CONVERGENCE_ARTIFACTS = {
+    "convergence.json", "convergence.csv", "convergence_rates.pgfplots.dat",
+    "convergence_plot.tex", "preflight.json",
+}
+OPTIONAL_RANK_ARTIFACTS = {
+    "rank_comparison.json", "reference_campaign_sha256",
+    "reference_case_manifest_sha256",
+}
+CONVERGENCE_FIELDS = {
+    "schema", "series_manifest_sha256", "diagnostic_resolutions_by_order",
+    "coefficient_floor_policy_sha256", "coefficient_floor_complexity",
+    "evidence_scope", "floor_decompositions", "legacy_normalization_actions",
+    "records", "exact_records", "legacy_pre_coefficient_floor_partition",
+    "coefficient_floor_partition", "artifacts", "failures", "passed",
+}
+PREFLIGHT_FIELDS = {
+    "schema", "state", "case_count", "norm_rows", "probe_rows", "case_products",
+    "aggregate_products", "rank_comparison_products",
+    "estimated_output_bytes_upper_bound", "free_bytes_before_campaign", "orders",
+    "resolutions", "resolutions_by_order", "phases", "ranks", "campaign_mode",
+    "stage_id", "frozen_window_sha256", "run_tuples", "domain_certification",
+    "search_manifest_sha256", "series_manifest_sha256",
+}
 CASE_ENVIRONMENT_KEYS = (
     "CUDA_DEVICE_ORDER", "CUDA_VISIBLE_DEVICES", "KOKKOS_NUM_DEVICES",
     "KOKKOS_NUM_THREADS", "OMPI_COMM_WORLD_SIZE", "PMIX_NAMESPACE",
@@ -1056,6 +1079,7 @@ def expect_runtime_error(action, label: str) -> None:
 
 def self_test_cpu_audit_policy() -> None:
     """Exercise the audit plumbing without launching Athena or creating a campaign."""
+    root = Path(__file__).resolve().parents[3]
     if rate_policy(6, "fitted_layer_0_negative", "clean", "l1") != (6.0, 0.25):
         raise RuntimeError("fitted clean margin is not p-0.25")
     if rate_policy(4, "raw_transition_positive", "clean", "raw_error",
@@ -1399,6 +1423,58 @@ def self_test_cpu_audit_policy() -> None:
                 reference_link, 4, "accepted_frozen_window", "0" * 64,
                 {"commit": "0" * 40, "tree": "1" * 40, "kokkos": "2" * 40},
                 "Serial", "3" * 64), "rank-reference root symlink")
+    with tempfile.TemporaryDirectory(prefix="cartoon-mms-launch-provenance-") as directory:
+        case = Path(directory) / "case"
+        case.mkdir()
+        executable = Path(directory) / "athena"
+        executable.write_text("fixture executable\n", encoding="utf-8")
+        wrapper = root / "tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py"
+        template = root / "tst/inputs/z4c_cartoon_derivatives.athinput"
+        rendered = render_input(template, 2, 32, 0, "cartoon_mms",
+                                QUALIFICATION_DOMAIN)
+        input_path = case / "input.athinput"
+        input_path.write_text(rendered, encoding="utf-8")
+        bindings = [
+            {"rank": rank, "local_rank": rank, "hostname": "fixture",
+             "cuda_visible_devices": None, "visible_device_token": None,
+             "selected_uuid": None, "gpu_name": None, "binding_verified": True}
+            for rank in range(2)]
+        for rank, binding in enumerate(bindings):
+            write_atomic(case / f"rank_binding_{rank:04d}.json", binding)
+        command = ["srun", "--ntasks", "2", sys.executable, str(wrapper),
+                   "--evidence-dir", ".", "--", str(executable), "-i",
+                   "input.athinput"]
+        identity = {"input_sha256": hashlib.sha256(rendered.encode()).hexdigest(),
+                    "rank_wrapper_sha256": sha256(wrapper), "command": command}
+        stored = {"rank_bindings": bindings}
+        validate_case_launch_provenance(
+            case, identity, stored, sha256(executable), "Serial", 2,
+            QUALIFICATION_DOMAIN, 2, 32, 0, template, wrapper)
+        wrong_input = rendered + "# mutation\n"
+        input_path.write_text(wrong_input, encoding="utf-8")
+        expect_runtime_error(
+            lambda: validate_case_launch_provenance(
+                case, {**identity, "input_sha256":
+                       hashlib.sha256(wrong_input.encode()).hexdigest()},
+                stored, sha256(executable), "Serial", 2,
+                QUALIFICATION_DOMAIN, 2, 32, 0, template, wrapper),
+            "coherently rehashed wrong input")
+        input_path.write_text(rendered, encoding="utf-8")
+        for label, mutation in (
+            ("wrapper digest mutation", {"rank_wrapper_sha256": "0" * 64}),
+            ("command mutation", {"command": command[:-1] + ["wrong.input"]})):
+            expect_runtime_error(
+                lambda edit=mutation: validate_case_launch_provenance(
+                    case, {**identity, **edit}, stored, sha256(executable),
+                    "Serial", 2, QUALIFICATION_DOMAIN, 2, 32, 0, template,
+                    wrapper), label)
+        write_atomic(case / "rank_binding_0001.json",
+                     {**bindings[1], "hostname": "mutated"})
+        expect_runtime_error(
+            lambda: validate_case_launch_provenance(
+                case, identity, stored, sha256(executable), "Serial", 2,
+                QUALIFICATION_DOMAIN, 2, 32, 0, template, wrapper),
+            "archived rank-binding mutation")
 
     forecast = output_forecast({order: DIAGNOSTIC_RESOLUTIONS for order in (2, 4, 6)},
                                list(range(8)), 4, False)
@@ -1529,6 +1605,26 @@ def self_test_cpu_audit_policy() -> None:
        len(merge_case_ledgers(copied_cases, complete_cases)) != 3 or \
        final_retry["materialization"]["immutable_root_bindings"] != chain_bindings:
         raise RuntimeError("partial1-partial2-final dependency chain is not composable")
+    authorized_set = {tuple(item) for item in authorized}
+    first_cases, second_cases = complete_cases[:1], complete_cases[:2]
+    first_missing = {tuple(item) for item in authorized[1:]}
+    second_missing = {tuple(authorized[2])}
+    validate_stage_lineage([], authorized_set, first_cases, first_missing,
+                           authorized_set)
+    validate_stage_lineage(first_cases, first_missing, second_cases,
+                           second_missing, authorized_set)
+    validate_stage_lineage(first_cases, first_missing, first_cases,
+                           first_missing, authorized_set)
+    for label, later, missing_set in (
+        ("partial completed regression", second_cases[1:],
+         {tuple(authorized[0]), tuple(authorized[2])}),
+        ("partial conflicting manifest",
+         [{**first_cases[0], "case_manifest_sha256": "9" * 64}, second_cases[1]],
+         second_missing),
+        ("partial incorrect missing set", second_cases, first_missing)):
+        expect_runtime_error(
+            lambda cases=later, missing=missing_set: validate_stage_lineage(
+                first_cases, first_missing, cases, missing, authorized_set), label)
     with tempfile.TemporaryDirectory(prefix="cartoon-mms-stage-header-") as directory:
         stage_fixture = materialize_search_stage(
             search, "o6_phase0_stage1", fake_source, "f" * 64, "1" * 64,
@@ -1582,6 +1678,63 @@ def self_test_cpu_audit_policy() -> None:
             lambda value={**rank_campaign, **mutation}: validate_rank_campaign_header(
                 value, 4, "accepted_frozen_window", "7" * 64, fake_source,
                 "Serial", "f" * 64), label)
+    aggregate_artifacts = {name: str(index + 1) * 64 for index, name in
+                           enumerate(sorted(FINAL_CONVERGENCE_ARTIFACTS))}
+    internal_artifacts = {name: aggregate_artifacts[name] for name in
+                          ("convergence.csv", "convergence_rates.pgfplots.dat",
+                           "convergence_plot.tex")}
+    aggregate_execution = {"series_manifest_sha256": "4" * 64,
+                           "domain": list(QUALIFICATION_DOMAIN)}
+    aggregate_required = [(2, 32, 0)]
+    aggregate_convergence = {field: None for field in CONVERGENCE_FIELDS}
+    aggregate_convergence.update({
+        "schema": SCHEMA, "series_manifest_sha256": "4" * 64,
+        "diagnostic_resolutions_by_order": {"2": [32]},
+        "evidence_scope": "fresh_single_source_final_qualification",
+        "artifacts": internal_artifacts, "failures": [], "passed": True,
+        "records": [], "exact_records": []})
+    aggregate_preflight = {field: 0 for field in PREFLIGHT_FIELDS}
+    aggregate_preflight.update({
+        "schema": SCHEMA, "state": "preflight", "orders": [2],
+        "resolutions": [32], "resolutions_by_order": {"2": [32]},
+        "phases": [0], "ranks": 2, "campaign_mode": "accepted_frozen_window",
+        "stage_id": None, "frozen_window_sha256": "7" * 64,
+        "run_tuples": [[2, 32, 0]],
+        "domain_certification": validate_certified_domain(
+            QUALIFICATION_DOMAIN, {2: (32,)}, True),
+        "series_manifest_sha256": "4" * 64})
+    if reference_artifact_files(aggregate_artifacts) != FINAL_CONVERGENCE_ARTIFACTS:
+        raise RuntimeError("current writer/reference artifact schema differs")
+    validate_final_reference_aggregates(
+        aggregate_convergence, aggregate_preflight, aggregate_artifacts,
+        aggregate_execution, 2, "7" * 64, aggregate_required)
+    for label, mutation in (
+        ("failed reference convergence", {"failures": ["rate miss"],
+                                           "passed": False}),
+        ("diagnostic reference scope", {"evidence_scope":
+                                         "single_source_diagnostic"}),
+        ("altered convergence artifact hash",
+         {"artifacts": {**internal_artifacts,
+                         "convergence.csv": "0" * 64}})):
+        expect_runtime_error(
+            lambda edit=mutation: validate_final_reference_aggregates(
+                {**aggregate_convergence, **edit}, aggregate_preflight,
+                aggregate_artifacts, aggregate_execution, 2, "7" * 64,
+                aggregate_required), label)
+    expect_runtime_error(
+        lambda: validate_final_reference_aggregates(
+            aggregate_convergence,
+            {**aggregate_preflight, "run_tuples": []}, aggregate_artifacts,
+            aggregate_execution, 2, "7" * 64, aggregate_required),
+        "mutated final preflight")
+    expect_runtime_error(
+        lambda: reference_artifact_files(
+            {key: value for key, value in aggregate_artifacts.items()
+             if key != "convergence.json"}), "missing convergence artifact")
+    expect_runtime_error(
+        lambda: reference_artifact_files(
+            {**aggregate_artifacts, "unexpected.json": "0" * 64}),
+        "unexpected convergence artifact")
     prior_tuples = {(order, resolution, phase) for order in (2, 4, 6)
                     for resolution in DIAGNOSTIC_RESOLUTIONS for phase in range(8)}
     prior_tuples.update({(2, 512, 0), (2, 1024, 0)})
@@ -2047,7 +2200,7 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
         verified, _, _, manifest_sha = verify_complete_case_evidence(
             case, source, sha256(args.build_manifest), sha256(args.athena),
             args.require_backend, args.ranks, tuple(args.domain), order,
-            resolution, phase, operator_names)
+            resolution, phase, operator_names, args.input, args.rank_wrapper)
         if verified != resumed_result:
             raise RuntimeError(f"case {key} resumed campaign/result differs")
         resumed_result["case_manifest_sha256"] = manifest_sha
@@ -2079,7 +2232,7 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
     verified, _, _, manifest_sha = verify_complete_case_evidence(
         case, source, sha256(args.build_manifest), sha256(args.athena),
         args.require_backend, args.ranks, tuple(args.domain), order, resolution,
-        phase, operator_names)
+        phase, operator_names, args.input, args.rank_wrapper)
     if verified != result:
         raise RuntimeError(f"case {key} finalized campaign/result differs")
     result["case_manifest_sha256"] = manifest_sha
@@ -2250,11 +2403,56 @@ def validate_case_numerical_summary(result: dict[str, object],
         raise RuntimeError("case lacks the exact finite 161-series axis inventory")
 
 
+def validate_case_launch_provenance(
+        case: Path, identity: dict[str, object], stored: dict[str, object],
+        executable_sha256: str, backend: str, ranks: int,
+        domain: tuple[float, float, float, float], order: int, resolution: int,
+        phase: int, input_template: Path, rank_wrapper: Path) -> None:
+    expected_input = render_input(input_template, order, resolution, phase,
+                                  "cartoon_mms", domain)
+    input_path = case / "input.athinput"
+    if (identity.get("input_sha256") !=
+            hashlib.sha256(expected_input.encode()).hexdigest() or
+            sha256(input_path) != identity.get("input_sha256") or
+            input_path.read_text(encoding="utf-8") != expected_input or
+            identity.get("rank_wrapper_sha256") != sha256(rank_wrapper)):
+        raise RuntimeError("case input/wrapper provenance differs")
+    command = identity.get("command")
+    wrapper_tail = [str(rank_wrapper), "--evidence-dir", "."] + \
+        (["--require-cuda"] if backend == "Cuda" else []) + ["--"]
+    delimiter = (len(command) - 4 if isinstance(command, list) else -1)
+    python_index = delimiter - len(wrapper_tail)
+    launcher_prefix = command[:python_index] if isinstance(command, list) else []
+    launcher_name = Path(launcher_prefix[0]).name if launcher_prefix else ""
+    launcher_ranks_ok = (
+        launcher_prefix[-2:] == ["-np", str(ranks)]
+        if launcher_name in {"mpirun", "mpiexec"} else
+        launcher_prefix[-2:] == ["--ntasks", str(ranks)]
+        if launcher_name == "srun" else
+        bool(launcher_prefix) and launcher_prefix[-1] == str(ranks))
+    if (not isinstance(command, list) or
+            any(not isinstance(token, str) for token in command) or
+            python_index < 1 or not launcher_ranks_ok or
+            not Path(command[python_index]).name.startswith("python") or
+            command[delimiter - len(wrapper_tail) + 1:
+                    delimiter + 1] != wrapper_tail or
+            Path(command[delimiter + 1]).is_symlink() or
+            not Path(command[delimiter + 1]).is_file() or
+            sha256(Path(command[delimiter + 1])) != executable_sha256 or
+            command[delimiter + 2:] != ["-i", "input.athinput"]):
+        raise RuntimeError("case launcher/wrapper/executable command differs")
+    archived_bindings = [load_json_strict(path)
+                         for path in sorted(case.glob("rank_binding_*.json"))]
+    if archived_bindings != stored.get("rank_bindings"):
+        raise RuntimeError("archived rank-binding objects differ from result")
+
+
 def verify_complete_case_evidence(
         case: Path, source: dict[str, str], build_manifest_sha256: str,
         executable_sha256: str, backend: str, ranks: int,
         domain: tuple[float, float, float, float], order: int, resolution: int,
-        phase: int, expected_operators: list[str]) -> \
+        phase: int, expected_operators: list[str], input_template: Path,
+        rank_wrapper: Path) -> \
         tuple[dict[str, object], list[dict[str, str]], list[dict[str, str]], str]:
     if not case.is_dir() or case.is_symlink():
         raise RuntimeError("case directory is missing or a symlink")
@@ -2277,6 +2475,9 @@ def verify_complete_case_evidence(
             identity.get("execution_environment_sha256") !=
             stored.get("execution_environment_sha256")):
         raise RuntimeError("case manifest/result identity differs")
+    validate_case_launch_provenance(
+        case, identity, stored, executable_sha256, backend, ranks, domain,
+        order, resolution, phase, input_template, rank_wrapper)
     validate_raw_case_invariants(stored, order, resolution, phase, backend,
                                  ranks, domain)
     verify_no_evolution(str(case_id),
@@ -2695,7 +2896,10 @@ def verify_stage_campaign_root(raw_root: Path,
             case, material_source, material["build_manifest_sha256"],
             material["executable_sha256"], material["backend"], material["ranks"],
             tuple(material["domain"]), order, resolution, phase,
-            expected_operators)
+            expected_operators, Path(__file__).resolve().parents[3] /
+            "tst/inputs/z4c_cartoon_derivatives.athinput",
+            Path(__file__).resolve().parents[3] /
+            "tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py")
         manifest = load_json_strict(case / "manifest.json")
         identity = manifest["identity"]
         if augmented != {**stored, "case_manifest_sha256": manifest_sha}:
@@ -2865,7 +3069,10 @@ def verify_window_campaign_root(
             case, execution["source"], execution["build_manifest_sha256"],
             execution["executable_sha256"], execution["backend"],
             execution["ranks"], tuple(execution["domain"]), order, resolution,
-            phase, expected_operators)
+            phase, expected_operators, Path(__file__).resolve().parents[3] /
+            "tst/inputs/z4c_cartoon_derivatives.athinput",
+            Path(__file__).resolve().parents[3] /
+            "tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py")
         manifest = load_json_strict(case / "manifest.json")
         identity = manifest["identity"]
         if augmented != {**stored, "case_manifest_sha256": manifest_sha}:
@@ -3244,7 +3451,7 @@ def convergence_gate(cases: list[dict[str, object]], case_root: Path, output: Pa
         "artifacts": {"convergence.csv": sha256(csv_path),
                       "convergence_rates.pgfplots.dat": sha256(data_path),
                       "convergence_plot.tex": sha256(plot_path)},
-        "failures": failures})
+        "failures": failures, "passed": not failures})
     return failures
 
 
@@ -3262,6 +3469,72 @@ def validate_rank_campaign_header(reference: object, current_ranks: int,
             reference.get("build_manifest_sha256") != build_manifest_sha256 or
             {reference.get("ranks"), current_ranks} != {2, 4}):
         raise RuntimeError("reference campaign differs from the exact evidence schema")
+
+
+def validate_final_reference_aggregates(
+        convergence: object, preflight: object, artifacts: dict[str, object],
+        execution: dict[str, object], reference_ranks: int,
+        accepted_window_sha256: str,
+        required: list[tuple[int, int, int]]) -> None:
+    internal_artifacts = {name: artifacts[name] for name in
+                          ("convergence.csv", "convergence_rates.pgfplots.dat",
+                           "convergence_plot.tex")}
+    resolutions_by_order = {
+        str(order): sorted({resolution for item_order, resolution, _ in required
+                            if item_order == order})
+        for order in sorted({item[0] for item in required})}
+    if (not isinstance(convergence, dict) or set(convergence) != CONVERGENCE_FIELDS or
+            convergence.get("schema") != SCHEMA or
+            convergence.get("series_manifest_sha256") !=
+            execution["series_manifest_sha256"] or
+            convergence.get("diagnostic_resolutions_by_order") !=
+            resolutions_by_order or
+            convergence.get("evidence_scope") !=
+            "fresh_single_source_final_qualification" or
+            convergence.get("artifacts") != internal_artifacts or
+            convergence.get("failures") != [] or convergence.get("passed") is not True or
+            not isinstance(convergence.get("records"), list) or
+            not isinstance(convergence.get("exact_records"), list)):
+        raise RuntimeError("rank-reference convergence result is not a passing fresh final")
+    expected_orders = sorted({item[0] for item in required})
+    expected_resolutions = sorted({item[1] for item in required})
+    expected_phases = sorted({item[2] for item in required})
+    expected_certification = validate_certified_domain(
+        tuple(execution["domain"]),
+        {int(order): tuple(values) for order, values in resolutions_by_order.items()},
+        True)
+    if (not isinstance(preflight, dict) or set(preflight) != PREFLIGHT_FIELDS or
+            preflight.get("schema") != SCHEMA or preflight.get("state") != "preflight" or
+            preflight.get("orders") != expected_orders or
+            preflight.get("resolutions") != expected_resolutions or
+            preflight.get("resolutions_by_order") != resolutions_by_order or
+            preflight.get("phases") != expected_phases or
+            preflight.get("ranks") != reference_ranks or
+            preflight.get("campaign_mode") != "accepted_frozen_window" or
+            preflight.get("stage_id") is not None or
+            preflight.get("frozen_window_sha256") != accepted_window_sha256 or
+            preflight.get("run_tuples") != [list(item) for item in required] or
+            preflight.get("domain_certification") != expected_certification or
+            preflight.get("series_manifest_sha256") !=
+            execution["series_manifest_sha256"]):
+        raise RuntimeError("rank-reference preflight identity differs")
+
+
+def reference_artifact_files(artifacts: object) -> set[str]:
+    allowed = {frozenset(FINAL_CONVERGENCE_ARTIFACTS),
+               frozenset(FINAL_CONVERGENCE_ARTIFACTS | OPTIONAL_RANK_ARTIFACTS)}
+    if not isinstance(artifacts, dict) or frozenset(artifacts) not in allowed:
+        raise RuntimeError("rank-reference convergence inventory is malformed")
+    files = set(FINAL_CONVERGENCE_ARTIFACTS)
+    if OPTIONAL_RANK_ARTIFACTS <= set(artifacts):
+        if (not re.fullmatch(r"[0-9a-f]{64}", str(
+                artifacts["reference_campaign_sha256"])) or
+                not isinstance(artifacts["reference_case_manifest_sha256"], list) or
+                any(not re.fullmatch(r"[0-9a-f]{64}", str(value))
+                    for value in artifacts["reference_case_manifest_sha256"])):
+            raise RuntimeError("rank-reference comparison binding is malformed")
+        files.add("rank_comparison.json")
+    return files
 
 
 def verify_rank_reference_root(
@@ -3334,7 +3607,11 @@ def verify_rank_reference_root(
         stored, _, _, manifest_sha = verify_complete_case_evidence(
             case, source, build_manifest_sha256, execution["executable_sha256"],
             backend, reference["ranks"], tuple(execution["domain"]), order,
-            resolution, phase, expected_operators)
+            resolution, phase, expected_operators,
+            Path(__file__).resolve().parents[3] /
+            "tst/inputs/z4c_cartoon_derivatives.athinput",
+            Path(__file__).resolve().parents[3] /
+            "tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py")
         if advertised != {**stored, "case_manifest_sha256": manifest_sha}:
             raise RuntimeError("rank-reference campaign/result differs")
         verified_cases.append(advertised)
@@ -3350,16 +3627,18 @@ def verify_rank_reference_root(
             execution.get("result_set_sha256") != canonical_digest(manifests)):
         raise RuntimeError("rank-reference attempt/result-set ledger differs")
     artifacts = reference.get("convergence_artifacts")
-    if not isinstance(artifacts, dict):
-        raise RuntimeError("rank-reference convergence inventory is malformed")
-    artifact_files = {name for name in artifacts
-                      if Path(name).suffix in {".json", ".csv", ".dat", ".tex"}}
+    artifact_files = reference_artifact_files(artifacts)
     for name in artifact_files:
         path = reference_root / name
         if (Path(name).name != name or not path.is_file() or path.is_symlink() or
                 not isinstance(artifacts[name], str) or
                 sha256(path) != artifacts[name]):
             raise RuntimeError("rank-reference convergence artifact changed")
+    convergence = load_json_strict(reference_root / "convergence.json")
+    preflight = load_json_strict(reference_root / "preflight.json")
+    validate_final_reference_aggregates(
+        convergence, preflight, artifacts, execution, reference["ranks"],
+        str(accepted_window_sha256), required)
     expected_entries = ({"campaign.json", "frozen_window_execution.json",
                          "authorization"} | artifact_files |
                         {f"{case['case_id']}-{case['case_uuid']}"
@@ -3671,6 +3950,38 @@ def stage_missing_tuples(stage: dict[str, object]) -> list[tuple[int, int, int]]
             if item.get("status") in {"failed", "not_attempted_after_stop"}]
 
 
+def validate_stage_lineage(
+        prior_cases: list[dict[str, object]],
+        prior_missing: set[tuple[int, int, int]],
+        current_cases: list[dict[str, object]],
+        current_missing: set[tuple[int, int, int]],
+        authorized: set[tuple[int, int, int]]) -> None:
+    def completed(cases: list[dict[str, object]]) -> \
+            dict[tuple[int, int, int], str]:
+        result = {}
+        for case in cases:
+            item = (int(case["spatial_order"]), int(case["resolution"]),
+                    int(case["phase"]))
+            digest = case.get("case_manifest_sha256")
+            if (item in result or item not in authorized or
+                    not isinstance(digest, str) or
+                    not re.fullmatch(r"[0-9a-f]{64}", digest)):
+                raise RuntimeError("partial lineage case ledger is malformed")
+            result[item] = digest
+        return result
+    previous = completed(prior_cases)
+    current = completed(current_cases)
+    if (set(previous) | prior_missing != authorized or
+            set(previous) & prior_missing or
+            set(current) | current_missing != authorized or
+            set(current) & current_missing or
+            not set(previous).issubset(current) or
+            any(current[item] != digest for item, digest in previous.items()) or
+            not current_missing.issubset(prior_missing) or
+            not (set(current) - set(previous)).issubset(prior_missing)):
+        raise RuntimeError("partial lineage regressed or conflicts with prior evidence")
+
+
 def verify_stage_roots(specifications: list[str] | None) -> \
         tuple[list[dict[str, object]], list[dict[str, object]],
               list[dict[str, object]]]:
@@ -3940,6 +4251,8 @@ def analyze_search(immutable_specs: list[str] | None, stage_specs: list[str] | N
     template = load_search_manifest(
         root / "tst/inputs/z4c_cartoon_mms_search_manifest.json")
     stage_cases = []
+    stage_lineages: dict[str, tuple[list[dict[str, object]],
+                                   set[tuple[int, int, int]]]] = {}
     completed_tuples = {
         (int(case["spatial_order"]), int(case["resolution"]), int(case["phase"]))
         for case in diagnostic_cases + characterization_cases}
@@ -3956,6 +4269,14 @@ def analyze_search(immutable_specs: list[str] | None, stage_specs: list[str] | N
                 stage_root, template, bindings)
             name = (f"partial:{binding['stage_id']}" if missing else
                     f"stage:{binding['stage_id']}")
+            stage_id = str(binding["stage_id"])
+            authorized = {tuple(item) for item in
+                          template["stages"][stage_id]["tuples"]}
+            prior_cases, prior_missing = stage_lineages.get(
+                stage_id, ([], set(authorized)))
+            validate_stage_lineage(prior_cases, prior_missing, cases,
+                                   set(missing), authorized)
+            stage_lineages[stage_id] = (cases, set(missing))
         stage_cases = merge_case_ledgers(stage_cases, cases)
         completed_tuples.update(
             (int(case["spatial_order"]), int(case["resolution"]),
@@ -4195,10 +4516,21 @@ def main() -> int:
                  int(case["phase"]))
                 for case in diagnostic_cases + characterization_cases}
             lineage_cases = []
+            lineage_cases_by_stage: dict[str, list[dict[str, object]]] = {}
+            lineage_missing: dict[str, set[tuple[int, int, int]]] = {}
             for stage_root in args.stage_root or []:
                 stage_cases, binding, missing = verify_stage_campaign_root(
                     Path(stage_root).absolute(), search, immutable_root_bindings)
+                stage_id = str(binding["stage_id"])
+                authorized = {tuple(item) for item in
+                              search["stages"][stage_id]["tuples"]}
+                validate_stage_lineage(
+                    lineage_cases_by_stage.get(stage_id, []),
+                    lineage_missing.get(stage_id, set(authorized)), stage_cases,
+                    set(missing), authorized)
                 lineage_cases = merge_case_ledgers(lineage_cases, stage_cases)
+                lineage_cases_by_stage[stage_id] = stage_cases
+                lineage_missing[stage_id] = set(missing)
                 completed_tuples.update(
                     (int(case["spatial_order"]), int(case["resolution"]),
                      int(case["phase"])) for case in stage_cases)
@@ -4225,6 +4557,10 @@ def main() -> int:
         immutable_root_bindings, _, _ = verify_stage_roots(
             args.immutable_root)
         if args.stage_root:
+            stage_id = args.characterization_stage
+            authorized = {tuple(item) for item in search["stages"][stage_id]["tuples"]}
+            prior_lineage_cases = []
+            prior_missing = set(authorized)
             for stage_root in args.stage_root:
                 cases_from_root, binding, missing = verify_stage_campaign_root(
                     Path(stage_root).absolute(), search, immutable_root_bindings)
@@ -4233,8 +4569,12 @@ def main() -> int:
                         binding["state"] != "stage_partial"):
                     raise RuntimeError(
                         "stage continuation root has no matching missing tuples")
+                validate_stage_lineage(prior_lineage_cases, prior_missing,
+                                       cases_from_root, set(missing), authorized)
                 continuation_cases = merge_case_ledgers(
                     continuation_cases, cases_from_root)
+                prior_lineage_cases = cases_from_root
+                prior_missing = set(missing)
                 immutable_root_bindings.append(stage_binding_record(binding))
             run_tuples = missing
             args.orders = sorted({item[0] for item in run_tuples})

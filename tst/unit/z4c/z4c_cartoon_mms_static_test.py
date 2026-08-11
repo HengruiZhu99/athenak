@@ -238,6 +238,10 @@ def main() -> int:
             driver.count("verify_complete_case_evidence(") >= 6 and
             "def verify_rank_reference_root" in driver and
             "def stage_binding_record" in driver and
+            "def validate_stage_lineage" in driver and
+            "def validate_case_launch_provenance" in driver and
+            "def validate_final_reference_aggregates" in driver and
+            '"fresh_single_source_final_qualification"' in driver and
             "require_exact_regular_files(authorization" in driver,
             "shared case verifier, partial lineage, or immutable rank/auth guard is missing")
     require("O(171*nx1)" in driver and "clean_floor" in driver and
