@@ -245,6 +245,8 @@ def main() -> int:
             "expected_exact_keys" in driver and
             "require_recomputed_reference_products(reference_root, recomputed)" in
             driver and
+            "verify_preserved_job56586376_failed_convergence" in driver and
+            "load_json_strict(preserved_convergence)" not in driver and
             'preflight.get("search_manifest_sha256")' in driver and
             '"fresh_single_source_final_qualification"' in driver and
             "require_exact_regular_files(authorization" in driver,

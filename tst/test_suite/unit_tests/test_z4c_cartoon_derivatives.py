@@ -40,6 +40,8 @@ EXPECTED_CASES = 3 * 4 * 8
 PRESERVED_JOB_56586376_BYTES = 715_807_842
 PRESERVED_JOB_56586376_CONVERGENCE_SHA256 = \
     "fdb4222c246b49d4df3c8ef40688dafacfd7983d5f090a2fe148d051538778a0"
+PRESERVED_JOB_56586376_CONVERGENCE_BYTES = 372_674_932
+PRESERVED_JOB_56586376_CONVERGENCE_NEGATIVE_INFINITY = 2_672
 PRESERVED_JOB_56586376_EVIDENCE_SHA256 = \
     "347b210b251e6100413ffef5f691edb684b79a2b41fcb6c8757b8a6233fb1869"
 PRESERVED_JOB_56586376_LOG_SHA256 = \
@@ -250,6 +252,27 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def _verify_opaque_legacy_failed_report(
+        path: Path, expected_sha256: str, expected_bytes: int,
+        expected_negative_infinity: int) -> None:
+    if (not path.is_file() or path.is_symlink() or
+            path.stat().st_size != expected_bytes or sha256(path) != expected_sha256):
+        raise RuntimeError("opaque legacy failed report provenance differs")
+    with path.open("rb") as stream:
+        negative_infinity = sum(line.count(b"-Infinity") for line in stream)
+    if negative_infinity != expected_negative_infinity:
+        raise RuntimeError("opaque legacy failed report nonfinite signature differs")
+
+
+def verify_preserved_job56586376_failed_convergence(path: Path) -> None:
+    # This sole immutable failed report is provenance only.  It is never parsed or
+    # imported; all raw cases and every current/recomputed product remain strict JSON.
+    _verify_opaque_legacy_failed_report(
+        path, PRESERVED_JOB_56586376_CONVERGENCE_SHA256,
+        PRESERVED_JOB_56586376_CONVERGENCE_BYTES,
+        PRESERVED_JOB_56586376_CONVERGENCE_NEGATIVE_INFINITY)
 
 
 def load_json_strict(path: Path) -> object:
@@ -1259,6 +1282,33 @@ def self_test_cpu_audit_policy() -> None:
         overflow.write_text('{"nested": {"value": 1e400}}\n', encoding="utf-8")
         expect_runtime_error(lambda: load_json_strict(overflow),
                              "exponent-overflow nested JSON")
+        opaque = Path(directory) / "opaque_legacy_failed_convergence.json"
+        opaque_bytes = b'{"failed_rate": -Infinity}\n'
+        opaque.write_bytes(opaque_bytes)
+        opaque_sha256 = hashlib.sha256(opaque_bytes).hexdigest()
+        _verify_opaque_legacy_failed_report(
+            opaque, opaque_sha256, len(opaque_bytes), 1)
+        expect_runtime_error(lambda: load_json_strict(opaque),
+                             "opaque legacy report used as current JSON")
+        opaque.write_bytes(opaque_bytes + b"tamper")
+        expect_runtime_error(
+            lambda: _verify_opaque_legacy_failed_report(
+                opaque, opaque_sha256, len(opaque_bytes), 1),
+            "tampered opaque legacy report")
+        opaque.write_bytes(opaque_bytes)
+        expect_runtime_error(
+            lambda: _verify_opaque_legacy_failed_report(
+                opaque, "0" * 64, len(opaque_bytes), 1),
+            "wrong opaque legacy report hash")
+        expect_runtime_error(
+            lambda: _verify_opaque_legacy_failed_report(
+                opaque, opaque_sha256, len(opaque_bytes), 0),
+            "wrong opaque legacy nonfinite count")
+        opaque.unlink()
+        expect_runtime_error(
+            lambda: _verify_opaque_legacy_failed_report(
+                opaque, opaque_sha256, len(opaque_bytes), 1),
+            "missing opaque legacy report")
 
     raw = {"status": "pass", "operator_count": 171}
     augmented = {**raw, **{field: None for field in RAW_RESULT_FIELDS}}
@@ -2658,17 +2708,16 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
     preserved_log = raw_root / "evidence/cpu-ranks2.log"
     build_record = raw_root / "evidence/cpu-build/build.json"
     build_manifest = raw_root / "build-mms-cpu-mpi/src/mms_build_manifest.json"
-    if (sha256(preserved_convergence) != PRESERVED_JOB_56586376_CONVERGENCE_SHA256 or
-            sha256(preserved_evidence) != PRESERVED_JOB_56586376_EVIDENCE_SHA256 or
+    verify_preserved_job56586376_failed_convergence(preserved_convergence)
+    if (sha256(preserved_evidence) != PRESERVED_JOB_56586376_EVIDENCE_SHA256 or
             sha256(preserved_log) != PRESERVED_JOB_56586376_LOG_SHA256 or
             sha256(build_record) !=
             "69c236d67283272c8877685f5e5d533efa10a302b4ffd4eb66a7656f90d64f31" or
             sha256(build_manifest) !=
             "60356b252d40b3657b07c681ed6dcc72d94a5be341455a4dce42ba8978a0a06d"):
         raise RuntimeError("replay root is not immutable job56586376 evidence")
-    if not isinstance(load_json_strict(preserved_convergence), dict) or \
-       not isinstance(load_json_strict(preserved_evidence), dict):
-        raise RuntimeError("preserved convergence/wrapper evidence is malformed")
+    if not isinstance(load_json_strict(preserved_evidence), dict):
+        raise RuntimeError("preserved wrapper evidence is malformed")
     manifests = sorted((raw_root / "results/ranks2").glob("o*/manifest.json"))
     if len(manifests) != EXPECTED_CASES:
         raise RuntimeError("replay requires exactly 96 complete case manifests")
@@ -2802,7 +2851,13 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
         raise RuntimeError("replay cases differ from exact 2/4/6 x 32/64/128/256 x 8")
     binding = {"schema": "athenak_z4c_cartoon_mms_replay_binding_v1",
                "raw_root": str(raw_root),
-               "preserved_convergence_sha256": sha256(preserved_convergence),
+               "preserved_convergence_sha256":
+               PRESERVED_JOB_56586376_CONVERGENCE_SHA256,
+               "preserved_convergence_bytes":
+               PRESERVED_JOB_56586376_CONVERGENCE_BYTES,
+               "preserved_convergence_negative_infinity":
+               PRESERVED_JOB_56586376_CONVERGENCE_NEGATIVE_INFINITY,
+               "preserved_convergence_trust": "opaque_failed_report_not_imported",
                "preserved_wrapper_evidence_sha256": sha256(preserved_evidence),
                "preserved_log_sha256": sha256(preserved_log),
                "build_record_sha256": sha256(build_record),
