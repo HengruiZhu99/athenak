@@ -909,35 +909,30 @@ def evaluate_rate_samples(values: list[dict[str, float]], expected: float,
 def evaluate_legacy_rate_samples(values: list[dict[str, float]], expected: float,
                                  margin: float, lane: str) -> dict[str, object]:
     """Frozen pre-coefficient-floor evaluator used for job56586376 only."""
+    if any(not math.isfinite(sample["error"]) or sample["error"] < 0.0 or
+           not math.isfinite(sample["direct_delta"]) or
+           sample["direct_delta"] < 0.0 for sample in values):
+        raise RuntimeError("legacy rate errors/deltas must be finite and nonnegative")
     rates: list[float | None] = []
     statuses = []
     usable = []
-    absorbing = False
     for coarse, fine in zip(values, values[1:]):
-        if (not math.isfinite(coarse["error"]) or coarse["error"] <= 0.0 or
-                not math.isfinite(fine["error"]) or fine["error"] <= 0.0):
-            raise RuntimeError("legacy rate errors must be finite and positive")
         floor = SATURATION_FACTOR * sys.float_info.epsilon * \
             max(1.0, coarse["error"])
         if lane != "clean":
-            if (not math.isfinite(coarse["direct_delta"]) or
-                    not math.isfinite(fine["direct_delta"]) or
-                    min(coarse["direct_delta"], fine["direct_delta"]) < 0.0):
-                raise RuntimeError("legacy noisy rate requires finite direct deltas")
             floor = max(floor, 8.0 * max(coarse["direct_delta"],
                                          fine["direct_delta"]))
-        if absorbing or fine["error"] <= floor:
-            absorbing = True
+        if fine["error"] <= floor:
             rates.append(None)
             statuses.append("legacy_saturated")
-        elif coarse["error"] >= fine["error"]:
+        elif fine["error"] > 0.0 and coarse["error"] >= fine["error"]:
             rate = math.log(coarse["error"] / fine["error"]) / \
                 math.log(fine["resolution"] / coarse["resolution"])
             rates.append(rate)
             statuses.append("legacy_rate")
             usable.append(rate)
         else:
-            rates.append(None)
+            rates.append(float("-inf"))
             statuses.append("legacy_nonmonotone")
             usable.append(float("-inf"))
     passed = len(usable) >= 2 and min(usable[-2:]) >= expected - margin
@@ -948,7 +943,7 @@ def evaluate_legacy_rate_samples(values: list[dict[str, float]], expected: float
     else:
         outcome = "legacy_rate_miss"
     return {"rates": rates, "rate_status": statuses,
-            "usable_prefix_ratios": len(usable), "saturation_absorbing": absorbing,
+            "usable_prefix_ratios": len(usable), "saturation_absorbing": False,
             "outcome_reason": outcome, "passed": passed}
 
 
@@ -1165,6 +1160,44 @@ def self_test_cpu_audit_policy() -> None:
     if (legacy_first != legacy_second or
             new_low["rate_status"] == new_high["rate_status"]):
         raise RuntimeError("coefficient floor altered the immutable legacy classifier")
+    legacy_zero = [{"resolution": resolution, "error": 0.0,
+                    "direct_delta": 0.0} for resolution in (32, 64, 128, 256)]
+    zero_result = evaluate_legacy_rate_samples(
+        legacy_zero, 2.0, 0.25, "clean")
+    if (zero_result["rates"] != [None, None, None] or
+            zero_result["rate_status"] != ["legacy_saturated"] * 3 or
+            zero_result["outcome_reason"] != "legacy_inconclusive"):
+        raise RuntimeError("legacy zero-error series did not saturate interval-locally")
+    legacy_reentry = [
+        {"resolution": 32, "error": 1.0, "direct_delta": 0.1},
+        {"resolution": 64, "error": 0.5, "direct_delta": 0.0},
+        {"resolution": 128, "error": 0.25, "direct_delta": 0.0},
+        {"resolution": 256, "error": 0.125, "direct_delta": 0.0}]
+    reentry = evaluate_legacy_rate_samples(legacy_reentry, 1.0, 0.0, "shared")
+    if (reentry["rates"] != [None, 1.0, 1.0] or not reentry["passed"] or
+            reentry["rate_status"] != ["legacy_saturated", "legacy_rate",
+                                        "legacy_rate"] or
+            reentry["saturation_absorbing"]):
+        raise RuntimeError("legacy interval-local saturation became absorbing")
+    legacy_nonmonotone = [
+        {"resolution": 32, "error": 1.0, "direct_delta": 0.0},
+        {"resolution": 64, "error": 2.0, "direct_delta": 0.0},
+        {"resolution": 128, "error": 1.0, "direct_delta": 0.0},
+        {"resolution": 256, "error": 0.5, "direct_delta": 0.0}]
+    nonmonotone = evaluate_legacy_rate_samples(
+        legacy_nonmonotone, 1.0, 0.0, "clean")
+    if (nonmonotone["rates"] != [float("-inf"), 1.0, 1.0] or
+            nonmonotone["rate_status"][0] != "legacy_nonmonotone" or
+            not nonmonotone["passed"]):
+        raise RuntimeError("legacy nonmonotone interval no longer records -inf")
+    for label, mutation in (
+        ("negative legacy error", {"error": -1.0}),
+        ("nonfinite legacy delta", {"direct_delta": float("inf")})):
+        expect_runtime_error(
+            lambda edit=mutation: evaluate_legacy_rate_samples(
+                [{**sample, **edit} if index == 0 else sample
+                 for index, sample in enumerate(legacy_zero)], 2.0, 0.25, "clean"),
+            label)
 
     valid_norm = {field: "" for field in NORM_FIELDS}
     valid_norm.update({"operator": "scalar.first.0", "mask": "regular_negative",
@@ -1614,6 +1647,16 @@ def self_test_cpu_audit_policy() -> None:
                  PRESERVED_JOB_56586376_LOG_SHA256)) or
             PRESERVED_JOB_56586376_AUDIT_COUNTS != (63_880, 18_508, 4_512, 3_696)):
         raise RuntimeError("output forecast/audit anchor differs from frozen CPU evidence")
+    partition_names = ("norm_inconclusive", "norm_rate_miss",
+                       "probe_inconclusive", "probe_rate_miss")
+    frozen_partition = dict(zip(
+        partition_names, PRESERVED_JOB_56586376_AUDIT_COUNTS))
+    validate_preserved_job56586376_legacy_partition(frozen_partition)
+    for name in partition_names:
+        expect_runtime_error(
+            lambda field=name: validate_preserved_job56586376_legacy_partition(
+                {**frozen_partition, field: frozen_partition[field] + 1}),
+            f"mutated frozen legacy partition {name}")
 
     root = Path(__file__).resolve().parents[3]
     search = load_search_manifest(root / "tst/inputs/z4c_cartoon_mms_search_manifest.json")
@@ -2580,6 +2623,14 @@ def validate_preserved_job56586376_normalization_counts(
         counts: Counter[str]) -> None:
     if dict(counts) != PRESERVED_JOB_56586376_NORMALIZATION_COUNTS:
         raise RuntimeError("replay legacy normalization accounting differs")
+
+
+def validate_preserved_job56586376_legacy_partition(partition: object) -> None:
+    if not isinstance(partition, dict) or tuple(partition.get(name) for name in
+            ("norm_inconclusive", "norm_rate_miss",
+             "probe_inconclusive", "probe_rate_miss")) != \
+            PRESERVED_JOB_56586376_AUDIT_COUNTS:
+        raise RuntimeError("job56586376 legacy pre-coefficient-floor partition changed")
 
 
 def validate_augmented_result(raw: object, augmented: object) -> None:
@@ -4669,12 +4720,7 @@ def replay_campaign(raw_root: Path, analysis_output: Path, root: Path,
                                 resolutions, allow_legacy_nullable=True)
     convergence = load_json_strict(analysis_output / "convergence.json")
     partition = convergence.get("legacy_pre_coefficient_floor_partition", {})
-    observed_partition = tuple(partition.get(name) for name in
-                               ("norm_inconclusive", "norm_rate_miss",
-                                "probe_inconclusive", "probe_rate_miss"))
-    if observed_partition != PRESERVED_JOB_56586376_AUDIT_COUNTS:
-        raise RuntimeError(f"job56586376 legacy pre-coefficient-floor partition changed: "
-                           f"{observed_partition}")
+    validate_preserved_job56586376_legacy_partition(partition)
     artifacts = {name: sha256(analysis_output / name) for name in
                  ("convergence.json", "convergence.csv",
                   "convergence_rates.pgfplots.dat", "convergence_plot.tex")}

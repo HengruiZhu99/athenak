@@ -257,6 +257,8 @@ def main() -> int:
     require("O(171*nx1)" in driver and "clean_floor" in driver and
             "saturated_at_resolution" in driver and
             "def evaluate_legacy_rate_samples" in driver and
+            'rates.append(float("-inf"))' in driver and
+            '"saturation_absorbing": False' in driver and
             "legacy_pre_coefficient_floor_partition" in driver and
             "coefficient_floor_partition" in driver,
             "driver does not use the finite O(nx1) absorbing coefficient floor")
