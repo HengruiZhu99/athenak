@@ -158,6 +158,59 @@ def test_legacy_fastflow_time_key_removal():
         raise RuntimeError("malformed legacy FastFlow time fixture was accepted")
 
 
+def assert_restart_binary_payload_unchanged(current, legacy):
+    marker = b"<par_end>\n"
+    current_payload = current[current.index(marker) + len(marker):]
+    legacy_payload = legacy[legacy.index(marker) + len(marker):]
+    # Restart writes two ints, a nine-Real RegionSize, then the root RegionIndcs.
+    # Its first ten ints are defined; its nine unused coarse-index ints must be zero.
+    root_indcs = 2 * struct.calcsize("=i") + 9 * struct.calcsize("=d")
+    root_coarse = root_indcs + 10 * struct.calcsize("=i")
+    root_coarse_end = root_coarse + 9 * struct.calcsize("=i")
+    for name, payload in (("current", current_payload), ("legacy", legacy_payload)):
+        if len(payload) < root_coarse_end:
+            raise RuntimeError(f"{name} restart binary header is truncated")
+        coarse = struct.unpack_from("=9i", payload, root_coarse)
+        if any(coarse):
+            raise RuntimeError(
+                f"{name} restart serialized nonzero root coarse indices: {coarse}"
+            )
+    if len(current_payload) != len(legacy_payload):
+        raise RuntimeError(
+            "restart carrier changed the post-<par_end> binary payload length: "
+            f"{len(current_payload)} != {len(legacy_payload)}"
+        )
+    if current_payload != legacy_payload:
+        first = next(i for i, values in enumerate(zip(current_payload, legacy_payload))
+                     if values[0] != values[1])
+        raise RuntimeError(
+            "restart carrier changed the post-<par_end> binary payload at "
+            f"offset {first}"
+        )
+
+
+def test_restart_binary_payload_contract():
+    marker = b"<par_end>\n"
+    payload = bytearray(256)
+    current = b"<current>\n" + marker + payload
+    legacy = b"<legacy>\n" + marker + payload
+    assert_restart_binary_payload_unchanged(current, legacy)
+
+    root_coarse = 2 * struct.calcsize("=i") + 9 * struct.calcsize("=d") + \
+        10 * struct.calcsize("=i")
+    nonzero_coarse = bytearray(payload)
+    struct.pack_into("=i", nonzero_coarse, root_coarse, 1)
+    active_mutation = bytearray(payload)
+    struct.pack_into("=i", active_mutation, root_coarse - struct.calcsize("=i"), 1)
+    for candidate in (nonzero_coarse, active_mutation):
+        try:
+            assert_restart_binary_payload_unchanged(
+                current, b"<legacy>\n" + marker + candidate)
+        except RuntimeError:
+            continue
+        raise RuntimeError("restart binary payload mutation was accepted")
+
+
 def mutate_binary_dimension(data, target, expected, replacement):
     marker = b"<par_end>\n"
     header_start = data.index(marker) + len(marker)
@@ -228,6 +281,7 @@ def build_legacy_athena(source_dir, work_dir, base_commit):
 
 def main():
     test_legacy_fastflow_time_key_removal()
+    test_restart_binary_payload_contract()
     parser = argparse.ArgumentParser()
     parser.add_argument("--athena", required=True, type=Path)
     parser.add_argument("--input", required=True, type=Path)
@@ -660,11 +714,8 @@ def main():
     )
     if "AssembleZ4cTasks" in output or "Setup complete, executing task list(s)" in output:
         raise RuntimeError("genuine legacy restart MMS injection reached physics allocation")
-    marker = b"<par_end>\n"
     base_restart_data = base_restart.read_bytes()
-    if (restart_data[restart_data.index(marker) + len(marker):] !=
-            base_restart_data[base_restart_data.index(marker) + len(marker):]):
-        raise RuntimeError("restart carrier changed the post-<par_end> binary payload")
+    assert_restart_binary_payload_unchanged(restart_data, base_restart_data)
     legacy_upgrade = args.work_dir / "legacy_upgrade"
     legacy_upgrade.mkdir()
     run([args.athena, "-r", base_restart, "-d", legacy_upgrade],

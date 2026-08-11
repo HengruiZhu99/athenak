@@ -241,7 +241,20 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
                             single_file_per_rank);
     resfile.Write_any_type(&(pm->mesh_size), (sizeof(RegionSize)), "byte",
                             single_file_per_rank);
-    resfile.Write_any_type(&(pm->mesh_indcs), (sizeof(RegionIndcs)), "byte",
+    // Root-mesh coarse indices are unused and are not initialized by Mesh.  Build the
+    // serialized value member-by-member so restart bytes never depend on stack contents.
+    RegionIndcs restart_mesh_indcs{};
+    restart_mesh_indcs.ng = pm->mesh_indcs.ng;
+    restart_mesh_indcs.nx1 = pm->mesh_indcs.nx1;
+    restart_mesh_indcs.nx2 = pm->mesh_indcs.nx2;
+    restart_mesh_indcs.nx3 = pm->mesh_indcs.nx3;
+    restart_mesh_indcs.is = pm->mesh_indcs.is;
+    restart_mesh_indcs.ie = pm->mesh_indcs.ie;
+    restart_mesh_indcs.js = pm->mesh_indcs.js;
+    restart_mesh_indcs.je = pm->mesh_indcs.je;
+    restart_mesh_indcs.ks = pm->mesh_indcs.ks;
+    restart_mesh_indcs.ke = pm->mesh_indcs.ke;
+    resfile.Write_any_type(&restart_mesh_indcs, (sizeof(RegionIndcs)), "byte",
                             single_file_per_rank);
     resfile.Write_any_type(&(pm->mb_indcs), (sizeof(RegionIndcs)), "byte",
                             single_file_per_rank);
