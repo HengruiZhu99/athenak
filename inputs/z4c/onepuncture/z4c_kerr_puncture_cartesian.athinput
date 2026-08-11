@@ -1,0 +1,74 @@
+# Stationary axis-aligned Kerr puncture in the coordinates of arXiv:1001.4077.
+
+<comment>
+problem = reusable Kerr puncture, Cartesian 3D
+reference = arXiv:1001.4077 equations 6,7,11,13-15
+
+<job>
+basename = kerr_puncture_cartesian
+
+<mesh>
+nghost = 4
+nx1 = 32
+x1min = -12.0
+x1max = 12.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 32
+x2min = -12.0
+x2max = 12.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 32
+x3min = -12.0
+x3max = 12.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 16
+
+<mesh_refinement>
+refinement = none
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = 4
+tlim = 0.1
+ndiag = 1
+
+<z4c>
+symmetry = cartesian3d
+coordinate_map = cartesian_xyz
+symmetry_schema = 1
+spatial_order = 6
+diss = 0.02
+chi_div_floor = 1.0e-5
+damp_kappa1 = 0.02
+damp_kappa2 = 0.0
+lapse_oplog = 2.0
+lapse_harmonic = 0.0
+lapse_advect = 1.0
+shift_eta = 2.0
+shift_advect = 1.0
+
+<problem>
+pgen_name = kerr_puncture
+M = 1.0
+chi = 0.99
+z_h = 0.0
+# precollapsed: alpha=psi^-2, beta^i=0; stationary: paper Eqs. (6),(7)
+initial_gauge = precollapsed
+
+<output1>
+file_type = hst
+dt = 0.02
+
+<output2>
+file_type = bin
+variable = z4c
+dt = 0.1
