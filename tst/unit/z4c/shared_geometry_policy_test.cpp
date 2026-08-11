@@ -202,7 +202,11 @@ bool CheckMeridionalMeasureAndState() {
            &state, 0.5, 0.125, 4.0, 9, 3, 1, 0.5, false).valid ||
       !NearlyEqual(state.proper_time, 0.375, 1.0e-15) ||
       !z4c::UpdateZ4cCentralRestartState(
-           &state, 0.5, 0.125, 4.0, 9, 3, 1, 0.5, true).valid ||
+           &state, 0.25, 0.0625, 5.0, 10, 4, 1, 0.5, true).valid ||
+      !NearlyEqual(state.proper_time, 0.375, 1.0e-15) ||
+      state.previous_lapse != 0.25 || state.constraint_norm != 0.0625 ||
+      state.abs_kretschmann != 5.0 || state.sample_gid != 10 ||
+      state.sample_level != 4 || state.last_cycle != 1 || state.last_time != 0.5 ||
       z4c::UpdateZ4cCentralRestartState(
           &state, 0.4, 0.1, 4.0, 9, 3, 3, 1.0, false).valid) {
     return false;

@@ -245,13 +245,37 @@ def main() -> int:
             "AMR-created blocks do not use default-false Z4c initialization")
     execute = driver[driver.index("void Driver::Execute(Mesh"):
                      driver.index("void Driver::Finalize(Mesh")]
+    normal_sample = execute.index("UpdateCartoonCentralState(pmesh, false)")
+    stop_check = execute.index("if (!step_stop_reason.empty())")
+    stop_output = execute.index("write_scheduled_outputs();", stop_check)
+    stop_break = execute.index("break;", stop_output)
+    amr = execute.index("pmesh->pmr->AdaptiveMeshRefinement(this, pin)")
+    refresh_guard = execute.index(
+        "if (topology_changed && pmesh->pmb_pack->pz4c != nullptr)")
+    refresh_sample = execute.index("UpdateCartoonCentralState(pmesh, true)",
+                                   refresh_guard)
+    ordinary_output = execute.index("write_scheduled_outputs();", refresh_sample)
+    capacity_stop = execute.index("if (user_stop) {break;}", ordinary_output)
     require(execute.index('ExecuteTaskList(pmesh, "after_stagen", stage)') <
             execute.index('ExecuteTaskList(pmesh, "after_timeintegrator", 1)') <
             execute.index("pmesh->time = pmesh->time + pmesh->dt") <
-            execute.index("pmesh->ncycle++") <
-            execute.index("UpdateCartoonCentralState(pmesh, false)") <
-            execute.index("for (auto &out : pout->pout_list)"),
-            "accepted-step central sampling is not post-task/post-time and pre-output")
+            execute.index("pmesh->ncycle++") < normal_sample < stop_check <
+            stop_output < stop_break < amr < refresh_guard < refresh_sample <
+            ordinary_output < capacity_stop,
+            "accepted-step/stop/AMR/refresh/output ordering changed")
+    require(execute.count("UpdateCartoonCentralState(pmesh, false)") == 1 and
+            execute.count("UpdateCartoonCentralState(pmesh, true)") == 1,
+            "driver duplicates accepted-step or post-AMR central collectives")
+    require("pmesh->pmr->nmb_created != created_before" in execute and
+            "pmesh->pmr->nmb_deleted != deleted_before" in execute,
+            "post-AMR central refresh is not guarded by an actual topology change")
+    require(execute.count("for (auto &out : pout->pout_list)") == 1 and
+            execute.index("auto write_scheduled_outputs") <
+            execute.index("while ((pmesh->time < tlim)"),
+            "scheduled output policy is duplicated inside the evolution loop")
+    require(initialize.index("for (auto &out : pout->pout_list)") >
+            initialize.index("UpdateCartoonCentralState(pmesh, res_flag)"),
+            "cycle-zero initialization checkpoint no longer follows central sampling")
     tasks = (source_dir / "src/z4c/z4c_tasks.cpp").read_text(encoding="utf-8")
     task_order = [tasks.index(marker) for marker in
                   ('"Z4c_RestU"', '"Z4c_SendU"', '"Z4c_RecvU"', '"Z4c_BCS"',

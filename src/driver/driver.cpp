@@ -416,6 +416,28 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
     if (wall_time > 0.) {
       elapsed_time = UpdateWallClock();
     }
+    auto write_scheduled_outputs = [this, pmesh, pin, pout]() {
+      Kokkos::Timer output_timer;
+      bool wrote_output = false;
+      for (auto &out : pout->pout_list) {
+        // compare at floating point (32-bit) precision to reduce effect of round off
+        float time_32 = static_cast<float>(pmesh->time);
+        float next_32 = static_cast<float>(out->out_params.last_time+out->out_params.dt);
+        float tlim_32 = static_cast<float>(tlim);
+        int &dcycle_ = out->out_params.dcycle;
+
+        if (((out->out_params.dt > 0.0) &&
+             ((time_32 >= next_32) && (time_32<tlim_32))) ||
+            ((dcycle_ > 0) && ((pmesh->ncycle)%(dcycle_) == 0))) {
+          out->LoadOutputData(pmesh);
+          out->WriteOutputFile(pmesh, pin);
+          wrote_output = true;
+        }
+      }
+      if (wrote_output) {
+        output_time_ += output_timer.seconds();
+      }
+    };
     while ((pmesh->time < tlim) && (pmesh->ncycle < nlim || nlim < 0) &&
            (pmesh->nmb_total < nmb_total_limit || nmb_total_limit < 0) &&
            (elapsed_time < wall_time)) {
@@ -468,35 +490,42 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
             pmesh->pgen->user_stopping_condition(pmesh);
       }
 
-      // Test for/make outputs
-      Kokkos::Timer output_timer;
-      bool wrote_output = false;
-      for (auto &out : pout->pout_list) {
-        // compare at floating point (32-bit) precision to reduce effect of round off
-        float time_32 = static_cast<float>(pmesh->time);
-        float next_32 = static_cast<float>(out->out_params.last_time+out->out_params.dt);
-        float tlim_32 = static_cast<float>(tlim);
-        int &dcycle_ = out->out_params.dcycle;
-
-        if (((out->out_params.dt > 0.0) && ((time_32 >= next_32) && (time_32<tlim_32))) ||
-            ((dcycle_ > 0) && ((pmesh->ncycle)%(dcycle_) == 0)) ) {
-          out->LoadOutputData(pmesh);
-          out->WriteOutputFile(pmesh, pin);
-          wrote_output = true;
-        }
-      }
-      if (wrote_output) {
-        output_time_ += output_timer.seconds();
-      }
-
       if (!step_stop_reason.empty()) {
+        // Preserve the last accepted state when a problem requests a clean stop.  In
+        // particular, do not change its topology before the scheduled checkpoint is made.
         user_stop = true;
         user_stop_reason = step_stop_reason;
+        write_scheduled_outputs();
         break;
       }
 
-      // AMR
-      if (pmesh->adaptive) {pmesh->pmr->AdaptiveMeshRefinement(this, pin);}
+      // AMR.  A cycle-N checkpoint is a continuation point, so it must contain the
+      // post-regrid hierarchy used to start cycle N+1.  Refresh only the instantaneous
+      // central sample after a real topology change; restart-initialization semantics
+      // deliberately leave the already integrated proper time unchanged.
+      bool topology_changed = false;
+      if (pmesh->adaptive) {
+        const int created_before = pmesh->pmr->nmb_created;
+        const int deleted_before = pmesh->pmr->nmb_deleted;
+        pmesh->pmr->AdaptiveMeshRefinement(this, pin);
+        topology_changed = (pmesh->pmr->nmb_created != created_before ||
+                            pmesh->pmr->nmb_deleted != deleted_before);
+      }
+      if (topology_changed && pmesh->pmb_pack->pz4c != nullptr) {
+        const std::string central_error =
+            z4c::UpdateCartoonCentralState(pmesh, true);
+        if (!central_error.empty()) {
+          std::cerr << "### FATAL ERROR in " << __FILE__
+                    << ": failed to refresh post-AMR Cartoon central diagnostics: "
+                    << central_error << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+      }
+
+      // Ordinary scheduled outputs now bind the accepted state to its continuation mesh.
+      // If AMR requested a clean capacity stop without changing the tree, this remains the
+      // same valid pre-AMR state that entered the refinement check.
+      write_scheduled_outputs();
       if (user_stop) {break;}
       // compute new timestep AFTER all Meshblocks refined/derefined
       pmesh->NewTimeStep(tlim);
