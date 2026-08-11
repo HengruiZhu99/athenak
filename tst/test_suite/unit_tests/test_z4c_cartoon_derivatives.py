@@ -438,6 +438,29 @@ def validate_probe_row(row: dict[str, str]) -> None:
         finite_value(row, field)
 
 
+def binary64_cell_center_budget(actual: float, index: int, resolution: int,
+                                lower: float, upper: float) -> tuple[float, float]:
+    if (not math.isfinite(actual) or not math.isfinite(lower) or
+            not math.isfinite(upper) or resolution <= 0 or
+            index < 0 or index >= resolution or not lower < upper):
+        raise RuntimeError("cell-center comparison has invalid geometry")
+    spacing = (upper - lower) / resolution
+    product = (index + 0.5) * spacing
+    reference = lower + product
+    if not math.isfinite(product) or not math.isfinite(reference):
+        raise RuntimeError("cell-center reference is nonfinite")
+    budget = math.ulp(product) + math.ulp(reference) + math.ulp(actual)
+    return reference, budget
+
+
+def validate_binary64_cell_center(actual: float, index: int, resolution: int,
+                                  lower: float, upper: float, field: str) -> None:
+    reference, budget = binary64_cell_center_budget(
+        actual, index, resolution, lower, upper)
+    if not math.isclose(actual, reference, rel_tol=0.0, abs_tol=budget):
+        raise RuntimeError(f"probe {field} differs from cell-center geometry")
+
+
 def validate_probe_geometry(row: dict[str, str], order: int, resolution: int,
                             domain: tuple[float, float, float, float]) -> None:
     validate_probe_row(row)
@@ -449,16 +472,33 @@ def validate_probe_geometry(row: dict[str, str], order: int, resolution: int,
                 finite_value(row, "actual_z") != 0.0):
             raise RuntimeError("diagnostic-axis probe is not at the true axis/center")
         return
-    h = (domain[1] - domain[0]) / resolution
-    hz = (domain[3] - domain[2]) / resolution
+    if resolution <= 0 or resolution % 2 != 0:
+        raise RuntimeError("probe geometry requires a positive even resolution")
+    global_id = integer_value(row, "global_cell_id")
+    global_i = global_id % resolution
+    global_j = global_id // resolution
+    if (global_i < 0 or global_i >= resolution or
+            global_j != resolution // 2 or
+            global_id != global_j * resolution + global_i):
+        raise RuntimeError("probe global cell ID is not the center-row cell")
+    expected_side = "negative" if global_i < resolution // 2 else "positive"
+    expected_layer = (resolution // 2 - 1 - global_i if expected_side == "negative"
+                      else global_i - resolution // 2)
     actual_rho = finite_value(row, "actual_rho")
     actual_z = finite_value(row, "actual_z")
-    expected_layer = math.floor(abs(actual_rho / h))
-    if (layer != expected_layer or (row["side"] == "positive") != (actual_rho > 0.0)):
-        raise RuntimeError("probe layer/side differs from physical geometry")
-    expected_actual_z = domain[2] + (resolution // 2 + 0.5) * hz
-    if finite_value(row, "target_z") != 0.0 or actual_z != expected_actual_z:
-        raise RuntimeError("probe z target/actual differs from cell-center geometry")
+    if layer != expected_layer or row["side"] != expected_side:
+        raise RuntimeError("probe cell ID/layer/side differs from physical geometry")
+    semantic_i = (resolution // 2 - 1 - layer if row["side"] == "negative"
+                  else resolution // 2 + layer)
+    if global_i != semantic_i:
+        raise RuntimeError("probe radial index differs from its semantic layer")
+    if finite_value(row, "target_z") != 0.0:
+        raise RuntimeError("probe z target is not the exact center target")
+    validate_binary64_cell_center(
+        actual_rho, global_i, resolution, domain[0], domain[1], "rho")
+    validate_binary64_cell_center(
+        actual_z, global_j, resolution, domain[2], domain[3], "z")
+    h = (domain[1] - domain[0]) / resolution
     nghost = order // 2 + 1
     if classification == "fitted":
         match = re.fullmatch(r"fitted_layer_(\d+)_(negative|positive)", row["mask"])
@@ -475,9 +515,6 @@ def validate_probe_geometry(row: dict[str, str], order: int, resolution: int,
             raise RuntimeError("regular probe layer differs from rho=1 target")
     else:
         raise RuntimeError("unknown probe geometry classification")
-    expected_rho = (-1.0 if row["side"] == "negative" else 1.0) * (layer + 0.5) * h
-    if actual_rho != expected_rho:
-        raise RuntimeError("probe actual_rho differs from selected cell center")
 
 
 def expected_masks(order: int) -> list[str]:
@@ -1594,14 +1631,138 @@ def self_test_cpu_audit_policy() -> None:
                 candidate[key] = value
         expect_runtime_error(lambda row=candidate: validate_norm_row(row), label)
 
+    def fitted_geometry_probe(resolution: int, side: str, actual_rho: float,
+                              actual_z: float) -> dict[str, str]:
+        radial_index = resolution // 2 - 1 if side == "negative" else resolution // 2
+        axial_index = resolution // 2
+        return {"operator": "scalar.first.0", "mask": f"fitted_layer_0_{side}",
+                "side": side, "layer_index": "0", "classification": "fitted",
+                "target_rho_applicable": "false", "target_rho": "",
+                "actual_rho": repr(actual_rho), "target_z": "0",
+                "actual_z": repr(actual_z),
+                "global_cell_id": str(axial_index * resolution + radial_index),
+                "raw_error": "0"}
+
+    def contracted_center(resolution: int, index: int) -> float:
+        spacing = (QUALIFICATION_DOMAIN[1] - QUALIFICATION_DOMAIN[0]) / resolution
+        return float(Fraction.from_float(QUALIFICATION_DOMAIN[0]) +
+                     Fraction(2 * index + 1, 2) * Fraction.from_float(spacing))
+
+    def ulp_steps(reference: float, actual: float) -> int:
+        value = reference
+        for steps in range(128):
+            if value == actual:
+                return steps
+            value = math.nextafter(value, actual)
+        raise RuntimeError("geometry fixture exceeds the bounded ULP walk")
+
+    exact_geometry_anchors = {
+        48: {"positive": ("0x1.5555555555545p-5", "0x1.5555555555540p-5"),
+             "negative": ("-0x1.5555555555565p-5", "-0x1.5555555555560p-5")},
+        80: {"positive": ("0x1.99999999999bap-6", "0x1.9999999999980p-6"),
+             "negative": ("-0x1.999999999997ap-6", "-0x1.9999999999980p-6")},
+        96: {"positive": ("0x1.5555555555535p-6", "0x1.5555555555500p-6"),
+             "negative": ("-0x1.5555555555575p-6", "-0x1.5555555555580p-6")},
+    }
+    for resolution in (32, 48, 80, 96):
+        axial_index = resolution // 2
+        contracted_z = contracted_center(resolution, axial_index)
+        reference_z, _ = binary64_cell_center_budget(
+            contracted_z, axial_index, resolution,
+            QUALIFICATION_DOMAIN[2], QUALIFICATION_DOMAIN[3])
+        for side in ("negative", "positive"):
+            radial_index = (resolution // 2 - 1 if side == "negative"
+                            else resolution // 2)
+            contracted_rho = contracted_center(resolution, radial_index)
+            reference_rho, _ = binary64_cell_center_budget(
+                contracted_rho, radial_index, resolution,
+                QUALIFICATION_DOMAIN[0], QUALIFICATION_DOMAIN[1])
+            if resolution == 32:
+                if contracted_rho != reference_rho or contracted_z != reference_z:
+                    raise RuntimeError("dyadic N32 cell center is not exact")
+            else:
+                actual_hex, reference_hex = exact_geometry_anchors[resolution][side]
+                if (contracted_rho.hex() != actual_hex or
+                        reference_rho.hex() != reference_hex):
+                    raise RuntimeError("non-dyadic rho anchor differs")
+                if side == "positive" and (contracted_z.hex() != actual_hex or
+                                            reference_z.hex() != reference_hex):
+                    raise RuntimeError("non-dyadic z anchor differs")
+            validate_probe_geometry(
+                fitted_geometry_probe(resolution, side, contracted_rho, contracted_z),
+                6 if resolution != 32 else 2, resolution, QUALIFICATION_DOMAIN)
+            validate_probe_geometry(
+                fitted_geometry_probe(resolution, side, reference_rho, reference_z),
+                6 if resolution != 32 else 2, resolution, QUALIFICATION_DOMAIN)
+    n48_positive_actual = float.fromhex("0x1.5555555555545p-5")
+    n48_positive_reference = float.fromhex("0x1.5555555555540p-5")
+    n48_negative_actual = float.fromhex("-0x1.5555555555565p-5")
+    n48_negative_reference = float.fromhex("-0x1.5555555555560p-5")
+    if (ulp_steps(n48_positive_reference, n48_positive_actual) != 5 or
+            ulp_steps(n48_negative_reference, n48_negative_actual) != 5):
+        raise RuntimeError("exact archived N48 geometry is not five result ULPs apart")
+
+    boundary_row = fitted_geometry_probe(
+        48, "positive", n48_positive_actual, n48_positive_reference)
+    boundary = n48_positive_reference
+    while True:
+        candidate = math.nextafter(boundary, math.inf)
+        reference, budget = binary64_cell_center_budget(
+            candidate, 24, 48, QUALIFICATION_DOMAIN[2], QUALIFICATION_DOMAIN[3])
+        if abs(candidate - reference) > budget:
+            beyond = candidate
+            break
+        boundary = candidate
+    validate_probe_geometry(
+        {**boundary_row, "actual_z": repr(boundary)}, 6, 48,
+        QUALIFICATION_DOMAIN)
+    expect_runtime_error(
+        lambda: validate_probe_geometry(
+            {**boundary_row, "actual_z": repr(beyond)}, 6, 48,
+            QUALIFICATION_DOMAIN), "first z value beyond binary64 geometry budget")
+    expect_runtime_error(
+        lambda: validate_probe_geometry(
+            {**boundary_row,
+             "actual_rho": repr(n48_positive_actual + (4.0 / 48.0) / 8.0)},
+            6, 48, QUALIFICATION_DOMAIN), "same-layer wrong rho coordinate")
+    expect_runtime_error(
+        lambda: validate_probe_geometry(
+            {**boundary_row, "actual_rho": repr(n48_positive_actual + 4.0 / 48.0)},
+            6, 48, QUALIFICATION_DOMAIN), "one-cell rho displacement")
+
+    axis_probe = {"operator": "scalar.first.0", "mask": "diagnostic_axis",
+                  "side": "axis", "layer_index": "0",
+                  "classification": "diagnostic_axis",
+                  "target_rho_applicable": "true", "target_rho": "0",
+                  "actual_rho": "0", "target_z": "0", "actual_z": "0",
+                  "global_cell_id": "-1", "raw_error": "0"}
+    validate_probe_geometry(axis_probe, 6, 48, QUALIFICATION_DOMAIN)
+    for label, edit in (
+        ("nonzero diagnostic rho", {"actual_rho": repr(math.ulp(0.0))}),
+        ("nonzero diagnostic z", {"actual_z": repr(math.ulp(0.0))}),
+        ("diagnostic global ID", {"global_cell_id": "0"}),
+    ):
+        expect_runtime_error(
+            lambda change=edit: validate_probe_geometry(
+                {**axis_probe, **change}, 6, 48, QUALIFICATION_DOMAIN), label)
+
     valid_probe = {"operator": "scalar.first.0", "mask": "raw_transition_negative",
                    "side": "negative", "layer_index": "3",
                    "classification": "raw_transition",
                    "target_rho_applicable": "false", "target_rho": "",
                    "actual_rho": "-0.4375", "target_z": "0", "actual_z": "0.0625",
-                   "global_cell_id": "7", "raw_error": "0"}
+                   "global_cell_id": "524", "raw_error": "0"}
     validate_probe_row(valid_probe)
     validate_probe_geometry(valid_probe, 4, 32, QUALIFICATION_DOMAIN)
+    fixed_target_probe = {
+        **valid_probe, "mask": "fixed_rho_negative_0.5", "layer_index": "4",
+        "classification": "fixed_radius", "target_rho_applicable": "true",
+        "target_rho": "-0.5", "actual_rho": "-0.5625", "global_cell_id": "523"}
+    validate_probe_geometry(fixed_target_probe, 4, 32, QUALIFICATION_DOMAIN)
+    expect_runtime_error(
+        lambda: validate_probe_geometry(
+            {**fixed_target_probe, "target_rho": "-0.49999999999999994"},
+            4, 32, QUALIFICATION_DOMAIN), "wrong exact rho target")
     legacy_probe = {key: value for key, value in valid_probe.items()
                     if key != "target_rho_applicable"}
     legacy_probe["target_rho"] = "nan"
@@ -1619,10 +1780,18 @@ def self_test_cpu_audit_policy() -> None:
     for label, edit in (
         ("fitted mask/layer mismatch", {"mask": "fitted_layer_1_negative",
                                         "classification": "fitted",
-                                        "layer_index": "0", "actual_rho": "-0.0625"}),
+                                        "layer_index": "0", "actual_rho": "-0.0625",
+                                        "global_cell_id": "527"}),
         ("raw transition away from NGHOST", {"layer_index": "2",
-                                             "actual_rho": "-0.3125"}),
+                                             "actual_rho": "-0.3125",
+                                             "global_cell_id": "525"}),
         ("probe z mismatch", {"actual_z": "0"}),
+        ("wrong exact z target", {"target_z": repr(math.ulp(0.0))}),
+        ("wrong global row", {"global_cell_id": "556"}),
+        ("wrong global column", {"global_cell_id": "525"}),
+        ("wrong geometric side", {"side": "positive"}),
+        ("nonfinite geometric rho", {"actual_rho": "nan"}),
+        ("nonfinite geometric z", {"actual_z": "inf"}),
     ):
         candidate = {**valid_probe, **edit}
         expect_runtime_error(
