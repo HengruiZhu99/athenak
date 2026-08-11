@@ -55,6 +55,13 @@ RAW_RESULT_FIELDS = {
     "execution_environment", "execution_environment_sha256", "domain",
     "output_bytes",
 }
+WINDOW_EXECUTION_FIELDS = {
+    "schema", "state", "purpose", "attempt_id", "accepted_window_sha256",
+    "accepted_review", "source", "build_manifest_sha256", "executable_sha256",
+    "input_sha256", "oracle_header_sha256", "series_manifest_sha256", "backend",
+    "ranks", "domain", "immutable_root_bindings", "execution_tuples", "attempts",
+    "result_set_sha256", "stop_reason", "authorization_files",
+}
 CASE_ENVIRONMENT_KEYS = (
     "CUDA_DEVICE_ORDER", "CUDA_VISIBLE_DEVICES", "KOKKOS_NUM_DEVICES",
     "KOKKOS_NUM_THREADS", "OMPI_COMM_WORLD_SIZE", "PMIX_NAMESPACE",
@@ -998,6 +1005,15 @@ def require_exact_root_entries(directory: Path, expected: set[str], label: str) 
         raise RuntimeError(f"{label} contains an unclaimed entry")
 
 
+def require_exact_regular_files(directory: Path, expected: set[str], label: str) -> None:
+    if not directory.is_dir() or directory.is_symlink():
+        raise RuntimeError(f"{label} is missing or a symlink")
+    require_exact_root_entries(directory, expected, label)
+    if any(not (directory / name).is_file() or (directory / name).is_symlink()
+           for name in expected):
+        raise RuntimeError(f"{label} contains a non-regular entry")
+
+
 def expected_case_files(ranks: int) -> set[str]:
     return CASE_FIXED_FILES | {f"rank_binding_{rank:04d}.json"
                               for rank in range(ranks)}
@@ -1256,6 +1272,63 @@ def self_test_cpu_audit_policy() -> None:
         candidate = {**valid_result, field: bad}
         expect_runtime_error(lambda value=candidate: validate_result_numbers(value),
                              f"typed finite result mutation {field}")
+    semantic_result = {
+        **valid_result, "status": "pass", "spatial_order": 2, "nghost": 2,
+        "nx1": 32, "nx2": 32, "nx3": 1, "mpi_ranks": 2,
+        "owned_cells": 1024, "operator_count": 171,
+        "diagnostic_axis_operator_count": 161, "backend": "Serial",
+        "phase": 0, "resolution": 32, "domain": list(QUALIFICATION_DOMAIN),
+        "ownership_sequence": "[0,N*N) exactly once",
+        "diagnostic_axis_tolerance": 1.0}
+    validate_raw_case_invariants(semantic_result, 2, 32, 0, "Serial", 2,
+                                 QUALIFICATION_DOMAIN)
+    for label, field, value in (
+        ("raw status", "status", "fail"), ("raw nghost", "nghost", 3),
+        ("raw nx1", "nx1", 31), ("raw nx2", "nx2", 31),
+        ("raw nx3", "nx3", 2), ("raw ranks", "mpi_ranks", 4),
+        ("raw operator count", "operator_count", 170),
+        ("raw nonfinite count", "nonfinite_count", 1),
+        ("raw axis count", "diagnostic_axis_operator_count", 160),
+        ("raw axis nonfinite", "diagnostic_axis_nonfinite", 1),
+        ("raw ownership count", "owned_cells", 1023),
+        ("raw ownership sequence", "ownership_sequence", "duplicated"),
+        ("stored backend", "backend", "Cuda"),
+        ("stored ranks", "mpi_ranks", 4),
+        ("stored domain", "domain", [-1.0, 1.0, -2.0, 2.0])):
+        expect_runtime_error(
+            lambda key=field, replacement=value: validate_raw_case_invariants(
+                {**semantic_result, key: replacement}, 2, 32, 0, "Serial", 2,
+                QUALIFICATION_DOMAIN), label)
+    summary_operators = [f"operator.{index}" for index in range(171)]
+    summary_rows = [{"operator": name, "nonfinite": "0",
+                     "shared_delta_linfinity": "0",
+                     "independent_delta_linfinity": "0"}
+                    for name in summary_operators]
+    summary_probes = [
+        {"operator": name, "mask": "diagnostic_axis", "side": "axis",
+         "classification": "diagnostic_axis", "layer_index": "0",
+         "raw_error": "0"} for name in summary_operators[:161]]
+    validate_case_numerical_summary(semantic_result, summary_operators,
+                                    summary_rows, summary_probes)
+    expect_runtime_error(
+        lambda: validate_case_numerical_summary(
+            semantic_result, summary_operators,
+            [{**summary_rows[0], "shared_delta_linfinity": "2"}] + summary_rows[1:],
+            summary_probes), "noise-bound mutation")
+    expect_runtime_error(
+        lambda: validate_case_numerical_summary(
+            {**semantic_result, "maximum_noise_delta": 2.0}, summary_operators,
+            summary_rows, summary_probes), "noise-summary mutation")
+    expect_runtime_error(
+        lambda: validate_case_numerical_summary(
+            semantic_result, summary_operators, summary_rows, summary_probes[:-1]),
+        "axis-count mutation")
+    expect_runtime_error(
+        lambda: validate_case_numerical_summary(
+            {**semantic_result, "diagnostic_axis_tolerance": 0.0},
+            summary_operators, summary_rows,
+            [{**summary_probes[0], "raw_error": "1"}] + summary_probes[1:]),
+        "axis-tolerance mutation")
     with tempfile.TemporaryDirectory(prefix="cartoon-mms-resume-") as directory:
         raw_path = Path(directory) / "raw.json"
         result_path = Path(directory) / "result.json"
@@ -1279,6 +1352,53 @@ def self_test_cpu_audit_policy() -> None:
         write_atomic(result_path, {**resumed, "status": "fail"})
         expect_runtime_error(lambda: load_augmented_result(raw_path, result_path),
                              "coherently rehashed resumed raw/result disagreement")
+    with tempfile.TemporaryDirectory(prefix="cartoon-mms-case-integrity-") as directory:
+        case = Path(directory) / "case"
+        case.mkdir()
+        identity = {"ranks": 1}
+        for name in expected_case_files(1):
+            (case / name).write_text(f"{name}\n", encoding="utf-8")
+        files = {name: sha256(case / name) for name in expected_case_files(1)}
+        write_atomic(case / "manifest.json", {
+            "schema": SCHEMA, "state": "complete", "identity": identity,
+            "files": files})
+        if not verified_complete(case, identity):
+            raise RuntimeError("case-integrity fixture is not initially complete")
+        for name in ("cartoon_mms.mms.json", "result.json",
+                     "cartoon_mms.mms.csv", "cartoon_mms.mms.probes.csv"):
+            original = (case / name).read_bytes()
+            (case / name).write_bytes(original + b"mutated")
+            if verified_complete(case, identity):
+                raise RuntimeError(f"case-integrity fixture accepted mutated {name}")
+            (case / name).write_bytes(original)
+        extra = case / "unexpected"
+        extra.write_text("extra\n", encoding="utf-8")
+        if verified_complete(case, identity):
+            raise RuntimeError("case-integrity fixture accepted an extra entry")
+        extra.unlink()
+        manifest_path = case / "manifest.json"
+        manifest_bytes = manifest_path.read_bytes()
+        mutated_manifest = load_json_strict(manifest_path)
+        mutated_manifest["state"] = "running"
+        write_atomic(manifest_path, mutated_manifest)
+        if verified_complete(case, identity):
+            raise RuntimeError("case-integrity fixture accepted a mutated manifest")
+        manifest_path.write_bytes(manifest_bytes)
+        manifest_copy = Path(directory) / "manifest-copy.json"
+        manifest_copy.write_bytes(manifest_path.read_bytes())
+        manifest_path.unlink()
+        manifest_path.symlink_to(manifest_copy)
+        if verified_complete(case, identity):
+            raise RuntimeError("case-integrity fixture accepted a manifest symlink")
+        reference = Path(directory) / "reference"
+        reference.mkdir()
+        reference_link = Path(directory) / "reference-link"
+        reference_link.symlink_to(reference.name, target_is_directory=True)
+        expect_runtime_error(
+            lambda: verify_rank_reference_root(
+                reference_link, 4, "accepted_frozen_window", "0" * 64,
+                {"commit": "0" * 40, "tree": "1" * 40, "kokkos": "2" * 40},
+                "Serial", "3" * 64), "rank-reference root symlink")
 
     forecast = output_forecast({order: DIAGNOSTIC_RESOLUTIONS for order in (2, 4, 6)},
                                list(range(8)), 4, False)
@@ -1349,6 +1469,66 @@ def self_test_cpu_audit_policy() -> None:
         if stage_missing_tuples(partial) != [tuple(item)
                                              for item in authorized[failed_index:]]:
             raise RuntimeError("partial stage continuation would rerun completed work")
+    chain_bindings = list(fake_roots)
+    copied_cases = []
+    partial_bindings = []
+    for retry_index, failure_index in enumerate((1, 2)):
+        retry = materialize_search_stage(
+            search, "o6_phase0_stage1", fake_source, "f" * 64, "1" * 64,
+            "2" * 64, "3" * 64, "4" * 64, "Serial", 2, chain_bindings)
+        retry_attempts = []
+        retry_cases = []
+        for index, item in enumerate(authorized):
+            status = ("complete" if index < failure_index else
+                      "failed" if index == failure_index else
+                      "not_attempted_after_stop")
+            digest = str(index + 1) * 64 if status == "complete" else None
+            retry_attempts.append({"tuple": item, "status": status,
+                                   "case_manifest_sha256": digest,
+                                   "reason": status})
+            if status == "complete":
+                retry_cases.append({"spatial_order": item[0],
+                                    "resolution": item[1], "phase": item[2],
+                                    "case_manifest_sha256": digest})
+        transition_search_stage(retry, "stage_partial", retry_attempts,
+                                "integrity_or_resource_failure")
+        expected_missing = [tuple(item) for item in authorized[failure_index:]]
+        if stage_missing_tuples(retry) != expected_missing:
+            raise RuntimeError("repeated partial stage did not retain exact suffix")
+        copied_cases = merge_case_ledgers(copied_cases, retry_cases)
+        fake_binding = {"root": f"/immutable/partial-{retry_index}",
+                        "stage_id": "o6_phase0_stage1", "state": "stage_partial",
+                        "stage_campaign_sha256": str(retry_index + 7) * 64}
+        partial_binding = stage_binding_record(fake_binding)
+        partial_bindings.append(partial_binding)
+        chain_bindings.append(partial_binding)
+    complete_attempts = [
+        {"tuple": item, "status": "complete",
+         "case_manifest_sha256": str(index + 1) * 64,
+         "reason": "case_complete"} for index, item in enumerate(authorized)]
+    complete_cases = [
+        {"spatial_order": item[0], "resolution": item[1], "phase": item[2],
+         "case_manifest_sha256": str(index + 1) * 64}
+        for index, item in enumerate(authorized)]
+    single_retry = materialize_search_stage(
+        search, "o6_phase0_stage1", fake_source, "f" * 64, "1" * 64,
+        "2" * 64, "3" * 64, "4" * 64, "Serial", 2,
+        list(fake_roots) + partial_bindings[:1])
+    transition_search_stage(single_retry, "stage_finalized", complete_attempts,
+                            "stage_complete_pending_offline_analysis")
+    if (stage_missing_tuples(single_retry) or
+            len(merge_case_ledgers(complete_cases[:1], complete_cases)) != 3):
+        raise RuntimeError("partial1-success continuation is not composable")
+    final_retry = materialize_search_stage(
+        search, "o6_phase0_stage1", fake_source, "f" * 64, "1" * 64,
+        "2" * 64, "3" * 64, "4" * 64, "Serial", 2, chain_bindings)
+    transition_search_stage(final_retry, "stage_finalized", complete_attempts,
+                            "stage_complete_pending_offline_analysis")
+    if stage_missing_tuples(retry) != [(6, 96, 0)] or len(copied_cases) != 2 or \
+       stage_missing_tuples(final_retry) or \
+       len(merge_case_ledgers(copied_cases, complete_cases)) != 3 or \
+       final_retry["materialization"]["immutable_root_bindings"] != chain_bindings:
+        raise RuntimeError("partial1-partial2-final dependency chain is not composable")
     with tempfile.TemporaryDirectory(prefix="cartoon-mms-stage-header-") as directory:
         stage_fixture = materialize_search_stage(
             search, "o6_phase0_stage1", fake_source, "f" * 64, "1" * 64,
@@ -1407,7 +1587,8 @@ def self_test_cpu_audit_policy() -> None:
     prior_tuples.update({(2, 512, 0), (2, 1024, 0)})
     missing = [(6, 48, phase) for phase in range(8)]
     with tempfile.TemporaryDirectory(prefix="cartoon-mms-window-") as directory:
-        authorization = Path(directory)
+        authorization = Path(directory) / "authorization"
+        authorization.mkdir()
         selected = [[6, 48]]
         qualification_window = {"6": [48]}
         candidate = {
@@ -1462,6 +1643,7 @@ def self_test_cpu_audit_policy() -> None:
             "convergence_sha256": "a" * 64,
             "review": {"artifact_path": review_path.name,
                        "artifact_sha256": sha256(review_path)}}
+        write_atomic(authorization / "accepted_window.json", window)
         observed_missing = validate_frozen_window(
             window, window["search_template_sha256"], fake_source, "f" * 64,
             "1" * 64, "2" * 64, "3" * 64, "4" * 64, prior_tuples,
@@ -1497,6 +1679,7 @@ def self_test_cpu_audit_policy() -> None:
             "prior_complete_tuples_sha256": canonical_digest([]),
             "review": {"artifact_path": review_path.name,
                        "artifact_sha256": sha256(review_path)}}
+        write_atomic(authorization / "accepted_window.json", final_window)
         if validate_frozen_window(
                 final_window, window["search_template_sha256"], fake_source, "f" * 64,
                 "1" * 64, "2" * 64, "3" * 64, "4" * 64, set(), authorization,
@@ -1508,19 +1691,53 @@ def self_test_cpu_audit_policy() -> None:
                 window["search_template_sha256"], fake_source, "f" * 64,
                 "1" * 64, "2" * 64, "3" * 64, "4" * 64, set(), authorization,
                 "Serial", 2), "cross-used final window")
-        duplicate = authorization / "duplicate.json"
+        for label, entry, target in (
+            ("candidate symlink", candidate_path, review_path),
+            ("review symlink", review_path, candidate_path)):
+            original = entry.read_bytes()
+            entry.unlink()
+            entry.symlink_to(target.name)
+            expect_runtime_error(
+                lambda: validate_frozen_window(
+                    final_window, window["search_template_sha256"], fake_source,
+                    "f" * 64, "1" * 64, "2" * 64, "3" * 64, "4" * 64,
+                    set(), authorization, "Serial", 4), label)
+            entry.unlink()
+            entry.write_bytes(original)
+        authorization_link = Path(directory) / "authorization-link"
+        authorization_link.symlink_to(authorization.name, target_is_directory=True)
+        expect_runtime_error(
+            lambda: validate_frozen_window(
+                final_window, window["search_template_sha256"], fake_source,
+                "f" * 64, "1" * 64, "2" * 64, "3" * 64, "4" * 64, set(),
+                authorization_link, "Serial", 4), "authorization-directory symlink")
+        extra = authorization / "unexpected.json"
+        extra.write_text("{}\n", encoding="utf-8")
+        expect_runtime_error(
+            lambda: validate_frozen_window(
+                final_window, window["search_template_sha256"], fake_source,
+                "f" * 64, "1" * 64, "2" * 64, "3" * 64, "4" * 64, set(),
+                authorization, "Serial", 4), "authorization extra entry")
+        extra.unlink()
+        duplicate = Path(directory) / "duplicate.json"
         duplicate.write_text('{"schema":"x","schema":"y"}\n', encoding="utf-8")
         expect_runtime_error(lambda: load_json_strict(duplicate),
                              "duplicate-key authorization JSON")
     ledger_fixture = merge_case_ledgers(
-        [{"spatial_order": 2, "resolution": 256, "phase": 0}],
-        [{"spatial_order": 2, "resolution": 512, "phase": 0}])
+        [{"spatial_order": 2, "resolution": 256, "phase": 0,
+          "case_manifest_sha256": "1" * 64}],
+        [{"spatial_order": 2, "resolution": 512, "phase": 0,
+          "case_manifest_sha256": "2" * 64}])
     if [(item["spatial_order"], item["resolution"], item["phase"])
             for item in ledger_fixture] != [(2, 256, 0), (2, 512, 0)]:
         raise RuntimeError("characterization evidence was omitted from merged ledger")
     expect_runtime_error(
-        lambda: merge_case_ledgers(ledger_fixture, [ledger_fixture[0]]),
-        "overlapping immutable evidence roots")
+        lambda: merge_case_ledgers(
+            ledger_fixture,
+            [{**ledger_fixture[0], "case_manifest_sha256": "3" * 64}]),
+        "conflicting immutable evidence roots")
+    if len(merge_case_ledgers(ledger_fixture, [ledger_fixture[0]])) != 2:
+        raise RuntimeError("byte-identical copied-prefix case was not deduplicated")
     inventory = load_json_strict(
         root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json")
     if not isinstance(inventory, dict) or not isinstance(inventory.get("roundoff_policy"), dict):
@@ -1827,7 +2044,13 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
                 resumed_result.get("execution_environment_sha256") !=
                 environment_sha256):
             raise RuntimeError(f"case {key} resumed evidence differs from its result")
-        resumed_result["case_manifest_sha256"] = sha256(case / "manifest.json")
+        verified, _, _, manifest_sha = verify_complete_case_evidence(
+            case, source, sha256(args.build_manifest), sha256(args.athena),
+            args.require_backend, args.ranks, tuple(args.domain), order,
+            resolution, phase, operator_names)
+        if verified != resumed_result:
+            raise RuntimeError(f"case {key} resumed campaign/result differs")
+        resumed_result["case_manifest_sha256"] = manifest_sha
         return resumed_result
     result.update({"case_id": key, "case_uuid": case_uuid, "phase": phase,
                    "resolution": resolution, "elapsed_seconds": time.time() - started,
@@ -1853,7 +2076,13 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
         raise RuntimeError(f"case {key} produced an unexpected file inventory")
     write_atomic(case / "manifest.json", {"schema": SCHEMA, "state": "complete",
                                            "identity": identity, "files": files})
-    result["case_manifest_sha256"] = sha256(case / "manifest.json")
+    verified, _, _, manifest_sha = verify_complete_case_evidence(
+        case, source, sha256(args.build_manifest), sha256(args.athena),
+        args.require_backend, args.ranks, tuple(args.domain), order, resolution,
+        phase, operator_names)
+    if verified != result:
+        raise RuntimeError(f"case {key} finalized campaign/result differs")
+    result["case_manifest_sha256"] = manifest_sha
     return result
 
 
@@ -1949,6 +2178,131 @@ def load_augmented_result(raw_path: Path, result_path: Path) -> dict[str, object
     return result
 
 
+def validate_raw_case_invariants(result: dict[str, object], order: int,
+                                 resolution: int, phase: int, backend: str,
+                                 ranks: int,
+                                 domain: tuple[float, float, float, float]) -> None:
+    validate_result_numbers(result)
+    if (result.get("status") != "pass" or
+            json_integer(result, "spatial_order", 2) != order or
+            json_integer(result, "nghost", 2) != order // 2 + 1 or
+            json_integer(result, "nx1", 1) != resolution or
+            json_integer(result, "nx2", 1) != resolution or
+            json_integer(result, "nx3", 1) != 1 or
+            json_integer(result, "mpi_ranks", 1) != ranks or
+            json_integer(result, "operator_count", 1) != 171 or
+            json_integer(result, "nonfinite_count") != 0 or
+            json_integer(result, "diagnostic_axis_operator_count", 1) != 161 or
+            json_integer(result, "diagnostic_axis_nonfinite") != 0 or
+            json_integer(result, "owned_cells", 1) != resolution * resolution or
+            result.get("ownership_sequence") != "[0,N*N) exactly once" or
+            result.get("backend") != backend or
+            json_integer(result, "phase") != phase or
+            json_integer(result, "resolution", 1) != resolution or
+            tuple(result.get("domain", ())) != tuple(domain)):
+        raise RuntimeError("case raw physics/grid/ownership identity differs")
+
+
+def validate_binding_inventory(result: dict[str, object], backend: str,
+                               ranks: int) -> None:
+    bindings = result.get("rank_bindings")
+    if (not isinstance(bindings, list) or len(bindings) != ranks or
+            sorted(item.get("rank") for item in bindings
+                   if isinstance(item, dict)) != list(range(ranks))):
+        raise RuntimeError("case lacks one binding record per MPI rank")
+    for binding in bindings:
+        validate_rank_binding(binding)
+    if backend == "Cuda":
+        uuids = [item["selected_uuid"] for item in bindings]
+        if (ranks != 4 or None in uuids or len(set(uuids)) != 4 or
+                any(item.get("binding_verified") is not True or
+                    item.get("cuda_visible_devices") !=
+                    item.get("visible_device_token") or
+                    not item.get("visible_device_token") for item in bindings) or
+                any("A100" not in (item.get("gpu_name") or "")
+                    for item in bindings)):
+            raise RuntimeError("case lacks four concrete distinct CUDA bindings")
+
+
+def validate_case_numerical_summary(result: dict[str, object],
+                                    expected_operators: list[str],
+                                    rows: list[dict[str, str]],
+                                    probes: list[dict[str, str]]) -> None:
+    if (any(integer_value(row, "nonfinite") != 0 for row in rows) or
+            {row["operator"] for row in rows} != set(expected_operators)):
+        raise RuntimeError("case CSV contains incomplete or nonfinite series")
+    noise_bound = json_number(result, "noise_delta_bound", 0.0)
+    if (json_number(result, "maximum_noise_delta", 0.0) > noise_bound or
+            any(finite_value(row, "shared_delta_linfinity") > noise_bound or
+           finite_value(row, "independent_delta_linfinity") > noise_bound
+                for row in rows)):
+        raise RuntimeError("case exceeds the frozen direct-noise bound")
+    axis = [row for row in probes if row["mask"] == "diagnostic_axis"]
+    axis_errors = [finite_value(row, "raw_error") for row in axis]
+    if (len(axis) != 161 or
+            [row["operator"] for row in axis] != expected_operators[:161] or
+            any(row["side"] != "axis" or
+                row["classification"] != "diagnostic_axis" or
+                row["layer_index"] != "0" for row in axis) or
+            max(axis_errors) != json_number(result, "diagnostic_axis_linf", 0.0) or
+            max(axis_errors) >
+            json_number(result, "diagnostic_axis_tolerance", 0.0)):
+        raise RuntimeError("case lacks the exact finite 161-series axis inventory")
+
+
+def verify_complete_case_evidence(
+        case: Path, source: dict[str, str], build_manifest_sha256: str,
+        executable_sha256: str, backend: str, ranks: int,
+        domain: tuple[float, float, float, float], order: int, resolution: int,
+        phase: int, expected_operators: list[str]) -> \
+        tuple[dict[str, object], list[dict[str, str]], list[dict[str, str]], str]:
+    if not case.is_dir() or case.is_symlink():
+        raise RuntimeError("case directory is missing or a symlink")
+    manifest_path = case / "manifest.json"
+    manifest = load_json_strict(manifest_path)
+    identity = manifest.get("identity") if isinstance(manifest, dict) else None
+    if not isinstance(identity, dict) or not verified_complete(case, identity):
+        raise RuntimeError("case manifest/files are incomplete or changed")
+    stored = load_augmented_result(case / "cartoon_mms.mms.json",
+                                   case / "result.json")
+    case_id, case_uuid = stored.get("case_id"), stored.get("case_uuid")
+    if (case.name != f"{case_id}-{case_uuid}" or
+            identity.get("case_id") != case_id or identity.get("uuid") != case_uuid or
+            identity.get("source") != source or
+            identity.get("athena_sha256") != executable_sha256 or
+            identity.get("build_manifest_sha256") != build_manifest_sha256 or
+            identity.get("backend_required") != backend or
+            identity.get("ranks") != ranks or
+            tuple(identity.get("domain", ())) != tuple(domain) or
+            identity.get("execution_environment_sha256") !=
+            stored.get("execution_environment_sha256")):
+        raise RuntimeError("case manifest/result identity differs")
+    validate_raw_case_invariants(stored, order, resolution, phase, backend,
+                                 ranks, domain)
+    verify_no_evolution(str(case_id),
+                        (case / "stdout.txt").read_text(
+                            encoding="utf-8", errors="replace"), stored)
+    validate_binding_inventory(stored, backend, ranks)
+    if stored.get("operator_names") != expected_operators:
+        raise RuntimeError("case operator order differs from the frozen 171 series")
+    csv_path = case / "cartoon_mms.mms.csv"
+    probes_path = case / "cartoon_mms.mms.probes.csv"
+    if (stored.get("csv_sha256") != sha256(csv_path) or
+            stored.get("probes_csv_sha256") != sha256(probes_path)):
+        raise RuntimeError("case result does not bind CSV/probe products")
+    rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))
+    probes = list(csv.DictReader(probes_path.open(encoding="utf-8")))
+    for row in rows:
+        validate_norm_row(row)
+        validate_norm_geometry(row, order, resolution, domain)
+    for row in probes:
+        validate_probe_row(row)
+        validate_probe_geometry(row, order, resolution, domain)
+    validate_case_inventory(order, expected_operators, rows, probes)
+    validate_case_numerical_summary(stored, expected_operators, rows, probes)
+    return stored, rows, probes, sha256(manifest_path)
+
+
 def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
                                                     dict[str, object]]:
     preserved_convergence = raw_root / "results/ranks2/convergence.json"
@@ -2021,16 +2375,10 @@ def verify_replay_campaign(raw_root: Path) -> tuple[list[dict[str, object]],
         order = json_integer(result, "spatial_order", 2)
         resolution = json_integer(result, "resolution", 1)
         phase = json_integer(result, "phase")
-        if (result.get("status") != "pass" or result.get("backend") != "Serial" or
-                order not in (2, 4, 6) or result.get("nghost") != order // 2 + 1 or
-                result.get("nx1") != resolution or result.get("nx2") != resolution or
-                result.get("nx3") != 1 or result.get("mpi_ranks") != 2 or
-                result.get("operator_count") != 171 or result.get("nonfinite_count") != 0 or
-                result.get("diagnostic_axis_operator_count") != 161 or
-                result.get("diagnostic_axis_nonfinite") != 0 or
-                result.get("owned_cells") != resolution * resolution or
-                result.get("ownership_sequence") != "[0,N*N) exactly once"):
+        if order not in (2, 4, 6):
             raise RuntimeError(f"replay case {case.name} raw physics/grid state changed")
+        validate_raw_case_invariants(result, order, resolution, phase, "Serial", 2,
+                                     QUALIFICATION_DOMAIN)
         observed.add((order, resolution, phase))
         case_id, case_uuid = result.get("case_id"), result.get("case_uuid")
         if (not isinstance(case_id, str) or not isinstance(case_uuid, str) or
@@ -2319,6 +2667,9 @@ def verify_stage_campaign_root(raw_root: Path,
         raise RuntimeError("completed stage root is missing or a symlink")
     stage_path = raw_root / "search_stage_manifest.json"
     campaign_path = raw_root / "stage_campaign.json"
+    if any(not path.is_file() or path.is_symlink()
+           for path in (stage_path, campaign_path)):
+        raise RuntimeError("completed stage lifecycle files are missing or symlinks")
     stage = load_json_strict(stage_path)
     campaign = load_json_strict(campaign_path)
     material, material_source = validate_stage_identity(
@@ -2337,22 +2688,18 @@ def verify_stage_campaign_root(raw_root: Path,
         if not isinstance(augmented, dict):
             raise RuntimeError("completed stage case is not an object")
         case = raw_root / f"{augmented.get('case_id')}-{augmented.get('case_uuid')}"
+        order, resolution, phase = (json_integer(augmented, "spatial_order", 2),
+                                    json_integer(augmented, "resolution", 1),
+                                    json_integer(augmented, "phase"))
+        stored, _, _, manifest_sha = verify_complete_case_evidence(
+            case, material_source, material["build_manifest_sha256"],
+            material["executable_sha256"], material["backend"], material["ranks"],
+            tuple(material["domain"]), order, resolution, phase,
+            expected_operators)
         manifest = load_json_strict(case / "manifest.json")
-        identity = manifest.get("identity", {}) if isinstance(manifest, dict) else {}
-        if (not isinstance(manifest, dict) or
-                augmented.get("case_manifest_sha256") != sha256(case / "manifest.json") or
-                not verified_complete(case, identity)):
-            raise RuntimeError("completed stage case manifest/files changed")
-        stored = load_json_strict(case / "result.json")
-        raw = load_json_strict(case / "cartoon_mms.mms.json")
-        validate_augmented_result(raw, stored)
-        if augmented != {**stored,
-                         "case_manifest_sha256": sha256(case / "manifest.json")}:
+        identity = manifest["identity"]
+        if augmented != {**stored, "case_manifest_sha256": manifest_sha}:
             raise RuntimeError("completed stage campaign/result differs")
-        validate_result_numbers(stored)
-        order, resolution, phase = (json_integer(stored, "spatial_order", 2),
-                                    json_integer(stored, "resolution", 1),
-                                    json_integer(stored, "phase"))
         expected_input = render_input(
             Path(__file__).resolve().parents[3] /
             "tst/inputs/z4c_cartoon_derivatives.athinput", order, resolution,
@@ -2365,21 +2712,8 @@ def verify_stage_campaign_root(raw_root: Path,
                 hashlib.sha256(expected_input.encode()).hexdigest() or
                 identity.get("backend_required") != material.get("backend") or
                 identity.get("ranks") != material.get("ranks") or
-                list(identity.get("domain", ())) != material.get("domain") or
-                stored.get("backend") != material.get("backend") or
-                stored.get("mpi_ranks") != material.get("ranks") or
-                list(stored.get("domain", ())) != material.get("domain")):
+                list(identity.get("domain", ())) != material.get("domain")):
             raise RuntimeError("stage case identity differs from materialization")
-        rows = list(csv.DictReader(
-            (case / "cartoon_mms.mms.csv").open(encoding="utf-8")))
-        probes = list(csv.DictReader(
-            (case / "cartoon_mms.mms.probes.csv").open(encoding="utf-8")))
-        for row in rows:
-            validate_norm_row(row)
-            validate_norm_geometry(row, order, resolution, tuple(stored["domain"]))
-        for row in probes:
-            validate_probe_geometry(row, order, resolution, tuple(stored["domain"]))
-        validate_case_inventory(order, expected_operators, rows, probes)
         result = dict(augmented)
         result["_replay_case_directory"] = str(case)
         result["_evidence_source"] = f"stage:{stage_id}"
@@ -2449,21 +2783,18 @@ def verify_window_campaign_root(
         tuple[list[dict[str, object]], dict[str, object]]:
     execution_path = raw_root / "frozen_window_execution.json"
     campaign_path = raw_root / "window_campaign.json"
+    if (not raw_root.is_dir() or raw_root.is_symlink() or
+            any(not path.is_file() or path.is_symlink()
+                for path in (execution_path, campaign_path))):
+        raise RuntimeError("completion root/lifecycle files are missing or symlinks")
     execution = load_json_strict(execution_path)
     campaign = load_json_strict(campaign_path)
-    execution_fields = {"schema", "state", "purpose", "attempt_id",
-                        "accepted_window_sha256", "accepted_review", "source",
-                        "build_manifest_sha256", "executable_sha256", "input_sha256",
-                        "oracle_header_sha256", "series_manifest_sha256", "backend",
-                        "ranks", "domain", "immutable_root_bindings",
-                        "execution_tuples", "attempts", "result_set_sha256",
-                        "stop_reason", "authorization_files"}
     campaign_fields = {"schema", "state", "purpose", "accepted_window_sha256",
                        "execution_manifest_sha256", "source", "build_manifest_sha256",
                        "executable_sha256", "input_sha256", "oracle_header_sha256",
                        "series_manifest_sha256", "backend", "ranks", "domain",
                        "immutable_root_bindings", "cases", "qualification_claim"}
-    if (not isinstance(execution, dict) or set(execution) != execution_fields or
+    if (not isinstance(execution, dict) or set(execution) != WINDOW_EXECUTION_FIELDS or
             execution.get("schema") !=
             "athenak_z4c_cartoon_mms_window_execution_v1" or
             execution.get("state") != "execution_finalized" or
@@ -2483,8 +2814,11 @@ def verify_window_campaign_root(
     authorization = raw_root / "authorization"
     files = execution.get("authorization_files")
     if (not isinstance(files, dict) or set(files) !=
-            {"accepted_window.json", "candidate_manifest.json", "review_artifact.json"} or
-            any(sha256(authorization / name) != digest for name, digest in files.items())):
+            {"accepted_window.json", "candidate_manifest.json", "review_artifact.json"}):
+        raise RuntimeError("completion authorization artifacts changed")
+    require_exact_regular_files(authorization, set(files),
+                                "completion authorization directory")
+    if any(sha256(authorization / name) != digest for name, digest in files.items()):
         raise RuntimeError("completion authorization artifacts changed")
     accepted_path = authorization / "accepted_window.json"
     accepted = load_json_strict(accepted_path)
@@ -2521,20 +2855,21 @@ def verify_window_campaign_root(
     cases = []
     observed = []
     for augmented in campaign["cases"]:
+        if not isinstance(augmented, dict):
+            raise RuntimeError("completion campaign case is not an object")
         case = raw_root / f"{augmented.get('case_id')}-{augmented.get('case_uuid')}"
+        order, resolution, phase = (json_integer(augmented, "spatial_order", 2),
+                                    json_integer(augmented, "resolution", 1),
+                                    json_integer(augmented, "phase"))
+        stored, _, _, manifest_sha = verify_complete_case_evidence(
+            case, execution["source"], execution["build_manifest_sha256"],
+            execution["executable_sha256"], execution["backend"],
+            execution["ranks"], tuple(execution["domain"]), order, resolution,
+            phase, expected_operators)
         manifest = load_json_strict(case / "manifest.json")
-        identity = manifest.get("identity", {}) if isinstance(manifest, dict) else {}
-        if (not isinstance(augmented, dict) or not verified_complete(case, identity) or
-                augmented.get("case_manifest_sha256") != sha256(case / "manifest.json")):
-            raise RuntimeError("completion case manifest differs")
-        stored = load_augmented_result(case / "cartoon_mms.mms.json",
-                                       case / "result.json")
-        if augmented != {**stored,
-                         "case_manifest_sha256": sha256(case / "manifest.json")}:
+        identity = manifest["identity"]
+        if augmented != {**stored, "case_manifest_sha256": manifest_sha}:
             raise RuntimeError("completion campaign/result differs")
-        order, resolution, phase = (json_integer(stored, "spatial_order", 2),
-                                    json_integer(stored, "resolution", 1),
-                                    json_integer(stored, "phase"))
         expected_input = render_input(
             Path(__file__).resolve().parents[3] /
             "tst/inputs/z4c_cartoon_derivatives.athinput", order, resolution,
@@ -2549,16 +2884,6 @@ def verify_window_campaign_root(
                 identity.get("ranks") != execution["ranks"] or
                 list(identity.get("domain", ())) != execution["domain"]):
             raise RuntimeError("completion case identity differs")
-        rows = list(csv.DictReader(
-            (case / "cartoon_mms.mms.csv").open(encoding="utf-8")))
-        probes = list(csv.DictReader(
-            (case / "cartoon_mms.mms.probes.csv").open(encoding="utf-8")))
-        for row in rows:
-            validate_norm_row(row)
-            validate_norm_geometry(row, order, resolution, tuple(stored["domain"]))
-        for row in probes:
-            validate_probe_geometry(row, order, resolution, tuple(stored["domain"]))
-        validate_case_inventory(order, expected_operators, rows, probes)
         result = dict(augmented)
         result["_replay_case_directory"] = str(case)
         result["_evidence_source"] = "characterization_completion"
@@ -2939,25 +3264,130 @@ def validate_rank_campaign_header(reference: object, current_ranks: int,
         raise RuntimeError("reference campaign differs from the exact evidence schema")
 
 
+def verify_rank_reference_root(
+        reference_root: Path, current_ranks: int, campaign_mode: str,
+        accepted_window_sha256: str | None, source: dict[str, str], backend: str,
+        build_manifest_sha256: str) -> tuple[dict[str, object],
+                                               list[dict[str, object]]]:
+    if not reference_root.is_dir() or reference_root.is_symlink():
+        raise RuntimeError("rank-reference root is missing or a symlink")
+    campaign_path = reference_root / "campaign.json"
+    execution_path = reference_root / "frozen_window_execution.json"
+    if any(not path.is_file() or path.is_symlink()
+           for path in (campaign_path, execution_path)):
+        raise RuntimeError("rank-reference campaign/execution is missing or a symlink")
+    reference = load_json_strict(campaign_path)
+    validate_rank_campaign_header(reference, current_ranks, campaign_mode,
+                                  accepted_window_sha256, source, backend,
+                                  build_manifest_sha256)
+    execution = load_json_strict(execution_path)
+    if (not isinstance(execution, dict) or set(execution) != WINDOW_EXECUTION_FIELDS or
+            execution.get("schema") !=
+            "athenak_z4c_cartoon_mms_window_execution_v1" or
+            execution.get("state") != "execution_finalized" or
+            execution.get("purpose") != "final_qualification" or
+            execution.get("source") != source or
+            execution.get("build_manifest_sha256") != build_manifest_sha256 or
+            execution.get("backend") != backend or
+            execution.get("ranks") != reference.get("ranks") or
+            execution.get("immutable_root_bindings") != [] or
+            execution.get("accepted_window_sha256") != accepted_window_sha256 or
+            execution.get("stop_reason") !=
+            "accepted_window_execution_complete_pending_merged_analysis" or
+            reference.get("window_execution_sha256") != sha256(execution_path)):
+        raise RuntimeError("rank-reference execution identity differs")
+    authorization = reference_root / "authorization"
+    authorization_files = execution.get("authorization_files")
+    if not isinstance(authorization_files, dict) or set(authorization_files) != {
+            "accepted_window.json", "candidate_manifest.json", "review_artifact.json"}:
+        raise RuntimeError("rank-reference authorization inventory differs")
+    require_exact_regular_files(authorization, set(authorization_files),
+                                "rank-reference authorization directory")
+    if any(sha256(authorization / name) != digest
+           for name, digest in authorization_files.items()):
+        raise RuntimeError("rank-reference authorization artifact changed")
+    accepted_path = authorization / "accepted_window.json"
+    accepted = load_json_strict(accepted_path)
+    required = validate_frozen_window(
+        accepted, sha256(Path(__file__).resolve().parents[3] /
+                         "tst/inputs/z4c_cartoon_mms_search_manifest.json"),
+        source, build_manifest_sha256, execution["executable_sha256"],
+        execution["input_sha256"], execution["oracle_header_sha256"],
+        execution["series_manifest_sha256"], set(), authorization, backend,
+        reference["ranks"])
+    if (sha256(accepted_path) != accepted_window_sha256 or
+            execution.get("accepted_review") != accepted.get("review") or
+            [tuple(item) for item in execution.get("execution_tuples", [])] != required):
+        raise RuntimeError("rank-reference accepted-window binding differs")
+    expected_operators = [item["name"] for item in load_json_strict(
+        Path(__file__).resolve().parents[3] /
+        "tst/unit/z4c/z4c_cartoon_derivatives_series.json")["series"]]
+    verified_cases = []
+    for advertised in reference["cases"]:
+        if not isinstance(advertised, dict):
+            raise RuntimeError("rank-reference campaign case is malformed")
+        order = json_integer(advertised, "spatial_order", 2)
+        resolution = json_integer(advertised, "resolution", 1)
+        phase = json_integer(advertised, "phase")
+        case = reference_root / \
+            f"{advertised.get('case_id')}-{advertised.get('case_uuid')}"
+        stored, _, _, manifest_sha = verify_complete_case_evidence(
+            case, source, build_manifest_sha256, execution["executable_sha256"],
+            backend, reference["ranks"], tuple(execution["domain"]), order,
+            resolution, phase, expected_operators)
+        if advertised != {**stored, "case_manifest_sha256": manifest_sha}:
+            raise RuntimeError("rank-reference campaign/result differs")
+        verified_cases.append(advertised)
+    attempts = execution.get("attempts")
+    manifests = [case["case_manifest_sha256"] for case in verified_cases]
+    tuples = [(case["spatial_order"], case["resolution"], case["phase"])
+              for case in verified_cases]
+    if (not isinstance(attempts, list) or
+            [tuple(item.get("tuple", ())) for item in attempts] != tuples or
+            any(not isinstance(item, dict) or item.get("status") != "complete"
+                for item in attempts) or
+            [item.get("case_manifest_sha256") for item in attempts] != manifests or
+            execution.get("result_set_sha256") != canonical_digest(manifests)):
+        raise RuntimeError("rank-reference attempt/result-set ledger differs")
+    artifacts = reference.get("convergence_artifacts")
+    if not isinstance(artifacts, dict):
+        raise RuntimeError("rank-reference convergence inventory is malformed")
+    artifact_files = {name for name in artifacts
+                      if Path(name).suffix in {".json", ".csv", ".dat", ".tex"}}
+    for name in artifact_files:
+        path = reference_root / name
+        if (Path(name).name != name or not path.is_file() or path.is_symlink() or
+                not isinstance(artifacts[name], str) or
+                sha256(path) != artifacts[name]):
+            raise RuntimeError("rank-reference convergence artifact changed")
+    expected_entries = ({"campaign.json", "frozen_window_execution.json",
+                         "authorization"} | artifact_files |
+                        {f"{case['case_id']}-{case['case_uuid']}"
+                         for case in verified_cases})
+    require_exact_root_entries(reference_root, expected_entries,
+                               "rank-reference root")
+    return reference, verified_cases
+
+
 def compare_rank_campaigns(cases: list[dict[str, object]], output: Path,
                            reference_root: Path, current_ranks: int,
                            campaign_mode: str,
                            accepted_window_sha256: str | None,
                            source: dict[str, str], backend: str,
                            build_manifest_sha256: str) -> dict[str, object]:
+    reference_root = reference_root.absolute()
     reference_campaign_path = reference_root / "campaign.json"
-    reference = load_json_strict(reference_campaign_path)
-    validate_rank_campaign_header(reference, current_ranks, campaign_mode,
-                                  accepted_window_sha256, source, backend,
-                                  build_manifest_sha256)
+    reference, verified_reference_cases = verify_rank_reference_root(
+        reference_root, current_ranks, campaign_mode, accepted_window_sha256,
+        source, backend, build_manifest_sha256)
     reference_case_manifests = [item.get("case_manifest_sha256")
-                                for item in reference.get("cases", [])]
+                                for item in verified_reference_cases]
     if (not reference_case_manifests or None in reference_case_manifests or
             any(not re.fullmatch(r"[0-9a-f]{64}", value)
                 for value in reference_case_manifests)):
         raise RuntimeError("reference campaign does not bind every case manifest")
     reference_cases = {(item["spatial_order"], item["resolution"], item["phase"]): item
-                       for item in reference["cases"]}
+                       for item in verified_reference_cases}
     current_keys = {(item["spatial_order"], item["resolution"], item["phase"])
                     for item in cases}
     if (len(reference_cases) != len(reference["cases"]) or
@@ -3165,10 +3595,13 @@ def materialize_search_stage(template: dict[str, object], stage_id: str,
                      "attempt_id": str(uuid.uuid4()),
                      "immutable_root_bindings": root_bindings})
     names = {item.get("name") for item in root_bindings}
-    if (len(root_bindings) not in (2, 3) or
-            not {"job56586376", "job56587561"}.issubset(names) or
-            (len(root_bindings) == 3 and
-             len([name for name in names if str(name).startswith("partial:")]) != 1)):
+    partial_pattern = re.compile(rf"partial:{re.escape(stage_id)}:[0-9a-f]{{16}}")
+    if (len(root_bindings) < 2 or
+            [item.get("name") for item in root_bindings[:2]] !=
+            ["job56586376", "job56587561"] or len(names) != len(root_bindings) or
+            any(not isinstance(item, dict) or
+                not partial_pattern.fullmatch(str(item.get("name", "")))
+                for item in root_bindings[2:])):
         raise RuntimeError("stage materialization requires exact prior/partial roots")
     return value
 
@@ -3311,6 +3744,13 @@ def validate_frozen_window(value: object, template_sha256: str,
     if value.get("prior_complete_tuples_sha256") != canonical_digest(
             sorted(completed_tuples)):
         raise RuntimeError("frozen window prior-complete ledger differs")
+    authorization_root = authorization_root.absolute()
+    require_exact_regular_files(
+        authorization_root,
+        {"accepted_window.json", "candidate_manifest.json", "review_artifact.json"},
+        "authorization directory")
+    if load_json_strict(authorization_root / "accepted_window.json") != value:
+        raise RuntimeError("accepted window differs from its canonical artifact")
     raw_selected = value.get("selected_extra_points")
     raw_execution = value.get("execution_tuples")
     if not isinstance(raw_selected, list) or not isinstance(raw_execution, list):
@@ -3346,9 +3786,11 @@ def validate_frozen_window(value: object, template_sha256: str,
         relative = Path(token)
         if relative.is_absolute() or ".." in relative.parts:
             raise RuntimeError("authorization artifact path escapes its root")
-        path = (authorization_root / relative).resolve()
-        if authorization_root.resolve() not in path.parents or not path.is_file() or \
-           path.is_symlink():
+        unresolved = authorization_root / relative
+        if unresolved.is_symlink() or not unresolved.is_file():
+            raise RuntimeError("authorization artifact is missing or a symlink")
+        path = unresolved.resolve()
+        if authorization_root.resolve() not in path.parents:
             raise RuntimeError("authorization artifact is missing, escaped, or a symlink")
         return path
     candidate_path = bound_path(value.get("candidate_manifest_path"))
@@ -3461,16 +3903,34 @@ def replay_campaign(raw_root: Path, analysis_output: Path, root: Path,
 
 def merge_case_ledgers(*groups: list[dict[str, object]]) -> list[dict[str, object]]:
     merged = []
-    seen = set()
+    seen: dict[tuple[int, int, int], str | None] = {}
     for group in groups:
         for case in group:
             identity = (int(case["spatial_order"]), int(case["resolution"]),
                         int(case["phase"]))
             if identity in seen:
-                raise RuntimeError("immutable evidence roots overlap")
-            seen.add(identity)
+                manifest_sha = case.get("case_manifest_sha256")
+                if (seen[identity] is None or
+                        not isinstance(manifest_sha, str) or
+                        seen[identity] != manifest_sha):
+                    raise RuntimeError("immutable evidence roots conflict")
+                continue
+            manifest_sha = case.get("case_manifest_sha256")
+            seen[identity] = (manifest_sha if isinstance(manifest_sha, str) and
+                              re.fullmatch(r"[0-9a-f]{64}", manifest_sha) else None)
             merged.append(case)
     return merged
+
+
+def stage_binding_record(binding: dict[str, object]) -> dict[str, object]:
+    state = binding.get("state")
+    prefix = "partial" if state == "stage_partial" else "stage"
+    digest = str(binding.get("stage_campaign_sha256", ""))
+    if not re.fullmatch(r"[0-9a-f]{64}", digest):
+        raise RuntimeError("stage binding lacks its campaign digest")
+    return {"name": f"{prefix}:{binding['stage_id']}:{digest[:16]}",
+            "root": binding["root"],
+            "binding_sha256": canonical_digest(binding)}
 
 
 def analyze_search(immutable_specs: list[str] | None, stage_specs: list[str] | None,
@@ -3484,7 +3944,7 @@ def analyze_search(immutable_specs: list[str] | None, stage_specs: list[str] | N
         (int(case["spatial_order"]), int(case["resolution"]), int(case["phase"]))
         for case in diagnostic_cases + characterization_cases}
     for raw_path in stage_specs or []:
-        stage_root = Path(raw_path).resolve()
+        stage_root = Path(raw_path).absolute()
         if (stage_root / "window_campaign.json").is_file():
             cases, binding = verify_window_campaign_root(
                 stage_root, bindings, completed_tuples,
@@ -3496,16 +3956,14 @@ def analyze_search(immutable_specs: list[str] | None, stage_specs: list[str] | N
                 stage_root, template, bindings)
             name = (f"partial:{binding['stage_id']}" if missing else
                     f"stage:{binding['stage_id']}")
-        stage_cases.extend(cases)
-        for case in cases:
-            item = (int(case["spatial_order"]), int(case["resolution"]),
-                    int(case["phase"]))
-            if item in completed_tuples:
-                raise RuntimeError("immutable search evidence roots overlap")
-            completed_tuples.add(item)
-        bindings.append({"name": name,
-                         "root": binding["root"],
-                         "binding_sha256": canonical_digest(binding)})
+        stage_cases = merge_case_ledgers(stage_cases, cases)
+        completed_tuples.update(
+            (int(case["spatial_order"]), int(case["resolution"]),
+             int(case["phase"])) for case in cases)
+        bindings.append(
+            ({"name": name, "root": binding["root"],
+              "binding_sha256": canonical_digest(binding)}
+             if name.startswith("window:") else stage_binding_record(binding)))
     cases = merge_case_ledgers(diagnostic_cases, characterization_cases, stage_cases)
     requested = {(int(case["spatial_order"]), int(case["phase"])) for case in cases}
     tuples = [(int(case["spatial_order"]), int(case["resolution"]),
@@ -3611,12 +4069,17 @@ def main() -> int:
     search = load_search_manifest(root / "tst/inputs/z4c_cartoon_mms_search_manifest.json")
     frozen_window = None
     frozen_window_purpose = None
+    frozen_window_path = None
     if args.frozen_window_manifest is not None:
         if (args.diagnostic_only or args.characterization_stage is not None or
                 args.orders != (2, 4, 6) or
                 args.resolutions is not None or args.phases != tuple(range(8))):
             raise RuntimeError("frozen-window selection comes only from the accepted manifest")
-        frozen_window = load_json_strict(args.frozen_window_manifest.resolve())
+        frozen_window_path = args.frozen_window_manifest.absolute()
+        if (frozen_window_path.is_symlink() or not frozen_window_path.is_file() or
+                frozen_window_path.parent.is_symlink()):
+            raise RuntimeError("accepted-window path/directory is missing or a symlink")
+        frozen_window = load_json_strict(frozen_window_path)
         if not isinstance(frozen_window, dict) or not isinstance(
                 frozen_window.get("execution_tuples"), list):
             raise RuntimeError("frozen-window execution tuple inventory is missing")
@@ -3731,20 +4194,15 @@ def main() -> int:
                 (int(case["spatial_order"]), int(case["resolution"]),
                  int(case["phase"]))
                 for case in diagnostic_cases + characterization_cases}
+            lineage_cases = []
             for stage_root in args.stage_root or []:
                 stage_cases, binding, missing = verify_stage_campaign_root(
-                    Path(stage_root).resolve(), search, immutable_root_bindings)
-                immutable_root_bindings.append({
-                    "name": (f"partial:{binding['stage_id']}" if missing else
-                             f"stage:{binding['stage_id']}"),
-                    "root": binding["root"],
-                    "binding_sha256": canonical_digest(binding)})
-                for case in stage_cases:
-                    item = (int(case["spatial_order"]), int(case["resolution"]),
-                            int(case["phase"]))
-                    if item in completed_tuples:
-                        raise RuntimeError("frozen-window immutable roots overlap")
-                    completed_tuples.add(item)
+                    Path(stage_root).absolute(), search, immutable_root_bindings)
+                lineage_cases = merge_case_ledgers(lineage_cases, stage_cases)
+                completed_tuples.update(
+                    (int(case["spatial_order"]), int(case["resolution"]),
+                     int(case["phase"])) for case in stage_cases)
+                immutable_root_bindings.append(stage_binding_record(binding))
         elif args.immutable_root or args.stage_root:
             raise RuntimeError("final qualification cannot consume old-source roots")
         if (frozen_window_purpose == "characterization_completion" and
@@ -3758,24 +4216,26 @@ def main() -> int:
             sha256(args.input),
             sha256(root / "src/pgen/unit_tests/z4c_cartoon_derivatives_oracle.hpp"),
             sha256(series_manifest), completed_tuples,
-            args.frozen_window_manifest.resolve().parent,
+            frozen_window_path.parent,
             args.require_backend, args.ranks)
         if validated_tuples != run_tuples:
             raise RuntimeError("frozen-window tuple selection changed after identity validation")
-        frozen_window_sha256 = sha256(args.frozen_window_manifest.resolve())
+        frozen_window_sha256 = sha256(frozen_window_path)
     elif args.characterization_stage is not None:
         immutable_root_bindings, _, _ = verify_stage_roots(
             args.immutable_root)
         if args.stage_root:
-            if len(args.stage_root) != 1:
-                raise RuntimeError("stage continuation requires exactly one partial root")
-            continuation_cases, binding, missing = verify_stage_campaign_root(
-                Path(args.stage_root[0]).resolve(), search, immutable_root_bindings)
-            if not missing or binding["stage_id"] != args.characterization_stage:
-                raise RuntimeError("stage continuation root has no matching missing tuples")
-            immutable_root_bindings.append({
-                "name": f"partial:{binding['stage_id']}", "root": binding["root"],
-                "binding_sha256": canonical_digest(binding)})
+            for stage_root in args.stage_root:
+                cases_from_root, binding, missing = verify_stage_campaign_root(
+                    Path(stage_root).absolute(), search, immutable_root_bindings)
+                if (not missing or
+                        binding["stage_id"] != args.characterization_stage or
+                        binding["state"] != "stage_partial"):
+                    raise RuntimeError(
+                        "stage continuation root has no matching missing tuples")
+                continuation_cases = merge_case_ledgers(
+                    continuation_cases, cases_from_root)
+                immutable_root_bindings.append(stage_binding_record(binding))
             run_tuples = missing
             args.orders = sorted({item[0] for item in run_tuples})
             args.resolutions = sorted({item[1] for item in run_tuples})
@@ -3824,12 +4284,12 @@ def main() -> int:
         authorization = args.output / "authorization"
         authorization.mkdir(exist_ok=True)
         source_files = {
-            "accepted_window.json": args.frozen_window_manifest.resolve(),
+            "accepted_window.json": frozen_window_path,
             "candidate_manifest.json":
-            args.frozen_window_manifest.resolve().parent /
+            frozen_window_path.parent /
             frozen_window["candidate_manifest_path"],
             "review_artifact.json":
-            args.frozen_window_manifest.resolve().parent /
+            frozen_window_path.parent /
             frozen_window["review"]["artifact_path"]}
         for name, source_path in source_files.items():
             destination = authorization / name
@@ -3838,6 +4298,8 @@ def main() -> int:
                     raise RuntimeError("resumed authorization artifact changed")
             else:
                 shutil.copy2(source_path, destination)
+        require_exact_regular_files(authorization, set(source_files),
+                                    "campaign authorization directory")
         authorization_files = {name: sha256(authorization / name)
                                for name in source_files}
     resumed_stage_cases = []
@@ -4001,7 +4463,7 @@ def main() -> int:
     rank_evidence = None
     if args.compare_campaign:
         rank_evidence = compare_rank_campaigns(
-            cases, args.output, args.compare_campaign.resolve(), args.ranks,
+            cases, args.output, args.compare_campaign.absolute(), args.ranks,
             campaign_mode, frozen_window_sha256, source, args.require_backend,
             sha256(args.build_manifest))
     convergence_artifacts = {name: sha256(args.output / name) for name in

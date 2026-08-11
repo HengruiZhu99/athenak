@@ -234,6 +234,12 @@ def main() -> int:
             "axis_names = operator_names[:161]" in driver and
             "len(axis_rows) != 161" in driver,
             "case resume does not bind environment and exact file inventory")
+    require("def verify_complete_case_evidence" in driver and
+            driver.count("verify_complete_case_evidence(") >= 6 and
+            "def verify_rank_reference_root" in driver and
+            "def stage_binding_record" in driver and
+            "require_exact_regular_files(authorization" in driver,
+            "shared case verifier, partial lineage, or immutable rank/auth guard is missing")
     require("O(171*nx1)" in driver and "clean_floor" in driver and
             "saturated_at_resolution" in driver and
             "def evaluate_legacy_rate_samples" in driver and
