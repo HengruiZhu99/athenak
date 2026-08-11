@@ -321,4 +321,86 @@ void HighOrderProlongCC(const int m, const int v, const int k, const int j, cons
   return;
 }
 
+enum class ChiProlongationStatus : int {
+  high_order = 0,
+  limited = 1,
+  invalid_parent = 2,
+  invalid_limited = 3,
+};
+
+template <int NGHOST>
+KOKKOS_INLINE_FUNCTION
+bool ProlongationParentStencilFinitePositive(
+    const int m, const int v, const int k, const int j, const int i,
+    const int nx3, const DvceArray5D<Real> &ca) {
+  const bool collapsed_x3 = (nx3 == 1);
+  const int nk = collapsed_x3 ? 1 : NGHOST + 1;
+  for (int kk = 0; kk < nk; ++kk) {
+    const int ck = collapsed_x3 ? k : k - NGHOST / 2 + kk;
+    for (int jj = 0; jj < NGHOST + 1; ++jj) {
+      for (int ii = 0; ii < NGHOST + 1; ++ii) {
+        const Real parent =
+            ca(m, v, ck, j - NGHOST / 2 + jj, i - NGHOST / 2 + ii);
+        if (!Kokkos::isfinite(parent) || !(parent > 0.0)) return false;
+      }
+    }
+  }
+  return true;
+}
+
+KOKKOS_INLINE_FUNCTION
+int ProlongationSiblingCount(const bool multi_d, const bool three_d) {
+  return 2 * (multi_d ? 2 : 1) * (three_d ? 2 : 1);
+}
+
+KOKKOS_INLINE_FUNCTION
+bool ProlongationSiblingGroupFinitePositive(
+    const int m, const int v, const int fk, const int fj, const int fi,
+    const bool multi_d, const bool three_d, const DvceArray5D<Real> &a) {
+  const int nk = three_d ? 2 : 1;
+  const int nj = multi_d ? 2 : 1;
+  for (int dk = 0; dk < nk; ++dk) {
+    for (int dj = 0; dj < nj; ++dj) {
+      for (int di = 0; di < 2; ++di) {
+        const Real child = a(m, v, fk + dk, fj + dj, fi + di);
+        if (!Kokkos::isfinite(child) || !(child > 0.0)) return false;
+      }
+    }
+  }
+  return true;
+}
+
+//! \brief Positivity-preserving Z4c chi prolongation for one complete child group.
+//!
+//! The existing high-order candidate is always generated first.  Acceptance also
+//! requires every coarse value consumed by that interpolation to be finite and strictly
+//! positive.  A rejected high-order group is replaced in full by the existing minmod
+//! prolongation; no child is clipped or floored independently.
+template <int NGHOST>
+KOKKOS_INLINE_FUNCTION
+ChiProlongationStatus ProlongPositiveChiCC(
+    const int m, const int v, const int k, const int j, const int i,
+    const int fk, const int fj, const int fi, const int nx1, const int nx2,
+    const int nx3, const bool multi_d, const bool three_d,
+    const DvceArray5D<Real> &ca, const DvceArray5D<Real> &a,
+    const DualArray3D<Real> &weights) {
+  HighOrderProlongCC<NGHOST>(m, v, k, j, i, fk, fj, fi, nx1, nx2, nx3,
+                             ca, a, weights);
+  if (!ProlongationParentStencilFinitePositive<NGHOST>(m, v, k, j, i, nx3,
+                                                        ca)) {
+    return ChiProlongationStatus::invalid_parent;
+  }
+  if (ProlongationSiblingGroupFinitePositive(m, v, fk, fj, fi, multi_d,
+                                              three_d, a)) {
+    return ChiProlongationStatus::high_order;
+  }
+
+  ProlongCC(m, v, k, j, i, fk, fj, fi, multi_d, three_d, ca, a);
+  if (!ProlongationSiblingGroupFinitePositive(m, v, fk, fj, fi, multi_d,
+                                              three_d, a)) {
+    return ChiProlongationStatus::invalid_limited;
+  }
+  return ChiProlongationStatus::limited;
+}
+
 #endif // MESH_PROLONGATION_HPP_

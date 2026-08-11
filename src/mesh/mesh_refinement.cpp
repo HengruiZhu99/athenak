@@ -19,6 +19,7 @@
 #include <algorithm> // sort
 #include <sstream>
 #include <utility>   // pair
+#include <vector>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -239,6 +240,12 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
       (void) pmbp->prad->NewTimeStep(pdriver, pdriver->nexp_stages);
     }
     if (pmbp->pz4c != nullptr) {
+      // AMR has replaced the active MeshBlock hierarchy and boundary state.  Recreate the
+      // same finalized Z4c/ADM/constraint state used at the end of a full integrator step
+      // before any timestep or diagnostic consumes the new mesh.
+      (void) pmbp->pz4c->EnforceAlgConstr(pdriver, pdriver->nexp_stages);
+      (void) pmbp->pz4c->ConvertZ4cToADM(pdriver, pdriver->nexp_stages);
+      (void) pmbp->pz4c->ADMConstraints_(pdriver, pdriver->nexp_stages);
       (void) pmbp->pz4c->NewTimeStep(pdriver, pdriver->nexp_stages);
     }
 
@@ -1104,6 +1111,9 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
   auto &ngids_ = new_gids_eachrank[global_variable::my_rank];
   // Outer loop over (# of MeshBlocks sent)*(# of variables)
   int nmv = new_nmb*nvar;
+  DvceArray1D<unsigned long long> chi_prolongation_counts(
+      "Z4c chi prolongation status counts", 4);
+  Kokkos::deep_copy(chi_prolongation_counts, 0ULL);
   Kokkos::TeamPolicy<> policy(DevExeSpace(), nmv, Kokkos::AUTO);
   Kokkos::parallel_for("SendBuff", policy, KOKKOS_LAMBDA(TeamMember_t tmember) {
     const int m = (tmember.league_rank())/nvar;
@@ -1132,6 +1142,23 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
         // call inlined prolongation operator for CC variables
         if (!is_z4c) {
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
+        } else if (v == z4c::Z4c::I_Z4C_CHI) {
+          ChiProlongationStatus status = ChiProlongationStatus::invalid_limited;
+          switch (indcs.ng) {
+            case 2:
+              status = ProlongPositiveChiCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
+                                               multi_d,three_d,ca,a,prolong_2nd);
+              break;
+            case 3:
+              status = ProlongPositiveChiCC<3>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
+                                               multi_d,three_d,ca,a,prolong_4th);
+              break;
+            case 4:
+              status = ProlongPositiveChiCC<4>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
+                                               multi_d,three_d,ca,a,prolong_4th);
+              break;
+          }
+          Kokkos::atomic_inc(&chi_prolongation_counts(static_cast<int>(status)));
         } else {
           switch (indcs.ng) {
             case 2: HighOrderProlongCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
@@ -1148,6 +1175,48 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
       });
     }
   });
+
+  if (is_z4c) {
+    const auto host_counts =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), chi_prolongation_counts);
+    unsigned long long local_counts[4] = {
+        host_counts(0), host_counts(1), host_counts(2), host_counts(3)};
+    unsigned long long global_counts[4] = {
+        local_counts[0], local_counts[1], local_counts[2], local_counts[3]};
+    std::vector<unsigned long long> fallback_each_rank(global_variable::nranks, 0ULL);
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(local_counts, global_counts, 4, MPI_UNSIGNED_LONG_LONG, MPI_SUM,
+                  MPI_COMM_WORLD);
+    MPI_Gather(&local_counts[1], 1, MPI_UNSIGNED_LONG_LONG,
+               fallback_each_rank.data(), 1, MPI_UNSIGNED_LONG_LONG, 0,
+               MPI_COMM_WORLD);
+#else
+    fallback_each_rank[0] = local_counts[1];
+#endif
+    if (global_variable::my_rank == 0) {
+      std::cout << "AMR_Z4C_CHI_PROLONGATION cycle=" << pmy_mesh->ncycle
+                << " local_fallback_groups=";
+      for (int rank = 0; rank < global_variable::nranks; ++rank) {
+        if (rank > 0) std::cout << ",";
+        std::cout << fallback_each_rank[rank];
+      }
+      std::cout << " global_fallback_groups=" << global_counts[1]
+                << " global_high_order_groups=" << global_counts[0]
+                << std::endl;
+    }
+    if (global_counts[2] != 0 || global_counts[3] != 0) {
+      if (global_variable::my_rank == 0) {
+        std::cerr << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                  << std::endl
+                  << "Z4c chi AMR prolongation rejected " << global_counts[2]
+                  << " parent stencils and " << global_counts[3]
+                  << " limited sibling groups; chi must remain finite and strictly "
+                     "positive without floors or clipping"
+                  << std::endl;
+      }
+      std::exit(EXIT_FAILURE);
+    }
+  }
 
   return;
 }
