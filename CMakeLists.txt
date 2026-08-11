@@ -406,6 +406,24 @@ if (Athena_BUILD_UNIT_TESTS)
       NAME athena.z4c_shared_geometry_policy
       COMMAND athena_z4c_shared_geometry_policy_unit_test)
 
+  add_executable(
+      athena_z4c_cartoon_m0_fastflow_unit_test
+      tst/unit/z4c/cartoon_m0_fastflow_test.cpp
+      src/z4c/cartoon_m0_fastflow.cpp)
+  target_compile_definitions(
+      athena_z4c_cartoon_m0_fastflow_unit_test
+      PRIVATE ATHENA_CARTOON_M0_MATH_ONLY=1)
+  target_include_directories(
+      athena_z4c_cartoon_m0_fastflow_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_cartoon_m0_fastflow_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_cartoon_m0_fastflow
+      COMMAND athena_z4c_cartoon_m0_fastflow_unit_test)
+
   add_test(
       NAME athena.z4c_policy_migration
       COMMAND

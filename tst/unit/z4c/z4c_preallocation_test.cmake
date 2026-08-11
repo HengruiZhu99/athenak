@@ -291,6 +291,9 @@ run_cartoon_mms_reject(
     "" "")
 run_cartoon_mms_positive(mms_exact_positive "")
 run_cartoon_mms_positive(
+    mms_fastflow_positive
+    "<fastflow>\nnum_horizons = 1\nlmax = 2\nntheta = 4\nflow_iterations_0 = 1\nfind_interval_0 = 1\nstart_time_0 = 0\nstop_time_0 = -1\ninitial_radius_0 = 1\nflow_alpha_beta_const_0 = 1\ndimensionless_hrms_tol_0 = 0.03\nmass_relative_tol_0 = 0.0001\ncartoon_surface_mode_0 = single\ncartoon_direct_residual_tol_0 = 0.03\ncartoon_pair_relative_tol_0 = 0.001\ncartoon_center_z_0 = 1\ncartoon_axis_search_bound_0 = 1\ncartoon_axis_search_samples_0 = 3")
+run_cartoon_mms_positive(
     mms_exact_inactive_output
     "<output1>\nfile_type = cart\ndcycle = 0\ndt = 0.0")
 run_cartoon_mms_reject(
@@ -357,8 +360,8 @@ run_cartoon_reject(
     cce "cartoon_so2 does not support CCE extraction"
     "" "<cce>\nnum_radii = 1")
 run_cartoon_reject(
-    fastflow "cartoon_so2 does not support FastFlow before the m=0 Cartoon adapter is integrated"
-    "" "<fastflow>\nnum_horizons = 1")
+    fastflow_count "cartoon_so2 does not support Cartoon m=0 FastFlow requires num_horizons=1"
+    "" "<fastflow>\nnum_horizons = 2")
 run_cartoon_mms_reject(
     mms_tracker z4c_cartoon_derivatives true
     "cartoon_so2 does not support compact-object tracker co_0_type"
@@ -375,10 +378,6 @@ run_cartoon_mms_reject(
     mms_cce z4c_cartoon_derivatives true
     "cartoon_so2 does not support CCE extraction"
     "" "<cce>\nnum_radii = 1")
-run_cartoon_mms_reject(
-    mms_fastflow z4c_cartoon_derivatives true
-    "cartoon_so2 does not support FastFlow before the m=0 Cartoon adapter is integrated"
-    "" "<fastflow>\nnum_horizons = 1")
 foreach(legacy_key
         center_x_0
         use_puncture_0
@@ -386,9 +385,17 @@ foreach(legacy_key
         use_puncture_massweighted_center_0)
   run_cartoon_reject(
       "fastflow_${legacy_key}"
-      "cartoon_so2 does not support legacy FastFlow key ${legacy_key}"
+      "cartoon_so2 does not support unsupported Cartoon m=0 FastFlow key ${legacy_key}"
       "" "<fastflow>\n${legacy_key} = 1")
 endforeach()
+run_cartoon_reject(
+    fastflow_unknown
+    "cartoon_so2 does not support unsupported Cartoon m=0 FastFlow key mystery_0"
+    "" "<fastflow>\nnum_horizons = 1\nmystery_0 = 1")
+run_cartoon_reject(
+    fastflow_pair_excision
+    "cartoon_so2 does not support Cartoon mirror_pair cannot feed single-surface horizon excision"
+    "" "<coord>\nexcision_scheme = horizon\n<fastflow>\nnum_horizons = 1\ncartoon_surface_mode_0 = mirror_pair")
 
 # Every rejected output token, the unknown fallback, PDF options, and active-state rules.
 foreach(file_type cart sph cbin pvtk trk)

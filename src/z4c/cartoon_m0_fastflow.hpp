@@ -97,7 +97,7 @@ class CartoonM0FastFlow {
   Real InitialRadius() const { return initial_radius_; }
   Real MinimumRadius() const;
   Real SelectedCenterZ() const;
-  //! Not restart-authoritative: schema 1 has no first-found-time field.
+  //! Restart-authoritative first accepted-surface time.
   Real TimeFirstFound() const { return time_first_found_; }
   int Lmax() const { return lmax_; }
   int Ntheta() const { return ntheta_; }

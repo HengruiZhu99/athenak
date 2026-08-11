@@ -55,7 +55,8 @@ RESTART_KEYS = (
     "fastflow_coefficient_count", "fastflow_coefficients", "fastflow_surface_mode",
     "fastflow_selected_branch", "fastflow_center_count", "fastflow_center_z0",
     "fastflow_center_z1", "fastflow_status", "fastflow_failure_code",
-    "fastflow_last_search_cycle", "fastflow_last_search_time", "fastflow_converged",
+    "fastflow_last_search_cycle", "fastflow_last_search_time",
+    "fastflow_time_first_found", "fastflow_converged",
 )
 # HistoryOutput writes labels with %.10s; the in-memory `Theta-norm2` label is
 # therefore intentionally `Theta-norm` in the exact on-disk inventory.
@@ -295,8 +296,11 @@ def validate_source_contract(source: Path) -> None:
     stop = restart.index("}) {", start)
     production_restart_keys = tuple(re.findall(r'"([a-z0-9_]+)"',
                                                 restart[start:stop]))
-    require(production_restart_keys == RESTART_KEYS,
-            "campaign restart inventory differs from production RequireKeys")
+    require(production_restart_keys == tuple(
+                key for key in RESTART_KEYS if key != "fastflow_time_first_found") and
+            'Has(pin, "fastflow_time_first_found")' in restart and
+            'READ_DOUBLE("fastflow_time_first_found"' in restart,
+            "campaign restart inventory differs from production schema-2 RequireKeys")
 
 
 def contract_payload(state: dict[str, Any]) -> dict[str, Any]:
@@ -430,12 +434,13 @@ def restart_metadata(path: Path) -> dict[str, str]:
             f"restart carrier inventory is not exact: {path}")
     require(carrier["symmetry"] == "cartoon_so2" and
             carrier["coordinate_map"] == "signed_rho_z_suppressed_y_v1" and
-            carrier["symmetry_schema"] == "1" and carrier["central_schema"] == "2",
+            carrier["symmetry_schema"] == "1" and carrier["central_schema"] == "2" and
+            carrier["fastflow_schema"] == "2",
             f"restart symmetry/schema metadata changed: {path}")
     for key in ("central_proper_time", "central_previous_lapse",
                 "central_constraint_norm", "central_abs_kretschmann",
                 "central_last_time", "fastflow_center_z0", "fastflow_center_z1",
-                "fastflow_last_search_time"):
+                "fastflow_last_search_time", "fastflow_time_first_found"):
         require(math.isfinite(float(carrier[key])),
                 f"restart contains nonfinite {key}: {path}")
     require(carrier["central_initialized"] in {"1", "true"},
@@ -452,6 +457,13 @@ def restart_metadata(path: Path) -> dict[str, str]:
             raise RuntimeError(f"restart contains malformed integer {key}: {path}") from error
     require(carrier["fastflow_converged"] in {"0", "1", "false", "true"},
             f"restart contains malformed fastflow_converged: {path}")
+    first_found = float(carrier["fastflow_time_first_found"])
+    last_search = float(carrier["fastflow_last_search_time"])
+    converged = carrier["fastflow_converged"] in {"1", "true"}
+    require((first_found == -1.0 or first_found >= 0.0) and
+            (not converged or first_found >= 0.0) and
+            (first_found < 0.0 or first_found <= last_search),
+            f"restart contains incoherent FastFlow times: {path}")
     return carrier
 
 
@@ -983,12 +995,13 @@ def self_test() -> None:
             "central_constraint_norm": "1e-4", "central_abs_kretschmann": "2",
             "central_sample_gid": "0", "central_sample_level": "0",
             "central_last_cycle": "4", "central_last_time": "0.1",
-            "fastflow_schema": "1", "fastflow_coefficient_count": "0",
+            "fastflow_schema": "2", "fastflow_coefficient_count": "0",
             "fastflow_coefficients": "none", "fastflow_surface_mode": "none",
             "fastflow_selected_branch": "none", "fastflow_center_count": "0",
             "fastflow_center_z0": "0", "fastflow_center_z1": "0",
             "fastflow_status": "not_started", "fastflow_failure_code": "none",
             "fastflow_last_search_cycle": "-1", "fastflow_last_search_time": "0",
+            "fastflow_time_first_found": "-1",
             "fastflow_converged": "0",
         }
         require(tuple(carrier) == RESTART_KEYS,

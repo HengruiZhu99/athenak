@@ -119,20 +119,40 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
       pin->GetInteger("cce", "num_radii") > 0) {
     input.incompatible_consumers.emplace_back("CCE extraction");
   }
-  if (pin->DoesParameterExist("fastflow", "num_horizons") &&
-      pin->GetInteger("fastflow", "num_horizons") > 0) {
-    input.incompatible_consumers.emplace_back(
-        "FastFlow before the m=0 Cartoon adapter is integrated");
-  }
-  for (const auto &block : pin->block) {
-    if (block.block_name != "fastflow") continue;
-    for (const auto &parameter : block.line) {
-      const std::string &name = parameter.param_name;
-      if (name.rfind("center_", 0) == 0 || name.rfind("use_puncture_", 0) == 0 ||
-          name.rfind("wait_until_punc_are_close_", 0) == 0 ||
-          name.rfind("use_puncture_massweighted_center_", 0) == 0) {
-        input.incompatible_consumers.emplace_back("legacy FastFlow key " + name);
+  if (input.requested_symmetry == "cartoon_so2" &&
+      pin->DoesBlockExist("fastflow")) {
+    const int horizon_count = pin->DoesParameterExist("fastflow", "num_horizons")
+                                  ? pin->GetInteger("fastflow", "num_horizons") : 0;
+    if (horizon_count != 0 && horizon_count != 1) {
+      input.incompatible_consumers.emplace_back(
+          "Cartoon m=0 FastFlow requires num_horizons=1");
+    }
+    const std::vector<std::string> supported_keys = {
+        "num_horizons", "lmax", "ntheta", "flow_iterations_0",
+        "find_interval_0", "start_time_0", "stop_time_0", "initial_radius_0",
+        "flow_alpha_beta_const_0", "dimensionless_hrms_tol_0",
+        "mass_relative_tol_0", "cartoon_surface_mode_0",
+        "cartoon_direct_residual_tol_0", "cartoon_pair_relative_tol_0",
+        "cartoon_center_z_0", "cartoon_axis_search_bound_0",
+        "cartoon_axis_search_samples_0"};
+    for (const auto &block : pin->block) {
+      if (block.block_name != "fastflow") continue;
+      for (const auto &parameter : block.line) {
+        const std::string &name = parameter.param_name;
+        if (std::find(supported_keys.begin(), supported_keys.end(), name) ==
+            supported_keys.end()) {
+          input.incompatible_consumers.emplace_back(
+              "unsupported Cartoon m=0 FastFlow key " + name);
+        }
       }
+    }
+    if (horizon_count == 1 &&
+        pin->DoesParameterExist("fastflow", "cartoon_surface_mode_0") &&
+        pin->GetString("fastflow", "cartoon_surface_mode_0") == "mirror_pair" &&
+        pin->DoesParameterExist("coord", "excision_scheme") &&
+        pin->GetString("coord", "excision_scheme") == "horizon") {
+      input.incompatible_consumers.emplace_back(
+          "Cartoon mirror_pair cannot feed single-surface horizon excision");
     }
   }
 

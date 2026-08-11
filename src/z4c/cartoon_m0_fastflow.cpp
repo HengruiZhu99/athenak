@@ -299,9 +299,22 @@ bool ValidateM0RestartState(const Z4cM0FastFlowRestartState &state,
   };
   if (state.schema != Z4cM0FastFlowRestartState::kCurrentSchema)
     return fail("schema");
+  if (state.last_search_cycle < -1 ||
+      !std::isfinite(state.last_search_time) || state.last_search_time < 0.0 ||
+      !std::isfinite(state.time_first_found) ||
+      (state.time_first_found != -1.0 && state.time_first_found < 0.0) ||
+      (state.time_first_found >= 0.0 &&
+       (state.last_search_cycle < 0 ||
+        state.time_first_found > state.last_search_time)) ||
+      (state.converged && state.time_first_found < 0.0))
+    return fail("time metadata");
   if (state.surface_mode == "none") {
     if (!state.coefficients.empty() || state.center_count != 0 ||
-        state.selected_branch != "none" || state.converged)
+        state.selected_branch != "none" || state.center_z0 != 0.0 ||
+        state.center_z1 != 0.0 || state.status != "not_started" ||
+        state.failure_code != "none" || state.last_search_cycle != -1 ||
+        state.last_search_time != 0.0 || state.time_first_found != -1.0 ||
+        state.converged)
       return fail("nonempty none state");
     return true;
   }
@@ -752,12 +765,12 @@ void CartoonM0FastFlow::Restore() {
   found_ = state.converged;
   last_search_cycle_ = state.last_search_cycle;
   last_search_time_ = state.last_search_time;
+  time_first_found_ = state.time_first_found;
   if (!found_) return;
   candidates_ = RestoreM0Candidates(state, lmax_, weights_, y0_);
   if (candidates_.size() != static_cast<std::size_t>(state.center_count))
     throw std::runtime_error("Cartoon m=0 restart has nonpositive surface radius");
   for (int index = 0; index < state.center_count; ++index) selected_.push_back(index);
-  // `time_first_found_` deliberately remains -1: schema 1 does not carry it.
 }
 
 void CartoonM0FastFlow::Capture() {
@@ -766,6 +779,7 @@ void CartoonM0FastFlow::Capture() {
   state.surface_mode = mode_;
   state.last_search_cycle = last_search_cycle_;
   state.last_search_time = last_search_time_;
+  state.time_first_found = time_first_found_;
   state.converged = found_;
   state.status = found_ ? "accepted" : "failed";
   if (!found_) {

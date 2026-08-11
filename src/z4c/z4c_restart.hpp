@@ -38,9 +38,9 @@ struct Z4cCentralRestartState {
   double last_time = 0.0;
 };
 
-//! Reserved state for the later m=0 FastFlow implementation.
+//! Restart-authoritative state for the Cartoon m=0 FastFlow implementation.
 struct Z4cM0FastFlowRestartState {
-  static constexpr int kCurrentSchema = 1;
+  static constexpr int kCurrentSchema = 2;
 
   int schema = kCurrentSchema;
   std::vector<double> coefficients;
@@ -53,6 +53,7 @@ struct Z4cM0FastFlowRestartState {
   std::string failure_code = "none";
   int last_search_cycle = -1;
   double last_search_time = 0.0;
+  double time_first_found = -1.0;
   bool converged = false;
 };
 

@@ -181,6 +181,7 @@ def main():
         b"central_abs_kretschmann",
         b"fastflow_coefficients",
         b"fastflow_last_search_time",
+        b"fastflow_time_first_found",
     ):
         if key not in restart_data:
             raise RuntimeError(f"restart ParameterDump omitted {key!r}")
@@ -198,6 +199,8 @@ def main():
         (b"central_sample_level", b"-1"),
         (b"central_last_cycle", b"-1"),
         (b"central_last_time", b"0"),
+        (b"fastflow_schema", b"2"),
+        (b"fastflow_time_first_found", b"-1"),
     ):
         if not re.search(rb"\b" + key + rb"\s*=\s*" + re.escape(value) + rb"\b",
                          restart_data):
@@ -268,7 +271,7 @@ def main():
          "central_sample_level", "-1", "0"),
         ("z4c_restart/central_last_cycle=0", "z4c_restart", "central_last_cycle", "-1", "0"),
         ("z4c_restart/central_last_time=1", "z4c_restart", "central_last_time", "0", "1"),
-        ("z4c_restart/fastflow_schema=2", "z4c_restart", "fastflow_schema", "1", "2"),
+        ("z4c_restart/fastflow_schema=1", "z4c_restart", "fastflow_schema", "2", "1"),
         ("z4c_restart/fastflow_coefficient_count=1", "z4c_restart",
          "fastflow_coefficient_count", "0", "1"),
         ("z4c_restart/fastflow_coefficients=2.5", "z4c_restart",
@@ -289,6 +292,8 @@ def main():
          "fastflow_last_search_cycle", "-1", "0"),
         ("z4c_restart/fastflow_last_search_time=1", "z4c_restart",
          "fastflow_last_search_time", "0", "1"),
+        ("z4c_restart/fastflow_time_first_found=0", "z4c_restart",
+         "fastflow_time_first_found", "-1", "0"),
         ("z4c_restart/fastflow_converged=1", "z4c_restart",
          "fastflow_converged", "0", "1"),
         ("z4c_restart/fastflow_converged=maybe", "z4c_restart",
@@ -399,6 +404,13 @@ def main():
     run([args.athena, "-r", partial], args.work_dir, False,
         ("invalid restart-origin Z4c carrier", "partial <z4c_restart> carrier",
          "<z4c_restart>/central_last_cycle"))
+    partial_fastflow = args.work_dir / "partial_fastflow.rst"
+    partial_fastflow.write_bytes(
+        replace_once(restart_data, b"fastflow_time_first_found",
+                     b"fastflow_time_first_founx"))
+    run([args.athena, "-r", partial_fastflow], args.work_dir, False,
+        ("invalid restart-origin Z4c carrier", "partial <z4c_restart> carrier",
+         "<z4c_restart>/fastflow_time_first_found"))
 
     schema = args.work_dir / "schema.rst"
     schema.write_bytes(replace_value(restart_data, "carrier_schema", "1", "2"))
@@ -418,6 +430,58 @@ def main():
     )
     if "Root grid" in output or "AssembleZ4cTasks" in output:
         raise RuntimeError("old central schema reached allocation")
+
+    # Exact inactive schema-1 state is the sole m=0 migration path.  It carries no
+    # first-found key and is upgraded to current schema 2 with an explicit -1 value.
+    legacy_fastflow_data = replace_value(restart_data, "fastflow_schema", "2", "1")
+    legacy_fastflow_data, removed = re.subn(
+        rb"^\s*fastflow_time_first_found\s*=\s*\S+\s*$\n?", b"",
+        legacy_fastflow_data, count=1, flags=re.MULTILINE)
+    if removed != 1:
+        raise RuntimeError("could not remove legacy FastFlow time key")
+    legacy_fastflow = args.work_dir / "legacy_fastflow_schema1.rst"
+    legacy_fastflow.write_bytes(legacy_fastflow_data)
+    legacy_fastflow_run = args.work_dir / "legacy_fastflow_schema1_run"
+    legacy_fastflow_run.mkdir()
+    run([args.athena, "-r", legacy_fastflow, "-d", legacy_fastflow_run],
+        args.work_dir, True, ("AssembleZ4cTasks",))
+    upgraded_fastflow = sorted(
+        (legacy_fastflow_run / "rst").glob("*.rst"))[0].read_bytes()
+    for key, value in ((b"fastflow_schema", b"2"),
+                       (b"fastflow_time_first_found", b"-1")):
+        if not re.search(rb"\b" + key + rb"\s*=\s*" + re.escape(value) + rb"\b",
+                         upgraded_fastflow):
+            raise RuntimeError(f"schema-1 FastFlow upgrade omitted {key!r}")
+    active_legacy_fastflow = args.work_dir / "active_legacy_fastflow_schema1.rst"
+    active_legacy_fastflow.write_bytes(
+        replace_value(legacy_fastflow_data, "fastflow_last_search_cycle", "-1", "00"))
+    output = run(
+        [args.athena, "-r", active_legacy_fastflow], args.work_dir, False,
+        ("invalid restart-origin Z4c carrier",
+         "active schema-1 m=0 FastFlow state lacks fastflow_time_first_found"))
+    if "Root grid" in output or "AssembleZ4cTasks" in output:
+        raise RuntimeError("active schema-1 FastFlow state reached allocation")
+    ambiguous_legacy_fastflow = args.work_dir / "ambiguous_legacy_fastflow_schema1.rst"
+    ambiguous_legacy_fastflow.write_bytes(
+        replace_value(restart_data, "fastflow_schema", "2", "1"))
+    output = run(
+        [args.athena, "-r", ambiguous_legacy_fastflow], args.work_dir, False,
+        ("invalid restart-origin Z4c carrier",
+         "fastflow_schema=1 must not contain fastflow_time_first_found"))
+    if "Root grid" in output or "AssembleZ4cTasks" in output:
+        raise RuntimeError("ambiguous schema-1 FastFlow state reached allocation")
+
+    for key, replacement in (("fastflow_time_first_found", "nan"),
+                             ("fastflow_time_first_found", "-2")):
+        corrupted = args.work_dir / f"invalid_{key}_{replacement}.rst"
+        corrupted.write_bytes(
+            replace_block_value(restart_data, "z4c_restart", key, replacement))
+        output = run(
+            [args.athena, "-r", corrupted], args.work_dir, False,
+            ("invalid restart-origin Z4c carrier",
+             "invalid m=0 FastFlow integration state in <z4c_restart>"))
+        if "Root grid" in output or "AssembleZ4cTasks" in output:
+            raise RuntimeError(f"invalid {key} reached allocation:\n{output}")
 
     # Every persisted central diagnostic is strict finite metadata. Invalid values and
     # an initialized flag without owner/cycle metadata fail before Mesh construction.
@@ -439,7 +503,7 @@ def main():
         if "Root grid" in output or "AssembleZ4cTasks" in output:
             raise RuntimeError(f"invalid {key} reached allocation:\n{output}")
 
-    # Seed non-default central and reserved FastFlow values in the authoritative origin,
+    # Seed non-default central and restart-authoritative FastFlow values in the origin,
     # then verify that a compatible restart restores and reserializes every value.
     seeded_data = restart_data
     for key, old, new in (
@@ -454,15 +518,16 @@ def main():
         ("central_last_time", "0", "4"),
         ("fastflow_coefficient_count", "0", "1"),
         ("fastflow_coefficients", "none", "2.50"),
-        ("fastflow_surface_mode", "none", "solo"),
+        ("fastflow_surface_mode", "none", "single"),
         ("fastflow_selected_branch", "none", "plus"),
         ("fastflow_center_count", "0", "1"),
         ("fastflow_center_z0", "0", "5"),
-        ("fastflow_center_z1", "0", "6"),
-        ("fastflow_status", "not_started", "state_saved"),
-        ("fastflow_failure_code", "none", "test"),
+        ("fastflow_center_z1", "0", "0"),
+        ("fastflow_status", "not_started", "accepted"),
+        ("fastflow_failure_code", "none", "none"),
         ("fastflow_last_search_cycle", "-1", "08"),
         ("fastflow_last_search_time", "0", "9"),
+        ("fastflow_time_first_found", "-1", "07"),
         ("fastflow_converged", "0", "1"),
     ):
         seeded_data = replace_value(seeded_data, key, old, new)
@@ -485,15 +550,16 @@ def main():
         (b"central_last_time", b"4"),
         (b"fastflow_coefficient_count", b"1"),
         (b"fastflow_coefficients", b"2.5"),
-        (b"fastflow_surface_mode", b"solo"),
+        (b"fastflow_surface_mode", b"single"),
         (b"fastflow_selected_branch", b"plus"),
         (b"fastflow_center_count", b"1"),
         (b"fastflow_center_z0", b"5"),
-        (b"fastflow_center_z1", b"6"),
-        (b"fastflow_status", b"state_saved"),
-        (b"fastflow_failure_code", b"test"),
+        (b"fastflow_center_z1", b"0"),
+        (b"fastflow_status", b"accepted"),
+        (b"fastflow_failure_code", b"none"),
         (b"fastflow_last_search_cycle", b"8"),
         (b"fastflow_last_search_time", b"9"),
+        (b"fastflow_time_first_found", b"7"),
         (b"fastflow_converged", b"1"),
     ):
         if not re.search(rb"\b" + key + rb"\s*=\s*" + re.escape(value) + rb"\b",

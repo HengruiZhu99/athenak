@@ -171,6 +171,7 @@ add_executable(
         z4c/compact_object_tracker.cpp
         z4c/curvature_diagnostics.cpp
         z4c/fastflow.cpp
+	      z4c/cartoon_m0_fastflow.cpp
 	    z4c/horizon_dump.cpp
         z4c/tmunu.cpp
         z4c/z4c.cpp

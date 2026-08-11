@@ -131,6 +131,25 @@ Z4cRestartResult RequireKeys(ParameterInput *pin) {
                      kZ4cRestartBlock + ">/" + key);
     }
   }
+  int fastflow_schema = 0;
+  if (!ReadInteger(pin, "fastflow_schema", &fastflow_schema)) {
+    return InvalidType(pin, "fastflow_schema", "integer");
+  }
+  if (fastflow_schema == Z4cM0FastFlowRestartState::kCurrentSchema) {
+    if (!Has(pin, "fastflow_time_first_found")) {
+      return Invalid(std::string("partial <") + kZ4cRestartBlock +
+                     "> carrier: missing <" + kZ4cRestartBlock +
+                     ">/fastflow_time_first_found");
+    }
+  } else if (fastflow_schema == 1) {
+    if (Has(pin, "fastflow_time_first_found")) {
+      return Invalid("legacy <z4c_restart>/fastflow_schema=1 must not contain "
+                     "fastflow_time_first_found");
+    }
+  } else {
+    return Invalid("unsupported <z4c_restart>/fastflow_schema=" +
+                   std::to_string(fastflow_schema));
+  }
   return {true, ""};
 }
 
@@ -227,8 +246,7 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
   READ_INTEGER("fastflow_schema", state->fastflow.schema)
   int coefficient_count = 0;
   READ_INTEGER("fastflow_coefficient_count", coefficient_count)
-  if (state->fastflow.schema != Z4cM0FastFlowRestartState::kCurrentSchema ||
-      coefficient_count < 0 || coefficient_count > 4096 ||
+  if (coefficient_count < 0 || coefficient_count > 4096 ||
       !ParseCoefficients(pin->GetString(kZ4cRestartBlock, "fastflow_coefficients"),
                          coefficient_count, &state->fastflow.coefficients)) {
     return Invalid("invalid m=0 FastFlow coefficient state in <z4c_restart>");
@@ -245,13 +263,45 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
       pin->GetString(kZ4cRestartBlock, "fastflow_failure_code");
   READ_INTEGER("fastflow_last_search_cycle", state->fastflow.last_search_cycle)
   READ_DOUBLE("fastflow_last_search_time", state->fastflow.last_search_time)
+  if (state->fastflow.schema == Z4cM0FastFlowRestartState::kCurrentSchema) {
+    READ_DOUBLE("fastflow_time_first_found", state->fastflow.time_first_found)
+  } else {
+    state->fastflow.time_first_found = -1.0;
+  }
   READ_BOOLEAN("fastflow_converged", state->fastflow.converged)
   if (state->fastflow.center_count < 0 || state->fastflow.center_count > 2 ||
       !std::isfinite(state->fastflow.center_z0) ||
       !std::isfinite(state->fastflow.center_z1) ||
       state->fastflow.last_search_cycle < -1 ||
-      !std::isfinite(state->fastflow.last_search_time)) {
+      !std::isfinite(state->fastflow.last_search_time) ||
+      state->fastflow.last_search_time < 0.0 ||
+      !std::isfinite(state->fastflow.time_first_found) ||
+      (state->fastflow.time_first_found != -1.0 &&
+       state->fastflow.time_first_found < 0.0) ||
+      (state->fastflow.time_first_found >= 0.0 &&
+       (state->fastflow.last_search_cycle < 0 ||
+        state->fastflow.time_first_found > state->fastflow.last_search_time))) {
     return Invalid("invalid m=0 FastFlow integration state in <z4c_restart>");
+  }
+  if (state->fastflow.schema == 1) {
+    const bool exact_legacy_inactive =
+        state->fastflow.coefficients.empty() &&
+        state->fastflow.surface_mode == "none" &&
+        state->fastflow.selected_branch == "none" &&
+        state->fastflow.center_count == 0 &&
+        state->fastflow.center_z0 == 0.0 && state->fastflow.center_z1 == 0.0 &&
+        state->fastflow.status == "not_started" &&
+        state->fastflow.failure_code == "none" &&
+        state->fastflow.last_search_cycle == -1 &&
+        state->fastflow.last_search_time == 0.0 && !state->fastflow.converged;
+    if (!exact_legacy_inactive) {
+      return Invalid("active schema-1 m=0 FastFlow state lacks "
+                     "fastflow_time_first_found");
+    }
+  }
+  if (state->fastflow.schema == Z4cM0FastFlowRestartState::kCurrentSchema &&
+      state->fastflow.converged && state->fastflow.time_first_found < 0.0) {
+    return Invalid("converged m=0 FastFlow state lacks time_first_found");
   }
   return {true, ""};
 #undef READ_INTEGER
@@ -351,6 +401,9 @@ Z4cRestartResult CompareCarrierParameters(ParameterInput *pin,
   COMPARE_STRING("fastflow_failure_code", stored.fastflow.failure_code)
   COMPARE_INTEGER("fastflow_last_search_cycle", stored.fastflow.last_search_cycle)
   COMPARE_DOUBLE("fastflow_last_search_time", stored.fastflow.last_search_time)
+  if (stored.fastflow.schema == Z4cM0FastFlowRestartState::kCurrentSchema) {
+    COMPARE_DOUBLE("fastflow_time_first_found", stored.fastflow.time_first_found)
+  }
   COMPARE_BOOLEAN("fastflow_converged", stored.fastflow.converged)
 #undef COMPARE_INTEGER
 #undef COMPARE_DOUBLE
@@ -493,7 +546,13 @@ Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
     if (!result.valid) return result;
   }
 
-  StoreZ4cRestartState(pin, snapshot.state);
+  // A genuine inactive schema-1 carrier has been compared byte-for-byte above.
+  // Upgrade only the requested copy; active schema-1 state was rejected by ReadState.
+  if (requested.fastflow.schema == 1) {
+    requested.fastflow.schema = Z4cM0FastFlowRestartState::kCurrentSchema;
+    requested.fastflow.time_first_found = -1.0;
+  }
+  StoreZ4cRestartState(pin, requested);
   pin->SetString("z4c", "symmetry", ToString(snapshot.state.config.mode));
   pin->SetString("z4c", "coordinate_map", ToString(snapshot.state.config.coordinate_map));
   pin->SetInteger("z4c", "symmetry_schema", snapshot.state.config.schema);
@@ -551,6 +610,21 @@ void StoreZ4cRestartState(ParameterInput *pin, const Z4cRestartState &state) {
               << central_validation.error << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  if (state.fastflow.schema != Z4cM0FastFlowRestartState::kCurrentSchema ||
+      state.fastflow.last_search_cycle < -1 ||
+      !std::isfinite(state.fastflow.last_search_time) ||
+      state.fastflow.last_search_time < 0.0 ||
+      !std::isfinite(state.fastflow.time_first_found) ||
+      (state.fastflow.time_first_found != -1.0 &&
+       state.fastflow.time_first_found < 0.0) ||
+      (state.fastflow.converged && state.fastflow.time_first_found < 0.0) ||
+      (state.fastflow.time_first_found >= 0.0 &&
+       (state.fastflow.last_search_cycle < 0 ||
+        state.fastflow.time_first_found > state.fastflow.last_search_time))) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": invalid current m=0 FastFlow restart state" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   pin->SetInteger(kZ4cRestartBlock, "carrier_schema", state.carrier_schema);
   pin->SetString(kZ4cRestartBlock, "symmetry", ToString(state.config.mode));
   pin->SetString(kZ4cRestartBlock, "coordinate_map",
@@ -606,6 +680,8 @@ void StoreZ4cRestartState(ParameterInput *pin, const Z4cRestartState &state) {
                   state.fastflow.last_search_cycle);
   pin->SetString(kZ4cRestartBlock, "fastflow_last_search_time",
                  FormatDouble(state.fastflow.last_search_time));
+  pin->SetString(kZ4cRestartBlock, "fastflow_time_first_found",
+                 FormatDouble(state.fastflow.time_first_found));
   pin->SetBoolean(kZ4cRestartBlock, "fastflow_converged", state.fastflow.converged);
 }
 

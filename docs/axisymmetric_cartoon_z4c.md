@@ -54,7 +54,7 @@ Before units or any physics object is constructed, `cartoon_so2` requires:
   or 4; as in the existing Cartesian path, a requested order less than or equal to zero uses
   `2*(mesh/nghost-1)`, so `nghost=2,3,4` select orders 2, 4, and 6 respectively;
 - no compact-object tracker, Cartesian wave extraction, CCE extraction, Cartesian horizon dump,
-  legacy tracker-dependent FastFlow option, or pre-m=0 FastFlow construction;
+  legacy tracker-dependent FastFlow option or unsupported m=0 FastFlow key;
 - only `tab`, `hst`, `log`, `vtk`, unweighted `pdf`, `bin`, and `rst` output types; and
 - compatible restart symmetry, coordinate-map, and schema metadata when those carrier fields are
   present.
@@ -69,13 +69,13 @@ contract.
 Restart-origin metadata is made immutable against `-i` and command-line overrides by the
 `<z4c_restart>` carrier. The carrier is internal and cannot be supplied on a fresh start. It
 records the symmetry mode, coordinate map and schema, requested and effective spatial order,
-stencil width, axis-central proper-time integration state, and reserved m=0 FastFlow surface
+stencil width, axis-central proper-time integration state, and m=0 FastFlow surface
 state. It is captured from the restart parameter dump before `-i` or command-line processing;
 every conflicting override reports the block, key, stored value, and requested value before
 mesh or physics construction. Compatible values are restored from that immutable snapshot.
 
 The carrier uses a versioned schema and does not alter the binary restart layout. Legacy Cartesian
 restarts without the block retain their previous behavior and acquire a carrier when next
-written. The central sampler and m=0 FastFlow algorithms are later slices, so their state is
-initialized to explicit inactive defaults until those consumers are enabled. The carrier
+written. The central sampler and m=0 FastFlow algorithms persist their state; each field is
+initialized to an explicit inactive default until its consumer is enabled. The carrier
 supports the admitted `kerr_puncture` pgen but does not by itself qualify Cartoon restart.
