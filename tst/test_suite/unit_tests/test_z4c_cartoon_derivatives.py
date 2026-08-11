@@ -1685,55 +1685,92 @@ def self_test_cpu_audit_policy() -> None:
                            "convergence_plot.tex")}
     aggregate_execution = {"series_manifest_sha256": "4" * 64,
                            "domain": list(QUALIFICATION_DOMAIN)}
-    aggregate_required = [(2, 32, 0)]
-    aggregate_policy_sha = "5" * 64
-    aggregate_floor_id = "6" * 64
+    aggregate_resolutions = (32, 64, 128, 256)
+    aggregate_required = [(2, resolution, 0)
+                          for resolution in aggregate_resolutions]
+    series_inventory = load_json_strict(
+        root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json")
+    aggregate_policy = series_inventory["roundoff_policy"]
+    aggregate_policy_sha = canonical_digest(aggregate_policy)
+    aggregate_item = next(item for item in series_inventory["series"]
+                          if item["name"] == "scalar.first.0")
     aggregate_record_keys = {
         ("norm", 2, 0, "scalar.first.0|full_signed_plane", "clean", norm)
         for norm in ("l1", "l2")}
-    aggregate_exact_key = (
-        "norm", 2, 0, 32, "scalar.first.1", "full_signed_plane", None, None)
-    aggregate_record = {
+    aggregate_exact_keys = {
+        ("norm", 2, 0, resolution, "scalar.first.2", "full_signed_plane",
+         None, None) for resolution in aggregate_resolutions}
+    aggregate_records = []
+    aggregate_floors = []
+    for norm in ("l1", "l2"):
+        samples = []
+        for resolution in aggregate_resolutions:
+            floor = aggregate_clean_floor(
+                aggregate_item, aggregate_policy, 2, resolution,
+                "full_signed_plane", norm, QUALIFICATION_DOMAIN)
+            floor_id = canonical_digest((
+                "scalar.first.0", 2, resolution, "full_signed_plane", norm,
+                QUALIFICATION_DOMAIN))
+            samples.append({
+                "resolution": resolution, "error": (32.0 / resolution) ** 2,
+                "direct_delta": 0.0, "clean_floor": floor["clean_floor"],
+                "floor_id": floor_id, "evidence_source": "current_output"})
+            aggregate_floors.append({
+                "floor_id": floor_id, "operator": "scalar.first.0",
+                "order": 2, "resolution": resolution,
+                "mask": "full_signed_plane", "norm": norm,
+                "domain": list(QUALIFICATION_DOMAIN), **floor})
+        expected, margin = rate_policy(
+            2, "full_signed_plane", "clean", norm, None)
+        record = {
+            "source": "norm", "order": 2, "phase": 0,
+            "series": "scalar.first.0|full_signed_plane", "lane": "clean",
+            "norm": norm, "expected": expected, "margin": margin,
+            "diagnostic_resolutions": list(aggregate_resolutions),
+            "samples": samples,
+            "legacy_evaluation": evaluate_legacy_rate_samples(
+                samples, expected, margin, "clean")}
+        record.update(evaluate_rate_samples(samples, expected, margin, "clean"))
+        aggregate_records.append(record)
+    aggregate_exact_records = [{
         "source": "norm", "order": 2, "phase": 0,
-        "series": "scalar.first.0|full_signed_plane", "lane": "clean",
-        "norm": "l1", "diagnostic_resolutions": [32],
-        "samples": [{"resolution": 32, "floor_id": aggregate_floor_id}],
-        "legacy_evaluation": {"outcome_reason": "pass"},
-        "outcome_reason": "pass", "passed": True}
-    aggregate_records = [aggregate_record,
-                         {**aggregate_record, "norm": "l2"}]
-    aggregate_exact = {
-        "source": "norm", "order": 2, "phase": 0, "resolution": 32,
-        "operator": "scalar.first.1", "mask": "full_signed_plane",
-        "passed": True}
+        "resolution": resolution, "operator": "scalar.first.2",
+        "mask": "full_signed_plane", "classification": "exact_identity",
+        "value": 0.0,
+        "bound": SATURATION_FACTOR * sys.float_info.epsilon * resolution ** 2,
+        "direct_delta_linfinity": {"shared": 0.0},
+        "direct_delta_bound": 0.0, "passed": True}
+        for resolution in aggregate_resolutions]
     aggregate_partition = {
         "norm_inconclusive": 0, "norm_rate_miss": 0,
         "probe_inconclusive": 0, "probe_rate_miss": 0}
     aggregate_convergence = {field: None for field in CONVERGENCE_FIELDS}
     aggregate_convergence.update({
         "schema": SCHEMA, "series_manifest_sha256": "4" * 64,
-        "diagnostic_resolutions_by_order": {"2": [32]},
+        "diagnostic_resolutions_by_order": {"2": list(aggregate_resolutions)},
         "coefficient_floor_policy_sha256": aggregate_policy_sha,
         "coefficient_floor_complexity":
             "O(171*nx1); active-z multiplicity analytic",
         "legacy_normalization_actions": [],
         "evidence_scope": "fresh_single_source_final_qualification",
         "artifacts": internal_artifacts, "failures": [], "passed": True,
-        "records": aggregate_records, "exact_records": [aggregate_exact],
-        "floor_decompositions": [{"floor_id": aggregate_floor_id}],
+        "records": aggregate_records, "exact_records": aggregate_exact_records,
+        "floor_decompositions": sorted(
+            aggregate_floors, key=lambda item: item["floor_id"]),
         "legacy_pre_coefficient_floor_partition": aggregate_partition,
         "coefficient_floor_partition": aggregate_partition})
     aggregate_forecast = output_forecast(
-        {2: (32,)}, [0], 2, False, aggregate_required)
+        {2: aggregate_resolutions}, [0], 2, False, aggregate_required)
     aggregate_preflight = {field: 0 for field in PREFLIGHT_FIELDS}
     aggregate_preflight.update({
         "schema": SCHEMA, "state": "preflight", "orders": [2],
-        "resolutions": [32], "resolutions_by_order": {"2": [32]},
+        "resolutions": list(aggregate_resolutions),
+        "resolutions_by_order": {"2": list(aggregate_resolutions)},
         "phases": [0], "ranks": 2, "campaign_mode": "accepted_frozen_window",
         "stage_id": None, "frozen_window_sha256": "7" * 64,
-        "run_tuples": [[2, 32, 0]],
+        "run_tuples": [list(item) for item in aggregate_required],
         "domain_certification": validate_certified_domain(
-            QUALIFICATION_DOMAIN, {2: (32,)}, True),
+            QUALIFICATION_DOMAIN, {2: aggregate_resolutions}, True),
         "series_manifest_sha256": "4" * 64,
         "search_manifest_sha256": sha256(
             root / "tst/inputs/z4c_cartoon_mms_search_manifest.json"),
@@ -1745,7 +1782,7 @@ def self_test_cpu_audit_policy() -> None:
     validate_final_reference_aggregates(
         aggregate_convergence, aggregate_preflight, aggregate_artifacts,
         aggregate_execution, 2, "7" * 64, aggregate_required,
-        aggregate_record_keys, {aggregate_exact_key}, aggregate_policy_sha, False)
+        aggregate_record_keys, aggregate_exact_keys, aggregate_policy_sha, False)
     for label, mutation in (
         ("failed reference convergence", {"failures": ["rate miss"],
                                            "passed": False}),
@@ -1758,13 +1795,13 @@ def self_test_cpu_audit_policy() -> None:
             lambda edit=mutation: validate_final_reference_aggregates(
                 {**aggregate_convergence, **edit}, aggregate_preflight,
                 aggregate_artifacts, aggregate_execution, 2, "7" * 64,
-                aggregate_required, aggregate_record_keys, {aggregate_exact_key},
+                aggregate_required, aggregate_record_keys, aggregate_exact_keys,
                 aggregate_policy_sha, False), label)
     for label, mutation in (
         ("empty convergence inventory", {"records": []}),
         ("truncated convergence inventory", {"records": aggregate_records[:1]}),
         ("duplicate convergence inventory",
-         {"records": [aggregate_record, aggregate_record]}),
+         {"records": [aggregate_records[0], aggregate_records[0]]}),
         ("empty exact inventory", {"exact_records": []}),
         ("inconsistent convergence partition",
          {"coefficient_floor_partition":
@@ -1775,14 +1812,14 @@ def self_test_cpu_audit_policy() -> None:
             lambda edit=mutation: validate_final_reference_aggregates(
                 {**aggregate_convergence, **edit}, aggregate_preflight,
                 aggregate_artifacts, aggregate_execution, 2, "7" * 64,
-                aggregate_required, aggregate_record_keys, {aggregate_exact_key},
+                aggregate_required, aggregate_record_keys, aggregate_exact_keys,
                 aggregate_policy_sha, False), label)
     expect_runtime_error(
         lambda: validate_final_reference_aggregates(
             aggregate_convergence,
             {**aggregate_preflight, "run_tuples": []}, aggregate_artifacts,
             aggregate_execution, 2, "7" * 64, aggregate_required,
-            aggregate_record_keys, {aggregate_exact_key}, aggregate_policy_sha,
+            aggregate_record_keys, aggregate_exact_keys, aggregate_policy_sha,
             False),
         "mutated final preflight")
     for label, mutation in (
@@ -1792,7 +1829,7 @@ def self_test_cpu_audit_policy() -> None:
             lambda edit=mutation: validate_final_reference_aggregates(
                 aggregate_convergence, {**aggregate_preflight, **edit},
                 aggregate_artifacts, aggregate_execution, 2, "7" * 64,
-                aggregate_required, aggregate_record_keys, {aggregate_exact_key},
+                aggregate_required, aggregate_record_keys, aggregate_exact_keys,
                 aggregate_policy_sha, False), label)
     expect_runtime_error(
         lambda: reference_artifact_files(
@@ -1802,6 +1839,49 @@ def self_test_cpu_audit_policy() -> None:
         lambda: reference_artifact_files(
             {**aggregate_artifacts, "unexpected.json": "0" * 64}),
         "unexpected convergence artifact")
+    with tempfile.TemporaryDirectory(prefix="cartoon-mms-aggregate-products-") \
+            as directory:
+        archived = Path(directory) / "archived"
+        recomputed = Path(directory) / "recomputed"
+        archived.mkdir()
+        recomputed.mkdir()
+        for product_root in (archived, recomputed):
+            write_atomic(product_root / "convergence.json", aggregate_convergence)
+            for name in RECOMPUTED_CONVERGENCE_PRODUCTS - {"convergence.json"}:
+                (product_root / name).write_text(
+                    f"deterministic writer product {name}\n", encoding="utf-8")
+        require_recomputed_reference_products(archived, recomputed)
+        product_mutations = (
+            ("sample error", lambda value: value["records"][0]["samples"][0].
+             __setitem__("error", 2.0)),
+            ("sample direct delta", lambda value: value["records"][0]["samples"][0].
+             __setitem__("direct_delta", 1.0)),
+            ("sample applied floor", lambda value: value["records"][0]["samples"][0].
+             __setitem__("applied_floor", 1.0)),
+            ("record rate", lambda value: value["records"][0]["rates"].
+             __setitem__(0, 0.0)),
+            ("record rate status", lambda value: value["records"][0]["rate_status"].
+             __setitem__(0, "excluded_saturated")),
+            ("exact bound", lambda value: value["exact_records"][0].
+             __setitem__("bound", 0.0)),
+            ("exact value", lambda value: value["exact_records"][0].
+             __setitem__("value", 1.0)),
+            ("exact direct delta", lambda value: value["exact_records"][0][
+             "direct_delta_linfinity"].__setitem__("shared", 1.0)),
+            ("floor decomposition", lambda value: value["floor_decompositions"][0].
+             __setitem__("clean_floor", 0.0)),
+            ("nondictionary floor", lambda value: value["floor_decompositions"].
+             append("malformed")),
+        )
+        for label, mutate in product_mutations:
+            changed = json.loads(json.dumps(aggregate_convergence))
+            mutate(changed)
+            write_atomic(archived / "convergence.json", changed)
+            expect_runtime_error(
+                lambda: require_recomputed_reference_products(
+                    archived, recomputed), label)
+        write_atomic(archived / "convergence.json", aggregate_convergence)
+        require_recomputed_reference_products(archived, recomputed)
     prior_tuples = {(order, resolution, phase) for order in (2, 4, 6)
                     for resolution in DIAGNOSTIC_RESOLUTIONS for phase in range(8)}
     prior_tuples.update({(2, 512, 0), (2, 1024, 0)})
@@ -3676,6 +3756,25 @@ def validate_final_reference_aggregates(
         raise RuntimeError("rank-reference preflight identity differs")
 
 
+RECOMPUTED_CONVERGENCE_PRODUCTS = {
+    "convergence.json", "convergence.csv",
+    "convergence_rates.pgfplots.dat", "convergence_plot.tex",
+}
+
+
+def require_recomputed_reference_products(archived: Path, recomputed: Path) -> None:
+    require_exact_regular_files(
+        recomputed, RECOMPUTED_CONVERGENCE_PRODUCTS,
+        "recomputed rank-reference convergence products")
+    for name in sorted(RECOMPUTED_CONVERGENCE_PRODUCTS):
+        archived_path = archived / name
+        recomputed_path = recomputed / name
+        if (not archived_path.is_file() or archived_path.is_symlink() or
+                archived_path.read_bytes() != recomputed_path.read_bytes()):
+            raise RuntimeError(
+                f"rank-reference {name} differs from verified-case recomputation")
+
+
 def reference_artifact_files(artifacts: object) -> set[str]:
     allowed = {frozenset(FINAL_CONVERGENCE_ARTIFACTS),
                frozenset(FINAL_CONVERGENCE_ARTIFACTS | OPTIONAL_RANK_ARTIFACTS)}
@@ -3829,6 +3928,22 @@ def verify_rank_reference_root(
         str(accepted_window_sha256), required, expected_record_keys,
         expected_exact_keys, canonical_digest(series_inventory["roundoff_policy"]),
         OPTIONAL_RANK_ARTIFACTS <= set(artifacts))
+    resolutions_by_order = {
+        order: tuple(sorted({resolution for item_order, resolution, _ in required
+                             if item_order == order}))
+        for order in sorted({item[0] for item in required})}
+    with tempfile.TemporaryDirectory(prefix="cartoon-mms-rank-reference-") as directory:
+        recomputed = Path(directory)
+        failures = convergence_gate(
+            verified_cases, reference_root, recomputed,
+            Path(__file__).resolve().parents[3] /
+            "tst/unit/z4c/z4c_cartoon_derivatives_series.json",
+            resolutions_by_order,
+            evidence_scope="fresh_single_source_final_qualification")
+        if failures:
+            raise RuntimeError(
+                "rank-reference verified cases fail fresh aggregate recomputation")
+        require_recomputed_reference_products(reference_root, recomputed)
     expected_entries = ({"campaign.json", "frozen_window_execution.json",
                          "authorization"} | artifact_files |
                         {f"{case['case_id']}-{case['case_uuid']}"
