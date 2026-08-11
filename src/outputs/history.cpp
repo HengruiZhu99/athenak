@@ -22,6 +22,7 @@
 #include "eos/eos.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
+#include "z4c/cartoon_meridional_sampler.hpp"
 #include "z4c/curvature_diagnostics.hpp"
 #include "z4c/fastflow.hpp"
 #include "z4c/z4c.hpp"
@@ -243,6 +244,8 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
 
 void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   auto &opt = pm->pmb_pack->pz4c->opt;
+  const bool cartoon =
+      pm->pmb_pack->z4c_symmetry.mode == z4c::Z4cSymmetryMode::cartoon_so2;
   // set number of and names of history variables for z4c
   const int kretschmann_index = opt.history_kretschmann ? 11 : -1;
   const int max_refinement_level_index = opt.history_kretschmann ? 12 : 11;
@@ -250,7 +253,10 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   const int horizon_status_index = max_meshblocks_per_rank_index + 1;
   const int horizon_last_search_cycle_index = horizon_status_index + 1;
   const int cycle_index = horizon_last_search_cycle_index + 1;
-  pdata->nhist = cycle_index + 1;
+  const int central_lapse_index = cartoon ? cycle_index + 1 : -1;
+  const int central_proper_time_index = cartoon ? central_lapse_index + 1 : -1;
+  const int central_kretschmann_index = cartoon ? central_proper_time_index + 1 : -1;
+  pdata->nhist = cartoon ? central_kretschmann_index + 1 : cycle_index + 1;
   pdata->label[0] = "C-norm2";
   pdata->label[1] = "H-norm2";
   pdata->label[2] = "M-norm2";
@@ -279,6 +285,14 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->reduction[horizon_status_index] = HistoryData::Reduction::max;
   pdata->reduction[horizon_last_search_cycle_index] = HistoryData::Reduction::max;
   pdata->reduction[cycle_index] = HistoryData::Reduction::max;
+  if (cartoon) {
+    pdata->label[central_lapse_index] = "axisLapse";
+    pdata->label[central_proper_time_index] = "axisTau";
+    pdata->label[central_kretschmann_index] = "axisKret";
+    pdata->reduction[central_lapse_index] = HistoryData::Reduction::max;
+    pdata->reduction[central_proper_time_index] = HistoryData::Reduction::max;
+    pdata->reduction[central_kretschmann_index] = HistoryData::Reduction::max;
+  }
 
   // capture class variabels for kernel
   auto &u0_ = pm->pmb_pack->pz4c->u0;
@@ -288,6 +302,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   auto &adm = pm->pmb_pack->padm->adm;
 
   auto &size = pm->pmb_pack->pmb->mb_size;
+  const z4c::Z4cSymmetryMode symmetry_mode = pm->pmb_pack->z4c_symmetry.mode;
   constexpr int nsum = 9;
 
   // loop over all MeshBlocks in this pack
@@ -313,8 +328,11 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
                                 adm.g_dd(m,0,2,k,j,i), adm.g_dd(m,1,1,k,j,i),
                                 adm.g_dd(m,1,2,k,j,i), adm.g_dd(m,2,2,k,j,i));
 
-    Real vol = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3
-               * std::sqrt(std::abs(detg));
+    const Real signed_rho = size.d_view(m).x1min +
+                            (i - is + 0.5) * size.d_view(m).dx1;
+    const Real vol = z4c::Z4cDiagnosticCellMeasure(
+        symmetry_mode, signed_rho, size.d_view(m).dx1, size.d_view(m).dx2,
+        size.d_view(m).dx3, detg);
 
     // Excise the punctures based on chi
     array_sum::GlobalSum hvars;
@@ -393,6 +411,19 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
         pm->pmb_pack->pz4c->pfastflow[0]->last_search_cycle);
   }
   pdata->hdata[cycle_index] = static_cast<Real>(pm->ncycle);
+  if (cartoon) {
+    const auto &central = pm->pmb_pack->z4c_restart_state.central;
+    const auto validation = z4c::ValidateZ4cCentralRestartState(central);
+    if (!validation.valid || !central.initialized) {
+      std::cerr << "### FATAL ERROR in " << __FILE__
+                << ": invalid Cartoon central history state: "
+                << validation.error << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    pdata->hdata[central_lapse_index] = central.previous_lapse;
+    pdata->hdata[central_proper_time_index] = central.proper_time;
+    pdata->hdata[central_kretschmann_index] = central.abs_kretschmann;
+  }
 
   return;
 }

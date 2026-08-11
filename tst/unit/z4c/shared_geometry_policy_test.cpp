@@ -15,6 +15,7 @@
 #include <Kokkos_Core.hpp>
 
 #include "athena.hpp"
+#include "z4c/cartoon_meridional_sampler.hpp"
 #include "z4c/cartoon_derivatives.hpp"
 #include "z4c/curvature_diagnostics.hpp"
 #include "z4c/weyl_tetrad.hpp"
@@ -56,6 +57,62 @@ struct PointVector {
 };
 
 bool NearlyEqual(Real left, Real right, Real tolerance);
+
+bool CheckMeridionalMeasureAndState() {
+  Kokkos::View<Real *> results("Cartoon meridional helper results", 5);
+  DvceArray5D<Real> scalar("Cartoon bilinear scalar", 1, 1, 1, 4, 4);
+  auto scalar_host = Kokkos::create_mirror_view(scalar);
+  for (int j = 0; j < 4; ++j) {
+    for (int i = 0; i < 4; ++i) scalar_host(0, 0, 0, j, i) = 2.0 + 3.0 * i + 5.0 * j;
+  }
+  Kokkos::deep_copy(scalar, scalar_host);
+  z4c::CartoonMeridionalStencil stencil;
+  stencil.local_block = 0;
+  stencil.k = 0;
+  stencil.i0 = 1;
+  stencil.j0 = 1;
+  stencil.wi = 0.25;
+  stencil.wj = 0.75;
+  Kokkos::parallel_for(
+      "Cartoon meridional helper oracle", Kokkos::RangePolicy<>(0, 1),
+      KOKKOS_LAMBDA(const int) {
+        results(0) = z4c::Z4cDiagnosticCellMeasure(
+            z4c::Z4cSymmetryMode::cartoon_so2, 0.5, 0.5, 0.5, 9.0, 4.0);
+        results(1) = z4c::Z4cDiagnosticCellMeasure(
+            z4c::Z4cSymmetryMode::cartoon_so2, -0.5, 0.5, 0.5, 9.0, 4.0);
+        results(2) = z4c::Z4cDiagnosticCellMeasure(
+            z4c::Z4cSymmetryMode::cartesian3d, -0.5, 0.5, 0.25, 2.0, 4.0);
+        results(3) = z4c::SampleCartoonMeridionalScalar(scalar, 0, stencil);
+        results(4) = z4c::Z4cAggregateConstraintNorm(25.0);
+      });
+  auto host = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), results);
+  if (!NearlyEqual(host(0), 0.25 * z4c::kCartoonTwoPi, 1.0e-15) ||
+      host(1) != 0.0 || !NearlyEqual(host(2), 0.5, 1.0e-15) ||
+      !NearlyEqual(host(3), 2.0 + 3.0 * 1.25 + 5.0 * 1.75, 1.0e-15) ||
+      host(4) != 5.0) {
+    return false;
+  }
+
+  z4c::Z4cCentralRestartState state;
+  if (!z4c::ValidateZ4cCentralRestartState(state).valid ||
+      !z4c::UpdateZ4cCentralRestartState(
+           &state, 1.0, 0.25, 3.0, 7, 2, 0, 0.0, false).valid ||
+      !z4c::UpdateZ4cCentralRestartState(
+           &state, 0.5, 0.125, 4.0, 9, 3, 1, 0.5, false).valid ||
+      !NearlyEqual(state.proper_time, 0.375, 1.0e-15) ||
+      !z4c::UpdateZ4cCentralRestartState(
+           &state, 0.5, 0.125, 4.0, 9, 3, 1, 0.5, true).valid ||
+      z4c::UpdateZ4cCentralRestartState(
+          &state, 0.4, 0.1, 4.0, 9, 3, 3, 1.0, false).valid) {
+    return false;
+  }
+  z4c::Z4cCentralRestartState uninitialized;
+  return !z4c::UpdateZ4cCentralRestartState(
+              &uninitialized, 1.0, 0.0, 0.0, 0, 0, 0, 0.0, true).valid &&
+         !z4c::UpdateZ4cCentralRestartState(
+              &uninitialized, std::numeric_limits<double>::infinity(), 0.0,
+              0.0, 0, 0, 0, 0.0, false).valid;
+}
 
 bool CheckWeylTetradComponentMap() {
   for (const Real rho : {Real(-0.75), Real(0.75)}) {
@@ -382,6 +439,7 @@ int main(int argc, char *argv[]) {
   Kokkos::initialize(argc, argv);
   const bool passed = CheckWeylCoordinatePolicy() &&
                       CheckWeylTetradComponentMap() &&
+                      CheckMeridionalMeasureAndState() &&
       CheckGaugeVectorFamilies<2>() && CheckGaugeVectorFamilies<3>() &&
       CheckGaugeVectorFamilies<4>() && CheckSharedGeometry<2>(true) &&
       CheckSharedGeometry<3>(true) &&

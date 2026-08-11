@@ -173,6 +173,52 @@ def main() -> int:
     require(physical.index("if (pm->two_d) return;") < physical.index('"z4cbc_x3"'),
             "collapsed physical boundary path does not stop before x3 faces")
 
+    # The persisted central scalar is the square root of the production aggregate
+    # con.C.  Freeze both sides of that contract so it cannot silently become a
+    # hand-picked subset of constraint components.
+    sampler = (source_dir / "src/z4c/cartoon_meridional_sampler.hpp").read_text(
+        encoding="utf-8")
+    require("SampleCartoonMeridionalScalar(constraints, 0, stencil)" in sampler,
+            "central sampler does not consume the production con.C aggregate")
+    require("Z4cAggregateConstraintNorm(c)" in sampler,
+            "central sampler does not apply the aggregate constraint norm")
+    for term in ("SQR(con.H", "con.M(m,k,j,i)", "SQR(z4c.vTheta", "4.0*con.Z"):
+        require(term in adm_source,
+                f"production con.C omitted full constraint-inventory term {term!r}")
+    history = (source_dir / "src/outputs/history.cpp").read_text(encoding="utf-8")
+    require(history.count("Z4cDiagnosticCellMeasure(") == 1 and
+            'Kokkos::parallel_reduce(\n      "Z4cHistoryMaxAbsK"' in history and
+            "Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji)" in history,
+            "Cartoon volume policy leaked into full-plane extrema")
+
+    # Initial sampling follows initialized ADM/constraints, while accepted-step
+    # sampling follows the after-timeintegrator task list (whose Z4c tail refreshes
+    # ADM and constraints) and the authoritative time/cycle increment.
+    driver = (source_dir / "src/driver/driver.cpp").read_text(encoding="utf-8")
+    initialize = driver[driver.index("void Driver::Initialize(Mesh"):
+                        driver.index("void Driver::Execute(Mesh")]
+    require(initialize.index("InitBoundaryValuesAndPrimitives(pmesh)") <
+            initialize.index("pz4c->ConvertZ4cToADM(this, nexp_stages)") <
+            initialize.index("pz4c->ADMConstraints_(this, nexp_stages)") <
+            initialize.index("UpdateCartoonCentralState(pmesh, res_flag)") <
+            initialize.index("for (auto &out : pout->pout_list)"),
+            "central initialization does not follow fresh ADM/constraints")
+    execute = driver[driver.index("void Driver::Execute(Mesh"):
+                     driver.index("void Driver::Finalize(Mesh")]
+    require(execute.index('ExecuteTaskList(pmesh, "after_stagen", stage)') <
+            execute.index('ExecuteTaskList(pmesh, "after_timeintegrator", 1)') <
+            execute.index("pmesh->time = pmesh->time + pmesh->dt") <
+            execute.index("pmesh->ncycle++") <
+            execute.index("UpdateCartoonCentralState(pmesh, false)") <
+            execute.index("for (auto &out : pout->pout_list)"),
+            "accepted-step central sampling is not post-task/post-time and pre-output")
+    tasks = (source_dir / "src/z4c/z4c_tasks.cpp").read_text(encoding="utf-8")
+    require(tasks.index("&Z4c::ConvertZ4cToADM") <
+            tasks.index("&Z4c::ADMConstraints_") and
+            '"Z4c_Z4c2ADM",\n                 Task_Run' in tasks and
+            '"Z4c_ADMC", Task_End' in tasks,
+            "Z4c post-step task tail does not initialize ADM/constraints before completion")
+
     validator = (source_dir / "src/mesh/meshblock_pack.cpp").read_text(encoding="utf-8")
     require('input.problem_generator == "z4c_cartoon_derivatives"' in
             (source_dir / "src/z4c/z4c_symmetry.cpp").read_text(encoding="utf-8"),

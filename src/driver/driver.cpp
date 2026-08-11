@@ -19,6 +19,7 @@
 #include "outputs/outputs.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
+#include "z4c/cartoon_meridional_sampler.hpp"
 #include "z4c/z4c.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "ion-neutral/ion-neutral.hpp"
@@ -329,6 +330,21 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
   mhd::MHD *pmhd = pmesh->pmb_pack->pmhd;
   radiation::Radiation *prad = pmesh->pmb_pack->prad;
   z4c::Z4c *pz4c = pmesh->pmb_pack->pz4c;
+  if (pz4c != nullptr &&
+      pmesh->pmb_pack->z4c_symmetry.mode == z4c::Z4cSymmetryMode::cartoon_so2) {
+    // Fresh and restart paths both need current derived fields before the
+    // restart-authoritative central sample is initialized or refreshed.
+    (void) pz4c->ConvertZ4cToADM(this, nexp_stages);
+    (void) pz4c->ADMConstraints_(this, nexp_stages);
+    const std::string central_error =
+        z4c::UpdateCartoonCentralState(pmesh, res_flag);
+    if (!central_error.empty()) {
+      std::cerr << "### FATAL ERROR in " << __FILE__
+                << ": failed to initialize Cartoon central diagnostics: "
+                << central_error << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
   if (time_evolution != TimeEvolution::tstatic) {
     if (phydro != nullptr) {
       (void) pmesh->pmb_pack->phydro->NewTimeStep(this, nexp_stages);
@@ -424,6 +440,16 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
       pmesh->time = pmesh->time + pmesh->dt;
       pmesh->ncycle++;
       pmesh->dt_last_completed = pmesh->dt;
+      if (pmesh->pmb_pack->pz4c != nullptr) {
+        const std::string central_error =
+            z4c::UpdateCartoonCentralState(pmesh, false);
+        if (!central_error.empty()) {
+          std::cerr << "### FATAL ERROR in " << __FILE__
+                    << ": failed to advance Cartoon central diagnostics: "
+                    << central_error << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+      }
       nmb_updated_ += pmesh->nmb_total;
       npart_updated_ += pmesh->nprtcl_total;
       // load balancing efficiency

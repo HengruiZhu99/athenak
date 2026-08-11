@@ -7,7 +7,9 @@
 //! \brief Immutable host-only Z4c restart carrier implementation.
 
 #include <cmath>
+#include <cstdlib>
 #include <iomanip>
+#include <iostream>
 #include <limits>
 #include <sstream>
 #include <string>
@@ -115,7 +117,9 @@ Z4cRestartResult RequireKeys(ParameterInput *pin) {
            "requested_spatial_order", "effective_spatial_order", "stencil_width",
            "mesh_nx1", "mesh_nx2", "mesh_nx3", "meshblock_nx1",
            "meshblock_nx2", "meshblock_nx3",
-           "central_schema", "central_proper_time", "central_previous_lapse",
+           "central_schema", "central_initialized", "central_proper_time",
+           "central_previous_lapse", "central_constraint_norm",
+           "central_abs_kretschmann", "central_sample_gid", "central_sample_level",
            "central_last_cycle", "central_last_time", "fastflow_schema",
            "fastflow_coefficient_count", "fastflow_coefficients",
            "fastflow_surface_mode", "fastflow_selected_branch", "fastflow_center_count",
@@ -208,16 +212,17 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
   }
 
   READ_INTEGER("central_schema", state->central.schema)
+  READ_BOOLEAN("central_initialized", state->central.initialized)
   READ_DOUBLE("central_proper_time", state->central.proper_time)
   READ_DOUBLE("central_previous_lapse", state->central.previous_lapse)
+  READ_DOUBLE("central_constraint_norm", state->central.constraint_norm)
+  READ_DOUBLE("central_abs_kretschmann", state->central.abs_kretschmann)
+  READ_INTEGER("central_sample_gid", state->central.sample_gid)
+  READ_INTEGER("central_sample_level", state->central.sample_level)
   READ_INTEGER("central_last_cycle", state->central.last_cycle)
   READ_DOUBLE("central_last_time", state->central.last_time)
-  if (state->central.schema != Z4cCentralRestartState::kCurrentSchema ||
-      !std::isfinite(state->central.proper_time) ||
-      !std::isfinite(state->central.previous_lapse) ||
-      !std::isfinite(state->central.last_time) || state->central.last_cycle < -1) {
-    return Invalid("invalid axis-central integration state in <z4c_restart>");
-  }
+  const auto central_validation = ValidateZ4cCentralRestartState(state->central);
+  if (!central_validation.valid) return central_validation;
 
   READ_INTEGER("fastflow_schema", state->fastflow.schema)
   int coefficient_count = 0;
@@ -325,8 +330,13 @@ Z4cRestartResult CompareCarrierParameters(ParameterInput *pin,
   COMPARE_INTEGER("meshblock_nx2", stored.mesh.meshblock_nx2)
   COMPARE_INTEGER("meshblock_nx3", stored.mesh.meshblock_nx3)
   COMPARE_INTEGER("central_schema", stored.central.schema)
+  COMPARE_BOOLEAN("central_initialized", stored.central.initialized)
   COMPARE_DOUBLE("central_proper_time", stored.central.proper_time)
   COMPARE_DOUBLE("central_previous_lapse", stored.central.previous_lapse)
+  COMPARE_DOUBLE("central_constraint_norm", stored.central.constraint_norm)
+  COMPARE_DOUBLE("central_abs_kretschmann", stored.central.abs_kretschmann)
+  COMPARE_INTEGER("central_sample_gid", stored.central.sample_gid)
+  COMPARE_INTEGER("central_sample_level", stored.central.sample_level)
   COMPARE_INTEGER("central_last_cycle", stored.central.last_cycle)
   COMPARE_DOUBLE("central_last_time", stored.central.last_time)
   COMPARE_INTEGER("fastflow_schema", stored.fastflow.schema)
@@ -535,6 +545,12 @@ Z4cRestartResult ValidateZ4cRestartBinaryDimensions(
 }
 
 void StoreZ4cRestartState(ParameterInput *pin, const Z4cRestartState &state) {
+  const auto central_validation = ValidateZ4cCentralRestartState(state.central);
+  if (!central_validation.valid) {
+    std::cerr << "### FATAL ERROR in " << __FILE__ << ": "
+              << central_validation.error << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   pin->SetInteger(kZ4cRestartBlock, "carrier_schema", state.carrier_schema);
   pin->SetString(kZ4cRestartBlock, "symmetry", ToString(state.config.mode));
   pin->SetString(kZ4cRestartBlock, "coordinate_map",
@@ -552,10 +568,19 @@ void StoreZ4cRestartState(ParameterInput *pin, const Z4cRestartState &state) {
   pin->SetInteger(kZ4cRestartBlock, "meshblock_nx2", state.mesh.meshblock_nx2);
   pin->SetInteger(kZ4cRestartBlock, "meshblock_nx3", state.mesh.meshblock_nx3);
   pin->SetInteger(kZ4cRestartBlock, "central_schema", state.central.schema);
+  pin->SetBoolean(kZ4cRestartBlock, "central_initialized",
+                  state.central.initialized);
   pin->SetString(kZ4cRestartBlock, "central_proper_time",
                  FormatDouble(state.central.proper_time));
   pin->SetString(kZ4cRestartBlock, "central_previous_lapse",
                  FormatDouble(state.central.previous_lapse));
+  pin->SetString(kZ4cRestartBlock, "central_constraint_norm",
+                 FormatDouble(state.central.constraint_norm));
+  pin->SetString(kZ4cRestartBlock, "central_abs_kretschmann",
+                 FormatDouble(state.central.abs_kretschmann));
+  pin->SetInteger(kZ4cRestartBlock, "central_sample_gid", state.central.sample_gid);
+  pin->SetInteger(kZ4cRestartBlock, "central_sample_level",
+                  state.central.sample_level);
   pin->SetInteger(kZ4cRestartBlock, "central_last_cycle", state.central.last_cycle);
   pin->SetString(kZ4cRestartBlock, "central_last_time",
                  FormatDouble(state.central.last_time));

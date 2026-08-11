@@ -175,12 +175,35 @@ def main():
     for key in (
         b"<z4c_restart>",
         b"carrier_schema",
+        b"central_initialized",
         b"central_proper_time",
+        b"central_constraint_norm",
+        b"central_abs_kretschmann",
         b"fastflow_coefficients",
         b"fastflow_last_search_time",
     ):
         if key not in restart_data:
             raise RuntimeError(f"restart ParameterDump omitted {key!r}")
+
+    # An ordinary Cartesian run retains a valid, inert schema-v2 central carrier.
+    # These defaults are intentionally preserved when no Cartoon state is sampled.
+    for key, value in (
+        (b"central_schema", b"2"),
+        (b"central_initialized", b"0"),
+        (b"central_proper_time", b"0"),
+        (b"central_previous_lapse", b"1"),
+        (b"central_constraint_norm", b"0"),
+        (b"central_abs_kretschmann", b"0"),
+        (b"central_sample_gid", b"-1"),
+        (b"central_sample_level", b"-1"),
+        (b"central_last_cycle", b"-1"),
+        (b"central_last_time", b"0"),
+    ):
+        if not re.search(rb"\b" + key + rb"\s*=\s*" + re.escape(value) + rb"\b",
+                         restart_data):
+            raise RuntimeError(
+                f"fresh Cartesian restart has invalid {key.decode()} default"
+            )
 
     roundtrip = args.work_dir / "roundtrip"
     roundtrip.mkdir()
@@ -228,11 +251,21 @@ def main():
         ("z4c_restart/effective_spatial_order=4", "z4c_restart",
          "effective_spatial_order", "2", "4"),
         ("z4c_restart/stencil_width=3", "z4c_restart", "stencil_width", "2", "3"),
-        ("z4c_restart/central_schema=2", "z4c_restart", "central_schema", "1", "2"),
+        ("z4c_restart/central_schema=3", "z4c_restart", "central_schema", "2", "3"),
+        ("z4c_restart/central_initialized=1", "z4c_restart",
+         "central_initialized", "0", "1"),
         ("z4c_restart/central_proper_time=1", "z4c_restart", "central_proper_time", "0", "1"),
         ("z4c_restart/central_proper_time=garbage", "z4c_restart",
          "central_proper_time", "0", "garbage"),
         ("z4c_restart/central_previous_lapse=2", "z4c_restart", "central_previous_lapse", "1", "2"),
+        ("z4c_restart/central_constraint_norm=2", "z4c_restart",
+         "central_constraint_norm", "0", "2"),
+        ("z4c_restart/central_abs_kretschmann=2", "z4c_restart",
+         "central_abs_kretschmann", "0", "2"),
+        ("z4c_restart/central_sample_gid=0", "z4c_restart",
+         "central_sample_gid", "-1", "0"),
+        ("z4c_restart/central_sample_level=0", "z4c_restart",
+         "central_sample_level", "-1", "0"),
         ("z4c_restart/central_last_cycle=0", "z4c_restart", "central_last_cycle", "-1", "0"),
         ("z4c_restart/central_last_time=1", "z4c_restart", "central_last_time", "0", "1"),
         ("z4c_restart/fastflow_schema=2", "z4c_restart", "fastflow_schema", "1", "2"),
@@ -372,12 +405,51 @@ def main():
     run([args.athena, "-r", schema], args.work_dir, False,
         ("invalid restart-origin Z4c carrier", "<z4c_restart>/carrier_schema=2"))
 
+    # The central schema is deliberately fail-closed: schema-1 carriers lack the
+    # new constraint/curvature/owner fields and are never silently inferred.
+    old_central_schema = args.work_dir / "old_central_schema.rst"
+    old_central_schema.write_bytes(
+        replace_block_value(restart_data, "z4c_restart", "central_schema", "1")
+    )
+    output = run(
+        [args.athena, "-r", old_central_schema], args.work_dir, False,
+        ("invalid restart-origin Z4c carrier",
+         "invalid axis-central integration state in <z4c_restart>"),
+    )
+    if "Root grid" in output or "AssembleZ4cTasks" in output:
+        raise RuntimeError("old central schema reached allocation")
+
+    # Every persisted central diagnostic is strict finite metadata. Invalid values and
+    # an initialized flag without owner/cycle metadata fail before Mesh construction.
+    for key, replacement in (
+        ("central_proper_time", "nan"),
+        ("central_previous_lapse", "-1"),
+        ("central_constraint_norm", "inf"),
+        ("central_abs_kretschmann", "nan"),
+        ("central_initialized", "1"),
+    ):
+        corrupted = args.work_dir / f"invalid_{key}.rst"
+        corrupted.write_bytes(
+            replace_block_value(restart_data, "z4c_restart", key, replacement)
+        )
+        output = run(
+            [args.athena, "-r", corrupted], args.work_dir, False,
+            ("invalid restart-origin Z4c carrier", "axis-central"),
+        )
+        if "Root grid" in output or "AssembleZ4cTasks" in output:
+            raise RuntimeError(f"invalid {key} reached allocation:\n{output}")
+
     # Seed non-default central and reserved FastFlow values in the authoritative origin,
     # then verify that a compatible restart restores and reserializes every value.
     seeded_data = restart_data
     for key, old, new in (
+        ("central_initialized", "0", "1"),
         ("central_proper_time", "0", "2"),
         ("central_previous_lapse", "1", "3"),
+        ("central_constraint_norm", "0", "4"),
+        ("central_abs_kretschmann", "0", "5"),
+        ("central_sample_gid", "-1", "06"),
+        ("central_sample_level", "-1", "07"),
         ("central_last_cycle", "-1", "07"),
         ("central_last_time", "0", "4"),
         ("fastflow_coefficient_count", "0", "1"),
@@ -402,8 +474,13 @@ def main():
         ("AssembleZ4cTasks",))
     restored = sorted((seeded_run / "rst").glob("*.rst"))[0].read_bytes()
     for key, value in (
+        (b"central_initialized", b"1"),
         (b"central_proper_time", b"2"),
         (b"central_previous_lapse", b"3"),
+        (b"central_constraint_norm", b"4"),
+        (b"central_abs_kretschmann", b"5"),
+        (b"central_sample_gid", b"6"),
+        (b"central_sample_level", b"7"),
         (b"central_last_cycle", b"7"),
         (b"central_last_time", b"4"),
         (b"fastflow_coefficient_count", b"1"),
