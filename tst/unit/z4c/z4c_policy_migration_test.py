@@ -173,15 +173,32 @@ def main() -> int:
     require(physical.index("if (pm->two_d) return;") < physical.index('"z4cbc_x3"'),
             "collapsed physical boundary path does not stop before x3 faces")
 
-    # The persisted central scalar is the square root of the production aggregate
-    # con.C.  Freeze both sides of that contract so it cannot silently become a
-    # hand-picked subset of constraint components.
+    # The persisted central scalar reconstructs the production aggregate con.C from
+    # exactly four active physical support cells.  Curvature may never be evaluated
+    # at the old ghost-backed bilinear interpolation sites.
     sampler = (source_dir / "src/z4c/cartoon_meridional_sampler.hpp").read_text(
         encoding="utf-8")
-    require("SampleCartoonMeridionalScalar(constraints, 0, stencil)" in sampler,
-            "central sampler does not consume the production con.C aggregate")
-    require("Z4cAggregateConstraintNorm(c)" in sampler,
+    central_start = sampler.index(
+        "inline CartoonCentralSample SampleCartoonCentralDiagnostics")
+    central_end = sampler.index("inline const char *CartoonCentralSampleStatusMessage")
+    central = strip_comments_preserving_lines(sampler[central_start:central_end])
+    require("Kokkos::RangePolicy<DevExeSpace>(0, 4)" in central and
+            "const CartoonCentralSupport point = supports.point[s]" in central,
+            "central sampler does not evaluate exactly four physical supports")
+    require("constraints(point.local_block, 0, point.k, point.j, point.i)" in central,
+            "central sampler does not consume production con.C at active supports")
+    require("ReconstructCartoonCentralFourPoint" in central and
+            "Z4cAggregateConstraintNorm(0.25 * constraint_sum)" in sampler,
             "central sampler does not apply the aggregate constraint norm")
+    require("CartoonCentralActiveCellHasStoredDerivativeHalo" in sampler and
+            "ValidateCartoonCentralSupportSet<NGHOST>" in central,
+            "central curvature supports lack an explicit active-halo contract")
+    require("point.j, point.i" in central and "stencil.i0" not in central and
+            "stencil.j0" not in central,
+            "central curvature can still be evaluated at a ghost interpolation site")
+    require("values[12 + s] != 1.0" in central and
+            "MPI_Allreduce(MPI_IN_PLACE, values, 20" in central,
+            "central physical supports do not fail closed on per-support ownership")
     for term in ("SQR(con.H", "con.M(m,k,j,i)", "SQR(z4c.vTheta", "4.0*con.Z"):
         require(term in adm_source,
                 f"production con.C omitted full constraint-inventory term {term!r}")

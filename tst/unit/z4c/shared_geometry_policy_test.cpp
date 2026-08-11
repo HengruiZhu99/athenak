@@ -58,6 +58,107 @@ struct PointVector {
 
 bool NearlyEqual(Real left, Real right, Real tolerance);
 
+template <int NGHOST>
+bool CheckCentralPhysicalSupportContract() {
+  RegionIndcs indices{};
+  indices.ng = NGHOST;
+  indices.nx1 = 8;
+  indices.nx2 = 8;
+  indices.is = indices.js = NGHOST;
+  indices.ie = indices.je = NGHOST + 7;
+
+  z4c::CartoonCentralSupportSet supports;
+  supports.gid = 13;
+  supports.level = 4;
+  for (int s = 0; s < 4; ++s) {
+    auto &point = supports.point[s];
+    point.matches = 1;
+    point.gid = 20 + s;
+    point.level = supports.level;
+    point.owner_rank = s % 2;
+    point.i = (s & 1) == 0 ? indices.ie : indices.is;
+    point.j = (s & 2) == 0 ? indices.je : indices.js;
+    point.rho = (s & 1) == 0 ? -0.5 : 0.5;
+    point.z = (s & 2) == 0 ? -0.25 : 0.25;
+  }
+  using Status = z4c::CartoonCentralSample::Status;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(supports, indices, 2) !=
+      Status::valid) {
+    return false;
+  }
+
+  auto malformed = supports;
+  malformed.point[0].matches = 0;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
+      Status::missing_support) {
+    return false;
+  }
+  malformed = supports;
+  malformed.point[0].matches = 0;
+  malformed.point[0].covered_at_other_level = true;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
+      Status::mixed_level_support) {
+    return false;
+  }
+  malformed = supports;
+  malformed.point[1].matches = 2;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
+      Status::duplicate_support) {
+    return false;
+  }
+  malformed = supports;
+  malformed.point[2].level += 1;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
+      Status::mixed_level_support) {
+    return false;
+  }
+  malformed = supports;
+  malformed.point[3].owner_rank = 2;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
+      Status::invalid_owner) {
+    return false;
+  }
+  malformed = supports;
+  malformed.point[0].i = indices.is - 1;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
+      Status::insufficient_derivative_halo) {
+    return false;
+  }
+  malformed = supports;
+  malformed.point[3].rho = malformed.point[2].rho;
+  malformed.point[3].z = malformed.point[2].z;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
+      Status::duplicate_support) {
+    return false;
+  }
+
+  // The active values are even in signed rho and deliberately asymmetric in z.
+  // Sentinel NaNs on either side prove reconstruction never consumes ghost values.
+  const Real nan = std::numeric_limits<Real>::quiet_NaN();
+  Real lapse_storage[6] = {nan, 1.0, 1.0, 3.0, 3.0, nan};
+  Real constraint_storage[6] = {nan, 1.0, 1.0, 9.0, 9.0, nan};
+  Real kretschmann_storage[6] = {nan, -2.0, -2.0, -6.0, -6.0, nan};
+  const auto reconstructed = z4c::ReconstructCartoonCentralFourPoint(
+      &lapse_storage[1], &constraint_storage[1], &kretschmann_storage[1]);
+  if (!reconstructed.valid || reconstructed.status != Status::valid ||
+      !NearlyEqual(reconstructed.lapse, 2.0, 1.0e-15) ||
+      !NearlyEqual(reconstructed.constraint_norm, std::sqrt(5.0), 1.0e-15) ||
+      !NearlyEqual(reconstructed.abs_kretschmann, 4.0, 1.0e-15)) {
+    return false;
+  }
+  lapse_storage[2] = nan;
+  if (z4c::ReconstructCartoonCentralFourPoint(
+          &lapse_storage[1], &constraint_storage[1],
+          &kretschmann_storage[1]).status != Status::nonfinite_support) {
+    return false;
+  }
+  lapse_storage[2] = 1.0;
+  constraint_storage[3] = -1.0;
+  return z4c::ReconstructCartoonCentralFourPoint(
+             &lapse_storage[1], &constraint_storage[1],
+             &kretschmann_storage[1]).status == Status::nonfinite_support;
+}
+
 bool CheckMeridionalMeasureAndState() {
   Kokkos::View<Real *> results("Cartoon meridional helper results", 5);
   DvceArray5D<Real> scalar("Cartoon bilinear scalar", 1, 1, 1, 4, 4);
@@ -437,7 +538,10 @@ bool CheckSharedGeometry(const bool minkowski) {
 
 int main(int argc, char *argv[]) {
   Kokkos::initialize(argc, argv);
-  const bool passed = CheckWeylCoordinatePolicy() &&
+  const bool passed = CheckCentralPhysicalSupportContract<2>() &&
+                      CheckCentralPhysicalSupportContract<3>() &&
+                      CheckCentralPhysicalSupportContract<4>() &&
+                      CheckWeylCoordinatePolicy() &&
                       CheckWeylTetradComponentMap() &&
                       CheckMeridionalMeasureAndState() &&
       CheckGaugeVectorFamilies<2>() && CheckGaugeVectorFamilies<3>() &&

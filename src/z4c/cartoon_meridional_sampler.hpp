@@ -195,19 +195,236 @@ struct CartoonCentralSample {
   Real abs_kretschmann = 0.0;
   int gid = -1;
   int level = -1;
+  enum class Status {
+    valid,
+    missing_center_leaf,
+    missing_support,
+    duplicate_support,
+    mixed_level_support,
+    invalid_owner,
+    insufficient_derivative_halo,
+    nonfinite_support
+  } status = Status::missing_center_leaf;
 };
+
+struct CartoonCentralSupport {
+  int matches = 0;
+  bool covered_at_other_level = false;
+  int gid = -1;
+  int level = -1;
+  int owner_rank = -1;
+  int local_block = -1;
+  int k = 0;
+  int i = 0;
+  int j = 0;
+  Real rho = 0.0;
+  Real z = 0.0;
+};
+
+struct CartoonCentralSupportSet {
+  CartoonCentralSupport point[4];
+  int gid = -1;
+  int level = -1;
+};
+
+template <int NGHOST>
+inline bool CartoonCentralActiveCellHasStoredDerivativeHalo(
+    const RegionIndcs &indices, const int i, const int j) {
+  constexpr int radius = NGHOST - 1;
+  const int total_i = indices.nx1 + 2 * indices.ng;
+  const int total_j = indices.nx2 + 2 * indices.ng;
+  return indices.ng >= NGHOST && i >= indices.is && i <= indices.ie &&
+         j >= indices.js && j <= indices.je && i - radius >= 0 &&
+         i + radius < total_i && j - radius >= 0 && j + radius < total_j;
+}
+
+template <int NGHOST>
+inline CartoonCentralSample::Status ValidateCartoonCentralSupportSet(
+    const CartoonCentralSupportSet &supports, const RegionIndcs &indices,
+    const int nranks) {
+  if (supports.gid < 0 || supports.level < 0) {
+    return CartoonCentralSample::Status::missing_center_leaf;
+  }
+  for (int s = 0; s < 4; ++s) {
+    const CartoonCentralSupport &point = supports.point[s];
+    if (point.matches == 0) {
+      return point.covered_at_other_level
+                 ? CartoonCentralSample::Status::mixed_level_support
+                 : CartoonCentralSample::Status::missing_support;
+    }
+    if (point.matches != 1) {
+      return CartoonCentralSample::Status::duplicate_support;
+    }
+    if (point.level != supports.level) {
+      return CartoonCentralSample::Status::mixed_level_support;
+    }
+    if (point.owner_rank < 0 || point.owner_rank >= nranks) {
+      return CartoonCentralSample::Status::invalid_owner;
+    }
+    if (!CartoonCentralActiveCellHasStoredDerivativeHalo<NGHOST>(
+            indices, point.i, point.j)) {
+      return CartoonCentralSample::Status::insufficient_derivative_halo;
+    }
+    for (int previous = 0; previous < s; ++previous) {
+      if (point.rho == supports.point[previous].rho &&
+          point.z == supports.point[previous].z) {
+        return CartoonCentralSample::Status::duplicate_support;
+      }
+    }
+  }
+  return CartoonCentralSample::Status::valid;
+}
+
+inline CartoonCentralSample ReconstructCartoonCentralFourPoint(
+    const Real lapse[4], const Real constraint_squared[4],
+    const Real kretschmann[4]) {
+  CartoonCentralSample sample;
+  Real lapse_sum = 0.0;
+  Real constraint_sum = 0.0;
+  Real kretschmann_sum = 0.0;
+  for (int s = 0; s < 4; ++s) {
+    if (!std::isfinite(lapse[s]) || lapse[s] < 0.0 ||
+        !std::isfinite(constraint_squared[s]) || constraint_squared[s] < 0.0 ||
+        !std::isfinite(kretschmann[s])) {
+      sample.status = CartoonCentralSample::Status::nonfinite_support;
+      return sample;
+    }
+    lapse_sum += lapse[s];
+    constraint_sum += constraint_squared[s];
+    kretschmann_sum += kretschmann[s];
+  }
+  sample.lapse = 0.25 * lapse_sum;
+  sample.constraint_norm = Z4cAggregateConstraintNorm(0.25 * constraint_sum);
+  sample.abs_kretschmann = std::fabs(0.25 * kretschmann_sum);
+  sample.valid = std::isfinite(sample.lapse) &&
+                 std::isfinite(sample.constraint_norm) &&
+                 std::isfinite(sample.abs_kretschmann);
+  sample.status = sample.valid ? CartoonCentralSample::Status::valid
+                               : CartoonCentralSample::Status::nonfinite_support;
+  return sample;
+}
+
+namespace meridional_detail {
+
+inline bool ContainsOpen(const Real value, const Real lower, const Real upper) {
+  const Real scale = std::max({Real(1.0), std::fabs(lower), std::fabs(upper)});
+  const Real tolerance = 32.0 * std::numeric_limits<Real>::epsilon() * scale;
+  return value > lower + tolerance && value < upper - tolerance;
+}
+
+inline bool ResolveActiveCellCenter(const Real value, const Real lower,
+                                    const Real upper, const int ncells,
+                                    const int active_start, int *index) {
+  if (ncells <= 0 || !(upper > lower)) return false;
+  const Real dx = (upper - lower) / static_cast<Real>(ncells);
+  const Real offset = (value - lower) / dx - 0.5;
+  const long long nearest = std::llround(offset);
+  const Real scale = std::max(Real(1.0), std::fabs(offset));
+  if (std::fabs(offset - static_cast<Real>(nearest)) >
+          128.0 * std::numeric_limits<Real>::epsilon() * scale ||
+      nearest < 0 || nearest >= ncells) {
+    return false;
+  }
+  *index = active_start + static_cast<int>(nearest);
+  return true;
+}
+
+template <int NGHOST>
+inline CartoonCentralSupportSet BuildCartoonCentralSupportSet(
+    Mesh *mesh, const CartoonMeridionalStencil &center) {
+  CartoonCentralSupportSet supports;
+  supports.gid = center.gid;
+  supports.level = center.level;
+  if (center.gid < 0 || center.level < mesh->root_level ||
+      center.gid >= mesh->nmb_total) {
+    return supports;
+  }
+
+  const int level_offset = center.level - mesh->root_level;
+  const std::int64_t blocks_x1 =
+      static_cast<std::int64_t>(mesh->nmb_rootx1) << level_offset;
+  const std::int64_t blocks_x2 =
+      static_cast<std::int64_t>(mesh->nmb_rootx2) << level_offset;
+  const Real dx1 = (mesh->mesh_size.x1max - mesh->mesh_size.x1min) /
+                   (static_cast<Real>(blocks_x1) * mesh->mb_indcs.nx1);
+  const Real dx2 = (mesh->mesh_size.x2max - mesh->mesh_size.x2min) /
+                   (static_cast<Real>(blocks_x2) * mesh->mb_indcs.nx2);
+  if (!(dx1 > 0.0) || !(dx2 > 0.0) || !std::isfinite(dx1) ||
+      !std::isfinite(dx2)) {
+    return supports;
+  }
+
+  for (int s = 0; s < 4; ++s) {
+    CartoonCentralSupport &point = supports.point[s];
+    point.rho = (s & 1) == 0 ? -0.5 * dx1 : 0.5 * dx1;
+    point.z = (s & 2) == 0 ? -0.5 * dx2 : 0.5 * dx2;
+    for (int gid = 0; gid < mesh->nmb_total; ++gid) {
+      Real x1min = 0.0;
+      Real x1max = 0.0;
+      Real x2min = 0.0;
+      Real x2max = 0.0;
+      const LogicalLocation &location = mesh->lloc_eachmb[gid];
+      LogicalEdges(*mesh, location, &x1min, &x1max, &x2min, &x2max);
+      if (!ContainsOpen(point.rho, x1min, x1max) ||
+          !ContainsOpen(point.z, x2min, x2max)) {
+        continue;
+      }
+      if (location.level != supports.level) {
+        point.covered_at_other_level = true;
+        continue;
+      }
+      int i = 0;
+      int j = 0;
+      if (!ResolveActiveCellCenter(point.rho, x1min, x1max,
+                                   mesh->mb_indcs.nx1, mesh->mb_indcs.is, &i) ||
+          !ResolveActiveCellCenter(point.z, x2min, x2max,
+                                   mesh->mb_indcs.nx2, mesh->mb_indcs.js, &j)) {
+        continue;
+      }
+      ++point.matches;
+      if (point.matches != 1) continue;
+      point.gid = gid;
+      point.level = location.level;
+      point.owner_rank = mesh->rank_eachmb[gid];
+      point.k = mesh->mb_indcs.ks;
+      point.i = i;
+      point.j = j;
+      if (point.owner_rank == global_variable::my_rank &&
+          point.owner_rank >= 0 && point.owner_rank < global_variable::nranks) {
+        point.local_block = gid - mesh->gids_eachrank[point.owner_rank];
+      }
+    }
+  }
+  return supports;
+}
+
+}  // namespace meridional_detail
 
 template <int NGHOST>
 inline CartoonCentralSample SampleCartoonCentralDiagnostics(Mesh *mesh) {
   CartoonCentralSample sample;
-  const CartoonMeridionalStencil stencil =
+  const CartoonMeridionalStencil center =
       LocateCartoonMeridionalPoint(mesh, 0.0, 0.0);
-  sample.gid = stencil.gid;
-  sample.level = stencil.level;
-  if (!stencil.valid) return sample;
+  sample.gid = center.gid;
+  sample.level = center.level;
+  const CartoonCentralSupportSet supports =
+      meridional_detail::BuildCartoonCentralSupportSet<NGHOST>(mesh, center);
+  CartoonCentralSample::Status local_status =
+      ValidateCartoonCentralSupportSet<NGHOST>(
+          supports, mesh->mb_indcs, global_variable::nranks);
+  if (local_status == CartoonCentralSample::Status::valid) {
+    for (int s = 0; s < 4; ++s) {
+      const CartoonCentralSupport &point = supports.point[s];
+      if (point.owner_rank == global_variable::my_rank &&
+          (point.local_block < 0 ||
+           point.local_block >= mesh->pmb_pack->nmb_thispack)) {
+        local_status = CartoonCentralSample::Status::invalid_owner;
+      }
+    }
+  }
 
   array_sum::GlobalSum local;
-  if (stencil.owner_rank == global_variable::my_rank) {
+  if (local_status == CartoonCentralSample::Status::valid) {
     auto u0 = mesh->pmb_pack->pz4c->u0;
     auto constraints = mesh->pmb_pack->pz4c->u_con;
     auto adm = mesh->pmb_pack->padm->adm;
@@ -216,56 +433,97 @@ inline CartoonCentralSample SampleCartoonCentralDiagnostics(Mesh *mesh) {
     const int nx1 = mesh->mb_indcs.nx1;
     const int is = mesh->mb_indcs.is;
     Kokkos::parallel_reduce(
-        "Cartoon axis-central diagnostics", Kokkos::RangePolicy<DevExeSpace>(0, 1),
-        KOKKOS_LAMBDA(const int, array_sum::GlobalSum &values) {
-          values.the_array[0] =
-              SampleCartoonMeridionalScalar(u0, alpha, stencil);
-          const Real c = SampleCartoonMeridionalScalar(constraints, 0, stencil);
-          values.the_array[1] = Z4cAggregateConstraintNorm(c);
+        "Cartoon axis-central physical support diagnostics",
+        Kokkos::RangePolicy<DevExeSpace>(0, 4),
+        KOKKOS_LAMBDA(const int s, array_sum::GlobalSum &values) {
+          const CartoonCentralSupport point = supports.point[s];
+          if (point.local_block < 0) return;
+          values.the_array[12 + s] = 1.0;
+          const Real lapse = u0(point.local_block, alpha, point.k, point.j, point.i);
+          const Real constraint_squared =
+              constraints(point.local_block, 0, point.k, point.j, point.i);
 
           const Real inverse_spacing[3] = {
-              1.0 / size(stencil.local_block).dx1,
-              1.0 / size(stencil.local_block).dx2,
-              1.0 / size(stencil.local_block).dx3};
-          Real kretschmann = 0.0;
-          for (int dj = 0; dj <= 1; ++dj) {
-            for (int di = 0; di <= 1; ++di) {
-              const int i = stencil.i0 + di;
-              const int j = stencil.j0 + dj;
-              auto derivatives =
-                  MakeCellCenteredDerivativeProvider<CartoonSO2, NGHOST>(
-                      inverse_spacing, size, nx1, is, stencil.local_block,
-                      stencil.k, j, i);
-              const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST, false>(
-                  derivatives, adm.g_dd, adm.vK_dd, stencil.local_block, stencil.k,
-                  j, i);
-              if (!diagnostic.valid) {
-                kretschmann = std::numeric_limits<Real>::quiet_NaN();
-              } else {
-                const Real weight_i = di == 0 ? 1.0 - stencil.wi : stencil.wi;
-                const Real weight_j = dj == 0 ? 1.0 - stencil.wj : stencil.wj;
-                kretschmann += weight_i * weight_j * diagnostic.kretschmann;
-              }
-            }
+              1.0 / size(point.local_block).dx1,
+              1.0 / size(point.local_block).dx2,
+              1.0 / size(point.local_block).dx3};
+          auto derivatives = MakeCellCenteredDerivativeProvider<CartoonSO2, NGHOST>(
+              inverse_spacing, size, nx1, is, point.local_block, point.k,
+              point.j, point.i);
+          const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST, false>(
+              derivatives, adm.g_dd, adm.vK_dd, point.local_block, point.k,
+              point.j, point.i);
+          if (!Kokkos::isfinite(lapse) || lapse < 0.0 ||
+              !Kokkos::isfinite(constraint_squared) || constraint_squared < 0.0 ||
+              !diagnostic.valid || !Kokkos::isfinite(diagnostic.kretschmann)) {
+            values.the_array[16 + s] = 1.0;
+            return;
           }
-          values.the_array[2] = Kokkos::fabs(kretschmann);
+          values.the_array[3 * s] = lapse;
+          values.the_array[3 * s + 1] = constraint_squared;
+          values.the_array[3 * s + 2] = diagnostic.kretschmann;
         },
         Kokkos::Sum<array_sum::GlobalSum>(local));
   }
 
-  Real values[3] = {local.the_array[0], local.the_array[1], local.the_array[2]};
+  Real values[20] = {};
+  for (int n = 0; n < 20; ++n) values[n] = local.the_array[n];
+  int status_code = static_cast<int>(local_status);
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, values, 3, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, values, 20, MPI_ATHENA_REAL, MPI_SUM,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &status_code, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
 #endif
-  sample.lapse = values[0];
-  sample.constraint_norm = values[1];
-  sample.abs_kretschmann = values[2];
-  sample.valid = std::isfinite(sample.lapse) && sample.lapse >= 0.0 &&
-                 std::isfinite(sample.constraint_norm) &&
-                 sample.constraint_norm >= 0.0 &&
-                 std::isfinite(sample.abs_kretschmann) && sample.gid >= 0 &&
-                 sample.level >= 0;
+  sample.status = static_cast<CartoonCentralSample::Status>(status_code);
+  if (sample.status != CartoonCentralSample::Status::valid) return sample;
+
+  Real lapse[4] = {};
+  Real constraint_squared[4] = {};
+  Real kretschmann[4] = {};
+  for (int s = 0; s < 4; ++s) {
+    if (values[12 + s] != 1.0) {
+      sample.status = CartoonCentralSample::Status::invalid_owner;
+      return sample;
+    }
+    if (values[16 + s] != 0.0) {
+      sample.status = CartoonCentralSample::Status::nonfinite_support;
+      return sample;
+    }
+    lapse[s] = values[3 * s];
+    constraint_squared[s] = values[3 * s + 1];
+    kretschmann[s] = values[3 * s + 2];
+  }
+  CartoonCentralSample reconstruction = ReconstructCartoonCentralFourPoint(
+      lapse, constraint_squared, kretschmann);
+  sample.valid = reconstruction.valid;
+  sample.lapse = reconstruction.lapse;
+  sample.constraint_norm = reconstruction.constraint_norm;
+  sample.abs_kretschmann = reconstruction.abs_kretschmann;
+  sample.status = reconstruction.status;
   return sample;
+}
+
+inline const char *CartoonCentralSampleStatusMessage(
+    const CartoonCentralSample::Status status) {
+  switch (status) {
+    case CartoonCentralSample::Status::valid:
+      return "";
+    case CartoonCentralSample::Status::missing_center_leaf:
+      return "axis-central diagnostic has no finest center leaf";
+    case CartoonCentralSample::Status::missing_support:
+      return "axis-central diagnostic is missing a physical support cell";
+    case CartoonCentralSample::Status::duplicate_support:
+      return "axis-central diagnostic has duplicate physical support cells";
+    case CartoonCentralSample::Status::mixed_level_support:
+      return "axis-central diagnostic support spans AMR levels";
+    case CartoonCentralSample::Status::invalid_owner:
+      return "axis-central diagnostic support ownership is not unique";
+    case CartoonCentralSample::Status::insufficient_derivative_halo:
+      return "axis-central diagnostic support lacks a stored derivative halo";
+    case CartoonCentralSample::Status::nonfinite_support:
+      return "axis-central diagnostic support is nonfinite or invalid";
+  }
+  return "axis-central diagnostic has an unknown failure status";
 }
 
 inline CartoonCentralSample DispatchCartoonCentralDiagnostics(Mesh *mesh) {
@@ -287,7 +545,7 @@ inline std::string UpdateCartoonCentralState(Mesh *mesh,
                                              const bool restart_initialization) {
   if (mesh->pmb_pack->z4c_symmetry.mode != Z4cSymmetryMode::cartoon_so2) return {};
   const CartoonCentralSample sample = DispatchCartoonCentralDiagnostics(mesh);
-  if (!sample.valid) return "nonfinite or uncovered axis-central diagnostic sample";
+  if (!sample.valid) return CartoonCentralSampleStatusMessage(sample.status);
 
   Z4cCentralRestartState &state = mesh->pmb_pack->z4c_restart_state.central;
   const auto result = UpdateZ4cCentralRestartState(
