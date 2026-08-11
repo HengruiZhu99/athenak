@@ -23,6 +23,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "coordinates/adm.hpp"
+#include "pgen/z4c/kerr_puncture.hpp"
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
@@ -964,6 +965,8 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     GaussLegendre(pin, is_restart);
   } else if (pgen_fun_name.compare("z4c_cartoon_derivatives") == 0) {
     Z4cCartoonDerivatives(pin, is_restart);
+  } else if (pgen_fun_name.compare("kerr_puncture") == 0) {
+    ConfigureKerrPuncture(this, pmy_mesh_, pin, is_restart);
 
   } else {
     // name not set on command line or input file, print warning and quit

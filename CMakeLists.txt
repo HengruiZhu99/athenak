@@ -372,6 +372,13 @@ if (Athena_BUILD_UNIT_TESTS)
       NAME athena.z4c_symmetry_validation
       COMMAND athena_z4c_symmetry_validation_unit_test)
 
+  add_test(
+      NAME athena.z4c_kerr_puncture_reference
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/kerr_puncture_reference_test.py
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+
   add_executable(
       athena_stored_domain_bounds_unit_test
       tst/unit/z4c/stored_domain_bounds_test.cpp)

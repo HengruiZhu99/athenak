@@ -277,6 +277,39 @@ bool CheckRestartAndPgenFailures() {
   return true;
 }
 
+bool CheckKerrPunctureProductionAdmission() {
+  auto input = ValidCartoonInput();
+  input.problem_generator = "kerr_puncture";
+  input.cartoon_derivative_check_only_present = false;
+  input.cartoon_derivative_check_only_valid = false;
+  input.cartoon_derivative_check_only = false;
+  input.multilevel = true;
+  input.outputs = {{"output1", "hst"}, {"output2", "rst"}};
+  auto result = z4c::ValidateZ4cSymmetry(input);
+  if (!result.valid ||
+      result.config.mode != z4c::Z4cSymmetryMode::cartoon_so2) {
+    return false;
+  }
+
+  input.restart_origin = true;
+  input.restart_metadata_present = true;
+  input.restart_symmetry = "cartoon_so2";
+  input.restart_coordinate_map = "signed_rho_z_suppressed_y_v1";
+  input.restart_schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
+  result = z4c::ValidateZ4cSymmetry(input);
+  if (!result.valid) return false;
+
+  input.restart_coordinate_map = "cartesian_xyz";
+  if (!Rejects(input, "restart")) return false;
+
+  input = ValidCartoonInput();
+  input.problem_generator = "unreviewed_production_pgen";
+  input.cartoon_derivative_check_only_present = false;
+  input.cartoon_derivative_check_only_valid = false;
+  input.cartoon_derivative_check_only = false;
+  return Rejects(input, "not the staged check_only");
+}
+
 }  // namespace
 
 int main() {
@@ -284,7 +317,8 @@ int main() {
                       CheckNonpositiveSpatialOrderFallback() &&
                       CheckMeshAndPhysicsFailures() &&
                       CheckConsumerAndOutputFailures() &&
-                      CheckRestartAndPgenFailures();
+                      CheckRestartAndPgenFailures() &&
+                      CheckKerrPunctureProductionAdmission();
   if (!passed) return EXIT_FAILURE;
   std::cout << "Z4c Cartoon preallocation validation tests passed\n";
   return EXIT_SUCCESS;

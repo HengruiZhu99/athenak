@@ -24,11 +24,13 @@ are owned by the shared policy (one ADM initialization site arrived in the earli
 slice), while the three remaining live raw calls are confined to the Cartesian-only dynamical
 GRMHD matter path.
 
-AMR, axis interpolation/history, initial data, and horizon integration are not all integrated
-or qualified yet. Consequently, this milestone still rejects every `cartoon_so2` problem
-generator before allocation. The later Cartoon Kerr adapter slice will enable its pgen only
-after its coordinate/component map and collapsed storage have focused tests. Do not interpret
-the public mode parser or compiled kernel readiness as a qualified evolution backend.
+AMR, axis interpolation/history, initial data, and horizon integration are not all qualified
+yet. The reusable `kerr_puncture` problem generator is admitted for production Cartoon
+evolution after the ordinary symmetry, vacuum-physics, topology, output, and restart checks;
+the staged derivative MMS remains check-only and all other pgens remain fail-closed. The Kerr
+coordinate/component map and puncture limits have focused analytic tests, while end-to-end
+CUDA evolution, AMR, restart, and horizon evidence remain required. Do not interpret pgen
+admission or compiled kernel readiness as a qualified evolution backend.
 
 The existing output lifecycle writes the initial history and derived-variable records before
 ADM scratch is initialized. Consequently, `maxAbsKret` is `inf` and cellwise curvature values
@@ -72,8 +74,8 @@ state. It is captured from the restart parameter dump before `-i` or command-lin
 every conflicting override reports the block, key, stored value, and requested value before
 mesh or physics construction. Compatible values are restored from that immutable snapshot.
 
-The carrier uses schema 1 and does not alter the binary restart layout. Legacy Cartesian
+The carrier uses a versioned schema and does not alter the binary restart layout. Legacy Cartesian
 restarts without the block retain their previous behavior and acquire a carrier when next
 written. The central sampler and m=0 FastFlow algorithms are later slices, so their state is
-currently initialized to explicit inactive defaults. No Cartoon pgen is enabled by this
-carrier slice.
+initialized to explicit inactive defaults until those consumers are enabled. The carrier
+supports the admitted `kerr_puncture` pgen but does not by itself qualify Cartoon restart.

@@ -211,6 +211,13 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
                    "restart symmetry/map/schema metadata conflicts with cartoon_so2");
   }
 
+  // This reusable analytic pgen supplies ordinary production evolution for both
+  // Cartesian and Cartoon storage. Its parameter/topology checks remain inside
+  // the pgen, while all allocation-free gates above apply unchanged here.
+  if (input.problem_generator == "kerr_puncture") {
+    return {true, config, ""};
+  }
+
   if (derivative_pgen &&
       input.cartoon_derivative_check_only_present &&
       !input.cartoon_derivative_check_only_valid) {
