@@ -233,6 +233,14 @@ def validate_certified_domain(domain: tuple[float, float, float, float],
             "maximum_z_reach": max(item["z_reach"] for item in reaches)}
 
 
+def persisted_domain(domain: tuple[float, float, float, float]) -> list[float]:
+    if (not isinstance(domain, tuple) or len(domain) != 4 or
+            any(isinstance(value, bool) or not isinstance(value, (int, float)) or
+                not math.isfinite(float(value)) for value in domain)):
+        raise RuntimeError("internal domain is not a finite four-tuple")
+    return list(domain)
+
+
 def up(value: float) -> float:
     if not math.isfinite(value) or value < 0.0:
         raise RuntimeError("coefficient floor arithmetic became invalid")
@@ -1957,7 +1965,11 @@ def self_test_cpu_audit_policy() -> None:
         ("raw ownership sequence", "ownership_sequence", "duplicated"),
         ("stored backend", "backend", "Cuda"),
         ("stored ranks", "mpi_ranks", 4),
-        ("stored domain", "domain", [-1.0, 1.0, -2.0, 2.0])):
+        ("stored domain", "domain", [-1.0, 1.0, -2.0, 2.0]),
+        ("reordered stored domain", "domain", [2.0, -2.0, -2.0, 2.0]),
+        ("short stored domain", "domain", [-2.0, 2.0, -2.0]),
+        ("Boolean stored domain", "domain", [-2.0, 2.0, False, 2.0]),
+        ("nonfinite stored domain", "domain", [-2.0, 2.0, -2.0, math.inf])):
         expect_runtime_error(
             lambda key=field, replacement=value: validate_raw_case_invariants(
                 {**semantic_result, key: replacement}, 2, 32, 0, "Serial", 2,
@@ -1995,6 +2007,12 @@ def self_test_cpu_audit_policy() -> None:
     with tempfile.TemporaryDirectory(prefix="cartoon-mms-resume-") as directory:
         raw_path = Path(directory) / "raw.json"
         result_path = Path(directory) / "result.json"
+        internal_domain = QUALIFICATION_DOMAIN
+        json_domain = persisted_domain(internal_domain)
+        if (not isinstance(json_domain, list) or json_domain != list(internal_domain) or
+                hashlib.sha256(json.dumps(json_domain).encode()).hexdigest() !=
+                hashlib.sha256(json.dumps(internal_domain).encode()).hexdigest()):
+            raise RuntimeError("persisted domain changed the case identity")
         raw_resume = {**valid_result, "status": "pass", "mpi_ranks": 1,
                       "operator_count": 171}
         environment = {"SLURM_NTASKS": "1"}
@@ -2008,17 +2026,37 @@ def self_test_cpu_audit_policy() -> None:
                    "operator_names": [f"operator.{index}" for index in range(171)],
                    "rank_bindings": [binding], "execution_environment": environment,
                    "execution_environment_sha256": canonical_digest(environment),
-                   "domain": list(QUALIFICATION_DOMAIN), "output_bytes": 0}
+                   "domain": json_domain, "output_bytes": 0}
         write_atomic(raw_path, raw_resume)
         write_atomic(result_path, resumed)
-        load_augmented_result(raw_path, result_path)
+        reloaded = load_augmented_result(raw_path, result_path)
+        if reloaded != resumed or not isinstance(reloaded["domain"], list):
+            raise RuntimeError("fresh augmented result is not JSON-roundtrip stable")
+        for label, domain in (
+            ("tuple persisted domain", internal_domain),
+            ("short persisted domain", [-2.0, 2.0, -2.0]),
+            ("Boolean persisted domain", [-2.0, 2.0, False, 2.0]),
+            ("NaN persisted domain", [-2.0, 2.0, math.nan, 2.0]),
+            ("infinite persisted domain", [-2.0, 2.0, -2.0, math.inf]),
+        ):
+            expect_runtime_error(
+                lambda value=domain: validate_augmented_result(
+                    raw_resume, {**resumed, "domain": value}), label)
+        for label, domain in (
+            ("list internal domain", list(internal_domain)),
+            ("short internal domain", (-2.0, 2.0, -2.0)),
+            ("Boolean internal domain", (-2.0, 2.0, False, 2.0)),
+            ("NaN internal domain", (-2.0, 2.0, math.nan, 2.0)),
+            ("infinite internal domain", (-2.0, 2.0, -2.0, math.inf)),
+        ):
+            expect_runtime_error(lambda value=domain: persisted_domain(value), label)
         write_atomic(result_path, {**resumed, "status": "fail"})
         expect_runtime_error(lambda: load_augmented_result(raw_path, result_path),
                              "coherently rehashed resumed raw/result disagreement")
     with tempfile.TemporaryDirectory(prefix="cartoon-mms-case-integrity-") as directory:
         case = Path(directory) / "case"
         case.mkdir()
-        identity = {"ranks": 1}
+        identity = {"ranks": 1, "domain": persisted_domain(QUALIFICATION_DOMAIN)}
         for name in expected_case_files(1):
             (case / name).write_text(f"{name}\n", encoding="utf-8")
         files = {name: sha256(case / name) for name in expected_case_files(1)}
@@ -2027,6 +2065,15 @@ def self_test_cpu_audit_policy() -> None:
             "files": files})
         if not verified_complete(case, identity):
             raise RuntimeError("case-integrity fixture is not initially complete")
+        reloaded_identity = load_json_strict(case / "manifest.json")["identity"]
+        current_identity = {**identity,
+                            "domain": persisted_domain(QUALIFICATION_DOMAIN)}
+        if (reloaded_identity != current_identity or
+                not verified_complete(case, current_identity)):
+            raise RuntimeError("completed-case resume identity is not JSON stable")
+        tuple_identity = {**current_identity, "domain": QUALIFICATION_DOMAIN}
+        if verified_complete(case, tuple_identity):
+            raise RuntimeError("completed-case resume accepted tuple/list drift")
         for name in ("cartoon_mms.mms.json", "result.json",
                      "cartoon_mms.mms.csv", "cartoon_mms.mms.probes.csv"):
             original = (case / name).read_bytes()
@@ -2886,7 +2933,8 @@ def verified_complete(case: Path, identity: dict[str, object]) -> bool:
 def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
              order: int, resolution: int, phase: int) -> dict[str, object]:
     nghost = order // 2 + 1
-    domain_hash = hashlib.sha256(json.dumps(args.domain).encode()).hexdigest()[:10]
+    json_domain = persisted_domain(args.domain)
+    domain_hash = hashlib.sha256(json.dumps(json_domain).encode()).hexdigest()[:10]
     key = f"o{order}-ng{nghost}-n{resolution}-p{phase}-r{args.ranks}-d{domain_hash}"
     case_environment = execution_environment()
     environment_sha256 = canonical_digest(case_environment)
@@ -2909,7 +2957,7 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
                 "ranks": args.ranks, "backend_required": args.require_backend,
                 "build_manifest_sha256": sha256(args.build_manifest),
                 "rank_wrapper_sha256": sha256(args.rank_wrapper),
-                "domain": args.domain, "execution_environment": case_environment,
+                "domain": json_domain, "execution_environment": case_environment,
                 "execution_environment_sha256": environment_sha256, **topology}
     started = time.time()
     resumed_result = None
@@ -3034,7 +3082,7 @@ def run_case(args: argparse.Namespace, root: Path, source: dict[str, str],
                    "rank_bindings": bindings,
                    "execution_environment": case_environment,
                    "execution_environment_sha256": environment_sha256,
-                   "domain": args.domain,
+                   "domain": json_domain,
                    "output_bytes": raw_csv.stat().st_size + probes_csv.stat().st_size})
     validate_augmented_result(load_json_strict(raw_result), result)
     (case / "result.json").write_text(json.dumps(result, indent=2, sort_keys=True,
@@ -3179,7 +3227,7 @@ def validate_augmented_result(raw: object, augmented: object) -> None:
             len(set(names)) != 171 or any(not isinstance(name, str) for name in names) or
             not isinstance(bindings, list) or
             len(bindings) != json_integer(augmented, "mpi_ranks", 1) or
-            not isinstance(domain, (list, tuple)) or len(domain) != 4 or
+            not isinstance(domain, list) or len(domain) != 4 or
             any(isinstance(value, bool) or not isinstance(value, (int, float)) or
                 not math.isfinite(float(value)) for value in domain)):
         raise RuntimeError("augmented result inventory/domain is malformed")
@@ -5405,12 +5453,121 @@ def analyze_search(immutable_specs: list[str] | None, stage_specs: list[str] | N
     return 0
 
 
+def self_test_job56625911_domain_representation(run_root: Path) -> None:
+    run_root = run_root.absolute()
+    if not run_root.is_dir() or run_root.is_symlink():
+        raise RuntimeError("job56625911 root is missing or a symlink")
+    root_manifest = run_root / "SHA256SUMS"
+    detached = run_root / "SHA256SUMS.sha256"
+    if (sha256(root_manifest) !=
+            "971951cc89b5ed8f0c26d88373ad6227e36dc736b212bb58fd5420689f9c8f0e" or
+            sha256(detached) !=
+            "34f6fe749afd6f7a5d0f9cd6b750a8fcde68a8b4da25f22b82379873856b8692" or
+            len(root_manifest.read_text(encoding="utf-8").splitlines()) != 2870):
+        raise RuntimeError("job56625911 root manifest identity differs")
+    subprocess.run(["sha256sum", "-c", "SHA256SUMS.sha256"], cwd=run_root,
+                   stdout=subprocess.DEVNULL, check=True)
+    subprocess.run(["sha256sum", "-c", "SHA256SUMS"], cwd=run_root,
+                   stdout=subprocess.DEVNULL, check=True)
+    source_root = run_root / "source"
+    source = {
+        "commit": "e1358a65228653a4c2087c0d63d1b93684f39d71",
+        "tree": "84b574341208a85a40d40c40769cd80722fc7ff0",
+        "kokkos": "6739bc623081648af9e752b616d9671527922cbf",
+    }
+    if ({"commit": git_value(source_root, "rev-parse", "HEAD"),
+         "tree": git_value(source_root, "rev-parse", "HEAD^{tree}"),
+         "kokkos": git_value(source_root, "rev-parse", "HEAD:kokkos")} != source or
+            git_value(source_root, "status", "--porcelain")):
+        raise RuntimeError("job56625911 source identity or clean state differs")
+    stage_root = run_root / "results/o6-phase0-stage1"
+    cases = sorted(path for path in stage_root.glob("o6-*-n*-p*-r*-*")
+                   if path.is_dir() and not path.is_symlink())
+    if len(cases) != 1 or "-n48-" not in cases[0].name:
+        raise RuntimeError("job56625911 does not contain exactly the N48 case")
+    case = cases[0]
+    case_manifest = load_json_strict(case / "manifest.json")
+    if (not isinstance(case_manifest, dict) or
+            case_manifest.get("state") != "complete" or
+            sha256(case / "manifest.json") !=
+            "663aa319d0c232022392b5280b52fa1b27a7bf3d48c09c0b772baa33faf17f26" or
+            not isinstance(case_manifest.get("identity", {}).get("domain"), list)):
+        raise RuntimeError("job56625911 complete N48 manifest differs")
+    inventory = load_json_strict(
+        source_root / "tst/unit/z4c/z4c_cartoon_derivatives_series.json")
+    expected_operators = [item["name"] for item in inventory["series"]]
+    build_manifest = run_root / "build-mms-cpu-mpi/src/mms_build_manifest.json"
+    executable = run_root / "build-mms-cpu-mpi/src/athena"
+    template = source_root / "tst/inputs/z4c_cartoon_derivatives.athinput"
+    wrapper = source_root / "tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py"
+    stored, rows, probes, manifest_sha = verify_complete_case_evidence(
+        case, source,
+        "f04227083ed3631d6ffa328d7750b539829a93dd11477b1ad4a94e0fdcfd608c",
+        "b57d0b8bc5c3f8b9319c0bb1cf84d0e030520425069d93929f2005a98127673c",
+        "Serial", 2, QUALIFICATION_DOMAIN, 6, 48, 0, expected_operators,
+        template, wrapper)
+    fresh_result = {**stored,
+                    "domain": persisted_domain(tuple(stored["domain"]))}
+    tuple_result = {**fresh_result, "domain": tuple(fresh_result["domain"])}
+    differing = [key for key in fresh_result
+                 if fresh_result[key] != tuple_result[key]]
+    if (not isinstance(stored.get("domain"), list) or fresh_result != stored or
+            differing != ["domain"] or len(rows) != 2565 or len(probes) != 2555 or
+            manifest_sha !=
+            "663aa319d0c232022392b5280b52fa1b27a7bf3d48c09c0b772baa33faf17f26"):
+        raise RuntimeError("job56625911 fresh-final domain fixture differs")
+    attempts = load_json_strict(stage_root / "search_stage_manifest.json")[
+        "materialization"]["attempts"]
+    if [(item["tuple"], item["status"]) for item in attempts] != [
+            ([6, 48, 0], "failed"),
+            ([6, 80, 0], "not_attempted_after_stop"),
+            ([6, 96, 0], "not_attempted_after_stop")]:
+        raise RuntimeError("job56625911 N48/N80/N96 attempt ledger differs")
+    before = {path.relative_to(case).as_posix(): sha256(path)
+              for path in case.iterdir() if path.is_file() and not path.is_symlink()}
+    identity = case_manifest["identity"]
+    archived_environment = identity["execution_environment"]
+    saved_environment = {key: os.environ.get(key) for key in CASE_ENVIRONMENT_KEYS}
+    original_subprocess_run = subprocess.run
+    def forbid_launch(*unused_args: object, **unused_kwargs: object) -> None:
+        raise RuntimeError("resume fixture attempted to invoke the case launcher")
+    try:
+        for key in CASE_ENVIRONMENT_KEYS:
+            os.environ.pop(key, None)
+        os.environ.update(archived_environment)
+        args = argparse.Namespace(
+            domain=QUALIFICATION_DOMAIN, ranks=2, output=stage_root,
+            input=template, rank_wrapper=wrapper, require_backend="Serial",
+            launcher=("srun --nodes=1 --cpus-per-task=8 --cpu-bind=cores "
+                      "--exact --kill-on-bad-exit=1"),
+            athena=executable, build_manifest=build_manifest)
+        subprocess.run = forbid_launch
+        resumed = run_case(args, source_root, source, 6, 48, 0)
+    finally:
+        subprocess.run = original_subprocess_run
+        for key, value in saved_environment.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+    after = {path.relative_to(case).as_posix(): sha256(path)
+             for path in case.iterdir() if path.is_file() and not path.is_symlink()}
+    expected_resumed = {**stored, "case_manifest_sha256": manifest_sha}
+    if resumed != expected_resumed or before != after:
+        raise RuntimeError("job56625911 resume rewrote or changed complete evidence")
+    print("job56625911_domain_representation=pass norms=2565 probes=2555 "
+          "operators=171 n80_n96=unrun resume_launcher_calls=0")
+
+
 def main() -> int:
     if sys.argv[1:] == ["--self-test-no-evolution-parser"]:
         self_test_no_evolution_parser()
         return 0
     if sys.argv[1:] == ["--self-test-cpu-audit-policy"]:
         self_test_cpu_audit_policy()
+        return 0
+    if len(sys.argv) == 3 and sys.argv[1] == "--self-test-job56625911-domain":
+        self_test_job56625911_domain_representation(Path(sys.argv[2]))
         return 0
     parser = argparse.ArgumentParser()
     parser.add_argument("--athena", type=Path)
