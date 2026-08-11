@@ -1,0 +1,101 @@
+# Short fixed-grid Kerr-puncture evolution for the Cartoon R1 campaign.
+
+<job>
+basename = cartoon_r1_fixed
+
+<mesh>
+nghost = 4
+nx1 = 64
+x1min = -24.0
+x1max = 24.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 64
+x2min = -24.0
+x2max = 24.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 32
+nx2 = 32
+nx3 = 1
+
+<mesh_refinement>
+refinement = none
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = 4
+tlim = 1.0
+ndiag = 1
+
+<z4c>
+symmetry = cartoon_so2
+coordinate_map = signed_rho_z_suppressed_y_v1
+symmetry_schema = 1
+spatial_order = 6
+diss = 0.02
+chi_div_floor = 1.0e-5
+excise_chi = 0.0
+damp_kappa1 = 0.02
+damp_kappa2 = 0.0
+lapse_oplog = 2.0
+lapse_harmonic = 0.0
+lapse_advect = 1.0
+shift_eta = 2.0
+shift_advect = 1.0
+history_kretschmann = true
+
+<problem>
+pgen_name = kerr_puncture
+M = 1.0
+chi = 0.99
+z_h = 0.0
+initial_gauge = precollapsed
+
+<output1>
+file_type = hst
+dcycle = 1
+
+<output2>
+file_type = bin
+variable = z4c
+dcycle = 1
+single_file_per_rank = true
+
+<output3>
+file_type = bin
+variable = con
+dcycle = 1
+single_file_per_rank = true
+
+<output4>
+file_type = bin
+variable = adm
+dcycle = 1
+single_file_per_rank = true
+
+<output5>
+file_type = bin
+variable = weyl
+dcycle = 1
+single_file_per_rank = true
+
+<output6>
+file_type = bin
+variable = z4c_diag
+dcycle = 1
+single_file_per_rank = true
+
+<output7>
+file_type = rst
+dcycle = 1
+single_file_per_rank = false
