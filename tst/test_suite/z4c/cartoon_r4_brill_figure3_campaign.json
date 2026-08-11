@@ -1,0 +1,62 @@
+{
+  "schema": "athenak_cartoon_r4_brill_figure3_design_v1",
+  "qualification_claim": "current_gauge_analogue_only",
+  "paper_reference": {
+    "arxiv": "2607.10843v1",
+    "figure": 3,
+    "figure_sha256": "bbbfdd618909eef7d4d9597859590457f310b3d790aef0ca51252c60787375d5",
+    "machine_readable_curve_available": false
+  },
+  "initial_data": {
+    "family": "brill_gaussian",
+    "branch": "unique_time_symmetric",
+    "amplitude": -0.047,
+    "rho0": 5.0,
+    "z0": 0.0,
+    "sigma_rho": 1.0,
+    "sigma_z": 1.0,
+    "source_faithful": true,
+    "radial_points": 48,
+    "angular_points": 32,
+    "payload_sha256": "b001be217b9574cde90fe81275541e1ee28601652c18d72a17a346d6405f12c6",
+    "sidecar_sha256": "a1552e6aa358f98e7787cd44d3813dcbede5260bae28485658cf61943d451015",
+    "coefficient_sha256": "8a065894902eb27c301f79910888f97f322952a25af5147f436ed66670f93516",
+    "irisk_commit": "2a069fd0497ef4352d4ecd28c6879ac47b84a5a1"
+  },
+  "execution": {
+    "order": ["n128", "n192", "n256"],
+    "mpi_ranks": 4,
+    "backend": "Cuda",
+    "one_executable": true,
+    "cmake_option": "Athena_ENABLE_IRISK_INTERPOLATOR:BOOL=ON",
+    "required_import_coordinate_map": "CartoonIrisInterpolationCoordinates:(x1,0,x2)"
+  },
+  "resolutions": {
+    "n128": {"nx1": 128, "nx2": 128, "meshblock_nx1": 32, "meshblock_nx2": 32},
+    "n192": {"nx1": 192, "nx2": 192, "meshblock_nx1": 32, "meshblock_nx2": 32},
+    "n256": {"nx1": 256, "nx2": 256, "meshblock_nx1": 32, "meshblock_nx2": 32}
+  },
+  "fixed_policy": {
+    "domain": [-16.0, 16.0, -16.0, 16.0],
+    "symmetry": "cartoon_so2",
+    "coordinate_map": "signed_rho_z_suppressed_y_v1",
+    "spatial_order": 6,
+    "amr_method": "dchi",
+    "dchi_max": 0.02,
+    "max_refinement_level": 8,
+    "gauge": "telegraph_max_abs_K",
+    "integrator": "rk4",
+    "cfl": 0.15,
+    "tlim": 20.0,
+    "history_stride_cycles": 4,
+    "state_stride_cycles": 64,
+    "restart_stride_cycles": 128
+  },
+  "acceptance": {
+    "minimum_common_proper_time": 12.0,
+    "minimum_common_samples": 64,
+    "fine_medium_normalized_l2_max": 0.05,
+    "required_error_contraction": 0.8,
+    "normalized_constraint_linf_max": 0.1
+  }
+}
