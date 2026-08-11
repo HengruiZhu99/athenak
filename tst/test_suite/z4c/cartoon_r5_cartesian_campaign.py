@@ -22,8 +22,6 @@ from typing import Any
 STATE_SCHEMA = "athenak_cartoon_r5_cartesian_campaign_v1"
 ANALYSIS_SCHEMA = "athenak_cartoon_r5_cartesian_analysis_v1"
 BASELINE_SCHEMA = "athenak_cartoon_r5_cuda_baseline_v1"
-EXPECTED_SOURCE_COMMIT = "4ce48a339f3d5331a28b17c87128e9a18d2b980d"
-EXPECTED_SOURCE_TREE = "9346dc23f89e2d1b2215819768f21029c10553e5"
 EXPECTED_BASELINE_SOURCE_COMMIT = "fc37f3a51aebce3187375eba701398c4c910f2af"
 EXPECTED_KOKKOS_COMMIT = "6739bc623081648af9e752b616d9671527922cbf"
 BACKEND = "Cuda"
@@ -64,6 +62,11 @@ def require(condition: bool, message: str) -> None:
 def require_hash(value: Any, label: str) -> None:
     require(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None,
             f"{label} is not a SHA-256 digest")
+
+
+def require_git_oid(value: Any, label: str) -> None:
+    require(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{40}", value) is not None,
+            f"{label} is not a full Git object ID")
 
 
 def require_finite(value: Any, label: str = "record") -> None:
@@ -108,13 +111,16 @@ def git_value(source: Path, expression: str) -> str:
         ["git", "-C", str(source), "rev-parse", expression], text=True).strip()
 
 
-def validate_source(source: Path, require_clean: bool = True) -> dict[str, Any]:
+def validate_source(source: Path, expected_commit: str, expected_tree: str,
+                    require_clean: bool = True) -> dict[str, Any]:
+    require_git_oid(expected_commit, "expected source commit")
+    require_git_oid(expected_tree, "expected source tree")
     require(source.is_dir(), f"source directory is missing: {source}")
     commit = git_value(source, "HEAD")
     tree = git_value(source, "HEAD^{tree}")
     kokkos = git_value(source / "kokkos", "HEAD")
-    require(commit == EXPECTED_SOURCE_COMMIT, "R5 source commit is not frozen")
-    require(tree == EXPECTED_SOURCE_TREE, "R5 source tree is not frozen")
+    require(commit == expected_commit, "R5 source commit differs from the declared identity")
+    require(tree == expected_tree, "R5 source tree differs from the declared identity")
     require(kokkos == EXPECTED_KOKKOS_COMMIT, "R5 Kokkos commit is not frozen")
     status = subprocess.check_output(
         ["git", "-C", str(source), "status", "--short"], text=True)
@@ -227,10 +233,10 @@ def validate_state(state: Any) -> None:
             "campaign state inventory is not exact")
     require(state["schema"] == STATE_SCHEMA and state["backend"] == BACKEND and
             state["ranks"] == RANKS, "campaign execution contract changed")
-    require(state["source"]["commit"] == EXPECTED_SOURCE_COMMIT and
-            state["source"]["tree"] == EXPECTED_SOURCE_TREE and
-            state["source"]["kokkos_commit"] == EXPECTED_KOKKOS_COMMIT,
-            "campaign source provenance changed")
+    require_git_oid(state["source"]["commit"], "campaign source commit")
+    require_git_oid(state["source"]["tree"], "campaign source tree")
+    require(state["source"]["kokkos_commit"] == EXPECTED_KOKKOS_COMMIT,
+            "campaign Kokkos provenance changed")
     require_hash(state["executable"]["sha256"], "campaign executable")
     require_hash(state["python"]["sha256"], "campaign Python")
     require_hash(state["tooling"]["sha256"], "campaign tooling")
@@ -265,7 +271,8 @@ def validate_state(state: Any) -> None:
 def prepare(args: argparse.Namespace) -> None:
     output = args.output.resolve()
     require(not output.exists(), f"output already exists: {output}")
-    source = validate_source(args.source.resolve())
+    source = validate_source(args.source.resolve(), args.expected_source_commit,
+                             args.expected_source_tree)
     executable = args.executable.resolve()
     require(executable.is_file() and os.access(executable, os.X_OK),
             "frozen Athena executable is missing or not executable")
@@ -318,6 +325,11 @@ def prepare(args: argparse.Namespace) -> None:
 
 
 def verify_bound_files(state: dict[str, Any]) -> None:
+    current_source = validate_source(Path(state["source"]["path"]),
+                                     state["source"]["commit"],
+                                     state["source"]["tree"])
+    require(current_source == state["source"],
+            "source, Kokkos, input, or rank-wrapper binding changed after prepare")
     require(sha256(Path(state["executable"]["path"])) ==
             state["executable"]["sha256"], "executable changed after prepare")
     require(sha256(Path(state["python"]["path"])) == state["python"]["sha256"],
@@ -643,7 +655,29 @@ def synthetic_baseline(gpu_name: str = "NVIDIA A100-SXM4-40GB") -> dict[str, Any
 
 
 def self_test(source: Path) -> None:
-    validate_source(source.resolve(), require_clean=False)
+    source = source.resolve()
+    current_commit = git_value(source, "HEAD")
+    current_tree = git_value(source, "HEAD^{tree}")
+    source_record = validate_source(source, current_commit, current_tree,
+                                    require_clean=False)
+    try:
+        validate_source(source, "0" * 40, current_tree, require_clean=False)
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError("mismatched expected source commit was accepted")
+    try:
+        validate_source(source, current_commit, "0" * 40, require_clean=False)
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError("mismatched expected source tree was accepted")
+    try:
+        validate_source(source, "", current_tree, require_clean=False)
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError("missing expected source identity was accepted")
     baseline = validate_baseline(synthetic_baseline())
     require(baseline["median"] == 1000.0 and baseline["mad"] == 2.0,
             "median/MAD oracle failed")
@@ -669,10 +703,7 @@ def self_test(source: Path) -> None:
         baseline_path = root / "baseline.json"
         strict_write(baseline_path, synthetic_baseline())
         state = {"schema": STATE_SCHEMA, "backend": BACKEND, "ranks": RANKS,
-                 "source": {"path": str(source), "commit": EXPECTED_SOURCE_COMMIT,
-                            "tree": EXPECTED_SOURCE_TREE,
-                            "kokkos_commit": EXPECTED_KOKKOS_COMMIT,
-                            "inputs": {}, "rank_wrapper": {}},
+                 "source": source_record,
                  "executable": {"path": "/synthetic/athena", "sha256": "8" * 64},
                  "python": {"path": sys.executable, "sha256": "9" * 64},
                  "tooling": {"path": str(Path(__file__).resolve()),
@@ -766,6 +797,8 @@ def parser() -> argparse.ArgumentParser:
     subparsers = result.add_subparsers(dest="action", required=True)
     prepare_parser = subparsers.add_parser("prepare")
     prepare_parser.add_argument("--source", type=Path, required=True)
+    prepare_parser.add_argument("--expected-source-commit", required=True)
+    prepare_parser.add_argument("--expected-source-tree", required=True)
     prepare_parser.add_argument("--executable", type=Path, required=True)
     prepare_parser.add_argument("--executable-sha256", required=True)
     prepare_parser.add_argument("--baseline", type=Path, required=True)
