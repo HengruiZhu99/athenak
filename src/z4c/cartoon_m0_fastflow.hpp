@@ -92,6 +92,12 @@ class CartoonM0FastFlow {
   void Find(int cycle, Real time);
   void Write(int cycle, Real time);
 
+  // nvcc requires a member function enclosing an extended KOKKOS_LAMBDA to be
+  // publicly accessible.  Keep only the two kernel-launching samplers public;
+  // they remain implementation details of the composed Cartoon finder.
+  M0AdmSample SampleAdm(Real rho, Real z) const;
+  M0AxisSample SampleAxisLapse(Real z) const;
+
   bool Found() const { return found_; }
   int LastSearchCycle() const { return last_search_cycle_; }
   Real InitialRadius() const { return initial_radius_; }
@@ -109,8 +115,6 @@ class CartoonM0FastFlow {
  private:
   M0CandidateSummary SearchCandidate(const std::string &branch, Real center_z,
                                      const std::vector<Real> &warm_start);
-  M0AdmSample SampleAdm(Real rho, Real z) const;
-  M0AxisSample SampleAxisLapse(Real z) const;
   void Restore();
   void Capture();
 
