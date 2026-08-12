@@ -604,7 +604,8 @@ def binary_summary(run_dir: Path, reader: Any) -> dict[str, Any]:
 
 
 def selected_row(rows: list[dict[str, Any]],
-                 carrier: dict[str, str]) -> dict[str, Any] | None:
+                 carrier: dict[str, str], *,
+                 continuation: bool) -> dict[str, Any] | None:
     r1.require(carrier["fastflow_surface_mode"] == "single",
                "latest restart changed the declared single-surface mode")
     if carrier["fastflow_converged"] in {"0", "false"}:
@@ -637,14 +638,18 @@ def selected_row(rows: list[dict[str, Any]],
         first_found = float(carrier["fastflow_time_first_found"])
     except ValueError as error:
         raise RuntimeError("malformed selected FastFlow restart values") from error
+    earliest_local_accepted = min(row["time"] for row in rows
+                                  if row["accepted"])
+    first_found_consistent = (first_found <= earliest_local_accepted
+                              if continuation else
+                              first_found == earliest_local_accepted)
     r1.require(count == len(selected["coefficients"]) == len(coefficients) and
                all(math.isfinite(value) for value in coefficients) and
                all(left == right for left, right in
                    zip(coefficients, selected["coefficients"])) and
                center == selected["center_z"] and search_time == selected["time"] and
                math.isfinite(first_found) and first_found >= 0.0 and
-               first_found <= search_time and
-               first_found == min(row["time"] for row in rows if row["accepted"]),
+               first_found <= search_time and first_found_consistent,
                "selected horizon output and restart carrier disagree")
     return selected
 
@@ -669,7 +674,8 @@ def collect_case(state: dict[str, Any], name: str, reader: Any) -> dict[str, Any
     r1.require(tuple(history) == r1.HISTORY_KEYS,
                f"unexpected history inventory: {histories[0]}")
     restart_path, carrier = r1.latest_restart(run_dir)
-    selected = selected_row(rows, carrier)
+    selected = selected_row(rows, carrier,
+                            continuation=case["mode"] == "restart")
     if selected is not None:
         selected["shape"] = shape_metrics(selected["coefficients"])
     return {
@@ -1031,8 +1037,58 @@ def self_test() -> None:
     })
     r1.require(validate_observations(coarse_failure)["verdict"] == "pass" and
                selected_row(coarse["horizon_rows"],
-                            coarse["restart_carrier"]) is None,
+                            coarse["restart_carrier"],
+                            continuation=False) is None,
                "archived coarse-basis failure was not retained as nullable evidence")
+    continuation_fixture = synthetic_observations()[
+        attempt_name("schwarzschild", "l6n24")]
+    cycle3 = dict(continuation_fixture["selected"])
+    cycle3.update({"cycle": 3, "time": 0.3})
+    cycle2 = dict(cycle3)
+    cycle2.update({"cycle": 2, "time": 0.2})
+    carrier = dict(continuation_fixture["restart_carrier"])
+    carrier.update({
+        "fastflow_last_search_cycle": "3",
+        "fastflow_last_search_time": "0.29999999999999999",
+        "fastflow_time_first_found": "0.20000000000000001",
+    })
+    r1.require(selected_row([cycle2, cycle3], carrier,
+                            continuation=False) == cycle3 and
+               selected_row([cycle3], carrier,
+                            continuation=True) == cycle3,
+               "historical first-found time was not preserved across continuation")
+
+    def reject_selection(carrier_updates: dict[str, str],
+                         message: str) -> None:
+        invalid = dict(carrier)
+        invalid.update(carrier_updates)
+        try:
+            selected_row([cycle3], invalid, continuation=True)
+        except RuntimeError:
+            return
+        raise RuntimeError(message)
+
+    reject_selection({"fastflow_time_first_found": "0.31"},
+                     "future first-found time was accepted")
+    reject_selection({"fastflow_time_first_found": "-0.1"},
+                     "negative first-found time was accepted")
+    reject_selection({"fastflow_time_first_found": "nan"},
+                     "nonfinite first-found time was accepted")
+    reject_selection({"fastflow_coefficients":
+                      carrier["fastflow_coefficients"] + ",0"},
+                     "mismatched horizon coefficients were accepted")
+    reject_selection({"fastflow_selected_branch": "plus"},
+                     "mismatched selected branch was accepted")
+    reject_selection({"fastflow_last_search_time": "0.29"},
+                     "mismatched last-search time was accepted")
+    changed_history = synthetic_observations()
+    changed_history["schwarzschild_restart"]["restart_carrier"][
+        "fastflow_time_first_found"] = "0.05"
+    changed_summary = validate_observations(changed_history)
+    r1.require(changed_summary["verdict"] == "fail" and
+               "schwarzschild: restart continuation changed diagnostic/horizon state"
+               in changed_summary["failures"],
+               "originating fresh/restart carrier equality was weakened")
     one_sided = synthetic_observations()
     del one_sided[attempt_name("spin99_minus", "l6n24")]
     r1.require(validate_observations(one_sided)["verdict"] == "fail",
