@@ -104,6 +104,10 @@ def main() -> int:
             "interpolation call was duplicated")
     require(importer.count("IrisAthenakSpectralOpen") == 1,
             "payload open call was duplicated")
+    require(importer.count("IrisAthenakSpectralClose") == 1 and
+            importer.index("FillAdmFromIrisSpectral(pmbp, interpolator)") <
+            importer.index("IrisAthenakSpectralClose(interpolator)"),
+            "Iris importer ownership is not one open/fill/close lifetime")
     for token in (
             "CartoonIrisInterpolationCoordinates",
             "IrisTensorProductDimensions<Map>",
@@ -116,6 +120,12 @@ def main() -> int:
     require("template <z4c_irisk::AdmMap Map>" in importer and
             "SelectAdmMap(pmbp->z4c_symmetry)" in importer,
             "Iris map is not selected once before compile-time mapped loops")
+    require("z4c::MakeStoredDomainBounds(indcs)" in importer,
+            "Iris import does not use allocated stored-domain bounds")
+    for unsafe_bound in ("indcs.ks - indcs.ng", "indcs.ke + indcs.ng",
+                         "indcs.js - indcs.ng", "indcs.je + indcs.ng"):
+        require(unsafe_bound not in importer,
+                f"Iris import fabricates collapsed ghost storage: {unsafe_bound}")
     require("return {code_x1, Scalar{0}, code_x2};" in coordinate_map,
             "Cartoon Iris point is not physical (X,Y,Z)=(x1,0,x2)")
     require("return {physical[0], physical[2], physical[1]};" in

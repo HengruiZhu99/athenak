@@ -35,6 +35,7 @@
 #include "z4c/z4c_amr.hpp"
 #include "z4c/curvature_diagnostics.hpp"
 #include "z4c/fastflow.hpp"
+#include "z4c/stored_domain_bounds.hpp"
 
 namespace {
 
@@ -123,15 +124,16 @@ void FillAdmFromIrisSpectralMapped(
   auto &indcs = pmbp->pmesh->mb_indcs;
   pmbp->pmb->mb_size.sync_host();
   auto size = pmbp->pmb->mb_size.h_view;
-  const int isg = indcs.is - indcs.ng;
-  const int ieg = indcs.ie + indcs.ng;
-  const int jsg = indcs.js - indcs.ng;
-  const int jeg = indcs.je + indcs.ng;
-  const int ksg = indcs.ks - indcs.ng;
-  const int keg = indcs.ke + indcs.ng;
-  const std::size_t nx = static_cast<std::size_t>(ieg - isg + 1);
-  const std::size_t ny = static_cast<std::size_t>(jeg - jsg + 1);
-  const std::size_t nz = static_cast<std::size_t>(keg - ksg + 1);
+  const auto bounds = z4c::MakeStoredDomainBounds(indcs);
+  const int isg = bounds.is;
+  const int ieg = bounds.ie;
+  const int jsg = bounds.js;
+  const int jeg = bounds.je;
+  const int ksg = bounds.ks;
+  const int keg = bounds.ke;
+  const std::size_t nx = static_cast<std::size_t>(bounds.n1);
+  const std::size_t ny = static_cast<std::size_t>(bounds.n2);
+  const std::size_t nz = static_cast<std::size_t>(bounds.n3);
   Real minimum_psi4 = std::numeric_limits<Real>::infinity();
   Real minimum_lapse = std::numeric_limits<Real>::infinity();
   int invalid_fields = 0;

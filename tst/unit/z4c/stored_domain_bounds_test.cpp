@@ -9,9 +9,11 @@
 #include <cstdlib>
 #include <iostream>
 #include <type_traits>
+#include <vector>
 
 #include <Kokkos_Core.hpp>
 
+#include "pgen/z4c_irisk_coordinate_map.hpp"
 #include "z4c/stored_domain_bounds.hpp"
 
 namespace {
@@ -71,6 +73,58 @@ bool CheckCase(const int ng, const int nx2, const int nx3) {
   return true;
 }
 
+template <z4c_irisk::AdmMap Map>
+bool CheckIrisImportCoverage(const int ng, const int nx2, const int nx3) {
+  const Indices indcs{
+      ng, 8, nx2, nx3, ng, ng + 7,
+      nx2 > 1 ? ng : 0, nx2 > 1 ? ng + nx2 - 1 : 0,
+      nx3 > 1 ? ng : 0, nx3 > 1 ? ng + nx3 - 1 : 0,
+      4, nx2 > 1 ? nx2 / 2 : 1, nx3 > 1 ? nx3 / 2 : 1,
+      ng, ng + 3, nx2 > 1 ? ng : 0,
+      nx2 > 1 ? ng + nx2 / 2 - 1 : 0, nx3 > 1 ? ng : 0,
+      nx3 > 1 ? ng + nx3 / 2 - 1 : 0};
+  const auto bounds = z4c::MakeStoredDomainBounds(indcs);
+  const auto dims = z4c_irisk::IrisTensorProductDimensions<Map>(
+      static_cast<std::size_t>(bounds.n1),
+      static_cast<std::size_t>(bounds.n2),
+      static_cast<std::size_t>(bounds.n3));
+  const std::size_t points = dims[0] * dims[1] * dims[2];
+  std::vector<int> visits(points, 0);
+  std::size_t writes = 0;
+  for (int k = bounds.ks; k <= bounds.ke; ++k) {
+    for (int j = bounds.js; j <= bounds.je; ++j) {
+      for (int i = bounds.is; i <= bounds.ie; ++i) {
+        const std::size_t point = z4c_irisk::IrisPointIndex<Map>(
+            static_cast<std::size_t>(i - bounds.is),
+            static_cast<std::size_t>(j - bounds.js),
+            static_cast<std::size_t>(k - bounds.ks),
+            static_cast<std::size_t>(bounds.n1),
+            static_cast<std::size_t>(bounds.n2));
+        if (point >= visits.size()) return false;
+        ++visits[point];
+        ++writes;
+      }
+    }
+  }
+  if (writes != static_cast<std::size_t>(bounds.n1 * bounds.n2 * bounds.n3)) {
+    return false;
+  }
+  for (const int visit_count : visits) {
+    if (visit_count != 1) return false;
+  }
+  if constexpr (Map == z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1) {
+    if (bounds.ks != bounds.ke || bounds.n3 != 1 || dims[1] != 1) return false;
+    // The two physical-Z rows must remain distinct; the collapsed direction
+    // must not duplicate or alias them.
+    if (bounds.n2 > 1 &&
+        z4c_irisk::IrisPointIndex<Map>(0, 0, 0, bounds.n1, bounds.n2) ==
+            z4c_irisk::IrisPointIndex<Map>(0, 1, 0, bounds.n1, bounds.n2)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 }  // namespace
 
 int main(int argc, char *argv[]) {
@@ -81,6 +135,14 @@ int main(int argc, char *argv[]) {
     passed = passed && CheckCase(ng, 8, 8);
     passed = passed && CheckCase(ng, 8, 1);
     passed = passed && CheckCase(ng, 1, 1);
+    passed = passed && CheckIrisImportCoverage<
+                           z4c_irisk::AdmMap::cartesian_xyz>(ng, 8, 8);
+    passed = passed && CheckIrisImportCoverage<
+                           z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1>(
+                           ng, 8, 1);
+    passed = passed && CheckIrisImportCoverage<
+                           z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1>(
+                           ng, 1, 1);
   }
   Kokkos::finalize();
   if (!passed) return EXIT_FAILURE;
