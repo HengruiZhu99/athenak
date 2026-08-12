@@ -49,6 +49,24 @@ Real RestrictInterpolation(const int m, const int v, const int fk, const int fj,
     }
   }
 
+  if (NGHOST == 3) {
+    // Cubic interpolation from four fine-cell centers to the coarse-cell
+    // center.  The target lies halfway between the two central samples, so
+    // the centered weights are symmetric in every direction.
+    constexpr Real weight[4] = {-1.0/16.0, 9.0/16.0, 9.0/16.0, -1.0/16.0};
+    const int refi = fi - 1;
+    const int refj = fj - 1;
+    const int refk = fk - 1;
+    for (int ii = 0; ii < 4; ++ii) {
+      for (int jj = 0; jj < 4; ++jj) {
+        for (int kk = 0; kk < 4; ++kk) {
+          ivals += weight[ii] * weight[jj] * weight[kk] *
+                   a(m, v, refk + kk, refj + jj, refi + ii);
+        }
+      }
+    }
+  }
+
   if (NGHOST ==4) {
     int refi = (offseti) ? fi-1 : fi-2;
     int refj = (offsetj) ? fj-1 : fj-2;

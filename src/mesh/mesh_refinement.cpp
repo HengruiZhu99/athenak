@@ -1356,6 +1356,9 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
           case 2: cu(m,n,k,j,i) = RestrictInterpolation<2>(m,n,finek,finej,finei,
                           nx1,nx2,nx3,u,restrict_2nd,restrict_4th,restrict_4th_edge);
                   break;
+          case 3: cu(m,n,k,j,i) = RestrictInterpolation<3>(m,n,finek,finej,finei,
+                          nx1,nx2,nx3,u,restrict_2nd,restrict_4th,restrict_4th_edge);
+                  break;
           case 4: cu(m,n,k,j,i) = RestrictInterpolation<4>(m,n,finek,finej,finei,
                           nx1,nx2,nx3,u,restrict_2nd,restrict_4th,restrict_4th_edge);
                   break;

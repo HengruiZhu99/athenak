@@ -14,6 +14,7 @@
 
 #include "athena.hpp"
 #include "mesh/prolongation.hpp"
+#include "mesh/restriction.hpp"
 
 namespace {
 
@@ -24,20 +25,138 @@ bool NearlyEqual(const Real left, const Real right, const Real tolerance) {
   return std::abs(left - right) <= tolerance * scale;
 }
 
-DualArray3D<Real> MakeFourthOrderWeights() {
+template <int NGHOST>
+DualArray3D<Real> MakeProlongationWeights() {
   DualArray3D<Real> weights("test prolongation weights", 5, 5, 5);
   for (int k = 0; k < 5; ++k) {
     for (int j = 0; j < 5; ++j) {
       for (int i = 0; i < 5; ++i) {
-        weights.h_view(k, j, i) = ProlongWeight1D<kNghost>(k, false) *
-                                  ProlongWeight1D<kNghost>(j, false) *
-                                  ProlongWeight1D<kNghost>(i, false);
+        weights.h_view(k, j, i) =
+            (k <= NGHOST && j <= NGHOST && i <= NGHOST)
+                ? ProlongWeight1D<NGHOST>(k, false) *
+                      ProlongWeight1D<NGHOST>(j, false) *
+                      ProlongWeight1D<NGHOST>(i, false)
+                : 0.0;
       }
     }
   }
   weights.template modify<HostMemSpace>();
   weights.template sync<DevExeSpace>();
   return weights;
+}
+
+DualArray3D<Real> MakeFourthOrderWeights() {
+  return MakeProlongationWeights<kNghost>();
+}
+
+struct RestrictionWeights {
+  DualArray1D<Real> second;
+  DualArray1D<Real> fourth;
+  DualArray1D<Real> fourth_edge;
+};
+
+RestrictionWeights MakeRestrictionWeights() {
+  RestrictionWeights weights{
+      DualArray1D<Real>("test second-order restriction weights", 3),
+      DualArray1D<Real>("test fourth-order restriction weights", 5),
+      DualArray1D<Real>("test fourth-order edge restriction weights", 5)};
+  const Real second[3] = {0.375, 0.75, -0.125};
+  const Real fourth[5] = {-0.0390625, 0.46875, 0.703125, -0.15625, 0.0234375};
+  const Real edge[5] = {0.2734375, 1.09375, -0.546875, 0.21875, -0.0390625};
+  for (int i = 0; i < 3; ++i) weights.second.h_view(i) = second[i];
+  for (int i = 0; i < 5; ++i) {
+    weights.fourth.h_view(i) = fourth[i];
+    weights.fourth_edge.h_view(i) = edge[i];
+  }
+  weights.second.template modify<HostMemSpace>();
+  weights.second.template sync<DevExeSpace>();
+  weights.fourth.template modify<HostMemSpace>();
+  weights.fourth.template sync<DevExeSpace>();
+  weights.fourth_edge.template modify<HostMemSpace>();
+  weights.fourth_edge.template sync<DevExeSpace>();
+  return weights;
+}
+
+template <int NGHOST>
+bool CheckConsecutiveThreeDimensionalRefreshes() {
+  constexpr int n = NGHOST + 1;
+  constexpr int fine_n = 32;
+  constexpr int fine_center = 16;
+  constexpr int coarse_center = NGHOST / 2;
+  DvceArray5D<Real> fine("refresh source chi", 1, 1, fine_n, fine_n, fine_n);
+  DvceArray5D<Real> coarse("refreshed coarse chi", 1, 1, n, n, n);
+  DvceArray5D<Real> children("refresh chi children", 1, 1, 2, 2, 2);
+  const auto prolongation_weights = MakeProlongationWeights<NGHOST>();
+  const auto restriction_weights = MakeRestrictionWeights();
+  Real previous_center = 0.0;
+
+  for (int pass = 0; pass < 2; ++pass) {
+    const Real offset = 2.0 + 0.25 * pass;
+    Kokkos::parallel_for(
+        "populate refresh source", Kokkos::MDRangePolicy<Kokkos::Rank<3>>(
+            {0, 0, 0}, {fine_n, fine_n, fine_n}),
+        KOKKOS_LAMBDA(const int k, const int j, const int i) {
+          fine(0, 0, k, j, i) =
+              offset + 1.0e-3 * i + 2.0e-3 * j + 3.0e-3 * k;
+        });
+    if (pass == 0) {
+      Kokkos::deep_copy(coarse, -1.0);
+    }
+    Kokkos::parallel_for(
+        "refresh coarse chi stencil", Kokkos::MDRangePolicy<Kokkos::Rank<3>>(
+            {0, 0, 0}, {n, n, n}),
+        KOKKOS_LAMBDA(const int k, const int j, const int i) {
+          const int fk = fine_center + 2 * (k - coarse_center);
+          const int fj = fine_center + 2 * (j - coarse_center);
+          const int fi = fine_center + 2 * (i - coarse_center);
+          coarse(0, 0, k, j, i) = RestrictInterpolation<NGHOST>(
+              0, 0, fk, fj, fi, fine_n, fine_n, fine_n, fine,
+              restriction_weights.second, restriction_weights.fourth,
+              restriction_weights.fourth_edge);
+        });
+    Kokkos::View<int *> status("refreshed chi status", 1);
+    Kokkos::parallel_for(
+        "prolong refreshed chi", Kokkos::RangePolicy<>(0, 1),
+        KOKKOS_LAMBDA(const int) {
+          status(0) = static_cast<int>(ProlongPositiveChiCC<NGHOST>(
+              0, 0, coarse_center, coarse_center, coarse_center, 0, 0, 0,
+              fine_n, fine_n, fine_n, true, true, coarse, children,
+              prolongation_weights));
+        });
+    const auto status_host =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), status);
+    const auto coarse_host =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), coarse);
+    const auto children_host =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), children);
+    if (status_host(0) != static_cast<int>(ChiProlongationStatus::high_order)) {
+      return false;
+    }
+    for (int k = 0; k < n; ++k) {
+      for (int j = 0; j < n; ++j) {
+        for (int i = 0; i < n; ++i) {
+          if (!std::isfinite(coarse_host(0, 0, k, j, i)) ||
+              !(coarse_host(0, 0, k, j, i) > 0.0)) return false;
+        }
+      }
+    }
+    for (int k = 0; k < 2; ++k) {
+      for (int j = 0; j < 2; ++j) {
+        for (int i = 0; i < 2; ++i) {
+          if (!std::isfinite(children_host(0, 0, k, j, i)) ||
+              !(children_host(0, 0, k, j, i) > 0.0)) return false;
+        }
+      }
+    }
+    const Real center = coarse_host(0, 0, coarse_center, coarse_center,
+                                    coarse_center);
+    const Real expected_center = offset + (1.0e-3 + 2.0e-3 + 3.0e-3) *
+                                              (fine_center + 0.5);
+    if (!NearlyEqual(center, expected_center, 2.0e-14)) return false;
+    if (pass == 1 && !(center > previous_center)) return false;
+    previous_center = center;
+  }
+  return true;
 }
 
 bool CheckThreeDimensionalBoostedPunctureFallback() {
@@ -338,7 +457,10 @@ int main(int argc, char **argv) {
                       CheckInvalidParentFailsClosed() &&
                       CheckSiblingInventories() &&
                       CheckThreeDimensionalHighOrderGroup() &&
-                      CheckThreeDimensionalFallbackConservation();
+                      CheckThreeDimensionalFallbackConservation() &&
+                      CheckConsecutiveThreeDimensionalRefreshes<2>() &&
+                      CheckConsecutiveThreeDimensionalRefreshes<3>() &&
+                      CheckConsecutiveThreeDimensionalRefreshes<4>();
   Kokkos::finalize();
   if (!passed) {
     std::cerr << "Z4c chi prolongation positivity test failed\n";

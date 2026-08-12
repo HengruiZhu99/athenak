@@ -119,6 +119,9 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
                   case 2: ca(m,v,k,j,i) = RestrictInterpolation<2>(m,v,finek,finej,finei,
                               nx1,nx2,nx3,a,restrict_2nd,restrict_4th,restrict_4th_edge);
                           break;
+                  case 3: ca(m,v,k,j,i) = RestrictInterpolation<3>(m,v,finek,finej,finei,
+                              nx1,nx2,nx3,a,restrict_2nd,restrict_4th,restrict_4th_edge);
+                          break;
                   case 4: ca(m,v,k,j,i) = RestrictInterpolation<4>(m,v,finek,finej,finei,
                               nx1,nx2,nx3,a,restrict_2nd,restrict_4th,restrict_4th_edge);
                           break;

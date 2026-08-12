@@ -16,8 +16,10 @@ def main() -> None:
     args = parser.parse_args()
     root = args.source_dir.resolve()
     prolongation = (root / "src/mesh/prolongation.hpp").read_text(encoding="utf-8")
+    restriction = (root / "src/mesh/restriction.hpp").read_text(encoding="utf-8")
     refinement = (root / "src/mesh/mesh_refinement.cpp").read_text(encoding="utf-8")
     boundary = (root / "src/bvals/prolongation.cpp").read_text(encoding="utf-8")
+    tasks = (root / "src/z4c/z4c_tasks.cpp").read_text(encoding="utf-8")
 
     helper = prolongation[prolongation.index("ChiProlongationStatus ProlongPositiveChiCC") :]
     high_order = helper.index("HighOrderProlongCC<NGHOST>")
@@ -68,6 +70,37 @@ def main() -> None:
     for forbidden in ("chi_min_floor", "fmax(", "epsilon"):
         require(forbidden not in boundary_dispatch,
                 f"forbidden boundary chi repair token entered source: {forbidden}")
+
+    z4c_prolongate = tasks[
+        tasks.index("TaskStatus Z4c::Prolongate") :
+        tasks.index("void Z4c::FillBuiltInPhysicalBoundaryGhosts")
+    ]
+    refresh = z4c_prolongate.index(
+        "pbval_u->FillCoarseInBndryCC(u0, coarse_u0, true)")
+    prolong = z4c_prolongate.index("pbval_u->ProlongateCC(u0, coarse_u0, true)")
+    require(refresh < prolong,
+            "Z4c same-level coarse corners are not refreshed before prolongation")
+
+    fill_coarse = boundary[
+        boundary.index("void MeshBoundaryValuesCC::FillCoarseInBndryCC") :
+        boundary.index("void MeshBoundaryValuesCC::ProlongateCC")
+    ]
+    for order in (2, 3, 4):
+        require(f"case {order}:" in fill_coarse and
+                f"RestrictInterpolation<{order}>" in fill_coarse,
+                f"3D Z4c coarse refresh is missing NGHOST={order}")
+    require("if (NGHOST == 3)" in restriction and
+            "constexpr Real weight[4]" in restriction,
+            "NGHOST=3 restriction implementation is missing")
+
+    restrict_cc = refinement[
+        refinement.index("void MeshRefinement::RestrictCC") :
+        refinement.index("void MeshRefinement::RestrictFC")
+    ]
+    for order in (2, 3, 4):
+        require(f"case {order}:" in restrict_cc and
+                f"RestrictInterpolation<{order}>" in restrict_cc,
+                f"full Z4c restriction is missing NGHOST={order}")
 
     adaptive = refinement[
         refinement.index("void MeshRefinement::AdaptiveMeshRefinement") :
