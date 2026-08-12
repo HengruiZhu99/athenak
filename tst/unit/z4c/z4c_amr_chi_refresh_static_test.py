@@ -89,9 +89,17 @@ def main() -> None:
         require(f"case {order}:" in fill_coarse and
                 f"RestrictInterpolation<{order}>" in fill_coarse,
                 f"3D Z4c coarse refresh is missing NGHOST={order}")
+    require("CompleteFinePairCoarseRange" in fill_coarse and
+            "fine_n1 = a.extent_int(4)" in fill_coarse and
+            "fine_n2 = a.extent_int(3)" in fill_coarse and
+            "fine_n3 = a.extent_int(2)" in fill_coarse,
+            "same-level coarse refresh no longer clamps to stored fine pairs")
     require("if (NGHOST == 3)" in restriction and
             "constexpr Real weight[4]" in restriction,
             "NGHOST=3 restriction implementation is missing")
+    require("fi == 0" in restriction and "fi == outer_i" in restriction and
+            "restrict_4th_edge.d_view" in restriction,
+            "outer stored NGHOST=4 pairs no longer use oriented edge weights")
 
     restrict_cc = refinement[
         refinement.index("void MeshRefinement::RestrictCC") :

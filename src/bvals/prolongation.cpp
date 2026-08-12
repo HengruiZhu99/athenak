@@ -52,6 +52,9 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
   auto &nx1 = pmy_pack->pmesh->mb_indcs.nx1;
   auto &nx2 = pmy_pack->pmesh->mb_indcs.nx2;
   auto &nx3 = pmy_pack->pmesh->mb_indcs.nx3;
+  const int fine_n1 = a.extent_int(4);
+  const int fine_n2 = a.extent_int(3);
+  const int fine_n3 = a.extent_int(2);
   auto& restrict_2nd = pmy_pack->pmesh->pmr->weights.restrict_2nd;
   auto& restrict_4th = pmy_pack->pmesh->pmr->weights.restrict_4th;
   auto& restrict_4th_edge = pmy_pack->pmesh->pmr->weights.restrict_4th_edge;
@@ -82,6 +85,24 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
         int ju = (rbuf[n].isame[0].bje + cjs)/2;
         int kl = (rbuf[n].isame[0].bks + cks)/2;
         int ku = (rbuf[n].isame[0].bke + cks)/2;
+
+        // Integer endpoint conversion can manufacture an unrepresentable
+        // coarse target when a same-level receive ghost band has odd width.
+        // Retain exactly the targets backed by a complete stored fine pair.
+        const auto irange = CompleteFinePairCoarseRange(
+            il, iu, indcs.cis, indcs.is, fine_n1);
+        const auto jrange = CompleteFinePairCoarseRange(
+            jl, ju, indcs.cjs, indcs.js, fine_n2);
+        il = irange.lower;
+        iu = irange.upper;
+        jl = jrange.lower;
+        ju = jrange.upper;
+        if (three_d) {
+          const auto krange = CompleteFinePairCoarseRange(
+              kl, ku, indcs.cks, indcs.ks, fine_n3);
+          kl = krange.lower;
+          ku = krange.upper;
+        }
 
         const int ni = iu - il + 1;
         const int nj = ju - jl + 1;

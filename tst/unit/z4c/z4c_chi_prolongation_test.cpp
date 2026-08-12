@@ -78,6 +78,96 @@ RestrictionWeights MakeRestrictionWeights() {
 }
 
 template <int NGHOST>
+bool CheckStoredSameLevelRestrictionBounds() {
+  constexpr int nx = 8;
+  constexpr int extent = nx + 2*NGHOST;
+  constexpr int fine_start = NGHOST;
+  constexpr int coarse_start = NGHOST;
+  DvceArray5D<Real> fine("stored same-level restriction source", 1, 1,
+                         extent, extent, extent);
+  Kokkos::parallel_for(
+      "populate stored same-level restriction source",
+      Kokkos::MDRangePolicy<Kokkos::Rank<3>>({0, 0, 0},
+                                              {extent, extent, extent}),
+      KOKKOS_LAMBDA(const int k, const int j, const int i) {
+        fine(0, 0, k, j, i) = 10.0 + i + 2.0*j + 3.0*k;
+      });
+  const auto weights = MakeRestrictionWeights();
+  int face_count = 0;
+  int edge_count = 0;
+  int corner_count = 0;
+
+  const auto receive_range = [](const int offset) {
+    int lower = fine_start;
+    int upper = fine_start + nx - 1;
+    if (offset < 0) {
+      lower = 0;
+      upper = fine_start - 1;
+    } else if (offset > 0) {
+      lower = fine_start + nx;
+      upper = extent - 1;
+    }
+    return CoarseRestrictionRange{(lower + coarse_start)/2,
+                                  (upper + coarse_start)/2};
+  };
+
+  for (int ox3 = -1; ox3 <= 1; ++ox3) {
+    for (int ox2 = -1; ox2 <= 1; ++ox2) {
+      for (int ox1 = -1; ox1 <= 1; ++ox1) {
+        const int codimension = (ox1 != 0) + (ox2 != 0) + (ox3 != 0);
+        if (codimension == 0) continue;
+        auto irange = receive_range(ox1);
+        auto jrange = receive_range(ox2);
+        auto krange = receive_range(ox3);
+        irange = CompleteFinePairCoarseRange(irange.lower, irange.upper,
+                                             coarse_start, fine_start, extent);
+        jrange = CompleteFinePairCoarseRange(jrange.lower, jrange.upper,
+                                             coarse_start, fine_start, extent);
+        krange = CompleteFinePairCoarseRange(krange.lower, krange.upper,
+                                             coarse_start, fine_start, extent);
+        if (irange.lower > irange.upper || jrange.lower > jrange.upper ||
+            krange.lower > krange.upper) return false;
+        const int ni = irange.upper - irange.lower + 1;
+        const int nj = jrange.upper - jrange.lower + 1;
+        const int nk = krange.upper - krange.lower + 1;
+        const int count = ni*nj*nk;
+        if (codimension == 1) face_count += count;
+        if (codimension == 2) edge_count += count;
+        if (codimension == 3) corner_count += count;
+        Kokkos::View<int *> failures("stored restriction failures", 1);
+        Kokkos::deep_copy(failures, 0);
+        Kokkos::parallel_for(
+            "stored face edge corner restriction",
+            Kokkos::RangePolicy<>(0, count), KOKKOS_LAMBDA(const int idx) {
+              const int k = idx/(nj*ni) + krange.lower;
+              const int j = (idx % (nj*ni))/ni + jrange.lower;
+              const int i = idx % ni + irange.lower;
+              const int fk = (k - coarse_start)*2 + fine_start;
+              const int fj = (j - coarse_start)*2 + fine_start;
+              const int fi = (i - coarse_start)*2 + fine_start;
+              const Real restricted = RestrictInterpolation<NGHOST>(
+                  0, 0, fk, fj, fi, nx, nx, nx, fine, weights.second,
+                  weights.fourth, weights.fourth_edge);
+              const Real expected =
+                  10.0 + (fi + 0.5) + 2.0*(fj + 0.5) + 3.0*(fk + 0.5);
+              if (!Kokkos::isfinite(restricted) ||
+                  Kokkos::abs(restricted - expected) > 2.0e-12) {
+                Kokkos::atomic_inc(&failures(0));
+              }
+            });
+        const auto failures_host =
+            Kokkos::create_mirror_view_and_copy(HostMemSpace(), failures);
+        if (failures_host(0) != 0) return false;
+      }
+    }
+  }
+  constexpr int boundary_width = (NGHOST == 4) ? 2 : 1;
+  return face_count == 6*boundary_width*4*4 &&
+         edge_count == 12*boundary_width*boundary_width*4 &&
+         corner_count == 8*boundary_width*boundary_width*boundary_width;
+}
+
+template <int NGHOST>
 bool CheckConsecutiveThreeDimensionalRefreshes() {
   constexpr int n = NGHOST + 1;
   constexpr int fine_n = 32;
@@ -458,6 +548,9 @@ int main(int argc, char **argv) {
                       CheckSiblingInventories() &&
                       CheckThreeDimensionalHighOrderGroup() &&
                       CheckThreeDimensionalFallbackConservation() &&
+                      CheckStoredSameLevelRestrictionBounds<2>() &&
+                      CheckStoredSameLevelRestrictionBounds<3>() &&
+                      CheckStoredSameLevelRestrictionBounds<4>() &&
                       CheckConsecutiveThreeDimensionalRefreshes<2>() &&
                       CheckConsecutiveThreeDimensionalRefreshes<3>() &&
                       CheckConsecutiveThreeDimensionalRefreshes<4>();

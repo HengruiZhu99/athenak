@@ -15,6 +15,32 @@
 #include "mesh/mesh.hpp"
 #include "coordinates/cell_locations.hpp"
 
+struct CoarseRestrictionRange {
+  int lower;
+  int upper;
+};
+
+// Return only coarse indices whose associated pair of fine cells is stored.
+// Same-level receive buffers can contain an odd number of fine ghost cells;
+// converting both endpoints with integer division otherwise creates a coarse
+// target whose fine-cell pair lies partly outside the allocation.
+KOKKOS_INLINE_FUNCTION
+CoarseRestrictionRange CompleteFinePairCoarseRange(const int lower, const int upper,
+                                                    const int coarse_start,
+                                                    const int fine_start,
+                                                    const int fine_extent) {
+  CoarseRestrictionRange range{lower, upper};
+  while (range.lower <= range.upper &&
+         (range.lower - coarse_start)*2 + fine_start < 0) {
+    ++range.lower;
+  }
+  while (range.lower <= range.upper &&
+         (range.upper - coarse_start)*2 + fine_start + 1 >= fine_extent) {
+    --range.upper;
+  }
+  return range;
+}
+
 template <int NGHOST>
 KOKKOS_INLINE_FUNCTION
 Real RestrictInterpolation(const int m, const int v, const int fk, const int fj,
@@ -72,6 +98,16 @@ Real RestrictInterpolation(const int m, const int v, const int fk, const int fj,
     int refj = (offsetj) ? fj-1 : fj-2;
     int refk = (offsetk) ? fk-1 : fk-2;
 
+    const int outer_i = nx1 + 2*NGHOST - 2;
+    const int outer_j = nx2 + 2*NGHOST - 2;
+    const int outer_k = nx3 + 2*NGHOST - 2;
+    const bool edge_i = (fi == 0 || fi == NGHOST ||
+                         fi == NGHOST + nx1 - 2 || fi == outer_i);
+    const bool edge_j = (fj == 0 || fj == NGHOST ||
+                         fj == NGHOST + nx2 - 2 || fj == outer_j);
+    const bool edge_k = (fk == 0 || fk == NGHOST ||
+                         fk == NGHOST + nx3 - 2 || fk == outer_k);
+
     // edge cases
     refi = (fi==NGHOST) ? refi+1 : refi;
     refj = (fj==NGHOST) ? refj+1 : refj;
@@ -81,6 +117,17 @@ Real RestrictInterpolation(const int m, const int v, const int fk, const int fj,
     refj = (fj==NGHOST+nx2-2) ? refj-1 : refj;
     refk = (fk==NGHOST+nx3-2) ? refk-1 : refk;
 
+    // FillCoarseInBndryCC also restricts the outermost complete pair in a
+    // stored same-level ghost band.  Use the existing one-sided fourth-order
+    // rule there, oriented by offset{i,j,k}; a centered five-point stencil
+    // would read one cell below zero or one beyond the stored allocation.
+    refi = (fi == 0) ? 0 : refi;
+    refj = (fj == 0) ? 0 : refj;
+    refk = (fk == 0) ? 0 : refk;
+    refi = (fi == outer_i) ? nx1 + NGHOST - 1 : refi;
+    refj = (fj == outer_j) ? nx2 + NGHOST - 1 : refj;
+    refk = (fk == outer_k) ? nx3 + NGHOST - 1 : refk;
+
     for (int ii=0; ii<NGHOST+1; ii++) {
       for (int jj=0; jj<NGHOST+1; jj++) {
         for (int kk=0; kk<NGHOST+1; kk++) {
@@ -88,17 +135,17 @@ Real RestrictInterpolation(const int m, const int v, const int fk, const int fj,
           int wghtj = (offsetj) ? jj : NGHOST-jj;
           int wghtk = (offsetk) ? kk : NGHOST-kk;
           Real iwght = 1;
-          if (fi==NGHOST || fi==NGHOST+nx1-2) {
+          if (edge_i) {
             iwght *= restrict_4th_edge.d_view(wghti);
           } else {
             iwght *= restrict_4th.d_view(wghti);
           }
-          if (fj==NGHOST || fj==NGHOST+nx2-2) {
+          if (edge_j) {
             iwght *= restrict_4th_edge.d_view(wghtj);
           } else {
             iwght *= restrict_4th.d_view(wghtj);
           }
-          if (fk==NGHOST || fk==NGHOST+nx3-2) {
+          if (edge_k) {
             iwght *= restrict_4th_edge.d_view(wghtk);
           } else {
             iwght *= restrict_4th.d_view(wghtk);
