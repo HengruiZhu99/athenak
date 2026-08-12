@@ -135,6 +135,15 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.lapse_harmonic = pin->GetOrAddReal("z4c", "lapse_harmonic", 0.0);
   opt.lapse_oplog = pin->GetOrAddReal("z4c", "lapse_oplog", 2.0);
   opt.lapse_advect = pin->GetOrAddReal("z4c", "lapse_advect", 1.0);
+  // Keep the legacy input/output bytes unchanged unless this prospective gauge is
+  // explicitly requested.
+  opt.lapse_shock_avoiding =
+      pin->DoesParameterExist("z4c", "lapse_shock_avoiding") &&
+      pin->GetBoolean("z4c", "lapse_shock_avoiding");
+  opt.lapse_shock_avoiding_kappa =
+      pin->DoesParameterExist("z4c", "lapse_shock_avoiding_kappa")
+          ? pin->GetReal("z4c", "lapse_shock_avoiding_kappa")
+          : 1.0;
   opt.slow_start_lapse = pin->GetOrAddBoolean("z4c", "slow_start_lapse", false);
   opt.ssl_damping_amp = pin->GetOrAddReal("z4c", "ssl_damping_amp", 0.6);
   opt.ssl_damping_time = pin->GetOrAddReal("z4c", "ssl_damping_time", 20.0);
@@ -166,6 +175,24 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
               << "<z4c>/telegraph_kappa must be nonnegative, but is "
               << opt.telegraph_kappa << std::endl;
     std::exit(EXIT_FAILURE);
+  }
+  if (opt.lapse_shock_avoiding) {
+    if (opt.lapse_shock_avoiding_kappa <= 0.0) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl
+                << "<z4c>/lapse_shock_avoiding_kappa must be positive, but is "
+                << opt.lapse_shock_avoiding_kappa << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    if (opt.telegraph_lapse || opt.slow_start_lapse || opt.lapse_oplog != 0.0 ||
+        opt.lapse_harmonic != 0.0) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl
+                << "shock-avoiding lapse requires telegraph_lapse=false, "
+                << "slow_start_lapse=false, lapse_oplog=0, and lapse_harmonic=0"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
   }
 
   opt.use_z4c = pin->GetOrAddBoolean("z4c", "use_z4c", true);

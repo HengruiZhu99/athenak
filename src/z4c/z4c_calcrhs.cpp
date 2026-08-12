@@ -749,8 +749,16 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
         // lapse function
         Real const f = opt.lapse_oplog * opt.lapse_harmonicf + opt.lapse_harmonic * alpha;
-        rhs.alpha(m, k, j, i) =
-            opt.lapse_advect * Lalpha - f * alpha * z4c.vKhat(m, k, j, i);
+        if (opt.lapse_shock_avoiding) {
+          rhs.alpha(m, k, j, i) =
+              opt.lapse_advect * Lalpha -
+              (alpha * alpha + opt.lapse_shock_avoiding_kappa) *
+                  (z4c.vKhat(m, k, j, i) + 2.0 * z4c.vTheta(m, k, j, i));
+        } else {
+          // Preserve the existing vanilla/telegraph lapse arithmetic exactly.
+          rhs.alpha(m, k, j, i) =
+              opt.lapse_advect * Lalpha - f * alpha * z4c.vKhat(m, k, j, i);
+        }
         if (opt.slow_start_lapse) {
           Real W2 = (chi > opt.chi_min_floor) ? chi : opt.chi_min_floor;
           Real W = pow(W2, 0.5);

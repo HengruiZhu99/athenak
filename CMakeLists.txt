@@ -465,6 +465,13 @@ if (Athena_BUILD_UNIT_TESTS)
       ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_amr_chi_refresh_static_test.py
       --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  add_test(
+      NAME athena.z4c_shock_avoiding_gauge_static
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_shock_avoiding_gauge_static_test.py
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR}
+      --athena $<TARGET_FILE:athena>)
 
   add_executable(
       athena_z4c_cartoon_m0_fastflow_unit_test
