@@ -239,7 +239,8 @@ def design() -> dict[str, Any]:
             result["qualification_claim"] == "current_gauge_analogue_only",
             "Figure-3 design schema/claim changed")
     require(result["execution"] == {
-                "order": ["n128", "n192", "n256"], "mpi_ranks": 4,
+                "order": ["n128", "n192", "n256"],
+                "allowed_mpi_ranks": [1, 2, 4],
                 "backend": "Cuda", "one_executable": True,
                 "cmake_option": "Athena_ENABLE_IRISK_INTERPOLATOR:BOOL=ON",
                 "required_import_coordinate_map":
@@ -587,7 +588,8 @@ def contract_digest(state: dict[str, Any]) -> str:
 
 def verify_state(state: dict[str, Any]) -> None:
     require(state.get("schema") == STATE_SCHEMA and
-            state.get("backend") == "Cuda" and state.get("ranks") == 4,
+            state.get("backend") == "Cuda" and
+            state.get("ranks") in design()["execution"]["allowed_mpi_ranks"],
             "unknown or altered Figure-3 campaign state")
     require(state.get("contract_sha256") == contract_digest(state),
             "Figure-3 campaign contract changed after preparation")
@@ -695,7 +697,7 @@ def prepare(args: argparse.Namespace) -> None:
                          "archive_path": str(archived_figure.resolve()),
                          "sha256": sha256(archived_figure),
                          "machine_readable_curve_available": False},
-        "backend": "Cuda", "ranks": 4, "inputs": inputs,
+        "backend": "Cuda", "ranks": args.ranks, "inputs": inputs,
         "execution_order": list(spec["execution"]["order"]), "cases": cases,
     }
     state["contract_sha256"] = contract_digest(state)
@@ -734,9 +736,12 @@ def run_case(args: argparse.Namespace) -> None:
     require(wrapper.is_file(), "established rank/GPU evidence wrapper is missing")
     athena = [state["executable"]["path"], "-i",
               state["inputs"][args.case]["path"], "-d", str(run_dir)]
-    command = ["srun", "--nodes=1", "--ntasks=4", "--ntasks-per-node=4",
+    ranks = state["ranks"]
+    gpu_map = ",".join(str(index) for index in range(ranks))
+    command = ["srun", "--nodes=1", f"--ntasks={ranks}",
+               f"--ntasks-per-node={ranks}",
                "--cpus-per-task=8", "--gpus-per-task=1",
-               "--gpu-bind=map_gpu:0,1,2,3", "--cpu-bind=cores", "--exact",
+               f"--gpu-bind=map_gpu:{gpu_map}", "--cpu-bind=cores", "--exact",
                "--kill-on-bad-exit=1", sys.executable, str(wrapper),
                "--evidence-dir", str(run_dir / "bindings"), "--require-cuda",
                "--", *athena]
@@ -969,7 +974,7 @@ def collect_case(state: dict[str, Any], name: str, reader: Any) -> dict[str, Any
     root_blocks_x1 = int(blocks["mesh"]["nx1"]) // int(
         blocks["meshblock"]["nx1"])
     tree = r1.tree_summary(groups["adm"], root_blocks_x1)
-    bindings = r1.binding_summary(root, "Cuda", 4)
+    bindings = r1.binding_summary(root, "Cuda", state["ranks"])
     restart, carrier = r1.latest_restart(root)
     rendered_input = Path(state["inputs"][name]["path"]).read_text(
         encoding="utf-8")
@@ -1422,6 +1427,7 @@ def main() -> int:
     make.add_argument("--artifact-root", required=True, type=Path)
     make.add_argument("--paper-figure", required=True, type=Path)
     make.add_argument("--output", required=True, type=Path)
+    make.add_argument("--ranks", required=True, type=int, choices=(1, 2, 4))
     run = subparsers.add_parser("run-case")
     run.add_argument("--state", required=True, type=Path)
     run.add_argument("--case", required=True)

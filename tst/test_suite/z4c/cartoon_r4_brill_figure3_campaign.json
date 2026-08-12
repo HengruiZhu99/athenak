@@ -45,7 +45,7 @@
   },
   "execution": {
     "order": ["n128", "n192", "n256"],
-    "mpi_ranks": 4,
+    "allowed_mpi_ranks": [1, 2, 4],
     "backend": "Cuda",
     "one_executable": true,
     "cmake_option": "Athena_ENABLE_IRISK_INTERPOLATOR:BOOL=ON",
