@@ -66,6 +66,19 @@ def check_mirror_reconciliation_order() -> None:
             in REFINEMENT, "refine > hold > derefine precedence changed")
     require("mirror.lx1 = nradial - 1 - loc.lx1;" in REFINEMENT,
             "signed-rho logical mirror map changed")
+    require("std::sort(cllderef, cllderef + ctnd, Mesh::GreaterLevel);"
+            in REFINEMENT,
+            "derefine parent sort does not cover the complete half-open range")
+    require("std::sort(cllderef, &(cllderef[ctnd-1])" not in REFINEMENT,
+            "legacy derefine sort still excludes the final parent")
+    refinement_audit = REFINEMENT.index(
+        'RequireCartoonTreeSymmetry(pmy_mesh, pmy_mesh->ptree.get(), "refinement")'
+    )
+    derefinement_audit = REFINEMENT.index(
+        'RequireCartoonTreeSymmetry(pmy_mesh, pmy_mesh->ptree.get(), "derefinement")'
+    )
+    require(update < refinement_audit < derefinement_audit,
+            "tree symmetry is not checked after both AMR mutation phases")
 
 
 def check_collapsed_dchi() -> None:

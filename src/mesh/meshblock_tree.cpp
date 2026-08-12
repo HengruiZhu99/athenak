@@ -323,6 +323,20 @@ void MeshBlockTree::CountMeshBlocks(int& count) {
 }
 
 //----------------------------------------------------------------------------------------
+//! \fn void MeshBlockTree::CollectLeafLocations(std::vector<LogicalLocation> &list)
+//! \brief Collect leaf locations without changing the tree's pre-AMR gid mapping.
+
+void MeshBlockTree::CollectLeafLocations(std::vector<LogicalLocation> &list) const {
+  if (pleaf_ == nullptr) {
+    list.push_back(lloc_);
+    return;
+  }
+  for (int n = 0; n < nleaf_; ++n) {
+    if (pleaf_[n] != nullptr) pleaf_[n]->CollectLeafLocations(list);
+  }
+}
+
+//----------------------------------------------------------------------------------------
 //! \fn void MeshBlockTree::CreateZOrderedLLList(LogicalLocation *list, int *pg, int& cnt)
 //! \brief Creates the Location list for tree sorted by Z-ordering, and creates new MB ids
 //! based on this order.  Should be called from root of tree. Called in BuildTreeXXX()

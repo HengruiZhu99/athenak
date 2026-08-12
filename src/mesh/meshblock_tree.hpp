@@ -1,5 +1,7 @@
 #ifndef MESH_MESHBLOCK_TREE_HPP_
 #define MESH_MESHBLOCK_TREE_HPP_
+
+#include <vector>
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -37,6 +39,7 @@ class MeshBlockTree {
     { return pleaf_[(ox1 + (ox2<<1) + (ox3<<2))]; }
   int GetGID() {return gid_;}
   std::int32_t GetLevel() {return lloc_.level;}
+  bool IsLeaf() const {return pleaf_ == nullptr;}
 
   // functions
   void CreateRootGrid();
@@ -46,6 +49,7 @@ class MeshBlockTree {
   void Derefine(int &ndel);
   MeshBlockTree* FindMeshBlock(LogicalLocation tloc);
   void CountMeshBlocks(int& count);
+  void CollectLeafLocations(std::vector<LogicalLocation> &list) const;
   void CreateZOrderedLLList(LogicalLocation *list, int *pglist, int& count);
   MeshBlockTree* FindNeighbor(LogicalLocation myloc, int ox1, int ox2, int ox3,
                               bool amrflag=false);

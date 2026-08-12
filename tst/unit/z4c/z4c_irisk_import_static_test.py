@@ -108,6 +108,21 @@ def main() -> int:
             importer.index("FillAdmFromIrisSpectral(pmbp, interpolator)") <
             importer.index("IrisAthenakSpectralClose(interpolator)"),
             "Iris importer ownership is not one open/fill/close lifetime")
+    require('import_mode == "direct_global_coefficients"' in importer and
+            'ReadBrillGlobalCoefficients(resolved_filename)' in importer and
+            'FillAdmFromBrillGlobalCoefficients(' in importer,
+            "direct global Brill import mode is absent")
+    require('initial_lapse == "precollapsed_psi_minus_2"' in importer and
+            'const double lapse = use_precollapsed_lapse ? 1.0 / psi2 : 1.0;'
+            in importer,
+            "direct Brill pre-collapsed lapse contract changed")
+    require('line != "IRIS_BRILL_GLOBAL_COEFFICIENTS_V1"' in importer and
+            'count != result.radial_points * result.angular_points' in importer and
+            'if (!std::isfinite(value)) Fail(' in importer,
+            "direct Brill coefficient parser is not fail-closed")
+    require('z4c::MakeStoredDomainBounds(indcs)' in importer and
+            'z4c_irisk::SelectAdmMap(pmbp->z4c_symmetry)' in importer,
+            "direct Brill import is not bound to allocated Cartoon storage")
     for token in (
             "CartoonIrisInterpolationCoordinates",
             "IrisTensorProductDimensions<Map>",
