@@ -11,15 +11,22 @@
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>    // std::setprecision()
+#include <vector>
 
 #include "athena.hpp"
+#include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "bvals.hpp"
 #include "mesh/prolongation.hpp" // implements prolongation operators
 #include "mesh/restriction.hpp" // implements restriction operators
+#include "z4c/z4c.hpp"
 
 #include "coordinates/cell_locations.hpp"
+
+#if MPI_PARALLEL_ENABLED
+#include <mpi.h>
+#endif
 //----------------------------------------------------------------------------------------
 //! \fn void FillCoarseInBndryCC()
 //! \brief To ensure that the coarse array is up-to-date in all neighboring cells touched
@@ -153,6 +160,9 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
   auto &nx3 = indcs.nx3;
   auto& prolong_2nd = pmy_pack->pmesh->pmr->weights.prolong_2nd;
   auto& prolong_4th = pmy_pack->pmesh->pmr->weights.prolong_4th;
+  DvceArray1D<unsigned long long> chi_prolongation_counts(
+      "Z4c boundary chi prolongation status counts", 4);
+  Kokkos::deep_copy(chi_prolongation_counts, 0ULL);
 
   // Outer loop over (# of MeshBlocks)*(# of buffers)*(# of variables)
   Kokkos::TeamPolicy<> policy(DevExeSpace(), nmnv, Kokkos::AUTO);
@@ -192,6 +202,23 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
         // call inlined prolongation operator for CC variables
         if (!is_z4c) {
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
+        } else if (v == z4c::Z4c::I_Z4C_CHI) {
+          ChiProlongationStatus status = ChiProlongationStatus::invalid_limited;
+          switch (indcs.ng) {
+            case 2:
+              status = ProlongPositiveChiCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
+                                               multi_d,three_d,ca,a,prolong_2nd);
+              break;
+            case 3:
+              status = ProlongPositiveChiCC<3>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
+                                               multi_d,three_d,ca,a,prolong_4th);
+              break;
+            case 4:
+              status = ProlongPositiveChiCC<4>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
+                                               multi_d,three_d,ca,a,prolong_4th);
+              break;
+          }
+          Kokkos::atomic_inc(&chi_prolongation_counts(static_cast<int>(status)));
         } else {
           switch (indcs.ng) {
             case 2: HighOrderProlongCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
@@ -209,6 +236,51 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
     }
     tmember.team_barrier();
   });
+
+  if (is_z4c) {
+    const auto host_counts =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), chi_prolongation_counts);
+    unsigned long long local_counts[4] = {
+        host_counts(0), host_counts(1), host_counts(2), host_counts(3)};
+    unsigned long long global_counts[4] = {
+        local_counts[0], local_counts[1], local_counts[2], local_counts[3]};
+    std::vector<unsigned long long> fallback_each_rank(global_variable::nranks, 0ULL);
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(local_counts, global_counts, 4, MPI_UNSIGNED_LONG_LONG, MPI_SUM,
+                  MPI_COMM_WORLD);
+    MPI_Gather(&local_counts[1], 1, MPI_UNSIGNED_LONG_LONG,
+               fallback_each_rank.data(), 1, MPI_UNSIGNED_LONG_LONG, 0,
+               MPI_COMM_WORLD);
+#else
+    fallback_each_rank[0] = local_counts[1];
+#endif
+    if (global_variable::my_rank == 0 &&
+        (global_counts[1] != 0 || global_counts[2] != 0 || global_counts[3] != 0)) {
+      std::cout << "BOUNDARY_Z4C_CHI_PROLONGATION cycle=" << pmy_pack->pmesh->ncycle
+                << " local_fallback_groups=";
+      for (int rank = 0; rank < global_variable::nranks; ++rank) {
+        if (rank > 0) std::cout << ",";
+        std::cout << fallback_each_rank[rank];
+      }
+      std::cout << " global_fallback_groups=" << global_counts[1]
+                << " global_high_order_groups=" << global_counts[0]
+                << " invalid_parent_stencils=" << global_counts[2]
+                << " invalid_limited_groups=" << global_counts[3]
+                << std::endl;
+    }
+    if (global_counts[2] != 0 || global_counts[3] != 0) {
+      if (global_variable::my_rank == 0) {
+        std::cerr << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                  << std::endl
+                  << "Z4c chi boundary prolongation rejected " << global_counts[2]
+                  << " parent stencils and " << global_counts[3]
+                  << " limited sibling groups; chi must remain finite and strictly "
+                     "positive without floors or clipping"
+                  << std::endl;
+      }
+      std::exit(EXIT_FAILURE);
+    }
+  }
   return;
 }
 

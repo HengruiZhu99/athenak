@@ -40,6 +40,64 @@ DualArray3D<Real> MakeFourthOrderWeights() {
   return weights;
 }
 
+bool CheckThreeDimensionalBoostedPunctureFallback() {
+  constexpr Real dx = 0.125;
+  constexpr Real velocity = 0.8660254;
+  const Real gamma = 1.0 / std::sqrt(1.0 - velocity * velocity);
+  DvceArray5D<Real> parent("boosted puncture chi parent", 1, 1, 5, 5, 5);
+  auto parent_host = Kokkos::create_mirror_view(parent);
+  for (int k = 0; k < 5; ++k) {
+    const Real z = (k - 2 + 0.5) * dx;
+    for (int j = 0; j < 5; ++j) {
+      const Real y = (j - 2 + 0.5) * dx;
+      for (int i = 0; i < 5; ++i) {
+        const Real x = (i - 2 + 0.5) * dx;
+        const Real radius = std::sqrt(gamma * gamma * x * x + y * y + z * z);
+        const Real psi = 1.0 + 0.5 / radius;
+        const Real alpha = (1.0 - 0.5 / radius) / psi;
+        const Real boost = std::sqrt(gamma * gamma *
+            (1.0 - velocity * velocity * alpha * alpha * std::pow(psi, -4.0)));
+        // det(g) = psi^12 boost^2 and chi = det(g)^(-1/3).
+        parent_host(0, 0, k, j, i) = std::pow(psi, -4.0) * std::pow(boost, -2.0/3.0);
+      }
+    }
+  }
+  Kokkos::deep_copy(parent, parent_host);
+
+  DvceArray5D<Real> raw("boosted puncture raw children", 1, 1, 2, 2, 2);
+  DvceArray5D<Real> limited("boosted puncture limited children", 1, 1, 2, 2, 2);
+  const auto weights = MakeFourthOrderWeights();
+  Kokkos::View<int *> status("boosted puncture chi status", 1);
+  Kokkos::parallel_for(
+      "boosted puncture chi fallback fixture", Kokkos::RangePolicy<>(0, 1),
+      KOKKOS_LAMBDA(const int) {
+        HighOrderProlongCC<kNghost>(0, 0, 2, 2, 2, 0, 0, 0, 8, 8, 8,
+                                    parent, raw, weights);
+        status(0) = static_cast<int>(ProlongPositiveChiCC<kNghost>(
+            0, 0, 2, 2, 2, 0, 0, 0, 8, 8, 8, true, true, parent, limited,
+            weights));
+      });
+  const auto raw_host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), raw);
+  const auto limited_host =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), limited);
+  const auto status_host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), status);
+  if (!(raw_host(0, 0, 0, 0, 0) < 0.0) ||
+      status_host(0) != static_cast<int>(ChiProlongationStatus::limited)) {
+    return false;
+  }
+  Real average = 0.0;
+  for (int k = 0; k < 2; ++k) {
+    for (int j = 0; j < 2; ++j) {
+      for (int i = 0; i < 2; ++i) {
+        const Real child = limited_host(0, 0, k, j, i);
+        if (!std::isfinite(child) || !(child > 0.0)) return false;
+        average += 0.125 * child;
+      }
+    }
+  }
+  return NearlyEqual(average, parent_host(0, 0, 2, 2, 2), 2.0e-15);
+}
+
 bool CheckSchwarzschildOvershootAndFallback() {
   constexpr Real dx = 0.1875;
   DvceArray5D<Real> parent("Schwarzschild chi parent", 1, 1, 1, 5, 5);
@@ -275,6 +333,7 @@ bool CheckThreeDimensionalFallbackConservation() {
 int main(int argc, char **argv) {
   Kokkos::initialize(argc, argv);
   const bool passed = CheckSchwarzschildOvershootAndFallback() &&
+                      CheckThreeDimensionalBoostedPunctureFallback() &&
                       CheckSmoothPositiveHighOrderUnchanged() &&
                       CheckInvalidParentFailsClosed() &&
                       CheckSiblingInventories() &&

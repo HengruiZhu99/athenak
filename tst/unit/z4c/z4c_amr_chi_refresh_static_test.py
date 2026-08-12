@@ -17,6 +17,7 @@ def main() -> None:
     root = args.source_dir.resolve()
     prolongation = (root / "src/mesh/prolongation.hpp").read_text(encoding="utf-8")
     refinement = (root / "src/mesh/mesh_refinement.cpp").read_text(encoding="utf-8")
+    boundary = (root / "src/bvals/prolongation.cpp").read_text(encoding="utf-8")
 
     helper = prolongation[prolongation.index("ChiProlongationStatus ProlongPositiveChiCC") :]
     high_order = helper.index("HighOrderProlongCC<NGHOST>")
@@ -44,6 +45,29 @@ def main() -> None:
     require("MPI_Allreduce(local_counts, global_counts" in dispatch and
             "MPI_Gather(&local_counts[1]" in dispatch,
             "local/global fallback accounting is not collective")
+
+    boundary_dispatch = boundary[
+        boundary.index("void MeshBoundaryValuesCC::ProlongateCC") :
+        boundary.index("void MeshBoundaryValuesFC::FillCoarseInBndryFC")
+    ]
+    chi_branch = boundary_dispatch.index("v == z4c::Z4c::I_Z4C_CHI")
+    generic_branch = boundary_dispatch.index("} else {", chi_branch)
+    require("ProlongPositiveChiCC<2>" in boundary_dispatch[chi_branch:generic_branch] and
+            "ProlongPositiveChiCC<3>" in boundary_dispatch[chi_branch:generic_branch] and
+            "ProlongPositiveChiCC<4>" in boundary_dispatch[chi_branch:generic_branch],
+            "boundary chi does not use the positive sibling-group helper for every order")
+    require("HighOrderProlongCC" not in boundary_dispatch[chi_branch:generic_branch],
+            "boundary chi branch bypasses the positive helper")
+    require("HighOrderProlongCC<4>" in boundary_dispatch[generic_branch:],
+            "generic Z4c high-order boundary path disappeared")
+    require("BOUNDARY_Z4C_CHI_PROLONGATION" in boundary_dispatch and
+            "MPI_Allreduce(local_counts, global_counts" in boundary_dispatch and
+            "invalid_parent_stencils=" in boundary_dispatch and
+            "invalid_limited_groups=" in boundary_dispatch,
+            "boundary chi aggregate fail-closed evidence disappeared")
+    for forbidden in ("chi_min_floor", "fmax(", "epsilon"):
+        require(forbidden not in boundary_dispatch,
+                f"forbidden boundary chi repair token entered source: {forbidden}")
 
     adaptive = refinement[
         refinement.index("void MeshRefinement::AdaptiveMeshRefinement") :
