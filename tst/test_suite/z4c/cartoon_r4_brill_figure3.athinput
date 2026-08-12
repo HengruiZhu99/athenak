@@ -86,7 +86,10 @@ num_horizons = 0
 
 <problem>
 pgen_name = z4c_irisk_xcts
+irisk_adm_import_mode = direct_global_coefficients
 irisk_adm_spectral_file = __IRISK_BRILL_FIGURE3_PAYLOAD__
+brill_global_coefficients_file = __IRISK_BRILL_FIGURE3_COEFFICIENTS__
+brill_direct_initial_lapse = precollapsed_psi_minus_2
 require_ghost_coverage = true
 write_constraint_summary = true
 constraint_summary_file = cartoon_r4_brill_figure3-constraints.dat
