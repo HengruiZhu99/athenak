@@ -198,18 +198,24 @@ struct CartoonCentralSample {
   enum class Status {
     valid,
     missing_center_leaf,
+    invalid_common_lattice,
+    unsupported_level_gap,
     missing_support,
     duplicate_support,
-    mixed_level_support,
     invalid_owner,
     insufficient_derivative_halo,
     nonfinite_support
   } status = Status::missing_center_leaf;
 };
 
+inline constexpr int kCartoonCentralQuadrants = 4;
+inline constexpr int kCartoonCentralSourcesPerQuadrant = 4;
+inline constexpr int kCartoonCentralMaxSources =
+    kCartoonCentralQuadrants * kCartoonCentralSourcesPerQuadrant;
+
 struct CartoonCentralSupport {
+  bool expected = false;
   int matches = 0;
-  bool covered_at_other_level = false;
   int gid = -1;
   int level = -1;
   int owner_rank = -1;
@@ -219,13 +225,64 @@ struct CartoonCentralSupport {
   int j = 0;
   Real rho = 0.0;
   Real z = 0.0;
+  Real restriction_weight = 0.0;
+  Real final_weight = 0.0;
 };
 
 struct CartoonCentralSupportSet {
-  CartoonCentralSupport point[4];
+  CartoonCentralSupport point[kCartoonCentralMaxSources];
+  int source_count = 0;
   int gid = -1;
   int level = -1;
+  int common_level = -1;
+  unsigned int refined_mask = 0;
+  Real common_dx1 = 0.0;
+  Real common_dx2 = 0.0;
+  CartoonCentralSample::Status construction_status =
+      CartoonCentralSample::Status::valid;
 };
+
+KOKKOS_INLINE_FUNCTION
+int CartoonCentralSourceSlot(const int quadrant, const int child) {
+  return quadrant * kCartoonCentralSourcesPerQuadrant + child;
+}
+
+inline void InitializeCartoonCentralSupportGeometry(
+    CartoonCentralSupportSet *supports, const int common_level,
+    const Real common_dx1, const Real common_dx2,
+    const unsigned int refined_mask) {
+  supports->source_count = 0;
+  supports->common_level = common_level;
+  supports->common_dx1 = common_dx1;
+  supports->common_dx2 = common_dx2;
+  supports->refined_mask = refined_mask;
+  for (int slot = 0; slot < kCartoonCentralMaxSources; ++slot) {
+    supports->point[slot] = CartoonCentralSupport{};
+  }
+  for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+    const Real rho_sign = (quadrant & 1) == 0 ? -1.0 : 1.0;
+    const Real z_sign = (quadrant & 2) == 0 ? -1.0 : 1.0;
+    const Real center_rho = 0.5 * rho_sign * common_dx1;
+    const Real center_z = 0.5 * z_sign * common_dx2;
+    const bool refined = (refined_mask & (1U << quadrant)) != 0;
+    const int children = refined ? kCartoonCentralSourcesPerQuadrant : 1;
+    for (int child = 0; child < children; ++child) {
+      CartoonCentralSupport &point =
+          supports->point[CartoonCentralSourceSlot(quadrant, child)];
+      const Real child_rho_sign = (child & 1) == 0 ? -1.0 : 1.0;
+      const Real child_z_sign = (child & 2) == 0 ? -1.0 : 1.0;
+      point.expected = true;
+      point.level = common_level + (refined ? 1 : 0);
+      point.rho = center_rho +
+                  (refined ? 0.25 * child_rho_sign * common_dx1 : 0.0);
+      point.z = center_z +
+                (refined ? 0.25 * child_z_sign * common_dx2 : 0.0);
+      point.restriction_weight = refined ? 0.25 : 1.0;
+      point.final_weight = refined ? 0.0625 : 0.25;
+      ++supports->source_count;
+    }
+  }
+}
 
 template <int NGHOST>
 inline bool CartoonCentralActiveCellHasStoredDerivativeHalo(
@@ -245,18 +302,47 @@ inline CartoonCentralSample::Status ValidateCartoonCentralSupportSet(
   if (supports.gid < 0 || supports.level < 0) {
     return CartoonCentralSample::Status::missing_center_leaf;
   }
-  for (int s = 0; s < 4; ++s) {
+  if (supports.construction_status != CartoonCentralSample::Status::valid) {
+    return supports.construction_status;
+  }
+  if (supports.common_level < 0 || !(supports.common_dx1 > 0.0) ||
+      !(supports.common_dx2 > 0.0) || !std::isfinite(supports.common_dx1) ||
+      !std::isfinite(supports.common_dx2) ||
+      (supports.refined_mask & ~0xFU) != 0) {
+    return CartoonCentralSample::Status::invalid_common_lattice;
+  }
+  int expected_count = 0;
+  for (int s = 0; s < kCartoonCentralMaxSources; ++s) {
     const CartoonCentralSupport &point = supports.point[s];
+    if (!point.expected) continue;
+    ++expected_count;
     if (point.matches == 0) {
-      return point.covered_at_other_level
-                 ? CartoonCentralSample::Status::mixed_level_support
-                 : CartoonCentralSample::Status::missing_support;
+      return CartoonCentralSample::Status::missing_support;
     }
     if (point.matches != 1) {
       return CartoonCentralSample::Status::duplicate_support;
     }
-    if (point.level != supports.level) {
-      return CartoonCentralSample::Status::mixed_level_support;
+    const int quadrant = s / kCartoonCentralSourcesPerQuadrant;
+    const int child = s % kCartoonCentralSourcesPerQuadrant;
+    const bool refined = (supports.refined_mask & (1U << quadrant)) != 0;
+    const int expected_level = supports.common_level + (refined ? 1 : 0);
+    const Real rho_sign = (quadrant & 1) == 0 ? -1.0 : 1.0;
+    const Real z_sign = (quadrant & 2) == 0 ? -1.0 : 1.0;
+    const Real child_rho_sign = (child & 1) == 0 ? -1.0 : 1.0;
+    const Real child_z_sign = (child & 2) == 0 ? -1.0 : 1.0;
+    const Real expected_rho = 0.5 * rho_sign * supports.common_dx1 +
+        (refined ? 0.25 * child_rho_sign * supports.common_dx1 : 0.0);
+    const Real expected_z = 0.5 * z_sign * supports.common_dx2 +
+        (refined ? 0.25 * child_z_sign * supports.common_dx2 : 0.0);
+    const Real rho_scale = std::max(Real(1.0), std::fabs(expected_rho));
+    const Real z_scale = std::max(Real(1.0), std::fabs(expected_z));
+    const Real tolerance = 128.0 * std::numeric_limits<Real>::epsilon();
+    if (point.level != expected_level ||
+        std::fabs(point.rho - expected_rho) > tolerance * rho_scale ||
+        std::fabs(point.z - expected_z) > tolerance * z_scale ||
+        point.restriction_weight != (refined ? 0.25 : 1.0) ||
+        point.final_weight != (refined ? 0.0625 : 0.25)) {
+      return CartoonCentralSample::Status::invalid_common_lattice;
     }
     if (point.owner_rank < 0 || point.owner_rank >= nranks) {
       return CartoonCentralSample::Status::invalid_owner;
@@ -266,32 +352,51 @@ inline CartoonCentralSample::Status ValidateCartoonCentralSupportSet(
       return CartoonCentralSample::Status::insufficient_derivative_halo;
     }
     for (int previous = 0; previous < s; ++previous) {
-      if (point.rho == supports.point[previous].rho &&
-          point.z == supports.point[previous].z) {
+      const CartoonCentralSupport &other = supports.point[previous];
+      if (other.expected && point.level == other.level && point.gid == other.gid &&
+          point.k == other.k && point.j == other.j && point.i == other.i) {
         return CartoonCentralSample::Status::duplicate_support;
       }
     }
   }
+  if (expected_count != supports.source_count) {
+    return CartoonCentralSample::Status::invalid_common_lattice;
+  }
   return CartoonCentralSample::Status::valid;
 }
 
-inline CartoonCentralSample ReconstructCartoonCentralFourPoint(
-    const Real lapse[4], const Real constraint_squared[4],
-    const Real kretschmann[4]) {
+inline CartoonCentralSample ReconstructCartoonCentralSupportValues(
+    const CartoonCentralSupportSet &supports,
+    const Real lapse[kCartoonCentralMaxSources],
+    const Real constraint_squared[kCartoonCentralMaxSources],
+    const Real kretschmann[kCartoonCentralMaxSources]) {
   CartoonCentralSample sample;
   Real lapse_sum = 0.0;
   Real constraint_sum = 0.0;
   Real kretschmann_sum = 0.0;
-  for (int s = 0; s < 4; ++s) {
-    if (!std::isfinite(lapse[s]) || lapse[s] < 0.0 ||
-        !std::isfinite(constraint_squared[s]) || constraint_squared[s] < 0.0 ||
-        !std::isfinite(kretschmann[s])) {
-      sample.status = CartoonCentralSample::Status::nonfinite_support;
-      return sample;
+  for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+    const bool refined = (supports.refined_mask & (1U << quadrant)) != 0;
+    const int children = refined ? kCartoonCentralSourcesPerQuadrant : 1;
+    Real quadrant_lapse = 0.0;
+    Real quadrant_constraint = 0.0;
+    Real quadrant_kretschmann = 0.0;
+    for (int child = 0; child < children; ++child) {
+      const int slot = CartoonCentralSourceSlot(quadrant, child);
+      if (!supports.point[slot].expected || !std::isfinite(lapse[slot]) ||
+          lapse[slot] < 0.0 || !std::isfinite(constraint_squared[slot]) ||
+          constraint_squared[slot] < 0.0 ||
+          !std::isfinite(kretschmann[slot])) {
+        sample.status = CartoonCentralSample::Status::nonfinite_support;
+        return sample;
+      }
+      const Real weight = supports.point[slot].restriction_weight;
+      quadrant_lapse += weight * lapse[slot];
+      quadrant_constraint += weight * constraint_squared[slot];
+      quadrant_kretschmann += weight * kretschmann[slot];
     }
-    lapse_sum += lapse[s];
-    constraint_sum += constraint_squared[s];
-    kretschmann_sum += kretschmann[s];
+    lapse_sum += quadrant_lapse;
+    constraint_sum += quadrant_constraint;
+    kretschmann_sum += quadrant_kretschmann;
   }
   sample.lapse = 0.25 * lapse_sum;
   sample.constraint_norm = Z4cAggregateConstraintNorm(0.25 * constraint_sum);
@@ -302,6 +407,24 @@ inline CartoonCentralSample ReconstructCartoonCentralFourPoint(
   sample.status = sample.valid ? CartoonCentralSample::Status::valid
                                : CartoonCentralSample::Status::nonfinite_support;
   return sample;
+}
+
+inline CartoonCentralSample ReconstructCartoonCentralFourPoint(
+    const Real lapse[4], const Real constraint_squared[4],
+    const Real kretschmann[4]) {
+  CartoonCentralSupportSet supports;
+  InitializeCartoonCentralSupportGeometry(&supports, 0, 1.0, 1.0, 0U);
+  Real expanded_lapse[kCartoonCentralMaxSources] = {};
+  Real expanded_constraint[kCartoonCentralMaxSources] = {};
+  Real expanded_kretschmann[kCartoonCentralMaxSources] = {};
+  for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+    const int slot = CartoonCentralSourceSlot(quadrant, 0);
+    expanded_lapse[slot] = lapse[quadrant];
+    expanded_constraint[slot] = constraint_squared[quadrant];
+    expanded_kretschmann[slot] = kretschmann[quadrant];
+  }
+  return ReconstructCartoonCentralSupportValues(
+      supports, expanded_lapse, expanded_constraint, expanded_kretschmann);
 }
 
 namespace meridional_detail {
@@ -337,27 +460,125 @@ inline CartoonCentralSupportSet BuildCartoonCentralSupportSet(
   supports.level = center.level;
   if (center.gid < 0 || center.level < mesh->root_level ||
       center.gid >= mesh->nmb_total) {
+    supports.construction_status =
+        CartoonCentralSample::Status::missing_center_leaf;
     return supports;
   }
 
-  const int level_offset = center.level - mesh->root_level;
+  int quadrant_level[kCartoonCentralQuadrants] = {-1, -1, -1, -1};
+  int quadrant_matches[kCartoonCentralQuadrants] = {};
+  bool aligned = true;
+  for (int gid = 0; gid < mesh->nmb_total; ++gid) {
+    Real x1min = 0.0;
+    Real x1max = 0.0;
+    Real x2min = 0.0;
+    Real x2max = 0.0;
+    const LogicalLocation &location = mesh->lloc_eachmb[gid];
+    LogicalEdges(*mesh, location, &x1min, &x1max, &x2min, &x2max);
+    const Real dx1 = (x1max - x1min) / mesh->mb_indcs.nx1;
+    const Real dx2 = (x2max - x2min) / mesh->mb_indcs.nx2;
+    if (!(dx1 > 0.0) || !(dx2 > 0.0) || !std::isfinite(dx1) ||
+        !std::isfinite(dx2)) {
+      aligned = false;
+      continue;
+    }
+    const Real scale =
+        std::max({Real(1.0), std::fabs(x1min), std::fabs(x1max),
+                  std::fabs(x2min), std::fabs(x2max)});
+    const Real tolerance =
+        128.0 * std::numeric_limits<Real>::epsilon() * scale;
+    for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+      const bool positive_rho = (quadrant & 1) != 0;
+      const bool positive_z = (quadrant & 2) != 0;
+      const bool enters_rho = positive_rho
+          ? (x1max > tolerance && x1min <= tolerance)
+          : (x1min < -tolerance && x1max >= -tolerance);
+      const bool enters_z = positive_z
+          ? (x2max > tolerance && x2min <= tolerance)
+          : (x2min < -tolerance && x2max >= -tolerance);
+      if (!enters_rho || !enters_z) continue;
+      const Real face_i = -x1min / dx1;
+      const Real face_j = -x2min / dx2;
+      const long long nearest_i = std::llround(face_i);
+      const long long nearest_j = std::llround(face_j);
+      const bool face_aligned =
+          std::fabs(face_i - static_cast<Real>(nearest_i)) <=
+              128.0 * std::numeric_limits<Real>::epsilon() *
+                  std::max(Real(1.0), std::fabs(face_i)) &&
+          std::fabs(face_j - static_cast<Real>(nearest_j)) <=
+              128.0 * std::numeric_limits<Real>::epsilon() *
+                  std::max(Real(1.0), std::fabs(face_j)) &&
+          nearest_i >= 0 && nearest_i <= mesh->mb_indcs.nx1 &&
+          nearest_j >= 0 && nearest_j <= mesh->mb_indcs.nx2;
+      aligned = aligned && face_aligned;
+      ++quadrant_matches[quadrant];
+      quadrant_level[quadrant] = location.level;
+    }
+  }
+  for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+    if (quadrant_matches[quadrant] == 0) {
+      supports.construction_status =
+          CartoonCentralSample::Status::missing_support;
+      return supports;
+    }
+    if (quadrant_matches[quadrant] != 1) {
+      supports.construction_status =
+          CartoonCentralSample::Status::duplicate_support;
+      return supports;
+    }
+  }
+  if (!aligned) {
+    supports.construction_status =
+        CartoonCentralSample::Status::invalid_common_lattice;
+    return supports;
+  }
+  int common_level = quadrant_level[0];
+  for (int quadrant = 1; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+    common_level = std::min(common_level, quadrant_level[quadrant]);
+  }
+  unsigned int refined_mask = 0U;
+  for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+    if (quadrant_level[quadrant] == common_level + 1) {
+      refined_mask |= 1U << quadrant;
+    } else if (quadrant_level[quadrant] != common_level) {
+      supports.construction_status =
+          CartoonCentralSample::Status::unsupported_level_gap;
+      return supports;
+    }
+  }
+
+  const int level_offset = common_level - mesh->root_level;
+  if (level_offset < 0 || level_offset >= 62) {
+    supports.construction_status =
+        CartoonCentralSample::Status::invalid_common_lattice;
+    return supports;
+  }
   const std::int64_t blocks_x1 =
       static_cast<std::int64_t>(mesh->nmb_rootx1) << level_offset;
   const std::int64_t blocks_x2 =
       static_cast<std::int64_t>(mesh->nmb_rootx2) << level_offset;
+  if (blocks_x1 <= 0 || blocks_x2 <= 0 || mesh->mb_indcs.nx1 <= 0 ||
+      mesh->mb_indcs.nx2 <= 0) {
+    supports.construction_status =
+        CartoonCentralSample::Status::invalid_common_lattice;
+    return supports;
+  }
   const Real dx1 = (mesh->mesh_size.x1max - mesh->mesh_size.x1min) /
                    (static_cast<Real>(blocks_x1) * mesh->mb_indcs.nx1);
   const Real dx2 = (mesh->mesh_size.x2max - mesh->mesh_size.x2min) /
                    (static_cast<Real>(blocks_x2) * mesh->mb_indcs.nx2);
   if (!(dx1 > 0.0) || !(dx2 > 0.0) || !std::isfinite(dx1) ||
       !std::isfinite(dx2)) {
+    supports.construction_status =
+        CartoonCentralSample::Status::invalid_common_lattice;
     return supports;
   }
+  InitializeCartoonCentralSupportGeometry(
+      &supports, common_level, dx1, dx2, refined_mask);
 
-  for (int s = 0; s < 4; ++s) {
+  for (int s = 0; s < kCartoonCentralMaxSources; ++s) {
     CartoonCentralSupport &point = supports.point[s];
-    point.rho = (s & 1) == 0 ? -0.5 * dx1 : 0.5 * dx1;
-    point.z = (s & 2) == 0 ? -0.5 * dx2 : 0.5 * dx2;
+    if (!point.expected) continue;
     for (int gid = 0; gid < mesh->nmb_total; ++gid) {
       Real x1min = 0.0;
       Real x1max = 0.0;
@@ -365,12 +586,9 @@ inline CartoonCentralSupportSet BuildCartoonCentralSupportSet(
       Real x2max = 0.0;
       const LogicalLocation &location = mesh->lloc_eachmb[gid];
       LogicalEdges(*mesh, location, &x1min, &x1max, &x2min, &x2max);
-      if (!ContainsOpen(point.rho, x1min, x1max) ||
+      if (location.level != point.level ||
+          !ContainsOpen(point.rho, x1min, x1max) ||
           !ContainsOpen(point.z, x2min, x2max)) {
-        continue;
-      }
-      if (location.level != supports.level) {
-        point.covered_at_other_level = true;
         continue;
       }
       int i = 0;
@@ -384,7 +602,6 @@ inline CartoonCentralSupportSet BuildCartoonCentralSupportSet(
       ++point.matches;
       if (point.matches != 1) continue;
       point.gid = gid;
-      point.level = location.level;
       point.owner_rank = mesh->rank_eachmb[gid];
       point.k = mesh->mb_indcs.ks;
       point.i = i;
@@ -413,8 +630,9 @@ inline CartoonCentralSample SampleCartoonCentralDiagnostics(Mesh *mesh) {
       ValidateCartoonCentralSupportSet<NGHOST>(
           supports, mesh->mb_indcs, global_variable::nranks);
   if (local_status == CartoonCentralSample::Status::valid) {
-    for (int s = 0; s < 4; ++s) {
+    for (int s = 0; s < kCartoonCentralMaxSources; ++s) {
       const CartoonCentralSupport &point = supports.point[s];
+      if (!point.expected) continue;
       if (point.owner_rank == global_variable::my_rank &&
           (point.local_block < 0 ||
            point.local_block >= mesh->pmb_pack->nmb_thispack)) {
@@ -423,7 +641,12 @@ inline CartoonCentralSample SampleCartoonCentralDiagnostics(Mesh *mesh) {
     }
   }
 
-  array_sum::GlobalSum local;
+  Kokkos::View<Real *> local_values("Cartoon central scalar slots",
+                                     3 * kCartoonCentralMaxSources);
+  Kokkos::View<int *> local_flags("Cartoon central scalar flags",
+                                   2 * kCartoonCentralMaxSources);
+  Kokkos::deep_copy(local_values, 0.0);
+  Kokkos::deep_copy(local_flags, 0);
   if (local_status == CartoonCentralSample::Status::valid) {
     auto u0 = mesh->pmb_pack->pz4c->u0;
     auto constraints = mesh->pmb_pack->pz4c->u_con;
@@ -432,13 +655,13 @@ inline CartoonCentralSample SampleCartoonCentralDiagnostics(Mesh *mesh) {
     const int alpha = mesh->pmb_pack->pz4c->I_Z4C_ALPHA;
     const int nx1 = mesh->mb_indcs.nx1;
     const int is = mesh->mb_indcs.is;
-    Kokkos::parallel_reduce(
+    Kokkos::parallel_for(
         "Cartoon axis-central physical support diagnostics",
-        Kokkos::RangePolicy<DevExeSpace>(0, 4),
-        KOKKOS_LAMBDA(const int s, array_sum::GlobalSum &values) {
+        Kokkos::RangePolicy<DevExeSpace>(0, kCartoonCentralMaxSources),
+        KOKKOS_LAMBDA(const int s) {
           const CartoonCentralSupport point = supports.point[s];
-          if (point.local_block < 0) return;
-          values.the_array[12 + s] = 1.0;
+          if (!point.expected || point.local_block < 0) return;
+          local_flags(s) = 1;
           const Real lapse = u0(point.local_block, alpha, point.k, point.j, point.i);
           const Real constraint_squared =
               constraints(point.local_block, 0, point.k, point.j, point.i);
@@ -456,36 +679,49 @@ inline CartoonCentralSample SampleCartoonCentralDiagnostics(Mesh *mesh) {
           if (!Kokkos::isfinite(lapse) || lapse < 0.0 ||
               !Kokkos::isfinite(constraint_squared) || constraint_squared < 0.0 ||
               !diagnostic.valid || !Kokkos::isfinite(diagnostic.kretschmann)) {
-            values.the_array[16 + s] = 1.0;
+            local_flags(kCartoonCentralMaxSources + s) = 1;
             return;
           }
-          values.the_array[3 * s] = lapse;
-          values.the_array[3 * s + 1] = constraint_squared;
-          values.the_array[3 * s + 2] = diagnostic.kretschmann;
-        },
-        Kokkos::Sum<array_sum::GlobalSum>(local));
+          local_values(3 * s) = lapse;
+          local_values(3 * s + 1) = constraint_squared;
+          local_values(3 * s + 2) = diagnostic.kretschmann;
+        });
   }
 
-  Real values[20] = {};
-  for (int n = 0; n < 20; ++n) values[n] = local.the_array[n];
+  auto host_values =
+      Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), local_values);
+  auto host_flags =
+      Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), local_flags);
+  Real values[3 * kCartoonCentralMaxSources] = {};
+  int flags[2 * kCartoonCentralMaxSources] = {};
+  for (int n = 0; n < 3 * kCartoonCentralMaxSources; ++n) {
+    values[n] = host_values(n);
+  }
+  for (int n = 0; n < 2 * kCartoonCentralMaxSources; ++n) {
+    flags[n] = host_flags(n);
+  }
   int status_code = static_cast<int>(local_status);
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, values, 20, MPI_ATHENA_REAL, MPI_SUM,
+  MPI_Allreduce(MPI_IN_PLACE, values, 3 * kCartoonCentralMaxSources,
+                MPI_ATHENA_REAL, MPI_SUM,
                 MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, flags, 2 * kCartoonCentralMaxSources, MPI_INT,
+                MPI_SUM, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &status_code, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
 #endif
   sample.status = static_cast<CartoonCentralSample::Status>(status_code);
   if (sample.status != CartoonCentralSample::Status::valid) return sample;
 
-  Real lapse[4] = {};
-  Real constraint_squared[4] = {};
-  Real kretschmann[4] = {};
-  for (int s = 0; s < 4; ++s) {
-    if (values[12 + s] != 1.0) {
+  Real lapse[kCartoonCentralMaxSources] = {};
+  Real constraint_squared[kCartoonCentralMaxSources] = {};
+  Real kretschmann[kCartoonCentralMaxSources] = {};
+  for (int s = 0; s < kCartoonCentralMaxSources; ++s) {
+    if (!supports.point[s].expected) continue;
+    if (flags[s] != 1) {
       sample.status = CartoonCentralSample::Status::invalid_owner;
       return sample;
     }
-    if (values[16 + s] != 0.0) {
+    if (flags[kCartoonCentralMaxSources + s] != 0) {
       sample.status = CartoonCentralSample::Status::nonfinite_support;
       return sample;
     }
@@ -493,8 +729,8 @@ inline CartoonCentralSample SampleCartoonCentralDiagnostics(Mesh *mesh) {
     constraint_squared[s] = values[3 * s + 1];
     kretschmann[s] = values[3 * s + 2];
   }
-  CartoonCentralSample reconstruction = ReconstructCartoonCentralFourPoint(
-      lapse, constraint_squared, kretschmann);
+  CartoonCentralSample reconstruction = ReconstructCartoonCentralSupportValues(
+      supports, lapse, constraint_squared, kretschmann);
   sample.valid = reconstruction.valid;
   sample.lapse = reconstruction.lapse;
   sample.constraint_norm = reconstruction.constraint_norm;
@@ -510,12 +746,14 @@ inline const char *CartoonCentralSampleStatusMessage(
       return "";
     case CartoonCentralSample::Status::missing_center_leaf:
       return "axis-central diagnostic has no finest center leaf";
+    case CartoonCentralSample::Status::invalid_common_lattice:
+      return "axis-central diagnostic has invalid common-level geometry";
+    case CartoonCentralSample::Status::unsupported_level_gap:
+      return "axis-central diagnostic support exceeds a 2:1 level gap";
     case CartoonCentralSample::Status::missing_support:
       return "axis-central diagnostic is missing a physical support cell";
     case CartoonCentralSample::Status::duplicate_support:
       return "axis-central diagnostic has duplicate physical support cells";
-    case CartoonCentralSample::Status::mixed_level_support:
-      return "axis-central diagnostic support spans AMR levels";
     case CartoonCentralSample::Status::invalid_owner:
       return "axis-central diagnostic support ownership is not unique";
     case CartoonCentralSample::Status::insufficient_derivative_halo:

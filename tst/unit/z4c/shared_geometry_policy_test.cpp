@@ -59,104 +59,266 @@ struct PointVector {
 bool NearlyEqual(Real left, Real right, Real tolerance);
 
 template <int NGHOST>
+z4c::CartoonCentralSupportSet MakeCentralSupports(
+    const unsigned int refined_mask, const Real dx1 = 0.09375,
+    const Real dx2 = 0.09375) {
+  z4c::CartoonCentralSupportSet supports;
+  supports.gid = 30;
+  supports.level = refined_mask == 0U ? 3 : 4;
+  z4c::InitializeCartoonCentralSupportGeometry(
+      &supports, 3, dx1, dx2, refined_mask);
+  for (int slot = 0; slot < z4c::kCartoonCentralMaxSources; ++slot) {
+    auto &point = supports.point[slot];
+    if (!point.expected) continue;
+    point.matches = 1;
+    point.gid = 100 + slot;
+    point.owner_rank = slot % 3;
+    point.k = 0;
+    point.i = NGHOST + (slot % 2);
+    point.j = NGHOST + ((slot / 2) % 2);
+  }
+  return supports;
+}
+
+template <typename Function>
+z4c::CartoonCentralSample ReconstructCentralFunction(
+    const z4c::CartoonCentralSupportSet &supports, Function function) {
+  Real lapse[z4c::kCartoonCentralMaxSources] = {};
+  Real constraint[z4c::kCartoonCentralMaxSources] = {};
+  Real kretschmann[z4c::kCartoonCentralMaxSources] = {};
+  for (int slot = 0; slot < z4c::kCartoonCentralMaxSources; ++slot) {
+    if (!supports.point[slot].expected) continue;
+    lapse[slot] = 2.0;
+    constraint[slot] = 1.0;
+    kretschmann[slot] =
+        function(supports.point[slot].rho, supports.point[slot].z);
+  }
+  return z4c::ReconstructCartoonCentralSupportValues(
+      supports, lapse, constraint, kretschmann);
+}
+
+template <int NGHOST>
 bool CheckCentralPhysicalSupportContract() {
   RegionIndcs indices{};
   indices.ng = NGHOST;
-  indices.nx1 = 8;
-  indices.nx2 = 8;
+  indices.nx1 = 32;
+  indices.nx2 = 32;
   indices.is = indices.js = NGHOST;
-  indices.ie = indices.je = NGHOST + 7;
+  indices.ie = indices.je = NGHOST + 31;
 
-  z4c::CartoonCentralSupportSet supports;
-  supports.gid = 13;
-  supports.level = 4;
-  for (int s = 0; s < 4; ++s) {
-    auto &point = supports.point[s];
-    point.matches = 1;
-    point.gid = 20 + s;
-    point.level = supports.level;
-    point.owner_rank = s % 2;
-    point.i = (s & 1) == 0 ? indices.ie : indices.is;
-    point.j = (s & 2) == 0 ? indices.je : indices.js;
-    point.rho = (s & 1) == 0 ? -0.5 : 0.5;
-    point.z = (s & 2) == 0 ? -0.25 : 0.25;
-  }
   using Status = z4c::CartoonCentralSample::Status;
-  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(supports, indices, 2) !=
-      Status::valid) {
-    return false;
+  for (unsigned int mask = 0; mask < 16U; ++mask) {
+    const auto supports = MakeCentralSupports<NGHOST>(mask);
+    if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(supports, indices, 3) !=
+        Status::valid) {
+      return false;
+    }
+    Real weight_sum = 0.0;
+    for (int slot = 0; slot < z4c::kCartoonCentralMaxSources; ++slot) {
+      if (supports.point[slot].expected) {
+        weight_sum += supports.point[slot].final_weight;
+      }
+    }
+    if (!NearlyEqual(weight_sum, 1.0, 1.0e-15)) return false;
+    const auto constant = ReconstructCentralFunction(
+        supports, [](const Real, const Real) { return 1.0; });
+    const auto rho = ReconstructCentralFunction(
+        supports, [](const Real r, const Real) { return r; });
+    const auto z = ReconstructCentralFunction(
+        supports, [](const Real, const Real x2) { return x2; });
+    const auto bilinear = ReconstructCentralFunction(
+        supports, [](const Real r, const Real x2) { return r * x2; });
+    if (!constant.valid || !rho.valid || !z.valid || !bilinear.valid ||
+        !NearlyEqual(constant.abs_kretschmann, 1.0, 1.0e-15) ||
+        !NearlyEqual(rho.abs_kretschmann, 0.0, 1.0e-15) ||
+        !NearlyEqual(z.abs_kretschmann, 0.0, 1.0e-15) ||
+        !NearlyEqual(bilinear.abs_kretschmann, 0.0, 1.0e-15)) {
+      return false;
+    }
+    Real errors[3] = {};
+    for (int resolution = 0; resolution < 3; ++resolution) {
+      const Real scale = 1.0 / static_cast<Real>(1 << resolution);
+      const auto scaled = MakeCentralSupports<NGHOST>(
+          mask, 0.09375 * scale, 0.09375 * scale);
+      const auto quadratic = ReconstructCentralFunction(
+          scaled, [](const Real r, const Real x2) {
+            return 2.0 + r * r + 0.7 * x2 * x2;
+          });
+      errors[resolution] = std::fabs(quadratic.abs_kretschmann - 2.0);
+    }
+    const Real first_rate = std::log(errors[0] / errors[1]) / std::log(2.0);
+    const Real second_rate = std::log(errors[1] / errors[2]) / std::log(2.0);
+    if (!NearlyEqual(first_rate, 2.0, 2.0e-11) ||
+        !NearlyEqual(second_rate, 2.0, 2.0e-11)) {
+      return false;
+    }
   }
 
-  auto malformed = supports;
-  malformed.point[0].matches = 0;
-  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
-      Status::missing_support) {
+  // Exact v12 cycle-2 topology: only +z is L4; provenance remains gid30/L4.
+  auto supports = MakeCentralSupports<NGHOST>(0xCU);
+  supports.gid = 30;
+  supports.level = 4;
+  const int coarse_gid[2] = {6, 11};
+  for (int quadrant = 0; quadrant < 2; ++quadrant) {
+    auto &point = supports.point[z4c::CartoonCentralSourceSlot(quadrant, 0)];
+    point.gid = coarse_gid[quadrant];
+    point.owner_rank = quadrant;
+    point.i = quadrant == 0 ? indices.ie : indices.is;
+    point.j = indices.je;
+  }
+  for (int quadrant = 2; quadrant < 4; ++quadrant) {
+    for (int child = 0; child < 4; ++child) {
+      auto &point =
+          supports.point[z4c::CartoonCentralSourceSlot(quadrant, child)];
+      point.gid = quadrant == 2 ? 17 : 30;
+      point.owner_rank = quadrant == 2 ? 1 : 2;
+      point.i = quadrant == 2 ? indices.ie - 1 + (child & 1)
+                              : indices.is + (child & 1);
+      point.j = indices.is + ((child & 2) != 0);
+    }
+  }
+  const Real expected_rho[4] = {-0.0703125, -0.0234375,
+                                 0.0234375, 0.0703125};
+  if (supports.gid != 30 || supports.level != 4 ||
+      supports.common_level != 3 || supports.source_count != 10 ||
+      supports.point[z4c::CartoonCentralSourceSlot(0, 0)].rho != -0.046875 ||
+      supports.point[z4c::CartoonCentralSourceSlot(1, 0)].rho != 0.046875 ||
+      supports.point[z4c::CartoonCentralSourceSlot(2, 0)].rho != expected_rho[0] ||
+      supports.point[z4c::CartoonCentralSourceSlot(2, 1)].rho != expected_rho[1] ||
+      supports.point[z4c::CartoonCentralSourceSlot(3, 0)].rho != expected_rho[2] ||
+      supports.point[z4c::CartoonCentralSourceSlot(3, 1)].rho != expected_rho[3] ||
+      supports.point[z4c::CartoonCentralSourceSlot(2, 0)].z != 0.0234375 ||
+      supports.point[z4c::CartoonCentralSourceSlot(2, 2)].z != 0.0703125 ||
+      z4c::ValidateCartoonCentralSupportSet<NGHOST>(supports, indices, 3) !=
+          Status::valid) {
     return false;
   }
-  malformed = supports;
-  malformed.point[0].matches = 0;
-  malformed.point[0].covered_at_other_level = true;
-  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
-      Status::mixed_level_support) {
-    return false;
-  }
-  malformed = supports;
-  malformed.point[1].matches = 2;
-  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
-      Status::duplicate_support) {
-    return false;
-  }
-  malformed = supports;
-  malformed.point[2].level += 1;
-  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
-      Status::mixed_level_support) {
-    return false;
-  }
-  malformed = supports;
-  malformed.point[3].owner_rank = 2;
-  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
-      Status::invalid_owner) {
-    return false;
-  }
-  malformed = supports;
-  malformed.point[0].i = indices.is - 1;
-  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
-      Status::insufficient_derivative_halo) {
-    return false;
-  }
-  malformed = supports;
-  malformed.point[3].rho = malformed.point[2].rho;
-  malformed.point[3].z = malformed.point[2].z;
-  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 2) !=
-      Status::duplicate_support) {
-    return false;
+  if constexpr (NGHOST == 4) {
+    if (supports.point[z4c::CartoonCentralSourceSlot(0, 0)].i != 35 ||
+        supports.point[z4c::CartoonCentralSourceSlot(1, 0)].i != 4 ||
+        supports.point[z4c::CartoonCentralSourceSlot(2, 0)].i != 34 ||
+        supports.point[z4c::CartoonCentralSourceSlot(2, 1)].i != 35 ||
+        supports.point[z4c::CartoonCentralSourceSlot(3, 0)].i != 4 ||
+        supports.point[z4c::CartoonCentralSourceSlot(3, 1)].i != 5) {
+      return false;
+    }
   }
 
-  // The active values are even in signed rho and deliberately asymmetric in z.
-  // Sentinel NaNs on either side prove reconstruction never consumes ghost values.
-  const Real nan = std::numeric_limits<Real>::quiet_NaN();
-  Real lapse_storage[6] = {nan, 1.0, 1.0, 3.0, 3.0, nan};
-  Real constraint_storage[6] = {nan, 1.0, 1.0, 9.0, 9.0, nan};
-  Real kretschmann_storage[6] = {nan, -2.0, -2.0, -6.0, -6.0, nan};
-  const auto reconstructed = z4c::ReconstructCartoonCentralFourPoint(
-      &lapse_storage[1], &constraint_storage[1], &kretschmann_storage[1]);
+  // The scalar is even in rho and deliberately asymmetric in z: no z reflection.
+  Real lapse[z4c::kCartoonCentralMaxSources] = {};
+  Real constraint[z4c::kCartoonCentralMaxSources] = {};
+  Real kretschmann[z4c::kCartoonCentralMaxSources] = {};
+  for (int slot = 0; slot < z4c::kCartoonCentralMaxSources; ++slot) {
+    if (!supports.point[slot].expected) continue;
+    const bool positive_z = supports.point[slot].z > 0.0;
+    lapse[slot] = positive_z ? 3.0 : 1.0;
+    constraint[slot] = positive_z ? 9.0 : 1.0;
+    kretschmann[slot] = positive_z ? -6.0 : -2.0;
+  }
+  const auto reconstructed = z4c::ReconstructCartoonCentralSupportValues(
+      supports, lapse, constraint, kretschmann);
   if (!reconstructed.valid || reconstructed.status != Status::valid ||
       !NearlyEqual(reconstructed.lapse, 2.0, 1.0e-15) ||
       !NearlyEqual(reconstructed.constraint_norm, std::sqrt(5.0), 1.0e-15) ||
       !NearlyEqual(reconstructed.abs_kretschmann, 4.0, 1.0e-15)) {
     return false;
   }
-  lapse_storage[2] = nan;
-  if (z4c::ReconstructCartoonCentralFourPoint(
-          &lapse_storage[1], &constraint_storage[1],
-          &kretschmann_storage[1]).status != Status::nonfinite_support) {
+
+  // Owner placement cannot change fixed-slot reconstruction order.
+  auto owner_permuted = supports;
+  for (int slot = 0; slot < z4c::kCartoonCentralMaxSources; ++slot) {
+    if (owner_permuted.point[slot].expected) {
+      owner_permuted.point[slot].owner_rank =
+          2 - owner_permuted.point[slot].owner_rank;
+    }
+  }
+  const auto reordered = z4c::ReconstructCartoonCentralSupportValues(
+      owner_permuted, lapse, constraint, kretschmann);
+  if (!reordered.valid || reordered.lapse != reconstructed.lapse ||
+      reordered.constraint_norm != reconstructed.constraint_norm ||
+      reordered.abs_kretschmann != reconstructed.abs_kretschmann) {
     return false;
   }
-  lapse_storage[2] = 1.0;
-  constraint_storage[3] = -1.0;
-  return z4c::ReconstructCartoonCentralFourPoint(
-             &lapse_storage[1], &constraint_storage[1],
-             &kretschmann_storage[1]).status == Status::nonfinite_support;
+
+  Real same_lapse[4] = {1.0, 1.0, 3.0, 3.0};
+  Real same_constraint[4] = {1.0, 1.0, 9.0, 9.0};
+  Real same_kretschmann[4] = {-2.0, -2.0, -6.0, -6.0};
+  const auto legacy_same_level = z4c::ReconstructCartoonCentralFourPoint(
+      same_lapse, same_constraint, same_kretschmann);
+  if (legacy_same_level.lapse != reconstructed.lapse ||
+      legacy_same_level.constraint_norm != reconstructed.constraint_norm ||
+      legacy_same_level.abs_kretschmann != reconstructed.abs_kretschmann) {
+    return false;
+  }
+
+  // Native 2-D four-child restriction is the left inverse of c +/- dr +/- dz.
+  auto rp = MakeCentralSupports<NGHOST>(0x1U);
+  for (int slot = 0; slot < z4c::kCartoonCentralMaxSources; ++slot) {
+    if (!rp.point[slot].expected) continue;
+    lapse[slot] = 2.0;
+    constraint[slot] = 1.0;
+    const int quadrant = slot / 4;
+    const int child = slot % 4;
+    kretschmann[slot] = quadrant == 0
+        ? 5.0 + ((child & 1) == 0 ? -0.3 : 0.3) +
+                    ((child & 2) == 0 ? 0.2 : -0.2)
+        : 5.0;
+  }
+  if (!NearlyEqual(z4c::ReconstructCartoonCentralSupportValues(
+                       rp, lapse, constraint, kretschmann).abs_kretschmann,
+                   5.0, 1.0e-15)) {
+    return false;
+  }
+
+  auto malformed = supports;
+  malformed.point[0].matches = 0;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 3) !=
+      Status::missing_support) return false;
+  malformed = supports;
+  malformed.point[0].matches = 2;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 3) !=
+      Status::duplicate_support) return false;
+  malformed = supports;
+  malformed.point[0].owner_rank = 3;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 3) !=
+      Status::invalid_owner) return false;
+  malformed = supports;
+  malformed.point[0].i = indices.is - 1;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 3) !=
+      Status::insufficient_derivative_halo) return false;
+  malformed = supports;
+  malformed.construction_status = Status::unsupported_level_gap;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 3) !=
+      Status::unsupported_level_gap) return false;
+  malformed = supports;
+  malformed.point[0].level += 2;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 3) !=
+      Status::invalid_common_lattice) return false;
+  malformed = supports;
+  malformed.point[0].rho += 1.0e-6;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 3) !=
+      Status::invalid_common_lattice) return false;
+  malformed = supports;
+  malformed.point[0].final_weight = 0.5;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 3) !=
+      Status::invalid_common_lattice) return false;
+  malformed = supports;
+  const int second_slot = z4c::CartoonCentralSourceSlot(1, 0);
+  malformed.point[second_slot].level = malformed.point[0].level;
+  malformed.point[second_slot].gid = malformed.point[0].gid;
+  malformed.point[second_slot].i = malformed.point[0].i;
+  malformed.point[second_slot].j = malformed.point[0].j;
+  if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(malformed, indices, 3) !=
+      Status::duplicate_support) return false;
+  lapse[0] = std::numeric_limits<Real>::quiet_NaN();
+  if (z4c::ReconstructCartoonCentralSupportValues(
+          supports, lapse, constraint, kretschmann).status !=
+      Status::nonfinite_support) return false;
+  lapse[0] = 1.0;
+  constraint[0] = -1.0;
+  return z4c::ReconstructCartoonCentralSupportValues(
+             supports, lapse, constraint, kretschmann).status ==
+         Status::nonfinite_support;
 }
 
 bool CheckMeridionalMeasureAndState() {
