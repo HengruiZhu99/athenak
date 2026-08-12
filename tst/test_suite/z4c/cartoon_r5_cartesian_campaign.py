@@ -200,6 +200,9 @@ def linear_overrides(name: str, resolution: int, nghost: int) -> list[str]:
 
 def case_inventory() -> list[dict[str, Any]]:
     cases = [
+        {"name": "boosted_n128", "kind": "boosted", "order": 6,
+         "resolution": 128, "role": "functional",
+         "overrides": ["job/basename=boosted"]},
         {"name": "lwave_o2_n32", "kind": "linear", "order": 2,
          "resolution": 32, "role": "functional",
          "overrides": linear_overrides("r5_lwave_o2_n32", 32, 2)},
@@ -209,9 +212,6 @@ def case_inventory() -> list[dict[str, Any]]:
         {"name": "lwave_o6_n64", "kind": "linear", "order": 6,
          "resolution": 64, "role": "functional",
          "overrides": linear_overrides("r5_lwave_o6_n64", 64, 4)},
-        {"name": "boosted_n128", "kind": "boosted", "order": 6,
-         "resolution": 128, "role": "functional",
-         "overrides": ["job/basename=boosted"]},
         {"name": "lwave_o6_n64_warmup", "kind": "linear", "order": 6,
          "resolution": 64, "role": "warmup",
          "overrides": linear_overrides("r5_lwave_o6_n64_warmup", 64, 4)},
