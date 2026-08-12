@@ -685,6 +685,10 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
     (void) pz4c->Z4cBoundaryRHS(this, 0);
     (void) pz4c->ApplyPhysicalBCs(this, 0);
     (void) pz4c->Prolongate(this, 0);
+    // The first physical pass supplies coarse data needed by prolongation.  Prolongation
+    // then fills coarse/fine side ghosts, after which this built-in-only pass completes
+    // physical/coarse-fine corner overlaps.  User boundary callbacks remain single-shot.
+    pz4c->FillBuiltInPhysicalBoundaryGhosts();
   }
 
   // Initialize HYDRO: ghost zones and primitive variables (everywhere)

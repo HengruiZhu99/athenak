@@ -291,16 +291,27 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
 }
 
 //----------------------------------------------------------------------------------------
-//! \fn  void Hydro::ApplyPhysicalBCs
-//! \brief
+//! \fn void Z4c::FillBuiltInPhysicalBoundaryGhosts
+//! \brief Apply only the built-in Z4c physical boundary policy.
+//!
+//! This is separate from the task wrapper so AMR initialization can compose a second
+//! physical-face pass after coarse/fine prolongation without invoking a user callback twice.
+
+void Z4c::FillBuiltInPhysicalBoundaryGhosts() {
+  if (!(pmy_pack->pmesh->strictly_periodic)) {
+    pbval_u->Z4cBCs((pmy_pack), (pbval_u->u_in), u0, coarse_u0);
+  }
+}
+
+//----------------------------------------------------------------------------------------
+//! \fn TaskStatus Z4c::ApplyPhysicalBCs
+//! \brief Apply built-in and user Z4c physical boundary conditions once per task pass.
 
 TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
-  // only apply BCs if domain is not strictly periodic
-  if (!(pmy_pack->pmesh->strictly_periodic)) {
-    // physical BCs
-    pbval_u->Z4cBCs((pmy_pack), (pbval_u->u_in), u0, coarse_u0);
+  FillBuiltInPhysicalBoundaryGhosts();
 
-    // user BCs
+  // Preserve the historical user callback count: once in the public task wrapper only.
+  if (!(pmy_pack->pmesh->strictly_periodic)) {
     if (pmy_pack->pmesh->pgen->user_bcs) {
       (pmy_pack->pmesh->pgen->user_bcs_func)(pmy_pack->pmesh);
     }

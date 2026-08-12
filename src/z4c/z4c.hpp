@@ -248,6 +248,7 @@ class Z4c {
   TaskStatus ExpRKUpdate(Driver *d, int stage);
   TaskStatus Z4cFloorChi(Driver *pdrive, int stage);
   TaskStatus NewTimeStep(Driver *d, int stage);
+  void FillBuiltInPhysicalBoundaryGhosts();
   TaskStatus ApplyPhysicalBCs(Driver *d, int stage);
   TaskStatus EnforceAlgConstr(Driver *d, int stage);
 

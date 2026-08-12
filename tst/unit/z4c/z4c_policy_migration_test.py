@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 import pathlib
 import re
 import sys
@@ -23,6 +24,98 @@ def strip_comments_preserving_lines(source: str) -> str:
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise RuntimeError(message)
+
+
+def exercise_physical_coarse_fine_corner_composition() -> None:
+    """Model the production NGHOST=4 outer-x2/coarse-x1 overlap on both sides."""
+    ng = 4
+    active_lo = ng
+    active_hi = ng + 32 - 1
+    extent = 32 + 2 * ng
+    components = ("chi", "gxx", "gxy", "gxz", "gyy", "gyz", "gzz")
+
+    def new_field() -> dict[str, list[list[float]]]:
+        return {name: [[0.0 for _ in range(extent)] for _ in range(extent)]
+                for name in components}
+
+    def sentinel(name: str, j: int, rho_sign: float) -> float:
+        z_slope = 1.0e-4 * (j - active_lo)
+        values = {
+            "chi": 0.85 + z_slope,
+            "gxx": 1.10 + z_slope,
+            "gxy": 0.01,
+            "gxz": rho_sign * (0.02 + z_slope),
+            "gyy": 1.00 + z_slope,
+            "gyz": rho_sign * 0.015,
+            "gzz": 0.95 + z_slope,
+        }
+        return values[name]
+
+    def fill_active(field: dict[str, list[list[float]]], rho_sign: float) -> None:
+        for name in components:
+            for j in range(active_lo, active_hi + 1):
+                value = sentinel(name, j, rho_sign)
+                for i in range(active_lo, active_hi + 1):
+                    field[name][j][i] = value
+
+    def outer_x2_builtin(field: dict[str, list[list[float]]]) -> None:
+        # This is the order-2 Extrapolate expression used by the campaign input.
+        for values in field.values():
+            for i in range(extent):
+                f0 = values[active_hi][i]
+                f1 = values[active_hi - 1][i]
+                for layer in range(1, ng + 1):
+                    values[active_hi + layer][i] = f0 + layer * (f0 - f1)
+
+    def prolong_x1_side(field: dict[str, list[list[float]]], outer: bool,
+                        rho_sign: float) -> None:
+        indices = range(active_hi + 1, extent) if outer else range(0, active_lo)
+        for name in components:
+            for j in range(active_lo, active_hi + 1):
+                value = sentinel(name, j, rho_sign)
+                for i in indices:
+                    field[name][j][i] = value
+
+    def determinant(field: dict[str, list[list[float]]], j: int, i: int) -> float:
+        xx = field["gxx"][j][i]
+        xy = field["gxy"][j][i]
+        xz = field["gxz"][j][i]
+        yy = field["gyy"][j][i]
+        yz = field["gyz"][j][i]
+        zz = field["gzz"][j][i]
+        return (xx * yy * zz + 2.0 * xy * xz * yz - xx * yz * yz -
+                yy * xz * xz - zz * xy * xy)
+
+    results: dict[str, dict[str, list[list[float]]]] = {}
+    for label, outer, rho_sign in (("negative", False, -1.0),
+                                   ("positive", True, 1.0)):
+        field = new_field()
+        fill_active(field, rho_sign)
+        outer_x2_builtin(field)
+        prolong_x1_side(field, outer, rho_sign)
+        corner_i = range(active_hi + 1, extent) if outer else range(0, active_lo)
+        corner_j = range(active_hi + 1, extent)
+        require(all(field[name][j][i] == 0.0 for name in components
+                    for j in corner_j for i in corner_i),
+                f"{label} first-pass/prolong unexpectedly filled physical corner")
+        outer_x2_builtin(field)
+        for j in corner_j:
+            for i in corner_i:
+                require(all(math.isfinite(field[name][j][i]) for name in components),
+                        f"{label} second physical pass left nonfinite corner")
+                require(field["chi"][j][i] > 0.0 and determinant(field, j, i) > 0.0,
+                        f"{label} second physical pass left invalid chi/metric")
+        results[label] = field
+
+    for j in range(active_hi + 1, extent):
+        left = results["negative"]
+        right = results["positive"]
+        require(left["gxz"][j][0] == -right["gxz"][j][extent - 1] and
+                left["gyz"][j][0] == -right["gyz"][j][extent - 1],
+                "signed-rho odd tensor parity changed in corner composition")
+        for name in ("chi", "gxx", "gxy", "gyy", "gzz"):
+            require(left[name][j][0] == right[name][j][extent - 1],
+                    f"signed-rho even tensor parity changed for {name}")
 
 
 def kokkos_lambda_bodies(source: str) -> list[str]:
@@ -53,6 +146,7 @@ def main() -> int:
     parser.add_argument("--source-dir", type=pathlib.Path, required=True)
     arguments = parser.parse_args()
     source_dir = arguments.source_dir.resolve()
+    exercise_physical_coarse_fine_corner_composition()
 
     residual: list[tuple[pathlib.Path, int, str]] = []
     for path in sorted((source_dir / "src").rglob("*")):
@@ -237,13 +331,15 @@ def main() -> int:
     require("if (pz4c != nullptr && !preserve_restored_z4c)" in boundary_init,
             "restart preservation does not guard exactly the Z4c initialization branch")
     for required in ("RestrictU", "InitRecv", "SendU", "ClearSend", "ClearRecv",
-                     "RecvU", "Z4cBoundaryRHS", "ApplyPhysicalBCs", "Prolongate"):
+                     "RecvU", "Z4cBoundaryRHS", "ApplyPhysicalBCs", "Prolongate",
+                     "FillBuiltInPhysicalBoundaryGhosts"):
         require(f"pz4c->{required}" in boundary_init,
                 f"fresh/AMR Z4c initialization lost {required}")
     initialization_order = [boundary_init.index(f"pz4c->{required}") for required in
                             ("RestrictU", "InitRecv", "SendU", "ClearSend",
                              "ClearRecv", "RecvU", "Z4cBoundaryRHS",
-                             "ApplyPhysicalBCs", "Prolongate")]
+                             "ApplyPhysicalBCs", "Prolongate",
+                             "FillBuiltInPhysicalBoundaryGhosts")]
     require(initialization_order == sorted(initialization_order),
             "fresh/AMR Z4c boundary initialization order changed")
     require("InitBoundaryValuesAndPrimitives(pmy_mesh);" in refinement and
@@ -283,6 +379,24 @@ def main() -> int:
             initialize.index("UpdateCartoonCentralState(pmesh, res_flag)"),
             "cycle-zero initialization checkpoint no longer follows central sampling")
     tasks = (source_dir / "src/z4c/z4c_tasks.cpp").read_text(encoding="utf-8")
+    built_in = tasks[tasks.index("void Z4c::FillBuiltInPhysicalBoundaryGhosts"):
+                     tasks.index("TaskStatus Z4c::ApplyPhysicalBCs")]
+    public_bc = tasks[tasks.index("TaskStatus Z4c::ApplyPhysicalBCs"):
+                      tasks.index("TaskStatus Z4c::TrackCompactObjects")]
+    require(built_in.count("pbval_u->Z4cBCs") == 1 and
+            "user_bcs" not in built_in,
+            "built-in-only corner pass invokes the wrong boundary policy")
+    require(public_bc.index("FillBuiltInPhysicalBoundaryGhosts") <
+            public_bc.index("user_bcs_func") and
+            public_bc.count("user_bcs_func") == 1 and
+            tasks.count("user_bcs_func") == 1,
+            "public Z4c boundary task no longer invokes each user callback exactly once")
+    require(boundary_init.count("FillBuiltInPhysicalBoundaryGhosts") == 1,
+            "fresh/AMR initialization lost or duplicated the corner completion pass")
+    queue = tasks[tasks.index("void Z4c::QueueZ4cTasks"):
+                  tasks.index("TaskStatus Z4c::CopyU")]
+    require(queue.index("Z4c_BCS") < queue.index("Z4c_Prolong"),
+            "normal RK physical/prolongation task ordering changed")
     task_order = [tasks.index(marker) for marker in
                   ('"Z4c_RestU"', '"Z4c_SendU"', '"Z4c_RecvU"', '"Z4c_BCS"',
                    '"Z4c_Prolong"', '"Z4c_AlgC"', '"Z4c_Z4c2ADM"')]
