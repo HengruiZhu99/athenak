@@ -28,6 +28,8 @@ BACKEND = "Cuda"
 RANKS = 4
 PERFORMANCE_REGRESSION_LIMIT = 0.05
 TIMING_REPEATS = 5
+LINEAR_ROOT_MESHBLOCKS = 8 ** 3
+LINEAR_MAX_NMB_PER_RANK = 1024
 INPUTS = {
     "linear": ("tst/inputs/lwave_z4c.athinput",
                "9f56b4c89aecb73dee09762ecfb8da835aa0fb9f62fe742f0e937b2530c52b1f"),
@@ -192,7 +194,7 @@ def linear_overrides(name: str, resolution: int, nghost: int) -> list[str]:
             f"mesh/nx1={resolution}", f"mesh/nx2={resolution}",
             f"mesh/nx3={resolution}", f"meshblock/nx1={block}",
             f"meshblock/nx2={block}", f"meshblock/nx3={block}",
-            "mesh_refinement/max_nmb_per_rank=4096",
+            f"mesh_refinement/max_nmb_per_rank={LINEAR_MAX_NMB_PER_RANK}",
             "problem/kx1=1", "problem/kx2=1", "problem/kx3=1"]
 
 
@@ -684,6 +686,26 @@ def self_test(source: Path) -> None:
     require(len(case_inventory()) == 10 and
             sum(case["role"] == "timing" for case in case_inventory()) == 5,
             "campaign inventory fixture changed")
+    inventory = case_inventory()
+    for case in inventory:
+        capacity = [item for item in case["overrides"]
+                    if item.startswith("mesh_refinement/max_nmb_per_rank=")]
+        if case["kind"] == "linear":
+            block = case["resolution"] // 8
+            root_blocks = (case["resolution"] // block) ** 3
+            require(root_blocks == LINEAR_ROOT_MESHBLOCKS and
+                    LINEAR_MAX_NMB_PER_RANK ==
+                    8 * math.ceil(root_blocks / RANKS),
+                    "linear MeshBlock capacity math changed")
+            require(capacity == [
+                f"mesh_refinement/max_nmb_per_rank={LINEAR_MAX_NMB_PER_RANK}"],
+                "linear case must contain exactly one reviewed capacity override")
+        else:
+            require(not capacity,
+                    "boosted case must retain its input-selected capacity")
+    tooling_text = Path(__file__).read_text(encoding="utf-8")
+    require("mesh_refinement/max_nmb_per_rank=" + str(4096) not in tooling_text,
+            "legacy per-rank capacity override remains in R5 tooling")
     try:
         require_finite({"bad": float("inf")})
     except RuntimeError:
