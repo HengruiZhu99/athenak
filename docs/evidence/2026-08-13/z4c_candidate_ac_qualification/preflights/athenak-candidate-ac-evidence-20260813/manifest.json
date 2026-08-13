@@ -1,0 +1,457 @@
+{
+  "binary": {
+    "bytes": 11770584,
+    "path": "/home/hzhu/build-athenak-candidate-a-c-openmp/src/athena",
+    "sha256": "9719db642250f43e0e7089a80efb56ce5f2c2c5dc1e86620b5f74261923b8630"
+  },
+  "compiler": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "configuration": "Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set\n  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads\n  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true\n  For unit testing set OMP_PROC_BIND=false\n\nThis Athena++ executable is configured with:\n  Problem generator:          z4c/z4c_one_puncture\n  Floating-point precision:   double\n  MPI parallelism:            ON\n  OpenMP parallelism:         ON\n",
+  "created_utc": "2026-08-13T15:45:18.848538+00:00",
+  "fixed_policy": {
+    "cfl_number": 0.1,
+    "chi_floor_enabled": false,
+    "constraint_damping_kappa1": 0.02,
+    "domain": [
+      -10.0,
+      10.0
+    ],
+    "inner_refined_cube": [
+      -0.6,
+      0.6
+    ],
+    "ko_dissipation": 0.02,
+    "mass": 1.0,
+    "meshblock_points": 4,
+    "nghost": 4,
+    "raw_chi_div_floor": -1000.0,
+    "rk_integrator": "rk4",
+    "shift_eta": 2.0,
+    "static_refinement_levels": 5
+  },
+  "gauges": [
+    "standard",
+    "candidate_a",
+    "candidate_c"
+  ],
+  "input": {
+    "path": "inputs/z4c/onepuncture/z4c_candidate_ac_qualification.athinput",
+    "sha256": "56be8bd7421ffb7c5020447d880bccfb9927ce838cbd69b3d63f941d6d66c05d"
+  },
+  "repository": {
+    "branch": "codex/z4c-candidate-a-c-gauge-qualification-20260813",
+    "commit": "0c500c2ed39d42b1b1f171c8bbd1bfe141bbbe57",
+    "remote": "git@github.com:HengruiZhu99/athenak.git",
+    "submodules": "6739bc623081648af9e752b616d9671527922cbf kokkos (4.7.02)"
+  },
+  "resolutions": {
+    "R0": {
+      "dx_min": 0.15625,
+      "nx": 8
+    },
+    "R1": {
+      "dx_min": 0.10416666666666667,
+      "nx": 12
+    },
+    "R2": {
+      "dx_min": 0.078125,
+      "nx": 16
+    }
+  },
+  "resources": {
+    "mpi_ranks": 1,
+    "omp_proc_bind": "false",
+    "openmp_threads": 8
+  },
+  "schedule": [
+    {
+      "gauge": "standard",
+      "resolution": "R0",
+      "sequence": 0,
+      "target": 0.1
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R0",
+      "sequence": 1,
+      "target": 0.1
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R0",
+      "sequence": 2,
+      "target": 0.1
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R1",
+      "sequence": 3,
+      "target": 0.1
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R1",
+      "sequence": 4,
+      "target": 0.1
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R1",
+      "sequence": 5,
+      "target": 0.1
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R2",
+      "sequence": 6,
+      "target": 0.1
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R2",
+      "sequence": 7,
+      "target": 0.1
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R2",
+      "sequence": 8,
+      "target": 0.1
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R0",
+      "sequence": 9,
+      "target": 0.25
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R0",
+      "sequence": 10,
+      "target": 0.25
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R0",
+      "sequence": 11,
+      "target": 0.25
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R1",
+      "sequence": 12,
+      "target": 0.25
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R1",
+      "sequence": 13,
+      "target": 0.25
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R1",
+      "sequence": 14,
+      "target": 0.25
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R2",
+      "sequence": 15,
+      "target": 0.25
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R2",
+      "sequence": 16,
+      "target": 0.25
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R2",
+      "sequence": 17,
+      "target": 0.25
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R0",
+      "sequence": 18,
+      "target": 0.5
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R0",
+      "sequence": 19,
+      "target": 0.5
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R0",
+      "sequence": 20,
+      "target": 0.5
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R1",
+      "sequence": 21,
+      "target": 0.5
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R1",
+      "sequence": 22,
+      "target": 0.5
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R1",
+      "sequence": 23,
+      "target": 0.5
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R2",
+      "sequence": 24,
+      "target": 0.5
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R2",
+      "sequence": 25,
+      "target": 0.5
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R2",
+      "sequence": 26,
+      "target": 0.5
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R0",
+      "sequence": 27,
+      "target": 1.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R0",
+      "sequence": 28,
+      "target": 1.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R0",
+      "sequence": 29,
+      "target": 1.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R1",
+      "sequence": 30,
+      "target": 1.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R1",
+      "sequence": 31,
+      "target": 1.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R1",
+      "sequence": 32,
+      "target": 1.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R2",
+      "sequence": 33,
+      "target": 1.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R2",
+      "sequence": 34,
+      "target": 1.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R2",
+      "sequence": 35,
+      "target": 1.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R0",
+      "sequence": 36,
+      "target": 2.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R0",
+      "sequence": 37,
+      "target": 2.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R0",
+      "sequence": 38,
+      "target": 2.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R1",
+      "sequence": 39,
+      "target": 2.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R1",
+      "sequence": 40,
+      "target": 2.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R1",
+      "sequence": 41,
+      "target": 2.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R2",
+      "sequence": 42,
+      "target": 2.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R2",
+      "sequence": 43,
+      "target": 2.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R2",
+      "sequence": 44,
+      "target": 2.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R0",
+      "sequence": 45,
+      "target": 5.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R0",
+      "sequence": 46,
+      "target": 5.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R0",
+      "sequence": 47,
+      "target": 5.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R1",
+      "sequence": 48,
+      "target": 5.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R1",
+      "sequence": 49,
+      "target": 5.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R1",
+      "sequence": 50,
+      "target": 5.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R2",
+      "sequence": 51,
+      "target": 5.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R2",
+      "sequence": 52,
+      "target": 5.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R2",
+      "sequence": 53,
+      "target": 5.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R0",
+      "sequence": 54,
+      "target": 10.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R0",
+      "sequence": 55,
+      "target": 10.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R0",
+      "sequence": 56,
+      "target": 10.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R1",
+      "sequence": 57,
+      "target": 10.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R1",
+      "sequence": 58,
+      "target": 10.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R1",
+      "sequence": 59,
+      "target": 10.0
+    },
+    {
+      "gauge": "standard",
+      "resolution": "R2",
+      "sequence": 60,
+      "target": 10.0
+    },
+    {
+      "gauge": "candidate_a",
+      "resolution": "R2",
+      "sequence": 61,
+      "target": 10.0
+    },
+    {
+      "gauge": "candidate_c",
+      "resolution": "R2",
+      "sequence": 62,
+      "target": 10.0
+    }
+  ],
+  "schema": "ATHENAK_Z4C_CANDIDATE_AC_QUALIFICATION",
+  "schema_version": 1,
+  "status": "active",
+  "targets": [
+    0.1,
+    0.25,
+    0.5,
+    1.0,
+    2.0,
+    5.0,
+    10.0
+  ]
+}
