@@ -22,8 +22,8 @@ VERSION = 1
 GAUGES = ("standard", "candidate_a", "candidate_c")
 RESOLUTIONS = {
     "R0": {"nx": 8, "dx_min": 20.0 / 8.0 / 16.0},
-    "R1": {"nx": 12, "dx_min": 20.0 / 12.0 / 16.0},
-    "R2": {"nx": 16, "dx_min": 20.0 / 16.0 / 16.0},
+    "R1": {"nx": 16, "dx_min": 20.0 / 16.0 / 16.0},
+    "R2": {"nx": 24, "dx_min": 20.0 / 24.0 / 16.0},
 }
 TARGETS = (0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0)
 TIME_RE = re.compile(r"^time=([0-9.eE+-]+) cycle=([0-9]+)$", re.MULTILINE)
@@ -165,7 +165,7 @@ def create_manifest(args: argparse.Namespace, repo: pathlib.Path, run_root: path
         "resources": {"mpi_ranks": 1, "openmp_threads": 8,
                       "omp_proc_bind": "false"},
         "fixed_policy": {
-            "mass": 1.0, "domain": [-10.0, 10.0], "meshblock_points": 4,
+            "mass": 1.0, "domain": [-10.0, 10.0], "meshblock_points": 8,
             "nghost": 4, "static_refinement_levels": 5,
             "inner_refined_cube": [-0.6, 0.6], "rk_integrator": "rk4",
             "cfl_number": 0.1, "ko_dissipation": 0.02,
@@ -252,7 +252,7 @@ def main() -> int:
             f"mesh/nx1={RESOLUTIONS[resolution]['nx']}",
             f"mesh/nx2={RESOLUTIONS[resolution]['nx']}",
             f"mesh/nx3={RESOLUTIONS[resolution]['nx']}",
-            "meshblock/nx1=4", "meshblock/nx2=4", "meshblock/nx3=4",
+            "meshblock/nx1=8", "meshblock/nx2=8", "meshblock/nx3=8",
             f"time/tlim={target:.17g}", "time/nlim=-1",
             f"fastflow/start_time_0={target:.17g}",
             f"fastflow/stop_time_0={target:.17g}",
