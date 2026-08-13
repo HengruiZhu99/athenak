@@ -130,6 +130,21 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
       pin->GetOrAddBoolean("z4c", "damp_kappa1_max_K", false);
   opt.history_kretschmann =
       pin->GetOrAddBoolean("z4c", "history_kretschmann", false);
+  opt.rhs_stage_diagnostics =
+      pin->GetOrAddBoolean("z4c", "rhs_stage_diagnostics", false);
+  opt.rhs_stage_diagnostics_start_time =
+      pin->GetOrAddReal("z4c", "rhs_stage_diagnostics_start_time", 0.0);
+  opt.rhs_stage_diagnostics_rho_max =
+      pin->GetOrAddReal("z4c", "rhs_stage_diagnostics_rho_max", 0.5);
+  opt.rhs_stage_diagnostics_abs_z_max =
+      pin->GetOrAddReal("z4c", "rhs_stage_diagnostics_abs_z_max", 0.5);
+  if (opt.rhs_stage_diagnostics_rho_max <= 0.0 ||
+      opt.rhs_stage_diagnostics_abs_z_max <= 0.0) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "Z4c RHS stage diagnostic extents must be positive" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   // Gauge conditions (default to moving puncture gauge)
   opt.lapse_harmonicf = pin->GetOrAddReal("z4c", "lapse_harmonicf", 1.0);
   opt.lapse_harmonic = pin->GetOrAddReal("z4c", "lapse_harmonic", 0.0);

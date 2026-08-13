@@ -10,10 +10,13 @@
 
 //#include <algorithm>
 //#include <cinttypes>
+#include <iomanip>
 #include <iostream>
+#include <fstream>
 //#include <limits>
 
 #include "athena.hpp"
+#include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/cartoon_derivatives.hpp"
@@ -107,6 +110,15 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   const Real telegraph_damping =
       (opt.telegraph_max_K ? max_abs_K : 1.0) / opt.telegraph_tau;
   const Real telegraph_gradient = opt.telegraph_kappa / opt.telegraph_tau;
+
+  const bool collect_rhs_stage_diagnostics =
+      opt.rhs_stage_diagnostics && time >= opt.rhs_stage_diagnostics_start_time;
+  DvceArray5D<Real> rhs_stage_terms;
+  if (collect_rhs_stage_diagnostics) {
+    rhs_stage_terms = DvceArray5D<Real>("z4c rhs stage terms", nmb, 75,
+                                       u_rhs.extent_int(2), u_rhs.extent_int(3),
+                                       u_rhs.extent_int(4));
+  }
 
   // ===================================================================================
   // Main RHS calculation
@@ -526,15 +538,35 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
           for (int b = a; b < 3; ++b) {
             rhs.g_dd(m, a, b, k, j, i) =
                 -2. * z4c.alpha(m, k, j, i) * z4c.vA_dd(m, a, b, k, j, i) + Lg_dd(a, b);
-            rhs.vA_dd(m, a, b, k, j, i) =
+            const Real a_geometric =
                 oopsi4 * (-Ddalpha_dd(a, b) +
                           z4c.alpha(m, k, j, i) * (R_dd(a, b) + Rphi_dd(a, b)));
-            rhs.vA_dd(m, a, b, k, j, i) -= (1. / 3.) * z4c.g_dd(m, a, b, k, j, i) *
-                                           (-Ddalpha + z4c.alpha(m, k, j, i) * R);
-            rhs.vA_dd(m, a, b, k, j, i) +=
+            const Real a_trace_subtraction =
+                -(1. / 3.) * z4c.g_dd(m, a, b, k, j, i) *
+                (-Ddalpha + z4c.alpha(m, k, j, i) * R);
+            const Real a_nonlinear =
                 z4c.alpha(m, k, j, i) *
                 (K * z4c.vA_dd(m, a, b, k, j, i) - 2. * AA_dd(a, b));
-            rhs.vA_dd(m, a, b, k, j, i) += LA_dd(a, b);
+            const Real a_lie = LA_dd(a, b);
+            rhs.vA_dd(m, a, b, k, j, i) =
+                a_geometric + a_trace_subtraction + a_nonlinear + a_lie;
+            if (collect_rhs_stage_diagnostics) {
+              const int pair = (a == 0) ? b : ((a == 1) ? 3 + (b - 1) : 5);
+              rhs_stage_terms(m, pair, k, j, i) = a_geometric;
+              rhs_stage_terms(m, 6 + pair, k, j, i) = a_trace_subtraction;
+              rhs_stage_terms(m, 12 + pair, k, j, i) = a_nonlinear;
+              rhs_stage_terms(m, 18 + pair, k, j, i) = a_lie;
+              rhs_stage_terms(m, 36 + pair, k, j, i) =
+                  -oopsi4 * Ddalpha_dd(a, b);
+              rhs_stage_terms(m, 42 + pair, k, j, i) =
+                  oopsi4 * z4c.alpha(m, k, j, i) *
+                  (R_dd(a, b) + Rphi_dd(a, b));
+              rhs_stage_terms(m, 48 + pair, k, j, i) =
+                  (1. / 3.) * z4c.g_dd(m, a, b, k, j, i) * Ddalpha;
+              rhs_stage_terms(m, 54 + pair, k, j, i) =
+                  -(1. / 3.) * z4c.g_dd(m, a, b, k, j, i) *
+                  z4c.alpha(m, k, j, i) * R;
+            }
             // Matter term
             if (!is_vacuum) {
               rhs.vA_dd(m, a, b, k, j, i) -= 8. * M_PI * z4c.alpha(m, k, j, i) *
@@ -559,6 +591,11 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> dTheta_d;
         AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> ddbeta_d;
         AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> LGam_u;
+        AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> LGam_advective_u;
+        AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> LGam_expansion_u;
+        AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> LGam_ddiv_u;
+        AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> LGam_contraction_u;
+        AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> LGam_second_u;
         AthenaPointTensor<Real, TensorSymm::NONE, 3, 2> dbeta_du;
         AthenaPointTensor<Real, TensorSymm::NONE, 3, 2> dGam_du;
         AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> dg_ddd;
@@ -570,6 +607,11 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         Gamma_udd.ZeroClear();
         ddbeta_d.ZeroClear();
         LGam_u.ZeroClear();
+        LGam_advective_u.ZeroClear();
+        LGam_expansion_u.ZeroClear();
+        LGam_ddiv_u.ZeroClear();
+        LGam_contraction_u.ZeroClear();
+        LGam_second_u.ZeroClear();
 
         Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                       1 / size.d_view(m).dx3};
@@ -611,7 +653,9 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
           }
 
         for (int b = 0; b < 3; ++b) {
-          LGam_u(b) = derivatives.VectorAdvective(b, z4c.beta_u, z4c.vGam_u);
+          LGam_advective_u(b) =
+              derivatives.VectorAdvective(b, z4c.beta_u, z4c.vGam_u);
+          LGam_u(b) = LGam_advective_u(b);
         }
 
         Real detg =
@@ -670,27 +714,46 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
         // Finalize LGam_u (note that this is not a real Lie derivative)
         for (int a = 0; a < 3; ++a) {
-          LGam_u(a) += (2. / 3.) * Gamma_u(a) * dbeta;
+          LGam_expansion_u(a) = (2. / 3.) * Gamma_u(a) * dbeta;
+          LGam_u(a) += LGam_expansion_u(a);
           for (int b = 0; b < 3; ++b) {
-            LGam_u(a) += g_uu(a, b) * ddbeta_d(b) - Gamma_u(b) * dbeta_du(b, a);
+            LGam_ddiv_u(a) += g_uu(a, b) * ddbeta_d(b);
+            LGam_contraction_u(a) -= Gamma_u(b) * dbeta_du(b, a);
             for (int c = 0; c < 3; ++c) {
-              LGam_u(a) += g_uu(b, c) * ddbeta_ddu(b, c, a);
+              LGam_second_u(a) += g_uu(b, c) * ddbeta_ddu(b, c, a);
             }
           }
+          LGam_u(a) += LGam_ddiv_u(a) + LGam_contraction_u(a) + LGam_second_u(a);
         }
 
         // Gamma's
         for (int a = 0; a < 3; ++a) {
-          rhs.vGam_u(m, a, k, j, i) = 2. * z4c.alpha(m, k, j, i) * DA_u(a) + LGam_u(a);
-          rhs.vGam_u(m, a, k, j, i) -= 2. * z4c.alpha(m, k, j, i) * kappa1_eff *
-                                       (z4c.vGam_u(m, a, k, j, i) - Gamma_u(a));
+          const Real gamma_divergence = 2. * z4c.alpha(m, k, j, i) * DA_u(a);
+          const Real gamma_lie = LGam_u(a);
+          const Real gamma_damping =
+              -2. * z4c.alpha(m, k, j, i) * kappa1_eff *
+              (z4c.vGam_u(m, a, k, j, i) - Gamma_u(a));
+          Real gamma_lapse_gradient = 0.0;
           for (int b = 0; b < 3; ++b) {
-            rhs.vGam_u(m, a, k, j, i) -= 2. * A_uu(a, b) * dalpha_d(b);
+            gamma_lapse_gradient -= 2. * A_uu(a, b) * dalpha_d(b);
             // Matter term
             if (!is_vacuum) {
-              rhs.vGam_u(m, a, k, j, i) -= 16. * M_PI * z4c.alpha(m, k, j, i) *
-                                           g_uu(a, b) * tmunu.S_d(m, b, k, j, i);
+              gamma_lapse_gradient -= 16. * M_PI * z4c.alpha(m, k, j, i) *
+                                      g_uu(a, b) * tmunu.S_d(m, b, k, j, i);
             }
+          }
+          rhs.vGam_u(m, a, k, j, i) =
+              gamma_divergence + gamma_lie + gamma_damping + gamma_lapse_gradient;
+          if (collect_rhs_stage_diagnostics) {
+            rhs_stage_terms(m, 24 + a, k, j, i) = gamma_divergence;
+            rhs_stage_terms(m, 27 + a, k, j, i) = gamma_lie;
+            rhs_stage_terms(m, 30 + a, k, j, i) = gamma_damping;
+            rhs_stage_terms(m, 33 + a, k, j, i) = gamma_lapse_gradient;
+            rhs_stage_terms(m, 60 + a, k, j, i) = LGam_advective_u(a);
+            rhs_stage_terms(m, 63 + a, k, j, i) = LGam_expansion_u(a);
+            rhs_stage_terms(m, 66 + a, k, j, i) = LGam_ddiv_u(a);
+            rhs_stage_terms(m, 69 + a, k, j, i) = LGam_contraction_u(a);
+            rhs_stage_terms(m, 72 + a, k, j, i) = LGam_second_u(a);
           }
         }
       });
@@ -812,6 +875,184 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
           derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
     }
   });
+
+  // This intentionally expensive host-side census is default-off and exists only for
+  // bounded causal audits.  It reports state and complete-RHS maxima after every RK
+  // stage without changing either array.  Restricting the census to a physical
+  // meridional tube keeps the evidence focused on the axis-local failure region.
+  if (collect_rhs_stage_diagnostics) {
+    Kokkos::fence();
+    auto host_u0 = Kokkos::create_mirror_view_and_copy(HostMemSpace(), u0);
+    auto host_rhs = Kokkos::create_mirror_view_and_copy(HostMemSpace(), u_rhs);
+    auto host_terms =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), rhs_stage_terms);
+    pmy_pack->pmb->mb_size.sync_host();
+    pmy_pack->pmb->mb_gid.sync_host();
+    auto host_size = pmy_pack->pmb->mb_size.h_view;
+    auto host_gid = pmy_pack->pmb->mb_gid.h_view;
+    const std::string diagnostic_path =
+        "z4c_rhs_stage_rank" + std::to_string(global_variable::my_rank) + ".log";
+    std::ofstream diagnostic_output(diagnostic_path, std::ios::app);
+    if (!diagnostic_output) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl << "Unable to open " << diagnostic_path << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    for (int n = 0; n < nz4c; ++n) {
+      Real state_max = 0.0;
+      Real rhs_max = 0.0;
+      Real state_value = 0.0;
+      Real rhs_value = 0.0;
+      Real state_rho = 0.0;
+      Real state_z = 0.0;
+      Real rhs_rho = 0.0;
+      Real rhs_z = 0.0;
+      int state_gid = -1;
+      int rhs_gid = -1;
+      int state_i = -1;
+      int state_j = -1;
+      int rhs_i = -1;
+      int rhs_j = -1;
+      std::uint64_t nonfinite_state = 0;
+      std::uint64_t nonfinite_rhs = 0;
+      std::uint64_t selected_cells = 0;
+      for (int m = 0; m < nmb; ++m) {
+        for (int k = ks; k <= ke; ++k) {
+          for (int j = js; j <= je; ++j) {
+            const Real z = CellCenterX(j - js, nx2, host_size(m).x2min,
+                                       host_size(m).x2max);
+            if (fabs(z) > opt.rhs_stage_diagnostics_abs_z_max) continue;
+            for (int i = is; i <= ie; ++i) {
+              const Real rho = CellCenterX(i - is, nx1, host_size(m).x1min,
+                                           host_size(m).x1max);
+              if (rho < 0.0 || rho > opt.rhs_stage_diagnostics_rho_max) continue;
+              ++selected_cells;
+              const Real state = host_u0(m, n, k, j, i);
+              const Real rhs_value_here = host_rhs(m, n, k, j, i);
+              if (!isfinite(state)) {
+                ++nonfinite_state;
+              } else if (fabs(state) >= state_max) {
+                state_max = fabs(state);
+                state_value = state;
+                state_rho = rho;
+                state_z = z;
+                state_gid = host_gid(m);
+                state_i = i;
+                state_j = j;
+              }
+              if (!isfinite(rhs_value_here)) {
+                ++nonfinite_rhs;
+              } else if (fabs(rhs_value_here) >= rhs_max) {
+                rhs_max = fabs(rhs_value_here);
+                rhs_value = rhs_value_here;
+                rhs_rho = rho;
+                rhs_z = z;
+                rhs_gid = host_gid(m);
+                rhs_i = i;
+                rhs_j = j;
+              }
+            }
+          }
+        }
+      }
+      diagnostic_output << std::setprecision(17)
+                << "Z4C_RHS_STAGE_DIAGNOSTIC rank=" << global_variable::my_rank
+                << " cycle=" << pmy_pack->pmesh->ncycle
+                << " time=" << time << " stage=" << stage
+                << " variable=" << Z4c_names[n]
+                << " selected_cells=" << selected_cells
+                << " nonfinite_state=" << nonfinite_state
+                << " nonfinite_rhs=" << nonfinite_rhs
+                << " state_abs_max=" << state_max
+                << " state_value=" << state_value
+                << " state_gid=" << state_gid
+                << " state_i=" << state_i << " state_j=" << state_j
+                << " state_rho=" << state_rho << " state_z=" << state_z
+                << " rhs_abs_max=" << rhs_max
+                << " rhs_value=" << rhs_value
+                << " rhs_gid=" << rhs_gid
+                << " rhs_i=" << rhs_i << " rhs_j=" << rhs_j
+                << " rhs_rho=" << rhs_rho << " rhs_z=" << rhs_z << '\n';
+    }
+    static const char * const term_names[75] = {
+        "A_geometric_xx", "A_geometric_xy", "A_geometric_xz",
+        "A_geometric_yy", "A_geometric_yz", "A_geometric_zz",
+        "A_trace_xx", "A_trace_xy", "A_trace_xz",
+        "A_trace_yy", "A_trace_yz", "A_trace_zz",
+        "A_nonlinear_xx", "A_nonlinear_xy", "A_nonlinear_xz",
+        "A_nonlinear_yy", "A_nonlinear_yz", "A_nonlinear_zz",
+        "A_lie_xx", "A_lie_xy", "A_lie_xz",
+        "A_lie_yy", "A_lie_yz", "A_lie_zz",
+        "Gamma_divergence_x", "Gamma_divergence_y", "Gamma_divergence_z",
+        "Gamma_lie_x", "Gamma_lie_y", "Gamma_lie_z",
+        "Gamma_damping_x", "Gamma_damping_y", "Gamma_damping_z",
+        "Gamma_lapse_gradient_x", "Gamma_lapse_gradient_y",
+        "Gamma_lapse_gradient_z",
+        "A_hessian_xx", "A_hessian_xy", "A_hessian_xz",
+        "A_hessian_yy", "A_hessian_yz", "A_hessian_zz",
+        "A_ricci_tensor_xx", "A_ricci_tensor_xy", "A_ricci_tensor_xz",
+        "A_ricci_tensor_yy", "A_ricci_tensor_yz", "A_ricci_tensor_zz",
+        "A_trace_lapse_xx", "A_trace_lapse_xy", "A_trace_lapse_xz",
+        "A_trace_lapse_yy", "A_trace_lapse_yz", "A_trace_lapse_zz",
+        "A_trace_ricci_xx", "A_trace_ricci_xy", "A_trace_ricci_xz",
+        "A_trace_ricci_yy", "A_trace_ricci_yz", "A_trace_ricci_zz",
+        "Gamma_advective_x", "Gamma_advective_y", "Gamma_advective_z",
+        "Gamma_expansion_x", "Gamma_expansion_y", "Gamma_expansion_z",
+        "Gamma_ddiv_x", "Gamma_ddiv_y", "Gamma_ddiv_z",
+        "Gamma_contraction_x", "Gamma_contraction_y", "Gamma_contraction_z",
+        "Gamma_second_x", "Gamma_second_y", "Gamma_second_z"};
+    for (int term = 0; term < 75; ++term) {
+      Real term_max = 0.0;
+      Real term_value = 0.0;
+      Real term_rho = 0.0;
+      Real term_z = 0.0;
+      int term_gid = -1;
+      int term_i = -1;
+      int term_j = -1;
+      std::uint64_t nonfinite_term = 0;
+      std::uint64_t selected_cells = 0;
+      for (int m = 0; m < nmb; ++m) {
+        for (int k = ks; k <= ke; ++k) {
+          for (int j = js; j <= je; ++j) {
+            const Real z = CellCenterX(j - js, nx2, host_size(m).x2min,
+                                       host_size(m).x2max);
+            if (fabs(z) > opt.rhs_stage_diagnostics_abs_z_max) continue;
+            for (int i = is; i <= ie; ++i) {
+              const Real rho = CellCenterX(i - is, nx1, host_size(m).x1min,
+                                           host_size(m).x1max);
+              if (rho < 0.0 || rho > opt.rhs_stage_diagnostics_rho_max) continue;
+              ++selected_cells;
+              const Real value = host_terms(m, term, k, j, i);
+              if (!isfinite(value)) {
+                ++nonfinite_term;
+              } else if (fabs(value) >= term_max) {
+                term_max = fabs(value);
+                term_value = value;
+                term_rho = rho;
+                term_z = z;
+                term_gid = host_gid(m);
+                term_i = i;
+                term_j = j;
+              }
+            }
+          }
+        }
+      }
+      diagnostic_output << std::setprecision(17)
+                        << "Z4C_RHS_TERM_DIAGNOSTIC rank="
+                        << global_variable::my_rank
+                        << " cycle=" << pmy_pack->pmesh->ncycle
+                        << " time=" << time << " stage=" << stage
+                        << " term=" << term_names[term]
+                        << " selected_cells=" << selected_cells
+                        << " nonfinite=" << nonfinite_term
+                        << " abs_max=" << term_max
+                        << " value=" << term_value
+                        << " gid=" << term_gid
+                        << " i=" << term_i << " j=" << term_j
+                        << " rho=" << term_rho << " z=" << term_z << '\n';
+    }
+  }
 
   return TaskStatus::complete;
 }

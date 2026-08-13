@@ -158,6 +158,11 @@ class Z4c {
     bool damp_kappa1_max_K;
     // Compute the volume-global maximum Kretschmann scalar in Z4c history output.
     bool history_kretschmann;
+    // Default-off, fail-visible stage diagnostics for bounded instability audits.
+    bool rhs_stage_diagnostics;
+    Real rhs_stage_diagnostics_start_time;
+    Real rhs_stage_diagnostics_rho_max;
+    Real rhs_stage_diagnostics_abs_z_max;
     // Gauge conditions for the lapse
     Real lapse_oplog;
     Real lapse_harmonicf;
