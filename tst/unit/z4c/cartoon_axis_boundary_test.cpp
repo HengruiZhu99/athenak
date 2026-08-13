@@ -26,8 +26,37 @@ std::uint64_t Bits(const Real value) {
   return bits;
 }
 
-template <int NCOMPONENTS, typename Fill, typename Parity>
-bool CheckComponents(const int ghost_depth, Fill fill, Parity parity) {
+enum class AxisFieldFamily : int { z4c, adm, constraint };
+
+template <AxisFieldFamily FAMILY>
+KOKKOS_INLINE_FUNCTION bool FillPackedAxisGhostLine(
+    const DvceArray5D<Real> &state, const int component,
+    const int active_start, const int ghost_depth) {
+  if constexpr (FAMILY == AxisFieldFamily::z4c) {
+    return z4c::FillZ4cAxisGhostLine(state, 0, component, 0, 0,
+                                    active_start, ghost_depth);
+  } else if constexpr (FAMILY == AxisFieldFamily::adm) {
+    return z4c::FillAdmAxisGhostLine(state, 0, component, 0, 0,
+                                    active_start, ghost_depth);
+  } else {
+    return z4c::FillConstraintAxisGhostLine(state, 0, component, 0, 0,
+                                           active_start, ghost_depth);
+  }
+}
+
+template <AxisFieldFamily FAMILY>
+constexpr int PackedAxisParitySign(const int component) {
+  if constexpr (FAMILY == AxisFieldFamily::z4c) {
+    return z4c::Z4cStateAxisParitySignFromPackedIndex(component);
+  } else if constexpr (FAMILY == AxisFieldFamily::adm) {
+    return z4c::AdmStateAxisParitySignFromPackedIndex(component);
+  } else {
+    return z4c::ConstraintAxisParitySignFromPackedIndex(component);
+  }
+}
+
+template <int NCOMPONENTS, AxisFieldFamily FAMILY>
+bool CheckComponents(const int ghost_depth) {
   const int active_cells = ghost_depth + 2;
   const int radial_cells = active_cells + ghost_depth;
   const int active_start = ghost_depth;
@@ -47,7 +76,8 @@ bool CheckComponents(const int ghost_depth, Fill fill, Parity parity) {
   Kokkos::parallel_for(
       "fill exact axis parity ghosts", Kokkos::RangePolicy<DevExeSpace>(0, NCOMPONENTS),
       KOKKOS_LAMBDA(const int component) {
-        if (!fill(state, 0, component, 0, 0, active_start, ghost_depth)) {
+        if (!FillPackedAxisGhostLine<FAMILY>(state, component, active_start,
+                                             ghost_depth)) {
           Kokkos::abort("valid packed component lacks axis parity");
         }
       });
@@ -55,7 +85,7 @@ bool CheckComponents(const int ghost_depth, Fill fill, Parity parity) {
   Kokkos::deep_copy(host, state);
 
   for (int component = 0; component < NCOMPONENTS; ++component) {
-    const int sign = parity(component);
+    const int sign = PackedAxisParitySign<FAMILY>(component);
     if (sign != -1 && sign != 1) return false;
     for (int depth = 0; depth < ghost_depth; ++depth) {
       const Real source = host(0, component, 0, 0,
@@ -131,15 +161,10 @@ int main(int argc, char **argv) {
   Kokkos::ScopeGuard guard(argc, argv);
   bool passed = true;
   for (const int ghost_depth : {2, 3, 4}) {
-    passed &= CheckComponents<z4c::Z4c::nz4c>(
-        ghost_depth, z4c::FillZ4cAxisGhostLine<DvceArray5D<Real>>,
-        z4c::Z4cStateAxisParitySignFromPackedIndex);
-    passed &= CheckComponents<adm::ADM::nadm>(
-        ghost_depth, z4c::FillAdmAxisGhostLine<DvceArray5D<Real>>,
-        z4c::AdmStateAxisParitySignFromPackedIndex);
-    passed &= CheckComponents<z4c::Z4c::ncon>(
-        ghost_depth, z4c::FillConstraintAxisGhostLine<DvceArray5D<Real>>,
-        z4c::ConstraintAxisParitySignFromPackedIndex);
+    passed &= CheckComponents<z4c::Z4c::nz4c, AxisFieldFamily::z4c>(ghost_depth);
+    passed &= CheckComponents<adm::ADM::nadm, AxisFieldFamily::adm>(ghost_depth);
+    passed &=
+        CheckComponents<z4c::Z4c::ncon, AxisFieldFamily::constraint>(ghost_depth);
   }
   passed &= CheckRestrictionProlongationCommutation(1);
   passed &= CheckRestrictionProlongationCommutation(-1);
