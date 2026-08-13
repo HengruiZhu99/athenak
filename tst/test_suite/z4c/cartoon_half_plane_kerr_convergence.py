@@ -32,7 +32,9 @@ def require(condition: bool, message: str) -> None:
         raise RuntimeError(message)
 
 
-def finite_number(value: float) -> float | None:
+def finite_number(value: float | None) -> float | None:
+    if value is None:
+        return None
     return float(value) if math.isfinite(float(value)) else None
 
 
@@ -311,7 +313,7 @@ def analyze_gauge(run_root: Path, gauge: str) -> dict[str, object]:
         "gates": {
             "all_runs_reached_5M": reached,
             "horizon_coverage_through_4p8M": horizon_coverage,
-            "constraint_time_dependent_convergence": constraint_gate,
+            "constraint_time_dependent_convergence": bool(constraint_gate),
             "horizon_invariant_time_dependent_convergence": invariant_ok,
             "direct_residual_at_most_0p03": direct_ok,
             "flow_residual_at_most_0p03": flow_ok,
@@ -323,6 +325,12 @@ def analyze_gauge(run_root: Path, gauge: str) -> dict[str, object]:
 
 
 def self_test() -> None:
+    require(finite_number(None) is None,
+            "unresolved convergence order was not preserved as JSON null")
+    require(unequal_order(1.0, 1.0, 1.0) is None,
+            "degenerate three-grid values unexpectedly produced an order")
+    require(json.loads(json.dumps({"gate": bool(np.bool_(True))})) == {"gate": True},
+            "NumPy-derived gate was not normalized to a strict JSON boolean")
     synthetic = {
         case: np.asarray([H[case] ** 4, 2.0 * H[case] ** 4]) for case in CASES
     }
