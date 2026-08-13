@@ -100,10 +100,15 @@ void FillPhysicalAdm(MeshBlockPack *pack,
       "initialize Kerr puncture ADM fields", DevExeSpace(), 0, nmb - 1,
       bounds.ks, bounds.ke, bounds.js, bounds.je, bounds.is, bounds.ie,
       KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+        // Evaluate this common expression before the compile-time map branch.
+        // NVCC rejects an extended host/device lambda when a captured view or
+        // scalar is first referenced from inside an if-constexpr context.
+        const bool is_axis_ghost =
+            mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
+            i < is;
         if constexpr (Map ==
                       kerr_puncture::CoordinateMap::half_rho_z_suppressed_y_v2) {
-          if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
-              i < is) {
+          if (is_axis_ghost) {
             return;
           }
         }

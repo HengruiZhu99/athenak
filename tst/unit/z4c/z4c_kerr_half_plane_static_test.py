@@ -23,9 +23,19 @@ require(
     "signed_rho_z_suppressed_y_v1" not in POINT + PGEN,
     "Kerr initializer still exposes the independently stored signed-rho map",
 )
-guard = PGEN.index("i < is")
+capture = PGEN.index("const bool is_axis_ghost =")
+guard = PGEN.index("i < is", capture)
+compile_time_branch = PGEN.index("if constexpr (Map ==", guard)
+guard_use = PGEN.index("if (is_axis_ghost)", compile_time_branch)
 evaluate = PGEN.index("kerr_puncture::Evaluate<Map, Gauge>", guard)
-require(guard < evaluate, "axis ghosts are not excluded before analytic evaluation")
+require(
+    capture < guard < compile_time_branch < guard_use < evaluate,
+    "axis ghosts are not excluded with CUDA-safe captures before analytic evaluation",
+)
+require(
+    "mb_bcs.d_view" not in PGEN[compile_time_branch:guard_use],
+    "a device view is first captured inside the Kerr if-constexpr branch",
+)
 
 adm_fill = PGEN.index("derive Kerr puncture ADM axis ghosts")
 gauge_fill = PGEN.index("derive Kerr puncture gauge axis ghosts", adm_fill)
