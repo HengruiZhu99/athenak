@@ -31,6 +31,7 @@
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "pgen/z4c_irisk_coordinate_map.hpp"
+#include "z4c/cartoon_axis_boundary.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
 #include "z4c/curvature_diagnostics.hpp"
@@ -110,6 +111,7 @@ void FillAdmFromIrisSpectralMapped(
   // The spectral export contains ADM fields plus lapse and shift, but not Theta or the
   // telegraph flux B_i.  Initialize every Z4c-only field deterministically before
   // ADMToZ4c overwrites the conformal geometry and curvature variables.
+  Kokkos::deep_copy(host_u_adm, 0.0);
   Kokkos::deep_copy(host_u_z4c, 0.0);
   adm::ADM::ADMhost_vars host_adm;
   host_adm.g_dd.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_GXX,
@@ -123,7 +125,9 @@ void FillAdmFromIrisSpectralMapped(
 
   auto &indcs = pmbp->pmesh->mb_indcs;
   pmbp->pmb->mb_size.sync_host();
+  pmbp->pmb->mb_bcs.sync_host();
   auto size = pmbp->pmb->mb_size.h_view;
+  auto bcs = pmbp->pmb->mb_bcs.h_view;
   const auto bounds = z4c::MakeStoredDomainBounds(indcs);
   const int isg = bounds.is;
   const int ieg = bounds.ie;
@@ -131,7 +135,6 @@ void FillAdmFromIrisSpectralMapped(
   const int jeg = bounds.je;
   const int ksg = bounds.ks;
   const int keg = bounds.ke;
-  const std::size_t nx = static_cast<std::size_t>(bounds.n1);
   const std::size_t ny = static_cast<std::size_t>(bounds.n2);
   const std::size_t nz = static_cast<std::size_t>(bounds.n3);
   Real minimum_psi4 = std::numeric_limits<Real>::infinity();
@@ -140,14 +143,19 @@ void FillAdmFromIrisSpectralMapped(
 
   for (int m = 0; m < pmbp->nmb_thispack; ++m) {
     constexpr bool cartoon =
-        Map == z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1;
+        Map == z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2;
+    const bool axis_block =
+        cartoon && bcs(m, BoundaryFace::inner_x1) == BoundaryFlag::axis;
+    const int interpolation_is = axis_block ? indcs.is : isg;
+    const std::size_t interpolation_nx =
+        static_cast<std::size_t>(ieg - interpolation_is + 1);
     const auto iris_dimensions =
-        z4c_irisk::IrisTensorProductDimensions<Map>(nx, ny, nz);
+        z4c_irisk::IrisTensorProductDimensions<Map>(interpolation_nx, ny, nz);
     std::vector<double> x(iris_dimensions[0]);
     std::vector<double> y(iris_dimensions[1]);
     std::vector<double> z(iris_dimensions[2]);
-    for (int i = isg; i <= ieg; ++i) {
-      x[static_cast<std::size_t>(i - isg)] =
+    for (int i = interpolation_is; i <= ieg; ++i) {
+      x[static_cast<std::size_t>(i - interpolation_is)] =
           CellCenterX(i - indcs.is, indcs.nx1, size(m).x1min, size(m).x1max);
     }
     if constexpr (cartoon) {
@@ -179,11 +187,11 @@ void FillAdmFromIrisSpectralMapped(
 
     for (int k = ksg; k <= keg; ++k)
       for (int j = jsg; j <= jeg; ++j)
-        for (int i = isg; i <= ieg; ++i) {
+        for (int i = interpolation_is; i <= ieg; ++i) {
           const std::size_t point = z4c_irisk::IrisPointIndex<Map>(
-              static_cast<std::size_t>(i - isg),
+              static_cast<std::size_t>(i - interpolation_is),
               static_cast<std::size_t>(j - jsg),
-              static_cast<std::size_t>(k - ksg), nx, ny);
+              static_cast<std::size_t>(k - ksg), interpolation_nx, ny);
           const double *value =
               values.data() + point * IRISK_ATHENAK_ADM_VARIABLE_COUNT;
           for (int variable = 0; variable < IRISK_ATHENAK_ADM_VARIABLE_COUNT;
@@ -229,6 +237,27 @@ void FillAdmFromIrisSpectralMapped(
             host_adm.beta_u(m, component, k, j, i) = shift[component];
           }
         }
+    if constexpr (cartoon) {
+      if (axis_block) {
+        for (int k = ksg; k <= keg; ++k) {
+          for (int j = jsg; j <= jeg; ++j) {
+            for (int n = 0; n <= adm::ADM::I_ADM_PSI4; ++n) {
+              if (!z4c::FillAdmAxisGhostLine(
+                      host_u_adm, m, n, k, j, indcs.is, indcs.ng)) {
+                Fail("invalid ADM component in IrisK axis parity fill");
+              }
+            }
+            for (int n = z4c::Z4c::I_Z4C_ALPHA;
+                 n <= z4c::Z4c::I_Z4C_BETAZ; ++n) {
+              if (!z4c::FillZ4cAxisGhostLine(
+                      host_u_z4c, m, n, k, j, indcs.is, indcs.ng)) {
+                Fail("invalid gauge component in IrisK axis parity fill");
+              }
+            }
+          }
+        }
+      }
+    }
   }
 #if MPI_PARALLEL_ENABLED
   MPI_Allreduce(MPI_IN_PLACE, &invalid_fields, 1, MPI_INT, MPI_MAX,
@@ -269,16 +298,16 @@ void FillAdmFromIrisSpectral(MeshBlockPack *pmbp,
       FillAdmFromIrisSpectralMapped<z4c_irisk::AdmMap::cartesian_xyz>(
           pmbp, interpolator);
       return;
-    case z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1:
+    case z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2:
       FillAdmFromIrisSpectralMapped<
-          z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1>(pmbp, interpolator);
+          z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2>(pmbp, interpolator);
       return;
   }
   Fail("invalid IrisK ADM coordinate map");
 }
 
 void RecomputeAdmConstraints(MeshBlockPack *pmbp) {
-  switch (pmbp->pmesh->mb_indcs.ng) {
+  switch (pmbp->pz4c->opt.fd_stencil) {
     case 2:
       pmbp->pz4c->ADMConstraints<2>(pmbp);
       break;
@@ -289,7 +318,7 @@ void RecomputeAdmConstraints(MeshBlockPack *pmbp) {
       pmbp->pz4c->ADMConstraints<4>(pmbp);
       break;
     default:
-      Fail("z4c_irisk_xcts supports nghost = 2, 3, or 4");
+      Fail("z4c_irisk_xcts supports Z4c stencil widths 2, 3, or 4");
   }
 }
 
@@ -1178,7 +1207,7 @@ void IrisXctsRefinementCondition(MeshBlockPack *pmbp) {
 void ProblemGenerator::Z4cFinalizeImportedAdm(ParameterInput *pin) {
   pgen_final_func = IrisXctsConstraintReport;
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
-  switch (pmy_mesh_->mb_indcs.ng) {
+  switch (pmbp->pz4c->opt.fd_stencil) {
     case 2:
       pmbp->pz4c->ADMToZ4c<2>(pmbp, pin);
       break;
@@ -1189,8 +1218,9 @@ void ProblemGenerator::Z4cFinalizeImportedAdm(ParameterInput *pin) {
       pmbp->pz4c->ADMToZ4c<4>(pmbp, pin);
       break;
     default:
-      Fail("z4c_irisk_xcts supports nghost = 2, 3, or 4");
+      Fail("z4c_irisk_xcts supports Z4c stencil widths 2, 3, or 4");
   }
+  pmbp->pz4c->ReconstructAxisParityGhosts();
   pmbp->pz4c->Z4cToADM(pmbp);
   RecomputeAdmConstraints(pmbp);
   const ConstraintSummary summary = ComputeConstraintSummary(pmy_mesh_);

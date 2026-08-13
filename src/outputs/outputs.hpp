@@ -17,10 +17,10 @@
 #include "io_wrapper.hpp"
 #include "outputs/pdf_validation.hpp"
 
-#define NHISTORY_VARIABLES 20
-#if NHISTORY_VARIABLES > NREDUCTION_VARIABLES
-    #error NHISTORY > NREDUCTION in outputs.hpp
-#endif
+// History storage is intentionally larger than the legacy GlobalSum reducer.
+// Cartoon axis/off-axis/layer diagnostics use dedicated reductions so ordinary
+// hydro/MHD hot reductions retain their established fixed width.
+#define NHISTORY_VARIABLES 80
 
 #define NOUTPUT_CHOICES 173
 // choices for output variables used in <ouput> blocks in input file

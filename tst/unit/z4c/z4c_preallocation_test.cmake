@@ -166,9 +166,9 @@ basename = prealloc_@CASE_NAME@
 <mesh>
 nghost = 2
 nx1 = 8
-x1min = -1.0
+x1min = 0.0
 x1max = 1.0
-ix1_bc = outflow
+ix1_bc = axis
 ox1_bc = outflow
 nx2 = 4
 x2min = -0.5
@@ -199,8 +199,8 @@ ndiag = 1
 
 <z4c>
 symmetry = cartoon_so2
-coordinate_map = signed_rho_z_suppressed_y_v1
-symmetry_schema = 1
+coordinate_map = half_rho_z_suppressed_y_v2
+symmetry_schema = 2
 spatial_order = -1
 telegraph_tau = -1
 @Z4C_EXTRA@
@@ -240,8 +240,9 @@ function(run_cartoon_mms_reject case_name pgen_name check_only expected_diagnost
 endfunction()
 
 function(run_cartoon_mms_positive case_name extra_blocks)
-  file(READ "${SOURCE_DIR}/tst/inputs/z4c_cartoon_derivatives.athinput" input_text)
-  string(REPLACE "basename = z4c_cartoon_derivatives"
+  file(READ "${SOURCE_DIR}/tst/inputs/z4c_cartoon_half_plane_derivatives.athinput"
+       input_text)
+  string(REPLACE "basename = z4c_cartoon_half_plane_derivatives"
                  "basename = prealloc_${case_name}" input_text "${input_text}")
   string(REPLACE "nx1 = 32" "nx1 = 8" input_text "${input_text}")
   string(REPLACE "nx2 = 32" "nx2 = 8" input_text "${input_text}")
@@ -317,8 +318,14 @@ run_cartoon_reject(
     bad_mode "<z4c>/symmetry must be cartesian3d or cartoon_so2, not 'helical'"
     "symmetry = helical" "")
 run_cartoon_reject(
-    bad_map "cartoon_so2 requires coordinate_map=signed_rho_z_suppressed_y_v1"
+    bad_map "cartoon_so2 requires coordinate_map=half_rho_z_suppressed_y_v2"
     "coordinate_map = cartesian_xyz" "")
+run_cartoon_reject(
+    legacy_signed_map "cartoon_so2 requires coordinate_map=half_rho_z_suppressed_y_v2"
+    "coordinate_map = signed_rho_z_suppressed_y_v1" "")
+run_cartoon_reject(
+    generic_reflect_axis "cartoon_so2 half-plane requires <mesh>/ix1_bc=axis"
+    "" "<mesh>\nix1_bc = reflect")
 run_cartoon_reject(
     bad_schema "unsupported <z4c>/symmetry_schema for cartoon_so2"
     "symmetry_schema = 99" "")
@@ -364,7 +371,7 @@ run_cartoon_mms_reject(
 run_cartoon_mms_reject(
     mms_restart_carrier z4c_cartoon_derivatives true
     "z4c_cartoon_derivatives check_only rejects restart"
-    "restart_symmetry = cartoon_so2\nrestart_coordinate_map = signed_rho_z_suppressed_y_v1\nrestart_symmetry_schema = 1"
+    "restart_symmetry = cartoon_so2\nrestart_coordinate_map = half_rho_z_suppressed_y_v2\nrestart_symmetry_schema = 2"
     "")
 run_internal_restart_carrier_reject(mms_restart_block_injection)
 run_cartoon_mms_reject(
@@ -565,7 +572,7 @@ run_cartoon_reject(
 run_cartoon_reject(
     restart_match
     "problem generator 'constructor_side_effect_sentinel' is not the staged check_only Cartoon derivative MMS"
-    "restart_symmetry = cartoon_so2\nrestart_coordinate_map = signed_rho_z_suppressed_y_v1\nrestart_symmetry_schema = 1"
+    "restart_symmetry = cartoon_so2\nrestart_coordinate_map = half_rho_z_suppressed_y_v2\nrestart_symmetry_schema = 2"
     "")
 run_cartoon_reject(
     pgen_gate

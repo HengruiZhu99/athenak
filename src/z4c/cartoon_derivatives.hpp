@@ -18,9 +18,9 @@
 
 namespace z4c {
 
-//! Coordinate directions used by the signed-meridional Cartoon mapping.
+//! Physical directions used by the half-plane SO(2) Cartoon mapping.
 enum class CartoonDirection : int {
-  rho = 0,        //!< x1: signed cylindrical radius on the active plane
+  rho = 0,        //!< x1: nonnegative cylindrical radius on the active plane
   z = 1,          //!< x2: physical symmetry-axis coordinate
   suppressed = 2 //!< x3: suppressed azimuthal Cartesian direction
 };
@@ -193,7 +193,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
   int i_;
 };
 
-//! Analytic SO(2) Cartoon derivative policy on the signed x1-x2 meridional plane.
+//! Analytic SO(2) Cartoon derivative policy on the x1>=0 meridional half-plane.
 //!
 //! The formulas in this specialization come from the independent, production-code-free
 //! derivation in `signed_rho_so2_identity_note.md`. They follow from the Killing relation
@@ -201,12 +201,14 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
 //! manufactured oracles cover the signs, axis limits, parity, divergence, and suppressed
 //! advection before a Cartoon problem generator may be enabled.
 //!
-//! Near-axis cell centers use side-local, parity-mapped polynomial fits in s=rho^2. The
-//! fit uses `NGHOST` samples on the target side, giving order 2*(NGHOST-1), and covers
-//! the innermost `NGHOST` half-cell layers with maximum radial reach `NGHOST-1`. Thus an
-//! internal axis at a MeshBlock boundary needs no wider communication than the existing
-//! finite-difference stencil. Exact-axis diagnostic limits use a separate location tag;
-//! no floating tolerance can silently turn a nonzero production cell into the axis.
+//! Ordinary rho/z derivatives always use AthenaK's centered finite differences through
+//! exact parity ghosts. Suppressed-direction combinations whose continuum form loses a
+//! power of rho use fixed rational regularity functionals only in rows whose centered
+//! stencil intersects the axis. The closure samples exactly `NGHOST` positive half-cell
+//! radii and differentiates the known regular coefficient in s=rho^2. Its coefficients
+//! are hard-coded: there is no runtime fit, matrix solve, allocation, or independently
+//! evolved negative side. The first row with a wholly active centered stencil uses the
+//! bulk analytic identity, so the legacy outer fitted row is absent.
 template <int NGHOST>
 class DerivativeProvider<CartoonSO2, NGHOST> {
  public:
@@ -226,7 +228,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
   KOKKOS_INLINE_FUNCTION static constexpr int ScalarParity() { return 1; }
 
   KOKKOS_INLINE_FUNCTION static constexpr int RegularizedHalfCellLayers() {
-    return NGHOST;
+    return NGHOST - 1;
   }
 
   KOKKOS_INLINE_FUNCTION static constexpr int MaximumRegularizationOffset() {
@@ -266,7 +268,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
       return ActiveSecond(RhoDirection(), RhoDirection(), field);
     }
     if (NearAxisCell()) {
-      return 2.0 * PhysicalRadialDerivative(EvenFit(field));
+      return 2.0 * EvenCoefficientDerivative(field);
     }
     return ActiveFirst(RhoDirection(), field) / rho_;
   }
@@ -286,12 +288,6 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
         return -ActiveFirst(RhoDirection(), SuppressedDirection(), field);
       }
       return ActiveFirst(RhoDirection(), RhoDirection(), field);
-    }
-    if (NearAxisCell()) {
-      if (component == RhoDirection()) {
-        return -OddCoefficientFit(field, SuppressedDirection()).value;
-      }
-      return OddCoefficientFit(field, RhoDirection()).value;
     }
     if (component == RhoDirection()) {
       return -Value(field, SuppressedDirection()) / rho_;
@@ -334,22 +330,11 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
       if (OnAxis()) {
         return 0.0;
       }
-      if (NearAxisCell()) {
-        return sign * rho_ *
-               QuadraticCoefficientFit(field, RhoDirection(), SuppressedDirection())
-                   .value;
-      }
       return sign * Value(field, RhoDirection(), SuppressedDirection()) / rho_;
     }
     if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
       if (OnAxis()) {
         return 0.0;
-      }
-      if (NearAxisCell()) {
-        return rho_ * QuadraticDifferenceFit(
-                          field, RhoDirection(), RhoDirection(), SuppressedDirection(),
-                          SuppressedDirection())
-                          .value;
       }
       return (Value(field, RhoDirection(), RhoDirection()) -
               Value(field, SuppressedDirection(), SuppressedDirection())) / rho_;
@@ -358,17 +343,11 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
       if (OnAxis()) {
         return -ActiveFirst(RhoDirection(), SuppressedDirection(), ZDirection(), field);
       }
-      if (NearAxisCell()) {
-        return -OddCoefficientFit(field, SuppressedDirection(), ZDirection()).value;
-      }
       return -Value(field, SuppressedDirection(), ZDirection()) / rho_;
     }
     if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
       if (OnAxis()) {
         return ActiveFirst(RhoDirection(), RhoDirection(), ZDirection(), field);
-      }
-      if (NearAxisCell()) {
-        return OddCoefficientFit(field, RhoDirection(), ZDirection()).value;
       }
       return Value(field, RhoDirection(), ZDirection()) / rho_;
     }
@@ -401,11 +380,6 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     if (OnAxis()) {
       return 2.0 * ActiveFirst(RhoDirection(), RhoDirection(), field) +
              ActiveFirst(ZDirection(), ZDirection(), field);
-    }
-    if (NearAxisCell()) {
-      return ActiveFirst(RhoDirection(), RhoDirection(), field) +
-             ActiveFirst(ZDirection(), ZDirection(), field) +
-             OddCoefficientFit(field, RhoDirection()).value;
     }
     return ActiveFirst(RhoDirection(), RhoDirection(), field) +
            ActiveFirst(ZDirection(), ZDirection(), field) +
@@ -499,18 +473,13 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     const bool is_half_cell = fabs(half_cell_index - rounded_index) <= grid_tolerance;
     const int absolute_index = rounded_index < 0 ? -rounded_index : rounded_index;
     return is_half_cell && (absolute_index % 2 == 1) &&
-           absolute_index <= 2 * NGHOST - 1;
+           absolute_index <= 2 * (NGHOST - 1) - 1;
   }
 
   KOKKOS_INLINE_FUNCTION static bool IsComponentPair(const int a, const int b,
                                                      const int c, const int d) {
     return (a == c && b == d) || (a == d && b == c);
   }
-
-  struct RadialFit {
-    Real value;
-    Real derivative;
-  };
 
   KOKKOS_INLINE_FUNCTION int TargetSideSign() const {
     const Real half_cell_index = 2.0 * rho_ * inverse_spacing_[RhoDirection()];
@@ -528,37 +497,40 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     return i_ + TargetSideSign() * (layer - TargetLayer());
   }
 
-  KOKKOS_INLINE_FUNCTION RadialFit FitRadialSamples(const Real samples[NGHOST]) const {
-    const Real target = SQR(rho_ * inverse_spacing_[RhoDirection()]);
-    RadialFit fit{0.0, 0.0};
-    for (int point = 0; point < NGHOST; ++point) {
-      const Real point_radius = static_cast<Real>(point) + 0.5;
-      const Real point_s = point_radius * point_radius;
-      Real basis = 1.0;
-      for (int other = 0; other < NGHOST; ++other) {
-        if (other == point) continue;
-        const Real other_radius = static_cast<Real>(other) + 0.5;
-        const Real other_s = other_radius * other_radius;
-        basis *= (target - other_s) / (point_s - other_s);
+  //! Differentiate a regular coefficient F(s) at the target half-cell.
+  //!
+  //! Samples are F((l+1/2)^2 h^2), l=0,...,NGHOST-1. These exact rational
+  //! rows reproduce degree NGHOST-1 in s and give O2/O4/O6 accuracy for the
+  //! singular-looking SO(2) combinations. Only target rows 0,...,NGHOST-2
+  //! are reachable; the next row uses the wholly active bulk stencil.
+  KOKKOS_INLINE_FUNCTION Real RegularCoefficientDerivative(
+      const Real samples[NGHOST]) const {
+    const int target = TargetLayer();
+    Real derivative = 0.0;
+    if constexpr (NGHOST == 2) {
+      derivative = -0.5 * samples[0] + 0.5 * samples[1];
+    } else if constexpr (NGHOST == 3) {
+      if (target == 0) {
+        derivative = -2.0 / 3.0 * samples[0] + 3.0 / 4.0 * samples[1] -
+                     1.0 / 12.0 * samples[2];
+      } else {
+        derivative = -1.0 / 3.0 * samples[0] + 1.0 / 4.0 * samples[1] +
+                     1.0 / 12.0 * samples[2];
       }
-      Real basis_derivative = 0.0;
-      for (int differentiated = 0; differentiated < NGHOST; ++differentiated) {
-        if (differentiated == point) continue;
-        const Real differentiated_radius = static_cast<Real>(differentiated) + 0.5;
-        const Real differentiated_s = differentiated_radius * differentiated_radius;
-        Real term = 1.0 / (point_s - differentiated_s);
-        for (int other = 0; other < NGHOST; ++other) {
-          if (other == point || other == differentiated) continue;
-          const Real other_radius = static_cast<Real>(other) + 0.5;
-          const Real other_s = other_radius * other_radius;
-          term *= (target - other_s) / (point_s - other_s);
-        }
-        basis_derivative += term;
+    } else if constexpr (NGHOST == 4) {
+      if (target == 0) {
+        derivative = -3.0 / 4.0 * samples[0] + 9.0 / 10.0 * samples[1] -
+                     1.0 / 6.0 * samples[2] + 1.0 / 60.0 * samples[3];
+      } else if (target == 1) {
+        derivative = -5.0 / 18.0 * samples[0] + 3.0 / 20.0 * samples[1] +
+                     5.0 / 36.0 * samples[2] - 1.0 / 90.0 * samples[3];
+      } else {
+        derivative = 1.0 / 6.0 * samples[0] - 9.0 / 20.0 * samples[1] +
+                     1.0 / 4.0 * samples[2] + 1.0 / 30.0 * samples[3];
       }
-      fit.value += basis * samples[point];
-      fit.derivative += basis_derivative * samples[point];
     }
-    return fit;
+    return derivative * inverse_spacing_[RhoDirection()] *
+           inverse_spacing_[RhoDirection()];
   }
 
   template <typename ScalarField>
@@ -581,105 +553,62 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     return parity * field(m_, a, b, k_, j_, SideLayerIndex(layer));
   }
 
-  template <typename VectorField>
-  KOKKOS_INLINE_FUNCTION Real MappedVectorDerivative(
-      const VectorField &field, const int direction, const int component,
-      const int layer) const {
-    const int parity = TargetSideSign() < 0 ? VectorParity(component) : 1;
-    return parity * Dx<NGHOST>(direction, inverse_spacing_, field, m_, component, k_,
-                               j_, SideLayerIndex(layer));
-  }
-
-  template <typename TensorField>
-  KOKKOS_INLINE_FUNCTION Real MappedTensorDerivative(
-      const TensorField &field, const int direction, const int a, const int b,
-      const int layer) const {
-    const int parity = TargetSideSign() < 0 ? TensorParity(a, b) : 1;
-    return parity * Dx<NGHOST>(direction, inverse_spacing_, field, m_, a, b, k_, j_,
-                               SideLayerIndex(layer));
-  }
-
   template <typename ScalarField>
-  KOKKOS_INLINE_FUNCTION RadialFit EvenFit(const ScalarField &field) const {
+  KOKKOS_INLINE_FUNCTION Real EvenCoefficientDerivative(
+      const ScalarField &field) const {
     Real samples[NGHOST];
     for (int layer = 0; layer < NGHOST; ++layer) {
       samples[layer] = MappedScalar(field, layer);
     }
-    return FitRadialSamples(samples);
+    return RegularCoefficientDerivative(samples);
   }
 
   template <typename VectorField>
-  KOKKOS_INLINE_FUNCTION RadialFit EvenFit(const VectorField &field,
-                                          const int component) const {
+  KOKKOS_INLINE_FUNCTION Real EvenCoefficientDerivative(
+      const VectorField &field, const int component) const {
     Real samples[NGHOST];
     for (int layer = 0; layer < NGHOST; ++layer) {
       samples[layer] = MappedVector(field, component, layer);
     }
-    return FitRadialSamples(samples);
+    return RegularCoefficientDerivative(samples);
   }
 
   template <typename TensorField>
-  KOKKOS_INLINE_FUNCTION RadialFit EvenFit(const TensorField &field, const int a,
-                                          const int b) const {
+  KOKKOS_INLINE_FUNCTION Real EvenCoefficientDerivative(
+      const TensorField &field, const int a, const int b) const {
     Real samples[NGHOST];
     for (int layer = 0; layer < NGHOST; ++layer) {
       samples[layer] = MappedTensor(field, a, b, layer);
     }
-    return FitRadialSamples(samples);
+    return RegularCoefficientDerivative(samples);
   }
 
   template <typename VectorField>
-  KOKKOS_INLINE_FUNCTION RadialFit OddCoefficientFit(const VectorField &field,
-                                                     const int component) const {
+  KOKKOS_INLINE_FUNCTION Real OddCoefficientDerivative(
+      const VectorField &field, const int component) const {
     Real samples[NGHOST];
     const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
     for (int layer = 0; layer < NGHOST; ++layer) {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
       samples[layer] = MappedVector(field, component, layer) / radius;
     }
-    return FitRadialSamples(samples);
+    return RegularCoefficientDerivative(samples);
   }
 
   template <typename TensorField>
-  KOKKOS_INLINE_FUNCTION RadialFit OddCoefficientFit(const TensorField &field,
-                                                     const int a, const int b) const {
+  KOKKOS_INLINE_FUNCTION Real OddCoefficientDerivative(
+      const TensorField &field, const int a, const int b) const {
     Real samples[NGHOST];
     const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
     for (int layer = 0; layer < NGHOST; ++layer) {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
       samples[layer] = MappedTensor(field, a, b, layer) / radius;
     }
-    return FitRadialSamples(samples);
-  }
-
-  template <typename VectorField>
-  KOKKOS_INLINE_FUNCTION RadialFit OddDerivativeCoefficientFit(
-      const VectorField &field, const int direction, const int component) const {
-    Real samples[NGHOST];
-    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
-    for (int layer = 0; layer < NGHOST; ++layer) {
-      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
-      samples[layer] =
-          MappedVectorDerivative(field, direction, component, layer) / radius;
-    }
-    return FitRadialSamples(samples);
+    return RegularCoefficientDerivative(samples);
   }
 
   template <typename TensorField>
-  KOKKOS_INLINE_FUNCTION RadialFit OddDerivativeCoefficientFit(
-      const TensorField &field, const int direction, const int a, const int b) const {
-    Real samples[NGHOST];
-    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
-    for (int layer = 0; layer < NGHOST; ++layer) {
-      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
-      samples[layer] =
-          MappedTensorDerivative(field, direction, a, b, layer) / radius;
-    }
-    return FitRadialSamples(samples);
-  }
-
-  template <typename TensorField>
-  KOKKOS_INLINE_FUNCTION RadialFit QuadraticCoefficientFit(
+  KOKKOS_INLINE_FUNCTION Real QuadraticCoefficientDerivative(
       const TensorField &field, const int a, const int b) const {
     Real samples[NGHOST];
     const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
@@ -687,11 +616,11 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
       const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
       samples[layer] = MappedTensor(field, a, b, layer) / (radius * radius);
     }
-    return FitRadialSamples(samples);
+    return RegularCoefficientDerivative(samples);
   }
 
   template <typename TensorField>
-  KOKKOS_INLINE_FUNCTION RadialFit QuadraticDifferenceFit(
+  KOKKOS_INLINE_FUNCTION Real QuadraticDifferenceCoefficientDerivative(
       const TensorField &field, const int a, const int b, const int c,
       const int d) const {
     Real samples[NGHOST];
@@ -702,41 +631,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
           (MappedTensor(field, a, b, layer) - MappedTensor(field, c, d, layer)) /
           (radius * radius);
     }
-    return FitRadialSamples(samples);
-  }
-
-  template <typename TensorField>
-  KOKKOS_INLINE_FUNCTION RadialFit QuadraticDerivativeFit(
-      const TensorField &field, const int direction, const int a, const int b) const {
-    Real samples[NGHOST];
-    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
-    for (int layer = 0; layer < NGHOST; ++layer) {
-      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
-      samples[layer] = MappedTensorDerivative(field, direction, a, b, layer) /
-                       (radius * radius);
-    }
-    return FitRadialSamples(samples);
-  }
-
-  template <typename TensorField>
-  KOKKOS_INLINE_FUNCTION RadialFit QuadraticDifferenceDerivativeFit(
-      const TensorField &field, const int direction, const int a, const int b,
-      const int c, const int d) const {
-    Real samples[NGHOST];
-    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
-    for (int layer = 0; layer < NGHOST; ++layer) {
-      const Real radius = (static_cast<Real>(layer) + 0.5) * spacing;
-      samples[layer] =
-          (MappedTensorDerivative(field, direction, a, b, layer) -
-           MappedTensorDerivative(field, direction, c, d, layer)) /
-          (radius * radius);
-    }
-    return FitRadialSamples(samples);
-  }
-
-  KOKKOS_INLINE_FUNCTION Real PhysicalRadialDerivative(const RadialFit &fit) const {
-    return fit.derivative * inverse_spacing_[RhoDirection()] *
-           inverse_spacing_[RhoDirection()];
+    return RegularCoefficientDerivative(samples);
   }
 
   template <typename ScalarField>
@@ -823,10 +718,9 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     }
     if (NearAxisCell()) {
       if (component == ZDirection()) {
-        return 2.0 * PhysicalRadialDerivative(EvenFit(field, component));
+        return 2.0 * EvenCoefficientDerivative(field, component);
       }
-      const RadialFit coefficient = OddCoefficientFit(field, component);
-      return 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+      return 2.0 * rho_ * OddCoefficientDerivative(field, component);
     }
     const Real radial_derivative = ActiveFirst(RhoDirection(), component, field);
     if (component == ZDirection()) {
@@ -858,11 +752,10 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     const Real sign = (component == RhoDirection()) ? -1.0 : 1.0;
     if (NearAxisCell()) {
       if (active_direction == RhoDirection()) {
-        const RadialFit coefficient = OddCoefficientFit(field, rotated_component);
-        return sign * 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+        return sign * 2.0 * rho_ *
+               OddCoefficientDerivative(field, rotated_component);
       }
-      return sign *
-             OddDerivativeCoefficientFit(field, active_direction, rotated_component).value;
+      return sign * ActiveFirst(active_direction, rotated_component, field) / rho_;
     }
     const Real derivative = ActiveFirst(active_direction, rotated_component, field);
     Real result = sign * derivative / rho_;
@@ -897,30 +790,27 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
 
     if (NearAxisCell()) {
       if (a == RhoDirection() && b == RhoDirection()) {
-        const RadialFit component = EvenFit(field, a, b);
-        const RadialFit difference = QuadraticDifferenceFit(
-            field, RhoDirection(), RhoDirection(), SuppressedDirection(),
-            SuppressedDirection());
-        return 2.0 * PhysicalRadialDerivative(component) - 2.0 * difference.value;
+        return 2.0 * EvenCoefficientDerivative(field, a, b) -
+               2.0 * (Value(field, RhoDirection(), RhoDirection()) -
+                      Value(field, SuppressedDirection(), SuppressedDirection())) /
+                   (rho_ * rho_);
       }
       if (a == SuppressedDirection() && b == SuppressedDirection()) {
-        const RadialFit component = EvenFit(field, a, b);
-        const RadialFit difference = QuadraticDifferenceFit(
-            field, RhoDirection(), RhoDirection(), SuppressedDirection(),
-            SuppressedDirection());
-        return 2.0 * PhysicalRadialDerivative(component) + 2.0 * difference.value;
+        return 2.0 * EvenCoefficientDerivative(field, a, b) +
+               2.0 * (Value(field, RhoDirection(), RhoDirection()) -
+                      Value(field, SuppressedDirection(), SuppressedDirection())) /
+                   (rho_ * rho_);
       }
       if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
-        const RadialFit coefficient = QuadraticCoefficientFit(field, a, b);
-        return 2.0 * rho_ * rho_ * PhysicalRadialDerivative(coefficient) -
-               2.0 * coefficient.value;
+        return 2.0 * rho_ * rho_ *
+                   QuadraticCoefficientDerivative(field, a, b) -
+               2.0 * Value(field, a, b) / (rho_ * rho_);
       }
       if (IsComponentPair(a, b, RhoDirection(), ZDirection()) ||
           IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
-        const RadialFit coefficient = OddCoefficientFit(field, a, b);
-        return 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+        return 2.0 * rho_ * OddCoefficientDerivative(field, a, b);
       }
-      return 2.0 * PhysicalRadialDerivative(EvenFit(field, a, b));
+      return 2.0 * EvenCoefficientDerivative(field, a, b);
     }
 
     const Real radial_derivative = ActiveFirst(RhoDirection(), a, b, field);
@@ -959,66 +849,40 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     if (NearAxisCell()) {
       if (active_direction == RhoDirection()) {
         if (a == RhoDirection() && b == RhoDirection()) {
-          const RadialFit coefficient = QuadraticCoefficientFit(
-              field, RhoDirection(), SuppressedDirection());
-          return -2.0 * coefficient.value -
-                 4.0 * rho_ * rho_ * PhysicalRadialDerivative(coefficient);
+          return -2.0 *
+                     Value(field, RhoDirection(), SuppressedDirection()) /
+                     (rho_ * rho_) -
+                 4.0 * rho_ * rho_ * QuadraticCoefficientDerivative(
+                                               field, RhoDirection(),
+                                               SuppressedDirection());
         }
         if (a == SuppressedDirection() && b == SuppressedDirection()) {
-          const RadialFit coefficient = QuadraticCoefficientFit(
-              field, RhoDirection(), SuppressedDirection());
-          return 2.0 * coefficient.value +
-                 4.0 * rho_ * rho_ * PhysicalRadialDerivative(coefficient);
+          return 2.0 *
+                     Value(field, RhoDirection(), SuppressedDirection()) /
+                     (rho_ * rho_) +
+                 4.0 * rho_ * rho_ * QuadraticCoefficientDerivative(
+                                               field, RhoDirection(),
+                                               SuppressedDirection());
         }
         if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
-          const RadialFit difference = QuadraticDifferenceFit(
-              field, RhoDirection(), RhoDirection(), SuppressedDirection(),
-              SuppressedDirection());
-          return difference.value +
-                 2.0 * rho_ * rho_ * PhysicalRadialDerivative(difference);
+          return (Value(field, RhoDirection(), RhoDirection()) -
+                  Value(field, SuppressedDirection(), SuppressedDirection())) /
+                     (rho_ * rho_) +
+                 2.0 * rho_ * rho_ *
+                     QuadraticDifferenceCoefficientDerivative(
+                         field, RhoDirection(), RhoDirection(),
+                         SuppressedDirection(), SuppressedDirection());
         }
         if (IsComponentPair(a, b, RhoDirection(), ZDirection())) {
-          const RadialFit coefficient =
-              OddCoefficientFit(field, SuppressedDirection(), ZDirection());
-          return -2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+          return -2.0 * rho_ * OddCoefficientDerivative(
+                                   field, SuppressedDirection(), ZDirection());
         }
         if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
-          const RadialFit coefficient =
-              OddCoefficientFit(field, RhoDirection(), ZDirection());
-          return 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+          return 2.0 * rho_ *
+                 OddCoefficientDerivative(field, RhoDirection(), ZDirection());
         }
         return 0.0;
       }
-
-      if (a == RhoDirection() && b == RhoDirection()) {
-        return -2.0 * rho_ *
-               QuadraticDerivativeFit(field, active_direction, RhoDirection(),
-                                      SuppressedDirection())
-                   .value;
-      }
-      if (a == SuppressedDirection() && b == SuppressedDirection()) {
-        return 2.0 * rho_ *
-               QuadraticDerivativeFit(field, active_direction, RhoDirection(),
-                                      SuppressedDirection())
-                   .value;
-      }
-      if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
-        return rho_ * QuadraticDifferenceDerivativeFit(
-                          field, active_direction, RhoDirection(), RhoDirection(),
-                          SuppressedDirection(), SuppressedDirection())
-                          .value;
-      }
-      if (IsComponentPair(a, b, RhoDirection(), ZDirection())) {
-        return -OddDerivativeCoefficientFit(field, active_direction,
-                                            SuppressedDirection(), ZDirection())
-                    .value;
-      }
-      if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
-        return OddDerivativeCoefficientFit(field, active_direction, RhoDirection(),
-                                           ZDirection())
-            .value;
-      }
-      return 0.0;
     }
 
     if (a == RhoDirection() && b == RhoDirection()) {
@@ -1116,7 +980,7 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
 //!
 //! The Cartesian instantiation does not evaluate coordinates; it delegates directly to
 //! the frozen finite-difference primitives.  The Cartoon instantiation alone evaluates
-//! signed rho.  Consequently host-selected Cartesian kernels retain their original hot
+//! nonnegative half-plane rho. Consequently host-selected Cartesian kernels retain their
 //! path and neither policy captures a runtime symmetry mode in a device lambda.
 template <typename Symmetry, int NGHOST, typename RegionSizeView>
 KOKKOS_INLINE_FUNCTION DerivativeProvider<Symmetry, NGHOST>

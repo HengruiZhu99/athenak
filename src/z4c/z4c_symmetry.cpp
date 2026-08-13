@@ -34,6 +34,8 @@ const char *ToString(const Z4cCoordinateMap coordinate_map) {
       return "cartesian_xyz";
     case Z4cCoordinateMap::signed_rho_z_suppressed_y_v1:
       return "signed_rho_z_suppressed_y_v1";
+    case Z4cCoordinateMap::half_rho_z_suppressed_y_v2:
+      return "half_rho_z_suppressed_y_v2";
   }
   return "invalid";
 }
@@ -67,9 +69,11 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
   if (input.requested_symmetry == "cartesian3d") {
     config.mode = Z4cSymmetryMode::cartesian3d;
     config.coordinate_map = Z4cCoordinateMap::cartesian_xyz;
+    config.schema = Z4cSymmetryConfig::kCartesianSchema;
   } else if (input.requested_symmetry == "cartoon_so2") {
     config.mode = Z4cSymmetryMode::cartoon_so2;
-    config.coordinate_map = Z4cCoordinateMap::signed_rho_z_suppressed_y_v1;
+    config.coordinate_map = Z4cCoordinateMap::half_rho_z_suppressed_y_v2;
+    config.schema = Z4cSymmetryConfig::kHalfPlaneCartoonSchema;
   } else {
     return Invalid(config, "<z4c>/symmetry must be cartesian3d or cartoon_so2, not '" +
                                input.requested_symmetry + "'");
@@ -125,13 +129,21 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
       return Invalid(config, "cartesian3d requires coordinate_map=cartesian_xyz");
     }
     if (input.schema_specified &&
-        input.schema != Z4cSymmetryConfig::kCurrentSchema) {
+        input.schema != Z4cSymmetryConfig::kCartesianSchema) {
       return Invalid(config, "unsupported <z4c>/symmetry_schema for cartesian3d");
+    }
+    for (const auto *boundary : {&input.inner_x1_boundary, &input.outer_x1_boundary,
+                                 &input.inner_x2_boundary, &input.outer_x2_boundary,
+                                 &input.inner_x3_boundary, &input.outer_x3_boundary}) {
+      if (*boundary == "axis") {
+        return Invalid(config,
+                       "boundary type axis is reserved for cartoon_so2 inner_x1");
+      }
     }
     if (input.restart_metadata_present &&
         (input.restart_symmetry != "cartesian3d" ||
          input.restart_coordinate_map != "cartesian_xyz" ||
-         input.restart_schema != Z4cSymmetryConfig::kCurrentSchema)) {
+         input.restart_schema != Z4cSymmetryConfig::kCartesianSchema)) {
       return Invalid(config, "restart symmetry metadata conflicts with cartesian3d");
     }
     return {true, config, ""};
@@ -141,13 +153,13 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
     return Invalid(config, "cartoon_so2 requires the <z4c> physics block");
   }
   if (input.coordinate_map_specified &&
-      input.coordinate_map != "signed_rho_z_suppressed_y_v1") {
+      input.coordinate_map != "half_rho_z_suppressed_y_v2") {
     return Invalid(config,
                    "cartoon_so2 requires coordinate_map="
-                   "signed_rho_z_suppressed_y_v1");
+                   "half_rho_z_suppressed_y_v2");
   }
   if (input.schema_specified &&
-      input.schema != Z4cSymmetryConfig::kCurrentSchema) {
+      input.schema != Z4cSymmetryConfig::kHalfPlaneCartoonSchema) {
     return Invalid(config, "unsupported <z4c>/symmetry_schema for cartoon_so2");
   }
 
@@ -157,24 +169,49 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
   if (input.mesh_nx2 <= 1) {
     return Invalid(config, "cartoon_so2 requires an active x1-x2 meridional plane");
   }
-  if (input.mesh_nx1 <= 0 || input.mesh_nx1 % 2 != 0) {
-    return Invalid(config, "cartoon_so2 requires positive even <mesh>/nx1");
+  if (input.mesh_nx1 <= 0) {
+    return Invalid(config, "cartoon_so2 requires positive <mesh>/nx1");
   }
-  if (input.root_blocks_x1 <= 0 || input.root_blocks_x1 % 2 != 0) {
+  if (input.meshblock_nx1 < input.nghost) {
     return Invalid(config,
-                   "cartoon_so2 requires an even number of root x1 MeshBlocks so no "
-                   "block straddles the internal axis");
+                   "cartoon_so2 requires meshblock/nx1 >= mesh/nghost for local "
+                   "axis parity extension");
   }
-  const double symmetry_scale =
-      std::max({1.0, std::abs(input.x1min), std::abs(input.x1max)});
-  const double symmetry_tolerance =
-      32.0 * std::numeric_limits<double>::epsilon() * symmetry_scale;
+  if (input.multilevel && input.meshblock_nx1 < 2 * input.nghost) {
+    return Invalid(config,
+                   "multilevel cartoon_so2 requires meshblock/nx1 >= "
+                   "2*mesh/nghost so coarse axis parity ghosts mirror local "
+                   "coarse active cells");
+  }
+  if (input.root_blocks_x1 <= 0) {
+    return Invalid(config, "cartoon_so2 requires positive root x1 MeshBlock count");
+  }
   if (!std::isfinite(input.x1min) || !std::isfinite(input.x1max) ||
-      !(input.x1min < 0.0) || !(input.x1max > 0.0) ||
-      std::abs(input.x1min + input.x1max) > symmetry_tolerance) {
+      input.x1min != 0.0 || !(input.x1max > 0.0)) {
     return Invalid(config,
-                   "cartoon_so2 requires finite cell-centered x1min=-x1max around "
-                   "the internal axis");
+                   "cartoon_so2 requires the exact finite half-plane axis face "
+                   "<mesh>/x1min=0 and x1max>0");
+  }
+  const double dx1 = (input.x1max - input.x1min) /
+                     static_cast<double>(input.mesh_nx1);
+  const double first_center = input.x1min + 0.5 * dx1;
+  if (!std::isfinite(dx1) || !(dx1 > 0.0) || !std::isfinite(first_center) ||
+      !(first_center > 0.0)) {
+    return Invalid(config,
+                   "cartoon_so2 requires a finite positive first active center at "
+                   "rho=dx1/2, never rho=0");
+  }
+  if (input.inner_x1_boundary != "axis") {
+    return Invalid(config,
+                   "cartoon_so2 half-plane requires <mesh>/ix1_bc=axis");
+  }
+  for (const auto *boundary : {&input.outer_x1_boundary, &input.inner_x2_boundary,
+                               &input.outer_x2_boundary, &input.inner_x3_boundary,
+                               &input.outer_x3_boundary}) {
+    if (*boundary == "axis") {
+      return Invalid(config,
+                     "cartoon_so2 permits boundary type axis only at inner_x1");
+    }
   }
 
   if (!input.incompatible_physics.empty()) {
@@ -205,8 +242,8 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
 
   if (input.restart_metadata_present &&
       (input.restart_symmetry != "cartoon_so2" ||
-       input.restart_coordinate_map != "signed_rho_z_suppressed_y_v1" ||
-       input.restart_schema != Z4cSymmetryConfig::kCurrentSchema)) {
+       input.restart_coordinate_map != "half_rho_z_suppressed_y_v2" ||
+       input.restart_schema != Z4cSymmetryConfig::kHalfPlaneCartoonSchema)) {
     return Invalid(config,
                    "restart symmetry/map/schema metadata conflicts with cartoon_so2");
   }
@@ -276,7 +313,7 @@ Z4cKernelDispatchTarget InstantiateZ4cKernelTarget() {
   return {is_cartesian ? Z4cSymmetryMode::cartesian3d
                        : Z4cSymmetryMode::cartoon_so2,
           is_cartesian ? Z4cCoordinateMap::cartesian_xyz
-                       : Z4cCoordinateMap::signed_rho_z_suppressed_y_v1,
+                       : Z4cCoordinateMap::half_rho_z_suppressed_y_v2,
           NGHOST};
 }
 

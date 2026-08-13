@@ -283,7 +283,7 @@ def main() -> int:
     require("constraints(point.local_block, 0, point.k, point.j, point.i)" in central,
             "central sampler does not consume production con.C at active supports")
     require("ReconstructCartoonCentralSupportValues" in central and
-            "Z4cAggregateConstraintNorm(0.25 * constraint_sum)" in sampler,
+            "Z4cAggregateConstraintNorm(constraint_sum)" in sampler,
             "central sampler does not apply the aggregate constraint norm")
     require("CartoonCentralActiveCellHasStoredDerivativeHalo" in sampler and
             "ValidateCartoonCentralSupportSet<NGHOST>" in central,
@@ -296,16 +296,27 @@ def main() -> int:
             "MPI_Allreduce(MPI_IN_PLACE, flags, 2 * kCartoonCentralMaxSources" in central,
             "central physical supports do not fail closed on per-support ownership")
     require("point.restriction_weight = refined ? 0.25 : 1.0" in sampler and
-            "point.final_weight = refined ? 0.0625 : 0.25" in sampler and
+            "point.final_weight = half_plane" in sampler and
+            "refined ? 0.125 : 0.5" in sampler and
+            "refined ? 0.0625 : 0.25" in sampler and
             "common_level = std::min(common_level, quadrant_level[quadrant])" in sampler,
             "central mixed-level restriction lacks fixed reviewed geometry/weights")
     for term in ("SQR(con.H", "con.M(m,k,j,i)", "SQR(z4c.vTheta", "4.0*con.Z"):
         require(term in adm_source,
                 f"production con.C omitted full constraint-inventory term {term!r}")
     history = (source_dir / "src/outputs/history.cpp").read_text(encoding="utf-8")
-    require(history.count("Z4cDiagnosticCellMeasure(") == 1 and
-            'Kokkos::parallel_reduce(\n      "Z4cHistoryMaxAbsK"' in history and
-            "Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji)" in history,
+    constraint_maximum = history[
+        history.index("ConstraintMaximum CartoonConstraintMaximum("):
+        history.index("template <typename Symmetry, int NGHOST>")]
+    max_abs_k = history[
+        history.index('Kokkos::parallel_reduce(\n      "Z4cHistoryMaxAbsK"'):
+        history.index("pdata->hdata[9] = max_abs_K;")]
+    require(history.count("Z4cDiagnosticCellMeasure(") == 2 and
+            "Z4cDiagnosticCellMeasure(" not in constraint_maximum and
+            "Z4cDiagnosticCellMeasure(" not in max_abs_k and
+            "Kokkos::RangePolicy<DevExeSpace>(0, nmkji)" in
+            constraint_maximum and
+            "Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji)" in max_abs_k,
             "Cartoon volume policy leaked into full-plane extrema")
 
     # Initial sampling follows initialized ADM/constraints, while accepted-step
@@ -330,6 +341,9 @@ def main() -> int:
             "Z4c restart-preservation flag is not explicit and default-false")
     require("if (pz4c != nullptr && !preserve_restored_z4c)" in boundary_init,
             "restart preservation does not guard exactly the Z4c initialization branch")
+    require("if (pz4c != nullptr)" in boundary_init and
+            "pz4c->FillAxisParityGhosts(this, 0)" in boundary_init,
+            "fresh/restart initialization does not regenerate derived axis ghosts")
     for required in ("RestrictU", "InitRecv", "SendU", "ClearSend", "ClearRecv",
                      "RecvU", "Z4cBoundaryRHS", "ApplyPhysicalBCs", "Prolongate",
                      "FillBuiltInPhysicalBoundaryGhosts"):
@@ -345,6 +359,14 @@ def main() -> int:
     require("InitBoundaryValuesAndPrimitives(pmy_mesh);" in refinement and
             "InitBoundaryValuesAndPrimitives(pmy_mesh," not in refinement,
             "AMR-created blocks do not use default-false Z4c initialization")
+    amr_finalize = refinement[
+        refinement.index("pmbp->pz4c->EnforceAlgConstr"):
+        refinement.index("nmb_created += nnew")]
+    amr_finalize_order = [amr_finalize.index(marker) for marker in
+                          ("EnforceAlgConstr", "FillAxisParityGhosts",
+                           "ConvertZ4cToADM", "ADMConstraints_", "NewTimeStep")]
+    require(amr_finalize_order == sorted(amr_finalize_order),
+            "post-AMR algebraic projection leaves stale axis ghosts before diagnostics")
     execute = driver[driver.index("void Driver::Execute(Mesh"):
                      driver.index("void Driver::Finalize(Mesh")]
     normal_sample = execute.index("UpdateCartoonCentralState(pmesh, false)")
@@ -395,11 +417,28 @@ def main() -> int:
             "fresh/AMR initialization lost or duplicated the corner completion pass")
     queue = tasks[tasks.index("void Z4c::QueueZ4cTasks"):
                   tasks.index("TaskStatus Z4c::CopyU")]
+    require(queue.index('"Z4c_CopyU"') < queue.index('"Z4c_AxisGhosts"') <
+            queue.index('"Z4c_CalcRHS"') and
+            queue.count("Task_Run, {Z4c_AxisGhosts}") == 3,
+            "each O2/O4/O6 RHS is not ordered after the explicit axis parity fill")
+    require(queue.index('"Z4c_Prolong"') < queue.index('"Z4c_AlgC"') <
+            queue.index('"Z4c_AxisGhostsPost"') <
+            queue.index('"Z4c_Z4c2ADM"'),
+            "post-prolongation diagnostics are not ordered after a fresh axis fill")
+    axis_fill = tasks[tasks.index("TaskStatus Z4c::FillAxisParityGhosts"):
+                      tasks.index("TaskStatus Z4c::SendU")]
+    require("half_rho_z_suppressed_y_v2" in axis_fill and
+            "kHalfPlaneCartoonSchema" in axis_fill and
+            "BoundaryFlag::axis" in axis_fill and
+            "FillZ4cAxisGhostLine" in axis_fill and
+            "Z4cBCs" not in axis_fill and "user_bcs" not in axis_fill,
+            "pre-RHS axis task is not a half-plane-only exact parity fill")
     require(queue.index("Z4c_BCS") < queue.index("Z4c_Prolong"),
             "normal RK physical/prolongation task ordering changed")
     task_order = [tasks.index(marker) for marker in
                   ('"Z4c_RestU"', '"Z4c_SendU"', '"Z4c_RecvU"', '"Z4c_BCS"',
-                   '"Z4c_Prolong"', '"Z4c_AlgC"', '"Z4c_Z4c2ADM"')]
+                   '"Z4c_Prolong"', '"Z4c_AlgC"', '"Z4c_AxisGhostsPost"',
+                   '"Z4c_Z4c2ADM"')]
     require(task_order == sorted(task_order),
             "normal Z4c boundary/projection/ADM task order changed")
     require(tasks.index("&Z4c::ConvertZ4cToADM") <

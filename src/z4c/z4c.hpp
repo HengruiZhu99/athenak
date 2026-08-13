@@ -239,6 +239,9 @@ class Z4c {
   TaskStatus ClearRecvWeyl(Driver *d, int stage);
   TaskStatus ClearSendWeyl(Driver *d, int stage);
   TaskStatus CopyU(Driver *d, int stage);
+  TaskStatus FillAxisParityGhosts(Driver *d, int stage);
+  void ReconstructAxisParityGhosts();
+  void ReconstructConstraintAxisParityGhosts();
   TaskStatus SendU(Driver *d, int stage);
   TaskStatus RecvU(Driver *d, int stage);
   TaskStatus SendWeyl(Driver *d, int stage);

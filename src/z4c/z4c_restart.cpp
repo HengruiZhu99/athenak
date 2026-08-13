@@ -190,6 +190,8 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
     state->config.coordinate_map = Z4cCoordinateMap::cartesian_xyz;
   } else if (coordinate_map == "signed_rho_z_suppressed_y_v1") {
     state->config.coordinate_map = Z4cCoordinateMap::signed_rho_z_suppressed_y_v1;
+  } else if (coordinate_map == "half_rho_z_suppressed_y_v2") {
+    state->config.coordinate_map = Z4cCoordinateMap::half_rho_z_suppressed_y_v2;
   } else {
     return Invalid("invalid <z4c_restart>/coordinate_map='" + coordinate_map + "'");
   }
@@ -208,8 +210,9 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
       (state->config.mode == Z4cSymmetryMode::cartesian3d &&
        state->config.coordinate_map == Z4cCoordinateMap::cartesian_xyz) ||
       (state->config.mode == Z4cSymmetryMode::cartoon_so2 &&
-       state->config.coordinate_map == Z4cCoordinateMap::signed_rho_z_suppressed_y_v1);
-  if (!map_matches_mode || state->config.schema != Z4cSymmetryConfig::kCurrentSchema) {
+       state->config.coordinate_map == Z4cCoordinateMap::half_rho_z_suppressed_y_v2);
+  if (!map_matches_mode ||
+      state->config.schema != ExpectedZ4cSymmetrySchema(state->config.mode)) {
     return Invalid("inconsistent symmetry/map/schema in <z4c_restart>");
   }
   if (state->mesh.nx1 <= 0 || state->mesh.nx2 <= 0 || state->mesh.nx3 <= 0 ||
@@ -483,10 +486,11 @@ Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
       pin->DoesParameterExist("z4c", "coordinate_map")
           ? pin->GetString("z4c", "coordinate_map")
           : (requested_symmetry == "cartoon_so2"
-                 ? "signed_rho_z_suppressed_y_v1" : "cartesian_xyz");
+                 ? "half_rho_z_suppressed_y_v2" : "cartesian_xyz");
   const int requested_schema = pin->DoesParameterExist("z4c", "symmetry_schema")
                                    ? pin->GetInteger("z4c", "symmetry_schema")
-                                   : Z4cSymmetryConfig::kCurrentSchema;
+                                   : ExpectedZ4cSymmetrySchema(
+                                         snapshot.state.config.mode);
   const int requested_order = pin->DoesParameterExist("z4c", "spatial_order")
                                   ? pin->GetInteger("z4c", "spatial_order")
                                   : 2 * (nghost - 1);

@@ -302,6 +302,13 @@ target_include_directories(athena PUBLIC
 configure_file(config.hpp.in config.hpp)
 
 if (Athena_BUILD_UNIT_TESTS)
+  # config.hpp exposes MPI_PARALLEL_ENABLED to every unit translation unit.
+  # Link the imported MPI target directory-wide so tests that include Athena
+  # headers receive mpi.h, and tests that compile production helpers also
+  # resolve any enabled MPI calls.
+  if (ENABLE_MPI)
+    link_libraries(MPI::MPI_CXX)
+  endif()
   target_sources(
       athena PRIVATE
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/cartoon_production_kernel_test.cpp)
@@ -338,12 +345,27 @@ if (Athena_BUILD_UNIT_TESTS)
   add_test(
       NAME athena.z4c_cartoon_mms_structure
       COMMAND athena_cartoon_mms_structure_unit_test)
-  add_test(
-      NAME athena.z4c_cartoon_mms_static
-      COMMAND
-      ${PYTHON_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_mms_static_test.py
-      --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  find_program(UV_EXECUTABLE uv)
+  if(UV_EXECUTABLE)
+    add_test(
+        NAME athena.z4c_cartoon_mms_static
+        COMMAND
+        ${UV_EXECUTABLE} run --no-project
+        --with-requirements
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/requirements-z4c-cartoon-mms.txt
+        python
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_mms_static_test.py
+        --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  else()
+    # The test deliberately fails closed when its exact SymPy dependency is
+    # unavailable; the fallback preserves that useful error on minimal hosts.
+    add_test(
+        NAME athena.z4c_cartoon_mms_static
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_mms_static_test.py
+        --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
   add_executable(
       athena_cartoon_mms_generated_reference_unit_test
       tst/unit/z4c/z4c_cartoon_mms_generated_reference_test.cpp)
@@ -372,6 +394,63 @@ if (Athena_BUILD_UNIT_TESTS)
   add_test(
       NAME athena.z4c_symmetry_dispatch
       COMMAND athena_z4c_symmetry_dispatch_unit_test)
+
+  add_executable(
+      athena_z4c_cartoon_axis_parity_unit_test
+      tst/unit/z4c/cartoon_axis_parity_test.cpp)
+  target_include_directories(
+      athena_z4c_cartoon_axis_parity_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_cartoon_axis_parity_unit_test PRIVATE Kokkos::kokkos)
+  if (ENABLE_MPI)
+    target_link_libraries(
+        athena_z4c_cartoon_axis_parity_unit_test PRIVATE MPI::MPI_CXX)
+  endif()
+  add_test(
+      NAME athena.z4c_cartoon_axis_parity
+      COMMAND athena_z4c_cartoon_axis_parity_unit_test)
+
+  add_executable(
+      athena_z4c_cartoon_axis_boundary_unit_test
+      tst/unit/z4c/cartoon_axis_boundary_test.cpp)
+  target_include_directories(
+      athena_z4c_cartoon_axis_boundary_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_cartoon_axis_boundary_unit_test PRIVATE Kokkos::kokkos)
+  if (ENABLE_MPI)
+    target_link_libraries(
+        athena_z4c_cartoon_axis_boundary_unit_test PRIVATE MPI::MPI_CXX)
+  endif()
+  add_test(
+      NAME athena.z4c_cartoon_axis_boundary
+      COMMAND athena_z4c_cartoon_axis_boundary_unit_test)
+
+  add_executable(
+      athena_z4c_cartoon_axis_centered_derivatives_unit_test
+      tst/unit/z4c/cartoon_axis_centered_derivatives_test.cpp)
+  target_include_directories(
+      athena_z4c_cartoon_axis_centered_derivatives_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_cartoon_axis_centered_derivatives_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_cartoon_axis_centered_derivatives
+      COMMAND athena_z4c_cartoon_axis_centered_derivatives_unit_test)
+
+  add_executable(
+      athena_z4c_cartoon_regular_functionals_unit_test
+      tst/unit/z4c/cartoon_regular_functionals_test.cpp)
+  add_test(
+      NAME athena.z4c_cartoon_regular_functionals
+      COMMAND athena_z4c_cartoon_regular_functionals_unit_test)
 
   add_executable(
       athena_z4c_symmetry_validation_unit_test
@@ -414,6 +493,79 @@ if (Athena_BUILD_UNIT_TESTS)
       ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/kerr_puncture_reference_test.py
       --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+
+  add_test(
+      NAME athena.z4c_kerr_half_plane_static
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_kerr_half_plane_static_test.py)
+
+  add_test(
+      NAME athena.z4c_kerr_half_plane_init
+      COMMAND
+      ${CMAKE_COMMAND}
+      -DATHENA=$<TARGET_FILE:athena>
+      -DINPUT=${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_kerr_half_plane_init.athinput
+      -DTEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/z4c_kerr_half_plane_init_test
+      -DPYTHON=${PYTHON_EXECUTABLE}
+      -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+      -DHISTORY_VALIDATOR=${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_history_test.py
+      -DFAILURE_REGION_EXTRACTOR=${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_failure_region_extract.py
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_kerr_half_plane_init_test.cmake)
+
+  add_test(
+      NAME athena.z4c_kerr_half_plane_amr_orders
+      COMMAND
+      ${CMAKE_COMMAND}
+      -DATHENA=$<TARGET_FILE:athena>
+      -DINPUT=${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_kerr_half_plane_amr.athinput
+      -DTEST_DIR=${CMAKE_CURRENT_BINARY_DIR}/z4c_kerr_half_plane_amr_test
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_kerr_half_plane_amr_test.cmake)
+
+  add_test(
+      NAME athena.z4c_kerr_half_plane_restart
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_kerr_half_plane_restart_test.py
+      --athena $<TARGET_FILE:athena>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_kerr_half_plane_restart.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_kerr_half_plane_restart_test
+      --python ${PYTHON_EXECUTABLE}
+      --history-validator
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_history_test.py)
+
+  add_test(
+      NAME athena.z4c_cartoon_frozen_operator_analysis
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_frozen_operator_analysis.py
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR}
+      --output ${CMAKE_CURRENT_BINARY_DIR}/z4c_cartoon_frozen_operator_analysis.json)
+  set_tests_properties(
+      athena.z4c_cartoon_frozen_operator_analysis
+      PROPERTIES TIMEOUT 120 LABELS "cartoon;stability;python")
+
+  add_test(
+      NAME athena.z4c_cartoon_operator_inventory
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/generate_z4c_cartoon_operator_table.py
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+
+  add_test(
+      NAME athena.z4c_kerr_half_plane_convergence_analyzer
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/test_suite/z4c/cartoon_half_plane_kerr_convergence.py
+      --self-test)
+  add_test(
+      NAME athena.z4c_kerr_half_plane_campaign
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/test_suite/z4c/cartoon_half_plane_kerr_campaign.py
+      self-test
+      --template
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_kerr_half_plane_convergence.athinput)
 
   add_executable(
       athena_stored_domain_bounds_unit_test
@@ -465,6 +617,11 @@ if (Athena_BUILD_UNIT_TESTS)
       ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_amr_chi_refresh_static_test.py
       --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  add_test(
+      NAME athena.z4c_cartoon_amr_static
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/cartoon_amr_static_test.py)
 
   add_executable(
       athena_z4c_cartoon_m0_fastflow_unit_test

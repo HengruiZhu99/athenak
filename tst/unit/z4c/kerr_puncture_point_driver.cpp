@@ -45,11 +45,11 @@ int main(int argc, char **argv) {
         kerr_puncture::GaugeChoice::stationary>(x1, x2, x3, parameters);
   } else if (map_name == "cartoon" && gauge_name == "precollapsed") {
     data = kerr_puncture::Evaluate<
-        kerr_puncture::CoordinateMap::signed_rho_z_suppressed_y_v1,
+        kerr_puncture::CoordinateMap::half_rho_z_suppressed_y_v2,
         kerr_puncture::GaugeChoice::pre_collapsed>(x1, x2, x3, parameters);
   } else if (map_name == "cartoon" && gauge_name == "stationary") {
     data = kerr_puncture::Evaluate<
-        kerr_puncture::CoordinateMap::signed_rho_z_suppressed_y_v1,
+        kerr_puncture::CoordinateMap::half_rho_z_suppressed_y_v2,
         kerr_puncture::GaugeChoice::stationary>(x1, x2, x3, parameters);
   } else {
     std::cerr << "invalid map/gauge\n";

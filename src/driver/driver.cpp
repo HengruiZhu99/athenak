@@ -671,10 +671,11 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
 
   // Initialize Z4c
   z4c::Z4c *pz4c = pm->pmb_pack->pz4c;
-  // Restart files contain the complete, post-algebraic-projection Z4c u0,
-  // including ghost zones.  Reconstructing those ghosts here would change the
-  // restored evolution state before its first RHS.  AMR-created blocks use the
-  // default false value and continue through the normal initialization path.
+  // Restart files contain the complete, post-algebraic-projection active Z4c u0.
+  // Generic restarts preserve stored ghosts, but half-plane negative-rho ghosts
+  // are derived parity data and are regenerated below before any derivative use.
+  // AMR-created blocks use the default false value and continue through the normal
+  // initialization path.
   if (pz4c != nullptr && !preserve_restored_z4c) {
     (void) pz4c->RestrictU(this, 0);
     (void) pz4c->InitRecv(this, -1);  // stage < 0 suppresses InitFluxRecv
@@ -689,6 +690,9 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
     // then fills coarse/fine side ghosts, after which this built-in-only pass completes
     // physical/coarse-fine corner overlaps.  User boundary callbacks remain single-shot.
     pz4c->FillBuiltInPhysicalBoundaryGhosts();
+  }
+  if (pz4c != nullptr) {
+    (void) pz4c->FillAxisParityGhosts(this, 0);
   }
 
   // Initialize HYDRO: ghost zones and primitive variables (everywhere)

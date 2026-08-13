@@ -11,7 +11,46 @@
 
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
+#include "z4c/cartoon_axis_boundary.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_symmetry.hpp"
+
+namespace {
+
+void ValidateAxisBoundaryContract(MeshBlockPack *ppack,
+                                  const DvceArray5D<Real> &state) {
+  const auto &bcs = ppack->pmesh->mesh_bcs;
+  const bool any_axis =
+      bcs[BoundaryFace::inner_x1] == BoundaryFlag::axis ||
+      bcs[BoundaryFace::outer_x1] == BoundaryFlag::axis ||
+      bcs[BoundaryFace::inner_x2] == BoundaryFlag::axis ||
+      bcs[BoundaryFace::outer_x2] == BoundaryFlag::axis ||
+      bcs[BoundaryFace::inner_x3] == BoundaryFlag::axis ||
+      bcs[BoundaryFace::outer_x3] == BoundaryFlag::axis;
+  if (!any_axis) return;
+
+  const auto &config = ppack->z4c_symmetry;
+  const bool exact_half_plane_axis =
+      config.mode == z4c::Z4cSymmetryMode::cartoon_so2 &&
+      config.coordinate_map == z4c::Z4cCoordinateMap::half_rho_z_suppressed_y_v2 &&
+      config.schema == z4c::Z4cSymmetryConfig::kHalfPlaneCartoonSchema &&
+      bcs[BoundaryFace::inner_x1] == BoundaryFlag::axis &&
+      bcs[BoundaryFace::outer_x1] != BoundaryFlag::axis &&
+      bcs[BoundaryFace::inner_x2] != BoundaryFlag::axis &&
+      bcs[BoundaryFace::outer_x2] != BoundaryFlag::axis &&
+      bcs[BoundaryFace::inner_x3] != BoundaryFlag::axis &&
+      bcs[BoundaryFace::outer_x3] != BoundaryFlag::axis &&
+      state.extent_int(1) == z4c::Z4c::nz4c;
+  if (!exact_half_plane_axis) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": boundary type axis requires the schema-2 half-plane Cartoon "
+                 "Z4c state at inner_x1 only"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+}
+
+}  // namespace
 
 template<int order>
 void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0,
@@ -89,6 +128,7 @@ void MeshBoundaryValues::Z4cBCs(MeshBlockPack *ppack, DualArray2D<Real> u_in,
   int ks = indcs.ks;
   int ke = indcs.ke;
   auto &opt = ppack->pz4c->opt;
+  ValidateAxisBoundaryContract(ppack, u0);
 
   switch(opt.extrap_order) {
     case 2:
@@ -145,6 +185,11 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
     KOKKOS_LAMBDA(int m, int n, int k, int j) {
       // apply physical boundaries to inner_x1
       switch (mb_bcs.d_view(m,BoundaryFace::inner_x1)) {
+        case BoundaryFlag::axis:
+          if (!z4c::FillZ4cAxisGhostLine(u0, m, n, k, j, is, ng)) {
+            Kokkos::abort("invalid packed Z4c component in axis parity fill");
+          }
+          break;
         case BoundaryFlag::reflect:
           for (int i=0; i<ng; ++i) {
             if (n==z4c::Z4c::I_Z4C_GXY || n==z4c::Z4c::I_Z4C_GXZ ||

@@ -523,6 +523,8 @@ BoundaryFlag Mesh::GetBoundaryFlag(const std::string& input_string) {
     return BoundaryFlag::vacuum;
   } else if (input_string == "shear_periodic") {
     return BoundaryFlag::shear_periodic;
+  } else if (input_string == "axis") {
+    return BoundaryFlag::axis;
   } else if (input_string == "undef") {
     return BoundaryFlag::undef;
   } else {
@@ -539,7 +541,7 @@ BoundaryFlag Mesh::GetBoundaryFlag(const std::string& input_string) {
 //  string describing the boundary condition. Typicall used to format descriptive errors
 //  or diagnostics. Inverse of GetBoundaryFlag().
 
-std::string Mesh::GetBoundaryString(BoundaryFlag input_flag) {
+std::string Mesh::GetBoundaryString(BoundaryFlag input_flag) const {
   switch (input_flag) {
     case BoundaryFlag::block:  // 0
       return "block";
@@ -557,6 +559,10 @@ std::string Mesh::GetBoundaryString(BoundaryFlag input_flag) {
       return "periodic";
     case BoundaryFlag::shear_periodic:
       return "shear_periodic";
+    case BoundaryFlag::vacuum:
+      return "vacuum";
+    case BoundaryFlag::axis:
+      return "axis";
     case BoundaryFlag::undef:
       return "undef";
     default:

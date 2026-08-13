@@ -16,7 +16,7 @@
 
 namespace z4c_irisk {
 
-enum class AdmMap { cartesian_xyz, signed_rho_z_suppressed_y_v1 };
+enum class AdmMap { cartesian_xyz, half_rho_z_suppressed_y_v2 };
 
 inline AdmMap SelectAdmMap(const z4c::Z4cSymmetryConfig &config) {
   switch (config.mode) {
@@ -27,8 +27,8 @@ inline AdmMap SelectAdmMap(const z4c::Z4cSymmetryConfig &config) {
       break;
     case z4c::Z4cSymmetryMode::cartoon_so2:
       if (config.coordinate_map ==
-          z4c::Z4cCoordinateMap::signed_rho_z_suppressed_y_v1) {
-        return AdmMap::signed_rho_z_suppressed_y_v1;
+          z4c::Z4cCoordinateMap::half_rho_z_suppressed_y_v2) {
+        return AdmMap::half_rho_z_suppressed_y_v2;
       }
       break;
     default:

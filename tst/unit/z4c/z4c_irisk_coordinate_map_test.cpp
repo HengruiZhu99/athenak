@@ -49,37 +49,37 @@ int main() {
           tensor),
       tensor);
   passed &= Equal(z4c_irisk::VectorFromPhysicalCartesian<
-                      AdmMap::signed_rho_z_suppressed_y_v1>(vector),
+                      AdmMap::half_rho_z_suppressed_y_v2>(vector),
                   std::array<double, 3>{101.0, 103.0, 102.0});
   passed &= Equal(z4c_irisk::SymmetricTensorFromPhysicalCartesian<
-                      AdmMap::signed_rho_z_suppressed_y_v1>(tensor),
+                      AdmMap::half_rho_z_suppressed_y_v2>(tensor),
                   std::array<double, 6>{11.0, 13.0, 12.0, 33.0, 23.0, 22.0});
   const auto mapped_vector = z4c_irisk::VectorFromPhysicalCartesian<
-      AdmMap::signed_rho_z_suppressed_y_v1>(vector);
+      AdmMap::half_rho_z_suppressed_y_v2>(vector);
   const auto mapped_tensor = z4c_irisk::SymmetricTensorFromPhysicalCartesian<
-      AdmMap::signed_rho_z_suppressed_y_v1>(tensor);
+      AdmMap::half_rho_z_suppressed_y_v2>(tensor);
   passed &= Equal(z4c_irisk::VectorFromPhysicalCartesian<
-                      AdmMap::signed_rho_z_suppressed_y_v1>(mapped_vector),
+                      AdmMap::half_rho_z_suppressed_y_v2>(mapped_vector),
                   vector);
   passed &= Equal(z4c_irisk::SymmetricTensorFromPhysicalCartesian<
-                      AdmMap::signed_rho_z_suppressed_y_v1>(mapped_tensor),
+                      AdmMap::half_rho_z_suppressed_y_v2>(mapped_tensor),
                   tensor);
   passed &= z4c_irisk::ScalarFromPhysicalCartesian<
-                AdmMap::signed_rho_z_suppressed_y_v1>(211.0) == 211.0;
+                AdmMap::half_rho_z_suppressed_y_v2>(211.0) == 211.0;
 
   passed &= Equal(z4c_irisk::IrisTensorProductDimensions<AdmMap::cartesian_xyz>(
                       7, 5, 3),
                   std::array<std::size_t, 3>{7, 5, 3});
   passed &= Equal(z4c_irisk::IrisTensorProductDimensions<
-                      AdmMap::signed_rho_z_suppressed_y_v1>(7, 5, 3),
+                      AdmMap::half_rho_z_suppressed_y_v2>(7, 5, 3),
                   std::array<std::size_t, 3>{7, 1, 5});
   passed &= z4c_irisk::IrisPointIndex<AdmMap::cartesian_xyz>(2, 3, 1, 7, 5) ==
             2 + 7 * (3 + 5);
   passed &= z4c_irisk::IrisPointIndex<
-                AdmMap::signed_rho_z_suppressed_y_v1>(2, 3, 0, 7, 5) ==
+                AdmMap::half_rho_z_suppressed_y_v2>(2, 3, 0, 7, 5) ==
             2 + 7 * 3;
   passed &= z4c_irisk::IrisPointIndex<
-                AdmMap::signed_rho_z_suppressed_y_v1>(2, 3, 9, 7, 5) ==
+                AdmMap::half_rho_z_suppressed_y_v2>(2, 3, 9, 7, 5) ==
             2 + 7 * 3;
 
   const z4c::Z4cSymmetryConfig cartesian{
@@ -87,10 +87,10 @@ int main() {
       z4c::Z4cCoordinateMap::cartesian_xyz, 1, 2};
   const z4c::Z4cSymmetryConfig cartoon{
       z4c::Z4cSymmetryMode::cartoon_so2,
-      z4c::Z4cCoordinateMap::signed_rho_z_suppressed_y_v1, 1, 4};
+      z4c::Z4cCoordinateMap::half_rho_z_suppressed_y_v2, 2, 4};
   passed &= z4c_irisk::SelectAdmMap(cartesian) == AdmMap::cartesian_xyz;
   passed &= z4c_irisk::SelectAdmMap(cartoon) ==
-            AdmMap::signed_rho_z_suppressed_y_v1;
+            AdmMap::half_rho_z_suppressed_y_v2;
 
   for (const auto invalid : {
            z4c::Z4cSymmetryConfig{z4c::Z4cSymmetryMode::cartesian3d,

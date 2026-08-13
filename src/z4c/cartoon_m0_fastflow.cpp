@@ -474,7 +474,8 @@ M0AdmSample CartoonM0FastFlow::SampleAdm(const Real rho, const Real z) const {
   M0AdmSample result;
   const auto stencil = LocateCartoonMeridionalPoint(pack_->pmesh, rho, z);
   if (!stencil.valid) return result;
-  if (pack_->pmesh->mb_indcs.ng < 2 || pack_->pmesh->mb_indcs.ng > 4)
+  const int fd_stencil = pack_->z4c_symmetry.stencil_width;
+  if (fd_stencil < 2 || fd_stencil > 4 || pack_->pmesh->mb_indcs.ng < fd_stencil)
     return result;
   Kokkos::View<Real *> values("Cartoon m0 ADM sample", 42);
   Kokkos::deep_copy(values, 0.0);
@@ -505,13 +506,13 @@ M0AdmSample CartoonM0FastFlow::SampleAdm(const Real rho, const Real z) const {
                                                     stencil.k, j, i);
           for (int d = 0; d < 3; ++d) {
             Real derivative_value = 0.0;
-            if (indices.ng == 2) {
+            if (fd_stencil == 2) {
               auto derivative = MakeCellCenteredDerivativeProvider<CartoonSO2, 2>(
                   inverse_spacing, size, indices.nx1, indices.is,
                   stencil.local_block, stencil.k, j, i);
               derivative_value = derivative.template TensorFirst<
                   TensorVariance::all_lower>(physical_to_code[d], ca, cb, metric);
-            } else if (indices.ng == 3) {
+            } else if (fd_stencil == 3) {
               auto derivative = MakeCellCenteredDerivativeProvider<CartoonSO2, 3>(
                   inverse_spacing, size, indices.nx1, indices.is,
                   stencil.local_block, stencil.k, j, i);

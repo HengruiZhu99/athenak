@@ -61,12 +61,12 @@ bool NearlyEqual(Real left, Real right, Real tolerance);
 template <int NGHOST>
 z4c::CartoonCentralSupportSet MakeCentralSupports(
     const unsigned int refined_mask, const Real dx1 = 0.09375,
-    const Real dx2 = 0.09375) {
+    const Real dx2 = 0.09375, const bool half_plane = false) {
   z4c::CartoonCentralSupportSet supports;
   supports.gid = 30;
   supports.level = refined_mask == 0U ? 3 : 4;
   z4c::InitializeCartoonCentralSupportGeometry(
-      &supports, 3, dx1, dx2, refined_mask);
+      &supports, 3, dx1, dx2, refined_mask, half_plane);
   for (int slot = 0; slot < z4c::kCartoonCentralMaxSources; ++slot) {
     auto &point = supports.point[slot];
     if (!point.expected) continue;
@@ -78,6 +78,72 @@ z4c::CartoonCentralSupportSet MakeCentralSupports(
     point.j = NGHOST + ((slot / 2) % 2);
   }
   return supports;
+}
+
+template <int NGHOST>
+bool CheckHalfPlaneCentralPhysicalSupportContract() {
+  RegionIndcs indices{};
+  indices.ng = NGHOST;
+  indices.nx1 = 32;
+  indices.nx2 = 32;
+  indices.is = indices.js = NGHOST;
+  indices.ie = indices.je = NGHOST + 31;
+
+  using Status = z4c::CartoonCentralSample::Status;
+  constexpr unsigned int allowed_masks[4] = {0x0U, 0x2U, 0x8U, 0xAU};
+  for (const unsigned int half_mask : allowed_masks) {
+    const auto half = MakeCentralSupports<NGHOST>(
+        half_mask, 0.09375, 0.09375, true);
+    if (!half.half_plane ||
+        z4c::ValidateCartoonCentralSupportSet<NGHOST>(half, indices, 3) !=
+            Status::valid) {
+      return false;
+    }
+
+    int expected_count = 2;
+    if ((half_mask & 0x2U) != 0) expected_count += 3;
+    if ((half_mask & 0x8U) != 0) expected_count += 3;
+    Real weight_sum = 0.0;
+    int observed_count = 0;
+    for (int slot = 0; slot < z4c::kCartoonCentralMaxSources; ++slot) {
+      const auto &point = half.point[slot];
+      if (!point.expected) continue;
+      ++observed_count;
+      weight_sum += point.final_weight;
+      const int quadrant = slot / z4c::kCartoonCentralSourcesPerQuadrant;
+      if ((quadrant & 1) == 0 || !(point.rho > 0.0)) return false;
+    }
+    if (observed_count != expected_count || half.source_count != expected_count ||
+        !NearlyEqual(weight_sum, 1.0, 1.0e-15)) {
+      return false;
+    }
+
+    // A virtual signed reference refines the negative-rho partner of every refined
+    // physical quadrant.  Even-in-rho data, including z-asymmetric data, must reconstruct
+    // identically without storing those redundant negative-rho leaves.
+    const unsigned int full_mask = half_mask |
+        ((half_mask & 0x2U) >> 1U) | ((half_mask & 0x8U) >> 1U);
+    const auto full = MakeCentralSupports<NGHOST>(full_mask);
+    const auto function = [](const Real rho, const Real z) {
+      return 2.0 + 0.4 * rho * rho + 0.7 * z + 0.3 * z * z;
+    };
+    const auto half_value = ReconstructCentralFunction(half, function);
+    const auto full_value = ReconstructCentralFunction(full, function);
+    if (!half_value.valid || !full_value.valid ||
+        !NearlyEqual(half_value.abs_kretschmann,
+                     full_value.abs_kretschmann, 2.0e-15)) {
+      return false;
+    }
+
+    auto invalid_negative_refinement = half;
+    invalid_negative_refinement.refined_mask |= 0x1U;
+    if (z4c::ValidateCartoonCentralSupportSet<NGHOST>(
+            invalid_negative_refinement, indices, 3) !=
+        Status::invalid_common_lattice) {
+      return false;
+    }
+  }
+  return true;
 }
 
 template <typename Function>
@@ -707,6 +773,9 @@ int main(int argc, char *argv[]) {
   const bool passed = CheckCentralPhysicalSupportContract<2>() &&
                       CheckCentralPhysicalSupportContract<3>() &&
                       CheckCentralPhysicalSupportContract<4>() &&
+                      CheckHalfPlaneCentralPhysicalSupportContract<2>() &&
+                      CheckHalfPlaneCentralPhysicalSupportContract<3>() &&
+                      CheckHalfPlaneCentralPhysicalSupportContract<4>() &&
                       CheckWeylCoordinatePolicy() &&
                       CheckWeylTetradComponentMap() &&
                       CheckMeridionalMeasureAndState() &&

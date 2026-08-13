@@ -34,8 +34,8 @@ struct CartoonPdfCellMeasure {
   KOKKOS_INLINE_FUNCTION
   Real operator()(const int m, const int i) const {
     const Real rho = CellCenterX(i - is, nx1, size(m).x1min, size(m).x1max);
-    // The full signed-rho plane is evolved.  Only its positive half owns unique
-    // cylindrical fine cells; the negative partner contributes zero measure.
+    // The active half-plane owns each cylindrical fine cell exactly once.
+    // The helper remains zero for nonpositive rho as a fail-closed guard.
     return CartoonCylindricalFineCellMeasure(rho, size(m).dx1, size(m).dx2);
   }
 };

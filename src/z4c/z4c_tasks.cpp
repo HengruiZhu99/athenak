@@ -22,6 +22,7 @@
 #include "mesh/mesh.hpp"
 #include "bvals/bvals.hpp"
 #include "z4c/compact_object_tracker.hpp"
+#include "z4c/cartoon_axis_boundary.hpp"
 #include "z4c/fastflow.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
@@ -46,18 +47,20 @@ void Z4c::QueueZ4cTasks() {
 
   // Run task list
   pnr->QueueTask(&Z4c::CopyU, this, Z4c_CopyU, "Z4c_CopyU", Task_Run);
+  pnr->QueueTask(&Z4c::FillAxisParityGhosts, this, Z4c_AxisGhosts,
+                 "Z4c_AxisGhosts", Task_Run, {Z4c_CopyU});
   switch (fd_stencil) {
     case 2:
       pnr->QueueTask(&Z4c::CalcRHS<2>, this, Z4c_CalcRHS, "Z4c_CalcRHS",
-                     Task_Run, {Z4c_CopyU}, {MHD_SetTmunu});
+                     Task_Run, {Z4c_AxisGhosts}, {MHD_SetTmunu});
       break;
     case 3:
       pnr->QueueTask(&Z4c::CalcRHS<3>, this, Z4c_CalcRHS, "Z4c_CalcRHS",
-                     Task_Run, {Z4c_CopyU}, {MHD_SetTmunu});
+                     Task_Run, {Z4c_AxisGhosts}, {MHD_SetTmunu});
       break;
     case 4:
       pnr->QueueTask(&Z4c::CalcRHS<4>, this, Z4c_CalcRHS, "Z4c_CalcRHS",
-                     Task_Run, {Z4c_CopyU}, {MHD_SetTmunu});
+                     Task_Run, {Z4c_AxisGhosts}, {MHD_SetTmunu});
       break;
     default:
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
@@ -85,8 +88,10 @@ void Z4c::QueueZ4cTasks() {
   pnr->QueueTask(&Z4c::Prolongate, this, Z4c_Prolong, "Z4c_Prolong", Task_Run, {Z4c_BCS});
   pnr->QueueTask(&Z4c::EnforceAlgConstr, this, Z4c_AlgC, "Z4c_AlgC", Task_Run,
                  {Z4c_Prolong});
+  pnr->QueueTask(&Z4c::FillAxisParityGhosts, this, Z4c_AxisGhostsPost,
+                 "Z4c_AxisGhostsPost", Task_Run, {Z4c_AlgC});
   pnr->QueueTask(&Z4c::ConvertZ4cToADM, this, Z4c_Z4c2ADM, "Z4c_Z4c2ADM",
-                 Task_Run, {Z4c_AlgC});
+                 Task_Run, {Z4c_AxisGhostsPost});
   if (pmy_pack->pdyngr != nullptr) {
     pnr->QueueTask(&Z4c::UpdateExcisionMasks, this, Z4c_Excise, "Z4c_Excise", Task_Run,
                    {Z4c_Z4c2ADM}, {Z4c_FastFlow});
@@ -188,6 +193,75 @@ TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
     }
   }
   return TaskStatus::complete;
+}
+
+//----------------------------------------------------------------------------------------
+//! \fn TaskStatus Z4c::FillAxisParityGhosts
+//! \brief Reconstruct only the derived negative-rho ghost storage for the current stage.
+//!
+//! The ordinary physical-boundary pass precedes prolongation and algebraic projection.
+//! Those operations may change the active state.  This named pre-RHS task therefore makes
+//! the half-plane invariant explicit without redundantly reapplying any outer boundary.
+
+TaskStatus Z4c::FillAxisParityGhosts(Driver *pdrive, int stage) {
+  ReconstructAxisParityGhosts();
+  return TaskStatus::complete;
+}
+
+void Z4c::ReconstructAxisParityGhosts() {
+  const auto &config = pmy_pack->z4c_symmetry;
+  if (config.mode != Z4cSymmetryMode::cartoon_so2 ||
+      config.coordinate_map != Z4cCoordinateMap::half_rho_z_suppressed_y_v2 ||
+      config.schema != Z4cSymmetryConfig::kHalfPlaneCartoonSchema) {
+    return;
+  }
+
+  const auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const int ng = indcs.ng;
+  const int n2 = indcs.nx2 > 1 ? indcs.nx2 + 2 * ng : 1;
+  const int n3 = indcs.nx3 > 1 ? indcs.nx3 + 2 * ng : 1;
+  const int is = indcs.is;
+  const int nmb = pmy_pack->nmb_thispack;
+  auto &mb_bcs = pmy_pack->pmb->mb_bcs;
+  auto &state = pmy_pack->pz4c->u0;
+
+  par_for("z4c half-plane axis parity", DevExeSpace(), 0, nmb - 1,
+          0, nz4c - 1, 0, n3 - 1, 0, n2 - 1,
+      KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
+        if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
+            !FillZ4cAxisGhostLine(state, m, n, k, j, is, ng)) {
+          Kokkos::abort("invalid packed Z4c component in pre-RHS axis parity fill");
+        }
+      });
+  Kokkos::fence();
+}
+
+void Z4c::ReconstructConstraintAxisParityGhosts() {
+  const auto &config = pmy_pack->z4c_symmetry;
+  if (config.mode != Z4cSymmetryMode::cartoon_so2 ||
+      config.coordinate_map != Z4cCoordinateMap::half_rho_z_suppressed_y_v2 ||
+      config.schema != Z4cSymmetryConfig::kHalfPlaneCartoonSchema) {
+    return;
+  }
+
+  const auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const int ng = indcs.ng;
+  const int n2 = indcs.nx2 > 1 ? indcs.nx2 + 2 * ng : 1;
+  const int n3 = indcs.nx3 > 1 ? indcs.nx3 + 2 * ng : 1;
+  const int is = indcs.is;
+  const int nmb = pmy_pack->nmb_thispack;
+  auto &mb_bcs = pmy_pack->pmb->mb_bcs;
+  auto &constraints = pmy_pack->pz4c->u_con;
+
+  par_for("Z4c half-plane constraint axis parity", DevExeSpace(),
+          0, nmb - 1, 0, ncon - 1, 0, n3 - 1, 0, n2 - 1,
+      KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
+        if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
+            !FillConstraintAxisGhostLine(constraints, m, n, k, j, is, ng)) {
+          Kokkos::abort("invalid constraint component in axis parity fill");
+        }
+      });
+  Kokkos::fence();
 }
 
 //----------------------------------------------------------------------------------------

@@ -26,7 +26,7 @@ namespace kerr_puncture {
 
 enum class CoordinateMap {
   cartesian_xyz,
-  signed_rho_z_suppressed_y_v1,
+  half_rho_z_suppressed_y_v2,
 };
 
 enum class GaugeChoice {
@@ -226,7 +226,7 @@ PointData<Scalar> Evaluate(const Scalar code_x1, const Scalar code_x2,
   Scalar x = code_x1;
   Scalar y = code_x2;
   Scalar z = code_x3;
-  if constexpr (Map == CoordinateMap::signed_rho_z_suppressed_y_v1) {
+  if constexpr (Map == CoordinateMap::half_rho_z_suppressed_y_v2) {
     y = code_x3;
     z = code_x2;
   }

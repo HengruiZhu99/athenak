@@ -120,8 +120,22 @@ def main() -> int:
     require("template <z4c_irisk::AdmMap Map>" in importer and
             "SelectAdmMap(pmbp->z4c_symmetry)" in importer,
             "Iris map is not selected once before compile-time mapped loops")
+    require("AdmMap::half_rho_z_suppressed_y_v2" in coordinate_map and
+            "signed_rho_z_suppressed_y_v1" not in coordinate_map,
+            "Iris map still advertises an independently stored signed plane")
     require("z4c::MakeStoredDomainBounds(indcs)" in importer,
             "Iris import does not use allocated stored-domain bounds")
+    require("const int interpolation_is = axis_block ? indcs.is : isg;" in importer,
+            "axis blocks still interpolate independently into negative-rho ghosts")
+    require("FillAdmAxisGhostLine" in importer and
+            "FillZ4cAxisGhostLine" in importer,
+            "Iris half-plane ghosts are not parity-derived")
+    require(importer.index("FillAdmAxisGhostLine") <
+            importer.index("Kokkos::deep_copy(u_adm, host_u_adm)"),
+            "Iris ADM axis parity is not established before device import")
+    require(importer.index("ReconstructAxisParityGhosts();") <
+            importer.index("pmbp->pz4c->Z4cToADM(pmbp);"),
+            "Iris derived Z4c parity is not established before constraints")
     for unsafe_bound in ("indcs.ks - indcs.ng", "indcs.ke + indcs.ng",
                          "indcs.js - indcs.ng", "indcs.je + indcs.ng"):
         require(unsafe_bound not in importer,

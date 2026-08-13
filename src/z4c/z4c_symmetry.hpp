@@ -29,18 +29,27 @@ enum class Z4cSymmetryMode { cartesian3d, cartoon_so2 };
 //! Coordinate/component map carried by configuration and restart provenance.
 enum class Z4cCoordinateMap {
   cartesian_xyz,
-  signed_rho_z_suppressed_y_v1
+  signed_rho_z_suppressed_y_v1,
+  half_rho_z_suppressed_y_v2
 };
 
 //! Immutable host configuration selected before any physics allocation.
 struct Z4cSymmetryConfig {
-  static constexpr int kCurrentSchema = 1;
+  static constexpr int kCartesianSchema = 1;
+  static constexpr int kHalfPlaneCartoonSchema = 2;
+  static constexpr int kCurrentSchema = kHalfPlaneCartoonSchema;
 
   Z4cSymmetryMode mode = Z4cSymmetryMode::cartesian3d;
   Z4cCoordinateMap coordinate_map = Z4cCoordinateMap::cartesian_xyz;
-  int schema = kCurrentSchema;
+  int schema = kCartesianSchema;
   int stencil_width = 2;
 };
+
+constexpr int ExpectedZ4cSymmetrySchema(const Z4cSymmetryMode mode) {
+  return mode == Z4cSymmetryMode::cartoon_so2
+             ? Z4cSymmetryConfig::kHalfPlaneCartoonSchema
+             : Z4cSymmetryConfig::kCartesianSchema;
+}
 
 //! Concrete target used to verify separately compiled policy/stencil instantiations.
 struct Z4cKernelDispatchTarget {
@@ -62,7 +71,7 @@ struct Z4cValidationInput {
   bool coordinate_map_specified = false;
   std::string coordinate_map;
   bool schema_specified = false;
-  int schema = Z4cSymmetryConfig::kCurrentSchema;
+  int schema = Z4cSymmetryConfig::kCartesianSchema;
 
   bool z4c_enabled = false;
   int nghost = 2;
@@ -70,11 +79,18 @@ struct Z4cValidationInput {
   int mesh_nx1 = 1;
   int mesh_nx2 = 1;
   int mesh_nx3 = 1;
+  int meshblock_nx1 = 1;
   int meshblock_nx3 = 1;
   int root_blocks_x1 = 1;
   double x1min = 0.0;
   double x1max = 1.0;
   std::size_t real_bytes = sizeof(double);
+  std::string inner_x1_boundary = "undef";
+  std::string outer_x1_boundary = "undef";
+  std::string inner_x2_boundary = "undef";
+  std::string outer_x2_boundary = "undef";
+  std::string inner_x3_boundary = "undef";
+  std::string outer_x3_boundary = "undef";
 
   std::vector<std::string> incompatible_physics;
   std::vector<std::string> incompatible_consumers;

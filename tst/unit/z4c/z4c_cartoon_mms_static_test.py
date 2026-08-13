@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 
-PROVIDER_SHA = "50a88d96cb9640c393982124d439b7a693c103d4735b5c9ce7daac84a3114055"
+LEGACY_PROVIDER_SHA = "50a88d96cb9640c393982124d439b7a693c103d4735b5c9ce7daac84a3114055"
 FINITE_DIFF_SHA = "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42"
 BASE = "949ccd7828adf18a122c352996aa1a6393d762e7"
 BASE_ORACLE_SHA = "03699d48a07aad3b928fba75a45b6ae0d1b1ed78a16b57e16fc0e93fc163d84c"
@@ -88,7 +88,20 @@ def main() -> int:
     root = args.source_dir.resolve()
     provider = root / "src/z4c/cartoon_derivatives.hpp"
     finite_diff = root / "src/utils/finite_diff.hpp"
-    require(digest(provider.read_bytes()) == PROVIDER_SHA, "provider hash changed")
+    legacy_provider = subprocess.check_output(
+        ["git", "show", f"{BASE}:src/z4c/cartoon_derivatives.hpp"], cwd=root)
+    require(digest(legacy_provider) == LEGACY_PROVIDER_SHA,
+            "frozen signed-plane provider reference changed")
+    provider_text = provider.read_text()
+    for forbidden in ("FitRadialSamples", "RadialFit", "OddCoefficientFit",
+                      "QuadraticCoefficientFit", "QuadraticDifferenceFit"):
+        require(forbidden not in provider_text,
+                f"production provider retains runtime fit helper {forbidden}")
+    require("RegularCoefficientDerivative" in provider_text and
+            "return NGHOST - 1;" in provider_text and
+            "-3.0 / 4.0 * samples[0]" in provider_text and
+            "1.0 / 30.0 * samples[3]" in provider_text,
+            "half-plane provider lacks the fixed rational regularity closure")
     require(digest(finite_diff.read_bytes()) == FINITE_DIFF_SHA,
             "generated finite_diff.hpp hash changed")
     base_oracle = subprocess.check_output(

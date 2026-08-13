@@ -37,7 +37,8 @@ bool CheckTarget(const z4c::Z4cSymmetryMode mode, const int stencil_width) {
   config.coordinate_map =
       mode == z4c::Z4cSymmetryMode::cartesian3d
           ? z4c::Z4cCoordinateMap::cartesian_xyz
-          : z4c::Z4cCoordinateMap::signed_rho_z_suppressed_y_v1;
+          : z4c::Z4cCoordinateMap::half_rho_z_suppressed_y_v2;
+  config.schema = z4c::ExpectedZ4cSymmetrySchema(mode);
   config.stencil_width = stencil_width;
 
   DispatchRecorder recorder;
@@ -53,7 +54,7 @@ int main() {
   z4c::Z4cSymmetryConfig default_config;
   bool passed = default_config.mode == z4c::Z4cSymmetryMode::cartesian3d &&
                 default_config.coordinate_map == z4c::Z4cCoordinateMap::cartesian_xyz &&
-                default_config.schema == z4c::Z4cSymmetryConfig::kCurrentSchema;
+                default_config.schema == z4c::Z4cSymmetryConfig::kCartesianSchema;
   for (const auto mode : {z4c::Z4cSymmetryMode::cartesian3d,
                           z4c::Z4cSymmetryMode::cartoon_so2}) {
     for (const int stencil_width : {2, 3, 4}) {

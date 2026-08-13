@@ -112,7 +112,7 @@ bool CheckIrisImportCoverage(const int ng, const int nx2, const int nx3) {
   for (const int visit_count : visits) {
     if (visit_count != 1) return false;
   }
-  if constexpr (Map == z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1) {
+  if constexpr (Map == z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2) {
     if (bounds.ks != bounds.ke || bounds.n3 != 1 || dims[1] != 1) return false;
     // The two physical-Z rows must remain distinct; the collapsed direction
     // must not duplicate or alias them.
@@ -138,10 +138,10 @@ int main(int argc, char *argv[]) {
     passed = passed && CheckIrisImportCoverage<
                            z4c_irisk::AdmMap::cartesian_xyz>(ng, 8, 8);
     passed = passed && CheckIrisImportCoverage<
-                           z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1>(
+                           z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2>(
                            ng, 8, 1);
     passed = passed && CheckIrisImportCoverage<
-                           z4c_irisk::AdmMap::signed_rho_z_suppressed_y_v1>(
+                           z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2>(
                            ng, 1, 1);
   }
   Kokkos::finalize();

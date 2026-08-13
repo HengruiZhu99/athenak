@@ -176,12 +176,13 @@ KOKKOS_INLINE_FUNCTION Real AnalyticDissipation(
 
 template <int NGHOST>
 constexpr Real NoiseCoefficientSafety() {
-  constexpr Real row_norm = NGHOST == 2 ? 1.0 : (NGHOST == 3 ? 1.5 : 2.5);
+  constexpr Real row_norm =
+      NGHOST == 2 ? 1.0 : (NGHOST == 3 ? 1.5 : 11.0 / 6.0);
   constexpr Real outer_radius = static_cast<Real>(NGHOST) - 0.5;
-  constexpr Real fitted_bound =
+  constexpr Real closure_bound =
       2.0 * (16.0 * outer_radius * outer_radius * row_norm + 16.0);
   constexpr Real rounded = NGHOST == 2 ? 128.0 : (NGHOST == 3 ? 512.0 : 1024.0);
-  static_assert(fitted_bound < rounded);
+  static_assert(closure_bound < rounded);
   constexpr Real evaluation_slack = sizeof(Real) == sizeof(float) ? 1.5 : 1.25;
   return evaluation_slack * rounded;
 }
@@ -934,18 +935,23 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
   }
   const std::vector<int> result_parities = ResultParities();
   std::vector<double> rotation_residual(kResults, 0.0);
-  for (int global_j = 0; global_j < mesh->mesh_indcs.nx2; ++global_j) {
-    for (int global_i = 0; global_i < mesh->mesh_indcs.nx1 / 2; ++global_i) {
-      const long long negative_id =
-          static_cast<long long>(global_j) * mesh->mesh_indcs.nx1 + global_i;
-      const long long positive_id =
-          static_cast<long long>(global_j) * mesh->mesh_indcs.nx1 +
-          (mesh->mesh_indcs.nx1 - 1 - global_i);
-      for (int result = 0; result < kResults; ++result) {
-        const double residual = std::abs(
-            ordered_values[negative_id * kResults + result] -
-            result_parities[result] * ordered_values[positive_id * kResults + result]);
-        rotation_residual[result] = std::max(rotation_residual[result], residual);
+  const bool signed_active_rotation_check =
+      pack->z4c_symmetry.coordinate_map ==
+      z4c::Z4cCoordinateMap::signed_rho_z_suppressed_y_v1;
+  if (signed_active_rotation_check) {
+    for (int global_j = 0; global_j < mesh->mesh_indcs.nx2; ++global_j) {
+      for (int global_i = 0; global_i < mesh->mesh_indcs.nx1 / 2; ++global_i) {
+        const long long negative_id =
+            static_cast<long long>(global_j) * mesh->mesh_indcs.nx1 + global_i;
+        const long long positive_id =
+            static_cast<long long>(global_j) * mesh->mesh_indcs.nx1 +
+            (mesh->mesh_indcs.nx1 - 1 - global_i);
+        for (int result = 0; result < kResults; ++result) {
+          const double residual = std::abs(
+              ordered_values[negative_id * kResults + result] -
+              result_parities[result] * ordered_values[positive_id * kResults + result]);
+          rotation_residual[result] = std::max(rotation_residual[result], residual);
+        }
       }
     }
   }
@@ -984,7 +990,8 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
       NGHOST == 2 ? 2.0e-2 : (NGHOST == 3 ? 2.0e-4 : 2.0e-6);
   bool failed = !ownership_valid || nonfinite != 0 ||
                       maximum_noise_delta > noise_bound ||
-                      maximum_rotation_residual > rotation_bound ||
+                      (signed_active_rotation_check &&
+                       maximum_rotation_residual > rotation_bound) ||
                       axis.nonfinite != 0 || !std::isfinite(axis.maximum) ||
                       axis.maximum > axis_tolerance ||
                       mesh->ncycle != initial_cycle || mesh->time != initial_time;
@@ -1075,7 +1082,9 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
       csv << ',' << std::hex << record.mask_xor << std::dec << '\n';
     };
     for (int result = 0; result < kResults; ++result) {
-      emit(result, "full_signed_plane", full[result], shared_full[result],
+      emit(result, signed_active_rotation_check ? "full_signed_plane"
+                                                : "full_half_plane",
+           full[result], shared_full[result],
            shared_delta_full[result], independent_full[result],
            independent_delta_full[result]);
       for (int region_index = 0; region_index < kRegions; ++region_index) {
@@ -1179,6 +1188,8 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
          << ",\n  \"noise_delta_bound\": " << noise_bound
          << ",\n  \"maximum_rotation_residual\": " << maximum_rotation_residual
          << ",\n  \"rotation_residual_bound\": " << rotation_bound
+         << ",\n  \"signed_active_rotation_check\": "
+         << (signed_active_rotation_check ? "true" : "false")
          << ",\n  \"diagnostic_axis_linf\": " << axis.maximum
          << ",\n  \"diagnostic_axis_tolerance\": " << axis_tolerance
          << ",\n  \"diagnostic_axis_operator_count\": "

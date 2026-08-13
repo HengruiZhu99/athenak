@@ -20,6 +20,7 @@
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "pgen/z4c/kerr_puncture.hpp"
+#include "z4c/cartoon_axis_boundary.hpp"
 #include "z4c/stored_domain_bounds.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
@@ -88,6 +89,7 @@ void FillPhysicalAdm(MeshBlockPack *pack,
   auto &size = pack->pmb->mb_size;
   const auto bounds = z4c::MakeStoredDomainBounds(indices);
   auto &adm = pack->padm->adm;
+  auto &mb_bcs = pack->pmb->mb_bcs;
   const int nmb = pack->nmb_thispack;
   const int is = indices.is;
   const int js = indices.js;
@@ -98,6 +100,13 @@ void FillPhysicalAdm(MeshBlockPack *pack,
       "initialize Kerr puncture ADM fields", DevExeSpace(), 0, nmb - 1,
       bounds.ks, bounds.ke, bounds.js, bounds.je, bounds.is, bounds.ie,
       KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+        if constexpr (Map ==
+                      kerr_puncture::CoordinateMap::half_rho_z_suppressed_y_v2) {
+          if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
+              i < is) {
+            return;
+          }
+        }
         const Real x1 = CellCenterX(i - is, indices.nx1,
                                     size.d_view(m).x1min,
                                     size.d_view(m).x1max);
@@ -136,11 +145,41 @@ void FillPhysicalAdm(MeshBlockPack *pack,
         }
       });
   Kokkos::fence();
+
+  if constexpr (Map ==
+                kerr_puncture::CoordinateMap::half_rho_z_suppressed_y_v2) {
+    auto &adm_state = pack->padm->u_adm;
+    auto &z4c_state = pack->pz4c->u0;
+    const int ng = indices.ng;
+    par_for(
+        "derive Kerr puncture ADM axis ghosts", DevExeSpace(), 0, nmb - 1,
+        0, adm::ADM::I_ADM_PSI4, bounds.ks, bounds.ke, bounds.js, bounds.je,
+        KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
+          if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
+              !z4c::FillAdmAxisGhostLine(adm_state, m, n, k, j, is, ng)) {
+            Kokkos::abort("invalid ADM component in Kerr axis parity fill");
+          }
+        });
+    par_for(
+        "derive Kerr puncture gauge axis ghosts", DevExeSpace(), 0, nmb - 1,
+        z4c::Z4c::I_Z4C_ALPHA, z4c::Z4c::I_Z4C_BETAZ,
+        bounds.ks, bounds.ke, bounds.js, bounds.je,
+        KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
+          if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
+              !z4c::FillZ4cAxisGhostLine(z4c_state, m, n, k, j, is, ng)) {
+            Kokkos::abort("invalid gauge component in Kerr axis parity fill");
+          }
+        });
+    Kokkos::fence();
+  }
 }
 
 void ConvertAdmAndComputeConstraints(MeshBlockPack *pack,
                                      ParameterInput *pin) {
-  switch (pack->pmesh->mb_indcs.ng) {
+  // AMR requires an even allocated ghost width, so an O4 evolution legitimately
+  // uses four stored ghosts with the three-point-half-width Z4c stencil.  Dispatch
+  // mathematical operators from the configured stencil, never from allocation size.
+  switch (pack->pz4c->opt.fd_stencil) {
     case 2:
       pack->pz4c->ADMToZ4c<2>(pack, pin);
       break;
@@ -151,10 +190,11 @@ void ConvertAdmAndComputeConstraints(MeshBlockPack *pack,
       pack->pz4c->ADMToZ4c<4>(pack, pin);
       break;
     default:
-      Fail("kerr_puncture supports nghost = 2, 3, or 4");
+      Fail("kerr_puncture supports Z4c stencil widths 2, 3, or 4");
   }
+  pack->pz4c->ReconstructAxisParityGhosts();
   pack->pz4c->Z4cToADM(pack);
-  switch (pack->pmesh->mb_indcs.ng) {
+  switch (pack->pz4c->opt.fd_stencil) {
     case 2:
       pack->pz4c->ADMConstraints<2>(pack);
       break;
@@ -214,7 +254,7 @@ void InitializeKerrPuncture(Mesh *mesh, ParameterInput *pin,
   }
   const auto map =
       pack->z4c_symmetry.mode == z4c::Z4cSymmetryMode::cartoon_so2
-          ? kerr_puncture::CoordinateMap::signed_rho_z_suppressed_y_v1
+          ? kerr_puncture::CoordinateMap::half_rho_z_suppressed_y_v2
           : kerr_puncture::CoordinateMap::cartesian_xyz;
   if (MeshSamplesPuncture(mesh, map, axial_center)) {
     Fail("kerr_puncture requires a cell-centered topology that does not sample "
@@ -237,11 +277,11 @@ void InitializeKerrPuncture(Mesh *mesh, ParameterInput *pin,
     }
   } else if (gauge == kerr_puncture::GaugeChoice::pre_collapsed) {
     FillPhysicalAdm<
-        kerr_puncture::CoordinateMap::signed_rho_z_suppressed_y_v1,
+        kerr_puncture::CoordinateMap::half_rho_z_suppressed_y_v2,
         kerr_puncture::GaugeChoice::pre_collapsed>(pack, parameters);
   } else {
     FillPhysicalAdm<
-        kerr_puncture::CoordinateMap::signed_rho_z_suppressed_y_v1,
+        kerr_puncture::CoordinateMap::half_rho_z_suppressed_y_v2,
         kerr_puncture::GaugeChoice::stationary>(pack, parameters);
   }
   ConvertAdmAndComputeConstraints(pack, pin);

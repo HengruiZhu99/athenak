@@ -253,47 +253,50 @@ int LayerFromOffset(const int radial_offset) {
 
 template <int NGHOST>
 const char *LayerRegion(const int radial_offset) {
-  return LayerFromOffset(radial_offset) < NGHOST ? "fitted" : "raw-transition";
+  return LayerFromOffset(radial_offset) < NGHOST - 1
+             ? "regularity-closure"
+             : "centered-bulk";
 }
 
 template <int NGHOST>
 constexpr int ExpectedNearAxisOrder(const int layer) {
-  constexpr int fitted_order = 2 * (NGHOST - 1);
+  constexpr int closure_order = 2 * (NGHOST - 1);
   // At fixed rho/h, a raw odd quotient divides the O(h^p) centered-Dx error
-  // by rho=O(h), so the generic transition order is p-1. Fitted composites
-  // retain p; fixed nonzero physical rho is checked separately at p.
-  return layer < NGHOST ? fitted_order : fitted_order - 1;
+  // by rho=O(h), so the generic first wholly-active row has order p-1. The
+  // fixed regularity closure retains p; fixed nonzero physical rho is checked
+  // separately at p.
+  return layer < NGHOST - 1 ? closure_order : closure_order - 1;
 }
 
 template <int NGHOST>
 constexpr double FitDerivativeRowOneNorm() {
   if constexpr (NGHOST == 2) return 1.0;
   if constexpr (NGHOST == 3) return 1.5;
-  return 2.5;
+  return 11.0 / 6.0;
 }
 
 template <int NGHOST>
 constexpr double IndependentNoiseCoefficientNormBound() {
-  // At a fitted node, 1/r_l^2 contributes at most 4/h^2. The largest
+  // At a direct-closure node, 1/r_l^2 contributes at most 4/h^2. The largest
   // derivative composite contributes 4*(rho/h)^2 times the Lagrange-row
   // one-norm, while a two-component nonderivative difference contributes at
   // most 16. A factor two covers the manufactured advection multiplier and
   // the result is rounded upward to a power-of-two audit bound. The raw
   // transition has smaller reciprocal-radius and Dx coefficient norms.
   constexpr double outer_radius = static_cast<double>(NGHOST) - 0.5;
-  constexpr double fitted_bound =
+  constexpr double closure_bound =
       2.0 * (16.0 * outer_radius * outer_radius *
                  FitDerivativeRowOneNorm<NGHOST>() +
              16.0);
   if constexpr (NGHOST == 2) {
-    static_assert(fitted_bound < 128.0);
+    static_assert(closure_bound < 128.0);
     return 128.0;
   }
   if constexpr (NGHOST == 3) {
-    static_assert(fitted_bound < 512.0);
+    static_assert(closure_bound < 512.0);
     return 512.0;
   }
-  static_assert(fitted_bound < 1024.0);
+  static_assert(closure_bound < 1024.0);
   return 1024.0;
 }
 
@@ -921,15 +924,16 @@ bool CheckFullApiAndCartesianDelegation(const double rho_sample) {
 }
 
 template <int NGHOST>
-bool CheckMinimalFitReach() {
+bool CheckMinimalRegularityReach() {
   using Provider = z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST>;
   constexpr int axial_extent = 2 * NGHOST + 1;
-  constexpr int targets = 2 * NGHOST;
-  // The radial extent is exactly the fitted-side sample set, with no radial
-  // ghosts. Every operation below is a suppressed composite whose fitted
+  constexpr int targets = 2 * (NGHOST - 1);
+  // The radial extent is exactly the direct-closure sample set, with no radial
+  // ghosts. Every operation below is a suppressed composite whose closure
   // branch needs only those samples (and, for z-mixed terms, axial ghosts).
   // Kokkos debug bounds therefore catches any extra or mirrored radial read.
-  DvceArray5D<Real> state("minimal Cartoon fit reach state", 2, kNumVariables, 1,
+  DvceArray5D<Real> state("minimal Cartoon regularity reach state", 2,
+                          kNumVariables, 1,
                           axial_extent, NGHOST);
   auto host = Kokkos::create_mirror_view(state);
   for (int block = 0; block < 2; ++block) {
@@ -956,12 +960,13 @@ bool CheckMinimalFitReach() {
   }
   Kokkos::deep_copy(state, host);
 
-  DvceArray1D<Real> results("minimal Cartoon fit reach results", targets);
+  DvceArray1D<Real> results("minimal Cartoon regularity reach results", targets);
   Kokkos::parallel_for(
-      "minimal Cartoon fit reach", Kokkos::RangePolicy<DevExeSpace>(0, targets),
+      "minimal Cartoon regularity reach",
+      Kokkos::RangePolicy<DevExeSpace>(0, targets),
       KOKKOS_LAMBDA(const int target) {
-        const int block = target / NGHOST;
-        const int layer = target % NGHOST;
+        const int block = target / (NGHOST - 1);
+        const int layer = target % (NGHOST - 1);
         const int side_sign = block == 0 ? 1 : -1;
         const int sample_i = block == 0 ? layer : NGHOST - 1 - layer;
         const Real rho = side_sign * (static_cast<Real>(layer) + 0.5);
@@ -1001,7 +1006,7 @@ bool CheckMinimalFitReach() {
                 z4c::TensorVariance::all_lower>(kSuppressed, kZ, first, second,
                                                 tensor);
             // Compile and execute both variance specializations on the same bounded
-            // fitted view.  Their suppressed-index signs differ for mixed components,
+            // closure view. Their suppressed-index signs differ for mixed components,
             // so this is a real provider/API instantiation rather than a source marker.
             sum += derivative.template TensorFirst<
                 z4c::TensorVariance::all_upper>(kSuppressed, first, second, tensor);
@@ -1018,9 +1023,9 @@ bool CheckMinimalFitReach() {
   for (int target = 0; target < targets; ++target) {
     if (!std::isfinite(result_host(target))) {
       std::cerr << "order " << 2 * (NGHOST - 1)
-                << " minimal-fit reach returned a non-finite value at side="
-                << (target < NGHOST ? "+" : "-")
-                << " layer=" << target % NGHOST << '\n';
+                << " minimal-regularity reach returned a non-finite value at side="
+                << (target < NGHOST - 1 ? "+" : "-")
+                << " layer=" << target % (NGHOST - 1) << '\n';
       return false;
     }
   }
@@ -1031,7 +1036,7 @@ template <int NGHOST>
 bool CheckBlockBoundaryReach() {
   using Provider = z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST>;
   static_assert(Provider::MaximumRegularizationOffset() == NGHOST - 1,
-                "near-axis fit must stay within the ordinary stencil reach");
+                "near-axis closure must stay within the ordinary stencil reach");
   constexpr int radial_extent = 3 * NGHOST;
   constexpr int axial_extent = 2 * NGHOST + 1;
   constexpr int targets = 2 * NGHOST;
@@ -1191,7 +1196,8 @@ bool CheckOrder() {
   const auto near_axis_offsets = SignedNearAxisOffsets<NGHOST>();
   // The negative sample is the pi-rotated signed-plane image of the positive sample.
   // Both are compared to independently rotated full-Cartesian jet derivatives.
-  if (!CheckMinimalFitReach<NGHOST>() || !CheckBlockBoundaryReach<NGHOST>() ||
+  if (!CheckMinimalRegularityReach<NGHOST>() ||
+      !CheckBlockBoundaryReach<NGHOST>() ||
       !CheckFullApiAndCartesianDelegation<NGHOST>(0.5) ||
       !CheckFullApiAndCartesianDelegation<NGHOST>(-0.5) ||
       !CheckFixedRadiusRawConvergence<NGHOST>(0.5) ||
@@ -1409,7 +1415,7 @@ bool CheckOrder() {
 
 bool CheckParity() {
   using Provider = z4c::DerivativeProvider<z4c::CartoonSO2, 2>;
-  if (Provider::RegularizedHalfCellLayers() != 2 ||
+  if (Provider::RegularizedHalfCellLayers() != 1 ||
       Provider::MaximumRegularizationOffset() != 1 ||
       Provider::ScalarParity() != 1 ||
       Provider::VectorParity(0) != -1 ||

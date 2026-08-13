@@ -8,6 +8,8 @@
 //         frequently in time to trace their evolution.
 
 #include <algorithm>
+#include <array>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <iomanip>
@@ -15,6 +17,7 @@
 #include <limits>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -31,6 +34,102 @@
 #include "outputs.hpp"
 
 namespace {
+
+constexpr int kCartoonConstraintFamilies = 4;
+constexpr int kCartoonAxisLayers = 5;
+constexpr int kCartoonRegionStride = kCartoonConstraintFamilies + 1;
+constexpr int kCartoonAxisSumBase = 0;
+constexpr int kCartoonOffAxisSumBase = kCartoonAxisSumBase + kCartoonRegionStride;
+constexpr int kCartoonLayerSumBase = kCartoonOffAxisSumBase + kCartoonRegionStride;
+constexpr int kCartoonDiagnosticSums =
+    kCartoonLayerSumBase + kCartoonAxisLayers * kCartoonRegionStride;
+
+struct ConstraintMaximum {
+  Real value = 0.0;
+  Real rho = 0.0;
+  Real z = 0.0;
+};
+
+template <int FAMILY, typename ConstraintView, typename ChiView,
+          typename MeshBlockSizeDualView>
+ConstraintMaximum CartoonConstraintMaximum(
+    const ConstraintView &constraints, const ChiView &chi,
+    MeshBlockSizeDualView &size, const Real excise_chi,
+    const int nmb, const int nx1, const int nx2, const int nx3,
+    const int is, const int js, const int ks) {
+  static_assert(FAMILY >= 0 && FAMILY < kCartoonConstraintFamilies);
+  const int nkji = nx3 * nx2 * nx1;
+  const int nji = nx2 * nx1;
+  const int nmkji = nmb * nkji;
+  typename Kokkos::MaxLoc<Real, int>::value_type local_maximum;
+  Kokkos::parallel_reduce(
+      "Cartoon constraint Linf location",
+      Kokkos::RangePolicy<DevExeSpace>(0, nmkji),
+      KOKKOS_LAMBDA(
+          const int idx,
+          typename Kokkos::MaxLoc<Real, int>::value_type &maximum) {
+        const int m = idx / nkji;
+        const int k0 = (idx - m * nkji) / nji;
+        const int j0 = (idx - m * nkji - k0 * nji) / nx1;
+        const int i0 = idx - m * nkji - k0 * nji - j0 * nx1;
+        const int i = i0 + is;
+        const int j = j0 + js;
+        const int k = k0 + ks;
+        if (chi(m, k, j, i) < excise_chi) return;
+        const Real raw = constraints(m, FAMILY, k, j, i);
+        Real magnitude = 0.0;
+        if constexpr (FAMILY == 1) {
+          magnitude = Kokkos::fabs(raw);
+        } else {
+          magnitude = (Kokkos::isfinite(raw) && raw >= 0.0)
+                          ? Kokkos::sqrt(raw)
+                          : std::numeric_limits<Real>::infinity();
+        }
+        if (!Kokkos::isfinite(magnitude)) {
+          magnitude = std::numeric_limits<Real>::infinity();
+        }
+        if (magnitude > maximum.val) {
+          maximum.val = magnitude;
+          maximum.loc = idx;
+        }
+      },
+      Kokkos::MaxLoc<Real, int>(local_maximum));
+
+  const bool local_valid = local_maximum.loc >= 0 && local_maximum.loc < nmkji;
+  Real global_maximum = local_valid ? local_maximum.val : -1.0;
+  int owner_rank = global_variable::my_rank;
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &global_maximum, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+  int candidate_rank =
+      (local_valid && local_maximum.val == global_maximum)
+          ? global_variable::my_rank
+          : std::numeric_limits<int>::max();
+  MPI_Allreduce(&candidate_rank, &owner_rank, 1, MPI_INT, MPI_MIN,
+                MPI_COMM_WORLD);
+#endif
+  ConstraintMaximum result;
+  if (global_maximum < 0.0 || owner_rank == std::numeric_limits<int>::max()) {
+    return result;
+  }
+  result.value = global_maximum;
+  Real position[2] = {0.0, 0.0};
+  if (global_variable::my_rank == owner_rank) {
+    const int m = local_maximum.loc / nkji;
+    const int k0 = (local_maximum.loc - m * nkji) / nji;
+    const int j0 = (local_maximum.loc - m * nkji - k0 * nji) / nx1;
+    const int i0 = local_maximum.loc - m * nkji - k0 * nji - j0 * nx1;
+    size.sync_host();
+    position[0] = size.h_view(m).x1min + (i0 + 0.5) * size.h_view(m).dx1;
+    position[1] = size.h_view(m).x2min + (j0 + 0.5) * size.h_view(m).dx2;
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Bcast(position, 2, MPI_ATHENA_REAL, owner_rank, MPI_COMM_WORLD);
+#endif
+  result.rho = position[0];
+  result.z = position[1];
+  return result;
+}
 
 template <typename Symmetry, int NGHOST>
 Real Z4cHistoryMaxKretschmann(Mesh *pm) {
@@ -220,8 +319,8 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
       hvars.the_array[nhydro_+3+s] = vol*u0_(m,nhydro_+s,k,j,i);
     }
 
-    // fill rest of the_array with zeros, if nhist < NHISTORY_VARIABLES
-    for (int n=nhist_; n<NHISTORY_VARIABLES; ++n) {
+    // Fill the fixed-width legacy reducer, not the larger HistoryData storage.
+    for (int n=nhist_; n<NREDUCTION_VARIABLES; ++n) {
       hvars.the_array[n] = 0.0;
     }
 
@@ -256,7 +355,23 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   const int central_lapse_index = cartoon ? cycle_index + 1 : -1;
   const int central_proper_time_index = cartoon ? central_lapse_index + 1 : -1;
   const int central_kretschmann_index = cartoon ? central_proper_time_index + 1 : -1;
-  pdata->nhist = cartoon ? central_kretschmann_index + 1 : cycle_index + 1;
+  const int cartoon_axis_index = cartoon ? central_kretschmann_index + 1 : -1;
+  const int cartoon_off_axis_index =
+      cartoon ? cartoon_axis_index + kCartoonRegionStride : -1;
+  const int cartoon_layer_index =
+      cartoon ? cartoon_off_axis_index + kCartoonRegionStride : -1;
+  const int cartoon_linf_index =
+      cartoon ? cartoon_layer_index +
+                    kCartoonAxisLayers * kCartoonRegionStride : -1;
+  pdata->nhist = cartoon
+                     ? cartoon_linf_index + 3 * kCartoonConstraintFamilies
+                     : cycle_index + 1;
+  if (pdata->nhist > NHISTORY_VARIABLES) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": Cartoon history inventory exceeds NHISTORY_VARIABLES"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   pdata->label[0] = "C-norm2";
   pdata->label[1] = "H-norm2";
   pdata->label[2] = "M-norm2";
@@ -292,6 +407,38 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
     pdata->reduction[central_lapse_index] = HistoryData::Reduction::max;
     pdata->reduction[central_proper_time_index] = HistoryData::Reduction::max;
     pdata->reduction[central_kretschmann_index] = HistoryData::Reduction::max;
+
+    constexpr std::array<const char *, kCartoonConstraintFamilies> names = {
+        "C", "H", "M", "Z"};
+    for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
+      pdata->label[cartoon_axis_index + family] =
+          std::string("ax-") + names[family] + "2";
+      pdata->label[cartoon_off_axis_index + family] =
+          std::string("off-") + names[family] + "2";
+    }
+    pdata->label[cartoon_axis_index + kCartoonConstraintFamilies] = "ax-N";
+    pdata->label[cartoon_off_axis_index + kCartoonConstraintFamilies] = "off-Vol";
+    for (int layer = 0; layer < kCartoonAxisLayers; ++layer) {
+      const int base = cartoon_layer_index + layer * kCartoonRegionStride;
+      for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
+        pdata->label[base + family] =
+            std::string("L") + std::to_string(layer) + "-" +
+            names[family] + "2";
+      }
+      pdata->label[base + kCartoonConstraintFamilies] =
+          std::string("L") + std::to_string(layer) + "-N";
+    }
+    for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
+      const int base = cartoon_linf_index + 3 * family;
+      pdata->label[base] = std::string(names[family]) + "-Linf";
+      pdata->label[base + 1] = std::string(names[family]) + "-rho";
+      pdata->label[base + 2] = std::string(names[family]) + "-z";
+      // These values are made globally identical below, so the ordinary MPI
+      // history reduction remains deterministic without multiplying locations.
+      pdata->reduction[base] = HistoryData::Reduction::max;
+      pdata->reduction[base + 1] = HistoryData::Reduction::max;
+      pdata->reduction[base + 2] = HistoryData::Reduction::max;
+    }
   }
 
   // capture class variabels for kernel
@@ -328,10 +475,10 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
                                 adm.g_dd(m,0,2,k,j,i), adm.g_dd(m,1,1,k,j,i),
                                 adm.g_dd(m,1,2,k,j,i), adm.g_dd(m,2,2,k,j,i));
 
-    const Real signed_rho = size.d_view(m).x1min +
-                            (i - is + 0.5) * size.d_view(m).dx1;
+    const Real rho = size.d_view(m).x1min +
+                     (i - is + 0.5) * size.d_view(m).dx1;
     const Real vol = z4c::Z4cDiagnosticCellMeasure(
-        symmetry_mode, signed_rho, size.d_view(m).dx1, size.d_view(m).dx2,
+        symmetry_mode, rho, size.d_view(m).dx1, size.d_view(m).dx2,
         size.d_view(m).dx3, detg);
 
     // Excise the punctures based on chi
@@ -359,7 +506,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
     }
 
     // max|K| is reduced separately below.
-    for (int n=nsum; n<NHISTORY_VARIABLES; ++n) {
+    for (int n=nsum; n<NREDUCTION_VARIABLES; ++n) {
       hvars.the_array[n] = 0.0;
     }
 
@@ -370,6 +517,112 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   // store data into hdata array
   for (int n=0; n<nsum; ++n) {
     pdata->hdata[n] = sum_this_mb.the_array[n];
+  }
+  if (cartoon) {
+    DvceArray1D<Real> diagnostic_sums(
+        "Cartoon constraint region sums", kCartoonDiagnosticSums);
+    Kokkos::deep_copy(diagnostic_sums, 0.0);
+    const Real excise_chi = opt.excise_chi;
+    Kokkos::parallel_for(
+        "Cartoon constraint axis off-axis and layer sums",
+        Kokkos::RangePolicy<DevExeSpace>(0, nmkji),
+        KOKKOS_LAMBDA(const int idx) {
+          const int m = idx / nkji;
+          const int k0 = (idx - m * nkji) / nji;
+          const int j0 = (idx - m * nkji - k0 * nji) / nx1;
+          const int i0 = idx - m * nkji - k0 * nji - j0 * nx1;
+          const int i = i0 + is;
+          const int j = j0 + js;
+          const int k = k0 + ks;
+          if (z4c.chi(m, k, j, i) < excise_chi) return;
+
+          const Real dx1 = size.d_view(m).dx1;
+          const Real rho = size.d_view(m).x1min + (i0 + 0.5) * dx1;
+          const int radial_layer = static_cast<int>(Kokkos::floor(rho / dx1));
+          const Real detg = adm::SpatialDet(
+              adm.g_dd(m,0,0,k,j,i), adm.g_dd(m,0,1,k,j,i),
+              adm.g_dd(m,0,2,k,j,i), adm.g_dd(m,1,1,k,j,i),
+              adm.g_dd(m,1,2,k,j,i), adm.g_dd(m,2,2,k,j,i));
+          const Real physical_volume = z4c::Z4cDiagnosticCellMeasure(
+              symmetry_mode, rho, dx1, size.d_view(m).dx2,
+              size.d_view(m).dx3, detg);
+          const Real squared[kCartoonConstraintFamilies] = {
+              u_con_(m,0,k,j,i), SQR(u_con_(m,1,k,j,i)),
+              u_con_(m,2,k,j,i), u_con_(m,3,k,j,i)};
+
+          if (radial_layer >= 0 && radial_layer < kCartoonAxisLayers) {
+            for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
+              Kokkos::atomic_add(
+                  &diagnostic_sums(kCartoonAxisSumBase + family),
+                  squared[family]);
+              Kokkos::atomic_add(
+                  &diagnostic_sums(
+                      kCartoonLayerSumBase +
+                      radial_layer * kCartoonRegionStride + family),
+                  squared[family]);
+            }
+            Kokkos::atomic_add(
+                &diagnostic_sums(
+                    kCartoonAxisSumBase + kCartoonConstraintFamilies),
+                1.0);
+            Kokkos::atomic_add(
+                &diagnostic_sums(
+                    kCartoonLayerSumBase +
+                    radial_layer * kCartoonRegionStride +
+                    kCartoonConstraintFamilies),
+                1.0);
+          } else {
+            for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
+              Kokkos::atomic_add(
+                  &diagnostic_sums(kCartoonOffAxisSumBase + family),
+                  physical_volume * squared[family]);
+            }
+            Kokkos::atomic_add(
+                &diagnostic_sums(
+                    kCartoonOffAxisSumBase + kCartoonConstraintFamilies),
+                physical_volume);
+          }
+        });
+    auto host_sums =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), diagnostic_sums);
+    for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
+      pdata->hdata[cartoon_axis_index + family] =
+          host_sums(kCartoonAxisSumBase + family);
+      pdata->hdata[cartoon_off_axis_index + family] =
+          host_sums(kCartoonOffAxisSumBase + family);
+    }
+    pdata->hdata[cartoon_axis_index + kCartoonConstraintFamilies] =
+        host_sums(kCartoonAxisSumBase + kCartoonConstraintFamilies);
+    pdata->hdata[cartoon_off_axis_index + kCartoonConstraintFamilies] =
+        host_sums(kCartoonOffAxisSumBase + kCartoonConstraintFamilies);
+    for (int layer = 0; layer < kCartoonAxisLayers; ++layer) {
+      for (int entry = 0; entry < kCartoonRegionStride; ++entry) {
+        pdata->hdata[
+            cartoon_layer_index + layer * kCartoonRegionStride + entry] =
+            host_sums(
+                kCartoonLayerSumBase + layer * kCartoonRegionStride + entry);
+      }
+    }
+
+    const std::array<ConstraintMaximum, kCartoonConstraintFamilies> maxima = {
+        CartoonConstraintMaximum<0>(u_con_, z4c.chi, size, excise_chi,
+                                    pm->pmb_pack->nmb_thispack,
+                                    nx1, nx2, nx3, is, js, ks),
+        CartoonConstraintMaximum<1>(u_con_, z4c.chi, size, excise_chi,
+                                    pm->pmb_pack->nmb_thispack,
+                                    nx1, nx2, nx3, is, js, ks),
+        CartoonConstraintMaximum<2>(u_con_, z4c.chi, size, excise_chi,
+                                    pm->pmb_pack->nmb_thispack,
+                                    nx1, nx2, nx3, is, js, ks),
+        CartoonConstraintMaximum<3>(u_con_, z4c.chi, size, excise_chi,
+                                    pm->pmb_pack->nmb_thispack,
+                                    nx1, nx2, nx3, is, js, ks)};
+    for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
+      const int base = cartoon_linf_index + 3 * family;
+      pdata->hdata[base] = maxima[family].value;
+      pdata->hdata[base + 1] = maxima[family].rho;
+      pdata->hdata[base + 2] = maxima[family].z;
+    }
   }
   Real max_abs_K = 0.0;
   Kokkos::parallel_reduce(
@@ -521,8 +774,8 @@ void HistoryOutput::LoadMHDHistoryData(HistoryData *pdata, Mesh *pm) {
       hvars.the_array[nmhd_+6+s] = vol*u0_(m,nmhd_+s,k,j,i);
     }
 
-    // fill rest of the_array with zeros, if nhist < NHISTORY_VARIABLES
-    for (int n=nhist_; n<NHISTORY_VARIABLES; ++n) {
+    // Fill the fixed-width legacy reducer, not the larger HistoryData storage.
+    for (int n=nhist_; n<NREDUCTION_VARIABLES; ++n) {
       hvars.the_array[n] = 0.0;
     }
 

@@ -16,8 +16,9 @@ int main(int argc, char *argv[]) {
   Kokkos::initialize(argc, argv);
   bool passed = false;
   {
-    passed = CheckParity() && CheckMinimalFitReach<2>() &&
-             CheckMinimalFitReach<3>() && CheckMinimalFitReach<4>() &&
+    passed = CheckParity() && CheckMinimalRegularityReach<2>() &&
+             CheckMinimalRegularityReach<3>() &&
+             CheckMinimalRegularityReach<4>() &&
              CheckBlockBoundaryReach<2>() && CheckBlockBoundaryReach<3>() &&
              CheckBlockBoundaryReach<4>();
   }

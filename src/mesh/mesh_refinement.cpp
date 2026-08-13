@@ -43,12 +43,14 @@
 
 namespace {
 
-// A signed-rho Cartoon tree must remain invariant under rho -> -rho.  Reconcile the
-// globally gathered flags before any counts or tree mutation; refinement wins over hold,
-// and hold wins over derefinement, so symmetry never discards requested resolution.
+// The retired signed-rho carrier required a reflected tree.  Retain that compatibility
+// rule only for restart inspection: a half-plane tree is physical storage and must never
+// be reflected about the midpoint of its radial extent.
 void ReconcileCartoonRefinementFlags(Mesh *pmesh, MeshBlockTree *tree) {
   if (pmesh->pmb_pack == nullptr ||
-      pmesh->pmb_pack->z4c_symmetry.mode != z4c::Z4cSymmetryMode::cartoon_so2) {
+      pmesh->pmb_pack->z4c_symmetry.mode != z4c::Z4cSymmetryMode::cartoon_so2 ||
+      pmesh->pmb_pack->z4c_symmetry.coordinate_map !=
+          z4c::Z4cCoordinateMap::signed_rho_z_suppressed_y_v1) {
     return;
   }
 
@@ -244,6 +246,10 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
       // same finalized Z4c/ADM/constraint state used at the end of a full integrator step
       // before any timestep or diagnostic consumes the new mesh.
       (void) pmbp->pz4c->EnforceAlgConstr(pdriver, pdriver->nexp_stages);
+      // Algebraic projection changes active metric/A fields after the boundary
+      // initialization fill.  Regenerate derived negative-rho ghosts before
+      // Z4cToADM populates stored ADM ghosts and constraints differentiate them.
+      (void) pmbp->pz4c->FillAxisParityGhosts(pdriver, pdriver->nexp_stages);
       (void) pmbp->pz4c->ConvertZ4cToADM(pdriver, pdriver->nexp_stages);
       (void) pmbp->pz4c->ADMConstraints_(pdriver, pdriver->nexp_stages);
       (void) pmbp->pz4c->NewTimeStep(pdriver, pdriver->nexp_stages);
@@ -1104,6 +1110,15 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
   auto &nx3 = indcs.nx3;
   auto& prolong_2nd = weights.prolong_2nd;
   auto& prolong_4th = weights.prolong_4th;
+  const int z4c_stencil =
+      is_z4c ? pmy_mesh->pmb_pack->pz4c->opt.fd_stencil : indcs.ng;
+  if (is_z4c && (z4c_stencil < 2 || z4c_stencil > 4 ||
+                 z4c_stencil > indcs.ng)) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": invalid Z4c AMR prolongation stencil " << z4c_stencil
+              << " for allocated nghost=" << indcs.ng << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   auto &refine_flag_ = refine_flag;
   bool &multi_d = pmy_mesh->multi_d;
@@ -1144,7 +1159,7 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
         } else if (v == z4c::Z4c::I_Z4C_CHI) {
           ChiProlongationStatus status = ChiProlongationStatus::invalid_limited;
-          switch (indcs.ng) {
+          switch (z4c_stencil) {
             case 2:
               status = ProlongPositiveChiCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
                                                multi_d,three_d,ca,a,prolong_2nd);
@@ -1160,7 +1175,7 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
           }
           Kokkos::atomic_inc(&chi_prolongation_counts(static_cast<int>(status)));
         } else {
-          switch (indcs.ng) {
+          switch (z4c_stencil) {
             case 2: HighOrderProlongCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
                                           ca,a,prolong_2nd);
                     break;
@@ -1321,6 +1336,15 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
   auto& restrict_2nd = weights.restrict_2nd;
   auto& restrict_4th = weights.restrict_4th;
   auto& restrict_4th_edge = weights.restrict_4th_edge;
+  const int z4c_stencil =
+      is_z4c ? pmy_mesh->pmb_pack->pz4c->opt.fd_stencil : indcs.ng;
+  if (is_z4c && (z4c_stencil < 2 || z4c_stencil > 4 ||
+                 z4c_stencil > indcs.ng)) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": invalid Z4c AMR restriction stencil " << z4c_stencil
+              << " for allocated nghost=" << indcs.ng << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   // restrict in 1D
   if (pmy_mesh->one_d) {
     par_for("restrictCC-1D",DevExeSpace(), 0,nmb-1, 0,nvar-1, cis,cie,
@@ -1352,7 +1376,7 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
                 + u(m,n,finek+1,finej,  finei) + u(m,n,finek+1,finej,  finei+1)
                 + u(m,n,finek+1,finej+1,finei) + u(m,n,finek+1,finej+1,finei+1));
       } else {
-        switch (indcs.ng) {
+        switch (z4c_stencil) {
           case 2: cu(m,n,k,j,i) = RestrictInterpolation<2>(m,n,finek,finej,finei,
                           nx1,nx2,nx3,u,restrict_2nd,restrict_4th,restrict_4th_edge);
                   break;

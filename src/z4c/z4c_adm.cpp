@@ -582,6 +582,7 @@ void Z4c::ADMConstraints(MeshBlockPack *pmbp) {
   } else {
     ADMConstraintsImpl<Cartesian3D, NGHOST>(pmbp);
   }
+  pmbp->pz4c->ReconstructConstraintAxisParityGhosts();
 }
 template void ADMConstraintsImpl<Cartesian3D, 2>(MeshBlockPack *);
 template void ADMConstraintsImpl<Cartesian3D, 3>(MeshBlockPack *);

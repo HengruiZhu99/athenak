@@ -19,7 +19,7 @@ z4c::Z4cValidationInput ValidCartoonInput() {
   z4c::Z4cValidationInput input;
   input.requested_symmetry = "cartoon_so2";
   input.coordinate_map_specified = true;
-  input.coordinate_map = "signed_rho_z_suppressed_y_v1";
+  input.coordinate_map = "half_rho_z_suppressed_y_v2";
   input.schema_specified = true;
   input.schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
   input.z4c_enabled = true;
@@ -28,10 +28,15 @@ z4c::Z4cValidationInput ValidCartoonInput() {
   input.mesh_nx1 = 64;
   input.mesh_nx2 = 64;
   input.mesh_nx3 = 1;
+  input.meshblock_nx1 = 32;
   input.meshblock_nx3 = 1;
   input.root_blocks_x1 = 2;
-  input.x1min = -24.0;
+  input.x1min = 0.0;
   input.x1max = 24.0;
+  input.inner_x1_boundary = "axis";
+  input.outer_x1_boundary = "outflow";
+  input.inner_x2_boundary = "outflow";
+  input.outer_x2_boundary = "outflow";
   input.problem_generator = "z4c_cartoon_derivatives";
   input.cartoon_derivative_check_only_present = true;
   input.cartoon_derivative_check_only_valid = true;
@@ -96,6 +101,8 @@ bool CheckNonpositiveSpatialOrderFallback() {
       input.requested_spatial_order = -1;
       if (input.requested_symmetry == "cartesian3d") {
         input.coordinate_map = "cartesian_xyz";
+        input.schema = z4c::Z4cSymmetryConfig::kCartesianSchema;
+        input.inner_x1_boundary = "outflow";
         input.problem_generator = "none";
         input.cartoon_derivative_check_only_present = false;
       }
@@ -119,6 +126,11 @@ bool CheckNonpositiveSpatialOrderFallback() {
 }
 
 bool CheckMeshAndPhysicsFailures() {
+  auto allowed = ValidCartoonInput();
+  allowed.mesh_nx1 = 63;
+  allowed.root_blocks_x1 = 1;
+  if (!z4c::ValidateZ4cSymmetry(allowed).valid) return false;
+
   auto input = ValidCartoonInput();
   input.requested_symmetry = "bad_mode";
   if (!Rejects(input, "cartesian3d or cartoon_so2")) return false;
@@ -135,14 +147,39 @@ bool CheckMeshAndPhysicsFailures() {
   input.mesh_nx2 = 1;
   if (!Rejects(input, "x1-x2")) return false;
   input = ValidCartoonInput();
-  input.mesh_nx1 = 63;
-  if (!Rejects(input, "even")) return false;
+  input.mesh_nx1 = 0;
+  if (!Rejects(input, "positive <mesh>/nx1")) return false;
   input = ValidCartoonInput();
-  input.root_blocks_x1 = 1;
-  if (!Rejects(input, "root x1 MeshBlocks")) return false;
+  input.meshblock_nx1 = 3;
+  if (!Rejects(input, "meshblock/nx1 >= mesh/nghost")) return false;
   input = ValidCartoonInput();
-  input.x1max = 23.0;
-  if (!Rejects(input, "x1min=-x1max")) return false;
+  input.multilevel = true;
+  input.meshblock_nx1 = 7;
+  if (!Rejects(input, "2*mesh/nghost")) return false;
+  input = ValidCartoonInput();
+  input.root_blocks_x1 = 0;
+  if (!Rejects(input, "positive root x1 MeshBlock")) return false;
+  input = ValidCartoonInput();
+  input.x1min = -1.0;
+  if (!Rejects(input, "x1min=0")) return false;
+  input = ValidCartoonInput();
+  input.x1min = 1.0e-300;
+  if (!Rejects(input, "x1min=0")) return false;
+  input = ValidCartoonInput();
+  input.x1max = 0.0;
+  if (!Rejects(input, "x1max>0")) return false;
+  input = ValidCartoonInput();
+  input.inner_x1_boundary = "reflect";
+  if (!Rejects(input, "ix1_bc=axis")) return false;
+  input = ValidCartoonInput();
+  input.outer_x1_boundary = "axis";
+  if (!Rejects(input, "only at inner_x1")) return false;
+  input = ValidCartoonInput();
+  input.inner_x2_boundary = "axis";
+  if (!Rejects(input, "only at inner_x1")) return false;
+  auto cartesian = z4c::Z4cValidationInput{};
+  cartesian.inner_x1_boundary = "axis";
+  if (!Rejects(cartesian, "reserved for cartoon_so2 inner_x1")) return false;
   input = ValidCartoonInput();
   input.coordinate_map = "cartesian_xyz";
   if (!Rejects(input, "coordinate_map")) return false;
@@ -241,14 +278,14 @@ bool CheckRestartAndPgenFailures() {
   input = ValidCartoonInput();
   input.restart_metadata_present = true;
   input.restart_symmetry = "cartoon_so2";
-  input.restart_coordinate_map = "signed_rho_z_suppressed_y_v1";
+  input.restart_coordinate_map = "half_rho_z_suppressed_y_v2";
   input.restart_schema = 99;
   if (!Rejects(input, "restart")) return false;
 
   input = ValidCartoonInput();
   input.restart_metadata_present = true;
   input.restart_symmetry = "cartoon_so2";
-  input.restart_coordinate_map = "signed_rho_z_suppressed_y_v1";
+  input.restart_coordinate_map = "half_rho_z_suppressed_y_v2";
   input.restart_schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
   if (!Rejects(input, "check_only rejects restart")) return false;
 
@@ -295,7 +332,7 @@ bool CheckKerrPunctureProductionAdmission() {
   input.restart_origin = true;
   input.restart_metadata_present = true;
   input.restart_symmetry = "cartoon_so2";
-  input.restart_coordinate_map = "signed_rho_z_suppressed_y_v1";
+  input.restart_coordinate_map = "half_rho_z_suppressed_y_v2";
   input.restart_schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
   result = z4c::ValidateZ4cSymmetry(input);
   if (!result.valid) return false;
@@ -338,7 +375,7 @@ bool CheckIrisImporterProductionAdmission() {
   input.restart_origin = true;
   input.restart_metadata_present = true;
   input.restart_symmetry = "cartoon_so2";
-  input.restart_coordinate_map = "signed_rho_z_suppressed_y_v1";
+  input.restart_coordinate_map = "half_rho_z_suppressed_y_v2";
   input.restart_schema = z4c::Z4cSymmetryConfig::kCurrentSchema;
   if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
   input.restart_coordinate_map = "cartesian_xyz";
@@ -353,8 +390,8 @@ bool CheckIrisImporterProductionAdmission() {
   input.incompatible_consumers = {"legacy FastFlow"};
   if (!Rejects(input, "legacy FastFlow")) return false;
   input.incompatible_consumers.clear();
-  input.root_blocks_x1 = 1;
-  return Rejects(input, "root x1 MeshBlocks");
+  input.meshblock_nx1 = 3;
+  return Rejects(input, "meshblock/nx1 >= mesh/nghost");
 }
 
 }  // namespace

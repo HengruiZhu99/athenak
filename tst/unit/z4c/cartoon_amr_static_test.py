@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused source and coefficient checks for the signed-rho Cartoon AMR slice."""
+"""Focused source and coefficient checks for the half-plane Cartoon AMR slice."""
 
 from fractions import Fraction
 from pathlib import Path
@@ -11,6 +11,10 @@ PROLONGATION = (ROOT / "src/mesh/prolongation.hpp").read_text(encoding="utf-8")
 REFINEMENT = (ROOT / "src/mesh/mesh_refinement.cpp").read_text(encoding="utf-8")
 BVALS = (ROOT / "src/bvals/prolongation.cpp").read_text(encoding="utf-8")
 Z4C_AMR = (ROOT / "src/z4c/z4c_amr.cpp").read_text(encoding="utf-8")
+KERR = (ROOT / "src/pgen/z4c/kerr_puncture.cpp").read_text(encoding="utf-8")
+IRISK = (ROOT / "src/pgen/z4c_irisk_xcts.cpp").read_text(encoding="utf-8")
+FASTFLOW = (ROOT / "src/z4c/fastflow.cpp").read_text(encoding="utf-8")
+M0_FASTFLOW = (ROOT / "src/z4c/cartoon_m0_fastflow.cpp").read_text(encoding="utf-8")
 
 
 def require(condition: bool, message: str) -> None:
@@ -66,6 +70,14 @@ def check_mirror_reconciliation_order() -> None:
             in REFINEMENT, "refine > hold > derefine precedence changed")
     require("mirror.lx1 = nradial - 1 - loc.lx1;" in REFINEMENT,
             "signed-rho logical mirror map changed")
+    require(
+        "z4c::Z4cCoordinateMap::signed_rho_z_suppressed_y_v1" in REFINEMENT,
+        "legacy mirror reconciliation is not explicitly map-gated",
+    )
+    require(
+        "half-plane tree is physical storage and must never" in REFINEMENT,
+        "half-plane AMR non-mirroring contract is missing",
+    )
 
 
 def check_collapsed_dchi() -> None:
@@ -78,8 +90,32 @@ def check_collapsed_dchi() -> None:
     require(match is not None, "collapsed dchi still reads k+/-1")
 
 
+def check_configured_stencil_dispatch() -> None:
+    # AMR requires an even allocated ghost width, so O4 legitimately has
+    # nghost=4 but fd_stencil=3.  Mathematical dispatch must follow the latter.
+    require(KERR.count("switch (pack->pz4c->opt.fd_stencil)") == 2,
+            "Kerr ADM conversion/constraint dispatch is not configuration-based")
+    require(IRISK.count("switch (pmbp->pz4c->opt.fd_stencil)") == 2,
+            "Iris ADM conversion/constraint dispatch is not configuration-based")
+    for source, name in ((BVALS, "boundary"), (REFINEMENT, "AMR")):
+        require(source.count("const int z4c_stencil =") == 2,
+                f"{name} does not bind both mathematical stencil dispatches")
+        require(source.count("switch (z4c_stencil)") >= 2,
+                f"{name} still dispatches Z4c operators from allocation width")
+        require("z4c_stencil > indcs.ng" in source,
+                f"{name} does not fail closed when stencil exceeds storage")
+    require("const int stencil = pmbp->z4c_symmetry.stencil_width;" in FASTFLOW,
+            "general FastFlow interpolation ignores configured Z4c stencil")
+    require("const int fd_stencil = pack_->z4c_symmetry.stencil_width;" in M0_FASTFLOW,
+            "m=0 FastFlow interpolation ignores configured Z4c stencil")
+    require("if (fd_stencil == 2)" in M0_FASTFLOW and
+            "else if (fd_stencil == 3)" in M0_FASTFLOW,
+            "m=0 FastFlow derivative dispatch is not configuration-based")
+
+
 check_cubic_weights()
 check_dispatch_and_collapsed_storage()
 check_mirror_reconciliation_order()
 check_collapsed_dchi()
+check_configured_stencil_dispatch()
 print("cartoon AMR static checks passed")

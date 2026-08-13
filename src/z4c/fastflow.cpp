@@ -882,8 +882,8 @@ void FastFlow::FastFlowLoop() {
     }
 
     // Step 2: Interpolate metric onto the surface.
-    auto &indcs = pmbp->pmesh->mb_indcs;
-    switch (indcs.ng) {
+    const int stencil = pmbp->z4c_symmetry.stencil_width;
+    switch (stencil) {
       case 2: MetricInterp<2>();
               break;
       case 3: MetricInterp<3>();

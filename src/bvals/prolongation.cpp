@@ -58,6 +58,16 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
   auto& restrict_2nd = pmy_pack->pmesh->pmr->weights.restrict_2nd;
   auto& restrict_4th = pmy_pack->pmesh->pmr->weights.restrict_4th;
   auto& restrict_4th_edge = pmy_pack->pmesh->pmr->weights.restrict_4th_edge;
+  const int z4c_stencil =
+      is_z4c ? pmy_pack->pz4c->opt.fd_stencil : indcs.ng;
+  if (is_z4c && (z4c_stencil < 2 || z4c_stencil > 4 ||
+                 z4c_stencil > indcs.ng)) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": invalid Z4c boundary restriction stencil "
+              << z4c_stencil << " for allocated nghost=" << indcs.ng
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   // Restrict data into coarse array in any boundary filled with data from the same
   // level.  This ensures data in the coarse array at corners where one direction is a
@@ -136,7 +146,7 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
                 + a(m,v,finek+1,finej,  finei) + a(m,v,finek+1,finej,  finei+1)
                 + a(m,v,finek+1,finej+1,finei) + a(m,v,finek+1,finej+1,finei+1));
             } else {
-                switch (indcs.ng) {
+                switch (z4c_stencil) {
                   case 2: ca(m,v,k,j,i) = RestrictInterpolation<2>(m,v,finek,finej,finei,
                               nx1,nx2,nx3,a,restrict_2nd,restrict_4th,restrict_4th_edge);
                           break;
@@ -184,6 +194,16 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
   auto &nx3 = indcs.nx3;
   auto& prolong_2nd = pmy_pack->pmesh->pmr->weights.prolong_2nd;
   auto& prolong_4th = pmy_pack->pmesh->pmr->weights.prolong_4th;
+  const int z4c_stencil =
+      is_z4c ? pmy_pack->pz4c->opt.fd_stencil : indcs.ng;
+  if (is_z4c && (z4c_stencil < 2 || z4c_stencil > 4 ||
+                 z4c_stencil > indcs.ng)) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": invalid Z4c boundary prolongation stencil "
+              << z4c_stencil << " for allocated nghost=" << indcs.ng
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   DvceArray1D<unsigned long long> chi_prolongation_counts(
       "Z4c boundary chi prolongation status counts", 4);
   Kokkos::deep_copy(chi_prolongation_counts, 0ULL);
@@ -228,7 +248,7 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
         } else if (v == z4c::Z4c::I_Z4C_CHI) {
           ChiProlongationStatus status = ChiProlongationStatus::invalid_limited;
-          switch (indcs.ng) {
+          switch (z4c_stencil) {
             case 2:
               status = ProlongPositiveChiCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
                                                multi_d,three_d,ca,a,prolong_2nd);
@@ -244,7 +264,7 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
           }
           Kokkos::atomic_inc(&chi_prolongation_counts(static_cast<int>(status)));
         } else {
-          switch (indcs.ng) {
+          switch (z4c_stencil) {
             case 2: HighOrderProlongCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
                                           ca,a,prolong_2nd);
                     break;

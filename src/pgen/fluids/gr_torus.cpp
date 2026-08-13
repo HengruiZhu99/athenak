@@ -1757,10 +1757,10 @@ void TorusFluxes(HistoryData *pdata, Mesh *pm) {
   //  (3) angular momentum flux
   //  (4) magnetic flux (iff MHD)
   pdata->nhist = nradii*nflux;
-  if (pdata->nhist > NHISTORY_VARIABLES) {
+  if (pdata->nhist > NREDUCTION_VARIABLES) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "User history function specified pdata->nhist larger than"
-              << " NHISTORY_VARIABLES" << std::endl;
+              << " NREDUCTION_VARIABLES" << std::endl;
     exit(EXIT_FAILURE);
   }
   for (int g=0; g<nradii; ++g) {
@@ -1892,8 +1892,8 @@ void TorusFluxes(HistoryData *pdata, Mesh *pm) {
     }
   }
 
-  // fill rest of the_array with zeros, if nhist < NHISTORY_VARIABLES
-  for (int n=pdata->nhist; n<NHISTORY_VARIABLES; ++n) {
+  // fill the fixed-width GlobalSum reducer
+  for (int n=pdata->nhist; n<NREDUCTION_VARIABLES; ++n) {
     pdata->hdata[n] = 0.0;
   }
 

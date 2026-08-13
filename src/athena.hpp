@@ -477,7 +477,8 @@ struct array_type {
     }
   }
 };
-// Number of reductions templated by (NHISTORY_VARIABLES)
+// Fixed width used by the legacy multi-sum reducer. HistoryData may expose
+// additional diagnostics that are reduced by dedicated kernels.
 typedef array_type<Real,(NREDUCTION_VARIABLES)> GlobalSum;  // simplifies code below
 } // namespace array_sum
 

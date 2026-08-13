@@ -433,7 +433,7 @@ bool RunStencil() {
   pack->AddCoordinates(&input);
   pack->z4c_symmetry = {z4c::Z4cSymmetryMode::cartoon_so2,
                          z4c::Z4cCoordinateMap::signed_rho_z_suppressed_y_v1,
-                         z4c::Z4cSymmetryConfig::kCurrentSchema, STENCIL};
+                         1, STENCIL};
   pack->pz4c = new z4c::Z4c(pack, &input);
   pack->padm = new adm::ADM(pack, &input);
   pack->ptmunu = nullptr;

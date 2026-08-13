@@ -505,11 +505,14 @@ def main():
     collapsed = restart_data
     for block, key, value in (
         ("z4c", "symmetry", "cartoon_so2"),
-        ("z4c", "coordinate_map", "signed_rho_z_suppressed_y_v1"),
+        ("z4c", "coordinate_map", "half_rho_z_suppressed_y_v2"),
+        ("z4c", "symmetry_schema", "2"),
         ("z4c", "restart_symmetry", "cartoon_so2"),
-        ("z4c", "restart_coordinate_map", "signed_rho_z_suppressed_y_v1"),
+        ("z4c", "restart_coordinate_map", "half_rho_z_suppressed_y_v2"),
+        ("z4c", "restart_symmetry_schema", "2"),
         ("z4c_restart", "symmetry", "cartoon_so2"),
-        ("z4c_restart", "coordinate_map", "signed_rho_z_suppressed_y_v1"),
+        ("z4c_restart", "coordinate_map", "half_rho_z_suppressed_y_v2"),
+        ("z4c_restart", "symmetry_schema", "2"),
         ("z4c_restart", "mesh_nx3", "1"),
         ("z4c_restart", "meshblock_nx3", "1"),
         ("mesh", "nx3", "1"),

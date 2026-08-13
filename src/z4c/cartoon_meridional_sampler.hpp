@@ -4,7 +4,7 @@
 // Licensed under the 3-clause BSD License, see LICENSE file for details
 //========================================================================================
 //! \file cartoon_meridional_sampler.hpp
-//! \brief Shared geometry and scalar sampling on the signed-rho Cartoon plane.
+//! \brief Shared geometry and scalar sampling on the half-plane Cartoon mesh.
 
 #ifndef Z4C_CARTOON_MERIDIONAL_SAMPLER_HPP_
 #define Z4C_CARTOON_MERIDIONAL_SAMPLER_HPP_
@@ -33,15 +33,15 @@ inline constexpr Real kCartoonTwoPi =
     6.2831853071795864769252867665590057683943387987502;
 
 //! Cell measure for Z4c integral diagnostics. Cartesian behavior is unchanged;
-//! Cartoon uses only the positive-rho half of the signed meridional plane.
+//! Cartoon uses the physical nonnegative-rho meridional half-plane.
 KOKKOS_INLINE_FUNCTION
-Real Z4cDiagnosticCellMeasure(const Z4cSymmetryMode mode, const Real signed_rho,
+Real Z4cDiagnosticCellMeasure(const Z4cSymmetryMode mode, const Real rho,
                               const Real dx1, const Real dx2, const Real dx3,
                               const Real spatial_determinant) {
   const Real proper_factor = Kokkos::sqrt(Kokkos::fabs(spatial_determinant));
   if (mode == Z4cSymmetryMode::cartoon_so2) {
-    return signed_rho > 0.0
-               ? kCartoonTwoPi * signed_rho * dx1 * dx2 * proper_factor
+    return rho > 0.0
+               ? kCartoonTwoPi * rho * dx1 * dx2 * proper_factor
                : 0.0;
   }
   return dx1 * dx2 * dx3 * proper_factor;
@@ -117,7 +117,7 @@ inline bool ContainsClosed(const Real value, const Real lower, const Real upper)
 //! Select the finest leaf touching a physical point. At equal level, prefer
 //! positive rho and positive z at symmetry interfaces, then the lowest gid.
 inline CartoonMeridionalStencil LocateCartoonMeridionalPoint(
-    Mesh *mesh, const Real signed_rho, const Real z) {
+    Mesh *mesh, const Real rho, const Real z) {
   CartoonMeridionalStencil stencil;
   bool selected_positive_rho = false;
   bool selected_positive_z = false;
@@ -133,7 +133,7 @@ inline CartoonMeridionalStencil LocateCartoonMeridionalPoint(
     const LogicalLocation &location = mesh->lloc_eachmb[gid];
     meridional_detail::LogicalEdges(*mesh, location, &x1min, &x1max, &x2min,
                                     &x2max);
-    if (!meridional_detail::ContainsClosed(signed_rho, x1min, x1max) ||
+    if (!meridional_detail::ContainsClosed(rho, x1min, x1max) ||
         !meridional_detail::ContainsClosed(z, x2min, x2max)) {
       continue;
     }
@@ -170,7 +170,7 @@ inline CartoonMeridionalStencil LocateCartoonMeridionalPoint(
   const auto &indices = mesh->mb_indcs;
   const Real dx1 = (selected_x1max - selected_x1min) / indices.nx1;
   const Real dx2 = (selected_x2max - selected_x2min) / indices.nx2;
-  const Real offset_i = (signed_rho - selected_x1min) / dx1 - 0.5;
+  const Real offset_i = (rho - selected_x1min) / dx1 - 0.5;
   const Real offset_j = (z - selected_x2min) / dx2 - 0.5;
   const int lower_i = static_cast<int>(std::floor(offset_i));
   const int lower_j = static_cast<int>(std::floor(offset_j));
@@ -238,6 +238,7 @@ struct CartoonCentralSupportSet {
   unsigned int refined_mask = 0;
   Real common_dx1 = 0.0;
   Real common_dx2 = 0.0;
+  bool half_plane = false;
   CartoonCentralSample::Status construction_status =
       CartoonCentralSample::Status::valid;
 };
@@ -250,16 +251,18 @@ int CartoonCentralSourceSlot(const int quadrant, const int child) {
 inline void InitializeCartoonCentralSupportGeometry(
     CartoonCentralSupportSet *supports, const int common_level,
     const Real common_dx1, const Real common_dx2,
-    const unsigned int refined_mask) {
+    const unsigned int refined_mask, const bool half_plane = false) {
   supports->source_count = 0;
   supports->common_level = common_level;
   supports->common_dx1 = common_dx1;
   supports->common_dx2 = common_dx2;
   supports->refined_mask = refined_mask;
+  supports->half_plane = half_plane;
   for (int slot = 0; slot < kCartoonCentralMaxSources; ++slot) {
     supports->point[slot] = CartoonCentralSupport{};
   }
   for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+    if (half_plane && (quadrant & 1) == 0) continue;
     const Real rho_sign = (quadrant & 1) == 0 ? -1.0 : 1.0;
     const Real z_sign = (quadrant & 2) == 0 ? -1.0 : 1.0;
     const Real center_rho = 0.5 * rho_sign * common_dx1;
@@ -278,7 +281,9 @@ inline void InitializeCartoonCentralSupportGeometry(
       point.z = center_z +
                 (refined ? 0.25 * child_z_sign * common_dx2 : 0.0);
       point.restriction_weight = refined ? 0.25 : 1.0;
-      point.final_weight = refined ? 0.0625 : 0.25;
+      point.final_weight = half_plane
+                               ? (refined ? 0.125 : 0.5)
+                               : (refined ? 0.0625 : 0.25);
       ++supports->source_count;
     }
   }
@@ -308,7 +313,8 @@ inline CartoonCentralSample::Status ValidateCartoonCentralSupportSet(
   if (supports.common_level < 0 || !(supports.common_dx1 > 0.0) ||
       !(supports.common_dx2 > 0.0) || !std::isfinite(supports.common_dx1) ||
       !std::isfinite(supports.common_dx2) ||
-      (supports.refined_mask & ~0xFU) != 0) {
+      (supports.refined_mask & ~0xFU) != 0 ||
+      (supports.half_plane && (supports.refined_mask & 0x5U) != 0)) {
     return CartoonCentralSample::Status::invalid_common_lattice;
   }
   int expected_count = 0;
@@ -341,7 +347,9 @@ inline CartoonCentralSample::Status ValidateCartoonCentralSupportSet(
         std::fabs(point.rho - expected_rho) > tolerance * rho_scale ||
         std::fabs(point.z - expected_z) > tolerance * z_scale ||
         point.restriction_weight != (refined ? 0.25 : 1.0) ||
-        point.final_weight != (refined ? 0.0625 : 0.25)) {
+        point.final_weight != (supports.half_plane
+                                   ? (refined ? 0.125 : 0.5)
+                                   : (refined ? 0.0625 : 0.25))) {
       return CartoonCentralSample::Status::invalid_common_lattice;
     }
     if (point.owner_rank < 0 || point.owner_rank >= nranks) {
@@ -362,6 +370,14 @@ inline CartoonCentralSample::Status ValidateCartoonCentralSupportSet(
   if (expected_count != supports.source_count) {
     return CartoonCentralSample::Status::invalid_common_lattice;
   }
+  Real final_weight_sum = 0.0;
+  for (int s = 0; s < kCartoonCentralMaxSources; ++s) {
+    if (supports.point[s].expected) final_weight_sum += supports.point[s].final_weight;
+  }
+  if (std::fabs(final_weight_sum - 1.0) >
+      64.0 * std::numeric_limits<Real>::epsilon()) {
+    return CartoonCentralSample::Status::invalid_common_lattice;
+  }
   return CartoonCentralSample::Status::valid;
 }
 
@@ -374,33 +390,22 @@ inline CartoonCentralSample ReconstructCartoonCentralSupportValues(
   Real lapse_sum = 0.0;
   Real constraint_sum = 0.0;
   Real kretschmann_sum = 0.0;
-  for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
-    const bool refined = (supports.refined_mask & (1U << quadrant)) != 0;
-    const int children = refined ? kCartoonCentralSourcesPerQuadrant : 1;
-    Real quadrant_lapse = 0.0;
-    Real quadrant_constraint = 0.0;
-    Real quadrant_kretschmann = 0.0;
-    for (int child = 0; child < children; ++child) {
-      const int slot = CartoonCentralSourceSlot(quadrant, child);
-      if (!supports.point[slot].expected || !std::isfinite(lapse[slot]) ||
-          lapse[slot] < 0.0 || !std::isfinite(constraint_squared[slot]) ||
-          constraint_squared[slot] < 0.0 ||
-          !std::isfinite(kretschmann[slot])) {
-        sample.status = CartoonCentralSample::Status::nonfinite_support;
-        return sample;
-      }
-      const Real weight = supports.point[slot].restriction_weight;
-      quadrant_lapse += weight * lapse[slot];
-      quadrant_constraint += weight * constraint_squared[slot];
-      quadrant_kretschmann += weight * kretschmann[slot];
+  for (int slot = 0; slot < kCartoonCentralMaxSources; ++slot) {
+    if (!supports.point[slot].expected) continue;
+    if (!std::isfinite(lapse[slot]) || lapse[slot] < 0.0 ||
+        !std::isfinite(constraint_squared[slot]) ||
+        constraint_squared[slot] < 0.0 || !std::isfinite(kretschmann[slot])) {
+      sample.status = CartoonCentralSample::Status::nonfinite_support;
+      return sample;
     }
-    lapse_sum += quadrant_lapse;
-    constraint_sum += quadrant_constraint;
-    kretschmann_sum += quadrant_kretschmann;
+    const Real weight = supports.point[slot].final_weight;
+    lapse_sum += weight * lapse[slot];
+    constraint_sum += weight * constraint_squared[slot];
+    kretschmann_sum += weight * kretschmann[slot];
   }
-  sample.lapse = 0.25 * lapse_sum;
-  sample.constraint_norm = Z4cAggregateConstraintNorm(0.25 * constraint_sum);
-  sample.abs_kretschmann = std::fabs(0.25 * kretschmann_sum);
+  sample.lapse = lapse_sum;
+  sample.constraint_norm = Z4cAggregateConstraintNorm(constraint_sum);
+  sample.abs_kretschmann = std::fabs(kretschmann_sum);
   sample.valid = std::isfinite(sample.lapse) &&
                  std::isfinite(sample.constraint_norm) &&
                  std::isfinite(sample.abs_kretschmann);
@@ -464,6 +469,7 @@ inline CartoonCentralSupportSet BuildCartoonCentralSupportSet(
         CartoonCentralSample::Status::missing_center_leaf;
     return supports;
   }
+  const bool half_plane = mesh->mesh_size.x1min == 0.0;
 
   int quadrant_level[kCartoonCentralQuadrants] = {-1, -1, -1, -1};
   int quadrant_matches[kCartoonCentralQuadrants] = {};
@@ -488,6 +494,7 @@ inline CartoonCentralSupportSet BuildCartoonCentralSupportSet(
     const Real tolerance =
         128.0 * std::numeric_limits<Real>::epsilon() * scale;
     for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+      if (half_plane && (quadrant & 1) == 0) continue;
       const bool positive_rho = (quadrant & 1) != 0;
       const bool positive_z = (quadrant & 2) != 0;
       const bool enters_rho = positive_rho
@@ -516,6 +523,7 @@ inline CartoonCentralSupportSet BuildCartoonCentralSupportSet(
     }
   }
   for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+    if (half_plane && (quadrant & 1) == 0) continue;
     if (quadrant_matches[quadrant] == 0) {
       supports.construction_status =
           CartoonCentralSample::Status::missing_support;
@@ -532,12 +540,14 @@ inline CartoonCentralSupportSet BuildCartoonCentralSupportSet(
         CartoonCentralSample::Status::invalid_common_lattice;
     return supports;
   }
-  int common_level = quadrant_level[0];
-  for (int quadrant = 1; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+  int common_level = quadrant_level[half_plane ? 1 : 0];
+  for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+    if (half_plane && (quadrant & 1) == 0) continue;
     common_level = std::min(common_level, quadrant_level[quadrant]);
   }
   unsigned int refined_mask = 0U;
   for (int quadrant = 0; quadrant < kCartoonCentralQuadrants; ++quadrant) {
+    if (half_plane && (quadrant & 1) == 0) continue;
     if (quadrant_level[quadrant] == common_level + 1) {
       refined_mask |= 1U << quadrant;
     } else if (quadrant_level[quadrant] != common_level) {
@@ -574,7 +584,7 @@ inline CartoonCentralSupportSet BuildCartoonCentralSupportSet(
     return supports;
   }
   InitializeCartoonCentralSupportGeometry(
-      &supports, common_level, dx1, dx2, refined_mask);
+      &supports, common_level, dx1, dx2, refined_mask, half_plane);
 
   for (int s = 0; s < kCartoonCentralMaxSources; ++s) {
     CartoonCentralSupport &point = supports.point[s];

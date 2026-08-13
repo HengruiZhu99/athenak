@@ -85,11 +85,24 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
   input.mesh_nx1 = mesh.mesh_indcs.nx1;
   input.mesh_nx2 = mesh.mesh_indcs.nx2;
   input.mesh_nx3 = mesh.mesh_indcs.nx3;
+  input.meshblock_nx1 = mesh.mb_indcs.nx1;
   input.meshblock_nx3 = mesh.mb_indcs.nx3;
   input.root_blocks_x1 = mesh.nmb_rootx1;
   input.x1min = mesh.mesh_size.x1min;
   input.x1max = mesh.mesh_size.x1max;
   input.real_bytes = sizeof(Real);
+  input.inner_x1_boundary = mesh.GetBoundaryString(
+      mesh.mesh_bcs[BoundaryFace::inner_x1]);
+  input.outer_x1_boundary = mesh.GetBoundaryString(
+      mesh.mesh_bcs[BoundaryFace::outer_x1]);
+  input.inner_x2_boundary = mesh.GetBoundaryString(
+      mesh.mesh_bcs[BoundaryFace::inner_x2]);
+  input.outer_x2_boundary = mesh.GetBoundaryString(
+      mesh.mesh_bcs[BoundaryFace::outer_x2]);
+  input.inner_x3_boundary = mesh.GetBoundaryString(
+      mesh.mesh_bcs[BoundaryFace::inner_x3]);
+  input.outer_x3_boundary = mesh.GetBoundaryString(
+      mesh.mesh_bcs[BoundaryFace::outer_x3]);
 
   for (const char *block : {"hydro", "mhd", "ion-neutral", "radiation",
                             "turb_driving", "particles"}) {
