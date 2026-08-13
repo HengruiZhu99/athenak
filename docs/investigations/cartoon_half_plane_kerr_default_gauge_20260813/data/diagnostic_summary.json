@@ -1,0 +1,514 @@
+{
+  "campaign_cases": {
+    "moving_puncture_h32": {
+      "command_sha256": "bdde667fba87f5efdab696d7ad53090bd1cabf900bd74810417bdc30ee0edcca",
+      "returncode": 0,
+      "status": "complete"
+    },
+    "moving_puncture_h48": {
+      "command_sha256": "45b0578d4eea0ff8dc4b8022baa610c9444885d33765cb6844c980673403d92e",
+      "returncode": 1,
+      "status": "failed"
+    },
+    "moving_puncture_h64": {
+      "command_sha256": null,
+      "returncode": null,
+      "status": "pending"
+    }
+  },
+  "claim_scope": "existing_data_only_no_new_evolution_no_convergence_qualification",
+  "disposition": {
+    "h32": "completed_t5_but_large_late_constraints_and_lost_horizon_acceptance",
+    "h48": "failed_t4.560417_nonfinite_central_diagnostic_after_puncture_interior_mode",
+    "h64": "not_run_because_convergence_already_failed",
+    "qualification_claim": false,
+    "safe_fix_identified": false,
+    "status": "failed_convergence_qualification",
+    "threshold_or_gauge_waiver": false
+  },
+  "executable": {
+    "path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/build/athena-cuda/src/athena",
+    "sha256": "c14f6ac88144ad27b097e6f95249167a37d32cc50de2923894e66f10de2adeba"
+  },
+  "near_axis": {
+    "cycles": [
+      2162,
+      2163,
+      2164,
+      2165,
+      2166,
+      2167,
+      2168,
+      2169,
+      2170,
+      2171,
+      2172,
+      2173,
+      2174,
+      2175,
+      2176,
+      2177
+    ],
+    "interpretation": "puncture-interior Gamma/A-Ricci mode; not outer-boundary arrival or equatorial-reflection asymmetry",
+    "selection": {
+      "absolute_z_interval": [
+        0.0,
+        0.5
+      ],
+      "rho_over_local_h": [
+        0.5,
+        1.5,
+        2.5,
+        3.5,
+        4.5
+      ]
+    },
+    "terminal_row": {
+      "cycle": 2177,
+      "max_abs_A": 6741667.0,
+      "max_abs_C": 1.7292665958249283e+26,
+      "max_abs_Gamma": 3749.481689453125,
+      "max_abs_H": 13150158061568.0,
+      "max_abs_M": 7196410441105408.0,
+      "max_abs_Z": 6414522.5,
+      "max_abs_alpha": 1661.0068359375,
+      "max_abs_chi": 0.07725626975297928,
+      "max_abs_detg_minus_one": 18.17468280428688,
+      "max_abs_traceA": 889675.6108148212,
+      "parity_residual": 7.431396418719584e-05,
+      "selected_cells": 240,
+      "time": 4.557
+    }
+  },
+  "physics": {
+    "chi_floor": false,
+    "dchi_max": 0.02,
+    "dimensionless_spin": 0.5,
+    "gauge": {
+      "lapse": "advective_1_plus_log",
+      "lapse_advect": 1.0,
+      "lapse_harmonic": 0.0,
+      "lapse_harmonicf": 1.0,
+      "lapse_oplog": 2.0,
+      "name": "athenak_default_moving_puncture",
+      "shift": "advective_Gamma_driver",
+      "shift_Gamma": 1.0,
+      "shift_H": 0.0,
+      "shift_advect": 1.0,
+      "shift_alpha2Gamma": 0.0,
+      "shift_eta": 2.0,
+      "shift_eta_max_K": false,
+      "slow_start_lapse": false,
+      "sss_damping_amp": 0.0,
+      "telegraph_lapse": false
+    },
+    "integrator": "rk4",
+    "mass": 1.0,
+    "precollapsed_lapse": true,
+    "spatial_order": 6,
+    "target_time_M": 5.0
+  },
+  "resolution_summary": {
+    "h32": {
+      "history_rows": 200,
+      "origin_horizon": {
+        "first_accepted": {
+          "accepted": 1,
+          "area": 46.96963823446854,
+          "axis_extremum_z": 0.0,
+          "branch": "origin",
+          "center_lapse": 0.03432050084215772,
+          "center_z": 0.0,
+          "coefficients": [
+            1.583716496493493,
+            -9.260900626537488e-16,
+            -0.009784271393464708,
+            6.450772056358686e-17,
+            0.003099617474153851,
+            -4.221561527510091e-17,
+            -0.00028649001580151746,
+            4.9722524722311136e-17,
+            0.0006266160661034884,
+            -1.8489872035673483e-17,
+            0.0002045051802295038
+          ],
+          "cycle": 32,
+          "direct_residual": 0.012793568279743504,
+          "failure": "none",
+          "flow_residual": 0.00293446565358446,
+          "horizon_mass": 1.0019469062519997,
+          "irreducible_mass": 0.9666598484119008,
+          "mean_radius": 0.4467581753071874,
+          "minimum_radius": 0.44257056978324655,
+          "spin_z": 0.5095547867642894,
+          "time": 0.13437500000000002
+        },
+        "last_accepted": {
+          "accepted": 1,
+          "area": 47.01293058395179,
+          "axis_extremum_z": 0.0,
+          "branch": "origin",
+          "center_lapse": 0.05233140987342618,
+          "center_z": 0.0,
+          "coefficients": [
+            2.205513125409216,
+            8.041927820864066e-15,
+            -0.03745998652661542,
+            8.380923115791486e-16,
+            0.0018275384557599563,
+            -1.1491894281960788e-15,
+            0.0007279202422267696,
+            4.2192685448876627e-16,
+            0.00034643440073733607,
+            -6.03572999452895e-16,
+            0.0004118917892127272
+          ],
+          "cycle": 896,
+          "direct_residual": 0.022916089832399282,
+          "failure": "none",
+          "flow_residual": 0.007419547816920478,
+          "horizon_mass": 1.0022786994483526,
+          "irreducible_mass": 0.9671052354625164,
+          "mean_radius": 0.6221637658668677,
+          "minimum_radius": 0.601751970822712,
+          "spin_z": 0.5090688179661913,
+          "time": 2.8343749999999726
+        },
+        "last_attempt": {
+          "accepted": 0,
+          "area": 46.56589517543567,
+          "axis_extremum_z": 0.0,
+          "branch": "origin",
+          "center_lapse": 0.1166160351207769,
+          "center_z": 0.0,
+          "coefficients": [
+            2.577765566888428,
+            -2.866677900300907e-13,
+            -0.037238391055695305,
+            -7.212705992939539e-14,
+            0.010651265093891906,
+            -3.2670733884302013e-14,
+            0.00816859404223712,
+            -1.8272836686772397e-14,
+            0.005596875972033658,
+            -7.133290356608696e-15,
+            0.0029177887910746387
+          ],
+          "cycle": 1568,
+          "direct_residual": 0.0797483285111873,
+          "failure": "iteration_limit",
+          "flow_residual": 0.027849632839881792,
+          "horizon_mass": 0.9985483955622216,
+          "irreducible_mass": 0.9624962595167337,
+          "mean_radius": 0.7271742408332635,
+          "minimum_radius": 0.706618658726291,
+          "spin_z": 0.5118447914665383,
+          "time": 4.934374999999854
+        }
+      },
+      "terminal_C_Linf": 1691.07,
+      "terminal_C_norm2": 179328.0,
+      "terminal_cycle": 1590,
+      "terminal_time": 5.0
+    },
+    "h48": {
+      "history_rows": 273,
+      "origin_horizon": {
+        "first_accepted": {
+          "accepted": 1,
+          "area": 46.93609331841724,
+          "axis_extremum_z": 0.0,
+          "branch": "origin",
+          "center_lapse": 0.014504608981731537,
+          "center_z": 0.0,
+          "coefficients": [
+            1.6554747986642409,
+            -2.9151939966744766e-16,
+            -0.00037602267083420454,
+            -1.5420998184792356e-16,
+            4.5371602908078744e-05,
+            4.007715105098578e-17,
+            -9.831743512674864e-06,
+            3.1343180202556636e-17,
+            1.0414453632568215e-05,
+            1.5507429695804273e-17,
+            -1.830022203297165e-06
+          ],
+          "cycle": 32,
+          "direct_residual": 0.0021718706433075615,
+          "failure": "none",
+          "flow_residual": 0.00052126923212847,
+          "horizon_mass": 1.0004919689381744,
+          "irreducible_mass": 0.9663146007543678,
+          "mean_radius": 0.4670008186160916,
+          "minimum_radius": 0.46680218751690994,
+          "spin_z": 0.5010703108945663,
+          "time": 0.0895833333333334
+        },
+        "last_accepted": {
+          "accepted": 1,
+          "area": 46.87001769424713,
+          "axis_extremum_z": 0.0,
+          "branch": "origin",
+          "center_lapse": 0.01620551279617436,
+          "center_z": 0.0,
+          "coefficients": [
+            2.014594443979947,
+            3.8731997424511034e-14,
+            -0.03729465121565366,
+            1.5112110915243633e-14,
+            0.0016868213960204148,
+            5.179875517736132e-15,
+            0.0006436940852406993,
+            4.149254912369339e-15,
+            0.0004830888334315341,
+            2.3978515317949337e-15,
+            0.00042496975657205254
+          ],
+          "cycle": 928,
+          "direct_residual": 0.017273186638989094,
+          "failure": "none",
+          "flow_residual": 0.005178977837917945,
+          "horizon_mass": 0.9998355520461802,
+          "irreducible_mass": 0.9656341827294143,
+          "mean_radius": 0.5683066001833347,
+          "minimum_radius": 0.547955534570192,
+          "spin_z": 0.5007230157281056,
+          "time": 1.9562500000000447
+        },
+        "last_attempt": {
+          "accepted": 0,
+          "area": 45.94792665025662,
+          "axis_extremum_z": 0.0,
+          "branch": "origin",
+          "center_lapse": 0.029882965229163998,
+          "center_z": 0.0,
+          "coefficients": [
+            2.4163171843532196,
+            -3.69938192261085e-11,
+            -0.045335566856495195,
+            -3.925597749651187e-12,
+            0.004445828604284987,
+            2.359427294302368e-12,
+            0.005348427725181309,
+            4.972010179908583e-12,
+            0.003203444590731459,
+            2.852542476190632e-12,
+            0.0015964707977655728
+          ],
+          "cycle": 2176,
+          "direct_residual": 0.07894520376278519,
+          "failure": "iteration_limit",
+          "flow_residual": 0.025113134805093792,
+          "horizon_mass": 0.991537338616518,
+          "irreducible_mass": 0.9560883622351658,
+          "mean_radius": 0.6816304929797644,
+          "minimum_radius": 0.6582388607112137,
+          "spin_z": 0.5024381704337014,
+          "time": 4.556249999999902
+        }
+      },
+      "terminal_C_Linf": 2652110000.0,
+      "terminal_C_norm2": 3.66108e+17,
+      "terminal_cycle": 2176,
+      "terminal_time": 4.55625
+    }
+  },
+  "rhs_term_diagnosis": {
+    "cycles": [
+      2168,
+      2169,
+      2170,
+      2171,
+      2172,
+      2173
+    ],
+    "dominant_by_category": {
+      "A_geometric": {
+        "abs_max": 16802.035654998763,
+        "cycle": 2170,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "A_geometric_xx",
+        "time": 4.5437499999999025,
+        "value": 16802.035654998763,
+        "z": 0.28125
+      },
+      "A_hessian": {
+        "abs_max": 18.714271973574792,
+        "cycle": 2169,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "A_hessian_xy",
+        "time": 4.541666666666569,
+        "value": 18.714271973574792,
+        "z": 0.23958333333333334
+      },
+      "A_lie": {
+        "abs_max": 113884.2273579319,
+        "cycle": 2173,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "A_lie_yy",
+        "time": 4.549999999999902,
+        "value": 113884.2273579319,
+        "z": 0.28125
+      },
+      "A_nonlinear": {
+        "abs_max": 35740.39288607396,
+        "cycle": 2171,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 4,
+        "term": "A_nonlinear_yy",
+        "time": 4.545833333333236,
+        "value": -35740.39288607396,
+        "z": 0.28125
+      },
+      "A_ricci_tensor": {
+        "abs_max": 16803.925608430018,
+        "cycle": 2170,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "A_ricci_tensor_xx",
+        "time": 4.5437499999999025,
+        "value": 16803.925608430018,
+        "z": 0.28125
+      },
+      "A_trace_ricci": {
+        "abs_max": 732652.2744565278,
+        "cycle": 2170,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "A_trace_ricci_yy",
+        "time": 4.5437499999999025,
+        "value": -732652.2744565278,
+        "z": 0.28125
+      },
+      "Gamma_advective": {
+        "abs_max": 207574.49702109178,
+        "cycle": 2172,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "Gamma_advective_y",
+        "time": 4.547916666666569,
+        "value": 207574.49702109178,
+        "z": -0.28125
+      },
+      "Gamma_contraction": {
+        "abs_max": 1397566.373790702,
+        "cycle": 2169,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "Gamma_contraction_z",
+        "time": 4.541666666666569,
+        "value": 1397566.373790702,
+        "z": 0.23958333333333334
+      },
+      "Gamma_damping": {
+        "abs_max": 105.95531280304465,
+        "cycle": 2169,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "Gamma_damping_z",
+        "time": 4.541666666666569,
+        "value": -105.95531280304465,
+        "z": 0.23958333333333334
+      },
+      "Gamma_ddiv": {
+        "abs_max": 36638.94668740465,
+        "cycle": 2170,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "Gamma_ddiv_x",
+        "time": 4.5437499999999025,
+        "value": 36638.94668740465,
+        "z": 0.28125
+      },
+      "Gamma_expansion": {
+        "abs_max": 990392.3347730559,
+        "cycle": 2171,
+        "rank": 1,
+        "rho": 0.03125,
+        "stage": 2,
+        "term": "Gamma_expansion_x",
+        "time": 4.545833333333236,
+        "value": -990392.3347730559,
+        "z": -0.23958333333333331
+      },
+      "Gamma_lapse_gradient": {
+        "abs_max": 598.7704090176346,
+        "cycle": 2169,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "Gamma_lapse_gradient_z",
+        "time": 4.541666666666569,
+        "value": 598.7704090176346,
+        "z": 0.23958333333333334
+      },
+      "Gamma_second": {
+        "abs_max": 157565.91855227482,
+        "cycle": 2170,
+        "rank": 1,
+        "rho": 0.05208333333333334,
+        "stage": 2,
+        "term": "Gamma_second_x",
+        "time": 4.5437499999999025,
+        "value": 157565.91855227482,
+        "z": 0.28125
+      }
+    },
+    "interpretation": "A trace-Ricci and Gamma Lie/shift-derivative terms dominate; explicit Gamma damping is orders of magnitude smaller",
+    "records": 7200,
+    "stages": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "schema": "athenak-cartoon-half-plane-kerr-default-gauge-diagnostic-v1",
+  "source": {
+    "commit": "f95a05802621b76cff2894d562c38df4b0d09661",
+    "path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/source/athenak",
+    "tree": "4a03dc2ec051463372d812cfd053ca4db3d0698a"
+  },
+  "source_hashes": {
+    "cycle_near_axis_00060.json": "a5e0112eef8e34c9fb9d34efb4267aeb2bbe4164cac6d9b2853780c630145e9b",
+    "cycle_near_axis_00061.json": "c63ea4f5c33ff19c58cfe22f894a134b80af0cc11f68b88e107a65482f4c6790",
+    "cycle_near_axis_00062.json": "0bc9b8a76103174b1d88f867efe47011d8b029ee15c3be47db176136b60dc491",
+    "cycle_near_axis_00063.json": "080bc9dc6cd08a0b8e17e913b3fe203d5ea93b8629b33780da78395fdf4e423e",
+    "cycle_near_axis_00064.json": "dc68a21d4bbc53b72e0555051a1fa8b0b333aee93efb004b91bd7f113def3f70",
+    "cycle_near_axis_00065.json": "eb3abedbfdeaf23cc0060eac5981e518d12de752b4539885df803b53fc9c71db",
+    "cycle_near_axis_00066.json": "86e4099aacb226a5ee4252b282d99a33e4c762adc31aeba49760e6b143559000",
+    "cycle_near_axis_00067.json": "2a83cf8a6d8f73534ccb1c033681caa49e95d82133b3ab16989645f91362f5d9",
+    "cycle_near_axis_00068.json": "6b6f444c60f42060e0246bec76bbd51fd9b369df49aebeb726769e6804fb223d",
+    "cycle_near_axis_00069.json": "479945e254c6cb2cff5d74f84c728af7d55f3c8312622f32bf2b994af0223ce7",
+    "cycle_near_axis_00070.json": "df7ebbf22888c5cf27920c71e4ec4b554f365ab095438af0b0f9d6a8eb557285",
+    "cycle_near_axis_00071.json": "90205eab6c7aa18f2efddc379665a1f9cde59e674f1bf0d4f40a47b563b7d51b",
+    "cycle_near_axis_00072.json": "3580f60aa00cf387ae3bc8b1031a0e6014ab1145379d69861ebe8b9c85eae764",
+    "cycle_near_axis_00073.json": "e051f92a3d65d17dcb474b8f858b86a725670c1daa009cab78809f6dec8a2828",
+    "cycle_near_axis_00074.json": "e49483d510f51d82fd282a4df1529120ff387f7637b50f5e8034297da3a9a0f7",
+    "cycle_near_axis_00075.json": "ccbe83ee5fd5687e5469181a7084c65281ddcdb71bb889dbad272badf83b6044",
+    "cycle_near_axis_00076.json": "e7ec630d09af2f6893d8ddbf2a6680de153f6c91b4e65e58fb22871b3ee06442",
+    "run_stage_split/z4c_rhs_stage_rank0.log": "1e9e7d20f8ef8ddfb9f29e0e0294b7e097fc5a2b05e6ff4b4f828f78d29a728a",
+    "run_stage_split/z4c_rhs_stage_rank1.log": "eb9380dafdc919608af27684a1cf9013b1cda6a9bd808ccaa13f1291fc08ee6d",
+    "run_stage_split/z4c_rhs_stage_rank2.log": "e9c5f9a782185c433f289a09c31213acc67442074bfac92b0945a6f64deec152",
+    "run_stage_split/z4c_rhs_stage_rank3.log": "57fd647a110ca17deef88a45c8a8798d267efd5686a254499a062a750d23a350",
+    "v5_evidence/campaign_state.json": "ed35bcedc3f107cb2e34bdeaf2764ce7d82a203d6bb6cccf4426eb58dc62ac6a",
+    "v5_evidence/kerr_half_plane_h32_moving_puncture.cartoon_m0_horizon_0.txt": "77c17b7ddccc74c66b2eace3a1e6182f7ff92e127fd281bfb0bb5751be259922",
+    "v5_evidence/kerr_half_plane_h32_moving_puncture.z4c.user.hst": "62e8b58abb57e8efcd2e96887003df1ea65952ddbeef1d4387834f13c716de72",
+    "v5_evidence/kerr_half_plane_h48_moving_puncture.cartoon_m0_horizon_0.txt": "7b5b17d1e802c90d386a9cf4f127e82b862dae0cf2bb64ef742716791f7d6403",
+    "v5_evidence/kerr_half_plane_h48_moving_puncture.z4c.user.hst": "9fd0ae4c1ca286f80d6e2b86868fa75cce4f3aa006af6df9b8192fc24e3304c0"
+  }
+}
