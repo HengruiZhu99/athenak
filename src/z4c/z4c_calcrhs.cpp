@@ -547,22 +547,41 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
                             (opt.ssl_damping_time),2));
     }
 
-    // shift vector
-    for(int a = 0; a < 3; ++a) {
-      rhs.beta_u(m,a,k,j,i) = opt.shift_ggamma * z4c.vGam_u(m,a,k,j,i)
-                            + opt.shift_advect * Lbeta_u(a);
-      rhs.beta_u(m,a,k,j,i) -= opt.shift_eta * z4c.beta_u(m,a,k,j,i);
-      // FORCE beta = 0
-      //rhs.beta_u(m,a,k,j,i) = 0;
-    }
+    if (opt.shift_gauge_profile == ShiftGaugeProfile::standard) {
+      // Preserve the production baseline operation ordering exactly.
+      for(int a = 0; a < 3; ++a) {
+        rhs.beta_u(m,a,k,j,i) = opt.shift_ggamma * z4c.vGam_u(m,a,k,j,i)
+                              + opt.shift_advect * Lbeta_u(a);
+        rhs.beta_u(m,a,k,j,i) -= opt.shift_eta * z4c.beta_u(m,a,k,j,i);
+        // FORCE beta = 0
+        //rhs.beta_u(m,a,k,j,i) = 0;
+      }
 
-    // harmonic gauge terms
-    for(int a = 0; a < 3; ++a) {
-      rhs.beta_u(m,a,k,j,i) += opt.shift_alpha2ggamma *
-                          SQR(z4c.alpha(m,k,j,i)) * z4c.vGam_u(m,a,k,j,i);
-      for(int b = 0; b < 3; ++b) {
-        rhs.beta_u(m,a,k,j,i) += opt.shift_hh * z4c.alpha(m,k,j,i) *
-          chi_guarded * (0.5 * z4c.alpha(m,k,j,i) * dchi_d(b) - dalpha_d(b)) * g_uu(a,b);
+      // Legacy harmonic gauge terms.
+      for(int a = 0; a < 3; ++a) {
+        rhs.beta_u(m,a,k,j,i) += opt.shift_alpha2ggamma *
+                            SQR(z4c.alpha(m,k,j,i)) * z4c.vGam_u(m,a,k,j,i);
+        for(int b = 0; b < 3; ++b) {
+          rhs.beta_u(m,a,k,j,i) += opt.shift_hh * z4c.alpha(m,k,j,i) *
+            chi_guarded * (0.5 * z4c.alpha(m,k,j,i) * dchi_d(b) - dalpha_d(b)) *
+            g_uu(a,b);
+        }
+      }
+    } else {
+      for(int a = 0; a < 3; ++a) {
+        Real inverse_metric_row[3];
+        Real lapse_gradient[3];
+        Real chi_gradient[3];
+        for (int b = 0; b < 3; ++b) {
+          inverse_metric_row[b] = g_uu(a,b);
+          lapse_gradient[b] = dalpha_d(b);
+          chi_gradient[b] = dchi_d(b);
+        }
+        const ShiftGaugeForces forces = EvaluateModifiedShiftGaugeForces(
+            opt.shift_gauge_profile, z4c.alpha(m,k,j,i), z4c.chi(m,k,j,i),
+            z4c.vGam_u(m,a,k,j,i), inverse_metric_row, lapse_gradient, chi_gradient);
+        rhs.beta_u(m,a,k,j,i) = opt.shift_advect * Lbeta_u(a) + forces.total();
+        rhs.beta_u(m,a,k,j,i) -= opt.shift_eta * z4c.beta_u(m,a,k,j,i);
       }
     }
   });

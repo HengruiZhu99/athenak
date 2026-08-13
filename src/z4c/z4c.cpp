@@ -139,10 +139,42 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.ssl_damping_time = pin->GetOrAddReal("z4c", "ssl_damping_time", 20.0);
   opt.ssl_damping_index = pin->GetOrAddInteger("z4c", "ssl_damping_index", 1);
 
-  opt.shift_ggamma = pin->GetOrAddReal("z4c", "shift_Gamma", 1.0);
+  std::string const shift_gauge =
+      pin->GetOrAddString("z4c", "shift_gauge", "standard");
+  if (shift_gauge == "standard") {
+    opt.shift_gauge_profile = ShiftGaugeProfile::standard;
+  } else if (shift_gauge == "candidate_a") {
+    opt.shift_gauge_profile = ShiftGaugeProfile::candidate_a;
+  } else if (shift_gauge == "candidate_c") {
+    opt.shift_gauge_profile = ShiftGaugeProfile::candidate_c;
+  } else {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "Unknown <z4c>/shift_gauge='" << shift_gauge
+              << "'. Expected standard, candidate_a, or candidate_c." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  bool const has_legacy_shift_gamma =
+      pin->DoesParameterExist("z4c", "shift_Gamma");
+  bool const has_legacy_shift_alpha2gamma =
+      pin->DoesParameterExist("z4c", "shift_alpha2Gamma");
+  bool const has_legacy_shift_h = pin->DoesParameterExist("z4c", "shift_H");
   opt.shift_advect = pin->GetOrAddReal("z4c", "shift_advect", 1.0);
-  opt.shift_alpha2ggamma = pin->GetOrAddReal("z4c", "shift_alpha2Gamma", 0.0);
-  opt.shift_hh = pin->GetOrAddReal("z4c", "shift_H", 0.0);
+  if (opt.shift_gauge_profile == ShiftGaugeProfile::standard) {
+    opt.shift_ggamma = pin->GetOrAddReal("z4c", "shift_Gamma", 1.0);
+    opt.shift_alpha2ggamma = pin->GetOrAddReal("z4c", "shift_alpha2Gamma", 0.0);
+    opt.shift_hh = pin->GetOrAddReal("z4c", "shift_H", 0.0);
+  } else if (has_legacy_shift_gamma || has_legacy_shift_alpha2gamma ||
+             has_legacy_shift_h) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "Candidate shift gauges cannot be combined with legacy "
+              << "shift_Gamma, shift_alpha2Gamma, or shift_H coefficients." << std::endl;
+    exit(EXIT_FAILURE);
+  } else {
+    opt.shift_ggamma = 1.0;
+    opt.shift_alpha2ggamma = 0.0;
+    opt.shift_hh = 0.0;
+  }
 
   opt.shift_eta = pin->GetOrAddReal("z4c", "shift_eta", 2.0);
 

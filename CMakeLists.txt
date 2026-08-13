@@ -34,6 +34,7 @@ endif()
 option(Athena_SINGLE_PRECISION "Compile for single precision" OFF)
 option(Athena_ENABLE_MPI "Compile with MPI parallelism enabled" OFF)
 option(Athena_ENABLE_OPENMP "Compile with OpenMP parallelism enabled" OFF)
+option(Athena_ENABLE_Z4C_GAUGE_TESTS "Build focused Z4c shift-gauge oracle tests" OFF)
 set(PROBLEM built_in_pgens CACHE STRING "Name of problem generator function")
 
 #------ set macros exported to config.hpp ------------------------------------------------
@@ -115,6 +116,13 @@ add_subdirectory(kokkos)
 include_directories(${Kokkos_INCLUDE_DIRS_RET})
 
 target_link_libraries(athena PUBLIC Kokkos::kokkos)
+if (Athena_ENABLE_Z4C_GAUGE_TESTS)
+  add_executable(z4c_shift_gauge_oracle_test tst/unit/z4c_shift_gauge_oracle_test.cpp)
+  target_include_directories(z4c_shift_gauge_oracle_test PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_BINARY_DIR})
+  target_link_libraries(z4c_shift_gauge_oracle_test PRIVATE Kokkos::kokkos)
+endif()
 if (ENABLE_MPI)
   target_link_libraries(athena PUBLIC MPI::MPI_CXX)
 endif()
@@ -251,4 +259,3 @@ target_include_directories(athena PUBLIC
 configure_file(config.hpp.in config.hpp)
 
 install( TARGETS athena DESTINATION bin )
-

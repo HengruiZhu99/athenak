@@ -22,6 +22,7 @@
 #include "athena_tensor.hpp"
 #include "geodesic-grid/geodesic_grid.hpp"
 #include "geodesic-grid/spherical_grid.hpp"
+#include "z4c/z4c_shift_gauge.hpp"
 
 // forward declarations
 class Coordinates;
@@ -162,6 +163,7 @@ class Z4c {
     Real ssl_damping_time;
     Real ssl_damping_index;
     // Gauge condition for the shift
+    ShiftGaugeProfile shift_gauge_profile;
     Real shift_ggamma;
     Real shift_alpha2ggamma;
     Real shift_hh;
