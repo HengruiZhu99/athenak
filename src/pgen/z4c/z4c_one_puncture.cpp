@@ -24,25 +24,43 @@
 #include "z4c/z4c_amr.hpp"
 #include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
+#include "pgen/z4c/z4c_one_puncture_gauge_diagnostics.hpp"
+#include "z4c/fastflow.hpp"
 
 
 void ADMOnePuncture(MeshBlockPack *pmbp, ParameterInput *pin);
 void RefinementCondition(MeshBlockPack* pmbp);
+void FinalizeOnePuncture(ParameterInput *pin, Mesh *pm);
 
 //----------------------------------------------------------------------------------------
 //! \fn ProblemGenerator::UserProblem_()
 //! \brief Problem Generator for single puncture
 void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
-  user_ref_func  = RefinementCondition;
+  user_ref_func = RefinementCondition;
+  pgen_final_func = FinalizeOnePuncture;
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
-  auto &indcs = pmy_mesh_->mb_indcs;
-
   if (pmbp->pz4c == nullptr) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << std::endl
               << "One Puncture test can only be run in Z4c, but no <z4c> block "
               << "in input file" << std::endl;
     exit(EXIT_FAILURE);
   }
+  if (pin->GetOrAddBoolean("problem", "user_hist", false)) {
+    user_hist_func = &z4c_puncture_gauge_diagnostics::GaugeDiagnostics;
+    z4c_puncture_gauge_diagnostics::center[0] =
+        pin->GetOrAddReal("problem", "punc_center_x1", 0.0);
+    z4c_puncture_gauge_diagnostics::center[1] =
+        pin->GetOrAddReal("problem", "punc_center_x2", 0.0);
+    z4c_puncture_gauge_diagnostics::center[2] =
+        pin->GetOrAddReal("problem", "punc_center_x3", 0.0);
+    z4c_puncture_gauge_diagnostics::output_path = pin->GetOrAddString(
+        "problem", "gauge_diagnostics_file", "z4c_gauge_source_diagnostics.csv");
+  }
+  z4c_puncture_gauge_diagnostics::profile_name =
+      z4c_puncture_gauge_diagnostics::ProfileName(pmbp->pz4c->opt.shift_gauge_profile);
+  if (restart) return;
+
+  auto &indcs = pmy_mesh_->mb_indcs;
 
   ADMOnePuncture(pmbp, pin);
   pmbp->pz4c->GaugePreCollapsedLapse(pmbp, pin);
@@ -66,6 +84,31 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   std::cout<<"OnePuncture initialized."<<std::endl;
 
   return;
+}
+
+//----------------------------------------------------------------------------------------
+//! \fn void FinalizeOnePuncture(ParameterInput *pin, Mesh *pm)
+//! \brief Optionally observe the accepted terminal slice with FastFlow.
+//!
+//! The regular FastFlow task runs before Driver advances Mesh::time.  This explicit
+//! qualification hook instead observes the already accepted terminal state at its exact
+//! accepted time.  It is opt-in and does not modify the evolution state.
+void FinalizeOnePuncture(ParameterInput *pin, Mesh *pm) {
+  if (!pin->GetOrAddBoolean("problem", "final_horizon", false)) return;
+  auto *pz4c = pm->pmb_pack->pz4c;
+  const Real accepted_time = pm->time;
+  const int accepted_cycle = pm->ncycle;
+  for (auto &horizon : pz4c->pfastflow) {
+    switch (pm->mb_indcs.ng) {
+      case 2: horizon->MetricDerivatives<2>(accepted_time); break;
+      case 3: horizon->MetricDerivatives<3>(accepted_time); break;
+      case 4: horizon->MetricDerivatives<4>(accepted_time); break;
+    }
+  }
+  for (auto &horizon : pz4c->pfastflow) {
+    horizon->Find(accepted_cycle, accepted_time);
+    horizon->Write(accepted_cycle, accepted_time);
+  }
 }
 
 //----------------------------------------------------------------------------------------
