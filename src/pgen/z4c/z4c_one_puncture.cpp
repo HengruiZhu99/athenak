@@ -58,7 +58,15 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   }
   z4c_puncture_gauge_diagnostics::profile_name =
       z4c_puncture_gauge_diagnostics::ProfileName(pmbp->pz4c->opt.shift_gauge_profile);
-  if (restart) return;
+  if (restart) {
+    // An exact terminal landing may persist a tiny, nonphysical remainder timestep.
+    // Opt-in qualification restarts discard only that proposal; Driver::Initialize
+    // immediately recomputes the ordinary spatial-CFL step from the restored state.
+    if (pin->GetOrAddBoolean("problem", "reset_dt_from_cfl_on_restart", false)) {
+      pmy_mesh_->dt = std::numeric_limits<float>::max();
+    }
+    return;
+  }
 
   auto &indcs = pmy_mesh_->mb_indcs;
 

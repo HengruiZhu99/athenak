@@ -171,6 +171,7 @@ def create_manifest(args: argparse.Namespace, repo: pathlib.Path, run_root: path
             "cfl_number": 0.1, "ko_dissipation": 0.02,
             "constraint_damping_kappa1": 0.02, "shift_eta": 2.0,
             "raw_chi_div_floor": -1000.0, "chi_floor_enabled": False,
+            "restart_dt_policy": "recompute_spatial_cfl_after_exact_terminal_landing",
         },
         "gauges": list(GAUGES), "resolutions": RESOLUTIONS,
         "targets": list(TARGETS), "schedule": [],
