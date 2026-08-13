@@ -238,12 +238,17 @@ bool IsIsotropySensitiveResult(const int result) {
   return radial_plane_component && (operation <= 3 || operation == 6);
 }
 
-template <int NGHOST>
-std::array<int, 2 * (NGHOST + 1)> SignedNearAxisOffsets() {
-  std::array<int, 2 * (NGHOST + 1)> offsets{};
+constexpr int kFixedHalfCellLayers = 5;
+
+std::array<int, 2 * kFixedHalfCellLayers> SignedFixedHalfCellOffsets() {
+  std::array<int, 2 * kFixedHalfCellLayers> offsets{};
   int output = 0;
-  for (int layer = 0; layer <= NGHOST; ++layer) offsets[output++] = layer;
-  for (int layer = 0; layer <= NGHOST; ++layer) offsets[output++] = -layer - 1;
+  for (int layer = 0; layer < kFixedHalfCellLayers; ++layer) {
+    offsets[output++] = layer;
+  }
+  for (int layer = 0; layer < kFixedHalfCellLayers; ++layer) {
+    offsets[output++] = -layer - 1;
+  }
   return offsets;
 }
 
@@ -251,21 +256,11 @@ int LayerFromOffset(const int radial_offset) {
   return radial_offset >= 0 ? radial_offset : -radial_offset - 1;
 }
 
-template <int NGHOST>
-const char *LayerRegion(const int radial_offset) {
-  return LayerFromOffset(radial_offset) < NGHOST - 1
-             ? "regularity-closure"
-             : "centered-bulk";
-}
+const char *LayerRegion(const int) { return "all-bulk"; }
 
 template <int NGHOST>
-constexpr int ExpectedNearAxisOrder(const int layer) {
-  constexpr int closure_order = 2 * (NGHOST - 1);
-  // At fixed rho/h, a raw odd quotient divides the O(h^p) centered-Dx error
-  // by rho=O(h), so the generic first wholly-active row has order p-1. The
-  // fixed regularity closure retains p; fixed nonzero physical rho is checked
-  // separately at p.
-  return layer < NGHOST - 1 ? closure_order : closure_order - 1;
+constexpr int ExpectedFixedHalfCellOrder(const int) {
+  return 2 * (NGHOST - 1);
 }
 
 template <int NGHOST>
@@ -1035,11 +1030,9 @@ bool CheckMinimalRegularityReach() {
 template <int NGHOST>
 bool CheckBlockBoundaryReach() {
   using Provider = z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST>;
-  static_assert(Provider::MaximumRegularizationOffset() == NGHOST - 1,
-                "near-axis closure must stay within the ordinary stencil reach");
-  constexpr int radial_extent = 3 * NGHOST;
+  constexpr int radial_extent = 2 * NGHOST + kFixedHalfCellLayers;
   constexpr int axial_extent = 2 * NGHOST + 1;
-  constexpr int targets = 2 * NGHOST;
+  constexpr int targets = 2 * kFixedHalfCellLayers;
   DvceArray5D<Real> state("block-local Cartoon reach state", 2, kNumVariables, 1,
                           axial_extent, radial_extent);
   auto host = Kokkos::create_mirror_view(state);
@@ -1049,7 +1042,8 @@ bool CheckBlockBoundaryReach() {
       for (int i = 0; i < radial_extent; ++i) {
         const double rho = block == 0
                                ? static_cast<double>(i - NGHOST) + 0.5
-                               : static_cast<double>(i - 2 * NGHOST) + 0.5;
+                               : static_cast<double>(i - NGHOST -
+                                                     kFixedHalfCellLayers) + 0.5;
         const ManufacturedFields fields = EvaluateManufacturedFields(rho, z, 0.0);
         host(block, kScalarOffset, 0, j, i) = fields.scalar.value;
         for (int component = 0; component < 3; ++component) {
@@ -1071,11 +1065,11 @@ bool CheckBlockBoundaryReach() {
   Kokkos::parallel_for(
       "block-local Cartoon reach", Kokkos::RangePolicy<DevExeSpace>(0, targets),
       KOKKOS_LAMBDA(const int target) {
-        const int block = target / NGHOST;
-        const int layer = target % NGHOST;
+        const int block = target / kFixedHalfCellLayers;
+        const int layer = target % kFixedHalfCellLayers;
         const int side_sign = block == 0 ? 1 : -1;
         const int sample_i = block == 0 ? NGHOST + layer
-                                        : 2 * NGHOST - 1 - layer;
+                                        : NGHOST + kFixedHalfCellLayers - 1 - layer;
         const Real rho = side_sign * (static_cast<Real>(layer) + 0.5);
         const Real inverse_spacing[3] = {1.0, 1.0, 1.0};
         ScalarField scalar{state};
@@ -1130,8 +1124,8 @@ bool CheckBlockBoundaryReach() {
     if (!std::isfinite(result_host(target))) {
       std::cerr << "order " << 2 * (NGHOST - 1)
                 << " block-boundary reach returned a non-finite value at side="
-                << (target < NGHOST ? "+" : "-")
-                << " layer=" << target % NGHOST << '\n';
+                << (target < kFixedHalfCellLayers ? "+" : "-")
+                << " layer=" << target % kFixedHalfCellLayers << '\n';
       return false;
     }
   }
@@ -1193,11 +1187,10 @@ bool CheckFixedRadiusRawConvergence(const double rho_sample) {
 template <int NGHOST>
 bool CheckOrder() {
   constexpr int order = 2 * (NGHOST - 1);
-  const auto near_axis_offsets = SignedNearAxisOffsets<NGHOST>();
+  const auto fixed_half_cell_offsets = SignedFixedHalfCellOffsets();
   // The negative sample is the pi-rotated signed-plane image of the positive sample.
   // Both are compared to independently rotated full-Cartesian jet derivatives.
-  if (!CheckMinimalRegularityReach<NGHOST>() ||
-      !CheckBlockBoundaryReach<NGHOST>() ||
+  if (!CheckBlockBoundaryReach<NGHOST>() ||
       !CheckFullApiAndCartesianDelegation<NGHOST>(0.5) ||
       !CheckFullApiAndCartesianDelegation<NGHOST>(-0.5) ||
       !CheckFixedRadiusRawConvergence<NGHOST>(0.5) ||
@@ -1231,14 +1224,15 @@ bool CheckOrder() {
     }
   }
 
-  constexpr int signed_point_count = 2 * (NGHOST + 1);
+  constexpr int signed_point_count = 2 * kFixedHalfCellLayers;
   std::array<ErrorSummary, signed_point_count> layer_coarse{};
   std::array<ErrorSummary, signed_point_count> layer_medium{};
   std::array<ErrorSummary, signed_point_count> layer_fine{};
+  bool fixed_half_cell_convergence_passed = true;
   for (int point = 0; point < signed_point_count; ++point) {
-    const int radial_offset = near_axis_offsets[point];
+    const int radial_offset = fixed_half_cell_offsets[point];
     const int layer = LayerFromOffset(radial_offset);
-    const int expected_order = ExpectedNearAxisOrder<NGHOST>(layer);
+    const int expected_order = ExpectedFixedHalfCellOrder<NGHOST>(layer);
     const double rho_over_h = radial_offset + 0.5;
     ErrorSummary &near_coarse = layer_coarse[point];
     ErrorSummary &near_medium = layer_medium[point];
@@ -1262,7 +1256,7 @@ bool CheckOrder() {
           near_fine.derivative <= near_fine_tolerance)) {
       std::cerr << "order " << order << " near-axis convergence failed at rho/h="
                 << rho_over_h << " layer=" << layer
-                << " region=" << LayerRegion<NGHOST>(radial_offset)
+                << " region=" << LayerRegion(radial_offset)
                 << " expected order=" << expected_order
                 << ": coarse=" << near_coarse.derivative
                 << " medium=" << near_medium.derivative
@@ -1271,7 +1265,7 @@ bool CheckOrder() {
                 << " expected=" << near_fine.worst_expected
                 << " observed=" << near_fine.worst_observed
                 << " normalized tolerance=" << near_fine_tolerance << '\n';
-      return false;
+      fixed_half_cell_convergence_passed = false;
     }
     for (int family = 0; family < 3; ++family) {
       const double family_order =
@@ -1282,19 +1276,19 @@ bool CheckOrder() {
         std::cerr << "order " << order << " near-axis " << family_names[family]
                   << " family failed at rho/h=" << rho_over_h
                   << " layer=" << layer
-                  << " region=" << LayerRegion<NGHOST>(radial_offset)
+                  << " region=" << LayerRegion(radial_offset)
                   << " expected order=" << expected_order
                   << ": coarse=" << near_coarse.family[family]
                   << " medium=" << near_medium.family[family]
                   << " fine=" << near_fine.family[family]
                   << " observed order=" << family_order << " worst="
                   << ResultName(near_fine.family_worst_result[family]) << '\n';
-        return false;
+        fixed_half_cell_convergence_passed = false;
       }
     }
     std::cout << "order=" << order << " rho/h=" << rho_over_h
               << " layer=" << layer
-              << " region=" << LayerRegion<NGHOST>(radial_offset)
+              << " region=" << LayerRegion(radial_offset)
               << " expected_order=" << expected_order
               << " clean_observed_order=" << near_order
               << " finest_error=" << near_fine.derivative
@@ -1302,14 +1296,15 @@ bool CheckOrder() {
               << " expected=" << near_fine.worst_expected
               << " observed=" << near_fine.worst_observed << '\n';
   }
+  if (!fixed_half_cell_convergence_passed) return false;
 
   const double roundoff_noise =
       RoundoffNoiseUlps() * std::numeric_limits<Real>::epsilon();
   for (int noise_phase = 0; noise_phase < 8; ++noise_phase) {
     for (int point = 0; point < signed_point_count; ++point) {
-      const int radial_offset = near_axis_offsets[point];
+      const int radial_offset = fixed_half_cell_offsets[point];
       const int layer = LayerFromOffset(radial_offset);
-      const int expected_order = ExpectedNearAxisOrder<NGHOST>(layer);
+      const int expected_order = ExpectedFixedHalfCellOrder<NGHOST>(layer);
       const double rho_over_h = radial_offset + 0.5;
       const ErrorSummary noisy_coarse = MeasureSample<NGHOST>(
           0.125, 0.0625, radial_offset, 0.25,
@@ -1335,15 +1330,15 @@ bool CheckOrder() {
           NoiseCoefficientSafety<NGHOST>() * roundoff_noise / (0.03125 * 0.03125);
       if (!CheckDirectNoiseDeltas(
               layer_coarse[point], noisy_coarse, false, coarse_delta_bound, order,
-              rho_over_h, layer, LayerRegion<NGHOST>(radial_offset), noise_phase,
+              rho_over_h, layer, LayerRegion(radial_offset), noise_phase,
               0.125, "shared-parity") ||
           !CheckDirectNoiseDeltas(
               layer_medium[point], noisy_medium, false, medium_delta_bound, order,
-              rho_over_h, layer, LayerRegion<NGHOST>(radial_offset), noise_phase,
+              rho_over_h, layer, LayerRegion(radial_offset), noise_phase,
               0.0625, "shared-parity") ||
           !CheckDirectNoiseDeltas(
               layer_fine[point], noisy_fine, false, fine_delta_bound, order,
-              rho_over_h, layer, LayerRegion<NGHOST>(radial_offset), noise_phase,
+              rho_over_h, layer, LayerRegion(radial_offset), noise_phase,
               0.03125, "shared-parity")) {
         return false;
       }
@@ -1354,7 +1349,7 @@ bool CheckOrder() {
             noisy_fine.derivative <= noise_bound)) {
         std::cerr << "order " << order << " parity-noise stability failed at rho/h="
                   << rho_over_h << " layer=" << layer
-                  << " region=" << LayerRegion<NGHOST>(radial_offset)
+                  << " region=" << LayerRegion(radial_offset)
                   << " expected order=" << expected_order
                   << " phase=" << noise_phase
                   << " coarse=" << noisy_coarse.derivative
@@ -1376,7 +1371,7 @@ bool CheckOrder() {
   constexpr double independent_noise_h = 0.03125;
   for (int noise_phase = 0; noise_phase < 8; ++noise_phase) {
     for (int point = 0; point < signed_point_count; ++point) {
-      const int radial_offset = near_axis_offsets[point];
+      const int radial_offset = fixed_half_cell_offsets[point];
       const int layer = LayerFromOffset(radial_offset);
       const double rho_over_h = radial_offset + 0.5;
       const ErrorSummary noisy = MeasureSample<NGHOST>(
@@ -1388,7 +1383,7 @@ bool CheckOrder() {
           (independent_noise_h * independent_noise_h);
       if (!CheckDirectNoiseDeltas(
               layer_fine[point], noisy, true, amplification_bound, order,
-              rho_over_h, layer, LayerRegion<NGHOST>(radial_offset), noise_phase,
+              rho_over_h, layer, LayerRegion(radial_offset), noise_phase,
               independent_noise_h, "independent-component")) {
         return false;
       }
@@ -1415,9 +1410,7 @@ bool CheckOrder() {
 
 bool CheckParity() {
   using Provider = z4c::DerivativeProvider<z4c::CartoonSO2, 2>;
-  if (Provider::RegularizedHalfCellLayers() != 1 ||
-      Provider::MaximumRegularizationOffset() != 1 ||
-      Provider::ScalarParity() != 1 ||
+  if (Provider::ScalarParity() != 1 ||
       Provider::VectorParity(0) != -1 ||
       Provider::VectorParity(1) != 1 || Provider::VectorParity(2) != -1) {
     return false;

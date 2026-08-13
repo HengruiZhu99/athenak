@@ -16,10 +16,12 @@ int main(int argc, char *argv[]) {
   Kokkos::initialize(argc, argv);
   bool passed = false;
   {
-    passed = CheckParity() && CheckMinimalRegularityReach<2>() &&
-             CheckMinimalRegularityReach<3>() &&
-             CheckMinimalRegularityReach<4>() &&
-             CheckBlockBoundaryReach<2>() && CheckBlockBoundaryReach<3>() &&
+    passed = CheckParity() &&
+             CheckFullApiAndCartesianDelegation<2>(0.5) &&
+             CheckFullApiAndCartesianDelegation<3>(0.5) &&
+             CheckFullApiAndCartesianDelegation<4>(0.5) &&
+             CheckBlockBoundaryReach<2>() &&
+             CheckBlockBoundaryReach<3>() &&
              CheckBlockBoundaryReach<4>();
   }
   Kokkos::finalize();

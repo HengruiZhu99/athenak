@@ -261,15 +261,22 @@ def main() -> None:
     parser.add_argument("--output", type=Path)
     parser.add_argument("--nradial", type=int, default=12)
     args = parser.parse_args()
-    require(args.nradial >= 10, "nradial must leave a bulk region beyond O6 closure")
+    require(args.nradial >= 10, "nradial must resolve the O6 parity-centered bulk stencil")
     verify_rows()
 
     derivative_path = args.source_dir / "src/z4c/cartoon_derivatives.hpp"
     source = derivative_path.read_bytes()
     source_text = source.decode("utf-8")
-    for token in ("RegularCoefficientDerivative", "RegularizedHalfCellLayers",
-                  "return NGHOST - 1;", "return ActiveFirst(RhoDirection(), field) / rho_;"):
+    for token in ("return ActiveFirst(RhoDirection(), field) / rho_;",
+                  "const Real radial_derivative = ActiveFirst(RhoDirection(), component, field);",
+                  "const Real radial_derivative = ActiveFirst(RhoDirection(), a, b, field);"):
         require(token in source_text, f"production derivative source omitted {token!r}")
+    for token in ("NearAxisCell", "RegularCoefficientDerivative",
+                  "EvenCoefficientDerivative", "OddCoefficientDerivative",
+                  "QuadraticCoefficientDerivative",
+                  "QuadraticDifferenceCoefficientDerivative"):
+        require(token not in source_text,
+                f"production derivative source retains special closure {token!r}")
 
     cases: dict[str, object] = {}
     for order in (2, 4, 6):
@@ -294,7 +301,8 @@ def main() -> None:
         "policies": {
             "legacy_fitted": "side-local even-in-rho polynomial fit through every closure row",
             "parity_centered": "centered parity extension with raw analytic rho quotient",
-            "direct_regular": "production parity extension plus fixed regular-coefficient rows",
+            "direct_regular": "historical parity extension plus fixed regular-coefficient rows",
+            "production": "parity_centered",
         },
         "cases": cases,
         "prospective_proxy_verdict": verdict,

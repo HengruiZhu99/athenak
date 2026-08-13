@@ -149,13 +149,12 @@ d_y V^y = V^rho/rho
 d_y^2 V^rho = d_rho V^rho/rho - V^rho/rho^2.
 ```
 
-Because active centres have `rho>=h/2`, raw scalar quotients never divide by
-zero.  Cancellation-sensitive vector and tensor combinations are not formed
-as a subtraction of large values followed by division.  Each such combination
-gets one fixed, regularity-constrained discrete functional whose weights are
-derived for O2/O4/O6 from polynomial exactness in the appropriate regular
-basis.  The production path performs no runtime fit, solve, allocation, radial
-blending, or arbitrary layer switch.
+Because active centres have `rho>=h/2`, the bulk quotients never divide by
+zero. Every active half-cell uses the same expression assembled from the
+ordinary centered radial derivative through exact parity ghosts and the local
+field values. There is no special `s=rho^2` reconstruction, fit width, radial
+blending, or layer switch. Exact-axis analytic limits remain diagnostic-only:
+the production half-plane samples and evolves no active `rho=0` point.
 
 The initial required operator inventory is the set reached by the shared
 provider API:
@@ -172,10 +171,10 @@ provider API:
 
 Every provider branch is recorded in the generated
 [`z4c_cartoon_half_plane_operator_table.md`](z4c_cartoon_half_plane_operator_table.md)
-table. It contains tensor character, parity/regularity class, stencil support,
-formal order, exact rational coefficient source, and remaining powers of rho.
-The generator verifies polynomial exactness and fails if the production helper
-inventory or generated document changes independently.
+table. It contains tensor character, parity/regularity class, centered
+primitive, and the implemented bulk quotient. The generator fails if a former
+layer-dependent closure helper returns or if the production source and table
+change independently.
 
 ## Current signed-plane assumptions and migration
 

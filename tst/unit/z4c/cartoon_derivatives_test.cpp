@@ -19,8 +19,10 @@ int main(int argc, char *argv[]) {
   Kokkos::initialize(argc, argv);
   bool passed = false;
   {
-    passed = RunCartoonDerivativeOrder2() && RunCartoonDerivativeOrder4() &&
-             RunCartoonDerivativeOrder6();
+    const bool order2_passed = RunCartoonDerivativeOrder2();
+    const bool order4_passed = RunCartoonDerivativeOrder4();
+    const bool order6_passed = RunCartoonDerivativeOrder6();
+    passed = order2_passed && order4_passed && order6_passed;
   }
   Kokkos::finalize();
   if (!passed) {

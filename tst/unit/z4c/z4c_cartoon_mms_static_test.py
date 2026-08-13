@@ -94,14 +94,19 @@ def main() -> int:
             "frozen signed-plane provider reference changed")
     provider_text = provider.read_text()
     for forbidden in ("FitRadialSamples", "RadialFit", "OddCoefficientFit",
-                      "QuadraticCoefficientFit", "QuadraticDifferenceFit"):
+                      "QuadraticCoefficientFit", "QuadraticDifferenceFit",
+                      "NearAxisCell", "TargetLayer", "RegularCoefficientDerivative",
+                      "EvenCoefficientDerivative", "OddCoefficientDerivative",
+                      "QuadraticCoefficientDerivative",
+                      "QuadraticDifferenceCoefficientDerivative"):
         require(forbidden not in provider_text,
-                f"production provider retains runtime fit helper {forbidden}")
-    require("RegularCoefficientDerivative" in provider_text and
-            "return NGHOST - 1;" in provider_text and
-            "-3.0 / 4.0 * samples[0]" in provider_text and
-            "1.0 / 30.0 * samples[3]" in provider_text,
-            "half-plane provider lacks the fixed rational regularity closure")
+                f"production provider retains layer-dependent closure helper {forbidden}")
+    require("return ActiveFirst(RhoDirection(), field) / rho_;" in provider_text and
+            "const Real radial_derivative = ActiveFirst(RhoDirection(), component, field);"
+            in provider_text and
+            "const Real radial_derivative = ActiveFirst(RhoDirection(), a, b, field);"
+            in provider_text,
+            "half-plane provider lacks the single all-bulk SO(2) path")
     require(digest(finite_diff.read_bytes()) == FINITE_DIFF_SHA,
             "generated finite_diff.hpp hash changed")
     base_oracle = subprocess.check_output(
