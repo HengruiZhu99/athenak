@@ -43,6 +43,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
   auto &z4c = pmy_pack->pz4c->z4c;
   auto &rhs = pmy_pack->pz4c->rhs;
+  auto &telegraph_mu = pmy_pack->pz4c->u_telegraph_mu;
   auto &opt = pmy_pack->pz4c->opt;
   Real time = pmy_pack->pmesh->time;
   bool is_vacuum = (pmy_pack->ptmunu == nullptr) ? true : false;
@@ -64,7 +65,8 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   // global curvature scale per RHS call and share it between every opt-in scale-invariant
   // gauge/damping term.
   const bool use_max_K_scale =
-      (opt.telegraph_lapse && opt.telegraph_max_K) ||
+      (opt.telegraph_lapse &&
+       opt.telegraph_damping_prescription != TelegraphDampingPrescription::fixed) ||
       opt.shift_eta_max_K || opt.damp_kappa1_max_K;
   Real max_abs_K = 1.0;
   if (use_max_K_scale) {
@@ -99,17 +101,14 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   const Real shift_eta_eff =
       opt.shift_eta * (opt.shift_eta_max_K ? max_abs_K : 1.0);
 
-  // B_i is dimensionless in alpha_t = chi div(B).  In scale-invariant mode,
+  // B_i is dimensionless in alpha_t = chi div(B).  The scale-invariant
+  // parameterization is
   //
-  //   (partial_t - beta^j partial_j) B_i
-  //       = -(max|K|/tau) B_i + (kappa/tau) partial_i alpha,
+  //   Q(x)=mu(x)/max|K|, tau_eff=tau/max|K|,
+  //   kappa_eff=kappa/max|K|,
   //
-  // where tau and kappa are dimensionless.  Keeping the gradient coefficient separate
-  // is essential: multiplying the entire bracket by max|K| would require kappa to carry
-  // a dynamically changing length scale and would freeze the gauge when max|K| = 0.
-  const Real telegraph_damping =
-      (opt.telegraph_max_K ? max_abs_K : 1.0) / opt.telegraph_tau;
-  const Real telegraph_gradient = opt.telegraph_kappa / opt.telegraph_tau;
+  // so Q/tau_eff=mu/tau and kappa_eff/tau_eff=kappa/tau.  The helper below
+  // evaluates these cancelled coefficients directly, including when max|K|=0.
 
   const bool collect_rhs_stage_diagnostics =
       opt.rhs_stage_diagnostics && time >= opt.rhs_stage_diagnostics_start_time;
@@ -832,11 +831,43 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         if (opt.telegraph_lapse) {
           Real W = (chi > 0) ? chi : 0;
           rhs.alpha(m, k, j, i) += W * dB;
+          const Real K =
+              z4c.vKhat(m, k, j, i) + 2.0 * z4c.vTheta(m, k, j, i);
+          Real local_mu = 1.0;
+          if (opt.telegraph_damping_prescription ==
+              TelegraphDampingPrescription::max_domain_abs_K) {
+            local_mu = max_abs_K;
+          } else if (opt.telegraph_damping_prescription ==
+                     TelegraphDampingPrescription::local_abs_K) {
+            local_mu = LocalAbsKTelegraphMu(K);
+          } else if (opt.telegraph_damping_prescription ==
+                     TelegraphDampingPrescription::local_extrinsic_curvature_norm) {
+            local_mu = LocalExtrinsicCurvatureNormTelegraphMu(
+                K,
+                g_uu(0, 0), g_uu(0, 1), g_uu(0, 2),
+                g_uu(1, 1), g_uu(1, 2), g_uu(2, 2),
+                z4c.vA_dd(m, 0, 0, k, j, i),
+                z4c.vA_dd(m, 0, 1, k, j, i),
+                z4c.vA_dd(m, 0, 2, k, j, i),
+                z4c.vA_dd(m, 1, 1, k, j, i),
+                z4c.vA_dd(m, 1, 2, k, j, i),
+                z4c.vA_dd(m, 2, 2, k, j, i));
+          } else if (opt.telegraph_damping_prescription ==
+                     TelegraphDampingPrescription::local_chi_gradient_norm) {
+            local_mu = LocalChiGradientNormTelegraphMu(
+                chi, opt.chi_psi_power,
+                g_uu(0, 0), g_uu(0, 1), g_uu(0, 2),
+                g_uu(1, 1), g_uu(1, 2), g_uu(2, 2),
+                dchi_d(0), dchi_d(1), dchi_d(2));
+          }
+          telegraph_mu(m, 0, k, j, i) = local_mu;
+          const auto coefficients = ScaleInvariantTelegraphCoefficients(
+              local_mu, max_abs_K, opt.telegraph_tau, opt.telegraph_kappa);
           for (int a = 0; a < 3; ++a) {
             rhs.vB_d(m, a, k, j, i) =
                 opt.lapse_advect * LB_d(a) +
-                -telegraph_damping * z4c.vB_d(m, a, k, j, i) +
-                telegraph_gradient * dalpha_d(a);
+                -coefficients.damping * z4c.vB_d(m, a, k, j, i) +
+                coefficients.gradient * dalpha_d(a);
           }
         }
         Real const shift_gamma =

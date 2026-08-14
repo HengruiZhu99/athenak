@@ -67,6 +67,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   u0("u0 z4c",1,1,1,1,1),
   u1("u1 z4c",1,1,1,1,1),
   u_rhs("u_rhs z4c",1,1,1,1,1),
+  u_telegraph_mu("u_telegraph_mu",1,1,1,1,1),
   coarse_u0("coarse u0 z4c",1,1,1,1,1),
   u_weyl("u_weyl",1,1,1,1,1),
   coarse_u_weyl("coarse_u_weyl",1,1,1,1,1),
@@ -87,6 +88,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   Kokkos::realloc(u0,    nmb, (nz4c), bounds.n3, bounds.n2, bounds.n1);
   Kokkos::realloc(u1,    nmb, (nz4c), bounds.n3, bounds.n2, bounds.n1);
   Kokkos::realloc(u_rhs, nmb, (nz4c), bounds.n3, bounds.n2, bounds.n1);
+  Kokkos::realloc(u_telegraph_mu, nmb, 1, bounds.n3, bounds.n2, bounds.n1);
+  Kokkos::deep_copy(u_telegraph_mu, 0.0);
   Kokkos::realloc(u_weyl,    nmb, (2), bounds.n3, bounds.n2, bounds.n1);
 
   con.C.InitWithShallowSlice(u_con, I_CON_C);
@@ -167,6 +170,34 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.sss_damping_time = pin->GetOrAddReal("z4c", "sss_damping_time", 10.0);
   opt.telegraph_lapse = pin->GetOrAddBoolean("z4c", "telegraph_lapse", false);
   opt.telegraph_max_K = pin->GetOrAddBoolean("z4c", "telegraph_max_K", false);
+  const std::string telegraph_damping_prescription =
+      pin->DoesParameterExist("z4c", "telegraph_damping_prescription")
+          ? pin->GetString("z4c", "telegraph_damping_prescription")
+          : (opt.telegraph_max_K ? "max_domain_abs_K" : "fixed");
+  if (telegraph_damping_prescription == "fixed") {
+    opt.telegraph_damping_prescription = TelegraphDampingPrescription::fixed;
+  } else if (telegraph_damping_prescription == "max_domain_abs_K") {
+    opt.telegraph_damping_prescription =
+        TelegraphDampingPrescription::max_domain_abs_K;
+  } else if (telegraph_damping_prescription == "local_abs_K") {
+    opt.telegraph_damping_prescription = TelegraphDampingPrescription::local_abs_K;
+  } else if (telegraph_damping_prescription ==
+             "local_extrinsic_curvature_norm") {
+    opt.telegraph_damping_prescription =
+        TelegraphDampingPrescription::local_extrinsic_curvature_norm;
+  } else if (telegraph_damping_prescription == "local_chi_gradient_norm") {
+    opt.telegraph_damping_prescription =
+        TelegraphDampingPrescription::local_chi_gradient_norm;
+  } else {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "unknown <z4c>/telegraph_damping_prescription='"
+              << telegraph_damping_prescription << "'; expected fixed, "
+              << "max_domain_abs_K, local_abs_K, "
+              << "local_extrinsic_curvature_norm, or local_chi_gradient_norm"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.telegraph_tau = pin->GetOrAddReal("z4c", "telegraph_tau", 0.1);
   opt.telegraph_kappa = pin->GetOrAddReal("z4c", "telegraph_kappa", 0.1);
 

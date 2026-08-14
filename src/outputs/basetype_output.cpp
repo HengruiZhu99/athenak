@@ -658,6 +658,10 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
         outvars.emplace_back(z4c::Z4c::Z4c_names[v], v, &(pm->pmb_pack->pz4c->u0));
       }
     }
+    if (variable.compare("z4c_telegraph_mu") == 0) {
+      outvars.emplace_back("z4c_telegraph_mu", 0,
+                           &(pm->pmb_pack->pz4c->u_telegraph_mu));
+    }
 
     // weyl scalars
     if (variable.compare("weyl") == 0) {

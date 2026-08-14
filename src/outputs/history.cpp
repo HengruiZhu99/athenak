@@ -363,9 +363,12 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   const int cartoon_linf_index =
       cartoon ? cartoon_layer_index +
                     kCartoonAxisLayers * kCartoonRegionStride : -1;
-  pdata->nhist = cartoon
-                     ? cartoon_linf_index + 3 * kCartoonConstraintFamilies
-                     : cycle_index + 1;
+  const int base_history_count =
+      cartoon ? cartoon_linf_index + 3 * kCartoonConstraintFamilies
+              : cycle_index + 1;
+  const int telegraph_mu_min_index = opt.telegraph_lapse ? base_history_count : -1;
+  const int telegraph_mu_max_index = opt.telegraph_lapse ? base_history_count + 1 : -1;
+  pdata->nhist = base_history_count + (opt.telegraph_lapse ? 2 : 0);
   if (pdata->nhist > NHISTORY_VARIABLES) {
     std::cerr << "### FATAL ERROR in " << __FILE__
               << ": Cartoon history inventory exceeds NHISTORY_VARIABLES"
@@ -400,6 +403,12 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->reduction[horizon_status_index] = HistoryData::Reduction::max;
   pdata->reduction[horizon_last_search_cycle_index] = HistoryData::Reduction::max;
   pdata->reduction[cycle_index] = HistoryData::Reduction::max;
+  if (opt.telegraph_lapse) {
+    pdata->label[telegraph_mu_min_index] = "muMin";
+    pdata->label[telegraph_mu_max_index] = "muMax";
+    pdata->reduction[telegraph_mu_min_index] = HistoryData::Reduction::min;
+    pdata->reduction[telegraph_mu_max_index] = HistoryData::Reduction::max;
+  }
   if (cartoon) {
     pdata->label[central_lapse_index] = "axisLapse";
     pdata->label[central_proper_time_index] = "axisTau";
@@ -444,6 +453,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   // capture class variabels for kernel
   auto &u0_ = pm->pmb_pack->pz4c->u0;
   auto &u_con_ = pm->pmb_pack->pz4c->u_con;
+  auto &u_telegraph_mu_ = pm->pmb_pack->pz4c->u_telegraph_mu;
   const int &I_Z4c_Theta_ =  pm->pmb_pack->pz4c->I_Z4C_THETA;
   auto &z4c = pm->pmb_pack->pz4c->z4c;
   auto &adm = pm->pmb_pack->padm->adm;
@@ -641,6 +651,36 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       Kokkos::Max<Real>(max_abs_K));
   pdata->hdata[9] = max_abs_K;
   pdata->hdata[10] = static_cast<Real>(pm->nmb_total);
+  if (opt.telegraph_lapse) {
+    Real telegraph_mu_min = std::numeric_limits<Real>::max();
+    Real telegraph_mu_max = 0.0;
+    Kokkos::parallel_reduce(
+        "Z4cHistoryTelegraphMuMin",
+        Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+        KOKKOS_LAMBDA(const int &idx, Real &rank_min) {
+          const int m = idx / nkji;
+          const int k0 = (idx - m * nkji) / nji;
+          const int j0 = (idx - m * nkji - k0 * nji) / nx1;
+          const int i0 = idx - m * nkji - k0 * nji - j0 * nx1;
+          rank_min = fmin(rank_min,
+                          u_telegraph_mu_(m, 0, k0 + ks, j0 + js, i0 + is));
+        },
+        Kokkos::Min<Real>(telegraph_mu_min));
+    Kokkos::parallel_reduce(
+        "Z4cHistoryTelegraphMuMax",
+        Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+        KOKKOS_LAMBDA(const int &idx, Real &rank_max) {
+          const int m = idx / nkji;
+          const int k0 = (idx - m * nkji) / nji;
+          const int j0 = (idx - m * nkji - k0 * nji) / nx1;
+          const int i0 = idx - m * nkji - k0 * nji - j0 * nx1;
+          rank_max = fmax(rank_max,
+                          u_telegraph_mu_(m, 0, k0 + ks, j0 + js, i0 + is));
+        },
+        Kokkos::Max<Real>(telegraph_mu_max));
+    pdata->hdata[telegraph_mu_min_index] = telegraph_mu_min;
+    pdata->hdata[telegraph_mu_max_index] = telegraph_mu_max;
+  }
   if (opt.history_kretschmann) {
     pdata->hdata[kretschmann_index] = DispatchZ4cHistoryMaxKretschmann(pm);
   }

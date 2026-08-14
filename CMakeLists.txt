@@ -611,6 +611,25 @@ if (Athena_BUILD_UNIT_TESTS)
   add_test(
       NAME athena.z4c_chi_prolongation
       COMMAND athena_z4c_chi_prolongation_unit_test)
+  add_executable(
+      athena_z4c_telegraph_damping_unit_test
+      tst/unit/z4c/z4c_telegraph_damping_test.cpp)
+  target_include_directories(
+      athena_z4c_telegraph_damping_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_telegraph_damping_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_telegraph_damping
+      COMMAND athena_z4c_telegraph_damping_unit_test)
+  add_test(
+      NAME athena.z4c_telegraph_damping_static
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_telegraph_damping_static_test.py
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
   add_test(
       NAME athena.z4c_amr_chi_refresh_static
       COMMAND

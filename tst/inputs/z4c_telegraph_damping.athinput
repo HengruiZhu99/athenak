@@ -1,0 +1,70 @@
+# Small Cartesian production-path smoke for runtime telegraph damping modes.
+
+<job>
+basename = z4c_telegraph_damping
+
+<mesh>
+nghost = 2
+nx1 = 8
+x1min = -1.0
+x1max = 1.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 8
+x2min = -1.0
+x2max = 1.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 8
+x3min = -1.0
+x3max = 1.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<time>
+evolution = dynamic
+integrator = rk2
+cfl_number = 0.05
+nlim = 1
+tlim = 0.05
+ndiag = 1
+
+<mesh_refinement>
+refinement = none
+
+<z4c>
+spatial_order = 2
+diss = 0.02
+user_Sbc = true
+telegraph_lapse = true
+telegraph_max_K = true
+telegraph_damping_prescription = max_domain_abs_K
+telegraph_tau = 1.0
+telegraph_kappa = 1.0
+nrad_wave_extraction = 1
+extraction_radius_0 = 0.25
+extraction_nlev = 2
+waveform_dt = 1.0
+
+<problem>
+pgen_name = z4c_linear_wave
+amp = 1.0e-8
+kx1 = 1
+kx2 = 0
+kx3 = 0
+
+<output1>
+file_type = hst
+dcycle = 1
+data_format = %24.16e
+
+<output2>
+file_type = bin
+variable = z4c_telegraph_mu
+dcycle = 1
+id = mu
