@@ -1,10 +1,12 @@
-# Remote review prompt: scale-invariant local telegrapher damping
+# Remote review prompt: scale-invariant Brill gauge damping
 
 You are an expert read-only reviewer of a numerical-relativity experiment in
 AthenaK.  You have repository access but cannot compile or run anything.  Use
 source inspection, dimensional analysis, PDE reasoning, and the committed
 plots/tables to audit the result and recommend the smallest mathematically
-discriminating next step.  Do not propose a blind parameter sweep.
+discriminating next step.  The bundle now contains four telegrapher-scale
+comparisons and a one-parameter fixed-shift control.  Do not propose a blind
+parameter sweep.
 
 ## Repository identity
 
@@ -21,17 +23,23 @@ The telegrapher implementation is commit
 Read the bundle at
 `docs/investigations/brill_local_telegraph_scaling_20260814/`, beginning with:
 
-1. `RESULTS.md`
-2. `data/analysis_summary.json`
-3. `figures/figure3_local_telegraph_mu_comparison.png`
-4. `figures/constraints_local_telegraph_mu_comparison.png`
-5. `figures/lapse_and_maxK_local_telegraph_mu.png`
-6. `figures/telegraph_mu_extrema.png`
-7. `figures/telegraph_mu_spatial_profiles.png`
+1. `figure3_shift_damping_report.pdf`
+2. `RESULTS.md`
+3. `data/analysis_summary.json`
+4. `data/fixed_shift_eta2_comparison.json`
+5. `figures/figure3_local_telegraph_mu_comparison.png`
+6. `figures/figure3_fixed_shift_eta2_overlay.png`
+7. `figures/fixed_shift_eta2_stiffness_and_gauge.png`
+8. `figures/fixed_shift_eta2_constraint_comparison.png`
+9. `figures/fixed_shift_eta2_trajectory_and_amr.png`
+10. the original lapse, mu-extrema, and spatial-profile plots
 
 The complete reduced temporal series used by the plots is
 `data/history_curves.csv`; selected raw-AthenaK spatial profiles are in
-`data/selected_mu_profiles.json`.
+`data/selected_mu_profiles.json`.  The fixed-shift reduced history, sampled
+gauge extrema, AMR events, exact command, and final interpretation are the
+`data/fixed_shift_eta2_*` files.  The overlay can be regenerated with
+`scripts/plot_fixed_eta_control.py`.
 
 Then inspect these source and test files:
 
@@ -157,6 +165,42 @@ The native output manifest and campaign summary hashes are recorded in
 `RESULTS.md` and `data/analysis_summary.json`.  The Git bundle deliberately
 does not include multi-gigabyte native binaries.
 
+## Fixed-shift control
+
+After the four-mode campaign, one controlled diagnostic tested whether the
+scale-invariant Gamma-driver shift damping, rather than the telegrapher lapse
+alone, generated the baseline stiffness.  Job `56966125` reused the exact
+source, executable, Figure-3 input, initial-data payload, hardware class, and
+all numerical settings.  The sole physics change was:
+
+```text
+z4c/shift_eta_max_K=true -> false
+```
+
+Thus the baseline has `eta_shift=2 max|K|`, and the control has fixed
+`eta_shift=2`.  The telegrapher remains `max_domain_abs_K` with
+`tau=kappa=1`; scale-invariant Z4c damping remains enabled.
+
+Define `S_beta=dt eta_shift`.  The baseline's final recorded value is
+`5.55889`, above the approximate RK4 negative-real-axis limit `2.8`; the fixed
+control never exceeds `0.075`.  At the baseline failure time the fixed control
+has combined constraint norm `136.568` rather than `2.4013e11`, `max|K|=3.49`
+rather than `1.8974e4`, sampled `max|Gamma|=0.237` rather than `1288`, and 32
+rather than 290 MeshBlocks.
+
+The fixed control avoids the baseline chi rejection and reaches
+`t=16.73892M`, central proper time `10.37631M`, a `64.7%` coordinate-time
+extension.  It then fails a different strict post-RK axis-central diagnostic.
+The last finite row already has `max|K|=1.0689e4`, axis Kretschmann
+`7.6154e15`, and combined constraint norm `8.3439e7`.  The frozen telemetry
+does not distinguish whether lapse, constraint density, or curvature
+reconstruction becomes invalid first.
+
+Interpret this carefully: the control strongly implicates max-K-scaled shift
+damping as a major contributor to the baseline stiffness, but fixed eta is
+dimensionful, is not the target algorithm, and is not robust.  It is neither a
+Figure-3 reproduction nor a qualified replacement gauge.
+
 ## Hard review constraints
 
 - Do not recommend a chi floor, clipping, relaxed finite/positivity gate, or
@@ -168,6 +212,10 @@ does not include multi-gigabyte native binaries.
 - Do not infer that local damping caused the strict-chi failure merely from
   temporal correlation.
 - Keep the original domain-max result as the accepted comparator.
+- Do not promote fixed `eta=2` merely because it runs farther.
+- Do not equate later coordinate-time failure with convergence or reproduction.
+- Do not assume the late fixed-eta central failure has the same cause as the
+  baseline chi rejection.
 - Prefer a source-level or mathematical discriminator that a future agent can
   test prospectively in one bounded run.
 
@@ -211,15 +259,37 @@ does not include multi-gigabyte native binaries.
    experimental diagnostics, revise one mathematically defective definition,
    or stop with `NO FURTHER TELEGRAPHER CHANGE YET`.
 
+8. **Shift-stiffness causality.** Audit the inference from the fixed-eta
+   control.  Is `S_beta=dt eta_shift` the correct frozen-mode explicit-RK
+   stiffness measure for the implemented Gamma-driver subsystem?  Derive the
+   relevant eigenvalues, including the coupled shift/Gamma principal terms,
+   and say whether crossing `2.8` is a sufficient, necessary, or merely
+   suggestive instability condition.
+
+9. **Scale-invariant shift redesign.** Propose at most one smooth,
+   positive, mass-rescaling-invariant replacement for global `max|K|` in the
+   shift damping.  Explain its dimensions, behavior at time symmetry and
+   local zeros, spatial regularity, and how it avoids both a global curvature
+   spike and an arbitrary dimensionful floor.  If the evidence is insufficient
+   to choose one, say so and instead specify the one diagnostic needed.
+
+10. **Late central failure.** Rank the plausible causes of the fixed-eta
+    terminal event using only the committed histories and source: lapse
+    pathology, constraint growth, curvature reconstruction, AMR interaction,
+    or a shared underlying collapse instability.  Be explicit that the current
+    telemetry cannot identify the first invalid field.
+
 ## Required response format
 
 Return:
 
 1. **Source and dimensional audit** with exact paths and line references.
-2. **Frozen-coefficient PDE analysis** with derived speeds/damping eigenvalues.
+2. **Frozen-coefficient PDE analysis** with derived lapse and shift
+   speeds/damping eigenvalues.
 3. **Evidence interpretation** separating facts, inferences, and unknowns.
 4. **Ranked hypotheses** for the earlier local-mode failures.
-5. **One minimum discriminating next step** with strict stop conditions.
+5. **One minimum discriminating next step** with strict stop conditions and no
+   coefficient sweep.
 6. **Recommendation** and the precise qualification boundary.
 
 You must reason from the committed repository and artifacts only.  Explicitly
