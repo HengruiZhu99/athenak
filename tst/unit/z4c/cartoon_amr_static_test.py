@@ -78,6 +78,11 @@ def check_mirror_reconciliation_order() -> None:
         "half-plane tree is physical storage and must never" in REFINEMENT,
         "half-plane AMR non-mirroring contract is missing",
     )
+    require("std::sort(cllderef, cllderef + ctnd, Mesh::GreaterLevel);"
+            in REFINEMENT,
+            "derefine parent sort does not cover the complete half-open range")
+    require("std::sort(cllderef, &(cllderef[ctnd-1])" not in REFINEMENT,
+            "legacy derefine sort still excludes the final parent")
 
 
 def check_collapsed_dchi() -> None:

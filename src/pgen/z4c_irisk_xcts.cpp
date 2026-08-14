@@ -61,6 +61,20 @@ struct ConstraintSummary {
   ConstraintRegionSummary proper_support;
 };
 
+struct BrillGlobalCoefficients {
+  std::size_t radial_points = 0;
+  std::size_t angular_points = 0;
+  double radial_scale = 0.0;
+  double amplitude = 0.0;
+  double rho0 = 0.0;
+  double z0 = 0.0;
+  double sigma_rho = 0.0;
+  double sigma_z = 0.0;
+  double adm_mass = 0.0;
+  double hamiltonian_residual = 0.0;
+  std::vector<double> values;
+};
+
 constexpr std::array<char, 24> kVolumeOutputMagic{
     'A', 'T', 'H', 'E', 'N', 'A', '_', 'I', 'R', 'I', 'S', 'K',
     '_', 'V', 'O', 'L', 'U', 'M', 'E', '1', '\r', '\n', '\0', '\0'};
@@ -100,6 +114,201 @@ std::filesystem::path ResolveSpectralInputPath(const std::string &filename) {
          "before -d, against AthenaK's launch directory)");
   }
   return resolved;
+}
+
+BrillGlobalCoefficients ReadBrillGlobalCoefficients(
+    const std::filesystem::path &path) {
+  std::ifstream input(path);
+  if (!input) Fail("cannot open global Brill coefficient file: " + path.string());
+  std::string line;
+  if (!std::getline(input, line) ||
+      line != "IRIS_BRILL_GLOBAL_COEFFICIENTS_V1") {
+    Fail("invalid global Brill coefficient magic");
+  }
+  const auto read_value = [&](const char *expected) {
+    std::string record;
+    if (!std::getline(input, record)) Fail("truncated global Brill coefficients");
+    const std::string prefix = std::string(expected) + "=";
+    if (record.rfind(prefix, 0) != 0) {
+      Fail("unexpected global Brill coefficient record: " + record);
+    }
+    return record.substr(prefix.size());
+  };
+  BrillGlobalCoefficients result;
+  result.radial_points = std::stoull(read_value("radial_points"));
+  result.angular_points = std::stoull(read_value("angular_points"));
+  result.radial_scale = std::stod(read_value("radial_scale"));
+  result.amplitude = std::stod(read_value("amplitude"));
+  result.rho0 = std::stod(read_value("rho0"));
+  result.z0 = std::stod(read_value("z0"));
+  result.sigma_rho = std::stod(read_value("sigma_rho"));
+  result.sigma_z = std::stod(read_value("sigma_z"));
+  result.adm_mass = std::stod(read_value("adm_mass"));
+  result.hamiltonian_residual = std::stod(read_value("hamiltonian_residual"));
+  const std::size_t count = std::stoull(read_value("coefficient_count"));
+  if (!std::getline(input, line) || line != "coefficients:") {
+    Fail("missing global Brill coefficient payload marker");
+  }
+  if (result.radial_points == 0 || result.angular_points == 0 ||
+      count != result.radial_points * result.angular_points ||
+      !(result.radial_scale > 0.0) || !(result.sigma_rho > 0.0) ||
+      !(result.sigma_z > 0.0)) {
+    Fail("invalid global Brill coefficient dimensions or parameters");
+  }
+  result.values.reserve(count);
+  for (std::size_t n = 0; n < count; ++n) {
+    if (!std::getline(input, line)) Fail("truncated global Brill coefficient data");
+    const double value = std::stod(line);
+    if (!std::isfinite(value)) Fail("nonfinite global Brill coefficient");
+    result.values.push_back(value);
+  }
+  while (std::getline(input, line)) {
+    if (!line.empty()) Fail("trailing data in global Brill coefficient file");
+  }
+  if (!(std::isfinite(result.adm_mass) && result.adm_mass > 0.0 &&
+        std::isfinite(result.hamiltonian_residual))) {
+    Fail("invalid global Brill solve metadata");
+  }
+  return result;
+}
+
+double EvaluateGlobalBrillPsi(const BrillGlobalCoefficients &coefficients,
+                              const double radius, const double z) {
+  const double theta = radius > 0.0
+                           ? std::acos(std::clamp(std::abs(z) / radius, 0.0, 1.0))
+                           : 0.0;
+  const double phi = 0.5 * std::acos(-1.0) - theta;
+  const double radial_angle = std::atan2(coefficients.radial_scale, radius);
+  std::vector<double> angular(coefficients.angular_points);
+  for (std::size_t l = 0; l < coefficients.angular_points; ++l) {
+    angular[l] = std::cos(2.0 * static_cast<double>(l) * phi);
+  }
+  double psi = 1.0;
+  for (std::size_t m = 0; m < coefficients.radial_points; ++m) {
+    const double radial =
+        std::sin(static_cast<double>(2 * m + 1) * radial_angle);
+    for (std::size_t l = 0; l < coefficients.angular_points; ++l) {
+      psi += radial * angular[l] *
+             coefficients.values[m * coefficients.angular_points + l];
+    }
+  }
+  return psi;
+}
+
+void FillAdmFromBrillGlobalCoefficients(
+    MeshBlockPack *pmbp, const BrillGlobalCoefficients &coefficients,
+    const bool use_precollapsed_lapse) {
+  const auto map = z4c_irisk::SelectAdmMap(pmbp->z4c_symmetry);
+  if (map != z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2) {
+    Fail("direct global Brill coefficients require cartoon_so2");
+  }
+  auto &u_adm = pmbp->padm->u_adm;
+  HostArray5D<Real>::HostMirror host_u_adm = create_mirror(u_adm);
+  HostArray5D<Real>::HostMirror host_u_z4c = create_mirror(pmbp->pz4c->u0);
+  Kokkos::deep_copy(host_u_adm, 0.0);
+  Kokkos::deep_copy(host_u_z4c, 0.0);
+  adm::ADM::ADMhost_vars host_adm;
+  host_adm.g_dd.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_GXX,
+                                     adm::ADM::I_ADM_GZZ);
+  host_adm.vK_dd.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_KXX,
+                                      adm::ADM::I_ADM_KZZ);
+  host_adm.psi4.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_PSI4);
+  host_adm.alpha.InitWithShallowSlice(host_u_z4c, z4c::Z4c::I_Z4C_ALPHA);
+  host_adm.beta_u.InitWithShallowSlice(host_u_z4c, z4c::Z4c::I_Z4C_BETAX,
+                                       z4c::Z4c::I_Z4C_BETAZ);
+  auto &indcs = pmbp->pmesh->mb_indcs;
+  const auto bounds = z4c::MakeStoredDomainBounds(indcs);
+  pmbp->pmb->mb_size.sync_host();
+  pmbp->pmb->mb_bcs.sync_host();
+  auto size = pmbp->pmb->mb_size.h_view;
+  auto bcs = pmbp->pmb->mb_bcs.h_view;
+  Real minimum_psi4 = std::numeric_limits<Real>::infinity();
+  Real minimum_lapse = std::numeric_limits<Real>::infinity();
+  Real maximum_lapse = 0.0;
+  for (int m = 0; m < pmbp->nmb_thispack; ++m) {
+    const bool axis_block =
+        bcs(m, BoundaryFace::inner_x1) == BoundaryFlag::axis;
+    const int interpolation_is = axis_block ? indcs.is : bounds.is;
+    for (int k = bounds.ks; k <= bounds.ke; ++k) {
+      for (int j = bounds.js; j <= bounds.je; ++j) {
+        const double z = CellCenterX(j - indcs.js, indcs.nx2,
+                                     size(m).x2min, size(m).x2max);
+        for (int i = interpolation_is; i <= bounds.ie; ++i) {
+          const double x = CellCenterX(i - indcs.is, indcs.nx1,
+                                       size(m).x1min, size(m).x1max);
+          const double rho = std::abs(x);
+          const double radius = std::hypot(rho, z);
+          const double psi = EvaluateGlobalBrillPsi(coefficients, radius, z);
+          const double dr = rho - coefficients.rho0;
+          const double dz = z - coefficients.z0;
+          const double envelope =
+              std::exp(-(dr * dr / (coefficients.sigma_rho * coefficients.sigma_rho) +
+                         dz * dz / (coefficients.sigma_z * coefficients.sigma_z)));
+          const double q = coefficients.amplitude * rho * rho * envelope;
+          const double psi2 = psi * psi;
+          const double psi4 = psi2 * psi2;
+          const double meridional = std::exp(2.0 * q);
+          if (!(std::isfinite(psi) && psi > 0.0 &&
+                std::isfinite(psi4) && psi4 > 0.0 &&
+                std::isfinite(meridional))) {
+            Fail("direct global Brill interpolation produced invalid ADM data");
+          }
+          // Physical Y=0 metric is diag(psi4*exp(2q), psi4,
+          // psi4*exp(2q)) in (X,Y,Z).  Cartoon code axes are (X,Z,Y).
+          host_adm.g_dd(m, 0, 0, k, j, i) = psi4 * meridional;
+          host_adm.g_dd(m, 1, 1, k, j, i) = psi4 * meridional;
+          host_adm.g_dd(m, 2, 2, k, j, i) = psi4;
+          host_adm.psi4(m, k, j, i) = psi4;
+          const double lapse = use_precollapsed_lapse ? 1.0 / psi2 : 1.0;
+          host_adm.alpha(m, k, j, i) = lapse;
+          minimum_psi4 = std::min(minimum_psi4, static_cast<Real>(psi4));
+          minimum_lapse = std::min(minimum_lapse, static_cast<Real>(lapse));
+          maximum_lapse = std::max(maximum_lapse, static_cast<Real>(lapse));
+        }
+      }
+    }
+    if (axis_block) {
+      for (int k = bounds.ks; k <= bounds.ke; ++k) {
+        for (int j = bounds.js; j <= bounds.je; ++j) {
+          for (int n = 0; n <= adm::ADM::I_ADM_PSI4; ++n) {
+            if (!z4c::FillAdmAxisGhostLine(
+                    host_u_adm, m, n, k, j, indcs.is, indcs.ng)) {
+              Fail("invalid ADM component in direct Brill axis parity fill");
+            }
+          }
+          for (int n = z4c::Z4c::I_Z4C_ALPHA;
+               n <= z4c::Z4c::I_Z4C_BETAZ; ++n) {
+            if (!z4c::FillZ4cAxisGhostLine(
+                    host_u_z4c, m, n, k, j, indcs.is, indcs.ng)) {
+              Fail("invalid gauge component in direct Brill axis parity fill");
+            }
+          }
+        }
+      }
+    }
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &minimum_psi4, 1, MPI_ATHENA_REAL, MPI_MIN,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &minimum_lapse, 1, MPI_ATHENA_REAL, MPI_MIN,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &maximum_lapse, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+#endif
+  Kokkos::deep_copy(u_adm, host_u_adm);
+  Kokkos::deep_copy(pmbp->pz4c->u0, host_u_z4c);
+  if (global_variable::my_rank == 0) {
+    std::cout << std::setprecision(17)
+              << "Direct global Brill coefficient import: radial_points="
+              << coefficients.radial_points
+              << " angular_points=" << coefficients.angular_points
+              << " adm_mass=" << coefficients.adm_mass
+              << " min_psi4=" << minimum_psi4
+              << " lapse="
+              << (use_precollapsed_lapse ? "psi^-2" : "unit")
+              << " min_lapse=" << minimum_lapse
+              << " max_lapse=" << maximum_lapse << std::endl;
+  }
 }
 
 template <z4c_irisk::AdmMap Map>
@@ -1258,33 +1467,59 @@ void ProblemGenerator::Z4cIrisXcts(ParameterInput *pin, const bool restart) {
   if (pmbp->pz4c == nullptr || pmbp->padm == nullptr) {
     Fail("z4c_irisk_xcts requires both <z4c> and <adm> blocks");
   }
-  const std::string filename =
-      pin->GetOrAddString("problem", "irisk_adm_spectral_file", "EMPTY");
-  if (filename == "EMPTY" || filename.empty()) {
-    Fail("z4c_irisk_xcts requires problem.irisk_adm_spectral_file");
+  const std::string import_mode = pin->GetOrAddString(
+      "problem", "irisk_adm_import_mode", "m0_spectral_payload");
+  std::string imported_path;
+  std::uintmax_t imported_bytes = 0;
+  if (import_mode == "m0_spectral_payload") {
+    const std::string filename =
+        pin->GetOrAddString("problem", "irisk_adm_spectral_file", "EMPTY");
+    if (filename == "EMPTY" || filename.empty()) {
+      Fail("m0_spectral_payload requires problem.irisk_adm_spectral_file");
+    }
+    const std::filesystem::path resolved_filename = ResolveSpectralInputPath(filename);
+    imported_path = resolved_filename.string();
+    imported_bytes = std::filesystem::file_size(resolved_filename);
+    IrisAthenakSpectralInterpolator *interpolator = nullptr;
+    std::array<char, 1024> error{};
+    if (IrisAthenakSpectralOpen(imported_path.c_str(), &interpolator,
+                                error.data(), error.size()) != 0) {
+      Fail("failed to open IrisK spectral data '" + imported_path +
+           "': " + error.data());
+    }
+    FillAdmFromIrisSpectral(pmbp, interpolator);
+    IrisAthenakSpectralClose(interpolator);
+  } else if (import_mode == "direct_global_coefficients") {
+    const std::string initial_lapse = pin->GetOrAddString(
+        "problem", "brill_direct_initial_lapse", "unit");
+    if (initial_lapse != "unit" && initial_lapse != "precollapsed_psi_minus_2") {
+      Fail("problem.brill_direct_initial_lapse must be unit or "
+           "precollapsed_psi_minus_2");
+    }
+    const std::string filename = pin->GetOrAddString(
+        "problem", "brill_global_coefficients_file", "EMPTY");
+    if (filename == "EMPTY" || filename.empty()) {
+      Fail("direct_global_coefficients requires "
+           "problem.brill_global_coefficients_file");
+    }
+    const std::filesystem::path resolved_filename = ResolveSpectralInputPath(filename);
+    imported_path = resolved_filename.string();
+    imported_bytes = std::filesystem::file_size(resolved_filename);
+    const BrillGlobalCoefficients coefficients =
+        ReadBrillGlobalCoefficients(resolved_filename);
+    FillAdmFromBrillGlobalCoefficients(
+        pmbp, coefficients, initial_lapse == "precollapsed_psi_minus_2");
+  } else {
+    Fail("problem.irisk_adm_import_mode must be m0_spectral_payload or "
+         "direct_global_coefficients");
   }
-  const std::filesystem::path resolved_filename =
-      ResolveSpectralInputPath(filename);
-  const std::string resolved_filename_string = resolved_filename.string();
-  const std::uintmax_t spectral_file_bytes =
-      std::filesystem::file_size(resolved_filename);
-  IrisAthenakSpectralInterpolator *interpolator = nullptr;
-  std::array<char, 1024> error{};
-  if (IrisAthenakSpectralOpen(resolved_filename_string.c_str(), &interpolator,
-                              error.data(), error.size()) != 0) {
-    Fail("failed to open IrisK spectral data '" + resolved_filename_string +
-         "': " + error.data());
-  }
-  FillAdmFromIrisSpectral(pmbp, interpolator);
-  IrisAthenakSpectralClose(interpolator);
 
-  // Match the established puncture import sequence, while preserving the
-  // elliptically solved XCTS lapse and shift rather than imposing a puncture
-  // pre-collapsed lapse.
+  // Convert the selected ADM fields, including the explicitly chosen direct
+  // Brill lapse, into the evolved Z4c variables.
   Z4cFinalizeImportedAdm(pin);
   if (global_variable::my_rank == 0) {
-    std::cout << "Initialized Z4c from IrisK spectral XCTS data: "
-              << resolved_filename_string
-              << " bytes=" << spectral_file_bytes << std::endl;
+    std::cout << "Initialized Z4c from IrisK data mode=" << import_mode
+              << " path=" << imported_path
+              << " bytes=" << imported_bytes << std::endl;
   }
 }

@@ -168,6 +168,10 @@ class Z4c {
     Real lapse_harmonicf;
     Real lapse_harmonic;
     Real lapse_advect;
+    // Alcubierre shock-avoiding Bona-Masso slicing:
+    // (d_t - beta^i d_i) alpha = -(alpha^2 + kappa) K.
+    bool lapse_shock_avoiding;
+    Real lapse_shock_avoiding_kappa;
     // slow start lapse condition
     bool slow_start_lapse;
     Real ssl_damping_amp;

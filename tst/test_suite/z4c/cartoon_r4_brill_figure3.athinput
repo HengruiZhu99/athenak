@@ -6,10 +6,10 @@ basename = cartoon_r4_brill_figure3
 
 <mesh>
 nghost = 4
-nx1 = 128
-x1min = -16.0
+nx1 = 64
+x1min = 0.0
 x1max = 16.0
-ix1_bc = outflow
+ix1_bc = axis
 ox1_bc = outflow
 nx2 = 128
 x2min = -16.0
@@ -53,8 +53,8 @@ ndiag = 1
 
 <z4c>
 symmetry = cartoon_so2
-coordinate_map = signed_rho_z_suppressed_y_v1
-symmetry_schema = 1
+coordinate_map = half_rho_z_suppressed_y_v2
+symmetry_schema = 2
 spatial_order = 6
 history_kretschmann = true
 diss = 0.02
@@ -86,7 +86,10 @@ num_horizons = 0
 
 <problem>
 pgen_name = z4c_irisk_xcts
+irisk_adm_import_mode = direct_global_coefficients
 irisk_adm_spectral_file = __IRISK_BRILL_FIGURE3_PAYLOAD__
+brill_global_coefficients_file = __IRISK_BRILL_FIGURE3_COEFFICIENTS__
+brill_direct_initial_lapse = precollapsed_psi_minus_2
 require_ghost_coverage = true
 write_constraint_summary = true
 constraint_summary_file = cartoon_r4_brill_figure3-constraints.dat

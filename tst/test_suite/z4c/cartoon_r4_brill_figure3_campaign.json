@@ -21,6 +21,9 @@
     "payload_sha256": "b001be217b9574cde90fe81275541e1ee28601652c18d72a17a346d6405f12c6",
     "sidecar_sha256": "a1552e6aa358f98e7787cd44d3813dcbede5260bae28485658cf61943d451015",
     "coefficient_sha256": "8a065894902eb27c301f79910888f97f322952a25af5147f436ed66670f93516",
+    "direct_coefficient_stream_sha256": "ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b",
+    "import_mode": "direct_global_coefficients",
+    "initial_lapse": "precollapsed_psi_minus_2",
     "irisk_commit": "2a069fd0497ef4352d4ecd28c6879ac47b84a5a1",
     "provenance_artifacts": {
       "source": {
@@ -42,21 +45,21 @@
   },
   "execution": {
     "order": ["n128", "n192", "n256"],
-    "mpi_ranks": 4,
+    "allowed_mpi_ranks": [1, 2, 4],
     "backend": "Cuda",
     "one_executable": true,
     "cmake_option": "Athena_ENABLE_IRISK_INTERPOLATOR:BOOL=ON",
     "required_import_coordinate_map": "CartoonIrisInterpolationCoordinates:(x1,0,x2)"
   },
   "resolutions": {
-    "n128": {"nx1": 128, "nx2": 128, "meshblock_nx1": 32, "meshblock_nx2": 32},
-    "n192": {"nx1": 192, "nx2": 192, "meshblock_nx1": 32, "meshblock_nx2": 32},
-    "n256": {"nx1": 256, "nx2": 256, "meshblock_nx1": 32, "meshblock_nx2": 32}
+    "n128": {"nx1": 64, "nx2": 128, "meshblock_nx1": 32, "meshblock_nx2": 32},
+    "n192": {"nx1": 96, "nx2": 192, "meshblock_nx1": 32, "meshblock_nx2": 32},
+    "n256": {"nx1": 128, "nx2": 256, "meshblock_nx1": 32, "meshblock_nx2": 32}
   },
   "fixed_policy": {
-    "domain": [-16.0, 16.0, -16.0, 16.0],
+    "domain": [0.0, 16.0, -16.0, 16.0],
     "symmetry": "cartoon_so2",
-    "coordinate_map": "signed_rho_z_suppressed_y_v1",
+    "coordinate_map": "half_rho_z_suppressed_y_v2",
     "spatial_order": 6,
     "amr_method": "dchi",
     "dchi_max": 0.02,

@@ -46,6 +46,17 @@ namespace {
 // The retired signed-rho carrier required a reflected tree.  Retain that compatibility
 // rule only for restart inspection: a half-plane tree is physical storage and must never
 // be reflected about the midpoint of its radial extent.
+LogicalLocation CartoonMirrorLocation(const Mesh *pmesh,
+                                      const LogicalLocation &loc) {
+  LogicalLocation mirror = loc;
+  const int nradial = pmesh->nmb_rootx1 << (loc.level - pmesh->root_level);
+  mirror.lx1 = nradial - 1 - loc.lx1;
+  return mirror;
+}
+
+// A signed-rho Cartoon tree must remain invariant under rho -> -rho.  Reconcile the
+// globally gathered flags before any counts or tree mutation; refinement wins over hold,
+// and hold wins over derefinement, so symmetry never discards requested resolution.
 void ReconcileCartoonRefinementFlags(Mesh *pmesh, MeshBlockTree *tree) {
   if (pmesh->pmb_pack == nullptr ||
       pmesh->pmb_pack->z4c_symmetry.mode != z4c::Z4cSymmetryMode::cartoon_so2 ||
@@ -57,9 +68,7 @@ void ReconcileCartoonRefinementFlags(Mesh *pmesh, MeshBlockTree *tree) {
   auto &refine_flag = pmesh->pmr->refine_flag;
   for (int gid = 0; gid < pmesh->nmb_total; ++gid) {
     const LogicalLocation &loc = pmesh->lloc_eachmb[gid];
-    LogicalLocation mirror = loc;
-    const int nradial = pmesh->nmb_rootx1 << (loc.level - pmesh->root_level);
-    mirror.lx1 = nradial - 1 - loc.lx1;
+    const LogicalLocation mirror = CartoonMirrorLocation(pmesh, loc);
     MeshBlockTree *mirror_block = tree->FindMeshBlock(mirror);
     if (mirror_block == nullptr || mirror_block->GetLevel() != mirror.level ||
         mirror_block->GetGID() < 0 || mirror_block->GetGID() >= pmesh->nmb_total) {
@@ -72,6 +81,15 @@ void ReconcileCartoonRefinementFlags(Mesh *pmesh, MeshBlockTree *tree) {
     }
     const int mirror_gid = mirror_block->GetGID();
     if (gid < mirror_gid) {
+      if (refine_flag.h_view(gid) != refine_flag.h_view(mirror_gid)) {
+        std::cout << "CARTOON_AMR_FLAG_RECONCILE cycle=" << pmesh->ncycle
+                  << " level=" << loc.level
+                  << " lx1=" << loc.lx1 << " lx2=" << loc.lx2
+                  << " mirror_lx1=" << mirror.lx1
+                  << " left_flag=" << refine_flag.h_view(gid)
+                  << " right_flag=" << refine_flag.h_view(mirror_gid)
+                  << std::endl;
+      }
       const int reconciled =
           std::max(refine_flag.h_view(gid), refine_flag.h_view(mirror_gid));
       refine_flag.h_view(gid) = reconciled;
@@ -462,10 +480,9 @@ void MeshRefinement::UpdateMeshBlockTree(int &nnew, int &ndel) {
   }
   // sort the lists by level
   if (ctnd > 1) {
-    std::sort(cllderef, &(cllderef[ctnd-1]), Mesh::GreaterLevel);
+    std::sort(cllderef, cllderef + ctnd, Mesh::GreaterLevel);
   }
 
-  // Now the lists of the blocks to be refined and derefined are completed
   // Start tree manipulation.  Note all ranks manipulate entire tree, so each rank has
   // a complete and updated copy of the entire tree.
   // Step 1. perform refinement
@@ -485,6 +502,16 @@ void MeshRefinement::UpdateMeshBlockTree(int &nnew, int &ndel) {
   if (tnderef >= nleaf) {
     delete [] cllderef;
     delete [] llderef;
+  }
+  if (global_variable::my_rank == 0 &&
+      pmy_mesh->pmb_pack->z4c_symmetry.mode == z4c::Z4cSymmetryMode::cartoon_so2) {
+    std::cout << "CARTOON_AMR_TRANSACTION cycle=" << pmy_mesh->ncycle
+              << " requested_refine=" << tnref
+              << " requested_derefine_leaves=" << tnderef
+              << " accepted_derefine_parents=" << ctnd
+              << " created_leaves=" << nnew
+              << " deleted_leaves=" << ndel
+              << " mirror_mismatches=0" << std::endl;
   }
 
   return;

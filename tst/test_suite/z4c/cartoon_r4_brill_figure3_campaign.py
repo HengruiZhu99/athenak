@@ -51,6 +51,7 @@ ATHENA_CURVE_HEADER = (
     "max_meshblocks_per_rank")
 PUBLISHED_COMPARISON_SAMPLES = 1025
 PAYLOAD_SENTINEL = "__IRISK_BRILL_FIGURE3_PAYLOAD__"
+COEFFICIENT_SENTINEL = "__IRISK_BRILL_FIGURE3_COEFFICIENTS__"
 
 
 def load_r1() -> Any:
@@ -238,7 +239,8 @@ def design() -> dict[str, Any]:
             result["qualification_claim"] == "current_gauge_analogue_only",
             "Figure-3 design schema/claim changed")
     require(result["execution"] == {
-                "order": ["n128", "n192", "n256"], "mpi_ranks": 4,
+                "order": ["n128", "n192", "n256"],
+                "allowed_mpi_ranks": [1, 2, 4],
                 "backend": "Cuda", "one_executable": True,
                 "cmake_option": "Athena_ENABLE_IRISK_INTERPOLATOR:BOOL=ON",
                 "required_import_coordinate_map":
@@ -252,8 +254,15 @@ def design() -> dict[str, Any]:
                 "input": {"basename": "input.txt", "location": "root",
                           "size": 1289}},
             "Brill provenance relocation contract changed")
-    expected = {"n128": (128, 128), "n192": (192, 192),
-                "n256": (256, 256)}
+    require(result["initial_data"].get("import_mode") ==
+            "direct_global_coefficients" and
+            result["initial_data"].get("initial_lapse") ==
+            "precollapsed_psi_minus_2" and
+            result["initial_data"].get("direct_coefficient_stream_sha256") ==
+            "ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b",
+            "direct Brill import/lapse/coefficient contract changed")
+    expected = {"n128": (64, 128), "n192": (96, 192),
+                "n256": (128, 256)}
     require(set(result["resolutions"]) == set(expected),
             "resolution pool changed")
     for name, shape in expected.items():
@@ -269,20 +278,25 @@ def validate_template() -> None:
     spec = design()
     blocks = r1.parse_athinput(TEMPLATE)
     require(blocks["problem"].get("pgen_name") == "z4c_irisk_xcts" and
-            blocks["problem"].get("irisk_adm_spectral_file") == PAYLOAD_SENTINEL,
-            "template does not select the external IrisK handoff")
+            blocks["problem"].get("irisk_adm_import_mode") ==
+            "direct_global_coefficients" and
+            blocks["problem"].get("irisk_adm_spectral_file") == PAYLOAD_SENTINEL and
+            blocks["problem"].get("brill_global_coefficients_file") ==
+            COEFFICIENT_SENTINEL and
+            blocks["problem"].get("brill_direct_initial_lapse") ==
+            "precollapsed_psi_minus_2",
+            "template does not select direct coefficients and pre-collapsed lapse")
     require(blocks["z4c"].get("symmetry") == "cartoon_so2" and
             blocks["z4c"].get("coordinate_map") ==
-            "signed_rho_z_suppressed_y_v1" and
+            "half_rho_z_suppressed_y_v2" and
             blocks["mesh"].get("nx3") == "1" and
             blocks["meshblock"].get("nx3") == "1",
-            "template is not collapsed signed-rho Cartoon")
-    require(float(blocks["mesh"]["x1min"]) ==
-            -float(blocks["mesh"]["x1max"]) and
+            "template is not collapsed half-plane Cartoon")
+    require(float(blocks["mesh"]["x1min"]) == 0.0 and
+            blocks["mesh"].get("ix1_bc") == "axis" and
             int(blocks["mesh"]["nx1"]) % int(blocks["meshblock"]["nx1"]) == 0 and
-            (int(blocks["mesh"]["nx1"]) //
-             int(blocks["meshblock"]["nx1"])) % 2 == 0,
-            "template violates the internal-axis MeshBlock topology")
+            int(blocks["mesh"]["nx1"]) >= int(blocks["meshblock"]["nx1"]),
+            "template violates the half-plane axis MeshBlock topology")
     policy = spec["fixed_policy"]
     require(blocks["mesh_refinement"].get("refinement") == "adaptive" and
             blocks["z4c_amr"].get("method") == policy["amr_method"] and
@@ -325,9 +339,13 @@ def validate_source_contract(source: Path) -> None:
     # not the ordinary Cartesian mesh tuple (x1,x2,x3).  The 01a base does not
     # yet meet this consuming production contract, so preparation must stop.
     require("cartoon_so2" in importer and
-            "signed_rho_z_suppressed_y_v1" in importer and
+            "half_rho_z_suppressed_y_v2" in importer and
             "CartoonIrisInterpolationCoordinates" in importer,
-            "IrisK importer lacks reviewed signed-rho (x1,0,x2) coordinate mapping")
+            "IrisK importer lacks reviewed half-plane (x1,0,x2) coordinate mapping")
+    require('import_mode == "direct_global_coefficients"' in importer and
+            "ReadBrillGlobalCoefficients(resolved_filename)" in importer and
+            'initial_lapse == "precollapsed_psi_minus_2"' in importer,
+            "source lacks direct Brill/pre-collapsed import contract")
 
 
 def load_cache(path: Path) -> dict[str, str]:
@@ -522,9 +540,11 @@ def validate_paper_figure(path: Path, expected: str) -> None:
             "official Figure-3 vector PDF hash mismatch")
 
 
-def render_input(name: str, payload: Path, spec: dict[str, Any]) -> str:
-    require(not any(character.isspace() for character in str(payload)),
-            "payload path contains whitespace unsupported by Athena input")
+def render_input(name: str, payload: Path, coefficients: Path,
+                 spec: dict[str, Any]) -> str:
+    require(not any(character.isspace() for path in (payload, coefficients)
+                    for character in str(path)),
+            "direct Brill input path contains whitespace unsupported by Athena input")
     blocks = r1.parse_athinput(TEMPLATE)
     resolution = spec["resolutions"][name]
     text = r1.render_athinput(blocks, {
@@ -534,14 +554,16 @@ def render_input(name: str, payload: Path, spec: dict[str, Any]) -> str:
         "meshblock/nx1": str(resolution["meshblock_nx1"]),
         "meshblock/nx2": str(resolution["meshblock_nx2"]),
         "problem/irisk_adm_spectral_file": str(payload),
+        "problem/brill_global_coefficients_file": str(coefficients),
         "problem/constraint_summary_file":
             f"cartoon_r4_brill_figure3_{name}-constraints.dat",
     })
     rendered = r1.parse_athinput_text(text, f"rendered-{name}")
     require(rendered["mesh"]["nx3"] == "1" and
             rendered["meshblock"]["nx3"] == "1" and
-            int(rendered["mesh"]["nx1"]) //
-            int(rendered["meshblock"]["nx1"]) % 2 == 0,
+            rendered["mesh"]["ix1_bc"] == "axis" and
+            int(rendered["mesh"]["nx1"]) %
+            int(rendered["meshblock"]["nx1"]) == 0,
             f"rendered {name} topology is invalid")
     return text
 
@@ -549,8 +571,8 @@ def render_input(name: str, payload: Path, spec: dict[str, Any]) -> str:
 def contract_payload(state: dict[str, Any]) -> dict[str, Any]:
     result = {key: state[key] for key in
               ("schema", "source", "executable", "cmake_cache", "design",
-               "initial_data", "paper_figure", "backend", "ranks", "inputs",
-               "execution_order")}
+               "initial_data", "direct_coefficients", "paper_figure",
+               "backend", "ranks", "inputs", "execution_order")}
     # Runtime status, commands, and hashes are evidence rather than prospective
     # contract fields.  Bind only the exact case inventory here so state updates
     # cannot either invalidate or expand the declared pool.
@@ -566,7 +588,8 @@ def contract_digest(state: dict[str, Any]) -> str:
 
 def verify_state(state: dict[str, Any]) -> None:
     require(state.get("schema") == STATE_SCHEMA and
-            state.get("backend") == "Cuda" and state.get("ranks") == 4,
+            state.get("backend") == "Cuda" and
+            state.get("ranks") in design()["execution"]["allowed_mpi_ranks"],
             "unknown or altered Figure-3 campaign state")
     require(state.get("contract_sha256") == contract_digest(state),
             "Figure-3 campaign contract changed after preparation")
@@ -589,6 +612,10 @@ def verify_state(state: dict[str, Any]) -> None:
     sidecar = Path(state["initial_data"]["sidecar_archive_path"])
     require(sidecar.is_file() and sha256(sidecar) ==
             state["initial_data"]["sidecar_sha256"], "bound sidecar changed")
+    coefficients = Path(state["direct_coefficients"]["archive_path"])
+    require(coefficients.is_file() and not coefficients.is_symlink() and
+            sha256(coefficients) == state["direct_coefficients"]["sha256"],
+            "bound direct Brill coefficient stream changed")
     for record in state["inputs"].values():
         path = Path(record["path"])
         require(path.is_file() and sha256(path) == record["sha256"],
@@ -603,6 +630,7 @@ def prepare(args: argparse.Namespace) -> None:
     cache = args.cmake_cache.resolve()
     payload = args.payload.resolve()
     sidecar = args.sidecar.resolve()
+    coefficients = args.coefficients.resolve()
     artifact_root = args.artifact_root
     figure = args.paper_figure.resolve()
     output = args.output.resolve()
@@ -613,6 +641,9 @@ def prepare(args: argparse.Namespace) -> None:
     validate_cache(cache, source)
     manifest = validate_handoff(payload, sidecar, spec["initial_data"],
                                 artifact_root)
+    require_file_hash(coefficients,
+                      spec["initial_data"]["direct_coefficient_stream_sha256"],
+                      "direct Brill coefficient stream")
     validate_paper_figure(figure, spec["paper_reference"]["figure_sha256"])
     require(not output.exists() or not any(output.iterdir()),
             "campaign output root already contains evidence")
@@ -620,16 +651,19 @@ def prepare(args: argparse.Namespace) -> None:
     provenance.mkdir(parents=True, exist_ok=True)
     archived_payload = provenance / payload.name
     archived_sidecar = provenance / sidecar.name
+    archived_coefficients = provenance / coefficients.name
     archived_figure = provenance / "arxiv2607.10843v1_figure3.pdf"
     shutil.copyfile(payload, archived_payload)
     shutil.copyfile(sidecar, archived_sidecar)
+    shutil.copyfile(coefficients, archived_coefficients)
     shutil.copyfile(figure, archived_figure)
     input_dir = output / "inputs"
     input_dir.mkdir()
     inputs: dict[str, dict[str, str]] = {}
     for name in spec["execution"]["order"]:
         path = input_dir / f"cartoon_r4_brill_figure3_{name}.athinput"
-        path.write_text(render_input(name, archived_payload.resolve(), spec),
+        path.write_text(render_input(name, archived_payload.resolve(),
+                                     archived_coefficients.resolve(), spec),
                         encoding="utf-8")
         inputs[name] = {"path": str(path.resolve()), "sha256": sha256(path),
                         "template_sha256": sha256(TEMPLATE)}
@@ -651,11 +685,19 @@ def prepare(args: argparse.Namespace) -> None:
             "artifact_root": str(artifact_root.resolve(strict=True)),
             "manifest": manifest,
         },
+        "direct_coefficients": {
+            "source_path": str(coefficients),
+            "archive_path": str(archived_coefficients.resolve()),
+            "sha256": sha256(archived_coefficients),
+            "producer_coefficient_sha256":
+                spec["initial_data"]["coefficient_sha256"],
+            "schema": "IRIS_BRILL_GLOBAL_COEFFICIENTS_V1",
+        },
         "paper_figure": {"source_path": str(figure),
                          "archive_path": str(archived_figure.resolve()),
                          "sha256": sha256(archived_figure),
                          "machine_readable_curve_available": False},
-        "backend": "Cuda", "ranks": 4, "inputs": inputs,
+        "backend": "Cuda", "ranks": args.ranks, "inputs": inputs,
         "execution_order": list(spec["execution"]["order"]), "cases": cases,
     }
     state["contract_sha256"] = contract_digest(state)
@@ -694,9 +736,12 @@ def run_case(args: argparse.Namespace) -> None:
     require(wrapper.is_file(), "established rank/GPU evidence wrapper is missing")
     athena = [state["executable"]["path"], "-i",
               state["inputs"][args.case]["path"], "-d", str(run_dir)]
-    command = ["srun", "--nodes=1", "--ntasks=4", "--ntasks-per-node=4",
+    ranks = state["ranks"]
+    gpu_map = ",".join(str(index) for index in range(ranks))
+    command = ["srun", "--nodes=1", f"--ntasks={ranks}",
+               f"--ntasks-per-node={ranks}",
                "--cpus-per-task=8", "--gpus-per-task=1",
-               "--gpu-bind=map_gpu:0,1,2,3", "--cpu-bind=cores", "--exact",
+               f"--gpu-bind=map_gpu:{gpu_map}", "--cpu-bind=cores", "--exact",
                "--kill-on-bad-exit=1", sys.executable, str(wrapper),
                "--evidence-dir", str(run_dir / "bindings"), "--require-cuda",
                "--", *athena]
@@ -929,11 +974,16 @@ def collect_case(state: dict[str, Any], name: str, reader: Any) -> dict[str, Any
     root_blocks_x1 = int(blocks["mesh"]["nx1"]) // int(
         blocks["meshblock"]["nx1"])
     tree = r1.tree_summary(groups["adm"], root_blocks_x1)
-    bindings = r1.binding_summary(root, "Cuda", 4)
+    bindings = r1.binding_summary(root, "Cuda", state["ranks"])
     restart, carrier = r1.latest_restart(root)
-    require(Path(state["initial_data"]["archive_path"]).name in
-            Path(state["inputs"][name]["path"]).read_text(encoding="utf-8"),
-            f"rendered {name} input lost the accepted payload")
+    rendered_input = Path(state["inputs"][name]["path"]).read_text(
+        encoding="utf-8")
+    require(Path(state["initial_data"]["archive_path"]).name in rendered_input and
+            Path(state["direct_coefficients"]["archive_path"]).name in
+            rendered_input and
+            "irisk_adm_import_mode = direct_global_coefficients" in rendered_input and
+            "brill_direct_initial_lapse = precollapsed_psi_minus_2" in rendered_input,
+            f"rendered {name} input lost direct Brill provenance or lapse policy")
     normalized_h: list[float | None] = []
     normalized_m: list[float | None] = []
     for volume, max_k, h2, m2 in zip(history["Volume"], history["max_abs_K"],
@@ -1099,9 +1149,10 @@ def self_test() -> None:
     validate_template()
     spec = design()
     rendered = r1.parse_athinput_text(
-        render_input("n192", Path("/immutable/brill.adm_spectral"), spec),
+        render_input("n192", Path("/immutable/brill.adm_spectral"),
+                     Path("/immutable/brill.coefficients"), spec),
         "synthetic-render")
-    require(rendered["mesh"]["nx1"] == "192" and
+    require(rendered["mesh"]["nx1"] == "96" and
             rendered["mesh"]["nx2"] == "192",
             "runtime resolution selection failed")
     invalid = r1.render_athinput(rendered, {"mesh/nx3": "2"})
@@ -1344,6 +1395,7 @@ def self_test() -> None:
     synthetic_state = {
         "schema": STATE_SCHEMA, "source": {}, "executable": {},
         "cmake_cache": {}, "design": {}, "initial_data": {},
+        "direct_coefficients": {},
         "paper_figure": {}, "backend": "Cuda", "ranks": 4,
         "inputs": {}, "execution_order": ["n128"],
         "cases": {"n128": {"status": "pending"}},
@@ -1352,6 +1404,10 @@ def self_test() -> None:
     synthetic_state["cases"]["n128"]["status"] = "complete"
     require(before == contract_digest(synthetic_state),
             "runtime evidence incorrectly changes the prospective contract")
+    synthetic_state["direct_coefficients"] = {"sha256": "a" * 64}
+    require(before != contract_digest(synthetic_state),
+            "prospective contract did not bind direct coefficient provenance")
+    synthetic_state["direct_coefficients"] = {}
     synthetic_state["cases"]["extra"] = {"status": "pending"}
     require(before != contract_digest(synthetic_state),
             "prospective contract did not bind the exact case inventory")
@@ -1367,9 +1423,11 @@ def main() -> int:
     make.add_argument("--cmake-cache", required=True, type=Path)
     make.add_argument("--payload", required=True, type=Path)
     make.add_argument("--sidecar", required=True, type=Path)
+    make.add_argument("--coefficients", required=True, type=Path)
     make.add_argument("--artifact-root", required=True, type=Path)
     make.add_argument("--paper-figure", required=True, type=Path)
     make.add_argument("--output", required=True, type=Path)
+    make.add_argument("--ranks", required=True, type=int, choices=(1, 2, 4))
     run = subparsers.add_parser("run-case")
     run.add_argument("--state", required=True, type=Path)
     run.add_argument("--case", required=True)
