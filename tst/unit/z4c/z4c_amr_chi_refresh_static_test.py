@@ -88,7 +88,16 @@ def main() -> None:
     for order in (2, 3, 4):
         require(f"case {order}:" in fill_coarse and
                 f"RestrictInterpolation<{order}>" in fill_coarse,
-                f"3D Z4c coarse refresh is missing NGHOST={order}")
+                f"Z4c coarse refresh is missing NGHOST={order}")
+    fill_2d = fill_coarse[
+        fill_coarse.index("// restrict in 2D") :
+        fill_coarse.index("// restrict in 3D")
+    ]
+    require("if (!is_z4c)" in fill_2d,
+            "2D coarse refresh no longer separates generic and Z4c restriction")
+    for order in (2, 3, 4):
+        require(f"RestrictInterpolation<{order}>" in fill_2d,
+                f"2D Z4c coarse refresh bypasses NGHOST={order} high-order restriction")
     require("CompleteFinePairCoarseRange" in fill_coarse and
             "fine_n1 = a.extent_int(4)" in fill_coarse and
             "fine_n2 = a.extent_int(3)" in fill_coarse and
@@ -97,6 +106,9 @@ def main() -> None:
     require("if (NGHOST == 3)" in restriction and
             "constexpr Real weight[4]" in restriction,
             "NGHOST=3 restriction implementation is missing")
+    require("if (nx3 == 1)" in restriction and
+            "a(m, v, fk, refj + jj, refi + ii)" in restriction,
+            "collapsed-x3 tensor restriction implementation is missing")
     require("fi == 0" in restriction and "fi == outer_i" in restriction and
             "restrict_4th_edge.d_view" in restriction,
             "outer stored NGHOST=4 pairs no longer use oriented edge weights")
@@ -109,6 +121,15 @@ def main() -> None:
         require(f"case {order}:" in restrict_cc and
                 f"RestrictInterpolation<{order}>" in restrict_cc,
                 f"full Z4c restriction is missing NGHOST={order}")
+    restrict_2d = restrict_cc[
+        restrict_cc.index("// restrict in 2D") :
+        restrict_cc.index("// restrict in 3D")
+    ]
+    require("if (!is_z4c)" in restrict_2d,
+            "2D full restriction no longer separates generic and Z4c restriction")
+    for order in (2, 3, 4):
+        require(f"RestrictInterpolation<{order}>" in restrict_2d,
+                f"2D Z4c full restriction bypasses NGHOST={order} high-order restriction")
 
     adaptive = refinement[
         refinement.index("void MeshRefinement::AdaptiveMeshRefinement") :

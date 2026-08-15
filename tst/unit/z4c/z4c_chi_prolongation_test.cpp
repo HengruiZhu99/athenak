@@ -77,6 +77,112 @@ RestrictionWeights MakeRestrictionWeights() {
   return weights;
 }
 
+Real PolynomialValue(const Real x, const Real y, const int degree) {
+  return 2.0 + std::pow(x, degree) + 0.7 * std::pow(y, degree) +
+         0.05 * std::pow(x, degree) * std::pow(y, degree);
+}
+
+template <int NGHOST>
+bool CheckCollapsedRestrictionPolynomialExactness() {
+  constexpr int nx = 8;
+  constexpr int extent = nx + 2 * NGHOST;
+  constexpr int npoints = (NGHOST == 4) ? 5 : 2;
+  const int points[5] = {
+      (NGHOST == 4) ? 0 : NGHOST,
+      NGHOST,
+      (NGHOST == 4) ? NGHOST + 2 : 0,
+      (NGHOST == 4) ? NGHOST + nx - 2 : 0,
+      (NGHOST == 4) ? extent - 2 : 0};
+  const int high_point = NGHOST + nx - 2;
+  const auto weights = MakeRestrictionWeights();
+  DvceArray5D<Real> fine("collapsed high-order restriction source", 1, 1,
+                         1, extent, extent);
+
+  for (int degree = 0; degree <= NGHOST; ++degree) {
+    auto fine_host = Kokkos::create_mirror_view(fine);
+    for (int j = 0; j < extent; ++j) {
+      for (int i = 0; i < extent; ++i) {
+        const Real x = 0.1 * (i - NGHOST);
+        const Real y = 0.1 * (j - NGHOST);
+        fine_host(0, 0, 0, j, i) = PolynomialValue(x, y, degree);
+      }
+    }
+    Kokkos::deep_copy(fine, fine_host);
+    for (int pj = 0; pj < npoints; ++pj) {
+      const int fj = (NGHOST == 4) ? points[pj] : (pj == 0 ? NGHOST : high_point);
+      for (int pi = 0; pi < npoints; ++pi) {
+        const int fi =
+            (NGHOST == 4) ? points[pi] : (pi == 0 ? NGHOST : high_point);
+        Kokkos::View<Real *> result("collapsed restriction result", 1);
+        Kokkos::parallel_for(
+            "collapsed polynomial restriction", Kokkos::RangePolicy<>(0, 1),
+            KOKKOS_LAMBDA(const int) {
+              result(0) = RestrictInterpolation<NGHOST>(
+                  0, 0, 0, fj, fi, nx, nx, 1, fine, weights.second,
+                  weights.fourth, weights.fourth_edge);
+            });
+        const auto result_host =
+            Kokkos::create_mirror_view_and_copy(HostMemSpace(), result);
+        const Real expected = PolynomialValue(
+            0.1 * (fi + 0.5 - NGHOST), 0.1 * (fj + 0.5 - NGHOST), degree);
+        if (!NearlyEqual(result_host(0), expected, 3.0e-12)) return false;
+      }
+    }
+  }
+  return true;
+}
+
+template <int NGHOST>
+bool CheckCollapsedRestrictionProlongationRoundTrip() {
+  constexpr int nx = 16;
+  constexpr int extent = nx + 2 * NGHOST;
+  constexpr int ncoarse = NGHOST + 1;
+  constexpr int coarse_center = NGHOST / 2;
+  constexpr int fine_center = NGHOST + 6;
+  DvceArray5D<Real> fine("collapsed round-trip fine source", 1, 1,
+                         1, extent, extent);
+  DvceArray5D<Real> coarse("collapsed round-trip coarse stencil", 1, 1,
+                           1, ncoarse, ncoarse);
+  DvceArray5D<Real> children("collapsed round-trip children", 1, 1, 1, 2, 2);
+  auto fine_host = Kokkos::create_mirror_view(fine);
+  for (int j = 0; j < extent; ++j) {
+    for (int i = 0; i < extent; ++i) {
+      const Real x = 0.05 * (i - fine_center);
+      const Real y = 0.05 * (j - fine_center);
+      fine_host(0, 0, 0, j, i) = PolynomialValue(x, y, NGHOST);
+    }
+  }
+  Kokkos::deep_copy(fine, fine_host);
+  const auto restriction_weights = MakeRestrictionWeights();
+  const auto prolongation_weights = MakeProlongationWeights<NGHOST>();
+  Kokkos::parallel_for(
+      "collapsed restriction stencil", Kokkos::MDRangePolicy<Kokkos::Rank<2>>(
+          {0, 0}, {ncoarse, ncoarse}),
+      KOKKOS_LAMBDA(const int j, const int i) {
+        const int fj = fine_center + 2 * (j - coarse_center);
+        const int fi = fine_center + 2 * (i - coarse_center);
+        coarse(0, 0, 0, j, i) = RestrictInterpolation<NGHOST>(
+            0, 0, 0, fj, fi, nx, nx, 1, fine, restriction_weights.second,
+            restriction_weights.fourth, restriction_weights.fourth_edge);
+      });
+  Kokkos::parallel_for(
+      "collapsed restriction prolongation round trip", Kokkos::RangePolicy<>(0, 1),
+      KOKKOS_LAMBDA(const int) {
+        HighOrderProlongCC<NGHOST>(0, 0, 0, coarse_center, coarse_center,
+                                   0, 0, 0, nx, nx, 1, coarse, children,
+                                   prolongation_weights);
+      });
+  const auto child_host =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), children);
+  for (int j = 0; j < 2; ++j) {
+    for (int i = 0; i < 2; ++i) {
+      const Real expected = fine_host(0, 0, 0, fine_center + j, fine_center + i);
+      if (!NearlyEqual(child_host(0, 0, 0, j, i), expected, 5.0e-12)) return false;
+    }
+  }
+  return true;
+}
+
 template <int NGHOST>
 bool CheckStoredSameLevelRestrictionBounds() {
   constexpr int nx = 8;
@@ -548,6 +654,12 @@ int main(int argc, char **argv) {
                       CheckSiblingInventories() &&
                       CheckThreeDimensionalHighOrderGroup() &&
                       CheckThreeDimensionalFallbackConservation() &&
+                      CheckCollapsedRestrictionPolynomialExactness<2>() &&
+                      CheckCollapsedRestrictionPolynomialExactness<3>() &&
+                      CheckCollapsedRestrictionPolynomialExactness<4>() &&
+                      CheckCollapsedRestrictionProlongationRoundTrip<2>() &&
+                      CheckCollapsedRestrictionProlongationRoundTrip<3>() &&
+                      CheckCollapsedRestrictionProlongationRoundTrip<4>() &&
                       CheckStoredSameLevelRestrictionBounds<2>() &&
                       CheckStoredSameLevelRestrictionBounds<3>() &&
                       CheckStoredSameLevelRestrictionBounds<4>() &&

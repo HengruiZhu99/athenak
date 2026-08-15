@@ -135,8 +135,26 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
 
           // restrict in 2D
           if (!(three_d)) {
-            ca(m,v,kl,j,i) = 0.25*(a(m,v,kl,finej  ,finei) + a(m,v,kl,finej  ,finei+1)
-                                 + a(m,v,kl,finej+1,finei) + a(m,v,kl,finej+1,finei+1));
+            if (!is_z4c) {
+              ca(m,v,kl,j,i) =
+                  0.25*(a(m,v,kl,finej  ,finei) + a(m,v,kl,finej  ,finei+1)
+                      + a(m,v,kl,finej+1,finei) + a(m,v,kl,finej+1,finei+1));
+            } else {
+              switch (z4c_stencil) {
+                case 2: ca(m,v,kl,j,i) = RestrictInterpolation<2>(m,v,indcs.ks,
+                            finej,finei,nx1,nx2,nx3,a,restrict_2nd,restrict_4th,
+                            restrict_4th_edge);
+                        break;
+                case 3: ca(m,v,kl,j,i) = RestrictInterpolation<3>(m,v,indcs.ks,
+                            finej,finei,nx1,nx2,nx3,a,restrict_2nd,restrict_4th,
+                            restrict_4th_edge);
+                        break;
+                case 4: ca(m,v,kl,j,i) = RestrictInterpolation<4>(m,v,indcs.ks,
+                            finej,finei,nx1,nx2,nx3,a,restrict_2nd,restrict_4th,
+                            restrict_4th_edge);
+                        break;
+              }
+            }
           // restrict in 3D
           } else {
             if (!is_z4c) {

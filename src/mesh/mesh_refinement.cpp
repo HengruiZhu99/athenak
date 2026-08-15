@@ -1385,8 +1385,23 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
     KOKKOS_LAMBDA(const int m, const int n, const int j, const int i) {
       int finei = 2*i - cis;  // correct when cis=is
       int finej = 2*j - cjs;  // correct when cjs=js
-      cu(m,n,cks,j,i) = 0.25*(u(m,n,cks,finej  ,finei) + u(m,n,cks,finej  ,finei+1)
-                            + u(m,n,cks,finej+1,finei) + u(m,n,cks,finej+1,finei+1));
+      if (!is_z4c) {
+        cu(m,n,cks,j,i) =
+            0.25*(u(m,n,cks,finej  ,finei) + u(m,n,cks,finej  ,finei+1)
+                + u(m,n,cks,finej+1,finei) + u(m,n,cks,finej+1,finei+1));
+      } else {
+        switch (z4c_stencil) {
+          case 2: cu(m,n,cks,j,i) = RestrictInterpolation<2>(m,n,cks,finej,finei,
+                          nx1,nx2,nx3,u,restrict_2nd,restrict_4th,restrict_4th_edge);
+                  break;
+          case 3: cu(m,n,cks,j,i) = RestrictInterpolation<3>(m,n,cks,finej,finei,
+                          nx1,nx2,nx3,u,restrict_2nd,restrict_4th,restrict_4th_edge);
+                  break;
+          case 4: cu(m,n,cks,j,i) = RestrictInterpolation<4>(m,n,cks,finej,finei,
+                          nx1,nx2,nx3,u,restrict_2nd,restrict_4th,restrict_4th_edge);
+                  break;
+        }
+      }
     });
 
   // restrict in 3D

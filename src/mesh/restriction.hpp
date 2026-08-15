@@ -54,6 +54,69 @@ Real RestrictInterpolation(const int m, const int v, const int fk, const int fj,
 
   bool offseti = (fi<nx1/2+NGHOST);
   bool offsetj = (fj<nx2/2+NGHOST);
+
+  // A collapsed x3 direction has one stored plane and no ghost layers.  Apply
+  // the same order-matched rule as the Cartesian path in the two active
+  // directions only.  This mirrors the collapsed-direction handling in
+  // ProlongInterpolation and leaves the established 3-D tensor product below
+  // unchanged.
+  if (nx3 == 1) {
+    if constexpr (NGHOST == 2) {
+      const int refi = offseti ? fi : fi - 1;
+      const int refj = offsetj ? fj : fj - 1;
+      for (int jj = 0; jj < NGHOST + 1; ++jj) {
+        for (int ii = 0; ii < NGHOST + 1; ++ii) {
+          const int wghti = offseti ? ii : NGHOST - ii;
+          const int wghtj = offsetj ? jj : NGHOST - jj;
+          ivals += restrict_2nd.d_view(wghti) * restrict_2nd.d_view(wghtj) *
+                   a(m, v, fk, refj + jj, refi + ii);
+        }
+      }
+    } else if constexpr (NGHOST == 3) {
+      constexpr Real weight[4] = {
+          -1.0 / 16.0, 9.0 / 16.0, 9.0 / 16.0, -1.0 / 16.0};
+      const int refi = fi - 1;
+      const int refj = fj - 1;
+      for (int jj = 0; jj < 4; ++jj) {
+        for (int ii = 0; ii < 4; ++ii) {
+          ivals += weight[ii] * weight[jj] *
+                   a(m, v, fk, refj + jj, refi + ii);
+        }
+      }
+    } else {
+      static_assert(NGHOST == 4,
+                    "Z4c restriction supports nghost=2, 3, or 4");
+      int refi = offseti ? fi - 1 : fi - 2;
+      int refj = offsetj ? fj - 1 : fj - 2;
+      const int outer_i = nx1 + 2 * NGHOST - 2;
+      const int outer_j = nx2 + 2 * NGHOST - 2;
+      const bool edge_i = (fi == 0 || fi == NGHOST ||
+                           fi == NGHOST + nx1 - 2 || fi == outer_i);
+      const bool edge_j = (fj == 0 || fj == NGHOST ||
+                           fj == NGHOST + nx2 - 2 || fj == outer_j);
+      refi = (fi == NGHOST) ? refi + 1 : refi;
+      refj = (fj == NGHOST) ? refj + 1 : refj;
+      refi = (fi == NGHOST + nx1 - 2) ? refi - 1 : refi;
+      refj = (fj == NGHOST + nx2 - 2) ? refj - 1 : refj;
+      refi = (fi == 0) ? 0 : refi;
+      refj = (fj == 0) ? 0 : refj;
+      refi = (fi == outer_i) ? nx1 + NGHOST - 1 : refi;
+      refj = (fj == outer_j) ? nx2 + NGHOST - 1 : refj;
+      for (int jj = 0; jj < NGHOST + 1; ++jj) {
+        for (int ii = 0; ii < NGHOST + 1; ++ii) {
+          const int wghti = offseti ? ii : NGHOST - ii;
+          const int wghtj = offsetj ? jj : NGHOST - jj;
+          const Real wi = edge_i ? restrict_4th_edge.d_view(wghti)
+                                 : restrict_4th.d_view(wghti);
+          const Real wj = edge_j ? restrict_4th_edge.d_view(wghtj)
+                                 : restrict_4th.d_view(wghtj);
+          ivals += wi * wj * a(m, v, fk, refj + jj, refi + ii);
+        }
+      }
+    }
+    return ivals;
+  }
+
   bool offsetk = (fk<nx3/2+NGHOST);
 
   if (NGHOST ==2) {
