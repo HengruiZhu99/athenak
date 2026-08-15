@@ -1,0 +1,116 @@
+{
+  "all_rank_bindings_verified": true,
+  "case": {
+    "adm_mass": 2.660301967997158,
+    "amplitude": -0.047,
+    "cfl": 0.15,
+    "constraint_damping": false,
+    "dchi_max": 0.01,
+    "domain": {
+      "rho": [
+        0.0,
+        16.0
+      ],
+      "z": [
+        -16.0,
+        16.0
+      ]
+    },
+    "floor_chi": false,
+    "integrator": "rk4",
+    "ko_dissipation": 0.02,
+    "lapse": "max_domain_abs_K_scaled_telegrapher",
+    "max_ref_lev": 20,
+    "meshblock": [
+      32,
+      32,
+      1
+    ],
+    "root_grid": [
+      128,
+      256,
+      1
+    ],
+    "shift": "advective_Gamma_driver_fixed_eta2",
+    "spatial_order": 6,
+    "telegraph_kappa": 1.0,
+    "telegraph_tau": 1.0
+  },
+  "chi_rejections": [
+    {
+      "invalid_limited_groups": 0,
+      "invalid_parent_stencils": 171
+    }
+  ],
+  "exit_code": 1,
+  "fatal_lines": [
+    "### FATAL ERROR in /pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-2d-restrict-fix-345dd31d-v1-20260815/source/athenak/src/bvals/prolongation.cpp at line 335"
+  ],
+  "history_path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-2d-restrict-fix-345dd31d-v1-20260815/run/cases/n256/brill_fig3_r16_n256_dchi001_2d_restrict_fix.z4c.user.hst",
+  "history_rows": 1171,
+  "last_history": {
+    "C-norm2": 2.152906451678325e+17,
+    "H-norm2": 2.0791518606071987e+17,
+    "M-norm2": 7375459107023880.0,
+    "Z-norm2": 12683.913632732034,
+    "axisKret": 0.12408348804280364,
+    "axisLapse": 0.6164628837738414,
+    "axisTau": 7.29820532879244,
+    "cycle": 4680.0,
+    "dt": 1.7881393432617187e-08,
+    "maxAbsKret": 5.208114005475827e+28,
+    "maxRefLev": 20.0,
+    "max_abs_K": 36097243.94785611,
+    "nmb_total": 845.0,
+    "time": 11.955865198373266
+  },
+  "max_meshblocks": 851,
+  "max_refinement_level_reached": 20,
+  "name": "n256",
+  "qualification_claim": false,
+  "rank_bindings": [
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008205",
+      "local_rank": 0,
+      "rank": 0,
+      "selected_uuid": "GPU-a7d133ce-80e5-fd64-0779-8af3fa03325b",
+      "visible_device_token": "0"
+    },
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008205",
+      "local_rank": 1,
+      "rank": 1,
+      "selected_uuid": "GPU-c8396260-7d02-f4ac-9882-01ebd7aaa735",
+      "visible_device_token": "0"
+    },
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008205",
+      "local_rank": 2,
+      "rank": 2,
+      "selected_uuid": "GPU-47bf822d-1a3e-9c95-7669-2aaea875640e",
+      "visible_device_token": "0"
+    },
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008205",
+      "local_rank": 3,
+      "rank": 3,
+      "selected_uuid": "GPU-6db0ddaf-ce32-677d-6ea0-7eda3a25b9c7",
+      "visible_device_token": "0"
+    }
+  ],
+  "reached_target_t20": false,
+  "schema": "athenak_brill_r16_2d_restriction_fix_case_v1",
+  "source_commit": "345dd31d59cebd9c0c7231be43dcc6a72524bcc7"
+}

@@ -1,0 +1,89 @@
+{
+  "chi_rejections": [
+    {
+      "invalid_limited_groups": 0,
+      "invalid_parent_stencils": 74
+    }
+  ],
+  "constraint_damping": false,
+  "damp_kappa1": 0.0,
+  "damp_kappa1_max_K": false,
+  "damp_kappa2": 0.0,
+  "exit_code": 1,
+  "fatal_lines": [
+    "### FATAL ERROR in /pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-local-telegraph-mu-2a8ad80e-v2-20260814/source/athenak/src/bvals/prolongation.cpp at line 317"
+  ],
+  "history_path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-fixed-shift-l20-tau1-nocd-ko-pair-mpi4-2a8ad80e-v2-20260815/run/cases/fixed_eta2_tau1_kappa1_l20_nocd_ko002/brill_fig3_fixed_eta2_tau1_kappa1_l20_nocd_ko002_n128.z4c.user.hst",
+  "history_rows": 754,
+  "kappa": 1.0,
+  "kappa_over_tau": 1.0,
+  "ko_dissipation": 0.02,
+  "last_history": {
+    "C-norm2": 70060518671.19572,
+    "H-norm2": 61685210434.56787,
+    "M-norm2": 8375308179.8885975,
+    "Z-norm2": 12.800202538326673,
+    "axisKret": 2.0982164770527245e+22,
+    "axisLapse": 0.6439848877594277,
+    "axisTau": 10.365381820577994,
+    "cycle": 3012.0,
+    "dt": 3.5762786865234374e-08,
+    "maxAbsKret": 1.6091915746411417e+28,
+    "maxRefLev": 20.0,
+    "max_abs_K": 26129864.11398102,
+    "nmb_total": 4358.0,
+    "time": 16.722269260883227
+  },
+  "last_log_time_cycle": null,
+  "max_dt_eta_shift": 0.075,
+  "max_dt_mu_over_tau": 0.9344767611258394,
+  "max_refinement_level_reached": 20,
+  "name": "fixed_eta2_tau1_kappa1_l20_nocd_ko002",
+  "qualification_claim": false,
+  "rank_bindings": [
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-40GB",
+      "hostname": "nid001001",
+      "local_rank": 0,
+      "rank": 0,
+      "selected_uuid": "GPU-600021e1-0470-67dd-b091-716694f4976c",
+      "visible_device_token": "0"
+    },
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-40GB",
+      "hostname": "nid001001",
+      "local_rank": 1,
+      "rank": 1,
+      "selected_uuid": "GPU-0e422d26-b0ef-4545-21ea-abdbab74987c",
+      "visible_device_token": "0"
+    },
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-40GB",
+      "hostname": "nid001001",
+      "local_rank": 2,
+      "rank": 2,
+      "selected_uuid": "GPU-f55bc0ad-8c05-1f16-7bd8-2034cbcada9c",
+      "visible_device_token": "0"
+    },
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-40GB",
+      "hostname": "nid001001",
+      "local_rank": 3,
+      "rank": 3,
+      "selected_uuid": "GPU-6a874355-dfbf-748e-600a-1a3c1564e450",
+      "visible_device_token": "0"
+    }
+  ],
+  "reached_target_t20": false,
+  "shift_condition": "fixed_gamma_driver_eta2",
+  "target_kappa1": 0.0,
+  "tau": 1.0
+}

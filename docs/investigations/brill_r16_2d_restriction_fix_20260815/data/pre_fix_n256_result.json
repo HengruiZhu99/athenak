@@ -1,0 +1,127 @@
+{
+  "all_rank_bindings_verified": true,
+  "baseline": {
+    "dchi_max": 0.02,
+    "job_id": 56993758,
+    "root_grid": [
+      64,
+      128,
+      1
+    ],
+    "terminal_time": 16.722269260883227
+  },
+  "case": {
+    "adm_mass": 2.660301967997158,
+    "amplitude": -0.047,
+    "cfl": 0.15,
+    "constraint_damping": false,
+    "dchi_max": 0.01,
+    "domain": {
+      "rho": [
+        0.0,
+        16.0
+      ],
+      "z": [
+        -16.0,
+        16.0
+      ]
+    },
+    "floor_chi": false,
+    "integrator": "rk4",
+    "ko_dissipation": 0.02,
+    "lapse": "max_domain_abs_K_scaled_telegrapher",
+    "max_ref_lev": 20,
+    "meshblock": [
+      32,
+      32,
+      1
+    ],
+    "root_grid": [
+      128,
+      256,
+      1
+    ],
+    "shift": "advective_Gamma_driver_fixed_eta2",
+    "spatial_order": 6,
+    "telegraph_kappa": 1.0,
+    "telegraph_tau": 1.0
+  },
+  "chi_rejections": [],
+  "exit_code": 1,
+  "fatal_lines": [
+    "### FATAL ERROR in /pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-local-telegraph-mu-2a8ad80e-v2-20260814/source/athenak/src/driver/driver.cpp: failed to advance Cartoon central diagnostics: axis-central diagnostic support is nonfinite or invalid",
+    "### FATAL ERROR in /pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-local-telegraph-mu-2a8ad80e-v2-20260814/source/athenak/src/driver/driver.cpp: failed to advance Cartoon central diagnostics: axis-central diagnostic support is nonfinite or invalid",
+    "### FATAL ERROR in /pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-local-telegraph-mu-2a8ad80e-v2-20260814/source/athenak/src/driver/driver.cpp: failed to advance Cartoon central diagnostics: axis-central diagnostic support is nonfinite or invalid",
+    "### FATAL ERROR in /pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-local-telegraph-mu-2a8ad80e-v2-20260814/source/athenak/src/driver/driver.cpp: failed to advance Cartoon central diagnostics: axis-central diagnostic support is nonfinite or invalid"
+  ],
+  "heuristic_interpretation": "comparable_failure_time_consistent_with_formulation_issue",
+  "history_path": "artifacts/axisymmetric_cartoon_z4c_2026-08-10/r4_brill_figure3_resolution_isolation_r16_n256_dchi001_mpi4_2a8ad80e_v3_20260815/terminal-remote-selected/run/case/brill_fig3_r16_n256_dchi001_tau1_nocd.z4c.user.hst",
+  "history_rows": 1905,
+  "interpretation_is_not_mechanism_proof": true,
+  "last_history": {
+    "C-norm2": 298004326898056.56,
+    "H-norm2": 28876860211795.15,
+    "M-norm2": 269127466686180.56,
+    "Z-norm2": 18.043036117356095,
+    "axisKret": 1.1618777905864043e+32,
+    "axisLapse": 0.6252064530351211,
+    "axisTau": 10.373899133839622,
+    "cycle": 7616.0,
+    "dt": 1.7881393432617187e-08,
+    "maxAbsKret": 1.1618777905876552e+32,
+    "maxRefLev": 20.0,
+    "max_abs_K": 107969229.63881329,
+    "nmb_total": 13076.0,
+    "time": 16.909588390589008
+  },
+  "max_meshblocks": 13076,
+  "max_refinement_level_reached": 20,
+  "prospective_interpretation_window_M": 0.25,
+  "qualification_claim": false,
+  "rank_bindings": [
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008556",
+      "local_rank": 0,
+      "rank": 0,
+      "selected_uuid": "GPU-90bbe970-52b8-8f9d-133b-a62889bb751a",
+      "visible_device_token": "0"
+    },
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008556",
+      "local_rank": 1,
+      "rank": 1,
+      "selected_uuid": "GPU-95531f1c-268f-dcff-c1d5-ad0c3ee73d92",
+      "visible_device_token": "0"
+    },
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008556",
+      "local_rank": 2,
+      "rank": 2,
+      "selected_uuid": "GPU-6e3d66e6-933f-7bca-a1ca-d6bdc85b7a17",
+      "visible_device_token": "0"
+    },
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008556",
+      "local_rank": 3,
+      "rank": 3,
+      "selected_uuid": "GPU-74f6a7b7-2fdf-251a-d742-51c5e07a09f0",
+      "visible_device_token": "0"
+    }
+  ],
+  "reached_target_t20": false,
+  "schema": "athenak_brill_r16_resolution_isolation_n256_v1",
+  "source_commit": "2a8ad80e02279769a99fe279b7a33516bc6c8d0d",
+  "terminal_time_delta_from_n128": 0.1873191297057808
+}

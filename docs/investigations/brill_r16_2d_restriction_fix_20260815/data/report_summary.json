@@ -1,0 +1,74 @@
+{
+  "schema": "athenak_brill_r16_2d_restriction_fix_report_v1",
+  "qualification_claim": false,
+  "disposition": "restriction_inconsistency_fixed_but_late_instability_not_cured",
+  "source": {
+    "branch": "codex/cartoon-2d-high-order-restriction-20260815",
+    "commit": "345dd31d59cebd9c0c7231be43dcc6a72524bcc7",
+    "tree": "f2c13de696ad4f53ac22f7b17531ddc4aea2d9a1",
+    "parent": "c870e98c52b3b87763f6817e811b0c4fcf7b1b35",
+    "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf",
+    "stable_patch_id": "547319d9043b39c92d9c66cb670785f25833218b"
+  },
+  "repair": {
+    "two_dimensional_z4c_amr_restriction": "order_aware_O2_O4_O6",
+    "two_dimensional_z4c_coarse_boundary_refresh": "order_aware_O2_O4_O6",
+    "three_dimensional_path_changed": false,
+    "generic_non_z4c_two_dimensional_path_changed": false,
+    "floor_clip_or_threshold_change": false
+  },
+  "verification": {
+    "serial_focused_tests": "pass_2_of_2",
+    "mpi_focused_tests": "pass_2_of_2",
+    "debug_kokkos_bounds_check": "pass",
+    "serial_full_build": "pass",
+    "mpi_full_build": "pass",
+    "perlmutter_cuda_focused_tests": "pass_2_of_2",
+    "full_remote_root_sha256sum_check": "pass"
+  },
+  "run": {
+    "job_id": "57034787",
+    "node": "nid008205",
+    "gpu_model": "NVIDIA A100-SXM4-80GB",
+    "executable_sha256": "de137495fd4f0c9801c0887245cf6167053cf81de64a831b7ca0b09c952ded68",
+    "root_manifest_sha256": "e846e03bf94cb10085f8d161368f86958dbc66eeea4f5a4bf30cfc11e82ddfbc",
+    "detached_manifest_file_sha256": "a956b7d677c6416436e71c4221edb5d75cf1499db837bfd3050c12e4f2b140f7",
+    "sacct_sha256": "f3bbc39e3ad12b600e0112066169aaab8bb09f7502de304819a61d78577f2d7d"
+  },
+  "paired_terminal_time": {
+    "n128_before": 16.722269260883227,
+    "n128_after": 16.728488016128324,
+    "n128_after_minus_before": 0.006218755245097,
+    "n256_before": 16.909588390589008,
+    "n256_after": 11.955865198373266,
+    "n256_after_minus_before": -4.953723192215742
+  },
+  "median_topology_log_increment_reduction_fraction": {
+    "n128": {
+      "C": 0.26967099166236874,
+      "H": 0.2767045913849642,
+      "M": 0.2897924009705304
+    },
+    "n256": {
+      "C": 0.5785840405384141,
+      "H": 0.5648853825106037,
+      "M": 0.7018437285610985
+    }
+  },
+  "terminal_failure": {
+    "n128": {
+      "invalid_parent_stencils": 98,
+      "invalid_limited_groups": 0
+    },
+    "n256": {
+      "invalid_parent_stencils": 171,
+      "invalid_limited_groups": 0
+    }
+  },
+  "interpretation": {
+    "restriction_mismatch_contributed_to_typical_amr_jumps": true,
+    "large_amr_associated_jumps_eliminated": false,
+    "late_instability_eliminated": false,
+    "remaining_mechanism_uniquely_identified": false
+  }
+}
