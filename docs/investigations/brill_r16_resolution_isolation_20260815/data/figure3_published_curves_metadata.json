@@ -1,0 +1,174 @@
+{
+  "axis_transform": {
+    "log10_abs_I": "(form_y-95.081934)*2/(112.949840-95.081934)",
+    "tau": "(form_x-34.311333)*2/(62.087173-34.311333)",
+    "x_tick_bindings": [
+      [
+        34.311333,
+        0.0
+      ],
+      [
+        62.087173,
+        2.0
+      ]
+    ],
+    "y_tick_bindings": [
+      [
+        95.081934,
+        0.0
+      ],
+      [
+        112.94984,
+        2.0
+      ]
+    ]
+  },
+  "independent_render_check": {
+    "bamps": {
+      "acceptance_pt": 0.82,
+      "matched_core_pixels": 8030,
+      "maximum_centerline_distance_pt": 0.6045259469504974,
+      "rms_centerline_distance_pt": 0.3505508381579553
+    },
+    "prague": {
+      "acceptance_pt": 0.82,
+      "matched_core_pixels": 11040,
+      "maximum_centerline_distance_pt": 0.6089819617416548,
+      "rms_centerline_distance_pt": 0.30393076218629983
+    },
+    "renderer": {
+      "dpi": 600,
+      "height_px": 1250,
+      "method": "independent pdftocairo RGB-core pixels to extracted polyline distance",
+      "width_px": 1967
+    },
+    "sphGR": {
+      "acceptance_pt": 0.82,
+      "matched_core_pixels": 18206,
+      "maximum_centerline_distance_pt": 0.6110046753499185,
+      "rms_centerline_distance_pt": 0.32003098009834824
+    }
+  },
+  "inventory": {
+    "bamps": {
+      "dash_pt": [],
+      "displayed_clipped_vertices": 119,
+      "pdf_path_vertices": 121,
+      "rgb": [
+        0.2,
+        0.2392156863,
+        0.4274509804
+      ],
+      "unique_pdf_path_vertices": 120
+    },
+    "prague": {
+      "dash_pt": [
+        1.25,
+        3.125
+      ],
+      "displayed_clipped_vertices": 130,
+      "pdf_path_vertices": 131,
+      "rgb": [
+        0.9411764706,
+        0.5254901961,
+        0.1843137255
+      ],
+      "unique_pdf_path_vertices": 130
+    },
+    "sphGR": {
+      "dash_pt": [
+        8.75,
+        11.25
+      ],
+      "displayed_clipped_vertices": 138,
+      "pdf_path_vertices": 210,
+      "rgb": [
+        0.1529411765,
+        0.7529411765,
+        0.9882352941
+      ],
+      "unique_pdf_path_vertices": 138
+    }
+  },
+  "schema": "axisymmetric-cartoon.figure3-published-vector-curves.v1",
+  "scientific_binding": {
+    "A": -0.047,
+    "caption_source": "frozen source/main.tex lines 397 and 401-403; label fig:BrillOffCent",
+    "family": "Brill",
+    "linear_y_export": "abs(I)=10**log10_abs_I",
+    "not_recovered": [
+      "pre-render simulation samples",
+      "original sampling metadata",
+      "solver errors"
+    ],
+    "paper_interpretation": "Kretschmann scalar I at the origin versus proper time",
+    "plotted_y": "log10(abs(I))",
+    "recovered_quantity": "rendered PDF polyline centerlines",
+    "rho0": 5.0,
+    "series": [
+      "bamps",
+      "prague",
+      "sphGR"
+    ],
+    "sigma_rho": 1.0,
+    "sigma_z": 1.0,
+    "x": "tau",
+    "z0": 0.0
+  },
+  "source": {
+    "clip_rectangle_form_pt": [
+      34.3113325031,
+      21.2055696862,
+      242.6301369863,
+      149.9536713526
+    ],
+    "contains_embedded_original_numeric_data": false,
+    "contains_pdf_image_objects": false,
+    "content_object": 4,
+    "embedded_file_count": 0,
+    "figure": 3,
+    "form_bbox_pt": [
+      0.0,
+      0.0,
+      245.08095,
+      151.46836
+    ],
+    "form_object": 1,
+    "form_to_page_matrix": [
+      1,
+      0,
+      0,
+      1,
+      -8.0,
+      -1.0
+    ],
+    "form_xobject_name": "Im1",
+    "media_box_pt": [
+      0.0,
+      0.0,
+      236.0,
+      150.0
+    ],
+    "page": 1,
+    "page_object": 3,
+    "paper": "arXiv:2607.10843v1",
+    "pdf_filename": "brill_rho0_5_A_-0.047_0D_compare_kretsch.pdf",
+    "pdf_sha256": "bbbfdd618909eef7d4d9597859590457f310b3d790aef0ca51252c60787375d5",
+    "pdf_size_bytes": 156454
+  },
+  "tools": {
+    "Pillow": "10.2.0",
+    "mutool": "mutool version 1.23.10",
+    "pdftocairo": "pdftocairo version 24.02.0\nCopyright 2005-2024 The Poppler Developers - http://poppler.freedesktop.org\nCopyright 1996-2011, 2022 Glyph & Cog, LLC"
+  },
+  "uncertainty": {
+    "axis_tick_serialization": "axis calibration coordinates are also serialized to 1e-6 pt; transform uncertainty is not independent of those rounded endpoints",
+    "coordinate_only_abs_I_relative_half_unit_upper_bound": 1.2886709237187878e-07,
+    "coordinate_only_log10_abs_I_half_unit": 5.5966267116023584e-08,
+    "coordinate_only_tau_half_unit": 3.600251153520469e-08,
+    "pdf_coordinate_serialization_half_unit_pt": 5e-07,
+    "status": "rendered-path reconstruction, not raw-data recovery",
+    "use_limit": "suitable for published-curve comparison at figure resolution; not a replacement for authors' raw data",
+    "visual_stroke_width_pt": 1.25
+  }
+}

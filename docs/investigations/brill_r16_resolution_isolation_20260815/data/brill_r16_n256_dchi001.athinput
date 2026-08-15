@@ -1,0 +1,147 @@
+<job>
+basename = brill_fig3_r16_n256_dchi001_tau1_nocd
+
+<mesh>
+nghost = 4
+nx1 = 128
+x1min = 0.0
+x1max = 16.0
+ix1_bc = axis
+ox1_bc = outflow
+nx2 = 256
+x2min = -16.0
+x2max = 16.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 32
+nx2 = 32
+nx3 = 1
+
+<mesh_refinement>
+refinement = adaptive
+max_nmb_per_rank = 4096
+num_levels = 21
+ncycle_check = 1
+refinement_interval = 1
+
+<amr_criterion0>
+method = user
+
+<z4c_amr>
+method = dchi
+dchi_max = 0.01
+max_ref_lev = 20
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.15
+nlim = -1
+tlim = 20.0
+nmb_total_limit = 16384
+ndiag = 1
+
+<z4c>
+symmetry = cartoon_so2
+coordinate_map = half_rho_z_suppressed_y_v2
+symmetry_schema = 2
+spatial_order = 6
+history_kretschmann = true
+diss = 0.02
+excise_chi = 0.0
+floor_chi = false
+lapse_oplog = 0.0
+lapse_harmonic = 0.0
+lapse_advect = 1.0
+slow_start_lapse = false
+telegraph_lapse = true
+telegraph_max_K = true
+telegraph_damping_prescription = max_domain_abs_K
+telegraph_tau = 1.0
+telegraph_kappa = 1.0
+shift_Gamma = 1.0
+shift_alpha2Gamma = 0.0
+shift_H = 0.0
+shift_eta = 2.0
+shift_eta_max_K = false
+shift_advect = 1.0
+sss_damping_amp = 0.0
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+damp_kappa1_max_K = false
+roll_kappa = false
+target_kappa1 = 0.0
+
+<fastflow>
+num_horizons = 0
+
+<problem>
+pgen_name = z4c_irisk_xcts
+irisk_adm_import_mode = direct_global_coefficients
+irisk_adm_spectral_file = /pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-direct-1gpu-51496bb4-v1-20260812/run/figure3/provenance/brill_A-0.047000000_rho0_5.000000000.adm_spectral
+brill_global_coefficients_file = brill_global_48x32.coefficients
+brill_direct_initial_lapse = precollapsed_psi_minus_2
+require_ghost_coverage = true
+write_constraint_summary = true
+constraint_summary_file = brill_fig3_r16_n256_dchi001_tau1_nocd-constraints.dat
+fail_if_c_rms_above = 1.0e300
+fail_if_h_rms_above = 1.0e300
+fail_if_m_rms_above = 1.0e300
+fail_if_z_rms_above = 1.0e300
+stop_on_horizon = false
+stop_on_dispersion = false
+xy_plane_output = EMPTY
+xz_plane_output = EMPTY
+
+<output1>
+file_type = hst
+data_format = %24.16e
+dcycle = 4
+
+<output2>
+file_type = rst
+dcycle = 128
+
+<output3>
+file_type = bin
+variable = z4c
+dcycle = 64
+single_file_per_rank = true
+
+<output4>
+file_type = bin
+variable = con
+dcycle = 64
+single_file_per_rank = true
+
+<output5>
+file_type = bin
+variable = adm
+dcycle = 64
+single_file_per_rank = true
+
+<output6>
+file_type = bin
+variable = weyl
+dcycle = 64
+single_file_per_rank = true
+
+<output7>
+file_type = bin
+variable = z4c_diag
+dcycle = 64
+single_file_per_rank = true
+
+<output8>
+file_type = bin
+variable = z4c_telegraph_mu
+dcycle = 64
+single_file_per_rank = true
+id = telegraph_mu

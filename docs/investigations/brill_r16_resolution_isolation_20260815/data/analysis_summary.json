@@ -1,0 +1,157 @@
+{
+  "cases": {
+    "N128": {
+      "dchi_max": 0.02,
+      "history_sha256": "4091e55d7ece2f25c6a722c9b172e99789dc1bb1affd67f9e656406b78e02ded",
+      "landmarks": {
+        "C_ge_1e10": {
+          "C-norm2": 13349135943.945381,
+          "cycle": 3004.0,
+          "dt": 3.5762786865234374e-08,
+          "maxRefLev": 20.0,
+          "time": 16.72226897478092
+        },
+        "C_ge_1e6": {
+          "C-norm2": 1683732.5791195608,
+          "cycle": 2412.0,
+          "dt": 9.1552734375e-06,
+          "maxRefLev": 12.0,
+          "time": 16.721456909179434
+        },
+        "dt_le_1e-4": {
+          "C-norm2": 3142.690332547331,
+          "cycle": 2272.0,
+          "dt": 7.32421875e-05,
+          "maxRefLev": 9.0,
+          "time": 16.716650390624842
+        },
+        "level20": {
+          "C-norm2": 651724312.7333231,
+          "cycle": 2864.0,
+          "dt": 3.5762786865234374e-08,
+          "maxRefLev": 20.0,
+          "time": 16.722263681888283
+        }
+      },
+      "last": {
+        "C-norm2": 70060518671.19572,
+        "H-norm2": 61685210434.56787,
+        "M-norm2": 8375308179.8885975,
+        "Z-norm2": 12.800202538326673,
+        "axisKret": 2.0982164770527245e+22,
+        "axisLapse": 0.6439848877594277,
+        "axisTau": 10.365381820577994,
+        "cycle": 3012.0,
+        "dt": 3.5762786865234374e-08,
+        "maxAbsKret": 1.6091915746411417e+28,
+        "maxRefLev": 20.0,
+        "max_abs_K": 26129864.11398102,
+        "nmb_total": 4358.0,
+        "time": 16.722269260883227
+      },
+      "max_meshblocks": 4484,
+      "max_refinement_level": 20,
+      "root_grid": [
+        64,
+        128,
+        1
+      ],
+      "rows": 754
+    },
+    "N256": {
+      "dchi_max": 0.01,
+      "history_sha256": "e50070f5b45ae943c567e47709f97aa45fa380a0b00ddce21ba9e17c6bbdee3d",
+      "landmarks": {
+        "C_ge_1e10": {
+          "C-norm2": 11491471618.843414,
+          "cycle": 7504.0,
+          "dt": 1.7881393432617187e-08,
+          "maxRefLev": 20.0,
+          "time": 16.909586387872864
+        },
+        "C_ge_1e6": {
+          "C-norm2": 1167171.3884908329,
+          "cycle": 6772.0,
+          "dt": 2.288818359375e-06,
+          "maxRefLev": 13.0,
+          "time": 16.909192657470843
+        },
+        "dt_le_1e-4": {
+          "C-norm2": 847.387408990346,
+          "cycle": 6360.0,
+          "dt": 7.32421875e-05,
+          "maxRefLev": 8.0,
+          "time": 16.895874023437518
+        },
+        "level20": {
+          "C-norm2": 1392906626.1003654,
+          "cycle": 7364.0,
+          "dt": 1.7881393432617187e-08,
+          "maxRefLev": 20.0,
+          "time": 16.909583848714895
+        }
+      },
+      "last": {
+        "C-norm2": 298004326898056.56,
+        "H-norm2": 28876860211795.15,
+        "M-norm2": 269127466686180.56,
+        "Z-norm2": 18.043036117356095,
+        "axisKret": 1.1618777905864043e+32,
+        "axisLapse": 0.6252064530351211,
+        "axisTau": 10.373899133839622,
+        "cycle": 7616.0,
+        "dt": 1.7881393432617187e-08,
+        "maxAbsKret": 1.1618777905876552e+32,
+        "maxRefLev": 20.0,
+        "max_abs_K": 107969229.63881329,
+        "nmb_total": 13076.0,
+        "time": 16.909588390589008
+      },
+      "max_meshblocks": 13076,
+      "max_refinement_level": 20,
+      "root_grid": [
+        128,
+        256,
+        1
+      ],
+      "rows": 1905
+    }
+  },
+  "common_physics": {
+    "adm_mass": 2.660301967997158,
+    "amplitude": -0.047,
+    "cfl": 0.15,
+    "constraint_damping": false,
+    "domain_rho": [
+      0,
+      16
+    ],
+    "domain_z": [
+      -16,
+      16
+    ],
+    "floor_chi": false,
+    "integrator": "rk4",
+    "ko_dissipation": 0.02,
+    "max_refinement_level": 20,
+    "shift": "fixed_gamma_driver_eta2",
+    "spatial_order": 6,
+    "telegrapher": {
+      "kappa": 1.0,
+      "max_abs_K_scaled": true,
+      "tau": 1.0
+    }
+  },
+  "interpretation": "comparable_failure_time_consistent_with_formulation_issue",
+  "interpretation_is_not_mechanism_proof": true,
+  "prospective_window_M": 0.25,
+  "qualification_claim": false,
+  "schema": "athenak_brill_r16_resolution_isolation_review_v1",
+  "source": {
+    "commit": "2a8ad80e02279769a99fe279b7a33516bc6c8d0d",
+    "executable_sha256": "8325bd78f4851f04e6810aaf9fb5ecfc4007d876c3a3011a296512ffbd7875be",
+    "kokkos": "6739bc623081648af9e752b616d9671527922cbf",
+    "tree": "67709c405a1169a15643cb933eec5353cd216243"
+  },
+  "terminal_time_delta_N256_minus_N128": 0.1873191297057808
+}
