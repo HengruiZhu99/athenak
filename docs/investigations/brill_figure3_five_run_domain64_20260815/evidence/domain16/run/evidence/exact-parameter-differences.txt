@@ -1,0 +1,6 @@
+common: mesh_refinement/num_levels=21 z4c_amr/max_ref_lev=20 time/nmb_total_limit=8192 z4c/shift_eta_max_K=false
+lapse: telegraph_tau=1 telegraph_kappa=1 telegraph_max_K=true
+constraint damping: damp_kappa1=0 damp_kappa2=0 target_kappa1=0 damp_kappa1_max_K=false roll_kappa=false
+case1: z4c/diss=0.02
+case2: z4c/diss=0.5
+case3: z4c/diss=0.5 zero shift

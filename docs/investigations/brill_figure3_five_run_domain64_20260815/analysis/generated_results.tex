@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{rlllrrrrrl}
+\toprule
+case & outer $R=Z$ & shift & KO & $t_{\rm last}$ & $\tau_{\rm last}$ & $\alpha_{\rm axis}$ & $L_{\max}$ & AH & terminal \\
+\midrule
+1 & 16 & fixed $\eta=2$ & 0.02 & 16.722 & 10.365 & 0.64398 & 20 & no & strict positive-$\chi$ gate \\
+2 & 16 & fixed $\eta=2$ & 0.5 & 16.714 & 10.372 & 0.64496 & 20 & no & exit 1 \\
+3 & 16 & zero & 0.5 & 7.4926 & 4.5815 & 0.5979 & 13 & no & exit 1 \\
+4 & 64 & fixed $\eta=2$ & 0.5 & 16.714 & 10.372 & 0.64496 & 20 & no & strict positive-$\chi$ gate \\
+5 & 64 & zero & 0.5 & 7.4927 & 4.5816 & 0.5979 & 20 & no & strict positive-$\chi$ gate \\
+\bottomrule
+\end{tabular}
+\caption{The five requested controls.  Last values are the last fully finite history rows, not post-failure extrapolations.  The AH column is recorded telemetry only; the horizon finder was disabled for this diagnostic series.}
+\label{tab:five-cases}
+\end{table*}
+\paragraph{Horizon status.} No finite history row in any of the five cases reported an apparent horizon.

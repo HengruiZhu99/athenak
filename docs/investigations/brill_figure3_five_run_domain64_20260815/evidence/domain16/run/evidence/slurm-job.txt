@@ -1,0 +1,30 @@
+JobId=56993758 JobName=cartoon-r4-nocd-l20-ko-pair-v2
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:05 TimeLimit=04:00:00 TimeMin=N/A
+   SubmitTime=2026-08-14T21:26:41 EligibleTime=2026-08-14T21:26:41
+   AccrueTime=Unknown
+   StartTime=2026-08-14T21:26:41 EndTime=2026-08-15T01:26:41 Deadline=N/A
+   PreemptEligibleTime=2026-08-14T21:26:41 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-14T21:26:41 Scheduler=Main
+   Partition=urgent_gpu_ss11 AllocNode:Sid=login24:2159902
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid001001
+   BatchHost=nid001001
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=128 NumTasks=4 CPUs/Task=8 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=229902M,node=1,billing=32,gres/gpu=4
+   AllocTRES=cpu=128,mem=229902M,node=1,billing=128,gres/gpu=4,gres/gpu:a100=4
+   Socks/Node=* NtasksPerN:B:S:C=4:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryNode=0 MinTmpDiskNode=0
+   Features=gpu&a100&hbm40g DelayBoot=00:00:00
+   OverSubscribe=NO Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=bash
+   SubmitLine=salloc --account=m3328_g --job-name=cartoon-r4-nocd-l20-ko-pair-v2 --qos=interactive --constraint=gpu&hbm40g --nodes=1 --ntasks=4 --ntasks-per-node=4 --cpus-per-task=8 --gpus-per-node=4 --time=04:00:00 bash /pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-fixed-shift-l20-tau1-nocd-ko-pair-mpi4-2a8ad80e-v2-20260815/bundle/run_allocation.sh
+   WorkDir=/global/u1/h/hzhu
+   TresPerNode=gres/gpu:4
+   TresPerTask=cpu=8
+   ResvPorts=63001-64000
+

@@ -1,0 +1,54 @@
+{
+  "chi_rejections": [],
+  "constraint_damping": false,
+  "damp_kappa1": 0.0,
+  "damp_kappa1_max_K": false,
+  "damp_kappa2": 0.0,
+  "exit_code": 143,
+  "fatal_lines": [
+    "[2026-08-15T09:32:43.248] error: *** STEP 57004715.1 ON nid008512 CANCELLED AT 2026-08-15T09:32:43 DUE TO TIME LIMIT ***"
+  ],
+  "history_path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-domain64-l20-tau1-nocd-ko05-shift-pair-cuda1-2a8ad80e-v7-20260815/run/cases/zero_shift_tau1_kappa1_l20_nocd_ko05_domain64/brill_fig3_zero_shift_tau1_kappa1_l20_nocd_ko05_domain64_n128.z4c.user.hst",
+  "history_rows": 5248,
+  "kappa": 1.0,
+  "kappa_over_tau": 1.0,
+  "ko_dissipation": 0.5,
+  "last_history": {
+    "C-norm2": 168.29296690786174,
+    "H-norm2": 134.593962886515,
+    "M-norm2": 33.56054667436556,
+    "Z-norm2": 0.02836790980894894,
+    "axisKret": 0.014548284954439552,
+    "axisLapse": 0.5973839757923289,
+    "axisTau": 4.541078546702413,
+    "cycle": 20988.0,
+    "dt": 1.8310546875e-05,
+    "maxAbsKret": 9498691.717444582,
+    "maxRefLev": 11.0,
+    "max_abs_K": 5.932149733435923,
+    "nmb_total": 4952.0,
+    "time": 7.42498168945451
+  },
+  "last_log_time_cycle": null,
+  "max_dt_eta_shift": 0.075,
+  "max_dt_mu_over_tau": 0.0025811465329106703,
+  "max_refinement_level_reached": 11,
+  "name": "zero_shift_tau1_kappa1_l20_nocd_ko05_domain64",
+  "qualification_claim": false,
+  "rank_bindings": [
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008512",
+      "local_rank": 0,
+      "rank": 0,
+      "selected_uuid": "GPU-35424ca1-8907-692a-6d09-a63ae3238ab7",
+      "visible_device_token": "0"
+    }
+  ],
+  "reached_target_t20": false,
+  "shift_condition": "zero_shift",
+  "target_kappa1": 0.0,
+  "tau": 1.0
+}

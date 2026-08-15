@@ -1,0 +1,59 @@
+{
+  "chi_rejections": [
+    {
+      "invalid_limited_groups": 0,
+      "invalid_parent_stencils": 694
+    }
+  ],
+  "constraint_damping": false,
+  "damp_kappa1": 0.0,
+  "damp_kappa1_max_K": false,
+  "damp_kappa2": 0.0,
+  "exit_code": 1,
+  "fatal_lines": [
+    "### FATAL ERROR in /pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-local-telegraph-mu-2a8ad80e-v2-20260814/source/athenak/src/bvals/prolongation.cpp at line 317"
+  ],
+  "history_path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-domain64-l20-tau1-nocd-ko05-shift-pair-cuda1-2a8ad80e-v7-20260815/run/cases/fixed_eta2_tau1_kappa1_l20_nocd_ko05_domain64/brill_fig3_fixed_eta2_tau1_kappa1_l20_nocd_ko05_domain64_n128.z4c.user.hst",
+  "history_rows": 723,
+  "kappa": 1.0,
+  "kappa_over_tau": 1.0,
+  "ko_dissipation": 0.5,
+  "last_history": {
+    "C-norm2": 5325186001762.608,
+    "H-norm2": 3843385426158.631,
+    "M-norm2": 1481800575603.765,
+    "Z-norm2": 0.01928017531777876,
+    "axisKret": 1.9308364647920536e+28,
+    "axisLapse": 0.6449597256736977,
+    "axisTau": 10.37202974804212,
+    "cycle": 2888.0,
+    "dt": 3.5762786865234374e-08,
+    "maxAbsKret": 2.2281391143083214e+28,
+    "maxRefLev": 20.0,
+    "max_abs_K": 28392404.064382058,
+    "nmb_total": 8408.0,
+    "time": 16.714051365852285
+  },
+  "last_log_time_cycle": null,
+  "max_dt_eta_shift": 0.075,
+  "max_dt_mu_over_tau": 1.0153914951461096,
+  "max_refinement_level_reached": 20,
+  "name": "fixed_eta2_tau1_kappa1_l20_nocd_ko05_domain64",
+  "qualification_claim": false,
+  "rank_bindings": [
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008512",
+      "local_rank": 0,
+      "rank": 0,
+      "selected_uuid": "GPU-35424ca1-8907-692a-6d09-a63ae3238ab7",
+      "visible_device_token": "0"
+    }
+  ],
+  "reached_target_t20": false,
+  "shift_condition": "fixed_gamma_driver_eta2",
+  "target_kappa1": 0.0,
+  "tau": 1.0
+}

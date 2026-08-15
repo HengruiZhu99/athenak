@@ -1,0 +1,59 @@
+{
+  "chi_rejections": [
+    {
+      "invalid_limited_groups": 0,
+      "invalid_parent_stencils": 2346
+    }
+  ],
+  "constraint_damping": false,
+  "damp_kappa1": 0.0,
+  "damp_kappa1_max_K": false,
+  "damp_kappa2": 0.0,
+  "exit_code": 1,
+  "fatal_lines": [
+    "### FATAL ERROR in /pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-local-telegraph-mu-2a8ad80e-v2-20260814/source/athenak/src/bvals/prolongation.cpp at line 317"
+  ],
+  "history_path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-domain64-zero-shift-restart-cuda1-2a8ad80e-v8-20260815/run/cases/zero_shift_tau1_kappa1_l20_nocd_ko05_domain64_restart_v8/brill_fig3_zero_shift_tau1_kappa1_l20_nocd_ko05_domain64_restart_v8_n128.z4c.user.hst",
+  "history_rows": 1078,
+  "kappa": 1.0,
+  "kappa_over_tau": 1.0,
+  "ko_dissipation": 0.5,
+  "last_history": {
+    "C-norm2": 1.3546805751955833e+20,
+    "H-norm2": 1.3510347367029655e+20,
+    "M-norm2": 3.6458384926177485e+17,
+    "Z-norm2": 0.4976528733522386,
+    "axisKret": 0.016896623190202516,
+    "axisLapse": 0.5979038844264523,
+    "axisTau": 4.581561131783995,
+    "cycle": 25176.0,
+    "dt": 3.5762786865234374e-08,
+    "maxAbsKret": 4.296731455442791e+30,
+    "maxRefLev": 20.0,
+    "max_abs_K": 26146774.507501885,
+    "nmb_total": 13430.0,
+    "time": 7.492718124391578
+  },
+  "last_log_time_cycle": null,
+  "max_dt_eta_shift": 3.662109375e-05,
+  "max_dt_mu_over_tau": 0.9350815239251333,
+  "max_refinement_level_reached": 20,
+  "name": "zero_shift_tau1_kappa1_l20_nocd_ko05_domain64_restart_v8",
+  "qualification_claim": false,
+  "rank_bindings": [
+    {
+      "binding_verified": true,
+      "cuda_visible_devices": "0",
+      "gpu_name": "NVIDIA A100-SXM4-80GB",
+      "hostname": "nid008192",
+      "local_rank": 0,
+      "rank": 0,
+      "selected_uuid": "GPU-b32a1ff3-904f-8415-4d6a-4a482c651d0b",
+      "visible_device_token": "0"
+    }
+  ],
+  "reached_target_t20": false,
+  "shift_condition": "zero_shift",
+  "target_kappa1": 0.0,
+  "tau": 1.0
+}
