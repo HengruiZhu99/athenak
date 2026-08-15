@@ -1,0 +1,135 @@
+# Fresh three-grid qualification template for the half-plane Kerr puncture.
+# Runtime rendering changes only the h32/h48/h64 root resolution and basename.
+# Gauge parameters explicitly freeze AthenaK's default moving-puncture gauge:
+# advective 1+log lapse plus the advective Gamma-driver shift.
+
+<job>
+basename = kerr_half_plane_h48_moving_puncture
+
+<mesh>
+nghost = 4
+nx1 = 144
+x1min = 0.0
+x1max = 24.0
+ix1_bc = axis
+ox1_bc = outflow
+nx2 = 288
+x2min = -24.0
+x2max = 24.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 24
+nx2 = 24
+nx3 = 1
+
+<mesh_refinement>
+refinement = adaptive
+max_nmb_per_rank = 1024
+num_levels = 4
+refinement_interval = 1
+
+<amr_criterion0>
+method = user
+
+<z4c_amr>
+method = dchi_max
+dchi_max = 0.02
+max_ref_lev = 3
+radius_0_rad = 1.5
+radius_0_reflevel = 3
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = 10000
+tlim = 5.0
+ndiag = 1
+
+<z4c>
+symmetry = cartoon_so2
+coordinate_map = half_rho_z_suppressed_y_v2
+symmetry_schema = 2
+spatial_order = 6
+diss = 0.02
+chi_div_floor = 1.0e-5
+excise_chi = 0.0625
+damp_kappa1 = 0.02
+damp_kappa2 = 0.0
+lapse_oplog = 2.0
+lapse_harmonicf = 1.0
+lapse_harmonic = 0.0
+lapse_advect = 1.0
+slow_start_lapse = false
+telegraph_lapse = false
+shift_Gamma = 1.0
+shift_eta = 2.0
+shift_advect = 1.0
+shift_alpha2Gamma = 0.0
+shift_H = 0.0
+shift_eta_max_K = false
+sss_damping_amp = 0.0
+history_kretschmann = true
+
+<problem>
+pgen_name = kerr_puncture
+M = 1.0
+chi = 0.5
+z_h = 0.0
+initial_gauge = precollapsed
+
+<fastflow>
+num_horizons = 1
+lmax = 10
+ntheta = 40
+flow_iterations_0 = 300
+find_interval_0 = 32
+start_time_0 = 0.0
+stop_time_0 = -1.0
+initial_radius_0 = 0.46650635094610965
+flow_alpha_beta_const_0 = 1.0
+dimensionless_hrms_tol_0 = 0.03
+mass_relative_tol_0 = 0.0001
+cartoon_direct_residual_tol_0 = 0.03
+cartoon_pair_relative_tol_0 = 0.001
+cartoon_center_z_0 = 0.0
+cartoon_axis_search_bound_0 = 1.0
+cartoon_axis_search_samples_0 = 65
+cartoon_surface_mode_0 = single
+
+<output1>
+file_type = hst
+dcycle = 8
+
+<output2>
+file_type = bin
+variable = con
+dcycle = 80
+single_file_per_rank = true
+id = con
+
+<output3>
+file_type = bin
+variable = z4c
+dcycle = 80
+single_file_per_rank = true
+id = z4c
+
+<output4>
+file_type = bin
+variable = adm
+dcycle = 80
+single_file_per_rank = true
+id = adm
+
+<output5>
+file_type = rst
+dcycle = 160
+single_file_per_rank = false

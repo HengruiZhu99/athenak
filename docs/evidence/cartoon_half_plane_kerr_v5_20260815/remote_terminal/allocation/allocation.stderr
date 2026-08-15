@@ -1,0 +1,20 @@
+salloc: Granted job allocation 56882670
+salloc: Waiting for resource configuration
+salloc: Nodes nid003268 are ready for job
+Unloading the cpe module is insufficient to restore the system defaults.
+Please run 'source
+/opt/cray/pe/cpe/25.09/restore_lmod_system_defaults.[csh|sh]'. 
+ 
+Sourcing the above script is not necessary if swapping the cpe module with a
+different version. 
+Traceback (most recent call last):
+  File "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/source/athenak/tst/test_suite/z4c/cartoon_half_plane_kerr_campaign.py", line 313, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/source/athenak/tst/test_suite/z4c/cartoon_half_plane_kerr_campaign.py", line 304, in main
+    run_case(arguments)
+  File "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/source/athenak/tst/test_suite/z4c/cartoon_half_plane_kerr_campaign.py", line 219, in run_case
+    raise RuntimeError(f"case {arguments.case} failed with {completed.returncode}")
+RuntimeError: case moving_puncture_h48 failed with 1
+salloc: Relinquishing job allocation 56882670
+salloc: Job allocation 56882670 has been revoked.

@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "srun",
+    "--nodes=1",
+    "--ntasks=4",
+    "--ntasks-per-node=4",
+    "--cpus-per-task=8",
+    "--gpus-per-task=1",
+    "--gpu-bind=map_gpu:0,1,2,3",
+    "--cpu-bind=cores",
+    "--exact",
+    "--kill-on-bad-exit=1",
+    "/global/common/software/nersc/pe/conda-envs/26.1.0/python-3.12/nersc-python/bin/python3",
+    "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/source/athenak/tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py",
+    "--evidence-dir",
+    "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/run/campaign/moving_puncture/h48/bindings",
+    "--require-cuda",
+    "--",
+    "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/build/athena-cuda/src/athena",
+    "-i",
+    "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/run/campaign/inputs/moving_puncture_h48.athinput"
+  ]
+}

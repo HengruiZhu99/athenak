@@ -1,0 +1,77 @@
+{
+  "schema": "athenak_cartoon_half_plane_kerr_v5_evidence_handoff_v1",
+  "assembled_date": "2026-08-15",
+  "new_run_performed": false,
+  "source": {
+    "commit": "f95a05802621b76cff2894d562c38df4b0d09661",
+    "tree": "4a03dc2ec051463372d812cfd053ca4db3d0698a",
+    "clean_at_finalization": true
+  },
+  "executable_sha256": "c14f6ac88144ad27b097e6f95249167a37d32cc50de2923894e66f10de2adeba",
+  "slurm": {
+    "job_id": "56882670",
+    "job_name": "cartoon-hp-kerr-f95a0580-v5",
+    "parent_state": "FAILED",
+    "parent_exit": "1:0",
+    "numbered_steps": 2,
+    "accounting_mode": "failure",
+    "h32_step": "COMPLETED",
+    "h48_step": "FAILED"
+  },
+  "physics": {
+    "mass": 1.0,
+    "dimensionless_spin": 0.5,
+    "precollapsed_lapse": true,
+    "lapse": "advective_1_plus_log",
+    "shift": "advective_Gamma_driver",
+    "shift_eta": 2.0,
+    "telegraph_lapse": false,
+    "chi_floor": false,
+    "dchi_max": 0.02,
+    "spatial_order": 6,
+    "integrator": "rk4",
+    "target_time_M": 5.0
+  },
+  "cases": {
+    "h32": {
+      "finest_spacing_M": 0.03125,
+      "status": "complete",
+      "terminal_time_M": 5.0,
+      "last_accepted_horizon_time_M": 2.8343749999999726,
+      "last_accepted_horizon_mass": 1.0022786994483526,
+      "last_accepted_dimensionless_spin": 0.5090688179661913
+    },
+    "h48": {
+      "finest_spacing_M": 0.020833333333333332,
+      "status": "failed",
+      "terminal_cycle": 2178,
+      "terminal_time_M_approx": 4.560417,
+      "first_accepted_horizon_mass": 1.0004919689381744,
+      "first_accepted_dimensionless_spin": 0.5010703108945663,
+      "last_accepted_horizon_time_M": 1.9562500000000447,
+      "failure": "axis-central diagnostic support became nonfinite or invalid"
+    },
+    "h64": {
+      "finest_spacing_M": 0.015625,
+      "status": "not_run_after_prospective_convergence_failure"
+    }
+  },
+  "disposition": {
+    "status": "failed_convergence_qualification",
+    "qualification_claim": false,
+    "safe_fix_identified": false,
+    "diagnostic_limitation": "existing data do not distinguish a continuum puncture-interior moving-puncture mode from a nonlinear SO(2) derivative-stability defect",
+    "threshold_or_gauge_waiver": false
+  },
+  "authenticated_files": {
+    "remote_root_manifest_sha256": "5d86104013a72c158a091778f9ca209ffc72b3db9499bc3014873643a580256b",
+    "remote_root_detached_file_sha256": "2c0e2881d0c24af76de24f265ca967e1cd23bdd873c30893d8825c6dfd97d93f",
+    "settled_sacct_sha256": "4a7620ba131d104c6b99aae0268b803d3dc3920f99bf264721064299a4e2b1a1",
+    "accounting_verdict_sha256": "bb8e6258b6f346d43d773b48cd3c2d8d0360aaa0fc4c4c0677198b947eba49e5",
+    "final_source_status_sha256": "2398538add0885ab462cc749bb662435c48c6ce3a6d3caeada348e14d342e8d8",
+    "campaign_state_sha256": "ed35bcedc3f107cb2e34bdeaf2764ce7d82a203d6bb6cccf4426eb58dc62ac6a",
+    "diagnostic_summary_sha256": "1c5f7b02182be4d77ae091024ac59376f7b4e64850740c0d1ed66ac7dc9ab928"
+  },
+  "raw_remote_root": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813",
+  "large_raw_binary_data_committed": false
+}

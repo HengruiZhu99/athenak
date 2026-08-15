@@ -1,0 +1,107 @@
+{
+  "analysis": null,
+  "cases": {
+    "moving_puncture_h32": {
+      "command_sha256": "bdde667fba87f5efdab696d7ad53090bd1cabf900bd74810417bdc30ee0edcca",
+      "returncode": 0,
+      "status": "complete"
+    },
+    "moving_puncture_h48": {
+      "command_sha256": "45b0578d4eea0ff8dc4b8022baa610c9444885d33765cb6844c980673403d92e",
+      "returncode": 1,
+      "status": "failed"
+    },
+    "moving_puncture_h64": {
+      "command_sha256": null,
+      "returncode": null,
+      "status": "pending"
+    }
+  },
+  "contract": {
+    "analyzer": {
+      "path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/source/athenak/tst/test_suite/z4c/cartoon_half_plane_kerr_convergence.py",
+      "sha256": "b638e4111c2e4e52f12823e78d996fefdb85d9d6ff865ca96e4f5153f65dd440"
+    },
+    "cases": [
+      {
+        "finest_spacing_M": 0.03125,
+        "gauge": "moving_puncture",
+        "input_path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/run/campaign/inputs/moving_puncture_h32.athinput",
+        "input_sha256": "769843e2ebc584b1d4294e8b1ddbf9f1d75f8962b8ece647fdf8176c7d06d0c5",
+        "name": "moving_puncture_h32",
+        "root_nx1": 96,
+        "root_nx2": 192,
+        "spacing": "h32"
+      },
+      {
+        "finest_spacing_M": 0.020833333333333332,
+        "gauge": "moving_puncture",
+        "input_path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/run/campaign/inputs/moving_puncture_h48.athinput",
+        "input_sha256": "f026ff8e26d4ed4ece9c8e7c183d07c16145c7dafa3c57c2ae0eb4e631f41671",
+        "name": "moving_puncture_h48",
+        "root_nx1": 144,
+        "root_nx2": 288,
+        "spacing": "h48"
+      },
+      {
+        "finest_spacing_M": 0.015625,
+        "gauge": "moving_puncture",
+        "input_path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/run/campaign/inputs/moving_puncture_h64.athinput",
+        "input_sha256": "749b2e8af92b5dd0ab54567e81cfd74b1d320c54fed18903a07bd5ef2d57e1e6",
+        "name": "moving_puncture_h64",
+        "root_nx1": 192,
+        "root_nx2": 384,
+        "spacing": "h64"
+      }
+    ],
+    "executable": {
+      "path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/build/athena-cuda/src/athena",
+      "sha256": "c14f6ac88144ad27b097e6f95249167a37d32cc50de2923894e66f10de2adeba"
+    },
+    "execution": {
+      "cpus_per_rank": 8,
+      "gpus": 4,
+      "one_node_per_case": true,
+      "ranks": 4
+    },
+    "physics": {
+      "chi_floor": false,
+      "dchi_max": 0.02,
+      "dimensionless_spin": 0.5,
+      "gauge": {
+        "lapse": "advective_1_plus_log",
+        "lapse_advect": 1.0,
+        "lapse_harmonic": 0.0,
+        "lapse_harmonicf": 1.0,
+        "lapse_oplog": 2.0,
+        "name": "athenak_default_moving_puncture",
+        "shift": "advective_Gamma_driver",
+        "shift_Gamma": 1.0,
+        "shift_H": 0.0,
+        "shift_advect": 1.0,
+        "shift_alpha2Gamma": 0.0,
+        "shift_eta": 2.0,
+        "shift_eta_max_K": false,
+        "slow_start_lapse": false,
+        "sss_damping_amp": 0.0,
+        "telegraph_lapse": false
+      },
+      "integrator": "rk4",
+      "mass": 1.0,
+      "precollapsed_lapse": true,
+      "spatial_order": 6,
+      "target_time_M": 5.0
+    },
+    "source": {
+      "commit": "f95a05802621b76cff2894d562c38df4b0d09661",
+      "path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/source/athenak",
+      "tree": "4a03dc2ec051463372d812cfd053ca4db3d0698a"
+    },
+    "template": {
+      "path": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-half-plane-kerr-f95a0580-v5-20260813/source/athenak/tst/inputs/z4c_kerr_half_plane_convergence.athinput",
+      "sha256": "769843e2ebc584b1d4294e8b1ddbf9f1d75f8962b8ece647fdf8176c7d06d0c5"
+    }
+  },
+  "contract_sha256": "4d2533271b5f269ee79253b2e4f1805db8f5b86a97030f2092846d5d50cff454",
+  "schema": "athenak_cartoon_half_plane_kerr_campaign_v2"
+}
