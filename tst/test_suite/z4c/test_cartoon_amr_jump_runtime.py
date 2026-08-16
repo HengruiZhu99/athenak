@@ -30,21 +30,27 @@ def run(command: list[str], cwd: Path, expect: int = 0) -> subprocess.CompletedP
 def execute(executable: Path, input_path: Path, ranks: int,
             mpiexec: str | None, enabled: bool = True) -> Path:
     root = Path(tempfile.mkdtemp(prefix=f"z4c-amr-runtime-r{ranks}."))
-    command = [str(executable), "-i", str(input_path)]
+    launch = root / "launch"
+    run_dir = root / "run"
+    launch.mkdir()
+    run_dir.mkdir()
+    command = [str(executable), "-i", str(input_path), "-d", str(run_dir)]
     if not enabled:
         command.append("z4c/amr_jump_diagnostic=false")
     if ranks > 1:
         if not mpiexec:
             raise TestFailure("MPI test requested without --mpiexec")
         command = [mpiexec, "-n", str(ranks)] + command
-    result = run(command, root)
+    result = run(command, launch)
     (root / "run.log").write_text(result.stdout, encoding="utf-8")
-    diagnostic = root / "z4c_amr_jump"
+    diagnostic = run_dir / "z4c_amr_jump"
     if enabled and not diagnostic.is_dir():
         raise TestFailure("enabled run produced no diagnostic root")
     if not enabled and diagnostic.exists():
         raise TestFailure("default-off run produced diagnostic files")
-    return root
+    if (launch / "z4c_amr_jump").exists():
+        raise TestFailure("diagnostic escaped the requested -d run directory")
+    return run_dir
 
 
 def aggregate_post(root: Path, ranks: int) -> list[dict[str, float]]:

@@ -376,6 +376,10 @@ AMRJumpDiagnosticRuntime::AMRJumpDiagnosticRuntime(
     DiagnosticFailure("requires live MeshBlockPack and Mesh objects");
   }
   rank_root_ = (fs::path(config_.output_basename) / RankTag()).string();
+}
+
+void AMRJumpDiagnosticRuntime::EnsureOutputInitialized() {
+  if (output_initialized_) return;
   CreateDirectory(rank_root_);
   std::ostringstream schema;
   schema << "{\"schema\":\"" << kAMRJumpDiagnosticSchema << "\","
@@ -393,10 +397,15 @@ AMRJumpDiagnosticRuntime::AMRJumpDiagnosticRuntime(
   }
   schema << "]}";
   WriteTextAtomically(fs::path(rank_root_) / "schema.json", schema.str() + "\n");
+  output_initialized_ = true;
 }
 
 void AMRJumpDiagnosticRuntime::BeginTransaction(
     const MeshRefinement &refinement) {
+  // Z4c is constructed before main() applies -d via ChangeRunDir().  Defer every
+  // diagnostic filesystem side effect until the first runtime AMR transaction so
+  // relative output basenames are rooted in the requested run directory.
+  EnsureOutputInitialized();
   if (transaction_active_) {
     DiagnosticFailure("attempted to begin an overlapping AMR transaction");
   }

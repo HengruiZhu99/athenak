@@ -267,6 +267,7 @@ class AMRJumpDiagnosticRuntime {
   MeshBlockPack *pack_ = nullptr;
   AMRJumpDiagnosticConfig config_;
   bool transaction_active_ = false;
+  bool output_initialized_ = false;
   bool pending_t0_ = false;
   bool detailed_event_active_ = false;
   bool target_seen_ = false;
@@ -285,6 +286,7 @@ class AMRJumpDiagnosticRuntime {
   std::vector<std::int32_t> old_lx3_;
   std::vector<std::int32_t> old_levels_;
 
+  void EnsureOutputInitialized();
   void CapturePhase(AMRJumpPhase phase, AMRJumpWriter writer, int ordinal,
                     bool constraints_valid, bool include_coarse);
   void WriteCurrentTopology(const std::string &path) const;
