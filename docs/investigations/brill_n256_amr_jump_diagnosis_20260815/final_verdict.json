@@ -1,0 +1,112 @@
+{
+  "schema": "axisymmetric_cartoon_z4c_amr_jump_final_verdict_v1",
+  "status": "diagnosed_with_explicit_t3_subphase_resolution_limit",
+  "qualification_claim": false,
+  "figure3_qualification": false,
+  "production_repair_performed": false,
+  "source": {
+    "commit": "b74903d5e6e1c8ff51e723f1cd90e4a1f5f2e9b3",
+    "tree": "9cd78a7cb4cb7aa1ef0bc49bd1d30ba34d235cea",
+    "base": "ea81e528ccd9b8d0b142f1d77b3cc6eb775f1ef4",
+    "scope": "default_off_diagnostics_only"
+  },
+  "campaign": {
+    "job_id": 57052389,
+    "remote_root": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-r4-brill-amr-jump-b74903d5-v4-20260815",
+    "science_step": "completed",
+    "outer_job_state": "FAILED",
+    "outer_exit_code": "1:0",
+    "numbered_steps": 2,
+    "outer_failure_class": "post_science_restart_inventory_glob_too_shallow",
+    "outer_failure_scientific_effect": false,
+    "target_transaction_cycle": 1722,
+    "target_transaction_time": 9.506249999999907,
+    "archived_history_cycle": 1724,
+    "archived_history_time": 9.510937499999907,
+    "old_meshblocks": 74,
+    "new_meshblocks": 86,
+    "maximum_level_before": 2,
+    "maximum_level_after": 3,
+    "post_event_cycles": 8
+  },
+  "disposition": "quantified_multi_stage",
+  "primary_diagnosis": "the jump is a new-hierarchy derivative-representation effect localized to reconstructed ghost and interface data, followed by a smaller algebraic-projection contribution; it is not a 2D volume-normalization artifact and not an active-state restriction discontinuity",
+  "native_integral_change_t0_to_t5": {
+    "C_norm2_before": 14.151060028208786,
+    "C_norm2_after": 88.22821406074948,
+    "C_integral_factor": 6.234742406920398,
+    "sqrt_C_factor": 2.4969466167542302,
+    "H_norm2_before": 0.5623796760041951,
+    "H_norm2_after": 12.894750091304507,
+    "H_integral_factor": 22.92890486890269,
+    "sqrt_H_factor": 4.788413606707621,
+    "M_norm2_before": 0.7757136489527502,
+    "M_norm2_after": 62.530475077851534,
+    "M_integral_factor": 80.61025503711403,
+    "sqrt_M_factor": 8.97832139306196,
+    "proper_volume_delta": -0.0012938186846440658,
+    "proper_volume_relative_delta": -2.71102710812296e-08,
+    "coordinate_ring_volume_delta": 9.822542779147625e-11
+  },
+  "ledger_closure": {
+    "parent_to_child_coarse_max_abs_residual": 0.0,
+    "canonical_transfer_max_abs_residual": 1.7763568394002505e-15,
+    "canonical_transfer_tolerance": 6.450866970586865e-12,
+    "evolved_telescoping_max_abs_residual": 0.0,
+    "evolved_telescoping_tolerance": 9.094947017729282e-13,
+    "constraint_telescoping_max_abs_residual": 8.881784197001252e-16,
+    "constraint_telescoping_tolerance": 5.6323699608519e-10
+  },
+  "phase_attribution": {
+    "active_refine_or_derefine_transfer_l2": 2.832256590685028e-14,
+    "active_mpi_receive_l2": 0.0,
+    "active_coarse_to_fine_prolongation_l2": 0.0,
+    "active_algebraic_projection_l2": 0.008728730133281395,
+    "stored_mpi_receive_l2": 42.94445319153904,
+    "stored_coarse_to_fine_prolongation_l2": 17.358328592683044,
+    "fixed_lattice_t0_to_t3_constraint_l2": 615.2503411986764,
+    "fixed_lattice_projection_constraint_l2": 9.521490498549129,
+    "projection_to_t0_t3_ratio": 0.01547579881060879,
+    "adm_or_constraint_recomputation_constraint_l2": 0.0,
+    "t3_subphase_limit": "intermediate T3 states have intentionally incomplete derivative halos, so MPI_RECEIVE and COARSE_TO_FINE_PROLONGATION ghost contributions are quantified in evolved storage but their separate constraint effects cannot be evaluated as valid constraints"
+  },
+  "spatial_localization": {
+    "worst_rho": 5.1328125,
+    "worst_z": -0.0078125,
+    "mirrored_partner_present": true,
+    "axis_distance": 5.1328125,
+    "block_edge_distance": 0.0078125,
+    "coarse_fine_interface_distance": 0.1328125,
+    "worst_delta_C": 147.45580333159432,
+    "interpretation": "off-axis, reflection-symmetric, and concentrated at a MeshBlock-edge row near the new coarse-fine interface"
+  },
+  "chi_shadow_control": {
+    "positive_source_nonpositive_high_order_targets": 0,
+    "largest_relative_high_order_vs_shadow_difference": 0.0010800989788246214,
+    "largest_difference_class": "edge-center",
+    "interpretation": "no chi positivity or high-order restriction overshoot trigger occurred at this event"
+  },
+  "post_event": {
+    "cycle_start": 1722,
+    "cycle_end": 1730,
+    "C_norm2_start": 88.22821406074948,
+    "C_norm2_end": 132.28691496352124,
+    "H_norm2_start": 12.894750091304507,
+    "H_norm2_end": 107.62213937379423,
+    "M_norm2_start": 62.530475077851534,
+    "M_norm2_end": 11.71224419193766,
+    "classification": "persistent_and_evolving_not_an_instantaneous_measure_jump"
+  },
+  "recommended_next_experiment": "use the unchanged O6 bulk scheme with a runtime-selectable genuinely limited-O2 Z4c AMR transfer pair at both regridding and ordinary coarse-boundary reconstruction, retaining the same provenance diagnostics; this tests whether the interface ghost representation rather than bulk evolution controls the jump",
+  "evidence": {
+    "analysis_verdict_sha256": "6efc4d13736bbfa82dffca39c536e4e91e149fdbc39cbe8684ea26a79f1d68f7",
+    "analysis_manifest_sha256": "7511970831f2bdd99f0691362093103efefcc03854f82c455c43dd51cbd1734a",
+    "raw_manifest_sha256": "d8670bb0ff55d752b40311b57689ca3d3fc8fbe9243d62679f23acd2f9c9f630",
+    "remote_root_manifest_sha256": "04601160ee2d63e5696f3c2824a51e46d89f3c6f7637e2609ce411f322d72b68",
+    "remote_detached_manifest_sha256": "f9a6436218da403afbbe1b23b584ad89512492d40a19a72304600b66e18b3b12",
+    "sacct_sha256": "a44f5a731f57d98e2661583e26a04d1ca0ed889ce19deabde72595015096f6ad",
+    "run_log_sha256": "b1e7a6625861b7252ea9364f7062c16f73d183a7e3cda175dfece457f3e7b3b4",
+    "final_restart_sha256": "1f2e8b81793bef86f5364f051bca9acc53ebb784575d16025b87b6b9efea6508"
+  },
+  "provenance_note": "During terminal verification, an audit command wrote manifest-check.log and manifest-check.status in the remote root after the frozen manifest inventory was generated. They are audit-only, unlisted by SHA256SUMS, copied locally, and did not alter any listed evidence byte."
+}
