@@ -85,6 +85,24 @@ def check_mirror_reconciliation_order() -> None:
             "legacy derefine sort still excludes the final parent")
 
 
+def check_bounded_hierarchy_control() -> None:
+    adaptive = REFINEMENT.index("void MeshRefinement::AdaptiveMeshRefinement")
+    criterion = REFINEMENT.index("CheckForRefinement(pmy_mesh->pmb_pack);", adaptive)
+    control = REFINEMENT.index("ApplyAMRJumpHierarchyControl", criterion)
+    transaction = REFINEMENT.index("BeginTransaction(*this)", control)
+    tree = REFINEMENT.index("UpdateMeshBlockTree(nnew, ndel)", transaction)
+    require(criterion < control < transaction < tree,
+            "hierarchy control is not applied after criteria and before tree mutation")
+    require("std::abs(location.lx1 - seed.lx1) <= 1" in REFINEMENT and
+            "std::abs(location.lx2 - seed.lx2) <= 1" in REFINEMENT,
+            "buffered target does not add a full same-level Chebyshev ring")
+    require("if (location.level != target_absolute_level) continue;" in REFINEMENT,
+            "buffered target is not restricted to the target parent level")
+    require("if (diagnostic.ShouldFreezeHierarchy())" in REFINEMENT and
+            "flags.h_view(gid) = 0" in REFINEMENT,
+            "frozen hierarchy does not suppress both refinement flag signs")
+
+
 def check_collapsed_dchi() -> None:
     match = re.search(
         r"if \(nx3 > 1\) \{\s*"
@@ -121,6 +139,7 @@ def check_configured_stencil_dispatch() -> None:
 check_cubic_weights()
 check_dispatch_and_collapsed_storage()
 check_mirror_reconciliation_order()
+check_bounded_hierarchy_control()
 check_collapsed_dchi()
 check_configured_stencil_dispatch()
 print("cartoon AMR static checks passed")

@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>    // std::setprecision()
+#include <limits>
 #include <vector>
 
 #include "athena.hpp"
@@ -225,6 +226,11 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
   DvceArray1D<unsigned long long> chi_prolongation_counts(
       "Z4c boundary chi prolongation status counts", 4);
   Kokkos::deep_copy(chi_prolongation_counts, 0ULL);
+  DvceArray1D<unsigned long long> chi_first_rejected_keys(
+      "Z4c boundary first rejected chi groups", 2);
+  Kokkos::deep_copy(chi_first_rejected_keys,
+                    std::numeric_limits<unsigned long long>::max());
+  auto &mb_gid = pmy_pack->pmb->mb_gid;
 
   // Outer loop over (# of MeshBlocks)*(# of buffers)*(# of variables)
   Kokkos::TeamPolicy<> policy(DevExeSpace(), nmnv, Kokkos::AUTO);
@@ -281,6 +287,18 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
               break;
           }
           Kokkos::atomic_inc(&chi_prolongation_counts(static_cast<int>(status)));
+          if (status == ChiProlongationStatus::invalid_parent ||
+              status == ChiProlongationStatus::invalid_limited) {
+            const int rejection =
+                status == ChiProlongationStatus::invalid_parent ? 0 : 1;
+            const unsigned long long key =
+                (static_cast<unsigned long long>(mb_gid.d_view(m)) << 36) |
+                (static_cast<unsigned long long>(n) << 30) |
+                (static_cast<unsigned long long>(k) << 20) |
+                (static_cast<unsigned long long>(j) << 10) |
+                static_cast<unsigned long long>(i);
+            Kokkos::atomic_min(&chi_first_rejected_keys(rejection), key);
+          }
         } else {
           switch (z4c_stencil) {
             case 2: HighOrderProlongCC<2>(m,v,k,j,i,fk,fj,fi,nx1,nx2,nx3,
@@ -306,10 +324,16 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
         host_counts(0), host_counts(1), host_counts(2), host_counts(3)};
     unsigned long long global_counts[4] = {
         local_counts[0], local_counts[1], local_counts[2], local_counts[3]};
+    const auto host_rejected_keys =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), chi_first_rejected_keys);
+    unsigned long long global_rejected_keys[2] = {
+        host_rejected_keys(0), host_rejected_keys(1)};
     std::vector<unsigned long long> fallback_each_rank(global_variable::nranks, 0ULL);
 #if MPI_PARALLEL_ENABLED
     MPI_Allreduce(local_counts, global_counts, 4, MPI_UNSIGNED_LONG_LONG, MPI_SUM,
                   MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, global_rejected_keys, 2,
+                  MPI_UNSIGNED_LONG_LONG, MPI_MIN, MPI_COMM_WORLD);
     MPI_Gather(&local_counts[1], 1, MPI_UNSIGNED_LONG_LONG,
                fallback_each_rank.data(), 1, MPI_UNSIGNED_LONG_LONG, 0,
                MPI_COMM_WORLD);
@@ -332,6 +356,41 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
     }
     if (global_counts[2] != 0 || global_counts[3] != 0) {
       if (global_variable::my_rank == 0) {
+        const unsigned long long key =
+            global_counts[2] != 0 ? global_rejected_keys[0]
+                                  : global_rejected_keys[1];
+        const int gid = static_cast<int>(key >> 36);
+        const int neighbor_slot = static_cast<int>((key >> 30) & 0x3fULL);
+        const int coarse_k = static_cast<int>((key >> 20) & 0x3ffULL);
+        const int coarse_j = static_cast<int>((key >> 10) & 0x3ffULL);
+        const int coarse_i = static_cast<int>(key & 0x3ffULL);
+        const Mesh *mesh = pmy_pack->pmesh;
+        const LogicalLocation &location = mesh->lloc_eachmb[gid];
+        const int relative_level = location.level - mesh->root_level;
+        const Real level_scale = std::ldexp(1.0, relative_level);
+        const Real block_dx1 =
+            (mesh->mesh_size.x1max - mesh->mesh_size.x1min) /
+            (static_cast<Real>(mesh->nmb_rootx1) * level_scale);
+        const Real block_dx2 =
+            (mesh->mesh_size.x2max - mesh->mesh_size.x2min) /
+            (static_cast<Real>(mesh->nmb_rootx2) * level_scale);
+        const Real block_x1min = mesh->mesh_size.x1min + location.lx1 * block_dx1;
+        const Real block_x2min = mesh->mesh_size.x2min + location.lx2 * block_dx2;
+        const Real rho = block_x1min +
+            (coarse_i - indcs.cis + 0.5) * 2.0 * block_dx1 / nx1;
+        const Real z = block_x2min +
+            (coarse_j - indcs.cjs + 0.5) * 2.0 * block_dx2 / nx2;
+        std::cerr << std::setprecision(17)
+                  << "BOUNDARY_Z4C_CHI_FIRST_REJECTED cycle="
+                  << pmy_pack->pmesh->ncycle
+                  << " kind=" << (global_counts[2] != 0 ? "invalid_parent"
+                                                              : "invalid_limited")
+                  << " gid=" << gid << " level=" << relative_level
+                  << " lx1=" << location.lx1 << " lx2=" << location.lx2
+                  << " neighbor_slot=" << neighbor_slot
+                  << " coarse_i=" << coarse_i << " coarse_j=" << coarse_j
+                  << " coarse_k=" << coarse_k << " rho=" << rho
+                  << " z=" << z << std::endl;
         std::cerr << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
                   << std::endl
                   << "Z4c chi boundary prolongation rejected " << global_counts[2]

@@ -98,6 +98,71 @@ void ReconcileCartoonRefinementFlags(Mesh *pmesh, MeshBlockTree *tree) {
   }
 }
 
+void ApplyAMRJumpHierarchyControl(Mesh *pmesh, MeshBlockTree *tree,
+                                  z4c::Z4c *diagnostic_z4c) {
+  if (diagnostic_z4c == nullptr || diagnostic_z4c->amr_jump_diagnostic == nullptr) {
+    return;
+  }
+  auto &diagnostic = *diagnostic_z4c->amr_jump_diagnostic;
+  auto &flags = pmesh->pmr->refine_flag;
+  int original_refine = 0;
+  int original_derefine = 0;
+  for (int gid = 0; gid < pmesh->nmb_total; ++gid) {
+    original_refine += flags.h_view(gid) > 0 ? 1 : 0;
+    original_derefine += flags.h_view(gid) < 0 ? 1 : 0;
+  }
+
+  if (diagnostic.ShouldFreezeHierarchy()) {
+    for (int gid = 0; gid < pmesh->nmb_total; ++gid) flags.h_view(gid) = 0;
+    flags.template modify<HostMemSpace>();
+    flags.template sync<DevExeSpace>();
+    diagnostic.RecordHierarchyControl(original_refine, original_derefine, 0,
+                                      original_refine, original_derefine);
+    return;
+  }
+
+  if (!diagnostic.ShouldBufferTargetCycle(pmesh->ncycle)) return;
+  const int target_absolute_level =
+      pmesh->root_level + diagnostic.target_level_before();
+  std::vector<LogicalLocation> seeds;
+  for (int gid = 0; gid < pmesh->nmb_total; ++gid) {
+    const LogicalLocation &location = pmesh->lloc_eachmb[gid];
+    if (flags.h_view(gid) > 0 && location.level == target_absolute_level) {
+      seeds.push_back(location);
+    }
+  }
+  if (seeds.empty()) {
+    std::cerr << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "buffered AMR-jump target cycle has no refinement seed at relative "
+                 "level "
+              << diagnostic.target_level_before() << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  for (int gid = 0; gid < pmesh->nmb_total; ++gid) {
+    const LogicalLocation &location = pmesh->lloc_eachmb[gid];
+    if (location.level != target_absolute_level) continue;
+    for (const LogicalLocation &seed : seeds) {
+      if (location.lx3 == seed.lx3 &&
+          std::abs(location.lx1 - seed.lx1) <= 1 &&
+          std::abs(location.lx2 - seed.lx2) <= 1) {
+        flags.h_view(gid) = 1;
+        break;
+      }
+    }
+  }
+  ReconcileCartoonRefinementFlags(pmesh, tree);
+  int buffered_total_refine = 0;
+  for (int gid = 0; gid < pmesh->nmb_total; ++gid) {
+    buffered_total_refine += flags.h_view(gid) > 0 ? 1 : 0;
+  }
+  flags.template modify<HostMemSpace>();
+  flags.template sync<DevExeSpace>();
+  diagnostic.RecordHierarchyControl(
+      original_refine, original_derefine,
+      std::max(0, buffered_total_refine - original_refine), 0, 0);
+}
+
 }  // namespace
 
 //----------------------------------------------------------------------------------------
@@ -206,6 +271,7 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
   // first check refinement criteria
   CheckForRefinement(pmy_mesh->pmb_pack);
   z4c::Z4c *diagnostic_z4c = pmy_mesh->pmb_pack->pz4c;
+  ApplyAMRJumpHierarchyControl(pmy_mesh, pmy_mesh->ptree.get(), diagnostic_z4c);
   if (diagnostic_z4c != nullptr && diagnostic_z4c->amr_jump_diagnostic != nullptr) {
     diagnostic_z4c->amr_jump_diagnostic->BeginTransaction(*this);
   }

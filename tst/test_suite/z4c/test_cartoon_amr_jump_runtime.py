@@ -28,7 +28,8 @@ def run(command: list[str], cwd: Path, expect: int = 0) -> subprocess.CompletedP
 
 
 def execute(executable: Path, input_path: Path, ranks: int,
-            mpiexec: str | None, enabled: bool = True) -> Path:
+            mpiexec: str | None, enabled: bool = True,
+            overrides: list[str] | None = None) -> Path:
     root = Path(tempfile.mkdtemp(prefix=f"z4c-amr-runtime-r{ranks}."))
     launch = root / "launch"
     run_dir = root / "run"
@@ -37,6 +38,8 @@ def execute(executable: Path, input_path: Path, ranks: int,
     command = [str(executable), "-i", str(input_path), "-d", str(run_dir)]
     if not enabled:
         command.append("z4c/amr_jump_diagnostic=false")
+    if overrides:
+        command.extend(overrides)
     if ranks > 1:
         if not mpiexec:
             raise TestFailure("MPI test requested without --mpiexec")
@@ -51,6 +54,46 @@ def execute(executable: Path, input_path: Path, ranks: int,
     if (launch / "z4c_amr_jump").exists():
         raise TestFailure("diagnostic escaped the requested -d run directory")
     return run_dir
+
+
+def check_hierarchy_control(executable: Path, input_path: Path) -> None:
+    for mode in ("freeze_after_target", "buffered_freeze_after_target"):
+        run_dir = execute(
+            executable, input_path, 1, None,
+            overrides=[f"z4c/amr_jump_hierarchy_control={mode}"],
+        )
+        rank = run_dir / "z4c_amr_jump" / "rank0000"
+        schema = json.loads((rank / "schema.json").read_text(encoding="utf-8"))
+        if schema.get("hierarchy_control") != mode:
+            raise TestFailure(f"schema did not bind hierarchy control {mode}")
+        with (rank / "hierarchy_control.jsonl").open(encoding="utf-8") as stream:
+            controls = [json.loads(line) for line in stream if line.strip()]
+        if not controls:
+            raise TestFailure(f"{mode} emitted no hierarchy-control evidence")
+        if mode == "buffered_freeze_after_target":
+            first = controls[0]
+            if int(first["cycle"]) != 1 or first["target_seen"] or \
+                    int(first["buffered_refine_added"]) <= 0:
+                raise TestFailure("buffered target did not expand the exact event")
+        frozen = [row for row in controls if row["target_seen"]]
+        if not frozen:
+            raise TestFailure(f"{mode} never entered frozen state")
+        snapshots = sorted((rank / "accepted_topologies").glob("*.csv"))
+        if [path.stem for path in snapshots] != ["c00000001"]:
+            raise TestFailure(f"{mode} changed topology after the target: {snapshots}")
+        with (rank / "rk_stage_exposure.jsonl").open(encoding="utf-8") as stream:
+            exposure = [json.loads(line) for line in stream if line.strip()]
+        if len(exposure) != 8 or any(int(row["stage"]) not in (1, 2, 3, 4)
+                                     for row in exposure):
+            raise TestFailure(f"{mode} exposure is not exactly RK-stage accounting")
+        cumulative = [int(row["cumulative_X_CF"]) for row in exposure]
+        expected = []
+        total = 0
+        for row in exposure:
+            total += int(row["coarse_fine_leaf_face_incidents"])
+            expected.append(total)
+        if cumulative != expected:
+            raise TestFailure(f"{mode} cumulative X_CF is invalid")
 
 
 def aggregate_post(root: Path, ranks: int) -> list[dict[str, float]]:
@@ -110,6 +153,7 @@ def main() -> None:
                   None, enabled=False)
     if (off / "z4c_amr_jump").exists():
         raise TestFailure("default-off diagnostic path exists")
+    check_hierarchy_control(args.serial_executable.resolve(), args.input.resolve())
 
     runs: dict[int, Path] = {}
     for ranks in (1, 2, 4):

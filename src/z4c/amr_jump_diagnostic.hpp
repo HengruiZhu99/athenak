@@ -56,6 +56,25 @@ enum class AMRJumpWriter : int {
   adm_or_constraint_recomputation = 9,
 };
 
+enum class AMRJumpHierarchyControl : int {
+  dynamic = 0,
+  freeze_after_target = 1,
+  buffered_freeze_after_target = 2,
+};
+
+inline const char *AMRJumpHierarchyControlName(
+    const AMRJumpHierarchyControl control) {
+  switch (control) {
+    case AMRJumpHierarchyControl::dynamic:
+      return "dynamic";
+    case AMRJumpHierarchyControl::freeze_after_target:
+      return "freeze_after_target";
+    case AMRJumpHierarchyControl::buffered_freeze_after_target:
+      return "buffered_freeze_after_target";
+  }
+  return "unknown";
+}
+
 inline const char *AMRJumpPhaseName(const AMRJumpPhase phase) {
   switch (phase) {
     case AMRJumpPhase::t0_accepted_old_hierarchy:
@@ -107,6 +126,8 @@ struct AMRJumpDiagnosticConfig {
   int target_cycle = -1;
   int post_cycles = 8;
   std::string output_basename = "z4c_amr_jump";
+  AMRJumpHierarchyControl hierarchy_control =
+      AMRJumpHierarchyControl::dynamic;
 };
 
 struct AMRJumpDiagnosticContext {
@@ -131,7 +152,12 @@ inline bool AMRJumpOutputBasenameIsSafe(const std::string &basename) {
 inline std::string ValidateAMRJumpDiagnosticConfig(
     const AMRJumpDiagnosticConfig &config,
     const AMRJumpDiagnosticContext &context) {
-  if (!config.enabled) return {};
+  if (!config.enabled) {
+    if (config.hierarchy_control != AMRJumpHierarchyControl::dynamic) {
+      return "amr_jump_hierarchy_control requires amr_jump_diagnostic=true";
+    }
+    return {};
+  }
   if (config.target_level_before < context.root_level) {
     return "amr_jump_target_level_before is below the root level";
   }
@@ -150,6 +176,10 @@ inline std::string ValidateAMRJumpDiagnosticConfig(
   if (!AMRJumpOutputBasenameIsSafe(config.output_basename)) {
     return "amr_jump_output_basename must be a non-hidden portable basename";
   }
+  if (config.hierarchy_control != AMRJumpHierarchyControl::dynamic &&
+      config.target_cycle < 0) {
+    return "amr_jump_hierarchy_control requires an explicit target cycle";
+  }
   if (context.nranks <= 0) {
     return "AMR jump diagnostic requires a positive MPI rank count";
   }
@@ -163,11 +193,11 @@ inline std::string ValidateAMRJumpDiagnosticConfig(
 }
 
 inline bool IsKnownAMRJumpParameter(const std::string &name) {
-  constexpr std::array<const char *, 6> known = {
+  constexpr std::array<const char *, 7> known = {
       "amr_jump_diagnostic", "amr_jump_target_level_before",
       "amr_jump_target_level_after", "amr_jump_target_cycle",
       "amr_jump_post_cycles",
-      "amr_jump_output_basename"};
+      "amr_jump_output_basename", "amr_jump_hierarchy_control"};
   return std::any_of(known.begin(), known.end(), [&name](const char *candidate) {
     return name == candidate;
   });
@@ -208,6 +238,21 @@ inline AMRJumpDiagnosticConfig ReadAMRJumpDiagnosticConfig(
   if (pin->DoesParameterExist("z4c", "amr_jump_output_basename")) {
     config.output_basename =
         pin->GetString("z4c", "amr_jump_output_basename");
+  }
+  if (pin->DoesParameterExist("z4c", "amr_jump_hierarchy_control")) {
+    const std::string control =
+        pin->GetString("z4c", "amr_jump_hierarchy_control");
+    if (control == "dynamic") {
+      config.hierarchy_control = AMRJumpHierarchyControl::dynamic;
+    } else if (control == "freeze_after_target") {
+      config.hierarchy_control = AMRJumpHierarchyControl::freeze_after_target;
+    } else if (control == "buffered_freeze_after_target") {
+      config.hierarchy_control =
+          AMRJumpHierarchyControl::buffered_freeze_after_target;
+    } else {
+      throw std::invalid_argument(
+          "unknown <z4c>/amr_jump_hierarchy_control=" + control);
+    }
   }
   const std::string error = ValidateAMRJumpDiagnosticConfig(config, context);
   if (!error.empty()) throw std::invalid_argument(error);
@@ -255,6 +300,12 @@ class AMRJumpDiagnosticRuntime {
   AMRJumpDiagnosticRuntime &operator=(const AMRJumpDiagnosticRuntime &) = delete;
 
   void BeginTransaction(const MeshRefinement &refinement);
+  bool ShouldFreezeHierarchy() const;
+  bool ShouldBufferTargetCycle(int cycle) const;
+  int target_level_before() const { return config_.target_level_before; }
+  void RecordHierarchyControl(int original_refine, int original_derefine,
+                              int buffered_refine, int suppressed_refine,
+                              int suppressed_derefine);
   void CancelTransaction();
   void RecordTopologyProposal(const MeshRefinement &refinement,
                               int old_nmb, int new_nmb, int nnew, int ndel);
@@ -265,6 +316,7 @@ class AMRJumpDiagnosticRuntime {
   void RecordT4();
   void RecordT5();
   void AfterAcceptedCycle(Driver *driver);
+  void RecordRKStageCoarseFineExposure(int stage);
 
   bool transaction_active() const { return transaction_active_; }
   bool detailed_event_active() const { return detailed_event_active_; }
@@ -284,6 +336,7 @@ class AMRJumpDiagnosticRuntime {
   int new_max_level_ = -1;
   int old_nmb_total_ = 0;
   int t3_last_ordinal_ = -1;
+  std::uint64_t local_x_cf_ = 0;
   std::string rank_root_;
   std::string pending_event_root_;
   std::string event_root_;
@@ -298,6 +351,7 @@ class AMRJumpDiagnosticRuntime {
   void CapturePhase(AMRJumpPhase phase, AMRJumpWriter writer, int ordinal,
                     bool constraints_valid, bool include_coarse);
   void WriteCurrentTopology(const std::string &path) const;
+  void WriteAcceptedTopologySnapshot() const;
   void WriteCompactTransaction(int nnew, int ndel) const;
   void WriteAcceptedCycleAggregate() const;
   void DiscardPendingT0();

@@ -361,6 +361,9 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
 
 TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
   if (pmy_pack->pmesh->multilevel) {  // only prolongate with SMR/AMR
+    if (amr_jump_diagnostic != nullptr && stage > 0) {
+      amr_jump_diagnostic->RecordRKStageCoarseFineExposure(stage);
+    }
     // Refresh same-level coarse-array corners after every RK update.  The
     // high-order coarse/fine interpolation stencil reaches these values, so
     // retaining the previous stage's coarse data can make an otherwise

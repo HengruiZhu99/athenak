@@ -30,6 +30,7 @@
 #include "bvals/bvals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
+#include "mesh/nghbr_index.hpp"
 #include "mesh/restriction.hpp"
 #include "z4c/stored_domain_bounds.hpp"
 #include "z4c/cartoon_meridional_sampler.hpp"
@@ -128,6 +129,46 @@ int MaximumLevel(const LogicalLocation *locations, const int count) {
     level = std::max(level, static_cast<int>(locations[index].level));
   }
   return count == 0 ? -1 : level;
+}
+
+struct CoarseFineFaceInventory {
+  std::uint64_t incidents = 0;
+  std::string locations;
+};
+
+CoarseFineFaceInventory LocalCoarseFineFaceInventory(MeshBlockPack *pack) {
+  CoarseFineFaceInventory inventory;
+  if (pack == nullptr || pack->pmesh == nullptr || !pack->pmesh->two_d) {
+    return inventory;
+  }
+  auto &neighbors = pack->pmb->nghbr.h_view;
+  auto &levels = pack->pmb->mb_lev.h_view;
+  auto &gids = pack->pmb->mb_gid.h_view;
+  constexpr std::array<const char *, 4> names = {
+      "inner_x1", "outer_x1", "inner_x2", "outer_x2"};
+  const std::array<std::array<int, 2>, 4> slots = {{
+      {{NeighborIndex(-1, 0, 0, 0, 0), NeighborIndex(-1, 0, 0, 1, 0)}},
+      {{NeighborIndex(1, 0, 0, 0, 0), NeighborIndex(1, 0, 0, 1, 0)}},
+      {{NeighborIndex(0, -1, 0, 0, 0), NeighborIndex(0, -1, 0, 1, 0)}},
+      {{NeighborIndex(0, 1, 0, 0, 0), NeighborIndex(0, 1, 0, 1, 0)}}}};
+  std::ostringstream locations;
+  bool first = true;
+  for (int m = 0; m < pack->nmb_thispack; ++m) {
+    for (int face = 0; face < 4; ++face) {
+      bool coarse_fine = false;
+      for (const int slot : slots[face]) {
+        coarse_fine = coarse_fine ||
+            (neighbors(m, slot).gid >= 0 && neighbors(m, slot).lev != levels(m));
+      }
+      if (!coarse_fine) continue;
+      ++inventory.incidents;
+      if (!first) locations << ";";
+      first = false;
+      locations << gids(m) << ":" << names[face];
+    }
+  }
+  inventory.locations = locations.str();
+  return inventory;
 }
 
 struct Aggregate {
@@ -395,9 +436,43 @@ void AMRJumpDiagnosticRuntime::EnsureOutputInitialized() {
     if (n != 0) schema << ",";
     schema << "\"" << Z4c::Constraint_names[n] << "\"";
   }
-  schema << "]}";
+  schema << "],\"hierarchy_control\":\""
+         << AMRJumpHierarchyControlName(config_.hierarchy_control) << "\"}";
   WriteTextAtomically(fs::path(rank_root_) / "schema.json", schema.str() + "\n");
   output_initialized_ = true;
+}
+
+bool AMRJumpDiagnosticRuntime::ShouldFreezeHierarchy() const {
+  return target_seen_ &&
+         config_.hierarchy_control != AMRJumpHierarchyControl::dynamic;
+}
+
+bool AMRJumpDiagnosticRuntime::ShouldBufferTargetCycle(const int cycle) const {
+  return !target_seen_ &&
+         config_.hierarchy_control ==
+             AMRJumpHierarchyControl::buffered_freeze_after_target &&
+         cycle == config_.target_cycle;
+}
+
+void AMRJumpDiagnosticRuntime::RecordHierarchyControl(
+    const int original_refine, const int original_derefine,
+    const int buffered_refine, const int suppressed_refine,
+    const int suppressed_derefine) {
+  EnsureOutputInitialized();
+  std::ostringstream record;
+  record << std::setprecision(17)
+         << "{\"schema\":\"athenak_z4c_amr_hierarchy_control_v1\","
+         << "\"rank\":" << global_variable::my_rank << ",\"cycle\":"
+         << pack_->pmesh->ncycle << ",\"time\":" << pack_->pmesh->time
+         << ",\"control\":\""
+         << AMRJumpHierarchyControlName(config_.hierarchy_control) << "\","
+         << "\"target_seen\":" << (target_seen_ ? "true" : "false") << ","
+         << "\"original_refine\":" << original_refine << ","
+         << "\"original_derefine\":" << original_derefine << ","
+         << "\"buffered_refine_added\":" << buffered_refine << ","
+         << "\"suppressed_refine\":" << suppressed_refine << ","
+         << "\"suppressed_derefine\":" << suppressed_derefine << "}\n";
+  AppendText(fs::path(rank_root_) / "hierarchy_control.jsonl", record.str());
 }
 
 void AMRJumpDiagnosticRuntime::BeginTransaction(
@@ -668,9 +743,27 @@ void AMRJumpDiagnosticRuntime::RecordT5() {
       << ",\"old_max_level\":" << old_max_level_
       << ",\"new_max_level\":" << new_max_level_ << "}\n";
   AppendText(fs::path(rank_root_) / "transactions.jsonl", end.str());
+  WriteAcceptedTopologySnapshot();
   transaction_active_ = false;
   detailed_event_active_ = false;
   event_root_.clear();
+}
+
+void AMRJumpDiagnosticRuntime::RecordRKStageCoarseFineExposure(const int stage) {
+  if (!target_seen_) return;
+  EnsureOutputInitialized();
+  const CoarseFineFaceInventory faces = LocalCoarseFineFaceInventory(pack_);
+  local_x_cf_ += faces.incidents;
+  std::ostringstream record;
+  record << std::setprecision(17)
+         << "{\"schema\":\"athenak_z4c_amr_rk_stage_exposure_v1\","
+         << "\"rank\":" << global_variable::my_rank << ",\"cycle\":"
+         << pack_->pmesh->ncycle << ",\"time\":" << pack_->pmesh->time
+         << ",\"stage\":" << stage
+         << ",\"coarse_fine_leaf_face_incidents\":" << faces.incidents
+         << ",\"cumulative_X_CF\":" << local_x_cf_
+         << ",\"locations\":\"" << faces.locations << "\"}\n";
+  AppendText(fs::path(rank_root_) / "rk_stage_exposure.jsonl", record.str());
 }
 
 void AMRJumpDiagnosticRuntime::AfterAcceptedCycle(Driver *driver) {
@@ -791,6 +884,13 @@ void AMRJumpDiagnosticRuntime::WriteCurrentTopology(
   WriteTextAtomically(path, output.str());
 }
 
+void AMRJumpDiagnosticRuntime::WriteAcceptedTopologySnapshot() const {
+  const fs::path directory = fs::path(rank_root_) / "accepted_topologies";
+  std::ostringstream name;
+  name << CycleTag(pack_->pmesh->ncycle) << ".csv";
+  WriteCurrentTopology((directory / name.str()).string());
+}
+
 void AMRJumpDiagnosticRuntime::WriteCompactTransaction(const int nnew,
                                                        const int ndel) const {
   std::ostringstream output;
@@ -811,10 +911,20 @@ void AMRJumpDiagnosticRuntime::WriteAcceptedCycleAggregate() const {
   const Aggregate aggregate = ComputeAggregate(pack_, pack_->pz4c->u0,
                                                pack_->padm->u_adm,
                                                pack_->pz4c->u_con);
+  const CoarseFineFaceInventory faces = LocalCoarseFineFaceInventory(pack_);
+  std::string record = AggregateJSON(
+      aggregate, pack_->pmesh, "athenak_z4c_amr_post_event_cycle_v1");
+  if (record.empty() || record.back() != '}') {
+    DiagnosticFailure("post-event aggregate did not produce a JSON object");
+  }
+  record.pop_back();
+  std::ostringstream suffix;
+  suffix << ",\"coarse_fine_leaf_face_incidents\":" << faces.incidents
+         << ",\"cumulative_X_CF\":" << local_x_cf_
+         << ",\"coarse_fine_face_locations\":\"" << faces.locations
+         << "\"}";
   AppendText(fs::path(rank_root_) / "post_event_cycles.jsonl",
-             AggregateJSON(aggregate, pack_->pmesh,
-                           "athenak_z4c_amr_post_event_cycle_v1") +
-                 "\n");
+             record + suffix.str() + "\n");
 }
 
 void AMRJumpDiagnosticRuntime::DiscardPendingT0() {
