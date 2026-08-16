@@ -370,6 +370,49 @@ bool ProlongationSiblingGroupFinitePositive(
   return true;
 }
 
+//! \brief Validate the complete parent neighborhood consumed by ProlongCC.
+KOKKOS_INLINE_FUNCTION
+bool LimitedProlongationParentNeighborhoodFinitePositive(
+    const int m, const int v, const int k, const int j, const int i,
+    const bool multi_d, const bool three_d, const DvceArray5D<Real> &ca) {
+  const int dk_lo = three_d ? -1 : 0;
+  const int dk_hi = three_d ? 1 : 0;
+  const int dj_lo = multi_d ? -1 : 0;
+  const int dj_hi = multi_d ? 1 : 0;
+  for (int dk = dk_lo; dk <= dk_hi; ++dk) {
+    for (int dj = dj_lo; dj <= dj_hi; ++dj) {
+      for (int di = -1; di <= 1; ++di) {
+        const Real parent = ca(m, v, k + dk, j + dj, i + di);
+        if (!Kokkos::isfinite(parent) || !(parent > 0.0)) return false;
+      }
+    }
+  }
+  return true;
+}
+
+//! \brief Always-limited O2 chi prolongation with unchanged strict positivity gates.
+//!
+//! This is the chi member of the diagnostic limited-O2 AMR transfer pair.  It is
+//! not a floor or clip: invalid parent data and invalid reconstructed sibling groups
+//! remain fatal at the existing caller gate.
+KOKKOS_INLINE_FUNCTION
+ChiProlongationStatus ProlongLimitedPositiveChiCC(
+    const int m, const int v, const int k, const int j, const int i,
+    const int fk, const int fj, const int fi, const bool multi_d,
+    const bool three_d, const DvceArray5D<Real> &ca,
+    const DvceArray5D<Real> &a) {
+  if (!LimitedProlongationParentNeighborhoodFinitePositive(
+          m, v, k, j, i, multi_d, three_d, ca)) {
+    return ChiProlongationStatus::invalid_parent;
+  }
+  ProlongCC(m, v, k, j, i, fk, fj, fi, multi_d, three_d, ca, a);
+  if (!ProlongationSiblingGroupFinitePositive(m, v, fk, fj, fi, multi_d,
+                                              three_d, a)) {
+    return ChiProlongationStatus::invalid_limited;
+  }
+  return ChiProlongationStatus::limited;
+}
+
 //! \brief Positivity-preserving Z4c chi prolongation for one complete child group.
 //!
 //! The existing high-order candidate is always generated first.  Acceptance also

@@ -1230,6 +1230,9 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
   auto& prolong_4th = weights.prolong_4th;
   const int z4c_stencil =
       is_z4c ? pmy_mesh->pmb_pack->pz4c->opt.fd_stencil : indcs.ng;
+  const bool limited_o2 =
+      is_z4c && pmy_mesh->pmb_pack->pz4c->opt.amr_transfer ==
+                    z4c::Z4cAMRTransfer::limited_o2;
   if (is_z4c && (z4c_stencil < 2 || z4c_stencil > 4 ||
                  z4c_stencil > indcs.ng)) {
     std::cerr << "### FATAL ERROR in " << __FILE__
@@ -1275,6 +1278,14 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
         // call inlined prolongation operator for CC variables
         if (!is_z4c) {
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
+        } else if (limited_o2) {
+          if (v == z4c::Z4c::I_Z4C_CHI) {
+            const ChiProlongationStatus status = ProlongLimitedPositiveChiCC(
+                m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
+            Kokkos::atomic_inc(&chi_prolongation_counts(static_cast<int>(status)));
+          } else {
+            ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
+          }
         } else if (v == z4c::Z4c::I_Z4C_CHI) {
           ChiProlongationStatus status = ChiProlongationStatus::invalid_limited;
           switch (z4c_stencil) {
@@ -1328,6 +1339,8 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
 #endif
     if (global_variable::my_rank == 0) {
       std::cout << "AMR_Z4C_CHI_PROLONGATION cycle=" << pmy_mesh->ncycle
+                << " transfer=" << z4c::Z4cAMRTransferName(
+                       pmy_mesh->pmb_pack->pz4c->opt.amr_transfer)
                 << " local_fallback_groups=";
       for (int rank = 0; rank < global_variable::nranks; ++rank) {
         if (rank > 0) std::cout << ",";
@@ -1456,6 +1469,9 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
   auto& restrict_4th_edge = weights.restrict_4th_edge;
   const int z4c_stencil =
       is_z4c ? pmy_mesh->pmb_pack->pz4c->opt.fd_stencil : indcs.ng;
+  const bool limited_o2 =
+      is_z4c && pmy_mesh->pmb_pack->pz4c->opt.amr_transfer ==
+                    z4c::Z4cAMRTransfer::limited_o2;
   if (is_z4c && (z4c_stencil < 2 || z4c_stencil > 4 ||
                  z4c_stencil > indcs.ng)) {
     std::cerr << "### FATAL ERROR in " << __FILE__
@@ -1476,7 +1492,7 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
     KOKKOS_LAMBDA(const int m, const int n, const int j, const int i) {
       int finei = 2*i - cis;  // correct when cis=is
       int finej = 2*j - cjs;  // correct when cjs=js
-      if (!is_z4c) {
+      if (!is_z4c || limited_o2) {
         cu(m,n,cks,j,i) =
             0.25*(u(m,n,cks,finej  ,finei) + u(m,n,cks,finej  ,finei+1)
                 + u(m,n,cks,finej+1,finei) + u(m,n,cks,finej+1,finei+1));
@@ -1502,7 +1518,7 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
       int finei = 2*i - cis;  // correct when cis=is
       int finej = 2*j - cjs;  // correct when cjs=js
       int finek = 2*k - cks;  // correct when cks=ks
-      if (!is_z4c) {
+      if (!is_z4c || limited_o2) {
         cu(m,n,k,j,i) =
             0.125*(u(m,n,finek  ,finej  ,finei) + u(m,n,finek  ,finej  ,finei+1)
                 + u(m,n,finek  ,finej+1,finei) + u(m,n,finek  ,finej+1,finei+1)

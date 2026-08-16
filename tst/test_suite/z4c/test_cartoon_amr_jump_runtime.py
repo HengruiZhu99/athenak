@@ -96,6 +96,36 @@ def check_hierarchy_control(executable: Path, input_path: Path) -> None:
             raise TestFailure(f"{mode} cumulative X_CF is invalid")
 
 
+def check_transfer_control(executable: Path, input_path: Path) -> None:
+    default_run = execute(executable, input_path, 1, None)
+    default_schema = json.loads(
+        (default_run / "z4c_amr_jump" / "rank0000" / "schema.json").read_text(
+            encoding="utf-8"))
+    if default_schema.get("amr_transfer") != "high_order":
+        raise TestFailure("Z4c AMR transfer did not default to high_order")
+
+    limited_run = execute(
+        executable, input_path, 1, None,
+        overrides=["z4c/amr_transfer=limited_o2"],
+    )
+    limited_schema = json.loads(
+        (limited_run / "z4c_amr_jump" / "rank0000" / "schema.json").read_text(
+            encoding="utf-8"))
+    if limited_schema.get("amr_transfer") != "limited_o2":
+        raise TestFailure("limited_o2 transfer was not authenticated in the schema")
+    log = limited_run.parent / "run.log"
+    if "transfer=limited_o2" not in log.read_text(encoding="utf-8"):
+        raise TestFailure("limited_o2 transfer emitted no runtime provenance")
+
+    temporary = Path(tempfile.mkdtemp(prefix="z4c-amr-transfer-invalid."))
+    command = [str(executable), "-i", str(input_path), "-d", str(temporary),
+               "z4c/amr_transfer=unknown"]
+    result = subprocess.run(command, text=True, stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT, check=False)
+    if result.returncode == 0 or "unknown <z4c>/amr_transfer=unknown" not in result.stdout:
+        raise TestFailure("invalid Z4c AMR transfer did not fail closed")
+
+
 def aggregate_post(root: Path, ranks: int) -> list[dict[str, float]]:
     by_cycle: dict[int, dict[str, float]] = {}
     keys = ["active_cells", "coordinate_ring_volume", "proper_volume",
@@ -154,6 +184,7 @@ def main() -> None:
     if (off / "z4c_amr_jump").exists():
         raise TestFailure("default-off diagnostic path exists")
     check_hierarchy_control(args.serial_executable.resolve(), args.input.resolve())
+    check_transfer_control(args.serial_executable.resolve(), args.input.resolve())
 
     runs: dict[int, Path] = {}
     for ranks in (1, 2, 4):

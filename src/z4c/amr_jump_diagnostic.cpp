@@ -437,7 +437,9 @@ void AMRJumpDiagnosticRuntime::EnsureOutputInitialized() {
     schema << "\"" << Z4c::Constraint_names[n] << "\"";
   }
   schema << "],\"hierarchy_control\":\""
-         << AMRJumpHierarchyControlName(config_.hierarchy_control) << "\"}";
+         << AMRJumpHierarchyControlName(config_.hierarchy_control)
+         << "\",\"amr_transfer\":\""
+         << Z4cAMRTransferName(pack_->pz4c->opt.amr_transfer) << "\"}";
   WriteTextAtomically(fs::path(rank_root_) / "schema.json", schema.str() + "\n");
   output_initialized_ = true;
 }

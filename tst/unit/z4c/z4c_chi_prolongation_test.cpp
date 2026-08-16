@@ -570,6 +570,89 @@ bool CheckSiblingInventories() {
   return host(0) == 1 && host(1) == 1 && host(2) == 0 && host(3) == 0;
 }
 
+bool CheckAlwaysLimitedPositiveChi() {
+  DvceArray5D<Real> parent2("limited-O2 2D chi parent", 1, 1, 1, 3, 3);
+  DvceArray5D<Real> child2("limited-O2 2D chi children", 1, 1, 1, 2, 2);
+  DvceArray5D<Real> parent3("limited-O2 3D chi parent", 1, 1, 3, 3, 3);
+  DvceArray5D<Real> child3("limited-O2 3D chi children", 1, 1, 2, 2, 2);
+  auto host2 = Kokkos::create_mirror_view(parent2);
+  auto host3 = Kokkos::create_mirror_view(parent3);
+  for (int j = 0; j < 3; ++j) {
+    for (int i = 0; i < 3; ++i) {
+      host2(0, 0, 0, j, i) = 2.0 + 0.02*i + 0.03*j;
+    }
+  }
+  for (int k = 0; k < 3; ++k) {
+    for (int j = 0; j < 3; ++j) {
+      for (int i = 0; i < 3; ++i) {
+        host3(0, 0, k, j, i) = 3.0 + 0.01*i + 0.02*j + 0.03*k;
+      }
+    }
+  }
+  Kokkos::deep_copy(parent2, host2);
+  Kokkos::deep_copy(parent3, host3);
+  Kokkos::View<int *> status("limited-O2 chi statuses", 2);
+  Kokkos::parallel_for(
+      "limited-O2 positive chi fixtures", Kokkos::RangePolicy<>(0, 1),
+      KOKKOS_LAMBDA(const int) {
+        status(0) = static_cast<int>(ProlongLimitedPositiveChiCC(
+            0, 0, 0, 1, 1, 0, 0, 0, true, false, parent2, child2));
+        status(1) = static_cast<int>(ProlongLimitedPositiveChiCC(
+            0, 0, 1, 1, 1, 0, 0, 0, true, true, parent3, child3));
+      });
+  const auto status_host =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), status);
+  const auto child2_host =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), child2);
+  const auto child3_host =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), child3);
+  if (status_host(0) != static_cast<int>(ChiProlongationStatus::limited) ||
+      status_host(1) != static_cast<int>(ChiProlongationStatus::limited)) {
+    return false;
+  }
+  Real average2 = 0.0;
+  for (int j = 0; j < 2; ++j) {
+    for (int i = 0; i < 2; ++i) {
+      const Real child = child2_host(0, 0, 0, j, i);
+      if (!std::isfinite(child) || !(child > 0.0)) return false;
+      average2 += 0.25*child;
+    }
+  }
+  Real average3 = 0.0;
+  for (int k = 0; k < 2; ++k) {
+    for (int j = 0; j < 2; ++j) {
+      for (int i = 0; i < 2; ++i) {
+        const Real child = child3_host(0, 0, k, j, i);
+        if (!std::isfinite(child) || !(child > 0.0)) return false;
+        average3 += 0.125*child;
+      }
+    }
+  }
+  if (!NearlyEqual(average2, host2(0, 0, 0, 1, 1), 2.0e-15) ||
+      !NearlyEqual(average3, host3(0, 0, 1, 1, 1), 2.0e-15)) {
+    return false;
+  }
+
+  host2(0, 0, 0, 0, 0) = 0.0;
+  host3(0, 0, 0, 0, 0) = std::numeric_limits<Real>::quiet_NaN();
+  Kokkos::deep_copy(parent2, host2);
+  Kokkos::deep_copy(parent3, host3);
+  Kokkos::parallel_for(
+      "limited-O2 invalid chi fixtures", Kokkos::RangePolicy<>(0, 1),
+      KOKKOS_LAMBDA(const int) {
+        status(0) = static_cast<int>(ProlongLimitedPositiveChiCC(
+            0, 0, 0, 1, 1, 0, 0, 0, true, false, parent2, child2));
+        status(1) = static_cast<int>(ProlongLimitedPositiveChiCC(
+            0, 0, 1, 1, 1, 0, 0, 0, true, true, parent3, child3));
+      });
+  const auto invalid_status_host =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), status);
+  return invalid_status_host(0) ==
+             static_cast<int>(ChiProlongationStatus::invalid_parent) &&
+         invalid_status_host(1) ==
+             static_cast<int>(ChiProlongationStatus::invalid_parent);
+}
+
 bool CheckThreeDimensionalHighOrderGroup() {
   DvceArray5D<Real> parent("3D smooth chi parent", 1, 1, 5, 5, 5);
   auto parent_host = Kokkos::create_mirror_view(parent);
@@ -652,6 +735,7 @@ int main(int argc, char **argv) {
                       CheckSmoothPositiveHighOrderUnchanged() &&
                       CheckInvalidParentFailsClosed() &&
                       CheckSiblingInventories() &&
+                      CheckAlwaysLimitedPositiveChi() &&
                       CheckThreeDimensionalHighOrderGroup() &&
                       CheckThreeDimensionalFallbackConservation() &&
                       CheckCollapsedRestrictionPolynomialExactness<2>() &&

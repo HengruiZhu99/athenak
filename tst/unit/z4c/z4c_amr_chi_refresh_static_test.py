@@ -20,6 +20,8 @@ def main() -> None:
     refinement = (root / "src/mesh/mesh_refinement.cpp").read_text(encoding="utf-8")
     boundary = (root / "src/bvals/prolongation.cpp").read_text(encoding="utf-8")
     tasks = (root / "src/z4c/z4c_tasks.cpp").read_text(encoding="utf-8")
+    z4c_header = (root / "src/z4c/z4c.hpp").read_text(encoding="utf-8")
+    z4c_source = (root / "src/z4c/z4c.cpp").read_text(encoding="utf-8")
 
     helper = prolongation[prolongation.index("ChiProlongationStatus ProlongPositiveChiCC") :]
     high_order = helper.index("HighOrderProlongCC<NGHOST>")
@@ -36,6 +38,17 @@ def main() -> None:
     for forbidden in ("chi_min_floor", "fmax(", "max(parent", "epsilon"):
         require(forbidden not in helper,
                 f"forbidden chi flooring/clipping token entered helper: {forbidden}")
+    limited_helper = prolongation[
+        prolongation.index("ChiProlongationStatus ProlongLimitedPositiveChiCC") :
+        prolongation.index("ChiProlongationStatus ProlongPositiveChiCC")
+    ]
+    require("LimitedProlongationParentNeighborhoodFinitePositive" in limited_helper and
+            "ProlongCC(" in limited_helper and
+            "ProlongationSiblingGroupFinitePositive" in limited_helper,
+            "limited-O2 chi helper lost parent/child positivity gates")
+    for forbidden in ("chi_min_floor", "fmax(", "epsilon"):
+        require(forbidden not in limited_helper,
+                f"forbidden limited-O2 chi token entered source: {forbidden}")
 
     dispatch = refinement[refinement.index("void MeshRefinement::RefineCC") :]
     require("v == z4c::Z4c::I_Z4C_CHI" in dispatch,
@@ -52,15 +65,11 @@ def main() -> None:
         boundary.index("void MeshBoundaryValuesCC::ProlongateCC") :
         boundary.index("void MeshBoundaryValuesFC::FillCoarseInBndryFC")
     ]
-    chi_branch = boundary_dispatch.index("v == z4c::Z4c::I_Z4C_CHI")
-    generic_branch = boundary_dispatch.index("} else {", chi_branch)
-    require("ProlongPositiveChiCC<2>" in boundary_dispatch[chi_branch:generic_branch] and
-            "ProlongPositiveChiCC<3>" in boundary_dispatch[chi_branch:generic_branch] and
-            "ProlongPositiveChiCC<4>" in boundary_dispatch[chi_branch:generic_branch],
+    require("ProlongPositiveChiCC<2>" in boundary_dispatch and
+            "ProlongPositiveChiCC<3>" in boundary_dispatch and
+            "ProlongPositiveChiCC<4>" in boundary_dispatch,
             "boundary chi does not use the positive sibling-group helper for every order")
-    require("HighOrderProlongCC" not in boundary_dispatch[chi_branch:generic_branch],
-            "boundary chi branch bypasses the positive helper")
-    require("HighOrderProlongCC<4>" in boundary_dispatch[generic_branch:],
+    require("HighOrderProlongCC<4>" in boundary_dispatch,
             "generic Z4c high-order boundary path disappeared")
     require("BOUNDARY_Z4C_CHI_PROLONGATION" in boundary_dispatch and
             "MPI_Allreduce(local_counts, global_counts" in boundary_dispatch and
@@ -93,8 +102,10 @@ def main() -> None:
         fill_coarse.index("// restrict in 2D") :
         fill_coarse.index("// restrict in 3D")
     ]
-    require("if (!is_z4c)" in fill_2d,
+    require("if (!is_z4c || limited_o2)" in fill_2d,
             "2D coarse refresh no longer separates generic and Z4c restriction")
+    require("Z4cAMRTransfer::limited_o2" in fill_coarse,
+            "2D/3D coarse refresh is not controlled by the Z4c transfer option")
     for order in (2, 3, 4):
         require(f"RestrictInterpolation<{order}>" in fill_2d,
                 f"2D Z4c coarse refresh bypasses NGHOST={order} high-order restriction")
@@ -125,11 +136,25 @@ def main() -> None:
         restrict_cc.index("// restrict in 2D") :
         restrict_cc.index("// restrict in 3D")
     ]
-    require("if (!is_z4c)" in restrict_2d,
+    require("if (!is_z4c || limited_o2)" in restrict_2d,
             "2D full restriction no longer separates generic and Z4c restriction")
+    require("Z4cAMRTransfer::limited_o2" in restrict_cc,
+            "full Z4c restriction is not controlled by the transfer option")
     for order in (2, 3, 4):
         require(f"RestrictInterpolation<{order}>" in restrict_2d,
                 f"2D Z4c full restriction bypasses NGHOST={order} high-order restriction")
+
+    require("Z4cAMRTransfer" in z4c_header and
+            "amr_transfer" in z4c_header and
+            'GetOrAddString("z4c", "amr_transfer", "high_order")' in z4c_source and
+            'amr_transfer == "limited_o2"' in z4c_source,
+            "Z4c AMR transfer option is absent or does not default high-order")
+    require("ProlongLimitedPositiveChiCC" in boundary_dispatch and
+            "ProlongLimitedPositiveChiCC" in dispatch,
+            "limited-O2 chi is not wired into both prolongation call sites")
+    require(boundary_dispatch.count("ProlongCC(") >= 2 and
+            dispatch.count("ProlongCC(") >= 2,
+            "limited-O2 non-chi Z4c prolongation is not wired at both sites")
 
     adaptive = refinement[
         refinement.index("void MeshRefinement::AdaptiveMeshRefinement") :

@@ -35,6 +35,21 @@ class HorizonDump;
 namespace z4c {
 class Z4c_AMR;
 
+// Default-off AMR transfer ablation.  This changes only Z4c interlevel transfer;
+// the bulk finite-difference stencil and time integrator remain configured separately.
+enum class Z4cAMRTransfer {
+  high_order,
+  limited_o2,
+};
+
+inline const char *Z4cAMRTransferName(const Z4cAMRTransfer transfer) {
+  switch (transfer) {
+    case Z4cAMRTransfer::high_order: return "high_order";
+    case Z4cAMRTransfer::limited_o2: return "limited_o2";
+  }
+  return "unknown";
+}
+
 // Shift needed for derivatives
 //----------------------------------------------------------------------------------------
 //! \class Z4c
@@ -210,6 +225,8 @@ class Z4c {
     int spatial_order;
     // Internal finite-difference stencil selector: 2, 3, 4 -> 2nd, 4th, 6th order
     int fd_stencil;
+    // Interlevel transfer only; does not change the bulk spatial order.
+    Z4cAMRTransfer amr_transfer;
     // Value of chi to specify the excision region for constraint evaluation
     Real excise_chi;
 

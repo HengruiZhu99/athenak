@@ -127,6 +127,18 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.chi_min_floor = pin->GetOrAddReal("z4c", "chi_min_floor", 1e-12);
   opt.floor_chi = pin->GetOrAddBoolean("z4c", "floor_chi", false);
   opt.diss = pin->GetOrAddReal("z4c", "diss", 0.0);
+  const std::string amr_transfer =
+      pin->GetOrAddString("z4c", "amr_transfer", "high_order");
+  if (amr_transfer == "high_order") {
+    opt.amr_transfer = Z4cAMRTransfer::high_order;
+  } else if (amr_transfer == "limited_o2") {
+    opt.amr_transfer = Z4cAMRTransfer::limited_o2;
+  } else {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": unknown <z4c>/amr_transfer=" << amr_transfer
+              << "; expected high_order or limited_o2" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.eps_floor = pin->GetOrAddReal("z4c", "eps_floor", 1e-12);
   opt.damp_kappa1 = pin->GetOrAddReal("z4c", "damp_kappa1", 0.0);
   opt.damp_kappa2 = pin->GetOrAddReal("z4c", "damp_kappa2", 0.0);

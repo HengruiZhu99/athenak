@@ -61,6 +61,9 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
   auto& restrict_4th_edge = pmy_pack->pmesh->pmr->weights.restrict_4th_edge;
   const int z4c_stencil =
       is_z4c ? pmy_pack->pz4c->opt.fd_stencil : indcs.ng;
+  const bool limited_o2 =
+      is_z4c && pmy_pack->pz4c->opt.amr_transfer ==
+                    z4c::Z4cAMRTransfer::limited_o2;
   if (is_z4c && (z4c_stencil < 2 || z4c_stencil > 4 ||
                  z4c_stencil > indcs.ng)) {
     std::cerr << "### FATAL ERROR in " << __FILE__
@@ -136,7 +139,7 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
 
           // restrict in 2D
           if (!(three_d)) {
-            if (!is_z4c) {
+            if (!is_z4c || limited_o2) {
               ca(m,v,kl,j,i) =
                   0.25*(a(m,v,kl,finej  ,finei) + a(m,v,kl,finej  ,finei+1)
                       + a(m,v,kl,finej+1,finei) + a(m,v,kl,finej+1,finei+1));
@@ -158,7 +161,7 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
             }
           // restrict in 3D
           } else {
-            if (!is_z4c) {
+            if (!is_z4c || limited_o2) {
               ca(m,v,k,j,i) = 0.125*(
                   a(m,v,finek  ,finej  ,finei) + a(m,v,finek  ,finej  ,finei+1)
                 + a(m,v,finek  ,finej+1,finei) + a(m,v,finek  ,finej+1,finei+1)
@@ -215,6 +218,9 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
   auto& prolong_4th = pmy_pack->pmesh->pmr->weights.prolong_4th;
   const int z4c_stencil =
       is_z4c ? pmy_pack->pz4c->opt.fd_stencil : indcs.ng;
+  const bool limited_o2 =
+      is_z4c && pmy_pack->pz4c->opt.amr_transfer ==
+                    z4c::Z4cAMRTransfer::limited_o2;
   if (is_z4c && (z4c_stencil < 2 || z4c_stencil > 4 ||
                  z4c_stencil > indcs.ng)) {
     std::cerr << "### FATAL ERROR in " << __FILE__
@@ -270,6 +276,26 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
         // call inlined prolongation operator for CC variables
         if (!is_z4c) {
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
+        } else if (limited_o2) {
+          if (v == z4c::Z4c::I_Z4C_CHI) {
+            const ChiProlongationStatus status = ProlongLimitedPositiveChiCC(
+                m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
+            Kokkos::atomic_inc(&chi_prolongation_counts(static_cast<int>(status)));
+            if (status == ChiProlongationStatus::invalid_parent ||
+                status == ChiProlongationStatus::invalid_limited) {
+              const int rejection =
+                  status == ChiProlongationStatus::invalid_parent ? 0 : 1;
+              const unsigned long long key =
+                  (static_cast<unsigned long long>(mb_gid.d_view(m)) << 36) |
+                  (static_cast<unsigned long long>(n) << 30) |
+                  (static_cast<unsigned long long>(k) << 20) |
+                  (static_cast<unsigned long long>(j) << 10) |
+                  static_cast<unsigned long long>(i);
+              Kokkos::atomic_min(&chi_first_rejected_keys(rejection), key);
+            }
+          } else {
+            ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
+          }
         } else if (v == z4c::Z4c::I_Z4C_CHI) {
           ChiProlongationStatus status = ChiProlongationStatus::invalid_limited;
           switch (z4c_stencil) {
@@ -343,6 +369,8 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
     if (global_variable::my_rank == 0 &&
         (global_counts[1] != 0 || global_counts[2] != 0 || global_counts[3] != 0)) {
       std::cout << "BOUNDARY_Z4C_CHI_PROLONGATION cycle=" << pmy_pack->pmesh->ncycle
+                << " transfer="
+                << z4c::Z4cAMRTransferName(pmy_pack->pz4c->opt.amr_transfer)
                 << " local_fallback_groups=";
       for (int rank = 0; rank < global_variable::nranks; ++rank) {
         if (rank > 0) std::cout << ",";
