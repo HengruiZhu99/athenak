@@ -104,6 +104,7 @@ struct AMRJumpDiagnosticConfig {
   bool enabled = false;
   int target_level_before = 2;
   int target_level_after = 3;
+  int target_cycle = -1;
   int post_cycles = 8;
   std::string output_basename = "z4c_amr_jump";
 };
@@ -140,6 +141,9 @@ inline std::string ValidateAMRJumpDiagnosticConfig(
   if (config.target_level_after > context.maximum_level) {
     return "amr_jump_target_level_after exceeds the configured maximum level";
   }
+  if (config.target_cycle < -1) {
+    return "amr_jump_target_cycle must be nonnegative or -1 for the first match";
+  }
   if (config.post_cycles <= 0) {
     return "amr_jump_post_cycles must be positive";
   }
@@ -159,9 +163,10 @@ inline std::string ValidateAMRJumpDiagnosticConfig(
 }
 
 inline bool IsKnownAMRJumpParameter(const std::string &name) {
-  constexpr std::array<const char *, 5> known = {
+  constexpr std::array<const char *, 6> known = {
       "amr_jump_diagnostic", "amr_jump_target_level_before",
-      "amr_jump_target_level_after", "amr_jump_post_cycles",
+      "amr_jump_target_level_after", "amr_jump_target_cycle",
+      "amr_jump_post_cycles",
       "amr_jump_output_basename"};
   return std::any_of(known.begin(), known.end(), [&name](const char *candidate) {
     return name == candidate;
@@ -193,6 +198,9 @@ inline AMRJumpDiagnosticConfig ReadAMRJumpDiagnosticConfig(
   if (pin->DoesParameterExist("z4c", "amr_jump_target_level_after")) {
     config.target_level_after =
         pin->GetInteger("z4c", "amr_jump_target_level_after");
+  }
+  if (pin->DoesParameterExist("z4c", "amr_jump_target_cycle")) {
+    config.target_cycle = pin->GetInteger("z4c", "amr_jump_target_cycle");
   }
   if (pin->DoesParameterExist("z4c", "amr_jump_post_cycles")) {
     config.post_cycles = pin->GetInteger("z4c", "amr_jump_post_cycles");

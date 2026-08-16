@@ -304,6 +304,9 @@ def analyze(args: argparse.Namespace) -> None:
         if schema.get("schema") != SCHEMA or schema.get("real_bytes") != 8:
             raise AnalysisError(f"bad schema in {rank}")
         matches = sorted(rank.glob(f"event_c*_l{args.level_before}_to_l{args.level_after}"))
+        if args.expected_cycle is not None:
+            expected_tag = f"event_c{args.expected_cycle:08d}_"
+            matches = [path for path in matches if path.name.startswith(expected_tag)]
         if len(matches) != 1:
             raise AnalysisError(f"expected one target event in {rank}, found {len(matches)}")
         if event_name is None:

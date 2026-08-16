@@ -526,8 +526,10 @@ void AMRJumpDiagnosticRuntime::RecordTopologyProposal(
     WriteTextAtomically(fs::path(event_root_) / "t1_phase.json",
                         phase.str() + "\n");
     t3_last_ordinal_ = -1;
+    const bool cycle_matches =
+        config_.target_cycle < 0 || mesh->ncycle == config_.target_cycle;
     if (!target_seen_ && old_max_level_ == config_.target_level_before &&
-        new_max_level_ == config_.target_level_after) {
+        new_max_level_ == config_.target_level_after && cycle_matches) {
       target_seen_ = true;
       target_cycle_ = mesh->ncycle;
     }

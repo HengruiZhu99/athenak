@@ -62,6 +62,8 @@ void TestConfiguration() {
   Expect(!defaults.enabled, "diagnostic must default off");
   Expect(defaults.target_level_before == 2 && defaults.target_level_after == 3,
          "default target must be the 2-to-3 transition");
+  Expect(defaults.target_cycle == -1,
+         "default target cycle must select the first matching transition");
   Expect(defaults.post_cycles == 8, "default post-event window must be eight cycles");
   Expect(defaults.output_basename == "z4c_amr_jump",
          "default output basename must be stable");
@@ -74,10 +76,12 @@ void TestConfiguration() {
       "amr_jump_diagnostic = true\n"
       "amr_jump_target_level_before = 2\n"
       "amr_jump_target_level_after = 3\n"
+      "amr_jump_target_cycle = 1724\n"
       "amr_jump_post_cycles = 8\n"
       "amr_jump_output_basename = event_1724\n",
       context);
-  Expect(enabled.enabled && enabled.output_basename == "event_1724",
+  Expect(enabled.enabled && enabled.target_cycle == 1724 &&
+             enabled.output_basename == "event_1724",
          "valid enabled configuration must parse exactly");
 
   Expect(ParseFails("amr_jump_diagnostic = true\n"
@@ -101,6 +105,9 @@ void TestConfiguration() {
   Expect(ParseFails("amr_jump_diagnostic = true\n"
                     "amr_jump_post_cycles = 0\n", context),
          "nonpositive post-event window must fail");
+  Expect(ParseFails("amr_jump_diagnostic = true\n"
+                    "amr_jump_target_cycle = -2\n", context),
+         "invalid negative target cycle must fail");
   Expect(ParseFails("amr_jump_diagnostic = true\n"
                     "amr_jump_output_basename = ../escape\n", context),
          "path-valued output basename must fail");
