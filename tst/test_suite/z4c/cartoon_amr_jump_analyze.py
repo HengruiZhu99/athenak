@@ -478,24 +478,33 @@ def analyze(args: argparse.Namespace) -> None:
             raise AnalysisError(f"nonfinite/nonpositive authoritative data in {phase}")
     history_comparison: dict[str, Any] | None = None
     if args.history is not None:
-        row = history_row(args.history.resolve(), event_cycle)
+        history_cycle = (event_cycle if args.history_cycle is None
+                         else args.history_cycle)
+        row = history_row(args.history.resolve(), history_cycle)
         t5_native = native[PHASES[9]]
         mapping = {"C_norm2": row[2], "H_norm2": row[3], "M_norm2": row[4],
                    "Z_norm2": row[5], "proper_volume": row[10]}
         residuals: dict[str, float] = {}
+        phase_identical = history_cycle == event_cycle
         for key, expected in mapping.items():
             residual = abs(t5_native[key] - expected)
-            tolerance_value = args.history_tolerance * max(1.0, abs(expected))
-            if residual > tolerance_value:
-                raise AnalysisError(f"T5/history mismatch for {key}: {residual} > "
-                                    f"{tolerance_value}")
+            if phase_identical:
+                tolerance_value = args.history_tolerance * max(1.0, abs(expected))
+                if residual > tolerance_value:
+                    raise AnalysisError(f"T5/history mismatch for {key}: {residual} > "
+                                        f"{tolerance_value}")
             residuals[key] = residual
         if int(round(row[12])) != int(t1_phase["new_nmb"]) or \
            int(round(row[14])) != args.level_after:
             raise AnalysisError("T5/history topology mismatch")
         history_comparison = {"path": str(args.history.resolve()),
                               "sha256": sha256(args.history.resolve()),
-                              "cycle": event_cycle, "absolute_residuals": residuals,
+                              "cycle": history_cycle,
+                              "event_cycle": event_cycle,
+                              "phase_identical": phase_identical,
+                              "history_values": mapping,
+                              "t5_values": {key: t5_native[key] for key in mapping},
+                              "absolute_residuals": residuals,
                               "relative_tolerance": args.history_tolerance}
 
     constraint_phases = [PHASES[7], PHASES[8], PHASES[9]]
@@ -836,6 +845,7 @@ def parser() -> argparse.ArgumentParser:
     analyze_parser.add_argument("--expected-old-nmb", type=int)
     analyze_parser.add_argument("--expected-new-nmb", type=int)
     analyze_parser.add_argument("--history", type=Path)
+    analyze_parser.add_argument("--history-cycle", type=int)
     analyze_parser.add_argument("--history-tolerance", type=float, default=2.0e-12)
     sub.add_parser("self-test")
     return result
