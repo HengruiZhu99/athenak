@@ -1,0 +1,84 @@
+{
+  "schema": "athenak_brill_amr_hierarchy_handoff_v1",
+  "qualification_claim": false,
+  "source": {
+    "repository": "https://github.com/HengruiZhu99/athenak",
+    "branch": "codex/brill-amr-frozen-hierarchy-20260816",
+    "commit": "21a268e4735308a39ac4f040d3621ea114b4ef1d",
+    "tree": "394aa38e76951249de0f247c3a893e0af4a0f1d9"
+  },
+  "restart_sha256": "83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea",
+  "production_job": {
+    "job_id": 57098562,
+    "outer_state": "COMPLETED",
+    "outer_exit_code": "0:0",
+    "root_manifest_sha256": "c5819a40dec0ae278b63e3867d1ca1bb9661fee94f781dc1837ff49a7d8c28c6",
+    "detached_manifest_sha256": "4c82deaf1d467dd2b4462698615378e2bda90f3d055dc3cf08b7522423a3210c",
+    "sacct_sha256": "b4e8c7838ecb6e4a13763389790484d2a938bb7e413a3090b576ba3f064a02fa"
+  },
+  "cases": {
+    "A_dynamic": {
+      "exit_code": 143,
+      "disposition": "step_timeout_in_refinement_runaway",
+      "terminal_time": 11.954784393309971,
+      "terminal_level": 12,
+      "terminal_meshblocks": 350,
+      "terminal_dt": 4.57763671875e-06,
+      "terminal_C_norm2": 34281989.29637937,
+      "topology_changes": 67,
+      "cumulative_X_CF": 1130760
+    },
+    "B_frozen": {
+      "exit_code": 0,
+      "disposition": "reached_tlim",
+      "terminal_time": 12.5,
+      "terminal_level": 3,
+      "terminal_meshblocks": 86,
+      "terminal_dt": 0.0015625000010928147,
+      "terminal_C_norm2": 86.32605024825021,
+      "topology_changes": 1,
+      "cumulative_X_CF": 398736
+    },
+    "C_buffered": {
+      "exit_code": 1,
+      "disposition": "strict_chi_parent_stencil_failure",
+      "terminal_time": 12.482812499999456,
+      "terminal_level": 3,
+      "terminal_meshblocks": 128,
+      "terminal_dt": 0.00234375,
+      "terminal_C_norm2": 2.3926096521076656e+32,
+      "invalid_parent_stencils": 346,
+      "invalid_limited_groups": 0,
+      "topology_changes": 1,
+      "cumulative_X_CF": 549072
+    },
+    "B2_limited": {
+      "disposition": "skipped_prospective_trigger_not_met",
+      "reason": "B_frozen reached tlim"
+    }
+  },
+  "analyses": {
+    "campaign_verdict_sha256": "552780f74799a4d9622a1b9f4966a3d319931831cf5070474801ccc213c55f43",
+    "comparison_table_sha256": "b8e99975638f46e9a2891d2b34084ad85cd83012d5a980361f09d1bffc2e089e",
+    "target_event_verdict_sha256": "0c8a338d0675cce664cc2fc2114e2c8cb5ede7554259986325c8f02b299041c1",
+    "parent_state_verdict_sha256": "d8db61e5aa9630ed268ddd79e094bb011bcd655c7b2440a8c6e7fcf85809e5ef"
+  },
+  "dissipation_0p5_attempt": {
+    "job_id": 57102293,
+    "state": "CANCELLED_BY_SALLOC_CONNECTION_TIMEOUT",
+    "allocated_nodes": 0,
+    "used_gpu": false,
+    "science_data": false,
+    "run_directory_created": false,
+    "allocation_stderr_sha256": "c075b675eb62c51a07b535f44f08b2cd12d86f5d81d3028cb90d33f3450eee38",
+    "sacct_sha256": "fe2f76b0146c335e3bd2ed11f0cc7e61afc726a7673d2b660a58255a26d7b538"
+  },
+  "verdict": "repeated dynamic regridding is causal to A's observed runaway; C proves a larger buffered frozen fine representation is not automatically stable",
+  "limitations": [
+    "A ended at a prospective step time limit rather than a strict chi failure",
+    "C's first invalid chi writer is not localized beyond the boundary parent-stencil gate",
+    "B2 did not run because B reached tlim",
+    "the dissipation-0.5 attempt did not execute",
+    "no convergence, Figure-3 reproduction, or fully isolated source bug is claimed"
+  ]
+}

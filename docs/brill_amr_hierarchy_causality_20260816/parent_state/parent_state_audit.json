@@ -1,0 +1,168 @@
+{
+  "T0_field_files": [
+    {
+      "path": "/home/hzhu/Desktop/research/gr/collapse/artifacts/axisymmetric_cartoon_z4c_2026-08-10/r4_brill_n256_amr_frozen_abc_analysis_21a268e4_v1_20260816/data/A_dynamic/z4c_amr_jump_A_dynamic/rank0000/event_c00001722_l2_to_l3/t0_00_ACCEPTED_OLD_STATE/u0.bin",
+      "sha256": "df68bd85da865ce504d0610f1184a50489f4148c152a036a3b1bef72a063e9cb"
+    }
+  ],
+  "chi_PR_fallback_groups": 0,
+  "cycle": 1722,
+  "definitions": {
+    "PR": "production O6-configured 2D point restriction followed by production high-order prolongation; chi uses the production strict-positive sibling fallback",
+    "PR_edge_split": "edge band means active cells within four cells of any MeshBlock edge; interior excludes that band",
+    "derivative_disagreement": "relative L2 of centered O6 minus centered O4 first/second derivatives over target-parent active cells",
+    "nyquist": "RMS and maximum block-local normalized projections onto i, j, and ij alternating patterns after removing each block-component mean"
+  },
+  "families": [
+    {
+      "D1_O6_O4_max_abs": 0.009295002769481253,
+      "D1_O6_O4_relative_l2": 0.010292515111697664,
+      "D2_O6_O4_max_abs": 0.3202776529807032,
+      "D2_O6_O4_relative_l2": 0.0403093146549952,
+      "PR_edge_band_relative_l2": 0.0002361700463638993,
+      "PR_interior_relative_l2": 1.855641904821478e-06,
+      "PR_max_abs": 0.002638208023501676,
+      "PR_max_location": {
+        "active_i": 3,
+        "active_j": 31,
+        "component": "z4c_chi",
+        "gid": 28,
+        "rho": 5.109375,
+        "value": 0.002638208023501676,
+        "within_four_cells_of_block_edge": true,
+        "z": -0.015625
+      },
+      "PR_relative_l2": 0.0001561983767540236,
+      "block_nyquist_i_rms": 0.02553268753096488,
+      "block_nyquist_ij_rms": 0.0010092928872065202,
+      "block_nyquist_j_rms": 0.03815748854495908,
+      "block_nyquist_max": 0.04700380464343716,
+      "component_count": 1,
+      "family": "chi",
+      "parent_block_count": 4
+    },
+    {
+      "D1_O6_O4_max_abs": 16.539314544377675,
+      "D1_O6_O4_relative_l2": 0.09946171456761832,
+      "D2_O6_O4_max_abs": 671.8569518816457,
+      "D2_O6_O4_relative_l2": 0.073007992249698,
+      "PR_edge_band_relative_l2": 0.39363826040393673,
+      "PR_interior_relative_l2": 0.005791761041299833,
+      "PR_max_abs": 3.726796647804255,
+      "PR_max_location": {
+        "active_i": 3,
+        "active_j": 31,
+        "component": "z4c_Khat",
+        "gid": 28,
+        "rho": 5.109375,
+        "value": 3.726796647804255,
+        "within_four_cells_of_block_edge": true,
+        "z": -0.015625
+      },
+      "PR_relative_l2": 0.35748882773535734,
+      "block_nyquist_i_rms": 0.060818960106251777,
+      "block_nyquist_ij_rms": 0.00017425831493537742,
+      "block_nyquist_j_rms": 0.043001522667311706,
+      "block_nyquist_max": 0.08532485757021843,
+      "component_count": 1,
+      "family": "K",
+      "parent_block_count": 4
+    },
+    {
+      "D1_O6_O4_max_abs": 3.892005766190799,
+      "D1_O6_O4_relative_l2": 0.0754563390401159,
+      "D2_O6_O4_max_abs": 126.67104412050094,
+      "D2_O6_O4_relative_l2": 0.052796518851180425,
+      "PR_edge_band_relative_l2": 0.3288316493997776,
+      "PR_interior_relative_l2": 0.01690882932372239,
+      "PR_max_abs": 0.851918752088812,
+      "PR_max_location": {
+        "active_i": 3,
+        "active_j": 31,
+        "component": "z4c_Ayy",
+        "gid": 28,
+        "rho": 5.109375,
+        "value": 0.851918752088812,
+        "within_four_cells_of_block_edge": true,
+        "z": -0.015625
+      },
+      "PR_relative_l2": 0.2870829006063485,
+      "block_nyquist_i_rms": 0.02273610774151669,
+      "block_nyquist_ij_rms": 0.0007264337130506914,
+      "block_nyquist_j_rms": 0.030909309749919237,
+      "block_nyquist_max": 0.0673452249791612,
+      "component_count": 6,
+      "family": "Atilde",
+      "parent_block_count": 4
+    },
+    {
+      "D1_O6_O4_max_abs": 0.24912149075547785,
+      "D1_O6_O4_relative_l2": 0.030935953662488892,
+      "D2_O6_O4_max_abs": 23.585350081112466,
+      "D2_O6_O4_relative_l2": 0.09448718316876106,
+      "PR_edge_band_relative_l2": 0.023509989981331168,
+      "PR_interior_relative_l2": 0.0002812985430334879,
+      "PR_max_abs": 0.06689964966795595,
+      "PR_max_location": {
+        "active_i": 3,
+        "active_j": 31,
+        "component": "z4c_Gamy",
+        "gid": 28,
+        "rho": 5.109375,
+        "value": 0.06689964966795595,
+        "within_four_cells_of_block_edge": true,
+        "z": -0.015625
+      },
+      "PR_relative_l2": 0.01514885119017058,
+      "block_nyquist_i_rms": 0.03153431717577997,
+      "block_nyquist_ij_rms": 0.0006148117054650353,
+      "block_nyquist_j_rms": 0.02558049534799927,
+      "block_nyquist_max": 0.04635612561938267,
+      "component_count": 3,
+      "family": "Gammatilde",
+      "parent_block_count": 4
+    },
+    {
+      "D1_O6_O4_max_abs": 0.015341039553849023,
+      "D1_O6_O4_relative_l2": 0.0076357332231989285,
+      "D2_O6_O4_max_abs": 0.7374082967529265,
+      "D2_O6_O4_relative_l2": 0.05614818527006203,
+      "PR_edge_band_relative_l2": 0.00016452559770678904,
+      "PR_interior_relative_l2": 2.3075663159099603e-06,
+      "PR_max_abs": 0.00394145138532731,
+      "PR_max_location": {
+        "active_i": 3,
+        "active_j": 31,
+        "component": "z4c_gzz",
+        "gid": 28,
+        "rho": 5.109375,
+        "value": 0.00394145138532731,
+        "within_four_cells_of_block_edge": true,
+        "z": -0.015625
+      },
+      "PR_relative_l2": 0.00010877487945453707,
+      "block_nyquist_i_rms": 0.0189812497933617,
+      "block_nyquist_ij_rms": 0.0009344861105222696,
+      "block_nyquist_j_rms": 0.028051333818521783,
+      "block_nyquist_max": 0.05009889305997832,
+      "component_count": 6,
+      "family": "gammatilde",
+      "parent_block_count": 4
+    }
+  ],
+  "limitations": [
+    "This is a local target-parent resolution indicator, not a convergence proof.",
+    "Block-local alternating projections can identify unresolved grid-scale content but do not establish its causal origin."
+  ],
+  "parent_block_count": 4,
+  "parent_gids": [
+    28,
+    29,
+    45,
+    48
+  ],
+  "qualification_claim": false,
+  "restart_sha256": "83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea",
+  "schema": "athenak_brill_parent_state_audit_v1",
+  "source_commit": "21a268e4735308a39ac4f040d3621ea114b4ef1d"
+}

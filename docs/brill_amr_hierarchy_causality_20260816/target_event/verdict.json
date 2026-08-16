@@ -1,0 +1,222 @@
+{
+  "T0_parent_to_T2_child_coarse_max_abs_residual": 0.0,
+  "canonical_transfer_max_abs_residual": 1.7763568394002505e-15,
+  "canonical_transfer_tolerance": 6.450866970586865e-12,
+  "constraint_ledger_max_abs_residual": 8.881784197001252e-16,
+  "constraint_ledger_tolerance": 5.6323699608519e-10,
+  "cycle": 1722,
+  "disposition": "quantified_multi_stage",
+  "event": "event_c00001722_l2_to_l3",
+  "evolved_ledger_max_abs_residual": 0.0,
+  "evolved_ledger_tolerance": 9.094947017729282e-13,
+  "fixed_child_lattice_constraint_integrals": {
+    "T0_AUTHORITATIVE_CONSTRAINTS_INTERPOLATED_TO_CHILD_LATTICE": {
+      "C_norm2": 0.7861209709122647,
+      "H_norm2": 0.29823805764475275,
+      "M_norm2": 0.3169058655938876,
+      "Z_norm2": 0.00410445004013199,
+      "coordinate_ring_volume": 420.9734155810324,
+      "min_det_gamma": 5.205399076237114,
+      "proper_volume": 1108.8689309457468
+    },
+    "t3_06_PHYSICAL_OR_AXIS_BC": {
+      "C_norm2": 74.36195826995564,
+      "H_norm2": 12.628558476608436,
+      "M_norm2": 61.646809251062,
+      "Z_norm2": 0.005409764999691914,
+      "coordinate_ring_volume": 420.9734155810324,
+      "min_det_gamma": 5.205648438488261,
+      "proper_volume": 1108.8689305026628
+    },
+    "t4_00_ALGEBRAIC_PROJECTION": {
+      "C_norm2": 74.85732863825724,
+      "H_norm2": 12.710553711794855,
+      "M_norm2": 62.060176667292616,
+      "Z_norm2": 0.005411682486441295,
+      "coordinate_ring_volume": 420.9734155810324,
+      "min_det_gamma": 5.205699698559616,
+      "proper_volume": 1108.868930285654
+    },
+    "t5_00_ADM_OR_CONSTRAINT_RECOMPUTATION": {
+      "C_norm2": 74.85732863825724,
+      "H_norm2": 12.710553711794855,
+      "M_norm2": 62.060176667292616,
+      "Z_norm2": 0.005411682486441295,
+      "coordinate_ring_volume": 420.9734155810324,
+      "min_det_gamma": 5.205699698559616,
+      "proper_volume": 1108.868930285654
+    }
+  },
+  "fixed_child_lattice_constraint_stage_l2": {
+    "ALGEBRAIC_PROJECTION": 9.521490498549129,
+    "T0_TO_T3_REPRESENTATION_AND_BOUNDARY": 615.2503411986764
+  },
+  "history_comparison": {
+    "absolute_residuals": {
+      "C_norm2": 4.263256414560601e-14,
+      "H_norm2": 1.7053025658242404e-13,
+      "M_norm2": 4.973799150320701e-14,
+      "Z_norm2": 4.440892098500626e-16,
+      "proper_volume": 1.7462298274040222e-10
+    },
+    "cycle": 1722,
+    "event_cycle": 1722,
+    "history_values": {
+      "C_norm2": 88.22811411518359,
+      "H_norm2": 12.894672931377844,
+      "M_norm2": 62.53045305148853,
+      "Z_norm2": 2.1964647220751266,
+      "proper_volume": 47724.297760549176
+    },
+    "path": "/home/hzhu/Desktop/research/gr/collapse/artifacts/axisymmetric_cartoon_z4c_2026-08-10/r4_brill_n256_amr_frozen_abc_analysis_21a268e4_v1_20260816/data/A_dynamic/brill_fig3_r16_n256_A_dynamic.z4c.user.hst",
+    "phase_identical": true,
+    "relative_tolerance": 2e-12,
+    "sha256": "c22b7198cc3946b6ecba0ae383d615abd90788b8fcb745cb696052d9e2f10fce",
+    "t5_values": {
+      "C_norm2": 88.22811411518354,
+      "H_norm2": 12.894672931377674,
+      "M_norm2": 62.53045305148848,
+      "Z_norm2": 2.196464722075127,
+      "proper_volume": 47724.297760549
+    }
+  },
+  "limitations": [
+    "T0 fixed-lattice constraints are authoritative parent constraint bytes interpolated with AthenaK's exact O6 weights; they are not constraints recomputed from a synthetic fine evolved state.",
+    "T2 derivative constraints are unavailable by design until boundary ghosts close.",
+    "No production repair or Figure 3 qualification is claimed."
+  ],
+  "native_integrals": {
+    "t0_00_ACCEPTED_OLD_STATE": {
+      "C_norm2": 14.150960157020057,
+      "H_norm2": 0.5623025911092887,
+      "M_norm2": 0.7756916219616811,
+      "Z_norm2": 2.1952754363974734,
+      "active_cells": 75776.0,
+      "coordinate_ring_volume": 25735.927018208145,
+      "nonfinite_chi": 0.0,
+      "nonfinite_constraints": 0.0,
+      "nonpositive_or_nonfinite_det_gamma": 0.0,
+      "proper_volume": 47724.29905436788
+    },
+    "t3_06_PHYSICAL_OR_AXIS_BC": {
+      "C_norm2": 87.73457970232857,
+      "H_norm2": 12.814380542422432,
+      "M_norm2": 62.117088466740604,
+      "Z_norm2": 2.196495374021814,
+      "active_cells": 88064.0,
+      "coordinate_ring_volume": 25735.927018208087,
+      "nonfinite_chi": 0.0,
+      "nonfinite_constraints": 0.0,
+      "nonpositive_or_nonfinite_det_gamma": 0.0,
+      "proper_volume": 47724.297760766334
+    },
+    "t4_00_ALGEBRAIC_PROJECTION": {
+      "C_norm2": 88.22811411518354,
+      "H_norm2": 12.894672931377674,
+      "M_norm2": 62.53045305148848,
+      "Z_norm2": 2.196464722075127,
+      "active_cells": 88064.0,
+      "coordinate_ring_volume": 25735.927018208087,
+      "nonfinite_chi": 0.0,
+      "nonfinite_constraints": 0.0,
+      "nonpositive_or_nonfinite_det_gamma": 0.0,
+      "proper_volume": 47724.297760549
+    },
+    "t5_00_ADM_OR_CONSTRAINT_RECOMPUTATION": {
+      "C_norm2": 88.22811411518354,
+      "H_norm2": 12.894672931377674,
+      "M_norm2": 62.53045305148848,
+      "Z_norm2": 2.196464722075127,
+      "active_cells": 88064.0,
+      "coordinate_ring_volume": 25735.927018208087,
+      "nonfinite_chi": 0.0,
+      "nonfinite_constraints": 0.0,
+      "nonpositive_or_nonfinite_det_gamma": 0.0,
+      "proper_volume": 47724.297760549
+    }
+  },
+  "new_nmb": 86,
+  "old_nmb": 74,
+  "post_cycles": 1898,
+  "qualification_claim": false,
+  "rank_count": 1,
+  "refined_child_count": 16,
+  "schema": "athenak_z4c_amr_jump_verdict_v1",
+  "shadow_chi": {
+    "0:center-center": {
+      "count": 16856.0,
+      "max_abs_diff": 6.427807368036831e-05,
+      "max_rel_diff": 0.00014608950000094035,
+      "positive_source_nonpositive_target": 0.0
+    },
+    "0:edge-center": {
+      "count": 4816.0,
+      "max_abs_diff": 0.0006224554632376922,
+      "max_rel_diff": 0.0010800989788246214,
+      "positive_source_nonpositive_target": 0.0
+    },
+    "0:edge-edge": {
+      "count": 344.0,
+      "max_abs_diff": 6.803696253832037e-05,
+      "max_rel_diff": 0.00012214868875137734,
+      "positive_source_nonpositive_target": 0.0
+    },
+    "3:center-center": {
+      "count": 3500.0,
+      "max_abs_diff": 0.00041876526569784023,
+      "max_rel_diff": 0.0007269080060882428,
+      "positive_source_nonpositive_target": 0.0
+    },
+    "3:edge-center": {
+      "count": 4144.0,
+      "max_abs_diff": 0.00024107729217981433,
+      "max_rel_diff": 0.0004228321983817959,
+      "positive_source_nonpositive_target": 0.0
+    },
+    "3:edge-edge": {
+      "count": 644.0,
+      "max_abs_diff": 4.220258651310704e-05,
+      "max_rel_diff": 7.612019411432205e-05,
+      "positive_source_nonpositive_target": 0.0
+    }
+  },
+  "time": 9.506249999999907,
+  "worst_fixed_lattice_C_change": {
+    "axis_distance": 5.1328125,
+    "block_edge_distance": 0.0078125,
+    "coarse_fine_interface_distance": 0.1328125,
+    "delta_C": 147.45580333159432,
+    "delta_H": 8.274720193449092,
+    "delta_M": 66.81149232186186,
+    "delta_Z": 0.0005981851370825729,
+    "gid": 30,
+    "i": 8,
+    "j": 31,
+    "rho": 5.1328125,
+    "z": -0.0078125
+  },
+  "writer_active_delta_l2": {
+    "ADM_OR_CONSTRAINT_RECOMPUTATION": 0.0,
+    "ALGEBRAIC_PROJECTION": 0.008728730133281395,
+    "COARSE_TO_FINE_PROLONGATION": 0.0,
+    "MPI_RECEIVE": 0.0,
+    "PHYSICAL_OR_AXIS_BC_1": 0.0,
+    "PHYSICAL_OR_AXIS_BC_2": 0.0,
+    "PHYSICAL_OR_AXIS_BC_AXIS": 0.0,
+    "REFINE_OR_DEREFINE_TRANSFER": 2.832256590685028e-14,
+    "RESTRICT": 0.0,
+    "SAME_LEVEL_COARSE_REFRESH": 0.0
+  },
+  "writer_stored_delta_l2": {
+    "ADM_OR_CONSTRAINT_RECOMPUTATION": 0.0,
+    "ALGEBRAIC_PROJECTION": 0.01228952041335313,
+    "COARSE_TO_FINE_PROLONGATION": 21.471964325296035,
+    "MPI_RECEIVE": 43.844811797029706,
+    "PHYSICAL_OR_AXIS_BC_1": 0.0,
+    "PHYSICAL_OR_AXIS_BC_2": 0.0,
+    "PHYSICAL_OR_AXIS_BC_AXIS": 0.0,
+    "REFINE_OR_DEREFINE_TRANSFER": 0.0,
+    "RESTRICT": 0.0,
+    "SAME_LEVEL_COARSE_REFRESH": 0.0
+  }
+}
