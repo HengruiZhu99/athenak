@@ -521,6 +521,10 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
           std::exit(EXIT_FAILURE);
         }
       }
+      if (pmesh->pmb_pack->pz4c != nullptr &&
+          pmesh->pmb_pack->pz4c->amr_jump_diagnostic != nullptr) {
+        pmesh->pmb_pack->pz4c->amr_jump_diagnostic->AfterAcceptedCycle(this);
+      }
 
       // Ordinary scheduled outputs now bind the accepted state to its continuation mesh.
       // If AMR requested a clean capacity stop without changing the tree, this remains the
@@ -678,21 +682,42 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
   // initialization path.
   if (pz4c != nullptr && !preserve_restored_z4c) {
     (void) pz4c->RestrictU(this, 0);
+    if (pz4c->amr_jump_diagnostic != nullptr) {
+      pz4c->amr_jump_diagnostic->RecordRestrictionShadow();
+      pz4c->amr_jump_diagnostic->RecordT3(
+          z4c::AMRJumpWriter::restrict, 0, false);
+    }
     (void) pz4c->InitRecv(this, -1);  // stage < 0 suppresses InitFluxRecv
     (void) pz4c->SendU(this, 0);
     (void) pz4c->ClearSend(this, -1);
     (void) pz4c->ClearRecv(this, -1);
     (void) pz4c->RecvU(this, 0);
+    if (pz4c->amr_jump_diagnostic != nullptr) {
+      pz4c->amr_jump_diagnostic->RecordT3(
+          z4c::AMRJumpWriter::mpi_receive, 1, false);
+    }
     (void) pz4c->Z4cBoundaryRHS(this, 0);
     (void) pz4c->ApplyPhysicalBCs(this, 0);
+    if (pz4c->amr_jump_diagnostic != nullptr) {
+      pz4c->amr_jump_diagnostic->RecordT3(
+          z4c::AMRJumpWriter::physical_or_axis_bc, 2, false);
+    }
     (void) pz4c->Prolongate(this, 0);
     // The first physical pass supplies coarse data needed by prolongation.  Prolongation
     // then fills coarse/fine side ghosts, after which this built-in-only pass completes
     // physical/coarse-fine corner overlaps.  User boundary callbacks remain single-shot.
     pz4c->FillBuiltInPhysicalBoundaryGhosts();
+    if (pz4c->amr_jump_diagnostic != nullptr) {
+      pz4c->amr_jump_diagnostic->RecordT3(
+          z4c::AMRJumpWriter::physical_or_axis_bc, 5, false);
+    }
   }
   if (pz4c != nullptr) {
     (void) pz4c->FillAxisParityGhosts(this, 0);
+    if (!preserve_restored_z4c && pz4c->amr_jump_diagnostic != nullptr) {
+      pz4c->amr_jump_diagnostic->RecordT3(
+          z4c::AMRJumpWriter::physical_or_axis_bc, 6, true);
+    }
   }
 
   // Initialize HYDRO: ghost zones and primitive variables (everywhere)

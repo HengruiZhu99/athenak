@@ -636,6 +636,26 @@ if (Athena_BUILD_UNIT_TESTS)
       ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_amr_chi_refresh_static_test.py
       --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  add_executable(
+      athena_z4c_amr_jump_diagnostic_unit_test
+      tst/unit/z4c/amr_jump_diagnostic_test.cpp
+      src/globals.cpp
+      src/parameter_input.cpp
+      src/outputs/io_wrapper.cpp)
+  target_include_directories(
+      athena_z4c_amr_jump_diagnostic_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_amr_jump_diagnostic_unit_test PRIVATE Kokkos::kokkos)
+  if (ENABLE_MPI)
+    target_link_libraries(
+        athena_z4c_amr_jump_diagnostic_unit_test PRIVATE MPI::MPI_CXX)
+  endif()
+  add_test(
+      NAME athena.z4c_amr_jump_diagnostic
+      COMMAND athena_z4c_amr_jump_diagnostic_unit_test)
   add_test(
       NAME athena.z4c_cartoon_amr_static
       COMMAND

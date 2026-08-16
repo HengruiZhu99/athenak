@@ -17,6 +17,7 @@
 #include <Kokkos_Core.hpp>
 
 #include "athena.hpp"
+#include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "bvals/bvals.hpp"
@@ -146,6 +147,27 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl
               << "Z4c RHS stage diagnostic extents must be positive" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  try {
+    AMRJumpDiagnosticContext jump_context;
+    jump_context.cartoon =
+        pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2;
+    jump_context.adaptive = pmy_pack->pmesh->adaptive;
+    jump_context.multilevel = pmy_pack->pmesh->multilevel;
+    // User-facing AMR levels and the history maximum-level column are measured
+    // relative to the root grid, whereas LogicalLocation::level includes the
+    // root-grid Morton depth.
+    jump_context.root_level = 0;
+    jump_context.maximum_level =
+        pmy_pack->pmesh->max_level - pmy_pack->pmesh->root_level;
+    jump_context.nranks = global_variable::nranks;
+    opt.amr_jump_diagnostic =
+        ReadAMRJumpDiagnosticConfig(pin, jump_context);
+  } catch (const std::invalid_argument &error) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": invalid Z4c AMR jump diagnostic configuration: "
+              << error.what() << std::endl;
     std::exit(EXIT_FAILURE);
   }
   // Gauge conditions (default to moving puncture gauge)
@@ -359,6 +381,10 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     } else {
       break;
     }
+  }
+  if (opt.amr_jump_diagnostic.enabled) {
+    amr_jump_diagnostic = std::make_unique<AMRJumpDiagnosticRuntime>(
+        pmy_pack, opt.amr_jump_diagnostic);
   }
 }
 

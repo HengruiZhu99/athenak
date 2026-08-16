@@ -217,20 +217,20 @@ template void Z4c::ADMToZ4c<4>(MeshBlockPack *pmbp, ParameterInput *pin);
 //! \brief Compute ADM Psi4, g_ij, and K_ij from Z4c variables
 //
 // This sets the ADM variables everywhere in the MeshBlock
-void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
+void Z4cToADMViews(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
+                   const adm::ADM::ADM_vars adm_fields,
+                   const Real chi_psi_power) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   const auto bounds = MakeStoredDomainBounds(indcs);
 
   int nmb = pmbp->nmb_thispack;
 
-  auto &z4c = pmbp->pz4c->z4c;
-  auto &adm = pmbp->padm->adm;
-  auto &opt = pmbp->pz4c->opt;
+  auto adm = adm_fields;
   par_for("initialize z4c fields",DevExeSpace(),
   0,nmb-1,bounds.ks,bounds.ke,bounds.js,bounds.je,bounds.is,bounds.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    adm.psi4(m,k,j,i) = pow(z4c.chi(m,k,j,i), 4./opt.chi_psi_power);
+    adm.psi4(m,k,j,i) = pow(z4c.chi(m,k,j,i), 4./chi_psi_power);
 
     // g_ab
     for(int a = 0; a < 3; ++a)
@@ -247,6 +247,11 @@ void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
   });
   return;
 }
+
+void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
+  Z4cToADMViews(pmbp, pmbp->pz4c->z4c, pmbp->padm->adm,
+                pmbp->pz4c->opt.chi_psi_power);
+}
 //----------------------------------------------------------------------------------------
 //! \fn void Z4c::ADMConstraints(AthenaArray<Real> & u_adm, AthenaArray<Real> & u_mat)
 //! \brief compute constraints ADM vars
@@ -261,7 +266,12 @@ void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
 // The constraints are set only in the MeshBlock interior, because derivatives
 // of the ADM quantities are needed to compute them.
 template <typename Symmetry, int FD_STENCIL>
-void ADMConstraintsImpl(MeshBlockPack *pmbp) {
+void ADMConstraintsViewsImpl(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
+                             const adm::ADM::ADM_vars adm_fields,
+                             DvceArray5D<Real> u_con,
+                             const Z4c::Constraint_vars con,
+                             const bool is_vacuum,
+                             const Tmunu::Tmunu_vars tmunu) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
@@ -272,17 +282,9 @@ void ADMConstraintsImpl(MeshBlockPack *pmbp) {
 
   int nmb = pmbp->nmb_thispack;
 
-  auto &z4c = pmbp->pz4c->z4c;
-  auto &adm = pmbp->padm->adm;
-  auto &u_con = pmbp->pz4c->u_con;
-
-  // vacuum or with matter?
-  bool is_vacuum = (pmbp->ptmunu == nullptr) ? true : false;
-  Tmunu::Tmunu_vars tmunu;
-  if (!is_vacuum) tmunu = pmbp->ptmunu->tmunu;
+  auto adm = adm_fields;
 
   Kokkos::deep_copy(u_con, 0.);
-  auto &con = pmbp->pz4c->con;
   par_for("ADM Hamiltonian constraint loop",DevExeSpace(),
   0,nmb-1,ks,ke,js,je,is,ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
@@ -569,6 +571,16 @@ void ADMConstraintsImpl(MeshBlockPack *pmbp) {
 });
 }
 
+template <typename Symmetry, int FD_STENCIL>
+void ADMConstraintsImpl(MeshBlockPack *pmbp) {
+  const bool is_vacuum = pmbp->ptmunu == nullptr;
+  Tmunu::Tmunu_vars tmunu;
+  if (!is_vacuum) tmunu = pmbp->ptmunu->tmunu;
+  ADMConstraintsViewsImpl<Symmetry, FD_STENCIL>(
+      pmbp, pmbp->pz4c->z4c, pmbp->padm->adm, pmbp->pz4c->u_con,
+      pmbp->pz4c->con, is_vacuum, tmunu);
+}
+
 template <int NGHOST>
 void Z4c::ADMConstraints(MeshBlockPack *pmbp) {
   if (pmbp->pz4c->opt.fd_stencil != NGHOST) {
@@ -584,6 +596,65 @@ void Z4c::ADMConstraints(MeshBlockPack *pmbp) {
   }
   pmbp->pz4c->ReconstructConstraintAxisParityGhosts();
 }
+
+void Z4c::EvaluateDiagnosticConstraints(
+    DvceArray5D<Real> &scratch_adm,
+    DvceArray5D<Real> &scratch_constraints) {
+  if (pmy_pack->ptmunu != nullptr) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": AMR jump scratch constraints are restricted to vacuum Z4c"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  const auto bounds = MakeStoredDomainBounds(pmy_pack->pmesh->mb_indcs);
+  const int nmb = pmy_pack->nmb_thispack;
+  Kokkos::realloc(scratch_adm, nmb, adm::ADM::nadm - 4, bounds.n3,
+                  bounds.n2, bounds.n1);
+  Kokkos::realloc(scratch_constraints, nmb, ncon, bounds.n3, bounds.n2,
+                  bounds.n1);
+
+  adm::ADM::ADM_vars diagnostic_adm;
+  diagnostic_adm.psi4.InitWithShallowSlice(scratch_adm, adm::ADM::I_ADM_PSI4);
+  diagnostic_adm.g_dd.InitWithShallowSlice(
+      scratch_adm, adm::ADM::I_ADM_GXX, adm::ADM::I_ADM_GZZ);
+  diagnostic_adm.vK_dd.InitWithShallowSlice(
+      scratch_adm, adm::ADM::I_ADM_KXX, adm::ADM::I_ADM_KZZ);
+
+  Constraint_vars diagnostic_constraints;
+  diagnostic_constraints.C.InitWithShallowSlice(scratch_constraints, I_CON_C);
+  diagnostic_constraints.H.InitWithShallowSlice(scratch_constraints, I_CON_H);
+  diagnostic_constraints.M.InitWithShallowSlice(scratch_constraints, I_CON_M);
+  diagnostic_constraints.Z.InitWithShallowSlice(scratch_constraints, I_CON_Z);
+  diagnostic_constraints.M_d.InitWithShallowSlice(
+      scratch_constraints, I_CON_MX, I_CON_MZ);
+
+  Z4cToADMViews(pmy_pack, z4c, diagnostic_adm, opt.chi_psi_power);
+  const Tmunu::Tmunu_vars empty_matter;
+  switch (opt.fd_stencil) {
+    case 2:
+      ADMConstraintsViewsImpl<CartoonSO2, 2>(
+          pmy_pack, z4c, diagnostic_adm, scratch_constraints,
+          diagnostic_constraints, true, empty_matter);
+      break;
+    case 3:
+      ADMConstraintsViewsImpl<CartoonSO2, 3>(
+          pmy_pack, z4c, diagnostic_adm, scratch_constraints,
+          diagnostic_constraints, true, empty_matter);
+      break;
+    case 4:
+      ADMConstraintsViewsImpl<CartoonSO2, 4>(
+          pmy_pack, z4c, diagnostic_adm, scratch_constraints,
+          diagnostic_constraints, true, empty_matter);
+      break;
+    default:
+      std::cerr << "### FATAL ERROR in " << __FILE__
+                << ": unsupported AMR jump scratch constraint stencil "
+                << opt.fd_stencil << std::endl;
+      std::exit(EXIT_FAILURE);
+  }
+  ReconstructConstraintAxisParityGhosts(scratch_constraints);
+}
+
 template void ADMConstraintsImpl<Cartesian3D, 2>(MeshBlockPack *);
 template void ADMConstraintsImpl<Cartesian3D, 3>(MeshBlockPack *);
 template void ADMConstraintsImpl<Cartesian3D, 4>(MeshBlockPack *);

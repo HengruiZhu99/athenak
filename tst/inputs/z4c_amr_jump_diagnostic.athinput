@@ -1,0 +1,83 @@
+# Short half-plane AMR transaction used only to exercise the default-off jump diagnostic.
+
+<job>
+basename = z4c_amr_jump_diagnostic
+
+<mesh>
+nghost = 4
+nx1 = 32
+x1min = 0.0
+x1max = 8.0
+ix1_bc = axis
+ox1_bc = outflow
+nx2 = 64
+x2min = -8.0
+x2max = 8.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 1
+
+<mesh_refinement>
+refinement = adaptive
+max_nmb_per_rank = 64
+num_levels = 2
+refinement_interval = 1
+
+<amr_criterion0>
+method = user
+
+<z4c_amr>
+method = dchi_max
+dchi_max = 0.05
+max_ref_lev = 1
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = 4
+tlim = 1.0e-1
+ndiag = 1
+
+<z4c>
+symmetry = cartoon_so2
+coordinate_map = half_rho_z_suppressed_y_v2
+symmetry_schema = 2
+spatial_order = 6
+diss = 0.02
+chi_div_floor = 1.0e-5
+excise_chi = 0.0625
+damp_kappa1 = 0.02
+damp_kappa2 = 0.0
+lapse_oplog = 2.0
+lapse_harmonicf = 1.0
+lapse_harmonic = 0.0
+lapse_advect = 1.0
+shift_Gamma = 0.0
+shift_eta = 0.0
+shift_advect = 0.0
+amr_jump_diagnostic = true
+amr_jump_target_level_before = 0
+amr_jump_target_level_after = 1
+amr_jump_post_cycles = 2
+amr_jump_output_basename = z4c_amr_jump
+
+<problem>
+pgen_name = kerr_puncture
+M = 1.0
+chi = 0.5
+z_h = 0.0
+initial_gauge = precollapsed
+
+<output1>
+file_type = hst
+dcycle = 1

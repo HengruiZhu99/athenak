@@ -205,11 +205,19 @@ MeshRefinement::~MeshRefinement() {
 void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin) {
   // first check refinement criteria
   CheckForRefinement(pmy_mesh->pmb_pack);
+  z4c::Z4c *diagnostic_z4c = pmy_mesh->pmb_pack->pz4c;
+  if (diagnostic_z4c != nullptr && diagnostic_z4c->amr_jump_diagnostic != nullptr) {
+    diagnostic_z4c->amr_jump_diagnostic->BeginTransaction(*this);
+  }
 
   // then update mesh tree if MeshBlock anywhere (on any rank) is flagged for refinement
   // indicated by the refine_flag[m] value being true (1) for any m.
   int nnew = 0, ndel = 0;
   UpdateMeshBlockTree(nnew, ndel);
+  if (nnew == 0 && ndel == 0 && diagnostic_z4c != nullptr &&
+      diagnostic_z4c->amr_jump_diagnostic != nullptr) {
+    diagnostic_z4c->amr_jump_diagnostic->CancelTransaction();
+  }
 
   // UpdateMeshBlockTree applies the complete 2:1-balanced regrid to the logical tree,
   // including refinements induced at neighboring blocks.  Before allocating or moving
@@ -241,12 +249,18 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
            << " MeshBlocks per rank and flushing final outputs for restart";
     pdriver->user_stop = true;
     pdriver->user_stop_reason = reason.str();
+    if (diagnostic_z4c != nullptr && diagnostic_z4c->amr_jump_diagnostic != nullptr) {
+      diagnostic_z4c->amr_jump_diagnostic->CancelTransaction();
+    }
     return;
   }
 
   // Refine/derefine mesh and evolved data, set boundary conditions/timestep on new mesh
   if (nnew != 0 || ndel != 0) { // at least one (de)refinement flagged
     RedistAndRefineMeshBlocks(pin, nnew, ndel);
+    if (diagnostic_z4c != nullptr && diagnostic_z4c->amr_jump_diagnostic != nullptr) {
+      diagnostic_z4c->amr_jump_diagnostic->RecordT2();
+    }
     pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
 
     MeshBlockPack* pmbp = pmy_mesh->pmb_pack;
@@ -268,9 +282,15 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
       // initialization fill.  Regenerate derived negative-rho ghosts before
       // Z4cToADM populates stored ADM ghosts and constraints differentiate them.
       (void) pmbp->pz4c->FillAxisParityGhosts(pdriver, pdriver->nexp_stages);
+      if (pmbp->pz4c->amr_jump_diagnostic != nullptr) {
+        pmbp->pz4c->amr_jump_diagnostic->RecordT4();
+      }
       (void) pmbp->pz4c->ConvertZ4cToADM(pdriver, pdriver->nexp_stages);
       (void) pmbp->pz4c->ADMConstraints_(pdriver, pdriver->nexp_stages);
       (void) pmbp->pz4c->NewTimeStep(pdriver, pdriver->nexp_stages);
+      if (pmbp->pz4c->amr_jump_diagnostic != nullptr) {
+        pmbp->pz4c->amr_jump_diagnostic->RecordT5();
+      }
     }
 
     nmb_created += nnew;
@@ -589,6 +609,11 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
         << global_variable::my_rank <<" exceeds <mesh_refinement>/max_nmb_per_rank = "
         << pm->nmb_maxperrank << std::endl;
     std::exit(EXIT_FAILURE);
+  }
+  if (pm->pmb_pack->pz4c != nullptr &&
+      pm->pmb_pack->pz4c->amr_jump_diagnostic != nullptr) {
+    pm->pmb_pack->pz4c->amr_jump_diagnostic->RecordTopologyProposal(
+        *this, old_nmb, new_nmb, nnew, ndel);
   }
 
   // UpdateMeshBlockTree function can refine/de-refine MBs to ensure resolution jump is

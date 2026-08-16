@@ -237,6 +237,11 @@ void Z4c::ReconstructAxisParityGhosts() {
 }
 
 void Z4c::ReconstructConstraintAxisParityGhosts() {
+  ReconstructConstraintAxisParityGhosts(u_con);
+}
+
+void Z4c::ReconstructConstraintAxisParityGhosts(
+    DvceArray5D<Real> &constraints) {
   const auto &config = pmy_pack->z4c_symmetry;
   if (config.mode != Z4cSymmetryMode::cartoon_so2 ||
       config.coordinate_map != Z4cCoordinateMap::half_rho_z_suppressed_y_v2 ||
@@ -251,8 +256,6 @@ void Z4c::ReconstructConstraintAxisParityGhosts() {
   const int is = indcs.is;
   const int nmb = pmy_pack->nmb_thispack;
   auto &mb_bcs = pmy_pack->pmb->mb_bcs;
-  auto &constraints = pmy_pack->pz4c->u_con;
-
   par_for("Z4c half-plane constraint axis parity", DevExeSpace(),
           0, nmb - 1, 0, ncon - 1, 0, n3 - 1, 0, n2 - 1,
       KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
@@ -363,7 +366,16 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
     // retaining the previous stage's coarse data can make an otherwise
     // positive chi parent stencil invalid.
     pbval_u->FillCoarseInBndryCC(u0, coarse_u0, true);
+    if (amr_jump_diagnostic != nullptr) {
+      amr_jump_diagnostic->RecordSameLevelRefreshShadow();
+      amr_jump_diagnostic->RecordT3(
+          AMRJumpWriter::same_level_coarse_refresh, 3, false);
+    }
     pbval_u->ProlongateCC(u0, coarse_u0, true);
+    if (amr_jump_diagnostic != nullptr) {
+      amr_jump_diagnostic->RecordT3(
+          AMRJumpWriter::coarse_to_fine_prolongation, 4, false);
+    }
   }
   return TaskStatus::complete;
 }

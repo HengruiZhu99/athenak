@@ -22,6 +22,7 @@
 #include "athena_tensor.hpp"
 #include "geodesic-grid/geodesic_grid.hpp"
 #include "geodesic-grid/spherical_grid.hpp"
+#include "z4c/amr_jump_diagnostic.hpp"
 #include "z4c/telegraph_damping.hpp"
 
 // forward declarations
@@ -165,6 +166,7 @@ class Z4c {
     Real rhs_stage_diagnostics_start_time;
     Real rhs_stage_diagnostics_rho_max;
     Real rhs_stage_diagnostics_abs_z_max;
+    AMRJumpDiagnosticConfig amr_jump_diagnostic;
     // Gauge conditions for the lapse
     Real lapse_oplog;
     Real lapse_harmonicf;
@@ -219,6 +221,7 @@ class Z4c {
   };
   Options opt;
   Real diss;              // Dissipation parameter
+  std::unique_ptr<AMRJumpDiagnosticRuntime> amr_jump_diagnostic;
 
   // Boundary communication buffers and functions for u
   MeshBoundaryValuesCC *pbval_u;
@@ -254,6 +257,8 @@ class Z4c {
   TaskStatus FillAxisParityGhosts(Driver *d, int stage);
   void ReconstructAxisParityGhosts();
   void ReconstructConstraintAxisParityGhosts();
+  void ReconstructConstraintAxisParityGhosts(
+      DvceArray5D<Real> &constraint_state);
   TaskStatus SendU(Driver *d, int stage);
   TaskStatus RecvU(Driver *d, int stage);
   TaskStatus SendWeyl(Driver *d, int stage);
@@ -290,6 +295,8 @@ class Z4c {
   void ADMToZ4c(MeshBlockPack *pmbp, ParameterInput *pin);
   void GaugePreCollapsedLapse(MeshBlockPack *pmbp, ParameterInput *pin);
   void Z4cToADM(MeshBlockPack *pmbp);
+  void EvaluateDiagnosticConstraints(DvceArray5D<Real> &scratch_adm,
+                                     DvceArray5D<Real> &scratch_constraints);
   template <int NGHOST>
   void ADMConstraints(MeshBlockPack *pmbp);
   template <int NGHOST>
