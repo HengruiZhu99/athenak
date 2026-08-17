@@ -256,6 +256,23 @@ def family_squared(constraints: np.ndarray, family: str) -> np.ndarray:
     return values
 
 
+def finalize_budget_values(values: dict[str, Any], label: str) -> None:
+    """Finalize one disjoint-region accumulator, including valid empty regions."""
+    if values["nonfinite_count"]:
+        raise ComparisonError(f"nonfinite constraint magnitude in {label}")
+    if values["cell_count"] == 0:
+        if values["volume"] != 0.0 or values["integral"] != 0.0:
+            raise ComparisonError(f"inconsistent empty-region budget in {label}")
+        values["rms"] = None
+    else:
+        if not math.isfinite(values["volume"]) or values["volume"] <= 0.0:
+            raise ComparisonError(f"invalid populated-region volume in {label}")
+        values["rms"] = (math.sqrt(values["integral"] / values["volume"])
+                         if values["integral"] >= 0.0 else None)
+    if values["max_magnitude"] == -math.inf:
+        values["max_magnitude"] = None
+
+
 def budgets(constraints: dict[int, np.ndarray], adm: dict[int, np.ndarray],
             topology: dict[int, dict[str, str]], children: set[int],
             arm: str, state: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -309,13 +326,7 @@ def budgets(constraints: dict[int, np.ndarray], adm: dict[int, np.ndarray],
                 cells.append(cell)
     rows: list[dict[str, Any]] = []
     for (measure, family, region), values in accum.items():
-        if values["nonfinite_count"]:
-            raise ComparisonError(
-                f"nonfinite constraint magnitude in {arm}/{state}/{family}/{region}")
-        values["rms"] = (math.sqrt(values["integral"] / values["volume"])
-                         if values["integral"] >= 0.0 else None)
-        if values["max_magnitude"] == -math.inf:
-            values["max_magnitude"] = None
+        finalize_budget_values(values, f"{arm}/{state}/{family}/{region}")
         rows.append({"arm": arm, "state": state, "measure": measure,
                      "family": family, "region": region, **values})
     for measure in MEASURES:
@@ -566,6 +577,24 @@ def self_test() -> None:
         raise ComparisonError("MeshBlock-edge classification failed")
     if region_for_cell(0, 16, 16, 32, 32, topology) != REGIONS[3]:
         raise ComparisonError("interior classification failed")
+    empty = {"integral": 0.0, "volume": 0.0, "cell_count": 0,
+             "max_magnitude": -math.inf, "nonfinite_count": 0}
+    finalize_budget_values(empty, "self-test/empty")
+    if empty["rms"] is not None or empty["max_magnitude"] is not None:
+        raise ComparisonError("empty-region null summary failed")
+    populated = {"integral": 4.0, "volume": 1.0, "cell_count": 1,
+                 "max_magnitude": 2.0, "nonfinite_count": 0}
+    finalize_budget_values(populated, "self-test/populated")
+    if populated["rms"] != 2.0 or populated["max_magnitude"] != 2.0:
+        raise ComparisonError("populated-region summary failed")
+    inconsistent = {"integral": 0.0, "volume": 1.0, "cell_count": 0,
+                    "max_magnitude": -math.inf, "nonfinite_count": 0}
+    try:
+        finalize_budget_values(inconsistent, "self-test/inconsistent")
+    except ComparisonError:
+        pass
+    else:
+        raise ComparisonError("inconsistent empty-region budget was accepted")
     print("cartoon_amr_transfer_compare self-test: PASS")
 
 
