@@ -19,6 +19,8 @@ def main() -> None:
     restriction = (root / "src/mesh/restriction.hpp").read_text(encoding="utf-8")
     refinement = (root / "src/mesh/mesh_refinement.cpp").read_text(encoding="utf-8")
     boundary = (root / "src/bvals/prolongation.cpp").read_text(encoding="utf-8")
+    ownership = (root / "src/bvals/coarse_cache_ownership.hpp").read_text(
+        encoding="utf-8")
     tasks = (root / "src/z4c/z4c_tasks.cpp").read_text(encoding="utf-8")
     z4c_header = (root / "src/z4c/z4c.hpp").read_text(encoding="utf-8")
     z4c_source = (root / "src/z4c/z4c.cpp").read_text(encoding="utf-8")
@@ -88,12 +90,20 @@ def main() -> None:
         "pbval_u->FillCoarseInBndryCC(u0, coarse_u0, true)")
     prolong = z4c_prolongate.index("pbval_u->ProlongateCC(u0, coarse_u0, true)")
     require(refresh < prolong,
-            "Z4c same-level coarse corners are not refreshed before prolongation")
+            "Z4c coarse-cache ownership gate is not called before prolongation")
 
     fill_coarse = boundary[
         boundary.index("void MeshBoundaryValuesCC::FillCoarseInBndryCC") :
         boundary.index("void MeshBoundaryValuesCC::ProlongateCC")
     ]
+    ownership_gate = fill_coarse.index(
+        "if (!ShouldLocallyRefreshSameLevelCoarseCache(is_z4c)) return;")
+    kernel = fill_coarse.index('Kokkos::parallel_for("ProlCCSame"')
+    require(ownership_gate < kernel,
+            "Z4c owner-authoritative cache gate no longer precedes local writes")
+    require("return !is_z4c;" in ownership and
+            "isame_z4c" in ownership,
+            "coarse-cache ownership policy no longer preserves Z4c receives")
     for order in (2, 3, 4):
         require(f"case {order}:" in fill_coarse and
                 f"RestrictInterpolation<{order}>" in fill_coarse,

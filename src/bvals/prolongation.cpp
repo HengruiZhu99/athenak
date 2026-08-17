@@ -19,6 +19,7 @@
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "bvals.hpp"
+#include "coarse_cache_ownership.hpp"
 #include "mesh/prolongation.hpp" // implements prolongation operators
 #include "mesh/restriction.hpp" // implements restriction operators
 #include "z4c/z4c.hpp"
@@ -37,6 +38,14 @@
 void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
                                                DvceArray5D<Real> &ca,
                                                bool is_z4c) {
+  // Z4c already sends the owner-computed coarse representation to same-level
+  // neighbors through isame_z4c.  Those received ghost values are the
+  // authoritative cache representation.  Recomputing them from receiver-local
+  // fine data selects a different block-edge stencil and creates a mixed cache.
+  // The complete production iprol inventory is supplied by local restriction,
+  // same/coarser receives, and physical boundaries before this point.
+  if (!ShouldLocallyRefreshSameLevelCoarseCache(is_z4c)) return;
+
   // create local references for variables in kernel
   int nmb = pmy_pack->nmb_thispack;
   int nnghbr = pmy_pack->pmb->nnghbr;

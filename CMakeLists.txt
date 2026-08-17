@@ -612,6 +612,32 @@ if (Athena_BUILD_UNIT_TESTS)
       NAME athena.z4c_chi_prolongation
       COMMAND athena_z4c_chi_prolongation_unit_test)
   add_executable(
+      athena_z4c_coarse_cache_ownership_unit_test
+      tst/unit/z4c/z4c_coarse_cache_ownership_test.cpp)
+  target_include_directories(
+      athena_z4c_coarse_cache_ownership_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_coarse_cache_ownership_unit_test PRIVATE Kokkos::kokkos)
+  if (ENABLE_MPI)
+    target_link_libraries(
+        athena_z4c_coarse_cache_ownership_unit_test PRIVATE MPI::MPI_CXX)
+  endif()
+  add_test(
+      NAME athena.z4c_coarse_cache_ownership
+      COMMAND athena_z4c_coarse_cache_ownership_unit_test)
+  if (ENABLE_MPI)
+    add_test(
+        NAME athena.z4c_coarse_cache_ownership_mpi2
+        COMMAND
+        ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+        ${MPIEXEC_PREFLAGS}
+        $<TARGET_FILE:athena_z4c_coarse_cache_ownership_unit_test>
+        ${MPIEXEC_POSTFLAGS})
+  endif()
+  add_executable(
       athena_z4c_telegraph_damping_unit_test
       tst/unit/z4c/z4c_telegraph_damping_test.cpp)
   target_include_directories(
