@@ -17,39 +17,6 @@
 
 namespace fo_gh {
 
-KOKKOS_INLINE_FUNCTION
-void LoadPoint(const FoGh::Variables &v, const int m, const int k,
-               const int j, const int i, RegularPointState &u) {
-  u.chi = v.chi(m, k, j, i);
-  u.alpha = v.alpha(m, k, j, i);
-  u.K = v.K(m, k, j, i);
-  u.pi = v.pi(m, k, j, i);
-  u.h_perp = v.h_perp(m, k, j, i);
-  u.vartheta_perp = v.vartheta_perp(m, k, j, i);
-  for (int a = 0; a < 3; ++a) {
-    u.beta(a) = v.beta(m, a, k, j, i);
-    u.Lambda(a) = v.Lambda(m, a, k, j, i);
-    u.X(a) = v.X(m, a, k, j, i);
-    u.a(a) = v.a(m, a, k, j, i);
-    u.h(a) = v.h(m, a, k, j, i);
-    u.vartheta(a) = v.vartheta(m, a, k, j, i);
-    for (int b = 0; b < 3; ++b) {
-      u.B(a, b) = v.B(m, a, b, k, j, i);
-    }
-    for (int b = 0; b < 3; ++b) {
-      for (int c = b; c < 3; ++c) {
-        u.Q(a, b, c) = v.Q[a](m, b, c, k, j, i);
-      }
-    }
-  }
-  for (int a = 0; a < 3; ++a) {
-    for (int b = a; b < 3; ++b) {
-      u.gtilde(a, b) = v.gtilde(m, a, b, k, j, i);
-      u.Atilde(a, b) = v.Atilde(m, a, b, k, j, i);
-    }
-  }
-}
-
 template <int FDNG>
 KOKKOS_INLINE_FUNCTION
 void LoadDerivatives(const FoGh::Variables &v, const Real idx[3],
