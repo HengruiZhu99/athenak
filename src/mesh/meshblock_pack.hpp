@@ -32,6 +32,7 @@ namespace numrel {class NumericalRelativity;}
 class TurbulenceDriver;
 namespace radiation {class Radiation;}
 namespace z4c {class Z4c;}
+namespace fo_gh {class FoGh;}
 namespace z4c {class CCE;}
 namespace adm {class ADM;}
 namespace particles {class Particles;}
@@ -69,6 +70,7 @@ class MeshBlockPack {
   adm::ADM *padm=nullptr;
   Tmunu *ptmunu=nullptr;
   z4c::Z4c *pz4c=nullptr;
+  fo_gh::FoGh *pfogh=nullptr;
   dyngr::DynGRMHD *pdyngr=nullptr;
   numrel::NumericalRelativity *pnr=nullptr;
   ion_neutral::IonNeutral *pionn=nullptr;

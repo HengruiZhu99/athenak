@@ -81,6 +81,7 @@ class ProblemGenerator {
   void EOSCompose(ParameterInput *pin, const bool restart);
   void GaussLegendre(ParameterInput *pin, const bool restart);
   void FoGhTensorUnit(ParameterInput *pin, const bool restart);
+  void FoGhAlgebraUnit(ParameterInput *pin, const bool restart);
 
   // Generic error output function (using difference u0-u1)
   void OutputErrors(ParameterInput *pin, Mesh *pm);

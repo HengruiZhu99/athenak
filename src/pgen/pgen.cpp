@@ -965,6 +965,8 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     GaussLegendre(pin, is_restart);
   } else if (pgen_fun_name.compare("fo_gh_tensor_unit") == 0) {
     FoGhTensorUnit(pin, is_restart);
+  } else if (pgen_fun_name.compare("fo_gh_algebra_unit") == 0) {
+    FoGhAlgebraUnit(pin, is_restart);
 
   } else {
     // name not set on command line or input file, print warning and quit

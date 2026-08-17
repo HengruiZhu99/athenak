@@ -62,6 +62,8 @@ add_executable(
         geodesic-grid/spherical_grid.cpp
         geodesic-grid/gauss_legendre.cpp
 
+        fo_gh/fo_gh.cpp
+
         gravity/gravity.cpp
         gravity/mg_gravity.cpp
 
@@ -146,6 +148,7 @@ add_executable(
         pgen/unit_tests/eos_compose.cpp
         pgen/unit_tests/gauss_legendre.cpp
         pgen/fo_gh/tensor_unit.cpp
+        pgen/fo_gh/algebra_unit.cpp
 
         radiation/radiation.cpp
         radiation/radiation_fluxes.cpp
