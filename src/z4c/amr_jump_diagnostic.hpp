@@ -130,8 +130,9 @@ struct AMRJumpDiagnosticConfig {
   // transaction.  The preceding evolution, including the RK step that reaches
   // the target cycle, retains the production <z4c>/amr_transfer policy.
   std::string target_transfer;
-  // At T5 only, recompute constraints from the accepted evolved state with the
-  // O2, O4, and O6 derivative providers. This never changes production state.
+  // At the final pre-projection T3 boundary state and at T5, recompute
+  // constraints with the O2, O4, and O6 derivative providers. This never
+  // changes production state.
   bool derivative_order_audit = false;
   AMRJumpHierarchyControl hierarchy_control =
       AMRJumpHierarchyControl::dynamic;

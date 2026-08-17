@@ -160,18 +160,21 @@ def check_zero_pde_stop(executable: Path, input_path: Path,
     snapshots = sorted((rank / "accepted_topologies").glob("*.csv"))
     if [path.stem for path in snapshots] != ["c00000001"]:
         raise TestFailure(f"zero-PDE probe accepted an unexpected later cycle: {snapshots}")
-    t5 = event / "t5_00_ADM_OR_CONSTRAINT_RECOMPUTATION"
-    metadata = json.loads((t5 / "phase.json").read_text(encoding="utf-8"))
-    if metadata.get("derivative_order_audit") is not True:
-        raise TestFailure("T5 derivative-order audit was not authenticated")
-    audit_files = [t5 / f"constraints_o{order}.bin" for order in (2, 4, 6)]
-    if any(not path.is_file() for path in audit_files):
-        raise TestFailure("T5 derivative-order audit omitted an order")
-    expected_size = (t5 / "constraints.bin").stat().st_size
-    if any(path.stat().st_size != expected_size for path in audit_files):
-        raise TestFailure("T5 derivative-order audit shape is inconsistent")
-    if file_sha256(audit_files[-1]) != file_sha256(t5 / "constraints.bin"):
-        raise TestFailure("diagnostic O6 constraints differ from production T5 bytes")
+    for phase_name in ("t3_06_PHYSICAL_OR_AXIS_BC",
+                       "t5_00_ADM_OR_CONSTRAINT_RECOMPUTATION"):
+        phase = event / phase_name
+        metadata = json.loads((phase / "phase.json").read_text(encoding="utf-8"))
+        if metadata.get("derivative_order_audit") is not True:
+            raise TestFailure(f"{phase_name} derivative-order audit was not authenticated")
+        audit_files = [phase / f"constraints_o{order}.bin" for order in (2, 4, 6)]
+        if any(not path.is_file() for path in audit_files):
+            raise TestFailure(f"{phase_name} derivative-order audit omitted an order")
+        expected_size = (phase / "constraints.bin").stat().st_size
+        if any(path.stat().st_size != expected_size for path in audit_files):
+            raise TestFailure(f"{phase_name} derivative-order audit shape is inconsistent")
+        if file_sha256(audit_files[-1]) != file_sha256(phase / "constraints.bin"):
+            raise TestFailure(
+                f"diagnostic O6 constraints differ from {phase_name} production bytes")
     log = run_dir.parent / "run.log"
     if "after T5 and before the next RHS" not in log.read_text(encoding="utf-8"):
         raise TestFailure("zero-PDE probe emitted no explicit stop-point evidence")

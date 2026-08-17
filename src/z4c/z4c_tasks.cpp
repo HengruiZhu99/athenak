@@ -364,10 +364,10 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
     if (amr_jump_diagnostic != nullptr && stage > 0) {
       amr_jump_diagnostic->RecordRKStageCoarseFineExposure(stage);
     }
-    // Refresh same-level coarse-array corners after every RK update.  The
-    // high-order coarse/fine interpolation stencil reaches these values, so
-    // retaining the previous stage's coarse data can make an otherwise
-    // positive chi parent stencil invalid.
+    // Populate only coarse-cache locations owned by this boundary operation.
+    // For Z4c, same-level overlap is owner-authoritative after receive/local
+    // copy, so FillCoarseInBndryCC deliberately preserves it; generic
+    // finite-volume users retain their receiver-local refresh policy.
     pbval_u->FillCoarseInBndryCC(u0, coarse_u0, true);
     if (amr_jump_diagnostic != nullptr) {
       amr_jump_diagnostic->RecordSameLevelRefreshShadow();
