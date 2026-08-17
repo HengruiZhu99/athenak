@@ -156,6 +156,7 @@ add_executable(
         pgen/fo_gh/minkowski.cpp
         pgen/fo_gh/linear_wave.cpp
         pgen/fo_gh/stability.cpp
+        pgen/fo_gh/compatible_unit.cpp
 
         radiation/radiation.cpp
         radiation/radiation_fluxes.cpp

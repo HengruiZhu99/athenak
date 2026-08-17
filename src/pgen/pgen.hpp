@@ -87,6 +87,7 @@ class ProblemGenerator {
   void FoGhMinkowski(ParameterInput *pin, const bool restart);
   void FoGhLinearWave(ParameterInput *pin, const bool restart);
   void FoGhStability(ParameterInput *pin, const bool restart);
+  void FoGhCompatibleUnit(ParameterInput *pin, const bool restart);
 
   // Generic error output function (using difference u0-u1)
   void OutputErrors(ParameterInput *pin, Mesh *pm);
