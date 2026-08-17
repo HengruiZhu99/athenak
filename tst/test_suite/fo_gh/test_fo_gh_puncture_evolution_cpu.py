@@ -1,6 +1,7 @@
 """Short no-floor/no-excision FO-GH puncture evolution smoke test."""
 
 from pathlib import Path
+import shutil
 
 import numpy as np
 import test_suite.testutils as testutils
@@ -99,4 +100,52 @@ def test_fo_gh_puncture_bounded_time_ladder():
         assert norms[-1, 3] < 1.05 * norms[0, 3]
     finally:
         history.unlink(missing_ok=True)
+        testutils.cleanup()
+
+
+def test_fo_gh_puncture_restart_equivalence():
+    """An identical-data puncture checkpoint must resume bit-for-bit at two cycles."""
+    shutil.rmtree("rst", ignore_errors=True)
+    try:
+        testutils.run(
+            "inputs/fo_gh_puncture_evolution.athinput",
+            ["job/basename=fo_gh_puncture_direct", "time/nlim=2", "time/tlim=1.0"],
+        )
+        direct = np.array(np.loadtxt("fo_gh_puncture_direct-checkpoint.dat"), copy=True)
+        testutils.cleanup()
+
+        testutils.run(
+            "inputs/fo_gh_puncture_evolution.athinput",
+            [
+                "job/basename=fo_gh_puncture_split",
+                "time/nlim=1",
+                "time/tlim=1.0",
+                "output2/dcycle=1",
+            ],
+        )
+        restart = Path("rst/fo_gh_puncture_split.00001.rst")
+        assert restart.exists()
+        testutils.cleanup()
+
+        assert testutils.run_command(
+            [
+                "./athena",
+                "-r",
+                str(restart),
+                "job/basename=fo_gh_puncture_resumed",
+                "time/nlim=2",
+                "time/tlim=1.0",
+                "output2/dcycle=0",
+            ]
+        )
+        resumed = np.loadtxt("fo_gh_puncture_resumed-checkpoint.dat")
+        np.testing.assert_array_equal(resumed, direct)
+    finally:
+        shutil.rmtree("rst", ignore_errors=True)
+        for basename in (
+            "fo_gh_puncture_direct",
+            "fo_gh_puncture_split",
+            "fo_gh_puncture_resumed",
+        ):
+            Path(f"{basename}.fo_gh.hst").unlink(missing_ok=True)
         testutils.cleanup()
