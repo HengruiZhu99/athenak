@@ -1,0 +1,35 @@
+# AthenaK input file for FO-GH pointwise RHS unit tests
+
+<job>
+basename  = fo_gh_rhs_unit
+
+<mesh>
+nghost    = 2
+nx1       = 4
+x1min     = -0.5
+x1max     = 0.5
+ix1_bc    = periodic
+ox1_bc    = periodic
+nx2       = 1
+x2min     = -0.5
+x2max     = 0.5
+nx3       = 1
+x3min     = -0.5
+x3max     = 0.5
+
+<meshblock>
+nx1       = 4
+
+<time>
+evolution  = static
+cfl_number = 0.1
+
+<fo_gh>
+kappa   = 1.0
+mu_H     = 1.0
+eta_H    = 1.0
+eta_beta = 2.0
+diss     = 0.0
+
+<problem>
+pgen_name = fo_gh_rhs_unit

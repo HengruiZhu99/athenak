@@ -967,6 +967,10 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     FoGhTensorUnit(pin, is_restart);
   } else if (pgen_fun_name.compare("fo_gh_algebra_unit") == 0) {
     FoGhAlgebraUnit(pin, is_restart);
+  } else if (pgen_fun_name.compare("fo_gh_geometry_unit") == 0) {
+    FoGhGeometryUnit(pin, is_restart);
+  } else if (pgen_fun_name.compare("fo_gh_rhs_unit") == 0) {
+    FoGhRhsUnit(pin, is_restart);
 
   } else {
     // name not set on command line or input file, print warning and quit

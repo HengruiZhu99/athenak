@@ -82,6 +82,8 @@ class ProblemGenerator {
   void GaussLegendre(ParameterInput *pin, const bool restart);
   void FoGhTensorUnit(ParameterInput *pin, const bool restart);
   void FoGhAlgebraUnit(ParameterInput *pin, const bool restart);
+  void FoGhGeometryUnit(ParameterInput *pin, const bool restart);
+  void FoGhRhsUnit(ParameterInput *pin, const bool restart);
 
   // Generic error output function (using difference u0-u1)
   void OutputErrors(ParameterInput *pin, Mesh *pm);

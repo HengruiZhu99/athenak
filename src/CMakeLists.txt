@@ -149,6 +149,8 @@ add_executable(
         pgen/unit_tests/gauss_legendre.cpp
         pgen/fo_gh/tensor_unit.cpp
         pgen/fo_gh/algebra_unit.cpp
+        pgen/fo_gh/geometry_unit.cpp
+        pgen/fo_gh/rhs_unit.cpp
 
         radiation/radiation.cpp
         radiation/radiation_fluxes.cpp
