@@ -176,6 +176,10 @@ void FoGh::CalcConstraints() {
     Real rx2 = 0.0;
     Real ra2 = 0.0;
     Real rb2 = 0.0;
+    Real curl_q2 = 0.0;
+    Real curl_x2 = 0.0;
+    Real curl_a2 = 0.0;
+    Real curl_b2 = 0.0;
     for (int p = 0; p < 3; ++p) {
       constraints(m, I_CON_MX + p, k, j, i) = geometry.momentum(p);
       constraints(m, I_CON_GHX + p, k, j, i) = geometry.c_up(p);
@@ -196,10 +200,34 @@ void FoGh::CalcConstraints() {
         }
       }
     }
+    for (int p = 0; p < 3; ++p) {
+      for (int q = p + 1; q < 3; ++q) {
+        const Real curl_x = derivatives.geometry.dX(p, q)
+                            - derivatives.geometry.dX(q, p);
+        const Real curl_a = derivatives.geometry.da(p, q)
+                            - derivatives.geometry.da(q, p);
+        curl_x2 += curl_x*curl_x;
+        curl_a2 += curl_a*curl_a;
+        for (int a = 0; a < 3; ++a) {
+          const Real curl_b = derivatives.dB(p, q, a)
+                              - derivatives.dB(q, p, a);
+          curl_b2 += curl_b*curl_b;
+          for (int b = a; b < 3; ++b) {
+            const Real curl_q = derivatives.geometry.dQ[p](q, a, b)
+                                - derivatives.geometry.dQ[q](p, a, b);
+            curl_q2 += curl_q*curl_q;
+          }
+        }
+      }
+    }
     constraints(m, I_CON_RQ, k, j, i) = std::sqrt(rq2);
     constraints(m, I_CON_RX, k, j, i) = std::sqrt(rx2);
     constraints(m, I_CON_RA, k, j, i) = std::sqrt(ra2);
     constraints(m, I_CON_RB, k, j, i) = std::sqrt(rb2);
+    constraints(m, I_CON_CURL_Q, k, j, i) = std::sqrt(curl_q2);
+    constraints(m, I_CON_CURL_X, k, j, i) = std::sqrt(curl_x2);
+    constraints(m, I_CON_CURL_A, k, j, i) = std::sqrt(curl_a2);
+    constraints(m, I_CON_CURL_B, k, j, i) = std::sqrt(curl_b2);
   });
 }
 

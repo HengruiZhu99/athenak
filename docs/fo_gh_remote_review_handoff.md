@@ -3,9 +3,10 @@
 ## Review target
 
 Review branch `codex/fo-gh-puncture-driver-20260817` against base
-`24dd527514a3b031d151ca8d3f2679e998a91b3d`.  The source implementation under
-review ends at `1e4c62ee25dd443334f8ddab1a27ad4d697e21d7`; the later commit adds
-only this documentation and captured evidence.
+`24dd527514a3b031d151ca8d3f2679e998a91b3d`.  Commit
+`1e4c62ee25dd443334f8ddab1a27ad4d697e21d7` is the source state used for the
+captured Perlmutter campaign.  Later commits add documentation/evidence and a
+compile-verified but not yet runtime-verified diagnostic extension.
 
 Do not work on fluid coupling.  Do not add Kerr-Schild or apparent-horizon
 scope.  Do not infer production qualification from the passing preflight.
@@ -23,6 +24,9 @@ scope.  Do not infer production qualification from the passing preflight.
 - static refinement and dynamic-regrid gradient repair;
 - exact/robust Minkowski, wave, algebra, geometry, RHS, puncture, restart, and
   AMR tests.
+- history reductions for the four curl constraints, determinant/trace
+  constraints, gauge residuals, and separately normalized fixed-radius
+  `H/M/GH/reduction+curl` families.
 
 ## Review priorities
 
@@ -33,9 +37,11 @@ scope.  Do not infer production qualification from the passing preflight.
    pointwise unit test.
 3. Check the two-pass stencil/ghost contract and whether KO treatment preserves
    compatibility at physical and coarse/fine boundaries.
-4. Treat the `[-4M,4M]^3` loss near the `4M` half-crossing time as potentially
+4. Runtime-test the new 20-value FO-GH history payload; it has compiled but has
+   not been executed locally or on a GPU.
+5. Treat the `[-4M,4M]^3` loss near the `4M` half-crossing time as potentially
    boundary-driven.  The single doubled-box coarse control is not decisive.
-5. Before long continuation, run a `[-8M,8M]^3` `N=32,48,64` ladder with
+6. Before long continuation, run a `[-8M,8M]^3` `N=32,48,64` ladder with
    fixed central-region histories and measured characteristic arrival.
 
 ## Reproducible source state

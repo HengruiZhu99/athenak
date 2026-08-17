@@ -269,3 +269,12 @@ exclude cells with `alpha < fo_gh/excise_lapse`; the default puncture input uses
 proper-volume normalization.  This is the lapse equivalent of the Z4c history
 mask `chi >= 0.0625`, because the identical initial data satisfy
 `chi=alpha^2`.  The mask does not modify the state or RHS.
+
+The FO-GH history payload contains 20 reductions: global squared L2 integrals
+for `H`, `M`, `C_perp`, `c`, each of `RQ/RX/Ra/RB`, the combined discrete curl
+constraints, `det(gtilde)-1`, `tr(Atilde)`, `h-f`, `R_alpha`, and `R_beta`;
+fixed-radius squared L2 integrals for the `H/M/GH/reduction+curl` families; and
+the separately masked global and fixed-radius proper volumes.  Runtime option
+`fo_gh/diagnostic_radius` selects the fixed coordinate radius and defaults to
+`1.0`.  The four individual curl magnitudes are also available as ordinary
+FO-GH output fields.

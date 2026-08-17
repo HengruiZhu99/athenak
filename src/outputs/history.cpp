@@ -15,6 +15,7 @@
 #include <string>
 
 #include "athena.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "eos/eos.hpp"
@@ -76,14 +77,23 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
 }
 
 void HistoryOutput::LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm) {
-  pdata->nhist = fo_gh::FoGh::ncon + 1;
-  const char *labels[fo_gh::FoGh::ncon] = {
-    "H-L2sq", "Mx-L2sq", "My-L2sq", "Mz-L2sq",
-    "GHp-L2sq", "GHx-L2sq", "GHy-L2sq", "GHz-L2sq",
-    "RQ-L2sq", "RX-L2sq", "Ra-L2sq", "RB-L2sq"
+  enum FoGhHistoryIndex {
+    HIST_H, HIST_M, HIST_CP, HIST_C, HIST_RQ, HIST_RX, HIST_RA, HIST_RB,
+    HIST_CURL, HIST_DET, HIST_TRA, HIST_H_MINUS_F, HIST_R_ALPHA, HIST_R_BETA,
+    HIST_NEAR_H, HIST_NEAR_M, HIST_NEAR_GH, HIST_NEAR_R,
+    HIST_VOLUME, HIST_NEAR_VOLUME, NHIST_FO_GH
   };
-  for (int n = 0; n < fo_gh::FoGh::ncon; ++n) pdata->label[n] = labels[n];
-  pdata->label[fo_gh::FoGh::ncon] = "Volume";
+  static_assert(NHIST_FO_GH <= NHISTORY_VARIABLES,
+                "FO-GH history exceeds NHISTORY_VARIABLES");
+  pdata->nhist = NHIST_FO_GH;
+  const char *labels[NHIST_FO_GH] = {
+    "H-L2sq", "M-L2sq", "Cp-L2sq", "c-L2sq",
+    "RQ-L2sq", "RX-L2sq", "Ra-L2sq", "RB-L2sq",
+    "Curl-L2sq", "detgt-L2sq", "trAt-L2sq", "h-f-L2sq",
+    "Ralpha-L2sq", "Rbeta-L2sq", "Hnear-L2sq", "Mnear-L2sq",
+    "GHnear-L2sq", "Rnear-L2sq", "Volume", "NearVolume"
+  };
+  for (int n = 0; n < NHIST_FO_GH; ++n) pdata->label[n] = labels[n];
 
   auto &indcs = pm->mb_indcs;
   auto &size = pm->pmb_pack->pmb->mb_size;
@@ -91,6 +101,8 @@ void HistoryOutput::LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm) {
   const auto vars = pm->pmb_pack->pfogh->u;
   const auto adm_vars = pm->pmb_pack->padm->adm;
   const Real excise_lapse = pm->pmb_pack->pfogh->opt.excise_lapse;
+  const Real eta_beta = pm->pmb_pack->pfogh->opt.eta_beta;
+  const Real diagnostic_radius = pm->pmb_pack->pfogh->opt.diagnostic_radius;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   array_sum::GlobalSum sums;
   Kokkos::parallel_reduce(
@@ -114,16 +126,90 @@ void HistoryOutput::LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm) {
                 *std::sqrt(std::abs(detg))
             : 0.0;
         array_sum::GlobalSum local;
-        for (int n = 0; n < fo_gh::FoGh::ncon; ++n) {
-          local.the_array[n] = volume*SQR(constraints(m, n, k, j, i));
+        local.the_array[HIST_H] = volume*SQR(
+            constraints(m, fo_gh::FoGh::I_CON_H, k, j, i));
+        Real momentum2 = 0.0;
+        for (int n = fo_gh::FoGh::I_CON_MX; n <= fo_gh::FoGh::I_CON_MZ; ++n) {
+          momentum2 += SQR(constraints(m, n, k, j, i));
         }
-        local.the_array[fo_gh::FoGh::ncon] = volume;
-        for (int n = fo_gh::FoGh::ncon + 1; n < NHISTORY_VARIABLES; ++n) {
+        local.the_array[HIST_M] = volume*momentum2;
+        local.the_array[HIST_CP] = volume*SQR(
+            constraints(m, fo_gh::FoGh::I_CON_GH_PERP, k, j, i));
+
+        fo_gh::RegularPointState point;
+        fo_gh::LoadPoint(vars, m, k, j, i, point);
+        Real c2 = 0.0;
+        for (int a = 0; a < 3; ++a) {
+          for (int b = 0; b < 3; ++b) {
+            c2 += point.gtilde(a, b)
+                  *constraints(m, fo_gh::FoGh::I_CON_GHX + a, k, j, i)
+                  *constraints(m, fo_gh::FoGh::I_CON_GHX + b, k, j, i);
+          }
+        }
+        local.the_array[HIST_C] = volume*c2;
+        const Real rq2 = SQR(constraints(m, fo_gh::FoGh::I_CON_RQ, k, j, i));
+        const Real rx2 = SQR(constraints(m, fo_gh::FoGh::I_CON_RX, k, j, i));
+        const Real ra2 = SQR(constraints(m, fo_gh::FoGh::I_CON_RA, k, j, i));
+        const Real rb2 = SQR(constraints(m, fo_gh::FoGh::I_CON_RB, k, j, i));
+        local.the_array[HIST_RQ] = volume*rq2;
+        local.the_array[HIST_RX] = volume*rx2;
+        local.the_array[HIST_RA] = volume*ra2;
+        local.the_array[HIST_RB] = volume*rb2;
+        Real curl2 = 0.0;
+        for (int n = fo_gh::FoGh::I_CON_CURL_Q;
+             n <= fo_gh::FoGh::I_CON_CURL_B; ++n) {
+          curl2 += SQR(constraints(m, n, k, j, i));
+        }
+        local.the_array[HIST_CURL] = volume*curl2;
+
+        AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> inverse;
+        const Real determinant = fo_gh::Invert3(point.gtilde, inverse);
+        Real trace_A = 0.0;
+        for (int a = 0; a < 3; ++a) {
+          for (int b = 0; b < 3; ++b) trace_A += inverse(a, b)*point.Atilde(a, b);
+        }
+        local.the_array[HIST_DET] = volume*SQR(determinant - 1.0);
+        local.the_array[HIST_TRA] = volume*SQR(trace_A);
+
+        Real f_perp = 0.0;
+        AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> f;
+        fo_gh::GaugeTargets(point, eta_beta, f_perp, f);
+        const Real perp_residual = point.h_perp - f_perp;
+        Real beta_residual2 = 0.0;
+        for (int a = 0; a < 3; ++a) {
+          for (int b = 0; b < 3; ++b) {
+            beta_residual2 += point.gtilde(a, b)*(point.h(a) - f(a))
+                              *(point.h(b) - f(b));
+          }
+        }
+        local.the_array[HIST_H_MINUS_F] =
+            volume*(perp_residual*perp_residual + beta_residual2);
+        local.the_array[HIST_R_ALPHA] =
+            volume*SQR(point.alpha*perp_residual);
+        local.the_array[HIST_R_BETA] = volume*beta_residual2;
+
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        const Real near_volume = (x*x + y*y + z*z < SQR(diagnostic_radius))
+                                 ? volume : 0.0;
+        local.the_array[HIST_NEAR_H] = near_volume*SQR(
+            constraints(m, fo_gh::FoGh::I_CON_H, k, j, i));
+        local.the_array[HIST_NEAR_M] = near_volume*momentum2;
+        local.the_array[HIST_NEAR_GH] = near_volume*(SQR(
+            constraints(m, fo_gh::FoGh::I_CON_GH_PERP, k, j, i)) + c2);
+        local.the_array[HIST_NEAR_R] = near_volume*(rq2 + rx2 + ra2 + rb2 + curl2);
+        local.the_array[HIST_VOLUME] = volume;
+        local.the_array[HIST_NEAR_VOLUME] = near_volume;
+        for (int n = NHIST_FO_GH; n < NHISTORY_VARIABLES; ++n) {
           local.the_array[n] = 0.0;
         }
         total += local;
       }, Kokkos::Sum<array_sum::GlobalSum>(sums));
-  for (int n = 0; n < pdata->nhist; ++n) {
+  for (int n = 0; n < NHIST_FO_GH; ++n) {
     pdata->hdata[n] = sums.the_array[n];
   }
 }

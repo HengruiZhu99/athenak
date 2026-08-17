@@ -38,7 +38,8 @@ char const * const FoGh::StateNames[FoGh::nfo_gh] = {
 char const * const FoGh::ConstraintNames[FoGh::ncon] = {
   "fo_gh_con_H", "fo_gh_con_Mx", "fo_gh_con_My", "fo_gh_con_Mz",
   "fo_gh_con_GHperp", "fo_gh_con_GHx", "fo_gh_con_GHy", "fo_gh_con_GHz",
-  "fo_gh_con_RQ", "fo_gh_con_RX", "fo_gh_con_Ra", "fo_gh_con_RB"
+  "fo_gh_con_RQ", "fo_gh_con_RX", "fo_gh_con_Ra", "fo_gh_con_RB",
+  "fo_gh_con_CurlQ", "fo_gh_con_CurlX", "fo_gh_con_Curla", "fo_gh_con_CurlB"
 };
 
 FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
@@ -58,11 +59,14 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.eta_beta = pin->GetOrAddReal("fo_gh", "eta_beta", 2.0);
   opt.diss = pin->GetOrAddReal("fo_gh", "diss", 0.0);
   opt.excise_lapse = pin->GetOrAddReal("fo_gh", "excise_lapse", 0.25);
+  opt.diagnostic_radius = pin->GetOrAddReal("fo_gh", "diagnostic_radius", 1.0);
   if (opt.kappa <= 0.0 || opt.mu_H <= 0.0 || opt.eta_H <= 0.0 ||
-      opt.eta_beta < 0.0 || opt.diss < 0.0 || opt.excise_lapse < 0.0) {
+      opt.eta_beta < 0.0 || opt.diss < 0.0 || opt.excise_lapse < 0.0 ||
+      opt.diagnostic_radius <= 0.0) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "FO-GH requires kappa, mu_H, and eta_H > 0 and "
-              << "eta_beta, diss, and diagnostic excise_lapse >= 0." << std::endl;
+              << "eta_beta, diss, and diagnostic excise_lapse >= 0, and "
+              << "diagnostic_radius > 0." << std::endl;
     std::exit(EXIT_FAILURE);
   }
 

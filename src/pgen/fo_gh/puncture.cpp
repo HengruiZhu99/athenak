@@ -42,7 +42,7 @@ Real ConstraintMagnitude(const DvceArray5D<Real> &constraints, const int group,
       value2 += SQR(constraints(m, n, k, j, i));
     }
   } else {
-    for (int n = fo_gh::FoGh::I_CON_RQ; n <= fo_gh::FoGh::I_CON_RB; ++n) {
+    for (int n = fo_gh::FoGh::I_CON_RQ; n <= fo_gh::FoGh::I_CON_CURL_B; ++n) {
       value2 += SQR(constraints(m, n, k, j, i));
     }
   }
@@ -113,6 +113,8 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
   Real minimum_radius = std::numeric_limits<float>::max();
   Real minimum_alpha = std::numeric_limits<float>::max();
   Real minimum_chi = std::numeric_limits<float>::max();
+  Real maximum_alpha = 0.0;
+  Real maximum_chi = 0.0;
   Real maximum_state = 0.0;
   Real maximum_rhs = 0.0;
   Real maximum_near_rhs = 0.0;
@@ -121,8 +123,9 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
       "fo_gh puncture diagnostics", Kokkos::RangePolicy<>(DevExeSpace(),
       0, pmbp->nmb_thispack*ncells),
       KOKKOS_LAMBDA(const int idx, Real &min_radius, Real &min_alpha,
-                    Real &min_chi, Real &max_state, Real &max_rhs,
-                    Real &max_near_rhs, int &nan_count) {
+                    Real &min_chi, Real &max_alpha, Real &max_chi,
+                    Real &max_state, Real &max_rhs, Real &max_near_rhs,
+                    int &nan_count) {
         int work = idx;
         const int i = work % indcs.nx1 + indcs.is;
         work /= indcs.nx1;
@@ -140,6 +143,8 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
         min_radius = fmin(min_radius, radius);
         min_alpha = fmin(min_alpha, state(m, fo_gh::I_ALPHA, k, j, i));
         min_chi = fmin(min_chi, state(m, fo_gh::I_CHI, k, j, i));
+        max_alpha = fmax(max_alpha, state(m, fo_gh::I_ALPHA, k, j, i));
+        max_chi = fmax(max_chi, state(m, fo_gh::I_CHI, k, j, i));
         for (int n = 0; n < fo_gh::nvar; ++n) {
           const Real state_value = state(m, n, k, j, i);
           const Real rhs_value = rhs(m, n, k, j, i);
@@ -154,7 +159,8 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
           }
         }
       }, Kokkos::Min<Real>(minimum_radius), Kokkos::Min<Real>(minimum_alpha),
-      Kokkos::Min<Real>(minimum_chi), Kokkos::Max<Real>(maximum_state),
+      Kokkos::Min<Real>(minimum_chi), Kokkos::Max<Real>(maximum_alpha),
+      Kokkos::Max<Real>(maximum_chi), Kokkos::Max<Real>(maximum_state),
       Kokkos::Max<Real>(maximum_rhs), Kokkos::Max<Real>(maximum_near_rhs),
       nonfinite);
   Real adm_adapter_error = 0.0;
@@ -343,6 +349,10 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
                 MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &minimum_chi, 1, MPI_ATHENA_REAL, MPI_MIN,
                 MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &maximum_alpha, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &maximum_chi, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &maximum_state, 1, MPI_ATHENA_REAL, MPI_MAX,
                 MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &maximum_rhs, 1, MPI_ATHENA_REAL, MPI_MAX,
@@ -386,7 +396,8 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
                                             + "-checkpoint.dat";
     FILE *checkpoint = std::fopen(checkpoint_filename.c_str(), "w");
     if (checkpoint == nullptr) std::exit(EXIT_FAILURE);
-    std::fprintf(checkpoint, "# time cycle near_radius finite alpha_min chi_min ");
+    std::fprintf(checkpoint, "# time cycle near_radius finite alpha_min alpha_max ");
+    std::fprintf(checkpoint, "chi_min chi_max ");
     std::fprintf(checkpoint, "metric_max Pi_max Phi_max gauge_driver_max ");
     std::fprintf(checkpoint, "max_char_speed dt_candidate effective_cfl_next ");
     std::fprintf(checkpoint, "adm_mass adm_mass_drift ");
@@ -404,9 +415,9 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
     const Real near_volume = constraint_sums.the_array[17];
     const Real effective_cfl = (pmbp->pfogh->dtnew > 0.0
                                 ? pm->dt/pmbp->pfogh->dtnew : 0.0);
-    std::fprintf(checkpoint, "%.17e %d %.17e %d %.17e %.17e ",
+    std::fprintf(checkpoint, "%.17e %d %.17e %d %.17e %.17e %.17e %.17e ",
                  pm->time, pm->ncycle, near_radius, (nonfinite == 0),
-                 minimum_alpha, minimum_chi);
+                 minimum_alpha, maximum_alpha, minimum_chi, maximum_chi);
     const Real expected_mass = pin->GetReal("problem", "mass");
     std::fprintf(checkpoint, "%.17e %.17e %.17e %.17e %.17e %.17e %.17e %.17e %.17e ",
                  gh_extrema[0], gh_extrema[1], gh_extrema[2], gh_extrema[3],

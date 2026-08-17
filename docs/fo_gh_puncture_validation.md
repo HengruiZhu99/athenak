@@ -173,6 +173,13 @@ The next reviewer should prioritize:
 3. missing curl, determinant/trace, and gauge-residual time-series diagnostics;
 4. only after those checks, continuation to `20M` and beyond.
 
+After the captured campaign, the source was extended to provide the missing
+curl, determinant/trace, gauge-residual, and separately normalized fixed-radius
+history reductions needed by items 2 and 3.  That extension has passed an
+incremental Release/Serial compile, but no Athena execution was started after
+the user's request to terminate runs.  Its runtime and GPU behavior therefore
+remain explicitly unverified.
+
 All source logs, histories, checkpoint summaries, CMake provenance, executable
 hashes, and GPU telemetry used above are under
 `docs/fo_gh_artifacts/`.

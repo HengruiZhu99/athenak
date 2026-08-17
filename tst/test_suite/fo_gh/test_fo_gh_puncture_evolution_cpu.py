@@ -9,15 +9,25 @@ import test_suite.testutils as testutils
 
 def constraint_family_norms(history):
     """Return masked proper-volume L2 norms for H, M, GH, and reduction families."""
-    component_norms = np.sqrt(history[:, 2:14] / history[:, -1, None])
+    component_norms = np.sqrt(history[:, 2:10] / history[:, -2, None])
     return np.column_stack(
         (
             component_norms[:, 0],
-            np.linalg.norm(component_norms[:, 1:4], axis=1),
+            component_norms[:, 1],
+            np.linalg.norm(component_norms[:, 2:4], axis=1),
             np.linalg.norm(component_norms[:, 4:8], axis=1),
-            np.linalg.norm(component_norms[:, 8:12], axis=1),
         )
     )
+
+
+def curl_family_norms(history):
+    """Return the combined masked proper-volume curl-constraint L2 norm."""
+    return np.sqrt(history[:, 10] / history[:, -2])
+
+
+def near_constraint_family_norms(history):
+    """Return fixed-radius masked H, M, GH, and reduction/curl L2 norms."""
+    return np.sqrt(history[:, 16:20] / history[:, -1, None])
 
 
 def test_fo_gh_puncture_evolution():
@@ -26,9 +36,11 @@ def test_fo_gh_puncture_evolution():
         testutils.run("inputs/fo_gh_puncture_evolution.athinput")
         data = np.loadtxt(history)
         checkpoint = np.loadtxt("fo_gh_puncture_evolution-checkpoint.dat")
-        assert data.shape[1] == 15
+        assert data.shape[1] == 22
         assert np.all(np.isfinite(data))
-        assert checkpoint.shape == (41,)
+        assert np.all(np.isfinite(curl_family_norms(data)))
+        assert np.all(np.isfinite(near_constraint_family_norms(data)))
+        assert checkpoint.shape == (43,)
         assert int(checkpoint[3]) == 1
         assert np.all(np.isfinite(checkpoint))
     finally:

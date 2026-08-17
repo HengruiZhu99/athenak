@@ -107,8 +107,21 @@ void ProblemGenerator::FoGhCompatibleUnit(ParameterInput *pin, const bool restar
           for (int q = p + 1; q < 3; ++q) {
             const Real curl_x = Dx<2>(p, idx, vars.X, m, q, k, j, i)
                                 - Dx<2>(q, idx, vars.X, m, p, k, j, i);
-            if (Kokkos::abs(curl_x) > tolerance) {
+            const Real curl_a = Dx<2>(p, idx, vars.a, m, q, k, j, i)
+                                - Dx<2>(q, idx, vars.a, m, p, k, j, i);
+            if (Kokkos::abs(curl_x) > tolerance ||
+                Kokkos::abs(curl_a) > tolerance) {
               ++local_errors;
+            }
+            for (int a = 0; a < 3; ++a) {
+              const Real curl_b = Dx<2>(p, idx, vars.B, m, q, a, k, j, i)
+                                  - Dx<2>(q, idx, vars.B, m, p, a, k, j, i);
+              if (Kokkos::abs(curl_b) > tolerance) ++local_errors;
+              for (int b = a; b < 3; ++b) {
+                const Real curl_q = Dx<2>(p, idx, vars.Q[q], m, a, b, k, j, i)
+                                    - Dx<2>(q, idx, vars.Q[p], m, a, b, k, j, i);
+                if (Kokkos::abs(curl_q) > tolerance) ++local_errors;
+              }
             }
           }
         }
@@ -143,6 +156,26 @@ void ProblemGenerator::FoGhCompatibleUnit(ParameterInput *pin, const bool restar
                               - Dx<2>(p, idx, rhs.gtilde, m, a, b, k, j, i))
                   > tolerance) {
                 ++local_errors;
+              }
+            }
+          }
+          for (int q = p + 1; q < 3; ++q) {
+            const Real curl_x = Dx<2>(p, idx, rhs.X, m, q, k, j, i)
+                                - Dx<2>(q, idx, rhs.X, m, p, k, j, i);
+            const Real curl_a = Dx<2>(p, idx, rhs.a, m, q, k, j, i)
+                                - Dx<2>(q, idx, rhs.a, m, p, k, j, i);
+            if (Kokkos::abs(curl_x) > tolerance ||
+                Kokkos::abs(curl_a) > tolerance) {
+              ++local_errors;
+            }
+            for (int a = 0; a < 3; ++a) {
+              const Real curl_b = Dx<2>(p, idx, rhs.B, m, q, a, k, j, i)
+                                  - Dx<2>(q, idx, rhs.B, m, p, a, k, j, i);
+              if (Kokkos::abs(curl_b) > tolerance) ++local_errors;
+              for (int b = a; b < 3; ++b) {
+                const Real curl_q = Dx<2>(p, idx, rhs.Q[q], m, a, b, k, j, i)
+                                    - Dx<2>(q, idx, rhs.Q[p], m, a, b, k, j, i);
+                if (Kokkos::abs(curl_q) > tolerance) ++local_errors;
               }
             }
           }

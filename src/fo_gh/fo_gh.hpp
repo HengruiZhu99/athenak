@@ -30,7 +30,8 @@ class FoGh {
   enum ConstraintIndex {
     I_CON_H, I_CON_MX, I_CON_MY, I_CON_MZ,
     I_CON_GH_PERP, I_CON_GHX, I_CON_GHY, I_CON_GHZ,
-    I_CON_RQ, I_CON_RX, I_CON_RA, I_CON_RB, ncon
+    I_CON_RQ, I_CON_RX, I_CON_RA, I_CON_RB,
+    I_CON_CURL_Q, I_CON_CURL_X, I_CON_CURL_A, I_CON_CURL_B, ncon
   };
   static char const * const ConstraintNames[ncon];
 
@@ -62,6 +63,7 @@ class FoGh {
     Real eta_beta;
     Real diss;
     Real excise_lapse;
+    Real diagnostic_radius;
   } opt;
 
   DvceArray5D<Real> u0;
