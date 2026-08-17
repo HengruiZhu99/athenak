@@ -129,6 +129,188 @@ void ProblemGenerator::FoGhAlgebraUnit(ParameterInput *pin, const bool restart) 
             ++local_errors;
           }
         }
+
+        // Non-diagonal ADM-jet oracle for the complete regular and standard-GH
+        // maps.  In particular, exercise all mixed spacetime Phi components
+        // and the shift-dependent Pi reconstruction, which diagonal static
+        // data cannot constrain.
+        adm.ZeroClear();
+        adm.alpha = 0.84;
+        adm.gamma(0, 0) = 1.43;
+        adm.gamma(0, 1) = 0.18;
+        adm.gamma(0, 2) = -0.09;
+        adm.gamma(1, 1) = 1.21;
+        adm.gamma(1, 2) = 0.08;
+        adm.gamma(2, 2) = 0.96;
+        adm.K(0, 0) = 0.07;
+        adm.K(0, 1) = -0.025;
+        adm.K(0, 2) = 0.035;
+        adm.K(1, 1) = -0.045;
+        adm.K(1, 2) = 0.055;
+        adm.K(2, 2) = 0.015;
+        for (int p = 0; p < 3; ++p) {
+          adm.beta(p) = 0.06*(p + 1) - 0.10;
+          adm.dalpha(p) = -0.017*(p + 1) + 0.029;
+          for (int a = 0; a < 3; ++a) {
+            adm.dbeta(p, a) = 0.012*(p + 1)*(a + 1)
+                               - 0.019*(p + a + 1);
+            for (int b = a; b < 3; ++b) {
+              adm.dgamma(p, a, b) = 0.014*(p + 1)*(a + b + 2)
+                                     - 0.008*(a + 1)*(b + 1);
+            }
+          }
+        }
+        constexpr Real eta_beta = 1.6;
+        fo_gh::AdmToRegular(adm, eta_beta, regular);
+
+        AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> gamma_inverse;
+        const Real det_gamma = fo_gh::Invert3(adm.gamma, gamma_inverse);
+        const Real chi_ref = std::pow(det_gamma, -1.0/3.0);
+        Real K_trace_ref = 0.0;
+        for (int i = 0; i < 3; ++i) {
+          for (int j = 0; j < 3; ++j) {
+            K_trace_ref += gamma_inverse(i, j)*adm.K(i, j);
+          }
+        }
+        if (Kokkos::abs(regular.chi - chi_ref) > tol ||
+            Kokkos::abs(regular.K - K_trace_ref) > tol ||
+            Kokkos::abs(regular.pi + K_trace_ref) > tol) {
+          ++local_errors;
+        }
+        for (int p = 0; p < 3; ++p) {
+          Real metric_trace = 0.0;
+          for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+              metric_trace += gamma_inverse(i, j)*adm.dgamma(p, i, j);
+            }
+          }
+          const Real X_ref = -(chi_ref/3.0)*metric_trace;
+          if (Kokkos::abs(regular.X(p) - X_ref) > tol ||
+              Kokkos::abs(regular.a(p) - adm.dalpha(p)) > tol) {
+            ++local_errors;
+          }
+          for (int a = 0; a < 3; ++a) {
+            if (Kokkos::abs(regular.B(p, a) - adm.dbeta(p, a)) > tol) {
+              ++local_errors;
+            }
+            for (int b = a; b < 3; ++b) {
+              const Real gtilde_ref = chi_ref*adm.gamma(a, b);
+              const Real Atilde_ref = chi_ref
+                  *(adm.K(a, b) - adm.gamma(a, b)*K_trace_ref/3.0);
+              const Real Q_ref = X_ref*adm.gamma(a, b)
+                                 + chi_ref*adm.dgamma(p, a, b);
+              if (Kokkos::abs(regular.gtilde(a, b) - gtilde_ref) > tol ||
+                  Kokkos::abs(regular.Atilde(a, b) - Atilde_ref) > tol ||
+                  Kokkos::abs(regular.Q(p, a, b) - Q_ref) > tol) {
+                ++local_errors;
+              }
+            }
+          }
+        }
+
+        AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> gtilde_inverse;
+        fo_gh::Invert3(regular.gtilde, gtilde_inverse);
+        for (int a = 0; a < 3; ++a) {
+          Real lambda_ref = 0.0;
+          for (int j = 0; j < 3; ++j) {
+            for (int k = 0; k < 3; ++k) {
+              Real gamma_tilde = 0.0;
+              for (int l = 0; l < 3; ++l) {
+                gamma_tilde += 0.5*gtilde_inverse(a, l)
+                    *(regular.Q(j, l, k) + regular.Q(k, l, j)
+                      - regular.Q(l, j, k));
+              }
+              lambda_ref += gtilde_inverse(j, k)*gamma_tilde;
+            }
+          }
+          if (Kokkos::abs(regular.Lambda(a) - lambda_ref) > tol) {
+            ++local_errors;
+          }
+        }
+
+        fo_gh::RegularToStandardGh(regular, gh);
+        Real beta_lower_ref[3] = {0.0, 0.0, 0.0};
+        for (int i = 0; i < 3; ++i) {
+          for (int j = 0; j < 3; ++j) {
+            beta_lower_ref[i] += adm.gamma(i, j)*adm.beta(j);
+          }
+        }
+        Real g00_ref = -adm.alpha*adm.alpha;
+        for (int i = 0; i < 3; ++i) g00_ref += beta_lower_ref[i]*adm.beta(i);
+        if (Kokkos::abs(gh.g(0, 0) - g00_ref) > tol) {
+          ++local_errors;
+        }
+        for (int i = 0; i < 3; ++i) {
+          if (Kokkos::abs(gh.g(0, i + 1) - beta_lower_ref[i]) > tol) {
+            ++local_errors;
+          }
+          for (int j = i; j < 3; ++j) {
+            if (Kokkos::abs(gh.g(i + 1, j + 1) - adm.gamma(i, j)) > tol) {
+              ++local_errors;
+            }
+          }
+        }
+
+        for (int p = 0; p < 3; ++p) {
+          Real phi00_ref = -2.0*adm.alpha*adm.dalpha(p);
+          for (int i = 0; i < 3; ++i) {
+            Real phi0i_ref = 0.0;
+            for (int j = 0; j < 3; ++j) {
+              phi0i_ref += adm.dgamma(p, i, j)*adm.beta(j)
+                           + adm.gamma(i, j)*adm.dbeta(p, j);
+              phi00_ref += adm.dgamma(p, i, j)*adm.beta(i)*adm.beta(j)
+                           + 2.0*adm.gamma(i, j)*adm.beta(i)*adm.dbeta(p, j);
+            }
+            if (Kokkos::abs(gh.Phi(p, 0, i + 1) - phi0i_ref) > tol) {
+              ++local_errors;
+            }
+            for (int j = i; j < 3; ++j) {
+              if (Kokkos::abs(gh.Phi(p, i + 1, j + 1)
+                              - adm.dgamma(p, i, j)) > tol) {
+                ++local_errors;
+              }
+            }
+          }
+          if (Kokkos::abs(gh.Phi(p, 0, 0) - phi00_ref) > tol) {
+            ++local_errors;
+          }
+        }
+
+        Real d0gamma_ref[3][3];
+        Real d0beta_ref[3];
+        for (int i = 0; i < 3; ++i) {
+          d0beta_ref[i] = 0.75*regular.Lambda(i) - eta_beta*regular.beta(i);
+          for (int j = 0; j < 3; ++j) {
+            d0gamma_ref[i][j] = -2.0*adm.alpha*adm.K(i, j);
+            for (int k = 0; k < 3; ++k) {
+              d0gamma_ref[i][j] += adm.gamma(i, k)*adm.dbeta(j, k)
+                                   + adm.gamma(j, k)*adm.dbeta(i, k);
+            }
+          }
+        }
+        const Real d0alpha_ref = -2.0*adm.alpha*K_trace_ref;
+        Real d0g00_ref = -2.0*adm.alpha*d0alpha_ref;
+        for (int i = 0; i < 3; ++i) {
+          Real d0g0i_ref = 0.0;
+          for (int j = 0; j < 3; ++j) {
+            d0g0i_ref += d0gamma_ref[i][j]*adm.beta(j)
+                         + adm.gamma(i, j)*d0beta_ref[j];
+            d0g00_ref += d0gamma_ref[i][j]*adm.beta(i)*adm.beta(j)
+                         + 2.0*adm.gamma(i, j)*adm.beta(i)*d0beta_ref[j];
+          }
+          if (Kokkos::abs(gh.Pi(0, i + 1) + d0g0i_ref/adm.alpha) > tol) {
+            ++local_errors;
+          }
+          for (int j = i; j < 3; ++j) {
+            if (Kokkos::abs(gh.Pi(i + 1, j + 1)
+                            + d0gamma_ref[i][j]/adm.alpha) > tol) {
+              ++local_errors;
+            }
+          }
+        }
+        if (Kokkos::abs(gh.Pi(0, 0) + d0g00_ref/adm.alpha) > tol) {
+          ++local_errors;
+        }
       }, errors);
 
   if (errors != 0) {

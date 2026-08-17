@@ -60,6 +60,16 @@ advection, every `Lambda` source, and its vector Lie-index term.  Both focused
 unit executables pass from `/tmp/athenak_fogh_geometry_audit/src/athena` with
 Kokkos Serial 4.4.0 and GCC 13.3.0.
 
+A subsequent complete non-diagonal ADM-jet oracle found a separate
+standard-GH conversion defect: `RegularToStandardGh` contracted the local
+`gamma(i,k)` workspace into `d0gamma(i,j)` before all symmetric metric
+components had been initialized.  Splitting metric/K reconstruction from the
+`d0gamma` pass fixes the nine resulting `Pi_ab` mismatches.  The independent
+oracle now checks every regular variable and every reconstructed `g_ab`,
+`Phi_iab`, and `Pi_ab` component.  Algebra, geometry, RHS, compatible-gradient,
+and tensor device tests pass with the corrected Serial executable, SHA-256
+`8de429a9a0983dacd034cc7fa7183a5c9ec68b04b7b9aedfb09d31c3cf1368b5`.
+
 All Perlmutter and `t>=1M` puncture evolutions reported below predate this
 continuum correction.  They remain useful failure-localization evidence but do
 not qualify the corrected source.  A bounded corrected-source local subset now
@@ -229,8 +239,9 @@ not promotion evidence.
 
 The pre-correction module passed the narrow algebraic, Minkowski, wave,
 compatible-gradient, restart, and regrid checks listed above.  The corrected
-non-diagonal RHS passes its focused local geometry and RHS tests, but has not
-yet been rerun through those numerical ladders.  It has not demonstrated long
+non-diagonal RHS and standard-GH map pass focused local tests, a `t=0.2M`
+bounded puncture, the `t=0.01M` constraint ladder, and bitwise two-cycle
+restart.  They have not been rerun on GPU and have not demonstrated long
 puncture stability.  The `5M` loss of resolution improvement is a hard
 scientific gate, not a threshold to weaken.  Current evidence does not
 establish production readiness, long uniform stability, long SMR stability,

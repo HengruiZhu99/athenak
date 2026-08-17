@@ -7,9 +7,9 @@ Review branch `codex/fo-gh-puncture-driver-20260817` against base
 `1e4c62ee25dd443334f8ddab1a27ad4d697e21d7` is the source state used for the
 first captured Perlmutter campaign.  Commit
 `3ec9c3bd326f22c7dedf792572876f4c2a8683a1` was used for the later current-source
-preflight and doubled-domain controls.  The current worktree contains a newer
-continuum correction described below; all Perlmutter puncture evolution
-evidence predates it.
+preflight and doubled-domain controls.  The current branch contains newer
+continuum, diagnostic, and standard-GH map corrections described below; all
+Perlmutter puncture evolution evidence predates them.
 
 Do not work on fluid coupling.  Do not add Kerr-Schild or apparent-horizon
 scope.  Do not infer production qualification from the passing preflight.
@@ -42,15 +42,18 @@ scope.  Do not infer production qualification from the passing preflight.
    Hamiltonian, momentum, and full nonlinear RHS regressions.  The latter
    directly covers the `Atilde` TF and Lambda Lie-index terms against the fixed
    equations.
-3. Check the two-pass stencil/ghost contract and whether KO treatment preserves
+3. Review the complete non-diagonal ADM-to-regular-to-standard-GH oracle and
+   the two-pass initialization fix in `RegularToStandardGh`; independently
+   verify every shift-dependent `Phi_iab` and `Pi_ab` expression.
+4. Check the two-pass stencil/ghost contract and whether KO treatment preserves
    compatibility at physical and coarse/fine boundaries.
-4. Rerun the corrected source on GPU; the earlier robust-advection/history
+5. Rerun the corrected source on GPU; the earlier robust-advection/history
    preflight predates the non-diagonal RHS correction.
-5. Preserve fixed-region diagnostics alongside the lapse mask.  The completed
+6. Preserve fixed-region diagnostics alongside the lapse mask.  The completed
    same-spacing small/doubled-box comparison shows that moving the face from
    `4M` to `8M` does not alter the central histories through `5M`; the large
    masked jumps instead coincide with resolution-dependent mask-volume jumps.
-6. Before long continuation, repeat a bounded `[-8M,8M]^3` `N=32,48,64`
+7. Before long continuation, repeat a bounded `[-8M,8M]^3` `N=32,48,64`
    ladder with the corrected source and require exterior GH convergence.
 
 ## Reproducible source state
@@ -83,6 +86,10 @@ The built executable SHA-256 is
 - `docs/fo_gh_artifacts/local_parameter_sweep/`: small-box diagnostic sweep.
 - `docs/fo_gh_artifacts/perlmutter_20260817_current/README.md`: later-source
   A100 preflight, equal-spacing domain control, and exterior-norm summary.
+- `docs/fo_gh_artifacts/local_standard_gh_map_audit/`: corrected-map local
+  histories, checkpoints, hashes, and focused-result summary.
+- `docs/fo_gh_remote_audit_prompt.md`: self-contained prompt for an adversarial
+  remote review.
 
 The large restart files remain in
 `/pscratch/sd/h/hzhu/fo-gh-puncture-20260817.L0vwO0`; the repository contains
@@ -99,5 +106,6 @@ The pre-correction identical-data puncture is finite through `5M`.  Equal-dx
 small/doubled-box central histories agree through `5M`, so the central behavior
 is not caused by boundary arrival on that interval.  Moving lapse-mask volume
 and stalled exterior GH convergence prevent a stability/convergence claim.
-The corrected RHS has only focused local evidence.  No run beyond `5M`
-and no prior GPU result should be used to qualify it.
+The corrected RHS and standard-GH map have focused local evidence through
+`t=0.2M`, a `t=0.01M` constraint ladder, and bitwise restart.  No corrected run
+beyond `0.2M` and no prior GPU result should be used to qualify them.

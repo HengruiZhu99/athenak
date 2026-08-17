@@ -22,7 +22,8 @@ cmake --build /tmp/athenak_fogh_geometry_audit -j 8
 - Kokkos 4.4.0 Serial;
 - double precision, MPI off, OpenMP off;
 - executable SHA-256
-  `42373267e725ee93df6e29460d852b30de4de2b9a21dbc4aef515afcd2a31e0f`.
+  `8de429a9a0983dacd034cc7fa7183a5c9ec68b04b7b9aedfb09d31c3cf1368b5`
+  after the subsequent standard-GH map correction.
 
 Focused results:
 
@@ -30,6 +31,7 @@ Focused results:
 non_diagonal_geometry_oracle=PASS
 non_diagonal_rhs_oracle=PASS
 non_diagonal_full_Atilde_Lambda_oracle=PASS
+non_diagonal_complete_adm_regular_standard_gh_map=PASS
 compatible_gradient_and_robust_advection=PASS
 exact_minkowski_uniform_max_error=0
 exact_minkowski_smr_max_error=0

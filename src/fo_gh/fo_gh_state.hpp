@@ -233,6 +233,13 @@ void RegularToStandardGh(const RegularPointState &u, StandardGhPointState &gh) {
     for (int j = i; j < 3; ++j) {
       gamma(i, j) = u.gtilde(i, j)/u.chi;
       Kij(i, j) = (u.Atilde(i, j) + u.gtilde(i, j)*u.K/3.0)/u.chi;
+    }
+  }
+  // Populate the complete symmetric metric before contracting it below.  Computing
+  // d0gamma in the reconstruction loop above would read not-yet-initialized
+  // off-diagonal/diagonal entries for general non-diagonal data.
+  for (int i = 0; i < 3; ++i) {
+    for (int j = i; j < 3; ++j) {
       d0gamma(i, j) = -2.0*u.alpha*Kij(i, j);
       for (int k = 0; k < 3; ++k) {
         d0gamma(i, j) += gamma(i, k)*u.B(j, k) + gamma(j, k)*u.B(i, k);
