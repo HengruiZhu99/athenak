@@ -26,6 +26,7 @@
 #include "refinement_criteria.hpp"
 
 #include "dyn_grmhd/dyn_grmhd.hpp"
+#include "fo_gh/fo_gh.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "radiation/radiation.hpp"
@@ -115,6 +116,9 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
   if (pm->pmb_pack->pz4c != nullptr) {
     ncc_tosend += (pm->pmb_pack->pz4c->nz4c);
   }
+  if (pm->pmb_pack->pfogh != nullptr) {
+    ncc_tosend += pm->pmb_pack->pfogh->nfo_gh;
+  }
   int nmb = std::max((pm->pmb_pack->nmb_thispack), (pm->nmb_maxperrank));
   // number of cells per MB, including ghost zones
   int ncells = (pm->mb_indcs.nx1 + 2*pm->mb_indcs.ng);
@@ -161,6 +165,12 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
 
     MeshBlockPack* pmbp = pmy_mesh->pmb_pack;
+    if (pmbp->pfogh != nullptr) {
+      // Prolong the primary variables conventionally, then restore the defining
+      // compatible-gradient identities only on blocks changed by this topology update.
+      pmbp->pfogh->RepairGradients(fc_amr_repair);
+      pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
+    }
     if (pmbp->pmhd != nullptr) {
       RepairAMRFC(pmbp->pmhd->b0);
       // Repair changes internal faces after the first exchange finalized exterior
@@ -179,6 +189,9 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     }
     if (pmbp->pz4c != nullptr) {
       (void) pmbp->pz4c->NewTimeStep(pdriver, pdriver->nexp_stages);
+    }
+    if (pmbp->pfogh != nullptr) {
+      (void) pmbp->pfogh->NewTimeStep(pdriver, pdriver->nexp_stages);
     }
 
     nmb_created += nnew;
@@ -512,6 +525,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   mhd::MHD* pmhd = pm->pmb_pack->pmhd;
   radiation::Radiation* prad = pm->pmb_pack->prad;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
+  fo_gh::FoGh* pfogh = pm->pmb_pack->pfogh;
   adm::ADM* padm = pm->pmb_pack->padm;
   if ((ndel > 0) && (pmhd != nullptr)) {
     RestrictFC(pmhd->b0, pmhd->coarse_b0);
@@ -545,6 +559,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     if (pz4c != nullptr) {
       DerefineCCSameRank(pz4c->u0, pz4c->coarse_u0);
     }
+    if (pfogh != nullptr) {
+      DerefineCCSameRank(pfogh->u0, pfogh->coarse_u0);
+    }
   }
 
   // Step 6.
@@ -562,6 +579,8 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   }
   if (pz4c != nullptr) {
     CopyCC(pz4c->u0);
+  } else if (pfogh != nullptr) {
+    CopyCC(pfogh->u0);
   } else if (padm != nullptr) {
     CopyCC(padm->u_adm);
   }
@@ -581,6 +600,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (pz4c != nullptr) {
       CopyForRefinementCC(pz4c->u0, pz4c->coarse_u0);
+    }
+    if (pfogh != nullptr) {
+      CopyForRefinementCC(pfogh->u0, pfogh->coarse_u0);
     }
   }
 
@@ -616,6 +638,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (pz4c != nullptr) {
       RefineCC(new_to_old, pz4c->u0, pz4c->coarse_u0, true);
+    }
+    if (pfogh != nullptr) {
+      RefineCC(new_to_old, pfogh->u0, pfogh->coarse_u0, true);
     }
   }
 
@@ -674,7 +699,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   // Initialize quantities stored on the mesh associated with each physics, if necessary
   if ((nnew > 0) || (ndel > 0)) {
     // With dynGRMHD, recalculate ADM variables
-    if ((pz4c == nullptr) && (padm != nullptr)) {
+    if ((pz4c == nullptr) && (pfogh == nullptr) && (padm != nullptr)) {
       padm->SetADMVariables(pm->pmb_pack);
     }
     // With radiation, compute tetrads and associated mesh arrays

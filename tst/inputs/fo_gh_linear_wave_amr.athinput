@@ -1,7 +1,7 @@
-# AthenaK input for FO-GH linear gravitational-wave convergence
+# AthenaK dynamic-regrid regression for compatible vacuum FO-GH gradients
 
 <job>
-basename = fo_gh_linear_wave
+basename = fo_gh_linear_wave_amr
 
 <mesh>
 nghost = 4
@@ -10,19 +10,19 @@ x1min = 0.0
 x1max = 1.0
 ix1_bc = periodic
 ox1_bc = periodic
-nx2 = 8
+nx2 = 16
 x2min = 0.0
 x2max = 1.0
 ix2_bc = periodic
 ox2_bc = periodic
-nx3 = 8
+nx3 = 16
 x3min = 0.0
 x3max = 1.0
 ix3_bc = periodic
 ox3_bc = periodic
 
 <meshblock>
-nx1 = 16
+nx1 = 8
 nx2 = 8
 nx3 = 8
 
@@ -30,14 +30,14 @@ nx3 = 8
 evolution = dynamic
 integrator = rk4
 cfl_number = 0.1
-nlim = -1
+nlim = 2
 tlim = 0.1
-ndiag = 10
+ndiag = 1
 
 <mesh_refinement>
-refinement = none
+refinement = adaptive
 num_levels = 2
-max_nmb_per_rank = 128
+max_nmb_per_rank = 64
 refinement_interval = 1
 
 <amr_criterion0>
@@ -46,15 +46,6 @@ location_x1 = 0.25
 location_x2 = 0.25
 location_x3 = 0.25
 location_rad = 0.1
-
-<refined_region1>
-level = 1
-x1min = 0.1
-x1max = 0.4
-x2min = 0.01
-x2max = 0.99
-x3min = 0.01
-x3max = 0.99
 
 <fo_gh>
 fd_order = 4
@@ -66,11 +57,7 @@ diss = 0.02
 
 <problem>
 pgen_name = fo_gh_linear_wave
-amp = 1.0e-8
+amp = 1.0e-6
 kx1 = 1.0
 kx2 = 0.0
 kx3 = 0.0
-
-<output1>
-file_type = rst
-dcycle = 0

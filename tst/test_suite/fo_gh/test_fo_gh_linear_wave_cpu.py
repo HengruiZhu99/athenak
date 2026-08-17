@@ -1,6 +1,8 @@
 """Fourth-order CPU linear-wave convergence for regularized vacuum FO-GH."""
 
 import math
+from pathlib import Path
+import shutil
 import numpy as np
 import pytest
 import test_suite.testutils as testutils
@@ -56,5 +58,60 @@ def test_fo_gh_linear_wave_smr_convergence():
             pytest.fail(
                 f"FO-GH SMR wave did not converge: errors={errors}, order={order}"
             )
+    finally:
+        testutils.cleanup()
+
+
+def test_fo_gh_restart_equivalence():
+    """A checkpoint boundary must reproduce uninterrupted FO-GH evolution exactly."""
+    shutil.rmtree("rst", ignore_errors=True)
+    try:
+        assert testutils.run(
+            "inputs/fo_gh_linear_wave.athinput",
+            ["job/basename=fo_gh_direct", "time/nlim=2"],
+        )
+        direct = np.array(np.loadtxt("fo_gh_direct-errors.dat"), copy=True)
+        testutils.cleanup()
+
+        assert testutils.run(
+            "inputs/fo_gh_linear_wave.athinput",
+            [
+                "job/basename=fo_gh_split",
+                "time/nlim=1",
+                "output1/dcycle=1",
+            ],
+        )
+        restart = Path("rst/fo_gh_split.00001.rst")
+        assert restart.exists()
+        testutils.cleanup()
+
+        assert testutils.run_command(
+            [
+                "./athena",
+                "-r",
+                str(restart),
+                "job/basename=fo_gh_resumed",
+                "time/nlim=2",
+                "output1/dcycle=0",
+            ]
+        )
+        resumed = np.loadtxt("fo_gh_resumed-errors.dat")
+        np.testing.assert_array_equal(resumed, direct)
+    finally:
+        shutil.rmtree("rst", ignore_errors=True)
+        testutils.cleanup()
+
+
+def test_fo_gh_dynamic_regrid_gradient_repair():
+    """A real regrid must restore every compatible first-order gradient."""
+    try:
+        assert testutils.run(
+            "inputs/fo_gh_linear_wave_amr.athinput",
+            ["mesh/nx1=8", "mesh/nx2=8", "mesh/nx3=8"],
+        )
+        data = np.loadtxt("fo_gh_linear_wave_amr-errors.dat")
+        assert int(data[7]) == 8
+        assert int(data[8]) == 7
+        assert math.isfinite(data[6]) and data[6] < 5.0e-13
     finally:
         testutils.cleanup()

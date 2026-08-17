@@ -80,6 +80,7 @@ class FoGh {
   TaskStatus Prolongate(Driver *d, int stage);
   TaskStatus ApplyPhysicalBCs(Driver *d, int stage);
   TaskStatus NewTimeStep(Driver *d, int stage);
+  void RepairGradients(const DualArray1D<int> &repair);
 
  private:
   void BindVariables(DvceArray5D<Real> data, Variables &vars);

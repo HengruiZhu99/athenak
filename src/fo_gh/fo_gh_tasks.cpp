@@ -17,6 +17,7 @@
 #include "mesh/mesh_refinement.hpp"
 #include "pgen/pgen.hpp"
 #include "tasklist/numerical_relativity.hpp"
+#include "utils/finite_diff.hpp"
 
 namespace fo_gh {
 
@@ -117,6 +118,45 @@ void ApplyExtrapolation(MeshBlockPack *pmbp, DvceArray5D<Real> &state,
 }
 
 } // namespace
+
+template <int FDNG>
+void RepairCompatibleGradients(FoGh *pfogh, MeshBlockPack *pmbp,
+                               const DualArray1D<int> &repair) {
+  auto &indcs = pmbp->pmesh->mb_indcs;
+  auto &size = pmbp->pmb->mb_size;
+  const int mbs = pmbp->gids;
+  const auto vars = pfogh->u;
+  par_for("fo_gh AMR gradient repair", DevExeSpace(), 0, pmbp->nmb_thispack - 1,
+  indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    if (repair.d_view(m + mbs) == 0) return;
+    const Real idx[3] = {1.0/size.d_view(m).dx1,
+                         1.0/size.d_view(m).dx2,
+                         1.0/size.d_view(m).dx3};
+    for (int p = 0; p < 3; ++p) {
+      vars.X(m, p, k, j, i) = Dx<FDNG>(p, idx, vars.chi, m, k, j, i);
+      vars.a(m, p, k, j, i) = Dx<FDNG>(p, idx, vars.alpha, m, k, j, i);
+      for (int a = 0; a < 3; ++a) {
+        vars.B(m, p, a, k, j, i) =
+            Dx<FDNG>(p, idx, vars.beta, m, a, k, j, i);
+      }
+      for (int a = 0; a < 3; ++a) {
+        for (int b = a; b < 3; ++b) {
+          vars.Q[p](m, a, b, k, j, i) =
+              Dx<FDNG>(p, idx, vars.gtilde, m, a, b, k, j, i);
+        }
+      }
+    }
+  });
+}
+
+void FoGh::RepairGradients(const DualArray1D<int> &repair) {
+  switch (opt.fd_order) {
+    case 2: RepairCompatibleGradients<2>(this, pmy_pack, repair); break;
+    case 4: RepairCompatibleGradients<3>(this, pmy_pack, repair); break;
+    case 6: RepairCompatibleGradients<4>(this, pmy_pack, repair); break;
+  }
+}
 
 void FoGh::QueueTasks() {
   using namespace numrel; // NOLINT(build/namespaces)

@@ -72,6 +72,13 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  if (ppack->pmesh->multilevel && opt.fd_order == 6) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "FO-GH fd_order=6 is not supported on multilevel meshes: "
+              << "AthenaK has no matching sixth-order AMR prolongation operator."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   const bool evolves = pin->GetString("time", "evolution") != "static";
   if (evolves && !(ppack->pmesh->three_d)) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__

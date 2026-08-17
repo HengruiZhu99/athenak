@@ -17,8 +17,10 @@
 #include "fo_gh/fo_gh.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/mesh_refinement.hpp"
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
+#include "utils/finite_diff.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -101,6 +103,48 @@ void SetLinearWave(ParameterInput *pin, Mesh *pm, DvceArray5D<Real> state,
   });
 }
 
+template <int FDNG>
+Real ReductionConstraintLinf(Mesh *pm) {
+  auto *pmbp = pm->pmb_pack;
+  auto &indcs = pm->mb_indcs;
+  auto &size = pmbp->pmb->mb_size;
+  const auto vars = pmbp->pfogh->u;
+  const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  Real linf = 0.0;
+  Kokkos::parallel_reduce(
+      "fo_gh wave reduction constraint", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pmbp->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is;
+        work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js;
+        work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real idxv[3] = {1.0/size.d_view(m).dx1,
+                              1.0/size.d_view(m).dx2,
+                              1.0/size.d_view(m).dx3};
+        for (int p = 0; p < 3; ++p) {
+          maximum = fmax(maximum, Kokkos::abs(vars.X(m, p, k, j, i)
+              - Dx<FDNG>(p, idxv, vars.chi, m, k, j, i)));
+          maximum = fmax(maximum, Kokkos::abs(vars.a(m, p, k, j, i)
+              - Dx<FDNG>(p, idxv, vars.alpha, m, k, j, i)));
+          for (int a = 0; a < 3; ++a) {
+            maximum = fmax(maximum, Kokkos::abs(vars.B(m, p, a, k, j, i)
+                - Dx<FDNG>(p, idxv, vars.beta, m, a, k, j, i)));
+          }
+          for (int a = 0; a < 3; ++a) {
+            for (int b = a; b < 3; ++b) {
+              maximum = fmax(maximum, Kokkos::abs(vars.Q[p](m, a, b, k, j, i)
+                  - Dx<FDNG>(p, idxv, vars.gtilde, m, a, b, k, j, i)));
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(linf));
+  return linf;
+}
+
 void FoGhLinearWaveErrors(ParameterInput *pin, Mesh *pm) {
   auto *pmbp = pm->pmb_pack;
   SetLinearWave(pin, pm, pmbp->pfogh->u1, pm->time);
@@ -152,25 +196,39 @@ void FoGhLinearWaveErrors(ParameterInput *pin, Mesh *pm) {
   MPI_Allreduce(MPI_IN_PLACE, &l1, 1, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &linf, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
 #endif
+  Real reduction_linf = 0.0;
+  switch (pmbp->pfogh->opt.fd_order) {
+    case 2: reduction_linf = ReductionConstraintLinf<2>(pm); break;
+    case 4: reduction_linf = ReductionConstraintLinf<3>(pm); break;
+    case 6: reduction_linf = ReductionConstraintLinf<4>(pm); break;
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &reduction_linf, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+#endif
   const Real domain_volume =
       (pm->mesh_size.x1max - pm->mesh_size.x1min)
       *(pm->mesh_size.x2max - pm->mesh_size.x2min)
       *(pm->mesh_size.x3max - pm->mesh_size.x3min);
   l1 /= 6.0*domain_volume;
   if (global_variable::my_rank == 0) {
+    const int nmb_created = (pm->pmr == nullptr ? 0 : pm->pmr->nmb_created);
     const std::string filename = pin->GetString("job", "basename") + "-errors.dat";
     FILE *file = std::fopen(filename.c_str(), "w");
     if (file == nullptr) {
       std::cout << "Unable to open " << filename << std::endl;
       std::exit(EXIT_FAILURE);
     }
-    std::fprintf(file, "# nx1 nx2 nx3 cycles metric_L1 metric_Linf\n");
-    std::fprintf(file, "%d %d %d %d %.17e %.17e\n",
+    std::fprintf(file, "# nx1 nx2 nx3 cycles metric_L1 metric_Linf reduction_Linf "
+                       "nmb_total nmb_created\n");
+    std::fprintf(file, "%d %d %d %d %.17e %.17e %.17e %d %d\n",
                  pm->mesh_indcs.nx1, pm->mesh_indcs.nx2, pm->mesh_indcs.nx3,
-                 pm->ncycle, l1, linf);
+                 pm->ncycle, l1, linf, reduction_linf, pm->nmb_total,
+                 nmb_created);
     std::fclose(file);
     std::cout << "FO-GH linear-wave metric L1 = " << l1
-              << ", Linf = " << linf << std::endl;
+              << ", Linf = " << linf
+              << ", reduction Linf = " << reduction_linf << std::endl;
   }
 }
 
