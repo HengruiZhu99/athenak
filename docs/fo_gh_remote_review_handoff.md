@@ -5,8 +5,11 @@
 Review branch `codex/fo-gh-puncture-driver-20260817` against base
 `24dd527514a3b031d151ca8d3f2679e998a91b3d`.  Commit
 `1e4c62ee25dd443334f8ddab1a27ad4d697e21d7` is the source state used for the
-captured Perlmutter campaign.  Later commits add documentation/evidence and a
-compile-verified but not yet runtime-verified diagnostic extension.
+first captured Perlmutter campaign.  Commit
+`3ec9c3bd326f22c7dedf792572876f4c2a8683a1` was used for the later current-source
+preflight and doubled-domain controls.  The current worktree contains a newer
+continuum correction described below; all Perlmutter puncture evolution
+evidence predates it.
 
 Do not work on fluid coupling.  Do not add Kerr-Schild or apparent-horizon
 scope.  Do not infer production qualification from the passing preflight.
@@ -31,20 +34,22 @@ scope.  Do not infer production qualification from the passing preflight.
 
 ## Review priorities
 
-1. Audit `fo_gh_geometry.hpp` and `fo_gh_rhs.hpp` index by index against
-   `docs/fo_gh_puncture_formulation.md`; do not replace the fixed equations.
-2. Verify `DivergenceC`, conformal Ricci quadratic terms, the `Atilde` TF terms,
-   and the Lambda Lie-index term independently rather than trusting the current
-   pointwise unit test.
+1. Review the correction that constructs the symmetric twice-raised
+   `Atilde^{ij}` only once per stored component and uses it, rather than
+   `Atilde^i_j`, in the `Atilde^{ik} a_k` and `Atilde^{ik} X_k` Lambda terms.
+2. Review the new independent non-diagonal metric-jet Ricci, `D_i c^i`,
+   Hamiltonian, momentum, and RHS regressions.  Continue auditing the
+   `Atilde` TF and Lambda Lie-index terms against the fixed equations.
 3. Check the two-pass stencil/ghost contract and whether KO treatment preserves
    compatibility at physical and coarse/fine boundaries.
-4. GPU-test the new 20-value FO-GH history payload and robust-advection path;
-   both now pass focused Release/Serial runtime checks but have not been rerun
-   on an A100.
-5. Treat the `[-4M,4M]^3` loss near the `4M` half-crossing time as potentially
-   boundary-driven.  The single doubled-box coarse control is not decisive.
-6. Before long continuation, run a `[-8M,8M]^3` `N=32,48,64` ladder with
-   fixed central-region histories and measured characteristic arrival.
+4. Rerun the corrected source on GPU; the earlier robust-advection/history
+   preflight predates the non-diagonal RHS correction.
+5. Preserve fixed-region diagnostics alongside the lapse mask.  The completed
+   same-spacing small/doubled-box comparison shows that moving the face from
+   `4M` to `8M` does not alter the central histories through `5M`; the large
+   masked jumps instead coincide with resolution-dependent mask-volume jumps.
+6. Before long continuation, repeat a bounded `[-8M,8M]^3` `N=32,48,64`
+   ladder with the corrected source and require exterior GH convergence.
 
 ## Reproducible source state
 
@@ -74,6 +79,8 @@ The built executable SHA-256 is
 - `.../runs/`: raw history and checkpoint text files.
 - `docs/fo_gh_artifacts/local_boundary_control/`: doubled-domain coarse control.
 - `docs/fo_gh_artifacts/local_parameter_sweep/`: small-box diagnostic sweep.
+- `docs/fo_gh_artifacts/perlmutter_20260817_current/README.md`: later-source
+  A100 preflight, equal-spacing domain control, and exterior-norm summary.
 
 The large restart files remain in
 `/pscratch/sd/h/hzhu/fo-gh-puncture-20260817.L0vwO0`; the repository contains
@@ -81,11 +88,14 @@ their SHA-256 manifest rather than duplicating them.
 
 ## Exact current scientific status
 
-Uniform smooth waves converge at order `3.91--3.93`.  The real-SMR wave result
-is only order `1.607`.  Exact and robust Minkowski, compatible gradients,
-dynamic regrid repair, and bitwise restart continuity pass on one A100.
+On pre-correction source, uniform smooth waves converge at order `3.91--3.93`
+and the real-SMR result is only order `1.607`.  Exact and robust Minkowski,
+compatible gradients, dynamic regrid repair, and bitwise restart continuity
+passed on one A100.
 
-The identical-data puncture is finite through `5M`, but its lapse-masked
-constraints cease to improve with resolution on the current small box.  This
-is not a long-stability result.  No run beyond `5M` should be used for a claim
-until the boundary/characteristic-arrival experiment above is complete.
+The pre-correction identical-data puncture is finite through `5M`.  Equal-dx
+small/doubled-box central histories agree through `5M`, so the central behavior
+is not caused by boundary arrival on that interval.  Moving lapse-mask volume
+and stalled exterior GH convergence prevent a stability/convergence claim.
+The corrected RHS has only focused local evidence.  No run beyond `5M`
+and no prior GPU result should be used to qualify it.

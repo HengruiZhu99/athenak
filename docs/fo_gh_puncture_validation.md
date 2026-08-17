@@ -46,7 +46,29 @@ Observed local results:
 - direct two-cycle puncture evolution and checkpoint/restart evolution produced
   identical 41-field final checkpoint arrays.
 
-The lapse-masked puncture constraint ladder at `t=0.01M` was:
+A later independent non-diagonal metric-jet audit now checks conformal Ricci
+against the direct coordinate definition of the Ricci tensor and separately
+checks `D_i c^i`, Hamiltonian, and momentum.  It passes on the local
+Release/Serial backend.  That audit also found and corrected two coupled
+non-diagonal-tensor defects in the `Lambda^i` RHS: the `Atilde^{ik} a_k` and
+`Atilde^{ik} X_k` terms had used a once-raised mixed tensor, and the symmetric
+twice-raised `Atilde^{ij}` workspace had accumulated off-diagonal components
+twice.  A non-diagonal RHS regression now covers the corrected contractions,
+`Atilde_ij Atilde^ij`, `K`, and `pi` assembly.  Both focused unit executables
+pass from `/tmp/athenak_fogh_geometry_audit/src/athena` with Kokkos Serial
+4.4.0 and GCC 13.3.0.
+
+All Perlmutter and `t>=1M` puncture evolutions reported below predate this
+continuum correction.  They remain useful failure-localization evidence but do
+not qualify the corrected source.  A bounded corrected-source local subset now
+passes: exact uniform/SMR Minkowski; robust uniform/SMR ratios `0.95388` and
+`0.99244`; compatible gradients; uniform wave orders `3.91255` and `3.93166`;
+real-SMR wave order `1.51443`; a finite `t=0.02M` puncture with 22 history
+columns and 43 checkpoint fields; and the `t=0.01M` three-resolution ladder
+immediately below.  This is not a replacement for corrected-source GPU or
+long-puncture qualification.
+
+The corrected-source lapse-masked puncture constraint ladder at `t=0.01M` was:
 
 | N | Hamiltonian L2 | Momentum L2 | GH L2 | Reduction L2 |
 |---:|---:|---:|---:|---:|
@@ -104,6 +126,16 @@ The following one-rank/one-A100 checks completed successfully:
 - lapse-masked puncture convergence at `N=16,24,32`, matching the local values
   above.
 
+A second one-A100 preflight of the later robust-advection/history source
+(`3ec9c3bd326f22c7dedf792572876f4c2a8683a1`) also passed: uniform and SMR
+robust-Minkowski ratios were `0.909425` and `0.983360`; uniform wave orders
+were `3.912554` and `3.932016`; real-SMR wave order was `1.607008`; dynamic
+regrid repair left a `1.15035e-14` gradient residual; the puncture history and
+checkpoint schemas contained 22 columns and 43 fields; and an actual restart
+matched directly evolved data bit for bit.  That source still predates the
+non-diagonal `Atilde^{ij}` correction above and therefore is not corrected-RHS
+qualification evidence.
+
 ## Uniform puncture time ladder
 
 The captured Perlmutter campaign used fourth-order centered derivatives,
@@ -133,26 +165,42 @@ resolution-improving:
 | 24 | 1.26654e-1 | 1.88644e-1 | 2.02327e-1 | 2.20226e-2 |
 | 32 | 2.58767e-1 | 8.14100e-1 | 3.63534e-1 | 2.32412e-2 |
 
-The first conspicuous growth in the coarse history occurs near `2M`, `3.5M`,
-and `4.5M` for `N=16,24,32`.  Because the box width is `8M`, the flat-space
-light-crossing time is `8M` and its half-crossing time is `4M`.  The fine-grid
-loss near `4.5M` is therefore consistent with outer-boundary contamination.
-The initial isotropic physical characteristic speed is
-`alpha*sqrt(chi)=alpha^2`; integrating its reciprocal from `r=4M` to `r=1M`
-gives about `7.15M`, but the evolved metric/gauge changes that estimate.
+The first conspicuous masked-norm transitions occur near `2M`, `3.5M`, and
+`4.5M` for `N=16,24,32`.  The outer boundary is at coordinate radius `4M` on
+each Cartesian face, so a simple flat-space half-box crossing estimate is
+`4M`.  That timing initially made boundary contamination plausible.
 
-A single same-spacing doubled-box control (`[-8M,8M]^3`, `N=32`, equivalent
-to the small-box `N=16` spacing) is finite through `5M`.  Its whole-domain L2
-norms cannot diagnose central boundary arrival because the global reduction
-contains boundary cells immediately.  Its near-puncture final norms closely
-match the small-box coarse run.  This one control is insufficient to either
-prove or rule out boundary-driven loss of convergence.
+The completed equal-spacing domain-control ladder rules it out as the cause of
+the central behavior through `5M`.  Small-box `[-4M,4M]^3` resolutions
+`N=16,24,32` were paired with doubled-box `[-8M,8M]^3` resolutions
+`N=32,48,64`.  For every pair, the fixed `r<2M` histories agree to roughly one
+percent or better through `5M`; at `t=5M`, the four small/doubled ratios are
+`0.9989,1.0007,1.0004,0.9999`, `0.9996,0.9997,0.9997,0.9998`, and
+`0.9995,1.0000,1.0000,0.9999`.  Moving the boundary from `4M` to `8M` therefore
+does not change the observed central transition on this interval.
 
-The required next experiment is a doubled-box ladder at `N=32,48,64`, which
-preserves the central spacings of the original `N=16,24,32` ladder.  Compare
-fixed central-region histories before the measured constraint-characteristic
-arrival.  No `20M`, `50M`, `100M`, or long-SMR claim is valid until this gate is
-resolved.
+The apparent resolution reversals in the whole lapse-masked near region are
+also confounded by a changing integration domain.  As cells cross
+`alpha=0.25`, the included physical volume jumps at resolution-dependent
+times: about `1.75M` (`N=32`), `3.5M` (`N=48`), and `2.5M` plus `4.25M`
+(`N=64`).  Thus those masked near norms do not compare the same physical
+region at a fixed time.
+
+Subtracting the `r<2M` squared integrals and volume from the global history
+gives an exterior `r>=2M` diagnostic.  At `t=5M`, doubled-box
+`N=32,48,64` exterior `(H,M,GH,reduction+curl)` L2 values are
+`(1.9323e-3,1.0806e-3,1.7264e-3,2.8764e-4)`,
+`(6.8110e-4,6.2949e-4,1.7388e-3,1.3048e-4)`, and
+`(6.0070e-4,5.1725e-4,1.7516e-3,8.3867e-5)`.  The fine-pair orders are
+`0.437`, `0.683`, `-0.026`, and `1.536`.  The exterior does not blow up and
+the reduction family improves cleanly, but the GH norm stalls rather than
+converging.  This remains a failed convergence gate even before accounting
+for the corrected RHS.
+
+No `20M`, `50M`, `100M`, or long-SMR claim is valid.  The next numerical step
+is to repeat the bounded ladder with the corrected twice-raised `Atilde` RHS
+and with diagnostics that distinguish fixed spatial regions from the moving
+lapse mask.
 
 ## Parameter sensitivity on the small box
 
@@ -166,20 +214,22 @@ not promotion evidence.
 
 ## Current conclusion and qualification gaps
 
-The module has passed the narrow algebraic, Minkowski, wave, compatible-gradient,
-restart, and regrid checks listed above.  It has not demonstrated long puncture
-stability.  The `5M` loss of resolution improvement is a hard scientific gate,
-not a threshold to weaken.  Current evidence does not establish trumpet
-behavior, production readiness, long uniform stability, long SMR stability, or
-one-/four-GPU agreement.
+The pre-correction module passed the narrow algebraic, Minkowski, wave,
+compatible-gradient, restart, and regrid checks listed above.  The corrected
+non-diagonal RHS passes its focused local geometry and RHS tests, but has not
+yet been rerun through those numerical ladders.  It has not demonstrated long
+puncture stability.  The `5M` loss of resolution improvement is a hard
+scientific gate, not a threshold to weaken.  Current evidence does not
+establish production readiness, long uniform stability, long SMR stability,
+or one-/four-GPU agreement.
 
 The next reviewer should prioritize:
 
-1. the correctly scaled doubled-domain characteristic-arrival study;
-2. fixed-radius exterior and near-region histories rather than global-only
-   normalization;
-3. missing curl, determinant/trace, and gauge-residual time-series diagnostics;
-4. only after those checks, continuation to `20M` and beyond.
+1. independent review of the corrected twice-raised/symmetric `Atilde` logic;
+2. a fresh corrected-source preflight and bounded uniform ladder;
+3. fixed-radius exterior and near-region histories alongside the moving lapse
+   mask;
+4. only after those checks, an SMR ladder and continuation to `20M` and beyond.
 
 After the captured campaign, the source was extended to provide the missing
 curl, determinant/trace, gauge-residual, and separately normalized fixed-radius
@@ -189,8 +239,9 @@ values were finite.  The same update routed explicit shift-advection terms
 through AthenaK's robust `Lx` operator while preserving the exact compatible
 `beta.(Q,X,a,B)` products.  Its direct `Lx` oracle, uniform robust Minkowski,
 real-SMR robust Minkowski, primary-RHS unit, and short puncture smoke checks all
-pass in the Release/Serial build.  These post-campaign changes remain GPU
-unverified and do not upgrade the long-stability claim.
+pass in the Release/Serial build and were subsequently exercised by the second
+one-A100 preflight.  The newer twice-raised/symmetric `Atilde` correction
+remains GPU-unverified and does not upgrade the long-stability claim.
 
 The focused post-change commands ran the executable directly from a fresh
 temporary directory with `tst/inputs/fo_gh_compatible_unit.athinput`,

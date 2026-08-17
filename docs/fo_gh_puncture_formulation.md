@@ -177,6 +177,12 @@ D0 pi = -alpha Atilde_ij Atilde^ij - alpha K^2/3
   + chi c^i a_i - kappa alpha C_perp/2.
 ```
 
+The two covector contractions in the Lambda equation use the twice-raised
+tensor `Atilde^{ik} = gtilde^{ia} gtilde^{kb} Atilde_ab`.  In code this is
+`A_up(i,k)`, not the mixed tensor `gtilde^{ia} Atilde_ak`.  Because `A_up` has
+symmetric storage, its components are assembled only for `j>=i`; visiting both
+`(i,j)` and `(j,i)` would double its off-diagonal entries.
+
 ## Compatible first-order gradients
 
 `FoGh::CalcRHS` uses two passes.  The first pass computes

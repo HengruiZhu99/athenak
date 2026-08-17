@@ -194,12 +194,16 @@ void ComputePrimaryRhs(const RegularPointState &u, const EvolutionDerivatives &d
   A_up.ZeroClear();
   Real A_squared = 0.0;
   for (int i = 0; i < 3; ++i) {
-    for (int j = 0; j < 3; ++j) {
+    for (int j = i; j < 3; ++j) {
       for (int k = 0; k < 3; ++k) {
         for (int l = 0; l < 3; ++l) {
           A_up(i, j) += geo.inverse(i, k)*geo.inverse(j, l)*u.Atilde(k, l);
         }
       }
+    }
+  }
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
       A_squared += u.Atilde(i, j)*A_up(i, j);
     }
   }
@@ -310,12 +314,8 @@ void ComputePrimaryRhs(const RegularPointState &u, const EvolutionDerivatives &d
                        *(d.dpi(j) + d.geometry.dK(j));
     }
     for (int k = 0; k < 3; ++k) {
-      Real A_mixed = 0.0;
-      for (int l = 0; l < 3; ++l) {
-        A_mixed += geo.inverse(i, l)*u.Atilde(l, k);
-      }
-      d0_Lambda -= 2.0*A_mixed*u.a(k)
-                   + (3.0*u.alpha/u.chi)*A_mixed*u.X(k);
+      d0_Lambda -= 2.0*A_up(i, k)*u.a(k)
+                   + (3.0*u.alpha/u.chi)*A_up(i, k)*u.X(k);
     }
     for (int k = 0; k < 3; ++k) {
       for (int l = 0; l < 3; ++l) {

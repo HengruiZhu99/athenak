@@ -113,6 +113,67 @@ void ProblemGenerator::FoGhRhsUnit(ParameterInput *pin, const bool restart) {
             ++local_errors;
           }
         }
+
+        // The Lambda equation contracts the covectors a_k and X_k with the
+        // twice-raised Atilde^{ik}.  A diagonal/identity metric cannot detect
+        // an accidental mixed-index Atilde^i_k here, so use a non-diagonal
+        // conformal metric and isolate these two terms.
+        u.ZeroClear();
+        d.ZeroClear();
+        u.alpha = 0.82;
+        u.chi = 0.71;
+        u.gtilde(0, 0) = 1.35;
+        u.gtilde(0, 1) = 0.16;
+        u.gtilde(0, 2) = -0.08;
+        u.gtilde(1, 1) = 1.12;
+        u.gtilde(1, 2) = 0.06;
+        u.gtilde(2, 2) = 0.93;
+        u.Atilde(0, 0) = 0.09;
+        u.Atilde(0, 1) = -0.04;
+        u.Atilde(0, 2) = 0.03;
+        u.Atilde(1, 1) = -0.06;
+        u.Atilde(1, 2) = 0.05;
+        u.Atilde(2, 2) = 0.02;
+        u.a(0) = 0.07;
+        u.a(1) = -0.03;
+        u.a(2) = 0.04;
+        u.X(0) = -0.02;
+        u.X(1) = 0.06;
+        u.X(2) = 0.01;
+        fo_gh::ComputePrimaryRhs(u, d, 1.0, 1.0, 1.0, 2.0, rhs);
+        AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> inverse;
+        fo_gh::Invert3(u.gtilde, inverse);
+        Real A_squared = 0.0;
+        Real X_squared = 0.0;
+        Real X_dot_a = 0.0;
+        for (int i = 0; i < 3; ++i) {
+          Real expected = 0.0;
+          for (int k = 0; k < 3; ++k) {
+            Real A_up = 0.0;
+            for (int a = 0; a < 3; ++a) {
+              for (int b = 0; b < 3; ++b) {
+                A_up += inverse(i, a)*inverse(k, b)*u.Atilde(a, b);
+              }
+            }
+            A_squared += u.Atilde(i, k)*A_up;
+            expected -= 2.0*A_up*u.a(k)
+                        + (3.0*u.alpha/u.chi)*A_up*u.X(k);
+            X_squared += inverse(i, k)*u.X(i)*u.X(k);
+            X_dot_a += inverse(i, k)*u.X(i)*u.a(k);
+          }
+          if (Kokkos::abs(rhs.Lambda(i) - expected) > tol) {
+            ++local_errors;
+          }
+        }
+        const Real hamiltonian = -A_squared
+                                 - (5.0/(2.0*u.chi))*X_squared;
+        const Real expected_K = u.alpha*A_squared + 0.5*X_dot_a
+                                + u.alpha*hamiltonian;
+        const Real expected_pi = -u.alpha*A_squared - 0.5*X_dot_a;
+        if (Kokkos::abs(rhs.K - expected_K) > tol ||
+            Kokkos::abs(rhs.pi - expected_pi) > tol) {
+          ++local_errors;
+        }
       }, errors);
 
   if (errors != 0) {
