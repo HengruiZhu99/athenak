@@ -28,8 +28,9 @@ def test_fo_gh_puncture_refinement():
             checkpoint = np.loadtxt("fo_gh_puncture-checkpoint.dat")
             assert int(data[8]) == 0
             assert data[9] < 1.0e-13
-            assert checkpoint.shape == (41,)
+            assert checkpoint.shape == (44,)
             assert int(checkpoint[3]) == 1
+            assert int(checkpoint[15]) == -1
             assert np.all(np.isfinite(checkpoint))
             assert Path("bin/fo_gh_puncture.fo_gh.00000.bin").exists()
             assert Path("bin/fo_gh_puncture.adm.00000.bin").exists()

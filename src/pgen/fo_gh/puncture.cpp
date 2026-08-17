@@ -20,6 +20,7 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
+#include "z4c/fastflow.hpp"
 #include "pgen/pgen.hpp"
 
 #if MPI_PARALLEL_ENABLED
@@ -382,7 +383,8 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
     std::fprintf(checkpoint, "# time cycle near_radius finite alpha_min chi_min ");
     std::fprintf(checkpoint, "metric_max Pi_max Phi_max gauge_driver_max ");
     std::fprintf(checkpoint, "max_char_speed dt_candidate effective_cfl_next ");
-    std::fprintf(checkpoint, "adm_mass adm_mass_drift ");
+    std::fprintf(checkpoint, "adm_mass adm_mass_drift horizon_status ");
+    std::fprintf(checkpoint, "horizon_area horizon_mass ");
     const char *group_names[4] = {"H", "M", "GH", "R"};
     for (int group = 0; group < 4; ++group) {
       std::fprintf(checkpoint, "%s_L1 %s_L2 %s_Linf ", group_names[group],
@@ -405,6 +407,18 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
                  gh_extrema[0], gh_extrema[1], gh_extrema[2], gh_extrema[3],
                  pmbp->pfogh->max_char_speed, pmbp->pfogh->dtnew, effective_cfl,
                  adm_mass, adm_mass - expected_mass);
+    int horizon_status = -1;
+    Real horizon_area = 0.0;
+    Real horizon_mass = 0.0;
+    if (!(pmbp->pfogh->pfastflow.empty())) {
+      horizon_status = pmbp->pfogh->pfastflow[0]->ah_found;
+      if (horizon_status == 1) {
+        horizon_area = pmbp->pfogh->pfastflow[0]->GetArea();
+        horizon_mass = pmbp->pfogh->pfastflow[0]->GetMass();
+      }
+    }
+    std::fprintf(checkpoint, "%d %.17e %.17e ", horizon_status,
+                 horizon_area, horizon_mass);
     for (int group = 0; group < 4; ++group) {
       const Real l1 = constraint_sums.the_array[2*group]/global_volume;
       const Real l2 = std::sqrt(constraint_sums.the_array[2*group + 1]/global_volume);

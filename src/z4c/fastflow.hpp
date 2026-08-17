@@ -54,6 +54,8 @@ class FastFlow {
   void RadiiFromSphericalHarmonics();
   void UpdateFlowSpectralComponents();
   void SurfaceIntegrals();
+  Real GetArea() const { return ah_prop[harea]; }
+  Real GetMass() const { return ah_prop[hmass]; }
 
   // Some of the main parameters in the fast-flow algorithm
   bool ah_found; // Horizon found

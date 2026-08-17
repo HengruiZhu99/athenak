@@ -8,6 +8,9 @@
 //! \file fo_gh.hpp
 //! \brief Definitions for the vacuum regularized first-order GH module.
 
+#include <memory>
+#include <vector>
+
 #include "athena.hpp"
 #include "athena_tensor.hpp"
 #include "fo_gh/fo_gh_state.hpp"
@@ -16,6 +19,7 @@
 
 class MeshBlockPack;
 class Driver;
+class FastFlow;
 class MeshBoundaryValuesCC;
 
 namespace fo_gh {
@@ -73,6 +77,7 @@ class FoGh {
   Real dtnew;
   Real max_char_speed;
   MeshBoundaryValuesCC *pbval_u;
+  std::vector<std::unique_ptr<FastFlow>> pfastflow;
 
   template <int FDNG>
   TaskStatus CalcRHS(Driver *d, int stage);
@@ -90,6 +95,7 @@ class FoGh {
   TaskStatus Prolongate(Driver *d, int stage);
   TaskStatus ApplyPhysicalBCs(Driver *d, int stage);
   TaskStatus NewTimeStep(Driver *d, int stage);
+  TaskStatus FindHorizon(Driver *d, int stage);
   void RepairGradients(const DualArray1D<int> &repair);
   void FoGhToADM();
   void UpdateDiagnostics();

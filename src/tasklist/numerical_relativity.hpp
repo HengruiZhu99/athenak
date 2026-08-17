@@ -100,6 +100,7 @@ enum TaskName {
   FoGh_Prolong,
   FoGh_BCS,
   FoGh_Newdt,
+  FoGh_FastFlow,
   FoGh_ClearS,
   FoGh_ClearR,
   FoGh_NTASKS

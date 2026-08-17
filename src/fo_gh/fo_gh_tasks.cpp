@@ -19,6 +19,7 @@
 #include "pgen/pgen.hpp"
 #include "tasklist/numerical_relativity.hpp"
 #include "utils/finite_diff.hpp"
+#include "z4c/fastflow.hpp"
 
 namespace fo_gh {
 
@@ -192,6 +193,8 @@ void FoGh::QueueTasks() {
                  {FoGh_Prolong});
   pnr->QueueTask(&FoGh::NewTimeStep, this, FoGh_Newdt, "FoGh_Newdt", Task_Run,
                  {FoGh_BCS});
+  pnr->QueueTask(&FoGh::FindHorizon, this, FoGh_FastFlow, "FoGh_FastFlow",
+                 Task_Run, {FoGh_Newdt});
   pnr->QueueTask(&FoGh::ClearSend, this, FoGh_ClearS, "FoGh_ClearS", Task_End);
   pnr->QueueTask(&FoGh::ClearRecv, this, FoGh_ClearR, "FoGh_ClearR", Task_End,
                  {FoGh_ClearS});
@@ -382,6 +385,26 @@ TaskStatus FoGh::NewTimeStep(Driver *pdriver, int stage) {
       }, Kokkos::Max<Real>(maximum));
   max_char_speed = maximum;
   UpdateDiagnostics();
+  return TaskStatus::complete;
+}
+
+TaskStatus FoGh::FindHorizon(Driver *pdriver, int stage) {
+  if (stage != pdriver->nexp_stages || pfastflow.empty()) {
+    return TaskStatus::complete;
+  }
+  const Real time = pmy_pack->pmesh->time;
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  for (auto &finder : pfastflow) {
+    switch (indcs.ng) {
+      case 2: finder->MetricDerivatives<2>(time); break;
+      case 3: finder->MetricDerivatives<3>(time); break;
+      case 4: finder->MetricDerivatives<4>(time); break;
+    }
+  }
+  for (auto &finder : pfastflow) {
+    finder->Find(pmy_pack->pmesh->ncycle, time);
+    finder->Write(pmy_pack->pmesh->ncycle, time);
+  }
   return TaskStatus::complete;
 }
 
