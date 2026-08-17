@@ -51,7 +51,8 @@ using sub_HostArray5D_0D = decltype(Kokkos::subview(
                            Kokkos::ALL,Kokkos::ALL,Kokkos::ALL));
 
 // this is the abstract base class
-// This now works only for spatially 3D data
+// Tensor index dimensions are compile-time parameters. Grid data are still stored in
+// AthenaK's standard five-dimensional views.
 template<typename T, TensorSymm sym, int ndim, int rank>
 class AthenaHostTensor;
 
@@ -134,7 +135,7 @@ class AthenaHostTensor<T, sym, ndim, 2> {
 
  private:
   sub_HostArray5D_2D data_;
-  int idxmap_[3][3];
+  int idxmap_[ndim][ndim];
   int ndof_;
 };
 
@@ -165,7 +166,8 @@ AthenaHostTensor<T, sym, ndim, 2>::AthenaHostTensor() {
 
 
 // this is the abstract base class
-// This now works only for spatially 3D data
+// Tensor index dimensions are compile-time parameters. Grid data are still stored in
+// AthenaK's standard five-dimensional views.
 template<typename T, TensorSymm sym, int ndim, int rank>
 class AthenaTensor;
 
@@ -250,7 +252,7 @@ class AthenaTensor<T, sym, ndim, 2> {
 
  private:
   sub_DvceArray5D_2D data_;
-  int idxmap_[3][3];
+  int idxmap_[ndim][ndim];
   int ndof_;
 };
 
@@ -300,11 +302,11 @@ class AthenaPointTensor<T, sym, ndim, 1> {
   (AthenaPointTensor<T, sym, ndim, 1> const &) = default;
 
   KOKKOS_INLINE_FUNCTION
-  Real operator()(int const a) const {
+  T operator()(int const a) const {
     return data_[a];
   }
   KOKKOS_INLINE_FUNCTION
-  Real & operator()(int const a) {
+  T & operator()(int const a) {
     return data_[a];
   }
   KOKKOS_INLINE_FUNCTION
@@ -315,7 +317,7 @@ class AthenaPointTensor<T, sym, ndim, 1> {
   }
 
  private:
-  Real data_[3];
+  T data_[ndim]; // NOLINT(runtime/arrays)
 };
 
 //----------------------------------------------------------------------------------------
@@ -355,6 +357,61 @@ constexpr int TensorDOF<TensorSymm::ISYM2, ndim, 4> = ndim*ndim*ndim*(ndim+1)/2;
 
 template<int ndim>
 constexpr int TensorDOF<TensorSymm::SYM22, ndim, 4> = ndim*ndim*(ndim+1)*(ndim+1)/4;
+
+//----------------------------------------------------------------------------------------
+//! \class AthenaPointMixedTensor
+//! \brief Point tensor with one index dimension independent of a symmetric index pair.
+//!
+//! This is used, for example, by first-order generalized harmonic evolution for
+//! Phi_iab: i has spatial dimension 3 while a,b have spacetime dimension 4. Storage is
+//! compile-time sized, contains no mapping table or allocation, and is symmetric only in
+//! the final pair.
+template<typename T, int outer_dim, int pair_dim>
+class AthenaPointMixedTensor {
+ public:
+  static_assert(outer_dim > 0, "Mixed tensor outer dimension must be positive.");
+  static_assert(pair_dim > 0, "Mixed tensor pair dimension must be positive.");
+
+  static constexpr int ndof = outer_dim*pair_dim*(pair_dim + 1)/2;
+
+  KOKKOS_INLINE_FUNCTION
+  AthenaPointMixedTensor() = default;
+  ~AthenaPointMixedTensor() = default;
+  AthenaPointMixedTensor(AthenaPointMixedTensor const &) = default;
+  AthenaPointMixedTensor & operator=(AthenaPointMixedTensor const &) = default;
+
+  KOKKOS_INLINE_FUNCTION
+  T operator()(int const i, int const a, int const b) const {
+    return data_[Index(i, a, b)];
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  T & operator()(int const i, int const a, int const b) {
+    return data_[Index(i, a, b)];
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  void ZeroClear() {
+    for (int n = 0; n < ndof; ++n) {
+      data_[n] = T{};
+    }
+  }
+
+ private:
+  KOKKOS_INLINE_FUNCTION
+  static constexpr int Index(int const i, int const a, int const b) {
+    const int lo = (a < b ? a : b);
+    const int hi = (a < b ? b : a);
+    return i*(pair_dim*(pair_dim + 1)/2)
+           + lo*(2*pair_dim - lo + 1)/2 + hi - lo;
+  }
+
+  T data_[ndof]; // NOLINT
+};
+
+// Concise generic name for code that does not need to distinguish storage location.
+template<typename T, int outer_dim, int pair_dim>
+using MixedTensor = AthenaPointMixedTensor<T, outer_dim, pair_dim>;
 
 
 //----------------------------------------------------------------------------------------
