@@ -49,6 +49,7 @@ class FoGh {
 
   struct Options {
     int fd_order;
+    int extrap_order;
     Real kappa;
     Real mu_H;
     Real eta_H;

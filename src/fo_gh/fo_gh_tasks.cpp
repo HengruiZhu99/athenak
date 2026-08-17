@@ -15,9 +15,108 @@
 #include "fo_gh/fo_gh.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
+#include "pgen/pgen.hpp"
 #include "tasklist/numerical_relativity.hpp"
 
 namespace fo_gh {
+
+namespace {
+
+template <int ORDER>
+KOKKOS_INLINE_FUNCTION
+Real Extrapolate(const DvceArray5D<Real> &u, const int m, const int n,
+                 const int k, const int j, const int i, const int dk,
+                 const int dj, const int di, const int distance) {
+  const Real f0 = u(m, n, k, j, i);
+  const Real f1 = u(m, n, k + dk, j + dj, i + di);
+  if constexpr (ORDER == 2) {
+    return f0 + distance*(f0 - f1);
+  } else {
+    const Real f2 = u(m, n, k + 2*dk, j + 2*dj, i + 2*di);
+    if constexpr (ORDER == 3) {
+      return 0.5*(f0*(1 + distance)*(2 + distance)
+                  + distance*(f2 + distance*f2 - 2*f1*(2 + distance)));
+    } else {
+      const Real f3 = u(m, n, k + 3*dk, j + 3*dj, i + 3*di);
+      return (-3.0*f1*distance*(2 + distance)*(3 + distance)
+              + f0*(1 + distance)*(2 + distance)*(3 + distance)
+              + distance*(1 + distance)
+                  *(-f3*(2 + distance) + 3*f2*(3 + distance)))/6.0;
+    }
+  }
+}
+
+KOKKOS_INLINE_FUNCTION
+bool IsExtrapolationBoundary(const BoundaryFlag flag) {
+  return flag == BoundaryFlag::outflow || flag == BoundaryFlag::diode
+         || flag == BoundaryFlag::vacuum;
+}
+
+template <int ORDER>
+void ApplyExtrapolation(MeshBlockPack *pmbp, DvceArray5D<Real> &state,
+                        const int is, const int ie, const int js, const int je,
+                        const int ks, const int ke, const int n1, const int n2,
+                        const int n3) {
+  const int ng = pmbp->pmesh->mb_indcs.ng;
+  const int nmb = pmbp->nmb_thispack;
+  const auto bcs = pmbp->pmb->mb_bcs;
+  if (pmbp->pmesh->mesh_bcs[BoundaryFace::inner_x1] != BoundaryFlag::periodic) {
+    par_for("fo_gh BC x1", DevExeSpace(), 0, nmb - 1, 0, FoGh::nfo_gh - 1,
+    0, n3 - 1, 0, n2 - 1,
+    KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
+      if (IsExtrapolationBoundary(bcs.d_view(m, BoundaryFace::inner_x1))) {
+        for (int q = 0; q < ng; ++q) {
+          state(m, n, k, j, is - q - 1) =
+              Extrapolate<ORDER>(state, m, n, k, j, is, 0, 0, 1, q + 1);
+        }
+      }
+      if (IsExtrapolationBoundary(bcs.d_view(m, BoundaryFace::outer_x1))) {
+        for (int q = 0; q < ng; ++q) {
+          state(m, n, k, j, ie + q + 1) =
+              Extrapolate<ORDER>(state, m, n, k, j, ie, 0, 0, -1, q + 1);
+        }
+      }
+    });
+  }
+  if (pmbp->pmesh->mesh_bcs[BoundaryFace::inner_x2] != BoundaryFlag::periodic) {
+    par_for("fo_gh BC x2", DevExeSpace(), 0, nmb - 1, 0, FoGh::nfo_gh - 1,
+    0, n3 - 1, 0, n1 - 1,
+    KOKKOS_LAMBDA(const int m, const int n, const int k, const int i) {
+      if (IsExtrapolationBoundary(bcs.d_view(m, BoundaryFace::inner_x2))) {
+        for (int q = 0; q < ng; ++q) {
+          state(m, n, k, js - q - 1, i) =
+              Extrapolate<ORDER>(state, m, n, k, js, i, 0, 1, 0, q + 1);
+        }
+      }
+      if (IsExtrapolationBoundary(bcs.d_view(m, BoundaryFace::outer_x2))) {
+        for (int q = 0; q < ng; ++q) {
+          state(m, n, k, je + q + 1, i) =
+              Extrapolate<ORDER>(state, m, n, k, je, i, 0, -1, 0, q + 1);
+        }
+      }
+    });
+  }
+  if (pmbp->pmesh->mesh_bcs[BoundaryFace::inner_x3] != BoundaryFlag::periodic) {
+    par_for("fo_gh BC x3", DevExeSpace(), 0, nmb - 1, 0, FoGh::nfo_gh - 1,
+    0, n2 - 1, 0, n1 - 1,
+    KOKKOS_LAMBDA(const int m, const int n, const int j, const int i) {
+      if (IsExtrapolationBoundary(bcs.d_view(m, BoundaryFace::inner_x3))) {
+        for (int q = 0; q < ng; ++q) {
+          state(m, n, ks - q - 1, j, i) =
+              Extrapolate<ORDER>(state, m, n, ks, j, i, 1, 0, 0, q + 1);
+        }
+      }
+      if (IsExtrapolationBoundary(bcs.d_view(m, BoundaryFace::outer_x3))) {
+        for (int q = 0; q < ng; ++q) {
+          state(m, n, ke + q + 1, j, i) =
+              Extrapolate<ORDER>(state, m, n, ke, j, i, -1, 0, 0, q + 1);
+        }
+      }
+    });
+  }
+}
+
+} // namespace
 
 void FoGh::QueueTasks() {
   using namespace numrel; // NOLINT(build/namespaces)
@@ -127,14 +226,50 @@ TaskStatus FoGh::RecvU(Driver *pdriver, int stage) {
 
 TaskStatus FoGh::Prolongate(Driver *pdriver, int stage) {
   if (pmy_pack->pmesh->multilevel) {
+    if (!(pmy_pack->pmesh->strictly_periodic)) {
+      auto &indcs = pmy_pack->pmesh->mb_indcs;
+      const int n1 = indcs.cnx1 + 2*indcs.ng;
+      const int n2 = indcs.cnx2 + 2*indcs.ng;
+      const int n3 = indcs.cnx3 + 2*indcs.ng;
+      if (opt.extrap_order == 2) {
+        ApplyExtrapolation<2>(pmy_pack, coarse_u0, indcs.cis, indcs.cie,
+                              indcs.cjs, indcs.cje, indcs.cks, indcs.cke,
+                              n1, n2, n3);
+      } else if (opt.extrap_order == 3) {
+        ApplyExtrapolation<3>(pmy_pack, coarse_u0, indcs.cis, indcs.cie,
+                              indcs.cjs, indcs.cje, indcs.cks, indcs.cke,
+                              n1, n2, n3);
+      } else {
+        ApplyExtrapolation<4>(pmy_pack, coarse_u0, indcs.cis, indcs.cie,
+                              indcs.cjs, indcs.cje, indcs.cks, indcs.cke,
+                              n1, n2, n3);
+      }
+    }
     pbval_u->ProlongateCC(u0, coarse_u0, true);
   }
   return TaskStatus::complete;
 }
 
 TaskStatus FoGh::ApplyPhysicalBCs(Driver *pdriver, int stage) {
-  // Periodic boundaries are completed by RecvU. Component-aware vacuum outer
-  // boundary conditions are added separately; silently borrowing fluid BCs is unsafe.
+  if (!(pmy_pack->pmesh->strictly_periodic)) {
+    auto &indcs = pmy_pack->pmesh->mb_indcs;
+    const int n1 = indcs.nx1 + 2*indcs.ng;
+    const int n2 = indcs.nx2 + 2*indcs.ng;
+    const int n3 = indcs.nx3 + 2*indcs.ng;
+    if (opt.extrap_order == 2) {
+      ApplyExtrapolation<2>(pmy_pack, u0, indcs.is, indcs.ie, indcs.js,
+                            indcs.je, indcs.ks, indcs.ke, n1, n2, n3);
+    } else if (opt.extrap_order == 3) {
+      ApplyExtrapolation<3>(pmy_pack, u0, indcs.is, indcs.ie, indcs.js,
+                            indcs.je, indcs.ks, indcs.ke, n1, n2, n3);
+    } else {
+      ApplyExtrapolation<4>(pmy_pack, u0, indcs.is, indcs.ie, indcs.js,
+                            indcs.je, indcs.ks, indcs.ke, n1, n2, n3);
+    }
+    if (pmy_pack->pmesh->pgen->user_bcs) {
+      pmy_pack->pmesh->pgen->user_bcs_func(pmy_pack->pmesh);
+    }
+  }
   return TaskStatus::complete;
 }
 

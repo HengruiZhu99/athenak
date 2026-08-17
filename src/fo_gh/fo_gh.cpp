@@ -44,6 +44,7 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
     pmy_pack(ppack) {
   opt.kappa = pin->GetOrAddReal("fo_gh", "kappa", 1.0);
   opt.fd_order = pin->GetOrAddInteger("fo_gh", "fd_order", 4);
+  opt.extrap_order = pin->GetOrAddInteger("fo_gh", "extrap_order", 2);
   opt.mu_H = pin->GetOrAddReal("fo_gh", "mu_H", 1.0);
   opt.eta_H = pin->GetOrAddReal("fo_gh", "eta_H", 1.0);
   opt.eta_beta = pin->GetOrAddReal("fo_gh", "eta_beta", 2.0);
@@ -62,6 +63,12 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "FO-GH fd_order must be 2, 4, or 6, with at least "
               << "fd_order ghost cells for its two-pass compatible derivative."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.extrap_order < 2 || opt.extrap_order > 4) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "FO-GH extrap_order must be 2, 3, or 4."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
