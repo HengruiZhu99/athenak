@@ -313,7 +313,8 @@ class Z4c {
   void GaugePreCollapsedLapse(MeshBlockPack *pmbp, ParameterInput *pin);
   void Z4cToADM(MeshBlockPack *pmbp);
   void EvaluateDiagnosticConstraints(DvceArray5D<Real> &scratch_adm,
-                                     DvceArray5D<Real> &scratch_constraints);
+                                     DvceArray5D<Real> &scratch_constraints,
+                                     int diagnostic_stencil = -1);
   template <int NGHOST>
   void ADMConstraints(MeshBlockPack *pmbp);
   template <int NGHOST>

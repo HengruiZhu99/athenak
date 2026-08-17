@@ -133,13 +133,15 @@ def check_zero_pde_stop(executable: Path, input_path: Path,
         executable, input_path, 1, None,
         overrides=["z4c/amr_jump_post_cycles=0", "z4c/amr_transfer=high_order",
                    "z4c/amr_jump_target_cycle=1",
+                   "z4c/amr_jump_derivative_order_audit=true",
                    f"z4c/amr_jump_target_transfer={transfer}"],
     )
     rank = run_dir / "z4c_amr_jump" / "rank0000"
     schema = json.loads((rank / "schema.json").read_text(encoding="utf-8"))
     if schema.get("amr_transfer") != transfer or \
             schema.get("pre_target_amr_transfer") != "high_order" or \
-            schema.get("target_transaction_only_transfer") is not True:
+            schema.get("target_transaction_only_transfer") is not True or \
+            schema.get("derivative_order_audit") is not True:
         raise TestFailure(f"zero-PDE target-only transfer provenance is invalid: {schema}")
     event = rank / "event_c00000001_l0_to_l1"
     lifecycle = json.loads(
@@ -158,6 +160,18 @@ def check_zero_pde_stop(executable: Path, input_path: Path,
     snapshots = sorted((rank / "accepted_topologies").glob("*.csv"))
     if [path.stem for path in snapshots] != ["c00000001"]:
         raise TestFailure(f"zero-PDE probe accepted an unexpected later cycle: {snapshots}")
+    t5 = event / "t5_00_ADM_OR_CONSTRAINT_RECOMPUTATION"
+    metadata = json.loads((t5 / "phase.json").read_text(encoding="utf-8"))
+    if metadata.get("derivative_order_audit") is not True:
+        raise TestFailure("T5 derivative-order audit was not authenticated")
+    audit_files = [t5 / f"constraints_o{order}.bin" for order in (2, 4, 6)]
+    if any(not path.is_file() for path in audit_files):
+        raise TestFailure("T5 derivative-order audit omitted an order")
+    expected_size = (t5 / "constraints.bin").stat().st_size
+    if any(path.stat().st_size != expected_size for path in audit_files):
+        raise TestFailure("T5 derivative-order audit shape is inconsistent")
+    if file_sha256(audit_files[-1]) != file_sha256(t5 / "constraints.bin"):
+        raise TestFailure("diagnostic O6 constraints differ from production T5 bytes")
     log = run_dir.parent / "run.log"
     if "after T5 and before the next RHS" not in log.read_text(encoding="utf-8"):
         raise TestFailure("zero-PDE probe emitted no explicit stop-point evidence")

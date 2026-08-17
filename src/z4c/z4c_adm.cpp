@@ -599,7 +599,8 @@ void Z4c::ADMConstraints(MeshBlockPack *pmbp) {
 
 void Z4c::EvaluateDiagnosticConstraints(
     DvceArray5D<Real> &scratch_adm,
-    DvceArray5D<Real> &scratch_constraints) {
+    DvceArray5D<Real> &scratch_constraints,
+    const int diagnostic_stencil) {
   if (pmy_pack->ptmunu != nullptr) {
     std::cerr << "### FATAL ERROR in " << __FILE__
               << ": AMR jump scratch constraints are restricted to vacuum Z4c"
@@ -607,6 +608,14 @@ void Z4c::EvaluateDiagnosticConstraints(
     std::exit(EXIT_FAILURE);
   }
   const auto bounds = MakeStoredDomainBounds(pmy_pack->pmesh->mb_indcs);
+  const int stencil = diagnostic_stencil < 0 ? opt.fd_stencil : diagnostic_stencil;
+  if (stencil < 2 || stencil > 4 || stencil > pmy_pack->pmesh->mb_indcs.ng) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": unsupported AMR jump scratch constraint stencil "
+              << stencil << " with nghost=" << pmy_pack->pmesh->mb_indcs.ng
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   const int nmb = pmy_pack->nmb_thispack;
   Kokkos::realloc(scratch_adm, nmb, adm::ADM::nadm - 4, bounds.n3,
                   bounds.n2, bounds.n1);
@@ -630,7 +639,7 @@ void Z4c::EvaluateDiagnosticConstraints(
 
   Z4cToADMViews(pmy_pack, z4c, diagnostic_adm, opt.chi_psi_power);
   const Tmunu::Tmunu_vars empty_matter;
-  switch (opt.fd_stencil) {
+  switch (stencil) {
     case 2:
       ADMConstraintsViewsImpl<CartoonSO2, 2>(
           pmy_pack, z4c, diagnostic_adm, scratch_constraints,
@@ -649,7 +658,7 @@ void Z4c::EvaluateDiagnosticConstraints(
     default:
       std::cerr << "### FATAL ERROR in " << __FILE__
                 << ": unsupported AMR jump scratch constraint stencil "
-                << opt.fd_stencil << std::endl;
+                << stencil << std::endl;
       std::exit(EXIT_FAILURE);
   }
   ReconstructConstraintAxisParityGhosts(scratch_constraints);

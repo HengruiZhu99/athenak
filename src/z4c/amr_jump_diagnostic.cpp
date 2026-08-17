@@ -453,7 +453,9 @@ void AMRJumpDiagnosticRuntime::EnsureOutputInitialized() {
          << target_transfer << "\",\"pre_target_amr_transfer\":\""
          << pre_target_transfer
          << "\",\"target_transaction_only_transfer\":"
-         << (config_.target_transfer.empty() ? "false" : "true") << "}";
+         << (config_.target_transfer.empty() ? "false" : "true")
+         << ",\"derivative_order_audit\":"
+         << (config_.derivative_order_audit ? "true" : "false") << "}";
   WriteTextAtomically(fs::path(rank_root_) / "schema.json", schema.str() + "\n");
   output_initialized_ = true;
 }
@@ -884,6 +886,18 @@ void AMRJumpDiagnosticRuntime::CapturePhase(
                         AggregateJSON(aggregate, mesh,
                                       "athenak_z4c_amr_phase_aggregate_v1") +
                             "\n");
+    if (phase == AMRJumpPhase::t5_accepted_new_hierarchy &&
+        config_.derivative_order_audit) {
+      constexpr std::array<int, 3> stencils = {2, 3, 4};
+      constexpr std::array<const char *, 3> labels = {"o2", "o4", "o6"};
+      for (std::size_t index = 0; index < stencils.size(); ++index) {
+        z4c->EvaluateDiagnosticConstraints(
+            scratch_adm, scratch_constraints, stencils[index]);
+        WriteViewBinary(phase_root /
+                            (std::string("constraints_") + labels[index] + ".bin"),
+                        scratch_constraints, nmb);
+      }
+    }
   }
   WriteCurrentTopology((phase_root / "topology.csv").string());
 
@@ -896,6 +910,9 @@ void AMRJumpDiagnosticRuntime::CapturePhase(
            << global_variable::my_rank << ",\"cycle\":" << mesh->ncycle
            << ",\"time\":" << mesh->time << ",\"constraints_valid\":"
            << (constraints_valid ? "true" : "false")
+           << ",\"derivative_order_audit\":"
+           << ((phase == AMRJumpPhase::t5_accepted_new_hierarchy &&
+                config_.derivative_order_audit) ? "true" : "false")
            << ",\"u0_shape\":" << ViewShapeJSON(z4c->u0, nmb)
            << ",\"active_bounds\":{\"is\":" << mesh->mb_indcs.is
            << ",\"ie\":" << mesh->mb_indcs.ie << ",\"js\":"

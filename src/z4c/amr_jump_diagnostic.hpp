@@ -130,6 +130,9 @@ struct AMRJumpDiagnosticConfig {
   // transaction.  The preceding evolution, including the RK step that reaches
   // the target cycle, retains the production <z4c>/amr_transfer policy.
   std::string target_transfer;
+  // At T5 only, recompute constraints from the accepted evolved state with the
+  // O2, O4, and O6 derivative providers. This never changes production state.
+  bool derivative_order_audit = false;
   AMRJumpHierarchyControl hierarchy_control =
       AMRJumpHierarchyControl::dynamic;
 };
@@ -158,6 +161,9 @@ inline std::string ValidateAMRJumpDiagnosticConfig(
     const AMRJumpDiagnosticContext &context) {
   if (!config.target_transfer.empty() && !config.enabled) {
     return "amr_jump_target_transfer requires amr_jump_diagnostic=true";
+  }
+  if (config.derivative_order_audit && !config.enabled) {
+    return "amr_jump_derivative_order_audit requires amr_jump_diagnostic=true";
   }
   if (!config.enabled) {
     if (config.hierarchy_control != AMRJumpHierarchyControl::dynamic) {
@@ -209,12 +215,12 @@ inline std::string ValidateAMRJumpDiagnosticConfig(
 }
 
 inline bool IsKnownAMRJumpParameter(const std::string &name) {
-  constexpr std::array<const char *, 8> known = {
+  constexpr std::array<const char *, 9> known = {
       "amr_jump_diagnostic", "amr_jump_target_level_before",
       "amr_jump_target_level_after", "amr_jump_target_cycle",
       "amr_jump_post_cycles",
       "amr_jump_output_basename", "amr_jump_hierarchy_control",
-      "amr_jump_target_transfer"};
+      "amr_jump_target_transfer", "amr_jump_derivative_order_audit"};
   return std::any_of(known.begin(), known.end(), [&name](const char *candidate) {
     return name == candidate;
   });
@@ -260,6 +266,10 @@ inline AMRJumpDiagnosticConfig ReadAMRJumpDiagnosticConfig(
     const std::string target_transfer =
         pin->GetString("z4c", "amr_jump_target_transfer");
     if (target_transfer != "none") config.target_transfer = target_transfer;
+  }
+  if (pin->DoesParameterExist("z4c", "amr_jump_derivative_order_audit")) {
+    config.derivative_order_audit =
+        pin->GetBoolean("z4c", "amr_jump_derivative_order_audit");
   }
   if (pin->DoesParameterExist("z4c", "amr_jump_hierarchy_control")) {
     const std::string control =
