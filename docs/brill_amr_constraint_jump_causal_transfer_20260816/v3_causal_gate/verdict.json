@@ -1,0 +1,127 @@
+{
+  "causal_gate_pass": false,
+  "disposition": "causal_gate_fail_or_mixed",
+  "event_cycle": 1722,
+  "factor_two_families": [],
+  "families": {
+    "C": {
+      "coordinate_ring": {
+        "dominant_high_order_excess": 23.453352045629593,
+        "dominant_high_order_excess_region": "MESHBLOCK_EDGE_OR_CORNER",
+        "high_order_jump_ratio": 95.4021117498403,
+        "improvement_factor": 0.07304137047451782,
+        "limited_o2_excess_in_same_region": 360.93238092107214,
+        "limited_o2_jump_ratio": 1306.138030133533,
+        "no_more_than_25_percent_worse": false,
+        "same_region_reduced": false
+      },
+      "proper_ring": {
+        "dominant_high_order_excess": 54.172910538556074,
+        "dominant_high_order_excess_region": "MESHBLOCK_EDGE_OR_CORNER",
+        "high_order_jump_ratio": 95.22367600928938,
+        "improvement_factor": 0.07298195758609333,
+        "limited_o2_excess_in_same_region": 833.4210691059342,
+        "limited_o2_jump_ratio": 1304.756396770511,
+        "no_more_than_25_percent_worse": false,
+        "same_region_reduced": false
+      }
+    },
+    "H": {
+      "coordinate_ring": {
+        "dominant_high_order_excess": 5.158508145673247,
+        "dominant_high_order_excess_region": "MESHBLOCK_EDGE_OR_CORNER",
+        "high_order_jump_ratio": 43.01960851834695,
+        "improvement_factor": 0.03418603966454012,
+        "limited_o2_excess_in_same_region": 119.52527473155334,
+        "limited_o2_jump_ratio": 1258.3969638041915,
+        "no_more_than_25_percent_worse": false,
+        "same_region_reduced": false
+      },
+      "proper_ring": {
+        "dominant_high_order_excess": 11.835186727426004,
+        "dominant_high_order_excess_region": "MESHBLOCK_EDGE_OR_CORNER",
+        "high_order_jump_ratio": 42.618818712047165,
+        "improvement_factor": 0.03355186588895372,
+        "limited_o2_excess_in_same_region": 276.12622769736333,
+        "limited_o2_jump_ratio": 1270.2369177649387,
+        "no_more_than_25_percent_worse": false,
+        "same_region_reduced": false
+      }
+    },
+    "M": {
+      "coordinate_ring": {
+        "dominant_high_order_excess": 18.32422453131356,
+        "dominant_high_order_excess_region": "MESHBLOCK_EDGE_OR_CORNER",
+        "high_order_jump_ratio": 196.47727870443862,
+        "improvement_factor": 0.09542402850898359,
+        "limited_o2_excess_in_same_region": 241.4293720085134,
+        "limited_o2_jump_ratio": 2058.991658332068,
+        "no_more_than_25_percent_worse": false,
+        "same_region_reduced": false
+      },
+      "proper_ring": {
+        "dominant_high_order_excess": 42.40568398614097,
+        "dominant_high_order_excess_region": "MESHBLOCK_EDGE_OR_CORNER",
+        "high_order_jump_ratio": 195.8315809364719,
+        "improvement_factor": 0.09595615924563772,
+        "limited_o2_excess_in_same_region": 557.3462580909907,
+        "limited_o2_jump_ratio": 2040.8443030234628,
+        "no_more_than_25_percent_worse": false,
+        "same_region_reduced": false
+      }
+    }
+  },
+  "high_order_provenance": {
+    "amr_transfer": "high_order",
+    "command_sha256": "e72a2d6f2a684e1c46af01dfa09299fa4c8386bb640fb016014e1c872c67ecb3",
+    "diagnostic_manifest_sha256": "2d35c8108bfda8d89f7fdcd0703958a28172df31418ce3fa0ba908503bb5f9f3",
+    "executable_sha256": "068c775d3920795067c6dc435ef53a34a9679dbca1d8230dfc53eb79506dd59e",
+    "gpu_model": "NVIDIA A100-SXM4-80GB",
+    "hardware_binding_sha256": "f7945000bdc0dd2776a277e21110aa2a58f90589d0d5a0a695a3e1b695c2ed70",
+    "input_sha256": "ecadb1e112e711bb261f7087072b1748c6b1914a5262214e5ce2f58b07e02835",
+    "node": "nid008205",
+    "post_cycles": 0,
+    "pre_target_amr_transfer": "high_order",
+    "qualification_claim": false,
+    "rank_count": 1,
+    "restart_sha256": "83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea",
+    "schema": "athenak_z4c_amr_zero_pde_provenance_v1",
+    "source_commit": "e6b1428cbe1fafe941ac6a41cbabe14430ed8d14",
+    "source_tree": "1b7958055d981c75fcfba78cb9f1bc2aec10648a",
+    "target_transaction_only_transfer": true
+  },
+  "level_after": 3,
+  "level_before": 2,
+  "limitations": [
+    "This is a zero-PDE target-event transfer comparison, not convergence evidence.",
+    "The common T0 constraints are authoritative parent constraint bytes mapped with one arm-independent O6 point representation; constraints are not recomputed from a synthetic fine evolved state.",
+    "No Figure-3 reproduction or production-default transfer is claimed."
+  ],
+  "limited_o2_provenance": {
+    "amr_transfer": "limited_o2",
+    "command_sha256": "9842a610bb31429e85d56ed5d587b8ba21df9c3e01f462bc86221d7b1f8fe0b7",
+    "diagnostic_manifest_sha256": "1f09a07b05c789a56c8c88053c45f3125b78de92fc7cd2973783ef0e98b1ff77",
+    "executable_sha256": "068c775d3920795067c6dc435ef53a34a9679dbca1d8230dfc53eb79506dd59e",
+    "gpu_model": "NVIDIA A100-SXM4-80GB",
+    "hardware_binding_sha256": "f7945000bdc0dd2776a277e21110aa2a58f90589d0d5a0a695a3e1b695c2ed70",
+    "input_sha256": "ecadb1e112e711bb261f7087072b1748c6b1914a5262214e5ce2f58b07e02835",
+    "node": "nid008205",
+    "post_cycles": 0,
+    "pre_target_amr_transfer": "high_order",
+    "qualification_claim": false,
+    "rank_count": 1,
+    "restart_sha256": "83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea",
+    "schema": "athenak_z4c_amr_zero_pde_provenance_v1",
+    "source_commit": "e6b1428cbe1fafe941ac6a41cbabe14430ed8d14",
+    "source_tree": "1b7958055d981c75fcfba78cb9f1bc2aec10648a",
+    "target_transaction_only_transfer": true
+  },
+  "meshblock_edge_dominant": false,
+  "no_family_worse_over_25_percent": false,
+  "proper_coordinate_localization_consistent": true,
+  "qualification_claim": false,
+  "rank_count": 1,
+  "refined_child_count": 16,
+  "same_dominant_region_reduced": true,
+  "schema": "athenak_z4c_amr_transfer_comparison_v1"
+}

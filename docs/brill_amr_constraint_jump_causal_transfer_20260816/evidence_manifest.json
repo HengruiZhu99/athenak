@@ -1,0 +1,85 @@
+{
+  "schema": "athenak_brill_amr_constraint_jump_causal_comparison_v1",
+  "qualification_claim": false,
+  "disposition": "inconclusive_parent_resolution_or_derivative_sensitivity",
+  "source": {
+    "branch": "codex/brill-amr-frozen-hierarchy-20260816",
+    "capture_commit": "e6b1428cbe1fafe941ac6a41cbabe14430ed8d14",
+    "analyzer_fix_commit": "a96c49e454674df8d1567a6d489ac08ce40a6f01",
+    "derivative_audit_commit": "392522dda2737508697662982f688809a154d571",
+    "derivative_audit_tree": "054d370479af2fc73d775b5e3ef8325bf288f90d"
+  },
+  "starting_point": {
+    "restart_sha256": "83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea",
+    "restart_cycle": 1721,
+    "restart_time": 9.501562499999995,
+    "target_cycle": 1722,
+    "target_time": 9.50625,
+    "old_meshblocks": 74,
+    "new_meshblocks": 86,
+    "created_meshblocks": 12,
+    "deleted_meshblocks": 0
+  },
+  "causal_capture": {
+    "job_id": 57137565,
+    "node": "nid008205",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "science_steps": {
+      "high_order": "COMPLETED_0_0",
+      "limited_o2": "COMPLETED_0_0"
+    },
+    "parent_disposition": "FAILED_1_0_analyzer_empty_region_division_by_zero",
+    "root_manifest_sha256": "11dd1454943adbfc5a681fda8876e07a9f07346d43ab89cb6cf7d32d92096342",
+    "detached_sha256": "35c686ae9429d7da53b0298b07c53713c18cdfe77ec600e31d239223f517780d",
+    "sacct_sha256": "52a2ce4a0974e526ad615ff0e0befaf48a38fe1d6e661e7246e939a550ad62dc"
+  },
+  "causal_gate": {
+    "causal_gate_pass": false,
+    "disposition": "causal_gate_fail_or_mixed",
+    "factor_two_families": [],
+    "no_family_worse_over_25_percent": false,
+    "proper_coordinate_localization_consistent": true,
+    "proper_ring_jump_ratios": {
+      "C": {"high_order": 95.22367600928938, "limited_o2": 1304.756396770511},
+      "H": {"high_order": 42.618818712047165, "limited_o2": 1270.2369177649387},
+      "M": {"high_order": 195.8315809364719, "limited_o2": 2040.8443030234628}
+    },
+    "dominant_high_order_region": "MESHBLOCK_EDGE_OR_CORNER",
+    "verdict_sha256": "6f3b1d2d9b078594d3a56761892c84945a0a9562c148fdad47ef06cb3e841aff",
+    "output_manifest_sha256": "72ba4cb4b39ee9f191684844a88fe7151d032e4da064f3f058c0d3c8a15f1e52"
+  },
+  "derivative_order_audit": {
+    "job_id": 57140240,
+    "parent_disposition": "COMPLETED_0_0",
+    "node": "nid008584",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "production_o6_byte_exact": true,
+    "executable_sha256": "0f91650c79da0f68fcfc6409ac073ca324f4ee70eea79a0625dd51b917203184",
+    "diagnostic_manifest_sha256": "d5857c3046a7144e206c06acdd6d7316bd72dccf4ce36d9344d796aabd441a8f",
+    "provenance_sha256": "8d03d5727abab29c88ee7dfd4eea0627f7a94a9015ccc30c20968c59f38ae134",
+    "proper_ring_integrals": {
+      "O2": {"C": 32.81462885109275, "H": 6.039918248975996, "M": 26.693084955196955},
+      "O4": {"C": 60.31450505614508, "H": 10.488769171385611, "M": 49.74015095307683},
+      "O6": {"C": 74.85732863825753, "H": 12.710553711794805, "M": 62.06017666729245}
+    },
+    "o2_over_o6": {"C": 0.4383622745832543, "H": 0.4751892313999847, "M": 0.4301161612590929},
+    "o4_over_o6": {"C": 0.8057261213208722, "H": 0.8252015930393748, "M": 0.80148258713049},
+    "correctable_operator_seam_isolated": false,
+    "verdict_sha256": "73c7651c64fc0f54fe2d8c5b919f716be3569bbbc65a983691877027505514d0",
+    "output_manifest_sha256": "7e47d8113ad28489fa7ceb8ef8b9b0ea025c99ae92a16f818aba057a1cc9b756",
+    "root_manifest_sha256": "4e24d433faf92c9b052cd44cf48b7b4178c6609c92c06f4993f61a66e18d4539",
+    "detached_sha256": "ccf6111a1777d9206bcb65e5fbe48b34ea36eaa3d7f5f6b38bd9b24f767c813f",
+    "sacct_sha256": "7019f6b762c51f7a346919c401c08f238065f16d691c236b352697d826bf96a6"
+  },
+  "skipped": {
+    "edge_limited_o2_implementation": "causal_gate_failed",
+    "three_method_evolution": "candidate_not_authorized",
+    "resolution_campaign": "outside_goal_fail_closed_branch"
+  },
+  "limitations": [
+    "This is one zero-PDE target transaction, not convergence evidence.",
+    "Derivative-order sensitivity does not identify a defective source operator.",
+    "The target refined-child set does not sample the symmetry axis.",
+    "No Figure-3 reproduction, collapse, horizon, or production-default claim is made."
+  ]
+}

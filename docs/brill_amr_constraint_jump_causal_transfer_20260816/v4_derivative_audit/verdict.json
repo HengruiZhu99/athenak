@@ -1,0 +1,70 @@
+{
+  "correctable_operator_seam_isolated": false,
+  "disposition": "inconclusive_parent_resolution_or_derivative_sensitivity",
+  "event_cycle": 1722,
+  "global_integral_ratios": {
+    "C": {
+      "O2_over_O4": 0.5440586608568956,
+      "O2_over_O6": 0.4383622745832543,
+      "O4_over_O6": 0.8057261213208722
+    },
+    "H": {
+      "O2_over_O4": 0.5758462361297343,
+      "O2_over_O6": 0.4751892313999847,
+      "O4_over_O6": 0.8252015930393748
+    },
+    "M": {
+      "O2_over_O4": 0.5366506623668735,
+      "O2_over_O6": 0.4301161612590929,
+      "O4_over_O6": 0.80148258713049
+    }
+  },
+  "global_proper_ring_integrals": {
+    "O2": {
+      "C": 32.81462885109275,
+      "H": 6.039918248975996,
+      "M": 26.693084955196955
+    },
+    "O4": {
+      "C": 60.31450505614508,
+      "H": 10.488769171385611,
+      "M": 49.74015095307683
+    },
+    "O6": {
+      "C": 74.85732863825753,
+      "H": 12.710553711794805,
+      "M": 62.06017666729245
+    }
+  },
+  "level_after": 3,
+  "level_before": 2,
+  "limitations": [
+    "All three constraint fields were recomputed from one byte-identical T5 evolved state; no PDE update or production derivative was changed.",
+    "Derivative-order disagreement characterizes sensitivity but does not by itself identify a defective source operator or establish convergence.",
+    "Block-local spectra are descriptive fluctuation spectra on the selected level-3 child MeshBlocks, not a global Fourier decomposition."
+  ],
+  "production_o6_byte_exact": true,
+  "provenance": {
+    "amr_transfer": "high_order",
+    "command_sha256": "6821bc2f0365982108c68db51349fee0b568303e81df78b01271a2267bae47b8",
+    "derivative_order_audit": true,
+    "diagnostic_manifest_sha256": "d5857c3046a7144e206c06acdd6d7316bd72dccf4ce36d9344d796aabd441a8f",
+    "executable_sha256": "0f91650c79da0f68fcfc6409ac073ca324f4ee70eea79a0625dd51b917203184",
+    "gpu_model": "NVIDIA A100-SXM4-80GB",
+    "hardware_binding_sha256": "cc30b0dc922288a0f3e43a62ee91fa17eeb8dfc848256897d2136931ee8fd97b",
+    "input_sha256": "1be2daf401a88390b73b0854779042fa142ed8ca161bf1252c81038da1b1ee95",
+    "node": "nid008584",
+    "post_cycles": 0,
+    "pre_target_amr_transfer": "high_order",
+    "qualification_claim": false,
+    "rank_count": 1,
+    "restart_sha256": "83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea",
+    "schema": "athenak_z4c_amr_zero_pde_provenance_v1",
+    "source_commit": "392522dda2737508697662982f688809a154d571",
+    "source_tree": "054d370479af2fc73d775b5e3ef8325bf288f90d",
+    "target_transaction_only_transfer": true
+  },
+  "qualification_claim": false,
+  "refined_child_count": 16,
+  "schema": "athenak_z4c_amr_derivative_order_audit_v1"
+}
