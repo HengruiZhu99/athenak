@@ -63,6 +63,8 @@ add_executable(
         geodesic-grid/gauss_legendre.cpp
 
         fo_gh/fo_gh.cpp
+        fo_gh/fo_gh_calcrhs.cpp
+        fo_gh/fo_gh_tasks.cpp
 
         gravity/gravity.cpp
         gravity/mg_gravity.cpp
@@ -151,6 +153,9 @@ add_executable(
         pgen/fo_gh/algebra_unit.cpp
         pgen/fo_gh/geometry_unit.cpp
         pgen/fo_gh/rhs_unit.cpp
+        pgen/fo_gh/minkowski.cpp
+        pgen/fo_gh/linear_wave.cpp
+        pgen/fo_gh/stability.cpp
 
         radiation/radiation.cpp
         radiation/radiation_fluxes.cpp

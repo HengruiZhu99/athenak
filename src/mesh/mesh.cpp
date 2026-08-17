@@ -23,6 +23,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
+#include "fo_gh/fo_gh.hpp"
 #include "diffusion/viscosity.hpp"
 #include "diffusion/resistivity.hpp"
 #include "diffusion/conduction.hpp"
@@ -638,6 +639,9 @@ void Mesh::NewTimeStep(const Real tlim) {
   // z4c timestep
   if (pmb_pack->pz4c != nullptr) {
     dt_cycle = std::min(dt_cycle, (cfl_no)*(pmb_pack->pz4c->dtnew) );
+  }
+  if (pmb_pack->pfogh != nullptr) {
+    dt_cycle = std::min(dt_cycle, (cfl_no)*(pmb_pack->pfogh->dtnew) );
   }
   // Radiation timestep
   if (pmb_pack->prad != nullptr) {

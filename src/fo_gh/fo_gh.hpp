@@ -12,15 +12,18 @@
 #include "athena_tensor.hpp"
 #include "fo_gh/fo_gh_state.hpp"
 #include "parameter_input.hpp"
+#include "tasklist/task_list.hpp"
 
 class MeshBlockPack;
+class Driver;
+class MeshBoundaryValuesCC;
 
 namespace fo_gh {
 
 class FoGh {
  public:
   FoGh(MeshBlockPack *ppack, ParameterInput *pin);
-  ~FoGh() = default;
+  ~FoGh();
 
   static constexpr int nfo_gh = nvar;
   static char const * const StateNames[nfo_gh];
@@ -45,6 +48,7 @@ class FoGh {
   };
 
   struct Options {
+    int fd_order;
     Real kappa;
     Real mu_H;
     Real eta_H;
@@ -59,6 +63,22 @@ class FoGh {
   Variables u;
   Variables rhs;
   Real dtnew;
+  MeshBoundaryValuesCC *pbval_u;
+
+  template <int FDNG>
+  TaskStatus CalcRHS(Driver *d, int stage);
+  void QueueTasks();
+  TaskStatus InitRecv(Driver *d, int stage);
+  TaskStatus ClearRecv(Driver *d, int stage);
+  TaskStatus ClearSend(Driver *d, int stage);
+  TaskStatus CopyU(Driver *d, int stage);
+  TaskStatus ExpRKUpdate(Driver *d, int stage);
+  TaskStatus RestrictU(Driver *d, int stage);
+  TaskStatus SendU(Driver *d, int stage);
+  TaskStatus RecvU(Driver *d, int stage);
+  TaskStatus Prolongate(Driver *d, int stage);
+  TaskStatus ApplyPhysicalBCs(Driver *d, int stage);
+  TaskStatus NewTimeStep(Driver *d, int stage);
 
  private:
   void BindVariables(DvceArray5D<Real> data, Variables &vars);

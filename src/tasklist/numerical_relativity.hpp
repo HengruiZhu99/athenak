@@ -88,13 +88,28 @@ enum TaskName {
   Z4c_FastFlow,
   Z4c_CCE,
   Z4c_DumpHorizon,
-  Z4c_NTASKS
+  Z4c_NTASKS,
+
+  FoGh_Recv,
+  FoGh_CopyU,
+  FoGh_CalcRHS,
+  FoGh_ExplRK,
+  FoGh_RestU,
+  FoGh_SendU,
+  FoGh_RecvU,
+  FoGh_Prolong,
+  FoGh_BCS,
+  FoGh_Newdt,
+  FoGh_ClearS,
+  FoGh_ClearR,
+  FoGh_NTASKS
 };
 
 enum PhysicsDependency {
   Phys_None,
   Phys_MHD,
-  Phys_Z4c
+  Phys_Z4c,
+  Phys_FoGh
 };
 
 enum TaskLocation {

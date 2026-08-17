@@ -248,7 +248,7 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     ptmunu = new Tmunu(this, pin);
   }
 
-  if (pz4c != nullptr || padm != nullptr) {
+  if (pz4c != nullptr || padm != nullptr || pfogh != nullptr) {
     pnr = new numrel::NumericalRelativity(this, pin);
     pnr->AssembleNumericalRelativityTasks(tl_map);
   }

@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include "athena.hpp"
+#include "bvals/bvals.hpp"
 #include "fo_gh/fo_gh.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
@@ -42,6 +43,7 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
     dtnew(0.0),
     pmy_pack(ppack) {
   opt.kappa = pin->GetOrAddReal("fo_gh", "kappa", 1.0);
+  opt.fd_order = pin->GetOrAddInteger("fo_gh", "fd_order", 4);
   opt.mu_H = pin->GetOrAddReal("fo_gh", "mu_H", 1.0);
   opt.eta_H = pin->GetOrAddReal("fo_gh", "eta_H", 1.0);
   opt.eta_beta = pin->GetOrAddReal("fo_gh", "eta_beta", 2.0);
@@ -51,6 +53,23 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "FO-GH requires kappa, mu_H, and eta_H > 0 and "
               << "eta_beta and diss >= 0." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  const int derivative_radius = opt.fd_order/2;
+  if ((opt.fd_order != 2 && opt.fd_order != 4 && opt.fd_order != 6) ||
+      ppack->pmesh->mb_indcs.ng < 2*derivative_radius) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "FO-GH fd_order must be 2, 4, or 6, with at least "
+              << "fd_order ghost cells for its two-pass compatible derivative."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  const bool evolves = pin->GetString("time", "evolution") != "static";
+  if (evolves && !(ppack->pmesh->three_d)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "FO-GH currently requires a three-dimensional mesh."
+              << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
@@ -71,6 +90,12 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
     const int nccells3 = (indcs.cnx3 > 1 ? indcs.cnx3 + 2*indcs.ng : 1);
     Kokkos::realloc(coarse_u0, nmb, nfo_gh, nccells3, nccells2, nccells1);
   }
+  pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
+  pbval_u->InitializeBuffers(nfo_gh);
+}
+
+FoGh::~FoGh() {
+  delete pbval_u;
 }
 
 void FoGh::BindVariables(DvceArray5D<Real> data, Variables &vars) {

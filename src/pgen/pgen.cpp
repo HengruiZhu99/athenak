@@ -971,6 +971,12 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     FoGhGeometryUnit(pin, is_restart);
   } else if (pgen_fun_name.compare("fo_gh_rhs_unit") == 0) {
     FoGhRhsUnit(pin, is_restart);
+  } else if (pgen_fun_name.compare("fo_gh_minkowski") == 0) {
+    FoGhMinkowski(pin, is_restart);
+  } else if (pgen_fun_name.compare("fo_gh_linear_wave") == 0) {
+    FoGhLinearWave(pin, is_restart);
+  } else if (pgen_fun_name.compare("fo_gh_stability") == 0) {
+    FoGhStability(pin, is_restart);
 
   } else {
     // name not set on command line or input file, print warning and quit

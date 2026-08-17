@@ -22,6 +22,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
+#include "fo_gh/fo_gh.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "ion-neutral/ion-neutral.hpp"
 #include "radiation/radiation.hpp"
@@ -468,6 +469,7 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
   mhd::MHD *pmhd = pmesh->pmb_pack->pmhd;
   radiation::Radiation *prad = pmesh->pmb_pack->prad;
   z4c::Z4c *pz4c = pmesh->pmb_pack->pz4c;
+  fo_gh::FoGh *pfogh = pmesh->pmb_pack->pfogh;
   if (time_evolution != TimeEvolution::tstatic) {
     if (phydro != nullptr) {
       (void) pmesh->pmb_pack->phydro->NewTimeStep(this, nexp_stages);
@@ -480,6 +482,9 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     }
     if (pz4c != nullptr) {
       (void) pmesh->pmb_pack->pz4c->NewTimeStep(this, nexp_stages);
+    }
+    if (pfogh != nullptr) {
+      (void) pfogh->NewTimeStep(this, nexp_stages);
     }
 
     pmesh->NewTimeStep(tlim);
@@ -759,6 +764,19 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
     (void) pz4c->Z4cBoundaryRHS(this, 0);
     (void) pz4c->Prolongate(this, 0); // coarse grid BCs and prolongation
     (void) pz4c->ApplyPhysicalBCs(this, 0); // fine grid BCs
+  }
+
+  // Initialize regularized vacuum FO-GH ghost zones.
+  fo_gh::FoGh *pfogh = pm->pmb_pack->pfogh;
+  if (pfogh != nullptr) {
+    (void) pfogh->RestrictU(this, 0);
+    (void) pfogh->InitRecv(this, -1);
+    (void) pfogh->SendU(this, 0);
+    (void) pfogh->ClearSend(this, -1);
+    (void) pfogh->ClearRecv(this, -1);
+    (void) pfogh->RecvU(this, 0);
+    (void) pfogh->Prolongate(this, 0);
+    (void) pfogh->ApplyPhysicalBCs(this, 0);
   }
 
   // Initialize HYDRO: ghost zones and primitive variables (everywhere)
