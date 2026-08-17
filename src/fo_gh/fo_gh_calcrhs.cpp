@@ -184,4 +184,60 @@ template TaskStatus FoGh::CalcRHS<2>(Driver *, int);
 template TaskStatus FoGh::CalcRHS<3>(Driver *, int);
 template TaskStatus FoGh::CalcRHS<4>(Driver *, int);
 
+template <int FDNG>
+void FoGh::CalcConstraints() {
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  auto &size = pmy_pack->pmb->mb_size;
+  const auto vars = u;
+  const auto constraints = u_con;
+  Kokkos::deep_copy(constraints, 0.0);
+  par_for("fo_gh constraints", DevExeSpace(), 0, pmy_pack->nmb_thispack - 1,
+  indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    const Real idx[3] = {1.0/size.d_view(m).dx1,
+                         1.0/size.d_view(m).dx2,
+                         1.0/size.d_view(m).dx3};
+    RegularPointState point;
+    EvolutionDerivatives derivatives;
+    GeometryPoint geometry;
+    LoadPoint(vars, m, k, j, i, point);
+    LoadDerivatives<FDNG>(vars, idx, m, k, j, i, derivatives);
+    ComputeGeometry(point, derivatives.geometry, geometry);
+    constraints(m, I_CON_H, k, j, i) = geometry.hamiltonian;
+    constraints(m, I_CON_GH_PERP, k, j, i) = point.pi + point.K;
+    Real rq2 = 0.0;
+    Real rx2 = 0.0;
+    Real ra2 = 0.0;
+    Real rb2 = 0.0;
+    for (int p = 0; p < 3; ++p) {
+      constraints(m, I_CON_MX + p, k, j, i) = geometry.momentum(p);
+      constraints(m, I_CON_GHX + p, k, j, i) = geometry.c_up(p);
+      const Real rx = point.X(p) - Dx<FDNG>(p, idx, vars.chi, m, k, j, i);
+      const Real ra = point.a(p) - Dx<FDNG>(p, idx, vars.alpha, m, k, j, i);
+      rx2 += rx*rx;
+      ra2 += ra*ra;
+      for (int a = 0; a < 3; ++a) {
+        const Real rb = point.B(p, a)
+                        - Dx<FDNG>(p, idx, vars.beta, m, a, k, j, i);
+        rb2 += rb*rb;
+      }
+      for (int a = 0; a < 3; ++a) {
+        for (int b = a; b < 3; ++b) {
+          const Real rq = point.Q(p, a, b)
+                          - Dx<FDNG>(p, idx, vars.gtilde, m, a, b, k, j, i);
+          rq2 += rq*rq;
+        }
+      }
+    }
+    constraints(m, I_CON_RQ, k, j, i) = std::sqrt(rq2);
+    constraints(m, I_CON_RX, k, j, i) = std::sqrt(rx2);
+    constraints(m, I_CON_RA, k, j, i) = std::sqrt(ra2);
+    constraints(m, I_CON_RB, k, j, i) = std::sqrt(rb2);
+  });
+}
+
+template void FoGh::CalcConstraints<2>();
+template void FoGh::CalcConstraints<3>();
+template void FoGh::CalcConstraints<4>();
+
 } // namespace fo_gh

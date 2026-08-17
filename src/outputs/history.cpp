@@ -20,6 +20,7 @@
 #include "eos/eos.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
+#include "fo_gh/fo_gh.hpp"
 #include "z4c/z4c.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
@@ -46,7 +47,7 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
     }
   }
 
-  if (pm->pmb_pack->pz4c != nullptr) {
+  if (pm->pmb_pack->pz4c != nullptr || pm->pmb_pack->pfogh != nullptr) {
     hist_data.emplace_back(PhysicsModule::SpaceTimeDynamics);
   }
 }
@@ -63,10 +64,62 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
     } else if (data.physics == PhysicsModule::MagnetoHydroDynamics) {
       LoadMHDHistoryData(&data, pm);
     } else if (data.physics == PhysicsModule::SpaceTimeDynamics) {
-      LoadZ4cHistoryData(&data, pm);
+      if (pm->pmb_pack->pfogh != nullptr) {
+        LoadFoGhHistoryData(&data, pm);
+      } else {
+        LoadZ4cHistoryData(&data, pm);
+      }
     } else if (data.physics == PhysicsModule::UserDefined) {
       (pm->pgen->user_hist_func)(&data, pm);
     }
+  }
+}
+
+void HistoryOutput::LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm) {
+  pdata->nhist = fo_gh::FoGh::ncon + 1;
+  const char *labels[fo_gh::FoGh::ncon] = {
+    "H-L2sq", "Mx-L2sq", "My-L2sq", "Mz-L2sq",
+    "GHp-L2sq", "GHx-L2sq", "GHy-L2sq", "GHz-L2sq",
+    "RQ-L2sq", "RX-L2sq", "Ra-L2sq", "RB-L2sq"
+  };
+  for (int n = 0; n < fo_gh::FoGh::ncon; ++n) pdata->label[n] = labels[n];
+  pdata->label[fo_gh::FoGh::ncon] = "Volume";
+
+  auto &indcs = pm->mb_indcs;
+  auto &size = pm->pmb_pack->pmb->mb_size;
+  const auto constraints = pm->pmb_pack->pfogh->u_con;
+  const auto adm_vars = pm->pmb_pack->padm->adm;
+  const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  array_sum::GlobalSum sums;
+  Kokkos::parallel_reduce(
+      "fo_gh history", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, array_sum::GlobalSum &total) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is;
+        work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js;
+        work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real detg = adm::SpatialDet(
+            adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
+            adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
+            adm_vars.g_dd(m, 1, 2, k, j, i), adm_vars.g_dd(m, 2, 2, k, j, i));
+        const Real volume = size.d_view(m).dx1*size.d_view(m).dx2
+                            *size.d_view(m).dx3*std::sqrt(std::abs(detg));
+        array_sum::GlobalSum local;
+        for (int n = 0; n < fo_gh::FoGh::ncon; ++n) {
+          local.the_array[n] = volume*SQR(constraints(m, n, k, j, i));
+        }
+        local.the_array[fo_gh::FoGh::ncon] = volume;
+        for (int n = fo_gh::FoGh::ncon + 1; n < NHISTORY_VARIABLES; ++n) {
+          local.the_array[n] = 0.0;
+        }
+        total += local;
+      }, Kokkos::Sum<array_sum::GlobalSum>(sums));
+  for (int n = 0; n < pdata->nhist; ++n) {
+    pdata->hdata[n] = sums.the_array[n];
   }
 }
 
@@ -406,7 +459,8 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
           fname.append(".mhd");
           break;
         case PhysicsModule::SpaceTimeDynamics:
-          fname.append(".z4c");
+          fname.append(pm->pmb_pack->pfogh != nullptr ? ".fo_gh" : ".z4c");
+          break;
         case PhysicsModule::UserDefined:
           fname.append(".user");
           break;

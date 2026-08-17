@@ -14,6 +14,7 @@
 #include <string>
 
 #include "athena.hpp"
+#include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "fo_gh/fo_gh.hpp"
 #include "globals.hpp"
@@ -29,6 +30,7 @@ namespace {
 
 void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
   auto *pmbp = pm->pmb_pack;
+  pmbp->pfogh->FoGhToADM();
   switch (pmbp->pfogh->opt.fd_order) {
     case 2:
       (void)pmbp->pfogh->CalcRHS<2>(nullptr, 0);
@@ -92,6 +94,39 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
       Kokkos::Min<Real>(minimum_chi), Kokkos::Max<Real>(maximum_state),
       Kokkos::Max<Real>(maximum_rhs), Kokkos::Max<Real>(maximum_near_rhs),
       nonfinite);
+  Real adm_adapter_error = 0.0;
+  const auto vars = pmbp->pfogh->u;
+  const auto adm_vars = pmbp->padm->adm;
+  Kokkos::parallel_reduce(
+      "fo_gh ADM adapter check", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pmbp->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is;
+        work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js;
+        work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real psi4 = 1.0/vars.chi(m, k, j, i);
+        maximum = fmax(maximum,
+                       Kokkos::abs(adm_vars.psi4(m, k, j, i) - psi4));
+        maximum = fmax(maximum, Kokkos::abs(adm_vars.alpha(m, k, j, i)
+                                             - vars.alpha(m, k, j, i)));
+        for (int a = 0; a < 3; ++a) {
+          maximum = fmax(maximum, Kokkos::abs(adm_vars.beta_u(m, a, k, j, i)
+                                               - vars.beta(m, a, k, j, i)));
+          for (int b = a; b < 3; ++b) {
+            const Real gamma = psi4*vars.gtilde(m, a, b, k, j, i);
+            const Real extrinsic = psi4*vars.Atilde(m, a, b, k, j, i)
+                                   + vars.K(m, k, j, i)*gamma/3.0;
+            maximum = fmax(maximum, Kokkos::abs(
+                adm_vars.g_dd(m, a, b, k, j, i) - gamma));
+            maximum = fmax(maximum, Kokkos::abs(
+                adm_vars.vK_dd(m, a, b, k, j, i) - extrinsic));
+          }
+        }
+      }, Kokkos::Max<Real>(adm_adapter_error));
 #if MPI_PARALLEL_ENABLED
   MPI_Allreduce(MPI_IN_PLACE, &minimum_radius, 1, MPI_ATHENA_REAL, MPI_MIN,
                 MPI_COMM_WORLD);
@@ -106,10 +141,13 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
   MPI_Allreduce(MPI_IN_PLACE, &maximum_near_rhs, 1, MPI_ATHENA_REAL, MPI_MAX,
                 MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &nonfinite, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &adm_adapter_error, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
 #endif
-  if (nonfinite != 0 || minimum_radius <= 0.0) {
+  if (nonfinite != 0 || minimum_radius <= 0.0 || adm_adapter_error > 1.0e-13) {
     std::cout << "FO-GH puncture boundedness failed: nonfinite=" << nonfinite
-              << ", minimum radius=" << minimum_radius << std::endl;
+              << ", minimum radius=" << minimum_radius
+              << ", ADM adapter error=" << adm_adapter_error << std::endl;
     std::exit(EXIT_FAILURE);
   }
   if (global_variable::my_rank == 0) {
@@ -120,16 +158,17 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
       std::exit(EXIT_FAILURE);
     }
     std::fprintf(file, "# nx dx rmin alpha_min chi_min state_max rhs_max ");
-    std::fprintf(file, "near_rhs_max nonfinite\n");
-    std::fprintf(file, "%d %.17e %.17e %.17e %.17e %.17e %.17e %.17e %d\n",
+    std::fprintf(file, "near_rhs_max nonfinite adm_adapter_error\n");
+    std::fprintf(file, "%d %.17e %.17e %.17e %.17e %.17e %.17e %.17e %d %.17e\n",
                  pm->mesh_indcs.nx1,
                  (pm->mesh_size.x1max - pm->mesh_size.x1min)/pm->mesh_indcs.nx1,
                  minimum_radius, minimum_alpha, minimum_chi, maximum_state,
-                 maximum_rhs, maximum_near_rhs, nonfinite);
+                 maximum_rhs, maximum_near_rhs, nonfinite, adm_adapter_error);
     std::fclose(file);
     std::cout << "FO-GH puncture boundedness passed: rmin=" << minimum_radius
               << ", state max=" << maximum_state
-              << ", near RHS max=" << maximum_near_rhs << std::endl;
+              << ", near RHS max=" << maximum_near_rhs
+              << ", ADM adapter error=" << adm_adapter_error << std::endl;
   }
 }
 

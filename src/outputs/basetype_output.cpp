@@ -23,6 +23,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
+#include "fo_gh/fo_gh.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/tmunu.hpp"
 #include "z4c/z4c.hpp"
@@ -174,6 +175,13 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
        << "Output of gravity potential requested in <output> block '"
        << out_params.block_name << "' but gravity object not constructed."
        << std::endl << "Input file is likely missing a <gravity> block" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  if ((ivar==154 || ivar==155) && (pm->pmb_pack->pfogh == nullptr)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << std::endl
+       << "Output of FO-GH state requested in <output> block '"
+       << out_params.block_name << "' but no FO-GH object has been constructed."
+       << std::endl << "Input file is likely missing a <fo_gh> block" << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -637,6 +645,20 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
             variable.compare(adm::ADM::ADM_names[v]) == 0) {
           outvars.emplace_back(adm::ADM::ADM_names[v], v, &(pm->pmb_pack->padm->u_adm));
         }
+      }
+    }
+
+    // regularized vacuum first-order generalized harmonic variables
+    if (variable.compare("fo_gh") == 0) {
+      for (int v = 0; v < fo_gh::FoGh::nfo_gh; ++v) {
+        outvars.emplace_back(fo_gh::FoGh::StateNames[v], v,
+                             &(pm->pmb_pack->pfogh->u0));
+      }
+    }
+    if (variable.compare("fo_gh_con") == 0) {
+      for (int v = 0; v < fo_gh::FoGh::ncon; ++v) {
+        outvars.emplace_back(fo_gh::FoGh::ConstraintNames[v], v,
+                             &(pm->pmb_pack->pfogh->u_con));
       }
     }
 

@@ -30,7 +30,8 @@ ADM::ADM(MeshBlockPack *ppack, ParameterInput *pin):
     u_adm("u_adm",1,1,1,1,1),
     SetADMVariables(&ADM::SetADMVariablesToKerrSchild),
     pmy_pack(ppack) {
-  is_dynamic = pin->GetOrAddBoolean("adm" , "dynamic", false);
+  is_dynamic = pin->DoesBlockExist("fo_gh")
+               ? true : pin->GetOrAddBoolean("adm" , "dynamic", false);
 
   int nmb = std::max((ppack->nmb_thispack), (ppack->pmesh->nmb_maxperrank));
   auto &indcs = pmy_pack->pmesh->mb_indcs;

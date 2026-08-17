@@ -27,6 +27,12 @@ class FoGh {
 
   static constexpr int nfo_gh = nvar;
   static char const * const StateNames[nfo_gh];
+  enum ConstraintIndex {
+    I_CON_H, I_CON_MX, I_CON_MY, I_CON_MZ,
+    I_CON_GH_PERP, I_CON_GHX, I_CON_GHY, I_CON_GHZ,
+    I_CON_RQ, I_CON_RX, I_CON_RA, I_CON_RB, ncon
+  };
+  static char const * const ConstraintNames[ncon];
 
   struct Variables {
     AthenaTensor<Real, TensorSymm::SYM2, 3, 2> gtilde;
@@ -60,14 +66,18 @@ class FoGh {
   DvceArray5D<Real> u0;
   DvceArray5D<Real> u1;
   DvceArray5D<Real> u_rhs;
+  DvceArray5D<Real> u_con;
   DvceArray5D<Real> coarse_u0;
   Variables u;
   Variables rhs;
   Real dtnew;
+  Real max_char_speed;
   MeshBoundaryValuesCC *pbval_u;
 
   template <int FDNG>
   TaskStatus CalcRHS(Driver *d, int stage);
+  template <int FDNG>
+  void CalcConstraints();
   void QueueTasks();
   TaskStatus InitRecv(Driver *d, int stage);
   TaskStatus ClearRecv(Driver *d, int stage);
@@ -81,6 +91,8 @@ class FoGh {
   TaskStatus ApplyPhysicalBCs(Driver *d, int stage);
   TaskStatus NewTimeStep(Driver *d, int stage);
   void RepairGradients(const DualArray1D<int> &repair);
+  void FoGhToADM();
+  void UpdateDiagnostics();
 
  private:
   void BindVariables(DvceArray5D<Real> data, Variables &vars);

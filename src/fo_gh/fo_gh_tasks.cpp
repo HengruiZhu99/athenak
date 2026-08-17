@@ -11,6 +11,7 @@
 
 #include "athena.hpp"
 #include "bvals/bvals.hpp"
+#include "coordinates/adm.hpp"
 #include "driver/driver.hpp"
 #include "fo_gh/fo_gh.hpp"
 #include "mesh/mesh.hpp"
@@ -320,18 +321,104 @@ TaskStatus FoGh::NewTimeStep(Driver *pdriver, int stage) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  const auto vars = u;
   Real minimum = std::numeric_limits<float>::max();
   Kokkos::parallel_reduce(
       "fo_gh dt", Kokkos::RangePolicy<>(DevExeSpace(),
       0, pmy_pack->nmb_thispack*ncells),
       KOKKOS_LAMBDA(const int idx, Real &local_minimum) {
-        const int m = idx/ncells;
-        const Real dx = fmin(size.d_view(m).dx1,
-                            fmin(size.d_view(m).dx2, size.d_view(m).dx3));
-        local_minimum = fmin(local_minimum, dx);
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is;
+        work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js;
+        work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> metric;
+        AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> inverse;
+        for (int a = 0; a < 3; ++a) {
+          for (int b = a; b < 3; ++b) {
+            metric(a, b) = vars.gtilde(m, a, b, k, j, i);
+          }
+        }
+        Invert3(metric, inverse);
+        const Real dx[3] = {size.d_view(m).dx1,
+                            size.d_view(m).dx2,
+                            size.d_view(m).dx3};
+        for (int d = 0; d < 3; ++d) {
+          const Real speed = Kokkos::abs(vars.beta(m, d, k, j, i))
+              + vars.alpha(m, k, j, i)
+                *std::sqrt(fmax(0.0, vars.chi(m, k, j, i)*inverse(d, d)));
+          if (speed > 0.0) local_minimum = fmin(local_minimum, dx[d]/speed);
+        }
       }, Kokkos::Min<Real>(minimum));
   dtnew = minimum;
+  Real maximum = 0.0;
+  Kokkos::parallel_reduce(
+      "fo_gh max characteristic speed", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pmy_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &local_maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is;
+        work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js;
+        work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> metric;
+        AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> inverse;
+        for (int a = 0; a < 3; ++a) {
+          for (int b = a; b < 3; ++b) {
+            metric(a, b) = vars.gtilde(m, a, b, k, j, i);
+          }
+        }
+        Invert3(metric, inverse);
+        for (int d = 0; d < 3; ++d) {
+          const Real speed = Kokkos::abs(vars.beta(m, d, k, j, i))
+              + vars.alpha(m, k, j, i)
+                *std::sqrt(fmax(0.0, vars.chi(m, k, j, i)*inverse(d, d)));
+          local_maximum = fmax(local_maximum, speed);
+        }
+      }, Kokkos::Max<Real>(maximum));
+  max_char_speed = maximum;
+  UpdateDiagnostics();
   return TaskStatus::complete;
+}
+
+void FoGh::FoGhToADM() {
+  if (pmy_pack->padm == nullptr) return;
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const int n1 = indcs.nx1 + 2*indcs.ng;
+  const int n2 = (indcs.nx2 > 1 ? indcs.nx2 + 2*indcs.ng : 1);
+  const int n3 = (indcs.nx3 > 1 ? indcs.nx3 + 2*indcs.ng : 1);
+  const auto vars = u;
+  const auto adm_vars = pmy_pack->padm->adm;
+  par_for("fo_gh to ADM", DevExeSpace(), 0, pmy_pack->nmb_thispack - 1,
+  0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
+  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    const Real psi4 = 1.0/vars.chi(m, k, j, i);
+    adm_vars.psi4(m, k, j, i) = psi4;
+    adm_vars.alpha(m, k, j, i) = vars.alpha(m, k, j, i);
+    for (int a = 0; a < 3; ++a) {
+      adm_vars.beta_u(m, a, k, j, i) = vars.beta(m, a, k, j, i);
+      for (int b = a; b < 3; ++b) {
+        const Real gamma = psi4*vars.gtilde(m, a, b, k, j, i);
+        adm_vars.g_dd(m, a, b, k, j, i) = gamma;
+        adm_vars.vK_dd(m, a, b, k, j, i) =
+            psi4*vars.Atilde(m, a, b, k, j, i)
+            + vars.K(m, k, j, i)*gamma/3.0;
+      }
+    }
+  });
+}
+
+void FoGh::UpdateDiagnostics() {
+  FoGhToADM();
+  switch (opt.fd_order) {
+    case 2: CalcConstraints<2>(); break;
+    case 4: CalcConstraints<3>(); break;
+    case 6: CalcConstraints<4>(); break;
+  }
 }
 
 } // namespace fo_gh

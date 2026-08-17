@@ -35,12 +35,20 @@ char const * const FoGh::StateNames[FoGh::nfo_gh] = {
   "fo_gh_varthetaz"
 };
 
+char const * const FoGh::ConstraintNames[FoGh::ncon] = {
+  "fo_gh_con_H", "fo_gh_con_Mx", "fo_gh_con_My", "fo_gh_con_Mz",
+  "fo_gh_con_GHperp", "fo_gh_con_GHx", "fo_gh_con_GHy", "fo_gh_con_GHz",
+  "fo_gh_con_RQ", "fo_gh_con_RX", "fo_gh_con_Ra", "fo_gh_con_RB"
+};
+
 FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
     u0("u0 fo_gh", 1, 1, 1, 1, 1),
     u1("u1 fo_gh", 1, 1, 1, 1, 1),
     u_rhs("u_rhs fo_gh", 1, 1, 1, 1, 1),
+    u_con("u_con fo_gh", 1, 1, 1, 1, 1),
     coarse_u0("coarse u0 fo_gh", 1, 1, 1, 1, 1),
     dtnew(0.0),
+    max_char_speed(0.0),
     pmy_pack(ppack) {
   opt.kappa = pin->GetOrAddReal("fo_gh", "kappa", 1.0);
   opt.fd_order = pin->GetOrAddInteger("fo_gh", "fd_order", 4);
@@ -95,6 +103,7 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
   Kokkos::realloc(u0, nmb, nfo_gh, ncells3, ncells2, ncells1);
   Kokkos::realloc(u1, nmb, nfo_gh, ncells3, ncells2, ncells1);
   Kokkos::realloc(u_rhs, nmb, nfo_gh, ncells3, ncells2, ncells1);
+  Kokkos::realloc(u_con, nmb, ncon, ncells3, ncells2, ncells1);
   BindVariables(u0, u);
   BindVariables(u_rhs, rhs);
 
