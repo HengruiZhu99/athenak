@@ -30,11 +30,15 @@ Observed local results:
 
 - tensor, algebra, geometry, primary RHS, and compatible-gradient device
   problem generators passed;
+- the compatible-gradient device problem now uses nonzero shift and driver
+  profiles and checks the production scalar/vector/tensor robust-advection RHS
+  against a direct `Lx` oracle; it also proves the dataset differs from centered
+  advection;
 - exact Minkowski remained exact on uniform and real-SMR meshes;
 - compatible reduction gradients remained at roundoff;
-- uniform linear-wave errors at `N=8,16,32` were
-  `1.1837289e-10`, `7.8606080e-12`, and `5.1499314e-13`, giving orders
-  `3.91255` and `3.93202`;
+- after the robust-advection correction, uniform linear-wave errors at
+  `N=8,16,32` were `1.1837284e-10`, `7.8606381e-12`, and `5.1512035e-13`,
+  giving orders `3.91255` and `3.93166`;
 - the real-SMR wave result is only about order `1.5--1.6` and must not be
   described as fourth-order SMR convergence;
 - dynamic regrid changed one root block to eight children and repaired all
@@ -102,8 +106,12 @@ The following one-rank/one-A100 checks completed successfully:
 
 ## Uniform puncture time ladder
 
-The production test parameters were fourth-order centered differences, RK4,
+The captured Perlmutter campaign used fourth-order centered derivatives,
+including the then-current centered explicit shift-advection terms, RK4,
 `CFL=0.025`, `kappa=1`, `mu_H=1`, `eta_H=1`, `eta_beta=2`, and `diss=0.02`.
+The later `Lx` correction described below means those puncture histories are
+diagnostic evidence for the earlier source state, not qualification of the
+current robust-advection implementation.
 The domain was initially `[-4M,4M]^3`, with one MeshBlock and outflow-labelled
 polynomial-extrapolation boundaries.  Evolution used no floors, clipping,
 resets, or excision.  Only diagnostic reductions omitted `alpha<0.25` cells.
@@ -175,10 +183,22 @@ The next reviewer should prioritize:
 
 After the captured campaign, the source was extended to provide the missing
 curl, determinant/trace, gauge-residual, and separately normalized fixed-radius
-history reductions needed by items 2 and 3.  That extension has passed an
-incremental Release/Serial compile, but no Athena execution was started after
-the user's request to terminate runs.  Its runtime and GPU behavior therefore
-remain explicitly unverified.
+history reductions needed by items 2 and 3.  A later local focused run verified
+the 22-column history and 43-field checkpoint schemas through `t=0.02M`; all
+values were finite.  The same update routed explicit shift-advection terms
+through AthenaK's robust `Lx` operator while preserving the exact compatible
+`beta.(Q,X,a,B)` products.  Its direct `Lx` oracle, uniform robust Minkowski,
+real-SMR robust Minkowski, primary-RHS unit, and short puncture smoke checks all
+pass in the Release/Serial build.  These post-campaign changes remain GPU
+unverified and do not upgrade the long-stability claim.
+
+The focused post-change commands ran the executable directly from a fresh
+temporary directory with `tst/inputs/fo_gh_compatible_unit.athinput`,
+`fo_gh_rhs_unit.athinput`, `fo_gh_stability.athinput`, and
+`fo_gh_puncture_evolution.athinput`.  The uniform robust-Minkowski final/initial
+`Linf` ratio was `0.95388`; the real-SMR ratio was `0.99244`.  Repeating the
+wave script's uniform `N=8,16,32` and real-SMR `N=16,32` ladders gave the
+uniform results above and SMR order `1.51443`.
 
 All source logs, histories, checkpoint summaries, CMake provenance, executable
 hashes, and GPU telemetry used above are under

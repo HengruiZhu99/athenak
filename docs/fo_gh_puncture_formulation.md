@@ -204,6 +204,18 @@ two passes require a doubled stencil radius, the mesh must supply at least
 the current AthenaK prolongator is not sixth-order compatible.  KO strength is
 runtime parameter `fo_gh/diss`.
 
+Shift advection follows the first-order split rather than applying one blanket
+operator to every field.  The four weight-zero coordinate-time RHSs retain the
+fixed products `beta.Q`, `beta.X`, `beta.a`, and `beta.B`; this is required for
+the compatible semidiscrete reduction system above.  Explicit
+`beta^k partial_k` terms for `K`, `Atilde`, `Lambda`, `pi`, and `h_A` use
+AthenaK's sign-aware `Lx<FDNG>` operator at the configured order.  The same
+numerical `Lx(h_A)` is used in both driver equations, including the
+`-eta_H beta^k partial_k h_A` term in `vartheta_A`.  These upwind stencils are
+evaluated only on physical cells, while the wider first-pass halo is needed
+only for the compatible weight-zero RHSs; no additional ghost-depth condition
+is introduced.
+
 ## Independent moving-puncture gauge driver
 
 The regular targets are

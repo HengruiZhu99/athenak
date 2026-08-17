@@ -32,6 +32,51 @@ struct EvolutionDerivatives {
   }
 };
 
+//! Numerical shift-advection terms for fields whose spatial gradients are not
+//! part of the evolved state.  Production code fills these with AthenaK's
+//! sign-aware Lx operator.  Keeping them separate from EvolutionDerivatives
+//! prevents the fixed compatible terms beta.Q, beta.X, beta.a, and beta.B from
+//! being silently replaced by a different discrete derivative.
+struct EvolutionAdvection {
+  AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> Atilde;
+  Real K;
+  AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> Lambda;
+  Real pi;
+  Real h_perp;
+  AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> h;
+
+  KOKKOS_INLINE_FUNCTION
+  void ZeroClear() {
+    Atilde.ZeroClear();
+    K = 0.0;
+    Lambda.ZeroClear();
+    pi = 0.0;
+    h_perp = 0.0;
+    h.ZeroClear();
+  }
+};
+
+//! Centered pointwise form used by algebraic unit tests.  The production mesh
+//! RHS supplies EvolutionAdvection from the robust Lx stencil instead.
+KOKKOS_INLINE_FUNCTION
+void CenteredAdvection(const RegularPointState &u,
+                       const EvolutionDerivatives &d,
+                       EvolutionAdvection &advection) {
+  advection.ZeroClear();
+  for (int k = 0; k < 3; ++k) {
+    advection.K += u.beta(k)*d.geometry.dK(k);
+    advection.pi += u.beta(k)*d.dpi(k);
+    advection.h_perp += u.beta(k)*d.dh_perp(k);
+    for (int i = 0; i < 3; ++i) {
+      advection.Lambda(i) += u.beta(k)*d.geometry.dLambda(k, i);
+      advection.h(i) += u.beta(k)*d.dh(k, i);
+      for (int j = i; j < 3; ++j) {
+        advection.Atilde(i, j) += u.beta(k)*d.geometry.dA(k, i, j);
+      }
+    }
+  }
+}
+
 //! Coordinate-time RHSs for the 30 primary fields. Q, X, a, and B are
 //! produced in a separate compatible-gradient pass by differentiating the
 //! gtilde, chi, alpha, and beta RHSs.
@@ -132,6 +177,7 @@ void MakeTraceFree(AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> &tensor,
 
 KOKKOS_INLINE_FUNCTION
 void ComputePrimaryRhs(const RegularPointState &u, const EvolutionDerivatives &d,
+                       const EvolutionAdvection &advection,
                        const Real kappa, const Real mu_H, const Real eta_H,
                        const Real eta_beta, PrimaryRhs &rhs) {
   rhs.ZeroClear();
@@ -206,10 +252,7 @@ void ComputePrimaryRhs(const RegularPointState &u, const EvolutionDerivatives &d
               + u.alpha*(geo.hamiltonian - u.K*C_perp - u.chi*div_c
                          + 0.5*c_dot_X)
               - 1.5*u.alpha*kappa*C_perp;
-  rhs.K = d0_K;
-  for (int k = 0; k < 3; ++k) {
-    rhs.K += u.beta(k)*d.geometry.dK(k);
-  }
+  rhs.K = advection.K + d0_K;
 
   AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> curvature;
   AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> c_terms;
@@ -242,9 +285,8 @@ void ComputePrimaryRhs(const RegularPointState &u, const EvolutionDerivatives &d
         for (int l = 0; l < 3; ++l) {
           d0_A -= 2.0*u.alpha*u.Atilde(i, k)*geo.inverse(k, l)*u.Atilde(l, j);
         }
-        rhs.Atilde(i, j) += u.beta(k)*d.geometry.dA(k, i, j);
       }
-      rhs.Atilde(i, j) += d0_A;
+      rhs.Atilde(i, j) = advection.Atilde(i, j) + d0_A;
     }
   }
 
@@ -253,7 +295,6 @@ void ComputePrimaryRhs(const RegularPointState &u, const EvolutionDerivatives &d
                      + ((2.0/3.0)*u.alpha*u.K + kappa*u.alpha)*geo.c_up(i);
     for (int k = 0; k < 3; ++k) {
       d0_Lambda -= u.Lambda(k)*u.B(k, i);
-      rhs.Lambda(i) += u.beta(k)*d.geometry.dLambda(k, i);
       for (int l = 0; l < 3; ++l) {
         d0_Lambda += geo.inverse(k, l)*d.dB(k, l, i);
       }
@@ -281,7 +322,7 @@ void ComputePrimaryRhs(const RegularPointState &u, const EvolutionDerivatives &d
         d0_Lambda += 2.0*u.alpha*A_up(k, l)*geo.Gamma(i, k, l);
       }
     }
-    rhs.Lambda(i) += d0_Lambda;
+    rhs.Lambda(i) = advection.Lambda(i) + d0_Lambda;
   }
 
   Real d0_pi = -u.alpha*A_squared - (u.alpha/3.0)*u.K*u.K
@@ -289,27 +330,30 @@ void ComputePrimaryRhs(const RegularPointState &u, const EvolutionDerivatives &d
                - 0.5*kappa*u.alpha*C_perp;
   for (int i = 0; i < 3; ++i) {
     d0_pi += u.chi*geo.c_up(i)*u.a(i);
-    rhs.pi += u.beta(i)*d.dpi(i);
   }
-  rhs.pi += d0_pi;
+  rhs.pi = advection.pi + d0_pi;
 
   Real f_perp = 0.0;
   AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> f;
   GaugeTargets(u, eta_beta, f_perp, f);
-  rhs.h_perp = -mu_H*(u.h_perp - f_perp) + u.vartheta_perp;
-  rhs.vartheta_perp = -eta_H*u.vartheta_perp;
-  for (int k = 0; k < 3; ++k) {
-    rhs.h_perp += u.beta(k)*d.dh_perp(k);
-    rhs.vartheta_perp -= eta_H*u.beta(k)*d.dh_perp(k);
-  }
+  rhs.h_perp = advection.h_perp - mu_H*(u.h_perp - f_perp)
+               + u.vartheta_perp;
+  rhs.vartheta_perp = -eta_H*(advection.h_perp + u.vartheta_perp);
   for (int i = 0; i < 3; ++i) {
-    rhs.h(i) = -mu_H*(u.h(i) - f(i)) + u.vartheta(i);
-    rhs.vartheta(i) = -eta_H*u.vartheta(i);
-    for (int k = 0; k < 3; ++k) {
-      rhs.h(i) += u.beta(k)*d.dh(k, i);
-      rhs.vartheta(i) -= eta_H*u.beta(k)*d.dh(k, i);
-    }
+    rhs.h(i) = advection.h(i) - mu_H*(u.h(i) - f(i)) + u.vartheta(i);
+    rhs.vartheta(i) = -eta_H*(advection.h(i) + u.vartheta(i));
   }
+}
+
+//! Convenience overload for pointwise tests that provide analytic centered
+//! derivatives rather than mesh-backed robust advection stencils.
+KOKKOS_INLINE_FUNCTION
+void ComputePrimaryRhs(const RegularPointState &u, const EvolutionDerivatives &d,
+                       const Real kappa, const Real mu_H, const Real eta_H,
+                       const Real eta_beta, PrimaryRhs &rhs) {
+  EvolutionAdvection advection;
+  CenteredAdvection(u, d, advection);
+  ComputePrimaryRhs(u, d, advection, kappa, mu_H, eta_H, eta_beta, rhs);
 }
 
 } // namespace fo_gh

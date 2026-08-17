@@ -51,6 +51,33 @@ void LoadDerivatives(const FoGh::Variables &v, const Real idx[3],
   }
 }
 
+//! Load only explicit beta^k partial_k terms.  The four compatible-gradient
+//! primaries deliberately retain beta.Q, beta.X, beta.a, and beta.B exactly as
+//! specified; applying Lx to them would change the semidiscrete reduction
+//! system.  This routine is called only on physical cells, where the complete
+//! Lx<FDNG> stencil is in bounds.
+template <int FDNG>
+KOKKOS_INLINE_FUNCTION
+void LoadRobustAdvection(const FoGh::Variables &v, const Real idx[3],
+                         const int m, const int k, const int j, const int i,
+                         EvolutionAdvection &advection) {
+  advection.ZeroClear();
+  for (int p = 0; p < 3; ++p) {
+    advection.K += Lx<FDNG>(p, idx, v.beta, v.K, m, p, k, j, i);
+    advection.pi += Lx<FDNG>(p, idx, v.beta, v.pi, m, p, k, j, i);
+    advection.h_perp += Lx<FDNG>(p, idx, v.beta, v.h_perp, m, p, k, j, i);
+    for (int a = 0; a < 3; ++a) {
+      advection.Lambda(a) +=
+          Lx<FDNG>(p, idx, v.beta, v.Lambda, m, p, a, k, j, i);
+      advection.h(a) += Lx<FDNG>(p, idx, v.beta, v.h, m, p, a, k, j, i);
+      for (int b = a; b < 3; ++b) {
+        advection.Atilde(a, b) +=
+            Lx<FDNG>(p, idx, v.beta, v.Atilde, m, p, a, b, k, j, i);
+      }
+    }
+  }
+}
+
 KOKKOS_INLINE_FUNCTION
 void StorePrimary(const PrimaryRhs &r, const FoGh::Variables &rhs,
                   const int m, const int k, const int j, const int i) {
@@ -95,11 +122,23 @@ TaskStatus FoGh::CalcRHS(Driver *pdriver, int stage) {
                          1.0/size.d_view(m).dx3};
     RegularPointState point;
     EvolutionDerivatives derivatives;
+    EvolutionAdvection advection;
     PrimaryRhs point_rhs;
     LoadPoint(vars, m, k, j, i, point);
     LoadDerivatives<FDNG>(vars, idx, m, k, j, i, derivatives);
-    ComputePrimaryRhs(point, derivatives, kappa, mu_H, eta_H, eta_beta,
-                      point_rhs);
+    const bool physical = (k >= indcs.ks && k <= indcs.ke &&
+                           j >= indcs.js && j <= indcs.je &&
+                           i >= indcs.is && i <= indcs.ie);
+    if (physical) {
+      LoadRobustAdvection<FDNG>(vars, idx, m, k, j, i, advection);
+    } else {
+      // Only the four compatible primary RHSs stored on this halo are consumed
+      // by the second pass, and their fixed beta.(Q,X,a,B) terms do not depend
+      // on this centered fallback.
+      CenteredAdvection(point, derivatives, advection);
+    }
+    ComputePrimaryRhs(point, derivatives, advection, kappa, mu_H, eta_H,
+                      eta_beta, point_rhs);
     StorePrimary(point_rhs, rhs_vars, m, k, j, i);
   });
 

@@ -17,7 +17,8 @@ scope.  Do not infer production qualification from the passing preflight.
 - generic four-dimensional symmetric tensors and a 30-DOF mixed tensor;
 - fixed regularized continuum RHS and independent hyperbolic gauge driver;
 - compatible `Q`, `X`, `a`, and `B` evolution using the production derivative;
-- 2/4/6 finite differences, modest configurable KO dissipation;
+- 2/4/6 centered derivatives, matching-order sign-aware `Lx` shift advection,
+  and modest configurable KO dissipation;
 - exact identical-Z4c one-puncture data with the puncture between cells;
 - diagnostic-only lapse excision equivalent to Z4c's `chi=0.0625` mask;
 - ADM adapter, characteristic timestep, restart/load-balance support;
@@ -37,8 +38,9 @@ scope.  Do not infer production qualification from the passing preflight.
    pointwise unit test.
 3. Check the two-pass stencil/ghost contract and whether KO treatment preserves
    compatibility at physical and coarse/fine boundaries.
-4. Runtime-test the new 20-value FO-GH history payload; it has compiled but has
-   not been executed locally or on a GPU.
+4. GPU-test the new 20-value FO-GH history payload and robust-advection path;
+   both now pass focused Release/Serial runtime checks but have not been rerun
+   on an A100.
 5. Treat the `[-4M,4M]^3` loss near the `4M` half-crossing time as potentially
    boundary-driven.  The single doubled-box coarse control is not decisive.
 6. Before long continuation, run a `[-8M,8M]^3` `N=32,48,64` ladder with
