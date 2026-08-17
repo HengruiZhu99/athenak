@@ -775,10 +775,17 @@ void AMRJumpDiagnosticRuntime::AfterAcceptedCycle(Driver *driver) {
   WriteAcceptedCycleAggregate();
   if (cycle == target_cycle_ + config_.post_cycles) {
     driver->user_stop = true;
-    driver->user_stop_reason =
-        "completed requested Z4c AMR-jump diagnostic window: target cycle " +
-        std::to_string(target_cycle_) + " plus " +
-        std::to_string(config_.post_cycles) + " accepted cycles";
+    if (config_.post_cycles == 0) {
+      driver->user_stop_reason =
+          "completed requested zero-PDE Z4c AMR-jump diagnostic at target "
+          "cycle " + std::to_string(target_cycle_) +
+          " after T5 and before the next RHS";
+    } else {
+      driver->user_stop_reason =
+          "completed requested Z4c AMR-jump diagnostic window: target cycle " +
+          std::to_string(target_cycle_) + " plus " +
+          std::to_string(config_.post_cycles) + " accepted cycles";
+    }
   }
 }
 

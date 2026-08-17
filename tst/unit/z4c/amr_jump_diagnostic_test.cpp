@@ -130,9 +130,13 @@ void TestConfiguration() {
                     "amr_jump_target_level_after = 21\n"
                     "amr_jump_target_level_before = 20\n", context),
          "target above maximum level must fail");
+  const auto zero_pde = Parse("amr_jump_diagnostic = true\n"
+                              "amr_jump_post_cycles = 0\n", context);
+  Expect(zero_pde.post_cycles == 0,
+         "zero post-event cycles must select the stop-after-T5 probe");
   Expect(ParseFails("amr_jump_diagnostic = true\n"
-                    "amr_jump_post_cycles = 0\n", context),
-         "nonpositive post-event window must fail");
+                    "amr_jump_post_cycles = -1\n", context),
+         "negative post-event window must fail");
   Expect(ParseFails("amr_jump_diagnostic = true\n"
                     "amr_jump_target_cycle = -2\n", context),
          "invalid negative target cycle must fail");

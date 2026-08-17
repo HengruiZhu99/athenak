@@ -170,8 +170,8 @@ inline std::string ValidateAMRJumpDiagnosticConfig(
   if (config.target_cycle < -1) {
     return "amr_jump_target_cycle must be nonnegative or -1 for the first match";
   }
-  if (config.post_cycles <= 0) {
-    return "amr_jump_post_cycles must be positive";
+  if (config.post_cycles < 0) {
+    return "amr_jump_post_cycles must be nonnegative";
   }
   if (!AMRJumpOutputBasenameIsSafe(config.output_basename)) {
     return "amr_jump_output_basename must be a non-hidden portable basename";

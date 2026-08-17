@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -126,6 +127,81 @@ def check_transfer_control(executable: Path, input_path: Path) -> None:
         raise TestFailure("invalid Z4c AMR transfer did not fail closed")
 
 
+def check_zero_pde_stop(executable: Path, input_path: Path,
+                        transfer: str = "high_order") -> Path:
+    run_dir = execute(
+        executable, input_path, 1, None,
+        overrides=["z4c/amr_jump_post_cycles=0", f"z4c/amr_transfer={transfer}"],
+    )
+    rank = run_dir / "z4c_amr_jump" / "rank0000"
+    with (rank / "post_event_cycles.jsonl").open(encoding="utf-8") as stream:
+        post = [json.loads(line) for line in stream if line.strip()]
+    if [int(row["cycle"]) for row in post] != [1]:
+        raise TestFailure(f"zero-PDE probe did not stop at target cycle: {post}")
+    exposure_path = rank / "rk_stage_exposure.jsonl"
+    if exposure_path.exists() and exposure_path.read_text(encoding="utf-8").strip():
+        raise TestFailure("zero-PDE probe advanced into a post-event RK stage")
+    snapshots = sorted((rank / "accepted_topologies").glob("*.csv"))
+    if [path.stem for path in snapshots] != ["c00000001"]:
+        raise TestFailure(f"zero-PDE probe accepted an unexpected later cycle: {snapshots}")
+    log = run_dir.parent / "run.log"
+    if "after T5 and before the next RHS" not in log.read_text(encoding="utf-8"):
+        raise TestFailure("zero-PDE probe emitted no explicit stop-point evidence")
+    return run_dir
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def write_synthetic_provenance(run_dir: Path, transfer: str) -> Path:
+    diagnostic = run_dir / "z4c_amr_jump"
+    manifest = run_dir / "diagnostic.SHA256SUMS"
+    files = sorted(path for path in diagnostic.rglob("*") if path.is_file())
+    manifest.write_text("".join(
+        f"{file_sha256(path)}  {path.relative_to(run_dir)}\n" for path in files),
+        encoding="utf-8")
+    record = {
+        "schema": "athenak_z4c_amr_zero_pde_provenance_v1",
+        "qualification_claim": False,
+        "amr_transfer": transfer,
+        "post_cycles": 0,
+        "rank_count": 1,
+        "source_commit": "synthetic-source",
+        "source_tree": "synthetic-tree",
+        "executable_sha256": "synthetic-executable",
+        "input_sha256": "synthetic-input",
+        "restart_sha256": "synthetic-restart",
+        "node": "synthetic-node",
+        "gpu_model": "synthetic-device",
+        "hardware_binding_sha256": "synthetic-binding",
+        "command_sha256": f"synthetic-command-{transfer}",
+        "diagnostic_manifest_sha256": file_sha256(manifest),
+    }
+    path = run_dir / "provenance.json"
+    path.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n",
+                    encoding="utf-8")
+    return path
+
+
+def compare_zero_pde(compare_analyzer: Path, high: Path, limited: Path) -> None:
+    high_provenance = write_synthetic_provenance(high, "high_order")
+    limited_provenance = write_synthetic_provenance(limited, "limited_o2")
+    command = ["python3", str(compare_analyzer), "analyze",
+               "--high-root", str(high / "z4c_amr_jump"),
+               "--limited-root", str(limited / "z4c_amr_jump"),
+               "--high-provenance", str(high_provenance),
+               "--limited-provenance", str(limited_provenance),
+               "--output", str(high / "comparison"), "--ranks", "1",
+               "--level-before", "0", "--level-after", "1",
+               "--expected-cycle", "1"]
+    run(command, high)
+
+
 def aggregate_post(root: Path, ranks: int) -> list[dict[str, float]]:
     by_cycle: dict[int, dict[str, float]] = {}
     keys = ["active_cells", "coordinate_ring_volume", "proper_volume",
@@ -173,10 +249,12 @@ def main() -> None:
     parser.add_argument("--mpi-executable", type=Path, required=True)
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--analyzer", type=Path, required=True)
+    parser.add_argument("--compare-analyzer", type=Path, required=True)
     parser.add_argument("--mpiexec", default="mpiexec")
     args = parser.parse_args()
 
-    for path in [args.serial_executable, args.mpi_executable, args.input, args.analyzer]:
+    for path in [args.serial_executable, args.mpi_executable, args.input,
+                 args.analyzer, args.compare_analyzer]:
         if not path.resolve().is_file():
             raise TestFailure(f"missing test input {path}")
     off = execute(args.serial_executable.resolve(), args.input.resolve(), 1,
@@ -185,6 +263,11 @@ def main() -> None:
         raise TestFailure("default-off diagnostic path exists")
     check_hierarchy_control(args.serial_executable.resolve(), args.input.resolve())
     check_transfer_control(args.serial_executable.resolve(), args.input.resolve())
+    high_zero = check_zero_pde_stop(
+        args.serial_executable.resolve(), args.input.resolve(), "high_order")
+    limited_zero = check_zero_pde_stop(
+        args.serial_executable.resolve(), args.input.resolve(), "limited_o2")
+    compare_zero_pde(args.compare_analyzer.resolve(), high_zero, limited_zero)
 
     runs: dict[int, Path] = {}
     for ranks in (1, 2, 4):

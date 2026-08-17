@@ -124,10 +124,39 @@ def phase_topology(event_roots: list[Path], phase: str) -> dict[int, dict[str, s
     return result
 
 
+def limited_slope(left: np.ndarray, center: np.ndarray,
+                  right: np.ndarray) -> np.ndarray:
+    dl = center - left
+    dr = right - center
+    return np.where(dl * dr > 0.0,
+                    0.25 * np.sign(dl) * np.minimum(np.abs(dl), np.abs(dr)),
+                    0.0)
+
+
 def prolong_group(coarse: np.ndarray, j: int, i: int, component: int,
-                  positive_chi: bool) -> np.ndarray:
+                  positive_chi: bool, transfer: str = "high_order") -> np.ndarray:
     result = np.empty((2, 2), dtype=np.float64)
     parent = coarse[component, 0]
+    if transfer == "limited_o2":
+        neighborhood = parent[j - 1:j + 2, i - 1:i + 2]
+        if neighborhood.shape != (3, 3):
+            raise AnalysisError("limited-O2 parent neighborhood escaped coarse storage")
+        if positive_chi and (not np.all(np.isfinite(neighborhood)) or
+                             not np.all(neighborhood > 0.0)):
+            raise AnalysisError("limited-O2 chi parent neighborhood is invalid")
+        slope_i = limited_slope(parent[j, i - 1], parent[j, i], parent[j, i + 1])
+        slope_j = limited_slope(parent[j - 1, i], parent[j, i], parent[j + 1, i])
+        center = parent[j, i]
+        result = np.asarray([[center - slope_i - slope_j,
+                              center + slope_i - slope_j],
+                             [center - slope_i + slope_j,
+                              center + slope_i + slope_j]])
+        if positive_chi and (not np.all(np.isfinite(result)) or
+                             not np.all(result > 0.0)):
+            raise AnalysisError("limited-O2 chi sibling group is invalid")
+        return result
+    if transfer != "high_order":
+        raise AnalysisError(f"unsupported AMR transfer {transfer}")
     stencil = parent[j - 2:j + 3, i - 2:i + 3]
     if stencil.shape != (5, 5):
         raise AnalysisError("canonical O6 prolongation stencil escaped coarse storage")
@@ -154,7 +183,8 @@ def prolong_group(coarse: np.ndarray, j: int, i: int, component: int,
     return result
 
 
-def prolong_active(coarse: np.ndarray, active: dict[str, int], chi_index: int | None) -> np.ndarray:
+def prolong_active(coarse: np.ndarray, active: dict[str, int], chi_index: int | None,
+                   transfer: str = "high_order") -> np.ndarray:
     cis, cie = active["cis"], active["cie"]
     cjs, cje = active["cjs"], active["cje"]
     is_, js = active["is"], active["js"]
@@ -164,8 +194,9 @@ def prolong_active(coarse: np.ndarray, active: dict[str, int], chi_index: int | 
     for component in range(coarse.shape[0]):
         for j in range(cjs, cje + 1):
             for i in range(cis, cie + 1):
-                group = prolong_group(coarse, j, i, component,
-                                      chi_index is not None and component == chi_index)
+                group = prolong_group(
+                    coarse, j, i, component,
+                    chi_index is not None and component == chi_index, transfer)
                 fj, fi = 2 * j - cjs - js, 2 * i - cis - is_
                 output[component, fj:fj + 2, fi:fi + 2] = group
     return output
@@ -367,13 +398,20 @@ def analyze(args: argparse.Namespace) -> None:
     coarse_bounds = t2_meta_any["coarse_active_bounds"]
     geometry = {**active_bounds, **coarse_bounds}
     schema = strict_load(rank_roots[0] / "schema.json")
+    transfer = schema.get("amr_transfer")
+    if transfer not in ("high_order", "limited_o2"):
+        raise AnalysisError(f"unsupported or missing AMR transfer {transfer}")
+    for rank in rank_roots[1:]:
+        if strict_load(rank / "schema.json").get("amr_transfer") != transfer:
+            raise AnalysisError("rank AMR-transfer provenance disagrees")
     z4c_names = schema["z4c_components"]
     chi_index = z4c_names.index("z4c_chi")
 
     reference: dict[int, np.ndarray] = {}
     transfer_max_abs = 0.0
     for gid in sorted(new_gids):
-        reference[gid] = prolong_active(t2_coarse[gid], geometry, chi_index)
+        reference[gid] = prolong_active(
+            t2_coarse[gid], geometry, chi_index, transfer)
         actual = active_slice(phase_u0[PHASES[0]][gid], phase_metadata[PHASES[0]][gid])
         transfer_max_abs = max(transfer_max_abs,
                                float(np.max(np.abs(reference[gid] - actual))))
@@ -409,8 +447,13 @@ def analyze(args: argparse.Namespace) -> None:
                                               ox1, ox2, nx1, nx2)
         source_adm = child_coarse_from_parent(old_adm[old_gid], adm_shape,
                                               ox1, ox2, nx1, nx2)
-        reference_constraints[gid] = prolong_active(source_con, geometry, None)
-        reference_adm[gid] = prolong_active(source_adm, geometry, None)
+        # The common child-lattice before-state is deliberately independent of
+        # the production transfer arm.  It is the authoritative T0 parent
+        # diagnostic representation mapped with the existing O6 point operator.
+        reference_constraints[gid] = prolong_active(
+            source_con, geometry, None, "high_order")
+        reference_adm[gid] = prolong_active(
+            source_adm, geometry, None, "high_order")
     if coarse_source_residual > transfer_tolerance:
         raise AnalysisError(f"T2 coarse source differs from authenticated T0 parent: "
                             f"{coarse_source_residual}")
@@ -755,6 +798,7 @@ def analyze(args: argparse.Namespace) -> None:
         "new_nmb": int(t1_phase["new_nmb"]),
         "post_cycles": args.post_cycles,
         "rank_count": len(rank_roots),
+        "amr_transfer": transfer,
         "refined_child_count": len(refined),
         "canonical_transfer_max_abs_residual": transfer_max_abs,
         "canonical_transfer_tolerance": transfer_tolerance,
@@ -819,8 +863,10 @@ def self_test() -> None:
     coarse[1, 0] = 1.0 + 0.01 * xx + 0.02 * yy
     active = {"cis": 4, "cie": 19, "cjs": 4, "cje": 19,
               "is": 4, "js": 4}
-    fine = prolong_active(coarse, active, 1)
-    if fine.shape != (2, 32, 32) or not np.all(np.isfinite(fine)):
+    fine = prolong_active(coarse, active, 1, "high_order")
+    limited = prolong_active(coarse, active, 1, "limited_o2")
+    if (fine.shape != (2, 32, 32) or limited.shape != fine.shape or
+            not np.all(np.isfinite(fine)) or not np.all(np.isfinite(limited))):
         raise AnalysisError("synthetic canonical-lattice test failed")
     increments = [np.ones(8), np.full(8, 2.0), np.full(8, -0.5)]
     direct = sum(increments)
