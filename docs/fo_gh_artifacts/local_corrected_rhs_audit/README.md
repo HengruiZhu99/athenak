@@ -22,13 +22,14 @@ cmake --build /tmp/athenak_fogh_geometry_audit -j 8
 - Kokkos 4.4.0 Serial;
 - double precision, MPI off, OpenMP off;
 - executable SHA-256
-  `b8492dd4d898dade4ebe3d1962b652a8e1aa0071555b8a939da21780b3daef5e`.
+  `42373267e725ee93df6e29460d852b30de4de2b9a21dbc4aef515afcd2a31e0f`.
 
 Focused results:
 
 ```text
 non_diagonal_geometry_oracle=PASS
 non_diagonal_rhs_oracle=PASS
+non_diagonal_full_Atilde_Lambda_oracle=PASS
 compatible_gradient_and_robust_advection=PASS
 exact_minkowski_uniform_max_error=0
 exact_minkowski_smr_max_error=0
@@ -48,9 +49,13 @@ The corrected-source lapse-masked `t=0.01M` constraint ladder was:
 
 | N | H L2 | M L2 | GH L2 | reduction L2 |
 |---:|---:|---:|---:|---:|
-| 16 | 1.0773104515e-2 | 2.1630523571e-4 | 4.9293887842e-5 | 6.6264116981e-3 |
-| 24 | 4.9997856521e-3 | 1.6579610873e-4 | 1.8465399989e-5 | 5.3002216281e-3 |
-| 32 | 1.9959395230e-3 | 8.3976444148e-5 | 7.7041006544e-6 | 1.3943473947e-3 |
+| 16 | 1.0773104515e-2 | 8.6936515309e-5 | 4.9293887842e-5 | 6.6264116981e-3 |
+| 24 | 4.9997856521e-3 | 4.9869718416e-5 | 1.8465399989e-5 | 5.3002216281e-3 |
+| 32 | 1.9959395230e-3 | 2.6608951030e-5 | 7.7041006544e-6 | 1.3943473947e-3 |
+
+The `24 -> 32` orders are `3.191996`, `2.183543`, `3.038583`, and
+`4.641659`.  Momentum uses the Z4c-style physical inverse-metric contraction;
+the history and checkpoint family L2 values agree to roundoff.
 
 Inputs were the committed files under `tst/inputs/fo_gh_*.athinput`; outputs
 were isolated under `/tmp/fogh-corrected-focused.CbBkDk` and were not used as

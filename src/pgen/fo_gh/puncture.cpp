@@ -30,16 +30,32 @@ namespace {
 
 KOKKOS_INLINE_FUNCTION
 Real ConstraintMagnitude(const DvceArray5D<Real> &constraints, const int group,
+                         const fo_gh::FoGh::Variables &vars,
                          const int m, const int k, const int j, const int i) {
   if (group == 0) return Kokkos::abs(constraints(m, fo_gh::FoGh::I_CON_H, k, j, i));
   Real value2 = 0.0;
   if (group == 1) {
-    for (int n = fo_gh::FoGh::I_CON_MX; n <= fo_gh::FoGh::I_CON_MZ; ++n) {
-      value2 += SQR(constraints(m, n, k, j, i));
+    fo_gh::RegularPointState point;
+    fo_gh::LoadPoint(vars, m, k, j, i, point);
+    AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> inverse;
+    fo_gh::Invert3(point.gtilde, inverse);
+    for (int a = 0; a < 3; ++a) {
+      for (int b = 0; b < 3; ++b) {
+        value2 += point.chi*inverse(a, b)
+                  *constraints(m, fo_gh::FoGh::I_CON_MX + a, k, j, i)
+                  *constraints(m, fo_gh::FoGh::I_CON_MX + b, k, j, i);
+      }
     }
   } else if (group == 2) {
-    for (int n = fo_gh::FoGh::I_CON_GH_PERP; n <= fo_gh::FoGh::I_CON_GHZ; ++n) {
-      value2 += SQR(constraints(m, n, k, j, i));
+    value2 = SQR(constraints(m, fo_gh::FoGh::I_CON_GH_PERP, k, j, i));
+    fo_gh::RegularPointState point;
+    fo_gh::LoadPoint(vars, m, k, j, i, point);
+    for (int a = 0; a < 3; ++a) {
+      for (int b = 0; b < 3; ++b) {
+        value2 += point.gtilde(a, b)
+                  *constraints(m, fo_gh::FoGh::I_CON_GHX + a, k, j, i)
+                  *constraints(m, fo_gh::FoGh::I_CON_GHX + b, k, j, i);
+      }
     }
   } else {
     for (int n = fo_gh::FoGh::I_CON_RQ; n <= fo_gh::FoGh::I_CON_CURL_B; ++n) {
@@ -226,7 +242,7 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
                 *std::sqrt(Kokkos::abs(detg))
             : 0.0;
         for (int group = 0; group < 4; ++group) {
-          const Real value = ConstraintMagnitude(constraints, group, m, k, j, i);
+          const Real value = ConstraintMagnitude(constraints, group, vars, m, k, j, i);
           sum.the_array[2*group] += volume*value;
           sum.the_array[2*group + 1] += volume*value*value;
           if (radius < near_radius) {
@@ -253,7 +269,7 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
           const int m = work/indcs.nx3;
           if (vars.alpha(m, k, j, i) >= excise_lapse) {
             maximum = fmax(maximum,
-                           ConstraintMagnitude(constraints, group, m, k, j, i));
+                           ConstraintMagnitude(constraints, group, vars, m, k, j, i));
           }
         }, Kokkos::Max<Real>(constraint_linf[group]));
     Kokkos::parallel_reduce(
@@ -276,7 +292,7 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
           if (std::sqrt(x*x + y*y + z*z) < near_radius
               && vars.alpha(m, k, j, i) >= excise_lapse) {
             maximum = fmax(maximum,
-                           ConstraintMagnitude(constraints, group, m, k, j, i));
+                           ConstraintMagnitude(constraints, group, vars, m, k, j, i));
           }
         }, Kokkos::Max<Real>(constraint_linf[4 + group]));
   }

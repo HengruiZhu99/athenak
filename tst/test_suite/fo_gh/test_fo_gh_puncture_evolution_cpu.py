@@ -43,6 +43,18 @@ def test_fo_gh_puncture_evolution():
         assert checkpoint.shape == (43,)
         assert int(checkpoint[3]) == 1
         assert np.all(np.isfinite(checkpoint))
+        final = data[-1]
+        volume = final[-2]
+        history_norms = np.array(
+            [
+                np.sqrt(final[2] / volume),
+                np.sqrt(final[3] / volume),
+                np.sqrt(np.sum(final[4:6]) / volume),
+                np.sqrt(np.sum(final[6:11]) / volume),
+            ]
+        )
+        checkpoint_norms = checkpoint[[18, 21, 24, 27]]
+        np.testing.assert_allclose(checkpoint_norms, history_norms, rtol=2.0e-14)
     finally:
         history.unlink(missing_ok=True)
         testutils.cleanup()

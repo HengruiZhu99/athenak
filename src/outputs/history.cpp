@@ -128,16 +128,22 @@ void HistoryOutput::LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm) {
         array_sum::GlobalSum local;
         local.the_array[HIST_H] = volume*SQR(
             constraints(m, fo_gh::FoGh::I_CON_H, k, j, i));
+        fo_gh::RegularPointState point;
+        fo_gh::LoadPoint(vars, m, k, j, i, point);
+        AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> inverse;
+        const Real determinant = fo_gh::Invert3(point.gtilde, inverse);
         Real momentum2 = 0.0;
-        for (int n = fo_gh::FoGh::I_CON_MX; n <= fo_gh::FoGh::I_CON_MZ; ++n) {
-          momentum2 += SQR(constraints(m, n, k, j, i));
+        for (int a = 0; a < 3; ++a) {
+          for (int b = 0; b < 3; ++b) {
+            momentum2 += point.chi*inverse(a, b)
+                         *constraints(m, fo_gh::FoGh::I_CON_MX + a, k, j, i)
+                         *constraints(m, fo_gh::FoGh::I_CON_MX + b, k, j, i);
+          }
         }
         local.the_array[HIST_M] = volume*momentum2;
         local.the_array[HIST_CP] = volume*SQR(
             constraints(m, fo_gh::FoGh::I_CON_GH_PERP, k, j, i));
 
-        fo_gh::RegularPointState point;
-        fo_gh::LoadPoint(vars, m, k, j, i, point);
         Real c2 = 0.0;
         for (int a = 0; a < 3; ++a) {
           for (int b = 0; b < 3; ++b) {
@@ -162,8 +168,6 @@ void HistoryOutput::LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm) {
         }
         local.the_array[HIST_CURL] = volume*curl2;
 
-        AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> inverse;
-        const Real determinant = fo_gh::Invert3(point.gtilde, inverse);
         Real trace_A = 0.0;
         for (int a = 0; a < 3; ++a) {
           for (int b = 0; b < 3; ++b) trace_A += inverse(a, b)*point.Atilde(a, b);

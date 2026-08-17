@@ -30,7 +30,8 @@ scope.  Do not infer production qualification from the passing preflight.
   AMR tests.
 - history reductions for the four curl constraints, determinant/trace
   constraints, gauge residuals, and separately normalized fixed-radius
-  `H/M/GH/reduction+curl` families.
+  `H/M/GH/reduction+curl` families; current momentum norms use the Z4c-style
+  physical inverse-metric contraction under the same `alpha>=0.25` mask.
 
 ## Review priorities
 
@@ -38,8 +39,9 @@ scope.  Do not infer production qualification from the passing preflight.
    `Atilde^{ij}` only once per stored component and uses it, rather than
    `Atilde^i_j`, in the `Atilde^{ik} a_k` and `Atilde^{ik} X_k` Lambda terms.
 2. Review the new independent non-diagonal metric-jet Ricci, `D_i c^i`,
-   Hamiltonian, momentum, and RHS regressions.  Continue auditing the
-   `Atilde` TF and Lambda Lie-index terms against the fixed equations.
+   Hamiltonian, momentum, and full nonlinear RHS regressions.  The latter
+   directly covers the `Atilde` TF and Lambda Lie-index terms against the fixed
+   equations.
 3. Check the two-pass stencil/ghost contract and whether KO treatment preserves
    compatibility at physical and coarse/fine boundaries.
 4. Rerun the corrected source on GPU; the earlier robust-advection/history

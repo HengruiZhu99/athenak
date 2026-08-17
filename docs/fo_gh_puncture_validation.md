@@ -54,9 +54,11 @@ non-diagonal-tensor defects in the `Lambda^i` RHS: the `Atilde^{ik} a_k` and
 `Atilde^{ik} X_k` terms had used a once-raised mixed tensor, and the symmetric
 twice-raised `Atilde^{ij}` workspace had accumulated off-diagonal components
 twice.  A non-diagonal RHS regression now covers the corrected contractions,
-`Atilde_ij Atilde^ij`, `K`, and `pi` assembly.  Both focused unit executables
-pass from `/tmp/athenak_fogh_geometry_audit/src/athena` with Kokkos Serial
-4.4.0 and GCC 13.3.0.
+`Atilde_ij Atilde^ij`, `K`, and `pi` assembly.  A second full nonlinear oracle
+covers both `Atilde` trace-free projections, shift second derivatives, explicit
+advection, every `Lambda` source, and its vector Lie-index term.  Both focused
+unit executables pass from `/tmp/athenak_fogh_geometry_audit/src/athena` with
+Kokkos Serial 4.4.0 and GCC 13.3.0.
 
 All Perlmutter and `t>=1M` puncture evolutions reported below predate this
 continuum correction.  They remain useful failure-localization evidence but do
@@ -72,12 +74,18 @@ The corrected-source lapse-masked puncture constraint ladder at `t=0.01M` was:
 
 | N | Hamiltonian L2 | Momentum L2 | GH L2 | Reduction L2 |
 |---:|---:|---:|---:|---:|
-| 16 | 1.07731e-2 | 2.16305e-4 | 4.92939e-5 | 6.62641e-3 |
-| 24 | 4.99979e-3 | 1.65796e-4 | 1.84654e-5 | 5.30022e-3 |
-| 32 | 1.99594e-3 | 8.39764e-5 | 7.70410e-6 | 1.39435e-3 |
+| 16 | 1.07731e-2 | 8.69365e-5 | 4.92939e-5 | 6.62641e-3 |
+| 24 | 4.99979e-3 | 4.98697e-5 | 1.84654e-5 | 5.30022e-3 |
+| 32 | 1.99594e-3 | 2.66090e-5 | 7.70410e-6 | 1.39435e-3 |
 
-The `24 -> 32` observed orders are `3.1920`, `2.3645`, `3.0386`, and
+The `24 -> 32` observed orders are `3.1920`, `2.1835`, `3.0386`, and
 `4.6417`, respectively.
+
+The momentum family now follows the Z4c diagnostic convention by contracting
+the covariant momentum constraint with the physical inverse metric,
+`gamma^{ij} M_i M_j = chi gtilde^{ij} M_i M_j`, rather than using Cartesian
+component squares.  The `alpha>=0.25` lapse mask is unchanged.  The checkpoint
+and history family L2 values agree to roundoff in the corrected short run.
 
 ## Perlmutter provenance
 
@@ -123,8 +131,9 @@ The following one-rank/one-A100 checks completed successfully:
 - identical-data puncture smoke: all 41 checkpoint fields finite;
 - puncture direct/restart equivalence: bit-for-bit equal, maximum difference
   zero;
-- lapse-masked puncture convergence at `N=16,24,32`, matching the local values
-  above.
+- lapse-masked puncture convergence at `N=16,24,32`, using the then-current
+  Cartesian-component momentum magnitude.  That momentum diagnostic is
+  superseded by the corrected geometric contraction in the local table above.
 
 A second one-A100 preflight of the later robust-advection/history source
 (`3ec9c3bd326f22c7dedf792572876f4c2a8683a1`) also passed: uniform and SMR
@@ -134,7 +143,8 @@ regrid repair left a `1.15035e-14` gradient residual; the puncture history and
 checkpoint schemas contained 22 columns and 43 fields; and an actual restart
 matched directly evolved data bit for bit.  That source still predates the
 non-diagonal `Atilde^{ij}` correction above and therefore is not corrected-RHS
-qualification evidence.
+qualification evidence; its momentum histories also use the superseded
+component norm.
 
 ## Uniform puncture time ladder
 
@@ -147,6 +157,8 @@ current robust-advection implementation.
 The domain was initially `[-4M,4M]^3`, with one MeshBlock and outflow-labelled
 polynomial-extrapolation boundaries.  Evolution used no floors, clipping,
 resets, or excision.  Only diagnostic reductions omitted `alpha<0.25` cells.
+The historical momentum columns below use Cartesian component squares rather
+than the later Z4c-style physical inverse-metric contraction.
 
 At `t=1M` all three resolutions were finite:
 
@@ -195,7 +207,8 @@ gives an exterior `r>=2M` diagnostic.  At `t=5M`, doubled-box
 `0.437`, `0.683`, `-0.026`, and `1.536`.  The exterior does not blow up and
 the reduction family improves cleanly, but the GH norm stalls rather than
 converging.  This remains a failed convergence gate even before accounting
-for the corrected RHS.
+for the corrected RHS.  Here too, `M` is the superseded component norm; the
+other three families are unaffected by the momentum-norm correction.
 
 No `20M`, `50M`, `100M`, or long-SMR claim is valid.  The next numerical step
 is to repeat the bounded ladder with the corrected twice-raised `Atilde` RHS

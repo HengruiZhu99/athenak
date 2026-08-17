@@ -49,4 +49,7 @@ At `t=5M`, the doubled-domain exterior `r>=2M` L2 values were:
 
 The `48 -> 64` orders are `0.43664`, `0.68264`, `-0.02550`, and `1.53633`.
 The exterior reduction family improves, while exterior GH stalls.  This is a
-failed convergence gate, not long-puncture qualification.
+failed convergence gate, not long-puncture qualification.  The historical `M`
+column uses Cartesian component squares; current source instead uses the
+Z4c-style physical inverse-metric contraction.  The other listed families are
+unchanged by that diagnostic correction.
