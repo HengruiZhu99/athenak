@@ -9,14 +9,12 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
-#include <memory>
 
 #include "athena.hpp"
 #include "bvals/bvals.hpp"
 #include "fo_gh/fo_gh.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
-#include "z4c/fastflow.hpp"
 
 namespace fo_gh {
 
@@ -117,9 +115,6 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
   pbval_u->InitializeBuffers(nfo_gh);
-  for (int n = 0; n < pin->GetOrAddInteger("fastflow", "num_horizons", 0); ++n) {
-    pfastflow.push_back(std::make_unique<FastFlow>(pmy_pack, pin, n));
-  }
 }
 
 FoGh::~FoGh() {
