@@ -1,0 +1,32 @@
+AthenaK Kokkos default execution space: Cuda
+
+Root grid = 4 x 8 x 1 MeshBlocks
+Total number of MeshBlocks = 74
+Number of logical  levels of refinement = 23 (24 levels total)
+Number of physical levels of refinement = 20 (21 levels total)
+  Physical level = 0 (logical level = 3): 22 MeshBlocks, cost = 22
+  Physical level = 1 (logical level = 4): 36 MeshBlocks, cost = 36
+  Physical level = 2 (logical level = 5): 16 MeshBlocks, cost = 16
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=1.931697e-01 cycle=1721 time=9.501562e+00 dt=4.687500e-03
+CARTOON_AMR_TRANSACTION cycle=1722 requested_refine=2 requested_derefine_leaves=24 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=1722 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+output wall time = 3.998672e-01
+elapsed=8.106939e+00 cycle=1722 time=9.506250e+00 dt=4.687500e-03
+
+Terminating on user stopping condition: completed requested zero-PDE Z4c AMR-jump diagnostic at target cycle 1722 after T5 and before the next RHS
+time=9.506250e+00 cycle=1722
+tlim=1.250000e+01 nlim=-1 nmb_total_limit=16384
+
+Current number of MeshBlocks = 86
+12 MeshBlocks created, 0 deleted by AMR
+0 communicated for load balancing, load balancing efficiency = 0.000000e+00
+
+MeshBlock-cycles = 74
+cpu time used  = 7.913767e+00
+zone-cycles/cpu_second = 9.575212e+03
+particle-updates/cpu_second = 0.000000e+00

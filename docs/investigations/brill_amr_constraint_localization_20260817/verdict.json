@@ -1,0 +1,80 @@
+{
+  "algebraic_projection": {
+    "fraction_of_final_proper_C": 0.005593848490603796,
+    "fraction_of_final_proper_H2": 0.006226807462745109,
+    "fraction_of_final_proper_M2": 0.006610610949213808,
+    "t4_to_t5_all_captured_fields_byte_exact": true
+  },
+  "case": "B",
+  "constraint_jump_proper_fraction": {
+    "ACTIVE_ONLY": {
+      "C": 0.34935292882414015,
+      "H2": 0.03315603981563708,
+      "M2": 0.41296249006223146
+    },
+    "COARSE_FINE": {
+      "C": 0.00517823490539349,
+      "H2": -0.0026767361588016505,
+      "M2": 0.006913744391824363
+    },
+    "MIXED_CORNER": {
+      "C": 0.023249129708212343,
+      "H2": 0.003547960066203225,
+      "M2": 0.02722439631840163
+    },
+    "SAME_LEVEL_SEAM": {
+      "C": 0.6221993272947414,
+      "H2": 0.9658586722819813,
+      "M2": 0.5528994139713156
+    }
+  },
+  "derivative_order_audit": {
+    "fresh_o6_byte_equal_established_t3_o6": true,
+    "job_id": 57185308,
+    "proper_global": {
+      "C": {"o2": 46.15555388497104, "o4": 73.2810249893747, "o6": 87.73469400999778},
+      "H2": {"o2": 6.1420244934997505, "o4": 10.587667810912539, "o6": 12.814369474792832},
+      "M2": {"o2": 27.23931523500687, "o4": 49.89184326159334, "o6": 62.1172137183534}
+    },
+    "proper_same_level_seam": {
+      "C": {"o2": 23.145845750877662, "o4": 39.8385849387452, "o6": 48.87438309704265},
+      "H2": {"o2": 5.681458957535867, "o4": 9.857388099698136, "o6": 11.920570751093713},
+      "M2": {"o2": 14.559988901113293, "o4": 27.069053633732363, "o6": 34.040744351325515}
+    },
+    "qualification_claim": false,
+    "run_manifest_sha256": "fdec782c07cc37b34eef50eb0ba0613418b1d212ce6ab89eb50985e4675755f9",
+    "sacct_state": "COMPLETED"
+  },
+  "exact_same_level_seam_audit": {
+    "all_local_and_stitched_derivatives_byte_equivalent": true,
+    "all_sender_receiver_values_byte_exact": true,
+    "same_level_ghost_stencil_values": 2730,
+    "selected_cells": 12
+  },
+  "phase_proper_integrals": {
+    "T0": {"C": 14.150966530347464, "H2": 0.5622987771972697, "M2": 0.7757016837219194, "Z2": 2.1952754672033934},
+    "T3_06": {"C": 87.73469400999846, "H2": 12.814369474792718, "M2": 62.117213718352936, "Z2": 2.196495404379218},
+    "T4": {"C": 88.22822935761923, "H2": 12.894662052691997, "M2": 62.5305790488741, "Z2": 2.196464752444923},
+    "T5": {"C": 88.22822935761923, "H2": 12.894662052691997, "M2": 62.5305790488741, "Z2": 2.196464752444923}
+  },
+  "primary_disposition": "same_level_seam_derivative_dominates",
+  "qualification_claim": false,
+  "schema": "athenak_brill_amr_constraint_localization_verdict_v1",
+  "source": {
+    "branch": "codex/brill-amr-coarse-cache-coherence-20260817",
+    "coarse_cache_fix_commit": "ab651f0ebd113f8718fefbf6d802976e6b3e8738",
+    "diagnostic_commit": "55f9147bc80d574636c47bcd1dac86178d921988",
+    "diagnostic_tree": "cb2ad270f0675230b77023877dc0fdf93b52cd59",
+    "repository": "https://github.com/HengruiZhu99/athenak"
+  },
+  "t2_to_t3_all_active_z4c_values_byte_exact": true,
+  "target": {
+    "cycle": 1722,
+    "new_max_level": 3,
+    "new_meshblocks": 86,
+    "old_max_level": 2,
+    "old_meshblocks": 74,
+    "time": 9.506249999999907
+  },
+  "upstream_mechanism": "unresolved_between_parent_resolution_and_independent_child_seam_construction"
+}
