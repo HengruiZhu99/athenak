@@ -71,8 +71,8 @@ Use the authenticated cycle-1721 restart immediately before the target event:
 
     restart SHA-256:
       83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea
-    restart time: 9.50625 M
-    target transaction: level 2 -> 3 at cycle 1722
+    restart time: 9.5015625 M at cycle 1721
+    target transaction: level 2 -> 3 at cycle 1722, t=9.50625 M
 
 Do not mutate the completed handoff, its raw production evidence, or any prior
 remote campaign root.
@@ -145,10 +145,22 @@ Extend the default-off AMR-jump diagnostic so that:
 
     <z4c>/amr_jump_post_cycles = 0
 
+and, for this matched comparison:
+
+    <z4c>/amr_transfer = high_order
+    <z4c>/amr_jump_target_transfer = high_order | limited_o2
+
 means: capture the complete target T0--T5 transaction, finalize evidence, and
 stop cleanly before any RHS or RK update. Negative values remain invalid. The
 default diagnostic-off path must remain allocation-, reduction-, fence-, and
 output-free.
+
+`amr_jump_target_transfer` is a diagnostic-only override for the exact matched
+T1--T5 transaction. It must not affect the RK cycle that advances the common
+cycle-1721 restart to cycle 1722, and the production transfer policy must be
+restored after T5. This makes the two arms byte-identical at T0 and isolates the
+transfer operation causally. Missing target identity, an unknown mode, or use
+without the diagnostic must fail closed.
 
 The zero-PDE output must retain:
 
@@ -173,6 +185,10 @@ probes from identical cycle-1721 restart bytes:
 
 Each probe must accept the identical level-2-to-3 topology transaction and stop
 after T5 without advancing cycle or coordinate time.
+
+Require the reconstructed T0 evolved, ADM, and constraint bytes to be identical
+between arms. Reject the comparison if the target-only override was active
+before T1 or was not restored after T5.
 
 Reject the comparison if topology, input, restart, rank layout, source,
 executable, hardware, or target-event identity differs between arms.

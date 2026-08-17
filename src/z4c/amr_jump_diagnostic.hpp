@@ -126,6 +126,10 @@ struct AMRJumpDiagnosticConfig {
   int target_cycle = -1;
   int post_cycles = 8;
   std::string output_basename = "z4c_amr_jump";
+  // Optional transfer policy applied only to the exact matched T1--T5
+  // transaction.  The preceding evolution, including the RK step that reaches
+  // the target cycle, retains the production <z4c>/amr_transfer policy.
+  std::string target_transfer;
   AMRJumpHierarchyControl hierarchy_control =
       AMRJumpHierarchyControl::dynamic;
 };
@@ -152,6 +156,9 @@ inline bool AMRJumpOutputBasenameIsSafe(const std::string &basename) {
 inline std::string ValidateAMRJumpDiagnosticConfig(
     const AMRJumpDiagnosticConfig &config,
     const AMRJumpDiagnosticContext &context) {
+  if (!config.target_transfer.empty() && !config.enabled) {
+    return "amr_jump_target_transfer requires amr_jump_diagnostic=true";
+  }
   if (!config.enabled) {
     if (config.hierarchy_control != AMRJumpHierarchyControl::dynamic) {
       return "amr_jump_hierarchy_control requires amr_jump_diagnostic=true";
@@ -169,6 +176,15 @@ inline std::string ValidateAMRJumpDiagnosticConfig(
   }
   if (config.target_cycle < -1) {
     return "amr_jump_target_cycle must be nonnegative or -1 for the first match";
+  }
+  if (!config.target_transfer.empty()) {
+    if (config.target_transfer != "high_order" &&
+        config.target_transfer != "limited_o2") {
+      return "amr_jump_target_transfer must be high_order or limited_o2";
+    }
+    if (config.target_cycle < 0) {
+      return "amr_jump_target_transfer requires an explicit target cycle";
+    }
   }
   if (config.post_cycles < 0) {
     return "amr_jump_post_cycles must be nonnegative";
@@ -193,11 +209,12 @@ inline std::string ValidateAMRJumpDiagnosticConfig(
 }
 
 inline bool IsKnownAMRJumpParameter(const std::string &name) {
-  constexpr std::array<const char *, 7> known = {
+  constexpr std::array<const char *, 8> known = {
       "amr_jump_diagnostic", "amr_jump_target_level_before",
       "amr_jump_target_level_after", "amr_jump_target_cycle",
       "amr_jump_post_cycles",
-      "amr_jump_output_basename", "amr_jump_hierarchy_control"};
+      "amr_jump_output_basename", "amr_jump_hierarchy_control",
+      "amr_jump_target_transfer"};
   return std::any_of(known.begin(), known.end(), [&name](const char *candidate) {
     return name == candidate;
   });
@@ -238,6 +255,11 @@ inline AMRJumpDiagnosticConfig ReadAMRJumpDiagnosticConfig(
   if (pin->DoesParameterExist("z4c", "amr_jump_output_basename")) {
     config.output_basename =
         pin->GetString("z4c", "amr_jump_output_basename");
+  }
+  if (pin->DoesParameterExist("z4c", "amr_jump_target_transfer")) {
+    const std::string target_transfer =
+        pin->GetString("z4c", "amr_jump_target_transfer");
+    if (target_transfer != "none") config.target_transfer = target_transfer;
   }
   if (pin->DoesParameterExist("z4c", "amr_jump_hierarchy_control")) {
     const std::string control =
@@ -331,6 +353,8 @@ class AMRJumpDiagnosticRuntime {
   bool pending_t0_ = false;
   bool detailed_event_active_ = false;
   bool target_seen_ = false;
+  bool target_transfer_active_ = false;
+  int saved_amr_transfer_ = -1;
   int target_cycle_ = -1;
   int old_max_level_ = -1;
   int new_max_level_ = -1;
@@ -354,6 +378,7 @@ class AMRJumpDiagnosticRuntime {
   void WriteAcceptedTopologySnapshot() const;
   void WriteCompactTransaction(int nnew, int ndel) const;
   void WriteAcceptedCycleAggregate() const;
+  void RestoreTargetTransfer();
   void DiscardPendingT0();
 };
 

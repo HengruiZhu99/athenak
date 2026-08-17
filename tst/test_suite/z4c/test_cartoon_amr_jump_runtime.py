@@ -131,9 +131,23 @@ def check_zero_pde_stop(executable: Path, input_path: Path,
                         transfer: str = "high_order") -> Path:
     run_dir = execute(
         executable, input_path, 1, None,
-        overrides=["z4c/amr_jump_post_cycles=0", f"z4c/amr_transfer={transfer}"],
+        overrides=["z4c/amr_jump_post_cycles=0", "z4c/amr_transfer=high_order",
+                   "z4c/amr_jump_target_cycle=1",
+                   f"z4c/amr_jump_target_transfer={transfer}"],
     )
     rank = run_dir / "z4c_amr_jump" / "rank0000"
+    schema = json.loads((rank / "schema.json").read_text(encoding="utf-8"))
+    if schema.get("amr_transfer") != transfer or \
+            schema.get("pre_target_amr_transfer") != "high_order" or \
+            schema.get("target_transaction_only_transfer") is not True:
+        raise TestFailure(f"zero-PDE target-only transfer provenance is invalid: {schema}")
+    event = rank / "event_c00000001_l0_to_l1"
+    lifecycle = json.loads(
+        (event / "target_transfer_lifecycle.json").read_text(encoding="utf-8"))
+    if lifecycle.get("target_transfer") != transfer or \
+            lifecycle.get("restored_transfer") != "high_order" or \
+            lifecycle.get("restored_after_t5") is not True:
+        raise TestFailure(f"target transfer was not restored after T5: {lifecycle}")
     with (rank / "post_event_cycles.jsonl").open(encoding="utf-8") as stream:
         post = [json.loads(line) for line in stream if line.strip()]
     if [int(row["cycle"]) for row in post] != [1]:
@@ -169,6 +183,8 @@ def write_synthetic_provenance(run_dir: Path, transfer: str) -> Path:
         "schema": "athenak_z4c_amr_zero_pde_provenance_v1",
         "qualification_claim": False,
         "amr_transfer": transfer,
+        "pre_target_amr_transfer": "high_order",
+        "target_transaction_only_transfer": True,
         "post_cycles": 0,
         "rank_count": 1,
         "source_commit": "synthetic-source",

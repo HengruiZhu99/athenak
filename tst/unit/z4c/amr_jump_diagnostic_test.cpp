@@ -67,6 +67,11 @@ void TestConfiguration() {
   Expect(defaults.post_cycles == 8, "default post-event window must be eight cycles");
   Expect(defaults.output_basename == "z4c_amr_jump",
          "default output basename must be stable");
+  Expect(defaults.target_transfer.empty(),
+         "target-transaction transfer override must default off");
+  const auto explicit_none = Parse("amr_jump_target_transfer = none\n", context);
+  Expect(explicit_none.target_transfer.empty(),
+         "explicit none must preserve the default-off target transfer");
   Expect(defaults.hierarchy_control ==
              z4c::AMRJumpHierarchyControl::dynamic,
          "hierarchy control must default to dynamic");
@@ -82,10 +87,12 @@ void TestConfiguration() {
       "amr_jump_target_cycle = 1724\n"
       "amr_jump_post_cycles = 8\n"
       "amr_jump_output_basename = event_1724\n"
+      "amr_jump_target_transfer = limited_o2\n"
       "amr_jump_hierarchy_control = freeze_after_target\n",
       context);
   Expect(enabled.enabled && enabled.target_cycle == 1724 &&
              enabled.output_basename == "event_1724" &&
+             enabled.target_transfer == "limited_o2" &&
              enabled.hierarchy_control ==
                  z4c::AMRJumpHierarchyControl::freeze_after_target,
          "valid enabled configuration must parse exactly");
@@ -111,6 +118,17 @@ void TestConfiguration() {
                     "amr_jump_hierarchy_control = freeze_after_target\n",
                     context),
          "hierarchy control must not silently disappear with diagnostics disabled");
+  Expect(ParseFails("amr_jump_diagnostic = false\n"
+                    "amr_jump_target_cycle = 1724\n"
+                    "amr_jump_target_transfer = limited_o2\n", context),
+         "target transfer must not silently disappear with diagnostics disabled");
+  Expect(ParseFails("amr_jump_diagnostic = true\n"
+                    "amr_jump_target_transfer = limited_o2\n", context),
+         "target transfer without an exact target cycle must fail");
+  Expect(ParseFails("amr_jump_diagnostic = true\n"
+                    "amr_jump_target_cycle = 1724\n"
+                    "amr_jump_target_transfer = approximate\n", context),
+         "unknown target transfer must fail");
 
   Expect(ParseFails("amr_jump_diagnostic = true\n"
                     "amr_jump_unknown = 1\n", context),

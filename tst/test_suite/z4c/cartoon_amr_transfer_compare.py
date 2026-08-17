@@ -64,6 +64,14 @@ def event_roots(root: Path, ranks: int, before: int, after: int,
         event = rank_root / event_name
         if not event.is_dir():
             raise ComparisonError(f"missing exact target event {event}")
+        lifecycle = base.strict_load(event / "target_transfer_lifecycle.json")
+        if lifecycle.get("schema") != \
+                "athenak_z4c_amr_target_transfer_lifecycle_v1" or \
+                int(lifecycle.get("cycle", -1)) != cycle or \
+                lifecycle.get("target_transfer") != schema.get("amr_transfer") or \
+                lifecycle.get("restored_transfer") != "high_order" or \
+                lifecycle.get("restored_after_t5") is not True:
+            raise ComparisonError(f"invalid target-transfer lifecycle in {event}")
         rows = base.read_csv(event / "t1_topology_proposal.csv")
         if proposal is None:
             proposal = rows
@@ -124,6 +132,9 @@ def validate_provenance(path: Path, diagnostic_root: Path,
         raise ComparisonError(f"wrong provenance schema in {path}")
     if record.get("amr_transfer") != expected_transfer:
         raise ComparisonError(f"wrong transfer provenance in {path}")
+    if record.get("pre_target_amr_transfer") != "high_order" or \
+            record.get("target_transaction_only_transfer") is not True:
+        raise ComparisonError(f"target-only transfer provenance is invalid in {path}")
     if record.get("rank_count") != ranks or record.get("post_cycles") != 0:
         raise ComparisonError(f"wrong rank/stop contract in {path}")
     if record.get("qualification_claim") is not False:
@@ -455,6 +466,11 @@ def analyze(args: argparse.Namespace) -> None:
     if high_schema.get("amr_transfer") != "high_order" or \
             limited_schema.get("amr_transfer") != "limited_o2":
         raise ComparisonError("diagnostic roots do not identify the requested arms")
+    for schema in (high_schema, limited_schema):
+        if schema.get("pre_target_amr_transfer") != "high_order" or \
+                schema.get("target_transaction_only_transfer") is not True:
+            raise ComparisonError(
+                "diagnostic roots do not prove target-transaction causal isolation")
     if high_proposal != limited_proposal:
         raise ComparisonError("transfer arms accepted different topology proposals")
     high_prov = validate_provenance(

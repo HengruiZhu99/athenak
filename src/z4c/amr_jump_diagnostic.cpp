@@ -408,6 +408,12 @@ void AppendChiShadowRecord(std::ostringstream &output, const HostView &fine,
          << values.str() << "\"\n";
 }
 
+Z4cAMRTransfer TransferFromName(const std::string &name) {
+  if (name == "high_order") return Z4cAMRTransfer::high_order;
+  if (name == "limited_o2") return Z4cAMRTransfer::limited_o2;
+  DiagnosticFailure("unknown target transaction transfer '" + name + "'");
+}
+
 }  // namespace
 
 AMRJumpDiagnosticRuntime::AMRJumpDiagnosticRuntime(
@@ -436,10 +442,18 @@ void AMRJumpDiagnosticRuntime::EnsureOutputInitialized() {
     if (n != 0) schema << ",";
     schema << "\"" << Z4c::Constraint_names[n] << "\"";
   }
+  const std::string pre_target_transfer =
+      Z4cAMRTransferName(pack_->pz4c->opt.amr_transfer);
+  const std::string target_transfer = config_.target_transfer.empty()
+                                          ? pre_target_transfer
+                                          : config_.target_transfer;
   schema << "],\"hierarchy_control\":\""
          << AMRJumpHierarchyControlName(config_.hierarchy_control)
          << "\",\"amr_transfer\":\""
-         << Z4cAMRTransferName(pack_->pz4c->opt.amr_transfer) << "\"}";
+         << target_transfer << "\",\"pre_target_amr_transfer\":\""
+         << pre_target_transfer
+         << "\",\"target_transaction_only_transfer\":"
+         << (config_.target_transfer.empty() ? "false" : "true") << "}";
   WriteTextAtomically(fs::path(rank_root_) / "schema.json", schema.str() + "\n");
   output_initialized_ = true;
 }
@@ -540,6 +554,7 @@ void AMRJumpDiagnosticRuntime::BeginTransaction(
 
 void AMRJumpDiagnosticRuntime::CancelTransaction() {
   if (!transaction_active_) return;
+  RestoreTargetTransfer();
   DiscardPendingT0();
   transaction_active_ = false;
   detailed_event_active_ = false;
@@ -607,6 +622,16 @@ void AMRJumpDiagnosticRuntime::RecordTopologyProposal(
         config_.target_cycle < 0 || mesh->ncycle == config_.target_cycle;
     if (!target_seen_ && old_max_level_ == config_.target_level_before &&
         new_max_level_ == config_.target_level_after && cycle_matches) {
+      if (!config_.target_transfer.empty()) {
+        if (target_transfer_active_) {
+          DiagnosticFailure("target transfer override is already active");
+        }
+        saved_amr_transfer_ =
+            static_cast<int>(pack_->pz4c->opt.amr_transfer);
+        pack_->pz4c->opt.amr_transfer =
+            TransferFromName(config_.target_transfer);
+        target_transfer_active_ = true;
+      }
       target_seen_ = true;
       target_cycle_ = mesh->ncycle;
     }
@@ -746,9 +771,38 @@ void AMRJumpDiagnosticRuntime::RecordT5() {
       << ",\"new_max_level\":" << new_max_level_ << "}\n";
   AppendText(fs::path(rank_root_) / "transactions.jsonl", end.str());
   WriteAcceptedTopologySnapshot();
+  const bool record_target_transfer =
+      detailed_event_active_ && target_transfer_active_;
+  const std::string effective_target_transfer =
+      Z4cAMRTransferName(pack_->pz4c->opt.amr_transfer);
+  RestoreTargetTransfer();
+  if (record_target_transfer) {
+    std::ostringstream lifecycle;
+    lifecycle << "{\"schema\":\"athenak_z4c_amr_target_transfer_lifecycle_v1\","
+              << "\"rank\":" << global_variable::my_rank
+              << ",\"cycle\":" << pack_->pmesh->ncycle
+              << ",\"target_transfer\":\"" << effective_target_transfer
+              << "\",\"restored_transfer\":\""
+              << Z4cAMRTransferName(pack_->pz4c->opt.amr_transfer)
+              << "\",\"restored_after_t5\":true}\n";
+    WriteTextAtomically(
+        fs::path(event_root_) / "target_transfer_lifecycle.json",
+        lifecycle.str());
+  }
   transaction_active_ = false;
   detailed_event_active_ = false;
   event_root_.clear();
+}
+
+void AMRJumpDiagnosticRuntime::RestoreTargetTransfer() {
+  if (!target_transfer_active_) return;
+  if (saved_amr_transfer_ < 0) {
+    DiagnosticFailure("target transfer override has no saved production policy");
+  }
+  pack_->pz4c->opt.amr_transfer =
+      static_cast<Z4cAMRTransfer>(saved_amr_transfer_);
+  saved_amr_transfer_ = -1;
+  target_transfer_active_ = false;
 }
 
 void AMRJumpDiagnosticRuntime::RecordRKStageCoarseFineExposure(const int stage) {
