@@ -108,6 +108,7 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
   const auto vars = pmbp->pfogh->u;
   const auto adm_vars = pmbp->padm->adm;
   const Real near_radius = pin->GetOrAddReal("problem", "near_radius", 1.0);
+  const Real excise_lapse = pmbp->pfogh->opt.excise_lapse;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   Real minimum_radius = std::numeric_limits<float>::max();
   Real minimum_alpha = std::numeric_limits<float>::max();
@@ -213,8 +214,11 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
             adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
             adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
             adm_vars.g_dd(m, 1, 2, k, j, i), adm_vars.g_dd(m, 2, 2, k, j, i));
-        const Real volume = size.d_view(m).dx1*size.d_view(m).dx2
-                            *size.d_view(m).dx3*std::sqrt(Kokkos::abs(detg));
+        const bool include = vars.alpha(m, k, j, i) >= excise_lapse;
+        const Real volume = include
+            ? size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3
+                *std::sqrt(Kokkos::abs(detg))
+            : 0.0;
         for (int group = 0; group < 4; ++group) {
           const Real value = ConstraintMagnitude(constraints, group, m, k, j, i);
           sum.the_array[2*group] += volume*value;
@@ -241,8 +245,10 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
           work /= indcs.nx2;
           const int k = work % indcs.nx3 + indcs.ks;
           const int m = work/indcs.nx3;
-          maximum = fmax(maximum,
-                         ConstraintMagnitude(constraints, group, m, k, j, i));
+          if (vars.alpha(m, k, j, i) >= excise_lapse) {
+            maximum = fmax(maximum,
+                           ConstraintMagnitude(constraints, group, m, k, j, i));
+          }
         }, Kokkos::Max<Real>(constraint_linf[group]));
     Kokkos::parallel_reduce(
         "fo_gh puncture near constraint Linf", Kokkos::RangePolicy<>(DevExeSpace(),
@@ -261,7 +267,8 @@ void CheckFoGhPuncture(ParameterInput *pin, Mesh *pm) {
                                      size.d_view(m).x2min, size.d_view(m).x2max);
           const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                      size.d_view(m).x3min, size.d_view(m).x3max);
-          if (std::sqrt(x*x + y*y + z*z) < near_radius) {
+          if (std::sqrt(x*x + y*y + z*z) < near_radius
+              && vars.alpha(m, k, j, i) >= excise_lapse) {
             maximum = fmax(maximum,
                            ConstraintMagnitude(constraints, group, m, k, j, i));
           }

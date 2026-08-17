@@ -88,7 +88,9 @@ void HistoryOutput::LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm) {
   auto &indcs = pm->mb_indcs;
   auto &size = pm->pmb_pack->pmb->mb_size;
   const auto constraints = pm->pmb_pack->pfogh->u_con;
+  const auto vars = pm->pmb_pack->pfogh->u;
   const auto adm_vars = pm->pmb_pack->padm->adm;
+  const Real excise_lapse = pm->pmb_pack->pfogh->opt.excise_lapse;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   array_sum::GlobalSum sums;
   Kokkos::parallel_reduce(
@@ -106,8 +108,11 @@ void HistoryOutput::LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm) {
             adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
             adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
             adm_vars.g_dd(m, 1, 2, k, j, i), adm_vars.g_dd(m, 2, 2, k, j, i));
-        const Real volume = size.d_view(m).dx1*size.d_view(m).dx2
-                            *size.d_view(m).dx3*std::sqrt(std::abs(detg));
+        const bool include = vars.alpha(m, k, j, i) >= excise_lapse;
+        const Real volume = include
+            ? size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3
+                *std::sqrt(std::abs(detg))
+            : 0.0;
         array_sum::GlobalSum local;
         for (int n = 0; n < fo_gh::FoGh::ncon; ++n) {
           local.the_array[n] = volume*SQR(constraints(m, n, k, j, i));

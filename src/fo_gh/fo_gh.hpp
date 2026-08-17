@@ -61,6 +61,7 @@ class FoGh {
     Real eta_H;
     Real eta_beta;
     Real diss;
+    Real excise_lapse;
   } opt;
 
   DvceArray5D<Real> u0;

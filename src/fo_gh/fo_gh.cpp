@@ -57,11 +57,12 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.eta_H = pin->GetOrAddReal("fo_gh", "eta_H", 1.0);
   opt.eta_beta = pin->GetOrAddReal("fo_gh", "eta_beta", 2.0);
   opt.diss = pin->GetOrAddReal("fo_gh", "diss", 0.0);
+  opt.excise_lapse = pin->GetOrAddReal("fo_gh", "excise_lapse", 0.25);
   if (opt.kappa <= 0.0 || opt.mu_H <= 0.0 || opt.eta_H <= 0.0 ||
-      opt.eta_beta < 0.0 || opt.diss < 0.0) {
+      opt.eta_beta < 0.0 || opt.diss < 0.0 || opt.excise_lapse < 0.0) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "FO-GH requires kappa, mu_H, and eta_H > 0 and "
-              << "eta_beta and diss >= 0." << std::endl;
+              << "eta_beta, diss, and diagnostic excise_lapse >= 0." << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
