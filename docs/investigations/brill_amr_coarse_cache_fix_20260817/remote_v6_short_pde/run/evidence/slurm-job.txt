@@ -1,0 +1,30 @@
+JobId=57168637 JobName=cartoon-brill-cache-ab651-v6
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:11 TimeLimit=02:00:00 TimeMin=N/A
+   SubmitTime=2026-08-17T09:07:34 EligibleTime=2026-08-17T09:07:34
+   AccrueTime=Unknown
+   StartTime=2026-08-17T09:07:34 EndTime=2026-08-17T11:07:34 Deadline=N/A
+   PreemptEligibleTime=2026-08-17T09:07:34 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-17T09:07:34 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login06:1396757
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid001005
+   BatchHost=nid001005
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=1:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100&hbm40g DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=bash
+   SubmitLine=salloc --account=m3328_g --job-name=cartoon-brill-cache-ab651-v6 --qos=shared_interactive --constraint=gpu&hbm40g --ntasks=1 --ntasks-per-node=1 --cpus-per-task=32 --gpus-per-node=1 --time=02:00:00 bash /pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v6-pde-20260817/run_perlmutter_short_pde.sh
+   WorkDir=/global/u1/h/hzhu
+   TresPerNode=gres/gpu:1
+   TresPerTask=cpu=32
+   ResvPorts=63163-63165
+

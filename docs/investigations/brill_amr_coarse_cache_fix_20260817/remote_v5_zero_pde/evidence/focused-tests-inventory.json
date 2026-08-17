@@ -1,0 +1,176 @@
+{
+  "backtraceGraph" : 
+  {
+    "commands" : 
+    [
+      "add_test"
+    ],
+    "files" : 
+    [
+      "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/source/athenak/CMakeLists.txt"
+    ],
+    "nodes" : 
+    [
+      {
+        "file" : 0
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 611,
+        "parent" : 0
+      },
+      {
+        "file" : 0
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 628,
+        "parent" : 2
+      },
+      {
+        "file" : 0
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 632,
+        "parent" : 4
+      },
+      {
+        "file" : 0
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 659,
+        "parent" : 6
+      },
+      {
+        "file" : 0
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 682,
+        "parent" : 8
+      },
+      {
+        "file" : 0
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 685,
+        "parent" : 10
+      }
+    ]
+  },
+  "kind" : "ctestInfo",
+  "tests" : 
+  [
+    {
+      "backtrace" : 1,
+      "command" : 
+      [
+        "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/build/athena-cuda/athena_z4c_chi_prolongation_unit_test"
+      ],
+      "name" : "athena.z4c_chi_prolongation",
+      "properties" : 
+      [
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/build/athena-cuda"
+        }
+      ]
+    },
+    {
+      "backtrace" : 3,
+      "command" : 
+      [
+        "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/build/athena-cuda/athena_z4c_coarse_cache_ownership_unit_test"
+      ],
+      "name" : "athena.z4c_coarse_cache_ownership",
+      "properties" : 
+      [
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/build/athena-cuda"
+        }
+      ]
+    },
+    {
+      "backtrace" : 5,
+      "command" : 
+      [
+        "/usr/bin/srun",
+        "-n",
+        "2",
+        "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/build/athena-cuda/athena_z4c_coarse_cache_ownership_unit_test"
+      ],
+      "name" : "athena.z4c_coarse_cache_ownership_mpi2",
+      "properties" : 
+      [
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/build/athena-cuda"
+        }
+      ]
+    },
+    {
+      "backtrace" : 7,
+      "command" : 
+      [
+        "/usr/bin/python3",
+        "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/source/athenak/tst/unit/z4c/z4c_amr_chi_refresh_static_test.py",
+        "--source-dir",
+        "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/source/athenak"
+      ],
+      "name" : "athena.z4c_amr_chi_refresh_static",
+      "properties" : 
+      [
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/build/athena-cuda"
+        }
+      ]
+    },
+    {
+      "backtrace" : 9,
+      "command" : 
+      [
+        "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/build/athena-cuda/athena_z4c_amr_jump_diagnostic_unit_test"
+      ],
+      "name" : "athena.z4c_amr_jump_diagnostic",
+      "properties" : 
+      [
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/build/athena-cuda"
+        }
+      ]
+    },
+    {
+      "backtrace" : 11,
+      "command" : 
+      [
+        "/usr/bin/python3",
+        "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/source/athenak/tst/unit/z4c/cartoon_amr_static_test.py"
+      ],
+      "name" : "athena.z4c_cartoon_amr_static",
+      "properties" : 
+      [
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-coarse-cache-ab651f0e-v5-20260817/build/athena-cuda"
+        }
+      ]
+    }
+  ],
+  "version" : 
+  {
+    "major" : 1,
+    "minor" : 0
+  }
+}
