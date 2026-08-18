@@ -88,6 +88,85 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
     TransformPartialWaveSource(metric, d_metric, partial_source, d_psi,
                                reference, geometry, covariant_source);
 
+    // Well-balance the exact stationary reference.  In continuum arithmetic this
+    // background source is identically zero because the stationary trumpet is a
+    // vacuum solution in wave-map gauge relative to itself.  Direct coordinate
+    // reconstruction near the puncture combines individually large terms and leaves a
+    // resolution-growing binary64 cancellation residual.  Re-evaluating the same
+    // transformed source on Psi=eta, Pi=Phi=0 and subtracting that analytically zero
+    // quantity preserves the continuum equations while making the discrete reference
+    // state an exact equilibrium.  Do not apply this correction to a time-dependent or
+    // non-vacuum reference.
+    if (reference_kind == 1) {
+      Real background_psi[4][4] = {};             // NOLINT(runtime/arrays)
+      Real background_d_psi[4][4][4] = {};        // NOLINT(runtime/arrays)
+      Real background_metric[4][4] = {};           // NOLINT(runtime/arrays)
+      Real background_d_metric[4][4][4] = {};      // NOLINT(runtime/arrays)
+      for (int A = 0; A < 4; ++A) {
+        background_psi[A][A] = (A == 0) ? -1.0 : 1.0;
+      }
+      for (int a0 = 0; a0 < 4; ++a0) {
+        for (int b0 = 0; b0 < 4; ++b0) {
+          for (int A = 0; A < 4; ++A) {
+            for (int B = 0; B < 4; ++B) {
+              background_metric[a0][b0] += reference.coframe[A][a0]
+                  *reference.coframe[B][b0]*background_psi[A][B];
+            }
+          }
+        }
+      }
+      for (int p0 = 0; p0 < 4; ++p0) {
+        Real frame_corrected[4][4];  // NOLINT(runtime/arrays)
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            frame_corrected[A][B] = 0.0;
+            for (int a0 = 0; a0 < 4; ++a0) {
+              for (int b0 = 0; b0 < 4; ++b0) {
+                frame_corrected[A][B] -=
+                    (reference.d_frame[p0][A][a0]*reference.frame[B][b0]
+                     + reference.frame[A][a0]*reference.d_frame[p0][B][b0])
+                    *background_metric[a0][b0];
+              }
+            }
+          }
+        }
+        for (int a0 = 0; a0 < 4; ++a0) {
+          for (int b0 = 0; b0 < 4; ++b0) {
+            for (int A = 0; A < 4; ++A) {
+              for (int B = 0; B < 4; ++B) {
+                background_d_metric[p0][a0][b0] += reference.coframe[A][a0]
+                    *reference.coframe[B][b0]*frame_corrected[A][B];
+              }
+            }
+          }
+        }
+      }
+      CoordinateGhGeometry background_geometry;
+      Real background_determinant = 0.0;
+      Real background_partial[4][4];    // NOLINT(runtime/arrays)
+      Real background_covariant[4][4];  // NOLINT(runtime/arrays)
+      if (!ComputeCoordinateGhGeometry(background_metric, background_d_metric,
+                                       reference, background_geometry,
+                                       background_determinant)) {
+        for (int a0 = 0; a0 < 4; ++a0) {
+          for (int b0 = 0; b0 < 4; ++b0) covariant_source[a0][b0] = NAN;
+        }
+      } else {
+        StandardGhPartialWaveSource(background_metric, background_d_metric,
+                                    reference, background_geometry, gamma0,
+                                    background_partial);
+        TransformPartialWaveSource(background_metric, background_d_metric,
+                                   background_partial, background_d_psi,
+                                   reference, background_geometry,
+                                   background_covariant);
+        for (int a0 = 0; a0 < 4; ++a0) {
+          for (int b0 = 0; b0 < 4; ++b0) {
+            covariant_source[a0][b0] -= background_covariant[a0][b0];
+          }
+        }
+      }
+    }
+
     Real spatial_connection[3][3][3];  // NOLINT(runtime/arrays)
     for (int q = 0; q < 3; ++q) {
       for (int p = 0; p < 3; ++p) {
