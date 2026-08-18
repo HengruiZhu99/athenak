@@ -1,4 +1,10 @@
-# Reference-frame FO-GH paused validation report
+# Reference-frame FO-GH validation report
+
+> **Final gate: REFERENCE-GH FORMULATION NOT ESTABLISHED.** The later
+> `dx=1/16,1/24,1/32` GPU stationary-RHS ladder reverses with resolution and
+> supersedes the coarse stationary observations below. See
+> `docs/ref_gh_puncture_validation.md` and `stationary_gpu_gate.tsv`. No t=20 or
+> wormhole-transition evolution was launched.
 
 ## Scope and conclusion
 
@@ -14,7 +20,7 @@ tabulated stationary Schwarzschild n=2 1+log trumpet reference and common
 ADM/history diagnostics are also implemented.  The exact regular stationary
 state remains bounded through the local t=1 test at three resolutions.
 
-Work is intentionally paused here for formulation review.  This is **not
+Work is stopped here for formulation review.  This is **not
 puncture qualification**: the wormhole-to-trumpet transition, analytic physical
 outer boundary treatment, SMR, restart, GPU, and long-time puncture stages are
 not implemented or claimed.  In particular, no result through t=20M exists.
@@ -128,7 +134,8 @@ Run `athena` with the committed `ref_gh_minkowski.athinput`,
 
 The committed compact tables are the review artifacts; large raw outputs are
 deliberately excluded.  The stationary runs used a Kokkos Serial Debug build.
-No CUDA or multi-rank qualification is claimed.
+Bounded one-A100 diagnostics were subsequently run; multi-rank runtime
+qualification is not claimed.
 
 ## Preservation note
 

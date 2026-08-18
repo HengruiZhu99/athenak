@@ -1,0 +1,10 @@
+case	status	n	dx	r_min	time	rhs_Linf	rhs_component	ref_Ricci_Linf	field_Linf	constraint_Linf	note
+retained	FAIL	64	0.0625	0.0541265877365274	0	4.78640873152355227e-09	Pi00	1.37213646667078137e-07	NA	8.03083821665495634e-10	analytic derivative profiles
+retained	FAIL	96	0.0416666666666667	0.0360843918243516	0	8.44213927841363483e-08	Pi00	7.21023752703331411e-07	NA	5.63522917218506336e-09	analytic derivative profiles
+retained	FAIL	128	0.03125	0.0270632938682637	0	1.35671426147499202e-07	Pi00	2.31637386605143547e-06	NA	4.18440322391688824e-08	analytic derivative profiles
+background_source_subtraction	REJECTED	64	0.0625	0.0541265877365274	0.1	NA	NA	NA	3.66e-10	NA	commit 713a7704 reverted by be4d62b3
+background_source_subtraction	REJECTED	96	0.0416666666666667	0.0360843918243516	0.1	NA	NA	NA	4.35e-09	NA	commit 713a7704 reverted by be4d62b3
+background_source_subtraction	REJECTED	128	0.03125	0.0270632938682637	0.1	NA	NA	NA	3.03e-08	NA	commit 713a7704 reverted by be4d62b3
+coordinate_wave_identity	REJECTED	64	0.0625	0.0541265877365274	0	4.734e-09	NA	NA	NA	NA	commit 14da2dc5 reverted by 2bf38e80
+coordinate_wave_identity	REJECTED	96	0.0416666666666667	0.0360843918243516	0	1.109e-07	NA	NA	NA	NA	commit 14da2dc5 reverted by 2bf38e80
+coordinate_wave_identity	REJECTED	128	0.03125	0.0270632938682637	0	3.049e-07	NA	NA	NA	NA	commit 14da2dc5 reverted by 2bf38e80

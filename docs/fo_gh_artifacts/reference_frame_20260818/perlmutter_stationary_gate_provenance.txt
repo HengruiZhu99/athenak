@@ -1,0 +1,19 @@
+campaign: reference-frame FO-GH stationary-trumpet hard gate
+date: 2026-08-18
+branch: codex/ref-frame-fo-gh-puncture-20260818
+parent: 68000b4a753056d5f18333a63175d9e003a32300
+authoritative instrumentation commit: 7a8f0c54
+final equivalent source state before this report: 2bf38e80
+allocation: 57239999; account: m3328_g; QOS: gpu_interactive
+node: nid001236; resources: 1 node, 128 CPUs, 4 A100 GPUs, 229902 MiB
+GPU 0: GPU-75c524aa-28ef-bbd0-042c-7ad82f447890
+GPU 1: GPU-007d4182-fbcf-62a3-5984-6ce5099619e7
+GPU 2: GPU-378e12cf-f1a3-65e7-b4a6-9e5c853840b4
+GPU 3: GPU-59839cac-0330-8cbb-c36b-b9d29ff24968
+software: CPE 25.09; CUDA 12.9; PrgEnv-gnu; cray-mpich 9.0.1;
+          Kokkos 4.7.2 CUDA+Serial, AMPERE80
+single-rank CUDA: built and executed on one assigned A100
+CUDA-aware MPI: build with nvcc_wrapper host CC succeeded; runtime multi-rank
+                communication was not qualified after the hard gate failed
+termination: allocation 57239999 explicitly relinquished; then COMPLETING
+production status: no t=20 ladder and no wormhole transition launched
