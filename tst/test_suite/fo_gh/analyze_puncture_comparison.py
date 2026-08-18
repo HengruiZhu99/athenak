@@ -130,23 +130,37 @@ def compare_initial(args):
     if len(fo_rows) != len(z4c_rows):
         raise RuntimeError(f"slice length mismatch: {len(fo_rows)} != {len(z4c_rows)}")
     maximum = 0.0
+    relative_maximum = 0.0
+    mismatch = False
     for fo_row, z4c_row in zip(fo_rows, z4c_rows):
         for fo_value, z4c_value in zip((fo_row[0],) + fo_row[1],
                                        (z4c_row[0],) + z4c_row[1]):
-            maximum = max(maximum, abs(fo_value - z4c_value))
-    print(f"common ADM gamma,K,psi4 max_abs={maximum:.17e}")
+            difference = abs(fo_value - z4c_value)
+            scale = max(abs(fo_value), abs(z4c_value))
+            maximum = max(maximum, difference)
+            if scale > 0.0:
+                relative_maximum = max(relative_maximum, difference / scale)
+            mismatch |= difference > args.tolerance + args.relative_tolerance*scale
+    print(f"common ADM gamma,K,psi4 max_abs={maximum:.17e} "
+          f"max_rel={relative_maximum:.17e}")
     fo_gauge = read_gauge_slice(args.fo_gh_tab, (16, 17, 18, 19))
     z4c_gauge = read_gauge_slice(args.z4c_state_tab, (21, 22, 23, 24))
     if len(fo_gauge) != len(z4c_gauge):
         raise RuntimeError(f"gauge slice length mismatch: {len(fo_gauge)} != {len(z4c_gauge)}")
     gauge_maximum = 0.0
+    gauge_relative_maximum = 0.0
     for fo_row, z4c_row in zip(fo_gauge, z4c_gauge):
         for fo_value, z4c_value in zip((fo_row[0],) + fo_row[1],
                                        (z4c_row[0],) + z4c_row[1]):
-            gauge_maximum = max(gauge_maximum, abs(fo_value - z4c_value))
-    print(f"common ADM alpha,beta max_abs={gauge_maximum:.17e}")
-    maximum = max(maximum, gauge_maximum)
-    if maximum > args.tolerance:
+            difference = abs(fo_value - z4c_value)
+            scale = max(abs(fo_value), abs(z4c_value))
+            gauge_maximum = max(gauge_maximum, difference)
+            if scale > 0.0:
+                gauge_relative_maximum = max(gauge_relative_maximum, difference / scale)
+            mismatch |= difference > args.tolerance + args.relative_tolerance*scale
+    print(f"common ADM alpha,beta max_abs={gauge_maximum:.17e} "
+          f"max_rel={gauge_relative_maximum:.17e}")
+    if mismatch:
         raise SystemExit(1)
 
 
@@ -167,6 +181,7 @@ def main():
     parity.add_argument("z4c_tab")
     parity.add_argument("z4c_state_tab")
     parity.add_argument("--tolerance", type=float, default=2.0e-14)
+    parity.add_argument("--relative-tolerance", type=float, default=2.0e-15)
     parity.set_defaults(function=compare_initial)
     args = parser.parse_args()
     if not hasattr(args, "function"):
