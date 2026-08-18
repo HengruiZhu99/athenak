@@ -26,9 +26,12 @@ class RefGh {
   struct Options {
     int fd_order;
     int extrap_order;
+    int reference_kind;
     Real gamma0;
     Real diss;
     Real fail_closed_dt;
+    Real reference_mass;
+    Real reference_center[3];  // NOLINT(runtime/arrays)
   } opt;
 
   RefGh(MeshBlockPack *ppack, ParameterInput *pin);
@@ -39,6 +42,7 @@ class RefGh {
   DvceArray5D<Real> u_rhs;
   DvceArray5D<Real> u_con;
   DvceArray5D<Real> coarse_u0;
+  DvceArray2D<Real> reference_table;
   Real dtnew;
   Real max_char_speed;
   MeshBoundaryValuesCC *pbval_u;

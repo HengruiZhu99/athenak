@@ -8,11 +8,14 @@
 
 #include "athena.hpp"
 #include "bvals/bvals.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "driver/driver.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/standard_gh_source.hpp"
+#include "ref_gh/reference_geometry.hpp"
+#include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "tasklist/numerical_relativity.hpp"
 
 namespace ref_gh {
@@ -122,6 +125,13 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   const auto state = u0;
+  const auto table = reference_table;
+  const int reference_kind = opt.reference_kind;
+  const Real reference_mass = opt.reference_mass;
+  const Real center_x = opt.reference_center[0];
+  const Real center_y = opt.reference_center[1];
+  const Real center_z = opt.reference_center[2];
+  const Real time = pmy_pack->pmesh->time;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   Kokkos::parallel_reduce(
       "ref_gh dt", Kokkos::RangePolicy<>(DevExeSpace(),
@@ -132,11 +142,36 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
         const int k = work % indcs.nx3 + indcs.ks;
         const int m = work/indcs.nx3;
-        Real metric[4][4];  // NOLINT(runtime/arrays)
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        ReferenceGeometry reference;
+        if (reference_kind == 0) {
+          reference = MinkowskiReference()(time, x, y, z);
+        } else {
+          const TrumpetSchwarzschildReference provider{
+              table, reference_mass, {center_x, center_y, center_z}};
+          reference = provider(time, x, y, z);
+        }
+        Real psi[4][4], metric[4][4];  // NOLINT(runtime/arrays)
         for (int a = 0; a < 4; ++a) {
           for (int b = a; b < 4; ++b) {
-            metric[a][b] = metric[b][a] =
+            psi[a][b] = psi[b][a] =
                 state(m, PsiIndex(a, b), k, j, i);
+          }
+        }
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            metric[a][b] = 0.0;
+            for (int A = 0; A < 4; ++A) {
+              for (int B = 0; B < 4; ++B) {
+                metric[a][b] += reference.coframe[A][a]
+                                *reference.coframe[B][b]*psi[A][B];
+              }
+            }
           }
         }
         Real inverse[4][4], determinant = 0.0;  // NOLINT(runtime/arrays)

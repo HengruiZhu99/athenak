@@ -5,12 +5,14 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <string>
 
 #include "athena.hpp"
 #include "bvals/bvals.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "ref_gh/ref_gh.hpp"
+#include "ref_gh/reference_trumpet_schwarzschild.hpp"
 
 namespace ref_gh {
 
@@ -43,12 +45,28 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     u_rhs("u_rhs ref_gh", 1, 1, 1, 1, 1),
     u_con("u_con ref_gh", 1, 1, 1, 1, 1),
     coarse_u0("coarse u0 ref_gh", 1, 1, 1, 1, 1),
+    reference_table("ref_gh reference table", 1, 1),
     dtnew(0.0), max_char_speed(0.0), pmy_pack(ppack) {
   opt.fd_order = pin->GetOrAddInteger("ref_gh", "fd_order", 4);
   opt.extrap_order = pin->GetOrAddInteger("ref_gh", "extrap_order", 2);
+  const std::string reference_name =
+      pin->GetOrAddString("ref_gh", "reference", "minkowski");
+  if (reference_name == "minkowski") {
+    opt.reference_kind = 0;
+  } else if (reference_name == "trumpet") {
+    opt.reference_kind = 1;
+  } else {
+    std::cout << "### FATAL ERROR: ref_gh reference must be minkowski or trumpet."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.gamma0 = pin->GetOrAddReal("ref_gh", "gamma0", 1.0);
   opt.diss = pin->GetOrAddReal("ref_gh", "diss", 0.02);
   opt.fail_closed_dt = pin->GetOrAddReal("ref_gh", "fail_closed_dt", 0.0);
+  opt.reference_mass = pin->GetOrAddReal("ref_gh", "reference_mass", 1.0);
+  opt.reference_center[0] = pin->GetOrAddReal("ref_gh", "reference_x", 0.0);
+  opt.reference_center[1] = pin->GetOrAddReal("ref_gh", "reference_y", 0.0);
+  opt.reference_center[2] = pin->GetOrAddReal("ref_gh", "reference_z", 0.0);
   const int derivative_radius = opt.fd_order/2;
   if ((opt.fd_order != 2 && opt.fd_order != 4 && opt.fd_order != 6)
       || ppack->pmesh->mb_indcs.ng < 2*derivative_radius) {
@@ -58,6 +76,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     std::exit(EXIT_FAILURE);
   }
   if (opt.gamma0 <= 0.0 || opt.diss < 0.0 || opt.fail_closed_dt < 0.0
+      || opt.reference_mass <= 0.0
       || opt.extrap_order < 2 || opt.extrap_order > 4) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "ref_gh requires gamma0>0, diss>=0, fail_closed_dt>=0, "
@@ -91,6 +110,16 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     const int cn2 = (indcs.cnx2 > 1) ? indcs.cnx2 + 2*indcs.ng : 1;
     const int cn3 = (indcs.cnx3 > 1) ? indcs.cnx3 + 2*indcs.ng : 1;
     Kokkos::realloc(coarse_u0, nmb, nref_gh, cn3, cn2, cn1);
+  }
+  if (opt.reference_kind == 1) {
+    Kokkos::realloc(reference_table, kTrumpetProfiles, kTrumpetTableSize);
+    auto host_table = Kokkos::create_mirror_view(reference_table);
+    for (int i = 0; i < kTrumpetTableSize; ++i) {
+      host_table(kProfileAlpha, i) = kTrumpetAlpha[i];
+      host_table(kProfilePsi2, i) = kTrumpetPsi2[i];
+      host_table(kProfileShiftQ, i) = kTrumpetShiftQ[i];
+    }
+    Kokkos::deep_copy(reference_table, host_table);
   }
   pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
   pbval_u->InitializeBuffers(nref_gh);

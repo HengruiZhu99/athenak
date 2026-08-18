@@ -92,6 +92,7 @@ class ProblemGenerator {
   void RefGhMinkowski(ParameterInput *pin, const bool restart);
   void RefGhLinearWave(ParameterInput *pin, const bool restart);
   void RefGhStability(ParameterInput *pin, const bool restart);
+  void RefGhStationaryTrumpet(ParameterInput *pin, const bool restart);
 
   // Generic error output function (using difference u0-u1)
   void OutputErrors(ParameterInput *pin, Mesh *pm);
