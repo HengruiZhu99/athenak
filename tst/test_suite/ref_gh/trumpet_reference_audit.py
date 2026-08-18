@@ -16,8 +16,9 @@ except ImportError:
     from reference_frame_audit import NVAR, principal_matrix, symmetrizer
 
 
-def interpolate(log_r: np.ndarray, values: np.ndarray, radius: float) -> np.ndarray:
-    """Mirror the C++ eight-point log-radius interpolant and its derivatives."""
+def interpolate(log_r: np.ndarray, data: np.ndarray, profile: int,
+                radius: float) -> np.ndarray:
+    """Mirror interpolation of stored value, first-, and second-derivative data."""
     spacing = log_r[1] - log_r[0]
     coordinate = (np.log(radius) - log_r[0]) / spacing
     start = max(0, min(len(log_r) - 8, int(np.floor(coordinate)) - 3))
@@ -39,9 +40,11 @@ def interpolate(log_r: np.ndarray, values: np.ndarray, radius: float) -> np.ndar
         weights[:, p] = (value / denominator,
                          first / (denominator * spacing),
                          second / (denominator * spacing**2))
-    log_derivatives = weights @ values[start:start + 8]
-    return np.array([log_derivatives[0], log_derivatives[1] / radius,
-                     (log_derivatives[2] - log_derivatives[1]) / radius**2])
+    return np.array([
+        weights[0] @ data[profile, start:start + 8],
+        weights[0] @ data[profile + 1, start:start + 8],
+        weights[0] @ data[profile + 2, start:start + 8],
+    ])
 
 
 def analytic_characteristic_basis(direction: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -98,9 +101,9 @@ def trumpet_principal_audit(log_r: np.ndarray, data: np.ndarray) -> dict[str, fl
     minimum_rank = NVAR
     maximum_imaginary_eigenvalue = 0.0
     for radius in radii:
-        alpha = interpolate(log_r, data[0], radius)[0]
-        psi2 = interpolate(log_r, data[3], radius)[0]
-        shift_q = interpolate(log_r, data[6], radius)[0]
+        alpha = interpolate(log_r, data, 0, radius)[0]
+        psi2 = interpolate(log_r, data, 3, radius)[0]
+        shift_q = interpolate(log_r, data, 6, radius)[0]
         beta_ref = np.array([psi2 * shift_q * radius, 0.0, 0.0])
         for direction in directions:
             matrix = principal_matrix(
@@ -146,9 +149,9 @@ def main() -> None:
     first_derivative_error = 0.0
     second_derivative_error = 0.0
     for radius in sample_radii:
-        alpha = interpolate(log_r, data[0], radius)
-        psi2 = interpolate(log_r, data[3], radius)
-        shift_q = interpolate(log_r, data[6], radius)
+        alpha = interpolate(log_r, data, 0, radius)
+        psi2 = interpolate(log_r, data, 3, radius)
+        shift_q = interpolate(log_r, data, 6, radius)
         areal = psi2[0] * radius
         alpha_r, alpha_rr = trumpet.alpha_radius_derivatives(
             np.array([alpha[0]]), np.array([areal]))
@@ -195,10 +198,10 @@ def main() -> None:
                    / exact_areal**3)
         value_error = max(
             value_error,
-            abs(interpolate(log_r, data[0], radius)[0] - exact_alpha),
-            abs(interpolate(log_r, data[3], radius)[0] - exact_areal / radius)
+            abs(interpolate(log_r, data, 0, radius)[0] - exact_alpha),
+            abs(interpolate(log_r, data, 3, radius)[0] - exact_areal / radius)
                 / max(1.0, exact_areal / radius),
-            abs(interpolate(log_r, data[6], radius)[0] - exact_q),
+            abs(interpolate(log_r, data, 6, radius)[0] - exact_q),
         )
 
     results = {

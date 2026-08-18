@@ -11,8 +11,12 @@
 
 namespace ref_gh {
 
-enum TrumpetProfileIndex : int { kProfileAlpha = 0, kProfilePsi2 = 1,
-                                 kProfileShiftQ = 2, kTrumpetProfiles = 3 };
+enum TrumpetProfileIndex : int {
+  kProfileAlpha = 0, kProfileAlphaD1 = 1, kProfileAlphaD2 = 2,
+  kProfilePsi2 = 3, kProfilePsi2D1 = 4, kProfilePsi2D2 = 5,
+  kProfileShiftQ = 6, kProfileShiftQD1 = 7, kProfileShiftQD2 = 8,
+  kTrumpetProfiles = 9
+};
 
 struct RadialProfile {
   Real value;
@@ -56,24 +60,25 @@ TrumpetInterpolationWeights MakeTrumpetInterpolationWeights(const Real rho) {
   return weights;
 }
 
-// Evaluate a degree-seven local interpolant on the uniform log(r/M) table and
-// differentiate that same polynomial analytically.  The centered eight-point stencil
-// is high-order enough that its second derivatives remain below the fourth-order FD
-// truncation floor at the intended closest-grid radii.
+// Evaluate the value and the independently generated analytic radial derivatives with
+// the same degree-seven local interpolation stencil.  Interpolating derivatives stored
+// by the offline ODE/implicit-solution generator avoids differentiating through the
+// large near-puncture psi2 values on device, where cancellation otherwise grows as the
+// closest grid radius decreases.
 KOKKOS_INLINE_FUNCTION
 RadialProfile InterpolateTrumpetProfile(const DvceArray2D<Real> &table,
                                         const int profile, const Real rho,
                                         const TrumpetInterpolationWeights &weights) {
   Real value = 0.0;
-  Real d_log = 0.0;
-  Real dd_log = 0.0;
+  Real d1 = 0.0;
+  Real d2 = 0.0;
   for (int p = 0; p < 8; ++p) {
-    const Real sample = table(profile, weights.start + p);
-    value += sample*weights.value[p];
-    d_log += sample*weights.d_log[p];
-    dd_log += sample*weights.dd_log[p];
+    const int index = weights.start + p;
+    value += table(profile, index)*weights.value[p];
+    d1 += table(profile + 1, index)*weights.value[p];
+    d2 += table(profile + 2, index)*weights.value[p];
   }
-  return {value, d_log/rho, (dd_log - d_log)/(rho*rho)};
+  return {value, d1, d2};
 }
 
 // A value with coordinate first and second partial derivatives.  This small local
