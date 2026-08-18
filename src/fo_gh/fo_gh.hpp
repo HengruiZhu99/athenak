@@ -64,6 +64,7 @@ class FoGh {
     Real diss;
     Real excise_lapse;
     Real diagnostic_radius;
+    Real fail_closed_dt;
   } opt;
 
   DvceArray5D<Real> u0;
@@ -93,6 +94,9 @@ class FoGh {
   TaskStatus Prolongate(Driver *d, int stage);
   TaskStatus ApplyPhysicalBCs(Driver *d, int stage);
   TaskStatus NewTimeStep(Driver *d, int stage);
+  void WriteFailureTelemetry(int flattened_cell, Real maximum_state,
+                             int maximum_state_location, Real maximum_rhs,
+                             int maximum_rhs_location, bool constraints_valid);
   void RepairGradients(const DualArray1D<int> &repair);
   void FoGhToADM();
   void UpdateDiagnostics();

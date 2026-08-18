@@ -7,13 +7,19 @@
 //! \brief Driver tasks for the standalone regularized vacuum FO-GH system.
 
 #include <algorithm>
+#include <cmath>
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
 #include <limits>
 
 #include "athena.hpp"
 #include "bvals/bvals.hpp"
 #include "coordinates/adm.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "driver/driver.hpp"
 #include "fo_gh/fo_gh.hpp"
+#include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "pgen/pgen.hpp"
@@ -23,6 +29,45 @@
 namespace fo_gh {
 
 namespace {
+
+void SymmetricEigenvalues3(Real matrix[3][3], Real eigenvalues[3]) {
+  for (int sweep = 0; sweep < 24; ++sweep) {
+    int p = 0;
+    int q = 1;
+    Real largest = std::abs(matrix[0][1]);
+    for (int i = 0; i < 3; ++i) {
+      for (int j = i + 1; j < 3; ++j) {
+        if (std::abs(matrix[i][j]) > largest) {
+          largest = std::abs(matrix[i][j]);
+          p = i;
+          q = j;
+        }
+      }
+    }
+    if (largest < 1.0e-15) break;
+    const Real angle = 0.5*std::atan2(2.0*matrix[p][q],
+                                      matrix[q][q] - matrix[p][p]);
+    const Real cosine = std::cos(angle);
+    const Real sine = std::sin(angle);
+    const Real app = matrix[p][p];
+    const Real aqq = matrix[q][q];
+    const Real apq = matrix[p][q];
+    matrix[p][p] = cosine*cosine*app - 2.0*sine*cosine*apq
+                   + sine*sine*aqq;
+    matrix[q][q] = sine*sine*app + 2.0*sine*cosine*apq
+                   + cosine*cosine*aqq;
+    matrix[p][q] = matrix[q][p] = 0.0;
+    for (int r = 0; r < 3; ++r) {
+      if (r == p || r == q) continue;
+      const Real arp = matrix[r][p];
+      const Real arq = matrix[r][q];
+      matrix[r][p] = matrix[p][r] = cosine*arp - sine*arq;
+      matrix[r][q] = matrix[q][r] = sine*arp + cosine*arq;
+    }
+  }
+  for (int i = 0; i < 3; ++i) eigenvalues[i] = matrix[i][i];
+  std::sort(eigenvalues, eigenvalues + 3);
+}
 
 template <int ORDER>
 KOKKOS_INLINE_FUNCTION
@@ -322,11 +367,13 @@ TaskStatus FoGh::NewTimeStep(Driver *pdriver, int stage) {
   auto &size = pmy_pack->pmb->mb_size;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   const auto vars = u;
-  Real minimum = std::numeric_limits<float>::max();
+  const auto state = u0;
+  using MinLoc = Kokkos::MinLoc<Real, int>;
+  MinLoc::value_type minimum;
   Kokkos::parallel_reduce(
       "fo_gh dt", Kokkos::RangePolicy<>(DevExeSpace(),
       0, pmy_pack->nmb_thispack*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &local_minimum) {
+      KOKKOS_LAMBDA(const int idx, MinLoc::value_type &local_minimum) {
         int work = idx;
         const int i = work % indcs.nx1 + indcs.is;
         work /= indcs.nx1;
@@ -341,6 +388,22 @@ TaskStatus FoGh::NewTimeStep(Driver *pdriver, int stage) {
             metric(a, b) = vars.gtilde(m, a, b, k, j, i);
           }
         }
+        const Real determinant = Determinant3(metric);
+        bool valid = Kokkos::isfinite(vars.alpha(m, k, j, i))
+                     && Kokkos::isfinite(vars.chi(m, k, j, i))
+                     && Kokkos::isfinite(determinant)
+                     && vars.alpha(m, k, j, i) > 0.0
+                     && vars.chi(m, k, j, i) > 0.0 && determinant > 0.0;
+        for (int n = 0; n < nfo_gh; ++n) {
+          valid = valid && Kokkos::isfinite(state(m, n, k, j, i));
+        }
+        if (!valid) {
+          if (0.0 < local_minimum.val) {
+            local_minimum.val = 0.0;
+            local_minimum.loc = idx;
+          }
+          return;
+        }
         Invert3(metric, inverse);
         const Real dx[3] = {size.d_view(m).dx1,
                             size.d_view(m).dx2,
@@ -349,10 +412,15 @@ TaskStatus FoGh::NewTimeStep(Driver *pdriver, int stage) {
           const Real speed = Kokkos::abs(vars.beta(m, d, k, j, i))
               + vars.alpha(m, k, j, i)
                 *std::sqrt(fmax(0.0, vars.chi(m, k, j, i)*inverse(d, d)));
-          if (speed > 0.0) local_minimum = fmin(local_minimum, dx[d]/speed);
+          const Real candidate = speed > 0.0 && Kokkos::isfinite(speed)
+                                 ? dx[d]/speed : 0.0;
+          if (candidate < local_minimum.val) {
+            local_minimum.val = candidate;
+            local_minimum.loc = idx;
+          }
         }
-      }, Kokkos::Min<Real>(minimum));
-  dtnew = minimum;
+      }, MinLoc(minimum));
+  dtnew = minimum.val;
   Real maximum = 0.0;
   Kokkos::parallel_reduce(
       "fo_gh max characteristic speed", Kokkos::RangePolicy<>(DevExeSpace(),
@@ -372,6 +440,12 @@ TaskStatus FoGh::NewTimeStep(Driver *pdriver, int stage) {
             metric(a, b) = vars.gtilde(m, a, b, k, j, i);
           }
         }
+        const Real determinant = Determinant3(metric);
+        if (!Kokkos::isfinite(vars.alpha(m, k, j, i))
+            || !Kokkos::isfinite(vars.chi(m, k, j, i))
+            || !Kokkos::isfinite(determinant)
+            || vars.alpha(m, k, j, i) <= 0.0
+            || vars.chi(m, k, j, i) <= 0.0 || determinant <= 0.0) return;
         Invert3(metric, inverse);
         for (int d = 0; d < 3; ++d) {
           const Real speed = Kokkos::abs(vars.beta(m, d, k, j, i))
@@ -381,8 +455,184 @@ TaskStatus FoGh::NewTimeStep(Driver *pdriver, int stage) {
         }
       }, Kokkos::Max<Real>(maximum));
   max_char_speed = maximum;
-  UpdateDiagnostics();
+  const bool constraints_valid = std::isfinite(dtnew) && dtnew > 0.0;
+  if (constraints_valid) UpdateDiagnostics();
+  if (opt.fail_closed_dt > 0.0 &&
+      (!std::isfinite(dtnew) || dtnew < opt.fail_closed_dt)) {
+    using MaxLoc = Kokkos::MaxLoc<Real, int>;
+    MaxLoc::value_type maximum_state;
+    MaxLoc::value_type maximum_rhs;
+    const int total_values = pmy_pack->nmb_thispack*nfo_gh*ncells;
+    const auto state_rhs = u_rhs;
+    Kokkos::parallel_reduce(
+        "fo_gh failure maximum state",
+        Kokkos::RangePolicy<>(DevExeSpace(), 0, total_values),
+        KOKKOS_LAMBDA(const int idx, MaxLoc::value_type &local_maximum) {
+          int work = idx;
+          const int i = work % indcs.nx1 + indcs.is;
+          work /= indcs.nx1;
+          const int j = work % indcs.nx2 + indcs.js;
+          work /= indcs.nx2;
+          const int k = work % indcs.nx3 + indcs.ks;
+          work /= indcs.nx3;
+          const int n = work % nfo_gh;
+          const int m = work/nfo_gh;
+          const Real value = Kokkos::abs(state(m, n, k, j, i));
+          if (value > local_maximum.val || !Kokkos::isfinite(value)) {
+            local_maximum.val = value;
+            local_maximum.loc = idx;
+          }
+        }, MaxLoc(maximum_state));
+    Kokkos::parallel_reduce(
+        "fo_gh failure maximum rhs",
+        Kokkos::RangePolicy<>(DevExeSpace(), 0, total_values),
+        KOKKOS_LAMBDA(const int idx, MaxLoc::value_type &local_maximum) {
+          int work = idx;
+          const int i = work % indcs.nx1 + indcs.is;
+          work /= indcs.nx1;
+          const int j = work % indcs.nx2 + indcs.js;
+          work /= indcs.nx2;
+          const int k = work % indcs.nx3 + indcs.ks;
+          work /= indcs.nx3;
+          const int n = work % nfo_gh;
+          const int m = work/nfo_gh;
+          const Real value = Kokkos::abs(state_rhs(m, n, k, j, i));
+          if (value > local_maximum.val || !Kokkos::isfinite(value)) {
+            local_maximum.val = value;
+            local_maximum.loc = idx;
+          }
+        }, MaxLoc(maximum_rhs));
+    WriteFailureTelemetry(minimum.loc, maximum_state.val, maximum_state.loc,
+                          maximum_rhs.val, maximum_rhs.loc, constraints_valid);
+#if MPI_PARALLEL_ENABLED
+    MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+#else
+    std::exit(EXIT_FAILURE);
+#endif
+  }
   return TaskStatus::complete;
+}
+
+void FoGh::WriteFailureTelemetry(const int flattened_cell,
+                                 const Real maximum_state,
+                                 const int maximum_state_location,
+                                 const Real maximum_rhs,
+                                 const int maximum_rhs_location,
+                                 const bool constraints_valid) {
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  int work = flattened_cell;
+  const int i = work % indcs.nx1 + indcs.is;
+  work /= indcs.nx1;
+  const int j = work % indcs.nx2 + indcs.js;
+  work /= indcs.nx2;
+  const int k = work % indcs.nx3 + indcs.ks;
+  const int m = work/indcs.nx3;
+  DvceArray1D<Real> packed("fo_gh failure telemetry", 2*nfo_gh + ncon);
+  const auto state = u0;
+  const auto state_rhs = u_rhs;
+  const auto constraints = u_con;
+  Kokkos::parallel_for(
+      "fo_gh pack failure telemetry", Kokkos::RangePolicy<>(DevExeSpace(), 0, 1),
+      KOKKOS_LAMBDA(const int) {
+        for (int n = 0; n < nfo_gh; ++n) {
+          packed(n) = state(m, n, k, j, i);
+          packed(nfo_gh + n) = state_rhs(m, n, k, j, i);
+        }
+        for (int n = 0; n < ncon; ++n) {
+          packed(2*nfo_gh + n) = constraints(m, n, k, j, i);
+        }
+      });
+  const auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), packed);
+  auto &block = pmy_pack->pmb->mb_size.h_view(m);
+  const Real x = CellCenterX(i - indcs.is, indcs.nx1, block.x1min, block.x1max);
+  const Real y = CellCenterX(j - indcs.js, indcs.nx2, block.x2min, block.x2max);
+  const Real z = CellCenterX(k - indcs.ks, indcs.nx3, block.x3min, block.x3max);
+
+  AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> gtilde;
+  gtilde(0, 0) = host(I_TGXX);
+  gtilde(0, 1) = host(I_TGXY);
+  gtilde(0, 2) = host(I_TGXZ);
+  gtilde(1, 1) = host(I_TGYY);
+  gtilde(1, 2) = host(I_TGYZ);
+  gtilde(2, 2) = host(I_TGZZ);
+  const Real determinant = Determinant3(gtilde);
+  Real matrix[3][3];
+  for (int a = 0; a < 3; ++a) {
+    for (int b = 0; b < 3; ++b) matrix[a][b] = gtilde(a, b);
+  }
+  Real eigenvalues[3];
+  SymmetricEigenvalues3(matrix, eigenvalues);
+
+  RegularPointState point;
+  point.ZeroClear();
+  point.gtilde = gtilde;
+  point.chi = host(I_CHI);
+  point.alpha = host(I_ALPHA);
+  point.K = host(I_K);
+  point.pi = host(I_PI);
+  point.h_perp = host(I_H_PERP);
+  for (int a = 0; a < 3; ++a) {
+    point.beta(a) = host(I_BETAX + a);
+    point.Lambda(a) = host(I_LAMBDAX + a);
+    point.X(a) = host(I_XX + a);
+    point.a(a) = host(I_AX + a);
+    point.h(a) = host(I_HX + a);
+  }
+  Real f_perp = 0.0;
+  AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> f;
+  GaugeTargets(point, opt.eta_beta, f_perp, f);
+
+  auto DecodeMaximum = [&](const int location, int &rank_m, int &rank_n,
+                           int &rank_k, int &rank_j, int &rank_i) {
+    int index = location;
+    rank_i = index % indcs.nx1 + indcs.is;
+    index /= indcs.nx1;
+    rank_j = index % indcs.nx2 + indcs.js;
+    index /= indcs.nx2;
+    rank_k = index % indcs.nx3 + indcs.ks;
+    index /= indcs.nx3;
+    rank_n = index % nfo_gh;
+    rank_m = index/nfo_gh;
+  };
+  int sm = 0, sn = 0, sk = 0, sj = 0, si = 0;
+  int rm = 0, rn = 0, rk = 0, rj = 0, ri = 0;
+  DecodeMaximum(maximum_state_location, sm, sn, sk, sj, si);
+  DecodeMaximum(maximum_rhs_location, rm, rn, rk, rj, ri);
+
+  std::cerr << std::setprecision(17)
+            << "FO_GH_FIRST_BAD_STATE rank=" << global_variable::my_rank
+            << " cycle=" << pmy_pack->pmesh->ncycle
+            << " time=" << pmy_pack->pmesh->time << " dtnew=" << dtnew
+            << " max_char_speed=" << max_char_speed << '\n'
+            << "cell local_block=" << m << " global_block=" << pmy_pack->gids + m
+            << " i=" << i << " j=" << j << " k=" << k
+            << " x=" << x << " y=" << y << " z=" << z << '\n'
+            << "alpha=" << point.alpha << " A=" << point.alpha*point.alpha
+            << " chi=" << point.chi << " det_gtilde=" << determinant
+            << " eig_gtilde=" << eigenvalues[0] << ',' << eigenvalues[1]
+            << ',' << eigenvalues[2] << '\n'
+            << "h_minus_f=" << point.h_perp - f_perp << ','
+            << point.h(0) - f(0) << ',' << point.h(1) - f(1) << ','
+            << point.h(2) - f(2) << '\n'
+            << "maximum_state=" << maximum_state << " component="
+            << StateNames[sn] << " local_block=" << sm << " i=" << si
+            << " j=" << sj << " k=" << sk << '\n'
+            << "maximum_last_stage_rhs=" << maximum_rhs << " component="
+            << StateNames[rn] << " local_block=" << rm << " i=" << ri
+            << " j=" << rj << " k=" << rk << '\n';
+  if (constraints_valid) {
+    for (int n = 0; n < ncon; ++n) {
+      std::cerr << ConstraintNames[n] << '=' << host(2*nfo_gh + n)
+                << (n + 1 == ncon ? '\n' : ' ');
+    }
+  } else {
+    std::cerr << "constraints=unavailable_invalid_metric_or_speed\n";
+  }
+  for (int n = 0; n < nfo_gh; ++n) {
+    std::cerr << StateNames[n] << '=' << host(n)
+              << " rhs=" << host(nfo_gh + n) << '\n';
+  }
+  std::cerr.flush();
 }
 
 void FoGh::FoGhToADM() {

@@ -60,13 +60,15 @@ FoGh::FoGh(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.diss = pin->GetOrAddReal("fo_gh", "diss", 0.0);
   opt.excise_lapse = pin->GetOrAddReal("fo_gh", "excise_lapse", 0.25);
   opt.diagnostic_radius = pin->GetOrAddReal("fo_gh", "diagnostic_radius", 1.0);
+  opt.fail_closed_dt = pin->GetOrAddReal("fo_gh", "fail_closed_dt", 0.0);
   if (opt.kappa <= 0.0 || opt.mu_H <= 0.0 || opt.eta_H <= 0.0 ||
       opt.eta_beta < 0.0 || opt.diss < 0.0 || opt.excise_lapse < 0.0 ||
-      opt.diagnostic_radius <= 0.0) {
+      opt.diagnostic_radius <= 0.0 || opt.fail_closed_dt < 0.0) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "FO-GH requires kappa, mu_H, and eta_H > 0 and "
               << "eta_beta, diss, and diagnostic excise_lapse >= 0, and "
-              << "diagnostic_radius > 0." << std::endl;
+              << "diagnostic_radius > 0; fail_closed_dt must be >= 0."
+              << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
