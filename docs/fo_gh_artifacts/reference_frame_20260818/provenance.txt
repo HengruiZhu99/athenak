@@ -1,0 +1,13 @@
+date=2026-08-18
+parent_commit=68000b4a753056d5f18333a63175d9e003a32300
+branch=codex/ref-frame-fo-gh-puncture-20260818
+backend=Kokkos Serial CPU
+build_type=Debug
+cxx_compiler=/usr/bin/c++
+kokkos_serial=ON
+kokkos_cuda=OFF
+executable_sha256=f4122bc71d63b23bd71dde869fe112a6916f1554cfab61374fd769c51615b55c
+clean_validation_worktree=/tmp/athenak-refgh-cnGi0z
+configure=cmake -S . -B build_cpu -DPROBLEM=built_in_pgens -DCMAKE_BUILD_TYPE=Debug -DKokkos_ENABLE_SERIAL=ON
+build=cmake --build build_cpu -j4
+note=The primary worktree contained pre-existing unrelated dirty files. Validation used a clean detached worktree at the committed branch state.
