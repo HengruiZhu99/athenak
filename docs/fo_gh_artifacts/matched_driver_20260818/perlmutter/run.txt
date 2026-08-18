@@ -1,0 +1,7 @@
+allocation=57213683
+node=nid001048
+qos=interactive
+source_commit=e0d8c653d30d41a676467c23e02f4969f7629156
+kokkos_commit=6739bc623081648af9e752b616d9671527922cbf
+executable_sha256=dd00196fe04229fdde7433d448d8bcfceaf55a2636274aa8c7a6d9062f1c6022
+command=srun -N 1 -n 4 -c 32 --gpus-per-task=1 --gpu-bind=none athena --kokkos-map-device-id-by=mpi_rank -i input.athinput time/tlim=4.0 output2/dt=100
