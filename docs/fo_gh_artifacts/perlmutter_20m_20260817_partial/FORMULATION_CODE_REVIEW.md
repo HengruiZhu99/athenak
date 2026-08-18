@@ -10,7 +10,7 @@ collapsed at 3.431611M, 3.024995M, and 2.658676M as `dx_min` decreased from
 reversed failure-time ordering contradicts numerical stability and makes long
 evolution unjustified. It does not alone prove continuum ill-posedness.
 
-### High: independently derive the gauge-driver subsystem
+### High: independently qualify the gauge-driver subsystem
 
 `src/fo_gh/fo_gh_rhs.hpp` evolves
 
@@ -19,10 +19,13 @@ dt h = beta^i d_i h - mu_H (h-f) + vartheta
 dt vartheta = -eta_H (beta^i d_i h + vartheta).
 ```
 
-The second equation uses advection of `h`, not `vartheta`. Documentation and
-unit tests encode the same expression, so they cannot validate its derivation.
-Derive the intended covariant driver, rescalings, and principal symbol, then add
-an independent Fourier-mode regression.
+The second equation uses advection of `h`, not `vartheta`. A direct audit found
+that the core regularized 3+1 equations and moving-puncture targets map to Brown,
+*Generalized Harmonic Equations in 3+1 Form* (arXiv:1109.1707), but this separate
+relaxation driver is neither Brown's algebraic gauge prescription nor the full
+Lindblom et al. wave-driver system (arXiv:0711.2084). Its frozen, fixed-target
+Fourier subsystem is stable, but the coupled principal symbol and constraint
+propagation remain unqualified. Derive those independently and add a regression.
 
 ### High: constraint additions and principal symbol are unqualified
 
@@ -33,12 +36,21 @@ to a strongly hyperbolic damped FO-GH system. Derive the principal symbol and
 constraint propagation independently, especially the `+kappa alpha c^i`
 Lambda term with `c^i=-Lambda^i+Gamma^i`.
 
-### High: common ADM momentum evidence is unusable
+### High, confirmed and repaired: common ADM histories are invalid
 
 All common fixed-region momentum histories are exactly zero, while native
-FO-GH momentum is nonzero. Audit `src/coordinates/adm_constraints.cpp`, the
-FO-GH ADM adapter/update cadence, tensor symmetries, and ghost data using a
-manufactured nonzero-momentum ADM field.
+FO-GH momentum is nonzero. The cause was confirmed in
+`src/coordinates/adm_constraints.cpp`: `Gamma_udd(c,a,b)` read
+`Gamma_ddd(d,a,b)` before all `d` components were initialized, and `DK_udd`
+made the same one-pass error with `DK_ddd`. This can corrupt both common H and
+M2. The history reduction additionally used `fmax(0,M2)`, which can turn a NaN
+into zero. The repair splits both operations into fill-then-raise passes,
+initializes point tensors, preserves invalid M2 as a visible NaN, and adds two
+mesh-backed manufactured tests: a non-diagonal constant flat metric with
+`K_yy=z` (`H=0`, `M2=25/24`) and an exactly flat curvilinear metric
+(`H=M2=0`). The original ordering fails all 64 active cells; the repaired
+Release/Serial test passes. The committed Perlmutter common-ADM histories
+predate the repair and must not be used or reanalyzed scientifically.
 
 ### Medium: invalid metric states become an endless timestep stall
 
@@ -60,9 +72,9 @@ Boundary arrival is excluded for onset on the 32M half-domain. GPU mapping,
 CUDA-aware MPI, restart continuity, and one/eight-rank agreement passed.
 Memory stayed below 40GB. No Z4c production result exists.
 
-Independently derive the regularized evolution, driver, characteristic fields,
-and constraint propagation; add symbolic/manufactured and Fourier tests;
-diagnose common ADM momentum; and add first-invalid-state telemetry. Only then
-rerun the bounded FO-GH 32/48/64 ladder. Do not tune damping or resume long/Z4c
-runs before confirmed defects are addressed.
-
+Independently qualify the remaining driver, characteristic fields, and
+constraint propagation; add Fourier tests and first-invalid-state telemetry.
+Then rerun only a bounded FO-GH ladder and regenerate the common-ADM evidence.
+The repaired diagnostic did not feed the evolution, so it cannot explain the
+timestep collapse. Do not tune damping or resume long/Z4c runs before the
+remaining formulation gate is addressed.

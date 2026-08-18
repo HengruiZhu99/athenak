@@ -14,8 +14,13 @@ CUDA-aware MPI, eight GPU mappings, exact eight-rank Minkowski, revised-tree
 startup, restart, and one/eight-rank comparison passed. Z4c production never
 launched, so no comparison or stability claim through 20M exists. Common
 unmasked ADM momentum histories are identically zero despite nonzero native
-momentum and are a separate diagnostic blocker. Compact evidence and the review
-prompt are in `docs/fo_gh_artifacts/perlmutter_20m_20260817_partial/`.
+momentum. A subsequent audit confirmed fill-before-initialization defects in
+the common ADM Christoffel and covariant-derivative index raising, plus NaN
+masking in history output. The operator and two ordering-sensitive manufactured
+flat-space regressions are repaired, but all common H/M histories in the paused
+bundle are invalid and must be regenerated. This diagnostic-only defect does
+not explain the evolution collapse. Compact evidence and the review prompt are in
+`docs/fo_gh_artifacts/perlmutter_20m_20260817_partial/`.
 
 Status date: 2026-08-17
 

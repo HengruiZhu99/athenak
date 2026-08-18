@@ -10,8 +10,11 @@
 #include <iostream>
 
 #include "athena.hpp"
+#include "coordinates/adm.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "fo_gh/fo_gh_rhs.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/meshblock_pack.hpp"
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 
@@ -282,6 +285,108 @@ void ProblemGenerator::FoGhGeometryUnit(ParameterInput *pin, const bool restart)
           ++local_errors;
         }
       }, errors);
+
+  // Mesh-backed manufactured checks of the formulation-independent ADM
+  // diagnostic.  First use a constant flat metric with g_xz=rho and K_yy=z.
+  // Then H=0 and M_i M^i=1/(1-rho^2).  The off-diagonal inverse makes the
+  // result sensitive to raising the derivative index before its z component
+  // has been populated.
+  MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
+  auto &indcs = pmbp->pmesh->mb_indcs;
+  auto &size = pmbp->pmb->mb_size;
+  const int n1 = indcs.nx1 + 2*indcs.ng;
+  const int n2 = indcs.nx2 + 2*indcs.ng;
+  const int n3 = indcs.nx3 + 2*indcs.ng;
+  const int nmb = pmbp->nmb_thispack;
+  const auto adm_vars = pmbp->padm->adm;
+  par_for("FO-GH manufactured common ADM state", DevExeSpace(),
+      0, nmb - 1, 0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
+      KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        constexpr Real rho = 0.2;
+        adm_vars.alpha(m, k, j, i) = 1.0;
+        adm_vars.psi4(m, k, j, i) = 1.0;
+        for (int a = 0; a < 3; ++a) {
+          adm_vars.beta_u(m, a, k, j, i) = 0.0;
+          for (int b = a; b < 3; ++b) {
+            adm_vars.g_dd(m, a, b, k, j, i) =
+                (a == b ? 1.0 : (a == 0 && b == 2 ? rho : 0.0));
+            adm_vars.vK_dd(m, a, b, k, j, i) =
+                (a == 1 && b == 1 ? z : 0.0);
+          }
+        }
+      });
+  pmbp->padm->ComputeVacuumConstraints<2>(pmbp);
+  const auto common = pmbp->padm->u_common;
+  const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  int adm_errors = 0;
+  Kokkos::parallel_reduce(
+      "FO-GH manufactured common ADM check",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nmb*ncells),
+      KOKKOS_LAMBDA(const int idx, int &local_errors) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is;
+        work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js;
+        work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real h = common(m, adm::ADM::I_COMMON_H, k, j, i);
+        const Real m2 = common(m, adm::ADM::I_COMMON_M2, k, j, i);
+        constexpr Real expected_m2 = 25.0/24.0;
+        if (!Kokkos::isfinite(h) || !Kokkos::isfinite(m2)
+            || Kokkos::abs(h) > 2.0e-12
+            || Kokkos::abs(m2 - expected_m2) > 2.0e-12) {
+          ++local_errors;
+        }
+      }, adm_errors);
+  errors += adm_errors;
+
+  // The coordinate transformation X=x+(a/2)z^2 gives the exactly flat
+  // metric g_xx=g_yy=1, g_xz=a*z, g_zz=1+(a*z)^2.  Its nonzero metric jets
+  // make H=R=0 sensitive to raising a Christoffel index before every lowered
+  // first-index component has been populated.
+  par_for("FO-GH manufactured common ADM curvilinear state", DevExeSpace(),
+      0, nmb - 1, 0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
+      KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        constexpr Real a = 0.3;
+        const Real az = a*z;
+        adm_vars.g_dd(m, 0, 0, k, j, i) = 1.0;
+        adm_vars.g_dd(m, 0, 1, k, j, i) = 0.0;
+        adm_vars.g_dd(m, 0, 2, k, j, i) = az;
+        adm_vars.g_dd(m, 1, 1, k, j, i) = 1.0;
+        adm_vars.g_dd(m, 1, 2, k, j, i) = 0.0;
+        adm_vars.g_dd(m, 2, 2, k, j, i) = 1.0 + az*az;
+        for (int q = 0; q < 3; ++q) {
+          for (int r = q; r < 3; ++r) {
+            adm_vars.vK_dd(m, q, r, k, j, i) = 0.0;
+          }
+        }
+      });
+  pmbp->padm->ComputeVacuumConstraints<2>(pmbp);
+  adm_errors = 0;
+  Kokkos::parallel_reduce(
+      "FO-GH manufactured common ADM curvilinear check",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nmb*ncells),
+      KOKKOS_LAMBDA(const int idx, int &local_errors) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is;
+        work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js;
+        work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real h = common(m, adm::ADM::I_COMMON_H, k, j, i);
+        const Real m2 = common(m, adm::ADM::I_COMMON_M2, k, j, i);
+        if (!Kokkos::isfinite(h) || !Kokkos::isfinite(m2)
+            || Kokkos::abs(h) > 2.0e-12 || Kokkos::abs(m2) > 2.0e-12) {
+          ++local_errors;
+        }
+      }, adm_errors);
+  errors += adm_errors;
 
   if (errors != 0) {
     std::cout << "FO-GH geometry unit test failed with " << errors

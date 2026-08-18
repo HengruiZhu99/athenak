@@ -164,7 +164,7 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
         const Real volume = size.d_view(m).dx1*size.d_view(m).dx2
                             *size.d_view(m).dx3*std::sqrt(Kokkos::abs(detg));
         const Real h = Kokkos::abs(common(m, adm::ADM::I_COMMON_H, k, j, i));
-        const Real m2 = fmax(0.0, common(m, adm::ADM::I_COMMON_M2, k, j, i));
+        const Real m2 = common(m, adm::ADM::I_COMMON_M2, k, j, i);
         const Real momentum = std::sqrt(m2);
         for (int local_region = 0; local_region < 2; ++local_region) {
           const int region = first_region + local_region;
@@ -255,8 +255,8 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
             const Real interface_radius = 64.0/std::pow(2.0, region - 6);
             include = Kokkos::abs(cube_r - interface_radius) < interface_radius/8.0;
           }
-          if (include) maximum = fmax(maximum, std::sqrt(fmax(0.0,
-              common(m, adm::ADM::I_COMMON_M2, k, j, i))));
+          if (include) maximum = fmax(maximum, std::sqrt(
+              common(m, adm::ADM::I_COMMON_M2, k, j, i)));
         }, Kokkos::Max<Real>(maxima[2*local_region + 1]));
   }
   for (int local_region = 0; local_region < 2; ++local_region) {

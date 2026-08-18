@@ -1,0 +1,29 @@
+Common ADM diagnostic repair verification
+=========================================
+Date: 2026-08-18
+Base commit: 6d2f8104584679e2b438973ecc452549dd079c18
+Kokkos: 6739bc623081648af9e752b616d9671527922cbf (4.7.02)
+Build: Release, Kokkos Serial ON, Kokkos CUDA OFF
+Compiler: /usr/bin/c++, GCC 13.3.0
+Executable SHA-256: 660bde6fcc1331a341ddff576a3786ddde41ade5c8cd94d370726906357526e8
+
+Commands:
+
+  cmake --build build -j 16
+  ./build/src/athena -i tst/inputs/fo_gh_geometry_unit.athinput
+
+Result:
+
+  Original one-pass ordering: FO-GH geometry unit test failed with 64 errors.
+  Fill-then-raise repair:
+  [100%] Built target athena
+  FO-GH geometry unit test passed.
+
+The first added mesh-backed state is a constant flat metric with g_xz=0.2 and
+K_yy=z. Its analytic constraints are H=0 and M_i M^i=25/24 at every active
+cell, and its off-diagonal inverse makes it sensitive to the DK fill/raise
+ordering. The second state is the exactly flat curvilinear metric induced by
+X=x+0.15*z^2, with K_ij=0 and H=M2=0; its nonzero metric jets exercise the
+Christoffel fill/raise ordering. Both check finiteness and an absolute tolerance
+of 2e-12. This is local Serial verification only; it is not GPU qualification
+and does not repair or qualify the FO-GH evolution formulation.

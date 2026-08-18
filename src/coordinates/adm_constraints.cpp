@@ -43,6 +43,17 @@ void ADM::ComputeVacuumConstraints(MeshBlockPack *pmbp) {
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> DK_ddd;
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> DK_udd;
     AthenaPointTensor<Real, TensorSymm::SYM22, 3, 4> ddg_dddd;
+    M_u.ZeroClear();
+    g_uu.ZeroClear();
+    R_dd.ZeroClear();
+    K_ud.ZeroClear();
+    dg_ddd.ZeroClear();
+    dK_ddd.ZeroClear();
+    Gamma_ddd.ZeroClear();
+    Gamma_udd.ZeroClear();
+    DK_ddd.ZeroClear();
+    DK_udd.ZeroClear();
+    ddg_dddd.ZeroClear();
     const Real idx[3] = {1.0/size.d_view(m).dx1,
                          1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
@@ -85,7 +96,14 @@ void ADM::ComputeVacuumConstraints(MeshBlockPack *pmbp) {
         for (int b = a; b < 3; ++b) {
           Gamma_ddd(c, a, b) = 0.5*(dg_ddd(a, b, c) + dg_ddd(b, a, c)
                                       - dg_ddd(c, a, b));
-          Gamma_udd(c, a, b) = 0.0;
+        }
+      }
+    }
+    // Gamma_udd(c,a,b) depends on every first-index component of Gamma_ddd.
+    // Populate the complete lower-index tensor before raising that index.
+    for (int c = 0; c < 3; ++c) {
+      for (int a = 0; a < 3; ++a) {
+        for (int b = a; b < 3; ++b) {
           for (int d = 0; d < 3; ++d) {
             Gamma_udd(c, a, b) += g_uu(c, d)*Gamma_ddd(d, a, b);
           }
@@ -137,7 +155,14 @@ void ADM::ComputeVacuumConstraints(MeshBlockPack *pmbp) {
             DK_ddd(a, b, c) -= Gamma_udd(d, a, b)*vars.vK_dd(m, d, c, k, j, i);
             DK_ddd(a, b, c) -= Gamma_udd(d, a, c)*vars.vK_dd(m, b, d, k, j, i);
           }
-          DK_udd(a, b, c) = 0.0;
+        }
+      }
+    }
+    // Raising the derivative index likewise requires all DK_ddd(d,b,c) to
+    // have been computed first.
+    for (int a = 0; a < 3; ++a) {
+      for (int b = 0; b < 3; ++b) {
+        for (int c = b; c < 3; ++c) {
           for (int d = 0; d < 3; ++d) DK_udd(a, b, c) += g_uu(a, d)*DK_ddd(d, b, c);
         }
       }

@@ -42,7 +42,11 @@ python3 tst/test_suite/fo_gh/analyze_fogh_instability.py \
 ```
 
 The common unmasked ADM momentum columns are identically zero despite nonzero
-native FO-GH momentum histories. Do not use them scientifically until the
-adapter/operator path is audited. Do not resume the campaign before the review
-in `FORMULATION_CODE_REVIEW.md` is resolved.
-
+native FO-GH momentum histories. A post-campaign audit confirmed uninitialized
+tensor reads in the common ADM operator; both its H and M columns in this bundle
+are therefore invalid and retained only as failure evidence. The repaired
+operator has ordering-sensitive non-diagonal and curvilinear flat-space
+regressions, but these histories have not been regenerated. The diagnostic did
+not feed evolution and cannot explain the FO-GH collapse. Do not resume the
+campaign before the remaining formulation review in
+`FORMULATION_CODE_REVIEW.md` is resolved.

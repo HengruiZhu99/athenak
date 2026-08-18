@@ -10,15 +10,21 @@ x1min     = -0.5
 x1max     = 0.5
 ix1_bc    = periodic
 ox1_bc    = periodic
-nx2       = 1
+nx2       = 4
 x2min     = -0.5
 x2max     = 0.5
-nx3       = 1
+ix2_bc    = periodic
+ox2_bc    = periodic
+nx3       = 4
 x3min     = -0.5
 x3max     = 0.5
+ix3_bc    = periodic
+ox3_bc    = periodic
 
 <meshblock>
 nx1       = 4
+nx2       = 4
+nx3       = 4
 
 <time>
 evolution  = static
