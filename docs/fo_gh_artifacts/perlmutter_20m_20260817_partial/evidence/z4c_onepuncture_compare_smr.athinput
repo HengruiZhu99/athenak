@@ -1,0 +1,103 @@
+# Mature Z4c side of the identical-grid t=20M puncture comparison.
+# Override both mesh/nx* and meshblock/nx* with 128/32, 192/48, or 256/64.
+
+<job>
+basename = z4c_puncture_compare
+
+<mesh>
+nghost = 4
+nx1 = 128
+x1min = -32.0
+x1max = 32.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 128
+x2min = -32.0
+x2max = 32.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 128
+x3min = -32.0
+x3max = 32.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 32
+nx2 = 32
+nx3 = 32
+
+<mesh_refinement>
+refinement = static
+
+# The same three-level fixed-refinement tree is used at every resolution.
+<refined_region1>
+level = 3
+x1min = -2.0
+x1max = 2.0
+x2min = -2.0
+x2max = 2.0
+x3min = -2.0
+x3max = 2.0
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = -1
+tlim = 20.0
+ndiag = 10
+
+<z4c>
+lapse_oplog = 2.0
+lapse_harmonicf = 1.0
+lapse_harmonic = 0.0
+lapse_advect = 1.0
+shift_eta = 2.0
+shift_advect = 1.0
+diss = 0.02
+damp_kappa1 = 0.02
+damp_kappa2 = 0.0
+floor_chi = false
+chi_div_floor = -1000.0
+excise_chi = 0.0625
+extrap_order = 2
+nrad_wave_extraction = 0
+
+<problem>
+punc_ADM_mass = 1.0
+common_adm_history = true
+common_adm_fd_order = 4
+
+<output1>
+file_type = hst
+dt = 0.2
+data_format = %20.15e
+
+<output2>
+file_type = rst
+dt = 2.0
+
+<output3>
+file_type = tab
+variable = adm
+dt = 0.2
+slice_x2 = 0.0
+slice_x3 = 0.0
+data_format = %20.15e
+
+<output4>
+file_type = tab
+variable = z4c
+dt = 0.2
+slice_x2 = 0.0
+slice_x3 = 0.0
+data_format = %20.15e
+
+<output5>
+file_type = tab
+variable = con
+dt = 0.2
+slice_x2 = 0.0
+slice_x3 = 0.0
+data_format = %20.15e

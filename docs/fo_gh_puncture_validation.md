@@ -1,5 +1,22 @@
 # FO-GH puncture validation status
 
+## 2026-08-17 revised 20M SMR campaign: paused formulation gate
+
+The revised `[-32M,32M]^3`, 232-block, eight-A100 campaign is paused. FO-GH
+coarse, medium, and fine runs reached valid 2M restarts but suffered timestep
+collapse at `3.431611M`, `3.024995M`, and `2.658676M`. Earlier failure with
+finer resolution is a failed stability/convergence gate and makes a formulation
+or high-frequency semidiscrete instability a leading hypothesis, not a proven
+root cause. With outer faces at 32M and pre-collapse characteristic speed near
+0.964, outer-boundary arrival cannot explain failure before 3.5M.
+
+CUDA-aware MPI, eight GPU mappings, exact eight-rank Minkowski, revised-tree
+startup, restart, and one/eight-rank comparison passed. Z4c production never
+launched, so no comparison or stability claim through 20M exists. Common
+unmasked ADM momentum histories are identically zero despite nonzero native
+momentum and are a separate diagnostic blocker. Compact evidence and the review
+prompt are in `docs/fo_gh_artifacts/perlmutter_20m_20260817_partial/`.
+
 Status date: 2026-08-17
 
 This document records evidence, including failures.  It is not a production or
