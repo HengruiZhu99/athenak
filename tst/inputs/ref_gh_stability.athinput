@@ -1,0 +1,44 @@
+# Robust Minkowski stability test for reference-frame GH.
+
+<job>
+basename = ref_gh_stability
+
+<mesh>
+nghost = 4
+nx1 = 8
+x1min = 0.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 8
+x2min = 0.0
+x2max = 1.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 8
+x3min = 0.0
+x3max = 1.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = -1
+tlim = 0.2
+ndiag = 10
+
+<ref_gh>
+fd_order = 4
+gamma0 = 1.0
+diss = 0.02
+
+<problem>
+pgen_name = ref_gh_stability
+amp = 1.0e-10
