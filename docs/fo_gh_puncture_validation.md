@@ -7,6 +7,23 @@ long-stability qualification claim.  The working branch is
 `codex/fo-gh-puncture-driver-20260817`, based on
 `24dd527514a3b031d151ca8d3f2679e998a91b3d`.
 
+## Pending 32M identical-grid comparison
+
+The current campaign specification requests three FO-GH and three Z4c runs to
+`t=32M` on a fixed `[-128,128]^3` octree.  Diagnostic plumbing and exact inputs
+are now under local validation.  The common ADM path uses one fourth-order
+AthenaK stencil for both formulations, no evolving lapse/chi mask, fixed radial
+regions, and fixed shells around every refinement interface.  Native masked
+formulation constraints remain additional outputs.
+
+The requested octree produces 3,200 leaf MeshBlocks.  Current-source allocation
+lower bounds show that the N=12 and N=16 FO-GH cases require at least 46.84 and
+79.98 GiB, respectively, before boundary buffers and runtime workspaces.  They
+cannot fit on the requested single 40-GB A100.  Full calculations and local
+evidence are recorded in
+`docs/fo_gh_artifacts/local_32m_campaign_preflight/README.md`.  No 32M run or
+new GPU qualification is claimed while the resource conflict is unresolved.
+
 ## Scope used for this campaign
 
 The campaign is vacuum FO-GH only.  Fluid coupling, Kerr-Schild validation, and

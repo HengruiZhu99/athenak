@@ -28,6 +28,7 @@ add_executable(
         bvals/physics/z4c_bcs.cpp
 
         coordinates/adm.cpp
+        coordinates/adm_constraints.cpp
         coordinates/coordinates.cpp
         coordinates/excision.cpp
 

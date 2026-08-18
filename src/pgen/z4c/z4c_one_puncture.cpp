@@ -44,6 +44,10 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     exit(EXIT_FAILURE);
   }
 
+  // The restart constructor has already restored the evolved Z4c state.  Reapplying
+  // analytic puncture data here would silently erase the checkpoint continuation.
+  if (restart) return;
+
   ADMOnePuncture(pmbp, pin);
   pmbp->pz4c->GaugePreCollapsedLapse(pmbp, pin);
   switch (indcs.ng) {

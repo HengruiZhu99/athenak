@@ -28,6 +28,7 @@ char const * const ADM::ADM_names[ADM::nadm] = {
 // constructor: initializes data structures and parameters
 ADM::ADM(MeshBlockPack *ppack, ParameterInput *pin):
     u_adm("u_adm",1,1,1,1,1),
+    u_common("u_common_adm_constraints",1,1,1,1,1),
     SetADMVariables(&ADM::SetADMVariablesToKerrSchild),
     pmy_pack(ppack) {
   is_dynamic = pin->DoesBlockExist("fo_gh")
@@ -38,6 +39,7 @@ ADM::ADM(MeshBlockPack *ppack, ParameterInput *pin):
   int ncells1 = indcs.nx1 + 2*(indcs.ng);
   int ncells2 = (indcs.nx2 > 1)? (indcs.nx2 + 2*(indcs.ng)) : 1;
   int ncells3 = (indcs.nx3 > 1)? (indcs.nx3 + 2*(indcs.ng)) : 1;
+  Kokkos::realloc(u_common, nmb, ncommon, ncells3, ncells2, ncells1);
 
   if (pmy_pack->pz4c == nullptr) {
     Kokkos::realloc(u_adm, nmb, nadm, ncells3, ncells2, ncells1);

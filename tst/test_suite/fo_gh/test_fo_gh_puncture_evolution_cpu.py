@@ -60,6 +60,39 @@ def test_fo_gh_puncture_evolution():
         testutils.cleanup()
 
 
+def test_fo_gh_common_adm_fixed_region_history():
+    """Common unmasked ADM norms must cover fixed regions and use finite maxima."""
+    basename = "fo_gh_common_adm"
+    histories = [Path(f"{basename}.adm_common{index}.hst") for index in range(6)]
+    try:
+        testutils.run(
+            "inputs/fo_gh_puncture_evolution.athinput",
+            [
+                f"job/basename={basename}",
+                "time/tlim=0.0",
+                "time/nlim=0",
+                "problem/common_adm_history=true",
+                "problem/common_adm_fd_order=4",
+            ],
+        )
+        data = [np.atleast_2d(np.loadtxt(history)) for history in histories]
+        assert data[0].shape[1] == 19
+        assert all(chunk.shape[1] == 16 for chunk in data[1:])
+        assert all(np.all(np.isfinite(chunk)) for chunk in data)
+        # On the uniform [-4,4]^3 N=16 mesh, 1/dx is exactly two.
+        assert data[0][-1, 16] == 2.0
+        # The fixed regions r<2, 2<=r<4, 4<=r<8, and r>=8 partition the domain.
+        np.testing.assert_allclose(
+            data[0][-1, 8], data[1][-1, 8] + data[1][-1, 15]
+            + data[2][-1, 8] + data[2][-1, 15], rtol=2.0e-14
+        )
+    finally:
+        for history in histories:
+            history.unlink(missing_ok=True)
+        Path(f"{basename}.fo_gh.hst").unlink(missing_ok=True)
+        testutils.cleanup()
+
+
 def test_fo_gh_puncture_constraint_convergence():
     """The lapse-excised history norms must improve on a resolved three-grid ladder."""
     history = Path("fo_gh_puncture_convergence.fo_gh.hst")

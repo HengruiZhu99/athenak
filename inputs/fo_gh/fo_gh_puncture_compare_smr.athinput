@@ -1,0 +1,103 @@
+# Corrected FO-GH side of the identical-grid t=32M puncture comparison.
+# The root grid is 4^3 MeshBlocks. Override both mesh/nx* and meshblock/nx*
+# with 32/8, 48/12, or 64/16 to obtain dx_min=1/16, 1/24, or 1/32.
+
+<job>
+basename = fo_gh_puncture_compare
+
+<mesh>
+nghost = 4
+nx1 = 32
+x1min = -128.0
+x1max = 128.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 32
+x2min = -128.0
+x2max = 128.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 32
+x3min = -128.0
+x3max = 128.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<mesh_refinement>
+refinement = static
+
+# AthenaK's 2:1 tree balance generates the requested outer interfaces from
+# this deepest fixed cube. It is the same logical tree for all resolutions.
+<refined_region1>
+level = 7
+x1min = -2.0
+x1max = 2.0
+x2min = -2.0
+x2max = 2.0
+x3min = -2.0
+x3max = 2.0
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.025
+nlim = -1
+tlim = 32.0
+ndiag = 10
+
+<fo_gh>
+fd_order = 4
+extrap_order = 2
+kappa = 1.0
+mu_H = 1.0
+eta_H = 1.0
+eta_beta = 2.0
+diss = 0.02
+excise_lapse = 0.25
+diagnostic_radius = 1.0
+
+<problem>
+pgen_name = fo_gh_puncture
+mass = 1.0
+near_radius = 2.0
+common_adm_history = true
+common_adm_fd_order = 4
+
+<output1>
+file_type = hst
+dt = 0.2
+data_format = %20.15e
+
+<output2>
+file_type = rst
+dt = 2.0
+dcycle = 0
+
+<output3>
+file_type = tab
+variable = adm
+dt = 0.2
+slice_x2 = 0.0
+slice_x3 = 0.0
+data_format = %20.15e
+
+<output4>
+file_type = tab
+variable = fo_gh
+dt = 0.2
+slice_x2 = 0.0
+slice_x3 = 0.0
+data_format = %20.15e
+
+<output5>
+file_type = tab
+variable = fo_gh_con
+dt = 0.2
+slice_x2 = 0.0
+slice_x3 = 0.0
+data_format = %20.15e

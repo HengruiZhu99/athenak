@@ -34,6 +34,9 @@ class ADM {
     I_ADM_ALPHA, I_ADM_BETAX, I_ADM_BETAY, I_ADM_BETAZ,
     nadm
   };
+  enum {
+    I_COMMON_H, I_COMMON_M2, ncommon
+  };
   // Names of ADM variables
   static char const * const ADM_names[nadm];
 
@@ -55,11 +58,15 @@ class ADM {
   };
 
   DvceArray5D<Real> u_adm;                                // adm variables
+  DvceArray5D<Real> u_common;  // formulation-independent vacuum ADM constraints
   bool is_dynamic;                                        // is the metric time dependent?
 
   void (*SetADMVariables)(MeshBlockPack *pm);
 
   static void SetADMVariablesToKerrSchild(MeshBlockPack *pm);
+
+  template <int NGHOST>
+  void ComputeVacuumConstraints(MeshBlockPack *pmbp);
 
  private:
   MeshBlockPack* pmy_pack;  // ptr to MeshBlockPack containing this Z4c

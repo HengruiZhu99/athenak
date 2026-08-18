@@ -50,6 +50,19 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
 
   if (pm->pmb_pack->pz4c != nullptr || pm->pmb_pack->pfogh != nullptr) {
     hist_data.emplace_back(PhysicsModule::SpaceTimeDynamics);
+    if (pin->GetOrAddBoolean("problem", "common_adm_history", false)) {
+      const int common_fd_order =
+          pin->GetOrAddInteger("problem", "common_adm_fd_order", 4);
+      if (common_fd_order != 2 && common_fd_order != 4 && common_fd_order != 6) {
+        std::cout << "### FATAL ERROR: problem/common_adm_fd_order must be 2, 4, or 6"
+                  << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+      for (int chunk = 0; chunk < 6; ++chunk) {
+        hist_data.emplace_back(PhysicsModule::CommonADMConstraints, chunk);
+        hist_data.back().fd_order = common_fd_order;
+      }
+    }
   }
 }
 
@@ -70,8 +83,215 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
       } else {
         LoadZ4cHistoryData(&data, pm);
       }
+    } else if (data.physics == PhysicsModule::CommonADMConstraints) {
+      LoadCommonADMHistoryData(&data, pm);
     } else if (data.physics == PhysicsModule::UserDefined) {
       (pm->pgen->user_hist_func)(&data, pm);
+    }
+  }
+}
+
+// Two fixed physical regions are stored per file so the standard 20-entry reduction
+// buffer is not enlarged.  No lapse or chi mask is applied to these common diagnostics.
+void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
+  if (pdata->instance == 0) {
+    switch (pdata->fd_order) {
+      case 2: pm->pmb_pack->padm->ComputeVacuumConstraints<2>(pm->pmb_pack); break;
+      case 4: pm->pmb_pack->padm->ComputeVacuumConstraints<3>(pm->pmb_pack); break;
+      case 6: pm->pmb_pack->padm->ComputeVacuumConstraints<4>(pm->pmb_pack); break;
+    }
+  }
+
+  static const char *prefix[12] = {
+    "all", "lt1", "lt2", "r2to4", "r4to8", "gt8",
+    "if64", "if32", "if16", "if8", "if4", "if2"
+  };
+  pdata->nhist = 14;
+  for (int local_region = 0; local_region < 2; ++local_region) {
+    const int base = 7*local_region;
+    const int region = 2*pdata->instance + local_region;
+    pdata->label[base + 0] = std::string(prefix[region]) + "H1";
+    pdata->label[base + 1] = std::string(prefix[region]) + "H2";
+    pdata->label[base + 2] = std::string(prefix[region]) + "Hi";
+    pdata->label[base + 3] = std::string(prefix[region]) + "M1";
+    pdata->label[base + 4] = std::string(prefix[region]) + "M2";
+    pdata->label[base + 5] = std::string(prefix[region]) + "Mi";
+    pdata->label[base + 6] = std::string(prefix[region]) + "V";
+    pdata->use_max[base + 2] = true;
+    pdata->use_max[base + 5] = true;
+  }
+  if (pdata->instance == 0) {
+    pdata->nhist = 17;
+    pdata->label[14] = "idxmax";
+    pdata->label[15] = "charmax";
+    pdata->label[16] = "effcfl";
+    pdata->use_max[14] = true;
+    pdata->use_max[15] = true;
+    pdata->use_max[16] = true;
+  }
+
+  auto &indcs = pm->mb_indcs;
+  auto &size = pm->pmb_pack->pmb->mb_size;
+  const auto common = pm->pmb_pack->padm->u_common;
+  const auto adm_vars = pm->pmb_pack->padm->adm;
+  const int first_region = 2*pdata->instance;
+  const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  array_sum::GlobalSum sums;
+  Kokkos::parallel_reduce(
+      "common ADM fixed-region sums", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, array_sum::GlobalSum &total) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is;
+        work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js;
+        work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        const Real r = std::sqrt(x*x + y*y + z*z);
+        const Real cube_r = fmax(Kokkos::abs(x),
+                                fmax(Kokkos::abs(y), Kokkos::abs(z)));
+        const Real detg = adm::SpatialDet(
+            adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
+            adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
+            adm_vars.g_dd(m, 1, 2, k, j, i), adm_vars.g_dd(m, 2, 2, k, j, i));
+        const Real volume = size.d_view(m).dx1*size.d_view(m).dx2
+                            *size.d_view(m).dx3*std::sqrt(Kokkos::abs(detg));
+        const Real h = Kokkos::abs(common(m, adm::ADM::I_COMMON_H, k, j, i));
+        const Real m2 = fmax(0.0, common(m, adm::ADM::I_COMMON_M2, k, j, i));
+        const Real momentum = std::sqrt(m2);
+        for (int local_region = 0; local_region < 2; ++local_region) {
+          const int region = first_region + local_region;
+          bool include = false;
+          if (region == 0) include = true;
+          if (region == 1) include = r < 1.0;
+          if (region == 2) include = r < 2.0;
+          if (region == 3) include = r >= 2.0 && r < 4.0;
+          if (region == 4) include = r >= 4.0 && r < 8.0;
+          if (region == 5) include = r >= 8.0;
+          if (region >= 6) {
+            const Real interface_radius = 64.0/std::pow(2.0, region - 6);
+            const Real half_width = interface_radius/8.0;
+            include = Kokkos::abs(cube_r - interface_radius) < half_width;
+          }
+          if (include) {
+            const int base = 7*local_region;
+            total.the_array[base + 0] += volume*h;
+            total.the_array[base + 1] += volume*h*h;
+            total.the_array[base + 3] += volume*momentum;
+            total.the_array[base + 4] += volume*m2;
+            total.the_array[base + 6] += volume;
+          }
+        }
+      }, Kokkos::Sum<array_sum::GlobalSum>(sums));
+
+  Real maxima[4] = {0.0, 0.0, 0.0, 0.0};
+  for (int local_region = 0; local_region < 2; ++local_region) {
+    const int region = first_region + local_region;
+    Kokkos::parallel_reduce(
+        "common ADM fixed-region H Linf", Kokkos::RangePolicy<>(DevExeSpace(),
+        0, pm->pmb_pack->nmb_thispack*ncells),
+        KOKKOS_LAMBDA(const int idx, Real &maximum) {
+          int work = idx;
+          const int i = work % indcs.nx1 + indcs.is;
+          work /= indcs.nx1;
+          const int j = work % indcs.nx2 + indcs.js;
+          work /= indcs.nx2;
+          const int k = work % indcs.nx3 + indcs.ks;
+          const int m = work/indcs.nx3;
+          const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                     size.d_view(m).x1min, size.d_view(m).x1max);
+          const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                     size.d_view(m).x2min, size.d_view(m).x2max);
+          const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                     size.d_view(m).x3min, size.d_view(m).x3max);
+          const Real r = std::sqrt(x*x + y*y + z*z);
+          const Real cube_r = fmax(Kokkos::abs(x),
+                                  fmax(Kokkos::abs(y), Kokkos::abs(z)));
+          bool include = region == 0 || (region == 1 && r < 1.0)
+              || (region == 2 && r < 2.0)
+              || (region == 3 && r >= 2.0 && r < 4.0)
+              || (region == 4 && r >= 4.0 && r < 8.0)
+              || (region == 5 && r >= 8.0);
+          if (region >= 6) {
+            const Real interface_radius = 64.0/std::pow(2.0, region - 6);
+            include = Kokkos::abs(cube_r - interface_radius) < interface_radius/8.0;
+          }
+          if (include) maximum = fmax(maximum, Kokkos::abs(
+              common(m, adm::ADM::I_COMMON_H, k, j, i)));
+        }, Kokkos::Max<Real>(maxima[2*local_region]));
+    Kokkos::parallel_reduce(
+        "common ADM fixed-region M Linf", Kokkos::RangePolicy<>(DevExeSpace(),
+        0, pm->pmb_pack->nmb_thispack*ncells),
+        KOKKOS_LAMBDA(const int idx, Real &maximum) {
+          int work = idx;
+          const int i = work % indcs.nx1 + indcs.is;
+          work /= indcs.nx1;
+          const int j = work % indcs.nx2 + indcs.js;
+          work /= indcs.nx2;
+          const int k = work % indcs.nx3 + indcs.ks;
+          const int m = work/indcs.nx3;
+          const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                     size.d_view(m).x1min, size.d_view(m).x1max);
+          const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                     size.d_view(m).x2min, size.d_view(m).x2max);
+          const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                     size.d_view(m).x3min, size.d_view(m).x3max);
+          const Real r = std::sqrt(x*x + y*y + z*z);
+          const Real cube_r = fmax(Kokkos::abs(x),
+                                  fmax(Kokkos::abs(y), Kokkos::abs(z)));
+          bool include = region == 0 || (region == 1 && r < 1.0)
+              || (region == 2 && r < 2.0)
+              || (region == 3 && r >= 2.0 && r < 4.0)
+              || (region == 4 && r >= 4.0 && r < 8.0)
+              || (region == 5 && r >= 8.0);
+          if (region >= 6) {
+            const Real interface_radius = 64.0/std::pow(2.0, region - 6);
+            include = Kokkos::abs(cube_r - interface_radius) < interface_radius/8.0;
+          }
+          if (include) maximum = fmax(maximum, std::sqrt(fmax(0.0,
+              common(m, adm::ADM::I_COMMON_M2, k, j, i))));
+        }, Kokkos::Max<Real>(maxima[2*local_region + 1]));
+  }
+  for (int local_region = 0; local_region < 2; ++local_region) {
+    const int base = 7*local_region;
+    if (sums.the_array[base + 6] == 0.0) {
+      maxima[2*local_region] = 0.0;
+      maxima[2*local_region + 1] = 0.0;
+    }
+    pdata->hdata[base + 0] = sums.the_array[base + 0];
+    pdata->hdata[base + 1] = sums.the_array[base + 1];
+    pdata->hdata[base + 2] = maxima[2*local_region];
+    pdata->hdata[base + 3] = sums.the_array[base + 3];
+    pdata->hdata[base + 4] = sums.the_array[base + 4];
+    pdata->hdata[base + 5] = maxima[2*local_region + 1];
+    pdata->hdata[base + 6] = sums.the_array[base + 6];
+  }
+  if (pdata->instance == 0) {
+    Real inverse_dx = 0.0;
+    Kokkos::parallel_reduce(
+        "common ADM inverse minimum spacing", Kokkos::RangePolicy<>(DevExeSpace(),
+        0, pm->pmb_pack->nmb_thispack),
+        KOKKOS_LAMBDA(const int m, Real &maximum) {
+          maximum = fmax(maximum, 1.0/size.d_view(m).dx1);
+          maximum = fmax(maximum, 1.0/size.d_view(m).dx2);
+          maximum = fmax(maximum, 1.0/size.d_view(m).dx3);
+        }, Kokkos::Max<Real>(inverse_dx));
+    pdata->hdata[14] = inverse_dx;
+    if (pm->pmb_pack->pfogh != nullptr) {
+      pdata->hdata[15] = pm->pmb_pack->pfogh->max_char_speed;
+      pdata->hdata[16] = pm->pmb_pack->pfogh->dtnew > 0.0
+          ? pm->dt/pm->pmb_pack->pfogh->dtnew : 0.0;
+    } else {
+      pdata->hdata[15] = 1.0;
+      pdata->hdata[16] = pm->pmb_pack->pz4c->dtnew > 0.0
+          ? pm->dt/pm->pmb_pack->pz4c->dtnew : 0.0;
     }
   }
 }
@@ -531,12 +751,15 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   for (auto &data : hist_data) {
     // first, perform in-place sum over all MPI ranks
 #if MPI_PARALLEL_ENABLED
-    if (global_variable::my_rank == 0) {
-      MPI_Reduce(MPI_IN_PLACE, &(data.hdata[0]), data.nhist, MPI_ATHENA_REAL,
-         MPI_SUM, 0, MPI_COMM_WORLD);
-    } else {
-      MPI_Reduce(&(data.hdata[0]), &(data.hdata[0]), data.nhist,
-         MPI_ATHENA_REAL, MPI_SUM, 0, MPI_COMM_WORLD);
+    for (int n = 0; n < data.nhist; ++n) {
+      const MPI_Op op = data.use_max[n] ? MPI_MAX : MPI_SUM;
+      if (global_variable::my_rank == 0) {
+        MPI_Reduce(MPI_IN_PLACE, &(data.hdata[n]), 1, MPI_ATHENA_REAL,
+                   op, 0, MPI_COMM_WORLD);
+      } else {
+        MPI_Reduce(&(data.hdata[n]), &(data.hdata[n]), 1, MPI_ATHENA_REAL,
+                   op, 0, MPI_COMM_WORLD);
+      }
     }
 #endif
 
@@ -555,6 +778,10 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
           break;
         case PhysicsModule::SpaceTimeDynamics:
           fname.append(pm->pmb_pack->pfogh != nullptr ? ".fo_gh" : ".z4c");
+          break;
+        case PhysicsModule::CommonADMConstraints:
+          fname.append(".adm_common");
+          fname.append(std::to_string(data.instance));
           break;
         case PhysicsModule::UserDefined:
           fname.append(".user");

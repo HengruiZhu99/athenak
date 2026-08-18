@@ -186,12 +186,18 @@ struct OutputMeshBlockInfo {
 
 struct HistoryData {
   int nhist;
+  int instance;
+  int fd_order;
   PhysicsModule physics;
   std::string label[NHISTORY_VARIABLES];
   Real hdata[NHISTORY_VARIABLES];
+  bool use_max[NHISTORY_VARIABLES];
   bool header_written;
   // constructor
-  explicit HistoryData(PhysicsModule name) : physics(name), header_written(false) {}
+  explicit HistoryData(PhysicsModule name, int id=0) :
+      instance(id), fd_order(4), physics(name), header_written(false) {
+    for (int n = 0; n < NHISTORY_VARIABLES; ++n) use_max[n] = false;
+  }
 };
 
 //----------------------------------------------------------------------------------------
@@ -289,6 +295,7 @@ class HistoryOutput : public BaseTypeOutput {
   void LoadMHDHistoryData(HistoryData *pdata, Mesh *pm);
   void LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm);
   void LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm);
+  void LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm);
   void WriteOutputFile(Mesh *pm, ParameterInput *pin) override;
 };
 
