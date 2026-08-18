@@ -1,0 +1,79 @@
+{
+  "schema": "athenak_brill_chi_parent_provenance_evidence_v1",
+  "final_disposition": "ACTIVE_FINE_CHI_FAILURE",
+  "source": {
+    "commit": "ac75c8d348da91b38cbc6855b5fba51cd3089663",
+    "tree": "6284882bd06e8db379495675aba7a4f153fb4afa",
+    "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf",
+    "diagnostic_patch_committed": false,
+    "diagnostic_executable_sha256": "b4a5681c23310af12f2192faadc78a01fb12a1713fc6ab7707217be637d1a746",
+    "restart_sha256": "2e2e8f7febd0d4fbb204f172df149f9295de6aa66097ef3c9f19048aa29a20e9"
+  },
+  "allocation": {
+    "job_id": 57214220,
+    "qos": "gpu_shared_interactive",
+    "node": "nid008257",
+    "gpus": 1,
+    "released_after_capture": true,
+    "terminal_diagnostic_step": "57214220.7",
+    "terminal_diagnostic_step_state": "COMPLETED"
+  },
+  "first_invalid": {
+    "cycle": 5546,
+    "rk_stage": 3,
+    "time_hex": "0x1.5124ccccccd9bp+3",
+    "time_decimal": 10.535742187500366,
+    "checkpoint": "S0_AFTER_EXP_RK_UPDATE",
+    "tree_checksum": "cf359244e1483352",
+    "active_nonpositive": 2,
+    "active_nonfinite": 0,
+    "active_minimum": -1.3409347716159825
+  },
+  "shadow_amr": {
+    "rows": 63002,
+    "cycle_first": 4097,
+    "cycle_last": 5546,
+    "refinement_requests": 690,
+    "derefinement_requests": 62312,
+    "unique_refinement_gids": 6
+  },
+  "files": {
+    "evidence/active_fine_failure.csv": "ca3ece884585a5a19c27fd5c268c2721aa946893c364c2aa2536811cc0cc9449",
+    "evidence/build-products.sha256": "3d15012e3b350e08bd0ad0377b0841d9ac9a146572c76fabe5678dc6c326b994",
+    "evidence/final-diagnostic-source/identity.txt": "3ea7df9d54d0abe06cd9e0253dfd074945282f0c0557b5248534f3049667f350",
+    "evidence/final-diagnostic-source/manifest.sha256": "0f9d2bfe1fe81a0ab1af1c47e3fa2ced1fcd940b90cef4465ed2451b63446cfb",
+    "evidence/final-diagnostic-source/owned-source-files.sha256": "f0397818bd8d4e8e26475c8501ea4b912ac1a2e6805ac332472a5dd4bd707269",
+    "evidence/final-diagnostic-source/owned-source-files.tar": "7ef5fc95223becac6e2e1bdb4b63387a821a83dbe53cf5f28e660d8e4648969a",
+    "evidence/final-diagnostic-source/owned-source-files.txt": "a35530924d4198cacaaf59d1a098e910170128c94dfd22fd3234fcc5337a488e",
+    "evidence/final-diagnostic-source/status.txt": "a23013101f512928de828afddba72c7eeb90fb2ba017f696f2eb5e6fc44f7d96",
+    "evidence/final-diagnostic-source/tracked.patch": "dab4d15a6d8802b1b557a43da8d1db2f458fa2969020ac9907fb8c156d855d49",
+    "evidence/focused-tests.log": "38ac96c28cd1d435b76fd6f48361dc0fcea2295b8ff197a0723f0038d55a1249",
+    "evidence/phase1_disposition.json": "a44a69e136316ecf6bcc01f5adc29c860a5c3ecf1a937d95eff87188fea601fd",
+    "evidence/phase1_stage_minima.csv": "a79d9b4364a09954492af67b20fd2647dc896b1c92bc95b41b198f80f4e703b3",
+    "evidence/remote-root-SHA256SUMS": "1a7a1542aa7de91426e6b346046dc4468223cafef4c4d691e20e94ab0d0c4a21",
+    "evidence/remote-root-SHA256SUMS.sha256": "f620a40006676ef3085189b4b9db5c4a0a7c693d7cef2d34ff7015cdd3fe09a2",
+    "evidence/replay_time_alignment.jsonl": "3b24e85f655fa273c68304d7d0cf82d8ddb7891f0ba040b775c4f3299fe56e1f",
+    "evidence/sacct-final.txt": "0995cdcdb10dac52734d6894a27227b8d5184ebd98e22e5ba5c24f402b23f8dd",
+    "evidence/shadow_amr_requests.jsonl": "6d28a3743cc84dc3a111869f86ae8bc764e3c0db55a53196ff6b5461050ad483",
+    "evidence/v5-command.txt": "d379a4309707682419ae86fe6e4d338bfa90ae17b6aa0897e75b8834c207a9f3",
+    "evidence/v5-run.log": "b62aaa09a0d515a75f7b0c65a4c1598d8c198ac95f30a60de793400e4a50fa3d",
+    "evidence/v5-terminal.sha256": "56f1cc2bae18e985459b3aa18c3899feaa0c930f64f2c73e78ed09c976b1e1f3",
+    "evidence/v6-command.txt": "c1020abd4bc6c2df59d29ad90361bab4e896ce017874fbf369ebb8723065b467",
+    "evidence/v6-run.log": "bd5506cf4837df7a8bd92c678f2da6ed8970f0bfe332bb209bbe23f35f6e9d0b",
+    "evidence/v6-terminal.sha256": "17d9372bdd01c7e50cdd31dc088724fbeb7e5ec3f0464da1ec5935faea529cf6"
+  },
+  "conditional_outputs_not_produced": [
+    "first_invalid_coarse_cell.json",
+    "first_invalid_parent_stencil.csv",
+    "unique_invalid_coarse_cells.csv",
+    "invalid_cell_consumption_multiplicity.csv",
+    "restriction_candidate_comparison.csv",
+    "bounded_corrected_run_summaries"
+  ],
+  "limitations": [
+    "No term-by-term chi RHS decomposition was captured.",
+    "No production correction was justified or implemented.",
+    "No corrected or native N256 control was run after the stop condition.",
+    "No convergence, continuum-instability, Figure-3, or production-qualification claim is supported."
+  ]
+}

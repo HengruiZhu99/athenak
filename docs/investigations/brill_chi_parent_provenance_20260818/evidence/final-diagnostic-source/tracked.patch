@@ -1,0 +1,228 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 14bc5c24..852166e0 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -177,6 +177,7 @@ add_executable(
+ 	    z4c/horizon_dump.cpp
+         z4c/tmunu.cpp
+         z4c/amr_jump_diagnostic.cpp
++        z4c/chi_parent_provenance.cpp
+         z4c/z4c.cpp
+         z4c/z4c_adm.cpp
+         z4c/z4c_calcrhs.cpp
+diff --git a/src/bvals/prolongation.cpp b/src/bvals/prolongation.cpp
+index fba00b0e..ed8927aa 100644
+--- a/src/bvals/prolongation.cpp
++++ b/src/bvals/prolongation.cpp
+@@ -392,6 +392,11 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real>
+                 << std::endl;
+     }
+     if (global_counts[2] != 0 || global_counts[3] != 0) {
++      if (global_counts[2] != 0 &&
++          pmy_pack->pz4c->chi_parent_provenance != nullptr) {
++        pmy_pack->pz4c->chi_parent_provenance->AnalyzeBoundaryFailure(
++            this, global_counts[2], global_rejected_keys[0]);
++      }
+       if (global_variable::my_rank == 0) {
+         const unsigned long long key =
+             global_counts[2] != 0 ? global_rejected_keys[0]
+diff --git a/src/mesh/amr_history.cpp b/src/mesh/amr_history.cpp
+index d82c8c64..cd2a36f7 100644
+--- a/src/mesh/amr_history.cpp
++++ b/src/mesh/amr_history.cpp
+@@ -1,8 +1,11 @@
+ #include "mesh/amr_history.hpp"
+ 
+ #include <algorithm>
++#include <cmath>
++#include <cstring>
+ #include <cstdlib>
+ #include <fstream>
++#include <iomanip>
+ #include <iostream>
+ #include <iterator>
+ #include <sstream>
+@@ -221,6 +224,7 @@ void AMRHistory::LimitTimestep() {
+   const double candidate_dt = mesh_->dt;
+   if (!amr_history::ParseReal(events_[next_event_].time_hex, &next_time) ||
+       !amr_history::LimitTimestep(mesh_->time, next_time, &mesh_->dt, &error)) Fatal(error);
++  last_timestep_clipped_ = mesh_->dt != candidate_dt;
+   if (mesh_->dt != candidate_dt && global_variable::my_rank == 0) {
+     std::cout << "AMR_HISTORY_TIMESTEP_CLIP event=" << next_event_
+               << " time_hex=" << amr_history::HexReal(mesh_->time)
+@@ -239,6 +243,12 @@ void AMRHistory::CaptureShadowFlags() {
+     shadow_derefine_ += mesh_->pmr->refine_flag.h_view(gid) < 0;
+   }
+   shadow_flags_captured_ = true;
++  if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
++      mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr &&
++      next_event_ < events_.size()) {
++    mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordShadowAMRRequests(
++        next_event_, events_[next_event_].time_hex, CurrentTreeChecksum());
++  }
+ }
+ 
+ bool AMRHistory::PrepareReplayFlags() {
+@@ -363,7 +373,35 @@ void AMRHistory::AppendLedger(const std::string &action, const amr_history::Even
+       << event.leaf_count << ",\"max_level\":" << event.max_level
+       << ",\"tree_checksum\":\"" << event.tree_checksum
+       << "\",\"ranks\":" << global_variable::nranks
+-      << ",\"exact_match\":" << (exact_match ? "true" : "false") << "}\n";
++      << ",\"exact_match\":" << (exact_match ? "true" : "false");
++  if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
++      mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr) {
++    double authority_time = 0.0;
++    if (!amr_history::ParseReal(event.time_hex, &authority_time)) {
++      Fatal("cannot decode authority time for diagnostic replay ledger");
++    }
++    std::uint64_t authority_bits = 0;
++    std::uint64_t actual_bits = 0;
++    static_assert(sizeof(authority_bits) == sizeof(authority_time),
++                  "ULP diagnostic assumes IEEE binary64");
++    std::memcpy(&authority_bits, &authority_time, sizeof(authority_bits));
++    std::memcpy(&actual_bits, &mesh_->time, sizeof(actual_bits));
++    const long long ulps = actual_bits >= authority_bits
++        ? static_cast<long long>(actual_bits - authority_bits)
++        : -static_cast<long long>(authority_bits - actual_bits);
++    out << std::setprecision(17)
++        << ",\"authority_time_hex\":\"" << event.time_hex << "\""
++        << ",\"actual_mesh_time_hex\":\""
++        << amr_history::HexReal(mesh_->time) << "\""
++        << ",\"signed_time_difference\":" << mesh_->time - authority_time
++        << ",\"ulp_difference\":" << ulps
++        << ",\"preceding_timestep_clipped\":"
++        << (last_timestep_clipped_ ? "true" : "false");
++    mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordReplayAlignment(
++        event.index, event.time_hex, amr_history::HexReal(mesh_->time),
++        mesh_->time - authority_time, ulps, last_timestep_clipped_);
++  }
++  out << "}\n";
+   out.flush();
+   if (!out) Fatal("failed to flush AMR history ledger");
+ }
+diff --git a/src/mesh/amr_history.hpp b/src/mesh/amr_history.hpp
+index da6aa634..cedb3553 100644
+--- a/src/mesh/amr_history.hpp
++++ b/src/mesh/amr_history.hpp
+@@ -61,6 +61,7 @@ class AMRHistory {
+   int shadow_refine_ = 0;
+   int shadow_derefine_ = 0;
+   bool shadow_flags_captured_ = false;
++  bool last_timestep_clipped_ = false;
+   std::vector<amr_history::Location> replay_target_;
+   std::string loaded_digest_;
+ };
+diff --git a/src/z4c/z4c.cpp b/src/z4c/z4c.cpp
+index 00fc4841..5f8c4a2a 100644
+--- a/src/z4c/z4c.cpp
++++ b/src/z4c/z4c.cpp
+@@ -182,6 +182,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
+               << error.what() << std::endl;
+     std::exit(EXIT_FAILURE);
+   }
++  opt.chi_parent_provenance = ReadChiParentProvenanceConfig(pin);
+   // Gauge conditions (default to moving puncture gauge)
+   opt.lapse_harmonicf = pin->GetOrAddReal("z4c", "lapse_harmonicf", 1.0);
+   opt.lapse_harmonic = pin->GetOrAddReal("z4c", "lapse_harmonic", 0.0);
+@@ -398,6 +399,10 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
+     amr_jump_diagnostic = std::make_unique<AMRJumpDiagnosticRuntime>(
+         pmy_pack, opt.amr_jump_diagnostic);
+   }
++  if (opt.chi_parent_provenance.enabled) {
++    chi_parent_provenance = std::make_unique<ChiParentProvenanceRuntime>(
++        pmy_pack, opt.chi_parent_provenance);
++  }
+ }
+ 
+ //----------------------------------------------------------------------------------------
+diff --git a/src/z4c/z4c.hpp b/src/z4c/z4c.hpp
+index a538831d..c1e3d63d 100644
+--- a/src/z4c/z4c.hpp
++++ b/src/z4c/z4c.hpp
+@@ -23,6 +23,7 @@
+ #include "geodesic-grid/geodesic_grid.hpp"
+ #include "geodesic-grid/spherical_grid.hpp"
+ #include "z4c/amr_jump_diagnostic.hpp"
++#include "z4c/chi_parent_provenance.hpp"
+ #include "z4c/telegraph_damping.hpp"
+ 
+ // forward declarations
+@@ -182,6 +183,7 @@ class Z4c {
+     Real rhs_stage_diagnostics_rho_max;
+     Real rhs_stage_diagnostics_abs_z_max;
+     AMRJumpDiagnosticConfig amr_jump_diagnostic;
++    ChiParentProvenanceConfig chi_parent_provenance;
+     // Gauge conditions for the lapse
+     Real lapse_oplog;
+     Real lapse_harmonicf;
+@@ -239,6 +241,7 @@ class Z4c {
+   Options opt;
+   Real diss;              // Dissipation parameter
+   std::unique_ptr<AMRJumpDiagnosticRuntime> amr_jump_diagnostic;
++  std::unique_ptr<ChiParentProvenanceRuntime> chi_parent_provenance;
+ 
+   // Boundary communication buffers and functions for u
+   MeshBoundaryValuesCC *pbval_u;
+diff --git a/src/z4c/z4c_tasks.cpp b/src/z4c/z4c_tasks.cpp
+index 63fcaff2..3b38cd45 100644
+--- a/src/z4c/z4c_tasks.cpp
++++ b/src/z4c/z4c_tasks.cpp
+@@ -282,6 +282,10 @@ TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
+ 
+ TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
+   TaskStatus tstat = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
++  if (tstat == TaskStatus::complete && chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s2_after_receive, stage, pbval_u);
++  }
+   return tstat;
+ }
+ 
+@@ -351,6 +355,10 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
+   if (pmy_pack->pmesh->multilevel) {
+     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
+   }
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s1_after_restriction, stage, pbval_u);
++  }
+   return TaskStatus::complete;
+ }
+ 
+@@ -369,6 +377,10 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
+     // copy, so FillCoarseInBndryCC deliberately preserves it; generic
+     // finite-volume users retain their receiver-local refresh policy.
+     pbval_u->FillCoarseInBndryCC(u0, coarse_u0, true);
++    if (chi_parent_provenance != nullptr) {
++      chi_parent_provenance->RecordCheckpoint(
++          ChiProvenanceCheckpoint::s4_before_parent_gate, stage, pbval_u);
++    }
+     if (amr_jump_diagnostic != nullptr) {
+       amr_jump_diagnostic->RecordSameLevelRefreshShadow();
+       amr_jump_diagnostic->RecordT3(
+@@ -409,6 +421,10 @@ TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
+       (pmy_pack->pmesh->pgen->user_bcs_func)(pmy_pack->pmesh);
+     }
+   }
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s3_after_boundary, stage, pbval_u);
++  }
+   return TaskStatus::complete;
+ }
+ 
+diff --git a/src/z4c/z4c_update.cpp b/src/z4c/z4c_update.cpp
+index 0413c41a..5b63379a 100644
+--- a/src/z4c/z4c_update.cpp
++++ b/src/z4c/z4c_update.cpp
+@@ -39,6 +39,10 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
+   KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
+     u0(m,n,k,j,i) = gam0*u0(m,n,k,j,i) + gam1*u1(m,n,k,j,i) + beta_dt*u_rhs(m,n,k,j,i);
+   });
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s0_after_rk, stage, pbval_u);
++  }
+   return TaskStatus::complete;
+ }
+ } // namespace z4c
