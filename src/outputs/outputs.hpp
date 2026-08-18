@@ -295,6 +295,7 @@ class HistoryOutput : public BaseTypeOutput {
   void LoadMHDHistoryData(HistoryData *pdata, Mesh *pm);
   void LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm);
   void LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm);
+  void LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm);
   void LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm);
   void WriteOutputFile(Mesh *pm, ParameterInput *pin) override;
 };

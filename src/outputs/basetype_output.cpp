@@ -24,6 +24,7 @@
 #include "mhd/mhd.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "fo_gh/fo_gh.hpp"
+#include "ref_gh/ref_gh.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/tmunu.hpp"
 #include "z4c/z4c.hpp"
@@ -659,6 +660,18 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
       for (int v = 0; v < fo_gh::FoGh::ncon; ++v) {
         outvars.emplace_back(fo_gh::FoGh::ConstraintNames[v], v,
                              &(pm->pmb_pack->pfogh->u_con));
+      }
+    }
+    if (variable.compare("ref_gh") == 0) {
+      for (int v = 0; v < ref_gh::RefGh::nref_gh; ++v) {
+        outvars.emplace_back(ref_gh::RefGh::StateNames[v], v,
+                             &(pm->pmb_pack->prefgh->u0));
+      }
+    }
+    if (variable.compare("ref_gh_con") == 0) {
+      for (int v = 0; v < ref_gh::RefGh::ncon; ++v) {
+        outvars.emplace_back(ref_gh::RefGh::ConstraintNames[v], v,
+                             &(pm->pmb_pack->prefgh->u_con));
       }
     }
 

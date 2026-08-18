@@ -69,6 +69,7 @@ add_executable(
 
         ref_gh/ref_gh.cpp
         ref_gh/ref_gh_calcrhs.cpp
+        ref_gh/ref_gh_diagnostics.cpp
         ref_gh/ref_gh_tasks.cpp
 
         gravity/gravity.cpp

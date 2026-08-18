@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
 
@@ -22,6 +23,8 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "fo_gh/fo_gh.hpp"
+#include "ref_gh/ref_gh.hpp"
+#include "ref_gh/ref_gh_geometry.hpp"
 #include "z4c/z4c.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
@@ -48,7 +51,8 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
     }
   }
 
-  if (pm->pmb_pack->pz4c != nullptr || pm->pmb_pack->pfogh != nullptr) {
+  if (pm->pmb_pack->pz4c != nullptr || pm->pmb_pack->pfogh != nullptr
+      || pm->pmb_pack->prefgh != nullptr) {
     hist_data.emplace_back(PhysicsModule::SpaceTimeDynamics);
     if (pin->GetOrAddBoolean("problem", "common_adm_history", false)) {
       const int common_fd_order =
@@ -80,6 +84,8 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
     } else if (data.physics == PhysicsModule::SpaceTimeDynamics) {
       if (pm->pmb_pack->pfogh != nullptr) {
         LoadFoGhHistoryData(&data, pm);
+      } else if (pm->pmb_pack->prefgh != nullptr) {
+        LoadRefGhHistoryData(&data, pm);
       } else {
         LoadZ4cHistoryData(&data, pm);
       }
@@ -288,6 +294,10 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
       pdata->hdata[15] = pm->pmb_pack->pfogh->max_char_speed;
       pdata->hdata[16] = pm->pmb_pack->pfogh->dtnew > 0.0
           ? pm->dt/pm->pmb_pack->pfogh->dtnew : 0.0;
+    } else if (pm->pmb_pack->prefgh != nullptr) {
+      pdata->hdata[15] = pm->pmb_pack->prefgh->max_char_speed;
+      pdata->hdata[16] = pm->pmb_pack->prefgh->dtnew > 0.0
+          ? pm->dt/pm->pmb_pack->prefgh->dtnew : 0.0;
     } else {
       pdata->hdata[15] = 1.0;
       pdata->hdata[16] = pm->pmb_pack->pz4c->dtnew > 0.0
@@ -436,6 +446,273 @@ void HistoryOutput::LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm) {
   for (int n = 0; n < NHIST_FO_GH; ++n) {
     pdata->hdata[n] = sums.the_array[n];
   }
+}
+
+void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
+  enum RefGhHistoryIndex {
+    HIST_GH, HIST_REDUCTION, HIST_CURL, HIST_PSI_ERROR, HIST_PI, HIST_PHI,
+    HIST_NEAR_GH, HIST_NEAR_REDUCTION, HIST_NEAR_CURL, HIST_VOLUME,
+    HIST_ALPHA_MAX, HIST_MINUS_ALPHA_MIN, HIST_REGULAR_MAX, HIST_G_CONDITION,
+    HIST_COORDINATE_G_MAX, HIST_CHARACTERISTIC_MAX, HIST_EFFECTIVE_CFL,
+    HIST_DETERMINANT_MARGIN, HIST_NEAR_VOLUME, HIST_BAD_STATE, NHIST_REF_GH
+  };
+  static_assert(NHIST_REF_GH <= NHISTORY_VARIABLES,
+                "reference-GH history exceeds NHISTORY_VARIABLES");
+  pdata->nhist = NHIST_REF_GH;
+  const char *labels[NHIST_REF_GH] = {
+    "GH-L2sq", "Reduction-L2sq", "Curl-L2sq", "PsiError-L2sq",
+    "Pi-L2sq", "Phi-L2sq", "GHnear-L2sq", "ReductionNear-L2sq",
+    "CurlNear-L2sq", "Volume", "alpha-max", "minus-alpha-min",
+    "regular-max", "G-condition-max", "coordinate-g-max", "char-speed-max",
+    "effective-CFL", "minus-detg-margin", "NearVolume", "bad-state"
+  };
+  for (int n = 0; n < NHIST_REF_GH; ++n) pdata->label[n] = labels[n];
+  for (int n = HIST_ALPHA_MAX; n <= HIST_DETERMINANT_MARGIN; ++n) {
+    pdata->use_max[n] = true;
+  }
+  pdata->use_max[HIST_BAD_STATE] = true;
+
+  auto *module = pm->pmb_pack->prefgh;
+  module->UpdateDiagnostics();
+  auto &indcs = pm->mb_indcs;
+  auto &size = pm->pmb_pack->pmb->mb_size;
+  const auto state = module->u0;
+  const auto constraints = module->u_con;
+  const auto adm_vars = pm->pmb_pack->padm->adm;
+  const auto table = module->reference_table;
+  const int reference_kind = module->opt.reference_kind;
+  const Real mass = module->opt.reference_mass;
+  const Real center_x = module->opt.reference_center[0];
+  const Real center_y = module->opt.reference_center[1];
+  const Real center_z = module->opt.reference_center[2];
+  const Real time = pm->time;
+  const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  array_sum::GlobalSum sums;
+  Kokkos::parallel_reduce(
+      "ref_gh history sums", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, array_sum::GlobalSum &total) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real detg = adm::SpatialDet(
+            adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
+            adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
+            adm_vars.g_dd(m, 1, 2, k, j, i), adm_vars.g_dd(m, 2, 2, k, j, i));
+        const Real volume = size.d_view(m).dx1*size.d_view(m).dx2
+                            *size.d_view(m).dx3*Kokkos::sqrt(Kokkos::abs(detg));
+        Real gh2 = 0.0;
+        for (int a = 0; a < 4; ++a) gh2 += constraints(m, a, k, j, i)
+                                                 *constraints(m, a, k, j, i);
+        const Real reduction2 = constraints(m, 4, k, j, i)
+                                *constraints(m, 4, k, j, i);
+        const Real curl2 = constraints(m, 5, k, j, i)*constraints(m, 5, k, j, i);
+        Real psi_error2 = 0.0;
+        Real pi2 = 0.0;
+        Real phi2 = 0.0;
+        for (int component = 0; component < ref_gh::kSymmetric4Size; ++component) {
+          Real expected = 0.0;
+          if (component == ref_gh::Symmetric4Index(0, 0)) expected = -1.0;
+          if (component == ref_gh::Symmetric4Index(1, 1)
+              || component == ref_gh::Symmetric4Index(2, 2)
+              || component == ref_gh::Symmetric4Index(3, 3)) expected = 1.0;
+          const Real difference = state(m, ref_gh::kPsiOffset + component, k, j, i)
+                                  - expected;
+          psi_error2 += difference*difference;
+          pi2 += state(m, ref_gh::kPiOffset + component, k, j, i)
+                 *state(m, ref_gh::kPiOffset + component, k, j, i);
+          for (int I = 0; I < 3; ++I) {
+            const Real value = state(m, ref_gh::kPhiOffset
+                                      + I*ref_gh::kSymmetric4Size + component,
+                                     k, j, i);
+            phi2 += value*value;
+          }
+        }
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        const bool near = (x-center_x)*(x-center_x) + (y-center_y)*(y-center_y)
+                          + (z-center_z)*(z-center_z) < 4.0*mass*mass;
+        total.the_array[HIST_GH] += volume*gh2;
+        total.the_array[HIST_REDUCTION] += volume*reduction2;
+        total.the_array[HIST_CURL] += volume*curl2;
+        total.the_array[HIST_PSI_ERROR] += volume*psi_error2;
+        total.the_array[HIST_PI] += volume*pi2;
+        total.the_array[HIST_PHI] += volume*phi2;
+        total.the_array[HIST_NEAR_GH] += near ? volume*gh2 : 0.0;
+        total.the_array[HIST_NEAR_REDUCTION] += near ? volume*reduction2 : 0.0;
+        total.the_array[HIST_NEAR_CURL] += near ? volume*curl2 : 0.0;
+        total.the_array[HIST_VOLUME] += volume;
+        total.the_array[HIST_NEAR_VOLUME] += near ? volume : 0.0;
+      }, Kokkos::Sum<array_sum::GlobalSum>(sums));
+  for (int n = 0; n < HIST_ALPHA_MAX; ++n) pdata->hdata[n] = sums.the_array[n];
+  pdata->hdata[HIST_NEAR_VOLUME] = sums.the_array[HIST_NEAR_VOLUME];
+
+  Real alpha_max = 0.0;
+  Real minus_alpha_min = -std::numeric_limits<Real>::max();
+  Real regular_max = 0.0;
+  Real g_condition_max = 0.0;
+  Real coordinate_g_max = 0.0;
+  Real characteristic_max = 0.0;
+  Real minus_det_margin = -std::numeric_limits<Real>::max();
+  Real bad_state = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh history alpha max", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        maximum = fmax(maximum, adm_vars.alpha(m, k, j, i));
+      }, Kokkos::Max<Real>(alpha_max));
+  Kokkos::parallel_reduce(
+      "ref_gh history minus alpha min", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        maximum = fmax(maximum, -adm_vars.alpha(m, k, j, i));
+      }, Kokkos::Max<Real>(minus_alpha_min));
+  Kokkos::parallel_reduce(
+      "ref_gh history regular max", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ref_gh::nvar*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks; work /= indcs.nx3;
+        const int n = work % ref_gh::nvar;
+        const int m = work/ref_gh::nvar;
+        maximum = fmax(maximum, Kokkos::abs(state(m, n, k, j, i)));
+      }, Kokkos::Max<Real>(regular_max));
+  Kokkos::parallel_reduce(
+      "ref_gh history geometry max", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        const ref_gh::ReferenceGeometry reference = ref_gh::GetReferenceGeometry(
+            reference_kind, table, mass, center_x, center_y, center_z, time, x, y, z);
+        Real relative[3][3];  // NOLINT(runtime/arrays)
+        for (int I = 0; I < 3; ++I) {
+          for (int J = 0; J < 3; ++J) {
+            relative[I][J] = 0.0;
+            for (int a = 0; a < 3; ++a) {
+              for (int b = 0; b < 3; ++b) {
+                relative[I][J] += reference.spatial_frame[I][a]
+                    *reference.spatial_frame[J][b]*adm_vars.g_dd(m, a, b, k, j, i);
+              }
+            }
+          }
+        }
+        Real eigenvalues[3];  // NOLINT(runtime/arrays)
+        ref_gh::SymmetricEigenvalues3(relative, eigenvalues);
+        if (eigenvalues[0] > 0.0) maximum = fmax(maximum, eigenvalues[2]/eigenvalues[0]);
+      }, Kokkos::Max<Real>(g_condition_max));
+  Kokkos::parallel_reduce(
+      "ref_gh history coordinate metric max", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*6*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks; work /= indcs.nx3;
+        const int component = work % 6;
+        const int m = work/6;
+        const int first[6] = {0, 0, 0, 1, 1, 2};
+        const int second[6] = {0, 1, 2, 1, 2, 2};
+        maximum = fmax(maximum, Kokkos::abs(
+            adm_vars.g_dd(m, first[component], second[component], k, j, i)));
+      }, Kokkos::Max<Real>(coordinate_g_max));
+  Kokkos::parallel_reduce(
+      "ref_gh history characteristic max", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        Real metric[4][4] = {};  // NOLINT(runtime/arrays)
+        metric[0][0] = -adm_vars.alpha(m, k, j, i)*adm_vars.alpha(m, k, j, i);
+        for (int a = 0; a < 3; ++a) {
+          for (int b = 0; b < 3; ++b) {
+            metric[a + 1][b + 1] = adm_vars.g_dd(m, a, b, k, j, i);
+            metric[0][0] += adm_vars.g_dd(m, a, b, k, j, i)
+                            *adm_vars.beta_u(m, a, k, j, i)
+                            *adm_vars.beta_u(m, b, k, j, i);
+          }
+          metric[0][a + 1] = metric[a + 1][0] = 0.0;
+          for (int b = 0; b < 3; ++b) {
+            metric[0][a + 1] += adm_vars.g_dd(m, a, b, k, j, i)
+                                *adm_vars.beta_u(m, b, k, j, i);
+          }
+        }
+        Real inverse_spatial[3][3], det_spatial = 0.0; // NOLINT(runtime/arrays)
+        if (ref_gh::InvertSpatial3(metric, inverse_spatial, det_spatial)) {
+          for (int a = 0; a < 3; ++a) {
+            maximum = fmax(maximum, Kokkos::abs(adm_vars.beta_u(m, a, k, j, i))
+                + adm_vars.alpha(m, k, j, i)*Kokkos::sqrt(inverse_spatial[a][a]));
+          }
+        }
+      }, Kokkos::Max<Real>(characteristic_max));
+  Kokkos::parallel_reduce(
+      "ref_gh history determinant margin", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real determinant = adm::SpatialDet(
+            adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
+            adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
+            adm_vars.g_dd(m, 1, 2, k, j, i), adm_vars.g_dd(m, 2, 2, k, j, i));
+        maximum = fmax(maximum, -determinant);
+      }, Kokkos::Max<Real>(minus_det_margin));
+  Kokkos::parallel_reduce(
+      "ref_gh history bad state", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ref_gh::nvar*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks; work /= indcs.nx3;
+        const int n = work % ref_gh::nvar;
+        const int m = work/ref_gh::nvar;
+        maximum = fmax(maximum, 0.0);
+        if (!Kokkos::isfinite(state(m, n, k, j, i))) maximum = 1.0;
+      }, Kokkos::Max<Real>(bad_state));
+  module->max_char_speed = characteristic_max;
+  pdata->hdata[HIST_ALPHA_MAX] = alpha_max;
+  pdata->hdata[HIST_MINUS_ALPHA_MIN] = minus_alpha_min;
+  pdata->hdata[HIST_REGULAR_MAX] = regular_max;
+  pdata->hdata[HIST_G_CONDITION] = g_condition_max;
+  pdata->hdata[HIST_COORDINATE_G_MAX] = coordinate_g_max;
+  pdata->hdata[HIST_CHARACTERISTIC_MAX] = characteristic_max;
+  pdata->hdata[HIST_EFFECTIVE_CFL] = module->dtnew > 0.0 ? pm->dt/module->dtnew : 0.0;
+  pdata->hdata[HIST_DETERMINANT_MARGIN] = minus_det_margin;
+  pdata->hdata[HIST_BAD_STATE] = bad_state;
 }
 
 //----------------------------------------------------------------------------------------
@@ -777,7 +1054,13 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
           fname.append(".mhd");
           break;
         case PhysicsModule::SpaceTimeDynamics:
-          fname.append(pm->pmb_pack->pfogh != nullptr ? ".fo_gh" : ".z4c");
+          if (pm->pmb_pack->pfogh != nullptr) {
+            fname.append(".fo_gh");
+          } else if (pm->pmb_pack->prefgh != nullptr) {
+            fname.append(".ref_gh");
+          } else {
+            fname.append(".z4c");
+          }
           break;
         case PhysicsModule::CommonADMConstraints:
           fname.append(".adm_common");

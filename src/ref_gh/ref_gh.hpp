@@ -52,6 +52,9 @@ class RefGh {
   template <int FDNG>
   void CalcConstraints();
   void QueueTasks();
+  void RefGhToADM();
+  void UpdateDiagnostics();
+  static void SetADMVariables(MeshBlockPack *pack);
   TaskStatus InitRecv(Driver *driver, int stage);
   TaskStatus ClearRecv(Driver *driver, int stage);
   TaskStatus ClearSend(Driver *driver, int stage);

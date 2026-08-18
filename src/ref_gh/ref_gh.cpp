@@ -9,6 +9,7 @@
 
 #include "athena.hpp"
 #include "bvals/bvals.hpp"
+#include "coordinates/adm.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "ref_gh/ref_gh.hpp"
@@ -123,6 +124,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
   pbval_u->InitializeBuffers(nref_gh);
+  if (ppack->padm != nullptr) ppack->padm->SetADMVariables = &RefGh::SetADMVariables;
 }
 
 RefGh::~RefGh() { delete pbval_u; }

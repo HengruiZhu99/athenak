@@ -475,6 +475,9 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
   if (pfogh != nullptr) {
     pfogh->UpdateDiagnostics();
   }
+  if (prefgh != nullptr) {
+    prefgh->UpdateDiagnostics();
+  }
   if (time_evolution != TimeEvolution::tstatic) {
     if (phydro != nullptr) {
       (void) pmesh->pmb_pack->phydro->NewTimeStep(this, nexp_stages);
