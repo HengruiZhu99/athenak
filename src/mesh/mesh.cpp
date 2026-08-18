@@ -17,6 +17,7 @@
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh.hpp"
+#include "amr_history.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "refinement_criteria.hpp"
 #include "hydro/hydro.hpp"
@@ -645,6 +646,9 @@ void Mesh::NewTimeStep(const Real tlim) {
 
   // limit last time step to stop at tlim *exactly*
   if ( (time < tlim) && ((time + dt) > tlim) ) {dt = tlim - time;}
+  if (pmr != nullptr && pmr->amr_history != nullptr) {
+    pmr->amr_history->LimitTimestep();
+  }
 
   return;
 }

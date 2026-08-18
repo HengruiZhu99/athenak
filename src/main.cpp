@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <map>
 #include <cstdio> // sscanf
 #include <fstream>  // Include this for std::ifstream
 
@@ -60,6 +61,17 @@
 #endif
 
 namespace {
+
+constexpr const char *kAMRHistoryRestartBlock = "amr_history_restart";
+
+std::map<std::string, std::string> CaptureAMRHistoryRestartCarrier(ParameterInput *pin) {
+  std::map<std::string, std::string> result;
+  for (const auto &block : pin->block) {
+    if (block.block_name != kAMRHistoryRestartBlock) continue;
+    for (const auto &line : block.line) result.emplace(line.param_name, line.param_value);
+  }
+  return result;
+}
 
 std::string FindZ4cRestartCommandLineOverride(const int argc, char *argv[]) {
   const std::string prefix = std::string(z4c::kZ4cRestartBlock) + "/";
@@ -274,6 +286,7 @@ int main(int argc, char *argv[]) {
 
   ParameterInput* pinput = new ParameterInput;
   z4c::Z4cRestartSnapshot z4c_restart_snapshot;
+  std::map<std::string, std::string> amr_history_restart_snapshot;
   IOWrapper infile, restartfile;
   // read parameters from restart file
   bool single_file_per_rank = false; // DBF: flag for single_file_per_rank for rst files
@@ -312,6 +325,7 @@ int main(int argc, char *argv[]) {
                 << capture.error << std::endl;
       std::exit(EXIT_FAILURE);
     }
+    amr_history_restart_snapshot = CaptureAMRHistoryRestartCarrier(pinput);
   }
 
   // read parameters from input file.  If both -r and -i are specified, this will
@@ -344,6 +358,17 @@ int main(int argc, char *argv[]) {
     }
   }
   pinput->ModifyFromCmdline(argc, argv);
+  const auto current_amr_history_carrier = CaptureAMRHistoryRestartCarrier(pinput);
+  if (res_flag && current_amr_history_carrier != amr_history_restart_snapshot) {
+    std::cerr << "### FATAL ERROR: immutable <" << kAMRHistoryRestartBlock
+              << "> carrier was injected or modified after restart capture" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (!res_flag && !current_amr_history_carrier.empty()) {
+    std::cerr << "### FATAL ERROR: <" << kAMRHistoryRestartBlock
+              << "> is an internal restart-only carrier" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   if (!res_flag && pinput->DoesBlockExist(z4c::kZ4cRestartBlock)) {
     std::cerr << "### FATAL ERROR: <" << z4c::kZ4cRestartBlock
               << "> is an internal restart-only carrier" << std::endl;

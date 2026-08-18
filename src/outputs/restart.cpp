@@ -22,6 +22,7 @@
 #include "geodesic-grid/geodesic_grid.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/amr_history.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "coordinates/adm.hpp"
@@ -216,6 +217,9 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
                    z4c::ToString(pm->pmb_pack->z4c_symmetry.coordinate_map));
     pin->SetInteger("z4c", "restart_symmetry_schema",
                     pm->pmb_pack->z4c_symmetry.schema);
+  }
+  if (pm->pmr != nullptr && pm->pmr->amr_history != nullptr) {
+    pm->pmr->amr_history->StoreRestartState(pin);
   }
 
   // create string holding input parameters (copy of input file)

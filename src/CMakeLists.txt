@@ -72,6 +72,8 @@ add_executable(
         ion-neutral/ion-neutral_tasks.cpp
 
         mesh/build_tree.cpp
+        mesh/amr_history.cpp
+        mesh/amr_history_format.cpp
         mesh/load_balance.cpp
         mesh/mesh.cpp
         mesh/meshblock.cpp

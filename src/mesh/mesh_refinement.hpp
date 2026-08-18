@@ -1,5 +1,7 @@
 #ifndef MESH_MESH_REFINEMENT_HPP_
 #define MESH_MESH_REFINEMENT_HPP_
+
+#include <memory>
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -36,6 +38,7 @@ struct AMRBufferData {
 
 // Forward declaration
 class RefinementCriteria;
+class AMRHistory;
 
 //----------------------------------------------------------------------------------------
 //! \class MeshRefinement
@@ -55,6 +58,7 @@ class MeshRefinement {
   bool prolong_prims;        // flag to enable prolongation of primitive vars
   bool clean_stop_on_max_nmb_per_rank;  // retain accepted mesh and finalize before OOM
   RefinementCriteria* pmrc=nullptr;   // object to control various refinement criteria
+  std::unique_ptr<AMRHistory> amr_history;  // optional deterministic hierarchy history
 
   // following 2x Views are dimensioned [nmb_total]
   DualArray1D<int> refine_flag;    // refinement flag for each MeshBlock

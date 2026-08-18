@@ -25,6 +25,7 @@
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh.hpp"
+#include "amr_history.hpp"
 #include "mesh_refinement.hpp"
 #include "refinement_criteria.hpp"
 
@@ -198,6 +199,12 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
         "mesh_refinement", "clean_stop_on_max_nmb_per_rank", false);
   }
 
+  amr_history = std::make_unique<AMRHistory>(pm, pin);
+  if (amr_history->active() && !pm->adaptive) {
+    std::cerr << "### FATAL ERROR: AMR history requires adaptive refinement" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
   // allocate arrays for AMR, add RefinementCriteria object
   if (pm->adaptive) {
     nref_eachrank = new int[global_variable::nranks];
@@ -268,10 +275,17 @@ MeshRefinement::~MeshRefinement() {
 //! \brief Simple driver function for adaptive mesh refinement
 
 void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin) {
-  // first check refinement criteria
-  CheckForRefinement(pmy_mesh->pmb_pack);
   z4c::Z4c *diagnostic_z4c = pmy_mesh->pmb_pack->pz4c;
-  ApplyAMRJumpHierarchyControl(pmy_mesh, pmy_mesh->ptree.get(), diagnostic_z4c);
+  if (amr_history != nullptr && amr_history->replay()) {
+    if (!amr_history->PrepareReplayFlags()) return;
+  } else {
+    // Record and off modes retain the existing refinement decision path.
+    CheckForRefinement(pmy_mesh->pmb_pack);
+    ApplyAMRJumpHierarchyControl(pmy_mesh, pmy_mesh->ptree.get(), diagnostic_z4c);
+  }
+  if (amr_history != nullptr && amr_history->active()) {
+    amr_history->CaptureRequestedFlags();
+  }
   if (diagnostic_z4c != nullptr && diagnostic_z4c->amr_jump_diagnostic != nullptr) {
     diagnostic_z4c->amr_jump_diagnostic->BeginTransaction(*this);
   }
@@ -280,6 +294,13 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
   // indicated by the refine_flag[m] value being true (1) for any m.
   int nnew = 0, ndel = 0;
   UpdateMeshBlockTree(nnew, ndel);
+  if (amr_history != nullptr && amr_history->replay()) {
+    amr_history->ValidateReplayProposedTree();
+    if (nnew == 0 && ndel == 0) {
+      std::cerr << "### FATAL ERROR: replay event did not change the hierarchy" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
   if (nnew == 0 && ndel == 0 && diagnostic_z4c != nullptr &&
       diagnostic_z4c->amr_jump_diagnostic != nullptr) {
     diagnostic_z4c->amr_jump_diagnostic->CancelTransaction();
@@ -361,6 +382,9 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
 
     nmb_created += nnew;
     nmb_deleted += ndel;
+    if (amr_history != nullptr && amr_history->active()) {
+      amr_history->AfterAcceptedTransaction(nnew, ndel);
+    }
   }
   return;
 }

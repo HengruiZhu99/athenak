@@ -78,6 +78,7 @@ class MeshBlock;
 class MeshBlockPack;
 class MeshBlockTree;
 class Mesh;
+class AMRHistory;
 
 #include "parameter_input.hpp"
 #include "meshblock.hpp"
@@ -96,6 +97,7 @@ class Mesh {
   friend class MeshBlockPack;
   friend class MeshBlockTree;
   friend class MeshRefinement;
+  friend class AMRHistory;
   // needs to access tree to find target MB offset by shear
   friend class ShearingBox;
 

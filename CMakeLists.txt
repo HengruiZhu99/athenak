@@ -129,6 +129,18 @@ add_subdirectory(src)
 add_subdirectory(kokkos)
 include_directories(${Kokkos_INCLUDE_DIRS_RET})
 
+execute_process(
+  COMMAND git rev-parse HEAD
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE ATHENA_GIT_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_QUIET)
+if (NOT ATHENA_GIT_COMMIT_HASH)
+  set(ATHENA_GIT_COMMIT_HASH "unknown")
+endif()
+target_compile_definitions(
+  athena PRIVATE ATHENA_GIT_COMMIT_HASH="${ATHENA_GIT_COMMIT_HASH}")
+
 target_link_libraries(athena PUBLIC Kokkos::kokkos)
 if (ENABLE_MPI)
   target_link_libraries(athena PUBLIC MPI::MPI_CXX)
@@ -682,6 +694,36 @@ if (Athena_BUILD_UNIT_TESTS)
   add_test(
       NAME athena.z4c_amr_jump_diagnostic
       COMMAND athena_z4c_amr_jump_diagnostic_unit_test)
+  add_executable(
+      athena_amr_history_format_unit_test
+      tst/unit/mesh/amr_history_format_test.cpp
+      src/mesh/amr_history_format.cpp)
+  target_include_directories(
+      athena_amr_history_format_unit_test PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
+  add_test(NAME athena.amr_history_format COMMAND athena_amr_history_format_unit_test)
+  add_test(
+      NAME athena.amr_history_integration
+      COMMAND ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/mesh/amr_history_integration_test.py
+      --athena $<TARGET_FILE:athena>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/amr_history_lwave.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/amr_history_integration_test)
+  set_tests_properties(athena.amr_history_integration PROPERTIES
+      TIMEOUT 180 LABELS "amr;history;serial")
+  if (Athena_ENABLE_MPI)
+    add_test(
+        NAME athena.amr_history_mpi2
+        COMMAND ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/mesh/amr_history_integration_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/amr_history_lwave.athinput
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/amr_history_mpi2_test
+        --mpi-only --mpiexec ${MPIEXEC_EXECUTABLE}
+        --np-flag=${MPIEXEC_NUMPROC_FLAG})
+    set_tests_properties(athena.amr_history_mpi2 PROPERTIES
+        TIMEOUT 180 LABELS "amr;history;mpi")
+  endif()
   add_test(
       NAME athena.z4c_cartoon_amr_static
       COMMAND
