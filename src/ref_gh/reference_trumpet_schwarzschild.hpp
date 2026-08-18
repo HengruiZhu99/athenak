@@ -296,6 +296,7 @@ struct TrumpetSchwarzschildReference {
         }
       }
     }
+    CompleteReferenceFrameGeometry(reference);
     return reference;
   }
 };
