@@ -19,6 +19,13 @@ initial accepted leaf tree plus every later topology-changing accepted tree.
 land on each recorded physical event time, derives production refinement flags
 from the requested leaf set, and verifies the accepted tree exactly.
 
+Replay still evaluates the configured refinement criterion on every AMR check in
+shadow-only mode. Those shadow flags are discarded before applying the recorded
+transition. This preserves record-mode refinement-age bookkeeping and execution
+ordering without allowing the live criterion to control the replay hierarchy.
+Every actual timestep clip is logged as `AMR_HISTORY_TIMESTEP_CLIP` with exact
+hexadecimal candidate, applied, current, and target values.
+
 ## Canonical JSON-lines format
 
 The first line is a header. It binds schema version, dimension, symmetry and

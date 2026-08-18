@@ -277,6 +277,11 @@ MeshRefinement::~MeshRefinement() {
 void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin) {
   z4c::Z4c *diagnostic_z4c = pmy_mesh->pmb_pack->pz4c;
   if (amr_history != nullptr && amr_history->replay()) {
+    // Preserve the record-mode criterion execution path and refinement-age state, but
+    // discard its flags before applying the recorded physical-time hierarchy below.
+    CheckForRefinement(pmy_mesh->pmb_pack);
+    ApplyAMRJumpHierarchyControl(pmy_mesh, pmy_mesh->ptree.get(), diagnostic_z4c);
+    amr_history->CaptureShadowFlags();
     if (!amr_history->PrepareReplayFlags()) return;
   } else {
     // Record and off modes retain the existing refinement decision path.

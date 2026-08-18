@@ -218,12 +218,32 @@ void AMRHistory::LimitTimestep() {
   if (!replay() || !initialized_ || next_event_ >= events_.size()) return;
   double next_time = 0.0;
   std::string error;
+  const double candidate_dt = mesh_->dt;
   if (!amr_history::ParseReal(events_[next_event_].time_hex, &next_time) ||
       !amr_history::LimitTimestep(mesh_->time, next_time, &mesh_->dt, &error)) Fatal(error);
+  if (mesh_->dt != candidate_dt && global_variable::my_rank == 0) {
+    std::cout << "AMR_HISTORY_TIMESTEP_CLIP event=" << next_event_
+              << " time_hex=" << amr_history::HexReal(mesh_->time)
+              << " candidate_dt_hex=" << amr_history::HexReal(candidate_dt)
+              << " applied_dt_hex=" << amr_history::HexReal(mesh_->dt)
+              << " target_time_hex=" << events_[next_event_].time_hex << std::endl;
+  }
+}
+
+void AMRHistory::CaptureShadowFlags() {
+  if (!replay()) Fatal("shadow refinement flags are replay-only");
+  shadow_refine_ = 0;
+  shadow_derefine_ = 0;
+  for (int gid = 0; gid < mesh_->nmb_total; ++gid) {
+    shadow_refine_ += mesh_->pmr->refine_flag.h_view(gid) > 0;
+    shadow_derefine_ += mesh_->pmr->refine_flag.h_view(gid) < 0;
+  }
+  shadow_flags_captured_ = true;
 }
 
 bool AMRHistory::PrepareReplayFlags() {
   if (!replay() || !initialized_ || next_event_ >= events_.size()) return false;
+  if (!shadow_flags_captured_) Fatal("replay criterion shadow was not evaluated");
   double event_time = 0.0;
   if (!amr_history::ParseReal(events_[next_event_].time_hex, &event_time)) Fatal("bad event time");
   if (!amr_history::TimeEqual(mesh_->time, event_time)) {
@@ -235,7 +255,10 @@ bool AMRHistory::PrepareReplayFlags() {
   std::string error;
   if (!amr_history::DeriveTransition(header_, current, events_[next_event_].leaves,
                                      &transition, &error)) Fatal(error);
-  Kokkos::realloc(mesh_->pmr->refine_flag, mesh_->nmb_total);
+  if (mesh_->pmr->refine_flag.extent(0) !=
+      static_cast<std::size_t>(mesh_->nmb_total)) {
+    Fatal("replay criterion shadow produced the wrong flag extent");
+  }
   for (int gid = 0; gid < mesh_->nmb_total; ++gid) {
     const auto loc = Convert(mesh_->lloc_eachmb[gid]);
     const auto found = std::lower_bound(current.begin(), current.end(), loc);
@@ -320,11 +343,13 @@ void AMRHistory::AfterAcceptedTransaction(int created, int deleted) {
               << event.time_hex << " requested_leaves=" << event.leaf_count
               << " accepted_leaves=" << CurrentLeaves().size() << " max_level="
               << event.max_level << " checksum=" << event.tree_checksum
-              << " exact_match=true" << std::endl;
+              << " exact_match=true shadow_refine=" << shadow_refine_
+              << " shadow_derefine=" << shadow_derefine_ << std::endl;
   }
   last_applied_event_ = next_event_;
   ++next_event_;
   replay_event_pending_ = false;
+  shadow_flags_captured_ = false;
   replay_target_.clear();
 }
 

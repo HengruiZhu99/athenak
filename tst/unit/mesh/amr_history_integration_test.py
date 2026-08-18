@@ -81,6 +81,13 @@ def event_lines(log):
     return [line for line in log.splitlines() if line.startswith("AMR_HISTORY_REPLAY")]
 
 
+def require_shadow_diagnostics(log, count):
+    lines = event_lines(log)
+    require(len(lines) == count, "unexpected replay event count")
+    require(all(" shadow_refine=" in line and " shadow_derefine=" in line
+                for line in lines), "replay criterion shadow diagnostics missing")
+
+
 def replace(text, old, new):
     require(old in text, f"input mutation source not found: {old}")
     return text.replace(old, new, 1)
@@ -124,13 +131,15 @@ def serial_suite(args, work):
 
     replay_log = run(command(args.athena, args.input, "replay", history, "replay"),
                      roots["replay"])
-    require(len(event_lines(replay_log)) == len(events) - 1, "replay event count mismatch")
+    require_shadow_diagnostics(replay_log, len(events) - 1)
     compare_payloads(roots["absent"], "absent", roots["off"], "off")
     compare_payloads(roots["off"], "off", roots["record"], "record")
     compare_payloads(roots["record"], "record", roots["replay"], "replay")
 
     cfl_log = run(command(args.athena, args.input, "replay", history, "cfl",
                           ["time/cfl_number=0.07", "time/nlim=6"]), roots["cfl"])
+    require("AMR_HISTORY_TIMESTEP_CLIP" in cfl_log,
+            "different-CFL replay did not report coordinate-time clipping")
     for event in events[1:]:
         require(any(f"event={event['event']} " in line and
                     f"time_hex={event['time_hex']} " in line for line in event_lines(cfl_log)),
@@ -203,7 +212,7 @@ def mpi_suite(args, work):
     cmd = [str(args.mpiexec), args.np_flag, "2"] + command(
         args.athena, args.input, "replay", history, "mpi_replay")
     log = run(cmd, replay_root)
-    require(len(event_lines(log)) == len(events) - 1, "MPI replay event count mismatch")
+    require_shadow_diagnostics(log, len(events) - 1)
 
 
 def main():

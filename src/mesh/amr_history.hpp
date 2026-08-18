@@ -23,6 +23,7 @@ class AMRHistory {
 
   void Initialize(bool restart);
   void LimitTimestep();
+  void CaptureShadowFlags();
   bool PrepareReplayFlags();
   void CaptureRequestedFlags();
   void ValidateReplayProposedTree();
@@ -57,6 +58,9 @@ class AMRHistory {
   bool replay_event_pending_ = false;
   int requested_refine_ = 0;
   int requested_derefine_ = 0;
+  int shadow_refine_ = 0;
+  int shadow_derefine_ = 0;
+  bool shadow_flags_captured_ = false;
   std::vector<amr_history::Location> replay_target_;
   std::string loaded_digest_;
 };
