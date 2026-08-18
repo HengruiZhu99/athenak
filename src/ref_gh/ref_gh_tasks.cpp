@@ -110,12 +110,84 @@ TaskStatus RefGh::Prolongate(Driver *, int) {
   return TaskStatus::complete;
 }
 TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
-  // The first two required gates are periodic.  Non-periodic characteristic data are
-  // added with the trumpet provider; failing closed here prevents unfilled ghost use.
-  if (!pmy_pack->pmesh->strictly_periodic) {
-    std::cout << "### FATAL ERROR: current ref_gh flat-reference prototype requires "
-              << "periodic boundaries." << std::endl;
+  if (pmy_pack->pmesh->strictly_periodic) return TaskStatus::complete;
+  if (opt.reference_kind != 1) {
+    std::cout << "### FATAL ERROR: non-periodic ref_gh boundaries are currently "
+              << "implemented only for the exact stationary trumpet state."
+              << std::endl;
     std::exit(EXIT_FAILURE);
+  }
+
+  // Exact analytic data for the stationary-reference gate.  In the regular frame the
+  // complete incoming state is simply Psi=eta, Pi=Phi=0.  Filling the full state (rather
+  // than only its incoming characteristic projection) is exact for this solution and
+  // avoids finite-differencing or extrapolating singular coordinate-metric components.
+  // Internal block faces have BoundaryFlag::block and are left untouched.
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const int ng = indcs.ng;
+  const int n1 = indcs.nx1 + 2*ng;
+  const int n2 = indcs.nx2 + 2*ng;
+  const int n3 = indcs.nx3 + 2*ng;
+  const int is = indcs.is;
+  const int ie = indcs.ie;
+  const int js = indcs.js;
+  const int je = indcs.je;
+  const int ks = indcs.ks;
+  const int ke = indcs.ke;
+  const int nmb = pmy_pack->nmb_thispack;
+  const auto state = u0;
+  const auto mb_bcs = pmy_pack->pmb->mb_bcs.d_view;
+
+  if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x1] != BoundaryFlag::periodic) {
+    par_for("ref_gh exact trumpet x1 boundaries", DevExeSpace(), 0, nmb - 1,
+    0, nref_gh - 1, 0, n3 - 1, 0, n2 - 1,
+    KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
+      Real value = 0.0;
+      if (n == PsiIndex(0, 0)) value = -1.0;
+      if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2) || n == PsiIndex(3, 3)) {
+        value = 1.0;
+      }
+      if (mb_bcs(m, BoundaryFace::inner_x1) != BoundaryFlag::block) {
+        for (int g = 1; g <= ng; ++g) state(m, n, k, j, is - g) = value;
+      }
+      if (mb_bcs(m, BoundaryFace::outer_x1) != BoundaryFlag::block) {
+        for (int g = 1; g <= ng; ++g) state(m, n, k, j, ie + g) = value;
+      }
+    });
+  }
+  if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x2] != BoundaryFlag::periodic) {
+    par_for("ref_gh exact trumpet x2 boundaries", DevExeSpace(), 0, nmb - 1,
+    0, nref_gh - 1, 0, n3 - 1, 0, n1 - 1,
+    KOKKOS_LAMBDA(const int m, const int n, const int k, const int i) {
+      Real value = 0.0;
+      if (n == PsiIndex(0, 0)) value = -1.0;
+      if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2) || n == PsiIndex(3, 3)) {
+        value = 1.0;
+      }
+      if (mb_bcs(m, BoundaryFace::inner_x2) != BoundaryFlag::block) {
+        for (int g = 1; g <= ng; ++g) state(m, n, k, js - g, i) = value;
+      }
+      if (mb_bcs(m, BoundaryFace::outer_x2) != BoundaryFlag::block) {
+        for (int g = 1; g <= ng; ++g) state(m, n, k, je + g, i) = value;
+      }
+    });
+  }
+  if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x3] != BoundaryFlag::periodic) {
+    par_for("ref_gh exact trumpet x3 boundaries", DevExeSpace(), 0, nmb - 1,
+    0, nref_gh - 1, 0, n2 - 1, 0, n1 - 1,
+    KOKKOS_LAMBDA(const int m, const int n, const int j, const int i) {
+      Real value = 0.0;
+      if (n == PsiIndex(0, 0)) value = -1.0;
+      if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2) || n == PsiIndex(3, 3)) {
+        value = 1.0;
+      }
+      if (mb_bcs(m, BoundaryFace::inner_x3) != BoundaryFlag::block) {
+        for (int g = 1; g <= ng; ++g) state(m, n, ks - g, j, i) = value;
+      }
+      if (mb_bcs(m, BoundaryFace::outer_x3) != BoundaryFlag::block) {
+        for (int g = 1; g <= ng; ++g) state(m, n, ke + g, j, i) = value;
+      }
+    });
   }
   return TaskStatus::complete;
 }
