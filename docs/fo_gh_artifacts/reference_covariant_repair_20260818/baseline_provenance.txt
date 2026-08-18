@@ -1,0 +1,67 @@
+campaign: reference-covariant GH repair immutable control
+date: 2026-08-18
+source commit: 704a4b7a38079cb34f6683216a93f717c411d747
+source worktree: detached clean worktree /tmp/refgh-control-nxvoH5
+Kokkos commit: 6739bc623081648af9e752b616d9671527922cbf
+compiler: c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Kokkos: 4.7.2 Serial
+build type: Release
+executable SHA-256: ff56e2b4ceba6246c48c9509d9c2a12f0a3e1890890edd1f882b7f7f67819f64
+
+Configure:
+  cmake -S /tmp/refgh-control-nxvoH5 -B /tmp/refgh-control-nxvoH5/build \
+    -DPROBLEM=built_in_pgens -DAthena_ENABLE_MPI=OFF \
+    -DKokkos_ENABLE_SERIAL=ON -DCMAKE_BUILD_TYPE=Release
+
+Build:
+  cmake --build /tmp/refgh-control-nxvoH5/build -j 4
+
+Run pattern (n=64 shown):
+  /tmp/refgh-control-nxvoH5/build/src/athena \
+    -i /tmp/refgh-control-nxvoH5/inputs/ref_gh/ref_gh_stationary_trumpet.athinput \
+    -d /tmp/refgh-control-run64 time/tlim=0.0 time/nlim=0 \
+    output1/dt=100 output2/dt=100
+
+For n=96 and n=128 the run additionally overrode mesh/nx1,2,3 and
+meshblock/nx1,2,3 to 96/48 and 128/64, respectively, and used unique basenames.
+
+The prior A100 values in baseline_control.tsv are copied without modification
+from docs/fo_gh_artifacts/reference_frame_20260818/stationary_gpu_gate.tsv. They
+are retained separately because the cancellation-sensitive binary64 values are
+backend dependent, although both backends show the same inward reversal and
+the same dominant Pi00 component.
+
+Control audit commands and reproduced output:
+
+  python3 tst/test_suite/ref_gh/reference_frame_audit.py
+    background_constraint_error=0
+    derivative_roundtrip_error=9.71445146547012e-17
+    frame_duality_error=1.1102230246251565e-16
+    metric_roundtrip_error=8.326672684688674e-17
+    principal_eigenvalue_error=1.9984014443252818e-15
+    principal_eigenvector_condition=1359.0984283367175
+    reference_orthonormality_error=1.1102230246251565e-16
+    symmetrizer_min_eigenvalue=0.12512228846289264
+    symmetrizer_residual=1.1102230246251565e-16
+    transformed_wave_product_error=1.1102230246251565e-15
+
+  python3 tst/test_suite/ref_gh/standard_gh_source_audit.py
+    scalar_vs_lindblom_l2_error=5.2866391672924595e-17
+    scalar_vs_lindblom_max_error=2.7755575615628914e-17
+
+  python3 tst/test_suite/ref_gh/trumpet_reference_audit.py
+    interpolation_value_error=4.702742829677748e-13
+    interpolation_first_derivative_error=7.126488288378141e-11
+    interpolation_second_derivative_error=4.456052843382352e-08
+    table_implicit_residual=4.890129901810197e-15
+    trumpet_principal_basis_condition=1.000000000000001
+    trumpet_principal_basis_residual=1.1102230246251565e-16
+    trumpet_principal_minimum_rank=50
+    trumpet_principal_symmetrizer_residual=0
+
+Local dirty-work isolation:
+  The primary worktree had pre-existing changes in kokkos, src/bvals, and
+  src/fo_gh plus two unrelated untracked external directories. They were not
+  used or modified. A direct primary-worktree build failed in the pre-existing
+  src/bvals/bvals_cc.cpp at lines 250 and 263 because i is undeclared; this is
+  why the clean detached worktree and exact recorded submodule commit were used.
