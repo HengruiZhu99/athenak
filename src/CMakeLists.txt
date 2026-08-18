@@ -164,6 +164,7 @@ add_executable(
         pgen/fo_gh/compatible_unit.cpp
         pgen/fo_gh/puncture.cpp
         pgen/ref_gh/minkowski.cpp
+        pgen/ref_gh/linear_wave.cpp
 
         radiation/radiation.cpp
         radiation/radiation_fluxes.cpp

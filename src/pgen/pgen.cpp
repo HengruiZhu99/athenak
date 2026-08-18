@@ -1019,6 +1019,8 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     FoGhPuncture(pin, is_restart);
   } else if (pgen_fun_name.compare("ref_gh_minkowski") == 0) {
     RefGhMinkowski(pin, is_restart);
+  } else if (pgen_fun_name.compare("ref_gh_linear_wave") == 0) {
+    RefGhLinearWave(pin, is_restart);
 
   } else {
     // name not set on command line or input file, print warning and quit
