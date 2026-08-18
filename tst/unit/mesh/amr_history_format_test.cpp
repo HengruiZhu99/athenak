@@ -116,6 +116,17 @@ int main() {
   double dt = 0.2;
   Require(amr_history::LimitTimestep(0.0, 0.125, &dt, &error) && dt == 0.125,
           "timestep clips to event");
+  const double recorded_time = std::strtod("0x1.3333333333333p-5", nullptr);
+  const double production_dt = std::strtod("0x1.3333333333333p-6", nullptr);
+  const double recorded_next = std::strtod("0x1.cccccccccccccp-5", nullptr);
+  Require(recorded_time + production_dt == recorded_next,
+          "fixture production timestep lands on recorded event");
+  Require(production_dt > recorded_next - recorded_time,
+          "fixture exposes subtractive one-ulp discrepancy");
+  dt = production_dt;
+  Require(amr_history::LimitTimestep(recorded_time, recorded_next, &dt, &error) &&
+              dt == production_dt,
+          "exact rounded endpoint preserves production timestep bitwise");
   Require(amr_history::TimeEqual(0.125, 0.125), "event time equality");
 
   std::cout << "AMR_HISTORY_FORMAT_TEST_PASS" << std::endl;

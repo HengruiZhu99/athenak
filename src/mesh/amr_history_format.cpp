@@ -463,6 +463,11 @@ bool LimitTimestep(double time, double next, double *dt, std::string *error) {
   }
   if (next < time && !TimeEqual(next, time)) { *error = "next replay event is in the past"; return false; }
   if (TimeEqual(next, time)) return true;
+  // Preserve an unmodified production timestep when its rounded endpoint is already the
+  // recorded event time.  Computing `next - time` can be one ulp smaller than that same
+  // timestep, even though `time + dt` rounds exactly to `next`; clipping in that case
+  // needlessly perturbs an otherwise identical same-resolution replay.
+  if (time + *dt == next) return true;
   const double remaining = next - time;
   if (remaining > 0.0 && *dt > remaining) *dt = remaining;
   if (*dt <= 0.0 || time + *dt == time) { *error = "replay timestep would not advance"; return false; }
