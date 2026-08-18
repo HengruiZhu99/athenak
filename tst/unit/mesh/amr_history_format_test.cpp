@@ -127,6 +127,17 @@ int main() {
   Require(amr_history::LimitTimestep(recorded_time, recorded_next, &dt, &error) &&
               dt == production_dt,
           "exact rounded endpoint preserves production timestep bitwise");
+  const double n256_time = std::strtod("0x1.1c66666666643p-1", nullptr);
+  const double n256_next = std::strtod("0x1.1c66666666666p-1", nullptr);
+  const double n256_dt = std::strtod("0x1.3333333333333p-9", nullptr);
+  Require(n256_next > n256_time && n256_next - n256_time < n256_dt,
+          "fixture exposes accumulated cross-resolution roundoff remainder");
+  Require(amr_history::TimeEqual(n256_time, n256_next),
+          "cross-resolution event time is equal within bounded roundoff");
+  dt = n256_dt;
+  Require(amr_history::LimitTimestep(n256_time, n256_next, &dt, &error) &&
+              dt == n256_dt,
+          "cross-resolution event does not create a near-zero PDE step");
   Require(amr_history::TimeEqual(0.125, 0.125), "event time equality");
 
   std::cout << "AMR_HISTORY_FORMAT_TEST_PASS" << std::endl;

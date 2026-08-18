@@ -455,7 +455,13 @@ bool DeriveTransition(const Header &h, std::vector<Location> current,
 
 bool TimeEqual(double a, double b) {
   const double scale = std::max({1.0, std::abs(a), std::abs(b)});
-  return std::abs(a - b) <= 8.0 * std::numeric_limits<double>::epsilon() * scale;
+  // A replay at a different resolution reaches a scheduled physical time by a
+  // different sequence of floating-point additions.  Treat the resulting
+  // bounded accumulation error as the same coordinate time instead of taking
+  // a near-zero PDE step to consume the last few ulps.  Even at the largest
+  // campaign times this tolerance remains many orders of magnitude below the
+  // smallest physical CFL timestep.
+  return std::abs(a - b) <= 32.0 * std::numeric_limits<double>::epsilon() * scale;
 }
 bool LimitTimestep(double time, double next, double *dt, std::string *error) {
   if (!std::isfinite(time) || !std::isfinite(next) || !std::isfinite(*dt) || *dt <= 0.0) {
