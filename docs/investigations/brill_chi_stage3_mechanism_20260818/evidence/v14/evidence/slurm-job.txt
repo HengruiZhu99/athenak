@@ -1,0 +1,30 @@
+JobId=57245427 JobName=chi-stage3-ac75-v14
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:08 TimeLimit=00:45:00 TimeMin=N/A
+   SubmitTime=2026-08-18T15:08:04 EligibleTime=2026-08-18T15:08:04
+   AccrueTime=Unknown
+   StartTime=2026-08-18T15:08:04 EndTime=2026-08-18T15:53:04 Deadline=N/A
+   PreemptEligibleTime=2026-08-18T15:08:04 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-18T15:08:04 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login15:1748056
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid001017
+   BatchHost=nid001017
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100 DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=bash
+   SubmitLine=salloc -A m3328_g -q shared_interactive -C gpu -N1 -n1 -c32 -G1 -t 00:45:00 --immediate=900 -J chi-stage3-ac75-v14 bash /pscratch/sd/h/hzhu/axisymmetric-cartoon-chi-stage3-ac75c8d3-v14-20260818/source/athenak/scripts/run_chi_stage3_targeted_control_v10.sh
+   WorkDir=/global/u1/h/hzhu
+   TresPerJob=gres/gpu:1
+   TresPerTask=cpu=32
+   ResvPorts=63387-63389
+

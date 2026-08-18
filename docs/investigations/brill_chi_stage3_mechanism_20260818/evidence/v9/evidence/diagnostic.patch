@@ -1,0 +1,451 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6fab104f..5deb4456 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -640,6 +640,22 @@ if (Athena_BUILD_UNIT_TESTS)
+   add_test(
+       NAME athena.z4c_coarse_cache_ownership
+       COMMAND athena_z4c_coarse_cache_ownership_unit_test)
++  add_executable(
++      athena_z4c_chi_preupdate_diagnostic_unit_test
++      tst/unit/z4c/chi_preupdate_diagnostic_test.cpp)
++  target_include_directories(
++      athena_z4c_chi_preupdate_diagnostic_unit_test
++      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
++  target_link_libraries(
++      athena_z4c_chi_preupdate_diagnostic_unit_test PRIVATE Kokkos::kokkos)
++  add_test(
++      NAME athena.z4c_chi_preupdate_diagnostic
++      COMMAND athena_z4c_chi_preupdate_diagnostic_unit_test)
++  add_test(
++      NAME athena.z4c_chi_preupdate_diagnostic_static
++      COMMAND ${PYTHON_EXECUTABLE}
++      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/chi_preupdate_diagnostic_static_test.py
++      --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+   if (ENABLE_MPI)
+     add_test(
+         NAME athena.z4c_coarse_cache_ownership_mpi2
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 14bc5c24..852166e0 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -177,6 +177,7 @@ add_executable(
+ 	    z4c/horizon_dump.cpp
+         z4c/tmunu.cpp
+         z4c/amr_jump_diagnostic.cpp
++        z4c/chi_parent_provenance.cpp
+         z4c/z4c.cpp
+         z4c/z4c_adm.cpp
+         z4c/z4c_calcrhs.cpp
+diff --git a/src/bvals/prolongation.cpp b/src/bvals/prolongation.cpp
+index fba00b0e..ed8927aa 100644
+--- a/src/bvals/prolongation.cpp
++++ b/src/bvals/prolongation.cpp
+@@ -392,6 +392,11 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real>
+                 << std::endl;
+     }
+     if (global_counts[2] != 0 || global_counts[3] != 0) {
++      if (global_counts[2] != 0 &&
++          pmy_pack->pz4c->chi_parent_provenance != nullptr) {
++        pmy_pack->pz4c->chi_parent_provenance->AnalyzeBoundaryFailure(
++            this, global_counts[2], global_rejected_keys[0]);
++      }
+       if (global_variable::my_rank == 0) {
+         const unsigned long long key =
+             global_counts[2] != 0 ? global_rejected_keys[0]
+diff --git a/src/mesh/amr_history.cpp b/src/mesh/amr_history.cpp
+index d82c8c64..cd2a36f7 100644
+--- a/src/mesh/amr_history.cpp
++++ b/src/mesh/amr_history.cpp
+@@ -1,8 +1,11 @@
+ #include "mesh/amr_history.hpp"
+ 
+ #include <algorithm>
++#include <cmath>
++#include <cstring>
+ #include <cstdlib>
+ #include <fstream>
++#include <iomanip>
+ #include <iostream>
+ #include <iterator>
+ #include <sstream>
+@@ -221,6 +224,7 @@ void AMRHistory::LimitTimestep() {
+   const double candidate_dt = mesh_->dt;
+   if (!amr_history::ParseReal(events_[next_event_].time_hex, &next_time) ||
+       !amr_history::LimitTimestep(mesh_->time, next_time, &mesh_->dt, &error)) Fatal(error);
++  last_timestep_clipped_ = mesh_->dt != candidate_dt;
+   if (mesh_->dt != candidate_dt && global_variable::my_rank == 0) {
+     std::cout << "AMR_HISTORY_TIMESTEP_CLIP event=" << next_event_
+               << " time_hex=" << amr_history::HexReal(mesh_->time)
+@@ -239,6 +243,12 @@ void AMRHistory::CaptureShadowFlags() {
+     shadow_derefine_ += mesh_->pmr->refine_flag.h_view(gid) < 0;
+   }
+   shadow_flags_captured_ = true;
++  if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
++      mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr &&
++      next_event_ < events_.size()) {
++    mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordShadowAMRRequests(
++        next_event_, events_[next_event_].time_hex, CurrentTreeChecksum());
++  }
+ }
+ 
+ bool AMRHistory::PrepareReplayFlags() {
+@@ -363,7 +373,35 @@ void AMRHistory::AppendLedger(const std::string &action, const amr_history::Even
+       << event.leaf_count << ",\"max_level\":" << event.max_level
+       << ",\"tree_checksum\":\"" << event.tree_checksum
+       << "\",\"ranks\":" << global_variable::nranks
+-      << ",\"exact_match\":" << (exact_match ? "true" : "false") << "}\n";
++      << ",\"exact_match\":" << (exact_match ? "true" : "false");
++  if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
++      mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr) {
++    double authority_time = 0.0;
++    if (!amr_history::ParseReal(event.time_hex, &authority_time)) {
++      Fatal("cannot decode authority time for diagnostic replay ledger");
++    }
++    std::uint64_t authority_bits = 0;
++    std::uint64_t actual_bits = 0;
++    static_assert(sizeof(authority_bits) == sizeof(authority_time),
++                  "ULP diagnostic assumes IEEE binary64");
++    std::memcpy(&authority_bits, &authority_time, sizeof(authority_bits));
++    std::memcpy(&actual_bits, &mesh_->time, sizeof(actual_bits));
++    const long long ulps = actual_bits >= authority_bits
++        ? static_cast<long long>(actual_bits - authority_bits)
++        : -static_cast<long long>(authority_bits - actual_bits);
++    out << std::setprecision(17)
++        << ",\"authority_time_hex\":\"" << event.time_hex << "\""
++        << ",\"actual_mesh_time_hex\":\""
++        << amr_history::HexReal(mesh_->time) << "\""
++        << ",\"signed_time_difference\":" << mesh_->time - authority_time
++        << ",\"ulp_difference\":" << ulps
++        << ",\"preceding_timestep_clipped\":"
++        << (last_timestep_clipped_ ? "true" : "false");
++    mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordReplayAlignment(
++        event.index, event.time_hex, amr_history::HexReal(mesh_->time),
++        mesh_->time - authority_time, ulps, last_timestep_clipped_);
++  }
++  out << "}\n";
+   out.flush();
+   if (!out) Fatal("failed to flush AMR history ledger");
+ }
+diff --git a/src/mesh/amr_history.hpp b/src/mesh/amr_history.hpp
+index da6aa634..cedb3553 100644
+--- a/src/mesh/amr_history.hpp
++++ b/src/mesh/amr_history.hpp
+@@ -61,6 +61,7 @@ class AMRHistory {
+   int shadow_refine_ = 0;
+   int shadow_derefine_ = 0;
+   bool shadow_flags_captured_ = false;
++  bool last_timestep_clipped_ = false;
+   std::vector<amr_history::Location> replay_target_;
+   std::string loaded_digest_;
+ };
+diff --git a/src/z4c/cartoon_derivatives.hpp b/src/z4c/cartoon_derivatives.hpp
+index 4a4e82b0..b456a83c 100644
+--- a/src/z4c/cartoon_derivatives.hpp
++++ b/src/z4c/cartoon_derivatives.hpp
+@@ -131,6 +131,14 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
+     return divergence;
+   }
+ 
++  template <typename VelocityField, typename ScalarField>
++  KOKKOS_INLINE_FUNCTION Real DirectionalScalarAdvective(
++      const int direction, const VelocityField &velocity,
++      const ScalarField &field) const {
++    return Lx<NGHOST>(direction, inverse_spacing_, velocity, field, m_, direction,
++                      k_, j_, i_);
++  }
++
+   template <typename VelocityField, typename ScalarField>
+   KOKKOS_INLINE_FUNCTION Real ScalarAdvective(const VelocityField &velocity,
+                                               const ScalarField &field) const {
+@@ -373,6 +381,15 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
+            Value(field, RhoDirection()) / rho_;
+   }
+ 
++  template <typename VelocityField, typename ScalarField>
++  KOKKOS_INLINE_FUNCTION Real DirectionalScalarAdvective(
++      const int direction, const VelocityField &velocity,
++      const ScalarField &field) const {
++    if (direction == SuppressedDirection()) return 0.0;
++    return Lx<NGHOST>(direction, inverse_spacing_, velocity, field, m_, direction,
++                      k_, j_, i_);
++  }
++
+   template <typename VelocityField, typename ScalarField>
+   KOKKOS_INLINE_FUNCTION Real ScalarAdvective(const VelocityField &velocity,
+                                               const ScalarField &field) const {
+diff --git a/src/z4c/z4c.cpp b/src/z4c/z4c.cpp
+index 00fc4841..3975779c 100644
+--- a/src/z4c/z4c.cpp
++++ b/src/z4c/z4c.cpp
+@@ -68,6 +68,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
+   u0("u0 z4c",1,1,1,1,1),
+   u1("u1 z4c",1,1,1,1,1),
+   u_rhs("u_rhs z4c",1,1,1,1,1),
++  chi_provenance_terms("chi provenance terms",1,1,1,1,1),
+   u_telegraph_mu("u_telegraph_mu",1,1,1,1,1),
+   coarse_u0("coarse u0 z4c",1,1,1,1,1),
+   u_weyl("u_weyl",1,1,1,1,1),
+@@ -182,6 +183,12 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
+               << error.what() << std::endl;
+     std::exit(EXIT_FAILURE);
+   }
++  opt.chi_parent_provenance = ReadChiParentProvenanceConfig(pin);
++  if (opt.chi_parent_provenance.enabled) {
++    Kokkos::realloc(chi_provenance_terms, nmb, n_chi_provenance_terms,
++                    bounds.n3, bounds.n2, bounds.n1);
++    Kokkos::deep_copy(chi_provenance_terms, 0.0);
++  }
+   // Gauge conditions (default to moving puncture gauge)
+   opt.lapse_harmonicf = pin->GetOrAddReal("z4c", "lapse_harmonicf", 1.0);
+   opt.lapse_harmonic = pin->GetOrAddReal("z4c", "lapse_harmonic", 0.0);
+@@ -398,6 +405,10 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
+     amr_jump_diagnostic = std::make_unique<AMRJumpDiagnosticRuntime>(
+         pmy_pack, opt.amr_jump_diagnostic);
+   }
++  if (opt.chi_parent_provenance.enabled) {
++    chi_parent_provenance = std::make_unique<ChiParentProvenanceRuntime>(
++        pmy_pack, opt.chi_parent_provenance);
++  }
+ }
+ 
+ //----------------------------------------------------------------------------------------
+diff --git a/src/z4c/z4c.hpp b/src/z4c/z4c.hpp
+index a538831d..b808c98e 100644
+--- a/src/z4c/z4c.hpp
++++ b/src/z4c/z4c.hpp
+@@ -23,6 +23,7 @@
+ #include "geodesic-grid/geodesic_grid.hpp"
+ #include "geodesic-grid/spherical_grid.hpp"
+ #include "z4c/amr_jump_diagnostic.hpp"
++#include "z4c/chi_parent_provenance.hpp"
+ #include "z4c/telegraph_damping.hpp"
+ 
+ // forward declarations
+@@ -102,6 +103,7 @@ class Z4c {
+   DvceArray5D<Real> u0;        // z4c solution
+   DvceArray5D<Real> u1;        // z4c solution at intermediate timestep
+   DvceArray5D<Real> u_rhs;     // z4c rhs storage
++  DvceArray5D<Real> chi_provenance_terms; // default-off exact chi RHS terms
+   DvceArray5D<Real> u_telegraph_mu; // physical inverse-length damping profile
+   DvceArray5D<Real> coarse_u0; // coarse representation of z4c solution
+   DvceArray5D<Real> u_weyl; // weyl scalars
+@@ -182,6 +184,7 @@ class Z4c {
+     Real rhs_stage_diagnostics_rho_max;
+     Real rhs_stage_diagnostics_abs_z_max;
+     AMRJumpDiagnosticConfig amr_jump_diagnostic;
++    ChiParentProvenanceConfig chi_parent_provenance;
+     // Gauge conditions for the lapse
+     Real lapse_oplog;
+     Real lapse_harmonicf;
+@@ -239,6 +242,7 @@ class Z4c {
+   Options opt;
+   Real diss;              // Dissipation parameter
+   std::unique_ptr<AMRJumpDiagnosticRuntime> amr_jump_diagnostic;
++  std::unique_ptr<ChiParentProvenanceRuntime> chi_parent_provenance;
+ 
+   // Boundary communication buffers and functions for u
+   MeshBoundaryValuesCC *pbval_u;
+diff --git a/src/z4c/z4c_Sbc.cpp b/src/z4c/z4c_Sbc.cpp
+index 50cc7c22..7ef25759 100644
+--- a/src/z4c/z4c_Sbc.cpp
++++ b/src/z4c/z4c_Sbc.cpp
+@@ -289,10 +289,16 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
+ }
+ 
+ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
++  TaskStatus status;
+   if (pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
+-    return Z4cBoundaryRHSImpl<CartoonSO2>(pdriver, stage);
++    status = Z4cBoundaryRHSImpl<CartoonSO2>(pdriver, stage);
++  } else {
++    status = Z4cBoundaryRHSImpl<Cartesian3D>(pdriver, stage);
+   }
+-  return Z4cBoundaryRHSImpl<Cartesian3D>(pdriver, stage);
++  if (status == TaskStatus::complete && chi_parent_provenance != nullptr) {
++    chi_parent_provenance->AnalyzePreUpdate(pdriver, stage);
++  }
++  return status;
+ }
+ 
+ template TaskStatus Z4c::Z4cBoundaryRHSImpl<Cartesian3D>(Driver *, int);
+diff --git a/src/z4c/z4c_calcrhs.cpp b/src/z4c/z4c_calcrhs.cpp
+index c606a526..92ed3ec2 100644
+--- a/src/z4c/z4c_calcrhs.cpp
++++ b/src/z4c/z4c_calcrhs.cpp
+@@ -112,6 +112,9 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+ 
+   const bool collect_rhs_stage_diagnostics =
+       opt.rhs_stage_diagnostics && time >= opt.rhs_stage_diagnostics_start_time;
++  const bool collect_chi_provenance =
++      opt.chi_parent_provenance.enabled && time >= opt.chi_parent_provenance.start_time;
++  auto &chi_provenance_terms = pmy_pack->pz4c->chi_provenance_terms;
+   DvceArray5D<Real> rhs_stage_terms;
+   if (collect_rhs_stage_diagnostics) {
+     rhs_stage_terms = DvceArray5D<Real>("z4c rhs stage terms", nmb, 75,
+@@ -302,7 +305,16 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+ 
+         //
+         // Scalars
++        // Keep the production expression byte-for-byte and collect directional
++        // components only as shadows.  The diagnostic must never rebuild Lchi.
+         Lchi = derivatives.ScalarAdvective(z4c.beta_u, z4c.chi);
++        if (collect_chi_provenance) {
++          for (int direction = 0; direction < 3; ++direction) {
++            const Real contribution = derivatives.DirectionalScalarAdvective(
++                direction, z4c.beta_u, z4c.chi);
++            chi_provenance_terms(m, chi_adv_rho + direction, k, j, i) = contribution;
++          }
++        }
+         LKhat = derivatives.ScalarAdvective(z4c.beta_u, z4c.vKhat);
+         LTheta = derivatives.ScalarAdvective(z4c.beta_u, z4c.vTheta);
+ 
+@@ -487,6 +499,13 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+ 
+         // Finalize Lchi
+         Lchi += (1. / 6.) * opt.chi_psi_power * chi_guarded * dbeta;
++        if (collect_chi_provenance) {
++          const Real chi_lie_divergence_term =
++              (1. / 6.) * opt.chi_psi_power * chi_guarded * dbeta;
++          chi_provenance_terms(m, chi_lie_divergence, k, j, i) =
++              chi_lie_divergence_term;
++          chi_provenance_terms(m, chi_adv_total_production, k, j, i) = Lchi;
++        }
+ 
+         // Finalize Lg_dd and LA_dd
+         for (int a = 0; a < 3; ++a)
+@@ -519,8 +538,16 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+           rhs.vKhat(m, k, j, i) +=
+               4. * M_PI * z4c.alpha(m, k, j, i) * (S + tmunu.E(m, k, j, i));
+         }
+-        rhs.chi(m, k, j, i) = Lchi - (1. / 6.) * opt.chi_psi_power * chi_guarded *
+-                                         z4c.alpha(m, k, j, i) * K;
++        rhs.chi(m, k, j, i) =
++            Lchi - (1. / 6.) * opt.chi_psi_power * chi_guarded *
++                       z4c.alpha(m, k, j, i) * K;
++        if (collect_chi_provenance) {
++          const Real chi_curvature_term = rhs.chi(m, k, j, i) - Lchi;
++          chi_provenance_terms(m, chi_curvature_source, k, j, i) =
++              chi_curvature_term;
++          chi_provenance_terms(m, chi_rhs_before_ko, k, j, i) =
++              rhs.chi(m, k, j, i);
++        }
+         rhs.vTheta(m, k, j, i) =
+             LTheta +
+             z4c.alpha(m, k, j, i) *
+@@ -910,8 +937,25 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+         idx, size.d_view, nx1, is, m, k, j, i);
+     // Keep the established multiply-then-accumulate order for Cartesian roundoff.
+     for (int direction = 0; direction < 3; ++direction) {
+-      u_rhs(m,n,k,j,i) +=
+-          derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
++      if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
++        const Real rhs_before = u_rhs(m,n,k,j,i);
++        u_rhs(m,n,k,j,i) +=
++            derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
++        const Real contribution = u_rhs(m,n,k,j,i) - rhs_before;
++        const int term = direction == 0 ? chi_ko_rho
++                         : (direction == 1 ? chi_ko_z : chi_ko_y);
++        const int cumulative = direction == 0 ? chi_rhs_after_ko_rho
++                               : (direction == 1 ? chi_rhs_after_ko_z
++                                                 : chi_rhs_after_ko_y);
++        chi_provenance_terms(m, term, k, j, i) = contribution;
++        chi_provenance_terms(m, cumulative, k, j, i) = u_rhs(m,n,k,j,i);
++      } else {
++        u_rhs(m,n,k,j,i) +=
++            derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
++      }
++    }
++    if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
++      chi_provenance_terms(m, chi_rhs_after_ko, k, j, i) = u_rhs(m,n,k,j,i);
+     }
+   });
+ 
+diff --git a/src/z4c/z4c_tasks.cpp b/src/z4c/z4c_tasks.cpp
+index 63fcaff2..5d804e34 100644
+--- a/src/z4c/z4c_tasks.cpp
++++ b/src/z4c/z4c_tasks.cpp
+@@ -174,6 +174,10 @@ TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
+   auto &u0 = pmy_pack->pz4c->u0;
+   auto &u1 = pmy_pack->pz4c->u1;
+ 
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordBeforeCopy(pdrive, stage);
++  }
++
+   // hierarchical parallel loop that updates conserved variables to intermediate step
+   // using weights and fractional time step appropriate to stages of time-integrator.
+   // Important to use vector inner loop for good performance on cpus
+@@ -192,6 +196,9 @@ TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
+       Kokkos::deep_copy(DevExeSpace(), u1, u0);
+     }
+   }
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordAfterCopy(pdrive, stage);
++  }
+   return TaskStatus::complete;
+ }
+ 
+@@ -282,6 +289,10 @@ TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
+ 
+ TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
+   TaskStatus tstat = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
++  if (tstat == TaskStatus::complete && chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s2_after_receive, stage, pbval_u);
++  }
+   return tstat;
+ }
+ 
+@@ -351,6 +362,10 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
+   if (pmy_pack->pmesh->multilevel) {
+     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
+   }
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s1_after_restriction, stage, pbval_u);
++  }
+   return TaskStatus::complete;
+ }
+ 
+@@ -369,6 +384,10 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
+     // copy, so FillCoarseInBndryCC deliberately preserves it; generic
+     // finite-volume users retain their receiver-local refresh policy.
+     pbval_u->FillCoarseInBndryCC(u0, coarse_u0, true);
++    if (chi_parent_provenance != nullptr) {
++      chi_parent_provenance->RecordCheckpoint(
++          ChiProvenanceCheckpoint::s4_before_parent_gate, stage, pbval_u);
++    }
+     if (amr_jump_diagnostic != nullptr) {
+       amr_jump_diagnostic->RecordSameLevelRefreshShadow();
+       amr_jump_diagnostic->RecordT3(
+@@ -409,6 +428,10 @@ TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
+       (pmy_pack->pmesh->pgen->user_bcs_func)(pmy_pack->pmesh);
+     }
+   }
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s3_after_boundary, stage, pbval_u);
++  }
+   return TaskStatus::complete;
+ }
+ 
+diff --git a/src/z4c/z4c_update.cpp b/src/z4c/z4c_update.cpp
+index 0413c41a..5c075cbc 100644
+--- a/src/z4c/z4c_update.cpp
++++ b/src/z4c/z4c_update.cpp
+@@ -37,8 +37,13 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
+   par_for("z4c RK update",DevExeSpace(),
+       0,nmb1,0,nvar-1,ks,ke,js,je,is,ie,
+   KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
+-    u0(m,n,k,j,i) = gam0*u0(m,n,k,j,i) + gam1*u1(m,n,k,j,i) + beta_dt*u_rhs(m,n,k,j,i);
++    u0(m,n,k,j,i) = gam0*u0(m,n,k,j,i) + gam1*u1(m,n,k,j,i) +
++                    beta_dt*u_rhs(m,n,k,j,i);
+   });
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s0_after_rk, stage, pbval_u);
++  }
+   return TaskStatus::complete;
+ }
+ } // namespace z4c

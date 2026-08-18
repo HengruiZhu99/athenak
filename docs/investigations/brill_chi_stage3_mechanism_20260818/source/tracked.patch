@@ -1,0 +1,715 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6fab104f..9a9652cd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -640,6 +640,22 @@ if (Athena_BUILD_UNIT_TESTS)
+   add_test(
+       NAME athena.z4c_coarse_cache_ownership
+       COMMAND athena_z4c_coarse_cache_ownership_unit_test)
++  add_executable(
++      athena_z4c_chi_preupdate_diagnostic_unit_test
++      tst/unit/z4c/chi_preupdate_diagnostic_test.cpp)
++  target_include_directories(
++      athena_z4c_chi_preupdate_diagnostic_unit_test
++      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
++  target_link_libraries(
++      athena_z4c_chi_preupdate_diagnostic_unit_test PRIVATE Kokkos::kokkos)
++  add_test(
++      NAME athena.z4c_chi_preupdate_diagnostic
++      COMMAND athena_z4c_chi_preupdate_diagnostic_unit_test)
++  add_test(
++      NAME athena.z4c_chi_preupdate_diagnostic_static
++      COMMAND ${PYTHON_EXECUTABLE}
++      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/chi_preupdate_diagnostic_static_test.py
++      --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+   if (ENABLE_MPI)
+     add_test(
+         NAME athena.z4c_coarse_cache_ownership_mpi2
+@@ -702,6 +718,11 @@ if (Athena_BUILD_UNIT_TESTS)
+       athena_amr_history_format_unit_test PRIVATE
+       ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
+   add_test(NAME athena.amr_history_format COMMAND athena_amr_history_format_unit_test)
++  add_test(
++      NAME athena.amr_history_extension_static
++      COMMAND ${PYTHON_EXECUTABLE}
++      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/mesh/amr_history_extension_static_test.py
++      --source-root ${CMAKE_CURRENT_SOURCE_DIR})
+   add_test(
+       NAME athena.amr_history_integration
+       COMMAND ${PYTHON_EXECUTABLE}
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 14bc5c24..852166e0 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -177,6 +177,7 @@ add_executable(
+ 	    z4c/horizon_dump.cpp
+         z4c/tmunu.cpp
+         z4c/amr_jump_diagnostic.cpp
++        z4c/chi_parent_provenance.cpp
+         z4c/z4c.cpp
+         z4c/z4c_adm.cpp
+         z4c/z4c_calcrhs.cpp
+diff --git a/src/bvals/prolongation.cpp b/src/bvals/prolongation.cpp
+index fba00b0e..ed8927aa 100644
+--- a/src/bvals/prolongation.cpp
++++ b/src/bvals/prolongation.cpp
+@@ -392,6 +392,11 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real>
+                 << std::endl;
+     }
+     if (global_counts[2] != 0 || global_counts[3] != 0) {
++      if (global_counts[2] != 0 &&
++          pmy_pack->pz4c->chi_parent_provenance != nullptr) {
++        pmy_pack->pz4c->chi_parent_provenance->AnalyzeBoundaryFailure(
++            this, global_counts[2], global_rejected_keys[0]);
++      }
+       if (global_variable::my_rank == 0) {
+         const unsigned long long key =
+             global_counts[2] != 0 ? global_rejected_keys[0]
+diff --git a/src/mesh/amr_history.cpp b/src/mesh/amr_history.cpp
+index d82c8c64..38521500 100644
+--- a/src/mesh/amr_history.cpp
++++ b/src/mesh/amr_history.cpp
+@@ -1,8 +1,13 @@
+ #include "mesh/amr_history.hpp"
+ 
+ #include <algorithm>
++#include <cerrno>
++#include <climits>
++#include <cmath>
++#include <cstring>
+ #include <cstdlib>
+ #include <fstream>
++#include <iomanip>
+ #include <iostream>
+ #include <iterator>
+ #include <sstream>
+@@ -54,6 +59,38 @@ AMRHistory::AMRHistory(Mesh *mesh, ParameterInput *pin) : mesh_(mesh), pin_(pin)
+   }
+   path_ = pin->GetString("mesh_refinement", "amr_history_file");
+   if (path_.empty()) Fatal("amr_history_file must not be empty");
++  const bool has_extension_parameter =
++      pin->DoesParameterExist("mesh_refinement", "amr_history_extension_file");
++  const char *extension_environment =
++      std::getenv("ATHENA_AMR_HISTORY_EXTENSION_FILE");
++  const bool has_extension_environment = extension_environment != nullptr;
++  if (has_extension_parameter || has_extension_environment) {
++    if (!replay()) Fatal("amr_history_extension_file is replay-only");
++    const std::string parameter_path = has_extension_parameter
++        ? pin->GetString("mesh_refinement", "amr_history_extension_file") : "";
++    const std::string environment_path = has_extension_environment
++        ? std::string(extension_environment) : "";
++    if (has_extension_parameter && has_extension_environment &&
++        parameter_path != environment_path) {
++      Fatal("amr_history_extension_file parameter/environment mismatch");
++    }
++    extension_path_ = has_extension_parameter ? parameter_path : environment_path;
++    if (extension_path_.empty()) Fatal("amr_history_extension_file must not be empty");
++  }
++  if (const char *branch_base =
++          std::getenv("ATHENA_AMR_HISTORY_BRANCH_BASE_EVENT")) {
++    if (extension_path_.empty()) {
++      Fatal("AMR history branch base requires an extension file");
++    }
++    char *end = nullptr;
++    errno = 0;
++    const long value = std::strtol(branch_base, &end, 10);
++    if (errno != 0 || end == branch_base || *end != '\0' ||
++        value < 0 || value > INT_MAX) {
++      Fatal("ATHENA_AMR_HISTORY_BRANCH_BASE_EVENT is invalid");
++    }
++    extension_branch_base_event_ = static_cast<int>(value);
++  }
+   ledger_path_ = record() ? path_ + ".ledger.jsonl"
+                           : pin->GetString("job", "basename") + ".amr_history_replay.jsonl";
+ }
+@@ -151,6 +188,46 @@ void AMRHistory::WriteFreshHistory() {
+   AppendEvent(0, 0);
+ }
+ 
++void AMRHistory::LoadAppendOnlyExtension() {
++  std::ifstream input(extension_path_);
++  if (!input) Fatal("cannot open append-only history extension '" + extension_path_ + "'");
++  std::string line, error;
++  amr_history::Header extension_header;
++  if (!std::getline(input, line) ||
++      !amr_history::DecodeHeader(line, &extension_header, &error)) {
++    Fatal("invalid history extension header: " + error);
++  }
++  if (amr_history::EncodeHeader(extension_header) !=
++      amr_history::EncodeHeader(header_)) {
++    Fatal("history extension header differs from authenticated authority header");
++  }
++  std::vector<amr_history::Event> extension;
++  while (std::getline(input, line)) {
++    if (line.empty()) Fatal("blank or truncated history extension record");
++    amr_history::Event event;
++    if (!amr_history::DecodeEvent(line, &event, &error)) {
++      Fatal("invalid history extension event: " + error);
++    }
++    extension.push_back(std::move(event));
++  }
++  if (!input.eof()) Fatal("history extension read failed before EOF");
++  if (!amr_history::ValidateEvents(header_, extension, &error)) {
++    Fatal(error);
++  }
++  if (extension_branch_base_event_ >= 0) {
++    const auto base = static_cast<std::size_t>(extension_branch_base_event_);
++    if (base < last_applied_event_ || base + 1 < next_event_) {
++      Fatal("AMR history branch would alter an already applied replay event");
++    }
++    if (!amr_history::AuthenticatedBranch(events_, extension, base, &error)) {
++      Fatal(error);
++    }
++  } else if (!amr_history::AppendOnlyExtension(events_, extension, &error)) {
++    Fatal(error);
++  }
++  events_ = std::move(extension);
++}
++
+ bool AMRHistory::HasRestartCarrier() const {
+   return pin_->DoesParameterExist(kRestartBlock, "schema");
+ }
+@@ -210,6 +287,12 @@ void AMRHistory::Initialize(bool restart) {
+       last_applied_event_ = 0;
+       next_event_ = 1;
+     }
++    if (!extension_path_.empty()) {
++      if (!restart || !HasRestartCarrier()) {
++        Fatal("append-only history extension requires an authenticated replay restart");
++      }
++      LoadAppendOnlyExtension();
++    }
+   }
+   initialized_ = true;
+ }
+@@ -221,6 +304,7 @@ void AMRHistory::LimitTimestep() {
+   const double candidate_dt = mesh_->dt;
+   if (!amr_history::ParseReal(events_[next_event_].time_hex, &next_time) ||
+       !amr_history::LimitTimestep(mesh_->time, next_time, &mesh_->dt, &error)) Fatal(error);
++  last_timestep_clipped_ = mesh_->dt != candidate_dt;
+   if (mesh_->dt != candidate_dt && global_variable::my_rank == 0) {
+     std::cout << "AMR_HISTORY_TIMESTEP_CLIP event=" << next_event_
+               << " time_hex=" << amr_history::HexReal(mesh_->time)
+@@ -239,6 +323,12 @@ void AMRHistory::CaptureShadowFlags() {
+     shadow_derefine_ += mesh_->pmr->refine_flag.h_view(gid) < 0;
+   }
+   shadow_flags_captured_ = true;
++  if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
++      mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr &&
++      next_event_ < events_.size()) {
++    mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordShadowAMRRequests(
++        next_event_, events_[next_event_].time_hex, CurrentTreeChecksum());
++  }
+ }
+ 
+ bool AMRHistory::PrepareReplayFlags() {
+@@ -363,7 +453,35 @@ void AMRHistory::AppendLedger(const std::string &action, const amr_history::Even
+       << event.leaf_count << ",\"max_level\":" << event.max_level
+       << ",\"tree_checksum\":\"" << event.tree_checksum
+       << "\",\"ranks\":" << global_variable::nranks
+-      << ",\"exact_match\":" << (exact_match ? "true" : "false") << "}\n";
++      << ",\"exact_match\":" << (exact_match ? "true" : "false");
++  if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
++      mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr) {
++    double authority_time = 0.0;
++    if (!amr_history::ParseReal(event.time_hex, &authority_time)) {
++      Fatal("cannot decode authority time for diagnostic replay ledger");
++    }
++    std::uint64_t authority_bits = 0;
++    std::uint64_t actual_bits = 0;
++    static_assert(sizeof(authority_bits) == sizeof(authority_time),
++                  "ULP diagnostic assumes IEEE binary64");
++    std::memcpy(&authority_bits, &authority_time, sizeof(authority_bits));
++    std::memcpy(&actual_bits, &mesh_->time, sizeof(actual_bits));
++    const long long ulps = actual_bits >= authority_bits
++        ? static_cast<long long>(actual_bits - authority_bits)
++        : -static_cast<long long>(authority_bits - actual_bits);
++    out << std::setprecision(17)
++        << ",\"authority_time_hex\":\"" << event.time_hex << "\""
++        << ",\"actual_mesh_time_hex\":\""
++        << amr_history::HexReal(mesh_->time) << "\""
++        << ",\"signed_time_difference\":" << mesh_->time - authority_time
++        << ",\"ulp_difference\":" << ulps
++        << ",\"preceding_timestep_clipped\":"
++        << (last_timestep_clipped_ ? "true" : "false");
++    mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordReplayAlignment(
++        event.index, event.time_hex, amr_history::HexReal(mesh_->time),
++        mesh_->time - authority_time, ulps, last_timestep_clipped_);
++  }
++  out << "}\n";
+   out.flush();
+   if (!out) Fatal("failed to flush AMR history ledger");
+ }
+@@ -388,6 +506,9 @@ std::string AMRHistory::CurrentTreeChecksum() const {
+ 
+ void AMRHistory::StoreRestartState(ParameterInput *pin) const {
+   if (!active() || !initialized_) return;
++  if (!extension_path_.empty()) {
++    Fatal("restart output is disabled for a diagnostic append-only history extension");
++  }
+   pin->SetInteger(kRestartBlock, "schema", 1);
+   pin->SetString(kRestartBlock, "mode", record() ? "record" : "replay");
+   pin->SetString(kRestartBlock, "history_digest", FileDigest());
+diff --git a/src/mesh/amr_history.hpp b/src/mesh/amr_history.hpp
+index da6aa634..0d9d3d78 100644
+--- a/src/mesh/amr_history.hpp
++++ b/src/mesh/amr_history.hpp
+@@ -35,6 +35,7 @@ class AMRHistory {
+   amr_history::Header CurrentHeader() const;
+   std::vector<amr_history::Location> CurrentLeaves() const;
+   void LoadHistory();
++  void LoadAppendOnlyExtension();
+   void WriteFreshHistory();
+   void AppendEvent(int created, int deleted);
+   void AppendLedger(const std::string &action, const amr_history::Event &event,
+@@ -49,6 +50,8 @@ class AMRHistory {
+   ParameterInput *pin_ = nullptr;
+   Mode mode_ = Mode::off;
+   std::string path_;
++  std::string extension_path_;
++  int extension_branch_base_event_ = -1;
+   std::string ledger_path_;
+   amr_history::Header header_;
+   std::vector<amr_history::Event> events_;
+@@ -61,6 +64,7 @@ class AMRHistory {
+   int shadow_refine_ = 0;
+   int shadow_derefine_ = 0;
+   bool shadow_flags_captured_ = false;
++  bool last_timestep_clipped_ = false;
+   std::vector<amr_history::Location> replay_target_;
+   std::string loaded_digest_;
+ };
+diff --git a/src/mesh/amr_history_format.cpp b/src/mesh/amr_history_format.cpp
+index 78a79cab..c9f12c69 100644
+--- a/src/mesh/amr_history_format.cpp
++++ b/src/mesh/amr_history_format.cpp
+@@ -395,6 +395,47 @@ bool ValidateEvents(const Header &h, const std::vector<Event> &events, std::stri
+   return true;
+ }
+ 
++bool AppendOnlyExtension(const std::vector<Event> &authority,
++                         const std::vector<Event> &extension,
++                         std::string *error) {
++  if (extension.size() <= authority.size()) {
++    *error = "AMR history extension does not append an event";
++    return false;
++  }
++  for (std::size_t index = 0; index < authority.size(); ++index) {
++    if (EncodeEvent(authority[index]) != EncodeEvent(extension[index])) {
++      *error = "AMR history extension changes the authenticated authority prefix";
++      return false;
++    }
++  }
++  return true;
++}
++
++bool AuthenticatedBranch(const std::vector<Event> &authority,
++                         const std::vector<Event> &branch,
++                         std::size_t base_event, std::string *error) {
++  if (base_event >= authority.size()) {
++    *error = "AMR history branch base is outside the authenticated authority";
++    return false;
++  }
++  if (branch.size() <= base_event + 1) {
++    *error = "AMR history branch has no event after its authenticated base";
++    return false;
++  }
++  for (std::size_t index = 0; index <= base_event; ++index) {
++    if (EncodeEvent(authority[index]) != EncodeEvent(branch[index])) {
++      *error = "AMR history branch changes its authenticated authority prefix";
++      return false;
++    }
++  }
++  if (base_event + 1 < authority.size() &&
++      EncodeEvent(authority[base_event + 1]) == EncodeEvent(branch[base_event + 1])) {
++    *error = "AMR history branch does not diverge after its declared base";
++    return false;
++  }
++  return true;
++}
++
+ bool DeriveTransition(const Header &h, std::vector<Location> current,
+                       std::vector<Location> target, Transition *result, std::string *error) {
+   if (!ValidateTree(h, current, error) || !ValidateTree(h, target, error)) return false;
+diff --git a/src/mesh/amr_history_format.hpp b/src/mesh/amr_history_format.hpp
+index 74dcf4ec..fd1a52c3 100644
+--- a/src/mesh/amr_history_format.hpp
++++ b/src/mesh/amr_history_format.hpp
+@@ -76,6 +76,12 @@ bool Compatible(const Header &recorded, const Header &candidate, std::string *er
+ bool ValidateTree(const Header &header, std::vector<Location> leaves, std::string *error);
+ bool ValidateEvents(const Header &header, const std::vector<Event> &events,
+                     std::string *error);
++bool AppendOnlyExtension(const std::vector<Event> &authority,
++                         const std::vector<Event> &extension,
++                         std::string *error);
++bool AuthenticatedBranch(const std::vector<Event> &authority,
++                         const std::vector<Event> &branch,
++                         std::size_t base_event, std::string *error);
+ bool DeriveTransition(const Header &header, std::vector<Location> current,
+                       std::vector<Location> target, Transition *transition,
+                       std::string *error);
+diff --git a/src/z4c/cartoon_derivatives.hpp b/src/z4c/cartoon_derivatives.hpp
+index 4a4e82b0..b456a83c 100644
+--- a/src/z4c/cartoon_derivatives.hpp
++++ b/src/z4c/cartoon_derivatives.hpp
+@@ -131,6 +131,14 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
+     return divergence;
+   }
+ 
++  template <typename VelocityField, typename ScalarField>
++  KOKKOS_INLINE_FUNCTION Real DirectionalScalarAdvective(
++      const int direction, const VelocityField &velocity,
++      const ScalarField &field) const {
++    return Lx<NGHOST>(direction, inverse_spacing_, velocity, field, m_, direction,
++                      k_, j_, i_);
++  }
++
+   template <typename VelocityField, typename ScalarField>
+   KOKKOS_INLINE_FUNCTION Real ScalarAdvective(const VelocityField &velocity,
+                                               const ScalarField &field) const {
+@@ -373,6 +381,15 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
+            Value(field, RhoDirection()) / rho_;
+   }
+ 
++  template <typename VelocityField, typename ScalarField>
++  KOKKOS_INLINE_FUNCTION Real DirectionalScalarAdvective(
++      const int direction, const VelocityField &velocity,
++      const ScalarField &field) const {
++    if (direction == SuppressedDirection()) return 0.0;
++    return Lx<NGHOST>(direction, inverse_spacing_, velocity, field, m_, direction,
++                      k_, j_, i_);
++  }
++
+   template <typename VelocityField, typename ScalarField>
+   KOKKOS_INLINE_FUNCTION Real ScalarAdvective(const VelocityField &velocity,
+                                               const ScalarField &field) const {
+diff --git a/src/z4c/z4c.cpp b/src/z4c/z4c.cpp
+index 00fc4841..3975779c 100644
+--- a/src/z4c/z4c.cpp
++++ b/src/z4c/z4c.cpp
+@@ -68,6 +68,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
+   u0("u0 z4c",1,1,1,1,1),
+   u1("u1 z4c",1,1,1,1,1),
+   u_rhs("u_rhs z4c",1,1,1,1,1),
++  chi_provenance_terms("chi provenance terms",1,1,1,1,1),
+   u_telegraph_mu("u_telegraph_mu",1,1,1,1,1),
+   coarse_u0("coarse u0 z4c",1,1,1,1,1),
+   u_weyl("u_weyl",1,1,1,1,1),
+@@ -182,6 +183,12 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
+               << error.what() << std::endl;
+     std::exit(EXIT_FAILURE);
+   }
++  opt.chi_parent_provenance = ReadChiParentProvenanceConfig(pin);
++  if (opt.chi_parent_provenance.enabled) {
++    Kokkos::realloc(chi_provenance_terms, nmb, n_chi_provenance_terms,
++                    bounds.n3, bounds.n2, bounds.n1);
++    Kokkos::deep_copy(chi_provenance_terms, 0.0);
++  }
+   // Gauge conditions (default to moving puncture gauge)
+   opt.lapse_harmonicf = pin->GetOrAddReal("z4c", "lapse_harmonicf", 1.0);
+   opt.lapse_harmonic = pin->GetOrAddReal("z4c", "lapse_harmonic", 0.0);
+@@ -398,6 +405,10 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
+     amr_jump_diagnostic = std::make_unique<AMRJumpDiagnosticRuntime>(
+         pmy_pack, opt.amr_jump_diagnostic);
+   }
++  if (opt.chi_parent_provenance.enabled) {
++    chi_parent_provenance = std::make_unique<ChiParentProvenanceRuntime>(
++        pmy_pack, opt.chi_parent_provenance);
++  }
+ }
+ 
+ //----------------------------------------------------------------------------------------
+diff --git a/src/z4c/z4c.hpp b/src/z4c/z4c.hpp
+index a538831d..b808c98e 100644
+--- a/src/z4c/z4c.hpp
++++ b/src/z4c/z4c.hpp
+@@ -23,6 +23,7 @@
+ #include "geodesic-grid/geodesic_grid.hpp"
+ #include "geodesic-grid/spherical_grid.hpp"
+ #include "z4c/amr_jump_diagnostic.hpp"
++#include "z4c/chi_parent_provenance.hpp"
+ #include "z4c/telegraph_damping.hpp"
+ 
+ // forward declarations
+@@ -102,6 +103,7 @@ class Z4c {
+   DvceArray5D<Real> u0;        // z4c solution
+   DvceArray5D<Real> u1;        // z4c solution at intermediate timestep
+   DvceArray5D<Real> u_rhs;     // z4c rhs storage
++  DvceArray5D<Real> chi_provenance_terms; // default-off exact chi RHS terms
+   DvceArray5D<Real> u_telegraph_mu; // physical inverse-length damping profile
+   DvceArray5D<Real> coarse_u0; // coarse representation of z4c solution
+   DvceArray5D<Real> u_weyl; // weyl scalars
+@@ -182,6 +184,7 @@ class Z4c {
+     Real rhs_stage_diagnostics_rho_max;
+     Real rhs_stage_diagnostics_abs_z_max;
+     AMRJumpDiagnosticConfig amr_jump_diagnostic;
++    ChiParentProvenanceConfig chi_parent_provenance;
+     // Gauge conditions for the lapse
+     Real lapse_oplog;
+     Real lapse_harmonicf;
+@@ -239,6 +242,7 @@ class Z4c {
+   Options opt;
+   Real diss;              // Dissipation parameter
+   std::unique_ptr<AMRJumpDiagnosticRuntime> amr_jump_diagnostic;
++  std::unique_ptr<ChiParentProvenanceRuntime> chi_parent_provenance;
+ 
+   // Boundary communication buffers and functions for u
+   MeshBoundaryValuesCC *pbval_u;
+diff --git a/src/z4c/z4c_Sbc.cpp b/src/z4c/z4c_Sbc.cpp
+index 50cc7c22..7ef25759 100644
+--- a/src/z4c/z4c_Sbc.cpp
++++ b/src/z4c/z4c_Sbc.cpp
+@@ -289,10 +289,16 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
+ }
+ 
+ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
++  TaskStatus status;
+   if (pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
+-    return Z4cBoundaryRHSImpl<CartoonSO2>(pdriver, stage);
++    status = Z4cBoundaryRHSImpl<CartoonSO2>(pdriver, stage);
++  } else {
++    status = Z4cBoundaryRHSImpl<Cartesian3D>(pdriver, stage);
+   }
+-  return Z4cBoundaryRHSImpl<Cartesian3D>(pdriver, stage);
++  if (status == TaskStatus::complete && chi_parent_provenance != nullptr) {
++    chi_parent_provenance->AnalyzePreUpdate(pdriver, stage);
++  }
++  return status;
+ }
+ 
+ template TaskStatus Z4c::Z4cBoundaryRHSImpl<Cartesian3D>(Driver *, int);
+diff --git a/src/z4c/z4c_calcrhs.cpp b/src/z4c/z4c_calcrhs.cpp
+index c606a526..92ed3ec2 100644
+--- a/src/z4c/z4c_calcrhs.cpp
++++ b/src/z4c/z4c_calcrhs.cpp
+@@ -112,6 +112,9 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+ 
+   const bool collect_rhs_stage_diagnostics =
+       opt.rhs_stage_diagnostics && time >= opt.rhs_stage_diagnostics_start_time;
++  const bool collect_chi_provenance =
++      opt.chi_parent_provenance.enabled && time >= opt.chi_parent_provenance.start_time;
++  auto &chi_provenance_terms = pmy_pack->pz4c->chi_provenance_terms;
+   DvceArray5D<Real> rhs_stage_terms;
+   if (collect_rhs_stage_diagnostics) {
+     rhs_stage_terms = DvceArray5D<Real>("z4c rhs stage terms", nmb, 75,
+@@ -302,7 +305,16 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+ 
+         //
+         // Scalars
++        // Keep the production expression byte-for-byte and collect directional
++        // components only as shadows.  The diagnostic must never rebuild Lchi.
+         Lchi = derivatives.ScalarAdvective(z4c.beta_u, z4c.chi);
++        if (collect_chi_provenance) {
++          for (int direction = 0; direction < 3; ++direction) {
++            const Real contribution = derivatives.DirectionalScalarAdvective(
++                direction, z4c.beta_u, z4c.chi);
++            chi_provenance_terms(m, chi_adv_rho + direction, k, j, i) = contribution;
++          }
++        }
+         LKhat = derivatives.ScalarAdvective(z4c.beta_u, z4c.vKhat);
+         LTheta = derivatives.ScalarAdvective(z4c.beta_u, z4c.vTheta);
+ 
+@@ -487,6 +499,13 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+ 
+         // Finalize Lchi
+         Lchi += (1. / 6.) * opt.chi_psi_power * chi_guarded * dbeta;
++        if (collect_chi_provenance) {
++          const Real chi_lie_divergence_term =
++              (1. / 6.) * opt.chi_psi_power * chi_guarded * dbeta;
++          chi_provenance_terms(m, chi_lie_divergence, k, j, i) =
++              chi_lie_divergence_term;
++          chi_provenance_terms(m, chi_adv_total_production, k, j, i) = Lchi;
++        }
+ 
+         // Finalize Lg_dd and LA_dd
+         for (int a = 0; a < 3; ++a)
+@@ -519,8 +538,16 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+           rhs.vKhat(m, k, j, i) +=
+               4. * M_PI * z4c.alpha(m, k, j, i) * (S + tmunu.E(m, k, j, i));
+         }
+-        rhs.chi(m, k, j, i) = Lchi - (1. / 6.) * opt.chi_psi_power * chi_guarded *
+-                                         z4c.alpha(m, k, j, i) * K;
++        rhs.chi(m, k, j, i) =
++            Lchi - (1. / 6.) * opt.chi_psi_power * chi_guarded *
++                       z4c.alpha(m, k, j, i) * K;
++        if (collect_chi_provenance) {
++          const Real chi_curvature_term = rhs.chi(m, k, j, i) - Lchi;
++          chi_provenance_terms(m, chi_curvature_source, k, j, i) =
++              chi_curvature_term;
++          chi_provenance_terms(m, chi_rhs_before_ko, k, j, i) =
++              rhs.chi(m, k, j, i);
++        }
+         rhs.vTheta(m, k, j, i) =
+             LTheta +
+             z4c.alpha(m, k, j, i) *
+@@ -910,8 +937,25 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+         idx, size.d_view, nx1, is, m, k, j, i);
+     // Keep the established multiply-then-accumulate order for Cartesian roundoff.
+     for (int direction = 0; direction < 3; ++direction) {
+-      u_rhs(m,n,k,j,i) +=
+-          derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
++      if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
++        const Real rhs_before = u_rhs(m,n,k,j,i);
++        u_rhs(m,n,k,j,i) +=
++            derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
++        const Real contribution = u_rhs(m,n,k,j,i) - rhs_before;
++        const int term = direction == 0 ? chi_ko_rho
++                         : (direction == 1 ? chi_ko_z : chi_ko_y);
++        const int cumulative = direction == 0 ? chi_rhs_after_ko_rho
++                               : (direction == 1 ? chi_rhs_after_ko_z
++                                                 : chi_rhs_after_ko_y);
++        chi_provenance_terms(m, term, k, j, i) = contribution;
++        chi_provenance_terms(m, cumulative, k, j, i) = u_rhs(m,n,k,j,i);
++      } else {
++        u_rhs(m,n,k,j,i) +=
++            derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
++      }
++    }
++    if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
++      chi_provenance_terms(m, chi_rhs_after_ko, k, j, i) = u_rhs(m,n,k,j,i);
+     }
+   });
+ 
+diff --git a/src/z4c/z4c_tasks.cpp b/src/z4c/z4c_tasks.cpp
+index 63fcaff2..5d804e34 100644
+--- a/src/z4c/z4c_tasks.cpp
++++ b/src/z4c/z4c_tasks.cpp
+@@ -174,6 +174,10 @@ TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
+   auto &u0 = pmy_pack->pz4c->u0;
+   auto &u1 = pmy_pack->pz4c->u1;
+ 
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordBeforeCopy(pdrive, stage);
++  }
++
+   // hierarchical parallel loop that updates conserved variables to intermediate step
+   // using weights and fractional time step appropriate to stages of time-integrator.
+   // Important to use vector inner loop for good performance on cpus
+@@ -192,6 +196,9 @@ TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
+       Kokkos::deep_copy(DevExeSpace(), u1, u0);
+     }
+   }
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordAfterCopy(pdrive, stage);
++  }
+   return TaskStatus::complete;
+ }
+ 
+@@ -282,6 +289,10 @@ TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
+ 
+ TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
+   TaskStatus tstat = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
++  if (tstat == TaskStatus::complete && chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s2_after_receive, stage, pbval_u);
++  }
+   return tstat;
+ }
+ 
+@@ -351,6 +362,10 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
+   if (pmy_pack->pmesh->multilevel) {
+     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
+   }
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s1_after_restriction, stage, pbval_u);
++  }
+   return TaskStatus::complete;
+ }
+ 
+@@ -369,6 +384,10 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
+     // copy, so FillCoarseInBndryCC deliberately preserves it; generic
+     // finite-volume users retain their receiver-local refresh policy.
+     pbval_u->FillCoarseInBndryCC(u0, coarse_u0, true);
++    if (chi_parent_provenance != nullptr) {
++      chi_parent_provenance->RecordCheckpoint(
++          ChiProvenanceCheckpoint::s4_before_parent_gate, stage, pbval_u);
++    }
+     if (amr_jump_diagnostic != nullptr) {
+       amr_jump_diagnostic->RecordSameLevelRefreshShadow();
+       amr_jump_diagnostic->RecordT3(
+@@ -409,6 +428,10 @@ TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
+       (pmy_pack->pmesh->pgen->user_bcs_func)(pmy_pack->pmesh);
+     }
+   }
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s3_after_boundary, stage, pbval_u);
++  }
+   return TaskStatus::complete;
+ }
+ 
+diff --git a/src/z4c/z4c_update.cpp b/src/z4c/z4c_update.cpp
+index 0413c41a..5c075cbc 100644
+--- a/src/z4c/z4c_update.cpp
++++ b/src/z4c/z4c_update.cpp
+@@ -37,8 +37,13 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
+   par_for("z4c RK update",DevExeSpace(),
+       0,nmb1,0,nvar-1,ks,ke,js,je,is,ie,
+   KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
+-    u0(m,n,k,j,i) = gam0*u0(m,n,k,j,i) + gam1*u1(m,n,k,j,i) + beta_dt*u_rhs(m,n,k,j,i);
++    u0(m,n,k,j,i) = gam0*u0(m,n,k,j,i) + gam1*u1(m,n,k,j,i) +
++                    beta_dt*u_rhs(m,n,k,j,i);
+   });
++  if (chi_parent_provenance != nullptr) {
++    chi_parent_provenance->RecordCheckpoint(
++        ChiProvenanceCheckpoint::s0_after_rk, stage, pbval_u);
++  }
+   return TaskStatus::complete;
+ }
+ } // namespace z4c
+diff --git a/tst/unit/mesh/amr_history_format_test.cpp b/tst/unit/mesh/amr_history_format_test.cpp
+index 1dbffceb..d12a4aaa 100644
+--- a/tst/unit/mesh/amr_history_format_test.cpp
++++ b/tst/unit/mesh/amr_history_format_test.cpp
+@@ -82,6 +82,50 @@ int main() {
+   events.push_back(e1);
+   Require(amr_history::ValidateEvents(header, events, &error), error);
+ 
++  auto extension = events;
++  auto e2 = e1;
++  e2.index = 2;
++  e2.time_decimal = "0.25";
++  e2.time_hex = "0x1p-2";
++  e2.leaves = RootLeaves();
++  const auto e2_line = amr_history::EncodeEvent(e2);
++  Require(amr_history::DecodeEvent(e2_line, &e2, &error), error);
++  extension.push_back(e2);
++  Require(amr_history::ValidateEvents(header, extension, &error), error);
++  Require(amr_history::AppendOnlyExtension(events, extension, &error), error);
++  auto changed_prefix = extension;
++  changed_prefix[1] = changed_prefix[2];
++  Require(!amr_history::AppendOnlyExtension(events, changed_prefix, &error),
++          "changed extension prefix rejected");
++  Require(!amr_history::AppendOnlyExtension(events, events, &error),
++          "non-extending history rejected");
++
++  auto authority = extension;
++  auto authority_e3 = e2;
++  authority_e3.index = 3;
++  authority_e3.time_decimal = "0.375";
++  authority_e3.time_hex = "0x1.8p-2";
++  authority_e3.leaves = RefinedLeaves();
++  const auto authority_e3_line = amr_history::EncodeEvent(authority_e3);
++  Require(amr_history::DecodeEvent(authority_e3_line, &authority_e3, &error), error);
++  authority.push_back(authority_e3);
++  auto branch = extension;
++  auto branch_e3 = authority_e3;
++  branch_e3.time_decimal = "0.3125";
++  branch_e3.time_hex = "0x1.4p-2";
++  const auto branch_e3_line = amr_history::EncodeEvent(branch_e3);
++  Require(amr_history::DecodeEvent(branch_e3_line, &branch_e3, &error), error);
++  branch.push_back(branch_e3);
++  Require(amr_history::AuthenticatedBranch(authority, branch, 2, &error), error);
++  auto bad_branch = branch;
++  bad_branch[2] = bad_branch[1];
++  Require(!amr_history::AuthenticatedBranch(authority, bad_branch, 2, &error),
++          "changed branch prefix rejected");
++  Require(!amr_history::AuthenticatedBranch(authority, extension, 2, &error),
++          "branch without a post-base event rejected");
++  Require(!amr_history::AuthenticatedBranch(authority, authority, 2, &error),
++          "branch without divergence rejected");
++
+   auto nonmonotonic = events;
+   nonmonotonic[1].time_decimal = "0";
+   nonmonotonic[1].time_hex = "0x0p+0";
