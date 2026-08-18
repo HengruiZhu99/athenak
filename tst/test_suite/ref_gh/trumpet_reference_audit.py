@@ -16,35 +16,56 @@ except ImportError:
     from reference_frame_audit import NVAR, principal_matrix, symmetrizer
 
 
-def interpolate(log_r: np.ndarray, data: np.ndarray, profile: int,
-                radius: float) -> np.ndarray:
-    """Mirror interpolation of stored value, first-, and second-derivative data."""
+def hermite_coefficients(log_r: np.ndarray, data: np.ndarray, profile: int,
+                         radius: float) -> tuple[np.ndarray, float, float]:
+    """Return the single quintic's coefficients, local coordinate, and spacing."""
     spacing = log_r[1] - log_r[0]
     coordinate = (np.log(radius) - log_r[0]) / spacing
-    start = max(0, min(len(log_r) - 8, int(np.floor(coordinate)) - 3))
-    z = coordinate - start
-    weights = np.zeros((3, 8))
-    for p in range(8):
-        denominator = 1.0
-        value = 1.0
-        first = 0.0
-        second = 0.0
-        for q in range(8):
-            if q == p:
-                continue
-            denominator *= p - q
-            factor = z - q
-            second = second * factor + 2.0 * first
-            first = first * factor + value
-            value *= factor
-        weights[:, p] = (value / denominator,
-                         first / (denominator * spacing),
-                         second / (denominator * spacing**2))
-    return np.array([
-        weights[0] @ data[profile, start:start + 8],
-        weights[0] @ data[profile + 1, start:start + 8],
-        weights[0] @ data[profile + 2, start:start + 8],
-    ])
+    index = max(0, min(len(log_r) - 2, int(np.floor(coordinate))))
+    s = coordinate - index
+    h = spacing
+    a0 = data[profile, index]
+    a1 = h * data[profile + 1, index]
+    a2 = 0.5 * h**2 * data[profile + 2, index]
+    f = data[profile, index + 1] - (a0 + a1 + a2)
+    g = h * data[profile + 1, index + 1] - (a1 + 2.0 * a2)
+    curvature = h**2 * data[profile + 2, index + 1] - 2.0 * a2
+    return np.array([a0, a1, a2,
+                     10.0 * f - 4.0 * g + 0.5 * curvature,
+                     -15.0 * f + 7.0 * g - curvature,
+                     6.0 * f - 3.0 * g + 0.5 * curvature]), s, h
+
+
+def interpolate(log_r: np.ndarray, data: np.ndarray, profile: int,
+                radius: float) -> np.ndarray:
+    """Evaluate f, f_y, and f_yy from one piecewise-quintic polynomial."""
+    coefficients, s, h = hermite_coefficients(log_r, data, profile, radius)
+    value = sum(coefficients[p] * s**p for p in range(6))
+    first = sum(p * coefficients[p] * s**(p - 1) for p in range(1, 6)) / h
+    second = sum(p * (p - 1) * coefficients[p] * s**(p - 2)
+                 for p in range(2, 6)) / h**2
+    return np.array([value, first, second])
+
+
+def interpolant_consistency_audit(log_r: np.ndarray,
+                                  data: np.ndarray) -> tuple[float, float]:
+    """Differentiate each local polynomial, never another derivative table."""
+    rng = np.random.default_rng(0x5EED)
+    first_error = 0.0
+    second_error = 0.0
+    for profile in (0, 3, 6):
+        for index in range(len(log_r) - 1):
+            s = rng.uniform(0.0, 1.0)
+            radius = np.exp(log_r[index] + s * (log_r[index + 1] - log_r[index]))
+            coefficients, local_s, h = hermite_coefficients(
+                log_r, data, profile, radius)
+            polynomial = np.polynomial.Polynomial(coefficients)
+            expected_first = polynomial.deriv(1)(local_s) / h
+            expected_second = polynomial.deriv(2)(local_s) / h**2
+            value = interpolate(log_r, data, profile, radius)
+            first_error = max(first_error, abs(value[1] - expected_first))
+            second_error = max(second_error, abs(value[2] - expected_second))
+    return first_error, second_error
 
 
 def analytic_characteristic_basis(direction: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -102,7 +123,7 @@ def trumpet_principal_audit(log_r: np.ndarray, data: np.ndarray) -> dict[str, fl
     maximum_imaginary_eigenvalue = 0.0
     for radius in radii:
         alpha = interpolate(log_r, data, 0, radius)[0]
-        psi2 = interpolate(log_r, data, 3, radius)[0]
+        psi2 = interpolate(log_r, data, 3, radius)[0] / radius
         shift_q = interpolate(log_r, data, 6, radius)[0]
         beta_ref = np.array([psi2 * shift_q * radius, 0.0, 0.0])
         for direction in directions:
@@ -150,39 +171,37 @@ def main() -> None:
     second_derivative_error = 0.0
     for radius in sample_radii:
         alpha = interpolate(log_r, data, 0, radius)
-        psi2 = interpolate(log_r, data, 3, radius)
+        areal = interpolate(log_r, data, 3, radius)
         shift_q = interpolate(log_r, data, 6, radius)
-        areal = psi2[0] * radius
         alpha_r, alpha_rr = trumpet.alpha_radius_derivatives(
-            np.array([alpha[0]]), np.array([areal]))
-        areal_d1 = alpha[0] * areal / radius
-        expected_alpha_d1 = alpha_r[0] * areal_d1
-        areal_d2 = ((expected_alpha_d1 * areal + alpha[0] * areal_d1) / radius
-                    - alpha[0] * areal / radius**2)
-        expected_alpha_d2 = alpha_rr[0] * areal_d1**2 + alpha_r[0] * areal_d2
-        expected_psi2_d1 = areal_d1 / radius - areal / radius**2
-        expected_psi2_d2 = (areal_d2 / radius - 2.0 * areal_d1 / radius**2
-                            + 2.0 * areal / radius**3)
-        log_q_d1 = expected_alpha_d1 / trumpet.N - 3.0 * areal_d1 / areal
-        log_q_d2 = (expected_alpha_d2 / trumpet.N
-                    - 3.0 * (areal_d2 / areal - (areal_d1 / areal)**2))
-        expected_q_d1 = shift_q[0] * log_q_d1
-        expected_q_d2 = shift_q[0] * (log_q_d1**2 + log_q_d2)
+            np.array([alpha[0]]), np.array([areal[0]]))
+        expected_areal_dy = alpha[0] * areal[0]
+        expected_alpha_dy = alpha_r[0] * expected_areal_dy
+        expected_areal_dyy = (expected_alpha_dy * areal[0]
+                               + alpha[0] * expected_areal_dy)
+        expected_alpha_dyy = (alpha_rr[0] * expected_areal_dy**2
+                              + alpha_r[0] * expected_areal_dyy)
+        log_q_dy = expected_alpha_dy / trumpet.N - 3.0 * expected_areal_dy / areal[0]
+        log_q_dyy = (expected_alpha_dyy / trumpet.N
+                     - 3.0 * (expected_areal_dyy / areal[0]
+                              - (expected_areal_dy / areal[0])**2))
+        expected_q_dy = shift_q[0] * log_q_dy
+        expected_q_dyy = shift_q[0] * (log_q_dy**2 + log_q_dyy)
         first_derivative_error = max(
             first_derivative_error,
-            abs(alpha[1] - expected_alpha_d1),
-            abs(psi2[1] - expected_psi2_d1) / max(1.0, abs(expected_psi2_d1)),
-            abs(shift_q[1] - expected_q_d1),
+            abs(alpha[1] - expected_alpha_dy),
+            abs(areal[1] - expected_areal_dy),
+            abs(shift_q[1] - expected_q_dy),
         )
         second_derivative_error = max(
             second_derivative_error,
-            abs(alpha[2] - expected_alpha_d2) / max(1.0, abs(expected_alpha_d2)),
-            abs(psi2[2] - expected_psi2_d2) / max(1.0, abs(expected_psi2_d2)),
-            abs(shift_q[2] - expected_q_d2) / max(1.0, abs(expected_q_d2)),
+            abs(alpha[2] - expected_alpha_dyy),
+            abs(areal[2] - expected_areal_dyy),
+            abs(shift_q[2] - expected_q_dyy),
         )
         implicit_error = max(
             implicit_error,
-            abs(trumpet.implicit(alpha[0], areal)) / max(1.0, areal**4),
+            abs(trumpet.implicit(alpha[0], areal[0])) / max(1.0, areal[0]**4),
         )
 
     # A smaller direct set exercises the split-integral normalization independently
@@ -199,11 +218,12 @@ def main() -> None:
         value_error = max(
             value_error,
             abs(interpolate(log_r, data, 0, radius)[0] - exact_alpha),
-            abs(interpolate(log_r, data, 3, radius)[0] - exact_areal / radius)
-                / max(1.0, exact_areal / radius),
+            abs(interpolate(log_r, data, 3, radius)[0] - exact_areal),
             abs(interpolate(log_r, data, 6, radius)[0] - exact_q),
         )
 
+    consistency_first, consistency_second = interpolant_consistency_audit(
+        log_r, data)
     results = {
         "critical_lapse": trumpet.ALPHA_C,
         "critical_areal_radius": trumpet.RADIUS_C,
@@ -214,6 +234,8 @@ def main() -> None:
         "interpolation_implicit_error": implicit_error,
         "interpolation_first_derivative_error": first_derivative_error,
         "interpolation_second_derivative_error": second_derivative_error,
+        "interpolant_consistency_first_error": consistency_first,
+        "interpolant_consistency_second_error": consistency_second,
         "minimum_tabulated_lapse": float(np.min(data[0])),
         "lapse_monotone": bool(np.all(np.diff(data[0]) > 0.0)),
     }
@@ -226,6 +248,8 @@ def main() -> None:
     assert implicit_error < 2.0e-10
     assert first_derivative_error < 2.0e-8
     assert second_derivative_error < 2.0e-5
+    assert consistency_first < 2.0e-12
+    assert consistency_second < 2.0e-10
     assert results["trumpet_principal_basis_residual"] < 1.0e-13
     assert results["trumpet_principal_symmetrizer_residual"] < 1.0e-13
     assert results["trumpet_principal_basis_condition"] < 10.0
