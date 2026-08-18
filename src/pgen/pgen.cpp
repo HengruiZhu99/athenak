@@ -24,6 +24,7 @@
 #include "mhd/mhd.hpp"
 #include "coordinates/adm.hpp"
 #include "fo_gh/fo_gh.hpp"
+#include "ref_gh/ref_gh.hpp"
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/z4c.hpp"
 #include "radiation/radiation.hpp"
@@ -1016,6 +1017,8 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     FoGhCompatibleUnit(pin, is_restart);
   } else if (pgen_fun_name.compare("fo_gh_puncture") == 0) {
     FoGhPuncture(pin, is_restart);
+  } else if (pgen_fun_name.compare("ref_gh_minkowski") == 0) {
+    RefGhMinkowski(pin, is_restart);
 
   } else {
     // name not set on command line or input file, print warning and quit

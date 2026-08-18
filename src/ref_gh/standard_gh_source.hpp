@@ -76,6 +76,25 @@ bool Invert4(const Real matrix[4][4], Real inverse[4][4], Real &determinant) {
   return Kokkos::isfinite(determinant);
 }
 
+KOKKOS_INLINE_FUNCTION
+bool InvertSpatial3(const Real metric[4][4], Real inverse[3][3], Real &determinant) {
+  const Real a = metric[1][1];
+  const Real b = metric[1][2];
+  const Real c = metric[1][3];
+  const Real d = metric[2][2];
+  const Real e = metric[2][3];
+  const Real f = metric[3][3];
+  determinant = a*(d*f - e*e) - b*(b*f - c*e) + c*(b*e - c*d);
+  if (!(determinant > 0.0) || !Kokkos::isfinite(determinant)) return false;
+  inverse[0][0] = (d*f - e*e)/determinant;
+  inverse[0][1] = inverse[1][0] = (c*e - b*f)/determinant;
+  inverse[0][2] = inverse[2][0] = (b*e - c*d)/determinant;
+  inverse[1][1] = (a*f - c*c)/determinant;
+  inverse[1][2] = inverse[2][1] = (b*c - a*e)/determinant;
+  inverse[2][2] = (a*d - b*b)/determinant;
+  return true;
+}
+
 // Construct all first-derivative coordinate geometry and the background-covariant
 // wave-map constraint C_a = H_a + Gamma_a, with H^a=-g^{bc} barGamma^a_bc.
 KOKKOS_INLINE_FUNCTION

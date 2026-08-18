@@ -102,14 +102,29 @@ enum TaskName {
   FoGh_Newdt,
   FoGh_ClearS,
   FoGh_ClearR,
-  FoGh_NTASKS
+  FoGh_NTASKS,
+
+  RefGh_Recv,
+  RefGh_CopyU,
+  RefGh_CalcRHS,
+  RefGh_ExplRK,
+  RefGh_RestU,
+  RefGh_SendU,
+  RefGh_RecvU,
+  RefGh_Prolong,
+  RefGh_BCS,
+  RefGh_Newdt,
+  RefGh_ClearS,
+  RefGh_ClearR,
+  RefGh_NTASKS
 };
 
 enum PhysicsDependency {
   Phys_None,
   Phys_MHD,
   Phys_Z4c,
-  Phys_FoGh
+  Phys_FoGh,
+  Phys_RefGh
 };
 
 enum TaskLocation {

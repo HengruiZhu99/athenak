@@ -67,6 +67,10 @@ add_executable(
         fo_gh/fo_gh_calcrhs.cpp
         fo_gh/fo_gh_tasks.cpp
 
+        ref_gh/ref_gh.cpp
+        ref_gh/ref_gh_calcrhs.cpp
+        ref_gh/ref_gh_tasks.cpp
+
         gravity/gravity.cpp
         gravity/mg_gravity.cpp
 
@@ -159,6 +163,7 @@ add_executable(
         pgen/fo_gh/stability.cpp
         pgen/fo_gh/compatible_unit.cpp
         pgen/fo_gh/puncture.cpp
+        pgen/ref_gh/minkowski.cpp
 
         radiation/radiation.cpp
         radiation/radiation_fluxes.cpp

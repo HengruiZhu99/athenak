@@ -23,6 +23,7 @@
 #include "tasklist/numerical_relativity.hpp"
 #include "z4c/z4c.hpp"
 #include "fo_gh/fo_gh.hpp"
+#include "ref_gh/ref_gh.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "z4c/cce/cce.hpp"
 #include "diffusion/viscosity.hpp"
@@ -71,6 +72,7 @@ MeshBlockPack::~MeshBlockPack() {
     pz4c_cce.resize(0);
   }
   if (pfogh  != nullptr) {delete pfogh;}
+  if (prefgh != nullptr) {delete prefgh;}
   if (pturb  != nullptr) {delete pturb;}
   if (prad   != nullptr) {delete prad;}
   if (pmhd   != nullptr) {delete pmhd;}
@@ -124,7 +126,7 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     nphysics++;
     if (!(pin->DoesBlockExist("mhd")) && !(pin->DoesBlockExist("radiation")) &&
         !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) &&
-        !(pin->DoesBlockExist("fo_gh")) ) {
+        !(pin->DoesBlockExist("fo_gh")) && !(pin->DoesBlockExist("ref_gh")) ) {
       phydro->AssembleHydroTasks(tl_map);
     }
   } else {
@@ -138,7 +140,7 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     nphysics++;
     if (!(pin->DoesBlockExist("hydro")) && !(pin->DoesBlockExist("radiation")) &&
         !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) &&
-        !(pin->DoesBlockExist("fo_gh")) ) {
+        !(pin->DoesBlockExist("fo_gh")) && !(pin->DoesBlockExist("ref_gh")) ) {
       pmhd->AssembleMHDTasks(tl_map);
     }
   } else {
@@ -152,7 +154,7 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     pionn = new ion_neutral::IonNeutral(this, pin);   // construct new MHD object
     if (pin->DoesBlockExist("hydro") && pin->DoesBlockExist("mhd") &&
         !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) &&
-        !(pin->DoesBlockExist("fo_gh")) ) {
+        !(pin->DoesBlockExist("fo_gh")) && !(pin->DoesBlockExist("ref_gh")) ) {
       pionn->AssembleIonNeutralTasks(tl_map);
       nphysics++;
     } else {
@@ -213,7 +215,8 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     nphysics++;
   } else {
     pz4c = nullptr;
-    if (pin->DoesBlockExist("adm") || pin->DoesBlockExist("fo_gh")) {
+    if (pin->DoesBlockExist("adm") || pin->DoesBlockExist("fo_gh")
+        || pin->DoesBlockExist("ref_gh")) {
       padm = new adm::ADM(this, pin);
     } else {
       padm = nullptr;
@@ -235,6 +238,23 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     pfogh = nullptr;
   }
 
+  // (8b) Vacuum reference-frame first-order generalized harmonic evolution.
+  if (pin->DoesBlockExist("ref_gh")) {
+    if (pin->DoesBlockExist("fo_gh") || pin->DoesBlockExist("z4c")
+        || pin->DoesBlockExist("hydro") || pin->DoesBlockExist("mhd")
+        || pin->DoesBlockExist("radiation")) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl << "<ref_gh> is a separate standalone vacuum module and "
+                << "cannot be combined with FO-GH, Z4c, or fluid/radiation physics."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    prefgh = new ref_gh::RefGh(this, pin);
+    nphysics++;
+  } else {
+    prefgh = nullptr;
+  }
+
   // (9) Dynamical Spacetime and Matter (MHD TODO)
   if ((pin->DoesBlockExist("z4c") || pin->DoesBlockExist("adm")) &&
       (pin->DoesBlockExist("hydro")) ) {
@@ -248,7 +268,7 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     ptmunu = new Tmunu(this, pin);
   }
 
-  if (pz4c != nullptr || padm != nullptr || pfogh != nullptr) {
+  if (pz4c != nullptr || padm != nullptr || pfogh != nullptr || prefgh != nullptr) {
     pnr = new numrel::NumericalRelativity(this, pin);
     pnr->AssembleNumericalRelativityTasks(tl_map);
   }

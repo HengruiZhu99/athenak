@@ -23,6 +23,7 @@
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
 #include "fo_gh/fo_gh.hpp"
+#include "ref_gh/ref_gh.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "ion-neutral/ion-neutral.hpp"
 #include "radiation/radiation.hpp"
@@ -470,6 +471,7 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
   radiation::Radiation *prad = pmesh->pmb_pack->prad;
   z4c::Z4c *pz4c = pmesh->pmb_pack->pz4c;
   fo_gh::FoGh *pfogh = pmesh->pmb_pack->pfogh;
+  ref_gh::RefGh *prefgh = pmesh->pmb_pack->prefgh;
   if (pfogh != nullptr) {
     pfogh->UpdateDiagnostics();
   }
@@ -488,6 +490,9 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     }
     if (pfogh != nullptr) {
       (void) pfogh->NewTimeStep(this, nexp_stages);
+    }
+    if (prefgh != nullptr) {
+      (void) prefgh->NewTimeStep(this, nexp_stages);
     }
 
     pmesh->NewTimeStep(tlim);
@@ -780,6 +785,19 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
     (void) pfogh->RecvU(this, 0);
     (void) pfogh->Prolongate(this, 0);
     (void) pfogh->ApplyPhysicalBCs(this, 0);
+  }
+
+  // Initialize reference-frame vacuum GH ghost zones.
+  ref_gh::RefGh *prefgh = pm->pmb_pack->prefgh;
+  if (prefgh != nullptr) {
+    (void) prefgh->RestrictU(this, 0);
+    (void) prefgh->InitRecv(this, -1);
+    (void) prefgh->SendU(this, 0);
+    (void) prefgh->ClearSend(this, -1);
+    (void) prefgh->ClearRecv(this, -1);
+    (void) prefgh->RecvU(this, 0);
+    (void) prefgh->Prolongate(this, 0);
+    (void) prefgh->ApplyPhysicalBCs(this, 0);
   }
 
   // Initialize HYDRO: ghost zones and primitive variables (everywhere)
