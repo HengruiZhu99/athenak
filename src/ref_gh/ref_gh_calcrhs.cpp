@@ -85,6 +85,41 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
     Real partial_source[4][4], covariant_source[4][4]; // NOLINT(runtime/arrays)
     StandardGhPartialWaveSource(metric, d_metric, reference, geometry, gamma0,
                                 partial_source);
+    if (reference_kind == 1) {
+      // Reference-balanced evaluation of the stationary vacuum source.  The bracketed
+      // correction is analytically zero: on an exact vacuum reference the reduced GH
+      // source equals gbar^{cd} partial_c partial_d gbar_ab.  Evaluating their
+      // difference from the same prescribed jets removes the r^-4 amplification of
+      // coordinate cancellation without changing the continuum equations or forcing
+      // the evolved regular fields toward eta.
+      CoordinateGhGeometry background_geometry;
+      Real background_determinant = 0.0;
+      Real background_source[4][4];  // NOLINT(runtime/arrays)
+      if (ComputeCoordinateGhGeometry(reference.metric, reference.d_metric,
+                                      reference, background_geometry,
+                                      background_determinant)) {
+        StandardGhPartialWaveSource(reference.metric, reference.d_metric,
+                                    reference, background_geometry, gamma0,
+                                    background_source);
+        for (int a0 = 0; a0 < 4; ++a0) {
+          for (int b0 = 0; b0 < 4; ++b0) {
+            Real background_wave = 0.0;
+            for (int c0 = 0; c0 < 4; ++c0) {
+              for (int d0 = 0; d0 < 4; ++d0) {
+                background_wave += background_geometry.inverse_metric[c0][d0]
+                    *reference.dd_metric[c0][d0][a0][b0];
+              }
+            }
+            partial_source[a0][b0] += background_wave
+                                       - background_source[a0][b0];
+          }
+        }
+      } else {
+        for (int a0 = 0; a0 < 4; ++a0) {
+          for (int b0 = 0; b0 < 4; ++b0) partial_source[a0][b0] = NAN;
+        }
+      }
+    }
     TransformPartialWaveSource(metric, d_metric, partial_source, d_psi,
                                reference, geometry, covariant_source);
 
