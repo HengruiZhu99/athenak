@@ -1,0 +1,93 @@
+{
+  "schema": "brill_amr_history_record_replay_evidence_v1",
+  "date": "2026-08-18",
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "branch": "codex/amr-history-record-replay-brill-20260817",
+  "source": {
+    "commit": "ac75c8d348da91b38cbc6855b5fba51cd3089663",
+    "tree": "6284882bd06e8db379495675aba7a4f153fb4afa",
+    "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf"
+  },
+  "perlmutter": {
+    "job_id": 57202042,
+    "qos": "gpu_shared_interactive",
+    "nodes": 1,
+    "gpus": 1,
+    "node": "nid001001",
+    "remote_root": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-amr-history-ac75c8d3-v15-20260818",
+    "run_root": "run/exact_timestep",
+    "executable_sha256": "8fe79ff1a428756369defeeb7f73313a8323b1331c9250cd8f99b158023bfd1a",
+    "cmake_cache_sha256": "78a04f1db436e9cc4a2dab0742a92fba8fefadeabf5d642a19ea17515c31dff2",
+    "root_manifest_sha256": "d72721e77011c39dec4bbcddd256ba1e7e1938d70903470e9cdbe5cd60209d6f",
+    "detached_manifest_sha256": "bfd4c40351560868da79fa53c72a8e4fa997273dd0250670954b2213b9cd16d6"
+  },
+  "claims": {
+    "n128_same_resolution_replay": "pass_bitwise_common_payloads",
+    "n128_events_replayed": 210,
+    "n128_timestep_clips": 0,
+    "n256_physical_time_replay": "executed_terminal_failure",
+    "n256_events_applied": 11,
+    "n256_ledger_exact_authority_prefix": true,
+    "n256_timestep_clips": 5,
+    "n256_terminal_cycle": 5547,
+    "n256_terminal_time_M": 10.53633,
+    "n256_invalid_chi_parent_stencils": 3928,
+    "convergence_claim": false,
+    "figure3_reproduction_claim": false,
+    "physical_instability_claim": false
+  },
+  "files": [
+    {
+      "path": "evidence/v15/build-products.sha256",
+      "sha256": "df577809a2aee460dbb408e6bea504a6632c3b322b4453aeb94a3432593f1509"
+    },
+    {
+      "path": "evidence/v15/focused-tests.log",
+      "sha256": "45627e51d9f364942e6a57c11476f4c62a1ea4cceeb49587f73ba504184b423d"
+    },
+    {
+      "path": "evidence/v15/integration.log",
+      "sha256": "f5463fa173c1a40b4c2748b6b4cd4d865d5671e43e7ad770ef75a18ef4465c71"
+    },
+    {
+      "path": "evidence/v15/n128-identity.json",
+      "sha256": "d69619684bd9a723362a5db758d8dc154c961ce76d6d360951b4823e6d392dbb"
+    },
+    {
+      "path": "evidence/v15/n128-record-ledger.jsonl",
+      "sha256": "190a78abd5e1e065cb37e0d37485f850a0d04b9552ebbab317f0ed78ba0baaf2"
+    },
+    {
+      "path": "evidence/v15/n128-replay-ledger.jsonl",
+      "sha256": "43eb29717f48762b7966cd7b209cbea63d3e79c9083f081336bc434795b74efa"
+    },
+    {
+      "path": "evidence/v15/n256-replay-ledger.jsonl",
+      "sha256": "2ec9259a7bf1f48913c2620fd4df3fd8ad9b90e59721bba6dabb07f1ab02b7b3"
+    },
+    {
+      "path": "evidence/v15/n256-replay-summary.json",
+      "sha256": "83de74713a5a4b83d0311f82994a8aa581354a83e457805efaa2ace3afdc6c01"
+    },
+    {
+      "path": "evidence/v15/remote-run-SHA256SUMS",
+      "sha256": "d72721e77011c39dec4bbcddd256ba1e7e1938d70903470e9cdbe5cd60209d6f"
+    },
+    {
+      "path": "evidence/v15/remote-run-SHA256SUMS.sha256",
+      "sha256": "bfd4c40351560868da79fa53c72a8e4fa997273dd0250670954b2213b9cd16d6"
+    },
+    {
+      "path": "analyze_n128_replay_identity.py",
+      "sha256": "ed758cba7267022aa02fbc05d72480fa0db3720ca66076e63f7cddf3471c9c14"
+    },
+    {
+      "path": "pilot.athinput",
+      "sha256": "edced480bbd934347aa80152dda4c164c4b6fd59c2a7abe764ac990983004791"
+    },
+    {
+      "path": "run_record_replay_n256_v15_on_perlmutter.sh",
+      "sha256": "771678accb6d67f7d3d5851cb00a2c533d07369bcbba056cc3bfa4b3178877f5"
+    }
+  ]
+}
