@@ -11,3 +11,7 @@ clean_validation_worktree=/tmp/athenak-refgh-cnGi0z
 configure=cmake -S . -B build_cpu -DPROBLEM=built_in_pgens -DCMAKE_BUILD_TYPE=Debug -DKokkos_ENABLE_SERIAL=ON
 build=cmake --build build_cpu -j4
 note=The primary worktree contained pre-existing unrelated dirty files. Validation used a clean detached worktree at the committed branch state.
+stationary_backend=Kokkos Serial CPU Debug
+stationary_domain=[-2,2]^3 periodic local gate
+stationary_resolutions=8,12,16 through t=1; ADM t=0 diagnostic ladder 16,24,32
+qualification_limit=No CUDA, SMR, restart, transition, or long-time puncture qualification
