@@ -152,7 +152,9 @@ def compare_initial(args):
 
 def main():
     parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(dest="command", required=True)
+    # Perlmutter currently provides Python 3.6, which predates the `required`
+    # keyword for argparse subparsers.
+    subparsers = parser.add_subparsers(dest="command")
     summary = subparsers.add_parser("summarize")
     summary.add_argument("--fo-gh", nargs=3, required=True,
                          metavar=("COARSE", "MEDIUM", "FINE"))
@@ -167,6 +169,8 @@ def main():
     parity.add_argument("--tolerance", type=float, default=2.0e-14)
     parity.set_defaults(function=compare_initial)
     args = parser.parse_args()
+    if not hasattr(args, "function"):
+        parser.error("a command is required")
     args.function(args)
 
 
