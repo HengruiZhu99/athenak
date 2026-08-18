@@ -19,8 +19,9 @@ test -n "${SLURM_JOB_ID:-}"
 test "${SLURM_NTASKS:-}" = 1
 test "${SLURM_GPUS:-}" = 1
 scontrol show job "${SLURM_JOB_ID}" -o | grep -E 'QOS=(gpu_)?shared_interactive' >/dev/null
-test "$(git -C "${source_root}" rev-parse HEAD)" = 908384176de0d5081304bfd91fd31d006f969049
-test "$(git -C "${source_root}" rev-parse 'HEAD^{tree}')" = c9d13ac06749fbe304778d7e55b7aa531879088b
+test -z "$(git -C "${source_root}" status --porcelain=v1)"
+test "$(git -C "${source_root}" rev-parse HEAD)" = \
+  "$(git -C "${source_root}" rev-parse '@{upstream}')"
 test "$(git -C "${source_root}/kokkos" rev-parse HEAD)" = 6739bc623081648af9e752b616d9671527922cbf
 test "$(sha256sum "${history}" | awk '{print $1}')" = d0e1289757bd8f5b6510ca8a7e8b8c5c42bec54f5f08480f607abc866af57555
 test "$(sha256sum "${coeff}" | awk '{print $1}')" = ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b
@@ -45,6 +46,7 @@ export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
 export MPICH_GPU_SUPPORT_ENABLED=1 MPICH_GPU_IPC_ENABLED=0
 export MPICH_OFI_NIC_POLICY=GPU
 env | sort > "${evidence}/environment.txt"
+git -C "${source_root}" rev-parse HEAD 'HEAD^{tree}' > "${evidence}/source-identity.txt"
 scontrol show job "${SLURM_JOB_ID}" > "${evidence}/slurm-job.txt"
 scontrol show node "${SLURM_NODELIST}" -o > "${evidence}/node.txt"
 nvidia-smi -L > "${evidence}/nvidia-smi-L.txt"

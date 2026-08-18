@@ -18,7 +18,9 @@ test -n "${SLURM_JOB_ID:-}"
 test "${SLURM_NTASKS:-}" = 1
 test "${SLURM_GPUS:-}" = 1
 scontrol show job "${SLURM_JOB_ID}" -o | grep -E 'QOS=(gpu_)?shared_interactive' >/dev/null
-test "$(git -C "${source_root}" rev-parse HEAD)" = 908384176de0d5081304bfd91fd31d006f969049
+test -z "$(git -C "${source_root}" status --porcelain=v1)"
+test "$(git -C "${source_root}" rev-parse HEAD)" = \
+  "$(git -C "${source_root}" rev-parse '@{upstream}')"
 test "$(sha256sum "${restart}" | awk '{print $1}')" = 2e2e8f7febd0d4fbb204f172df149f9295de6aa66097ef3c9f19048aa29a20e9
 test "$(sha256sum "${history}" | awk '{print $1}')" = d0e1289757bd8f5b6510ca8a7e8b8c5c42bec54f5f08480f607abc866af57555
 test -x "${build_root}/src/athena" && test ! -e "${run}"
@@ -42,6 +44,7 @@ export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
 export MPICH_GPU_SUPPORT_ENABLED=1 MPICH_GPU_IPC_ENABLED=0
 export MPICH_OFI_NIC_POLICY=GPU
 env | sort > "${evidence}/environment.txt"
+git -C "${source_root}" rev-parse HEAD 'HEAD^{tree}' > "${evidence}/source-identity.txt"
 scontrol show job "${SLURM_JOB_ID}" > "${evidence}/slurm-job.txt"
 scontrol show node "${SLURM_NODELIST}" -o > "${evidence}/node.txt"
 nvidia-smi -L > "${evidence}/nvidia-smi-L.txt"
