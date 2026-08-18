@@ -8,6 +8,8 @@ Repository: <https://github.com/HengruiZhu99/athenak>
 Branch: `codex/amr-history-record-replay-brill-20260817`
 
 Qualified source commit: `ac75c8d348da91b38cbc6855b5fba51cd3089663`
+
+Evidence/report commit: `41ddd235910b0dedfb3e72ae23d40455ba020872`
 Qualified source tree: `6284882bd06e8db379495675aba7a4f153fb4afa`
 
 Start with:
