@@ -36,6 +36,15 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
   } else if (ref_method == "dchi" || ref_method == "dchi_max") {
     method = dChi;
     dchi_thresh = pin->GetOrAddReal("z4c_amr", "dchi_max", 0.01);
+    dchi_derefine_factor =
+        pin->GetOrAddReal("z4c_amr", "dchi_derefine_factor", 0.25);
+    if (!(dchi_derefine_factor > 0.0 && dchi_derefine_factor < 1.0)) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+                << __LINE__ << std::endl
+                << "<z4c_amr>/dchi_derefine_factor must be strictly between 0 and 1, but is "
+                << dchi_derefine_factor << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
   } else {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
               << __LINE__ << std::endl;
@@ -225,6 +234,7 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
   int I_Z4C_CHI  = pmbp->pz4c->I_Z4C_CHI;
   // note: we need this to prevent capture by this in the lambda expr.
   auto dchi_thresh = this->dchi_thresh;
+  auto dchi_derefine_factor = this->dchi_derefine_factor;
   auto root_lev = pmesh->root_level;
   auto max_ref_lev = this->max_ref_lev;
 
@@ -255,7 +265,7 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
       if (team_dmax > dchi_thresh) {
         refine_flag.d_view(m + mbs) = 1;
       }
-      if (team_dmax < 0.5 * dchi_thresh) {
+      if (team_dmax < dchi_derefine_factor * dchi_thresh) {
         refine_flag.d_view(m + mbs) = -1;
       }
     });

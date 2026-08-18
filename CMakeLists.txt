@@ -711,6 +711,11 @@ if (Athena_BUILD_UNIT_TESTS)
       --work-dir ${CMAKE_CURRENT_BINARY_DIR}/amr_history_integration_test)
   set_tests_properties(athena.amr_history_integration PROPERTIES
       TIMEOUT 180 LABELS "amr;history;serial")
+  add_test(
+      NAME athena.z4c_amr_derefine_factor_static
+      COMMAND ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_amr_derefine_factor_static_test.py
+      --source-root ${CMAKE_CURRENT_SOURCE_DIR})
   if (Athena_ENABLE_MPI)
     add_test(
         NAME athena.amr_history_mpi2
