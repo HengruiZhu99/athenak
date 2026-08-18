@@ -656,6 +656,10 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/chi_preupdate_diagnostic_static_test.py
       --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  add_test(
+      NAME athena.z4c_shift_control_static
+      COMMAND ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_shift_control_static_test.py)
   if (ENABLE_MPI)
     add_test(
         NAME athena.z4c_coarse_cache_ownership_mpi2

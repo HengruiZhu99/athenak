@@ -150,6 +150,16 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
     return derivative;
   }
 
+  template <typename VelocityField, typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ScalarAdvectiveO2(const VelocityField &velocity,
+                                                const ScalarField &field) const {
+    Real derivative = 0.0;
+    for (int d = 0; d < 3; ++d) {
+      derivative += Lx<2>(d, inverse_spacing_, velocity, field, m_, d, k_, j_, i_);
+    }
+    return derivative;
+  }
+
   template <typename VelocityField, typename VectorField>
   KOKKOS_INLINE_FUNCTION Real VectorAdvective(const int component,
                                               const VelocityField &velocity,
@@ -158,6 +168,18 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
     for (int d = 0; d < 3; ++d) {
       derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
                                component, k_, j_, i_);
+    }
+    return derivative;
+  }
+
+  template <typename VelocityField, typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorAdvectiveO2(const int component,
+                                                const VelocityField &velocity,
+                                                const VectorField &field) const {
+    Real derivative = 0.0;
+    for (int d = 0; d < 3; ++d) {
+      derivative += Lx<2>(d, inverse_spacing_, velocity, field, m_, d, component,
+                          k_, j_, i_);
     }
     return derivative;
   }
@@ -172,6 +194,18 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
     for (int d = 0; d < 3; ++d) {
       derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
                                first_component, second_component, k_, j_, i_);
+    }
+    return derivative;
+  }
+
+  template <TensorVariance Variance, typename VelocityField, typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorAdvectiveO2(
+      const int first_component, const int second_component,
+      const VelocityField &velocity, const TensorField &field) const {
+    Real derivative = 0.0;
+    for (int d = 0; d < 3; ++d) {
+      derivative += Lx<2>(d, inverse_spacing_, velocity, field, m_, d,
+                          first_component, second_component, k_, j_, i_);
     }
     return derivative;
   }
@@ -401,6 +435,16 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     return derivative;
   }
 
+  template <typename VelocityField, typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real ScalarAdvectiveO2(const VelocityField &velocity,
+                                                const ScalarField &field) const {
+    Real derivative = 0.0;
+    for (int d = RhoDirection(); d <= ZDirection(); ++d) {
+      derivative += Lx<2>(d, inverse_spacing_, velocity, field, m_, d, k_, j_, i_);
+    }
+    return derivative;
+  }
+
   template <typename VelocityField, typename VectorField>
   KOKKOS_INLINE_FUNCTION Real VectorAdvective(const int component,
                                               const VelocityField &velocity,
@@ -409,6 +453,19 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     for (int d = RhoDirection(); d <= ZDirection(); ++d) {
       derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
                                component, k_, j_, i_);
+    }
+    return derivative + Value(velocity, SuppressedDirection()) *
+                            VectorFirst(SuppressedDirection(), component, field);
+  }
+
+  template <typename VelocityField, typename VectorField>
+  KOKKOS_INLINE_FUNCTION Real VectorAdvectiveO2(const int component,
+                                                const VelocityField &velocity,
+                                                VectorField &field) const {
+    Real derivative = 0.0;
+    for (int d = RhoDirection(); d <= ZDirection(); ++d) {
+      derivative += Lx<2>(d, inverse_spacing_, velocity, field, m_, d, component,
+                          k_, j_, i_);
     }
     return derivative + Value(velocity, SuppressedDirection()) *
                             VectorFirst(SuppressedDirection(), component, field);
@@ -424,6 +481,20 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     for (int d = RhoDirection(); d <= ZDirection(); ++d) {
       derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
                                first_component, second_component, k_, j_, i_);
+    }
+    return derivative + Value(velocity, SuppressedDirection()) *
+                            TensorFirst<Variance>(SuppressedDirection(), first_component,
+                                                  second_component, field);
+  }
+
+  template <TensorVariance Variance, typename VelocityField, typename TensorField>
+  KOKKOS_INLINE_FUNCTION Real TensorAdvectiveO2(
+      const int first_component, const int second_component,
+      const VelocityField &velocity, TensorField &field) const {
+    Real derivative = 0.0;
+    for (int d = RhoDirection(); d <= ZDirection(); ++d) {
+      derivative += Lx<2>(d, inverse_spacing_, velocity, field, m_, d,
+                          first_component, second_component, k_, j_, i_);
     }
     return derivative + Value(velocity, SuppressedDirection()) *
                             TensorFirst<Variance>(SuppressedDirection(), first_component,

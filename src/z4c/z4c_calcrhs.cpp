@@ -114,6 +114,10 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
       opt.rhs_stage_diagnostics && time >= opt.rhs_stage_diagnostics_start_time;
   const bool collect_chi_provenance =
       opt.chi_parent_provenance.enabled && time >= opt.chi_parent_provenance.start_time;
+  const bool prescribed_zero_shift =
+      opt.shift_mode == Z4cShiftMode::prescribed_zero;
+  const bool use_o2_shift_advection =
+      opt.shift_advection_order == Z4cShiftAdvectionOrder::o2;
   auto &chi_provenance_terms = pmy_pack->pz4c->chi_provenance_terms;
   DvceArray5D<Real> rhs_stage_terms;
   if (collect_rhs_stage_diagnostics) {
@@ -307,7 +311,9 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         // Scalars
         // Keep the production expression byte-for-byte and collect directional
         // components only as shadows.  The diagnostic must never rebuild Lchi.
-        Lchi = derivatives.ScalarAdvective(z4c.beta_u, z4c.chi);
+        Lchi = use_o2_shift_advection
+                   ? derivatives.ScalarAdvectiveO2(z4c.beta_u, z4c.chi)
+                   : derivatives.ScalarAdvective(z4c.beta_u, z4c.chi);
         if (collect_chi_provenance) {
           for (int direction = 0; direction < 3; ++direction) {
             const Real contribution = derivatives.DirectionalScalarAdvective(
@@ -315,19 +321,27 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
             chi_provenance_terms(m, chi_adv_rho + direction, k, j, i) = contribution;
           }
         }
-        LKhat = derivatives.ScalarAdvective(z4c.beta_u, z4c.vKhat);
-        LTheta = derivatives.ScalarAdvective(z4c.beta_u, z4c.vTheta);
+        LKhat = use_o2_shift_advection
+                    ? derivatives.ScalarAdvectiveO2(z4c.beta_u, z4c.vKhat)
+                    : derivatives.ScalarAdvective(z4c.beta_u, z4c.vKhat);
+        LTheta = use_o2_shift_advection
+                     ? derivatives.ScalarAdvectiveO2(z4c.beta_u, z4c.vTheta)
+                     : derivatives.ScalarAdvective(z4c.beta_u, z4c.vTheta);
 
         // Tensors
         for (int a = 0; a < 3; ++a)
           for (int b = a; b < 3; ++b)
             {
-              Lg_dd(a, b) =
-                  derivatives.template TensorAdvective<TensorVariance::all_lower>(
-                      a, b, z4c.beta_u, z4c.g_dd);
-              LA_dd(a, b) =
-                  derivatives.template TensorAdvective<TensorVariance::all_lower>(
-                      a, b, z4c.beta_u, z4c.vA_dd);
+              Lg_dd(a, b) = use_o2_shift_advection
+                  ? derivatives.template TensorAdvectiveO2<TensorVariance::all_lower>(
+                        a, b, z4c.beta_u, z4c.g_dd)
+                  : derivatives.template TensorAdvective<TensorVariance::all_lower>(
+                        a, b, z4c.beta_u, z4c.g_dd);
+              LA_dd(a, b) = use_o2_shift_advection
+                  ? derivatives.template TensorAdvectiveO2<TensorVariance::all_lower>(
+                        a, b, z4c.beta_u, z4c.vA_dd)
+                  : derivatives.template TensorAdvective<TensorVariance::all_lower>(
+                        a, b, z4c.beta_u, z4c.vA_dd);
             }
 
         // -----------------------------------------------------------------------------------
@@ -679,8 +693,9 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
           }
 
         for (int b = 0; b < 3; ++b) {
-          LGam_advective_u(b) =
-              derivatives.VectorAdvective(b, z4c.beta_u, z4c.vGam_u);
+          LGam_advective_u(b) = use_o2_shift_advection
+              ? derivatives.VectorAdvectiveO2(b, z4c.beta_u, z4c.vGam_u)
+              : derivatives.VectorAdvective(b, z4c.beta_u, z4c.vGam_u);
           LGam_u(b) = LGam_advective_u(b);
         }
 
@@ -819,12 +834,22 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
           dalpha_d(a) = derivatives.ScalarFirst(a, z4c.alpha);
           dchi_d(a) = derivatives.ScalarFirst(a, z4c.chi);
         }
-        Lalpha = derivatives.ScalarAdvective(z4c.beta_u, z4c.alpha);
+        Lalpha = use_o2_shift_advection
+                     ? derivatives.ScalarAdvectiveO2(z4c.beta_u, z4c.alpha)
+                     : derivatives.ScalarAdvective(z4c.beta_u, z4c.alpha);
 
         for (int b = 0; b < 3; ++b) {
-          Lbeta_u(b) = derivatives.VectorAdvective(b, z4c.beta_u, z4c.beta_u);
+          Lbeta_u(b) = use_o2_shift_advection
+                           ? derivatives.VectorAdvectiveO2(
+                                 b, z4c.beta_u, z4c.beta_u)
+                           : derivatives.VectorAdvective(
+                                 b, z4c.beta_u, z4c.beta_u);
           if (opt.telegraph_lapse) {
-            LB_d(b) = derivatives.VectorAdvective(b, z4c.beta_u, z4c.vB_d);
+            LB_d(b) = use_o2_shift_advection
+                          ? derivatives.VectorAdvectiveO2(
+                                b, z4c.beta_u, z4c.vB_d)
+                          : derivatives.VectorAdvective(
+                                b, z4c.beta_u, z4c.vB_d);
           }
         }
         // Preserve the legacy Cartesian a-major accumulation order exactly.
@@ -906,6 +931,11 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         Real const shift_hh_alpha_chi = opt.shift_hh * alpha * chi_guarded;
         // shift vector
         for (int a = 0; a < 3; ++a) {
+          if (prescribed_zero_shift) {
+            rhs.beta_u(m, a, k, j, i) = 0.0;
+            if (!opt.telegraph_lapse) rhs.vB_d(m, a, k, j, i) = 0.0;
+            continue;
+          }
           rhs.beta_u(m, a, k, j, i) =
               shift_gamma * z4c.vGam_u(m, a, k, j, i) + opt.shift_advect * Lbeta_u(a);
           rhs.beta_u(m, a, k, j, i) -=

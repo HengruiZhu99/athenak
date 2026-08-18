@@ -248,6 +248,39 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.shift_hh = pin->GetOrAddReal("z4c", "shift_H", 0.0);
   opt.shift_eta = pin->GetOrAddReal("z4c", "shift_eta", 2.0);
   opt.shift_eta_max_K = pin->GetOrAddBoolean("z4c", "shift_eta_max_K", false);
+  const std::string shift_mode =
+      pin->GetOrAddString("z4c", "shift_mode", "gamma_driver");
+  if (shift_mode == "gamma_driver") {
+    opt.shift_mode = Z4cShiftMode::gamma_driver;
+  } else if (shift_mode == "prescribed_zero") {
+    opt.shift_mode = Z4cShiftMode::prescribed_zero;
+  } else {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": unknown <z4c>/shift_mode=" << shift_mode
+              << "; expected gamma_driver or prescribed_zero" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  const std::string shift_advection_order =
+      pin->GetOrAddString("z4c", "shift_advection_order", "spatial");
+  if (shift_advection_order == "spatial") {
+    opt.shift_advection_order = Z4cShiftAdvectionOrder::spatial;
+  } else if (shift_advection_order == "2") {
+    opt.shift_advection_order = Z4cShiftAdvectionOrder::o2;
+  } else {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": unknown <z4c>/shift_advection_order="
+              << shift_advection_order << "; expected spatial or 2" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  opt.shift_invariant_diagnostic = pin->GetOrAddBoolean(
+      "z4c", "shift_invariant_diagnostic", false);
+  if (opt.shift_mode == Z4cShiftMode::prescribed_zero &&
+      opt.shift_advection_order != Z4cShiftAdvectionOrder::spatial) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": prescribed_zero has no shift transport; "
+                 "shift_advection_order must remain spatial" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   if (opt.telegraph_tau <= 0.0) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__

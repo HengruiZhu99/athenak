@@ -31,14 +31,16 @@ def main() -> int:
     require(update, "gam0*u0(m,n,k,j,i) + gam1*u1(m,n,k,j,i) +")
     require(config, "EvaluateChiRKCandidate(")
     require(rhs, "DirectionalScalarAdvective(")
-    require(rhs, "Lchi = derivatives.ScalarAdvective(z4c.beta_u, z4c.chi);")
+    require(rhs, "Lchi = use_o2_shift_advection")
+    require(rhs, "derivatives.ScalarAdvective(z4c.beta_u, z4c.chi)")
+    require(rhs, "derivatives.ScalarAdvectiveO2(z4c.beta_u, z4c.chi)")
     require(rhs, "chi_adv_total_production")
     require(rhs, "chi_curvature_source")
     require(rhs, "chi_rhs_before_ko")
     require(rhs, "chi_rhs_after_ko")
     require(config, "pre-update chi candidate is nonpositive or nonfinite")
     diagnostic_branch = rhs[rhs.index("if (collect_chi_provenance) {"):
-                            rhs.index("LKhat = derivatives.ScalarAdvective")]
+                            rhs.index("LTheta = use_o2_shift_advection")]
     if "Lchi += contribution" in diagnostic_branch:
         raise SystemExit("diagnostic reconstructs the production advective term")
     require(rhs, "const Real contribution = u_rhs(m,n,k,j,i) - rhs_before;")

@@ -43,6 +43,16 @@ enum class Z4cAMRTransfer {
   limited_o2,
 };
 
+enum class Z4cShiftMode {
+  gamma_driver,
+  prescribed_zero,
+};
+
+enum class Z4cShiftAdvectionOrder {
+  spatial,
+  o2,
+};
+
 inline const char *Z4cAMRTransferName(const Z4cAMRTransfer transfer) {
   switch (transfer) {
     case Z4cAMRTransfer::high_order: return "high_order";
@@ -212,6 +222,9 @@ class Z4c {
     Real shift_hh;
     Real shift_advect;
     Real shift_eta;
+    Z4cShiftMode shift_mode;
+    Z4cShiftAdvectionOrder shift_advection_order;
+    bool shift_invariant_diagnostic;
     // If true, shift_eta is a dimensionless multiplier of max|K|.
     bool shift_eta_max_K;
     // slow start shift condition
@@ -287,6 +300,8 @@ class Z4c {
   TaskStatus Prolongate(Driver *pdrive, int stage);
   TaskStatus ProlongateWeyl(Driver *pdrive, int stage);
   TaskStatus ExpRKUpdate(Driver *d, int stage);
+  void InitializePrescribedZeroShift();
+  void CheckPrescribedZeroShiftInvariant(Driver *d, int stage);
   TaskStatus Z4cFloorChi(Driver *pdrive, int stage);
   TaskStatus NewTimeStep(Driver *d, int stage);
   void FillBuiltInPhysicalBoundaryGhosts();

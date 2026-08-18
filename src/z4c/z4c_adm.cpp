@@ -208,6 +208,9 @@ void Z4c::ADMToZ4c(MeshBlockPack *pmbp, ParameterInput *pin) {
   } else {
     ADMToZ4cImpl<Cartesian3D, NGHOST>(pmbp, pin);
   }
+  if (pmbp->pz4c->opt.shift_mode == Z4cShiftMode::prescribed_zero) {
+    pmbp->pz4c->InitializePrescribedZeroShift();
+  }
 }
 template void Z4c::ADMToZ4c<2>(MeshBlockPack *pmbp, ParameterInput *pin);
 template void Z4c::ADMToZ4c<3>(MeshBlockPack *pmbp, ParameterInput *pin);
