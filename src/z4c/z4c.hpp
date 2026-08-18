@@ -23,6 +23,7 @@
 #include "geodesic-grid/geodesic_grid.hpp"
 #include "geodesic-grid/spherical_grid.hpp"
 #include "z4c/amr_jump_diagnostic.hpp"
+#include "z4c/chi_parent_provenance.hpp"
 #include "z4c/telegraph_damping.hpp"
 
 // forward declarations
@@ -102,6 +103,7 @@ class Z4c {
   DvceArray5D<Real> u0;        // z4c solution
   DvceArray5D<Real> u1;        // z4c solution at intermediate timestep
   DvceArray5D<Real> u_rhs;     // z4c rhs storage
+  DvceArray5D<Real> chi_provenance_terms; // default-off exact chi RHS terms
   DvceArray5D<Real> u_telegraph_mu; // physical inverse-length damping profile
   DvceArray5D<Real> coarse_u0; // coarse representation of z4c solution
   DvceArray5D<Real> u_weyl; // weyl scalars
@@ -182,6 +184,7 @@ class Z4c {
     Real rhs_stage_diagnostics_rho_max;
     Real rhs_stage_diagnostics_abs_z_max;
     AMRJumpDiagnosticConfig amr_jump_diagnostic;
+    ChiParentProvenanceConfig chi_parent_provenance;
     // Gauge conditions for the lapse
     Real lapse_oplog;
     Real lapse_harmonicf;
@@ -239,6 +242,7 @@ class Z4c {
   Options opt;
   Real diss;              // Dissipation parameter
   std::unique_ptr<AMRJumpDiagnosticRuntime> amr_jump_diagnostic;
+  std::unique_ptr<ChiParentProvenanceRuntime> chi_parent_provenance;
 
   // Boundary communication buffers and functions for u
   MeshBoundaryValuesCC *pbval_u;

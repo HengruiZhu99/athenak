@@ -392,6 +392,11 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
                 << std::endl;
     }
     if (global_counts[2] != 0 || global_counts[3] != 0) {
+      if (global_counts[2] != 0 &&
+          pmy_pack->pz4c->chi_parent_provenance != nullptr) {
+        pmy_pack->pz4c->chi_parent_provenance->AnalyzeBoundaryFailure(
+            this, global_counts[2], global_rejected_keys[0]);
+      }
       if (global_variable::my_rank == 0) {
         const unsigned long long key =
             global_counts[2] != 0 ? global_rejected_keys[0]

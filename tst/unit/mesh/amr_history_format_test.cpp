@@ -82,6 +82,50 @@ int main() {
   events.push_back(e1);
   Require(amr_history::ValidateEvents(header, events, &error), error);
 
+  auto extension = events;
+  auto e2 = e1;
+  e2.index = 2;
+  e2.time_decimal = "0.25";
+  e2.time_hex = "0x1p-2";
+  e2.leaves = RootLeaves();
+  const auto e2_line = amr_history::EncodeEvent(e2);
+  Require(amr_history::DecodeEvent(e2_line, &e2, &error), error);
+  extension.push_back(e2);
+  Require(amr_history::ValidateEvents(header, extension, &error), error);
+  Require(amr_history::AppendOnlyExtension(events, extension, &error), error);
+  auto changed_prefix = extension;
+  changed_prefix[1] = changed_prefix[2];
+  Require(!amr_history::AppendOnlyExtension(events, changed_prefix, &error),
+          "changed extension prefix rejected");
+  Require(!amr_history::AppendOnlyExtension(events, events, &error),
+          "non-extending history rejected");
+
+  auto authority = extension;
+  auto authority_e3 = e2;
+  authority_e3.index = 3;
+  authority_e3.time_decimal = "0.375";
+  authority_e3.time_hex = "0x1.8p-2";
+  authority_e3.leaves = RefinedLeaves();
+  const auto authority_e3_line = amr_history::EncodeEvent(authority_e3);
+  Require(amr_history::DecodeEvent(authority_e3_line, &authority_e3, &error), error);
+  authority.push_back(authority_e3);
+  auto branch = extension;
+  auto branch_e3 = authority_e3;
+  branch_e3.time_decimal = "0.3125";
+  branch_e3.time_hex = "0x1.4p-2";
+  const auto branch_e3_line = amr_history::EncodeEvent(branch_e3);
+  Require(amr_history::DecodeEvent(branch_e3_line, &branch_e3, &error), error);
+  branch.push_back(branch_e3);
+  Require(amr_history::AuthenticatedBranch(authority, branch, 2, &error), error);
+  auto bad_branch = branch;
+  bad_branch[2] = bad_branch[1];
+  Require(!amr_history::AuthenticatedBranch(authority, bad_branch, 2, &error),
+          "changed branch prefix rejected");
+  Require(!amr_history::AuthenticatedBranch(authority, extension, 2, &error),
+          "branch without a post-base event rejected");
+  Require(!amr_history::AuthenticatedBranch(authority, authority, 2, &error),
+          "branch without divergence rejected");
+
   auto nonmonotonic = events;
   nonmonotonic[1].time_decimal = "0";
   nonmonotonic[1].time_hex = "0x0p+0";

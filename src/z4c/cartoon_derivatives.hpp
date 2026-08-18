@@ -132,6 +132,14 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
   }
 
   template <typename VelocityField, typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real DirectionalScalarAdvective(
+      const int direction, const VelocityField &velocity,
+      const ScalarField &field) const {
+    return Lx<NGHOST>(direction, inverse_spacing_, velocity, field, m_, direction,
+                      k_, j_, i_);
+  }
+
+  template <typename VelocityField, typename ScalarField>
   KOKKOS_INLINE_FUNCTION Real ScalarAdvective(const VelocityField &velocity,
                                               const ScalarField &field) const {
     Real derivative = 0.0;
@@ -371,6 +379,15 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     return ActiveFirst(RhoDirection(), RhoDirection(), field) +
            ActiveFirst(ZDirection(), ZDirection(), field) +
            Value(field, RhoDirection()) / rho_;
+  }
+
+  template <typename VelocityField, typename ScalarField>
+  KOKKOS_INLINE_FUNCTION Real DirectionalScalarAdvective(
+      const int direction, const VelocityField &velocity,
+      const ScalarField &field) const {
+    if (direction == SuppressedDirection()) return 0.0;
+    return Lx<NGHOST>(direction, inverse_spacing_, velocity, field, m_, direction,
+                      k_, j_, i_);
   }
 
   template <typename VelocityField, typename ScalarField>

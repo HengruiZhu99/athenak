@@ -35,6 +35,7 @@ class AMRHistory {
   amr_history::Header CurrentHeader() const;
   std::vector<amr_history::Location> CurrentLeaves() const;
   void LoadHistory();
+  void LoadAppendOnlyExtension();
   void WriteFreshHistory();
   void AppendEvent(int created, int deleted);
   void AppendLedger(const std::string &action, const amr_history::Event &event,
@@ -49,6 +50,8 @@ class AMRHistory {
   ParameterInput *pin_ = nullptr;
   Mode mode_ = Mode::off;
   std::string path_;
+  std::string extension_path_;
+  int extension_branch_base_event_ = -1;
   std::string ledger_path_;
   amr_history::Header header_;
   std::vector<amr_history::Event> events_;
@@ -61,6 +64,7 @@ class AMRHistory {
   int shadow_refine_ = 0;
   int shadow_derefine_ = 0;
   bool shadow_flags_captured_ = false;
+  bool last_timestep_clipped_ = false;
   std::vector<amr_history::Location> replay_target_;
   std::string loaded_digest_;
 };

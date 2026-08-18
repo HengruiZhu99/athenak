@@ -76,6 +76,12 @@ bool Compatible(const Header &recorded, const Header &candidate, std::string *er
 bool ValidateTree(const Header &header, std::vector<Location> leaves, std::string *error);
 bool ValidateEvents(const Header &header, const std::vector<Event> &events,
                     std::string *error);
+bool AppendOnlyExtension(const std::vector<Event> &authority,
+                         const std::vector<Event> &extension,
+                         std::string *error);
+bool AuthenticatedBranch(const std::vector<Event> &authority,
+                         const std::vector<Event> &branch,
+                         std::size_t base_event, std::string *error);
 bool DeriveTransition(const Header &header, std::vector<Location> current,
                       std::vector<Location> target, Transition *transition,
                       std::string *error);

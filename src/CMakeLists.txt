@@ -177,6 +177,7 @@ add_executable(
 	    z4c/horizon_dump.cpp
         z4c/tmunu.cpp
         z4c/amr_jump_diagnostic.cpp
+        z4c/chi_parent_provenance.cpp
         z4c/z4c.cpp
         z4c/z4c_adm.cpp
         z4c/z4c_calcrhs.cpp

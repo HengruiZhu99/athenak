@@ -68,6 +68,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   u0("u0 z4c",1,1,1,1,1),
   u1("u1 z4c",1,1,1,1,1),
   u_rhs("u_rhs z4c",1,1,1,1,1),
+  chi_provenance_terms("chi provenance terms",1,1,1,1,1),
   u_telegraph_mu("u_telegraph_mu",1,1,1,1,1),
   coarse_u0("coarse u0 z4c",1,1,1,1,1),
   u_weyl("u_weyl",1,1,1,1,1),
@@ -181,6 +182,12 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
               << ": invalid Z4c AMR jump diagnostic configuration: "
               << error.what() << std::endl;
     std::exit(EXIT_FAILURE);
+  }
+  opt.chi_parent_provenance = ReadChiParentProvenanceConfig(pin);
+  if (opt.chi_parent_provenance.enabled) {
+    Kokkos::realloc(chi_provenance_terms, nmb, n_chi_provenance_terms,
+                    bounds.n3, bounds.n2, bounds.n1);
+    Kokkos::deep_copy(chi_provenance_terms, 0.0);
   }
   // Gauge conditions (default to moving puncture gauge)
   opt.lapse_harmonicf = pin->GetOrAddReal("z4c", "lapse_harmonicf", 1.0);
@@ -397,6 +404,10 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   if (opt.amr_jump_diagnostic.enabled) {
     amr_jump_diagnostic = std::make_unique<AMRJumpDiagnosticRuntime>(
         pmy_pack, opt.amr_jump_diagnostic);
+  }
+  if (opt.chi_parent_provenance.enabled) {
+    chi_parent_provenance = std::make_unique<ChiParentProvenanceRuntime>(
+        pmy_pack, opt.chi_parent_provenance);
   }
 }
 

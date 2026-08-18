@@ -37,8 +37,13 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
   par_for("z4c RK update",DevExeSpace(),
       0,nmb1,0,nvar-1,ks,ke,js,je,is,ie,
   KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
-    u0(m,n,k,j,i) = gam0*u0(m,n,k,j,i) + gam1*u1(m,n,k,j,i) + beta_dt*u_rhs(m,n,k,j,i);
+    u0(m,n,k,j,i) = gam0*u0(m,n,k,j,i) + gam1*u1(m,n,k,j,i) +
+                    beta_dt*u_rhs(m,n,k,j,i);
   });
+  if (chi_parent_provenance != nullptr) {
+    chi_parent_provenance->RecordCheckpoint(
+        ChiProvenanceCheckpoint::s0_after_rk, stage, pbval_u);
+  }
   return TaskStatus::complete;
 }
 } // namespace z4c

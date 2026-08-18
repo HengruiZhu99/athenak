@@ -1,8 +1,13 @@
 #include "mesh/amr_history.hpp"
 
 #include <algorithm>
+#include <cerrno>
+#include <climits>
+#include <cmath>
+#include <cstring>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <sstream>
@@ -54,6 +59,38 @@ AMRHistory::AMRHistory(Mesh *mesh, ParameterInput *pin) : mesh_(mesh), pin_(pin)
   }
   path_ = pin->GetString("mesh_refinement", "amr_history_file");
   if (path_.empty()) Fatal("amr_history_file must not be empty");
+  const bool has_extension_parameter =
+      pin->DoesParameterExist("mesh_refinement", "amr_history_extension_file");
+  const char *extension_environment =
+      std::getenv("ATHENA_AMR_HISTORY_EXTENSION_FILE");
+  const bool has_extension_environment = extension_environment != nullptr;
+  if (has_extension_parameter || has_extension_environment) {
+    if (!replay()) Fatal("amr_history_extension_file is replay-only");
+    const std::string parameter_path = has_extension_parameter
+        ? pin->GetString("mesh_refinement", "amr_history_extension_file") : "";
+    const std::string environment_path = has_extension_environment
+        ? std::string(extension_environment) : "";
+    if (has_extension_parameter && has_extension_environment &&
+        parameter_path != environment_path) {
+      Fatal("amr_history_extension_file parameter/environment mismatch");
+    }
+    extension_path_ = has_extension_parameter ? parameter_path : environment_path;
+    if (extension_path_.empty()) Fatal("amr_history_extension_file must not be empty");
+  }
+  if (const char *branch_base =
+          std::getenv("ATHENA_AMR_HISTORY_BRANCH_BASE_EVENT")) {
+    if (extension_path_.empty()) {
+      Fatal("AMR history branch base requires an extension file");
+    }
+    char *end = nullptr;
+    errno = 0;
+    const long value = std::strtol(branch_base, &end, 10);
+    if (errno != 0 || end == branch_base || *end != '\0' ||
+        value < 0 || value > INT_MAX) {
+      Fatal("ATHENA_AMR_HISTORY_BRANCH_BASE_EVENT is invalid");
+    }
+    extension_branch_base_event_ = static_cast<int>(value);
+  }
   ledger_path_ = record() ? path_ + ".ledger.jsonl"
                           : pin->GetString("job", "basename") + ".amr_history_replay.jsonl";
 }
@@ -151,6 +188,46 @@ void AMRHistory::WriteFreshHistory() {
   AppendEvent(0, 0);
 }
 
+void AMRHistory::LoadAppendOnlyExtension() {
+  std::ifstream input(extension_path_);
+  if (!input) Fatal("cannot open append-only history extension '" + extension_path_ + "'");
+  std::string line, error;
+  amr_history::Header extension_header;
+  if (!std::getline(input, line) ||
+      !amr_history::DecodeHeader(line, &extension_header, &error)) {
+    Fatal("invalid history extension header: " + error);
+  }
+  if (amr_history::EncodeHeader(extension_header) !=
+      amr_history::EncodeHeader(header_)) {
+    Fatal("history extension header differs from authenticated authority header");
+  }
+  std::vector<amr_history::Event> extension;
+  while (std::getline(input, line)) {
+    if (line.empty()) Fatal("blank or truncated history extension record");
+    amr_history::Event event;
+    if (!amr_history::DecodeEvent(line, &event, &error)) {
+      Fatal("invalid history extension event: " + error);
+    }
+    extension.push_back(std::move(event));
+  }
+  if (!input.eof()) Fatal("history extension read failed before EOF");
+  if (!amr_history::ValidateEvents(header_, extension, &error)) {
+    Fatal(error);
+  }
+  if (extension_branch_base_event_ >= 0) {
+    const auto base = static_cast<std::size_t>(extension_branch_base_event_);
+    if (base < last_applied_event_ || base + 1 < next_event_) {
+      Fatal("AMR history branch would alter an already applied replay event");
+    }
+    if (!amr_history::AuthenticatedBranch(events_, extension, base, &error)) {
+      Fatal(error);
+    }
+  } else if (!amr_history::AppendOnlyExtension(events_, extension, &error)) {
+    Fatal(error);
+  }
+  events_ = std::move(extension);
+}
+
 bool AMRHistory::HasRestartCarrier() const {
   return pin_->DoesParameterExist(kRestartBlock, "schema");
 }
@@ -210,6 +287,12 @@ void AMRHistory::Initialize(bool restart) {
       last_applied_event_ = 0;
       next_event_ = 1;
     }
+    if (!extension_path_.empty()) {
+      if (!restart || !HasRestartCarrier()) {
+        Fatal("append-only history extension requires an authenticated replay restart");
+      }
+      LoadAppendOnlyExtension();
+    }
   }
   initialized_ = true;
 }
@@ -221,6 +304,7 @@ void AMRHistory::LimitTimestep() {
   const double candidate_dt = mesh_->dt;
   if (!amr_history::ParseReal(events_[next_event_].time_hex, &next_time) ||
       !amr_history::LimitTimestep(mesh_->time, next_time, &mesh_->dt, &error)) Fatal(error);
+  last_timestep_clipped_ = mesh_->dt != candidate_dt;
   if (mesh_->dt != candidate_dt && global_variable::my_rank == 0) {
     std::cout << "AMR_HISTORY_TIMESTEP_CLIP event=" << next_event_
               << " time_hex=" << amr_history::HexReal(mesh_->time)
@@ -239,6 +323,12 @@ void AMRHistory::CaptureShadowFlags() {
     shadow_derefine_ += mesh_->pmr->refine_flag.h_view(gid) < 0;
   }
   shadow_flags_captured_ = true;
+  if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
+      mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr &&
+      next_event_ < events_.size()) {
+    mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordShadowAMRRequests(
+        next_event_, events_[next_event_].time_hex, CurrentTreeChecksum());
+  }
 }
 
 bool AMRHistory::PrepareReplayFlags() {
@@ -363,7 +453,35 @@ void AMRHistory::AppendLedger(const std::string &action, const amr_history::Even
       << event.leaf_count << ",\"max_level\":" << event.max_level
       << ",\"tree_checksum\":\"" << event.tree_checksum
       << "\",\"ranks\":" << global_variable::nranks
-      << ",\"exact_match\":" << (exact_match ? "true" : "false") << "}\n";
+      << ",\"exact_match\":" << (exact_match ? "true" : "false");
+  if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
+      mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr) {
+    double authority_time = 0.0;
+    if (!amr_history::ParseReal(event.time_hex, &authority_time)) {
+      Fatal("cannot decode authority time for diagnostic replay ledger");
+    }
+    std::uint64_t authority_bits = 0;
+    std::uint64_t actual_bits = 0;
+    static_assert(sizeof(authority_bits) == sizeof(authority_time),
+                  "ULP diagnostic assumes IEEE binary64");
+    std::memcpy(&authority_bits, &authority_time, sizeof(authority_bits));
+    std::memcpy(&actual_bits, &mesh_->time, sizeof(actual_bits));
+    const long long ulps = actual_bits >= authority_bits
+        ? static_cast<long long>(actual_bits - authority_bits)
+        : -static_cast<long long>(authority_bits - actual_bits);
+    out << std::setprecision(17)
+        << ",\"authority_time_hex\":\"" << event.time_hex << "\""
+        << ",\"actual_mesh_time_hex\":\""
+        << amr_history::HexReal(mesh_->time) << "\""
+        << ",\"signed_time_difference\":" << mesh_->time - authority_time
+        << ",\"ulp_difference\":" << ulps
+        << ",\"preceding_timestep_clipped\":"
+        << (last_timestep_clipped_ ? "true" : "false");
+    mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordReplayAlignment(
+        event.index, event.time_hex, amr_history::HexReal(mesh_->time),
+        mesh_->time - authority_time, ulps, last_timestep_clipped_);
+  }
+  out << "}\n";
   out.flush();
   if (!out) Fatal("failed to flush AMR history ledger");
 }
@@ -388,6 +506,9 @@ std::string AMRHistory::CurrentTreeChecksum() const {
 
 void AMRHistory::StoreRestartState(ParameterInput *pin) const {
   if (!active() || !initialized_) return;
+  if (!extension_path_.empty()) {
+    Fatal("restart output is disabled for a diagnostic append-only history extension");
+  }
   pin->SetInteger(kRestartBlock, "schema", 1);
   pin->SetString(kRestartBlock, "mode", record() ? "record" : "replay");
   pin->SetString(kRestartBlock, "history_digest", FileDigest());

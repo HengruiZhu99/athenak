@@ -289,10 +289,16 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
 }
 
 TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
+  TaskStatus status;
   if (pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
-    return Z4cBoundaryRHSImpl<CartoonSO2>(pdriver, stage);
+    status = Z4cBoundaryRHSImpl<CartoonSO2>(pdriver, stage);
+  } else {
+    status = Z4cBoundaryRHSImpl<Cartesian3D>(pdriver, stage);
   }
-  return Z4cBoundaryRHSImpl<Cartesian3D>(pdriver, stage);
+  if (status == TaskStatus::complete && chi_parent_provenance != nullptr) {
+    chi_parent_provenance->AnalyzePreUpdate(pdriver, stage);
+  }
+  return status;
 }
 
 template TaskStatus Z4c::Z4cBoundaryRHSImpl<Cartesian3D>(Driver *, int);

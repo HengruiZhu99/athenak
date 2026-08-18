@@ -395,6 +395,47 @@ bool ValidateEvents(const Header &h, const std::vector<Event> &events, std::stri
   return true;
 }
 
+bool AppendOnlyExtension(const std::vector<Event> &authority,
+                         const std::vector<Event> &extension,
+                         std::string *error) {
+  if (extension.size() <= authority.size()) {
+    *error = "AMR history extension does not append an event";
+    return false;
+  }
+  for (std::size_t index = 0; index < authority.size(); ++index) {
+    if (EncodeEvent(authority[index]) != EncodeEvent(extension[index])) {
+      *error = "AMR history extension changes the authenticated authority prefix";
+      return false;
+    }
+  }
+  return true;
+}
+
+bool AuthenticatedBranch(const std::vector<Event> &authority,
+                         const std::vector<Event> &branch,
+                         std::size_t base_event, std::string *error) {
+  if (base_event >= authority.size()) {
+    *error = "AMR history branch base is outside the authenticated authority";
+    return false;
+  }
+  if (branch.size() <= base_event + 1) {
+    *error = "AMR history branch has no event after its authenticated base";
+    return false;
+  }
+  for (std::size_t index = 0; index <= base_event; ++index) {
+    if (EncodeEvent(authority[index]) != EncodeEvent(branch[index])) {
+      *error = "AMR history branch changes its authenticated authority prefix";
+      return false;
+    }
+  }
+  if (base_event + 1 < authority.size() &&
+      EncodeEvent(authority[base_event + 1]) == EncodeEvent(branch[base_event + 1])) {
+    *error = "AMR history branch does not diverge after its declared base";
+    return false;
+  }
+  return true;
+}
+
 bool DeriveTransition(const Header &h, std::vector<Location> current,
                       std::vector<Location> target, Transition *result, std::string *error) {
   if (!ValidateTree(h, current, error) || !ValidateTree(h, target, error)) return false;

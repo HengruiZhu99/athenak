@@ -174,6 +174,10 @@ TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
   auto &u0 = pmy_pack->pz4c->u0;
   auto &u1 = pmy_pack->pz4c->u1;
 
+  if (chi_parent_provenance != nullptr) {
+    chi_parent_provenance->RecordBeforeCopy(pdrive, stage);
+  }
+
   // hierarchical parallel loop that updates conserved variables to intermediate step
   // using weights and fractional time step appropriate to stages of time-integrator.
   // Important to use vector inner loop for good performance on cpus
@@ -191,6 +195,9 @@ TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
     if (stage == 1) {
       Kokkos::deep_copy(DevExeSpace(), u1, u0);
     }
+  }
+  if (chi_parent_provenance != nullptr) {
+    chi_parent_provenance->RecordAfterCopy(pdrive, stage);
   }
   return TaskStatus::complete;
 }
@@ -282,6 +289,10 @@ TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
 
 TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
   TaskStatus tstat = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
+  if (tstat == TaskStatus::complete && chi_parent_provenance != nullptr) {
+    chi_parent_provenance->RecordCheckpoint(
+        ChiProvenanceCheckpoint::s2_after_receive, stage, pbval_u);
+  }
   return tstat;
 }
 
@@ -351,6 +362,10 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
   if (pmy_pack->pmesh->multilevel) {
     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
   }
+  if (chi_parent_provenance != nullptr) {
+    chi_parent_provenance->RecordCheckpoint(
+        ChiProvenanceCheckpoint::s1_after_restriction, stage, pbval_u);
+  }
   return TaskStatus::complete;
 }
 
@@ -369,6 +384,10 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
     // copy, so FillCoarseInBndryCC deliberately preserves it; generic
     // finite-volume users retain their receiver-local refresh policy.
     pbval_u->FillCoarseInBndryCC(u0, coarse_u0, true);
+    if (chi_parent_provenance != nullptr) {
+      chi_parent_provenance->RecordCheckpoint(
+          ChiProvenanceCheckpoint::s4_before_parent_gate, stage, pbval_u);
+    }
     if (amr_jump_diagnostic != nullptr) {
       amr_jump_diagnostic->RecordSameLevelRefreshShadow();
       amr_jump_diagnostic->RecordT3(
@@ -408,6 +427,10 @@ TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
     if (pmy_pack->pmesh->pgen->user_bcs) {
       (pmy_pack->pmesh->pgen->user_bcs_func)(pmy_pack->pmesh);
     }
+  }
+  if (chi_parent_provenance != nullptr) {
+    chi_parent_provenance->RecordCheckpoint(
+        ChiProvenanceCheckpoint::s3_after_boundary, stage, pbval_u);
   }
   return TaskStatus::complete;
 }

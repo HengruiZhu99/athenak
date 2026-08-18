@@ -112,6 +112,9 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
   const bool collect_rhs_stage_diagnostics =
       opt.rhs_stage_diagnostics && time >= opt.rhs_stage_diagnostics_start_time;
+  const bool collect_chi_provenance =
+      opt.chi_parent_provenance.enabled && time >= opt.chi_parent_provenance.start_time;
+  auto &chi_provenance_terms = pmy_pack->pz4c->chi_provenance_terms;
   DvceArray5D<Real> rhs_stage_terms;
   if (collect_rhs_stage_diagnostics) {
     rhs_stage_terms = DvceArray5D<Real>("z4c rhs stage terms", nmb, 75,
@@ -302,7 +305,16 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
         //
         // Scalars
+        // Keep the production expression byte-for-byte and collect directional
+        // components only as shadows.  The diagnostic must never rebuild Lchi.
         Lchi = derivatives.ScalarAdvective(z4c.beta_u, z4c.chi);
+        if (collect_chi_provenance) {
+          for (int direction = 0; direction < 3; ++direction) {
+            const Real contribution = derivatives.DirectionalScalarAdvective(
+                direction, z4c.beta_u, z4c.chi);
+            chi_provenance_terms(m, chi_adv_rho + direction, k, j, i) = contribution;
+          }
+        }
         LKhat = derivatives.ScalarAdvective(z4c.beta_u, z4c.vKhat);
         LTheta = derivatives.ScalarAdvective(z4c.beta_u, z4c.vTheta);
 
@@ -487,6 +499,13 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
         // Finalize Lchi
         Lchi += (1. / 6.) * opt.chi_psi_power * chi_guarded * dbeta;
+        if (collect_chi_provenance) {
+          const Real chi_lie_divergence_term =
+              (1. / 6.) * opt.chi_psi_power * chi_guarded * dbeta;
+          chi_provenance_terms(m, chi_lie_divergence, k, j, i) =
+              chi_lie_divergence_term;
+          chi_provenance_terms(m, chi_adv_total_production, k, j, i) = Lchi;
+        }
 
         // Finalize Lg_dd and LA_dd
         for (int a = 0; a < 3; ++a)
@@ -519,8 +538,16 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
           rhs.vKhat(m, k, j, i) +=
               4. * M_PI * z4c.alpha(m, k, j, i) * (S + tmunu.E(m, k, j, i));
         }
-        rhs.chi(m, k, j, i) = Lchi - (1. / 6.) * opt.chi_psi_power * chi_guarded *
-                                         z4c.alpha(m, k, j, i) * K;
+        rhs.chi(m, k, j, i) =
+            Lchi - (1. / 6.) * opt.chi_psi_power * chi_guarded *
+                       z4c.alpha(m, k, j, i) * K;
+        if (collect_chi_provenance) {
+          const Real chi_curvature_term = rhs.chi(m, k, j, i) - Lchi;
+          chi_provenance_terms(m, chi_curvature_source, k, j, i) =
+              chi_curvature_term;
+          chi_provenance_terms(m, chi_rhs_before_ko, k, j, i) =
+              rhs.chi(m, k, j, i);
+        }
         rhs.vTheta(m, k, j, i) =
             LTheta +
             z4c.alpha(m, k, j, i) *
@@ -910,8 +937,25 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         idx, size.d_view, nx1, is, m, k, j, i);
     // Keep the established multiply-then-accumulate order for Cartesian roundoff.
     for (int direction = 0; direction < 3; ++direction) {
-      u_rhs(m,n,k,j,i) +=
-          derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
+      if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
+        const Real rhs_before = u_rhs(m,n,k,j,i);
+        u_rhs(m,n,k,j,i) +=
+            derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
+        const Real contribution = u_rhs(m,n,k,j,i) - rhs_before;
+        const int term = direction == 0 ? chi_ko_rho
+                         : (direction == 1 ? chi_ko_z : chi_ko_y);
+        const int cumulative = direction == 0 ? chi_rhs_after_ko_rho
+                               : (direction == 1 ? chi_rhs_after_ko_z
+                                                 : chi_rhs_after_ko_y);
+        chi_provenance_terms(m, term, k, j, i) = contribution;
+        chi_provenance_terms(m, cumulative, k, j, i) = u_rhs(m,n,k,j,i);
+      } else {
+        u_rhs(m,n,k,j,i) +=
+            derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
+      }
+    }
+    if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
+      chi_provenance_terms(m, chi_rhs_after_ko, k, j, i) = u_rhs(m,n,k,j,i);
     }
   });
 
