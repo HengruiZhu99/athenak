@@ -25,6 +25,9 @@
 namespace {
 Real initial_rhs_linf = 0.0;
 Real initial_reference_ricci_linf = 0.0;
+Real initial_frame_ricci_linf = 0.0;
+Real initial_spin_antisymmetry_linf = 0.0;
+Real initial_structure_antisymmetry_linf = 0.0;
 int initial_rhs_component = -1;
 Real initial_rhs_radius = -1.0;
 
@@ -81,11 +84,16 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
     FILE *file = std::fopen(filename.c_str(), "w");
     if (file == nullptr) std::exit(EXIT_FAILURE);
     std::fprintf(file, "# nx1 cycles time field_Linf constraint_Linf "
-                       "rhs_estimate reference_Ricci_Linf rhs_component rhs_radius\n");
+                       "rhs_estimate coordinate_reference_Ricci_Linf "
+                       "frame_reference_Ricci_Linf spin_antisymmetry_Linf "
+                       "structure_antisymmetry_Linf rhs_component rhs_radius\n");
     const Real rhs_estimate = initial_rhs_linf;
-    std::fprintf(file, "%d %d %.17e %.17e %.17e %.17e %.17e %d %.17e\n",
+    std::fprintf(file, "%d %d %.17e %.17e %.17e %.17e %.17e %.17e %.17e "
+                       "%.17e %d %.17e\n",
                  mesh->mesh_indcs.nx1, mesh->ncycle, mesh->time, field_linf,
                  constraint_linf, rhs_estimate, initial_reference_ricci_linf,
+                 initial_frame_ricci_linf, initial_spin_antisymmetry_linf,
+                 initial_structure_antisymmetry_linf,
                  initial_rhs_component, initial_rhs_radius);
     std::fclose(file);
     std::cout << "reference-GH stationary trumpet: field Linf=" << field_linf
@@ -234,17 +242,104 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *, const bool resta
           }
         }
       }, Kokkos::Max<Real>(initial_reference_ricci_linf));
+  Kokkos::parallel_reduce(
+      "ref_gh stationary frame reference audits", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        const ref_gh::ReferenceGeometry reference = ref_gh::GetReferenceGeometry(
+            1, table, mass, cx, cy, cz, 0.0, x, y, z);
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            maximum = fmax(maximum, Kokkos::abs(reference.ricci_frame[A][B]));
+          }
+        }
+      }, Kokkos::Max<Real>(initial_frame_ricci_linf));
+  Kokkos::parallel_reduce(
+      "ref_gh stationary spin antisymmetry", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const ref_gh::ReferenceGeometry reference = ref_gh::GetReferenceGeometry(
+            1, table, mass, cx, cy, cz, 0.0,
+            CellCenterX(i - indcs.is, indcs.nx1, size.d_view(m).x1min,
+                        size.d_view(m).x1max),
+            CellCenterX(j - indcs.js, indcs.nx2, size.d_view(m).x2min,
+                        size.d_view(m).x2max),
+            CellCenterX(k - indcs.ks, indcs.nx3, size.d_view(m).x3min,
+                        size.d_view(m).x3max));
+        for (int A = 0; A < 4; ++A) {
+          const Real eta_A = (A == 0) ? -1.0 : 1.0;
+          for (int B = 0; B < 4; ++B) {
+            const Real eta_B = (B == 0) ? -1.0 : 1.0;
+            for (int C = 0; C < 4; ++C) {
+              maximum = fmax(maximum, Kokkos::abs(
+                  eta_A*reference.spin[A][B][C]
+                  + eta_B*reference.spin[B][A][C]));
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(initial_spin_antisymmetry_linf));
+  Kokkos::parallel_reduce(
+      "ref_gh stationary structure antisymmetry", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const ref_gh::ReferenceGeometry reference = ref_gh::GetReferenceGeometry(
+            1, table, mass, cx, cy, cz, 0.0,
+            CellCenterX(i - indcs.is, indcs.nx1, size.d_view(m).x1min,
+                        size.d_view(m).x1max),
+            CellCenterX(j - indcs.js, indcs.nx2, size.d_view(m).x2min,
+                        size.d_view(m).x2max),
+            CellCenterX(k - indcs.ks, indcs.nx3, size.d_view(m).x3min,
+                        size.d_view(m).x3max));
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            for (int C = 0; C < 4; ++C) {
+              maximum = fmax(maximum, Kokkos::abs(
+                  reference.structure4[A][B][C]
+                  + reference.structure4[A][C][B]));
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(initial_structure_antisymmetry_linf));
 #if MPI_PARALLEL_ENABLED
   MPI_Allreduce(MPI_IN_PLACE, &initial_rhs_linf, 1, MPI_ATHENA_REAL, MPI_MAX,
                 MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &initial_reference_ricci_linf, 1, MPI_ATHENA_REAL,
                 MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &initial_frame_ricci_linf, 1, MPI_ATHENA_REAL,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &initial_spin_antisymmetry_linf, 1, MPI_ATHENA_REAL,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &initial_structure_antisymmetry_linf, 1,
+                MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
 #endif
   if (global_variable::my_rank == 0) {
     std::cout << "reference-GH stationary initial RHS Linf = "
               << initial_rhs_linf << ", component=" << initial_rhs_component
               << ", radius=" << initial_rhs_radius
-              << ", reference Ricci Linf=" << initial_reference_ricci_linf
+              << ", coordinate reference Ricci Linf="
+              << initial_reference_ricci_linf
+              << ", frame reference Ricci Linf=" << initial_frame_ricci_linf
               << std::endl;
   }
   if (!std::isfinite(initial_rhs_linf) || initial_rhs_linf > 1.0e-6) {
