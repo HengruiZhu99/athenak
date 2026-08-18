@@ -16,6 +16,7 @@
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "ref_gh/ref_gh.hpp"
+#include "ref_gh/ref_gh_geometry.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -23,6 +24,9 @@
 
 namespace {
 Real initial_rhs_linf = 0.0;
+Real initial_reference_ricci_linf = 0.0;
+int initial_rhs_component = -1;
+Real initial_rhs_radius = -1.0;
 
 void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
   auto *pack = mesh->pmb_pack;
@@ -76,11 +80,13 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
     const std::string filename = pin->GetString("job", "basename") + "-trumpet.dat";
     FILE *file = std::fopen(filename.c_str(), "w");
     if (file == nullptr) std::exit(EXIT_FAILURE);
-    std::fprintf(file, "# nx1 cycles time field_Linf constraint_Linf rhs_estimate\n");
+    std::fprintf(file, "# nx1 cycles time field_Linf constraint_Linf "
+                       "rhs_estimate reference_Ricci_Linf rhs_component rhs_radius\n");
     const Real rhs_estimate = initial_rhs_linf;
-    std::fprintf(file, "%d %d %.17e %.17e %.17e %.17e\n",
+    std::fprintf(file, "%d %d %.17e %.17e %.17e %.17e %.17e %d %.17e\n",
                  mesh->mesh_indcs.nx1, mesh->ncycle, mesh->time, field_linf,
-                 constraint_linf, rhs_estimate);
+                 constraint_linf, rhs_estimate, initial_reference_ricci_linf,
+                 initial_rhs_component, initial_rhs_radius);
     std::fclose(file);
     std::cout << "reference-GH stationary trumpet: field Linf=" << field_linf
               << ", constraint Linf=" << constraint_linf
@@ -157,25 +163,89 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *, const bool resta
   }
   const auto rhs = pack->prefgh->u_rhs;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  using MaxLoc = Kokkos::MaxLoc<Real, int>;
+  MaxLoc::value_type rhs_maximum;
   Kokkos::parallel_reduce(
       "ref_gh stationary initial RHS", Kokkos::RangePolicy<>(DevExeSpace(),
       0, pack->nmb_thispack*ref_gh::nvar*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+      KOKKOS_LAMBDA(const int idx, MaxLoc::value_type &maximum) {
         int work = idx;
         const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
         const int k = work % indcs.nx3 + indcs.ks; work /= indcs.nx3;
         const int n = work % ref_gh::nvar;
         const int m = work/ref_gh::nvar;
-        maximum = fmax(maximum, Kokkos::abs(rhs(m, n, k, j, i)));
-      }, Kokkos::Max<Real>(initial_rhs_linf));
+        const Real value = Kokkos::abs(rhs(m, n, k, j, i));
+        if (value > maximum.val) {
+          maximum.val = value;
+          maximum.loc = idx;
+        }
+      }, MaxLoc(rhs_maximum));
+  initial_rhs_linf = rhs_maximum.val;
+  int rhs_work = rhs_maximum.loc;
+  const int rhs_i = rhs_work % indcs.nx1 + indcs.is; rhs_work /= indcs.nx1;
+  const int rhs_j = rhs_work % indcs.nx2 + indcs.js; rhs_work /= indcs.nx2;
+  const int rhs_k = rhs_work % indcs.nx3 + indcs.ks; rhs_work /= indcs.nx3;
+  initial_rhs_component = rhs_work % ref_gh::nvar;
+  const int rhs_m = rhs_work/ref_gh::nvar;
+  const auto &rhs_block = size.h_view(rhs_m);
+  const Real rhs_x = CellCenterX(rhs_i - indcs.is, indcs.nx1,
+                                 rhs_block.x1min, rhs_block.x1max);
+  const Real rhs_y = CellCenterX(rhs_j - indcs.js, indcs.nx2,
+                                 rhs_block.x2min, rhs_block.x2max);
+  const Real rhs_z = CellCenterX(rhs_k - indcs.ks, indcs.nx3,
+                                 rhs_block.x3min, rhs_block.x3max);
+  initial_rhs_radius = std::sqrt((rhs_x-cx)*(rhs_x-cx) + (rhs_y-cy)*(rhs_y-cy)
+                                 + (rhs_z-cz)*(rhs_z-cz));
+
+  const auto table = pack->prefgh->reference_table;
+  const Real mass = pack->prefgh->opt.reference_mass;
+  Kokkos::parallel_reduce(
+      "ref_gh stationary reference Ricci", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        const ref_gh::ReferenceGeometry reference = ref_gh::GetReferenceGeometry(
+            1, table, mass, cx, cy, cz, 0.0, x, y, z);
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            Real ricci = 0.0;
+            for (int c = 0; c < 4; ++c) {
+              ricci += reference.d_christoffel[c][c][a][b]
+                       - reference.d_christoffel[b][c][a][c];
+              for (int d = 0; d < 4; ++d) {
+                ricci += reference.christoffel[c][c][d]
+                           *reference.christoffel[d][a][b]
+                         - reference.christoffel[c][b][d]
+                           *reference.christoffel[d][a][c];
+              }
+            }
+            maximum = fmax(maximum, Kokkos::abs(ricci));
+          }
+        }
+      }, Kokkos::Max<Real>(initial_reference_ricci_linf));
 #if MPI_PARALLEL_ENABLED
   MPI_Allreduce(MPI_IN_PLACE, &initial_rhs_linf, 1, MPI_ATHENA_REAL, MPI_MAX,
                 MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &initial_reference_ricci_linf, 1, MPI_ATHENA_REAL,
+                MPI_MAX, MPI_COMM_WORLD);
 #endif
   if (global_variable::my_rank == 0) {
     std::cout << "reference-GH stationary initial RHS Linf = "
-              << initial_rhs_linf << std::endl;
+              << initial_rhs_linf << ", component=" << initial_rhs_component
+              << ", radius=" << initial_rhs_radius
+              << ", reference Ricci Linf=" << initial_reference_ricci_linf
+              << std::endl;
   }
   if (!std::isfinite(initial_rhs_linf) || initial_rhs_linf > 1.0e-6) {
     std::cout << "### FATAL ERROR: stationary reference RHS exceeds 1e-6."
