@@ -1,40 +1,39 @@
-# Corrected FO-GH side of the identical-grid t=32M puncture comparison.
+# Corrected FO-GH side of the identical-grid t=20M puncture comparison.
 # The root grid is 4^3 MeshBlocks. Override both mesh/nx* and meshblock/nx*
-# with 32/8, 48/12, or 64/16 to obtain dx_min=1/16, 1/24, or 1/32.
+# with 128/32, 192/48, or 256/64 to obtain dx_min=1/16, 1/24, or 1/32.
 
 <job>
 basename = fo_gh_puncture_compare
 
 <mesh>
 nghost = 4
-nx1 = 32
-x1min = -128.0
-x1max = 128.0
+nx1 = 128
+x1min = -32.0
+x1max = 32.0
 ix1_bc = outflow
 ox1_bc = outflow
-nx2 = 32
-x2min = -128.0
-x2max = 128.0
+nx2 = 128
+x2min = -32.0
+x2max = 32.0
 ix2_bc = outflow
 ox2_bc = outflow
-nx3 = 32
-x3min = -128.0
-x3max = 128.0
+nx3 = 128
+x3min = -32.0
+x3max = 32.0
 ix3_bc = outflow
 ox3_bc = outflow
 
 <meshblock>
-nx1 = 8
-nx2 = 8
-nx3 = 8
+nx1 = 32
+nx2 = 32
+nx3 = 32
 
 <mesh_refinement>
 refinement = static
 
-# AthenaK's 2:1 tree balance generates the requested outer interfaces from
-# this deepest fixed cube. It is the same logical tree for all resolutions.
+# The same three-level fixed-refinement tree is used at every resolution.
 <refined_region1>
-level = 7
+level = 3
 x1min = -2.0
 x1max = 2.0
 x2min = -2.0
@@ -47,7 +46,7 @@ evolution = dynamic
 integrator = rk4
 cfl_number = 0.025
 nlim = -1
-tlim = 32.0
+tlim = 20.0
 ndiag = 10
 
 <fo_gh>

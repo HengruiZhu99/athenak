@@ -7,22 +7,24 @@ long-stability qualification claim.  The working branch is
 `codex/fo-gh-puncture-driver-20260817`, based on
 `24dd527514a3b031d151ca8d3f2679e998a91b3d`.
 
-## Pending 32M identical-grid comparison
+## Pending revised 20M identical-grid comparison
 
-The current campaign specification requests three FO-GH and three Z4c runs to
-`t=32M` on a fixed `[-128,128]^3` octree.  Diagnostic plumbing and exact inputs
-are now under local validation.  The common ADM path uses one fourth-order
-AthenaK stencil for both formulations, no evolving lapse/chi mask, fixed radial
-regions, and fixed shells around every refinement interface.  Native masked
-formulation constraints remain additional outputs.
+The revised campaign requests three FO-GH and three Z4c runs through `t=20M`
+on a fixed `[-32,32]^3` octree, using 32, 48, and 64 active cells per
+MeshBlock.  Both controlling inputs reproduce the authoritative 232-block
+tree: 56, 56, 56, and 64 leaf blocks on physical levels 0--3.  Their leaf
+envelopes are `[-32,32]^3`, `[-16,16]^3`, `[-8,8]^3`, and `[-4,4]^3`, so the
+finest level covers the requested `[-2,2]^3` cube.  The finest spacings are
+`1/16`, `1/24`, and `1/32 M`.  Compact evidence is in
+`docs/fo_gh_artifacts/local_20m_campaign_preflight/README.md`.
 
-The requested octree produces 3,200 leaf MeshBlocks.  Current-source allocation
-lower bounds show that the N=12 and N=16 FO-GH cases require at least 46.84 and
-79.98 GiB, respectively, before boundary buffers and runtime workspaces.  They
-cannot fit on the requested single 40-GB A100.  Full calculations and local
-evidence are recorded in
-`docs/fo_gh_artifacts/local_32m_campaign_preflight/README.md`.  No 32M run or
-new GPU qualification is claimed while the resource conflict is unresolved.
+The common ADM path uses one fourth-order AthenaK stencil for both
+formulations, no evolving lapse/chi mask, fixed radial regions, and fixed
+shells around every refinement interface.  Native FO-GH alpha-masked and Z4c
+chi-masked histories remain secondary outputs.  Checkpoints are requested
+every `2M`, and history/slice output every `0.2M`.  No stability claim beyond
+`20M` is permitted.  The previous 3,200-block `[-128,128]^3` run was stopped
+before `t=2M` when this revised campaign superseded it.
 
 ## Scope used for this campaign
 
