@@ -117,14 +117,14 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     auto host_table = Kokkos::create_mirror_view(reference_table);
     for (int i = 0; i < kTrumpetTableSize; ++i) {
       host_table(kProfileAlpha, i) = kTrumpetAlpha[i];
-      host_table(kProfileAlphaD1, i) = kTrumpetAlphaD1[i];
-      host_table(kProfileAlphaD2, i) = kTrumpetAlphaD2[i];
-      host_table(kProfilePsi2, i) = kTrumpetPsi2[i];
-      host_table(kProfilePsi2D1, i) = kTrumpetPsi2D1[i];
-      host_table(kProfilePsi2D2, i) = kTrumpetPsi2D2[i];
+      host_table(kProfileAlphaDy, i) = kTrumpetAlphaDy[i];
+      host_table(kProfileAlphaDyy, i) = kTrumpetAlphaDyy[i];
+      host_table(kProfileArealRadius, i) = kTrumpetArealRadius[i];
+      host_table(kProfileArealRadiusDy, i) = kTrumpetArealRadiusDy[i];
+      host_table(kProfileArealRadiusDyy, i) = kTrumpetArealRadiusDyy[i];
       host_table(kProfileShiftQ, i) = kTrumpetShiftQ[i];
-      host_table(kProfileShiftQD1, i) = kTrumpetShiftQD1[i];
-      host_table(kProfileShiftQD2, i) = kTrumpetShiftQD2[i];
+      host_table(kProfileShiftQDy, i) = kTrumpetShiftQDy[i];
+      host_table(kProfileShiftQDyy, i) = kTrumpetShiftQDyy[i];
     }
     Kokkos::deep_copy(reference_table, host_table);
   }
