@@ -14,7 +14,7 @@ def require(condition, message):
 
 
 def run(command, cwd, log_name="run.log"):
-    result = subprocess.run(command, cwd=cwd, text=True, stdout=subprocess.PIPE,
+    result = subprocess.run(command, cwd=cwd, universal_newlines=True, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, check=False)
     (cwd / log_name).write_text(result.stdout, encoding="utf-8")
     (cwd / (log_name + ".err")).write_text(result.stderr, encoding="utf-8")
@@ -24,7 +24,7 @@ def run(command, cwd, log_name="run.log"):
 
 
 def run_fails(command, cwd, expected, log_name="failed.log"):
-    result = subprocess.run(command, cwd=cwd, text=True, stdout=subprocess.PIPE,
+    result = subprocess.run(command, cwd=cwd, universal_newlines=True, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, check=False)
     (cwd / log_name).write_text(result.stdout, encoding="utf-8")
     (cwd / (log_name + ".err")).write_text(result.stderr, encoding="utf-8")
