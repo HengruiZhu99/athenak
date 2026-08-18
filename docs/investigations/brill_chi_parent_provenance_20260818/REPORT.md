@@ -79,6 +79,14 @@ an interface-contaminated RHS stencil, or a timestep/stage stability failure.
   `b4a5681c23310af12f2192faadc78a01fb12a1713fc6ab7707217be637d1a746`
 - Authenticated restart SHA256:
   `2e2e8f7febd0d4fbb204f172df149f9295de6aa66097ef3c9f19048aa29a20e9`
+- N128 authority-history SHA256:
+  `d0e1289757bd8f5b6510ca8a7e8b8c5c42bec54f5f08480f607abc866af57555`
+- Base input SHA256:
+  `edced480bbd934347aa80152dda4c164c4b6fd59c2a7abe764ac990983004791`
+- Brill coefficient payload SHA256:
+  `ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b`
+- GPU binding: verified rank 0 on `NVIDIA A100-SXM4-80GB`, UUID
+  `GPU-409efa6b-7727-9c67-1201-4f69a221d832`; the exact JSON is preserved.
 - Remote evidence root:
   `/pscratch/sd/h/hzhu/axisymmetric-cartoon-chi-parent-provenance-ac75c8d3-v1-20260818`
 
