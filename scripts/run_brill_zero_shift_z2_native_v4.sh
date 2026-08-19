@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root=/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-shift-controls-sourcecompat-v4-20260818
+source_root=${root}/source/athenak
+build_root=${root}/build/athena-cuda
+run=${root}/run/arm-zero-shift-native
+evidence=${root}/evidence/z2-native
+input=${source_root}/docs/investigations/brill_zero_shift_advection_controls_20260818/arm_zero_shift.athinput
+coeff=${root}/input/brill_global_48x32.coefficients
+profile=/pscratch/sd/h/hzhu/collapse-critical-perlmutter/workflow/profiles/perlmutter-a100.sh
+python_bin=/global/common/software/nersc/pe/conda-envs/24.1.0/python-3.11/nersc-python/bin/python3
+wrapper=${source_root}/tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py
+
+test -n "${SLURM_JOB_ID:-}"
+test "${SLURM_NTASKS:-}" = 1
+test "${SLURM_GPUS:-}" = 1
+scontrol show job "${SLURM_JOB_ID}" -o | grep -E 'QOS=(gpu_)?shared_interactive' >/dev/null
+test -z "$(git -C "${source_root}" status --porcelain=v1)"
+test "$(git -C "${source_root}" rev-parse HEAD)" = \
+  "$(git -C "${source_root}" rev-parse '@{upstream}')"
+test "$(sha256sum "${coeff}" | awk '{print $1}')" = ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b
+test -x "${build_root}/src/athena" && test ! -e "${run}"
+mkdir -p "${evidence}" "${run}/bindings"
+
+finish() {
+  status=$?
+  trap - EXIT
+  set +e
+  printf '%s\n' "${status}" > "${evidence}/orchestration-status.txt"
+  git -C "${source_root}" status --porcelain=v1 > "${evidence}/source-status.final"
+  find "${run}" "${evidence}" -type f ! -name terminal.sha256 -print0 |
+    sort -z | xargs -0 sha256sum > "${evidence}/terminal.sha256"
+  exit "${status}"
+}
+trap finish EXIT
+
+export COLLAPSE_ROOT=${root}
+source "${profile}"
+export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
+export MPICH_GPU_SUPPORT_ENABLED=1 MPICH_GPU_IPC_ENABLED=0
+export MPICH_OFI_NIC_POLICY=GPU
+env | sort > "${evidence}/environment.txt"
+git -C "${source_root}" rev-parse HEAD 'HEAD^{tree}' > "${evidence}/source-identity.txt"
+scontrol show job "${SLURM_JOB_ID}" > "${evidence}/slurm-job.txt"
+scontrol show node "${SLURM_NODELIST}" -o > "${evidence}/node.txt"
+nvidia-smi -L > "${evidence}/nvidia-smi-L.txt"
+sha256sum "${build_root}/src/athena" "${build_root}/CMakeCache.txt" > "${evidence}/build-products.sha256"
+
+command=(srun --ntasks=1 --cpus-per-task=32 --gpus-per-task=1 --gpu-bind=single:1
+  "${python_bin}" "${wrapper}" --evidence-dir "${run}/bindings" --require-cuda --
+  "${build_root}/src/athena" -i "${input}" -d "${run}"
+  job/basename=arm_zero_shift_native
+  mesh_refinement/amr_history_mode=off
+  mesh_refinement/amr_history_file=unused.jsonl
+  problem/brill_global_coefficients_file="${coeff}"
+  problem/constraint_summary_file=arm-zero-shift-native-constraints.dat
+  z4c/chi_parent_provenance_output=zero_shift_native_diagnostic)
+printf '%q ' "${command[@]}" > "${run}/command.txt"
+printf '\n' >> "${run}/command.txt"
+status=0
+(cd "${run}" && "${command[@]}") > "${run}/run.log" 2>&1 || status=$?
+printf '%s\n' "${status}" > "${run}/exit-status.txt"
+test "${status}" = 0 || test "${status}" = 1
+test -s "${run}/arm_zero_shift_native.z4c.user.hst"
+test -s "${run}/shift_invariant_check.csv"
+awk -F, 'NR>1 && $4 != 0 {exit 1}' "${run}/shift_invariant_check.csv"
+exit "${status}"
