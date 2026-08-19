@@ -104,7 +104,7 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
 
 }  // namespace
 
-void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *, const bool restart) {
+void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool restart) {
   pgen_final_func = &CheckRefGhStationaryTrumpet;
   if (restart) return;
   auto *pack = pmy_mesh_->pmb_pack;
@@ -265,6 +265,9 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *, const bool resta
           }
         }
       }, Kokkos::Max<Real>(initial_frame_ricci_linf));
+  const bool full_reference_audit =
+      pin->GetOrAddBoolean("problem", "full_reference_audit", false);
+  if (full_reference_audit) {
   Kokkos::parallel_reduce(
       "ref_gh stationary spin antisymmetry", Kokkos::RangePolicy<>(DevExeSpace(),
       0, pack->nmb_thispack*ncells),
@@ -321,6 +324,10 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *, const bool resta
           }
         }
       }, Kokkos::Max<Real>(initial_structure_antisymmetry_linf));
+  } else {
+    initial_spin_antisymmetry_linf = NAN;
+    initial_structure_antisymmetry_linf = NAN;
+  }
 #if MPI_PARALLEL_ENABLED
   MPI_Allreduce(MPI_IN_PLACE, &initial_rhs_linf, 1, MPI_ATHENA_REAL, MPI_MAX,
                 MPI_COMM_WORLD);
