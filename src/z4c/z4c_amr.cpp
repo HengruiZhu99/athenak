@@ -5,7 +5,10 @@
 //========================================================================================
 
 #include <algorithm>
+#include <array>
 #include <cstdio>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -15,8 +18,10 @@
 #include "athena.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/nghbr_index.hpp"
 #include "parameter_input.hpp"
 #include "z4c/compact_object_tracker.hpp"
+#include "z4c/amr_shadow_sensor.hpp"
 #include "z4c/z4c.hpp"
 
 #define SQ(X) ((X)*(X))
@@ -53,6 +58,8 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
                 << dchi_derefine_factor << std::endl;
       std::exit(EXIT_FAILURE);
     }
+    dchi_shadow_nyquist =
+        pin->GetOrAddBoolean("z4c_amr", "dchi_shadow_nyquist", false);
   } else {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
               << __LINE__ << std::endl;
@@ -246,6 +253,8 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
   auto root_lev = pmesh->root_level;
   auto max_ref_lev = this->max_ref_lev;
 
+  if (dchi_shadow_nyquist) WriteDchiShadow(pmbp);
+
   par_for_outer(
     "Z4c_AMR::DchiMax", DevExeSpace(), 0, 0, 0, (nmb - 1),
     KOKKOS_LAMBDA(TeamMember_t tmember, const int m) {
@@ -294,6 +303,75 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
 
   refine_flag.template modify<HostMemSpace>();
   refine_flag.template sync<DevExeSpace>();
+}
+
+void Z4c_AMR::WriteDchiShadow(MeshBlockPack *pmbp) {
+  Mesh *pmesh = pmbp->pmesh;
+  auto &indcs = pmesh->mb_indcs;
+  const int nmb = pmbp->nmb_thispack;
+  const int mbs = pmesh->gids_eachrank[global_variable::my_rank];
+  constexpr int kCategories = 3;  // interior, active-edge, coarse-fine-adjacent block
+  DvceArray3D<Real> maximum("Z4c dchi shadow maxima", nmb, kCategories, Z4c::nz4c);
+  DvceArray1D<int> coarse_fine("Z4c dchi shadow coarse-fine", nmb);
+  Kokkos::deep_copy(maximum, 0.0);
+  auto coarse_fine_host = Kokkos::create_mirror_view(coarse_fine);
+  auto &neighbors = pmbp->pmb->nghbr.h_view;
+  auto &levels = pmbp->pmb->mb_lev.h_view;
+  for (int m = 0; m < nmb; ++m) {
+    bool adjacent = false;
+    for (int ox2 = -1; ox2 <= 1; ++ox2) {
+      for (int ox1 = -1; ox1 <= 1; ++ox1) {
+        if (ox1 == 0 && ox2 == 0) continue;
+        for (int child = 0; child < 2; ++child) {
+          const auto neighbor = neighbors(m, NeighborIndex(ox1, ox2, 0, child, 0));
+          adjacent = adjacent || (neighbor.gid >= 0 && neighbor.lev != levels(m));
+        }
+      }
+    }
+    coarse_fine_host(m) = adjacent ? 1 : 0;
+  }
+  Kokkos::deep_copy(coarse_fine, coarse_fine_host);
+  const auto u0 = pmbp->pz4c->u0;
+  const int ni = indcs.nx1;
+  const int nj = indcs.nx2;
+  par_for("Z4c_AMR::DchiShadow", DevExeSpace(), 0, nmb - 1, indcs.ks + 0,
+          indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+          KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+            const bool edge = (i - indcs.is < 2 || indcs.ie - i < 2 ||
+                               j - indcs.js < 2 || indcs.je - j < 2);
+            for (int v = 0; v < Z4c::nz4c; ++v) {
+              const Real value = FourthDifferenceShadow2D(
+                  u0(m, v, k, j, i - 2), u0(m, v, k, j, i - 1),
+                  u0(m, v, k, j, i), u0(m, v, k, j, i + 1),
+                  u0(m, v, k, j, i + 2), u0(m, v, k, j - 2, i),
+                  u0(m, v, k, j - 1, i), u0(m, v, k, j + 1, i),
+                  u0(m, v, k, j + 2, i));
+              if (!edge) Kokkos::atomic_max(&maximum(m, 0, v), value);
+              if (edge) Kokkos::atomic_max(&maximum(m, 1, v), value);
+              if (coarse_fine(m) != 0) Kokkos::atomic_max(&maximum(m, 2, v), value);
+            }
+          });
+  const auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), maximum);
+  std::ostringstream name;
+  name << "z4c_amr_shadow.rank" << std::setw(4) << std::setfill('0')
+       << global_variable::my_rank << ".csv";
+  const bool first = !std::ifstream(name.str()).good();
+  std::ofstream output(name.str(), std::ios::app);
+  if (!output) Kokkos::abort("cannot open Z4c AMR shadow diagnostic");
+  if (first) output << "cycle,time,gid,level,region,component,eta4\n";
+  constexpr std::array<const char *, kCategories> labels = {
+      "clean_interior", "block_edge", "coarse_fine_adjacent_block"};
+  for (int m = 0; m < nmb; ++m) {
+    const auto &location = pmesh->lloc_eachmb[m + mbs];
+    for (int category = 0; category < kCategories; ++category) {
+      for (int v = 0; v < Z4c::nz4c; ++v) {
+        output << pmesh->ncycle << ',' << std::setprecision(17) << pmesh->time << ','
+               << (m + mbs) << ',' << location.level << ',' << labels[category] << ','
+               << Z4c::Z4c_names[v] << ',' << host(m, category, v) << '\n';
+      }
+    }
+  }
+  if (!output) Kokkos::abort("cannot write Z4c AMR shadow diagnostic");
 }
 
 // Enforce some minimum resolution within a certain spherical region

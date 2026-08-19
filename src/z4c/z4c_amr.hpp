@@ -51,6 +51,7 @@ class Z4c_AMR {
   void RefineChiMin(MeshBlockPack *pmbp);       // Refine based on min{chi}
   void RefineDchiMax(MeshBlockPack *pmbp);      // Refine based on max{dchi}
   void RefineRadii(MeshBlockPack *pmbp);        // Refine based on the radii
+  void WriteDchiShadow(MeshBlockPack *pmbp);    // Diagnostic-only Nyquist sensor
 
   RefinementMethod method;
 
@@ -61,6 +62,7 @@ class Z4c_AMR {
   Real chi_thresh;     // chi threshold for chi refinement method
   Real dchi_thresh;    // dchi threshold for dchi refinement method
   Real dchi_derefine_factor = 0.25;  // derefine below this fraction of dchi threshold
+  bool dchi_shadow_nyquist = false;  // default-off; never changes refinement flags
   int max_ref_lev;   // maximum level of refinement for chi and dchi
 };
 
