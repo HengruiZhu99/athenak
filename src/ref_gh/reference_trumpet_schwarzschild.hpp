@@ -175,6 +175,84 @@ struct TrumpetSchwarzschildReference {
   Real mass;
   Real center[3];  // NOLINT(runtime/arrays)
 
+  // The stationary n=2 trumpet is exactly Schwarzschild.  In its Eulerian
+  // orthonormal frame the magnetic Weyl part vanishes and the electric part is
+  // E_IJ=M/R^3(delta_IJ-3 n_I n_J), where R is areal radius.  Evaluating the
+  // full Cartan curvature from a coordinate 2-jet is a valid generic route,
+  // but its Ricci trace loses several binary64 digits near the isotropic
+  // puncture.  This analytic vacuum tensor is the prescribed trumpet
+  // curvature itself, not a background-source subtraction or a projection of
+  // an approximate Riemann tensor.  It retains all Weyl components needed by
+  // the covariant source for perturbations away from Psi=eta.
+  KOKKOS_INLINE_FUNCTION
+  void SetExactVacuumFrameRiemann(ReferenceGeometry &reference,
+                                  const RadialProfile &areal,
+                                  const Real displacement[3],
+                                  const Real radius) const {
+    Real electric[3][3];  // NOLINT(runtime/arrays)
+    const Real inverse_areal = 1.0/areal.value;
+    const Real curvature_scale = inverse_areal*inverse_areal*inverse_areal
+                                 /(mass*mass);
+    for (int I = 0; I < 3; ++I) {
+      const Real n_I = displacement[I]/radius;
+      for (int J = 0; J < 3; ++J) {
+        const Real n_J = displacement[J]/radius;
+        electric[I][J] = curvature_scale*((I == J) ? 1.0 : 0.0)
+                         - 3.0*curvature_scale*n_I*n_J;
+      }
+    }
+
+    Real lower[4][4][4][4];  // NOLINT(runtime/arrays)
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        reference.ricci_frame[A][B] = 0.0;
+        for (int C = 0; C < 4; ++C) {
+          for (int D = 0; D < 4; ++D) lower[A][B][C][D] = 0.0;
+        }
+      }
+    }
+    for (int I = 0; I < 3; ++I) {
+      for (int J = 0; J < 3; ++J) {
+        const Real value = electric[I][J];
+        lower[0][I + 1][0][J + 1] = value;
+        lower[I + 1][0][0][J + 1] = -value;
+        lower[0][I + 1][J + 1][0] = -value;
+        lower[I + 1][0][J + 1][0] = value;
+      }
+    }
+    for (int I = 0; I < 3; ++I) {
+      for (int J = 0; J < 3; ++J) {
+        for (int K = 0; K < 3; ++K) {
+          for (int L = 0; L < 3; ++L) {
+            lower[I + 1][J + 1][K + 1][L + 1] =
+                ((I == K) ? electric[J][L] : 0.0)
+                + ((J == L) ? electric[I][K] : 0.0)
+                - ((I == L) ? electric[J][K] : 0.0)
+                - ((J == K) ? electric[I][L] : 0.0);
+          }
+        }
+      }
+    }
+    for (int A = 0; A < 4; ++A) {
+      const Real inverse_metric_sign = (A == 0) ? -1.0 : 1.0;
+      for (int B = 0; B < 4; ++B) {
+        for (int C = 0; C < 4; ++C) {
+          for (int D = 0; D < 4; ++D) {
+            reference.riemann_frame[A][B][C][D] =
+                inverse_metric_sign*lower[A][B][C][D];
+          }
+        }
+      }
+    }
+    for (int B = 0; B < 4; ++B) {
+      for (int D = 0; D < 4; ++D) {
+        for (int A = 0; A < 4; ++A) {
+          reference.ricci_frame[B][D] += reference.riemann_frame[A][B][A][D];
+        }
+      }
+    }
+  }
+
   KOKKOS_INLINE_FUNCTION
   ReferenceGeometry operator()(const Real /*time*/, const Real x, const Real y,
                                const Real z) const {
@@ -296,6 +374,7 @@ struct TrumpetSchwarzschildReference {
       }
     }
     CompleteReferenceFrameGeometry(reference);
+    SetExactVacuumFrameRiemann(reference, areal, displacement, radius);
     return reference;
   }
 };
