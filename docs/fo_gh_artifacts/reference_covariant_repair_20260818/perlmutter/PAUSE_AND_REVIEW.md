@@ -67,3 +67,14 @@ observed early resolution trend is or is not boundary-related.
 The intended next action is an evidence-backed formulation fix or a documented
 reason why this norm behavior is expected.  Only then should a new clean
 three-resolution `t=20` ladder be authorized.
+
+## Follow-up (commit `b5594291`)
+
+The requested formulation audit found a concrete curvature-conditioning
+defect: the generic Cartan Riemann reconstruction carries a growing Ricci trace
+near the puncture even though `Q=Delta=0`.  The full analytic Schwarzschild
+Weyl tensor now replaces that Riemann only for the exact stationary trumpet
+provider.  See `../binary64_stationary_source_audit.json` and the regression
+script of the same name.  This removes the stationary curvature-sector forcing
+in the table-faithful audit.  A new production ladder is pending; this note is
+not an updated stability qualification.

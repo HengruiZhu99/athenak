@@ -90,3 +90,32 @@ questions are in the artifact directory.
 
 The time-dependent wormhole-to-trumpet reference remains out of scope until
 the stationary gate is resolved.
+
+## Curvature-conditioning diagnosis and correction
+
+The pause review isolated the non-improving stationary histories to a
+table-faithful binary64 reference-curvature error, not to nonzero `Q`,
+`Delta`, damping, or a source-sector ambiguity.  At the closest off-grid cells
+of the 64/96/128 ladder, the old generic coordinate-2-jet/Cartan construction
+produced frame-Ricci Linf values `6.54e-11`, `2.54e-10`, and `6.88e-10`.
+For the exact regular state its curvature sector was the complete source
+residual; the other four source sectors vanish.
+
+The stationary reference is exactly Schwarzschild, so its Riemann tensor in
+the Eulerian Cartesian orthonormal frame is known analytically.  Commit
+`b5594291` supplies that full vacuum Weyl tensor from the interpolated areal
+radius, with electric part
+`E_IJ = M/R^3 (delta_IJ - 3 n_I n_J)` and zero magnetic part.  This is neither
+background-source subtraction nor projection of an approximate curvature:
+the full analytic Riemann remains available to the covariant source for
+perturbed states.  The generic Cartan spin and spin-derivative construction is
+retained for the scalar-frame correction.
+
+The new table-faithful audit records a roundoff-scale analytic Ricci trace and
+source at all three closest cells (source Linf at most `5.68e-16`), while
+preserving the independently measured raw-curvature discrepancy.  A clean
+serial C++ 64^3 initialization also gives RHS Linf `1.17e-16` and frame-Ricci
+Linf `3.33e-16`; its coordinate-Ricci diagnostic remains `3.76e-10`, as
+expected from the deliberately cancellation-prone coordinate calculation.
+The 96^3/128^3 executable ladder and all post-change flat/long-time gates are
+still required; this correction does not retroactively pass them.

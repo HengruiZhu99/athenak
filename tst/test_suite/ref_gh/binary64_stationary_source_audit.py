@@ -257,15 +257,34 @@ def probe(resolution: int, coefficients, ymin: float, spacing: float) -> dict:
             "sectors": maxima}
 
 
+def run_audit(resolutions: tuple[int, ...] = (64, 96, 128)) -> dict:
+    coefficients, ymin, spacing = read_table()
+    return {"table": str(TABLE.relative_to(ROOT)),
+            "probes": [probe(n, coefficients, ymin, spacing) for n in resolutions]}
+
+
+def validate(result: dict) -> None:
+    probes = result["probes"]
+    if len(probes) < 3:
+        raise AssertionError("the stationary audit needs all three target resolutions")
+    for probe_result in probes:
+        if probe_result["q_linf"] > 2.0e-15 or probe_result["delta_linf"] > 2.0e-15:
+            raise AssertionError(f"reference identity failed: {probe_result}")
+        if probe_result["analytic_frame_ricci_linf"] > 2.0e-14:
+            raise AssertionError(f"analytic vacuum Ricci is not roundoff-scale: {probe_result}")
+        if probe_result["source_linf"] > 2.0e-13:
+            raise AssertionError(f"analytic stationary source is not roundoff-scale: {probe_result}")
+        if probe_result["raw_source_linf"] <= 1.0e3 * probe_result["source_linf"]:
+            raise AssertionError(f"audit no longer demonstrates the raw-curvature defect: {probe_result}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--resolutions", type=int, nargs="+", default=[64, 96, 128])
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    coefficients, ymin, spacing = read_table()
-    result = {"table": str(TABLE.relative_to(ROOT)),
-              "probes": [probe(n, coefficients, ymin, spacing)
-                         for n in args.resolutions]}
+    result = run_audit(tuple(args.resolutions))
+    validate(result)
     encoded = json.dumps(result, indent=2, sort_keys=True) + "\n"
     if args.output:
         args.output.write_text(encoded)

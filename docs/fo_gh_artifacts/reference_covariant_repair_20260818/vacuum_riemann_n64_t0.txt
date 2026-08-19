@@ -1,0 +1,10 @@
+# Clean serial C++ initialization evidence for b5594291.
+# Build: CMake Release, Athena_ENABLE_MPI=OFF, Kokkos_ENABLE_SERIAL=ON.
+# Command (from a clean worktree; unique output directory omitted here):
+# build-release/src/athena -d <output> -i inputs/ref_gh/ref_gh_stationary_trumpet.athinput \
+#   time/nlim=0 time/tlim=1.0 job/basename=stationary_repaired_n64 \
+#   mesh/nx1=64 mesh/nx2=64 mesh/nx3=64 \
+#   meshblock/nx1=32 meshblock/nx2=32 meshblock/nx3=32
+reference-GH puncture minimum cell-center radius = 0.0541266
+reference-GH stationary initial RHS Linf = 1.16791e-16, component=10, radius=0.97778, coordinate reference Ricci Linf=3.75621e-10, frame reference Ricci Linf=3.33067e-16
+# This is a t=0 initialization check only.  It is not a t=20 result.

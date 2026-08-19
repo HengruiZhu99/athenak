@@ -17,6 +17,10 @@ mapping in `rank_gpu_mapping_verified.txt` records four distinct A100 UUIDs.
   restart checkpoints remain on Perlmutter and are not committed.
 - `stationary_t20_pause_summary.tsv` and `PAUSE_AND_REVIEW.md`: compact final
   rows and the fail-closed review handoff.
+- `../binary64_stationary_source_audit.json` and
+  `../vacuum_riemann_n64_t0.txt`: the post-pause curvature-conditioning
+  diagnosis and clean C++ initialization evidence.  They do not constitute a
+  renewed long-time qualification.
 
 The direct and resumed rows over their common times are identical to the
 printed precision.  No raw checkpoints or large field dumps are committed.
