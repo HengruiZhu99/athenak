@@ -1,0 +1,63 @@
+#!/bin/bash -l
+# One-cycle Ref-GH Aurora task-fence localization run.
+# The default-off fences only synchronize and label tasks; no numerical setting changes.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_fences
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_aurora_stationary_frozen_20260819
+SRC="${ROOT}/athenak"
+EXE="${ROOT}/build_sycl_pvc_bounds_20260819/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
+OUT="${ROOT}/runs/task_fence_repro_${PBS_JOBID}"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+
+source "$HOME/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  sha256sum "${EXE}"
+  git -C "${SRC}" rev-parse HEAD
+  git -C "${SRC}/kokkos" rev-parse HEAD
+  grep -E "Kokkos_ENABLE_(SYCL|DEBUG_BOUNDS_CHECK)|Kokkos_ARCH_INTEL_PVC|Athena_ENABLE_MPI" \
+    "${ROOT}/build_sycl_pvc_bounds_20260819/CMakeCache.txt"
+} > provenance.txt
+
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "hostname=$(hostname)"
+    echo "MPI_LOCALRANKID=${MPI_LOCALRANKID:-unset}"
+    echo "PALS_LOCAL_RANKID=${PALS_LOCAL_RANKID:-unset}"
+    echo "ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    echo "ONEAPI_DEVICE_SELECTOR=${ONEAPI_DEVICE_SELECTOR:-unset}"
+    sycl-ls 2>&1 || true
+  ' > gpu_mapping.txt 2>&1
+
+mkdir -p one_cycle
+cd one_cycle
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+  job/basename=ref_gh_stationary_task_fence_dx16 \
+  mesh/nx1=64 mesh/nx2=64 mesh/nx3=64 \
+  meshblock/nx1=64 meshblock/nx2=64 meshblock/nx3=64 \
+  ref_gh/debug_task_fences=true \
+  time/nlim=1 time/tlim=1.0 \
+  > ref_gh_stationary_task_fence_dx16.log 2>&1
