@@ -8,6 +8,7 @@
 #include "coordinates/cell_locations.hpp"
 #include "driver/driver.hpp"
 #include "mesh/mesh.hpp"
+#include "ref_gh/covariant_gh_source.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/standard_gh_source.hpp"
@@ -25,6 +26,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   const auto state_rhs = u_rhs;
   const auto table = reference_table;
   const int reference_kind = opt.reference_kind;
+  const int source_kind = opt.source_kind;
   const Real reference_mass = opt.reference_mass;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
@@ -82,11 +84,21 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
       return;
     }
-    Real partial_source[4][4], covariant_source[4][4]; // NOLINT(runtime/arrays)
-    StandardGhPartialWaveSource(metric, d_metric, reference, geometry, gamma0,
-                                partial_source);
-    TransformPartialWaveSource(metric, d_metric, partial_source, d_psi,
-                               reference, geometry, covariant_source);
+    Real scalar_source[4][4];  // NOLINT(runtime/arrays)
+    CovariantSourceSectors source_sectors;
+    if (source_kind == 0) {
+      if (!CovariantGhScalarWaveSource(psi, pi, phi, reference, geometry, gamma0,
+                                       scalar_source, source_sectors)) {
+        for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
+        return;
+      }
+    } else {
+      Real partial_source[4][4];  // NOLINT(runtime/arrays)
+      StandardGhPartialWaveSource(metric, d_metric, reference, geometry, gamma0,
+                                  partial_source);
+      TransformPartialWaveSource(metric, d_metric, partial_source, d_psi,
+                                 reference, geometry, scalar_source);
+    }
 
     Real spatial_connection[3][3][3];  // NOLINT(runtime/arrays)
     for (int q = 0; q < 3; ++q) {
@@ -150,7 +162,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
           }
         }
         Real pi_rhs = geometry.lapse*(trace_k*pi[a][b] - divergence
-                                      + covariant_source[a][b])
+                                      + scalar_source[a][b])
                       - lapse_gradient_term;
         for (int p = 0; p < 3; ++p) {
           pi_rhs += geometry.shift[p]
@@ -223,6 +235,7 @@ void RefGh::CalcConstraints() {
   const auto constraints = u_con;
   const auto table = reference_table;
   const int reference_kind = opt.reference_kind;
+  const int source_kind = opt.source_kind;
   const Real reference_mass = opt.reference_mass;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
@@ -252,8 +265,21 @@ void RefGh::CalcConstraints() {
       for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
       return;
     }
-    for (int a = 0; a < 4; ++a) {
-      constraints(m, a, k, j, i) = geometry.gauge_constraint[a];
+    if (source_kind == 0) {
+      Real scalar_source[4][4];  // NOLINT(runtime/arrays)
+      CovariantSourceSectors source_sectors;
+      if (!CovariantGhScalarWaveSource(psi, pi, phi, reference, geometry, 0.0,
+                                       scalar_source, source_sectors)) {
+        for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
+        return;
+      }
+      for (int A = 0; A < 4; ++A) {
+        constraints(m, A, k, j, i) = source_sectors.delta[A];
+      }
+    } else {
+      for (int a = 0; a < 4; ++a) {
+        constraints(m, a, k, j, i) = geometry.gauge_constraint[a];
+      }
     }
     Real reduction2 = 0.0;
     Real curl2 = 0.0;

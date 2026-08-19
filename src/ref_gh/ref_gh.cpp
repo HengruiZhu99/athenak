@@ -61,6 +61,17 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  const std::string source_name =
+      pin->GetOrAddString("ref_gh", "source", "covariant");
+  if (source_name == "covariant") {
+    opt.source_kind = 0;
+  } else if (source_name == "coordinate_oracle") {
+    opt.source_kind = 1;
+  } else {
+    std::cout << "### FATAL ERROR: ref_gh source must be covariant or coordinate_oracle."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.gamma0 = pin->GetOrAddReal("ref_gh", "gamma0", 1.0);
   opt.diss = pin->GetOrAddReal("ref_gh", "diss", 0.02);
   opt.fail_closed_dt = pin->GetOrAddReal("ref_gh", "fail_closed_dt", 0.0);

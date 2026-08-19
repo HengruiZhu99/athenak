@@ -27,6 +27,7 @@ class RefGh {
     int fd_order;
     int extrap_order;
     int reference_kind;
+    int source_kind;
     Real gamma0;
     Real diss;
     Real fail_closed_dt;
