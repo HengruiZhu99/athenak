@@ -46,5 +46,29 @@ regressions now also pass: exact Minkowski remains exactly zero, linear-wave
 L1 orders are 3.913 and 3.946, and robust-Minkowski perturbations decay at
 8, 16, and 32 cells.  See `flat_regression_covariant.tsv`.
 
-Stationary evolution and the time-dependent wormhole-to-trumpet reference are
-still required before a formulation-success claim.
+## Short multi-GPU stationary and restart gates
+
+On Perlmutter allocation 57256611, the CUDA/MPI build ran one rank on each of
+four distinct A100 GPUs.  The exact stationary trumpet stayed finite through
+`t=0.1` and `t=1.0` at `dx=1/16,1/24,1/32`.  At `t=1`, the maximum regular
+field errors were `2.52e-12`, `5.37e-12`, and `5.74e-12`; native constraint
+Linf values were `6.60e-12`, `1.48e-11`, and `2.56e-11`.  The bad-state flag
+remained zero in every history.  These are bounded, roundoff-scale stationary
+results, not a long-time or puncture-stability claim.
+
+The first restart attempt exposed a concrete plumbing defect: the Ref-GH
+50-field state was absent from restart-file serialization and deserialization.
+Commit `e162917c` repairs both paths.  A fresh four-rank checkpoint at
+`t=0.1023608699` now restarts to `t=0.25` with the same history values as the
+uninterrupted run, to the printed precision.  Pre-repair checkpoints contain
+no Ref-GH state and are invalid; they were not used as evidence after the
+repair.
+
+Compact Perlmutter histories and rank-to-GPU evidence are under
+`docs/fo_gh_artifacts/reference_covariant_repair_20260818/perlmutter/`.  Raw
+restart files (about 205 MB each) are intentionally excluded.
+
+The `t=20` stationary gate and the time-dependent wormhole-to-trumpet reference
+remain required before a formulation-success claim.  In particular, the
+successful short stationary and restart checks do **not** establish puncture
+stability.
