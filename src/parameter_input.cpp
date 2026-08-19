@@ -106,7 +106,7 @@ void ParameterInput::CheckBlockNames() {
     "time", "problem", "output", "units",
     "hydro", "mhd", "ion-neutral", "radiation", "z4c", "z4c_amr", "cce",
     "rad_srcterms", "hydro_srcterms", "mhd_srcterms", "particles", "turb_driving",
-    "fastflow"
+    "fastflow", "z4c_restart", "amr_history_restart"
     };
 
   for (auto it1 = block.begin(); it1 != block.end(); ++it1) {

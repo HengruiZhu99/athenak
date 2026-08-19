@@ -131,7 +131,8 @@ def serial_suite(args, work):
 
     roots = {name: work / name for name in
              ("absent", "off", "record", "replay", "cfl", "high", "record_restart",
-              "replay_prefix", "replay_restart", "carrier_mutation", "fresh_injection",
+              "replay_prefix", "replay_restart", "replay_restart_input",
+              "carrier_mutation", "fresh_injection",
               "existing_record", "source_mismatch", "source_wrong", "source_compatible",
               "source_environment", "source_environment_mismatch")}
     for root in roots.values():
@@ -250,6 +251,17 @@ def serial_suite(args, work):
          "job/basename=replay_restart"], replay_cont, "continued.log")
     compare_final_payload(roots["record"], "record", replay_cont, "replay_restart")
 
+    # The documented restart-plus-input path must accept the immutable internal
+    # carrier blocks already loaded from the restart. The later carrier checks
+    # remain authoritative against injection or mutation.
+    restart_override = work / "restart-override.athinput"
+    restart_override.write_text("<time>\nnlim = 4\n", encoding="utf-8")
+    replay_input = roots["replay_restart_input"]
+    run([str(args.athena), "-r", str(restart2), "-i", str(restart_override),
+         "job/basename=replay_restart_input"], replay_input, "continued.log")
+    compare_final_payload(roots["record"], "record", replay_input,
+                          "replay_restart_input")
+
     # Restart carriers are internal and immutable: command-line injection or
     # mutation must fail before any evolution begins.
     run_fails([str(args.athena), "-r", str(restart2),
@@ -259,7 +271,7 @@ def serial_suite(args, work):
     injected_input.write_text(base_text + "\n<amr_history_restart>\nschema = 1\n",
                               encoding="utf-8")
     run_fails([str(args.athena), "-i", str(injected_input)], roots["fresh_injection"],
-              "Invalid <block_name> in input file")
+              "<amr_history_restart> is an internal restart-only carrier")
 
     # A fresh record never overwrites an existing authority history.
     occupied = roots["existing_record"] / "history.jsonl"
