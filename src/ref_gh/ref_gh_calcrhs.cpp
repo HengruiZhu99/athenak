@@ -34,6 +34,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   const Real stage_time = pmy_pack->pmesh->time;
   const Real gamma0 = opt.gamma0;
   Kokkos::deep_copy(state_rhs, 0.0);
+  DebugFence("ref_gh CalcRHS zero");
 
   // Psi_t is required on a stencil halo by the compatible Phi update.  Pi_t is only
   // consumed on physical cells and is therefore not evaluated outside that region.
@@ -172,6 +173,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       }
     }
   });
+  DebugFence("ref_gh CalcRHS primary");
 
   par_for("ref_gh compatible phi rhs", DevExeSpace(), 0, nmb - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
@@ -205,6 +207,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       }
     }
   });
+  DebugFence("ref_gh CalcRHS compatible_phi");
 
   if (opt.diss > 0.0) {
     const Real sign = (FDNG % 2 == 0) ? -1.0 : 1.0;
@@ -219,6 +222,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
             *Diss<FDNG>(p, idx, state, m, n, k, j, i);
       }
     });
+    DebugFence("ref_gh CalcRHS dissipation");
   }
   DebugFence("ref_gh CalcRHS");
   return TaskStatus::complete;
