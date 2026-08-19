@@ -1,0 +1,17 @@
+Configuration: clean detached worktree /tmp/refgh-control-nxvoH5 at
+ac99dcc192b5fe2b43fef603c89b00d39fbe5f19; Release Serial Kokkos 4.7.2,
+GCC 13.3.0 executable SHA-256
+36c878a474cb55570418381d38848ff043d8104b5099d404a3ca23578fb773b6.
+
+All inputs omit ref_gh/source, so the committed default covariant source was
+selected.  Runs were made in fresh directories with:
+
+  athena -d <dir> -i tst/inputs/ref_gh_minkowski.athinput
+  athena -d <dir> -i tst/inputs/ref_gh_linear_wave.athinput \
+      mesh/nx1={8,16,32} meshblock/nx1={8,16,32}
+  athena -d <dir> -i tst/inputs/ref_gh_stability.athinput \
+      mesh/nx{1,2,3}={8,16,32} meshblock/nx{1,2,3}={8,16,32}
+
+The linear-wave L1 orders are 3.9134 and 3.9456.  Robust-Minkowski uses the
+same deterministic 1e-10 perturbation and remains decaying at every resolution;
+there is no resolution-growing mode over the specified t=0.2 interval.

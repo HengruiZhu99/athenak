@@ -42,5 +42,9 @@ as the predicted conditioning diagnostic.  All final field and native
 constraint norms are zero for the exact constant regular state.
 
 This establishes only the algebra and stationary-initial-data gates.  Flat
-regressions, stationary evolution, and the time-dependent wormhole-to-trumpet
-reference are still required before a formulation-success claim.
+regressions now also pass: exact Minkowski remains exactly zero, linear-wave
+L1 orders are 3.913 and 3.946, and robust-Minkowski perturbations decay at
+8, 16, and 32 cells.  See `flat_regression_covariant.tsv`.
+
+Stationary evolution and the time-dependent wormhole-to-trumpet reference are
+still required before a formulation-success claim.
