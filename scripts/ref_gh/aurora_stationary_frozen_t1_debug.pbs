@@ -1,0 +1,73 @@
+#!/bin/bash -l
+# Frozen reference-covariant GH stationary-trumpet t=1 gate on Aurora.
+# The solver/source must remain at the recorded campaign SHA.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_stationary_t1
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_aurora_stationary_frozen_20260819
+SRC="${ROOT}/athenak"
+BUILD="${ROOT}/build_sycl_pvc_frozen"
+OUT="${ROOT}/runs/t1_debug_attempt2"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+
+source "$HOME/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  cat "${ROOT}/artifacts/athena.sha256"
+  git -C "${SRC}" rev-parse HEAD
+  git -C "${SRC}/kokkos" rev-parse HEAD
+} > provenance.txt
+
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "hostname=$(hostname)"
+    echo "MPI_LOCALRANKID=${MPI_LOCALRANKID:-unset}"
+    echo "PALS_LOCAL_RANKID=${PALS_LOCAL_RANKID:-unset}"
+    echo "ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    echo "ONEAPI_DEVICE_SELECTOR=${ONEAPI_DEVICE_SELECTOR:-unset}"
+    sycl-ls 2>&1 || true
+  ' > gpu_mapping.txt 2>&1
+
+run_case() {
+  local label="$1"
+  local ncell="$2"
+  local mbcell="$3"
+  local work="${OUT}/${label}"
+  mkdir -p "${work}"
+  (
+    cd "${work}"
+    /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+      gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+      job/basename="${label}" \
+      mesh/nx1="${ncell}" mesh/nx2="${ncell}" mesh/nx3="${ncell}" \
+      meshblock/nx1="${mbcell}" meshblock/nx2="${mbcell}" meshblock/nx3="${mbcell}" \
+      time/tlim=1.0 \
+      > "${label}.log" 2>&1
+  )
+}
+
+run_case ref_gh_stationary_trumpet_dx16_t1 64 32
+run_case ref_gh_stationary_trumpet_dx24_t1 96 48
+run_case ref_gh_stationary_trumpet_dx32_t1 128 64
