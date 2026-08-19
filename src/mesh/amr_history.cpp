@@ -59,6 +59,14 @@ AMRHistory::AMRHistory(Mesh *mesh, ParameterInput *pin) : mesh_(mesh), pin_(pin)
   }
   path_ = pin->GetString("mesh_refinement", "amr_history_file");
   if (path_.empty()) Fatal("amr_history_file must not be empty");
+  if (pin->DoesParameterExist("mesh_refinement", "amr_history_compatible_source_id")) {
+    if (!replay()) Fatal("amr_history_compatible_source_id is replay-only");
+    compatible_source_id_ =
+        pin->GetString("mesh_refinement", "amr_history_compatible_source_id");
+    if (compatible_source_id_.empty()) {
+      Fatal("amr_history_compatible_source_id must not be empty");
+    }
+  }
   const bool has_extension_parameter =
       pin->DoesParameterExist("mesh_refinement", "amr_history_extension_file");
   const char *extension_environment =
@@ -162,7 +170,17 @@ void AMRHistory::LoadHistory() {
   }
   if (!input.eof()) Fatal("history read failed before EOF");
   if (!amr_history::ValidateEvents(header_, events_, &error)) Fatal(error);
-  const auto candidate = CurrentHeader();
+  auto candidate = CurrentHeader();
+  if (!compatible_source_id_.empty()) {
+    if (header_.source_id != compatible_source_id_) {
+      Fatal("history source-id does not match explicit compatible source-id");
+    }
+    std::cout << "AMR_HISTORY_SOURCE_COMPATIBILITY"
+              << " recorded_source_id=" << header_.source_id
+              << " current_source_id=" << candidate.source_id
+              << " explicit_match=true" << std::endl;
+    candidate.source_id = header_.source_id;
+  }
   if (!amr_history::Compatible(header_, candidate, &error)) Fatal(error);
   loaded_digest_ = FileDigest();
 }

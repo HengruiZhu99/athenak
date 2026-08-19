@@ -77,6 +77,26 @@ def load_history(path):
     return records[0], records[1:]
 
 
+def fnv1a64(text):
+    value = 14695981039346656037
+    for byte in text.encode("utf-8"):
+        value ^= byte
+        value = (value * 1099511628211) & ((1 << 64) - 1)
+    return f"{value:016x}"
+
+
+def rebind_history_source(source, destination, source_id):
+    lines = source.read_text(encoding="utf-8").splitlines()
+    header = json.loads(lines[0])
+    header["source_id"] = source_id
+    header.pop("checksum")
+    base = json.dumps(header, separators=(",", ":"))
+    require(base.endswith("}"), "canonical header base is malformed")
+    header["checksum"] = fnv1a64(base[:-1])
+    lines[0] = json.dumps(header, separators=(",", ":"))
+    destination.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def event_lines(log):
     return [line for line in log.splitlines() if line.startswith("AMR_HISTORY_REPLAY")]
 
@@ -112,7 +132,7 @@ def serial_suite(args, work):
     roots = {name: work / name for name in
              ("absent", "off", "record", "replay", "cfl", "high", "record_restart",
               "replay_prefix", "replay_restart", "carrier_mutation", "fresh_injection",
-              "existing_record")}
+              "existing_record", "source_mismatch", "source_wrong", "source_compatible")}
     for root in roots.values():
         clean_dir(root)
 
@@ -135,6 +155,39 @@ def serial_suite(args, work):
     compare_payloads(roots["absent"], "absent", roots["off"], "off")
     compare_payloads(roots["off"], "off", roots["record"], "record")
     compare_payloads(roots["record"], "record", roots["replay"], "replay")
+
+    # A reviewed replay-source delta must be explicit and exact. Default replay
+    # remains source-bound, and an incorrect compatibility declaration fails.
+    rebound = work / "reviewed-parent-history.jsonl"
+    reviewed_parent = "athena-0.1-git-reviewed-parent"
+    rebind_history_source(history, rebound, reviewed_parent)
+    run_fails(command(args.athena, args.input, "replay", rebound, "source_mismatch"),
+              roots["source_mismatch"], "history source-id mismatch")
+    wrong_input = work / "source-wrong.athinput"
+    compatible_input = work / "source-compatible.athinput"
+    compatibility_anchor = "amr_history_file = unused.jsonl"
+    require(compatibility_anchor in base_text,
+            "AMR history input anchor is missing")
+    wrong_input.write_text(base_text.replace(
+        compatibility_anchor,
+        compatibility_anchor + "\namr_history_compatible_source_id = wrong", 1),
+        encoding="utf-8")
+    compatible_input.write_text(base_text.replace(
+        compatibility_anchor,
+        compatibility_anchor +
+        f"\namr_history_compatible_source_id = {reviewed_parent}", 1),
+        encoding="utf-8")
+    run_fails(command(args.athena, wrong_input, "replay", rebound, "source_wrong"),
+              roots["source_wrong"],
+              "history source-id does not match explicit compatible source-id")
+    compatible_log = run(command(
+        args.athena, compatible_input, "replay", rebound, "source_compatible"),
+        roots["source_compatible"])
+    require("AMR_HISTORY_SOURCE_COMPATIBILITY" in compatible_log and
+            "explicit_match=true" in compatible_log,
+            "explicit replay source compatibility evidence missing")
+    compare_payloads(roots["record"], "record", roots["source_compatible"],
+                     "source_compatible")
 
     cfl_log = run(command(args.athena, args.input, "replay", history, "cfl",
                           ["time/cfl_number=0.07", "time/nlim=6"]), roots["cfl"])

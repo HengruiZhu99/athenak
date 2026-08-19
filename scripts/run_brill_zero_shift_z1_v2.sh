@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-root=/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-shift-controls-90838417-v1-20260818
+root=/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-shift-controls-sourcecompat-v2-20260818
 source_root=${root}/source/athenak
 build_root=${root}/build/athena-cuda
 run=${root}/run/arm-zero-shift

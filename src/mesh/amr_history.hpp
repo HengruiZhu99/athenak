@@ -51,6 +51,7 @@ class AMRHistory {
   Mode mode_ = Mode::off;
   std::string path_;
   std::string extension_path_;
+  std::string compatible_source_id_;
   int extension_branch_base_event_ = -1;
   std::string ledger_path_;
   amr_history::Header header_;
