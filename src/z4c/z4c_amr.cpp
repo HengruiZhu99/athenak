@@ -30,6 +30,14 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
     method = Trivial;
   } else if (ref_method == "tracker") {
     method = Tracker;
+    if (!pin->DoesParameterExist("z4c", "co_0_type")) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+                << __LINE__ << std::endl
+                << "<z4c_amr>/method=tracker requires at least one "
+                   "<z4c>/co_0_type compact-object tracker"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
   } else if (ref_method == "chi") {
     method = Chi;
     chi_thresh = pin->GetOrAddReal("z4c_amr", "chi_min", 0.2);

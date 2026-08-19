@@ -2,6 +2,7 @@
 #define MESH_MESH_REFINEMENT_HPP_
 
 #include <memory>
+#include "mesh/amr_cadence.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
