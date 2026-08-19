@@ -265,14 +265,14 @@ void RefGh::CalcConstraints() {
       for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
       return;
     }
+    Real scalar_source[4][4];  // NOLINT(runtime/arrays)
+    CovariantSourceSectors source_sectors;
+    if (!CovariantGhScalarWaveSource(psi, pi, phi, reference, geometry, 0.0,
+                                     scalar_source, source_sectors)) {
+      for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
+      return;
+    }
     if (source_kind == 0) {
-      Real scalar_source[4][4];  // NOLINT(runtime/arrays)
-      CovariantSourceSectors source_sectors;
-      if (!CovariantGhScalarWaveSource(psi, pi, phi, reference, geometry, 0.0,
-                                       scalar_source, source_sectors)) {
-        for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
-        return;
-      }
       for (int A = 0; A < 4; ++A) {
         constraints(m, A, k, j, i) = source_sectors.delta[A];
       }
@@ -281,6 +281,56 @@ void RefGh::CalcConstraints() {
         constraints(m, a, k, j, i) = geometry.gauge_constraint[a];
       }
     }
+
+    Real q2 = 0.0;
+    Real delta2 = 0.0;
+    Real frame_ricci2 = 0.0;
+    Real coordinate_ricci2 = 0.0;
+    Real curvature2 = 0.0;
+    Real qq2 = 0.0;
+    Real delta_product2 = 0.0;
+    Real damping2 = 0.0;
+    Real frame_correction2 = 0.0;
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        frame_ricci2 += reference.ricci_frame[A][B]*reference.ricci_frame[A][B];
+        curvature2 += source_sectors.curvature[A][B]*source_sectors.curvature[A][B];
+        qq2 += source_sectors.qq[A][B]*source_sectors.qq[A][B];
+        delta_product2 += source_sectors.delta_product[A][B]
+                          *source_sectors.delta_product[A][B];
+        damping2 += source_sectors.damping[A][B]*source_sectors.damping[A][B];
+        frame_correction2 += source_sectors.frame_correction[A][B]
+                             *source_sectors.frame_correction[A][B];
+        for (int C = 0; C < 4; ++C) {
+          q2 += source_sectors.q[C][A][B]*source_sectors.q[C][A][B];
+          delta2 += source_sectors.delta_lower[A][B][C]
+                    *source_sectors.delta_lower[A][B][C];
+        }
+        Real coordinate_ricci = 0.0;
+        for (int C = 0; C < 4; ++C) {
+          coordinate_ricci += reference.d_christoffel[C][C][A][B]
+                              - reference.d_christoffel[B][C][A][C];
+          for (int D = 0; D < 4; ++D) {
+            coordinate_ricci += reference.christoffel[C][C][D]
+                                *reference.christoffel[D][A][B]
+                              - reference.christoffel[C][B][D]
+                                *reference.christoffel[D][A][C];
+          }
+        }
+        coordinate_ricci2 += coordinate_ricci*coordinate_ricci;
+      }
+    }
+    constraints(m, kDiagnosticOffset + 0, k, j, i) = Kokkos::sqrt(q2);
+    constraints(m, kDiagnosticOffset + 1, k, j, i) = Kokkos::sqrt(delta2);
+    constraints(m, kDiagnosticOffset + 2, k, j, i) = Kokkos::sqrt(frame_ricci2);
+    constraints(m, kDiagnosticOffset + 3, k, j, i) =
+        Kokkos::sqrt(coordinate_ricci2);
+    constraints(m, kDiagnosticOffset + 4, k, j, i) = Kokkos::sqrt(curvature2);
+    constraints(m, kDiagnosticOffset + 5, k, j, i) = Kokkos::sqrt(qq2);
+    constraints(m, kDiagnosticOffset + 6, k, j, i) = Kokkos::sqrt(delta_product2);
+    constraints(m, kDiagnosticOffset + 7, k, j, i) = Kokkos::sqrt(damping2);
+    constraints(m, kDiagnosticOffset + 8, k, j, i) =
+        Kokkos::sqrt(frame_correction2);
     Real reduction2 = 0.0;
     Real curl2 = 0.0;
     for (int I = 0; I < 3; ++I) {

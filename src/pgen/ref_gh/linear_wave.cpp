@@ -92,7 +92,7 @@ void RefGhLinearWaveErrors(ParameterInput *pin, Mesh *mesh) {
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
         const int k = work % indcs.nx3 + indcs.ks;
         const int m = work/indcs.nx3;
-        for (int n = 0; n < ref_gh::RefGh::ncon; ++n) {
+        for (int n = 0; n < ref_gh::RefGh::kNativeConstraints; ++n) {
           maximum = fmax(maximum, Kokkos::abs(constraints(m, n, k, j, i)));
         }
       }, Kokkos::Max<Real>(constraint_linf));

@@ -454,7 +454,11 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
     HIST_NEAR_GH, HIST_NEAR_REDUCTION, HIST_NEAR_CURL, HIST_VOLUME,
     HIST_ALPHA_MAX, HIST_MINUS_ALPHA_MIN, HIST_REGULAR_MAX, HIST_G_CONDITION,
     HIST_COORDINATE_G_MAX, HIST_CHARACTERISTIC_MAX, HIST_EFFECTIVE_CFL,
-    HIST_DETERMINANT_MARGIN, HIST_NEAR_VOLUME, HIST_BAD_STATE, NHIST_REF_GH
+    HIST_DETERMINANT_MARGIN, HIST_NEAR_VOLUME, HIST_BAD_STATE,
+    HIST_Q_MAX, HIST_DELTA_MAX, HIST_FRAME_RICCI_MAX,
+    HIST_COORDINATE_RICCI_MAX, HIST_SOURCE_CURVATURE_MAX, HIST_SOURCE_QQ_MAX,
+    HIST_SOURCE_DELTA_DELTA_MAX, HIST_SOURCE_DAMPING_MAX,
+    HIST_SOURCE_FRAME_CORRECTION_MAX, NHIST_REF_GH
   };
   static_assert(NHIST_REF_GH <= NHISTORY_VARIABLES,
                 "reference-GH history exceeds NHISTORY_VARIABLES");
@@ -464,13 +468,17 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
     "Pi-L2sq", "Phi-L2sq", "GHnear-L2sq", "ReductionNear-L2sq",
     "CurlNear-L2sq", "Volume", "alpha-max", "minus-alpha-min",
     "regular-max", "G-condition-max", "coordinate-g-max", "char-speed-max",
-    "effective-CFL", "minus-detg-margin", "NearVolume", "bad-state"
+    "effective-CFL", "minus-detg-margin", "NearVolume", "bad-state",
+    "Q-Linf", "Delta-Linf", "frame-Ricci-Linf", "coordinate-Ricci-Linf",
+    "source-curvature-Linf", "source-QQ-Linf", "source-DeltaDelta-Linf",
+    "source-damping-Linf", "source-frame-correction-Linf"
   };
   for (int n = 0; n < NHIST_REF_GH; ++n) pdata->label[n] = labels[n];
   for (int n = HIST_ALPHA_MAX; n <= HIST_DETERMINANT_MARGIN; ++n) {
     pdata->use_max[n] = true;
   }
   pdata->use_max[HIST_BAD_STATE] = true;
+  for (int n = HIST_Q_MAX; n < NHIST_REF_GH; ++n) pdata->use_max[n] = true;
 
   auto *module = pm->pmb_pack->prefgh;
   module->UpdateDiagnostics();
@@ -552,6 +560,23 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
       }, Kokkos::Sum<array_sum::GlobalSum>(sums));
   for (int n = 0; n < HIST_ALPHA_MAX; ++n) pdata->hdata[n] = sums.the_array[n];
   pdata->hdata[HIST_NEAR_VOLUME] = sums.the_array[HIST_NEAR_VOLUME];
+
+  for (int diagnostic = 0; diagnostic < 9; ++diagnostic) {
+    Real diagnostic_max = 0.0;
+    Kokkos::parallel_reduce(
+        "ref_gh history source diagnostic max", Kokkos::RangePolicy<>(DevExeSpace(),
+        0, pm->pmb_pack->nmb_thispack*ncells),
+        KOKKOS_LAMBDA(const int idx, Real &maximum) {
+          int work = idx;
+          const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+          const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+          const int k = work % indcs.nx3 + indcs.ks;
+          const int m = work/indcs.nx3;
+          maximum = fmax(maximum, constraints(
+              m, ref_gh::RefGh::kDiagnosticOffset + diagnostic, k, j, i));
+        }, Kokkos::Max<Real>(diagnostic_max));
+    pdata->hdata[HIST_Q_MAX + diagnostic] = diagnostic_max;
+  }
 
   Real alpha_max = 0.0;
   Real minus_alpha_min = -std::numeric_limits<Real>::max();

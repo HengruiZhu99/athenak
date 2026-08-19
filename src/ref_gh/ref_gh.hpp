@@ -19,7 +19,12 @@ namespace ref_gh {
 class RefGh {
  public:
   static constexpr int nref_gh = nvar;
-  static constexpr int ncon = 6;
+  // First six slots are the native GH/reduction constraints.  The remaining
+  // pointwise diagnostic slots are deliberately not evolved state and are
+  // refreshed only when diagnostics/history are requested.
+  static constexpr int kNativeConstraints = 6;
+  static constexpr int kDiagnosticOffset = kNativeConstraints;
+  static constexpr int ncon = kDiagnosticOffset + 9;
   static char const * const StateNames[nref_gh];
   static char const * const ConstraintNames[ncon];
 
