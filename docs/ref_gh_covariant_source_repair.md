@@ -119,3 +119,14 @@ Linf `3.33e-16`; its coordinate-Ricci diagnostic remains `3.76e-10`, as
 expected from the deliberately cancellation-prone coordinate calculation.
 The 96^3/128^3 executable ladder and all post-change flat/long-time gates are
 still required; this correction does not retroactively pass them.
+
+## Post-correction flat regressions
+
+The correction is confined to the stationary-trumpet reference Riemann
+provider, but the required clean release reruns also preserve exact Minkowski
+(zero error), fourth-order linear-wave convergence (L1 orders `3.9134` and
+`3.9456`), and robust-Minkowski decay through `t=0.2` at 8, 16, and 32 cells.
+The exact rows and commands are summarized in
+`flat_regression_analytic_vacuum.tsv`.  These flat results pass, but they do
+not replace the pending 96^3/128^3 stationary executable checks or the new
+long-time stationary ladder.

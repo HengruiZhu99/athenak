@@ -21,6 +21,8 @@ mapping in `rank_gpu_mapping_verified.txt` records four distinct A100 UUIDs.
   `../vacuum_riemann_n64_t0.txt`: the post-pause curvature-conditioning
   diagnosis and clean C++ initialization evidence.  They do not constitute a
   renewed long-time qualification.
+- `../flat_regression_analytic_vacuum.tsv`: post-correction exact/linear/robust
+  flat-reference release regressions.
 
 The direct and resumed rows over their common times are identical to the
 printed precision.  No raw checkpoints or large field dumps are committed.
