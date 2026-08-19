@@ -102,12 +102,12 @@ out of scope until the post-correction stationary `t=20` gate passes.
 ## 8. Aurora corrected stationary gate
 
 The attempted frozen-source Aurora `t=1` gate did not supply stationary
-evolution evidence. Its corrected 64-cell run completed source/diagnostic
-initialization with a roundoff-scale stationary RHS and a clean t=0 history,
-then the Level Zero runtime aborted on a GPU write fault at cycle 0. No
-positive-time sample, medium/fine run, or `t=20` continuation exists. Thus
-convergent trumpet evolution remains **not established**; the evidence cannot
-distinguish any formulation behavior because execution stopped before an
-evolved step. See
+evolution evidence. Two corrected 64-cell runs on distinct Aurora nodes each
+completed source/diagnostic initialization with a roundoff-scale stationary
+RHS and a byte-identical clean t=0 history, then the Level Zero runtime aborted
+on a GPU write fault at cycle 0. No positive-time sample, medium/fine run, or
+`t=20` continuation exists. Thus convergent trumpet evolution remains **not
+established**; the evidence cannot distinguish any formulation behavior because
+execution stopped before an evolved step. See
 `fo_gh_artifacts/reference_covariant_repair_20260818/aurora_stationary_frozen/`
 for the scheduler, mapping, history, and failure records.

@@ -210,19 +210,21 @@ not stationary-evolution evidence.
 
 The current corrected source commit
 `9d55f7b411171aaf2d7e0dc6c3d9be2bfd7ffe0a` was rebuilt in an isolated
-Aurora SYCL/PVC directory and launched in PBS debug job 8766897. The one-rank
-mapping selected one Intel Data Center GPU Max 1550 tile; application startup
-completed with stationary initial RHS Linf `8.55241e-17` and a clean t=0
-Ref-GH history. At the first task-list execution status (`cycle=0`, `time=0`)
-the Level Zero runtime raised a GPU `NotPresent` write fault and aborted the
-rank (exit status 134). No positive-time history row was produced.
+Aurora SYCL/PVC directory and launched in PBS debug jobs 8766897 and 8766926
+on distinct nodes. Each one-rank mapping selected one Intel Data Center GPU
+Max 1550 tile; application startup completed with stationary initial RHS Linf
+`8.55241e-17` and an identical clean t=0 Ref-GH history. At the first task-list
+execution status (`cycle=0`, `time=0`), each Level Zero runtime raised a GPU
+`NotPresent` write fault and aborted the rank (exit status 134). No
+positive-time history row was produced.
 
 Accordingly, the corrected Aurora three-resolution `t=1` stationary gate was
-**not assessed**: only the 64-cell case started; the 96/128-cell cases and all
-`t=20` cases were deliberately not launched. This is not numerical evidence
-for a formulation defect, constraint growth, or lack of stationary stability;
-it is a first-step device/runtime execution blocker. No solver, source,
-parameter, or threshold was changed in response. The complete compact
+**not assessed**: only the 64-cell case started in each retry; the 96/128-cell
+cases and all `t=20` cases were deliberately not launched. This is not
+numerical evidence for a formulation defect, constraint growth, or lack of
+stationary stability; it is a reproducible first-step device/runtime execution
+blocker. No solver, source, parameter, or threshold was changed in response.
+The complete compact
 provenance, scheduler records, mapping, histories, and exact failure log are
 in `fo_gh_artifacts/reference_covariant_repair_20260818/aurora_stationary_frozen/`.
 
