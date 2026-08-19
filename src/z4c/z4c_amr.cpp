@@ -308,17 +308,8 @@ void Z4c_AMR::RefineRadii(MeshBlockPack *pmbp) {
     Real &x3min = size.h_view(m).x3min;
     Real &x3max = size.h_view(m).x3max;
 
-    Real r2[8] = {
-      SQ(x1min) + SQ(x2min) + SQ(x3min),
-      SQ(x1max) + SQ(x2min) + SQ(x3min),
-      SQ(x1min) + SQ(x2max) + SQ(x3min),
-      SQ(x1max) + SQ(x2max) + SQ(x3min),
-      SQ(x1min) + SQ(x2min) + SQ(x3max),
-      SQ(x1max) + SQ(x2min) + SQ(x3max),
-      SQ(x1min) + SQ(x2max) + SQ(x3max),
-      SQ(x1max) + SQ(x2max) + SQ(x3max),
-    };
-    Real rmin2 = *std::min_element(&r2[0], &r2[8]);
+    const Real rmin2 = SquaredDistanceToAABB(
+        0.0, 0.0, 0.0, x1min, x1max, x2min, x2max, x3min, x3max);
 
     for (size_t ir = 0; ir < radius.size(); ++ir) {
       if (rmin2 < SQ(radius[ir])) {

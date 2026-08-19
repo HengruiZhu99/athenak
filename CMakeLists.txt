@@ -637,6 +637,16 @@ if (Athena_BUILD_UNIT_TESTS)
       NAME athena.z4c_cartoon_amr_transfer_qualification
       COMMAND athena_z4c_cartoon_amr_transfer_qualification_unit_test)
   add_executable(
+      athena_z4c_amr_radius_unit_test
+      tst/unit/z4c/z4c_amr_radius_test.cpp)
+  target_include_directories(
+      athena_z4c_amr_radius_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(athena_z4c_amr_radius_unit_test PRIVATE Kokkos::kokkos)
+  add_test(NAME athena.z4c_amr_radius COMMAND athena_z4c_amr_radius_unit_test)
+  add_executable(
       athena_z4c_coarse_cache_ownership_unit_test
       tst/unit/z4c/z4c_coarse_cache_ownership_test.cpp)
   target_include_directories(

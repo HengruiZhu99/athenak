@@ -7,6 +7,7 @@
 #ifndef Z4C_Z4C_AMR_HPP_
 #define Z4C_Z4C_AMR_HPP_
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -17,6 +18,24 @@ class MeshBlockPack;
 
 namespace z4c {
 class Z4c;
+
+//! \brief Squared distance from a point to an axis-aligned MeshBlock box.
+//!
+//! A corner-only minimum is wrong whenever the closest point lies on a face, an
+//! edge, or in the interior.  This helper is host-only because the Z4c radius
+//! refinement policy is evaluated while refining the mesh tree.
+inline Real SquaredDistanceToAABB(const Real x, const Real y, const Real z,
+                                  const Real x1min, const Real x1max,
+                                  const Real x2min, const Real x2max,
+                                  const Real x3min, const Real x3max) {
+  const Real cx = std::max(x1min, std::min(x, x1max));
+  const Real cy = std::max(x2min, std::min(y, x2max));
+  const Real cz = std::max(x3min, std::min(z, x3max));
+  const Real dx = x - cx;
+  const Real dy = y - cy;
+  const Real dz = z - cz;
+  return dx * dx + dy * dy + dz * dz;
+}
 
 //! \class Z4c_AMR
 //  \brief managing AMR for Z4c simulations
