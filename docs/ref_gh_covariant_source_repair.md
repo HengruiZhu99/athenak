@@ -198,6 +198,14 @@ directly to the production covariant source. The maximum error is
 `3.33e-16`. This closes the compiled nonflat source-oracle evidence gap; the
 compact terminal record and executable hash are in `delta_upper_source_repair/`.
 
+The post-oracle principal check retains a rank-50 trumpet basis with zero
+imaginary characteristic part, unit basis condition to printed precision, and
+zero trumpet symmetrizer residual. The generic reference-frame audit retains a
+positive minimum symmetrizer eigenvalue `0.1251`; the retained JSON records
+also show standard-source agreement `2.78e-17` and independent nonflat
+covariant-source agreement `1.11e-15`. These are algebra/principal checks,
+not stationary-evolution evidence.
+
 The earlier post-curvature stationary `t=0` rows are superseded for source
 provenance, even though the exact state has `Q=Delta=0` and therefore did not
 excite this bug. The corrected OpenMP 64/96/128 replacement ladder has RHS

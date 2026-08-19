@@ -31,3 +31,9 @@ source against the retained C++ coordinate source and scalar-frame transform.
 The coordinate derivatives of all frame components are initialized before
 reconstructing the coordinate metric jet; this matters because their first two
 array indices are frame indices, not coordinate metric indices.
+
+Commit `208f4c81` is also accompanied by four independent host-side audit
+records in this directory. They retain the principal-symbol/symmetrizer,
+trumpet principal-basis, standard coordinate-source, and covariant-source
+results used to ensure that the lower-order test change did not modify the
+50-field principal system.
