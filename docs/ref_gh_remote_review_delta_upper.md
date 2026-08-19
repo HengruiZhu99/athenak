@@ -43,6 +43,12 @@ The source unit deliberately uses 1,000 deterministic generic flat-reference
 Lorentzian jets with nonzero shift, `Pi`, `Phi`, and `Delta`; it is not a
 stationary-state-only regression.
 
+It also contains 128 compiled nonflat manufactured references with nonzero
+time-space coframe, spin connection, and curvature. Verify especially that the
+coordinate derivatives of `Psi_AB` are completed over all frame-index pairs
+before the coordinate metric jet is assembled; initializing them inside a
+coordinate-index loop silently overwrites earlier frame components.
+
 ## Evidence and current limits
 
 Before this repair the compiled test observed maximum mismatch `1.14718e-4`
@@ -51,6 +57,10 @@ Before this repair the compiled test observed maximum mismatch `1.14718e-4`
 orders are 3.9134 and 3.9456; robust Minkowski decays through `t=0.2` at 8, 16,
 and 32 cells. The replacement exact-stationary `t=0` 64/96/128 ladder has RHS
 Linf at roundoff scale.
+
+The C++ nonflat source/coordinate comparison now gives `3.33067e-16` over 128
+samples. It verifies the compiled source on a nonflat reference but still does
+not substitute for a restarted or long-time stationary evolution.
 
 The artifacts are in
 `docs/fo_gh_artifacts/reference_covariant_repair_20260818/delta_upper_source_repair/`.

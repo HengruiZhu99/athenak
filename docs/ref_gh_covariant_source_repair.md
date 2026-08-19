@@ -188,6 +188,16 @@ fourth-order linear-wave, and robust-Minkowski reruns are all recorded in
 The wave L1 orders are 3.9134 and 3.9456, and robust perturbations decay at
 all three tested resolutions through `t=0.2`.
 
+The initial compiled test was deliberately extended beyond flat space after a
+review identified that the existing generic nonflat oracle was Python-only.
+The repaired C++ regression now supplies 128 deterministic nonflat references
+with nonzero shift, spin connection, and curvature, together with nonzero
+regular physical perturbations. It reconstructs the coordinate metric jet,
+runs the retained C++ coordinate oracle and scalar transform, and compares it
+directly to the production covariant source. The maximum error is
+`3.33e-16`. This closes the compiled nonflat source-oracle evidence gap; the
+compact terminal record and executable hash are in `delta_upper_source_repair/`.
+
 The earlier post-curvature stationary `t=0` rows are superseded for source
 provenance, even though the exact state has `Q=Delta=0` and therefore did not
 excite this bug. The corrected OpenMP 64/96/128 replacement ladder has RHS
