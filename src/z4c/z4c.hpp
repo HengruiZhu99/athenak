@@ -53,6 +53,24 @@ enum class Z4cShiftAdvectionOrder {
   o2,
 };
 
+// The name is deliberately a writer/checkpoint label, rather than an inferred
+// root cause.  A failure record can therefore distinguish a bad RK update from
+// a later AMR, communication, or boundary write without retaining a large
+// per-cell provenance array.
+enum class Z4cStateCheckpoint {
+  pre_rhs,
+  post_rk_update,
+  post_restriction,
+  post_receive,
+  post_physical_bc,
+  post_prolongation,
+  pre_algconstr,
+  post_algconstr,
+  post_amr_transfer,
+};
+
+const char *Z4cStateCheckpointName(Z4cStateCheckpoint checkpoint);
+
 inline const char *Z4cAMRTransferName(const Z4cAMRTransfer transfer) {
   switch (transfer) {
     case Z4cAMRTransfer::high_order: return "high_order";
@@ -341,7 +359,10 @@ class Z4c {
   template <typename Symmetry, int NGHOST>
   void Z4cWeylImpl(MeshBlockPack *pmbp);
   void WaveExtr(MeshBlockPack *pmbp);
-  void AlgConstr(MeshBlockPack *pmbp);
+  void AlgConstr(MeshBlockPack *pmbp, Driver *driver = nullptr, int stage = 0);
+  void CheckStateAdmissibility(Driver *driver, int stage,
+                               Z4cStateCheckpoint checkpoint,
+                               bool include_ghosts = false);
 
   Z4c_AMR *pamr;
   std::vector<std::unique_ptr<CompactObjectTracker>> ptracker;

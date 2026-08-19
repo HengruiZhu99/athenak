@@ -656,6 +656,24 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/chi_preupdate_diagnostic_static_test.py
       --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  add_executable(
+      athena_z4c_state_admissibility_unit_test
+      tst/unit/z4c/state_admissibility_test.cpp)
+  target_include_directories(
+      athena_z4c_state_admissibility_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_state_admissibility_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_state_admissibility
+      COMMAND athena_z4c_state_admissibility_unit_test)
+  add_test(
+      NAME athena.z4c_state_admissibility_static
+      COMMAND ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/state_admissibility_static_test.py
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
   add_test(
       NAME athena.z4c_shift_control_static
       COMMAND ${PYTHON_EXECUTABLE}

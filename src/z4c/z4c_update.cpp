@@ -122,6 +122,7 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
     chi_parent_provenance->RecordCheckpoint(
         ChiProvenanceCheckpoint::s0_after_rk, stage, pbval_u);
   }
+  CheckStateAdmissibility(pdriver, stage, Z4cStateCheckpoint::post_rk_update);
   return TaskStatus::complete;
 }
 } // namespace z4c

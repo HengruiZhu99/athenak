@@ -10,6 +10,9 @@
 #include <sys/stat.h>  // mkdir
 
 #include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <limits>
 #include <string>
 #include <algorithm>
 #include <memory>    // make_unique, unique_ptr
@@ -20,6 +23,7 @@
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
+#include "driver/driver.hpp"
 #include "bvals/bvals.hpp"
 #include "z4c/fastflow.hpp"
 #include "z4c/compact_object_tracker.hpp"
@@ -28,10 +32,30 @@
 #include "z4c/z4c_amr.hpp"
 #include "z4c/z4c_symmetry.hpp"
 #include "z4c/stored_domain_bounds.hpp"
+#include "z4c/state_admissibility.hpp"
 #include "coordinates/adm.hpp"
 #include "utils/cart_grid.hpp"
 
+#if MPI_PARALLEL_ENABLED
+#include <mpi.h>
+#endif
+
 namespace z4c {
+
+const char *Z4cStateCheckpointName(const Z4cStateCheckpoint checkpoint) {
+  switch (checkpoint) {
+    case Z4cStateCheckpoint::pre_rhs: return "PRE_RHS";
+    case Z4cStateCheckpoint::post_rk_update: return "POST_RK_UPDATE";
+    case Z4cStateCheckpoint::post_restriction: return "POST_RESTRICTION";
+    case Z4cStateCheckpoint::post_receive: return "POST_RECEIVE";
+    case Z4cStateCheckpoint::post_physical_bc: return "POST_PHYSICAL_BC";
+    case Z4cStateCheckpoint::post_prolongation: return "POST_PROLONGATION";
+    case Z4cStateCheckpoint::pre_algconstr: return "PRE_ALGCONSTR";
+    case Z4cStateCheckpoint::post_algconstr: return "POST_ALGCONSTR";
+    case Z4cStateCheckpoint::post_amr_transfer: return "POST_AMR_TRANSFER";
+  }
+  return "UNKNOWN";
+}
 
 char const * const Z4c::Z4c_names[Z4c::nz4c] = {
   "z4c_chi",
@@ -445,49 +469,163 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 }
 
 //----------------------------------------------------------------------------------------
+//! \fn void Z4c::CheckStateAdmissibility
+//! \brief fail closed before an invalid conformal state is consumed or projected.
+//
+// The scan is intentionally separate from projection: invalid inputs are never
+// normalized in place.  The deterministic key is (global GID, local active
+// cell ordinal), so the selected failure does not depend on thread or rank
+// scheduling.
+void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
+                                  const Z4cStateCheckpoint checkpoint,
+                                  const bool include_ghosts) {
+  const auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const auto stored = MakeStoredDomainBounds(indcs);
+  const int is = include_ghosts ? stored.is : indcs.is;
+  const int ie = include_ghosts ? stored.ie : indcs.ie;
+  const int js = include_ghosts ? stored.js : indcs.js;
+  const int je = include_ghosts ? stored.je : indcs.je;
+  const int ks = include_ghosts ? stored.ks : indcs.ks;
+  const int ke = include_ghosts ? stored.ke : indcs.ke;
+  const int nmb = pmy_pack->nmb_thispack;
+  const int nx1 = ie - is + 1;
+  const int nx2 = je - js + 1;
+  const auto state = u0;
+  const auto gids = pmy_pack->pmb->mb_gid.d_view;
+  constexpr unsigned long long kNoFailure =
+      std::numeric_limits<unsigned long long>::max();
+  Kokkos::View<unsigned long long *> first_key("z4c first inadmissible key", 1);
+  Kokkos::deep_copy(first_key, kNoFailure);
+  par_for("z4c state admissibility", DevExeSpace(), 0, nmb - 1,
+          ks, ke, js, je, is, ie,
+      KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+        Real values[nz4c];
+        for (int variable = 0; variable < nz4c; ++variable) {
+          values[variable] = state(m, variable, k, j, i);
+        }
+        if (EvaluateZ4cState(values, nz4c).reason ==
+            Z4cStateFailureReason::valid) return;
+        const unsigned long long ordinal =
+            (static_cast<unsigned long long>(k - ks) * nx2 + (j - js)) * nx1 +
+            static_cast<unsigned long long>(i - is);
+        const unsigned long long key =
+            (static_cast<unsigned long long>(gids(m)) << 32) | ordinal;
+        Kokkos::atomic_min(&first_key(0), key);
+      });
+  Kokkos::fence();
+  const auto host_key = Kokkos::create_mirror_view_and_copy(HostMemSpace(), first_key);
+  unsigned long long selected_key = host_key(0);
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &selected_key, 1, MPI_UNSIGNED_LONG_LONG, MPI_MIN,
+                MPI_COMM_WORLD);
+#endif
+  if (selected_key == kNoFailure) return;
+
+  pmy_pack->pmb->mb_gid.sync_host();
+  pmy_pack->pmb->mb_lev.sync_host();
+  pmy_pack->pmb->mb_size.sync_host();
+  const int selected_gid = static_cast<int>(selected_key >> 32);
+  const unsigned long long ordinal = selected_key & 0xffffffffULL;
+  int m = -1;
+  for (int candidate = 0; candidate < nmb; ++candidate) {
+    if (pmy_pack->pmb->mb_gid.h_view(candidate) == selected_gid) {
+      m = candidate;
+      break;
+    }
+  }
+  if (m >= 0) {
+    const int k = ks + static_cast<int>(ordinal / (nx1 * nx2));
+    const int remainder = static_cast<int>(ordinal % (nx1 * nx2));
+    const int j = js + remainder / nx1;
+    const int i = is + remainder % nx1;
+    const auto device_values = Kokkos::subview(state, m, Kokkos::ALL(), k, j, i);
+    const auto values = Kokkos::create_mirror_view_and_copy(HostMemSpace(), device_values);
+    const auto admissibility = EvaluateZ4cState(values.data(), nz4c);
+    const auto &size = pmy_pack->pmb->mb_size.h_view(m);
+    const Real rho = size.x1min + (static_cast<Real>(i - indcs.is) + 0.5) * size.dx1;
+    const Real z = size.x2min + (static_cast<Real>(j - indcs.js) + 0.5) * size.dx2;
+    const Real edge_distance = std::min(
+        std::min(static_cast<Real>(i - indcs.is), static_cast<Real>(indcs.ie - i)) * size.dx1,
+        std::min(static_cast<Real>(j - indcs.js), static_cast<Real>(indcs.je - j)) * size.dx2);
+    std::ofstream output("z4c_state_failure.json", std::ios::trunc);
+    output << std::setprecision(17)
+           << "{\"schema\":\"z4c_state_admissibility_v1\","
+           << "\"time\":" << pmy_pack->pmesh->time << ",\"cycle\":"
+           << pmy_pack->pmesh->ncycle << ",\"rk_stage\":" << stage
+           << ",\"checkpoint\":\"" << Z4cStateCheckpointName(checkpoint) << "\","
+           << "\"global_gid\":" << selected_gid << ",\"level\":"
+           << pmy_pack->pmb->mb_lev.h_view(m) << ",\"local_indices\":["
+           << i << ',' << j << ',' << k << "],\"rho\":" << rho << ",\"z\":" << z
+           << ",\"include_ghosts\":" << (include_ghosts ? "true" : "false")
+           << ",\"axis_distance\":" << rho << ",\"block_edge_distance\":"
+           << edge_distance << ",\"coarse_fine_interface_distance\":null,"
+           << "\"reason\":\"" << Z4cStateFailureReasonName(admissibility.reason)
+           << "\",\"first_nonfinite_component\":"
+           << admissibility.first_nonfinite_component << ",\"chi\":" << values[I_Z4C_CHI]
+           << ",\"alpha\":" << values[I_Z4C_ALPHA] << ",\"det_gtilde\":"
+           << admissibility.metric.determinant << ",\"spd_pivots\":["
+           << admissibility.metric.pivot0 << ',' << admissibility.metric.pivot1 << ','
+           << admissibility.metric.pivot2 << "],\"gtilde\":[" << values[I_Z4C_GXX]
+           << ',' << values[I_Z4C_GXY] << ',' << values[I_Z4C_GXZ] << ','
+           << values[I_Z4C_GYY] << ',' << values[I_Z4C_GYZ] << ',' << values[I_Z4C_GZZ]
+           << "],\"Khat\":" << values[I_Z4C_KHAT] << ",\"Theta\":"
+           << values[I_Z4C_THETA] << ",\"beta\":[" << values[I_Z4C_BETAX] << ','
+           << values[I_Z4C_BETAY] << ',' << values[I_Z4C_BETAZ] << "],\"B\":["
+           << values[I_Z4C_BX] << ',' << values[I_Z4C_BY] << ',' << values[I_Z4C_BZ]
+           << "],\"state25\":[";
+    for (int variable = 0; variable < nz4c; ++variable) {
+      if (variable != 0) output << ',';
+      output << values(variable);
+    }
+    output << "]}\n";
+    output.flush();
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+#else
+  std::exit(EXIT_FAILURE);
+#endif
+}
+
+//----------------------------------------------------------------------------------------
 //! \fn void Z4c::AlgConstr(AthenaArray<Real> & u)
 //! \brief algebraic constraints projection
 //
 // This function operates on all grid points of the MeshBlock
-void Z4c::AlgConstr(MeshBlockPack *pmbp) {
+void Z4c::AlgConstr(MeshBlockPack *pmbp, Driver *driver, const int stage) {
+  // Algebraic constraints are defined for evolved active cells.  Boundary
+  // storage is owned by the communication/physical-BC passes and can be
+  // deliberately unpopulated between those passes; projecting it previously
+  // hid that distinction through the detg->1 fallback.
+  CheckStateAdmissibility(driver, stage, Z4cStateCheckpoint::pre_algconstr);
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
-  const auto bounds = MakeStoredDomainBounds(indcs);
 
   int nmb = pmbp->nmb_thispack;
 
   auto &z4c = pmbp->pz4c->z4c;
   par_for("Alg constr loop",DevExeSpace(),
-  0,nmb-1,bounds.ks,bounds.ke,bounds.js,bounds.je,bounds.is,bounds.ie,
+  0,nmb-1,indcs.ks,indcs.ke,indcs.js,indcs.je,indcs.is,indcs.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    Real detg = adm::SpatialDet(z4c.g_dd(m,0,0,k,j,i), z4c.g_dd(m,0,1,k,j,i),
-                              z4c.g_dd(m,0,2,k,j,i),z4c.g_dd(m,1,1,k,j,i),
-                              z4c.g_dd(m,1,2,k,j,i), z4c.g_dd(m,2,2,k,j,i));
-    detg = detg > 0. ? detg : 1.;
-    // Real eps = detg - 1.;
-    // Real oopsi4 = (eps < opt.eps_floor) ? (1. - opt.eps_floor/3.) :
-    //             (std::pow(1./detg, 1./3.));
-    Real oopsi4 = std::cbrt(1./detg);
-
-    for(int a = 0; a < 3; ++a)
-    for(int b = a; b < 3; ++b) {
-      z4c.g_dd(m,a,b,k,j,i) *= oopsi4;
+    Real metric[6] = {z4c.g_dd(m,0,0,k,j,i), z4c.g_dd(m,0,1,k,j,i),
+                      z4c.g_dd(m,0,2,k,j,i), z4c.g_dd(m,1,1,k,j,i),
+                      z4c.g_dd(m,1,2,k,j,i), z4c.g_dd(m,2,2,k,j,i)};
+    Real atracefree[6] = {z4c.vA_dd(m,0,0,k,j,i), z4c.vA_dd(m,0,1,k,j,i),
+                          z4c.vA_dd(m,0,2,k,j,i), z4c.vA_dd(m,1,1,k,j,i),
+                          z4c.vA_dd(m,1,2,k,j,i), z4c.vA_dd(m,2,2,k,j,i)};
+    if (!ProjectAdmissibleConformalState(metric, atracefree)) {
+      Kokkos::abort("invalid Z4c conformal state reached algebraic projection");
     }
-
-    // compute trace of A
-    // note: here we are assuming that det g = 1, which we enforced above
-    Real A = adm::Trace(1.0,
-              z4c.g_dd(m,0,0,k,j,i), z4c.g_dd(m,0,1,k,j,i), z4c.g_dd(m,0,2,k,j,i),
-              z4c.g_dd(m,1,1,k,j,i), z4c.g_dd(m,1,2,k,j,i), z4c.g_dd(m,2,2,k,j,i),
-              z4c.vA_dd(m,0,0,k,j,i), z4c.vA_dd(m,0,1,k,j,i), z4c.vA_dd(m,0,2,k,j,i),
-              z4c.vA_dd(m,1,1,k,j,i), z4c.vA_dd(m,1,2,k,j,i), z4c.vA_dd(m,2,2,k,j,i));
-
-    // enforce trace of A to be zero
-    for(int a = 0; a < 3; ++a)
-    for(int b = a; b < 3; ++b) {
-      z4c.vA_dd(m,a,b,k,j,i) -= (1.0/3.0) * A * z4c.g_dd(m,a,b,k,j,i);
-    }
+    z4c.g_dd(m,0,0,k,j,i) = metric[0]; z4c.g_dd(m,0,1,k,j,i) = metric[1];
+    z4c.g_dd(m,0,2,k,j,i) = metric[2]; z4c.g_dd(m,1,1,k,j,i) = metric[3];
+    z4c.g_dd(m,1,2,k,j,i) = metric[4]; z4c.g_dd(m,2,2,k,j,i) = metric[5];
+    z4c.vA_dd(m,0,0,k,j,i) = atracefree[0]; z4c.vA_dd(m,0,1,k,j,i) = atracefree[1];
+    z4c.vA_dd(m,0,2,k,j,i) = atracefree[2]; z4c.vA_dd(m,1,1,k,j,i) = atracefree[3];
+    z4c.vA_dd(m,1,2,k,j,i) = atracefree[4]; z4c.vA_dd(m,2,2,k,j,i) = atracefree[5];
   });
+  Kokkos::fence();
+  CheckStateAdmissibility(driver, stage, Z4cStateCheckpoint::post_algconstr);
 }
 
 //----------------------------------------------------------------------------------------

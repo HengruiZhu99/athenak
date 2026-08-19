@@ -31,6 +31,7 @@ template <typename Symmetry, int NGHOST>
 //! \fn void Z4c::CalcRHS(Driver *pdriver, int stage)
 //! \brief compute rhs of the z4c equations
 TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
+  CheckStateAdmissibility(pdriver, stage, Z4cStateCheckpoint::pre_rhs);
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   int &is = indcs.is; int &ie = indcs.ie;

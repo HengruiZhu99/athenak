@@ -293,6 +293,9 @@ TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
     chi_parent_provenance->RecordCheckpoint(
         ChiProvenanceCheckpoint::s2_after_receive, stage, pbval_u);
   }
+  if (tstat == TaskStatus::complete) {
+    CheckStateAdmissibility(pdrive, stage, Z4cStateCheckpoint::post_receive);
+  }
   return tstat;
 }
 
@@ -302,7 +305,7 @@ TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
 
 TaskStatus Z4c::EnforceAlgConstr(Driver *pdrive, int stage) {
   if (pmy_pack->pdyngr != nullptr || stage == pdrive->nexp_stages) {
-    AlgConstr(pmy_pack);
+    AlgConstr(pmy_pack, pdrive, stage);
   }
   return TaskStatus::complete;
 }
@@ -366,6 +369,7 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
     chi_parent_provenance->RecordCheckpoint(
         ChiProvenanceCheckpoint::s1_after_restriction, stage, pbval_u);
   }
+  CheckStateAdmissibility(pdrive, stage, Z4cStateCheckpoint::post_restriction);
   return TaskStatus::complete;
 }
 
@@ -399,6 +403,8 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
           AMRJumpWriter::coarse_to_fine_prolongation, 4, false);
     }
   }
+  CheckStateAdmissibility(pdrive, stage, Z4cStateCheckpoint::post_prolongation);
+  CheckStateAdmissibility(pdrive, stage, Z4cStateCheckpoint::post_amr_transfer);
   return TaskStatus::complete;
 }
 
@@ -432,6 +438,7 @@ TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
     chi_parent_provenance->RecordCheckpoint(
         ChiProvenanceCheckpoint::s3_after_boundary, stage, pbval_u);
   }
+  CheckStateAdmissibility(pdrive, stage, Z4cStateCheckpoint::post_physical_bc);
   return TaskStatus::complete;
 }
 
