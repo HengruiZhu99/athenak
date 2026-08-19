@@ -128,8 +128,27 @@ provider, but the required clean release reruns also preserve exact Minkowski
 `3.9456`), and robust-Minkowski decay through `t=0.2` at 8, 16, and 32 cells.
 The exact rows and commands are summarized in
 `flat_regression_analytic_vacuum.tsv`.  These flat results pass, but they do
-not replace the pending 96^3/128^3 stationary executable checks or the new
-long-time stationary ladder.
+not replace the new long-time stationary ladder.
+
+## Post-curvature executable stationary t=0 ladder
+
+The pending executable 96^3/128^3 checks are now complete on the exact source
+state containing the analytic stationary vacuum Riemann.  The compact table
+`stationary_analytic_vacuum_t0.tsv` records clean `64^3`, `96^3`, and `128^3`
+initializations.  Their regular-state RHS Linf values are respectively
+`1.17e-16`, `1.59e-16`, and `1.46e-16`; all final regular-field and native
+constraint Linf values are zero.  Frame-Ricci Linf stays in
+`[3.33e-16, 5.00e-16]`, with no inward growth.  Coordinate-Ricci Linf grows
+from `3.76e-10` to `5.33e-08`, exactly as expected of the retained
+coordinate-conditioning diagnostic rather than of the frame-native source.
+
+The 64^3 and 96^3 rows use a clean Release/Kokkos-Serial executable; the 128^3
+row uses a separately built Release/Kokkos-OpenMP executable with 32 host
+threads.  Exact executable hashes, commands, and complete terminal records
+are retained beside the table in `stationary_analytic_vacuum_t0_provenance.md`.
+This completes the post-curvature **t=0** stationary gate only.  It does not
+qualify t=0.1, t=1, t=20, t=100, or the time-dependent transition after the
+source/curvature correction.
 
 ## Source-sector history diagnostics
 
