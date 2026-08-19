@@ -628,7 +628,11 @@ void Mesh::NewTimeStep(const Real tlim) {
   }
   // z4c timestep
   if (pmb_pack->pz4c != nullptr) {
-    dt = std::min(dt, (cfl_no)*(pmb_pack->pz4c->dtnew) );
+    // dt_spatial is a characteristic-crossing interval and receives the ordinary CFL.
+    // dt_source is already an explicit-RK hard ceiling, so applying cfl_no to it would
+    // silently change its documented stability contract.
+    dt = std::min(dt, (cfl_no)*(pmb_pack->pz4c->dt_spatial) );
+    dt = std::min(dt, pmb_pack->pz4c->dt_source);
   }
   // Radiation timestep
   if (pmb_pack->prad != nullptr) {
@@ -648,6 +652,9 @@ void Mesh::NewTimeStep(const Real tlim) {
   if ( (time < tlim) && ((time + dt) > tlim) ) {dt = tlim - time;}
   if (pmr != nullptr && pmr->amr_history != nullptr) {
     pmr->amr_history->LimitTimestep();
+  }
+  if (pmb_pack->pz4c != nullptr) {
+    pmb_pack->pz4c->WriteTimestepContractRecord(dt);
   }
 
   return;

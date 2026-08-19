@@ -99,6 +99,12 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   coarse_u_weyl("coarse_u_weyl",1,1,1,1,1),
   pamr(new Z4c_AMR(pin)),
   pmy_pack(ppack) {
+  dtnew = std::numeric_limits<Real>::max();
+  dt_spatial = std::numeric_limits<Real>::max();
+  dt_source = std::numeric_limits<Real>::max();
+  max_source_rate = 0.0;
+  max_coordinate_speed = 0.0;
+  negative_real_stability_radius = 0.0;
   // (1) read time-evolution option [already error checked in driver constructor]
   // Then initialize memory and algorithms for reconstruction and Riemann solvers
   std::string evolution_t = pin->GetString("time","evolution");
@@ -165,6 +171,15 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     std::exit(EXIT_FAILURE);
   }
   opt.eps_floor = pin->GetOrAddReal("z4c", "eps_floor", 1e-12);
+  opt.timestep_source_safety =
+      pin->GetOrAddReal("z4c", "timestep_source_safety", 0.8);
+  if (!(opt.timestep_source_safety > 0.0) || opt.timestep_source_safety > 1.0 ||
+      !std::isfinite(opt.timestep_source_safety)) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": <z4c>/timestep_source_safety must be finite and in (0,1]"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.damp_kappa1 = pin->GetOrAddReal("z4c", "damp_kappa1", 0.0);
   opt.damp_kappa2 = pin->GetOrAddReal("z4c", "damp_kappa2", 0.0);
   opt.damp_kappa1_max_K =

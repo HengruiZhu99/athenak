@@ -199,6 +199,9 @@ class Z4c {
     // where a square root is necessary.
     Real diss;            // amount of numerical dissipation
     Real eps_floor;       // a small number O(10^-12)
+    // Safety factor applied only to the explicit local-source stability ceiling.
+    // This is deliberately distinct from <time>/cfl_number.
+    Real timestep_source_safety;
     // Constraint damping parameters
     Real damp_kappa1;
     Real damp_kappa2;
@@ -281,8 +284,14 @@ class Z4c {
   // Boundary communication buffers for the weyl scalar
   MeshBoundaryValuesCC *pbval_weyl;
 
-  // following only used for time-evolving flow
+  // Z4c timestep contracts. dt_spatial receives the ordinary mesh CFL multiplier;
+  // dt_source is an already-final hard source ceiling and must not receive it again.
   Real dtnew;
+  Real dt_spatial;
+  Real dt_source;
+  Real max_source_rate;
+  Real max_coordinate_speed;
+  Real negative_real_stability_radius;
 
   // geodesic grid for wave extr
   std::vector<std::unique_ptr<SphericalGrid>> spherical_grids;
@@ -322,6 +331,7 @@ class Z4c {
   void CheckPrescribedZeroShiftInvariant(Driver *d, int stage);
   TaskStatus Z4cFloorChi(Driver *pdrive, int stage);
   TaskStatus NewTimeStep(Driver *d, int stage);
+  void WriteTimestepContractRecord(Real final_dt) const;
   void FillBuiltInPhysicalBoundaryGhosts();
   TaskStatus ApplyPhysicalBCs(Driver *d, int stage);
   TaskStatus EnforceAlgConstr(Driver *d, int stage);
