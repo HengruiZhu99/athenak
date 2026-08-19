@@ -1,0 +1,117 @@
+#!/bin/bash -l
+# One-tile Aurora qualification for the Brill Cartoon contract-fix branch.
+# Submit only with a fresh AURORA_PHASE_ROOT and an exact clean ATHENAK_ROOT:
+#   qsub -A CompactBinaryMerger -v ATHENAK_ROOT=/home/hzhu/...,AURORA_PHASE_ROOT=/home/hzhu/... \
+#     docs/investigations/brill_collapse_contract_fixes_20260819/aurora_single_tile_cpu_gpu_qualification.pbs
+# Aurora allocates a complete PVC node; this script uses only tile 0.0 and one rank.
+# It deliberately performs no Brill restart or long evolution.
+#PBS -N z4c-contract-q
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+
+set -euo pipefail
+
+: "${ATHENAK_ROOT:?provide an exact clean AthenaK checkout}"
+: "${AURORA_PHASE_ROOT:?provide a fresh output directory}"
+
+source_root="$(cd "${ATHENAK_ROOT}" && pwd)"
+if [[ -e "${AURORA_PHASE_ROOT}" ]]; then
+  printf 'refusing to reuse phase root: %s\n' "${AURORA_PHASE_ROOT}" >&2
+  exit 2
+fi
+mkdir -p "${AURORA_PHASE_ROOT}"
+phase_root="$(cd "${AURORA_PHASE_ROOT}" && pwd)"
+build_root="${phase_root}/build-sycl"
+
+module purge
+module load oneapi/release/2025.3.1
+module load gcc/13.4.0
+module load cmake/3.31.11
+module load python/3.12.12
+
+export OMP_NUM_THREADS=1
+export KOKKOS_NUM_THREADS=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ZE_AFFINITY_MASK=0.0
+
+{
+  date --iso-8601=seconds
+  hostname
+  printf 'PBS_JOBID=%s\n' "${PBS_JOBID:-unknown}"
+  printf 'source_root=%s\nphase_root=%s\n' "${source_root}" "${phase_root}"
+  git -C "${source_root}" rev-parse HEAD
+  git -C "${source_root}" status --short
+  git -C "${source_root}" submodule status
+  module list
+  command -v icpx
+  icpx --version | head -n 1
+  cmake --version | head -n 1
+  sycl-ls
+  env | LC_ALL=C sort | grep -E '^(ONEAPI|ZE_|OMP_|KOKKOS_)' || true
+} > "${phase_root}/provenance.log" 2>&1
+
+cmake -S "${source_root}" -B "${build_root}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER=icx \
+  -DCMAKE_CXX_COMPILER=icpx \
+  -DPROBLEM=built_in_pgens \
+  -DBUILD_TESTING=ON \
+  -DAthena_BUILD_UNIT_TESTS=ON \
+  -DAthena_ENABLE_MPI=OFF \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_TESTS=OFF \
+  > "${phase_root}/configure.log" 2>&1
+
+cmake --build "${build_root}" --parallel 64 \
+  --target athena athena_z4c_cartoon_amr_transfer_qualification_unit_test \
+           athena_z4c_amr_shadow_sensor_unit_test \
+  > "${phase_root}/build.log" 2>&1
+
+grep -qx 'Kokkos_ENABLE_SYCL:BOOL=ON' "${build_root}/CMakeCache.txt"
+grep -qx 'Kokkos_ARCH_INTEL_PVC:BOOL=ON' "${build_root}/CMakeCache.txt"
+grep -qx 'Athena_ENABLE_MPI:BOOL=OFF' "${build_root}/CMakeCache.txt"
+
+"${build_root}/athena_z4c_cartoon_amr_transfer_qualification_unit_test" \
+  > "${phase_root}/transfer-test.log" 2>&1
+"${build_root}/athena_z4c_amr_shadow_sensor_unit_test" \
+  > "${phase_root}/shadow-test.log" 2>&1
+
+run_root="${phase_root}/zero-pde"
+mkdir -p "${run_root}"
+(
+  cd "${run_root}"
+  "${build_root}/src/athena" \
+    -i "${source_root}/tst/inputs/z4c_amr_jump_diagnostic.athinput" \
+    z4c/amr_jump_post_cycles=0 \
+    z4c/amr_jump_target_cycle=1 \
+    z4c/amr_jump_derivative_order_audit=true \
+    z4c_amr/dchi_shadow_nyquist=true \
+    > stdout.log 2> stderr.log
+  test ! -s stderr.log
+  test -f z4c_amr_shadow.rank0000.csv
+  test -f z4c_amr_jump/rank0000/event_c00000001_l0_to_l1/t5_00_ADM_OR_CONSTRAINT_RECOMPUTATION/aggregate.json
+)
+
+sha256sum "${build_root}/src/athena" \
+  "${phase_root}/provenance.log" \
+  "${phase_root}/configure.log" \
+  "${phase_root}/build.log" \
+  "${phase_root}/transfer-test.log" \
+  "${phase_root}/shadow-test.log" \
+  "${run_root}/stdout.log" \
+  "${run_root}/stderr.log" \
+  "${run_root}/z4c_amr_shadow.rank0000.csv" \
+  "${run_root}/z4c_amr_jump/rank0000/event_c00000001_l0_to_l1/t5_00_ADM_OR_CONSTRAINT_RECOMPUTATION/aggregate.json" \
+  > "${phase_root}/SHA256SUMS"
+
+printf 'SYCL_SINGLE_TILE_QUALIFICATION_PASS\n' > "${phase_root}/status"
