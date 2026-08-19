@@ -1,0 +1,32 @@
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+### WARNING in /tmp/athenak-refgh-audit-syo6AL/src/parameter_input.cpp: input parameter <job>/basename = ref_gh_stability was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=1.790665e-01 cycle=0 time=0.000000e+00 dt=3.125000e-03
+elapsed=5.721850e+00 cycle=10 time=3.125000e-02 dt=3.125000e-03
+elapsed=1.103891e+01 cycle=20 time=6.250000e-02 dt=3.125000e-03
+elapsed=1.644836e+01 cycle=30 time=9.375000e-02 dt=3.125000e-03
+elapsed=2.182560e+01 cycle=40 time=1.250000e-01 dt=3.125000e-03
+elapsed=2.850892e+01 cycle=50 time=1.562500e-01 dt=3.125000e-03
+elapsed=3.422853e+01 cycle=60 time=1.875000e-01 dt=3.125000e-03
+reference-GH robust stability: growth=8.780101e-01, rate=-6.504857e-01, Linf=2.378938e-10
+
+Terminating on time limit
+time=2.000000e-01 cycle=65
+tlim=2.000000e-01 nlim=-1
+
+MeshBlock-cycles = 65
+cpu time used  = 3.665947e+01
+zone-cycles/cpu_second = 5.810012e+04
+particle-updates/cpu_second = 0.000000e+00

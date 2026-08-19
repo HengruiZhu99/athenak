@@ -91,6 +91,7 @@ class ProblemGenerator {
   void FoGhPuncture(ParameterInput *pin, const bool restart);
   void RefGhMinkowski(ParameterInput *pin, const bool restart);
   void RefGhLinearWave(ParameterInput *pin, const bool restart);
+  void RefGhSourceUnit(ParameterInput *pin, const bool restart);
   void RefGhStability(ParameterInput *pin, const bool restart);
   void RefGhStationaryTrumpet(ParameterInput *pin, const bool restart);
 

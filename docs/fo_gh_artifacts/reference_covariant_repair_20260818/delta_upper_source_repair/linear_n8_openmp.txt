@@ -1,0 +1,26 @@
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+### WARNING in /tmp/athenak-refgh-audit-syo6AL/src/parameter_input.cpp: input parameter <job>/basename = ref_gh_linear_wave was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=2.101113e-02 cycle=0 time=0.000000e+00 dt=1.249999e-02
+reference-GH linear-wave metric L1 = 3.551022e-10, Linf = 5.450745e-10, constraint Linf = 9.674374e-08
+
+Terminating on time limit
+time=5.000000e-02 cycle=5
+tlim=5.000000e-02 nlim=-1
+
+MeshBlock-cycles = 5
+cpu time used  = 2.424443e-01
+zone-cycles/cpu_second = 1.055913e+04
+particle-updates/cpu_second = 0.000000e+00

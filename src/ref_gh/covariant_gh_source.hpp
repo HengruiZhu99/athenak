@@ -73,6 +73,15 @@ bool CovariantGhScalarWaveSource(const Real psi[4][4], const Real pi[4][4],
       for (int C = 0; C < 4; ++C) {
         sectors.delta_lower[A][B][C] = 0.5*(
             sectors.q[B][A][C] + sectors.q[C][A][B] - sectors.q[A][B][C]);
+      }
+    }
+  }
+  // All lower-index connection differences must exist before raising the
+  // first index: Delta^A_BC at a fixed A contracts Delta_DBC for every D.
+  // Combining the two passes can read not-yet-initialized D rows.
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int C = 0; C < 4; ++C) {
         sectors.delta_upper[A][B][C] = 0.0;
         for (int D = 0; D < 4; ++D) {
           sectors.delta_upper[A][B][C] +=

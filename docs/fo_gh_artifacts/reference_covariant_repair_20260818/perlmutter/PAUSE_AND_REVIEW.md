@@ -88,3 +88,19 @@ The retained clean-release wiring smoke is
 `../stationary_history_diagnostics_smoke_n16.hst`.  It confirms roundoff-scale
 analytic curvature and zero non-curvature exact-state sectors, but does not
 replace any pending multi-resolution or long-time gate.
+
+## Follow-up (delta-upper source construction repair)
+
+A later compiled generic-state source test found an uninitialized-read defect
+in the construction of raised connection differences: the old loop raised
+`Delta^A_BC` while only some `Delta_DBC` rows existed. The production code now
+fills all lower-index components before the separate raising pass. It reduces
+the 1,000-jet compiled flat-source mismatch from `1.14718e-4` to
+`6.93889e-17`; compact evidence is in `../delta_upper_source_repair/` and the
+audit request is `../../../ref_gh_remote_review_delta_upper.md`.
+
+Consequently every Perlmutter stationary row above predates this generic source
+repair. The exact stationary `t=0` state did not expose it because
+`Q=Delta=0`, but no `t>0` stationary, transition, or puncture evidence may be
+reused as post-fix qualification. The campaign remains paused pending the
+source/formulation audit and fresh authorization.

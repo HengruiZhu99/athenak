@@ -166,6 +166,7 @@ add_executable(
         pgen/fo_gh/puncture.cpp
         pgen/ref_gh/minkowski.cpp
         pgen/ref_gh/linear_wave.cpp
+        pgen/ref_gh/source_unit.cpp
         pgen/ref_gh/stability.cpp
         pgen/ref_gh/stationary_trumpet.cpp
 

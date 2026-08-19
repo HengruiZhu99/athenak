@@ -55,6 +55,16 @@ oracle has maximum frame-vs-coordinate mismatch `1.11e-15`.  These results
 are in `high_precision_covariant_trumpet_oracle.json` and are documented in
 `ref_gh_covariant_source_repair.md`.
 
+After that audit, a compiled generic-state test exposed an initialization-order
+defect in the production construction of raised `Delta^A_BC`: rows of
+`Delta_DBC` could be read before they were filled. The lower tensor and the
+raised tensor are now constructed in separate passes. The new 1,000-jet flat
+source unit test changes from a pre-fix mismatch of `1.14718e-4` to
+`6.93889e-17`. Its evidence and a focused remote-review request are in
+`fo_gh_artifacts/reference_covariant_repair_20260818/delta_upper_source_repair/`
+and `ref_gh_remote_review_delta_upper.md`. This makes all prior evolution
+evidence pre-delta-upper-fix; it is not a new stability result.
+
 ## 5. Stationary t=0
 
 The generic Cartan curvature trace was found to be the remaining binary64

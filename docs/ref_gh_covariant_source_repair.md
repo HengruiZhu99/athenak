@@ -168,3 +168,30 @@ At initialization it records zero `Q` and `Delta`, frame-Ricci Linf
 `6.66e-16`, and zero remaining exact-state source sectors.  The short smoke
 only validates the wiring and the expected exact-state decomposition.  It is
 not a stationary-convergence or long-time-stability result.
+
+## Delta-upper construction repair and replacement local evidence
+
+A subsequent compiled-source audit found an additional generic-state defect:
+the source formed `Delta_lower[A][B][C]` and immediately raised its first
+index. That contraction requires `Delta_lower[D][B][C]` for every `D`, so it
+could read rows not yet initialized by the enclosing `A` loop. The repair is
+two passes: fill all lower-index connection differences, then form all raised
+ones. It changes no equation or threshold.
+
+The new device-side unit test uses 1,000 deterministic nonzero-Delta flat
+Lorentzian metric jets and compares the production covariant source with the
+retained coordinate partial-wave oracle and transform. It failed before the
+repair at `1.14718e-4` (and at `2.25991e-5` even with zero shift); the repaired
+OpenMP executable gives `6.93889e-17`. The corresponding exact-Minkowski,
+fourth-order linear-wave, and robust-Minkowski reruns are all recorded in
+`fo_gh_artifacts/reference_covariant_repair_20260818/delta_upper_source_repair/`.
+The wave L1 orders are 3.9134 and 3.9456, and robust perturbations decay at
+all three tested resolutions through `t=0.2`.
+
+The earlier post-curvature stationary `t=0` rows are superseded for source
+provenance, even though the exact state has `Q=Delta=0` and therefore did not
+excite this bug. The corrected OpenMP 64/96/128 replacement ladder has RHS
+Linf `1.17e-16`, `1.59e-16`, and `1.46e-16` and frame-Ricci Linf
+`3.33e-16`, `4.44e-16`, and `5.00e-16`, with zero-time final field and native
+constraint norms. This is still a `t=0` gate only. No existing stationary
+evolution or puncture conclusion is requalified by this correction.

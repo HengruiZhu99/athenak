@@ -1,0 +1,12 @@
+# Suite	resolution_or_samples	final_time	primary_result	interpretation
+flat_source_oracle	1000	0	6.93889e-17	production covariant source versus retained coordinate oracle
+exact_minkowski	8^3	0.02	0.0	exact evolution error
+linear_wave	8	0.05	3.551022115244606e-10	metric L1
+linear_wave	16	0.05	2.356635719902300e-11	metric L1; L1 order from 8=3.9134
+linear_wave	32	0.05	1.529488341533991e-12	metric L1; L1 order from 16=3.9456
+robust_minkowski	8^3	0.2	0.9610169371738498	growth; Linf=2.150863397579147e-10
+robust_minkowski	16^3	0.2	0.9288222137525614	growth; Linf=2.160000757200345e-10
+robust_minkowski	32^3	0.2	0.8780101	growth; Linf=2.378938e-10
+stationary_trumpet_t0	64^3	0	1.16791e-16	RHS Linf; frame Ricci=3.33067e-16
+stationary_trumpet_t0	96^3	0	1.58608e-16	RHS Linf; frame Ricci=4.44089e-16
+stationary_trumpet_t0	128^3	0	1.45536e-16	RHS Linf; frame Ricci=4.996e-16
