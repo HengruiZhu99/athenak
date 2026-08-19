@@ -1,0 +1,20 @@
+Configuration: clean detached worktree /tmp/refgh-control-nxvoH5 at
+ac99dcc192b5fe2b43fef603c89b00d39fbe5f19; Release Serial build with
+Kokkos 4.7.2 and GCC 13.3.0.  The source worktree was intentionally not used
+because it contains unrelated user changes.
+
+Executable SHA-256:
+36c878a474cb55570418381d38848ff043d8104b5099d404a3ca23578fb773b6  /tmp/refgh-control-nxvoH5/build/src/athena
+
+Each run used:
+/tmp/refgh-control-nxvoH5/build/src/athena -d <fresh-run-dir> -i
+/tmp/refgh-control-nxvoH5/inputs/ref_gh/ref_gh_stationary_trumpet.athinput
+time/tlim=0.0 job/basename=dx{16,24,32}
+mesh/nx{1,2,3}={64,96,128}
+meshblock/nx{1,2,3}={32,48,64}
+
+The problem generator first evaluates the full lower-order RHS and reference
+curvature on all physical cells, then the final diagnostic refresh verifies
+field and native-constraint Linf.  The frame spin/structure full scans were
+intentionally disabled for these three expensive points; their exact
+antisymmetries are separately covered by the reference-frame audit.

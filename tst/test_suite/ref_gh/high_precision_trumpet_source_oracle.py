@@ -441,6 +441,187 @@ def legacy_source(isotropic_radius, c0, gamma0=mp.mpf(1)):
     }
 
 
+def inverse_matrix(matrix):
+    """Small arbitrary-precision Gauss-Jordan inverse for the frame oracle."""
+    augmented = [[matrix[row][column] for column in range(4)]
+                 + [mp.mpf(row == column) for column in range(4)]
+                 for row in range(4)]
+    for column in range(4):
+        pivot = max(range(column, 4),
+                    key=lambda row: abs(augmented[row][column]))
+        augmented[column], augmented[pivot] = augmented[pivot], augmented[column]
+        diagonal = augmented[column][column]
+        if diagonal == 0:
+            raise AssertionError("singular frame metric in covariant oracle")
+        augmented[column] = [entry / diagonal for entry in augmented[column]]
+        for row in range(4):
+            if row == column:
+                continue
+            factor = augmented[row][column]
+            augmented[row] = [augmented[row][item] - factor * augmented[column][item]
+                              for item in range(8)]
+    return [[augmented[row][column + 4] for column in range(4)]
+            for row in range(4)]
+
+
+def frame_geometry(metric_jet, inverse_jet, coframe_jet, frame_jet):
+    """Evaluate the exact same spin/Cartan construction as the device provider.
+
+    This intentionally starts from the arbitrary-precision coordinate 2-jet and
+    never reads the generated interpolation table.  The construction is kept
+    independent of the production C++ implementation while using the documented
+    frame/spin definitions.
+    """
+    _, _, _, _, christoffel, dchristoffel = coordinate_geometry(
+        metric_jet, inverse_jet)
+    theta = [[coframe_jet[A][a].value for a in range(4)] for A in range(4)]
+    tetrad = [[frame_jet[A][a].value for a in range(4)] for A in range(4)]
+    dtheta = [[[coframe_jet[A][a].first[p] for a in range(4)]
+               for A in range(4)] for p in range(4)]
+    dframe = [[[frame_jet[A][a].first[p] for a in range(4)]
+               for A in range(4)] for p in range(4)]
+    ddframe = [[[[frame_jet[A][a].second[p][q] for a in range(4)]
+                 for A in range(4)] for q in range(4)] for p in range(4)]
+    omega = [[[mp.mpf(0) for _ in range(4)] for _ in range(4)]
+             for _ in range(4)]
+    coordinate_domega = [[[[mp.mpf(0) for _ in range(4)] for _ in range(4)]
+                           for _ in range(4)] for _ in range(4)]
+    for A in range(4):
+        for B in range(4):
+            for C in range(4):
+                for a in range(4):
+                    for c in range(4):
+                        covariant = dframe[c][B][a] + sum(
+                            christoffel[a][c][d] * tetrad[B][d]
+                            for d in range(4))
+                        omega[A][B][C] += theta[A][a] * tetrad[C][c] * covariant
+                        for p in range(4):
+                            d_covariant = ddframe[p][c][B][a] + sum(
+                                dchristoffel[p][a][c][d] * tetrad[B][d]
+                                + christoffel[a][c][d] * dframe[p][B][d]
+                                for d in range(4))
+                            coordinate_domega[p][A][B][C] += (
+                                (dtheta[p][A][a] * tetrad[C][c]
+                                 + theta[A][a] * dframe[p][C][c]) * covariant
+                                + theta[A][a] * tetrad[C][c] * d_covariant)
+    # Project only the exact metric-compatibility antisymmetry, as production does.
+    for A in range(4):
+        eta_a = -1 if A == 0 else 1
+        for B in range(A, 4):
+            eta_b = -1 if B == 0 else 1
+            for C in range(4):
+                projected = (eta_a * omega[A][B][C]
+                             - eta_b * omega[B][A][C]) / 2
+                omega[A][B][C] = eta_a * projected
+                omega[B][A][C] = -eta_b * projected
+    domega = [[[[mp.mpf(0) for _ in range(4)] for _ in range(4)]
+               for _ in range(4)] for _ in range(4)]
+    for D in range(4):
+        for A in range(4):
+            for B in range(4):
+                for C in range(4):
+                    domega[D][A][B][C] = sum(
+                        tetrad[D][p] * coordinate_domega[p][A][B][C]
+                        for p in range(4))
+    for A in range(4):
+        eta_a = -1 if A == 0 else 1
+        for B in range(A, 4):
+            eta_b = -1 if B == 0 else 1
+            for C in range(4):
+                for D in range(4):
+                    projected = (eta_a * domega[D][A][B][C]
+                                 - eta_b * domega[D][B][A][C]) / 2
+                    domega[D][A][B][C] = eta_a * projected
+                    domega[D][B][A][C] = -eta_b * projected
+    structure = [[[mp.mpf(0) for _ in range(4)] for _ in range(4)]
+                 for _ in range(4)]
+    for A in range(4):
+        for B in range(4):
+            for C in range(B, 4):
+                value = sum(theta[A][a] * (
+                    tetrad[B][p] * dframe[p][C][a]
+                    - tetrad[C][p] * dframe[p][B][a])
+                    for a in range(4) for p in range(4))
+                structure[A][B][C] = value
+                structure[A][C][B] = -value
+    riemann = [[[[mp.mpf(0) for _ in range(4)] for _ in range(4)]
+                for _ in range(4)] for _ in range(4)]
+    for A in range(4):
+        for B in range(4):
+            for C in range(4):
+                for D in range(4):
+                    riemann[A][B][C][D] = (
+                        domega[C][A][B][D] - domega[D][A][B][C]
+                        + sum(omega[A][E][C] * omega[E][B][D]
+                              - omega[A][E][D] * omega[E][B][C]
+                              - structure[E][C][D] * omega[A][B][E]
+                              for E in range(4)))
+    return theta, tetrad, omega, domega, riemann
+
+
+def covariant_reference_source(isotropic_radius, c0):
+    """High-precision Q=Delta=S=0 identity for the exact trumpet reference."""
+    alpha, psi2, q, _, _ = trumpet_jets(isotropic_radius, c0)
+    coordinates = [Jet.coordinate(isotropic_radius, 1),
+                   Jet.coordinate(0, 2), Jet.coordinate(0, 3)]
+    shift = [q * coordinate for coordinate in coordinates]
+    coframe = [[Jet.constant(0) for _ in range(4)] for _ in range(4)]
+    frame = [[Jet.constant(0) for _ in range(4)] for _ in range(4)]
+    coframe[0][0] = alpha
+    frame[0][0] = alpha.reciprocal()
+    for i in range(3):
+        coframe[i + 1][0] = psi2 * shift[i]
+        coframe[i + 1][i + 1] = psi2
+        frame[0][i + 1] = -(shift[i] / alpha)
+        frame[i + 1][i + 1] = psi2.reciprocal()
+    eta = [[mp.mpf(-1) if A == B == 0 else mp.mpf(A == B)
+            for B in range(4)] for A in range(4)]
+    metric = [[sum(eta[A][A] * coframe[A][a] * coframe[A][b]
+                   for A in range(4)) for b in range(4)] for a in range(4)]
+    inverse = [[sum(eta[A][A] * frame[A][a] * frame[A][b]
+                    for A in range(4)) for b in range(4)] for a in range(4)]
+    _, tetrad, omega, domega, riemann = frame_geometry(
+        metric, inverse, coframe, frame)
+    p = [[[mp.mpf(0) for _ in range(4)] for _ in range(4)] for _ in range(4)]
+    q_cov = [[[p[C][A][B] - sum(
+        omega[D][A][C] * eta[D][B] + omega[D][B][C] * eta[A][D]
+        for D in range(4)) for B in range(4)] for A in range(4)] for C in range(4)]
+    delta_lower = [[[((q_cov[B][A][C] + q_cov[C][A][B]
+                       - q_cov[A][B][C]) / 2)
+                    for C in range(4)] for B in range(4)] for A in range(4)]
+    delta = [sum(eta[B][B] * delta_lower[A][B][B] for B in range(4))
+             for A in range(4)]
+    curvature = [[-sum(eta[C][C] * (
+        riemann[E][C][C][A] * eta[B][E]
+        + riemann[E][C][C][B] * eta[A][E])
+        for C in range(4) for E in range(4)) for B in range(4)] for A in range(4)]
+    correction = [[sum(eta[C][C] * (
+        sum(domega[C][E][A][C] * eta[E][B]
+            + domega[C][E][B][C] * eta[A][E] for E in range(4)))
+        for C in range(4)) for B in range(4)] for A in range(4)]
+    source = [[curvature[A][B] + correction[A][B]
+               for B in range(4)] for A in range(4)]
+    maximum = lambda array: max(abs(value) for row in array for value in row)
+    maximum3 = lambda array: max(abs(value) for plane in array
+                                 for row in plane for value in row)
+    return {
+        "covariant_q_linf": maximum3(q_cov),
+        "covariant_delta_linf": max(maximum3(delta_lower), max(abs(v) for v in delta)),
+        "covariant_scalar_source_linf": maximum(source),
+        "covariant_frame_ricci_linf": max(abs(sum(riemann[A][B][A][D]
+                                                     for A in range(4)))
+                                          for B in range(4) for D in range(4)),
+        "covariant_spin_antisymmetry_linf": max(
+            abs(((-1 if A == 0 else 1) * omega[A][B][C]
+                 + (-1 if B == 0 else 1) * omega[B][A][C]))
+            for A in range(4) for B in range(4) for C in range(4)),
+        "covariant_tetrad_duality_linf": max(abs(sum(
+            [[coframe[A][a].value for a in range(4)] for A in range(4)][A][a]
+            * tetrad[B][a] for a in range(4)) - (1 if A == B else 0))
+            for A in range(4) for B in range(4)),
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dps", type=int, default=100)
@@ -461,6 +642,7 @@ def main():
     results = []
     for radius in radii:
         row = legacy_source(radius, c0)
+        row.update(covariant_reference_source(radius, c0))
         row["radius"] = radius
         results.append({key: mp.nstr(value, args.dps)
                         for key, value in row.items()})
@@ -475,6 +657,11 @@ def main():
     maximum = max(mp.mpf(row["scalar_source_linf"]) for row in results)
     if maximum > mp.mpf(10) ** (-(args.dps // 2)):
         raise AssertionError(f"finite continuum scalar-source residual: {maximum}")
+    for key in ("covariant_q_linf", "covariant_delta_linf",
+                "covariant_scalar_source_linf", "covariant_frame_ricci_linf"):
+        maximum = max(mp.mpf(row[key]) for row in results)
+        if maximum > mp.mpf(10) ** (-(args.dps // 2)):
+            raise AssertionError(f"finite covariant reference residual {key}: {maximum}")
 
 
 if __name__ == "__main__":
