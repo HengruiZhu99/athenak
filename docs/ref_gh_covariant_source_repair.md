@@ -68,7 +68,25 @@ Compact Perlmutter histories and rank-to-GPU evidence are under
 `docs/fo_gh_artifacts/reference_covariant_repair_20260818/perlmutter/`.  Raw
 restart files (about 205 MB each) are intentionally excluded.
 
-The `t=20` stationary gate and the time-dependent wormhole-to-trumpet reference
-remain required before a formulation-success claim.  In particular, the
-successful short stationary and restart checks do **not** establish puncture
-stability.
+## Paused stationary `t=20` ladder (not a gate pass)
+
+The subsequent four-A100 campaign used the same CUDA-aware-MPI build and was
+intentionally stopped at the user's request.  The `dx=1/16` and `dx=1/24`
+stationary cases completed `t=20` with bad-state flag zero and effective CFL
+0.05; their final square-root-of-integrated GH/reduction norms were
+`4.19e-12`/`3.27e-10` and `8.68e-12`/`6.03e-10`, respectively.  The `dx=1/32`
+case was cleanly cancelled after checkpoint `.00002`; its final written history
+row is at `t=4.00184777`, also with bad-state flag zero and CFL 0.05, but has
+GH/reduction norms `8.29e-11`/`1.81e-10`.
+
+Thus all observed runs remained finite, but these common norms do not show a
+resolution-improving trend.  The fine case has not reached `t=20`, so the
+three-resolution stationary gate has **not** passed and no conclusion about
+long-time puncture stability or formulation success is justified.  This is an
+observation requiring source/formulation review, not a diagnosed cause: no
+parameter, threshold, clipping, floor, or source term was changed to improve
+it.  The compact histories, an exact table of the final rows, and reviewer
+questions are in the artifact directory.
+
+The time-dependent wormhole-to-trumpet reference remains out of scope until
+the stationary gate is resolved.
