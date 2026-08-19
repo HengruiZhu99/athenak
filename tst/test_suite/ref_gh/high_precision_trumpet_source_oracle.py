@@ -83,8 +83,10 @@ def radius_from_alpha(alpha):
                      - 1 / (1 - ALPHA_C))
         try:
             root = mp.findroot(function, guess, df=derivative, solver="newton",
-                               verify=True)
-            if root > 0 and ((root < RADIUS_C) == (alpha < ALPHA_C)):
+                               verify=False)
+            scale = max(mp.mpf(1), abs(C_SQUARED * mp.exp(2 * alpha / N)))
+            if (root > 0 and ((root < RADIUS_C) == (alpha < ALPHA_C))
+                    and abs(function(root)) < scale * mp.mpf(10) ** (-(mp.mp.dps - 10))):
                 return root
         except (ValueError, ZeroDivisionError):
             pass
