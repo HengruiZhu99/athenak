@@ -130,10 +130,11 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
   adm::ADM* padm = pm->pmb_pack->padm;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
   fo_gh::FoGh* pfogh = pm->pmb_pack->pfogh;
+  ref_gh::RefGh* prefgh = pm->pmb_pack->prefgh;
   radiation::Radiation* prad=pm->pmb_pack->prad;
   TurbulenceDriver* pturb=pm->pmb_pack->pturb;
   int nrad = 0, nhydro = 0, nmhd = 0, nforce = 3, nadm = 0, nz4c = 0,
-      nfogh = 0;
+      nfogh = 0, nrefgh = 0;
   if (phydro != nullptr) {
     nhydro = phydro->nhydro + phydro->nscalars;
   }
@@ -147,6 +148,8 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     nz4c = pz4c->nz4c;
   } else if (pfogh != nullptr) {
     nfogh = pfogh->nfo_gh;
+  } else if (prefgh != nullptr) {
+    nrefgh = prefgh->nref_gh;
   } else if (padm != nullptr) {
     nadm = padm->nadm;
   }
@@ -264,6 +267,8 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     data_size_ += nout1*nout2*nout3*nz4c*sizeof(Real);   // z4c u0
   } else if (pfogh != nullptr) {
     data_size_ += nout1*nout2*nout3*nfogh*sizeof(Real);  // fo_gh u0
+  } else if (prefgh != nullptr) {
+    data_size_ += nout1*nout2*nout3*nrefgh*sizeof(Real); // ref_gh u0
   } else if (padm != nullptr) {
     data_size_ += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
   }
@@ -622,6 +627,34 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     Kokkos::deep_copy(Kokkos::subview(pfogh->u0, std::make_pair(0,nmb), Kokkos::ALL,
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL), ccin);
     offset_myrank += nout1*nout2*nout3*nfogh*sizeof(Real); // fo_gh u0
+    myoffset = offset_myrank;
+  } else if (prefgh != nullptr) {
+    Kokkos::realloc(ccin, nmb, nrefgh, nout3, nout2, nout1);
+    for (int m=0; m<noutmbs_max; ++m) {
+      auto mbptr = Kokkos::subview(ccin, m, Kokkos::ALL, Kokkos::ALL,
+                                   Kokkos::ALL, Kokkos::ALL);
+      size_t mbcnt = mbptr.size();
+      size_t nread = 0;
+      if (m < noutmbs_min) {
+        nread = resfile.Read_Reals_at_all(mbptr.data(), mbcnt, myoffset,
+                                          single_file_per_rank);
+      } else if (m < pm->nmb_thisrank) {
+        nread = resfile.Read_Reals_at(mbptr.data(), mbcnt, myoffset,
+                                      single_file_per_rank);
+      } else {
+        continue;
+      }
+      if (nread != mbcnt) {
+        std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                  << std::endl << "CC Ref-GH data not read correctly from rst file, "
+                  << "restart file is broken." << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      myoffset += data_size;
+    }
+    Kokkos::deep_copy(Kokkos::subview(prefgh->u0, std::make_pair(0,nmb), Kokkos::ALL,
+                      Kokkos::ALL, Kokkos::ALL, Kokkos::ALL), ccin);
+    offset_myrank += nout1*nout2*nout3*nrefgh*sizeof(Real); // ref_gh u0
     myoffset = offset_myrank;
   } else if (padm != nullptr) {
     Kokkos::realloc(ccin, nmb, nadm, nout3, nout2, nout1);
