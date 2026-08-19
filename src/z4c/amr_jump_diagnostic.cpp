@@ -179,7 +179,11 @@ struct Aggregate {
   Real m_integral = 0.0;
   Real z_integral = 0.0;
   Real min_chi = std::numeric_limits<Real>::infinity();
+  Real min_lapse = std::numeric_limits<Real>::infinity();
   Real min_detg = std::numeric_limits<Real>::infinity();
+  Real min_conformal_pivot = std::numeric_limits<Real>::infinity();
+  Real max_conformal_det_error = 0.0;
+  Real max_abs_atilde_trace = 0.0;
   Real max_c = -std::numeric_limits<Real>::infinity();
   int min_chi_gid = -1;
   int min_chi_i = -1;
@@ -243,6 +247,29 @@ Aggregate ComputeAggregate(MeshBlockPack *pack,
           result.max_c = std::max(result.max_c, c);
           if (!(detg > 0.0) || !std::isfinite(detg)) ++result.nonpositive_detg;
           const Real chi = z4c_host(m, Z4c::I_Z4C_CHI, k, j, i);
+          const Real lapse = z4c_host(m, Z4c::I_Z4C_ALPHA, k, j, i);
+          const Real txx = z4c_host(m, Z4c::I_Z4C_GXX, k, j, i);
+          const Real txy = z4c_host(m, Z4c::I_Z4C_GXY, k, j, i);
+          const Real txz = z4c_host(m, Z4c::I_Z4C_GXZ, k, j, i);
+          const Real tyy = z4c_host(m, Z4c::I_Z4C_GYY, k, j, i);
+          const Real tyz = z4c_host(m, Z4c::I_Z4C_GYZ, k, j, i);
+          const Real tzz = z4c_host(m, Z4c::I_Z4C_GZZ, k, j, i);
+          const Real tdet = adm::SpatialDet(txx, txy, txz, tyy, tyz, tzz);
+          const Real pivot0 = txx;
+          const Real pivot1 = tyy - txy * txy / pivot0;
+          const Real pivot2 = tdet / (pivot0 * pivot1);
+          const Real axx = z4c_host(m, Z4c::I_Z4C_AXX, k, j, i);
+          const Real axy = z4c_host(m, Z4c::I_Z4C_AXY, k, j, i);
+          const Real axz = z4c_host(m, Z4c::I_Z4C_AXZ, k, j, i);
+          const Real ayy = z4c_host(m, Z4c::I_Z4C_AYY, k, j, i);
+          const Real ayz = z4c_host(m, Z4c::I_Z4C_AYZ, k, j, i);
+          const Real azz = z4c_host(m, Z4c::I_Z4C_AZZ, k, j, i);
+          const Real trace = ((tyy * tzz - tyz * tyz) * axx +
+                              (txx * tzz - txz * txz) * ayy +
+                              (txx * tyy - txy * txy) * azz +
+                              2.0 * (txz * tyz - txy * tzz) * axy +
+                              2.0 * (txy * tyz - txz * tyy) * axz +
+                              2.0 * (txy * txz - txx * tyz) * ayz) / tdet;
           if (!std::isfinite(chi)) ++result.nonfinite_chi;
           if (chi < result.min_chi || !std::isfinite(chi)) {
             result.min_chi = chi;
@@ -252,6 +279,13 @@ Aggregate ComputeAggregate(MeshBlockPack *pack,
             result.min_chi_rho = rho;
             result.min_chi_z = z;
           }
+          result.min_lapse = std::min(result.min_lapse, lapse);
+          result.min_conformal_pivot = std::min(
+              result.min_conformal_pivot, std::min(pivot0, std::min(pivot1, pivot2)));
+          result.max_conformal_det_error = std::max(
+              result.max_conformal_det_error, std::abs(tdet - 1.0));
+          result.max_abs_atilde_trace = std::max(result.max_abs_atilde_trace,
+                                                  std::abs(trace));
           ++result.active_cells;
         }
       }
@@ -284,6 +318,7 @@ std::string AggregateJSON(const Aggregate &aggregate, const Mesh *mesh,
          << "\"M_norm2\":" << StrictJSONReal(aggregate.m_integral) << ","
          << "\"Z_norm2\":" << StrictJSONReal(aggregate.z_integral) << ","
          << "\"min_chi\":" << StrictJSONReal(aggregate.min_chi) << ","
+         << "\"min_lapse\":" << StrictJSONReal(aggregate.min_lapse) << ","
          << "\"nonfinite_chi\":" << aggregate.nonfinite_chi << ","
          << "\"min_chi_gid\":" << aggregate.min_chi_gid << ","
          << "\"min_chi_i\":" << aggregate.min_chi_i << ","
@@ -291,6 +326,12 @@ std::string AggregateJSON(const Aggregate &aggregate, const Mesh *mesh,
          << "\"min_chi_rho\":" << StrictJSONReal(aggregate.min_chi_rho) << ","
          << "\"min_chi_z\":" << StrictJSONReal(aggregate.min_chi_z) << ","
          << "\"min_det_gamma\":" << StrictJSONReal(aggregate.min_detg) << ","
+         << "\"min_conformal_pivot\":"
+         << StrictJSONReal(aggregate.min_conformal_pivot) << ","
+         << "\"max_abs_detgtilde_minus_one\":"
+         << StrictJSONReal(aggregate.max_conformal_det_error) << ","
+         << "\"max_abs_atilde_trace\":"
+         << StrictJSONReal(aggregate.max_abs_atilde_trace) << ","
          << "\"nonpositive_or_nonfinite_det_gamma\":"
          << aggregate.nonpositive_detg << ","
          << "\"nonfinite_constraints\":" << aggregate.nonfinite_constraints << ","
