@@ -59,10 +59,24 @@ AMRHistory::AMRHistory(Mesh *mesh, ParameterInput *pin) : mesh_(mesh), pin_(pin)
   }
   path_ = pin->GetString("mesh_refinement", "amr_history_file");
   if (path_.empty()) Fatal("amr_history_file must not be empty");
-  if (pin->DoesParameterExist("mesh_refinement", "amr_history_compatible_source_id")) {
+  const bool has_compatible_source_parameter =
+      pin->DoesParameterExist("mesh_refinement", "amr_history_compatible_source_id");
+  const char *compatible_source_environment =
+      std::getenv("ATHENA_AMR_HISTORY_COMPATIBLE_SOURCE_ID");
+  const bool has_compatible_source_environment =
+      compatible_source_environment != nullptr;
+  if (has_compatible_source_parameter || has_compatible_source_environment) {
     if (!replay()) Fatal("amr_history_compatible_source_id is replay-only");
-    compatible_source_id_ =
-        pin->GetString("mesh_refinement", "amr_history_compatible_source_id");
+    const std::string parameter_source_id = has_compatible_source_parameter
+        ? pin->GetString("mesh_refinement", "amr_history_compatible_source_id") : "";
+    const std::string environment_source_id = has_compatible_source_environment
+        ? std::string(compatible_source_environment) : "";
+    if (has_compatible_source_parameter && has_compatible_source_environment &&
+        parameter_source_id != environment_source_id) {
+      Fatal("amr_history_compatible_source_id parameter/environment mismatch");
+    }
+    compatible_source_id_ = has_compatible_source_parameter
+        ? parameter_source_id : environment_source_id;
     if (compatible_source_id_.empty()) {
       Fatal("amr_history_compatible_source_id must not be empty");
     }

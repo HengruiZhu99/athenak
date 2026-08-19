@@ -132,7 +132,8 @@ def serial_suite(args, work):
     roots = {name: work / name for name in
              ("absent", "off", "record", "replay", "cfl", "high", "record_restart",
               "replay_prefix", "replay_restart", "carrier_mutation", "fresh_injection",
-              "existing_record", "source_mismatch", "source_wrong", "source_compatible")}
+              "existing_record", "source_mismatch", "source_wrong", "source_compatible",
+              "source_environment", "source_environment_mismatch")}
     for root in roots.values():
         clean_dir(root)
 
@@ -188,6 +189,22 @@ def serial_suite(args, work):
             "explicit replay source compatibility evidence missing")
     compare_payloads(roots["record"], "record", roots["source_compatible"],
                      "source_compatible")
+    environment_command = [
+        "/usr/bin/env", f"ATHENA_AMR_HISTORY_COMPATIBLE_SOURCE_ID={reviewed_parent}"]
+    environment_command += command(
+        args.athena, args.input, "replay", rebound, "source_environment")
+    environment_log = run(environment_command, roots["source_environment"])
+    require("AMR_HISTORY_SOURCE_COMPATIBILITY" in environment_log,
+            "environment replay source compatibility evidence missing")
+    compare_payloads(roots["record"], "record", roots["source_environment"],
+                     "source_environment")
+    mismatch_command = [
+        "/usr/bin/env", "ATHENA_AMR_HISTORY_COMPATIBLE_SOURCE_ID=environment-wrong"]
+    mismatch_command += command(
+        args.athena, compatible_input, "replay", rebound,
+        "source_environment_mismatch")
+    run_fails(mismatch_command, roots["source_environment_mismatch"],
+              "amr_history_compatible_source_id parameter/environment mismatch")
 
     cfl_log = run(command(args.athena, args.input, "replay", history, "cfl",
                           ["time/cfl_number=0.07", "time/nlim=6"]), roots["cfl"])

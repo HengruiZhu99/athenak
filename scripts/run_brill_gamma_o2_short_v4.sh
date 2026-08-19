@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-root=/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-shift-controls-sourcecompat-v3-20260818
+root=/pscratch/sd/h/hzhu/axisymmetric-cartoon-brill-shift-controls-sourcecompat-v4-20260818
 source_root=${root}/source/athenak
 build_root=${root}/build/athena-cuda
 run=${root}/run/arm-gamma-o2-short
@@ -43,6 +43,7 @@ source "${profile}"
 export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
 export MPICH_GPU_SUPPORT_ENABLED=1 MPICH_GPU_IPC_ENABLED=0
 export MPICH_OFI_NIC_POLICY=GPU
+export ATHENA_AMR_HISTORY_COMPATIBLE_SOURCE_ID=athena-0.1-git-ac75c8d348da91b38cbc6855b5fba51cd3089663
 env | sort > "${evidence}/environment.txt"
 git -C "${source_root}" rev-parse HEAD 'HEAD^{tree}' > "${evidence}/source-identity.txt"
 scontrol show job "${SLURM_JOB_ID}" > "${evidence}/slurm-job.txt"
