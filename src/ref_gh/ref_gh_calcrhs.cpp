@@ -220,6 +220,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       }
     });
   }
+  DebugFence("ref_gh CalcRHS");
   return TaskStatus::complete;
 }
 

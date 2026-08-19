@@ -20,6 +20,13 @@
 
 namespace ref_gh {
 
+void RefGh::DebugFence(const char *label) const {
+  if (opt.debug_task_fences) {
+    Kokkos::fence(label);
+    std::cout << "ref_gh debug fence passed: " << label << std::endl;
+  }
+}
+
 void RefGh::QueueTasks() {
   using namespace numrel;  // NOLINT(build/namespaces)
   auto *pnr = pmy_pack->pnr;
@@ -54,7 +61,11 @@ void RefGh::QueueTasks() {
                  {RefGh_ClearS});
 }
 
-TaskStatus RefGh::InitRecv(Driver *, int) { return pbval_u->InitRecv(nref_gh); }
+TaskStatus RefGh::InitRecv(Driver *, int) {
+  const auto status = pbval_u->InitRecv(nref_gh);
+  DebugFence("ref_gh InitRecv");
+  return status;
+}
 TaskStatus RefGh::ClearRecv(Driver *, int) { return pbval_u->ClearRecv(); }
 TaskStatus RefGh::ClearSend(Driver *, int) { return pbval_u->ClearSend(); }
 
@@ -76,6 +87,7 @@ TaskStatus RefGh::CopyU(Driver *driver, int stage) {
   } else if (stage == 1) {
     Kokkos::deep_copy(DevExeSpace(), u1, u0);
   }
+  DebugFence("ref_gh CopyU");
   return TaskStatus::complete;
 }
 
@@ -94,6 +106,7 @@ TaskStatus RefGh::ExpRKUpdate(Driver *driver, int stage) {
                                + gam1*base(m, n, k, j, i)
                                + beta_dt*rhs(m, n, k, j, i);
   });
+  DebugFence("ref_gh ExpRKUpdate");
   return TaskStatus::complete;
 }
 
@@ -101,12 +114,22 @@ TaskStatus RefGh::RestrictU(Driver *, int) {
   if (pmy_pack->pmesh->multilevel) {
     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
   }
+  DebugFence("ref_gh RestrictU");
   return TaskStatus::complete;
 }
-TaskStatus RefGh::SendU(Driver *, int) { return pbval_u->PackAndSendCC(u0, coarse_u0); }
-TaskStatus RefGh::RecvU(Driver *, int) { return pbval_u->RecvAndUnpackCC(u0, coarse_u0); }
+TaskStatus RefGh::SendU(Driver *, int) {
+  const auto status = pbval_u->PackAndSendCC(u0, coarse_u0);
+  DebugFence("ref_gh SendU");
+  return status;
+}
+TaskStatus RefGh::RecvU(Driver *, int) {
+  const auto status = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
+  DebugFence("ref_gh RecvU");
+  return status;
+}
 TaskStatus RefGh::Prolongate(Driver *, int) {
   if (pmy_pack->pmesh->multilevel) pbval_u->ProlongateCC(u0, coarse_u0, true);
+  DebugFence("ref_gh Prolongate");
   return TaskStatus::complete;
 }
 TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
@@ -189,6 +212,7 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
       }
     });
   }
+  DebugFence("ref_gh ApplyPhysicalBCs");
   return TaskStatus::complete;
 }
 
@@ -278,6 +302,7 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  DebugFence("ref_gh NewTimeStep");
   return TaskStatus::complete;
 }
 

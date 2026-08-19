@@ -33,6 +33,7 @@ class RefGh {
     int extrap_order;
     int reference_kind;
     int source_kind;
+    bool debug_task_fences;
     Real gamma0;
     Real diss;
     Real fail_closed_dt;
@@ -72,6 +73,7 @@ class RefGh {
   TaskStatus Prolongate(Driver *driver, int stage);
   TaskStatus ApplyPhysicalBCs(Driver *driver, int stage);
   TaskStatus NewTimeStep(Driver *driver, int stage);
+  void DebugFence(const char *label) const;
 
  private:
   MeshBlockPack *pmy_pack;
