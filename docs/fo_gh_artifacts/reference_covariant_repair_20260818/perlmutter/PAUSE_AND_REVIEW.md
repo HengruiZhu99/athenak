@@ -78,3 +78,13 @@ provider.  See `../binary64_stationary_source_audit.json` and the regression
 script of the same name.  This removes the stationary curvature-sector forcing
 in the table-faithful audit.  A new production ladder is pending; this note is
 not an updated stability qualification.
+
+## Follow-up (commit `9c2e3579`)
+
+The Ref-GH history now carries the source-sector Linf diagnostics needed to
+review a resumed ladder: `Q`, `Delta`, frame/coordinate Ricci, and curvature,
+`Q Q`, `Delta Delta`, damping, and scalar-frame-correction source sectors.
+The retained clean-release wiring smoke is
+`../stationary_history_diagnostics_smoke_n16.hst`.  It confirms roundoff-scale
+analytic curvature and zero non-curvature exact-state sectors, but does not
+replace any pending multi-resolution or long-time gate.

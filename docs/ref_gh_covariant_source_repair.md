@@ -130,3 +130,22 @@ The exact rows and commands are summarized in
 `flat_regression_analytic_vacuum.tsv`.  These flat results pass, but they do
 not replace the pending 96^3/128^3 stationary executable checks or the new
 long-time stationary ladder.
+
+## Source-sector history diagnostics
+
+Commit `9c2e3579` makes the stationary source decomposition visible in the
+standard Ref-GH history rather than relying on a separate post-processing
+oracle.  In addition to the six native constraint reductions, the history now
+records Linf values for `Q`, `Delta`, frame Ricci, coordinate Ricci, and the
+five covariant-source sectors: curvature, `Q Q`, `Delta Delta`, damping, and
+the scalar-frame correction.  The native stationary acceptance check continues
+to use only the six native constraints; these source diagnostics cannot turn a
+conditioning indicator into a reported GH-constraint failure.
+
+The compact clean-release `16^3` one-cycle smoke history is retained as
+`fo_gh_artifacts/reference_covariant_repair_20260818/stationary_history_diagnostics_smoke_n16.hst`.
+At initialization it records zero `Q` and `Delta`, frame-Ricci Linf
+`3.33e-16`, coordinate-Ricci Linf `1.43e-11`, curvature-sector Linf
+`6.66e-16`, and zero remaining exact-state source sectors.  The short smoke
+only validates the wiring and the expected exact-state decomposition.  It is
+not a stationary-convergence or long-time-stability result.
