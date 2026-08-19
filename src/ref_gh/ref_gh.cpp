@@ -125,6 +125,24 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       host_table(kProfileShiftQ, i) = kTrumpetShiftQ[i];
       host_table(kProfileShiftQDy, i) = kTrumpetShiftQDy[i];
       host_table(kProfileShiftQDyy, i) = kTrumpetShiftQDyy[i];
+      host_table(kCoeffAlpha, i) = kTrumpetAlphaA0[i];
+      host_table(kCoeffAlpha + 1, i) = kTrumpetAlphaA1[i];
+      host_table(kCoeffAlpha + 2, i) = kTrumpetAlphaA2[i];
+      host_table(kCoeffAlpha + 3, i) = kTrumpetAlphaA3[i];
+      host_table(kCoeffAlpha + 4, i) = kTrumpetAlphaA4[i];
+      host_table(kCoeffAlpha + 5, i) = kTrumpetAlphaA5[i];
+      host_table(kCoeffArealRadius, i) = kTrumpetArealRadiusA0[i];
+      host_table(kCoeffArealRadius + 1, i) = kTrumpetArealRadiusA1[i];
+      host_table(kCoeffArealRadius + 2, i) = kTrumpetArealRadiusA2[i];
+      host_table(kCoeffArealRadius + 3, i) = kTrumpetArealRadiusA3[i];
+      host_table(kCoeffArealRadius + 4, i) = kTrumpetArealRadiusA4[i];
+      host_table(kCoeffArealRadius + 5, i) = kTrumpetArealRadiusA5[i];
+      host_table(kCoeffShiftQ, i) = kTrumpetShiftQA0[i];
+      host_table(kCoeffShiftQ + 1, i) = kTrumpetShiftQA1[i];
+      host_table(kCoeffShiftQ + 2, i) = kTrumpetShiftQA2[i];
+      host_table(kCoeffShiftQ + 3, i) = kTrumpetShiftQA3[i];
+      host_table(kCoeffShiftQ + 4, i) = kTrumpetShiftQA4[i];
+      host_table(kCoeffShiftQ + 5, i) = kTrumpetShiftQA5[i];
     }
     Kokkos::deep_copy(reference_table, host_table);
   }

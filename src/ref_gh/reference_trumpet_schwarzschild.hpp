@@ -16,7 +16,8 @@ enum TrumpetProfileIndex : int {
   kProfileArealRadius = 3, kProfileArealRadiusDy = 4,
   kProfileArealRadiusDyy = 5, kProfileShiftQ = 6,
   kProfileShiftQDy = 7, kProfileShiftQDyy = 8,
-  kTrumpetProfiles = 9
+  kCoeffAlpha = 9, kCoeffArealRadius = 15, kCoeffShiftQ = 21,
+  kTrumpetProfiles = 27
 };
 
 struct RadialProfile {
@@ -30,7 +31,8 @@ struct RadialProfile {
 // polynomial, rather than independent interpolants.
 KOKKOS_INLINE_FUNCTION
 RadialProfile InterpolateTrumpetProfile(const DvceArray2D<Real> &table,
-                                        const int profile, const Real rho) {
+                                        const int coefficient_profile,
+                                        const Real rho) {
   const Real y = Kokkos::log(rho);
   const Real u = (y - kTrumpetLogRMin)/kTrumpetLogRSpacing;
   int index = static_cast<int>(Kokkos::floor(u));
@@ -38,15 +40,12 @@ RadialProfile InterpolateTrumpetProfile(const DvceArray2D<Real> &table,
   if (index > kTrumpetTableSize - 2) index = kTrumpetTableSize - 2;
   const Real s = u - static_cast<Real>(index);
   const Real h = kTrumpetLogRSpacing;
-  const Real a0 = table(profile, index);
-  const Real a1 = h*table(profile + 1, index);
-  const Real a2 = 0.5*h*h*table(profile + 2, index);
-  const Real f = table(profile, index + 1) - (a0 + a1 + a2);
-  const Real g = h*table(profile + 1, index + 1) - (a1 + 2.0*a2);
-  const Real curvature = h*h*table(profile + 2, index + 1) - 2.0*a2;
-  const Real a3 = 10.0*f - 4.0*g + 0.5*curvature;
-  const Real a4 = -15.0*f + 7.0*g - curvature;
-  const Real a5 = 6.0*f - 3.0*g + 0.5*curvature;
+  const Real a0 = table(coefficient_profile, index);
+  const Real a1 = table(coefficient_profile + 1, index);
+  const Real a2 = table(coefficient_profile + 2, index);
+  const Real a3 = table(coefficient_profile + 3, index);
+  const Real a4 = table(coefficient_profile + 4, index);
+  const Real a5 = table(coefficient_profile + 5, index);
   const Real value = a0 + s*(a1 + s*(a2 + s*(a3 + s*(a4 + s*a5))));
   const Real dy = (a1 + s*(2.0*a2 + s*(3.0*a3
                    + s*(4.0*a4 + s*5.0*a5))))/h;
@@ -187,15 +186,15 @@ struct TrumpetSchwarzschildReference {
                                      + displacement[2]*displacement[2]);
     const Real rho = radius/mass;
     const ReferenceJet alpha = RadialJet(
-        InterpolateTrumpetProfile(table, kProfileAlpha, rho), mass,
+        InterpolateTrumpetProfile(table, kCoeffAlpha, rho), mass,
         displacement, radius);
     const RadialProfile areal =
-        InterpolateTrumpetProfile(table, kProfileArealRadius, rho);
+        InterpolateTrumpetProfile(table, kCoeffArealRadius, rho);
     const ReferenceJet psi2 = RadialJet(
         ArealRadiusToPsi2(areal, rho), mass,
         displacement, radius);
     RadialProfile q_profile = InterpolateTrumpetProfile(
-        table, kProfileShiftQ, rho);
+        table, kCoeffShiftQ, rho);
     q_profile.value /= mass;
     q_profile.d1 /= mass;
     q_profile.d2 /= mass;
