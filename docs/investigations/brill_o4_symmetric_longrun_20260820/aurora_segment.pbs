@@ -1,0 +1,106 @@
+#!/bin/bash -l
+#PBS -N brill-o4-n256
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=02:00:00
+#PBS -l filesystems=home:flare
+#PBS -q capacity
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+: "${ATHENAK_ROOT:?}"
+: "${BUILD_ROOT:?}"
+: "${INPUT_FILE:?}"
+: "${COEFFICIENT_FILE:?}"
+: "${SEGMENT_ROOT:?fresh segment root required}"
+: "${SEGMENT_ID:?integer segment identifier required}"
+: "${EXPECTED_SOURCE_COMMIT:?}"
+: "${EXPECTED_INPUT_SHA256:?}"
+: "${EXPECTED_COEFFICIENT_SHA256:?}"
+test ! -e "${SEGMENT_ROOT}"
+grep -Fx 'AURORA_BRILL_O4_HEAD_BUILD_PASS' "${BUILD_ROOT}/status" >/dev/null
+test -x "${BUILD_ROOT}/athena-build/src/athena"
+test "$(git -C "${ATHENAK_ROOT}" rev-parse HEAD)" = "${EXPECTED_SOURCE_COMMIT}"
+test -z "$(git -C "${ATHENAK_ROOT}" status --porcelain)"
+test "$(sha256sum "${INPUT_FILE}" | awk '{print $1}')" = "${EXPECTED_INPUT_SHA256}"
+test "$(sha256sum "${COEFFICIENT_FILE}" | awk '{print $1}')" = \
+  "${EXPECTED_COEFFICIENT_SHA256}"
+
+mkdir -p "${SEGMENT_ROOT}"
+run_root="$(cd "${SEGMENT_ROOT}" && pwd)"
+module purge
+module load oneapi/release/2025.3.1 gcc/13.4.0 cmake/3.31.11 python/3.12.12
+export OMP_NUM_THREADS=1 KOKKOS_NUM_THREADS=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ZE_AFFINITY_MASK=0.0
+cp "${INPUT_FILE}" "${run_root}/brill_o4_n256.athinput"
+cp "${COEFFICIENT_FILE}" "${run_root}/brill_global_48x32.coefficients"
+
+{
+  date --iso-8601=seconds
+  hostname
+  printf 'PBS_JOBID=%s\nSEGMENT_ID=%s\n' "${PBS_JOBID:-unknown}" "${SEGMENT_ID}"
+  printf 'PBS_QUEUE=%s\nPBS_ACCOUNT=%s\n' "${PBS_QUEUE:-unknown}" \
+    "${PBS_ACCOUNT:-CompactBinaryMerger}"
+  git -C "${ATHENAK_ROOT}" rev-parse HEAD HEAD^{tree}
+  git -C "${ATHENAK_ROOT}" submodule status
+  module list
+  sycl-ls
+  env | LC_ALL=C sort | grep -E '^(ONEAPI|ZE_|OMP_|KOKKOS_)'
+  sha256sum "${BUILD_ROOT}/athena-build/src/athena" \
+    "${run_root}/brill_o4_n256.athinput" \
+    "${run_root}/brill_global_48x32.coefficients"
+} > "${run_root}/provenance.log" 2>&1
+
+if [[ "${SEGMENT_ID}" = 0 ]]; then
+  "${BUILD_ROOT}/athena-build/athena_z4c_state_admissibility_unit_test" \
+    > "${run_root}/state-admissibility-test.log" 2>&1
+  "${BUILD_ROOT}/athena-build/athena_z4c_chi_prolongation_unit_test" \
+    > "${run_root}/chi-prolongation-test.log" 2>&1
+  "${BUILD_ROOT}/athena-build/athena_z4c_cartoon_amr_transfer_qualification_unit_test" \
+    > "${run_root}/o4-transfer-test.log" 2>&1
+  "${BUILD_ROOT}/athena-build/athena_z4c_cartoon_axis_centered_derivatives_unit_test" \
+    > "${run_root}/o4-derivative-test.log" 2>&1
+  "${BUILD_ROOT}/athena-build/src/athena" --z4c-cartoon-kernel-test \
+    > "${run_root}/o4-production-kernel-test.log" 2>&1
+  printf 'PVC_O4_FOCUSED_TESTS_PASS\n' > "${run_root}/qualification-status"
+fi
+
+restart_args=()
+if [[ -n "${RESTART_FILE:-}" ]]; then
+  : "${RESTART_SHA256:?required with RESTART_FILE}"
+  test -f "${RESTART_FILE}"
+  test "$(sha256sum "${RESTART_FILE}" | awk '{print $1}')" = "${RESTART_SHA256}"
+  sha256sum "${RESTART_FILE}" > "${run_root}/restart-input.sha256"
+  restart_args=(-r "${RESTART_FILE}")
+else
+  test "${SEGMENT_ID}" = 0
+  restart_args=(-i brill_o4_n256.athinput)
+fi
+
+set +e
+(cd "${run_root}" && "${BUILD_ROOT}/athena-build/src/athena" \
+  "${restart_args[@]}" -t 01:45:00 \
+  time/nlim=-1 time/tlim=50.0 \
+  job/basename="brill_o4_n256_seg${SEGMENT_ID}" \
+  problem/constraint_summary_file="brill_o4_n256_seg${SEGMENT_ID}-constraints.dat" \
+  > stdout.log 2> stderr.log)
+run_status=$?
+set -e
+printf 'athena_exit=%s\n' "${run_status}" > "${run_root}/run-status"
+if [[ ${run_status} -ne 0 ]]; then
+  disposition=NUMERICAL_OR_RUNTIME_FAILURE
+elif grep -Fq 'Terminating on time limit' "${run_root}/stdout.log"; then
+  disposition=REACHED_TLIM
+elif grep -Fq 'Terminating on wall clock limit' "${run_root}/stdout.log"; then
+  disposition=HEALTHY_WALLTIME_RESTART_REQUIRED
+else
+  disposition=UNCLASSIFIED_CLEAN_EXIT
+fi
+printf '%s\n' "${disposition}" > "${run_root}/disposition"
+find "${run_root}" -type f ! -name SHA256SUMS -print0 | \
+  LC_ALL=C sort -z | xargs -0r sha256sum > "${run_root}/SHA256SUMS"
+if [[ "${disposition}" = UNCLASSIFIED_CLEAN_EXIT ]]; then
+  exit 2
+fi
