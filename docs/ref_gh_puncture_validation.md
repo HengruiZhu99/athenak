@@ -111,3 +111,9 @@ established**; the evidence cannot distinguish any formulation behavior because
 execution stopped before an evolved step. See
 `fo_gh_artifacts/reference_covariant_repair_20260818/aurora_stationary_frozen/`
 for the scheduler, mapping, history, and failure records.
+
+A third one-block Aurora phase-localization run (PBS 8768490) reproduces the
+same failure after stage receive setup, `CopyU`, and RHS zeroing, at the first
+evolved primary-RHS kernel. It does not establish a numerical or formulation
+instability; it confirms that the frozen stationary campaign must remain
+stopped pending a separately authorized execution-correctness diagnosis.

@@ -235,3 +235,17 @@ Linf `1.17e-16`, `1.59e-16`, and `1.46e-16` and frame-Ricci Linf
 `3.33e-16`, `4.44e-16`, and `5.00e-16`, with zero-time final field and native
 constraint norms. This is still a `t=0` gate only. No existing stationary
 evolution or puncture conclusion is requalified by this correction.
+
+### Frozen-campaign phase localization
+
+Frozen diagnostic job 8768490 independently reproduced the failure on Aurora
+node `x4311c0s0b0n0`, one MPI rank, one PVC tile (`ZE_AFFINITY_MASK=0.0`). It
+used a one-block physical `[-2,2]^3` `64^3` case, excluding an internal-block
+or SMR-interface precondition. The initial RHS and all initial RHS phase fences
+completed at roundoff. On the first evolved stage, receive initialization,
+`CopyU`, and RHS zeroing completed; the next primary-RHS kernel produced the
+same Level-Zero `NotPresent` write fault (exit 134). This is an execution
+localization observation, not a root-cause or formulation diagnosis. The
+frozen campaign made no solver/source change in response and stopped before
+any positive-time sample. See
+`fo_gh_artifacts/reference_covariant_repair_20260818/aurora_stationary_frozen/attempt4_*`.
