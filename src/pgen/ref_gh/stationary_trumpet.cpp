@@ -169,6 +169,17 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
     case 4: (void)pack->prefgh->CalcRHS<3>(nullptr, 1); break;
     case 6: (void)pack->prefgh->CalcRHS<4>(nullptr, 1); break;
   }
+  if (pin->GetOrAddBoolean("problem", "debug_repeat_initial_rhs", false)) {
+    switch (pack->prefgh->opt.fd_order) {
+      case 2: (void)pack->prefgh->CalcRHS<2>(nullptr, 1); break;
+      case 4: (void)pack->prefgh->CalcRHS<3>(nullptr, 1); break;
+      case 6: (void)pack->prefgh->CalcRHS<4>(nullptr, 1); break;
+    }
+    Kokkos::fence("ref_gh repeated initial RHS");
+    if (global_variable::my_rank == 0) {
+      std::cout << "reference-GH repeated initial RHS completed" << std::endl;
+    }
+  }
   const auto rhs = pack->prefgh->u_rhs;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   using MaxLoc = Kokkos::MaxLoc<Real, int>;
@@ -223,8 +234,9 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
                                    size.d_view(m).x2min, size.d_view(m).x2max);
         const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                    size.d_view(m).x3min, size.d_view(m).x3max);
-        const ref_gh::ReferenceGeometry reference = ref_gh::GetReferenceGeometry(
-            1, table, mass, cx, cy, cz, 0.0, x, y, z);
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::GetReferenceGeometry(1, table, mass, cx, cy, cz, 0.0, x, y, z,
+                                     reference);
         for (int a = 0; a < 4; ++a) {
           for (int b = 0; b < 4; ++b) {
             Real ricci = 0.0;
@@ -257,8 +269,9 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
                                    size.d_view(m).x2min, size.d_view(m).x2max);
         const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                    size.d_view(m).x3min, size.d_view(m).x3max);
-        const ref_gh::ReferenceGeometry reference = ref_gh::GetReferenceGeometry(
-            1, table, mass, cx, cy, cz, 0.0, x, y, z);
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::GetReferenceGeometry(1, table, mass, cx, cy, cz, 0.0, x, y, z,
+                                     reference);
         for (int A = 0; A < 4; ++A) {
           for (int B = 0; B < 4; ++B) {
             maximum = fmax(maximum, Kokkos::abs(reference.ricci_frame[A][B]));
@@ -277,14 +290,15 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
         const int k = work % indcs.nx3 + indcs.ks;
         const int m = work/indcs.nx3;
-        const ref_gh::ReferenceGeometry reference = ref_gh::GetReferenceGeometry(
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::GetReferenceGeometry(
             1, table, mass, cx, cy, cz, 0.0,
             CellCenterX(i - indcs.is, indcs.nx1, size.d_view(m).x1min,
                         size.d_view(m).x1max),
             CellCenterX(j - indcs.js, indcs.nx2, size.d_view(m).x2min,
                         size.d_view(m).x2max),
             CellCenterX(k - indcs.ks, indcs.nx3, size.d_view(m).x3min,
-                        size.d_view(m).x3max));
+                        size.d_view(m).x3max), reference);
         for (int A = 0; A < 4; ++A) {
           const Real eta_A = (A == 0) ? -1.0 : 1.0;
           for (int B = 0; B < 4; ++B) {
@@ -306,14 +320,15 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
         const int k = work % indcs.nx3 + indcs.ks;
         const int m = work/indcs.nx3;
-        const ref_gh::ReferenceGeometry reference = ref_gh::GetReferenceGeometry(
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::GetReferenceGeometry(
             1, table, mass, cx, cy, cz, 0.0,
             CellCenterX(i - indcs.is, indcs.nx1, size.d_view(m).x1min,
                         size.d_view(m).x1max),
             CellCenterX(j - indcs.js, indcs.nx2, size.d_view(m).x2min,
                         size.d_view(m).x2max),
             CellCenterX(k - indcs.ks, indcs.nx3, size.d_view(m).x3min,
-                        size.d_view(m).x3max));
+                        size.d_view(m).x3max), reference);
         for (int A = 0; A < 4; ++A) {
           for (int B = 0; B < 4; ++B) {
             for (int C = 0; C < 4; ++C) {

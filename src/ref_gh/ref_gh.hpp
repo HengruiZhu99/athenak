@@ -24,7 +24,10 @@ class RefGh {
   // refreshed only when diagnostics/history are requested.
   static constexpr int kNativeConstraints = 6;
   static constexpr int kDiagnosticOffset = kNativeConstraints;
-  static constexpr int ncon = kDiagnosticOffset + 9;
+  static constexpr int kSourceDiagnostics = 9;
+  static constexpr int kMetricConditionDiagnostic =
+      kDiagnosticOffset + kSourceDiagnostics;
+  static constexpr int ncon = kMetricConditionDiagnostic + 1;
   static char const * const StateNames[nref_gh];
   static char const * const ConstraintNames[ncon];
 
@@ -60,6 +63,7 @@ class RefGh {
   void CalcConstraints();
   void QueueTasks();
   void RefGhToADM();
+  void CacheMetricCondition();
   void UpdateDiagnostics();
   static void SetADMVariables(MeshBlockPack *pack);
   TaskStatus InitRecv(Driver *driver, int stage);

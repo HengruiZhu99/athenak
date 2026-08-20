@@ -26,6 +26,7 @@
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "z4c/z4c.hpp"
+
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
 
@@ -481,19 +482,17 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
   for (int n = HIST_Q_MAX; n < NHIST_REF_GH; ++n) pdata->use_max[n] = true;
 
   auto *module = pm->pmb_pack->prefgh;
+  for (int n = 0; n < NHIST_REF_GH; ++n) pdata->hdata[n] = 0.0;
   module->UpdateDiagnostics();
   auto &indcs = pm->mb_indcs;
   auto &size = pm->pmb_pack->pmb->mb_size;
   const auto state = module->u0;
   const auto constraints = module->u_con;
   const auto adm_vars = pm->pmb_pack->padm->adm;
-  const auto table = module->reference_table;
-  const int reference_kind = module->opt.reference_kind;
   const Real mass = module->opt.reference_mass;
   const Real center_x = module->opt.reference_center[0];
   const Real center_y = module->opt.reference_center[1];
   const Real center_z = module->opt.reference_center[2];
-  const Real time = pm->time;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   array_sum::GlobalSum sums;
   Kokkos::parallel_reduce(
@@ -558,127 +557,114 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
         total.the_array[HIST_VOLUME] += volume;
         total.the_array[HIST_NEAR_VOLUME] += near ? volume : 0.0;
       }, Kokkos::Sum<array_sum::GlobalSum>(sums));
+  module->DebugFence("ref_gh history sums");
   for (int n = 0; n < HIST_ALPHA_MAX; ++n) pdata->hdata[n] = sums.the_array[n];
   pdata->hdata[HIST_NEAR_VOLUME] = sums.the_array[HIST_NEAR_VOLUME];
-
-  for (int diagnostic = 0; diagnostic < 9; ++diagnostic) {
-    Real diagnostic_max = 0.0;
-    Kokkos::parallel_reduce(
-        "ref_gh history source diagnostic max", Kokkos::RangePolicy<>(DevExeSpace(),
-        0, pm->pmb_pack->nmb_thispack*ncells),
-        KOKKOS_LAMBDA(const int idx, Real &maximum) {
-          int work = idx;
-          const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
-          const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
-          const int k = work % indcs.nx3 + indcs.ks;
-          const int m = work/indcs.nx3;
-          maximum = fmax(maximum, constraints(
-              m, ref_gh::RefGh::kDiagnosticOffset + diagnostic, k, j, i));
-        }, Kokkos::Max<Real>(diagnostic_max));
-    pdata->hdata[HIST_Q_MAX + diagnostic] = diagnostic_max;
-  }
 
   Real alpha_max = 0.0;
   Real minus_alpha_min = -std::numeric_limits<Real>::max();
   Real regular_max = 0.0;
+  Real bad_state = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh history state maxima", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &alpha_maximum,
+                    Real &minus_alpha_minimum, Real &regular_maximum,
+                    Real &bad_state_maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real alpha = adm_vars.alpha(m, k, j, i);
+        alpha_maximum = fmax(alpha_maximum, alpha);
+        minus_alpha_minimum = fmax(minus_alpha_minimum, -alpha);
+        bad_state_maximum = fmax(bad_state_maximum, 0.0);
+        for (int n = 0; n < ref_gh::nvar; ++n) {
+          const Real value = state(m, n, k, j, i);
+          regular_maximum = fmax(regular_maximum, Kokkos::abs(value));
+          if (!Kokkos::isfinite(value)) bad_state_maximum = 1.0;
+        }
+      }, Kokkos::Max<Real>(alpha_max), Kokkos::Max<Real>(minus_alpha_min),
+      Kokkos::Max<Real>(regular_max), Kokkos::Max<Real>(bad_state));
+  module->DebugFence("ref_gh history state maxima");
+
+  Real q_max = 0.0;
+  Real delta_max = 0.0;
+  Real frame_ricci_max = 0.0;
+  Real coordinate_ricci_max = 0.0;
+  Real source_curvature_max = 0.0;
+  Real source_qq_max = 0.0;
+  Real source_delta_delta_max = 0.0;
+  Real source_damping_max = 0.0;
+  Real source_frame_correction_max = 0.0;
   Real g_condition_max = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh history diagnostic maxima", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pm->pmb_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, Real &q_maximum, Real &delta_maximum,
+                    Real &frame_ricci_maximum, Real &coordinate_ricci_maximum,
+                    Real &source_curvature_maximum, Real &source_qq_maximum,
+                    Real &source_delta_delta_maximum, Real &source_damping_maximum,
+                    Real &source_frame_correction_maximum,
+                    Real &g_condition_maximum) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        q_maximum = fmax(q_maximum, constraints(
+            m, ref_gh::RefGh::kDiagnosticOffset + 0, k, j, i));
+        delta_maximum = fmax(delta_maximum, constraints(
+            m, ref_gh::RefGh::kDiagnosticOffset + 1, k, j, i));
+        frame_ricci_maximum = fmax(frame_ricci_maximum, constraints(
+            m, ref_gh::RefGh::kDiagnosticOffset + 2, k, j, i));
+        coordinate_ricci_maximum = fmax(coordinate_ricci_maximum, constraints(
+            m, ref_gh::RefGh::kDiagnosticOffset + 3, k, j, i));
+        source_curvature_maximum = fmax(source_curvature_maximum, constraints(
+            m, ref_gh::RefGh::kDiagnosticOffset + 4, k, j, i));
+        source_qq_maximum = fmax(source_qq_maximum, constraints(
+            m, ref_gh::RefGh::kDiagnosticOffset + 5, k, j, i));
+        source_delta_delta_maximum = fmax(source_delta_delta_maximum, constraints(
+            m, ref_gh::RefGh::kDiagnosticOffset + 6, k, j, i));
+        source_damping_maximum = fmax(source_damping_maximum, constraints(
+            m, ref_gh::RefGh::kDiagnosticOffset + 7, k, j, i));
+        source_frame_correction_maximum = fmax(
+            source_frame_correction_maximum, constraints(
+                m, ref_gh::RefGh::kDiagnosticOffset + 8, k, j, i));
+        g_condition_maximum = fmax(g_condition_maximum, constraints(
+            m, ref_gh::RefGh::kMetricConditionDiagnostic, k, j, i));
+      }, Kokkos::Max<Real>(q_max), Kokkos::Max<Real>(delta_max),
+      Kokkos::Max<Real>(frame_ricci_max), Kokkos::Max<Real>(coordinate_ricci_max),
+      Kokkos::Max<Real>(source_curvature_max), Kokkos::Max<Real>(source_qq_max),
+      Kokkos::Max<Real>(source_delta_delta_max),
+      Kokkos::Max<Real>(source_damping_max),
+      Kokkos::Max<Real>(source_frame_correction_max),
+      Kokkos::Max<Real>(g_condition_max));
+  module->DebugFence("ref_gh history diagnostic maxima");
+
   Real coordinate_g_max = 0.0;
   Real characteristic_max = 0.0;
   Real minus_det_margin = -std::numeric_limits<Real>::max();
-  Real bad_state = 0.0;
   Kokkos::parallel_reduce(
-      "ref_gh history alpha max", Kokkos::RangePolicy<>(DevExeSpace(),
+      "ref_gh history geometry maxima", Kokkos::RangePolicy<>(DevExeSpace(),
       0, pm->pmb_pack->nmb_thispack*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+      KOKKOS_LAMBDA(const int idx, Real &coordinate_g_maximum,
+                    Real &characteristic_maximum, Real &minus_det_maximum) {
         int work = idx;
         const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
         const int k = work % indcs.nx3 + indcs.ks;
         const int m = work/indcs.nx3;
-        maximum = fmax(maximum, adm_vars.alpha(m, k, j, i));
-      }, Kokkos::Max<Real>(alpha_max));
-  Kokkos::parallel_reduce(
-      "ref_gh history minus alpha min", Kokkos::RangePolicy<>(DevExeSpace(),
-      0, pm->pmb_pack->nmb_thispack*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &maximum) {
-        int work = idx;
-        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
-        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
-        const int k = work % indcs.nx3 + indcs.ks;
-        const int m = work/indcs.nx3;
-        maximum = fmax(maximum, -adm_vars.alpha(m, k, j, i));
-      }, Kokkos::Max<Real>(minus_alpha_min));
-  Kokkos::parallel_reduce(
-      "ref_gh history regular max", Kokkos::RangePolicy<>(DevExeSpace(),
-      0, pm->pmb_pack->nmb_thispack*ref_gh::nvar*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &maximum) {
-        int work = idx;
-        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
-        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
-        const int k = work % indcs.nx3 + indcs.ks; work /= indcs.nx3;
-        const int n = work % ref_gh::nvar;
-        const int m = work/ref_gh::nvar;
-        maximum = fmax(maximum, Kokkos::abs(state(m, n, k, j, i)));
-      }, Kokkos::Max<Real>(regular_max));
-  Kokkos::parallel_reduce(
-      "ref_gh history geometry max", Kokkos::RangePolicy<>(DevExeSpace(),
-      0, pm->pmb_pack->nmb_thispack*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &maximum) {
-        int work = idx;
-        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
-        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
-        const int k = work % indcs.nx3 + indcs.ks;
-        const int m = work/indcs.nx3;
-        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                                   size.d_view(m).x1min, size.d_view(m).x1max);
-        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                                   size.d_view(m).x2min, size.d_view(m).x2max);
-        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                                   size.d_view(m).x3min, size.d_view(m).x3max);
-        const ref_gh::ReferenceGeometry reference = ref_gh::GetReferenceGeometry(
-            reference_kind, table, mass, center_x, center_y, center_z, time, x, y, z);
-        Real relative[3][3];  // NOLINT(runtime/arrays)
-        for (int I = 0; I < 3; ++I) {
-          for (int J = 0; J < 3; ++J) {
-            relative[I][J] = 0.0;
-            for (int a = 0; a < 3; ++a) {
-              for (int b = 0; b < 3; ++b) {
-                relative[I][J] += reference.spatial_frame[I][a]
-                    *reference.spatial_frame[J][b]*adm_vars.g_dd(m, a, b, k, j, i);
-              }
-            }
+        const Real alpha = adm_vars.alpha(m, k, j, i);
+        for (int a = 0; a < 3; ++a) {
+          for (int b = a; b < 3; ++b) {
+            coordinate_g_maximum = fmax(coordinate_g_maximum, Kokkos::abs(
+                adm_vars.g_dd(m, a, b, k, j, i)));
           }
         }
-        Real eigenvalues[3];  // NOLINT(runtime/arrays)
-        ref_gh::SymmetricEigenvalues3(relative, eigenvalues);
-        if (eigenvalues[0] > 0.0) maximum = fmax(maximum, eigenvalues[2]/eigenvalues[0]);
-      }, Kokkos::Max<Real>(g_condition_max));
-  Kokkos::parallel_reduce(
-      "ref_gh history coordinate metric max", Kokkos::RangePolicy<>(DevExeSpace(),
-      0, pm->pmb_pack->nmb_thispack*6*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &maximum) {
-        int work = idx;
-        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
-        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
-        const int k = work % indcs.nx3 + indcs.ks; work /= indcs.nx3;
-        const int component = work % 6;
-        const int m = work/6;
-        const int first[6] = {0, 0, 0, 1, 1, 2};
-        const int second[6] = {0, 1, 2, 1, 2, 2};
-        maximum = fmax(maximum, Kokkos::abs(
-            adm_vars.g_dd(m, first[component], second[component], k, j, i)));
-      }, Kokkos::Max<Real>(coordinate_g_max));
-  Kokkos::parallel_reduce(
-      "ref_gh history characteristic max", Kokkos::RangePolicy<>(DevExeSpace(),
-      0, pm->pmb_pack->nmb_thispack*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &maximum) {
-        int work = idx;
-        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
-        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
-        const int k = work % indcs.nx3 + indcs.ks;
-        const int m = work/indcs.nx3;
         Real metric[4][4] = {};  // NOLINT(runtime/arrays)
-        metric[0][0] = -adm_vars.alpha(m, k, j, i)*adm_vars.alpha(m, k, j, i);
+        metric[0][0] = -alpha*alpha;
         for (int a = 0; a < 3; ++a) {
           for (int b = 0; b < 3; ++b) {
             metric[a + 1][b + 1] = adm_vars.g_dd(m, a, b, k, j, i);
@@ -692,52 +678,44 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
                                 *adm_vars.beta_u(m, b, k, j, i);
           }
         }
-        Real inverse_spatial[3][3], det_spatial = 0.0; // NOLINT(runtime/arrays)
+        Real inverse_spatial[3][3], det_spatial = 0.0;  // NOLINT(runtime/arrays)
         if (ref_gh::InvertSpatial3(metric, inverse_spatial, det_spatial)) {
           for (int a = 0; a < 3; ++a) {
-            maximum = fmax(maximum, Kokkos::abs(adm_vars.beta_u(m, a, k, j, i))
-                + adm_vars.alpha(m, k, j, i)*Kokkos::sqrt(inverse_spatial[a][a]));
+            characteristic_maximum = fmax(characteristic_maximum,
+                Kokkos::abs(adm_vars.beta_u(m, a, k, j, i))
+                    + alpha*Kokkos::sqrt(inverse_spatial[a][a]));
           }
         }
-      }, Kokkos::Max<Real>(characteristic_max));
-  Kokkos::parallel_reduce(
-      "ref_gh history determinant margin", Kokkos::RangePolicy<>(DevExeSpace(),
-      0, pm->pmb_pack->nmb_thispack*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &maximum) {
-        int work = idx;
-        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
-        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
-        const int k = work % indcs.nx3 + indcs.ks;
-        const int m = work/indcs.nx3;
-        const Real determinant = adm::SpatialDet(
-            adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
-            adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
-            adm_vars.g_dd(m, 1, 2, k, j, i), adm_vars.g_dd(m, 2, 2, k, j, i));
-        maximum = fmax(maximum, -determinant);
-      }, Kokkos::Max<Real>(minus_det_margin));
-  Kokkos::parallel_reduce(
-      "ref_gh history bad state", Kokkos::RangePolicy<>(DevExeSpace(),
-      0, pm->pmb_pack->nmb_thispack*ref_gh::nvar*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &maximum) {
-        int work = idx;
-        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
-        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
-        const int k = work % indcs.nx3 + indcs.ks; work /= indcs.nx3;
-        const int n = work % ref_gh::nvar;
-        const int m = work/ref_gh::nvar;
-        maximum = fmax(maximum, 0.0);
-        if (!Kokkos::isfinite(state(m, n, k, j, i))) maximum = 1.0;
-      }, Kokkos::Max<Real>(bad_state));
-  module->max_char_speed = characteristic_max;
+        minus_det_maximum = fmax(minus_det_maximum, -adm::SpatialDet(
+            adm_vars.g_dd(m, 0, 0, k, j, i),
+            adm_vars.g_dd(m, 0, 1, k, j, i),
+            adm_vars.g_dd(m, 0, 2, k, j, i),
+            adm_vars.g_dd(m, 1, 1, k, j, i),
+            adm_vars.g_dd(m, 1, 2, k, j, i),
+            adm_vars.g_dd(m, 2, 2, k, j, i)));
+      }, Kokkos::Max<Real>(coordinate_g_max),
+      Kokkos::Max<Real>(characteristic_max), Kokkos::Max<Real>(minus_det_margin));
+  module->DebugFence("ref_gh history geometry maxima");
+
   pdata->hdata[HIST_ALPHA_MAX] = alpha_max;
   pdata->hdata[HIST_MINUS_ALPHA_MIN] = minus_alpha_min;
   pdata->hdata[HIST_REGULAR_MAX] = regular_max;
   pdata->hdata[HIST_G_CONDITION] = g_condition_max;
   pdata->hdata[HIST_COORDINATE_G_MAX] = coordinate_g_max;
   pdata->hdata[HIST_CHARACTERISTIC_MAX] = characteristic_max;
-  pdata->hdata[HIST_EFFECTIVE_CFL] = module->dtnew > 0.0 ? pm->dt/module->dtnew : 0.0;
   pdata->hdata[HIST_DETERMINANT_MARGIN] = minus_det_margin;
   pdata->hdata[HIST_BAD_STATE] = bad_state;
+  pdata->hdata[HIST_Q_MAX] = q_max;
+  pdata->hdata[HIST_DELTA_MAX] = delta_max;
+  pdata->hdata[HIST_FRAME_RICCI_MAX] = frame_ricci_max;
+  pdata->hdata[HIST_COORDINATE_RICCI_MAX] = coordinate_ricci_max;
+  pdata->hdata[HIST_SOURCE_CURVATURE_MAX] = source_curvature_max;
+  pdata->hdata[HIST_SOURCE_QQ_MAX] = source_qq_max;
+  pdata->hdata[HIST_SOURCE_DELTA_DELTA_MAX] = source_delta_delta_max;
+  pdata->hdata[HIST_SOURCE_DAMPING_MAX] = source_damping_max;
+  pdata->hdata[HIST_SOURCE_FRAME_CORRECTION_MAX] = source_frame_correction_max;
+  module->max_char_speed = characteristic_max;
+  pdata->hdata[HIST_EFFECTIVE_CFL] = module->dtnew > 0.0 ? pm->dt/module->dtnew : 0.0;
 }
 
 //----------------------------------------------------------------------------------------
@@ -1053,14 +1031,45 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   for (auto &data : hist_data) {
     // first, perform in-place sum over all MPI ranks
 #if MPI_PARALLEL_ENABLED
+    Real sum_values[NHISTORY_VARIABLES];  // NOLINT(runtime/arrays)
+    Real max_values[NHISTORY_VARIABLES];  // NOLINT(runtime/arrays)
+    int sum_indices[NHISTORY_VARIABLES];  // NOLINT(runtime/arrays)
+    int max_indices[NHISTORY_VARIABLES];  // NOLINT(runtime/arrays)
+    int num_sums = 0;
+    int num_maxima = 0;
     for (int n = 0; n < data.nhist; ++n) {
-      const MPI_Op op = data.use_max[n] ? MPI_MAX : MPI_SUM;
-      if (global_variable::my_rank == 0) {
-        MPI_Reduce(MPI_IN_PLACE, &(data.hdata[n]), 1, MPI_ATHENA_REAL,
-                   op, 0, MPI_COMM_WORLD);
+      if (data.use_max[n]) {
+        max_values[num_maxima] = data.hdata[n];
+        max_indices[num_maxima++] = n;
       } else {
-        MPI_Reduce(&(data.hdata[n]), &(data.hdata[n]), 1, MPI_ATHENA_REAL,
-                   op, 0, MPI_COMM_WORLD);
+        sum_values[num_sums] = data.hdata[n];
+        sum_indices[num_sums++] = n;
+      }
+    }
+    if (num_sums > 0) {
+      if (global_variable::my_rank == 0) {
+        MPI_Reduce(MPI_IN_PLACE, sum_values, num_sums, MPI_ATHENA_REAL,
+                   MPI_SUM, 0, MPI_COMM_WORLD);
+      } else {
+        MPI_Reduce(sum_values, nullptr, num_sums, MPI_ATHENA_REAL,
+                   MPI_SUM, 0, MPI_COMM_WORLD);
+      }
+    }
+    if (num_maxima > 0) {
+      if (global_variable::my_rank == 0) {
+        MPI_Reduce(MPI_IN_PLACE, max_values, num_maxima, MPI_ATHENA_REAL,
+                   MPI_MAX, 0, MPI_COMM_WORLD);
+      } else {
+        MPI_Reduce(max_values, nullptr, num_maxima, MPI_ATHENA_REAL,
+                   MPI_MAX, 0, MPI_COMM_WORLD);
+      }
+    }
+    if (global_variable::my_rank == 0) {
+      for (int n = 0; n < num_sums; ++n) {
+        data.hdata[sum_indices[n]] = sum_values[n];
+      }
+      for (int n = 0; n < num_maxima; ++n) {
+        data.hdata[max_indices[n]] = max_values[n];
       }
     }
 #endif

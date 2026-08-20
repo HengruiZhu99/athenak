@@ -41,7 +41,8 @@ char const * const RefGh::ConstraintNames[RefGh::ncon] = {
   "ref_gh_Q", "ref_gh_Delta", "ref_gh_frame_Ricci",
   "ref_gh_coordinate_Ricci", "ref_gh_source_curvature",
   "ref_gh_source_QQ", "ref_gh_source_DeltaDelta",
-  "ref_gh_source_damping", "ref_gh_source_frame_correction"
+  "ref_gh_source_damping", "ref_gh_source_frame_correction",
+  "ref_gh_metric_condition"
 };
 
 RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :

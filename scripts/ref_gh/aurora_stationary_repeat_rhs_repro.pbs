@@ -1,0 +1,47 @@
+#!/bin/bash -l
+# Distinguish repeated RHS launch failure from intervening task-list corruption.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_repeat_rhs
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_aurora_stationary_frozen_20260819
+SRC="${ROOT}/athenak"
+BUILD="${ROOT}/build_sycl_pvc_bounds_20260819"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
+OUT="${ROOT}/runs/repeat_rhs_repro_${PBS_JOBID}"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "$HOME/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  sha256sum "${EXE}"
+  git -C "${SRC}" rev-parse HEAD
+  git -C "${SRC}" status --short
+} > provenance.txt
+
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+  job/basename=ref_gh_repeat_initial_rhs_dx16 \
+  mesh/nx1=64 mesh/nx2=64 mesh/nx3=64 \
+  meshblock/nx1=64 meshblock/nx2=64 meshblock/nx3=64 \
+  ref_gh/debug_task_fences=true problem/debug_repeat_initial_rhs=true \
+  time/nlim=0 time/tlim=0.0 \
+  > repeat_initial_rhs.log 2>&1

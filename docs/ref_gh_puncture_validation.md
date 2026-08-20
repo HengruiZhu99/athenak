@@ -117,3 +117,13 @@ same failure after stage receive setup, `CopyU`, and RHS zeroing, at the first
 evolved primary-RHS kernel. It does not establish a numerical or formulation
 instability; it confirms that the frozen stationary campaign must remain
 stopped pending a separately authorized execution-correctness diagnosis.
+
+An authorized equation-preserving portability refactor subsequently reduced
+device ABI pressure and aligned Ref-GH history reductions with mature AthenaK
+patterns.  Its final PVC gate, PBS 8769672, still exits 134: all diagnostics,
+combined built-in maximum reductions, and explicit fences finish before the
+next evolved RHS write reports a Level Zero `NotPresent` page fault.  The CPU
+history output is byte-identical across the refactor, but no positive-time PVC
+history exists.  The Aurora `t=1` resolution ladder therefore remains unrun,
+and convergent stationary-trumpet evolution is still **not established**. See
+`fo_gh_artifacts/reference_covariant_repair_20260818/aurora_portability_20260820/`.

@@ -9,6 +9,24 @@
 
 namespace ref_gh {
 
+// Minimal reference data required by the Psi evolution.  Keeping this separate
+// avoids constructing the full reference two-jet in kernels that use only the
+// coframe and spatial derivative map.
+struct ReferencePsiKinematics {
+  Real coframe[4][4];          // NOLINT(runtime/arrays)
+  Real spatial_coframe[3][3];  // NOLINT(runtime/arrays)
+};
+
+KOKKOS_INLINE_FUNCTION
+void ZeroReferencePsiKinematics(ReferencePsiKinematics &reference) {
+  for (int A = 0; A < 4; ++A) {
+    for (int a = 0; a < 4; ++a) reference.coframe[A][a] = 0.0;
+  }
+  for (int I = 0; I < 3; ++I) {
+    for (int i = 0; i < 3; ++i) reference.spatial_coframe[I][i] = 0.0;
+  }
+}
+
 // All arrays have fixed extent and may live in a pointwise Kokkos kernel.  Derivative
 // index 0 is coordinate time and 1..3 are Cartesian space.  The provider owns no storage
 // and performs no allocation.
@@ -213,9 +231,17 @@ void CompleteReferenceFrameGeometry(ReferenceGeometry &reference) {
 // oracle and makes the stored variables identical to ordinary coordinate FO-GH fields.
 struct MinkowskiReference {
   KOKKOS_INLINE_FUNCTION
-  ReferenceGeometry operator()(const Real /*time*/, const Real /*x*/,
-                               const Real /*y*/, const Real /*z*/) const {
-    ReferenceGeometry reference;
+  void PopulatePsiKinematics(const Real /*time*/, const Real /*x*/,
+                             const Real /*y*/, const Real /*z*/,
+                             ReferencePsiKinematics &reference) const {
+    ZeroReferencePsiKinematics(reference);
+    for (int a = 0; a < 4; ++a) reference.coframe[a][a] = 1.0;
+    for (int i = 0; i < 3; ++i) reference.spatial_coframe[i][i] = 1.0;
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  void Populate(const Real /*time*/, const Real /*x*/, const Real /*y*/,
+                const Real /*z*/, ReferenceGeometry &reference) const {
     ZeroReferenceGeometry(reference);
     for (int a = 0; a < 4; ++a) {
       const Real sign = (a == 0) ? -1.0 : 1.0;
@@ -229,6 +255,13 @@ struct MinkowskiReference {
       reference.spatial_coframe[i][i] = 1.0;
     }
     CompleteReferenceFrameGeometry(reference);
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  ReferenceGeometry operator()(const Real time, const Real x,
+                               const Real y, const Real z) const {
+    ReferenceGeometry reference;
+    Populate(time, x, y, z, reference);
     return reference;
   }
 };

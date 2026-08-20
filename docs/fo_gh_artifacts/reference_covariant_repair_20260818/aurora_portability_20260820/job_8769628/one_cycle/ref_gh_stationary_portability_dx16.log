@@ -1,0 +1,45 @@
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+reference-GH puncture minimum cell-center radius = 0.0541266
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS source
+ref_gh debug fence passed: ref_gh CalcRHS primary
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS dissipation
+ref_gh debug fence passed: ref_gh CalcRHS
+reference-GH stationary initial RHS Linf = 8.55241e-17, component=10, radius=0.858664, coordinate reference Ricci Linf=4.14162e-10, frame reference Ricci Linf=1.38778e-16
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history maxima
+
+Setup complete, executing task list(s)...
+
+elapsed=1.758540e+01 cycle=0 time=0.000000e+00 dt=5.118043e-03
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh CalcRHS zero
+Segmentation fault from GPU at 0xff000000339c9000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff000000339c9000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+x4115c3s4b0n0.hsn.cm.aurora.alcf.anl.gov: rank 0 died from signal 6
+real 18.63
+user 0.00
+sys 0.00

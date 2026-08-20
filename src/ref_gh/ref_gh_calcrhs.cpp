@@ -36,9 +36,10 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   Kokkos::deep_copy(state_rhs, 0.0);
   DebugFence("ref_gh CalcRHS zero");
 
-  // Psi_t is required on a stencil halo by the compatible Phi update.  Pi_t is only
-  // consumed on physical cells and is therefore not evaluated outside that region.
-  par_for("ref_gh flat primary rhs", DevExeSpace(), 0, nmb - 1,
+  // Psi_t is required on a stencil halo by the compatible Phi update.  Keep its
+  // point-local working set separate from the lower-order source and principal Pi
+  // update so large reference-frame temporaries do not all remain live together.
+  par_for("ref_gh psi rhs", DevExeSpace(), 0, nmb - 1,
   indcs.ks - radius, indcs.ke + radius,
   indcs.js - radius, indcs.je + radius,
   indcs.is - radius, indcs.ie + radius,
@@ -49,39 +50,81 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
                                size.d_view(m).x2min, size.d_view(m).x2max);
     const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                size.d_view(m).x3min, size.d_view(m).x3max);
-    const ReferenceGeometry reference = GetReferenceGeometry(
+    ReferencePsiKinematics reference;
+    GetReferencePsiKinematics(
         reference_kind, table, reference_mass, center_x, center_y, center_z,
-        stage_time, x, y, z);
-    Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
-    Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
-    CoordinateGhGeometry geometry;
+        stage_time, x, y, z, reference);
+    Real psi[4][4], metric[4][4], inverse[4][4], pi[4][4]; // NOLINT
+    Real phi[3][4][4]; // NOLINT
+    LoadSymmetric(state, kPsiOffset, m, k, j, i, psi);
+    LoadSymmetric(state, kPiOffset, m, k, j, i, pi);
+    for (int p = 0; p < 3; ++p) {
+      for (int a = 0; a < 4; ++a) {
+        for (int b = a; b < 4; ++b) {
+          phi[p][a][b] = phi[p][b][a] =
+              state(m, PhiIndex(p, a, b), k, j, i);
+        }
+      }
+    }
+    for (int a = 0; a < 4; ++a) {
+      for (int b = 0; b < 4; ++b) {
+        metric[a][b] = 0.0;
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            metric[a][b] += reference.coframe[A][a]
+                            *reference.coframe[B][b]*psi[A][B];
+          }
+        }
+      }
+    }
     Real determinant = 0.0;
-    const bool valid = LoadPointGeometry(state, reference, m, k, j, i, psi, pi,
-                                         phi, d_psi, metric, d_metric, geometry,
-                                         determinant);
-    if (!valid) {
+    if (!Invert4(metric, inverse, determinant) || !(inverse[0][0] < 0.0)) {
       for (int n = 0; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
       return;
     }
+    const Real lapse = 1.0/Kokkos::sqrt(-inverse[0][0]);
+    Real shift[3];  // NOLINT(runtime/arrays)
+    for (int p = 0; p < 3; ++p) {
+      shift[p] = lapse*lapse*inverse[0][p + 1];
+    }
     for (int a = 0; a < 4; ++a) {
       for (int b = a; b < 4; ++b) {
-        Real psi_rhs = -geometry.lapse*pi[a][b];
+        Real psi_rhs = -lapse*pi[a][b];
         for (int p = 0; p < 3; ++p) {
-          psi_rhs += geometry.shift[p]*d_psi[p + 1][a][b];
+          Real coordinate_d_psi = 0.0;
+          for (int I = 0; I < 3; ++I) {
+            coordinate_d_psi += reference.spatial_coframe[I][p]*phi[I][a][b];
+          }
+          psi_rhs += shift[p]*coordinate_d_psi;
         }
         state_rhs(m, PsiIndex(a, b), k, j, i) = psi_rhs;
       }
     }
-    const bool physical = k >= indcs.ks && k <= indcs.ke
-                          && j >= indcs.js && j <= indcs.je
-                          && i >= indcs.is && i <= indcs.ie;
-    if (!physical) return;
+  });
+  DebugFence("ref_gh CalcRHS psi");
 
-    const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
-                         1.0/size.d_view(m).dx3};
-    Real spatial_inverse[3][3];  // NOLINT(runtime/arrays)
-    Real spatial_determinant = 0.0;
-    if (!InvertSpatial3(metric, spatial_inverse, spatial_determinant)) {
+  // Stage the ten independent scalar-source components in the Pi RHS slots.
+  // The following kernel consumes and overwrites them pointwise, so no additional
+  // production array or change to the mathematical update is required.
+  par_for("ref_gh scalar source rhs", DevExeSpace(), 0, nmb - 1,
+  indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    ReferenceGeometry reference;
+    GetReferenceGeometry(
+        reference_kind, table, reference_mass, center_x, center_y, center_z,
+        stage_time, x, y, z, reference);
+    Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
+    Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
+    CoordinateGhGeometry geometry;
+    Real determinant = 0.0;
+    if (!LoadPointGeometry(state, reference, m, k, j, i, psi, pi, phi, d_psi,
+                           metric, d_metric, geometry, determinant)) {
       for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
       return;
     }
@@ -100,7 +143,51 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       TransformPartialWaveSource(metric, d_metric, partial_source, d_psi,
                                  reference, geometry, scalar_source);
     }
+    for (int a = 0; a < 4; ++a) {
+      for (int b = a; b < 4; ++b) {
+        state_rhs(m, PiIndex(a, b), k, j, i) = scalar_source[a][b];
+      }
+    }
+  });
+  DebugFence("ref_gh CalcRHS source");
 
+  par_for("ref_gh pi rhs", DevExeSpace(), 0, nmb - 1,
+  indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    ReferenceGeometry reference;
+    GetReferenceGeometry(
+        reference_kind, table, reference_mass, center_x, center_y, center_z,
+        stage_time, x, y, z, reference);
+    Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
+    Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
+    CoordinateGhGeometry geometry;
+    Real determinant = 0.0;
+    if (!LoadPointGeometry(state, reference, m, k, j, i, psi, pi, phi, d_psi,
+                           metric, d_metric, geometry, determinant)) {
+      for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
+      return;
+    }
+    const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
+                         1.0/size.d_view(m).dx3};
+    Real spatial_inverse[3][3];  // NOLINT(runtime/arrays)
+    Real spatial_determinant = 0.0;
+    if (!InvertSpatial3(metric, spatial_inverse, spatial_determinant)) {
+      for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
+      return;
+    }
+    Real scalar_source[4][4];  // NOLINT(runtime/arrays)
+    for (int a = 0; a < 4; ++a) {
+      for (int b = a; b < 4; ++b) {
+        scalar_source[a][b] = scalar_source[b][a] =
+            state_rhs(m, PiIndex(a, b), k, j, i);
+      }
+    }
     Real spatial_connection[3][3][3];  // NOLINT(runtime/arrays)
     for (int q = 0; q < 3; ++q) {
       for (int p = 0; p < 3; ++p) {
@@ -184,9 +271,10 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
                                size.d_view(m).x2min, size.d_view(m).x2max);
     const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                size.d_view(m).x3min, size.d_view(m).x3max);
-    const ReferenceGeometry reference = GetReferenceGeometry(
+    ReferenceGeometry reference;
+    GetReferenceGeometry(
         reference_kind, table, reference_mass, center_x, center_y, center_z,
-        stage_time, x, y, z);
+        stage_time, x, y, z, reference);
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
     for (int I = 0; I < 3; ++I) {
@@ -256,9 +344,10 @@ void RefGh::CalcConstraints() {
                                size.d_view(m).x2min, size.d_view(m).x2max);
     const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                size.d_view(m).x3min, size.d_view(m).x3max);
-    const ReferenceGeometry reference = GetReferenceGeometry(
+    ReferenceGeometry reference;
+    GetReferenceGeometry(
         reference_kind, table, reference_mass, center_x, center_y, center_z,
-        time, x, y, z);
+        time, x, y, z, reference);
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
     Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
@@ -336,6 +425,8 @@ void RefGh::CalcConstraints() {
     constraints(m, kDiagnosticOffset + 7, k, j, i) = Kokkos::sqrt(damping2);
     constraints(m, kDiagnosticOffset + 8, k, j, i) =
         Kokkos::sqrt(frame_correction2);
+    constraints(m, kMetricConditionDiagnostic, k, j, i) =
+        reference.spatial_frame[0][0];
     Real reduction2 = 0.0;
     Real curl2 = 0.0;
     for (int I = 0; I < 3; ++I) {

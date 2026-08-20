@@ -249,3 +249,24 @@ localization observation, not a root-cause or formulation diagnosis. The
 frozen campaign made no solver/source change in response and stopped before
 any positive-time sample. See
 `fo_gh_artifacts/reference_covariant_repair_20260818/aurora_stationary_frozen/attempt4_*`.
+
+### Authorized equation-preserving portability attempt
+
+The later authorized portability investigation changed device execution and
+diagnostic plumbing without changing the equations or numerical algorithm.
+Reference-geometry aggregate returns were replaced with caller-owned outputs,
+the large RHS was split into smaller kernels, Psi-only consumers use a compact
+kinematics object, and history MPI reductions use valid separately batched
+sum/max buffers.  A condition-number diagnostic was cached outside history,
+and the final history implementation uses mature-AthenaK-style combined
+built-in scalar reducers rather than a custom array maximum.
+
+These changes compile and complete the focused CPU cycle.  The final native
+and common-ADM CPU histories are byte-identical to the pre-refactor histories.
+They do **not** fix the Aurora gate: PBS job 8769672 completes all history
+reductions and fences, then the next evolved `CalcRHS zero` write triggers the
+same Level Zero `NotPresent` page fault and exits 134.  Consequently the PVC
+bug remains open and the three-resolution `t=1` ladder was not launched.  The
+full evidence and remote-debugging handoff are in
+`fo_gh_artifacts/reference_covariant_repair_20260818/aurora_portability_20260820/`
+and `ref_gh_aurora_portability_handoff_prompt.md`.

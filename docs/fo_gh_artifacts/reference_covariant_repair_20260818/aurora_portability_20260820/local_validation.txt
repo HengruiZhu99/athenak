@@ -1,0 +1,30 @@
+Isolated worktree: /tmp/athenak-refgh-portability
+
+Build results:
+  cmake --build build_refgh_cpu -j 8: PASS
+  cmake --build build_refgh_mpi -j 8: PASS
+
+Focused CPU run:
+  executable: build_refgh_cpu/src/athena
+  problem: inputs/ref_gh/ref_gh_stationary_trumpet.athinput
+  overrides: mesh/nx1=32 mesh/nx2=32 mesh/nx3=32
+             meshblock/nx1=32 meshblock/nx2=32 meshblock/nx3=32
+             time/nlim=1 time/tlim=1.0
+  result: PASS, cycle=1, time=1.030542702970713e-02
+  field Linf: 1.665335e-15
+  constraint Linf: 2.042604e-14
+  initial RHS estimate: 1.238798e-16
+
+History equivalence:
+  scalar-reduction reference:
+    /tmp/refgh-cache-condition-cpu-wWgLQv/cache_condition_cpu.ref_gh.hst
+  built-in combined-reducer candidate:
+    /tmp/refgh-combined-max-cpu-k1mZL0/cache_condition_cpu.ref_gh.hst
+  cmp result: byte-identical
+  native history SHA-256, both files:
+    30e568589b325c6857d5ace9040ad2da81ec5069598e42da0da5771ee78d81d6
+  six common-ADM histories: byte-identical
+
+Interpretation boundary:
+  This validates CPU compilation, a bounded CPU cycle, and output equivalence.
+  It is not Aurora PVC qualification, convergence, or long-time stability.

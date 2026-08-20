@@ -41,8 +41,9 @@ void RefGh::RefGhToADM() {
                                size.d_view(m).x2min, size.d_view(m).x2max);
     const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                size.d_view(m).x3min, size.d_view(m).x3max);
-    const ReferenceGeometry reference = GetReferenceGeometry(
-        reference_kind, table, mass, center_x, center_y, center_z, time, x, y, z);
+    ReferenceGeometry reference;
+    GetReferenceGeometry(reference_kind, table, mass, center_x, center_y,
+                         center_z, time, x, y, z, reference);
     Real psi[4][4], pi[4][4], phi[3][4][4], d_psi[4][4][4]; // NOLINT
     Real metric[4][4], d_metric[4][4][4]; // NOLINT
     CoordinateGhGeometry geometry;
@@ -68,13 +69,44 @@ void RefGh::RefGhToADM() {
   });
 }
 
+void RefGh::CacheMetricCondition() {
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  const auto constraints = u_con;
+  const auto adm_vars = pmy_pack->padm->adm;
+  Kokkos::parallel_for(
+      "ref_gh cache metric condition", Kokkos::RangePolicy<>(DevExeSpace(),
+      0, pmy_pack->nmb_thispack*ncells), KOKKOS_LAMBDA(const int idx) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real frame_scale = constraints(
+            m, kMetricConditionDiagnostic, k, j, i);
+        const Real scale2 = frame_scale*frame_scale;
+        constraints(m, kMetricConditionDiagnostic, k, j, i) =
+            SymmetricConditionNumber3(
+                scale2*adm_vars.g_dd(m, 0, 0, k, j, i),
+                scale2*adm_vars.g_dd(m, 0, 1, k, j, i),
+                scale2*adm_vars.g_dd(m, 0, 2, k, j, i),
+                scale2*adm_vars.g_dd(m, 1, 1, k, j, i),
+                scale2*adm_vars.g_dd(m, 1, 2, k, j, i),
+                scale2*adm_vars.g_dd(m, 2, 2, k, j, i));
+      });
+}
+
 void RefGh::UpdateDiagnostics() {
   RefGhToADM();
+  DebugFence("ref_gh diagnostics ADM reconstruction");
   switch (opt.fd_order) {
     case 2: CalcConstraints<2>(); break;
     case 4: CalcConstraints<3>(); break;
     case 6: CalcConstraints<4>(); break;
   }
+  DebugFence("ref_gh diagnostics constraints");
+  CacheMetricCondition();
+  DebugFence("ref_gh diagnostics metric condition");
 }
 
 }  // namespace ref_gh

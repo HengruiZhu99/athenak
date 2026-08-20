@@ -14,49 +14,62 @@
 namespace ref_gh {
 
 KOKKOS_INLINE_FUNCTION
-void SymmetricEigenvalues3(Real matrix[3][3], Real eigenvalues[3]) {
+Real SymmetricConditionNumber3(Real m00, Real m01, Real m02,
+                               Real m11, Real m12, Real m22) {
   for (int sweep = 0; sweep < 18; ++sweep) {
     int p = 0;
     int q = 1;
-    Real largest = Kokkos::abs(matrix[0][1]);
-    for (int a = 0; a < 3; ++a) {
-      for (int b = a + 1; b < 3; ++b) {
-        if (Kokkos::abs(matrix[a][b]) > largest) {
-          largest = Kokkos::abs(matrix[a][b]);
-          p = a;
-          q = b;
-        }
-      }
+    Real largest = Kokkos::abs(m01);
+    if (Kokkos::abs(m02) > largest) {
+      largest = Kokkos::abs(m02);
+      q = 2;
+    }
+    if (Kokkos::abs(m12) > largest) {
+      largest = Kokkos::abs(m12);
+      p = 1;
+      q = 2;
     }
     if (largest < 1.0e-14) break;
-    const Real angle = 0.5*Kokkos::atan2(2.0*matrix[p][q],
-                                         matrix[q][q] - matrix[p][p]);
+    const Real app = p == 0 ? m00 : m11;
+    const Real aqq = q == 1 ? m11 : m22;
+    const Real apq = q == 1 ? m01 : (p == 0 ? m02 : m12);
+    const Real angle = 0.5*Kokkos::atan2(2.0*apq, aqq - app);
     const Real cosine = Kokkos::cos(angle);
     const Real sine = Kokkos::sin(angle);
-    const Real app = matrix[p][p];
-    const Real aqq = matrix[q][q];
-    const Real apq = matrix[p][q];
-    matrix[p][p] = cosine*cosine*app - 2.0*sine*cosine*apq + sine*sine*aqq;
-    matrix[q][q] = sine*sine*app + 2.0*sine*cosine*apq + cosine*cosine*aqq;
-    matrix[p][q] = matrix[q][p] = 0.0;
-    for (int r = 0; r < 3; ++r) {
-      if (r == p || r == q) continue;
-      const Real arp = matrix[r][p];
-      const Real arq = matrix[r][q];
-      matrix[r][p] = matrix[p][r] = cosine*arp - sine*arq;
-      matrix[r][q] = matrix[q][r] = sine*arp + cosine*arq;
+    const Real rotated_p = cosine*cosine*app - 2.0*sine*cosine*apq
+                           + sine*sine*aqq;
+    const Real rotated_q = sine*sine*app + 2.0*sine*cosine*apq
+                           + cosine*cosine*aqq;
+    if (p == 0 && q == 1) {
+      const Real old02 = m02;
+      const Real old12 = m12;
+      m00 = rotated_p;
+      m11 = rotated_q;
+      m01 = 0.0;
+      m02 = cosine*old02 - sine*old12;
+      m12 = sine*old02 + cosine*old12;
+    } else if (p == 0) {
+      const Real old01 = m01;
+      const Real old12 = m12;
+      m00 = rotated_p;
+      m22 = rotated_q;
+      m02 = 0.0;
+      m01 = cosine*old01 - sine*old12;
+      m12 = sine*old01 + cosine*old12;
+    } else {
+      const Real old01 = m01;
+      const Real old02 = m02;
+      m11 = rotated_p;
+      m22 = rotated_q;
+      m12 = 0.0;
+      m01 = cosine*old01 - sine*old02;
+      m02 = sine*old01 + cosine*old02;
     }
   }
-  for (int a = 0; a < 3; ++a) eigenvalues[a] = matrix[a][a];
-  for (int a = 0; a < 2; ++a) {
-    for (int b = a + 1; b < 3; ++b) {
-      if (eigenvalues[b] < eigenvalues[a]) {
-        const Real temporary = eigenvalues[a];
-        eigenvalues[a] = eigenvalues[b];
-        eigenvalues[b] = temporary;
-      }
-    }
-  }
+  if (m11 < m00) { const Real temporary = m00; m00 = m11; m11 = temporary; }
+  if (m22 < m00) { const Real temporary = m00; m00 = m22; m22 = temporary; }
+  if (m22 < m11) { const Real temporary = m11; m11 = m22; m22 = temporary; }
+  return m00 > 0.0 ? m22/m00 : 0.0;
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -81,6 +94,42 @@ ReferenceGeometry GetReferenceGeometry(const int reference_kind,
   TrumpetSchwarzschildReference provider{table, mass,
                                          {center_x, center_y, center_z}};
   return provider(time, x, y, z);
+}
+
+// Fill caller-owned storage in device kernels.  Avoiding a large aggregate return
+// keeps the reference geometry out of the device ABI's temporary return storage.
+KOKKOS_INLINE_FUNCTION
+void GetReferenceGeometry(const int reference_kind,
+                          const DvceArray2D<Real> &table,
+                          const Real mass, const Real center_x,
+                          const Real center_y, const Real center_z,
+                          const Real time, const Real x,
+                          const Real y, const Real z,
+                          ReferenceGeometry &reference) {
+  if (reference_kind == 0) {
+    MinkowskiReference().Populate(time, x, y, z, reference);
+    return;
+  }
+  const TrumpetSchwarzschildReference provider{
+      table, mass, {center_x, center_y, center_z}};
+  provider.Populate(time, x, y, z, reference);
+}
+
+KOKKOS_INLINE_FUNCTION
+void GetReferencePsiKinematics(const int reference_kind,
+                               const DvceArray2D<Real> &table,
+                               const Real mass, const Real center_x,
+                               const Real center_y, const Real center_z,
+                               const Real time, const Real x,
+                               const Real y, const Real z,
+                               ReferencePsiKinematics &reference) {
+  if (reference_kind == 0) {
+    MinkowskiReference().PopulatePsiKinematics(time, x, y, z, reference);
+    return;
+  }
+  const TrumpetSchwarzschildReference provider{
+      table, mass, {center_x, center_y, center_z}};
+  provider.PopulatePsiKinematics(time, x, y, z, reference);
 }
 
 KOKKOS_INLINE_FUNCTION

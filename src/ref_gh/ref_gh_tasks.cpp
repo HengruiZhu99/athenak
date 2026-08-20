@@ -13,6 +13,7 @@
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "ref_gh/ref_gh.hpp"
+#include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
@@ -244,14 +245,10 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
                                    size.d_view(m).x2min, size.d_view(m).x2max);
         const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                    size.d_view(m).x3min, size.d_view(m).x3max);
-        ReferenceGeometry reference;
-        if (reference_kind == 0) {
-          reference = MinkowskiReference()(time, x, y, z);
-        } else {
-          const TrumpetSchwarzschildReference provider{
-              table, reference_mass, {center_x, center_y, center_z}};
-          reference = provider(time, x, y, z);
-        }
+        ReferencePsiKinematics reference;
+        GetReferencePsiKinematics(reference_kind, table, reference_mass,
+                                  center_x, center_y, center_z, time, x, y, z,
+                                  reference);
         Real psi[4][4], metric[4][4];  // NOLINT(runtime/arrays)
         for (int a = 0; a < 4; ++a) {
           for (int b = a; b < 4; ++b) {

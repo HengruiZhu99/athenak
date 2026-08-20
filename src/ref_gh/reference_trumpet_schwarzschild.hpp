@@ -175,6 +175,31 @@ struct TrumpetSchwarzschildReference {
   Real mass;
   Real center[3];  // NOLINT(runtime/arrays)
 
+  KOKKOS_INLINE_FUNCTION
+  void PopulatePsiKinematics(const Real /*time*/, const Real x, const Real y,
+                             const Real z,
+                             ReferencePsiKinematics &reference) const {
+    ZeroReferencePsiKinematics(reference);
+    const Real displacement[3] = {x - center[0], y - center[1], z - center[2]};
+    const Real radius = Kokkos::sqrt(displacement[0]*displacement[0]
+                                     + displacement[1]*displacement[1]
+                                     + displacement[2]*displacement[2]);
+    const Real rho = radius/mass;
+    const Real alpha =
+        InterpolateTrumpetProfile(table, kCoeffAlpha, rho).value;
+    const Real psi2 = ArealRadiusToPsi2(
+        InterpolateTrumpetProfile(table, kCoeffArealRadius, rho), rho).value;
+    const Real shift_q =
+        InterpolateTrumpetProfile(table, kCoeffShiftQ, rho).value/mass;
+    reference.coframe[0][0] = alpha;
+    for (int i = 0; i < 3; ++i) {
+      const Real shift = shift_q*displacement[i];
+      reference.coframe[i + 1][0] = psi2*shift;
+      reference.coframe[i + 1][i + 1] = psi2;
+      reference.spatial_coframe[i][i] = psi2;
+    }
+  }
+
   // The stationary n=2 trumpet is exactly Schwarzschild.  In its Eulerian
   // orthonormal frame the magnetic Weyl part vanishes and the electric part is
   // E_IJ=M/R^3(delta_IJ-3 n_I n_J), where R is areal radius.  Evaluating the
@@ -254,9 +279,8 @@ struct TrumpetSchwarzschildReference {
   }
 
   KOKKOS_INLINE_FUNCTION
-  ReferenceGeometry operator()(const Real /*time*/, const Real x, const Real y,
-                               const Real z) const {
-    ReferenceGeometry reference;
+  void Populate(const Real /*time*/, const Real x, const Real y, const Real z,
+                ReferenceGeometry &reference) const {
     ZeroReferenceGeometry(reference);
     const Real displacement[3] = {x - center[0], y - center[1], z - center[2]};
     const Real radius = Kokkos::sqrt(displacement[0]*displacement[0]
@@ -375,6 +399,13 @@ struct TrumpetSchwarzschildReference {
     }
     CompleteReferenceFrameGeometry(reference);
     SetExactVacuumFrameRiemann(reference, areal, displacement, radius);
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  ReferenceGeometry operator()(const Real time, const Real x, const Real y,
+                               const Real z) const {
+    ReferenceGeometry reference;
+    Populate(time, x, y, z, reference);
     return reference;
   }
 };

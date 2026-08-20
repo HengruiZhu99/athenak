@@ -1,0 +1,40 @@
+#!/bin/bash -l
+# One-cycle Ref-GH diagnostic with output/history hooks disabled.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:15:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_no_output
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_aurora_stationary_frozen_20260819
+SRC="${ROOT}/athenak"
+EXE="${ROOT}/build_sycl_pvc_bounds_20260819/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet_no_output.athinput"
+OUT="${ROOT}/runs/no_output_repro_${PBS_JOBID}"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "$HOME/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  sha256sum "${EXE}"
+  git -C "${SRC}" rev-parse HEAD
+  git -C "${SRC}" status --short
+} > provenance.txt
+
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+  > no_output_one_cycle.log 2>&1
