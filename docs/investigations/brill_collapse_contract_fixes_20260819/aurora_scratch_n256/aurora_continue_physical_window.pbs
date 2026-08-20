@@ -1,0 +1,55 @@
+#!/bin/bash -l
+# Continue the authenticated scratch trajectory from its cycle-1800 restart to
+# t=10, because the corrected timestep contract moved the historical event away
+# from cycle 1722. No evolution parameter is changed.
+#PBS -N brill-n256-cont
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+: "${ATHENAK_ROOT:?}"
+: "${BUILD_PHASE_ROOT:?}"
+: "${RESTART_FILE:?}"
+: "${RESTART_SHA256:?}"
+: "${AURORA_RUN_ROOT:?}"
+test ! -e "${AURORA_RUN_ROOT}"
+grep -Fx 'AURORA_N256_SCRATCH_HEAD_BUILD_PASS' "${BUILD_PHASE_ROOT}/status" >/dev/null
+test "$(sha256sum "${RESTART_FILE}" | awk '{print $1}')" = "${RESTART_SHA256}"
+test -x "${BUILD_PHASE_ROOT}/athena-build/src/athena"
+mkdir -p "${AURORA_RUN_ROOT}"
+run_root="$(cd "${AURORA_RUN_ROOT}" && pwd)"
+module purge
+module load oneapi/release/2025.3.1 gcc/13.4.0 cmake/3.31.11 python/3.12.12
+export OMP_NUM_THREADS=1 KOKKOS_NUM_THREADS=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE ZE_AFFINITY_MASK=0.0
+{
+  date --iso-8601=seconds
+  hostname
+  printf 'PBS_JOBID=%s\nrestart=%s\n' "${PBS_JOBID:-unknown}" "${RESTART_FILE}"
+  git -C "${ATHENAK_ROOT}" rev-parse HEAD HEAD^{tree}
+  test -z "$(git -C "${ATHENAK_ROOT}" status --porcelain)"
+  sycl-ls
+  sha256sum "${BUILD_PHASE_ROOT}/athena-build/src/athena" "${RESTART_FILE}"
+} > "${run_root}/provenance.log" 2>&1
+set +e
+(cd "${run_root}" && "${BUILD_PHASE_ROOT}/athena-build/src/athena" -r "${RESTART_FILE}" \
+  time/nlim=-1 time/tlim=10.0 \
+  job/basename=brill_contract_n256_scratch_cont \
+  z4c/amr_jump_output_basename=z4c_amr_jump_n256_scratch_cont \
+  z4c/chi_parent_provenance_output=chi_parent_provenance_n256_scratch_cont \
+  problem/constraint_summary_file=brill_contract_n256_scratch_cont-constraints.dat \
+  > stdout.log 2> stderr.log)
+run_status=$?
+set -e
+printf 'athena_exit=%s\n' "${run_status}" > "${run_root}/run-status"
+if [[ ${run_status} -eq 0 ]] && grep -Fq 'Terminating on time limit' "${run_root}/stdout.log"; then
+  printf 'AURORA_N256_SCRATCH_PHYSICAL_WINDOW_PASS\n' > "${run_root}/status"
+else
+  printf 'AURORA_N256_SCRATCH_PHYSICAL_WINDOW_FAILED\n' > "${run_root}/status"
+fi
+find "${run_root}" -type f ! -name SHA256SUMS -print0 | LC_ALL=C sort -z | xargs -0r sha256sum > "${run_root}/SHA256SUMS"
+test "$(cat "${run_root}/status")" = AURORA_N256_SCRATCH_PHYSICAL_WINDOW_PASS
