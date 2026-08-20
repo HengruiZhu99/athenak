@@ -1,0 +1,78 @@
+#!/bin/bash -l
+# One-tile bounded fresh N256 Brill run. It reuses only a successful build root.
+# qsub -A CompactBinaryMerger -v ATHENAK_ROOT=...,BUILD_PHASE_ROOT=...,INPUT_ROOT=...,AURORA_RUN_ROOT=... aurora_run.pbs
+#PBS -N brill-n256-run
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+
+set -euo pipefail
+: "${ATHENAK_ROOT:?exact clean AthenaK checkout required}"
+: "${BUILD_PHASE_ROOT:?successful fresh build root required}"
+: "${INPUT_ROOT:?committed scratch-input directory required}"
+: "${AURORA_RUN_ROOT:?fresh run output root required}"
+if [[ -e "${AURORA_RUN_ROOT}" ]]; then
+  printf 'refusing to reuse run root: %s\n' "${AURORA_RUN_ROOT}" >&2
+  exit 2
+fi
+test -f "${BUILD_PHASE_ROOT}/status"
+grep -Fx 'AURORA_N256_SCRATCH_BUILD_PASS' "${BUILD_PHASE_ROOT}/status" >/dev/null
+test -x "${BUILD_PHASE_ROOT}/athena-build/src/athena"
+test -f "${INPUT_ROOT}/n256_scratch.athinput"
+test -f "${INPUT_ROOT}/brill_global_48x32.coefficients"
+test "$(sha256sum "${INPUT_ROOT}/n256_scratch.athinput" | awk '{print $1}')" = 570de812a89c6fca778175485479dd0257b2018bc441a07b1476d6fe30e20c84
+test "$(sha256sum "${INPUT_ROOT}/brill_global_48x32.coefficients" | awk '{print $1}')" = ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b
+
+mkdir -p "${AURORA_RUN_ROOT}"
+run_root="$(cd "${AURORA_RUN_ROOT}" && pwd)"
+source_root="$(cd "${ATHENAK_ROOT}" && pwd)"
+build_root="$(cd "${BUILD_PHASE_ROOT}" && pwd)"
+input_root="$(cd "${INPUT_ROOT}" && pwd)"
+
+module purge
+module load oneapi/release/2025.3.1
+module load gcc/13.4.0
+module load cmake/3.31.11
+module load python/3.12.12
+export OMP_NUM_THREADS=1
+export KOKKOS_NUM_THREADS=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ZE_AFFINITY_MASK=0.0
+
+cp "${input_root}/n256_scratch.athinput" "${run_root}/"
+cp "${input_root}/brill_global_48x32.coefficients" "${run_root}/"
+{
+  date --iso-8601=seconds
+  hostname
+  printf 'PBS_JOBID=%s\nsource_root=%s\nbuild_root=%s\nrun_root=%s\n' "${PBS_JOBID:-unknown}" "${source_root}" "${build_root}" "${run_root}"
+  git -C "${source_root}" rev-parse HEAD
+  git -C "${source_root}" rev-parse HEAD^{tree}
+  git -C "${source_root}" status --short
+  module list
+  sycl-ls
+  env | LC_ALL=C sort | grep -E '^(ONEAPI|ZE_|OMP_|KOKKOS_)' || true
+  sha256sum "${build_root}/athena-build/src/athena" "${run_root}/n256_scratch.athinput" "${run_root}/brill_global_48x32.coefficients"
+} > "${run_root}/provenance.log" 2>&1
+
+set +e
+(
+  cd "${run_root}"
+  "${build_root}/athena-build/src/athena" -i n256_scratch.athinput > stdout.log 2> stderr.log
+)
+run_status=$?
+set -e
+printf '%s\n' "athena_exit=${run_status}" > "${run_root}/run-status"
+find "${run_root}" -type f ! -name SHA256SUMS -print0 | LC_ALL=C sort -z | xargs -0r sha256sum > "${run_root}/SHA256SUMS"
+if [[ ${run_status} -eq 0 ]]; then
+  grep -F 'completed requested Z4c AMR-jump diagnostic window: target cycle 1722 plus 8 accepted cycles' "${run_root}/stdout.log" >/dev/null
+  test -d "${run_root}/z4c_amr_jump_n256_scratch"
+  printf 'AURORA_N256_SCRATCH_RUN_PASS\n' > "${run_root}/status"
+else
+  printf 'AURORA_N256_SCRATCH_RUN_FAILED\n' > "${run_root}/status"
+fi
+exit "${run_status}"
