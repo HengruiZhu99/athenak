@@ -43,6 +43,7 @@ cp "${COEFFICIENT_FILE}" "${run_root}/brill_global_48x32.coefficients"
   printf 'PBS_JOBID=%s\nSEGMENT_ID=%s\n' "${PBS_JOBID:-unknown}" "${SEGMENT_ID}"
   printf 'PBS_QUEUE=%s\nPBS_ACCOUNT=%s\n' "${PBS_QUEUE:-unknown}" \
     "${PBS_ACCOUNT:-CompactBinaryMerger}"
+  printf 'MAX_NMB_PER_RANK_OVERRIDE=%s\n' "${MAX_NMB_PER_RANK_OVERRIDE:-none}"
   git -C "${ATHENAK_ROOT}" rev-parse HEAD HEAD^{tree}
   git -C "${ATHENAK_ROOT}" submodule status
   module list
@@ -68,14 +69,29 @@ if [[ "${SEGMENT_ID}" = 0 ]]; then
 fi
 
 restart_args=()
+capacity_args=()
 if [[ -n "${RESTART_FILE:-}" ]]; then
   : "${RESTART_SHA256:?required with RESTART_FILE}"
   test -f "${RESTART_FILE}"
   test "$(sha256sum "${RESTART_FILE}" | awk '{print $1}')" = "${RESTART_SHA256}"
   sha256sum "${RESTART_FILE}" > "${run_root}/restart-input.sha256"
   restart_args=(-r "${RESTART_FILE}")
+  if [[ -n "${MAX_NMB_PER_RANK_OVERRIDE:-}" ]]; then
+    case "${MAX_NMB_PER_RANK_OVERRIDE}" in
+      8192|16384) ;;
+      *)
+        printf 'unsupported continuation capacity override: %s\n' \
+          "${MAX_NMB_PER_RANK_OVERRIDE}" >&2
+        exit 2
+        ;;
+    esac
+    capacity_args=(
+      "mesh_refinement/max_nmb_per_rank=${MAX_NMB_PER_RANK_OVERRIDE}"
+    )
+  fi
 else
   test "${SEGMENT_ID}" = 0
+  test -z "${MAX_NMB_PER_RANK_OVERRIDE:-}"
   restart_args=(-i brill_o4_n256.athinput)
 fi
 
@@ -83,6 +99,7 @@ set +e
 (cd "${run_root}" && "${BUILD_ROOT}/athena-build/src/athena" \
   "${restart_args[@]}" -t 01:45:00 \
   time/nlim=-1 time/tlim=50.0 \
+  "${capacity_args[@]}" \
   job/basename="brill_o4_n256_seg${SEGMENT_ID}" \
   problem/constraint_summary_file="brill_o4_n256_seg${SEGMENT_ID}-constraints.dat" \
   > stdout.log 2> stderr.log)
