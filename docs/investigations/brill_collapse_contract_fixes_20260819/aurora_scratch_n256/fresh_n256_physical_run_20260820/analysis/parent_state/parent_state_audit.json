@@ -1,0 +1,168 @@
+{
+  "T0_field_files": [
+    {
+      "path": "/home/hzhu/brill-contract-n256-scratch-cont-e8781f40-v1-20260820/z4c_amr_jump_n256_scratch_cont/rank0000/event_c00002833_l2_to_l3/t0_00_ACCEPTED_OLD_STATE/u0.bin",
+      "sha256": "bef6d1e2abd5a03581a5d1c74f251b0a2a1a3a0fc766a51895f383e7a8bbe70b"
+    }
+  ],
+  "chi_PR_fallback_groups": 0,
+  "cycle": 2833,
+  "definitions": {
+    "PR": "production O6-configured 2D point restriction followed by production high-order prolongation; chi uses the production strict-positive sibling fallback",
+    "PR_edge_split": "edge band means active cells within four cells of any MeshBlock edge; interior excludes that band",
+    "derivative_disagreement": "relative L2 of centered O6 minus centered O4 first/second derivatives over target-parent active cells",
+    "nyquist": "RMS and maximum block-local normalized projections onto i, j, and ij alternating patterns after removing each block-component mean"
+  },
+  "families": [
+    {
+      "D1_O6_O4_max_abs": 0.009189778905886625,
+      "D1_O6_O4_relative_l2": 0.010385525108458075,
+      "D2_O6_O4_max_abs": 0.31576533677804086,
+      "D2_O6_O4_relative_l2": 0.03953767286341487,
+      "PR_edge_band_relative_l2": 0.00024391667071287635,
+      "PR_interior_relative_l2": 6.113698346278433e-05,
+      "PR_max_abs": 0.0026292867978983114,
+      "PR_max_location": {
+        "active_i": 3,
+        "active_j": 31,
+        "component": "z4c_chi",
+        "gid": 28,
+        "rho": 5.109375,
+        "value": 0.0026292867978983114,
+        "within_four_cells_of_block_edge": true,
+        "z": -0.015625
+      },
+      "PR_relative_l2": 0.00016712268147023193,
+      "block_nyquist_i_rms": 0.023162313899815292,
+      "block_nyquist_ij_rms": 0.0008630548176729543,
+      "block_nyquist_j_rms": 0.0350777108027103,
+      "block_nyquist_max": 0.044833783555631286,
+      "component_count": 1,
+      "family": "chi",
+      "parent_block_count": 4
+    },
+    {
+      "D1_O6_O4_max_abs": 15.98254907532926,
+      "D1_O6_O4_relative_l2": 0.09901608862823945,
+      "D2_O6_O4_max_abs": 646.359767644859,
+      "D2_O6_O4_relative_l2": 0.07278666109688291,
+      "PR_edge_band_relative_l2": 0.3891831238455759,
+      "PR_interior_relative_l2": 0.021138209640273437,
+      "PR_max_abs": 3.604672011875904,
+      "PR_max_location": {
+        "active_i": 3,
+        "active_j": 31,
+        "component": "z4c_Khat",
+        "gid": 28,
+        "rho": 5.109375,
+        "value": 3.604672011875904,
+        "within_four_cells_of_block_edge": true,
+        "z": -0.015625
+      },
+      "PR_relative_l2": 0.35348200670798013,
+      "block_nyquist_i_rms": 0.014677292009053293,
+      "block_nyquist_ij_rms": 0.00037984875315954397,
+      "block_nyquist_j_rms": 0.04284794224208934,
+      "block_nyquist_max": 0.060551420016342325,
+      "component_count": 1,
+      "family": "K",
+      "parent_block_count": 4
+    },
+    {
+      "D1_O6_O4_max_abs": 3.830018938443267,
+      "D1_O6_O4_relative_l2": 0.0750955334217242,
+      "D2_O6_O4_max_abs": 124.49041326397719,
+      "D2_O6_O4_relative_l2": 0.05260672573335245,
+      "PR_edge_band_relative_l2": 0.3231490798850213,
+      "PR_interior_relative_l2": 0.03059943649078252,
+      "PR_max_abs": 0.8368844548816877,
+      "PR_max_location": {
+        "active_i": 3,
+        "active_j": 31,
+        "component": "z4c_Ayy",
+        "gid": 28,
+        "rho": 5.109375,
+        "value": 0.8368844548816877,
+        "within_four_cells_of_block_edge": true,
+        "z": -0.015625
+      },
+      "PR_relative_l2": 0.2798979581320448,
+      "block_nyquist_i_rms": 0.019542442524667497,
+      "block_nyquist_ij_rms": 0.0006223942018394197,
+      "block_nyquist_j_rms": 0.02892969920482172,
+      "block_nyquist_max": 0.06676517651922129,
+      "component_count": 6,
+      "family": "Atilde",
+      "parent_block_count": 4
+    },
+    {
+      "D1_O6_O4_max_abs": 0.24366061500300917,
+      "D1_O6_O4_relative_l2": 0.03009217819771223,
+      "D2_O6_O4_max_abs": 22.863564654262177,
+      "D2_O6_O4_relative_l2": 0.09418469540695087,
+      "PR_edge_band_relative_l2": 0.02092781560814061,
+      "PR_interior_relative_l2": 0.0027361258050921707,
+      "PR_max_abs": 0.06468404005783496,
+      "PR_max_location": {
+        "active_i": 3,
+        "active_j": 31,
+        "component": "z4c_Gamy",
+        "gid": 28,
+        "rho": 5.109375,
+        "value": 0.06468404005783496,
+        "within_four_cells_of_block_edge": true,
+        "z": -0.015625
+      },
+      "PR_relative_l2": 0.013559686246281481,
+      "block_nyquist_i_rms": 0.02771498702456455,
+      "block_nyquist_ij_rms": 0.0006127480450636025,
+      "block_nyquist_j_rms": 0.03047836676305293,
+      "block_nyquist_max": 0.04743304908653004,
+      "component_count": 3,
+      "family": "Gammatilde",
+      "parent_block_count": 4
+    },
+    {
+      "D1_O6_O4_max_abs": 0.015395894388466669,
+      "D1_O6_O4_relative_l2": 0.00802215590776093,
+      "D2_O6_O4_max_abs": 0.7330134429576178,
+      "D2_O6_O4_relative_l2": 0.053498012288400586,
+      "PR_edge_band_relative_l2": 0.00017895178514006727,
+      "PR_interior_relative_l2": 8.425953519714715e-05,
+      "PR_max_abs": 0.003954726340200221,
+      "PR_max_location": {
+        "active_i": 3,
+        "active_j": 31,
+        "component": "z4c_gyy",
+        "gid": 28,
+        "rho": 5.109375,
+        "value": 0.003954726340200221,
+        "within_four_cells_of_block_edge": true,
+        "z": -0.015625
+      },
+      "PR_relative_l2": 0.00013419685307725969,
+      "block_nyquist_i_rms": 0.02019700122394111,
+      "block_nyquist_ij_rms": 0.001008243330892623,
+      "block_nyquist_j_rms": 0.024540749040528102,
+      "block_nyquist_max": 0.04841287771197743,
+      "component_count": 6,
+      "family": "gammatilde",
+      "parent_block_count": 4
+    }
+  ],
+  "limitations": [
+    "This is a local target-parent resolution indicator, not a convergence proof.",
+    "Block-local alternating projections can identify unresolved grid-scale content but do not establish its causal origin."
+  ],
+  "parent_block_count": 4,
+  "parent_gids": [
+    28,
+    29,
+    45,
+    48
+  ],
+  "qualification_claim": false,
+  "restart_sha256": "8771db9d9cf7ed6973513d4f81cd6fe3cc7f8edb58538e21014dd5b804fd058a",
+  "schema": "athenak_brill_parent_state_audit_v1",
+  "source_commit": "e8781f4057c73a0e97f5802413aefde899e24123"
+}

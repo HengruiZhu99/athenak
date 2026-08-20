@@ -1,0 +1,34 @@
+2026-08-20T16:28:30+00:00
+x4104c2s1b0n0
+PBS_JOBID=8768636.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+e8781f4057c73a0e97f5802413aefde899e24123
+2250689f6d694e8e8ac0fc695e56eafeb11193fd
+
+Currently Loaded Modules:
+  1) oneapi/release/2025.3.1          6) expat/2.7.3-6auksxt          (H)
+  2) gcc/13.4.0                       7) gdbm/1.25
+  3) cmake/3.31.11                    8) sqlite/3.50.4-s65ksrg        (H)
+  4) gcc-runtime/13.4.0-2tg3zy7 (H)   9) util-linux-uuid/2.41-ytoy2bg (H)
+  5) bzip2/1.0.8                     10) python/3.12.12
+
+  Where:
+   H:  Hidden Module
+
+ 
+
+INFO: Output filtered by ONEAPI_DEVICE_SELECTOR environment variable, which is set to level_zero:gpu.
+To see device ids, use the --ignore-device-selectors CLI option.
+
+[level_zero:gpu] Intel(R) oneAPI Unified Runtime over Level-Zero, Intel(R) Data Center GPU Max 1550 12.60.7 [1.6.33578+42]
+KOKKOS_NUM_THREADS=1
+OMP_NUM_THREADS=1
+OMP_TARGET_OFFLOAD=MANDATORY
+ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+ONEAPI_ROOT=/opt/aurora/26.26.0/oneapi
+ZE_AFFINITY_MASK=0.0
+ZE_ENABLE_API_TRACING=1
+ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+8d9035cc22f4406788792f585648243e4dc043e484ee5ab6f54ac14009a063ed  /home/hzhu/brill-contract-n256-scratch-head-build-e8781f40-20260820/athena-build/src/athena
+570de812a89c6fca778175485479dd0257b2018bc441a07b1476d6fe30e20c84  /home/hzhu/brill-contract-n256-scratch-run-e8781f40-v1-20260820/n256_scratch.athinput
+ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b  /home/hzhu/brill-contract-n256-scratch-run-e8781f40-v1-20260820/brill_global_48x32.coefficients

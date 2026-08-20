@@ -1,0 +1,124 @@
+{
+  "athena_executable_sha256": "8d9035cc22f4406788792f585648243e4dc043e484ee5ab6f54ac14009a063ed",
+  "aurora_jobs": {
+    "continuation": 8768689,
+    "segment0_from_t0": 8768636
+  },
+  "history_inputs": [
+    {
+      "path": "segment0/brill_contract_n256_scratch.z4c.user.hst",
+      "sha256": "03aa09b5d4324deb6520d74be33128b5bb112fb8201ac70d409f0b476ae14b8c"
+    },
+    {
+      "path": "continuation/brill_contract_n256_scratch_cont.z4c.user.hst",
+      "sha256": "b08a9f3db7b8d2b6a228018607b6f2d166a8a9ab99ccb255b78f6d632cedc65f"
+    }
+  ],
+  "limitations": [
+    "The run is one N256 trajectory, not a convergence study.",
+    "The source contracts and diagnostics are qualified; no unique production AMR operator correction is established.",
+    "The cycle-1800 restart is an authenticated segmentation of the same from-t0 trajectory, not independent initial data."
+  ],
+  "parent_state_selected": {
+    "Atilde": {
+      "D2_O6_O4_relative_l2": 0.05260672573335245,
+      "PR_edge_band_relative_l2": 0.3231490798850213,
+      "PR_interior_relative_l2": 0.03059943649078252,
+      "PR_relative_l2": 0.2798979581320448,
+      "block_nyquist_max": 0.06676517651922129
+    },
+    "Gammatilde": {
+      "D2_O6_O4_relative_l2": 0.09418469540695087,
+      "PR_edge_band_relative_l2": 0.02092781560814061,
+      "PR_interior_relative_l2": 0.0027361258050921707,
+      "PR_relative_l2": 0.013559686246281481,
+      "block_nyquist_max": 0.04743304908653004
+    },
+    "K": {
+      "D2_O6_O4_relative_l2": 0.07278666109688291,
+      "PR_edge_band_relative_l2": 0.3891831238455759,
+      "PR_interior_relative_l2": 0.021138209640273437,
+      "PR_relative_l2": 0.35348200670798013,
+      "block_nyquist_max": 0.060551420016342325
+    },
+    "chi": {
+      "D2_O6_O4_relative_l2": 0.03953767286341487,
+      "PR_edge_band_relative_l2": 0.00024391667071287635,
+      "PR_interior_relative_l2": 6.113698346278433e-05,
+      "PR_relative_l2": 0.00016712268147023193,
+      "block_nyquist_max": 0.044833783555631286
+    },
+    "gammatilde": {
+      "D2_O6_O4_relative_l2": 0.053498012288400586,
+      "PR_edge_band_relative_l2": 0.00017895178514006727,
+      "PR_interior_relative_l2": 8.425953519714715e-05,
+      "PR_relative_l2": 0.00013419685307725969,
+      "block_nyquist_max": 0.04841287771197743
+    }
+  },
+  "qualification_claim": false,
+  "schema": "athenak_brill_fresh_n256_aurora_summary_v1",
+  "segment_boundary": {
+    "cycle": 1800,
+    "restart_sha256": "8771db9d9cf7ed6973513d4f81cd6fe3cc7f8edb58538e21014dd5b804fd058a",
+    "time": 5.639311105449374
+  },
+  "source_commit": "e8781f4057c73a0e97f5802413aefde899e24123",
+  "source_tree": "f7a0d222b7f08c035a1cf4c2a783c2d4ff8f8154",
+  "target_event": {
+    "coordinate_ring_volume_relative_change": -2.220446049250313e-15,
+    "cycle": 2833,
+    "explicit_refined_parent_gids": [
+      28,
+      45
+    ],
+    "native_integral_ratios_T5_over_T0": {
+      "C_norm2": 3.0469579492491485,
+      "H_norm2": 12.252389385128769,
+      "M_norm2": 61.773604381064786,
+      "Z_norm2": 1.0003466317838878
+    },
+    "new_nmb": 86,
+    "old_nmb": 74,
+    "physical_patch": {
+      "rho": [
+        5.0,
+        6.0
+      ],
+      "z": [
+        -1.0,
+        1.0
+      ]
+    },
+    "projection_fraction_of_fixed_lattice_constraint_stage_l2": 0.013950800334573313,
+    "proper_volume_relative_change": 6.594323154196502e-08,
+    "time": 9.476710063617325,
+    "worst_fixed_lattice_C_change": {
+      "axis_distance": 5.1328125,
+      "block_edge_distance": 0.0078125,
+      "coarse_fine_interface_distance": 0.1328125,
+      "delta_C": 153.54173129174384,
+      "delta_H": 8.505469479164814,
+      "delta_M": 67.87561908855238,
+      "delta_Z": 0.00024138296966774372,
+      "gid": 30,
+      "i": 8,
+      "j": 31,
+      "rho": 5.1328125,
+      "z": -0.0078125
+    }
+  },
+  "terminal": {
+    "C_norm2": 212.93874989797249,
+    "H_norm2": 120.93213365720331,
+    "M_norm2": 56.14020347426478,
+    "Z_norm2": 7.448769256844296,
+    "cycle": 3329,
+    "dt": 0.000956389323411208,
+    "max_abs_K": 18.663230389404887,
+    "max_kretschmann": 1133.5654640423434,
+    "max_relative_level": 4,
+    "nmb_total": 98,
+    "time": 10.0
+  }
+}

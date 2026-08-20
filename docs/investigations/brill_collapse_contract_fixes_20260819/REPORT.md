@@ -3,23 +3,45 @@
 Date: 2026-08-20  
 Branch: `codex/brill-collapse-contract-fixes-20260819`  
 Base: `1c95db8a2adc743672b49a525c21c4f762f35223`  
-Current source: `d64b499c01aa4369bb6c37cfd11bc4c0590e69f2`  
+Compiled physical-run source: `e8781f4057c73a0e97f5802413aefde899e24123`
 Kokkos: `6739bc623081648af9e752b616d9671527922cbf` (4.7.2)
 
 ## Disposition
 
 The completed work hardens and makes observable the known state, timestep,
 AMR-transfer, high-frequency, and secondary AMR configuration contracts. A
-fresh Aurora PVC one-tile build and zero-PDE AMR transaction also executed
-successfully. This is **not** a Brill-collapse qualification, convergence
-result, Figure-3 reproduction, or demonstrated production AMR-operator cure.
+fresh Aurora PVC one-tile build, zero-PDE AMR transaction, and user-authorized
+from-scratch N256 Brill trajectory through `t=10 M` executed successfully.
+This is **not** a Brill-collapse qualification, convergence result, Figure-3
+reproduction, or demonstrated production AMR-operator cure.
 
-The exact cycle-1721 N256 Brill restart needed for the mandated bounded
-pre-failure continuation has SHA-256
-`83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea`.
-It is not present in this checkout or on Aurora; its historical Perlmutter
-location must not be replaced with a different initial-data case. That bounded
-physical check is therefore pending authenticated staging of those bytes.
+The original exact cycle-1721 restart remains unavailable.  Rather than
+substitute unrelated bytes, the physical run began from the archived direct
+IrisK coefficient payload at `t=0`.  Its authenticated cycle-1800 restart was
+continued to the physical target window.  The exact old parents 28 and 45 were
+refined at cycle 2833, `t=9.476710063617325 M`.
+
+## Fresh N256 physical event
+
+Aurora job `8768636` executed the `t=0` segment and job `8768689` completed the
+same trajectory at `t=10 M`; the latter requested one hour and used one PVC
+tile.  The full compact report and evidence are under
+[`aurora_scratch_n256/fresh_n256_physical_run_20260820/`](aurora_scratch_n256/fresh_n256_physical_run_20260820/).
+
+At the target transaction, coordinate ring volume is conserved to `2.22e-15`
+relatively, while T5/T0 proper-volume integral ratios are `3.047` for C,
+`12.252` for H, `61.774` for M, and `1.00035` for Z.  The Cartoon measure is
+already the proper ring measure, so this is not a collapsed-y normalization
+artifact.  Transfer/phase ledgers close to roundoff and active fields do not
+show a corrupt-copy jump.  The constraint change is present after boundary
+reconstruction; algebraic projection contributes only about 1.40% of the
+fixed-lattice stage-change sum.
+
+The worst point lies at the equatorial MeshBlock edge, not the Cartoon axis.
+Pre-event parent self-shadow is small for chi (`1.67e-4` relative L2) but large
+for K (`0.353`) and Atilde (`0.280`), with edge bands much worse than interiors.
+This supports a dchi-blind parent-resolution/edge-transfer mechanism but does
+not uniquely distinguish parent under-resolution from an AMR-interface mode.
 
 ## Implemented, separately committed source contracts
 
@@ -140,9 +162,10 @@ removes that failure path; the succeeding job rebuilt the full application.
 
 ## What remains unproven
 
-1. The required authentic N256 Brill restart is unavailable on Aurora, so no
-   short physical continuation has run from this source.
-2. The zero-PDE suite characterizes transfer symbols and selected transactions;
+1. The original cycle-1721 restart remains unavailable; the completed physical
+   check is instead a checksum-bound from-scratch trajectory.
+2. The zero-PDE and physical-event suites characterize transfer symbols and
+   selected transactions;
    it does not establish that a unique transfer source bug causes the nonlinear
    Brill runaway.
 3. No claim is made that the high-k sensor should become a production AMR
@@ -168,7 +191,7 @@ removes that failure path; the succeeding job rebuilt the full application.
 | RefineRadii geometry | FIXED | `0a740714`; exact AABB distance tests cover inside/face/edge/corner/half-plane cases. |
 | AMR cadence parsing | FIXED | `e55685f2`; positive integer cadence validation is unit-tested. |
 | Empty tracker handling | FIXED | `e55685f2`; configuration fails before empty-tracker use. |
-| Phase 7 bounded Brill continuation | STILL OPEN | Exact N256 pre-event restart SHA-256 `83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea` is absent locally and on Aurora; no substitute run is authorized. |
+| Phase 7 bounded Brill execution | QUALIFIED FOR DIAGNOSIS | User-authorized from-scratch N256 trajectory reaches the same physical parent pair at cycle 2833, `t=9.476710063617325 M`, and completes at `t=10 M`.  The event is quantified but does not qualify convergence or a production cure. |
 
 ## Reproduction commands
 
@@ -202,3 +225,6 @@ command/result and is checksum-bound in the manifest.
 - `cpu_head/`: supported passing suite and the broader, explicitly classified
   CPU audit, including the GCC cross-compiler MMS result.
 - `EVIDENCE_MANIFEST.json`: strict hashes and scope labels for this report.
+- `aurora_scratch_n256/fresh_n256_physical_run_20260820/`: head-build,
+  from-scratch/continuation logs, combined history, target-event writer ledger,
+  parent-state audit, plots, and strict summary.
