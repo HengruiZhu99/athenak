@@ -60,6 +60,7 @@ export KOKKOS_NUM_THREADS=1
 
 mpiexec -n 2 -ppn 2 --depth 1 --cpu-bind depth "${test_binary}" \
   > "${phase_root}/test.log" 2>&1
-grep -qx 'Z4c coarse-cache ownership tests passed' "${phase_root}/test.log"
+test "$(grep -Fxc 'Z4c coarse-cache ownership regression passed' \
+  "${phase_root}/test.log")" -eq 2
 sha256sum "${phase_root}/provenance.log" "${phase_root}/test.log" > "${phase_root}/SHA256SUMS"
 printf 'TWO_RANK_CPU_MPI_OWNERSHIP_PASS\n' > "${phase_root}/status"
