@@ -48,6 +48,26 @@
     "provenance.log": "9606f107ef7c2b95570c4eebff322688f6957a6f8a1a7cb27233d883d4f105e0",
     "test.log": "4db89ef940876cfac34dd2e890201ac3005581eaf6acc0daf99b7719e340a967"
   },
+  "cpu_head_extended_audit": {
+    "build_workers": 64,
+    "ctest_workers": 2,
+    "runtime_threads": 1,
+    "supported_suite": {
+      "tests": 17,
+      "result": "pass",
+      "log_sha256": "7ada4b2bc2b2a4022f0cd5a35fd8a0c42eb41c6c416c8b3920a7a94d84e2ffb2"
+    },
+    "broader_suite": {
+      "tests": 20,
+      "result": "17 pass; 3 classified exclusions",
+      "log_sha256": "620df2fbf3c7c48dc28161fd469b61e744cebdc622d346d3a143508323c3e2cd",
+      "exclusions": [
+        "mms static generator needs SymPy, absent from loaded Aurora Python",
+        "serial CMake configuration has no MPI-only coarse-cache ownership executable",
+        "MMS structure reports one rho=0.5 bitwise mismatch in source unchanged from the frozen base"
+      ]
+    }
+  },
   "required_bounded_physical_input": {
     "description": "N256 Brill pre-event cycle-1721 restart",
     "sha256": "83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea",

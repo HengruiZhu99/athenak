@@ -53,6 +53,26 @@ max_abs_atilde_trace          = 7.18283939271647e-19
 
 This is a small synthetic zero-PDE transfer event, not physical Brill evidence.
 
+An additional 17-test CPU-head-node suite also passed under the same runtime
+cap. Its log is `cpu_head/contract_cpu_supported_ctest.log` (SHA-256
+`7ada4b2bc2b2a4022f0cd5a35fd8a0c42eb41c6c416c8b3920a7a94d84e2ffb2`).
+The deliberately broader 20-test audit is preserved separately in
+`cpu_head/contract_cpu_extended_ctest.log` (SHA-256
+`620df2fbf3c7c48dc28161fd469b61e744cebdc622d346d3a143508323c3e2cd`):
+
+- 17 selected supported tests passed;
+- `athena.z4c_cartoon_mms_static` could not run because the Aurora Python
+  module lacks SymPy;
+- the serial build correctly has no MPI-only coarse-cache ownership executable;
+- `athena.z4c_cartoon_mms_structure` reproducibly reports one bitwise
+  Cartesian-delegation/tensor-variance mismatch at `rho=0.5`.
+
+The last result is not attributable to this branch's changes: the test source
+and `src/z4c/cartoon_derivatives.hpp` are byte-identical to the frozen base.
+It is therefore retained as an environment/compiler-sensitive baseline signal,
+not suppressed or reclassified as a passing qualification. Its cause remains
+outside the bounded Brill-contract change scope.
+
 ## Aurora one-tile device qualification
 
 Aurora allocation `8768479` used account `CompactBinaryMerger`, debug queue,
@@ -129,4 +149,6 @@ removes that failure path; the succeeding job rebuilt the full application.
 - `aurora_v1_build_failure/`: preserved failed-build provenance.
 - `aurora_mpi_v2/`: strict two-rank cache-ownership evidence.
 - `aurora_mpi_v1_failure/`: preserved wrapper-only predecessor failure.
+- `cpu_head/`: supported passing suite and the broader, explicitly classified
+  CPU audit.
 - `EVIDENCE_MANIFEST.json`: strict hashes and scope labels for this report.
