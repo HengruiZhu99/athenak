@@ -75,6 +75,14 @@ with Aurora GCC 13.4 (`cpu_head/contract_cpu_gcc_mms_structure.log`, SHA-256
 The oneAPI bitwise discrepancy is retained as an unresolved toolchain/test
 reproducibility issue, not suppressed or reclassified as a Z4c source defect.
 
+The expanded CPU build was made from exact revision
+`828ee0ab0b30c8c08de3acb55102d398ec78e371`, clean tree
+`f7a0d222b7f08c035a1cf4c2a783c2d4ff8f8154`; all changes between that revision
+and source-bearing commit `d64b499c` are documentation/evidence only. The
+compiler/cache and focused executable hashes are recorded in
+`cpu_head/contract_cpu_reproducibility.log` (SHA-256
+`ba8c17ed34ed7d2d3eca3a4c2980b7406955d18b4a839d563be5860725cf182b`).
+
 ## Aurora one-tile device qualification
 
 Aurora allocation `8768479` used account `CompactBinaryMerger`, debug queue,
@@ -140,6 +148,46 @@ removes that failure path; the succeeding job rebuilt the full application.
 3. No claim is made that the high-k sensor should become a production AMR
    selector, that parent under-resolution is resolved, or that any physical
    result converges.
+
+## Phase status and numerical-contract matrix
+
+| phase / contract | status | exact scope and evidence |
+|---|---|---|
+| Phase 0 baseline freeze | QUALIFIED | `dd149c13`; baseline static logs retained under `baseline/`. The expanded CPU audit adds 17 supported passes and a separately classified oneAPI-only MMS bitwise discrepancy. |
+| Fail-open AlgConstr determinant/SPD | FIXED | `b490b3b9`; invalid determinant, indefinite metric, nonfinite values, nonpositive chi/lapse, and unmodified-failure paths are covered by the state-admissibility test. |
+| Active-stage state admissibility | QUALIFIED | `b490b3b9`; deterministic checkpoint/failure machinery plus synthetic zero-PDE T5 manifold diagnostics. A physical first failure is pending the authenticated restart. |
+| Explicit gauge/source timestep | FIXED | `cb61b64a`; distinct `dt_spatial`/`dt_source`, source-rate diagnostics, and focused contract tests. |
+| Gauge characteristic CFL | QUALIFIED | `cb61b64a`; characteristic/source contract code and flat/parameterized unit coverage; no physical Brill activation has been measured. |
+| AMR coarse-cache provenance | QUALIFIED | Existing ownership fix retained; zero-PDE transaction evidence and strict two-rank Aurora ownership test (`8768526`) pass. |
+| Block-edge restriction | STILL OPEN | Production operator was intentionally not changed; symbol/decomposition qualification measures it but does not identify a unique cure. |
+| Refine/restrict high-k amplification | QUALIFIED | `71b07572` Fourier transfer sweep and device transfer target expose, rather than hide, high-k gain. |
+| Coarse-fine derivative compatibility | QUALIFIED | Zero-PDE transfer/interface suite and same-rank/two-rank ownership scope; not a nonlinear Brill validation. |
+| dchi Nyquist blindness | QUALIFIED | `34f9f620` adds a non-authoritative fourth-difference shadow sensor; legacy AMR selection remains unchanged. |
+| Transfer metric/state admissibility | QUALIFIED | `e4da52e2` records chi/lapse/SPD/determinant/trace diagnostics at T5; no nonlinear transfer redesign was justified. |
+| Axis regularity | QUALIFIED | Cartoon parity/boundary and regular-functional tests pass in the supported suite; GCC 13.4 also passes the MMS structure target. |
+| RefineRadii geometry | FIXED | `0a740714`; exact AABB distance tests cover inside/face/edge/corner/half-plane cases. |
+| AMR cadence parsing | FIXED | `e55685f2`; positive integer cadence validation is unit-tested. |
+| Empty tracker handling | FIXED | `e55685f2`; configuration fails before empty-tracker use. |
+| Phase 7 bounded Brill continuation | STILL OPEN | Exact N256 pre-event restart SHA-256 `83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea` is absent locally and on Aurora; no substitute run is authorized. |
+
+## Reproduction commands
+
+The Aurora one-tile and two-rank PBS scripts are committed beside the evidence
+and are the authoritative scheduler commands. The CPU-head-node suite used
+one runtime thread and two CTest workers:
+
+```bash
+OMP_NUM_THREADS=1 KOKKOS_NUM_THREADS=1 \
+ctest --test-dir /home/hzhu/athenak-brill-contract-fixes-20260819-cpu-compat \
+  -j2 --output-on-failure \
+  -R 'athena\.(amr_cadence|amr_history_format|z4c_cartoon_mms_generated_reference|z4c_cartoon_axis_parity|z4c_cartoon_axis_boundary|z4c_cartoon_axis_centered_derivatives|z4c_cartoon_regular_functionals|z4c_cartoon_amr_transfer_qualification|z4c_cartoon_lattice_index|z4c_cartoon_m0_fastflow|z4c_chi_prolongation|z4c_amr_jump_diagnostic|z4c_amr_radius|z4c_amr_shadow_sensor|z4c_state_admissibility|z4c_timestep_contract|z4c_amr_configuration_static)$'
+```
+
+Builds used `cmake --build ... --parallel 64` only, as permitted for
+compilation. The exact build cache, source/tree/Kokkos identities, and hashes
+of the principal focused executables are in
+`cpu_head/contract_cpu_reproducibility.log`; each runtime log names its test
+command/result and is checksum-bound in the manifest.
 
 ## Evidence files
 
