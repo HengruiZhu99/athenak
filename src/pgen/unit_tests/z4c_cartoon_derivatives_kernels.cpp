@@ -31,6 +31,7 @@
 #include "pgen/unit_tests/z4c_cartoon_derivatives_oracle.hpp"
 #include "pgen/unit_tests/z4c_cartoon_derivatives.hpp"
 #include "z4c/cartoon_derivatives.hpp"
+#include "z4c/cartoon_lattice_index.hpp"
 #include "z4c/stored_domain_bounds.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_symmetry.hpp"
@@ -540,7 +541,7 @@ AxisProbeResult RunDiagnosticAxisProbe() {
       z4c_mms::FieldValues oracle;
       z4c_mms::EvaluateFieldValues(rho, 0.0, z, oracle);
       const int radial_layer = static_cast<int>(floor(fabs(rho / spacing)));
-      const int axial_index = static_cast<int>(llround(z / spacing));
+      const int axial_index = z4c::NearestLatticeIndex(z / spacing);
       StoreManufacturedState(oracle, rho, radial_layer, axial_index,
                              0.0, 0, 0, 0, 0, j, i, state);
       });
@@ -628,7 +629,7 @@ void RunMmsOrder(ParameterInput *pin, Mesh *mesh) {
         z4c_mms::FieldValues oracle;
         z4c_mms::EvaluateFieldValues(rho, 0.0, z, oracle);
         const int radial_layer = static_cast<int>(floor(fabs(rho / size.d_view(m).dx1)));
-        const int axial_index = static_cast<int>(llround(z / size.d_view(m).dx2));
+        const int axial_index = z4c::NearestLatticeIndex(z / size.d_view(m).dx2);
         StoreManufacturedState(oracle, rho, radial_layer, axial_index,
                                0.0, noise_phase, 0, m, k, j, i, clean);
         StoreManufacturedState(oracle, rho, radial_layer, axial_index,
