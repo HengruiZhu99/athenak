@@ -1,0 +1,36 @@
+2026-08-19T22:55:37+00:00
+x4219c7s2b0n0
+PBS_JOBID=8767286.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+source_root=/home/hzhu/athenak-brill-contract-fixes-20260819-git
+phase_root=/home/hzhu/athenak-brill-contract-fixes-20260819-gpu-qualification-v1
+c45637bdff6488541d796a369ce2dce540f6c8f8
+ 6739bc623081648af9e752b616d9671527922cbf kokkos (4.7.02)
+
+Currently Loaded Modules:
+  1) oneapi/release/2025.3.1          6) expat/2.7.3-6auksxt          (H)
+  2) gcc/13.4.0                       7) gdbm/1.25
+  3) cmake/3.31.11                    8) sqlite/3.50.4-s65ksrg        (H)
+  4) gcc-runtime/13.4.0-2tg3zy7 (H)   9) util-linux-uuid/2.41-ytoy2bg (H)
+  5) bzip2/1.0.8                     10) python/3.12.12
+
+  Where:
+   H:  Hidden Module
+
+ 
+
+/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx
+Intel(R) oneAPI DPC++/C++ Compiler 2025.3.2 (2025.3.2.20260112)
+cmake version 3.31.11
+INFO: Output filtered by ONEAPI_DEVICE_SELECTOR environment variable, which is set to level_zero:gpu.
+To see device ids, use the --ignore-device-selectors CLI option.
+
+[level_zero:gpu] Intel(R) oneAPI Unified Runtime over Level-Zero, Intel(R) Data Center GPU Max 1550 12.60.7 [1.6.33578+42]
+KOKKOS_NUM_THREADS=1
+OMP_NUM_THREADS=1
+OMP_TARGET_OFFLOAD=MANDATORY
+ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+ONEAPI_ROOT=/opt/aurora/26.26.0/oneapi
+ZE_AFFINITY_MASK=0.0
+ZE_ENABLE_API_TRACING=1
+ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE

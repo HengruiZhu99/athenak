@@ -1,0 +1,47 @@
+{
+  "schema": "athenak_brill_collapse_contract_fixes_evidence_v1",
+  "source": {
+    "branch": "codex/brill-collapse-contract-fixes-20260819",
+    "base_commit": "1c95db8a2adc743672b49a525c21c4f762f35223",
+    "commit": "d64b499c01aa4369bb6c37cfd11bc4c0590e69f2",
+    "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf"
+  },
+  "aurora_v1_build_failure": {
+    "job_id": "8767286",
+    "classification": "pre-runtime SYCL llvm-spirv incompatibility",
+    "build_log_sha256": "a3fd8bd27890779884fb4d66f3bdb260af9c638e860c59529e999167b7f0d5c2"
+  },
+  "aurora_v2_single_tile": {
+    "job_id": "8768479",
+    "account": "CompactBinaryMerger",
+    "queue": "debug",
+    "source_commit": "d64b499c01aa4369bb6c37cfd11bc4c0590e69f2",
+    "execution_space": "SYCL",
+    "device": "Intel Data Center GPU Max 1550 via Level Zero",
+    "runtime_threads": 1,
+    "exit_status": 0,
+    "remote_phase_manifest_sha256": "4787cbacfe14100e48c62f6decbf5ed9b34ea750b76e5795b70890a9b2717030",
+    "files": {
+      "provenance.log": "3af299b230c418c6ca55f312ade9e2dd331946b0b87d9dcaa54a17019dfca412",
+      "configure.log": "1705682a80300c93d28433befd4b0cc2ee398941446ff74fc2b59f56958a5a69",
+      "build.log": "157e466edc5c2931689d172d42408641722219a10f5e88866590cc4d56623eec",
+      "transfer-test.log": "beb095e9f1108004ecd49f7a2eef0e24fa662ab5e42b88f2bae54afb0dc114ec",
+      "shadow-test.log": "50f48b332747c2f599acb4928154b451fda24450880929553bd3a94a70cbcc2c",
+      "zero-pde/stdout.log": "70555d190e2d92132cdd2a67bae7fbade97c803c31a4c662e98656d21e5afaa4",
+      "zero-pde/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zero-pde/z4c_amr_shadow.rank0000.csv": "1820ee957623e166a5fcce1595ad4be20986c22d39c2822f75ec8bdc9180c4d3",
+      "zero-pde/aggregate.json": "d4230abe856a078a80f5dabda7f2f5feca4cfb6b494c6dbedfdf4a39e63e25df"
+    }
+  },
+  "required_bounded_physical_input": {
+    "description": "N256 Brill pre-event cycle-1721 restart",
+    "sha256": "83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea",
+    "status": "not staged on Aurora; no substitute run performed"
+  },
+  "scope_limitations": [
+    "No Figure-3 reproduction or convergence claim",
+    "No physical Brill continuation from the authenticated restart",
+    "No actual multi-rank MPI runtime test on Aurora",
+    "No production AMR-transfer operator change"
+  ]
+}
