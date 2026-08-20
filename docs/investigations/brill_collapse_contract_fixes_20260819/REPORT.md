@@ -80,6 +80,28 @@ built-in Kerr-puncture test input supplied by
 `tst/inputs/z4c_amr_jump_diagnostic.athinput`; it is deliberately not a Brill
 substitute.
 
+## Aurora two-rank cache-ownership qualification
+
+Aurora head-node MPICH does not expose a launcher without the PALS modules, so
+the actual multi-rank check ran in the short debug allocation `8768526` under
+`CompactBinaryMerger`. It used the same compiled CPU-MPI target and exactly two
+ranks with one runtime thread each. The test log contains exactly two success
+records:
+
+```text
+Z4c coarse-cache ownership regression passed
+Z4c coarse-cache ownership regression passed
+```
+
+The wrapper's SHA-256 manifest is `SHA256SUMS` in `aurora_mpi_v2/`. This
+qualifies the targeted two-rank ownership model only; it is not a multi-rank
+physical Brill continuation or an end-to-end MPI AMR campaign.
+
+The first wrapper attempt, allocation `8768523`, reached the same two passing
+rank records but returned failure because the wrapper grepped a stale success
+phrase. That phase is preserved under `aurora_mpi_v1_failure/`; the second
+wrapper verifies the actual two-record result strictly.
+
 The prior Aurora attempt, allocation `8767286`, failed during the SYCL build
 before any device test because Aurora oneAPI 2025.3 llvm-spirv rejects the
 `llvm.llround.i64.f64` intrinsic from the Cartoon MMS pgen. Its preserved build
@@ -90,14 +112,10 @@ removes that failure path; the succeeding job rebuilt the full application.
 
 1. The required authentic N256 Brill restart is unavailable on Aurora, so no
    short physical continuation has run from this source.
-2. Aurora head-node MPICH supplies compiler wrappers but no MPI launcher;
-   consequently the two-rank ownership runtime test remains allocation-only.
-   The single-rank ownership contract and CPU MPI compilation passed, but that
-   is not a substitute for an actual multi-rank run.
-3. The zero-PDE suite characterizes transfer symbols and selected transactions;
+2. The zero-PDE suite characterizes transfer symbols and selected transactions;
    it does not establish that a unique transfer source bug causes the nonlinear
    Brill runaway.
-4. No claim is made that the high-k sensor should become a production AMR
+3. No claim is made that the high-k sensor should become a production AMR
    selector, that parent under-resolution is resolved, or that any physical
    result converges.
 
@@ -109,4 +127,6 @@ removes that failure path; the succeeding job rebuilt the full application.
 - `aurora_v2/zero-pde/`: stdout/stderr, shadow diagnostic, and T5 aggregate.
 - `aurora_v2/SHA256SUMS`: remote phase checksum list.
 - `aurora_v1_build_failure/`: preserved failed-build provenance.
+- `aurora_mpi_v2/`: strict two-rank cache-ownership evidence.
+- `aurora_mpi_v1_failure/`: preserved wrapper-only predecessor failure.
 - `EVIDENCE_MANIFEST.json`: strict hashes and scope labels for this report.

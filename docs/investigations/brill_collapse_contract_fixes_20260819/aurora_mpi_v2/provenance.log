@@ -1,0 +1,47 @@
+2026-08-20T15:29:56+00:00
+x4311c0s3b0n0
+PBS_JOBID=8768526.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+source_root=/home/hzhu/athenak-brill-contract-fixes-20260819-git
+test_binary=/home/hzhu/athenak-brill-contract-fixes-20260819-cpu-mpi-pals/athena_z4c_coarse_cache_ownership_unit_test
+828ee0ab0b30c8c08de3acb55102d398ec78e371
+ 6739bc623081648af9e752b616d9671527922cbf kokkos (4.7.02)
+
+Currently Loaded Modules:
+  1) oneapi/release/2025.3.1
+  2) gcc/13.4.0
+  3) cmake/3.31.11
+  4) gcc-runtime/13.4.0-2tg3zy7          (H)
+  5) bzip2/1.0.8
+  6) expat/2.7.3-6auksxt                 (H)
+  7) gdbm/1.25
+  8) sqlite/3.50.4-s65ksrg               (H)
+  9) util-linux-uuid/2.41-ytoy2bg        (H)
+ 10) python/3.12.12
+ 11) mpich/opt/5.0.0.aurora_test.3c70a61
+ 12) libfabric/1.22.0
+ 13) cray-pals/1.8.0
+ 14) cray-libpals/1.8.0
+
+  Where:
+   H:  Hidden Module
+
+ 
+
+icx -I/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/include -L/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib -Wl,-rpath -Wl,/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib -lmpi
+/opt/cray/pals/1.8/bin/mpiexec
+KOKKOS_NUM_THREADS=1
+MPICC=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin/mpicc
+MPICH_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk
+MPICXX=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin/mpicxx
+MPIF77=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin/mpif77
+MPIF90=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin/mpif90
+MPIR_CVAR_CH4_OFI_MAX_NICS=1
+MPIR_CVAR_CH4_SHM_POSIX_TOPO_ENABLE=1
+MPIR_CVAR_INIT_SKIP_PMI_BARRIER=0
+MPI_HOME=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk
+MPI_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk
+MPI_TEST_BINARY=/home/hzhu/athenak-brill-contract-fixes-20260819-cpu-mpi-pals/athena_z4c_coarse_cache_ownership_unit_test
+OMP_NUM_THREADS=1
+OMP_TARGET_OFFLOAD=MANDATORY
+PALS_PMI=pmix
+PALS_TRANSFER=0

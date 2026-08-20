@@ -33,6 +33,21 @@
       "zero-pde/aggregate.json": "d4230abe856a078a80f5dabda7f2f5feca4cfb6b494c6dbedfdf4a39e63e25df"
     }
   },
+  "aurora_mpi_v1_wrapper_failure": {
+    "job_id": "8768523",
+    "classification": "wrapper expected stale success phrase after both MPI ranks passed",
+    "test_log_sha256": "4db89ef940876cfac34dd2e890201ac3005581eaf6acc0daf99b7719e340a967"
+  },
+  "aurora_mpi_v2_two_rank_ownership": {
+    "job_id": "8768526",
+    "account": "CompactBinaryMerger",
+    "queue": "debug",
+    "ranks": 2,
+    "runtime_threads_per_rank": 1,
+    "exit_status": 0,
+    "provenance.log": "9606f107ef7c2b95570c4eebff322688f6957a6f8a1a7cb27233d883d4f105e0",
+    "test.log": "4db89ef940876cfac34dd2e890201ac3005581eaf6acc0daf99b7719e340a967"
+  },
   "required_bounded_physical_input": {
     "description": "N256 Brill pre-event cycle-1721 restart",
     "sha256": "83e996d2d5069307888a69fff47a7524c2f63f11869fb628630bca54dd5943ea",
@@ -41,7 +56,6 @@
   "scope_limitations": [
     "No Figure-3 reproduction or convergence claim",
     "No physical Brill continuation from the authenticated restart",
-    "No actual multi-rank MPI runtime test on Aurora",
     "No production AMR-transfer operator change"
   ]
 }
