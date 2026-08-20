@@ -1,0 +1,65 @@
+#!/bin/bash -l
+# Run the MPI ownership model once on two CPU ranks. Aurora allocates complete
+# nodes; the launched test itself uses exactly two ranks and one thread each.
+# Submit with a fresh phase root:
+#   qsub -A CompactBinaryMerger -v ATHENAK_ROOT=/home/hzhu/... ,\
+#MPI_TEST_BINARY=/home/hzhu/.../athena_z4c_coarse_cache_ownership_unit_test,\
+#AURORA_PHASE_ROOT=/home/hzhu/... \
+#     docs/investigations/brill_collapse_contract_fixes_20260819/aurora_two_rank_coarse_cache_ownership.pbs
+#PBS -N z4c-cache-mpi
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:10:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+
+set -euo pipefail
+
+: "${ATHENAK_ROOT:?provide exact source checkout}"
+: "${MPI_TEST_BINARY:?provide compiled MPI ownership test}"
+: "${AURORA_PHASE_ROOT:?provide a fresh output directory}"
+
+source_root="$(cd "${ATHENAK_ROOT}" && pwd)"
+test_binary="$(readlink -f "${MPI_TEST_BINARY}")"
+if [[ -e "${AURORA_PHASE_ROOT}" ]]; then
+  printf 'refusing to reuse phase root: %s\n' "${AURORA_PHASE_ROOT}" >&2
+  exit 2
+fi
+mkdir -p "${AURORA_PHASE_ROOT}"
+phase_root="$(cd "${AURORA_PHASE_ROOT}" && pwd)"
+test -x "${test_binary}"
+
+module purge
+module load oneapi/release/2025.3.1
+module load gcc/13.4.0
+module load cmake/3.31.11
+module load python/3.12.12
+module load mpich/opt/5.0.0.aurora_test.3c70a61
+module load libfabric/1.22.0
+module load cray-pals/1.8.0
+module load cray-libpals/1.8.0
+
+export OMP_NUM_THREADS=1
+export KOKKOS_NUM_THREADS=1
+
+{
+  date --iso-8601=seconds
+  hostname
+  printf 'PBS_JOBID=%s\nsource_root=%s\ntest_binary=%s\n' \
+    "${PBS_JOBID:-unknown}" "${source_root}" "${test_binary}"
+  git -C "${source_root}" rev-parse HEAD
+  git -C "${source_root}" status --short
+  git -C "${source_root}" submodule status
+  module list
+  mpicc -show
+  command -v mpiexec
+  env | LC_ALL=C sort | grep -E '^(OMP_|KOKKOS_|PALS_|MPI)' || true
+} > "${phase_root}/provenance.log" 2>&1
+
+mpiexec -n 2 -ppn 2 --depth 1 --cpu-bind depth "${test_binary}" \
+  > "${phase_root}/test.log" 2>&1
+grep -qx 'Z4c coarse-cache ownership tests passed' "${phase_root}/test.log"
+sha256sum "${phase_root}/provenance.log" "${phase_root}/test.log" > "${phase_root}/SHA256SUMS"
+printf 'TWO_RANK_CPU_MPI_OWNERSHIP_PASS\n' > "${phase_root}/status"
