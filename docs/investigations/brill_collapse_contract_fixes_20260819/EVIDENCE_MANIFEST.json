@@ -64,8 +64,14 @@
       "exclusions": [
         "mms static generator needs SymPy, absent from loaded Aurora Python",
         "serial CMake configuration has no MPI-only coarse-cache ownership executable",
-        "MMS structure reports one rho=0.5 bitwise mismatch in source unchanged from the frozen base"
+        "oneAPI serial MMS structure reports one rho=0.5 bitwise mismatch; GCC 13.4 passes the same unchanged target"
       ]
+    },
+    "gcc_cross_compiler_mms_structure": {
+      "compiler": "GCC 13.4.0",
+      "result": "pass",
+      "log_sha256": "39b668a57ee36e67c35ba5718b9c23dfa11326b4ae6d25c1819b0756c8bd080d",
+      "scope": "same single-threaded target; source and derivative header unchanged from frozen base"
     }
   },
   "required_bounded_physical_input": {

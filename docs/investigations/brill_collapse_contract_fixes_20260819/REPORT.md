@@ -64,14 +64,16 @@ The deliberately broader 20-test audit is preserved separately in
 - `athena.z4c_cartoon_mms_static` could not run because the Aurora Python
   module lacks SymPy;
 - the serial build correctly has no MPI-only coarse-cache ownership executable;
-- `athena.z4c_cartoon_mms_structure` reproducibly reports one bitwise
-  Cartesian-delegation/tensor-variance mismatch at `rho=0.5`.
+- the oneAPI serial build's `athena.z4c_cartoon_mms_structure` reports one
+  bitwise Cartesian-delegation/tensor-variance mismatch at `rho=0.5`.
 
-The last result is not attributable to this branch's changes: the test source
-and `src/z4c/cartoon_derivatives.hpp` are byte-identical to the frozen base.
-It is therefore retained as an environment/compiler-sensitive baseline signal,
-not suppressed or reclassified as a passing qualification. Its cause remains
-outside the bounded Brill-contract change scope.
+The mismatch is compiler-path-specific rather than evidence against the
+current branch: the test source and `src/z4c/cartoon_derivatives.hpp` are
+byte-identical to the frozen base, and the same single-threaded target passes
+with Aurora GCC 13.4 (`cpu_head/contract_cpu_gcc_mms_structure.log`, SHA-256
+`39b668a57ee36e67c35ba5718b9c23dfa11326b4ae6d25c1819b0756c8bd080d`).
+The oneAPI bitwise discrepancy is retained as an unresolved toolchain/test
+reproducibility issue, not suppressed or reclassified as a Z4c source defect.
 
 ## Aurora one-tile device qualification
 
@@ -150,5 +152,5 @@ removes that failure path; the succeeding job rebuilt the full application.
 - `aurora_mpi_v2/`: strict two-rank cache-ownership evidence.
 - `aurora_mpi_v1_failure/`: preserved wrapper-only predecessor failure.
 - `cpu_head/`: supported passing suite and the broader, explicitly classified
-  CPU audit.
+  CPU audit, including the GCC cross-compiler MMS result.
 - `EVIDENCE_MANIFEST.json`: strict hashes and scope labels for this report.
