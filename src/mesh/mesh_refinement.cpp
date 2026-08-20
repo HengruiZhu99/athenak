@@ -359,12 +359,22 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
   // Refine/derefine mesh and evolved data, set boundary conditions/timestep on new mesh
   if (nnew != 0 || ndel != 0) { // at least one (de)refinement flagged
     RedistAndRefineMeshBlocks(pin, nnew, ndel);
+    MeshBlockPack* pmbp = pmy_mesh->pmb_pack;
     if (diagnostic_z4c != nullptr && diagnostic_z4c->amr_jump_diagnostic != nullptr) {
       diagnostic_z4c->amr_jump_diagnostic->RecordT2();
     }
+    if (pmbp->pz4c != nullptr) {
+      // Project the newly accepted active representation before rebuilding
+      // its coarse cache and every ghost layer.  No ghost is projected
+      // independently; InitBoundaryValuesAndPrimitives below derives all
+      // boundary state from these authoritative active values.
+      (void) pmbp->pz4c->EnforceAlgConstr(pdriver, pdriver->nexp_stages);
+      if (pmbp->pz4c->amr_jump_diagnostic != nullptr) {
+        pmbp->pz4c->amr_jump_diagnostic->RecordT4();
+      }
+    }
     pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
 
-    MeshBlockPack* pmbp = pmy_mesh->pmb_pack;
     if (pmbp->phydro != nullptr) {
       (void) pmbp->phydro->NewTimeStep(pdriver, pdriver->nexp_stages);
     }
@@ -375,17 +385,8 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
       (void) pmbp->prad->NewTimeStep(pdriver, pdriver->nexp_stages);
     }
     if (pmbp->pz4c != nullptr) {
-      // AMR has replaced the active MeshBlock hierarchy and boundary state.  Recreate the
-      // same finalized Z4c/ADM/constraint state used at the end of a full integrator step
-      // before any timestep or diagnostic consumes the new mesh.
-      (void) pmbp->pz4c->EnforceAlgConstr(pdriver, pdriver->nexp_stages);
-      // Algebraic projection changes active metric/A fields after the boundary
-      // initialization fill.  Regenerate derived negative-rho ghosts before
-      // Z4cToADM populates stored ADM ghosts and constraints differentiate them.
-      (void) pmbp->pz4c->FillAxisParityGhosts(pdriver, pdriver->nexp_stages);
-      if (pmbp->pz4c->amr_jump_diagnostic != nullptr) {
-        pmbp->pz4c->amr_jump_diagnostic->RecordT4();
-      }
+      // The finalized boundary state already descends from the projected
+      // active representation and includes Cartoon parity reconstruction.
       (void) pmbp->pz4c->ConvertZ4cToADM(pdriver, pdriver->nexp_stages);
       (void) pmbp->pz4c->ADMConstraints_(pdriver, pdriver->nexp_stages);
       (void) pmbp->pz4c->NewTimeStep(pdriver, pdriver->nexp_stages);

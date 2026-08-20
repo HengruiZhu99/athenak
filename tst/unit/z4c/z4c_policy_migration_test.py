@@ -360,13 +360,13 @@ def main() -> int:
             "InitBoundaryValuesAndPrimitives(pmy_mesh," not in refinement,
             "AMR-created blocks do not use default-false Z4c initialization")
     amr_finalize = refinement[
-        refinement.index("pmbp->pz4c->EnforceAlgConstr"):
+        refinement.index("RedistAndRefineMeshBlocks"):
         refinement.index("nmb_created += nnew")]
     amr_finalize_order = [amr_finalize.index(marker) for marker in
-                          ("EnforceAlgConstr", "FillAxisParityGhosts",
-                           "ConvertZ4cToADM", "ADMConstraints_", "NewTimeStep")]
+                          ("EnforceAlgConstr", "pdriver->InitBoundaryValuesAndPrimitives",
+                           "ConvertZ4cToADM", "ADMConstraints_", "pz4c->NewTimeStep")]
     require(amr_finalize_order == sorted(amr_finalize_order),
-            "post-AMR algebraic projection leaves stale axis ghosts before diagnostics")
+            "post-AMR projected active state does not precede cache/ghost reconstruction")
     execute = driver[driver.index("void Driver::Execute(Mesh"):
                      driver.index("void Driver::Finalize(Mesh")]
     normal_sample = execute.index("UpdateCartoonCentralState(pmesh, false)")
@@ -421,10 +421,11 @@ def main() -> int:
             queue.index('"Z4c_CalcRHS"') and
             queue.count("Task_Run, {Z4c_AxisGhosts}") == 3,
             "each O2/O4/O6 RHS is not ordered after the explicit axis parity fill")
-    require(queue.index('"Z4c_Prolong"') < queue.index('"Z4c_AlgC"') <
+    require(queue.index('"Z4c_ExplRK"') < queue.index('"Z4c_AlgC"') <
+            queue.index('"Z4c_RestU"') < queue.index('"Z4c_Prolong"') <
             queue.index('"Z4c_AxisGhostsPost"') <
             queue.index('"Z4c_Z4c2ADM"'),
-            "post-prolongation diagnostics are not ordered after a fresh axis fill")
+            "projected accepted state does not own the next cache/ghost/ADM state")
     axis_fill = tasks[tasks.index("TaskStatus Z4c::FillAxisParityGhosts"):
                       tasks.index("TaskStatus Z4c::SendU")]
     require("half_rho_z_suppressed_y_v2" in axis_fill and
@@ -436,8 +437,8 @@ def main() -> int:
     require(queue.index("Z4c_BCS") < queue.index("Z4c_Prolong"),
             "normal RK physical/prolongation task ordering changed")
     task_order = [tasks.index(marker) for marker in
-                  ('"Z4c_RestU"', '"Z4c_SendU"', '"Z4c_RecvU"', '"Z4c_BCS"',
-                   '"Z4c_Prolong"', '"Z4c_AlgC"', '"Z4c_AxisGhostsPost"',
+                  ('"Z4c_AlgC"', '"Z4c_RestU"', '"Z4c_SendU"', '"Z4c_RecvU"',
+                   '"Z4c_BCS"', '"Z4c_Prolong"', '"Z4c_AxisGhostsPost"',
                    '"Z4c_Z4c2ADM"')]
     require(task_order == sorted(task_order),
             "normal Z4c boundary/projection/ADM task order changed")

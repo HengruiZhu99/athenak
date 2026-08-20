@@ -20,6 +20,46 @@ struct CoarseRestrictionRange {
   int upper;
 };
 
+enum class O4RestrictionStencil1D : int {
+  centered = 0,
+  active_lower = 1,
+  active_upper = 2,
+};
+
+KOKKOS_INLINE_FUNCTION
+O4RestrictionStencil1D SelectO4RestrictionStencil(const int fine_pair_start,
+                                                   const int active_start,
+                                                   const int active_extent) {
+  if (fine_pair_start == active_start) {
+    return O4RestrictionStencil1D::active_lower;
+  }
+  if (fine_pair_start == active_start + active_extent - 2) {
+    return O4RestrictionStencil1D::active_upper;
+  }
+  return O4RestrictionStencil1D::centered;
+}
+
+KOKKOS_INLINE_FUNCTION
+int O4RestrictionReference(const int fine_pair_start,
+                           const O4RestrictionStencil1D stencil) {
+  if (stencil == O4RestrictionStencil1D::active_lower) return fine_pair_start;
+  if (stencil == O4RestrictionStencil1D::active_upper) return fine_pair_start - 2;
+  return fine_pair_start - 1;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real O4RestrictionWeight(const O4RestrictionStencil1D stencil, const int n) {
+  constexpr Real centered[4] = {
+      -1.0 / 16.0, 9.0 / 16.0, 9.0 / 16.0, -1.0 / 16.0};
+  constexpr Real lower[4] = {
+      5.0 / 16.0, 15.0 / 16.0, -5.0 / 16.0, 1.0 / 16.0};
+  constexpr Real upper[4] = {
+      1.0 / 16.0, -5.0 / 16.0, 15.0 / 16.0, 5.0 / 16.0};
+  if (stencil == O4RestrictionStencil1D::active_lower) return lower[n];
+  if (stencil == O4RestrictionStencil1D::active_upper) return upper[n];
+  return centered[n];
+}
+
 // Return only coarse indices whose associated pair of fine cells is stored.
 // Same-level receive buffers can contain an odd number of fine ghost cells;
 // converting both endpoints with integer division otherwise creates a coarse
@@ -73,13 +113,21 @@ Real RestrictInterpolation(const int m, const int v, const int fk, const int fj,
         }
       }
     } else if constexpr (NGHOST == 3) {
-      constexpr Real weight[4] = {
-          -1.0 / 16.0, 9.0 / 16.0, 9.0 / 16.0, -1.0 / 16.0};
-      const int refi = fi - 1;
-      const int refj = fj - 1;
+      // The O4 evolution may retain four allocated ghost layers while using
+      // a three-deep PDE stencil.  Infer the allocated active start from the
+      // actual View extent, not from the interpolation selector.  At the first
+      // and last active sibling pairs use mirror-paired, cubic-exact stencils
+      // containing current active values only.
+      const int active_is = (a.extent_int(4) - nx1) / 2;
+      const int active_js = (a.extent_int(3) - nx2) / 2;
+      const auto stencil_i = SelectO4RestrictionStencil(fi, active_is, nx1);
+      const auto stencil_j = SelectO4RestrictionStencil(fj, active_js, nx2);
+      const int refi = O4RestrictionReference(fi, stencil_i);
+      const int refj = O4RestrictionReference(fj, stencil_j);
       for (int jj = 0; jj < 4; ++jj) {
         for (int ii = 0; ii < 4; ++ii) {
-          ivals += weight[ii] * weight[jj] *
+          ivals += O4RestrictionWeight(stencil_i, ii) *
+                   O4RestrictionWeight(stencil_j, jj) *
                    a(m, v, fk, refj + jj, refi + ii);
         }
       }
@@ -139,17 +187,21 @@ Real RestrictInterpolation(const int m, const int v, const int fk, const int fj,
   }
 
   if (NGHOST == 3) {
-    // Cubic interpolation from four fine-cell centers to the coarse-cell
-    // center.  The target lies halfway between the two central samples, so
-    // the centered weights are symmetric in every direction.
-    constexpr Real weight[4] = {-1.0/16.0, 9.0/16.0, 9.0/16.0, -1.0/16.0};
-    const int refi = fi - 1;
-    const int refj = fj - 1;
-    const int refk = fk - 1;
+    const int active_is = (a.extent_int(4) - nx1) / 2;
+    const int active_js = (a.extent_int(3) - nx2) / 2;
+    const int active_ks = (a.extent_int(2) - nx3) / 2;
+    const auto stencil_i = SelectO4RestrictionStencil(fi, active_is, nx1);
+    const auto stencil_j = SelectO4RestrictionStencil(fj, active_js, nx2);
+    const auto stencil_k = SelectO4RestrictionStencil(fk, active_ks, nx3);
+    const int refi = O4RestrictionReference(fi, stencil_i);
+    const int refj = O4RestrictionReference(fj, stencil_j);
+    const int refk = O4RestrictionReference(fk, stencil_k);
     for (int ii = 0; ii < 4; ++ii) {
       for (int jj = 0; jj < 4; ++jj) {
         for (int kk = 0; kk < 4; ++kk) {
-          ivals += weight[ii] * weight[jj] * weight[kk] *
+          ivals += O4RestrictionWeight(stencil_i, ii) *
+                   O4RestrictionWeight(stencil_j, jj) *
+                   O4RestrictionWeight(stencil_k, kk) *
                    a(m, v, refk + kk, refj + jj, refi + ii);
         }
       }

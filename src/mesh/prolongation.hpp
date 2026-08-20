@@ -237,8 +237,10 @@ Real ProlongWeight1D(const int n, const bool offset) {
     constexpr Real w[3] = {0.15625, 0.9375, -0.09375};
     return w[offset ? NGHOST-n : n];
   } else if constexpr (NGHOST == 3) {
-    // Cubic interpolation from coarse cells i-1,...,i+2 to i-/+1/4.
-    constexpr Real wl[4] = {15.0/128.0, 135.0/128.0, -27.0/128.0, 5.0/128.0};
+    // Reflection-symmetric cubic interpolation.  The left child uses coarse
+    // cells i-2,...,i+1 and the right child uses i-1,...,i+2; the reference
+    // shift is applied in ProlongInterpolation below.
+    constexpr Real wl[4] = {-5.0/128.0, 35.0/128.0, 105.0/128.0, -7.0/128.0};
     constexpr Real wr[4] = {-7.0/128.0, 105.0/128.0, 35.0/128.0, -5.0/128.0};
     return offset ? wr[n] : wl[n];
   } else {
@@ -280,8 +282,16 @@ Real ProlongInterpolation(const int m, const int v, int k, int j, int i,
         } else {
           weight = weights.d_view(wghtk,wghtj,wghti);
         }
-        const int ck = collapsed_x3 ? k : k-NGHOST/2+kk;
-        ivals += weight*ca(m,v,ck,j-NGHOST/2+jj,i-NGHOST/2+ii);
+        // For the O4-configured cubic pair, shift only the left-child stencil
+        // one parent farther left.  The two child stencils are then exact
+        // reflections about the coarse-cell center.  O2/O6 references remain
+        // byte-for-byte equivalent to the historical expression.
+        const int o4_left_k = (NGHOST == 3 && !offsetk && !collapsed_x3) ? 1 : 0;
+        const int o4_left_j = (NGHOST == 3 && !offsetj) ? 1 : 0;
+        const int o4_left_i = (NGHOST == 3 && !offseti) ? 1 : 0;
+        const int ck = collapsed_x3 ? k : k-NGHOST/2+kk-o4_left_k;
+        ivals += weight*ca(m,v,ck,j-NGHOST/2+jj-o4_left_j,
+                          i-NGHOST/2+ii-o4_left_i);
       }
     }
   }
@@ -334,13 +344,19 @@ bool ProlongationParentStencilFinitePositive(
     const int m, const int v, const int k, const int j, const int i,
     const int nx3, const DvceArray5D<Real> &ca) {
   const bool collapsed_x3 = (nx3 == 1);
-  const int nk = collapsed_x3 ? 1 : NGHOST + 1;
-  for (int kk = 0; kk < nk; ++kk) {
-    const int ck = collapsed_x3 ? k : k - NGHOST / 2 + kk;
-    for (int jj = 0; jj < NGHOST + 1; ++jj) {
-      for (int ii = 0; ii < NGHOST + 1; ++ii) {
-        const Real parent =
-            ca(m, v, ck, j - NGHOST / 2 + jj, i - NGHOST / 2 + ii);
+  // The symmetric O4 child pair consumes the union i-2,...,i+2 in every
+  // active direction.  The strict chi gate must validate that union, not only
+  // either four-point child stencil in isolation.  O2/O6 retain their exact
+  // historical parent inventory.
+  const int lower = NGHOST == 3 ? -2 : -NGHOST / 2;
+  const int upper = NGHOST == 3 ? 2 : NGHOST - NGHOST / 2;
+  const int k_lower = collapsed_x3 ? 0 : lower;
+  const int k_upper = collapsed_x3 ? 0 : upper;
+  for (int dk = k_lower; dk <= k_upper; ++dk) {
+    const int ck = collapsed_x3 ? k : k + dk;
+    for (int dj = lower; dj <= upper; ++dj) {
+      for (int di = lower; di <= upper; ++di) {
+        const Real parent = ca(m, v, ck, j + dj, i + di);
         if (!Kokkos::isfinite(parent) || !(parent > 0.0)) return false;
       }
     }

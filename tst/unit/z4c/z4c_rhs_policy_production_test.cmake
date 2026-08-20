@@ -12,6 +12,11 @@ file(READ "${SOURCE_DIR}/tst/inputs/z4c_rhs_policy.athinput" base_input)
 
 foreach(stencil 2 4 6)
   math(EXPR nghost "${stencil} / 2 + 1")
+  if(stencil EQUAL 4)
+    # Production O4 deliberately retains a fourth allocated/communicated
+    # ghost layer as buffer headroom while fd_stencil remains three.
+    set(nghost 4)
+  endif()
   set(case_dir "${TEST_DIR}/order${stencil}")
   file(MAKE_DIRECTORY "${case_dir}")
   string(REPLACE "nghost = 2" "nghost = ${nghost}" input_text "${base_input}")
@@ -19,9 +24,9 @@ foreach(stencil 2 4 6)
                  input_text "${input_text}")
   string(REPLACE "basename = z4c_rhs_policy"
                  "basename = z4c_rhs_policy_o${stencil}" input_text "${input_text}")
-  if(stencil EQUAL 6)
-    string(REPLACE "spatial_order = 6"
-                   "spatial_order = 6\nhistory_kretschmann = true"
+  if(stencil EQUAL 4 OR stencil EQUAL 6)
+    string(REPLACE "spatial_order = ${stencil}"
+                   "spatial_order = ${stencil}\nhistory_kretschmann = true"
                    input_text "${input_text}")
   endif()
   set(input_file "${case_dir}/input.athinput")
@@ -68,10 +73,10 @@ foreach(stencil 2 4 6)
   if(final_history_lower MATCHES "(^|[^a-z])(nan|inf)([^a-z]|$)")
     message(FATAL_ERROR "order ${stencil} final history contains a nonfinite value")
   endif()
-  if(stencil EQUAL 6)
+  if(stencil EQUAL 4 OR stencil EQUAL 6)
     string(FIND "${history_text}" "maxAbsKret" kretschmann_found)
     if(kretschmann_found EQUAL -1)
-      message(FATAL_ERROR "sixth-order history did not exercise curvature reduction")
+      message(FATAL_ERROR "order ${stencil} history did not exercise curvature reduction")
     endif()
     # History is emitted once before ADM scratch has been initialized.  The exact
     # pre-migration binary therefore also records maxAbsKret=inf at t=0.  Make the
@@ -82,11 +87,11 @@ foreach(stencil 2 4 6)
     list(GET initial_fields 13 initial_kretschmann)
     if(NOT initial_kretschmann STREQUAL "inf")
       message(FATAL_ERROR
-          "sixth-order baseline lifecycle sentinel changed: expected t=0 "
+          "order ${stencil} baseline lifecycle sentinel changed: expected t=0 "
           "maxAbsKret=inf before ADM initialization, got '${initial_kretschmann}'")
     endif()
     message(STATUS
-        "order 6 lifecycle sentinel: t=0 maxAbsKret=inf (pre-ADM initialization); "
+        "order ${stencil} lifecycle sentinel: t=0 maxAbsKret=inf (pre-ADM initialization); "
         "post-initialization history is finite")
   endif()
   list(GET states -1 final_state)

@@ -383,15 +383,6 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
               << " ghost cells, but <mesh>/nghost=" << indcs.ng << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  if (opt.history_kretschmann && opt.fd_stencil != 4) {
-    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-              << std::endl
-              << "<z4c>/history_kretschmann=true requires "
-              << "<z4c>/spatial_order=6 and at least four ghost cells"
-              << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
-
   opt.roll_kappa = pin->GetOrAddBoolean("z4c", "roll_kappa", false);
   opt.kappa_roll_start_time = pin->GetOrAddReal("z4c", "kappa_roll_start_time", 0.0);
   opt.roll_window = pin->GetOrAddReal("z4c", "roll_window", 20.0);
@@ -607,7 +598,7 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
 //! \fn void Z4c::AlgConstr(AthenaArray<Real> & u)
 //! \brief algebraic constraints projection
 //
-// This function operates on all grid points of the MeshBlock
+// This function operates on evolved active cells of the MeshBlock.
 void Z4c::AlgConstr(MeshBlockPack *pmbp, Driver *driver, const int stage) {
   // Algebraic constraints are defined for evolved active cells.  Boundary
   // storage is owned by the communication/physical-BC passes and can be

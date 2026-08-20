@@ -76,20 +76,23 @@ void Z4c::QueueZ4cTasks() {
   if (pmy_pack->pz4c->opt.floor_chi) {
     pnr->QueueTask(&Z4c::Z4cFloorChi, this, Z4c_ChiFloor, "Z4c_ChiFloor", Task_Run,
                    {Z4c_ExplRK});
-    pnr->QueueTask(&Z4c::RestrictU, this, Z4c_RestU, "Z4c_RestU",
-                   Task_Run, {Z4c_ChiFloor});
+    pnr->QueueTask(&Z4c::EnforceAlgConstr, this, Z4c_AlgC, "Z4c_AlgC", Task_Run,
+                   {Z4c_ChiFloor});
   } else {
-    pnr->QueueTask(&Z4c::RestrictU, this, Z4c_RestU, "Z4c_RestU",
-                   Task_Run, {Z4c_ExplRK});
+    pnr->QueueTask(&Z4c::EnforceAlgConstr, this, Z4c_AlgC, "Z4c_AlgC", Task_Run,
+                   {Z4c_ExplRK});
   }
+  // At the accepted final stage EnforceAlgConstr projects active cells before
+  // any coarse representation or ghost state is derived from them.  It is a
+  // no-op at intermediate vacuum stages, retaining final-stage-only policy.
+  pnr->QueueTask(&Z4c::RestrictU, this, Z4c_RestU, "Z4c_RestU",
+                 Task_Run, {Z4c_AlgC});
   pnr->QueueTask(&Z4c::SendU, this, Z4c_SendU, "Z4c_SendU", Task_Run, {Z4c_RestU});
   pnr->QueueTask(&Z4c::RecvU, this, Z4c_RecvU, "Z4c_RecvU", Task_Run, {Z4c_SendU});
   pnr->QueueTask(&Z4c::ApplyPhysicalBCs, this, Z4c_BCS, "Z4c_BCS", Task_Run, {Z4c_RecvU});
   pnr->QueueTask(&Z4c::Prolongate, this, Z4c_Prolong, "Z4c_Prolong", Task_Run, {Z4c_BCS});
-  pnr->QueueTask(&Z4c::EnforceAlgConstr, this, Z4c_AlgC, "Z4c_AlgC", Task_Run,
-                 {Z4c_Prolong});
   pnr->QueueTask(&Z4c::FillAxisParityGhosts, this, Z4c_AxisGhostsPost,
-                 "Z4c_AxisGhostsPost", Task_Run, {Z4c_AlgC});
+                 "Z4c_AxisGhostsPost", Task_Run, {Z4c_Prolong});
   pnr->QueueTask(&Z4c::ConvertZ4cToADM, this, Z4c_Z4c2ADM, "Z4c_Z4c2ADM",
                  Task_Run, {Z4c_AxisGhostsPost});
   if (pmy_pack->pdyngr != nullptr) {
@@ -206,9 +209,10 @@ TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
 //! \fn TaskStatus Z4c::FillAxisParityGhosts
 //! \brief Reconstruct only the derived negative-rho ghost storage for the current stage.
 //!
-//! The ordinary physical-boundary pass precedes prolongation and algebraic projection.
-//! Those operations may change the active state.  This named pre-RHS task therefore makes
-//! the half-plane invariant explicit without redundantly reapplying any outer boundary.
+//! The accepted-state boundary pass follows active-cell algebraic projection, exchange,
+//! physical boundary conditions, and coarse-fine prolongation.  This named task rebuilds
+//! the derived negative-rho storage before the next RHS without independently projecting
+//! any ghost value.
 
 TaskStatus Z4c::FillAxisParityGhosts(Driver *pdrive, int stage) {
   ReconstructAxisParityGhosts();

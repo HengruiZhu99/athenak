@@ -41,6 +41,7 @@ constexpr Real kSentinel = 9.87654321e37;
 
 std::string InputForStencil(const int stencil) {
   const int spatial_order = 2 * (stencil - 1);
+  const int allocated_ghosts = stencil == 3 ? 4 : stencil;
   std::ostringstream input;
   input << R"(<mesh>
 nx1 = 16
@@ -58,7 +59,7 @@ x3min = -0.5
 x3max = 0.5
 ix3_bc = user
 ox3_bc = user
-nghost = )" << stencil << R"(
+nghost = )" << allocated_ghosts << R"(
 
 <meshblock>
 nx1 = 16

@@ -30,6 +30,11 @@ namespace {
 constexpr int kNvar = 25;
 constexpr int kNx = 16;
 
+template <int STENCIL>
+constexpr int AllocatedGhosts() {
+  return STENCIL == 3 ? 4 : STENCIL;
+}
+
 struct RestrictionWeights {
   DualArray1D<Real> second;
   DualArray1D<Real> fourth;
@@ -102,9 +107,10 @@ struct Direction {
 template <int NGHOST>
 bool CheckTwoDimensionalOwnership(const Direction same, const int child,
                                   const bool axis_adjacent) {
-  constexpr int fine_extent = kNx + 2 * NGHOST;
+  constexpr int allocated_ng = AllocatedGhosts<NGHOST>();
+  constexpr int fine_extent = kNx + 2 * allocated_ng;
   constexpr int coarse_nx = kNx / 2;
-  constexpr int coarse_extent = coarse_nx + 2 * NGHOST;
+  constexpr int coarse_extent = coarse_nx + 2 * allocated_ng;
   const auto restriction = MakeRestrictionWeights();
   const auto prolongation = MakeProlongationWeights<NGHOST>();
   DvceArray5D<Real> sender_fine("ownership sender fine", 1, kNvar, 1,
@@ -127,8 +133,8 @@ bool CheckTwoDimensionalOwnership(const Direction same, const int child,
   for (int v = 0; v < kNvar; ++v) {
     for (int j = 0; j < fine_extent; ++j) {
       for (int i = 0; i < fine_extent; ++i) {
-        const Real rx = i - NGHOST + 0.5;
-        const Real ry = j - NGHOST + 0.5;
+        const Real rx = i - allocated_ng + 0.5;
+        const Real ry = j - allocated_ng + 0.5;
         const Real sx = sender_origin_x + rx;
         const Real sy = sender_origin_y + ry;
         receiver_host(0, v, 0, j, i) = SmoothState(v, rx, ry);
@@ -144,10 +150,11 @@ bool CheckTwoDimensionalOwnership(const Direction same, const int child,
   Kokkos::parallel_for(
       "ownership restrict active blocks",
       Kokkos::MDRangePolicy<Kokkos::Rank<3>>(
-          {0, NGHOST, NGHOST}, {kNvar, NGHOST + coarse_nx, NGHOST + coarse_nx}),
+          {0, allocated_ng, allocated_ng},
+          {kNvar, allocated_ng + coarse_nx, allocated_ng + coarse_nx}),
       KOKKOS_LAMBDA(const int v, const int j, const int i) {
-        const int fj = (j - NGHOST) * 2 + NGHOST;
-        const int fi = (i - NGHOST) * 2 + NGHOST;
+        const int fj = (j - allocated_ng) * 2 + allocated_ng;
+        const int fi = (i - allocated_ng) * 2 + allocated_ng;
         sender_coarse(0, v, 0, j, i) = RestrictInterpolation<NGHOST>(
             0, v, 0, fj, fi, kNx, kNx, 1, sender_fine, restriction.second,
             restriction.fourth, restriction.fourth_edge);
@@ -163,24 +170,24 @@ bool CheckTwoDimensionalOwnership(const Direction same, const int child,
 
   using CoarseKey = std::pair<int, int>;
   std::map<CoarseKey, std::array<Real, kNvar>> owned;
-  for (int j = NGHOST; j < NGHOST + coarse_nx; ++j) {
-    for (int i = NGHOST; i < NGHOST + coarse_nx; ++i) {
-      const int gx = sender_origin_x + 2 * (i - NGHOST) + 1;
-      const int gy = sender_origin_y + 2 * (j - NGHOST) + 1;
+  for (int j = allocated_ng; j < allocated_ng + coarse_nx; ++j) {
+    for (int i = allocated_ng; i < allocated_ng + coarse_nx; ++i) {
+      const int gx = sender_origin_x + 2 * (i - allocated_ng) + 1;
+      const int gy = sender_origin_y + 2 * (j - allocated_ng) + 1;
       auto &value = owned[{gy, gx}];
       for (int v = 0; v < kNvar; ++v) value[v] = sender_coarse_host(0, v, 0, j, i);
     }
   }
 
-  const int ghost_lo = same.sign < 0 ? 0 : NGHOST + coarse_nx;
-  const int ghost_hi = same.sign < 0 ? NGHOST : coarse_extent;
+  const int ghost_lo = same.sign < 0 ? 0 : allocated_ng + coarse_nx;
+  const int ghost_hi = same.sign < 0 ? allocated_ng : coarse_extent;
   std::vector<Real> packed;
-  for (int j = (same.axis == 0 ? NGHOST : ghost_lo);
-       j < (same.axis == 0 ? NGHOST + coarse_nx : ghost_hi); ++j) {
-    for (int i = (same.axis == 0 ? ghost_lo : NGHOST);
-         i < (same.axis == 0 ? ghost_hi : NGHOST + coarse_nx); ++i) {
-      const int gx = 2 * (i - NGHOST) + 1;
-      const int gy = 2 * (j - NGHOST) + 1;
+  for (int j = (same.axis == 0 ? allocated_ng : ghost_lo);
+       j < (same.axis == 0 ? allocated_ng + coarse_nx : ghost_hi); ++j) {
+    for (int i = (same.axis == 0 ? ghost_lo : allocated_ng);
+         i < (same.axis == 0 ? ghost_hi : allocated_ng + coarse_nx); ++i) {
+      const int gx = 2 * (i - allocated_ng) + 1;
+      const int gy = 2 * (j - allocated_ng) + 1;
       const auto found = owned.find({gy, gx});
       if (found == owned.end()) return false;
       packed.insert(packed.end(), found->second.begin(), found->second.end());
@@ -203,10 +210,10 @@ bool CheckTwoDimensionalOwnership(const Direction same, const int child,
     }
   }
   std::size_t q = 0;
-  for (int j = (same.axis == 0 ? NGHOST : ghost_lo);
-       j < (same.axis == 0 ? NGHOST + coarse_nx : ghost_hi); ++j) {
-    for (int i = (same.axis == 0 ? ghost_lo : NGHOST);
-         i < (same.axis == 0 ? ghost_hi : NGHOST + coarse_nx); ++i) {
+  for (int j = (same.axis == 0 ? allocated_ng : ghost_lo);
+       j < (same.axis == 0 ? allocated_ng + coarse_nx : ghost_hi); ++j) {
+    for (int i = (same.axis == 0 ? ghost_lo : allocated_ng);
+         i < (same.axis == 0 ? ghost_hi : allocated_ng + coarse_nx); ++i) {
       for (int v = 0; v < kNvar; ++v) {
         receiver_coarse_host(0, v, 0, j, i) = packed[q];
         mpi_coarse_host(0, v, 0, j, i) = mpi_packed[q];
@@ -219,20 +226,37 @@ bool CheckTwoDimensionalOwnership(const Direction same, const int child,
   // Preserve-received semantics are linked directly to the production policy.
   const auto received_snapshot = receiver_coarse_host;
   bool legacy_would_change = false;
-  const int fine_lo = same.sign < 0 ? 0 : NGHOST + kNx;
-  const int fine_hi = same.sign < 0 ? NGHOST : fine_extent;
-  int refresh_lo = (fine_lo + NGHOST) / 2;
-  int refresh_hi = (fine_hi - 1 + NGHOST) / 2;
+  const int fine_lo = same.sign < 0 ? 0 : allocated_ng + kNx;
+  const int fine_hi = same.sign < 0 ? allocated_ng : fine_extent;
+  int refresh_lo = (fine_lo + allocated_ng) / 2;
+  int refresh_hi = (fine_hi - 1 + allocated_ng) / 2;
   while (refresh_lo <= refresh_hi &&
-         (refresh_lo - NGHOST) * 2 + NGHOST < 0) ++refresh_lo;
+         (refresh_lo - allocated_ng) * 2 + allocated_ng < 0) ++refresh_lo;
   while (refresh_lo <= refresh_hi &&
-         (refresh_hi - NGHOST) * 2 + NGHOST + 1 >= fine_extent) --refresh_hi;
-  for (int j = (same.axis == 0 ? NGHOST : refresh_lo);
-       j <= (same.axis == 0 ? NGHOST + coarse_nx - 1 : refresh_hi); ++j) {
-    for (int i = (same.axis == 0 ? refresh_lo : NGHOST);
-         i <= (same.axis == 0 ? refresh_hi : NGHOST + coarse_nx - 1); ++i) {
-      const int fj = (j - NGHOST) * 2 + NGHOST;
-      const int fi = (i - NGHOST) * 2 + NGHOST;
+         (refresh_hi - allocated_ng) * 2 + allocated_ng + 1 >= fine_extent) --refresh_hi;
+  for (int j = (same.axis == 0 ? allocated_ng : refresh_lo);
+       j <= (same.axis == 0 ? allocated_ng + coarse_nx - 1 : refresh_hi); ++j) {
+    for (int i = (same.axis == 0 ? refresh_lo : allocated_ng);
+         i <= (same.axis == 0 ? refresh_hi : allocated_ng + coarse_nx - 1); ++i) {
+      const int fj = (j - allocated_ng) * 2 + allocated_ng;
+      const int fi = (i - allocated_ng) * 2 + allocated_ng;
+      if constexpr (NGHOST == 3) {
+        const auto stencil_i = SelectO4RestrictionStencil(fi, allocated_ng, kNx);
+        const auto stencil_j = SelectO4RestrictionStencil(fj, allocated_ng, kNx);
+        const int refi = O4RestrictionReference(fi, stencil_i);
+        const int refj = O4RestrictionReference(fj, stencil_j);
+        // This loop models the superseded receiver-local refresh only to prove
+        // why owner-authoritative cache preservation is required.  Some
+        // same-level ghost targets do not own a complete cubic source stencil;
+        // production never evaluates them locally.  Treat that as a decisive
+        // legacy-policy mismatch without deliberately issuing an out-of-bounds
+        // test kernel under Kokkos bounds checking.
+        if (refi < 0 || refi + 3 >= fine_extent ||
+            refj < 0 || refj + 3 >= fine_extent) {
+          legacy_would_change = true;
+          continue;
+        }
+      }
       for (int v = 0; v < kNvar; ++v) {
         Kokkos::View<Real *> candidate("ownership local refresh candidate", 1);
         Kokkos::parallel_for(
@@ -259,10 +283,10 @@ bool CheckTwoDimensionalOwnership(const Direction same, const int child,
   if constexpr (NGHOST == 4) {
     if (!legacy_would_change) return false;
   }
-  for (int j = (same.axis == 0 ? NGHOST : ghost_lo);
-       j < (same.axis == 0 ? NGHOST + coarse_nx : ghost_hi); ++j) {
-    for (int i = (same.axis == 0 ? ghost_lo : NGHOST);
-         i < (same.axis == 0 ? ghost_hi : NGHOST + coarse_nx); ++i) {
+  for (int j = (same.axis == 0 ? allocated_ng : ghost_lo);
+       j < (same.axis == 0 ? allocated_ng + coarse_nx : ghost_hi); ++j) {
+    for (int i = (same.axis == 0 ? ghost_lo : allocated_ng);
+         i < (same.axis == 0 ? ghost_hi : allocated_ng + coarse_nx); ++i) {
       for (int v = 0; v < kNvar; ++v) {
         if (receiver_coarse_host(0, v, 0, j, i) !=
             received_snapshot(0, v, 0, j, i)) return false;
@@ -277,13 +301,13 @@ bool CheckTwoDimensionalOwnership(const Direction same, const int child,
       for (int v = 0; v < kNvar; ++v) {
         if (!std::isfinite(receiver_coarse_host(0, v, 0, j, i))) {
           receiver_coarse_host(0, v, 0, j, i) =
-              SmoothState(v, 2 * (i - NGHOST) + 1,
-                           2 * (j - NGHOST) + 1);
+              SmoothState(v, 2 * (i - allocated_ng) + 1,
+                           2 * (j - allocated_ng) + 1);
         }
         if (!std::isfinite(mpi_coarse_host(0, v, 0, j, i))) {
           mpi_coarse_host(0, v, 0, j, i) =
-              SmoothState(v, 2 * (i - NGHOST) + 1,
-                           2 * (j - NGHOST) + 1);
+              SmoothState(v, 2 * (i - allocated_ng) + 1,
+                           2 * (j - allocated_ng) + 1);
         }
       }
     }
@@ -293,12 +317,15 @@ bool CheckTwoDimensionalOwnership(const Direction same, const int child,
 
   const int coarse_axis = 1 - same.axis;
   const int coarse_sign = child == 0 ? -1 : 1;
-  const int target_normal = coarse_sign < 0 ? NGHOST - 1 : NGHOST + coarse_nx;
-  const int target_tangent = same.sign < 0 ? NGHOST : NGHOST + coarse_nx - 1;
+  const int target_normal = coarse_sign < 0 ? allocated_ng - 1
+                                             : allocated_ng + coarse_nx;
+  const int target_tangent = same.sign < 0 ? allocated_ng
+                                            : allocated_ng + coarse_nx - 1;
   const int target_i = coarse_axis == 0 ? target_normal : target_tangent;
   const int target_j = coarse_axis == 1 ? target_normal : target_tangent;
-  for (int jj = target_j - NGHOST / 2; jj <= target_j + NGHOST / 2; ++jj) {
-    for (int ii = target_i - NGHOST / 2; ii <= target_i + NGHOST / 2; ++ii) {
+  const int parent_radius = NGHOST == 3 ? 2 : NGHOST / 2;
+  for (int jj = target_j - parent_radius; jj <= target_j + parent_radius; ++jj) {
+    for (int ii = target_i - parent_radius; ii <= target_i + parent_radius; ++ii) {
       const Real chi = receiver_coarse_host(0, 0, 0, jj, ii);
       if (!std::isfinite(chi) || !(chi > 0.0)) return false;
     }
@@ -327,7 +354,8 @@ bool CheckTwoDimensionalOwnership(const Direction same, const int child,
   }
   // Axis-adjacent arrangements additionally require an exact positive chi parity
   // carrier.  The ownership rule itself is independent of parity.
-  if (axis_adjacent && !(receiver_coarse_host(0, 0, 0, NGHOST, NGHOST) > 0.0)) {
+  if (axis_adjacent &&
+      !(receiver_coarse_host(0, 0, 0, allocated_ng, allocated_ng) > 0.0)) {
     return false;
   }
   return true;
@@ -335,7 +363,8 @@ bool CheckTwoDimensionalOwnership(const Direction same, const int child,
 
 template <int NGHOST>
 bool CheckThreeDimensionalOwnership() {
-  constexpr int n = NGHOST + 1;
+  constexpr int n = NGHOST == 3 ? 5 : NGHOST + 1;
+  constexpr int center = n / 2;
   DvceArray5D<Real> coarse("ownership 3d coarse", 1, kNvar, n, n, n);
   DvceArray5D<Real> same("ownership 3d same", 1, kNvar, 2, 2, 2);
   DvceArray5D<Real> mpi("ownership 3d mpi", 1, kNvar, 2, 2, 2);
@@ -356,9 +385,9 @@ bool CheckThreeDimensionalOwnership() {
   Kokkos::parallel_for(
       "ownership 3d prolongation", Kokkos::RangePolicy<>(0, kNvar),
       KOKKOS_LAMBDA(const int v) {
-        HighOrderProlongCC<NGHOST>(0, v, NGHOST / 2, NGHOST / 2, NGHOST / 2,
+        HighOrderProlongCC<NGHOST>(0, v, center, center, center,
                                    0, 0, 0, 8, 8, 8, coarse, same, weights);
-        HighOrderProlongCC<NGHOST>(0, v, NGHOST / 2, NGHOST / 2, NGHOST / 2,
+        HighOrderProlongCC<NGHOST>(0, v, center, center, center,
                                    0, 0, 0, 8, 8, 8, coarse, mpi, weights);
       });
   const auto same_host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), same);

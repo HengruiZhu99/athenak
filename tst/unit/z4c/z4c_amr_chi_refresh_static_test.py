@@ -124,9 +124,14 @@ def main() -> None:
             "fine_n2 = a.extent_int(3)" in fill_coarse and
             "fine_n3 = a.extent_int(2)" in fill_coarse,
             "same-level coarse refresh no longer clamps to stored fine pairs")
-    require("if (NGHOST == 3)" in restriction and
-            "constexpr Real weight[4]" in restriction,
-            "NGHOST=3 restriction implementation is missing")
+    require("O4RestrictionStencil1D" in restriction and
+            "SelectO4RestrictionStencil" in restriction and
+            "5.0 / 16.0, 15.0 / 16.0, -5.0 / 16.0, 1.0 / 16.0" in restriction and
+            "1.0 / 16.0, -5.0 / 16.0, 15.0 / 16.0, 5.0 / 16.0" in restriction,
+            "mirror-paired active-only O4 edge restriction is missing")
+    require("(a.extent_int(4) - nx1) / 2" in restriction and
+            "(a.extent_int(3) - nx2) / 2" in restriction,
+            "O4 restriction does not distinguish allocated nghost=4 from fd_stencil=3")
     require("if (nx3 == 1)" in restriction and
             "a(m, v, fk, refj + jj, refi + ii)" in restriction,
             "collapsed-x3 tensor restriction implementation is missing")
@@ -171,13 +176,24 @@ def main() -> None:
         refinement.index("void MeshRefinement::CheckForRefinement")
     ]
     redist = adaptive.index("RedistAndRefineMeshBlocks")
-    boundary = adaptive.index("InitBoundaryValuesAndPrimitives", redist)
-    algebraic = adaptive.index("EnforceAlgConstr", boundary)
-    adm = adaptive.index("ConvertZ4cToADM", algebraic)
+    algebraic = adaptive.index("EnforceAlgConstr", redist)
+    boundary = adaptive.index("InitBoundaryValuesAndPrimitives", algebraic)
+    adm = adaptive.index("ConvertZ4cToADM", boundary)
     constraints = adaptive.index("ADMConstraints_", adm)
     timestep = adaptive.index("pz4c->NewTimeStep", constraints)
-    require(redist < boundary < algebraic < adm < constraints < timestep,
+    require(redist < algebraic < boundary < adm < constraints < timestep,
             "post-regrid finalized Z4c/ADM/constraint ordering changed")
+
+    queue = tasks[tasks.index("void Z4c::QueueZ4cTasks"):
+                  tasks.index("TaskStatus Z4c::InitRecv")]
+    accepted_order = [queue.index(marker) for marker in
+                      ("Z4c_ExplRK", "Z4c_AlgC", "Z4c_RestU", "Z4c_SendU",
+                       "Z4c_RecvU", "Z4c_BCS", "Z4c_Prolong",
+                       "Z4c_AxisGhostsPost", "Z4c_Z4c2ADM")]
+    require(accepted_order == sorted(accepted_order),
+            "accepted Z4c state is not projected before cache/ghost reconstruction")
+    require(queue.count("&Z4c::EnforceAlgConstr") == 2,
+            "expected floor/no-floor dependency branches for one algebraic task id")
 
     print("Z4c chi AMR refresh static checks passed")
 

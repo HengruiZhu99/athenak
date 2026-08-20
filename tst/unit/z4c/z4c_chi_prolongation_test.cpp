@@ -136,8 +136,8 @@ template <int NGHOST>
 bool CheckCollapsedRestrictionProlongationRoundTrip() {
   constexpr int nx = 16;
   constexpr int extent = nx + 2 * NGHOST;
-  constexpr int ncoarse = NGHOST + 1;
-  constexpr int coarse_center = NGHOST / 2;
+  constexpr int ncoarse = NGHOST == 3 ? 5 : NGHOST + 1;
+  constexpr int coarse_center = ncoarse / 2;
   constexpr int fine_center = NGHOST + 6;
   DvceArray5D<Real> fine("collapsed round-trip fine source", 1, 1,
                          1, extent, extent);
@@ -275,10 +275,10 @@ bool CheckStoredSameLevelRestrictionBounds() {
 
 template <int NGHOST>
 bool CheckConsecutiveThreeDimensionalRefreshes() {
-  constexpr int n = NGHOST + 1;
+  constexpr int n = NGHOST == 3 ? 5 : NGHOST + 1;
   constexpr int fine_n = 32;
   constexpr int fine_center = 16;
-  constexpr int coarse_center = NGHOST / 2;
+  constexpr int coarse_center = n / 2;
   DvceArray5D<Real> fine("refresh source chi", 1, 1, fine_n, fine_n, fine_n);
   DvceArray5D<Real> coarse("refreshed coarse chi", 1, 1, n, n, n);
   DvceArray5D<Real> children("refresh chi children", 1, 1, 2, 2, 2);

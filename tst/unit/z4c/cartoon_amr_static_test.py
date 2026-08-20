@@ -51,7 +51,8 @@ def check_dispatch_and_collapsed_storage() -> None:
             "collapsed storage guard is missing")
     require("const int nk = collapsed_x3 ? 1 : NGHOST+1;" in PROLONGATION,
             "collapsed storage still traverses a transverse stencil")
-    require("const int ck = collapsed_x3 ? k : k-NGHOST/2+kk;" in PROLONGATION,
+    require("const int ck = collapsed_x3 ? k : k-NGHOST/2+kk-o4_left_k;"
+            in PROLONGATION,
             "collapsed storage still offsets the transverse read")
     require("if (nx3 > 1) {\n    a(m,v,fk+1" in PROLONGATION,
             "fine transverse writes are not guarded")
