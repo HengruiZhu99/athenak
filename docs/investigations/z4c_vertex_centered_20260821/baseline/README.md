@@ -124,3 +124,12 @@ in 1D/2D/3D, and the collapsed Cartoon half-plane.
 This checkpoint defines identity and role semantics only.  Building those
 records from production neighbor metadata, deterministic contributor lists,
 MPI synchronization, and AMR reconstruction remains pending.
+
+The production topology-plan builder now materializes the compact records over
+the complete native VC allocation from exact `LogicalLocation`, boundary, and
+neighbor metadata.  It is constructed after initial/static/restart neighbors
+exist and rebuilt immediately after dynamic AMR/load-balance neighbor
+reconstruction.  Canonical-key overflow fails closed.  The transitional VC run
+still exits before allocating a CC boundary object, after successfully building
+this plan and without producing science output.  Contributor-list construction
+and synchronization remain the next gate.

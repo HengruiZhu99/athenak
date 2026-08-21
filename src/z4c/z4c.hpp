@@ -35,6 +35,8 @@ class FastFlow;
 class HorizonDump;
 
 namespace z4c {
+
+class Z4cVertexTopologyPlan;
 class Z4c_AMR;
 
 // Default-off AMR transfer ablation.  This changes only Z4c interlevel transfer;
@@ -285,6 +287,7 @@ class Z4c {
   Real diss;              // Dissipation parameter
   std::unique_ptr<AMRJumpDiagnosticRuntime> amr_jump_diagnostic;
   std::unique_ptr<ChiParentProvenanceRuntime> chi_parent_provenance;
+  std::unique_ptr<Z4cVertexTopologyPlan> vertex_topology_plan;
 
   // Boundary communication buffers and functions for u
   MeshBoundaryValuesCC *pbval_u;
@@ -325,6 +328,7 @@ class Z4c {
   TaskStatus CopyU(Driver *d, int stage);
   TaskStatus FillAxisParityGhosts(Driver *d, int stage);
   void ReconstructAxisParityGhosts();
+  void RebuildVertexTopologyPlan();
   void ApplyVertexAxisRegularity(DvceArray5D<Real> &state, int stage,
                                  const char *checkpoint);
   void ReconstructConstraintAxisParityGhosts();

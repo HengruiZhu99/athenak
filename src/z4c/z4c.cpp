@@ -30,6 +30,7 @@
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_vertex_topology.hpp"
 #include "z4c/z4c_amr.hpp"
 #include "z4c/z4c_symmetry.hpp"
 #include "z4c/state_admissibility.hpp"
@@ -460,6 +461,10 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   }
 
   ValidateNativeStorageExtents();
+  if (layout.centering == Z4cGridCentering::vertex) {
+    vertex_topology_plan = std::make_unique<Z4cVertexTopologyPlan>();
+    RebuildVertexTopologyPlan();
+  }
   Kokkos::Profiling::popRegion();
 
   // Native VC arrays are real N+1 nodal allocations at this point. Do not attach
@@ -543,6 +548,15 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     chi_parent_provenance = std::make_unique<ChiParentProvenanceRuntime>(
         pmy_pack, opt.chi_parent_provenance);
   }
+}
+
+void Z4c::RebuildVertexTopologyPlan() {
+  if (layout.centering != Z4cGridCentering::vertex) return;
+  if (vertex_topology_plan == nullptr) {
+    std::cerr << "### FATAL ERROR: missing native VC topology plan" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  vertex_topology_plan->Rebuild(pmy_pack, layout);
 }
 
 //----------------------------------------------------------------------------------------

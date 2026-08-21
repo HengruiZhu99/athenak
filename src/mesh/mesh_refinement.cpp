@@ -886,6 +886,10 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   pm->pmb_pack->AddMeshBlocks(pin);
   pm->pmb_pack->AddCoordinates(pin);
   pm->pmb_pack->pmb->SetNeighbors(pm->ptree, pm->rank_eachmb);
+  if (pz4c != nullptr &&
+      pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
+    pz4c->RebuildVertexTopologyPlan();
+  }
 
   // clean-up
   delete [] newtoold;

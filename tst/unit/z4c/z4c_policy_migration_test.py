@@ -449,6 +449,18 @@ def main() -> int:
             '"Z4c_ADMC", Task_End' in tasks,
             "Z4c post-step task tail does not initialize ADM/constraints before completion")
 
+    z4c_constructor = (source_dir / "src/z4c/z4c.cpp").read_text(encoding="utf-8")
+    refinement = (source_dir / "src/mesh/mesh_refinement.cpp").read_text(
+        encoding="utf-8")
+    require("vertex_topology_plan = std::make_unique<Z4cVertexTopologyPlan>()" in
+            z4c_constructor and "RebuildVertexTopologyPlan();" in z4c_constructor,
+            "initial/static/restart VC topology plan is not constructed from neighbors")
+    neighbor_rebuild = refinement[refinement.index("pmb->SetNeighbors"):
+                                  refinement.index("// clean-up", refinement.index(
+                                      "pmb->SetNeighbors"))]
+    require("RebuildVertexTopologyPlan" in neighbor_rebuild,
+            "dynamic AMR/load-balance neighbor rebuild does not rebuild VC topology")
+
     validator = (source_dir / "src/mesh/meshblock_pack.cpp").read_text(encoding="utf-8")
     require('input.problem_generator == "z4c_cartoon_derivatives"' in
             (source_dir / "src/z4c/z4c_symmetry.cpp").read_text(encoding="utf-8"),
