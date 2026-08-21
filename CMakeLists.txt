@@ -481,6 +481,22 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND athena_z4c_cartoon_axis_boundary_unit_test)
 
   add_executable(
+      athena_z4c_cartoon_vertex_axis_unit_test
+      tst/unit/z4c/cartoon_vertex_axis_test.cpp)
+  target_include_directories(
+      athena_z4c_cartoon_vertex_axis_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_cartoon_vertex_axis_unit_test PRIVATE Kokkos::kokkos)
+  foreach(axis_contract IN ITEMS scalar vector tensor rhs_regularity)
+    add_test(
+        NAME athena.z4c_vc_cartoon_axis_${axis_contract}
+        COMMAND athena_z4c_cartoon_vertex_axis_unit_test ${axis_contract})
+  endforeach()
+
+  add_executable(
       athena_z4c_cartoon_axis_centered_derivatives_unit_test
       tst/unit/z4c/cartoon_axis_centered_derivatives_test.cpp)
   target_include_directories(

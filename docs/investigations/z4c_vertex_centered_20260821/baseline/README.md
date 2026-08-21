@@ -83,3 +83,29 @@ reference remained byte-identical to Phase 0:
 
 This checkpoint proves the CC arithmetic and output payload remained frozen;
 it does not qualify VC communication, AMR, restart, or evolution.
+
+## Evolved Cartoon-axis checkpoint
+
+The native VC axis now has an explicit production contract: the rho=0 vertex
+is never overwritten by parity reconstruction; negative-rho ghosts mirror the
+corresponding positive vertex; scalar/vector/tensor identities are enforced on
+the active axis RHS before RK consumption and on active state immediately after
+each RK update.  Nonfinite or materially large corrections fail visibly and a
+nonzero correction is recorded with cycle, stage, component, GID, and z.
+
+The four exact VC axis tests (`scalar`, `vector`, `tensor`, and
+`rhs_regularity`) pass for ghost widths 2, 3, and 4 on the device execution
+space.  Together with the six Cartesian/Cartoon derivative tests and legacy CC
+axis test, all 11 focused tests pass.  The complete OpenMP/MPI suite registers
+78 tests; all 76 enabled tests pass in 180.97 s and the two CUDA-required tests
+remain disabled in this host build.
+
+The post-axis executable SHA-256 is
+`97715f7fa5d6d1a1f73827688ce906bd65d05ce81076117f6a8f0f77711f8c18`.
+The frozen one-cycle CC reference remains byte-identical:
+
+- history SHA-256: `4896c333ceda81d99cf1e4c15a28996d73c999c6222d4b83e5e0a4a6044aa`;
+- timestep-contract SHA-256: `dad954f5938eea76aca74493ec5bd1ac8c66cdc67ac7ad24225988c19e5e3037`.
+
+This still does not qualify VC communication or AMR; the constructor guard
+continues to reject VC before attaching the legacy CC boundary object.

@@ -992,6 +992,10 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
     }
   });
 
+  // The rho=0 vertex is evolved.  Project only its exact SO(2) identities on the
+  // complete RHS before any RK stage consumes it.
+  ApplyVertexAxisRegularity(u_rhs, stage, "post_rhs");
+
   // This intentionally expensive host-side census is default-off and exists only for
   // bounded causal audits.  It reports state and complete-RHS maxima after every RK
   // stage without changing either array.  Restricting the census to a physical

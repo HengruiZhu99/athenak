@@ -214,6 +214,18 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.chi_min_floor = pin->GetOrAddReal("z4c", "chi_min_floor", 1e-12);
   opt.floor_chi = pin->GetOrAddBoolean("z4c", "floor_chi", false);
   opt.diss = pin->GetOrAddReal("z4c", "diss", 0.0);
+  // Do not materialize a VC-only default in legacy CC input/output bytes.
+  opt.vertex_axis_correction_tolerance =
+      layout.centering == Z4cGridCentering::vertex
+          ? pin->GetOrAddReal("z4c", "vertex_axis_correction_tolerance", 1.0e-8)
+          : 1.0e-8;
+  if (!(opt.vertex_axis_correction_tolerance > 0.0) ||
+      !std::isfinite(opt.vertex_axis_correction_tolerance)) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": <z4c>/vertex_axis_correction_tolerance must be finite and positive"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   const std::string amr_transfer =
       pin->GetOrAddString("z4c", "amr_transfer", "high_order");
   if (amr_transfer == "high_order") {

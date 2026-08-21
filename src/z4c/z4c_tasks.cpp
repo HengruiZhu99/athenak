@@ -6,10 +6,14 @@
 //! \file z4c_tasks.cpp
 //! \brief functions that control z4c tasks in the appropriate task list
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <limits>
 #include <cstdio>
 #include <cstdlib>
 
@@ -23,6 +27,7 @@
 #include "bvals/bvals.hpp"
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/cartoon_axis_boundary.hpp"
+#include "z4c/cartoon_vertex_axis.hpp"
 #include "z4c/fastflow.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
@@ -227,24 +232,187 @@ void Z4c::ReconstructAxisParityGhosts() {
     return;
   }
 
-  const auto &indcs = pmy_pack->pmesh->mb_indcs;
-  const int ng = indcs.ng;
-  const int n2 = indcs.nx2 > 1 ? indcs.nx2 + 2 * ng : 1;
-  const int n3 = indcs.nx3 > 1 ? indcs.nx3 + 2 * ng : 1;
-  const int is = indcs.is;
+  const int ng = layout.ng;
+  const int n2 = layout.n2;
+  const int n3 = layout.n3;
+  const int is = layout.is;
   const int nmb = pmy_pack->nmb_thispack;
   auto &mb_bcs = pmy_pack->pmb->mb_bcs;
   auto &state = pmy_pack->pz4c->u0;
 
-  par_for("z4c half-plane axis parity", DevExeSpace(), 0, nmb - 1,
-          0, nz4c - 1, 0, n3 - 1, 0, n2 - 1,
-      KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
-        if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
-            !FillZ4cAxisGhostLine(state, m, n, k, j, is, ng)) {
-          Kokkos::abort("invalid packed Z4c component in pre-RHS axis parity fill");
-        }
+  if (layout.centering == Z4cGridCentering::vertex) {
+    par_for("z4c VC half-plane axis parity", DevExeSpace(), 0, nmb - 1,
+            0, nz4c - 1, 0, n3 - 1, 0, n2 - 1,
+        KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
+          if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
+              !FillCenteredZ4cAxisGhostLine<VertexCenteredZ4c>(
+                  state, m, n, k, j, is, ng)) {
+            Kokkos::abort("invalid packed Z4c component in VC axis parity fill");
+          }
+        });
+  } else {
+    par_for("z4c CC half-plane axis parity", DevExeSpace(), 0, nmb - 1,
+            0, nz4c - 1, 0, n3 - 1, 0, n2 - 1,
+        KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
+          if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
+              !FillCenteredZ4cAxisGhostLine<CellCenteredZ4c>(
+                  state, m, n, k, j, is, ng)) {
+            Kokkos::abort("invalid packed Z4c component in CC axis parity fill");
+          }
+        });
+  }
+  Kokkos::fence();
+}
+
+//----------------------------------------------------------------------------------------
+//! \brief Enforce exact SO(2) identities on the evolved VC axis and emit a deterministic
+//! correction audit.  This is a regularity projection, not a floor or limiter.
+
+void Z4c::ApplyVertexAxisRegularity(DvceArray5D<Real> &state, const int stage,
+                                    const char *checkpoint) {
+  if (layout.centering != Z4cGridCentering::vertex ||
+      pmy_pack->z4c_symmetry.mode != Z4cSymmetryMode::cartoon_so2) {
+    return;
+  }
+  const int nmb = pmy_pack->nmb_thispack;
+  const int active_n2 = layout.je - layout.js + 1;
+  const int active_n3 = layout.ke - layout.ks + 1;
+  const int points_per_block = active_n2 * active_n3;
+  DvceArray2D<Real> records("vertex axis regularity records",
+                            nmb * points_per_block, 4);
+  Kokkos::deep_copy(records, 0.0);
+  auto &mb_bcs = pmy_pack->pmb->mb_bcs;
+  const int is = layout.is;
+  const int js = layout.js;
+  const int ks = layout.ks;
+  par_for("enforce evolved vertex axis regularity", DevExeSpace(), 0, nmb - 1,
+          layout.ks, layout.ke, layout.js, layout.je,
+      KOKKOS_LAMBDA(const int m, const int k, const int j) {
+        if (mb_bcs.d_view(m, BoundaryFace::inner_x1) != BoundaryFlag::axis) return;
+        const VertexAxisCorrection correction =
+            EnforceVertexAxisZ4cPoint(state, m, k, j, is);
+        const int record =
+            m * points_per_block + (k - ks) * active_n2 + (j - js);
+        records(record, 0) = correction.max_abs;
+        records(record, 1) = correction.max_rel;
+        records(record, 2) = static_cast<Real>(correction.component);
+        records(record, 3) = static_cast<Real>(correction.nonfinite);
       });
   Kokkos::fence();
+
+  const auto host_records =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), records);
+  pmy_pack->pmb->mb_gid.sync_host();
+  pmy_pack->pmb->mb_size.sync_host();
+  Real local_max_abs = 0.0;
+  Real local_max_rel = 0.0;
+  int local_nonfinite = 0;
+  unsigned long long local_key = std::numeric_limits<unsigned long long>::max();
+  int local_component = -1;
+  int local_m = -1;
+  int local_j = -1;
+  for (int m = 0; m < nmb; ++m) {
+    for (int k = layout.ks; k <= layout.ke; ++k) {
+      for (int j = layout.js; j <= layout.je; ++j) {
+        const int record =
+            m * points_per_block + (k - layout.ks) * active_n2 + (j - layout.js);
+        const Real absolute = host_records(record, 0);
+        const Real relative = host_records(record, 1);
+        const int component = static_cast<int>(host_records(record, 2));
+        local_nonfinite = std::max(local_nonfinite,
+                                   static_cast<int>(host_records(record, 3)));
+        local_max_rel = std::max(local_max_rel, relative);
+        const unsigned long long ordinal =
+            static_cast<unsigned long long>((k - layout.ks) * active_n2 +
+                                            (j - layout.js));
+        const unsigned long long key =
+            (static_cast<unsigned long long>(pmy_pack->pmb->mb_gid.h_view(m)) << 32) |
+            (ordinal << 8) | static_cast<unsigned long long>(component + 1);
+        if (absolute > local_max_abs ||
+            (absolute == local_max_abs && key < local_key)) {
+          local_max_abs = absolute;
+          local_key = key;
+          local_component = component;
+          local_m = m;
+          local_j = j;
+        }
+      }
+    }
+  }
+  Real global_max_abs = local_max_abs;
+  Real global_max_rel = local_max_rel;
+  int global_nonfinite = local_nonfinite;
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &global_max_abs, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &global_max_rel, 1, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &global_nonfinite, 1, MPI_INT, MPI_MAX,
+                MPI_COMM_WORLD);
+#endif
+  if (local_max_abs != global_max_abs) {
+    local_key = std::numeric_limits<unsigned long long>::max();
+    local_component = -1;
+    local_m = -1;
+    local_j = -1;
+  }
+  unsigned long long global_key = local_key;
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &global_key, 1, MPI_UNSIGNED_LONG_LONG, MPI_MIN,
+                MPI_COMM_WORLD);
+#endif
+  const int selected_gid =
+      global_key == std::numeric_limits<unsigned long long>::max()
+          ? -1 : static_cast<int>(global_key >> 32);
+  int selected_component = -1;
+  Real selected_z = 0.0;
+  if (local_key == global_key && local_m >= 0) {
+    selected_component = local_component;
+    const auto &size = pmy_pack->pmb->mb_size.h_view(local_m);
+    selected_z = size.x2min +
+                 static_cast<Real>(local_j - layout.js) * size.dx2;
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &selected_component, 1, MPI_INT, MPI_MAX,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &selected_z, 1, MPI_ATHENA_REAL, MPI_SUM,
+                MPI_COMM_WORLD);
+#endif
+  if (global_variable::my_rank == 0 &&
+      (global_max_abs > 0.0 || global_nonfinite != 0)) {
+    std::ifstream prior("z4c_vertex_axis_regularity.csv");
+    const bool exists = prior.good();
+    prior.close();
+    std::ofstream out("z4c_vertex_axis_regularity.csv", std::ios::app);
+    if (!exists) {
+      out << "cycle,time,rk_stage,checkpoint,max_abs,max_scaled,component,gid,z,nonfinite\n";
+    }
+    out << pmy_pack->pmesh->ncycle << ',' << std::setprecision(17)
+        << pmy_pack->pmesh->time << ',' << stage << ',' << checkpoint << ','
+        << global_max_abs << ',' << global_max_rel << ',' << selected_component
+        << ',' << selected_gid << ',' << selected_z << ',' << global_nonfinite
+        << '\n';
+    if (!out) {
+      std::cerr << "### FATAL ERROR: failed to write VC axis regularity evidence"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
+  if (global_nonfinite != 0 ||
+      global_max_rel > opt.vertex_axis_correction_tolerance) {
+    std::cerr << "### FATAL ERROR: VC axis regularity correction rejected at cycle "
+              << pmy_pack->pmesh->ncycle << " stage " << stage
+              << " checkpoint=" << checkpoint << " max_abs=" << global_max_abs
+              << " max_scaled=" << global_max_rel << " tolerance="
+              << opt.vertex_axis_correction_tolerance << " component="
+              << selected_component << " gid=" << selected_gid << " z="
+              << selected_z << " nonfinite=" << global_nonfinite << std::endl;
+#if MPI_PARALLEL_ENABLED
+    MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+#else
+    std::exit(EXIT_FAILURE);
+#endif
+  }
 }
 
 void Z4c::ReconstructConstraintAxisParityGhosts() {

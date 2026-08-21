@@ -205,6 +205,8 @@ class Z4c {
     // where a square root is necessary.
     Real diss;            // amount of numerical dissipation
     Real eps_floor;       // a small number O(10^-12)
+    // Fail-visible bound for the exact evolved-axis regularity projection.
+    Real vertex_axis_correction_tolerance;
     // Safety factor applied only to the explicit local-source stability ceiling.
     // This is deliberately distinct from <time>/cfl_number.
     Real timestep_source_safety;
@@ -323,6 +325,8 @@ class Z4c {
   TaskStatus CopyU(Driver *d, int stage);
   TaskStatus FillAxisParityGhosts(Driver *d, int stage);
   void ReconstructAxisParityGhosts();
+  void ApplyVertexAxisRegularity(DvceArray5D<Real> &state, int stage,
+                                 const char *checkpoint);
   void ReconstructConstraintAxisParityGhosts();
   void ReconstructConstraintAxisParityGhosts(
       DvceArray5D<Real> &constraint_state);

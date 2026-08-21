@@ -14,7 +14,6 @@
 #include "coordinates/coordinates.hpp"
 #include "globals.hpp"
 #include "z4c/z4c.hpp"
-#include "z4c/stored_domain_bounds.hpp"
 
 #include <fstream>
 #include <iomanip>
@@ -27,8 +26,7 @@
 namespace z4c {
 
 void Z4c::InitializePrescribedZeroShift() {
-  auto &indcs = pmy_pack->pmesh->mb_indcs;
-  const auto bounds = MakeStoredDomainBounds(indcs);
+  const auto bounds = layout;
   auto state = u0;
   const int nmb = pmy_pack->nmb_thispack;
   const int last = opt.telegraph_lapse ? I_Z4C_BETAZ : I_Z4C_BZ;
@@ -43,7 +41,7 @@ void Z4c::InitializePrescribedZeroShift() {
 void Z4c::CheckPrescribedZeroShiftInvariant(Driver *driver, int stage) {
   if (opt.shift_mode != Z4cShiftMode::prescribed_zero ||
       !opt.shift_invariant_diagnostic) return;
-  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const auto bounds = layout;
   auto state = u0;
   const int nmb = pmy_pack->nmb_thispack;
   const int last = opt.telegraph_lapse ? I_Z4C_BETAZ : I_Z4C_BZ;
@@ -51,8 +49,8 @@ void Z4c::CheckPrescribedZeroShiftInvariant(Driver *driver, int stage) {
   Kokkos::parallel_reduce(
       "prescribed zero shift invariant",
       Kokkos::MDRangePolicy<DevExeSpace, Kokkos::Rank<5>>(
-          {0, I_Z4C_BETAX, indcs.ks, indcs.js, indcs.is},
-          {nmb, last + 1, indcs.ke + 1, indcs.je + 1, indcs.ie + 1}),
+          {0, I_Z4C_BETAX, bounds.ks, bounds.js, bounds.is},
+          {nmb, last + 1, bounds.ke + 1, bounds.je + 1, bounds.ie + 1}),
       KOKKOS_LAMBDA(const int m, const int n, const int k, const int j,
                     const int i, Real &value) {
         value = fmax(value, fabs(state(m, n, k, j, i)));
@@ -87,10 +85,10 @@ void Z4c::CheckPrescribedZeroShiftInvariant(Driver *driver, int stage) {
 //! \fn  void Z4c::Update
 //! \brief Explicit RK update
 TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
-  auto &indcs = pmy_pack->pmesh->mb_indcs;
-  int is = indcs.is, ie = indcs.ie;
-  int js = indcs.js, je = indcs.je;
-  int ks = indcs.ks, ke = indcs.ke;
+  const auto bounds = layout;
+  int is = bounds.is, ie = bounds.ie;
+  int js = bounds.js, je = bounds.je;
+  int ks = bounds.ks, ke = bounds.ke;
 
 
   Real &gam0 = pdriver->gam0[stage-1];
@@ -117,6 +115,7 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
                       beta_dt*u_rhs(m,n,k,j,i);
     }
   });
+  ApplyVertexAxisRegularity(u0, stage, "post_rk_state");
   CheckPrescribedZeroShiftInvariant(pdriver, stage);
   if (chi_parent_provenance != nullptr) {
     chi_parent_provenance->RecordCheckpoint(

@@ -431,9 +431,10 @@ def main() -> int:
     require("half_rho_z_suppressed_y_v2" in axis_fill and
             "kHalfPlaneCartoonSchema" in axis_fill and
             "BoundaryFlag::axis" in axis_fill and
-            "FillZ4cAxisGhostLine" in axis_fill and
+            "FillCenteredZ4cAxisGhostLine<VertexCenteredZ4c>" in axis_fill and
+            "FillCenteredZ4cAxisGhostLine<CellCenteredZ4c>" in axis_fill and
             "Z4cBCs" not in axis_fill and "user_bcs" not in axis_fill,
-            "pre-RHS axis task is not a half-plane-only exact parity fill")
+            "pre-RHS axis task is not a centering-aware half-plane parity fill")
     require(queue.index("Z4c_BCS") < queue.index("Z4c_Prolong"),
             "normal RK physical/prolongation task ordering changed")
     task_order = [tasks.index(marker) for marker in
