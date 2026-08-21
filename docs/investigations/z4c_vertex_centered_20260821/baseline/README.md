@@ -109,3 +109,18 @@ The frozen one-cycle CC reference remains byte-identical:
 
 This still does not qualify VC communication or AMR; the constructor guard
 continues to reject VC before attaching the legacy CC boundary object.
+
+## Canonical vertex identity checkpoint
+
+The communication-independent topology core uses an overflow-checked dyadic
+integer key, never a floating coordinate.  It canonicalizes periodic upper
+endpoints before promotion to the configured maximum level and assigns key zero
+to collapsed directions.  A compact device record distinguishes independent,
+same-level shared, coincident coarse-fine, hanging fine-interface, physical,
+axis, and ghost nodes.  The focused test covers same-level and cross-level
+identity, periodic wrapping, overflow rejection, every face/edge/corner subset
+in 1D/2D/3D, and the collapsed Cartoon half-plane.
+
+This checkpoint defines identity and role semantics only.  Building those
+records from production neighbor metadata, deterministic contributor lists,
+MPI synchronization, and AMR reconstruction remains pending.
