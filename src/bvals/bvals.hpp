@@ -183,6 +183,43 @@ class MeshBoundaryValuesCC : public MeshBoundaryValues {
 };
 
 //----------------------------------------------------------------------------------------
+//! \struct VertexBoundaryLayout
+//! \brief Immutable vertex-centered active and stored bounds used by VC communication.
+
+struct VertexBoundaryLayout {
+  int ng = 0;
+  int is = 0, ie = -1, js = 0, je = -1, ks = 0, ke = -1;
+  int sis = 0, sie = -1, sjs = 0, sje = -1, sks = 0, ske = -1;
+  bool collapse_x2 = false;
+  bool collapse_x3 = false;
+};
+
+//----------------------------------------------------------------------------------------
+//! \class MeshBoundaryValuesVC
+//! \brief Separate boundary implementation for native vertex-centered variables.
+//!
+//! This class intentionally does not reinterpret CC index metadata.  Phase-6 same-level
+//! communication is enabled first; coarse/fine neighbors fail closed until the native VC
+//! AMR transfer path is installed.
+
+class MeshBoundaryValuesVC : public MeshBoundaryValues {
+ public:
+  MeshBoundaryValuesVC(MeshBlockPack *ppack, ParameterInput *pin,
+                       const VertexBoundaryLayout &layout);
+
+  void InitSendIndices(MeshBoundaryBuffer &b, int o1, int o2, int o3,
+                       int f1, int f2) override;
+  void InitRecvIndices(MeshBoundaryBuffer &b, int o1, int o2, int o3,
+                       int f1, int f2) override;
+  TaskStatus InitFluxRecv(const int nvar) override;
+
+  TaskStatus PackAndSendVC(DvceArray5D<Real> &a);
+  TaskStatus RecvAndUnpackVC(DvceArray5D<Real> &a);
+
+  const VertexBoundaryLayout layout;
+};
+
+//----------------------------------------------------------------------------------------
 //! \class BoundaryValuesFC
 //  \brief Derived class implementing boundary values for face-centered vector fields
 

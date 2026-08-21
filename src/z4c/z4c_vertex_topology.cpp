@@ -8,11 +8,16 @@
 #include "z4c/z4c_vertex_topology.hpp"
 
 #include <algorithm>
+#include <cmath>
+#include <cstring>
 #include <cstdlib>
 #include <iostream>
+#include <numeric>
 #include <set>
+#include <tuple>
 
 #include "bvals/bvals.hpp"
+#include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
 #include "mesh/nghbr_index.hpp"
@@ -51,6 +56,14 @@ vertex_topology::CanonicalVertexDirectionConfig DirectionConfig(
 }
 
 }  // namespace
+
+bool VertexContributorLess(const VertexContributor &left,
+                           const VertexContributor &right) {
+  return std::tie(left.key1, left.key2, left.key3, left.level, left.lx1,
+                  left.lx2, left.lx3, left.gid, left.k, left.j, left.i) <
+         std::tie(right.key1, right.key2, right.key3, right.level, right.lx1,
+                  right.lx2, right.lx3, right.gid, right.k, right.j, right.i);
+}
 
 void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
                                     const Z4cGridLayout &layout) {
@@ -194,7 +207,208 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
   active_records = local_active;
   shared_records = local_shared;
   hanging_records = local_hanging;
+
+  local_contributors.clear();
+  for (int m = 0; m < nmb; ++m) {
+    const int gid = blocks->mb_gid.h_view(m);
+    const LogicalLocation location = mesh->lloc_eachmb[gid];
+    for (int k = layout.ks; k <= layout.ke; ++k) {
+      for (int j = layout.js; j <= layout.je; ++j) {
+        for (int i = layout.is; i <= layout.ie; ++i) {
+          auto &record = host(m, k, j, i);
+          if (record.topological_multiplicity <= 1 ||
+              record.role ==
+                  vertex_topology::VertexNodeRole::hanging_fine_interface) {
+            continue;
+          }
+          local_contributors.push_back(
+              {record.key.i1, record.key.i2, record.key.i3, location.level,
+               location.lx1, location.lx2, location.lx3, gid, m, k, j, i});
+        }
+      }
+    }
+  }
+  std::sort(local_contributors.begin(), local_contributors.end(),
+            VertexContributorLess);
+  contributor_counts.assign(global_variable::nranks, 0);
+  const int local_count = static_cast<int>(local_contributors.size());
+#if MPI_PARALLEL_ENABLED
+  MPI_Allgather(&local_count, 1, MPI_INT, contributor_counts.data(), 1, MPI_INT,
+                MPI_COMM_WORLD);
+#else
+  contributor_counts[0] = local_count;
+#endif
+  contributor_displacements.assign(global_variable::nranks, 0);
+  for (int rank = 1; rank < global_variable::nranks; ++rank) {
+    contributor_displacements[rank] = contributor_displacements[rank - 1] +
+                                      contributor_counts[rank - 1];
+  }
+  const int global_count =
+      contributor_displacements.back() + contributor_counts.back();
+  global_contributors.resize(global_count);
+#if MPI_PARALLEL_ENABLED
+  std::vector<int> byte_counts(global_variable::nranks);
+  std::vector<int> byte_displacements(global_variable::nranks);
+  for (int rank = 0; rank < global_variable::nranks; ++rank) {
+    byte_counts[rank] = contributor_counts[rank] * sizeof(VertexContributor);
+    byte_displacements[rank] =
+        contributor_displacements[rank] * sizeof(VertexContributor);
+  }
+  MPI_Allgatherv(local_contributors.data(),
+                 local_count * sizeof(VertexContributor), MPI_BYTE,
+                 global_contributors.data(), byte_counts.data(),
+                 byte_displacements.data(), MPI_BYTE, MPI_COMM_WORLD);
+#else
+  global_contributors = local_contributors;
+#endif
+  sorted_global_indices.resize(global_count);
+  std::iota(sorted_global_indices.begin(), sorted_global_indices.end(), 0);
+  std::sort(sorted_global_indices.begin(), sorted_global_indices.end(),
+      [this](const int left, const int right) {
+        return VertexContributorLess(global_contributors[left],
+                                     global_contributors[right]);
+      });
+  global_group_for_contributor.assign(global_count, -1);
+  int group = -1;
+  VertexContributor prior;
+  bool have_prior = false;
+  for (const int global_index : sorted_global_indices) {
+    const auto &current = global_contributors[global_index];
+    if (!have_prior || current.key1 != prior.key1 || current.key2 != prior.key2 ||
+        current.key3 != prior.key3) {
+      ++group;
+      prior = current;
+      have_prior = true;
+    }
+    global_group_for_contributor[global_index] = group;
+  }
+  local_group.resize(local_count);
+  const int my_displacement =
+      contributor_displacements[global_variable::my_rank];
+  Kokkos::realloc(local_indices, local_count, 4);
+  for (int local = 0; local < local_count; ++local) {
+    const int global_index = my_displacement + local;
+    local_group[local] = global_group_for_contributor[global_index];
+    const auto &contributor = local_contributors[local];
+    local_indices.h_view(local, 0) = contributor.m;
+    local_indices.h_view(local, 1) = contributor.k;
+    local_indices.h_view(local, 2) = contributor.j;
+    local_indices.h_view(local, 3) = contributor.i;
+  }
+  local_indices.template modify<HostMemSpace>();
+  local_indices.template sync<DevExeSpace>();
+  // Mark exactly the first contributor in the canonical global order as diagnostic
+  // owner.  Evolution synchronization still averages every contributor.
+  for (int sorted = 0; sorted < global_count; ++sorted) {
+    const int global_index = sorted_global_indices[sorted];
+    const int owner_group = global_group_for_contributor[global_index];
+    if (sorted > 0 &&
+        global_group_for_contributor[sorted_global_indices[sorted - 1]] ==
+            owner_group) {
+      continue;
+    }
+    if (global_index < my_displacement ||
+        global_index >= my_displacement + local_count) {
+      continue;
+    }
+    const auto &owner = local_contributors[global_index - my_displacement];
+    host(owner.m, owner.k, owner.j, owner.i).canonical_diagnostic_owner = 1;
+  }
+  records.template modify<HostMemSpace>();
+  records.template sync<DevExeSpace>();
   ++generation;
+}
+
+void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
+    DvceArray5D<Real> &state) const {
+  const int local_count = static_cast<int>(local_contributors.size());
+  const int global_count = static_cast<int>(global_contributors.size());
+  const int nvar = state.extent_int(1);
+  if (global_count == 0 || nvar == 0) return;
+  DvceArray2D<Real> packed("VC shared contributors", local_count, nvar);
+  const auto indices = local_indices.d_view;
+  if (local_count > 0) {
+    par_for("pack VC shared contributors", DevExeSpace(), 0, local_count - 1,
+            0, nvar - 1,
+        KOKKOS_LAMBDA(const int contributor, const int variable) {
+          packed(contributor, variable) =
+              state(indices(contributor, 0), variable, indices(contributor, 1),
+                    indices(contributor, 2), indices(contributor, 3));
+        });
+  }
+  Kokkos::fence();
+  const auto host_packed =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), packed);
+  std::vector<Real> local_values(local_count * nvar);
+  for (int contributor = 0; contributor < local_count; ++contributor) {
+    for (int variable = 0; variable < nvar; ++variable) {
+      local_values[contributor * nvar + variable] = host_packed(contributor, variable);
+    }
+  }
+  std::vector<Real> global_values(global_count * nvar);
+#if MPI_PARALLEL_ENABLED
+  std::vector<int> value_counts(global_variable::nranks);
+  std::vector<int> value_displacements(global_variable::nranks);
+  for (int rank = 0; rank < global_variable::nranks; ++rank) {
+    value_counts[rank] = contributor_counts[rank] * nvar;
+    value_displacements[rank] = contributor_displacements[rank] * nvar;
+  }
+  MPI_Allgatherv(local_values.data(), local_count * nvar, MPI_ATHENA_REAL,
+                 global_values.data(), value_counts.data(),
+                 value_displacements.data(), MPI_ATHENA_REAL, MPI_COMM_WORLD);
+#else
+  global_values = local_values;
+#endif
+  const int groups = global_group_for_contributor.empty()
+                         ? 0
+                         : 1 + *std::max_element(global_group_for_contributor.begin(),
+                                                 global_group_for_contributor.end());
+  std::vector<Real> averages(groups * nvar, 0.0);
+  std::vector<int> multiplicity(groups, 0);
+  for (const int global_index : sorted_global_indices) {
+    const int group = global_group_for_contributor[global_index];
+    ++multiplicity[group];
+    for (int variable = 0; variable < nvar; ++variable) {
+      const Real value = global_values[global_index * nvar + variable];
+      if (!std::isfinite(value)) {
+        std::cerr << "### FATAL ERROR: nonfinite VC shared contributor key=("
+                  << global_contributors[global_index].key1 << ','
+                  << global_contributors[global_index].key2 << ','
+                  << global_contributors[global_index].key3 << ") variable="
+                  << variable << std::endl;
+#if MPI_PARALLEL_ENABLED
+        MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+#else
+        std::exit(EXIT_FAILURE);
+#endif
+      }
+      averages[group * nvar + variable] += value;
+    }
+  }
+  for (int group = 0; group < groups; ++group) {
+    for (int variable = 0; variable < nvar; ++variable) {
+      averages[group * nvar + variable] /=
+          static_cast<Real>(multiplicity[group]);
+    }
+  }
+  auto host_replacements = Kokkos::create_mirror_view(packed);
+  for (int contributor = 0; contributor < local_count; ++contributor) {
+    const int group = local_group[contributor];
+    for (int variable = 0; variable < nvar; ++variable) {
+      host_replacements(contributor, variable) = averages[group * nvar + variable];
+    }
+  }
+  Kokkos::deep_copy(packed, host_replacements);
+  if (local_count > 0) {
+    par_for("apply deterministic VC shared averages", DevExeSpace(),
+            0, local_count - 1, 0, nvar - 1,
+        KOKKOS_LAMBDA(const int contributor, const int variable) {
+          state(indices(contributor, 0), variable, indices(contributor, 1),
+                indices(contributor, 2), indices(contributor, 3)) =
+              packed(contributor, variable);
+        });
+  }
+  Kokkos::fence();
 }
 
 }  // namespace z4c
