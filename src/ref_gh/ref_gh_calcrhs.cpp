@@ -113,10 +113,9 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       return;
     }
     Real scalar_source[4][4];  // NOLINT(runtime/arrays)
-    CovariantSourceSectors source_sectors;
     if (source_kind == 0) {
-      if (!CovariantGhScalarWaveSource(psi, pi, phi, reference, geometry, gamma0,
-                                       scalar_source, source_sectors)) {
+      if (!CovariantGhScalarWaveSourceProduction(
+              psi, pi, phi, reference, geometry, gamma0, scalar_source)) {
         for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
         return;
       }

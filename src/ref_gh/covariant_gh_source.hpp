@@ -161,6 +161,145 @@ bool CovariantGhScalarWaveSource(const Real psi[4][4], const Real pi[4][4],
   return true;
 }
 
+// Production path for the ten independent symmetric source components.  Keep
+// CovariantGhScalarWaveSource above as the full diagnostic/oracle path.  The
+// common q and connection-difference construction and every retained
+// contraction use the same loop order as that path; only unused lower-triangle
+// outputs and diagnostic sector matrices are omitted.
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+bool CovariantGhScalarWaveSourceProduction(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const Reference &reference,
+    const CoordinateGhGeometry &geometry, const Real gamma0,
+    Real source[4][4]) {
+  Real inverse[4][4];  // NOLINT(runtime/arrays)
+  Real determinant = 0.0;
+  if (!Invert4(psi, inverse, determinant)) return false;
+
+  Real normal[4];  // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    normal[A] = 0.0;
+    for (int a = 0; a < 4; ++a) {
+      normal[A] += ReferenceCoframe(reference, A, a)*geometry.normal_upper[a];
+    }
+  }
+  if (!(normal[0] > 0.0) || !Kokkos::isfinite(normal[0])) return false;
+
+  Real p[4][4][4];            // NOLINT(runtime/arrays)
+  Real q[4][4][4];            // NOLINT(runtime/arrays)
+  Real delta_lower[4][4][4];  // NOLINT(runtime/arrays)
+  Real delta_upper[4][4][4];  // NOLINT(runtime/arrays)
+  Real delta[4];              // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int I = 0; I < 3; ++I) p[I + 1][A][B] = phi[I][A][B];
+      p[0][A][B] = -pi[A][B];
+      for (int I = 0; I < 3; ++I) {
+        p[0][A][B] -= normal[I + 1]*phi[I][A][B];
+      }
+      p[0][A][B] /= normal[0];
+    }
+  }
+
+  for (int C = 0; C < 4; ++C) {
+    delta[C] = 0.0;
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        q[C][A][B] = p[C][A][B];
+        for (int D = 0; D < 4; ++D) {
+          q[C][A][B] -= ReferenceSpin(reference, D, A, C)*psi[D][B]
+                        + ReferenceSpin(reference, D, B, C)*psi[A][D];
+        }
+      }
+    }
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int C = 0; C < 4; ++C) {
+        delta_lower[A][B][C] =
+            0.5*(q[B][A][C] + q[C][A][B] - q[A][B][C]);
+      }
+    }
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int C = 0; C < 4; ++C) {
+        delta_upper[A][B][C] = 0.0;
+        for (int D = 0; D < 4; ++D) {
+          delta_upper[A][B][C] += inverse[A][D]*delta_lower[D][B][C];
+        }
+      }
+    }
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int C = 0; C < 4; ++C) {
+        delta[A] += inverse[B][C]*delta_lower[A][B][C];
+      }
+    }
+  }
+
+  for (int A = 0; A < 4; ++A) {
+    for (int B = A; B < 4; ++B) {
+      Real curvature = 0.0;
+      Real qq = 0.0;
+      Real delta_product = 0.0;
+      Real damping = 0.0;
+      Real frame_correction = 0.0;
+      for (int C = 0; C < 4; ++C) {
+        for (int D = 0; D < 4; ++D) {
+          for (int E = 0; E < 4; ++E) {
+            curvature -= inverse[C][D]*(
+                ReferenceRiemann(reference, E, C, D, A)*psi[B][E]
+                + ReferenceRiemann(reference, E, C, D, B)*psi[A][E]);
+            for (int F = 0; F < 4; ++F) {
+              qq += 2.0*inverse[C][D]*inverse[E][F]
+                    *q[E][C][A]*q[F][D][B];
+              delta_product -= 2.0*inverse[C][D]*inverse[E][F]
+                               *delta_lower[A][C][E]
+                               *delta_lower[B][D][F];
+            }
+          }
+        }
+        Real normal_lower_A = 0.0;
+        Real normal_lower_B = 0.0;
+        for (int D = 0; D < 4; ++D) {
+          normal_lower_A += psi[A][D]*normal[D];
+          normal_lower_B += psi[B][D]*normal[D];
+        }
+        const Real frame_projector = ((C == A) ? normal_lower_B : 0.0)
+                                     + ((C == B) ? normal_lower_A : 0.0)
+                                     - psi[A][B]*normal[C];
+        damping += gamma0*frame_projector*delta[C];
+      }
+
+      for (int C = 0; C < 4; ++C) {
+        for (int D = 0; D < 4; ++D) {
+          Real f_cdab = 0.0;
+          for (int E = 0; E < 4; ++E) {
+            f_cdab -= (ReferenceSpin(reference, E, D, C)
+                       + delta_upper[E][D][C])*p[E][A][B];
+            f_cdab += ReferenceSpinDerivative(reference, C, E, A, D)*psi[E][B]
+                      + ReferenceSpin(reference, E, A, D)*p[C][E][B]
+                      + ReferenceSpinDerivative(reference, C, E, B, D)*psi[A][E]
+                      + ReferenceSpin(reference, E, B, D)*p[C][A][E]
+                      + ReferenceSpin(reference, E, D, C)*q[E][A][B]
+                      + ReferenceSpin(reference, E, A, C)*q[D][E][B]
+                      + ReferenceSpin(reference, E, B, C)*q[D][A][E];
+          }
+          frame_correction += inverse[C][D]*f_cdab;
+        }
+      }
+      const Real value = curvature + qq + delta_product + damping
+                         + frame_correction;
+      source[A][B] = value;
+      source[B][A] = value;
+    }
+  }
+  return true;
+}
+
 }  // namespace ref_gh
 
 #endif  // REF_GH_COVARIANT_GH_SOURCE_HPP_

@@ -23,6 +23,7 @@ BINDER="${SRC}/scripts/ref_gh/aurora_gpu_tile_slot.sh"
 GATE_INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
 BENCH_INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet_benchmark.athinput"
 TIME_INPUT="${SRC}/tst/inputs/ref_gh_time_dependent_reference.athinput"
+SOURCE_INPUT="${SRC}/inputs/ref_gh/ref_gh_source_unit.athinput"
 TOOL="${OUT}/librefgh_kokkos_kernel_timer.so"
 PREVIOUS_THROUGHPUT=${PREVIOUS_THROUGHPUT:-3.033790e5}
 
@@ -52,7 +53,8 @@ test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
   mpicxx --version | head -1
   cmake --version | head -1
   env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
-  sha256sum "${GATE_INPUT}" "${BENCH_INPUT}" "${TIME_INPUT}" "$0"
+  sha256sum "${GATE_INPUT}" "${BENCH_INPUT}" "${TIME_INPUT}" \
+    "${SOURCE_INPUT}" "$0"
 } > provenance.txt
 
 configure_build() {
@@ -93,6 +95,19 @@ mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
     sycl-ls 2>&1
   ' > gpu_mapping.txt 2>&1
 
+mkdir source_oracle
+cd source_oracle
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 "${CHECKED_BUILD}/src/athena" -i "${SOURCE_INPUT}" \
+  > ref_gh_source_oracle.log 2>&1
+grep -q 'reference-GH flat covariant source unit passed' \
+  ref_gh_source_oracle.log
+grep -q 'reference-GH nonflat covariant source unit passed' \
+  ref_gh_source_oracle.log
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  ref_gh_source_oracle.log
+
+cd "${OUT}"
 mkdir checked_gate
 cd checked_gate
 /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
@@ -197,4 +212,5 @@ PY
 head -31 static_kernel_timing.tsv > top30_static_kernel_timing.tsv
 sha256sum provenance.txt gpu_mapping.txt throughput.tsv speedup.tsv \
   static_kernel_timing.tsv time_dependent_kernel_timing.tsv \
-  top30_static_kernel_timing.tsv > compact_sha256.txt
+  top30_static_kernel_timing.tsv source_oracle/ref_gh_source_oracle.log \
+  > compact_sha256.txt

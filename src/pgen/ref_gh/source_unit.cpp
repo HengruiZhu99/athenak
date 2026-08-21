@@ -4,6 +4,7 @@
 //========================================================================================
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
@@ -287,10 +288,16 @@ void CheckFlatCovariantSource() {
         }
         ref_gh::CovariantSourceSectors sectors;
         Real covariant[4][4];      // NOLINT(runtime/arrays)
+        Real production[4][4];     // NOLINT(runtime/arrays)
         Real coordinate_partial[4][4];  // NOLINT(runtime/arrays)
         Real coordinate[4][4];     // NOLINT(runtime/arrays)
         if (!ref_gh::CovariantGhScalarWaveSource(psi, pi, phi, reference, geometry,
                                                   1.3, covariant, sectors)) {
+          local_maximum = fmax(local_maximum, 1.0e30);
+          return;
+        }
+        if (!ref_gh::CovariantGhScalarWaveSourceProduction(
+                psi, pi, phi, reference, geometry, 1.3, production)) {
           local_maximum = fmax(local_maximum, 1.0e30);
           return;
         }
@@ -300,6 +307,16 @@ void CheckFlatCovariantSource() {
                                             reference, geometry, coordinate);
         for (int a = 0; a < 4; ++a) {
           for (int b = 0; b < 4; ++b) {
+            if (a <= b) {
+              const Real production_error =
+                  Kokkos::abs(production[a][b] - covariant[a][b]);
+              const Real production_tolerance =
+                  256.0*std::numeric_limits<Real>::epsilon()
+                  *(1.0 + Kokkos::abs(covariant[a][b]));
+              if (!(production_error <= production_tolerance)) {
+                local_maximum = fmax(local_maximum, 1.0e30);
+              }
+            }
             const Real error = Kokkos::abs(covariant[a][b] - coordinate[a][b]);
             if (!Kokkos::isfinite(error)) {
               local_maximum = fmax(local_maximum, 1.0e30);
@@ -357,10 +374,16 @@ void CheckNonflatCovariantSource() {
         }
         ref_gh::CovariantSourceSectors sectors;
         Real covariant[4][4];       // NOLINT(runtime/arrays)
+        Real production[4][4];      // NOLINT(runtime/arrays)
         Real coordinate_partial[4][4];  // NOLINT(runtime/arrays)
         Real coordinate[4][4];      // NOLINT(runtime/arrays)
         if (!ref_gh::CovariantGhScalarWaveSource(psi, pi, phi, reference, geometry,
                                                   1.3, covariant, sectors)) {
+          local_maximum = fmax(local_maximum, 1.0e30);
+          return;
+        }
+        if (!ref_gh::CovariantGhScalarWaveSourceProduction(
+                psi, pi, phi, reference, geometry, 1.3, production)) {
           local_maximum = fmax(local_maximum, 1.0e30);
           return;
         }
@@ -381,6 +404,16 @@ void CheckNonflatCovariantSource() {
             }
             const Real error = Kokkos::abs(covariant[A][B] - coordinate[A][B]);
             local_maximum = fmax(local_maximum, error);
+            if (A <= B) {
+              const Real production_error =
+                  Kokkos::abs(production[A][B] - covariant[A][B]);
+              const Real production_tolerance =
+                  256.0*std::numeric_limits<Real>::epsilon()
+                  *(1.0 + Kokkos::abs(covariant[A][B]));
+              if (!(production_error <= production_tolerance)) {
+                local_maximum = fmax(local_maximum, 1.0e30);
+              }
+            }
           }
         }
         if (!(reference_scale > 1.0e-5) || !(spin_scale > 1.0e-5)) {
