@@ -409,6 +409,42 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
         });
   }
   Kokkos::fence();
+
+  // This is intentionally an exact postcondition, not a tolerance check: every
+  // contributor is assigned the identical canonical value above.  A mismatch
+  // therefore diagnoses an indexing/write defect rather than floating-point
+  // reduction order.
+  DvceArray1D<unsigned long long> mismatches("VC shared sync mismatches", 1);
+  Kokkos::deep_copy(mismatches, 0ULL);
+  if (local_count > 0) {
+    par_for("verify deterministic VC shared averages", DevExeSpace(),
+            0, local_count - 1, 0, nvar - 1,
+        KOKKOS_LAMBDA(const int contributor, const int variable) {
+          const Real actual =
+              state(indices(contributor, 0), variable, indices(contributor, 1),
+                    indices(contributor, 2), indices(contributor, 3));
+          if (actual != packed(contributor, variable)) {
+            Kokkos::atomic_inc(&mismatches(0));
+          }
+        });
+  }
+  Kokkos::fence();
+  const auto host_mismatches =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), mismatches);
+  unsigned long long global_mismatches = host_mismatches(0);
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &global_mismatches, 1, MPI_UNSIGNED_LONG_LONG,
+                MPI_SUM, MPI_COMM_WORLD);
+#endif
+  if (global_mismatches != 0) {
+    std::cerr << "### FATAL ERROR: canonical VC shared-node synchronization left "
+              << global_mismatches << " mismatched contributor values" << std::endl;
+#if MPI_PARALLEL_ENABLED
+    MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+#else
+    std::exit(EXIT_FAILURE);
+#endif
+  }
 }
 
 }  // namespace z4c

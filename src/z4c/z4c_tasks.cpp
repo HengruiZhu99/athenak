@@ -460,7 +460,8 @@ void Z4c::ReconstructConstraintAxisParityGhosts(
 
 TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
   TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
-      ? pbval_u_vc->PackAndSendVC(u0) : pbval_u->PackAndSendCC(u0, coarse_u0);
+      ? pbval_u_vc->PackAndSendVC(u0, coarse_u0)
+      : pbval_u->PackAndSendCC(u0, coarse_u0);
   return tstat;
 }
 
@@ -470,7 +471,8 @@ TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
 
 TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
   TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
-      ? pbval_u_vc->RecvAndUnpackVC(u0) : pbval_u->RecvAndUnpackCC(u0, coarse_u0);
+      ? pbval_u_vc->RecvAndUnpackVC(u0, coarse_u0)
+      : pbval_u->RecvAndUnpackCC(u0, coarse_u0);
   if (tstat == TaskStatus::complete &&
       layout.centering == Z4cGridCentering::vertex) {
     vertex_topology_plan->SynchronizeSharedNodes(u0);
@@ -550,6 +552,10 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
   // Only execute Mesh function with SMR/SMR
   if (pmy_pack->pmesh->multilevel) {
     if (layout.centering == Z4cGridCentering::vertex) {
+      // RK updates are block-local.  Reconcile coincident active vertices before
+      // injection so every fine child presents one canonical point value to its
+      // parent, independently of MeshBlock or MPI ownership.
+      vertex_topology_plan->SynchronizeSharedNodes(u0);
       pmy_pack->pmesh->pmr->RestrictVC(u0, coarse_u0);
     } else {
       pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
@@ -570,6 +576,15 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
 
 TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
   if (pmy_pack->pmesh->multilevel) {  // only prolongate with SMR/AMR
+    if (layout.centering == Z4cGridCentering::vertex) {
+      pbval_u_vc->ProlongateVC(u0, coarse_u0, opt.spatial_order,
+                               I_Z4C_CHI);
+      CheckStateAdmissibility(pdrive, stage,
+                              Z4cStateCheckpoint::post_prolongation);
+      CheckStateAdmissibility(pdrive, stage,
+                              Z4cStateCheckpoint::post_amr_transfer);
+      return TaskStatus::complete;
+    }
     if (amr_jump_diagnostic != nullptr && stage > 0) {
       amr_jump_diagnostic->RecordRKStageCoarseFineExposure(stage);
     }
@@ -769,7 +784,7 @@ TaskStatus Z4c::SendWeyl(Driver *pdrive, int stage) {
     float time_32 = static_cast<float>(pmy_pack->pmesh->time);
     if ((last_output_time==time_32) && (stage == pdrive->nexp_stages)) {
       TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
-          ? pbval_weyl_vc->PackAndSendVC(u_weyl)
+          ? pbval_weyl_vc->PackAndSendVC(u_weyl, coarse_u_weyl)
           : pbval_weyl->PackAndSendCC(u_weyl, coarse_u_weyl);
       return tstat;
     } else {
@@ -789,7 +804,7 @@ TaskStatus Z4c::RecvWeyl(Driver *pdrive, int stage) {
     float time_32 = static_cast<float>(pmy_pack->pmesh->time);
     if ((last_output_time==time_32) && (stage == pdrive->nexp_stages)) {
       TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
-          ? pbval_weyl_vc->RecvAndUnpackVC(u_weyl)
+          ? pbval_weyl_vc->RecvAndUnpackVC(u_weyl, coarse_u_weyl)
           : pbval_weyl->RecvAndUnpackCC(u_weyl, coarse_u_weyl);
       if (tstat == TaskStatus::complete &&
           layout.centering == Z4cGridCentering::vertex) {
@@ -836,7 +851,12 @@ TaskStatus Z4c::ProlongateWeyl(Driver *pdrive, int stage) {
     float time_32 = static_cast<float>(pmy_pack->pmesh->time);
     if ((last_output_time==time_32) && (stage == pdrive->nexp_stages)) {
       if (pmy_pack->pmesh->multilevel) {
-        pbval_weyl->ProlongateCC(u_weyl, coarse_u_weyl);
+        if (layout.centering == Z4cGridCentering::vertex) {
+          pbval_weyl_vc->ProlongateVC(u_weyl, coarse_u_weyl,
+                                      opt.spatial_order);
+        } else {
+          pbval_weyl->ProlongateCC(u_weyl, coarse_u_weyl);
+        }
       }
     }
     return TaskStatus::complete;

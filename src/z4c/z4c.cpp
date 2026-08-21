@@ -490,24 +490,15 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   Kokkos::Profiling::popRegion();
 
-  // Dynamic/static multilevel VC is enabled only after the coarse/fine boundary path is
-  // attached. Uniform and same-level decomposed VC evolution uses MeshBoundaryValuesVC.
-  if (layout.centering == Z4cGridCentering::vertex &&
-      ppack->pmesh->multilevel) {
-    std::cerr << "### FATAL ERROR in " << __FILE__
-              << ": native vertex Z4c coarse/fine boundary communication is not "
-                 "enabled yet"
-              << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
-
   // allocate boundary buffers for conserved (cell-centered) variables
   Kokkos::Profiling::pushRegion("Buffers");
   if (layout.centering == Z4cGridCentering::vertex) {
     const VertexBoundaryLayout boundary_layout{
-        layout.ng, layout.is, layout.ie, layout.js, layout.je,
+        layout.ng, layout.coarse_ng, layout.is, layout.ie, layout.js, layout.je,
         layout.ks, layout.ke, 0, layout.n1 - 1, 0, layout.n2 - 1,
-        0, layout.n3 - 1, layout.nx2 <= 1, layout.nx3 <= 1};
+        0, layout.n3 - 1, layout.cis, layout.cie, layout.cjs, layout.cje,
+        layout.cks, layout.cke, 0, layout.cn1 - 1, 0, layout.cn2 - 1,
+        0, layout.cn3 - 1, layout.nx2 <= 1, layout.nx3 <= 1};
     pbval_u_vc = new MeshBoundaryValuesVC(ppack, pin, boundary_layout);
     pbval_u_vc->InitializeBuffers(nz4c);
     pbval_weyl_vc = new MeshBoundaryValuesVC(ppack, pin, boundary_layout);

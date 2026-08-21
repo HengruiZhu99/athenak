@@ -188,8 +188,11 @@ class MeshBoundaryValuesCC : public MeshBoundaryValues {
 
 struct VertexBoundaryLayout {
   int ng = 0;
+  int coarse_ng = 0;
   int is = 0, ie = -1, js = 0, je = -1, ks = 0, ke = -1;
   int sis = 0, sie = -1, sjs = 0, sje = -1, sks = 0, ske = -1;
+  int cis = 0, cie = -1, cjs = 0, cje = -1, cks = 0, cke = -1;
+  int csis = 0, csie = -1, csjs = 0, csje = -1, csks = 0, cske = -1;
   bool collapse_x2 = false;
   bool collapse_x3 = false;
 };
@@ -198,9 +201,8 @@ struct VertexBoundaryLayout {
 //! \class MeshBoundaryValuesVC
 //! \brief Separate boundary implementation for native vertex-centered variables.
 //!
-//! This class intentionally does not reinterpret CC index metadata.  Phase-6 same-level
-//! communication is enabled first; coarse/fine neighbors fail closed until the native VC
-//! AMR transfer path is installed.
+//! This class intentionally does not reinterpret CC index metadata.  Same-level and
+//! coarse/fine ranges are derived from the independent native point layout.
 
 class MeshBoundaryValuesVC : public MeshBoundaryValues {
  public:
@@ -213,8 +215,10 @@ class MeshBoundaryValuesVC : public MeshBoundaryValues {
                        int f1, int f2) override;
   TaskStatus InitFluxRecv(const int nvar) override;
 
-  TaskStatus PackAndSendVC(DvceArray5D<Real> &a);
-  TaskStatus RecvAndUnpackVC(DvceArray5D<Real> &a);
+  TaskStatus PackAndSendVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
+  TaskStatus RecvAndUnpackVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
+  void ProlongateVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
+                    int spatial_order, int positive_component = -1);
 
   const VertexBoundaryLayout layout;
 };

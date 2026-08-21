@@ -29,51 +29,108 @@ int Count(const MeshBufferIndcs &indices) {
          (indices.bke - indices.bks + 1);
 }
 
+vertex_bvals::VertexIndexRange SameSend(const int start, const int end,
+                                        const int ng, const int offset,
+                                        const bool collapsed) {
+  return vertex_bvals::VertexSendRange(start, end, ng, offset, collapsed);
+}
+
+vertex_bvals::VertexIndexRange SameRecv(const int start, const int end,
+                                        const int ng, const int offset,
+                                        const bool collapsed) {
+  return vertex_bvals::VertexRecvRange(start, end, ng, offset, collapsed);
+}
+
 }  // namespace
 
 MeshBoundaryValuesVC::MeshBoundaryValuesVC(
     MeshBlockPack *ppack, ParameterInput *pin,
     const VertexBoundaryLayout &vertex_layout)
-    : MeshBoundaryValues(ppack, pin, false), layout(vertex_layout) {}
+    : MeshBoundaryValues(ppack, pin, true), layout(vertex_layout) {}
 
 void MeshBoundaryValuesVC::InitSendIndices(MeshBoundaryBuffer &buf,
                                             int ox1, int ox2, int ox3,
                                             int f1, int f2) {
-  if (f1 != 0 || f2 != 0) return;
-  SetRange(buf.isame[0],
-      vertex_bvals::VertexSendRange(layout.is, layout.ie, layout.ng, ox1, false),
-      vertex_bvals::VertexSendRange(layout.js, layout.je, layout.ng, ox2,
-                                    layout.collapse_x2),
-      vertex_bvals::VertexSendRange(layout.ks, layout.ke, layout.ng, ox3,
-                                    layout.collapse_x3));
+  const int sx = vertex_bvals::TangentialSelector(0, ox1, ox2, ox3, f1, f2,
+                                    layout.collapse_x2, layout.collapse_x3);
+  const int sy = vertex_bvals::TangentialSelector(1, ox1, ox2, ox3, f1, f2,
+                                    layout.collapse_x2, layout.collapse_x3);
+  const int sz = vertex_bvals::TangentialSelector(2, ox1, ox2, ox3, f1, f2,
+                                    layout.collapse_x2, layout.collapse_x3);
+  SetRange(buf.isame[0], SameSend(layout.is, layout.ie, layout.ng, ox1, false),
+      SameSend(layout.js, layout.je, layout.ng, ox2, layout.collapse_x2),
+      SameSend(layout.ks, layout.ke, layout.ng, ox3, layout.collapse_x3));
   buf.isame_ndat = Count(buf.isame[0]);
-  buf.isame_z4c = buf.isame[0];
-  buf.isame_z4c_ndat = buf.isame_ndat;
-  // Reserve valid storage geometry for all neighbor relations, but production methods
-  // reject level-mismatched communication until native VC AMR transfer is installed.
-  buf.icoar[0] = buf.isame[0];
-  buf.ifine[0] = buf.isame[0];
-  buf.icoar_ndat = buf.isame_ndat;
-  buf.ifine_ndat = buf.isame_ndat;
+  SetRange(buf.isame_z4c,
+      SameSend(layout.cis, layout.cie, layout.coarse_ng, ox1, false),
+      SameSend(layout.cjs, layout.cje, layout.coarse_ng, ox2,
+               layout.collapse_x2),
+      SameSend(layout.cks, layout.cke, layout.coarse_ng, ox3,
+               layout.collapse_x3));
+  buf.isame_z4c_ndat = buf.isame_ndat + Count(buf.isame_z4c);
+  SetRange(buf.icoar[0],
+      vertex_bvals::FineToCoarseSendRange(
+          layout.cis, layout.cie, layout.coarse_ng, ox1, sx, false),
+      vertex_bvals::FineToCoarseSendRange(
+          layout.cjs, layout.cje, layout.coarse_ng, ox2, sy,
+                       layout.collapse_x2),
+      vertex_bvals::FineToCoarseSendRange(
+          layout.cks, layout.cke, layout.coarse_ng, ox3, sz,
+                       layout.collapse_x3));
+  buf.icoar_ndat = Count(buf.icoar[0]);
+  SetRange(buf.ifine[0],
+      vertex_bvals::CoarseToFineSendRange(
+          layout.is, layout.ie, layout.coarse_ng, ox1, sx, false),
+      vertex_bvals::CoarseToFineSendRange(
+          layout.js, layout.je, layout.coarse_ng, ox2, sy,
+                       layout.collapse_x2),
+      vertex_bvals::CoarseToFineSendRange(
+          layout.ks, layout.ke, layout.coarse_ng, ox3, sz,
+                       layout.collapse_x3));
+  buf.ifine_ndat = Count(buf.ifine[0]);
 }
 
 void MeshBoundaryValuesVC::InitRecvIndices(MeshBoundaryBuffer &buf,
                                             int ox1, int ox2, int ox3,
                                             int f1, int f2) {
-  if (f1 != 0 || f2 != 0) return;
-  SetRange(buf.isame[0],
-      vertex_bvals::VertexRecvRange(layout.is, layout.ie, layout.ng, ox1, false),
-      vertex_bvals::VertexRecvRange(layout.js, layout.je, layout.ng, ox2,
-                                    layout.collapse_x2),
-      vertex_bvals::VertexRecvRange(layout.ks, layout.ke, layout.ng, ox3,
-                                    layout.collapse_x3));
+  const int sx = vertex_bvals::TangentialSelector(0, ox1, ox2, ox3, f1, f2,
+                                    layout.collapse_x2, layout.collapse_x3);
+  const int sy = vertex_bvals::TangentialSelector(1, ox1, ox2, ox3, f1, f2,
+                                    layout.collapse_x2, layout.collapse_x3);
+  const int sz = vertex_bvals::TangentialSelector(2, ox1, ox2, ox3, f1, f2,
+                                    layout.collapse_x2, layout.collapse_x3);
+  SetRange(buf.isame[0], SameRecv(layout.is, layout.ie, layout.ng, ox1, false),
+      SameRecv(layout.js, layout.je, layout.ng, ox2, layout.collapse_x2),
+      SameRecv(layout.ks, layout.ke, layout.ng, ox3, layout.collapse_x3));
   buf.isame_ndat = Count(buf.isame[0]);
-  buf.isame_z4c = buf.isame[0];
-  buf.isame_z4c_ndat = buf.isame_ndat;
-  buf.icoar[0] = buf.isame[0];
-  buf.ifine[0] = buf.isame[0];
-  buf.icoar_ndat = buf.isame_ndat;
-  buf.ifine_ndat = buf.isame_ndat;
+  SetRange(buf.isame_z4c,
+      SameRecv(layout.cis, layout.cie, layout.coarse_ng, ox1, false),
+      SameRecv(layout.cjs, layout.cje, layout.coarse_ng, ox2,
+               layout.collapse_x2),
+      SameRecv(layout.cks, layout.cke, layout.coarse_ng, ox3,
+               layout.collapse_x3));
+  buf.isame_z4c_ndat = buf.isame_ndat + Count(buf.isame_z4c);
+  SetRange(buf.icoar[0],
+      vertex_bvals::CoarseToFineRecvRange(
+          layout.cis, layout.cie, layout.coarse_ng, ox1, sx, false),
+      vertex_bvals::CoarseToFineRecvRange(
+          layout.cjs, layout.cje, layout.coarse_ng, ox2, sy,
+                       layout.collapse_x2),
+      vertex_bvals::CoarseToFineRecvRange(
+          layout.cks, layout.cke, layout.coarse_ng, ox3, sz,
+                       layout.collapse_x3));
+  buf.icoar_ndat = Count(buf.icoar[0]);
+  SetRange(buf.ifine[0],
+      vertex_bvals::FineToCoarseRecvRange(
+          layout.is, layout.ie, layout.ng, ox1, sx, false),
+      vertex_bvals::FineToCoarseRecvRange(
+          layout.js, layout.je, layout.ng, ox2, sy,
+                       layout.collapse_x2),
+      vertex_bvals::FineToCoarseRecvRange(
+          layout.ks, layout.ke, layout.ng, ox3, sz,
+                       layout.collapse_x3));
+  buf.ifine_ndat = Count(buf.ifine[0]);
+  buf.iprol[0] = buf.icoar[0];
 }
 
 TaskStatus MeshBoundaryValuesVC::InitFluxRecv(const int) {
