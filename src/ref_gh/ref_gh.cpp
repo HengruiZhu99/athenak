@@ -14,6 +14,7 @@
 #include "parameter_input.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/reference_cache.hpp"
+#include "ref_gh/reference_provider_cache.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 
 namespace ref_gh {
@@ -76,6 +77,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
                  "or time_dependent_lapse_test." << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  opt.reference_time_dependent =
+      GetReferenceProviderMetadata(opt.reference_kind).time_dependent;
   const std::string source_name =
       pin->GetOrAddString("ref_gh", "source", "covariant");
   if (source_name == "covariant") {

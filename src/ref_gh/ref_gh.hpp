@@ -35,6 +35,7 @@ class RefGh {
     int fd_order;
     int extrap_order;
     int reference_kind;
+    bool reference_time_dependent;
     int source_kind;
     bool debug_task_fences;
     bool validate_reference_cache;

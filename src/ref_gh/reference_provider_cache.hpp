@@ -12,6 +12,16 @@
 
 namespace ref_gh {
 
+struct ReferenceProviderMetadata {
+  bool time_dependent;
+};
+
+KOKKOS_INLINE_FUNCTION
+constexpr ReferenceProviderMetadata GetReferenceProviderMetadata(
+    const int reference_kind) {
+  return {reference_kind == 2};
+}
+
 KOKKOS_INLINE_FUNCTION
 void StoreProviderJet(const ReferenceJet &jet, const int offset,
                       const ReferenceProviderPoint &point) {

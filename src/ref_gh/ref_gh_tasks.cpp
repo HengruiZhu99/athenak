@@ -223,8 +223,11 @@ Real RefGh::StageTime(const Driver *driver, const int target_stage) const {
 }
 
 void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) {
-  (void)include_diagnostics;
-  if (reference_cache_time == time && reference_diagnostic_time == time) return;
+  const bool production_current = std::isfinite(reference_cache_time)
+      && (!opt.reference_time_dependent || reference_cache_time == time);
+  const bool diagnostics_current = std::isfinite(reference_diagnostic_time)
+      && (!opt.reference_time_dependent || reference_diagnostic_time == time);
+  if (production_current && (!include_diagnostics || diagnostics_current)) return;
 
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
