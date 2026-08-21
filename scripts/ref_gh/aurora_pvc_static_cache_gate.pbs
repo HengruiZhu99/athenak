@@ -1,12 +1,13 @@
 #!/bin/bash -l
-# Correctness, stage-time, performance, and profile gate for static cache validity.
+# Correctness, stage-time, performance, and profile gate for the current
+# equation-neutral reference-cache revision.
 #PBS -A CompactBinaryMerger
 #PBS -q debug
 #PBS -l select=1
 #PBS -l place=scatter
 #PBS -l walltime=01:00:00
 #PBS -l filesystems=home:flare
-#PBS -N refgh_static_gate
+#PBS -N refgh_cache_gate
 #PBS -j oe
 
 set -euo pipefail
@@ -14,15 +15,16 @@ set -euo pipefail
 ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_performance_convergence_20260821
 SRC="${ROOT}/athenak"
 : "${EXPECTED_COMMIT:?submit with qsub -v EXPECTED_COMMIT=<full-sha>}"
-CHECKED_BUILD="${ROOT}/build_static_cache_checked_${PBS_JOBID}"
-PERF_BUILD="${ROOT}/build_static_cache_performance_${PBS_JOBID}"
-OUT="${ROOT}/runs/static_cache_${PBS_JOBID}"
+RUN_TAG=${RUN_TAG:-diagnostic_split}
+CHECKED_BUILD="${ROOT}/build_${RUN_TAG}_checked_${PBS_JOBID}"
+PERF_BUILD="${ROOT}/build_${RUN_TAG}_performance_${PBS_JOBID}"
+OUT="${ROOT}/runs/${RUN_TAG}_${PBS_JOBID}"
 BINDER="${SRC}/scripts/ref_gh/aurora_gpu_tile_slot.sh"
 GATE_INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
 BENCH_INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet_benchmark.athinput"
 TIME_INPUT="${SRC}/tst/inputs/ref_gh_time_dependent_reference.athinput"
 TOOL="${OUT}/librefgh_kokkos_kernel_timer.so"
-PREVIOUS_THROUGHPUT=1.126323e5
+PREVIOUS_THROUGHPUT=${PREVIOUS_THROUGHPUT:-3.033790e5}
 
 mkdir -p "${OUT}"
 cd "${OUT}"
@@ -169,20 +171,24 @@ def calls(path, target):
     with pathlib.Path(path).open() as stream:
         rows = {row["kernel"]: int(row["calls"])
                 for row in csv.DictReader(stream, delimiter="\t")}
-    return rows[target]
+    return rows.get(target, 0)
 
 static_builds = calls("static_kernel_timing.tsv",
                       "ref_gh reference provider profiles")
 dynamic_builds = calls("time_dependent_kernel_timing.tsv",
                        "ref_gh reference provider profiles")
+production_ricci_builds = calls("static_kernel_timing.tsv",
+                                "ref_gh reference Ricci")
 assert static_builds == 1
 assert dynamic_builds > static_builds
+assert production_ricci_builds == 0
 print("metric\tvalue")
 print("previous_zone_cycles_per_s\t{:.12g}".format(previous))
 print("static_cache_zone_cycles_per_s\t{:.12g}".format(measured))
 print("static_cache_speedup\t{:.12g}".format(measured/previous))
 print("static_provider_builds_20_cycles\t{}".format(static_builds))
 print("time_dependent_provider_builds\t{}".format(dynamic_builds))
+print("production_reference_ricci_builds\t{}".format(production_ricci_builds))
 PY
 
 head -31 static_kernel_timing.tsv > top30_static_kernel_timing.tsv
