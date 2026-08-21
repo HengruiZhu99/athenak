@@ -5,6 +5,36 @@ No Aurora job owned by this campaign was queued or running at wrap-up. This is
 an interim performance checkpoint, not completion of the controlling Goal Mode
 campaign and not a new scientific qualification.
 
+## Resumed diagnostic split checkpoint
+
+The campaign resumed at commit
+`338b18f0e075b1ddf842acf67aca8f12762958b4`.  Production cache rebuilds now
+honor `include_diagnostics=false` by skipping reference Ricci; checked cache
+validation still requests and verifies it.  Aurora jobs `8773745` and
+`8774035` established the call-count distinction:
+
+| Case | Provider builds | Ricci builds |
+|---|---:|---:|
+| Static profile with initialization diagnostics | 1 | 1 |
+| Time-dependent checked/oracle cycle | 5 | 5 |
+| Time-dependent validation-off production cycle | 5 | 2 |
+
+The two production Ricci calls are initial and terminal history, not RK-stage
+cache updates.  The checked full-output stationary result remained
+`9.992007e-16` in field Linf and `2.461044e-14` in native-constraint Linf; the
+time-dependent production cycle also ended at `9.992007e-16`.  No Level Zero
+fault or nonfinite state occurred.  The measured bounds-off rate was
+`3.550192e5` active zone-cycles/s, but the `1.1702x` difference from the prior
+job is not assigned to this setup-only change because the timed scalar-source
+loop is unchanged.
+
+Both PBS jobs completed their numerical payloads but returned status 1 in
+offline postprocessing: the first assertion ignored the initialization
+diagnostic and the follow-up ignored terminal history.  The corrected compact
+table and complete provenance are under
+`docs/fo_gh_artifacts/ref_gh_pvc_performance_20260821/diagnostic_split_8773745_8774035/`.
+No campaign job remains queued or running.
+
 ## Outcome
 
 The equation-preserving static-reference validity change raised the matched

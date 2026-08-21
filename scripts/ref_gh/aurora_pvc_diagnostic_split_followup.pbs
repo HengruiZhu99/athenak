@@ -1,0 +1,111 @@
+#!/bin/bash -l
+# Focused follow-up proving that production reference updates skip diagnostic Ricci.
+# Reuses the exact checked/performance binaries from job 8773745.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:15:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_diag_split
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_performance_convergence_20260821
+SRC="${ROOT}/athenak"
+BASE_JOB=8773745.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+BASE="${ROOT}/runs/diagnostic_split_${BASE_JOB}"
+CHECKED_BUILD="${ROOT}/build_diagnostic_split_checked_${BASE_JOB}"
+PERF_BUILD="${ROOT}/build_diagnostic_split_performance_${BASE_JOB}"
+OUT="${ROOT}/runs/diagnostic_split_followup_${PBS_JOBID}"
+BINDER="${SRC}/scripts/ref_gh/aurora_gpu_tile_slot.sh"
+TIME_INPUT="${SRC}/tst/inputs/ref_gh_time_dependent_reference.athinput"
+TOOL="${BASE}/librefgh_kokkos_kernel_timer.so"
+: "${EXPECTED_COMMIT:?submit with qsub -v EXPECTED_COMMIT=<full-sha>}"
+
+mkdir -p "${OUT}/time_dependent_production"
+cd "${OUT}"
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain)"
+test -x "${CHECKED_BUILD}/src/athena"
+test -x "${PERF_BUILD}/src/athena"
+test -s "${TOOL}"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" submodule status
+  sha256sum "${CHECKED_BUILD}/src/athena" "${PERF_BUILD}/src/athena"
+  sha256sum "${TIME_INPUT}" "${TOOL}" "$0"
+  cat "${BASE}/throughput.tsv"
+} > provenance.txt
+
+cd "${OUT}/time_dependent_production"
+KOKKOS_TOOLS_LIBS="${TOOL}" \
+REF_GH_KERNEL_TIMING_FILE="${OUT}/time_dependent_production_kernel_timing.tsv" \
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 "${PERF_BUILD}/src/athena" -i "${TIME_INPUT}" \
+  job/basename=ref_gh_time_dependent_production \
+  ref_gh/validate_reference_cache=false time/ndiag=100 output1/dt=100 \
+  > ref_gh_time_dependent_production.log 2>&1
+grep -q 'reference-GH Minkowski evolution passed' \
+  ref_gh_time_dependent_production.log
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  ref_gh_time_dependent_production.log
+
+cd "${OUT}"
+python3 - "${BASE}" <<'PY' > diagnostic_split.tsv
+import csv
+import pathlib
+import sys
+
+base = pathlib.Path(sys.argv[1])
+
+def calls(path, target):
+    with pathlib.Path(path).open() as stream:
+        rows = {row["kernel"]: int(row["calls"])
+                for row in csv.DictReader(stream, delimiter="\t")}
+    return rows.get(target, 0)
+
+provider = "ref_gh reference provider profiles"
+ricci = "ref_gh reference Ricci"
+static_provider = calls(base / "static_kernel_timing.tsv", provider)
+static_ricci = calls(base / "static_kernel_timing.tsv", ricci)
+checked_dynamic_provider = calls(base / "time_dependent_kernel_timing.tsv", provider)
+checked_dynamic_ricci = calls(base / "time_dependent_kernel_timing.tsv", ricci)
+production_dynamic_provider = calls(
+    "time_dependent_production_kernel_timing.tsv", provider)
+production_dynamic_ricci = calls(
+    "time_dependent_production_kernel_timing.tsv", ricci)
+
+assert static_provider == 1
+assert static_ricci == 1
+assert checked_dynamic_provider == 5
+assert checked_dynamic_ricci == 5
+assert production_dynamic_provider == 5
+assert 0 < production_dynamic_ricci < production_dynamic_provider
+
+print("case\tprovider_builds\tricci_builds")
+print(f"static_profile\t{static_provider}\t{static_ricci}")
+print(f"time_dependent_checked_oracle\t{checked_dynamic_provider}\t{checked_dynamic_ricci}")
+print(f"time_dependent_production\t{production_dynamic_provider}\t{production_dynamic_ricci}")
+PY
+
+sha256sum provenance.txt diagnostic_split.tsv \
+  time_dependent_production_kernel_timing.tsv \
+  time_dependent_production/ref_gh_time_dependent_production.log \
+  > compact_sha256.txt
