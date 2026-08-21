@@ -192,6 +192,44 @@ bool CheckAxisStateAndRhsRegularity() {
       return false;
     }
   }
+
+  // The register-local projection used by native-VC Cartoon KO must enforce
+  // the same representation and leave every unconstrained component intact.
+  Kokkos::View<Real *> local_projection("local axis projection", components);
+  Kokkos::parallel_for(
+      "project local axis values", Kokkos::RangePolicy<DevExeSpace>(0, 1),
+      KOKKOS_LAMBDA(const int) {
+        Real values[components];
+        for (int component = 0; component < components; ++component) {
+          values[component] = static_cast<Real>(17 * (component + 1)) + 0.25;
+        }
+        z4c::ProjectVertexAxisZ4cValues(values);
+        for (int component = 0; component < components; ++component) {
+          local_projection(component) = values[component];
+        }
+      });
+  Kokkos::fence();
+  const auto local_host =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), local_projection);
+  const Real local_metric_average =
+      0.5 * ((17.0 * (grr + 1) + 0.25) + (17.0 * (gyy + 1) + 0.25));
+  const Real local_atilde_average =
+      0.5 * ((17.0 * (arr + 1) + 0.25) + (17.0 * (ayy + 1) + 0.25));
+  if (Bits(local_host(grr)) != Bits(local_metric_average) ||
+      Bits(local_host(gyy)) != Bits(local_metric_average) ||
+      Bits(local_host(arr)) != Bits(local_atilde_average) ||
+      Bits(local_host(ayy)) != Bits(local_atilde_average)) {
+    return false;
+  }
+  for (int component = 0; component < components; ++component) {
+    if (is_zero_component[component]) {
+      if (Bits(local_host(component)) != Bits(0.0)) return false;
+    } else if (component != grr && component != gyy && component != arr &&
+               component != ayy) {
+      const Real expected = static_cast<Real>(17 * (component + 1)) + 0.25;
+      if (Bits(local_host(component)) != Bits(expected)) return false;
+    }
+  }
   return true;
 }
 

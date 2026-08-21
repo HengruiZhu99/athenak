@@ -20,6 +20,7 @@
 #include "mesh/mesh.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/cartoon_derivatives.hpp"
+#include "z4c/cartoon_vertex_axis.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_symmetry.hpp"
 #include "z4c/tmunu.hpp"
@@ -962,44 +963,86 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   Real &diss = pmy_pack->pz4c->diss;
   auto &u0 = pmy_pack->pz4c->u0;
   auto &u_rhs = pmy_pack->pz4c->u_rhs;
-  par_for("K-O Dissipation",
-  DevExeSpace(),0,nmb-1,0,nz4c-1,ks,ke,js,je,is,ie,
-  KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
-    Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
-    auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-        idx, size.d_view, nx1, is, m, k, j, i);
-    // Keep the established multiply-then-accumulate order for Cartesian roundoff.
-    for (int direction = 0; direction < 3; ++direction) {
-      if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
-        const Real rhs_before = u_rhs(m,n,k,j,i);
-        u_rhs(m,n,k,j,i) +=
-            derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
-        const Real contribution = u_rhs(m,n,k,j,i) - rhs_before;
-        const int term = direction == 0 ? chi_ko_rho
-                         : (direction == 1 ? chi_ko_z : chi_ko_y);
-        const int cumulative = direction == 0 ? chi_rhs_after_ko_rho
-                               : (direction == 1 ? chi_rhs_after_ko_z
-                                                 : chi_rhs_after_ko_y);
-        chi_provenance_terms(m, term, k, j, i) = contribution;
-        chi_provenance_terms(m, cumulative, k, j, i) = u_rhs(m,n,k,j,i);
-      } else {
-        u_rhs(m,n,k,j,i) +=
-            derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
+  if constexpr (std::is_same_v<Centering, VertexCenteredZ4c> &&
+                std::is_same_v<Symmetry, CartoonSO2>) {
+    // The non-KO continuum RHS must already preserve the evolved-axis
+    // subspace. This strict pre-gate prevents the KO projection below from
+    // hiding a geometric, gauge, or boundary inconsistency.
+    ApplyVertexAxisRegularity(u_rhs, stage, "pre_ko_rhs");
+    auto &mb_bcs = pmy_pack->pmb->mb_bcs;
+    par_for("SO2-invariant vertex K-O dissipation", DevExeSpace(), 0, nmb - 1,
+            ks, ke, js, je, is, ie,
+        KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+          Real values[Z4c::nz4c];
+          Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
+                        1 / size.d_view(m).dx3};
+          auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
+              idx, size.d_view, nx1, is, m, k, j, i);
+          for (int n = 0; n < Z4c::nz4c; ++n) {
+            values[n] = u_rhs(m, n, k, j, i);
+            for (int direction = 0; direction < 3; ++direction) {
+              const Real before = values[n];
+              values[n] += derivatives.DirectionalComponentDissipation(
+                               direction, n, u0) * diss;
+              if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
+                const int term = direction == 0 ? chi_ko_rho
+                                 : (direction == 1 ? chi_ko_z : chi_ko_y);
+                const int cumulative = direction == 0 ? chi_rhs_after_ko_rho
+                                       : (direction == 1 ? chi_rhs_after_ko_z
+                                                         : chi_rhs_after_ko_y);
+                chi_provenance_terms(m, term, k, j, i) = values[n] - before;
+                chi_provenance_terms(m, cumulative, k, j, i) = values[n];
+              }
+            }
+          }
+          if (i == is &&
+              mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis) {
+            ProjectVertexAxisZ4cValues(values);
+          }
+          for (int n = 0; n < Z4c::nz4c; ++n) {
+            u_rhs(m, n, k, j, i) = values[n];
+          }
+          if (collect_chi_provenance) {
+            chi_provenance_terms(m, chi_rhs_after_ko, k, j, i) =
+                values[Z4c::I_Z4C_CHI];
+          }
+        });
+  } else {
+    par_for("K-O Dissipation",
+    DevExeSpace(),0,nmb-1,0,nz4c-1,ks,ke,js,je,is,ie,
+    KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
+      Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+      auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
+          idx, size.d_view, nx1, is, m, k, j, i);
+      // Keep the established multiply-then-accumulate order for Cartesian roundoff.
+      for (int direction = 0; direction < 3; ++direction) {
+        if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
+          const Real rhs_before = u_rhs(m,n,k,j,i);
+          u_rhs(m,n,k,j,i) +=
+              derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
+          const Real contribution = u_rhs(m,n,k,j,i) - rhs_before;
+          const int term = direction == 0 ? chi_ko_rho
+                           : (direction == 1 ? chi_ko_z : chi_ko_y);
+          const int cumulative = direction == 0 ? chi_rhs_after_ko_rho
+                                 : (direction == 1 ? chi_rhs_after_ko_z
+                                                   : chi_rhs_after_ko_y);
+          chi_provenance_terms(m, term, k, j, i) = contribution;
+          chi_provenance_terms(m, cumulative, k, j, i) = u_rhs(m,n,k,j,i);
+        } else {
+          u_rhs(m,n,k,j,i) +=
+              derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
+        }
       }
-    }
-    if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
-      chi_provenance_terms(m, chi_rhs_after_ko, k, j, i) = u_rhs(m,n,k,j,i);
-    }
-  });
-
-  // The rho=0 vertex is evolved.  Project only its exact SO(2) identities on the
-  // complete RHS before any RK stage consumes it.
-  ApplyVertexAxisRegularity(u_rhs, stage, "post_rhs");
+      if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
+        chi_provenance_terms(m, chi_rhs_after_ko, k, j, i) = u_rhs(m,n,k,j,i);
+      }
+    });
+  }
 
   // This intentionally expensive host-side census is default-off and exists only for
-  // bounded causal audits.  It reports state and complete-RHS maxima after every RK
-  // stage without changing either array.  Restricting the census to a physical
-  // meridional tube keeps the evidence focused on the axis-local failure region.
+  // bounded causal audits.  It reports the pre-projection complete RHS so the
+  // exact axis correction remains attributable. Restricting the census to a
+  // physical meridional tube keeps the evidence focused on the failure region.
   if (collect_rhs_stage_diagnostics) {
     Kokkos::fence();
     auto host_u0 = Kokkos::create_mirror_view_and_copy(HostMemSpace(), u0);
@@ -1039,12 +1082,14 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
       for (int m = 0; m < nmb; ++m) {
         for (int k = ks; k <= ke; ++k) {
           for (int j = js; j <= je; ++j) {
-            const Real z = CellCenterX(j - js, nx2, host_size(m).x2min,
-                                       host_size(m).x2max);
+            const Real z = Z4cPointX<Centering>(j - js, nx2,
+                                                host_size(m).x2min,
+                                                host_size(m).x2max);
             if (fabs(z) > opt.rhs_stage_diagnostics_abs_z_max) continue;
             for (int i = is; i <= ie; ++i) {
-              const Real rho = CellCenterX(i - is, nx1, host_size(m).x1min,
-                                           host_size(m).x1max);
+              const Real rho = Z4cPointX<Centering>(i - is, nx1,
+                                                    host_size(m).x1min,
+                                                    host_size(m).x1max);
               if (rho < 0.0 || rho > opt.rhs_stage_diagnostics_rho_max) continue;
               ++selected_cells;
               const Real state = host_u0(m, n, k, j, i);
@@ -1134,12 +1179,14 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
       for (int m = 0; m < nmb; ++m) {
         for (int k = ks; k <= ke; ++k) {
           for (int j = js; j <= je; ++j) {
-            const Real z = CellCenterX(j - js, nx2, host_size(m).x2min,
-                                       host_size(m).x2max);
+            const Real z = Z4cPointX<Centering>(j - js, nx2,
+                                                host_size(m).x2min,
+                                                host_size(m).x2max);
             if (fabs(z) > opt.rhs_stage_diagnostics_abs_z_max) continue;
             for (int i = is; i <= ie; ++i) {
-              const Real rho = CellCenterX(i - is, nx1, host_size(m).x1min,
-                                           host_size(m).x1max);
+              const Real rho = Z4cPointX<Centering>(i - is, nx1,
+                                                    host_size(m).x1min,
+                                                    host_size(m).x1max);
               if (rho < 0.0 || rho > opt.rhs_stage_diagnostics_rho_max) continue;
               ++selected_cells;
               const Real value = host_terms(m, term, k, j, i);
@@ -1172,7 +1219,92 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
                         << " i=" << term_i << " j=" << term_j
                         << " rho=" << term_rho << " z=" << term_z << '\n';
     }
+
+    // The VC Cartoon axis projection compares A_rhorho with the suppressed
+    // A_yy component.  Preserve a paired, same-point decomposition so a
+    // rejected correction can be attributed to geometry, trace subtraction,
+    // nonlinear/Lie terms, or KO without relying on independent maxima.
+    if constexpr (std::is_same_v<Centering, VertexCenteredZ4c> &&
+                  std::is_same_v<Symmetry, CartoonSO2>) {
+      Real selected_abs = 0.0;
+      int selected_m = -1;
+      int selected_j = -1;
+      for (int m = 0; m < nmb; ++m) {
+        if (host_size(m).x1min != 0.0) continue;
+        for (int j = js; j <= je; ++j) {
+          const Real z = Z4cPointX<Centering>(j - js, nx2,
+                                              host_size(m).x2min,
+                                              host_size(m).x2max);
+          if (fabs(z) > opt.rhs_stage_diagnostics_abs_z_max) continue;
+          const Real difference =
+              host_rhs(m, Z4c::I_Z4C_AXX, ks, j, is) -
+              host_rhs(m, Z4c::I_Z4C_AZZ, ks, j, is);
+          if (isfinite(difference) && fabs(difference) >= selected_abs) {
+            selected_abs = fabs(difference);
+            selected_m = m;
+            selected_j = j;
+          }
+        }
+      }
+      if (selected_m >= 0) {
+        constexpr int pair_rhorho = 0;
+        constexpr int pair_suppressed = 5;
+        constexpr int bases[] = {0, 6, 12, 18, 36, 42, 48, 54};
+        const int m = selected_m;
+        const int j = selected_j;
+        const Real z = Z4cPointX<Centering>(j - js, nx2,
+                                            host_size(m).x2min,
+                                            host_size(m).x2max);
+        Real main_difference = 0.0;
+        for (int family = 0; family < 4; ++family) {
+          main_difference +=
+              host_terms(m, bases[family] + pair_rhorho, ks, j, is) -
+              host_terms(m, bases[family] + pair_suppressed, ks, j, is);
+        }
+        const Real full_difference =
+            host_rhs(m, Z4c::I_Z4C_AXX, ks, j, is) -
+            host_rhs(m, Z4c::I_Z4C_AZZ, ks, j, is);
+        diagnostic_output << std::setprecision(17)
+                          << "Z4C_AXIS_RHS_PAIR_DIAGNOSTIC rank="
+                          << global_variable::my_rank
+                          << " cycle=" << pmy_pack->pmesh->ncycle
+                          << " time=" << time << " stage=" << stage
+                          << " gid=" << host_gid(m) << " z=" << z
+                          << " rhs_difference=" << full_difference
+                          << " geometric_difference="
+                          << host_terms(m, bases[0] + pair_rhorho, ks, j, is) -
+                                 host_terms(m, bases[0] + pair_suppressed, ks, j, is)
+                          << " trace_difference="
+                          << host_terms(m, bases[1] + pair_rhorho, ks, j, is) -
+                                 host_terms(m, bases[1] + pair_suppressed, ks, j, is)
+                          << " nonlinear_difference="
+                          << host_terms(m, bases[2] + pair_rhorho, ks, j, is) -
+                                 host_terms(m, bases[2] + pair_suppressed, ks, j, is)
+                          << " lie_difference="
+                          << host_terms(m, bases[3] + pair_rhorho, ks, j, is) -
+                                 host_terms(m, bases[3] + pair_suppressed, ks, j, is)
+                          << " hessian_difference="
+                          << host_terms(m, bases[4] + pair_rhorho, ks, j, is) -
+                                 host_terms(m, bases[4] + pair_suppressed, ks, j, is)
+                          << " ricci_tensor_difference="
+                          << host_terms(m, bases[5] + pair_rhorho, ks, j, is) -
+                                 host_terms(m, bases[5] + pair_suppressed, ks, j, is)
+                          << " trace_lapse_difference="
+                          << host_terms(m, bases[6] + pair_rhorho, ks, j, is) -
+                                 host_terms(m, bases[6] + pair_suppressed, ks, j, is)
+                          << " trace_ricci_difference="
+                          << host_terms(m, bases[7] + pair_rhorho, ks, j, is) -
+                                 host_terms(m, bases[7] + pair_suppressed, ks, j, is)
+                          << " ko_difference=" << full_difference - main_difference
+                          << '\n';
+      }
+    }
   }
+
+  // The rho=0 vertex is evolved.  Project only its exact SO(2) identities on the
+  // complete RHS before any RK stage consumes it.  In diagnostic mode the host
+  // census above observes, but does not modify, the pre-projection state first.
+  ApplyVertexAxisRegularity(u_rhs, stage, "post_rhs");
 
   return TaskStatus::complete;
 }

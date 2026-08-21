@@ -22,6 +22,34 @@ struct VertexAxisCorrection {
   int nonfinite = 0;
 };
 
+//! Project one local packed Z4c vector into the exact SO(2) axis subspace.
+//! This is used when a component-wise operator (notably meridional KO) is
+//! assembled in registers before it is written to the evolved axis vertex.
+template <int N>
+KOKKOS_INLINE_FUNCTION void ProjectVertexAxisZ4cValues(Real (&values)[N]) {
+  static_assert(N >= static_cast<int>(Z4cStateComponent::count));
+  const int metric_rr = static_cast<int>(Z4cStateComponent::g_rhorho);
+  const int metric_yy = static_cast<int>(Z4cStateComponent::g_yy);
+  const int atilde_rr = static_cast<int>(Z4cStateComponent::a_rhorho);
+  const int atilde_yy = static_cast<int>(Z4cStateComponent::a_yy);
+  const Real metric_average = 0.5 * (values[metric_rr] + values[metric_yy]);
+  const Real atilde_average = 0.5 * (values[atilde_rr] + values[atilde_yy]);
+  values[metric_rr] = metric_average;
+  values[metric_yy] = metric_average;
+  values[atilde_rr] = atilde_average;
+  values[atilde_yy] = atilde_average;
+  constexpr Z4cStateComponent zero_components[] = {
+      Z4cStateComponent::g_rhoz, Z4cStateComponent::g_rhoy,
+      Z4cStateComponent::g_zy, Z4cStateComponent::a_rhoz,
+      Z4cStateComponent::a_rhoy, Z4cStateComponent::a_zy,
+      Z4cStateComponent::gamma_rho, Z4cStateComponent::gamma_y,
+      Z4cStateComponent::beta_rho, Z4cStateComponent::beta_y,
+      Z4cStateComponent::b_rho, Z4cStateComponent::b_y};
+  for (const auto component : zero_components) {
+    values[static_cast<int>(component)] = 0.0;
+  }
+}
+
 template <typename Array5D>
 KOKKOS_INLINE_FUNCTION void SetVertexAxisComponent(
     const Array5D &state, const int meshblock, const int k, const int j,
