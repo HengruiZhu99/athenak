@@ -57,7 +57,7 @@ enum ReferenceWorkspaceComponent : int {
   kRefWorkspaceMetricJet = 0,                 // 4 x 4 x 21
   kRefWorkspaceInverseMetricJet = kRefWorkspaceMetricJet + 336,
   kRefWorkspaceCoframeDerivative = 0,         // 4 x 4 x 4 (reuse)
-  kRefWorkspaceSpinCoordinateDerivative = 64,// 4 x 4 x 4 x 4 (reuse)
+  kRefWorkspaceSpinCoordinateDerivative = 64,// 4 x 6 x 4 (reuse)
   kReferenceWorkspaceSize = kRefWorkspaceInverseMetricJet + 80
 };
 
