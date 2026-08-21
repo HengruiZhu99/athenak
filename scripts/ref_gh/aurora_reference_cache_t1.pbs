@@ -1,0 +1,91 @@
+#!/bin/bash -l
+# Three-resolution stationary-trumpet t=1 gate after the Ref-GH cache qualification.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_cache_t1
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820
+SRC="${ROOT}/athenak"
+BUILD="${ROOT}/build_sycl_pvc_8770089.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
+BINDER="${SRC}/scripts/ref_gh/aurora_gpu_tile_slot.sh"
+OUT="${ROOT}/runs/cache_t1_${PBS_JOBID}"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  git -C "${SRC}" rev-parse HEAD
+  git -C "${SRC}" status --short
+  git -C "${SRC}" submodule status
+  sha256sum "${EXE}"
+  icpx --version | head -1
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+} > provenance.txt
+
+run_case() {
+  local slot="$1"
+  local label="$2"
+  local ncell="$3"
+  local mbcell="$4"
+  local work="${OUT}/${label}"
+  mkdir -p "${work}"
+  cd "${work}"
+  /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+    "${BINDER}" "${slot}" "${EXE}" -i "${INPUT}" \
+    job/basename="${label}" \
+    mesh/nx1="${ncell}" mesh/nx2="${ncell}" mesh/nx3="${ncell}" \
+    meshblock/nx1="${mbcell}" meshblock/nx2="${mbcell}" meshblock/nx3="${mbcell}" \
+    ref_gh/debug_task_fences=false \
+    ref_gh/validate_reference_cache=false \
+    output1/dt=0.1 output2/dt=0.5 \
+    time/nlim=-1 time/tlim=1.0 \
+    > "${label}.log" 2>&1
+  test -s "${label}.ref_gh.hst"
+  awk 'BEGIN {positive=0; reached=0} !/^#/ {if ($1 > 0) positive=1; if ($1 >= 0.999999999) reached=1} END {exit !(positive && reached)}' \
+    "${label}.ref_gh.hst"
+  ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+    "${label}.log"
+}
+
+run_case 0.0 ref_gh_stationary_trumpet_dx16_t1 64 32 &
+pid16=$!
+run_case 0.1 ref_gh_stationary_trumpet_dx24_t1 96 48 &
+pid24=$!
+run_case 1.0 ref_gh_stationary_trumpet_dx32_t1 128 64 &
+pid32=$!
+
+status=0
+wait "${pid16}" || status=1
+wait "${pid24}" || status=1
+wait "${pid32}" || status=1
+
+for label in ref_gh_stationary_trumpet_dx16_t1 \
+             ref_gh_stationary_trumpet_dx24_t1 \
+             ref_gh_stationary_trumpet_dx32_t1; do
+  log="${OUT}/${label}/${label}.log"
+  printf '%s\t' "${label}"
+  grep 'reference-GH stationary trumpet:' "${log}" | tail -1 || true
+done > case_status.tsv
+
+exit "${status}"
