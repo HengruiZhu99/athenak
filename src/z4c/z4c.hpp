@@ -359,6 +359,7 @@ class Z4c {
   void FillBuiltInPhysicalBoundaryGhosts();
   TaskStatus ApplyPhysicalBCs(Driver *d, int stage);
   TaskStatus EnforceAlgConstr(Driver *d, int stage);
+  TaskStatus FinalizeVertexAcceptedState(Driver *d, int stage);
 
   TaskStatus ConvertZ4cToADM(Driver *d, int stage);
   TaskStatus UpdateExcisionMasks(Driver *d, int stage);

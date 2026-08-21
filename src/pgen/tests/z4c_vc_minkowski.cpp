@@ -9,13 +9,48 @@
 #include <iostream>
 
 #include "athena.hpp"
+#include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "z4c/z4c.hpp"
 
+namespace {
+
+void Z4cVcMinkowskiRefinementSchedule(MeshBlockPack *pack) {
+  Mesh *mesh = pack->pmesh;
+  auto &flags = mesh->pmr->refine_flag;
+  const int first_gid = mesh->gids_eachrank[global_variable::my_rank];
+  const int target_lx1 = 0;
+  const int target_lx2 = mesh->nmb_rootx2 > 1 ? 1 : 0;
+  for (int m = 0; m < pack->nmb_thispack; ++m) {
+    const int gid = first_gid + m;
+    const auto &location = mesh->lloc_eachmb[gid];
+    int flag = 0;
+    if (mesh->ncycle == 1 && location.level == mesh->root_level &&
+        location.lx1 == target_lx1 && location.lx2 == target_lx2 &&
+        location.lx3 == 0) {
+      flag = 1;
+    } else if (mesh->ncycle == 2 &&
+               location.level == mesh->root_level + 1 &&
+               (location.lx1 >> 1) == target_lx1 &&
+               (location.lx2 >> 1) == target_lx2 &&
+               location.lx3 == 0) {
+      flag = -1;
+    }
+    flags.h_view(gid) = flag;
+  }
+  flags.template modify<HostMemSpace>();
+  flags.template sync<DevExeSpace>();
+}
+
+}  // namespace
+
 void ProblemGenerator::Z4cVcMinkowski(ParameterInput *pin,
                                       const bool restart) {
+  if (pin->GetOrAddBoolean("problem", "exercise_dynamic_vc_amr", false)) {
+    user_ref_func = Z4cVcMinkowskiRefinementSchedule;
+  }
   if (restart) return;
   MeshBlockPack *pack = pmy_mesh_->pmb_pack;
   if (pack->pz4c == nullptr || pack->padm == nullptr ||

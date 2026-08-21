@@ -181,8 +181,21 @@ void MeshRefinement::DerefineVCSameRank(DvceArray5D<Real> &a,
 
   for (int oldm = first_old; oldm <= last_old; ++oldm) {
     if (refine_flag.h_view(oldm) >= -1) continue;
+    const auto &lower_child = pmy_mesh->lloc_eachmb[oldm];
+    if ((lower_child.lx1 & 1) != 0 ||
+        (two_d && (lower_child.lx2 & 1) != 0) ||
+        (three_d && (lower_child.lx3 & 1) != 0)) {
+      continue;
+    }
     const int newm = oldtonew[oldm];
     if (new_rank_eachmb[newm] != global_variable::my_rank) continue;
+    bool all_siblings_local = oldm + nleaf - 1 <= last_old;
+    for (int child = 0; child < nleaf && all_siblings_local; ++child) {
+      all_siblings_local =
+          pmy_mesh->rank_eachmb[oldm + child] == global_variable::my_rank;
+    }
+    // A family split across ranks is reconstructed by the AMR receive/unpack path.
+    if (!all_siblings_local) continue;
     const int destination_m = newm - first_new;
     // Every target node is assigned by one deterministic thread.  At shared sibling
     // planes all available copies are checked and averaged in logical child order.

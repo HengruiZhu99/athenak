@@ -524,6 +524,23 @@ if (Athena_BUILD_UNIT_TESTS)
       NAME athena.z4c_vc_boundary_indices
       COMMAND athena_z4c_vertex_boundary_indices_unit_test)
 
+  add_test(
+      NAME athena.z4c_vc_task_order
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_task_order_static_test.py)
+
+  add_test(
+      NAME athena.z4c_vc_dynamic_amr
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py
+      --athena $<TARGET_FILE:athena>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_dynamic_amr_test)
+  set_tests_properties(
+      athena.z4c_vc_dynamic_amr PROPERTIES TIMEOUT 60 LABELS "z4c;vertex;amr")
+
   add_executable(
       athena_z4c_vertex_amr_unit_test
       tst/unit/z4c/z4c_vertex_amr_test.cpp)

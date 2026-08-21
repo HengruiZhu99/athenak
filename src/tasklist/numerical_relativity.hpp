@@ -73,6 +73,7 @@ enum TaskName {
   Z4c_Prolong,
   Z4c_AlgC,
   Z4c_AxisGhostsPost,
+  Z4c_VCFinalize,
   Z4c_Z4c2ADM,
   Z4c_Excise,
   Z4c_ADMC,

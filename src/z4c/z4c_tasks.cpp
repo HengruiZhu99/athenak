@@ -79,28 +79,46 @@ void Z4c::QueueZ4cTasks() {
                  {Z4c_CalcRHS});
   pnr->QueueTask(&Z4c::ExpRKUpdate, this, Z4c_ExplRK, "Z4c_ExplRK", Task_Run,
                  {Z4c_SomBC},{MHD_EField});
+  const bool vertex_centered =
+      layout.centering == Z4cGridCentering::vertex;
   if (pmy_pack->pz4c->opt.floor_chi) {
     pnr->QueueTask(&Z4c::Z4cFloorChi, this, Z4c_ChiFloor, "Z4c_ChiFloor", Task_Run,
                    {Z4c_ExplRK});
-    pnr->QueueTask(&Z4c::EnforceAlgConstr, this, Z4c_AlgC, "Z4c_AlgC", Task_Run,
-                   {Z4c_ChiFloor});
-  } else {
-    pnr->QueueTask(&Z4c::EnforceAlgConstr, this, Z4c_AlgC, "Z4c_AlgC", Task_Run,
-                   {Z4c_ExplRK});
   }
-  // At the accepted final stage EnforceAlgConstr projects active cells before
-  // any coarse representation or ghost state is derived from them.  It is a
-  // no-op at intermediate vacuum stages, retaining final-stage-only policy.
-  pnr->QueueTask(&Z4c::RestrictU, this, Z4c_RestU, "Z4c_RestU",
-                 Task_Run, {Z4c_AlgC});
+  if (vertex_centered) {
+    // Native VC first reconciles shared nodes and builds a complete unprojected
+    // stage boundary state.  The accepted final stage is projected and rebuilt
+    // once more by FinalizeVertexAcceptedState below.
+    pnr->QueueTask(&Z4c::RestrictU, this, Z4c_RestU, "Z4c_RestU", Task_Run,
+                   pmy_pack->pz4c->opt.floor_chi
+                       ? std::vector<TaskName>{Z4c_ChiFloor}
+                       : std::vector<TaskName>{Z4c_ExplRK});
+  } else {
+    if (pmy_pack->pz4c->opt.floor_chi) {
+      pnr->QueueTask(&Z4c::EnforceAlgConstr, this, Z4c_AlgC, "Z4c_AlgC",
+                     Task_Run, {Z4c_ChiFloor});
+    } else {
+      pnr->QueueTask(&Z4c::EnforceAlgConstr, this, Z4c_AlgC, "Z4c_AlgC",
+                     Task_Run, {Z4c_ExplRK});
+    }
+    pnr->QueueTask(&Z4c::RestrictU, this, Z4c_RestU, "Z4c_RestU",
+                   Task_Run, {Z4c_AlgC});
+  }
   pnr->QueueTask(&Z4c::SendU, this, Z4c_SendU, "Z4c_SendU", Task_Run, {Z4c_RestU});
   pnr->QueueTask(&Z4c::RecvU, this, Z4c_RecvU, "Z4c_RecvU", Task_Run, {Z4c_SendU});
   pnr->QueueTask(&Z4c::ApplyPhysicalBCs, this, Z4c_BCS, "Z4c_BCS", Task_Run, {Z4c_RecvU});
   pnr->QueueTask(&Z4c::Prolongate, this, Z4c_Prolong, "Z4c_Prolong", Task_Run, {Z4c_BCS});
   pnr->QueueTask(&Z4c::FillAxisParityGhosts, this, Z4c_AxisGhostsPost,
                  "Z4c_AxisGhostsPost", Task_Run, {Z4c_Prolong});
-  pnr->QueueTask(&Z4c::ConvertZ4cToADM, this, Z4c_Z4c2ADM, "Z4c_Z4c2ADM",
-                 Task_Run, {Z4c_AxisGhostsPost});
+  if (vertex_centered) {
+    pnr->QueueTask(&Z4c::FinalizeVertexAcceptedState, this, Z4c_VCFinalize,
+                   "Z4c_VCFinalize", Task_Run, {Z4c_AxisGhostsPost});
+    pnr->QueueTask(&Z4c::ConvertZ4cToADM, this, Z4c_Z4c2ADM, "Z4c_Z4c2ADM",
+                   Task_Run, {Z4c_VCFinalize});
+  } else {
+    pnr->QueueTask(&Z4c::ConvertZ4cToADM, this, Z4c_Z4c2ADM, "Z4c_Z4c2ADM",
+                   Task_Run, {Z4c_AxisGhostsPost});
+  }
   if (pmy_pack->pdyngr != nullptr) {
     pnr->QueueTask(&Z4c::UpdateExcisionMasks, this, Z4c_Excise, "Z4c_Excise", Task_Run,
                    {Z4c_Z4c2ADM}, {Z4c_FastFlow});
@@ -495,6 +513,46 @@ TaskStatus Z4c::EnforceAlgConstr(Driver *pdrive, int stage) {
   if (pmy_pack->pdyngr != nullptr || stage == pdrive->nexp_stages) {
     AlgConstr(pmy_pack, pdrive, stage);
   }
+  return TaskStatus::complete;
+}
+
+//----------------------------------------------------------------------------------------
+//! \brief Project the accepted native-VC state only after its first canonical
+//! shared-node synchronization, then rebuild every derived coarse/ghost value.
+
+TaskStatus Z4c::FinalizeVertexAcceptedState(Driver *pdrive, int stage) {
+  if (layout.centering != Z4cGridCentering::vertex ||
+      stage != pdrive->nexp_stages) {
+    return TaskStatus::complete;
+  }
+
+  AlgConstr(pmy_pack, pdrive, stage);
+  ApplyVertexAxisRegularity(u0, stage, "post_accepted_projection");
+  vertex_topology_plan->SynchronizeSharedNodes(u0);
+
+  if (pmy_pack->pmesh->multilevel) {
+    pmy_pack->pmesh->pmr->RestrictVC(u0, coarse_u0);
+  }
+
+  // Reuse the same native boundary objects only after the first pass's requests
+  // are complete.  This blocking accepted-state pass runs once per full RK step.
+  (void)pbval_u_vc->ClearSend();
+  (void)pbval_u_vc->ClearRecv();
+  (void)pbval_u_vc->InitRecv(nz4c);
+  (void)pbval_u_vc->PackAndSendVC(u0, coarse_u0);
+  (void)pbval_u_vc->ClearSend();
+  (void)pbval_u_vc->ClearRecv();
+  (void)pbval_u_vc->RecvAndUnpackVC(u0, coarse_u0);
+  vertex_topology_plan->SynchronizeSharedNodes(u0);
+  FillBuiltInPhysicalBoundaryGhosts();
+  if (pmy_pack->pmesh->multilevel) {
+    pbval_u_vc->ProlongateVC(u0, coarse_u0, opt.spatial_order, I_Z4C_CHI);
+  }
+  FillBuiltInPhysicalBoundaryGhosts();
+  ApplyVertexAxisRegularity(u0, stage, "post_accepted_boundary");
+  ReconstructAxisParityGhosts();
+  CheckStateAdmissibility(pdrive, stage,
+                          Z4cStateCheckpoint::post_amr_transfer);
   return TaskStatus::complete;
 }
 
