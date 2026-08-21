@@ -705,9 +705,17 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
   // are derived parity data and are regenerated below before any derivative use.
   // AMR-created blocks use the default false value and continue through the normal
   // initialization path.
-  if (pz4c != nullptr && !preserve_restored_z4c) {
+  const bool rebuild_vertex_restart =
+      pz4c != nullptr && preserve_restored_z4c &&
+      pz4c->layout.centering == z4c::Z4cGridCentering::vertex;
+  if (rebuild_vertex_restart) {
+    // Rank ownership and neighbor lists may differ from the checkpoint writer.
+    // Reconstruct integer node keys/multiplicities before touching duplicate nodes.
+    pz4c->RebuildVertexTopologyPlan();
+  }
+  if (pz4c != nullptr && (!preserve_restored_z4c || rebuild_vertex_restart)) {
     (void) pz4c->RestrictU(this, 0);
-    if (pz4c->amr_jump_diagnostic != nullptr) {
+    if (!preserve_restored_z4c && pz4c->amr_jump_diagnostic != nullptr) {
       pz4c->amr_jump_diagnostic->RecordRestrictionShadow();
       pz4c->amr_jump_diagnostic->RecordT3(
           z4c::AMRJumpWriter::restrict, 0, false);
@@ -717,13 +725,13 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
     (void) pz4c->ClearSend(this, -1);
     (void) pz4c->ClearRecv(this, -1);
     (void) pz4c->RecvU(this, 0);
-    if (pz4c->amr_jump_diagnostic != nullptr) {
+    if (!preserve_restored_z4c && pz4c->amr_jump_diagnostic != nullptr) {
       pz4c->amr_jump_diagnostic->RecordT3(
           z4c::AMRJumpWriter::mpi_receive, 1, false);
     }
     (void) pz4c->Z4cBoundaryRHS(this, 0);
     (void) pz4c->ApplyPhysicalBCs(this, 0);
-    if (pz4c->amr_jump_diagnostic != nullptr) {
+    if (!preserve_restored_z4c && pz4c->amr_jump_diagnostic != nullptr) {
       pz4c->amr_jump_diagnostic->RecordT3(
           z4c::AMRJumpWriter::physical_or_axis_bc, 2, false);
     }
@@ -732,7 +740,7 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
     // then fills coarse/fine side ghosts, after which this built-in-only pass completes
     // physical/coarse-fine corner overlaps.  User boundary callbacks remain single-shot.
     pz4c->FillBuiltInPhysicalBoundaryGhosts();
-    if (pz4c->amr_jump_diagnostic != nullptr) {
+    if (!preserve_restored_z4c && pz4c->amr_jump_diagnostic != nullptr) {
       pz4c->amr_jump_diagnostic->RecordT3(
           z4c::AMRJumpWriter::physical_or_axis_bc, 5, false);
     }

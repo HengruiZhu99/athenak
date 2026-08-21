@@ -276,7 +276,8 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     data_size_ += nout1*nout2*nout3*nforce*sizeof(Real); // forcing
   }
   if (pz4c != nullptr) {
-    data_size_ += nout1*nout2*nout3*nz4c*sizeof(Real);   // z4c u0
+    data_size_ += pz4c->layout.n1*pz4c->layout.n2*pz4c->layout.n3*
+                  nz4c*sizeof(Real);                       // native Z4c u0
   } else if (padm != nullptr) {
     data_size_ += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
   }
@@ -568,7 +569,8 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
   }
 
   if (pz4c != nullptr) {
-    Kokkos::realloc(ccin, nmb, nz4c, nout3, nout2, nout1);
+    Kokkos::realloc(ccin, nmb, nz4c, pz4c->layout.n3,
+                    pz4c->layout.n2, pz4c->layout.n1);
     for (int m=0;  m<noutmbs_max; ++m) {
       // every rank has a MB to read, so read collectively
       if (m < noutmbs_min) {
@@ -603,11 +605,13 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     }
     Kokkos::deep_copy(Kokkos::subview(pz4c->u0, std::make_pair(0,nmb), Kokkos::ALL,
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL), ccin);
-    offset_myrank += nout1*nout2*nout3*nz4c*sizeof(Real);   // z4c u0
+    offset_myrank += pz4c->layout.n1*pz4c->layout.n2*pz4c->layout.n3*
+                     nz4c*sizeof(Real); // native Z4c u0
     myoffset = offset_myrank;
 
-    // We also need to reinitialize the ADM data.
-    pz4c->Z4cToADM(pmy_mesh_->pmb_pack);
+    // Driver initialization rebuilds VC topology/shared/hanging/ghost state before
+    // recomputing native ADM and constraints.  CC follows that same authoritative
+    // post-load conversion point.
   } else if (padm != nullptr) {
     Kokkos::realloc(ccin, nmb, nadm, nout3, nout2, nout1);
     for (int m=0;  m<noutmbs_max; ++m) {

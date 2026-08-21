@@ -117,7 +117,8 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL));
   }
   if (pz4c != nullptr) {
-    Kokkos::realloc(outarray_z4c, nmb, nz4c, nout3, nout2, nout1);
+    Kokkos::realloc(outarray_z4c, nmb, nz4c, pz4c->layout.n3,
+                    pz4c->layout.n2, pz4c->layout.n1);
     Kokkos::deep_copy(outarray_z4c, Kokkos::subview(pz4c->u0, std::make_pair(0,nmb),
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL));
   } else if (padm != nullptr) {
@@ -204,6 +205,11 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   pin->SetReal(out_params.block_name, "last_time", out_params.last_time);
   if (pz4c != nullptr) {
     pm->pmb_pack->z4c_restart_state.config = pm->pmb_pack->z4c_symmetry;
+    pm->pmb_pack->z4c_restart_state.layout = pz4c->layout;
+    pm->pmb_pack->z4c_restart_state.carrier_schema =
+        pz4c->layout.centering == z4c::Z4cGridCentering::cell
+            ? z4c::Z4cRestartState::kLegacyCellCarrierSchema
+            : z4c::Z4cRestartState::kCurrentCarrierSchema;
     z4c::StoreZ4cRestartState(pin, pm->pmb_pack->z4c_restart_state);
     pin->SetString("z4c", "symmetry",
                    z4c::ToString(pm->pmb_pack->z4c_symmetry.mode));
@@ -329,7 +335,8 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     data_size += nout1*nout2*nout3*nforce*sizeof(Real); // forcing
   }
   if (pz4c != nullptr) {
-    data_size += nout1*nout2*nout3*nz4c*sizeof(Real);   // z4c u0
+    data_size += pz4c->layout.n1*pz4c->layout.n2*pz4c->layout.n3*
+                 nz4c*sizeof(Real);                       // native Z4c u0
   } else if (padm != nullptr) {
     data_size += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
   }
@@ -627,7 +634,8 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
         myoffset += data_size;
       }
     }
-    offset_myrank += nout1*nout2*nout3*nz4c*sizeof(Real); // z4c u0
+    offset_myrank += pz4c->layout.n1*pz4c->layout.n2*pz4c->layout.n3*
+                     nz4c*sizeof(Real); // native Z4c u0
     myoffset = offset_myrank;
   } else if (padm != nullptr) {
     for (int m=0;  m<noutmbs_max; ++m) {

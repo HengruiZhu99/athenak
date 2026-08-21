@@ -541,6 +541,32 @@ if (Athena_BUILD_UNIT_TESTS)
   set_tests_properties(
       athena.z4c_vc_dynamic_amr PROPERTIES TIMEOUT 60 LABELS "z4c;vertex;amr")
 
+  add_test(
+      NAME athena.z4c_vc_restart
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_restart_test.py
+      --athena $<TARGET_FILE:athena>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_restart_test)
+  set_tests_properties(
+      athena.z4c_vc_restart PROPERTIES TIMEOUT 90 LABELS "z4c;vertex;restart")
+  if (Athena_ENABLE_MPI)
+    add_test(
+        NAME athena.z4c_vc_restart_rank_change
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_restart_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_restart_rank_change_test
+        --mpiexec ${MPIEXEC_EXECUTABLE}
+        --np-flag=${MPIEXEC_NUMPROC_FLAG})
+    set_tests_properties(
+        athena.z4c_vc_restart_rank_change
+        PROPERTIES TIMEOUT 120 LABELS "z4c;vertex;restart;mpi")
+  endif()
+
   add_executable(
       athena_z4c_vertex_amr_unit_test
       tst/unit/z4c/z4c_vertex_amr_test.cpp)

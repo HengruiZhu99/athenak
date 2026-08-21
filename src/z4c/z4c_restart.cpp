@@ -132,6 +132,40 @@ Z4cRestartResult RequireKeys(ParameterInput *pin,
                      kZ4cRestartBlock + ">/" + key);
     }
   }
+  int carrier_schema = 0;
+  if (!ReadInteger(pin, "carrier_schema", &carrier_schema)) {
+    return InvalidType(pin, "carrier_schema", "integer");
+  }
+  const std::vector<const char *> layout_keys = {
+      "grid_centering", "centering_schema", "nghost", "coarse_nghost",
+      "active_n1", "active_n2", "active_n3", "stored_n1", "stored_n2",
+      "stored_n3", "coarse_active_n1", "coarse_active_n2",
+      "coarse_active_n3", "coarse_stored_n1", "coarse_stored_n2",
+      "coarse_stored_n3"};
+  if (carrier_schema == Z4cRestartState::kCurrentCarrierSchema) {
+    if (enforce_schema_shape) {
+      for (const char *key : layout_keys) {
+        if (!Has(pin, key)) {
+          return Invalid(std::string("partial <") + kZ4cRestartBlock +
+                         ">/carrier_schema=2 centering carrier: missing <" +
+                         kZ4cRestartBlock +
+                         ">/" + key);
+        }
+      }
+    }
+  } else if (carrier_schema == Z4cRestartState::kLegacyCellCarrierSchema) {
+    if (enforce_schema_shape) {
+      for (const char *key : layout_keys) {
+        if (Has(pin, key)) {
+          return Invalid(std::string("legacy <") + kZ4cRestartBlock +
+                         ">/carrier_schema=1 must not contain " + key);
+        }
+      }
+    }
+  } else {
+    return Invalid("unsupported <z4c_restart>/carrier_schema=" +
+                   std::to_string(carrier_schema));
+  }
   int fastflow_schema = 0;
   if (!ReadInteger(pin, "fastflow_schema", &fastflow_schema)) {
     return InvalidType(pin, "fastflow_schema", "integer");
@@ -171,10 +205,6 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
     return InvalidType(pin, KEY, "boolean");              \
   }
   READ_INTEGER("carrier_schema", state->carrier_schema)
-  if (state->carrier_schema != Z4cRestartState::kCurrentCarrierSchema) {
-    return Invalid("unsupported <z4c_restart>/carrier_schema=" +
-                   std::to_string(state->carrier_schema));
-  }
 
   const std::string symmetry = pin->GetString(kZ4cRestartBlock, "symmetry");
   const std::string coordinate_map =
@@ -206,6 +236,71 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
   READ_INTEGER("meshblock_nx2", state->mesh.meshblock_nx2)
   READ_INTEGER("meshblock_nx3", state->mesh.meshblock_nx3)
 
+  struct RestartRegionIndices {
+    int nx1, nx2, nx3, ng;
+  };
+  const int nghost = pin->GetInteger("mesh", "nghost");
+  const RestartRegionIndices restart_indices{
+      state->mesh.meshblock_nx1, state->mesh.meshblock_nx2,
+      state->mesh.meshblock_nx3, nghost};
+  if (state->carrier_schema == Z4cRestartState::kLegacyCellCarrierSchema) {
+    state->config.grid_centering = Z4cGridCentering::cell;
+    state->config.centering_schema = Z4cGridLayout::kCenteringSchema;
+    state->layout = MakeZ4cGridLayout(Z4cGridCentering::cell, restart_indices);
+  } else {
+    const std::string centering =
+        pin->GetString(kZ4cRestartBlock, "grid_centering");
+    if (centering == "cell") {
+      state->config.grid_centering = Z4cGridCentering::cell;
+    } else if (centering == "vertex") {
+      state->config.grid_centering = Z4cGridCentering::vertex;
+    } else {
+      return Invalid("invalid <z4c_restart>/grid_centering='" + centering + "'");
+    }
+    if (state->config.grid_centering != Z4cGridCentering::vertex) {
+      return Invalid("<z4c_restart>/carrier_schema=2 is reserved for native vertex "
+                     "centering; legacy/schema-1 is the immutable cell format");
+    }
+    READ_INTEGER("centering_schema", state->config.centering_schema)
+    if (state->config.centering_schema != Z4cGridLayout::kCenteringSchema) {
+      return Invalid("unsupported <z4c_restart>/centering_schema=" +
+                     std::to_string(state->config.centering_schema));
+    }
+    state->layout = MakeZ4cGridLayout(state->config.grid_centering,
+                                     restart_indices);
+#define REQUIRE_LAYOUT_INTEGER(KEY, EXPECTED)                               \
+    {                                                                       \
+      int stored_layout_value = 0;                                          \
+      if (!ReadInteger(pin, KEY, &stored_layout_value)) {                    \
+        return InvalidType(pin, KEY, "integer");                           \
+      }                                                                     \
+      if (stored_layout_value != (EXPECTED)) {                              \
+        return Invalid(std::string("inconsistent <z4c_restart>/") + KEY +  \
+                       " for declared centering: stored='" +               \
+                       std::to_string(stored_layout_value) + "' expected='" + \
+                       std::to_string(EXPECTED) + "'");                    \
+      }                                                                     \
+    }
+    REQUIRE_LAYOUT_INTEGER("nghost", state->layout.ng)
+    REQUIRE_LAYOUT_INTEGER("coarse_nghost", state->layout.coarse_ng)
+    REQUIRE_LAYOUT_INTEGER("active_n1", state->layout.ie - state->layout.is + 1)
+    REQUIRE_LAYOUT_INTEGER("active_n2", state->layout.je - state->layout.js + 1)
+    REQUIRE_LAYOUT_INTEGER("active_n3", state->layout.ke - state->layout.ks + 1)
+    REQUIRE_LAYOUT_INTEGER("stored_n1", state->layout.n1)
+    REQUIRE_LAYOUT_INTEGER("stored_n2", state->layout.n2)
+    REQUIRE_LAYOUT_INTEGER("stored_n3", state->layout.n3)
+    REQUIRE_LAYOUT_INTEGER("coarse_active_n1",
+                           state->layout.cie - state->layout.cis + 1)
+    REQUIRE_LAYOUT_INTEGER("coarse_active_n2",
+                           state->layout.cje - state->layout.cjs + 1)
+    REQUIRE_LAYOUT_INTEGER("coarse_active_n3",
+                           state->layout.cke - state->layout.cks + 1)
+    REQUIRE_LAYOUT_INTEGER("coarse_stored_n1", state->layout.cn1)
+    REQUIRE_LAYOUT_INTEGER("coarse_stored_n2", state->layout.cn2)
+    REQUIRE_LAYOUT_INTEGER("coarse_stored_n3", state->layout.cn3)
+#undef REQUIRE_LAYOUT_INTEGER
+  }
+
   const bool map_matches_mode =
       (state->config.mode == Z4cSymmetryMode::cartesian3d &&
        state->config.coordinate_map == Z4cCoordinateMap::cartesian_xyz) ||
@@ -225,7 +320,6 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
     return Invalid("collapsed Cartoon geometry requires <z4c_restart>/mesh_nx3=1 "
                    "and <z4c_restart>/meshblock_nx3=1");
   }
-  const int nghost = pin->GetInteger("mesh", "nghost");
   const int expected_order =
       EffectiveZ4cSpatialOrder(state->requested_spatial_order, nghost);
   if (state->effective_spatial_order != expected_order ||
@@ -377,6 +471,25 @@ Z4cRestartResult CompareCarrierParameters(ParameterInput *pin,
   COMPARE_INTEGER("requested_spatial_order", stored.requested_spatial_order)
   COMPARE_INTEGER("effective_spatial_order", stored.effective_spatial_order)
   COMPARE_INTEGER("stencil_width", stored.config.stencil_width)
+  if (stored.carrier_schema == Z4cRestartState::kCurrentCarrierSchema) {
+    COMPARE_STRING("grid_centering",
+                   std::string(ToString(stored.config.grid_centering)))
+    COMPARE_INTEGER("centering_schema", stored.config.centering_schema)
+    COMPARE_INTEGER("nghost", stored.layout.ng)
+    COMPARE_INTEGER("coarse_nghost", stored.layout.coarse_ng)
+    COMPARE_INTEGER("active_n1", stored.layout.ie - stored.layout.is + 1)
+    COMPARE_INTEGER("active_n2", stored.layout.je - stored.layout.js + 1)
+    COMPARE_INTEGER("active_n3", stored.layout.ke - stored.layout.ks + 1)
+    COMPARE_INTEGER("stored_n1", stored.layout.n1)
+    COMPARE_INTEGER("stored_n2", stored.layout.n2)
+    COMPARE_INTEGER("stored_n3", stored.layout.n3)
+    COMPARE_INTEGER("coarse_active_n1", stored.layout.cie - stored.layout.cis + 1)
+    COMPARE_INTEGER("coarse_active_n2", stored.layout.cje - stored.layout.cjs + 1)
+    COMPARE_INTEGER("coarse_active_n3", stored.layout.cke - stored.layout.cks + 1)
+    COMPARE_INTEGER("coarse_stored_n1", stored.layout.cn1)
+    COMPARE_INTEGER("coarse_stored_n2", stored.layout.cn2)
+    COMPARE_INTEGER("coarse_stored_n3", stored.layout.cn3)
+  }
   COMPARE_INTEGER("mesh_nx1", stored.mesh.nx1)
   COMPARE_INTEGER("mesh_nx2", stored.mesh.nx2)
   COMPARE_INTEGER("mesh_nx3", stored.mesh.nx3)
@@ -439,10 +552,19 @@ Z4cRestartState MakeDefaultZ4cRestartState(const Z4cSymmetryConfig &config,
                                            const int meshblock_nx3) {
   Z4cRestartState state;
   state.config = config;
+  state.carrier_schema = config.grid_centering == Z4cGridCentering::cell
+                             ? Z4cRestartState::kLegacyCellCarrierSchema
+                             : Z4cRestartState::kCurrentCarrierSchema;
   state.requested_spatial_order = requested_spatial_order;
   state.effective_spatial_order =
       EffectiveZ4cSpatialOrder(requested_spatial_order, nghost);
   state.mesh = {nx1, nx2, nx3, meshblock_nx1, meshblock_nx2, meshblock_nx3};
+  struct RestartRegionIndices {
+    int nx1, nx2, nx3, ng;
+  };
+  state.layout = MakeZ4cGridLayout(
+      config.grid_centering,
+      RestartRegionIndices{meshblock_nx1, meshblock_nx2, meshblock_nx3, nghost});
   return state;
 }
 
@@ -494,6 +616,9 @@ Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
   const int requested_order = pin->DoesParameterExist("z4c", "spatial_order")
                                   ? pin->GetInteger("z4c", "spatial_order")
                                   : 2 * (nghost - 1);
+  const std::string requested_centering =
+      pin->DoesParameterExist("z4c", "grid_centering")
+          ? pin->GetString("z4c", "grid_centering") : "cell";
   if (requested_symmetry != ToString(snapshot.state.config.mode)) {
     return Conflict("z4c", "symmetry", ToString(snapshot.state.config.mode),
                     requested_symmetry);
@@ -508,6 +633,10 @@ Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
   if (!result.valid) return result;
   result = Compare("z4c", "spatial_order", snapshot.state.requested_spatial_order,
                    requested_order);
+  if (!result.valid) return result;
+  result = Compare("z4c", "grid_centering",
+                   std::string(ToString(snapshot.state.config.grid_centering)),
+                   requested_centering);
   if (!result.valid) return result;
   result = Compare("z4c", "effective_spatial_order",
                    snapshot.state.effective_spatial_order,
@@ -564,6 +693,10 @@ Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
   pin->SetString("z4c", "coordinate_map", ToString(snapshot.state.config.coordinate_map));
   pin->SetInteger("z4c", "symmetry_schema", snapshot.state.config.schema);
   pin->SetInteger("z4c", "spatial_order", snapshot.state.requested_spatial_order);
+  if (snapshot.state.carrier_schema == Z4cRestartState::kCurrentCarrierSchema) {
+    pin->SetString("z4c", "grid_centering",
+                   ToString(snapshot.state.config.grid_centering));
+  }
   pin->SetString("z4c", "restart_symmetry", ToString(snapshot.state.config.mode));
   pin->SetString("z4c", "restart_coordinate_map",
                  ToString(snapshot.state.config.coordinate_map));
@@ -607,6 +740,30 @@ Z4cRestartResult ValidateZ4cRestartBinaryDimensions(
     return Invalid("binary restart is not collapsed in x3 for immutable "
                    "<z4c_restart>/symmetry='cartoon_so2'");
   }
+  struct RestartRegionIndices {
+    int nx1, nx2, nx3, ng;
+  };
+  const auto binary_layout = MakeZ4cGridLayout(
+      stored.config.grid_centering,
+      RestartRegionIndices{meshblock_nx1, meshblock_nx2, meshblock_nx3,
+                           pin->GetInteger("mesh", "nghost")});
+  if (binary_layout.centering != stored.layout.centering ||
+      binary_layout.centering_schema != stored.layout.centering_schema ||
+      binary_layout.ng != stored.layout.ng ||
+      binary_layout.coarse_ng != stored.layout.coarse_ng ||
+      binary_layout.is != stored.layout.is || binary_layout.ie != stored.layout.ie ||
+      binary_layout.js != stored.layout.js || binary_layout.je != stored.layout.je ||
+      binary_layout.ks != stored.layout.ks || binary_layout.ke != stored.layout.ke ||
+      binary_layout.n1 != stored.layout.n1 || binary_layout.n2 != stored.layout.n2 ||
+      binary_layout.n3 != stored.layout.n3 ||
+      binary_layout.cis != stored.layout.cis || binary_layout.cie != stored.layout.cie ||
+      binary_layout.cjs != stored.layout.cjs || binary_layout.cje != stored.layout.cje ||
+      binary_layout.cks != stored.layout.cks || binary_layout.cke != stored.layout.cke ||
+      binary_layout.cn1 != stored.layout.cn1 ||
+      binary_layout.cn2 != stored.layout.cn2 ||
+      binary_layout.cn3 != stored.layout.cn3) {
+    return Invalid("binary restart Z4c layout conflicts with immutable centering carrier");
+  }
   return {true, ""};
 }
 
@@ -632,6 +789,20 @@ void StoreZ4cRestartState(ParameterInput *pin, const Z4cRestartState &state) {
               << ": invalid current m=0 FastFlow restart state" << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  const bool legacy_cell =
+      state.carrier_schema == Z4cRestartState::kLegacyCellCarrierSchema &&
+      state.config.grid_centering == Z4cGridCentering::cell;
+  const bool current_layout =
+      state.carrier_schema == Z4cRestartState::kCurrentCarrierSchema &&
+      state.config.grid_centering == Z4cGridCentering::vertex;
+  if ((!legacy_cell && !current_layout) ||
+      state.config.centering_schema != Z4cGridLayout::kCenteringSchema ||
+      state.layout.centering != state.config.grid_centering ||
+      state.layout.centering_schema != state.config.centering_schema) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": invalid current Z4c centering restart state" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   pin->SetInteger(kZ4cRestartBlock, "carrier_schema", state.carrier_schema);
   pin->SetString(kZ4cRestartBlock, "symmetry", ToString(state.config.mode));
   pin->SetString(kZ4cRestartBlock, "coordinate_map",
@@ -642,6 +813,32 @@ void StoreZ4cRestartState(ParameterInput *pin, const Z4cRestartState &state) {
   pin->SetInteger(kZ4cRestartBlock, "effective_spatial_order",
                   state.effective_spatial_order);
   pin->SetInteger(kZ4cRestartBlock, "stencil_width", state.config.stencil_width);
+  if (current_layout) {
+    pin->SetString(kZ4cRestartBlock, "grid_centering",
+                   ToString(state.config.grid_centering));
+    pin->SetInteger(kZ4cRestartBlock, "centering_schema",
+                    state.config.centering_schema);
+    pin->SetInteger(kZ4cRestartBlock, "nghost", state.layout.ng);
+    pin->SetInteger(kZ4cRestartBlock, "coarse_nghost", state.layout.coarse_ng);
+    pin->SetInteger(kZ4cRestartBlock, "active_n1",
+                    state.layout.ie - state.layout.is + 1);
+    pin->SetInteger(kZ4cRestartBlock, "active_n2",
+                    state.layout.je - state.layout.js + 1);
+    pin->SetInteger(kZ4cRestartBlock, "active_n3",
+                    state.layout.ke - state.layout.ks + 1);
+    pin->SetInteger(kZ4cRestartBlock, "stored_n1", state.layout.n1);
+    pin->SetInteger(kZ4cRestartBlock, "stored_n2", state.layout.n2);
+    pin->SetInteger(kZ4cRestartBlock, "stored_n3", state.layout.n3);
+    pin->SetInteger(kZ4cRestartBlock, "coarse_active_n1",
+                    state.layout.cie - state.layout.cis + 1);
+    pin->SetInteger(kZ4cRestartBlock, "coarse_active_n2",
+                    state.layout.cje - state.layout.cjs + 1);
+    pin->SetInteger(kZ4cRestartBlock, "coarse_active_n3",
+                    state.layout.cke - state.layout.cks + 1);
+    pin->SetInteger(kZ4cRestartBlock, "coarse_stored_n1", state.layout.cn1);
+    pin->SetInteger(kZ4cRestartBlock, "coarse_stored_n2", state.layout.cn2);
+    pin->SetInteger(kZ4cRestartBlock, "coarse_stored_n3", state.layout.cn3);
+  }
   pin->SetInteger(kZ4cRestartBlock, "mesh_nx1", state.mesh.nx1);
   pin->SetInteger(kZ4cRestartBlock, "mesh_nx2", state.mesh.nx2);
   pin->SetInteger(kZ4cRestartBlock, "mesh_nx3", state.mesh.nx3);
