@@ -29,6 +29,16 @@
 
 namespace z4c {
 
+template <typename Centering, typename Records>
+KOKKOS_INLINE_FUNCTION bool IsCanonicalDchiDiagnosticOwner(
+    const Records &records, const int m, const int k, const int j,
+    const int i) {
+  if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
+    return records(m, k, j, i).canonical_diagnostic_owner != 0;
+  }
+  return true;
+}
+
 // set some parameters
 Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
   std::string ref_method = pin->GetOrAddString("z4c_amr", "method", "trivial");
@@ -305,11 +315,8 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
           int i = (idx - k * nji - j * nx1) + is;
           j += js;
           k += ks;
-          if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
-            if (vertex_records(m, k, j, i).canonical_diagnostic_owner == 0) {
-              return;
-            }
-          }
+          if (!IsCanonicalDchiDiagnosticOwner<Centering>(
+                  vertex_records, m, k, j, i)) return;
           // This is 2*dx*|grad(chi)| on an isotropic mesh, not |grad(chi)|.
           // Since chi is dimensionless, the indicator is dimensionless and follows a
           // self-similar feature without introducing a preferred physical length.
@@ -335,11 +342,8 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
     par_for("Z4c_AMR::DchiArgmax", DevExeSpace(), 0, nmb - 1, ks, ks + nx3 - 1,
             js, js + nx2 - 1, is, is + nx1 - 1,
         KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-          if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
-            if (vertex_records(m, k, j, i).canonical_diagnostic_owner == 0) {
-              return;
-            }
-          }
+          if (!IsCanonicalDchiDiagnosticOwner<Centering>(
+                  vertex_records, m, k, j, i)) return;
           Real d2 = SQR(u0(m, I_Z4C_CHI, k, j, i + 1) -
                         u0(m, I_Z4C_CHI, k, j, i - 1));
           d2 += SQR(u0(m, I_Z4C_CHI, k, j + 1, i) -

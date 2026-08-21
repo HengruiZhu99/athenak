@@ -256,13 +256,16 @@ void Z4cToADMViews(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
   par_for("initialize z4c fields",DevExeSpace(),
   0,nmb-1,0,bounds.n3-1,0,bounds.n2-1,0,bounds.n1-1,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    // Touch both aggregate view wrappers before the constexpr branch.  NVCC
+    // rejects first capture of an extended-lambda aggregate from inside an
+    // if-constexpr context even when the discarded branch is valid C++.
+    adm.psi4(m,k,j,i) = pow(z4c.chi(m,k,j,i), 4./chi_psi_power);
     if constexpr (CopyGauge) {
       adm.alpha(m,k,j,i) = z4c.alpha(m,k,j,i);
       for (int a = 0; a < 3; ++a) {
         adm.beta_u(m,a,k,j,i) = z4c.beta_u(m,a,k,j,i);
       }
     }
-    adm.psi4(m,k,j,i) = pow(z4c.chi(m,k,j,i), 4./chi_psi_power);
 
     // g_ab
     for(int a = 0; a < 3; ++a)
