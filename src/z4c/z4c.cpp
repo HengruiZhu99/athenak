@@ -16,6 +16,7 @@
 #include <string>
 #include <algorithm>
 #include <memory>    // make_unique, unique_ptr
+#include <type_traits>
 #include <vector>    // vector
 #include <Kokkos_Core.hpp>
 
@@ -31,7 +32,6 @@
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
 #include "z4c/z4c_symmetry.hpp"
-#include "z4c/stored_domain_bounds.hpp"
 #include "z4c/state_admissibility.hpp"
 #include "coordinates/adm.hpp"
 #include "utils/cart_grid.hpp"
@@ -77,6 +77,60 @@ char const * const Z4c::Constraint_names[Z4c::ncon] = {
   "con_Mx", "con_My", "con_Mz",
 };
 
+template <typename Centering>
+void Z4c::AllocateNativeStorage(const int nmb) {
+  constexpr bool is_cell = std::is_same_v<Centering, CellCenteredZ4c>;
+  constexpr bool is_vertex = std::is_same_v<Centering, VertexCenteredZ4c>;
+  static_assert(is_cell || is_vertex, "unknown Z4c centering tag");
+  constexpr Z4cGridCentering expected =
+      is_vertex ? Z4cGridCentering::vertex : Z4cGridCentering::cell;
+  if (layout.centering != expected) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": native Z4c storage centering dispatch mismatch" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  Kokkos::realloc(u_con, nmb, ncon, layout.n3, layout.n2, layout.n1);
+  Kokkos::realloc(u0, nmb, nz4c, layout.n3, layout.n2, layout.n1);
+  Kokkos::realloc(u1, nmb, nz4c, layout.n3, layout.n2, layout.n1);
+  Kokkos::realloc(u_rhs, nmb, nz4c, layout.n3, layout.n2, layout.n1);
+  Kokkos::realloc(u_telegraph_mu, nmb, 1, layout.n3, layout.n2, layout.n1);
+  Kokkos::deep_copy(u_telegraph_mu, 0.0);
+  Kokkos::realloc(u_weyl, nmb, 2, layout.n3, layout.n2, layout.n1);
+  if (pmy_pack->pmesh->multilevel) {
+    Kokkos::realloc(coarse_u0, nmb, nz4c, layout.cn3, layout.cn2, layout.cn1);
+    Kokkos::realloc(coarse_u_weyl, nmb, 2, layout.cn3, layout.cn2, layout.cn1);
+  }
+}
+
+void Z4c::ValidateNativeStorageExtents() const {
+  const auto matches = [this](const auto &view, const int variables) {
+    return view.extent_int(1) == variables && view.extent_int(2) == layout.n3 &&
+           view.extent_int(3) == layout.n2 && view.extent_int(4) == layout.n1;
+  };
+  if (!matches(u_con, ncon) || !matches(u0, nz4c) || !matches(u1, nz4c) ||
+      !matches(u_rhs, nz4c) || !matches(u_telegraph_mu, 1) ||
+      !matches(u_weyl, 2)) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": a native Z4c array does not match the immutable "
+              << ToString(layout.centering) << " layout" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (pmy_pack->pmesh->multilevel) {
+    const auto coarse_matches = [this](const auto &view, const int variables) {
+      return view.extent_int(1) == variables && view.extent_int(2) == layout.cn3 &&
+             view.extent_int(3) == layout.cn2 && view.extent_int(4) == layout.cn1;
+    };
+    if (!coarse_matches(coarse_u0, nz4c) ||
+        !coarse_matches(coarse_u_weyl, 2)) {
+      std::cerr << "### FATAL ERROR in " << __FILE__
+                << ": a coarse native Z4c array does not match the immutable "
+                << ToString(layout.centering) << " layout" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
+}
+
 /*char const * const Z4c::Matter_names[Z4c::nmat] = {
   "mat_rho",
   "mat_Sx", "mat_Sy", "mat_Sz",
@@ -87,6 +141,8 @@ char const * const Z4c::Constraint_names[Z4c::ncon] = {
 // constructor, initializes data structures and parameters
 
 Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
+  layout(MakeZ4cGridLayout(ppack->z4c_symmetry.grid_centering,
+                           ppack->pmesh->mb_indcs)),
   u_con("u_con",1,1,1,1,1),
   //u_mat("u_mat",1,1,1,1,1),
   u0("u0 z4c",1,1,1,1,1),
@@ -113,16 +169,16 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   // int nmb = ppack->nmb_thispack;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   {
-  const auto bounds = MakeStoredDomainBounds(indcs);
   Kokkos::Profiling::pushRegion("Tensor fields");
-  Kokkos::realloc(u_con, nmb, (ncon), bounds.n3, bounds.n2, bounds.n1);
-  // Matter storage is currently disabled.
-  Kokkos::realloc(u0,    nmb, (nz4c), bounds.n3, bounds.n2, bounds.n1);
-  Kokkos::realloc(u1,    nmb, (nz4c), bounds.n3, bounds.n2, bounds.n1);
-  Kokkos::realloc(u_rhs, nmb, (nz4c), bounds.n3, bounds.n2, bounds.n1);
-  Kokkos::realloc(u_telegraph_mu, nmb, 1, bounds.n3, bounds.n2, bounds.n1);
-  Kokkos::deep_copy(u_telegraph_mu, 0.0);
-  Kokkos::realloc(u_weyl,    nmb, (2), bounds.n3, bounds.n2, bounds.n1);
+  if (layout.centering == Z4cGridCentering::cell) {
+    AllocateNativeStorage<CellCenteredZ4c>(nmb);
+  } else if (layout.centering == Z4cGridCentering::vertex) {
+    AllocateNativeStorage<VertexCenteredZ4c>(nmb);
+  } else {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": invalid native Z4c storage centering" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   con.C.InitWithShallowSlice(u_con, I_CON_C);
   con.H.InitWithShallowSlice(u_con, I_CON_H);
@@ -225,7 +281,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.chi_parent_provenance = ReadChiParentProvenanceConfig(pin);
   if (opt.chi_parent_provenance.enabled) {
     Kokkos::realloc(chi_provenance_terms, nmb, n_chi_provenance_terms,
-                    bounds.n3, bounds.n2, bounds.n1);
+                    layout.n3, layout.n2, layout.n1);
     Kokkos::deep_copy(chi_provenance_terms, 0.0);
   }
   // Gauge conditions (default to moving puncture gauge)
@@ -391,16 +447,19 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   diss = opt.diss*pow(2., -2.*opt.fd_stencil)*(opt.fd_stencil % 2 == 0 ? -1. : 1.);
   }
 
-  // allocate memory for conserved variables on coarse mesh
-  if (ppack->pmesh->multilevel) {
-    auto &indcs = pmy_pack->pmesh->mb_indcs;
-    const auto coarse_bounds = MakeCoarseStoredDomainBounds(indcs);
-    Kokkos::realloc(coarse_u0, nmb, (nz4c), coarse_bounds.n3,
-                    coarse_bounds.n2, coarse_bounds.n1);
-    Kokkos::realloc(coarse_u_weyl, nmb, (2), coarse_bounds.n3,
-                    coarse_bounds.n2, coarse_bounds.n1);
-  }
+  ValidateNativeStorageExtents();
   Kokkos::Profiling::popRegion();
+
+  // Native VC arrays are real N+1 nodal allocations at this point. Do not attach
+  // the existing cell-centered boundary object until the deterministic VC boundary
+  // path is implemented and qualified.
+  if (layout.centering == Z4cGridCentering::vertex) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": native vertex Z4c storage extents verified, but deterministic "
+                 "vertex boundary communication is not enabled yet"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   // allocate boundary buffers for conserved (cell-centered) variables
   Kokkos::Profiling::pushRegion("Buffers");
@@ -486,13 +545,12 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
                                   const Z4cStateCheckpoint checkpoint,
                                   const bool include_ghosts) {
   const auto &indcs = pmy_pack->pmesh->mb_indcs;
-  const auto stored = MakeStoredDomainBounds(indcs);
-  const int is = include_ghosts ? stored.is : indcs.is;
-  const int ie = include_ghosts ? stored.ie : indcs.ie;
-  const int js = include_ghosts ? stored.js : indcs.js;
-  const int je = include_ghosts ? stored.je : indcs.je;
-  const int ks = include_ghosts ? stored.ks : indcs.ks;
-  const int ke = include_ghosts ? stored.ke : indcs.ke;
+  const int is = include_ghosts ? 0 : layout.is;
+  const int ie = include_ghosts ? layout.n1 - 1 : layout.ie;
+  const int js = include_ghosts ? 0 : layout.js;
+  const int je = include_ghosts ? layout.n2 - 1 : layout.je;
+  const int ks = include_ghosts ? 0 : layout.ks;
+  const int ke = include_ghosts ? layout.n3 - 1 : layout.ke;
   const int nmb = pmy_pack->nmb_thispack;
   const int nx1 = ie - is + 1;
   const int nx2 = je - js + 1;
@@ -558,11 +616,11 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
         Kokkos::create_mirror_view_and_copy(HostMemSpace(), packed_values);
     const auto admissibility = EvaluateZ4cState(values.data(), nz4c);
     const auto &size = pmy_pack->pmb->mb_size.h_view(m);
-    const Real rho = size.x1min + (static_cast<Real>(i - indcs.is) + 0.5) * size.dx1;
-    const Real z = size.x2min + (static_cast<Real>(j - indcs.js) + 0.5) * size.dx2;
+    const Real rho = size.x1min + (static_cast<Real>(i - layout.is) + 0.5) * size.dx1;
+    const Real z = size.x2min + (static_cast<Real>(j - layout.js) + 0.5) * size.dx2;
     const Real edge_distance = std::min(
-        std::min(static_cast<Real>(i - indcs.is), static_cast<Real>(indcs.ie - i)) * size.dx1,
-        std::min(static_cast<Real>(j - indcs.js), static_cast<Real>(indcs.je - j)) * size.dx2);
+        std::min(static_cast<Real>(i - layout.is), static_cast<Real>(layout.ie - i)) * size.dx1,
+        std::min(static_cast<Real>(j - layout.js), static_cast<Real>(layout.je - j)) * size.dx2);
     const auto &location = pmy_pack->pmesh->lloc_eachmb[selected_gid];
     std::ofstream output("z4c_state_failure.json", std::ios::trunc);
     output << std::setprecision(17);

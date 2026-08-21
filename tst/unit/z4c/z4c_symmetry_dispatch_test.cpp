@@ -31,6 +31,28 @@ struct DispatchRecorder {
   }
 };
 
+struct CenteredDispatchRecorder {
+  z4c::Z4cKernelDispatchTarget target{};
+  bool invoked = false;
+  bool compile_time_target_matches = false;
+
+  template <typename Centering, typename Symmetry, int NGHOST>
+  void Invoke(const z4c::Z4cKernelDispatchTarget selected) {
+    constexpr bool is_vertex =
+        std::is_same_v<Centering, z4c::VertexCenteredZ4c>;
+    constexpr bool is_cartesian = std::is_same_v<Symmetry, z4c::Cartesian3D>;
+    invoked = true;
+    target = selected;
+    compile_time_target_matches =
+        selected.grid_centering ==
+            (is_vertex ? z4c::Z4cGridCentering::vertex
+                       : z4c::Z4cGridCentering::cell) &&
+        selected.mode == (is_cartesian ? z4c::Z4cSymmetryMode::cartesian3d
+                                       : z4c::Z4cSymmetryMode::cartoon_so2) &&
+        selected.stencil_width == NGHOST;
+  }
+};
+
 bool CheckTarget(const z4c::Z4cSymmetryMode mode, const int stencil_width) {
   z4c::Z4cSymmetryConfig config;
   config.mode = mode;
@@ -48,6 +70,25 @@ bool CheckTarget(const z4c::Z4cSymmetryMode mode, const int stencil_width) {
          recorder.target.coordinate_map == config.coordinate_map;
 }
 
+bool CheckCenteredTarget(const z4c::Z4cGridCentering centering,
+                         const z4c::Z4cSymmetryMode mode,
+                         const int stencil_width) {
+  z4c::Z4cSymmetryConfig config;
+  config.mode = mode;
+  config.coordinate_map =
+      mode == z4c::Z4cSymmetryMode::cartesian3d
+          ? z4c::Z4cCoordinateMap::cartesian_xyz
+          : z4c::Z4cCoordinateMap::half_rho_z_suppressed_y_v2;
+  config.schema = z4c::ExpectedZ4cSymmetrySchema(mode);
+  config.stencil_width = stencil_width;
+  config.grid_centering = centering;
+
+  CenteredDispatchRecorder recorder;
+  z4c::DispatchCenteredZ4cKernel(config, recorder);
+  return recorder.invoked && recorder.compile_time_target_matches &&
+         recorder.target.grid_centering == centering;
+}
+
 }  // namespace
 
 int main() {
@@ -62,6 +103,10 @@ int main() {
                           z4c::Z4cSymmetryMode::cartoon_so2}) {
     for (const int stencil_width : {2, 3, 4}) {
       passed = passed && CheckTarget(mode, stencil_width);
+      for (const auto centering : {z4c::Z4cGridCentering::cell,
+                                   z4c::Z4cGridCentering::vertex}) {
+        passed = passed && CheckCenteredTarget(centering, mode, stencil_width);
+      }
     }
   }
 

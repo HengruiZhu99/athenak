@@ -93,7 +93,11 @@ bool CheckCenteringSelection() {
   if (!Rejects(input, "grid_centering must be cell or vertex")) return false;
   z4c::Z4cValidationInput no_z4c;
   no_z4c.requested_grid_centering = "vertex";
-  return Rejects(no_z4c, "requires the <z4c>");
+  if (!Rejects(no_z4c, "requires the <z4c>")) return false;
+  input = ValidCartoonInput();
+  input.requested_grid_centering = "vertex";
+  input.incompatible_physics = {"hydro"};
+  return Rejects(input, "vacuum Z4c");
 }
 
 bool CheckStencilDispatch() {

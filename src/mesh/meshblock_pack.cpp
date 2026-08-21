@@ -273,13 +273,6 @@ void ValidateAndStoreZ4cSymmetry(ParameterInput *pin, MeshBlockPack *pack) {
     std::exit(EXIT_FAILURE);
   }
   pack->z4c_symmetry = validation.config;
-  if (validation.config.grid_centering == z4c::Z4cGridCentering::vertex) {
-    std::cerr << "### FATAL ERROR in " << __FILE__
-              << ": grid_centering=vertex passed the immutable geometry contract, "
-                 "but vertex-centered Z4c storage and boundaries are not enabled yet"
-              << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
   if (pin->DoesBlockExist(z4c::kZ4cRestartBlock)) {
     z4c::Z4cRestartSnapshot snapshot;
     const auto restart = z4c::CaptureZ4cRestartSnapshot(pin, &snapshot);

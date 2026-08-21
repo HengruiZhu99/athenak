@@ -88,6 +88,12 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
   if (config.grid_centering == Z4cGridCentering::vertex && !input.z4c_enabled) {
     return Invalid(config, "grid_centering=vertex requires the <z4c> physics block");
   }
+  if (config.grid_centering == Z4cGridCentering::vertex &&
+      !input.incompatible_physics.empty()) {
+    return Invalid(config, "grid_centering=vertex is qualified only for vacuum Z4c; "
+                               "found <" + input.incompatible_physics.front() +
+                               "> physics without a CC-to-VC matter adapter");
+  }
   if (input.requested_symmetry == "cartesian3d") {
     config.mode = Z4cSymmetryMode::cartesian3d;
     config.coordinate_map = Z4cCoordinateMap::cartesian_xyz;

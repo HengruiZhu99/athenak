@@ -62,8 +62,9 @@ passed in 183.77 s; the same two CUDA-required tests remained disabled. The
 three new tests were `athena.z4c_vc_layout`, `athena.z4c_vc_coordinates`, and
 `athena.z4c_vc_collapsed_dimension`.
 
-As a transitional fail-closed check, `grid_centering=vertex` was admitted by
-the allocation-free schema validator and then rejected before Z4c physics
-allocation because vertex storage and boundaries were not yet enabled. It
-exited 1 and produced no output files. This guard is temporary and must be
-removed only when the production VC storage path is complete.
+As a transitional fail-closed check, `grid_centering=vertex` is admitted by the
+allocation-free schema validator, allocates and verifies true native `N+1`
+Z4c arrays, and then rejects before any cell-centered boundary object can be
+attached. It exits 1 and produces no output files. This boundary-seam guard is
+temporary and must be removed only when deterministic VC communication is
+complete.

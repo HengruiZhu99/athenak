@@ -25,6 +25,7 @@
 #include "z4c/amr_jump_diagnostic.hpp"
 #include "z4c/chi_parent_provenance.hpp"
 #include "z4c/telegraph_damping.hpp"
+#include "z4c/z4c_grid.hpp"
 
 // forward declarations
 class Coordinates;
@@ -88,6 +89,10 @@ class Z4c {
   Z4c(MeshBlockPack *ppack, ParameterInput *pin);
   ~Z4c();
 
+  template <typename Centering>
+  void AllocateNativeStorage(int nmb);
+  void ValidateNativeStorageExtents() const;
+
   // Indices of evolved variables
   enum {
     I_Z4C_CHI,
@@ -125,6 +130,7 @@ class Z4c {
   static char const * const Matter_names[nmat];*/
 
   // data
+  Z4cGridLayout layout;         // authoritative Z4c active/stored index geometry
   // flags to denote relativistic dynamics
   DvceArray5D<Real> u_con;     // constraints fields
   DvceArray5D<Real> u_mat;

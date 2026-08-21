@@ -21,7 +21,6 @@
 #include "mesh/mesh.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
-#include "z4c/stored_domain_bounds.hpp"
 #include "z4c/cartoon_derivatives.hpp"
 #include "z4c/z4c_symmetry.hpp"
 #include "z4c/tmunu.hpp"
@@ -55,7 +54,7 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
-  const auto bounds = MakeStoredDomainBounds(indcs);
+  const auto &bounds = pmbp->pz4c->layout;
   int nmb = pmbp->nmb_thispack;
 
   auto &z4c = pmbp->pz4c->z4c;
@@ -63,7 +62,7 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
   auto &opt = pmbp->pz4c->opt;
   // 2 1D scratch array and 1 2D scratch array
   par_for("initialize z4c fields",DevExeSpace(),
-  0,nmb-1,bounds.ks,bounds.ke,bounds.js,bounds.je,bounds.is,bounds.ie,
+  0,nmb-1,0,bounds.n3-1,0,bounds.n2-1,0,bounds.n1-1,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> Kt_dd;
     Real detg = adm::SpatialDet(adm.g_dd(m,0,0,k,j,i), adm.g_dd(m,0,1,k,j,i),
@@ -101,7 +100,7 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
   g3u.InitWithShallowSlice(g_uu, 0, 5);
   // GLOOP
   par_for("invert z4c metric",DevExeSpace(),
-  0,nmb-1,bounds.ks,bounds.ke,bounds.js,bounds.je,bounds.is,bounds.ie,
+  0,nmb-1,0,bounds.n3-1,0,bounds.n2-1,0,bounds.n1-1,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i){
     Real detg = adm::SpatialDet(z4c.g_dd(m,0,0,k,j,i), z4c.g_dd(m,0,1,k,j,i),
                                 z4c.g_dd(m,0,2,k,j,i), z4c.g_dd(m,1,1,k,j,i),
@@ -225,13 +224,13 @@ void Z4cToADMViews(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
                    const Real chi_psi_power) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
-  const auto bounds = MakeStoredDomainBounds(indcs);
+  const auto &bounds = pmbp->pz4c->layout;
 
   int nmb = pmbp->nmb_thispack;
 
   auto adm = adm_fields;
   par_for("initialize z4c fields",DevExeSpace(),
-  0,nmb-1,bounds.ks,bounds.ke,bounds.js,bounds.je,bounds.is,bounds.ie,
+  0,nmb-1,0,bounds.n3-1,0,bounds.n2-1,0,bounds.n1-1,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     adm.psi4(m,k,j,i) = pow(z4c.chi(m,k,j,i), 4./chi_psi_power);
 
@@ -610,7 +609,7 @@ void Z4c::EvaluateDiagnosticConstraints(
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  const auto bounds = MakeStoredDomainBounds(pmy_pack->pmesh->mb_indcs);
+  const auto &bounds = layout;
   const int stencil = diagnostic_stencil < 0 ? opt.fd_stencil : diagnostic_stencil;
   if (stencil < 2 || stencil > 4 || stencil > pmy_pack->pmesh->mb_indcs.ng) {
     std::cerr << "### FATAL ERROR in " << __FILE__

@@ -59,6 +59,7 @@ struct Z4cKernelDispatchTarget {
   Z4cSymmetryMode mode;
   Z4cCoordinateMap coordinate_map;
   int stencil_width;
+  Z4cGridCentering grid_centering = Z4cGridCentering::cell;
 };
 
 //! Output facts collected before output wrappers or physics modules are constructed.
@@ -190,6 +191,44 @@ void DispatchZ4cKernel(const Z4cSymmetryConfig &config, Callable &callable) {
 
   std::cerr << "### FATAL ERROR: invalid Z4c host dispatch target: symmetry="
             << ToString(config.mode) << ", stencil_width=" << config.stencil_width
+            << std::endl;
+  std::exit(EXIT_FAILURE);
+}
+
+namespace detail {
+
+template <typename Centering, typename Callable>
+struct CenteredZ4cDispatchAdapter {
+  Callable &callable;
+
+  template <typename Symmetry, int NGHOST>
+  void Invoke(Z4cKernelDispatchTarget target) {
+    target.grid_centering = std::is_same_v<Centering, VertexCenteredZ4c>
+                                ? Z4cGridCentering::vertex
+                                : Z4cGridCentering::cell;
+    callable.template Invoke<Centering, Symmetry, NGHOST>(target);
+  }
+};
+
+}  // namespace detail
+
+//! Dispatch once on the host to a compile-time centering, symmetry, and stencil triple.
+//!
+//! The centering branch occurs before any device kernel launch. Production callables
+//! must not capture the runtime centering enum inside their device lambdas.
+template <typename Callable>
+void DispatchCenteredZ4cKernel(const Z4cSymmetryConfig &config, Callable &callable) {
+  if (config.grid_centering == Z4cGridCentering::cell) {
+    detail::CenteredZ4cDispatchAdapter<CellCenteredZ4c, Callable> adapter{callable};
+    DispatchZ4cKernel(config, adapter);
+    return;
+  }
+  if (config.grid_centering == Z4cGridCentering::vertex) {
+    detail::CenteredZ4cDispatchAdapter<VertexCenteredZ4c, Callable> adapter{callable};
+    DispatchZ4cKernel(config, adapter);
+    return;
+  }
+  std::cerr << "### FATAL ERROR: invalid Z4c host centering dispatch target"
             << std::endl;
   std::exit(EXIT_FAILURE);
 }

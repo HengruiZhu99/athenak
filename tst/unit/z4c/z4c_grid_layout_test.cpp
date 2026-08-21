@@ -15,6 +15,7 @@
 #include <type_traits>
 
 #include "coordinates/cell_locations.hpp"
+#include "z4c/stored_domain_bounds.hpp"
 #include "z4c/z4c_grid.hpp"
 
 namespace {
@@ -22,6 +23,14 @@ namespace {
 struct Indices {
   int ng;
   int nx1, nx2, nx3;
+};
+
+struct LegacyIndices {
+  int ng;
+  int nx1, nx2, nx3;
+  int is, ie, js, je, ks, ke;
+  int cnx1, cnx2, cnx3;
+  int cis, cie, cjs, cje, cks, cke;
 };
 
 bool Near(const Real lhs, const Real rhs) {
@@ -34,6 +43,8 @@ bool CheckLayout() {
   constexpr Indices full{4, 8, 10, 12};
   constexpr auto cell =
       z4c::MakeZ4cGridLayout(z4c::Z4cGridCentering::cell, full, 3);
+  constexpr auto cell_same_ng =
+      z4c::MakeZ4cGridLayout(z4c::Z4cGridCentering::cell, full);
   constexpr auto vertex =
       z4c::MakeZ4cGridLayout(z4c::Z4cGridCentering::vertex, full, 3);
   static_assert(cell.is == 4 && cell.ie == 11 && cell.n1 == 16);
@@ -48,8 +59,30 @@ bool CheckLayout() {
   static_assert(vertex.cis == 3 && vertex.cie == 7 && vertex.cn1 == 11);
   static_assert(vertex.cjs == 3 && vertex.cje == 8 && vertex.cn2 == 12);
   static_assert(vertex.cks == 3 && vertex.cke == 9 && vertex.cn3 == 13);
+  constexpr LegacyIndices legacy_indices{
+      4, 8, 10, 12, 4, 11, 4, 13, 4, 15,
+      4, 5, 6, 4, 7, 4, 8, 4, 9};
+  const auto legacy = z4c::MakeStoredDomainBounds(legacy_indices);
+  const auto legacy_coarse = z4c::MakeCoarseStoredDomainBounds(legacy_indices);
   return vertex.centering_schema == z4c::Z4cGridLayout::kCenteringSchema &&
-         vertex.ng == 4 && vertex.coarse_ng == 3;
+         vertex.ng == 4 && vertex.coarse_ng == 3 &&
+         cell_same_ng.is == legacy_indices.is &&
+         cell_same_ng.ie == legacy_indices.ie &&
+         cell_same_ng.js == legacy_indices.js &&
+         cell_same_ng.je == legacy_indices.je &&
+         cell_same_ng.ks == legacy_indices.ks &&
+         cell_same_ng.ke == legacy_indices.ke &&
+         cell_same_ng.n1 == legacy.n1 && cell_same_ng.n2 == legacy.n2 &&
+         cell_same_ng.n3 == legacy.n3 &&
+         cell_same_ng.cis == legacy_indices.cis &&
+         cell_same_ng.cie == legacy_indices.cie &&
+         cell_same_ng.cjs == legacy_indices.cjs &&
+         cell_same_ng.cje == legacy_indices.cje &&
+         cell_same_ng.cks == legacy_indices.cks &&
+         cell_same_ng.cke == legacy_indices.cke &&
+         cell_same_ng.cn1 == legacy_coarse.n1 &&
+         cell_same_ng.cn2 == legacy_coarse.n2 &&
+         cell_same_ng.cn3 == legacy_coarse.n3;
 }
 
 bool CheckCoordinates() {
