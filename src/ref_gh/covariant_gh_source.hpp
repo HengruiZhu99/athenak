@@ -6,6 +6,7 @@
 #define REF_GH_COVARIANT_GH_SOURCE_HPP_
 
 #include "athena.hpp"
+#include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 
@@ -23,10 +24,11 @@ struct CovariantSourceSectors {
   Real frame_correction[4][4];     // NOLINT(runtime/arrays)
 };
 
+template <typename Reference>
 KOKKOS_INLINE_FUNCTION
 bool CovariantGhScalarWaveSource(const Real psi[4][4], const Real pi[4][4],
                                  const Real phi[3][4][4],
-                                 const ReferenceGeometry &reference,
+                                 const Reference &reference,
                                  const CoordinateGhGeometry &geometry,
                                  const Real gamma0, Real source[4][4],
                                  CovariantSourceSectors &sectors) {
@@ -38,7 +40,7 @@ bool CovariantGhScalarWaveSource(const Real psi[4][4], const Real pi[4][4],
   for (int A = 0; A < 4; ++A) {
     normal[A] = 0.0;
     for (int a = 0; a < 4; ++a) {
-      normal[A] += reference.coframe[A][a]*geometry.normal_upper[a];
+      normal[A] += ReferenceCoframe(reference, A, a)*geometry.normal_upper[a];
     }
   }
   if (!(normal[0] > 0.0) || !Kokkos::isfinite(normal[0])) return false;
@@ -62,8 +64,8 @@ bool CovariantGhScalarWaveSource(const Real psi[4][4], const Real pi[4][4],
         sectors.q[C][A][B] = p[C][A][B];
         for (int D = 0; D < 4; ++D) {
           sectors.q[C][A][B] -=
-              reference.spin[D][A][C]*psi[D][B]
-              + reference.spin[D][B][C]*psi[A][D];
+              ReferenceSpin(reference, D, A, C)*psi[D][B]
+              + ReferenceSpin(reference, D, B, C)*psi[A][D];
         }
       }
     }
@@ -109,8 +111,8 @@ bool CovariantGhScalarWaveSource(const Real psi[4][4], const Real pi[4][4],
         for (int D = 0; D < 4; ++D) {
           for (int E = 0; E < 4; ++E) {
             sectors.curvature[A][B] -= inverse[C][D]*(
-                reference.riemann_frame[E][C][D][A]*psi[B][E]
-                + reference.riemann_frame[E][C][D][B]*psi[A][E]);
+                ReferenceRiemann(reference, E, C, D, A)*psi[B][E]
+                + ReferenceRiemann(reference, E, C, D, B)*psi[A][E]);
             for (int F = 0; F < 4; ++F) {
               sectors.qq[A][B] += 2.0*inverse[C][D]*inverse[E][F]
                   *sectors.q[E][C][A]*sectors.q[F][D][B];
@@ -138,15 +140,15 @@ bool CovariantGhScalarWaveSource(const Real psi[4][4], const Real pi[4][4],
         for (int D = 0; D < 4; ++D) {
           Real f_cdab = 0.0;
           for (int E = 0; E < 4; ++E) {
-            f_cdab -= (reference.spin[E][D][C]
+            f_cdab -= (ReferenceSpin(reference, E, D, C)
                        + sectors.delta_upper[E][D][C])*p[E][A][B];
-            f_cdab += reference.spin_derivative[C][E][A][D]*psi[E][B]
-                      + reference.spin[E][A][D]*p[C][E][B]
-                      + reference.spin_derivative[C][E][B][D]*psi[A][E]
-                      + reference.spin[E][B][D]*p[C][A][E]
-                      + reference.spin[E][D][C]*sectors.q[E][A][B]
-                      + reference.spin[E][A][C]*sectors.q[D][E][B]
-                      + reference.spin[E][B][C]*sectors.q[D][A][E];
+            f_cdab += ReferenceSpinDerivative(reference, C, E, A, D)*psi[E][B]
+                      + ReferenceSpin(reference, E, A, D)*p[C][E][B]
+                      + ReferenceSpinDerivative(reference, C, E, B, D)*psi[A][E]
+                      + ReferenceSpin(reference, E, B, D)*p[C][A][E]
+                      + ReferenceSpin(reference, E, D, C)*sectors.q[E][A][B]
+                      + ReferenceSpin(reference, E, A, C)*sectors.q[D][E][B]
+                      + ReferenceSpin(reference, E, B, C)*sectors.q[D][A][E];
           }
           sectors.frame_correction[A][B] += inverse[C][D]*f_cdab;
         }

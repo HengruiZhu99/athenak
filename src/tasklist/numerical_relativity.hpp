@@ -106,6 +106,7 @@ enum TaskName {
 
   RefGh_Recv,
   RefGh_CopyU,
+  RefGh_UpdateReference,
   RefGh_CalcRHS,
   RefGh_ExplRK,
   RefGh_RestU,

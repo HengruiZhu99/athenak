@@ -1,0 +1,92 @@
+#!/bin/bash -l
+# Build and run the Ref-GH RK-stage reference-cache full-output gate on one PVC tile.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:15:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_refcache
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820
+SRC="${ROOT}/athenak"
+BUILD="${ROOT}/build_sycl_pvc_${PBS_JOBID}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
+OUT="${ROOT}/runs/cache_gate_${PBS_JOBID}"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  git -C "${SRC}" rev-parse HEAD
+  git -C "${SRC}" status --short
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=ON \
+  -DPROBLEM=built_in_pgens \
+  > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "hostname=$(hostname)"
+    echo "MPI_LOCALRANKID=${MPI_LOCALRANKID:-unset}"
+    echo "PALS_LOCAL_RANKID=${PALS_LOCAL_RANKID:-unset}"
+    echo "ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1
+  ' > gpu_mapping.txt 2>&1
+
+mkdir -p one_cycle
+cd one_cycle
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+  job/basename=ref_gh_reference_cache_dx16 \
+  mesh/nx1=64 mesh/nx2=64 mesh/nx3=64 \
+  meshblock/nx1=64 meshblock/nx2=64 meshblock/nx3=64 \
+  ref_gh/debug_task_fences=true \
+  ref_gh/validate_reference_cache=true \
+  output1/dt=1.0e-6 output2/dt=1.0e-6 \
+  time/nlim=1 time/tlim=1.0 \
+  > ref_gh_reference_cache_dx16.log 2>&1
+
+test -s ref_gh_reference_cache_dx16.ref_gh.hst
+awk 'BEGIN {rows=0; positive=0} !/^#/ {rows++; if ($1 > 0) positive=1} END {exit !(rows >= 2 && positive)}' \
+  ref_gh_reference_cache_dx16.ref_gh.hst
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  ref_gh_reference_cache_dx16.log

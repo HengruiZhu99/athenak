@@ -6,6 +6,7 @@
 #define REF_GH_STANDARD_GH_SOURCE_HPP_
 
 #include "athena.hpp"
+#include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_geometry.hpp"
 
 namespace ref_gh {
@@ -97,10 +98,11 @@ bool InvertSpatial3(const Real metric[4][4], Real inverse[3][3], Real &determina
 
 // Construct all first-derivative coordinate geometry and the background-covariant
 // wave-map constraint C_a = H_a + Gamma_a, with H^a=-g^{bc} barGamma^a_bc.
+template <typename Reference>
 KOKKOS_INLINE_FUNCTION
 bool ComputeCoordinateGhGeometry(const Real metric[4][4],
                                  const Real d_metric[4][4][4],
-                                 const ReferenceGeometry &reference,
+                                 const Reference &reference,
                                  CoordinateGhGeometry &geometry,
                                  Real &determinant) {
   if (!Invert4(metric, geometry.inverse_metric, determinant)) return false;
@@ -147,7 +149,7 @@ bool ComputeCoordinateGhGeometry(const Real metric[4][4],
         geometry.contracted_upper[a] += geometry.inverse_metric[b][c]
                                           *geometry.christoffel[a][b][c];
         geometry.gauge_source_upper[a] -= geometry.inverse_metric[b][c]
-                                             *reference.christoffel[a][b][c];
+                                             *ReferenceChristoffel(reference, a, b, c);
       }
     }
   }
@@ -165,10 +167,11 @@ bool ComputeCoordinateGhGeometry(const Real metric[4][4],
 // Evaluate Eq. (18) of Lindblom et al., arXiv:gr-qc/0512093v3.  The derivative
 // of H_a is analytic in g, dg, barGamma, and d(barGamma); no finite difference of H
 // or of a coordinate metric is used.
+template <typename Reference>
 KOKKOS_INLINE_FUNCTION
 void StandardGhPartialWaveSource(const Real metric[4][4],
                                  const Real d_metric[4][4][4],
-                                 const ReferenceGeometry &reference,
+                                 const Reference &reference,
                                  const CoordinateGhGeometry &geometry,
                                  const Real gamma0,
                                  Real source[4][4]) {
@@ -193,9 +196,10 @@ void StandardGhPartialWaveSource(const Real metric[4][4],
       d_h_upper[p][a] = 0.0;
       for (int b = 0; b < 4; ++b) {
         for (int c = 0; c < 4; ++c) {
-          d_h_upper[p][a] -= d_inverse[p][b][c]*reference.christoffel[a][b][c]
+          d_h_upper[p][a] -= d_inverse[p][b][c]
+                                  *ReferenceChristoffel(reference, a, b, c)
                               + geometry.inverse_metric[b][c]
-                                  *reference.d_christoffel[p][a][b][c];
+                                  *ReferenceDChristoffel(reference, p, a, b, c);
         }
       }
     }
@@ -245,12 +249,13 @@ void StandardGhPartialWaveSource(const Real metric[4][4],
 
 // Transform the coordinate partial-wave equation by Psi_AB=e_A^a e_B^b g_ab,
 // then convert to the covariant scalar-wave source.  d_psi contains partial_c Psi_AB.
+template <typename Reference>
 KOKKOS_INLINE_FUNCTION
 void TransformPartialWaveSource(const Real metric[4][4],
                                 const Real d_metric[4][4][4],
                                 const Real coordinate_source[4][4],
                                 const Real d_psi[4][4][4],
-                                const ReferenceGeometry &reference,
+                                const Reference &reference,
                                 const CoordinateGhGeometry &geometry,
                                 Real source[4][4]) {
   for (int A = 0; A < 4; ++A) {
@@ -258,19 +263,24 @@ void TransformPartialWaveSource(const Real metric[4][4],
       Real value = 0.0;
       for (int a = 0; a < 4; ++a) {
         for (int b = 0; b < 4; ++b) {
-          const Real tensor = reference.frame[A][a]*reference.frame[B][b];
+          const Real tensor = ReferenceFrame(reference, A, a)
+                              *ReferenceFrame(reference, B, b);
           value += tensor*coordinate_source[a][b];
           for (int c = 0; c < 4; ++c) {
-            const Real d_tensor_c = reference.d_frame[c][A][a]
-                                      *reference.frame[B][b]
-                                    + reference.frame[A][a]
-                                      *reference.d_frame[c][B][b];
+            const Real d_tensor_c = ReferenceDFrame(reference, c, A, a)
+                                      *ReferenceFrame(reference, B, b)
+                                    + ReferenceFrame(reference, A, a)
+                                      *ReferenceDFrame(reference, c, B, b);
             for (int d = 0; d < 4; ++d) {
               const Real dd_tensor =
-                  reference.dd_frame[c][d][A][a]*reference.frame[B][b]
-                  + reference.d_frame[c][A][a]*reference.d_frame[d][B][b]
-                  + reference.d_frame[d][A][a]*reference.d_frame[c][B][b]
-                  + reference.frame[A][a]*reference.dd_frame[c][d][B][b];
+                  ReferenceDDFrame(reference, c, d, A, a)
+                    *ReferenceFrame(reference, B, b)
+                  + ReferenceDFrame(reference, c, A, a)
+                    *ReferenceDFrame(reference, d, B, b)
+                  + ReferenceDFrame(reference, d, A, a)
+                    *ReferenceDFrame(reference, c, B, b)
+                  + ReferenceFrame(reference, A, a)
+                    *ReferenceDDFrame(reference, c, d, B, b);
               value += 2.0*geometry.inverse_metric[c][d]*d_tensor_c
                          *d_metric[d][a][b]
                        + geometry.inverse_metric[c][d]*dd_tensor*metric[a][b];

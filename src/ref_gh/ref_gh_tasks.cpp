@@ -10,16 +10,28 @@
 #include "bvals/bvals.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "driver/driver.hpp"
+#include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
+#include "ref_gh/reference_cache.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "tasklist/numerical_relativity.hpp"
 
 namespace ref_gh {
+
+template <typename MaxLocation>
+KOKKOS_INLINE_FUNCTION
+void UpdateReferenceOracleMaximum(const Real error, const int category,
+                                  MaxLocation &maximum) {
+  if (error > maximum.val) {
+    maximum.val = error;
+    maximum.loc = category;
+  }
+}
 
 void RefGh::DebugFence(const char *label) const {
   if (opt.debug_task_fences) {
@@ -33,15 +45,17 @@ void RefGh::QueueTasks() {
   auto *pnr = pmy_pack->pnr;
   pnr->QueueTask(&RefGh::InitRecv, this, RefGh_Recv, "RefGh_Recv", Task_Start);
   pnr->QueueTask(&RefGh::CopyU, this, RefGh_CopyU, "RefGh_CopyU", Task_Run);
+  pnr->QueueTask(&RefGh::UpdateReferenceGeometry, this, RefGh_UpdateReference,
+                 "RefGh_UpdateReference", Task_Run, {RefGh_CopyU});
   if (opt.fd_order == 2) {
     pnr->QueueTask(&RefGh::CalcRHS<2>, this, RefGh_CalcRHS, "RefGh_CalcRHS",
-                   Task_Run, {RefGh_CopyU});
+                   Task_Run, {RefGh_UpdateReference});
   } else if (opt.fd_order == 4) {
     pnr->QueueTask(&RefGh::CalcRHS<3>, this, RefGh_CalcRHS, "RefGh_CalcRHS",
-                   Task_Run, {RefGh_CopyU});
+                   Task_Run, {RefGh_UpdateReference});
   } else {
     pnr->QueueTask(&RefGh::CalcRHS<4>, this, RefGh_CalcRHS, "RefGh_CalcRHS",
-                   Task_Run, {RefGh_CopyU});
+                   Task_Run, {RefGh_UpdateReference});
   }
   pnr->QueueTask(&RefGh::ExpRKUpdate, this, RefGh_ExplRK, "RefGh_ExplRK", Task_Run,
                  {RefGh_CalcRHS});
@@ -89,6 +103,198 @@ TaskStatus RefGh::CopyU(Driver *driver, int stage) {
     Kokkos::deep_copy(DevExeSpace(), u1, u0);
   }
   DebugFence("ref_gh CopyU");
+  return TaskStatus::complete;
+}
+
+Real RefGh::StageTime(const Driver *driver, const int target_stage) const {
+  // Propagate the affine time coordinate through the same low-storage RK
+  // recurrences used for u0/u1.  This derives the non-monotone RK4 abscissae
+  // from the active integrator coefficients instead of maintaining a second
+  // hard-coded Butcher table.
+  Real state_weight = 1.0;
+  Real state_time = 0.0;
+  Real base_weight = 0.0;
+  Real base_time = 0.0;
+  for (int stage = 1; stage <= target_stage; ++stage) {
+    if (stage == 1) {
+      base_weight = state_weight;
+      base_time = state_time;
+    } else if (driver->integrator == "rk4") {
+      base_weight += driver->delta[stage - 1]*state_weight;
+      base_time += driver->delta[stage - 1]*state_time;
+    }
+    if (stage == target_stage) {
+      return pmy_pack->pmesh->time
+             + (state_time/state_weight)*pmy_pack->pmesh->dt;
+    }
+    const Real next_time = driver->gam0[stage - 1]*state_time
+                           + driver->gam1[stage - 1]*base_time
+                           + driver->beta[stage - 1];
+    const Real next_weight = driver->gam0[stage - 1]*state_weight
+                             + driver->gam1[stage - 1]*base_weight;
+    state_time = next_time;
+    state_weight = next_weight;
+  }
+  return pmy_pack->pmesh->time;
+}
+
+void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) {
+  const bool fill_evolution = !(reference_cache_time == time);
+  const bool fill_diagnostic = include_diagnostics
+                               && !(reference_diagnostic_time == time);
+  if (!fill_evolution && !fill_diagnostic) return;
+
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  auto &size = pmy_pack->pmb->mb_size;
+  const int n1 = indcs.nx1 + 2*indcs.ng;
+  const int n2 = indcs.nx2 + 2*indcs.ng;
+  const int n3 = indcs.nx3 + 2*indcs.ng;
+  const auto evolution = reference_evolution;
+  const auto diagnostic = reference_diagnostic;
+  const auto table = reference_table;
+  const int reference_kind = opt.reference_kind;
+  const Real mass = opt.reference_mass;
+  const Real center_x = opt.reference_center[0];
+  const Real center_y = opt.reference_center[1];
+  const Real center_z = opt.reference_center[2];
+  par_for("ref_gh update reference cache", DevExeSpace(),
+  0, pmy_pack->nmb_thispack - 1, 0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
+  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    ReferenceGeometry reference;
+    GetReferenceGeometry(reference_kind, table, mass, center_x, center_y,
+                         center_z, time, x, y, z, reference);
+    if (fill_evolution) StoreReferenceEvolution(reference, evolution, m, k, j, i);
+    if (fill_diagnostic) StoreReferenceDiagnostic(reference, diagnostic, m, k, j, i);
+  });
+  if (fill_evolution) reference_cache_time = time;
+  if (fill_diagnostic) reference_diagnostic_time = time;
+
+  if (opt.validate_reference_cache
+      && ((!reference_cache_oracle_validated && fill_evolution)
+          || (!reference_diagnostic_oracle_validated && fill_diagnostic))) {
+    using MaxLoc = Kokkos::MaxLoc<Real, int>;
+    MaxLoc::value_type maximum_error;
+    Kokkos::parallel_reduce(
+    "ref_gh reference cache oracle", Kokkos::RangePolicy<>(DevExeSpace(),
+    0, pmy_pack->nmb_thispack*n3*n2*n1),
+    KOKKOS_LAMBDA(const int idx, MaxLoc::value_type &local_maximum) {
+      int work = idx;
+      const int i = work % n1; work /= n1;
+      const int j = work % n2; work /= n2;
+      const int k = work % n3;
+      const int m = work/n3;
+      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min, size.d_view(m).x1max);
+      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                 size.d_view(m).x2min, size.d_view(m).x2max);
+      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                 size.d_view(m).x3min, size.d_view(m).x3max);
+      ReferenceGeometry oracle;
+      GetReferenceGeometry(reference_kind, table, mass, center_x, center_y,
+                           center_z, time, x, y, z, oracle);
+      const ReferenceCachePoint cached{evolution, diagnostic, m, k, j, i};
+      for (int A = 0; A < 4; ++A) {
+        for (int a = 0; a < 4; ++a) {
+          UpdateReferenceOracleMaximum(Kokkos::abs(
+              ReferenceCoframe(cached, A, a) - oracle.coframe[A][a]),
+              0, local_maximum);
+          UpdateReferenceOracleMaximum(Kokkos::abs(
+              ReferenceFrame(cached, A, a) - oracle.frame[A][a]),
+              1, local_maximum);
+          for (int p = 0; p < 4; ++p) {
+            UpdateReferenceOracleMaximum(Kokkos::abs(
+                ReferenceDFrame(cached, p, A, a) - oracle.d_frame[p][A][a]),
+                2, local_maximum);
+          }
+        }
+      }
+      for (int A = 0; A < 4; ++A) {
+        for (int B = 0; B < 4; ++B) {
+          for (int C = 0; C < 4; ++C) {
+            UpdateReferenceOracleMaximum(Kokkos::abs(
+                ReferenceChristoffel(cached, A, B, C)
+                - oracle.christoffel[A][B][C]), 3, local_maximum);
+            UpdateReferenceOracleMaximum(Kokkos::abs(
+                ReferenceSpin(cached, A, B, C) - oracle.spin[A][B][C]),
+                4, local_maximum);
+            for (int D = 0; D < 4; ++D) {
+              UpdateReferenceOracleMaximum(Kokkos::abs(
+                  ReferenceSpinDerivative(cached, A, B, C, D)
+                  - oracle.spin_derivative[A][B][C][D]), 5, local_maximum);
+              UpdateReferenceOracleMaximum(Kokkos::abs(
+                  ReferenceRiemann(cached, A, B, C, D)
+                  - oracle.riemann_frame[A][B][C][D]), 6, local_maximum);
+            }
+          }
+        }
+      }
+      for (int I = 0; I < 3; ++I) {
+        for (int J = 0; J < 3; ++J) {
+          UpdateReferenceOracleMaximum(Kokkos::abs(
+              ReferenceSpatialFrame(cached, I, J) - oracle.spatial_frame[I][J]),
+              7, local_maximum);
+          UpdateReferenceOracleMaximum(Kokkos::abs(
+              ReferenceSpatialCoframe(cached, I, J)
+              - oracle.spatial_coframe[I][J]), 8, local_maximum);
+          UpdateReferenceOracleMaximum(Kokkos::abs(
+              ReferenceDtSpatialFrame(cached, I, J)
+              - oracle.dt_spatial_frame[I][J]), 9, local_maximum);
+          for (int K = 0; K < 3; ++K) {
+            UpdateReferenceOracleMaximum(Kokkos::abs(
+                ReferenceStructure(cached, I, J, K)
+                - oracle.structure[I][J][K]), 10, local_maximum);
+          }
+        }
+      }
+      if (fill_diagnostic) {
+        for (int p = 0; p < 4; ++p) {
+          for (int a = 0; a < 4; ++a) {
+            for (int b = 0; b < 4; ++b) {
+              for (int c = 0; c < 4; ++c) {
+                UpdateReferenceOracleMaximum(Kokkos::abs(
+                    ReferenceDDFrame(cached, p, a, b, c)
+                    - oracle.dd_frame[p][a][b][c]), 11, local_maximum);
+                UpdateReferenceOracleMaximum(Kokkos::abs(
+                    ReferenceDChristoffel(cached, p, a, b, c)
+                    - oracle.d_christoffel[p][a][b][c]), 12, local_maximum);
+              }
+            }
+          }
+        }
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            UpdateReferenceOracleMaximum(Kokkos::abs(
+                ReferenceRicci(cached, A, B) - oracle.ricci_frame[A][B]),
+                13, local_maximum);
+          }
+        }
+      }
+    }, MaxLoc(maximum_error));
+    if (!(maximum_error.val <= 1.0e-14)) {
+      std::cout << "### FATAL ERROR: Ref-GH reference cache disagrees with oracle: "
+                << maximum_error.val << " category=" << maximum_error.loc
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    if (fill_evolution) reference_cache_oracle_validated = true;
+    if (fill_diagnostic) reference_diagnostic_oracle_validated = true;
+    if (global_variable::my_rank == 0) {
+      std::cout << "reference-GH production cache oracle Linf = "
+                << maximum_error.val << std::endl;
+    }
+  }
+}
+
+TaskStatus RefGh::UpdateReferenceGeometry(Driver *driver, const int stage) {
+  const Real time = StageTime(driver, stage);
+  FillReferenceCache(time, opt.source_kind != 0);
+  DebugFence("ref_gh UpdateReference");
   return TaskStatus::complete;
 }
 
@@ -222,13 +428,8 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   const auto state = u0;
-  const auto table = reference_table;
-  const int reference_kind = opt.reference_kind;
-  const Real reference_mass = opt.reference_mass;
-  const Real center_x = opt.reference_center[0];
-  const Real center_y = opt.reference_center[1];
-  const Real center_z = opt.reference_center[2];
-  const Real time = pmy_pack->pmesh->time;
+  const auto reference_cache = reference_evolution;
+  const auto reference_extra = reference_diagnostic;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   Kokkos::parallel_reduce(
       "ref_gh dt", Kokkos::RangePolicy<>(DevExeSpace(),
@@ -239,16 +440,8 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
         const int k = work % indcs.nx3 + indcs.ks;
         const int m = work/indcs.nx3;
-        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                                   size.d_view(m).x1min, size.d_view(m).x1max);
-        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                                   size.d_view(m).x2min, size.d_view(m).x2max);
-        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                                   size.d_view(m).x3min, size.d_view(m).x3max);
-        ReferencePsiKinematics reference;
-        GetReferencePsiKinematics(reference_kind, table, reference_mass,
-                                  center_x, center_y, center_z, time, x, y, z,
-                                  reference);
+        const ReferenceCachePoint reference{
+            reference_cache, reference_extra, m, k, j, i};
         Real psi[4][4], metric[4][4];  // NOLINT(runtime/arrays)
         for (int a = 0; a < 4; ++a) {
           for (int b = a; b < 4; ++b) {
@@ -261,8 +454,8 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
             metric[a][b] = 0.0;
             for (int A = 0; A < 4; ++A) {
               for (int B = 0; B < 4; ++B) {
-                metric[a][b] += reference.coframe[A][a]
-                                *reference.coframe[B][b]*psi[A][B];
+                metric[a][b] += ReferenceCoframe(reference, A, a)
+                                *ReferenceCoframe(reference, B, b)*psi[A][B];
               }
             }
           }

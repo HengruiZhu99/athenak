@@ -7,6 +7,7 @@
 
 #include "athena.hpp"
 #include "ref_gh/ref_gh_state.hpp"
+#include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "ref_gh/standard_gh_source.hpp"
@@ -132,22 +133,25 @@ void GetReferencePsiKinematics(const int reference_kind,
   provider.PopulatePsiKinematics(time, x, y, z, reference);
 }
 
+template <typename Reference>
 KOKKOS_INLINE_FUNCTION
-Real CoframeDerivative(const ReferenceGeometry &reference, const int p,
+Real CoframeDerivative(const Reference &reference, const int p,
                        const int A, const int a) {
   Real derivative = 0.0;
   for (int b = 0; b < 4; ++b) {
     for (int B = 0; B < 4; ++B) {
-      derivative -= reference.coframe[A][b]*reference.d_frame[p][B][b]
-                    *reference.coframe[B][a];
+      derivative -= ReferenceCoframe(reference, A, b)
+                    *ReferenceDFrame(reference, p, B, b)
+                    *ReferenceCoframe(reference, B, a);
     }
   }
   return derivative;
 }
 
+template <typename Reference>
 KOKKOS_INLINE_FUNCTION
 bool LoadPointGeometry(const DvceArray5D<Real> &state,
-                       const ReferenceGeometry &reference, const int m,
+                       const Reference &reference, const int m,
                        const int k, const int j, const int i,
                        Real psi[4][4], Real pi[4][4], Real phi[3][4][4],
                        Real d_psi[4][4][4], Real metric[4][4],
@@ -167,8 +171,8 @@ bool LoadPointGeometry(const DvceArray5D<Real> &state,
       metric[a][b] = 0.0;
       for (int A = 0; A < 4; ++A) {
         for (int B = 0; B < 4; ++B) {
-          metric[a][b] += reference.coframe[A][a]*reference.coframe[B][b]
-                          *psi[A][B];
+          metric[a][b] += ReferenceCoframe(reference, A, a)
+                          *ReferenceCoframe(reference, B, b)*psi[A][B];
         }
       }
     }
@@ -183,7 +187,8 @@ bool LoadPointGeometry(const DvceArray5D<Real> &state,
       for (int p = 0; p < 3; ++p) {
         d_psi[p + 1][A][B] = 0.0;
         for (int I = 0; I < 3; ++I) {
-          d_psi[p + 1][A][B] += reference.spatial_coframe[I][p]*phi[I][A][B];
+          d_psi[p + 1][A][B] +=
+              ReferenceSpatialCoframe(reference, I, p)*phi[I][A][B];
         }
       }
       d_psi[0][A][B] = -alpha*pi[A][B];
@@ -199,8 +204,10 @@ bool LoadPointGeometry(const DvceArray5D<Real> &state,
         for (int a = 0; a < 4; ++a) {
           for (int b = 0; b < 4; ++b) {
             frame_corrected[A][B] -=
-                (reference.d_frame[p][A][a]*reference.frame[B][b]
-                 + reference.frame[A][a]*reference.d_frame[p][B][b])*metric[a][b];
+                (ReferenceDFrame(reference, p, A, a)
+                   *ReferenceFrame(reference, B, b)
+                 + ReferenceFrame(reference, A, a)
+                   *ReferenceDFrame(reference, p, B, b))*metric[a][b];
           }
         }
       }
@@ -210,8 +217,9 @@ bool LoadPointGeometry(const DvceArray5D<Real> &state,
         d_metric[p][a][b] = 0.0;
         for (int A = 0; A < 4; ++A) {
           for (int B = 0; B < 4; ++B) {
-            d_metric[p][a][b] += reference.coframe[A][a]
-                                  *reference.coframe[B][b]*frame_corrected[A][B];
+            d_metric[p][a][b] += ReferenceCoframe(reference, A, a)
+                                  *ReferenceCoframe(reference, B, b)
+                                  *frame_corrected[A][B];
           }
         }
       }

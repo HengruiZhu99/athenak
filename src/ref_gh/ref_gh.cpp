@@ -13,6 +13,7 @@
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "ref_gh/ref_gh.hpp"
+#include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 
 namespace ref_gh {
@@ -51,7 +52,12 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     u_rhs("u_rhs ref_gh", 1, 1, 1, 1, 1),
     u_con("u_con ref_gh", 1, 1, 1, 1, 1),
     coarse_u0("coarse u0 ref_gh", 1, 1, 1, 1, 1),
+    reference_evolution("ref_gh reference evolution", 1, 1, 1, 1, 1),
+    reference_diagnostic("ref_gh reference diagnostic", 1, 1, 1, 1, 1),
     reference_table("ref_gh reference table", 1, 1),
+    reference_cache_time(NAN), reference_diagnostic_time(NAN),
+    reference_cache_oracle_validated(false),
+    reference_diagnostic_oracle_validated(false),
     dtnew(0.0), max_char_speed(0.0), pmy_pack(ppack) {
   opt.fd_order = pin->GetOrAddInteger("ref_gh", "fd_order", 4);
   opt.extrap_order = pin->GetOrAddInteger("ref_gh", "extrap_order", 2);
@@ -79,6 +85,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   opt.debug_task_fences =
       pin->GetOrAddBoolean("ref_gh", "debug_task_fences", false);
+  opt.validate_reference_cache =
+      pin->GetOrAddBoolean("ref_gh", "validate_reference_cache", false);
   opt.gamma0 = pin->GetOrAddReal("ref_gh", "gamma0", 1.0);
   opt.diss = pin->GetOrAddReal("ref_gh", "diss", 0.02);
   opt.fail_closed_dt = pin->GetOrAddReal("ref_gh", "fail_closed_dt", 0.0);
@@ -124,6 +132,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   Kokkos::realloc(u1, nmb, nref_gh, n3, n2, n1);
   Kokkos::realloc(u_rhs, nmb, nref_gh, n3, n2, n1);
   Kokkos::realloc(u_con, nmb, ncon, n3, n2, n1);
+  Kokkos::realloc(reference_evolution, nmb, kReferenceEvolutionSize, n3, n2, n1);
+  Kokkos::realloc(reference_diagnostic, nmb, kReferenceDiagnosticSize, n3, n2, n1);
   if (ppack->pmesh->multilevel) {
     const int cn1 = indcs.cnx1 + 2*indcs.ng;
     const int cn2 = (indcs.cnx2 > 1) ? indcs.cnx2 + 2*indcs.ng : 1;

@@ -37,6 +37,7 @@ class RefGh {
     int reference_kind;
     int source_kind;
     bool debug_task_fences;
+    bool validate_reference_cache;
     Real gamma0;
     Real diss;
     Real fail_closed_dt;
@@ -52,7 +53,13 @@ class RefGh {
   DvceArray5D<Real> u_rhs;
   DvceArray5D<Real> u_con;
   DvceArray5D<Real> coarse_u0;
+  DvceArray5D<Real> reference_evolution;
+  DvceArray5D<Real> reference_diagnostic;
   DvceArray2D<Real> reference_table;
+  Real reference_cache_time;
+  Real reference_diagnostic_time;
+  bool reference_cache_oracle_validated;
+  bool reference_diagnostic_oracle_validated;
   Real dtnew;
   Real max_char_speed;
   MeshBoundaryValuesCC *pbval_u;
@@ -70,6 +77,7 @@ class RefGh {
   TaskStatus ClearRecv(Driver *driver, int stage);
   TaskStatus ClearSend(Driver *driver, int stage);
   TaskStatus CopyU(Driver *driver, int stage);
+  TaskStatus UpdateReferenceGeometry(Driver *driver, int stage);
   TaskStatus ExpRKUpdate(Driver *driver, int stage);
   TaskStatus RestrictU(Driver *driver, int stage);
   TaskStatus SendU(Driver *driver, int stage);
@@ -80,6 +88,8 @@ class RefGh {
   void DebugFence(const char *label) const;
 
  private:
+  Real StageTime(const Driver *driver, int stage) const;
+  void FillReferenceCache(Real time, bool include_diagnostics);
   MeshBlockPack *pmy_pack;
 };
 

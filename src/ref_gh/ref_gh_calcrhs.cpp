@@ -18,20 +18,19 @@ namespace ref_gh {
 
 template <int FDNG>
 TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
+  // The queued UpdateReference task normally prepares this cache.  Keep the
+  // guard here for initialization/unit-test callers that invoke CalcRHS
+  // directly outside the stage task list.
+  FillReferenceCache(StageTime(driver, stage), opt.source_kind != 0);
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   const int radius = FDNG - 1;
   const int nmb = pmy_pack->nmb_thispack;
   const auto state = u0;
   const auto state_rhs = u_rhs;
-  const auto table = reference_table;
-  const int reference_kind = opt.reference_kind;
+  const auto reference_cache = reference_evolution;
+  const auto reference_extra = reference_diagnostic;
   const int source_kind = opt.source_kind;
-  const Real reference_mass = opt.reference_mass;
-  const Real center_x = opt.reference_center[0];
-  const Real center_y = opt.reference_center[1];
-  const Real center_z = opt.reference_center[2];
-  const Real stage_time = pmy_pack->pmesh->time;
   const Real gamma0 = opt.gamma0;
   Kokkos::deep_copy(state_rhs, 0.0);
   DebugFence("ref_gh CalcRHS zero");
@@ -44,16 +43,8 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   indcs.js - radius, indcs.je + radius,
   indcs.is - radius, indcs.ie + radius,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                               size.d_view(m).x1min, size.d_view(m).x1max);
-    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                               size.d_view(m).x2min, size.d_view(m).x2max);
-    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                               size.d_view(m).x3min, size.d_view(m).x3max);
-    ReferencePsiKinematics reference;
-    GetReferencePsiKinematics(
-        reference_kind, table, reference_mass, center_x, center_y, center_z,
-        stage_time, x, y, z, reference);
+    const ReferenceCachePoint reference{
+        reference_cache, reference_extra, m, k, j, i};
     Real psi[4][4], metric[4][4], inverse[4][4], pi[4][4]; // NOLINT
     Real phi[3][4][4]; // NOLINT
     LoadSymmetric(state, kPsiOffset, m, k, j, i, psi);
@@ -71,8 +62,8 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
         metric[a][b] = 0.0;
         for (int A = 0; A < 4; ++A) {
           for (int B = 0; B < 4; ++B) {
-            metric[a][b] += reference.coframe[A][a]
-                            *reference.coframe[B][b]*psi[A][B];
+            metric[a][b] += ReferenceCoframe(reference, A, a)
+                            *ReferenceCoframe(reference, B, b)*psi[A][B];
           }
         }
       }
@@ -93,7 +84,8 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
         for (int p = 0; p < 3; ++p) {
           Real coordinate_d_psi = 0.0;
           for (int I = 0; I < 3; ++I) {
-            coordinate_d_psi += reference.spatial_coframe[I][p]*phi[I][a][b];
+            coordinate_d_psi +=
+                ReferenceSpatialCoframe(reference, I, p)*phi[I][a][b];
           }
           psi_rhs += shift[p]*coordinate_d_psi;
         }
@@ -109,16 +101,8 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   par_for("ref_gh scalar source rhs", DevExeSpace(), 0, nmb - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                               size.d_view(m).x1min, size.d_view(m).x1max);
-    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                               size.d_view(m).x2min, size.d_view(m).x2max);
-    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                               size.d_view(m).x3min, size.d_view(m).x3max);
-    ReferenceGeometry reference;
-    GetReferenceGeometry(
-        reference_kind, table, reference_mass, center_x, center_y, center_z,
-        stage_time, x, y, z, reference);
+    const ReferenceCachePoint reference{
+        reference_cache, reference_extra, m, k, j, i};
     Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
     Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
     CoordinateGhGeometry geometry;
@@ -154,16 +138,8 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   par_for("ref_gh pi rhs", DevExeSpace(), 0, nmb - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                               size.d_view(m).x1min, size.d_view(m).x1max);
-    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                               size.d_view(m).x2min, size.d_view(m).x2max);
-    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                               size.d_view(m).x3min, size.d_view(m).x3max);
-    ReferenceGeometry reference;
-    GetReferenceGeometry(
-        reference_kind, table, reference_mass, center_x, center_y, center_z,
-        stage_time, x, y, z, reference);
+    const ReferenceCachePoint reference{
+        reference_cache, reference_extra, m, k, j, i};
     Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
     Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
     CoordinateGhGeometry geometry;
@@ -233,15 +209,17 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
               partial_tilde_phi +=
                   CoframeDerivative(reference, p + 1, I + 1, q + 1)
                     *phi[I][a][b]
-                  + reference.spatial_coframe[I][q]
+                  + ReferenceSpatialCoframe(reference, I, q)
                     *Dx<FDNG>(p, idx, state, m, PhiIndex(I, a, b), k, j, i);
-              tilde_phi_q += reference.spatial_coframe[I][q]*phi[I][a][b];
+              tilde_phi_q +=
+                  ReferenceSpatialCoframe(reference, I, q)*phi[I][a][b];
             }
             Real covariant_derivative = partial_tilde_phi;
             for (int r = 0; r < 3; ++r) {
               Real tilde_phi_r = 0.0;
               for (int I = 0; I < 3; ++I) {
-                tilde_phi_r += reference.spatial_coframe[I][r]*phi[I][a][b];
+                tilde_phi_r +=
+                    ReferenceSpatialCoframe(reference, I, r)*phi[I][a][b];
               }
               covariant_derivative -= spatial_connection[r][p][q]*tilde_phi_r;
             }
@@ -265,31 +243,23 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   par_for("ref_gh compatible phi rhs", DevExeSpace(), 0, nmb - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                               size.d_view(m).x1min, size.d_view(m).x1max);
-    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                               size.d_view(m).x2min, size.d_view(m).x2max);
-    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                               size.d_view(m).x3min, size.d_view(m).x3max);
-    ReferenceGeometry reference;
-    GetReferenceGeometry(
-        reference_kind, table, reference_mass, center_x, center_y, center_z,
-        stage_time, x, y, z, reference);
+    const ReferenceCachePoint reference{
+        reference_cache, reference_extra, m, k, j, i};
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
     for (int I = 0; I < 3; ++I) {
       for (int component = 0; component < kSymmetric4Size; ++component) {
         Real phi_rhs = 0.0;
         for (int p = 0; p < 3; ++p) {
-          phi_rhs += reference.spatial_frame[I][p]
+          phi_rhs += ReferenceSpatialFrame(reference, I, p)
                        *Dx<FDNG>(p, idx, state_rhs, m,
                                   kPsiOffset + component, k, j, i);
           Real coordinate_d_psi = 0.0;
           for (int J = 0; J < 3; ++J) {
-            coordinate_d_psi += reference.spatial_coframe[J][p]
+            coordinate_d_psi += ReferenceSpatialCoframe(reference, J, p)
                 *state(m, kPhiOffset + J*kSymmetric4Size + component, k, j, i);
           }
-          phi_rhs += reference.dt_spatial_frame[I][p]*coordinate_d_psi;
+          phi_rhs += ReferenceDtSpatialFrame(reference, I, p)*coordinate_d_psi;
         }
         state_rhs(m, kPhiOffset + I*kSymmetric4Size + component, k, j, i) = phi_rhs;
       }
@@ -326,28 +296,15 @@ void RefGh::CalcConstraints() {
   auto &size = pmy_pack->pmb->mb_size;
   const auto state = u0;
   const auto constraints = u_con;
-  const auto table = reference_table;
-  const int reference_kind = opt.reference_kind;
+  const auto reference_cache = reference_evolution;
+  const auto reference_extra = reference_diagnostic;
   const int source_kind = opt.source_kind;
-  const Real reference_mass = opt.reference_mass;
-  const Real center_x = opt.reference_center[0];
-  const Real center_y = opt.reference_center[1];
-  const Real center_z = opt.reference_center[2];
-  const Real time = pmy_pack->pmesh->time;
   Kokkos::deep_copy(constraints, 0.0);
   par_for("ref_gh flat constraints", DevExeSpace(), 0, pmy_pack->nmb_thispack - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                               size.d_view(m).x1min, size.d_view(m).x1max);
-    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                               size.d_view(m).x2min, size.d_view(m).x2max);
-    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                               size.d_view(m).x3min, size.d_view(m).x3max);
-    ReferenceGeometry reference;
-    GetReferenceGeometry(
-        reference_kind, table, reference_mass, center_x, center_y, center_z,
-        time, x, y, z, reference);
+    const ReferenceCachePoint reference{
+        reference_cache, reference_extra, m, k, j, i};
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
     Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
@@ -387,7 +344,8 @@ void RefGh::CalcConstraints() {
     Real frame_correction2 = 0.0;
     for (int A = 0; A < 4; ++A) {
       for (int B = 0; B < 4; ++B) {
-        frame_ricci2 += reference.ricci_frame[A][B]*reference.ricci_frame[A][B];
+        frame_ricci2 += ReferenceRicci(reference, A, B)
+                        *ReferenceRicci(reference, A, B);
         curvature2 += source_sectors.curvature[A][B]*source_sectors.curvature[A][B];
         qq2 += source_sectors.qq[A][B]*source_sectors.qq[A][B];
         delta_product2 += source_sectors.delta_product[A][B]
@@ -402,13 +360,13 @@ void RefGh::CalcConstraints() {
         }
         Real coordinate_ricci = 0.0;
         for (int C = 0; C < 4; ++C) {
-          coordinate_ricci += reference.d_christoffel[C][C][A][B]
-                              - reference.d_christoffel[B][C][A][C];
+          coordinate_ricci += ReferenceDChristoffel(reference, C, C, A, B)
+                              - ReferenceDChristoffel(reference, B, C, A, C);
           for (int D = 0; D < 4; ++D) {
-            coordinate_ricci += reference.christoffel[C][C][D]
-                                *reference.christoffel[D][A][B]
-                              - reference.christoffel[C][B][D]
-                                *reference.christoffel[D][A][C];
+            coordinate_ricci += ReferenceChristoffel(reference, C, C, D)
+                                *ReferenceChristoffel(reference, D, A, B)
+                              - ReferenceChristoffel(reference, C, B, D)
+                                *ReferenceChristoffel(reference, D, A, C);
           }
         }
         coordinate_ricci2 += coordinate_ricci*coordinate_ricci;
@@ -426,7 +384,7 @@ void RefGh::CalcConstraints() {
     constraints(m, kDiagnosticOffset + 8, k, j, i) =
         Kokkos::sqrt(frame_correction2);
     constraints(m, kMetricConditionDiagnostic, k, j, i) =
-        reference.spatial_frame[0][0];
+        ReferenceSpatialFrame(reference, 0, 0);
     Real reduction2 = 0.0;
     Real curl2 = 0.0;
     for (int I = 0; I < 3; ++I) {
@@ -434,24 +392,24 @@ void RefGh::CalcConstraints() {
         Real reduction =
             -state(m, kPhiOffset + I*kSymmetric4Size + component, k, j, i);
         for (int p = 0; p < 3; ++p) {
-          reduction += reference.spatial_frame[I][p]
+          reduction += ReferenceSpatialFrame(reference, I, p)
               *Dx<FDNG>(p, idx, state, m, kPsiOffset + component, k, j, i);
         }
         reduction2 += reduction*reduction;
         for (int J = I + 1; J < 3; ++J) {
           Real curl = 0.0;
           for (int p = 0; p < 3; ++p) {
-            curl += reference.spatial_frame[I][p]
+            curl += ReferenceSpatialFrame(reference, I, p)
                       *Dx<FDNG>(p, idx, state, m,
                                 kPhiOffset + J*kSymmetric4Size + component,
                                 k, j, i)
-                    - reference.spatial_frame[J][p]
+                    - ReferenceSpatialFrame(reference, J, p)
                       *Dx<FDNG>(p, idx, state, m,
                                 kPhiOffset + I*kSymmetric4Size + component,
                                 k, j, i);
           }
           for (int K = 0; K < 3; ++K) {
-            curl -= reference.structure[I][J][K]
+            curl -= ReferenceStructure(reference, I, J, K)
                     *state(m, kPhiOffset + K*kSymmetric4Size + component,
                            k, j, i);
           }
