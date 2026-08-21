@@ -58,13 +58,16 @@ void ProblemGenerator::Z4cLinearWave(ParameterInput *pin, const bool restart) {
 
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
+  const auto layout = pmbp->pz4c->layout;
+  const bool vertex =
+      layout.centering == z4c::Z4cGridCentering::vertex;
   auto &size = pmbp->pmb->mb_size;
-  int &is = indcs.is;
-  int &ie = indcs.ie;
-  int &js = indcs.js;
-  int &je = indcs.je;
-  int &ks = indcs.ks;
-  int &ke = indcs.ke;
+  const int is = vertex ? layout.is : indcs.is;
+  const int ie = vertex ? layout.ie : indcs.ie;
+  const int js = vertex ? layout.js : indcs.js;
+  const int je = vertex ? layout.je : indcs.je;
+  const int ks = vertex ? layout.ks : indcs.ks;
+  const int ke = vertex ? layout.ke : indcs.ke;
   auto &pz4c = pmbp->pz4c;
 
   // Code below will automatically calculate wavevector along grid diagonal, imposing the
@@ -124,9 +127,14 @@ void ProblemGenerator::Z4cLinearWave(ParameterInput *pin, const bool restart) {
         int nx2 = indcs.nx2;
         int nx3 = indcs.nx3;
 
-        Real x1v = CellCenterX(i - is, nx1, x1min, x1max);
-        Real x2v = CellCenterX(j - js, nx2, x2min, x2max);
-        Real x3v = CellCenterX(k - ks, nx3, x3min, x3max);
+        Real x1v = vertex ? VertexX(i - is, nx1, x1min, x1max)
+                          : CellCenterX(i - is, nx1, x1min, x1max);
+        Real x2v = vertex && nx2 > 1
+                       ? VertexX(j - js, nx2, x2min, x2max)
+                       : CellCenterX(j - js, nx2, x2min, x2max);
+        Real x3v = vertex && nx3 > 1
+                       ? VertexX(k - ks, nx3, x3min, x3max)
+                       : CellCenterX(k - ks, nx3, x3min, x3max);
         Real sinkx = sin(2 * M_PI * (kx1 * x1v + kx2 * x2v + kx3 * x3v));
         Real coskx = knorm * M_PI * cos(2 * M_PI * (kx1 * x1v + kx2 * x2v + kx3 * x3v));
 
@@ -171,12 +179,6 @@ void Z4cLinearWaveErrors(ParameterInput *pin, Mesh *pm) {
 
   // capture class variables for kernel
   auto &indcs = pm->mb_indcs;
-  int &nx1 = indcs.nx1;
-  int &nx2 = indcs.nx2;
-  int &nx3 = indcs.nx3;
-  int &is = indcs.is;
-  int &js = indcs.js;
-  int &ks = indcs.ks;
   MeshBlockPack *pmbp = pm->pmb_pack;
   auto &size = pmbp->pmb->mb_size;
 
@@ -186,6 +188,15 @@ void Z4cLinearWaveErrors(ParameterInput *pin, Mesh *pm) {
     auto &pz4c = pmbp->pz4c;
     auto &u0_ = pmbp->pz4c->u0;
     auto &u1_ = pmbp->pz4c->u1;
+    const auto layout = pz4c->layout;
+    const bool vertex =
+        layout.centering == z4c::Z4cGridCentering::vertex;
+    const int nx1 = vertex ? layout.ie - layout.is + 1 : indcs.nx1;
+    const int nx2 = vertex ? layout.je - layout.js + 1 : indcs.nx2;
+    const int nx3 = vertex ? layout.ke - layout.ks + 1 : indcs.nx3;
+    const int is = vertex ? layout.is : indcs.is;
+    const int js = vertex ? layout.js : indcs.js;
+    const int ks = vertex ? layout.ks : indcs.ks;
 
     const int nmkji = (pmbp->nmb_thispack)*nx3*nx2*nx1;
     const int nkji = nx3*nx2*nx1;
@@ -202,6 +213,13 @@ void Z4cLinearWaveErrors(ParameterInput *pin, Mesh *pm) {
       j += js;
 
       Real vol = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3;
+      if (vertex) {
+        // Tensor-product nodal trapezoidal weights count shared block vertices
+        // once in the global L1 norm while retaining the historical CC volume.
+        if (layout.nx1 > 1 && (i == layout.is || i == layout.ie)) vol *= 0.5;
+        if (layout.nx2 > 1 && (j == layout.js || j == layout.je)) vol *= 0.5;
+        if (layout.nx3 > 1 && (k == layout.ks || k == layout.ke)) vol *= 0.5;
+      }
 
       // g_ij's:
       array_sum::GlobalSum evars;
@@ -249,7 +267,11 @@ void Z4cLinearWaveErrors(ParameterInput *pin, Mesh *pm) {
             *(pmbp->pmesh->mesh_size.x2max - pmbp->pmesh->mesh_size.x2min)
             *(pmbp->pmesh->mesh_size.x3max - pmbp->pmesh->mesh_size.x3min);
   for (int i=0; i<nvars; ++i) l1_err[i] = l1_err[i]/vol;
-  linfty_err /= vol;
+  if (pmbp->pz4c->layout.centering == z4c::Z4cGridCentering::cell) {
+    // Preserve the historical CC diagnostic byte-for-byte.  Native VC reports
+    // the conventional pointwise Linf value without a volume rescaling.
+    linfty_err /= vol;
+  }
 
   // compute rms error
   Real rms_err = 0.0;
@@ -309,9 +331,15 @@ void LWRefinementCondition(MeshBlockPack* pmbp) {
   int I_Z4C_GXY  = pmbp->pz4c->I_Z4C_GXY;
   int nmb           = pmbp->nmb_thispack;
   auto &indcs       = pmbp->pmesh->mb_indcs;
-  int &is = indcs.is, nx1 = indcs.nx1;
-  int &js = indcs.js, nx2 = indcs.nx2;
-  int &ks = indcs.ks, nx3 = indcs.nx3;
+  const auto layout = pmbp->pz4c->layout;
+  const bool vertex =
+      layout.centering == z4c::Z4cGridCentering::vertex;
+  const int is = vertex ? layout.is : indcs.is;
+  const int js = vertex ? layout.js : indcs.js;
+  const int ks = vertex ? layout.ks : indcs.ks;
+  const int nx1 = vertex ? layout.ie - layout.is + 1 : indcs.nx1;
+  const int nx2 = vertex ? layout.je - layout.js + 1 : indcs.nx2;
+  const int nx3 = vertex ? layout.ke - layout.ks + 1 : indcs.nx3;
   const int nkji = nx3 * nx2 * nx1;
   const int nji  = nx2 * nx1;
   int mbs           = pmbp->pmesh->gids_eachrank[global_variable::my_rank];

@@ -541,6 +541,29 @@ if (Athena_BUILD_UNIT_TESTS)
   set_tests_properties(
       athena.z4c_vc_dynamic_amr PROPERTIES TIMEOUT 60 LABELS "z4c;vertex;amr")
   add_test(
+      NAME athena.z4c_vc_linear_wave_convergence_o4
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_linear_wave_convergence_test.py
+      --athena $<TARGET_FILE:athena>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_linear_wave_o4.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_linear_wave_o4_test)
+  set_tests_properties(
+      athena.z4c_vc_linear_wave_convergence_o4
+      PROPERTIES TIMEOUT 180 LABELS "z4c;vertex;cartesian;convergence")
+  add_test(
+      NAME athena.z4c_vc_static_multilevel_wave
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_static_multilevel_test.py
+      --athena $<TARGET_FILE:athena>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_static_multilevel_wave.athinput
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR}
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_static_multilevel_test)
+  set_tests_properties(
+      athena.z4c_vc_static_multilevel_wave
+      PROPERTIES TIMEOUT 120 LABELS "z4c;vertex;cartesian;amr;interface")
+  add_test(
       NAME athena.z4c_vc_amr_history
       COMMAND
       ${PYTHON_EXECUTABLE}

@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <utility>
 
 #include <Kokkos_Core.hpp>
 
@@ -102,6 +103,127 @@ bool CheckCartoon() {
   return true;
 }
 
+std::pair<Real, Real> CartoonO4ConvergenceError(const int nx) {
+  constexpr int nghost = 3;
+  const int is = nghost;
+  const int js = nghost;
+  const int n1 = nx + 1 + 2 * nghost;
+  const int n2 = nx + 1 + 2 * nghost;
+  DvceArray5D<Real> storage("VC Cartoon smooth convergence", 1, 1, 1, n2, n1);
+  auto host = Kokkos::create_mirror_view(storage);
+  for (int j = 0; j < n2; ++j) {
+    const Real z = VertexX(j - js, nx, -1.0, 1.0);
+    for (int i = 0; i < n1; ++i) {
+      const Real rho = VertexX(i - is, nx, 0.0, 2.0);
+      host(0, 0, 0, j, i) = std::exp(-rho * rho) * std::cos(z);
+    }
+  }
+  Kokkos::deep_copy(storage, host);
+  Kokkos::View<RegionSize *> size("VC Cartoon convergence size", 1);
+  auto size_host = Kokkos::create_mirror_view(size);
+  size_host(0).x1min = 0.0;
+  size_host(0).x1max = 2.0;
+  size_host(0).x2min = -1.0;
+  size_host(0).x2max = 1.0;
+  size_host(0).dx1 = 2.0 / nx;
+  size_host(0).dx2 = 2.0 / nx;
+  size_host(0).dx3 = 1.0;
+  Kokkos::deep_copy(size, size_host);
+  ScalarField field{storage};
+  const int active_points = nx + 1;
+  const int total_points = active_points * active_points;
+  Real squared_error = 0.0;
+  Kokkos::parallel_reduce(
+      "VC Cartoon O4 smooth whole-domain error",
+      Kokkos::RangePolicy<DevExeSpace>(0, total_points),
+      KOKKOS_LAMBDA(const int index, Real &sum) {
+        const int i = is + index % active_points;
+        const int j = js + index / active_points;
+        const Real rho = VertexX(i - is, nx, 0.0, 2.0);
+        const Real z = VertexX(j - js, nx, -1.0, 1.0);
+        const Real exponential = Kokkos::exp(-rho * rho);
+        const Real cosine = Kokkos::cos(z);
+        const Real sine = Kokkos::sin(z);
+        const Real exact[6] = {
+            -2.0 * rho * exponential * cosine,
+            -exponential * sine,
+            (4.0 * rho * rho - 2.0) * exponential * cosine,
+            -exponential * cosine,
+            2.0 * rho * exponential * sine,
+            -2.0 * exponential * cosine};
+        const Real inverse_spacing[3] = {0.5 * nx, 0.5 * nx, 1.0};
+        auto derivatives = z4c::MakeZ4cDerivativeProvider<
+            z4c::VertexCenteredZ4c, z4c::CartoonSO2, nghost>(
+                inverse_spacing, size, nx, is, 0, 0, j, i);
+        const Real actual[6] = {
+            derivatives.ScalarFirst(0, field),
+            derivatives.ScalarFirst(1, field),
+            derivatives.ScalarSecond(0, 0, field),
+            derivatives.ScalarSecond(1, 1, field),
+            derivatives.ScalarSecond(0, 1, field),
+            derivatives.ScalarSecond(2, 2, field)};
+        for (int quantity = 0; quantity < 6; ++quantity) {
+          const Real difference = actual[quantity] - exact[quantity];
+          sum += difference * difference;
+        }
+      }, squared_error);
+  Real axis_squared_error = 0.0;
+  Kokkos::parallel_reduce(
+      "VC Cartoon O4 smooth axis error",
+      Kokkos::RangePolicy<DevExeSpace>(0, active_points),
+      KOKKOS_LAMBDA(const int offset, Real &sum) {
+        const int i = is;
+        const int j = js + offset;
+        const Real z = VertexX(offset, nx, -1.0, 1.0);
+        const Real exponential = 1.0;
+        const Real cosine = Kokkos::cos(z);
+        const Real sine = Kokkos::sin(z);
+        const Real exact[6] = {0.0, -exponential * sine,
+                               -2.0 * exponential * cosine,
+                               -exponential * cosine, 0.0,
+                               -2.0 * exponential * cosine};
+        const Real inverse_spacing[3] = {0.5 * nx, 0.5 * nx, 1.0};
+        auto derivatives = z4c::MakeZ4cDerivativeProvider<
+            z4c::VertexCenteredZ4c, z4c::CartoonSO2, nghost>(
+                inverse_spacing, size, nx, is, 0, 0, j, i);
+        const Real actual[6] = {
+            derivatives.ScalarFirst(0, field),
+            derivatives.ScalarFirst(1, field),
+            derivatives.ScalarSecond(0, 0, field),
+            derivatives.ScalarSecond(1, 1, field),
+            derivatives.ScalarSecond(0, 1, field),
+            derivatives.ScalarSecond(2, 2, field)};
+        for (int quantity = 0; quantity < 6; ++quantity) {
+          const Real difference = actual[quantity] - exact[quantity];
+          sum += difference * difference;
+        }
+      }, axis_squared_error);
+  Kokkos::fence();
+  return {std::sqrt(squared_error / (6.0 * total_points)),
+          std::sqrt(axis_squared_error / (6.0 * active_points))};
+}
+
+bool CheckCartoonO4Convergence() {
+  const auto coarse = CartoonO4ConvergenceError(16);
+  const auto medium = CartoonO4ConvergenceError(32);
+  const auto fine = CartoonO4ConvergenceError(64);
+  const Real whole_order_1 = std::log2(coarse.first / medium.first);
+  const Real whole_order_2 = std::log2(medium.first / fine.first);
+  const Real axis_order_1 = std::log2(coarse.second / medium.second);
+  const Real axis_order_2 = std::log2(medium.second / fine.second);
+  if (std::min(whole_order_1, whole_order_2) < 3.5 ||
+      std::min(axis_order_1, axis_order_2) < 3.5) {
+    std::cerr << "Cartoon native-VC O4 convergence failure whole="
+              << whole_order_1 << "," << whole_order_2 << " axis="
+              << axis_order_1 << "," << axis_order_2 << "\n";
+    return false;
+  }
+  std::cout << "Cartoon native-VC O4 convergence whole=" << whole_order_1
+            << "," << whole_order_2 << " axis=" << axis_order_1 << ","
+            << axis_order_2 << "\n";
+  return true;
+}
+
 template <int NGHOST>
 bool CheckCartesian() {
   constexpr int nx = 12;
@@ -171,7 +293,9 @@ int main(int argc, char **argv) {
   if (selection == "cartesian_o4") passed = CheckCartesian<3>();
   if (selection == "cartesian_o6") passed = CheckCartesian<4>();
   if (selection == "cartoon_o2") passed = CheckCartoon<2>();
-  if (selection == "cartoon_o4") passed = CheckCartoon<3>();
+  if (selection == "cartoon_o4") {
+    passed = CheckCartoon<3>() && CheckCartoonO4Convergence();
+  }
   if (selection == "cartoon_o6") passed = CheckCartoon<4>();
   if (!passed) return EXIT_FAILURE;
   std::cout << "Z4c Cartesian/Cartoon VC derivative factories passed on "

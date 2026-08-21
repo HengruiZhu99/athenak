@@ -32,10 +32,16 @@ bool IsNonperiodicPhysicalBoundary(const BoundaryFlag flag) {
 
 void AddNeighborIndices(const int ox1, const int ox2, const int ox3,
                         std::set<int> *indices) {
-  for (int f2 = 0; f2 <= 1; ++f2) {
-    for (int f1 = 0; f1 <= 1; ++f1) {
-      const int index = NeighborIndex(ox1, ox2, ox3, f1, f2);
-      if (index >= 0) indices->insert(index);
+  // AthenaK subdivides faces with (f1,f2), edges with f1 only, and corners
+  // not at all.  Passing f2=1 for an edge numerically aliases its buffer ID
+  // into the corner range and can misclassify a same-level shared vertex as a
+  // hanging coarse/fine node.
+  const int codimension = std::abs(ox1) + std::abs(ox2) + std::abs(ox3);
+  const int f1_count = codimension <= 2 ? 2 : 1;
+  const int f2_count = codimension == 1 ? 2 : 1;
+  for (int f2 = 0; f2 < f2_count; ++f2) {
+    for (int f1 = 0; f1 < f1_count; ++f1) {
+      indices->insert(NeighborIndex(ox1, ox2, ox3, f1, f2));
     }
   }
 }
