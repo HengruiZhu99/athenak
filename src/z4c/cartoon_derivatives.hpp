@@ -15,6 +15,7 @@
 #include "athena.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "utils/finite_diff.hpp"
+#include "z4c/z4c_grid.hpp"
 
 namespace z4c {
 
@@ -33,7 +34,11 @@ struct CartoonSO2 {};
 enum class TensorVariance { all_lower, all_upper };
 
 //! Exact-axis diagnostic samples are distinct from nonzero production cell centers.
-enum class CartoonAxisLocation { cell_centered, diagnostic_axis };
+enum class CartoonAxisLocation {
+  cell_centered,
+  diagnostic_axis,
+  evolved_vertex_axis,
+};
 
 template <typename Symmetry, int NGHOST>
 class DerivativeProvider;
@@ -533,7 +538,8 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
   }
 
   KOKKOS_INLINE_FUNCTION bool OnAxis() const {
-    return axis_location_ == CartoonAxisLocation::diagnostic_axis;
+    return axis_location_ == CartoonAxisLocation::diagnostic_axis ||
+           axis_location_ == CartoonAxisLocation::evolved_vertex_axis;
   }
 
   KOKKOS_INLINE_FUNCTION static bool IsComponentPair(const int a, const int b,
@@ -826,6 +832,50 @@ MakeCellCenteredDerivativeProvider(const Real inverse_spacing[3],
     static_assert(std::is_same_v<Symmetry, Cartesian3D>,
                   "Unknown Z4c derivative symmetry policy");
     return DerivativeProvider<Cartesian3D, NGHOST>(inverse_spacing, m, k, j, i);
+  }
+}
+
+//! Construct the compile-time derivative policy at a native Z4c vertex.
+//!
+//! Cartesian stencils are identical to the CC path on a uniform grid. Cartoon
+//! evaluates rho with VertexX and marks the physical rho=0 vertex explicitly, so the
+//! provider's analytic limits are selected before the device kernel is instantiated.
+template <typename Symmetry, int NGHOST, typename RegionSizeView>
+KOKKOS_INLINE_FUNCTION DerivativeProvider<Symmetry, NGHOST>
+MakeVertexCenteredDerivativeProvider(const Real inverse_spacing[3],
+                                     const RegionSizeView &size, const int nx1,
+                                     const int is, const int m, const int k,
+                                     const int j, const int i) {
+  if constexpr (std::is_same_v<Symmetry, CartoonSO2>) {
+    const Real rho = VertexX(i - is, nx1, size(m).x1min, size(m).x1max);
+    const auto axis_location =
+        (i == is) ? CartoonAxisLocation::evolved_vertex_axis
+                  : CartoonAxisLocation::cell_centered;
+    return DerivativeProvider<CartoonSO2, NGHOST>(
+        inverse_spacing, rho, axis_location, m, k, j, i);
+  } else {
+    static_assert(std::is_same_v<Symmetry, Cartesian3D>,
+                  "Unknown Z4c derivative symmetry policy");
+    return DerivativeProvider<Cartesian3D, NGHOST>(inverse_spacing, m, k, j, i);
+  }
+}
+
+//! Compile-time centering selection for centering-generic Z4c kernels.
+template <typename Centering, typename Symmetry, int NGHOST,
+          typename RegionSizeView>
+KOKKOS_INLINE_FUNCTION DerivativeProvider<Symmetry, NGHOST>
+MakeZ4cDerivativeProvider(const Real inverse_spacing[3],
+                          const RegionSizeView &size, const int nx1,
+                          const int is, const int m, const int k,
+                          const int j, const int i) {
+  if constexpr (std::is_same_v<Centering, CellCenteredZ4c>) {
+    return MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+        inverse_spacing, size, nx1, is, m, k, j, i);
+  } else {
+    static_assert(std::is_same_v<Centering, VertexCenteredZ4c>,
+                  "Unknown Z4c centering policy tag");
+    return MakeVertexCenteredDerivativeProvider<Symmetry, NGHOST>(
+        inverse_spacing, size, nx1, is, m, k, j, i);
   }
 }
 

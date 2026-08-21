@@ -427,6 +427,24 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND athena_z4c_grid_layout_unit_test collapsed)
 
   add_executable(
+      athena_z4c_vertex_derivatives_unit_test
+      tst/unit/z4c/z4c_vertex_derivatives_test.cpp)
+  target_include_directories(
+      athena_z4c_vertex_derivatives_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_vertex_derivatives_unit_test PRIVATE Kokkos::kokkos)
+  foreach(symmetry IN ITEMS cartesian cartoon)
+    foreach(order IN ITEMS o2 o4 o6)
+      add_test(
+          NAME athena.z4c_vc_${symmetry}_derivatives_${order}
+          COMMAND athena_z4c_vertex_derivatives_unit_test ${symmetry}_${order})
+    endforeach()
+  endforeach()
+
+  add_executable(
       athena_z4c_cartoon_axis_parity_unit_test
       tst/unit/z4c/cartoon_axis_parity_test.cpp)
   target_include_directories(
