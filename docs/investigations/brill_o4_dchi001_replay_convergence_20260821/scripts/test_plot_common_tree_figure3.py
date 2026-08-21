@@ -32,7 +32,7 @@ with tempfile.TemporaryDirectory() as directory:
     output = root / "output"
     subprocess.run([sys.executable, str(SCRIPT), *histories,
                     "--reference", str(reference), "--output", str(output)], check=True)
-    assert (output / "figure3_common_tree_overlay.png").stat().st_size > 0
+    assert (output / "fig3_o4_common_tree_n128_n256_n512.png").stat().st_size > 0
     with (output / "figure3_plotted_data.csv").open(newline="") as stream:
         rows = list(csv.DictReader(stream))
     assert len(rows) == 9 and {row["series"] for row in rows} == {

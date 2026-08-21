@@ -81,7 +81,7 @@ def main() -> None:
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="outside lower center", ncol=3, fontsize=8)
     fig.suptitle("Brill A=-0.047: symmetric-O4 common-hierarchy comparison")
-    figure_path = args.output / "figure3_common_tree_overlay.png"
+    figure_path = args.output / "fig3_o4_common_tree_n128_n256_n512.png"
     fig.savefig(figure_path, dpi=220)
     plt.close(fig)
 

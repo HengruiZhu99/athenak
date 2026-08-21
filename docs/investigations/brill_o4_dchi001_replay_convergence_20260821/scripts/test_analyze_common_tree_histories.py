@@ -126,7 +126,9 @@ def main() -> None:
         expected = {
             "constraints_vs_t.png", "constraints_vs_tau.png",
             "curvature_and_timestep_vs_tau.png", "amr_vs_tau.png",
+            "curvature_vs_tau.png", "timestep_vs_tau.png",
             "constraint_convergence_order.png", "native_amr_shadow.png",
+            "native_amr_sensor_vs_tau.png", "authority_event_jump_convergence.png",
         }
         assert expected == {path.name for path in (output / "figures").glob("*.png")}
     print("COMMON_TREE_HISTORY_ANALYZER_TEST_PASS")

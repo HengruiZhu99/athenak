@@ -384,6 +384,26 @@ def plot_scalar_panels(histories: dict[str, list[dict[str, float]]], output: Pat
     axes[1].set_xlabel("central proper time"); axes[1].set_ylabel("dt"); axes[1].grid(alpha=.22, which="both"); axes[1].legend()
     save_figure(fig, output / "curvature_and_timestep_vs_tau.png")
 
+    fig, ax = plt.subplots(figsize=(9.4, 5.2), constrained_layout=True)
+    for case, rows in histories.items():
+        tau = [row["axisTau"] for row in rows]
+        ax.semilogy(tau, [max(row["max_abs_K"], 1e-300) for row in rows],
+                    color=colors[case], label=f"{case.upper()} max|K|")
+        ax.semilogy(tau, [max(row["maxAbsKret"], 1e-300) for row in rows],
+                    color=colors[case], linestyle="--",
+                    label=f"{case.upper()} max Kretschmann")
+    ax.set_xlabel("central proper time"); ax.grid(alpha=.22, which="both")
+    ax.legend(fontsize=7)
+    save_figure(fig, output / "curvature_vs_tau.png")
+
+    fig, ax = plt.subplots(figsize=(9.4, 5.2), constrained_layout=True)
+    for case, rows in histories.items():
+        ax.semilogy([row["axisTau"] for row in rows], [row["dt"] for row in rows],
+                    color=colors[case], label=case.upper())
+    ax.set_xlabel("central proper time"); ax.set_ylabel("accepted dt")
+    ax.grid(alpha=.22, which="both"); ax.legend()
+    save_figure(fig, output / "timestep_vs_tau.png")
+
     fig, axes = plt.subplots(1, 2, figsize=(12.8, 4.7), constrained_layout=True)
     for case, rows in histories.items():
         tau = [row["axisTau"] for row in rows]
@@ -423,6 +443,49 @@ def plot_shadow(shadows: dict[str, list[dict[str, Any]]], path: Path) -> None:
     axes[-1].set_xlabel("authority event")
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="outside lower center", ncol=3, fontsize=7)
+    save_figure(fig, path)
+
+
+def plot_shadow_sensor(shadows: dict[str, list[dict[str, Any]]], path: Path) -> None:
+    colors = {"n128": "#377eb8", "n512": "#e41a1c"}
+    fig, axes = plt.subplots(1, 2, figsize=(12.2, 4.7), constrained_layout=True)
+    for case, rows in shadows.items():
+        by_cycle: dict[int, list[dict[str, Any]]] = {}
+        for row in rows:
+            by_cycle.setdefault(int(row["cycle"]), []).append(row)
+        groups = [by_cycle[cycle] for cycle in sorted(by_cycle)]
+        tau = [float(group[0]["tau_c"]) for group in groups]
+        raw = [max(float(row["raw_dchi"]) for row in group) for group in groups]
+        scaled = [max(float(row["dchi_over_dx"]) for row in group) for group in groups]
+        axes[0].semilogy(tau, raw, color=colors[case], label=case.upper(), linewidth=.9)
+        axes[1].semilogy(tau, scaled, color=colors[case], label=case.upper(), linewidth=.9)
+    axes[0].axhline(.01, color="black", linestyle="--", linewidth=.8,
+                    label=r"$d\chi_{max}=0.01$")
+    axes[0].set_ylabel("maximum native raw dchi")
+    axes[1].set_ylabel("maximum native dchi/dx")
+    for ax in axes:
+        ax.set_xlabel("central proper time"); ax.grid(alpha=.2, which="both"); ax.legend()
+    save_figure(fig, path)
+
+
+def plot_authority_jump_convergence(rows: list[dict[str, Any]], path: Path) -> None:
+    colors = {"n128": "#377eb8", "n256": "#4daf4a", "n512": "#e41a1c"}
+    positions = {"n128": 0, "n256": 1, "n512": 2}
+    fig, axes = plt.subplots(2, 2, figsize=(12.2, 8.0), constrained_layout=True)
+    for ax, field in zip(axes.flat, CONSTRAINTS):
+        for case in CASES:
+            values = [float(row["abs_log10_jump"]) for row in rows
+                      if row["field"] == field and row["resolution"] == case
+                      and math.isfinite(float(row["abs_log10_jump"]))]
+            if values:
+                ax.boxplot(values, positions=[positions[case]], widths=.55,
+                           patch_artist=True,
+                           boxprops={"facecolor": colors[case], "alpha": .55},
+                           medianprops={"color": "black"}, showfliers=False)
+        ax.set_xticks((0, 1, 2), ("N128\nh=0.25", "N256\nh=0.125", "N512\nh=0.0625"))
+        ax.set_ylabel(r"$|\Delta\log_{10}\|C\|_2|$")
+        ax.set_title(field); ax.grid(alpha=.2, axis="y")
+    fig.suptitle("Constraint jumps bracketing corresponding authority events")
     save_figure(fig, path)
 
 
@@ -489,6 +552,8 @@ def main() -> None:
     plot_scalar_panels(histories, figures)
     plot_constraint_order(conv, figures / "constraint_convergence_order.png")
     plot_shadow(shadows, figures / "native_amr_shadow.png")
+    plot_shadow_sensor(shadows, figures / "native_amr_sensor_vs_tau.png")
+    plot_authority_jump_convergence(jumps, figures / "authority_event_jump_convergence.png")
 
     summary = {
         "schema": "brill_o4_common_tree_history_analysis_v1",
