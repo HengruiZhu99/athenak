@@ -540,6 +540,21 @@ if (Athena_BUILD_UNIT_TESTS)
       --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_dynamic_amr_test)
   set_tests_properties(
       athena.z4c_vc_dynamic_amr PROPERTIES TIMEOUT 60 LABELS "z4c;vertex;amr")
+  if (Athena_ENABLE_MPI)
+    add_test(
+        NAME athena.z4c_vc_history_mpi
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_history_mpi_test
+        --mpiexec ${MPIEXEC_EXECUTABLE}
+        --np-flag=${MPIEXEC_NUMPROC_FLAG})
+    set_tests_properties(
+        athena.z4c_vc_history_mpi
+        PROPERTIES TIMEOUT 90 LABELS "z4c;vertex;history;mpi")
+  endif()
 
   add_test(
       NAME athena.z4c_vc_restart
@@ -580,6 +595,31 @@ if (Athena_BUILD_UNIT_TESTS)
   add_test(
       NAME athena.z4c_vc_amr_transfer
       COMMAND athena_z4c_vertex_amr_unit_test)
+
+  add_executable(
+      athena_z4c_vertex_history_quadrature_unit_test
+      tst/unit/z4c/z4c_vertex_history_quadrature_test.cpp)
+  target_include_directories(
+      athena_z4c_vertex_history_quadrature_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_vertex_history_quadrature_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_vc_history_quadrature
+      COMMAND athena_z4c_vertex_history_quadrature_unit_test)
+
+  add_test(
+      NAME athena.z4c_vc_output
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_output_test.py
+      --athena $<TARGET_FILE:athena>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_output.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_output_test)
+  set_tests_properties(
+      athena.z4c_vc_output PROPERTIES TIMEOUT 90 LABELS "z4c;vertex;output")
 
   add_executable(
       athena_z4c_vertex_to_cell_unit_test

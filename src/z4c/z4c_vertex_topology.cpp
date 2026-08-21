@@ -150,6 +150,7 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
           bool same_level = false;
           bool coarse_fine = false;
           bool fine_side = false;
+          int minimum_same_level_gid = gid;
           std::set<int> neighbor_gids;
           for (int a = 0; a < count1; ++a) {
             for (int b = 0; b < count2; ++b) {
@@ -164,7 +165,11 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
                   const NeighborBlock &neighbor = blocks->nghbr.h_view(m, index);
                   if (neighbor.gid < 0) continue;
                   neighbor_gids.insert(neighbor.gid);
-                  if (neighbor.lev == location.level) same_level = true;
+                  if (neighbor.lev == location.level) {
+                    same_level = true;
+                    minimum_same_level_gid =
+                        std::min(minimum_same_level_gid, neighbor.gid);
+                  }
                   if (neighbor.lev != location.level) coarse_fine = true;
                   if (neighbor.lev < location.level) fine_side = true;
                 }
@@ -185,10 +190,17 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
           record.role = vertex_topology::ClassifyVertexNodeRole(role_input);
           record.topological_multiplicity = static_cast<std::uint8_t>(
               std::min<std::size_t>(255, neighbor_gids.size() + 1));
-          // The deterministic gather plan will refine this ownership bit using the
-          // complete contributor order.  Interior nodes are unambiguous already.
+          // Axis, physical-boundary, and hanging roles intentionally do not enter
+          // the evolution gather.  They still need exactly one deterministic
+          // same-level diagnostic copy.  Shared coincident roles are refined by
+          // the complete global contributor order below.
           record.canonical_diagnostic_owner =
-              record.role == vertex_topology::VertexNodeRole::independent_interior;
+              (record.role == vertex_topology::VertexNodeRole::independent_interior ||
+               record.role == vertex_topology::VertexNodeRole::axis ||
+               record.role == vertex_topology::VertexNodeRole::physical_boundary ||
+               record.role ==
+                   vertex_topology::VertexNodeRole::hanging_fine_interface) &&
+              gid == minimum_same_level_gid;
           if (record.role == vertex_topology::VertexNodeRole::shared_same_level ||
               record.role ==
                   vertex_topology::VertexNodeRole::shared_coarse_fine_coincident) {

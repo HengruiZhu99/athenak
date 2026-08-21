@@ -23,6 +23,8 @@
 #include "coordinates/cell_locations.hpp"
 #include "mesh/mesh.hpp"
 #include "outputs.hpp"
+#include "z4c/z4c.hpp"
+#include "z4c/z4c_vertex_topology.hpp"
 
 //----------------------------------------------------------------------------------------
 // ctor: also calls BaseTypeOutput base class constructor
@@ -84,6 +86,9 @@ void FormattedTableOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     // print file header
     std::fprintf(pfile, "# Athena++ data at time=%e", pm->time);
     std::fprintf(pfile, "  cycle=%d \n", pm->ncycle);
+    if (output_sampling == OutputGridSampling::vertex) {
+      std::fprintf(pfile, "# grid_sampling=vertex centering_schema=1\n");
+    }
 
     // write one of x1, x2, x3 column headers
     std::fprintf(pfile, "# gid  ");
@@ -109,6 +114,10 @@ void FormattedTableOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
         << "Output file '" << fname << "' could not be opened" << std::endl;
     exit(EXIT_FAILURE);
   }
+  const bool vertex_output = output_sampling == OutputGridSampling::vertex;
+  if (vertex_output) {
+    pm->pmb_pack->pz4c->vertex_topology_plan->records.sync_host();
+  }
   for (int r=0; r<global_variable::nranks; ++r) {
     // MPI ranks append data one-at-a-time in order, due to MPI_Barrier at end of loop
     // This could be slow for very large numbers of ranks, however this is not a regime
@@ -122,9 +131,11 @@ void FormattedTableOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
         auto &size  = pm->pmb_pack->pmb->mb_size;
         MeshBlock* pmb = pm->pmb_pack->pmb;
         int idx = pm->FindMeshBlockIndex(outmbs[m].mb_gid);
-        int &is = indcs.is;
-        int &js = indcs.js;
-        int &ks = indcs.ks;
+        const bool vertex = vertex_output;
+        const auto &layout = pm->pmb_pack->pz4c->layout;
+        const int is = vertex ? layout.is : indcs.is;
+        const int js = vertex ? layout.js : indcs.js;
+        const int ks = vertex ? layout.ks : indcs.ks;
         int &ois = outmbs[m].ois;
         int &oie = outmbs[m].oie;
         int &ojs = outmbs[m].ojs;
@@ -143,22 +154,30 @@ void FormattedTableOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
         for (int k=oks; k<=oke; ++k) {
           for (int j=ojs; j<=oje; ++j) {
             for (int i=ois; i<=oie; ++i) {
+              if (vertex && !pm->pmb_pack->pz4c->vertex_topology_plan->records
+                                  .h_view(idx, k, j, i)
+                                  .canonical_diagnostic_owner) {
+                continue;
+              }
               std::fprintf(pfile, "%05d", pmb->mb_gid.h_view(idx));
               // write x1, x2, x3 indices and coordinates
               if (oie != ois) {
                 std::fprintf(pfile, " %04d", i);  // note extra space for formatting
-                Real x1cc = CellCenterX(i-is,nx1,x1min,x1max);
-                std::fprintf(pfile, out_params.data_format.c_str(), x1cc);
+                const Real x1 = vertex ? VertexX(i-is,nx1,x1min,x1max)
+                                       : CellCenterX(i-is,nx1,x1min,x1max);
+                std::fprintf(pfile, out_params.data_format.c_str(), x1);
               }
               if (oje != ojs) {
                 std::fprintf(pfile, " %04d", j);  // note extra space for formatting
-                Real x2cc = CellCenterX(j-js,nx2,x2min,x2max);
-                std::fprintf(pfile, out_params.data_format.c_str(), x2cc);
+                const Real x2 = vertex ? VertexX(j-js,nx2,x2min,x2max)
+                                       : CellCenterX(j-js,nx2,x2min,x2max);
+                std::fprintf(pfile, out_params.data_format.c_str(), x2);
               }
               if (oke != oks) {
                 std::fprintf(pfile, " %04d", k);  // note extra space for formatting
-                Real x3cc = CellCenterX(k-ks,nx3,x3min,x3max);
-                std::fprintf(pfile, out_params.data_format.c_str(), x3cc);
+                const Real x3 = vertex ? VertexX(k-ks,nx3,x3min,x3max)
+                                       : CellCenterX(k-ks,nx3,x3min,x3max);
+                std::fprintf(pfile, out_params.data_format.c_str(), x3);
               }
 
               // write each output variable on same line

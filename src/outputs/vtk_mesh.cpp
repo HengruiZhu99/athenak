@@ -36,6 +36,13 @@
 
 MeshVTKOutput::MeshVTKOutput(ParameterInput *pin, Mesh *pm, OutputParameters op) :
   BaseTypeOutput(pin, pm, op) {
+  if (output_sampling == OutputGridSampling::vertex && pm->nmb_total > 1 &&
+      out_params.gid < 0) {
+    std::cerr << "### FATAL ERROR: legacy structured-points VTK cannot de-duplicate "
+                 "native VC data across multiple MeshBlocks; select one gid or use "
+                 "standard binary output" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   // create new directory for this output. Comments in binary.cpp constructor explain why
   mkdir("vtk",0775);
 }
@@ -86,9 +93,10 @@ void MeshVTKOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     nout2 = outmbs[0].oje - outmbs[0].ojs + 1;
     nout3 = outmbs[0].oke - outmbs[0].oks + 1;
   }
-  int ncoord1 = (nout1 > 1)? nout1+1 : nout1;
-  int ncoord2 = (nout2 > 1)? nout2+1 : nout2;
-  int ncoord3 = (nout3 > 1)? nout3+1 : nout3;
+  const bool vertex = output_sampling == OutputGridSampling::vertex;
+  int ncoord1 = vertex ? nout1 : ((nout1 > 1) ? nout1 + 1 : nout1);
+  int ncoord2 = vertex ? nout2 : ((nout2 > 1) ? nout2 + 1 : nout2);
+  int ncoord3 = vertex ? nout3 : ((nout3 > 1) ? nout3 + 1 : nout3);
 
   // Write parts 1-4: Create string with header text.
   std::stringstream msg;
@@ -99,6 +107,7 @@ void MeshVTKOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
       << "  nranks= " << global_variable::nranks
       << "  cycle=" << pm->ncycle
       << "  variables=" << out_params.variable
+      << (vertex ? "  grid_sampling=vertex" : "")
       << std::endl << "BINARY" << std::endl
       << "DATASET STRUCTURED_POINTS" << std::endl
       << "DIMENSIONS " << ncoord1 << " " << ncoord2 << " " << ncoord3 << std::endl;
@@ -134,7 +143,9 @@ void MeshVTKOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   // Write part 5: An arbitrary number of scalars and vectors can be written (every
   // element of the outvars vector), all in binary floats format
   msg.seekp(0, std::ios_base::end);
-  msg << std::endl << "CELL_DATA " << nout1*nout2*nout3 << std::endl;
+  msg << std::endl
+      << (vertex ? "POINT_DATA " : "CELL_DATA ")
+      << nout1*nout2*nout3 << std::endl;
 
   bool parallel_write=false;
 #if MPI_PARALLEL_ENABLED

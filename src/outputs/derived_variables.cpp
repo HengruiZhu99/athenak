@@ -16,6 +16,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>   // std::string, to_string()
+#include <type_traits>
 
 #include "athena.hpp"
 #include "parameter_input.hpp"
@@ -33,22 +34,28 @@
 #include "utils/current.hpp"
 #include "athena_tensor.hpp"
 #include "z4c/curvature_diagnostics.hpp"
+#include "z4c/z4c.hpp"
 #include "z4c/z4c_symmetry.hpp"
 
 namespace {
 
-template <typename Symmetry, int NGHOST>
+template <typename Centering, typename Symmetry, int NGHOST>
 void ComputeZ4cDerivedDiagnostics(DvceArray5D<Real> derived, Mesh *pm) {
-  auto &indcs = pm->mb_indcs;
-  const int is = indcs.is;
-  const int ie = indcs.ie;
-  const int js = indcs.js;
-  const int je = indcs.je;
-  const int ks = indcs.ks;
-  const int ke = indcs.ke;
-  const int nx1 = indcs.nx1;
+  const auto &layout = pm->pmb_pack->pz4c->layout;
+  const int is = layout.is;
+  const int ie = layout.ie;
+  const int js = layout.js;
+  const int je = layout.je;
+  const int ks = layout.ks;
+  const int ke = layout.ke;
+  const int nx1 = layout.nx1;
   const int nmb = pm->pmb_pack->nmb_thispack;
-  auto &adm = pm->pmb_pack->padm->adm;
+  const auto g_dd = std::is_same_v<Centering, z4c::VertexCenteredZ4c>
+                        ? pm->pmb_pack->pz4c->adm.g_dd
+                        : pm->pmb_pack->padm->adm.g_dd;
+  const auto vK_dd = std::is_same_v<Centering, z4c::VertexCenteredZ4c>
+                         ? pm->pmb_pack->pz4c->adm.vK_dd
+                         : pm->pmb_pack->padm->adm.vK_dd;
   auto &size = pm->pmb_pack->pmb->mb_size;
   par_for(
       "z4c_diag", DevExeSpace(), 0, nmb - 1, ks, ke, js, je, is, ie,
@@ -57,10 +64,10 @@ void ComputeZ4cDerivedDiagnostics(DvceArray5D<Real> derived, Mesh *pm) {
             1.0 / size.d_view(m).dx1,
             1.0 / size.d_view(m).dx2,
             1.0 / size.d_view(m).dx3};
-        auto derivatives = z4c::MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+        auto derivatives = z4c::MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
             inverse_spacing, size.d_view, nx1, is, m, k, j, i);
         const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST>(
-            derivatives, adm.g_dd, adm.vK_dd, m, k, j, i);
+            derivatives, g_dd, vK_dd, m, k, j, i);
         if (!diagnostic.valid) {
           for (int component = 0; component < 16; ++component) {
             derived(m, component, k, j, i) = NAN;
@@ -81,24 +88,39 @@ void ComputeZ4cDerivedDiagnostics(DvceArray5D<Real> derived, Mesh *pm) {
 void DispatchZ4cDerivedDiagnostics(DvceArray5D<Real> derived, Mesh *pm) {
   const auto &config = pm->pmb_pack->z4c_symmetry;
   const bool cartoon = config.mode == z4c::Z4cSymmetryMode::cartoon_so2;
+  const bool vertex = config.grid_centering == z4c::Z4cGridCentering::vertex;
+#define DISPATCH_DIAGNOSTICS(STENCIL)                                      \
+  if (cartoon) {                                                           \
+    vertex ? ComputeZ4cDerivedDiagnostics<z4c::VertexCenteredZ4c,          \
+                                           z4c::CartoonSO2, STENCIL>(       \
+                 derived, pm)                                              \
+           : ComputeZ4cDerivedDiagnostics<z4c::CellCenteredZ4c,            \
+                                         z4c::CartoonSO2, STENCIL>(         \
+                 derived, pm);                                             \
+  } else {                                                                 \
+    vertex ? ComputeZ4cDerivedDiagnostics<z4c::VertexCenteredZ4c,          \
+                                           z4c::Cartesian3D, STENCIL>(      \
+                 derived, pm)                                              \
+           : ComputeZ4cDerivedDiagnostics<z4c::CellCenteredZ4c,            \
+                                         z4c::Cartesian3D, STENCIL>(        \
+                 derived, pm);                                             \
+  }
   switch (config.stencil_width) {
     case 2:
-      cartoon ? ComputeZ4cDerivedDiagnostics<z4c::CartoonSO2, 2>(derived, pm)
-              : ComputeZ4cDerivedDiagnostics<z4c::Cartesian3D, 2>(derived, pm);
+      DISPATCH_DIAGNOSTICS(2)
       return;
     case 3:
-      cartoon ? ComputeZ4cDerivedDiagnostics<z4c::CartoonSO2, 3>(derived, pm)
-              : ComputeZ4cDerivedDiagnostics<z4c::Cartesian3D, 3>(derived, pm);
+      DISPATCH_DIAGNOSTICS(3)
       return;
     case 4:
-      cartoon ? ComputeZ4cDerivedDiagnostics<z4c::CartoonSO2, 4>(derived, pm)
-              : ComputeZ4cDerivedDiagnostics<z4c::Cartesian3D, 4>(derived, pm);
+      DISPATCH_DIAGNOSTICS(4)
       return;
     default:
       std::cerr << "### FATAL ERROR: invalid Z4c diagnostic stencil "
                 << config.stencil_width << std::endl;
       std::exit(EXIT_FAILURE);
   }
+#undef DISPATCH_DIAGNOSTICS
 }
 
 }  // namespace
@@ -1349,7 +1371,9 @@ void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm) {
   // Flux
   if (name.compare("z4c_diag") == 0) {
     constexpr int n_z4c_vars = 16;
-    Kokkos::realloc(derived_var, nmb_alloc, n_z4c_vars, n3, n2, n1);
+    const auto &layout = pm->pmb_pack->pz4c->layout;
+    Kokkos::realloc(derived_var, nmb_alloc, n_z4c_vars,
+                    layout.n3, layout.n2, layout.n1);
     DispatchZ4cDerivedDiagnostics(derived_var, pm);
     i_dv += n_z4c_vars;
   }

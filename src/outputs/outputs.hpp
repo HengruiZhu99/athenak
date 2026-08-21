@@ -158,6 +158,12 @@ struct OutputParameters {
   bool single_file_per_rank=false; // DBF: parameter for single file per rank
 };
 
+enum class OutputGridSampling { cell, vertex };
+
+inline const char *ToString(const OutputGridSampling sampling) {
+  return sampling == OutputGridSampling::vertex ? "vertex" : "cell";
+}
+
 //----------------------------------------------------------------------------------------
 //! \struct OutputVariableInfo
 //  \brief  container for various properties of each output variable
@@ -166,9 +172,11 @@ struct OutputVariableInfo {
   std::string label;             // "name" of variable
   int data_index;                // index of variable in device array
   DvceArray5D<Real> *data_ptr;   // ptr to device array containing variable
+  OutputGridSampling sampling;   // physical sampling of the referenced array
   // constructor(s)
-  OutputVariableInfo(std::string lab, int indx, DvceArray5D<Real> *ptr) :
-    label(lab), data_index(indx), data_ptr(ptr) {}
+  OutputVariableInfo(std::string lab, int indx, DvceArray5D<Real> *ptr,
+                     OutputGridSampling grid_sampling = OutputGridSampling::cell) :
+    label(lab), data_index(indx), data_ptr(ptr), sampling(grid_sampling) {}
 };
 
 //----------------------------------------------------------------------------------------
@@ -236,6 +244,7 @@ class BaseTypeOutput {
 
   // data
   OutputParameters out_params;   // params read from <output> block for this type
+  OutputGridSampling output_sampling = OutputGridSampling::cell;
   DvceArray5D<Real> derived_var; // array to store output variables computed from u0/b0
 
   // function which computes derived output variables like vorticity and current density

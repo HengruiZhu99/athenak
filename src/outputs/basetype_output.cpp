@@ -11,6 +11,7 @@
 #include <string>    // std::string, to_string()
 #include <cstdio>    // snprintf
 #include <algorithm> // min_element
+#include <cmath>
 #include <utility>   // pair<>
 #include <vector>
 
@@ -33,6 +34,33 @@
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
 #endif
+
+namespace {
+
+OutputGridSampling NativeZ4cSampling(const Mesh *pm) {
+  return pm->pmb_pack->pz4c != nullptr &&
+                 pm->pmb_pack->pz4c->layout.centering ==
+                     z4c::Z4cGridCentering::vertex
+             ? OutputGridSampling::vertex
+             : OutputGridSampling::cell;
+}
+
+int VertexIndex(const Real coordinate, const int intervals,
+                const Real minimum, const Real maximum) {
+  const Real logical =
+      (coordinate - minimum) / (maximum - minimum) * intervals;
+  return std::max(0, std::min(intervals,
+                              static_cast<int>(std::llround(logical))));
+}
+
+bool VertexSliceBelongsToBlock(const Real coordinate, const Real minimum,
+                               const Real maximum, const Real global_maximum) {
+  return coordinate >= minimum &&
+         (coordinate < maximum ||
+          (coordinate == maximum && maximum == global_maximum));
+}
+
+}  // namespace
 
 //----------------------------------------------------------------------------------------
 // BaseTypeOutput base class constructor
@@ -179,6 +207,7 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
 
   // Now load STL vector of output variables
   outvars.clear();
+  const OutputGridSampling z4c_sampling = NativeZ4cSampling(pm);
 
   // make a vector of out_params.variables
   std::vector<std::string> variables;
@@ -617,20 +646,26 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
       outvars.emplace_back("force3",2,&(pm->pmb_pack->pturb->force));
     }
 
-    // ADM variables, excluding gauge
+    // ADM variables, excluding gauge.  Native VC Z4c owns an ADM view on the
+    // nodal grid; never silently output its CC coupling adapter instead.
+    DvceArray5D<Real> *adm_output = &(pm->pmb_pack->padm->u_adm);
+    if (z4c_sampling == OutputGridSampling::vertex) {
+      adm_output = &(pm->pmb_pack->pz4c->u_adm_native);
+    }
     for (int v = 0; v < adm::ADM::nadm - 4; ++v) {
       if (variable.compare("adm") == 0 ||
           variable.compare(adm::ADM::ADM_names[v]) == 0) {
-        outvars.emplace_back(adm::ADM::ADM_names[v], v, &(pm->pmb_pack->padm->u_adm));
+        outvars.emplace_back(adm::ADM::ADM_names[v], v, adm_output, z4c_sampling);
       }
     }
 
     // ADM gauge variables
-    if (nullptr == pm->pmb_pack->pz4c) {
+    if (nullptr == pm->pmb_pack->pz4c ||
+        z4c_sampling == OutputGridSampling::vertex) {
       for (int v = adm::ADM::nadm - 4; v < adm::ADM::nadm; ++v) {
         if (variable.compare("adm") == 0 ||
             variable.compare(adm::ADM::ADM_names[v]) == 0) {
-          outvars.emplace_back(adm::ADM::ADM_names[v], v, &(pm->pmb_pack->padm->u_adm));
+          outvars.emplace_back(adm::ADM::ADM_names[v], v, adm_output, z4c_sampling);
         }
       }
     }
@@ -647,7 +682,7 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
       if (variable.compare("con") == 0 ||
           variable.compare(z4c::Z4c::Constraint_names[v]) == 0) {
         outvars.emplace_back(z4c::Z4c::Constraint_names[v], v,
-        &(pm->pmb_pack->pz4c->u_con));
+        &(pm->pmb_pack->pz4c->u_con), z4c_sampling);
       }
     }
 
@@ -655,18 +690,21 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
     for (int v = 0; v < z4c::Z4c::nz4c; ++v) {
       if (variable.compare("z4c") == 0 ||
           variable.compare(z4c::Z4c::Z4c_names[v]) == 0) {
-        outvars.emplace_back(z4c::Z4c::Z4c_names[v], v, &(pm->pmb_pack->pz4c->u0));
+        outvars.emplace_back(z4c::Z4c::Z4c_names[v], v,
+                             &(pm->pmb_pack->pz4c->u0), z4c_sampling);
       }
     }
     if (variable.compare("z4c_telegraph_mu") == 0) {
       outvars.emplace_back("z4c_telegraph_mu", 0,
-                           &(pm->pmb_pack->pz4c->u_telegraph_mu));
+                           &(pm->pmb_pack->pz4c->u_telegraph_mu), z4c_sampling);
     }
 
     // weyl scalars
     if (variable.compare("weyl") == 0) {
-      outvars.emplace_back("weyl_rpsi4",0,&(pm->pmb_pack->pz4c->u_weyl));
-      outvars.emplace_back("weyl_ipsi4",1,&(pm->pmb_pack->pz4c->u_weyl));
+      outvars.emplace_back("weyl_rpsi4", 0, &(pm->pmb_pack->pz4c->u_weyl),
+                           z4c_sampling);
+      outvars.emplace_back("weyl_ipsi4", 1, &(pm->pmb_pack->pz4c->u_weyl),
+                           z4c_sampling);
     }
 
     // radiation moments in coordinate frame
@@ -718,7 +756,8 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
       for (int i = 0; i < 16; ++i) {
         // out_params.n_derived offsets the index if other derived vars are in the same
         // block
-        outvars.emplace_back(z4c_diag_names[i], out_params.n_derived + i, &(derived_var));
+        outvars.emplace_back(z4c_diag_names[i], out_params.n_derived + i,
+                             &(derived_var), z4c_sampling);
       }
       out_params.n_derived += 16;
     }
@@ -729,6 +768,33 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
     out_params.contains_derived = true;
     out_params.n_derived += 1;
     outvars.emplace_back("pdens",0,&(derived_var));
+  }
+
+  if (!outvars.empty()) {
+    output_sampling = outvars.front().sampling;
+    for (const auto &output_variable : outvars) {
+      if (output_variable.sampling != output_sampling) {
+        std::cerr << "### FATAL ERROR: output block '" << out_params.block_name
+                  << "' mixes cell- and vertex-sampled variables" << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+    }
+  }
+  if (output_sampling == OutputGridSampling::vertex) {
+    if (out_params.file_type != "tab" && out_params.file_type != "bin" &&
+        out_params.file_type != "vtk") {
+      std::cerr << "### FATAL ERROR: output format '" << out_params.file_type
+                << "' cannot represent native vertex-sampled Z4c data; use tab, bin, "
+                   "or vtk" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    pin->SetString(out_params.block_name, "grid_sampling", "vertex");
+    pin->SetInteger(out_params.block_name, "centering_schema",
+                    z4c::Z4cGridLayout::kCenteringSchema);
+    const auto &layout = pm->pmb_pack->pz4c->layout;
+    pin->SetInteger(out_params.block_name, "active_n1", layout.ie - layout.is + 1);
+    pin->SetInteger(out_params.block_name, "active_n2", layout.je - layout.js + 1);
+    pin->SetInteger(out_params.block_name, "active_n3", layout.ke - layout.ks + 1);
   }
 
   // initialize vector containing number of output MBs per rank
@@ -760,50 +826,72 @@ void BaseTypeOutput::LoadOutputData(Mesh *pm) {
 
     int ois,oie,ojs,oje,oks,oke;
 
+    const bool vertex = output_sampling == OutputGridSampling::vertex;
+    const auto *layout = vertex ? &(pm->pmb_pack->pz4c->layout) : nullptr;
     if (out_params.include_gzs) {
-      int nout1 = indcs.nx1 + 2*(indcs.ng);
-      int nout2 = (indcs.nx2 > 1)? (indcs.nx2 + 2*(indcs.ng)) : 1;
-      int nout3 = (indcs.nx3 > 1)? (indcs.nx3 + 2*(indcs.ng)) : 1;
-      ois = 0; oie = nout1-1;
-      ojs = 0; oje = nout2-1;
-      oks = 0; oke = nout3-1;
+      int nout1 = vertex ? layout->n1 : indcs.nx1 + 2*(indcs.ng);
+      int nout2 = vertex ? layout->n2
+                         : ((indcs.nx2 > 1) ? indcs.nx2 + 2*indcs.ng : 1);
+      int nout3 = vertex ? layout->n3
+                         : ((indcs.nx3 > 1) ? indcs.nx3 + 2*indcs.ng : 1);
+      ois = 0; oie = nout1 - 1;
+      ojs = 0; oje = nout2 - 1;
+      oks = 0; oke = nout3 - 1;
     } else {
-      ois = indcs.is; oie = indcs.ie;
-      ojs = indcs.js; oje = indcs.je;
-      oks = indcs.ks; oke = indcs.ke;
+      ois = vertex ? layout->is : indcs.is;
+      oie = vertex ? layout->ie : indcs.ie;
+      ojs = vertex ? layout->js : indcs.js;
+      oje = vertex ? layout->je : indcs.je;
+      oks = vertex ? layout->ks : indcs.ks;
+      oke = vertex ? layout->ke : indcs.ke;
     }
 
     // check for slicing in each dimension, adjust start/end indices accordingly
     if (out_params.slice1) {
       // skip this MB if slice is out of range
-      if (out_params.slice_x1 <  size.h_view(m).x1min ||
-          out_params.slice_x1 >= size.h_view(m).x1max) { continue; }
+      if ((vertex && !VertexSliceBelongsToBlock(
+                         out_params.slice_x1, size.h_view(m).x1min,
+                         size.h_view(m).x1max, pm->mesh_size.x1max)) ||
+          (!vertex && (out_params.slice_x1 < size.h_view(m).x1min ||
+                       out_params.slice_x1 >= size.h_view(m).x1max))) { continue; }
       // set index of slice
-      ois = CellCenterIndex(out_params.slice_x1, indcs.nx1,
-                            size.h_view(m).x1min, size.h_view(m).x1max);
-      ois += indcs.is;
+      ois = vertex ? VertexIndex(out_params.slice_x1, layout->nx1,
+                                 size.h_view(m).x1min, size.h_view(m).x1max)
+                   : CellCenterIndex(out_params.slice_x1, indcs.nx1,
+                                     size.h_view(m).x1min, size.h_view(m).x1max);
+      ois += vertex ? layout->is : indcs.is;
       oie = ois;
     }
 
     if (out_params.slice2) {
       // skip this MB if slice is out of range
-      if (out_params.slice_x2 <  size.h_view(m).x2min ||
-          out_params.slice_x2 >= size.h_view(m).x2max) { continue; }
+      if ((vertex && !VertexSliceBelongsToBlock(
+                         out_params.slice_x2, size.h_view(m).x2min,
+                         size.h_view(m).x2max, pm->mesh_size.x2max)) ||
+          (!vertex && (out_params.slice_x2 < size.h_view(m).x2min ||
+                       out_params.slice_x2 >= size.h_view(m).x2max))) { continue; }
       // set index of slice
-      ojs = CellCenterIndex(out_params.slice_x2, indcs.nx2,
-                            size.h_view(m).x2min, size.h_view(m).x2max);
-      ojs += indcs.js;
+      ojs = vertex ? VertexIndex(out_params.slice_x2, layout->nx2,
+                                 size.h_view(m).x2min, size.h_view(m).x2max)
+                   : CellCenterIndex(out_params.slice_x2, indcs.nx2,
+                                     size.h_view(m).x2min, size.h_view(m).x2max);
+      ojs += vertex ? layout->js : indcs.js;
       oje = ojs;
     }
 
     if (out_params.slice3) {
       // skip this MB if slice is out of range
-      if (out_params.slice_x3 <  size.h_view(m).x3min ||
-          out_params.slice_x3 >= size.h_view(m).x3max) { continue; }
+      if ((vertex && !VertexSliceBelongsToBlock(
+                         out_params.slice_x3, size.h_view(m).x3min,
+                         size.h_view(m).x3max, pm->mesh_size.x3max)) ||
+          (!vertex && (out_params.slice_x3 < size.h_view(m).x3min ||
+                       out_params.slice_x3 >= size.h_view(m).x3max))) { continue; }
       // set index of slice
-      oks = CellCenterIndex(out_params.slice_x3, indcs.nx3,
-                            size.h_view(m).x3min, size.h_view(m).x3max);
-      oks += indcs.ks;
+      oks = vertex ? VertexIndex(out_params.slice_x3, layout->nx3,
+                                 size.h_view(m).x3min, size.h_view(m).x3max)
+                   : CellCenterIndex(out_params.slice_x3, indcs.nx3,
+                                     size.h_view(m).x3min, size.h_view(m).x3max);
+      oks += vertex ? layout->ks : indcs.ks;
       oke = oks;
     }
 

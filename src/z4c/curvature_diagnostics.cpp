@@ -7,6 +7,7 @@
 //! \brief MPI-global curvature extrema used by collapse stopping conditions.
 
 #include <limits>
+#include <type_traits>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -26,7 +27,12 @@ Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaximaImpl(Mesh *pm) {
   const int nkji = active_nx3 * active_nx2 * active_nx1;
   const int nji = active_nx2 * active_nx1;
   auto &u0 = pmbp->pz4c->u0;
-  auto &adm = pmbp->padm->adm;
+  const auto g_dd = std::is_same_v<Centering, z4c::VertexCenteredZ4c>
+                        ? pmbp->pz4c->adm.g_dd
+                        : pmbp->padm->adm.g_dd;
+  const auto vK_dd = std::is_same_v<Centering, z4c::VertexCenteredZ4c>
+                         ? pmbp->pz4c->adm.vK_dd
+                         : pmbp->padm->adm.vK_dd;
   auto &size = pmbp->pmb->mb_size;
 
   Real max_abs_k = 0.0;
@@ -65,7 +71,7 @@ Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaximaImpl(Mesh *pm) {
         auto derivatives = z4c::MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
             inverse_spacing, size.d_view, layout.nx1, layout.is, m, k, j, i);
         const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST, false>(
-            derivatives, adm.g_dd, adm.vK_dd, m, k, j, i);
+            derivatives, g_dd, vK_dd, m, k, j, i);
         if (!diagnostic.valid) {
           result = std::numeric_limits<Real>::infinity();
         } else {

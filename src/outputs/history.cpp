@@ -29,7 +29,10 @@
 #include "z4c/curvature_diagnostics.hpp"
 #include "z4c/fastflow.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_history_quadrature.hpp"
 #include "z4c/z4c_symmetry.hpp"
+#include "z4c/z4c_vertex_topology.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
 
@@ -51,12 +54,13 @@ struct ConstraintMaximum {
 };
 
 template <int FAMILY, typename ConstraintView, typename ChiView,
-          typename MeshBlockSizeDualView>
+          typename MeshBlockSizeDualView, typename TopologyView>
 ConstraintMaximum CartoonConstraintMaximum(
     const ConstraintView &constraints, const ChiView &chi,
     MeshBlockSizeDualView &size, const Real excise_chi,
     const int nmb, const int nx1, const int nx2, const int nx3,
-    const int is, const int js, const int ks) {
+    const int is, const int js, const int ks, const bool vertex,
+    const TopologyView topology) {
   static_assert(FAMILY >= 0 && FAMILY < kCartoonConstraintFamilies);
   const int nkji = nx3 * nx2 * nx1;
   const int nji = nx2 * nx1;
@@ -75,6 +79,7 @@ ConstraintMaximum CartoonConstraintMaximum(
         const int i = i0 + is;
         const int j = j0 + js;
         const int k = k0 + ks;
+        if (vertex && !topology(m, k, j, i).canonical_diagnostic_owner) return;
         if (chi(m, k, j, i) < excise_chi) return;
         const Real raw = constraints(m, FAMILY, k, j, i);
         Real magnitude = 0.0;
@@ -120,8 +125,16 @@ ConstraintMaximum CartoonConstraintMaximum(
     const int j0 = (local_maximum.loc - m * nkji - k0 * nji) / nx1;
     const int i0 = local_maximum.loc - m * nkji - k0 * nji - j0 * nx1;
     size.sync_host();
-    position[0] = size.h_view(m).x1min + (i0 + 0.5) * size.h_view(m).dx1;
-    position[1] = size.h_view(m).x2min + (j0 + 0.5) * size.h_view(m).dx2;
+    position[0] = vertex
+                      ? VertexX(i0, nx1 - 1, size.h_view(m).x1min,
+                                size.h_view(m).x1max)
+                      : CellCenterX(i0, nx1, size.h_view(m).x1min,
+                                    size.h_view(m).x1max);
+    position[1] = vertex
+                      ? VertexX(j0, nx2 - 1, size.h_view(m).x2min,
+                                size.h_view(m).x2max)
+                      : CellCenterX(j0, nx2, size.h_view(m).x2min,
+                                    size.h_view(m).x2max);
   }
 #if MPI_PARALLEL_ENABLED
   MPI_Bcast(position, 2, MPI_ATHENA_REAL, owner_rank, MPI_COMM_WORLD);
@@ -173,6 +186,10 @@ Real Z4cHistoryMaxKretschmann(Mesh *pm) {
 }
 
 Real DispatchZ4cHistoryMaxKretschmann(Mesh *pm) {
+  if (pm->pmb_pack->pz4c->layout.centering ==
+      z4c::Z4cGridCentering::vertex) {
+    return ComputeZ4cGlobalCurvatureMaxima(pm).max_abs_kretschmann;
+  }
   const auto &config = pm->pmb_pack->z4c_symmetry;
   const bool cartoon = config.mode == z4c::Z4cSymmetryMode::cartoon_so2;
   switch (config.stencil_width) {
@@ -456,7 +473,10 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   auto &u_telegraph_mu_ = pm->pmb_pack->pz4c->u_telegraph_mu;
   const int &I_Z4c_Theta_ =  pm->pmb_pack->pz4c->I_Z4C_THETA;
   auto &z4c = pm->pmb_pack->pz4c->z4c;
-  auto &adm = pm->pmb_pack->padm->adm;
+  const bool vertex = pm->pmb_pack->pz4c->layout.centering ==
+                      z4c::Z4cGridCentering::vertex;
+  const auto g_dd = vertex ? pm->pmb_pack->pz4c->adm.g_dd
+                           : pm->pmb_pack->padm->adm.g_dd;
 
   auto &size = pm->pmb_pack->pmb->mb_size;
   const z4c::Z4cSymmetryMode symmetry_mode = pm->pmb_pack->z4c_symmetry.mode;
@@ -464,9 +484,17 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 
   // loop over all MeshBlocks in this pack
   auto &indcs = pm->pmb_pack->pmesh->mb_indcs;
-  int is = indcs.is; int nx1 = indcs.nx1;
-  int js = indcs.js; int nx2 = indcs.nx2;
-  int ks = indcs.ks; int nx3 = indcs.nx3;
+  const auto &layout = pm->pmb_pack->pz4c->layout;
+  int is = vertex ? layout.is : indcs.is;
+  int nx1 = vertex ? layout.ie - layout.is + 1 : indcs.nx1;
+  int js = vertex ? layout.js : indcs.js;
+  int nx2 = vertex ? layout.je - layout.js + 1 : indcs.nx2;
+  int ks = vertex ? layout.ks : indcs.ks;
+  int nx3 = vertex ? layout.ke - layout.ks + 1 : indcs.nx3;
+  DvceArray4D<vertex_topology::VertexTopologyRecord> topology;
+  if (vertex) {
+    topology = pm->pmb_pack->pz4c->vertex_topology_plan->records.d_view;
+  }
   const int nmkji = (pm->pmb_pack->nmb_thispack)*nx3*nx2*nx1;
   const int nkji = nx3*nx2*nx1;
   const int nji  = nx2*nx1;
@@ -481,15 +509,28 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
     k += ks;
     j += js;
 
-    Real detg = adm::SpatialDet(adm.g_dd(m,0,0,k,j,i), adm.g_dd(m,0,1,k,j,i),
-                                adm.g_dd(m,0,2,k,j,i), adm.g_dd(m,1,1,k,j,i),
-                                adm.g_dd(m,1,2,k,j,i), adm.g_dd(m,2,2,k,j,i));
+    Real detg = adm::SpatialDet(g_dd(m,0,0,k,j,i), g_dd(m,0,1,k,j,i),
+                                g_dd(m,0,2,k,j,i), g_dd(m,1,1,k,j,i),
+                                g_dd(m,1,2,k,j,i), g_dd(m,2,2,k,j,i));
 
-    const Real rho = size.d_view(m).x1min +
-                     (i - is + 0.5) * size.d_view(m).dx1;
-    const Real vol = z4c::Z4cDiagnosticCellMeasure(
-        symmetry_mode, rho, size.d_view(m).dx1, size.d_view(m).dx2,
-        size.d_view(m).dx3, detg);
+    const Real rho = vertex
+                         ? VertexX(i - is, layout.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max)
+                         : CellCenterX(i - is, indcs.nx1,
+                                       size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real vol = vertex
+        ? z4c::Z4cDiagnosticVertexMeasure(
+              symmetry_mode, rho, size.d_view(m).dx1, size.d_view(m).dx2,
+              size.d_view(m).dx3, detg,
+              z4c::Z4cNodalTrapezoidWeight(i, layout.is, layout.ie,
+                                           layout.nx1 <= 1),
+              z4c::Z4cNodalTrapezoidWeight(j, layout.js, layout.je,
+                                           layout.nx2 <= 1),
+              z4c::Z4cNodalTrapezoidWeight(k, layout.ks, layout.ke,
+                                           layout.nx3 <= 1))
+        : z4c::Z4cDiagnosticCellMeasure(
+              symmetry_mode, rho, size.d_view(m).dx1, size.d_view(m).dx2,
+              size.d_view(m).dx3, detg);
 
     // Excise the punctures based on chi
     array_sum::GlobalSum hvars;
@@ -547,40 +588,60 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
           if (z4c.chi(m, k, j, i) < excise_chi) return;
 
           const Real dx1 = size.d_view(m).dx1;
-          const Real rho = size.d_view(m).x1min + (i0 + 0.5) * dx1;
+          const Real rho = vertex
+                               ? VertexX(i0, layout.nx1,
+                                         size.d_view(m).x1min,
+                                         size.d_view(m).x1max)
+                               : CellCenterX(i0, indcs.nx1,
+                                             size.d_view(m).x1min,
+                                             size.d_view(m).x1max);
           const int radial_layer = static_cast<int>(Kokkos::floor(rho / dx1));
           const Real detg = adm::SpatialDet(
-              adm.g_dd(m,0,0,k,j,i), adm.g_dd(m,0,1,k,j,i),
-              adm.g_dd(m,0,2,k,j,i), adm.g_dd(m,1,1,k,j,i),
-              adm.g_dd(m,1,2,k,j,i), adm.g_dd(m,2,2,k,j,i));
-          const Real physical_volume = z4c::Z4cDiagnosticCellMeasure(
-              symmetry_mode, rho, dx1, size.d_view(m).dx2,
-              size.d_view(m).dx3, detg);
+              g_dd(m,0,0,k,j,i), g_dd(m,0,1,k,j,i),
+              g_dd(m,0,2,k,j,i), g_dd(m,1,1,k,j,i),
+              g_dd(m,1,2,k,j,i), g_dd(m,2,2,k,j,i));
+          const Real physical_volume = vertex
+              ? z4c::Z4cDiagnosticVertexMeasure(
+                    symmetry_mode, rho, dx1, size.d_view(m).dx2,
+                    size.d_view(m).dx3, detg,
+                    z4c::Z4cNodalTrapezoidWeight(i, layout.is, layout.ie,
+                                                 layout.nx1 <= 1),
+                    z4c::Z4cNodalTrapezoidWeight(j, layout.js, layout.je,
+                                                 layout.nx2 <= 1),
+                    z4c::Z4cNodalTrapezoidWeight(k, layout.ks, layout.ke,
+                                                 layout.nx3 <= 1))
+              : z4c::Z4cDiagnosticCellMeasure(
+                    symmetry_mode, rho, dx1, size.d_view(m).dx2,
+                    size.d_view(m).dx3, detg);
           const Real squared[kCartoonConstraintFamilies] = {
               u_con_(m,0,k,j,i), SQR(u_con_(m,1,k,j,i)),
               u_con_(m,2,k,j,i), u_con_(m,3,k,j,i)};
 
+          const bool diagnostic_owner =
+              !vertex || topology(m, k, j, i).canonical_diagnostic_owner;
           if (radial_layer >= 0 && radial_layer < kCartoonAxisLayers) {
-            for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
+            if (diagnostic_owner) {
+              for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
+                Kokkos::atomic_add(
+                    &diagnostic_sums(kCartoonAxisSumBase + family),
+                    squared[family]);
+                Kokkos::atomic_add(
+                    &diagnostic_sums(
+                        kCartoonLayerSumBase +
+                        radial_layer * kCartoonRegionStride + family),
+                    squared[family]);
+              }
               Kokkos::atomic_add(
-                  &diagnostic_sums(kCartoonAxisSumBase + family),
-                  squared[family]);
+                  &diagnostic_sums(
+                      kCartoonAxisSumBase + kCartoonConstraintFamilies),
+                  1.0);
               Kokkos::atomic_add(
                   &diagnostic_sums(
                       kCartoonLayerSumBase +
-                      radial_layer * kCartoonRegionStride + family),
-                  squared[family]);
+                      radial_layer * kCartoonRegionStride +
+                      kCartoonConstraintFamilies),
+                  1.0);
             }
-            Kokkos::atomic_add(
-                &diagnostic_sums(
-                    kCartoonAxisSumBase + kCartoonConstraintFamilies),
-                1.0);
-            Kokkos::atomic_add(
-                &diagnostic_sums(
-                    kCartoonLayerSumBase +
-                    radial_layer * kCartoonRegionStride +
-                    kCartoonConstraintFamilies),
-                1.0);
           } else {
             for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
               Kokkos::atomic_add(
@@ -617,16 +678,16 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
     const std::array<ConstraintMaximum, kCartoonConstraintFamilies> maxima = {
         CartoonConstraintMaximum<0>(u_con_, z4c.chi, size, excise_chi,
                                     pm->pmb_pack->nmb_thispack,
-                                    nx1, nx2, nx3, is, js, ks),
+                                    nx1, nx2, nx3, is, js, ks, vertex, topology),
         CartoonConstraintMaximum<1>(u_con_, z4c.chi, size, excise_chi,
                                     pm->pmb_pack->nmb_thispack,
-                                    nx1, nx2, nx3, is, js, ks),
+                                    nx1, nx2, nx3, is, js, ks, vertex, topology),
         CartoonConstraintMaximum<2>(u_con_, z4c.chi, size, excise_chi,
                                     pm->pmb_pack->nmb_thispack,
-                                    nx1, nx2, nx3, is, js, ks),
+                                    nx1, nx2, nx3, is, js, ks, vertex, topology),
         CartoonConstraintMaximum<3>(u_con_, z4c.chi, size, excise_chi,
                                     pm->pmb_pack->nmb_thispack,
-                                    nx1, nx2, nx3, is, js, ks)};
+                                    nx1, nx2, nx3, is, js, ks, vertex, topology)};
     for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
       const int base = cartoon_linf_index + 3 * family;
       pdata->hdata[base] = maxima[family].value;

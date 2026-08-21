@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import math
+import os
 import pathlib
 import shutil
 import subprocess
@@ -20,15 +21,24 @@ def main() -> int:
     parser.add_argument("--athena", required=True)
     parser.add_argument("--input", required=True)
     parser.add_argument("--work-dir", required=True)
+    parser.add_argument("--mpiexec")
+    parser.add_argument("--np-flag", default="-n")
     args = parser.parse_args()
 
     work = pathlib.Path(args.work_dir)
     if work.exists():
         shutil.rmtree(work)
     work.mkdir(parents=True)
+    command = [args.athena, "-i", args.input]
+    if args.mpiexec:
+        command = [args.mpiexec, args.np_flag, "2", *command]
+    environment = dict(os.environ)
+    environment.setdefault("OMP_NUM_THREADS", "2")
+    environment.setdefault("OMP_PROC_BIND", "false")
     completed = subprocess.run(
-        [args.athena, "-i", args.input],
+        command,
         cwd=work,
+        env=environment,
         text=True,
         capture_output=True,
         check=False,
@@ -60,8 +70,12 @@ def main() -> int:
                 "history contains a nonfinite value")
         require(row[2] < 1.0e-18 and row[3] < 1.0e-18,
                 "Minkowski constraints exceed the dynamic AMR regression bound")
+        require(math.isclose(row[10], 64.0 * math.pi, rel_tol=5.0e-6),
+                "native VC history does not integrate the exact Cartoon ring volume")
+    require(max(row[10] for row in rows) == min(row[10] for row in rows),
+            "native VC history volume changed across refine/derefine events")
 
-    print("PASS: native VC dynamic refine/derefine lifecycle")
+    print("PASS: native VC dynamic refine/derefine lifecycle and ring quadrature")
     return 0
 
 
