@@ -54,8 +54,8 @@ enum ReferenceProviderComponent : int {
 // coordinate spin derivatives, so no separate per-stage scratch allocation is
 // required.
 enum ReferenceWorkspaceComponent : int {
-  kRefWorkspaceMetricJet = 0,                 // sym(4,4) x 21
-  kRefWorkspaceInverseMetricJet = kRefWorkspaceMetricJet + 210,
+  kRefWorkspaceMetricJet = 0,                 // 4 x 4 x 21
+  kRefWorkspaceInverseMetricJet = kRefWorkspaceMetricJet + 336,
   kRefWorkspaceCoframeDerivative = 0,         // 4 x 4 x 4 (reuse)
   kRefWorkspaceSpinCoordinateDerivative = 64,// 4 x 6 x 4 (reuse)
   kReferenceWorkspaceSize = kRefWorkspaceInverseMetricJet + 50
@@ -67,7 +67,7 @@ static_assert(kReferenceDiagnosticSize == 336,
               "Ref-GH derivative/diagnostic cache layout changed");
 static_assert(kReferenceProviderSize == 64,
               "Ref-GH provider cache layout changed");
-static_assert(kReferenceWorkspaceSize == 260,
+static_assert(kReferenceWorkspaceSize == 386,
               "Ref-GH update workspace layout changed");
 
 KOKKOS_INLINE_FUNCTION constexpr int RefMatrix4(const int offset,

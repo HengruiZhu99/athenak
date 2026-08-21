@@ -346,16 +346,15 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
 
     Kokkos::parallel_for(
     "ref_gh reference metric jets",
-    Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*10), KOKKOS_LAMBDA(const int idx) {
+    Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*16), KOKKOS_LAMBDA(const int idx) {
       const int component = idx/ncells;
       int work = idx % ncells;
       const int i = work % n1; work /= n1;
       const int j = work % n2; work /= n2;
       const int k = work % n3;
       const int m = work/n3;
-      int a = 0;
-      int b = 0;
-      RefDecodeSymmetricPair4(component, a, b);
+      const int a = component/4;
+      const int b = component % 4;
       const Real x = CellCenterX(i - indcs.is, indcs.nx1,
                                  size.d_view(m).x1min, size.d_view(m).x1max);
       const Real y = CellCenterX(j - indcs.js, indcs.nx2,
