@@ -14,6 +14,7 @@ set -euo pipefail
 ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820
 SRC="${ROOT}/athenak"
 BUILD="${ROOT}/build_sycl_pvc_8770089.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov"
+BUILD_SOURCE_COMMIT=4bdc86ca736185f5e2727d771cb9c5e3cf313b34
 EXE="${BUILD}/src/athena"
 INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
 BINDER="${SRC}/scripts/ref_gh/aurora_gpu_tile_slot.sh"
@@ -31,11 +32,15 @@ export OMP_PLACES=threads
 export FI_MR_CACHE_MONITOR=disabled
 export FI_LOG_LEVEL=ERROR
 
+# The only commits after the cached executable added this launch script.
+git -C "${SRC}" diff --quiet "${BUILD_SOURCE_COMMIT}" HEAD -- src inputs
+
 {
   date -Is
   hostname
   qstat -f "${PBS_JOBID}"
   git -C "${SRC}" rev-parse HEAD
+  echo "build_source_commit=${BUILD_SOURCE_COMMIT}"
   git -C "${SRC}" status --short
   git -C "${SRC}" submodule status
   sha256sum "${EXE}"
