@@ -70,7 +70,7 @@ def read_cbin(path: Path) -> dict:
             ois, oie, ojs, oje, oks, oke, lx1, lx2, lx3, level = values[:10]
             bounds = values[10:]
             shape = (oke - oks + 1, oje - ojs + 1, oie - ois + 1)
-            count = nvar*math.prod(shape)
+            count = nvar*shape[0]*shape[1]*shape[2]
             raw = stream.read(4*count)
             if len(raw) != 4*count:
                 raise ValueError(f"{path}: truncated MeshBlock field data")
