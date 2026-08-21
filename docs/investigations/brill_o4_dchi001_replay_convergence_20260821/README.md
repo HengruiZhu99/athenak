@@ -49,3 +49,23 @@ Run the local static/evidence gate before submission:
 ```bash
 python3 docs/investigations/brill_o4_dchi001_replay_convergence_20260821/test_campaign_contract.py
 ```
+
+## Perlmutter production successor
+
+Aurora job `8770135` was cancelled while still queued, before allocation or
+science, when the user authorized moving production to a single A100 in
+Perlmutter `shared_interactive`.  The platform-specific wrappers are
+`perlmutter_allocate_segment.sh` and `perlmutter_run_segment.sh`.  They retain
+the same frozen physics, common 4-by-8 physical MeshBlock lattice,
+record/replay semantics, `CFL=0.15`, exact event-time landing, output cadence,
+and fail-closed evidence policy.  All three resolutions use one rank and one
+80-GB A100; N512 therefore uses the same global
+`max_nmb_per_rank=16384` capacity rather than Aurora's four-way split.
+
+The CUDA executable is built freshly on the Perlmutter login node.  Device
+binding and runtime tests must pass inside the shared allocation before the
+first authority evolution is accepted.  Run the additional static gate with:
+
+```bash
+python3 docs/investigations/brill_o4_dchi001_replay_convergence_20260821/test_perlmutter_campaign_contract.py
+```
