@@ -391,7 +391,7 @@ void AMRHistory::AppendShadowLedger() const {
     if (!amr_history::ParseReal(authority_time_hex, &event_time)) {
       Fatal("cannot decode next authority time for shadow ledger");
     }
-    authority_event = amr_history::TimeEqual(mesh_->time, event_time);
+    authority_event = mesh_->time == event_time;
     if (authority_event) {
       amr_history::Transition transition;
       std::string error;
@@ -497,7 +497,11 @@ bool AMRHistory::PrepareReplayFlags() {
   if (!shadow_flags_captured_) Fatal("replay criterion shadow was not evaluated");
   double event_time = 0.0;
   if (!amr_history::ParseReal(events_[next_event_].time_hex, &event_time)) Fatal("bad event time");
-  if (!amr_history::TimeEqual(mesh_->time, event_time)) {
+  if (mesh_->time != event_time) {
+    if (amr_history::TimeEqual(mesh_->time, event_time)) {
+      Fatal("replay reached authority event within tolerance but not at its exact "
+            "binary64 time");
+    }
     if (mesh_->time > event_time) Fatal("replay advanced past next event");
     return false;
   }

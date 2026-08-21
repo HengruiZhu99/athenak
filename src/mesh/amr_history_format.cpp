@@ -514,9 +514,17 @@ bool LimitTimestep(double time, double next, double *dt, std::string *error) {
   // recorded event time.  Computing `next - time` can be one ulp smaller than that same
   // timestep, even though `time + dt` rounds exactly to `next`; clipping in that case
   // needlessly perturbs an otherwise identical same-resolution replay.
-  if (time + *dt == next) return true;
+  const double endpoint = time + *dt;
+  if (endpoint == next) return true;
   const double remaining = next - time;
-  if (remaining > 0.0 && *dt > remaining) *dt = remaining;
+  // A different-resolution replay can undershoot an authority time by many ulps at
+  // that small coordinate value while remaining within the scale-aware TimeEqual
+  // tolerance.  Adjust the preceding physical step by that roundoff-sized amount
+  // instead of accepting the topology event early or taking a near-zero PDE step.
+  // This also retains the ordinary overshoot clipping behavior.
+  if (remaining > 0.0 && (endpoint > next || TimeEqual(endpoint, next))) {
+    *dt = remaining;
+  }
   if (*dt <= 0.0 || time + *dt == time) { *error = "replay timestep would not advance"; return false; }
   return true;
 }

@@ -182,6 +182,22 @@ int main() {
   Require(amr_history::LimitTimestep(n256_time, n256_next, &dt, &error) &&
               dt == n256_dt,
           "cross-resolution event does not create a near-zero PDE step");
+  const double aurora_high_time =
+      std::strtod("0x1.6a09e658c4fdep-8", nullptr);
+  const double aurora_high_dt =
+      std::strtod("0x1.21a18513d404p-10", nullptr);
+  const double aurora_event =
+      std::strtod("0x1.b272479dba2b8p-8", nullptr);
+  Require(aurora_high_time + aurora_high_dt < aurora_event &&
+              amr_history::TimeEqual(aurora_high_time + aurora_high_dt,
+                                     aurora_event),
+          "fixture exposes the Aurora 2x replay roundoff undershoot");
+  dt = aurora_high_dt;
+  Require(amr_history::LimitTimestep(aurora_high_time, aurora_event, &dt,
+                                     &error) &&
+              dt == aurora_event - aurora_high_time &&
+              aurora_high_time + dt == aurora_event,
+          "near-event 2x timestep is adjusted to the exact authority time");
   Require(amr_history::TimeEqual(0.125, 0.125), "event time equality");
 
   std::cout << "AMR_HISTORY_FORMAT_TEST_PASS" << std::endl;
