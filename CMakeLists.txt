@@ -700,6 +700,21 @@ if (Athena_BUILD_UNIT_TESTS)
       ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_irisk_import_static_test.py
       --source-dir ${CMAKE_CURRENT_SOURCE_DIR})
+  if (Athena_ENABLE_IRISK_INTERPOLATOR)
+    add_test(
+        NAME athena.z4c_vc_brill_direct_init
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vc_brill_direct_init_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_brill_direct_fixed.athinput
+        --coefficients
+        ${CMAKE_CURRENT_SOURCE_DIR}/docs/investigations/brill_figure3_five_run_domain64_20260815/evidence/domain64/bundle/brill_global_48x32.coefficients
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_brill_direct_init_test)
+    set_tests_properties(
+        athena.z4c_vc_brill_direct_init
+        PROPERTIES TIMEOUT 120 LABELS "z4c;vertex;cartoon;brill;initialization")
+  endif()
 
   add_executable(
       athena_z4c_irisk_coordinate_map_unit_test

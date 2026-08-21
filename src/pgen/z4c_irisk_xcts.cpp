@@ -202,7 +202,13 @@ void FillAdmFromBrillGlobalCoefficients(
   if (map != z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2) {
     Fail("direct global Brill coefficients require cartoon_so2");
   }
-  auto &u_adm = pmbp->padm->u_adm;
+  const bool vertex = pmbp->pz4c->layout.centering ==
+                      z4c::Z4cGridCentering::vertex;
+  // Direct coefficient mode evaluates the analytic global representation on
+  // the authoritative evolution grid.  The legacy ADM object is only an
+  // explicit derived CC adapter in native-VC mode and is populated later by
+  // Z4cToADM; it must never be the import authority.
+  auto &u_adm = vertex ? pmbp->pz4c->u_adm_native : pmbp->padm->u_adm;
   HostArray5D<Real>::HostMirror host_u_adm = create_mirror(u_adm);
   HostArray5D<Real>::HostMirror host_u_z4c = create_mirror(pmbp->pz4c->u0);
   Kokkos::deep_copy(host_u_adm, 0.0);
@@ -213,11 +219,26 @@ void FillAdmFromBrillGlobalCoefficients(
   host_adm.vK_dd.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_KXX,
                                       adm::ADM::I_ADM_KZZ);
   host_adm.psi4.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_PSI4);
-  host_adm.alpha.InitWithShallowSlice(host_u_z4c, z4c::Z4c::I_Z4C_ALPHA);
-  host_adm.beta_u.InitWithShallowSlice(host_u_z4c, z4c::Z4c::I_Z4C_BETAX,
-                                       z4c::Z4c::I_Z4C_BETAZ);
+  if (vertex) {
+    host_adm.alpha.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_ALPHA);
+    host_adm.beta_u.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_BETAX,
+                                         adm::ADM::I_ADM_BETAZ);
+  } else {
+    host_adm.alpha.InitWithShallowSlice(host_u_z4c, z4c::Z4c::I_Z4C_ALPHA);
+    host_adm.beta_u.InitWithShallowSlice(host_u_z4c, z4c::Z4c::I_Z4C_BETAX,
+                                         z4c::Z4c::I_Z4C_BETAZ);
+  }
   auto &indcs = pmbp->pmesh->mb_indcs;
   const auto bounds = z4c::MakeStoredDomainBounds(indcs);
+  const auto &layout = pmbp->pz4c->layout;
+  const int stored_is = vertex ? 0 : bounds.is;
+  const int stored_ie = vertex ? layout.n1 - 1 : bounds.ie;
+  const int stored_js = vertex ? 0 : bounds.js;
+  const int stored_je = vertex ? layout.n2 - 1 : bounds.je;
+  const int stored_ks = vertex ? 0 : bounds.ks;
+  const int stored_ke = vertex ? layout.n3 - 1 : bounds.ke;
+  const int active_is = vertex ? layout.is : indcs.is;
+  const int active_js = vertex ? layout.js : indcs.js;
   pmbp->pmb->mb_size.sync_host();
   pmbp->pmb->mb_bcs.sync_host();
   auto size = pmbp->pmb->mb_size.h_view;
@@ -228,14 +249,20 @@ void FillAdmFromBrillGlobalCoefficients(
   for (int m = 0; m < pmbp->nmb_thispack; ++m) {
     const bool axis_block =
         bcs(m, BoundaryFace::inner_x1) == BoundaryFlag::axis;
-    const int interpolation_is = axis_block ? indcs.is : bounds.is;
-    for (int k = bounds.ks; k <= bounds.ke; ++k) {
-      for (int j = bounds.js; j <= bounds.je; ++j) {
-        const double z = CellCenterX(j - indcs.js, indcs.nx2,
-                                     size(m).x2min, size(m).x2max);
-        for (int i = interpolation_is; i <= bounds.ie; ++i) {
-          const double x = CellCenterX(i - indcs.is, indcs.nx1,
-                                       size(m).x1min, size(m).x1max);
+    const int interpolation_is = axis_block ? active_is : stored_is;
+    for (int k = stored_ks; k <= stored_ke; ++k) {
+      for (int j = stored_js; j <= stored_je; ++j) {
+        const double z = vertex
+            ? VertexX(j - active_js, layout.nx2,
+                      size(m).x2min, size(m).x2max)
+            : CellCenterX(j - indcs.js, indcs.nx2,
+                          size(m).x2min, size(m).x2max);
+        for (int i = interpolation_is; i <= stored_ie; ++i) {
+          const double x = vertex
+              ? VertexX(i - active_is, layout.nx1,
+                        size(m).x1min, size(m).x1max)
+              : CellCenterX(i - indcs.is, indcs.nx1,
+                            size(m).x1min, size(m).x1max);
           const double rho = std::abs(x);
           const double radius = std::hypot(rho, z);
           const double psi = EvaluateGlobalBrillPsi(coefficients, radius, z);
@@ -268,19 +295,35 @@ void FillAdmFromBrillGlobalCoefficients(
       }
     }
     if (axis_block) {
-      for (int k = bounds.ks; k <= bounds.ke; ++k) {
-        for (int j = bounds.js; j <= bounds.je; ++j) {
+      for (int k = stored_ks; k <= stored_ke; ++k) {
+        for (int j = stored_js; j <= stored_je; ++j) {
           for (int n = 0; n <= adm::ADM::I_ADM_PSI4; ++n) {
-            if (!z4c::FillAdmAxisGhostLine(
-                    host_u_adm, m, n, k, j, indcs.is, indcs.ng)) {
+            const bool valid = vertex
+                ? z4c::FillCenteredAdmAxisGhostLine<z4c::VertexCenteredZ4c>(
+                      host_u_adm, m, n, k, j, active_is, indcs.ng)
+                : z4c::FillAdmAxisGhostLine(
+                      host_u_adm, m, n, k, j, active_is, indcs.ng);
+            if (!valid) {
               Fail("invalid ADM component in direct Brill axis parity fill");
             }
           }
-          for (int n = z4c::Z4c::I_Z4C_ALPHA;
-               n <= z4c::Z4c::I_Z4C_BETAZ; ++n) {
-            if (!z4c::FillZ4cAxisGhostLine(
-                    host_u_z4c, m, n, k, j, indcs.is, indcs.ng)) {
-              Fail("invalid gauge component in direct Brill axis parity fill");
+          if (vertex) {
+            for (int n = adm::ADM::I_ADM_ALPHA;
+                 n <= adm::ADM::I_ADM_BETAZ; ++n) {
+              if (!z4c::FillCenteredAdmAxisGhostLine<
+                      z4c::VertexCenteredZ4c>(
+                      host_u_adm, m, n, k, j, active_is, indcs.ng)) {
+                Fail("invalid native ADM gauge component in direct Brill axis "
+                     "parity fill");
+              }
+            }
+          } else {
+            for (int n = z4c::Z4c::I_Z4C_ALPHA;
+                 n <= z4c::Z4c::I_Z4C_BETAZ; ++n) {
+              if (!z4c::FillZ4cAxisGhostLine(
+                      host_u_z4c, m, n, k, j, active_is, indcs.ng)) {
+                Fail("invalid gauge component in direct Brill axis parity fill");
+              }
             }
           }
         }

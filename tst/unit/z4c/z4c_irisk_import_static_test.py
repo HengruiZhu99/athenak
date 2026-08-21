@@ -116,6 +116,17 @@ def main() -> int:
             'const double lapse = use_precollapsed_lapse ? 1.0 / psi2 : 1.0;'
             in importer,
             "direct Brill pre-collapsed lapse contract changed")
+    require('pmbp->pz4c->u_adm_native : pmbp->padm->u_adm' in importer and
+            'VertexX(i - active_is, layout.nx1' in importer and
+            'VertexX(j - active_js, layout.nx2' in importer,
+            "direct Brill import is not evaluated on authoritative native VC storage")
+    require('FillCenteredAdmAxisGhostLine<z4c::VertexCenteredZ4c>' in importer and
+            'host_adm.alpha.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_ALPHA)'
+            in importer,
+            "native VC Brill ADM/gauge axis parity contract disappeared")
+    require('legacy ADM object is only an' in importer and
+            'it must never be the import authority' in importer,
+            "native VC direct-import authority is no longer explicit")
     require('line != "IRIS_BRILL_GLOBAL_COEFFICIENTS_V1"' in importer and
             'count != result.radial_points * result.angular_points' in importer and
             'if (!std::isfinite(value)) Fail(' in importer,
