@@ -373,6 +373,9 @@ class Z4c {
   void CheckStateAdmissibility(Driver *driver, int stage,
                                Z4cStateCheckpoint checkpoint,
                                bool include_ghosts = false);
+#if defined(ATHENA_Z4C_KERNEL_TESTS)
+  void InjectStateAdmissibilityExtractionTestFailure(Driver *driver);
+#endif
 
   Z4c_AMR *pamr;
   std::vector<std::unique_ptr<CompactObjectTracker>> ptracker;

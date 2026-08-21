@@ -544,8 +544,18 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
     const int remainder = static_cast<int>(ordinal % (nx1 * nx2));
     const int j = js + remainder / nx1;
     const int i = is + remainder % nx1;
-    const auto device_values = Kokkos::subview(state, m, Kokkos::ALL(), k, j, i);
-    const auto values = Kokkos::create_mirror_view_and_copy(HostMemSpace(), device_values);
+    // A component slice of the pack-major state is strided/noncontiguous.  In
+    // particular, SYCL cannot deep-copy that subview directly to HostMemSpace.
+    // Pack the selected point explicitly so every backend sees one contiguous
+    // device allocation and one supported device-to-host copy.
+    Kokkos::View<Real *> packed_values("z4c selected inadmissible state", nz4c);
+    par_for("pack selected inadmissible z4c state", DevExeSpace(), 0, nz4c - 1,
+        KOKKOS_LAMBDA(const int variable) {
+          packed_values(variable) = state(m, variable, k, j, i);
+        });
+    Kokkos::fence();
+    const auto values =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), packed_values);
     const auto admissibility = EvaluateZ4cState(values.data(), nz4c);
     const auto &size = pmy_pack->pmb->mb_size.h_view(m);
     const Real rho = size.x1min + (static_cast<Real>(i - indcs.is) + 0.5) * size.dx1;
@@ -553,35 +563,71 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
     const Real edge_distance = std::min(
         std::min(static_cast<Real>(i - indcs.is), static_cast<Real>(indcs.ie - i)) * size.dx1,
         std::min(static_cast<Real>(j - indcs.js), static_cast<Real>(indcs.je - j)) * size.dx2);
+    const auto &location = pmy_pack->pmesh->lloc_eachmb[selected_gid];
     std::ofstream output("z4c_state_failure.json", std::ios::trunc);
-    output << std::setprecision(17)
+    output << std::setprecision(17);
+    const auto write_real = [&output](const Real value) {
+      if (std::isfinite(value)) {
+        output << value;
+      } else if (std::isnan(value)) {
+        output << "\"nan\"";
+      } else if (value > 0.0) {
+        output << "\"+inf\"";
+      } else {
+        output << "\"-inf\"";
+      }
+    };
+    output
            << "{\"schema\":\"z4c_state_admissibility_v1\","
            << "\"time\":" << pmy_pack->pmesh->time << ",\"cycle\":"
            << pmy_pack->pmesh->ncycle << ",\"rk_stage\":" << stage
            << ",\"checkpoint\":\"" << Z4cStateCheckpointName(checkpoint) << "\","
            << "\"global_gid\":" << selected_gid << ",\"level\":"
-           << pmy_pack->pmb->mb_lev.h_view(m) << ",\"local_indices\":["
+           << pmy_pack->pmb->mb_lev.h_view(m) << ",\"relative_level\":"
+           << location.level - pmy_pack->pmesh->root_level
+           << ",\"logical_location\":[" << location.level << ',' << location.lx1
+           << ',' << location.lx2 << ',' << location.lx3 << "],\"local_indices\":["
            << i << ',' << j << ',' << k << "],\"rho\":" << rho << ",\"z\":" << z
            << ",\"include_ghosts\":" << (include_ghosts ? "true" : "false")
            << ",\"axis_distance\":" << rho << ",\"block_edge_distance\":"
            << edge_distance << ",\"coarse_fine_interface_distance\":null,"
            << "\"reason\":\"" << Z4cStateFailureReasonName(admissibility.reason)
            << "\",\"first_nonfinite_component\":"
-           << admissibility.first_nonfinite_component << ",\"chi\":" << values[I_Z4C_CHI]
-           << ",\"alpha\":" << values[I_Z4C_ALPHA] << ",\"det_gtilde\":"
-           << admissibility.metric.determinant << ",\"spd_pivots\":["
-           << admissibility.metric.pivot0 << ',' << admissibility.metric.pivot1 << ','
-           << admissibility.metric.pivot2 << "],\"gtilde\":[" << values[I_Z4C_GXX]
-           << ',' << values[I_Z4C_GXY] << ',' << values[I_Z4C_GXZ] << ','
-           << values[I_Z4C_GYY] << ',' << values[I_Z4C_GYZ] << ',' << values[I_Z4C_GZZ]
-           << "],\"Khat\":" << values[I_Z4C_KHAT] << ",\"Theta\":"
-           << values[I_Z4C_THETA] << ",\"beta\":[" << values[I_Z4C_BETAX] << ','
-           << values[I_Z4C_BETAY] << ',' << values[I_Z4C_BETAZ] << "],\"B\":["
-           << values[I_Z4C_BX] << ',' << values[I_Z4C_BY] << ',' << values[I_Z4C_BZ]
-           << "],\"state25\":[";
+           << admissibility.first_nonfinite_component << ",\"chi\":";
+    write_real(values[I_Z4C_CHI]);
+    output << ",\"alpha\":";
+    write_real(values[I_Z4C_ALPHA]);
+    output << ",\"det_gtilde\":";
+    write_real(admissibility.metric.determinant);
+    output << ",\"spd_pivots\":[";
+    write_real(admissibility.metric.pivot0);
+    output << ',';
+    write_real(admissibility.metric.pivot1);
+    output << ',';
+    write_real(admissibility.metric.pivot2);
+    output << "],\"gtilde\":[";
+    for (int variable = I_Z4C_GXX; variable <= I_Z4C_GZZ; ++variable) {
+      if (variable != I_Z4C_GXX) output << ',';
+      write_real(values(variable));
+    }
+    output << "],\"Khat\":";
+    write_real(values[I_Z4C_KHAT]);
+    output << ",\"Theta\":";
+    write_real(values[I_Z4C_THETA]);
+    output << ",\"beta\":[";
+    for (int variable = I_Z4C_BETAX; variable <= I_Z4C_BETAZ; ++variable) {
+      if (variable != I_Z4C_BETAX) output << ',';
+      write_real(values(variable));
+    }
+    output << "],\"B\":[";
+    for (int variable = I_Z4C_BX; variable <= I_Z4C_BZ; ++variable) {
+      if (variable != I_Z4C_BX) output << ',';
+      write_real(values(variable));
+    }
+    output << "],\"state25\":[";
     for (int variable = 0; variable < nz4c; ++variable) {
       if (variable != 0) output << ',';
-      output << values(variable);
+      write_real(values(variable));
     }
     output << "]}\n";
     output.flush();
@@ -593,6 +639,27 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
   std::exit(EXIT_FAILURE);
 #endif
 }
+
+#if defined(ATHENA_Z4C_KERNEL_TESTS)
+//----------------------------------------------------------------------------------------
+//! \fn void Z4c::InjectStateAdmissibilityExtractionTestFailure
+//! \brief Test-only hook that exercises the complete production failure extractor.
+
+void Z4c::InjectStateAdmissibilityExtractionTestFailure(Driver *driver) {
+  if (pmy_pack->nmb_thispack <= 0) return;
+  const auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const auto state = u0;
+  par_for("inject selected inadmissible z4c state", DevExeSpace(), 0, 0,
+      KOKKOS_LAMBDA(const int) {
+        state(0, I_Z4C_CHI, indcs.ks, indcs.js, indcs.is) = -1.0;
+      });
+  Kokkos::fence();
+  CheckStateAdmissibility(driver, 0, Z4cStateCheckpoint::pre_rhs);
+  std::cerr << "### FATAL ERROR: state-admissibility extraction test did not abort"
+            << std::endl;
+  std::exit(EXIT_FAILURE);
+}
+#endif
 
 //----------------------------------------------------------------------------------------
 //! \fn void Z4c::AlgConstr(AthenaArray<Real> & u)

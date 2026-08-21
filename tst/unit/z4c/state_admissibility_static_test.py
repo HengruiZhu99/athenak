@@ -33,6 +33,14 @@ def main() -> None:
     ):
         require(header if token != "MPI_Allreduce" else z4c, token,
                 args.source_dir / ("src/z4c/state_admissibility.hpp" if token != "MPI_Allreduce" else "src/z4c/z4c.cpp"))
+    require(z4c, 'Kokkos::View<Real *> packed_values',
+            args.source_dir / "src/z4c/z4c.cpp")
+    require(z4c, 'packed_values(variable) = state(m, variable, k, j, i)',
+            args.source_dir / "src/z4c/z4c.cpp")
+    require(z4c, '"logical_location"', args.source_dir / "src/z4c/z4c.cpp")
+    require(z4c, 'output << "\\\"nan\\\""', args.source_dir / "src/z4c/z4c.cpp")
+    if "Kokkos::subview(state, m, Kokkos::ALL(), k, j, i)" in z4c:
+        raise SystemExit("noncontiguous state-point host copy remains")
     require(rhs, "Z4cStateCheckpoint::pre_rhs", args.source_dir / "src/z4c/z4c_calcrhs.cpp")
     require(update, "Z4cStateCheckpoint::post_rk_update", args.source_dir / "src/z4c/z4c_update.cpp")
     for checkpoint in (

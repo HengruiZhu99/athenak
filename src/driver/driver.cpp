@@ -10,6 +10,7 @@
 #include <iomanip>    // std::setprecision()
 #include <limits>
 #include <algorithm>
+#include <cstdlib>
 #include <string> // string
 
 #include "athena.hpp"
@@ -328,6 +329,26 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
   }
   //---- Step 1.  Set conserved variables in ghost zones for all physics
   InitBoundaryValuesAndPrimitives(pmesh, res_flag);
+
+#if defined(ATHENA_Z4C_KERNEL_TESTS)
+  // This opt-in environment hook is compiled only into unit-test-enabled
+  // Athena executables.  It deliberately corrupts one active chi value and
+  // exercises the complete production state-failure selection, contiguous
+  // device packing, JSON emission, and fail-closed abort path.
+  if (const char *test = std::getenv("ATHENA_TEST_Z4C_STATE_EXTRACTION")) {
+    if (std::string(test) != "selected_negative_chi") {
+      std::cerr << "### FATAL ERROR: unsupported ATHENA_TEST_Z4C_STATE_EXTRACTION='"
+                << test << "'" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    if (pmesh->pmb_pack->pz4c == nullptr) {
+      std::cerr << "### FATAL ERROR: Z4c state extraction test requires Z4c"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    pmesh->pmb_pack->pz4c->InjectStateAdmissibilityExtractionTestFailure(this);
+  }
+#endif
 
   //---- Step 2.  Compute time step (if problem involves time evolution)
   hydro::Hydro *phydro = pmesh->pmb_pack->phydro;
