@@ -19,6 +19,16 @@ set -euo pipefail
 test ! -e "${QUAL_ROOT}"
 test "$(git -C "${ATHENAK_ROOT}" rev-parse HEAD)" = "${EXPECTED_SOURCE_COMMIT}"
 test -z "$(git -C "${ATHENAK_ROOT}" status --porcelain)"
+kokkos_status="$(git -C "${ATHENAK_ROOT}" submodule status -- kokkos)"
+case "${kokkos_status}" in
+  " 6739bc623081648af9e752b616d9671527922cbf kokkos"*) ;;
+  *)
+    printf 'unexpected or uninitialized AthenaK Kokkos submodule: %s\n' \
+      "${kokkos_status:-<missing>}" >&2
+    exit 2
+    ;;
+esac
+test -f "${ATHENAK_ROOT}/kokkos/CMakeLists.txt"
 test "$(git -C "${IRIS_ROOT}" rev-parse HEAD)" = \
   2a069fd0497ef4352d4ecd28c6879ac47b84a5a1
 
