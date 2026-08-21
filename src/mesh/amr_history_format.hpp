@@ -19,10 +19,12 @@ bool operator==(const Location &a, const Location &b);
 bool operator<(const Location &a, const Location &b);
 
 struct Header {
-  int schema = 1;
+  int schema = 2;
   int dimension = 1;
   std::string symmetry = "cartesian3d";
   std::string coordinate_map = "cartesian";
+  std::string grid_centering = "cell";
+  int centering_schema = 1;
   int root_level = 0;
   int refinement_ratio = 2;
   std::array<int, 3> root_blocks{{1, 1, 1}};

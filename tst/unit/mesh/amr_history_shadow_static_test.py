@@ -21,6 +21,11 @@ def main() -> None:
     for token in (
         "AppendShadowLedger();",
         "athenak_amr_native_shadow_v1",
+        "athenak_amr_native_shadow_v2",
+        "grid_centering",
+        "centering_schema",
+        "active_points_per_meshblock",
+        "strongest_point_ordinal",
         "raw_dchi",
         "dchi_over_dx",
         "native_action",
@@ -33,6 +38,12 @@ def main() -> None:
         require(token in history, f"native replay shadow field is missing: {token}")
     require("capture_replay_dchi" in amr and "Z4c_AMR::DchiArgmax" in amr,
             "exact per-block dchi maximum/location capture is missing")
+    require("canonical_diagnostic_owner" in amr and
+            "vertex_topology_plan->records.d_view" in amr,
+            "VC dchi does not deduplicate shared nodes using the topology owner")
+    require("VertexX(oi, layout.nx1" in history and
+            "VertexX(oj, layout.nx2" in history,
+            "VC dchi strongest-location evidence is not vertex sampled")
     require('mode") == "replay"' in amr,
             "dchi shadow capture is not replay-only")
     require("candidate_dt_hex" in history and "applied_dt_hex" in history and

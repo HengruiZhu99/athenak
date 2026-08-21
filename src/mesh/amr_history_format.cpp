@@ -87,8 +87,12 @@ std::string HeaderBase(const Header &h) {
   out << "{\"type\":\"header\",\"schema\":" << h.schema
       << ",\"dimension\":" << h.dimension
       << ",\"symmetry\":\"" << h.symmetry
-      << "\",\"coordinate_map\":\"" << h.coordinate_map
-      << "\",\"root_level\":" << h.root_level
+      << "\",\"coordinate_map\":\"" << h.coordinate_map << '"';
+  if (h.schema >= 2) {
+    out << ",\"grid_centering\":\"" << h.grid_centering
+        << "\",\"centering_schema\":" << h.centering_schema;
+  }
+  out << ",\"root_level\":" << h.root_level
       << ",\"refinement_ratio\":" << h.refinement_ratio
       << ",\"root_blocks\":[" << h.root_blocks[0] << ',' << h.root_blocks[1] << ','
       << h.root_blocks[2] << "],\"domain_hex\":[";
@@ -187,13 +191,25 @@ bool DecodeHeader(const std::string &line, Header *h, std::string *error) {
   if (!c.literal("{\"type\":\"header\",\"schema\":") || !c.integer(&schema) ||
       !c.literal(",\"dimension\":") || !ParseInt(&c, &h->dimension) ||
       !c.literal(",\"symmetry\":") || !c.string(&h->symmetry) ||
-      !c.literal(",\"coordinate_map\":") || !c.string(&h->coordinate_map) ||
-      !c.literal(",\"root_level\":") || !ParseInt(&c, &h->root_level) ||
-      !c.literal(",\"refinement_ratio\":") || !ParseInt(&c, &h->refinement_ratio) ||
-      !c.literal(",\"root_blocks\":[")) {
+      !c.literal(",\"coordinate_map\":") || !c.string(&h->coordinate_map)) {
     *error = "malformed history header"; return false;
   }
   h->schema = static_cast<int>(schema);
+  if (h->schema >= 2) {
+    if (!c.literal(",\"grid_centering\":") || !c.string(&h->grid_centering) ||
+        !c.literal(",\"centering_schema\":") ||
+        !ParseInt(&c, &h->centering_schema)) {
+      *error = "malformed history centering provenance"; return false;
+    }
+  } else {
+    h->grid_centering = "cell";
+    h->centering_schema = 0;
+  }
+  if (!c.literal(",\"root_level\":") || !ParseInt(&c, &h->root_level) ||
+      !c.literal(",\"refinement_ratio\":") || !ParseInt(&c, &h->refinement_ratio) ||
+      !c.literal(",\"root_blocks\":[")) {
+    *error = "malformed history grid provenance"; return false;
+  }
   for (int i = 0; i < 3; ++i) {
     if ((i && !c.literal(",")) || !ParseInt(&c, &h->root_blocks[i])) {
       *error = "malformed root_blocks"; return false;
@@ -276,10 +292,18 @@ bool DecodeEvent(const std::string &line, Event *e, std::string *error) {
 }
 
 bool ValidateHeader(const Header &h, std::string *error) {
-  if (h.schema != 1 || h.dimension < 1 || h.dimension > 3 || h.refinement_ratio != 2 ||
+  if ((h.schema != 1 && h.schema != 2) || h.dimension < 1 || h.dimension > 3 ||
+      h.refinement_ratio != 2 ||
       h.root_level < 0 || h.max_level < h.root_level || h.max_level > 31 ||
       (h.real_bytes != 4 && h.real_bytes != 8)) {
     *error = "unsupported history header"; return false;
+  }
+  if ((h.schema == 1 &&
+       (h.grid_centering != "cell" || h.centering_schema != 0)) ||
+      (h.schema == 2 &&
+       ((h.grid_centering != "cell" && h.grid_centering != "vertex") ||
+        h.centering_schema != 1))) {
+    *error = "unsupported history centering provenance"; return false;
   }
   for (int d = 0; d < 3; ++d) {
     if (h.root_blocks[d] < 1 || h.cells_per_meshblock[d] < 1) {
@@ -301,6 +325,12 @@ bool Compatible(const Header &a, const Header &b, std::string *error) {
   if (a.dimension != b.dimension) { *error = "history dimension mismatch"; return false; }
   if (a.symmetry != b.symmetry) { *error = "history symmetry mismatch"; return false; }
   if (a.coordinate_map != b.coordinate_map) { *error = "history coordinate-map mismatch"; return false; }
+  if (a.grid_centering != b.grid_centering) {
+    *error = "history grid-centering mismatch"; return false;
+  }
+  if (a.centering_schema != b.centering_schema) {
+    *error = "history centering-schema mismatch"; return false;
+  }
   if (a.root_level != b.root_level) { *error = "history root-level mismatch"; return false; }
   if (a.refinement_ratio != b.refinement_ratio) { *error = "history refinement-ratio mismatch"; return false; }
   if (a.root_blocks != b.root_blocks) { *error = "history root-block mismatch"; return false; }

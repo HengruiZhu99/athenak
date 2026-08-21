@@ -23,6 +23,7 @@
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/amr_shadow_sensor.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_vertex_topology.hpp"
 
 #define SQ(X) ((X)*(X))
 
@@ -273,6 +274,13 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
   auto dchi_derefine_factor = this->dchi_derefine_factor;
   auto root_lev = pmesh->root_level;
   auto max_ref_lev = this->max_ref_lev;
+  decltype(pmbp->pz4c->vertex_topology_plan->records.d_view) vertex_records;
+  if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
+    if (pmbp->pz4c->vertex_topology_plan == nullptr) {
+      Kokkos::abort("VC dchi refinement requires the vertex topology plan");
+    }
+    vertex_records = pmbp->pz4c->vertex_topology_plan->records.d_view;
+  }
   DvceArray1D<Real> block_dchi;
   DvceArray1D<int> block_dchi_ordinal;
   if (capture_replay_dchi) {
@@ -297,6 +305,11 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
           int i = (idx - k * nji - j * nx1) + is;
           j += js;
           k += ks;
+          if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
+            if (vertex_records(m, k, j, i).canonical_diagnostic_owner == 0) {
+              return;
+            }
+          }
           // This is 2*dx*|grad(chi)| on an isotropic mesh, not |grad(chi)|.
           // Since chi is dimensionless, the indicator is dimensionless and follows a
           // self-similar feature without introducing a preferred physical length.
@@ -322,6 +335,11 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
     par_for("Z4c_AMR::DchiArgmax", DevExeSpace(), 0, nmb - 1, ks, ks + nx3 - 1,
             js, js + nx2 - 1, is, is + nx1 - 1,
         KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+          if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
+            if (vertex_records(m, k, j, i).canonical_diagnostic_owner == 0) {
+              return;
+            }
+          }
           Real d2 = SQR(u0(m, I_Z4C_CHI, k, j, i + 1) -
                         u0(m, I_Z4C_CHI, k, j, i - 1));
           d2 += SQR(u0(m, I_Z4C_CHI, k, j + 1, i) -

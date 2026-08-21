@@ -144,6 +144,9 @@ def serial_suite(args, work):
     record_log = run(command(args.athena, args.input, "record", history, "record"),
                      roots["record"])
     header, events = load_history(history)
+    require(header["schema"] == 2 and header["grid_centering"] == "cell" and
+            header["centering_schema"] == 1,
+            "new CC history lacks explicit centering provenance")
     require(len(events) >= 3, "fixture did not create at least two topology events")
     require([event["event"] for event in events] == list(range(len(events))),
             "event indices are not contiguous")

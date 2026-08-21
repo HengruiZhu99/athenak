@@ -17,6 +17,7 @@
 #include "config.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "mesh/meshblock_tree.hpp"
@@ -84,6 +85,40 @@ AMRHistory::AMRHistory(Mesh *mesh, ParameterInput *pin) : mesh_(mesh), pin_(pin)
       Fatal("amr_history_compatible_source_id must not be empty");
     }
   }
+  const bool has_centering_compatibility_parameter = pin->DoesParameterExist(
+      "mesh_refinement", "amr_history_topology_only_centering_compatibility");
+  const char *centering_compatibility_environment =
+      std::getenv("ATHENA_AMR_HISTORY_TOPOLOGY_ONLY_CENTERING_COMPATIBILITY");
+  const bool has_centering_compatibility_environment =
+      centering_compatibility_environment != nullptr;
+  if (has_centering_compatibility_parameter ||
+      has_centering_compatibility_environment) {
+    const std::string parameter_value = has_centering_compatibility_parameter
+        ? pin->GetString(
+              "mesh_refinement",
+              "amr_history_topology_only_centering_compatibility")
+        : "";
+    const std::string environment_value = has_centering_compatibility_environment
+        ? std::string(centering_compatibility_environment)
+        : "";
+    if (has_centering_compatibility_parameter &&
+        has_centering_compatibility_environment &&
+        parameter_value != environment_value) {
+      Fatal("amr_history_topology_only_centering_compatibility "
+            "parameter/environment mismatch");
+    }
+    topology_only_centering_compatibility_ =
+        has_centering_compatibility_parameter ? parameter_value
+                                              : environment_value;
+    if (topology_only_centering_compatibility_ == "none") {
+      topology_only_centering_compatibility_.clear();
+    } else if (topology_only_centering_compatibility_ != "cell_to_vertex") {
+      Fatal("amr_history_topology_only_centering_compatibility must be exactly "
+            "'none' or 'cell_to_vertex'");
+    } else if (!replay()) {
+      Fatal("amr_history_topology_only_centering_compatibility is replay-only");
+    }
+  }
   const bool has_extension_parameter =
       pin->DoesParameterExist("mesh_refinement", "amr_history_extension_file");
   const char *extension_environment =
@@ -131,6 +166,10 @@ amr_history::Header AMRHistory::CurrentHeader() const {
   if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr) {
     h.symmetry = z4c::ToString(mesh_->pmb_pack->z4c_symmetry.mode);
     h.coordinate_map = z4c::ToString(mesh_->pmb_pack->z4c_symmetry.coordinate_map);
+    h.grid_centering =
+        z4c::ToString(mesh_->pmb_pack->pz4c->layout.centering);
+    h.centering_schema =
+        mesh_->pmb_pack->pz4c->layout.centering_schema;
   } else {
     h.symmetry = pin_->DoesParameterExist("z4c", "symmetry")
         ? pin_->GetString("z4c", "symmetry") : "cartesian3d";
@@ -188,6 +227,28 @@ void AMRHistory::LoadHistory() {
   if (!input.eof()) Fatal("history read failed before EOF");
   if (!amr_history::ValidateEvents(header_, events_, &error)) Fatal(error);
   auto candidate = CurrentHeader();
+  if (!topology_only_centering_compatibility_.empty()) {
+    if (header_.grid_centering != "cell" ||
+        candidate.grid_centering != "vertex" ||
+        (header_.centering_schema != 0 && header_.centering_schema != 1) ||
+        candidate.centering_schema != z4c::Z4cGridLayout::kCenteringSchema) {
+      Fatal("explicit topology-only centering compatibility does not describe "
+            "a supported cell-to-vertex replay");
+    }
+    if (global_variable::my_rank == 0) {
+      std::cout
+          << "AMR_HISTORY_CENTERING_COMPATIBILITY"
+          << " recorded_grid_centering=" << header_.grid_centering
+          << " recorded_centering_schema=" << header_.centering_schema
+          << " current_grid_centering=" << candidate.grid_centering
+          << " current_centering_schema=" << candidate.centering_schema
+          << " scope=topology_only native_optimal=false explicit_match=true"
+          << std::endl;
+    }
+    candidate.schema = header_.schema;
+    candidate.grid_centering = header_.grid_centering;
+    candidate.centering_schema = header_.centering_schema;
+  }
   if (!compatible_source_id_.empty()) {
     if (header_.source_id != compatible_source_id_) {
       Fatal("history source-id does not match explicit compatible source-id");
@@ -268,7 +329,21 @@ bool AMRHistory::HasRestartCarrier() const {
 }
 
 void AMRHistory::LoadRestartCarrier() {
-  if (pin_->GetInteger(kRestartBlock, "schema") != 1) Fatal("unsupported restart carrier");
+  const int schema = pin_->GetInteger(kRestartBlock, "schema");
+  if (schema != 1 && schema != 2) Fatal("unsupported restart carrier");
+  if (schema == 2) {
+    const std::string carrier_compatibility =
+        pin_->GetString(kRestartBlock, "topology_only_centering_compatibility");
+    const std::string current_compatibility =
+        topology_only_centering_compatibility_.empty()
+            ? "none"
+            : topology_only_centering_compatibility_;
+    if (carrier_compatibility != current_compatibility) {
+      Fatal("restart topology-only centering compatibility mismatch");
+    }
+  } else if (!topology_only_centering_compatibility_.empty()) {
+    Fatal("legacy restart carrier cannot authenticate centering compatibility");
+  }
   if (pin_->GetString(kRestartBlock, "mode") != (record() ? "record" : "replay")) {
     Fatal("restart carrier mode mismatch");
   }
@@ -376,6 +451,12 @@ void AMRHistory::AppendShadowLedger() const {
   if (!mesh_->pmb_pack->pz4c->pamr->capture_replay_dchi) return;
   const auto &dchi = mesh_->pmb_pack->pz4c->pamr->last_dchi_max;
   const auto &ordinal = mesh_->pmb_pack->pz4c->pamr->last_dchi_ordinal;
+  const auto layout = mesh_->pmb_pack->pz4c->layout;
+  const bool vertex =
+      layout.centering == z4c::Z4cGridCentering::vertex;
+  const int active_nx1 = layout.ie - layout.is + 1;
+  const int active_nx2 = layout.je - layout.js + 1;
+  const int active_nx3 = layout.ke - layout.ks + 1;
   const int nmb = mesh_->pmb_pack->nmb_thispack;
   if (dchi.size() != static_cast<std::size_t>(nmb) ||
       ordinal.size() != static_cast<std::size_t>(nmb)) {
@@ -444,27 +525,40 @@ void AMRHistory::AppendShadowLedger() const {
     const int native = mesh_->pmr->refine_flag.h_view(gid);
     const int authority = authority_flags[gid];
     if (m != strongest && native == 0 && authority == 0) continue;
-    if (ordinal[m] < 0 || ordinal[m] >=
-        mesh_->mb_indcs.nx1 * mesh_->mb_indcs.nx2 * mesh_->mb_indcs.nx3) {
-      Fatal("native AMR shadow maximum has no valid active-cell ordinal");
+    if (ordinal[m] < 0 ||
+        ordinal[m] >= active_nx1 * active_nx2 * active_nx3) {
+      Fatal("native AMR shadow maximum has no valid active-point ordinal");
     }
-    const int nji = mesh_->mb_indcs.nx2 * mesh_->mb_indcs.nx1;
+    const int nji = active_nx2 * active_nx1;
     const int ok = ordinal[m] / nji;
     const int remainder = ordinal[m] % nji;
-    const int oj = remainder / mesh_->mb_indcs.nx1;
-    const int oi = remainder % mesh_->mb_indcs.nx1;
-    const Real strongest_rho =
-        size.x1min + (static_cast<Real>(oi) + 0.5) * size.dx1;
-    const Real strongest_z =
-        size.x2min + (static_cast<Real>(oj) + 0.5) * size.dx2;
+    const int oj = remainder / active_nx1;
+    const int oi = remainder % active_nx1;
+    const Real strongest_rho = vertex
+        ? VertexX(oi, layout.nx1, size.x1min, size.x1max)
+        : size.x1min + (static_cast<Real>(oi) + 0.5) * size.dx1;
+    const Real strongest_z = vertex
+        ? VertexX(oj, layout.nx2, size.x2min, size.x2max)
+        : size.x2min + (static_cast<Real>(oj) + 0.5) * size.dx2;
     output << std::setprecision(17)
-           << "{\"schema\":\"athenak_amr_native_shadow_v1\",\"cycle\":"
+           << "{\"schema\":\""
+           << (vertex ? "athenak_amr_native_shadow_v2"
+                      : "athenak_amr_native_shadow_v1")
+           << "\",\"cycle\":"
            << mesh_->ncycle << ",\"time\":" << mesh_->time
            << ",\"time_hex\":\"" << amr_history::HexReal(mesh_->time)
            << "\",\"tau_c\":" << tau_c << ",\"root_nx1\":"
            << mesh_->mesh_indcs.nx1 << ",\"cells_per_meshblock\":["
            << mesh_->mb_indcs.nx1 << ',' << mesh_->mb_indcs.nx2 << ','
-           << mesh_->mb_indcs.nx3 << "],\"gid\":" << gid
+           << mesh_->mb_indcs.nx3 << ']';
+    if (vertex) {
+      output << ",\"grid_centering\":\""
+             << z4c::ToString(layout.centering)
+             << "\",\"centering_schema\":" << layout.centering_schema
+             << ",\"active_points_per_meshblock\":[" << active_nx1 << ','
+             << active_nx2 << ',' << active_nx3 << ']';
+    }
+    output << ",\"gid\":" << gid
            << ",\"logical_location\":[" << loc.level << ',' << loc.lx1 << ','
            << loc.lx2 << ',' << loc.lx3 << "],\"relative_level\":"
            << loc.level - mesh_->root_level << ",\"dx\":" << size.dx1
@@ -481,8 +575,11 @@ void AMRHistory::AppendShadowLedger() const {
            << "\",\"classification\":\""
            << classification(native, authority) << "\",\"record_scope\":\""
            << (m == strongest ? "rank_strongest" : "requested_or_authority")
-           << "\",\"strongest_cell_ordinal\":" << ordinal[m]
-           << ",\"strongest_cell_offset\":[" << oi << ',' << oj << ',' << ok
+           << "\",\"" << (vertex ? "strongest_point_ordinal"
+                                    : "strongest_cell_ordinal")
+           << "\":" << ordinal[m] << ",\""
+           << (vertex ? "strongest_point_offset" : "strongest_cell_offset")
+           << "\":[" << oi << ',' << oj << ',' << ok
            << "],\"strongest_physical_location\":[" << strongest_rho << ','
            << strongest_z << "],\"block_center\":["
            << 0.5 * (size.x1min + size.x1max) << ','
@@ -680,8 +777,12 @@ void AMRHistory::StoreRestartState(ParameterInput *pin) const {
   if (!extension_path_.empty()) {
     Fatal("restart output is disabled for a diagnostic append-only history extension");
   }
-  pin->SetInteger(kRestartBlock, "schema", 1);
+  pin->SetInteger(kRestartBlock, "schema", 2);
   pin->SetString(kRestartBlock, "mode", record() ? "record" : "replay");
+  pin->SetString(kRestartBlock, "topology_only_centering_compatibility",
+                 topology_only_centering_compatibility_.empty()
+                     ? "none"
+                     : topology_only_centering_compatibility_);
   pin->SetString(kRestartBlock, "history_digest", FileDigest());
   pin->SetString(kRestartBlock, "history_bytes", std::to_string(FileSize()));
   pin->SetInteger(kRestartBlock, "last_applied_event", static_cast<int>(last_applied_event_));

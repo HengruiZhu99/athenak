@@ -540,7 +540,31 @@ if (Athena_BUILD_UNIT_TESTS)
       --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_dynamic_amr_test)
   set_tests_properties(
       athena.z4c_vc_dynamic_amr PROPERTIES TIMEOUT 60 LABELS "z4c;vertex;amr")
+  add_test(
+      NAME athena.z4c_vc_amr_history
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_amr_history_test.py
+      --athena $<TARGET_FILE:athena>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_amr_history_test)
+  set_tests_properties(
+      athena.z4c_vc_amr_history
+      PROPERTIES TIMEOUT 120 LABELS "z4c;vertex;amr;history;mpi")
   if (Athena_ENABLE_MPI)
+    add_test(
+        NAME athena.z4c_vc_amr_history_mpi
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_amr_history_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_amr_history_mpi_test
+        --mpiexec ${MPIEXEC_EXECUTABLE}
+        --np-flag=${MPIEXEC_NUMPROC_FLAG})
+    set_tests_properties(
+        athena.z4c_vc_amr_history_mpi
+        PROPERTIES TIMEOUT 150 LABELS "z4c;vertex;amr;history;mpi")
     add_test(
         NAME athena.z4c_vc_history_mpi
         COMMAND

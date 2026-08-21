@@ -45,6 +45,22 @@ int main() {
   amr_history::Header decoded_header;
   Require(amr_history::DecodeHeader(encoded_header, &decoded_header, &error), error);
   Require(amr_history::EncodeHeader(decoded_header) == encoded_header, "header round trip");
+  Require(decoded_header.schema == 2 &&
+              decoded_header.grid_centering == "cell" &&
+              decoded_header.centering_schema == 1,
+          "schema-2 centering provenance round trip");
+  auto legacy_header = header;
+  legacy_header.schema = 1;
+  legacy_header.grid_centering = "cell";
+  legacy_header.centering_schema = 0;
+  const std::string encoded_legacy = amr_history::EncodeHeader(legacy_header);
+  amr_history::Header decoded_legacy;
+  Require(amr_history::DecodeHeader(encoded_legacy, &decoded_legacy, &error), error);
+  Require(amr_history::EncodeHeader(decoded_legacy) == encoded_legacy,
+          "legacy schema-1 header round trip");
+  Require(decoded_legacy.grid_centering == "cell" &&
+              decoded_legacy.centering_schema == 0,
+          "legacy schema-1 centering is explicit after decode");
 
   amr_history::Event e0;
   e0.time_decimal = "0";
@@ -68,6 +84,10 @@ int main() {
   auto high = header;
   high.cells_per_meshblock = {{16, 16, 1}};
   Require(amr_history::Compatible(header, high, &error), "cells per block may differ");
+  auto vertex = header;
+  vertex.grid_centering = "vertex";
+  Require(!amr_history::Compatible(header, vertex, &error),
+          "grid centering must match by default");
   high.root_blocks[0] = 4;
   Require(!amr_history::Compatible(header, high, &error), "root blocks must match");
 
