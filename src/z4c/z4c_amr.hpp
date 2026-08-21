@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "athena.hpp"
+#include "z4c/z4c_grid.hpp"
 
 class ParameterInput;
 class MeshBlockPack;
@@ -50,6 +51,10 @@ class Z4c_AMR {
   void RefineTracker(MeshBlockPack *pmbp);      // Refine based on trackers
   void RefineChiMin(MeshBlockPack *pmbp);       // Refine based on min{chi}
   void RefineDchiMax(MeshBlockPack *pmbp);      // Refine based on max{dchi}
+  template <typename Centering>
+  void RefineChiMinImpl(MeshBlockPack *pmbp);
+  template <typename Centering>
+  void RefineDchiMaxImpl(MeshBlockPack *pmbp);
   void RefineRadii(MeshBlockPack *pmbp);        // Refine based on the radii
   void WriteDchiShadow(MeshBlockPack *pmbp);    // Diagnostic-only Nyquist sensor
 

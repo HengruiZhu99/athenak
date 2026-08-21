@@ -27,20 +27,22 @@
 
 namespace z4c {
 
-template <typename Symmetry, int NGHOST>
+template <typename Centering, typename Symmetry, int NGHOST>
 //! \fn void Z4c::CalcRHS(Driver *pdriver, int stage)
 //! \brief compute rhs of the z4c equations
 TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   CheckStateAdmissibility(pdriver, stage, Z4cStateCheckpoint::pre_rhs);
-  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const auto &layout = pmy_pack->pz4c->layout;
   auto &size = pmy_pack->pmb->mb_size;
-  int &is = indcs.is; int &ie = indcs.ie;
-  int &js = indcs.js; int &je = indcs.je;
-  int &ks = indcs.ks; int &ke = indcs.ke;
+  const int is = layout.is; const int ie = layout.ie;
+  const int js = layout.js; const int je = layout.je;
+  const int ks = layout.ks; const int ke = layout.ke;
   int nmb = pmy_pack->nmb_thispack;
-  int nx1 = indcs.nx1;
-  int nx2 = indcs.nx2;
-  int nx3 = indcs.nx3;
+  const int nx1 = layout.nx1;
+  const int nx2 = layout.nx2;
+  const int active_nx1 = ie - is + 1;
+  const int active_nx2 = je - js + 1;
+  const int active_nx3 = ke - ks + 1;
 
   auto &z4c = pmy_pack->pz4c->z4c;
   auto &rhs = pmy_pack->pz4c->rhs;
@@ -71,9 +73,9 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
       opt.shift_eta_max_K || opt.damp_kappa1_max_K;
   Real max_abs_K = 1.0;
   if (use_max_K_scale) {
-    const int nmkji = nmb * nx3 * nx2 * nx1;
-    const int nkji = nx3 * nx2 * nx1;
-    const int nji = nx2 * nx1;
+    const int nmkji = nmb * active_nx3 * active_nx2 * active_nx1;
+    const int nkji = active_nx3 * active_nx2 * active_nx1;
+    const int nji = active_nx2 * active_nx1;
     max_abs_K = 0.0;
 
     Kokkos::parallel_reduce(
@@ -82,8 +84,8 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         KOKKOS_LAMBDA(const int &idx, Real &mb_max_abs_K) {
           int m = idx / nkji;
           int k = (idx - m * nkji) / nji;
-          int j = (idx - m * nkji - k * nji) / nx1;
-          int i = (idx - m * nkji - k * nji - j * nx1) + is;
+          int j = (idx - m * nkji - k * nji) / active_nx1;
+          int i = (idx - m * nkji - k * nji - j * active_nx1) + is;
           k += ks;
           j += js;
 
@@ -189,7 +191,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
         Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                       1 / size.d_view(m).dx3};
-        auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+        auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
             idx, size.d_view, nx1, is, m, k, j, i);
 
         // -----------------------------------------------------------------------------------
@@ -656,7 +658,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
         Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                       1 / size.d_view(m).dx3};
-        auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+        auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
             idx, size.d_view, nx1, is, m, k, j, i);
         Real dbeta = 0.0;
         Real chi_guarded = (z4c.chi(m, k, j, i) > opt.chi_div_floor) ? z4c.chi(m, k, j, i)
@@ -813,7 +815,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
         Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                       1 / size.d_view(m).dx3};
-        auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+        auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
             idx, size.d_view, nx1, is, m, k, j, i);
         Real Lalpha = 0.0;
         Real dB = 0.0;
@@ -964,7 +966,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   DevExeSpace(),0,nmb-1,0,nz4c-1,ks,ke,js,je,is,ie,
   KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
-    auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
+    auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
         idx, size.d_view, nx1, is, m, k, j, i);
     // Keep the established multiply-then-accumulate order for Cartesian roundoff.
     for (int direction = 0; direction < 3; ++direction) {
@@ -1173,18 +1175,31 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
 template <int NGHOST>
 TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
+  const bool is_vertex = layout.centering == Z4cGridCentering::vertex;
   if (pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
-    return CalcRHSImpl<CartoonSO2, NGHOST>(pdriver, stage);
+    if (is_vertex) {
+      return CalcRHSImpl<VertexCenteredZ4c, CartoonSO2, NGHOST>(pdriver, stage);
+    }
+    return CalcRHSImpl<CellCenteredZ4c, CartoonSO2, NGHOST>(pdriver, stage);
   }
-  return CalcRHSImpl<Cartesian3D, NGHOST>(pdriver, stage);
+  if (is_vertex) {
+    return CalcRHSImpl<VertexCenteredZ4c, Cartesian3D, NGHOST>(pdriver, stage);
+  }
+  return CalcRHSImpl<CellCenteredZ4c, Cartesian3D, NGHOST>(pdriver, stage);
 }
 
-template TaskStatus Z4c::CalcRHSImpl<Cartesian3D, 2>(Driver *, int);
-template TaskStatus Z4c::CalcRHSImpl<Cartesian3D, 3>(Driver *, int);
-template TaskStatus Z4c::CalcRHSImpl<Cartesian3D, 4>(Driver *, int);
-template TaskStatus Z4c::CalcRHSImpl<CartoonSO2, 2>(Driver *, int);
-template TaskStatus Z4c::CalcRHSImpl<CartoonSO2, 3>(Driver *, int);
-template TaskStatus Z4c::CalcRHSImpl<CartoonSO2, 4>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<CellCenteredZ4c, Cartesian3D, 2>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<CellCenteredZ4c, Cartesian3D, 3>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<CellCenteredZ4c, Cartesian3D, 4>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<CellCenteredZ4c, CartoonSO2, 2>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<CellCenteredZ4c, CartoonSO2, 3>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<CellCenteredZ4c, CartoonSO2, 4>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<VertexCenteredZ4c, Cartesian3D, 2>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<VertexCenteredZ4c, Cartesian3D, 3>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<VertexCenteredZ4c, Cartesian3D, 4>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<VertexCenteredZ4c, CartoonSO2, 2>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<VertexCenteredZ4c, CartoonSO2, 3>(Driver *, int);
+template TaskStatus Z4c::CalcRHSImpl<VertexCenteredZ4c, CartoonSO2, 4>(Driver *, int);
 template TaskStatus Z4c::CalcRHS<2>(Driver *pdriver, int stage);
 template TaskStatus Z4c::CalcRHS<3>(Driver *pdriver, int stage);
 template TaskStatus Z4c::CalcRHS<4>(Driver *pdriver, int stage);

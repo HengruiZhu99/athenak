@@ -544,7 +544,6 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
                                   const Z4cStateCheckpoint checkpoint,
                                   const bool include_ghosts) {
-  const auto &indcs = pmy_pack->pmesh->mb_indcs;
   const int is = include_ghosts ? 0 : layout.is;
   const int ie = include_ghosts ? layout.n1 - 1 : layout.ie;
   const int js = include_ghosts ? 0 : layout.js;
@@ -616,8 +615,9 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
         Kokkos::create_mirror_view_and_copy(HostMemSpace(), packed_values);
     const auto admissibility = EvaluateZ4cState(values.data(), nz4c);
     const auto &size = pmy_pack->pmb->mb_size.h_view(m);
-    const Real rho = size.x1min + (static_cast<Real>(i - layout.is) + 0.5) * size.dx1;
-    const Real z = size.x2min + (static_cast<Real>(j - layout.js) + 0.5) * size.dx2;
+    const Real offset = layout.centering == Z4cGridCentering::vertex ? 0.0 : 0.5;
+    const Real rho = size.x1min + (static_cast<Real>(i - layout.is) + offset) * size.dx1;
+    const Real z = size.x2min + (static_cast<Real>(j - layout.js) + offset) * size.dx2;
     const Real edge_distance = std::min(
         std::min(static_cast<Real>(i - layout.is), static_cast<Real>(layout.ie - i)) * size.dx1,
         std::min(static_cast<Real>(j - layout.js), static_cast<Real>(layout.je - j)) * size.dx2);
@@ -705,11 +705,11 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
 
 void Z4c::InjectStateAdmissibilityExtractionTestFailure(Driver *driver) {
   if (pmy_pack->nmb_thispack <= 0) return;
-  const auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const auto bounds = layout;
   const auto state = u0;
   par_for("inject selected inadmissible z4c state", DevExeSpace(), 0, 0,
       KOKKOS_LAMBDA(const int) {
-        state(0, I_Z4C_CHI, indcs.ks, indcs.js, indcs.is) = -1.0;
+        state(0, I_Z4C_CHI, bounds.ks, bounds.js, bounds.is) = -1.0;
       });
   Kokkos::fence();
   CheckStateAdmissibility(driver, 0, Z4cStateCheckpoint::pre_rhs);
@@ -731,13 +731,13 @@ void Z4c::AlgConstr(MeshBlockPack *pmbp, Driver *driver, const int stage) {
   // hid that distinction through the detg->1 fallback.
   CheckStateAdmissibility(driver, stage, Z4cStateCheckpoint::pre_algconstr);
   // capture variables for the kernel
-  auto &indcs = pmbp->pmesh->mb_indcs;
+  const auto bounds = pmbp->pz4c->layout;
 
   int nmb = pmbp->nmb_thispack;
 
   auto &z4c = pmbp->pz4c->z4c;
   par_for("Alg constr loop",DevExeSpace(),
-  0,nmb-1,indcs.ks,indcs.ke,indcs.js,indcs.je,indcs.is,indcs.ie,
+  0,nmb-1,bounds.ks,bounds.ke,bounds.js,bounds.je,bounds.is,bounds.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     Real metric[6] = {z4c.g_dd(m,0,0,k,j,i), z4c.g_dd(m,0,1,k,j,i),
                       z4c.g_dd(m,0,2,k,j,i), z4c.g_dd(m,1,1,k,j,i),

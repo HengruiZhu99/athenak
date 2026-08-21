@@ -68,3 +68,18 @@ Z4c arrays, and then rejects before any cell-centered boundary object can be
 attached. It exits 1 and produces no output files. This boundary-seam guard is
 temporary and must be removed only when deterministic VC communication is
 complete.
+
+## Native-kernel centering dispatch checkpoint
+
+After host-selected centering templates were wired through the RHS, ADM
+initialization/constraints, curvature, timestep, AMR sensor, Weyl, and
+Sommerfeld paths, all 72 enabled host/MPI tests passed in 180.50 s. The two
+CUDA-required tests remained disabled in this OpenMP build. The one-cycle CC
+reference remained byte-identical to Phase 0:
+
+- history SHA-256: `4896c333ceda81d99cf1e4c15a28996d73c999c6222d4b83e770c9f4f4d0f598`
+- timestep-contract SHA-256: `dad954f5938eea76aca74493ec5bd1ac8c66cdc67ac7ad24225988c19e5e3037`
+- checkpoint executable SHA-256: `e5eeff30233d2bfc6adcf1e0f7f5375579f38084407e1990df1fad9c770ef88a`
+
+This checkpoint proves the CC arithmetic and output payload remained frozen;
+it does not qualify VC communication, AMR, restart, or evolution.

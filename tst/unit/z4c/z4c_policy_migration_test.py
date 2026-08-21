@@ -172,23 +172,23 @@ def main() -> int:
 
     required_markers = {
         "src/z4c/z4c_calcrhs.cpp": [
-            "CalcRHSImpl<CartoonSO2, 2>",
-            "CalcRHSImpl<Cartesian3D, 4>",
-            "MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>",
+            "CalcRHSImpl<CellCenteredZ4c, CartoonSO2, 2>",
+            "CalcRHSImpl<VertexCenteredZ4c, Cartesian3D, 4>",
+            "MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>",
         ],
         "src/z4c/z4c_adm.cpp": [
-            "ADMConstraintsImpl<CartoonSO2, NGHOST>",
-            "MakeCellCenteredDerivativeProvider<Symmetry, FD_STENCIL>",
+            "ADMConstraintsImpl<CellCenteredZ4c, CartoonSO2, NGHOST>",
+            "MakeZ4cDerivativeProvider<Centering, Symmetry, FD_STENCIL>",
             "TensorVariance::all_lower",
         ],
         "src/z4c/z4c_Sbc.cpp": [
-            "MakeCellCenteredDerivativeProvider<Symmetry, 2>",
-            "Z4cBoundaryRHSImpl<CartoonSO2>",
+            "MakeZ4cDerivativeProvider<Centering, Symmetry, 2>",
+            "Z4cBoundaryRHSImpl<CellCenteredZ4c, CartoonSO2>",
         ],
         "src/z4c/z4c_calculate_weyl_scalars.cpp": [
-            "Z4cWeylImpl<CartoonSO2, 2>",
+            "Z4cWeylImpl<CellCenteredZ4c, CartoonSO2, 2>",
             "TensorVariance::all_lower",
-            "WeylX3Coordinate<Symmetry>",
+            "WeylX3Coordinate<Centering, Symmetry>",
             "InitializeWeylTetradSeed<Symmetry>",
         ],
         "src/outputs/derived_variables.cpp": [
@@ -213,7 +213,7 @@ def main() -> int:
     gamma_launch = adm_source.index('par_for("initialize Gamma"')
     gamma_body = next(
         body for body in kokkos_lambda_bodies(adm_source[gamma_launch:])
-        if "MakeCellCenteredDerivativeProvider" in body)
+        if "MakeZ4cDerivativeProvider" in body)
     require("if constexpr" not in gamma_body,
             "ADM-to-Z4c Gamma device lambda reintroduced constexpr first-captures")
 
@@ -225,7 +225,7 @@ def main() -> int:
     weyl_launch = weyl_source.index('par_for("z4c_weyl_scalar"')
     weyl_body = next(
         body for body in kokkos_lambda_bodies(weyl_source[weyl_launch:])
-        if "WeylX3Coordinate<Symmetry>" in body)
+        if "WeylX3Coordinate<Centering, Symmetry>" in body)
     require("if constexpr" not in weyl_body,
             "Weyl device lambda reintroduced constexpr first-captures")
 

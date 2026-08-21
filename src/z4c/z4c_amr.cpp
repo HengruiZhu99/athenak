@@ -172,14 +172,23 @@ void Z4c_AMR::RefineTracker(MeshBlockPack *pmbp) {
 
 // refine based on min{chi}
 void Z4c_AMR::RefineChiMin(MeshBlockPack *pmbp) {
+  if (pmbp->pz4c->layout.centering == Z4cGridCentering::vertex) {
+    RefineChiMinImpl<VertexCenteredZ4c>(pmbp);
+  } else {
+    RefineChiMinImpl<CellCenteredZ4c>(pmbp);
+  }
+}
+
+template <typename Centering>
+void Z4c_AMR::RefineChiMinImpl(MeshBlockPack *pmbp) {
   Mesh *pmesh       = pmbp->pmesh;
   int nmb           = pmbp->nmb_thispack;
   int mbs           = pmesh->gids_eachrank[global_variable::my_rank];
   auto &refine_flag = pmesh->pmr->refine_flag;
-  auto &indcs       = pmesh->mb_indcs;
-  int &is = indcs.is, nx1 = indcs.nx1;
-  int &js = indcs.js, nx2 = indcs.nx2;
-  int &ks = indcs.ks, nx3 = indcs.nx3;
+  const auto bounds = pmbp->pz4c->layout;
+  const int is = bounds.is, nx1 = bounds.ie - bounds.is + 1;
+  const int js = bounds.js, nx2 = bounds.je - bounds.js + 1;
+  const int ks = bounds.ks, nx3 = bounds.ke - bounds.ks + 1;
   const int nkji = nx3 * nx2 * nx1;
   const int nji  = nx2 * nx1;
   auto &u0       = pmbp->pz4c->u0;
@@ -238,14 +247,23 @@ void Z4c_AMR::RefineChiMin(MeshBlockPack *pmbp) {
 
 // refine based on max{dchi}
 void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
+  if (pmbp->pz4c->layout.centering == Z4cGridCentering::vertex) {
+    RefineDchiMaxImpl<VertexCenteredZ4c>(pmbp);
+  } else {
+    RefineDchiMaxImpl<CellCenteredZ4c>(pmbp);
+  }
+}
+
+template <typename Centering>
+void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
   Mesh *pmesh       = pmbp->pmesh;
   int nmb           = pmbp->nmb_thispack;
   int mbs           = pmesh->gids_eachrank[global_variable::my_rank];
   auto &refine_flag = pmesh->pmr->refine_flag;
-  auto &indcs       = pmesh->mb_indcs;
-  int &is = indcs.is, nx1 = indcs.nx1;
-  int &js = indcs.js, nx2 = indcs.nx2;
-  int &ks = indcs.ks, nx3 = indcs.nx3;
+  const auto bounds = pmbp->pz4c->layout;
+  const int is = bounds.is, nx1 = bounds.ie - bounds.is + 1;
+  const int js = bounds.js, nx2 = bounds.je - bounds.js + 1;
+  const int ks = bounds.ks, nx3 = bounds.ke - bounds.ks + 1;
   const int nkji = nx3 * nx2 * nx1;
   const int nji  = nx2 * nx1;
   auto &u0       = pmbp->pz4c->u0;
@@ -351,7 +369,7 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
 
 void Z4c_AMR::WriteDchiShadow(MeshBlockPack *pmbp) {
   Mesh *pmesh = pmbp->pmesh;
-  auto &indcs = pmesh->mb_indcs;
+  const auto bounds = pmbp->pz4c->layout;
   const int nmb = pmbp->nmb_thispack;
   const int mbs = pmesh->gids_eachrank[global_variable::my_rank];
   constexpr int kCategories = 3;  // interior, active-edge, coarse-fine-adjacent block
@@ -376,13 +394,11 @@ void Z4c_AMR::WriteDchiShadow(MeshBlockPack *pmbp) {
   }
   Kokkos::deep_copy(coarse_fine, coarse_fine_host);
   const auto u0 = pmbp->pz4c->u0;
-  const int ni = indcs.nx1;
-  const int nj = indcs.nx2;
-  par_for("Z4c_AMR::DchiShadow", DevExeSpace(), 0, nmb - 1, indcs.ks + 0,
-          indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+  par_for("Z4c_AMR::DchiShadow", DevExeSpace(), 0, nmb - 1, bounds.ks,
+          bounds.ke, bounds.js, bounds.je, bounds.is, bounds.ie,
           KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-            const bool edge = (i - indcs.is < 2 || indcs.ie - i < 2 ||
-                               j - indcs.js < 2 || indcs.je - j < 2);
+            const bool edge = (i - bounds.is < 2 || bounds.ie - i < 2 ||
+                               j - bounds.js < 2 || bounds.je - j < 2);
             for (int v = 0; v < Z4c::nz4c; ++v) {
               const Real value = FourthDifferenceShadow2D(
                   u0(m, v, k, j, i - 2), u0(m, v, k, j, i - 1),

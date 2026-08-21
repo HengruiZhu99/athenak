@@ -49,10 +49,9 @@ namespace z4c {
 //
 // The Z4c variables will be set on the whole MeshBlock with the exception of
 // the Gamma's that can only be set in the interior of the MeshBlock.
-template <typename Symmetry, int FD_STENCIL>
+template <typename Centering, typename Symmetry, int FD_STENCIL>
 void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
   // capture variables for the kernel
-  auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
   const auto &bounds = pmbp->pz4c->layout;
   int nmb = pmbp->nmb_thispack;
@@ -132,8 +131,8 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
                             Kokkos::ALL, Kokkos::ALL, Kokkos::ALL);
   sub_DvceArray5D_0D g_22 = Kokkos::subview(g_uu, Kokkos::ALL, 5,
                             Kokkos::ALL, Kokkos::ALL, Kokkos::ALL);*/
-  par_for("initialize Gamma",DevExeSpace(),0,nmb-1,indcs.ks,indcs.ke,
-          indcs.js,indcs.je,indcs.is,indcs.ie,
+  par_for("initialize Gamma",DevExeSpace(),0,nmb-1,bounds.ks,bounds.ke,
+          bounds.js,bounds.je,bounds.is,bounds.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     // Usage of Dx: pmbp->pz4c->Dx(blockn, posvar, k,j,i, dir, nghost, dx, quantity);
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
@@ -179,8 +178,8 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
     // Keep the compile-time symmetry branch in the named device helper.  The
     // Kokkos lambda references z4c and g3u unconditionally, avoiding nvcc's
     // extended-lambda first-capture restriction for if-constexpr bodies.
-    auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, FD_STENCIL>(
-        idx, size.d_view, indcs.nx1, indcs.is, m, k, j, i);
+    auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, FD_STENCIL>(
+        idx, size.d_view, bounds.nx1, bounds.is, m, k, j, i);
     for (int a = 0; a < 3; ++a) {
       z4c.vGam_u(m, a, k, j, i) = 0.0;
       for (int b = 0; b < 3; ++b) {
@@ -203,9 +202,17 @@ void Z4c::ADMToZ4c(MeshBlockPack *pmbp, ParameterInput *pin) {
     std::exit(EXIT_FAILURE);
   }
   if (pmbp->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
-    ADMToZ4cImpl<CartoonSO2, NGHOST>(pmbp, pin);
+    if (pmbp->pz4c->layout.centering == Z4cGridCentering::vertex) {
+      ADMToZ4cImpl<VertexCenteredZ4c, CartoonSO2, NGHOST>(pmbp, pin);
+    } else {
+      ADMToZ4cImpl<CellCenteredZ4c, CartoonSO2, NGHOST>(pmbp, pin);
+    }
   } else {
-    ADMToZ4cImpl<Cartesian3D, NGHOST>(pmbp, pin);
+    if (pmbp->pz4c->layout.centering == Z4cGridCentering::vertex) {
+      ADMToZ4cImpl<VertexCenteredZ4c, Cartesian3D, NGHOST>(pmbp, pin);
+    } else {
+      ADMToZ4cImpl<CellCenteredZ4c, Cartesian3D, NGHOST>(pmbp, pin);
+    }
   }
   if (pmbp->pz4c->opt.shift_mode == Z4cShiftMode::prescribed_zero) {
     pmbp->pz4c->InitializePrescribedZeroShift();
@@ -223,7 +230,6 @@ void Z4cToADMViews(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
                    const adm::ADM::ADM_vars adm_fields,
                    const Real chi_psi_power) {
   // capture variables for the kernel
-  auto &indcs = pmbp->pmesh->mb_indcs;
   const auto &bounds = pmbp->pz4c->layout;
 
   int nmb = pmbp->nmb_thispack;
@@ -267,7 +273,7 @@ void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
 //
 // The constraints are set only in the MeshBlock interior, because derivatives
 // of the ADM quantities are needed to compute them.
-template <typename Symmetry, int FD_STENCIL>
+template <typename Centering, typename Symmetry, int FD_STENCIL>
 void ADMConstraintsViewsImpl(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
                              const adm::ADM::ADM_vars adm_fields,
                              DvceArray5D<Real> u_con,
@@ -275,11 +281,11 @@ void ADMConstraintsViewsImpl(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
                              const bool is_vacuum,
                              const Tmunu::Tmunu_vars tmunu) {
   // capture variables for the kernel
-  auto &indcs = pmbp->pmesh->mb_indcs;
+  const auto &bounds = pmbp->pz4c->layout;
   auto &size = pmbp->pmb->mb_size;
-  int &is = indcs.is; int &ie = indcs.ie;
-  int &js = indcs.js; int &je = indcs.je;
-  int &ks = indcs.ks; int &ke = indcs.ke;
+  const int is = bounds.is; const int ie = bounds.ie;
+  const int js = bounds.js; const int je = bounds.je;
+  const int ks = bounds.ks; const int ke = bounds.ke;
   //For GLOOPS
 
   int nmb = pmbp->nmb_thispack;
@@ -301,8 +307,8 @@ void ADMConstraintsViewsImpl(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
     AthenaPointTensor<Real, TensorSymm::SYM22, 3, 4> ddg_dddd;
 
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
-    auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, FD_STENCIL>(
-        idx, size.d_view, indcs.nx1, is, m, k, j, i);
+    auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, FD_STENCIL>(
+        idx, size.d_view, bounds.nx1, is, m, k, j, i);
 
     // -----------------------------------------------------------------------------------
     // derivatives
@@ -437,8 +443,8 @@ void ADMConstraintsViewsImpl(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> DK_udd;
 
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
-    auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, FD_STENCIL>(
-        idx, size.d_view, indcs.nx1, is, m, k, j, i);
+    auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, FD_STENCIL>(
+        idx, size.d_view, bounds.nx1, is, m, k, j, i);
 
     // -----------------------------------------------------------------------------------
     // derivatives
@@ -573,12 +579,12 @@ void ADMConstraintsViewsImpl(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
 });
 }
 
-template <typename Symmetry, int FD_STENCIL>
+template <typename Centering, typename Symmetry, int FD_STENCIL>
 void ADMConstraintsImpl(MeshBlockPack *pmbp) {
   const bool is_vacuum = pmbp->ptmunu == nullptr;
   Tmunu::Tmunu_vars tmunu;
   if (!is_vacuum) tmunu = pmbp->ptmunu->tmunu;
-  ADMConstraintsViewsImpl<Symmetry, FD_STENCIL>(
+  ADMConstraintsViewsImpl<Centering, Symmetry, FD_STENCIL>(
       pmbp, pmbp->pz4c->z4c, pmbp->padm->adm, pmbp->pz4c->u_con,
       pmbp->pz4c->con, is_vacuum, tmunu);
 }
@@ -592,9 +598,17 @@ void Z4c::ADMConstraints(MeshBlockPack *pmbp) {
     std::exit(EXIT_FAILURE);
   }
   if (pmbp->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
-    ADMConstraintsImpl<CartoonSO2, NGHOST>(pmbp);
+    if (pmbp->pz4c->layout.centering == Z4cGridCentering::vertex) {
+      ADMConstraintsImpl<VertexCenteredZ4c, CartoonSO2, NGHOST>(pmbp);
+    } else {
+      ADMConstraintsImpl<CellCenteredZ4c, CartoonSO2, NGHOST>(pmbp);
+    }
   } else {
-    ADMConstraintsImpl<Cartesian3D, NGHOST>(pmbp);
+    if (pmbp->pz4c->layout.centering == Z4cGridCentering::vertex) {
+      ADMConstraintsImpl<VertexCenteredZ4c, Cartesian3D, NGHOST>(pmbp);
+    } else {
+      ADMConstraintsImpl<CellCenteredZ4c, Cartesian3D, NGHOST>(pmbp);
+    }
   }
   pmbp->pz4c->ReconstructConstraintAxisParityGhosts();
 }
@@ -643,19 +657,37 @@ void Z4c::EvaluateDiagnosticConstraints(
   const Tmunu::Tmunu_vars empty_matter;
   switch (stencil) {
     case 2:
-      ADMConstraintsViewsImpl<CartoonSO2, 2>(
-          pmy_pack, z4c, diagnostic_adm, scratch_constraints,
-          diagnostic_constraints, true, empty_matter);
+      if (layout.centering == Z4cGridCentering::vertex) {
+        ADMConstraintsViewsImpl<VertexCenteredZ4c, CartoonSO2, 2>(
+            pmy_pack, z4c, diagnostic_adm, scratch_constraints,
+            diagnostic_constraints, true, empty_matter);
+      } else {
+        ADMConstraintsViewsImpl<CellCenteredZ4c, CartoonSO2, 2>(
+            pmy_pack, z4c, diagnostic_adm, scratch_constraints,
+            diagnostic_constraints, true, empty_matter);
+      }
       break;
     case 3:
-      ADMConstraintsViewsImpl<CartoonSO2, 3>(
-          pmy_pack, z4c, diagnostic_adm, scratch_constraints,
-          diagnostic_constraints, true, empty_matter);
+      if (layout.centering == Z4cGridCentering::vertex) {
+        ADMConstraintsViewsImpl<VertexCenteredZ4c, CartoonSO2, 3>(
+            pmy_pack, z4c, diagnostic_adm, scratch_constraints,
+            diagnostic_constraints, true, empty_matter);
+      } else {
+        ADMConstraintsViewsImpl<CellCenteredZ4c, CartoonSO2, 3>(
+            pmy_pack, z4c, diagnostic_adm, scratch_constraints,
+            diagnostic_constraints, true, empty_matter);
+      }
       break;
     case 4:
-      ADMConstraintsViewsImpl<CartoonSO2, 4>(
-          pmy_pack, z4c, diagnostic_adm, scratch_constraints,
-          diagnostic_constraints, true, empty_matter);
+      if (layout.centering == Z4cGridCentering::vertex) {
+        ADMConstraintsViewsImpl<VertexCenteredZ4c, CartoonSO2, 4>(
+            pmy_pack, z4c, diagnostic_adm, scratch_constraints,
+            diagnostic_constraints, true, empty_matter);
+      } else {
+        ADMConstraintsViewsImpl<CellCenteredZ4c, CartoonSO2, 4>(
+            pmy_pack, z4c, diagnostic_adm, scratch_constraints,
+            diagnostic_constraints, true, empty_matter);
+      }
       break;
     default:
       std::cerr << "### FATAL ERROR in " << __FILE__
@@ -666,12 +698,18 @@ void Z4c::EvaluateDiagnosticConstraints(
   ReconstructConstraintAxisParityGhosts(scratch_constraints);
 }
 
-template void ADMConstraintsImpl<Cartesian3D, 2>(MeshBlockPack *);
-template void ADMConstraintsImpl<Cartesian3D, 3>(MeshBlockPack *);
-template void ADMConstraintsImpl<Cartesian3D, 4>(MeshBlockPack *);
-template void ADMConstraintsImpl<CartoonSO2, 2>(MeshBlockPack *);
-template void ADMConstraintsImpl<CartoonSO2, 3>(MeshBlockPack *);
-template void ADMConstraintsImpl<CartoonSO2, 4>(MeshBlockPack *);
+template void ADMConstraintsImpl<CellCenteredZ4c, Cartesian3D, 2>(MeshBlockPack *);
+template void ADMConstraintsImpl<CellCenteredZ4c, Cartesian3D, 3>(MeshBlockPack *);
+template void ADMConstraintsImpl<CellCenteredZ4c, Cartesian3D, 4>(MeshBlockPack *);
+template void ADMConstraintsImpl<CellCenteredZ4c, CartoonSO2, 2>(MeshBlockPack *);
+template void ADMConstraintsImpl<CellCenteredZ4c, CartoonSO2, 3>(MeshBlockPack *);
+template void ADMConstraintsImpl<CellCenteredZ4c, CartoonSO2, 4>(MeshBlockPack *);
+template void ADMConstraintsImpl<VertexCenteredZ4c, Cartesian3D, 2>(MeshBlockPack *);
+template void ADMConstraintsImpl<VertexCenteredZ4c, Cartesian3D, 3>(MeshBlockPack *);
+template void ADMConstraintsImpl<VertexCenteredZ4c, Cartesian3D, 4>(MeshBlockPack *);
+template void ADMConstraintsImpl<VertexCenteredZ4c, CartoonSO2, 2>(MeshBlockPack *);
+template void ADMConstraintsImpl<VertexCenteredZ4c, CartoonSO2, 3>(MeshBlockPack *);
+template void ADMConstraintsImpl<VertexCenteredZ4c, CartoonSO2, 4>(MeshBlockPack *);
 template void Z4c::ADMConstraints<2>(MeshBlockPack *pmbp);
 template void Z4c::ADMConstraints<3>(MeshBlockPack *pmbp);
 template void Z4c::ADMConstraints<4>(MeshBlockPack *pmbp);

@@ -484,9 +484,11 @@ bool CheckWeylCoordinatePolicy() {
   Kokkos::parallel_for(
       "Weyl x3 coordinate policy", Kokkos::RangePolicy<>(0, 1),
       KOKKOS_LAMBDA(const int) {
-        coordinates(0) = z4c::WeylX3Coordinate<z4c::CartoonSO2>(
+        coordinates(0) = z4c::WeylX3Coordinate<z4c::CellCenteredZ4c,
+                                                z4c::CartoonSO2>(
             37, 11, 1, -9.0, 13.0);
-        coordinates(1) = z4c::WeylX3Coordinate<z4c::Cartesian3D>(
+        coordinates(1) = z4c::WeylX3Coordinate<z4c::CellCenteredZ4c,
+                                                z4c::Cartesian3D>(
             3, 1, 4, -2.0, 2.0);
       });
   auto host = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), coordinates);

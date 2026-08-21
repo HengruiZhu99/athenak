@@ -15,19 +15,16 @@
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_symmetry.hpp"
 
-template <typename Symmetry, int NGHOST>
+template <typename Centering, typename Symmetry, int NGHOST>
 Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaximaImpl(Mesh *pm) {
   auto *pmbp = pm->pmb_pack;
-  auto &indcs = pm->mb_indcs;
-  const int nx1 = indcs.nx1;
-  const int nx2 = indcs.nx2;
-  const int nx3 = indcs.nx3;
-  const int is = indcs.is;
-  const int js = indcs.js;
-  const int ks = indcs.ks;
-  const int nmkji = pmbp->nmb_thispack * nx3 * nx2 * nx1;
-  const int nkji = nx3 * nx2 * nx1;
-  const int nji = nx2 * nx1;
+  const auto &layout = pmbp->pz4c->layout;
+  const int active_nx1 = layout.ie - layout.is + 1;
+  const int active_nx2 = layout.je - layout.js + 1;
+  const int active_nx3 = layout.ke - layout.ks + 1;
+  const int nmkji = pmbp->nmb_thispack * active_nx3 * active_nx2 * active_nx1;
+  const int nkji = active_nx3 * active_nx2 * active_nx1;
+  const int nji = active_nx2 * active_nx1;
   auto &u0 = pmbp->pz4c->u0;
   auto &adm = pmbp->padm->adm;
   auto &size = pmbp->pmb->mb_size;
@@ -39,10 +36,10 @@ Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaximaImpl(Mesh *pm) {
       KOKKOS_LAMBDA(const int idx, Real &result) {
         const int m = idx / nkji;
         int k = (idx - m * nkji) / nji;
-        int j = (idx - m * nkji - k * nji) / nx1;
-        const int i = (idx - m * nkji - k * nji - j * nx1) + is;
-        k += ks;
-        j += js;
+        int j = (idx - m * nkji - k * nji) / active_nx1;
+        const int i = (idx - m * nkji - k * nji - j * active_nx1) + layout.is;
+        k += layout.ks;
+        j += layout.js;
         const Real trace_k =
             u0(m, z4c::Z4c::I_Z4C_KHAT, k, j, i) +
             2.0 * u0(m, z4c::Z4c::I_Z4C_THETA, k, j, i);
@@ -57,16 +54,16 @@ Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaximaImpl(Mesh *pm) {
       KOKKOS_LAMBDA(const int idx, Real &result) {
         const int m = idx / nkji;
         int k = (idx - m * nkji) / nji;
-        int j = (idx - m * nkji - k * nji) / nx1;
-        const int i = (idx - m * nkji - k * nji - j * nx1) + is;
-        k += ks;
-        j += js;
+        int j = (idx - m * nkji - k * nji) / active_nx1;
+        const int i = (idx - m * nkji - k * nji - j * active_nx1) + layout.is;
+        k += layout.ks;
+        j += layout.js;
         const Real inverse_spacing[3] = {
             1.0 / size.d_view(m).dx1,
             1.0 / size.d_view(m).dx2,
             1.0 / size.d_view(m).dx3};
-        auto derivatives = z4c::MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
-            inverse_spacing, size.d_view, nx1, is, m, k, j, i);
+        auto derivatives = z4c::MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
+            inverse_spacing, size.d_view, layout.nx1, layout.is, m, k, j, i);
         const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST, false>(
             derivatives, adm.g_dd, adm.vK_dd, m, k, j, i);
         if (!diagnostic.valid) {
@@ -93,19 +90,47 @@ Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaximaImpl(Mesh *pm) {
 Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaxima(Mesh *pm) {
   const auto &config = pm->pmb_pack->z4c_symmetry;
   const bool cartoon = config.mode == z4c::Z4cSymmetryMode::cartoon_so2;
+  const bool vertex = config.grid_centering == z4c::Z4cGridCentering::vertex;
   switch (config.stencil_width) {
     case 2:
-      return cartoon
-                 ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CartoonSO2, 2>(pm)
-                 : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::Cartesian3D, 2>(pm);
+      if (cartoon) {
+        return vertex
+                   ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::VertexCenteredZ4c,
+                                                        z4c::CartoonSO2, 2>(pm)
+                   : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CellCenteredZ4c,
+                                                        z4c::CartoonSO2, 2>(pm);
+      }
+      return vertex
+                 ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::VertexCenteredZ4c,
+                                                      z4c::Cartesian3D, 2>(pm)
+                 : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CellCenteredZ4c,
+                                                      z4c::Cartesian3D, 2>(pm);
     case 3:
-      return cartoon
-                 ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CartoonSO2, 3>(pm)
-                 : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::Cartesian3D, 3>(pm);
+      if (cartoon) {
+        return vertex
+                   ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::VertexCenteredZ4c,
+                                                        z4c::CartoonSO2, 3>(pm)
+                   : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CellCenteredZ4c,
+                                                        z4c::CartoonSO2, 3>(pm);
+      }
+      return vertex
+                 ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::VertexCenteredZ4c,
+                                                      z4c::Cartesian3D, 3>(pm)
+                 : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CellCenteredZ4c,
+                                                      z4c::Cartesian3D, 3>(pm);
     case 4:
-      return cartoon
-                 ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CartoonSO2, 4>(pm)
-                 : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::Cartesian3D, 4>(pm);
+      if (cartoon) {
+        return vertex
+                   ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::VertexCenteredZ4c,
+                                                        z4c::CartoonSO2, 4>(pm)
+                   : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CellCenteredZ4c,
+                                                        z4c::CartoonSO2, 4>(pm);
+      }
+      return vertex
+                 ? ComputeZ4cGlobalCurvatureMaximaImpl<z4c::VertexCenteredZ4c,
+                                                      z4c::Cartesian3D, 4>(pm)
+                 : ComputeZ4cGlobalCurvatureMaximaImpl<z4c::CellCenteredZ4c,
+                                                      z4c::Cartesian3D, 4>(pm);
     default:
       return {0.0, 0.0, false};
   }

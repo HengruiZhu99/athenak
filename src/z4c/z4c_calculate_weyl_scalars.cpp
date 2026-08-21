@@ -30,14 +30,14 @@ namespace z4c {
 // \brief compute the weyl scalars given the adm variables and matter state
 //
 // This function operates only on the interior points of the MeshBlock
-template <typename Symmetry, int NGHOST>
+template <typename Centering, typename Symmetry, int NGHOST>
 void Z4c::Z4cWeylImpl(MeshBlockPack *pmbp) {
   // capture variables for the kernel
-  auto &indcs = pmbp->pmesh->mb_indcs;
+  const auto &layout = pmbp->pz4c->layout;
   auto &size = pmbp->pmb->mb_size;
-  int &is = indcs.is; int &ie = indcs.ie;
-  int &js = indcs.js; int &je = indcs.je;
-  int &ks = indcs.ks; int &ke = indcs.ke;
+  const int is = layout.is; const int ie = layout.ie;
+  const int js = layout.js; const int je = layout.je;
+  const int ks = layout.ks; const int ke = layout.ke;
   int nmb = pmbp->nmb_thispack;
 
   auto &adm = pmbp->padm->adm;
@@ -51,18 +51,19 @@ void Z4c::Z4cWeylImpl(MeshBlockPack *pmbp) {
     const Real FR4 = 0.25;
     Real &x1min = size.d_view(m).x1min;
     Real &x1max = size.d_view(m).x1max;
-    int nx1 = indcs.nx1;
-    Real x1v = CellCenterX(i-is, nx1, x1min, x1max);
+    int nx1 = layout.nx1;
+    Real x1v = Z4cPointX<Centering>(i-is, nx1, x1min, x1max);
 
     Real &x2min = size.d_view(m).x2min;
     Real &x2max = size.d_view(m).x2max;
-    int nx2 = indcs.nx2;
-    Real x2v = CellCenterX(j-js, nx2, x2min, x2max);
+    int nx2 = layout.nx2;
+    Real x2v = Z4cPointX<Centering>(j-js, nx2, x2min, x2max);
 
     Real &x3min = size.d_view(m).x3min;
     Real &x3max = size.d_view(m).x3max;
-    int nx3 = indcs.nx3;
-    const Real x3v = WeylX3Coordinate<Symmetry>(k, ks, nx3, x3min, x3max);
+    int nx3 = layout.nx3;
+    const Real x3v = WeylX3Coordinate<Centering, Symmetry>(
+        k, ks, nx3, x3min, x3max);
 
     // Scalars
     Real detg = 0.0;         // det(g)
@@ -138,8 +139,8 @@ void Z4c::Z4cWeylImpl(MeshBlockPack *pmbp) {
     }
 
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
-    auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
-        idx, size.d_view, indcs.nx1, is, m, k, j, i);
+    auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
+        idx, size.d_view, layout.nx1, is, m, k, j, i);
     // -----------------------------------------------------------------------------------
     // derivatives
     //
@@ -416,18 +417,32 @@ void Z4c::Z4cWeylImpl(MeshBlockPack *pmbp) {
 template <int NGHOST>
 void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
   if (pmbp->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
-    Z4cWeylImpl<CartoonSO2, NGHOST>(pmbp);
+    if (layout.centering == Z4cGridCentering::vertex) {
+      Z4cWeylImpl<VertexCenteredZ4c, CartoonSO2, NGHOST>(pmbp);
+    } else {
+      Z4cWeylImpl<CellCenteredZ4c, CartoonSO2, NGHOST>(pmbp);
+    }
   } else {
-    Z4cWeylImpl<Cartesian3D, NGHOST>(pmbp);
+    if (layout.centering == Z4cGridCentering::vertex) {
+      Z4cWeylImpl<VertexCenteredZ4c, Cartesian3D, NGHOST>(pmbp);
+    } else {
+      Z4cWeylImpl<CellCenteredZ4c, Cartesian3D, NGHOST>(pmbp);
+    }
   }
 }
 
-template void Z4c::Z4cWeylImpl<Cartesian3D, 2>(MeshBlockPack *);
-template void Z4c::Z4cWeylImpl<Cartesian3D, 3>(MeshBlockPack *);
-template void Z4c::Z4cWeylImpl<Cartesian3D, 4>(MeshBlockPack *);
-template void Z4c::Z4cWeylImpl<CartoonSO2, 2>(MeshBlockPack *);
-template void Z4c::Z4cWeylImpl<CartoonSO2, 3>(MeshBlockPack *);
-template void Z4c::Z4cWeylImpl<CartoonSO2, 4>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<CellCenteredZ4c, Cartesian3D, 2>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<CellCenteredZ4c, Cartesian3D, 3>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<CellCenteredZ4c, Cartesian3D, 4>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<CellCenteredZ4c, CartoonSO2, 2>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<CellCenteredZ4c, CartoonSO2, 3>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<CellCenteredZ4c, CartoonSO2, 4>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<VertexCenteredZ4c, Cartesian3D, 2>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<VertexCenteredZ4c, Cartesian3D, 3>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<VertexCenteredZ4c, Cartesian3D, 4>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<VertexCenteredZ4c, CartoonSO2, 2>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<VertexCenteredZ4c, CartoonSO2, 3>(MeshBlockPack *);
+template void Z4c::Z4cWeylImpl<VertexCenteredZ4c, CartoonSO2, 4>(MeshBlockPack *);
 template void Z4c::Z4cWeyl<2>(MeshBlockPack *pmbp);
 template void Z4c::Z4cWeyl<3>(MeshBlockPack *pmbp);
 template void Z4c::Z4cWeyl<4>(MeshBlockPack *pmbp);

@@ -33,6 +33,19 @@ struct CartoonSO2 {};
 //! Tensor component tables are valid only when both indices have the same variance.
 enum class TensorVariance { all_lower, all_upper };
 
+//! Compile-time coordinate selection for a native Z4c point.
+template <typename Centering>
+KOKKOS_INLINE_FUNCTION Real Z4cPointX(const int offset, const int intervals,
+                                      const Real xmin, const Real xmax) {
+  if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
+    return VertexX(offset, intervals, xmin, xmax);
+  } else {
+    static_assert(std::is_same_v<Centering, CellCenteredZ4c>,
+                  "Unknown Z4c centering policy tag");
+    return CellCenterX(offset, intervals, xmin, xmax);
+  }
+}
+
 //! Exact-axis diagnostic samples are distinct from nonzero production cell centers.
 enum class CartoonAxisLocation {
   cell_centered,

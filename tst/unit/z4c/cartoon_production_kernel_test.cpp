@@ -31,7 +31,7 @@
 namespace z4c {
 // This is a production template with explicit instantiations in z4c_adm.cpp.  The
 // declaration is kept test-local so it does not enlarge the public application API.
-template <typename Symmetry, int FD_STENCIL>
+template <typename Centering, typename Symmetry, int FD_STENCIL>
 void ADMConstraintsImpl(MeshBlockPack *pmbp);
 }  // namespace z4c
 
@@ -207,7 +207,8 @@ template <int STENCIL>
 bool CheckRhs(MeshBlockPack *pack, const bool minkowski) {
   auto *z4c = pack->pz4c;
   Kokkos::deep_copy(z4c->u_rhs, 0.0);
-  if (z4c->CalcRHSImpl<z4c::CartoonSO2, STENCIL>(nullptr, 0) !=
+  if (z4c->CalcRHSImpl<z4c::CellCenteredZ4c, z4c::CartoonSO2, STENCIL>(
+          nullptr, 0) !=
       TaskStatus::complete) return false;
   Kokkos::fence();
   auto rhs = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), z4c->u_rhs);
@@ -278,7 +279,7 @@ bool CheckAdmToZ4c(MeshBlockPack *pack, ParameterInput *input) {
 
 template <int STENCIL>
 bool CheckConstraints(MeshBlockPack *pack, const bool minkowski) {
-  z4c::ADMConstraintsImpl<z4c::CartoonSO2, STENCIL>(pack);
+  z4c::ADMConstraintsImpl<z4c::CellCenteredZ4c, z4c::CartoonSO2, STENCIL>(pack);
   Kokkos::fence();
   auto constraints = Kokkos::create_mirror_view_and_copy(
       Kokkos::HostSpace(), pack->pz4c->u_con);
@@ -314,7 +315,7 @@ bool CheckConstraints(MeshBlockPack *pack, const bool minkowski) {
 
 template <int STENCIL>
 bool CheckWeyl(MeshBlockPack *pack, const bool minkowski) {
-  pack->pz4c->Z4cWeylImpl<z4c::CartoonSO2, STENCIL>(pack);
+  pack->pz4c->Z4cWeylImpl<z4c::CellCenteredZ4c, z4c::CartoonSO2, STENCIL>(pack);
   Kokkos::fence();
   auto weyl = Kokkos::create_mirror_view_and_copy(
       Kokkos::HostSpace(), pack->pz4c->u_weyl);
@@ -343,7 +344,8 @@ bool CheckWeyl(MeshBlockPack *pack, const bool minkowski) {
 bool CheckSommerfeldFaces(MeshBlockPack *pack) {
   auto *z4c = pack->pz4c;
   Kokkos::deep_copy(z4c->u_rhs, kSentinel);
-  if (z4c->Z4cBoundaryRHSImpl<z4c::CartoonSO2>(nullptr, 0) !=
+  if (z4c->Z4cBoundaryRHSImpl<z4c::CellCenteredZ4c, z4c::CartoonSO2>(
+          nullptr, 0) !=
       TaskStatus::complete) return false;
   Kokkos::fence();
   auto rhs = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), z4c->u_rhs);

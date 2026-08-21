@@ -39,14 +39,14 @@ ExplicitRKMethod MethodFromDriver(const Driver *driver) {
   return method;
 }
 
-template <typename Symmetry, int NGHOST>
+template <typename Centering, typename Symmetry, int NGHOST>
 TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *driver) {
   auto *mesh = pack->pmesh;
-  const auto &indcs = mesh->mb_indcs;
+  const auto &layout = self->layout;
   const int nmb = pack->nmb_thispack;
-  const int nx1 = indcs.nx1;
-  const int nx2 = indcs.nx2;
-  const int nx3 = indcs.nx3;
+  const int nx1 = layout.ie - layout.is + 1;
+  const int nx2 = layout.je - layout.js + 1;
+  const int nx3 = layout.ke - layout.ks + 1;
   const int nmkji = nmb * nx3 * nx2 * nx1;
   const int nkji = nx3 * nx2 * nx1;
   const int nji = nx2 * nx1;
@@ -68,10 +68,10 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
         "z4c timestep max abs K", Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
         KOKKOS_LAMBDA(const int idx, Real &result) {
           const int m = idx / nkji;
-          const int k = (idx - m * nkji) / nji + indcs.ks;
-          const int j = (idx - m * nkji - (k - indcs.ks) * nji) / nx1 + indcs.js;
-          const int i = idx - m * nkji - (k - indcs.ks) * nji -
-                        (j - indcs.js) * nx1 + indcs.is;
+          const int k = (idx - m * nkji) / nji + layout.ks;
+          const int j = (idx - m * nkji - (k - layout.ks) * nji) / nx1 + layout.js;
+          const int i = idx - m * nkji - (k - layout.ks) * nji -
+                        (j - layout.js) * nx1 + layout.is;
           const Real K = state.vKhat(m, k, j, i) + 2.0 * state.vTheta(m, k, j, i);
           if (!Kokkos::isfinite(K)) {
             result = std::numeric_limits<Real>::infinity();
@@ -114,10 +114,10 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
       "z4c timestep source rate", Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
       KOKKOS_LAMBDA(const int idx, Real &result) {
         const int m = idx / nkji;
-        const int k = (idx - m * nkji) / nji + indcs.ks;
-        const int j = (idx - m * nkji - (k - indcs.ks) * nji) / nx1 + indcs.js;
-        const int i = idx - m * nkji - (k - indcs.ks) * nji -
-                      (j - indcs.js) * nx1 + indcs.is;
+        const int k = (idx - m * nkji) / nji + layout.ks;
+        const int j = (idx - m * nkji - (k - layout.ks) * nji) / nx1 + layout.js;
+        const int i = idx - m * nkji - (k - layout.ks) * nji -
+                      (j - layout.js) * nx1 + layout.is;
         const Real alpha = state.alpha(m, k, j, i);
         const Real chi = state.chi(m, k, j, i);
         const Real K = state.vKhat(m, k, j, i) + 2.0 * state.vTheta(m, k, j, i);
@@ -157,8 +157,8 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
             const Real inverse_spacing[] = {1.0 / size.d_view(m).dx1,
                                              1.0 / size.d_view(m).dx2,
                                              1.0 / size.d_view(m).dx3};
-            auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
-                inverse_spacing, size.d_view, nx1, indcs.is, m, k, j, i);
+            auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
+                inverse_spacing, size.d_view, layout.nx1, layout.is, m, k, j, i);
             mu = LocalChiGradientNormTelegraphMu(
                 chi, opt.chi_psi_power, g_uu[0], g_uu[1], g_uu[2], g_uu[3], g_uu[4],
                 g_uu[5], derivatives.ScalarFirst(0, state.chi),
@@ -207,10 +207,10 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
   auto ComputeCoordinateSpeed = KOKKOS_LAMBDA(const int idx, Real &result,
                                                 const bool minimum) {
     const int m = idx / nkji;
-    const int k = (idx - m * nkji) / nji + indcs.ks;
-    const int j = (idx - m * nkji - (k - indcs.ks) * nji) / nx1 + indcs.js;
-    const int i = idx - m * nkji - (k - indcs.ks) * nji -
-                  (j - indcs.js) * nx1 + indcs.is;
+    const int k = (idx - m * nkji) / nji + layout.ks;
+    const int j = (idx - m * nkji - (k - layout.ks) * nji) / nx1 + layout.js;
+    const int i = idx - m * nkji - (k - layout.ks) * nji -
+                  (j - layout.js) * nx1 + layout.is;
     const Real alpha = state.alpha(m, k, j, i);
     const Real chi = state.chi(m, k, j, i);
     const Real detg = adm::SpatialDet(
@@ -319,23 +319,36 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
   return TaskStatus::complete;
 }
 
+template <int NGHOST>
+TaskStatus DispatchZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack,
+                                        Driver *driver) {
+  const bool vertex = self->layout.centering == Z4cGridCentering::vertex;
+  const bool cartoon = pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2;
+  if (cartoon) {
+    return vertex
+               ? ComputeZ4cTimestepContracts<VertexCenteredZ4c, CartoonSO2, NGHOST>(
+                     self, pack, driver)
+               : ComputeZ4cTimestepContracts<CellCenteredZ4c, CartoonSO2, NGHOST>(
+                     self, pack, driver);
+  }
+  return vertex
+             ? ComputeZ4cTimestepContracts<VertexCenteredZ4c, Cartesian3D, NGHOST>(
+                   self, pack, driver)
+             : ComputeZ4cTimestepContracts<CellCenteredZ4c, Cartesian3D, NGHOST>(
+                   self, pack, driver);
+}
+
 }  // namespace
 
 TaskStatus Z4c::NewTimeStep(Driver *driver, int stage) {
   if (stage != driver->nexp_stages) return TaskStatus::complete;
   switch (opt.fd_stencil) {
     case 2:
-      return pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2
-                 ? ComputeZ4cTimestepContracts<CartoonSO2, 2>(this, pmy_pack, driver)
-                 : ComputeZ4cTimestepContracts<Cartesian3D, 2>(this, pmy_pack, driver);
+      return DispatchZ4cTimestepContracts<2>(this, pmy_pack, driver);
     case 3:
-      return pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2
-                 ? ComputeZ4cTimestepContracts<CartoonSO2, 3>(this, pmy_pack, driver)
-                 : ComputeZ4cTimestepContracts<Cartesian3D, 3>(this, pmy_pack, driver);
+      return DispatchZ4cTimestepContracts<3>(this, pmy_pack, driver);
     case 4:
-      return pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2
-                 ? ComputeZ4cTimestepContracts<CartoonSO2, 4>(this, pmy_pack, driver)
-                 : ComputeZ4cTimestepContracts<Cartesian3D, 4>(this, pmy_pack, driver);
+      return DispatchZ4cTimestepContracts<4>(this, pmy_pack, driver);
     default:
       std::cerr << "### FATAL ERROR in Z4c timestep contract: unsupported fd stencil "
                 << opt.fd_stencil << std::endl;

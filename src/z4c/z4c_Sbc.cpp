@@ -23,10 +23,10 @@ namespace z4c {
 //----------------------------------------------------------------------------------------
 //! \fn void Z4c::Z4cSommerfeld
 //! \brief apply Sommerfeld BCs to the given set of points
-template <typename Symmetry>
+template <typename Centering, typename Symmetry>
 KOKKOS_INLINE_FUNCTION
 static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
-    const RegionIndcs &indcs, const DualArray1D<RegionSize> &size,
+    const Z4cGridLayout &layout, const DualArray1D<RegionSize> &size,
     const int m, const int k, const int j, const int i) {
   // -------------------------------------------------------------------------------------
   // Scratch data
@@ -48,8 +48,8 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> s_u;
 
   Real idx[] = {1./size.d_view(m).dx1, 1./size.d_view(m).dx2, 1./size.d_view(m).dx3};
-  auto derivatives = MakeCellCenteredDerivativeProvider<Symmetry, 2>(
-      idx, size.d_view, indcs.nx1, indcs.is, m, k, j, i);
+  auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, 2>(
+      idx, size.d_view, layout.nx1, layout.is, m, k, j, i);
 
   // -------------------------------------------------------------------------------------
   // First derivatives
@@ -85,11 +85,11 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   Real &x3min = size.d_view(m).x3min;
   Real &x3max = size.d_view(m).x3max;
 
-  Real x1v = CellCenterX(i-indcs.is, indcs.nx1, x1min, x1max);
-  Real x2v = CellCenterX(j-indcs.js, indcs.nx2, x2min, x2max);
+  Real x1v = Z4cPointX<Centering>(i-layout.is, layout.nx1, x1min, x1max);
+  Real x2v = Z4cPointX<Centering>(j-layout.js, layout.nx2, x2min, x2max);
   Real x3v = 0.0;
   if constexpr (std::is_same_v<Symmetry, Cartesian3D>) {
-    x3v = CellCenterX(k-indcs.ks, indcs.nx3, x3min, x3max);
+    x3v = Z4cPointX<Centering>(k-layout.ks, layout.nx3, x3min, x3max);
   }
 
   Real r = sqrt(SQR(x1v) + SQR(x2v) + SQR(x3v));
@@ -134,20 +134,20 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
 //---------------------------------------------------------------------------------------
 //! \fn TaskStatus Z4c::Z4cBoundaryRHS
 //! \brief placeholder for the Sommerfield Boundary conditions for z4c
-template <typename Symmetry>
+template <typename Centering, typename Symmetry>
 TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
   auto &pm = pmy_pack->pmesh;
   auto &mb_bcs = pmy_pack->pmb->mb_bcs;
-  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  const auto layout = pmy_pack->pz4c->layout;
   auto &size = pmy_pack->pmb->mb_size;
 
   int nmb = pmy_pack->nmb_thispack;
-  int is = indcs.is;
-  int ie = indcs.ie;
-  int js = indcs.js;
-  int je = indcs.je;
-  int ks = indcs.ks;
-  int ke = indcs.ke;
+  int is = layout.is;
+  int ie = layout.ie;
+  int js = layout.js;
+  int je = layout.je;
+  int ks = layout.ks;
+  int ke = layout.ke;
 
   auto &z4c_ = z4c;
   auto &rhs_ = rhs;
@@ -169,11 +169,11 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, j, is);
+            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, j, is);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, j, is);
+              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, j, is);
             }
           break;
         default:
@@ -184,11 +184,11 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, j, ie);
+            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, j, ie);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, j, ie);
+              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, j, ie);
             }
           break;
         default:
@@ -211,11 +211,11 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, js, i);
+            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, js, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, js, i);
+              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, js, i);
             }
           break;
         default:
@@ -226,11 +226,11 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, je, i);
+            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, je, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, k, je, i);
+              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, je, i);
             }
           break;
         default:
@@ -256,11 +256,11 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, ks, j, i);
+            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, ks, j, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, ks, j, i);
+              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, ks, j, i);
             }
           break;
         default:
@@ -271,11 +271,11 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, ke, j, i);
+            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, ke, j, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Symmetry>(z4c_, rhs_, indcs, size, m, ke, j, i);
+              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, ke, j, i);
             }
           break;
         default:
@@ -291,9 +291,13 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
 TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   TaskStatus status;
   if (pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
-    status = Z4cBoundaryRHSImpl<CartoonSO2>(pdriver, stage);
+    status = layout.centering == Z4cGridCentering::vertex
+                 ? Z4cBoundaryRHSImpl<VertexCenteredZ4c, CartoonSO2>(pdriver, stage)
+                 : Z4cBoundaryRHSImpl<CellCenteredZ4c, CartoonSO2>(pdriver, stage);
   } else {
-    status = Z4cBoundaryRHSImpl<Cartesian3D>(pdriver, stage);
+    status = layout.centering == Z4cGridCentering::vertex
+                 ? Z4cBoundaryRHSImpl<VertexCenteredZ4c, Cartesian3D>(pdriver, stage)
+                 : Z4cBoundaryRHSImpl<CellCenteredZ4c, Cartesian3D>(pdriver, stage);
   }
   if (status == TaskStatus::complete && chi_parent_provenance != nullptr) {
     chi_parent_provenance->AnalyzePreUpdate(pdriver, stage);
@@ -301,7 +305,9 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   return status;
 }
 
-template TaskStatus Z4c::Z4cBoundaryRHSImpl<Cartesian3D>(Driver *, int);
-template TaskStatus Z4c::Z4cBoundaryRHSImpl<CartoonSO2>(Driver *, int);
+template TaskStatus Z4c::Z4cBoundaryRHSImpl<CellCenteredZ4c, Cartesian3D>(Driver *, int);
+template TaskStatus Z4c::Z4cBoundaryRHSImpl<CellCenteredZ4c, CartoonSO2>(Driver *, int);
+template TaskStatus Z4c::Z4cBoundaryRHSImpl<VertexCenteredZ4c, Cartesian3D>(Driver *, int);
+template TaskStatus Z4c::Z4cBoundaryRHSImpl<VertexCenteredZ4c, CartoonSO2>(Driver *, int);
 
 } // end namespace z4c

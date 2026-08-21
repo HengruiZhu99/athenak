@@ -346,7 +346,7 @@ class Z4c {
   TaskStatus UpdateExcisionMasks(Driver *d, int stage);
   TaskStatus ADMConstraints_(Driver *d, int stage);
   TaskStatus Z4cBoundaryRHS(Driver *d, int stage);
-  template <typename Symmetry>
+  template <typename Centering, typename Symmetry>
   TaskStatus Z4cBoundaryRHSImpl(Driver *d, int stage);
   TaskStatus RestrictU(Driver *d, int stage);
   TaskStatus RestrictWeyl(Driver *d, int stage);
@@ -359,7 +359,7 @@ class Z4c {
 
   template <int NGHOST>
   TaskStatus CalcRHS(Driver *d, int stage);
-  template <typename Symmetry, int NGHOST>
+  template <typename Centering, typename Symmetry, int NGHOST>
   TaskStatus CalcRHSImpl(Driver *d, int stage);
   template <int NGHOST>
   void ADMToZ4c(MeshBlockPack *pmbp, ParameterInput *pin);
@@ -372,7 +372,7 @@ class Z4c {
   void ADMConstraints(MeshBlockPack *pmbp);
   template <int NGHOST>
   void Z4cWeyl(MeshBlockPack *pmbp);
-  template <typename Symmetry, int NGHOST>
+  template <typename Centering, typename Symmetry, int NGHOST>
   void Z4cWeylImpl(MeshBlockPack *pmbp);
   void WaveExtr(MeshBlockPack *pmbp);
   void AlgConstr(MeshBlockPack *pmbp, Driver *driver = nullptr, int stage = 0);
