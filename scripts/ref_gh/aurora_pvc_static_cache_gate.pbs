@@ -1,0 +1,191 @@
+#!/bin/bash -l
+# Correctness, stage-time, performance, and profile gate for static cache validity.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_static_gate
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_performance_convergence_20260821
+SRC="${ROOT}/athenak"
+: "${EXPECTED_COMMIT:?submit with qsub -v EXPECTED_COMMIT=<full-sha>}"
+CHECKED_BUILD="${ROOT}/build_static_cache_checked_${PBS_JOBID}"
+PERF_BUILD="${ROOT}/build_static_cache_performance_${PBS_JOBID}"
+OUT="${ROOT}/runs/static_cache_${PBS_JOBID}"
+BINDER="${SRC}/scripts/ref_gh/aurora_gpu_tile_slot.sh"
+GATE_INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
+BENCH_INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet_benchmark.athinput"
+TIME_INPUT="${SRC}/tst/inputs/ref_gh_time_dependent_reference.athinput"
+TOOL="${OUT}/librefgh_kokkos_kernel_timer.so"
+PREVIOUS_THROUGHPUT=1.126323e5
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${GATE_INPUT}" "${BENCH_INPUT}" "${TIME_INPUT}" "$0"
+} > provenance.txt
+
+configure_build() {
+  local build="$1"
+  local bounds="$2"
+  local label="$3"
+  cmake -S "${SRC}" -B "${build}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER="$(command -v icx)" \
+    -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+    -DAthena_ENABLE_MPI=ON \
+    -DAthena_ENABLE_OPENMP=OFF \
+    -DKokkos_ENABLE_SERIAL=ON \
+    -DKokkos_ENABLE_OPENMP=OFF \
+    -DKokkos_ENABLE_SYCL=ON \
+    -DKokkos_ARCH_INTEL_PVC=ON \
+    -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK="${bounds}" \
+    -DPROBLEM=built_in_pgens \
+    > "configure_${label}.log" 2>&1
+  cmake --build "${build}" -j 64 > "build_${label}.log" 2>&1
+  {
+    echo "build=${label}"
+    grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+      "${build}/CMakeCache.txt"
+    sha256sum "${build}/src/athena"
+  } >> provenance.txt
+}
+
+configure_build "${CHECKED_BUILD}" ON checked
+configure_build "${PERF_BUILD}" OFF performance
+icpx -std=c++17 -O2 -fPIC -shared \
+  "${SRC}/scripts/ref_gh/kokkos_kernel_timer.cpp" -o "${TOOL}"
+
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 bash -lc '
+    echo "hostname=$(hostname)"
+    echo "ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1
+  ' > gpu_mapping.txt 2>&1
+
+mkdir checked_gate
+cd checked_gate
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 "${CHECKED_BUILD}/src/athena" -i "${GATE_INPUT}" \
+  job/basename=ref_gh_static_cache_gate \
+  mesh/nx1=64 mesh/nx2=64 mesh/nx3=64 \
+  meshblock/nx1=64 meshblock/nx2=64 meshblock/nx3=64 \
+  ref_gh/debug_task_fences=true ref_gh/validate_reference_cache=true \
+  output1/dt=1.0e-6 output2/dt=1.0e-6 time/nlim=1 time/tlim=1.0 \
+  > ref_gh_static_cache_gate.log 2>&1
+test -s ref_gh_static_cache_gate.ref_gh.hst
+awk 'BEGIN {rows=0; positive=0} !/^#/ {rows++; if ($1 > 0) positive=1} END {exit !(rows >= 2 && positive)}' \
+  ref_gh_static_cache_gate.ref_gh.hst
+grep -q 'reference-GH stationary initial RHS Linf' ref_gh_static_cache_gate.log
+grep -q 'reference-GH production cache oracle conditioned scaled Linf' \
+  ref_gh_static_cache_gate.log
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  ref_gh_static_cache_gate.log
+
+mkdir "${OUT}/time_dependent"
+cd "${OUT}/time_dependent"
+KOKKOS_TOOLS_LIBS="${TOOL}" \
+REF_GH_KERNEL_TIMING_FILE="${OUT}/time_dependent_kernel_timing.tsv" \
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 "${CHECKED_BUILD}/src/athena" -i "${TIME_INPUT}" \
+  job/basename=ref_gh_time_dependent_static_gate \
+  > ref_gh_time_dependent_static_gate.log 2>&1
+grep -q 'reference-GH Minkowski evolution passed' \
+  ref_gh_time_dependent_static_gate.log
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  ref_gh_time_dependent_static_gate.log
+
+run_benchmark() {
+  local cycles="$1"
+  local label="$2"
+  local work="${OUT}/${label}"
+  mkdir -p "${work}"
+  cd "${work}"
+  /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+    "${BINDER}" 0.0 "${PERF_BUILD}/src/athena" -i "${BENCH_INPUT}" \
+    job/basename="${label}" time/nlim="${cycles}" time/tlim=100.0 \
+    > "${label}.log" 2>&1
+  grep -q "cycle=${cycles}" "${label}.log"
+  grep -q 'zone-cycles/cpu_second' "${label}.log"
+  ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+    "${label}.log"
+}
+
+run_benchmark 20 ref_gh_static_cache_warmup
+run_benchmark 100 ref_gh_static_cache
+
+mkdir "${OUT}/profile"
+cd "${OUT}/profile"
+KOKKOS_TOOLS_LIBS="${TOOL}" \
+REF_GH_KERNEL_TIMING_FILE="${OUT}/static_kernel_timing.tsv" \
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 "${PERF_BUILD}/src/athena" -i "${BENCH_INPUT}" \
+  job/basename=ref_gh_static_profile time/nlim=20 time/tlim=100.0 \
+  > ref_gh_static_profile.log 2>&1
+grep -q 'cycle=20' ref_gh_static_profile.log
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  ref_gh_static_profile.log
+
+cd "${OUT}"
+awk -F'= ' '/zone-cycles\/cpu_second/ {print "static_cache\t" $2}' \
+  ref_gh_static_cache/ref_gh_static_cache.log > throughput.tsv
+python3 - "${PREVIOUS_THROUGHPUT}" <<'PY' > speedup.tsv
+import csv
+import pathlib
+import sys
+
+previous = float(sys.argv[1])
+measured = float(pathlib.Path("throughput.tsv").read_text().split("\t")[1])
+
+def calls(path, target):
+    with pathlib.Path(path).open() as stream:
+        rows = {row["kernel"]: int(row["calls"])
+                for row in csv.DictReader(stream, delimiter="\t")}
+    return rows[target]
+
+static_builds = calls("static_kernel_timing.tsv",
+                      "ref_gh reference provider profiles")
+dynamic_builds = calls("time_dependent_kernel_timing.tsv",
+                       "ref_gh reference provider profiles")
+assert static_builds == 1
+assert dynamic_builds > static_builds
+print("metric\tvalue")
+print("previous_zone_cycles_per_s\t{:.12g}".format(previous))
+print("static_cache_zone_cycles_per_s\t{:.12g}".format(measured))
+print("static_cache_speedup\t{:.12g}".format(measured/previous))
+print("static_provider_builds_20_cycles\t{}".format(static_builds))
+print("time_dependent_provider_builds\t{}".format(dynamic_builds))
+PY
+
+head -31 static_kernel_timing.tsv > top30_static_kernel_timing.tsv
+sha256sum provenance.txt gpu_mapping.txt throughput.tsv speedup.tsv \
+  static_kernel_timing.tsv time_dependent_kernel_timing.tsv \
+  top30_static_kernel_timing.tsv > compact_sha256.txt
