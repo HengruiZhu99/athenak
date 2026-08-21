@@ -1,0 +1,51 @@
+Aurora root: /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820
+Source build commit: 6eed3d9d6fb5d31ee8f240a771e18bfc220a0701
+Kokkos: 6739bc623081648af9e752b616d9671527922cbf (4.7.2)
+Compiler: Intel oneAPI DPC++/C++ 2025.3.2
+Executable: build_sycl_pvc_8770307.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src/athena
+Executable SHA-256: 96b9578bbd2c02c9223c91f05ab80aef97064693b5f9c3b1d0a7f9813e3bec0a
+
+Run roots:
+gate=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820/runs/cache_gate_8770430.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+t1=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820/runs/cache_t1_eight_rank_8770508.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+perturbed=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820/runs/perturbed_convergence_8770619.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+t20=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820/runs/stationary_t20_8770706.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+
+Remote SHA-256 evidence:
+7129c255b86cc821b635db2fcde1f27d673ebc71274c6cf4f86f29af6f032404  gate/provenance.txt
+725d78d0894f5dc315faede73172572ae999c8a5b990c00d34740d285ff1f919  gate/gpu_mapping.txt
+ff9ed10f6fb215011652494ba0fedbcf8937fb886c918efa04bd78bd8aebb3df  gate/one_cycle/ref_gh_reference_cache_dx16.log
+836174ca52d57afcb69362bd6608651fa7f7ec25d45929f2d98ae7d3c4093c15  gate/one_cycle/ref_gh_reference_cache_dx16.ref_gh.hst
+0cc566224baf7278705918c7a20f956801b78523b112d57b82e373278233e189  t1/provenance.txt
+d5697e6bc9e6ad627a9166f8b800c717e6ed19724e7f2055aa45d49ecb6e520a  t1/rank_gpu_mapping.txt
+767bc9c0fe09fe33f6b200e0c342c3fea9439f1072700943d425c7d600ecdeb2  t1/case_status.tsv
+894c87fa8d81cc1d91a5483bd420f04b6553eb29f893dcefc4733f799a90f75f  perturbed/convergence.json
+533de0e5bea60d17ae06ff72900adec086260bc0de51a4427409c126c1cf9e8a  perturbed/case_status.txt
+046257c481bb27a304991e265c5801c2dbf0433678236ca161e3104fb35b2ec5  t20/provenance.txt
+2162d90084a94973d9c75655a89d39e7b7c00d0c21dceacebf3ec27b58b52239  t20/rank_gpu_mapping.txt
+d6d0ed4876cb391bd2a018b6f00800f73ddb1bb2d25d6bac60cf6b600cdb4ac9  t20/fine/ref_gh_stationary_trumpet_dx32_t20_8r.log
+48f81ddcde4f52fce5cffae0e8e4f3f2b31747ab9c86e2b5c41c9941b909f761  t20/fine/ref_gh_stationary_trumpet_dx32_t20_8r.ref_gh.hst
+3566b6f70fe1712e3a5cf780436009476e59539a9e0e6eb4d904d241a3792e17  t20/medium/ref_gh_stationary_trumpet_dx24_t20_8r.log
+ad62bc9768b2361848e8a481d172d6e6fccef15d406f1e551307e82d3ffbd280  t20/medium/ref_gh_stationary_trumpet_dx24_t20_8r.ref_gh.hst
+
+Large files retained only on Aurora (not committed):
+8ef4ca9c9fcbfb91ab1fbdf99d49c2a38ad465ca6f18a51675e756bdaca0035b  t20/ref_gh_stationary_trumpet_dx32_t20_8r/rst/ref_gh_stationary_trumpet_dx32_t20_8r.00012.rst  (1194397020 bytes, t=20)
+76927c24de48c929310cb48bd4429c8b5f1c5769feb96032198be9ec6ebe193e  t20/ref_gh_stationary_trumpet_dx24_t20_8r/rst/ref_gh_stationary_trumpet_dx24_t20_8r.00006.rst  (561974620 bytes, t=8)
+Perturbed final field/constraint cbin files and all t1 restart chains remain under their run roots above.
+
+Exact committed submission/launch definitions:
+scripts/ref_gh/aurora_reference_cache_gate.pbs
+scripts/ref_gh/aurora_reference_cache_t1_eight_rank.pbs
+scripts/ref_gh/aurora_perturbed_trumpet_convergence.pbs
+scripts/ref_gh/aurora_perturbed_trumpet_analysis.pbs
+scripts/ref_gh/aurora_stationary_trumpet_t20.pbs
+
+Cancellation evidence:
+initial_state=R
+resources_used.walltime=08:09:05
+queue=capacity
+exec_host=x4406c2s5b0n0
+qdel_submitted=8770706
+confirmed_state=F
+resources_used.walltime=08:09:16
+Exit_status=271

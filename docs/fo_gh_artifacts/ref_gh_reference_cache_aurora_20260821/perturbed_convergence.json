@@ -1,0 +1,31 @@
+{
+  "analysis_radius": 1.0,
+  "method": "sixth-order interpolation to fixed 32^3 cell-centered grid",
+  "resolutions": [64, 96, 128],
+  "time": 0.2,
+  "dynamic_field": {
+    "difference_64_96_L2": 1.1284810105122773e-11,
+    "difference_96_128_L2": 1.6347577742276848e-12,
+    "ratio_L2": 6.903047217777631,
+    "order_L2": 4.401291888666767,
+    "difference_64_96_Linf": 2.2203377916020136e-10,
+    "difference_96_128_Linf": 2.6027510351040598e-11,
+    "ratio_Linf": 8.530734448495735,
+    "order_Linf": 4.964639948390092
+  },
+  "native_constraint": {
+    "difference_64_96_L2": 9.674493545117315e-10,
+    "difference_96_128_L2": 9.54767598518938e-11,
+    "ratio_L2": 10.132825579884214,
+    "order_L2": 5.419460130241033,
+    "difference_64_96_Linf": 2.533809523164256e-8,
+    "difference_96_128_Linf": 4.077099828416889e-9,
+    "ratio_Linf": 6.214735056286608,
+    "order_Linf": 4.120104381957431
+  },
+  "binary32_psi_secondary": {
+    "order_L2": null,
+    "order_Linf": null,
+    "note": "nonconvergent precision-limited secondary output"
+  }
+}
