@@ -55,7 +55,8 @@ python3 docs/investigations/brill_o4_dchi001_replay_convergence_20260821/test_ca
 Aurora job `8770135` was cancelled while still queued, before allocation or
 science, when the user authorized moving production to a single A100 in
 Perlmutter `shared_interactive`.  The platform-specific wrappers are
-`perlmutter_allocate_segment.sh` and `perlmutter_run_segment.sh`.  They retain
+`perlmutter_allocate_segment.sh`, `perlmutter_submit_segment.sh`, and
+`perlmutter_run_segment.sh`.  They retain
 the same frozen physics, common 4-by-8 physical MeshBlock lattice,
 record/replay semantics, `CFL=0.15`, exact event-time landing, output cadence,
 and fail-closed evidence policy.  All three resolutions use one rank and one
@@ -69,3 +70,11 @@ first authority evolution is accepted.  Run the additional static gate with:
 ```bash
 python3 docs/investigations/brill_o4_dchi001_replay_convergence_20260821/test_perlmutter_campaign_contract.py
 ```
+
+For unattended queued execution, use `perlmutter_submit_segment.sh`. It asks
+for the same one-GPU `shared_interactive` allocation through `sbatch`, so the
+job is not coupled to the lifetime of a login-held `salloc` client. The
+original allocation wrapper remains available for a manually attended
+interactive submission. Perlmutter v3 job `57342018` was revoked before
+allocation when its queued `salloc` client timed out; it used no node/GPU and
+created neither qualification nor science output.
