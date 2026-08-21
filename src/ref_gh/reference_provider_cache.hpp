@@ -39,7 +39,7 @@ void StoreProviderJet(const ReferenceJet &jet, const int offset,
 KOKKOS_INLINE_FUNCTION
 void StoreWorkspaceMetricJet(const ReferenceJet &jet, const int a, const int b,
                              const ReferenceWorkspacePoint &point) {
-  const int offset = kRefWorkspaceMetricJet + 21*(4*a + b);
+  const int offset = kRefWorkspaceMetricJet + 21*RefSymmetricPair4(a, b);
   point.workspace(point.m, offset, point.k, point.j, point.i) = jet.value;
   for (int p = 0; p < 4; ++p) {
     point.workspace(point.m, RefJetDerivative(offset, p),
@@ -54,7 +54,7 @@ void StoreWorkspaceMetricJet(const ReferenceJet &jet, const int a, const int b,
 KOKKOS_INLINE_FUNCTION
 ReferenceJet LoadWorkspaceMetricJet(const ReferenceWorkspacePoint &point,
   const int a, const int b) {
-  const int offset = kRefWorkspaceMetricJet + 21*(4*a + b);
+  const int offset = kRefWorkspaceMetricJet + 21*RefSymmetricPair4(a, b);
   ReferenceJet jet;
   jet.value = point.workspace(point.m, offset, point.k, point.j, point.i);
   for (int p = 0; p < 4; ++p) {
@@ -73,7 +73,8 @@ KOKKOS_INLINE_FUNCTION
 void StoreWorkspaceInverseMetricJet(const ReferenceJet &jet,
                                     const int a, const int b,
                                     const ReferenceWorkspacePoint &point) {
-  const int offset = kRefWorkspaceInverseMetricJet + 5*(4*a + b);
+  const int offset =
+      kRefWorkspaceInverseMetricJet + 5*RefSymmetricPair4(a, b);
   point.workspace(point.m, offset, point.k, point.j, point.i) = jet.value;
   for (int p = 0; p < 4; ++p) {
     point.workspace(point.m, offset + 1 + p, point.k, point.j, point.i) = jet.d[p];
@@ -84,7 +85,7 @@ KOKKOS_INLINE_FUNCTION
 Real WorkspaceInverseMetric(const ReferenceWorkspacePoint &point,
                             const int a, const int b) {
   return point.workspace(
-      point.m, kRefWorkspaceInverseMetricJet + 5*(4*a + b),
+      point.m, kRefWorkspaceInverseMetricJet + 5*RefSymmetricPair4(a, b),
       point.k, point.j, point.i);
 }
 
@@ -93,7 +94,7 @@ Real WorkspaceDInverseMetric(const ReferenceWorkspacePoint &point,
                              const int p, const int a, const int b) {
   return point.workspace(
       point.m, kRefWorkspaceInverseMetricJet
-                 + 5*(4*a + b) + 1 + p,
+                 + 5*RefSymmetricPair4(a, b) + 1 + p,
       point.k, point.j, point.i);
 }
 
