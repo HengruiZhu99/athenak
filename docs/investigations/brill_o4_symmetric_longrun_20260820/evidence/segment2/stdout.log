@@ -1,0 +1,696 @@
+AthenaK Kokkos default execution space: SYCL
+
+Root grid = 4 x 8 x 1 MeshBlocks
+Total number of MeshBlocks = 7664
+Number of logical  levels of refinement = 23 (24 levels total)
+Number of physical levels of refinement = 20 (21 levels total)
+  Physical level = 0 (logical level = 3): 26 MeshBlocks, cost = 26
+  Physical level = 1 (logical level = 4): 20 MeshBlocks, cost = 20
+  Physical level = 2 (logical level = 5): 12 MeshBlocks, cost = 12
+  Physical level = 3 (logical level = 6): 10 MeshBlocks, cost = 10
+  Physical level = 4 (logical level = 7): 16 MeshBlocks, cost = 16
+  Physical level = 5 (logical level = 8): 22 MeshBlocks, cost = 22
+  Physical level = 6 (logical level = 9): 28 MeshBlocks, cost = 28
+  Physical level = 7 (logical level = 10): 34 MeshBlocks, cost = 34
+  Physical level = 8 (logical level = 11): 38 MeshBlocks, cost = 38
+  Physical level = 9 (logical level = 12): 44 MeshBlocks, cost = 44
+  Physical level = 10 (logical level = 13): 72 MeshBlocks, cost = 72
+  Physical level = 11 (logical level = 14): 96 MeshBlocks, cost = 96
+  Physical level = 12 (logical level = 15): 186 MeshBlocks, cost = 186
+  Physical level = 13 (logical level = 16): 152 MeshBlocks, cost = 152
+  Physical level = 14 (logical level = 17): 364 MeshBlocks, cost = 364
+  Physical level = 15 (logical level = 18): 336 MeshBlocks, cost = 336
+  Physical level = 16 (logical level = 19): 716 MeshBlocks, cost = 716
+  Physical level = 17 (logical level = 20): 720 MeshBlocks, cost = 720
+  Physical level = 18 (logical level = 21): 1584 MeshBlocks, cost = 1584
+  Physical level = 19 (logical level = 22): 1412 MeshBlocks, cost = 1412
+  Physical level = 20 (logical level = 23): 1776 MeshBlocks, cost = 1776
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=1.626180e+00 cycle=5760 time=1.671448e+01 dt=7.555610e-09
+CARTOON_AMR_TRANSACTION cycle=5761 requested_refine=26 requested_derefine_leaves=4992 accepted_derefine_parents=0 created_leaves=78 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5761 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=26624
+CARTOON_AMR_TRANSACTION cycle=5762 requested_refine=0 requested_derefine_leaves=5044 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5763 requested_refine=26 requested_derefine_leaves=5044 accepted_derefine_parents=0 created_leaves=78 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5763 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=26624
+CARTOON_AMR_TRANSACTION cycle=5764 requested_refine=6 requested_derefine_leaves=5096 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5764 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=1.474496e+01 cycle=5764 time=1.671448e+01 dt=7.555613e-09
+CARTOON_AMR_TRANSACTION cycle=5765 requested_refine=26 requested_derefine_leaves=5108 accepted_derefine_parents=0 created_leaves=78 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5765 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=26624
+CARTOON_AMR_TRANSACTION cycle=5766 requested_refine=2 requested_derefine_leaves=5160 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5766 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5767 requested_refine=0 requested_derefine_leaves=5164 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5768 requested_refine=0 requested_derefine_leaves=5164 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.747909e+01 cycle=5768 time=1.671448e+01 dt=7.556717e-09
+CARTOON_AMR_TRANSACTION cycle=5769 requested_refine=6 requested_derefine_leaves=5164 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5769 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5770 requested_refine=0 requested_derefine_leaves=5176 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5771 requested_refine=0 requested_derefine_leaves=5176 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5772 requested_refine=8 requested_derefine_leaves=5176 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5772 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=4.025632e+01 cycle=5772 time=1.671448e+01 dt=7.556455e-09
+CARTOON_AMR_TRANSACTION cycle=5773 requested_refine=6 requested_derefine_leaves=5192 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5773 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5774 requested_refine=6 requested_derefine_leaves=5204 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5774 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5775 requested_refine=16 requested_derefine_leaves=5216 accepted_derefine_parents=0 created_leaves=48 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5775 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=16384
+CARTOON_AMR_TRANSACTION cycle=5776 requested_refine=4 requested_derefine_leaves=5248 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5776 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=5.438146e+01 cycle=5776 time=1.671448e+01 dt=7.555656e-09
+CARTOON_AMR_TRANSACTION cycle=5777 requested_refine=16 requested_derefine_leaves=5256 accepted_derefine_parents=0 created_leaves=48 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5777 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=16384
+CARTOON_AMR_TRANSACTION cycle=5778 requested_refine=12 requested_derefine_leaves=5288 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5778 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+CARTOON_AMR_TRANSACTION cycle=5779 requested_refine=8 requested_derefine_leaves=5312 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5779 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5780 requested_refine=26 requested_derefine_leaves=5328 accepted_derefine_parents=0 created_leaves=78 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5780 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=26624
+elapsed=6.887318e+01 cycle=5780 time=1.671448e+01 dt=7.555371e-09
+CARTOON_AMR_TRANSACTION cycle=5781 requested_refine=8 requested_derefine_leaves=5380 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5781 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5782 requested_refine=2 requested_derefine_leaves=5396 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5782 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5783 requested_refine=20 requested_derefine_leaves=5400 accepted_derefine_parents=0 created_leaves=60 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5783 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=20480
+CARTOON_AMR_TRANSACTION cycle=5784 requested_refine=4 requested_derefine_leaves=5440 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5784 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=8.349634e+01 cycle=5784 time=1.671448e+01 dt=7.555692e-09
+CARTOON_AMR_TRANSACTION cycle=5785 requested_refine=14 requested_derefine_leaves=5448 accepted_derefine_parents=0 created_leaves=42 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5785 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=14336
+CARTOON_AMR_TRANSACTION cycle=5786 requested_refine=8 requested_derefine_leaves=5476 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5786 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5787 requested_refine=12 requested_derefine_leaves=5492 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5787 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+CARTOON_AMR_TRANSACTION cycle=5788 requested_refine=2 requested_derefine_leaves=5516 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5788 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=9.846776e+01 cycle=5788 time=1.671448e+01 dt=7.553997e-09
+CARTOON_AMR_TRANSACTION cycle=5789 requested_refine=20 requested_derefine_leaves=5520 accepted_derefine_parents=0 created_leaves=60 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5789 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=20480
+CARTOON_AMR_TRANSACTION cycle=5790 requested_refine=0 requested_derefine_leaves=5560 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5791 requested_refine=20 requested_derefine_leaves=5560 accepted_derefine_parents=0 created_leaves=60 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5791 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=20480
+CARTOON_AMR_TRANSACTION cycle=5792 requested_refine=0 requested_derefine_leaves=5600 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.121539e+02 cycle=5792 time=1.671448e+01 dt=7.552306e-09
+CARTOON_AMR_TRANSACTION cycle=5793 requested_refine=14 requested_derefine_leaves=5600 accepted_derefine_parents=0 created_leaves=42 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5793 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=14336
+CARTOON_AMR_TRANSACTION cycle=5794 requested_refine=6 requested_derefine_leaves=5628 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5794 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5795 requested_refine=4 requested_derefine_leaves=5640 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5795 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5796 requested_refine=2 requested_derefine_leaves=5648 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5796 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=1.272885e+02 cycle=5796 time=1.671448e+01 dt=7.551610e-09
+CARTOON_AMR_TRANSACTION cycle=5797 requested_refine=8 requested_derefine_leaves=5652 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5797 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5798 requested_refine=2 requested_derefine_leaves=5668 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5798 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5799 requested_refine=4 requested_derefine_leaves=5672 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5799 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5800 requested_refine=6 requested_derefine_leaves=5680 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5800 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=1.426364e+02 cycle=5800 time=1.671448e+01 dt=7.550008e-09
+CARTOON_AMR_TRANSACTION cycle=5801 requested_refine=14 requested_derefine_leaves=5692 accepted_derefine_parents=0 created_leaves=42 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5801 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=14336
+CARTOON_AMR_TRANSACTION cycle=5802 requested_refine=4 requested_derefine_leaves=5720 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5802 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5803 requested_refine=14 requested_derefine_leaves=5728 accepted_derefine_parents=0 created_leaves=42 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5803 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=14336
+CARTOON_AMR_TRANSACTION cycle=5804 requested_refine=0 requested_derefine_leaves=5756 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.574617e+02 cycle=5804 time=1.671448e+01 dt=7.549263e-09
+CARTOON_AMR_TRANSACTION cycle=5805 requested_refine=16 requested_derefine_leaves=5756 accepted_derefine_parents=0 created_leaves=48 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5805 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=16384
+CARTOON_AMR_TRANSACTION cycle=5806 requested_refine=0 requested_derefine_leaves=5788 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5807 requested_refine=12 requested_derefine_leaves=5788 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5807 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+CARTOON_AMR_TRANSACTION cycle=5808 requested_refine=4 requested_derefine_leaves=5812 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5808 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.723686e+02 cycle=5808 time=1.671448e+01 dt=7.549486e-09
+CARTOON_AMR_TRANSACTION cycle=5809 requested_refine=8 requested_derefine_leaves=5820 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5809 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5810 requested_refine=2 requested_derefine_leaves=5836 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5810 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5811 requested_refine=6 requested_derefine_leaves=5840 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5811 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5812 requested_refine=4 requested_derefine_leaves=5852 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5812 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.880330e+02 cycle=5812 time=1.671448e+01 dt=7.549095e-09
+CARTOON_AMR_TRANSACTION cycle=5813 requested_refine=20 requested_derefine_leaves=5860 accepted_derefine_parents=0 created_leaves=60 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5813 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=20480
+CARTOON_AMR_TRANSACTION cycle=5814 requested_refine=4 requested_derefine_leaves=5900 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5814 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5815 requested_refine=14 requested_derefine_leaves=5908 accepted_derefine_parents=0 created_leaves=42 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5815 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=14336
+CARTOON_AMR_TRANSACTION cycle=5816 requested_refine=6 requested_derefine_leaves=5936 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5816 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=2.047310e+02 cycle=5816 time=1.671448e+01 dt=7.549217e-09
+CARTOON_AMR_TRANSACTION cycle=5817 requested_refine=20 requested_derefine_leaves=5948 accepted_derefine_parents=0 created_leaves=60 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5817 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=20480
+CARTOON_AMR_TRANSACTION cycle=5818 requested_refine=4 requested_derefine_leaves=5988 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5818 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5819 requested_refine=2 requested_derefine_leaves=5996 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5819 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5820 requested_refine=2 requested_derefine_leaves=6000 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5820 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=2.209472e+02 cycle=5820 time=1.671448e+01 dt=7.548880e-09
+CARTOON_AMR_TRANSACTION cycle=5821 requested_refine=6 requested_derefine_leaves=6004 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5821 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5822 requested_refine=4 requested_derefine_leaves=6016 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5822 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5823 requested_refine=0 requested_derefine_leaves=6024 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5824 requested_refine=0 requested_derefine_leaves=6024 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.357654e+02 cycle=5824 time=1.671448e+01 dt=7.548880e-09
+CARTOON_AMR_TRANSACTION cycle=5825 requested_refine=4 requested_derefine_leaves=6024 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5825 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5826 requested_refine=20 requested_derefine_leaves=6032 accepted_derefine_parents=0 created_leaves=60 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5826 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=20480
+CARTOON_AMR_TRANSACTION cycle=5827 requested_refine=6 requested_derefine_leaves=6072 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5827 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5828 requested_refine=8 requested_derefine_leaves=6084 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5828 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=2.520082e+02 cycle=5828 time=1.671448e+01 dt=7.548563e-09
+CARTOON_AMR_TRANSACTION cycle=5829 requested_refine=8 requested_derefine_leaves=6100 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5829 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5830 requested_refine=12 requested_derefine_leaves=6116 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5830 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+CARTOON_AMR_TRANSACTION cycle=5831 requested_refine=6 requested_derefine_leaves=6140 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5831 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5832 requested_refine=8 requested_derefine_leaves=6152 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5832 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=2.684628e+02 cycle=5832 time=1.671448e+01 dt=7.548339e-09
+CARTOON_AMR_TRANSACTION cycle=5833 requested_refine=12 requested_derefine_leaves=6168 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5833 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+CARTOON_AMR_TRANSACTION cycle=5834 requested_refine=8 requested_derefine_leaves=6192 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5834 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5835 requested_refine=10 requested_derefine_leaves=6208 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5835 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=5836 requested_refine=12 requested_derefine_leaves=6228 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5836 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+elapsed=2.851314e+02 cycle=5836 time=1.671448e+01 dt=7.548992e-09
+CARTOON_AMR_TRANSACTION cycle=5837 requested_refine=6 requested_derefine_leaves=6252 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5837 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5838 requested_refine=10 requested_derefine_leaves=6264 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5838 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=5839 requested_refine=4 requested_derefine_leaves=6284 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5839 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5840 requested_refine=6 requested_derefine_leaves=6292 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5840 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=3.019368e+02 cycle=5840 time=1.671448e+01 dt=7.548613e-09
+CARTOON_AMR_TRANSACTION cycle=5841 requested_refine=6 requested_derefine_leaves=6304 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5841 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5842 requested_refine=14 requested_derefine_leaves=6316 accepted_derefine_parents=0 created_leaves=42 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5842 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=14336
+CARTOON_AMR_TRANSACTION cycle=5843 requested_refine=8 requested_derefine_leaves=6344 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5843 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5844 requested_refine=8 requested_derefine_leaves=6360 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5844 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=3.189819e+02 cycle=5844 time=1.671448e+01 dt=7.548816e-09
+CARTOON_AMR_TRANSACTION cycle=5845 requested_refine=4 requested_derefine_leaves=6376 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5845 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5846 requested_refine=0 requested_derefine_leaves=6384 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5847 requested_refine=0 requested_derefine_leaves=6384 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5848 requested_refine=6 requested_derefine_leaves=6384 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5848 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=3.345934e+02 cycle=5848 time=1.671448e+01 dt=7.548203e-09
+CARTOON_AMR_TRANSACTION cycle=5849 requested_refine=0 requested_derefine_leaves=6396 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5850 requested_refine=0 requested_derefine_leaves=6396 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5851 requested_refine=0 requested_derefine_leaves=6396 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5852 requested_refine=2 requested_derefine_leaves=6396 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5852 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=3.495275e+02 cycle=5852 time=1.671448e+01 dt=7.548502e-09
+CARTOON_AMR_TRANSACTION cycle=5853 requested_refine=8 requested_derefine_leaves=6400 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5853 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5854 requested_refine=10 requested_derefine_leaves=6416 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5854 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=5855 requested_refine=6 requested_derefine_leaves=6436 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5855 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5856 requested_refine=12 requested_derefine_leaves=6448 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5856 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+elapsed=3.668138e+02 cycle=5856 time=1.671448e+01 dt=7.548664e-09
+CARTOON_AMR_TRANSACTION cycle=5857 requested_refine=8 requested_derefine_leaves=6472 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5857 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5858 requested_refine=14 requested_derefine_leaves=6488 accepted_derefine_parents=0 created_leaves=42 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5858 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=14336
+CARTOON_AMR_TRANSACTION cycle=5859 requested_refine=16 requested_derefine_leaves=6516 accepted_derefine_parents=0 created_leaves=48 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5859 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=16384
+CARTOON_AMR_TRANSACTION cycle=5860 requested_refine=8 requested_derefine_leaves=6548 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5860 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=3.842666e+02 cycle=5860 time=1.671448e+01 dt=7.548844e-09
+CARTOON_AMR_TRANSACTION cycle=5861 requested_refine=8 requested_derefine_leaves=6564 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5861 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5862 requested_refine=2 requested_derefine_leaves=6580 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5862 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5863 requested_refine=2 requested_derefine_leaves=6584 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5863 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5864 requested_refine=0 requested_derefine_leaves=6588 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.011043e+02 cycle=5864 time=1.671448e+01 dt=7.548955e-09
+CARTOON_AMR_TRANSACTION cycle=5865 requested_refine=0 requested_derefine_leaves=6588 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5866 requested_refine=0 requested_derefine_leaves=6588 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5867 requested_refine=4 requested_derefine_leaves=6588 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5867 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5868 requested_refine=2 requested_derefine_leaves=6596 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5868 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=4.172330e+02 cycle=5868 time=1.671448e+01 dt=7.548846e-09
+CARTOON_AMR_TRANSACTION cycle=5869 requested_refine=2 requested_derefine_leaves=6600 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5869 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5870 requested_refine=0 requested_derefine_leaves=6604 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5871 requested_refine=4 requested_derefine_leaves=6604 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5871 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5872 requested_refine=4 requested_derefine_leaves=6612 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5872 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=4.341828e+02 cycle=5872 time=1.671448e+01 dt=7.549104e-09
+CARTOON_AMR_TRANSACTION cycle=5873 requested_refine=8 requested_derefine_leaves=6620 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5873 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5874 requested_refine=4 requested_derefine_leaves=6636 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5874 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5875 requested_refine=6 requested_derefine_leaves=6644 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5875 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5876 requested_refine=8 requested_derefine_leaves=6656 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5876 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=4.519876e+02 cycle=5876 time=1.671448e+01 dt=7.548440e-09
+CARTOON_AMR_TRANSACTION cycle=5877 requested_refine=6 requested_derefine_leaves=6672 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5877 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5878 requested_refine=12 requested_derefine_leaves=6684 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5878 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+CARTOON_AMR_TRANSACTION cycle=5879 requested_refine=10 requested_derefine_leaves=6708 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5879 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=5880 requested_refine=4 requested_derefine_leaves=6728 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5880 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=4.699062e+02 cycle=5880 time=1.671448e+01 dt=7.548623e-09
+CARTOON_AMR_TRANSACTION cycle=5881 requested_refine=0 requested_derefine_leaves=6736 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5882 requested_refine=0 requested_derefine_leaves=6736 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5883 requested_refine=2 requested_derefine_leaves=6736 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5883 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5884 requested_refine=2 requested_derefine_leaves=6740 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5884 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=4.863624e+02 cycle=5884 time=1.671448e+01 dt=7.549075e-09
+CARTOON_AMR_TRANSACTION cycle=5885 requested_refine=0 requested_derefine_leaves=6744 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5886 requested_refine=0 requested_derefine_leaves=6744 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5887 requested_refine=4 requested_derefine_leaves=6744 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5887 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5888 requested_refine=0 requested_derefine_leaves=6752 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=5.525741e+02 cycle=5888 time=1.671448e+01 dt=7.548236e-09
+CARTOON_AMR_TRANSACTION cycle=5889 requested_refine=2 requested_derefine_leaves=6752 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5889 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5890 requested_refine=0 requested_derefine_leaves=6756 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5891 requested_refine=10 requested_derefine_leaves=6756 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5891 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=5892 requested_refine=6 requested_derefine_leaves=6776 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5892 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=5.698889e+02 cycle=5892 time=1.671448e+01 dt=7.545577e-09
+CARTOON_AMR_TRANSACTION cycle=5893 requested_refine=12 requested_derefine_leaves=6788 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5893 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+CARTOON_AMR_TRANSACTION cycle=5894 requested_refine=8 requested_derefine_leaves=6812 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5894 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5895 requested_refine=10 requested_derefine_leaves=6828 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5895 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=5896 requested_refine=8 requested_derefine_leaves=6848 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5896 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=5.881573e+02 cycle=5896 time=1.671448e+01 dt=7.541803e-09
+CARTOON_AMR_TRANSACTION cycle=5897 requested_refine=6 requested_derefine_leaves=6864 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5897 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5898 requested_refine=6 requested_derefine_leaves=6876 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5898 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5899 requested_refine=6 requested_derefine_leaves=6888 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5899 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5900 requested_refine=8 requested_derefine_leaves=6900 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5900 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=6.065464e+02 cycle=5900 time=1.671448e+01 dt=7.538162e-09
+CARTOON_AMR_TRANSACTION cycle=5901 requested_refine=12 requested_derefine_leaves=6916 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5901 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+CARTOON_AMR_TRANSACTION cycle=5902 requested_refine=4 requested_derefine_leaves=6940 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5902 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5903 requested_refine=2 requested_derefine_leaves=6948 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5903 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5904 requested_refine=0 requested_derefine_leaves=6952 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=6.242815e+02 cycle=5904 time=1.671448e+01 dt=7.534873e-09
+CARTOON_AMR_TRANSACTION cycle=5905 requested_refine=0 requested_derefine_leaves=6952 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5906 requested_refine=0 requested_derefine_leaves=6952 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5907 requested_refine=0 requested_derefine_leaves=6952 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5908 requested_refine=2 requested_derefine_leaves=6952 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5908 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=6.404032e+02 cycle=5908 time=1.671448e+01 dt=7.527201e-09
+CARTOON_AMR_TRANSACTION cycle=5909 requested_refine=10 requested_derefine_leaves=6956 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5909 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=5910 requested_refine=2 requested_derefine_leaves=6976 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5910 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5911 requested_refine=4 requested_derefine_leaves=6980 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5911 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5912 requested_refine=8 requested_derefine_leaves=6988 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5912 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=6.590099e+02 cycle=5912 time=1.671448e+01 dt=7.520151e-09
+CARTOON_AMR_TRANSACTION cycle=5913 requested_refine=2 requested_derefine_leaves=7004 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5913 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5914 requested_refine=6 requested_derefine_leaves=7008 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5914 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5915 requested_refine=6 requested_derefine_leaves=7020 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5915 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5916 requested_refine=6 requested_derefine_leaves=7032 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5916 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=6.777209e+02 cycle=5916 time=1.671448e+01 dt=7.513457e-09
+CARTOON_AMR_TRANSACTION cycle=5917 requested_refine=4 requested_derefine_leaves=7044 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5917 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5918 requested_refine=8 requested_derefine_leaves=7052 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5918 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5919 requested_refine=6 requested_derefine_leaves=7068 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5919 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5920 requested_refine=14 requested_derefine_leaves=7080 accepted_derefine_parents=0 created_leaves=42 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5920 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=14336
+elapsed=6.965681e+02 cycle=5920 time=1.671448e+01 dt=7.506111e-09
+CARTOON_AMR_TRANSACTION cycle=5921 requested_refine=8 requested_derefine_leaves=7108 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5921 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5922 requested_refine=2 requested_derefine_leaves=7124 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5922 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5923 requested_refine=2 requested_derefine_leaves=7128 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5923 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5924 requested_refine=4 requested_derefine_leaves=7132 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5924 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=7.155616e+02 cycle=5924 time=1.671448e+01 dt=7.498055e-09
+CARTOON_AMR_TRANSACTION cycle=5925 requested_refine=2 requested_derefine_leaves=7140 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5925 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5926 requested_refine=2 requested_derefine_leaves=7144 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5926 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5927 requested_refine=8 requested_derefine_leaves=7148 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5927 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5928 requested_refine=4 requested_derefine_leaves=7164 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5928 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=7.346213e+02 cycle=5928 time=1.671448e+01 dt=7.490210e-09
+CARTOON_AMR_TRANSACTION cycle=5929 requested_refine=4 requested_derefine_leaves=7172 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5929 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5930 requested_refine=4 requested_derefine_leaves=7180 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5930 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5931 requested_refine=0 requested_derefine_leaves=7188 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5932 requested_refine=4 requested_derefine_leaves=7188 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5932 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=7.529267e+02 cycle=5932 time=1.671448e+01 dt=7.482816e-09
+CARTOON_AMR_TRANSACTION cycle=5933 requested_refine=4 requested_derefine_leaves=7196 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5933 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5934 requested_refine=6 requested_derefine_leaves=7204 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5934 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5935 requested_refine=8 requested_derefine_leaves=7216 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5935 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5936 requested_refine=8 requested_derefine_leaves=7232 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5936 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=7.721823e+02 cycle=5936 time=1.671448e+01 dt=7.468348e-09
+CARTOON_AMR_TRANSACTION cycle=5937 requested_refine=12 requested_derefine_leaves=7248 accepted_derefine_parents=0 created_leaves=36 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5937 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=12288
+CARTOON_AMR_TRANSACTION cycle=5938 requested_refine=10 requested_derefine_leaves=7272 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5938 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=5939 requested_refine=4 requested_derefine_leaves=7292 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5939 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5940 requested_refine=8 requested_derefine_leaves=7300 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5940 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=7.919059e+02 cycle=5940 time=1.671448e+01 dt=7.450739e-09
+CARTOON_AMR_TRANSACTION cycle=5941 requested_refine=4 requested_derefine_leaves=7316 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5941 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5942 requested_refine=4 requested_derefine_leaves=7324 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5942 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5943 requested_refine=4 requested_derefine_leaves=7332 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5943 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5944 requested_refine=6 requested_derefine_leaves=7340 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5944 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=8.114771e+02 cycle=5944 time=1.671448e+01 dt=7.433041e-09
+CARTOON_AMR_TRANSACTION cycle=5945 requested_refine=0 requested_derefine_leaves=7352 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5946 requested_refine=4 requested_derefine_leaves=7352 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5946 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5947 requested_refine=0 requested_derefine_leaves=7360 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5948 requested_refine=4 requested_derefine_leaves=7360 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5948 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=8.293691e+02 cycle=5948 time=1.671448e+01 dt=7.412924e-09
+CARTOON_AMR_TRANSACTION cycle=5949 requested_refine=2 requested_derefine_leaves=7368 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5949 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5950 requested_refine=2 requested_derefine_leaves=7372 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5950 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5951 requested_refine=0 requested_derefine_leaves=7376 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5952 requested_refine=2 requested_derefine_leaves=7376 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5952 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=8.481538e+02 cycle=5952 time=1.671448e+01 dt=7.391065e-09
+CARTOON_AMR_TRANSACTION cycle=5953 requested_refine=2 requested_derefine_leaves=7380 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5953 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5954 requested_refine=4 requested_derefine_leaves=7384 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5954 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5955 requested_refine=4 requested_derefine_leaves=7392 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5955 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5956 requested_refine=0 requested_derefine_leaves=7400 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=8.669757e+02 cycle=5956 time=1.671448e+01 dt=7.369864e-09
+CARTOON_AMR_TRANSACTION cycle=5957 requested_refine=0 requested_derefine_leaves=7400 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5958 requested_refine=4 requested_derefine_leaves=7400 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5958 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5959 requested_refine=6 requested_derefine_leaves=7408 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5959 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5960 requested_refine=0 requested_derefine_leaves=7420 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=8.850043e+02 cycle=5960 time=1.671448e+01 dt=7.349294e-09
+CARTOON_AMR_TRANSACTION cycle=5961 requested_refine=0 requested_derefine_leaves=7420 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5962 requested_refine=0 requested_derefine_leaves=7420 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5963 requested_refine=0 requested_derefine_leaves=7420 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5964 requested_refine=4 requested_derefine_leaves=7420 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5964 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=9.021716e+02 cycle=5964 time=1.671448e+01 dt=7.326893e-09
+CARTOON_AMR_TRANSACTION cycle=5965 requested_refine=0 requested_derefine_leaves=7428 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5966 requested_refine=6 requested_derefine_leaves=7428 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5966 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5967 requested_refine=2 requested_derefine_leaves=7440 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5967 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5968 requested_refine=2 requested_derefine_leaves=7444 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5968 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=9.211106e+02 cycle=5968 time=1.671448e+01 dt=7.301853e-09
+CARTOON_AMR_TRANSACTION cycle=5969 requested_refine=4 requested_derefine_leaves=7448 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5969 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5970 requested_refine=2 requested_derefine_leaves=7456 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5970 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5971 requested_refine=6 requested_derefine_leaves=7460 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5971 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5972 requested_refine=8 requested_derefine_leaves=7472 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5972 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=9.409693e+02 cycle=5972 time=1.671448e+01 dt=7.276296e-09
+CARTOON_AMR_TRANSACTION cycle=5973 requested_refine=4 requested_derefine_leaves=7488 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5973 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5974 requested_refine=10 requested_derefine_leaves=7496 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5974 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=5975 requested_refine=2 requested_derefine_leaves=7516 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5975 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5976 requested_refine=4 requested_derefine_leaves=7520 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5976 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=9.609734e+02 cycle=5976 time=1.671448e+01 dt=7.251603e-09
+CARTOON_AMR_TRANSACTION cycle=5977 requested_refine=8 requested_derefine_leaves=7528 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5977 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5978 requested_refine=6 requested_derefine_leaves=7544 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5978 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5979 requested_refine=6 requested_derefine_leaves=7556 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5979 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5980 requested_refine=2 requested_derefine_leaves=7568 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5980 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=9.810733e+02 cycle=5980 time=1.671448e+01 dt=7.226000e-09
+CARTOON_AMR_TRANSACTION cycle=5981 requested_refine=8 requested_derefine_leaves=7572 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5981 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5982 requested_refine=8 requested_derefine_leaves=7588 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5982 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=5983 requested_refine=2 requested_derefine_leaves=7604 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5983 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=5984 requested_refine=0 requested_derefine_leaves=7608 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.000403e+03 cycle=5984 time=1.671448e+01 dt=7.197421e-09
+CARTOON_AMR_TRANSACTION cycle=5985 requested_refine=0 requested_derefine_leaves=7608 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5986 requested_refine=0 requested_derefine_leaves=7608 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5987 requested_refine=0 requested_derefine_leaves=7608 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5988 requested_refine=2 requested_derefine_leaves=7608 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5988 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=1.018045e+03 cycle=5988 time=1.671448e+01 dt=7.166847e-09
+CARTOON_AMR_TRANSACTION cycle=5989 requested_refine=0 requested_derefine_leaves=7612 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5990 requested_refine=0 requested_derefine_leaves=7612 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5991 requested_refine=0 requested_derefine_leaves=7612 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5992 requested_refine=0 requested_derefine_leaves=7612 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.034761e+03 cycle=5992 time=1.671448e+01 dt=7.136483e-09
+CARTOON_AMR_TRANSACTION cycle=5993 requested_refine=0 requested_derefine_leaves=7612 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5994 requested_refine=0 requested_derefine_leaves=7612 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5995 requested_refine=4 requested_derefine_leaves=7612 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5995 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=5996 requested_refine=0 requested_derefine_leaves=7620 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.052361e+03 cycle=5996 time=1.671448e+01 dt=7.105855e-09
+CARTOON_AMR_TRANSACTION cycle=5997 requested_refine=0 requested_derefine_leaves=7620 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=5998 requested_refine=6 requested_derefine_leaves=7620 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5998 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=5999 requested_refine=2 requested_derefine_leaves=7632 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=5999 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6000 requested_refine=4 requested_derefine_leaves=7636 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6000 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.071771e+03 cycle=6000 time=1.671448e+01 dt=7.072383e-09
+CARTOON_AMR_TRANSACTION cycle=6001 requested_refine=6 requested_derefine_leaves=7644 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6001 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=6002 requested_refine=6 requested_derefine_leaves=7656 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6002 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=6003 requested_refine=2 requested_derefine_leaves=7668 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6003 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6004 requested_refine=4 requested_derefine_leaves=7672 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6004 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.092165e+03 cycle=6004 time=1.671448e+01 dt=7.035521e-09
+CARTOON_AMR_TRANSACTION cycle=6005 requested_refine=8 requested_derefine_leaves=7680 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6005 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=6006 requested_refine=8 requested_derefine_leaves=7696 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6006 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=6007 requested_refine=6 requested_derefine_leaves=7712 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6007 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=6008 requested_refine=4 requested_derefine_leaves=7724 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6008 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.112672e+03 cycle=6008 time=1.671448e+01 dt=6.997527e-09
+CARTOON_AMR_TRANSACTION cycle=6009 requested_refine=4 requested_derefine_leaves=7732 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6009 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6010 requested_refine=6 requested_derefine_leaves=7740 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6010 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=6011 requested_refine=4 requested_derefine_leaves=7752 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6011 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6012 requested_refine=8 requested_derefine_leaves=7760 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6012 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+elapsed=1.133271e+03 cycle=6012 time=1.671448e+01 dt=6.959441e-09
+CARTOON_AMR_TRANSACTION cycle=6013 requested_refine=0 requested_derefine_leaves=7776 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6014 requested_refine=2 requested_derefine_leaves=7776 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6014 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6015 requested_refine=4 requested_derefine_leaves=7780 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6015 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6016 requested_refine=0 requested_derefine_leaves=7788 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.155381e+03 cycle=6016 time=1.671448e+01 dt=6.918924e-09
+CARTOON_AMR_TRANSACTION cycle=6017 requested_refine=2 requested_derefine_leaves=7788 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6017 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6018 requested_refine=0 requested_derefine_leaves=7792 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6019 requested_refine=2 requested_derefine_leaves=7792 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6019 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6020 requested_refine=6 requested_derefine_leaves=7796 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6020 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=1.175198e+03 cycle=6020 time=1.671448e+01 dt=6.873692e-09
+CARTOON_AMR_TRANSACTION cycle=6021 requested_refine=2 requested_derefine_leaves=7808 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6021 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6022 requested_refine=4 requested_derefine_leaves=7812 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6022 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6023 requested_refine=0 requested_derefine_leaves=7820 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6024 requested_refine=0 requested_derefine_leaves=7820 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.194213e+03 cycle=6024 time=1.671448e+01 dt=6.825046e-09
+CARTOON_AMR_TRANSACTION cycle=6025 requested_refine=10 requested_derefine_leaves=7820 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6025 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=6026 requested_refine=4 requested_derefine_leaves=7840 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6026 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6027 requested_refine=8 requested_derefine_leaves=7848 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6027 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=6028 requested_refine=4 requested_derefine_leaves=7864 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6028 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.215062e+03 cycle=6028 time=1.671448e+01 dt=6.775501e-09
+CARTOON_AMR_TRANSACTION cycle=6029 requested_refine=10 requested_derefine_leaves=7872 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6029 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=6030 requested_refine=2 requested_derefine_leaves=7892 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6030 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6031 requested_refine=8 requested_derefine_leaves=7896 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6031 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=6032 requested_refine=4 requested_derefine_leaves=7912 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6032 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.236046e+03 cycle=6032 time=1.671448e+01 dt=6.724079e-09
+CARTOON_AMR_TRANSACTION cycle=6033 requested_refine=10 requested_derefine_leaves=7920 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6033 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=6034 requested_refine=2 requested_derefine_leaves=7940 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6034 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6035 requested_refine=2 requested_derefine_leaves=7944 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6035 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6036 requested_refine=4 requested_derefine_leaves=7948 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6036 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.257136e+03 cycle=6036 time=1.671448e+01 dt=6.666980e-09
+CARTOON_AMR_TRANSACTION cycle=6037 requested_refine=6 requested_derefine_leaves=7956 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6037 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=6038 requested_refine=8 requested_derefine_leaves=7968 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6038 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=6039 requested_refine=6 requested_derefine_leaves=7984 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6039 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=6040 requested_refine=0 requested_derefine_leaves=7996 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.277418e+03 cycle=6040 time=1.671448e+01 dt=6.602953e-09
+CARTOON_AMR_TRANSACTION cycle=6041 requested_refine=2 requested_derefine_leaves=7996 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6041 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6042 requested_refine=0 requested_derefine_leaves=8000 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6043 requested_refine=4 requested_derefine_leaves=8000 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6043 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6044 requested_refine=4 requested_derefine_leaves=8008 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6044 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.297783e+03 cycle=6044 time=1.671448e+01 dt=6.534821e-09
+CARTOON_AMR_TRANSACTION cycle=6045 requested_refine=0 requested_derefine_leaves=8016 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6046 requested_refine=4 requested_derefine_leaves=8016 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6046 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6047 requested_refine=0 requested_derefine_leaves=8024 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6048 requested_refine=6 requested_derefine_leaves=8024 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6048 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=1.317236e+03 cycle=6048 time=1.671448e+01 dt=6.464197e-09
+CARTOON_AMR_TRANSACTION cycle=6049 requested_refine=10 requested_derefine_leaves=8036 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6049 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=6050 requested_refine=2 requested_derefine_leaves=8056 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6050 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6051 requested_refine=8 requested_derefine_leaves=8060 accepted_derefine_parents=0 created_leaves=24 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6051 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=8192
+CARTOON_AMR_TRANSACTION cycle=6052 requested_refine=4 requested_derefine_leaves=8076 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6052 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.338650e+03 cycle=6052 time=1.671448e+01 dt=6.387337e-09
+CARTOON_AMR_TRANSACTION cycle=6053 requested_refine=4 requested_derefine_leaves=8084 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6053 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6054 requested_refine=6 requested_derefine_leaves=8092 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6054 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=6055 requested_refine=4 requested_derefine_leaves=8104 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6055 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6056 requested_refine=6 requested_derefine_leaves=8112 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6056 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+elapsed=1.360191e+03 cycle=6056 time=1.671448e+01 dt=6.298955e-09
+CARTOON_AMR_TRANSACTION cycle=6057 requested_refine=2 requested_derefine_leaves=8124 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6057 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6058 requested_refine=4 requested_derefine_leaves=8128 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6058 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6059 requested_refine=6 requested_derefine_leaves=8136 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6059 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=6060 requested_refine=2 requested_derefine_leaves=8148 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6060 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+elapsed=1.381806e+03 cycle=6060 time=1.671448e+01 dt=6.198579e-09
+CARTOON_AMR_TRANSACTION cycle=6061 requested_refine=10 requested_derefine_leaves=8152 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6061 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=10240
+CARTOON_AMR_TRANSACTION cycle=6062 requested_refine=6 requested_derefine_leaves=8172 accepted_derefine_parents=0 created_leaves=18 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6062 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=6144
+CARTOON_AMR_TRANSACTION cycle=6063 requested_refine=0 requested_derefine_leaves=8184 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6064 requested_refine=4 requested_derefine_leaves=8184 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6064 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+elapsed=1.402593e+03 cycle=6064 time=1.671448e+01 dt=6.089224e-09
+CARTOON_AMR_TRANSACTION cycle=6065 requested_refine=4 requested_derefine_leaves=8192 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6065 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6066 requested_refine=4 requested_derefine_leaves=8200 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6066 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6067 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6068 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.422471e+03 cycle=6068 time=1.671448e+01 dt=5.969189e-09
+CARTOON_AMR_TRANSACTION cycle=6069 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6070 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6071 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6072 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.440507e+03 cycle=6072 time=1.671448e+01 dt=5.828664e-09
+CARTOON_AMR_TRANSACTION cycle=6073 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6074 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6075 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6076 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.458500e+03 cycle=6076 time=1.671448e+01 dt=5.479887e-09
+CARTOON_AMR_TRANSACTION cycle=6077 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6078 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6079 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6080 requested_refine=0 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.476495e+03 cycle=6080 time=1.671448e+01 dt=4.994592e-09
+CARTOON_AMR_TRANSACTION cycle=6081 requested_refine=4 requested_derefine_leaves=8208 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6081 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=4096
+CARTOON_AMR_TRANSACTION cycle=6082 requested_refine=2 requested_derefine_leaves=8216 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6082 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6083 requested_refine=0 requested_derefine_leaves=8220 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6084 requested_refine=0 requested_derefine_leaves=8220 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.496448e+03 cycle=6084 time=1.671448e+01 dt=4.271498e-09
+CARTOON_AMR_TRANSACTION cycle=6085 requested_refine=0 requested_derefine_leaves=8220 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6086 requested_refine=0 requested_derefine_leaves=8220 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6087 requested_refine=0 requested_derefine_leaves=8220 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6088 requested_refine=0 requested_derefine_leaves=8220 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.514467e+03 cycle=6088 time=1.671448e+01 dt=3.164796e-09
+CARTOON_AMR_TRANSACTION cycle=6089 requested_refine=2 requested_derefine_leaves=8220 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6089 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6090 requested_refine=2 requested_derefine_leaves=8224 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_Z4C_CHI_PROLONGATION cycle=6090 transfer=high_order local_fallback_groups=0 global_fallback_groups=0 global_high_order_groups=2048
+CARTOON_AMR_TRANSACTION cycle=6091 requested_refine=0 requested_derefine_leaves=8228 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6092 requested_refine=0 requested_derefine_leaves=8228 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.534420e+03 cycle=6092 time=1.671448e+01 dt=1.340915e-09
+CARTOON_AMR_TRANSACTION cycle=6093 requested_refine=0 requested_derefine_leaves=8228 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0

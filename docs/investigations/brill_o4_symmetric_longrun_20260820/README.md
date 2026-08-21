@@ -11,10 +11,13 @@ recorders are disabled.  The production run uses one Aurora PVC tile in two-hour
 capacity allocations; Athena's internal `-t 01:45:00` limit leaves time for a
 final authenticated restart before PBS wall time.
 
-If the one-rank run reaches its allocation-only `max_nmb_per_rank=4096`
-guard, a restart segment may set `MAX_NMB_PER_RANK_OVERRIDE=8192`.  This changes
-only preallocated MeshBlock capacity; it is rejected for a fresh segment and
-all evolution/AMR criteria remain loaded from the authenticated restart.
+The one-rank run reached allocation-only `max_nmb_per_rank` guards at 4096 and
+8192 blocks.  Authenticated restart segments raised only that preallocated
+capacity, first to 8192 and then to 16384; the override is rejected for a fresh
+segment and all evolution/AMR criteria remain loaded from the authenticated
+restart.  Segment 2 then reached the first numerical fail-closed event at
+`t=16.714479500260431 M`.  See `REPORT.md` and `EVIDENCE_MANIFEST.json` for the
+careful terminal classification and checksum-bound provenance.
 
 The coefficient payload is intentionally reused byte-for-byte from
 `../brill_collapse_contract_fixes_20260819/aurora_scratch_n256/` and must have

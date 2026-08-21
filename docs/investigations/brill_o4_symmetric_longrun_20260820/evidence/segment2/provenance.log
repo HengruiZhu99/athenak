@@ -1,0 +1,39 @@
+2026-08-21T00:02:50+00:00
+x4310c1s1b0n0
+PBS_JOBID=8769961.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+SEGMENT_ID=2
+PBS_QUEUE=capacity
+PBS_ACCOUNT=CompactBinaryMerger
+MAX_NMB_PER_RANK_OVERRIDE=16384
+26d4c371ea57b8db2cde47e56ac0a8de8fb89dc9
+ffa46e2b51d4bf46929565deee92df52ad7d6add
+ 6739bc623081648af9e752b616d9671527922cbf kokkos (4.7.02)
+
+Currently Loaded Modules:
+  1) oneapi/release/2025.3.1          6) expat/2.7.3-6auksxt          (H)
+  2) gcc/13.4.0                       7) gdbm/1.25
+  3) cmake/3.31.11                    8) sqlite/3.50.4-s65ksrg        (H)
+  4) gcc-runtime/13.4.0-2tg3zy7 (H)   9) util-linux-uuid/2.41-ytoy2bg (H)
+  5) bzip2/1.0.8                     10) python/3.12.12
+
+  Where:
+   H:  Hidden Module
+
+ 
+
+INFO: Output filtered by ONEAPI_DEVICE_SELECTOR environment variable, which is set to level_zero:gpu.
+To see device ids, use the --ignore-device-selectors CLI option.
+
+[level_zero:gpu] Intel(R) oneAPI Unified Runtime over Level-Zero, Intel(R) Data Center GPU Max 1550 12.60.7 [1.6.33578+42]
+KOKKOS_NUM_THREADS=1
+OMP_NUM_THREADS=1
+OMP_TARGET_OFFLOAD=MANDATORY
+ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+ONEAPI_ROOT=/opt/aurora/26.26.0/oneapi
+ZE_AFFINITY_MASK=0.0
+ZE_ENABLE_API_TRACING=1
+ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+645de4273ab1509407cba6a5df93a153a2510c4bb4d335c0f10d892f41eeb4a0  /home/hzhu/brill-o4-n256-head-build-26d4c371-20260820/athena-build/src/athena
+02b627dca6ad6ddf1802137882c543e0aa56c79db6d8d8efcd07c4c4c495769b  /lus/flare/projects/CompactBinaryMerger/hzhu/brill_o4_n256_26d4c371_20260820/segment2/brill_o4_n256.athinput
+ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b  /lus/flare/projects/CompactBinaryMerger/hzhu/brill_o4_n256_26d4c371_20260820/segment2/brill_global_48x32.coefficients

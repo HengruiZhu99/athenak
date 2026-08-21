@@ -1,0 +1,231 @@
+{
+  "diagnostic_measure": {
+    "cartoon_history_cell_measure": "2*pi*rho*dx_rho*dx_z*sqrt(abs(det(gamma)))",
+    "fictitious_collapsed_y_width": false
+  },
+  "formal_disposition": "COMPARISON_NOT_MATCHED",
+  "formal_reason": "O4 uses dchi_max=0.02 while the closest authenticated O6 N256 history uses dchi_max=0.01; this is not an isolated order comparison",
+  "inputs": {
+    "O4_segments": [
+      {
+        "path": "evidence/segment0/brill_o4_n256_seg0.z4c.user.hst",
+        "rows": 1394,
+        "segment": 0,
+        "sha256": "9cca51a576985e69c15e9485c013e152052f0df204e13bab50718ff08d36bc34"
+      },
+      {
+        "path": "evidence/segment1/brill_o4_n256_seg1.z4c.user.hst",
+        "rows": 68,
+        "segment": 1,
+        "sha256": "f8721a712f2491cef8a694c8224d8ddca349383921f3c85b6f9f2658e6410c0a"
+      },
+      {
+        "path": "evidence/segment2/brill_o4_n256_seg2.z4c.user.hst",
+        "rows": 83,
+        "segment": 2,
+        "sha256": "f1cd4e0d5a1fdfbdf94385de5c04493bf4e26cebd4c7ea3e2588578369956bc9"
+      }
+    ],
+    "O6_history": {
+      "dchi_max": 0.01,
+      "path": "brill_r16_resolution_isolation_20260815/data/n256_history.csv",
+      "sha256": "3e21f7fa19e545d34a5c25e4b880f28212234e930ca5915c61ad16b924d71b35",
+      "spatial_order": 6
+    },
+    "paper_curves": {
+      "path": "brill_r16_resolution_isolation_20260815/data/figure3_published_curves.csv",
+      "sha256": "947f92f72af32caf631d5efe9d720c7c56800b2e4578dcb6bcc26107cabc8adf",
+      "status": "rendered PDF polyline reconstruction, not raw paper data"
+    }
+  },
+  "landmarks": {
+    "O4": {
+      "C_ge_1e6": 16.714024698011343,
+      "K_ge_1e3": 16.71134591602894,
+      "dt_le_1e-4": 16.695943387773465,
+      "level_ge_10": 16.712409206575245,
+      "level_ge_18": 16.71447119983469
+    },
+    "O6": {
+      "C_ge_1e6": 16.909192657470843,
+      "K_ge_1e3": 16.905834960937586,
+      "dt_le_1e-4": 16.895874023437518,
+      "level_ge_10": 16.906219482421946,
+      "level_ge_18": 16.90957489013674
+    }
+  },
+  "limitations": [
+    "No isolated O4/O6 production comparison because dchi_max differs.",
+    "Published Figure 3 curves are reconstructed from rendered PDF vectors.",
+    "No convergence or Figure 3 reproduction claim is made.",
+    "Operational MeshBlock-capacity stops are not numerical-invariant failures.",
+    "The O4 state-admissibility scan detected an invalid state, but the SYCL host extraction of the selected noncontiguous cell failed before the checkpoint, component, coordinates, and reason could be recorded."
+  ],
+  "matched_axis_proper_time_constraints": [
+    {
+      "O4_C-norm2": 2.4535566242379687,
+      "O4_H-norm2": 0.039527507536613334,
+      "O4_M-norm2": 0.02659796726180077,
+      "O4_Z-norm2": 0.5163498125049837,
+      "O6_C-norm2": 3.6093871462383826,
+      "O6_H-norm2": 0.21957082253562546,
+      "O6_M-norm2": 0.08825996568808687,
+      "O6_Z-norm2": 0.7138758881628158,
+      "axisTau": 5.0
+    },
+    {
+      "O4_C-norm2": 49.1084697372757,
+      "O4_H-norm2": 0.47609302931315506,
+      "O4_M-norm2": 0.21358601101866503,
+      "O4_Z-norm2": 10.894571770700455,
+      "O6_C-norm2": 636.2389823717322,
+      "O6_H-norm2": 328.4777539488527,
+      "O6_M-norm2": 237.55442131523404,
+      "O6_Z-norm2": 15.540804902320751,
+      "axisTau": 10.0
+    }
+  ],
+  "matched_coordinate_time_constraints": [
+    {
+      "O4_C-norm2": 0.2288171429233348,
+      "O4_H-norm2": 0.008680426625885494,
+      "O4_M-norm2": 0.0020607281058719843,
+      "O4_Z-norm2": 0.04626384787214627,
+      "O6_C-norm2": 0.4357543448242705,
+      "O6_H-norm2": 0.06251430477078566,
+      "O6_M-norm2": 0.02044185409983435,
+      "O6_Z-norm2": 0.07442666409353128,
+      "time": 5.0
+    },
+    {
+      "O4_C-norm2": 6.288501155537935,
+      "O4_H-norm2": 0.1464800519557225,
+      "O4_M-norm2": 0.11317577815222492,
+      "O4_Z-norm2": 1.307767705244669,
+      "O6_C-norm2": 86.8119019368269,
+      "O6_H-norm2": 54.82752194163884,
+      "O6_M-norm2": 23.57647447089478,
+      "O6_Z-norm2": 1.8113766366197348,
+      "time": 10.0
+    },
+    {
+      "O4_C-norm2": 36.24404134756463,
+      "O4_H-norm2": 0.38584874332154806,
+      "O4_M-norm2": 0.20526659226609723,
+      "O4_Z-norm2": 7.980558148375429,
+      "O6_C-norm2": 100.02135742740819,
+      "O6_H-norm2": 43.72561095832117,
+      "O6_M-norm2": 7.297912159327415,
+      "O6_Z-norm2": 11.089991015704001,
+      "time": 15.0
+    }
+  ],
+  "o4_constraint_jumps": {
+    "event_count": 1523,
+    "top_20_topology_changed_count": 10,
+    "top_event": {
+      "C_abs_log10_jump": 4.800245021220777,
+      "H_abs_log10_jump": 5.757854670451336,
+      "M_abs_log10_jump": 3.442478718182605,
+      "Z_abs_log10_jump": 0.0005881963908727826,
+      "cycle_after": 6092,
+      "cycle_before": 6088,
+      "delta_max_level": 0,
+      "delta_meshblocks": 12,
+      "max_abs_log10_constraint_jump": 5.757854670451336,
+      "time_after": 16.71447950026043,
+      "time_before": 16.714479489983486,
+      "topology_changed": true
+    }
+  },
+  "qualification_claim": false,
+  "schema": "athenak_brill_o4_o6_comparison_v1",
+  "segments": [
+    {
+      "job_id": 8769918,
+      "max_nmb_per_rank": 4096,
+      "proposed_meshblocks": 4100,
+      "result": "OPERATIONAL_MESHBLOCK_CAPACITY_STOP",
+      "segment": 0,
+      "start": "fresh"
+    },
+    {
+      "job_id": 8769947,
+      "max_nmb_per_rank": 8192,
+      "proposed_meshblocks": 8246,
+      "result": "OPERATIONAL_MESHBLOCK_CAPACITY_STOP",
+      "segment": 1,
+      "start_restart_sha256": "fb12aa1704204fa1b3b96346a2b064245d47676e4495ef78ff53a7ecf53c11f0"
+    },
+    {
+      "athena_exit": 134,
+      "job_id": 8769961,
+      "max_nmb_per_rank": 16384,
+      "result": "STATE_INADMISSIBILITY_DETECTED_DETAIL_EXTRACTION_FAILED",
+      "segment": 2,
+      "start_restart_sha256": "340be0e5f851af226c7a39d00c5df27796e6c46f9a4d28552079e2513a1f5e75"
+    }
+  ],
+  "terminal": {
+    "O4": {
+      "athena_exit": 134,
+      "axis_proper_time": 10.378859183276221,
+      "constraint_C": 5.939153200051595e+19,
+      "cycle": 6092,
+      "dt": 1.914904931041057e-09,
+      "failure_evidence": {
+        "detail_extraction": "Kokkos SYCL rejected the noncontiguous 25-component device subview copy to Host before z4c_state_failure.json was written",
+        "exact_cell_known": false,
+        "exact_checkpoint_known": false,
+        "exact_state_reason_known": false,
+        "first_guard": "Z4c state-admissibility scan selected an inadmissible cell",
+        "printed_chi_transfer_invalid_limited_groups": 0,
+        "printed_chi_transfer_invalid_parent_groups": 0
+      },
+      "failure_mechanism": "STATE_INADMISSIBILITY_DETECTED_DETAIL_EXTRACTION_FAILED",
+      "job_id": 8769961,
+      "max_abs_K": 1044318745.1154325,
+      "max_kretschmann": 9.320082940759948e+38,
+      "max_meshblocks": 12518,
+      "max_refinement_level": 20,
+      "maximum_constraints": {
+        "C-norm2": 5.939153200051595e+19,
+        "H-norm2": 5.706166689045549e+19,
+        "M-norm2": 2.3298651100604483e+18,
+        "Z-norm2": 12.709386501856066
+      },
+      "minimum_dt": 1.914904931041057e-09,
+      "time": 16.71447950026043,
+      "topology_change_rows": 305
+    },
+    "O6": {
+      "axis_proper_time": 10.373899133839622,
+      "constraint_C": 298004326898056.56,
+      "cycle": 7616,
+      "dt": 1.7881393432617187e-08,
+      "failure_mechanism": "CENTRAL_AXIS_DIAGNOSTIC_SUPPORT_NONFINITE_OR_INVALID",
+      "failure_source_status": "authenticated existing comparator evidence",
+      "max_abs_K": 107969229.63881329,
+      "max_kretschmann": 1.1618777905876552e+32,
+      "max_meshblocks": 13076,
+      "max_refinement_level": 20,
+      "maximum_constraints": {
+        "C-norm2": 298004326898056.56,
+        "H-norm2": 28876860211795.15,
+        "M-norm2": 269127466686180.56,
+        "Z-norm2": 18.13061518681497
+      },
+      "minimum_dt": 1.7881393432617187e-08,
+      "time": 16.909588390589008,
+      "topology_change_rows": 356
+    }
+  },
+  "test_evidence": {
+    "o4_raw_fixed_radius_derivative_order": 4.01794,
+    "zero_pde_fourier_max_error": {
+      "O2": 1.2965737272678386,
+      "O4": 3.444338947270087,
+      "O6": 3.7965698987568763
+    }
+  }
+}

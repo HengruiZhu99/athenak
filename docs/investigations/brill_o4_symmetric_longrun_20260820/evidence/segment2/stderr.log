@@ -1,0 +1,6 @@
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  Error: Kokkos::deep_copy with no available copy mechanism: from source view ("u0 z4c") to destination view ("u0 z4c").
+There is no common execution space that can access both source's space
+(SYCLDeviceUSM) and destination's space (Host), so source and destination
+must be contiguous and have the same layout.
+
