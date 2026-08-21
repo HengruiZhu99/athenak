@@ -57,7 +57,11 @@ test "$(sha256sum "${COEFFICIENT_FILE}" | awk '{print $1}')" = \
 case "${CASE_LABEL}:${HISTORY_MODE}:${ROOT_NX1}:${ROOT_NX2}:${MB_NX1}:${MB_NX2}:${MAX_NMB_PER_RANK}" in
   n128:replay:64:128:16:16:16384) ;;
   n256:record:128:256:32:32:16384) ;;
-  n512:replay:256:512:64:64:16384) ;;
+  # The frozen authority contains at most 1166 leaves.  On one A100-80GB,
+  # 16384 makes each N512 capacity-sized Z4c view unnecessarily enormous
+  # (job 57347610 requested 8.227 GiB for u_adm alone).  2048 is the smallest
+  # power-of-two reviewed capacity above the complete authority tree.
+  n512:replay:256:512:64:64:2048) ;;
   *) printf 'unsupported frozen Perlmutter run contract\n' >&2; exit 2 ;;
 esac
 if [[ "${HISTORY_MODE}" = record ]]; then

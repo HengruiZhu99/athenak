@@ -59,8 +59,12 @@ Perlmutter `shared_interactive`.  The platform-specific wrappers are
 the same frozen physics, common 4-by-8 physical MeshBlock lattice,
 record/replay semantics, `CFL=0.15`, exact event-time landing, output cadence,
 and fail-closed evidence policy.  All three resolutions use one rank and one
-80-GB A100; N512 therefore uses the same global
-`max_nmb_per_rank=16384` capacity rather than Aurora's four-way split.
+80-GB A100.  N128 and N256 use `max_nmb_per_rank=16384`.  N512 uses the
+reviewed capacity 2048: the immutable N256 authority tree peaks at 1166
+leaves, while job 57347610 proved that 16384 is wasteful and fails during
+initialization (`u_adm` alone requested 8.227 GiB).  The lower capacity changes
+no accepted replay tree and retains 1.76x headroom over the complete authority
+schedule.
 
 The CUDA executable is built freshly on the Perlmutter login node.  Device
 binding and runtime tests must pass inside the shared allocation before the

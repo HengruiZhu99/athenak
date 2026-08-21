@@ -15,7 +15,9 @@ assert "--cpus-per-task=32" in ALLOC and "--time=02:00:00" in ALLOC
 assert "--qos=interactive" not in ALLOC
 assert "n128:replay:64:128:16:16:16384" in RUN
 assert "n256:record:128:256:32:32:16384" in RUN
-assert "n512:replay:256:512:64:64:16384" in RUN
+assert "n512:replay:256:512:64:64:2048" in RUN
+assert "at most 1166 leaves" in RUN
+assert "8.227 GiB for u_adm" in RUN
 assert "time/tlim=\"${RUN_TLIM}\"" in RUN
 assert "--time=01:45:00" in RUN
 assert "--require-cuda" in RUN
