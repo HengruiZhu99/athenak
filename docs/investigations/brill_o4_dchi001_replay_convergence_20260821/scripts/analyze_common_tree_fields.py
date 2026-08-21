@@ -109,29 +109,8 @@ def interpolation_indices(q: float, count: int) -> tuple[np.ndarray, np.ndarray]
     return indices, lagrange_weights(nodes, q)
 
 
-def block_bounds(data: dict[str, Any]) -> np.ndarray:
-    """Return active-cell face bounds from Athena binary MeshBlock geometry.
-
-    ``mb_geometry`` stores the center of the first output cell followed by the
-    cell spacing: ``x1i,x2i,x3i,dx1,dx2,dx3``.  It does not store face bounds.
-    """
-    geometry = np.asarray(data["mb_geometry"], dtype=float)
-    nx = int(data["nx1_out_mb"])
-    ny = int(data["nx2_out_mb"])
-    if geometry.ndim != 2 or geometry.shape[1] != 6 or nx < 5 or ny < 5:
-        fail("invalid MeshBlock geometry or output extent")
-    x1i, x2i = geometry[:, 0], geometry[:, 1]
-    dx1, dx2 = geometry[:, 3], geometry[:, 4]
-    if np.any(dx1 <= 0.0) or np.any(dx2 <= 0.0):
-        fail("nonpositive MeshBlock cell spacing")
-    return np.column_stack((x1i - 0.5 * dx1,
-                            x1i + (nx - 0.5) * dx1,
-                            x2i - 0.5 * dx2,
-                            x2i + (ny - 0.5) * dx2))
-
-
 def coarse_fine_sides(data: dict[str, Any]) -> list[set[str]]:
-    geometry = block_bounds(data)
+    geometry = np.asarray(data["mb_geometry"], dtype=float)
     levels = np.asarray(data["mb_logical"], dtype=int)[:, 3]
     sides = [set() for _ in range(len(geometry))]
     tolerance = 128.0 * np.finfo(float).eps * 32.0
@@ -154,7 +133,7 @@ def coarse_fine_sides(data: dict[str, Any]) -> list[set[str]]:
 
 def sample_snapshot(data: dict[str, Any], rho: np.ndarray, zed: np.ndarray
                     ) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
-    geometry = block_bounds(data)
+    geometry = np.asarray(data["mb_geometry"], dtype=float)
     nx = int(data["nx1_out_mb"])
     ny = int(data["nx2_out_mb"])
     values = {name: np.full(rho.shape, np.nan) for name in BASE_FIELDS}

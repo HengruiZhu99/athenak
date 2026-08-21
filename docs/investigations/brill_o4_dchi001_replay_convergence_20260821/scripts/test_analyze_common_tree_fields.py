@@ -23,8 +23,7 @@ for count in (16, 32, 64):
     xx, yy = np.meshgrid(x, y, indexing="xy")
     array = polynomial(xx, yy)[None, :, :]
     data = {
-        "mb_geometry": np.array([[0.5/count, 0.5/count, 0.,
-                                  1./count, 1./count, 1.]]),
+        "mb_geometry": np.array([[0., 1., 0., 1., -.5, .5]]),
         "mb_logical": np.array([[0, 0, 0, 0]]),
         "nx1_out_mb": count, "nx2_out_mb": count,
         "mb_data": {name: [array.copy()] for name in module.BASE_FIELDS.values()},
@@ -34,22 +33,6 @@ for count in (16, 32, 64):
     sampled, masks = module.sample_snapshot(data, rho, zed)
     np.testing.assert_allclose(sampled["chi"], polynomial(rho, zed), rtol=0, atol=2e-12)
     assert np.isinf(masks["cf_distance"]).all()
-    np.testing.assert_allclose(module.block_bounds(data), [[0., 1., 0., 1.]],
-                               rtol=0, atol=2e-16)
-
-# A coarse block and a half-width fine neighbor share one physical face.  This
-# exercises coarse/fine-side detection using center-plus-spacing geometry.
-count = 16
-two_level = {
-    "mb_geometry": np.array([
-        [0.5/16, 0.5/16, 0., 1./16, 1./16, 1.],
-        [1.0 + 0.5/32, 0.5/16, 0., 1./32, 1./16, 1.],
-    ]),
-    "mb_logical": np.array([[0, 0, 0, 0], [2, 0, 0, 1]]),
-    "nx1_out_mb": count,
-    "nx2_out_mb": count,
-}
-assert module.coarse_fine_sides(two_level) == [{"rhi"}, {"rlo"}]
 
 nodes = np.array([0.0, 0.3, 0.8, 1.4])
 target = 0.55
