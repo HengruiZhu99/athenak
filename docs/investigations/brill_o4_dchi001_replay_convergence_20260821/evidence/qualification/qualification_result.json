@@ -1,0 +1,63 @@
+{
+  "schema": "aurora_o4_common_tree_qualification_v1",
+  "result": "pass",
+  "job": {
+    "id": "8770096",
+    "queue": "debug",
+    "node": "x4304c7s5b0n0",
+    "exit_status": 0,
+    "walltime": "00:07:54",
+    "maximum_resident_memory_kib": 14861024
+  },
+  "remote_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/brill_o4_replay_16931a5f_20260821/qualification",
+  "source": {
+    "commit": "16931a5f9830e7c8a75a9b72e93c4c7230cb6906",
+    "tree": "404cf42aab18fe8b3d3f7baa49a33f705ab05191",
+    "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf"
+  },
+  "build": {
+    "athena_sha256": "7673c98a6ad595bc99ab836153b1ddd99c620e7e5ad0fe88d192975f3082432d",
+    "cmake_cache_sha256": "cfe4196314f4a4d0d1b9aa5690b2b817f0ba67b37ce0b1329639ce0b5f6b439b",
+    "backend": "Kokkos SYCL",
+    "architecture": "Intel PVC",
+    "mpi": true
+  },
+  "inputs": {
+    "brill_input_sha256": "631814f374ac598c641728c4a37e5aab6180d1dcf51b013fa9e1bef31cd87f66",
+    "irisk_coefficients_sha256": "ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b"
+  },
+  "gates": {
+    "focused_ctest": "12_of_12_pass",
+    "mpi2_coarse_cache": "pass",
+    "mpi2_amr_history_record_replay": "pass",
+    "pvc_state_failure_extraction": "pass",
+    "n256_short_record_restart": "pass",
+    "n128_short_replay_restart": "pass",
+    "n512_short_replay": "pass",
+    "replay_tree_exact": true,
+    "maximum_absolute_event_time_ulp_difference": 0
+  },
+  "files": {
+    "status_sha256": "f134b99e5b908375852020ea27b3666df1c56e699c056d9a642df1cdbb59a87d",
+    "remote_manifest_sha256": "bf311e6d9a11edc056d0b7f01e917579f5b40ebae38d156e75ceb64e245e4bc2",
+    "focused_ctest_sha256": "bb36119b5db9f62f4cde2c7c2c20eedd139fd263ef325aa5e3bfc297c39ffae4",
+    "state_failure_json_sha256": "43ed64ef786d88afa275e134d4ea87552d9977b9d665ff8f1c04172e25744d1f",
+    "short_authority_sha256": "f4249273910f8b5d9ebd874610f621200ab16c3f9034cd71c749de6be4d3b3ca",
+    "n128_replay_ledger_sha256": "3f56e9848f1161288fc9d1ff00840b496eddcc3794498ed6a6e31ee0cdc441fe",
+    "n512_replay_ledger_sha256": "0e5c7712c4458914b9ccd713a215f8f9818add4353ceaeca5caf2bd0bbf7a559"
+  },
+  "predecessors": [
+    {
+      "job": "8770064",
+      "disposition": "cancelled_while_queued_before_allocation"
+    },
+    {
+      "job": "8770069",
+      "disposition": "prebuild_failure_uninitialized_kokkos_submodule"
+    },
+    {
+      "job": "8770076",
+      "disposition": "postbuild_test_failure_static_key_and_2x_event_time_714_ulp_early"
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+#!/bin/bash -l
+#PBS -N brill-o4-common-tree
+#PBS -A CompactBinaryMerger
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=02:00:00
+#PBS -l filesystems=home:flare
+#PBS -q capacity
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+: "${ATHENAK_ROOT:?}"
+: "${EXPECTED_SOURCE_COMMIT:?}"
+: "${EXPECTED_BUILD_SOURCE_COMMIT:?}"
+: "${QUAL_ROOT:?}"
+: "${EXPECTED_EXE_SHA256:?}"
+: "${EXPECTED_CACHE_SHA256:?}"
+: "${INPUT_FILE:?}"
+: "${COEFFICIENT_FILE:?}"
+: "${SEGMENT_ROOT:?fresh segment root required}"
+: "${CASE_LABEL:?n128, n256, or n512}"
+: "${HISTORY_MODE:?record or replay}"
+: "${HISTORY_FILE:?}"
+: "${RUN_RANKS:?}"
+: "${ROOT_NX1:?}"
+: "${ROOT_NX2:?}"
+: "${MB_NX1:?}"
+: "${MB_NX2:?}"
+: "${MAX_NMB_PER_RANK:?}"
+: "${RUN_TLIM:?}"
+test ! -e "${SEGMENT_ROOT}"
+test "$(git -C "${ATHENAK_ROOT}" rev-parse HEAD)" = "${EXPECTED_SOURCE_COMMIT}"
+test -z "$(git -C "${ATHENAK_ROOT}" status --porcelain)"
+while IFS= read -r changed; do
+  case "${changed}" in
+    docs/investigations/brill_o4_dchi001_replay_convergence_20260821/*) ;;
+    *) printf 'post-build change outside campaign tooling: %s\n' "${changed}" >&2; exit 2 ;;
+  esac
+done < <(git -C "${ATHENAK_ROOT}" diff --name-only \
+  "${EXPECTED_BUILD_SOURCE_COMMIT}" "${EXPECTED_SOURCE_COMMIT}")
+kokkos_status="$(git -C "${ATHENAK_ROOT}" submodule status -- kokkos)"
+case "${kokkos_status}" in
+  " 6739bc623081648af9e752b616d9671527922cbf kokkos"*) ;;
+  *) printf 'unexpected or uninitialized Kokkos submodule: %s\n' \
+       "${kokkos_status:-<missing>}" >&2; exit 2 ;;
+esac
+grep -Fx AURORA_O4_REPLAY_QUALIFICATION_PASS "${QUAL_ROOT}/status" >/dev/null
+test "$(sed -n '3p' "${QUAL_ROOT}/provenance.log")" = \
+  "${EXPECTED_BUILD_SOURCE_COMMIT}"
+(cd "${QUAL_ROOT}" && sha256sum -c SHA256SUMS >/dev/null)
+athena="${QUAL_ROOT}/build/athena/src/athena"
+test -x "${athena}"
+test "$(sha256sum "${athena}" | awk '{print $1}')" = "${EXPECTED_EXE_SHA256}"
+test "$(sha256sum "${QUAL_ROOT}/build/athena/CMakeCache.txt" | awk '{print $1}')" = \
+  "${EXPECTED_CACHE_SHA256}"
+case "${CASE_LABEL}:${HISTORY_MODE}:${RUN_RANKS}:${ROOT_NX1}:${ROOT_NX2}:${MB_NX1}:${MB_NX2}:${MAX_NMB_PER_RANK}" in
+  n128:replay:1:64:128:16:16:16384) ;;
+  n256:record:1:128:256:32:32:16384) ;;
+  n512:replay:4:256:512:64:64:4096) ;;
+  *) printf 'unsupported frozen run contract\n' >&2; exit 2 ;;
+esac
+if [[ "${HISTORY_MODE}" = record ]]; then
+  if [[ -z "${RESTART_FILE:-}" ]]; then
+    test ! -e "${HISTORY_FILE}"
+  else
+    : "${EXPECTED_HISTORY_SHA256:?}"
+    test "$(sha256sum "${HISTORY_FILE}" | awk '{print $1}')" = \
+      "${EXPECTED_HISTORY_SHA256}"
+  fi
+elif [[ "${HISTORY_MODE}" = replay ]]; then
+  : "${EXPECTED_HISTORY_SHA256:?}"
+  test "$(sha256sum "${HISTORY_FILE}" | awk '{print $1}')" = \
+    "${EXPECTED_HISTORY_SHA256}"
+fi
+
+mkdir -p "${SEGMENT_ROOT}"
+root="$(cd "${SEGMENT_ROOT}" && pwd)"
+cp "${INPUT_FILE}" "${root}/brill_o4_common_tree.athinput"
+cp "${COEFFICIENT_FILE}" "${root}/brill_global_48x32.coefficients"
+
+module purge
+module load oneapi/release/2025.3.1 gcc/13.4.0 \
+  mpich/opt/5.0.0.aurora_test.3c70a61 libfabric/1.22.0 \
+  cray-pals/1.8.0 cray-libpals/1.8.0 cmake/3.31.11 python/3.12.12
+export OMP_NUM_THREADS=1 KOKKOS_NUM_THREADS=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPIR_CVAR_ENABLE_GPU=1
+export RANK_EVIDENCE_ROOT="${root}/rank-bindings"
+tile_wrapper=/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh
+rank_wrapper="${ATHENAK_ROOT}/docs/investigations/brill_o4_dchi001_replay_convergence_20260821/aurora_rank_run.sh"
+test -x "${tile_wrapper}" -a -x "${rank_wrapper}"
+
+{
+  date --iso-8601=seconds
+  hostname
+  printf 'PBS_JOBID=%s\nCASE_LABEL=%s\nHISTORY_MODE=%s\nRUN_RANKS=%s\n' \
+    "${PBS_JOBID:-unknown}" "${CASE_LABEL}" "${HISTORY_MODE}" "${RUN_RANKS}"
+  printf 'BUILD_SOURCE_COMMIT=%s\n' "${EXPECTED_BUILD_SOURCE_COMMIT}"
+  git -C "${ATHENAK_ROOT}" rev-parse HEAD HEAD^{tree}
+  sha256sum "${athena}" "${root}/brill_o4_common_tree.athinput" \
+    "${root}/brill_global_48x32.coefficients"
+  module list
+} > "${root}/provenance.log" 2>&1
+
+restart_args=(-i brill_o4_common_tree.athinput)
+if [[ -n "${RESTART_FILE:-}" ]]; then
+  : "${RESTART_SHA256:?}"
+  test "$(sha256sum "${RESTART_FILE}" | awk '{print $1}')" = "${RESTART_SHA256}"
+  restart_args=(-r "${RESTART_FILE}")
+  sha256sum "${RESTART_FILE}" > "${root}/restart-input.sha256"
+fi
+
+set +e
+(cd "${root}" && mpiexec -n "${RUN_RANKS}" -ppn "${RUN_RANKS}" \
+  --depth 8 --cpu-bind depth "${tile_wrapper}" "${rank_wrapper}" \
+  "${athena}" "${restart_args[@]}" -t 01:45:00 \
+  mesh/nx1="${ROOT_NX1}" mesh/nx2="${ROOT_NX2}" \
+  meshblock/nx1="${MB_NX1}" meshblock/nx2="${MB_NX2}" \
+  mesh_refinement/max_nmb_per_rank="${MAX_NMB_PER_RANK}" \
+  mesh_refinement/amr_history_mode="${HISTORY_MODE}" \
+  mesh_refinement/amr_history_file="${HISTORY_FILE}" \
+  time/tlim="${RUN_TLIM}" time/nlim=-1 \
+  output2/dcycle=512 output3/dcycle=128 output4/dcycle=128 \
+  output5/dcycle=0 output6/dcycle=128 output7/dcycle=0 output8/dcycle=0 \
+  job/basename="${CASE_LABEL}" \
+  problem/brill_global_coefficients_file=brill_global_48x32.coefficients \
+  problem/constraint_summary_file="${CASE_LABEL}-constraints.dat" \
+  > stdout.log 2> stderr.log)
+status=$?
+set -e
+printf 'athena_exit=%s\n' "${status}" > "${root}/run-status"
+python3 - "${root}/rank-bindings" "${RUN_RANKS}" <<'PY'
+import pathlib, re, sys
+root = pathlib.Path(sys.argv[1])
+expected = int(sys.argv[2])
+files = sorted(root.glob("rank-*.log"))
+assert len(files) == expected, (len(files), expected)
+ranks, masks = set(), set()
+for path in files:
+    text = path.read_text(encoding="utf-8")
+    rank = re.search(r"^rank=(.+)$", text, re.MULTILINE)
+    mask = re.search(r"^ZE_AFFINITY_MASK=(.+)$", text, re.MULTILINE)
+    assert rank and mask and mask.group(1) != "unset", path
+    assert "Intel(R) Data Center GPU Max 1550" in text, path
+    ranks.add(int(rank.group(1)))
+    masks.add(mask.group(1))
+assert ranks == set(range(expected)), ranks
+assert len(masks) == expected, masks
+PY
+if [[ ${status} -ne 0 ]]; then
+  disposition=FAIL_CLOSED_NUMERICAL_OR_RUNTIME_FAILURE
+elif grep -Fq 'Terminating on time limit' "${root}/stdout.log"; then
+  disposition=REACHED_TLIM
+elif grep -Fq 'Terminating on wall clock limit' "${root}/stdout.log"; then
+  disposition=HEALTHY_WALLTIME_RESTART_REQUIRED
+else
+  disposition=UNCLASSIFIED_CLEAN_EXIT
+fi
+printf '%s\n' "${disposition}" > "${root}/disposition"
+(cd "${root}" && find . -type f ! -name SHA256SUMS -print0 | \
+  LC_ALL=C sort -z | xargs -0r sha256sum > SHA256SUMS && \
+  sha256sum -c SHA256SUMS >/dev/null)
+if [[ "${disposition}" = UNCLASSIFIED_CLEAN_EXIT ]]; then exit 2; fi
