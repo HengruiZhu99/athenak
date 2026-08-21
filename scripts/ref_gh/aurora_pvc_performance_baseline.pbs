@@ -16,6 +16,7 @@ SRC="${ROOT}/athenak"
 : "${EXPECTED_COMMIT:?submit with qsub -v EXPECTED_COMMIT=<full-sha>}"
 CHECKED_BUILD="${ROOT}/build_checked_${PBS_JOBID}"
 PERF_BUILD="${ROOT}/build_performance_${PBS_JOBID}"
+Z4C_BUILD="${ROOT}/build_z4c_performance_${PBS_JOBID}"
 OUT="${ROOT}/runs/baseline_${PBS_JOBID}"
 BINDER="${SRC}/scripts/ref_gh/aurora_gpu_tile_slot.sh"
 REF_INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet_benchmark.athinput"
@@ -56,6 +57,7 @@ configure_build() {
   local build="$1"
   local bounds="$2"
   local label="$3"
+  local problem="$4"
   cmake -S "${SRC}" -B "${build}" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER="$(command -v icx)" \
@@ -67,7 +69,7 @@ configure_build() {
     -DKokkos_ENABLE_SYCL=ON \
     -DKokkos_ARCH_INTEL_PVC=ON \
     -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK="${bounds}" \
-    -DPROBLEM=built_in_pgens \
+    -DPROBLEM="${problem}" \
     > "configure_${label}.log" 2>&1
   cmake --build "${build}" -j 64 > "build_${label}.log" 2>&1
   {
@@ -78,8 +80,9 @@ configure_build() {
   } >> provenance.txt
 }
 
-configure_build "${CHECKED_BUILD}" ON checked
-configure_build "${PERF_BUILD}" OFF performance
+configure_build "${CHECKED_BUILD}" ON checked built_in_pgens
+configure_build "${PERF_BUILD}" OFF performance built_in_pgens
+configure_build "${Z4C_BUILD}" OFF z4c_performance z4c/z4c_one_puncture
 
 mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
   "${BINDER}" 0.0 bash -lc '
@@ -119,7 +122,7 @@ run_case() {
 printf 'case\tzone_cycles_per_s\n' > throughput.tsv
 run_case ref_gh_checked "${CHECKED_BUILD}/src/athena" "${REF_INPUT}"
 run_case ref_gh_performance "${PERF_BUILD}/src/athena" "${REF_INPUT}"
-run_case z4c_performance "${PERF_BUILD}/src/athena" "${Z4C_INPUT}"
+run_case z4c_performance "${Z4C_BUILD}/src/athena" "${Z4C_INPUT}"
 
 python3 - <<'PY' > speedups.tsv
 from pathlib import Path

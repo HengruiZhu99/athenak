@@ -1,0 +1,123 @@
+#!/bin/bash -l
+# Focused continuation of a completed Ref-GH baseline: build/run only Z4c.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_z4c_ctrl
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_performance_convergence_20260821
+SRC="${ROOT}/athenak"
+: "${EXPECTED_COMMIT:?submit with qsub -v EXPECTED_COMMIT=<full-sha>}"
+: "${REF_GH_BASELINE_JOB:?submit with the completed Ref-GH baseline job ID}"
+BUILD="${ROOT}/build_z4c_performance_${PBS_JOBID}"
+OUT="${ROOT}/runs/z4c_control_${PBS_JOBID}"
+PRIOR="${ROOT}/runs/baseline_${REF_GH_BASELINE_JOB}"
+BINDER="${SRC}/scripts/ref_gh/aurora_gpu_tile_slot.sh"
+INPUT="${SRC}/inputs/ref_gh/z4c_onepuncture_benchmark.athinput"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+test -s "${PRIOR}/throughput.tsv"
+grep -q '^ref_gh_checked' "${PRIOR}/throughput.tsv"
+grep -q '^ref_gh_performance' "${PRIOR}/throughput.tsv"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "ref_gh_baseline_job=${REF_GH_BASELINE_JOB}"
+  git -C "${SRC}" status --short
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=z4c/z4c_one_puncture \
+  > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+    "${BUILD}/CMakeCache.txt"
+  sha256sum "${BUILD}/src/athena"
+} >> provenance.txt
+
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 bash -lc '
+    echo "hostname=$(hostname)"
+    echo "ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1
+  ' > gpu_mapping.txt 2>&1
+
+run_case() {
+  local cycles="$1"
+  local label="$2"
+  local work="${OUT}/${label}"
+  mkdir -p "${work}"
+  cd "${work}"
+  /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+    "${BINDER}" 0.0 "${BUILD}/src/athena" -i "${INPUT}" \
+    job/basename="${label}" time/nlim="${cycles}" time/tlim=100.0 \
+    > "${label}.log" 2>&1
+  grep -q "cycle=${cycles}" "${label}.log"
+  grep -q 'zone-cycles/cpu_second' "${label}.log"
+  ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+    "${label}.log"
+}
+
+run_case 20 z4c_performance_warmup
+run_case 100 z4c_performance
+
+cp "${PRIOR}/throughput.tsv" throughput.tsv
+awk -F'= ' '/zone-cycles\/cpu_second/ {print "z4c_performance\t" $2}' \
+  z4c_performance/z4c_performance.log >> throughput.tsv
+
+python3 - <<'PY' > speedups.tsv
+from pathlib import Path
+
+rows = {}
+for line in Path("throughput.tsv").read_text().splitlines()[1:]:
+    name, value = line.split("\t")
+    rows[name] = float(value)
+print("metric\tvalue")
+print("performance_over_checked\t{:.12g}".format(
+    rows["ref_gh_performance"] / rows["ref_gh_checked"]))
+print("z4c_over_ref_gh_performance\t{:.12g}".format(
+    rows["z4c_performance"] / rows["ref_gh_performance"]))
+PY
+
+sha256sum provenance.txt gpu_mapping.txt throughput.tsv speedups.tsv > compact_sha256.txt
