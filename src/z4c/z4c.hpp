@@ -290,10 +290,12 @@ class Z4c {
   std::unique_ptr<Z4cVertexTopologyPlan> vertex_topology_plan;
 
   // Boundary communication buffers and functions for u
-  MeshBoundaryValuesCC *pbval_u;
+  MeshBoundaryValuesCC *pbval_u = nullptr;
+  MeshBoundaryValuesVC *pbval_u_vc = nullptr;
 
   // Boundary communication buffers for the weyl scalar
-  MeshBoundaryValuesCC *pbval_weyl;
+  MeshBoundaryValuesCC *pbval_weyl = nullptr;
+  MeshBoundaryValuesVC *pbval_weyl_vc = nullptr;
 
   // Z4c timestep contracts. dt_spatial receives the ordinary mesh CFL multiplier;
   // dt_source is an already-final hard source ceiling and must not receive it again.

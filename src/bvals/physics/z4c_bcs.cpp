@@ -12,6 +12,7 @@
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
 #include "z4c/cartoon_axis_boundary.hpp"
+#include "z4c/cartoon_vertex_axis.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_symmetry.hpp"
 
@@ -117,16 +118,17 @@ void MeshBoundaryValues::Z4cBCs(MeshBlockPack *ppack, DualArray2D<Real> u_in,
   auto &pm = ppack->pmesh;
   auto &indcs = ppack->pmesh->mb_indcs;
   int &ng = indcs.ng;
+  const auto &layout = ppack->pz4c->layout;
 
-  int n1 = indcs.nx1 + 2*ng;
-  int n2 = (indcs.nx2 > 1)? (indcs.nx2 + 2*ng) : 1;
-  int n3 = (indcs.nx3 > 1)? (indcs.nx3 + 2*ng) : 1;
-  int is = indcs.is;
-  int ie = indcs.ie;
-  int js = indcs.js;
-  int je = indcs.je;
-  int ks = indcs.ks;
-  int ke = indcs.ke;
+  int n1 = layout.n1;
+  int n2 = layout.n2;
+  int n3 = layout.n3;
+  int is = layout.is;
+  int ie = layout.ie;
+  int js = layout.js;
+  int je = layout.je;
+  int ks = layout.ks;
+  int ke = layout.ke;
   auto &opt = ppack->pz4c->opt;
   ValidateAxisBoundaryContract(ppack, u0);
 
@@ -142,15 +144,15 @@ void MeshBoundaryValues::Z4cBCs(MeshBlockPack *ppack, DualArray2D<Real> u_in,
       break;
   }
   if (pm->multilevel) {
-    int cn1 = indcs.cnx1 + 2*ng;
-    int cn2 = (indcs.cnx2 > 1)? (indcs.cnx2 + 2*ng) : 1;
-    int cn3 = (indcs.cnx3 > 1)? (indcs.cnx3 + 2*ng) : 1;
-    int cis = indcs.cis;
-    int cie = indcs.cie;
-    int cjs = indcs.cjs;
-    int cje = indcs.cje;
-    int cks = indcs.cks;
-    int cke = indcs.cke;
+    int cn1 = layout.cn1;
+    int cn2 = layout.cn2;
+    int cn3 = layout.cn3;
+    int cis = layout.cis;
+    int cie = layout.cie;
+    int cjs = layout.cjs;
+    int cje = layout.cje;
+    int cks = layout.cks;
+    int cke = layout.cke;
     switch(opt.extrap_order) {
       case 2:
         BCHelper<2>(ppack, u_in, coarse_u0, cis, cie, cjs, cje, cks, cke, cn1, cn2, cn3);
@@ -177,6 +179,8 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
 
   int nvar = u0.extent_int(1);  // TODO(@user): 2nd index from L of in array must be NVAR
   int nmb = ppack->nmb_thispack;
+  const bool vertex = ppack->pz4c->layout.centering ==
+                      z4c::Z4cGridCentering::vertex;
 
   // only apply BCs unless periodic or shear_periodic
   if (pm->mesh_bcs[BoundaryFace::inner_x1] != BoundaryFlag::periodic
@@ -186,7 +190,10 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
       // apply physical boundaries to inner_x1
       switch (mb_bcs.d_view(m,BoundaryFace::inner_x1)) {
         case BoundaryFlag::axis:
-          if (!z4c::FillZ4cAxisGhostLine(u0, m, n, k, j, is, ng)) {
+          if (!(vertex
+                    ? z4c::FillCenteredZ4cAxisGhostLine<z4c::VertexCenteredZ4c>(
+                          u0, m, n, k, j, is, ng)
+                    : z4c::FillZ4cAxisGhostLine(u0, m, n, k, j, is, ng))) {
             Kokkos::abort("invalid packed Z4c component in axis parity fill");
           }
           break;
@@ -195,9 +202,9 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
             if (n==z4c::Z4c::I_Z4C_GXY || n==z4c::Z4c::I_Z4C_GXZ ||
                 n==z4c::Z4c::I_Z4C_AXY || n==z4c::Z4c::I_Z4C_AXZ ||
                 n==z4c::Z4c::I_Z4C_GAMX || n==z4c::Z4c::I_Z4C_BETAX) {
-              u0(m,n,k,j,is-i-1) = -u0(m,n,k,j,is+i);
+              u0(m,n,k,j,is-i-1) = -u0(m,n,k,j,is+i+(vertex ? 1 : 0));
             } else {
-              u0(m,n,k,j,is-i-1) =  u0(m,n,k,j,is+i);
+              u0(m,n,k,j,is-i-1) =  u0(m,n,k,j,is+i+(vertex ? 1 : 0));
             }
           }
           break;
@@ -225,9 +232,9 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
             if (n==z4c::Z4c::I_Z4C_GXY || n==z4c::Z4c::I_Z4C_GXZ ||
                 n==z4c::Z4c::I_Z4C_AXY || n==z4c::Z4c::I_Z4C_AXZ ||
                 n==z4c::Z4c::I_Z4C_GAMX || n==z4c::Z4c::I_Z4C_BETAX) {
-              u0(m,n,k,j,ie+i+1) = -u0(m,n,k,j,ie-i);
+              u0(m,n,k,j,ie+i+1) = -u0(m,n,k,j,ie-i-(vertex ? 1 : 0));
             } else {
-              u0(m,n,k,j,ie+i+1) =  u0(m,n,k,j,ie-i);
+              u0(m,n,k,j,ie+i+1) =  u0(m,n,k,j,ie-i-(vertex ? 1 : 0));
             }
           }
           break;
@@ -263,9 +270,9 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
             if (n==z4c::Z4c::I_Z4C_GXY || n==z4c::Z4c::I_Z4C_GYZ ||
                 n==z4c::Z4c::I_Z4C_AXY || n==z4c::Z4c::I_Z4C_AYZ ||
                 n==z4c::Z4c::I_Z4C_GAMY || n==z4c::Z4c::I_Z4C_BETAY) {
-              u0(m,n,k,js-j-1,i) = -u0(m,n,k,js+j,i);
+              u0(m,n,k,js-j-1,i) = -u0(m,n,k,js+j+(vertex ? 1 : 0),i);
             } else {
-              u0(m,n,k,js-j-1,i) =  u0(m,n,k,js+j,i);
+              u0(m,n,k,js-j-1,i) =  u0(m,n,k,js+j+(vertex ? 1 : 0),i);
             }
           }
           break;
@@ -293,9 +300,9 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
             if (n==z4c::Z4c::I_Z4C_GXY || n==z4c::Z4c::I_Z4C_GYZ ||
                 n==z4c::Z4c::I_Z4C_AXY || n==z4c::Z4c::I_Z4C_AYZ ||
                 n==z4c::Z4c::I_Z4C_GAMY || n==z4c::Z4c::I_Z4C_BETAY) {
-              u0(m,n,k,je+j+1,i) = -u0(m,n,k,je-j,i);
+              u0(m,n,k,je+j+1,i) = -u0(m,n,k,je-j-(vertex ? 1 : 0),i);
             } else {
-              u0(m,n,k,je+j+1,i) =  u0(m,n,k,je-j,i);
+              u0(m,n,k,je+j+1,i) =  u0(m,n,k,je-j-(vertex ? 1 : 0),i);
             }
           }
           break;
@@ -330,9 +337,9 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
           if (n==z4c::Z4c::I_Z4C_GXZ || n==z4c::Z4c::I_Z4C_GYZ ||
               n==z4c::Z4c::I_Z4C_AXZ || n==z4c::Z4c::I_Z4C_AYZ ||
               n==z4c::Z4c::I_Z4C_GAMZ || n==z4c::Z4c::I_Z4C_BETAZ) {
-            u0(m,n,ks-k-1,j,i) = -u0(m,n,ks+k,j,i);
+            u0(m,n,ks-k-1,j,i) = -u0(m,n,ks+k+(vertex ? 1 : 0),j,i);
           } else {
-            u0(m,n,ks-k-1,j,i) =  u0(m,n,ks+k,j,i);
+            u0(m,n,ks-k-1,j,i) =  u0(m,n,ks+k+(vertex ? 1 : 0),j,i);
           }
         }
         break;
@@ -360,9 +367,9 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
           if (n==z4c::Z4c::I_Z4C_GXZ || n==z4c::Z4c::I_Z4C_GYZ ||
               n==z4c::Z4c::I_Z4C_AXZ || n==z4c::Z4c::I_Z4C_AYZ ||
               n==z4c::Z4c::I_Z4C_GAMZ || n==z4c::Z4c::I_Z4C_BETAZ) {
-            u0(m,n,ke+k+1,j,i) = -u0(m,n,ke-k,j,i);
+            u0(m,n,ke+k+1,j,i) = -u0(m,n,ke-k-(vertex ? 1 : 0),j,i);
           } else {
-            u0(m,n,ke+k+1,j,i) =  u0(m,n,ke-k,j,i);
+            u0(m,n,ke+k+1,j,i) =  u0(m,n,ke-k-(vertex ? 1 : 0),j,i);
           }
         }
         break;

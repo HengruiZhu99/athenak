@@ -82,6 +82,7 @@ add_executable(
         mesh/meshblock_pack.cpp
         mesh/meshblock_tree.cpp
         mesh/mesh_refinement.cpp
+        mesh/mesh_refinement_vc.cpp
         mesh/refinement_criteria.cpp
 
         mhd/mhd.cpp

@@ -467,23 +467,34 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   Kokkos::Profiling::popRegion();
 
-  // Native VC arrays are real N+1 nodal allocations at this point. Do not attach
-  // the existing cell-centered boundary object until the deterministic VC boundary
-  // path is implemented and qualified.
-  if (layout.centering == Z4cGridCentering::vertex) {
+  // Dynamic/static multilevel VC is enabled only after the coarse/fine boundary path is
+  // attached. Uniform and same-level decomposed VC evolution uses MeshBoundaryValuesVC.
+  if (layout.centering == Z4cGridCentering::vertex &&
+      ppack->pmesh->multilevel) {
     std::cerr << "### FATAL ERROR in " << __FILE__
-              << ": native vertex Z4c storage extents verified, but deterministic "
-                 "vertex boundary communication is not enabled yet"
+              << ": native vertex Z4c coarse/fine boundary communication is not "
+                 "enabled yet"
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
   // allocate boundary buffers for conserved (cell-centered) variables
   Kokkos::Profiling::pushRegion("Buffers");
-  pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
-  pbval_u->InitializeBuffers((nz4c));
-  pbval_weyl = new MeshBoundaryValuesCC(ppack, pin, true);
-  pbval_weyl->InitializeBuffers((2));
+  if (layout.centering == Z4cGridCentering::vertex) {
+    const VertexBoundaryLayout boundary_layout{
+        layout.ng, layout.is, layout.ie, layout.js, layout.je,
+        layout.ks, layout.ke, 0, layout.n1 - 1, 0, layout.n2 - 1,
+        0, layout.n3 - 1, layout.nx2 <= 1, layout.nx3 <= 1};
+    pbval_u_vc = new MeshBoundaryValuesVC(ppack, pin, boundary_layout);
+    pbval_u_vc->InitializeBuffers(nz4c);
+    pbval_weyl_vc = new MeshBoundaryValuesVC(ppack, pin, boundary_layout);
+    pbval_weyl_vc->InitializeBuffers(2);
+  } else {
+    pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
+    pbval_u->InitializeBuffers((nz4c));
+    pbval_weyl = new MeshBoundaryValuesCC(ppack, pin, true);
+    pbval_weyl->InitializeBuffers((2));
+  }
   Kokkos::Profiling::popRegion();
 
   // wave extraction spheres
@@ -541,10 +552,20 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     }
   }
   if (opt.amr_jump_diagnostic.enabled) {
+    if (layout.centering == Z4cGridCentering::vertex) {
+      std::cerr << "### FATAL ERROR: the CC AMR-jump diagnostic is not valid for "
+                   "native VC storage" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
     amr_jump_diagnostic = std::make_unique<AMRJumpDiagnosticRuntime>(
         pmy_pack, opt.amr_jump_diagnostic);
   }
   if (opt.chi_parent_provenance.enabled) {
+    if (layout.centering == Z4cGridCentering::vertex) {
+      std::cerr << "### FATAL ERROR: the CC chi-parent provenance diagnostic is not "
+                   "valid for native VC storage" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
     chi_parent_provenance = std::make_unique<ChiParentProvenanceRuntime>(
         pmy_pack, opt.chi_parent_provenance);
   }
@@ -790,7 +811,9 @@ void Z4c::AlgConstr(MeshBlockPack *pmbp, Driver *driver, const int stage) {
 Z4c::~Z4c() {
   delete[] psi_out;
   delete pbval_weyl;
+  delete pbval_weyl_vc;
   delete pbval_u;
+  delete pbval_u_vc;
   delete pamr;
 }
 

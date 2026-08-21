@@ -135,7 +135,7 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
   }
 
   // count number of cell- and face-centered variables communicated depending on physics
-  int ncc_tosend=0, nfc_tosend=0;
+  int ncc_tosend=0, nvc_tosend=0, nfc_tosend=0;
   if (pmy_mesh->pmb_pack->phydro != nullptr) {
     ncc_tosend += (pmy_mesh->pmb_pack->phydro->nhydro +
                    pmy_mesh->pmb_pack->phydro->nscalars);
@@ -149,7 +149,12 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
     ncc_tosend += (pmy_mesh->pmb_pack->prad->prgeo->nangles);
   }
   if (pmy_mesh->pmb_pack->pz4c != nullptr) {
-    ncc_tosend += (pmy_mesh->pmb_pack->pz4c->nz4c);
+    if (pmy_mesh->pmb_pack->pz4c->layout.centering ==
+        z4c::Z4cGridCentering::vertex) {
+      nvc_tosend += pmy_mesh->pmb_pack->pz4c->nz4c;
+    } else {
+      ncc_tosend += pmy_mesh->pmb_pack->pz4c->nz4c;
+    }
   }
 
   // Step 2. (InitRecvAMR)
@@ -173,6 +178,8 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
   if (pmy_mesh->three_d) {
     kl -= ng; ku += ng;
   }
+  z4c::Z4cGridLayout vlayout;
+  if (nvc_tosend > 0) vlayout = pmy_mesh->pmb_pack->pz4c->layout;
 
   int rb_idx = 0;   // recv buffer index
   for (int newm=nmbs; newm<=nmbe; newm++) {
@@ -195,9 +202,24 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
           recvbuf.h_view(rb_idx).bks = cks + ox3*cnx3;
           recvbuf.h_view(rb_idx).bke = cke + ox3*cnx3;
           recvbuf.h_view(rb_idx).cntcc = cnx1*cnx2*cnx3;
+          recvbuf.h_view(rb_idx).vbis = vlayout.is + ox1 * vlayout.cnx1;
+          recvbuf.h_view(rb_idx).vbie = recvbuf.h_view(rb_idx).vbis + vlayout.cnx1;
+          recvbuf.h_view(rb_idx).vbjs = vlayout.nx2 <= 1
+              ? 0 : vlayout.js + ox2 * vlayout.cnx2;
+          recvbuf.h_view(rb_idx).vbje = vlayout.nx2 <= 1
+              ? 0 : recvbuf.h_view(rb_idx).vbjs + vlayout.cnx2;
+          recvbuf.h_view(rb_idx).vbks = vlayout.nx3 <= 1
+              ? 0 : vlayout.ks + ox3 * vlayout.cnx3;
+          recvbuf.h_view(rb_idx).vbke = vlayout.nx3 <= 1
+              ? 0 : recvbuf.h_view(rb_idx).vbks + vlayout.cnx3;
+          recvbuf.h_view(rb_idx).cntvc =
+              (recvbuf.h_view(rb_idx).vbie - recvbuf.h_view(rb_idx).vbis + 1) *
+              (recvbuf.h_view(rb_idx).vbje - recvbuf.h_view(rb_idx).vbjs + 1) *
+              (recvbuf.h_view(rb_idx).vbke - recvbuf.h_view(rb_idx).vbks + 1);
           recvbuf.h_view(rb_idx).cntfc = 3*cnx1*cnx2*cnx3 + cnx2*cnx3 +
                                           cnx1*cnx3 + cnx1*cnx2;
           recvbuf.h_view(rb_idx).cnt   = ncc_tosend*(recvbuf.h_view(rb_idx).cntcc) +
+                                         nvc_tosend*(recvbuf.h_view(rb_idx).cntvc) +
                                          nfc_tosend*(recvbuf.h_view(rb_idx).cntfc);
           recvbuf.h_view(rb_idx).lid   = newm - nmbs;
           recvbuf.h_view(rb_idx).use_coarse = false;
@@ -219,8 +241,18 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
         recvbuf.h_view(rb_idx).bks = ks;
         recvbuf.h_view(rb_idx).bke = ke;
         recvbuf.h_view(rb_idx).cntcc = nx1*nx2*nx3;
+        recvbuf.h_view(rb_idx).vbis = vlayout.is;
+        recvbuf.h_view(rb_idx).vbie = vlayout.ie;
+        recvbuf.h_view(rb_idx).vbjs = vlayout.js;
+        recvbuf.h_view(rb_idx).vbje = vlayout.je;
+        recvbuf.h_view(rb_idx).vbks = vlayout.ks;
+        recvbuf.h_view(rb_idx).vbke = vlayout.ke;
+        recvbuf.h_view(rb_idx).cntvc =
+            (vlayout.ie - vlayout.is + 1) * (vlayout.je - vlayout.js + 1) *
+            (vlayout.ke - vlayout.ks + 1);
         recvbuf.h_view(rb_idx).cntfc = 3*nx1*nx2*nx3 + nx2*nx3 + nx1*nx3 + nx1*nx2;
         recvbuf.h_view(rb_idx).cnt = ncc_tosend*(recvbuf.h_view(rb_idx).cntcc) +
+                                     nvc_tosend*(recvbuf.h_view(rb_idx).cntvc) +
                                      nfc_tosend*(recvbuf.h_view(rb_idx).cntfc);
         recvbuf.h_view(rb_idx).lid = newm - nmbs;
         recvbuf.h_view(rb_idx).use_coarse = false;
@@ -243,9 +275,24 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
         recvbuf.h_view(rb_idx).bks = kl;
         recvbuf.h_view(rb_idx).bke = ku;
         recvbuf.h_view(rb_idx).cntcc = (iu-il+1)*(ju-jl+1)*(ku-kl+1);
+        recvbuf.h_view(rb_idx).vbis = vlayout.cis - vlayout.coarse_ng;
+        recvbuf.h_view(rb_idx).vbie = vlayout.cie + vlayout.coarse_ng;
+        recvbuf.h_view(rb_idx).vbjs = vlayout.nx2 <= 1
+            ? 0 : vlayout.cjs - vlayout.coarse_ng;
+        recvbuf.h_view(rb_idx).vbje = vlayout.nx2 <= 1
+            ? 0 : vlayout.cje + vlayout.coarse_ng;
+        recvbuf.h_view(rb_idx).vbks = vlayout.nx3 <= 1
+            ? 0 : vlayout.cks - vlayout.coarse_ng;
+        recvbuf.h_view(rb_idx).vbke = vlayout.nx3 <= 1
+            ? 0 : vlayout.cke + vlayout.coarse_ng;
+        recvbuf.h_view(rb_idx).cntvc =
+            (recvbuf.h_view(rb_idx).vbie - recvbuf.h_view(rb_idx).vbis + 1) *
+            (recvbuf.h_view(rb_idx).vbje - recvbuf.h_view(rb_idx).vbjs + 1) *
+            (recvbuf.h_view(rb_idx).vbke - recvbuf.h_view(rb_idx).vbks + 1);
         recvbuf.h_view(rb_idx).cntfc = (iu-il+2)*(ju-jl+1)*(ku-kl+1) +
              (iu-il+1)*(ju-jl+2)*(ku-kl+1) + (iu-il+1)*(ju-jl+1)*(ku-kl+2);
         recvbuf.h_view(rb_idx).cnt = ncc_tosend*(recvbuf.h_view(rb_idx).cntcc) +
+                                     nvc_tosend*(recvbuf.h_view(rb_idx).cntvc) +
                                      nfc_tosend*(recvbuf.h_view(rb_idx).cntfc);
         recvbuf.h_view(rb_idx).lid = newm - nmbs;
         recvbuf.h_view(rb_idx).use_coarse = true;
@@ -387,7 +434,7 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   }
 
   // count number of cell- and face-centered variables communicated depending on physics
-  int ncc_tosend=0, nfc_tosend=0;
+  int ncc_tosend=0, nvc_tosend=0, nfc_tosend=0;
   if (pmy_mesh->pmb_pack->phydro != nullptr) {
     ncc_tosend += (pmy_mesh->pmb_pack->phydro->nhydro +
                    pmy_mesh->pmb_pack->phydro->nscalars);
@@ -401,7 +448,12 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
     ncc_tosend += (pmy_mesh->pmb_pack->prad->prgeo->nangles);
   }
   if (pmy_mesh->pmb_pack->pz4c != nullptr) {
-    ncc_tosend += (pmy_mesh->pmb_pack->pz4c->nz4c);
+    if (pmy_mesh->pmb_pack->pz4c->layout.centering ==
+        z4c::Z4cGridCentering::vertex) {
+      nvc_tosend += pmy_mesh->pmb_pack->pz4c->nz4c;
+    } else {
+      ncc_tosend += pmy_mesh->pmb_pack->pz4c->nz4c;
+    }
   }
 
   // Step 2. (PackAndSendAMR)
@@ -425,6 +477,8 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   if (pmy_mesh->three_d) {
     kl -= ng; ku += ng;
   }
+  z4c::Z4cGridLayout vlayout;
+  if (nvc_tosend > 0) vlayout = pmy_mesh->pmb_pack->pz4c->layout;
 
   int sb_idx = 0;   // send buffer index
   for (int oldm=ombs; oldm<=ombe; oldm++) {
@@ -447,9 +501,26 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
           sendbuf.h_view(sb_idx).bks = kl + ox3*cnx3;
           sendbuf.h_view(sb_idx).bke = ku + ox3*cnx3;
           sendbuf.h_view(sb_idx).cntcc = (iu-il+1)*(ju-jl+1)*(ku-kl+1);
+          sendbuf.h_view(sb_idx).vbis =
+              vlayout.is + ox1 * vlayout.cnx1 - vlayout.coarse_ng;
+          sendbuf.h_view(sb_idx).vbie =
+              vlayout.is + (ox1 + 1) * vlayout.cnx1 + vlayout.coarse_ng;
+          sendbuf.h_view(sb_idx).vbjs = vlayout.nx2 <= 1 ? 0
+              : vlayout.js + ox2 * vlayout.cnx2 - vlayout.coarse_ng;
+          sendbuf.h_view(sb_idx).vbje = vlayout.nx2 <= 1 ? 0
+              : vlayout.js + (ox2 + 1) * vlayout.cnx2 + vlayout.coarse_ng;
+          sendbuf.h_view(sb_idx).vbks = vlayout.nx3 <= 1 ? 0
+              : vlayout.ks + ox3 * vlayout.cnx3 - vlayout.coarse_ng;
+          sendbuf.h_view(sb_idx).vbke = vlayout.nx3 <= 1 ? 0
+              : vlayout.ks + (ox3 + 1) * vlayout.cnx3 + vlayout.coarse_ng;
+          sendbuf.h_view(sb_idx).cntvc =
+              (sendbuf.h_view(sb_idx).vbie - sendbuf.h_view(sb_idx).vbis + 1) *
+              (sendbuf.h_view(sb_idx).vbje - sendbuf.h_view(sb_idx).vbjs + 1) *
+              (sendbuf.h_view(sb_idx).vbke - sendbuf.h_view(sb_idx).vbks + 1);
           sendbuf.h_view(sb_idx).cntfc = (iu-il+2)*(ju-jl+1)*(ku-kl+1) +
                (iu-il+1)*(ju-jl+2)*(ku-kl+1) + (iu-il+1)*(ju-jl+1)*(ku-kl+2);
           sendbuf.h_view(sb_idx).cnt   = ncc_tosend*(sendbuf.h_view(sb_idx).cntcc) +
+                                         nvc_tosend*(sendbuf.h_view(sb_idx).cntvc) +
                                          nfc_tosend*(sendbuf.h_view(sb_idx).cntfc);
           sendbuf.h_view(sb_idx).lid   = oldm - ombs;
           sendbuf.h_view(sb_idx).use_coarse = false;
@@ -472,8 +543,18 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
           sendbuf.h_view(sb_idx).bks = ks;
           sendbuf.h_view(sb_idx).bke = ke;
           sendbuf.h_view(sb_idx).cntcc = nx1*nx2*nx3;
+          sendbuf.h_view(sb_idx).vbis = vlayout.is;
+          sendbuf.h_view(sb_idx).vbie = vlayout.ie;
+          sendbuf.h_view(sb_idx).vbjs = vlayout.js;
+          sendbuf.h_view(sb_idx).vbje = vlayout.je;
+          sendbuf.h_view(sb_idx).vbks = vlayout.ks;
+          sendbuf.h_view(sb_idx).vbke = vlayout.ke;
+          sendbuf.h_view(sb_idx).cntvc =
+              (vlayout.ie - vlayout.is + 1) * (vlayout.je - vlayout.js + 1) *
+              (vlayout.ke - vlayout.ks + 1);
           sendbuf.h_view(sb_idx).cntfc = 3*nx1*nx2*nx3 + nx2*nx3 + nx1*nx3 + nx1*nx2;
           sendbuf.h_view(sb_idx).cnt = ncc_tosend*(sendbuf.h_view(sb_idx).cntcc) +
+                                       nvc_tosend*(sendbuf.h_view(sb_idx).cntvc) +
                                        nfc_tosend*(sendbuf.h_view(sb_idx).cntfc);
           sendbuf.h_view(sb_idx).lid = oldm - ombs;
           sendbuf.h_view(sb_idx).use_coarse = false;
@@ -496,10 +577,21 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
           sendbuf.h_view(sb_idx).bks = cks;
           sendbuf.h_view(sb_idx).bke = cke;
           sendbuf.h_view(sb_idx).cntcc = cnx1*cnx2*cnx3;
+          sendbuf.h_view(sb_idx).vbis = vlayout.cis;
+          sendbuf.h_view(sb_idx).vbie = vlayout.cie;
+          sendbuf.h_view(sb_idx).vbjs = vlayout.cjs;
+          sendbuf.h_view(sb_idx).vbje = vlayout.cje;
+          sendbuf.h_view(sb_idx).vbks = vlayout.cks;
+          sendbuf.h_view(sb_idx).vbke = vlayout.cke;
+          sendbuf.h_view(sb_idx).cntvc =
+              (vlayout.cie - vlayout.cis + 1) *
+              (vlayout.cje - vlayout.cjs + 1) *
+              (vlayout.cke - vlayout.cks + 1);
           sendbuf.h_view(sb_idx).cntfc = 3*cnx1*cnx2*cnx3 + cnx2*cnx3 + cnx1*cnx3
                                           + cnx1*cnx2;
           sendbuf.h_view(sb_idx).use_coarse = true;
           sendbuf.h_view(sb_idx).cnt = ncc_tosend*(sendbuf.h_view(sb_idx).cntcc) +
+                                       nvc_tosend*(sendbuf.h_view(sb_idx).cntvc) +
                                        nfc_tosend*(sendbuf.h_view(sb_idx).cntfc);
           sendbuf.h_view(sb_idx).lid = oldm - ombs;
           if (sb_idx > 0) {
@@ -525,7 +617,7 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   radiation::Radiation* prad = pmy_mesh->pmb_pack->prad;
   z4c::Z4c* pz4c = pmy_mesh->pmb_pack->pz4c;
 
-  int ncc_sent = 0, nfc_sent = 0;
+  int ncc_sent = 0, nvc_sent = 0, nfc_sent = 0;
   if (phydro != nullptr) {
     PackAMRBuffersCC(phydro->u0, phydro->coarse_u0, ncc_sent, nfc_sent);
     ncc_sent += phydro->nhydro + phydro->nscalars;
@@ -533,7 +625,8 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   if (pmhd != nullptr) {
     PackAMRBuffersCC(pmhd->u0, pmhd->coarse_u0, ncc_sent, nfc_sent);
     ncc_sent += pmhd->nmhd + pmhd->nscalars;
-    PackAMRBuffersFC(pmhd->b0, pmhd->coarse_b0, ncc_sent, nfc_sent);
+    PackAMRBuffersFC(pmhd->b0, pmhd->coarse_b0,
+                     ncc_sent, nvc_sent, nfc_sent);
     nfc_sent += 1;
   }
   if (prad != nullptr) {
@@ -541,8 +634,14 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
     ncc_sent += prad->prgeo->nangles;
   }
   if (pz4c != nullptr) {
-    PackAMRBuffersCC(pz4c->u0, pz4c->coarse_u0, ncc_sent, nfc_sent);
-    ncc_sent += pz4c->nz4c;
+    if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
+      PackAMRBuffersVC(pz4c->u0, pz4c->coarse_u0,
+                       ncc_sent, nvc_sent, nfc_sent);
+      nvc_sent += pz4c->nz4c;
+    } else {
+      PackAMRBuffersCC(pz4c->u0, pz4c->coarse_u0, ncc_sent, nfc_sent);
+      ncc_sent += pz4c->nz4c;
+    }
   }
 
   // Step 4. (PackAndSendAMR)
@@ -677,11 +776,49 @@ void MeshRefinement::PackAMRBuffersCC(DvceArray5D<Real> &a, DvceArray5D<Real> &c
 }
 
 //----------------------------------------------------------------------------------------
+//! \brief Pack native vertex-centered AMR/load-balance data using its own geometry.
+
+void MeshRefinement::PackAMRBuffersVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
+                                      int ncc, int nvc, int nfc) {
+#if MPI_PARALLEL_ENABLED
+  auto &sbuf = sendbuf;
+  auto &sdata = send_data;
+  const int nvar = a.extent_int(1);
+  Kokkos::TeamPolicy<> policy(DevExeSpace(), nmb_send * nvar, Kokkos::AUTO);
+  Kokkos::parallel_for("Pack native VC AMR buffers", policy,
+      KOKKOS_LAMBDA(TeamMember_t member) {
+        const int n = member.league_rank() / nvar;
+        const int v = member.league_rank() % nvar;
+        const int il = sbuf.d_view(n).vbis;
+        const int jl = sbuf.d_view(n).vbjs;
+        const int kl = sbuf.d_view(n).vbks;
+        const int ni = sbuf.d_view(n).vbie - il + 1;
+        const int nj = sbuf.d_view(n).vbje - jl + 1;
+        const int nk = sbuf.d_view(n).vbke - kl + 1;
+        const int cells = ni * nj * nk;
+        const int m = sbuf.d_view(n).lid;
+        const int offset = sbuf.d_view(n).offset +
+            ncc * sbuf.d_view(n).cntcc + nvc * sbuf.d_view(n).cntvc +
+            nfc * sbuf.d_view(n).cntfc;
+        Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, cells),
+            [&](const int index) {
+              const int i = il + index % ni;
+              const int j = jl + (index / ni) % nj;
+              const int k = kl + index / (ni * nj);
+              const int destination = offset + index + cells * v;
+              sdata(destination) = sbuf.d_view(n).use_coarse
+                  ? ca(m, v, k, j, i) : a(m, v, k, j, i);
+            });
+      });
+#endif
+}
+
+//----------------------------------------------------------------------------------------
 //! \fn void MeshRefinement::PackAMRBuffersFC()
 //! \brief Packs face-centered data into AMR communication buffers for all MBs being sent
 
 void MeshRefinement::PackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real> &cb,
-                                      int ncc, int nfc) {
+                                      int ncc, int nvc, int nfc) {
 #if MPI_PARALLEL_ENABLED
   auto &sbuf = sendbuf;
   auto &sdata = send_data;
@@ -703,7 +840,8 @@ void MeshRefinement::PackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real
     // pack x1 component
     if (v==0) {
       const int offset = sbuf.d_view(n).offset +
-                         (ncc*sbuf.d_view(n).cntcc + nfc*sbuf.d_view(n).cntfc);
+                         (ncc*sbuf.d_view(n).cntcc +
+                          nvc*sbuf.d_view(n).cntvc + nfc*sbuf.d_view(n).cntfc);
       const int ni = nicc + 1;  // add b.x1f at (ie+1)
       const int nj = njcc;
       const int nk = nkcc;
@@ -729,7 +867,8 @@ void MeshRefinement::PackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real
     // pack x2 component
     } else if (v==1) {
       const int offset = sbuf.d_view(n).offset +
-                         (ncc*sbuf.d_view(n).cntcc + nfc*sbuf.d_view(n).cntfc) +
+                         (ncc*sbuf.d_view(n).cntcc +
+                          nvc*sbuf.d_view(n).cntvc + nfc*sbuf.d_view(n).cntfc) +
                          (nicc+1)*njcc*nkcc;
       const int ni = nicc;
       const int nj = njcc + 1;  // add b.x2f at (je+1)
@@ -756,7 +895,8 @@ void MeshRefinement::PackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real
     // pack x3 component
     } else {
       const int offset = sbuf.d_view(n).offset +
-                         (ncc*sbuf.d_view(n).cntcc + nfc*sbuf.d_view(n).cntfc) +
+                         (ncc*sbuf.d_view(n).cntcc +
+                          nvc*sbuf.d_view(n).cntvc + nfc*sbuf.d_view(n).cntfc) +
                          (nicc+1)*njcc*nkcc + nicc*(njcc+1)*nkcc;
       const int ni = nicc;
       const int nj = njcc;
@@ -814,7 +954,7 @@ void MeshRefinement::ClearRecvAndUnpackAMR() {
   radiation::Radiation* prad = pmy_mesh->pmb_pack->prad;
   z4c::Z4c* pz4c = pmy_mesh->pmb_pack->pz4c;
 
-  int ncc_recv=0, nfc_recv=0;
+  int ncc_recv=0, nvc_recv=0, nfc_recv=0;
 
   if (phydro != nullptr) {
     UnpackAMRBuffersCC(phydro->u0, phydro->coarse_u0, ncc_recv, nfc_recv);
@@ -823,7 +963,8 @@ void MeshRefinement::ClearRecvAndUnpackAMR() {
   if (pmhd != nullptr) {
     UnpackAMRBuffersCC(pmhd->u0, pmhd->coarse_u0, ncc_recv, nfc_recv);
     ncc_recv += pmhd->nmhd + pmhd->nscalars;
-    UnpackAMRBuffersFC(pmhd->b0, pmhd->coarse_b0, ncc_recv, nfc_recv);
+    UnpackAMRBuffersFC(pmhd->b0, pmhd->coarse_b0,
+                       ncc_recv, nvc_recv, nfc_recv);
     nfc_recv += 1;
   }
   if (prad != nullptr) {
@@ -831,8 +972,14 @@ void MeshRefinement::ClearRecvAndUnpackAMR() {
     ncc_recv += prad->prgeo->nangles;
   }
   if (pz4c != nullptr) {
-    UnpackAMRBuffersCC(pz4c->u0, pz4c->coarse_u0, ncc_recv, nfc_recv);
-    ncc_recv += pz4c->nz4c;
+    if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
+      UnpackAMRBuffersVC(pz4c->u0, pz4c->coarse_u0,
+                         ncc_recv, nvc_recv, nfc_recv);
+      nvc_recv += pz4c->nz4c;
+    } else {
+      UnpackAMRBuffersCC(pz4c->u0, pz4c->coarse_u0, ncc_recv, nfc_recv);
+      ncc_recv += pz4c->nz4c;
+    }
   }
 #endif
   return;
@@ -891,12 +1038,53 @@ void MeshRefinement::UnpackAMRBuffersCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
 }
 
 //----------------------------------------------------------------------------------------
+//! \brief Unpack native vertex-centered AMR/load-balance data.
+
+void MeshRefinement::UnpackAMRBuffersVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
+                                        int ncc, int nvc, int nfc) {
+#if MPI_PARALLEL_ENABLED
+  auto &rbuf = recvbuf;
+  auto &rdata = recv_data;
+  const int nvar = a.extent_int(1);
+  Kokkos::TeamPolicy<> policy(DevExeSpace(), nmb_recv * nvar, Kokkos::AUTO);
+  Kokkos::parallel_for("Unpack native VC AMR buffers", policy,
+      KOKKOS_LAMBDA(TeamMember_t member) {
+        const int n = member.league_rank() / nvar;
+        const int v = member.league_rank() % nvar;
+        const int il = rbuf.d_view(n).vbis;
+        const int jl = rbuf.d_view(n).vbjs;
+        const int kl = rbuf.d_view(n).vbks;
+        const int ni = rbuf.d_view(n).vbie - il + 1;
+        const int nj = rbuf.d_view(n).vbje - jl + 1;
+        const int nk = rbuf.d_view(n).vbke - kl + 1;
+        const int cells = ni * nj * nk;
+        const int m = rbuf.d_view(n).lid;
+        const int offset = rbuf.d_view(n).offset +
+            ncc * rbuf.d_view(n).cntcc + nvc * rbuf.d_view(n).cntvc +
+            nfc * rbuf.d_view(n).cntfc;
+        Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, cells),
+            [&](const int index) {
+              const int i = il + index % ni;
+              const int j = jl + (index / ni) % nj;
+              const int k = kl + index / (ni * nj);
+              const Real value = rdata(offset + index + cells * v);
+              if (rbuf.d_view(n).use_coarse) {
+                ca(m, v, k, j, i) = value;
+              } else {
+                a(m, v, k, j, i) = value;
+              }
+            });
+      });
+#endif
+}
+
+//----------------------------------------------------------------------------------------
 //! \fn void MeshRefinement::UnpackAMRBuffersFC()
 //! \brief Unpacks face-centered data from AMR communication buffers into appropriate
 //! coarse or fine arrays for all MBs received during load balancing.
 
 void MeshRefinement::UnpackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real> &cb,
-                                        int ncc, int nfc) {
+                                        int ncc, int nvc, int nfc) {
 #if MPI_PARALLEL_ENABLED
   auto &rbuf = recvbuf;
   auto &rdata = recv_data;
@@ -918,7 +1106,8 @@ void MeshRefinement::UnpackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Re
     // unpack x1 component
     if (v==0) {
       const int offset = rbuf.d_view(n).offset +
-                         (ncc*rbuf.d_view(n).cntcc + nfc*rbuf.d_view(n).cntfc);
+                         (ncc*rbuf.d_view(n).cntcc +
+                          nvc*rbuf.d_view(n).cntvc + nfc*rbuf.d_view(n).cntfc);
       const int ni = nicc + 1;  // add b.x1f at (ie+1)
       const int nj = njcc;
       const int nk = nkcc;
@@ -944,7 +1133,8 @@ void MeshRefinement::UnpackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Re
     // unpack x2 component
     } else if (v==1) {
       const int offset = rbuf.d_view(n).offset +
-                         (ncc*rbuf.d_view(n).cntcc + nfc*rbuf.d_view(n).cntfc) +
+                         (ncc*rbuf.d_view(n).cntcc +
+                          nvc*rbuf.d_view(n).cntvc + nfc*rbuf.d_view(n).cntfc) +
                          (nicc+1)*njcc*nkcc;
       const int ni = nicc;
       const int nj = njcc + 1;  // add b.x2f at (je+1)
@@ -971,7 +1161,8 @@ void MeshRefinement::UnpackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Re
     // unpack x3 component
     } else {
       const int offset = rbuf.d_view(n).offset +
-                         (ncc*rbuf.d_view(n).cntcc + nfc*rbuf.d_view(n).cntfc) +
+                         (ncc*rbuf.d_view(n).cntcc +
+                          nvc*rbuf.d_view(n).cntvc + nfc*rbuf.d_view(n).cntfc) +
                          (nicc+1)*njcc*nkcc + nicc*(njcc+1)*nkcc;
       const int ni = nicc;
       const int nj = njcc;

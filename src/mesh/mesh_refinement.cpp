@@ -240,7 +240,7 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
   // allocate fixed-length send/recv data buffers as work around on Aurora and other
   // machines where frequent reallocation of Kokkos:Views causes memory issues
   // count number of cell- and face-centered variables communicated depending on physics
-  int ncc_tosend=0, nfc_tosend=0;
+  int ncc_tosend=0, nvc_tosend=0, nfc_tosend=0;
   if (pm->pmb_pack->phydro != nullptr) {
     ncc_tosend += (pm->pmb_pack->phydro->nhydro +
                    pm->pmb_pack->phydro->nscalars);
@@ -254,14 +254,25 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
     ncc_tosend += (pm->pmb_pack->prad->prgeo->nangles);
   }
   if (pm->pmb_pack->pz4c != nullptr) {
-    ncc_tosend += (pm->pmb_pack->pz4c->nz4c);
+    if (pm->pmb_pack->pz4c->layout.centering ==
+        z4c::Z4cGridCentering::vertex) {
+      nvc_tosend += pm->pmb_pack->pz4c->nz4c;
+    } else {
+      ncc_tosend += pm->pmb_pack->pz4c->nz4c;
+    }
   }
   int nmb = std::max((pm->pmb_pack->nmb_thispack), (pm->nmb_maxperrank));
   // number of cells per MB, including ghost zones
   int ncells = (pm->mb_indcs.nx1 + 2*pm->mb_indcs.ng);
   if (pm->multi_d) ncells *= (pm->mb_indcs.nx2 + 2*pm->mb_indcs.ng);
   if (pm->three_d) ncells *= (pm->mb_indcs.nx3 + 2*pm->mb_indcs.ng);
-  int ndata = nmb*(ncc_tosend + nfc_tosend)*ncells;
+  int vcells = 1;
+  if (nvc_tosend > 0) {
+    const auto &layout = pm->pmb_pack->pz4c->layout;
+    vcells = layout.n1 * layout.n2 * layout.n3;
+  }
+  int ndata = nmb * ((ncc_tosend + nfc_tosend) * ncells +
+                     nvc_tosend * vcells);
   Kokkos::realloc(recv_data, ndata);
   Kokkos::realloc(send_data, ndata);
 #endif
@@ -771,7 +782,11 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
       DerefineCCSameRank(prad->i0, prad->coarse_i0);
     }
     if (pz4c != nullptr) {
-      DerefineCCSameRank(pz4c->u0, pz4c->coarse_u0);
+      if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
+        DerefineVCSameRank(pz4c->u0, pz4c->coarse_u0);
+      } else {
+        DerefineCCSameRank(pz4c->u0, pz4c->coarse_u0);
+      }
     }
   }
 
@@ -789,7 +804,11 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     CopyCC(prad->i0);
   }
   if (pz4c != nullptr) {
-    CopyCC(pz4c->u0);
+    if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
+      CopyVC(pz4c->u0);
+    } else {
+      CopyCC(pz4c->u0);
+    }
   } else if (padm != nullptr) {
     CopyCC(padm->u_adm);
   }
@@ -808,7 +827,11 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
       CopyForRefinementCC(prad->i0, prad->coarse_i0);
     }
     if (pz4c != nullptr) {
-      CopyForRefinementCC(pz4c->u0, pz4c->coarse_u0);
+      if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
+        CopyForRefinementVC(pz4c->u0, pz4c->coarse_u0);
+      } else {
+        CopyForRefinementCC(pz4c->u0, pz4c->coarse_u0);
+      }
     }
   }
 
@@ -843,7 +866,11 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
       RefineCC(new_to_old, prad->i0, prad->coarse_i0);
     }
     if (pz4c != nullptr) {
-      RefineCC(new_to_old, pz4c->u0, pz4c->coarse_u0, true);
+      if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
+        RefineVC(new_to_old, pz4c->u0, pz4c->coarse_u0);
+      } else {
+        RefineCC(new_to_old, pz4c->u0, pz4c->coarse_u0, true);
+      }
     }
   }
 

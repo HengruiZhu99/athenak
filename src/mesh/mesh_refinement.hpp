@@ -29,7 +29,8 @@ inline int CreateAMR_MPI_Tag(int lid, int ox1, int ox2, int ox3) {
 #if MPI_PARALLEL_ENABLED
 struct AMRBufferData {
   int bis, bie, bjs, bje, bks, bke;  // start/end indices of data to be packed/unpacked
-  int cntcc, cntfc;          // number of CC and FC array elements to be sent/recv per var
+  int vbis, vbie, vbjs, vbje, vbks, vbke;  // separate native VC bounds
+  int cntcc, cntvc, cntfc;   // CC, VC, and FC elements sent/recv per variable
   int cnt;                   // total number of elements stored in buffer incl all vars
   int offset=0;              // starting index of data for this buffer
   int lid;                   // local ID (gid - gids) of MeshBlock on this rank
@@ -109,19 +110,25 @@ class MeshRefinement {
   void RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, int ndel);
 
   void DerefineCCSameRank(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
+  void DerefineVCSameRank(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
   void DerefineFCSameRank(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real> &cb);
 
   void CopyCC(DvceArray5D<Real> &a);
+  void CopyVC(DvceArray5D<Real> &a);
   void CopyFC(DvceFaceFld4D<Real> &b);
 
   void CopyForRefinementCC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
+  void CopyForRefinementVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
   void CopyForRefinementFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real> &cb);
 
   void RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
                 bool is_z4c=false);
+  void RefineVC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
+                DvceArray5D<Real> &ca);
   void RefineFC(DualArray1D<int> &n2o, DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real> &cb);
 
   void RestrictCC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca, bool is_z4c=false);
+  void RestrictVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
   void RestrictFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real> &cb);
   void HighOrderRestrictCC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
 
@@ -129,10 +136,16 @@ class MeshRefinement {
   void InitRecvAMR(int nleaf);
   void PackAndSendAMR(int nleaf);
   void PackAMRBuffersCC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca, int ncc, int nfc);
-  void PackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real> &cb, int ncc,int nfc);
+  void PackAMRBuffersVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
+                        int ncc, int nvc, int nfc);
+  void PackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real> &cb,
+                        int ncc, int nvc, int nfc);
   void ClearRecvAndUnpackAMR();
   void UnpackAMRBuffersCC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca, int ncc,int nfc);
-  void UnpackAMRBuffersFC(DvceFaceFld4D<Real> &b,DvceFaceFld4D<Real> &cb,int ncc,int nfc);
+  void UnpackAMRBuffersVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
+                          int ncc, int nvc, int nfc);
+  void UnpackAMRBuffersFC(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real> &cb,
+                          int ncc, int nvc, int nfc);
   void ClearSendAMR();
 
   // initialize interpolation weights

@@ -31,6 +31,7 @@
 #include "z4c/fastflow.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_vertex_topology.hpp"
 #include "tasklist/numerical_relativity.hpp"
 #include "z4c/cce/cce.hpp"
 
@@ -141,7 +142,8 @@ void Z4c::QueueZ4cTasks() {
 //  receive status flags to waiting (with or without MPI) for Wave variables.
 
 TaskStatus Z4c::InitRecv(Driver *pdrive, int stage) {
-  TaskStatus tstat = pbval_u->InitRecv(nz4c);
+  TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
+      ? pbval_u_vc->InitRecv(nz4c) : pbval_u->InitRecv(nz4c);
   if (tstat != TaskStatus::complete) return tstat;
   return tstat;
 }
@@ -151,7 +153,8 @@ TaskStatus Z4c::InitRecv(Driver *pdrive, int stage) {
 //! \brief Waits for all MPI receives to complete before allowing execution to continue
 
 TaskStatus Z4c::ClearRecv(Driver *pdrive, int stage) {
-  TaskStatus tstat = pbval_u->ClearRecv();
+  TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
+      ? pbval_u_vc->ClearRecv() : pbval_u->ClearRecv();
   if (tstat != TaskStatus::complete) return tstat;
   return tstat;
 }
@@ -161,7 +164,8 @@ TaskStatus Z4c::ClearRecv(Driver *pdrive, int stage) {
 //! \brief Waits for all MPI sends to complete before allowing execution to continue
 
 TaskStatus Z4c::ClearSend(Driver *pdrive, int stage) {
-  TaskStatus tstat = pbval_u->ClearSend();
+  TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
+      ? pbval_u_vc->ClearSend() : pbval_u->ClearSend();
   if (tstat != TaskStatus::complete) return tstat;
   return tstat;
 }
@@ -451,7 +455,8 @@ void Z4c::ReconstructConstraintAxisParityGhosts(
 //! \brief sends cell-centered conserved variables
 
 TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
-  TaskStatus tstat = pbval_u->PackAndSendCC(u0, coarse_u0);
+  TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
+      ? pbval_u_vc->PackAndSendVC(u0) : pbval_u->PackAndSendCC(u0, coarse_u0);
   return tstat;
 }
 
@@ -460,7 +465,12 @@ TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
 //! \brief receives cell-centered conserved variables
 
 TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
-  TaskStatus tstat = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
+  TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
+      ? pbval_u_vc->RecvAndUnpackVC(u0) : pbval_u->RecvAndUnpackCC(u0, coarse_u0);
+  if (tstat == TaskStatus::complete &&
+      layout.centering == Z4cGridCentering::vertex) {
+    vertex_topology_plan->SynchronizeSharedNodes(u0);
+  }
   if (tstat == TaskStatus::complete && chi_parent_provenance != nullptr) {
     chi_parent_provenance->RecordCheckpoint(
         ChiProvenanceCheckpoint::s2_after_receive, stage, pbval_u);
@@ -535,7 +545,11 @@ TaskStatus Z4c::ADMConstraints_(Driver *pdrive, int stage) {
 TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
   // Only execute Mesh function with SMR/SMR
   if (pmy_pack->pmesh->multilevel) {
-    pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
+    if (layout.centering == Z4cGridCentering::vertex) {
+      pmy_pack->pmesh->pmr->RestrictVC(u0, coarse_u0);
+    } else {
+      pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
+    }
   }
   if (chi_parent_provenance != nullptr) {
     chi_parent_provenance->RecordCheckpoint(
@@ -589,7 +603,11 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
 
 void Z4c::FillBuiltInPhysicalBoundaryGhosts() {
   if (!(pmy_pack->pmesh->strictly_periodic)) {
-    pbval_u->Z4cBCs((pmy_pack), (pbval_u->u_in), u0, coarse_u0);
+    if (layout.centering == Z4cGridCentering::vertex) {
+      pbval_u_vc->Z4cBCs(pmy_pack, pbval_u_vc->u_in, u0, coarse_u0);
+    } else {
+      pbval_u->Z4cBCs(pmy_pack, pbval_u->u_in, u0, coarse_u0);
+    }
   }
 }
 
@@ -746,7 +764,9 @@ TaskStatus Z4c::SendWeyl(Driver *pdrive, int stage) {
   } else {
     float time_32 = static_cast<float>(pmy_pack->pmesh->time);
     if ((last_output_time==time_32) && (stage == pdrive->nexp_stages)) {
-      TaskStatus tstat = pbval_weyl->PackAndSendCC(u_weyl, coarse_u_weyl);
+      TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
+          ? pbval_weyl_vc->PackAndSendVC(u_weyl)
+          : pbval_weyl->PackAndSendCC(u_weyl, coarse_u_weyl);
       return tstat;
     } else {
       return TaskStatus::complete;
@@ -764,7 +784,13 @@ TaskStatus Z4c::RecvWeyl(Driver *pdrive, int stage) {
   } else {
     float time_32 = static_cast<float>(pmy_pack->pmesh->time);
     if ((last_output_time==time_32) && (stage == pdrive->nexp_stages)) {
-      TaskStatus tstat = pbval_weyl->RecvAndUnpackCC(u_weyl, coarse_u_weyl);
+      TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
+          ? pbval_weyl_vc->RecvAndUnpackVC(u_weyl)
+          : pbval_weyl->RecvAndUnpackCC(u_weyl, coarse_u_weyl);
+      if (tstat == TaskStatus::complete &&
+          layout.centering == Z4cGridCentering::vertex) {
+        vertex_topology_plan->SynchronizeSharedNodes(u_weyl);
+      }
       return tstat;
     } else {
       return TaskStatus::complete;
@@ -783,7 +809,11 @@ TaskStatus Z4c::RestrictWeyl(Driver *pdrive, int stage) {
     float time_32 = static_cast<float>(pmy_pack->pmesh->time);
     if ((last_output_time==time_32) && (stage == pdrive->nexp_stages)) {
       if (pmy_pack->pmesh->multilevel) {
-        pmy_pack->pmesh->pmr->RestrictCC(u_weyl, coarse_u_weyl, true);
+        if (layout.centering == Z4cGridCentering::vertex) {
+          pmy_pack->pmesh->pmr->RestrictVC(u_weyl, coarse_u_weyl);
+        } else {
+          pmy_pack->pmesh->pmr->RestrictCC(u_weyl, coarse_u_weyl, true);
+        }
       }
     }
     return TaskStatus::complete;
@@ -822,7 +852,8 @@ TaskStatus Z4c::InitRecvWeyl(Driver *pdrive, int stage) {
     float next_32 = static_cast<float>(last_output_time+waveform_dt);
     if (((time_32 >= next_32) || (time_32 == 0)) && stage == pdrive->nexp_stages) {
       last_output_time = time_32;
-      TaskStatus tstat = pbval_weyl->InitRecv(2);
+      TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
+          ? pbval_weyl_vc->InitRecv(2) : pbval_weyl->InitRecv(2);
       return tstat;
     } else {
       return TaskStatus::complete;
@@ -840,7 +871,8 @@ TaskStatus Z4c::ClearRecvWeyl(Driver *pdrive, int stage) {
   } else {
     float time_32 = static_cast<float>(pmy_pack->pmesh->time);
     if ((last_output_time==time_32) && (stage == pdrive->nexp_stages)) {
-      TaskStatus tstat = pbval_weyl->ClearRecv();
+      TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
+          ? pbval_weyl_vc->ClearRecv() : pbval_weyl->ClearRecv();
       return tstat;
     } else {
       return TaskStatus::complete;
@@ -858,7 +890,8 @@ TaskStatus Z4c::ClearSendWeyl(Driver *pdrive, int stage) {
   } else {
     float time_32 = static_cast<float>(pmy_pack->pmesh->time);
     if ((last_output_time==time_32) && (stage == pdrive->nexp_stages)) {
-      TaskStatus tstat = pbval_weyl->ClearSend();
+      TaskStatus tstat = layout.centering == Z4cGridCentering::vertex
+          ? pbval_weyl_vc->ClearSend() : pbval_weyl->ClearSend();
       return tstat;
     } else {
       return TaskStatus::complete;
