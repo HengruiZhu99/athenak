@@ -1,0 +1,43 @@
+# Output-free mature-Z4c hardware/execution-structure control for the Ref-GH
+# Aurora benchmark.  This is not a claim of equal arithmetic work.
+
+<job>
+basename = z4c_onepuncture_benchmark
+
+<mesh>
+nghost = 4
+nx1 = 64
+x1min = -2.0
+x1max = 2.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 64
+x2min = -2.0
+x2max = 2.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 64
+x3min = -2.0
+x3max = 2.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 64
+nx2 = 64
+nx3 = 64
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+nlim = 100
+tlim = 100.0
+ndiag = 1000000
+
+<z4c>
+diss = 1.0
+
+<problem>
+pgen_name = z4c_one_puncture
+punc_ADM_mass = 1.0

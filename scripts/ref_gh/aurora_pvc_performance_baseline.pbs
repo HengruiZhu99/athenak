@@ -1,0 +1,138 @@
+#!/bin/bash -l
+# Build checked/performance SYCL executables and benchmark one Aurora PVC tile.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_perf_base
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_performance_convergence_20260821
+SRC="${ROOT}/athenak"
+: "${EXPECTED_COMMIT:?submit with qsub -v EXPECTED_COMMIT=<full-sha>}"
+CHECKED_BUILD="${ROOT}/build_checked_${PBS_JOBID}"
+PERF_BUILD="${ROOT}/build_performance_${PBS_JOBID}"
+OUT="${ROOT}/runs/baseline_${PBS_JOBID}"
+BINDER="${SRC}/scripts/ref_gh/aurora_gpu_tile_slot.sh"
+REF_INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet_benchmark.athinput"
+Z4C_INPUT="${SRC}/inputs/ref_gh/z4c_onepuncture_benchmark.athinput"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" status --short
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  sycl-ls 2>&1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${REF_INPUT}" "${Z4C_INPUT}" "$0"
+} > provenance.txt
+
+configure_build() {
+  local build="$1"
+  local bounds="$2"
+  local label="$3"
+  cmake -S "${SRC}" -B "${build}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER="$(command -v icx)" \
+    -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+    -DAthena_ENABLE_MPI=ON \
+    -DAthena_ENABLE_OPENMP=OFF \
+    -DKokkos_ENABLE_SERIAL=ON \
+    -DKokkos_ENABLE_OPENMP=OFF \
+    -DKokkos_ENABLE_SYCL=ON \
+    -DKokkos_ARCH_INTEL_PVC=ON \
+    -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK="${bounds}" \
+    -DPROBLEM=built_in_pgens \
+    > "configure_${label}.log" 2>&1
+  cmake --build "${build}" -j 64 > "build_${label}.log" 2>&1
+  {
+    echo "build=${label}"
+    grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+      "${build}/CMakeCache.txt"
+    sha256sum "${build}/src/athena"
+  } >> provenance.txt
+}
+
+configure_build "${CHECKED_BUILD}" ON checked
+configure_build "${PERF_BUILD}" OFF performance
+
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 bash -lc '
+    echo "hostname=$(hostname)"
+    echo "MPI_LOCALRANKID=${MPI_LOCALRANKID:-unset}"
+    echo "PALS_LOCAL_RANKID=${PALS_LOCAL_RANKID:-unset}"
+    echo "ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1
+  ' > gpu_mapping.txt 2>&1
+
+run_case() {
+  local label="$1"
+  local executable="$2"
+  local input="$3"
+  local work="${OUT}/${label}"
+  mkdir -p "${work}/warmup" "${work}/measured"
+
+  cd "${work}/warmup"
+  /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+    "${BINDER}" 0.0 "${executable}" -i "${input}" \
+    job/basename="${label}_warmup" time/nlim=20 time/tlim=100.0 \
+    > "${label}_warmup.log" 2>&1
+
+  cd "${work}/measured"
+  /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+    "${BINDER}" 0.0 "${executable}" -i "${input}" \
+    job/basename="${label}" time/nlim=100 time/tlim=100.0 \
+    > "${label}.log" 2>&1
+  grep -q 'cycle=100' "${label}.log"
+  grep -q 'zone-cycles/cpu_second' "${label}.log"
+  ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+    "${label}.log"
+  awk -F'= ' '/zone-cycles\/cpu_second/ {print label "\t" $2}' label="${label}" \
+    "${label}.log" >> "${OUT}/throughput.tsv"
+}
+
+printf 'case\tzone_cycles_per_s\n' > throughput.tsv
+run_case ref_gh_checked "${CHECKED_BUILD}/src/athena" "${REF_INPUT}"
+run_case ref_gh_performance "${PERF_BUILD}/src/athena" "${REF_INPUT}"
+run_case z4c_performance "${PERF_BUILD}/src/athena" "${Z4C_INPUT}"
+
+python3 - <<'PY' > speedups.tsv
+from pathlib import Path
+
+rows = {}
+for line in Path("throughput.tsv").read_text().splitlines()[1:]:
+    name, value = line.split("\t")
+    rows[name] = float(value)
+print("metric\tvalue")
+print("performance_over_checked\t{:.12g}".format(
+    rows["ref_gh_performance"] / rows["ref_gh_checked"]))
+print("z4c_over_ref_gh_performance\t{:.12g}".format(
+    rows["z4c_performance"] / rows["ref_gh_performance"]))
+PY
+
+sha256sum provenance.txt gpu_mapping.txt throughput.tsv speedups.tsv > compact_sha256.txt
