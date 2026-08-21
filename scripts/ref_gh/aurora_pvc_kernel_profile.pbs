@@ -1,0 +1,82 @@
+#!/bin/bash -l
+# Synchronized Kokkos per-kernel profile of the bounds-check-off Ref-GH baseline.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:15:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_kprofile
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_performance_convergence_20260821
+SRC="${ROOT}/athenak"
+: "${EXPECTED_COMMIT:?submit with qsub -v EXPECTED_COMMIT=<full-sha>}"
+: "${PERFORMANCE_BUILD_JOB:?submit with the completed performance-build job ID}"
+BUILD="${ROOT}/build_performance_${PERFORMANCE_BUILD_JOB}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet_benchmark.athinput"
+BINDER="${SRC}/scripts/ref_gh/aurora_gpu_tile_slot.sh"
+OUT="${ROOT}/runs/kernel_profile_${PBS_JOBID}"
+TOOL="${OUT}/librefgh_kokkos_kernel_timer.so"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+test -x "${EXE}"
+# The reused executable predates profiling-only scripts, not production source.
+git -C "${SRC}" diff --quiet c594f6fde13c915927fef2d7d5b840cef3e7af87 HEAD -- src kokkos
+
+icpx -std=c++17 -O2 -fPIC -shared \
+  "${SRC}/scripts/ref_gh/kokkos_kernel_timer.cpp" -o "${TOOL}"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "performance_build_job=${PERFORMANCE_BUILD_JOB}"
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+    "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}" "${INPUT}" "${TOOL}" "$0"
+} > provenance.txt
+
+mkdir warmup profile
+cd warmup
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 "${EXE}" -i "${INPUT}" \
+  job/basename=ref_gh_profile_warmup time/nlim=10 time/tlim=100.0 \
+  > ref_gh_profile_warmup.log 2>&1
+
+cd "${OUT}/profile"
+export KOKKOS_TOOLS_LIBS="${TOOL}"
+export REF_GH_KERNEL_TIMING_FILE="${OUT}/kernel_timing.tsv"
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 "${EXE}" -i "${INPUT}" \
+  job/basename=ref_gh_profile time/nlim=20 time/tlim=100.0 \
+  > ref_gh_profile.log 2>&1
+
+test -s "${OUT}/kernel_timing.tsv"
+grep -q 'cycle=20' ref_gh_profile.log
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  ref_gh_profile.log
+
+cd "${OUT}"
+head -31 kernel_timing.tsv > top30_kernel_timing.tsv
+sha256sum provenance.txt kernel_timing.tsv top30_kernel_timing.tsv > compact_sha256.txt

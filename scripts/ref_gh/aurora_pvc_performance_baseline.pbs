@@ -124,6 +124,7 @@ run_case ref_gh_checked "${CHECKED_BUILD}/src/athena" "${REF_INPUT}"
 run_case ref_gh_performance "${PERF_BUILD}/src/athena" "${REF_INPUT}"
 run_case z4c_performance "${Z4C_BUILD}/src/athena" "${Z4C_INPUT}"
 
+cd "${OUT}"
 python3 - <<'PY' > speedups.tsv
 from pathlib import Path
 

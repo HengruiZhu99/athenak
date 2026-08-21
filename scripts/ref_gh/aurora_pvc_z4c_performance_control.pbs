@@ -102,6 +102,7 @@ run_case() {
 run_case 20 z4c_performance_warmup
 run_case 100 z4c_performance
 
+cd "${OUT}"
 cp "${PRIOR}/throughput.tsv" throughput.tsv
 awk -F'= ' '/zone-cycles\/cpu_second/ {print "z4c_performance\t" $2}' \
   z4c_performance/z4c_performance.log >> throughput.tsv
