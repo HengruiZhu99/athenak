@@ -37,7 +37,7 @@ def main() -> None:
             args.source_dir / "src/z4c/z4c.cpp")
     require(z4c, 'packed_values(variable) = state(m, variable, k, j, i)',
             args.source_dir / "src/z4c/z4c.cpp")
-    require(z4c, '"logical_location"', args.source_dir / "src/z4c/z4c.cpp")
+    require(z4c, r'\"logical_location\"', args.source_dir / "src/z4c/z4c.cpp")
     require(z4c, 'output << "\\\"nan\\\""', args.source_dir / "src/z4c/z4c.cpp")
     if "Kokkos::subview(state, m, Kokkos::ALL(), k, j, i)" in z4c:
         raise SystemExit("noncontiguous state-point host copy remains")
