@@ -53,6 +53,8 @@ class RefGh {
   DvceArray5D<Real> u_rhs;
   DvceArray5D<Real> u_con;
   DvceArray5D<Real> coarse_u0;
+  DvceArray5D<Real> reference_provider;
+  DvceArray5D<Real> reference_workspace;
   DvceArray5D<Real> reference_evolution;
   DvceArray5D<Real> reference_diagnostic;
   DvceArray2D<Real> reference_table;

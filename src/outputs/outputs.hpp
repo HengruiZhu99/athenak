@@ -21,7 +21,7 @@
     #error NHISTORY > NREDUCTION in outputs.hpp
 #endif
 
-#define NOUTPUT_CHOICES 156
+#define NOUTPUT_CHOICES 160
 // choices for output variables used in <ouput> blocks in input file
 // TO ADD MORE CHOICES:
 //   - add more strings to array below, change NOUTPUT_CHOICES above appropriately
@@ -101,8 +101,9 @@ static const char *var_choice[NOUTPUT_CHOICES] = {
   "prtcl_all", "prtcl_d",
   // Gravity (153)
   "grav_phi",
-  // Vacuum first-order generalized harmonic state (154)
-  "fo_gh", "fo_gh_con"
+  // Vacuum first-order generalized harmonic state (154-157)
+  "fo_gh", "fo_gh_con", "ref_gh", "ref_gh_con",
+  "ref_gh_perturb", "ref_gh_native_con"
 };
 
 

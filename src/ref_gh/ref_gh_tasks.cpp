@@ -16,6 +16,7 @@
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_cache.hpp"
+#include "ref_gh/reference_provider_cache.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
@@ -31,6 +32,76 @@ void UpdateReferenceOracleMaximum(const Real error, const int category,
     maximum.val = error;
     maximum.loc = category;
   }
+}
+
+KOKKOS_INLINE_FUNCTION
+Real RawReferenceSpin(const ReferenceCachePoint &reference,
+                      const int A, const int B, const int C) {
+  Real value = 0.0;
+  for (int a = 0; a < 4; ++a) {
+    for (int c = 0; c < 4; ++c) {
+      Real derivative = ReferenceDFrame(reference, c, B, a);
+      for (int d = 0; d < 4; ++d) {
+        derivative += ReferenceChristoffel(reference, a, c, d)
+                      *ReferenceFrame(reference, B, d);
+      }
+      value += ReferenceCoframe(reference, A, a)
+               *ReferenceFrame(reference, C, c)*derivative;
+    }
+  }
+  return value;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real WorkspaceCoframeDerivative(const ReferenceWorkspacePoint &workspace,
+                                const int p, const int A, const int a) {
+  return workspace.workspace(
+      workspace.m, kRefWorkspaceCoframeDerivative + 16*p + 4*A + a,
+      workspace.k, workspace.j, workspace.i);
+}
+
+KOKKOS_INLINE_FUNCTION
+Real RawReferenceSpinCoordinateDerivative(const ReferenceCachePoint &reference,
+                                           const ReferenceWorkspacePoint &workspace,
+                                           const int p, const int A,
+                                           const int B, const int C) {
+  Real coordinate_derivative = 0.0;
+  for (int a = 0; a < 4; ++a) {
+    const Real d_coframe = WorkspaceCoframeDerivative(workspace, p, A, a);
+    for (int c = 0; c < 4; ++c) {
+      Real frame_covariant_derivative = ReferenceDFrame(reference, c, B, a);
+      Real d_frame_covariant_derivative =
+          ReferenceDDFrame(reference, p, c, B, a);
+      for (int d = 0; d < 4; ++d) {
+        frame_covariant_derivative +=
+            ReferenceChristoffel(reference, a, c, d)
+            *ReferenceFrame(reference, B, d);
+        d_frame_covariant_derivative +=
+            ReferenceDChristoffel(reference, p, a, c, d)
+              *ReferenceFrame(reference, B, d)
+            + ReferenceChristoffel(reference, a, c, d)
+              *ReferenceDFrame(reference, p, B, d);
+      }
+      coordinate_derivative +=
+          (d_coframe*ReferenceFrame(reference, C, c)
+           + ReferenceCoframe(reference, A, a)
+             *ReferenceDFrame(reference, p, C, c))
+            *frame_covariant_derivative
+          + ReferenceCoframe(reference, A, a)
+            *ReferenceFrame(reference, C, c)
+            *d_frame_covariant_derivative;
+    }
+  }
+  return coordinate_derivative;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real WorkspaceSpinCoordinateDerivative(const ReferenceWorkspacePoint &workspace,
+                                       const int p, const int pair,
+                                       const int C) {
+  return workspace.workspace(
+      workspace.m, kRefWorkspaceSpinCoordinateDerivative + 24*p + 4*pair + C,
+      workspace.k, workspace.j, workspace.i);
 }
 
 void RefGh::DebugFence(const char *label) const {
@@ -139,16 +210,17 @@ Real RefGh::StageTime(const Driver *driver, const int target_stage) const {
 }
 
 void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) {
-  const bool fill_evolution = !(reference_cache_time == time);
-  const bool fill_diagnostic = include_diagnostics
-                               && !(reference_diagnostic_time == time);
-  if (!fill_evolution && !fill_diagnostic) return;
+  (void)include_diagnostics;
+  if (reference_cache_time == time && reference_diagnostic_time == time) return;
 
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   const int n1 = indcs.nx1 + 2*indcs.ng;
   const int n2 = indcs.nx2 + 2*indcs.ng;
   const int n3 = indcs.nx3 + 2*indcs.ng;
+  const int ncells = pmy_pack->nmb_thispack*n3*n2*n1;
+  const auto provider = reference_provider;
+  const auto workspace = reference_workspace;
   const auto evolution = reference_evolution;
   const auto diagnostic = reference_diagnostic;
   const auto table = reference_table;
@@ -157,27 +229,340 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
   const Real center_z = opt.reference_center[2];
-  par_for("ref_gh update reference cache", DevExeSpace(),
-  0, pmy_pack->nmb_thispack - 1, 0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
-  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+
+  // Stage 1: evaluate the provider/profile two-jets once per point.
+  Kokkos::parallel_for(
+  "ref_gh reference provider profiles",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells), KOKKOS_LAMBDA(const int idx) {
+    int work = idx;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
     const Real x = CellCenterX(i - indcs.is, indcs.nx1,
                                size.d_view(m).x1min, size.d_view(m).x1max);
     const Real y = CellCenterX(j - indcs.js, indcs.nx2,
                                size.d_view(m).x2min, size.d_view(m).x2max);
     const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                size.d_view(m).x3min, size.d_view(m).x3max);
-    ReferenceGeometry reference;
-    GetReferenceGeometry(reference_kind, table, mass, center_x, center_y,
-                         center_z, time, x, y, z, reference);
-    if (fill_evolution) StoreReferenceEvolution(reference, evolution, m, k, j, i);
-    if (fill_diagnostic) StoreReferenceDiagnostic(reference, diagnostic, m, k, j, i);
+    const ReferenceProviderPoint point{provider, m, k, j, i};
+    PopulateReferenceProviderCache(reference_kind, table, mass,
+                                   center_x, center_y, center_z,
+                                   time, x, y, z, point);
   });
-  if (fill_evolution) reference_cache_time = time;
-  if (fill_diagnostic) reference_diagnostic_time = time;
+
+  // Stage 2: populate frame/coframe values and frame derivatives component by
+  // component. Each work item holds only two scalar jets, not a full geometry.
+  Kokkos::parallel_for(
+  "ref_gh reference frame jets",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*16), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 16;
+    int work = idx/16;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    const int A = component/4;
+    const int a = component % 4;
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    const ReferenceProviderPoint point{provider, m, k, j, i};
+    const ReferenceJet coframe = ProviderCoframeJet(
+        reference_kind, point, x, y, z, center_x, center_y, center_z, A, a);
+    const ReferenceJet frame = ProviderFrameJet(
+        reference_kind, point, x, y, z, center_x, center_y, center_z, A, a);
+    evolution(m, RefMatrix4(kRefCoframe, A, a), k, j, i) = coframe.value;
+    evolution(m, RefMatrix4(kRefFrame, A, a), k, j, i) = frame.value;
+    for (int p = 0; p < 4; ++p) {
+      evolution(m, RefRank3(kRefDFrame, p, A, a), k, j, i) = frame.d[p];
+      for (int q = p; q < 4; ++q) {
+        diagnostic(m, kRefDDFrame + 16*RefSymmetricPair4(p, q) + 4*A + a,
+                   k, j, i) = frame.dd[p][q];
+      }
+    }
+  });
+
+  // Stage 3: spatial frame maps and their commutator coefficients.
+  Kokkos::parallel_for(
+  "ref_gh reference spatial frame",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*9), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 9;
+    int work = idx/9;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    const int I = component/3;
+    const int p = component % 3;
+    const ReferenceProviderPoint point{provider, m, k, j, i};
+    evolution(m, RefMatrix3(kRefSpatialFrame, I, p), k, j, i) =
+        ProviderSpatialFrame(reference_kind, point, I, p);
+    evolution(m, RefMatrix3(kRefSpatialCoframe, I, p), k, j, i) =
+        ProviderSpatialCoframe(reference_kind, point, I, p);
+    evolution(m, RefMatrix3(kRefDtSpatialFrame, I, p), k, j, i) =
+        ProviderDtSpatialFrame(reference_kind, point, I, p);
+  });
+  Kokkos::parallel_for(
+  "ref_gh reference structure coefficients",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*9), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 9;
+    int work = idx/9;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    int I = 0;
+    int J = 0;
+    RefDecodeAntisymmetricPair3(component/3, I, J);
+    const int K = component % 3;
+    const ReferenceProviderPoint point{provider, m, k, j, i};
+    evolution(m, kRefStructure + component, k, j, i) =
+        ProviderStructure(reference_kind, point, I, J, K);
+  });
+
+  Kokkos::parallel_for(
+  "ref_gh reference metric jets",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*16), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 16;
+    int work = idx/16;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    const int a = component/4;
+    const int b = component % 4;
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    const ReferenceProviderPoint provider_point{provider, m, k, j, i};
+    const ReferenceWorkspacePoint workspace_point{workspace, m, k, j, i};
+    StoreWorkspaceMetricJet(
+        ProviderMetricJet(reference_kind, provider_point, x, y, z,
+                          center_x, center_y, center_z, a, b),
+        a, b, workspace_point);
+    StoreWorkspaceInverseMetricJet(
+        ProviderInverseMetricJet(reference_kind, provider_point, x, y, z,
+                                 center_x, center_y, center_z, a, b),
+        a, b, workspace_point);
+  });
+
+  // Stage 4: connection and its coordinate derivative. Metric jets are
+  // read from the compact update workspace, keeping this kernel scalar-small.
+  Kokkos::parallel_for(
+  "ref_gh reference connection",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*40), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 40;
+    int work = idx/40;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    const int a = component/10;
+    int b = 0;
+    int c = 0;
+    RefDecodeSymmetricPair4(component % 10, b, c);
+    const ReferenceWorkspacePoint point{workspace, m, k, j, i};
+    Real christoffel = 0.0;
+    Real d_christoffel[4] = {0.0, 0.0, 0.0, 0.0}; // NOLINT
+    for (int ell = 0; ell < 4; ++ell) {
+      const ReferenceJet metric_ell_c = LoadWorkspaceMetricJet(point, ell, c);
+      const ReferenceJet metric_ell_b = LoadWorkspaceMetricJet(point, ell, b);
+      const ReferenceJet metric_b_c = LoadWorkspaceMetricJet(point, b, c);
+      const Real first_kind = 0.5*(metric_ell_c.d[b] + metric_ell_b.d[c]
+                                   - metric_b_c.d[ell]);
+      const Real inverse = WorkspaceInverseMetric(point, a, ell);
+      christoffel += inverse*first_kind;
+      for (int p = 0; p < 4; ++p) {
+        const Real d_first = 0.5*(metric_ell_c.dd[p][b]
+                                  + metric_ell_b.dd[p][c]
+                                  - metric_b_c.dd[p][ell]);
+        d_christoffel[p] +=
+            WorkspaceDInverseMetric(point, p, a, ell)*first_kind
+            + inverse*d_first;
+      }
+    }
+    evolution(m, kRefChristoffel + component, k, j, i) = christoffel;
+    for (int p = 0; p < 4; ++p) {
+      diagnostic(m, kRefDChristoffel + 40*p + component, k, j, i) =
+          d_christoffel[p];
+    }
+  });
+
+  // Stage 5: spin connection, compressed in its metric antisymmetric pair.
+  Kokkos::parallel_for(
+  "ref_gh reference spin connection",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*24), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 24;
+    int work = idx/24;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    int A = 0;
+    int B = 0;
+    RefDecodeAntisymmetricPair4(component/4, A, B);
+    const int C = component % 4;
+    const ReferenceCachePoint reference{evolution, diagnostic, m, k, j, i};
+    const Real eta_A = (A == 0) ? -1.0 : 1.0;
+    const Real eta_B = (B == 0) ? -1.0 : 1.0;
+    const Real projected = 0.5*(eta_A*RawReferenceSpin(reference, A, B, C)
+                                - eta_B*RawReferenceSpin(reference, B, A, C));
+    evolution(m, kRefSpin + component, k, j, i) = eta_A*projected;
+  });
+
+  // Stage 6a: cache d(coframe) once. The metric-jet workspace is no longer
+  // needed after connection assembly, so it is deliberately reused here.
+  Kokkos::parallel_for(
+  "ref_gh reference coframe derivative",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*64), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 64;
+    int work = idx/64;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    const int p = component/16;
+    const int A = (component % 16)/4;
+    const int a = component % 4;
+    const ReferenceCachePoint reference{evolution, diagnostic, m, k, j, i};
+    Real derivative = 0.0;
+    for (int B = 0; B < 4; ++B) {
+      for (int b = 0; b < 4; ++b) {
+        derivative -= ReferenceCoframe(reference, A, b)
+                      *ReferenceDFrame(reference, p, B, b)
+                      *ReferenceCoframe(reference, B, a);
+      }
+    }
+    workspace(m, kRefWorkspaceCoframeDerivative + component, k, j, i) = derivative;
+  });
+
+  // Stage 6b: form coordinate derivatives of the projected spin connection.
+  Kokkos::parallel_for(
+  "ref_gh reference coordinate spin derivative",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*96), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 96;
+    int work = idx/96;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    const int p = component/24;
+    const int pair_component = (component % 24)/4;
+    const int C = component % 4;
+    int A = 0;
+    int B = 0;
+    RefDecodeAntisymmetricPair4(pair_component, A, B);
+    const ReferenceCachePoint reference{evolution, diagnostic, m, k, j, i};
+    const ReferenceWorkspacePoint workspace_point{workspace, m, k, j, i};
+    const Real eta_A = (A == 0) ? -1.0 : 1.0;
+    const Real eta_B = (B == 0) ? -1.0 : 1.0;
+    const Real projected = 0.5*(
+        eta_A*RawReferenceSpinCoordinateDerivative(
+            reference, workspace_point, p, A, B, C)
+        - eta_B*RawReferenceSpinCoordinateDerivative(
+            reference, workspace_point, p, B, A, C));
+    workspace(m, kRefWorkspaceSpinCoordinateDerivative + component,
+              k, j, i) = eta_A*projected;
+  });
+
+  // Stage 6c: convert the coordinate derivative index to the frame index.
+  Kokkos::parallel_for(
+  "ref_gh reference spin derivative",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*96), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 96;
+    int work = idx/96;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    const int D = component/24;
+    const int pair_component = (component % 24)/4;
+    const int C = component % 4;
+    const ReferenceCachePoint reference{evolution, diagnostic, m, k, j, i};
+    const ReferenceWorkspacePoint workspace_point{workspace, m, k, j, i};
+    Real derivative = 0.0;
+    for (int p = 0; p < 4; ++p) {
+      derivative += ReferenceFrame(reference, D, p)
+                    *WorkspaceSpinCoordinateDerivative(
+                        workspace_point, p, pair_component, C);
+    }
+    evolution(m, kRefSpinDerivative + component, k, j, i) = derivative;
+  });
+
+  // Stage 7: provider curvature in compact bivector form, then Ricci for
+  // diagnostics. The current trumpet provider supplies its exact vacuum Weyl
+  // tensor; the interface remains time-aware for future providers.
+  Kokkos::parallel_for(
+  "ref_gh reference curvature",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*21), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 21;
+    int work = idx/21;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    int first_pair = 0;
+    int second_pair = 0;
+    RefDecodeSymmetricPair6(component, first_pair, second_pair);
+    int A = 0;
+    int B = 0;
+    int C = 0;
+    int D = 0;
+    RefDecodeAntisymmetricPair4(first_pair, A, B);
+    RefDecodeAntisymmetricPair4(second_pair, C, D);
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    const ReferenceProviderPoint point{provider, m, k, j, i};
+    const Real raised = ProviderRiemann(
+        reference_kind, point, mass, x, y, z,
+        center_x, center_y, center_z, A, B, C, D);
+    evolution(m, kRefRiemann + component, k, j, i) =
+        ((A == 0) ? -1.0 : 1.0)*raised;
+  });
+  Kokkos::parallel_for(
+  "ref_gh reference Ricci",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*16), KOKKOS_LAMBDA(const int idx) {
+    const int component = idx % 16;
+    int work = idx/16;
+    const int i = work % n1; work /= n1;
+    const int j = work % n2; work /= n2;
+    const int k = work % n3;
+    const int m = work/n3;
+    const int B = component/4;
+    const int D = component % 4;
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    const ReferenceProviderPoint point{provider, m, k, j, i};
+    Real ricci = 0.0;
+    for (int A = 0; A < 4; ++A) {
+      ricci += ProviderRiemann(reference_kind, point, mass, x, y, z,
+                               center_x, center_y, center_z, A, B, A, D);
+    }
+    diagnostic(m, kRefRicci + component, k, j, i) = ricci;
+  });
+
+  reference_cache_time = time;
+  reference_diagnostic_time = time;
 
   if (opt.validate_reference_cache
-      && ((!reference_cache_oracle_validated && fill_evolution)
-          || (!reference_diagnostic_oracle_validated && fill_diagnostic))) {
+      && (opt.reference_kind == 2
+          || !reference_cache_oracle_validated
+          || !reference_diagnostic_oracle_validated)) {
     using MaxLoc = Kokkos::MaxLoc<Real, int>;
     MaxLoc::value_type maximum_error;
     Kokkos::parallel_reduce(
@@ -217,9 +602,11 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       for (int A = 0; A < 4; ++A) {
         for (int B = 0; B < 4; ++B) {
           for (int C = 0; C < 4; ++C) {
-            UpdateReferenceOracleMaximum(Kokkos::abs(
-                ReferenceChristoffel(cached, A, B, C)
-                - oracle.christoffel[A][B][C]), 3, local_maximum);
+            if (B <= C) {
+              UpdateReferenceOracleMaximum(Kokkos::abs(
+                  ReferenceChristoffel(cached, A, B, C)
+                  - oracle.christoffel[A][B][C]), 3, local_maximum);
+            }
             UpdateReferenceOracleMaximum(Kokkos::abs(
                 ReferenceSpin(cached, A, B, C) - oracle.spin[A][B][C]),
                 4, local_maximum);
@@ -252,14 +639,20 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
           }
         }
       }
-      if (fill_diagnostic) {
-        for (int p = 0; p < 4; ++p) {
-          for (int a = 0; a < 4; ++a) {
-            for (int b = 0; b < 4; ++b) {
-              for (int c = 0; c < 4; ++c) {
-                UpdateReferenceOracleMaximum(Kokkos::abs(
-                    ReferenceDDFrame(cached, p, a, b, c)
-                    - oracle.dd_frame[p][a][b][c]), 11, local_maximum);
+      for (int p = 0; p < 4; ++p) {
+        for (int q = 0; q < 4; ++q) {
+          for (int A = 0; A < 4; ++A) {
+            for (int a = 0; a < 4; ++a) {
+              UpdateReferenceOracleMaximum(Kokkos::abs(
+                  ReferenceDDFrame(cached, p, q, A, a)
+                  - oracle.dd_frame[p][q][A][a]), 11, local_maximum);
+            }
+          }
+        }
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            for (int c = 0; c < 4; ++c) {
+              if (b <= c) {
                 UpdateReferenceOracleMaximum(Kokkos::abs(
                     ReferenceDChristoffel(cached, p, a, b, c)
                     - oracle.d_christoffel[p][a][b][c]), 12, local_maximum);
@@ -267,12 +660,12 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
             }
           }
         }
-        for (int A = 0; A < 4; ++A) {
-          for (int B = 0; B < 4; ++B) {
-            UpdateReferenceOracleMaximum(Kokkos::abs(
-                ReferenceRicci(cached, A, B) - oracle.ricci_frame[A][B]),
-                13, local_maximum);
-          }
+      }
+      for (int A = 0; A < 4; ++A) {
+        for (int B = 0; B < 4; ++B) {
+          UpdateReferenceOracleMaximum(Kokkos::abs(
+              ReferenceRicci(cached, A, B) - oracle.ricci_frame[A][B]),
+              13, local_maximum);
         }
       }
     }, MaxLoc(maximum_error));
@@ -282,11 +675,11 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
                 << std::endl;
       std::exit(EXIT_FAILURE);
     }
-    if (fill_evolution) reference_cache_oracle_validated = true;
-    if (fill_diagnostic) reference_diagnostic_oracle_validated = true;
+    reference_cache_oracle_validated = true;
+    reference_diagnostic_oracle_validated = true;
     if (global_variable::my_rank == 0) {
       std::cout << "reference-GH production cache oracle Linf = "
-                << maximum_error.val << std::endl;
+                << maximum_error.val << ", time=" << time << std::endl;
     }
   }
 }

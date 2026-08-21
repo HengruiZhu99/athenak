@@ -1,6 +1,6 @@
 //========================================================================================
 //! \file reference_cache.hpp
-//! \brief Device-side structure-of-arrays cache for Ref-GH reference geometry.
+//! \brief Compact device-side SoA cache for Ref-GH reference geometry.
 //========================================================================================
 #ifndef REF_GH_REFERENCE_CACHE_HPP_
 #define REF_GH_REFERENCE_CACHE_HPP_
@@ -10,36 +10,65 @@
 
 namespace ref_gh {
 
-// Quantities used on every RHS evaluation.  Components are flattened into the
-// second index of a normal AthenaK cell-centered device array.
+// Components consumed by every RHS evaluation. Tensor symmetries are part of
+// the storage contract; accessors below reconstruct arbitrary index orderings.
 enum ReferenceEvolutionComponent : int {
-  kRefCoframe = 0,
-  kRefFrame = kRefCoframe + 16,
-  kRefDFrame = kRefFrame + 16,
-  kRefChristoffel = kRefDFrame + 64,
-  kRefSpatialFrame = kRefChristoffel + 64,
+  kRefCoframe = 0,                         // 4 x 4
+  kRefFrame = kRefCoframe + 16,            // 4 x 4
+  kRefDFrame = kRefFrame + 16,             // 4 x 4 x 4
+  kRefChristoffel = kRefDFrame + 64,       // 4 x sym(4,4)
+  kRefSpatialFrame = kRefChristoffel + 40, // 3 x 3
   kRefSpatialCoframe = kRefSpatialFrame + 9,
   kRefDtSpatialFrame = kRefSpatialCoframe + 9,
-  kRefStructure = kRefDtSpatialFrame + 9,
-  kRefSpin = kRefStructure + 27,
-  kRefSpinDerivative = kRefSpin + 64,
-  kRefRiemann = kRefSpinDerivative + 256,
-  kReferenceEvolutionSize = kRefRiemann + 256
+  kRefStructure = kRefDtSpatialFrame + 9,  // antisym(3,3) x 3
+  kRefSpin = kRefStructure + 9,            // antisym_eta(4,4) x 4
+  kRefSpinDerivative = kRefSpin + 24,      // 4 x antisym_eta(4,4) x 4
+  kRefRiemann = kRefSpinDerivative + 96,   // sym(bivector(4),bivector(4))
+  kReferenceEvolutionSize = kRefRiemann + 21
 };
 
-// Second derivatives needed only by the coordinate-source oracle and native
-// reference-curvature diagnostics stay out of the hot production cache.
+// Second derivatives are required while constructing spin derivatives and by
+// the optional coordinate-source oracle, but are not read by the production
+// covariant RHS. They therefore live outside the hot evolution cache.
 enum ReferenceDiagnosticComponent : int {
-  kRefDDFrame = 0,
-  kRefDChristoffel = kRefDDFrame + 256,
-  kRefRicci = kRefDChristoffel + 256,
+  kRefDDFrame = 0,                         // sym(4,4) x 4 x 4
+  kRefDChristoffel = kRefDDFrame + 160,    // 4 x 4 x sym(4,4)
+  kRefRicci = kRefDChristoffel + 160,      // 4 x 4
   kReferenceDiagnosticSize = kRefRicci + 16
 };
 
-static_assert(kReferenceEvolutionSize == 790,
+// Provider/profile data are evaluated once per cell per RK stage. Each scalar
+// jet is laid out as value, four first derivatives, and sixteen second
+// derivatives. The time argument belongs to the provider API even though the
+// present trumpet provider is stationary.
+enum ReferenceProviderComponent : int {
+  kRefProviderAlpha = 0,
+  kRefProviderPsi2 = kRefProviderAlpha + 21,
+  kRefProviderShiftQ = kRefProviderPsi2 + 21,
+  kRefProviderArealRadius = kRefProviderShiftQ + 21,
+  kReferenceProviderSize = kRefProviderArealRadius + 1
+};
+
+// The first half of this array holds metric jets during connection assembly.
+// Once the connection is complete, the same storage is reused for coframe and
+// coordinate spin derivatives, so no separate per-stage scratch allocation is
+// required.
+enum ReferenceWorkspaceComponent : int {
+  kRefWorkspaceMetricJet = 0,                 // 4 x 4 x 21
+  kRefWorkspaceInverseMetricJet = kRefWorkspaceMetricJet + 336,
+  kRefWorkspaceCoframeDerivative = 0,         // 4 x 4 x 4 (reuse)
+  kRefWorkspaceSpinCoordinateDerivative = 64,// 4 x 6 x 4 (reuse)
+  kReferenceWorkspaceSize = kRefWorkspaceInverseMetricJet + 80
+};
+
+static_assert(kReferenceEvolutionSize == 313,
               "Ref-GH production reference-cache layout changed");
-static_assert(kReferenceDiagnosticSize == 528,
-              "Ref-GH diagnostic reference-cache layout changed");
+static_assert(kReferenceDiagnosticSize == 336,
+              "Ref-GH derivative/diagnostic cache layout changed");
+static_assert(kReferenceProviderSize == 64,
+              "Ref-GH provider cache layout changed");
+static_assert(kReferenceWorkspaceSize == 416,
+              "Ref-GH update workspace layout changed");
 
 KOKKOS_INLINE_FUNCTION constexpr int RefMatrix4(const int offset,
                                                  const int a, const int b) {
@@ -49,24 +78,86 @@ KOKKOS_INLINE_FUNCTION constexpr int RefRank3(const int offset, const int a,
                                                const int b, const int c) {
   return offset + 16*a + 4*b + c;
 }
-KOKKOS_INLINE_FUNCTION constexpr int RefRank4(const int offset, const int a,
-                                               const int b, const int c,
-                                               const int d) {
-  return offset + 64*a + 16*b + 4*c + d;
-}
 KOKKOS_INLINE_FUNCTION constexpr int RefMatrix3(const int offset,
                                                  const int i, const int j) {
   return offset + 3*i + j;
 }
-KOKKOS_INLINE_FUNCTION constexpr int RefRank3Spatial(const int offset,
-                                                      const int i, const int j,
-                                                      const int k) {
-  return offset + 9*i + 3*j + k;
+KOKKOS_INLINE_FUNCTION constexpr int RefSymmetricPair4(int a, int b) {
+  if (a > b) { const int temporary = a; a = b; b = temporary; }
+  return a*4 - a*(a - 1)/2 + b - a;
+}
+KOKKOS_INLINE_FUNCTION constexpr int RefAntisymmetricPair4(int a, int b) {
+  if (a > b) { const int temporary = a; a = b; b = temporary; }
+  return a*(7 - a)/2 + b - a - 1;
+}
+KOKKOS_INLINE_FUNCTION constexpr int RefAntisymmetricPair3(int a, int b) {
+  if (a > b) { const int temporary = a; a = b; b = temporary; }
+  return a*(5 - a)/2 + b - a - 1;
+}
+KOKKOS_INLINE_FUNCTION constexpr int RefSymmetricPair6(int a, int b) {
+  if (a > b) { const int temporary = a; a = b; b = temporary; }
+  return a*6 - a*(a - 1)/2 + b - a;
+}
+KOKKOS_INLINE_FUNCTION void RefDecodeSymmetricPair4(const int pair,
+                                                     int &a, int &b) {
+  constexpr int first[10] = {0, 0, 0, 0, 1, 1, 1, 2, 2, 3};
+  constexpr int second[10] = {0, 1, 2, 3, 1, 2, 3, 2, 3, 3};
+  a = first[pair];
+  b = second[pair];
+}
+KOKKOS_INLINE_FUNCTION void RefDecodeAntisymmetricPair4(const int pair,
+                                                         int &a, int &b) {
+  constexpr int first[6] = {0, 0, 0, 1, 1, 2};
+  constexpr int second[6] = {1, 2, 3, 2, 3, 3};
+  a = first[pair];
+  b = second[pair];
+}
+KOKKOS_INLINE_FUNCTION void RefDecodeAntisymmetricPair3(const int pair,
+                                                         int &a, int &b) {
+  constexpr int first[3] = {0, 0, 1};
+  constexpr int second[3] = {1, 2, 2};
+  a = first[pair];
+  b = second[pair];
+}
+KOKKOS_INLINE_FUNCTION void RefDecodeSymmetricPair6(const int pair,
+                                                     int &a, int &b) {
+  int remaining = pair;
+  a = 0;
+  while (remaining >= 6 - a) {
+    remaining -= 6 - a;
+    ++a;
+  }
+  b = a + remaining;
+}
+KOKKOS_INLINE_FUNCTION constexpr int RefJetDerivative(const int offset,
+                                                       const int p) {
+  return offset + 1 + p;
+}
+KOKKOS_INLINE_FUNCTION constexpr int RefJetSecondDerivative(const int offset,
+                                                             const int p,
+                                                             const int q) {
+  return offset + 5 + 4*p + q;
 }
 
 struct ReferenceCachePoint {
   DvceArray5D<Real> evolution;
   DvceArray5D<Real> diagnostic;
+  int m;
+  int k;
+  int j;
+  int i;
+};
+
+struct ReferenceProviderPoint {
+  DvceArray5D<Real> provider;
+  int m;
+  int k;
+  int j;
+  int i;
+};
+
+struct ReferenceWorkspacePoint {
+  DvceArray5D<Real> workspace;
   int m;
   int k;
   int j;
@@ -107,7 +198,9 @@ Real ReferenceDDFrame(const ReferenceGeometry &r, const int p, const int q,
 KOKKOS_INLINE_FUNCTION
 Real ReferenceDDFrame(const ReferenceCachePoint &r, const int p, const int q,
                       const int A, const int a) {
-  return r.diagnostic(r.m, RefRank4(kRefDDFrame, p, q, A, a), r.k, r.j, r.i);
+  return r.diagnostic(
+      r.m, kRefDDFrame + 16*RefSymmetricPair4(p, q) + 4*A + a,
+      r.k, r.j, r.i);
 }
 KOKKOS_INLINE_FUNCTION
 Real ReferenceChristoffel(const ReferenceGeometry &r, const int a, const int b,
@@ -117,7 +210,8 @@ Real ReferenceChristoffel(const ReferenceGeometry &r, const int a, const int b,
 KOKKOS_INLINE_FUNCTION
 Real ReferenceChristoffel(const ReferenceCachePoint &r, const int a, const int b,
                           const int c) {
-  return r.evolution(r.m, RefRank3(kRefChristoffel, a, b, c), r.k, r.j, r.i);
+  return r.evolution(r.m, kRefChristoffel + 10*a + RefSymmetricPair4(b, c),
+                     r.k, r.j, r.i);
 }
 KOKKOS_INLINE_FUNCTION
 Real ReferenceDChristoffel(const ReferenceGeometry &r, const int p, const int a,
@@ -127,7 +221,9 @@ Real ReferenceDChristoffel(const ReferenceGeometry &r, const int p, const int a,
 KOKKOS_INLINE_FUNCTION
 Real ReferenceDChristoffel(const ReferenceCachePoint &r, const int p, const int a,
                            const int b, const int c) {
-  return r.diagnostic(r.m, RefRank4(kRefDChristoffel, p, a, b, c), r.k, r.j, r.i);
+  return r.diagnostic(
+      r.m, kRefDChristoffel + 40*p + 10*a + RefSymmetricPair4(b, c),
+      r.k, r.j, r.i);
 }
 KOKKOS_INLINE_FUNCTION
 Real ReferenceSpatialFrame(const ReferenceGeometry &r, const int I, const int i) {
@@ -161,8 +257,11 @@ Real ReferenceStructure(const ReferenceGeometry &r, const int I, const int J,
 KOKKOS_INLINE_FUNCTION
 Real ReferenceStructure(const ReferenceCachePoint &r, const int I, const int J,
                         const int K) {
-  return r.evolution(r.m, RefRank3Spatial(kRefStructure, I, J, K),
-                     r.k, r.j, r.i);
+  if (I == J) return 0.0;
+  const Real orientation = (I < J) ? 1.0 : -1.0;
+  return orientation*r.evolution(
+      r.m, kRefStructure + 3*RefAntisymmetricPair3(I, J) + K,
+      r.k, r.j, r.i);
 }
 KOKKOS_INLINE_FUNCTION
 Real ReferenceSpin(const ReferenceGeometry &r, const int A, const int B,
@@ -172,7 +271,14 @@ Real ReferenceSpin(const ReferenceGeometry &r, const int A, const int B,
 KOKKOS_INLINE_FUNCTION
 Real ReferenceSpin(const ReferenceCachePoint &r, const int A, const int B,
                    const int C) {
-  return r.evolution(r.m, RefRank3(kRefSpin, A, B, C), r.k, r.j, r.i);
+  if (A == B) return 0.0;
+  const int lower = (A < B) ? A : B;
+  const int upper = (A < B) ? B : A;
+  const Real eta_lower = (lower == 0) ? -1.0 : 1.0;
+  const Real eta_upper = (upper == 0) ? -1.0 : 1.0;
+  const Real orientation = (A < B) ? 1.0 : -eta_upper/eta_lower;
+  return orientation*r.evolution(
+      r.m, kRefSpin + 4*RefAntisymmetricPair4(A, B) + C, r.k, r.j, r.i);
 }
 KOKKOS_INLINE_FUNCTION
 Real ReferenceSpinDerivative(const ReferenceGeometry &r, const int D,
@@ -182,8 +288,16 @@ Real ReferenceSpinDerivative(const ReferenceGeometry &r, const int D,
 KOKKOS_INLINE_FUNCTION
 Real ReferenceSpinDerivative(const ReferenceCachePoint &r, const int D,
                              const int A, const int B, const int C) {
-  return r.evolution(r.m, RefRank4(kRefSpinDerivative, D, A, B, C),
-                     r.k, r.j, r.i);
+  if (A == B) return 0.0;
+  const int lower = (A < B) ? A : B;
+  const int upper = (A < B) ? B : A;
+  const Real eta_lower = (lower == 0) ? -1.0 : 1.0;
+  const Real eta_upper = (upper == 0) ? -1.0 : 1.0;
+  const Real orientation = (A < B) ? 1.0 : -eta_upper/eta_lower;
+  return orientation*r.evolution(
+      r.m, kRefSpinDerivative + 24*D
+             + 4*RefAntisymmetricPair4(A, B) + C,
+      r.k, r.j, r.i);
 }
 KOKKOS_INLINE_FUNCTION
 Real ReferenceRiemann(const ReferenceGeometry &r, const int A, const int B,
@@ -193,7 +307,16 @@ Real ReferenceRiemann(const ReferenceGeometry &r, const int A, const int B,
 KOKKOS_INLINE_FUNCTION
 Real ReferenceRiemann(const ReferenceCachePoint &r, const int A, const int B,
                       const int C, const int D) {
-  return r.evolution(r.m, RefRank4(kRefRiemann, A, B, C, D), r.k, r.j, r.i);
+  if (A == B || C == D) return 0.0;
+  const Real first_orientation = (A < B) ? 1.0 : -1.0;
+  const Real second_orientation = (C < D) ? 1.0 : -1.0;
+  const Real eta_A = (A == 0) ? -1.0 : 1.0;
+  const int first_pair = RefAntisymmetricPair4(A, B);
+  const int second_pair = RefAntisymmetricPair4(C, D);
+  const Real lower = r.evolution(
+      r.m, kRefRiemann + RefSymmetricPair6(first_pair, second_pair),
+      r.k, r.j, r.i);
+  return eta_A*first_orientation*second_orientation*lower;
 }
 KOKKOS_INLINE_FUNCTION
 Real ReferenceRicci(const ReferenceGeometry &r, const int A, const int B) {
@@ -202,73 +325,6 @@ Real ReferenceRicci(const ReferenceGeometry &r, const int A, const int B) {
 KOKKOS_INLINE_FUNCTION
 Real ReferenceRicci(const ReferenceCachePoint &r, const int A, const int B) {
   return r.diagnostic(r.m, RefMatrix4(kRefRicci, A, B), r.k, r.j, r.i);
-}
-
-KOKKOS_INLINE_FUNCTION
-void StoreReferenceEvolution(const ReferenceGeometry &r,
-                             const DvceArray5D<Real> &cache,
-                             const int m, const int k, const int j, const int i) {
-  for (int A = 0; A < 4; ++A) {
-    for (int a = 0; a < 4; ++a) {
-      cache(m, RefMatrix4(kRefCoframe, A, a), k, j, i) = r.coframe[A][a];
-      cache(m, RefMatrix4(kRefFrame, A, a), k, j, i) = r.frame[A][a];
-      for (int p = 0; p < 4; ++p) {
-        cache(m, RefRank3(kRefDFrame, p, A, a), k, j, i) = r.d_frame[p][A][a];
-      }
-    }
-  }
-  for (int a = 0; a < 4; ++a) {
-    for (int b = 0; b < 4; ++b) {
-      for (int c = 0; c < 4; ++c) {
-        cache(m, RefRank3(kRefChristoffel, a, b, c), k, j, i) =
-            r.christoffel[a][b][c];
-        cache(m, RefRank3(kRefSpin, a, b, c), k, j, i) = r.spin[a][b][c];
-        for (int d = 0; d < 4; ++d) {
-          cache(m, RefRank4(kRefSpinDerivative, a, b, c, d), k, j, i) =
-              r.spin_derivative[a][b][c][d];
-          cache(m, RefRank4(kRefRiemann, a, b, c, d), k, j, i) =
-              r.riemann_frame[a][b][c][d];
-        }
-      }
-    }
-  }
-  for (int I = 0; I < 3; ++I) {
-    for (int p = 0; p < 3; ++p) {
-      cache(m, RefMatrix3(kRefSpatialFrame, I, p), k, j, i) =
-          r.spatial_frame[I][p];
-      cache(m, RefMatrix3(kRefSpatialCoframe, I, p), k, j, i) =
-          r.spatial_coframe[I][p];
-      cache(m, RefMatrix3(kRefDtSpatialFrame, I, p), k, j, i) =
-          r.dt_spatial_frame[I][p];
-      for (int J = 0; J < 3; ++J) {
-        cache(m, RefRank3Spatial(kRefStructure, I, p, J), k, j, i) =
-            r.structure[I][p][J];
-      }
-    }
-  }
-}
-
-KOKKOS_INLINE_FUNCTION
-void StoreReferenceDiagnostic(const ReferenceGeometry &r,
-                              const DvceArray5D<Real> &cache,
-                              const int m, const int k, const int j, const int i) {
-  for (int p = 0; p < 4; ++p) {
-    for (int a = 0; a < 4; ++a) {
-      for (int b = 0; b < 4; ++b) {
-        for (int c = 0; c < 4; ++c) {
-          cache(m, RefRank4(kRefDDFrame, p, a, b, c), k, j, i) =
-              r.dd_frame[p][a][b][c];
-          cache(m, RefRank4(kRefDChristoffel, p, a, b, c), k, j, i) =
-              r.d_christoffel[p][a][b][c];
-        }
-      }
-    }
-  }
-  for (int A = 0; A < 4; ++A) {
-    for (int B = 0; B < 4; ++B) {
-      cache(m, RefMatrix4(kRefRicci, A, B), k, j, i) = r.ricci_frame[A][B];
-    }
-  }
 }
 
 }  // namespace ref_gh

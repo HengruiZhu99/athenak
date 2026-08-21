@@ -9,6 +9,7 @@
 #include "ref_gh/ref_gh_state.hpp"
 #include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_geometry.hpp"
+#include "ref_gh/reference_time_dependent_lapse.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 
@@ -92,6 +93,11 @@ ReferenceGeometry GetReferenceGeometry(const int reference_kind,
                                        const Real time, const Real x,
                                        const Real y, const Real z) {
   if (reference_kind == 0) return MinkowskiReference()(time, x, y, z);
+  if (reference_kind == 2) {
+    ReferenceGeometry reference;
+    TimeDependentLapseReference().Populate(time, x, y, z, reference);
+    return reference;
+  }
   TrumpetSchwarzschildReference provider{table, mass,
                                          {center_x, center_y, center_z}};
   return provider(time, x, y, z);
@@ -111,6 +117,10 @@ void GetReferenceGeometry(const int reference_kind,
     MinkowskiReference().Populate(time, x, y, z, reference);
     return;
   }
+  if (reference_kind == 2) {
+    TimeDependentLapseReference().Populate(time, x, y, z, reference);
+    return;
+  }
   const TrumpetSchwarzschildReference provider{
       table, mass, {center_x, center_y, center_z}};
   provider.Populate(time, x, y, z, reference);
@@ -126,6 +136,11 @@ void GetReferencePsiKinematics(const int reference_kind,
                                ReferencePsiKinematics &reference) {
   if (reference_kind == 0) {
     MinkowskiReference().PopulatePsiKinematics(time, x, y, z, reference);
+    return;
+  }
+  if (reference_kind == 2) {
+    TimeDependentLapseReference().PopulatePsiKinematics(
+        time, x, y, z, reference);
     return;
   }
   const TrumpetSchwarzschildReference provider{

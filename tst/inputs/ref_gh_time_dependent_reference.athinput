@@ -1,0 +1,55 @@
+# Flat reference-frame GH test with alpha(t)=1+0.1 sin(t).  The evolved state
+# remains exact Minkowski in the orthonormal frame; validating every staged
+# cache refresh checks that the provider receives the RK stage time.
+
+<job>
+basename = ref_gh_time_dependent_reference
+
+<mesh>
+nghost = 4
+nx1 = 8
+x1min = -1.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 8
+x2min = -1.0
+x2max = 1.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 8
+x3min = -1.0
+x3max = 1.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+nlim = 1
+tlim = 0.2
+ndiag = 1
+
+<ref_gh>
+reference = time_dependent_lapse_test
+source = covariant
+fd_order = 4
+validate_reference_cache = true
+gamma0 = 1.0
+diss = 0.0
+
+<problem>
+pgen_name = ref_gh_minkowski
+common_adm_history = true
+common_adm_fd_order = 4
+
+<output1>
+file_type = hst
+dt = 0.01
+data_format = %20.15e

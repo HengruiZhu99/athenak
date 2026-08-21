@@ -9,6 +9,14 @@ def test_ref_gh_minkowski():
     testutils.run("inputs/ref_gh_minkowski.athinput")
 
 
+def test_ref_gh_time_dependent_reference():
+    """Verify that each RK stage refreshes a genuinely time-dependent provider."""
+    try:
+        assert testutils.run("inputs/ref_gh_time_dependent_reference.athinput")
+    finally:
+        testutils.cleanup()
+
+
 def test_ref_gh_linear_wave_convergence():
     errors = []
     try:

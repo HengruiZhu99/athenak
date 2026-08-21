@@ -185,6 +185,15 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
        << std::endl << "Input file is likely missing a <fo_gh> block" << std::endl;
     exit(EXIT_FAILURE);
   }
+  if ((ivar>=156 && ivar<=159) && (pm->pmb_pack->prefgh == nullptr)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "Output of Ref-GH state requested in <output> block '"
+              << out_params.block_name
+              << "' but no Ref-GH object has been constructed." << std::endl
+              << "Input file is likely missing a <ref_gh> block" << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
   // Now load STL vector of output variables
   outvars.clear();
@@ -670,6 +679,24 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
     }
     if (variable.compare("ref_gh_con") == 0) {
       for (int v = 0; v < ref_gh::RefGh::ncon; ++v) {
+        outvars.emplace_back(ref_gh::RefGh::ConstraintNames[v], v,
+                             &(pm->pmb_pack->prefgh->u_con));
+      }
+    }
+    if (variable.compare("ref_gh_perturb") == 0) {
+      const int components[10] = {
+          ref_gh::PsiIndex(2, 2), ref_gh::PsiIndex(3, 3),
+          ref_gh::PiIndex(2, 2), ref_gh::PiIndex(3, 3),
+          ref_gh::PhiIndex(0, 2, 2), ref_gh::PhiIndex(0, 3, 3),
+          ref_gh::PhiIndex(1, 2, 2), ref_gh::PhiIndex(1, 3, 3),
+          ref_gh::PhiIndex(2, 2, 2), ref_gh::PhiIndex(2, 3, 3)};
+      for (const int component : components) {
+        outvars.emplace_back(ref_gh::RefGh::StateNames[component], component,
+                             &(pm->pmb_pack->prefgh->u0));
+      }
+    }
+    if (variable.compare("ref_gh_native_con") == 0) {
+      for (int v = 0; v < ref_gh::RefGh::kNativeConstraints; ++v) {
         outvars.emplace_back(ref_gh::RefGh::ConstraintNames[v], v,
                              &(pm->pmb_pack->prefgh->u_con));
       }

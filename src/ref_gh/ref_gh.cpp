@@ -52,6 +52,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     u_rhs("u_rhs ref_gh", 1, 1, 1, 1, 1),
     u_con("u_con ref_gh", 1, 1, 1, 1, 1),
     coarse_u0("coarse u0 ref_gh", 1, 1, 1, 1, 1),
+    reference_provider("ref_gh reference provider", 1, 1, 1, 1, 1),
+    reference_workspace("ref_gh reference workspace", 1, 1, 1, 1, 1),
     reference_evolution("ref_gh reference evolution", 1, 1, 1, 1, 1),
     reference_diagnostic("ref_gh reference diagnostic", 1, 1, 1, 1, 1),
     reference_table("ref_gh reference table", 1, 1),
@@ -67,9 +69,11 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     opt.reference_kind = 0;
   } else if (reference_name == "trumpet") {
     opt.reference_kind = 1;
+  } else if (reference_name == "time_dependent_lapse_test") {
+    opt.reference_kind = 2;
   } else {
-    std::cout << "### FATAL ERROR: ref_gh reference must be minkowski or trumpet."
-              << std::endl;
+    std::cout << "### FATAL ERROR: ref_gh reference must be minkowski, trumpet, "
+                 "or time_dependent_lapse_test." << std::endl;
     std::exit(EXIT_FAILURE);
   }
   const std::string source_name =
@@ -132,6 +136,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   Kokkos::realloc(u1, nmb, nref_gh, n3, n2, n1);
   Kokkos::realloc(u_rhs, nmb, nref_gh, n3, n2, n1);
   Kokkos::realloc(u_con, nmb, ncon, n3, n2, n1);
+  Kokkos::realloc(reference_provider, nmb, kReferenceProviderSize, n3, n2, n1);
+  Kokkos::realloc(reference_workspace, nmb, kReferenceWorkspaceSize, n3, n2, n1);
   Kokkos::realloc(reference_evolution, nmb, kReferenceEvolutionSize, n3, n2, n1);
   Kokkos::realloc(reference_diagnostic, nmb, kReferenceDiagnosticSize, n3, n2, n1);
   if (ppack->pmesh->multilevel) {

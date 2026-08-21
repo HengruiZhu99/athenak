@@ -30,6 +30,9 @@ Real initial_spin_antisymmetry_linf = 0.0;
 Real initial_structure_antisymmetry_linf = 0.0;
 int initial_rhs_component = -1;
 Real initial_rhs_radius = -1.0;
+bool perturbed_trumpet = false;
+Real perturbation_amplitude = 0.0;
+Real perturbation_width = 0.0;
 
 void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
   auto *pack = mesh->pmb_pack;
@@ -80,7 +83,9 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
                 MPI_COMM_WORLD);
 #endif
   if (global_variable::my_rank == 0) {
-    const std::string filename = pin->GetString("job", "basename") + "-trumpet.dat";
+    const std::string suffix =
+        perturbed_trumpet ? "-perturbed-trumpet.dat" : "-trumpet.dat";
+    const std::string filename = pin->GetString("job", "basename") + suffix;
     FILE *file = std::fopen(filename.c_str(), "w");
     if (file == nullptr) std::exit(EXIT_FAILURE);
     std::fprintf(file, "# nx1 cycles time field_Linf constraint_Linf "
@@ -96,7 +101,9 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
                  initial_structure_antisymmetry_linf,
                  initial_rhs_component, initial_rhs_radius);
     std::fclose(file);
-    std::cout << "reference-GH stationary trumpet: field Linf=" << field_linf
+    std::cout << "reference-GH "
+              << (perturbed_trumpet ? "perturbed" : "stationary")
+              << " trumpet: field Linf=" << field_linf
               << ", constraint Linf=" << constraint_linf
               << ", RHS estimate=" << rhs_estimate << std::endl;
   }
@@ -105,6 +112,18 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
 }  // namespace
 
 void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool restart) {
+  perturbed_trumpet =
+      pin->GetString("problem", "pgen_name") == "ref_gh_perturbed_trumpet";
+  perturbation_amplitude = perturbed_trumpet
+      ? pin->GetOrAddReal("problem", "perturb_amplitude", 1.0e-6) : 0.0;
+  perturbation_width = perturbed_trumpet
+      ? pin->GetOrAddReal("problem", "perturb_width", 0.5) : 0.0;
+  if (perturbed_trumpet
+      && (!(perturbation_amplitude > 0.0) || !(perturbation_width > 0.0))) {
+    std::cout << "### FATAL ERROR: perturbed trumpet requires positive amplitude "
+                 "and width." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   pgen_final_func = &CheckRefGhStationaryTrumpet;
   if (restart) return;
   auto *pack = pmy_mesh_->pmb_pack;
@@ -122,6 +141,10 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
   const Real cx = pack->prefgh->opt.reference_center[0];
   const Real cy = pack->prefgh->opt.reference_center[1];
   const Real cz = pack->prefgh->opt.reference_center[2];
+  const Real mass = pack->prefgh->opt.reference_mass;
+  const auto table = pack->prefgh->reference_table;
+  const Real amplitude = perturbation_amplitude;
+  const Real width = perturbation_width;
   Real minimum_radius = std::numeric_limits<Real>::max();
   Kokkos::parallel_reduce(
       "ref_gh minimum puncture radius", Kokkos::RangePolicy<>(DevExeSpace(),
@@ -163,6 +186,32 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
     state(m, ref_gh::PsiIndex(1, 1), k, j, i) = 1.0;
     state(m, ref_gh::PsiIndex(2, 2), k, j, i) = 1.0;
     state(m, ref_gh::PsiIndex(3, 3), k, j, i) = 1.0;
+    if (amplitude > 0.0) {
+      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min, size.d_view(m).x1max);
+      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                 size.d_view(m).x2min, size.d_view(m).x2max);
+      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                 size.d_view(m).x3min, size.d_view(m).x3max);
+      const Real displacement[3] = {x - cx, y - cy, z - cz};
+      const Real radius2 = displacement[0]*displacement[0]
+                           + displacement[1]*displacement[1]
+                           + displacement[2]*displacement[2];
+      const Real width2 = width*width;
+      const Real bump = amplitude*Kokkos::exp(-radius2/width2);
+      state(m, ref_gh::PsiIndex(2, 2), k, j, i) += bump;
+      state(m, ref_gh::PsiIndex(3, 3), k, j, i) -= bump;
+      ref_gh::ReferencePsiKinematics reference;
+      ref_gh::GetReferencePsiKinematics(
+          1, table, mass, cx, cy, cz, 0.0, x, y, z, reference);
+      for (int I = 0; I < 3; ++I) {
+        const Real gradient = -2.0*bump*displacement[I]/width2;
+        const Real frame_gradient =
+            gradient/reference.spatial_coframe[I][I];
+        state(m, ref_gh::PhiIndex(I, 2, 2), k, j, i) = frame_gradient;
+        state(m, ref_gh::PhiIndex(I, 3, 3), k, j, i) = -frame_gradient;
+      }
+    }
   });
   switch (pack->prefgh->opt.fd_order) {
     case 2: (void)pack->prefgh->CalcRHS<2>(nullptr, 1); break;
@@ -185,7 +234,9 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
   using MaxLoc = Kokkos::MaxLoc<Real, int>;
   MaxLoc::value_type rhs_maximum;
   Kokkos::parallel_reduce(
-      "ref_gh stationary initial RHS", Kokkos::RangePolicy<>(DevExeSpace(),
+      perturbed_trumpet ? "ref_gh perturbed initial RHS"
+                        : "ref_gh stationary initial RHS",
+      Kokkos::RangePolicy<>(DevExeSpace(),
       0, pack->nmb_thispack*ref_gh::nvar*ncells),
       KOKKOS_LAMBDA(const int idx, MaxLoc::value_type &maximum) {
         int work = idx;
@@ -217,8 +268,6 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
   initial_rhs_radius = std::sqrt((rhs_x-cx)*(rhs_x-cx) + (rhs_y-cy)*(rhs_y-cy)
                                  + (rhs_z-cz)*(rhs_z-cz));
 
-  const auto table = pack->prefgh->reference_table;
-  const Real mass = pack->prefgh->opt.reference_mass;
   Kokkos::parallel_reduce(
       "ref_gh stationary reference Ricci", Kokkos::RangePolicy<>(DevExeSpace(),
       0, pack->nmb_thispack*ncells),
@@ -356,7 +405,9 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
                 MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
 #endif
   if (global_variable::my_rank == 0) {
-    std::cout << "reference-GH stationary initial RHS Linf = "
+    std::cout << "reference-GH "
+              << (perturbed_trumpet ? "perturbed" : "stationary")
+              << " initial RHS Linf = "
               << initial_rhs_linf << ", component=" << initial_rhs_component
               << ", radius=" << initial_rhs_radius
               << ", coordinate reference Ricci Linf="
@@ -364,9 +415,10 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
               << ", frame reference Ricci Linf=" << initial_frame_ricci_linf
               << std::endl;
   }
-  if (!std::isfinite(initial_rhs_linf) || initial_rhs_linf > 1.0e-6) {
-    std::cout << "### FATAL ERROR: stationary reference RHS exceeds 1e-6."
-              << std::endl;
+  if (!std::isfinite(initial_rhs_linf)
+      || (!perturbed_trumpet && initial_rhs_linf > 1.0e-6)) {
+    std::cout << "### FATAL ERROR: reference-GH initial RHS is nonfinite or "
+                 "the stationary residual exceeds 1e-6." << std::endl;
     std::exit(EXIT_FAILURE);
   }
 }
