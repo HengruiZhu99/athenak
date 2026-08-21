@@ -269,8 +269,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference frame jets",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*16), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 16;
-    int work = idx/16;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
@@ -303,8 +303,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference spatial frame",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*9), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 9;
-    int work = idx/9;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
@@ -322,8 +322,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference structure coefficients",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*9), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 9;
-    int work = idx/9;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
@@ -340,8 +340,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference metric jets",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*16), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 16;
-    int work = idx/16;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
@@ -371,8 +371,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference connection",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*40), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 40;
-    int work = idx/40;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
@@ -412,8 +412,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference spin connection",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*24), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 24;
-    int work = idx/24;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
@@ -435,8 +435,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference coframe derivative",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*64), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 64;
-    int work = idx/64;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
@@ -460,8 +460,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference coordinate spin derivative",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*96), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 96;
-    int work = idx/96;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
@@ -489,8 +489,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference spin derivative",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*96), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 96;
-    int work = idx/96;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
@@ -515,8 +515,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference curvature",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*21), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 21;
-    int work = idx/21;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
@@ -546,8 +546,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   Kokkos::parallel_for(
   "ref_gh reference Ricci",
   Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*16), KOKKOS_LAMBDA(const int idx) {
-    const int component = idx % 16;
-    int work = idx/16;
+    const int component = idx/ncells;
+    int work = idx % ncells;
     const int i = work % n1; work /= n1;
     const int j = work % n2; work /= n2;
     const int k = work % n3;
