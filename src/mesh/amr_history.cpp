@@ -20,7 +20,10 @@
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "mesh/meshblock_tree.hpp"
+#include "mesh/meshblock_pack.hpp"
+#include "mesh/meshblock.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_amr.hpp"
 #include "z4c/z4c_symmetry.hpp"
 
 #if MPI_PARALLEL_ENABLED
@@ -336,6 +339,8 @@ void AMRHistory::LimitTimestep() {
   const double candidate_dt = mesh_->dt;
   if (!amr_history::ParseReal(events_[next_event_].time_hex, &next_time) ||
       !amr_history::LimitTimestep(mesh_->time, next_time, &mesh_->dt, &error)) Fatal(error);
+  last_candidate_dt_ = candidate_dt;
+  last_applied_dt_ = mesh_->dt;
   last_timestep_clipped_ = mesh_->dt != candidate_dt;
   if (mesh_->dt != candidate_dt && global_variable::my_rank == 0) {
     std::cout << "AMR_HISTORY_TIMESTEP_CLIP event=" << next_event_
@@ -355,12 +360,136 @@ void AMRHistory::CaptureShadowFlags() {
     shadow_derefine_ += mesh_->pmr->refine_flag.h_view(gid) < 0;
   }
   shadow_flags_captured_ = true;
+  AppendShadowLedger();
   if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
       mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr &&
       next_event_ < events_.size()) {
     mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordShadowAMRRequests(
         next_event_, events_[next_event_].time_hex, CurrentTreeChecksum());
   }
+}
+
+void AMRHistory::AppendShadowLedger() const {
+  if (!replay() || mesh_->pmb_pack == nullptr || mesh_->pmb_pack->pz4c == nullptr) {
+    return;
+  }
+  if (!mesh_->pmb_pack->pz4c->pamr->capture_replay_dchi) return;
+  const auto &dchi = mesh_->pmb_pack->pz4c->pamr->last_dchi_max;
+  const auto &ordinal = mesh_->pmb_pack->pz4c->pamr->last_dchi_ordinal;
+  const int nmb = mesh_->pmb_pack->nmb_thispack;
+  if (dchi.size() != static_cast<std::size_t>(nmb) ||
+      ordinal.size() != static_cast<std::size_t>(nmb)) {
+    Fatal("replay dchi shadow values do not match the local MeshBlock count");
+  }
+  const int begin = mesh_->gids_eachrank[global_variable::my_rank];
+  std::vector<int> authority_flags(static_cast<std::size_t>(mesh_->nmb_total), 0);
+  bool authority_event = false;
+  std::string authority_time_hex;
+  if (next_event_ < events_.size()) {
+    authority_time_hex = events_[next_event_].time_hex;
+    double event_time = 0.0;
+    if (!amr_history::ParseReal(authority_time_hex, &event_time)) {
+      Fatal("cannot decode next authority time for shadow ledger");
+    }
+    authority_event = amr_history::TimeEqual(mesh_->time, event_time);
+    if (authority_event) {
+      amr_history::Transition transition;
+      std::string error;
+      if (!amr_history::DeriveTransition(header_, CurrentLeaves(),
+                                         events_[next_event_].leaves,
+                                         &transition, &error)) {
+        Fatal("cannot derive authority transition for shadow ledger: " + error);
+      }
+      const auto current = CurrentLeaves();
+      if (transition.flags.size() != current.size()) {
+        Fatal("authority transition flag count differs from current tree");
+      }
+      for (int gid = 0; gid < mesh_->nmb_total; ++gid) {
+        const auto loc = Convert(mesh_->lloc_eachmb[gid]);
+        const auto found = std::lower_bound(current.begin(), current.end(), loc);
+        if (found == current.end() || !(*found == loc)) {
+          Fatal("GID leaf missing while writing shadow authority action");
+        }
+        authority_flags[gid] = transition.flags[
+            static_cast<std::size_t>(found - current.begin())];
+      }
+    }
+  }
+  const auto action_name = [](const int flag) {
+    return flag > 0 ? "refine" : (flag < 0 ? "derefine" : "same");
+  };
+  const auto classification = [](const int native, const int authority) {
+    if (native == authority) return "AGREES";
+    if (native < 0) return "WOULD_DEREFINE";
+    if (native > 0 && authority == 0) return "WOULD_REFINE_EARLIER";
+    if (authority > 0 && native == 0) return "WOULD_NOT_REFINE";
+    return "OTHER";
+  };
+  std::ostringstream name;
+  name << pin_->GetString("job", "basename") << ".amr_native_shadow.rank"
+       << std::setw(4) << std::setfill('0') << global_variable::my_rank
+       << ".jsonl";
+  std::ofstream output(name.str(), std::ios::app);
+  if (!output) Fatal("cannot append native AMR shadow ledger");
+  const double tau_c = mesh_->pmb_pack->z4c_restart_state.central.proper_time;
+  mesh_->pmb_pack->pmb->mb_size.sync_host();
+  int strongest = -1;
+  for (int m = 0; m < nmb; ++m) {
+    if (strongest < 0 || dchi[m] > dchi[strongest]) strongest = m;
+  }
+  for (int m = 0; m < nmb; ++m) {
+    const int gid = begin + m;
+    const auto &loc = mesh_->lloc_eachmb[gid];
+    const auto &size = mesh_->pmb_pack->pmb->mb_size.h_view(m);
+    const int native = mesh_->pmr->refine_flag.h_view(gid);
+    const int authority = authority_flags[gid];
+    if (m != strongest && native == 0 && authority == 0) continue;
+    if (ordinal[m] < 0 || ordinal[m] >=
+        mesh_->mb_indcs.nx1 * mesh_->mb_indcs.nx2 * mesh_->mb_indcs.nx3) {
+      Fatal("native AMR shadow maximum has no valid active-cell ordinal");
+    }
+    const int nji = mesh_->mb_indcs.nx2 * mesh_->mb_indcs.nx1;
+    const int ok = ordinal[m] / nji;
+    const int remainder = ordinal[m] % nji;
+    const int oj = remainder / mesh_->mb_indcs.nx1;
+    const int oi = remainder % mesh_->mb_indcs.nx1;
+    const Real strongest_rho =
+        size.x1min + (static_cast<Real>(oi) + 0.5) * size.dx1;
+    const Real strongest_z =
+        size.x2min + (static_cast<Real>(oj) + 0.5) * size.dx2;
+    output << std::setprecision(17)
+           << "{\"schema\":\"athenak_amr_native_shadow_v1\",\"cycle\":"
+           << mesh_->ncycle << ",\"time\":" << mesh_->time
+           << ",\"time_hex\":\"" << amr_history::HexReal(mesh_->time)
+           << "\",\"tau_c\":" << tau_c << ",\"root_nx1\":"
+           << mesh_->mesh_indcs.nx1 << ",\"cells_per_meshblock\":["
+           << mesh_->mb_indcs.nx1 << ',' << mesh_->mb_indcs.nx2 << ','
+           << mesh_->mb_indcs.nx3 << "],\"gid\":" << gid
+           << ",\"logical_location\":[" << loc.level << ',' << loc.lx1 << ','
+           << loc.lx2 << ',' << loc.lx3 << "],\"relative_level\":"
+           << loc.level - mesh_->root_level << ",\"dx\":" << size.dx1
+           << ",\"raw_dchi\":" << dchi[m] << ",\"dchi_over_dx\":"
+           << dchi[m] / size.dx1 << ",\"native_action\":\""
+           << action_name(native) << "\",\"authority_event\":"
+           << (authority_event ? "true" : "false")
+           << ",\"authority_event_index\":"
+           << (next_event_ < events_.size() ? std::to_string(next_event_) : "null")
+           << ",\"authority_event_time_hex\":";
+    if (authority_time_hex.empty()) output << "null";
+    else output << '\"' << authority_time_hex << '\"';
+    output << ",\"authority_action\":\"" << action_name(authority)
+           << "\",\"classification\":\""
+           << classification(native, authority) << "\",\"record_scope\":\""
+           << (m == strongest ? "rank_strongest" : "requested_or_authority")
+           << "\",\"strongest_cell_ordinal\":" << ordinal[m]
+           << ",\"strongest_cell_offset\":[" << oi << ',' << oj << ',' << ok
+           << "],\"strongest_physical_location\":[" << strongest_rho << ','
+           << strongest_z << "],\"block_center\":["
+           << 0.5 * (size.x1min + size.x1max) << ','
+           << 0.5 * (size.x2min + size.x2max) << "]}\n";
+  }
+  output.flush();
+  if (!output) Fatal("failed to flush native AMR shadow ledger");
 }
 
 bool AMRHistory::PrepareReplayFlags() {
@@ -486,8 +615,7 @@ void AMRHistory::AppendLedger(const std::string &action, const amr_history::Even
       << ",\"tree_checksum\":\"" << event.tree_checksum
       << "\",\"ranks\":" << global_variable::nranks
       << ",\"exact_match\":" << (exact_match ? "true" : "false");
-  if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
-      mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr) {
+  if (action == "replay") {
     double authority_time = 0.0;
     if (!amr_history::ParseReal(event.time_hex, &authority_time)) {
       Fatal("cannot decode authority time for diagnostic replay ledger");
@@ -507,11 +635,18 @@ void AMRHistory::AppendLedger(const std::string &action, const amr_history::Even
         << amr_history::HexReal(mesh_->time) << "\""
         << ",\"signed_time_difference\":" << mesh_->time - authority_time
         << ",\"ulp_difference\":" << ulps
+        << ",\"candidate_dt_hex\":\""
+        << amr_history::HexReal(last_candidate_dt_) << "\""
+        << ",\"applied_dt_hex\":\""
+        << amr_history::HexReal(last_applied_dt_) << "\""
         << ",\"preceding_timestep_clipped\":"
         << (last_timestep_clipped_ ? "true" : "false");
-    mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordReplayAlignment(
-        event.index, event.time_hex, amr_history::HexReal(mesh_->time),
-        mesh_->time - authority_time, ulps, last_timestep_clipped_);
+    if (mesh_->pmb_pack != nullptr && mesh_->pmb_pack->pz4c != nullptr &&
+        mesh_->pmb_pack->pz4c->chi_parent_provenance != nullptr) {
+      mesh_->pmb_pack->pz4c->chi_parent_provenance->RecordReplayAlignment(
+          event.index, event.time_hex, amr_history::HexReal(mesh_->time),
+          mesh_->time - authority_time, ulps, last_timestep_clipped_);
+    }
   }
   out << "}\n";
   out.flush();

@@ -40,6 +40,7 @@ class AMRHistory {
   void AppendEvent(int created, int deleted);
   void AppendLedger(const std::string &action, const amr_history::Event &event,
                     bool exact_match) const;
+  void AppendShadowLedger() const;
   std::string FileDigest() const;
   std::uint64_t FileSize() const;
   std::string CurrentTreeChecksum() const;
@@ -66,6 +67,8 @@ class AMRHistory {
   int shadow_derefine_ = 0;
   bool shadow_flags_captured_ = false;
   bool last_timestep_clipped_ = false;
+  double last_candidate_dt_ = 0.0;
+  double last_applied_dt_ = 0.0;
   std::vector<amr_history::Location> replay_target_;
   std::string loaded_digest_;
 };

@@ -224,6 +224,16 @@ def serial_suite(args, work):
     require(len(event_lines(high_log)) == len(events) - 1, "2x replay event count mismatch")
     high_ledger = roots["high"] / "high.amr_history_replay.jsonl"
     require(high_ledger.is_file(), "2x replay ledger missing")
+    high_ledger_records = [json.loads(line) for line in
+                           high_ledger.read_text(encoding="utf-8").splitlines()]
+    require(high_ledger_records and all(
+        record["action"] == "replay" and
+        "candidate_dt_hex" in record and
+        "applied_dt_hex" in record and
+        "ulp_difference" in record and
+        abs(record["ulp_difference"]) <= 1
+        for record in high_ledger_records),
+        "2x replay ledger lacks exact event-time/timestep evidence")
     require(header["root_blocks"] == [2, 2, 1] and
             header["cells_per_meshblock"] == [8, 8, 8], "unexpected record geometry")
 

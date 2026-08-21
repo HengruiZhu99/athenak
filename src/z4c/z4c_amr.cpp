@@ -60,6 +60,9 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
     }
     dchi_shadow_nyquist =
         pin->GetOrAddBoolean("z4c_amr", "dchi_shadow_nyquist", false);
+    capture_replay_dchi =
+        pin->DoesParameterExist("mesh_refinement", "amr_history_mode") &&
+        pin->GetString("mesh_refinement", "amr_history_mode") == "replay";
   } else {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
               << __LINE__ << std::endl;
@@ -252,6 +255,15 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
   auto dchi_derefine_factor = this->dchi_derefine_factor;
   auto root_lev = pmesh->root_level;
   auto max_ref_lev = this->max_ref_lev;
+  DvceArray1D<Real> block_dchi;
+  DvceArray1D<int> block_dchi_ordinal;
+  if (capture_replay_dchi) {
+    Kokkos::realloc(block_dchi, nmb);
+    Kokkos::realloc(block_dchi_ordinal, nmb);
+    Kokkos::deep_copy(block_dchi, 0.0);
+    Kokkos::deep_copy(block_dchi_ordinal, std::numeric_limits<int>::max());
+  }
+  const auto capture_dchi = capture_replay_dchi;
 
   if (dchi_shadow_nyquist) WriteDchiShadow(pmbp);
 
@@ -285,7 +297,27 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
       if (team_dmax < dchi_derefine_factor * dchi_thresh) {
         refine_flag.d_view(m + mbs) = -1;
       }
+      if (capture_dchi) block_dchi(m) = team_dmax;
     });
+
+  if (capture_replay_dchi) {
+    par_for("Z4c_AMR::DchiArgmax", DevExeSpace(), 0, nmb - 1, ks, ks + nx3 - 1,
+            js, js + nx2 - 1, is, is + nx1 - 1,
+        KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+          Real d2 = SQR(u0(m, I_Z4C_CHI, k, j, i + 1) -
+                        u0(m, I_Z4C_CHI, k, j, i - 1));
+          d2 += SQR(u0(m, I_Z4C_CHI, k, j + 1, i) -
+                    u0(m, I_Z4C_CHI, k, j - 1, i));
+          if (nx3 > 1) {
+            d2 += SQR(u0(m, I_Z4C_CHI, k + 1, j, i) -
+                      u0(m, I_Z4C_CHI, k - 1, j, i));
+          }
+          if (sqrt(d2) == block_dchi(m)) {
+            const int ordinal = ((k - ks) * nx2 + (j - js)) * nx1 + (i - is);
+            Kokkos::atomic_min(&block_dchi_ordinal(m), ordinal);
+          }
+        });
+  }
 
   // sync host and device
   refine_flag.template modify<DevExeSpace>();
@@ -303,6 +335,18 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
 
   refine_flag.template modify<HostMemSpace>();
   refine_flag.template sync<DevExeSpace>();
+  if (capture_replay_dchi) {
+    const auto host_dchi =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), block_dchi);
+    const auto host_ordinal =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), block_dchi_ordinal);
+    last_dchi_max.assign(static_cast<std::size_t>(nmb), 0.0);
+    last_dchi_ordinal.assign(static_cast<std::size_t>(nmb), -1);
+    for (int m = 0; m < nmb; ++m) {
+      last_dchi_max[m] = host_dchi(m);
+      last_dchi_ordinal[m] = host_ordinal(m);
+    }
+  }
 }
 
 void Z4c_AMR::WriteDchiShadow(MeshBlockPack *pmbp) {

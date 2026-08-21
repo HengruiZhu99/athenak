@@ -63,6 +63,9 @@ class Z4c_AMR {
   Real dchi_thresh;    // dchi threshold for dchi refinement method
   Real dchi_derefine_factor = 0.25;  // derefine below this fraction of dchi threshold
   bool dchi_shadow_nyquist = false;  // default-off; never changes refinement flags
+  bool capture_replay_dchi = false;  // diagnostic-only native criterion values in replay
+  std::vector<Real> last_dchi_max;   // local MeshBlock maxima from the latest dchi check
+  std::vector<int> last_dchi_ordinal;  // first active cell attaining each local maximum
   int max_ref_lev;   // maximum level of refinement for chi and dchi
 };
 
