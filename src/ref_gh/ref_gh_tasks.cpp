@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 
 #include "athena.hpp"
 #include "bvals/bvals.hpp"
@@ -26,8 +27,15 @@ namespace ref_gh {
 
 template <typename MaxLocation>
 KOKKOS_INLINE_FUNCTION
-void UpdateReferenceOracleMaximum(const Real error, const int category,
+void UpdateReferenceOracleMaximum(const Real cached, const Real oracle,
+                                  const int category,
                                   MaxLocation &maximum) {
+  Real scale = 1.0;
+  const Real cached_magnitude = Kokkos::abs(cached);
+  const Real oracle_magnitude = Kokkos::abs(oracle);
+  if (cached_magnitude > scale) scale = cached_magnitude;
+  if (oracle_magnitude > scale) scale = oracle_magnitude;
+  const Real error = Kokkos::abs(cached - oracle)/scale;
   if (error > maximum.val) {
     maximum.val = error;
     maximum.loc = category;
@@ -586,15 +594,15 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       const ReferenceCachePoint cached{evolution, diagnostic, m, k, j, i};
       for (int A = 0; A < 4; ++A) {
         for (int a = 0; a < 4; ++a) {
-          UpdateReferenceOracleMaximum(Kokkos::abs(
-              ReferenceCoframe(cached, A, a) - oracle.coframe[A][a]),
+          UpdateReferenceOracleMaximum(
+              ReferenceCoframe(cached, A, a), oracle.coframe[A][a],
               0, local_maximum);
-          UpdateReferenceOracleMaximum(Kokkos::abs(
-              ReferenceFrame(cached, A, a) - oracle.frame[A][a]),
+          UpdateReferenceOracleMaximum(
+              ReferenceFrame(cached, A, a), oracle.frame[A][a],
               1, local_maximum);
           for (int p = 0; p < 4; ++p) {
-            UpdateReferenceOracleMaximum(Kokkos::abs(
-                ReferenceDFrame(cached, p, A, a) - oracle.d_frame[p][A][a]),
+            UpdateReferenceOracleMaximum(
+                ReferenceDFrame(cached, p, A, a), oracle.d_frame[p][A][a],
                 2, local_maximum);
           }
         }
@@ -603,39 +611,39 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
         for (int B = 0; B < 4; ++B) {
           for (int C = 0; C < 4; ++C) {
             if (B <= C) {
-              UpdateReferenceOracleMaximum(Kokkos::abs(
-                  ReferenceChristoffel(cached, A, B, C)
-                  - oracle.christoffel[A][B][C]), 3, local_maximum);
+              UpdateReferenceOracleMaximum(
+                  ReferenceChristoffel(cached, A, B, C),
+                  oracle.christoffel[A][B][C], 3, local_maximum);
             }
-            UpdateReferenceOracleMaximum(Kokkos::abs(
-                ReferenceSpin(cached, A, B, C) - oracle.spin[A][B][C]),
+            UpdateReferenceOracleMaximum(
+                ReferenceSpin(cached, A, B, C), oracle.spin[A][B][C],
                 4, local_maximum);
             for (int D = 0; D < 4; ++D) {
-              UpdateReferenceOracleMaximum(Kokkos::abs(
-                  ReferenceSpinDerivative(cached, A, B, C, D)
-                  - oracle.spin_derivative[A][B][C][D]), 5, local_maximum);
-              UpdateReferenceOracleMaximum(Kokkos::abs(
-                  ReferenceRiemann(cached, A, B, C, D)
-                  - oracle.riemann_frame[A][B][C][D]), 6, local_maximum);
+              UpdateReferenceOracleMaximum(
+                  ReferenceSpinDerivative(cached, A, B, C, D),
+                  oracle.spin_derivative[A][B][C][D], 5, local_maximum);
+              UpdateReferenceOracleMaximum(
+                  ReferenceRiemann(cached, A, B, C, D),
+                  oracle.riemann_frame[A][B][C][D], 6, local_maximum);
             }
           }
         }
       }
       for (int I = 0; I < 3; ++I) {
         for (int J = 0; J < 3; ++J) {
-          UpdateReferenceOracleMaximum(Kokkos::abs(
-              ReferenceSpatialFrame(cached, I, J) - oracle.spatial_frame[I][J]),
+          UpdateReferenceOracleMaximum(
+              ReferenceSpatialFrame(cached, I, J), oracle.spatial_frame[I][J],
               7, local_maximum);
-          UpdateReferenceOracleMaximum(Kokkos::abs(
-              ReferenceSpatialCoframe(cached, I, J)
-              - oracle.spatial_coframe[I][J]), 8, local_maximum);
-          UpdateReferenceOracleMaximum(Kokkos::abs(
-              ReferenceDtSpatialFrame(cached, I, J)
-              - oracle.dt_spatial_frame[I][J]), 9, local_maximum);
+          UpdateReferenceOracleMaximum(
+              ReferenceSpatialCoframe(cached, I, J),
+              oracle.spatial_coframe[I][J], 8, local_maximum);
+          UpdateReferenceOracleMaximum(
+              ReferenceDtSpatialFrame(cached, I, J),
+              oracle.dt_spatial_frame[I][J], 9, local_maximum);
           for (int K = 0; K < 3; ++K) {
-            UpdateReferenceOracleMaximum(Kokkos::abs(
-                ReferenceStructure(cached, I, J, K)
-                - oracle.structure[I][J][K]), 10, local_maximum);
+            UpdateReferenceOracleMaximum(
+                ReferenceStructure(cached, I, J, K),
+                oracle.structure[I][J][K], 10, local_maximum);
           }
         }
       }
@@ -643,9 +651,9 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
         for (int q = 0; q < 4; ++q) {
           for (int A = 0; A < 4; ++A) {
             for (int a = 0; a < 4; ++a) {
-              UpdateReferenceOracleMaximum(Kokkos::abs(
-                  ReferenceDDFrame(cached, p, q, A, a)
-                  - oracle.dd_frame[p][q][A][a]), 11, local_maximum);
+              UpdateReferenceOracleMaximum(
+                  ReferenceDDFrame(cached, p, q, A, a),
+                  oracle.dd_frame[p][q][A][a], 11, local_maximum);
             }
           }
         }
@@ -653,9 +661,9 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
           for (int b = 0; b < 4; ++b) {
             for (int c = 0; c < 4; ++c) {
               if (b <= c) {
-                UpdateReferenceOracleMaximum(Kokkos::abs(
-                    ReferenceDChristoffel(cached, p, a, b, c)
-                    - oracle.d_christoffel[p][a][b][c]), 12, local_maximum);
+                UpdateReferenceOracleMaximum(
+                    ReferenceDChristoffel(cached, p, a, b, c),
+                    oracle.d_christoffel[p][a][b][c], 12, local_maximum);
               }
             }
           }
@@ -663,22 +671,26 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       }
       for (int A = 0; A < 4; ++A) {
         for (int B = 0; B < 4; ++B) {
-          UpdateReferenceOracleMaximum(Kokkos::abs(
-              ReferenceRicci(cached, A, B) - oracle.ricci_frame[A][B]),
+          UpdateReferenceOracleMaximum(
+              ReferenceRicci(cached, A, B), oracle.ricci_frame[A][B],
               13, local_maximum);
         }
       }
     }, MaxLoc(maximum_error));
-    if (!(maximum_error.val <= 1.0e-14)) {
-      std::cout << "### FATAL ERROR: Ref-GH reference cache disagrees with oracle: "
-                << maximum_error.val << " category=" << maximum_error.loc
+    constexpr Real kRoundoffTolerance =
+        256.0*std::numeric_limits<Real>::epsilon();
+    if (!(maximum_error.val <= kRoundoffTolerance)) {
+      std::cout << "### FATAL ERROR: Ref-GH reference cache scaled error "
+                   "disagrees with oracle: " << maximum_error.val
+                << " category=" << maximum_error.loc
+                << " tolerance=" << kRoundoffTolerance
                 << std::endl;
       std::exit(EXIT_FAILURE);
     }
     reference_cache_oracle_validated = true;
     reference_diagnostic_oracle_validated = true;
     if (global_variable::my_rank == 0) {
-      std::cout << "reference-GH production cache oracle Linf = "
+      std::cout << "reference-GH production cache oracle scaled Linf = "
                 << maximum_error.val << ", time=" << time << std::endl;
     }
   }

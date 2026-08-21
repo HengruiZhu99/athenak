@@ -13,7 +13,9 @@ set -euo pipefail
 
 ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820
 SRC="${ROOT}/athenak"
-BUILD="${ROOT}/build_sycl_pvc_${PBS_JOBID}"
+# Reuse the first gate's configured build tree so focused validation-only
+# retries rebuild only changed translation units on the compute node.
+BUILD="${ROOT}/build_sycl_pvc_8770307.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov"
 EXE="${BUILD}/src/athena"
 INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
 OUT="${ROOT}/runs/cache_gate_${PBS_JOBID}"
