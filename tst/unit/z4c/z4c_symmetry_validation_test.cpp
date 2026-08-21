@@ -97,7 +97,10 @@ bool CheckCenteringSelection() {
   input = ValidCartoonInput();
   input.requested_grid_centering = "vertex";
   input.incompatible_physics = {"hydro"};
-  return Rejects(input, "vacuum Z4c");
+  if (!Rejects(input, "vacuum Z4c")) return false;
+  input.incompatible_physics.clear();
+  input.incompatible_consumers = {"Z4c wave extraction"};
+  return Rejects(input, "without a centering-aware sampler");
 }
 
 bool CheckStencilDispatch() {

@@ -72,6 +72,12 @@ def main() -> int:
                 "Minkowski constraints exceed the dynamic AMR regression bound")
         require(math.isclose(row[10], 64.0 * math.pi, rel_tol=5.0e-6),
                 "native VC history does not integrate the exact Cartoon ring volume")
+        require(math.isclose(row[18], 1.0, rel_tol=0.0, abs_tol=2.0e-14),
+                "native VC central observer did not sample unit lapse at the origin")
+        require(math.isclose(row[19], row[0], rel_tol=2.0e-6, abs_tol=2.0e-12),
+                "native VC central proper time does not track Minkowski coordinate time")
+        require(abs(row[20]) < 1.0e-18,
+                "native VC origin curvature is nonzero in Minkowski spacetime")
     require(max(row[10] for row in rows) == min(row[10] for row in rows),
             "native VC history volume changed across refine/derefine events")
 

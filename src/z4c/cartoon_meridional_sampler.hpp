@@ -116,8 +116,9 @@ inline bool ContainsClosed(const Real value, const Real lower, const Real upper)
 
 //! Select the finest leaf touching a physical point. At equal level, prefer
 //! positive rho and positive z at symmetry interfaces, then the lowest gid.
-inline CartoonMeridionalStencil LocateCartoonMeridionalPoint(
-    Mesh *mesh, const Real rho, const Real z) {
+inline CartoonMeridionalStencil LocateCartoonMeridionalPointOnGrid(
+    Mesh *mesh, const Real rho, const Real z,
+    const Z4cGridCentering centering) {
   CartoonMeridionalStencil stencil;
   bool selected_positive_rho = false;
   bool selected_positive_z = false;
@@ -168,24 +169,47 @@ inline CartoonMeridionalStencil LocateCartoonMeridionalPoint(
     return stencil;
   }
   const auto &indices = mesh->mb_indcs;
+  const bool vertex = centering == Z4cGridCentering::vertex;
+  const auto &layout = mesh->pmb_pack->pz4c->layout;
   const Real dx1 = (selected_x1max - selected_x1min) / indices.nx1;
   const Real dx2 = (selected_x2max - selected_x2min) / indices.nx2;
-  const Real offset_i = (rho - selected_x1min) / dx1 - 0.5;
-  const Real offset_j = (z - selected_x2min) / dx2 - 0.5;
-  const int lower_i = static_cast<int>(std::floor(offset_i));
-  const int lower_j = static_cast<int>(std::floor(offset_j));
-  stencil.i0 = indices.is + lower_i;
-  stencil.j0 = indices.js + lower_j;
-  stencil.k = indices.ks;
+  const Real offset_i = (rho - selected_x1min) / dx1 - (vertex ? 0.0 : 0.5);
+  const Real offset_j = (z - selected_x2min) / dx2 - (vertex ? 0.0 : 0.5);
+  int lower_i = static_cast<int>(std::floor(offset_i));
+  int lower_j = static_cast<int>(std::floor(offset_j));
+  if (vertex) {
+    // A query on an upper block vertex belongs to the last interpolation
+    // interval.  This keeps both points active while preserving an exact
+    // weight of one at the endpoint.
+    lower_i = std::max(0, std::min(indices.nx1 - 1, lower_i));
+    lower_j = std::max(0, std::min(indices.nx2 - 1, lower_j));
+  }
+  stencil.i0 = (vertex ? layout.is : indices.is) + lower_i;
+  stencil.j0 = (vertex ? layout.js : indices.js) + lower_j;
+  stencil.k = vertex ? layout.ks : indices.ks;
   stencil.wi = offset_i - lower_i;
   stencil.wj = offset_j - lower_j;
-  const int total_i = indices.nx1 + 2 * indices.ng;
-  const int total_j = indices.nx2 + 2 * indices.ng;
+  const int total_i = vertex ? layout.n1 : indices.nx1 + 2 * indices.ng;
+  const int total_j = vertex ? layout.n2 : indices.nx2 + 2 * indices.ng;
   if (stencil.i0 < 0 || stencil.i0 + 1 >= total_i || stencil.j0 < 0 ||
       stencil.j0 + 1 >= total_j) {
     stencil.valid = false;
   }
   return stencil;
+}
+
+//! Locate a query on the legacy cell-centred ADM/Z4c adapter.
+inline CartoonMeridionalStencil LocateCartoonMeridionalPoint(
+    Mesh *mesh, const Real rho, const Real z) {
+  return LocateCartoonMeridionalPointOnGrid(
+      mesh, rho, z, Z4cGridCentering::cell);
+}
+
+//! Locate a query on the authoritative native Z4c grid.
+inline CartoonMeridionalStencil LocateNativeCartoonMeridionalPoint(
+    Mesh *mesh, const Real rho, const Real z) {
+  return LocateCartoonMeridionalPointOnGrid(
+      mesh, rho, z, mesh->pmb_pack->pz4c->layout.centering);
 }
 
 struct CartoonCentralSample {
@@ -749,6 +773,107 @@ inline CartoonCentralSample SampleCartoonCentralDiagnostics(Mesh *mesh) {
   return sample;
 }
 
+//! Sample the synchronized physical origin directly on the native VC grid.
+//!
+//! Unlike the legacy CC diagnostic, no four-cell reconstruction is required:
+//! rho=0,z=0 is an evolved vertex.  The globally selected leaf is deterministic
+//! at same-level block interfaces, and shared-node exchange makes duplicate
+//! copies bitwise identical before this accepted-state diagnostic.
+template <int NGHOST>
+inline CartoonCentralSample SampleCartoonCentralVertexDiagnostics(Mesh *mesh) {
+  CartoonCentralSample sample;
+  const CartoonMeridionalStencil center =
+      LocateNativeCartoonMeridionalPoint(mesh, 0.0, 0.0);
+  sample.gid = center.gid;
+  sample.level = center.level;
+  const Real tolerance = 128.0 * std::numeric_limits<Real>::epsilon();
+  if (!center.valid || std::fabs(center.wi) > tolerance ||
+      std::fabs(center.wj) > tolerance) {
+    sample.status = center.valid
+                        ? CartoonCentralSample::Status::invalid_common_lattice
+                        : CartoonCentralSample::Status::missing_center_leaf;
+    return sample;
+  }
+
+  Kokkos::View<Real *> local_values("Cartoon native vertex center values", 3);
+  Kokkos::View<int *> local_flags("Cartoon native vertex center flags", 2);
+  Kokkos::deep_copy(local_values, 0.0);
+  Kokkos::deep_copy(local_flags, 0);
+  if (center.owner_rank == global_variable::my_rank) {
+    if (center.local_block < 0 ||
+        center.local_block >= mesh->pmb_pack->nmb_thispack) {
+      sample.status = CartoonCentralSample::Status::invalid_owner;
+      return sample;
+    }
+    auto u0 = mesh->pmb_pack->pz4c->u0;
+    auto constraints = mesh->pmb_pack->pz4c->u_con;
+    auto metric = mesh->pmb_pack->pz4c->adm.g_dd;
+    auto curvature = mesh->pmb_pack->pz4c->adm.vK_dd;
+    auto size = mesh->pmb_pack->pmb->mb_size.d_view;
+    const auto layout = mesh->pmb_pack->pz4c->layout;
+    const int alpha = mesh->pmb_pack->pz4c->I_Z4C_ALPHA;
+    Kokkos::parallel_for(
+        "Cartoon native vertex center diagnostic",
+        Kokkos::RangePolicy<DevExeSpace>(0, 1), KOKKOS_LAMBDA(const int) {
+          const int m = center.local_block;
+          const int k = center.k;
+          const int j = center.j0;
+          const int i = center.i0;
+          const Real inverse_spacing[3] = {
+              1.0 / size(m).dx1, 1.0 / size(m).dx2, 1.0 / size(m).dx3};
+          auto derivatives =
+              MakeVertexCenteredDerivativeProvider<CartoonSO2, NGHOST>(
+                  inverse_spacing, size, layout.nx1, layout.is, m, k, j, i);
+          const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST, false>(
+              derivatives, metric, curvature, m, k, j, i);
+          const Real lapse = u0(m, alpha, k, j, i);
+          const Real constraint_squared = constraints(m, 0, k, j, i);
+          local_flags(0) = 1;
+          if (!Kokkos::isfinite(lapse) || lapse < 0.0 ||
+              !Kokkos::isfinite(constraint_squared) ||
+              constraint_squared < 0.0 || !diagnostic.valid ||
+              !Kokkos::isfinite(diagnostic.kretschmann)) {
+            local_flags(1) = 1;
+            return;
+          }
+          local_values(0) = lapse;
+          local_values(1) = constraint_squared;
+          local_values(2) = Kokkos::fabs(diagnostic.kretschmann);
+        });
+    Kokkos::fence();
+  }
+  auto host_values =
+      Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), local_values);
+  auto host_flags =
+      Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), local_flags);
+  Real values[3] = {host_values(0), host_values(1), host_values(2)};
+  int flags[2] = {host_flags(0), host_flags(1)};
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, values, 3, MPI_ATHENA_REAL, MPI_SUM,
+                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, flags, 2, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  if (flags[0] != 1) {
+    sample.status = flags[0] == 0
+                        ? CartoonCentralSample::Status::missing_support
+                        : CartoonCentralSample::Status::duplicate_support;
+    return sample;
+  }
+  if (flags[1] != 0) {
+    sample.status = CartoonCentralSample::Status::nonfinite_support;
+    return sample;
+  }
+  sample.lapse = values[0];
+  sample.constraint_norm = Z4cAggregateConstraintNorm(values[1]);
+  sample.abs_kretschmann = values[2];
+  sample.valid = std::isfinite(sample.lapse) &&
+                 std::isfinite(sample.constraint_norm) &&
+                 std::isfinite(sample.abs_kretschmann);
+  sample.status = sample.valid ? CartoonCentralSample::Status::valid
+                               : CartoonCentralSample::Status::nonfinite_support;
+  return sample;
+}
+
 inline const char *CartoonCentralSampleStatusMessage(
     const CartoonCentralSample::Status status) {
   switch (status) {
@@ -775,13 +900,18 @@ inline const char *CartoonCentralSampleStatusMessage(
 }
 
 inline CartoonCentralSample DispatchCartoonCentralDiagnostics(Mesh *mesh) {
+  const bool vertex = mesh->pmb_pack->pz4c->layout.centering ==
+                      Z4cGridCentering::vertex;
   switch (mesh->pmb_pack->z4c_symmetry.stencil_width) {
     case 2:
-      return SampleCartoonCentralDiagnostics<2>(mesh);
+      return vertex ? SampleCartoonCentralVertexDiagnostics<2>(mesh)
+                    : SampleCartoonCentralDiagnostics<2>(mesh);
     case 3:
-      return SampleCartoonCentralDiagnostics<3>(mesh);
+      return vertex ? SampleCartoonCentralVertexDiagnostics<3>(mesh)
+                    : SampleCartoonCentralDiagnostics<3>(mesh);
     case 4:
-      return SampleCartoonCentralDiagnostics<4>(mesh);
+      return vertex ? SampleCartoonCentralVertexDiagnostics<4>(mesh)
+                    : SampleCartoonCentralDiagnostics<4>(mesh);
     default:
       return {};
   }

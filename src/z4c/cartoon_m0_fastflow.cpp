@@ -551,7 +551,11 @@ M0AdmSample CartoonM0FastFlow::SampleAdm(const Real rho, const Real z) const {
 M0AxisSample CartoonM0FastFlow::SampleAxisLapse(const Real z) const {
   M0AxisSample result;
   result.z = z;
-  const auto stencil = LocateCartoonMeridionalPoint(pack_->pmesh, 0.0, z);
+  // Lapse is an evolved Z4c field.  In VC mode sample the authoritative
+  // rho=0 nodal line; the ADM metric path above deliberately uses the explicit
+  // cell-centred adapter instead.
+  const auto stencil =
+      LocateNativeCartoonMeridionalPoint(pack_->pmesh, 0.0, z);
   if (!stencil.valid) return result;
   Kokkos::View<Real *> values("Cartoon axis lapse sample", 2);
   Kokkos::deep_copy(values, 0.0);

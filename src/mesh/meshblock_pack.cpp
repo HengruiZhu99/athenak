@@ -173,6 +173,12 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
           "Cartoon mirror_pair cannot feed single-surface horizon excision");
     }
   }
+  if (input.requested_grid_centering == "vertex" &&
+      input.requested_symmetry == "cartesian3d" &&
+      pin->DoesParameterExist("fastflow", "num_horizons") &&
+      pin->GetInteger("fastflow", "num_horizons") > 0) {
+    input.incompatible_consumers.emplace_back("Cartesian FastFlow");
+  }
 
   for (const auto &block : pin->block) {
     if (block.block_name.rfind("output", 0) != 0 ||

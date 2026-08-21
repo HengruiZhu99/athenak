@@ -152,6 +152,17 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
                    "z4c_cartoon_derivatives check_only requires cartoon_so2");
   }
 
+  // Optional consumers that still interpolate Z4c state with CC geometry must
+  // never receive native nodal arrays.  Cartoon m=0 FastFlow is deliberately
+  // absent from this list: it uses the explicit VC-to-CC ADM adapter and a
+  // centering-aware native lapse sampler.
+  if (config.grid_centering == Z4cGridCentering::vertex &&
+      !input.incompatible_consumers.empty()) {
+    return Invalid(config, "grid_centering=vertex does not support " +
+                               input.incompatible_consumers.front() +
+                               " without a centering-aware sampler");
+  }
+
   if (config.mode == Z4cSymmetryMode::cartesian3d) {
     if (input.coordinate_map_specified && input.coordinate_map != "cartesian_xyz") {
       return Invalid(config, "cartesian3d requires coordinate_map=cartesian_xyz");

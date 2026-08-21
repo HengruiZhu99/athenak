@@ -238,8 +238,13 @@ def main() -> int:
     ]:
         text = (source_dir / relative).read_text(encoding="utf-8")
         for stencil in (2, 3, 4):
-            require(f"CartoonSO2, {stencil}" in text and
-                    f"Cartesian3D, {stencil}" in text,
+            direct = (f"CartoonSO2, {stencil}" in text and
+                      f"Cartesian3D, {stencil}" in text)
+            macro = ("DISPATCH_DIAGNOSTICS(STENCIL)" in text and
+                     f"DISPATCH_DIAGNOSTICS({stencil})" in text and
+                     "z4c::CartoonSO2, STENCIL" in text and
+                     "z4c::Cartesian3D, STENCIL" in text)
+            require(direct or macro,
                     f"{relative} does not dispatch actual stencil {stencil}")
 
     # The runtime mode is consumed only by host wrappers.  Device lambdas receive a
@@ -339,8 +344,11 @@ def main() -> int:
     require("bool preserve_restored_z4c = false" in driver_header and
             "bool preserve_restored_z4c)" in boundary_init,
             "Z4c restart-preservation flag is not explicit and default-false")
-    require("if (pz4c != nullptr && !preserve_restored_z4c)" in boundary_init,
-            "restart preservation does not guard exactly the Z4c initialization branch")
+    require("const bool rebuild_vertex_restart" in boundary_init and
+            "pz4c->RebuildVertexTopologyPlan()" in boundary_init and
+            "if (pz4c != nullptr && (!preserve_restored_z4c || rebuild_vertex_restart))"
+            in boundary_init,
+            "restart preservation does not rebuild native VC topology and derived storage")
     require("if (pz4c != nullptr)" in boundary_init and
             "pz4c->FillAxisParityGhosts(this, 0)" in boundary_init,
             "fresh/restart initialization does not regenerate derived axis ghosts")
@@ -421,11 +429,11 @@ def main() -> int:
             queue.index('"Z4c_CalcRHS"') and
             queue.count("Task_Run, {Z4c_AxisGhosts}") == 3,
             "each O2/O4/O6 RHS is not ordered after the explicit axis parity fill")
-    require(queue.index('"Z4c_ExplRK"') < queue.index('"Z4c_AlgC"') <
-            queue.index('"Z4c_RestU"') < queue.index('"Z4c_Prolong"') <
-            queue.index('"Z4c_AxisGhostsPost"') <
-            queue.index('"Z4c_Z4c2ADM"'),
-            "projected accepted state does not own the next cache/ghost/ADM state")
+    require(queue.index('"Z4c_ExplRK"') < queue.index('"Z4c_RestU"') <
+            queue.index('"Z4c_Prolong"') < queue.index('"Z4c_AxisGhostsPost"') <
+            queue.index('"Z4c_VCFinalize"') < queue.index('"Z4c_Z4c2ADM"') and
+            "Task_Run, {Z4c_AlgC}" in queue,
+            "CC/VC accepted states do not own the next cache/ghost/ADM state")
     axis_fill = tasks[tasks.index("TaskStatus Z4c::FillAxisParityGhosts"):
                       tasks.index("TaskStatus Z4c::SendU")]
     require("half_rho_z_suppressed_y_v2" in axis_fill and
@@ -438,14 +446,15 @@ def main() -> int:
     require(queue.index("Z4c_BCS") < queue.index("Z4c_Prolong"),
             "normal RK physical/prolongation task ordering changed")
     task_order = [tasks.index(marker) for marker in
-                  ('"Z4c_AlgC"', '"Z4c_RestU"', '"Z4c_SendU"', '"Z4c_RecvU"',
+                  ('"Z4c_RestU"', '"Z4c_SendU"', '"Z4c_RecvU"',
                    '"Z4c_BCS"', '"Z4c_Prolong"', '"Z4c_AxisGhostsPost"',
+                   '"Z4c_VCFinalize"',
                    '"Z4c_Z4c2ADM"')]
     require(task_order == sorted(task_order),
             "normal Z4c boundary/projection/ADM task order changed")
     require(tasks.index("&Z4c::ConvertZ4cToADM") <
             tasks.index("&Z4c::ADMConstraints_") and
-            '"Z4c_Z4c2ADM",\n                 Task_Run' in tasks and
+            '"Z4c_Z4c2ADM"' in tasks and
             '"Z4c_ADMC", Task_End' in tasks,
             "Z4c post-step task tail does not initialize ADM/constraints before completion")
 
@@ -468,6 +477,24 @@ def main() -> int:
     require('pin->GetString("problem", "check_only")' in validator and
             "cartoon_derivative_check_only_valid" in validator,
             "Cartoon derivative MMS lacks strict check_only parsing")
+
+    sampler = (source_dir / "src/z4c/cartoon_meridional_sampler.hpp").read_text(
+        encoding="utf-8")
+    fastflow = (source_dir / "src/z4c/cartoon_m0_fastflow.cpp").read_text(
+        encoding="utf-8")
+    symmetry = (source_dir / "src/z4c/z4c_symmetry.cpp").read_text(
+        encoding="utf-8")
+    require("SampleCartoonCentralVertexDiagnostics" in sampler and
+            "LocateNativeCartoonMeridionalPoint(mesh, 0.0, 0.0)" in sampler and
+            "vertex ? SampleCartoonCentralVertexDiagnostics" in sampler,
+            "VC central observer does not sample the evolved origin vertex")
+    axis_lapse = fastflow[fastflow.index("M0AxisSample CartoonM0FastFlow::SampleAxisLapse"):
+                         fastflow.index("void CartoonM0FastFlow::Restore")]
+    require("LocateNativeCartoonMeridionalPoint" in axis_lapse and
+            "LocateCartoonMeridionalPoint(pack_->pmesh" not in axis_lapse,
+            "Cartoon FastFlow lapse still samples VC state with CC geometry")
+    require("without a centering-aware sampler" in symmetry,
+            "unsupported native-VC consumers do not fail before allocation")
 
     print("Z4c policy migration ownership and host-dispatch contract passed")
     return 0
