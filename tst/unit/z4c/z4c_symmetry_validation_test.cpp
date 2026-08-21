@@ -68,7 +68,32 @@ bool CheckDefaultCartesian() {
   const auto result = z4c::ValidateZ4cSymmetry(input);
   return result.valid &&
          result.config.mode == z4c::Z4cSymmetryMode::cartesian3d &&
-         result.config.coordinate_map == z4c::Z4cCoordinateMap::cartesian_xyz;
+         result.config.coordinate_map == z4c::Z4cCoordinateMap::cartesian_xyz &&
+         result.config.grid_centering == z4c::Z4cGridCentering::cell &&
+         result.config.centering_schema == z4c::Z4cGridLayout::kCenteringSchema;
+}
+
+bool CheckCenteringSelection() {
+  auto input = ValidCartoonInput();
+  input.requested_grid_centering = "cell";
+  auto result = z4c::ValidateZ4cSymmetry(input);
+  if (!result.valid || result.config.grid_centering != z4c::Z4cGridCentering::cell ||
+      std::string(z4c::ToString(result.config.grid_centering)) != "cell") {
+    return false;
+  }
+  input.requested_grid_centering = "vertex";
+  result = z4c::ValidateZ4cSymmetry(input);
+  if (!result.valid ||
+      result.config.grid_centering != z4c::Z4cGridCentering::vertex ||
+      result.config.centering_schema != z4c::Z4cGridLayout::kCenteringSchema ||
+      std::string(z4c::ToString(result.config.grid_centering)) != "vertex") {
+    return false;
+  }
+  input.requested_grid_centering = "nodal";
+  if (!Rejects(input, "grid_centering must be cell or vertex")) return false;
+  z4c::Z4cValidationInput no_z4c;
+  no_z4c.requested_grid_centering = "vertex";
+  return Rejects(no_z4c, "requires the <z4c>");
 }
 
 bool CheckStencilDispatch() {
@@ -397,7 +422,8 @@ bool CheckIrisImporterProductionAdmission() {
 }  // namespace
 
 int main() {
-  const bool passed = CheckDefaultCartesian() && CheckStencilDispatch() &&
+  const bool passed = CheckDefaultCartesian() && CheckCenteringSelection() &&
+                      CheckStencilDispatch() &&
                       CheckNonpositiveSpatialOrderFallback() &&
                       CheckMeshAndPhysicsFailures() &&
                       CheckConsumerAndOutputFailures() &&

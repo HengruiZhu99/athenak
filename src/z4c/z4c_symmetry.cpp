@@ -40,6 +40,16 @@ const char *ToString(const Z4cCoordinateMap coordinate_map) {
   return "invalid";
 }
 
+const char *ToString(const Z4cGridCentering centering) {
+  switch (centering) {
+    case Z4cGridCentering::cell:
+      return "cell";
+    case Z4cGridCentering::vertex:
+      return "vertex";
+  }
+  return "invalid";
+}
+
 int EffectiveZ4cSpatialOrder(const int requested_spatial_order, const int nghost) {
   return requested_spatial_order > 0 ? requested_spatial_order : 2 * (nghost - 1);
 }
@@ -66,6 +76,18 @@ bool IsRejectedOutput(const std::string &file_type) {
 
 Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
   Z4cSymmetryConfig config;
+  if (input.requested_grid_centering == "cell") {
+    config.grid_centering = Z4cGridCentering::cell;
+  } else if (input.requested_grid_centering == "vertex") {
+    config.grid_centering = Z4cGridCentering::vertex;
+  } else {
+    return Invalid(config, "<z4c>/grid_centering must be cell or vertex, not '" +
+                               input.requested_grid_centering + "'");
+  }
+  config.centering_schema = Z4cGridLayout::kCenteringSchema;
+  if (config.grid_centering == Z4cGridCentering::vertex && !input.z4c_enabled) {
+    return Invalid(config, "grid_centering=vertex requires the <z4c> physics block");
+  }
   if (input.requested_symmetry == "cartesian3d") {
     config.mode = Z4cSymmetryMode::cartesian3d;
     config.coordinate_map = Z4cCoordinateMap::cartesian_xyz;

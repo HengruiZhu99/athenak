@@ -25,7 +25,45 @@ CUDA-required tests were disabled in this CPU build:
 - `athena.z4c_cartoon_production_kernels_cuda_required`
 - `athena.pdf_scatter_cuda_required`
 
-This establishes the host/MPI CC red-green baseline. CUDA/SYCL baselines and
-the implicit-versus-explicit `grid_centering=cell` byte comparison remain open
-until the immutable centering selector exists.
+This establishes the pre-selector host/MPI CC red-green baseline. CUDA/SYCL
+baselines remain open until their dedicated qualification phases.
 
+## Implicit versus explicit cell selector
+
+After adding only the immutable selector and index-geometry layer, the same
+one-cycle Kerr half-plane input was run twice with one OpenMP thread:
+
+- the repository input with `grid_centering` absent;
+- an otherwise byte-identical input containing `grid_centering = cell`.
+
+Both executions used the rebuilt executable from the same source tree. The
+history file and timestep-contract CSV were byte-identical:
+
+- post-selector executable SHA-256: `e6c1500f8c67c97b0538c876b16fc14bf1fca6a8330d9ae3983e8697c673f402`
+
+- history SHA-256: `4896c333ceda81d99cf1e4c15a28996d73c999c6222d4b83e770c9f4f4d0f598`
+- timestep-contract SHA-256: `dad954f5938eea76aca74493ec5bd1ac8c66cdc67ac7ad24225988c19e5e3037`
+
+Athena binary files include the input deck in their header, so their whole-file
+lengths differ by the added selector line. The repository binary reader was
+used to compare time, cycle, variable inventory, MeshBlock indices, logical
+locations, geometry, and every numerical array with exact equality. Canonical
+numerical-payload SHA-256 values were identical for both runs:
+
+| payload | SHA-256 |
+|---|---|
+| constraints cycle 0 | `0b34b0c1886ca18622058aa1f42d8953bf11ed194cb302005e769e77f3db970b` |
+| constraints cycle 1/final | `c0ba4a0da9982e78bfd5665f9421b48b2b019110171f0f30b24deae729ace2e3` |
+| Z4c cycle 0 | `b5f8dd57e2902fe18d4af8ac1c27f35124379292f389197323dd2ae144b0166a` |
+| Z4c cycle 1/final | `8058fed583f1eca73ad9b4d54fe2171a634214b93f440561720c3367cfc92fea` |
+
+The post-selector host/MPI suite registered 68 tests. All 66 enabled tests
+passed in 183.77 s; the same two CUDA-required tests remained disabled. The
+three new tests were `athena.z4c_vc_layout`, `athena.z4c_vc_coordinates`, and
+`athena.z4c_vc_collapsed_dimension`.
+
+As a transitional fail-closed check, `grid_centering=vertex` was admitted by
+the allocation-free schema validator and then rejected before Z4c physics
+allocation because vertex storage and boundaries were not yet enabled. It
+exited 1 and produced no output files. This guard is temporary and must be
+removed only when the production VC storage path is complete.

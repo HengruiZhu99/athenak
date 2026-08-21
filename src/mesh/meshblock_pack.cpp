@@ -62,6 +62,10 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
   z4c::Z4cValidationInput input;
   input.z4c_enabled = pin->DoesBlockExist("z4c");
   if (input.z4c_enabled) {
+    input.requested_grid_centering =
+        pin->DoesParameterExist("z4c", "grid_centering")
+            ? pin->GetString("z4c", "grid_centering")
+            : "cell";
     input.requested_symmetry = pin->DoesParameterExist("z4c", "symmetry")
                                    ? pin->GetString("z4c", "symmetry")
                                    : "cartesian3d";
@@ -269,6 +273,13 @@ void ValidateAndStoreZ4cSymmetry(ParameterInput *pin, MeshBlockPack *pack) {
     std::exit(EXIT_FAILURE);
   }
   pack->z4c_symmetry = validation.config;
+  if (validation.config.grid_centering == z4c::Z4cGridCentering::vertex) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": grid_centering=vertex passed the immutable geometry contract, "
+                 "but vertex-centered Z4c storage and boundaries are not enabled yet"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   if (pin->DoesBlockExist(z4c::kZ4cRestartBlock)) {
     z4c::Z4cRestartSnapshot snapshot;
     const auto restart = z4c::CaptureZ4cRestartSnapshot(pin, &snapshot);

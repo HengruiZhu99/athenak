@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "outputs/pdf_validation.hpp"
+#include "z4c/z4c_grid.hpp"
 
 namespace z4c {
 
@@ -43,6 +44,8 @@ struct Z4cSymmetryConfig {
   Z4cCoordinateMap coordinate_map = Z4cCoordinateMap::cartesian_xyz;
   int schema = kCartesianSchema;
   int stencil_width = 2;
+  Z4cGridCentering grid_centering = Z4cGridCentering::cell;
+  int centering_schema = Z4cGridLayout::kCenteringSchema;
 };
 
 constexpr int ExpectedZ4cSymmetrySchema(const Z4cSymmetryMode mode) {
@@ -68,6 +71,7 @@ struct Z4cOutputValidationRequest {
 //! Host snapshot consumed by the allocation-free Cartoon validator.
 struct Z4cValidationInput {
   std::string requested_symmetry = "cartesian3d";
+  std::string requested_grid_centering = "cell";
   bool coordinate_map_specified = false;
   std::string coordinate_map;
   bool schema_specified = false;
@@ -119,6 +123,7 @@ struct Z4cValidationResult {
 
 const char *ToString(Z4cSymmetryMode mode);
 const char *ToString(Z4cCoordinateMap coordinate_map);
+const char *ToString(Z4cGridCentering centering);
 int EffectiveZ4cSpatialOrder(int requested_spatial_order, int nghost);
 Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input);
 

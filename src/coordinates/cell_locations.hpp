@@ -39,6 +39,19 @@ static Real CellCenterX(int ith, int n, Real xmin, Real xmax) {
 }
 
 //----------------------------------------------------------------------------------------
+//! \fn void VertexX()
+// returns x-posn of i^th vertex where index range [0,N] maps to [xmin,xmax]
+// returns ghost vertex posn if i is outside range [0,N]. Averages the linear
+// interpolation from each side to symmetrize roundoff exactly as CellCenterX does.
+
+KOKKOS_INLINE_FUNCTION
+static Real VertexX(int ith, int n, Real xmin, Real xmax) {
+  Real x = static_cast<Real>(ith) / static_cast<Real>(n);
+  return (x*xmax - x*xmin) - (0.5*xmax - 0.5*xmin) +
+         (0.5*xmin + 0.5*xmax);
+}
+
+//----------------------------------------------------------------------------------------
 //! \fn void CellCenterIndex()
 // returns i-index of cell containing x position
 

@@ -408,6 +408,25 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND athena_z4c_symmetry_dispatch_unit_test)
 
   add_executable(
+      athena_z4c_grid_layout_unit_test
+      tst/unit/z4c/z4c_grid_layout_test.cpp)
+  target_include_directories(
+      athena_z4c_grid_layout_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(athena_z4c_grid_layout_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_vc_layout
+      COMMAND athena_z4c_grid_layout_unit_test layout)
+  add_test(
+      NAME athena.z4c_vc_coordinates
+      COMMAND athena_z4c_grid_layout_unit_test coordinates)
+  add_test(
+      NAME athena.z4c_vc_collapsed_dimension
+      COMMAND athena_z4c_grid_layout_unit_test collapsed)
+
+  add_executable(
       athena_z4c_cartoon_axis_parity_unit_test
       tst/unit/z4c/cartoon_axis_parity_test.cpp)
   target_include_directories(

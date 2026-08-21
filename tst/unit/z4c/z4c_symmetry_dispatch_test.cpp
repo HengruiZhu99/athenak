@@ -54,7 +54,10 @@ int main() {
   z4c::Z4cSymmetryConfig default_config;
   bool passed = default_config.mode == z4c::Z4cSymmetryMode::cartesian3d &&
                 default_config.coordinate_map == z4c::Z4cCoordinateMap::cartesian_xyz &&
-                default_config.schema == z4c::Z4cSymmetryConfig::kCartesianSchema;
+                default_config.schema == z4c::Z4cSymmetryConfig::kCartesianSchema &&
+                default_config.grid_centering == z4c::Z4cGridCentering::cell &&
+                default_config.centering_schema ==
+                    z4c::Z4cGridLayout::kCenteringSchema;
   for (const auto mode : {z4c::Z4cSymmetryMode::cartesian3d,
                           z4c::Z4cSymmetryMode::cartoon_so2}) {
     for (const int stencil_width : {2, 3, 4}) {
