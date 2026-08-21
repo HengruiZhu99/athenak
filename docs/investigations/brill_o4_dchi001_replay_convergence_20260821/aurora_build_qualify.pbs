@@ -1,0 +1,194 @@
+#!/bin/bash -l
+#PBS -N brill-o4-replay-gate
+#PBS -A CompactBinaryMerger
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=02:00:00
+#PBS -l filesystems=home:flare
+#PBS -q capacity
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+: "${ATHENAK_ROOT:?fresh exact AthenaK checkout required}"
+: "${EXPECTED_SOURCE_COMMIT:?}"
+: "${IRIS_ROOT:?}"
+: "${INPUT_FILE:?}"
+: "${COEFFICIENT_FILE:?}"
+: "${QUAL_ROOT:?fresh qualification root required}"
+test ! -e "${QUAL_ROOT}"
+test "$(git -C "${ATHENAK_ROOT}" rev-parse HEAD)" = "${EXPECTED_SOURCE_COMMIT}"
+test -z "$(git -C "${ATHENAK_ROOT}" status --porcelain)"
+test "$(git -C "${IRIS_ROOT}" rev-parse HEAD)" = \
+  2a069fd0497ef4352d4ecd28c6879ac47b84a5a1
+
+mkdir -p "${QUAL_ROOT}"/{build,run}
+root="$(cd "${QUAL_ROOT}" && pwd)"
+build_root="${root}/build"
+run_root="${root}/run"
+iris_build="${build_root}/iris"
+athena_build="${build_root}/athena"
+
+module purge
+module load oneapi/release/2025.3.1 gcc/13.4.0 \
+  mpich/opt/5.0.0.aurora_test.3c70a61 libfabric/1.22.0 \
+  cray-pals/1.8.0 cray-libpals/1.8.0 cmake/3.31.11 python/3.12.12
+export OMP_NUM_THREADS=1 KOKKOS_NUM_THREADS=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPIR_CVAR_ENABLE_GPU=1
+tile_wrapper=/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh
+test -x "${tile_wrapper}"
+
+{
+  date --iso-8601=seconds
+  hostname
+  git -C "${ATHENAK_ROOT}" rev-parse HEAD HEAD^{tree}
+  git -C "${ATHENAK_ROOT}" submodule status
+  git -C "${IRIS_ROOT}" rev-parse HEAD HEAD^{tree}
+  module list
+  command -v icpx mpicxx mpiexec
+  icpx --version | head -1
+  mpicxx -show
+  cmake --version | head -1
+  sycl-ls
+} > "${root}/provenance.log" 2>&1
+
+cmake -S "${IRIS_ROOT}" -B "${iris_build}" \
+  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=icpx \
+  -DIRIS_ENABLE_MPI=OFF -DIRIS_USE_SYSTEM_KOKKOS=OFF \
+  -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=OFF -DBUILD_TESTING=OFF \
+  > "${build_root}/iris-configure.log" 2>&1
+cmake --build "${iris_build}" --parallel 64 --target iris_athenak_interpolator \
+  > "${build_root}/iris-build.log" 2>&1
+
+export MPICH_CXX=icpx MPICH_CC=icx
+cmake -S "${ATHENAK_ROOT}" -B "${athena_build}" \
+  -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=mpicc \
+  -DCMAKE_CXX_COMPILER=mpicxx -DPROBLEM=z4c_irisk_xcts \
+  -DIRISK_ROOT="${IRIS_ROOT}" \
+  -DIRISK_INTERPOLATOR_LIBRARY="${iris_build}/src/libiris_athenak_interpolator.a" \
+  -DBUILD_TESTING=ON -DAthena_BUILD_UNIT_TESTS=ON \
+  -DAthena_ENABLE_MPI=ON -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_TESTS=OFF > "${build_root}/athena-configure.log" 2>&1
+cmake --build "${athena_build}" --parallel 64 \
+  > "${build_root}/athena-build.log" 2>&1
+
+grep -qx 'Kokkos_ENABLE_SYCL:BOOL=ON' "${athena_build}/CMakeCache.txt"
+grep -qx 'Kokkos_ARCH_INTEL_PVC:BOOL=ON' "${athena_build}/CMakeCache.txt"
+grep -qx 'Athena_ENABLE_MPI:BOOL=ON' "${athena_build}/CMakeCache.txt"
+test -x "${athena_build}/src/athena"
+athena="${athena_build}/src/athena"
+
+ctest --test-dir "${athena_build}" --output-on-failure \
+  -R 'athena[.](amr_history_format|amr_history_extension_static|amr_history_shadow_static|amr_history_integration|z4c_state_admissibility|z4c_state_admissibility_static|z4c_chi_prolongation|z4c_cartoon_amr_transfer_qualification|z4c_cartoon_axis_centered_derivatives|z4c_coarse_cache_ownership|z4c_timestep_contract|z4c_amr_configuration_static)$' \
+  > "${root}/focused-ctest.log" 2>&1
+mpiexec -n 2 -ppn 2 --depth 8 --cpu-bind depth "${tile_wrapper}" \
+  "${athena_build}/athena_z4c_coarse_cache_ownership_unit_test" \
+  > "${root}/coarse-cache-mpi2.log" 2>&1
+python3 "${ATHENAK_ROOT}/tst/unit/mesh/amr_history_integration_test.py" \
+  --athena "${athena}" \
+  --input "${ATHENAK_ROOT}/tst/inputs/amr_history_lwave.athinput" \
+  --work-dir "${root}/amr-history-mpi2" --mpi-only \
+  --mpiexec "${ATHENAK_ROOT}/docs/investigations/brill_o4_dchi001_replay_convergence_20260821/aurora_mpiexec_tile_wrapper.sh" \
+  --np-flag=-n > "${root}/amr-history-mpi2.log" 2>&1
+
+cp "${INPUT_FILE}" "${run_root}/brill_o4_common_tree.athinput"
+cp "${COEFFICIENT_FILE}" "${run_root}/brill_global_48x32.coefficients"
+# Exercise the complete production state-failure extractor on PVC. The
+# intentional nonzero exit is required, and its strict JSON must survive.
+mkdir "${run_root}/state-extraction"
+set +e
+(cd "${run_root}/state-extraction" && \
+  ATHENA_TEST_Z4C_STATE_EXTRACTION=selected_negative_chi \
+  mpiexec -n 1 -ppn 1 --depth 8 --cpu-bind depth "${tile_wrapper}" \
+  "${athena}" -i ../brill_o4_common_tree.athinput \
+  time/nlim=0 mesh_refinement/max_nmb_per_rank=128 \
+  job/basename=state_extraction \
+  problem/brill_global_coefficients_file=../brill_global_48x32.coefficients \
+  > stdout.log 2> stderr.log)
+state_status=$?
+set -e
+test "${state_status}" -ne 0
+python3 - "${run_root}/state-extraction/z4c_state_failure.json" <<'PY'
+import json, pathlib, sys
+p = pathlib.Path(sys.argv[1])
+d = json.loads(p.read_text())
+assert d["schema"] == "z4c_state_admissibility_v1"
+assert d["reason"] == "nonpositive_chi" and d["chi"] == -1
+assert d["checkpoint"] == "PRE_RHS" and d["rk_stage"] == 0
+assert len(d["state25"]) == 25 and len(d["logical_location"]) == 4
+assert "relative_level" in d and "spd_pivots" in d
+PY
+
+run_case() {
+  local label=$1; shift
+  local case_root="${run_root}/${label}"
+  mkdir -p "${case_root}"
+  (cd "${case_root}" && mpiexec -n 1 -ppn 1 --depth 8 --cpu-bind depth \
+    "${tile_wrapper}" "${athena}" -i ../brill_o4_common_tree.athinput \
+    problem/brill_global_coefficients_file=../brill_global_48x32.coefficients \
+    "$@" > stdout.log 2> stderr.log)
+}
+
+history="${run_root}/short-authority.jsonl"
+run_case authority_prefix mesh/nx1=128 mesh/nx2=256 meshblock/nx1=32 \
+  meshblock/nx2=32 mesh_refinement/max_nmb_per_rank=1024 \
+  mesh_refinement/amr_history_mode=record \
+  mesh_refinement/amr_history_file="${history}" time/nlim=4 output2/dcycle=4 \
+  job/basename=short_authority
+authority_restart="$(find "${run_root}/authority_prefix/rst" -type f -name '*.00001.rst' -print -quit)"
+test -n "${authority_restart}"
+(cd "${run_root}/authority_prefix" && mpiexec -n 1 -ppn 1 --depth 8 --cpu-bind depth \
+  "${tile_wrapper}" "${athena}" -r "${authority_restart}" time/nlim=8 \
+  output2/dcycle=4 > continued.log 2> continued.err)
+
+run_case n128_prefix mesh/nx1=64 mesh/nx2=128 meshblock/nx1=16 \
+  meshblock/nx2=16 mesh_refinement/max_nmb_per_rank=1024 \
+  mesh_refinement/amr_history_mode=replay \
+  mesh_refinement/amr_history_file="${history}" time/nlim=4 output2/dcycle=4 \
+  job/basename=short_n128
+n128_restart="$(find "${run_root}/n128_prefix/rst" -type f -name '*.00001.rst' -print -quit)"
+test -n "${n128_restart}"
+(cd "${run_root}/n128_prefix" && mpiexec -n 1 -ppn 1 --depth 8 --cpu-bind depth \
+  "${tile_wrapper}" "${athena}" -r "${n128_restart}" time/nlim=8 \
+  output2/dcycle=4 > continued.log 2> continued.err)
+
+run_case n512 mesh/nx1=256 mesh/nx2=512 meshblock/nx1=64 meshblock/nx2=64 \
+  mesh_refinement/max_nmb_per_rank=1024 \
+  mesh_refinement/amr_history_mode=replay \
+  mesh_refinement/amr_history_file="${history}" time/nlim=8 \
+  job/basename=short_n512
+
+python3 - "${run_root}" <<'PY'
+import json, pathlib, sys
+root = pathlib.Path(sys.argv[1])
+records = [json.loads(x) for x in (root / "short-authority.jsonl").read_text().splitlines()]
+header, events = records[0], records[1:]
+assert header["root_blocks"] == [4, 8, 1]
+assert header["cells_per_meshblock"] == [32, 32, 1]
+assert len(events) >= 2
+for rel in ("n128_prefix/short_n128.amr_history_replay.jsonl",
+            "n512/short_n512.amr_history_replay.jsonl"):
+    ledger = [json.loads(x) for x in (root / rel).read_text().splitlines()]
+    assert ledger and all(x["exact_match"] for x in ledger)
+    assert all(abs(x["ulp_difference"]) <= 1 for x in ledger)
+    assert [x["tree_checksum"] for x in ledger] == \
+           [x["tree_checksum"] for x in events[1:len(ledger)+1]]
+for pattern, cells in (("n128_prefix/*.amr_native_shadow.rank0000.jsonl", [16,16,1]),
+                       ("n512/*.amr_native_shadow.rank0000.jsonl", [64,64,1])):
+    path = next(root.glob(pattern))
+    rows = [json.loads(x) for x in path.read_text().splitlines()]
+    assert rows and all(x["cells_per_meshblock"] == cells for x in rows)
+    assert all("raw_dchi" in x and "strongest_physical_location" in x for x in rows)
+PY
+
+sha256sum "${athena}" "${athena_build}/CMakeCache.txt" \
+  "${root}"/provenance.log "${root}"/focused-ctest.log \
+  "${run_root}/short-authority.jsonl" \
+  "${run_root}/state-extraction/z4c_state_failure.json" \
+  > "${root}/SHA256SUMS"
+printf 'AURORA_O4_REPLAY_QUALIFICATION_PASS\n' > "${root}/status"
