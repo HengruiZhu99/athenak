@@ -1,0 +1,135 @@
+{
+  "schema": "brill_o4_common_tree_final_comparison_v1",
+  "campaign": {
+    "branch": "codex/brill-o4-dchi001-replay-convergence-20260821",
+    "built_source_commit": "d0d0b648bab09afb33453132075f1b813306526a",
+    "analysis_source_commit": "94542216646e45c4182b84388e74b872370d1d82",
+    "perlmutter_root": "/pscratch/sd/h/hzhu/axisymmetric-cartoon-o4-common-tree-a72539e9-v5-20260821",
+    "executable_sha256": "bf0f69b0cb68fdf2fb0035b4a29d55a30f1cef224acce9da77b9089f2207bd3b",
+    "cmake_cache_sha256": "232dd20f55063c684b25b0b6910ad3f2dca4a17b88ed3ab31f404dd01f4dc2f6",
+    "input_sha256": "631814f374ac598c641728c4a37e5aab6180d1dcf51b013fa9e1bef31cd87f66",
+    "coefficient_sha256": "ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b"
+  },
+  "formal_verdicts": {
+    "replay_verdict": "EXACT_CROSS_RESOLUTION_REPLAY",
+    "bulk_convergence": "DIVERGES_WITH_RESOLUTION",
+    "constraint_convergence": "DIVERGES",
+    "failure_scaling": "FAILURE_EARLIER_WITH_RESOLUTION",
+    "authority_N128": "AUTHORITY_UNDERRESOLVED",
+    "authority_N512": "AUTHORITY_OVERRESOLVED",
+    "temporal_control": "NOT_RUN",
+    "overall": "O4_NONCONVERGENT"
+  },
+  "qualification_claims": {
+    "o4_convergence_established": false,
+    "figure3_reproduction": false,
+    "common_interface_failure": false,
+    "parent_underresolution_ruled_out_globally": false,
+    "n512_authority_parent_underresolution_supported_by_dchi": false
+  },
+  "replay": {
+    "authority_sha256": "874551cc68e7dab4d40b854b31ab6b42aff9d2eae0ca9faf5985c41ef14a589f",
+    "authority_events": 164,
+    "n128": {"events_executed": 27, "exact_prefix": true, "max_abs_ulp": 0},
+    "n512": {"events_executed": 17, "exact_prefix": true, "max_abs_ulp": 0},
+    "limitation": "both replay evolutions failed before the authority history ended"
+  },
+  "terminal_states": {
+    "n128": {
+      "job": 57346928,
+      "time": 16.797028624324007,
+      "central_proper_time": 10.402932343882021,
+      "cycle": 4039,
+      "status": "FAIL_CLOSED_STATE_ADMISSIBILITY",
+      "reason": "nonpositive_metric_pivot_1",
+      "checkpoint": "POST_RK_UPDATE",
+      "rk_stage": 1,
+      "relative_level": 6,
+      "rho": 0.005859375,
+      "z": -0.005859375,
+      "block_edge_distance": 0.00390625,
+      "coarse_fine_interface_distance": null,
+      "failure_json_sha256": "b8c1b543323dff0b8ba89c84313e9ed87383ba50f4217d380cda0bf80190b7a7"
+    },
+    "n256": {
+      "job": 57342668,
+      "last_history_time": 16.898790256213729,
+      "last_history_central_proper_time": 10.383672334954873,
+      "last_contract_time": 16.898791309908578,
+      "cycle": 10022,
+      "status": "SCHEDULER_TIMEOUT_DURING_NUMERICAL_RUNAWAY",
+      "state_failure_json": null,
+      "last_history_C_norm2": 3355417.9545519175,
+      "last_history_max_abs_K": 18830.284196723296,
+      "last_history_max_abs_Kretschmann": 1.2225398644201236e18,
+      "last_history_dt": 5.268524471735956e-7
+    },
+    "n512": {
+      "job": 57347956,
+      "time": 15.359616753334356,
+      "central_proper_time": 9.379816237656659,
+      "cycle": 13184,
+      "status": "FAIL_CLOSED_STATE_ADMISSIBILITY",
+      "reason": "nonpositive_metric_pivot_1",
+      "checkpoint": "POST_RK_UPDATE",
+      "rk_stage": 3,
+      "relative_level": 3,
+      "rho": 4.83203125,
+      "z": -0.00390625,
+      "block_edge_distance": 0.0,
+      "coarse_fine_interface_distance": null,
+      "failure_json_sha256": "2222d531080b96ab0f3a13c599e205051c8b770c39f0a19badfd36a0e161f014"
+    }
+  },
+  "field_convergence": {
+    "trusted_central_proper_times": [5.0, 7.5, 9.0],
+    "norm": "common-lattice ring-coordinate RMS",
+    "entire_domain_effective_order_by_time": {
+      "chi": [-0.5575359334, -0.3082276837, -0.1763113162],
+      "alpha": [1.4820523293, 1.0374511577, 0.9496719039],
+      "K": [-0.3465298887, -0.0789687182, 0.0707367106],
+      "Theta": [-0.0401226661, -0.0747004578, 0.0484547723],
+      "Axx": [-0.3417000502, -0.0294196069, 0.1402571624],
+      "Axy": [1.4808070419, 0.0979178803, 0.2983107182],
+      "Ayy": [-0.0288953894, 0.0030396182, 0.0622675312],
+      "Gamx": [-0.1495848310, 0.4741319133, 0.5345514816],
+      "Gamy": [-0.2540643731, 0.1272345259, 0.3044947055]
+    },
+    "spatial_kretschmann": "NOT_AVAILABLE_IN_RETAINED_BINARY_INVENTORY"
+  },
+  "constraint_convergence": {
+    "trusted_central_proper_time_max": 9.0,
+    "median_effective_order": {
+      "C-norm2": -1.2200196009,
+      "H-norm2": -0.9153823477,
+      "M-norm2": -1.3034125022,
+      "Z-norm2": -1.0362280991
+    },
+    "history_measure": "2*pi*rho*dx1*dx2*sqrt(abs(det_gamma)); no collapsed-y width",
+    "measure_normalization_artifact": false
+  },
+  "native_amr_shadow": {
+    "n128": {
+      "records": 143504,
+      "would_refine_earlier": 133268,
+      "would_derefine": 10146,
+      "agrees": 56,
+      "interpretation": "the N256 authority is too coarse in logical level for the N128 raw-dchi policy"
+    },
+    "n512": {
+      "records": 686490,
+      "would_refine_earlier": 609,
+      "would_derefine": 672961,
+      "agrees": 12886,
+      "interpretation": "the N256 authority is predominantly over-refined for the N512 raw-dchi policy"
+    }
+  },
+  "limitations": [
+    "N256 ended by scheduler timeout, not a captured state-admissibility JSON",
+    "N128 and N512 validate only exact executed prefixes of the 164-event authority",
+    "the optional half-CFL control was not run because the primary divergence and earlier N512 failure were not ambiguous",
+    "the retained field dumps do not include a spatial Kretschmann field",
+    "different terminal locations do not establish one fixed physical interface mechanism",
+    "the common-tree result does not by itself isolate the source-level instability"
+  ]
+}

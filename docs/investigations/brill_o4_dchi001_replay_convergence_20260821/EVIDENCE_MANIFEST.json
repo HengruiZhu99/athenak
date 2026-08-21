@@ -1,0 +1,614 @@
+{
+  "analysis_source_commit": "94542216646e45c4182b84388e74b872370d1d82",
+  "authority_sha256": "874551cc68e7dab4d40b854b31ab6b42aff9d2eae0ca9faf5985c41ef14a589f",
+  "branch": "codex/brill-o4-dchi001-replay-convergence-20260821",
+  "built_source_commit": "d0d0b648bab09afb33453132075f1b813306526a",
+  "files": [
+    {
+      "bytes": 5574,
+      "path": "README.md",
+      "sha256": "99d00a4115592aa190da8e0a6af5cbea6c864b0501e2a3d801abec60e5967c0d"
+    },
+    {
+      "bytes": 10900,
+      "path": "REPORT.md",
+      "sha256": "eee4e187cf8fe21310ae727c64a8643099d454b06fe37b1ec86665a2c5a87ac1"
+    },
+    {
+      "bytes": 9112,
+      "path": "aurora_build_qualify.pbs",
+      "sha256": "0ba08aa3d2a30c31ad6fc837a403f698e5571ba11cc7ca1a580a9eeee3467793"
+    },
+    {
+      "bytes": 391,
+      "path": "aurora_mpiexec_tile_wrapper.sh",
+      "sha256": "f9d26d3a94705995aa49b00e157a5b3124d11186a7fc12bc563f7f24042a6f42"
+    },
+    {
+      "bytes": 632,
+      "path": "aurora_rank_run.sh",
+      "sha256": "bf9c44e90bc2577eb91e24e54472f950753e4bb129543d12c032a38915445dee"
+    },
+    {
+      "bytes": 6639,
+      "path": "aurora_run_segment.pbs",
+      "sha256": "c22db60840477cab9f104439459c8e07255be1e572080879b8e88612de0679f0"
+    },
+    {
+      "bytes": 986,
+      "path": "authority/authority_manifest.json",
+      "sha256": "69b029879d66fb0394d09a0e7b3d9b44590e4a63e28a30b49bac5e86cdd8a2f0"
+    },
+    {
+      "bytes": 1281576,
+      "path": "authority/n256_amr_history.jsonl",
+      "sha256": "874551cc68e7dab4d40b854b31ab6b42aff9d2eae0ca9faf5985c41ef14a589f"
+    },
+    {
+      "bytes": 2697,
+      "path": "brill_o4_common_tree.athinput",
+      "sha256": "631814f374ac598c641728c4a37e5aab6180d1dcf51b013fa9e1bef31cd87f66"
+    },
+    {
+      "bytes": 11220,
+      "path": "comparison_summary.history_only.json",
+      "sha256": "ab16a9ff7e9f48ffb705d5b360722c3c19bee6a0345838d7ec013dc413aa30dd"
+    },
+    {
+      "bytes": 5734,
+      "path": "comparison_summary.json",
+      "sha256": "4c4827d6622ee235e117bc144545117bdfc8ee6d1a44893051af313bd8686c9c"
+    },
+    {
+      "bytes": 161958,
+      "path": "data/authority_event_jump_comparison.csv",
+      "sha256": "92dd47bb3c7eda52552a0db53de1fbe6e07a1c3d37ec305d0313fbfc05648155"
+    },
+    {
+      "bytes": 2089819,
+      "path": "data/common_tau_profiles/tau_5.csv.gz",
+      "sha256": "d05c7759fe9274a25d738ab6d5b233c49e603f4bdb6198468af7ab64d0eb0562"
+    },
+    {
+      "bytes": 2078174,
+      "path": "data/common_tau_profiles/tau_7.5.csv.gz",
+      "sha256": "08cca9a56d9cfda307f3663756a5cbaee823860cc937ec0465a8f2c9a6893af8"
+    },
+    {
+      "bytes": 2071468,
+      "path": "data/common_tau_profiles/tau_9.csv.gz",
+      "sha256": "17c2cf37ab1acdef4d924493f717cd0be72face8546c0ef38ad5f97e2e3e779c"
+    },
+    {
+      "bytes": 950655,
+      "path": "data/constraint_convergence.csv",
+      "sha256": "3681958efed2442c093a1828eb63683a8358607bbd64be840f34af7b8a503b7e"
+    },
+    {
+      "bytes": 12062,
+      "path": "data/convergence_orders.csv",
+      "sha256": "192599c9755267d97d1f14a81e35420cf37477264e2ec3c938e2f09b176ab1fd"
+    },
+    {
+      "bytes": 2729,
+      "path": "data/failure_landmarks.csv",
+      "sha256": "6b0bdc11ee158ad145fe4fc6e1ad3afef02bee6ca5b7acc54633fa6be3e40f3f"
+    },
+    {
+      "bytes": 12062,
+      "path": "data/field_convergence.csv",
+      "sha256": "192599c9755267d97d1f14a81e35420cf37477264e2ec3c938e2f09b176ab1fd"
+    },
+    {
+      "bytes": 11562,
+      "path": "data/field_sampling_provenance.json",
+      "sha256": "6ff4983beb3fec2faa56438db059871b0841ce64fc7c3657de139c87cf53772c"
+    },
+    {
+      "bytes": 551368,
+      "path": "data/figure3_plotted_data.csv",
+      "sha256": "8a60e5434eb31ab2b9027c6b0552a654ea0169a667cb1424327c2a687b0ca218"
+    },
+    {
+      "bytes": 1166557,
+      "path": "data/n128_history.csv",
+      "sha256": "2ebefa8f6eb9cbcd33aac78751824b6241a77706d56cd5d7943fe8f929177aa7"
+    },
+    {
+      "bytes": 2908818,
+      "path": "data/n256_history.csv",
+      "sha256": "cc1473898cdc4e99feabbc07017d4eec13abec1e6694f2d034b38823aeeaa30e"
+    },
+    {
+      "bytes": 3868649,
+      "path": "data/n512_history.csv",
+      "sha256": "43fc5f50231e27d3196d724ee76fdcea842ce946a55c1fd129fb5d11bfcdb619"
+    },
+    {
+      "bytes": 604969,
+      "path": "data/native_amr_shadow_n128.csv",
+      "sha256": "217e1492b60107a7d0e15ed0230079337103351820f8560bad0368c53068723f"
+    },
+    {
+      "bytes": 2035706,
+      "path": "data/native_amr_shadow_n512.csv",
+      "sha256": "86609cbc306a25df17b63dd9922919dc90b4e0a649c761beb6a739285df1baca"
+    },
+    {
+      "bytes": 786,
+      "path": "data/native_authority_mismatch_summary.json",
+      "sha256": "04d9d06a1ed9843581a2dec157c97329121bd9aa35f92e863927757359bffd45"
+    },
+    {
+      "bytes": 4776,
+      "path": "data/replay_tree_verification.csv",
+      "sha256": "2f00d9836d4df5d62c15d8396a7160392b31875caba36e7c7427bd12f397778b"
+    },
+    {
+      "bytes": 4964,
+      "path": "data/timestep_landmarks.json",
+      "sha256": "c8c296108fef86d0376d3da92eb59926a7f484f4f43761743cc7f7787e33ec6f"
+    },
+    {
+      "bytes": 62909,
+      "path": "evidence/build/perlmutter/CMakeCache.txt",
+      "sha256": "232dd20f55063c684b25b0b6910ad3f2dca4a17b88ed3ab31f404dd01f4dc2f6"
+    },
+    {
+      "bytes": 124,
+      "path": "evidence/build/perlmutter/build-command.txt",
+      "sha256": "daa03c3697853a997382f4de07ddd392da6b8e351cbf6a5d19f2ae11086e7cca"
+    },
+    {
+      "bytes": 348,
+      "path": "evidence/build/perlmutter/build-products.sha256",
+      "sha256": "d7b43689f730f4a384bc404f110ab42a4c96a6188a7527821a11941fcdb5f07b"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/build/perlmutter/build-python311.err",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3832,
+      "path": "evidence/build/perlmutter/build-python311.log",
+      "sha256": "73cc2883ab0bb337a2eb6bb644510eeda6f4ca561997c345b9f7ae3101c17b51"
+    },
+    {
+      "bytes": 36,
+      "path": "evidence/build/perlmutter/build-time.txt",
+      "sha256": "ac9a00a82a392f1258737b8d0be17970eb2447ef07b6d8c880a7b95863540990"
+    },
+    {
+      "bytes": 6814,
+      "path": "evidence/build/perlmutter/build.err",
+      "sha256": "a306586031cf13b0e166c92d70d795c9d8d765a8d9ace9d0360860af74df43ce"
+    },
+    {
+      "bytes": 24405,
+      "path": "evidence/build/perlmutter/build.log",
+      "sha256": "d8be239787a83483b6685859ffdc181e401c0c656417b98d96fae80db032e5ca"
+    },
+    {
+      "bytes": 2695,
+      "path": "evidence/build/perlmutter/clone.log",
+      "sha256": "0c26bfc7e8e5eff1cac99bf1860affb3b2cea6396f50c79a073a0f90405f9349"
+    },
+    {
+      "bytes": 916,
+      "path": "evidence/build/perlmutter/configure-command.txt",
+      "sha256": "eda2ff39ad28fd5fcd27a7f8afa2ac5f5293c244bc086888fcd50808fa30c516"
+    },
+    {
+      "bytes": 1024,
+      "path": "evidence/build/perlmutter/configure-python311-command.txt",
+      "sha256": "eb58b3929e46479b2f1e090589db3023290df5762e9b75a0c2bb23e24d34c339"
+    },
+    {
+      "bytes": 354,
+      "path": "evidence/build/perlmutter/configure-python311.err",
+      "sha256": "f174acac0f45220eb65c0f723690d6f48f641e85209c06b7a2682cdb9cb8f48a"
+    },
+    {
+      "bytes": 1562,
+      "path": "evidence/build/perlmutter/configure-python311.log",
+      "sha256": "5dc241955423cc787d199a4436c79f3ecf7b25aac496c5b2ea34f017ce98f844"
+    },
+    {
+      "bytes": 29,
+      "path": "evidence/build/perlmutter/configure-time.txt",
+      "sha256": "1021921f67fb77bf976535869e92071e6e1657bbec87b5443c27c618d1bfe0ed"
+    },
+    {
+      "bytes": 354,
+      "path": "evidence/build/perlmutter/configure.err",
+      "sha256": "f174acac0f45220eb65c0f723690d6f48f641e85209c06b7a2682cdb9cb8f48a"
+    },
+    {
+      "bytes": 2589,
+      "path": "evidence/build/perlmutter/configure.log",
+      "sha256": "bb6e1948ce8954fa6a7041327665b642da7e38f16fb90947f1bd8d940cc6609b"
+    },
+    {
+      "bytes": 817,
+      "path": "evidence/build/perlmutter/focused-ctest-inventory.txt",
+      "sha256": "c6945609ce946ce9e837ae9ad404112b4152b483c49aab9fe35f8804fb252a01"
+    },
+    {
+      "bytes": 453,
+      "path": "evidence/build/perlmutter/python311-static-test.log",
+      "sha256": "57a4a679c4c692a84d59233148d893a6783fd717f7ee126d2a7b1e07ab9e4d6c"
+    },
+    {
+      "bytes": 2568,
+      "path": "evidence/build/perlmutter/qualification-focused-ctest.log",
+      "sha256": "502bb059c484784c6599aa0da060ccab0e244e529a7cdaed70dd3408947aef44"
+    },
+    {
+      "bytes": 140,
+      "path": "evidence/build/perlmutter/source-provenance.txt",
+      "sha256": "b14c1b0011e4531e2c3c0dd9ad745c89cbd0f0e5f315405106c8ef5c7c48bdda"
+    },
+    {
+      "bytes": 39,
+      "path": "evidence/build/perlmutter/status.txt",
+      "sha256": "8c882cc22a688113ab9088b77c79f7beffe164ec52db62707b2e3a5e69eb5f49"
+    },
+    {
+      "bytes": 59234,
+      "path": "evidence/build/perlmutter/v2-failure-57341031/CMakeCache.txt",
+      "sha256": "40d4469f027def69cbbb25b6ccf1281439e6cd606af6f529114a607230d69a11"
+    },
+    {
+      "bytes": 47,
+      "path": "evidence/build/perlmutter/v2-failure-57341031/disposition.txt",
+      "sha256": "10a158c22e1a4e4198cfc730b688aefa01d90777109a0e387293129511271c9d"
+    },
+    {
+      "bytes": 2568,
+      "path": "evidence/build/perlmutter/v2-failure-57341031/focused-ctest.log",
+      "sha256": "502bb059c484784c6599aa0da060ccab0e244e529a7cdaed70dd3408947aef44"
+    },
+    {
+      "bytes": 486,
+      "path": "evidence/build/perlmutter/v2-failure-57341031/sacct.txt",
+      "sha256": "ccc2fc0601efc203b3f18e7f1c35dfe14a5d1f4793057d112ccd98dac889aaa7"
+    },
+    {
+      "bytes": 1286,
+      "path": "evidence/perlmutter/n128/command.txt",
+      "sha256": "c230aea42e0435644197f81196afac9a2587f487935ef42fc8ace84084cf64de"
+    },
+    {
+      "bytes": 41,
+      "path": "evidence/perlmutter/n128/disposition",
+      "sha256": "47ad10db758b707fac603ea1efb7279f43369a16b03461e950bf02374987c22c"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/n128/orchestration-status",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "bytes": 14,
+      "path": "evidence/perlmutter/n128/run-status",
+      "sha256": "1b47f09b3ef08e60e9beef8b3deb871c9aec49985c480c62d1dfe73e7a613e2f"
+    },
+    {
+      "bytes": 1261,
+      "path": "evidence/perlmutter/n128/z4c_state_failure.json",
+      "sha256": "b8c1b543323dff0b8ba89c84313e9ed87383ba50f4217d380cda0bf80190b7a7"
+    },
+    {
+      "bytes": 1260,
+      "path": "evidence/perlmutter/n256/command.txt",
+      "sha256": "d5a41f7d7a3feae2e2d865e3f03212b830330f326b0062bdf63cc6111cbe6a23"
+    },
+    {
+      "bytes": 41,
+      "path": "evidence/perlmutter/n256/disposition",
+      "sha256": "47ad10db758b707fac603ea1efb7279f43369a16b03461e950bf02374987c22c"
+    },
+    {
+      "bytes": 4,
+      "path": "evidence/perlmutter/n256/orchestration-status",
+      "sha256": "9d9b18720961e9b4689fd763b85e7b6f36160ccd3a8a1c9ddc5103bb0f66c396"
+    },
+    {
+      "bytes": 16,
+      "path": "evidence/perlmutter/n256/run-status",
+      "sha256": "5c987107112abef69540fb675895e084c3396a9aa91876435be18c84d73a4435"
+    },
+    {
+      "bytes": 1293,
+      "path": "evidence/perlmutter/n512/command.txt",
+      "sha256": "9b5d072a1c90df6afbb3759d336a48c9244560c731e758b35201971ebd3705b6"
+    },
+    {
+      "bytes": 41,
+      "path": "evidence/perlmutter/n512/disposition",
+      "sha256": "47ad10db758b707fac603ea1efb7279f43369a16b03461e950bf02374987c22c"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/n512/orchestration-status",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "bytes": 14,
+      "path": "evidence/perlmutter/n512/run-status",
+      "sha256": "1b47f09b3ef08e60e9beef8b3deb871c9aec49985c480c62d1dfe73e7a613e2f"
+    },
+    {
+      "bytes": 1229,
+      "path": "evidence/perlmutter/n512/z4c_state_failure.json",
+      "sha256": "2222d531080b96ab0f3a13c599e205051c8b770c39f0a19badfd36a0e161f014"
+    },
+    {
+      "bytes": 6054,
+      "path": "evidence/perlmutter/postprocess/final-postprocess-products.sha256",
+      "sha256": "1f3876e9a233cae8b8d31bfe8b32dc730dc293f0ec9ef3d99fe613f676bffb00"
+    },
+    {
+      "bytes": 4069,
+      "path": "evidence/perlmutter/postprocess/postprocess-products.sha256",
+      "sha256": "5a3dceed1b6b7fb6cc47a6cbaa7b91e34449d916bb53770a8d84981d40b3a982"
+    },
+    {
+      "bytes": 551,
+      "path": "evidence/perlmutter/sacct-primary.txt",
+      "sha256": "51750baf7188e7548694a685ae3c875b78e95bb0a19be2863ec4ba49f84ac3d9"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/perlmutter/squeue-at-finalization.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 34,
+      "path": "evidence/qualification/amr-history-mpi2.log",
+      "sha256": "f5463fa173c1a40b4c2748b6b4cd4d865d5671e43e7ad770ef75a18ef4465c71"
+    },
+    {
+      "bytes": 39342,
+      "path": "evidence/qualification/build/CMakeCache.txt",
+      "sha256": "cfe4196314f4a4d0d1b9aa5690b2b817f0ba67b37ce0b1329639ce0b5f6b439b"
+    },
+    {
+      "bytes": 509751,
+      "path": "evidence/qualification/build/athena-build.log",
+      "sha256": "286d38050bf3d9a38c5b45ac4fb139037dd5a56281c29a65eb802b3f1d08f919"
+    },
+    {
+      "bytes": 3655,
+      "path": "evidence/qualification/build/athena-configure.log",
+      "sha256": "70ee749f8ccf798dfa1caba54566c7fb9b267182f4407c8aac628beecb6ee30d"
+    },
+    {
+      "bytes": 90,
+      "path": "evidence/qualification/coarse-cache-mpi2.log",
+      "sha256": "4db89ef940876cfac34dd2e890201ac3005581eaf6acc0daf99b7719e340a967"
+    },
+    {
+      "bytes": 2131,
+      "path": "evidence/qualification/focused-ctest.log",
+      "sha256": "bb36119b5db9f62f4cde2c7c2c20eedd139fd263ef325aa5e3bfc297c39ffae4"
+    },
+    {
+      "bytes": 2360,
+      "path": "evidence/qualification/provenance.log",
+      "sha256": "37f3a5e35c477045cb2873b56239cc34d05915b51f5c83f387430a1066c26778"
+    },
+    {
+      "bytes": 2499,
+      "path": "evidence/qualification/qualification_result.json",
+      "sha256": "33982491537c1d52cccc66f157269bfacb6059a0dc332f6f28cd408601b263e4"
+    },
+    {
+      "bytes": 1109,
+      "path": "evidence/qualification/remote-SHA256SUMS",
+      "sha256": "bf311e6d9a11edc056d0b7f01e917579f5b40ebae38d156e75ceb64e245e4bc2"
+    },
+    {
+      "bytes": 1217,
+      "path": "evidence/qualification/run/n128_prefix/short_n128.amr_history_replay.jsonl",
+      "sha256": "3f56e9848f1161288fc9d1ff00840b496eddcc3794498ed6a6e31ee0cdc441fe"
+    },
+    {
+      "bytes": 176458,
+      "path": "evidence/qualification/run/n128_prefix/short_n128.amr_native_shadow.rank0000.jsonl",
+      "sha256": "1cf27ce7565c67c611cb794be9d5dd05d07e8030b9b4da5bacac4fd04b4e25ab"
+    },
+    {
+      "bytes": 405,
+      "path": "evidence/qualification/run/n512/short_n512.amr_history_replay.jsonl",
+      "sha256": "0e5c7712c4458914b9ccd713a215f8f9818add4353ceaeca5caf2bd0bbf7a559"
+    },
+    {
+      "bytes": 78655,
+      "path": "evidence/qualification/run/n512/short_n512.amr_native_shadow.rank0000.jsonl",
+      "sha256": "12d6dda9cbfc40c0c5d3acf8e699370a416f5b72222be755e28ed4e46cd694a4"
+    },
+    {
+      "bytes": 4060,
+      "path": "evidence/qualification/run/short-authority.jsonl",
+      "sha256": "f4249273910f8b5d9ebd874610f621200ab16c3f9034cd71c749de6be4d3b3ca"
+    },
+    {
+      "bytes": 602,
+      "path": "evidence/qualification/run/short-authority.jsonl.ledger.jsonl",
+      "sha256": "d519d31aa066b673f7126891dff237abb35a5c01fd5b7ebc0c3e7f27ee25b605"
+    },
+    {
+      "bytes": 649,
+      "path": "evidence/qualification/run/state-extraction/z4c_state_failure.json",
+      "sha256": "43ed64ef786d88afa275e134d4ea87552d9977b9d665ff8f1c04172e25744d1f"
+    },
+    {
+      "bytes": 36,
+      "path": "evidence/qualification/status",
+      "sha256": "f134b99e5b908375852020ea27b3666df1c56e699c056d9a642df1cdbb59a87d"
+    },
+    {
+      "bytes": 44892,
+      "path": "evidence/reference/figure3_published_curves.csv",
+      "sha256": "947f92f72af32caf631d5efe9d720c7c56800b2e4578dcb6bcc26107cabc8adf"
+    },
+    {
+      "bytes": 4599,
+      "path": "evidence/reference/figure3_published_curves_metadata.json",
+      "sha256": "b623b340ded776acb4165c8d69fc79a41d41a92dc5f459b131cab8a94927859d"
+    },
+    {
+      "bytes": 80502,
+      "path": "figures/amr_vs_tau.png",
+      "sha256": "3c1553edcd8fbbb294bac0615a2f8f8d39d3fdc84c25b50569db93fbb5a8d2af"
+    },
+    {
+      "bytes": 150411,
+      "path": "figures/authority_event_jump_convergence.png",
+      "sha256": "bb2d41ee0a89c3b88bdd18f9a9b93d2be512aed4823f74ddff6bdbd102dfbfd6"
+    },
+    {
+      "bytes": 180193,
+      "path": "figures/constraint_convergence_order.png",
+      "sha256": "1afdd0dda87f23f997014d72dcceddc281105ea3700beb6c43c0ef02cd9c8b65"
+    },
+    {
+      "bytes": 283994,
+      "path": "figures/constraints_vs_t.png",
+      "sha256": "a312eca3259f28c99a096aeb55bc6b38c3a3b388bc69fd1a1b8502da1f37402b"
+    },
+    {
+      "bytes": 278006,
+      "path": "figures/constraints_vs_tau.png",
+      "sha256": "5292ce770d44b147ba571bcfdc53055f98567e6de6e6413f703796d5e3dc976b"
+    },
+    {
+      "bytes": 140953,
+      "path": "figures/curvature_and_timestep_vs_tau.png",
+      "sha256": "9cbe82f5ed96ab09f4a85c2694f8442b47d206450146f83a851ad34a607b44d9"
+    },
+    {
+      "bytes": 85826,
+      "path": "figures/curvature_vs_tau.png",
+      "sha256": "72f9b6da9219624ddc60172997b7d8956bb95a1cac147a57aee2b6bf17b3d5b8"
+    },
+    {
+      "bytes": 128137,
+      "path": "figures/field_convergence_order.png",
+      "sha256": "d884971003425c8f7413dd4fd5790aeff55b501328effa32fa3645cf6491e6e2"
+    },
+    {
+      "bytes": 242175,
+      "path": "figures/fig3_o4_common_tree_n128_n256_n512.png",
+      "sha256": "fd7ebe325c9fd61a1c9fc8e7c8f61d9d77fa90306749ee0ffcacdcbc643aca7c"
+    },
+    {
+      "bytes": 154401,
+      "path": "figures/native_amr_sensor_vs_tau.png",
+      "sha256": "7fcdb5392771000279aeb95ce4da9e6dcb61d250e20e9f044da311f380b770ab"
+    },
+    {
+      "bytes": 81961,
+      "path": "figures/native_amr_shadow.png",
+      "sha256": "65310e0bcd46a28ebca45be9d13db39f2bc1ecdc5d576252979d06ccfd427413"
+    },
+    {
+      "bytes": 94203,
+      "path": "figures/timestep_vs_tau.png",
+      "sha256": "6cc3ec6af44af1d20b59876c804da789e33339a816588fa7b528bb527f449fdf"
+    },
+    {
+      "bytes": 358,
+      "path": "perlmutter_allocate_segment.sh",
+      "sha256": "6b0d0ab0cfb49a8811ba6ccccf886cb5a546980e5225feca5b4b5e434c0ecac4"
+    },
+    {
+      "bytes": 12000,
+      "path": "perlmutter_run_segment.sh",
+      "sha256": "3a8972e4ece13fae92db0bb4bd1e5b71e8369b6527f437fbf493744c722967ba"
+    },
+    {
+      "bytes": 13523,
+      "path": "scripts/analyze_common_tree_fields.py",
+      "sha256": "23f4e48dc61b5f0751a61a4679be045b376257856c8ce9f451879aead77d4e65"
+    },
+    {
+      "bytes": 26932,
+      "path": "scripts/analyze_common_tree_histories.py",
+      "sha256": "f6af73a9e6ffb6679552bdf804c277f72d2a64f88c1a901084f38cbfc378baf4"
+    },
+    {
+      "bytes": 2465,
+      "path": "scripts/analyze_timestep_contracts.py",
+      "sha256": "e72dc166f4a156e24b1fbc638cbaee6edb893cabcdedf074e0e180622550bf73"
+    },
+    {
+      "bytes": 6700,
+      "path": "scripts/freeze_evidence.py",
+      "sha256": "f2afb4ff3bef513f07a97efd3730cdba79c2a397e92ac9dbb84c29cc60094df7"
+    },
+    {
+      "bytes": 5848,
+      "path": "scripts/plot_common_tree_figure3.py",
+      "sha256": "0e7e696fbc2f324e983d1f4f674047336fd9be373adf6dcb9f9567bb231c6e2f"
+    },
+    {
+      "bytes": 1951,
+      "path": "scripts/test_analyze_common_tree_fields.py",
+      "sha256": "06f3f31fc359b651cf828709dc02e3b207ffed734a207f505896d7bed42f27b8"
+    },
+    {
+      "bytes": 6428,
+      "path": "scripts/test_analyze_common_tree_histories.py",
+      "sha256": "f9d6858f24dba8d26056e5e35d03c5837eccd5f1c27645c97b3d59197b7454be"
+    },
+    {
+      "bytes": 1508,
+      "path": "scripts/test_analyze_timestep_contracts.py",
+      "sha256": "e6cd07cbb135e3697800584d9df07463964ce5e7d26b309a3120d00adfde5e2b"
+    },
+    {
+      "bytes": 1784,
+      "path": "scripts/test_plot_common_tree_figure3.py",
+      "sha256": "640a2d61ba58c477eed0b1464a701abca36d94908bad9dd23da83dfa2e886975"
+    },
+    {
+      "bytes": 5238,
+      "path": "test_campaign_contract.py",
+      "sha256": "b2d41b89ef4664dd2ee7356cc34ccc328f7412253a21b93c0499fb96ebf7eb64"
+    },
+    {
+      "bytes": 1269,
+      "path": "test_perlmutter_campaign_contract.py",
+      "sha256": "4be4915693b7a829d87bd42e1cb8ae635ce543e2d17fe6342ed027470b5c7c4c"
+    }
+  ],
+  "formal_verdicts": {
+    "authority_N128": "AUTHORITY_UNDERRESOLVED",
+    "authority_N512": "AUTHORITY_OVERRESOLVED",
+    "bulk_convergence": "DIVERGES_WITH_RESOLUTION",
+    "constraint_convergence": "DIVERGES",
+    "failure_scaling": "FAILURE_EARLIER_WITH_RESOLUTION",
+    "overall": "O4_NONCONVERGENT",
+    "replay_verdict": "EXACT_CROSS_RESOLUTION_REPLAY",
+    "temporal_control": "NOT_RUN"
+  },
+  "jobs": {
+    "n128": 57346928,
+    "n256": 57342668,
+    "n512": 57347956
+  },
+  "limitations": [
+    "N256 ended by scheduler timeout, not a captured state-admissibility JSON",
+    "N128 and N512 validate only exact executed prefixes of the 164-event authority",
+    "the optional half-CFL control was not run because the primary divergence and earlier N512 failure were not ambiguous",
+    "the retained field dumps do not include a spatial Kretschmann field",
+    "different terminal locations do not establish one fixed physical interface mechanism",
+    "the common-tree result does not by itself isolate the source-level instability"
+  ],
+  "qualification_claim": false,
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "schema": "athenak_brill_o4_common_tree_evidence_v1"
+}

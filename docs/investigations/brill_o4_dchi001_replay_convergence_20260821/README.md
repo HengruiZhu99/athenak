@@ -6,9 +6,11 @@ All three cases use the same 4x8 root MeshBlock lattice, O4 method, RK4,
 `CFL=0.15`, gauge, damping, KO dissipation, and physical domain. Only active
 cells per MeshBlock change (16, 32, and 64 per active direction).
 
-The campaign is fail closed. `aurora_build_qualify.pbs` must pass before any
-long authority or replay segment is submitted. The final evidence tree and
-scientific verdicts are populated only from authenticated Aurora runs.
+The campaign is fail closed. `aurora_build_qualify.pbs` had to pass before any
+long authority or replay segment was submitted. At the user's direction,
+production then moved to Perlmutter `shared_interactive`; the final evidence
+tree combines the authenticated Aurora qualification with the complete
+Perlmutter production triplet and offline analysis.
 
 ## Aurora qualification
 
@@ -86,3 +88,14 @@ Figure-3 overlay, which remain separate binary-sampling and reference-curve
 gates.  `scripts/test_analyze_common_tree_histories.py` exercises restart
 overlap, exact replay, shadow reduction, plotting, and an exact synthetic
 fourth-order triplet.
+
+`scripts/analyze_common_tree_fields.py` samples retained binary fields onto a
+common meridional lattice and measures ring-coordinate self convergence.
+`scripts/plot_common_tree_figure3.py` applies the already authenticated
+rendered-paper Figure-3 curves. `scripts/analyze_timestep_contracts.py`
+separates exact-event replay clips from the underlying Z4c timestep candidate.
+
+The completed disposition and evidence boundaries are in [REPORT.md](REPORT.md)
+and [comparison_summary.json](comparison_summary.json). The primary result is
+`O4_NONCONVERGENT`: replay is exact for every executed prefix, but trusted
+fields and constraints do not converge and N512 fails earlier than N128.
