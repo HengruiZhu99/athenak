@@ -176,6 +176,41 @@ def merge_shadow(case_root: Path, case: str) -> tuple[list[dict[str, Any]], list
     return sorted(rows.values(), key=lambda row: (row["cycle"], row["gid"])), inputs
 
 
+def summarize_shadow_cycles(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Reduce the block-level shadow ledger without discarding its source hash."""
+    grouped: dict[int, list[dict[str, Any]]] = {}
+    for row in rows:
+        grouped.setdefault(int(row["cycle"]), []).append(row)
+    output = []
+    for cycle in sorted(grouped):
+        group = grouped[cycle]
+        classifications = Counter(row["classification"] for row in group)
+        actions = Counter(row["native_action"] for row in group)
+        strongest = max(group, key=lambda row: float(row["raw_dchi"]))
+        output.append({
+            "cycle": cycle,
+            "time": group[0]["time"],
+            "tau_c": group[0]["tau_c"],
+            "authority_event": any(bool(row.get("authority_event")) for row in group),
+            "authority_event_index": max(int(row.get("authority_event_index", -1)) for row in group),
+            "records": len(group),
+            "agrees": classifications["AGREES"],
+            "would_refine_earlier": classifications["WOULD_REFINE_EARLIER"],
+            "would_derefine": classifications["WOULD_DEREFINE"],
+            "would_not_refine": classifications["WOULD_NOT_REFINE"],
+            "other": classifications["OTHER"],
+            "native_refine": actions["refine"],
+            "native_derefine": actions["derefine"],
+            "native_same": actions["same"],
+            "max_raw_dchi": strongest["raw_dchi"],
+            "max_dchi_over_dx": max(float(row["dchi_over_dx"]) for row in group),
+            "strongest_gid": strongest["gid"],
+            "strongest_logical_location": strongest["logical_location"],
+            "strongest_physical_location": strongest["strongest_physical_location"],
+        })
+    return output
+
+
 def verify_replay(
     authority: list[dict[str, Any]], ledgers: dict[str, list[dict[str, Any]]]
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -429,8 +464,8 @@ def main() -> None:
         rows, provenance = merge_shadow(roots[case], case)
         shadows[case] = rows
         inputs[f"{case}_shadow_ledgers"] = provenance
-        fields = sorted({key for row in rows for key in row})
-        write_csv(data / f"native_amr_shadow_{case}.csv", fields, rows)
+        reduced = summarize_shadow_cycles(rows)
+        write_csv(data / f"native_amr_shadow_{case}.csv", list(reduced[0]), reduced)
         shadow_summary[case] = {
             "records": len(rows),
             "classification_counts": dict(sorted(Counter(row["classification"] for row in rows).items())),

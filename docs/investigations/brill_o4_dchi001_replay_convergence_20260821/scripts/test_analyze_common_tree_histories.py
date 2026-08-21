@@ -118,6 +118,11 @@ def main() -> None:
             rows = list(csv.DictReader(stream))
         c_rows = [row for row in rows if row["field"] == "C-norm2"]
         assert c_rows and all(abs(float(row["p"]) - 4.0) < 1e-10 for row in c_rows)
+        with (output / "data/native_amr_shadow_n128.csv").open(newline="") as stream:
+            shadow = list(csv.DictReader(stream))
+        assert len(shadow) == 2
+        assert shadow[0]["would_refine_earlier"] == "1"
+        assert shadow[1]["agrees"] == "1"
         expected = {
             "constraints_vs_t.png", "constraints_vs_tau.png",
             "curvature_and_timestep_vs_tau.png", "amr_vs_tau.png",
