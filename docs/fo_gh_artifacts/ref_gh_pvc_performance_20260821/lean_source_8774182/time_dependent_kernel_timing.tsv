@@ -1,0 +1,82 @@
+kernel	calls	total_seconds	average_seconds	percent
+ref_gh reference cache oracle	5	0.540221016	0.1080442032	55.5860385865
+ref_gh flat constraints	4	0.103079598	0.0257698995	10.6063746915
+ref_gh scalar source rhs	4	0.03480273	0.0087006825	3.58102671943
+ref_gh pi rhs	4	0.034028609	0.00850715225	3.50137354323
+ref_gh history sums	3	0.031679998	0.0105599993333	3.25971322679
+ref_gh reference provider profiles	5	0.02743372	0.005486744	2.82279247442
+common vacuum ADM constraints	3	0.02132696	0.00710898666667	2.1944374365
+ref_gh to ADM	4	0.020652791	0.00516319775	2.1250688208
+common ADM fixed-region H Linf	36	0.017473577	0.000485377138889	1.79794361307
+common ADM fixed-region M Linf	36	0.017452321	0.000484786694444	1.79575647707
+ref_gh reference metric jets	5	0.017363544	0.0034727088	1.78662176812
+ref_gh reference coordinate spin derivative	5	0.014370602	0.0028741204	1.47866301685
+SendBuff	10	0.010848352	0.0010848352	1.11624112171
+common ADM fixed-region sums	18	0.010339673	0.000574426277778	1.06390059869
+ref_gh reference connection	5	0.009550982	0.0019101964	0.982748242417
+RecvBuff	10	0.007654586	0.0007654586	0.787618586018
+ref_gh reference frame jets	5	0.005141782	0.0010283564	0.529063631718
+ref_gh psi rhs	4	0.004652255	0.00116306375	0.47869375364
+ref_gh reference spin connection	5	0.004311847	0.0008623694	0.443667474279
+ref_gh Minkowski data	1	0.004178708	0.004178708	0.429968137577
+ref_gh compatible phi rhs	4	0.003458392	0.000864598	0.355851226564
+ref_gh reference coframe derivative	5	0.002946106	0.0005892212	0.303139561301
+ref_gh reference spatial frame	5	0.002811378	0.0005622756	0.289276724453
+ref_gh reference spin derivative	5	0.002670733	0.0005341466	0.274805057921
+ref_gh reference Ricci	5	0.002553394	0.0005106788	0.262731462136
+ref_gh reference curvature	5	0.002521821	0.0005043642	0.259482758468
+ref_gh reference structure coefficients	5	0.002509301	0.0005018602	0.258194513134
+ref_gh cache metric condition	4	0.002100055	0.00052501375	0.216085148127
+ref_gh RK update	4	0.002047534	0.0005118835	0.21068100011
+ref_gh history geometry maxima	3	0.0017828	0.000594266666667	0.183441196579
+ref_gh history state maxima	3	0.001707541	0.000569180333333	0.175697422171
+ref_gh history diagnostic maxima	3	0.001659549	0.000553183	0.170759285585
+ref_gh dt	2	0.001619358	0.000809679	0.166623832852
+ref_gh rk4 base	3	0.00154689	0.00051563	0.159167238375
+common ADM inverse minimum spacing	3	0.001503379	0.000501126333333	0.15469017426
+Kokkos::View::initialization [] via memset	105	0.000795145	7.57280952381e-06	0.081816440573
+ref_gh Minkowski error	1	0.000688825	0.000688825	0.0708766447348
+Kokkos::View::initialization [mb_gid] via memset	1	5.0934e-05	5.0934e-05	0.00524085366083
+Kokkos::View::initialization [ru] via memset	1	2.1653e-05	2.1653e-05	0.00222798532057
+Kokkos::View::initialization [ref_gh reference workspace] via memset	2	1.943e-05	9.715e-06	0.00199924974732
+Kokkos::View::initialization [ref_gh reference evolution] via memset	2	1.7782e-05	8.891e-06	0.00182967879603
+Kokkos::View::initialization [ref_gh reference diagnostic] via memset	2	1.751e-05	8.755e-06	0.00180169135747
+Kokkos::View::initialization [ref_gh reference provider] via memset	2	1.6737e-05	8.3685e-06	0.00172215352655
+Kokkos::View::initialization [u1 ref_gh] via memset	2	1.6617e-05	8.3085e-06	0.00170980612719
+Kokkos::View::initialization [u_con ref_gh] via memset	2	1.6162e-05	8.081e-06	0.00166298890459
+Kokkos::View::initialization [u_rhs ref_gh] via memset	2	1.5682e-05	7.841e-06	0.00161359930713
+Kokkos::View::initialization [send_agg_offset] via memset	2	1.5394e-05	7.697e-06	0.00158396554865
+Kokkos::View::initialization [u0 ref_gh] via memset	2	1.5331e-05	7.6655e-06	0.00157748316398
+Kokkos::View::initialization [recv_agg_offset] via memset	2	1.4737e-05	7.3685e-06	0.00151636353712
+Kokkos::View::initialization [u_adm] via memset	2	1.4364e-05	7.182e-06	0.00147798370409
+Kokkos::View::initialization [u_common_adm_constraints] via memset	2	1.4252e-05	7.126e-06	0.00146645946468
+Kokkos::View::initialization [derived-var] via memset	1	9.87e-06	9.87e-06	0.00101557359784
+Kokkos::View::initialization [coarse u0 ref_gh] via memset	1	9.313e-06	9.313e-06	0.000958261085784
+Kokkos::View::initialization [mb_lev] via memset	1	8.464e-06	8.464e-06	0.000870903235271
+Kokkos::View::initialization [excision_floor] via memset	1	8.286e-06	8.286e-06	0.000852587926212
+Kokkos::View::initialization [uin] via memset	1	7.905e-06	7.905e-06	0.000813384933225
+Kokkos::View::initialization [mbsize] via memset	1	7.787e-06	7.787e-06	0.000801243323849
+Kokkos::View::initialization [excision_flux] via memset	1	7.337e-06	7.337e-06	0.000754940576227
+Kokkos::View::initialization [ref_gh reference table] via memset	1	7.32e-06	7.32e-06	0.000753191361317
+Kokkos::View::initialization [rank_sendbuf_vars] via memset	1	7.117e-06	7.117e-06	0.000732303677389
+Kokkos::View::initialization [mbbcs] via memset	1	7.108e-06	7.108e-06	0.000731377622437
+Kokkos::View::initialization [rank_recvbuf_vars] via memset	1	7.016e-06	7.016e-06	0.000721911282923
+Kokkos::View::initialization [iin] via memset	1	6.968e-06	6.968e-06	0.000716972323177
+Kokkos::View::initialization [bin] via memset	1	6.864e-06	6.864e-06	0.000706271243726
+Kokkos::View::initialization [DualView::modified_flags] via memset	8	3.892e-06	4.865e-07	0.000400467319432
+Kokkos::View::initialization [recv_agg_offset_mirror] via memset	1	7.39e-07	7.39e-07	7.60394010947e-05
+Kokkos::View::initialization [_mirror] via memset	1	6.77e-07	6.77e-07	6.96599114223e-05
+Kokkos::View::initialization [cc_outvar] via memset	1	5.73e-07	5.73e-07	5.89588319719e-05
+Kokkos::View::initialization [fc_outvar.x1f] via memset	1	5.65e-07	5.65e-07	5.81356720142e-05
+Kokkos::View::initialization [mbbcs_mirror] via memset	1	5.6e-07	5.6e-07	5.76211970406e-05
+Kokkos::View::initialization [mb_gid_mirror] via memset	1	5.43e-07	5.43e-07	5.58719821304e-05
+Kokkos::View::initialization [mbsize_mirror] via memset	1	4.95e-07	4.95e-07	5.09330223841e-05
+Kokkos::View::initialization [rank_sendhdr_vars] via memset	1	3.76e-07	3.76e-07	3.8688518013e-05
+Kokkos::View::initialization [uin_mirror] via memset	1	3.51e-07	3.51e-07	3.61161431451e-05
+Kokkos::View::initialization [fc_outvar.x2f] via memset	1	2.99e-07	2.99e-07	3.07656034199e-05
+Kokkos::View::initialization [send_agg_offset_mirror] via memset	1	2.88e-07	2.88e-07	2.9633758478e-05
+Kokkos::View::initialization [bin_mirror] via memset	1	2.87e-07	2.87e-07	2.95308634833e-05
+Kokkos::View::initialization [fc_outvar.x3f] via memset	1	2.86e-07	2.86e-07	2.94279684886e-05
+Kokkos::View::initialization [iin_mirror] via memset	1	2.86e-07	2.86e-07	2.94279684886e-05
+Kokkos::View::initialization [rank_recvhdr_vars] via memset	1	2.83e-07	2.83e-07	2.91192835045e-05
+Kokkos::View::initialization [mb_lev_mirror] via memset	1	2.8e-07	2.8e-07	2.88105985203e-05

@@ -1,6 +1,7 @@
 # Aurora Ref-GH PVC performance wrap-up
 
-Status frozen on 2026-08-21 at commit `9da381a3311bf2ea133bd705994565a7d56fb86a`.
+Status wrapped on 2026-08-21.  The final tested source authority is commit
+`fc2d61adf3559b5c09707a50cb6ddbc2b612bc26`.
 No Aurora job owned by this campaign was queued or running at wrap-up. This is
 an interim performance checkpoint, not completion of the controlling Goal Mode
 campaign and not a new scientific qualification.
@@ -51,15 +52,31 @@ reverts both compressions and is source-identical to the last passing Ref-GH
 state.  Compact negative evidence is under
 `docs/fo_gh_artifacts/ref_gh_pvc_performance_20260821/symmetry_rejected_8774093_8774143/`.
 
+## Final lean-source checkpoint
+
+Commit `fc2d61ad` adds a production-only covariant scalar-source evaluator.  It
+uses the same equations and loop order as the full diagnostic/oracle evaluator,
+but computes only the ten evolved symmetric source components and does not
+materialize five final diagnostic sector matrices.  The full implementation is
+retained unchanged as the independent oracle.
+
+Aurora job `8774182` passed on one PVC tile with PBS exit status zero.  The
+source oracle compared 1000 flat and 128 nonflat manufactured states, with
+maximum errors `5.55112e-17` and `3.33067e-16`.  The checked stationary cache,
+full-output evolved cycle, native/common histories, restart, time-dependent
+stage-time cache, and performance cases also passed.  The final bounds-off rate
+was `9.592259e5` active zone-cycles/s: `2.7019x` the immediately preceding
+diagnostic-split measurement and `8.3391x` the original Ref-GH baseline.  It is
+still `7.4389x` slower than the matched mature-Z4c control.
+
 ## Outcome
 
-The equation-preserving static-reference validity change raised the matched
-one-PVC-tile Ref-GH benchmark from `1.126323e5` to `3.033790e5` active
-zone-cycles/s, a `2.6935x` speedup over the immediately preceding traversal
-build and a `2.6374x` speedup over the original bounds-off baseline
-(`1.150275e5`). The checked full-output evolved-cycle gate, native/common
-histories, restart, and time-dependent-reference stage-time check passed after
-the change.
+The equation-preserving static-reference and lean-source changes raised the
+matched one-PVC-tile Ref-GH benchmark from the original `1.150275e5` to
+`9.592259e5` active zone-cycles/s, an overall `8.3391x` improvement.  The
+checked full-output evolved-cycle gate, native/common histories, restart,
+time-dependent-reference stage-time check, and independent full-source oracle
+passed after the final change.
 
 The implementation does not change the GH equations, 50-field state, spatial
 discretization, RK4 integrator, CFL, dissipation, boundary conditions, or
@@ -78,7 +95,9 @@ the original baseline; it is not claimed as a performance improvement.
 | Ref-GH performance baseline | 8773102 | `1.150275e5` | reference |
 | Ref-GH traversal reorder | 8773363 | `1.126323e5` | `0.9792x` baseline |
 | Ref-GH static cache | 8773414 | `3.033790e5` | `2.6935x` traversal; `2.6374x` baseline |
-| Mature Z4c control | 8773273 | `7.135622e6` | `62.03x` baseline Ref-GH; `23.52x` static-cache Ref-GH |
+| Ref-GH diagnostic split | 8773745 | `3.550192e5` | setup-only change; no causal speedup claim |
+| Ref-GH lean production source | 8774182 | `9.592259e5` | `2.7019x` preceding; `8.3391x` baseline |
+| Mature Z4c control | 8773273 | `7.135622e6` | `7.4389x` final Ref-GH |
 
 All cases used the same `64^3` active-cell, one-MeshBlock, one-PVC-tile,
 four-stage RK4, CFL `0.05`, output-free benchmark shape. The Z4c numerical
@@ -91,14 +110,16 @@ The synchronized baseline profile attributed approximately 66 percent of
 completed kernel time to repeated reference construction: metric jets 41.47
 percent, reference connection 17.98 percent, coordinate spin derivative 5.22
 percent, and remaining reference kernels. After static caching, the leading
-kernels were scalar-source RHS at 72.02 percent and Pi RHS at 12.79 percent;
-the static provider was constructed once in the 20-cycle profile rather than
-73 times. These percentages include global profiler fences and are for
-localization, not production throughput.
+kernels were scalar-source RHS at 72.02 percent and Pi RHS at 12.79 percent.
+After the lean-source change they were 35.24 percent and 32.42 percent,
+respectively, or 67.66 percent combined.  The static provider was constructed
+once in the 20-cycle profile rather than at RK stages.  These percentages
+include global profiler fences and are for localization, not production
+throughput.
 
 ## Correctness gate
 
-The checked static-cache job reported:
+The final checked lean-source job reported:
 
 - conditioned reference-cache oracle Linf: `2.36929e-14`;
 - stationary initial RHS Linf: `1.10048e-16`;
@@ -110,8 +131,8 @@ The checked static-cache job reported:
 - time-dependent evolved maximum error: `9.992007e-16`.
 
 The final checked and performance executables have SHA-256 hashes
-`0ce1d09bd556a858828b836e9ed63d35576e6894b91442fc6cffb369768795c3`
-and `c2810867854b387ee3c74b98bffb3263cd0dd3bc8b79ccbc172b251d489943af`,
+`f242ab90e8495860dfd39e6b4b4a1a8eb7fa0c24379e261838867dfefcaf0e50`
+and `c6b0cbc6c259879e384f60dd4456766e53149a11e61c5824e8d2f0168df9ee45`,
 respectively. Kokkos used SYCL with `Kokkos_ARCH_INTEL_PVC=ON`, Level Zero was
 selected, and GPU-aware MPI was enabled in the recorded environment.
 
@@ -136,10 +157,10 @@ campaign.
 
 The controlling objective is incomplete. In particular:
 
-- Ref-GH is still `23.52x` slower than the matched mature-Z4c control on this
+- Ref-GH is still `7.4389x` slower than the matched mature-Z4c control on this
   one-tile benchmark.
-- The scalar-source RHS now dominates the synchronized profile and needs a
-  direct equation-preserving code audit.
+- Scalar-source and Pi RHS together account for `67.66%` of the synchronized
+  profile and remain the next equation-preserving performance-audit target.
 - The 1129-Real-per-point reference allocation has not yet been separated into
   production, transient-update, and diagnostic lifetimes; diagnostic
   overcompute and memory traffic remain unresolved.
@@ -166,4 +187,5 @@ The full Aurora campaign root is:
 The relevant full run directories are `runs/baseline_8773102.*`,
 `runs/z4c_control_8773273.*`, `runs/kernel_profile_8773335.*`,
 `runs/iteration_order_8773363.*`, and `runs/static_cache_8773414.*` beneath
-that root.
+that root.  The final passing source/oracle/performance run is
+`runs/lean_source_8774182.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov`.

@@ -16,6 +16,13 @@ executables, and the compiled profiler library remain only on Aurora.
   regression from the traversal reorder.
 - `static_cache_8773414`: checked stationary and time-dependent gates,
   throughput/speedup, synchronized profiles, hashes, and provenance.
+- `diagnostic_split_8773745_8774035`: corrected static, checked, and
+  production-only reference-Ricci call-count evidence.
+- `symmetry_rejected_8774093_8774143`: the two failed checked-oracle results
+  that rejected workspace symmetry compression without weakening tolerances.
+- `lean_source_8774182`: the final passing full-source oracle, checked evolved
+  gate, histories, time-dependent gate, throughput, profile, executable hashes,
+  and provenance for the lean production scalar source.
 
 The complete remote evidence is retained under
 `/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_performance_convergence_20260821/runs`
