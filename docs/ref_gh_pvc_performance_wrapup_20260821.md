@@ -35,6 +35,22 @@ table and complete provenance are under
 `docs/fo_gh_artifacts/ref_gh_pvc_performance_20260821/diagnostic_split_8773745_8774035/`.
 No campaign job remains queued or running.
 
+## Rejected symmetry-compression experiment
+
+An exact-symmetry workspace compression was attempted and rejected by the
+unchanged checked oracle before benchmarking.  Full metric/inverse-metric
+compression at `056aafcd` produced conditioned spin-derivative disagreement
+`5.94778e-13`; retaining only inverse-metric compression at `dfdf9fee` produced
+`9.96623e-13`.  Both exceed the existing `5.68434e-14` threshold.  No tolerance
+was weakened and no performance result from either build was accepted.
+
+The likely mechanism is floating-point accumulation-order sensitivity between
+separately evaluated analytic tensor orientations near the trumpet puncture;
+this is an interpretation, not a formulation defect.  Commit `47d0ad99`
+reverts both compressions and is source-identical to the last passing Ref-GH
+state.  Compact negative evidence is under
+`docs/fo_gh_artifacts/ref_gh_pvc_performance_20260821/symmetry_rejected_8774093_8774143/`.
+
 ## Outcome
 
 The equation-preserving static-reference validity change raised the matched
