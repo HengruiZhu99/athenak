@@ -98,6 +98,10 @@ void Z4c::AllocateNativeStorage(const int nmb) {
   Kokkos::realloc(u_telegraph_mu, nmb, 1, layout.n3, layout.n2, layout.n1);
   Kokkos::deep_copy(u_telegraph_mu, 0.0);
   Kokkos::realloc(u_weyl, nmb, 2, layout.n3, layout.n2, layout.n1);
+  if constexpr (is_vertex) {
+    Kokkos::realloc(u_adm_native, nmb, ::adm::ADM::nadm, layout.n3,
+                    layout.n2, layout.n1);
+  }
   if (pmy_pack->pmesh->multilevel) {
     Kokkos::realloc(coarse_u0, nmb, nz4c, layout.cn3, layout.cn2, layout.cn1);
     Kokkos::realloc(coarse_u_weyl, nmb, 2, layout.cn3, layout.cn2, layout.cn1);
@@ -115,6 +119,13 @@ void Z4c::ValidateNativeStorageExtents() const {
     std::cerr << "### FATAL ERROR in " << __FILE__
               << ": a native Z4c array does not match the immutable "
               << ToString(layout.centering) << " layout" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (layout.centering == Z4cGridCentering::vertex &&
+      !matches(u_adm_native, ::adm::ADM::nadm)) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": native VC ADM cache does not match the immutable layout"
+              << std::endl;
     std::exit(EXIT_FAILURE);
   }
   if (pmy_pack->pmesh->multilevel) {
@@ -154,6 +165,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   coarse_u0("coarse u0 z4c",1,1,1,1,1),
   u_weyl("u_weyl",1,1,1,1,1),
   coarse_u_weyl("coarse_u_weyl",1,1,1,1,1),
+  u_adm_native("u_adm native z4c",1,1,1,1,1),
   pamr(new Z4c_AMR(pin)),
   pmy_pack(ppack) {
   dtnew = std::numeric_limits<Real>::max();
@@ -209,6 +221,17 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 
   weyl.rpsi4.InitWithShallowSlice (u_weyl, 0);
   weyl.ipsi4.InitWithShallowSlice (u_weyl, 1);
+
+  if (layout.centering == Z4cGridCentering::vertex) {
+    adm.g_dd.InitWithShallowSlice(u_adm_native, ::adm::ADM::I_ADM_GXX,
+                                 ::adm::ADM::I_ADM_GZZ);
+    adm.vK_dd.InitWithShallowSlice(u_adm_native, ::adm::ADM::I_ADM_KXX,
+                                  ::adm::ADM::I_ADM_KZZ);
+    adm.psi4.InitWithShallowSlice(u_adm_native, ::adm::ADM::I_ADM_PSI4);
+    adm.alpha.InitWithShallowSlice(u_adm_native, ::adm::ADM::I_ADM_ALPHA);
+    adm.beta_u.InitWithShallowSlice(u_adm_native, ::adm::ADM::I_ADM_BETAX,
+                                   ::adm::ADM::I_ADM_BETAZ);
+  }
 
   opt.chi_psi_power = pin->GetOrAddReal("z4c", "chi_psi_power", -4.0);
   opt.chi_div_floor = pin->GetOrAddReal("z4c", "chi_div_floor", -1000.0);

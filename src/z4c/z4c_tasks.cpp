@@ -177,10 +177,14 @@ TaskStatus Z4c::ClearSend(Driver *pdrive, int stage) {
 TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
   auto integrator = pdrive->integrator;
 
-  auto &indcs = pmy_pack->pmesh->mb_indcs;
-  int is = indcs.is, ie = indcs.ie;
-  int js = indcs.js, je = indcs.je;
-  int ks = indcs.ks, ke = indcs.ke;
+  // Copy/accumulate every active degree of freedom.  A native vertex grid has
+  // one more active point than the cell-centered mesh indices in each
+  // non-collapsed direction, so using mb_indcs here silently omitted the
+  // shared upper face/edge/corner vertices from RK4's low-storage accumulator.
+  const auto bounds = layout;
+  int is = bounds.is, ie = bounds.ie;
+  int js = bounds.js, je = bounds.je;
+  int ks = bounds.ks, ke = bounds.ke;
   int nmb1 = pmy_pack->nmb_thispack - 1;
   int nvar = nz4c;
   auto &u0 = pmy_pack->pz4c->u0;

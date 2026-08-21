@@ -41,12 +41,19 @@ ADM::ADM(MeshBlockPack *ppack, ParameterInput *pin):
     Kokkos::realloc(u_adm, nmb, nadm, bounds.n3, bounds.n2, bounds.n1);
     adm.alpha.InitWithShallowSlice(u_adm, I_ADM_ALPHA);
     adm.beta_u.InitWithShallowSlice(u_adm, I_ADM_BETAX, I_ADM_BETAZ);
-  } else {
+  } else if (pmy_pack->pz4c->layout.centering ==
+             z4c::Z4cGridCentering::cell) {
     // Lapse and shift are stored in the Z4c class
     z4c::Z4c * pz4c = pmy_pack->pz4c;
     Kokkos::realloc(u_adm, nmb, nadm - 4, bounds.n3, bounds.n2, bounds.n1);
     adm.alpha.InitWithShallowSlice(pz4c->u0, pz4c->I_Z4C_ALPHA);
     adm.beta_u.InitWithShallowSlice(pz4c->u0, pz4c->I_Z4C_BETAX, pz4c->I_Z4C_BETAZ);
+  } else {
+    // VC Z4c owns a differently shaped native ADM cache.  This object remains
+    // an independently allocated CC adapter for legacy cell-centred consumers.
+    Kokkos::realloc(u_adm, nmb, nadm, bounds.n3, bounds.n2, bounds.n1);
+    adm.alpha.InitWithShallowSlice(u_adm, I_ADM_ALPHA);
+    adm.beta_u.InitWithShallowSlice(u_adm, I_ADM_BETAX, I_ADM_BETAZ);
   }
   adm.psi4.InitWithShallowSlice(u_adm, I_ADM_PSI4);
   adm.g_dd.InitWithShallowSlice(u_adm, I_ADM_GXX, I_ADM_GZZ);

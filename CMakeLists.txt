@@ -539,6 +539,20 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND athena_z4c_vertex_amr_unit_test)
 
   add_executable(
+      athena_z4c_vertex_to_cell_unit_test
+      tst/unit/z4c/z4c_vertex_to_cell_test.cpp)
+  target_include_directories(
+      athena_z4c_vertex_to_cell_unit_test
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(
+      athena_z4c_vertex_to_cell_unit_test PRIVATE Kokkos::kokkos)
+  add_test(
+      NAME athena.z4c_vc_to_cc_adm
+      COMMAND athena_z4c_vertex_to_cell_unit_test)
+
+  add_executable(
       athena_z4c_cartoon_axis_centered_derivatives_unit_test
       tst/unit/z4c/cartoon_axis_centered_derivatives_test.cpp)
   target_include_directories(

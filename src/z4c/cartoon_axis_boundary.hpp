@@ -106,6 +106,15 @@ KOKKOS_INLINE_FUNCTION bool FillAdmAxisGhostLine(
       AdmStateAxisParitySignFromPackedIndex(component));
 }
 
+template <typename Centering, typename Array5D>
+KOKKOS_INLINE_FUNCTION bool FillCenteredAdmAxisGhostLine(
+    const Array5D &state, const int meshblock, const int component,
+    const int k, const int j, const int active_start, const int ghost_depth) {
+  return FillCenteredAxisGhostLine<Centering>(
+      state, meshblock, component, k, j, active_start, ghost_depth,
+      AdmStateAxisParitySignFromPackedIndex(component));
+}
+
 template <typename Array5D>
 KOKKOS_INLINE_FUNCTION bool FillConstraintAxisGhostLine(
     const Array5D &state, const int meshblock, const int component,

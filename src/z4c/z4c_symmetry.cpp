@@ -280,7 +280,8 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
   // Cartesian and Cartoon storage. Its parameter/topology checks remain inside
   // the pgen, while all allocation-free gates above apply unchanged here.
   if (input.problem_generator == "kerr_puncture" ||
-      input.problem_generator == "z4c_irisk_xcts") {
+      input.problem_generator == "z4c_irisk_xcts" ||
+      input.problem_generator == "z4c_vc_minkowski") {
     return {true, config, ""};
   }
 

@@ -144,8 +144,14 @@ class Z4c {
   DvceArray5D<Real> coarse_u0; // coarse representation of z4c solution
   DvceArray5D<Real> u_weyl; // weyl scalars
   DvceArray5D<Real> coarse_u_weyl; // coarse representation of weyl scalars
+  // Full native-sampling ADM cache.  It is allocated only in VC mode; the
+  // existing adm::ADM object remains the cell-centred adapter used by legacy
+  // cell consumers.
+  DvceArray5D<Real> u_adm_native;
 
   struct ADM_vars {
+    AthenaTensor<Real, TensorSymm::NONE, 3, 0> alpha;
+    AthenaTensor<Real, TensorSymm::NONE, 3, 1> beta_u;
     AthenaTensor<Real, TensorSymm::NONE, 3, 0> psi4;
     AthenaTensor<Real, TensorSymm::SYM2, 3, 2> g_dd;
     AthenaTensor<Real, TensorSymm::SYM2, 3, 2> vK_dd;
@@ -153,6 +159,8 @@ class Z4c {
   ADM_vars adm;
 
   struct ADMhost_vars {
+    AthenaHostTensor<Real, TensorSymm::NONE, 3, 0> alpha;
+    AthenaHostTensor<Real, TensorSymm::NONE, 3, 1> beta_u;
     AthenaHostTensor<Real, TensorSymm::NONE, 3, 0> psi4;
     AthenaHostTensor<Real, TensorSymm::SYM2, 3, 2> g_dd;
     AthenaHostTensor<Real, TensorSymm::SYM2, 3, 2> vK_dd;

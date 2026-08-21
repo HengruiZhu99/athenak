@@ -23,7 +23,9 @@
 #include "z4c/z4c.hpp"
 #include "z4c/cartoon_derivatives.hpp"
 #include "z4c/z4c_symmetry.hpp"
+#include "z4c/stored_domain_bounds.hpp"
 #include "z4c/tmunu.hpp"
+#include "z4c/vertex_to_cell.hpp"
 #include "coordinates/cell_locations.hpp"
 
 namespace z4c {
@@ -49,15 +51,16 @@ namespace z4c {
 //
 // The Z4c variables will be set on the whole MeshBlock with the exception of
 // the Gamma's that can only be set in the interior of the MeshBlock.
-template <typename Centering, typename Symmetry, int FD_STENCIL>
-void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
+template <typename Centering, typename Symmetry, int FD_STENCIL,
+          typename AdmVars>
+void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin,
+                  AdmVars &adm) {
   // capture variables for the kernel
   auto &size = pmbp->pmb->mb_size;
   const auto &bounds = pmbp->pz4c->layout;
   int nmb = pmbp->nmb_thispack;
 
   auto &z4c = pmbp->pz4c->z4c;
-  auto &adm = pmbp->padm->adm;
   auto &opt = pmbp->pz4c->opt;
   // 2 1D scratch array and 1 2D scratch array
   par_for("initialize z4c fields",DevExeSpace(),
@@ -69,6 +72,16 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin) {
                                 adm.g_dd(m,1,2,k,j,i), adm.g_dd(m,2,2,k,j,i));
     Real oopsi4 = pow(detg, -1./3.);
     z4c.chi(m,k,j,i) = pow(detg, 1./12.*opt.chi_psi_power);
+
+    // The historical CC ADM object aliases lapse/shift directly into u0.  A
+    // native VC ADM cache has independent storage and must copy that gauge
+    // state explicitly when constructing the evolved variables.
+    if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
+      z4c.alpha(m,k,j,i) = adm.alpha(m,k,j,i);
+      for (int a = 0; a < 3; ++a) {
+        z4c.beta_u(m,a,k,j,i) = adm.beta_u(m,a,k,j,i);
+      }
+    }
 
     for(int a = 0; a < 3; ++a)
     for(int b = a; b < 3; ++b) {
@@ -203,15 +216,19 @@ void Z4c::ADMToZ4c(MeshBlockPack *pmbp, ParameterInput *pin) {
   }
   if (pmbp->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
     if (pmbp->pz4c->layout.centering == Z4cGridCentering::vertex) {
-      ADMToZ4cImpl<VertexCenteredZ4c, CartoonSO2, NGHOST>(pmbp, pin);
+      ADMToZ4cImpl<VertexCenteredZ4c, CartoonSO2, NGHOST>(
+          pmbp, pin, pmbp->pz4c->adm);
     } else {
-      ADMToZ4cImpl<CellCenteredZ4c, CartoonSO2, NGHOST>(pmbp, pin);
+      ADMToZ4cImpl<CellCenteredZ4c, CartoonSO2, NGHOST>(
+          pmbp, pin, pmbp->padm->adm);
     }
   } else {
     if (pmbp->pz4c->layout.centering == Z4cGridCentering::vertex) {
-      ADMToZ4cImpl<VertexCenteredZ4c, Cartesian3D, NGHOST>(pmbp, pin);
+      ADMToZ4cImpl<VertexCenteredZ4c, Cartesian3D, NGHOST>(
+          pmbp, pin, pmbp->pz4c->adm);
     } else {
-      ADMToZ4cImpl<CellCenteredZ4c, Cartesian3D, NGHOST>(pmbp, pin);
+      ADMToZ4cImpl<CellCenteredZ4c, Cartesian3D, NGHOST>(
+          pmbp, pin, pmbp->padm->adm);
     }
   }
   if (pmbp->pz4c->opt.shift_mode == Z4cShiftMode::prescribed_zero) {
@@ -226,8 +243,9 @@ template void Z4c::ADMToZ4c<4>(MeshBlockPack *pmbp, ParameterInput *pin);
 //! \brief Compute ADM Psi4, g_ij, and K_ij from Z4c variables
 //
 // This sets the ADM variables everywhere in the MeshBlock
+template <bool CopyGauge, typename AdmVars>
 void Z4cToADMViews(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
-                   const adm::ADM::ADM_vars adm_fields,
+                   const AdmVars adm_fields,
                    const Real chi_psi_power) {
   // capture variables for the kernel
   const auto &bounds = pmbp->pz4c->layout;
@@ -238,6 +256,12 @@ void Z4cToADMViews(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
   par_for("initialize z4c fields",DevExeSpace(),
   0,nmb-1,0,bounds.n3-1,0,bounds.n2-1,0,bounds.n1-1,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    if constexpr (CopyGauge) {
+      adm.alpha(m,k,j,i) = z4c.alpha(m,k,j,i);
+      for (int a = 0; a < 3; ++a) {
+        adm.beta_u(m,a,k,j,i) = z4c.beta_u(m,a,k,j,i);
+      }
+    }
     adm.psi4(m,k,j,i) = pow(z4c.chi(m,k,j,i), 4./chi_psi_power);
 
     // g_ab
@@ -256,9 +280,71 @@ void Z4cToADMViews(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
   return;
 }
 
+template <int ORDER>
+void FillCellCenteredAdmAdapter(MeshBlockPack *pmbp) {
+  auto source = pmbp->pz4c->u_adm_native;
+  auto target = pmbp->padm->u_adm;
+  const auto &indcs = pmbp->pmesh->mb_indcs;
+  const auto cc = MakeStoredDomainBounds(indcs);
+  const auto &vc = pmbp->pz4c->layout;
+  if (source.extent_int(1) != adm::ADM::nadm ||
+      source.extent_int(2) != vc.n3 || source.extent_int(3) != vc.n2 ||
+      source.extent_int(4) != vc.n1 ||
+      target.extent_int(1) != adm::ADM::nadm ||
+      target.extent_int(2) != cc.n3 || target.extent_int(3) != cc.n2 ||
+      target.extent_int(4) != cc.n1) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": native VC or CC ADM adapter extent mismatch source="
+              << source.extent_int(1) << 'x' << source.extent_int(2) << 'x'
+              << source.extent_int(3) << 'x' << source.extent_int(4)
+              << " target=" << target.extent_int(1) << 'x'
+              << target.extent_int(2) << 'x' << target.extent_int(3) << 'x'
+              << target.extent_int(4) << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  const int nmb = pmbp->nmb_thispack;
+  const bool collapse_x2 = vc.nx2 == 1;
+  const bool collapse_x3 = vc.nx3 == 1;
+
+  // Every CC stored point lies between two allocated VC stored points.  Use the
+  // positive, bounded O2 midpoint for derived outer ghost storage, then overwrite
+  // the active adapter with the configured order-matched interpolation.
+  par_for("fill bounded VC-to-CC ADM adapter ghosts", DevExeSpace(), 0, nmb - 1,
+          0, adm::ADM::nadm - 1, 0, cc.n3 - 1, 0, cc.n2 - 1, 0, cc.n1 - 1,
+      KOKKOS_LAMBDA(const int m, const int v, const int k, const int j,
+                    const int i) {
+        target(m, v, k, j, i) = InterpolateVertexToCellPoint<2>(
+            source, m, v, k, j, i, collapse_x2, collapse_x3);
+      });
+  par_for("fill active order-matched VC-to-CC ADM adapter", DevExeSpace(),
+          0, nmb - 1, 0, adm::ADM::nadm - 1, indcs.ks, indcs.ke,
+          indcs.js, indcs.je, indcs.is, indcs.ie,
+      KOKKOS_LAMBDA(const int m, const int v, const int k, const int j,
+                    const int i) {
+        target(m, v, k, j, i) = InterpolateVertexToCellPoint<ORDER>(
+            source, m, v, k, j, i, collapse_x2, collapse_x3);
+      });
+  Kokkos::fence();
+}
+
 void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
-  Z4cToADMViews(pmbp, pmbp->pz4c->z4c, pmbp->padm->adm,
-                pmbp->pz4c->opt.chi_psi_power);
+  if (pmbp->pz4c->layout.centering == Z4cGridCentering::vertex) {
+    Z4cToADMViews<true>(pmbp, pmbp->pz4c->z4c, pmbp->pz4c->adm,
+                  pmbp->pz4c->opt.chi_psi_power);
+    switch (pmbp->pz4c->opt.fd_stencil) {
+      case 2: FillCellCenteredAdmAdapter<2>(pmbp); break;
+      case 3: FillCellCenteredAdmAdapter<4>(pmbp); break;
+      case 4: FillCellCenteredAdmAdapter<6>(pmbp); break;
+      default:
+        std::cerr << "### FATAL ERROR in " << __FILE__
+                  << ": unsupported VC-to-CC ADM interpolation stencil"
+                  << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+  } else {
+    Z4cToADMViews<false>(pmbp, pmbp->pz4c->z4c, pmbp->padm->adm,
+                  pmbp->pz4c->opt.chi_psi_power);
+  }
 }
 //----------------------------------------------------------------------------------------
 //! \fn void Z4c::ADMConstraints(AthenaArray<Real> & u_adm, AthenaArray<Real> & u_mat)
@@ -273,9 +359,10 @@ void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
 //
 // The constraints are set only in the MeshBlock interior, because derivatives
 // of the ADM quantities are needed to compute them.
-template <typename Centering, typename Symmetry, int FD_STENCIL>
+template <typename Centering, typename Symmetry, int FD_STENCIL,
+          typename AdmVars>
 void ADMConstraintsViewsImpl(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
-                             const adm::ADM::ADM_vars adm_fields,
+                             const AdmVars adm_fields,
                              DvceArray5D<Real> u_con,
                              const Z4c::Constraint_vars con,
                              const bool is_vacuum,
@@ -584,9 +671,15 @@ void ADMConstraintsImpl(MeshBlockPack *pmbp) {
   const bool is_vacuum = pmbp->ptmunu == nullptr;
   Tmunu::Tmunu_vars tmunu;
   if (!is_vacuum) tmunu = pmbp->ptmunu->tmunu;
-  ADMConstraintsViewsImpl<Centering, Symmetry, FD_STENCIL>(
-      pmbp, pmbp->pz4c->z4c, pmbp->padm->adm, pmbp->pz4c->u_con,
-      pmbp->pz4c->con, is_vacuum, tmunu);
+  if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
+    ADMConstraintsViewsImpl<Centering, Symmetry, FD_STENCIL>(
+        pmbp, pmbp->pz4c->z4c, pmbp->pz4c->adm, pmbp->pz4c->u_con,
+        pmbp->pz4c->con, is_vacuum, tmunu);
+  } else {
+    ADMConstraintsViewsImpl<Centering, Symmetry, FD_STENCIL>(
+        pmbp, pmbp->pz4c->z4c, pmbp->padm->adm, pmbp->pz4c->u_con,
+        pmbp->pz4c->con, is_vacuum, tmunu);
+  }
 }
 
 template <int NGHOST>
@@ -653,7 +746,7 @@ void Z4c::EvaluateDiagnosticConstraints(
   diagnostic_constraints.M_d.InitWithShallowSlice(
       scratch_constraints, I_CON_MX, I_CON_MZ);
 
-  Z4cToADMViews(pmy_pack, z4c, diagnostic_adm, opt.chi_psi_power);
+  Z4cToADMViews<false>(pmy_pack, z4c, diagnostic_adm, opt.chi_psi_power);
   const Tmunu::Tmunu_vars empty_matter;
   switch (stencil) {
     case 2:
