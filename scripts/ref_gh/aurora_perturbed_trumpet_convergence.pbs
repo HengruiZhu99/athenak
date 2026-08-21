@@ -1,12 +1,12 @@
 #!/bin/bash -l
-# Sequential 8-rank/8-tile t=1 Ref-GH stationary-trumpet resolution ladder.
+# 8-rank/8-tile smooth perturbed-trumpet 64/96/128 convergence ladder.
 #PBS -A CompactBinaryMerger
 #PBS -q debug
 #PBS -l select=1
 #PBS -l place=scatter
 #PBS -l walltime=01:00:00
 #PBS -l filesystems=home:flare
-#PBS -N refgh_t1_8r
+#PBS -N refgh_pert_conv
 #PBS -j oe
 
 set -euo pipefail
@@ -16,8 +16,9 @@ SRC="${ROOT}/athenak"
 BUILD="${ROOT}/build_sycl_pvc_8770307.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov"
 BUILD_SOURCE_COMMIT=6eed3d9d6fb5d31ee8f240a771e18bfc220a0701
 EXE="${BUILD}/src/athena"
-INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
-OUT="${ROOT}/runs/cache_t1_eight_rank_${PBS_JOBID}"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_perturbed_trumpet.athinput"
+ANALYZER="${SRC}/scripts/ref_gh/analyze_perturbed_trumpet_convergence.py"
+OUT="${ROOT}/runs/perturbed_convergence_${PBS_JOBID}"
 
 mkdir -p "${OUT}"
 cd "${OUT}"
@@ -66,28 +67,32 @@ run_case() (
     meshblock/nx1="${mbcell}" meshblock/nx2="${mbcell}" meshblock/nx3="${mbcell}" \
     ref_gh/debug_task_fences=false \
     ref_gh/validate_reference_cache=false \
-    output1/dt=0.1 output2/dt=0.5 \
-    time/nlim=-1 time/tlim=1.0 \
+    output1/dt=0.02 output2/dt=0.1 \
+    output3/dt=0.2 output4/dt=0.2 \
+    time/nlim=-1 time/tlim=0.2 \
     > "${label}.log" 2>&1
   test -s "${label}.ref_gh.hst"
-  awk 'BEGIN {positive=0; reached=0} !/^#/ {if ($1 > 0) positive=1; if ($1 >= 0.999999999) reached=1} END {exit !(positive && reached)}' \
+  awk 'BEGIN {reached=0} !/^#/ && $1 >= 0.199999999 {reached=1} END {exit !reached}' \
     "${label}.ref_gh.hst"
+  test -s "cbin_ref_gh_perturb_1/${label}.ref_gh_perturb.00001.cbin"
+  test -s "cbin_ref_gh_native_con_1/${label}.ref_gh_native_con.00001.cbin"
   ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
     "${label}.log"
-  grep 'reference-GH stationary trumpet:' "${label}.log" | tail -1
+  grep 'reference-GH perturbed trumpet:' "${label}.log" | tail -1
 )
 
-status=0
-run_case ref_gh_stationary_trumpet_dx16_t1_8r 64 32 \
-  > dx16_status.txt || status=1
-if test "${status}" -eq 0; then
-  run_case ref_gh_stationary_trumpet_dx24_t1_8r 96 48 \
-    > dx24_status.txt || status=1
-fi
-if test "${status}" -eq 0; then
-  run_case ref_gh_stationary_trumpet_dx32_t1_8r 128 64 \
-    > dx32_status.txt || status=1
-fi
+run_case ref_gh_perturbed_trumpet_n64 64 32 > n64_status.txt
+run_case ref_gh_perturbed_trumpet_n96 96 48 > n96_status.txt
+run_case ref_gh_perturbed_trumpet_n128 128 64 > n128_status.txt
+cat n64_status.txt n96_status.txt n128_status.txt > case_status.txt
 
-cat dx16_status.txt dx24_status.txt dx32_status.txt > case_status.tsv 2>/dev/null || true
-exit "${status}"
+python3 "${ANALYZER}" \
+  --field \
+    "${OUT}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n64.ref_gh_perturb.00001.cbin" \
+    "${OUT}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n96.ref_gh_perturb.00001.cbin" \
+    "${OUT}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n128.ref_gh_perturb.00001.cbin" \
+  --constraint \
+    "${OUT}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n64.ref_gh_native_con.00001.cbin" \
+    "${OUT}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n96.ref_gh_native_con.00001.cbin" \
+    "${OUT}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n128.ref_gh_native_con.00001.cbin" \
+  --output convergence.json > convergence.log
