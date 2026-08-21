@@ -7,8 +7,6 @@ Lagrange interpolation to a fixed cell-centered sample grid.  This keeps the
 comparison operator higher order than the nominal fourth-order evolution.
 """
 
-from __future__ import annotations
-
 import argparse
 import json
 import math
@@ -28,8 +26,8 @@ def read_cbin(path: Path) -> dict:
         first = stream.readline()
         if first.strip() != b"Athena binary output version=1.1":
             raise ValueError(f"{path}: unsupported cbin header {first!r}")
-        metadata: dict[str, object] = {}
-        variables: list[str] = []
+        metadata = {}
+        variables = []
         input_bytes = None
         while True:
             line = stream.readline()
@@ -132,7 +130,7 @@ def interpolate(data: np.ndarray, bounds, target_n: int) -> np.ndarray:
     return np.einsum("vzba,cz->vcba", along_y, wz, optimize=True)
 
 
-def effective_self_order(ratio: float, resolutions: tuple[int, int, int]) -> float:
+def effective_self_order(ratio: float, resolutions) -> float:
     """Solve unequal-ratio Richardson self-convergence for p."""
     h0, h1, h2 = (1.0/resolution for resolution in resolutions)
     if not math.isfinite(ratio) or ratio <= 0.0:
@@ -159,7 +157,7 @@ def effective_self_order(ratio: float, resolutions: tuple[int, int, int]) -> flo
 
 
 def norm_summary(coarse: np.ndarray, medium: np.ndarray, fine: np.ndarray,
-                 mask: np.ndarray, resolutions: tuple[int, int, int]) -> dict:
+                 mask: np.ndarray, resolutions) -> dict:
     first = (coarse - medium)[:, mask]
     second = (medium - fine)[:, mask]
     first_l2 = float(np.sqrt(np.mean(first*first)))
@@ -180,7 +178,7 @@ def norm_summary(coarse: np.ndarray, medium: np.ndarray, fine: np.ndarray,
     }
 
 
-def load_triplet(paths: list[Path], target_n: int):
+def load_triplet(paths, target_n: int):
     loaded = [read_cbin(path) for path in paths]
     variables = loaded[0]["variables"]
     bounds = loaded[0]["bounds"]

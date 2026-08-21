@@ -1,0 +1,41 @@
+#!/bin/bash -l
+# Analyze the preserved t=0.2 perturbed-trumpet ladder from Aurora job 8770619.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:15:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_pert_an
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820
+SRC="${ROOT}/athenak"
+RUN="${ROOT}/runs/perturbed_convergence_8770619.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov"
+ANALYZER="${SRC}/scripts/ref_gh/analyze_perturbed_trumpet_convergence.py"
+
+source "${HOME}/athenak_env"
+cd "${RUN}"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  git -C "${SRC}" rev-parse HEAD
+  python3 --version
+  python3 -c 'import numpy; print("numpy=" + numpy.__version__)'
+} > analysis_provenance.txt
+
+python3 "${ANALYZER}" \
+  --field \
+    "${RUN}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n64.ref_gh_perturb.00001.cbin" \
+    "${RUN}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n96.ref_gh_perturb.00001.cbin" \
+    "${RUN}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n128.ref_gh_perturb.00001.cbin" \
+  --constraint \
+    "${RUN}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n64.ref_gh_native_con.00001.cbin" \
+    "${RUN}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n96.ref_gh_native_con.00001.cbin" \
+    "${RUN}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n128.ref_gh_native_con.00001.cbin" \
+  --output convergence.json > convergence.log
+
+test -s convergence.json
