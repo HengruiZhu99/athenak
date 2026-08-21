@@ -76,8 +76,7 @@ The read_*(...) functions return a filedata dictionary-like object with
     filedata['mb_logical'] = array with shape [n_mbs, 4]
         i,j,k,level coordinates for each MeshBlock
     filedata['mb_geometry'] = array with shape [n_mbs, 6]
-        x1i,x2i,x3i,dx1,dx2,dx3 including cell-centered location of left-most
-        cell and offsets between cells
+        x1min,x1max,x2min,x2max,x3min,x3max face bounds of each MeshBlock
     filedata['mb_data'] = dict of arrays with shape [n_mbs, nx3, nx2, nx1]
         {'var1':var1_array, 'var2':var2_array, ...} dictionary of fluid data arrays
         for each variable in var_names

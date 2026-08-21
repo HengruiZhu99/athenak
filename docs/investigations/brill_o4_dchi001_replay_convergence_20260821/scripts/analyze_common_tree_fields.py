@@ -110,6 +110,8 @@ def interpolation_indices(q: float, count: int) -> tuple[np.ndarray, np.ndarray]
 
 
 def coarse_fine_sides(data: dict[str, Any]) -> list[set[str]]:
+    # Athena binary mb_geometry stores MeshBlock face bounds, despite the
+    # center-plus-spacing wording in older bin_convert.py documentation.
     geometry = np.asarray(data["mb_geometry"], dtype=float)
     levels = np.asarray(data["mb_logical"], dtype=int)[:, 3]
     sides = [set() for _ in range(len(geometry))]
