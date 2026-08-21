@@ -29,13 +29,16 @@ with tempfile.TemporaryDirectory() as directory:
         writer.writeheader()
         for series in ("bamps", "prague", "sphGR"):
             writer.writerow({"series": series, "tau": 0, "log10_abs_I": -3})
+    secondary = root / "secondary.csv"
+    secondary.write_text("axisTau,axisKret\n0,1\n1,3\n", encoding="utf-8")
     output = root / "output"
     subprocess.run([sys.executable, str(SCRIPT), *histories,
-                    "--reference", str(reference), "--output", str(output)], check=True)
+                    "--reference", str(reference), "--secondary", str(secondary),
+                    "--output", str(output)], check=True)
     assert (output / "fig3_o4_common_tree_n128_n256_n512.png").stat().st_size > 0
     with (output / "figure3_plotted_data.csv").open(newline="") as stream:
         rows = list(csv.DictReader(stream))
-    assert len(rows) == 9 and {row["series"] for row in rows} == {
-        "bamps", "prague", "sphGR", "n128", "n256", "n512"}
+    assert len(rows) == 11 and {row["series"] for row in rows} == {
+        "bamps", "prague", "sphGR", "n128", "n256", "n512", "n256_dchi002_prior"}
 
 print("COMMON_TREE_FIGURE3_OVERLAY_TEST_PASS")

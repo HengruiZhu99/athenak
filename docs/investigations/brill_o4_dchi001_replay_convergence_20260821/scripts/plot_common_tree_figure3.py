@@ -24,6 +24,16 @@ PAPER_STYLES = {
 
 
 def read_history(path: Path) -> list[dict[str, float]]:
+    with path.open(encoding="utf-8") as stream:
+        first = stream.readline()
+    if "," in first and not first.startswith("#"):
+        with path.open(newline="", encoding="utf-8") as stream:
+            rows = [{name: float(value) for name, value in row.items()
+                     if value not in (None, "")}
+                    for row in csv.DictReader(stream)]
+        if not rows or not {"axisTau", "axisKret"} <= rows[0].keys():
+            raise RuntimeError(f"invalid history CSV: {path}")
+        return rows
     labels: dict[str, int] = {}
     rows = []
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -50,10 +60,12 @@ def main() -> None:
     for case in ("n128", "n256", "n512"):
         parser.add_argument(f"--{case}", type=Path, required=True)
     parser.add_argument("--reference", type=Path, required=True)
+    parser.add_argument("--secondary", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
     histories = {case: read_history(getattr(args, case)) for case in COLORS}
+    secondary = read_history(args.secondary) if args.secondary else []
     reference = read_reference(args.reference)
     args.output.mkdir(parents=True, exist_ok=True)
     plotted = []
@@ -70,6 +82,12 @@ def main() -> None:
             axis.plot([point[0] for point in points], [point[1] for point in points],
                       color=COLORS[case], label=case.upper(), linewidth=1.45)
             axis.scatter(points[-1][0], points[-1][1], color=COLORS[case], marker="x", s=28)
+        if secondary:
+            points = [(row["axisTau"], math.log10(abs(row["axisKret"])))
+                      for row in secondary if row["axisKret"] != 0.0]
+            axis.plot([point[0] for point in points], [point[1] for point in points],
+                      color="#984ea3", linestyle=":", linewidth=1.1,
+                      label="prior N256 O4 dchi=0.02 (unmatched context)")
         axis.set_xlim(0.0, 15.05)
         axis.set_xlabel(r"central proper time $\tau_c/M$")
         axis.set_ylabel(r"$\log_{10}|I|$ on the symmetry axis")
@@ -93,6 +111,10 @@ def main() -> None:
                         "tau": row["axisTau"],
                         "log10_abs_I": math.log10(abs(row["axisKret"]))}
                        for row in rows if row["axisKret"] != 0.0)
+    plotted.extend({"source": "secondary_unmatched_context", "series": "n256_dchi002_prior",
+                    "tau": row["axisTau"],
+                    "log10_abs_I": math.log10(abs(row["axisKret"]))}
+                   for row in secondary if row["axisKret"] != 0.0)
     with (args.output / "figure3_plotted_data.csv").open("w", newline="", encoding="utf-8") as stream:
         writer = csv.DictWriter(stream, fieldnames=("source", "series", "tau", "log10_abs_I"),
                                 lineterminator="\n")
