@@ -69,3 +69,16 @@ first authority evolution is accepted.  Run the additional static gate with:
 ```bash
 python3 docs/investigations/brill_o4_dchi001_replay_convergence_20260821/test_perlmutter_campaign_contract.py
 ```
+
+## Offline analysis
+
+`scripts/analyze_common_tree_histories.py` merges restart-overlapped Athena
+histories, validates the executed N128/N512 replay prefixes against the N256
+authority checksums and event times, reduces native-AMR shadow decisions,
+computes trusted-window scalar-constraint orders and authority-event jumps,
+and produces the scalar history plots.  It requires an explicitly reviewed
+`--trusted-tau-max`; it intentionally does not promote field convergence or a
+Figure-3 overlay, which remain separate binary-sampling and reference-curve
+gates.  `scripts/test_analyze_common_tree_histories.py` exercises restart
+overlap, exact replay, shadow reduction, plotting, and an exact synthetic
+fourth-order triplet.
