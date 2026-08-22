@@ -18,6 +18,7 @@
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/amr_history.hpp"
+#include "mesh/mesh_refinement.hpp"
 #include "outputs/outputs.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
@@ -698,6 +699,13 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
                                              bool preserve_restored_z4c) {
   // Note: with MPI, sends on ALL MBs must be complete before receives execute
 
+  // Sub-phase markers for the default-off native-VC AMR lifecycle diagnostic.
+  // These deliberately use the MeshRefinement-owned selector so production inputs,
+  // restarts, and behavior remain unchanged when the environment variable is absent.
+  const auto vc_amr_mark = [pm](const int phase, const char *name) {
+    if (pm->pmr != nullptr) pm->pmr->VCAMRLifecycleMark(phase, name);
+  };
+
   // Initialize Z4c
   z4c::Z4c *pz4c = pm->pmb_pack->pz4c;
   // Restart files contain the complete, post-algebraic-projection active Z4c u0.
@@ -715,31 +723,40 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
   }
   if (pz4c != nullptr && (!preserve_restored_z4c || rebuild_vertex_restart)) {
     (void) pz4c->RestrictU(this, 0);
+    vc_amr_mark(150, "InitBndry_Z4c_RestrictU_complete");
     if (!preserve_restored_z4c && pz4c->amr_jump_diagnostic != nullptr) {
       pz4c->amr_jump_diagnostic->RecordRestrictionShadow();
       pz4c->amr_jump_diagnostic->RecordT3(
           z4c::AMRJumpWriter::restrict, 0, false);
     }
     (void) pz4c->InitRecv(this, -1);  // stage < 0 suppresses InitFluxRecv
+    vc_amr_mark(151, "InitBndry_Z4c_InitRecv_complete");
     (void) pz4c->SendU(this, 0);
+    vc_amr_mark(152, "InitBndry_Z4c_SendU_complete");
     (void) pz4c->ClearSend(this, -1);
     (void) pz4c->ClearRecv(this, -1);
+    vc_amr_mark(153, "InitBndry_Z4c_ClearSendRecv_complete");
     (void) pz4c->RecvU(this, 0);
+    vc_amr_mark(154, "InitBndry_Z4c_RecvU_complete");
     if (!preserve_restored_z4c && pz4c->amr_jump_diagnostic != nullptr) {
       pz4c->amr_jump_diagnostic->RecordT3(
           z4c::AMRJumpWriter::mpi_receive, 1, false);
     }
     (void) pz4c->Z4cBoundaryRHS(this, 0);
+    vc_amr_mark(155, "InitBndry_Z4c_BoundaryRHS_complete");
     (void) pz4c->ApplyPhysicalBCs(this, 0);
+    vc_amr_mark(156, "InitBndry_Z4c_ApplyPhysicalBCs_complete");
     if (!preserve_restored_z4c && pz4c->amr_jump_diagnostic != nullptr) {
       pz4c->amr_jump_diagnostic->RecordT3(
           z4c::AMRJumpWriter::physical_or_axis_bc, 2, false);
     }
     (void) pz4c->Prolongate(this, 0);
+    vc_amr_mark(157, "InitBndry_Z4c_Prolongate_complete");
     // The first physical pass supplies coarse data needed by prolongation.  Prolongation
     // then fills coarse/fine side ghosts, after which this built-in-only pass completes
     // physical/coarse-fine corner overlaps.  User boundary callbacks remain single-shot.
     pz4c->FillBuiltInPhysicalBoundaryGhosts();
+    vc_amr_mark(158, "InitBndry_Z4c_BuiltInPhysicalGhosts_complete");
     if (!preserve_restored_z4c && pz4c->amr_jump_diagnostic != nullptr) {
       pz4c->amr_jump_diagnostic->RecordT3(
           z4c::AMRJumpWriter::physical_or_axis_bc, 5, false);
@@ -747,6 +764,7 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
   }
   if (pz4c != nullptr) {
     (void) pz4c->FillAxisParityGhosts(this, 0);
+    vc_amr_mark(159, "InitBndry_Z4c_AxisParityGhosts_complete");
     if (!preserve_restored_z4c && pz4c->amr_jump_diagnostic != nullptr) {
       pz4c->amr_jump_diagnostic->RecordT3(
           z4c::AMRJumpWriter::physical_or_axis_bc, 6, true);

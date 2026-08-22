@@ -1,0 +1,97 @@
+#!/bin/bash -l
+#PBS -N z4c-vc-amr-a0a19
+#PBS -A CompactBinaryMerger
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:20:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+base=/lus/flare/projects/CompactBinaryMerger/hzhu
+stage="${base}/z4c-vc-hardening-829be2f6-v1-20260822"
+source_root="${stage}/source"
+build_root="${stage}/build"
+root="${stage}/campaign-all-fences-v1"
+expected_source=829be2f6d60103816a8d7320268604045e4b31d5
+expected_kokkos=6739bc623081648af9e752b616d9671527922cbf
+
+test ! -e "${root}"
+test "$(git -C "${source_root}" rev-parse HEAD)" = "${expected_source}"
+test -z "$(git -C "${source_root}" status --porcelain)"
+test "$(git -C "${source_root}/kokkos" rev-parse HEAD)" = "${expected_kokkos}"
+test -x "${build_root}/src/athena"
+
+mkdir -p "${root}/evidence" "${root}/run"
+finish() {
+  code=$?
+  trap - EXIT
+  set +e
+  printf '%s\n' "${code}" > "${root}/orchestration-status"
+  git -C "${source_root}" status --porcelain=v1 > "${root}/evidence/source-status.final"
+  qstat -f "${PBS_JOBID}" > "${root}/evidence/qstat-final.txt" 2>&1
+  find "${root}" -type f ! -name SHA256SUMS ! -name SHA256SUMS.sha256 \
+    -print0 | LC_ALL=C sort -z | xargs -0r sha256sum > "${root}/SHA256SUMS"
+  (cd "${root}" && sha256sum -c SHA256SUMS >/dev/null)
+  sha256sum "${root}/SHA256SUMS" > "${root}/SHA256SUMS.sha256"
+  exit "${code}"
+}
+trap finish EXIT
+
+workflow="${base}/collapse-critical/collapse-critical-workflow"
+export ATHENAK_ROOT="${source_root}"
+export ATHENAK_BUILD_DIR="${build_root}"
+export IRISK_ROOT="${base}/collapse-critical/bbhk"
+export IRISK_BUILD_DIR="${IRISK_ROOT}/build/aurora-pvc"
+source "${workflow}/profiles/aurora-pvc.sh"
+export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPIR_CVAR_ENABLE_GPU=1 MPICH_GPU_SUPPORT_ENABLED=1
+tile_wrapper=/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh
+test -x "${tile_wrapper}"
+
+{
+  date --iso-8601=seconds
+  hostname
+  git -C "${source_root}" rev-parse HEAD HEAD^{tree}
+  git -C "${source_root}" submodule status -- kokkos
+  module list
+  command -v icpx mpicxx mpiexec sycl-ls
+  icpx --version | head -1
+  mpicxx -show
+  cmake --version | head -1
+  sycl-ls
+  qstat -f "${PBS_JOBID}"
+  sha256sum "${build_root}/src/athena" "${build_root}/CMakeCache.txt"
+} > "${root}/evidence/provenance.txt" 2>&1
+
+grep -qx 'Kokkos_ENABLE_SYCL:BOOL=ON' "${build_root}/CMakeCache.txt"
+grep -qx 'Kokkos_ARCH_INTEL_PVC:BOOL=ON' "${build_root}/CMakeCache.txt"
+grep -qx 'Athena_ENABLE_MPI:BOOL=ON' "${build_root}/CMakeCache.txt"
+
+cd "${root}/run"
+set +e
+ATHENA_Z4C_VC_AMR_LIFECYCLE=all \
+  /opt/cray/pals/1.8/bin/mpiexec -n 1 -ppn 1 --depth 8 --cpu-bind depth \
+  "${tile_wrapper}" "${build_root}/src/athena" \
+  -i "${source_root}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" \
+  > "${root}/run/stdout.log" 2> "${root}/run/stderr.log"
+run_status=$?
+set -e
+printf '%s\n' "${run_status}" > "${root}/run/exit-status"
+
+if test "${run_status}" -eq 0; then
+  for phase in $(seq 0 19); do
+    test "$(grep -c "VC_AMR_LIFECYCLE phase=A${phase} " \
+      "${root}/run/stdout.log")" -eq 2
+  done
+  grep -Fq 'Current number of MeshBlocks = 4' "${root}/run/stdout.log"
+  grep -Fq '3 MeshBlocks created, 3 deleted by AMR' "${root}/run/stdout.log"
+  printf 'AURORA_SYCL_VC_AMR_ALL_FENCES_PASS\n' > "${root}/status"
+else
+  printf 'AURORA_SYCL_VC_AMR_ALL_FENCES_FAIL\n' > "${root}/status"
+  exit "${run_status}"
+fi
