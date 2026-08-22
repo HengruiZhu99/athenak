@@ -129,13 +129,14 @@ def main() -> None:
 
     for metric, values in final_by_metric.items():
         values.sort()
+        resolution_slope = log_slope(
+            [float(resolution) for resolution, _ in values],
+            [error for _, error in values])
         fit_rows.append({
             "scope": "t20_across_resolution",
             "metric": metric,
             "scaling_variable": "resolution_N",
-            "log_log_slope": f"{log_slope(
-                [float(resolution) for resolution, _ in values],
-                [error for _, error in values]):.17g}",
+            "log_log_slope": f"{resolution_slope:.17g}",
         })
 
     prefix = args.output_prefix

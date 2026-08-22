@@ -20,6 +20,7 @@ INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
 SUMMARY="${SRC}/scripts/ref_gh/summarize_stationary_history.py"
 ROUNDOFF="${SRC}/scripts/ref_gh/analyze_stationary_roundoff.py"
 MASKED="${SRC}/scripts/ref_gh/analyze_stationary_common_constraints.py"
+PYTHON=$(command -v python3.10)
 OUT="${ROOT}/runs/stationary_t20_${PBS_JOBID}"
 
 mkdir -p "${OUT}"
@@ -48,6 +49,7 @@ test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
   icpx --version | head -1
   mpicxx --version | head -1
   cmake --version | head -1
+  "${PYTHON}" --version
   env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
   sha256sum "${INPUT}" "${SUMMARY}" "${ROUNDOFF}" "${MASKED}" "$0"
 } > provenance.txt
@@ -126,24 +128,24 @@ run_case "${medium}" 96 48 > n96_status.txt
 run_case "${coarse}" 64 32 > n64_status.txt
 paste n64_status.txt n96_status.txt n128_status.txt > case_status.txt
 
-python3 "${SUMMARY}" \
+"${PYTHON}" "${SUMMARY}" \
   --case "n64=${OUT}/${coarse}/${coarse}.ref_gh.hst" \
   --case "n96=${OUT}/${medium}/${medium}.ref_gh.hst" \
   --case "n128=${OUT}/${fine}/${fine}.ref_gh.hst" \
   --output stationary_matched.tsv
 
-python3 "${ROUNDOFF}" \
+"${PYTHON}" "${ROUNDOFF}" \
   --case "n64,64=${OUT}/${coarse}/${coarse}.ref_gh.hst,${OUT}/${coarse}/${coarse}-trumpet.dat" \
   --case "n96,96=${OUT}/${medium}/${medium}.ref_gh.hst,${OUT}/${medium}/${medium}-trumpet.dat" \
   --case "n128,128=${OUT}/${fine}/${fine}.ref_gh.hst,${OUT}/${fine}/${fine}-trumpet.dat" \
   --output-prefix stationary_roundoff
 
-python3 "${MASKED}" \
+"${PYTHON}" "${MASKED}" \
   --case "n64=${OUT}/${coarse}/cbin_adm_common_1/${coarse}.adm_common.00000.cbin" \
   --case "n96=${OUT}/${medium}/cbin_adm_common_1/${medium}.adm_common.00000.cbin" \
   --case "n128=${OUT}/${fine}/cbin_adm_common_1/${fine}.adm_common.00000.cbin" \
   --expected-time 0 --output stationary_common_adm_t0.tsv
-python3 "${MASKED}" \
+"${PYTHON}" "${MASKED}" \
   --case "n64=${OUT}/${coarse}/cbin_adm_common_1/${coarse}.adm_common.00001.cbin" \
   --case "n96=${OUT}/${medium}/cbin_adm_common_1/${medium}.adm_common.00001.cbin" \
   --case "n128=${OUT}/${fine}/cbin_adm_common_1/${fine}.adm_common.00001.cbin" \
