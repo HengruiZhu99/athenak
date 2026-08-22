@@ -22,8 +22,8 @@ void RefGh::RefGhToADM() {
   FillReferenceCache(pmy_pack->pmesh->time, false);
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   const int n1 = indcs.nx1 + 2*indcs.ng;
-  const int n2 = indcs.nx2 + 2*indcs.ng;
-  const int n3 = indcs.nx3 + 2*indcs.ng;
+  const int n2 = (indcs.nx2 > 1) ? indcs.nx2 + 2*indcs.ng : 1;
+  const int n3 = (indcs.nx3 > 1) ? indcs.nx3 + 2*indcs.ng : 1;
   const auto state = u0;
   const auto reference_cache = reference_evolution;
   const auto reference_extra = reference_diagnostic;
@@ -40,6 +40,14 @@ void RefGh::RefGhToADM() {
     if (!LoadPointGeometry(state, reference, m, k, j, i, psi, pi, phi, d_psi,
                            metric, d_metric, geometry, determinant)) {
       adm_vars.alpha(m, k, j, i) = NAN;
+      adm_vars.psi4(m, k, j, i) = NAN;
+      for (int a = 0; a < 3; ++a) {
+        adm_vars.beta_u(m, a, k, j, i) = NAN;
+        for (int b = a; b < 3; ++b) {
+          adm_vars.g_dd(m, a, b, k, j, i) = NAN;
+          adm_vars.vK_dd(m, a, b, k, j, i) = NAN;
+        }
+      }
       return;
     }
     adm_vars.alpha(m, k, j, i) = geometry.lapse;

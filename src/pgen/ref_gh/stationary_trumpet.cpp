@@ -135,8 +135,8 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
   auto &indcs = pack->pmesh->mb_indcs;
   auto &size = pack->pmb->mb_size;
   const int n1 = indcs.nx1 + 2*indcs.ng;
-  const int n2 = indcs.nx2 + 2*indcs.ng;
-  const int n3 = indcs.nx3 + 2*indcs.ng;
+  const int n2 = (indcs.nx2 > 1) ? indcs.nx2 + 2*indcs.ng : 1;
+  const int n3 = (indcs.nx3 > 1) ? indcs.nx3 + 2*indcs.ng : 1;
   const auto state = pack->prefgh->u0;
   const Real cx = pack->prefgh->opt.reference_center[0];
   const Real cy = pack->prefgh->opt.reference_center[1];

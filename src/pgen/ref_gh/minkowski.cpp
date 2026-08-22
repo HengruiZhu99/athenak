@@ -62,8 +62,8 @@ void ProblemGenerator::RefGhMinkowski(ParameterInput *, const bool restart) {
   }
   auto &indcs = pack->pmesh->mb_indcs;
   const int n1 = indcs.nx1 + 2*indcs.ng;
-  const int n2 = indcs.nx2 + 2*indcs.ng;
-  const int n3 = indcs.nx3 + 2*indcs.ng;
+  const int n2 = (indcs.nx2 > 1) ? indcs.nx2 + 2*indcs.ng : 1;
+  const int n3 = (indcs.nx3 > 1) ? indcs.nx3 + 2*indcs.ng : 1;
   const auto state = pack->prefgh->u0;
   par_for("ref_gh Minkowski data", DevExeSpace(), 0, pack->nmb_thispack - 1,
   0, n3 - 1, 0, n2 - 1, 0, n1 - 1,

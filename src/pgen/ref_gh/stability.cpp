@@ -115,8 +115,8 @@ void ProblemGenerator::RefGhStability(ParameterInput *pin, const bool restart) {
   const Real amplitude = pin->GetOrAddReal("problem", "amp", 1.0e-10);
   auto &indcs = pack->pmesh->mb_indcs;
   const int n1 = indcs.nx1 + 2*indcs.ng;
-  const int n2 = indcs.nx2 + 2*indcs.ng;
-  const int n3 = indcs.nx3 + 2*indcs.ng;
+  const int n2 = (indcs.nx2 > 1) ? indcs.nx2 + 2*indcs.ng : 1;
+  const int n3 = (indcs.nx3 > 1) ? indcs.nx3 + 2*indcs.ng : 1;
   const auto state = pack->prefgh->u0;
   const int gid0 = pack->gids;
   par_for("ref_gh robust noise", DevExeSpace(), 0, pack->nmb_thispack - 1,

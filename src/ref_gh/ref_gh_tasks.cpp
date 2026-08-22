@@ -235,8 +235,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   const int n1 = indcs.nx1 + 2*indcs.ng;
-  const int n2 = indcs.nx2 + 2*indcs.ng;
-  const int n3 = indcs.nx3 + 2*indcs.ng;
+  const int n2 = (indcs.nx2 > 1) ? indcs.nx2 + 2*indcs.ng : 1;
+  const int n3 = (indcs.nx3 > 1) ? indcs.nx3 + 2*indcs.ng : 1;
   const int ncells = pmy_pack->nmb_thispack*n3*n2*n1;
   const auto provider = reference_provider;
   const auto workspace = reference_workspace;
@@ -780,8 +780,8 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   const int ng = indcs.ng;
   const int n1 = indcs.nx1 + 2*ng;
-  const int n2 = indcs.nx2 + 2*ng;
-  const int n3 = indcs.nx3 + 2*ng;
+  const int n2 = (indcs.nx2 > 1) ? indcs.nx2 + 2*ng : 1;
+  const int n3 = (indcs.nx3 > 1) ? indcs.nx3 + 2*ng : 1;
   const int is = indcs.is;
   const int ie = indcs.ie;
   const int js = indcs.js;

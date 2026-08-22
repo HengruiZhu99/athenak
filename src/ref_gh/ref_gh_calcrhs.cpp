@@ -269,6 +269,8 @@ void RefGh::CalcConstraints() {
   const auto reference_cache = reference_evolution;
   const auto reference_extra = reference_diagnostic;
   const int source_kind = opt.source_kind;
+  const int active_dimensions = pmy_pack->pmesh->one_d ? 1
+      : (pmy_pack->pmesh->two_d ? 2 : 3);
   Kokkos::deep_copy(constraints, 0.0);
   par_for("ref_gh flat constraints", DevExeSpace(), 0, pmy_pack->nmb_thispack - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
@@ -361,14 +363,14 @@ void RefGh::CalcConstraints() {
       for (int component = 0; component < kSymmetric4Size; ++component) {
         Real reduction =
             -state(m, kPhiOffset + I*kSymmetric4Size + component, k, j, i);
-        for (int p = 0; p < 3; ++p) {
+        for (int p = 0; p < active_dimensions; ++p) {
           reduction += ReferenceSpatialFrame(reference, I, p)
               *Dx<FDNG>(p, idx, state, m, kPsiOffset + component, k, j, i);
         }
         reduction2 += reduction*reduction;
         for (int J = I + 1; J < 3; ++J) {
           Real curl = 0.0;
-          for (int p = 0; p < 3; ++p) {
+          for (int p = 0; p < active_dimensions; ++p) {
             curl += ReferenceSpatialFrame(reference, I, p)
                       *Dx<FDNG>(p, idx, state, m,
                                 kPhiOffset + J*kSymmetric4Size + component,
