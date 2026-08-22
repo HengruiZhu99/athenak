@@ -109,6 +109,13 @@ class MeshRefinement {
   void UpdateMeshBlockTree(int &nnew, int &ndel);
   void RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, int ndel);
 
+  // Default-off native-VC AMR lifecycle diagnostics.  Selection is controlled by
+  // ATHENA_Z4C_VC_AMR_LIFECYCLE and therefore does not materialize a CC input/restart
+  // parameter.  A completion marker is emitted only after a device fence and MPI barrier.
+  bool VCAMRLifecycleDiagnosticEnabled() const;
+  void VCAMRLifecycleMark(int phase, const char *name) const;
+  void ValidateVCAMRMaps(int old_nmb, int new_nmb) const;
+
   void DerefineCCSameRank(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
   void DerefineVCSameRank(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
   void DerefineFCSameRank(DvceFaceFld4D<Real> &b, DvceFaceFld4D<Real> &cb);

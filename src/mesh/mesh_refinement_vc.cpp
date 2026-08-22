@@ -21,6 +21,45 @@
 
 namespace {
 
+enum class VCAMRDeviceError : long long {
+  none = 0,
+  new_gid_out_of_range = 1,
+  old_gid_out_of_range = 2,
+  local_meshblock_out_of_range = 3,
+  active_bounds_out_of_range = 4,
+  coarse_bounds_out_of_range = 5,
+};
+
+template <typename Record>
+KOKKOS_INLINE_FUNCTION void RecordFirstVCAMRError(
+    const Record &record, const VCAMRDeviceError error, const long long phase,
+    const long long detail0, const long long detail1, const long long detail2,
+    const long long detail3) {
+  const long long code = static_cast<long long>(error);
+  if (Kokkos::atomic_compare_exchange(&record(0), 0LL, code) == 0LL) {
+    record(1) = phase;
+    record(2) = detail0;
+    record(3) = detail1;
+    record(4) = detail2;
+    record(5) = detail3;
+  }
+}
+
+void CheckVCAMRDeviceError(const DvceArray1D<long long> &record,
+                           const char *operation) {
+  Kokkos::fence();
+  const auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), record);
+  if (host(0) == 0) return;
+  std::cerr << "### FATAL ERROR: native VC AMR lifecycle validation failed operation="
+            << operation << " code=" << host(0) << " phase=A" << host(1)
+            << " details=" << host(2) << ',' << host(3) << ',' << host(4)
+            << ',' << host(5) << std::endl;
+#if MPI_PARALLEL_ENABLED
+  MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+#endif
+  std::exit(EXIT_FAILURE);
+}
+
 [[noreturn]] void AbortVC(const char *message) {
   if (global_variable::my_rank == 0) {
     std::cerr << "### FATAL ERROR: " << message << std::endl;
@@ -100,6 +139,37 @@ void MeshRefinement::CopyForRefinementVC(DvceArray5D<Real> &a,
         : std::pair<int, int>(
               layout.ks + ox3 * layout.cnx3 - layout.coarse_ng,
               layout.ks + (ox3 + 1) * layout.cnx3 + layout.coarse_ng + 1);
+    if (VCAMRLifecycleDiagnosticEnabled()) {
+      const auto valid_range = [](const std::pair<int, int> &range,
+                                  const int extent) {
+        return range.first >= 0 && range.second >= range.first &&
+               range.second <= extent;
+      };
+      const bool same_shape =
+          isrc.second - isrc.first == idst.second - idst.first &&
+          jsrc.second - jsrc.first == jdst.second - jdst.first &&
+          ksrc.second - ksrc.first == kdst.second - kdst.first;
+      const bool collapsed_exact =
+          (layout.nx2 > 1 || (jsrc.first == 0 && jsrc.second == 1 &&
+                             jdst.first == 0 && jdst.second == 1)) &&
+          (layout.nx3 > 1 || (ksrc.first == 0 && ksrc.second == 1 &&
+                             kdst.first == 0 && kdst.second == 1));
+      if (source_m < 0 || source_m >= a.extent_int(0) || destination_m < 0 ||
+          destination_m >= ca.extent_int(0) ||
+          !valid_range(isrc, a.extent_int(4)) ||
+          !valid_range(jsrc, a.extent_int(3)) ||
+          !valid_range(ksrc, a.extent_int(2)) ||
+          !valid_range(idst, ca.extent_int(4)) ||
+          !valid_range(jdst, ca.extent_int(3)) ||
+          !valid_range(kdst, ca.extent_int(2)) || !same_shape ||
+          !collapsed_exact || a.extent_int(1) != ca.extent_int(1)) {
+        std::cerr << "### FATAL ERROR: native VC CopyForRefinementVC bounds mismatch"
+                  << " new_gid=" << newm << " old_gid=" << oldm
+                  << " source_m=" << source_m
+                  << " destination_m=" << destination_m << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+    }
     auto source = Kokkos::subview(a, source_m, Kokkos::ALL, ksrc, jsrc, isrc);
     auto destination =
         Kokkos::subview(ca, destination_m, Kokkos::ALL, kdst, jdst, idst);
@@ -130,6 +200,64 @@ void MeshRefinement::RefineVC(DualArray1D<int> &new_to_old,
   // tolerate that representation, while SYCL exposes the invalid host indirection.
   const auto flags = refine_flag.d_view;
   const auto new_to_old_device = new_to_old.d_view;
+  if (VCAMRLifecycleDiagnosticEnabled()) {
+    DvceArray1D<long long> error("native VC AMR first device error", 6);
+    Kokkos::deep_copy(error, 0LL);
+    const long long new_extent = new_to_old_device.extent_int(0);
+    const long long old_extent = flags.extent_int(0);
+    const long long fine_m_extent = a.extent_int(0);
+    const long long coarse_m_extent = ca.extent_int(0);
+    const long long fine_i_extent = a.extent_int(4);
+    const long long fine_j_extent = a.extent_int(3);
+    const long long fine_k_extent = a.extent_int(2);
+    const long long coarse_i_extent = ca.extent_int(4);
+    const long long coarse_j_extent = ca.extent_int(3);
+    const long long coarse_k_extent = ca.extent_int(2);
+    Kokkos::parallel_for(
+        "validate native VC refine lifecycle",
+        Kokkos::RangePolicy<DevExeSpace>(0, nmb),
+        KOKKOS_LAMBDA(const int m) {
+          const long long new_gid = static_cast<long long>(m) + first_gid;
+          if (new_gid < 0 || new_gid >= new_extent) {
+            RecordFirstVCAMRError(error, VCAMRDeviceError::new_gid_out_of_range,
+                                  10, m, new_gid, new_extent, first_gid);
+            return;
+          }
+          const long long old_gid = new_to_old_device(new_gid);
+          if (old_gid < 0 || old_gid >= old_extent) {
+            RecordFirstVCAMRError(error, VCAMRDeviceError::old_gid_out_of_range,
+                                  10, m, new_gid, old_gid, old_extent);
+            return;
+          }
+          if (flags(old_gid) <= 0) return;
+          if (m < 0 || m >= fine_m_extent || m >= coarse_m_extent) {
+            RecordFirstVCAMRError(
+                error, VCAMRDeviceError::local_meshblock_out_of_range, 10,
+                m, fine_m_extent, coarse_m_extent, old_gid);
+            return;
+          }
+          if (layout.is < 0 || layout.ie >= fine_i_extent ||
+              layout.js < 0 || layout.je >= fine_j_extent ||
+              layout.ks < 0 || layout.ke >= fine_k_extent) {
+            RecordFirstVCAMRError(
+                error, VCAMRDeviceError::active_bounds_out_of_range, 10,
+                m, layout.ie, layout.je, layout.ke);
+            return;
+          }
+          if (layout.cis - required < 0 ||
+              layout.cie + required >= coarse_i_extent ||
+              (layout.nx2 > 1 && (layout.cjs - required < 0 ||
+                                  layout.cje + required >= coarse_j_extent)) ||
+              (layout.nx3 > 1 && (layout.cks - required < 0 ||
+                                  layout.cke + required >= coarse_k_extent))) {
+            RecordFirstVCAMRError(
+                error, VCAMRDeviceError::coarse_bounds_out_of_range, 10,
+                m, layout.cie + required, layout.cje + required,
+                layout.cke + required);
+          }
+        });
+    CheckVCAMRDeviceError(error, "RefineVC_preflight");
+  }
   DvceArray1D<unsigned long long> invalid("invalid VC refined chi", 1);
   Kokkos::deep_copy(invalid, 0ULL);
   par_for("native VC refine", DevExeSpace(), 0, nmb - 1, 0, nvar - 1,

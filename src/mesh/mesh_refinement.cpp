@@ -18,6 +18,7 @@
 #include <cmath>     // abs
 #include <algorithm> // sort
 #include <sstream>
+#include <string>
 #include <utility>   // pair
 #include <vector>
 
@@ -290,6 +291,81 @@ MeshRefinement::~MeshRefinement() {
   }
 }
 
+bool MeshRefinement::VCAMRLifecycleDiagnosticEnabled() const {
+  const char *selection = std::getenv("ATHENA_Z4C_VC_AMR_LIFECYCLE");
+  if (selection == nullptr || selection[0] == '\0' || std::string(selection) == "0") {
+    return false;
+  }
+  return pmy_mesh != nullptr && pmy_mesh->pmb_pack != nullptr &&
+         pmy_mesh->pmb_pack->pz4c != nullptr &&
+         pmy_mesh->pmb_pack->pz4c->layout.centering ==
+             z4c::Z4cGridCentering::vertex;
+}
+
+void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const {
+  if (!VCAMRLifecycleDiagnosticEnabled()) return;
+  const std::string selection(std::getenv("ATHENA_Z4C_VC_AMR_LIFECYCLE"));
+  const std::string token = "A" + std::to_string(phase);
+  bool selected = selection == "1" || selection == "all";
+  if (!selected) {
+    std::size_t begin = 0;
+    while (begin <= selection.size()) {
+      const std::size_t end = selection.find(',', begin);
+      const std::string entry = selection.substr(
+          begin, end == std::string::npos ? std::string::npos : end - begin);
+      if (entry == token) {
+        selected = true;
+        break;
+      }
+      if (end == std::string::npos) break;
+      begin = end + 1;
+    }
+  }
+  if (!selected) return;
+
+  Kokkos::fence();
+#if MPI_PARALLEL_ENABLED
+  MPI_Barrier(MPI_COMM_WORLD);
+#endif
+  if (global_variable::my_rank == 0) {
+    std::cout << "VC_AMR_LIFECYCLE phase=" << token
+              << " name=" << name
+              << " cycle=" << pmy_mesh->ncycle
+              << " time=" << pmy_mesh->time
+              << " global_meshblocks=" << pmy_mesh->nmb_total
+              << " local_meshblocks=" << pmy_mesh->pmb_pack->nmb_thispack
+              << std::endl;
+  }
+}
+
+void MeshRefinement::ValidateVCAMRMaps(const int old_nmb,
+                                       const int new_nmb) const {
+  if (!VCAMRLifecycleDiagnosticEnabled()) return;
+  const int flag_extent = refine_flag.h_view.extent_int(0);
+  if (flag_extent < old_nmb) {
+    std::cerr << "### FATAL ERROR: VC AMR lifecycle refine_flag extent "
+              << flag_extent << " is smaller than old map extent " << old_nmb
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  for (int new_gid = 0; new_gid < new_nmb; ++new_gid) {
+    if (newtoold[new_gid] < 0 || newtoold[new_gid] >= old_nmb) {
+      std::cerr << "### FATAL ERROR: VC AMR lifecycle invalid newtoold mapping new_gid="
+                << new_gid << " old_gid=" << newtoold[new_gid]
+                << " old_extent=" << old_nmb << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
+  for (int old_gid = 0; old_gid < old_nmb; ++old_gid) {
+    if (oldtonew[old_gid] < 0 || oldtonew[old_gid] >= new_nmb) {
+      std::cerr << "### FATAL ERROR: VC AMR lifecycle invalid oldtonew mapping old_gid="
+                << old_gid << " new_gid=" << oldtonew[old_gid]
+                << " new_extent=" << new_nmb << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
+}
+
 //----------------------------------------------------------------------------------------
 //! \fn void MeshRefinement::AdaptiveMeshRefinement()
 //! \brief Simple driver function for adaptive mesh refinement
@@ -369,6 +445,7 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
 
   // Refine/derefine mesh and evolved data, set boundary conditions/timestep on new mesh
   if (nnew != 0 || ndel != 0) { // at least one (de)refinement flagged
+    VCAMRLifecycleMark(0, "before_RedistAndRefineMeshBlocks");
     RedistAndRefineMeshBlocks(pin, nnew, ndel);
     MeshBlockPack* pmbp = pmy_mesh->pmb_pack;
     if (diagnostic_z4c != nullptr && diagnostic_z4c->amr_jump_diagnostic != nullptr) {
@@ -380,11 +457,13 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
       // independently; InitBoundaryValuesAndPrimitives below derives all
       // boundary state from these authoritative active values.
       (void) pmbp->pz4c->EnforceAlgConstr(pdriver, pdriver->nexp_stages);
+      VCAMRLifecycleMark(15, "post_regrid_EnforceAlgConstr_complete");
       if (pmbp->pz4c->amr_jump_diagnostic != nullptr) {
         pmbp->pz4c->amr_jump_diagnostic->RecordT4();
       }
     }
     pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
+    VCAMRLifecycleMark(16, "InitBoundaryValuesAndPrimitives_complete");
 
     if (pmbp->phydro != nullptr) {
       (void) pmbp->phydro->NewTimeStep(pdriver, pdriver->nexp_stages);
@@ -399,8 +478,11 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
       // The finalized boundary state already descends from the projected
       // active representation and includes Cartoon parity reconstruction.
       (void) pmbp->pz4c->ConvertZ4cToADM(pdriver, pdriver->nexp_stages);
+      VCAMRLifecycleMark(17, "ConvertZ4cToADM_complete");
       (void) pmbp->pz4c->ADMConstraints_(pdriver, pdriver->nexp_stages);
+      VCAMRLifecycleMark(18, "ADMConstraints_complete");
       (void) pmbp->pz4c->NewTimeStep(pdriver, pdriver->nexp_stages);
+      VCAMRLifecycleMark(19, "NewTimeStep_complete");
       if (pmbp->pz4c->amr_jump_diagnostic != nullptr) {
         pmbp->pz4c->amr_jump_diagnostic->RecordT5();
       }
@@ -705,6 +787,8 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     oldtonew[mb_idx] = new_nmb-1;
     mb_idx++;
   }
+  ValidateVCAMRMaps(old_nmb, new_nmb);
+  VCAMRLifecycleMark(1, "logical_locations_and_maps_complete");
 
   // Step 3.
   // Calculate new load balance. Initialize new cost array with the simplest estimate
@@ -726,6 +810,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
         << pm->nmb_maxperrank << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  VCAMRLifecycleMark(2, "load_balance_and_capacity_complete");
   if (pm->pmb_pack->pz4c != nullptr &&
       pm->pmb_pack->pz4c->amr_jump_diagnostic != nullptr) {
     pm->pmb_pack->pz4c->amr_jump_diagnostic->RecordTopologyProposal(
@@ -756,9 +841,13 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   // Pack send buffers for load blancing and send data
 #if MPI_PARALLEL_ENABLED
   InitRecvAMR(nleaf);
+#endif
+  VCAMRLifecycleMark(3, "InitRecvAMR_complete");
+#if MPI_PARALLEL_ENABLED
   PackAndSendAMR(nleaf);
   nmb_sent_thisrank += nmb_send;
 #endif
+  VCAMRLifecycleMark(4, "PackAndSendAMR_complete");
 
   // Step 5.
   // De-refine (restrict) evolved physics variables for MeshBlocks within this rank.
@@ -789,6 +878,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
       }
     }
   }
+  VCAMRLifecycleMark(5, "DerefineVCSameRank_complete");
 
   // Step 6.
   // Copy evolved physics variables to new MB index within View for MeshBlocks that stay
@@ -812,6 +902,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   } else if (padm != nullptr) {
     CopyCC(padm->u_adm);
   }
+  VCAMRLifecycleMark(6, "CopyVC_complete");
   // Step 7.
   // Copy evolved physics variables for MBs flagged for refinement from source fine array
   // to target coarse array, when both are on same rank.
@@ -834,6 +925,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
       }
     }
   }
+  VCAMRLifecycleMark(7, "CopyForRefinementVC_complete");
 
   // Step 8.
   // Wait for all MPI load balancing communications to finish.  Unpack data.
@@ -841,6 +933,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   if (nmb_send > 0) {ClearSendAMR();}
   if (nmb_recv > 0) {ClearRecvAndUnpackAMR();}
 #endif
+  VCAMRLifecycleMark(8, "AMR_MPI_and_UnpackAMRBuffersVC_complete");
 
   // copy newtoold array to DualView so that it can be accessed in kernel
   DualArray1D<int> new_to_old("newtoold",new_nmb_total);
@@ -849,6 +942,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   }
   new_to_old.template modify<HostMemSpace>();
   new_to_old.template sync<DevExeSpace>();
+  VCAMRLifecycleMark(9, "new_to_old_DualView_synchronized");
 
   // Step 9.
   // Coarse arrays are now up-to-date, either through copies on same rank or MPI calls
@@ -873,6 +967,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
       }
     }
   }
+  VCAMRLifecycleMark(10, "RefineVC_complete");
 
   // Step 10.
   // General housekeeping
@@ -906,17 +1001,21 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   pm->pmb_pack->gids = pm->gids_eachrank[global_variable::my_rank];
   pm->pmb_pack->gide = pm->pmb_pack->gids + pm->nmb_eachrank[global_variable::my_rank]-1;
   pm->pmb_pack->nmb_thispack = pm->pmb_pack->gide - pm->pmb_pack->gids + 1;
+  VCAMRLifecycleMark(11, "new_mesh_and_rank_metadata_installed");
 
   // Delete old then allocate new MeshBlocks and Coordinates (latter includes masks in GR)
   delete (pm->pmb_pack->pmb);
   delete (pm->pmb_pack->pcoord);
   pm->pmb_pack->AddMeshBlocks(pin);
   pm->pmb_pack->AddCoordinates(pin);
+  VCAMRLifecycleMark(12, "MeshBlock_and_Coordinates_reconstructed");
   pm->pmb_pack->pmb->SetNeighbors(pm->ptree, pm->rank_eachmb);
+  VCAMRLifecycleMark(13, "SetNeighbors_complete");
   if (pz4c != nullptr &&
       pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
     pz4c->RebuildVertexTopologyPlan();
   }
+  VCAMRLifecycleMark(14, "RebuildVertexTopologyPlan_complete");
 
   // clean-up
   delete [] newtoold;
