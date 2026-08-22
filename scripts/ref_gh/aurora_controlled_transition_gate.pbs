@@ -1,0 +1,120 @@
+#!/bin/bash -l
+# One-PVC-tile build, estimator, controlled-cycle, and restart gate.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_ctrl_gate
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1
+SRC="${ROOT}/src"
+BUILD="${ROOT}/build_${PBS_JOBID}"
+OUT="${ROOT}/runs/gate_${PBS_JOBID}"
+EXE="${BUILD}/src/athena"
+SMOKE="${SRC}/tst/inputs/ref_gh_controlled_transition_smoke.athinput"
+ESTIMATOR="${SRC}/tst/inputs/ref_gh_estimator_calibration.athinput"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  git -C "${SRC}" rev-parse HEAD
+  git -C "${SRC}" status --short
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=ON \
+  -DPROBLEM=built_in_pgens \
+  > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1
+  ' > gpu_mapping.txt 2>&1
+
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth gpu_tile_compact.sh \
+  python3 "${SRC}/tst/test_suite/ref_gh/ref_gh_estimator_calibration.py" \
+    --executable "${EXE}" --input "${ESTIMATOR}" \
+    --output "${OUT}/estimator_calibration.json" \
+  > estimator_calibration.log 2>&1
+
+mkdir -p "${OUT}/one_cycle"
+cd "${OUT}/one_cycle"
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${SMOKE}" \
+  job/basename=controlled_gate \
+  mesh/nx1=32 mesh/nx2=32 mesh/nx3=32 \
+  meshblock/nx1=32 meshblock/nx2=32 meshblock/nx3=32 \
+  ref_gh/debug_task_fences=true \
+  output1/dt=1.0e-6 output2/dt=1.0e-6 \
+  time/nlim=1 time/tlim=0.1 \
+  > controlled_gate.log 2>&1
+
+test -s controlled_gate.ref_gh.hst
+test -s controlled_gate.user.hst
+awk 'BEGIN {rows=0; positive=0} !/^#/ {rows++; if ($1 > 0) positive=1} END {exit !(rows >= 2 && positive)}' controlled_gate.ref_gh.hst
+awk 'BEGIN {ok=0} !/^#/ && $1 > 0 && $27 >= 4 {ok=1} END {exit !ok}' controlled_gate.user.hst
+test "$(find rst -maxdepth 1 -type f -name '*.rst' | wc -l)" -ge 2
+checkpoint="$(find rst -maxdepth 1 -type f -name '*.rst' | sort | tail -1)"
+sha256sum "${checkpoint}" > checkpoint.sha256
+
+mkdir -p "${OUT}/restart"
+cd "${OUT}/restart"
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -r "${OUT}/one_cycle/${checkpoint}" -i "${SMOKE}" \
+  job/basename=controlled_restart \
+  mesh/nx1=32 mesh/nx2=32 mesh/nx3=32 \
+  meshblock/nx1=32 meshblock/nx2=32 meshblock/nx3=32 \
+  ref_gh/debug_task_fences=true \
+  output1/dt=1.0e-6 output2/dt=1.0e-6 \
+  time/nlim=2 time/tlim=0.1 \
+  > controlled_restart.log 2>&1
+
+test -s controlled_restart.ref_gh.hst
+test -s controlled_restart.user.hst
+awk 'BEGIN {ok=0} !/^#/ && $1 > 0 && $27 >= 8 {ok=1} END {exit !ok}' controlled_restart.user.hst
+strings "${OUT}/one_cycle/${checkpoint}" | grep -q 'controller_delta_q'
+
+{
+  echo "gate=PASS"
+  echo "checkpoint=${OUT}/one_cycle/${checkpoint}"
+  tail -1 controlled_gate.user.hst
+  tail -1 controlled_restart.user.hst
+} > "${OUT}/gate_status.txt"
