@@ -81,12 +81,30 @@ def main() -> None:
 
     queue = tasks[tasks.index("void Z4c::QueueZ4cTasks"):
                   tasks.index("TaskStatus Z4c::InitRecv")]
-    markers = ("Z4c_ExplRK", "Z4c_AlgC", "Z4c_RestU", "Z4c_SendU",
-               "Z4c_RecvU", "Z4c_BCS", "Z4c_Prolong",
-               "Z4c_AxisGhostsPost", "Z4c_Z4c2ADM")
+    markers = ("Z4c_ExplRK", "Z4c_RestU", "Z4c_SendU", "Z4c_RecvU",
+               "Z4c_BCS", "Z4c_Prolong", "Z4c_AxisGhostsPost",
+               "Z4c_Z4c2ADM")
     positions = [queue.index(marker) for marker in markers]
     require(positions == sorted(positions),
-            "accepted-state projection/cache/ghost/ADM order is not authoritative")
+            "accepted-state cache/ghost/ADM order is not authoritative")
+    cc_branch = queue[queue.index("  } else {", queue.index("if (vertex_centered)")):
+                      queue.index("  }\n  pnr->QueueTask(&Z4c::SendU")]
+    require("{Z4c_ChiFloor}" in cc_branch and "{Z4c_ExplRK}" in cc_branch and
+            "Task_Run, {Z4c_AlgC}" in cc_branch,
+            "cell-centered projection no longer precedes restriction")
+    require("Task_Run, {Z4c_AxisGhostsPost}" in queue and
+            "Task_Run, {Z4c_VCFinalize}" in queue,
+            "native-VC accepted-state finalizer is not between ghosts and ADM")
+    vc_finalize = tasks[tasks.index("TaskStatus Z4c::FinalizeVertexAcceptedState"):
+                        tasks.index("TaskStatus Z4c::ConvertZ4cToADM")]
+    vc_markers = ("AlgConstr(", "ApplyVertexAxisRegularity(",
+                  "SynchronizeSharedNodes(", "RestrictVC(", "InitRecv(",
+                  "PackAndSendVC(", "RecvAndUnpackVC(",
+                  "FillBuiltInPhysicalBoundaryGhosts(", "ProlongateVC(",
+                  "ReconstructAxisParityGhosts(", "CheckStateAdmissibility(")
+    vc_positions = [vc_finalize.index(marker) for marker in vc_markers]
+    require(vc_positions == sorted(vc_positions),
+            "native-VC accepted projection/restriction/ghost rebuild order changed")
     require("stage == pdrive->nexp_stages" in tasks,
             "vacuum algebraic projection lost final-stage-only policy")
 

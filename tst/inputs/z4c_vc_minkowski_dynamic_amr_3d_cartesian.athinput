@@ -1,30 +1,30 @@
-# Deterministic native-VC Cartoon refine/derefine lifecycle fixture.
+# Deterministic native-VC 3D Cartesian refine/derefine lifecycle fixture.
 
 <job>
 basename = z4c_vc_minkowski_dynamic
 
 <mesh>
 nghost = 4
-nx1 = 32
-x1min = 0.0
-x1max = 4.0
-ix1_bc = axis
+nx1 = 16
+x1min = -2.0
+x1max = 2.0
+ix1_bc = outflow
 ox1_bc = outflow
-nx2 = 32
+nx2 = 16
 x2min = -2.0
 x2max = 2.0
 ix2_bc = outflow
 ox2_bc = outflow
-nx3 = 1
-x3min = -0.5
-x3max = 0.5
-ix3_bc = periodic
-ox3_bc = periodic
+nx3 = 16
+x3min = -2.0
+x3max = 2.0
+ix3_bc = outflow
+ox3_bc = outflow
 
 <meshblock>
-nx1 = 16
-nx2 = 16
-nx3 = 1
+nx1 = 8
+nx2 = 8
+nx3 = 8
 
 <mesh_refinement>
 refinement = adaptive
@@ -49,9 +49,9 @@ ndiag = 1
 
 <z4c>
 grid_centering = vertex
-symmetry = cartoon_so2
-coordinate_map = half_rho_z_suppressed_y_v2
-symmetry_schema = 2
+symmetry = cartesian3d
+coordinate_map = cartesian_xyz
+symmetry_schema = 1
 spatial_order = 6
 diss = 0.02
 chi_div_floor = 1.0e-5
@@ -70,7 +70,7 @@ pgen_name = z4c_vc_minkowski
 exercise_dynamic_vc_amr = true
 amr_target_lx1 = 0
 amr_target_lx2 = 1
-amr_target_lx3 = 0
+amr_target_lx3 = 1
 
 <output1>
 file_type = hst

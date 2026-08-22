@@ -17,25 +17,34 @@
 
 namespace {
 
+struct RefinementTarget {
+  int lx1 = 0;
+  int lx2 = 0;
+  int lx3 = 0;
+};
+
+RefinementTarget refinement_target;
+
 void Z4cVcMinkowskiRefinementSchedule(MeshBlockPack *pack) {
   Mesh *mesh = pack->pmesh;
   auto &flags = mesh->pmr->refine_flag;
   const int first_gid = mesh->gids_eachrank[global_variable::my_rank];
-  const int target_lx1 = 0;
-  const int target_lx2 = mesh->nmb_rootx2 > 1 ? 1 : 0;
+  const int target_lx1 = refinement_target.lx1;
+  const int target_lx2 = refinement_target.lx2;
+  const int target_lx3 = refinement_target.lx3;
   for (int m = 0; m < pack->nmb_thispack; ++m) {
     const int gid = first_gid + m;
     const auto &location = mesh->lloc_eachmb[gid];
     int flag = 0;
     if (mesh->ncycle == 1 && location.level == mesh->root_level &&
         location.lx1 == target_lx1 && location.lx2 == target_lx2 &&
-        location.lx3 == 0) {
+        location.lx3 == target_lx3) {
       flag = 1;
     } else if (mesh->ncycle == 2 &&
                location.level == mesh->root_level + 1 &&
                (location.lx1 >> 1) == target_lx1 &&
                (location.lx2 >> 1) == target_lx2 &&
-               location.lx3 == 0) {
+               (location.lx3 >> 1) == target_lx3) {
       flag = -1;
     }
     flags.h_view(gid) = flag;
@@ -49,6 +58,29 @@ void Z4cVcMinkowskiRefinementSchedule(MeshBlockPack *pack) {
 void ProblemGenerator::Z4cVcMinkowski(ParameterInput *pin,
                                       const bool restart) {
   if (pin->GetOrAddBoolean("problem", "exercise_dynamic_vc_amr", false)) {
+    const Mesh *mesh = pmy_mesh_;
+    refinement_target.lx1 =
+        pin->GetOrAddInteger("problem", "amr_target_lx1", 0);
+    refinement_target.lx2 = pin->GetOrAddInteger(
+        "problem", "amr_target_lx2", mesh->nmb_rootx2 > 1 ? 1 : 0);
+    refinement_target.lx3 = pin->GetOrAddInteger(
+        "problem", "amr_target_lx3", mesh->nmb_rootx3 > 1 ? 1 : 0);
+    const bool valid_target =
+        refinement_target.lx1 >= 0 &&
+        refinement_target.lx1 < mesh->nmb_rootx1 &&
+        refinement_target.lx2 >= 0 &&
+        refinement_target.lx2 < mesh->nmb_rootx2 &&
+        refinement_target.lx3 >= 0 &&
+        refinement_target.lx3 < mesh->nmb_rootx3;
+    if (!valid_target) {
+      std::cerr << "### FATAL ERROR: z4c_vc_minkowski AMR target ("
+                << refinement_target.lx1 << "," << refinement_target.lx2
+                << "," << refinement_target.lx3
+                << ") lies outside the root MeshBlock lattice ("
+                << mesh->nmb_rootx1 << "," << mesh->nmb_rootx2 << ","
+                << mesh->nmb_rootx3 << ")" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
     user_ref_func = Z4cVcMinkowskiRefinementSchedule;
   }
   if (restart) return;
@@ -64,7 +96,7 @@ void ProblemGenerator::Z4cVcMinkowski(ParameterInput *pin,
   const int nmb = pack->nmb_thispack;
   Kokkos::deep_copy(state, 0.0);
   par_for("initialize exact native Z4c Minkowski", DevExeSpace(), 0, nmb - 1,
-          bounds.ks, bounds.ke, bounds.js, bounds.je, bounds.is, bounds.ie,
+          0, bounds.n3 - 1, 0, bounds.n2 - 1, 0, bounds.n1 - 1,
       KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
         state(m, z4c::Z4c::I_Z4C_CHI, k, j, i) = 1.0;
         state(m, z4c::Z4c::I_Z4C_GXX, k, j, i) = 1.0;

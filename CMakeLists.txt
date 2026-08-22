@@ -540,6 +540,56 @@ if (Athena_BUILD_UNIT_TESTS)
       --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_dynamic_amr_test)
   set_tests_properties(
       athena.z4c_vc_dynamic_amr PROPERTIES TIMEOUT 60 LABELS "z4c;vertex;amr")
+
+  function(add_z4c_vc_dynamic_amr_case name input dimensions geometry order
+           root_leaves expected_volume)
+    add_test(
+        NAME ${name}
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/${input}
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/${name}
+        --dimensions ${dimensions}
+        --geometry ${geometry}
+        --order ${order}
+        --root-leaves ${root_leaves}
+        --expected-volume ${expected_volume})
+    set_tests_properties(
+        ${name} PROPERTIES TIMEOUT 120
+        LABELS "z4c;vertex;${dimensions}d;${geometry};amr")
+  endfunction()
+
+  foreach(order IN ITEMS 2 4 6)
+    add_z4c_vc_dynamic_amr_case(
+        athena.z4c_vc_dynamic_amr_2d_cartesian_o${order}
+        z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput
+        2 cartesian ${order} 4 16.0)
+    add_z4c_vc_dynamic_amr_case(
+        athena.z4c_vc_dynamic_amr_2d_cartoon_o${order}
+        z4c_vc_minkowski_dynamic_amr.athinput
+        2 cartoon ${order} 4 201.06192982974676)
+    add_z4c_vc_dynamic_amr_case(
+        athena.z4c_vc_dynamic_amr_3d_cartesian_o${order}
+        z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
+        3 cartesian ${order} 8 64.0)
+  endforeach()
+  add_test(
+      NAME athena.z4c_vc_dynamic_amr_invalid_target
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py
+      --athena $<TARGET_FILE:athena>
+      --input
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
+      --work-dir
+      ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_dynamic_amr_invalid_target
+      --dimensions 3 --geometry cartesian --order 6 --root-leaves 8
+      --expected-volume 64.0 --invalid-target-test)
+  set_tests_properties(
+      athena.z4c_vc_dynamic_amr_invalid_target
+      PROPERTIES TIMEOUT 30 LABELS "z4c;vertex;3d;cartesian;amr;negative")
   add_test(
       NAME athena.z4c_vc_linear_wave_convergence_o4
       COMMAND

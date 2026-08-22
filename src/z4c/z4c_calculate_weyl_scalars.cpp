@@ -140,7 +140,7 @@ void Z4c::Z4cWeylImpl(MeshBlockPack *pmbp) {
 
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
     auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-        idx, size.d_view, layout.nx1, is, m, k, j, i);
+        idx, size.d_view, layout.nx1, is, m, k, j, i, layout.nx3 == 1);
     // -----------------------------------------------------------------------------------
     // derivatives
     //

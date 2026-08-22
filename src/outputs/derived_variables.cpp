@@ -49,6 +49,7 @@ void ComputeZ4cDerivedDiagnostics(DvceArray5D<Real> derived, Mesh *pm) {
   const int ks = layout.ks;
   const int ke = layout.ke;
   const int nx1 = layout.nx1;
+  const int nx3 = layout.nx3;
   const int nmb = pm->pmb_pack->nmb_thispack;
   const auto g_dd = std::is_same_v<Centering, z4c::VertexCenteredZ4c>
                         ? pm->pmb_pack->pz4c->adm.g_dd
@@ -65,7 +66,7 @@ void ComputeZ4cDerivedDiagnostics(DvceArray5D<Real> derived, Mesh *pm) {
             1.0 / size.d_view(m).dx2,
             1.0 / size.d_view(m).dx3};
         auto derivatives = z4c::MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-            inverse_spacing, size.d_view, nx1, is, m, k, j, i);
+            inverse_spacing, size.d_view, nx1, is, m, k, j, i, nx3 == 1);
         const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST>(
             derivatives, g_dd, vK_dd, m, k, j, i);
         if (!diagnostic.valid) {

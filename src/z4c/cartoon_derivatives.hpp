@@ -69,8 +69,8 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
 
   KOKKOS_INLINE_FUNCTION
   DerivativeProvider(const Real inverse_spacing[3], const int m, const int k,
-                     const int j, const int i)
-      : m_(m), k_(k), j_(j), i_(i) {
+                     const int j, const int i, const bool collapse_x3 = false)
+      : collapse_x3_(collapse_x3), m_(m), k_(k), j_(j), i_(i) {
     for (int d = 0; d < 3; ++d) {
       inverse_spacing_[d] = inverse_spacing[d];
     }
@@ -79,6 +79,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
   template <typename ScalarField>
   KOKKOS_INLINE_FUNCTION Real ScalarFirst(const int derivative_direction,
                                           ScalarField &field) const {
+    if (collapse_x3_ && derivative_direction == 2) return 0.0;
     return Dx<NGHOST>(derivative_direction, inverse_spacing_, field, m_, k_, j_, i_);
   }
 
@@ -86,6 +87,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
   KOKKOS_INLINE_FUNCTION Real ScalarSecond(const int first_direction,
                                            const int second_direction,
                                            ScalarField &field) const {
+    if (collapse_x3_ && (first_direction == 2 || second_direction == 2)) return 0.0;
     if (first_direction == second_direction) {
       return Dxx<NGHOST>(first_direction, inverse_spacing_, field, m_, k_, j_, i_);
     }
@@ -97,6 +99,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
   KOKKOS_INLINE_FUNCTION Real VectorFirst(const int derivative_direction,
                                           const int component,
                                           VectorField &field) const {
+    if (collapse_x3_ && derivative_direction == 2) return 0.0;
     return Dx<NGHOST>(derivative_direction, inverse_spacing_, field, m_, component,
                       k_, j_, i_);
   }
@@ -106,6 +109,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
                                            const int second_direction,
                                            const int component,
                                            VectorField &field) const {
+    if (collapse_x3_ && (first_direction == 2 || second_direction == 2)) return 0.0;
     if (first_direction == second_direction) {
       return Dxx<NGHOST>(first_direction, inverse_spacing_, field, m_, component,
                          k_, j_, i_);
@@ -121,6 +125,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
                                           const int first_component,
                                           const int second_component,
                                           TensorField &field) const {
+    if (collapse_x3_ && derivative_direction == 2) return 0.0;
     return Dx<NGHOST>(derivative_direction, inverse_spacing_, field, m_,
                       first_component, second_component, k_, j_, i_);
   }
@@ -132,6 +137,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
                                            const int first_component,
                                            const int second_component,
                                            TensorField &field) const {
+    if (collapse_x3_ && (first_direction == 2 || second_direction == 2)) return 0.0;
     if (first_direction == second_direction) {
       return Dxx<NGHOST>(first_direction, inverse_spacing_, field, m_,
                          first_component, second_component, k_, j_, i_);
@@ -153,6 +159,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
   KOKKOS_INLINE_FUNCTION Real DirectionalScalarAdvective(
       const int direction, const VelocityField &velocity,
       const ScalarField &field) const {
+    if (collapse_x3_ && direction == 2) return 0.0;
     return Lx<NGHOST>(direction, inverse_spacing_, velocity, field, m_, direction,
                       k_, j_, i_);
   }
@@ -162,8 +169,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
                                               const ScalarField &field) const {
     Real derivative = 0.0;
     for (int d = 0; d < 3; ++d) {
-      derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
-                               k_, j_, i_);
+      derivative += DirectionalScalarAdvective(d, velocity, field);
     }
     return derivative;
   }
@@ -173,6 +179,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
                                                 const ScalarField &field) const {
     Real derivative = 0.0;
     for (int d = 0; d < 3; ++d) {
+      if (collapse_x3_ && d == 2) continue;
       derivative += Lx<2>(d, inverse_spacing_, velocity, field, m_, d, k_, j_, i_);
     }
     return derivative;
@@ -184,6 +191,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
                                               const VectorField &field) const {
     Real derivative = 0.0;
     for (int d = 0; d < 3; ++d) {
+      if (collapse_x3_ && d == 2) continue;
       derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
                                component, k_, j_, i_);
     }
@@ -196,6 +204,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
                                                 const VectorField &field) const {
     Real derivative = 0.0;
     for (int d = 0; d < 3; ++d) {
+      if (collapse_x3_ && d == 2) continue;
       derivative += Lx<2>(d, inverse_spacing_, velocity, field, m_, d, component,
                           k_, j_, i_);
     }
@@ -210,6 +219,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
                                               const TensorField &field) const {
     Real derivative = 0.0;
     for (int d = 0; d < 3; ++d) {
+      if (collapse_x3_ && d == 2) continue;
       derivative += Lx<NGHOST>(d, inverse_spacing_, velocity, field, m_, d,
                                first_component, second_component, k_, j_, i_);
     }
@@ -222,6 +232,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
       const VelocityField &velocity, const TensorField &field) const {
     Real derivative = 0.0;
     for (int d = 0; d < 3; ++d) {
+      if (collapse_x3_ && d == 2) continue;
       derivative += Lx<2>(d, inverse_spacing_, velocity, field, m_, d,
                           first_component, second_component, k_, j_, i_);
     }
@@ -231,6 +242,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
   template <typename ComponentField>
   KOKKOS_INLINE_FUNCTION Real DirectionalComponentDissipation(
       const int direction, const int component, ComponentField &field) const {
+    if (collapse_x3_ && direction == 2) return 0.0;
     return Diss<NGHOST>(direction, inverse_spacing_, field, m_, component,
                         k_, j_, i_);
   }
@@ -247,6 +259,7 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
 
  private:
   Real inverse_spacing_[3];
+  bool collapse_x3_;
   int m_;
   int k_;
   int j_;
@@ -836,7 +849,8 @@ KOKKOS_INLINE_FUNCTION DerivativeProvider<Symmetry, NGHOST>
 MakeCellCenteredDerivativeProvider(const Real inverse_spacing[3],
                                    const RegionSizeView &size, const int nx1,
                                    const int is, const int m, const int k,
-                                   const int j, const int i) {
+                                   const int j, const int i,
+                                   const bool collapse_x3 = false) {
   if constexpr (std::is_same_v<Symmetry, CartoonSO2>) {
     const Real rho = CellCenterX(i - is, nx1, size(m).x1min, size(m).x1max);
     return DerivativeProvider<CartoonSO2, NGHOST>(
@@ -844,7 +858,8 @@ MakeCellCenteredDerivativeProvider(const Real inverse_spacing[3],
   } else {
     static_assert(std::is_same_v<Symmetry, Cartesian3D>,
                   "Unknown Z4c derivative symmetry policy");
-    return DerivativeProvider<Cartesian3D, NGHOST>(inverse_spacing, m, k, j, i);
+    return DerivativeProvider<Cartesian3D, NGHOST>(inverse_spacing, m, k, j, i,
+                                                   collapse_x3);
   }
 }
 
@@ -858,7 +873,8 @@ KOKKOS_INLINE_FUNCTION DerivativeProvider<Symmetry, NGHOST>
 MakeVertexCenteredDerivativeProvider(const Real inverse_spacing[3],
                                      const RegionSizeView &size, const int nx1,
                                      const int is, const int m, const int k,
-                                     const int j, const int i) {
+                                     const int j, const int i,
+                                     const bool collapse_x3 = false) {
   if constexpr (std::is_same_v<Symmetry, CartoonSO2>) {
     const Real rho = VertexX(i - is, nx1, size(m).x1min, size(m).x1max);
     // `i == is` identifies the lower vertex of every MeshBlock, not the
@@ -876,7 +892,8 @@ MakeVertexCenteredDerivativeProvider(const Real inverse_spacing[3],
   } else {
     static_assert(std::is_same_v<Symmetry, Cartesian3D>,
                   "Unknown Z4c derivative symmetry policy");
-    return DerivativeProvider<Cartesian3D, NGHOST>(inverse_spacing, m, k, j, i);
+    return DerivativeProvider<Cartesian3D, NGHOST>(inverse_spacing, m, k, j, i,
+                                                   collapse_x3);
   }
 }
 
@@ -887,15 +904,16 @@ KOKKOS_INLINE_FUNCTION DerivativeProvider<Symmetry, NGHOST>
 MakeZ4cDerivativeProvider(const Real inverse_spacing[3],
                           const RegionSizeView &size, const int nx1,
                           const int is, const int m, const int k,
-                          const int j, const int i) {
+                          const int j, const int i,
+                          const bool collapse_x3 = false) {
   if constexpr (std::is_same_v<Centering, CellCenteredZ4c>) {
     return MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
-        inverse_spacing, size, nx1, is, m, k, j, i);
+        inverse_spacing, size, nx1, is, m, k, j, i, collapse_x3);
   } else {
     static_assert(std::is_same_v<Centering, VertexCenteredZ4c>,
                   "Unknown Z4c centering policy tag");
     return MakeVertexCenteredDerivativeProvider<Symmetry, NGHOST>(
-        inverse_spacing, size, nx1, is, m, k, j, i);
+        inverse_spacing, size, nx1, is, m, k, j, i, collapse_x3);
   }
 }
 

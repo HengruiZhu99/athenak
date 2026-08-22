@@ -49,7 +49,7 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
 
   Real idx[] = {1./size.d_view(m).dx1, 1./size.d_view(m).dx2, 1./size.d_view(m).dx3};
   auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, 2>(
-      idx, size.d_view, layout.nx1, layout.is, m, k, j, i);
+      idx, size.d_view, layout.nx1, layout.is, m, k, j, i, layout.nx3 == 1);
 
   // -------------------------------------------------------------------------------------
   // First derivatives

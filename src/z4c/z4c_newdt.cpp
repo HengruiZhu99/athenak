@@ -158,7 +158,8 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
                                              1.0 / size.d_view(m).dx2,
                                              1.0 / size.d_view(m).dx3};
             auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-                inverse_spacing, size.d_view, layout.nx1, layout.is, m, k, j, i);
+                inverse_spacing, size.d_view, layout.nx1, layout.is, m, k, j, i,
+                layout.nx3 == 1);
             mu = LocalChiGradientNormTelegraphMu(
                 chi, opt.chi_psi_power, g_uu[0], g_uu[1], g_uu[2], g_uu[3], g_uu[4],
                 g_uu[5], derivatives.ScalarFirst(0, state.chi),

@@ -192,7 +192,7 @@ void ADMToZ4cImpl(MeshBlockPack *pmbp, ParameterInput *pin,
     // Kokkos lambda references z4c and g3u unconditionally, avoiding nvcc's
     // extended-lambda first-capture restriction for if-constexpr bodies.
     auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, FD_STENCIL>(
-        idx, size.d_view, bounds.nx1, bounds.is, m, k, j, i);
+        idx, size.d_view, bounds.nx1, bounds.is, m, k, j, i, bounds.nx3 == 1);
     for (int a = 0; a < 3; ++a) {
       z4c.vGam_u(m, a, k, j, i) = 0.0;
       for (int b = 0; b < 3; ++b) {
@@ -398,7 +398,7 @@ void ADMConstraintsViewsImpl(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
 
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
     auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, FD_STENCIL>(
-        idx, size.d_view, bounds.nx1, is, m, k, j, i);
+        idx, size.d_view, bounds.nx1, is, m, k, j, i, bounds.nx3 == 1);
 
     // -----------------------------------------------------------------------------------
     // derivatives
@@ -534,7 +534,7 @@ void ADMConstraintsViewsImpl(MeshBlockPack *pmbp, const Z4c::Z4c_vars z4c,
 
     Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
     auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, FD_STENCIL>(
-        idx, size.d_view, bounds.nx1, is, m, k, j, i);
+        idx, size.d_view, bounds.nx1, is, m, k, j, i, bounds.nx3 == 1);
 
     // -----------------------------------------------------------------------------------
     // derivatives

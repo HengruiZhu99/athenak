@@ -41,6 +41,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   int nmb = pmy_pack->nmb_thispack;
   const int nx1 = layout.nx1;
   const int nx2 = layout.nx2;
+  const int nx3 = layout.nx3;
   const int active_nx1 = ie - is + 1;
   const int active_nx2 = je - js + 1;
   const int active_nx3 = ke - ks + 1;
@@ -193,7 +194,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                       1 / size.d_view(m).dx3};
         auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-            idx, size.d_view, nx1, is, m, k, j, i);
+            idx, size.d_view, nx1, is, m, k, j, i, nx3 == 1);
 
         // -----------------------------------------------------------------------------------
         // Initialize everything to zero
@@ -660,7 +661,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                       1 / size.d_view(m).dx3};
         auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-            idx, size.d_view, nx1, is, m, k, j, i);
+            idx, size.d_view, nx1, is, m, k, j, i, nx3 == 1);
         Real dbeta = 0.0;
         Real chi_guarded = (z4c.chi(m, k, j, i) > opt.chi_div_floor) ? z4c.chi(m, k, j, i)
                                                                      : opt.chi_div_floor;
@@ -817,7 +818,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                       1 / size.d_view(m).dx3};
         auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-            idx, size.d_view, nx1, is, m, k, j, i);
+            idx, size.d_view, nx1, is, m, k, j, i, nx3 == 1);
         Real Lalpha = 0.0;
         Real dB = 0.0;
         Real const alpha = z4c.alpha(m, k, j, i);
@@ -977,7 +978,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
           Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
                         1 / size.d_view(m).dx3};
           auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-              idx, size.d_view, nx1, is, m, k, j, i);
+              idx, size.d_view, nx1, is, m, k, j, i, nx3 == 1);
           for (int n = 0; n < Z4c::nz4c; ++n) {
             values[n] = u_rhs(m, n, k, j, i);
             for (int direction = 0; direction < 3; ++direction) {
@@ -1013,7 +1014,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
     KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
       Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
       auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-          idx, size.d_view, nx1, is, m, k, j, i);
+          idx, size.d_view, nx1, is, m, k, j, i, nx3 == 1);
       // Keep the established multiply-then-accumulate order for Cartesian roundoff.
       for (int direction = 0; direction < 3; ++direction) {
         if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {

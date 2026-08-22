@@ -69,7 +69,8 @@ Z4cGlobalCurvatureMaxima ComputeZ4cGlobalCurvatureMaximaImpl(Mesh *pm) {
             1.0 / size.d_view(m).dx2,
             1.0 / size.d_view(m).dx3};
         auto derivatives = z4c::MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-            inverse_spacing, size.d_view, layout.nx1, layout.is, m, k, j, i);
+            inverse_spacing, size.d_view, layout.nx1, layout.is, m, k, j, i,
+            layout.nx3 == 1);
         const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST, false>(
             derivatives, g_dd, vK_dd, m, k, j, i);
         if (!diagnostic.valid) {

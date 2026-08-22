@@ -174,7 +174,7 @@ Real Z4cHistoryMaxKretschmann(Mesh *pm) {
             1.0 / size.d_view(m).dx2,
             1.0 / size.d_view(m).dx3};
         auto derivatives = z4c::MakeCellCenteredDerivativeProvider<Symmetry, NGHOST>(
-            inverse_spacing, size.d_view, nx1, is, m, k, j, i);
+            inverse_spacing, size.d_view, nx1, is, m, k, j, i, nx3 == 1);
         const auto diagnostic = ComputeZ4cCurvatureDiagnostics<NGHOST, false>(
             derivatives, adm.g_dd, adm.vK_dd, m, k, j, i);
         rank_maximum = diagnostic.valid
