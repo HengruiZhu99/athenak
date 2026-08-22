@@ -55,7 +55,19 @@ def main() -> int:
     parser.add_argument("--work-dir", required=True)
     parser.add_argument("--mpiexec")
     parser.add_argument("--np-flag", default="-n")
+    parser.add_argument("--dimensions", type=int, choices=(2, 3), default=2)
+    parser.add_argument("--active-n1", type=int, default=17)
+    parser.add_argument("--active-n2", type=int, default=17)
+    parser.add_argument("--active-n3", type=int, default=1)
     args = parser.parse_args()
+
+    active = (args.active_n1, args.active_n2, args.active_n3)
+    stored = tuple(value + 8 if value > 1 else 1 for value in active)
+    coarse_active = tuple((value - 1) // 2 + 1 if value > 1 else 1
+                          for value in active)
+    coarse_stored = tuple(value + 8 if value > 1 else 1
+                          for value in coarse_active)
+    changed_leaves = (1 << args.dimensions) - 1
 
     root = Path(args.work_dir)
     if root.exists():
@@ -64,34 +76,38 @@ def main() -> int:
     fresh = root / "fresh"
     fresh.mkdir()
     run([args.athena, "-i", args.input], fresh, True,
-        ("created_leaves=3", "deleted_leaves=3"))
+        (f"{changed_leaves} MeshBlocks created, {changed_leaves} deleted by AMR",))
 
     checkpoints = fresh / "rst"
-    pre_derefine = checkpoints / "z4c_vc_minkowski_dynamic.00001.rst"
+    pre_refine = checkpoints / "z4c_vc_minkowski_dynamic.00000.rst"
+    post_refine = checkpoints / "z4c_vc_minkowski_dynamic.00001.rst"
     post_derefine = checkpoints / "z4c_vc_minkowski_dynamic.00002.rst"
     final = checkpoints / "z4c_vc_minkowski_dynamic.00003.rst"
-    for checkpoint in (pre_derefine, post_derefine, final):
+    for checkpoint in (pre_refine, post_refine, post_derefine, final):
         require(checkpoint.is_file(), f"missing restart checkpoint {checkpoint}")
-    header = pre_derefine.read_bytes().split(MARKER, 1)[0]
-    for record in (
+    header = post_refine.read_bytes().split(MARKER, 1)[0]
+    records = [
         b"carrier_schema             = 2",
         b"grid_centering             = vertex",
         b"centering_schema           = 1",
         b"nghost                     = 4",
-        b"active_n1                  = 17",
-        b"active_n2                  = 17",
-        b"active_n3                  = 1",
-        b"stored_n1                  = 25",
-        b"stored_n2                  = 25",
-        b"stored_n3                  = 1",
-        b"coarse_active_n1           = 9",
-        b"coarse_stored_n1           = 17",
-    ):
+    ]
+    for direction in range(3):
+        records.extend((
+            f"active_n{direction + 1}                  = {active[direction]}".encode(),
+            f"stored_n{direction + 1}                  = {stored[direction]}".encode(),
+            (f"coarse_active_n{direction + 1}           = "
+             f"{coarse_active[direction]}").encode(),
+            (f"coarse_stored_n{direction + 1}           = "
+             f"{coarse_stored[direction]}").encode(),
+        ))
+    for record in records:
         require(record in header, f"VC restart omitted {record!r}")
 
-    # A checkpoint on either side of the AMR transaction must continue to the
-    # identical accepted state at the same rank count.
-    for label, checkpoint in (("before_derefine", pre_derefine),
+    # Checkpoints immediately before refinement, after refinement, and after
+    # derefinement must continue to the identical accepted state.
+    for label, checkpoint in (("before_refine", pre_refine),
+                              ("after_refine", post_refine),
                               ("after_derefine", post_derefine)):
         resumed = root / label
         resumed.mkdir()
@@ -105,8 +121,9 @@ def main() -> int:
         mpi = root / "mpi2"
         mpi.mkdir()
         run([args.mpiexec, args.np_flag, "2", args.athena, "-r",
-             str(pre_derefine), "-d", str(mpi)], root, True,
-            ("Number of parallel ranks = 2", "deleted_leaves=3"))
+             str(post_refine), "-d", str(mpi)], root, True,
+            ("Number of parallel ranks = 2",
+             f"{changed_leaves} MeshBlocks created, {changed_leaves} deleted by AMR"))
         mpi_final = mpi / "rst" / "z4c_vc_minkowski_dynamic.00003.rst"
         require(payload(final) == payload(mpi_final),
                 "rank-change continuation changed the global binary payload")
@@ -120,14 +137,14 @@ def main() -> int:
         ("z4c_restart/carrier_schema=1", "<z4c_restart>/carrier_schema"),
     )
     for override, diagnostic in conflicts:
-        output = run([args.athena, "-r", str(pre_derefine), override],
+        output = run([args.athena, "-r", str(post_refine), override],
                      root, False,
                      ("immutable Z4c restart validation failed", diagnostic))
         require("Root grid" not in output and "AssembleZ4cTasks" not in output,
                 f"restart conflict {override} reached allocation")
 
     incomplete = root / "missing_stored_n1.rst"
-    incomplete.write_bytes(remove_carrier_key(pre_derefine.read_bytes(),
+    incomplete.write_bytes(remove_carrier_key(post_refine.read_bytes(),
                                               b"stored_n1"))
     run([args.athena, "-r", str(incomplete)], root, False,
         ("invalid restart-origin Z4c carrier", "stored_n1"))

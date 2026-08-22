@@ -590,6 +590,42 @@ if (Athena_BUILD_UNIT_TESTS)
   set_tests_properties(
       athena.z4c_vc_dynamic_amr_invalid_target
       PROPERTIES TIMEOUT 30 LABELS "z4c;vertex;3d;cartesian;amr;negative")
+  if (Athena_ENABLE_MPI)
+    function(add_z4c_vc_dynamic_amr_mpi_case name input dimensions geometry
+             ranks root_leaves expected_volume)
+      add_test(
+          NAME ${name}
+          COMMAND
+          ${PYTHON_EXECUTABLE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py
+          --athena $<TARGET_FILE:athena>
+          --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/${input}
+          --work-dir ${CMAKE_CURRENT_BINARY_DIR}/${name}
+          --dimensions ${dimensions} --geometry ${geometry} --order 6
+          --ranks ${ranks} --root-leaves ${root_leaves}
+          --expected-volume ${expected_volume}
+          --mpiexec ${MPIEXEC_EXECUTABLE} --np-flag=${MPIEXEC_NUMPROC_FLAG})
+      set_tests_properties(
+          ${name} PROPERTIES TIMEOUT 240
+          LABELS "z4c;vertex;${dimensions}d;${geometry};amr;mpi")
+    endfunction()
+    add_z4c_vc_dynamic_amr_mpi_case(
+        athena.z4c_vc_dynamic_amr_2d_cartesian_mpi2
+        z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput
+        2 cartesian 2 4 16.0)
+    add_z4c_vc_dynamic_amr_mpi_case(
+        athena.z4c_vc_dynamic_amr_2d_cartoon_mpi2
+        z4c_vc_minkowski_dynamic_amr.athinput
+        2 cartoon 2 4 201.06192982974676)
+    add_z4c_vc_dynamic_amr_mpi_case(
+        athena.z4c_vc_dynamic_amr_3d_cartesian_mpi2
+        z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
+        3 cartesian 2 8 64.0)
+    add_z4c_vc_dynamic_amr_mpi_case(
+        athena.z4c_vc_dynamic_amr_3d_cartesian_mpi4
+        z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
+        3 cartesian 4 8 64.0)
+  endif()
   add_test(
       NAME athena.z4c_vc_linear_wave_convergence_o4
       COMMAND
@@ -624,6 +660,20 @@ if (Athena_BUILD_UNIT_TESTS)
   set_tests_properties(
       athena.z4c_vc_amr_history
       PROPERTIES TIMEOUT 120 LABELS "z4c;vertex;amr;history;mpi")
+  add_test(
+      NAME athena.z4c_vc_amr_history_3d_cartesian
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_amr_history_test.py
+      --athena $<TARGET_FILE:athena>
+      --input
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
+      --work-dir
+      ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_amr_history_3d_cartesian
+      --dimensions 3)
+  set_tests_properties(
+      athena.z4c_vc_amr_history_3d_cartesian
+      PROPERTIES TIMEOUT 240 LABELS "z4c;vertex;3d;cartesian;amr;history")
   if (Athena_ENABLE_MPI)
     add_test(
         NAME athena.z4c_vc_amr_history_mpi
@@ -651,6 +701,21 @@ if (Athena_BUILD_UNIT_TESTS)
     set_tests_properties(
         athena.z4c_vc_history_mpi
         PROPERTIES TIMEOUT 90 LABELS "z4c;vertex;history;mpi")
+    add_test(
+        NAME athena.z4c_vc_amr_history_3d_cartesian_mpi
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_amr_history_test.py
+        --athena $<TARGET_FILE:athena>
+        --input
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
+        --work-dir
+        ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_amr_history_3d_cartesian_mpi
+        --dimensions 3 --mpiexec ${MPIEXEC_EXECUTABLE}
+        --np-flag=${MPIEXEC_NUMPROC_FLAG})
+    set_tests_properties(
+        athena.z4c_vc_amr_history_3d_cartesian_mpi
+        PROPERTIES TIMEOUT 300 LABELS "z4c;vertex;3d;cartesian;amr;history;mpi")
   endif()
 
   add_test(
@@ -663,6 +728,32 @@ if (Athena_BUILD_UNIT_TESTS)
       --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_restart_test)
   set_tests_properties(
       athena.z4c_vc_restart PROPERTIES TIMEOUT 90 LABELS "z4c;vertex;restart")
+  function(add_z4c_vc_restart_case name input dimensions active_n1 active_n2
+           active_n3 labels)
+    add_test(
+        NAME ${name}
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_restart_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/${input}
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/${name}
+        --dimensions ${dimensions}
+        --active-n1 ${active_n1} --active-n2 ${active_n2} --active-n3 ${active_n3})
+    set_tests_properties(
+        ${name} PROPERTIES TIMEOUT 180 LABELS "z4c;vertex;restart;${labels}")
+  endfunction()
+  add_z4c_vc_restart_case(
+      athena.z4c_vc_restart_2d_cartesian
+      z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput 2 17 17 1
+      "2d;cartesian")
+  add_z4c_vc_restart_case(
+      athena.z4c_vc_restart_2d_cartoon
+      z4c_vc_minkowski_dynamic_amr.athinput 2 17 17 1 "2d;cartoon")
+  add_z4c_vc_restart_case(
+      athena.z4c_vc_restart_3d_cartesian
+      z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput 3 9 9 9
+      "3d;cartesian")
   if (Athena_ENABLE_MPI)
     add_test(
         NAME athena.z4c_vc_restart_rank_change
@@ -677,6 +768,21 @@ if (Athena_BUILD_UNIT_TESTS)
     set_tests_properties(
         athena.z4c_vc_restart_rank_change
         PROPERTIES TIMEOUT 120 LABELS "z4c;vertex;restart;mpi")
+    add_test(
+        NAME athena.z4c_vc_restart_3d_cartesian_rank_change
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_restart_test.py
+        --athena $<TARGET_FILE:athena>
+        --input
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
+        --work-dir
+        ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_restart_3d_cartesian_rank_change
+        --dimensions 3 --active-n1 9 --active-n2 9 --active-n3 9
+        --mpiexec ${MPIEXEC_EXECUTABLE} --np-flag=${MPIEXEC_NUMPROC_FLAG})
+    set_tests_properties(
+        athena.z4c_vc_restart_3d_cartesian_rank_change
+        PROPERTIES TIMEOUT 240 LABELS "z4c;vertex;restart;3d;cartesian;mpi")
   endif()
 
   add_executable(

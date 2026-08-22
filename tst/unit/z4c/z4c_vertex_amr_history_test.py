@@ -106,6 +106,7 @@ def main() -> int:
     parser.add_argument("--work-dir", required=True)
     parser.add_argument("--mpiexec")
     parser.add_argument("--np-flag", default="-n")
+    parser.add_argument("--dimensions", type=int, choices=(2, 3), default=2)
     args = parser.parse_args()
 
     work = Path(args.work_dir)
@@ -134,10 +135,15 @@ def main() -> int:
     replay = replay_records(roots["replay"] / "vc_replay.amr_history_replay.jsonl")
     require_same_authority(events, replay)
 
+    high_resolution = ["mesh/nx1=64", "mesh/nx2=64",
+                       "meshblock/nx1=32", "meshblock/nx2=32"]
+    if args.dimensions == 3:
+        high_resolution = ["mesh/nx1=32", "mesh/nx2=32", "mesh/nx3=32",
+                           "meshblock/nx1=16", "meshblock/nx2=16",
+                           "meshblock/nx3=16"]
     high_log = execute(command(
         args.athena, args.input, "vc_high", "replay", authority,
-        ["mesh/nx1=64", "mesh/nx2=64", "meshblock/nx1=32",
-         "meshblock/nx2=32", "time/cfl_number=0.07", "time/nlim=6"]),
+        [*high_resolution, "time/cfl_number=0.07", "time/nlim=6"]),
         roots["high"])
     require("AMR_HISTORY_REPLAY" in high_log,
             "2x-cells-per-block VC replay emitted no acceptance evidence")
@@ -192,7 +198,8 @@ def main() -> int:
             roots["mpi_replay"] / "vc_mpi.amr_history_replay.jsonl")
         require_same_authority(events, mpi)
 
-    print("PASS: native VC AMR history record/replay, 2x cells, restart, "
+    print(f"PASS: native VC {args.dimensions}D AMR history record/replay, "
+          "2x cells, restart, "
           "MPI decomposition, and explicit CC-topology bridge")
     return 0
 
