@@ -82,7 +82,6 @@ cd "${OUT}/one_cycle"
   job/basename=controlled_gate \
   mesh/nx1=32 mesh/nx2=32 mesh/nx3=32 \
   meshblock/nx1=32 meshblock/nx2=32 meshblock/nx3=32 \
-  ref_gh/debug_task_fences=true \
   output1/dt=1.0e-6 output2/dt=1.0e-6 \
   time/nlim=1 time/tlim=0.1 \
   > controlled_gate.log 2>&1
@@ -102,7 +101,6 @@ cd "${OUT}/restart"
   job/basename=controlled_restart \
   mesh/nx1=32 mesh/nx2=32 mesh/nx3=32 \
   meshblock/nx1=32 meshblock/nx2=32 meshblock/nx3=32 \
-  ref_gh/debug_task_fences=true \
   output1/dt=1.0e-6 output2/dt=1.0e-6 \
   time/nlim=2 time/tlim=0.1 \
   > controlled_restart.log 2>&1
@@ -110,7 +108,8 @@ cd "${OUT}/restart"
 test -s controlled_restart.ref_gh.hst
 test -s controlled_restart.user.hst
 awk 'BEGIN {ok=0} !/^#/ && $1 > 0 && $27 >= 8 {ok=1} END {exit !ok}' controlled_restart.user.hst
-strings "${OUT}/one_cycle/${checkpoint}" | grep -q 'controller_delta_q'
+strings "${OUT}/one_cycle/${checkpoint}" > checkpoint.strings
+grep -q 'controller_delta_q' checkpoint.strings
 
 {
   echo "gate=PASS"
