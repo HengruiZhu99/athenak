@@ -21,7 +21,8 @@ case "${MODE}" in
   closed_loop) CONTROLLER=true ;;
   *) echo "invalid MODE=${MODE}" >&2; exit 2 ;;
 esac
-BUILD="${ROOT}/build_production_${EXPECTED_COMMIT:0:12}"
+# Reuse the compute-node production build across script-only corrections.
+BUILD="${ROOT}/build_production_31860ab0418d"
 EXE="${BUILD}/src/athena"
 INPUT="${SRC}/tst/inputs/ref_gh_controlled_transition.athinput"
 ANALYZE="${SRC}/scripts/ref_gh/analyze_controlled_transition.py"
@@ -93,12 +94,21 @@ run_case() (
   local work="${OUT}/${label}"
   mkdir -p "${work}"
   cd "${work}"
+  set +e
   mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
     gpu_tile_compact.sh "${EXE}" -m -i "${INPUT}" \
     mesh/nx1="${root_cells}" mesh/nx2="${root_cells}" mesh/nx3="${root_cells}" \
     meshblock/nx1="${mb_cells}" meshblock/nx2="${mb_cells}" meshblock/nx3="${mb_cells}" \
     > mesh_structure.txt 2>&1
+  mesh_status=$?
+  set -e
+  echo "mesh_only_exit_status=${mesh_status}" >> mesh_structure.txt
+  # Aurora's SYCL build can fault during process teardown after mesh-only mode
+  # has completely written the tree.  Accept only that exact post-output status.
+  test "${mesh_status}" -eq 0 -o "${mesh_status}" -eq 139
+  grep -q 'Root grid = 3 x 3 x 3 MeshBlocks' mesh_structure.txt
   grep -q 'Total number of MeshBlocks = 34' mesh_structure.txt
+  grep -q 'Number of physical levels of refinement = 1 (2 levels total)' mesh_structure.txt
   /usr/bin/time -p mpiexec -n 8 --ppn 8 --depth=16 --cpu-bind depth \
     gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
     job/basename="${label}" \
