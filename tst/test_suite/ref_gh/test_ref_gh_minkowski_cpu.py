@@ -9,6 +9,22 @@ def test_ref_gh_minkowski():
     testutils.run("inputs/ref_gh_minkowski.athinput")
 
 
+def test_ref_gh_lower_dimensional_static_diagnostics():
+    """Collapsed dimensions must match Ref-GH cache and diagnostic extents."""
+    cases = (
+        ["job/basename=ref_gh_minkowski_1d", "time/evolution=static",
+         "time/nlim=0", "time/tlim=0.0", "mesh/nx2=1", "mesh/nx3=1",
+         "meshblock/nx2=1", "meshblock/nx3=1"],
+        ["job/basename=ref_gh_minkowski_2d", "time/evolution=static",
+         "time/nlim=0", "time/tlim=0.0", "mesh/nx3=1", "meshblock/nx3=1"],
+    )
+    try:
+        for arguments in cases:
+            assert testutils.run("inputs/ref_gh_minkowski.athinput", arguments)
+    finally:
+        testutils.cleanup()
+
+
 def test_ref_gh_time_dependent_reference():
     """Verify that each RK stage refreshes a genuinely time-dependent provider."""
     try:
