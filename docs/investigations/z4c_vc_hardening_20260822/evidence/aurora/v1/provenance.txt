@@ -1,0 +1,155 @@
+2026-08-22T18:29:01+00:00
+x4217c0s5b0n0
+99a4eb5ba7713f7de73239cf75a27c1fb9ac6cbb
+e8c1083cc9ea67aa4a3a2c3adbffb9c31fe32c83
+ 6739bc623081648af9e752b616d9671527922cbf kokkos (4.7.02)
+
+Currently Loaded Modules:
+  1) oneapi/release/2025.3.1
+  2) gcc/13.4.0
+  3) mpich/opt/5.0.0.aurora_test.3c70a61
+  4) libfabric/1.22.0
+  5) cray-pals/1.8.0
+  6) cray-libpals/1.8.0
+  7) cmake/3.31.11
+  8) gcc-runtime/13.4.0-2tg3zy7            (H)
+  9) intel-oneapi-runtime/2025.3.1-h4uj4w3 (H)
+ 10) hdf5/1.14.6
+ 11) bzip2/1.0.8
+ 12) expat/2.7.3-6auksxt                   (H)
+ 13) gdbm/1.25
+ 14) sqlite/3.50.4-s65ksrg                 (H)
+ 15) util-linux-uuid/2.41-ytoy2bg          (H)
+ 16) python/3.12.12
+
+  Where:
+   H:  Hidden Module
+
+ 
+
+/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx
+/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin/mpicxx
+/opt/cray/pals/1.8/bin/mpiexec
+/opt/aurora/26.26.0/oneapi/compiler/latest/bin/sycl-ls
+/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/cmake-3.31.11-pss2phi/bin/cmake
+Intel(R) oneAPI DPC++/C++ Compiler 2025.3.2 (2025.3.2.20260112)
+icpx -I/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/include -L/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib -lmpicxx -Wl,-rpath -Wl,/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib -lmpi
+cmake version 3.31.11
+INFO: Output filtered by ONEAPI_DEVICE_SELECTOR environment variable, which is set to level_zero:gpu.
+To see device ids, use the --ignore-device-selectors CLI option.
+
+[level_zero:gpu] Intel(R) oneAPI Unified Runtime over Level-Zero, Intel(R) Data Center GPU Max 1550 12.60.7 [1.6.33578+42]
+[level_zero:gpu] Intel(R) oneAPI Unified Runtime over Level-Zero, Intel(R) Data Center GPU Max 1550 12.60.7 [1.6.33578+42]
+[level_zero:gpu] Intel(R) oneAPI Unified Runtime over Level-Zero, Intel(R) Data Center GPU Max 1550 12.60.7 [1.6.33578+42]
+[level_zero:gpu] Intel(R) oneAPI Unified Runtime over Level-Zero, Intel(R) Data Center GPU Max 1550 12.60.7 [1.6.33578+42]
+[level_zero:gpu] Intel(R) oneAPI Unified Runtime over Level-Zero, Intel(R) Data Center GPU Max 1550 12.60.7 [1.6.33578+42]
+[level_zero:gpu] Intel(R) oneAPI Unified Runtime over Level-Zero, Intel(R) Data Center GPU Max 1550 12.60.7 [1.6.33578+42]
+Job Id: 8775503.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Job_Name = z4c-vc-exact-final
+    Job_Owner = hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov
+    resources_used.cpupercent = 0
+    resources_used.cput = 00:00:00
+    resources_used.mem = 0kb
+    resources_used.ncpus = 208
+    resources_used.vmem = 0kb
+    resources_used.walltime = 00:00:00
+    job_state = R
+    queue = debug
+    server = aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Account_Name = CompactBinaryMerger
+    Checkpoint = u
+    ctime = Sat Aug 22 18:24:46 2026
+    Error_Path = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flare
+	/projects/CompactBinaryMerger/hzhu/z4c-vc-hardening-99a4eb5b-v2-2026082
+	2/z4c-vc-exact-final.e8775503
+    exec_host = x4217c0s5b0n0/0*208
+    exec_vnode = (x4217c0s5b0n0:ncpus=208)
+    Hold_Types = n
+    Join_Path = oe
+    Keep_Files = doe
+    Mail_Points = a
+    Mail_Users = hz0693@princeton.edu
+    mtime = Sat Aug 22 18:28:58 2026
+    Output_Path = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flar
+	e/projects/CompactBinaryMerger/hzhu/z4c-vc-hardening-99a4eb5b-v2-202608
+	22/z4c-vc-exact-final.o8775503
+    Priority = 0
+    qtime = Sat Aug 22 18:24:46 2026
+    Rerunable = False
+    Resource_List.allow_account_check_failure = True
+    Resource_List.allow_negative_allocation = True
+    Resource_List.award_category = INCITE
+    Resource_List.award_type = INCITE-2026
+    Resource_List.backfill_factor = 84600
+    Resource_List.backfill_max = 50
+    Resource_List.base_score = 51
+    Resource_List.bkc_definition = compute_aurora_prod_20260710T174510_d2b6bbb_
+	8bfceff
+    Resource_List.burn_ratio = 0.3921
+    Resource_List.current_allocation = 13130299392
+    Resource_List.enable_2nd_fp64 = True
+    Resource_List.enable_backfill = 0
+    Resource_List.enable_fifo = 1
+    Resource_List.enable_wfp = 0
+    Resource_List.fifo_factor = 1800
+    Resource_List.filesystems = home:flare
+    Resource_List.flare_fs = True
+    Resource_List.hbm_mode = flat
+    Resource_List.home_fs = True
+    Resource_List.ncpus = 208
+    Resource_List.ni_resource = aurora
+    Resource_List.nodect = 1
+    Resource_List.overburn = False
+    Resource_List.place = scatter
+    Resource_List.project_priority = 25
+    Resource_List.route_backfill = False
+    Resource_List.score_boost = 0
+    Resource_List.select = 1
+    Resource_List.snc_mode = quad
+    Resource_List.total_allocation = 21600000000
+    Resource_List.total_cpus = 10624
+    Resource_List.walltime = 01:00:00
+    Resource_List.wfp_factor = 100000
+    stime = Sat Aug 22 18:28:56 2026
+    session_id = 106045
+    jobdir = /home/hzhu
+    substate = 42
+    Variable_List = PBS_O_HOME=/home/hzhu,PBS_O_LANG=en_US.UTF-8,
+	PBS_O_LOGNAME=hzhu,
+	PBS_O_PATH=/home/hzhu/.local/bin:/home/hzhu/bin:/opt/cray/pals/1.8/bin
+	:/opt/cray/libfabric/1.22.0/bin:/opt/aurora/26.26.0/spack/unified/1.1.1
+	/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin:/opt/
+	aurora/26.26.0/support/tools/gpu_validation:/opt/aurora/26.26.0/support
+	/tools/mpi_wrapper_utils:/opt/aurora/26.26.0/oneapi/ishmem/latest/bin:/
+	opt/aurora/26.26.0/oneapi/dpcpp-ct/latest/bin:/opt/aurora/26.26.0/oneap
+	i/advisor/latest/bin64:/opt/aurora/26.26.0/oneapi/vtune/latest/bin64:/o
+	pt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger/bin:/opt/aurora/2
+	6.26.0/oneapi/mkl/latest/bin:/opt/aurora/26.26.0/oneapi/compiler/latest
+	/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-1
+	3.4.0-hgnyg4p/bin:/opt/clmgr/sbin:/opt/clmgr/bin:/opt/sgi/sbin:/opt/sgi
+	/bin:/home/hzhu/.local/bin:/home/hzhu/bin:/usr/local/bin:/usr/bin:/bin:
+	/opt/c3/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin:/opt/pbs/bin:/sbin,
+	PBS_O_MAIL=/var/spool/mail/hzhu,PBS_O_SHELL=/bin/bash,
+	PBS_O_INTERACTIVE_AUTH_METHOD=resvport,
+	PBS_O_HOST=aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov,
+	PBS_O_WORKDIR=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-hard
+	ening-99a4eb5b-v2-20260822,PBS_O_SYSTEM=Linux,PBS_O_QUEUE=debug,
+	PBS_JOBID_SHORT=8775503.aurora,XDG_RUNTIME_DIR=/run/user/40304,
+	PBS_HOOK_RESOURCES=eJylUktz2yAQ/kNuB+RH7DCcOj3kklPuDKDFVoxYhYcd//sullx
+	L02M1Oohvl93voQTxAlG1GpPCISmXJBdpBg4QXUXZAi10WPQ6ryMskCPYMy5unrBftly071
+	rlOg/pljL0SU4tq8e41Xzbak5oNaMstPd4VdpaLCEre6LVyunOlwi0bawGOOrcXUDVo6VPD
+	LV21bFVdIQjxpt8e//19vF7QvNtgAn50bBmJ4y2Z2LrabbNGOV+s2Psifb6W27rOYFKFmn3
+	lgtztqoF14XuvtFiP5RMJErEqNUQsVV1Nnvh7IO/bLacqbYxO2OM2htnwTlhSgwqVsaS/Vw
+	fGi5siRFI6VzKmq9ZczhQXUDQxoNqApk77DYkc0IeVCmTCXGdw2f96gYqVewhke9ZBZYJvd
+	7jEbPMT6ZXPbYgCcviGXSwQ0myYXsROhUhYYkW5CheBLpgM3Uh/QxVJO0evKaGRKIyREH2f
+	FIL2dRh7PJNNlsRsfo3U3K3WhnElO//mh+HpmBHSl9FtyJj1n7uV8Mpu/GZineqnO2ajbhS
+	Y+56kIy/MkavIGf+WjJe+ipQKo952BP2/5GPg/7NcYFP2Y3YMoERW1jwB0EgbhU=
+    comment = Job run at Sat Aug 22 at 18:28 on (x4217c0s5b0n0:ncpus=208)
+    etime = Sat Aug 22 18:24:46 2026
+    umask = 22
+    run_count = 1
+    eligible_time = 00:04:12
+    Submit_arguments = aurora_exact_final_sycl_matrix.pbs
+    project = CompactBinaryMerger
+    Submit_Host = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov
+

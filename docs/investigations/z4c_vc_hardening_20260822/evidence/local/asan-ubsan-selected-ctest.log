@@ -1,0 +1,87 @@
+[OUTPUT] 
+Internal ctest changing into directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_hardening_20260822/candidate/build/vc-amr-lifecycle-asan-ubsan-openmp
+
+[HANDLER_OUTPUT] 
+Test project /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_hardening_20260822/candidate/build/vc-amr-lifecycle-asan-ubsan-openmp
+
+      Start 22: athena.z4c_vc_task_order
+      Start 23: athena.z4c_vc_dynamic_amr
+      Start 24: athena.z4c_vc_dynamic_amr_2d_cartesian_o2
+      Start 25: athena.z4c_vc_dynamic_amr_2d_cartoon_o2
+ 1/19 Test #22: athena.z4c_vc_task_order ....................   Passed    0.03 sec
+      Start 26: athena.z4c_vc_dynamic_amr_3d_cartesian_o2
+ 2/19 Test #24: athena.z4c_vc_dynamic_amr_2d_cartesian_o2 ...   Passed    4.64 sec
+      Start 27: athena.z4c_vc_dynamic_amr_2d_cartesian_o4
+ 3/19 Test #25: athena.z4c_vc_dynamic_amr_2d_cartoon_o2 .....   Passed    4.83 sec
+      Start 28: athena.z4c_vc_dynamic_amr_2d_cartoon_o4
+ 4/19 Test #23: athena.z4c_vc_dynamic_amr ...................   Passed    7.37 sec
+      Start 29: athena.z4c_vc_dynamic_amr_3d_cartesian_o4
+ 5/19 Test #27: athena.z4c_vc_dynamic_amr_2d_cartesian_o4 ...   Passed    5.54 sec
+      Start 30: athena.z4c_vc_dynamic_amr_2d_cartesian_o6
+ 6/19 Test #28: athena.z4c_vc_dynamic_amr_2d_cartoon_o4 .....   Passed    5.90 sec
+      Start 31: athena.z4c_vc_dynamic_amr_2d_cartoon_o6
+ 7/19 Test #30: athena.z4c_vc_dynamic_amr_2d_cartesian_o6 ...   Passed    6.65 sec
+      Start 32: athena.z4c_vc_dynamic_amr_3d_cartesian_o6
+ 8/19 Test #31: athena.z4c_vc_dynamic_amr_2d_cartoon_o6 .....   Passed    7.25 sec
+      Start 36: athena.z4c_vc_dynamic_amr_invalid_target
+ 9/19 Test #36: athena.z4c_vc_dynamic_amr_invalid_target ....   Passed    0.70 sec
+      Start 56: athena.z4c_vc_restart
+10/19 Test #26: athena.z4c_vc_dynamic_amr_3d_cartesian_o2 ...   Passed   42.86 sec
+      Start 57: athena.z4c_vc_restart_2d_cartesian
+11/19 Test #56: athena.z4c_vc_restart .......................   Passed   34.19 sec
+      Start 58: athena.z4c_vc_restart_2d_cartoon
+12/19 Test #29: athena.z4c_vc_dynamic_amr_3d_cartesian_o4 ...   Passed   54.30 sec
+      Start 59: athena.z4c_vc_restart_3d_cartesian
+13/19 Test #57: athena.z4c_vc_restart_2d_cartesian ..........   Passed   31.72 sec
+      Start 62: athena.z4c_vc_output
+14/19 Test #62: athena.z4c_vc_output ........................   Passed    3.12 sec
+      Start 63: athena.z4c_vc_output_2d_cartoon
+15/19 Test #63: athena.z4c_vc_output_2d_cartoon .............   Passed    3.11 sec
+      Start 64: athena.z4c_vc_output_3d_cartesian
+16/19 Test #58: athena.z4c_vc_restart_2d_cartoon ............   Passed   33.80 sec
+17/19 Test #64: athena.z4c_vc_output_3d_cartesian ...........   Passed    8.01 sec
+18/19 Test #32: athena.z4c_vc_dynamic_amr_3d_cartesian_o6 ...   Passed   73.53 sec
+19/19 Test #59: athena.z4c_vc_restart_3d_cartesian ..........***Failed   45.22 sec
+Traceback (most recent call last):
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_hardening_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 175, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_hardening_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 78, in main
+    run([args.athena, "-i", args.input], fresh, True,
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_hardening_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 25, in run
+    result = subprocess.run(command, cwd=cwd, env=environment, text=True,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_hardening_20260822/candidate/build/vc-amr-lifecycle-asan-ubsan-openmp/src/athena', '-i', '/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_hardening_20260822/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput']' timed out after 45 seconds
+
+
+95% tests passed, 1 tests failed out of 19
+
+Label Time Summary:
+2d           = 103.44 sec*proc (9 tests)
+3d           = 224.61 sec*proc (6 tests)
+amr          = 213.56 sec*proc (11 tests)
+cartesian    = 273.17 sec*proc (10 tests)
+cartoon      =  54.88 sec*proc (5 tests)
+negative     =   0.70 sec*proc (1 test)
+output       =  14.24 sec*proc (3 tests)
+restart      = 144.93 sec*proc (4 tests)
+vertex       = 372.74 sec*proc (18 tests)
+z4c          = 372.74 sec*proc (18 tests)
+
+Total Test time (real) = 106.90 sec
+
+The following tests FAILED:
+	 59 - athena.z4c_vc_restart_3d_cartesian (Failed)
+[ERROR_MESSAGE] 
+Errors while running CTest
+

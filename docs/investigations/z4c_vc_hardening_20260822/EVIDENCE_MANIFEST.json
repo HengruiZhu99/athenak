@@ -1,0 +1,141 @@
+{
+  "schema": "athenak.z4c_vc_hardening_evidence.v1",
+  "date": "2026-08-22",
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "branch": "codex/z4c-vc-hardening-2d3d-20260822",
+  "verdict": "VC_Z4C_NOT_QUALIFIED",
+  "authorities": {
+    "historical_cc_commit": "6daa774d7451dbc5f7cac640c6e32a6fd11de7f9",
+    "historical_cc_tree": "cbb702f4da954cf630da261790d5c21ef3142235",
+    "starting_handoff_commit": "7e0690e46766cdb101f45aceefe8cc5f2a66ae4f",
+    "compiled_production_commit": "99a4eb5ba7713f7de73239cf75a27c1fb9ac6cbb",
+    "compiled_production_tree": "e8c1083cc9ea67aa4a3a2c3adbffb9c31fe32c83",
+    "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf"
+  },
+  "root_cause": {
+    "repair_commit": "aa668dd0909eb8a144afe9ef398ae6e01e829b27",
+    "file": "src/bvals/bvals_vc.cpp",
+    "function": "MeshBoundaryValuesVC::ProlongateVC",
+    "invalid_capture": "recvbuf[n].iprol[0] host boundary metadata",
+    "repair": "copy prolongation bounds into a synchronized device-resident DualArray1D"
+  },
+  "local_builds": {
+    "release_openmp_serial": {
+      "executable_sha256": "fe7f1d8e314df3b8a574a8e7cb6a1fb3ca4948dc9a7c0cd1240abb08d68cc29b",
+      "cmake_cache_sha256": "7d7e8d7c4ed28e8e3af5047fa5930fd746ac124822fb6470b1dee12532e6cf5e",
+      "result": "121 of 121 enabled tests passed; 2 CUDA-required tests disabled"
+    },
+    "release_mpi_openmp": {
+      "executable_sha256": "584b3e3bbf40f3e22da634fe50846bdcb0bb1efb85cc31dc1e571d79926e7731",
+      "cmake_cache_sha256": "847bb3de956fc0f9eff08b115ad96abbdb0f796b0e7a2bcc26f0cdb1751d26b6",
+      "result": "configure and build passed; local launcher not accepted as runtime authority"
+    },
+    "debug_openmp_bounds_dualview": {
+      "executable_sha256": "0969669e979b4c5c3aab495b52bc2298e27133add4a540f4889b137c17a13634",
+      "cmake_cache_sha256": "c321803e14350e43468aff70dfceea959641440d609241e9fe8121418854fcd6",
+      "result": "120 enabled tests completed cleanly; three wall-time-limited tests separately classified"
+    },
+    "asan_ubsan_openmp": {
+      "executable_sha256": "e3176533d13279f31c211c48442004d010f0dbc9656f50af94b9d73667e549cd",
+      "cmake_cache_sha256": "519898ac59912f663290013ff3d15e38993718e3ea14f535c3e6387eccafa9c3",
+      "result": "selected matrix and direct 3D restart passed with no sanitizer diagnostic; leak detection disabled"
+    }
+  },
+  "committed_compact_evidence": {
+    "evidence/aurora/v1/provenance.txt": "288e0cc29136fef6083576baaaacb7907adbbfb4229394ddef6c0c396d6b9a47",
+    "evidence/aurora/v1/selected-ctest.log": "91cb8555a54b24494b8c13da217f020be91b01040c5a93efa6cab6ad2d6c420f",
+    "evidence/aurora/v2/gauge-wave-ctest.log": "e89592e39d3a768b29cf11997cc8c1d8d3cf4fd916722b109506e68fa195bbcc",
+    "evidence/aurora/v2/provenance.txt": "d1829aa424a07312ceb7a41d84886c2f00705bb0d17e754f03dbd756a381e78d",
+    "evidence/aurora/v3/mpi2-3d-o4.log": "f36b892c8df58a2e461eb78dfb6e6a19775b2523e6aa7a878f0534197d67ede9",
+    "evidence/aurora/v3/mpi2-cartoon-o4.log": "35e9b928cfa544db22f337ec14a21231835e67fb5c9d32f02e96dae1e50f511f",
+    "evidence/aurora/v3/provenance.txt": "e5d1289bf28e12a96a8cdd03dc7806413030e4e704be4e8828e0fafcde1bc6c2",
+    "evidence/local/release-ctest.log": "06a7f752ca0942d8a3f9b8d73a92cc5fa51b5311a5e4e166f2610899bdb9c1a5",
+    "evidence/local/release-ctest-inventory.log": "102389c9dd8cdcc3c1949e3dcbcf625cfbf099245addb5662ab1a0d8dbbbb8a4",
+    "evidence/local/asan-ubsan-selected-ctest.log": "bc1382a87ef957e729580d2328a45beb04e693273fb17118058f51ab1d0919f5",
+    "evidence/local/cc-historical-equivalence.json": "ea08a7149f28dfd21f4a2007577e604a3755de9649182a58a0cbf3a2f3d4bc8b",
+    "evidence/local/cc-selector-equivalence.json": "39d67170530d6cd9b94574233a60989faa646e8197e9e747dcc05a3b6196a248",
+    "evidence/local/dynamic-wave-2d-failure.log": "94c2c3e975903aeff6683543b96eb3bd033486c934e207121b8af17712d6bcfc",
+    "evidence/local/dynamic-wave-3d-failure.log": "ec89f8da56626ca425a41dd2c0a930cbac4db078b208d8ede1775c396f42c85f"
+  },
+  "cc_exactness": {
+    "history_sha256": "4896c333ceda81d99cf1e4c15a28996d73c999c6222d4b83e770c9f4f4d0f598",
+    "timestep_sha256": "dad954f5938eea76aca74493ec5bd1ac8c66cdc67ac7ad24225988c19e5e3037",
+    "evolved_binary_payload_sha256": "cba796c4feb0af6d89f15b0278ae2cf00f882f1347953079884f19519b5aeced",
+    "constraint_binary_payload_sha256": "dd0e1b8dbf64d2014a5d49f26b7b3f188145c6c66571ccbb44e456a9dc5b6591",
+    "post_parameter_header_payload_sha256": "b04b85bbb0b6f4227a1795ba507d7ddc8e19159c080bc4f5e6c4800ab7dc2618",
+    "historical_comparison": "PASS"
+  },
+  "nonconstant_dynamic_amr_discriminator": {
+    "disposition": "FAIL_NONCONVERGENT",
+    "2d_cartesian": {
+      "n16_rms": 1.185856836092841e-6,
+      "n32_rms": 2.2893815833157216e-6,
+      "observed_order": -0.9490280951280053,
+      "n16_linf": 1.1657549767976247e-5,
+      "n32_linf": 2.924735125701657e-5
+    },
+    "3d_cartesian": {
+      "n16_rms": 1.6766648236318956e-7,
+      "n32_rms": 2.2839130191583775e-7,
+      "observed_order": -0.44591339449908546,
+      "n16_linf": 1.5351424707132374e-6,
+      "n32_linf": 2.575247635003725e-6
+    }
+  },
+  "aurora_sycl": {
+    "device": "Intel Data Center GPU Max 1550 via Level Zero",
+    "executable_sha256": "48c257bac9ed0802805661ca93630eb526082e1adfdaebc485c9d11fab1b4ff1",
+    "cmake_cache_sha256": "621b7caa192fa36d651583c127dd8d3aac01766211f351f63dfcfd5cc992892d",
+    "page_fault_repair_canary": {
+      "job": "8775368",
+      "external_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-hardening-829be2f6-v1-20260822/campaign-device-metadata-repair-v2",
+      "local_copy": "/home/hzhu/Desktop/research/gr/collapse/artifacts/z4c_vc_hardening_20260822/aurora/campaign-device-metadata-repair-v2",
+      "manifest_sha256": "3c7a4f99a0032f63b8b6b80a814c3aa0a3a2fb5f4ff31ec46da3d91dcc6bce0f",
+      "detached_manifest_sha256": "37a70671dc3c8679d9e6886b77e647ec1a66a3e10adb938de500643e0c8d9126",
+      "result": "PASS"
+    },
+    "exact_final_v1": {
+      "job": "8775503",
+      "external_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-hardening-99a4eb5b-v2-20260822/campaign-exact-final-sycl-v1",
+      "manifest_sha256": "74b6da83fb8c581b1681938791f703e45acf95fd4ef365b1bfc03f2bec28d22f",
+      "detached_manifest_sha256": "12235a8c8441c831b9c37490117f3ed04735730f67a730ec16698db2e95a1d3d",
+      "result": "nine lifecycle, two 2D restart, and three output tests pass; 3D exact restart fails; gauge harness lacks numpy"
+    },
+    "exact_final_v2_harness": {
+      "job": "8775539",
+      "external_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-hardening-99a4eb5b-v2-20260822/campaign-exact-final-sycl-v2",
+      "manifest_sha256": "4bc1e33cc148378802d0a973a7646f9eb1172fc49b90e67f9b4b323837ca9359",
+      "detached_manifest_sha256": "c5928e17f3793db2c518e7a2cecde115ad574aac61926299b6f677dd2a2579c6",
+      "result": "HARNESS_FAIL_MISSING_H5PY; no restart or MPI result"
+    },
+    "exact_final_v3_mpi": {
+      "job": "8775545",
+      "external_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-hardening-99a4eb5b-v2-20260822/campaign-exact-final-sycl-v3-mpi",
+      "manifest_sha256": "7b7e038e39361f3b55d8bdfc300490c72053de4a83505c33e57151ad3faca485",
+      "detached_manifest_sha256": "efd4cb6e4e9b71533805fc60a6b7799e36338a17574d19f10aecf875948cfcc3",
+      "result": "PASS_2RANK_CARTOON2D_O4_AND_CARTESIAN3D_O4"
+    },
+    "restart_3d": {
+      "fresh_payload_sha256": "e79600535d266b13b06fefec6aec2b80d51354bf0b5875e8533c4dd29a073217",
+      "restarted_payload_sha256": "131e6929ef1397916b191d6963c02561f0f107f615dabd5493cb2614cdc26e69",
+      "payload_bytes_each": 7861236,
+      "differing_bytes": 2134655,
+      "disposition": "FAIL_EXACT_PAYLOAD"
+    }
+  },
+  "cuda": {
+    "disposition": "PENDING_UNAVAILABLE",
+    "reason": "no current-source CUDA runtime matrix; Perlmutter certificate rejected during this execution"
+  },
+  "prior_brill": {
+    "fixed_grid_o4": "bounded N128/N256/N512 through t=0.5 M; prior evidence only",
+    "common_tree": "O4_NONCONVERGENT",
+    "common_tree_summary": "docs/investigations/brill_o4_dchi001_replay_convergence_20260821/comparison_summary.json"
+  },
+  "limitations": [
+    "nonconstant VC dynamic-AMR discriminator worsens from N16 to N32 in 2D and 3D",
+    "SYCL 3D restart continuation is not bit-exact",
+    "current-source CUDA runtime qualification is absent",
+    "no Figure-3, critical-collapse, horizon, long-time, or production-readiness claim"
+  ]
+}
