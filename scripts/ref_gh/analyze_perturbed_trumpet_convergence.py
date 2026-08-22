@@ -52,8 +52,10 @@ def read_cbin(path: Path) -> dict:
         if input_bytes is None:
             raise ValueError(f"{path}: missing input-header size")
         stream.read(input_bytes)
-        if metadata.get("location_size") != 8 or metadata.get("variable_size") != 4:
-            raise ValueError(f"{path}: expected binary64 locations and binary32 fields")
+        variable_size = metadata.get("variable_size")
+        if metadata.get("location_size") != 8 or variable_size not in (4, 8):
+            raise ValueError(
+                f"{path}: expected binary64 locations and binary32/binary64 fields")
         nvar = int(metadata["nvar"])
         if len(variables) != nvar:
             raise ValueError(f"{path}: variable label/count mismatch")
@@ -71,10 +73,11 @@ def read_cbin(path: Path) -> dict:
             bounds = values[10:]
             shape = (oke - oks + 1, oje - ojs + 1, oie - ois + 1)
             count = nvar*shape[0]*shape[1]*shape[2]
-            raw = stream.read(4*count)
-            if len(raw) != 4*count:
+            raw = stream.read(variable_size*count)
+            if len(raw) != variable_size*count:
                 raise ValueError(f"{path}: truncated MeshBlock field data")
-            data = np.frombuffer(raw, dtype="<f4").astype(np.float64)
+            dtype = "<f8" if variable_size == 8 else "<f4"
+            data = np.frombuffer(raw, dtype=dtype).astype(np.float64)
             data = data.reshape((nvar,) + shape)
             blocks.append(((lx1, lx2, lx3, level), bounds, data))
 
@@ -183,8 +186,10 @@ def load_triplet(paths, target_n: int):
     variables = loaded[0]["variables"]
     bounds = loaded[0]["bounds"]
     for item in loaded[1:]:
-        if item["variables"] != variables or item["bounds"] != bounds:
-            raise ValueError("triplet variable labels or physical domains differ")
+        if (item["variables"] != variables or item["bounds"] != bounds
+                or item["variable_size"] != loaded[0]["variable_size"]):
+            raise ValueError(
+                "triplet variable labels, precision, or physical domains differ")
     return variables, bounds, [interpolate(item["data"], bounds, target_n)
                                for item in loaded], loaded
 
@@ -213,30 +218,36 @@ def main() -> None:
                           indexing="ij")
     mask = x*x + y*y + z*z < args.analysis_radius*args.analysis_radius
 
-    # Psi contains an O(1) background and cbin stores binary32. Dynamic Pi/Phi
-    # components retain roughly seven significant digits of the perturbation,
-    # so they are the primary field-convergence measure.
+    variable_size = field_meta[0]["variable_size"]
+    constraint_variable_size = constraint_meta[0]["variable_size"]
+    binary64 = variable_size == 8 and constraint_variable_size == 8
     dynamic_fields = [array[2:] for array in fields]
     result = {
         "method": "sixth-order interpolation to fixed cell-centered grid",
+        "field_precision": "binary64" if binary64 else "binary32",
         "target_n": args.target_n,
         "analysis_radius": args.analysis_radius,
         "resolutions": args.resolutions,
         "field_variables": field_names,
-        "primary_field_variables": field_names[2:],
+        "primary_field_variables": field_names if binary64 else field_names[2:],
         "constraint_variables": constraint_names,
         "times": {
             "field": [item["time"] for item in field_meta],
             "constraint": [item["time"] for item in constraint_meta],
         },
+        "field": norm_summary(*fields, mask, tuple(args.resolutions)),
         "dynamic_field": norm_summary(
             *dynamic_fields, mask, tuple(args.resolutions)),
         "native_constraint": norm_summary(
             *constraints, mask, tuple(args.resolutions)),
-        "psi_binary32_secondary": norm_summary(
+        "psi": norm_summary(
             fields[0][:2], fields[1][:2], fields[2][:2], mask,
             tuple(args.resolutions)),
     }
+    if not binary64:
+        result["precision_limitation"] = (
+            "Psi is secondary because the cbin payload is binary32")
+        result["psi_binary32_secondary"] = result["psi"]
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     print(json.dumps(result, indent=2, sort_keys=True))

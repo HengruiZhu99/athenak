@@ -1,24 +1,24 @@
 #!/bin/bash -l
-# 8-rank/8-tile smooth perturbed-trumpet 64/96/128 convergence ladder.
+# Binary64, multi-time, 8-rank/8-tile Ref-GH perturbed-trumpet convergence gate.
 #PBS -A CompactBinaryMerger
 #PBS -q debug
 #PBS -l select=1
 #PBS -l place=scatter
 #PBS -l walltime=01:00:00
 #PBS -l filesystems=home:flare
-#PBS -N refgh_pert_conv
+#PBS -N refgh_pert64
 #PBS -j oe
 
 set -euo pipefail
 
-ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_performance_convergence_20260821
 SRC="${ROOT}/athenak"
-BUILD="${ROOT}/build_sycl_pvc_8770307.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov"
-BUILD_SOURCE_COMMIT=6eed3d9d6fb5d31ee8f240a771e18bfc220a0701
+: "${EXPECTED_COMMIT:?submit with qsub -v EXPECTED_COMMIT=<full-sha>}"
+BUILD="${ROOT}/build_perturbed_binary64_${PBS_JOBID}"
 EXE="${BUILD}/src/athena"
 INPUT="${SRC}/inputs/ref_gh/ref_gh_perturbed_trumpet.athinput"
 ANALYZER="${SRC}/scripts/ref_gh/analyze_perturbed_trumpet_convergence.py"
-OUT="${ROOT}/runs/perturbed_convergence_${PBS_JOBID}"
+OUT="${ROOT}/runs/perturbed_binary64_${PBS_JOBID}"
 
 mkdir -p "${OUT}"
 cd "${OUT}"
@@ -32,26 +32,49 @@ export OMP_PLACES=threads
 export FI_MR_CACHE_MONITOR=disabled
 export FI_LOG_LEVEL=ERROR
 
-git -C "${SRC}" diff --quiet "${BUILD_SOURCE_COMMIT}" HEAD -- src inputs
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
 
 {
   date -Is
   hostname
   qstat -f "${PBS_JOBID}"
-  git -C "${SRC}" rev-parse HEAD
-  echo "build_source_commit=${BUILD_SOURCE_COMMIT}"
-  git -C "${SRC}" status --short
+  echo "source_commit=${actual_commit}"
   git -C "${SRC}" submodule status
-  sha256sum "${EXE}"
   icpx --version | head -1
-  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${ANALYZER}" "$0"
 } > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens \
+  > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+    "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
 
 mpiexec -n 8 --ppn 8 --depth=16 --cpu-bind depth \
   gpu_tile_compact.sh bash -lc '
     echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
     sycl-ls 2>&1 | grep "Data Center GPU Max"
   ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 8
 
 run_case() (
   local label="$1"
@@ -65,17 +88,23 @@ run_case() (
     job/basename="${label}" \
     mesh/nx1="${ncell}" mesh/nx2="${ncell}" mesh/nx3="${ncell}" \
     meshblock/nx1="${mbcell}" meshblock/nx2="${mbcell}" meshblock/nx3="${mbcell}" \
-    ref_gh/debug_task_fences=false \
-    ref_gh/validate_reference_cache=false \
-    output1/dt=0.02 output2/dt=0.1 \
+    ref_gh/debug_task_fences=false ref_gh/validate_reference_cache=false \
+    output1/dt=0.02 output2/dt=0.2 \
     output3/dt=0.2 output4/dt=0.2 \
-    time/nlim=-1 time/tlim=0.2 \
+    output3/binary64=true output4/binary64=true \
+    time/nlim=-1 time/tlim=0.6 \
     > "${label}.log" 2>&1
   test -s "${label}.ref_gh.hst"
-  awk 'BEGIN {reached=0} !/^#/ && $1 >= 0.199999999 {reached=1} END {exit !reached}' \
+  awk 'BEGIN {reached=0} !/^#/ && $1 >= 0.599999999 {reached=1} END {exit !reached}' \
     "${label}.ref_gh.hst"
-  test -s "cbin_ref_gh_perturb_1/${label}.ref_gh_perturb.00001.cbin"
-  test -s "cbin_ref_gh_native_con_1/${label}.ref_gh_native_con.00001.cbin"
+  for index in 00001 00002 00003; do
+    field="cbin_ref_gh_perturb_1/${label}.ref_gh_perturb.${index}.cbin"
+    constraint="cbin_ref_gh_native_con_1/${label}.ref_gh_native_con.${index}.cbin"
+    test -s "${field}"
+    test -s "${constraint}"
+    grep -a -m1 -q 'size of variable=8' "${field}"
+    grep -a -m1 -q 'size of variable=8' "${constraint}"
+  done
   ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
     "${label}.log"
   grep 'reference-GH perturbed trumpet:' "${label}.log" | tail -1
@@ -84,15 +113,58 @@ run_case() (
 run_case ref_gh_perturbed_trumpet_n64 64 32 > n64_status.txt
 run_case ref_gh_perturbed_trumpet_n96 96 48 > n96_status.txt
 run_case ref_gh_perturbed_trumpet_n128 128 64 > n128_status.txt
-cat n64_status.txt n96_status.txt n128_status.txt > case_status.txt
+paste n64_status.txt n96_status.txt n128_status.txt > case_status.txt
 
-python3 "${ANALYZER}" \
-  --field \
-    "${OUT}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n64.ref_gh_perturb.00001.cbin" \
-    "${OUT}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n96.ref_gh_perturb.00001.cbin" \
-    "${OUT}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n128.ref_gh_perturb.00001.cbin" \
-  --constraint \
-    "${OUT}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n64.ref_gh_native_con.00001.cbin" \
-    "${OUT}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n96.ref_gh_native_con.00001.cbin" \
-    "${OUT}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n128.ref_gh_native_con.00001.cbin" \
-  --output convergence.json > convergence.log
+for item in 1:0.2 2:0.4 3:0.6; do
+  index=${item%%:*}
+  expected_time=${item##*:}
+  printf -v suffix '%05d' "${index}"
+  python3 "${ANALYZER}" \
+    --field \
+      "${OUT}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n64.ref_gh_perturb.${suffix}.cbin" \
+      "${OUT}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n96.ref_gh_perturb.${suffix}.cbin" \
+      "${OUT}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n128.ref_gh_perturb.${suffix}.cbin" \
+    --constraint \
+      "${OUT}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n64.ref_gh_native_con.${suffix}.cbin" \
+      "${OUT}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n96.ref_gh_native_con.${suffix}.cbin" \
+      "${OUT}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n128.ref_gh_native_con.${suffix}.cbin" \
+    --output "convergence_t${expected_time}.json" \
+    > "convergence_t${expected_time}.log"
+done
+
+python3 - "${OUT}" <<'PY' > boundary_arrival.tsv
+import pathlib
+import sys
+
+root = pathlib.Path(sys.argv[1])
+print("resolution\tmaximum_characteristic_speed\tearliest_boundary_arrival_to_r_lt_1")
+for resolution in (64, 96, 128):
+    label = f"ref_gh_perturbed_trumpet_n{resolution}"
+    path = root / label / f"{label}.ref_gh.hst"
+    rows = [[float(value) for value in line.split()]
+            for line in path.read_text().splitlines()
+            if line and not line.startswith("#")]
+    maximum_speed = max(row[17] for row in rows)
+    arrival = 1.0 / maximum_speed
+    print(f"{resolution}\t{maximum_speed:.17g}\t{arrival:.17g}")
+PY
+
+python3 - "${OUT}" <<'PY' > convergence_summary.tsv
+import json
+import pathlib
+import sys
+
+root = pathlib.Path(sys.argv[1])
+print("time\tquantity\tL2_order\tLinf_order\tdifference_64_96_L2\tdifference_96_128_L2")
+for time in ("0.2", "0.4", "0.6"):
+    result = json.loads((root / f"convergence_t{time}.json").read_text())
+    for quantity in ("field", "psi", "dynamic_field", "native_constraint"):
+        values = result[quantity]
+        print("{}\t{}\t{:.17g}\t{:.17g}\t{:.17g}\t{:.17g}".format(
+            time, quantity, values["order_L2"], values["order_Linf"],
+            values["difference_64_96_L2"], values["difference_96_128_L2"]))
+PY
+
+find . -type f \( -name '*.json' -o -name '*.tsv' -o -name '*status.txt' \
+  -o -name 'provenance.txt' -o -name 'rank_gpu_mapping.txt' \) \
+  -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt

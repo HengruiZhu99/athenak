@@ -35,7 +35,7 @@ evolution = dynamic
 integrator = rk4
 cfl_number = 0.05
 nlim = -1
-tlim = 0.2
+tlim = 0.6
 ndiag = 10
 
 <ref_gh>
@@ -73,6 +73,7 @@ id = ref_gh_perturb
 dt = 0.2
 coarsen_factor = 1
 compute_moments = false
+binary64 = true
 single_file_per_rank = false
 
 <output4>
@@ -82,4 +83,5 @@ id = ref_gh_native_con
 dt = 0.2
 coarsen_factor = 1
 compute_moments = false
+binary64 = true
 single_file_per_rank = false
