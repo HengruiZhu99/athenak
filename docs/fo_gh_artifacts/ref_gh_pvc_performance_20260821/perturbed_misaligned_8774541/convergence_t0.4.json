@@ -1,0 +1,95 @@
+{
+  "analysis_radius": 1.0,
+  "constraint_variables": [
+    "ref_gh_C0",
+    "ref_gh_C1",
+    "ref_gh_C2",
+    "ref_gh_C3",
+    "ref_gh_reduction",
+    "ref_gh_curl"
+  ],
+  "dynamic_field": {
+    "difference_64_96_L2": 1.8364011129761634e-10,
+    "difference_64_96_Linf": 9.01905039650264e-10,
+    "difference_96_128_L2": 9.209357539479214e-11,
+    "difference_96_128_Linf": 3.854862372875212e-10,
+    "order_L2": 0.9915814779615582,
+    "order_Linf": 1.4420630809169537,
+    "ratio_L2": 1.994059960321631,
+    "ratio_Linf": 2.3396556151953187
+  },
+  "field": {
+    "difference_64_96_L2": 2.0316105139126834e-10,
+    "difference_64_96_Linf": 9.01905039650264e-10,
+    "difference_96_128_L2": 1.0160970614456142e-10,
+    "difference_96_128_Linf": 3.854862372875212e-10,
+    "order_L2": 0.9991871348569952,
+    "order_Linf": 1.4420630809169537,
+    "ratio_L2": 1.9994256365846441,
+    "ratio_Linf": 2.3396556151953187
+  },
+  "field_precision": "binary64",
+  "field_variables": [
+    "ref_gh_Psi22",
+    "ref_gh_Psi33",
+    "ref_gh_Pi22",
+    "ref_gh_Pi33",
+    "ref_gh_Phi122",
+    "ref_gh_Phi133",
+    "ref_gh_Phi222",
+    "ref_gh_Phi233",
+    "ref_gh_Phi322",
+    "ref_gh_Phi333"
+  ],
+  "method": "sixth-order interpolation to fixed cell-centered grid",
+  "native_constraint": {
+    "difference_64_96_L2": 9.256879984162934e-10,
+    "difference_64_96_Linf": 2.542251955251118e-08,
+    "difference_96_128_L2": 1.3276706305815546e-10,
+    "difference_96_128_Linf": 4.056414698351843e-09,
+    "order_L2": 4.427943215006863,
+    "order_Linf": 4.142667925276113,
+    "ratio_L2": 6.972271413511781,
+    "ratio_Linf": 6.267238791645383
+  },
+  "primary_field_variables": [
+    "ref_gh_Psi22",
+    "ref_gh_Psi33",
+    "ref_gh_Pi22",
+    "ref_gh_Pi33",
+    "ref_gh_Phi122",
+    "ref_gh_Phi133",
+    "ref_gh_Phi222",
+    "ref_gh_Phi233",
+    "ref_gh_Phi322",
+    "ref_gh_Phi333"
+  ],
+  "psi": {
+    "difference_64_96_L2": 2.6735239311145917e-10,
+    "difference_64_96_Linf": 6.219097459236878e-10,
+    "difference_96_128_L2": 1.3303291095791128e-10,
+    "difference_96_128_Linf": 3.1028779545749785e-10,
+    "order_L2": 1.013650119742974,
+    "order_Linf": 1.006077375737045,
+    "ratio_L2": 2.0096710745211284,
+    "ratio_Linf": 2.004299734079856
+  },
+  "resolutions": [
+    64,
+    96,
+    128
+  ],
+  "target_n": 32,
+  "times": {
+    "constraint": [
+      0.404325,
+      0.401731,
+      0.40044
+    ],
+    "field": [
+      0.404325,
+      0.401731,
+      0.40044
+    ]
+  }
+}
