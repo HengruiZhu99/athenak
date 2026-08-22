@@ -686,6 +686,31 @@ if (Athena_BUILD_UNIT_TESTS)
   add_z4c_vc_static_multilevel_case(
       athena.z4c_vc_static_multilevel_3d_cartesian_o4
       z4c_vc_static_multilevel_wave.athinput 9 0.0 "3d;cartesian")
+  function(add_z4c_gauge_wave_case name input centering order dimensions)
+    add_test(
+        NAME ${name}
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_gauge_wave_convergence_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/${input}
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/${name}
+        --centering ${centering}
+        --order ${order})
+    set_tests_properties(
+        ${name} PROPERTIES TIMEOUT 300
+        LABELS "z4c;gauge_wave;analytic;${centering};${dimensions}d;o${order}")
+  endfunction()
+  foreach(centering IN ITEMS cell vertex)
+    foreach(order IN ITEMS 2 4 6)
+      add_z4c_gauge_wave_case(
+          athena.z4c_${centering}_gauge_wave_2d_cartesian_o${order}
+          z4c_gauge_wave_2d_cartesian.athinput ${centering} ${order} 2)
+      add_z4c_gauge_wave_case(
+          athena.z4c_${centering}_gauge_wave_3d_cartesian_o${order}
+          z4c_gauge_wave_3d_cartesian.athinput ${centering} ${order} 3)
+    endforeach()
+  endforeach()
   if (Athena_ENABLE_MPI)
     foreach(ranks IN ITEMS 2 4)
       add_test(

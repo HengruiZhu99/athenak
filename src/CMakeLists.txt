@@ -131,6 +131,7 @@ add_executable(
         pgen/tests/rad_beam.cpp
         pgen/tests/rad_linear_wave.cpp
         pgen/tests/z4c_boosted_puncture.cpp
+        pgen/tests/z4c_gauge_wave.cpp
         pgen/tests/z4c_linear_wave.cpp
         pgen/tests/z4c_vc_minkowski.cpp
         pgen/z4c/kerr_puncture.cpp
