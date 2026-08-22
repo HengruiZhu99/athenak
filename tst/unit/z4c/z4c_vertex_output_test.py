@@ -15,12 +15,23 @@ import subprocess
 
 CC_SHA256 = {
     "bin/z4c_vc_output.z4c_chi.00000.bin":
-        "0d76e0756575fc312663c4a5450216f709d97cc32e303a5b327096c441368c57",
+        "05d6b3c0b1a4fd2aeaa02934ce97bbe6e9e48c672d08a069ccf786cc328c1193",
     "tab/z4c_vc_output.z4c_chi.00000.tab":
         "a2363cb7f33b6571cadef29936bff2f82c764d1f63ebdb550320ce19150ee9bf",
     "vtk/z4c_vc_output.z4c_chi.00000.vtk":
         "8741361b5a3f7f5f3e236ce3b4aa066810a894cd04aaa209c5eb1c1914b3274e",
 }
+CC_BINARY_PAYLOAD_SHA256 = (
+    "b04b85bbb0b6f4227a1795ba507d7ddc8e19159c080bc4f5e6c4800ab7dc2618"
+)
+# The shared deterministic-AMR helper deliberately stopped materializing the
+# unused ``exercise_dynamic_vc_amr = 0`` default in unrelated runs.  That one
+# parameter-header deletion changed only the binary whole-file hash; this is the
+# reviewed prior value, retained so the transition cannot be mistaken for a
+# numerical golden update.
+CC_HISTORICAL_BINARY_FILE_SHA256 = (
+    "0d76e0756575fc312663c4a5450216f709d97cc32e303a5b327096c441368c57"
+)
 
 
 def require(condition: bool, message: str) -> None:
@@ -42,6 +53,20 @@ def run(command: list[str], cwd: Path, success: bool) -> str:
 
 def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def binary_payload_digest(path: Path) -> str:
+    """Hash MB metadata/data after the embedded parameter header."""
+    with path.open("rb") as stream:
+        while True:
+            line = stream.readline()
+            require(line, f"binary output {path} omitted header offset")
+            if line.startswith(b"  header offset="):
+                header_size = int(line.split(b"=", 1)[1])
+                break
+        require(len(stream.read(header_size)) == header_size,
+                f"binary output {path} has a truncated parameter header")
+        return hashlib.sha256(stream.read()).hexdigest()
 
 
 def main() -> int:
@@ -122,6 +147,13 @@ def main() -> int:
             observed = digest(cc / relative)
             require(observed == expected,
                     f"CC output regression for {relative}: {observed} != {expected}")
+        cc_binary = cc / "bin/z4c_vc_output.z4c_chi.00000.bin"
+        require(binary_payload_digest(cc_binary) == CC_BINARY_PAYLOAD_SHA256,
+                "CC binary MeshBlock/numerical payload changed from the reviewed "
+                "pre-schedule checkpoint")
+        require(CC_SHA256["bin/z4c_vc_output.z4c_chi.00000.bin"] !=
+                CC_HISTORICAL_BINARY_FILE_SHA256,
+                "metadata-only CC binary transition was accidentally hidden")
 
     rejected = root / "rejected_multiblock_vtk"
     rejected.mkdir()
