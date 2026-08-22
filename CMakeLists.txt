@@ -1044,6 +1044,27 @@ if (Athena_BUILD_UNIT_TESTS)
       -DFAILURE_REGION_EXTRACTOR=${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_failure_region_extract.py
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_kerr_half_plane_init_test.cmake)
 
+  # The frozen one-cycle Kerr half-plane case is the authoritative CC selector
+  # contract.  Keep this exact byte/payload comparison on deterministic GNU
+  # host builds without MPI startup; accelerator arithmetic has its own gates.
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
+     NOT Athena_SINGLE_PRECISION AND NOT Athena_ENABLE_MPI AND
+     NOT Kokkos_ENABLE_CUDA AND NOT Kokkos_ENABLE_HIP AND
+     NOT Kokkos_ENABLE_SYCL)
+    add_test(
+        NAME athena.z4c_cc_selector_equivalence
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cc_selector_equivalence_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_kerr_half_plane_init.athinput
+        --source-dir ${CMAKE_CURRENT_SOURCE_DIR}
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_cc_selector_equivalence_test)
+    set_tests_properties(
+        athena.z4c_cc_selector_equivalence
+        PROPERTIES TIMEOUT 120 LABELS "z4c;cell;regression;host-exact-regression")
+  endif()
+
   add_test(
       NAME athena.z4c_kerr_half_plane_amr_orders
       COMMAND
