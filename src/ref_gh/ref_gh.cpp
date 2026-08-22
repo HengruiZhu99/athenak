@@ -3,6 +3,7 @@
 //! \brief Construction and storage for the separate 50-field reference-frame GH module.
 //========================================================================================
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -14,6 +15,7 @@
 #include "parameter_input.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/reference_cache.hpp"
+#include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_provider_cache.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 
@@ -59,9 +61,15 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     reference_diagnostic("ref_gh reference diagnostic", 1, 1, 1, 1, 1),
     reference_table("ref_gh reference table", 1, 1),
     reference_cache_time(NAN), reference_diagnostic_time(NAN),
+    controller_generation(0), reference_cache_generation(0),
+    reference_diagnostic_generation(0),
+    controller{0.0, 0.0, 0.0, 0.0},
+    controller_base{0.0, 0.0, 0.0, 0.0},
+    controller_rhs{0.0, 0.0, 0.0, 0.0},
+    controller_diagnostics{},
     reference_cache_oracle_validated(false),
     reference_diagnostic_oracle_validated(false),
-    dtnew(0.0), max_char_speed(0.0), pmy_pack(ppack) {
+    dtnew(0.0), max_char_speed(0.0), pmy_pack(ppack), pinput(pin) {
   opt.fd_order = pin->GetOrAddInteger("ref_gh", "fd_order", 4);
   opt.extrap_order = pin->GetOrAddInteger("ref_gh", "extrap_order", 2);
   const std::string reference_name =
@@ -74,14 +82,22 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     opt.reference_kind = 2;
   } else if (reference_name == "time_dependent_spatial_test") {
     opt.reference_kind = 3;
+  } else if (reference_name == "wormhole") {
+    opt.reference_kind = 4;
+  } else if (reference_name == "controlled_transition") {
+    opt.reference_kind = 5;
   } else {
     std::cout << "### FATAL ERROR: ref_gh reference must be minkowski, trumpet, "
-                 "time_dependent_lapse_test, or time_dependent_spatial_test."
+                 "time_dependent_lapse_test, time_dependent_spatial_test, "
+                 "wormhole, or controlled_transition."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
   opt.reference_time_dependent =
       GetReferenceProviderMetadata(opt.reference_kind).time_dependent;
+  opt.reference_controlled = opt.reference_kind == 5;
+  opt.controller_enabled =
+      pin->GetOrAddBoolean("ref_gh", "controller_enabled", false);
   const std::string source_name =
       pin->GetOrAddString("ref_gh", "source", "covariant");
   if (source_name == "covariant") {
@@ -104,6 +120,44 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.reference_center[0] = pin->GetOrAddReal("ref_gh", "reference_x", 0.0);
   opt.reference_center[1] = pin->GetOrAddReal("ref_gh", "reference_y", 0.0);
   opt.reference_center[2] = pin->GetOrAddReal("ref_gh", "reference_z", 0.0);
+  opt.r_core0 = pin->GetOrAddReal("ref_gh", "r_core0", 0.30);
+  opt.tau_core = pin->GetOrAddReal("ref_gh", "tau_core", 1.5);
+  opt.kappa_core = pin->GetOrAddReal("ref_gh", "kappa_core", 1.0);
+  opt.tau_transition = pin->GetOrAddReal("ref_gh", "tau_transition", 4.0);
+  opt.r_fit_min = pin->GetOrAddReal("ref_gh", "r_fit_min", 0.15);
+  opt.r_fit_max = pin->GetOrAddReal("ref_gh", "r_fit_max", 0.40);
+  opt.regularization_outer_start =
+      pin->GetOrAddReal("ref_gh", "regularization_outer_start", 0.50);
+  opt.regularization_outer_end =
+      pin->GetOrAddReal("ref_gh", "regularization_outer_end", 0.60);
+  opt.controller_zeta = pin->GetOrAddReal("ref_gh", "controller_zeta", 1.0);
+  opt.controller_omega_q =
+      pin->GetOrAddReal("ref_gh", "controller_omega_q", 0.25);
+  opt.controller_omega_p =
+      pin->GetOrAddReal("ref_gh", "controller_omega_p", 0.25);
+  opt.controller_acceleration_limit =
+      pin->GetOrAddReal("ref_gh", "controller_acceleration_limit", 0.05);
+  opt.controller_delta_bound =
+      pin->GetOrAddReal("ref_gh", "controller_delta_bound", 0.25);
+  opt.controller_rate_bound =
+      pin->GetOrAddReal("ref_gh", "controller_rate_bound", 0.10);
+  controller.delta_q =
+      pin->GetOrAddReal("ref_gh", "controller_delta_q", 0.0);
+  controller.delta_q_dot =
+      pin->GetOrAddReal("ref_gh", "controller_delta_q_dot", 0.0);
+  controller.delta_p =
+      pin->GetOrAddReal("ref_gh", "controller_delta_p", 0.0);
+  controller.delta_p_dot =
+      pin->GetOrAddReal("ref_gh", "controller_delta_p_dot", 0.0);
+  const Real stored_generation =
+      pin->GetOrAddReal("ref_gh", "controller_generation", 0.0);
+  if (!(stored_generation >= 0.0) || !std::isfinite(stored_generation)) {
+    std::cout << "### FATAL ERROR: invalid stored Ref-GH controller generation."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  controller_generation = static_cast<std::uint64_t>(stored_generation);
+  controller_base = controller;
   const int derivative_radius = opt.fd_order/2;
   if ((opt.fd_order != 2 && opt.fd_order != 4 && opt.fd_order != 6)
       || ppack->pmesh->mb_indcs.ng < 2*derivative_radius) {
@@ -114,10 +168,20 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   if (opt.gamma0 <= 0.0 || opt.diss < 0.0 || opt.fail_closed_dt < 0.0
       || opt.reference_mass <= 0.0
+      || opt.r_core0 <= 0.0 || opt.tau_core <= 0.0
+      || opt.kappa_core <= 0.0 || opt.tau_transition <= 0.0
+      || opt.r_fit_min <= 0.0 || opt.r_fit_max <= opt.r_fit_min
+      || opt.regularization_outer_start <= opt.r_fit_max
+      || opt.regularization_outer_end <= opt.regularization_outer_start
+      || opt.controller_zeta <= 0.0 || opt.controller_omega_q <= 0.0
+      || opt.controller_omega_p <= 0.0
+      || opt.controller_acceleration_limit <= 0.0
+      || opt.controller_delta_bound <= 0.0 || opt.controller_rate_bound <= 0.0
       || opt.extrap_order < 2 || opt.extrap_order > 4) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "ref_gh requires gamma0>0, diss>=0, fail_closed_dt>=0, "
-              << "and extrap_order in [2,4]." << std::endl;
+              << "valid positive reference/controller scales, and extrap_order "
+                 "in [2,4]." << std::endl;
     std::exit(EXIT_FAILURE);
   }
   if (ppack->pmesh->multilevel && opt.fd_order == 6) {
@@ -152,7 +216,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     const int cn3 = (indcs.cnx3 > 1) ? indcs.cnx3 + 2*indcs.ng : 1;
     Kokkos::realloc(coarse_u0, nmb, nref_gh, cn3, cn2, cn1);
   }
-  if (opt.reference_kind == 1) {
+  if (opt.reference_kind == 1 || opt.reference_kind == 5) {
     Kokkos::realloc(reference_table, kTrumpetProfiles, kTrumpetTableSize);
     auto host_table = Kokkos::create_mirror_view(reference_table);
     for (int i = 0; i < kTrumpetTableSize; ++i) {

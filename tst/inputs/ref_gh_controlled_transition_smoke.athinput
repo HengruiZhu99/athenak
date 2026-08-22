@@ -1,0 +1,68 @@
+# Small open-loop controlled-reference transition smoke test.
+
+<job>
+basename = ref_gh_controlled_transition_smoke
+
+<mesh>
+nghost = 4
+nx1 = 8
+x1min = -2.0
+x1max = 2.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 8
+x2min = -2.0
+x2max = 2.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 8
+x3min = -2.0
+x3max = 2.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+nlim = 10000
+tlim = 0.1
+ndiag = 1
+
+<ref_gh>
+reference = controlled_transition
+source = covariant
+reference_mass = 1.0
+fd_order = 4
+validate_reference_cache = false
+controller_enabled = false
+r_core0 = 0.30
+tau_core = 1.5
+kappa_core = 1.0
+tau_transition = 4.0
+r_fit_min = 0.15
+r_fit_max = 0.40
+regularization_outer_start = 0.50
+regularization_outer_end = 0.60
+gamma0 = 1.0
+diss = 0.02
+
+<problem>
+pgen_name = ref_gh_controlled_transition
+user_hist = true
+common_adm_history = true
+common_adm_fd_order = 4
+
+<output1>
+file_type = hst
+dt = 0.05
+data_format = %20.15e
+
+<output2>
+file_type = rst
+dt = 0.05

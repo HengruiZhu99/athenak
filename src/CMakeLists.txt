@@ -169,6 +169,7 @@ add_executable(
         pgen/ref_gh/source_unit.cpp
         pgen/ref_gh/stability.cpp
         pgen/ref_gh/stationary_trumpet.cpp
+        pgen/ref_gh/controlled_transition.cpp
 
         radiation/radiation.cpp
         radiation/radiation_fluxes.cpp

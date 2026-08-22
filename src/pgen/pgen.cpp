@@ -1062,6 +1062,10 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     RefGhStationaryTrumpet(pin, is_restart);
   } else if (pgen_fun_name.compare("ref_gh_perturbed_trumpet") == 0) {
     RefGhStationaryTrumpet(pin, is_restart);
+  } else if (pgen_fun_name.compare("ref_gh_wormhole") == 0
+             || pgen_fun_name.compare("ref_gh_controlled_transition") == 0
+             || pgen_fun_name.compare("ref_gh_estimator_calibration") == 0) {
+    RefGhControlledTransition(pin, is_restart);
 
   } else {
     // name not set on command line or input file, print warning and quit

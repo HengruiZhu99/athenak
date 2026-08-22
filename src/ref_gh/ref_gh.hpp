@@ -5,6 +5,8 @@
 #ifndef REF_GH_REF_GH_HPP_
 #define REF_GH_REF_GH_HPP_
 
+#include <cstdint>
+
 #include "athena.hpp"
 #include "parameter_input.hpp"
 #include "ref_gh/ref_gh_state.hpp"
@@ -36,6 +38,8 @@ class RefGh {
     int extrap_order;
     int reference_kind;
     bool reference_time_dependent;
+    bool reference_controlled;
+    bool controller_enabled;
     int source_kind;
     bool debug_task_fences;
     bool validate_reference_cache;
@@ -44,7 +48,50 @@ class RefGh {
     Real fail_closed_dt;
     Real reference_mass;
     Real reference_center[3];  // NOLINT(runtime/arrays)
+    Real r_core0;
+    Real tau_core;
+    Real kappa_core;
+    Real tau_transition;
+    Real r_fit_min;
+    Real r_fit_max;
+    Real regularization_outer_start;
+    Real regularization_outer_end;
+    Real controller_zeta;
+    Real controller_omega_q;
+    Real controller_omega_p;
+    Real controller_acceleration_limit;
+    Real controller_delta_bound;
+    Real controller_rate_bound;
   } opt;
+
+  struct ControllerState {
+    Real delta_q;
+    Real delta_q_dot;
+    Real delta_p;
+    Real delta_p_dot;
+  };
+
+  struct ControllerDiagnostics {
+    Real e_G;
+    Real e_alpha;
+    Real fitting_cell_count;
+    Real lambda_min;
+    Real lambda_max;
+    Real det_g_third_min;
+    Real det_g_third_max;
+    Real condition_max;
+    Real relative_lapse_min;
+    Real relative_lapse_max;
+    Real v2_max;
+    Real psi_max;
+    Real inverse_psi_max;
+    Real physical_lapse_min;
+    Real physical_lapse_max;
+    Real r_core;
+    Real transition_amplitude;
+    bool feedback_active;
+    bool fitting_shell_valid;
+  };
 
   RefGh(MeshBlockPack *ppack, ParameterInput *pin);
   ~RefGh();
@@ -61,6 +108,13 @@ class RefGh {
   DvceArray2D<Real> reference_table;
   Real reference_cache_time;
   Real reference_diagnostic_time;
+  std::uint64_t controller_generation;
+  std::uint64_t reference_cache_generation;
+  std::uint64_t reference_diagnostic_generation;
+  ControllerState controller;
+  ControllerState controller_base;
+  ControllerState controller_rhs;
+  ControllerDiagnostics controller_diagnostics;
   bool reference_cache_oracle_validated;
   bool reference_diagnostic_oracle_validated;
   Real dtnew;
@@ -80,6 +134,8 @@ class RefGh {
   TaskStatus ClearRecv(Driver *driver, int stage);
   TaskStatus ClearSend(Driver *driver, int stage);
   TaskStatus CopyU(Driver *driver, int stage);
+  TaskStatus MeasureController(Driver *driver, int stage);
+  void MeasureControllerAtTime(Real stage_time);
   TaskStatus UpdateReferenceGeometry(Driver *driver, int stage);
   TaskStatus ExpRKUpdate(Driver *driver, int stage);
   TaskStatus RestrictU(Driver *driver, int stage);
@@ -93,7 +149,9 @@ class RefGh {
  private:
   Real StageTime(const Driver *driver, int stage) const;
   void FillReferenceCache(Real time, bool include_diagnostics);
+  void PersistControllerState();
   MeshBlockPack *pmy_pack;
+  ParameterInput *pinput;
 };
 
 }  // namespace ref_gh

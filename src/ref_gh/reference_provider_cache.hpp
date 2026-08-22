@@ -7,6 +7,7 @@
 
 #include "athena.hpp"
 #include "ref_gh/reference_cache.hpp"
+#include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_time_dependent_lapse.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
@@ -20,7 +21,7 @@ struct ReferenceProviderMetadata {
 KOKKOS_INLINE_FUNCTION
 constexpr ReferenceProviderMetadata GetReferenceProviderMetadata(
     const int reference_kind) {
-  return {reference_kind == 2 || reference_kind == 3};
+  return {reference_kind == 2 || reference_kind == 3 || reference_kind == 5};
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -123,6 +124,7 @@ void PopulateReferenceProviderCache(
     const int reference_kind, const DvceArray2D<Real> &table, const Real mass,
     const Real center_x, const Real center_y, const Real center_z,
     const Real time, const Real x, const Real y, const Real z,
+    const ControlledReferenceParameters &controlled,
     const ReferenceProviderPoint &point) {
   if (reference_kind == 0) {
     for (int component = 0; component < kReferenceProviderSize; ++component) {
@@ -144,6 +146,32 @@ void PopulateReferenceProviderCache(
     StoreProviderJet(ConstantJet(1.0), kRefProviderAlpha, point);
     StoreProviderJet(provider.ScaleJet(time), kRefProviderPsi2, point);
     StoreProviderJet(provider.ShiftQJet(time), kRefProviderShiftQ, point);
+    point.provider(point.m, kRefProviderArealRadius,
+                   point.k, point.j, point.i) = 0.0;
+    return;
+  }
+  if (reference_kind == 4) {
+    ReferenceJet alpha;
+    ReferenceJet psi2;
+    ReferenceJet shift_q;
+    WormholeProfileJets(mass, x, y, z, center_x, center_y, center_z,
+                        alpha, psi2, shift_q);
+    StoreProviderJet(alpha, kRefProviderAlpha, point);
+    StoreProviderJet(psi2, kRefProviderPsi2, point);
+    StoreProviderJet(shift_q, kRefProviderShiftQ, point);
+    point.provider(point.m, kRefProviderArealRadius,
+                   point.k, point.j, point.i) = 0.0;
+    return;
+  }
+  if (reference_kind == 5) {
+    ReferenceJet alpha;
+    ReferenceJet psi2;
+    ReferenceJet shift_q;
+    ControlledTransitionProfileJets(table, controlled, time, x, y, z,
+                                    alpha, psi2, shift_q);
+    StoreProviderJet(alpha, kRefProviderAlpha, point);
+    StoreProviderJet(psi2, kRefProviderPsi2, point);
+    StoreProviderJet(shift_q, kRefProviderShiftQ, point);
     point.provider(point.m, kRefProviderArealRadius,
                    point.k, point.j, point.i) = 0.0;
     return;
@@ -291,7 +319,8 @@ KOKKOS_INLINE_FUNCTION
 Real ProviderStructure(const int reference_kind,
                        const ReferenceProviderPoint &point,
                        const int I, const int J, const int K) {
-  if (reference_kind == 0) return 0.0;
+  if (reference_kind == 0 || reference_kind == 2
+      || reference_kind == 3) return 0.0;
   const ReferenceJet inverse_psi2 =
       Reciprocal(LoadProviderJet(point, kRefProviderPsi2));
   return ((J == K) ? inverse_psi2.d[I + 1] : 0.0)

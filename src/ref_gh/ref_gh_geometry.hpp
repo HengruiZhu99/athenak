@@ -8,6 +8,7 @@
 #include "athena.hpp"
 #include "ref_gh/ref_gh_state.hpp"
 #include "ref_gh/reference_cache.hpp"
+#include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_time_dependent_lapse.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
@@ -104,6 +105,13 @@ ReferenceGeometry GetReferenceGeometry(const int reference_kind,
     TimeDependentSpatialReference().Populate(time, x, y, z, reference);
     return reference;
   }
+  if (reference_kind == 4) {
+    ReferenceGeometry reference;
+    WormholeSchwarzschildReference provider{
+        mass, {center_x, center_y, center_z}};
+    provider.Populate(time, x, y, z, reference);
+    return reference;
+  }
   TrumpetSchwarzschildReference provider{table, mass,
                                          {center_x, center_y, center_z}};
   return provider(time, x, y, z);
@@ -131,9 +139,33 @@ void GetReferenceGeometry(const int reference_kind,
     TimeDependentSpatialReference().Populate(time, x, y, z, reference);
     return;
   }
+  if (reference_kind == 4) {
+    const WormholeSchwarzschildReference provider{
+        mass, {center_x, center_y, center_z}};
+    provider.Populate(time, x, y, z, reference);
+    return;
+  }
   const TrumpetSchwarzschildReference provider{
       table, mass, {center_x, center_y, center_z}};
   provider.Populate(time, x, y, z, reference);
+}
+
+KOKKOS_INLINE_FUNCTION
+void GetReferenceGeometry(const int reference_kind,
+                          const DvceArray2D<Real> &table,
+                          const Real mass, const Real center_x,
+                          const Real center_y, const Real center_z,
+                          const Real time, const Real x,
+                          const Real y, const Real z,
+                          const ControlledReferenceParameters &controlled,
+                          ReferenceGeometry &reference) {
+  if (reference_kind == 5) {
+    const ControlledSchwarzschildReference provider{table, controlled};
+    provider.Populate(time, x, y, z, reference);
+    return;
+  }
+  GetReferenceGeometry(reference_kind, table, mass, center_x, center_y,
+                       center_z, time, x, y, z, reference);
 }
 
 KOKKOS_INLINE_FUNCTION

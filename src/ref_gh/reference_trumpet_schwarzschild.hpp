@@ -142,6 +142,51 @@ ReferenceJet Reciprocal(const ReferenceJet &input) {
 }
 
 KOKKOS_INLINE_FUNCTION
+ReferenceJet Log(const ReferenceJet &input) {
+  ReferenceJet result;
+  const Real inverse = 1.0/input.value;
+  result.value = Kokkos::log(input.value);
+  for (int a = 0; a < 4; ++a) {
+    result.d[a] = input.d[a]*inverse;
+    for (int b = 0; b < 4; ++b) {
+      result.dd[a][b] = input.dd[a][b]*inverse
+                        - input.d[a]*input.d[b]*inverse*inverse;
+    }
+  }
+  return result;
+}
+
+KOKKOS_INLINE_FUNCTION
+ReferenceJet Exp(const ReferenceJet &input) {
+  ReferenceJet result;
+  result.value = Kokkos::exp(input.value);
+  for (int a = 0; a < 4; ++a) {
+    result.d[a] = result.value*input.d[a];
+    for (int b = 0; b < 4; ++b) {
+      result.dd[a][b] = result.value
+                        *(input.dd[a][b] + input.d[a]*input.d[b]);
+    }
+  }
+  return result;
+}
+
+KOKKOS_INLINE_FUNCTION
+ReferenceJet Sqrt(const ReferenceJet &input) {
+  ReferenceJet result;
+  result.value = Kokkos::sqrt(input.value);
+  const Real inverse_two_root = 0.5/result.value;
+  const Real inverse_four_root3 = 0.25/(result.value*result.value*result.value);
+  for (int a = 0; a < 4; ++a) {
+    result.d[a] = inverse_two_root*input.d[a];
+    for (int b = 0; b < 4; ++b) {
+      result.dd[a][b] = inverse_two_root*input.dd[a][b]
+                        - inverse_four_root3*input.d[a]*input.d[b];
+    }
+  }
+  return result;
+}
+
+KOKKOS_INLINE_FUNCTION
 ReferenceJet RadialJet(const RadialProfile &profile, const Real mass,
                        const Real displacement[3], const Real radius) {
   ReferenceJet result = ConstantJet(profile.value);
