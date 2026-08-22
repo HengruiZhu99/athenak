@@ -1,0 +1,144 @@
+#!/bin/bash -l
+# Three-resolution Ref-GH open- or closed-loop transition through t=4M.
+# Submit with EXPECTED_COMMIT=<full sha>, MODE=open_loop|closed_loop.
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=14:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_ctrl_t4
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1
+SRC="${ROOT}/src"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full-sha>}"
+: "${MODE:?submit with MODE=open_loop or MODE=closed_loop}"
+case "${MODE}" in
+  open_loop) CONTROLLER=false ;;
+  closed_loop) CONTROLLER=true ;;
+  *) echo "invalid MODE=${MODE}" >&2; exit 2 ;;
+esac
+BUILD="${ROOT}/build_production_${EXPECTED_COMMIT:0:12}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/tst/inputs/ref_gh_controlled_transition.athinput"
+ANALYZE="${SRC}/scripts/ref_gh/analyze_controlled_transition.py"
+OUT="${ROOT}/runs/${MODE}_t4_${PBS_JOBID}"
+PYTHON=$(command -v python3)
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "mode=${MODE}"
+  echo "controller_enabled=${CONTROLLER}"
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  "${PYTHON}" --version
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${ANALYZE}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens \
+  > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n 8 --ppn 8 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 8
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 8
+
+run_case() (
+  local label="$1"
+  local root_cells="$2"
+  local mb_cells="$3"
+  local work="${OUT}/${label}"
+  mkdir -p "${work}"
+  cd "${work}"
+  mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+    gpu_tile_compact.sh "${EXE}" -m -i "${INPUT}" \
+    mesh/nx1="${root_cells}" mesh/nx2="${root_cells}" mesh/nx3="${root_cells}" \
+    meshblock/nx1="${mb_cells}" meshblock/nx2="${mb_cells}" meshblock/nx3="${mb_cells}" \
+    > mesh_structure.txt 2>&1
+  grep -q 'Total number of MeshBlocks = 34' mesh_structure.txt
+  /usr/bin/time -p mpiexec -n 8 --ppn 8 --depth=16 --cpu-bind depth \
+    gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+    job/basename="${label}" \
+    mesh/nx1="${root_cells}" mesh/nx2="${root_cells}" mesh/nx3="${root_cells}" \
+    meshblock/nx1="${mb_cells}" meshblock/nx2="${mb_cells}" meshblock/nx3="${mb_cells}" \
+    ref_gh/controller_enabled="${CONTROLLER}" time/tlim=4.0 time/nlim=-1 \
+    > "${label}.log" 2>&1
+  test -s "${label}.ref_gh.hst"
+  test -s "${label}.user.hst"
+  for instance in 0 1 2 3 4 5; do test -s "${label}.adm_common${instance}.hst"; done
+  awk 'BEGIN {ok=0} !/^#/ && $1 >= 4.0 - 1.0e-12 && $22 == 0 {ok=1} END {exit !ok}' "${label}.ref_gh.hst"
+  awk 'BEGIN {ok=0} !/^#/ && $1 >= 4.0 - 1.0e-12 && $26 == 1 {ok=1} END {exit !ok}' "${label}.user.hst"
+  if test "${CONTROLLER}" = true; then
+    awk 'BEGIN {ok=0} !/^#/ && $1 >= 4.0 - 1.0e-12 && $25 == 1 {ok=1} END {exit !ok}' "${label}.user.hst"
+  fi
+  ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' "${label}.log"
+  grep 'reference-GH controlled Schwarzschild final:' "${label}.log" | tail -1 > case_status.txt
+)
+
+# Preserve the most expensive member first if the scheduler interrupts the job.
+fine="ref_gh_${MODE}_dx32_t4"
+medium="ref_gh_${MODE}_dx24_t4"
+coarse="ref_gh_${MODE}_dx16_t4"
+run_case "${fine}" 192 64
+run_case "${medium}" 144 48
+run_case "${coarse}" 96 32
+
+"${PYTHON}" "${ANALYZE}" \
+  --mode "${MODE}" \
+  --coarse "${OUT}/${coarse}" --medium "${OUT}/${medium}" --fine "${OUT}/${fine}" \
+  --output-prefix "${OUT}/${MODE}_convergence"
+paste "${OUT}/${coarse}/case_status.txt" "${OUT}/${medium}/case_status.txt" \
+      "${OUT}/${fine}/case_status.txt" > case_status.txt
+{
+  echo "campaign=PASS"
+  echo "mode=${MODE}"
+  echo "completed_time=4.0"
+  echo "boundary_faces=6.0"
+  sha256sum "${OUT}/${MODE}_convergence.json" "${OUT}/${MODE}_convergence.tsv"
+} > campaign_status.txt
+find . -type f \( -name '*.hst' -o -name '*.json' -o -name '*.tsv' \
+  -o -name '*status.txt' -o -name 'provenance.txt' -o -name 'rank_gpu_mapping.txt' \
+  -o -name 'mesh_structure.txt' \) -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt

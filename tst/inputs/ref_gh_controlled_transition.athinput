@@ -1,0 +1,106 @@
+# Three-resolution open/closed-loop Schwarzschild reference transition.
+# The root grid is 3^3 MeshBlocks on [-6,6]^3.  Refining the central root
+# MeshBlock produces 26 level-0 plus 8 level-1 blocks and finest coverage
+# [-2,2]^3.  Override root/MB cells together as 96/32, 144/48, or 192/64.
+
+<job>
+basename = ref_gh_controlled_transition_dx16
+
+<mesh>
+nghost = 4
+nx1 = 96
+x1min = -6.0
+x1max = 6.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 96
+x2min = -6.0
+x2max = 6.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 96
+x3min = -6.0
+x3max = 6.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 32
+nx2 = 32
+nx3 = 32
+
+<mesh_refinement>
+refinement = static
+num_levels = 2
+max_nmb_per_rank = 128
+
+<refined_region1>
+level = 1
+x1min = -2.0
+x1max = 2.0
+x2min = -2.0
+x2max = 2.0
+x3min = -2.0
+x3max = 2.0
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+nlim = -1
+tlim = 4.0
+ndiag = 10
+
+<ref_gh>
+reference = controlled_transition
+source = covariant
+reference_mass = 1.0
+fd_order = 4
+debug_task_fences = false
+validate_reference_cache = false
+controller_enabled = false
+r_core0 = 0.30
+tau_core = 1.5
+kappa_core = 1.0
+tau_transition = 4.0
+r_fit_min = 0.15
+r_fit_max = 0.40
+# The default remains the conservative four-cell example.  One cell is used
+# here because four finest cells exceed r_fit_min at dx=M/16 and M/24.
+controller_fit_buffer_cells = 1.0
+regularization_outer_start = 0.50
+regularization_outer_end = 0.60
+controller_zeta = 1.0
+controller_omega_q = 0.25
+controller_omega_p = 0.25
+controller_acceleration_limit = 0.05
+controller_delta_bound = 0.25
+controller_rate_bound = 0.10
+gamma0 = 1.0
+diss = 0.02
+fail_closed_dt = 1.0e-12
+
+<problem>
+pgen_name = ref_gh_controlled_transition
+user_hist = true
+common_adm_history = true
+common_adm_fd_order = 4
+
+<output1>
+file_type = hst
+dt = 0.05
+data_format = %20.15e
+
+<output2>
+file_type = rst
+dt = 1.0
+
+<output3>
+file_type = cbin
+variable = adm_common
+id = adm_common
+dt = 4.0
+coarsen_factor = 1
+compute_moments = false
+binary64 = true
+single_file_per_rank = false

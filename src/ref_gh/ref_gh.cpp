@@ -126,6 +126,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.tau_transition = pin->GetOrAddReal("ref_gh", "tau_transition", 4.0);
   opt.r_fit_min = pin->GetOrAddReal("ref_gh", "r_fit_min", 0.15);
   opt.r_fit_max = pin->GetOrAddReal("ref_gh", "r_fit_max", 0.40);
+  opt.controller_fit_buffer_cells =
+      pin->GetOrAddReal("ref_gh", "controller_fit_buffer_cells", 4.0);
   opt.regularization_outer_start =
       pin->GetOrAddReal("ref_gh", "regularization_outer_start", 0.50);
   opt.regularization_outer_end =
@@ -171,6 +173,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       || opt.r_core0 <= 0.0 || opt.tau_core <= 0.0
       || opt.kappa_core <= 0.0 || opt.tau_transition <= 0.0
       || opt.r_fit_min <= 0.0 || opt.r_fit_max <= opt.r_fit_min
+      || opt.controller_fit_buffer_cells <= 0.0
       || opt.regularization_outer_start <= opt.r_fit_max
       || opt.regularization_outer_end <= opt.regularization_outer_start
       || opt.controller_zeta <= 0.0 || opt.controller_omega_q <= 0.0

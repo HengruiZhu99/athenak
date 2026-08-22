@@ -54,6 +54,7 @@ class RefGh {
     Real tau_transition;
     Real r_fit_min;
     Real r_fit_max;
+    Real controller_fit_buffer_cells;
     Real regularization_outer_start;
     Real regularization_outer_end;
     Real controller_zeta;

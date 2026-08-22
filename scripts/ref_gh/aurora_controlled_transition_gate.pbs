@@ -114,6 +114,6 @@ grep -q 'controller_delta_q' checkpoint.strings
 {
   echo "gate=PASS"
   echo "checkpoint=${OUT}/one_cycle/${checkpoint}"
-  tail -1 controlled_gate.user.hst
-  tail -1 controlled_restart.user.hst
+  tail -1 "${OUT}/one_cycle/controlled_gate.user.hst"
+  tail -1 "${OUT}/restart/controlled_restart.user.hst"
 } > "${OUT}/gate_status.txt"

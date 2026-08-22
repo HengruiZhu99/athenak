@@ -587,7 +587,7 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
   }
   const Real r_full = (1.0 + opt.kappa_core)*controller_diagnostics.r_core;
   const bool feedback_active = opt.controller_enabled && shell_valid
-      && r_full + 4.0*finest_spacing < fit_min;
+      && r_full + opt.controller_fit_buffer_cells*finest_spacing < fit_min;
   controller_diagnostics.feedback_active = feedback_active;
 
   // Freeze all four variables if feedback is disabled or the shell is invalid.
