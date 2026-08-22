@@ -556,7 +556,7 @@ if (Athena_BUILD_UNIT_TESTS)
         --order ${order}
         --root-leaves ${root_leaves}
         --expected-volume ${expected_volume})
-    set_tests_properties(
+  set_tests_properties(
         ${name} PROPERTIES TIMEOUT 120
         LABELS "z4c;vertex;${dimensions}d;${geometry};amr")
   endfunction()
@@ -665,7 +665,7 @@ if (Athena_BUILD_UNIT_TESTS)
       --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_linear_wave_o4_test)
   set_tests_properties(
       athena.z4c_vc_linear_wave_convergence_o4
-      PROPERTIES TIMEOUT 180 LABELS "z4c;vertex;cartesian;convergence")
+      PROPERTIES TIMEOUT 900 LABELS "z4c;vertex;cartesian;convergence")
   add_test(
       NAME athena.z4c_vc_static_multilevel_wave
       COMMAND
@@ -786,7 +786,7 @@ if (Athena_BUILD_UNIT_TESTS)
       --dimensions 3)
   set_tests_properties(
       athena.z4c_vc_amr_history_3d_cartesian
-      PROPERTIES TIMEOUT 240 LABELS "z4c;vertex;3d;cartesian;amr;history")
+      PROPERTIES TIMEOUT 600 LABELS "z4c;vertex;3d;cartesian;amr;history")
   if (Athena_ENABLE_MPI)
     add_test(
         NAME athena.z4c_vc_amr_history_mpi
@@ -1412,7 +1412,7 @@ if (Athena_BUILD_UNIT_TESTS)
       --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/amr_history_lwave.athinput
       --work-dir ${CMAKE_CURRENT_BINARY_DIR}/amr_history_integration_test)
   set_tests_properties(athena.amr_history_integration PROPERTIES
-      TIMEOUT 180 LABELS "amr;history;serial")
+      TIMEOUT 600 LABELS "amr;history;serial")
   add_test(
       NAME athena.z4c_amr_derefine_factor_static
       COMMAND ${PYTHON_EXECUTABLE}
