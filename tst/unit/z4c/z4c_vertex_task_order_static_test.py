@@ -6,6 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 TASKS = (ROOT / "src/z4c/z4c_tasks.cpp").read_text(encoding="utf-8")
+REFINEMENT = (ROOT / "src/mesh/mesh_refinement_vc.cpp").read_text(encoding="utf-8")
 
 
 def require(fragment: str, message: str) -> None:
@@ -30,5 +31,10 @@ for fragment in (
     require(fragment, f"accepted VC rebuild is missing {fragment}")
 require("Task_Run, {Z4c_VCFinalize}",
         "ADM conversion must depend on accepted VC finalization")
+if ("const auto flags = refine_flag.d_view;" not in REFINEMENT or
+        "const auto new_to_old_device = new_to_old.d_view;" not in REFINEMENT):
+    raise RuntimeError("native VC refinement does not capture explicit device views")
+if "flags.d_view(new_to_old.d_view" in REFINEMENT:
+    raise RuntimeError("native VC refinement captures DualView wrappers in a kernel")
 
 print("PASS: native VC accepted-state task ordering")

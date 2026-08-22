@@ -125,14 +125,18 @@ void MeshRefinement::RefineVC(DualArray1D<int> &new_to_old,
   const int nmb = new_nmb_eachrank[global_variable::my_rank];
   const int first_gid = new_gids_eachrank[global_variable::my_rank];
   const int nvar = a.extent_int(1);
-  auto &flags = refine_flag;
+  // Capture only device Views in the device closure.  Capturing a DualView wrapper
+  // makes its host-side bookkeeping part of the kernel object; CUDA happened to
+  // tolerate that representation, while SYCL exposes the invalid host indirection.
+  const auto flags = refine_flag.d_view;
+  const auto new_to_old_device = new_to_old.d_view;
   DvceArray1D<unsigned long long> invalid("invalid VC refined chi", 1);
   Kokkos::deep_copy(invalid, 0ULL);
   par_for("native VC refine", DevExeSpace(), 0, nmb - 1, 0, nvar - 1,
           layout.ks, layout.ke, layout.js, layout.je, layout.is, layout.ie,
       KOKKOS_LAMBDA(const int m, const int v, const int k,
                     const int j, const int i) {
-        if (flags.d_view(new_to_old.d_view(m + first_gid)) <= 0) return;
+        if (flags(new_to_old_device(m + first_gid)) <= 0) return;
         Real value = 0.0;
         if (order == 2) {
           value = vertex_amr::ProlongVCPoint<2>(
