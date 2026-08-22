@@ -1,6 +1,7 @@
 #!/bin/bash -l
 # Three-resolution Ref-GH open- or closed-loop transition through t=4M.
-# Submit with EXPECTED_COMMIT=<full sha>, MODE=open_loop|closed_loop.
+# Submit with EXPECTED_COMMIT=<full sha>, MODE=open_loop|closed_loop, and
+# optionally CASE_SET=all|remaining|fine|medium|coarse.
 #PBS -A CompactBinaryMerger
 #PBS -q capacity
 #PBS -l select=1
@@ -16,6 +17,7 @@ ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_202608
 SRC="${ROOT}/src"
 : "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full-sha>}"
 : "${MODE:?submit with MODE=open_loop or MODE=closed_loop}"
+CASE_SET=${CASE_SET:-all}
 case "${MODE}" in
   open_loop) CONTROLLER=false ;;
   closed_loop) CONTROLLER=true ;;
@@ -49,6 +51,7 @@ test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
   qstat -f "${PBS_JOBID}"
   echo "mode=${MODE}"
   echo "controller_enabled=${CONTROLLER}"
+  echo "case_set=${CASE_SET}"
   echo "source_commit=${actual_commit}"
   git -C "${SRC}" status --short --branch
   git -C "${SRC}" submodule status
@@ -109,6 +112,7 @@ run_case() (
   grep -q 'Root grid = 3 x 3 x 3 MeshBlocks' mesh_structure.txt
   grep -q 'Total number of MeshBlocks = 34' mesh_structure.txt
   grep -q 'Number of physical levels of refinement = 1 (2 levels total)' mesh_structure.txt
+  set +e
   /usr/bin/time -p mpiexec -n 8 --ppn 8 --depth=16 --cpu-bind depth \
     gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
     job/basename="${label}" \
@@ -116,6 +120,22 @@ run_case() (
     meshblock/nx1="${mb_cells}" meshblock/nx2="${mb_cells}" meshblock/nx3="${mb_cells}" \
     ref_gh/controller_enabled="${CONTROLLER}" time/tlim=4.0 time/nlim=-1 \
     > "${label}.log" 2>&1
+  run_status=$?
+  set -e
+  {
+    echo "run_exit_status=${run_status}"
+    if test -s "${label}.ref_gh.hst"; then
+      echo -n "last_ref_gh_row="
+      tail -1 "${label}.ref_gh.hst"
+    fi
+    if test -s "${label}.user.hst"; then
+      echo -n "last_user_row="
+      tail -1 "${label}.user.hst"
+    fi
+  } > case_status.txt
+  if test "${run_status}" -ne 0; then
+    return 1
+  fi
   test -s "${label}.ref_gh.hst"
   test -s "${label}.user.hst"
   for instance in 0 1 2 3 4 5; do test -s "${label}.adm_common${instance}.hst"; done
@@ -125,29 +145,42 @@ run_case() (
     awk 'BEGIN {ok=0} !/^#/ && $1 >= 4.0 - 1.0e-12 && $25 == 1 {ok=1} END {exit !ok}' "${label}.user.hst"
   fi
   ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' "${label}.log"
-  grep 'reference-GH controlled Schwarzschild final:' "${label}.log" | tail -1 > case_status.txt
+  grep 'reference-GH controlled Schwarzschild final:' "${label}.log" | tail -1 >> case_status.txt
 )
 
 # Preserve the most expensive member first if the scheduler interrupts the job.
 fine="ref_gh_${MODE}_dx32_t4"
 medium="ref_gh_${MODE}_dx24_t4"
 coarse="ref_gh_${MODE}_dx16_t4"
-run_case "${fine}" 192 64
-run_case "${medium}" 144 48
-run_case "${coarse}" 96 32
+case "${CASE_SET}" in
+  all) selected=("${fine}:192:64" "${medium}:144:48" "${coarse}:96:32") ;;
+  remaining) selected=("${medium}:144:48" "${coarse}:96:32") ;;
+  fine) selected=("${fine}:192:64") ;;
+  medium) selected=("${medium}:144:48") ;;
+  coarse) selected=("${coarse}:96:32") ;;
+  *) echo "invalid CASE_SET=${CASE_SET}" >&2; exit 2 ;;
+esac
+campaign_failed=0
+for specification in "${selected[@]}"; do
+  IFS=: read -r label root_cells mb_cells <<< "${specification}"
+  if ! run_case "${label}" "${root_cells}" "${mb_cells}"; then
+    campaign_failed=1
+  fi
+done
 
-"${PYTHON}" "${ANALYZE}" \
-  --mode "${MODE}" \
-  --coarse "${OUT}/${coarse}" --medium "${OUT}/${medium}" --fine "${OUT}/${fine}" \
-  --output-prefix "${OUT}/${MODE}_convergence"
-paste "${OUT}/${coarse}/case_status.txt" "${OUT}/${medium}/case_status.txt" \
-      "${OUT}/${fine}/case_status.txt" > case_status.txt
+if test "${CASE_SET}" = all -a "${campaign_failed}" -eq 0; then
+  "${PYTHON}" "${ANALYZE}" \
+    --mode "${MODE}" \
+    --coarse "${OUT}/${coarse}" --medium "${OUT}/${medium}" --fine "${OUT}/${fine}" \
+    --output-prefix "${OUT}/${MODE}_convergence"
+fi
+find . -name case_status.txt -type f ! -path ./case_status.txt -print0 \
+  | sort -z | xargs -0 cat > case_status.txt
 {
-  echo "campaign=PASS"
+  if test "${campaign_failed}" -eq 0; then echo "campaign=PASS"; else echo "campaign=FAIL"; fi
   echo "mode=${MODE}"
-  echo "completed_time=4.0"
+  echo "case_set=${CASE_SET}"
   echo "boundary_faces=6.0"
-  sha256sum "${OUT}/${MODE}_convergence.json" "${OUT}/${MODE}_convergence.tsv"
 } > campaign_status.txt
 find . -type f \( -name '*.hst' -o -name '*.json' -o -name '*.tsv' \
   -o -name '*status.txt' -o -name 'provenance.txt' -o -name 'rank_gpu_mapping.txt' \
