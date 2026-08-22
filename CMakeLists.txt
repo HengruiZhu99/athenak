@@ -823,6 +823,31 @@ if (Athena_BUILD_UNIT_TESTS)
       --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_output_test)
   set_tests_properties(
       athena.z4c_vc_output PROPERTIES TIMEOUT 90 LABELS "z4c;vertex;output")
+  add_test(
+      NAME athena.z4c_vc_output_2d_cartoon
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_output_test.py
+      --athena $<TARGET_FILE:athena>
+      --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_output.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_output_2d_cartoon)
+  set_tests_properties(
+      athena.z4c_vc_output_2d_cartoon
+      PROPERTIES TIMEOUT 90 LABELS "z4c;vertex;output;2d;cartoon")
+  add_test(
+      NAME athena.z4c_vc_output_3d_cartesian
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_output_test.py
+      --athena $<TARGET_FILE:athena>
+      --input
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_output_3d_cartesian.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_output_3d_cartesian
+      --dimensions 3 --active-n1 9 --active-n2 9 --active-n3 9
+      --multiblock-nx1 16)
+  set_tests_properties(
+      athena.z4c_vc_output_3d_cartesian
+      PROPERTIES TIMEOUT 120 LABELS "z4c;vertex;output;3d;cartesian")
 
   add_executable(
       athena_z4c_vertex_to_cell_unit_test

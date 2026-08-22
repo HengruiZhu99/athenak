@@ -1,0 +1,94 @@
+# Native-Z4c 3D Cartesian output and history sampling fixture.
+
+<job>
+basename = z4c_vc_output
+
+<mesh>
+nghost = 4
+nx1 = 8
+x1min = -1.0
+x1max = 1.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 8
+x2min = -1.0
+x2max = 1.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 8
+x3min = -1.0
+x3max = 1.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = 1
+tlim = 0.01
+
+<z4c>
+grid_centering = vertex
+symmetry = cartesian3d
+coordinate_map = cartesian_xyz
+symmetry_schema = 1
+spatial_order = 6
+diss = 0.02
+chi_div_floor = 1.0e-5
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+lapse_oplog = 2.0
+lapse_harmonicf = 1.0
+lapse_harmonic = 0.0
+lapse_advect = 1.0
+shift_Gamma = 0.0
+shift_eta = 0.0
+shift_advect = 0.0
+
+<problem>
+pgen_name = z4c_vc_minkowski
+
+<output1>
+file_type = tab
+variable = z4c_chi
+slice_x2 = 0.0
+slice_x3 = 0.0
+dcycle = 1
+
+<output2>
+file_type = bin
+variable = z4c_chi
+dcycle = 1
+
+<output3>
+file_type = vtk
+variable = z4c_chi
+dcycle = 1
+
+<output4>
+file_type = bin
+variable = adm
+id = adm
+dcycle = 1
+
+<output5>
+file_type = bin
+variable = con
+id = con
+dcycle = 1
+
+<output6>
+file_type = bin
+variable = z4c_diag
+id = diag
+dcycle = 1
+
+<output7>
+file_type = hst
+dcycle = 1
