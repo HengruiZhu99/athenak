@@ -109,6 +109,12 @@ def main() -> int:
     parser.add_argument("--work-dir", type=Path, required=True)
     args = parser.parse_args()
 
+    for attribute in (
+            "candidate_athena", "historical_athena", "candidate_cache",
+            "historical_cache", "candidate_source", "historical_source",
+            "input", "work_dir"):
+        setattr(args, attribute, getattr(args, attribute).resolve())
+
     candidate_identity = git_identity(args.candidate_source)
     historical_identity = git_identity(args.historical_source)
     cc.require(historical_identity["commit"] == HISTORICAL_COMMIT,
