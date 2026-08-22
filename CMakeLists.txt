@@ -556,7 +556,7 @@ if (Athena_BUILD_UNIT_TESTS)
         --order ${order}
         --root-leaves ${root_leaves}
         --expected-volume ${expected_volume})
-  set_tests_properties(
+    set_tests_properties(
         ${name} PROPERTIES TIMEOUT 120
         LABELS "z4c;vertex;${dimensions}d;${geometry};amr")
   endfunction()
