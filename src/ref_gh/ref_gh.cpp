@@ -72,9 +72,12 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     opt.reference_kind = 1;
   } else if (reference_name == "time_dependent_lapse_test") {
     opt.reference_kind = 2;
+  } else if (reference_name == "time_dependent_spatial_test") {
+    opt.reference_kind = 3;
   } else {
     std::cout << "### FATAL ERROR: ref_gh reference must be minkowski, trumpet, "
-                 "or time_dependent_lapse_test." << std::endl;
+                 "time_dependent_lapse_test, or time_dependent_spatial_test."
+              << std::endl;
     std::exit(EXIT_FAILURE);
   }
   opt.reference_time_dependent =

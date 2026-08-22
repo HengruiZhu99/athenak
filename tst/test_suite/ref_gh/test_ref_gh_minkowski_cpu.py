@@ -33,6 +33,14 @@ def test_ref_gh_time_dependent_reference():
         testutils.cleanup()
 
 
+def test_ref_gh_time_dependent_spatial_reference():
+    """Exercise an exact changing spatial frame and its generic curvature."""
+    try:
+        assert testutils.run("inputs/ref_gh_time_dependent_spatial.athinput")
+    finally:
+        testutils.cleanup()
+
+
 def test_ref_gh_linear_wave_convergence():
     errors = []
     try:

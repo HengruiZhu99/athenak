@@ -109,6 +109,22 @@ Real RawReferenceSpinCoordinateDerivative(const ReferenceCachePoint &reference,
 }
 
 KOKKOS_INLINE_FUNCTION
+Real RawReferenceStructure4(const ReferenceCachePoint &reference,
+                            const int E, const int C, const int D) {
+  Real value = 0.0;
+  for (int a = 0; a < 4; ++a) {
+    for (int p = 0; p < 4; ++p) {
+      value += ReferenceCoframe(reference, E, a)
+               *(ReferenceFrame(reference, C, p)
+                   *ReferenceDFrame(reference, p, D, a)
+                 - ReferenceFrame(reference, D, p)
+                   *ReferenceDFrame(reference, p, C, a));
+    }
+  }
+  return value;
+}
+
+KOKKOS_INLINE_FUNCTION
 Real WorkspaceSpinCoordinateDerivative(const ReferenceWorkspacePoint &workspace,
                                        const int p, const int pair,
                                        const int C) {
@@ -516,9 +532,10 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       evolution(m, kRefSpinDerivative + component, k, j, i) = derivative;
     });
 
-    // Stage 7: provider curvature in compact bivector form. The current trumpet
-    // provider supplies its exact vacuum Weyl tensor; the interface remains
-    // time-aware for future providers.
+    // Stage 7: curvature in compact bivector form. Preserve the optimized exact
+    // Schwarzschild Weyl tensor for the stationary trumpet. All other
+    // nontrivial providers use the generic Cartan construction from the cached
+    // spin, spin derivative, and frame commutator.
     Kokkos::parallel_for(
     "ref_gh reference curvature",
     Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*21), KOKKOS_LAMBDA(const int idx) {
@@ -544,9 +561,25 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       const ReferenceProviderPoint point{provider, m, k, j, i};
-      const Real raised = ProviderRiemann(
-          reference_kind, point, mass, x, y, z,
-          center_x, center_y, center_z, A, B, C, D);
+      Real raised = 0.0;
+      if (reference_kind == 1) {
+        raised = ProviderRiemann(reference_kind, point, mass, x, y, z,
+                                 center_x, center_y, center_z,
+                                 A, B, C, D);
+      } else if (reference_kind != 0) {
+        const ReferenceCachePoint reference{
+            evolution, diagnostic, m, k, j, i};
+        raised = ReferenceSpinDerivative(reference, C, A, B, D)
+                 - ReferenceSpinDerivative(reference, D, A, B, C);
+        for (int E = 0; E < 4; ++E) {
+          raised += ReferenceSpin(reference, A, E, C)
+                      *ReferenceSpin(reference, E, B, D)
+                    - ReferenceSpin(reference, A, E, D)
+                      *ReferenceSpin(reference, E, B, C)
+                    - RawReferenceStructure4(reference, E, C, D)
+                      *ReferenceSpin(reference, A, B, E);
+        }
+      }
       evolution(m, kRefRiemann + component, k, j, i) =
           ((A == 0) ? -1.0 : 1.0)*raised;
     });
@@ -586,7 +619,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   }
 
   if (opt.validate_reference_cache
-      && (opt.reference_kind == 2
+      && (opt.reference_time_dependent
           || !reference_cache_oracle_validated
           || !reference_diagnostic_oracle_validated)) {
     using MaxLoc = Kokkos::MaxLoc<Real, int>;

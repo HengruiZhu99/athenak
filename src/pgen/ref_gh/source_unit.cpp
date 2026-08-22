@@ -12,6 +12,7 @@
 #include "pgen/pgen.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
 #include "ref_gh/reference_geometry.hpp"
+#include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 
@@ -429,11 +430,196 @@ void CheckNonflatCovariantSource() {
             << nsamples << ", max error = " << maximum << std::endl;
 }
 
+void CheckDynamicSpatialReference() {
+  constexpr int nsamples = 128;
+  Real curvature_error = 0.0;
+  Real curvature_scale = 0.0;
+  Real spin_scale = 0.0;
+  Real dt_frame_scale = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh dynamic spatial curvature error",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum) {
+        const Real time = -0.37 + 0.013*static_cast<Real>(sample);
+        const Real x = -0.81 + 0.017*static_cast<Real>(sample % 31);
+        const Real y = 0.63 - 0.021*static_cast<Real>(sample % 29);
+        const Real z = -0.44 + 0.019*static_cast<Real>(sample % 23);
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::TimeDependentSpatialReference().Populate(time, x, y, z,
+                                                          reference);
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            for (int C = 0; C < 4; ++C) {
+              for (int D = 0; D < 4; ++D) {
+                const Real coordinate = ref_gh::CoordinateReferenceRiemannFrame(
+                    reference, A, B, C, D);
+                const Real error = Kokkos::abs(
+                    reference.riemann_frame[A][B][C][D] - coordinate);
+                local_maximum = fmax(local_maximum, error);
+              }
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(curvature_error));
+  Kokkos::parallel_reduce(
+      "ref_gh dynamic spatial curvature scale",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum) {
+        const Real time = -0.37 + 0.013*static_cast<Real>(sample);
+        const Real x = -0.81 + 0.017*static_cast<Real>(sample % 31);
+        const Real y = 0.63 - 0.021*static_cast<Real>(sample % 29);
+        const Real z = -0.44 + 0.019*static_cast<Real>(sample % 23);
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::TimeDependentSpatialReference().Populate(time, x, y, z,
+                                                          reference);
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            for (int C = 0; C < 4; ++C) {
+              for (int D = 0; D < 4; ++D) {
+                local_maximum = fmax(local_maximum,
+                    Kokkos::abs(ref_gh::CoordinateReferenceRiemannFrame(
+                        reference, A, B, C, D)));
+              }
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(curvature_scale));
+  Kokkos::parallel_reduce(
+      "ref_gh dynamic spatial spin scale",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum) {
+        const Real time = -0.37 + 0.013*static_cast<Real>(sample);
+        const Real x = -0.81 + 0.017*static_cast<Real>(sample % 31);
+        const Real y = 0.63 - 0.021*static_cast<Real>(sample % 29);
+        const Real z = -0.44 + 0.019*static_cast<Real>(sample % 23);
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::TimeDependentSpatialReference().Populate(time, x, y, z,
+                                                          reference);
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            for (int C = 0; C < 4; ++C) {
+              local_maximum = fmax(local_maximum,
+                  Kokkos::abs(reference.spin[A][B][C]));
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(spin_scale));
+  Kokkos::parallel_reduce(
+      "ref_gh dynamic spatial dt frame scale",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum) {
+        const Real time = -0.37 + 0.013*static_cast<Real>(sample);
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::TimeDependentSpatialReference().Populate(time, 0.31, -0.27,
+                                                          0.19, reference);
+        for (int I = 0; I < 3; ++I) {
+          for (int J = 0; J < 3; ++J) {
+            local_maximum = fmax(local_maximum,
+                Kokkos::abs(reference.dt_spatial_frame[I][J]));
+          }
+        }
+      }, Kokkos::Max<Real>(dt_frame_scale));
+
+  Real source_error = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh dynamic spatial source oracle",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum) {
+        const Real time = -0.37 + 0.013*static_cast<Real>(sample);
+        const Real x = -0.81 + 0.017*static_cast<Real>(sample % 31);
+        const Real y = 0.63 - 0.021*static_cast<Real>(sample % 29);
+        const Real z = -0.44 + 0.019*static_cast<Real>(sample % 23);
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::TimeDependentSpatialReference().Populate(time, x, y, z,
+                                                          reference);
+        Real psi[4][4];       // NOLINT(runtime/arrays)
+        Real p[4][4][4];      // NOLINT(runtime/arrays)
+        Real d_psi[4][4][4];  // NOLINT(runtime/arrays)
+        Real metric[4][4];    // NOLINT(runtime/arrays)
+        Real d_metric[4][4][4];  // NOLINT(runtime/arrays)
+        ManufacturedFrameState(sample, psi, p);
+        CoordinateStateFromFrame(reference, psi, p, d_psi, metric, d_metric);
+        ref_gh::CoordinateGhGeometry geometry;
+        Real determinant = 0.0;
+        if (!ref_gh::ComputeCoordinateGhGeometry(
+                metric, d_metric, reference, geometry, determinant)) {
+          local_maximum = fmax(local_maximum, 1.0e30);
+          return;
+        }
+        Real normal[4];  // NOLINT(runtime/arrays)
+        for (int A = 0; A < 4; ++A) {
+          normal[A] = 0.0;
+          for (int a = 0; a < 4; ++a) {
+            normal[A] += reference.coframe[A][a]*geometry.normal_upper[a];
+          }
+        }
+        Real pi[4][4];       // NOLINT(runtime/arrays)
+        Real phi[3][4][4];   // NOLINT(runtime/arrays)
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            pi[A][B] = 0.0;
+            for (int C = 0; C < 4; ++C) pi[A][B] -= normal[C]*p[C][A][B];
+            for (int I = 0; I < 3; ++I) phi[I][A][B] = p[I + 1][A][B];
+          }
+        }
+        ref_gh::CovariantSourceSectors sectors;
+        Real covariant[4][4];            // NOLINT(runtime/arrays)
+        Real production[4][4];           // NOLINT(runtime/arrays)
+        Real coordinate_partial[4][4];   // NOLINT(runtime/arrays)
+        Real coordinate_source[4][4];    // NOLINT(runtime/arrays)
+        if (!ref_gh::CovariantGhScalarWaveSource(
+                psi, pi, phi, reference, geometry, 1.3, covariant, sectors)
+            || !ref_gh::CovariantGhScalarWaveSourceProduction(
+                psi, pi, phi, reference, geometry, 1.3, production)) {
+          local_maximum = fmax(local_maximum, 1.0e30);
+          return;
+        }
+        ref_gh::StandardGhPartialWaveSource(
+            metric, d_metric, reference, geometry, 1.3, coordinate_partial);
+        ref_gh::TransformPartialWaveSource(
+            metric, d_metric, coordinate_partial, d_psi,
+            reference, geometry, coordinate_source);
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            local_maximum = fmax(local_maximum,
+                Kokkos::abs(covariant[A][B] - coordinate_source[A][B]));
+            if (A <= B) {
+              local_maximum = fmax(local_maximum,
+                  Kokkos::abs(covariant[A][B] - production[A][B]));
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(source_error));
+
+  constexpr Real kCurvatureTolerance = 2.0e-13;
+  constexpr Real kSourceTolerance = 1.0e-10;
+  if (!(curvature_error <= kCurvatureTolerance)
+      || !(curvature_scale <= kCurvatureTolerance)
+      || !(source_error <= kSourceTolerance)
+      || !(spin_scale <= kCurvatureTolerance)
+      || !(dt_frame_scale > 1.0e-5)) {
+    std::cout << "reference-GH dynamic spatial oracle failed: frame-coordinate "
+              << "curvature Linf=" << curvature_error
+              << ", coordinate curvature Linf=" << curvature_scale
+              << ", source Linf=" << source_error
+              << ", spin scale=" << spin_scale
+              << ", dt spatial frame scale=" << dt_frame_scale << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH dynamic spatial oracle passed: frame-coordinate "
+            << "curvature Linf=" << curvature_error
+            << ", coordinate curvature Linf=" << curvature_scale
+            << ", source Linf=" << source_error
+            << ", spin scale=" << spin_scale
+            << ", dt spatial frame scale=" << dt_frame_scale << std::endl;
+}
+
 }  // namespace
 
 void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) {
   CheckFlatCovariantSource();
   CheckNonflatCovariantSource();
+  CheckDynamicSpatialReference();
   // Leave a valid exact state for the zero-time AthenaK task sequence.
   RefGhMinkowski(pin, restart);
 }

@@ -227,6 +227,39 @@ void CompleteReferenceFrameGeometry(ReferenceGeometry &reference) {
   }
 }
 
+// Independently construct R^A_BCD from the coordinate Christoffel symbols and
+// their coordinate derivatives.  This deliberately does not use spin or frame
+// structure coefficients and is therefore an oracle for the Cartan-path
+// curvature assembled by CompleteReferenceFrameGeometry and the staged cache.
+KOKKOS_INLINE_FUNCTION
+Real CoordinateReferenceRiemannFrame(const ReferenceGeometry &reference,
+                                     const int A, const int B,
+                                     const int C, const int D) {
+  Real frame_riemann = 0.0;
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      for (int c = 0; c < 4; ++c) {
+        for (int d = 0; d < 4; ++d) {
+          Real coordinate_riemann =
+              reference.d_christoffel[c][a][b][d]
+              - reference.d_christoffel[d][a][b][c];
+          for (int e = 0; e < 4; ++e) {
+            coordinate_riemann +=
+                reference.christoffel[a][c][e]
+                  *reference.christoffel[e][b][d]
+                - reference.christoffel[a][d][e]
+                  *reference.christoffel[e][b][c];
+          }
+          frame_riemann += reference.coframe[A][a]*reference.frame[B][b]
+                           *reference.frame[C][c]*reference.frame[D][d]
+                           *coordinate_riemann;
+        }
+      }
+    }
+  }
+  return frame_riemann;
+}
+
 // Identity Cartesian tetrad on Minkowski spacetime.  This is the exact flat-reference
 // oracle and makes the stored variables identical to ordinary coordinate FO-GH fields.
 struct MinkowskiReference {
