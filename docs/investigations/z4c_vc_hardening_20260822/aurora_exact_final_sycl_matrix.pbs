@@ -1,0 +1,109 @@
+#!/bin/bash -l
+#PBS -N z4c-vc-exact-final
+#PBS -A CompactBinaryMerger
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+base=/lus/flare/projects/CompactBinaryMerger/hzhu
+stage="${base}/z4c-vc-hardening-99a4eb5b-v2-20260822"
+source_root="${stage}/source"
+build_root="${stage}/build"
+root="${stage}/campaign-exact-final-sycl-v1"
+expected_source=99a4eb5ba7713f7de73239cf75a27c1fb9ac6cbb
+expected_tree=e8c1083cc9ea67aa4a3a2c3adbffb9c31fe32c83
+expected_kokkos=6739bc623081648af9e752b616d9671527922cbf
+
+test ! -e "${root}"
+test "$(git -C "${source_root}" rev-parse HEAD)" = "${expected_source}"
+test "$(git -C "${source_root}" rev-parse HEAD^{tree})" = "${expected_tree}"
+test -z "$(git -C "${source_root}" status --porcelain)"
+test "$(git -C "${source_root}/kokkos" rev-parse HEAD)" = "${expected_kokkos}"
+
+mkdir -p "${root}/evidence" "${root}/run"
+finish() {
+  code=$?
+  trap - EXIT
+  set +e
+  printf '%s\n' "${code}" > "${root}/orchestration-status"
+  git -C "${source_root}" status --porcelain=v1 > "${root}/evidence/source-status.final"
+  qstat -f "${PBS_JOBID}" > "${root}/evidence/qstat-final.txt" 2>&1
+  find "${root}" -type f ! -name SHA256SUMS ! -name SHA256SUMS.sha256 \
+    -print0 | LC_ALL=C sort -z | xargs -0r sha256sum > "${root}/SHA256SUMS"
+  (cd "${root}" && sha256sum -c SHA256SUMS >/dev/null)
+  sha256sum "${root}/SHA256SUMS" > "${root}/SHA256SUMS.sha256"
+  exit "${code}"
+}
+trap finish EXIT
+
+workflow="${base}/collapse-critical/collapse-critical-workflow"
+export ATHENAK_ROOT="${source_root}"
+export ATHENAK_BUILD_DIR="${build_root}"
+export IRISK_ROOT="${base}/collapse-critical/bbhk"
+export IRISK_BUILD_DIR="${IRISK_ROOT}/build/aurora-pvc"
+source "${workflow}/profiles/aurora-pvc.sh"
+export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPIR_CVAR_ENABLE_GPU=1 MPICH_GPU_SUPPORT_ENABLED=1
+export ATHENA_Z4C_VC_AMR_LIFECYCLE=all
+
+{
+  date --iso-8601=seconds
+  hostname
+  git -C "${source_root}" rev-parse HEAD HEAD^{tree}
+  git -C "${source_root}" submodule status -- kokkos
+  module list
+  command -v icpx mpicxx mpiexec sycl-ls cmake
+  icpx --version | head -1
+  mpicxx -show
+  cmake --version | head -1
+  sycl-ls
+  qstat -f "${PBS_JOBID}"
+} > "${root}/evidence/provenance.txt" 2>&1
+
+cmake -S "${source_root}" -B "${build_root}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CXX_COMPILER=mpicxx \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_BUILD_UNIT_TESTS=ON \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  > "${root}/evidence/configure.log" 2>&1
+cmake --build "${build_root}" --parallel 64 \
+  > "${root}/evidence/build.log" 2> "${root}/evidence/build.err"
+
+grep -qx 'Kokkos_ENABLE_SYCL:BOOL=ON' "${build_root}/CMakeCache.txt"
+grep -qx 'Kokkos_ARCH_INTEL_PVC:BOOL=ON' "${build_root}/CMakeCache.txt"
+grep -qx 'Athena_ENABLE_MPI:BOOL=ON' "${build_root}/CMakeCache.txt"
+grep -qx 'Athena_BUILD_UNIT_TESTS:BOOL=ON' "${build_root}/CMakeCache.txt"
+sha256sum "${build_root}/src/athena" "${build_root}/CMakeCache.txt" \
+  > "${root}/evidence/build.sha256"
+
+ctest --test-dir "${build_root}" --output-on-failure -j1 \
+  -R '^(athena\.z4c_vc_dynamic_amr_(2d_cartesian|2d_cartoon|3d_cartesian)_o(2|4|6)|athena\.z4c_vertex_gauge_wave_(2d|3d)_cartesian_o(2|4|6)|athena\.z4c_vc_(restart_(2d_cartesian|2d_cartoon|3d_cartesian)|output(_2d_cartoon|_3d_cartesian)?))$' \
+  > "${root}/evidence/selected-ctest.log" 2>&1
+
+mpi_wrapper="${source_root}/docs/investigations/z4c_vc_hardening_20260822/aurora_mpiexec_tile_wrapper.sh"
+test -x "${mpi_wrapper}"
+python3 "${source_root}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" \
+  --athena "${build_root}/src/athena" \
+  --input "${source_root}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" \
+  --work-dir "${root}/run/mpi2-cartoon-o4" --dimensions 2 --geometry cartoon \
+  --order 4 --root-leaves 4 --expected-volume 201.06192982974676 \
+  --mpiexec "${mpi_wrapper}" --np-flag=-n --ranks 2 \
+  > "${root}/evidence/mpi2-cartoon-o4.log" 2>&1
+python3 "${source_root}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" \
+  --athena "${build_root}/src/athena" \
+  --input "${source_root}/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" \
+  --work-dir "${root}/run/mpi2-3d-o4" --dimensions 3 --geometry cartesian \
+  --order 4 --root-leaves 8 --expected-volume 64.0 \
+  --mpiexec "${mpi_wrapper}" --np-flag=-n --ranks 2 \
+  > "${root}/evidence/mpi2-3d-o4.log" 2>&1
+
+printf 'AURORA_EXACT_FINAL_SYCL_MATRIX_PASS\n' > "${root}/status"
