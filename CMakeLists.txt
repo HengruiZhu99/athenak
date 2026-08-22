@@ -575,6 +575,35 @@ if (Athena_BUILD_UNIT_TESTS)
         z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
         3 cartesian ${order} 8 64.0)
   endforeach()
+  function(add_z4c_cc_lifecycle_case name input dimensions geometry root_leaves
+           expected_volume)
+    add_test(
+        NAME ${name}
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/${input}
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/${name}
+        --centering cell --dimensions ${dimensions} --geometry ${geometry}
+        --order 6 --root-leaves ${root_leaves}
+        --expected-volume ${expected_volume})
+    set_tests_properties(
+        ${name} PROPERTIES TIMEOUT 120
+        LABELS "z4c;cell;regression;${dimensions}d;${geometry};amr;lifecycle")
+  endfunction()
+  add_z4c_cc_lifecycle_case(
+      athena.z4c_cc_lifecycle_2d_cartesian
+      z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput
+      2 cartesian 4 16.0)
+  add_z4c_cc_lifecycle_case(
+      athena.z4c_cc_lifecycle_2d_cartoon
+      z4c_vc_minkowski_dynamic_amr.athinput
+      2 cartoon 4 201.06192982974676)
+  add_z4c_cc_lifecycle_case(
+      athena.z4c_cc_lifecycle_3d_cartesian
+      z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
+      3 cartesian 8 64.0)
   add_test(
       NAME athena.z4c_vc_dynamic_amr_invalid_target
       COMMAND

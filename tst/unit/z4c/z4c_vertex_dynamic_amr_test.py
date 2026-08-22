@@ -27,6 +27,8 @@ def main() -> int:
     parser.add_argument("--dimensions", type=int, choices=(2, 3), default=2)
     parser.add_argument("--geometry", choices=("cartesian", "cartoon"),
                         default="cartoon")
+    parser.add_argument("--centering", choices=("cell", "vertex"),
+                        default="vertex")
     parser.add_argument("--order", type=int, choices=(2, 4, 6), default=6)
     parser.add_argument("--root-leaves", type=int, default=4)
     parser.add_argument("--expected-volume", type=float, default=64.0 * math.pi)
@@ -38,7 +40,8 @@ def main() -> int:
         shutil.rmtree(work)
     work.mkdir(parents=True)
     command = [args.athena, "-i", args.input,
-               f"z4c/spatial_order={args.order}"]
+               f"z4c/spatial_order={args.order}",
+               f"z4c/grid_centering={args.centering}"]
     if args.invalid_target_test:
         command.append("problem/amr_target_lx1=99")
     if args.mpiexec:
@@ -60,10 +63,12 @@ def main() -> int:
         require("lies outside the root MeshBlock lattice" in
                 completed.stdout + completed.stderr,
                 "invalid deterministic AMR target did not fail with the contract message")
-        print("PASS: invalid native VC deterministic AMR target fails closed")
+        print(f"PASS: invalid {args.centering}-centered deterministic AMR target "
+              "fails closed")
         return 0
     require(completed.returncode == 0,
-            f"native VC dynamic AMR run failed:\n{completed.stdout}\n{completed.stderr}")
+            f"{args.centering}-centered dynamic AMR run failed:\n"
+            f"{completed.stdout}\n{completed.stderr}")
     child_count = 1 << args.dimensions
     created_leaves = child_count - 1
     if args.geometry == "cartoon":
@@ -101,23 +106,28 @@ def main() -> int:
         require(row[2] < 1.0e-18 and row[3] < 1.0e-18,
                 "Minkowski constraints exceed the dynamic AMR regression bound")
         require(math.isclose(row[10], args.expected_volume, rel_tol=5.0e-6),
-                "native VC history does not integrate the exact physical volume")
+                f"{args.centering}-centered history does not integrate the exact "
+                "physical volume")
         if args.geometry == "cartoon":
             require(math.isclose(row[18], 1.0, rel_tol=0.0, abs_tol=2.0e-14),
-                    "native VC central observer did not sample unit lapse at the origin")
+                    f"{args.centering}-centered central observer did not sample unit "
+                    "lapse at the origin")
             require(math.isclose(row[19], row[0], rel_tol=2.0e-6,
                                  abs_tol=2.0e-12),
-                    "native VC central proper time does not track coordinate time")
+                    f"{args.centering}-centered central proper time does not track "
+                    "coordinate time")
             require(abs(row[20]) < 1.0e-18,
-                    "native VC origin curvature is nonzero in Minkowski spacetime")
+                    f"{args.centering}-centered origin curvature is nonzero in "
+                    "Minkowski spacetime")
     require(max(row[10] for row in rows) == min(row[10] for row in rows),
-            "native VC history volume changed across refine/derefine events")
+            f"{args.centering}-centered history volume changed across "
+            "refine/derefine events")
 
     restarts = sorted((work / "rst").glob("*.rst"))
     require(len(restarts) >= 4 and all(path.stat().st_size > 0 for path in restarts),
             "dynamic AMR fixture did not produce valid restart files")
-    print(f"PASS: native VC {args.dimensions}D {args.geometry} O{args.order} "
-          "dynamic refine/derefine lifecycle and quadrature")
+    print(f"PASS: {args.centering}-centered {args.dimensions}D {args.geometry} "
+          f"O{args.order} dynamic refine/derefine lifecycle and quadrature")
     return 0
 
 
