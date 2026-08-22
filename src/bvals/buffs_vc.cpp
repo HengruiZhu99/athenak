@@ -48,6 +48,17 @@ MeshBoundaryValuesVC::MeshBoundaryValuesVC(
     const VertexBoundaryLayout &vertex_layout)
     : MeshBoundaryValues(ppack, pin, true), layout(vertex_layout) {}
 
+void MeshBoundaryValuesVC::InitializeBuffers(const int nvar) {
+  MeshBoundaryValues::InitializeBuffers(nvar);
+  const int nnghbr = pmy_pack->pmb->nnghbr;
+  Kokkos::realloc(prolongation_bounds, nnghbr);
+  for (int n = 0; n < nnghbr; ++n) {
+    prolongation_bounds.h_view(n) = recvbuf[n].iprol[0];
+  }
+  prolongation_bounds.template modify<HostMemSpace>();
+  prolongation_bounds.template sync<DevExeSpace>();
+}
+
 void MeshBoundaryValuesVC::InitSendIndices(MeshBoundaryBuffer &buf,
                                             int ox1, int ox2, int ox3,
                                             int f1, int f2) {

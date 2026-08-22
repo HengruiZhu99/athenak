@@ -270,6 +270,7 @@ void MeshBoundaryValuesVC::ProlongateVC(DvceArray5D<Real> &a,
   auto &nghbr = pmy_pack->pmb->nghbr;
   auto &mblev = pmy_pack->pmb->mb_lev;
   auto records = pmy_pack->pz4c->vertex_topology_plan->records.d_view;
+  auto iprol = prolongation_bounds.d_view;
   const auto vertex_layout = layout;
   DvceArray1D<unsigned long long> invalid("invalid VC boundary prolongation", 1);
   Kokkos::deep_copy(invalid, 0ULL);
@@ -282,7 +283,7 @@ void MeshBoundaryValuesVC::ProlongateVC(DvceArray5D<Real> &a,
         const int v = league % nvar;
         if (nghbr.d_view(m, n).gid < 0 ||
             nghbr.d_view(m, n).lev >= mblev.d_view(m)) return;
-        const auto coarse = recvbuf[n].iprol[0];
+        const auto coarse = iprol(n);
         const int raw_il = vertex_layout.is +
                            2 * (coarse.bis - vertex_layout.cis);
         const int raw_iu = vertex_layout.is +

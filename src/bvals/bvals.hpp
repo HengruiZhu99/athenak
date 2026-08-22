@@ -209,6 +209,7 @@ class MeshBoundaryValuesVC : public MeshBoundaryValues {
   MeshBoundaryValuesVC(MeshBlockPack *ppack, ParameterInput *pin,
                        const VertexBoundaryLayout &layout);
 
+  void InitializeBuffers(int nvar);
   void InitSendIndices(MeshBoundaryBuffer &b, int o1, int o2, int o3,
                        int f1, int f2) override;
   void InitRecvIndices(MeshBoundaryBuffer &b, int o1, int o2, int o3,
@@ -221,6 +222,7 @@ class MeshBoundaryValuesVC : public MeshBoundaryValues {
                     int spatial_order, int positive_component = -1);
 
   const VertexBoundaryLayout layout;
+  DualArray1D<MeshBufferIndcs> prolongation_bounds;
 };
 
 //----------------------------------------------------------------------------------------
