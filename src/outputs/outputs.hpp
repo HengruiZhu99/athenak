@@ -21,7 +21,7 @@
     #error NHISTORY > NREDUCTION in outputs.hpp
 #endif
 
-#define NOUTPUT_CHOICES 160
+#define NOUTPUT_CHOICES 163
 // choices for output variables used in <ouput> blocks in input file
 // TO ADD MORE CHOICES:
 //   - add more strings to array below, change NOUTPUT_CHOICES above appropriately
@@ -103,7 +103,9 @@ static const char *var_choice[NOUTPUT_CHOICES] = {
   "grav_phi",
   // Vacuum first-order generalized harmonic state (154-157)
   "fo_gh", "fo_gh_con", "ref_gh", "ref_gh_con",
-  "ref_gh_perturb", "ref_gh_native_con"
+  "ref_gh_perturb", "ref_gh_native_con",
+  // Formulation-independent vacuum ADM constraints (160-162)
+  "adm_common_H", "adm_common_M2", "adm_common"
 };
 
 
@@ -139,6 +141,7 @@ struct OutputParameters {
   int coarsen_factor;
   bool compute_moments; // if true then will compute
   bool binary64=false;  // if true, cbin fields are written as binary64 Real values
+  int common_adm_fd_order=4;
   // <q>, <q^2>, <q^3>, <q^4> for each variable q
   // DBF parameters for PDF:
   // number of derived variables, index of current derived variable

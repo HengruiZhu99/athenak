@@ -22,6 +22,7 @@
 
 #include "athena.hpp"
 #include "globals.hpp"
+#include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "mesh/mesh.hpp"
 #include "outputs.hpp"
@@ -63,6 +64,14 @@ CoarsenedBinaryOutput::CoarsenedBinaryOutput(ParameterInput *pin, Mesh *pm,
 // this output type
 
 void CoarsenedBinaryOutput::LoadOutputData(Mesh *pm) {
+  if (out_params.variable.compare(0, 10, "adm_common") == 0) {
+    pm->pmb_pack->padm->SetADMVariables(pm->pmb_pack);
+    switch (out_params.common_adm_fd_order) {
+      case 2: pm->pmb_pack->padm->ComputeVacuumConstraints<2>(pm->pmb_pack); break;
+      case 4: pm->pmb_pack->padm->ComputeVacuumConstraints<3>(pm->pmb_pack); break;
+      case 6: pm->pmb_pack->padm->ComputeVacuumConstraints<4>(pm->pmb_pack); break;
+    }
+  }
   // out_data_ vector (indexed over # of output MBs) stores 4D array of variables
   // so start iteration over number of MeshBlocks
   // TODO(@user): get this working for multiple physics, which may be either defined/undef

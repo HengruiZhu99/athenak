@@ -62,3 +62,13 @@ data_format = %20.15e
 <output2>
 file_type = rst
 dt = 2.0
+
+<output3>
+file_type = cbin
+variable = adm_common
+id = adm_common
+dt = 20.0
+coarsen_factor = 1
+compute_moments = false
+binary64 = true
+single_file_per_rank = false

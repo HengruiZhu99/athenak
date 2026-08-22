@@ -194,6 +194,14 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
               << "Input file is likely missing a <ref_gh> block" << std::endl;
     exit(EXIT_FAILURE);
   }
+  if ((ivar>=160 && ivar<=162) && (pm->pmb_pack->padm == nullptr)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl
+              << "Output of common ADM constraints requested in <output> block '"
+              << out_params.block_name << "' but no ADM object has been constructed."
+              << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
   // Now load STL vector of output variables
   outvars.clear();
@@ -656,6 +664,18 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
           outvars.emplace_back(adm::ADM::ADM_names[v], v, &(pm->pmb_pack->padm->u_adm));
         }
       }
+    }
+
+    // formulation-independent vacuum ADM constraints
+    if (variable.compare("adm_common_H") == 0
+        || variable.compare("adm_common") == 0) {
+      outvars.emplace_back("adm_common_H", adm::ADM::I_COMMON_H,
+                           &(pm->pmb_pack->padm->u_common));
+    }
+    if (variable.compare("adm_common_M2") == 0
+        || variable.compare("adm_common") == 0) {
+      outvars.emplace_back("adm_common_M2", adm::ADM::I_COMMON_M2,
+                           &(pm->pmb_pack->padm->u_common));
     }
 
     // regularized vacuum first-order generalized harmonic variables

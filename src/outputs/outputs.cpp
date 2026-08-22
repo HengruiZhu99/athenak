@@ -248,6 +248,18 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
         opar.compute_moments = pin->GetOrAddBoolean(opar.block_name,
           "compute_moments", false);
         opar.binary64 = pin->GetOrAddBoolean(opar.block_name, "binary64", false);
+        if (opar.variable.compare(0, 10, "adm_common") == 0) {
+          const int default_order =
+              pin->GetOrAddInteger("problem", "common_adm_fd_order", 4);
+          opar.common_adm_fd_order = pin->GetOrAddInteger(
+              opar.block_name, "common_adm_fd_order", default_order);
+          if (opar.common_adm_fd_order != 2 && opar.common_adm_fd_order != 4
+              && opar.common_adm_fd_order != 6) {
+            std::cout << "### FATAL ERROR: common ADM cbin fd order must be "
+                         "2, 4, or 6." << std::endl;
+            std::exit(EXIT_FAILURE);
+          }
+        }
         pnode = new CoarsenedBinaryOutput(pin,pm,opar);
         pout_list.insert(pout_list.begin(),pnode);
       } else if (opar.file_type.compare("pdf") == 0) {
