@@ -4,14 +4,18 @@ Repository: <https://github.com/HengruiZhu99/athenak>
 
 Branch: `codex/z4c-vc-hardening-2d3d-20260822`
 
+Immutable evidence snapshot commit:
+`8cd8f502c5797008514284127d1a678c29fd1e2f`
+
 Compiled production source authority:
 
 - commit: `99a4eb5ba7713f7de73239cf75a27c1fb9ac6cbb`
 - tree: `e8c1083cc9ea67aa4a3a2c3adbffb9c31fe32c83`
 - Kokkos: `6739bc623081648af9e752b616d9671527922cbf`
 
-Use the pushed branch tip named in the accompanying handoff for the final
-reports. Do not substitute a later branch state.
+Review the immutable evidence snapshot above; the subsequent handoff commit
+only binds this prompt and manifest to that snapshot. Do not substitute a
+later branch state.
 
 Start with:
 
