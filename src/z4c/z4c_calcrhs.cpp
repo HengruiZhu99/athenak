@@ -10,6 +10,7 @@
 
 //#include <algorithm>
 //#include <cinttypes>
+#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <fstream>
@@ -45,6 +46,63 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   const int active_nx1 = ie - is + 1;
   const int active_nx2 = je - js + 1;
   const int active_nx3 = ke - ks + 1;
+
+  if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
+    const char *diagnostic = std::getenv("ATHENA_Z4C_VC_PRE_RHS_STATE_DIAGNOSTIC");
+    if (diagnostic != nullptr && diagnostic[0] != '\0') {
+      const auto host_state =
+          Kokkos::create_mirror_view_and_copy(HostMemSpace(), u0);
+      const auto host_coarse = pmy_pack->pmesh->multilevel
+          ? Kokkos::create_mirror_view_and_copy(HostMemSpace(), coarse_u0)
+          : decltype(Kokkos::create_mirror_view_and_copy(HostMemSpace(), coarse_u0))();
+      pmy_pack->pmb->mb_gid.sync_host();
+      std::ifstream prior(diagnostic);
+      const bool exists = prior.good();
+      prior.close();
+      std::ofstream out(diagnostic, std::ios::app);
+      if (!exists) {
+        out << "cycle,time,stage,array,gid,variable,k,j,i,active,value\n";
+      }
+      for (int m = 0; m < nmb; ++m) {
+        const int gid = pmy_pack->pmb->mb_gid.h_view(m);
+        for (int v = 0; v < nz4c; ++v) {
+          for (int k = 0; k < layout.n3; ++k) {
+            for (int j = 0; j < layout.n2; ++j) {
+              for (int i = 0; i < layout.n1; ++i) {
+                const bool active = i >= is && i <= ie && j >= js && j <= je &&
+                                    k >= ks && k <= ke;
+                out << pmy_pack->pmesh->ncycle << ',' << std::setprecision(17)
+                    << pmy_pack->pmesh->time << ',' << stage << ",fine," << gid
+                    << ',' << v << ',' << k << ',' << j << ',' << i << ','
+                    << active << ',' << host_state(m, v, k, j, i) << '\n';
+              }
+            }
+          }
+          if (pmy_pack->pmesh->multilevel) {
+            for (int k = 0; k < layout.cn3; ++k) {
+              for (int j = 0; j < layout.cn2; ++j) {
+                for (int i = 0; i < layout.cn1; ++i) {
+                  const bool active = i >= layout.cis && i <= layout.cie &&
+                                      j >= layout.cjs && j <= layout.cje &&
+                                      k >= layout.cks && k <= layout.cke;
+                  out << pmy_pack->pmesh->ncycle << ',' << std::setprecision(17)
+                      << pmy_pack->pmesh->time << ',' << stage << ",coarse," << gid
+                      << ',' << v << ',' << k << ',' << j << ',' << i << ','
+                      << active << ',' << host_coarse(m, v, k, j, i) << '\n';
+                }
+              }
+            }
+          }
+        }
+      }
+      out.flush();
+      if (!out) {
+        std::cerr << "### FATAL ERROR: failed to write VC pre-RHS state diagnostic"
+                  << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+    }
+  }
 
   auto &z4c = pmy_pack->pz4c->z4c;
   auto &rhs = pmy_pack->pz4c->rhs;

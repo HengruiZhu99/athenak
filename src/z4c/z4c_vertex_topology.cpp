@@ -11,7 +11,10 @@
 #include <cmath>
 #include <cstring>
 #include <cstdlib>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
+#include <limits>
 #include <numeric>
 #include <set>
 #include <tuple>
@@ -338,7 +341,8 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
 }
 
 void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
-    DvceArray5D<Real> &state) const {
+    DvceArray5D<Real> &state, const char *diagnostic_environment) const {
+  ++synchronization_calls;
   const int local_count = static_cast<int>(local_contributors.size());
   const int global_count = static_cast<int>(global_contributors.size());
   const int nvar = state.extent_int(1);
@@ -383,9 +387,19 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
                                                  global_group_for_contributor.end());
   std::vector<Real> averages(groups * nvar, 0.0);
   std::vector<int> multiplicity(groups, 0);
+  std::vector<int> authority_multiplicity(groups, 0);
+  std::vector<int> authority_level(groups, std::numeric_limits<int>::min());
   for (const int global_index : sorted_global_indices) {
     const int group = global_group_for_contributor[global_index];
     ++multiplicity[group];
+    authority_level[group] =
+        std::max(authority_level[group], global_contributors[global_index].level);
+  }
+  for (const int global_index : sorted_global_indices) {
+    const int group = global_group_for_contributor[global_index];
+    const bool authoritative = VertexContributorHasAuthority(
+        global_contributors[global_index].level, authority_level[group]);
+    if (authoritative) ++authority_multiplicity[group];
     for (int variable = 0; variable < nvar; ++variable) {
       const Real value = global_values[global_index * nvar + variable];
       if (!std::isfinite(value)) {
@@ -400,13 +414,100 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
         std::exit(EXIT_FAILURE);
 #endif
       }
-      averages[group * nvar + variable] += value;
+      if (authoritative) averages[group * nvar + variable] += value;
     }
   }
   for (int group = 0; group < groups; ++group) {
+    if (authority_multiplicity[group] <= 0) {
+      std::cerr << "### FATAL ERROR: VC shared group has no finest-level authority"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
     for (int variable = 0; variable < nvar; ++variable) {
       averages[group * nvar + variable] /=
-          static_cast<Real>(multiplicity[group]);
+          static_cast<Real>(authority_multiplicity[group]);
+    }
+  }
+
+  // Default-off localization evidence for the native-VC AMR discriminator.  The
+  // contributor values have already been gathered in deterministic canonical order,
+  // so this diagnostic observes (but does not alter) the exact inputs to the shared-node
+  // reconciliation.  A caller-provided path keeps ordinary runs and restart state free
+  // of new parameters or side effects.
+  const char *diagnostic_path = std::getenv(diagnostic_environment);
+  if (diagnostic_path != nullptr && diagnostic_path[0] != '\0' &&
+      global_variable::my_rank == 0) {
+    std::vector<Real> minima(groups * nvar,
+                             std::numeric_limits<Real>::max());
+    std::vector<Real> maxima(groups * nvar,
+                             -std::numeric_limits<Real>::max());
+    std::vector<int> minimum_levels(groups,
+                                    std::numeric_limits<int>::max());
+    std::vector<int> maximum_levels(groups,
+                                    std::numeric_limits<int>::min());
+    for (const int global_index : sorted_global_indices) {
+      const int group = global_group_for_contributor[global_index];
+      minimum_levels[group] =
+          std::min(minimum_levels[group], global_contributors[global_index].level);
+      maximum_levels[group] =
+          std::max(maximum_levels[group], global_contributors[global_index].level);
+      for (int variable = 0; variable < nvar; ++variable) {
+        const Real value = global_values[global_index * nvar + variable];
+        minima[group * nvar + variable] =
+            std::min(minima[group * nvar + variable], value);
+        maxima[group * nvar + variable] =
+            std::max(maxima[group * nvar + variable], value);
+      }
+    }
+    std::ifstream prior_output(diagnostic_path);
+    const bool output_exists = prior_output.good();
+    prior_output.close();
+    std::ofstream output(diagnostic_path, std::ios::app);
+    if (!output) {
+      std::cerr << "### FATAL ERROR: cannot open native VC synchronization "
+                   "diagnostic path "
+                << diagnostic_path << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    if (!output_exists) {
+      output << "call,generation,group,key1,key2,key3,variable,"
+                "minimum_level,maximum_level,multiplicity,authority_level,"
+                "authority_multiplicity,minimum,maximum,"
+                "spread,mean,contributor_level,contributor_lx1,"
+                "contributor_lx2,contributor_lx3,contributor_gid,"
+                "contributor_k,contributor_j,contributor_i,value\n";
+    }
+    output << std::setprecision(std::numeric_limits<Real>::max_digits10);
+    const bool include_same_level =
+        std::getenv("ATHENA_Z4C_VC_SYNC_DIAGNOSTIC_INCLUDE_SAME_LEVEL") != nullptr;
+    for (const int global_index : sorted_global_indices) {
+      const int group = global_group_for_contributor[global_index];
+      if (!include_same_level && minimum_levels[group] == maximum_levels[group]) {
+        continue;
+      }
+      const auto &contributor = global_contributors[global_index];
+      for (int variable = 0; variable < nvar; ++variable) {
+        const int offset = group * nvar + variable;
+        output << synchronization_calls << ',' << generation << ',' << group
+               << ',' << contributor.key1 << ',' << contributor.key2 << ','
+               << contributor.key3 << ',' << variable << ','
+               << minimum_levels[group] << ',' << maximum_levels[group] << ','
+               << multiplicity[group] << ',' << authority_level[group] << ','
+               << authority_multiplicity[group] << ',' << minima[offset] << ','
+               << maxima[offset] << ',' << maxima[offset] - minima[offset]
+               << ',' << averages[offset] << ',' << contributor.level << ','
+               << contributor.lx1 << ',' << contributor.lx2 << ','
+               << contributor.lx3 << ',' << contributor.gid << ','
+               << contributor.k << ',' << contributor.j << ','
+               << contributor.i << ','
+               << global_values[global_index * nvar + variable] << '\n';
+      }
+    }
+    if (!output) {
+      std::cerr << "### FATAL ERROR: failed while writing native VC "
+                   "synchronization diagnostic"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
     }
   }
   auto host_replacements = Kokkos::create_mirror_view(packed);

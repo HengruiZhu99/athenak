@@ -101,12 +101,18 @@ void MeshRefinement::RestrictVC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu) {
 void MeshRefinement::CopyForRefinementVC(DvceArray5D<Real> &a,
                                           DvceArray5D<Real> &ca) {
   const auto layout = pmy_mesh->pmb_pack->pz4c->layout;
-  const int il = layout.cis - layout.coarse_ng;
-  const int iu = layout.cie + layout.coarse_ng;
-  const int jl = layout.nx2 <= 1 ? 0 : layout.cjs - layout.coarse_ng;
-  const int ju = layout.nx2 <= 1 ? 0 : layout.cje + layout.coarse_ng;
-  const int kl = layout.nx3 <= 1 ? 0 : layout.cks - layout.coarse_ng;
-  const int ku = layout.nx3 <= 1 ? 0 : layout.cke + layout.coarse_ng;
+  const int refine_halo = vertex_amr::RequiredRefinementHaloForSpatialOrder(
+      pmy_mesh->pmb_pack->pz4c->opt.spatial_order);
+  if (refine_halo <= 0 || refine_halo > layout.ng ||
+      refine_halo > layout.coarse_ng) {
+    AbortVC("native VC refinement halo is incompatible with allocated storage");
+  }
+  const int il = layout.cis - refine_halo;
+  const int iu = layout.cie + refine_halo;
+  const int jl = layout.nx2 <= 1 ? 0 : layout.cjs - refine_halo;
+  const int ju = layout.nx2 <= 1 ? 0 : layout.cje + refine_halo;
+  const int kl = layout.nx3 <= 1 ? 0 : layout.cks - refine_halo;
+  const int ku = layout.nx3 <= 1 ? 0 : layout.cke + refine_halo;
   const std::pair<int, int> idst(il, iu + 1);
   const std::pair<int, int> jdst(jl, ju + 1);
   const std::pair<int, int> kdst(kl, ku + 1);
@@ -127,18 +133,18 @@ void MeshRefinement::CopyForRefinementVC(DvceArray5D<Real> &a,
     const int ox2 = location.lx2 & 1;
     const int ox3 = location.lx3 & 1;
     const std::pair<int, int> isrc(
-        layout.is + ox1 * layout.cnx1 - layout.coarse_ng,
-        layout.is + (ox1 + 1) * layout.cnx1 + layout.coarse_ng + 1);
+        layout.is + ox1 * layout.cnx1 - refine_halo,
+        layout.is + (ox1 + 1) * layout.cnx1 + refine_halo + 1);
     const std::pair<int, int> jsrc = layout.nx2 <= 1
         ? std::pair<int, int>(0, 1)
         : std::pair<int, int>(
-              layout.js + ox2 * layout.cnx2 - layout.coarse_ng,
-              layout.js + (ox2 + 1) * layout.cnx2 + layout.coarse_ng + 1);
+              layout.js + ox2 * layout.cnx2 - refine_halo,
+              layout.js + (ox2 + 1) * layout.cnx2 + refine_halo + 1);
     const std::pair<int, int> ksrc = layout.nx3 <= 1
         ? std::pair<int, int>(0, 1)
         : std::pair<int, int>(
-              layout.ks + ox3 * layout.cnx3 - layout.coarse_ng,
-              layout.ks + (ox3 + 1) * layout.cnx3 + layout.coarse_ng + 1);
+              layout.ks + ox3 * layout.cnx3 - refine_halo,
+              layout.ks + (ox3 + 1) * layout.cnx3 + refine_halo + 1);
     if (VCAMRLifecycleDiagnosticEnabled()) {
       const auto valid_range = [](const std::pair<int, int> &range,
                                   const int extent) {
@@ -186,9 +192,8 @@ void MeshRefinement::RefineVC(DualArray1D<int> &new_to_old,
   if (order != 2 && order != 4 && order != 6) {
     AbortVC("RefineVC requires O2, O4, or O6 spatial order");
   }
-  const int required = order == 6 ? vertex_amr::RequiredCoarseGhostWidth<6>()
-                       : order == 4 ? vertex_amr::RequiredCoarseGhostWidth<4>()
-                                    : vertex_amr::RequiredCoarseGhostWidth<2>();
+  const int required =
+      vertex_amr::RequiredRefinementHaloForSpatialOrder(order);
   if (layout.coarse_ng < required) {
     AbortVC("native VC coarse ghost allocation is too narrow for midpoint interpolation");
   }
@@ -267,17 +272,17 @@ void MeshRefinement::RefineVC(DualArray1D<int> &new_to_old,
         if (flags(new_to_old_device(m + first_gid)) <= 0) return;
         Real value = 0.0;
         if (order == 2) {
-          value = vertex_amr::ProlongVCPoint<2>(
-              m, v, k, j, i, layout.is, layout.js, layout.ks,
-              layout.cis, layout.cjs, layout.cks,
-              layout.nx2 <= 1, layout.nx3 <= 1, ca, a);
-        } else if (order == 4) {
           value = vertex_amr::ProlongVCPoint<4>(
               m, v, k, j, i, layout.is, layout.js, layout.ks,
               layout.cis, layout.cjs, layout.cks,
               layout.nx2 <= 1, layout.nx3 <= 1, ca, a);
-        } else {
+        } else if (order == 4) {
           value = vertex_amr::ProlongVCPoint<6>(
+              m, v, k, j, i, layout.is, layout.js, layout.ks,
+              layout.cis, layout.cjs, layout.cks,
+              layout.nx2 <= 1, layout.nx3 <= 1, ca, a);
+        } else {
+          value = vertex_amr::ProlongVCPoint<8>(
               m, v, k, j, i, layout.is, layout.js, layout.ks,
               layout.cis, layout.cjs, layout.cks,
               layout.nx2 <= 1, layout.nx3 <= 1, ca, a);

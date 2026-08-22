@@ -103,7 +103,14 @@ def main() -> int:
     parser.add_argument("--input", required=True, type=Path)
     parser.add_argument("--work-dir", required=True, type=Path)
     parser.add_argument("--dimensions", required=True, type=int, choices=(2, 3))
+    parser.add_argument("--resolutions", nargs="+", type=int,
+                        default=(16, 32),
+                        help="root resolutions used for the convergence check")
     args = parser.parse_args()
+    require(len(args.resolutions) >= 2 and
+            all(resolution > 0 and resolution % 2 == 0
+                for resolution in args.resolutions),
+            "need at least two positive even resolutions")
 
     text = args.input.read_text(encoding="utf-8")
     for needle in ("grid_centering = vertex", "spatial_order = 4",
@@ -117,7 +124,7 @@ def main() -> int:
     root.mkdir(parents=True)
 
     errors = []
-    for resolution in (16, 32):
+    for resolution in args.resolutions:
         uniform, uniform_line, _ = run_case(
             args.athena.resolve(), args.input.resolve(), root,
             args.dimensions, resolution, False)
@@ -126,16 +133,20 @@ def main() -> int:
             args.dimensions, resolution, True)
         errors.append(payload_difference(
             uniform, adaptive, uniform_line, adaptive_line))
-    require(errors[0][0] > 0.0 and errors[1][0] > 0.0,
+    require(all(error[0] > 0.0 for error in errors),
             "nonconstant transfer comparison unexpectedly has zero error")
-    order = math.log(errors[0][0] / errors[1][0], 2.0)
-    require(errors[1][0] < errors[0][0] and order >= 1.5,
+    orders = [math.log(coarse[0] / fine[0],
+                       fine_resolution / coarse_resolution)
+              for coarse, fine, coarse_resolution, fine_resolution in
+              zip(errors, errors[1:], args.resolutions, args.resolutions[1:])]
+    require(all(fine[0] < coarse[0] for coarse, fine in
+                zip(errors, errors[1:])) and min(orders) >= 1.5,
             f"nonconstant AMR mismatch does not decrease robustly: "
-            f"errors={errors} order={order}")
-    require(errors[1][1] < 1.0e-6,
+            f"errors={errors} orders={orders}")
+    require(errors[-1][1] < 1.0e-6,
             f"nonconstant AMR Linf mismatch is unexpectedly large: {errors}")
     print(f"PASS: native-VC {args.dimensions}D nonconstant dynamic AMR "
-          f"errors={errors} observed_order={order}")
+          f"errors={errors} observed_orders={orders}")
     return 0
 
 

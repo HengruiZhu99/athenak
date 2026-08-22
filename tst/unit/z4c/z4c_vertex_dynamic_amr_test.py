@@ -33,6 +33,7 @@ def main() -> int:
     parser.add_argument("--root-leaves", type=int, default=4)
     parser.add_argument("--expected-volume", type=float, default=64.0 * math.pi)
     parser.add_argument("--invalid-target-test", action="store_true")
+    parser.add_argument("--invalid-halo-test", action="store_true")
     args = parser.parse_args()
 
     work = pathlib.Path(args.work_dir)
@@ -44,6 +45,9 @@ def main() -> int:
                f"z4c/grid_centering={args.centering}"]
     if args.invalid_target_test:
         command.append("problem/amr_target_lx1=99")
+    if args.invalid_halo_test:
+        command.extend(("meshblock/nx1=8", "meshblock/nx2=8",
+                        "meshblock/nx3=8"))
     if args.mpiexec:
         command = [args.mpiexec, args.np_flag, str(args.ranks), *command]
     environment = dict(os.environ)
@@ -65,6 +69,13 @@ def main() -> int:
                 "invalid deterministic AMR target did not fail with the contract message")
         print(f"PASS: invalid {args.centering}-centered deterministic AMR target "
               "fails closed")
+        return 0
+    if args.invalid_halo_test:
+        require(completed.returncode != 0,
+                "undersized VC MeshBlock was unexpectedly accepted")
+        require("increase the MeshBlock size" in completed.stdout + completed.stderr,
+                "undersized VC MeshBlock did not fail with the halo contract message")
+        print("PASS: undersized native-VC coarse halo fails closed")
         return 0
     require(completed.returncode == 0,
             f"{args.centering}-centered dynamic AMR run failed:\n"

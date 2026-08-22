@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 
@@ -63,11 +64,22 @@ def main() -> int:
     parser.add_argument("--active-n3", type=int, default=1)
     args = parser.parse_args()
 
+    input_text = Path(args.input).read_text(encoding="utf-8")
+    nghost_match = re.search(r"^nghost\s*=\s*(\d+)\s*$", input_text,
+                              flags=re.MULTILINE)
+    order_match = re.search(r"^spatial_order\s*=\s*(\d+)\s*$", input_text,
+                            flags=re.MULTILINE)
+    require(nghost_match is not None and order_match is not None,
+            "VC restart fixture must declare nghost and spatial_order")
+    nghost = int(nghost_match.group(1))
+    spatial_order = int(order_match.group(1))
+    transfer_order = {2: 4, 4: 6, 6: 8}[spatial_order]
+    coarse_nghost = max(nghost, (nghost - 1) // 2 + transfer_order // 2)
     active = (args.active_n1, args.active_n2, args.active_n3)
-    stored = tuple(value + 8 if value > 1 else 1 for value in active)
+    stored = tuple(value + 2 * nghost if value > 1 else 1 for value in active)
     coarse_active = tuple((value - 1) // 2 + 1 if value > 1 else 1
                           for value in active)
-    coarse_stored = tuple(value + 8 if value > 1 else 1
+    coarse_stored = tuple(value + 2 * coarse_nghost if value > 1 else 1
                           for value in coarse_active)
     changed_leaves = (1 << args.dimensions) - 1
 
@@ -92,7 +104,8 @@ def main() -> int:
         b"carrier_schema             = 2",
         b"grid_centering             = vertex",
         b"centering_schema           = 1",
-        b"nghost                     = 4",
+        f"nghost                     = {nghost}".encode(),
+        f"coarse_nghost              = {coarse_nghost}".encode(),
     ]
     for direction in range(3):
         records.extend((

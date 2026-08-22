@@ -22,9 +22,9 @@ ix3_bc = outflow
 ox3_bc = outflow
 
 <meshblock>
-nx1 = 8
-nx2 = 8
-nx3 = 8
+nx1 = 16
+nx2 = 16
+nx3 = 16
 
 <mesh_refinement>
 refinement = adaptive
@@ -69,8 +69,8 @@ shift_advect = 0.0
 pgen_name = z4c_vc_minkowski
 exercise_dynamic_vc_amr = true
 amr_target_lx1 = 0
-amr_target_lx2 = 1
-amr_target_lx3 = 1
+amr_target_lx2 = 0
+amr_target_lx3 = 0
 
 <output1>
 file_type = hst

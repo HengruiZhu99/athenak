@@ -12,6 +12,7 @@
 
 #include "athena.hpp"
 #include "bvals/vertex_topology.hpp"
+#include "z4c/z4c_vertex_topology.hpp"
 
 namespace {
 
@@ -146,6 +147,12 @@ bool CheckCartoonHalfPlane() {
              VertexNodeRole::axis;
 }
 
+bool CheckFinestLevelAuthority() {
+  return z4c::VertexContributorHasAuthority(5, 5) &&
+         !z4c::VertexContributorHasAuthority(4, 5) &&
+         z4c::VertexContributorHasAuthority(4, 4);
+}
+
 }  // namespace
 
 int main(int argc, char **argv) {
@@ -153,6 +160,7 @@ int main(int argc, char **argv) {
   bool passed = CheckCanonicalIdentity() && CheckFaceEdgeCornerKeys(1) &&
                 CheckFaceEdgeCornerKeys(2) && CheckFaceEdgeCornerKeys(3) &&
                 CheckRolesAndDeviceRecord() && CheckCartoonHalfPlane();
+  passed = passed && CheckFinestLevelAuthority();
   if (!passed) {
     std::cerr << "canonical VC topology contract failed\n";
     return 1;

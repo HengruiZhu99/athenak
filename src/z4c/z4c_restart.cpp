@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 
+#include "mesh/vertex_amr.hpp"
 #include "parameter_input.hpp"
 #include "z4c/z4c_restart.hpp"
 
@@ -266,8 +267,10 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
       return Invalid("unsupported <z4c_restart>/centering_schema=" +
                      std::to_string(state->config.centering_schema));
     }
-    state->layout = MakeZ4cGridLayout(state->config.grid_centering,
-                                     restart_indices);
+    state->layout = MakeZ4cGridLayout(
+        state->config.grid_centering, restart_indices,
+        vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(
+            state->effective_spatial_order, nghost));
 #define REQUIRE_LAYOUT_INTEGER(KEY, EXPECTED)                               \
     {                                                                       \
       int stored_layout_value = 0;                                          \
@@ -562,9 +565,14 @@ Z4cRestartState MakeDefaultZ4cRestartState(const Z4cSymmetryConfig &config,
   struct RestartRegionIndices {
     int nx1, nx2, nx3, ng;
   };
+  const int coarse_ng = config.grid_centering == Z4cGridCentering::vertex
+      ? vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(
+            state.effective_spatial_order, nghost)
+      : nghost;
   state.layout = MakeZ4cGridLayout(
       config.grid_centering,
-      RestartRegionIndices{meshblock_nx1, meshblock_nx2, meshblock_nx3, nghost});
+      RestartRegionIndices{meshblock_nx1, meshblock_nx2, meshblock_nx3, nghost},
+      coarse_ng);
   return state;
 }
 
@@ -743,10 +751,17 @@ Z4cRestartResult ValidateZ4cRestartBinaryDimensions(
   struct RestartRegionIndices {
     int nx1, nx2, nx3, ng;
   };
+  const int binary_nghost = pin->GetInteger("mesh", "nghost");
+  const int binary_coarse_ng =
+      stored.config.grid_centering == Z4cGridCentering::vertex
+          ? vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(
+                stored.effective_spatial_order, binary_nghost)
+          : binary_nghost;
   const auto binary_layout = MakeZ4cGridLayout(
       stored.config.grid_centering,
       RestartRegionIndices{meshblock_nx1, meshblock_nx2, meshblock_nx3,
-                           pin->GetInteger("mesh", "nghost")});
+                           binary_nghost},
+      binary_coarse_ng);
   if (binary_layout.centering != stored.layout.centering ||
       binary_layout.centering_schema != stored.layout.centering_schema ||
       binary_layout.ng != stored.layout.ng ||

@@ -38,11 +38,19 @@ static_assert(std::is_trivially_copyable_v<VertexContributor>);
 bool VertexContributorLess(const VertexContributor &left,
                            const VertexContributor &right);
 
+constexpr bool VertexContributorHasAuthority(const int contributor_level,
+                                              const int maximum_level) {
+  return contributor_level == maximum_level;
+}
+
 class Z4cVertexTopologyPlan {
  public:
   Z4cVertexTopologyPlan() = default;
   void Rebuild(MeshBlockPack *pack, const Z4cGridLayout &layout);
-  void SynchronizeSharedNodes(DvceArray5D<Real> &state) const;
+  void SynchronizeSharedNodes(
+      DvceArray5D<Real> &state,
+      const char *diagnostic_environment =
+          "ATHENA_Z4C_VC_SYNC_DIAGNOSTIC") const;
 
   DualArray4D<vertex_topology::VertexTopologyRecord> records;
   std::uint64_t generation = 0;
@@ -57,6 +65,7 @@ class Z4cVertexTopologyPlan {
   std::vector<int> global_group_for_contributor;
   std::vector<int> local_group;
   DualArray2D<int> local_indices;
+  mutable std::uint64_t synchronization_calls = 0;
 };
 
 }  // namespace z4c

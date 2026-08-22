@@ -326,19 +326,19 @@ void MeshBoundaryValuesVC::ProlongateVC(DvceArray5D<Real> &a,
                     }
                     Real value = 0.0;
                     if (spatial_order == 2) {
-                      value = vertex_amr::ProlongVCPoint<2>(
-                          m, v, k, j, i, vertex_layout.is, vertex_layout.js,
-                          vertex_layout.ks, vertex_layout.cis, vertex_layout.cjs,
-                          vertex_layout.cks, vertex_layout.collapse_x2,
-                          vertex_layout.collapse_x3, ca, a);
-                    } else if (spatial_order == 4) {
                       value = vertex_amr::ProlongVCPoint<4>(
                           m, v, k, j, i, vertex_layout.is, vertex_layout.js,
                           vertex_layout.ks, vertex_layout.cis, vertex_layout.cjs,
                           vertex_layout.cks, vertex_layout.collapse_x2,
                           vertex_layout.collapse_x3, ca, a);
-                    } else {
+                    } else if (spatial_order == 4) {
                       value = vertex_amr::ProlongVCPoint<6>(
+                          m, v, k, j, i, vertex_layout.is, vertex_layout.js,
+                          vertex_layout.ks, vertex_layout.cis, vertex_layout.cjs,
+                          vertex_layout.cks, vertex_layout.collapse_x2,
+                          vertex_layout.collapse_x3, ca, a);
+                    } else {
+                      value = vertex_amr::ProlongVCPoint<8>(
                           m, v, k, j, i, vertex_layout.is, vertex_layout.js,
                           vertex_layout.ks, vertex_layout.cis, vertex_layout.cjs,
                           vertex_layout.cks, vertex_layout.collapse_x2,

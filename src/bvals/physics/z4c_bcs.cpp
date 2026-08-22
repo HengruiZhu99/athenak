@@ -55,7 +55,8 @@ void ValidateAxisBoundaryContract(MeshBlockPack *ppack,
 
 template<int order>
 void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0,
-              int is, int ie, int js, int je, int ks, int ke, int n1, int n2, int n3);
+              int is, int ie, int js, int je, int ks, int ke, int n1, int n2,
+              int n3, int ghost_width);
 
 // A simple function for doing one-sided extrapolation.
 // The off[xyz] variables control the direction of the extrapolation,
@@ -116,8 +117,6 @@ Real Extrapolate<4>(DvceArray5D<Real> u, const int m, const int n,
 void MeshBoundaryValues::Z4cBCs(MeshBlockPack *ppack, DualArray2D<Real> u_in,
                                 DvceArray5D<Real> u0, DvceArray5D<Real> coarse_u0) {
   auto &pm = ppack->pmesh;
-  auto &indcs = ppack->pmesh->mb_indcs;
-  int &ng = indcs.ng;
   const auto &layout = ppack->pz4c->layout;
 
   int n1 = layout.n1;
@@ -134,13 +133,16 @@ void MeshBoundaryValues::Z4cBCs(MeshBlockPack *ppack, DualArray2D<Real> u_in,
 
   switch(opt.extrap_order) {
     case 2:
-      BCHelper<2>(ppack, u_in, u0, is, ie, js, je, ks, ke, n1, n2, n3);
+      BCHelper<2>(ppack, u_in, u0, is, ie, js, je, ks, ke, n1, n2, n3,
+                  layout.ng);
       break;
     case 3:
-      BCHelper<3>(ppack, u_in, u0, is, ie, js, je, ks, ke, n1, n2, n3);
+      BCHelper<3>(ppack, u_in, u0, is, ie, js, je, ks, ke, n1, n2, n3,
+                  layout.ng);
       break;
     case 4:
-      BCHelper<4>(ppack, u_in, u0, is, ie, js, je, ks, ke, n1, n2, n3);
+      BCHelper<4>(ppack, u_in, u0, is, ie, js, je, ks, ke, n1, n2, n3,
+                  layout.ng);
       break;
   }
   if (pm->multilevel) {
@@ -155,13 +157,16 @@ void MeshBoundaryValues::Z4cBCs(MeshBlockPack *ppack, DualArray2D<Real> u_in,
     int cke = layout.cke;
     switch(opt.extrap_order) {
       case 2:
-        BCHelper<2>(ppack, u_in, coarse_u0, cis, cie, cjs, cje, cks, cke, cn1, cn2, cn3);
+        BCHelper<2>(ppack, u_in, coarse_u0, cis, cie, cjs, cje, cks, cke,
+                    cn1, cn2, cn3, layout.coarse_ng);
         break;
       case 3:
-        BCHelper<3>(ppack, u_in, coarse_u0, cis, cie, cjs, cje, cks, cke, cn1, cn2, cn3);
+        BCHelper<3>(ppack, u_in, coarse_u0, cis, cie, cjs, cje, cks, cke,
+                    cn1, cn2, cn3, layout.coarse_ng);
         break;
       case 4:
-        BCHelper<4>(ppack, u_in, coarse_u0, cis, cie, cjs, cje, cks, cke, cn1, cn2, cn3);
+        BCHelper<4>(ppack, u_in, coarse_u0, cis, cie, cjs, cje, cks, cke,
+                    cn1, cn2, cn3, layout.coarse_ng);
         break;
     }
   }
@@ -171,10 +176,11 @@ void MeshBoundaryValues::Z4cBCs(MeshBlockPack *ppack, DualArray2D<Real> u_in,
 //                            DvceArray5D<Real> u0) {
 template<int order>
 void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0,
-              int is, int ie, int js, int je, int ks, int ke, int n1, int n2, int n3) {
+              int is, int ie, int js, int je, int ks, int ke, int n1, int n2,
+              int n3, int ghost_width) {
   // loop over all MeshBlocks in this MeshBlockPack
   auto &pm = ppack->pmesh;
-  int &ng = ppack->pmesh->mb_indcs.ng;
+  const int ng = ghost_width;
   auto &mb_bcs = ppack->pmb->mb_bcs;
 
   int nvar = u0.extent_int(1);  // TODO(@user): 2nd index from L of in array must be NVAR

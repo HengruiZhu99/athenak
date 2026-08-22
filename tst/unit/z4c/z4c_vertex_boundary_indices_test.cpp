@@ -33,7 +33,7 @@ void RequireEqualCount(const vertex_bvals::VertexIndexRange left,
 void CheckRelation(const int ox1, const int ox2, const int ox3,
                    const int f1, const int f2,
                    const bool collapse_x2, const bool collapse_x3,
-                   const int ng) {
+                   const int fine_ng, const int coarse_ng) {
   constexpr int fine_start = 4;
   constexpr int fine_end = 12;
   constexpr int coarse_start = 2;
@@ -49,27 +49,31 @@ void CheckRelation(const int ox1, const int ox2, const int ox3,
     const int coarse_e = collapsed[direction] ? 0 : coarse_end;
 
     const auto fine_to_coarse_send = vertex_bvals::FineToCoarseSendRange(
-        coarse_s, coarse_e, ng, offsets[direction], selector,
+        coarse_s, coarse_e, fine_ng, offsets[direction], selector,
         collapsed[direction]);
     const auto fine_to_coarse_recv = vertex_bvals::FineToCoarseRecvRange(
-        fine_s, fine_e, ng, offsets[direction], selector,
+        fine_s, fine_e, fine_ng, offsets[direction], selector,
         collapsed[direction]);
     RequireEqualCount(fine_to_coarse_send, fine_to_coarse_recv,
                       "fine-to-coarse relation counts must match");
 
     const auto coarse_to_fine_send = vertex_bvals::CoarseToFineSendRange(
-        fine_s, fine_e, ng, offsets[direction], selector,
+        fine_s, fine_e, coarse_ng, offsets[direction], selector,
         collapsed[direction]);
     const auto coarse_to_fine_recv = vertex_bvals::CoarseToFineRecvRange(
-        coarse_s, coarse_e, ng, offsets[direction], selector,
+        coarse_s, coarse_e, coarse_ng, offsets[direction], selector,
         collapsed[direction]);
     RequireEqualCount(coarse_to_fine_send, coarse_to_fine_recv,
                       "coarse-to-fine relation counts must match");
 
-    const int fine_stored_lower = collapsed[direction] ? 0 : fine_start - ng;
-    const int fine_stored_upper = collapsed[direction] ? 0 : fine_end + ng;
-    const int coarse_stored_lower = collapsed[direction] ? 0 : coarse_start - ng;
-    const int coarse_stored_upper = collapsed[direction] ? 0 : coarse_end + ng;
+    const int fine_stored_lower =
+        collapsed[direction] ? 0 : fine_start - fine_ng;
+    const int fine_stored_upper =
+        collapsed[direction] ? 0 : fine_end + fine_ng;
+    const int coarse_stored_lower =
+        collapsed[direction] ? 0 : coarse_start - coarse_ng;
+    const int coarse_stored_upper =
+        collapsed[direction] ? 0 : coarse_end + coarse_ng;
     Require(fine_to_coarse_send.lower >= coarse_stored_lower &&
                 fine_to_coarse_send.upper <= coarse_stored_upper,
             "fine-to-coarse send must stay inside coarse cache storage");
@@ -133,20 +137,25 @@ int main() {
 
   // Exhaust all face/edge/corner orientations and child selectors in full 3D,
   // Cartoon 2D, and 1D for the O2/O4/O6 native ghost widths (2,3,4).
-  const int ghost_widths[3] = {2, 3, 4};
-  for (const int native_ng : ghost_widths) {
+  const int ghost_widths[4][2] = {{2, 2}, {3, 3}, {4, 4}, {4, 5}};
+  for (const auto &widths : ghost_widths) {
+    const int fine_ng = widths[0];
+    const int coarse_ng = widths[1];
     for (int ox3 = -1; ox3 <= 1; ++ox3) {
       for (int ox2 = -1; ox2 <= 1; ++ox2) {
         for (int ox1 = -1; ox1 <= 1; ++ox1) {
           if (ox1 == 0 && ox2 == 0 && ox3 == 0) continue;
           for (int f2 = 0; f2 <= 1; ++f2) {
             for (int f1 = 0; f1 <= 1; ++f1) {
-              CheckRelation(ox1, ox2, ox3, f1, f2, false, false, native_ng);
+              CheckRelation(ox1, ox2, ox3, f1, f2, false, false,
+                            fine_ng, coarse_ng);
               if (ox3 == 0) {
-                CheckRelation(ox1, ox2, ox3, f1, f2, false, true, native_ng);
+                CheckRelation(ox1, ox2, ox3, f1, f2, false, true,
+                              fine_ng, coarse_ng);
               }
               if (ox2 == 0 && ox3 == 0) {
-                CheckRelation(ox1, ox2, ox3, f1, f2, true, true, native_ng);
+                CheckRelation(ox1, ox2, ox3, f1, f2, true, true,
+                              fine_ng, coarse_ng);
               }
             }
           }

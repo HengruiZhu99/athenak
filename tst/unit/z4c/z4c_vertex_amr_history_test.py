@@ -139,8 +139,8 @@ def main() -> int:
                        "meshblock/nx1=32", "meshblock/nx2=32"]
     if args.dimensions == 3:
         high_resolution = ["mesh/nx1=32", "mesh/nx2=32", "mesh/nx3=32",
-                           "meshblock/nx1=16", "meshblock/nx2=16",
-                           "meshblock/nx3=16"]
+                           "meshblock/nx1=32", "meshblock/nx2=32",
+                           "meshblock/nx3=32"]
     high_log = execute(command(
         args.athena, args.input, "vc_high", "replay", authority,
         [*high_resolution, "time/cfl_number=0.07", "time/nlim=6"]),

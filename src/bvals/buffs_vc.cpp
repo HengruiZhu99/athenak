@@ -81,12 +81,12 @@ void MeshBoundaryValuesVC::InitSendIndices(MeshBoundaryBuffer &buf,
   buf.isame_z4c_ndat = buf.isame_ndat + Count(buf.isame_z4c);
   SetRange(buf.icoar[0],
       vertex_bvals::FineToCoarseSendRange(
-          layout.cis, layout.cie, layout.coarse_ng, ox1, sx, false),
+          layout.cis, layout.cie, layout.ng, ox1, sx, false),
       vertex_bvals::FineToCoarseSendRange(
-          layout.cjs, layout.cje, layout.coarse_ng, ox2, sy,
+          layout.cjs, layout.cje, layout.ng, ox2, sy,
                        layout.collapse_x2),
       vertex_bvals::FineToCoarseSendRange(
-          layout.cks, layout.cke, layout.coarse_ng, ox3, sz,
+          layout.cks, layout.cke, layout.ng, ox3, sz,
                        layout.collapse_x3));
   buf.icoar_ndat = Count(buf.icoar[0]);
   SetRange(buf.ifine[0],

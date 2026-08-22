@@ -573,7 +573,7 @@ if (Athena_BUILD_UNIT_TESTS)
     add_z4c_vc_dynamic_amr_case(
         athena.z4c_vc_dynamic_amr_3d_cartesian_o${order}
         z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
-        3 cartesian ${order} 8 64.0)
+        3 cartesian ${order} 1 64.0)
   endforeach()
   function(add_z4c_cc_lifecycle_case name input dimensions geometry root_leaves
            expected_volume)
@@ -603,7 +603,7 @@ if (Athena_BUILD_UNIT_TESTS)
   add_z4c_cc_lifecycle_case(
       athena.z4c_cc_lifecycle_3d_cartesian
       z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
-      3 cartesian 8 64.0)
+      3 cartesian 1 64.0)
   add_test(
       NAME athena.z4c_vc_dynamic_amr_invalid_target
       COMMAND
@@ -614,10 +614,25 @@ if (Athena_BUILD_UNIT_TESTS)
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
       --work-dir
       ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_dynamic_amr_invalid_target
-      --dimensions 3 --geometry cartesian --order 6 --root-leaves 8
+      --dimensions 3 --geometry cartesian --order 6 --root-leaves 1
       --expected-volume 64.0 --invalid-target-test)
   set_tests_properties(
       athena.z4c_vc_dynamic_amr_invalid_target
+      PROPERTIES TIMEOUT 30 LABELS "z4c;vertex;3d;cartesian;amr;negative")
+  add_test(
+      NAME athena.z4c_vc_dynamic_amr_invalid_halo
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py
+      --athena $<TARGET_FILE:athena>
+      --input
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
+      --work-dir
+      ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_dynamic_amr_invalid_halo
+      --dimensions 3 --geometry cartesian --order 6 --root-leaves 8
+      --expected-volume 64.0 --invalid-halo-test)
+  set_tests_properties(
+      athena.z4c_vc_dynamic_amr_invalid_halo
       PROPERTIES TIMEOUT 30 LABELS "z4c;vertex;3d;cartesian;amr;negative")
   if (Athena_ENABLE_MPI)
     function(add_z4c_vc_dynamic_amr_mpi_case name input dimensions geometry
@@ -649,11 +664,11 @@ if (Athena_BUILD_UNIT_TESTS)
     add_z4c_vc_dynamic_amr_mpi_case(
         athena.z4c_vc_dynamic_amr_3d_cartesian_mpi2
         z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
-        3 cartesian 2 8 64.0)
+        3 cartesian 2 1 64.0)
     add_z4c_vc_dynamic_amr_mpi_case(
         athena.z4c_vc_dynamic_amr_3d_cartesian_mpi4
         z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
-        3 cartesian 4 8 64.0)
+        3 cartesian 4 1 64.0)
   endif()
   add_test(
       NAME athena.z4c_vc_linear_wave_convergence_o4
@@ -865,7 +880,7 @@ if (Athena_BUILD_UNIT_TESTS)
       z4c_vc_minkowski_dynamic_amr.athinput 2 17 17 1 "2d;cartoon")
   add_z4c_vc_restart_case(
       athena.z4c_vc_restart_3d_cartesian
-      z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput 3 9 9 9
+      z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput 3 17 17 17
       "3d;cartesian")
   if (Athena_ENABLE_MPI)
     add_test(
@@ -891,7 +906,7 @@ if (Athena_BUILD_UNIT_TESTS)
         ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
         --work-dir
         ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_restart_3d_cartesian_rank_change
-        --dimensions 3 --active-n1 9 --active-n2 9 --active-n3 9
+        --dimensions 3 --active-n1 17 --active-n2 17 --active-n3 17
         --mpiexec ${MPIEXEC_EXECUTABLE} --np-flag=${MPIEXEC_NUMPROC_FLAG})
     set_tests_properties(
         athena.z4c_vc_restart_3d_cartesian_rank_change

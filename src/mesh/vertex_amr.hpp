@@ -50,11 +50,42 @@ struct MidpointRule<6> {
   }
 };
 
+template <>
+struct MidpointRule<8> {
+  static constexpr int points = 8;
+  static constexpr int left_offset = -3;
+  KOKKOS_INLINE_FUNCTION static constexpr Real weight(const int p) {
+    return p == 0 ?   -5.0 / 2048.0
+         : p == 1 ?   49.0 / 2048.0
+         : p == 2 ? -245.0 / 2048.0
+         : p == 3 ? 1225.0 / 2048.0
+         : p == 4 ? 1225.0 / 2048.0
+         : p == 5 ? -245.0 / 2048.0
+         : p == 6 ?   49.0 / 2048.0
+         : p == 7 ?   -5.0 / 2048.0 : 0.0;
+  }
+};
+
+//! Z4c contains interface-consumed second derivatives, so a p-th order bulk
+//! stencil requires midpoint data accurate to O(h^(p+2)).
+KOKKOS_INLINE_FUNCTION constexpr int TransferOrderForSpatialOrder(
+    const int spatial_order) {
+  return spatial_order == 2 ? 4 : spatial_order == 4 ? 6
+       : spatial_order == 6 ? 8 : 0;
+}
+
 struct DirectionStencil {
   int count = 1;
-  int index[6] = {0, 0, 0, 0, 0, 0};
-  Real weight[6] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  int index[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+  Real weight[8] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 };
+
+//! Integer floor(offset/2).  C++ signed integer division truncates toward zero,
+//! which is wrong for odd lower-side ghost indices (for example -1/2 must map
+//! to the coarse interval [-1,0], not [0,1]).
+KOKKOS_INLINE_FUNCTION constexpr int FloorHalf(const int offset) {
+  return offset >= 0 ? offset / 2 : (offset - 1) / 2;
+}
 
 template <int ORDER>
 KOKKOS_INLINE_FUNCTION DirectionStencil MakeDirectionStencil(
@@ -66,7 +97,7 @@ KOKKOS_INLINE_FUNCTION DirectionStencil MakeDirectionStencil(
     return stencil;
   }
   const int offset = fine_index - fine_start;
-  const int coarse_left = coarse_start + offset / 2;
+  const int coarse_left = coarse_start + FloorHalf(offset);
   if ((offset & 1) == 0) {
     stencil.index[0] = coarse_left;
     return stencil;
@@ -118,9 +149,41 @@ KOKKOS_INLINE_FUNCTION Real ProlongVCPoint(
   return value;
 }
 
-template <int ORDER>
-KOKKOS_INLINE_FUNCTION constexpr int RequiredCoarseGhostWidth() {
-  return ORDER == 2 ? 1 : ORDER == 4 ? 1 : 2;
+template <int TRANSFER_ORDER>
+KOKKOS_INLINE_FUNCTION constexpr int RequiredCoarseGhostWidth(
+    const int fine_ghost_width) {
+  // A fine ghost at the farthest odd offset needs floor(offset/2) plus
+  // TRANSFER_ORDER/2 coarse points on its outer side.  Retain at least the
+  // historical width so same-level coarse-cache communication is not narrowed.
+  const int interpolation_width =
+      (fine_ghost_width - 1) / 2 + TRANSFER_ORDER / 2;
+  return interpolation_width > fine_ghost_width
+             ? interpolation_width : fine_ghost_width;
+}
+
+template <int TRANSFER_ORDER>
+KOKKOS_INLINE_FUNCTION constexpr int RequiredRefinementHalo() {
+  return TRANSFER_ORDER / 2 - 1;
+}
+
+KOKKOS_INLINE_FUNCTION constexpr int RequiredRefinementHaloForSpatialOrder(
+    const int spatial_order) {
+  return spatial_order == 2 ? RequiredRefinementHalo<4>()
+       : spatial_order == 4 ? RequiredRefinementHalo<6>()
+       : spatial_order == 6 ? RequiredRefinementHalo<8>() : 0;
+}
+
+KOKKOS_INLINE_FUNCTION constexpr int RequiredCoarseGhostWidthForSpatialOrder(
+    const int spatial_order, const int fine_ghost_width) {
+  return spatial_order == 2 ? RequiredCoarseGhostWidth<4>(fine_ghost_width)
+       : spatial_order == 4 ? RequiredCoarseGhostWidth<6>(fine_ghost_width)
+       : spatial_order == 6 ? RequiredCoarseGhostWidth<8>(fine_ghost_width)
+                            : 0;
+}
+
+KOKKOS_INLINE_FUNCTION constexpr bool SupportsSingleHopCoarseHalo(
+    const int coarse_intervals, const int coarse_ghost_width) {
+  return coarse_intervals >= coarse_ghost_width;
 }
 
 }  // namespace vertex_amr

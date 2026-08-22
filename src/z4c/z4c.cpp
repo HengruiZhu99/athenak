@@ -24,6 +24,7 @@
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/vertex_amr.hpp"
 #include "driver/driver.hpp"
 #include "bvals/bvals.hpp"
 #include "z4c/fastflow.hpp"
@@ -42,6 +43,22 @@
 #endif
 
 namespace z4c {
+
+namespace {
+
+int NativeCoarseGhostWidth(MeshBlockPack *ppack, ParameterInput *pin) {
+  const auto &indcs = ppack->pmesh->mb_indcs;
+  if (ppack->z4c_symmetry.grid_centering != Z4cGridCentering::vertex) {
+    return indcs.ng;
+  }
+  const int requested = pin->GetOrAddInteger(
+      "z4c", "spatial_order", 2 * (indcs.ng - 1));
+  const int effective = EffectiveZ4cSpatialOrder(requested, indcs.ng);
+  return vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(effective,
+                                                              indcs.ng);
+}
+
+}  // namespace
 
 const char *Z4cStateCheckpointName(const Z4cStateCheckpoint checkpoint) {
   switch (checkpoint) {
@@ -154,7 +171,8 @@ void Z4c::ValidateNativeStorageExtents() const {
 
 Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   layout(MakeZ4cGridLayout(ppack->z4c_symmetry.grid_centering,
-                           ppack->pmesh->mb_indcs)),
+                           ppack->pmesh->mb_indcs,
+                           NativeCoarseGhostWidth(ppack, pin))),
   u_con("u_con",1,1,1,1,1),
   //u_mat("u_mat",1,1,1,1,1),
   u0("u0 z4c",1,1,1,1,1),
@@ -473,6 +491,19 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
               << "<z4c>/spatial_order=" << opt.spatial_order
               << " requires at least " << opt.fd_stencil
               << " ghost cells, but <mesh>/nghost=" << indcs.ng << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (layout.centering == Z4cGridCentering::vertex &&
+      pmy_pack->pmesh->multilevel &&
+      (!vertex_amr::SupportsSingleHopCoarseHalo(layout.cnx1,
+                                                layout.coarse_ng) ||
+       (layout.nx2 > 1 && !vertex_amr::SupportsSingleHopCoarseHalo(
+                              layout.cnx2, layout.coarse_ng)) ||
+       (layout.nx3 > 1 && !vertex_amr::SupportsSingleHopCoarseHalo(
+                              layout.cnx3, layout.coarse_ng)))) {
+    std::cerr << "### FATAL ERROR: native VC centered interpolation requires each "
+                 "coarse MeshBlock interval count to be at least coarse_nghost="
+              << layout.coarse_ng << "; increase the MeshBlock size" << std::endl;
     std::exit(EXIT_FAILURE);
   }
   opt.roll_kappa = pin->GetOrAddBoolean("z4c", "roll_kappa", false);

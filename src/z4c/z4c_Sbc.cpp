@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cinttypes>
+#include <cstdlib>
 #include <iostream>
 #include <limits>
 
@@ -16,6 +17,7 @@
 #include "z4c/cartoon_derivatives.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_symmetry.hpp"
+#include "z4c/z4c_vertex_topology.hpp"
 #include "coordinates/cell_locations.hpp"
 
 namespace z4c {
@@ -301,6 +303,19 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   }
   if (status == TaskStatus::complete && chi_parent_provenance != nullptr) {
     chi_parent_provenance->AnalyzePreUpdate(pdriver, stage);
+  }
+  if (status == TaskStatus::complete &&
+      layout.centering == Z4cGridCentering::vertex &&
+      std::getenv("ATHENA_Z4C_VC_RHS_SYNC_DIAGNOSTIC") != nullptr) {
+    // Observe the canonical shared-node RHS mismatch without changing the production
+    // update.  Synchronization is applied only to this disposable diagnostic copy.
+    DvceArray5D<Real> rhs_copy(
+        "native VC shared RHS diagnostic", u_rhs.extent_int(0),
+        u_rhs.extent_int(1), u_rhs.extent_int(2), u_rhs.extent_int(3),
+        u_rhs.extent_int(4));
+    Kokkos::deep_copy(rhs_copy, u_rhs);
+    vertex_topology_plan->SynchronizeSharedNodes(
+        rhs_copy, "ATHENA_Z4C_VC_RHS_SYNC_DIAGNOSTIC");
   }
   return status;
 }
