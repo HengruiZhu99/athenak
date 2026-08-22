@@ -104,7 +104,7 @@ The post-axis executable SHA-256 is
 `97715f7fa5d6d1a1f73827688ce906bd65d05ce81076117f6a8f0f77711f8c18`.
 The frozen one-cycle CC reference remains byte-identical:
 
-- history SHA-256: `4896c333ceda81d99cf1e4c15a28996d73c999c6222d4b83e5e0a4a6044aa`;
+- history SHA-256: `4896c333ceda81d99cf1e4c15a28996d73c999c6222d4b83e770c9f4f4d0f598`;
 - timestep-contract SHA-256: `dad954f5938eea76aca74493ec5bd1ac8c66cdc67ac7ad24225988c19e5e3037`.
 
 This still does not qualify VC communication or AMR; the constructor guard

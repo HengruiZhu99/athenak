@@ -1,0 +1,73 @@
+Internal ctest changing into directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/axisymmetric_cartoon_remaining/brill_collapse_contract_fixes/build/o4-release-mpi
+Test project /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/axisymmetric_cartoon_remaining/brill_collapse_contract_fixes/build/o4-release-mpi
+      Start 27: athena.z4c_vc_amr_history_mpi
+      Start 30: athena.z4c_vc_restart_rank_change
+      Start 26: athena.z4c_vc_amr_history
+      Start 29: athena.z4c_vc_restart
+      Start 33: athena.z4c_vc_output
+      Start 25: athena.z4c_vc_static_multilevel_wave
+      Start 23: athena.z4c_vc_dynamic_amr
+      Start 28: athena.z4c_vc_history_mpi
+      Start 22: athena.z4c_vc_task_order
+      Start 19: athena.z4c_vc_cartoon_axis_rhs_regularity
+      Start 18: athena.z4c_vc_cartoon_axis_tensor
+      Start 16: athena.z4c_vc_cartoon_axis_scalar
+      Start 17: athena.z4c_vc_cartoon_axis_vector
+      Start 13: athena.z4c_vc_cartoon_derivatives_o6
+      Start 12: athena.z4c_vc_cartoon_derivatives_o4
+      Start 20: athena.z4c_vc_vertex_topology
+ 1/28 Test #19: athena.z4c_vc_cartoon_axis_rhs_regularity ......   Passed    0.01 sec
+      Start  8: athena.z4c_vc_cartesian_derivatives_o2
+ 2/28 Test #18: athena.z4c_vc_cartoon_axis_tensor ..............   Passed    0.01 sec
+      Start 11: athena.z4c_vc_cartoon_derivatives_o2
+ 3/28 Test #16: athena.z4c_vc_cartoon_axis_scalar ..............   Passed    0.01 sec
+      Start 10: athena.z4c_vc_cartesian_derivatives_o6
+ 4/28 Test #17: athena.z4c_vc_cartoon_axis_vector ..............   Passed    0.01 sec
+      Start  7: athena.z4c_vc_collapsed_dimension
+ 5/28 Test #13: athena.z4c_vc_cartoon_derivatives_o6 ...........   Passed    0.01 sec
+      Start  9: athena.z4c_vc_cartesian_derivatives_o4
+ 6/28 Test #12: athena.z4c_vc_cartoon_derivatives_o4 ...........   Passed    0.01 sec
+      Start  6: athena.z4c_vc_coordinates
+ 7/28 Test #20: athena.z4c_vc_vertex_topology ..................   Passed    0.01 sec
+      Start  5: athena.z4c_vc_layout
+ 8/28 Test  #8: athena.z4c_vc_cartesian_derivatives_o2 .........   Passed    0.01 sec
+      Start 35: athena.z4c_cartoon_axis_centered_derivatives
+ 9/28 Test #11: athena.z4c_vc_cartoon_derivatives_o2 ...........   Passed    0.01 sec
+      Start 21: athena.z4c_vc_boundary_indices
+10/28 Test #10: athena.z4c_vc_cartesian_derivatives_o6 .........   Passed    0.01 sec
+      Start 31: athena.z4c_vc_amr_transfer
+11/28 Test  #7: athena.z4c_vc_collapsed_dimension ..............   Passed    0.01 sec
+      Start 32: athena.z4c_vc_history_quadrature
+12/28 Test  #9: athena.z4c_vc_cartesian_derivatives_o4 .........   Passed    0.01 sec
+      Start 34: athena.z4c_vc_to_cc_adm
+13/28 Test #22: athena.z4c_vc_task_order .......................   Passed    0.02 sec
+14/28 Test  #6: athena.z4c_vc_coordinates ......................   Passed    0.01 sec
+15/28 Test  #5: athena.z4c_vc_layout ...........................   Passed    0.01 sec
+16/28 Test #35: athena.z4c_cartoon_axis_centered_derivatives ...   Passed    0.00 sec
+17/28 Test #21: athena.z4c_vc_boundary_indices .................   Passed    0.00 sec
+18/28 Test #31: athena.z4c_vc_amr_transfer .....................   Passed    0.00 sec
+19/28 Test #32: athena.z4c_vc_history_quadrature ...............   Passed    0.00 sec
+20/28 Test #34: athena.z4c_vc_to_cc_adm ........................   Passed    0.00 sec
+21/28 Test #28: athena.z4c_vc_history_mpi ......................   Passed    0.71 sec
+22/28 Test #23: athena.z4c_vc_dynamic_amr ......................   Passed    0.76 sec
+23/28 Test #25: athena.z4c_vc_static_multilevel_wave ...........   Passed    1.63 sec
+24/28 Test #33: athena.z4c_vc_output ...........................   Passed    2.07 sec
+25/28 Test #29: athena.z4c_vc_restart ..........................   Passed    5.58 sec
+26/28 Test #26: athena.z4c_vc_amr_history ......................   Passed    5.95 sec
+27/28 Test #30: athena.z4c_vc_restart_rank_change ..............   Passed    6.16 sec
+28/28 Test #27: athena.z4c_vc_amr_history_mpi ..................   Passed    6.52 sec
+
+100% tests passed, 0 tests failed out of 28
+
+Label Time Summary:
+amr          =  14.86 sec*proc (4 tests)
+cartesian    =   1.63 sec*proc (1 test)
+history      =  13.18 sec*proc (3 tests)
+interface    =   1.63 sec*proc (1 test)
+mpi          =  19.34 sec*proc (4 tests)
+output       =   2.07 sec*proc (1 test)
+restart      =  11.74 sec*proc (2 tests)
+vertex       =  29.38 sec*proc (8 tests)
+z4c          =  29.38 sec*proc (8 tests)
+
+Total Test time (real) =   6.52 sec

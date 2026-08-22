@@ -1,0 +1,30 @@
+JobId=57392246 JobName=z4c-vc-axis-fix-v2
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:09 TimeLimit=01:00:00 TimeMin=N/A
+   SubmitTime=2026-08-21T17:23:09 EligibleTime=2026-08-21T17:23:09
+   AccrueTime=Unknown
+   StartTime=2026-08-21T17:23:09 EndTime=2026-08-21T18:23:09 Deadline=N/A
+   PreemptEligibleTime=2026-08-21T17:23:09 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-21T17:23:09 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login02:1136573
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid008205
+   BatchHost=nid008205
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=2 CPUs/Task=16 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=16 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100&hbm80g DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=scratch:1 LicensesAlloc=scratch:1 Network=(null)
+   Command=env
+   SubmitLine=salloc --account=m3328_g --job-name=z4c-vc-axis-fix-v2 --qos=shared_interactive --constraint=gpu&hbm80g --nodes=1 --ntasks=2 --cpus-per-task=16 --gpus-per-node=1 --time=01:00:00 env CAMPAIGN_ROOT=/pscratch/sd/h/hzhu/z4c-vc-qual-684402ae-v2-20260821/campaign-v2 SOURCE_ROOT=/pscratch/sd/h/hzhu/z4c-vc-qual-684402ae-v2-20260821/source BUILD_ROOT=/pscratch/sd/h/hzhu/z4c-vc-qual-684402ae-v2-20260821/build FIXED_INPUT=/pscratch/sd/h/hzhu/z4c-vc-qual-684402ae-v2-20260821/input/brill_vc_fixed_grid.athinput REPLAY_INPUT=/pscratch/sd/h/hzhu/z4c-vc-qual-684402ae-v2-20260821/input/brill_vc_common_tree.athinput COEFFICIENT_FILE=/pscratch/sd/h/hzhu/z4c-vc-qual-684402ae-v2-20260821/input/brill_global_48x32.coefficients AUTHORITY_FILE=/pscratch/sd/h/hzhu/z4c-vc-qual-684402ae-v2-20260821/input/n256_amr_history.jsonl bash /pscratch/sd/h/hzhu/z4c-vc-qual-684402ae-v2-20260821/input/run_perlmutter_qualification.sh
+   WorkDir=/pscratch/sd/h/hzhu/z4c-vc-qual-684402ae-v2-20260821
+   TresPerNode=gres/gpu:1
+   TresPerTask=cpu=16
+   ResvPorts=63318-63322
+

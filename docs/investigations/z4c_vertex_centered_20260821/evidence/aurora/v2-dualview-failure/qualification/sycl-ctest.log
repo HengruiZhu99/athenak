@@ -1,0 +1,135 @@
+START 1/30 athena.z4c_vc_layout
+Z4c grid layout test passed
+END 1/30 athena.z4c_vc_layout status=0 seconds=0.508201
+START 2/30 athena.z4c_vc_coordinates
+Z4c grid coordinates test passed
+END 2/30 athena.z4c_vc_coordinates status=0 seconds=0.192863
+START 3/30 athena.z4c_vc_collapsed_dimension
+Z4c grid collapsed test passed
+END 3/30 athena.z4c_vc_collapsed_dimension status=0 seconds=0.184107
+START 4/30 athena.z4c_vc_cartesian_derivatives_o2
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+Z4c Cartesian/Cartoon VC derivative factories passed on SYCL
+END 4/30 athena.z4c_vc_cartesian_derivatives_o2 status=0 seconds=0.443695
+START 5/30 athena.z4c_vc_cartesian_derivatives_o4
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+Z4c Cartesian/Cartoon VC derivative factories passed on SYCL
+END 5/30 athena.z4c_vc_cartesian_derivatives_o4 status=0 seconds=0.276506
+START 6/30 athena.z4c_vc_cartesian_derivatives_o6
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+Z4c Cartesian/Cartoon VC derivative factories passed on SYCL
+END 6/30 athena.z4c_vc_cartesian_derivatives_o6 status=0 seconds=0.259002
+START 7/30 athena.z4c_vc_cartoon_derivatives_o2
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+Z4c Cartesian/Cartoon VC derivative factories passed on SYCL
+END 7/30 athena.z4c_vc_cartoon_derivatives_o2 status=0 seconds=0.265988
+START 8/30 athena.z4c_vc_cartoon_derivatives_o4
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+Cartoon native-VC O4 convergence whole=3.91066,3.96148 axis=3.96545,3.98798
+Z4c Cartesian/Cartoon VC derivative factories passed on SYCL
+END 8/30 athena.z4c_vc_cartoon_derivatives_o4 status=0 seconds=0.250061
+START 9/30 athena.z4c_vc_cartoon_derivatives_o6
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+Z4c Cartesian/Cartoon VC derivative factories passed on SYCL
+END 9/30 athena.z4c_vc_cartoon_derivatives_o6 status=0 seconds=0.257483
+START 10/30 athena.z4c_vc_cartoon_axis_scalar
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+vertex Cartoon axis contract passed for scalar
+END 10/30 athena.z4c_vc_cartoon_axis_scalar status=0 seconds=0.376409
+START 11/30 athena.z4c_vc_cartoon_axis_vector
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+vertex Cartoon axis contract passed for vector
+END 11/30 athena.z4c_vc_cartoon_axis_vector status=0 seconds=0.265310
+START 12/30 athena.z4c_vc_cartoon_axis_tensor
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+vertex Cartoon axis contract passed for tensor
+END 12/30 athena.z4c_vc_cartoon_axis_tensor status=0 seconds=0.263707
+START 13/30 athena.z4c_vc_cartoon_axis_rhs_regularity
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+vertex Cartoon axis contract passed for rhs_regularity
+END 13/30 athena.z4c_vc_cartoon_axis_rhs_regularity status=0 seconds=0.265403
+START 14/30 athena.z4c_vc_vertex_topology
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+canonical VC topology contract passed
+END 14/30 athena.z4c_vc_vertex_topology status=0 seconds=0.455396
+START 15/30 athena.z4c_vc_boundary_indices
+PASS: native VC same/coarse/fine boundary index contract
+END 15/30 athena.z4c_vc_boundary_indices status=0 seconds=0.248052
+START 16/30 athena.z4c_vc_task_order
+PASS: native VC accepted-state task ordering
+END 16/30 athena.z4c_vc_task_order status=0 seconds=0.088249
+START 17/30 athena.z4c_vc_dynamic_amr
+Traceback (most recent call last):
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-qual-684402ae-v2-20260821/source/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 89, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-qual-684402ae-v2-20260821/source/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 46, in main
+    require(completed.returncode == 0,
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-qual-684402ae-v2-20260821/source/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 16, in require
+    raise RuntimeError(message)
+RuntimeError: native VC dynamic AMR run failed:
+AthenaK Kokkos default execution space: SYCL
+
+Root grid = 2 x 2 x 1 MeshBlocks
+Total number of MeshBlocks = 4
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=4.717882e-01 cycle=0 time=0.000000e+00 dt=8.838835e-03
+CARTOON_AMR_TRANSACTION cycle=1 requested_refine=1 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=3 deleted_leaves=0 mirror_mismatches=0
+Segmentation fault from GPU at 0xf58d000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 3 (PML4), access: 0 (Read), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+
+Segmentation fault from GPU at 0xf58d000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 3 (PML4), access: 0 (Read), banned: 1, aborting.
+
+x4711c1s2b0n0.hsn.cm.aurora.alcf.anl.gov: rank 0 exited with code 1
+END 17/30 athena.z4c_vc_dynamic_amr status=1 seconds=1.873734

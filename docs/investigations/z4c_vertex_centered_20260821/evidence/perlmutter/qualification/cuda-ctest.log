@@ -1,0 +1,92 @@
+START 1/30 athena.z4c_vc_layout
+Z4c grid layout test passed
+END 1/30 athena.z4c_vc_layout status=0 seconds=0.968781
+START 2/30 athena.z4c_vc_coordinates
+Z4c grid coordinates test passed
+END 2/30 athena.z4c_vc_coordinates status=0 seconds=0.461005
+START 3/30 athena.z4c_vc_collapsed_dimension
+Z4c grid collapsed test passed
+END 3/30 athena.z4c_vc_collapsed_dimension status=0 seconds=0.515145
+START 4/30 athena.z4c_vc_cartesian_derivatives_o2
+Z4c Cartesian/Cartoon VC derivative factories passed on Cuda
+END 4/30 athena.z4c_vc_cartesian_derivatives_o2 status=0 seconds=1.589553
+START 5/30 athena.z4c_vc_cartesian_derivatives_o4
+Z4c Cartesian/Cartoon VC derivative factories passed on Cuda
+END 5/30 athena.z4c_vc_cartesian_derivatives_o4 status=0 seconds=0.938629
+START 6/30 athena.z4c_vc_cartesian_derivatives_o6
+Z4c Cartesian/Cartoon VC derivative factories passed on Cuda
+END 6/30 athena.z4c_vc_cartesian_derivatives_o6 status=0 seconds=0.891605
+START 7/30 athena.z4c_vc_cartoon_derivatives_o2
+Z4c Cartesian/Cartoon VC derivative factories passed on Cuda
+END 7/30 athena.z4c_vc_cartoon_derivatives_o2 status=0 seconds=0.956075
+START 8/30 athena.z4c_vc_cartoon_derivatives_o4
+Cartoon native-VC O4 convergence whole=3.91066,3.96148 axis=3.96545,3.98798
+Z4c Cartesian/Cartoon VC derivative factories passed on Cuda
+END 8/30 athena.z4c_vc_cartoon_derivatives_o4 status=0 seconds=0.909111
+START 9/30 athena.z4c_vc_cartoon_derivatives_o6
+Z4c Cartesian/Cartoon VC derivative factories passed on Cuda
+END 9/30 athena.z4c_vc_cartoon_derivatives_o6 status=0 seconds=0.865882
+START 10/30 athena.z4c_vc_cartoon_axis_scalar
+vertex Cartoon axis contract passed for scalar
+END 10/30 athena.z4c_vc_cartoon_axis_scalar status=0 seconds=0.871226
+START 11/30 athena.z4c_vc_cartoon_axis_vector
+vertex Cartoon axis contract passed for vector
+END 11/30 athena.z4c_vc_cartoon_axis_vector status=0 seconds=0.773633
+START 12/30 athena.z4c_vc_cartoon_axis_tensor
+vertex Cartoon axis contract passed for tensor
+END 12/30 athena.z4c_vc_cartoon_axis_tensor status=0 seconds=0.879924
+START 13/30 athena.z4c_vc_cartoon_axis_rhs_regularity
+vertex Cartoon axis contract passed for rhs_regularity
+END 13/30 athena.z4c_vc_cartoon_axis_rhs_regularity status=0 seconds=0.847065
+START 14/30 athena.z4c_vc_vertex_topology
+canonical VC topology contract passed
+END 14/30 athena.z4c_vc_vertex_topology status=0 seconds=1.016372
+START 15/30 athena.z4c_vc_boundary_indices
+PASS: native VC same/coarse/fine boundary index contract
+END 15/30 athena.z4c_vc_boundary_indices status=0 seconds=0.407766
+START 16/30 athena.z4c_vc_task_order
+PASS: native VC accepted-state task ordering
+END 16/30 athena.z4c_vc_task_order status=0 seconds=0.745684
+START 17/30 athena.z4c_vc_dynamic_amr
+PASS: native VC dynamic refine/derefine lifecycle and ring quadrature
+END 17/30 athena.z4c_vc_dynamic_amr status=0 seconds=1.422952
+START 18/30 athena.z4c_vc_linear_wave_convergence_o4
+native-VC Cartesian O4 convergence passed: wave_orders={'z4c_gyy': 3.9677950791289875, 'z4c_gzz': 3.9678614616404033, 'z4c_Ayy': 3.97701269324149, 'z4c_Azz': 3.9814521800892866} wave_differences={'z4c_gyy': [2.1497454558688422e-10, 1.3739208180673758e-11], 'z4c_gzz': [2.1497588257812682e-10, 1.3738661459413086e-11], 'z4c_Ayy': [6.753702482487411e-10, 4.288859419677116e-11], 'z4c_Azz': [6.753123089073164e-10, 4.275315144035422e-11]} all_state_differences=[2.031400652442669e-10, 2.082655819484829e-11] analytic_norms=[(8.063539e-08, 7.622821e-11), (8.063504e-08, 3.811453e-11), (8.063035e-08, 1.905812e-11)]
+END 18/30 athena.z4c_vc_linear_wave_convergence_o4 status=0 seconds=22.890655
+START 19/30 athena.z4c_vc_static_multilevel_wave
+PASS: native-VC static multilevel wave shared_mismatch=0.0 interface_constraint_rms=3.2707412796301295e-05 interior_constraint_rms=2.2939066692646127e-08
+END 19/30 athena.z4c_vc_static_multilevel_wave status=0 seconds=3.415983
+START 20/30 athena.z4c_vc_amr_history
+PASS: native VC AMR history record/replay, 2x cells, restart, MPI decomposition, and explicit CC-topology bridge
+END 20/30 athena.z4c_vc_amr_history status=0 seconds=5.869386
+START 21/30 athena.z4c_vc_amr_history_mpi
+PASS: native VC AMR history record/replay, 2x cells, restart, MPI decomposition, and explicit CC-topology bridge
+END 21/30 athena.z4c_vc_amr_history_mpi status=0 seconds=40.920193
+START 22/30 athena.z4c_vc_history_mpi
+PASS: native VC dynamic refine/derefine lifecycle and ring quadrature
+END 22/30 athena.z4c_vc_history_mpi status=0 seconds=2.179545
+START 23/30 athena.z4c_vc_restart
+PASS: native VC restart, AMR continuation, rank change, and rejection
+END 23/30 athena.z4c_vc_restart status=0 seconds=7.316462
+START 24/30 athena.z4c_vc_restart_rank_change
+PASS: native VC restart, AMR continuation, rank change, and rejection
+END 24/30 athena.z4c_vc_restart_rank_change status=0 seconds=20.335799
+START 25/30 athena.z4c_vc_amr_transfer
+PASS: native VC injection and symmetric midpoint transfer
+END 25/30 athena.z4c_vc_amr_transfer status=0 seconds=0.999166
+START 26/30 athena.z4c_vc_history_quadrature
+PASS: native VC leaf quadrature, ring volume, and metric gate
+END 26/30 athena.z4c_vc_history_quadrature status=0 seconds=0.879392
+START 27/30 athena.z4c_vc_output
+PASS: native VC binary/table/VTK sampling, table de-duplication, and frozen CC output
+END 27/30 athena.z4c_vc_output status=0 seconds=3.580136
+START 28/30 athena.z4c_vc_to_cc_adm
+PASS: symmetric native VC-to-CC ADM interpolation
+END 28/30 athena.z4c_vc_to_cc_adm status=0 seconds=0.982812
+START 29/30 athena.z4c_cartoon_axis_centered_derivatives
+centered half-plane O2/O4/O6 rho derivatives passed on Cuda
+END 29/30 athena.z4c_cartoon_axis_centered_derivatives status=0 seconds=0.868376
+START 30/30 athena.z4c_vc_brill_direct_init
+native-VC direct Brill initialization passed: adm_mass=2.660301967997158 min_lapse=0.3153505946310291 max_lapse=0.8983796223954417
+END 30/30 athena.z4c_vc_brill_direct_init status=0 seconds=1.325808
+100% tests passed, 0 tests failed out of 30

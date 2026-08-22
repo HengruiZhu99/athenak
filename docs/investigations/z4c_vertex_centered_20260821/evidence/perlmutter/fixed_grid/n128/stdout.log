@@ -1,0 +1,31 @@
+AthenaK Kokkos default execution space: Cuda
+
+Root grid = 4 x 8 x 1 MeshBlocks
+Total number of MeshBlocks = 32
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+Direct global Brill coefficient import: radial_points=48 angular_points=32 adm_mass=2.660301967997158 min_psi4=1.2390254161110994 lapse=psi^-2 min_lapse=0.3153505946310291 max_lapse=0.89837962239544167
+Converted imported ADM data to Z4c proper_box_C_rms=0.0019320461083237339 proper_box_H_rms=0.0019267787919107068 proper_box_M_rms=0 proper_box_Z_rms=7.1284029999717314e-05 coordinate_support_H_rms=3.6306132152489324e-05 coordinate_support_M_rms=0
+Initialized Z4c from IrisK data mode=direct_global_coefficients path=/pscratch/sd/h/hzhu/z4c-vc-qual-684402ae-v2-20260821/campaign-v2/brill_global_48x32.coefficients bytes=35988
+
+Setup complete, executing task list(s)...
+
+elapsed=2.020200e-01 cycle=0 time=0.000000e+00 dt=2.164663e-02
+elapsed=2.476859e-01 cycle=4 time=8.589062e-02 dt=2.103152e-02
+elapsed=2.802223e-01 cycle=8 time=1.692228e-01 dt=2.059046e-02
+elapsed=3.121839e-01 cycle=12 time=2.513369e-01 dt=2.040008e-02
+elapsed=3.439450e-01 cycle=16 time=3.327869e-01 dt=2.037182e-02
+elapsed=3.760335e-01 cycle=20 time=4.146079e-01 dt=2.065090e-02
+elapsed=4.078997e-01 cycle=24 time=4.979240e-01 dt=2.076007e-03
+output wall time = 2.391108e-01
+
+Terminating on time limit
+time=5.000000e-01 cycle=25
+tlim=5.000000e-01 nlim=-1 nmb_total_limit=-1
+
+MeshBlock-cycles = 800
+cpu time used  = 3.221495e-01
+zone-cycles/cpu_second = 6.357296e+05
+particle-updates/cpu_second = 0.000000e+00

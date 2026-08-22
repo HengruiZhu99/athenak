@@ -1,0 +1,148 @@
+{
+  "schema": "z4c_vertex_centered_qualification_v1",
+  "date": "2026-08-22",
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "branch": "codex/z4c-vertex-centered-cartoon-amr-20260821",
+  "source": {
+    "base_commit": "6daa774d7451dbc5f7cac640c6e32a6fd11de7f9",
+    "base_tree": "cbb702f4da954cf630da261790d5c21ef3142235",
+    "implementation_commit": "5d37b5e5c278ac4a1afd52f9553dee6ffed48d0e",
+    "implementation_tree": "e391e2889647471e2e8c0cf8bfbfeb5fe3c00edf",
+    "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf"
+  },
+  "references": {
+    "gr_athena_repository": "https://github.com/computationalrelativity/gr-athena",
+    "gr_athena_commit": "8583eb9b13639ef7cef65b93f12e9858884527a9",
+    "algorithm_sources": "../../design/z4c_vertex_centered_sources.md"
+  },
+  "cell_centered_regression": {
+    "verdict": "BITWISE_OR_QUALIFIED_UNCHANGED",
+    "pre_change_registered_tests": 65,
+    "pre_change_enabled_tests_passed": 63,
+    "implicit_explicit_history_sha256": "4896c333ceda81d99cf1e4c15a28996d73c999c6222d4b83e770c9f4f4d0f598",
+    "implicit_explicit_timestep_contract_sha256": "dad954f5938eea76aca74493ec5bd1ac8c66cdc67ac7ad24225988c19e5e3037",
+    "initial_constraints_payload_sha256": "0b34b0c1886ca18622058aa1f42d8953bf11ed194cb302005e769e77f3db970b",
+    "final_constraints_payload_sha256": "c0ba4a0da9982e78bfd5665f9421b48b2b019110171f0f30b24deae729ace2e3",
+    "initial_z4c_payload_sha256": "b5f8dd57e2902fe18d4af8ac1c27f35124379292f389197323dd2ae144b0166a",
+    "final_z4c_payload_sha256": "8058fed583f1eca73ad9b4d54fe2171a634214b93f440561720c3367cfc92fea"
+  },
+  "builds_and_backends": {
+    "local_exact_final_source": {
+      "source_commit": "5d37b5e5c278ac4a1afd52f9553dee6ffed48d0e",
+      "executable_sha256": "78258757068d1e813a2c36586fcd8b51b81615a4361e79fc34cb65947ea38b9d",
+      "cmake_cache_sha256": "43639c897f440321ba7c5576bf58e6f68f30fbadb2c70a0e2ebe26e5312540a3",
+      "backend": "Kokkos Serial with MPI-enabled build",
+      "selected_fast_tests_passed": 28,
+      "selected_long_ctest_status": "TIMEOUT_180_SECONDS",
+      "explicit_o4_linear_wave_status": "PASS",
+      "explicit_o4_linear_wave_minimum_order": 3.9935134438397997,
+      "explicit_o4_linear_wave_maximum_order": 4.000851197478704
+    },
+    "perlmutter_brill_campaign": {
+      "source_commit": "684402aed9d5038cf864cf84449e160e7d1545e1",
+      "source_tree": "2666b75a7291b85349c0c4de46883178b0f4ea90",
+      "job_id": "57392246",
+      "backend": "Kokkos CUDA A100",
+      "executable_sha256": "d1b9fa83a5dc2b2f8e9048465dda7d2b896c140880ea9e6af5eeb526421a7cfa",
+      "cmake_cache_sha256": "c369598df28b2ba1f1b78eeb862df9ef5bc7bb42c190ad776fbede82e2d3f8c8",
+      "selected_tests_passed": 30,
+      "selected_tests_failed": 0,
+      "raw_manifest_file_sha256": "296a14d6c95a8e756c036e410249dd0bd388e90972330c8df062be059aeeafc1",
+      "raw_detached_file_sha256": "6e48c3b66739935de78bb8c405c3afafe7772364e7fcdbcb8c6d7f6ebc955bf3",
+      "qualification_scope": "PRE_PORTABILITY_FIX_NUMERICAL_EVIDENCE"
+    },
+    "perlmutter_exact_final_source": {
+      "source_commit": "5d37b5e5c278ac4a1afd52f9553dee6ffed48d0e",
+      "source_tree": "e391e2889647471e2e8c0cf8bfbfeb5fe3c00edf",
+      "executable_sha256": "6dadf42591f77bd9236a39230a8cf70290a68b61565dd0e9b6b624567691f54a",
+      "cmake_cache_sha256": "9809192574df929b2b70a550f48e1bea29d50369df62bbd65a5bb5e566fa4ec4",
+      "build_status": "PASS",
+      "device_test_status": "PENDING_CREDENTIAL_RENEWAL",
+      "job_id": null,
+      "raw_manifest_file_sha256": null,
+      "raw_detached_file_sha256": null
+    },
+    "aurora_first_attempt": {
+      "source_commit": "684402aed9d5038cf864cf84449e160e7d1545e1",
+      "source_tree": "2666b75a7291b85349c0c4de46883178b0f4ea90",
+      "job_id": "8774394.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "backend": "Kokkos SYCL Intel PVC",
+      "executable_sha256": "37d9384e701c53eaeab5a4f3602bd1816edb8cdcfad0612f4acfd336ecf96058",
+      "cmake_cache_sha256": "4ef41c771c30143dc77652b25a046a7b2e88b09996fc8f9695adb8897e6e9df8",
+      "tests_passed_before_failure": 16,
+      "failed_test": "athena.z4c_vc_dynamic_amr",
+      "failure": "SYCL_GPU_SEGMENTATION_FAULT_AFTER_FIRST_DYNAMIC_REFINEMENT",
+      "raw_manifest_file_sha256": "3019df4e95ac501270da97bb41a3aba92c4625ee22a8d6f39581e8fae677fedb",
+      "raw_detached_file_sha256": "1cd93e554cbd1a89d068e6991236c6ed1ddaf964d10ff444f02c34167706168d"
+    },
+    "aurora_exact_final_source": {
+      "source_commit": "5d37b5e5c278ac4a1afd52f9553dee6ffed48d0e",
+      "source_tree": "e391e2889647471e2e8c0cf8bfbfeb5fe3c00edf",
+      "job_id": "8774420.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "backend": "Kokkos SYCL Intel PVC",
+      "executable_sha256": "4189f822560b979693c2336f66e175d183db7254f2e2479e10e91e9d44f4bd85",
+      "cmake_cache_sha256": "d376655892259902bb67a6a7015cdd2e130921202123f3967657018641b322a9",
+      "tests_passed_before_failure": 16,
+      "failed_test": "athena.z4c_vc_dynamic_amr",
+      "failure": "SYCL_GPU_SEGMENTATION_FAULT_AFTER_FIRST_DYNAMIC_REFINEMENT",
+      "normalized_failure_tail_matches_first_attempt": true,
+      "raw_manifest_file_sha256": "7e0a3225f091d11110e775bd51a3b87384785e702f1ba796fbde3f7385f0c0c0",
+      "raw_detached_file_sha256": "eb55d88b1302ce8d0bfef3ad81d33952759d2d69f6557e315bc692c48491e245",
+      "qualification_claim": false
+    }
+  },
+  "bounded_brill": {
+    "source_commit": "684402aed9d5038cf864cf84449e160e7d1545e1",
+    "qualification_scope": "PRE_PORTABILITY_FIX_NUMERICAL_EVIDENCE",
+    "fixed_grid": {
+      "time": 0.5,
+      "resolutions": [128, 256, 512],
+      "minimum_nontrivial_effective_order": 3.31405503534312,
+      "maximum_nontrivial_effective_order": 4.081080627491467,
+      "maximum_shared_vertex_mismatch": 0.0,
+      "verdict": "QUALIFIED"
+    },
+    "common_tree": {
+      "resolutions": [128, 256, 512],
+      "events_per_resolution": 6,
+      "maximum_event_time_ulp_error": 0,
+      "last_tree_checksum": "2db37c60ec3c806c",
+      "failure_times": {
+        "n128": 3.483226188689057,
+        "n256": 2.4372449836650913,
+        "n512": 1.3892645558475873
+      },
+      "median_constraint_effective_orders": {
+        "C": -2.907335758738189,
+        "H": -2.8853432689636174,
+        "M": -3.0395918543759834,
+        "Z": -2.121732991778857
+      },
+      "verdict": "FAILURE_EARLIER_WITH_RESOLUTION",
+      "qualification_claim": false
+    },
+    "comparison_summary_sha256": "caa2c1badf666a474d0e20c2040da390cea3ceb8d65ed477127ac997ed2d06ec"
+  },
+  "formal_verdicts": {
+    "cc_regression": "BITWISE_OR_QUALIFIED_UNCHANGED",
+    "vc_uniform_grid": "QUALIFIED",
+    "vc_cartoon_axis": "QUALIFIED",
+    "vc_shared_nodes_mpi": "QUALIFIED",
+    "vc_amr": "FAILED",
+    "vc_restart_output": "QUALIFIED",
+    "vc_vacuum_support": "COMPLETE",
+    "vc_matter_support": "EXPLICITLY_UNSUPPORTED",
+    "brill_discriminator": "VC_AND_CC_SHARE_Z_MODE",
+    "overall": "VC_Z4C_NOT_QUALIFIED"
+  },
+  "limitations": [
+    "Exact-final SYCL dynamic AMR faults after the first accepted refinement transaction.",
+    "The full requested Phase-16 stable-name matrix is absent, including a production vertex-centered gauge-wave test.",
+    "Backend-comparable VC memory and timing costs are not qualified because the SYCL device gate failed.",
+    "The common-tree Brill discriminator fails earlier with increasing resolution and does not establish convergence.",
+    "The first writer of the post-RK metric-SPD loss is not localized.",
+    "Vertex-centered matter coupling is intentionally unsupported and fails closed.",
+    "No Figure-3, horizon, critical-collapse, long-time, performance, or production-readiness claim is made."
+  ],
+  "qualification_claim": false
+}
