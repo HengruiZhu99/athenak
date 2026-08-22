@@ -25,6 +25,7 @@
 #include "z4c/z4c.hpp"
 #include "driver/driver.hpp"
 #include "pgen/pgen.hpp"
+#include "pgen/tests/z4c_deterministic_amr.hpp"
 
 // function to compute errors in solution at end of run
 void Z4cLinearWaveErrors(ParameterInput *pin, Mesh *pm);
@@ -40,8 +41,14 @@ bool set_initial_conditions = true;
 //! \brief Sets initial conditions for gw linear wave tests
 
 void ProblemGenerator::Z4cLinearWave(ParameterInput *pin, const bool restart) {
-  pgen_final_func = Z4cLinearWaveErrors;
-  user_ref_func  = LWRefinementCondition;
+  const bool write_period_error =
+      !pin->DoesParameterExist("problem", "write_period_error") ||
+      pin->GetBoolean("problem", "write_period_error");
+  pgen_final_func = write_period_error ? Z4cLinearWaveErrors : nullptr;
+  user_ref_func = z4c_test::ConfigureDeterministicRefinementSchedule(
+                      pin, pmy_mesh_, "z4c_linear_wave")
+                      ? z4c_test::DeterministicRefinementSchedule
+                      : LWRefinementCondition;
 
   if (restart)
     return;
