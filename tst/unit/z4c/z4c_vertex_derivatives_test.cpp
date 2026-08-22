@@ -103,6 +103,64 @@ bool CheckCartoon() {
   return true;
 }
 
+template <int NGHOST>
+bool CheckCartoonInternalBlockLowerVertex() {
+  constexpr int nx1 = 16;
+  constexpr int nx2 = 16;
+  constexpr int is = NGHOST;
+  constexpr int js = NGHOST;
+  constexpr int n1 = nx1 + 1 + 2 * NGHOST;
+  constexpr int n2 = nx2 + 1 + 2 * NGHOST;
+  DvceArray5D<Real> storage("VC Cartoon internal block scalar", 1, 1, 1, n2, n1);
+  auto host = Kokkos::create_mirror_view(storage);
+  for (int j = 0; j < n2; ++j) {
+    for (int i = 0; i < n1; ++i) {
+      const Real rho = VertexX(i - is, nx1, 2.0, 4.0);
+      host(0, 0, 0, j, i) = rho * rho * rho * rho;
+    }
+  }
+  Kokkos::deep_copy(storage, host);
+
+  Kokkos::View<RegionSize *> size("VC Cartoon internal block size", 1);
+  auto size_host = Kokkos::create_mirror_view(size);
+  size_host(0).x1min = 2.0;
+  size_host(0).x1max = 4.0;
+  size_host(0).x2min = -1.0;
+  size_host(0).x2max = 1.0;
+  size_host(0).dx1 = 2.0 / nx1;
+  size_host(0).dx2 = 2.0 / nx2;
+  size_host(0).dx3 = 1.0;
+  Kokkos::deep_copy(size, size_host);
+
+  Kokkos::View<Real *[3]> result("VC Cartoon internal lower result", 1);
+  ScalarField field{storage};
+  Kokkos::parallel_for(
+      "VC Cartoon internal lower vertex", Kokkos::RangePolicy<DevExeSpace>(0, 1),
+      KOKKOS_LAMBDA(const int) {
+        const Real inverse_spacing[3] = {1.0 / size(0).dx1,
+                                         1.0 / size(0).dx2, 1.0};
+        auto derivatives = z4c::MakeZ4cDerivativeProvider<
+            z4c::VertexCenteredZ4c, z4c::CartoonSO2, NGHOST>(
+                inverse_spacing, size, nx1, is, 0, 0, js + 4, is);
+        z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST> ordinary(
+            inverse_spacing, 2.0, z4c::CartoonAxisLocation::cell_centered,
+            0, 0, js + 4, is);
+        z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST> axis(
+            inverse_spacing, 2.0, z4c::CartoonAxisLocation::evolved_vertex_axis,
+            0, 0, js + 4, is);
+        result(0, 0) = derivatives.ScalarSecond(2, 2, field);
+        result(0, 1) = ordinary.ScalarSecond(2, 2, field);
+        result(0, 2) = axis.ScalarSecond(2, 2, field);
+      });
+  Kokkos::fence();
+  const auto value =
+      Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), result);
+  // The factory must choose the ordinary nonzero-rho formula at this local
+  // lower vertex.  The rho^4 profile also makes the erroneous axis limit
+  // observably distinct for every supported stencil order.
+  return value(0, 0) == value(0, 1) && value(0, 0) != value(0, 2);
+}
+
 std::pair<Real, Real> CartoonO4ConvergenceError(const int nx) {
   constexpr int nghost = 3;
   const int is = nghost;
@@ -292,11 +350,16 @@ int main(int argc, char **argv) {
   if (selection == "cartesian_o2") passed = CheckCartesian<2>();
   if (selection == "cartesian_o4") passed = CheckCartesian<3>();
   if (selection == "cartesian_o6") passed = CheckCartesian<4>();
-  if (selection == "cartoon_o2") passed = CheckCartoon<2>();
-  if (selection == "cartoon_o4") {
-    passed = CheckCartoon<3>() && CheckCartoonO4Convergence();
+  if (selection == "cartoon_o2") {
+    passed = CheckCartoon<2>() && CheckCartoonInternalBlockLowerVertex<2>();
   }
-  if (selection == "cartoon_o6") passed = CheckCartoon<4>();
+  if (selection == "cartoon_o4") {
+    passed = CheckCartoon<3>() && CheckCartoonInternalBlockLowerVertex<3>() &&
+             CheckCartoonO4Convergence();
+  }
+  if (selection == "cartoon_o6") {
+    passed = CheckCartoon<4>() && CheckCartoonInternalBlockLowerVertex<4>();
+  }
   if (!passed) return EXIT_FAILURE;
   std::cout << "Z4c Cartesian/Cartoon VC derivative factories passed on "
             << Kokkos::DefaultExecutionSpace::name() << "\n";

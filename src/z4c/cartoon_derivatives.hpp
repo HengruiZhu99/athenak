@@ -861,9 +861,16 @@ MakeVertexCenteredDerivativeProvider(const Real inverse_spacing[3],
                                      const int j, const int i) {
   if constexpr (std::is_same_v<Symmetry, CartoonSO2>) {
     const Real rho = VertexX(i - is, nx1, size(m).x1min, size(m).x1max);
+    // `i == is` identifies the lower vertex of every MeshBlock, not the
+    // physical Cartoon axis.  Only blocks whose physical lower radial bound
+    // is rho=0 may use the analytic axis limits.  Treating an internal block
+    // face as the axis replaces ordinary 1/rho derivatives by their rho=0
+    // limits and produces a resolution-dependent stripe at every radial
+    // MeshBlock boundary.
     const auto axis_location =
-        (i == is) ? CartoonAxisLocation::evolved_vertex_axis
-                  : CartoonAxisLocation::cell_centered;
+        (i == is && size(m).x1min == 0.0)
+            ? CartoonAxisLocation::evolved_vertex_axis
+            : CartoonAxisLocation::cell_centered;
     return DerivativeProvider<CartoonSO2, NGHOST>(
         inverse_spacing, rho, axis_location, m, k, j, i);
   } else {
