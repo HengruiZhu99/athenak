@@ -247,6 +247,7 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
         opar.coarsen_factor = pin->GetInteger(opar.block_name,"coarsen_factor");
         opar.compute_moments = pin->GetOrAddBoolean(opar.block_name,
           "compute_moments", false);
+        opar.binary64 = pin->GetOrAddBoolean(opar.block_name, "binary64", false);
         pnode = new CoarsenedBinaryOutput(pin,pm,opar);
         pout_list.insert(pout_list.begin(),pnode);
       } else if (opar.file_type.compare("pdf") == 0) {

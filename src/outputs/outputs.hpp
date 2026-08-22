@@ -138,6 +138,7 @@ struct OutputParameters {
   // cannot be greater than shortest meshblock dimension
   int coarsen_factor;
   bool compute_moments; // if true then will compute
+  bool binary64=false;  // if true, cbin fields are written as binary64 Real values
   // <q>, <q^2>, <q^3>, <q^4> for each variable q
   // DBF parameters for PDF:
   // number of derived variables, index of current derived variable

@@ -32,6 +32,11 @@
 CoarsenedBinaryOutput::CoarsenedBinaryOutput(ParameterInput *pin, Mesh *pm,
                                              OutputParameters op) :
   BaseTypeOutput(pin, pm, op) {
+  if (op.binary64 && sizeof(Real) != 8) {
+    std::cout << "### FATAL ERROR: cbin binary64 output requires an AthenaK "
+                 "binary64 Real build." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   // create directories for outputs
   // useful for mpiio-based outputs because on some supercomputers you may need to
   // set different stripe counts depending on whether mpiio is used in order to
@@ -345,7 +350,8 @@ void CoarsenedBinaryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
       << "  number of moments=" << number_of_moments << std::endl
       << "  coarsening factor=" << out_params.coarsen_factor << std::endl
       << "  size of location=" << sizeof(Real) << std::endl
-      << "  size of variable=" << sizeof(float) << std::endl
+      << "  size of variable="
+      << (out_params.binary64 ? sizeof(Real) : sizeof(float)) << std::endl
       << "  number of variables=" << outvars.size()*number_of_moments << std::endl
       << "  variables:  ";
   if (out_params.compute_moments) {
@@ -382,7 +388,8 @@ void CoarsenedBinaryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   header_offset += msg.str().size();}
 
   //  5. Data.  An arbitrary number of scalars and vectors can be written (every node
-  //  in the OutputData doubly linked lists), all in binary floats format
+  //  in the OutputData doubly linked lists). Binary32 remains the default;
+  //  binary64 is available for precision-sensitive convergence measurements.
 
   int nout_vars = outvars.size();
   if (out_params.compute_moments) {
@@ -397,15 +404,18 @@ void CoarsenedBinaryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
 
   // ois, oie, ojs, oje, oks, oke + il1, il2, il3, level +
   // x1min, x1max, x2min, x2max, x3min, x3max + data
+  const std::size_t variable_size =
+      out_params.binary64 ? sizeof(Real) : sizeof(float);
   std::size_t data_size = 10*sizeof(int32_t) + 6*sizeof(Real)
-                        + (cells*nout_vars)*sizeof(float);
+                        + (cells*nout_vars)*variable_size;
 
   int ns_mbs = pm->gids_eachrank[global_variable::my_rank];
   int nb_mbs = pm->nmb_eachrank[global_variable::my_rank];
 
-  // allocate 1D vector of floats used to convert and output data
+  // Use a byte buffer so both payload widths share the same record and MPI-IO
+  // implementation.
   char *data = new char[nb_mbs*data_size];
-  float *single_data = new float[cells];
+  char *single_data = new char[cells*variable_size];
 
   // Loop over MeshBlocks
   for (int m=0; m<nout_mbs; ++m) {
@@ -480,20 +490,25 @@ void CoarsenedBinaryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     pdata+=sizeof(xv);
 
     // output variables
-    float tmp_data;
     for (int n=0; n<nout_vars; n++) {
       int cnt=0;
       for (int k=oks; k<=oke; k++) {
         for (int j=ojs; j<=oje; j++) {
           for (int i=ois; i<=oie; i++) {
-            tmp_data = static_cast<float>(outarray(n,m,k-oks,j-ojs,i-ois));
-            single_data[cnt] = tmp_data;
+            if (out_params.binary64) {
+              const Real tmp_data = outarray(n,m,k-oks,j-ojs,i-ois);
+              memcpy(single_data + cnt*variable_size, &tmp_data, variable_size);
+            } else {
+              const float tmp_data =
+                  static_cast<float>(outarray(n,m,k-oks,j-ojs,i-ois));
+              memcpy(single_data + cnt*variable_size, &tmp_data, variable_size);
+            }
             cnt++;
           }
         }
       }
-      memcpy(pdata,single_data,cells*sizeof(float));
-      pdata+=cells*sizeof(float);
+      memcpy(pdata,single_data,cells*variable_size);
+      pdata+=cells*variable_size;
     }
   }
 
