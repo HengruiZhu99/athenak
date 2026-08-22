@@ -11,6 +11,7 @@ import subprocess
 
 
 MARKER = b"<par_end>\n"
+COMMAND_TIMEOUT = float(os.environ.get("ATHENA_TEST_COMMAND_TIMEOUT", "45"))
 
 
 def require(condition: bool, message: str) -> None:
@@ -23,7 +24,8 @@ def run(command: list[str], cwd: Path, success: bool, required=()) -> str:
     environment.setdefault("OMP_NUM_THREADS", "2")
     environment.setdefault("OMP_PROC_BIND", "false")
     result = subprocess.run(command, cwd=cwd, env=environment, text=True,
-                            capture_output=True, check=False, timeout=45)
+                            capture_output=True, check=False,
+                            timeout=COMMAND_TIMEOUT)
     output = result.stdout + "\n" + result.stderr
     require((result.returncode == 0) == success,
             f"unexpected exit {result.returncode} for {' '.join(command)}:\n{output}")
