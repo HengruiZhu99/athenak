@@ -35,7 +35,7 @@ def main() -> int:
                 f"ref_gh/controller_delta_p={mismatch:.17g}",
             ]
             completed = subprocess.run(
-                command, check=False, text=True,
+                command, check=False, universal_newlines=True,
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             )
             match = RESULT.search(completed.stdout)
