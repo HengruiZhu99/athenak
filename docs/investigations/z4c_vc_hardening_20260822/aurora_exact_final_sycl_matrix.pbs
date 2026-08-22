@@ -89,7 +89,7 @@ ctest --test-dir "${build_root}" --output-on-failure -j1 \
   -R '^(athena\.z4c_vc_dynamic_amr_(2d_cartesian|2d_cartoon|3d_cartesian)_o(2|4|6)|athena\.z4c_vertex_gauge_wave_(2d|3d)_cartesian_o(2|4|6)|athena\.z4c_vc_(restart_(2d_cartesian|2d_cartoon|3d_cartesian)|output(_2d_cartoon|_3d_cartesian)?))$' \
   > "${root}/evidence/selected-ctest.log" 2>&1
 
-mpi_wrapper="${source_root}/docs/investigations/z4c_vc_hardening_20260822/aurora_mpiexec_tile_wrapper.sh"
+mpi_wrapper="${stage}/aurora_mpiexec_tile_wrapper.sh"
 test -x "${mpi_wrapper}"
 python3 "${source_root}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" \
   --athena "${build_root}/src/athena" \
