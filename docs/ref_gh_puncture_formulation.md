@@ -1,5 +1,11 @@
 # Reference-frame FO-GH puncture formulation status
 
+> **Historical/superseded status (2026-08-22).** This document describes the
+> pre-covariant-repair, static-reference implementation and its then-correct
+> negative gate. It is not the status authority for the later qualified
+> reference-cache implementation or the simple controlled-transition study;
+> see `docs/ref_gh_simple_controlled_transition_20260822.md` for that campaign.
+
 This branch implements a separate vacuum 50-field first-order GH system in a
 fixed frame: ten symmetric `Psi_ab`, ten `Pi_ab`, and thirty `Phi_iab`. The
 frame/coframe and reference connection are prescribed rather than evolved; the

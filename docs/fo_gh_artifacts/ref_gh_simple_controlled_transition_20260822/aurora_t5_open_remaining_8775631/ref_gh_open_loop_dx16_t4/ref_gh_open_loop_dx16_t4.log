@@ -1,0 +1,66 @@
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1/src/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 34
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 8
+  Rank = 0: 4 MeshBlocks, cost = 4
+  Rank = 1: 4 MeshBlocks, cost = 4
+  Rank = 2: 4 MeshBlocks, cost = 4
+  Rank = 3: 4 MeshBlocks, cost = 4
+  Rank = 4: 4 MeshBlocks, cost = 4
+  Rank = 5: 4 MeshBlocks, cost = 4
+  Rank = 6: 5 MeshBlocks, cost = 5
+  Rank = 7: 5 MeshBlocks, cost = 5
+Load Balancing:
+  Maximum normalized cost = 1.25, Average = 1.0625
+reference-GH puncture vertex audit passed; minimum cell radius=0.0541266, wormhole match state=0, G=0, lapse=3.94268e-16, shift=0
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1/src/src/parameter_input.cpp: input parameter <mesh_refinement>/num_levels = 2 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1/src/src/parameter_input.cpp: input parameter <mesh_refinement>/max_nmb_per_rank = 128 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=3.912819e+00 cycle=0 time=0.000000e+00 dt=5.401833e-03
+elapsed=2.653273e+01 cycle=10 time=5.401830e-02 dt=5.401820e-03
+elapsed=4.871543e+01 cycle=20 time=1.080363e-01 dt=5.401753e-03
+elapsed=7.149088e+01 cycle=30 time=1.620532e-01 dt=5.401590e-03
+elapsed=9.428219e+01 cycle=40 time=2.160678e-01 dt=5.401292e-03
+elapsed=1.170356e+02 cycle=50 time=2.700788e-01 dt=5.400826e-03
+elapsed=1.397937e+02 cycle=60 time=3.240843e-01 dt=5.400160e-03
+elapsed=1.626740e+02 cycle=70 time=3.780820e-01 dt=5.399266e-03
+elapsed=1.854397e+02 cycle=80 time=4.320698e-01 dt=5.398120e-03
+elapsed=2.082166e+02 cycle=90 time=4.860448e-01 dt=5.396701e-03
+elapsed=2.310475e+02 cycle=100 time=5.400044e-01 dt=5.394989e-03
+elapsed=2.538194e+02 cycle=110 time=5.939454e-01 dt=5.392971e-03
+elapsed=2.766060e+02 cycle=120 time=6.478649e-01 dt=5.390633e-03
+elapsed=3.002393e+02 cycle=130 time=7.017595e-01 dt=5.387967e-03
+elapsed=3.224416e+02 cycle=140 time=7.556260e-01 dt=5.384966e-03
+elapsed=3.452050e+02 cycle=150 time=8.094609e-01 dt=5.381627e-03
+elapsed=3.679199e+02 cycle=160 time=8.632609e-01 dt=5.377947e-03
+elapsed=3.906812e+02 cycle=170 time=9.170225e-01 dt=5.373929e-03
+elapsed=4.134448e+02 cycle=180 time=9.707425e-01 dt=5.369575e-03
+elapsed=4.390549e+02 cycle=190 time=1.024417e+00 dt=5.364893e-03
+elapsed=4.617883e+02 cycle=200 time=1.078044e+00 dt=5.359890e-03
+elapsed=4.846006e+02 cycle=210 time=1.131619e+00 dt=5.354576e-03
+elapsed=5.073856e+02 cycle=220 time=1.185140e+00 dt=5.348962e-03
+elapsed=5.301769e+02 cycle=230 time=1.238603e+00 dt=5.343062e-03
+elapsed=5.529640e+02 cycle=240 time=1.292006e+00 dt=5.336891e-03
+elapsed=5.757333e+02 cycle=250 time=1.345347e+00 dt=5.330466e-03
+elapsed=5.984991e+02 cycle=260 time=1.398622e+00 dt=5.323803e-03
+elapsed=6.221118e+02 cycle=270 time=1.451829e+00 dt=5.316922e-03
+elapsed=6.449118e+02 cycle=280 time=1.504966e+00 dt=5.309842e-03
+elapsed=6.671812e+02 cycle=290 time=1.558032e+00 dt=5.302583e-03
+elapsed=6.899842e+02 cycle=300 time=1.611025e+00 dt=5.295167e-03
+### FATAL ERROR: ref_gh reached an invalid effective timestep.
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: ref_gh reached an invalid effective timestep.
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: ref_gh reached an invalid effective timestep.
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+x4217c0s5b0n0.hsn.cm.aurora.alcf.anl.gov: rank 3 exited with code 1
+x4217c0s5b0n0.hsn.cm.aurora.alcf.anl.gov: rank 0 died from signal 15
+real 706.65
+user 0.00
+sys 0.02

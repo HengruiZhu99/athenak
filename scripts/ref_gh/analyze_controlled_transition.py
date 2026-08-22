@@ -7,7 +7,7 @@ import math
 from pathlib import Path
 
 
-TARGETS = (0.5, 1.0, 2.0, 4.0)
+DEFAULT_TARGETS = (0.5, 1.0, 2.0, 4.0)
 SPACINGS = {"coarse": 1.0 / 16.0, "medium": 1.0 / 24.0,
             "fine": 1.0 / 32.0}
 
@@ -123,11 +123,13 @@ def main():
         parser.add_argument("--" + label, required=True, type=Path)
     parser.add_argument("--mode", required=True)
     parser.add_argument("--output-prefix", required=True, type=Path)
+    parser.add_argument("--targets", nargs="+", type=float,
+                        default=DEFAULT_TARGETS)
     args = parser.parse_args()
     cases = {label: load_case(getattr(args, label))
              for label in ("coarse", "medium", "fine")}
     records = []
-    for target in TARGETS:
+    for target in args.targets:
         extracted = {label: extract(case, target) for label, case in cases.items()}
         record = {"target_time": target, "resolutions": extracted, "orders": {}}
         for metric in ("gh_l2", "reduction_l2", "curl_l2", "all_H_l2",

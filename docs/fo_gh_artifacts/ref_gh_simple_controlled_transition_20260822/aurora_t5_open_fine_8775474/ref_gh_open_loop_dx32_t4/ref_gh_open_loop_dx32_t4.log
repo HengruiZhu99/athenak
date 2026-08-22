@@ -1,0 +1,97 @@
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1/src/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 34
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 8
+  Rank = 0: 4 MeshBlocks, cost = 4
+  Rank = 1: 4 MeshBlocks, cost = 4
+  Rank = 2: 4 MeshBlocks, cost = 4
+  Rank = 3: 4 MeshBlocks, cost = 4
+  Rank = 4: 4 MeshBlocks, cost = 4
+  Rank = 5: 4 MeshBlocks, cost = 4
+  Rank = 6: 5 MeshBlocks, cost = 5
+  Rank = 7: 5 MeshBlocks, cost = 5
+Load Balancing:
+  Maximum normalized cost = 1.25, Average = 1.0625
+reference-GH puncture vertex audit passed; minimum cell radius=0.0270633, wormhole match state=0, G=0, lapse=4.66097e-16, shift=0
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1/src/src/parameter_input.cpp: input parameter <mesh_refinement>/num_levels = 2 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1/src/src/parameter_input.cpp: input parameter <mesh_refinement>/max_nmb_per_rank = 128 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=1.567610e+01 cycle=0 time=0.000000e+00 dt=2.690055e-03
+elapsed=1.435470e+02 cycle=10 time=2.690054e-02 dt=2.690054e-03
+elapsed=2.765754e+02 cycle=20 time=5.380106e-02 dt=2.690049e-03
+elapsed=4.075833e+02 cycle=30 time=8.070150e-02 dt=2.690037e-03
+elapsed=5.406600e+02 cycle=40 time=1.076018e-01 dt=2.690016e-03
+elapsed=6.716276e+02 cycle=50 time=1.345018e-01 dt=2.689983e-03
+elapsed=8.046461e+02 cycle=60 time=1.614014e-01 dt=2.689937e-03
+elapsed=9.356954e+02 cycle=70 time=1.883005e-01 dt=2.689874e-03
+elapsed=1.068703e+03 cycle=80 time=2.151989e-01 dt=2.689792e-03
+elapsed=1.199815e+03 cycle=90 time=2.420964e-01 dt=2.689691e-03
+elapsed=1.332883e+03 cycle=100 time=2.689928e-01 dt=2.689566e-03
+elapsed=1.463908e+03 cycle=110 time=2.958878e-01 dt=2.689418e-03
+elapsed=1.597008e+03 cycle=120 time=3.227812e-01 dt=2.689243e-03
+elapsed=1.727990e+03 cycle=130 time=3.496728e-01 dt=2.689041e-03
+elapsed=1.860734e+03 cycle=140 time=3.765621e-01 dt=2.688810e-03
+elapsed=1.993863e+03 cycle=150 time=4.034491e-01 dt=2.688548e-03
+elapsed=2.124904e+03 cycle=160 time=4.303333e-01 dt=2.688254e-03
+elapsed=2.257956e+03 cycle=170 time=4.572144e-01 dt=2.687926e-03
+elapsed=2.388874e+03 cycle=180 time=4.840920e-01 dt=2.687565e-03
+elapsed=2.522065e+03 cycle=190 time=5.109659e-01 dt=2.687168e-03
+elapsed=2.653073e+03 cycle=200 time=5.378357e-01 dt=2.686734e-03
+elapsed=2.786010e+03 cycle=210 time=5.647009e-01 dt=2.686263e-03
+elapsed=2.916908e+03 cycle=220 time=5.915613e-01 dt=2.685754e-03
+elapsed=3.049973e+03 cycle=230 time=6.184164e-01 dt=2.685206e-03
+elapsed=3.181086e+03 cycle=240 time=6.452659e-01 dt=2.684619e-03
+elapsed=3.314226e+03 cycle=250 time=6.721093e-01 dt=2.683992e-03
+elapsed=3.445227e+03 cycle=260 time=6.989462e-01 dt=2.683325e-03
+elapsed=3.578190e+03 cycle=270 time=7.257763e-01 dt=2.682616e-03
+elapsed=3.714351e+03 cycle=280 time=7.525991e-01 dt=2.681867e-03
+elapsed=3.842389e+03 cycle=290 time=7.794143e-01 dt=2.681076e-03
+elapsed=3.976203e+03 cycle=300 time=8.062213e-01 dt=2.680244e-03
+elapsed=4.106984e+03 cycle=310 time=8.330199e-01 dt=2.679371e-03
+elapsed=4.240056e+03 cycle=320 time=8.598095e-01 dt=2.678457e-03
+elapsed=4.371101e+03 cycle=330 time=8.865898e-01 dt=2.677501e-03
+elapsed=4.504349e+03 cycle=340 time=9.133604e-01 dt=2.676504e-03
+elapsed=4.635517e+03 cycle=350 time=9.401208e-01 dt=2.675466e-03
+elapsed=4.768628e+03 cycle=360 time=9.668706e-01 dt=2.674387e-03
+elapsed=4.899674e+03 cycle=370 time=9.936095e-01 dt=2.673269e-03
+elapsed=5.041950e+03 cycle=380 time=1.020337e+00 dt=2.672111e-03
+elapsed=5.172982e+03 cycle=390 time=1.047053e+00 dt=2.670913e-03
+elapsed=5.306103e+03 cycle=400 time=1.073756e+00 dt=2.669677e-03
+elapsed=5.442216e+03 cycle=410 time=1.100447e+00 dt=2.668403e-03
+elapsed=5.570256e+03 cycle=420 time=1.127126e+00 dt=2.667092e-03
+elapsed=5.703355e+03 cycle=430 time=1.153790e+00 dt=2.665744e-03
+elapsed=5.834306e+03 cycle=440 time=1.180442e+00 dt=2.664360e-03
+elapsed=5.967471e+03 cycle=450 time=1.207079e+00 dt=2.662941e-03
+elapsed=6.098538e+03 cycle=460 time=1.233702e+00 dt=2.661489e-03
+elapsed=6.231597e+03 cycle=470 time=1.260310e+00 dt=2.660002e-03
+elapsed=6.362686e+03 cycle=480 time=1.286903e+00 dt=2.658484e-03
+elapsed=6.495667e+03 cycle=490 time=1.313481e+00 dt=2.656934e-03
+elapsed=6.627071e+03 cycle=500 time=1.340043e+00 dt=2.655355e-03
+elapsed=6.760289e+03 cycle=510 time=1.366590e+00 dt=2.653746e-03
+elapsed=6.891562e+03 cycle=520 time=1.393120e+00 dt=2.652109e-03
+elapsed=7.024585e+03 cycle=530 time=1.419634e+00 dt=2.650445e-03
+elapsed=7.155846e+03 cycle=540 time=1.446130e+00 dt=2.648755e-03
+elapsed=7.288956e+03 cycle=550 time=1.472610e+00 dt=2.647041e-03
+elapsed=7.419993e+03 cycle=560 time=1.499073e+00 dt=2.645304e-03
+elapsed=7.553198e+03 cycle=570 time=1.525518e+00 dt=2.643544e-03
+elapsed=7.689825e+03 cycle=580 time=1.551945e+00 dt=2.641764e-03
+elapsed=7.818284e+03 cycle=590 time=1.578355e+00 dt=2.639964e-03
+elapsed=7.951924e+03 cycle=600 time=1.604746e+00 dt=2.638146e-03
+elapsed=8.083132e+03 cycle=610 time=1.631120e+00 dt=2.636311e-03
+### FATAL ERROR: ref_gh reached an invalid effective timestep.
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: ref_gh reached an invalid effective timestep.
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: ref_gh reached an invalid effective timestep.
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+x4301c1s7b0n0.hsn.cm.aurora.alcf.anl.gov: rank 1 exited with code 1
+x4301c1s7b0n0.hsn.cm.aurora.alcf.anl.gov: rank 0 died from signal 15
+real 8136.59
+user 0.07
+sys 0.23

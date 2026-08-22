@@ -1,0 +1,91 @@
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1/src/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 34
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 8
+  Rank = 0: 4 MeshBlocks, cost = 4
+  Rank = 1: 4 MeshBlocks, cost = 4
+  Rank = 2: 4 MeshBlocks, cost = 4
+  Rank = 3: 4 MeshBlocks, cost = 4
+  Rank = 4: 4 MeshBlocks, cost = 4
+  Rank = 5: 4 MeshBlocks, cost = 4
+  Rank = 6: 5 MeshBlocks, cost = 5
+  Rank = 7: 5 MeshBlocks, cost = 5
+Load Balancing:
+  Maximum normalized cost = 1.25, Average = 1.0625
+reference-GH puncture vertex audit passed; minimum cell radius=0.0360844, wormhole match state=0, G=0, lapse=1.91962e-14, shift=0
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1/src/src/parameter_input.cpp: input parameter <mesh_refinement>/num_levels = 2 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_simple_controlled_20260822_1162bab4_v1/src/src/parameter_input.cpp: input parameter <mesh_refinement>/max_nmb_per_rank = 128 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=8.894832e+00 cycle=0 time=0.000000e+00 dt=3.591537e-03
+elapsed=6.991020e+01 cycle=10 time=3.591536e-02 dt=3.591534e-03
+elapsed=1.333765e+02 cycle=20 time=7.183065e-02 dt=3.591519e-03
+elapsed=1.968812e+02 cycle=30 time=1.077457e-01 dt=3.591485e-03
+elapsed=2.600186e+02 cycle=40 time=1.436603e-01 dt=3.591422e-03
+elapsed=3.237511e+02 cycle=50 time=1.795741e-01 dt=3.591324e-03
+elapsed=3.874467e+02 cycle=60 time=2.154868e-01 dt=3.591184e-03
+elapsed=4.527002e+02 cycle=70 time=2.513978e-01 dt=3.590994e-03
+elapsed=5.137126e+02 cycle=80 time=2.873067e-01 dt=3.590749e-03
+elapsed=5.771124e+02 cycle=90 time=3.232128e-01 dt=3.590444e-03
+elapsed=6.407332e+02 cycle=100 time=3.591157e-01 dt=3.590072e-03
+elapsed=7.033062e+02 cycle=110 time=3.950144e-01 dt=3.589629e-03
+elapsed=7.666959e+02 cycle=120 time=4.309085e-01 dt=3.589111e-03
+elapsed=8.302064e+02 cycle=130 time=4.667970e-01 dt=3.588513e-03
+elapsed=8.951158e+02 cycle=140 time=5.026791e-01 dt=3.587832e-03
+elapsed=9.561789e+02 cycle=150 time=5.385540e-01 dt=3.587065e-03
+elapsed=1.019611e+03 cycle=160 time=5.744209e-01 dt=3.586208e-03
+elapsed=1.083111e+03 cycle=170 time=6.102788e-01 dt=3.585260e-03
+elapsed=1.145744e+03 cycle=180 time=6.461268e-01 dt=3.584217e-03
+elapsed=1.209138e+03 cycle=190 time=6.819639e-01 dt=3.583080e-03
+elapsed=1.272620e+03 cycle=200 time=7.177892e-01 dt=3.581845e-03
+elapsed=1.336270e+03 cycle=210 time=7.536018e-01 dt=3.580512e-03
+elapsed=1.399016e+03 cycle=220 time=7.894005e-01 dt=3.579081e-03
+elapsed=1.462721e+03 cycle=230 time=8.251845e-01 dt=3.577551e-03
+elapsed=1.526286e+03 cycle=240 time=8.609528e-01 dt=3.575921e-03
+elapsed=1.589069e+03 cycle=250 time=8.967043e-01 dt=3.574194e-03
+elapsed=1.652703e+03 cycle=260 time=9.324381e-01 dt=3.572368e-03
+elapsed=1.716216e+03 cycle=270 time=9.681532e-01 dt=3.570445e-03
+elapsed=1.785653e+03 cycle=280 time=1.003849e+00 dt=3.568426e-03
+elapsed=1.848396e+03 cycle=290 time=1.039523e+00 dt=3.566312e-03
+elapsed=1.912125e+03 cycle=300 time=1.075177e+00 dt=3.564106e-03
+elapsed=1.975783e+03 cycle=310 time=1.110808e+00 dt=3.561810e-03
+elapsed=2.038518e+03 cycle=320 time=1.146415e+00 dt=3.559424e-03
+elapsed=2.102097e+03 cycle=330 time=1.181998e+00 dt=3.556952e-03
+elapsed=2.165833e+03 cycle=340 time=1.217556e+00 dt=3.554397e-03
+elapsed=2.230988e+03 cycle=350 time=1.253088e+00 dt=3.551761e-03
+elapsed=2.292271e+03 cycle=360 time=1.288594e+00 dt=3.549048e-03
+elapsed=2.356019e+03 cycle=370 time=1.324072e+00 dt=3.546259e-03
+elapsed=2.419781e+03 cycle=380 time=1.359522e+00 dt=3.543400e-03
+elapsed=2.482595e+03 cycle=390 time=1.394943e+00 dt=3.540473e-03
+elapsed=2.546290e+03 cycle=400 time=1.430334e+00 dt=3.537482e-03
+elapsed=2.610033e+03 cycle=410 time=1.465695e+00 dt=3.534430e-03
+elapsed=2.675170e+03 cycle=420 time=1.501025e+00 dt=3.531322e-03
+elapsed=2.736477e+03 cycle=430 time=1.536324e+00 dt=3.528162e-03
+elapsed=2.800171e+03 cycle=440 time=1.571592e+00 dt=3.524953e-03
+elapsed=2.863838e+03 cycle=450 time=1.606827e+00 dt=3.521700e-03
+elapsed=2.926612e+03 cycle=460 time=1.642029e+00 dt=3.518406e-03
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=1.646229e+00 generation=1841
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=1.64623 generation=1841
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=1.64623 generation=1841
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=1.64623 generation=1841
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=1.64623 generation=1841
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=1.64623 generation=1841
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=1.64623 generation=1841
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=1.64623 generation=1841
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+x4217c0s5b0n0.hsn.cm.aurora.alcf.anl.gov: rank 5 exited with code 1
+real 2929.05
+user 0.02
+sys 0.08

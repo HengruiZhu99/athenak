@@ -1,5 +1,11 @@
 # Reference-frame FO-GH validation report
 
+> **Historical/superseded status (2026-08-22).** The gate below applies to the
+> earlier static-reference implementation. Later covariant-source/reference-
+> cache work superseded its implementation status. The controlled-transition
+> campaign is reported separately in
+> `docs/ref_gh_simple_controlled_transition_20260822.md`.
+
 > **Final gate: REFERENCE-GH FORMULATION NOT ESTABLISHED.** The later
 > `dx=1/16,1/24,1/32` GPU stationary-RHS ladder reverses with resolution and
 > supersedes the coarse stationary observations below. See

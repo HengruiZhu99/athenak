@@ -1,0 +1,52 @@
+Ref-GH simple controlled transition: compact local validation
+date: 2026-08-22
+base: f962c946534bf0cd3d80abaae351973b37560a43
+
+T0 exact/regression gates after controlled-reference implementation
+  exact Minkowski state error: 0
+  dynamic-lapse evolved maximum: 1.665335e-15
+  dynamic-lapse cache oracle: 0 at every stage
+  dynamic-spatial evolved maximum: 1.665335e-15
+  dynamic-spatial cache oracle maximum: 4.163336e-17
+  stationary-trumpet initial RHS Linf: 7.482764509e-17
+  stationary-trumpet one-cycle field Linf: 1.559597290e-18
+  stationary-trumpet one-cycle constraint Linf: 3.119194580e-18
+  perturbed-trumpet initial RHS Linf: 2.574942387e-7
+  perturbed-trumpet one-cycle field Linf: 8.263112916e-7
+  perturbed-trumpet one-cycle constraint Linf: 7.854239196e-7
+
+T1/T2 dynamic spatial-frame and curvature/source oracles
+  frame-versus-coordinate curvature Linf: 8.67502e-18
+  coordinate flatness Linf: 2.55872e-17
+  covariant source error Linf: 4.996e-16
+  spin-connection scale: 2.08311e-17
+  time-dependent spatial-frame scale: 7.14141e-2
+
+T3 fixed-shell planted-mismatch calibration, 15 local cases
+  shell: 0.15M <= r <= 0.40M
+  weight: (M/r)^3 on native Cartesian cells
+  resolutions: 32, 48, 64 cells per direction
+  planted delta: -0.25, -0.10, 0, 0.10, 0.25
+  maximum absolute e_G error: 5.6704e-16
+  maximum absolute e_alpha error: 9.08802e-17
+  result: PASS
+
+T4 static wormhole
+  target/reached time: 0.1M / 0.1M
+  cycles: 3
+  puncture vertex audit: PASS
+  minimum cell radius: 0.4330127M on the deliberately coarse 8^3 smoke grid
+  initial matching state/G/shift error: 0
+  initial lapse-ratio error: 2.220446e-16
+  final regular-state Linf: 1.0002146
+  nonfinite/bad state: 0
+  intervention: none
+
+Production mesh-only audit
+  domain: [-6M,6M]^3
+  root grid: 3 x 3 x 3 MeshBlocks
+  physical refinement levels: 2 (level 0 plus level 1)
+  active blocks: 26 at level 0 plus 8 at level 1 = 34
+  finest coverage: [-2M,2M]^3
+  root/MB cells: 96/32, 144/48, 192/64
+  dx_min: M/16, M/24, M/32

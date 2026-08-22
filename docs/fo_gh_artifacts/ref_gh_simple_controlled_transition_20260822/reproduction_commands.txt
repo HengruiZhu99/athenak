@@ -1,0 +1,23 @@
+# Local CPU build and mesh audit
+cmake --build build_refgh_control_cpu -j 8
+build_refgh_control_cpu/src/athena -m -i tst/inputs/ref_gh_controlled_transition.athinput
+
+# Aurora source-qualified one-tile gate
+qsub -o "$ROOT/runs/gate_final_pbs.log" scripts/ref_gh/aurora_controlled_transition_gate.pbs
+
+# Aurora three-resolution open-loop campaign
+qsub -v EXPECTED_COMMIT=ebec8d28fe3e98fb6ee37e70423fbbc199bc7d31,MODE=open_loop \
+  -o "$ROOT/runs/open_loop_t4_retry_pbs.log" \
+  scripts/ref_gh/aurora_controlled_transition_t4.pbs
+
+# Preserving medium/coarse follow-up after the fine fail-closed event
+qsub -v EXPECTED_COMMIT=d51e318ae5fd0d79a40ee45468dec1c5ac64e15d,MODE=open_loop,CASE_SET=remaining \
+  -o "$ROOT/runs/open_loop_t5_remaining_pbs.log" \
+  scripts/ref_gh/aurora_controlled_transition_t4.pbs
+
+# Matched pre-failure convergence analysis
+python3 scripts/ref_gh/analyze_controlled_transition.py \
+  --mode open_loop_prefailure --targets 0.5 1.0 1.5 1.6 \
+  --coarse <coarse-case-directory> --medium <medium-case-directory> \
+  --fine <fine-case-directory> \
+  --output-prefix open_loop_prefailure_convergence
