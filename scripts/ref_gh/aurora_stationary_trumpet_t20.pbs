@@ -1,23 +1,25 @@
 #!/bin/bash -l
-# Resume the verified 64/96/128 Ref-GH trumpet checkpoints from t=1 to t=20.
+# Binary64 diagnostics for the 64/96/128 stationary Ref-GH trumpet through t=20.
 #PBS -A CompactBinaryMerger
 #PBS -q capacity
 #PBS -l select=1
 #PBS -l place=scatter
 #PBS -l walltime=14:00:00
 #PBS -l filesystems=home:flare
-#PBS -N refgh_t20_8r
+#PBS -N refgh_stat20
 #PBS -j oe
 
 set -euo pipefail
 
-ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_reference_cache_task_20260820
+ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_performance_convergence_20260821
 SRC="${ROOT}/athenak"
-BUILD="${ROOT}/build_sycl_pvc_8770307.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov"
-BUILD_SOURCE_COMMIT=6eed3d9d6fb5d31ee8f240a771e18bfc220a0701
+: "${EXPECTED_COMMIT:?submit with qsub -v EXPECTED_COMMIT=<full-sha>}"
+BUILD="${ROOT}/build_stationary_t20_${PBS_JOBID}"
 EXE="${BUILD}/src/athena"
 INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet.athinput"
-T1="${ROOT}/runs/cache_t1_eight_rank_8770508.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov"
+SUMMARY="${SRC}/scripts/ref_gh/summarize_stationary_history.py"
+ROUNDOFF="${SRC}/scripts/ref_gh/analyze_stationary_roundoff.py"
+MASKED="${SRC}/scripts/ref_gh/analyze_stationary_common_constraints.py"
 OUT="${ROOT}/runs/stationary_t20_${PBS_JOBID}"
 
 mkdir -p "${OUT}"
@@ -32,66 +34,121 @@ export OMP_PLACES=threads
 export FI_MR_CACHE_MONITOR=disabled
 export FI_LOG_LEVEL=ERROR
 
-git -C "${SRC}" diff --quiet "${BUILD_SOURCE_COMMIT}" HEAD -- src inputs
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
 
 {
   date -Is
   hostname
   qstat -f "${PBS_JOBID}"
-  git -C "${SRC}" rev-parse HEAD
-  echo "build_source_commit=${BUILD_SOURCE_COMMIT}"
-  git -C "${SRC}" status --short
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" status --short --branch
   git -C "${SRC}" submodule status
-  sha256sum "${EXE}"
   icpx --version | head -1
-  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${SUMMARY}" "${ROUNDOFF}" "${MASKED}" "$0"
 } > provenance.txt
+
+# Compile only on the allocated compute node. This is the bounds-check-off
+# production configuration used by the preceding PVC performance gates.
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens \
+  > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+    "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
 
 mpiexec -n 8 --ppn 8 --depth=16 --cpu-bind depth \
   gpu_tile_compact.sh bash -lc '
     echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
     sycl-ls 2>&1 | grep "Data Center GPU Max"
   ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 8
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 8
 
 run_case() (
   local label="$1"
   local ncell="$2"
   local mbcell="$3"
-  local checkpoint="$4"
   local work="${OUT}/${label}"
-  test -s "${checkpoint}"
   mkdir -p "${work}"
   cd "${work}"
-  sha256sum "${checkpoint}" > input_checkpoint.sha256
   /usr/bin/time -p mpiexec -n 8 --ppn 8 --depth=16 --cpu-bind depth \
-    gpu_tile_compact.sh "${EXE}" -r "${checkpoint}" -i "${INPUT}" \
+    gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
     job/basename="${label}" \
     mesh/nx1="${ncell}" mesh/nx2="${ncell}" mesh/nx3="${ncell}" \
     meshblock/nx1="${mbcell}" meshblock/nx2="${mbcell}" meshblock/nx3="${mbcell}" \
-    ref_gh/debug_task_fences=false \
-    ref_gh/validate_reference_cache=false \
-    output1/dt=0.2 output2/dt=2.0 \
-    time/nlim=-1 time/tlim=20.0 \
+    ref_gh/debug_task_fences=false ref_gh/validate_reference_cache=false \
+    output1/dt=0.1 output2/dt=2.0 output3/dt=20.0 \
+    output3/binary64=true time/nlim=-1 time/tlim=20.0 \
     > "${label}.log" 2>&1
   test -s "${label}.ref_gh.hst"
-  awk 'BEGIN {reached=0} !/^#/ && $1 >= 19.99999999 {reached=1} END {exit !reached}' \
+  test -s "${label}-trumpet.dat"
+  awk 'BEGIN {reached=0} !/^#/ && $1 >= 20.0 - 1.0e-12 {reached=1} END {exit !reached}' \
     "${label}.ref_gh.hst"
-  test -n "$(find rst -maxdepth 1 -type f -name '*.rst' -print -quit)"
+  awk 'BEGIN {good=0} !/^#/ && $3 >= 20.0 - 1.0e-12 {good=($1 > 0 && $2 > 0)} END {exit !good}' \
+    "${label}-trumpet.dat"
+  test "$(find rst -maxdepth 1 -type f -name '*.rst' | wc -l)" -ge 10
+  for sequence in 00000 00001; do
+    cbin="cbin_adm_common_1/${label}.adm_common.${sequence}.cbin"
+    test -s "${cbin}"
+    grep -a -m1 -q 'size of variable=8' "${cbin}"
+    grep -a -m1 -Eq 'variables:.*adm_common_H.*adm_common_M2' "${cbin}"
+  done
   ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
     "${label}.log"
   grep 'reference-GH stationary trumpet:' "${label}.log" | tail -1
 )
 
-# Run the most expensive member first so a scheduler interruption cannot erase
-# the hardest completed checkpoint chain.
-run_case ref_gh_stationary_trumpet_dx32_t20_8r 128 64 \
-  "${T1}/ref_gh_stationary_trumpet_dx32_t1_8r/rst/ref_gh_stationary_trumpet_dx32_t1_8r.00002.rst" \
-  > dx32_status.txt
-run_case ref_gh_stationary_trumpet_dx24_t20_8r 96 48 \
-  "${T1}/ref_gh_stationary_trumpet_dx24_t1_8r/rst/ref_gh_stationary_trumpet_dx24_t1_8r.00002.rst" \
-  > dx24_status.txt
-run_case ref_gh_stationary_trumpet_dx16_t20_8r 64 32 \
-  "${T1}/ref_gh_stationary_trumpet_dx16_t1_8r/rst/ref_gh_stationary_trumpet_dx16_t1_8r.00002.rst" \
-  > dx16_status.txt
+# Preserve the most expensive member first if an external scheduler event
+# interrupts this sequential one-node campaign.
+fine=ref_gh_stationary_trumpet_n128_t20
+medium=ref_gh_stationary_trumpet_n96_t20
+coarse=ref_gh_stationary_trumpet_n64_t20
+run_case "${fine}" 128 64 > n128_status.txt
+run_case "${medium}" 96 48 > n96_status.txt
+run_case "${coarse}" 64 32 > n64_status.txt
+paste n64_status.txt n96_status.txt n128_status.txt > case_status.txt
 
-cat dx16_status.txt dx24_status.txt dx32_status.txt > case_status.txt
+python3 "${SUMMARY}" \
+  --case "n64=${OUT}/${coarse}/${coarse}.ref_gh.hst" \
+  --case "n96=${OUT}/${medium}/${medium}.ref_gh.hst" \
+  --case "n128=${OUT}/${fine}/${fine}.ref_gh.hst" \
+  --output stationary_matched.tsv
+
+python3 "${ROUNDOFF}" \
+  --case "n64,64=${OUT}/${coarse}/${coarse}.ref_gh.hst,${OUT}/${coarse}/${coarse}-trumpet.dat" \
+  --case "n96,96=${OUT}/${medium}/${medium}.ref_gh.hst,${OUT}/${medium}/${medium}-trumpet.dat" \
+  --case "n128,128=${OUT}/${fine}/${fine}.ref_gh.hst,${OUT}/${fine}/${fine}-trumpet.dat" \
+  --output-prefix stationary_roundoff
+
+python3 "${MASKED}" \
+  --case "n64=${OUT}/${coarse}/cbin_adm_common_1/${coarse}.adm_common.00000.cbin" \
+  --case "n96=${OUT}/${medium}/cbin_adm_common_1/${medium}.adm_common.00000.cbin" \
+  --case "n128=${OUT}/${fine}/cbin_adm_common_1/${fine}.adm_common.00000.cbin" \
+  --expected-time 0 --output stationary_common_adm_t0.tsv
+python3 "${MASKED}" \
+  --case "n64=${OUT}/${coarse}/cbin_adm_common_1/${coarse}.adm_common.00001.cbin" \
+  --case "n96=${OUT}/${medium}/cbin_adm_common_1/${medium}.adm_common.00001.cbin" \
+  --case "n128=${OUT}/${fine}/cbin_adm_common_1/${fine}.adm_common.00001.cbin" \
+  --expected-time 20 --output stationary_common_adm_t20.tsv
+
+find . -type f \( -name '*.tsv' -o -name '*status.txt' \
+  -o -name 'provenance.txt' -o -name 'rank_gpu_mapping.txt' \) \
+  -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
