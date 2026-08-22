@@ -80,6 +80,7 @@ run_case() (
   local label="$1"
   local ncell="$2"
   local mbcell="$3"
+  local target_time="$4"
   local work="${OUT}/${label}"
   mkdir -p "${work}"
   cd "${work}"
@@ -89,45 +90,47 @@ run_case() (
     mesh/nx1="${ncell}" mesh/nx2="${ncell}" mesh/nx3="${ncell}" \
     meshblock/nx1="${mbcell}" meshblock/nx2="${mbcell}" meshblock/nx3="${mbcell}" \
     ref_gh/debug_task_fences=false ref_gh/validate_reference_cache=false \
-    output1/dt=0.02 output2/dt=0.2 \
-    output3/dt=0.2 output4/dt=0.2 \
+    output1/dt=0.02 output2/dt="${target_time}" \
+    output3/dt="${target_time}" output4/dt="${target_time}" \
     output3/binary64=true output4/binary64=true \
-    time/nlim=-1 time/tlim=0.6 \
+    time/nlim=-1 time/tlim="${target_time}" \
     > "${label}.log" 2>&1
   test -s "${label}.ref_gh.hst"
-  awk 'BEGIN {reached=0} !/^#/ && $1 >= 0.599999999 {reached=1} END {exit !reached}' \
+  awk -v target="${target_time}" \
+    'BEGIN {reached=0} !/^#/ && $1 >= target - 1.0e-12 {reached=1} END {exit !reached}' \
     "${label}.ref_gh.hst"
-  for index in 00001 00002 00003; do
-    field="cbin_ref_gh_perturb_1/${label}.ref_gh_perturb.${index}.cbin"
-    constraint="cbin_ref_gh_native_con_1/${label}.ref_gh_native_con.${index}.cbin"
-    test -s "${field}"
-    test -s "${constraint}"
-    grep -a -m1 -q 'size of variable=8' "${field}"
-    grep -a -m1 -q 'size of variable=8' "${constraint}"
-  done
+  field="cbin_ref_gh_perturb_1/${label}.ref_gh_perturb.00001.cbin"
+  constraint="cbin_ref_gh_native_con_1/${label}.ref_gh_native_con.00001.cbin"
+  test -s "${field}"
+  test -s "${constraint}"
+  grep -a -m1 -q 'size of variable=8' "${field}"
+  grep -a -m1 -q 'size of variable=8' "${constraint}"
   ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
     "${label}.log"
   grep 'reference-GH perturbed trumpet:' "${label}.log" | tail -1
 )
 
-run_case ref_gh_perturbed_trumpet_n64 64 32 > n64_status.txt
-run_case ref_gh_perturbed_trumpet_n96 96 48 > n96_status.txt
-run_case ref_gh_perturbed_trumpet_n128 128 64 > n128_status.txt
-paste n64_status.txt n96_status.txt n128_status.txt > case_status.txt
-
-for item in 1:0.2 2:0.4 3:0.6; do
-  index=${item%%:*}
+for item in 02:0.2 04:0.4 06:0.6; do
+  tag=${item%%:*}
   expected_time=${item##*:}
-  printf -v suffix '%05d' "${index}"
+  coarse="ref_gh_perturbed_trumpet_n64_t${tag}"
+  medium="ref_gh_perturbed_trumpet_n96_t${tag}"
+  fine="ref_gh_perturbed_trumpet_n128_t${tag}"
+  run_case "${coarse}" 64 32 "${expected_time}" > "n64_t${tag}_status.txt"
+  run_case "${medium}" 96 48 "${expected_time}" > "n96_t${tag}_status.txt"
+  run_case "${fine}" 128 64 "${expected_time}" > "n128_t${tag}_status.txt"
+  paste "n64_t${tag}_status.txt" "n96_t${tag}_status.txt" \
+    "n128_t${tag}_status.txt" > "case_t${tag}_status.txt"
   python3 "${ANALYZER}" \
     --field \
-      "${OUT}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n64.ref_gh_perturb.${suffix}.cbin" \
-      "${OUT}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n96.ref_gh_perturb.${suffix}.cbin" \
-      "${OUT}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_perturb_1/ref_gh_perturbed_trumpet_n128.ref_gh_perturb.${suffix}.cbin" \
+      "${OUT}/${coarse}/cbin_ref_gh_perturb_1/${coarse}.ref_gh_perturb.00001.cbin" \
+      "${OUT}/${medium}/cbin_ref_gh_perturb_1/${medium}.ref_gh_perturb.00001.cbin" \
+      "${OUT}/${fine}/cbin_ref_gh_perturb_1/${fine}.ref_gh_perturb.00001.cbin" \
     --constraint \
-      "${OUT}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n64.ref_gh_native_con.${suffix}.cbin" \
-      "${OUT}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n96.ref_gh_native_con.${suffix}.cbin" \
-      "${OUT}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n128.ref_gh_native_con.${suffix}.cbin" \
+      "${OUT}/${coarse}/cbin_ref_gh_native_con_1/${coarse}.ref_gh_native_con.00001.cbin" \
+      "${OUT}/${medium}/cbin_ref_gh_native_con_1/${medium}.ref_gh_native_con.00001.cbin" \
+      "${OUT}/${fine}/cbin_ref_gh_native_con_1/${fine}.ref_gh_native_con.00001.cbin" \
+    --expected-time "${expected_time}" \
     --output "convergence_t${expected_time}.json" \
     > "convergence_t${expected_time}.log"
 done
@@ -139,7 +142,7 @@ import sys
 root = pathlib.Path(sys.argv[1])
 print("resolution\tmaximum_characteristic_speed\tearliest_boundary_arrival_to_r_lt_1")
 for resolution in (64, 96, 128):
-    label = f"ref_gh_perturbed_trumpet_n{resolution}"
+    label = f"ref_gh_perturbed_trumpet_n{resolution}_t06"
     path = root / label / f"{label}.ref_gh.hst"
     rows = [[float(value) for value in line.split()]
             for line in path.read_text().splitlines()

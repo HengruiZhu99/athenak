@@ -202,6 +202,7 @@ def main() -> None:
                         metavar=("N64", "N96", "N128"))
     parser.add_argument("--target-n", type=int, default=32)
     parser.add_argument("--analysis-radius", type=float, default=1.0)
+    parser.add_argument("--expected-time", type=float)
     parser.add_argument("--resolutions", nargs=3, type=int, default=(64, 96, 128),
                         metavar=("N0", "N1", "N2"))
     parser.add_argument("--output", type=Path, required=True)
@@ -212,6 +213,11 @@ def main() -> None:
         args.constraint, args.target_n)
     if bounds != constraint_bounds:
         raise ValueError("field and constraint domains differ")
+    output_times = [item["time"] for item in field_meta + constraint_meta]
+    if args.expected_time is not None and any(
+            abs(time - args.expected_time) > 1.0e-12 for time in output_times):
+        raise ValueError(
+            f"output times {output_times} do not match {args.expected_time}")
     coordinates = [lower + (np.arange(args.target_n) + 0.5)*(upper - lower)
                    /args.target_n for lower, upper in bounds]
     z, y, x = np.meshgrid(coordinates[2], coordinates[1], coordinates[0],
@@ -243,6 +249,20 @@ def main() -> None:
         "psi": norm_summary(
             fields[0][:2], fields[1][:2], fields[2][:2], mask,
             tuple(args.resolutions)),
+        "field_per_variable": {
+            name: norm_summary(
+                fields[0][index:index + 1], fields[1][index:index + 1],
+                fields[2][index:index + 1], mask, tuple(args.resolutions))
+            for index, name in enumerate(field_names)
+        },
+        "constraint_per_variable": {
+            name: norm_summary(
+                constraints[0][index:index + 1],
+                constraints[1][index:index + 1],
+                constraints[2][index:index + 1], mask,
+                tuple(args.resolutions))
+            for index, name in enumerate(constraint_names)
+        },
     }
     if not binary64:
         result["precision_limitation"] = (
