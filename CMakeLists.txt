@@ -649,6 +649,65 @@ if (Athena_BUILD_UNIT_TESTS)
   set_tests_properties(
       athena.z4c_vc_static_multilevel_wave
       PROPERTIES TIMEOUT 120 LABELS "z4c;vertex;cartesian;amr;interface")
+  function(add_z4c_vc_static_multilevel_case name input expected_leaves
+           interface_x1 labels)
+    add_test(
+        NAME ${name}
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_static_multilevel_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/${input}
+        --source-dir ${CMAKE_CURRENT_SOURCE_DIR}
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/${name}
+        --expected-leaves ${expected_leaves} --interface-x1 ${interface_x1})
+    set_tests_properties(
+        ${name} PROPERTIES TIMEOUT 180
+        LABELS "z4c;vertex;amr;interface;${labels}")
+  endfunction()
+  add_z4c_vc_static_multilevel_case(
+      athena.z4c_vc_static_multilevel_2d_cartesian_o4
+      z4c_vc_static_multilevel_2d_cartesian.athinput 5 0.0 "2d;cartesian")
+  add_test(
+      NAME athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_static_multilevel_test.py
+      --athena $<TARGET_FILE:athena>
+      --input
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_static_multilevel_2d_cartoon_axis.athinput
+      --source-dir ${CMAKE_CURRENT_SOURCE_DIR}
+      --work-dir
+      ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4
+      --expected-leaves 5 --interface-x1 1.0 --cartoon-axis)
+  set_tests_properties(
+      athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4
+      PROPERTIES TIMEOUT 180 LABELS "z4c;vertex;amr;interface;2d;cartoon")
+  add_z4c_vc_static_multilevel_case(
+      athena.z4c_vc_static_multilevel_3d_cartesian_o4
+      z4c_vc_static_multilevel_wave.athinput 9 0.0 "3d;cartesian")
+  if (Athena_ENABLE_MPI)
+    foreach(ranks IN ITEMS 2 4)
+      add_test(
+          NAME athena.z4c_vc_static_multilevel_3d_cartesian_mpi${ranks}
+          COMMAND
+          ${PYTHON_EXECUTABLE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_static_multilevel_test.py
+          --athena $<TARGET_FILE:athena>
+          --input
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_static_multilevel_wave.athinput
+          --source-dir ${CMAKE_CURRENT_SOURCE_DIR}
+          --work-dir
+          ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_static_multilevel_3d_cartesian_mpi${ranks}
+          --expected-leaves 9 --interface-x1 0.0
+          --mpiexec ${MPIEXEC_EXECUTABLE} --np-flag=${MPIEXEC_NUMPROC_FLAG}
+          --ranks ${ranks})
+      set_tests_properties(
+          athena.z4c_vc_static_multilevel_3d_cartesian_mpi${ranks}
+          PROPERTIES TIMEOUT 240
+          LABELS "z4c;vertex;amr;interface;3d;cartesian;mpi")
+    endforeach()
+  endif()
   add_test(
       NAME athena.z4c_vc_amr_history
       COMMAND

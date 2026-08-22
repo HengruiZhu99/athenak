@@ -1,0 +1,84 @@
+# Exact native-VC Minkowski carrier on an axis-touching fixed interface.
+
+<job>
+basename = z4c_vc_static_multilevel_wave
+
+<mesh>
+nghost = 4
+nx1 = 16
+x1min = 0.0
+x1max = 2.0
+ix1_bc = axis
+ox1_bc = outflow
+nx2 = 8
+x2min = -0.5
+x2max = 0.5
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 1
+
+<mesh_refinement>
+refinement = static
+num_levels = 1
+max_nmb_per_rank = 64
+
+<refined_region1>
+level = 1
+x1min = 0.0
+x1max = 1.0
+x2min = -0.5
+x2max = 0.5
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = 4
+tlim = 10.0
+ndiag = 1
+
+<z4c>
+grid_centering = vertex
+symmetry = cartoon_so2
+coordinate_map = half_rho_z_suppressed_y_v2
+symmetry_schema = 2
+spatial_order = 4
+diss = 0.02
+floor_chi = false
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+lapse_oplog = 0.0
+lapse_harmonic = 0.0
+lapse_advect = 0.0
+shift_Gamma = 0.0
+shift_eta = 0.0
+shift_advect = 0.0
+
+<problem>
+pgen_name = z4c_vc_minkowski
+
+<output1>
+file_type = hst
+dcycle = 1
+data_format = %24.16e
+
+<output2>
+file_type = bin
+variable = z4c
+id = state
+dcycle = 4
+
+<output3>
+file_type = bin
+variable = con
+id = constraints
+dcycle = 4
