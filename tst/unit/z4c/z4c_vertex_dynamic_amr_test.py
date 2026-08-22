@@ -7,6 +7,7 @@ import argparse
 import math
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 
@@ -30,7 +31,10 @@ def main() -> int:
     parser.add_argument("--centering", choices=("cell", "vertex"),
                         default="vertex")
     parser.add_argument("--order", type=int, choices=(2, 4, 6), default=6)
+    parser.add_argument("--integrator", choices=("rk1", "rk2", "rk3", "rk4"),
+                        default="rk4")
     parser.add_argument("--root-leaves", type=int, default=4)
+    parser.add_argument("--meshblocks-per-dim", type=int, default=1)
     parser.add_argument("--expected-volume", type=float, default=64.0 * math.pi)
     parser.add_argument("--invalid-target-test", action="store_true")
     parser.add_argument("--invalid-halo-test", action="store_true")
@@ -42,7 +46,19 @@ def main() -> int:
     work.mkdir(parents=True)
     command = [args.athena, "-i", args.input,
                f"z4c/spatial_order={args.order}",
-               f"z4c/grid_centering={args.centering}"]
+               f"z4c/grid_centering={args.centering}",
+               f"time/integrator={args.integrator}"]
+    if args.meshblocks_per_dim > 1:
+        input_text = pathlib.Path(args.input).read_text(encoding="utf-8")
+        meshblock_text = input_text.split("<meshblock>", 1)[1].split("<", 1)[0]
+        for direction in range(1, args.dimensions + 1):
+            match = re.search(
+                rf"^nx{direction}\s*=\s*(\d+)\s*$", meshblock_text,
+                flags=re.MULTILINE)
+            require(match is not None,
+                    f"fixture is missing <meshblock>/nx{direction}")
+            root_cells = args.meshblocks_per_dim * int(match.group(1))
+            command.append(f"mesh/nx{direction}={root_cells}")
     if args.invalid_target_test:
         command.append("problem/amr_target_lx1=99")
     if args.invalid_halo_test:
@@ -138,7 +154,8 @@ def main() -> int:
     require(len(restarts) >= 4 and all(path.stat().st_size > 0 for path in restarts),
             "dynamic AMR fixture did not produce valid restart files")
     print(f"PASS: {args.centering}-centered {args.dimensions}D {args.geometry} "
-          f"O{args.order} dynamic refine/derefine lifecycle and quadrature")
+          f"O{args.order} {args.integrator} dynamic refine/derefine lifecycle "
+          "and quadrature")
     return 0
 
 

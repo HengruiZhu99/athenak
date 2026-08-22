@@ -575,6 +575,24 @@ if (Athena_BUILD_UNIT_TESTS)
         z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
         3 cartesian ${order} 1 64.0)
   endforeach()
+  foreach(integrator IN ITEMS rk1 rk2 rk3)
+    add_test(
+        NAME athena.z4c_vc_dynamic_amr_2d_cartesian_o4_${integrator}
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py
+        --athena $<TARGET_FILE:athena>
+        --input
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput
+        --work-dir
+        ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_dynamic_amr_2d_cartesian_o4_${integrator}
+        --dimensions 2 --geometry cartesian --order 4
+        --integrator ${integrator} --root-leaves 4 --expected-volume 16.0)
+    set_tests_properties(
+        athena.z4c_vc_dynamic_amr_2d_cartesian_o4_${integrator}
+        PROPERTIES TIMEOUT 120
+        LABELS "z4c;vertex;2d;cartesian;amr;${integrator}")
+  endforeach()
   function(add_z4c_cc_lifecycle_case name input dimensions geometry root_leaves
            expected_volume)
     add_test(
@@ -636,7 +654,7 @@ if (Athena_BUILD_UNIT_TESTS)
       PROPERTIES TIMEOUT 30 LABELS "z4c;vertex;3d;cartesian;amr;negative")
   if (Athena_ENABLE_MPI)
     function(add_z4c_vc_dynamic_amr_mpi_case name input dimensions geometry
-             ranks root_leaves expected_volume)
+             ranks root_leaves expected_volume meshblocks_per_dim)
       add_test(
           NAME ${name}
           COMMAND
@@ -647,6 +665,7 @@ if (Athena_BUILD_UNIT_TESTS)
           --work-dir ${CMAKE_CURRENT_BINARY_DIR}/${name}
           --dimensions ${dimensions} --geometry ${geometry} --order 6
           --ranks ${ranks} --root-leaves ${root_leaves}
+          --meshblocks-per-dim ${meshblocks_per_dim}
           --expected-volume ${expected_volume}
           --mpiexec ${MPIEXEC_EXECUTABLE} --np-flag=${MPIEXEC_NUMPROC_FLAG})
       set_tests_properties(
@@ -656,19 +675,19 @@ if (Athena_BUILD_UNIT_TESTS)
     add_z4c_vc_dynamic_amr_mpi_case(
         athena.z4c_vc_dynamic_amr_2d_cartesian_mpi2
         z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput
-        2 cartesian 2 4 16.0)
+        2 cartesian 2 4 16.0 1)
     add_z4c_vc_dynamic_amr_mpi_case(
         athena.z4c_vc_dynamic_amr_2d_cartoon_mpi2
         z4c_vc_minkowski_dynamic_amr.athinput
-        2 cartoon 2 4 201.06192982974676)
+        2 cartoon 2 4 201.06192982974676 1)
     add_z4c_vc_dynamic_amr_mpi_case(
         athena.z4c_vc_dynamic_amr_3d_cartesian_mpi2
         z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
-        3 cartesian 2 1 64.0)
+        3 cartesian 2 8 64.0 2)
     add_z4c_vc_dynamic_amr_mpi_case(
         athena.z4c_vc_dynamic_amr_3d_cartesian_mpi4
         z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput
-        3 cartesian 4 1 64.0)
+        3 cartesian 4 8 64.0 2)
   endif()
   add_test(
       NAME athena.z4c_vc_linear_wave_convergence_o4
@@ -1087,6 +1106,20 @@ if (Athena_BUILD_UNIT_TESTS)
       -DHISTORY_VALIDATOR=${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_history_test.py
       -DFAILURE_REGION_EXTRACTOR=${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_cartoon_failure_region_extract.py
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_kerr_half_plane_init_test.cmake)
+
+  add_test(
+      NAME athena.z4c_vc_kerr_puncture_rejection
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vc_kerr_puncture_rejection_test.py
+      --athena $<TARGET_FILE:athena>
+      --input
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_kerr_half_plane_amr.athinput
+      --work-dir
+      ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_kerr_puncture_rejection)
+  set_tests_properties(
+      athena.z4c_vc_kerr_puncture_rejection
+      PROPERTIES TIMEOUT 30 LABELS "z4c;vertex;cartoon;kerr;negative")
 
   # The frozen one-cycle Kerr half-plane case is the authoritative CC selector
   # contract.  Keep this exact byte/payload comparison on deterministic GNU

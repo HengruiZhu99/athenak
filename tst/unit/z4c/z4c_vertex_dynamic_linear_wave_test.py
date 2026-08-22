@@ -20,17 +20,20 @@ def require(condition: bool, message: str) -> None:
 
 
 def run_case(athena: Path, input_path: Path, root: Path, dimensions: int,
-             resolution: int, adaptive: bool) -> tuple[dict, dict[float, list[float]], str]:
-    label = f"{'amr' if adaptive else 'uniform'}_n{resolution}"
+             resolution: int, adaptive: bool, order: int, integrator: str,
+             meshblocks_per_dim: int) -> tuple[dict, dict[float, list[float]], str]:
+    label = (f"{'amr' if adaptive else 'uniform'}_o{order}_{integrator}_"
+             f"n{resolution}")
     work = root / label
     work.mkdir(parents=True)
     basename = f"z4c_vc_dynamic_linear_wave_{label}"
-    meshblock_resolution = resolution // 2
+    meshblock_resolution = resolution // meshblocks_per_dim
     command = [
         str(athena), "-i", str(input_path), "-d", str(work),
         f"job/basename={basename}",
         f"mesh/nx1={resolution}", f"meshblock/nx1={meshblock_resolution}",
         f"mesh/nx2={resolution}", f"meshblock/nx2={meshblock_resolution}",
+        f"z4c/spatial_order={order}", f"time/integrator={integrator}",
     ]
     if dimensions == 3:
         command.extend((f"mesh/nx3={resolution}",
@@ -54,7 +57,7 @@ def run_case(athena: Path, input_path: Path, root: Path, dimensions: int,
         require(f"{created} MeshBlocks created, {created} deleted by AMR" in
                 result.stdout,
                 f"{label} did not execute the deterministic refine/derefine pair")
-        root_leaves = 1 << dimensions
+        root_leaves = meshblocks_per_dim ** dimensions
         require(f"Current number of MeshBlocks = {root_leaves}" in result.stdout,
                 f"{label} did not return to the root hierarchy")
 
@@ -103,6 +106,10 @@ def main() -> int:
     parser.add_argument("--input", required=True, type=Path)
     parser.add_argument("--work-dir", required=True, type=Path)
     parser.add_argument("--dimensions", required=True, type=int, choices=(2, 3))
+    parser.add_argument("--order", type=int, choices=(2, 4, 6), default=4)
+    parser.add_argument("--integrator", choices=("rk1", "rk2", "rk3", "rk4"),
+                        default="rk4")
+    parser.add_argument("--meshblocks-per-dim", type=int, default=2)
     parser.add_argument("--resolutions", nargs="+", type=int,
                         default=(16, 32),
                         help="root resolutions used for the convergence check")
@@ -111,9 +118,22 @@ def main() -> int:
             all(resolution > 0 and resolution % 2 == 0
                 for resolution in args.resolutions),
             "need at least two positive even resolutions")
+    require(args.meshblocks_per_dim > 0 and
+            all(resolution % args.meshblocks_per_dim == 0
+                for resolution in args.resolutions),
+            "every resolution must be divisible by --meshblocks-per-dim")
+    fine_nghost = 4
+    transfer_order = {2: 4, 4: 6, 6: 8}[args.order]
+    coarse_nghost = max(
+        fine_nghost, (fine_nghost - 1) // 2 + transfer_order // 2)
+    require(all((resolution // args.meshblocks_per_dim) // 2 >= coarse_nghost
+                for resolution in args.resolutions),
+            "selected MeshBlock size cannot supply the centered coarse halo; "
+            "reduce --meshblocks-per-dim or increase the resolutions")
 
     text = args.input.read_text(encoding="utf-8")
     for needle in ("grid_centering = vertex", "spatial_order = 4",
+                   "integrator = rk4",
                    "exercise_deterministic_amr = true",
                    "amr_refine_time = 0.01",
                    "amr_derefine_time = 0.024",
@@ -127,10 +147,12 @@ def main() -> int:
     for resolution in args.resolutions:
         uniform, uniform_line, _ = run_case(
             args.athena.resolve(), args.input.resolve(), root,
-            args.dimensions, resolution, False)
+            args.dimensions, resolution, False, args.order, args.integrator,
+            args.meshblocks_per_dim)
         adaptive, adaptive_line, _ = run_case(
             args.athena.resolve(), args.input.resolve(), root,
-            args.dimensions, resolution, True)
+            args.dimensions, resolution, True, args.order, args.integrator,
+            args.meshblocks_per_dim)
         errors.append(payload_difference(
             uniform, adaptive, uniform_line, adaptive_line))
     require(all(error[0] > 0.0 for error in errors),
@@ -139,13 +161,18 @@ def main() -> int:
                        fine_resolution / coarse_resolution)
               for coarse, fine, coarse_resolution, fine_resolution in
               zip(errors, errors[1:], args.resolutions, args.resolutions[1:])]
+    # The coarse member may precede the asymptotic regime, so require at least
+    # p-1 on every interval while retaining strict monotonic decrease.  The
+    # measured orders are always reported for the qualification matrix.
+    minimum_order = max(1.5, args.order - 1.0)
     require(all(fine[0] < coarse[0] for coarse, fine in
-                zip(errors, errors[1:])) and min(orders) >= 1.5,
+                zip(errors, errors[1:])) and min(orders) >= minimum_order,
             f"nonconstant AMR mismatch does not decrease robustly: "
             f"errors={errors} orders={orders}")
     require(errors[-1][1] < 1.0e-6,
             f"nonconstant AMR Linf mismatch is unexpectedly large: {errors}")
-    print(f"PASS: native-VC {args.dimensions}D nonconstant dynamic AMR "
+    print(f"PASS: native-VC {args.dimensions}D O{args.order} {args.integrator} "
+          "nonconstant dynamic AMR "
           f"errors={errors} observed_orders={orders}")
     return 0
 
