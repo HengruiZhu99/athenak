@@ -85,6 +85,31 @@ configure_build() {
 
 configure_build "${CHECKED_BUILD}" ON checked
 configure_build "${PERF_BUILD}" OFF performance
+python3 - "${OUT}/build_checked.log" "${OUT}/build_performance.log" \
+  > compiler_pressure.tsv <<'PY'
+import pathlib
+import re
+import sys
+
+print("build\tkernel\tevent\tdetail")
+for path in sys.argv[1:]:
+    build = pathlib.Path(path).stem.replace("build_", "")
+    lines = pathlib.Path(path).read_text(errors="replace").splitlines()
+    for line_number, line in enumerate(lines):
+        if "compiled SIMD" in line and "ref_gh" in line.lower():
+            match = re.search(r"compiled SIMD(\d+) allocated (\d+) regs "
+                              r"and spilled around (\d+)", line)
+            if match:
+                print("{}\tref_gh\tregister_spill\tline={};simd={};regs={};spill={}".
+                      format(build, line_number + 1, *match.groups()))
+        if "[RetryManager] Start recompilation" not in line:
+            continue
+        context = " ".join(lines[line_number + 1:line_number + 4])
+        match = re.search(r"RefGh::CalcRHS<(\d+)>.*?'(lambda\d*)'", context)
+        if match:
+            print("{}\tCalcRHS<{}>::{}\tretry_recompile\tline={}".
+                  format(build, match.group(1), match.group(2), line_number + 1))
+PY
 icpx -std=c++17 -O2 -fPIC -shared \
   "${SRC}/scripts/ref_gh/kokkos_kernel_timer.cpp" -o "${TOOL}"
 
@@ -126,6 +151,76 @@ grep -q 'reference-GH production cache oracle conditioned scaled Linf' \
   ref_gh_static_cache_gate.log
 ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
   ref_gh_static_cache_gate.log
+
+cd "${OUT}"
+mkdir performance_gate
+cd performance_gate
+/usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  "${BINDER}" 0.0 "${PERF_BUILD}/src/athena" -i "${GATE_INPUT}" \
+  job/basename=ref_gh_performance_output_gate \
+  mesh/nx1=64 mesh/nx2=64 mesh/nx3=64 \
+  meshblock/nx1=64 meshblock/nx2=64 meshblock/nx3=64 \
+  ref_gh/debug_task_fences=true ref_gh/validate_reference_cache=true \
+  output1/dt=1.0e-6 output2/dt=1.0e-6 time/nlim=1 time/tlim=1.0 \
+  > ref_gh_performance_output_gate.log 2>&1
+test -s ref_gh_performance_output_gate.ref_gh.hst
+test -s rst/ref_gh_performance_output_gate.00002.rst
+awk 'BEGIN {rows=0; positive=0} !/^#/ {rows++; if ($1 > 0) positive=1} END {exit !(rows >= 2 && positive)}' \
+  ref_gh_performance_output_gate.ref_gh.hst
+grep -q 'reference-GH stationary initial RHS Linf' \
+  ref_gh_performance_output_gate.log
+grep -q 'reference-GH production cache oracle conditioned scaled Linf' \
+  ref_gh_performance_output_gate.log
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  ref_gh_performance_output_gate.log
+
+cd "${OUT}"
+python3 - <<'PY' > full_output_comparison.tsv
+import math
+import pathlib
+
+checked = pathlib.Path("checked_gate")
+performance = pathlib.Path("performance_gate")
+file_pairs = [
+    (checked / "ref_gh_static_cache_gate.ref_gh.hst",
+     performance / "ref_gh_performance_output_gate.ref_gh.hst")]
+for index in range(6):
+    file_pairs.append(
+        (checked / "ref_gh_static_cache_gate.adm_common{}.hst".format(index),
+         performance / "ref_gh_performance_output_gate.adm_common{}.hst".
+         format(index)))
+
+maximum = 0.0
+where = ""
+for checked_path, performance_path in file_pairs:
+    def rows(path):
+        return [[float(value) for value in line.split()]
+                for line in path.read_text().splitlines()
+                if line and not line.startswith("#")]
+    checked_rows = rows(checked_path)
+    performance_rows = rows(performance_path)
+    if len(checked_rows) != len(performance_rows):
+        raise SystemExit("history row count mismatch: {}".format(checked_path))
+    for row_index, (checked_row, performance_row) in enumerate(
+            zip(checked_rows, performance_rows)):
+        if len(checked_row) != len(performance_row):
+            raise SystemExit("history column mismatch: {}".format(checked_path))
+        for column, (checked_value, performance_value) in enumerate(
+                zip(checked_row, performance_row)):
+            difference = abs(checked_value - performance_value)
+            if not math.isfinite(difference):
+                raise SystemExit("nonfinite history comparison")
+            if difference > maximum:
+                maximum = difference
+                where = "{}:{}:{}".format(checked_path.name, row_index, column)
+            tolerance = 1024.0*2.220446049250313e-16*(1.0 + abs(checked_value))
+            if difference > tolerance:
+                raise SystemExit("history mismatch at {}: {} > {}".
+                                 format(where, difference, tolerance))
+print("metric\tvalue")
+print("checked_performance_history_linf\t{:.17g}".format(maximum))
+print("maximum_location\t{}".format(where or "identical"))
+PY
 
 mkdir "${OUT}/time_dependent"
 cd "${OUT}/time_dependent"
@@ -211,6 +306,7 @@ PY
 
 head -31 static_kernel_timing.tsv > top30_static_kernel_timing.tsv
 sha256sum provenance.txt gpu_mapping.txt throughput.tsv speedup.tsv \
+  compiler_pressure.tsv full_output_comparison.tsv \
   static_kernel_timing.tsv time_dependent_kernel_timing.tsv \
   top30_static_kernel_timing.tsv source_oracle/ref_gh_source_oracle.log \
   > compact_sha256.txt
