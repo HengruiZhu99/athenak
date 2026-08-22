@@ -95,10 +95,10 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   });
   DebugFence("ref_gh CalcRHS psi");
 
-  // Stage the ten independent scalar-source components in the Pi RHS slots.
-  // The following kernel consumes and overwrites them pointwise, so no additional
-  // production array or change to the mathematical update is required.
-  par_for("ref_gh scalar source rhs", DevExeSpace(), 0, nmb - 1,
+  // The lean source and principal Pi update share the same reconstructed point
+  // geometry.  Keep the source implementation in a separate inline function so
+  // its large contraction temporaries end before the Pi working set begins.
+  par_for("ref_gh scalar source and pi rhs", DevExeSpace(), 0, nmb - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     const ReferenceCachePoint reference{
@@ -126,28 +126,6 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       TransformPartialWaveSource(metric, d_metric, partial_source, d_psi,
                                  reference, geometry, scalar_source);
     }
-    for (int a = 0; a < 4; ++a) {
-      for (int b = a; b < 4; ++b) {
-        state_rhs(m, PiIndex(a, b), k, j, i) = scalar_source[a][b];
-      }
-    }
-  });
-  DebugFence("ref_gh CalcRHS source");
-
-  par_for("ref_gh pi rhs", DevExeSpace(), 0, nmb - 1,
-  indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
-  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const ReferenceCachePoint reference{
-        reference_cache, reference_extra, m, k, j, i};
-    Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
-    Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
-    CoordinateGhGeometry geometry;
-    Real determinant = 0.0;
-    if (!LoadPointGeometry(state, reference, m, k, j, i, psi, pi, phi, d_psi,
-                           metric, d_metric, geometry, determinant)) {
-      for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
-      return;
-    }
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
     Real spatial_inverse[3][3];  // NOLINT(runtime/arrays)
@@ -155,13 +133,6 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
     if (!InvertSpatial3(metric, spatial_inverse, spatial_determinant)) {
       for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
       return;
-    }
-    Real scalar_source[4][4];  // NOLINT(runtime/arrays)
-    for (int a = 0; a < 4; ++a) {
-      for (int b = a; b < 4; ++b) {
-        scalar_source[a][b] = scalar_source[b][a] =
-            state_rhs(m, PiIndex(a, b), k, j, i);
-      }
     }
     Real spatial_connection[3][3][3];  // NOLINT(runtime/arrays)
     for (int q = 0; q < 3; ++q) {
