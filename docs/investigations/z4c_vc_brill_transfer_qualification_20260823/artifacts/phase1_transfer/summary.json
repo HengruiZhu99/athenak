@@ -1,0 +1,389 @@
+{
+  "rules": {
+    "4": {
+      "cycles": [
+        {
+          "case": "smooth_fourier",
+          "coarse_cycle_linf_change": 0.0,
+          "fine_cycle_linf_change": 0.0,
+          "fine_high_fraction_50": 7.665287794344088e-09,
+          "fine_high_fraction_80": 7.665287794344088e-09,
+          "fine_overshoot_above_parent_range": 0.0,
+          "order": 4
+        },
+        {
+          "case": "near_nyquist",
+          "coarse_cycle_linf_change": 0.0,
+          "fine_cycle_linf_change": 0.0,
+          "fine_high_fraction_50": 0.2914423164501952,
+          "fine_high_fraction_80": 4.4010623795813454e-33,
+          "fine_overshoot_above_parent_range": 0.0,
+          "order": 4
+        },
+        {
+          "case": "localized_pulse",
+          "coarse_cycle_linf_change": 0.0,
+          "fine_cycle_linf_change": 0.0,
+          "fine_high_fraction_50": 3.342664351228582e-09,
+          "fine_high_fraction_80": 3.3426643512257934e-09,
+          "fine_overshoot_above_parent_range": 0.0049738780631207735,
+          "order": 4
+        },
+        {
+          "case": "fine_restrict_prolong_kh_0.125",
+          "coarse_cycle_linf_change": NaN,
+          "fine_cycle_linf_change": 0.007826141918014007,
+          "fine_high_fraction_50": 1.809187588366563e-05,
+          "fine_high_fraction_80": 1.809187588366563e-05,
+          "fine_overshoot_above_parent_range": 0.0,
+          "order": 4
+        },
+        {
+          "case": "fine_restrict_prolong_kh_0.500",
+          "coarse_cycle_linf_change": NaN,
+          "fine_cycle_linf_change": 2.008854037047271e-14,
+          "fine_high_fraction_50": 1.0,
+          "fine_high_fraction_80": 0.0,
+          "fine_overshoot_above_parent_range": 0.0,
+          "order": 4
+        },
+        {
+          "case": "fine_restrict_prolong_kh_0.800",
+          "coarse_cycle_linf_change": NaN,
+          "fine_cycle_linf_change": 1.9919576808202417,
+          "fine_high_fraction_50": 0.001574968102242627,
+          "fine_high_fraction_80": 2.410344612903253e-05,
+          "fine_overshoot_above_parent_range": 0.18294068644527894,
+          "order": 4
+        },
+        {
+          "case": "fine_restrict_prolong_kh_1.000",
+          "coarse_cycle_linf_change": NaN,
+          "fine_cycle_linf_change": 2.0,
+          "fine_high_fraction_50": 0.0,
+          "fine_high_fraction_80": 0.0,
+          "fine_overshoot_above_parent_range": 0.0,
+          "order": 4
+        }
+      ],
+      "max_image_amplitude": 0.49999999999999994,
+      "max_midpoint_magnitude": 1.0,
+      "near_nyquist_image_amplitude": 0.49999999999999994,
+      "near_nyquist_midpoint_magnitude": 9.18485099360515e-17,
+      "nonlinear": [
+        {
+          "child_max": 0.9398402824361981,
+          "child_min": 0.18000001883046157,
+          "high_fraction_50": 6.613925989281066e-12,
+          "high_fraction_80": 6.6139254964516824e-12,
+          "order": 4,
+          "overshoot": 9.27903925541651e-05,
+          "parent_max": 0.9397474920436439,
+          "parent_min": 0.18000001883046157,
+          "positive": true,
+          "profile": "chi_smooth_positive",
+          "undershoot": 0.0
+        },
+        {
+          "child_max": 1.0000000002317284,
+          "child_min": 0.32001719353135444,
+          "high_fraction_50": 1.2792258632289488e-11,
+          "high_fraction_80": 1.2792258592215129e-11,
+          "order": 4,
+          "overshoot": 3.657835145887134e-10,
+          "parent_max": 0.9999999998659449,
+          "parent_min": 0.3206637383562565,
+          "positive": true,
+          "profile": "lapse_smooth_positive",
+          "undershoot": 0.0006465448249020622
+        },
+        {
+          "child_max": 1.29,
+          "child_min": 0.71,
+          "high_fraction_50": 1.2633252634250778e-12,
+          "high_fraction_80": 1.2633252634250776e-12,
+          "order": 4,
+          "overshoot": 0.0,
+          "parent_max": 1.29,
+          "parent_min": 0.71,
+          "positive": true,
+          "profile": "metric_smooth_positive",
+          "undershoot": 0.0
+        }
+      ],
+      "polynomial": {
+        "coincident_injection_is_exact": true,
+        "collapsed_dimension_is_identity": true,
+        "degree_errors": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l1_weight_norm": 1.25,
+        "order": 4,
+        "reproduced_degree": 3,
+        "symmetry_error": 0.0,
+        "tensor_l1_2d": 1.5625,
+        "tensor_l1_3d": 1.953125,
+        "weight_sum_error": 0.0
+      },
+      "tensor_response": [
+        {
+          "dimensions": 2,
+          "image_branch_power_fraction": 3.6183424451339184e-05,
+          "kH_over_pi": "0.25;0.25",
+          "midpoint_magnitude": 0.983129847137234,
+          "midpoint_phase": 0.7853981633974483,
+          "mode": "2d_low",
+          "order": 4,
+          "physical_branch_amplitude": 0.991546984299089
+        },
+        {
+          "dimensions": 2,
+          "image_branch_power_fraction": 0.07940551125164028,
+          "kH_over_pi": "0.75;0.25",
+          "midpoint_magnitude": 0.5413786293459505,
+          "midpoint_phase": 1.5707963267948966,
+          "mode": "2d_mixed",
+          "order": 4,
+          "physical_branch_amplitude": 0.7697278693375371
+        },
+        {
+          "dimensions": 2,
+          "image_branch_power_fraction": 0.4804780471186021,
+          "kH_over_pi": "0.9;0.9",
+          "midpoint_magnitude": 0.0541667837684672,
+          "midpoint_phase": 2.8274333882308134,
+          "mode": "2d_high",
+          "order": 4,
+          "physical_branch_amplitude": 0.3799104887609684
+        },
+        {
+          "dimensions": 3,
+          "image_branch_power_fraction": 5.4274645708780115e-05,
+          "kH_over_pi": "0.25;0.25;0.25",
+          "midpoint_magnitude": 0.9748017984720402,
+          "midpoint_phase": 1.1780972450961724,
+          "mode": "3d_low",
+          "order": 4,
+          "physical_branch_amplitude": 0.9873473093715531
+        },
+        {
+          "dimensions": 3,
+          "image_branch_power_fraction": 0.08288969898236175,
+          "kH_over_pi": "0.75;0.5;0.25",
+          "midpoint_magnitude": 0.47851562499999994,
+          "midpoint_phase": 2.356194490192345,
+          "mode": "3d_mixed",
+          "order": 4,
+          "physical_branch_amplitude": 0.7250388072167969
+        },
+        {
+          "dimensions": 3,
+          "image_branch_power_fraction": 0.6255396355107039,
+          "kH_over_pi": "0.9;0.9;0.9",
+          "midpoint_magnitude": 0.012606646476032584,
+          "midpoint_phase": -2.0420352248333664,
+          "mode": "3d_high",
+          "order": 4,
+          "physical_branch_amplitude": 0.23416496933681796
+        }
+      ]
+    },
+    "6": {
+      "cycles": [
+        {
+          "case": "smooth_fourier",
+          "coarse_cycle_linf_change": 0.0,
+          "fine_cycle_linf_change": 0.0,
+          "fine_high_fraction_50": 2.4715025460797027e-12,
+          "fine_high_fraction_80": 2.4715025460797027e-12,
+          "fine_overshoot_above_parent_range": 0.0,
+          "order": 6
+        },
+        {
+          "case": "near_nyquist",
+          "coarse_cycle_linf_change": 0.0,
+          "fine_cycle_linf_change": 0.0,
+          "fine_high_fraction_50": 0.24738303620675414,
+          "fine_high_fraction_80": 5.13140665570061e-33,
+          "fine_overshoot_above_parent_range": 0.0,
+          "order": 6
+        },
+        {
+          "case": "localized_pulse",
+          "coarse_cycle_linf_change": 0.0,
+          "fine_cycle_linf_change": 0.0,
+          "fine_high_fraction_50": 5.67930061991197e-12,
+          "fine_high_fraction_80": 5.679300619624554e-12,
+          "fine_overshoot_above_parent_range": 0.005084283338395279,
+          "order": 6
+        },
+        {
+          "case": "fine_restrict_prolong_kh_0.125",
+          "coarse_cycle_linf_change": NaN,
+          "fine_cycle_linf_change": 0.0009614571020738483,
+          "fine_high_fraction_50": 2.710323303660653e-07,
+          "fine_high_fraction_80": 2.710323303660653e-07,
+          "fine_overshoot_above_parent_range": 0.0,
+          "order": 6
+        },
+        {
+          "case": "fine_restrict_prolong_kh_0.500",
+          "coarse_cycle_linf_change": NaN,
+          "fine_cycle_linf_change": 2.008854037047271e-14,
+          "fine_high_fraction_50": 1.0,
+          "fine_high_fraction_80": 0.0,
+          "fine_overshoot_above_parent_range": 0.0,
+          "order": 6
+        },
+        {
+          "case": "fine_restrict_prolong_kh_0.800",
+          "coarse_cycle_linf_change": NaN,
+          "fine_cycle_linf_change": 2.0605604382372302,
+          "fine_high_fraction_50": 0.0006629474003749221,
+          "fine_high_fraction_80": 1.5312133157716222e-06,
+          "fine_overshoot_above_parent_range": 0.25154344386226757,
+          "order": 6
+        },
+        {
+          "case": "fine_restrict_prolong_kh_1.000",
+          "coarse_cycle_linf_change": NaN,
+          "fine_cycle_linf_change": 2.0,
+          "fine_high_fraction_50": 0.0,
+          "fine_high_fraction_80": 0.0,
+          "fine_overshoot_above_parent_range": 0.0,
+          "order": 6
+        }
+      ],
+      "max_image_amplitude": 0.49999999999999994,
+      "max_midpoint_magnitude": 1.0,
+      "near_nyquist_image_amplitude": 0.49999999999999994,
+      "near_nyquist_midpoint_magnitude": 1.1481063742006437e-16,
+      "nonlinear": [
+        {
+          "child_max": 0.9398440715268233,
+          "child_min": 0.18000001883046157,
+          "high_fraction_50": 5.054401231334228e-16,
+          "high_fraction_80": 5.050528788213563e-16,
+          "order": 6,
+          "overshoot": 9.657948317931542e-05,
+          "parent_max": 0.9397474920436439,
+          "parent_min": 0.18000001883046157,
+          "positive": true,
+          "profile": "chi_smooth_positive",
+          "undershoot": 0.0
+        },
+        {
+          "child_max": 1.0000000003215403,
+          "child_min": 0.3200123987288025,
+          "high_fraction_50": 1.3806867328364679e-15,
+          "high_fraction_80": 1.3806547995830318e-15,
+          "order": 6,
+          "overshoot": 4.555954502549753e-10,
+          "parent_max": 0.9999999998659449,
+          "parent_min": 0.3206637383562565,
+          "positive": true,
+          "profile": "lapse_smooth_positive",
+          "undershoot": 0.0006513396274540062
+        },
+        {
+          "child_max": 1.29,
+          "child_min": 0.71,
+          "high_fraction_50": 2.5616226278913403e-17,
+          "high_fraction_80": 2.561622627891334e-17,
+          "order": 6,
+          "overshoot": 0.0,
+          "parent_max": 1.29,
+          "parent_min": 0.71,
+          "positive": true,
+          "profile": "metric_smooth_positive",
+          "undershoot": 0.0
+        }
+      ],
+      "polynomial": {
+        "coincident_injection_is_exact": true,
+        "collapsed_dimension_is_identity": true,
+        "degree_errors": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l1_weight_norm": 1.390625,
+        "order": 6,
+        "reproduced_degree": 5,
+        "symmetry_error": 0.0,
+        "tensor_l1_2d": 1.933837890625,
+        "tensor_l1_3d": 2.6892433166503906,
+        "weight_sum_error": 0.0
+      },
+      "tensor_response": [
+        {
+          "dimensions": 2,
+          "image_branch_power_fraction": 5.420645873908278e-07,
+          "kH_over_pi": "0.25;0.25",
+          "midpoint_magnitude": 0.9979197356652852,
+          "midpoint_phase": 0.7853981633974483,
+          "mode": "2d_low",
+          "order": 6,
+          "physical_branch_amplitude": 0.9989595970822218
+        },
+        {
+          "dimensions": 2,
+          "image_branch_power_fraction": 0.04289981411203859,
+          "kH_over_pi": "0.75;0.25",
+          "midpoint_magnitude": 0.6498787787540914,
+          "midpoint_phase": 1.5707963267948966,
+          "mode": "2d_mixed",
+          "order": 6,
+          "physical_branch_amplitude": 0.824848475031394
+        },
+        {
+          "dimensions": 2,
+          "image_branch_power_fraction": 0.4126572302131395,
+          "kH_over_pi": "0.9;0.9",
+          "midpoint_magnitude": 0.08326945529907397,
+          "midpoint_phase": 2.8274333882308134,
+          "mode": "2d_high",
+          "order": 6,
+          "physical_branch_amplitude": 0.41509960051649886
+        },
+        {
+          "dimensions": 3,
+          "image_branch_power_fraction": 8.130967709011735e-07,
+          "kH_over_pi": "0.25;0.25;0.25",
+          "midpoint_magnitude": 0.9968812268734021,
+          "midpoint_phase": 1.1780972450961724,
+          "mode": "3d_low",
+          "order": 6,
+          "physical_branch_amplitude": 0.9984398016080827
+        },
+        {
+          "dimensions": 3,
+          "image_branch_power_fraction": 0.043524161281523734,
+          "kH_over_pi": "0.75;0.5;0.25",
+          "midpoint_magnitude": 0.6174983978271484,
+          "midpoint_phase": 2.356194490192345,
+          "mode": "3d_mixed",
+          "order": 6,
+          "physical_branch_amplitude": 0.8042993290200954
+        },
+        {
+          "dimensions": 3,
+          "image_branch_power_fraction": 0.5498705369893979,
+          "kH_over_pi": "0.9;0.9;0.9",
+          "midpoint_magnitude": 0.024028606517304894,
+          "midpoint_phase": -2.0420352248333664,
+          "mode": "3d_high",
+          "order": 6,
+          "physical_branch_amplitude": 0.26744129907061365
+        }
+      ]
+    }
+  },
+  "schema": 1
+}

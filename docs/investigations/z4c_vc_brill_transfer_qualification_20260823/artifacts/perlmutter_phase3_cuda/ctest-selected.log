@@ -1,0 +1,34 @@
+Internal ctest changing into directory: /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi
+Test project /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi
+    Start  27: athena.z4c_vc_dynamic_amr_2d_cartesian_o4
+1/8 Test  #27: athena.z4c_vc_dynamic_amr_2d_cartesian_o4 .............   Passed   16.68 sec
+    Start  29: athena.z4c_vc_dynamic_amr_3d_cartesian_o4
+2/8 Test  #29: athena.z4c_vc_dynamic_amr_3d_cartesian_o4 .............   Passed    7.02 sec
+    Start  70: athena.z4c_vc_restart_2d_cartesian
+3/8 Test  #70: athena.z4c_vc_restart_2d_cartesian ....................   Passed   10.93 sec
+    Start  72: athena.z4c_vc_restart_3d_cartesian
+4/8 Test  #72: athena.z4c_vc_restart_3d_cartesian ....................   Passed   10.62 sec
+    Start  77: athena.z4c_vc_output
+5/8 Test  #77: athena.z4c_vc_output ..................................   Passed    2.92 sec
+    Start  79: athena.z4c_vc_output_3d_cartesian
+6/8 Test  #79: athena.z4c_vc_output_3d_cartesian .....................   Passed    2.11 sec
+    Start 130: athena.z4c_cartoon_production_kernels_cuda_required
+7/8 Test #130: athena.z4c_cartoon_production_kernels_cuda_required ...   Passed    0.61 sec
+    Start 133: athena.pdf_scatter_cuda_required
+8/8 Test #133: athena.pdf_scatter_cuda_required ......................   Passed    0.53 sec
+
+100% tests passed, 0 tests failed out of 8
+
+Label Time Summary:
+2d                            =  27.61 sec*proc (2 tests)
+3d                            =  19.76 sec*proc (3 tests)
+amr                           =  23.71 sec*proc (2 tests)
+cartesian                     =  47.37 sec*proc (5 tests)
+cartoon-production-kernels    =   0.61 sec*proc (1 test)
+cuda-required                 =   1.14 sec*proc (2 tests)
+output                        =   5.03 sec*proc (2 tests)
+restart                       =  21.55 sec*proc (2 tests)
+vertex                        =  50.29 sec*proc (6 tests)
+z4c                           =  50.29 sec*proc (6 tests)
+
+Total Test time (real) =  51.56 sec

@@ -1,0 +1,30 @@
+JobId=57443278 JobName=interactive
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:04 TimeLimit=01:00:00 TimeMin=N/A
+   SubmitTime=2026-08-22T20:30:24 EligibleTime=2026-08-22T20:30:24
+   AccrueTime=Unknown
+   StartTime=2026-08-22T20:30:24 EndTime=2026-08-22T21:30:24 Deadline=N/A
+   PreemptEligibleTime=2026-08-22T20:30:24 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-22T20:30:24 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login10:1892862
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid001085
+   BatchHost=nid001085
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100&hbm40g DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=/bin/bash
+   SubmitLine=salloc -A m3328_g -C gpu&hbm40g -q shared_interactive -N 1 -n 1 -c 32 --gpus=1 -t 01:00:00 /bin/bash /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/perlmutter_phase3_cuda.sh
+   WorkDir=/global/u1/h/hzhu
+   TresPerJob=gres/gpu:1
+   TresPerTask=cpu=32
+   ResvPorts=63712-63714
+

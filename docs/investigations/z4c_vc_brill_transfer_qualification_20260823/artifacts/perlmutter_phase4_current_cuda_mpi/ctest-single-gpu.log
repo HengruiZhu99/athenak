@@ -1,0 +1,32 @@
+Internal ctest changing into directory: /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi
+Test project /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi
+    Start  73: athena.z4c_vc_restart_2d_cartesian_o4_q4
+1/6 Test  #73: athena.z4c_vc_restart_2d_cartesian_o4_q4 ..............   Passed   11.34 sec
+    Start  74: athena.z4c_vc_restart_2d_cartesian_o4_q6
+2/6 Test  #74: athena.z4c_vc_restart_2d_cartesian_o4_q6 ..............   Passed   11.31 sec
+    Start  83: athena.z4c_vc_output
+3/6 Test  #83: athena.z4c_vc_output ..................................   Passed    3.50 sec
+    Start  85: athena.z4c_vc_output_3d_cartesian
+4/6 Test  #85: athena.z4c_vc_output_3d_cartesian .....................   Passed    2.41 sec
+    Start 136: athena.z4c_cartoon_production_kernels_cuda_required
+5/6 Test #136: athena.z4c_cartoon_production_kernels_cuda_required ...   Passed    0.69 sec
+    Start 139: athena.pdf_scatter_cuda_required
+6/6 Test #139: athena.pdf_scatter_cuda_required ......................   Passed    0.73 sec
+
+100% tests passed, 0 tests failed out of 6
+
+Label Time Summary:
+2d                            =  22.65 sec*proc (2 tests)
+3d                            =   2.41 sec*proc (1 test)
+cartesian                     =  25.06 sec*proc (3 tests)
+cartoon-production-kernels    =   0.69 sec*proc (1 test)
+cuda-required                 =   1.42 sec*proc (2 tests)
+o4                            =  22.65 sec*proc (2 tests)
+output                        =   5.90 sec*proc (2 tests)
+q4                            =  11.34 sec*proc (1 test)
+q6                            =  11.31 sec*proc (1 test)
+restart                       =  22.65 sec*proc (2 tests)
+vertex                        =  28.55 sec*proc (4 tests)
+z4c                           =  28.55 sec*proc (4 tests)
+
+Total Test time (real) =  30.00 sec

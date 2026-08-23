@@ -1,0 +1,32 @@
+Internal ctest changing into directory: /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/phase0-host-base
+Test project /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/phase0-host-base
+    Start 117: athena.z4c_rhs_policy_production_host_exact
+1/1 Test #117: athena.z4c_rhs_policy_production_host_exact ...***Failed    3.41 sec
+-- order 2 numeric fingerprints: state=c45262270ecceea810e4dd22692fe5af1f00cdb42422b6a0e81aed46208d94fd diagnostic=c4a4cfca63e3ea4f1b0527bb80d23e736ac3635760fd0a8126f9eee706a63fc0 history=f5d5bc476570a1d69a9bcfd72cb816612c31f65118d99c0fefd366c412bbed45 waveform=06903222129c615ec15c092a2d3e34e113b800f6b1d990aee9631f16e6cfff17
+-- order 4 lifecycle sentinel: t=0 maxAbsKret=inf (pre-ADM initialization); post-initialization history is finite
+-- order 4 numeric fingerprints: state=d0ecfec16497cd757e0067edeac29765d3c8a3ba851309cc40735a54175140e4 diagnostic=82fff485943280ad2a19a533f468f577871f5e49707ba55b125aa184d00471e4 history=68f89b33145cd04be36d957e623fae8d94c0593a388fe179d2bd42db73a635ad waveform=961f2b316eb6b47f6c5f9ff0ee75344d165bb0c96d4c65461f3520f4f568de1a
+-- order 6 lifecycle sentinel: t=0 maxAbsKret=inf (pre-ADM initialization); post-initialization history is finite
+-- order 6 numeric fingerprints: state=a5f6958caafb84d6c681206392cba46c6f9018ecd7826904ca618290d56a0795 diagnostic=7494f56d6f58a7af5efba18b84d5c198b4ec8c65ee9c24d7fc1823db10e31fac history=dfb31ae7d8301ada10a113e1022a3184224da0e65f35879981a077e79253dc6e waveform=69c8fed5cf3b77644546c9ca42dd5362a383a8a9a498734be1b3e7c040d754cb
+CMake Error at /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/source/athenak/tst/unit/z4c/z4c_rhs_policy_production_test.cmake:176 (message):
+  Cartesian production numeric regression failed (1):
+
+
+
+  order 2: exact-base final state payload changed
+
+
+
+
+
+0% tests passed, 1 tests failed out of 1
+
+Label Time Summary:
+host-exact-regression    =   3.41 sec*proc (1 test)
+
+Total Test time (real) =   3.42 sec
+
+The following tests FAILED:
+	117 - athena.z4c_rhs_policy_production_host_exact (Failed)
+Errors while running CTest
+srun: error: nid001085: task 0: Exited with exit code 8
+srun: Terminating StepId=57441616.1
