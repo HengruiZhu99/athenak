@@ -54,6 +54,18 @@ reported exit 143.  This is classified as a launcher failure, not a controller
 or solver failure; the script now resolves an absolute checkpoint path before
 the focused retry.
 
+The absolute-path retry, job `8777396`, exposed a second orchestration error.
+Every 0.5M evolution segment exited zero and the fields remained finite through
+t=5M, but the restart command supplied both `-r checkpoint` and the original
+input.  This reapplied `continuation_xi=0`: xi returned to
+`0.0459849301474` at every segment endpoint instead of accumulating, while the
+controller generation advanced.  Its combined trajectory is therefore
+scientifically invalid and does not count as T3.  The largest recorded risk
+was 0.6513, still below the frozen slow threshold, and there was no constraint
+veto.  The launcher now uses the already qualified `-r checkpoint`-only
+pattern so restart metadata remains authoritative; no threshold or equation
+was changed.
+
 ## Fixed mathematical scope
 
 The radial family, GH equations, compatible Phi ordering, dissipation, and

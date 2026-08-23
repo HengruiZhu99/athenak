@@ -1,0 +1,27 @@
+{
+  "schema": "ref-gh-feedback-t3-invalid-restart-trajectory-v1",
+  "job_id": "8777396",
+  "node": "x4217c0s5b0n0",
+  "pbs_exit_status": 1,
+  "walltime": "01:38:08",
+  "classification": "HARNESS_CONTROLLER_STATE_RESET_BY_INPUT_REAPPLY",
+  "all_evolution_segments_exit_zero": true,
+  "completed_coordinate_time": 5.0,
+  "trajectory_scientifically_valid": false,
+  "final_xi": 0.04598493014738916,
+  "expected_controller_state_continuity": false,
+  "finite": true,
+  "max_risk": 0.6512957176953421,
+  "risk_slow": 0.70,
+  "first_constraint_veto": null,
+  "native_constraint_maxima": {
+    "gh_l2": 0.00595756636741453,
+    "reduction_l2": 0.0010223652973822427,
+    "curl_l2": 0.0005301854881846675
+  },
+  "direct_evidence": "xi returned to 0.0459849301474 at each 0.5M segment endpoint while controller generation advanced by 560 per segment.",
+  "cause": "The restart command supplied both -r checkpoint and -i original_input, reapplying continuation_xi=0 and continuation_xi_dot=0.",
+  "correction": "Use the verified -r checkpoint-only pattern so restart metadata owns the controller state.",
+  "threshold_retuning": false,
+  "mathematical_or_algorithmic_change": false
+}

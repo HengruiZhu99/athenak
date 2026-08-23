@@ -106,7 +106,10 @@ for target in 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0; do
   cd "${directory}"
   command=("${EXE}")
   if test -n "${previous_checkpoint}"; then
-    command+=( -r "${previous_checkpoint}" -i "${INPUT}" )
+    # Restart metadata owns the replicated feedback-controller state.  Passing
+    # the original input again would reapply continuation_xi=0 and erase that
+    # state before the next segment.
+    command+=( -r "${previous_checkpoint}" )
   else
     command+=( -i "${INPUT}" )
   fi

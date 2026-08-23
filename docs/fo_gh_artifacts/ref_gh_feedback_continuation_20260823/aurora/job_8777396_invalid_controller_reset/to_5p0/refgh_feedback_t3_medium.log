@@ -1,0 +1,62 @@
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 34
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 12
+  Rank = 0: 2 MeshBlocks, cost = 2
+  Rank = 1: 2 MeshBlocks, cost = 2
+  Rank = 2: 3 MeshBlocks, cost = 3
+  Rank = 3: 3 MeshBlocks, cost = 3
+  Rank = 4: 3 MeshBlocks, cost = 3
+  Rank = 5: 3 MeshBlocks, cost = 3
+  Rank = 6: 3 MeshBlocks, cost = 3
+  Rank = 7: 3 MeshBlocks, cost = 3
+  Rank = 8: 3 MeshBlocks, cost = 3
+  Rank = 9: 3 MeshBlocks, cost = 3
+  Rank = 10: 3 MeshBlocks, cost = 3
+  Rank = 11: 3 MeshBlocks, cost = 3
+Load Balancing:
+  Maximum normalized cost = 1.5, Average = 1.41667
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/parameter_input.cpp: input parameter <mesh_refinement>/num_levels = 2 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/parameter_input.cpp: input parameter <mesh_refinement>/max_nmb_per_rank = 128 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/parameter_input.cpp: input parameter <refined_region1>/level = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/parameter_input.cpp: input parameter <refined_region1>/x1min = -2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/parameter_input.cpp: input parameter <refined_region1>/x1max = 2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/parameter_input.cpp: input parameter <refined_region1>/x2min = -2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/parameter_input.cpp: input parameter <refined_region1>/x2max = 2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/parameter_input.cpp: input parameter <refined_region1>/x3min = -2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/parameter_input.cpp: input parameter <refined_region1>/x3max = 2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/src/src/parameter_input.cpp: input parameter <time>/start_time = 0 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=3.046861e+01 cycle=1270 time=4.528364e+00 dt=3.545049e-03
+elapsed=6.875028e+01 cycle=1280 time=4.563810e+00 dt=3.544077e-03
+elapsed=1.064541e+02 cycle=1290 time=4.599246e+00 dt=3.543092e-03
+elapsed=1.447008e+02 cycle=1300 time=4.634673e+00 dt=3.542095e-03
+elapsed=1.829406e+02 cycle=1310 time=4.670089e+00 dt=3.541085e-03
+elapsed=2.211735e+02 cycle=1320 time=4.705495e+00 dt=3.540062e-03
+elapsed=2.588588e+02 cycle=1330 time=4.740891e+00 dt=3.539026e-03
+elapsed=2.970998e+02 cycle=1340 time=4.776277e+00 dt=3.537975e-03
+elapsed=3.353625e+02 cycle=1350 time=4.811652e+00 dt=3.536908e-03
+elapsed=3.730525e+02 cycle=1360 time=4.847016e+00 dt=3.535824e-03
+elapsed=4.113631e+02 cycle=1370 time=4.882369e+00 dt=3.534721e-03
+elapsed=4.496389e+02 cycle=1380 time=4.917712e+00 dt=3.533597e-03
+elapsed=4.889147e+02 cycle=1390 time=4.953042e+00 dt=3.532449e-03
+elapsed=5.258394e+02 cycle=1400 time=4.988362e+00 dt=3.531275e-03
+reference-GH controlled Schwarzschild final: time=5.000000e+00 state Linf=2.399553e+00 bad-state=0.000000e+00
+
+Terminating on time limit
+time=5.000000e+00 cycle=1404
+tlim=5.000000e+00 nlim=-1
+
+MeshBlock-cycles = 4828
+cpu time used  = 5.451205e+02
+zone-cycles/cpu_second = 9.794864e+05
+particle-updates/cpu_second = 0.000000e+00
+real 547.44
+user 0.00
+sys 0.01
