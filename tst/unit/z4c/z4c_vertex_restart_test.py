@@ -190,7 +190,7 @@ def main() -> int:
         run([args.mpiexec, args.np_flag, "2", args.athena, "-r",
              str(post_refine), "-d", str(mpi)], root, True,
             ("Number of parallel ranks = 2",
-             f"{changed_leaves} MeshBlocks created, {changed_leaves} deleted by AMR"))
+             f"0 MeshBlocks created, {changed_leaves} deleted by AMR"))
         mpi_final = mpi / "rst" / "z4c_vc_minkowski_dynamic.00003.rst"
         require(payload(final) == payload(mpi_final),
                 "rank-change continuation changed the global binary payload")
