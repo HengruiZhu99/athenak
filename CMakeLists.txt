@@ -676,6 +676,26 @@ if (Athena_BUILD_UNIT_TESTS)
         athena.z4c_vc_dynamic_amr_2d_cartesian_mpi2
         z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput
         2 cartesian 2 4 16.0 1)
+    foreach(transfer IN ITEMS 4 6)
+      add_test(
+          NAME athena.z4c_vc_dynamic_amr_2d_cartesian_o4_q${transfer}_mpi2
+          COMMAND
+          ${PYTHON_EXECUTABLE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py
+          --athena $<TARGET_FILE:athena>
+          --input
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput
+          --work-dir
+          ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_dynamic_amr_2d_cartesian_o4_q${transfer}_mpi2
+          --dimensions 2 --geometry cartesian --order 4
+          --vertex-prolongation-order ${transfer}
+          --ranks 2 --root-leaves 4 --expected-volume 16.0
+          --mpiexec ${MPIEXEC_EXECUTABLE} --np-flag=${MPIEXEC_NUMPROC_FLAG})
+      set_tests_properties(
+          athena.z4c_vc_dynamic_amr_2d_cartesian_o4_q${transfer}_mpi2
+          PROPERTIES TIMEOUT 240
+          LABELS "z4c;vertex;2d;cartesian;amr;o4;q${transfer};mpi")
+    endforeach()
     add_z4c_vc_dynamic_amr_mpi_case(
         athena.z4c_vc_dynamic_amr_2d_cartoon_mpi2
         z4c_vc_minkowski_dynamic_amr.athinput

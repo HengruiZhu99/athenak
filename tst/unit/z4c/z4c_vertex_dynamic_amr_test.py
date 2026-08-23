@@ -31,6 +31,8 @@ def main() -> int:
     parser.add_argument("--centering", choices=("cell", "vertex"),
                         default="vertex")
     parser.add_argument("--order", type=int, choices=(2, 4, 6), default=6)
+    parser.add_argument("--vertex-prolongation-order",
+                        choices=("auto", "4", "6", "8"), default="auto")
     parser.add_argument("--integrator", choices=("rk1", "rk2", "rk3", "rk4"),
                         default="rk4")
     parser.add_argument("--root-leaves", type=int, default=4)
@@ -44,7 +46,21 @@ def main() -> int:
     if work.exists():
         shutil.rmtree(work)
     work.mkdir(parents=True)
-    command = [args.athena, "-i", args.input,
+    run_input = pathlib.Path(args.input)
+    if args.vertex_prolongation_order != "auto":
+        require(args.centering == "vertex",
+                "explicit vertex prolongation is invalid for cell centering")
+        input_text = run_input.read_text(encoding="utf-8")
+        marker = "grid_centering = vertex"
+        require(input_text.count(marker) == 1,
+                "dynamic AMR fixture lacks a unique VC selector")
+        run_input = work / pathlib.Path(args.input).name
+        run_input.write_text(
+            input_text.replace(
+                marker, marker + "\nvertex_prolongation_order = " +
+                args.vertex_prolongation_order),
+            encoding="utf-8")
+    command = [args.athena, "-i", str(run_input),
                f"z4c/spatial_order={args.order}",
                f"z4c/grid_centering={args.centering}",
                f"time/integrator={args.integrator}"]
@@ -154,7 +170,8 @@ def main() -> int:
     require(len(restarts) >= 4 and all(path.stat().st_size > 0 for path in restarts),
             "dynamic AMR fixture did not produce valid restart files")
     print(f"PASS: {args.centering}-centered {args.dimensions}D {args.geometry} "
-          f"O{args.order} {args.integrator} dynamic refine/derefine lifecycle "
+          f"O{args.order} q{args.vertex_prolongation_order} {args.integrator} "
+          "dynamic refine/derefine lifecycle "
           "and quadrature")
     return 0
 
