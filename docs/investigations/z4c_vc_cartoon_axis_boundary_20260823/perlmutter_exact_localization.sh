@@ -11,6 +11,7 @@ evidence_root=${ATHENA_EXACT_EVIDENCE_ROOT:-${campaign_root}/evidence/exact-loca
 athena=${build_root}/src/athena
 required_source_fix=1392f5c472353fec1cdc44108b403a316f33fc46
 python_bin=/global/common/software/nersc/pe/conda-envs/24.1.0/python-3.11/nersc-python/bin/python3
+resolutions=${ATHENA_EXACT_RESOLUTIONS:-"128 256 512"}
 
 test -n "${SLURM_JOB_ID:-}"
 test "${SLURM_JOB_NUM_NODES}" -eq 1
@@ -97,7 +98,7 @@ print(header["time"], header["cycle"])
 PY
 }
 
-for resolution in 128 256 512; do
+for resolution in ${resolutions}; do
   case "${resolution}" in
     128) stride=1 ;;
     256) stride=2 ;;
