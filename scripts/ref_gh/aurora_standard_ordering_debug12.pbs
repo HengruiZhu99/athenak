@@ -1,0 +1,149 @@
+#!/bin/bash -l
+# Phase-6 PVC gate and original shrinking-path standard-Phi ablation.
+# Submit only after the Phase-5 rate scan has completed.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_std12
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+OUT="${CAMPAIGN_ROOT}/runs/standard_ordering_${PBS_JOBID}"
+EXE="${BUILD}/src/athena"
+SOURCE_INPUT="${SRC}/inputs/ref_gh/ref_gh_source_unit.athinput"
+MINKOWSKI_INPUT="${SRC}/tst/inputs/ref_gh_minkowski.athinput"
+TRANSITION_INPUT="${SRC}/inputs/ref_gh/ref_gh_transition_path_medium.athinput"
+LABEL=shrinking_standard
+TARGET=2.2
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${SOURCE_INPUT}" "${MINKOWSKI_INPUT}" "${TRANSITION_INPUT}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 12
+
+mkdir source_unit
+(cd source_unit && mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${SOURCE_INPUT}" \
+  > source_unit.log 2>&1)
+grep -q 'reference-GH Phi-ordering algebra maximum error' \
+  source_unit/source_unit.log
+grep -q 'reference-GH dynamic spatial oracle passed' source_unit/source_unit.log
+
+mkdir minkowski_standard
+(cd minkowski_standard && mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${MINKOWSKI_INPUT}" \
+  ref_gh/phi_ordering=standard > minkowski_standard.log 2>&1)
+grep -q 'reference-GH Minkowski evolution passed: max error = 0.000000e+00' \
+  minkowski_standard/minkowski_standard.log
+
+set +e
+mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -m -i "${TRANSITION_INPUT}" \
+  > mesh_structure.txt 2>&1
+mesh_status=$?
+set -e
+echo "mesh_only_exit_status=${mesh_status}" >> mesh_structure.txt
+test "${mesh_status}" -eq 0 -o "${mesh_status}" -eq 139
+grep -q 'Root grid = 3 x 3 x 3 MeshBlocks' mesh_structure.txt
+grep -q 'Total number of MeshBlocks = 34' mesh_structure.txt
+
+mkdir transition
+cd transition
+set +e
+/usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${TRANSITION_INPUT}" \
+  job/basename="${LABEL}" ref_gh/reference=controlled_transition \
+  ref_gh/transition_path=shrinking_width ref_gh/phi_ordering=standard \
+  ref_gh/controller_enabled=false time/tlim="${TARGET}" time/nlim=-1 \
+  > "${LABEL}.log" 2>&1
+status=$?
+set -e
+{
+  echo "exit_status=${status}"
+  echo "target=${TARGET}"
+  for history in "${LABEL}.ref_gh.hst" "${LABEL}.user.hst"; do
+    if test -s "${history}"; then
+      echo -n "last_${history}="
+      tail -1 "${history}"
+    fi
+  done
+} > segment_status.txt
+
+cd "${OUT}"
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' \) -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
+
+test "${status}" -eq 0
+test -s "transition/${LABEL}.ref_gh.hst"
+test -s "transition/${LABEL}.user.hst"
+test -s "transition/${LABEL}.ref_gh_maxloc.tsv"
+awk -v target="${TARGET}" '
+  BEGIN {ok=0}
+  !/^#/ && $1 >= target-1.e-10 && $2 > 0 && $14 < 0 && $22 == 0 {ok=1}
+  END {exit !ok}
+' "transition/${LABEL}.ref_gh.hst"
+awk '
+  BEGIN {ok=1}
+  !/^#/ && ($3 != 0 || $5 != 0 || $10 <= 0 || $12 <= 0 || $15 <= 0 || $25 != 0) {ok=0}
+  END {exit !ok}
+' "transition/${LABEL}.user.hst"
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  "transition/${LABEL}.log"
