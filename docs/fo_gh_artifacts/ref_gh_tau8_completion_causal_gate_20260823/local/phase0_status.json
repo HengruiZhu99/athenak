@@ -1,0 +1,24 @@
+{
+  "schema": "ref-gh-tau8-phase0-status-v1",
+  "base_commit": "9c438dc619aa742404530c953243d71b2a01d8e6",
+  "implementation_commit": "9869a1481e2af487b70fff5215182db8d7a6cb3d",
+  "backend": "Kokkos Serial Debug",
+  "post_dedup_binary_sha256": "98edf96984f413ef3848d3032b706fa00739e3451949d5ae2c238d92be478508",
+  "compiled_gates": {
+    "source_and_phi_ordering": "PASS",
+    "exact_minkowski": "PASS",
+    "time_dependent_lapse_frame": "PASS",
+    "time_dependent_spatial_frame": "PASS",
+    "stationary_trumpet_one_step": "PASS"
+  },
+  "standalone_audits": {
+    "reference_frame": "PASS",
+    "trumpet_reference": "PASS",
+    "standard_gh_source": "PASS",
+    "binary64_stationary_source": "PASS"
+  },
+  "pytest_wrapper": "UNAVAILABLE: /usr/bin/python3 has no pytest module",
+  "numerical_failure": false,
+  "full_272_block_local_smoke": "HOST_MEMORY_LIMIT_BEFORE_EVOLUTION",
+  "full_272_block_pvc_smoke": "PENDING"
+}
