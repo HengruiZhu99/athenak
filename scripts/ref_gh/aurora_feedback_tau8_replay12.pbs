@@ -34,6 +34,8 @@ export OMP_PROC_BIND=spread
 export OMP_PLACES=threads
 export FI_MR_CACHE_MONITOR=disabled
 export FI_LOG_LEVEL=ERROR
+PYTHON=${PYTHON:-/usr/bin/python3.10}
+test -x "${PYTHON}"
 
 actual_commit=$(git -C "${SRC}" rev-parse HEAD)
 actual_exe_sha256=$(sha256sum "${EXE}" | awk '{print $1}')
@@ -52,6 +54,7 @@ test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
   git -C "${SRC}" submodule status
   icpx --version | head -1
   mpicxx --version | head -1
+  "${PYTHON}" --version
   env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
   sha256sum "${INPUT}" "${ANALYZE}" "$0"
 } > provenance.txt
@@ -125,11 +128,11 @@ run_segment "${OUT}/to_4" 4.0 "${checkpoint}"
   grep -h -v '^#' "${OUT}/to_2/${LABEL}.user.hst" \
     "${OUT}/to_4/${LABEL}.user.hst"
 } > "${OUT}/${LABEL}.combined.user.hst"
-python3 "${ANALYZE}" "${OUT}/${LABEL}.combined.user.hst" \
+"${PYTHON}" "${ANALYZE}" "${OUT}/${LABEL}.combined.user.hst" \
   --outer-distance 6.0 --json "${OUT}/tau8_envelope.json" \
   > "${OUT}/tau8_envelope.stdout.json"
 
-python3 - "${OUT}/tau8_envelope.json" <<'PY' > "${OUT}/threshold_freeze_decision.json"
+"${PYTHON}" - "${OUT}/tau8_envelope.json" <<'PY' > "${OUT}/threshold_freeze_decision.json"
 import json, math, pathlib, sys
 source = pathlib.Path(sys.argv[1])
 summary = json.loads(source.read_text())

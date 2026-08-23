@@ -30,6 +30,8 @@ export OMP_PROC_BIND=spread
 export OMP_PLACES=threads
 export FI_MR_CACHE_MONITOR=disabled
 export FI_LOG_LEVEL=ERROR
+PYTHON=${PYTHON:-/usr/bin/python3.10}
+test -x "${PYTHON}"
 
 actual_commit=$(git -C "${SRC}" rev-parse HEAD)
 test "${actual_commit}" = "${EXPECTED_COMMIT}"
@@ -44,6 +46,7 @@ test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
   icpx --version | head -1
   mpicxx --version | head -1
   cmake --version | head -1
+  "${PYTHON}" --version
   env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
   sha256sum "${INPUT}" "${CAUSAL_INPUT}" "$0"
 } > provenance.txt
@@ -116,7 +119,7 @@ run_equivalence legacy_time
 run_equivalence prescribed
 legacy=$(find "${OUT}/legacy_time" -name '*.00001.cbin' -print -quit)
 prescribed=$(find "${OUT}/prescribed" -name '*.00001.cbin' -print -quit)
-python3 "${SRC}/scripts/ref_gh/compare_feedback_prescribed_equivalence.py" \
+"${PYTHON}" "${SRC}/scripts/ref_gh/compare_feedback_prescribed_equivalence.py" \
   "${legacy}" "${prescribed}" --source-root "${SRC}" \
   --json "${OUT}/prescribed_equivalence.json" > "${OUT}/prescribed_equivalence.log"
 
@@ -138,7 +141,7 @@ mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
   gpu_tile_compact.sh "${EXE}" -r "${checkpoint}" \
   time/nlim=2 time/tlim=1.0 > restart.log 2>&1
 
-python3 - "${SRC}" "${OUT}" <<'PY' > "${OUT}/restart_equivalence.json"
+"${PYTHON}" - "${SRC}" "${OUT}" <<'PY' > "${OUT}/restart_equivalence.json"
 import importlib.util, json, pathlib, sys
 import numpy as np
 src, out = map(pathlib.Path, sys.argv[1:])
