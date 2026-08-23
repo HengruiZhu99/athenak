@@ -1,0 +1,157 @@
+2026-08-23T07:54:58+00:00
+x4303c7s1b0n0
+Job Id: 8776642.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Job_Name = refgh_t8_f
+    Job_Owner = hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov
+    resources_used.cpupercent = 0
+    resources_used.cput = 00:00:00
+    resources_used.mem = 0kb
+    resources_used.ncpus = 208
+    resources_used.vmem = 0kb
+    resources_used.walltime = 00:00:00
+    job_state = R
+    queue = capacity
+    server = aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Account_Name = CompactBinaryMerger
+    Checkpoint = u
+    ctime = Sun Aug 23 07:51:16 2026
+    Error_Path = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flare
+	/projects/CompactBinaryMerger/hzhu/refgh_standard_ordering_20260823T052
+	5Z_6884b09/refgh_t8_f.e8776642
+    exec_host = x4303c7s1b0n0/0*208
+    exec_vnode = (x4303c7s1b0n0:ncpus=208)
+    Hold_Types = n
+    Join_Path = oe
+    Keep_Files = doe
+    Mail_Points = a
+    Mail_Users = hz0693@princeton.edu
+    mtime = Sun Aug 23 07:54:56 2026
+    Output_Path = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flar
+	e/projects/CompactBinaryMerger/hzhu/refgh_standard_ordering_20260823T05
+	25Z_6884b09/refgh_t8_f.o8776642
+    Priority = 0
+    qtime = Sun Aug 23 07:51:16 2026
+    Rerunable = False
+    Resource_List.allow_account_check_failure = True
+    Resource_List.allow_negative_allocation = True
+    Resource_List.award_category = INCITE
+    Resource_List.award_type = INCITE-2026
+    Resource_List.backfill_factor = 84600
+    Resource_List.backfill_max = 50
+    Resource_List.base_score = 0
+    Resource_List.bkc_definition = compute_aurora_prod_20260710T174510_d2b6bbb_
+	8bfceff
+    Resource_List.burn_ratio = 0.3939
+    Resource_List.current_allocation = 13091320832
+    Resource_List.enable_2nd_fp64 = True
+    Resource_List.enable_backfill = 0
+    Resource_List.enable_fifo = 0
+    Resource_List.enable_wfp = 1
+    Resource_List.fifo_factor = 1800
+    Resource_List.filesystems = home:flare
+    Resource_List.flare_fs = True
+    Resource_List.hbm_mode = flat
+    Resource_List.home_fs = True
+    Resource_List.ncpus = 208
+    Resource_List.ni_resource = aurora
+    Resource_List.nodect = 1
+    Resource_List.overburn = False
+    Resource_List.place = scatter
+    Resource_List.project_priority = 25
+    Resource_List.route_backfill = False
+    Resource_List.score_boost = 0
+    Resource_List.select = 1
+    Resource_List.snc_mode = quad
+    Resource_List.total_allocation = 21600000000
+    Resource_List.total_cpus = 10624
+    Resource_List.walltime = 05:00:00
+    Resource_List.wfp_factor = 100000
+    stime = Sun Aug 23 07:54:53 2026
+    session_id = 196949
+    jobdir = /home/hzhu
+    substate = 42
+    Variable_List = PBS_O_HOME=/home/hzhu,PBS_O_LANG=en_US.UTF-8,
+	PBS_O_LOGNAME=hzhu,
+	PBS_O_PATH=/home/hzhu/.local/bin:/home/hzhu/bin:/opt/cray/pals/1.8/bin
+	:/opt/cray/libfabric/1.22.0/bin:/opt/aurora/26.26.0/spack/unified/1.1.1
+	/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin:/opt/
+	aurora/26.26.0/support/tools/gpu_validation:/opt/aurora/26.26.0/support
+	/tools/mpi_wrapper_utils:/opt/aurora/26.26.0/oneapi/ishmem/latest/bin:/
+	opt/aurora/26.26.0/oneapi/dpcpp-ct/latest/bin:/opt/aurora/26.26.0/oneap
+	i/advisor/latest/bin64:/opt/aurora/26.26.0/oneapi/vtune/latest/bin64:/o
+	pt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger/bin:/opt/aurora/2
+	6.26.0/oneapi/mkl/latest/bin:/opt/aurora/26.26.0/oneapi/compiler/latest
+	/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-1
+	3.4.0-hgnyg4p/bin:/opt/clmgr/sbin:/opt/clmgr/bin:/opt/sgi/sbin:/opt/sgi
+	/bin:/home/hzhu/.local/bin:/home/hzhu/bin:/usr/local/bin:/usr/bin:/bin:
+	/opt/c3/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin:/opt/pbs/bin:/sbin,
+	PBS_O_MAIL=/var/spool/mail/hzhu,PBS_O_SHELL=/bin/bash,
+	PBS_O_INTERACTIVE_AUTH_METHOD=resvport,
+	PBS_O_HOST=aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov,
+	PBS_O_WORKDIR=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_stand
+	ard_ordering_20260823T0525Z_6884b09,PBS_O_SYSTEM=Linux,
+	CAMPAIGN_ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_stand
+	ard_ordering_20260823T0525Z_6884b09,
+	EXPECTED_COMMIT=6884b094b07646b9206fdd23c56389b08a7122bd,
+	EXPECTED_EXE_SHA256=07f336a5dca87d40088e2256715afca332abd226e09dfe1783
+	d8160a4927a4e5,RESOLUTION_LABEL=fine,ROOT_N=192,MB_N=64,
+	PBS_O_QUEUE=capacity,PBS_JOBID_SHORT=8776642.aurora,
+	XDG_RUNTIME_DIR=/run/user/40304,
+	PBS_HOOK_RESOURCES=eJylUjuTmzAQ/kO+jMA2Z5+GKpPimlTXa4RY2YqFltPDPv/7LAj
+	HKCnDULCfVrvfgwD+Cl70EoPAMQgd2oqHFTiC1xPKCjRRUfRqKz0UyAnUBYubZxzKlqu0ph
+	faWAj3EGEI7dKyeYzbrLdt1oQ2K8pcWos3IZXC5KJQZ1ottDQ2eaBt+dTBSUZzBTGVij7RT
+	Wc36XtBJZzQ39v3n9/fP34saLyPsCAvNasb3kl1IbaWZquIvj3sGsae6CC/2v1UBxBBIe2m
+	4qJED9o4My9UOIwpEofk0UsxeuzFNJq9Vuyjet3tKyb6umu6rhOHTivQmnfJO+Enwi37tj1
+	uj1wl74GErpVs2bHa1uywrTk42VkQtSNvx2ZHKhfkwZR4LYg2Gp/VTY/UPGEPhdWBBP4d0N
+	ucDl9Ffu4GMWAPLWGRP3N2akyhJVbcGeEhYPIK2iyeO7qgInUh/QuTSCIyWkkNgURF8Jzs+
+	UUtZJNBb+K9rffc4+TfSsnstOgQQ5x/NZuHBqcypc8kex4xSrv2q64ouvwshzPVijX1jt+o
+	MZqB8tu/MUYvJ2f+WJIvfSZItPb/482D/s2swFd6C3zJr8Byihkqg8lY6XHGCrd+A/mLfso
+	=
+    comment = Job run at Sun Aug 23 at 07:54 on (x4303c7s1b0n0:ncpus=208)
+    etime = Sun Aug 23 07:51:16 2026
+    umask = 22
+    run_count = 1
+    eligible_time = 00:03:40
+    Submit_arguments = -N refgh_t8_f -v CAMPAIGN_ROOT=/lus/flare/projects/Compa
+	ctBinaryMerger/hzhu/refgh_standard_ordering_20260823T0525Z_6884b09,
+	EXPECTED_COMMIT=6884b094b07646b9206fdd23c56389b08a7122bd,
+	EXPECTED_EXE_SHA256=07f336a5dca87d40088e2256715afca332abd226e09dfe1783
+	d8160a4927a4e5,RESOLUTION_LABEL=fine,ROOT_N=192,
+	MB_N=64 aurora_tau8_resolution_gate12.pbs
+    project = CompactBinaryMerger
+    Submit_Host = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov
+
+source_commit=6884b094b07646b9206fdd23c56389b08a7122bd
+executable_sha256=07f336a5dca87d40088e2256715afca332abd226e09dfe1783d8160a4927a4e5
+resolution_label=fine
+root_cells=192
+meshblock_cells=64
+expected_dx_min=0.03125
+expected_finest_extent=[-2M,2M]^3
+## codex/ref-gh-transition-path-ordering-diagnosis-20260822...origin/codex/ref-gh-transition-path-ordering-diagnosis-20260822
+?? refgh_std12.o8776594
+ 6739bc623081648af9e752b616d9671527922cbf kokkos (4.7.02)
+Intel(R) oneAPI DPC++/C++ Compiler 2025.3.2 (2025.3.2.20260112)
+Intel(R) oneAPI DPC++/C++ Compiler 2025.3.2 (2025.3.2.20260112)
+FI_CXI_DEFAULT_CQ_SIZE=131072
+FI_CXI_DEFAULT_TX_SIZE=1024
+FI_CXI_OFLOW_BUF_COUNT=3
+FI_CXI_OFLOW_BUF_SIZE=12582912
+FI_CXI_RDZV_EAGER_SIZE=2048
+FI_CXI_RDZV_THRESHOLD=16384
+FI_CXI_REQ_BUF_MAX_CACHED=0
+FI_CXI_REQ_BUF_MIN_POSTED=6
+FI_CXI_REQ_BUF_SIZE=12582912
+FI_CXI_RX_MATCH_MODE=hardware
+FI_LOG_LEVEL=ERROR
+FI_MR_CACHE_MAX_COUNT=524288
+FI_MR_CACHE_MAX_SIZE=-1
+FI_MR_CACHE_MONITOR=disabled
+FI_PROVIDER=cxi,tcp;ofi_rxm
+MPICH_GPU_SUPPORT_ENABLED=1
+ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+ZE_ENABLE_API_TRACING=1
+ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+ad0c48583ebafa37e5b70a5fb5254b8e4cd91af43b10d4eb538df34c2836ebdf  /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_standard_ordering_20260823T0525Z_6884b09/src/inputs/ref_gh/ref_gh_transition_path_medium.athinput
+0018dbd607ead082052d2313356aaf2742ceaaa89ef7916f10e3ed618faeda2a  /var/spool/pbs/mom_priv/jobs/8776642.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov.SC

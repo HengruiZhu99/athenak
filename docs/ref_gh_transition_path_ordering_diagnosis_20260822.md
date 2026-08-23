@@ -2,9 +2,20 @@
 
 ## Current controlling status
 
-This campaign is in progress. Phases 0 and 1 are complete. The medium frozen,
-fixed-core, and fixed-width discriminators are complete; the rate scan is
-running. No three-resolution open-loop result or feedback result is claimed.
+This bounded campaign is complete. The result is:
+
+```text
+A VIABLE OPEN-LOOP SCHWARZSCHILD REFERENCE PATH IS ESTABLISHED
+```
+
+The qualified candidate is the fixed-core metric homotopy with
+`r_core=0.30M`, `tau_transition=8M`, compatible Phi ordering, and controller
+off. It reached `t=4M` at `dx_min=M/16, M/24, M/32` without an invalid state,
+timestep collapse, nonpositive physical lapse, or loss of relative-metric
+admissibility. The primary native errors improve with resolution. This is the
+goal's bounded open-loop result, not a claim that the transition has completed:
+the smoothstep amplitude is only `0.5` at `t=4M`, and no stability beyond
+`t=4M` is established.
 
 The isolated branch is
 `codex/ref-gh-transition-path-ordering-diagnosis-20260822`, created exactly
@@ -116,7 +127,24 @@ fixed-core continuation returned nonzero. The job was cancelled as soon as this
 was detected, and every validator now uses explicit `|| return 1`. The separate
 12-tile fixed-width result above is the authoritative Phase-4 result.
 
-## Standard Phi-ordering derivation and local tests
+## Rate ablation
+
+Because both original-rate moving-width and fixed-core paths failed, the
+bounded rate scan tested only `tau_transition=8M` and `16M` on the fixed-core
+path at medium resolution. Both runs passed a real `t=2.2M` checkpoint/restart
+and reached `t=4M` on 12 distinct PVC tiles:
+
+| case at `t=4M` | amplitude | GH L2 | reduction L2 | curl L2 | condition max |
+|---|---:|---:|---:|---:|---:|
+| fixed core, tau 8M | `0.5` | `3.0641e-3` | `8.4551e-4` | `1.4093e-2` | `3.7446` |
+| fixed core, tau 16M | `0.103515625` | `2.2666e-4` | `4.5318e-4` | `6.4200e-4` | `1.9557` |
+
+This establishes a rate threshold for the bounded `t=4M` test. It does not
+show that arbitrary slowing is robust, and the tau-16 run has traversed only
+about ten percent of the prescribed homotopy. Tau 8M was promoted because it
+made the larger transition while remaining admissible.
+
+## Standard Phi-ordering derivation and tests
 
 The runtime option is:
 
@@ -159,14 +187,102 @@ Local current-source evidence:
 | standard wave order, `8->16` | `3.9134` |
 | standard wave order, `16->32` | `3.9456` |
 
-This is local implementation evidence only. PVC compilation/execution and the
-medium original shrinking-path standard-ordering evolution remain pending.
+Aurora job `8776594` rebuilt this implementation with Kokkos SYCL/PVC, mapped
+12 ranks to 12 distinct PVC tiles, and passed the device source/algebra unit and
+exact standard-ordering Minkowski tests. The original shrinking-width path with
+standard ordering nevertheless failed at RK stage time `1.64623M`; the last
+history row was `t=1.603305M`. Its normalized GH, reduction, and curl norms were
+`0.41993`, `0.019631`, and `1.25048`. The smoothstep amplitude was `0.31887`,
+the relative shift-speed ratio was `0.0674`, and controller state remained
+zero. This agrees with the compatible-ordering failure window and rules out
+Phi ordering D as the primary cause. Compatible ordering is sufficient for the
+promoted fixed-core tau-8 path.
 
-## Pending decision sequence
+## Medium-resolution decision matrix
 
-Job `8776454` is testing fixed-core `tau_transition=8M` and `16M` independently
-through restart-chained `t=4M` gates. After that job completes, the pushed PVC
-standard-ordering discriminator will run the original shrinking path to at least
-`t=2.2M`. Only a medium candidate that reaches `t=4M` without invalid state and
-with controlled constraints may enter the three-resolution gate. Feedback stays
-disabled until that gate passes.
+| case | ordering | last time | result |
+|---|---|---:|---|
+| frozen wormhole | compatible | `4.0M` | pass |
+| fixed core, tau 4M | compatible | `3.15195M` | fail at RK stage `3.18655M` |
+| fixed-width moving core, tau 4M | compatible | `1.90148M` | invalid effective timestep |
+| shrinking width, tau 4M | standard | `1.60330M` | fail at RK stage `1.64623M` |
+| fixed core, tau 8M | compatible | `4.0M` | pass and promoted |
+| fixed core, tau 16M | compatible | `4.0M` | pass, only 10.35 percent transitioned |
+
+The evidence implicates a combination of the prescribed interpolation and its
+rate. Width collapse is harmful but not the sole cause: fixing only the width
+still fails, while fixing the core at the original rate also eventually fails.
+Standard Phi ordering does not rescue the original path.
+
+## Three-resolution open-loop gate
+
+Aurora jobs `8776640`, `8776641`, and `8776642` ran the single promoted
+candidate on the identical 34-MeshBlock SMR tree using all 12 PVC tiles. The
+coarse job used the debug queue; medium and fine used capacity. All three used
+source `6884b094b07646b9206fdd23c56389b08a7122bd`, executable SHA-256
+`07f336a5dca87d40088e2256715afca332abd226e09dfe1783d8160a4927a4e5`, and
+Kokkos submodule `6739bc623081648af9e752b616d9671527922cbf`. Each run passed an
+actual restart from `t=2.2M` and reached exactly `t=4M`.
+
+Final normalized errors and observed pairwise orders are:
+
+| metric at `t=4M` | M/16 | M/24 | M/32 | order 16->24 | order 24->32 |
+|---|---:|---:|---:|---:|---:|
+| GH L2 | `1.40885e-2` | `3.06406e-3` | `1.00004e-3` | `3.763` | `3.892` |
+| reduction L2 | `3.17406e-3` | `8.45509e-4` | `3.87666e-4` | `3.262` | `2.711` |
+| curl L2 | `4.85626e-2` | `1.40931e-2` | `4.73797e-3` | `3.051` | `3.789` |
+| Psi-reference L2 | `2.33243e-1` | `1.74655e-1` | `1.31418e-1` | `0.713` | `0.989` |
+| common ADM momentum L2 | `3.20385e-2` | `9.45671e-3` | `3.59953e-3` | `3.009` | `3.358` |
+
+All three had `bad_state=0`, `feedback=0`, `delta_q=delta_p=0`, positive
+physical lapse minima (`9.5403e-3`, `4.5307e-3`, `2.6365e-3`), and bounded
+relative-metric condition maxima (`3.7756`, `3.7446`, `3.7329`). No
+resolution-dependent earlier failure occurred.
+
+There is an important scientific limitation. The common ADM Hamiltonian L2 in
+the `2M<=r<4M` shell is resolution-reversed after about `t=2M`; at `t=4M` it is
+`7.361e-3`, `1.350e-2`, `1.900e-2`. The `4M<=r<8M` shell shows the same trend.
+This outgoing feature is outside the fixed transition shell (`0.30M<r<0.60M`),
+while the global common Hamiltonian L2 still decreases
+`1.216 -> 1.047 -> 0.826`. It is retained as a limitation, not hidden or used
+to claim physical/dynamic-regularization qualification. The bounded goal's
+primary transition and native-constraint gate passes; a longer campaign must
+resolve the outward Hamiltonian feature before any production claim.
+
+## Feedback smoke disposition
+
+No feedback run was launched. For the surviving fixed-core path,
+`r_full=(1+kappa_core)r_core=0.60M`, while the immutable fitting shell starts at
+`r_fit_min=0.15M`. The implemented legal-activation condition requires
+
+```text
+r_full + controller_fit_buffer_cells*dx_min < r_fit_min,
+```
+
+which is impossible at every tested resolution. Moving the fitting shell to
+force activation is explicitly forbidden by this goal. Phase 9 is therefore
+structurally unavailable for this survivor; this does not weaken the completed
+open-loop result, and no closed-loop result is claimed.
+
+## Reproduction, provenance, and handoff
+
+The exact launchers are `scripts/ref_gh/aurora_transition_path_medium.pbs`,
+`aurora_fixed_width_debug12.pbs`, `aurora_fixed_core_rate12.pbs`,
+`aurora_standard_ordering_debug12.pbs`, and
+`aurora_tau8_resolution_gate12.pbs`. Compact history, max-location, mapping,
+mesh, build, command, status, and hash evidence is under
+`docs/fo_gh_artifacts/ref_gh_transition_path_ordering_diagnosis_20260822/`.
+The tables are reproducible with `analyze_transition_path_medium.py` and
+`analyze_transition_resolution_gate.py`.
+
+Large restart/output data remain intentionally uncommitted at:
+
+```text
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_standard_ordering_20260823T0525Z_6884b09/
+```
+
+At completion, `qstat -u hzhu` reported no jobs. The branch is
+`codex/ref-gh-transition-path-ordering-diagnosis-20260822`; final local/upstream
+SHA equality is recorded in the final push handoff because a commit cannot
+self-record its own SHA.
