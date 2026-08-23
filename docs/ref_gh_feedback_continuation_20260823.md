@@ -44,6 +44,16 @@ prescribed one-cycle test matches all three independently normalized native
 values to `2.65e-23` Linf or better.  No GH equation, controller equation, or
 threshold changed.
 
+The first T3 attempt, capacity job `8777374`, passed that focused PVC history
+check and completed the feedback segment through t=0.5M.  It remained finite
+with `xi=0.04598493014744905`, maximum risk `0.004586673499545036`, no veto,
+and native/controller constraint histories agreeing to `3.39e-21` Linf or
+better.  The next segment never evolved: all ranks failed to open a relative
+`rst/...` path after the launcher changed directories.  PBS consequently
+reported exit 143.  This is classified as a launcher failure, not a controller
+or solver failure; the script now resolves an absolute checkpoint path before
+the focused retry.
+
 ## Fixed mathematical scope
 
 The radial family, GH equations, compatible Phi ordering, dissipation, and

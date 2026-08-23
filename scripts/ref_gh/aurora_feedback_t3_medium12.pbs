@@ -131,7 +131,8 @@ for target in 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0; do
     echo "failed_target=${target}" >> "${OUT}/t3_status.txt"
     exit "${status}"
   fi
-  previous_checkpoint=$(find rst -type f -name '*.rst' | sort | tail -1)
+  previous_checkpoint=$(find "${directory}/rst" -type f -name '*.rst' \
+    | sort | tail -1)
   test -s "${previous_checkpoint}"
   sha256sum "${previous_checkpoint}" > checkpoint.sha256
   xi=$(awk 'NF && $1 !~ /^#/ {value=$20} END {print value}' "${LABEL}.user.hst")

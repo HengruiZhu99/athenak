@@ -1,0 +1,19 @@
+{
+  "schema": "ref-gh-feedback-t3-partial-failure-v1",
+  "job_id": "8777374",
+  "node": "x4300c2s4b0n0",
+  "pbs_exit_status": 143,
+  "walltime": "00:15:40",
+  "classification": "HARNESS_RELATIVE_RESTART_PATH",
+  "prescribed_constraint_history_fix_passed": true,
+  "completed_feedback_time": 0.5,
+  "completed_feedback_xi": 0.04598493014744905,
+  "completed_feedback_finite": true,
+  "controller_fail_closed": false,
+  "first_constraint_veto": null,
+  "failed_target": 1.0,
+  "direct_error": "Unable to open restart file: rst/refgh_feedback_t3_medium.00001.rst",
+  "cause": "The launcher captured a relative checkpoint path in to_0p5 and reused it after changing to to_1p0.",
+  "correction": "Resolve the checkpoint beneath the absolute segment directory before changing directories.",
+  "mathematical_or_algorithmic_change": false
+}
