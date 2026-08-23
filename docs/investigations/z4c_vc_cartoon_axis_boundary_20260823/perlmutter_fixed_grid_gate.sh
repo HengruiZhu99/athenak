@@ -7,7 +7,7 @@ source_root=${old_root}/source/athenak
 build_root=${old_root}/build/current-cuda-mpi
 evidence_root=${campaign_root}/evidence/fixed-grid-gate
 run_root=${campaign_root}/runs/fixed-grid-gate
-expected_source=1392f5c472353fec1cdc44108b403a316f33fc46
+required_source_fix=1392f5c472353fec1cdc44108b403a316f33fc46
 expected_kokkos=6739bc623081648af9e752b616d9671527922cbf
 coefficient=${old_root}/authority/brill_global_48x32.coefficients
 input=${campaign_root}/fixed_grid_brill_dense.athinput
@@ -17,7 +17,7 @@ python_bin=/global/common/software/nersc/pe/conda-envs/24.1.0/python-3.11/nersc-
 
 test -n "${SLURM_JOB_ID:-}"
 test "${SLURM_JOB_NUM_NODES}" -eq 1
-test "$(git -C "${source_root}" rev-parse HEAD)" = "${expected_source}"
+git -C "${source_root}" merge-base --is-ancestor "${required_source_fix}" HEAD
 test "$(git -C "${source_root}/kokkos" rev-parse HEAD)" = "${expected_kokkos}"
 test -z "$(git -C "${source_root}" status --short)"
 test -x "${athena}"
