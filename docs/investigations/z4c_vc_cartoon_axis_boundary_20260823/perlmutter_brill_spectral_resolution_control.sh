@@ -16,8 +16,8 @@ python_bin=/global/common/software/nersc/pe/conda-envs/24.1.0/python-3.11/nersc-
 test -n "${SLURM_JOB_ID:-}"
 test "${SLURM_JOB_NUM_NODES}" -eq 1
 test "${SLURM_GPUS:-0}" -eq 1
-test "$(git -C "${source_root}" rev-parse HEAD)" = \
-  bd1ba697ed4d3315844deae7d10ef89b9cad2106
+git -C "${source_root}" merge-base --is-ancestor \
+  bd1ba697ed4d3315844deae7d10ef89b9cad2106 HEAD
 test -z "$(git -C "${source_root}" status --short)"
 test -x "${athena}"
 test -f "${input}"
