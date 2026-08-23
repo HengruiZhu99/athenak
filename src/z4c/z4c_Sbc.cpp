@@ -303,18 +303,24 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   // Match the configured bulk stencil.  The physical ghost extrapolation order is
   // an independent input contract and must provide the corresponding boundary halo.
   for (int a = 0; a < 3; a++) {
-    dKhat_d(a) = boundary_side[a] == 0
+    dKhat_d(a) = (boundary_side[a] == 0 ||
+                  std::is_same_v<Centering, CellCenteredZ4c> ||
+                  std::is_same_v<Symmetry, Cartesian3D>)
         ? derivatives.ScalarFirst(a, z4c.vKhat)
         : OneSidedScalarFirst<NGHOST>(
               a, boundary_side[a], idx, z4c.vKhat, m, k, j, i);
-    dTheta_d(a) = boundary_side[a] == 0
+    dTheta_d(a) = (boundary_side[a] == 0 ||
+                   std::is_same_v<Centering, CellCenteredZ4c> ||
+                   std::is_same_v<Symmetry, Cartesian3D>)
         ? derivatives.ScalarFirst(a, z4c.vTheta)
         : OneSidedScalarFirst<NGHOST>(
               a, boundary_side[a], idx, z4c.vTheta, m, k, j, i);
   }
   for (int a = 0; a < 3; a++) {
     for (int b = 0; b < 3; b++) {
-      dGam_du(b,a) = boundary_side[b] == 0
+      dGam_du(b,a) = (boundary_side[b] == 0 ||
+                      std::is_same_v<Centering, CellCenteredZ4c> ||
+                      std::is_same_v<Symmetry, Cartesian3D>)
           ? derivatives.VectorFirst(b, a, z4c.vGam_u)
           : OneSidedVectorFirst<NGHOST>(
                 b, boundary_side[b], idx, z4c.vGam_u, a, m, k, j, i);
@@ -323,7 +329,9 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   for (int a = 0; a < 3; a++) {
     for (int b = a; b < 3; b++) {
       for (int c = 0; c < 3; c++) {
-        dA_ddd(c, a, b) = boundary_side[c] == 0
+        dA_ddd(c, a, b) = (boundary_side[c] == 0 ||
+                            std::is_same_v<Centering, CellCenteredZ4c> ||
+                            std::is_same_v<Symmetry, Cartesian3D>)
             ? derivatives.template TensorFirst<TensorVariance::all_lower>(
                   c, a, b, z4c.vA_dd)
             : OneSidedTensorFirst<NGHOST>(
@@ -394,6 +402,15 @@ static void Z4cSommerfeldConfigured(
     const Z4cGridLayout &layout, const DualArray1D<RegionSize> &size,
     const DvceArray2D<BoundaryFlag> &bcs, const bool user_sbc,
     const int fd_stencil, const int m, const int k, const int j, const int i) {
+  // Preserve the established cell-centered and Cartesian closures exactly.  The
+  // matched configured stencil and one-sided physical-normal derivative are a
+  // native-VC Cartoon repair and must not silently alter legacy fingerprints.
+  if constexpr (std::is_same_v<Centering, CellCenteredZ4c> ||
+                std::is_same_v<Symmetry, Cartesian3D>) {
+    Z4cSommerfeld<Centering, Symmetry, 2>(
+        z4c, rhs, layout, size, bcs, user_sbc, m, k, j, i);
+    return;
+  }
   switch (fd_stencil) {
     case 2:
       Z4cSommerfeld<Centering, Symmetry, 2>(
