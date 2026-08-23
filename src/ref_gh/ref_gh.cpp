@@ -116,6 +116,17 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       pin->GetOrAddBoolean("ref_gh", "validate_reference_cache", false);
   opt.max_location_diagnostics =
       pin->GetOrAddBoolean("ref_gh", "max_location_diagnostics", false);
+  const std::string phi_ordering =
+      pin->GetOrAddString("ref_gh", "phi_ordering", "compatible");
+  if (phi_ordering == "compatible") {
+    opt.phi_ordering = 0;
+  } else if (phi_ordering == "standard") {
+    opt.phi_ordering = 1;
+  } else {
+    std::cout << "### FATAL ERROR: ref_gh phi_ordering must be compatible or standard."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   const std::string transition_path =
       pin->GetOrAddString("ref_gh", "transition_path", "shrinking_width");
   if (transition_path == "shrinking_width") {

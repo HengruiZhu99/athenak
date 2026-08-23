@@ -15,6 +15,7 @@
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
+#include "ref_gh/phi_ordering.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
@@ -22,6 +23,128 @@
 #include "ref_gh/standard_gh_source.hpp"
 
 namespace {
+
+void CheckPhiOrderingAlgebra() {
+  constexpr int nsamples = 1024;
+  Real maximum = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh phi ordering algebra",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum) {
+        const Real scale = static_cast<Real>(sample % 29 - 14)/14.0;
+        const Real alpha = 0.61 + 0.19*static_cast<Real>(sample % 17)/16.0;
+        // Include shifts both below and well above the lapse.
+        const Real beta[3] = {
+          2.4*scale, -1.7 + 0.03*static_cast<Real>(sample % 11),
+          0.9 - 0.02*static_cast<Real>(sample % 13)};
+        Real phi[3];                    // NOLINT(runtime/arrays)
+        Real frame_derivative[3][3];   // NOLINT(runtime/arrays)
+        Real structure[3][3][3];       // NOLINT(runtime/arrays)
+        for (int I = 0; I < 3; ++I) {
+          phi[I] = 0.13*static_cast<Real>(I + 1) - 0.07*scale;
+          for (int J = 0; J < 3; ++J) {
+            frame_derivative[I][J] =
+                0.11*static_cast<Real>(2*I - J + 1) + 0.04*scale;
+            for (int K = 0; K < 3; ++K) {
+              structure[I][J][K] = 0.017*static_cast<Real>(I - J)
+                                    *static_cast<Real>(K + 1);
+            }
+          }
+        }
+
+        // The helper must reproduce the exact rewrite
+        // E_I Phi_J = E_J Phi_I + c^K_IJ Phi_K + C_IJ.
+        for (int I = 0; I < 3; ++I) {
+          const Real grad_pi = 0.09*static_cast<Real>(I + 1) - 0.03*scale;
+          Real compatible = -alpha*grad_pi;
+          Real expected_standard = -alpha*grad_pi;
+          for (int J = 0; J < 3; ++J) {
+            compatible += beta[J]*frame_derivative[I][J];
+            Real commutator = 0.0;
+            for (int K = 0; K < 3; ++K) {
+              commutator += structure[I][J][K]*phi[K];
+            }
+            expected_standard += beta[J]
+                *(frame_derivative[J][I] + commutator);
+          }
+          const Real standard = compatible - ref_gh::StandardPhiOrderingCorrection(
+              I, beta, frame_derivative, structure, phi);
+          local_maximum = fmax(local_maximum,
+                               Kokkos::abs(standard - expected_standard));
+        }
+
+        // On an integrable state, construct derivatives whose antisymmetric
+        // part is exactly the non-coordinate-frame commutator.  Compatible and
+        // standard orderings must then agree.
+        Real constrained_derivative[3][3];  // NOLINT(runtime/arrays)
+        for (int I = 0; I < 3; ++I) {
+          for (int J = 0; J < 3; ++J) {
+            Real commutator = 0.0;
+            for (int K = 0; K < 3; ++K) {
+              commutator += structure[I][J][K]*phi[K];
+            }
+            const Real symmetric = 0.08*static_cast<Real>(I + J + 1) - 0.02*scale;
+            constrained_derivative[I][J] = symmetric + 0.5*commutator;
+          }
+        }
+        for (int I = 0; I < 3; ++I) {
+          local_maximum = fmax(local_maximum, Kokkos::abs(
+              ref_gh::StandardPhiOrderingCorrection(
+                  I, beta, constrained_derivative, structure, phi)));
+        }
+
+        // Manufactured plane-wave principal symbol.  The standard correction
+        // must turn beta^J n_I Phi_J into beta^J n_J Phi_I for arbitrary shift.
+        const Real n[3] = {0.36, -0.48, 0.80};
+        const Real pi_amplitude = 0.37 - 0.05*scale;
+        Real plane_derivative[3][3];  // NOLINT(runtime/arrays)
+        Real zero_structure[3][3][3] = {};  // NOLINT(runtime/arrays)
+        for (int I = 0; I < 3; ++I) {
+          for (int J = 0; J < 3; ++J) {
+            plane_derivative[I][J] = n[I]*phi[J];
+          }
+        }
+        Real beta_n = 0.0;
+        for (int J = 0; J < 3; ++J) beta_n += beta[J]*n[J];
+        for (int I = 0; I < 3; ++I) {
+          Real compatible = -alpha*n[I]*pi_amplitude;
+          for (int J = 0; J < 3; ++J) {
+            compatible += beta[J]*plane_derivative[I][J];
+          }
+          const Real standard = compatible - ref_gh::StandardPhiOrderingCorrection(
+              I, beta, plane_derivative, zero_structure, phi);
+          const Real expected = -alpha*n[I]*pi_amplitude + beta_n*phi[I];
+          local_maximum = fmax(local_maximum, Kokkos::abs(standard - expected));
+        }
+
+        // The normal (Pi,Phi_n) block [[beta_n,-alpha],[-alpha,beta_n]]
+        // has the complete real eigenbasis (1,1), (1,-1), even for |beta_n|>alpha.
+        const Real lambda_minus = beta_n - alpha;
+        const Real lambda_plus = beta_n + alpha;
+        const Real minus_lhs_pi = beta_n*1.0 - alpha*1.0;
+        const Real minus_lhs_phi = -alpha*1.0 + beta_n*1.0;
+        const Real plus_lhs_pi = beta_n*1.0 - alpha*(-1.0);
+        const Real plus_lhs_phi = -alpha*1.0 + beta_n*(-1.0);
+        local_maximum = fmax(local_maximum,
+            Kokkos::abs(minus_lhs_pi - lambda_minus));
+        local_maximum = fmax(local_maximum,
+            Kokkos::abs(minus_lhs_phi - lambda_minus));
+        local_maximum = fmax(local_maximum,
+            Kokkos::abs(plus_lhs_pi - lambda_plus));
+        local_maximum = fmax(local_maximum,
+            Kokkos::abs(plus_lhs_phi + lambda_plus));
+      }, Kokkos::Max<Real>(maximum));
+  Kokkos::fence();
+  if (global_variable::my_rank == 0) {
+    std::cout << "reference-GH Phi-ordering algebra maximum error = "
+              << maximum << std::endl;
+  }
+  if (!(maximum < 2.0e-13)) {
+    std::cout << "### FATAL ERROR: reference-GH Phi-ordering algebra failed."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+}
 
 KOKKOS_INLINE_FUNCTION
 ref_gh::ReferenceJet SpatialJet(const Real value, const Real dx, const Real dy,
@@ -804,6 +927,7 @@ void ScanReferencePaths(ParameterInput *pin) {
 }  // namespace
 
 void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) {
+  CheckPhiOrderingAlgebra();
   CheckFlatCovariantSource();
   CheckNonflatCovariantSource();
   CheckDynamicSpatialReference();

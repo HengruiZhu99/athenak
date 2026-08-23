@@ -45,6 +45,7 @@ class RefGh {
     bool validate_reference_cache;
     bool max_location_diagnostics;
     int transition_path;
+    int phi_ordering;
     Real gamma0;
     Real diss;
     Real fail_closed_dt;

@@ -9,6 +9,7 @@
 #include "driver/driver.hpp"
 #include "mesh/mesh.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
+#include "ref_gh/phi_ordering.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/standard_gh_source.hpp"
@@ -31,6 +32,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   const auto reference_cache = reference_evolution;
   const auto reference_extra = reference_diagnostic;
   const int source_kind = opt.source_kind;
+  const int phi_ordering = opt.phi_ordering;
   const Real gamma0 = opt.gamma0;
   Kokkos::deep_copy(state_rhs, 0.0);
   DebugFence("ref_gh CalcRHS zero");
@@ -210,32 +212,122 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   });
   DebugFence("ref_gh CalcRHS primary");
 
-  par_for("ref_gh compatible phi rhs", DevExeSpace(), 0, nmb - 1,
-  indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
-  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const ReferenceCachePoint reference{
-        reference_cache, reference_extra, m, k, j, i};
-    const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
-                         1.0/size.d_view(m).dx3};
-    for (int I = 0; I < 3; ++I) {
-      for (int component = 0; component < kSymmetric4Size; ++component) {
-        Real phi_rhs = 0.0;
-        for (int p = 0; p < 3; ++p) {
-          phi_rhs += ReferenceSpatialFrame(reference, I, p)
-                       *Dx<FDNG>(p, idx, state_rhs, m,
-                                  kPsiOffset + component, k, j, i);
-          Real coordinate_d_psi = 0.0;
-          for (int J = 0; J < 3; ++J) {
-            coordinate_d_psi += ReferenceSpatialCoframe(reference, J, p)
-                *state(m, kPhiOffset + J*kSymmetric4Size + component, k, j, i);
+  if (phi_ordering == 0) {
+    // Preserve the qualified compatible kernel and its arithmetic exactly.
+    par_for("ref_gh compatible phi rhs", DevExeSpace(), 0, nmb - 1,
+    indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+    KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+      const ReferenceCachePoint reference{
+          reference_cache, reference_extra, m, k, j, i};
+      const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
+                           1.0/size.d_view(m).dx3};
+      for (int I = 0; I < 3; ++I) {
+        for (int component = 0; component < kSymmetric4Size; ++component) {
+          Real phi_rhs = 0.0;
+          for (int p = 0; p < 3; ++p) {
+            phi_rhs += ReferenceSpatialFrame(reference, I, p)
+                         *Dx<FDNG>(p, idx, state_rhs, m,
+                                    kPsiOffset + component, k, j, i);
+            Real coordinate_d_psi = 0.0;
+            for (int J = 0; J < 3; ++J) {
+              coordinate_d_psi += ReferenceSpatialCoframe(reference, J, p)
+                  *state(m, kPhiOffset + J*kSymmetric4Size + component, k, j, i);
+            }
+            phi_rhs += ReferenceDtSpatialFrame(reference, I, p)*coordinate_d_psi;
           }
-          phi_rhs += ReferenceDtSpatialFrame(reference, I, p)*coordinate_d_psi;
+          state_rhs(m, kPhiOffset + I*kSymmetric4Size + component, k, j, i) = phi_rhs;
         }
-        state_rhs(m, kPhiOffset + I*kSymmetric4Size + component, k, j, i) = phi_rhs;
       }
-    }
-  });
-  DebugFence("ref_gh CalcRHS compatible_phi");
+    });
+    DebugFence("ref_gh CalcRHS compatible_phi");
+  } else {
+    par_for("ref_gh standard phi rhs", DevExeSpace(), 0, nmb - 1,
+    indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+    KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+      const ReferenceCachePoint reference{
+          reference_cache, reference_extra, m, k, j, i};
+      const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
+                           1.0/size.d_view(m).dx3};
+
+      // The standard correction needs the physical shift expressed in the
+      // reference spatial frame. Reconstruct it once per cell.
+      Real psi[4][4], metric[4][4], inverse[4][4];  // NOLINT(runtime/arrays)
+      LoadSymmetric(state, kPsiOffset, m, k, j, i, psi);
+      for (int a = 0; a < 4; ++a) {
+        for (int b = 0; b < 4; ++b) {
+          metric[a][b] = 0.0;
+          for (int A = 0; A < 4; ++A) {
+            for (int B = 0; B < 4; ++B) {
+              metric[a][b] += ReferenceCoframe(reference, A, a)
+                              *ReferenceCoframe(reference, B, b)*psi[A][B];
+            }
+          }
+        }
+      }
+      Real determinant = 0.0;
+      if (!Invert4(metric, inverse, determinant) || !(inverse[0][0] < 0.0)) {
+        for (int n = kPhiOffset; n < nvar; ++n) state_rhs(m, n, k, j, i) = NAN;
+        return;
+      }
+      const Real lapse = 1.0/Kokkos::sqrt(-inverse[0][0]);
+      Real beta_frame[3] = {};  // NOLINT(runtime/arrays)
+      for (int J = 0; J < 3; ++J) {
+        for (int p = 0; p < 3; ++p) {
+          const Real beta_coordinate = lapse*lapse*inverse[0][p + 1];
+          beta_frame[J] += ReferenceSpatialCoframe(reference, J, p)*beta_coordinate;
+        }
+      }
+      Real structure[3][3][3];  // NOLINT(runtime/arrays)
+      for (int I = 0; I < 3; ++I) {
+        for (int J = 0; J < 3; ++J) {
+          for (int K = 0; K < 3; ++K) {
+            structure[I][J][K] = ReferenceStructure(reference, I, J, K);
+          }
+        }
+      }
+
+      for (int component = 0; component < kSymmetric4Size; ++component) {
+        Real phi[3];                    // NOLINT(runtime/arrays)
+        Real coordinate_d_phi[3][3];   // NOLINT(runtime/arrays)
+        Real frame_derivative[3][3];   // NOLINT(runtime/arrays)
+        for (int J = 0; J < 3; ++J) {
+          for (int p = 0; p < 3; ++p) {
+            coordinate_d_phi[J][p] = Dx<FDNG>(
+                p, idx, state, m, kPhiOffset + J*kSymmetric4Size + component,
+                k, j, i);
+          }
+          phi[J] = state(m, kPhiOffset + J*kSymmetric4Size + component, k, j, i);
+        }
+        for (int I = 0; I < 3; ++I) {
+          for (int J = 0; J < 3; ++J) {
+            frame_derivative[I][J] = 0.0;
+            for (int p = 0; p < 3; ++p) {
+              frame_derivative[I][J] += ReferenceSpatialFrame(reference, I, p)
+                                        *coordinate_d_phi[J][p];
+            }
+          }
+        }
+        for (int I = 0; I < 3; ++I) {
+          Real phi_rhs = 0.0;
+          for (int p = 0; p < 3; ++p) {
+            phi_rhs += ReferenceSpatialFrame(reference, I, p)
+                         *Dx<FDNG>(p, idx, state_rhs, m,
+                                    kPsiOffset + component, k, j, i);
+            Real coordinate_d_psi = 0.0;
+            for (int J = 0; J < 3; ++J) {
+              coordinate_d_psi += ReferenceSpatialCoframe(reference, J, p)
+                  *state(m, kPhiOffset + J*kSymmetric4Size + component, k, j, i);
+            }
+            phi_rhs += ReferenceDtSpatialFrame(reference, I, p)*coordinate_d_psi;
+          }
+          phi_rhs -= StandardPhiOrderingCorrection(
+              I, beta_frame, frame_derivative, structure, phi);
+          state_rhs(m, kPhiOffset + I*kSymmetric4Size + component, k, j, i) = phi_rhs;
+        }
+      }
+    });
+    DebugFence("ref_gh CalcRHS standard_phi");
+  }
 
   if (opt.diss > 0.0) {
     const Real sign = (FDNG % 2 == 0) ? -1.0 : 1.0;
