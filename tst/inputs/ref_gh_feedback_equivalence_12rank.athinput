@@ -1,21 +1,21 @@
-# Small open-loop controlled-reference transition smoke test.
+# Twelve-block prescribed-law equivalence and feedback startup gate.
 
 <job>
-basename = ref_gh_controlled_transition_smoke
+basename = ref_gh_feedback_equivalence
 
 <mesh>
 nghost = 4
-nx1 = 8
-x1min = -2.0
-x1max = 2.0
+nx1 = 24
+x1min = -3.0
+x1max = 3.0
 ix1_bc = outflow
 ox1_bc = outflow
-nx2 = 8
+nx2 = 16
 x2min = -2.0
 x2max = 2.0
 ix2_bc = outflow
 ox2_bc = outflow
-nx3 = 8
+nx3 = 16
 x3min = -2.0
 x3max = 2.0
 ix3_bc = outflow
@@ -30,53 +30,57 @@ nx3 = 8
 evolution = dynamic
 integrator = rk4
 cfl_number = 0.05
-nlim = 10000
-tlim = 0.1
+nlim = 1
+tlim = 0.01
 ndiag = 1
 
 <ref_gh>
 reference = controlled_transition
 continuation_mode = legacy_time
 continuation_self_test = false
+phi_ordering = compatible
 source = covariant
 reference_mass = 1.0
 fd_order = 4
-validate_reference_cache = false
-max_location_diagnostics = false
 controller_enabled = false
-transition_path = shrinking_width
-transition_width = 0.20
+transition_path = fixed_core
 r_core0 = 0.30
 tau_core = 1.5
 kappa_core = 1.0
-tau_transition = 4.0
+transition_width = 0.20
+tau_transition = 8.0
 r_fit_min = 0.15
 r_fit_max = 0.40
 regularization_outer_start = 0.50
 regularization_outer_end = 0.60
+controller_delta_q = 0.0
+controller_delta_q_dot = 0.0
+controller_delta_p = 0.0
+controller_delta_p_dot = 0.0
+continuation_xi = 0.0
+continuation_xi_dot = 0.0
 gamma0 = 1.0
 diss = 0.02
 
 <problem>
 pgen_name = ref_gh_controlled_transition
 user_hist = true
-common_adm_history = true
-common_adm_fd_order = 4
+common_adm_history = false
 
 <output1>
 file_type = hst
-dt = 0.05
+dt = 0.01
 data_format = %20.15e
 
 <output2>
 file_type = rst
-dt = 0.05
+dt = 0.01
 
 <output3>
 file_type = cbin
 variable = ref_gh
 id = ref_gh
-dt = 0.05
+dt = 0.01
 coarsen_factor = 1
 compute_moments = false
 binary64 = true

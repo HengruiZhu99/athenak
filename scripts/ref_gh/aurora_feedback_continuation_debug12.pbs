@@ -1,0 +1,173 @@
+#!/bin/bash -l
+# T0--T2 Ref-GH feedback-continuation PVC gate on all twelve Aurora tiles.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_feedback_gate
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+OUT="${CAMPAIGN_ROOT}/runs/debug_gate_${PBS_JOBID}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/tst/inputs/ref_gh_feedback_equivalence_12rank.athinput"
+CAUSAL_INPUT="${SRC}/inputs/ref_gh/ref_gh_feedback_continuation_causal.athinput"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${CAUSAL_INPUT}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 12
+
+mkdir mesh
+cd mesh
+"${EXE}" -m -i "${CAUSAL_INPUT}" > mesh_structure.txt 2>&1
+grep -q 'Root grid = 3 x 3 x 3 MeshBlocks' mesh_structure.txt
+grep -q 'Total number of MeshBlocks = 272' mesh_structure.txt
+grep -q 'Physical level = 1.*208 MeshBlocks' mesh_structure.txt
+grep -q 'Physical level = 2.*64 MeshBlocks' mesh_structure.txt
+cd "${OUT}"
+
+# T2 manufactured risk histories execute in the compiled PVC binary.
+mkdir controller_unit
+cd controller_unit
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+  ref_gh/continuation_self_test=true time/nlim=0 > controller_unit.log 2>&1
+test "$(grep -c 'manufactured histories passed' controller_unit.log)" -eq 12
+cd "${OUT}"
+
+run_equivalence() {
+  local mode="$1"
+  local directory="${OUT}/${mode}"
+  mkdir -p "${directory}"
+  cd "${directory}"
+  mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+    gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+    ref_gh/continuation_mode="${mode}" time/nlim=1 time/tlim=0.01 \
+    > "${mode}.log" 2>&1
+}
+run_equivalence legacy_time
+run_equivalence prescribed
+legacy=$(find "${OUT}/legacy_time" -name '*.00001.cbin' -print -quit)
+prescribed=$(find "${OUT}/prescribed" -name '*.00001.cbin' -print -quit)
+python3 "${SRC}/scripts/ref_gh/compare_feedback_prescribed_equivalence.py" \
+  "${legacy}" "${prescribed}" --source-root "${SRC}" \
+  --json "${OUT}/prescribed_equivalence.json" > "${OUT}/prescribed_equivalence.log"
+
+# T0 actual feedback checkpoint/restart against a continuous two-cycle control.
+for lane in direct split; do mkdir -p "${OUT}/restart_${lane}"; done
+cd "${OUT}/restart_direct"
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+  ref_gh/continuation_mode=feedback time/nlim=2 time/tlim=1.0 \
+  output1/dt=0.001 output2/dt=0.001 output3/dt=0.001 > direct.log 2>&1
+cd "${OUT}/restart_split"
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+  ref_gh/continuation_mode=feedback time/nlim=1 time/tlim=1.0 \
+  output1/dt=0.001 output2/dt=0.001 output3/dt=0.001 > first.log 2>&1
+checkpoint=$(find rst -name '*.00001.rst' -print -quit)
+test -s "${checkpoint}"
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -r "${checkpoint}" \
+  time/nlim=2 time/tlim=1.0 > restart.log 2>&1
+
+python3 - "${SRC}" "${OUT}" <<'PY' > "${OUT}/restart_equivalence.json"
+import importlib.util, json, pathlib, sys
+import numpy as np
+src, out = map(pathlib.Path, sys.argv[1:])
+path = src / "scripts/ref_gh/analyze_perturbed_trumpet_convergence.py"
+spec = importlib.util.spec_from_file_location("reader", path)
+module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+def last(directory):
+    file = sorted(directory.rglob("*.cbin"))[-1]
+    return module.read_cbin(file), file
+direct, direct_path = last(out / "restart_direct")
+split, split_path = last(out / "restart_split")
+linf = float(np.max(np.abs(direct["data"] - split["data"])))
+def last_history(directory):
+    path = next(directory.glob("*.user.hst"))
+    lines = [line for line in path.read_text().splitlines()
+             if line and not line.startswith("#")]
+    return [float(value) for value in lines[-1].split()]
+direct_history = last_history(out / "restart_direct")
+split_history = last_history(out / "restart_split")
+xi_difference = abs(direct_history[19] - split_history[19])
+xi_dot_difference = abs(direct_history[20] - split_history[20])
+result = {"direct": str(direct_path), "split": str(split_path),
+          "payload_linf": linf, "tolerance": 1.0e-7,
+          "xi_difference": xi_difference,
+          "xi_dot_difference": xi_dot_difference,
+          "controller_tolerance": 1.0e-11,
+          "pass": linf <= 1.0e-7 and direct["cycle"] == split["cycle"]
+                  and xi_difference <= 1.0e-11
+                  and xi_dot_difference <= 1.0e-11}
+print(json.dumps(result, indent=2, sort_keys=True))
+if not result["pass"]: raise SystemExit(1)
+PY
+
+cd "${OUT}"
+{
+  echo 'result=PASS'
+  echo 'tiles=12'
+  echo 'tests=T0_restart,T1_prescribed_equivalence,T2_manufactured_controller'
+  sha256sum "${EXE}"
+} > gate_status.txt
+find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.json' \
+  -o -name '*.hst' \) -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt

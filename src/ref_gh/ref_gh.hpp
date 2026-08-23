@@ -40,6 +40,7 @@ class RefGh {
     bool reference_time_dependent;
     bool reference_controlled;
     bool controller_enabled;
+    int continuation_mode;
     int source_kind;
     bool debug_task_fences;
     bool validate_reference_cache;
@@ -67,6 +68,19 @@ class RefGh {
     Real controller_acceleration_limit;
     Real controller_delta_bound;
     Real controller_rate_bound;
+    Real continuation_v_max;
+    Real continuation_tau_v;
+    Real continuation_xi_end_start;
+    Real continuation_risk_slow;
+    Real continuation_risk_stop;
+    Real continuation_condition_stop;
+    Real continuation_lapse_min_stop;
+    Real continuation_lapse_max_stop;
+    Real continuation_v2_stop;
+    Real continuation_gh_warning;
+    Real continuation_reduction_warning;
+    Real continuation_curl_warning;
+    Real continuation_growth_time;
   } opt;
 
   struct ControllerState {
@@ -74,6 +88,8 @@ class RefGh {
     Real delta_q_dot;
     Real delta_p;
     Real delta_p_dot;
+    Real xi;
+    Real xi_dot;
   };
 
   struct ControllerDiagnostics {
@@ -94,8 +110,23 @@ class RefGh {
     Real physical_lapse_max;
     Real r_core;
     Real transition_amplitude;
+    Real xi_ddot;
+    Real v_cmd;
+    Real risk;
+    Real risk_condition;
+    Real risk_lapse_min;
+    Real risk_lapse_max;
+    Real risk_v2;
+    Real risk_factor;
+    Real endpoint_factor;
+    Real gh_l2;
+    Real reduction_l2;
+    Real curl_l2;
     bool feedback_active;
     bool fitting_shell_valid;
+    bool constraint_veto;
+    bool controller_frozen;
+    bool controller_completed;
   };
 
   RefGh(MeshBlockPack *ppack, ParameterInput *pin);
@@ -122,6 +153,12 @@ class RefGh {
   ControllerState controller_base;
   ControllerState controller_rhs;
   ControllerDiagnostics controller_diagnostics;
+  bool continuation_constraint_veto;
+  bool continuation_frozen;
+  bool continuation_completed;
+  Real continuation_veto_start_time;
+  Real continuation_veto_start_level;
+  Real continuation_veto_last_level;
   bool reference_cache_oracle_validated;
   bool reference_diagnostic_oracle_validated;
   Real dtnew;
@@ -144,6 +181,7 @@ class RefGh {
   TaskStatus CopyU(Driver *driver, int stage);
   TaskStatus MeasureController(Driver *driver, int stage);
   void MeasureControllerAtTime(Real stage_time);
+  bool UpdateContinuationConstraintVeto(Real time);
   TaskStatus UpdateReferenceGeometry(Driver *driver, int stage);
   TaskStatus ExpRKUpdate(Driver *driver, int stage);
   TaskStatus RestrictU(Driver *driver, int stage);

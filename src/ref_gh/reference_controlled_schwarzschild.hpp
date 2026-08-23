@@ -20,6 +20,10 @@ struct ControlledReferenceParameters {
   int transition_path;
   Real transition_width;
   Real tau_transition;
+  int activation_mode;
+  Real xi;
+  Real xi_dot;
+  Real xi_ddot;
   Real regularization_outer_start;
   Real regularization_outer_end;
   Real delta_q;
@@ -34,6 +38,11 @@ enum ControlledReferencePath : int {
   kShrinkingWidthPath = 0,
   kFixedCorePath = 1,
   kFixedWidthPath = 2
+};
+
+enum ControlledActivationMode : int {
+  kLegacyTimeActivation = 0,
+  kContinuationActivation = 1
 };
 
 KOKKOS_INLINE_FUNCTION
@@ -107,8 +116,11 @@ void ControlledTransitionProfileJets(
       : (radius*Reciprocal(r_core) + ConstantJet(-1.0))
           *ConstantJet(1.0/params.kappa_core);
   const ReferenceJet core_blend = QuinticSmoothstep(transition_coordinate);
-  const ReferenceJet activation = QuinticSmoothstep(
-      time_jet*ConstantJet(1.0/(params.tau_transition*params.mass)));
+  const ReferenceJet activation_argument =
+      params.activation_mode == kContinuationActivation
+      ? ControllerJet(params.xi, params.xi_dot, params.xi_ddot)
+      : time_jet*ConstantJet(1.0/(params.tau_transition*params.mass));
+  const ReferenceJet activation = QuinticSmoothstep(activation_argument);
   const ReferenceJet blend = activation*core_blend;
 
   ReferenceJet alpha_w;

@@ -1,9 +1,8 @@
-# Medium-resolution SMR discriminator for open-loop Schwarzschild reference paths.
-# Override ref_gh/reference=wormhole for the frozen case, or select one of the
-# controlled transition_path values. Controller feedback remains disabled.
+# T1 tau-8 replay and T3 cheap medium feedback-continuation discriminator.
+# The old [-6M,6M]^3 domain is deliberately retained only for these bounded gates.
 
 <job>
-basename = ref_gh_transition_path_medium
+basename = ref_gh_feedback_medium
 
 <mesh>
 nghost = 4
@@ -47,12 +46,13 @@ evolution = dynamic
 integrator = rk4
 cfl_number = 0.05
 nlim = -1
-tlim = 4.0
+tlim = 5.0
 ndiag = 10
 
 <ref_gh>
 reference = controlled_transition
-continuation_mode = legacy_time
+continuation_mode = feedback
+continuation_self_test = false
 phi_ordering = compatible
 source = covariant
 reference_mass = 1.0
@@ -61,23 +61,37 @@ debug_task_fences = false
 validate_reference_cache = false
 max_location_diagnostics = true
 controller_enabled = false
-transition_path = shrinking_width
+transition_path = fixed_core
 transition_width = 0.20
 r_core0 = 0.30
 tau_core = 1.5
 kappa_core = 1.0
-tau_transition = 4.0
+tau_transition = 8.0
 r_fit_min = 0.15
 r_fit_max = 0.40
 controller_fit_buffer_cells = 1.0
 regularization_outer_start = 0.50
 regularization_outer_end = 0.60
-controller_zeta = 1.0
-controller_omega_q = 0.25
-controller_omega_p = 0.25
-controller_acceleration_limit = 0.05
-controller_delta_bound = 0.25
-controller_rate_bound = 0.10
+controller_delta_q = 0.0
+controller_delta_q_dot = 0.0
+controller_delta_p = 0.0
+controller_delta_p_dot = 0.0
+continuation_xi = 0.0
+continuation_xi_dot = 0.0
+continuation_v_max = 0.25
+continuation_tau_v = 0.5
+continuation_xi_end_start = 0.90
+# Candidate safety envelope.  T1 must freeze these values before T3 is launched.
+continuation_risk_slow = 0.70
+continuation_risk_stop = 1.0
+continuation_condition_stop = 8.0
+continuation_lapse_min_stop = 0.5
+continuation_lapse_max_stop = 3.0
+continuation_v2_stop = 0.20
+continuation_gh_warning = 2.0e-2
+continuation_reduction_warning = 5.0e-3
+continuation_curl_warning = 8.0e-2
+continuation_growth_time = 0.5
 gamma0 = 1.0
 diss = 0.02
 fail_closed_dt = 1.0e-12

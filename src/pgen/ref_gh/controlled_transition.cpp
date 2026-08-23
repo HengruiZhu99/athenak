@@ -2,6 +2,7 @@
 //! \file controlled_transition.cpp
 //! \brief Wormhole-matched data for the controlled Ref-GH Schwarzschild transition.
 //========================================================================================
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -36,21 +37,23 @@ struct InitialMatchEvidence {
 
 void ControlledTransitionHistory(HistoryData *pdata, Mesh *mesh) {
   enum Index {
-    kDeltaQ, kDeltaQDot, kDeltaP, kDeltaPDot, kEG, kEAlpha, kFitCount,
-    kLambdaMin, kLambdaMax, kDetThirdMin, kDetThirdMax, kConditionMax,
+    kDeltaQ, kDeltaP, kEG, kEAlpha, kFitCount, kShellValid, kConditionMax,
     kRelativeLapseMin, kRelativeLapseMax, kV2Max, kPsiMax, kInversePsiMax,
     kMinusPhysicalLapseMin, kPhysicalLapseMax, kCharacteristicMax,
-    kRCore, kTransitionAmplitude, kFeedbackActive, kShellValid,
-    kControllerGeneration, kHistoryCount
+    kTransitionAmplitude, kControllerGeneration, kXi, kXiDot, kXiDdot, kVCmd, kRisk,
+    kRiskCondition, kRiskLapseMin, kRiskLapseMax, kRiskV2,
+    kGhL2, kReductionL2, kCurlL2, kConstraintVeto,
+    kControllerFrozen, kControllerCompleted, kHistoryCount
   };
   static_assert(kHistoryCount <= NHISTORY_VARIABLES,
                 "controlled transition history exceeds fixed history storage");
   const char *labels[kHistoryCount] = {
-    "delta-q", "delta-qdot", "delta-p", "delta-pdot", "e-G", "e-alpha",
-    "fit-cells", "G-lmin", "G-lmax", "detG13-min", "detG13-max",
-    "G-cond-max", "arel-min", "arel-max", "v2-max", "Psi-max",
-    "invPsi-max", "minus-a-min", "a-max", "char-max", "r-core",
-    "transition", "feedback", "shell-valid", "ctrl-gen"
+    "delta-q", "delta-p", "e-G", "e-alpha", "fit-cells", "shell-valid",
+    "G-cond-max", "arel-min", "arel-max", "v2-max", "Psi-max", "invPsi-max",
+    "minus-a-min", "a-max", "char-max", "transition", "ctrl-gen", "xi", "xi-dot",
+    "xi-ddot", "v-cmd", "risk", "risk-G", "risk-amin", "risk-amax",
+    "risk-v2", "GH-L2", "reduction-L2",
+    "curl-L2", "constraint-veto", "controller-frozen", "controller-completed"
   };
   pdata->nhist = kHistoryCount;
   for (int n = 0; n < kHistoryCount; ++n) {
@@ -62,34 +65,48 @@ void ControlledTransitionHistory(HistoryData *pdata, Mesh *mesh) {
   }
 
   auto *module = mesh->pmb_pack->prefgh;
-  if (module->opt.reference_controlled) {
-    module->MeasureControllerAtTime(mesh->time);
-  }
+  if (module->opt.reference_controlled) module->MeasureControllerAtTime(mesh->time);
   module->UpdateDiagnostics();
+  module->UpdateContinuationConstraintVeto(mesh->time);
+  if (module->opt.reference_controlled) module->MeasureControllerAtTime(mesh->time);
   auto &diagnostics = module->controller_diagnostics;
   pdata->hdata[kDeltaQ] = module->controller.delta_q;
-  pdata->hdata[kDeltaQDot] = module->controller.delta_q_dot;
   pdata->hdata[kDeltaP] = module->controller.delta_p;
-  pdata->hdata[kDeltaPDot] = module->controller.delta_p_dot;
   pdata->hdata[kEG] = diagnostics.e_G;
   pdata->hdata[kEAlpha] = diagnostics.e_alpha;
   pdata->hdata[kFitCount] = diagnostics.fitting_cell_count;
-  pdata->hdata[kLambdaMin] = diagnostics.lambda_min;
-  pdata->hdata[kLambdaMax] = diagnostics.lambda_max;
-  pdata->hdata[kDetThirdMin] = diagnostics.det_g_third_min;
-  pdata->hdata[kDetThirdMax] = diagnostics.det_g_third_max;
+  pdata->hdata[kShellValid] = diagnostics.fitting_shell_valid ? 1.0 : 0.0;
   pdata->hdata[kConditionMax] = diagnostics.condition_max;
   pdata->hdata[kRelativeLapseMin] = diagnostics.relative_lapse_min;
   pdata->hdata[kRelativeLapseMax] = diagnostics.relative_lapse_max;
   pdata->hdata[kV2Max] = diagnostics.v2_max;
   pdata->hdata[kPsiMax] = diagnostics.psi_max;
   pdata->hdata[kInversePsiMax] = diagnostics.inverse_psi_max;
-  pdata->hdata[kRCore] = diagnostics.r_core;
   pdata->hdata[kTransitionAmplitude] = diagnostics.transition_amplitude;
-  pdata->hdata[kFeedbackActive] = diagnostics.feedback_active ? 1.0 : 0.0;
-  pdata->hdata[kShellValid] = diagnostics.fitting_shell_valid ? 1.0 : 0.0;
   pdata->hdata[kControllerGeneration] =
       static_cast<Real>(module->controller_generation);
+  const Real prescribed_coordinate = mesh->time
+      /(module->opt.tau_transition*module->opt.reference_mass);
+  pdata->hdata[kXi] = module->opt.continuation_mode == 0
+      ? std::max(0.0, std::min(1.0, prescribed_coordinate))
+      : module->controller.xi;
+  pdata->hdata[kXiDot] = module->opt.continuation_mode == 0
+      ? ((prescribed_coordinate > 0.0 && prescribed_coordinate < 1.0)
+         ? 1.0/(module->opt.tau_transition*module->opt.reference_mass) : 0.0)
+      : module->controller.xi_dot;
+  pdata->hdata[kXiDdot] = diagnostics.xi_ddot;
+  pdata->hdata[kVCmd] = diagnostics.v_cmd;
+  pdata->hdata[kRisk] = diagnostics.risk;
+  pdata->hdata[kRiskCondition] = diagnostics.risk_condition;
+  pdata->hdata[kRiskLapseMin] = diagnostics.risk_lapse_min;
+  pdata->hdata[kRiskLapseMax] = diagnostics.risk_lapse_max;
+  pdata->hdata[kRiskV2] = diagnostics.risk_v2;
+  pdata->hdata[kGhL2] = diagnostics.gh_l2;
+  pdata->hdata[kReductionL2] = diagnostics.reduction_l2;
+  pdata->hdata[kCurlL2] = diagnostics.curl_l2;
+  pdata->hdata[kConstraintVeto] = diagnostics.constraint_veto ? 1.0 : 0.0;
+  pdata->hdata[kControllerFrozen] = diagnostics.controller_frozen ? 1.0 : 0.0;
+  pdata->hdata[kControllerCompleted] = diagnostics.controller_completed ? 1.0 : 0.0;
 
   auto &indcs = mesh->mb_indcs;
   const auto adm_vars = mesh->pmb_pack->padm->adm;
@@ -174,15 +191,19 @@ void FinishControlledTransition(ParameterInput *pin, Mesh *mesh) {
     if (file == nullptr) std::exit(EXIT_FAILURE);
     std::fprintf(file, "# time cycles initial_state_Linf initial_G_Linf "
                        "initial_arel_Linf initial_shift_Linf min_cell_r "
-                       "final_state_Linf bad_state delta_q delta_p\n");
+                       "final_state_Linf bad_state delta_q delta_p xi xi_dot "
+                       "completed constraint_veto\n");
     std::fprintf(file, "%.17e %d %.17e %.17e %.17e %.17e %.17e %.17e "
-                       "%.17e %.17e %.17e\n",
+                       "%.17e %.17e %.17e %.17e %.17e %d %d\n",
                  mesh->time, mesh->ncycle, initial_match.regular_state_linf,
                  initial_match.relative_spatial_linf,
                  initial_match.relative_lapse_linf,
                  initial_match.relative_shift_linf,
                  initial_match.minimum_cell_radius, state_max, bad_state,
-                 module->controller.delta_q, module->controller.delta_p);
+                 module->controller.delta_q, module->controller.delta_p,
+                 module->controller.xi, module->controller.xi_dot,
+                 module->continuation_completed ? 1 : 0,
+                 module->continuation_constraint_veto ? 1 : 0);
     std::fclose(file);
     std::cout << "reference-GH controlled Schwarzschild final: time="
               << mesh->time << " state Linf=" << state_max

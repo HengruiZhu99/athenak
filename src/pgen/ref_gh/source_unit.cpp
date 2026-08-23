@@ -794,7 +794,8 @@ void ScanReferencePaths(ParameterInput *pin) {
   DvceArray2D<Real> samples("ref_gh path scan samples", kMeasures, kSamples);
   const ref_gh::ControlledReferenceParameters base{
       1.0, {0.0, 0.0, 0.0}, 0.30, 1.5, 1.0,
-      ref_gh::kShrinkingWidthPath, 0.20, 4.0, 0.50, 0.60,
+      ref_gh::kShrinkingWidthPath, 0.20, 4.0,
+      ref_gh::kLegacyTimeActivation, 0.0, 0.0, 0.0, 0.50, 0.60,
       0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
   const std::string filename =

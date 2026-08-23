@@ -9,12 +9,14 @@
 
 #include "athena.hpp"
 #include "bvals/bvals.hpp"
+#include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "driver/driver.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "ref_gh/ref_gh.hpp"
+#include "ref_gh/feedback_continuation.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_provider_cache.hpp"
@@ -272,6 +274,8 @@ TaskStatus RefGh::CopyU(Driver *driver, int stage) {
       controller_base.delta_q_dot += delta*controller.delta_q_dot;
       controller_base.delta_p += delta*controller.delta_p;
       controller_base.delta_p_dot += delta*controller.delta_p_dot;
+      controller_base.xi += delta*controller.xi;
+      controller_base.xi_dot += delta*controller.xi_dot;
     }
   } else if (stage == 1) {
     Kokkos::deep_copy(DevExeSpace(), u1, u0);
@@ -288,6 +292,19 @@ void RefGh::PersistControllerState() {
   pinput->SetReal("ref_gh", "controller_delta_q_dot", controller.delta_q_dot);
   pinput->SetReal("ref_gh", "controller_delta_p", controller.delta_p);
   pinput->SetReal("ref_gh", "controller_delta_p_dot", controller.delta_p_dot);
+  pinput->SetReal("ref_gh", "continuation_xi", controller.xi);
+  pinput->SetReal("ref_gh", "continuation_xi_dot", controller.xi_dot);
+  pinput->SetBoolean("ref_gh", "continuation_constraint_veto",
+                     continuation_constraint_veto);
+  pinput->SetBoolean("ref_gh", "continuation_frozen", continuation_frozen);
+  pinput->SetBoolean("ref_gh", "continuation_completed",
+                     continuation_completed);
+  pinput->SetReal("ref_gh", "continuation_veto_start_time",
+                  continuation_veto_start_time);
+  pinput->SetReal("ref_gh", "continuation_veto_start_level",
+                  continuation_veto_start_level);
+  pinput->SetReal("ref_gh", "continuation_veto_last_level",
+                  continuation_veto_last_level);
   pinput->SetReal("ref_gh", "controller_generation",
                   static_cast<Real>(controller_generation));
 }
@@ -299,6 +316,13 @@ TaskStatus RefGh::MeasureController(Driver *driver, const int stage) {
 
 void RefGh::MeasureControllerAtTime(const Real stage_time) {
   if (!opt.reference_controlled) return;
+
+  if (opt.continuation_mode == 1) {
+    const Real coordinate = stage_time/(opt.tau_transition*opt.reference_mass);
+    controller.xi = std::max(0.0, std::min(1.0, coordinate));
+    controller.xi_dot = (coordinate > 0.0 && coordinate < 1.0)
+        ? 1.0/(opt.tau_transition*opt.reference_mass) : 0.0;
+  }
 
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
@@ -576,7 +600,8 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
   controller_diagnostics.r_core = opt.transition_path == kFixedCorePath
       ? opt.r_core0*mass
       : opt.r_core0*mass*std::exp(-stage_time/(opt.tau_core*mass));
-  const Real activation_coordinate = stage_time/(opt.tau_transition*mass);
+  const Real activation_coordinate = opt.continuation_mode == 0
+      ? stage_time/(opt.tau_transition*mass) : controller.xi;
   if (activation_coordinate <= 0.0) {
     controller_diagnostics.transition_amplitude = 0.0;
   } else if (activation_coordinate >= 1.0) {
@@ -589,13 +614,12 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
   const Real r_full = opt.transition_path == kFixedWidthPath
       ? controller_diagnostics.r_core + opt.transition_width*mass
       : (1.0 + opt.kappa_core)*controller_diagnostics.r_core;
-  const bool feedback_active = opt.controller_enabled && shell_valid
+  const bool exponent_feedback_active = opt.controller_enabled && shell_valid
       && r_full + opt.controller_fit_buffer_cells*finest_spacing < fit_min;
-  controller_diagnostics.feedback_active = feedback_active;
 
   // Freeze all four variables if feedback is disabled or the shell is invalid.
-  controller_rhs = {0.0, 0.0, 0.0, 0.0};
-  if (feedback_active) {
+  controller_rhs = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  if (exponent_feedback_active) {
     const Real omega_q = opt.controller_omega_q/mass;
     const Real omega_p = opt.controller_omega_p/mass;
     const Real raw_q_acceleration =
@@ -614,6 +638,43 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
         *std::tanh(raw_p_acceleration/acceleration_limit);
   }
 
+  const FeedbackContinuationParameters parameters{
+      opt.continuation_v_max/mass, opt.continuation_tau_v*mass,
+      opt.continuation_xi_end_start, opt.continuation_risk_slow,
+      opt.continuation_risk_stop, opt.continuation_condition_stop,
+      opt.continuation_lapse_min_stop, opt.continuation_lapse_max_stop,
+      opt.continuation_v2_stop};
+  const FeedbackContinuationObservables observables{
+      condition_max, -minus_relative_lapse_min, relative_lapse_max, v2_max};
+  const Real diagnostic_xi = opt.continuation_mode == 0
+      ? std::max(0.0, std::min(1.0, activation_coordinate)) : controller.xi;
+  const FeedbackContinuationCommand command = EvaluateFeedbackContinuation(
+      parameters, observables, diagnostic_xi,
+      opt.continuation_mode == 2 ? controller.xi_dot : 0.0,
+      continuation_constraint_veto, continuation_completed);
+  controller_diagnostics.risk = command.risk;
+  controller_diagnostics.risk_condition = command.risk_condition;
+  controller_diagnostics.risk_lapse_min = command.risk_lapse_min;
+  controller_diagnostics.risk_lapse_max = command.risk_lapse_max;
+  controller_diagnostics.risk_v2 = command.risk_v2;
+  controller_diagnostics.risk_factor = command.risk_factor;
+  controller_diagnostics.endpoint_factor = command.endpoint_factor;
+  if (opt.continuation_mode == 2) {
+    controller_rhs.xi = command.xi_rhs;
+    controller_rhs.xi_dot = command.xi_dot_rhs;
+    controller_diagnostics.xi_ddot = command.xi_dot_rhs;
+    controller_diagnostics.v_cmd = command.v_cmd;
+    continuation_frozen = command.v_cmd == 0.0;
+    controller_diagnostics.feedback_active = command.v_cmd > 0.0;
+  } else {
+    controller_diagnostics.xi_ddot = 0.0;
+    controller_diagnostics.v_cmd = 0.0;
+    controller_diagnostics.feedback_active = exponent_feedback_active;
+  }
+  controller_diagnostics.constraint_veto = continuation_constraint_veto;
+  controller_diagnostics.controller_frozen = continuation_frozen;
+  controller_diagnostics.controller_completed = continuation_completed;
+
   if (invalid_max > 0.0 || !std::isfinite(controller_diagnostics.lambda_min)
       || !std::isfinite(controller_diagnostics.relative_lapse_min)) {
     std::cout << "### FATAL ERROR: Ref-GH controller conditioning became invalid at "
@@ -622,6 +683,104 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
     std::exit(EXIT_FAILURE);
   }
   DebugFence("ref_gh MeasureController");
+}
+
+bool RefGh::UpdateContinuationConstraintVeto(const Real time) {
+  if (opt.continuation_mode != 2) return false;
+  const bool old_veto = continuation_constraint_veto;
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  auto &size = pmy_pack->pmb->mb_size;
+  const auto constraints = u_con;
+  const auto adm_vars = pmy_pack->padm->adm;
+  const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  enum ConstraintMoment {kGh2, kReduction2, kCurl2, kVolume, kMomentCount};
+  array_sum::GlobalSum sums;
+  Kokkos::parallel_reduce(
+      "ref_gh continuation constraint veto",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, pmy_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, array_sum::GlobalSum &total) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real detg = adm::SpatialDet(
+            adm_vars.g_dd(m, 0, 0, k, j, i),
+            adm_vars.g_dd(m, 0, 1, k, j, i),
+            adm_vars.g_dd(m, 0, 2, k, j, i),
+            adm_vars.g_dd(m, 1, 1, k, j, i),
+            adm_vars.g_dd(m, 1, 2, k, j, i),
+            adm_vars.g_dd(m, 2, 2, k, j, i));
+        const Real volume = size.d_view(m).dx1*size.d_view(m).dx2
+                            *size.d_view(m).dx3
+                            *Kokkos::sqrt(Kokkos::abs(detg));
+        Real gh2 = 0.0;
+        for (int a = 0; a < 4; ++a) {
+          const Real value = constraints(m, a, k, j, i);
+          gh2 += value*value;
+        }
+        const Real reduction = constraints(m, 4, k, j, i);
+        const Real curl = constraints(m, 5, k, j, i);
+        total.the_array[kGh2] += volume*gh2;
+        total.the_array[kReduction2] += volume*reduction*reduction;
+        total.the_array[kCurl2] += volume*curl*curl;
+        total.the_array[kVolume] += volume;
+      }, Kokkos::Sum<array_sum::GlobalSum>(sums));
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, sums.the_array, NREDUCTION_VARIABLES,
+                MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  if (!(sums.the_array[kVolume] > 0.0)
+      || !std::isfinite(sums.the_array[kGh2])
+      || !std::isfinite(sums.the_array[kReduction2])
+      || !std::isfinite(sums.the_array[kCurl2])) {
+    std::cout << "### FATAL ERROR: Ref-GH continuation constraint norms are invalid "
+              << "at time=" << time << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  controller_diagnostics.gh_l2 =
+      std::sqrt(sums.the_array[kGh2]/sums.the_array[kVolume]);
+  controller_diagnostics.reduction_l2 =
+      std::sqrt(sums.the_array[kReduction2]/sums.the_array[kVolume]);
+  controller_diagnostics.curl_l2 =
+      std::sqrt(sums.the_array[kCurl2]/sums.the_array[kVolume]);
+  const Real level = std::max(
+      controller_diagnostics.gh_l2/opt.continuation_gh_warning,
+      std::max(controller_diagnostics.reduction_l2
+                   /opt.continuation_reduction_warning,
+               controller_diagnostics.curl_l2/opt.continuation_curl_warning));
+  if (level <= 1.0) {
+    continuation_constraint_veto = false;
+    continuation_frozen = false;
+    continuation_veto_start_time = -1.0;
+    continuation_veto_start_level = -1.0;
+    continuation_veto_last_level = level;
+    if (old_veto != continuation_constraint_veto) ++controller_generation;
+    PersistControllerState();
+    return old_veto != continuation_constraint_veto;
+  }
+  if (!continuation_constraint_veto) {
+    continuation_constraint_veto = true;
+    continuation_frozen = true;
+    continuation_veto_start_time = time;
+    continuation_veto_start_level = level;
+  }
+  const Real frozen_duration = time - continuation_veto_start_time;
+  const bool doubled_warning = level >= 2.0;
+  const bool persistent_growth =
+      frozen_duration >= opt.continuation_growth_time*opt.reference_mass
+      && level > continuation_veto_start_level;
+  continuation_veto_last_level = level;
+  if (old_veto != continuation_constraint_veto) ++controller_generation;
+  PersistControllerState();
+  if (doubled_warning || persistent_growth) {
+    std::cout << "### FATAL ERROR: Ref-GH continuation constraint veto failed closed: "
+              << "time=" << time << " normalized-level=" << level
+              << " initial-level=" << continuation_veto_start_level
+              << " frozen-duration=" << frozen_duration << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  return old_veto != continuation_constraint_veto;
 }
 
 Real RefGh::StageTime(const Driver *driver, const int target_stage) const {
@@ -691,7 +850,17 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   const ControlledReferenceParameters controlled{
       mass, {center_x, center_y, center_z}, opt.r_core0, opt.tau_core,
       opt.kappa_core, opt.transition_path, opt.transition_width,
-      opt.tau_transition, opt.regularization_outer_start,
+      opt.tau_transition,
+      opt.continuation_mode == 0 ? kLegacyTimeActivation
+                                 : kContinuationActivation,
+      opt.continuation_mode == 1
+          ? std::max(0.0, std::min(1.0,
+              time/(opt.tau_transition*mass))) : controller.xi,
+      opt.continuation_mode == 1
+          ? ((time > 0.0 && time < opt.tau_transition*mass)
+             ? 1.0/(opt.tau_transition*mass) : 0.0) : controller.xi_dot,
+      opt.continuation_mode == 1 ? 0.0 : controller_rhs.xi_dot,
+      opt.regularization_outer_start,
       opt.regularization_outer_end, controller.delta_q,
       controller.delta_q_dot, controller_rhs.delta_q_dot,
       controller.delta_p, controller.delta_p_dot,
@@ -1211,6 +1380,23 @@ TaskStatus RefGh::ExpRKUpdate(Driver *driver, int stage) {
     controller.delta_p_dot = gam0*controller.delta_p_dot
                              + gam1*controller_base.delta_p_dot
                              + beta_dt*controller_rhs.delta_p_dot;
+    if (opt.continuation_mode == 2) {
+      controller.xi = gam0*controller.xi
+                      + gam1*controller_base.xi
+                      + beta_dt*controller_rhs.xi;
+      controller.xi_dot = gam0*controller.xi_dot
+                          + gam1*controller_base.xi_dot
+                          + beta_dt*controller_rhs.xi_dot;
+      if (controller.xi >= 1.0) {
+        controller.xi = 1.0;
+        controller.xi_dot = 0.0;
+        continuation_completed = true;
+        continuation_frozen = true;
+      } else {
+        if (controller.xi <= 0.0) controller.xi = 0.0;
+        if (controller.xi_dot < 0.0) controller.xi_dot = 0.0;
+      }
+    }
     ++controller_generation;
     const Real mass = opt.reference_mass;
     const bool invalid = !std::isfinite(controller.delta_q)
@@ -1220,13 +1406,19 @@ TaskStatus RefGh::ExpRKUpdate(Driver *driver, int stage) {
         || std::abs(controller.delta_q) > opt.controller_delta_bound
         || std::abs(controller.delta_p) > opt.controller_delta_bound
         || std::abs(controller.delta_q_dot)*mass > opt.controller_rate_bound
-        || std::abs(controller.delta_p_dot)*mass > opt.controller_rate_bound;
+        || std::abs(controller.delta_p_dot)*mass > opt.controller_rate_bound
+        || !std::isfinite(controller.xi) || !std::isfinite(controller.xi_dot)
+        || controller.xi < 0.0 || controller.xi > 1.0
+        || controller.xi_dot < 0.0
+        || controller.xi_dot*mass > opt.continuation_v_max;
     if (invalid) {
       std::cout << "### FATAL ERROR: Ref-GH controller crossed a hard state bound: "
                 << "delta_q=" << controller.delta_q
                 << " delta_q_dot*M=" << controller.delta_q_dot*mass
                 << " delta_p=" << controller.delta_p
                 << " delta_p_dot*M=" << controller.delta_p_dot*mass
+                << " xi=" << controller.xi
+                << " xi_dot*M=" << controller.xi_dot*mass
                 << " generation=" << controller_generation << std::endl;
       std::exit(EXIT_FAILURE);
     }
