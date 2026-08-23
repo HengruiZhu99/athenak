@@ -19,6 +19,7 @@
 #include "pgen/pgen.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
+#include "ref_gh/reference_controlled_schwarzschild.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -41,7 +42,8 @@ void ControlledTransitionHistory(HistoryData *pdata, Mesh *mesh) {
     kRelativeLapseMin, kRelativeLapseMax, kV2Max, kPsiMax, kInversePsiMax,
     kMinusPhysicalLapseMin, kPhysicalLapseMax, kCharacteristicMax,
     kRCore, kTransitionAmplitude, kFeedbackActive, kShellValid,
-    kControllerGeneration, kHistoryCount
+    kControllerGeneration, kTransitionRate, kTransitionAcceleration,
+    kHistoryCount
   };
   static_assert(kHistoryCount <= NHISTORY_VARIABLES,
                 "controlled transition history exceeds fixed history storage");
@@ -50,7 +52,8 @@ void ControlledTransitionHistory(HistoryData *pdata, Mesh *mesh) {
     "fit-cells", "G-lmin", "G-lmax", "detG13-min", "detG13-max",
     "G-cond-max", "arel-min", "arel-max", "v2-max", "Psi-max",
     "invPsi-max", "minus-a-min", "a-max", "char-max", "r-core",
-    "transition", "feedback", "shell-valid", "ctrl-gen"
+    "transition", "feedback", "shell-valid", "ctrl-gen", "transition-dt",
+    "transition-dtt"
   };
   pdata->nhist = kHistoryCount;
   for (int n = 0; n < kHistoryCount; ++n) {
@@ -90,6 +93,13 @@ void ControlledTransitionHistory(HistoryData *pdata, Mesh *mesh) {
   pdata->hdata[kShellValid] = diagnostics.fitting_shell_valid ? 1.0 : 0.0;
   pdata->hdata[kControllerGeneration] =
       static_cast<Real>(module->controller_generation);
+  const ref_gh::ReferenceJet time =
+      ref_gh::CoordinateJet(mesh->time, 0);
+  const ref_gh::ReferenceJet activation = ref_gh::QuinticSmoothstep(
+      time*ref_gh::ConstantJet(
+          1.0/(module->opt.tau_transition*module->opt.reference_mass)));
+  pdata->hdata[kTransitionRate] = activation.d[0];
+  pdata->hdata[kTransitionAcceleration] = activation.dd[0][0];
 
   auto &indcs = mesh->mb_indcs;
   const auto adm_vars = mesh->pmb_pack->padm->adm;

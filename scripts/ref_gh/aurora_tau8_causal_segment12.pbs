@@ -1,0 +1,177 @@
+#!/bin/bash -l
+# One restart-verified segment of the causally enlarged tau-8 campaign.
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=14:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_t8_seg
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+: "${EXPECTED_EXE_SHA256:?submit with EXPECTED_EXE_SHA256=<sha256>}"
+: "${RESOLUTION_LABEL:?coarse, medium, or fine}"
+: "${ROOT_N:?96, 144, or 192}"
+: "${MB_N:?32, 48, or 64}"
+: "${START_TIME:?0, 4, or 8}"
+: "${TARGET_TIME:?4, 8, or 10}"
+
+case "${RESOLUTION_LABEL}:${ROOT_N}:${MB_N}" in
+  coarse:96:32) expected_dx=0.0625 ;;
+  medium:144:48) expected_dx=0.0416666666666666667 ;;
+  fine:192:64) expected_dx=0.03125 ;;
+  *) echo 'invalid resolution tuple' >&2; exit 2 ;;
+esac
+case "${RESOLUTION_LABEL}:${START_TIME}:${TARGET_TIME}" in
+  medium:0:4|medium:4:8|medium:8:10|coarse:0:4|coarse:4:8|fine:0:4|fine:4:8) ;;
+  *) echo 'segment violates the medium-first campaign order' >&2; exit 2 ;;
+esac
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_tau8_completion_causal.athinput"
+LABEL="tau8_${RESOLUTION_LABEL}"
+OUT="${CAMPAIGN_ROOT}/runs/${LABEL}_${START_TIME}_to_${TARGET_TIME}_${PBS_JOBID}"
+mkdir -p "${OUT}"
+cd "${OUT}"
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+actual_exe_sha256=$(sha256sum "${EXE}" | awk '{print $1}')
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test "${actual_exe_sha256}" = "${EXPECTED_EXE_SHA256}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+
+restart_args=()
+if test "${START_TIME}" != 0; then
+  : "${CHECKPOINT:?restart segment requires CHECKPOINT=<absolute path>}"
+  : "${EXPECTED_CHECKPOINT_SHA256:?restart segment requires checkpoint hash}"
+  test -s "${CHECKPOINT}"
+  actual_checkpoint_sha256=$(sha256sum "${CHECKPOINT}" | awk '{print $1}')
+  test "${actual_checkpoint_sha256}" = "${EXPECTED_CHECKPOINT_SHA256}"
+  restart_args=(-r "${CHECKPOINT}")
+fi
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "executable_sha256=${actual_exe_sha256}"
+  echo "resolution=${RESOLUTION_LABEL}"
+  echo "root_cells=${ROOT_N}"
+  echo "meshblock_cells=${MB_N}"
+  echo "dx_min=${expected_dx}"
+  echo "start_time=${START_TIME}"
+  echo "target_time=${TARGET_TIME}"
+  if test "${START_TIME}" != 0; then
+    echo "checkpoint=${CHECKPOINT}"
+    echo "checkpoint_sha256=${EXPECTED_CHECKPOINT_SHA256}"
+  fi
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "$0"
+} > provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 12
+
+command=("${EXE}" "${restart_args[@]}" -i "${INPUT}"
+  "mesh/nx1=${ROOT_N}" "mesh/nx2=${ROOT_N}" "mesh/nx3=${ROOT_N}"
+  "meshblock/nx1=${MB_N}" "meshblock/nx2=${MB_N}" "meshblock/nx3=${MB_N}"
+  "job/basename=${LABEL}" "time/tlim=${TARGET_TIME}" time/nlim=-1)
+printf '%q ' mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${command[@]}" > command.txt
+printf '\n' >> command.txt
+
+set +e
+/usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${command[@]}" > "${LABEL}.log" 2>&1
+status=$?
+set -e
+
+{
+  echo "exit_status=${status}"
+  echo "start_time=${START_TIME}"
+  echo "target_time=${TARGET_TIME}"
+  for history in "${LABEL}.ref_gh.hst" "${LABEL}.user.hst" \
+      "${LABEL}.adm_common0.hst"; do
+    if test -s "${history}"; then
+      echo -n "last_${history}="
+      tail -1 "${history}"
+    fi
+  done
+} > segment_status.txt
+test "${status}" -eq 0
+test -s "${LABEL}-controlled-transition.dat"
+for instance in $(seq 0 8); do
+  test -s "${LABEL}.adm_common${instance}.hst"
+done
+test -s "${LABEL}.ref_gh_maxloc.tsv"
+test -s "${LABEL}.adm_common_maxloc.tsv"
+awk -v target="${TARGET_TIME}" '
+  BEGIN {ok=0}
+  !/^#/ && $1 >= target-1.e-10 && $2 > 0 && $14 < 0 && $22 == 0 {ok=1}
+  END {exit !ok}
+' "${LABEL}.ref_gh.hst"
+awk -v target="${TARGET_TIME}" '
+  BEGIN {ok=0}
+  !/^#/ {
+    if ($3 != 0 || $4 != 0 || $5 != 0 || $6 != 0 || $10 <= 0
+        || $12 <= 0 || $15 <= 0 || $25 != 0 || $27 != 0) exit 1
+    if ($1 >= target-1.e-10) {
+      if (target >= 8 && ($24 != 1 || $28 != 0 || $29 != 0)) exit 1
+      ok=1
+    }
+  }
+  END {exit !ok}
+' "${LABEL}.user.hst"
+awk -v target="${TARGET_TIME}" '!/^#/ {exit !($1 >= target-1.e-10 && $9 == 0 && $10 == 0 && $11 == 0)}' \
+  "${LABEL}-controlled-transition.dat"
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  "${LABEL}.log"
+
+checkpoint=$(find rst -type f -name '*.rst' | sort | tail -1)
+test -s "${checkpoint}"
+sha256sum "${checkpoint}" > checkpoint.sha256
+realpath "${checkpoint}" > next_checkpoint.txt
+{
+  echo "result=PASS"
+  echo "resolution=${RESOLUTION_LABEL}"
+  echo "dx_min=${expected_dx}"
+  echo "start_time=${START_TIME}"
+  echo "target_time=${TARGET_TIME}"
+  echo 'candidate=fixed_core_tau8_compatible_open_loop'
+  echo 'controller_enabled=false'
+  echo 'delta_q=0'
+  echo 'delta_p=0'
+  if awk -v target="${TARGET_TIME}" 'BEGIN {exit !(target >= 8)}'; then
+    echo 'transition_amplitude=1'
+    echo 'transition_rate=0'
+    echo 'transition_acceleration=0'
+  fi
+} >> segment_status.txt
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' -o -name '*.sha256' -o -name '*.dat' \) -print0 \
+  | sort -z | xargs -0 sha256sum > compact_sha256.txt

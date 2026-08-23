@@ -1,0 +1,137 @@
+#!/bin/bash -l
+# Current-source PVC regression and authoritative enlarged-tree audit.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_t8_pre
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_tau8_completion_causal.athinput"
+OUT="${CAMPAIGN_ROOT}/runs/preflight_${PBS_JOBID}"
+mkdir -p "${OUT}"
+cd "${OUT}"
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens \
+  > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 12
+
+run_one_rank() {
+  local name="$1"
+  local input="$2"
+  shift 2
+  mkdir -p "${OUT}/${name}"
+  cd "${OUT}/${name}"
+  mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth \
+    gpu_tile_compact.sh "${EXE}" -i "${input}" "$@" > "${name}.log" 2>&1 || return 1
+}
+
+run_one_rank source_phi "${SRC}/inputs/ref_gh/ref_gh_source_unit.athinput"
+grep -q 'Phi-ordering algebra maximum error' source_phi/source_phi.log
+grep -q 'dynamic spatial oracle passed' source_phi/source_phi.log
+run_one_rank minkowski "${SRC}/tst/inputs/ref_gh_minkowski.athinput"
+run_one_rank dynamic_lapse "${SRC}/tst/inputs/ref_gh_time_dependent_reference.athinput"
+run_one_rank dynamic_spatial "${SRC}/tst/inputs/ref_gh_time_dependent_spatial.athinput"
+run_one_rank stationary_trumpet "${SRC}/tst/inputs/ref_gh_stationary_trumpet.athinput"
+
+cd "${OUT}"
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -m -i "${INPUT}" \
+  > mesh_structure.txt 2>&1
+grep -q 'Root grid = 3 x 3 x 3 MeshBlocks' mesh_structure.txt
+grep -q 'Total number of MeshBlocks = 272' mesh_structure.txt
+grep -q 'Physical level = 1 (logical level = 3): 208 MeshBlocks' mesh_structure.txt
+grep -q 'Physical level = 2 (logical level = 4): 64 MeshBlocks' mesh_structure.txt
+mv mesh_structure.dat authoritative_mesh_structure.dat
+
+mkdir -p diagnostic_smoke
+cd diagnostic_smoke
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+  mesh/nx1=24 mesh/nx2=24 mesh/nx3=24 \
+  meshblock/nx1=8 meshblock/nx2=8 meshblock/nx3=8 \
+  job/basename=tau8_diagnostic_smoke time/tlim=0.0 time/nlim=0 \
+  output3/dt=100.0 > diagnostic_smoke.log 2>&1
+for instance in $(seq 0 8); do
+  test -s "tau8_diagnostic_smoke.adm_common${instance}.hst"
+done
+test -s tau8_diagnostic_smoke.adm_common_maxloc.tsv
+test "$(grep -c $'\tADM_H\t' tau8_diagnostic_smoke.adm_common_maxloc.tsv)" -eq 1
+test "$(grep -c $'\tADM_momentum\t' tau8_diagnostic_smoke.adm_common_maxloc.tsv)" -eq 1
+awk '!/^#/ {exit !($24 == 0 && $25 == 0 && $28 == 0 && $29 == 0)}' \
+  tau8_diagnostic_smoke.user.hst
+
+cd "${OUT}"
+{
+  echo 'result=PASS'
+  echo 'backend=Kokkos_SYCL_INTEL_PVC'
+  echo 'tiles=12'
+  echo 'tree_total=272'
+  echo 'physical_level_1_blocks=208'
+  echo 'physical_level_2_blocks=64'
+  echo 'finest_coverage=[-4M,4M]^3'
+  echo 'transition_shell_on_finest=true'
+  sha256sum "${EXE}"
+} > preflight_status.txt
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' \) -print0 | sort -z | xargs -0 sha256sum \
+  > compact_sha256.txt

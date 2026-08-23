@@ -14,6 +14,7 @@
 #include <limits>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "athena.hpp"
 #include "coordinates/cell_locations.hpp"
@@ -34,7 +35,9 @@
 // Constructor: also calls BaseTypeOutput base class constructor
 
 HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op) :
-  BaseTypeOutput(pin, pm, op) {
+  BaseTypeOutput(pin, pm, op),
+  common_adm_max_location_time(std::numeric_limits<Real>::quiet_NaN()),
+  common_adm_max_location_cycle(-1) {
   // cycle through physics modules and add HistoryData struct for each
   hist_data.clear();
 
@@ -63,7 +66,7 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
                   << std::endl;
         std::exit(EXIT_FAILURE);
       }
-      for (int chunk = 0; chunk < 6; ++chunk) {
+      for (int chunk = 0; chunk < 9; ++chunk) {
         hist_data.emplace_back(PhysicsModule::CommonADMConstraints, chunk);
         hist_data.back().fd_order = common_fd_order;
       }
@@ -109,9 +112,10 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
     }
   }
 
-  static const char *prefix[12] = {
+  static const char *prefix[18] = {
     "all", "lt1", "lt2", "r2to4", "r4to8", "gt8",
-    "if64", "if32", "if16", "if8", "if4", "if2"
+    "if64", "if32", "if16", "if8", "if4", "if2",
+    "r0to1", "r1to2", "r2to3", "r3to4", "r4to6", "r6to8"
   };
   pdata->nhist = 14;
   for (int local_region = 0; local_region < 2; ++local_region) {
@@ -143,6 +147,10 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
   const auto adm_vars = pm->pmb_pack->padm->adm;
   const int first_region = 2*pdata->instance;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  if (pdata->instance == 0 && pm->pmb_pack->prefgh != nullptr
+      && pm->pmb_pack->prefgh->opt.max_location_diagnostics) {
+    AppendCommonADMMaxLocationDiagnostics(pm);
+  }
   array_sum::GlobalSum sums;
   Kokkos::parallel_reduce(
       "common ADM fixed-region sums", Kokkos::RangePolicy<>(DevExeSpace(),
@@ -182,11 +190,17 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
           if (region == 3) include = r >= 2.0 && r < 4.0;
           if (region == 4) include = r >= 4.0 && r < 8.0;
           if (region == 5) include = r >= 8.0;
-          if (region >= 6) {
+          if (region >= 6 && region < 12) {
             const Real interface_radius = 64.0/std::pow(2.0, region - 6);
             const Real half_width = interface_radius/8.0;
             include = Kokkos::abs(cube_r - interface_radius) < half_width;
           }
+          if (region == 12) include = r < 1.0;
+          if (region == 13) include = r >= 1.0 && r < 2.0;
+          if (region == 14) include = r >= 2.0 && r < 3.0;
+          if (region == 15) include = r >= 3.0 && r < 4.0;
+          if (region == 16) include = r >= 4.0 && r < 6.0;
+          if (region == 17) include = r >= 6.0 && r < 8.0;
           if (include) {
             const int base = 7*local_region;
             total.the_array[base + 0] += volume*h;
@@ -226,10 +240,16 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
               || (region == 3 && r >= 2.0 && r < 4.0)
               || (region == 4 && r >= 4.0 && r < 8.0)
               || (region == 5 && r >= 8.0);
-          if (region >= 6) {
+          if (region >= 6 && region < 12) {
             const Real interface_radius = 64.0/std::pow(2.0, region - 6);
             include = Kokkos::abs(cube_r - interface_radius) < interface_radius/8.0;
           }
+          if (region == 12) include = r < 1.0;
+          if (region == 13) include = r >= 1.0 && r < 2.0;
+          if (region == 14) include = r >= 2.0 && r < 3.0;
+          if (region == 15) include = r >= 3.0 && r < 4.0;
+          if (region == 16) include = r >= 4.0 && r < 6.0;
+          if (region == 17) include = r >= 6.0 && r < 8.0;
           if (include) maximum = fmax(maximum, Kokkos::abs(
               common(m, adm::ADM::I_COMMON_H, k, j, i)));
         }, Kokkos::Max<Real>(maxima[2*local_region]));
@@ -258,10 +278,16 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
               || (region == 3 && r >= 2.0 && r < 4.0)
               || (region == 4 && r >= 4.0 && r < 8.0)
               || (region == 5 && r >= 8.0);
-          if (region >= 6) {
+          if (region >= 6 && region < 12) {
             const Real interface_radius = 64.0/std::pow(2.0, region - 6);
             include = Kokkos::abs(cube_r - interface_radius) < interface_radius/8.0;
           }
+          if (region == 12) include = r < 1.0;
+          if (region == 13) include = r >= 1.0 && r < 2.0;
+          if (region == 14) include = r >= 2.0 && r < 3.0;
+          if (region == 15) include = r >= 3.0 && r < 4.0;
+          if (region == 16) include = r >= 4.0 && r < 6.0;
+          if (region == 17) include = r >= 6.0 && r < 8.0;
           if (include) maximum = fmax(maximum, std::sqrt(
               common(m, adm::ADM::I_COMMON_M2, k, j, i)));
         }, Kokkos::Max<Real>(maxima[2*local_region + 1]));
@@ -305,6 +331,120 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
           ? pm->dt/pm->pmb_pack->pz4c->dtnew : 0.0;
     }
   }
+}
+
+// Record the global locations of the common ADM Hamiltonian and momentum
+// maxima.  This diagnostic is deliberately unmasked and is emitted only when
+// the Ref-GH max-location telemetry is enabled.
+void HistoryOutput::AppendCommonADMMaxLocationDiagnostics(Mesh *pm) {
+  if (common_adm_max_location_time == pm->time
+      && common_adm_max_location_cycle == pm->ncycle) return;
+  common_adm_max_location_time = pm->time;
+  common_adm_max_location_cycle = pm->ncycle;
+  constexpr int kDiagnosticCount = 2;
+  constexpr int kRecordFields = 11;
+  constexpr const char *names[kDiagnosticCount] = {
+    "ADM_H", "ADM_momentum"
+  };
+  auto &indcs = pm->mb_indcs;
+  auto &size = pm->pmb_pack->pmb->mb_size;
+  const auto common = pm->pmb_pack->padm->u_common;
+  const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  Real local_records[kDiagnosticCount*kRecordFields] = {};  // NOLINT
+  using MaxLoc = Kokkos::MaxLoc<Real, int>;
+
+  for (int diagnostic = 0; diagnostic < kDiagnosticCount; ++diagnostic) {
+    MaxLoc::value_type maximum;
+    Kokkos::parallel_reduce(
+        "common ADM maximum location",
+        Kokkos::RangePolicy<>(DevExeSpace(),
+            0, pm->pmb_pack->nmb_thispack*ncells),
+        KOKKOS_LAMBDA(const int idx, MaxLoc::value_type &local_maximum) {
+          int work = idx;
+          const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+          const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+          const int k = work % indcs.nx3 + indcs.ks;
+          const int m = work/indcs.nx3;
+          const Real value = diagnostic == 0
+              ? Kokkos::abs(common(m, adm::ADM::I_COMMON_H, k, j, i))
+              : Kokkos::sqrt(common(m, adm::ADM::I_COMMON_M2, k, j, i));
+          const Real comparable = Kokkos::isfinite(value)
+              ? value : std::numeric_limits<Real>::max();
+          if (comparable >= local_maximum.val) {
+            local_maximum.val = comparable;
+            local_maximum.loc = idx;
+          }
+        }, MaxLoc(maximum));
+
+    int work = maximum.loc;
+    const int ii = work % indcs.nx1; work /= indcs.nx1;
+    const int jj = work % indcs.nx2; work /= indcs.nx2;
+    const int kk = work % indcs.nx3;
+    const int m = work/indcs.nx3;
+    const Real x = CellCenterX(ii, indcs.nx1,
+                               size.h_view(m).x1min, size.h_view(m).x1max);
+    const Real y = CellCenterX(jj, indcs.nx2,
+                               size.h_view(m).x2min, size.h_view(m).x2max);
+    const Real z = CellCenterX(kk, indcs.nx3,
+                               size.h_view(m).x3min, size.h_view(m).x3max);
+    const int offset = diagnostic*kRecordFields;
+    local_records[offset + 0] = maximum.val;
+    local_records[offset + 1] = std::sqrt(x*x + y*y + z*z);
+    local_records[offset + 2] = pm->pmb_pack->pmb->mb_lev.h_view(m);
+    local_records[offset + 3] = global_variable::my_rank;
+    local_records[offset + 4] = pm->pmb_pack->pmb->mb_gid.h_view(m);
+    local_records[offset + 5] = x;
+    local_records[offset + 6] = y;
+    local_records[offset + 7] = z;
+    local_records[offset + 8] = ii;
+    local_records[offset + 9] = jj;
+    local_records[offset + 10] = kk;
+  }
+
+  std::vector<Real> gathered;
+#if MPI_PARALLEL_ENABLED
+  if (global_variable::my_rank == 0) {
+    gathered.resize(global_variable::nranks*kDiagnosticCount*kRecordFields);
+  }
+  MPI_Gather(local_records, kDiagnosticCount*kRecordFields, MPI_ATHENA_REAL,
+             gathered.data(), kDiagnosticCount*kRecordFields, MPI_ATHENA_REAL,
+             0, MPI_COMM_WORLD);
+#else
+  gathered.assign(local_records,
+                  local_records + kDiagnosticCount*kRecordFields);
+#endif
+  if (global_variable::my_rank != 0) return;
+
+  const std::string filename =
+      out_params.file_basename + ".adm_common_maxloc.tsv";
+  FILE *file = std::fopen(filename.c_str(), "a+");
+  if (file == nullptr) {
+    std::cout << "### FATAL ERROR: unable to open common ADM max-location file "
+              << filename << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::fseek(file, 0, SEEK_END);
+  if (std::ftell(file) == 0) {
+    std::fprintf(file, "time\tcycle\tdiagnostic\tmaximum\tradius\tlevel\t"
+                       "rank\tgid\tx\ty\tz\ti\tj\tk\n");
+  }
+  for (int diagnostic = 0; diagnostic < kDiagnosticCount; ++diagnostic) {
+    const Real *best = nullptr;
+    for (int rank = 0; rank < global_variable::nranks; ++rank) {
+      const Real *candidate = gathered.data()
+          + (rank*kDiagnosticCount + diagnostic)*kRecordFields;
+      if (best == nullptr || candidate[0] > best[0]) best = candidate;
+    }
+    std::fprintf(file,
+        "%.17e\t%d\t%s\t%.17e\t%.17e\t%d\t%d\t%d\t"
+        "%.17e\t%.17e\t%.17e\t%d\t%d\t%d\n",
+        pm->time, pm->ncycle, names[diagnostic], best[0], best[1],
+        static_cast<int>(best[2]), static_cast<int>(best[3]),
+        static_cast<int>(best[4]), best[5], best[6], best[7],
+        static_cast<int>(best[8]), static_cast<int>(best[9]),
+        static_cast<int>(best[10]));
+  }
+  std::fclose(file);
 }
 
 void HistoryOutput::LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm) {

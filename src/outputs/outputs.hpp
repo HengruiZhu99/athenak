@@ -295,6 +295,8 @@ class HistoryOutput : public BaseTypeOutput {
 
   // vector of length [# of physics modules] containing hdata arrays
   std::vector<HistoryData> hist_data;
+  Real common_adm_max_location_time;
+  int common_adm_max_location_cycle;
 
   void LoadOutputData(Mesh *pm) override;
   void LoadHydroHistoryData(HistoryData *pdata, Mesh *pm);
@@ -303,6 +305,7 @@ class HistoryOutput : public BaseTypeOutput {
   void LoadFoGhHistoryData(HistoryData *pdata, Mesh *pm);
   void LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm);
   void LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm);
+  void AppendCommonADMMaxLocationDiagnostics(Mesh *pm);
   void WriteOutputFile(Mesh *pm, ParameterInput *pin) override;
 };
 
