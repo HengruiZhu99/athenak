@@ -42,6 +42,20 @@ void DumpVertexRHSFieldDiagnostic(Z4c *z4c, MeshBlockPack *pack,
   // Driver initialization invokes BoundaryRHS with stage zero before CalcRHS;
   // that storage is intentionally zero and is not a semidiscrete operator sample.
   if (stage <= 0 || path_prefix == nullptr || path_prefix[0] == '\0') return;
+  int diagnostic_stride = 1;
+  if (const char *stride_text =
+          std::getenv("ATHENA_Z4C_VC_RHS_FIELD_DIAGNOSTIC_STRIDE")) {
+    char *end = nullptr;
+    const long parsed = std::strtol(stride_text, &end, 10);
+    if (end == stride_text || *end != '\0' || parsed <= 0 ||
+        parsed > std::numeric_limits<int>::max()) {
+      std::cerr << "### FATAL ERROR: ATHENA_Z4C_VC_RHS_FIELD_DIAGNOSTIC_STRIDE "
+                   "must be a positive integer"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    diagnostic_stride = static_cast<int>(parsed);
+  }
   std::ostringstream path;
   path << path_prefix << ".rank" << std::setfill('0') << std::setw(6)
        << global_variable::my_rank << ".csv";
@@ -60,6 +74,8 @@ void DumpVertexRHSFieldDiagnostic(Z4c *z4c, MeshBlockPack *pack,
       Kokkos::create_mirror_view_and_copy(HostMemSpace(), z4c->u_rhs);
   const auto host_state =
       Kokkos::create_mirror_view_and_copy(HostMemSpace(), z4c->u0);
+  const auto host_constraints =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), z4c->u_con);
 
   std::ofstream output(path.str(), std::ios::trunc);
   if (!output) {
@@ -68,7 +84,7 @@ void DumpVertexRHSFieldDiagnostic(Z4c *z4c, MeshBlockPack *pack,
     std::exit(EXIT_FAILURE);
   }
   output << "schema,rank,nranks,time,cycle,rk_stage,topology_generation,"
-            "local_m,gid,level,relative_level,lx1,lx2,lx3,k,j,i,"
+            "diagnostic_stride,local_m,gid,level,relative_level,lx1,lx2,lx3,k,j,i,"
             "key1,key2,key3,role,canonical_owner,topological_multiplicity,"
             "local_edge_codimension,local_edge_distance,rho,x2,x3";
   output << ",nx1_intervals,nx2_intervals,nx3_intervals,"
@@ -78,6 +94,9 @@ void DumpVertexRHSFieldDiagnostic(Z4c *z4c, MeshBlockPack *pack,
   }
   for (int variable = 0; variable < Z4c::nz4c; ++variable) {
     output << ",rhs_" << Z4c::Z4c_names[variable];
+  }
+  for (int variable = 0; variable < Z4c::ncon; ++variable) {
+    output << ',' << Z4c::Constraint_names[variable];
   }
   output << '\n' << std::setprecision(std::numeric_limits<Real>::max_digits10);
 
@@ -89,6 +108,13 @@ void DumpVertexRHSFieldDiagnostic(Z4c *z4c, MeshBlockPack *pack,
     for (int k = layout.ks; k <= layout.ke; ++k) {
       for (int j = layout.js; j <= layout.je; ++j) {
         for (int i = layout.is; i <= layout.ie; ++i) {
+          if ((i - layout.is) % diagnostic_stride != 0 ||
+              (layout.nx2 > 1 &&
+               (j - layout.js) % diagnostic_stride != 0) ||
+              (layout.nx3 > 1 &&
+               (k - layout.ks) % diagnostic_stride != 0)) {
+            continue;
+          }
           const auto &record = topology.records.h_view(m, k, j, i);
           const int on_x1_edge = layout.nx1 > 1 &&
               (i == layout.is || i == layout.ie);
@@ -114,10 +140,11 @@ void DumpVertexRHSFieldDiagnostic(Z4c *z4c, MeshBlockPack *pack,
               ? Z4cPointX<VertexCenteredZ4c>(
                     k - layout.ks, layout.nx3, size.x3min, size.x3max)
               : 0.0;
-          output << "z4c_vc_rhs_field_v1," << global_variable::my_rank << ','
+          output << "z4c_vc_rhs_field_v2," << global_variable::my_rank << ','
                  << global_variable::nranks << ',' << mesh->time << ','
                  << mesh->ncycle << ',' << stage << ',' << topology.generation
-                 << ',' << m << ',' << gid << ',' << location.level << ','
+                 << ',' << diagnostic_stride << ',' << m << ',' << gid << ','
+                 << location.level << ','
                  << location.level - mesh->root_level << ',' << location.lx1
                  << ',' << location.lx2 << ',' << location.lx3 << ',' << k
                  << ',' << j << ',' << i << ',' << record.key.i1 << ','
@@ -135,6 +162,9 @@ void DumpVertexRHSFieldDiagnostic(Z4c *z4c, MeshBlockPack *pack,
           }
           for (int variable = 0; variable < Z4c::nz4c; ++variable) {
             output << ',' << host_rhs(m, variable, k, j, i);
+          }
+          for (int variable = 0; variable < Z4c::ncon; ++variable) {
+            output << ',' << host_constraints(m, variable, k, j, i);
           }
           output << '\n';
         }
