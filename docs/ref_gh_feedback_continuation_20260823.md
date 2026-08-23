@@ -1,0 +1,152 @@
+# Ref-GH feedback continuation, 2026-08-23
+
+## Status
+
+This branch implements the equation-preserving feedback clock requested in the
+controlling goal.  Local T0--T2 gates pass, including exact prescribed-law
+equivalence and restart continuity.  The required Aurora tau-8 replay has not
+run, so the risk thresholds below remain **candidates**, T3 has not started,
+and no closed-loop continuation or stability claim is made.
+
+The work is based exactly on
+`9c438dc619aa742404530c953243d71b2a01d8e6` from
+`codex/ref-gh-transition-path-ordering-diagnosis-20260822`.  The implementation
+branch is `codex/ref-gh-feedback-continuation-20260823`; the controller code and
+inputs are commit `9b86a5d97af9abb46b18c82c4895feb9887f0d5d`.
+
+Aurora BatchMode authentication was unavailable at the final local gate
+(`Permission denied (keyboard-interactive,hostbased)` and no control socket),
+so no PBS job was submitted.  The committed debug-queue script is ready for one
+node, all twelve PVC tiles, one MPI rank per tile.  When a job is queued, it is
+to be checked no more often than every 30 minutes.
+
+## Fixed mathematical scope
+
+The radial family, GH equations, compatible Phi ordering, dissipation, and
+profiles are unchanged.  The fixed core is
+
+```
+r_core = 0.30 M
+kappa_core = 1
+B = 0 for r <= 0.30 M
+B = 1 for r >= 0.60 M
+delta_q = delta_p = 0 exactly
+```
+
+Only the prescribed activation clock is replaced.  With the existing quintic
+smoothstep `S`, the reference uses `s=S(xi)` and exact constant jets outside
+`0<xi<1`:
+
+```
+d xi/dt     = xi_dot
+d xi_dot/dt = (v_cmd - xi_dot)/tau_v
+v_cmd       = v_max F_risk(R) F_end(xi)
+R           = max(R_G, R_a_min, R_a_max, R_v)
+R_G         = ln(kappa_G)/ln(kappa_stop)
+R_a_min     = ln(1/a_min)/ln(1/a_min_stop)
+R_a_max     = ln(a_max)/ln(a_max_stop)
+R_v         = sqrt(v2_max/v2_stop)
+```
+
+Harmless-baseline contributions are zero.  Both governor factors are C2
+quintic ramps.  Defaults are `v_max=0.25/M`, `tau_v=0.5M`, and endpoint slowing
+over `0.90<xi<1`.  At completion, `xi=1`, `xi_dot=0`, and the activation jet is
+exactly stationary.  Reverse motion is prohibited.
+
+The controller state is advanced by the existing low-storage RK recurrence in
+the required order: copy PDE/controller base, measure the current relative
+state, form the continuation acceleration, rebuild the current reference,
+evaluate the GH RHS, and update PDE/controller state.  `xi`, `xi_dot`, cache
+generation, veto state, freeze state, completion state, and veto timing are
+persisted in restart metadata.
+
+## Safety policy and candidate thresholds
+
+The hard absolute caps are enforced in the parser:
+
+| Quantity | candidate stop | immutable cap |
+|---|---:|---:|
+| `kappa_G` | 8 | <= 8 |
+| `a_min` | 0.5 | >= 0.5 |
+| `a_max` | 3 | <= 3 |
+| `v2_max` | 0.20 | <= 0.20 |
+
+The risk ramp currently slows at `R=0.70` and stops at `R=1`.  These values are
+not frozen scientifically until the mandated old-medium tau-8 replay records
+its envelope.  They must not be retuned after T1 replay or after observing a
+closed-loop outcome.
+
+The native-constraint warning levels are GH L2 `2e-2`, reduction L2 `5e-3`,
+and curl L2 `8e-2`; smaller values are rejected.  A warning commands
+`v_cmd=0` while evolution continues at fixed commanded xi.  Twice a warning,
+or growth after a 0.5M freeze, fails closed.  These are safety vetoes, not
+convergence criteria.
+
+## Local evidence
+
+All evidence here was produced by the Release Kokkos Serial build
+`build-feedback-local/src/athena`, SHA-256
+`fb3730b67269fbcc33bd731a6e97d91be4aaa8844eb23563b4e8df51fc29cee1`.
+
+- T0 source/reference tests pass: compatible Phi and source-oracle residuals
+  are at or below `6.94e-16`; stationary-trumpet RHS, field, and constraint
+  residuals are `7.48e-17`, `1.56e-18`, and `3.12e-18`; dynamic lapse and
+  spatial-reference errors are `1.67e-15`.
+- T1 legacy-time versus prescribed-xi one-cycle payloads are bitwise equal:
+  `Linf=0`, identical cycle and time.
+- T2 manufactured safe, approach-stop, excursion/recovery,
+  permanently-unsafe, and endpoint histories pass.
+- Post-schema feedback smoke remains finite for one cycle.  `xi` is monotone,
+  `xi_dot` is nonnegative, all four risk channels are finite, and
+  `delta_q=delta_p=0` exactly.
+- Continuous versus checkpoint/restart comparison passes.  The spacetime
+  payload difference is `4.919683421929222e-08` (limit `1e-7`), while
+  `|Delta xi|=1.4123e-13` and `|Delta xi_dot|=1.3966e-12` (limit `1e-11`).
+  Runtime-written Real metadata now uses `max_digits10`; this representation
+  fix removes six-digit restart truncation without changing the equations.
+
+The enlarged `[-12M,12M]^3` mesh audit gives a 3x3x3 root, 272 MeshBlocks in
+total, 208 blocks at physical level 1, and 64 at physical level 2.  The finest
+logical coverage is `[-4M,4M]^3`, which contains the complete 0.30--0.60M
+transition shell.  Medium resolution has `dx_min=M/24`; the planned coarse and
+fine variants preserve the tree with `dx_min=M/16` and `M/32`.
+
+## Remaining ordered gates
+
+1. Restore Aurora SSH authentication and inspect the live queue.
+2. Submit exactly one twelve-tile debug job with
+   `scripts/ref_gh/aurora_feedback_continuation_debug12.pbs`; do not leave a
+   competing request.
+3. Pass the PVC T0--T2/restart gate, then replay the existing medium fixed-core
+   tau-8 run to t=4M and freeze thresholds from its new diagnostics.
+4. Run T3 cheap medium only to `xi>=0.5` or t=5M.
+5. Run T4 on the enlarged medium domain through xi=1 plus a 2M hold, t=20M, or
+   fail closed; then T5 aggressive prescribed four-M discriminator.
+6. Run the three-resolution T6 gate only if T4 passes.
+
+No statement of feedback success, convergence, full activation, trumpet
+establishment, or long-time stability is justified by the current evidence.
+
+## Reproduction
+
+Local build and mesh audit:
+
+```bash
+cmake -S . -B build-feedback-local -DCMAKE_BUILD_TYPE=Release \
+  -DAthena_ENABLE_MPI=OFF -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF -DPROBLEM=built_in_pgens
+cmake --build build-feedback-local -j
+build-feedback-local/src/athena -m \
+  -i inputs/ref_gh/ref_gh_feedback_continuation_causal.athinput
+```
+
+Aurora submission after creating a fresh campaign clone at the committed SHA:
+
+```bash
+qsub -v CAMPAIGN_ROOT=/absolute/fresh/campaign,EXPECTED_COMMIT=$(git rev-parse HEAD) \
+  scripts/ref_gh/aurora_feedback_continuation_debug12.pbs
+```
+
+The compact logs, JSON, mesh structure, hashes, and status manifest are under
+`docs/fo_gh_artifacts/ref_gh_feedback_continuation_20260823/`.  Large CBIN and
+restart outputs are intentionally excluded.

@@ -1,0 +1,41 @@
+{
+  "schema": "ref-gh-feedback-continuation-status-v1",
+  "date": "2026-08-23",
+  "branch": "codex/ref-gh-feedback-continuation-20260823",
+  "parent_commit": "9c438dc619aa742404530c953243d71b2a01d8e6",
+  "implementation_commit": "9b86a5d97af9abb46b18c82c4895feb9887f0d5d",
+  "local_executable_sha256": "fb3730b67269fbcc33bd731a6e97d91be4aaa8844eb23563b4e8df51fc29cee1",
+  "completed": {
+    "local_t0_regressions": true,
+    "local_t1_prescribed_equivalence": true,
+    "local_t2_manufactured_histories": true,
+    "local_restart_equivalence": true,
+    "enlarged_mesh_audit": true
+  },
+  "prescribed_equivalence_linf": 0.0,
+  "restart": {
+    "payload_linf": 4.919683421929222e-08,
+    "payload_tolerance": 1e-07,
+    "xi_difference": 1.4122687394535482e-13,
+    "xi_dot_difference": 1.3966466871906391e-12,
+    "controller_tolerance": 1e-11
+  },
+  "mesh": {
+    "domain": [-12.0, 12.0],
+    "root_meshblocks": [3, 3, 3],
+    "total_meshblocks": 272,
+    "physical_level_1_meshblocks": 208,
+    "physical_level_2_meshblocks": 64,
+    "medium_dx_min": 0.041666666666666664
+  },
+  "pending": {
+    "aurora_12_tile_debug_gate": "blocked_by_missing_ssh_authentication",
+    "tau8_threshold_freeze": true,
+    "t3_cheap_medium": true,
+    "t4_definitive_medium": true,
+    "t5_open_loop_discriminator": true,
+    "t6_three_resolution": true
+  },
+  "active_or_submitted_jobs_from_this_work": 0,
+  "scientific_claim": "none"
+}
