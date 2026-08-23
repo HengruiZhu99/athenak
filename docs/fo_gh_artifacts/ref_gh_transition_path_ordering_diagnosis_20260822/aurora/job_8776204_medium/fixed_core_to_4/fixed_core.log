@@ -1,0 +1,81 @@
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 34
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 8
+  Rank = 0: 4 MeshBlocks, cost = 4
+  Rank = 1: 4 MeshBlocks, cost = 4
+  Rank = 2: 4 MeshBlocks, cost = 4
+  Rank = 3: 4 MeshBlocks, cost = 4
+  Rank = 4: 4 MeshBlocks, cost = 4
+  Rank = 5: 4 MeshBlocks, cost = 4
+  Rank = 6: 5 MeshBlocks, cost = 5
+  Rank = 7: 5 MeshBlocks, cost = 5
+Load Balancing:
+  Maximum normalized cost = 1.25, Average = 1.0625
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <mesh_refinement>/num_levels = 2 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <mesh_refinement>/max_nmb_per_rank = 128 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/level = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x1min = -2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x1max = 2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x2min = -2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x2max = 2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x3min = -2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x3max = 2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <time>/start_time = 0 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=2.077944e+00 cycle=620 time=2.200000e+00 dt=3.463793e-03
+elapsed=5.747887e+01 cycle=630 time=2.234623e+00 dt=3.460466e-03
+elapsed=1.149662e+02 cycle=640 time=2.269213e+00 dt=3.457174e-03
+elapsed=1.724447e+02 cycle=650 time=2.303770e+00 dt=3.453921e-03
+elapsed=2.291998e+02 cycle=660 time=2.338295e+00 dt=3.450709e-03
+elapsed=2.867370e+02 cycle=670 time=2.372787e+00 dt=3.447543e-03
+elapsed=3.442578e+02 cycle=680 time=2.407249e+00 dt=3.444425e-03
+elapsed=4.008621e+02 cycle=690 time=2.441679e+00 dt=3.441359e-03
+elapsed=4.584317e+02 cycle=700 time=2.476079e+00 dt=3.438348e-03
+elapsed=5.159130e+02 cycle=710 time=2.510449e+00 dt=3.435396e-03
+elapsed=5.724893e+02 cycle=720 time=2.544790e+00 dt=3.432504e-03
+elapsed=6.299257e+02 cycle=730 time=2.579102e+00 dt=3.429676e-03
+elapsed=6.873967e+02 cycle=740 time=2.613387e+00 dt=3.426914e-03
+elapsed=7.440113e+02 cycle=750 time=2.647644e+00 dt=3.424221e-03
+elapsed=8.014751e+02 cycle=760 time=2.681874e+00 dt=3.421599e-03
+elapsed=8.589260e+02 cycle=770 time=2.716078e+00 dt=3.419051e-03
+elapsed=9.177032e+02 cycle=780 time=2.750258e+00 dt=3.416578e-03
+elapsed=9.730109e+02 cycle=790 time=2.784413e+00 dt=3.414182e-03
+elapsed=1.030492e+03 cycle=800 time=2.818544e+00 dt=3.411866e-03
+elapsed=1.089265e+03 cycle=810 time=2.852653e+00 dt=3.409631e-03
+elapsed=1.144565e+03 cycle=820 time=2.886739e+00 dt=3.407478e-03
+elapsed=1.202045e+03 cycle=830 time=2.920805e+00 dt=3.405409e-03
+elapsed=1.259488e+03 cycle=840 time=2.954850e+00 dt=3.403425e-03
+elapsed=1.316076e+03 cycle=850 time=2.988875e+00 dt=3.401527e-03
+elapsed=1.378828e+03 cycle=860 time=3.022882e+00 dt=3.399716e-03
+elapsed=1.436252e+03 cycle=870 time=3.056872e+00 dt=3.397992e-03
+elapsed=1.492831e+03 cycle=880 time=3.090844e+00 dt=3.396356e-03
+elapsed=1.550320e+03 cycle=890 time=3.124801e+00 dt=3.394809e-03
+elapsed=1.607807e+03 cycle=900 time=3.158742e+00 dt=3.393350e-03
+elapsed=1.664385e+03 cycle=910 time=3.184598e+00 dt=1.635393e-03
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=3.186550e+00 generation=3641
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=3.18655 generation=3641
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=3.18655 generation=3641
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=3.18655 generation=3641
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=3.18655 generation=3641
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=3.18655 generation=3641
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=3.18655 generation=3641
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+### FATAL ERROR: Ref-GH controller conditioning became invalid at stage_time=3.18655 generation=3641
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+x4505c2s7b0n0.hsn.cm.aurora.alcf.anl.gov: rank 1 exited with code 1
+real 1667.68
+user 0.01
+sys 0.05

@@ -1,0 +1,94 @@
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 34
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 8
+  Rank = 0: 4 MeshBlocks, cost = 4
+  Rank = 1: 4 MeshBlocks, cost = 4
+  Rank = 2: 4 MeshBlocks, cost = 4
+  Rank = 3: 4 MeshBlocks, cost = 4
+  Rank = 4: 4 MeshBlocks, cost = 4
+  Rank = 5: 4 MeshBlocks, cost = 4
+  Rank = 6: 5 MeshBlocks, cost = 5
+  Rank = 7: 5 MeshBlocks, cost = 5
+Load Balancing:
+  Maximum normalized cost = 1.25, Average = 1.0625
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <mesh_refinement>/num_levels = 2 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <mesh_refinement>/max_nmb_per_rank = 128 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/level = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x1min = -2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x1max = 2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x2min = -2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x2max = 2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x3min = -2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <refined_region1>/x3max = 2.0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_transition_path_20260823T0225Z_dc7a408/src/src/parameter_input.cpp: input parameter <time>/start_time = 0 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=4.991131e+00 cycle=620 time=2.225090e+00 dt=3.584214e-03
+elapsed=1.040810e+01 cycle=630 time=2.260931e+00 dt=3.583935e-03
+elapsed=1.488187e+01 cycle=640 time=2.296769e+00 dt=3.583649e-03
+elapsed=2.030198e+01 cycle=650 time=2.332604e+00 dt=3.583356e-03
+elapsed=2.571921e+01 cycle=660 time=2.368437e+00 dt=3.583056e-03
+elapsed=3.113480e+01 cycle=670 time=2.404266e+00 dt=3.582748e-03
+elapsed=3.561362e+01 cycle=680 time=2.440092e+00 dt=3.582434e-03
+elapsed=4.103668e+01 cycle=690 time=2.475915e+00 dt=3.582112e-03
+elapsed=4.643723e+01 cycle=700 time=2.511734e+00 dt=3.581783e-03
+elapsed=5.090504e+01 cycle=710 time=2.547551e+00 dt=3.581446e-03
+elapsed=5.631993e+01 cycle=720 time=2.583364e+00 dt=3.581102e-03
+elapsed=6.173372e+01 cycle=730 time=2.619173e+00 dt=3.580750e-03
+elapsed=6.714997e+01 cycle=740 time=2.654979e+00 dt=3.580390e-03
+elapsed=7.161751e+01 cycle=750 time=2.690781e+00 dt=3.580022e-03
+elapsed=7.703446e+01 cycle=760 time=2.726580e+00 dt=3.579647e-03
+elapsed=8.245709e+01 cycle=770 time=2.762375e+00 dt=3.579263e-03
+elapsed=8.692400e+01 cycle=780 time=2.798165e+00 dt=3.578870e-03
+elapsed=9.232641e+01 cycle=790 time=2.833952e+00 dt=3.578470e-03
+elapsed=9.773908e+01 cycle=800 time=2.869735e+00 dt=3.578061e-03
+elapsed=1.031397e+02 cycle=810 time=2.905514e+00 dt=3.577643e-03
+elapsed=1.076072e+02 cycle=820 time=2.941288e+00 dt=3.577217e-03
+elapsed=1.130324e+02 cycle=830 time=2.977059e+00 dt=3.576782e-03
+elapsed=1.238195e+02 cycle=840 time=3.012824e+00 dt=3.576338e-03
+elapsed=1.282952e+02 cycle=850 time=3.048586e+00 dt=3.575885e-03
+elapsed=1.337251e+02 cycle=860 time=3.084343e+00 dt=3.575423e-03
+elapsed=1.391397e+02 cycle=870 time=3.120095e+00 dt=3.574952e-03
+elapsed=1.445715e+02 cycle=880 time=3.155842e+00 dt=3.574471e-03
+elapsed=1.490326e+02 cycle=890 time=3.191585e+00 dt=3.573981e-03
+elapsed=1.544279e+02 cycle=900 time=3.227322e+00 dt=3.573481e-03
+elapsed=1.598547e+02 cycle=910 time=3.263055e+00 dt=3.572972e-03
+elapsed=1.643244e+02 cycle=920 time=3.298782e+00 dt=3.572453e-03
+elapsed=1.697236e+02 cycle=930 time=3.334504e+00 dt=3.571924e-03
+elapsed=1.751503e+02 cycle=940 time=3.370221e+00 dt=3.571385e-03
+elapsed=1.805537e+02 cycle=950 time=3.405932e+00 dt=3.570836e-03
+elapsed=1.850287e+02 cycle=960 time=3.441638e+00 dt=3.570277e-03
+elapsed=1.904472e+02 cycle=970 time=3.477339e+00 dt=3.569708e-03
+elapsed=2.011887e+02 cycle=980 time=3.513033e+00 dt=3.569128e-03
+elapsed=2.056619e+02 cycle=990 time=3.548722e+00 dt=3.568538e-03
+elapsed=2.110746e+02 cycle=1000 time=3.584404e+00 dt=3.567938e-03
+elapsed=2.164903e+02 cycle=1010 time=3.620081e+00 dt=3.567327e-03
+elapsed=2.218966e+02 cycle=1020 time=3.655751e+00 dt=3.566705e-03
+elapsed=2.263619e+02 cycle=1030 time=3.691416e+00 dt=3.566072e-03
+elapsed=2.317871e+02 cycle=1040 time=3.727073e+00 dt=3.565429e-03
+elapsed=2.372085e+02 cycle=1050 time=3.762725e+00 dt=3.564774e-03
+elapsed=2.416712e+02 cycle=1060 time=3.798370e+00 dt=3.564109e-03
+elapsed=2.470791e+02 cycle=1070 time=3.834008e+00 dt=3.563433e-03
+elapsed=2.525022e+02 cycle=1080 time=3.869639e+00 dt=3.562746e-03
+elapsed=2.579122e+02 cycle=1090 time=3.905263e+00 dt=3.562047e-03
+elapsed=2.623839e+02 cycle=1100 time=3.940881e+00 dt=3.561338e-03
+elapsed=2.678045e+02 cycle=1110 time=3.976491e+00 dt=3.560618e-03
+reference-GH controlled Schwarzschild final: time=4.000000e+00 state Linf=1.615230e+00 bad-state=0.000000e+00
+
+Terminating on time limit
+time=4.000000e+00 cycle=1117
+tlim=4.000000e+00 nlim=-1
+
+MeshBlock-cycles = 17136
+cpu time used  = 2.758977e+02
+zone-cycles/cpu_second = 6.868866e+06
+particle-updates/cpu_second = 0.000000e+00
+real 278.69
+user 0.00
+sys 0.01
