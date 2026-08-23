@@ -122,7 +122,10 @@ fine variants preserve the tree with `dx_min=M/16` and `M/32`.
    `scripts/ref_gh/aurora_feedback_continuation_debug12.pbs`; do not leave a
    competing request.
 3. Pass the PVC T0--T2/restart gate, then replay the existing medium fixed-core
-   tau-8 run to t=4M and freeze thresholds from its new diagnostics.
+   tau-8 run to t=4M with
+   `scripts/ref_gh/aurora_feedback_tau8_replay12.pbs` and freeze thresholds
+   from its new diagnostics.  The replay script launches no feedback case and
+   emits a fail-closed threshold-freeze decision for review.
 4. Run T3 cheap medium only to `xi>=0.5` or t=5M.
 5. Run T4 on the enlarged medium domain through xi=1 plus a 2M hold, t=20M, or
    fail closed; then T5 aggressive prescribed four-M discriminator.

@@ -1,0 +1,189 @@
+#!/bin/bash -l
+# T1 threshold-freeze replay for the successful old-medium fixed-core tau-8 case.
+# This job records the safe envelope; it does not launch feedback continuation.
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=06:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_fb_tau8
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+: "${EXPECTED_EXE_SHA256:?submit with EXPECTED_EXE_SHA256=<sha256>}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_feedback_continuation_medium.athinput"
+ANALYZE="${SRC}/scripts/ref_gh/analyze_feedback_continuation.py"
+OUT="${CAMPAIGN_ROOT}/runs/t1_tau8_replay12_${PBS_JOBID}"
+LABEL=refgh_feedback_tau8_replay
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+actual_exe_sha256=$(sha256sum "${EXE}" | awk '{print $1}')
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test "${actual_exe_sha256}" = "${EXPECTED_EXE_SHA256}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "executable_sha256=${actual_exe_sha256}"
+  echo "case=old_medium_fixed_core_tau8_prescribed_clock"
+  echo "feedback_launched=false"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${ANALYZE}" "$0"
+} > provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 12
+
+mkdir mesh
+cd mesh
+set +e
+mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -m -i "${INPUT}" > mesh_structure.txt 2>&1
+mesh_status=$?
+set -e
+echo "mesh_only_exit_status=${mesh_status}" >> mesh_structure.txt
+test "${mesh_status}" -eq 0 -o "${mesh_status}" -eq 139
+grep -q 'Root grid = 3 x 3 x 3 MeshBlocks' mesh_structure.txt
+grep -q 'Total number of MeshBlocks = 34' mesh_structure.txt
+test "$(grep -c '^#  Logical level 2' mesh_structure.dat)" -eq 26
+test "$(grep -c '^#  Logical level 3' mesh_structure.dat)" -eq 8
+cd "${OUT}"
+
+run_segment() {
+  local directory="$1"
+  local target="$2"
+  local restart_path="${3:-}"
+  mkdir -p "${directory}"
+  cd "${directory}"
+  local command=("${EXE}")
+  if test -n "${restart_path}"; then
+    command+=( -r "${restart_path}" -i "${INPUT}" )
+  else
+    command+=( -i "${INPUT}" )
+  fi
+  set +e
+  /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+    gpu_tile_compact.sh "${command[@]}" \
+    job/basename="${LABEL}" ref_gh/continuation_mode=legacy_time \
+    ref_gh/transition_path=fixed_core ref_gh/phi_ordering=compatible \
+    ref_gh/controller_enabled=false ref_gh/tau_transition=8.0 \
+    ref_gh/controller_delta_q=0.0 ref_gh/controller_delta_q_dot=0.0 \
+    ref_gh/controller_delta_p=0.0 ref_gh/controller_delta_p_dot=0.0 \
+    time/tlim="${target}" time/nlim=-1 > "${LABEL}.log" 2>&1
+  local status=$?
+  set -e
+  {
+    echo "exit_status=${status}"
+    echo "target=${target}"
+    test -s "${LABEL}.user.hst" && tail -1 "${LABEL}.user.hst"
+  } > segment_status.txt
+  test "${status}" -eq 0
+  test -s "${LABEL}.user.hst"
+  test -s "${LABEL}.ref_gh.hst"
+  ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+    "${LABEL}.log"
+}
+
+run_segment "${OUT}/to_2" 2.0
+checkpoint=$(find "${OUT}/to_2/rst" -type f -name '*.rst' | sort | tail -1)
+test -s "${checkpoint}"
+sha256sum "${checkpoint}" > "${OUT}/to_2/checkpoint.sha256"
+run_segment "${OUT}/to_4" 4.0 "${checkpoint}"
+
+{
+  head -2 "${OUT}/to_2/${LABEL}.user.hst"
+  grep -h -v '^#' "${OUT}/to_2/${LABEL}.user.hst" \
+    "${OUT}/to_4/${LABEL}.user.hst"
+} > "${OUT}/${LABEL}.combined.user.hst"
+python3 "${ANALYZE}" "${OUT}/${LABEL}.combined.user.hst" \
+  --outer-distance 6.0 --json "${OUT}/tau8_envelope.json" \
+  > "${OUT}/tau8_envelope.stdout.json"
+
+python3 - "${OUT}/tau8_envelope.json" <<'PY' > "${OUT}/threshold_freeze_decision.json"
+import json, math, pathlib, sys
+source = pathlib.Path(sys.argv[1])
+summary = json.loads(source.read_text())
+maxima = summary["maxima"]
+safe_risk = maxima["risk"]
+result = {
+    "schema": "ref-gh-feedback-threshold-freeze-decision-v1",
+    "source": str(source),
+    "tau8_replay_complete": summary["final_time"] >= 4.0 - 1.0e-10,
+    "finite": summary["finite"],
+    "delta_q_delta_p_exact_zero": summary["deltas_exact_zero"],
+    "observed": {
+        "condition_max": maxima["condition"],
+        "relative_lapse_min": summary["minima"]["relative_lapse_min"],
+        "relative_lapse_max": maxima["relative_lapse_max"],
+        "v2_max": maxima["v2_max"],
+        "safe_normalized_risk_max": safe_risk,
+        "gh_l2": maxima["gh_l2"],
+        "reduction_l2": maxima["reduction_l2"],
+        "curl_l2": maxima["curl_l2"],
+    },
+    "candidate": {
+        "risk_slow": 0.70, "risk_stop": 1.0,
+        "condition_stop": 8.0, "relative_lapse_min_stop": 0.5,
+        "relative_lapse_max_stop": 3.0, "v2_stop": 0.20,
+        "gh_warning": 2.0e-2, "reduction_warning": 5.0e-3,
+        "curl_warning": 8.0e-2,
+    },
+    "mandatory_reference_consistent": (
+        2.5 <= maxima["condition"] <= 5.0
+        and 1.2 <= maxima["relative_lapse_max"] <= 2.0
+        and 0.01 <= maxima["v2_max"] <= 0.06
+    ),
+    "candidate_slow_above_safe_envelope": safe_risk < 0.70,
+}
+result["ready_for_human_threshold_freeze"] = all((
+    result["tau8_replay_complete"], result["finite"],
+    result["delta_q_delta_p_exact_zero"],
+    result["mandatory_reference_consistent"],
+    result["candidate_slow_above_safe_envelope"],
+))
+print(json.dumps(result, indent=2, sort_keys=True))
+if not result["ready_for_human_threshold_freeze"]:
+    raise SystemExit(1)
+PY
+
+cd "${OUT}"
+{
+  echo 'result=PASS'
+  echo 'stage=T1_tau8_envelope_only'
+  echo 'feedback_launched=false'
+  echo 'thresholds_frozen=false_pending_review'
+  sha256sum "${EXE}"
+} > replay_status.txt
+find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.json' \
+  -o -name '*.hst' -o -name '*.sha256' \) -print0 | sort -z | \
+  xargs -0 sha256sum > compact_sha256.txt
