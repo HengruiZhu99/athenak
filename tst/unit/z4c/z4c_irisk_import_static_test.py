@@ -55,6 +55,8 @@ def main() -> int:
             encoding="utf-8")
     symmetry = (root / "src/z4c/z4c_symmetry.cpp").read_text(
         encoding="utf-8")
+    sommerfeld = (root / "src/z4c/z4c_Sbc.cpp").read_text(
+        encoding="utf-8")
 
     require('option(Athena_ENABLE_IRISK_INTERPOLATOR' in cmake,
             "input-selected importer option disappeared")
@@ -112,6 +114,11 @@ def main() -> int:
             'ReadBrillGlobalCoefficients(resolved_filename)' in importer and
             'FillAdmFromBrillGlobalCoefficients(' in importer,
             "direct global Brill import mode is absent")
+    require("MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>" in
+            sommerfeld and "Z4cSommerfeldConfigured" in sommerfeld and
+            "MakeZ4cDerivativeProvider<Centering, Symmetry, 2>" not in
+            sommerfeld,
+            "Sommerfeld derivatives do not follow the configured Z4c stencil")
     require('initial_lapse == "precollapsed_psi_minus_2"' in importer and
             'const double lapse = use_precollapsed_lapse ? 1.0 / psi2 : 1.0;'
             in importer,

@@ -182,7 +182,8 @@ def main() -> int:
             "TensorVariance::all_lower",
         ],
         "src/z4c/z4c_Sbc.cpp": [
-            "MakeZ4cDerivativeProvider<Centering, Symmetry, 2>",
+            "MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>",
+            "Z4cSommerfeldConfigured",
             "Z4cBoundaryRHSImpl<CellCenteredZ4c, CartoonSO2>",
         ],
         "src/z4c/z4c_calculate_weyl_scalars.cpp": [

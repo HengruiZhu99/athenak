@@ -184,7 +184,7 @@ void DumpVertexRHSFieldDiagnostic(Z4c *z4c, MeshBlockPack *pack,
 //----------------------------------------------------------------------------------------
 //! \fn void Z4c::Z4cSommerfeld
 //! \brief apply Sommerfeld BCs to the given set of points
-template <typename Centering, typename Symmetry>
+template <typename Centering, typename Symmetry, int NGHOST>
 KOKKOS_INLINE_FUNCTION
 static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
     const Z4cGridLayout &layout, const DualArray1D<RegionSize> &size,
@@ -209,14 +209,13 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> s_u;
 
   Real idx[] = {1./size.d_view(m).dx1, 1./size.d_view(m).dx2, 1./size.d_view(m).dx3};
-  auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, 2>(
+  auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
       idx, size.d_view, layout.nx1, layout.is, m, k, j, i, layout.nx3 == 1);
 
   // -------------------------------------------------------------------------------------
   // First derivatives
-  // We force all derivatives to be calculated at second-order, as this was found to
-  // be necessary for stability in Athena++.
-  //
+  // Match the configured bulk stencil.  The physical ghost extrapolation order is
+  // an independent input contract and must provide the corresponding boundary halo.
   for (int a = 0; a < 3; a++) {
     dKhat_d(a) = derivatives.ScalarFirst(a, z4c.vKhat);
     dTheta_d(a) = derivatives.ScalarFirst(a, z4c.vTheta);
@@ -291,6 +290,30 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   }
 }
 
+template <typename Centering, typename Symmetry>
+KOKKOS_INLINE_FUNCTION
+static void Z4cSommerfeldConfigured(
+    const Z4c::Z4c_vars &z4c, const Z4c::Z4c_vars &rhs,
+    const Z4cGridLayout &layout, const DualArray1D<RegionSize> &size,
+    const int fd_stencil, const int m, const int k, const int j, const int i) {
+  switch (fd_stencil) {
+    case 2:
+      Z4cSommerfeld<Centering, Symmetry, 2>(
+          z4c, rhs, layout, size, m, k, j, i);
+      break;
+    case 3:
+      Z4cSommerfeld<Centering, Symmetry, 3>(
+          z4c, rhs, layout, size, m, k, j, i);
+      break;
+    case 4:
+      Z4cSommerfeld<Centering, Symmetry, 4>(
+          z4c, rhs, layout, size, m, k, j, i);
+      break;
+    default:
+      Kokkos::abort("invalid Z4c Sommerfeld derivative stencil");
+  }
+}
+
 
 //---------------------------------------------------------------------------------------
 //! \fn TaskStatus Z4c::Z4cBoundaryRHS
@@ -313,6 +336,7 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
   auto &z4c_ = z4c;
   auto &rhs_ = rhs;
   bool &user_Sbc = opt.user_Sbc;
+  const int fd_stencil = opt.fd_stencil;
 
   // We only need to apply this condition for outflow boundaries
   if (pm->mesh_bcs[BoundaryFace::inner_x1] == BoundaryFlag::outflow
@@ -330,11 +354,13 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, j, is);
+            Z4cSommerfeldConfigured<Centering, Symmetry>(
+                z4c_, rhs_, layout, size, fd_stencil, m, k, j, is);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, j, is);
+              Z4cSommerfeldConfigured<Centering, Symmetry>(
+                  z4c_, rhs_, layout, size, fd_stencil, m, k, j, is);
             }
           break;
         default:
@@ -345,11 +371,13 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, j, ie);
+            Z4cSommerfeldConfigured<Centering, Symmetry>(
+                z4c_, rhs_, layout, size, fd_stencil, m, k, j, ie);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, j, ie);
+              Z4cSommerfeldConfigured<Centering, Symmetry>(
+                  z4c_, rhs_, layout, size, fd_stencil, m, k, j, ie);
             }
           break;
         default:
@@ -372,11 +400,13 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, js, i);
+            Z4cSommerfeldConfigured<Centering, Symmetry>(
+                z4c_, rhs_, layout, size, fd_stencil, m, k, js, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, js, i);
+              Z4cSommerfeldConfigured<Centering, Symmetry>(
+                  z4c_, rhs_, layout, size, fd_stencil, m, k, js, i);
             }
           break;
         default:
@@ -387,11 +417,13 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, je, i);
+            Z4cSommerfeldConfigured<Centering, Symmetry>(
+                z4c_, rhs_, layout, size, fd_stencil, m, k, je, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, k, je, i);
+              Z4cSommerfeldConfigured<Centering, Symmetry>(
+                  z4c_, rhs_, layout, size, fd_stencil, m, k, je, i);
             }
           break;
         default:
@@ -417,11 +449,13 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, ks, j, i);
+            Z4cSommerfeldConfigured<Centering, Symmetry>(
+                z4c_, rhs_, layout, size, fd_stencil, m, ks, j, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, ks, j, i);
+              Z4cSommerfeldConfigured<Centering, Symmetry>(
+                  z4c_, rhs_, layout, size, fd_stencil, m, ks, j, i);
             }
           break;
         default:
@@ -432,11 +466,13 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::diode:
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
-            Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, ke, j, i);
+            Z4cSommerfeldConfigured<Centering, Symmetry>(
+                z4c_, rhs_, layout, size, fd_stencil, m, ke, j, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
-              Z4cSommerfeld<Centering, Symmetry>(z4c_, rhs_, layout, size, m, ke, j, i);
+              Z4cSommerfeldConfigured<Centering, Symmetry>(
+                  z4c_, rhs_, layout, size, fd_stencil, m, ke, j, i);
             }
           break;
         default:
