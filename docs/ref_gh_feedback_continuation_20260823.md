@@ -12,7 +12,9 @@ The work is based exactly on
 `9c438dc619aa742404530c953243d71b2a01d8e6` from
 `codex/ref-gh-transition-path-ordering-diagnosis-20260822`.  The implementation
 branch is `codex/ref-gh-feedback-continuation-20260823`; the controller code and
-inputs are commit `9b86a5d97af9abb46b18c82c4895feb9887f0d5d`.
+inputs are commit `9b86a5d97af9abb46b18c82c4895feb9887f0d5d`, with the
+stronger manufactured-history audit in
+`55eed5d4267d2eea833c4fe3ec6e8ff3af3bc732`.
 
 Aurora BatchMode authentication was unavailable at the final local gate
 (`Permission denied (keyboard-interactive,hostbased)` and no control socket),
@@ -86,7 +88,7 @@ convergence criteria.
 
 All evidence here was produced by the Release Kokkos Serial build
 `build-feedback-local/src/athena`, SHA-256
-`fb3730b67269fbcc33bd731a6e97d91be4aaa8844eb23563b4e8df51fc29cee1`.
+`e23c7449ba5691c2142b010623d0d9a76ca0589ca45875d94a1c4e08f412cb6c`.
 
 - T0 source/reference tests pass: compatible Phi and source-oracle residuals
   are at or below `6.94e-16`; stationary-trumpet RHS, field, and constraint
@@ -94,8 +96,10 @@ All evidence here was produced by the Release Kokkos Serial build
   spatial-reference errors are `1.67e-15`.
 - T1 legacy-time versus prescribed-xi one-cycle payloads are bitwise equal:
   `Linf=0`, identical cycle and time.
-- T2 manufactured safe, approach-stop, excursion/recovery,
-  permanently-unsafe, and endpoint histories pass.
+- T2 manufactured safe, approach-stop, evolved excursion/recovery, evolved
+  permanently-unsafe, and endpoint histories pass.  The test directly checks
+  the activation two-jet chain rule, C2 endpoint limits, exact constant endpoint
+  jets, monotone xi, smooth nonnegative rate relaxation, freeze, and resumption.
 - Post-schema feedback smoke remains finite for one cycle.  `xi` is monotone,
   `xi_dot` is nonnegative, all four risk channels are finite, and
   `delta_q=delta_p=0` exactly.
