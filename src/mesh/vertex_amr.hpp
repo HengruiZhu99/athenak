@@ -80,6 +80,34 @@ struct DirectionStencil {
   Real weight[8] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 };
 
+struct IndexRange {
+  int lower = 0;
+  int upper = -1;
+
+  KOKKOS_INLINE_FUNCTION constexpr int count() const {
+    return upper - lower + 1;
+  }
+};
+
+//! Fine-array source interval sent when an old MeshBlock is refined and a
+//! child migrates to another rank.  This is the same refinement halo consumed
+//! by CopyForRefinementVC, not the wider persistent coarse-cache ghost width.
+KOKKOS_INLINE_FUNCTION constexpr IndexRange RefinementChildSourceRange(
+    const int fine_start, const int coarse_intervals, const int child,
+    const int refinement_halo, const bool collapsed) {
+  if (collapsed) return {0, 0};
+  return {fine_start + child * coarse_intervals - refinement_halo,
+          fine_start + (child + 1) * coarse_intervals + refinement_halo};
+}
+
+//! Coarse-array target interval receiving a migrated refined child.
+KOKKOS_INLINE_FUNCTION constexpr IndexRange RefinementChildTargetRange(
+    const int coarse_start, const int coarse_end, const int refinement_halo,
+    const bool collapsed) {
+  if (collapsed) return {0, 0};
+  return {coarse_start - refinement_halo, coarse_end + refinement_halo};
+}
+
 //! Integer floor(offset/2).  C++ signed integer division truncates toward zero,
 //! which is wrong for odd lower-side ghost indices (for example -1/2 must map
 //! to the coarse interval [-1,0], not [0,1]).

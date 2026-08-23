@@ -15,6 +15,7 @@
 #include "athena.hpp"
 #include "globals.hpp"
 #include "mesh.hpp"
+#include "vertex_amr.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "radiation/radiation.hpp"
@@ -179,7 +180,12 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
     kl -= ng; ku += ng;
   }
   z4c::Z4cGridLayout vlayout;
-  if (nvc_tosend > 0) vlayout = pmy_mesh->pmb_pack->pz4c->layout;
+  int vc_refinement_halo = 0;
+  if (nvc_tosend > 0) {
+    vlayout = pmy_mesh->pmb_pack->pz4c->layout;
+    vc_refinement_halo = vertex_amr::RequiredRefinementHaloForSpatialOrder(
+        pmy_mesh->pmb_pack->pz4c->opt.spatial_order);
+  }
 
   int rb_idx = 0;   // recv buffer index
   for (int newm=nmbs; newm<=nmbe; newm++) {
@@ -275,16 +281,26 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
         recvbuf.h_view(rb_idx).bks = kl;
         recvbuf.h_view(rb_idx).bke = ku;
         recvbuf.h_view(rb_idx).cntcc = (iu-il+1)*(ju-jl+1)*(ku-kl+1);
-        recvbuf.h_view(rb_idx).vbis = vlayout.cis - vlayout.coarse_ng;
-        recvbuf.h_view(rb_idx).vbie = vlayout.cie + vlayout.coarse_ng;
-        recvbuf.h_view(rb_idx).vbjs = vlayout.nx2 <= 1
-            ? 0 : vlayout.cjs - vlayout.coarse_ng;
-        recvbuf.h_view(rb_idx).vbje = vlayout.nx2 <= 1
-            ? 0 : vlayout.cje + vlayout.coarse_ng;
-        recvbuf.h_view(rb_idx).vbks = vlayout.nx3 <= 1
-            ? 0 : vlayout.cks - vlayout.coarse_ng;
-        recvbuf.h_view(rb_idx).vbke = vlayout.nx3 <= 1
-            ? 0 : vlayout.cke + vlayout.coarse_ng;
+        const auto vx = vertex_amr::RefinementChildTargetRange(
+            vlayout.cis, vlayout.cie, vc_refinement_halo, false);
+        const auto vy = vertex_amr::RefinementChildTargetRange(
+            vlayout.cjs, vlayout.cje, vc_refinement_halo, vlayout.nx2 <= 1);
+        const auto vz = vertex_amr::RefinementChildTargetRange(
+            vlayout.cks, vlayout.cke, vc_refinement_halo, vlayout.nx3 <= 1);
+        if (nvc_tosend > 0 &&
+            (vx.lower < 0 || vx.upper >= vlayout.cn1 ||
+             vy.lower < 0 || vy.upper >= vlayout.cn2 ||
+             vz.lower < 0 || vz.upper >= vlayout.cn3)) {
+          std::cerr << "### FATAL ERROR: native VC AMR receive range exceeds "
+                       "coarse storage" << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        recvbuf.h_view(rb_idx).vbis = vx.lower;
+        recvbuf.h_view(rb_idx).vbie = vx.upper;
+        recvbuf.h_view(rb_idx).vbjs = vy.lower;
+        recvbuf.h_view(rb_idx).vbje = vy.upper;
+        recvbuf.h_view(rb_idx).vbks = vz.lower;
+        recvbuf.h_view(rb_idx).vbke = vz.upper;
         recvbuf.h_view(rb_idx).cntvc =
             (recvbuf.h_view(rb_idx).vbie - recvbuf.h_view(rb_idx).vbis + 1) *
             (recvbuf.h_view(rb_idx).vbje - recvbuf.h_view(rb_idx).vbjs + 1) *
@@ -478,7 +494,12 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
     kl -= ng; ku += ng;
   }
   z4c::Z4cGridLayout vlayout;
-  if (nvc_tosend > 0) vlayout = pmy_mesh->pmb_pack->pz4c->layout;
+  int vc_refinement_halo = 0;
+  if (nvc_tosend > 0) {
+    vlayout = pmy_mesh->pmb_pack->pz4c->layout;
+    vc_refinement_halo = vertex_amr::RequiredRefinementHaloForSpatialOrder(
+        pmy_mesh->pmb_pack->pz4c->opt.spatial_order);
+  }
 
   int sb_idx = 0;   // send buffer index
   for (int oldm=ombs; oldm<=ombe; oldm++) {
@@ -501,18 +522,28 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
           sendbuf.h_view(sb_idx).bks = kl + ox3*cnx3;
           sendbuf.h_view(sb_idx).bke = ku + ox3*cnx3;
           sendbuf.h_view(sb_idx).cntcc = (iu-il+1)*(ju-jl+1)*(ku-kl+1);
-          sendbuf.h_view(sb_idx).vbis =
-              vlayout.is + ox1 * vlayout.cnx1 - vlayout.coarse_ng;
-          sendbuf.h_view(sb_idx).vbie =
-              vlayout.is + (ox1 + 1) * vlayout.cnx1 + vlayout.coarse_ng;
-          sendbuf.h_view(sb_idx).vbjs = vlayout.nx2 <= 1 ? 0
-              : vlayout.js + ox2 * vlayout.cnx2 - vlayout.coarse_ng;
-          sendbuf.h_view(sb_idx).vbje = vlayout.nx2 <= 1 ? 0
-              : vlayout.js + (ox2 + 1) * vlayout.cnx2 + vlayout.coarse_ng;
-          sendbuf.h_view(sb_idx).vbks = vlayout.nx3 <= 1 ? 0
-              : vlayout.ks + ox3 * vlayout.cnx3 - vlayout.coarse_ng;
-          sendbuf.h_view(sb_idx).vbke = vlayout.nx3 <= 1 ? 0
-              : vlayout.ks + (ox3 + 1) * vlayout.cnx3 + vlayout.coarse_ng;
+          const auto vx = vertex_amr::RefinementChildSourceRange(
+              vlayout.is, vlayout.cnx1, ox1, vc_refinement_halo, false);
+          const auto vy = vertex_amr::RefinementChildSourceRange(
+              vlayout.js, vlayout.cnx2, ox2, vc_refinement_halo,
+              vlayout.nx2 <= 1);
+          const auto vz = vertex_amr::RefinementChildSourceRange(
+              vlayout.ks, vlayout.cnx3, ox3, vc_refinement_halo,
+              vlayout.nx3 <= 1);
+          if (nvc_tosend > 0 &&
+              (vx.lower < 0 || vx.upper >= vlayout.n1 ||
+               vy.lower < 0 || vy.upper >= vlayout.n2 ||
+               vz.lower < 0 || vz.upper >= vlayout.n3)) {
+            std::cerr << "### FATAL ERROR: native VC AMR send range exceeds fine "
+                         "storage" << std::endl;
+            std::exit(EXIT_FAILURE);
+          }
+          sendbuf.h_view(sb_idx).vbis = vx.lower;
+          sendbuf.h_view(sb_idx).vbie = vx.upper;
+          sendbuf.h_view(sb_idx).vbjs = vy.lower;
+          sendbuf.h_view(sb_idx).vbje = vy.upper;
+          sendbuf.h_view(sb_idx).vbks = vz.lower;
+          sendbuf.h_view(sb_idx).vbke = vz.upper;
           sendbuf.h_view(sb_idx).cntvc =
               (sendbuf.h_view(sb_idx).vbie - sendbuf.h_view(sb_idx).vbis + 1) *
               (sendbuf.h_view(sb_idx).vbje - sendbuf.h_view(sb_idx).vbjs + 1) *

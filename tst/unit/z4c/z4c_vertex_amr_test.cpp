@@ -204,6 +204,30 @@ void CheckTransferOrderAndHalo() {
   Require(vertex_amr::SupportsSingleHopCoarseHalo(5, 5) &&
               !vertex_amr::SupportsSingleHopCoarseHalo(4, 5),
           "single-hop coarse communication feasibility contract");
+
+  constexpr int fine_start = 4;
+  constexpr int fine_stored_end = 24;
+  constexpr int coarse_start = 5;
+  constexpr int coarse_end = 13;
+  constexpr int coarse_intervals = 8;
+  constexpr int refinement_halo = 3;
+  const auto target = vertex_amr::RefinementChildTargetRange(
+      coarse_start, coarse_end, refinement_halo, false);
+  for (int child = 0; child <= 1; ++child) {
+    const auto source = vertex_amr::RefinementChildSourceRange(
+        fine_start, coarse_intervals, child, refinement_halo, false);
+    Require(source.lower >= 0 && source.upper <= fine_stored_end,
+            "migrating refined-child source must stay inside fine storage");
+    Require(source.count() == target.count(),
+            "migrating refined-child send/receive cardinality");
+  }
+  const auto collapsed_source = vertex_amr::RefinementChildSourceRange(
+      0, 0, 0, refinement_halo, true);
+  const auto collapsed_target = vertex_amr::RefinementChildTargetRange(
+      0, 0, refinement_halo, true);
+  Require(collapsed_source.lower == 0 && collapsed_source.upper == 0 &&
+              collapsed_target.lower == 0 && collapsed_target.upper == 0,
+          "migrating refined-child collapsed dimension remains singleton");
 }
 
 }  // namespace
