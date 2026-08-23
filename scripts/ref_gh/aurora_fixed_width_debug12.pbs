@@ -1,0 +1,100 @@
+#!/bin/bash -l
+# Conditional Phase-4 accelerator: run only after the medium fixed-core path
+# has passed t=2.2M.  Reuse the exact compute-node-built executable from the
+# controlling capacity job and map one rank to each of the 12 PVC tiles.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_fw12
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+: "${EXPECTED_EXE_SHA256:?submit with EXPECTED_EXE_SHA256=<sha256>}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_transition_path_medium.athinput"
+OUT="${CAMPAIGN_ROOT}/runs/fixed_width_debug12_${PBS_JOBID}"
+LABEL=fixed_width
+TARGET=2.2
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+actual_exe_sha256=$(sha256sum "${EXE}" | awk '{print $1}')
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test "${actual_exe_sha256}" = "${EXPECTED_EXE_SHA256}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "executable_sha256=${actual_exe_sha256}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "$0"
+} > provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 12
+
+set +e
+/usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+  job/basename="${LABEL}" ref_gh/reference=controlled_transition \
+  ref_gh/transition_path=fixed_width ref_gh/controller_enabled=false \
+  time/tlim="${TARGET}" time/nlim=-1 > "${LABEL}.log" 2>&1
+status=$?
+set -e
+
+{
+  echo "exit_status=${status}"
+  echo "target=${TARGET}"
+  for history in "${LABEL}.ref_gh.hst" "${LABEL}.user.hst"; do
+    if test -s "${history}"; then
+      echo -n "last_${history}="
+      tail -1 "${history}"
+    fi
+  done
+} > segment_status.txt
+
+test "${status}" -eq 0
+test -s "${LABEL}.ref_gh.hst"
+test -s "${LABEL}.user.hst"
+test -s "${LABEL}.ref_gh_maxloc.tsv"
+awk -v target="${TARGET}" \
+  'BEGIN {ok=0} !/^#/ && $1 >= target-1.e-10 && $22 == 0 {ok=1} END {exit !ok}' \
+  "${LABEL}.ref_gh.hst"
+awk 'BEGIN {ok=1} !/^#/ && ($3 != 0 || $5 != 0 || $25 != 0) {ok=0} END {exit !ok}' \
+  "${LABEL}.user.hst"
+! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+  "${LABEL}.log"
+
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' \) -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
