@@ -1,0 +1,233 @@
+# Native-VC Cartoon axis and fixed-grid boundary qualification
+
+Date: 2026-08-23
+
+Branch: `codex/z4c-vc-cartoon-axis-boundary-qualification-20260823`
+
+Exact base: `11d4dde207862a8de633dc51b67ef16b4afe31ef`
+
+Qualified source under test: `6ad9cf4048af6a93aa73cf9940fc78c3b439c8fe`
+
+## Executive verdict
+
+The native vertex-centered modified-Cartoon axis contained two distinct
+defects and both are repaired: the VC constraint ghost mirror used the CC
+geometry, and near-axis quotient identities lost one formal order by dividing
+ordinary centered-difference error by `rho=O(h)`. The production axis now uses
+one centering-aware mirror, analytic `rho=0` limits, and regular-coefficient
+fits in `s=rho^2`. Host and current-source CUDA manufactured/production tests
+pass.
+
+The previously reported physical axis divergence was then traced to a third,
+upstream issue: the 48x32 global IrisK coefficient export was under-resolved at
+the origin. A 128x32 control removes the origin defect and restores positive
+axis-center/core convergence.
+
+The strict fixed-grid physical gate nevertheless fails at the outer boundary.
+Quadratic ghost extrapolation makes all global C/H/M/Z history norms decrease
+with resolution through `tau_c=3 M`, but exact face-local Theta/A state and RHS
+orders remain negative. Moving the boundary from 16M to 32M leaves the inner
+core about O3.6--O3.7 and moves the bad subset to the new outer edge. A cubic
+ghost control is unstable at N512. Therefore this branch is not ready for AMR
+transfer selection or collapse production.
+
+```text
+axis_formulas     = DEFECT_FOUND_AND_REPAIRED
+axis_ghosts       = DEFECT_FOUND_AND_REPAIRED
+outer_boundary    = NONCONVERGENT
+fixed_grid_brill  = BOUNDARY_LIMITED
+transfer_selection = DEFERRED
+overall           = VC_BOUNDARY_GATE_FAILED
+```
+
+## Source changes
+
+The branch adds or changes:
+
+1. centering-aware VC constraint parity reconstruction;
+2. analytic active-axis and bounded near-axis regular-coefficient derivative
+   closures for every scalar/vector/tensor branch used by Z4c/ADM/curvature;
+3. exact active-axis state/RHS regularity enforcement and correction telemetry;
+4. regular evaluation of the global Brill basis at exactly `r=0`;
+5. configured-order, one-sided physical-normal Sommerfeld derivatives scoped
+   only to native-VC Cartoon;
+6. manufactured, poison, origin, Sommerfeld, dense fixed-grid, and domain
+   control harnesses plus offline reducers.
+
+Legacy CC and Cartesian Sommerfeld behavior is deliberately unchanged and
+passes the exact fingerprint regressions. The default ghost extrapolation is
+also unchanged. No floor, extra dissipation, constraint damping, gauge change,
+or weakened admissibility gate was introduced.
+
+## Axis and ghost qualification
+
+The full formula inventory and derivations are in
+`CARTOON_AXIS_IDENTITY_AUDIT.md`. The exact VC mirror contract and lifecycle
+audit are in `GHOST_FILL_AUDIT.md`.
+
+The current-source host gate passes 15/15 focused axis/boundary, CC exact,
+Cartesian exact, restart, and production-kernel tests. The two long tests left
+unfinished by an initially over-broad parallel CTest invocation were rerun
+under the CPU cap and pass 2/2 (`amr_history_integration` and
+`z4c_vc_linear_wave_convergence_o4`). The initial broad invocation also
+exposed the CC/Cartesian fingerprint drift that motivated the final scoping
+fix; those exact regressions now pass.
+
+Perlmutter job `57485375` ran the final source on one A100 and passes 14/14
+selected CUDA tests, including the required device production kernel, VC
+Cartoon restart/output, O2/O4/O6 derivative tests, axis tests, IrisK coordinate
+map, and Sommerfeld derivative oracle. Final CUDA binary SHA-256:
+
+```text
+87b86be33725ddb0d55dbd3484fdb36cf570f3436e7677c0e6bbcae823773204
+```
+
+No current-source SYCL runtime was available, so SYCL is not qualified.
+
+## Initial-data resolution control
+
+The global basis is
+
+```text
+psi = 1 + sum_(m,l) a_ml sin((2m+1) atan(L/r)) cos(2l phi).
+```
+
+Smoothness requires the angular `l` mode to scale as `O(r^(2l))`. The original
+48x32 coefficients leave `l>0` origin plateaus around `1e-8--1e-7`; the first
+radial collocation point is `r=0.04859`, coarser than the N512 first spacing.
+The 96x32 export reduces the plateau to about `1e-12` but does not give clean
+point-origin convergence. The 128x32 export reduces it to roundoff and gives:
+
+| Quantity at the initial slice | observed order |
+|---|---:|
+| axis-center Theta RHS | 2.721 |
+| axis-center H | 3.893 |
+| axis-core constraint minimum | 3.824 |
+| core-interior RHS minimum | 3.925 |
+
+| Export | SHA-256 | ADM mass | disposition |
+|---|---|---:|---|
+| 48x32 | `ff0993c...ccf2d6b` | 2.660301967997158 | under-resolved |
+| 96x32 | `55da940f...85d8ec` | 2.6606354439930562 | intermediate control |
+| 128x32 | `1b5f0ef...aea10` | 2.6606354586228815 | accepted diagnostic control |
+
+The 96/128 files were generated by an existing but dirty/uncommitted local
+IrisK exporter. Their exact bytes are preserved here, but this provenance
+prevents treating them as an upstream IrisK qualification.
+
+## First loss and fixed-grid outcomes
+
+All decisive fixed-grid runs use O4/RK4, CFL 0.15, KO 0.02, max-|K|-scaled
+telegraph lapse with `tau=kappa=1`, Gamma driver with `eta=2`, no Z4 damping,
+no floor, and no AMR.
+
+At `tau_c=0.125 M`, the quadratic-ghost control first loses significant local
+order at the physical rho face:
+
+```text
+component = Theta RHS
+region = outer layer 0
+point = (rho,z)=(16,0)
+observed order = -3.26162596
+|N256-N512| RMS = 7.56515e-7
+```
+
+At the same time the core MeshBlock-interior RHS minimum is `3.578`, the
+axis-core minimum is positive (`1.620`), and the full-domain minimum is
+`3.593`. Detailed time/region/component tables and worst-point coordinates are
+in `FIRST_LOSS_LOCALIZATION.md` and
+`evidence/exact-localization-nr128nt32-extrap3-analysis/`.
+
+### Ghost-extrapolation A/B/C
+
+| Ghost rule | N128/N256/N512 outcome | global history | strict local face |
+|---|---|---|---|
+| degree 1 (`extrap_order=2`) | all reach `tau_c>3` | 6 negative-order samples; min `-4.613` | failed |
+| degree 2 (`extrap_order=3`) | all reach `tau_c>3` | no negative samples; min `+2.630` | failed at `1e-7--1e-6` |
+| degree 3 (`extrap_order=4`) | N512 fails at `t=4.31650` | not qualified | unstable outer corner |
+
+The N512 cubic-ghost failure is an admissibility failure at
+`(rho,z)=(15.8125,16)`, with `det(gtilde)=-39.0094` and a nonpositive second
+metric pivot. This rules out increasing extrapolation degree as a safe repair.
+
+### Moved boundary and CC auxiliary control
+
+Perlmutter job `57484873` evolved six cases through coordinate time
+`2.0295751268186133`:
+
+| geometry | core state min order | core constraint min order | outer state min | outer constraint min |
+|---|---:|---:|---:|---:|
+| VC, boundary at 32M | 3.587 | 3.712 | -0.110 | -0.333 |
+| CC, boundary at 16M | 1.247 | 3.721 | -0.368 | -0.666 |
+
+The maximum base-domain/moved-domain VC difference over all state and
+constraint components in `r<=8` is `5.96034e-8`. This is strong evidence that
+the first bad subset follows the physical outer boundary. CC is only an
+auxiliary comparator, but its own outer-only loss shows this is not a uniquely
+VC-axis phenomenon.
+
+## History normalization
+
+The Cartoon history measure is already the correct axisymmetric proper ring
+measure:
+
+```text
+2*pi*rho*dx1*dx2*w_rho*w_z*sqrt(det(gamma)).
+```
+
+There is no collapsed-`y` `dx3` factor. Nodal trapezoid weights make shared
+endpoints tile the dual volume. The reported jumps/nonconvergence are not a
+fictitious suppressed-width normalization artifact.
+
+## Evidence versus inference
+
+Established:
+
+- the original VC constraint mirror and near-axis quotient closure were wrong;
+- their focused host/CUDA tests now pass;
+- the 48x32 coefficient artifact is under-resolved at the origin;
+- the 128x32 control cures the initial axis-center defect;
+- the earliest evolved negative order is on the physical outer face;
+- moving the boundary preserves the inner core and moves the bad subset;
+- quadratic ghosts improve global convergence but do not pass the local gate;
+- cubic ghosts are unstable at N512.
+
+Supported inference:
+
+- the leading remaining fixed-grid defect is the coupled outer boundary
+  closure: a partial Sommerfeld overwrite plus bulk centered derivatives
+  through low-order extrapolated ghosts;
+- AMR transfer cannot be selected while this fixed-grid prerequisite fails.
+
+Not established:
+
+- a unique defective RHS term at the boundary;
+- complete resolution of the later `(rho,z)=(0,4)` seam-axis gauge anomaly;
+- an energy-stable O4 boundary operator;
+- physical O4 convergence, common-tree/native-AMR convergence, Figure 3,
+  horizon behavior, or critical-collapse readiness.
+
+## Natural next source diagnostic
+
+Build a small manufactured semidiscrete boundary test containing the actual
+VC Cartoon Z4c principal terms, Sommerfeld overwrite, bulk first/second/mixed
+derivatives, KO, corners, and the first four active layers. Use it to compare
+a complete one-sided/biased O4 closure against a characteristic/SAT closure
+with an energy estimate. Only after that frozen operator is stable should the
+N128/N256/N512 fixed-grid gate be rerun.
+
+Do not add a degree-five extrapolator, floors, extra KO, damping, or relaxed
+gates as a substitute for the boundary analysis.
+
+## Artifact map
+
+- `CARTOON_AXIS_IDENTITY_AUDIT.md` — paper-to-code branch inventory.
+- `GHOST_FILL_AUDIT.md` — mirror/lifecycle/poison audit.
+- `FIRST_LOSS_LOCALIZATION.md` — exact common-time localization.
+- `OUTER_BOUNDARY_CONTROL.md` — closure math and A/B/C controls.
+- `comparison_summary.json` — machine-readable verdicts and metrics.
+- `artifacts/boundary-history-comparison/` — global constraint comparison.
+- `EVIDENCE_MANIFEST.json` and `SHA256SUMS` — strict provenance inventory.
+
+AMR q4/q6 physics, performance, and collapse campaigns were deliberately not
+run after the fixed-grid boundary gate failed.

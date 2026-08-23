@@ -1,0 +1,116 @@
+{
+  "schema": "z4c_vc_cartoon_axis_boundary_evidence_manifest_v1",
+  "date": "2026-08-23",
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "branch": "codex/z4c-vc-cartoon-axis-boundary-qualification-20260823",
+  "source_under_test": "6ad9cf4048af6a93aa73cf9940fc78c3b439c8fe",
+  "perlmutter": {
+    "account": "m3328_g",
+    "queue": "shared_interactive",
+    "gpu_count_per_job": 1,
+    "final_binary_sha256": "87b86be33725ddb0d55dbd3484fdb36cf570f3436e7677c0e6bbcae823773204",
+    "jobs": [
+      57483765,
+      57483795,
+      57483834,
+      57484068,
+      57484259,
+      57484477,
+      57484730,
+      57484867,
+      57484873,
+      57485375
+    ],
+    "non_science_jobs": {
+      "57483834": "N128/N256 exact diagnostics succeeded; N512 diagnostic scratch exceeded the 40-GB GPU. N512 was rerun successfully as job 57484068 on an 80-GB GPU.",
+      "57484867": "Harness permission failure before AthenaK execution; no science data. Replaced by job 57484873."
+    }
+  },
+  "artifacts": [
+    {
+      "path": "evidence/current-source-cuda-6ad9cf40/SHA256SUMS",
+      "sha256": "9111e0f83d45208bfe46847b94c47802e8e6d64f3a8119b9307fbcd00c7ab4dd",
+      "role": "final current-source CUDA selected-test manifest"
+    },
+    {
+      "path": "evidence/fixed-grid-gate-nr128nt32/SHA256SUMS",
+      "sha256": "a75e6772e8d448e71cc8f9b78e06c4b55fb9aa18dfe3cb429569fab3d2d615a8",
+      "role": "linear-ghost N128/N256/N512 fixed-grid gate"
+    },
+    {
+      "path": "evidence/fixed-grid-gate-nr128nt32-extrap3/SHA256SUMS",
+      "sha256": "75d2a7a80f4d960f4bae69ff8dc32cb2df0d87017b94e018d7aa285f4450a4c2",
+      "role": "quadratic-ghost N128/N256/N512 fixed-grid gate"
+    },
+    {
+      "path": "evidence/fixed-grid-gate-nr128nt32-extrap4/SHA256SUMS",
+      "sha256": "b15f7b27f1f4dec1bbbf782c0f620cb70f5fc3d22c7252b131dba0a8d37e2ee1",
+      "role": "cubic-ghost partial gate and terminal logs"
+    },
+    {
+      "path": "evidence/fixed-grid-gate-nr128nt32-extrap4/N512.z4c_state_failure.json",
+      "sha256": "a7d8f27e805aa8719c501b7f6a1717b624c6f8260877a7c0cb65ea1d841de75d",
+      "role": "N512 cubic-ghost terminal admissibility record"
+    },
+    {
+      "path": "evidence/exact-localization-nr128nt32-extrap3-hbm80g/SHA256SUMS",
+      "sha256": "cf3d0e873a77737b7df94855ec77dad9c49156a0c50f9c9ec21dbf2ff969a723",
+      "role": "exact common-time diagnostic provenance"
+    },
+    {
+      "path": "evidence/exact-localization-nr128nt32-extrap3-analysis/summary.json",
+      "sha256": "2e32e66b9bafcaeaaa1a9d83e010298fc289cad0c73dd077d3a6f4d8c48ac653",
+      "role": "exact region/component convergence summary"
+    },
+    {
+      "path": "evidence/exact-localization-nr128nt32-extrap3-analysis/worst_negative_points.csv",
+      "sha256": "b7822c9dededc8c402cb69613406655db0e898b6a4fd02c10c3162a13bb2e040",
+      "role": "point coordinates for every meaningful negative-order row"
+    },
+    {
+      "path": "evidence/domain-cc-controls-nr128nt32-extrap3/SHA256SUMS",
+      "sha256": "31e8596838ed102c6e6d5f5cc758a5b90d1c28b09014ffefc94c0de4ae33f7a8",
+      "role": "moved-boundary VC and matched CC run provenance"
+    },
+    {
+      "path": "evidence/domain-cc-controls-nr128nt32-extrap3-analysis/summary.json",
+      "sha256": "1ed1ab680ba1aeff0ea13fcae8a51eebda82db2434e338b0a6d49907c1919eb6",
+      "role": "moved-boundary and CC numerical comparison"
+    },
+    {
+      "path": "artifacts/history-norms-extrap3/summary.json",
+      "sha256": "26f30b868ea26893a34939a862beb3f3864aa2d484a0422d366bd1e90b9ebcb9",
+      "role": "common-axis-proper-time global history convergence"
+    },
+    {
+      "path": "artifacts/boundary-history-comparison/fixed_grid_history_norms_extrap2_vs_extrap3.png",
+      "sha256": "5d74051e3e58cca9cce35e090c8236f00c9914505d0921f018e860b5675f974e",
+      "role": "global constraint comparison plot"
+    },
+    {
+      "path": "evidence/brill_global_48x32.coefficients",
+      "sha256": "ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b",
+      "role": "original under-resolved coefficient authority"
+    },
+    {
+      "path": "evidence/brill_global_96x32_origin_control.coefficients",
+      "sha256": "55da940f0cc091dacd02fc9491e1d27565a0069d0d81dd76c5d6e4fb9a85d8ec",
+      "role": "intermediate origin-resolution control"
+    },
+    {
+      "path": "evidence/brill_global_128x32_origin_control.coefficients",
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10",
+      "role": "accepted origin-resolution diagnostic control"
+    }
+  ],
+  "remote_raw_authority": {
+    "root": "/pscratch/sd/h/hzhu/z4c-vc-cartoon-axis-boundary-20260823",
+    "note": "Large binary/restart/exact CSV products remain on Perlmutter. Checked-in SHA256SUMS files authenticate them without committing production-size raw arrays."
+  },
+  "limitations": [
+    "The strict localized outer-boundary convergence gate fails.",
+    "The 96x32 and 128x32 IrisK controls were generated from an uncommitted dirty exporter worktree.",
+    "No current-source SYCL runtime evidence exists.",
+    "No AMR physics or q4/q6 selection was run after the fixed-grid failure."
+  ]
+}

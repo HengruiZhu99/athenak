@@ -1,0 +1,28 @@
+Current-source host qualification
+Date: 2026-08-23
+Source: 6ad9cf4048af6a93aa73cf9940fc78c3b439c8fe
+
+Build:
+  cmake --build build-axis-host -j64
+  PASS
+
+Focused axis/boundary/exact-regression subset:
+  OMP_NUM_THREADS=1 ctest --test-dir build-axis-host --output-on-failure -j1
+  regex: z4c_cc_selector_equivalence, z4c_rhs_policy_production_host_exact,
+         z4c_kerr_half_plane_restart, z4c_sommerfeld_derivatives,
+         z4c_vc_cartoon_derivatives_o2/o4/o6,
+         z4c_vc_cartoon_axis_scalar/vector/tensor/adm/constraint/rhs_regularity,
+         z4c_cartoon_axis_boundary, z4c_cartoon_production_kernels
+  PASS: 15/15, 0.94 seconds
+
+Long controls interrupted in the initial broad parallel invocation and rerun
+under the CPU cap:
+  OMP_NUM_THREADS=4 ctest --test-dir build-axis-host --output-on-failure -j2
+  regex: z4c_vc_linear_wave_convergence_o4|amr_history_integration
+  PASS: 2/2, 123.05 seconds
+
+The initial broad invocation reached 131/133 completions before it was stopped
+to respect the CPU ceiling. It exposed three failures: one timeout under
+contention and two exact fingerprints changed by an over-broad Sommerfeld
+scope. The final source scoped the new closure to native-VC Cartoon; the
+timeout and both exact fingerprints pass in the focused rerun above.

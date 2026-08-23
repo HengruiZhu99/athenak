@@ -1,0 +1,30 @@
+JobId=57484259 JobName=interactive
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:03 TimeLimit=00:25:00 TimeMin=N/A
+   SubmitTime=2026-08-23T13:17:32 EligibleTime=2026-08-23T13:17:32
+   AccrueTime=Unknown
+   StartTime=2026-08-23T13:17:32 EndTime=2026-08-23T13:42:32 Deadline=N/A
+   PreemptEligibleTime=2026-08-23T13:17:32 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-23T13:17:32 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login02:1273007
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid001000
+   BatchHost=nid001000
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100&hbm40g DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=env
+   SubmitLine=salloc -A m3328_g -C gpu&hbm40g -q shared_interactive -N 1 -n 1 -c 32 --gpus=1 -t 00:25:00 env ATHENA_FIXED_GRID_GATE_COEFFICIENT=/pscratch/sd/h/hzhu/z4c-vc-cartoon-axis-boundary-20260823/authority/brill_global_128x32_origin_control.coefficients ATHENA_FIXED_GRID_GATE_TAG=nr128nt32-extrap3 ATHENA_FIXED_GRID_EXTRAP_ORDER=3 bash /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/source/athenak/docs/investigations/z4c_vc_cartoon_axis_boundary_20260823/perlmutter_fixed_grid_gate_final.sh
+   WorkDir=/global/u1/h/hzhu
+   TresPerJob=gres/gpu:1
+   TresPerTask=cpu=32
+   ResvPorts=63585-63587
+

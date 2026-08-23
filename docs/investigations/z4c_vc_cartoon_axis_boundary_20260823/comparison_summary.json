@@ -1,0 +1,87 @@
+{
+  "schema": "z4c_vc_cartoon_axis_boundary_qualification_v1",
+  "date": "2026-08-23",
+  "branch": "codex/z4c-vc-cartoon-axis-boundary-qualification-20260823",
+  "exact_base": "11d4dde207862a8de633dc51b67ef16b4afe31ef",
+  "qualified_source_under_test": "6ad9cf4048af6a93aa73cf9940fc78c3b439c8fe",
+  "classifications": {
+    "axis_formulas": "DEFECT_FOUND_AND_REPAIRED",
+    "axis_ghosts": "DEFECT_FOUND_AND_REPAIRED",
+    "outer_boundary": "NONCONVERGENT",
+    "fixed_grid_brill": "BOUNDARY_LIMITED",
+    "transfer_selection": "DEFERRED",
+    "overall": "VC_BOUNDARY_GATE_FAILED"
+  },
+  "initial_data_controls": {
+    "48x32": {
+      "sha256": "ff0993c390513c15d6aa65857a0a3c710f2e2c3faf5717d9d63245203ccf2d6b",
+      "adm_mass": 2.660301967997158,
+      "disposition": "UNDERRESOLVED_AT_ORIGIN"
+    },
+    "96x32": {
+      "sha256": "55da940f0cc091dacd02fc9491e1d27565a0069d0d81dd76c5d6e4fb9a85d8ec",
+      "adm_mass": 2.6606354439930562,
+      "disposition": "IMPROVED_BUT_POINT_ORIGIN_NOT_CONVERGED"
+    },
+    "128x32": {
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10",
+      "adm_mass": 2.6606354586228815,
+      "disposition": "ORIGIN_CONTROL_ACCEPTED_FOR_DIAGNOSIS"
+    }
+  },
+  "fixed_grid_extrapolation_controls": {
+    "extrap_order_2": {
+      "N128_N256_N512_reached_axis_tau_3": true,
+      "history_negative_order_count": 6,
+      "history_minimum_order": -4.613315390109523,
+      "exact_full_C_order_tau_1_25": -3.894908598762808,
+      "disposition": "GLOBALLY_NONCONVERGENT"
+    },
+    "extrap_order_3": {
+      "N128_N256_N512_reached_axis_tau_3": true,
+      "history_negative_order_count": 0,
+      "history_minimum_order": 2.630454452102559,
+      "exact_full_worst_order_tau_1_25": 3.4060699910764414,
+      "exact_outer_layer_0_Axx_rhs_order_tau_1_25": -3.4994433307327975,
+      "disposition": "GLOBAL_CONTROL_PASSES_LOCAL_FACE_GATE_FAILS"
+    },
+    "extrap_order_4": {
+      "N128_reached_t_5": true,
+      "N256_reached_t_5": true,
+      "N512_failure_time": 4.3165046742246815,
+      "N512_failure_cycle": 1437,
+      "N512_failure_location": [15.8125, 16.0],
+      "N512_failure_reason": "nonpositive_metric_pivot_1",
+      "slurm_job": 57484730,
+      "disposition": "UNSTABLE_OUTER_CORNER"
+    }
+  },
+  "first_loss": {
+    "axis_tau": 0.125,
+    "coordinate_time": 0.2029627528643316,
+    "region": "outer_layer_0",
+    "family": "rhs",
+    "variable": "Theta",
+    "observed_order_rms": -3.2616259606057274,
+    "difference_256_512_rms": 7.56515097405393e-07,
+    "worst_point": [16.0, 0.0]
+  },
+  "moved_boundary_control": {
+    "target_coordinate_time": 2.0295751268186133,
+    "slurm_job": 57484873,
+    "vc_large_core_state_minimum_order": 3.5870410792290093,
+    "vc_large_core_constraint_minimum_order": 3.7119388677771554,
+    "vc_large_outer_state_minimum_order": -0.11004113095260126,
+    "vc_large_outer_constraint_minimum_order": -0.33321288412410616,
+    "base_large_core_max_linf": 5.9603388669060564e-08,
+    "cc_base_core_constraint_minimum_order": 3.7207889615046232,
+    "cc_base_outer_constraint_minimum_order": -0.6660495005472852
+  },
+  "limitations": [
+    "The 128x32 coefficient control was generated from an uncommitted dirty IrisK exporter worktree.",
+    "The strict local outer-boundary convergence gate fails despite positive global history convergence with extrap_order=3.",
+    "A later negative-order axis result occurs at the z=4 same-level MeshBlock seam and is not source-isolated.",
+    "No current-source SYCL runtime evidence was produced.",
+    "No common-tree or native-AMR physics run was performed and no q4/q6 transfer was selected."
+  ]
+}
