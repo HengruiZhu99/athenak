@@ -8,6 +8,10 @@ Branch: `codex/z4c-vc-amr-correctness-performance-20260822`
 
 Exact base: `34cd6db227e81aed91064f3684733e720c9fac7e`
 
+Final source commit: `144aaded1c56f4443d1e4d31f45c0168ab849f06`
+
+Evidence archive commit: `ac996e618ffc084fdb6758d7df0e4009d92a12e0`
+
 Implementation commits:
 
 - `21b9121339185ba2629ead53b6993596bbc64b62` — native-VC interpolation,
