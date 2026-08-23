@@ -76,7 +76,17 @@ test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]
 
 mkdir mesh
 cd mesh
-"${EXE}" -m -i "${CAUSAL_INPUT}" > mesh_structure.txt 2>&1
+set +e
+mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -m -i "${CAUSAL_INPUT}" \
+  > mesh_structure.txt 2>&1
+mesh_status=$?
+set -e
+echo "mesh_only_exit_status=${mesh_status}" >> mesh_structure.txt
+# Aurora can return 139 during SYCL process teardown after mesh-only mode has
+# completely written its authoritative tree.  Accept only that post-output
+# status, following the mature Z4c/Ref-GH Aurora launch pattern.
+test "${mesh_status}" -eq 0 -o "${mesh_status}" -eq 139
 grep -q 'Root grid = 3 x 3 x 3 MeshBlocks' mesh_structure.txt
 grep -q 'Total number of MeshBlocks = 272' mesh_structure.txt
 grep -q 'Physical level = 1.*208 MeshBlocks' mesh_structure.txt
