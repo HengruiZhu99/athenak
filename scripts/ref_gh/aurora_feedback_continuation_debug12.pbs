@@ -122,6 +122,11 @@ prescribed=$(find "${OUT}/prescribed" -name '*.00001.cbin' -print -quit)
 "${PYTHON}" "${SRC}/scripts/ref_gh/compare_feedback_prescribed_equivalence.py" \
   "${legacy}" "${prescribed}" --source-root "${SRC}" \
   --json "${OUT}/prescribed_equivalence.json" > "${OUT}/prescribed_equivalence.log"
+"${PYTHON}" "${SRC}/scripts/ref_gh/verify_feedback_constraint_history.py" \
+  "${OUT}/legacy_time/ref_gh_feedback_equivalence.user.hst" \
+  "${OUT}/legacy_time/ref_gh_feedback_equivalence.ref_gh.hst" \
+  --json "${OUT}/prescribed_constraint_history.json" \
+  > "${OUT}/prescribed_constraint_history.log"
 
 # T0 actual feedback checkpoint/restart against a continuous two-cycle control.
 for lane in direct split; do mkdir -p "${OUT}/restart_${lane}"; done

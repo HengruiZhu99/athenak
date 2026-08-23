@@ -686,7 +686,6 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
 }
 
 bool RefGh::UpdateContinuationConstraintVeto(const Real time) {
-  if (opt.continuation_mode != 2) return false;
   const bool old_veto = continuation_constraint_veto;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
@@ -744,6 +743,10 @@ bool RefGh::UpdateContinuationConstraintVeto(const Real time) {
       std::sqrt(sums.the_array[kReduction2]/sums.the_array[kVolume]);
   controller_diagnostics.curl_l2 =
       std::sqrt(sums.the_array[kCurl2]/sums.the_array[kVolume]);
+  // The prescribed tau-8 replay is the calibration source for the feedback
+  // safety thresholds, so publish the native norms in every continuation
+  // mode.  Only the closed-loop mode is permitted to change the veto state.
+  if (opt.continuation_mode != 2) return false;
   const Real level = std::max(
       controller_diagnostics.gh_l2/opt.continuation_gh_warning,
       std::max(controller_diagnostics.reduction_l2
