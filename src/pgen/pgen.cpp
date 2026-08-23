@@ -223,6 +223,7 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     }
 #endif
     std::memcpy(&(pturb->rstate), &(rng_data[0]), sizeof(RNG_State));
+    delete[] rng_data;
   }
 
   // root process reads size of CC and FC data arrays from restart file
@@ -245,6 +246,7 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
 #endif
   IOWrapperSizeT data_size;
   std::memcpy(&data_size, &(variabledata[0]), sizeof(IOWrapperSizeT));
+  delete[] variabledata;
 
   // calculate total number of CC variables
   IOWrapperSizeT headeroffset=0;

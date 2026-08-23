@@ -284,6 +284,7 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
 
 MeshRefinement::~MeshRefinement() {
   if (pmy_mesh->adaptive) { // deallocate arrays for AMR
+    delete pmrc;
     delete [] nref_eachrank;
     delete [] nderef_eachrank;
     delete [] nref_rsum;
