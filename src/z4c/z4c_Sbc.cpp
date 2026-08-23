@@ -20,6 +20,7 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "z4c/cartoon_derivatives.hpp"
+#include "z4c/sommerfeld_derivatives.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_symmetry.hpp"
 #include "z4c/z4c_vertex_topology.hpp"
@@ -181,6 +182,86 @@ void DumpVertexRHSFieldDiagnostic(Z4c *z4c, MeshBlockPack *pack,
 
 }  // namespace
 
+KOKKOS_INLINE_FUNCTION
+static bool IsSommerfeldBoundaryFlag(const BoundaryFlag flag,
+                                     const bool user_sbc) {
+  return flag == BoundaryFlag::outflow || flag == BoundaryFlag::diode ||
+         flag == BoundaryFlag::vacuum ||
+         (flag == BoundaryFlag::user && user_sbc);
+}
+
+KOKKOS_INLINE_FUNCTION
+static int SommerfeldBoundarySide(const DvceArray2D<BoundaryFlag> &bcs,
+                                  const bool user_sbc, const int m,
+                                  const int direction, const int index,
+                                  const int lower, const int upper) {
+  const auto inner = static_cast<BoundaryFace>(2 * direction);
+  const auto outer = static_cast<BoundaryFace>(2 * direction + 1);
+  if (index == lower && IsSommerfeldBoundaryFlag(bcs(m, inner), user_sbc)) {
+    return -1;
+  }
+  if (index == upper && IsSommerfeldBoundaryFlag(bcs(m, outer), user_sbc)) {
+    return 1;
+  }
+  return 0;
+}
+
+template <int NGHOST, typename ScalarField>
+KOKKOS_INLINE_FUNCTION
+static Real OneSidedScalarFirst(const int direction, const int side,
+                                const Real inverse_spacing[3],
+                                ScalarField &field, const int m, const int k,
+                                const int j, const int i) {
+  const int sk = direction == 2;
+  const int sj = direction == 1;
+  const int si = direction == 0;
+  const int inward = -side;
+  const auto value = [&](const int q) {
+    return field(m, k + q * inward * sk, j + q * inward * sj,
+                 i + q * inward * si);
+  };
+  return SommerfeldOneSidedFirst<NGHOST>(
+      side, inverse_spacing[direction], value);
+}
+
+template <int NGHOST, typename VectorField>
+KOKKOS_INLINE_FUNCTION
+static Real OneSidedVectorFirst(const int direction, const int side,
+                                const Real inverse_spacing[3],
+                                VectorField &field, const int component,
+                                const int m, const int k, const int j,
+                                const int i) {
+  const int sk = direction == 2;
+  const int sj = direction == 1;
+  const int si = direction == 0;
+  const int inward = -side;
+  const auto value = [&](const int q) {
+    return field(m, component, k + q * inward * sk, j + q * inward * sj,
+                 i + q * inward * si);
+  };
+  return SommerfeldOneSidedFirst<NGHOST>(
+      side, inverse_spacing[direction], value);
+}
+
+template <int NGHOST, typename TensorField>
+KOKKOS_INLINE_FUNCTION
+static Real OneSidedTensorFirst(const int direction, const int side,
+                                const Real inverse_spacing[3],
+                                TensorField &field, const int component_a,
+                                const int component_b, const int m, const int k,
+                                const int j, const int i) {
+  const int sk = direction == 2;
+  const int sj = direction == 1;
+  const int si = direction == 0;
+  const int inward = -side;
+  const auto value = [&](const int q) {
+    return field(m, component_a, component_b, k + q * inward * sk,
+                 j + q * inward * sj, i + q * inward * si);
+  };
+  return SommerfeldOneSidedFirst<NGHOST>(
+      side, inverse_spacing[direction], value);
+}
+
 //----------------------------------------------------------------------------------------
 //! \fn void Z4c::Z4cSommerfeld
 //! \brief apply Sommerfeld BCs to the given set of points
@@ -188,6 +269,7 @@ template <typename Centering, typename Symmetry, int NGHOST>
 KOKKOS_INLINE_FUNCTION
 static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
     const Z4cGridLayout &layout, const DualArray1D<RegionSize> &size,
+    const DvceArray2D<BoundaryFlag> &bcs, const bool user_sbc,
     const int m, const int k, const int j, const int i) {
   // -------------------------------------------------------------------------------------
   // Scratch data
@@ -211,26 +293,41 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
   Real idx[] = {1./size.d_view(m).dx1, 1./size.d_view(m).dx2, 1./size.d_view(m).dx3};
   auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
       idx, size.d_view, layout.nx1, layout.is, m, k, j, i, layout.nx3 == 1);
+  const int boundary_side[3] = {
+      SommerfeldBoundarySide(bcs, user_sbc, m, 0, i, layout.is, layout.ie),
+      SommerfeldBoundarySide(bcs, user_sbc, m, 1, j, layout.js, layout.je),
+      SommerfeldBoundarySide(bcs, user_sbc, m, 2, k, layout.ks, layout.ke)};
 
   // -------------------------------------------------------------------------------------
   // First derivatives
   // Match the configured bulk stencil.  The physical ghost extrapolation order is
   // an independent input contract and must provide the corresponding boundary halo.
   for (int a = 0; a < 3; a++) {
-    dKhat_d(a) = derivatives.ScalarFirst(a, z4c.vKhat);
-    dTheta_d(a) = derivatives.ScalarFirst(a, z4c.vTheta);
+    dKhat_d(a) = boundary_side[a] == 0
+        ? derivatives.ScalarFirst(a, z4c.vKhat)
+        : OneSidedScalarFirst<NGHOST>(
+              a, boundary_side[a], idx, z4c.vKhat, m, k, j, i);
+    dTheta_d(a) = boundary_side[a] == 0
+        ? derivatives.ScalarFirst(a, z4c.vTheta)
+        : OneSidedScalarFirst<NGHOST>(
+              a, boundary_side[a], idx, z4c.vTheta, m, k, j, i);
   }
   for (int a = 0; a < 3; a++) {
     for (int b = 0; b < 3; b++) {
-      dGam_du(b,a) = derivatives.VectorFirst(b, a, z4c.vGam_u);
+      dGam_du(b,a) = boundary_side[b] == 0
+          ? derivatives.VectorFirst(b, a, z4c.vGam_u)
+          : OneSidedVectorFirst<NGHOST>(
+                b, boundary_side[b], idx, z4c.vGam_u, a, m, k, j, i);
     }
   }
   for (int a = 0; a < 3; a++) {
     for (int b = a; b < 3; b++) {
       for (int c = 0; c < 3; c++) {
-        dA_ddd(c, a, b) =
-            derivatives.template TensorFirst<TensorVariance::all_lower>(
-                c, a, b, z4c.vA_dd);
+        dA_ddd(c, a, b) = boundary_side[c] == 0
+            ? derivatives.template TensorFirst<TensorVariance::all_lower>(
+                  c, a, b, z4c.vA_dd)
+            : OneSidedTensorFirst<NGHOST>(
+                  c, boundary_side[c], idx, z4c.vA_dd, a, b, m, k, j, i);
       }
     }
   }
@@ -295,19 +392,20 @@ KOKKOS_INLINE_FUNCTION
 static void Z4cSommerfeldConfigured(
     const Z4c::Z4c_vars &z4c, const Z4c::Z4c_vars &rhs,
     const Z4cGridLayout &layout, const DualArray1D<RegionSize> &size,
+    const DvceArray2D<BoundaryFlag> &bcs, const bool user_sbc,
     const int fd_stencil, const int m, const int k, const int j, const int i) {
   switch (fd_stencil) {
     case 2:
       Z4cSommerfeld<Centering, Symmetry, 2>(
-          z4c, rhs, layout, size, m, k, j, i);
+          z4c, rhs, layout, size, bcs, user_sbc, m, k, j, i);
       break;
     case 3:
       Z4cSommerfeld<Centering, Symmetry, 3>(
-          z4c, rhs, layout, size, m, k, j, i);
+          z4c, rhs, layout, size, bcs, user_sbc, m, k, j, i);
       break;
     case 4:
       Z4cSommerfeld<Centering, Symmetry, 4>(
-          z4c, rhs, layout, size, m, k, j, i);
+          z4c, rhs, layout, size, bcs, user_sbc, m, k, j, i);
       break;
     default:
       Kokkos::abort("invalid Z4c Sommerfeld derivative stencil");
@@ -337,6 +435,7 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
   auto &rhs_ = rhs;
   bool &user_Sbc = opt.user_Sbc;
   const int fd_stencil = opt.fd_stencil;
+  auto bcs = mb_bcs.d_view;
 
   // We only need to apply this condition for outflow boundaries
   if (pm->mesh_bcs[BoundaryFace::inner_x1] == BoundaryFlag::outflow
@@ -355,12 +454,12 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeldConfigured<Centering, Symmetry>(
-                z4c_, rhs_, layout, size, fd_stencil, m, k, j, is);
+                z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, k, j, is);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeldConfigured<Centering, Symmetry>(
-                  z4c_, rhs_, layout, size, fd_stencil, m, k, j, is);
+                  z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, k, j, is);
             }
           break;
         default:
@@ -372,12 +471,12 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeldConfigured<Centering, Symmetry>(
-                z4c_, rhs_, layout, size, fd_stencil, m, k, j, ie);
+                z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, k, j, ie);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeldConfigured<Centering, Symmetry>(
-                  z4c_, rhs_, layout, size, fd_stencil, m, k, j, ie);
+                  z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, k, j, ie);
             }
           break;
         default:
@@ -401,12 +500,12 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeldConfigured<Centering, Symmetry>(
-                z4c_, rhs_, layout, size, fd_stencil, m, k, js, i);
+                z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, k, js, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeldConfigured<Centering, Symmetry>(
-                  z4c_, rhs_, layout, size, fd_stencil, m, k, js, i);
+                  z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, k, js, i);
             }
           break;
         default:
@@ -418,12 +517,12 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeldConfigured<Centering, Symmetry>(
-                z4c_, rhs_, layout, size, fd_stencil, m, k, je, i);
+                z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, k, je, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeldConfigured<Centering, Symmetry>(
-                  z4c_, rhs_, layout, size, fd_stencil, m, k, je, i);
+                  z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, k, je, i);
             }
           break;
         default:
@@ -450,12 +549,12 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeldConfigured<Centering, Symmetry>(
-                z4c_, rhs_, layout, size, fd_stencil, m, ks, j, i);
+                z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, ks, j, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeldConfigured<Centering, Symmetry>(
-                  z4c_, rhs_, layout, size, fd_stencil, m, ks, j, i);
+                  z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, ks, j, i);
             }
           break;
         default:
@@ -467,12 +566,12 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
         case BoundaryFlag::vacuum:
         case BoundaryFlag::outflow:
             Z4cSommerfeldConfigured<Centering, Symmetry>(
-                z4c_, rhs_, layout, size, fd_stencil, m, ke, j, i);
+                z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, ke, j, i);
           break;
         case BoundaryFlag::user:
             if (user_Sbc) {
               Z4cSommerfeldConfigured<Centering, Symmetry>(
-                  z4c_, rhs_, layout, size, fd_stencil, m, ke, j, i);
+                  z4c_, rhs_, layout, size, bcs, user_Sbc, fd_stencil, m, ke, j, i);
             }
           break;
         default:
