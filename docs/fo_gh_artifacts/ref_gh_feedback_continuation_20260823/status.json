@@ -5,6 +5,7 @@
   "parent_commit": "9c438dc619aa742404530c953243d71b2a01d8e6",
   "implementation_commit": "9b86a5d97af9abb46b18c82c4895feb9887f0d5d",
   "controller_test_commit": "55eed5d4267d2eea833c4fe3ec6e8ff3af3bc732",
+  "aurora_mesh_launcher_correction_commit": "0944be6b18dcc89f04a1e98fb34dfaef2a18622d",
   "local_executable_sha256": "e23c7449ba5691c2142b010623d0d9a76ca0589ca45875d94a1c4e08f412cb6c",
   "completed": {
     "local_t0_regressions": true,
@@ -30,7 +31,7 @@
     "medium_dx_min": 0.041666666666666664
   },
   "pending": {
-    "aurora_12_tile_debug_gate": "blocked_by_missing_ssh_authentication",
+    "aurora_12_tile_debug_gate": "corrected_rerun_pending_after_job_8777229_mesh_teardown_139",
     "tau8_threshold_freeze": true,
     "t3_cheap_medium": true,
     "t4_definitive_medium": true,
@@ -38,5 +39,15 @@
     "t6_three_resolution": true
   },
   "active_or_submitted_jobs_from_this_work": 0,
+  "aurora_job_8777229": {
+    "queue": "debug",
+    "node": "x4311c6s7b0n0",
+    "exit_status": 139,
+    "walltime": "00:06:01",
+    "distinct_pvc_tiles": 12,
+    "mesh_tree_complete": true,
+    "controller_tests_started": false,
+    "classification": "post-output mesh-only SYCL teardown"
+  },
   "scientific_claim": "none"
 }

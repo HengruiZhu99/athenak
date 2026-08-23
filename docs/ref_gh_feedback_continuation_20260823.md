@@ -16,11 +16,16 @@ inputs are commit `9b86a5d97af9abb46b18c82c4895feb9887f0d5d`, with the
 stronger manufactured-history audit in
 `55eed5d4267d2eea833c4fe3ec6e8ff3af3bc732`.
 
-Aurora BatchMode authentication was unavailable at the final local gate
-(`Permission denied (keyboard-interactive,hostbased)` and no control socket),
-so no PBS job was submitted.  The committed debug-queue script is ready for one
-node, all twelve PVC tiles, one MPI rank per tile.  When a job is queued, it is
-to be checked no more often than every 30 minutes.
+Aurora authentication was restored and debug job `8777229` ran on node
+`x4311c6s7b0n0`.  It proved twelve distinct PVC tile mappings (`0.0` through
+`5.1`), built the intended Kokkos `SERIAL;SYCL`/PVC/MPI executable, and wrote
+the exact 272-block mesh tree.  The direct mesh-only process then returned 139
+during SYCL teardown before any controller test ran.  This is a launcher-gate
+failure, not solver evidence.  Following the mature Aurora pattern, one
+equation-preserving script correction maps mesh-only mode through one MPI tile
+and accepts 139 only after the complete expected tree is verified.  A single
+focused rerun is pending; no numerical or controller source was changed.  The
+launcher correction is commit `0944be6b18dcc89f04a1e98fb34dfaef2a18622d`.
 
 ## Fixed mathematical scope
 
@@ -117,19 +122,19 @@ fine variants preserve the tree with `dx_min=M/16` and `M/32`.
 
 ## Remaining ordered gates
 
-1. Restore Aurora SSH authentication and inspect the live queue.
-2. Submit exactly one twelve-tile debug job with
+1. Rerun exactly one corrected twelve-tile debug job with
    `scripts/ref_gh/aurora_feedback_continuation_debug12.pbs`; do not leave a
-   competing request.
-3. Pass the PVC T0--T2/restart gate, then replay the existing medium fixed-core
+   competing request.  Job `8777229` stopped at post-output mesh teardown and
+   did not qualify controller execution.
+2. Pass the PVC T0--T2/restart gate, then replay the existing medium fixed-core
    tau-8 run to t=4M with
    `scripts/ref_gh/aurora_feedback_tau8_replay12.pbs` and freeze thresholds
    from its new diagnostics.  The replay script launches no feedback case and
    emits a fail-closed threshold-freeze decision for review.
-4. Run T3 cheap medium only to `xi>=0.5` or t=5M.
-5. Run T4 on the enlarged medium domain through xi=1 plus a 2M hold, t=20M, or
+3. Run T3 cheap medium only to `xi>=0.5` or t=5M.
+4. Run T4 on the enlarged medium domain through xi=1 plus a 2M hold, t=20M, or
    fail closed; then T5 aggressive prescribed four-M discriminator.
-6. Run the three-resolution T6 gate only if T4 passes.
+5. Run the three-resolution T6 gate only if T4 passes.
 
 No statement of feedback success, convergence, full activation, trumpet
 establishment, or long-time stability is justified by the current evidence.
