@@ -66,6 +66,16 @@ veto.  The launcher now uses the already qualified `-r checkpoint`-only
 pattern so restart metadata remains authoritative; no threshold or equation
 was changed.
 
+The clean checkpoint-only retry, capacity job `8777507`, passed T3 on node
+`x4301c1s7b0n0`.  It reached `xi=0.5008422433746882` at t=2.5M with monotone
+xi, nonnegative xi_dot, finite fields, exact zero exponent trims, and no veto.
+The controller did not yet slow, which is the permitted T3 exception because
+every risk channel stayed strictly below `R_slow=0.70`; the maximum risk was
+0.3821703582169683.  Native maxima were GH `1.5705e-3`, reduction
+`2.3654e-4`, and curl `5.4938e-3`, and their controller-history copies agreed
+to `8.68e-19` Linf or better.  This is a bounded plumbing/discrimination pass,
+not a long-time or full-activation result.
+
 ## Fixed mathematical scope
 
 The radial family, GH equations, compatible Phi ordering, dissipation, and
@@ -163,11 +173,9 @@ fine variants preserve the tree with `dx_min=M/16` and `M/32`.
 
 ## Remaining ordered gates
 
-1. Run one focused PVC prescribed-history check for commit `8b7c0841`, then run
-   T3 cheap medium only to `xi>=0.5` or t=5M.
-2. Run T4 on the enlarged medium domain through xi=1 plus a 2M hold, t=20M, or
+1. Run T4 on the enlarged medium domain through xi=1 plus a 2M hold, t=20M, or
    fail closed; then T5 aggressive prescribed four-M discriminator.
-3. Run the three-resolution T6 gate only if T4 passes.  If the measured
+2. Run the three-resolution T6 gate only if T4 passes.  If the measured
    characteristic travel distance makes the `[-12M,12M]^3` clean window too
    short, push only the outer boundary outward with SMR while preserving the
    fixed inner spacings and full finest coverage of the 0.30--0.60M shell.
