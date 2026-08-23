@@ -1,0 +1,202 @@
+Internal ctest changing into directory: /lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-amr-21b91213-20260822/build-sycl
+Test project /lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-amr-21b91213-20260822/build-sycl
+      Start 24: athena.z4c_vc_dynamic_amr_2d_cartesian_o2
+ 1/25 Test #24: athena.z4c_vc_dynamic_amr_2d_cartesian_o2 ............   Passed    2.42 sec
+      Start 25: athena.z4c_vc_dynamic_amr_2d_cartoon_o2
+ 2/25 Test #25: athena.z4c_vc_dynamic_amr_2d_cartoon_o2 ..............   Passed    2.44 sec
+      Start 26: athena.z4c_vc_dynamic_amr_3d_cartesian_o2
+ 3/25 Test #26: athena.z4c_vc_dynamic_amr_3d_cartesian_o2 ............   Passed    2.63 sec
+      Start 27: athena.z4c_vc_dynamic_amr_2d_cartesian_o4
+ 4/25 Test #27: athena.z4c_vc_dynamic_amr_2d_cartesian_o4 ............   Passed    2.47 sec
+      Start 28: athena.z4c_vc_dynamic_amr_2d_cartoon_o4
+ 5/25 Test #28: athena.z4c_vc_dynamic_amr_2d_cartoon_o4 ..............   Passed    2.31 sec
+      Start 29: athena.z4c_vc_dynamic_amr_3d_cartesian_o4
+ 6/25 Test #29: athena.z4c_vc_dynamic_amr_3d_cartesian_o4 ............   Passed    2.24 sec
+      Start 30: athena.z4c_vc_dynamic_amr_2d_cartesian_o6
+ 7/25 Test #30: athena.z4c_vc_dynamic_amr_2d_cartesian_o6 ............   Passed    2.31 sec
+      Start 31: athena.z4c_vc_dynamic_amr_2d_cartoon_o6
+ 8/25 Test #31: athena.z4c_vc_dynamic_amr_2d_cartoon_o6 ..............   Passed    2.43 sec
+      Start 32: athena.z4c_vc_dynamic_amr_3d_cartesian_o6
+ 9/25 Test #32: athena.z4c_vc_dynamic_amr_3d_cartesian_o6 ............   Passed    4.02 sec
+      Start 44: athena.z4c_vc_static_multilevel_2d_cartesian_o4
+10/25 Test #44: athena.z4c_vc_static_multilevel_2d_cartesian_o4 ......***Failed    2.54 sec
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_static_multilevel_test.py", line 164, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_static_multilevel_test.py", line 90, in main
+    import bin_convert  # pylint: disable=import-error,import-outside-toplevel
+    ^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/vis/python/bin_convert.py", line 87, in <module>
+    import h5py
+ModuleNotFoundError: No module named 'h5py'
+
+      Start 45: athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4
+11/25 Test #45: athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4 ...***Failed    2.60 sec
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_static_multilevel_test.py", line 164, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_static_multilevel_test.py", line 90, in main
+    import bin_convert  # pylint: disable=import-error,import-outside-toplevel
+    ^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/vis/python/bin_convert.py", line 87, in <module>
+    import h5py
+ModuleNotFoundError: No module named 'h5py'
+
+      Start 46: athena.z4c_vc_static_multilevel_3d_cartesian_o4
+12/25 Test #46: athena.z4c_vc_static_multilevel_3d_cartesian_o4 ......***Failed    2.63 sec
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_static_multilevel_test.py", line 164, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_static_multilevel_test.py", line 90, in main
+    import bin_convert  # pylint: disable=import-error,import-outside-toplevel
+    ^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/vis/python/bin_convert.py", line 87, in <module>
+    import h5py
+ModuleNotFoundError: No module named 'h5py'
+
+      Start 53: athena.z4c_vertex_gauge_wave_2d_cartesian_o2
+13/25 Test #53: athena.z4c_vertex_gauge_wave_2d_cartesian_o2 .........***Failed    1.69 sec
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 126, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 110, in main
+    errors = [run_case(args.athena.resolve(), args.input.resolve(), root,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 47, in run_case
+    import bin_convert  # pylint: disable=import-error,import-outside-toplevel
+    ^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/vis/python/bin_convert.py", line 87, in <module>
+    import h5py
+ModuleNotFoundError: No module named 'h5py'
+
+      Start 54: athena.z4c_vertex_gauge_wave_3d_cartesian_o2
+14/25 Test #54: athena.z4c_vertex_gauge_wave_3d_cartesian_o2 .........***Failed    1.76 sec
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 126, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 110, in main
+    errors = [run_case(args.athena.resolve(), args.input.resolve(), root,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 47, in run_case
+    import bin_convert  # pylint: disable=import-error,import-outside-toplevel
+    ^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/vis/python/bin_convert.py", line 87, in <module>
+    import h5py
+ModuleNotFoundError: No module named 'h5py'
+
+      Start 55: athena.z4c_vertex_gauge_wave_2d_cartesian_o4
+15/25 Test #55: athena.z4c_vertex_gauge_wave_2d_cartesian_o4 .........***Failed    2.25 sec
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 126, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 110, in main
+    errors = [run_case(args.athena.resolve(), args.input.resolve(), root,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 47, in run_case
+    import bin_convert  # pylint: disable=import-error,import-outside-toplevel
+    ^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/vis/python/bin_convert.py", line 87, in <module>
+    import h5py
+ModuleNotFoundError: No module named 'h5py'
+
+      Start 56: athena.z4c_vertex_gauge_wave_3d_cartesian_o4
+16/25 Test #56: athena.z4c_vertex_gauge_wave_3d_cartesian_o4 .........***Failed    1.75 sec
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 126, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 110, in main
+    errors = [run_case(args.athena.resolve(), args.input.resolve(), root,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 47, in run_case
+    import bin_convert  # pylint: disable=import-error,import-outside-toplevel
+    ^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/vis/python/bin_convert.py", line 87, in <module>
+    import h5py
+ModuleNotFoundError: No module named 'h5py'
+
+      Start 57: athena.z4c_vertex_gauge_wave_2d_cartesian_o6
+17/25 Test #57: athena.z4c_vertex_gauge_wave_2d_cartesian_o6 .........***Failed    1.65 sec
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 126, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 110, in main
+    errors = [run_case(args.athena.resolve(), args.input.resolve(), root,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 47, in run_case
+    import bin_convert  # pylint: disable=import-error,import-outside-toplevel
+    ^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/vis/python/bin_convert.py", line 87, in <module>
+    import h5py
+ModuleNotFoundError: No module named 'h5py'
+
+      Start 58: athena.z4c_vertex_gauge_wave_3d_cartesian_o6
+18/25 Test #58: athena.z4c_vertex_gauge_wave_3d_cartesian_o6 .........***Failed    1.79 sec
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 126, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 110, in main
+    errors = [run_case(args.athena.resolve(), args.input.resolve(), root,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_gauge_wave_convergence_test.py", line 47, in run_case
+    import bin_convert  # pylint: disable=import-error,import-outside-toplevel
+    ^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/vis/python/bin_convert.py", line 87, in <module>
+    import h5py
+ModuleNotFoundError: No module named 'h5py'
+
+      Start 67: athena.z4c_vc_restart_2d_cartesian
+19/25 Test #67: athena.z4c_vc_restart_2d_cartesian ...................   Passed   12.34 sec
+      Start 68: athena.z4c_vc_restart_2d_cartoon
+20/25 Test #68: athena.z4c_vc_restart_2d_cartoon .....................   Passed   12.60 sec
+      Start 69: athena.z4c_vc_restart_3d_cartesian
+21/25 Test #69: athena.z4c_vc_restart_3d_cartesian ...................   Passed   13.28 sec
+      Start 72: athena.z4c_vc_amr_transfer
+22/25 Test #72: athena.z4c_vc_amr_transfer ...........................   Passed    0.18 sec
+      Start 74: athena.z4c_vc_output
+23/25 Test #74: athena.z4c_vc_output .................................   Passed   10.65 sec
+      Start 75: athena.z4c_vc_output_2d_cartoon
+24/25 Test #75: athena.z4c_vc_output_2d_cartoon ......................   Passed    9.74 sec
+      Start 76: athena.z4c_vc_output_3d_cartesian
+25/25 Test #76: athena.z4c_vc_output_3d_cartesian ....................   Passed    6.59 sec
+
+64% tests passed, 9 tests failed out of 25
+
+Label Time Summary:
+2d            =  59.80 sec*proc (14 tests)
+3d            =  36.70 sec*proc (9 tests)
+amr           =  31.04 sec*proc (12 tests)
+analytic      =  10.89 sec*proc (6 tests)
+cartesian     =  53.48 sec*proc (11 tests)
+cartoon       =  32.12 sec*proc (6 tests)
+gauge_wave    =  10.89 sec*proc (6 tests)
+interface     =   7.77 sec*proc (3 tests)
+o2            =   3.45 sec*proc (2 tests)
+o4            =   4.00 sec*proc (2 tests)
+o6            =   3.44 sec*proc (2 tests)
+output        =  26.98 sec*proc (3 tests)
+restart       =  38.23 sec*proc (3 tests)
+vertex        = 107.14 sec*proc (24 tests)
+z4c           = 107.14 sec*proc (24 tests)
+
+Total Test time (real) = 107.60 sec
+
+The following tests FAILED:
+	 44 - athena.z4c_vc_static_multilevel_2d_cartesian_o4 (Failed) 2d amr cartesian interface vertex z4c
+	 45 - athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4 (Failed) 2d amr cartoon interface vertex z4c
+	 46 - athena.z4c_vc_static_multilevel_3d_cartesian_o4 (Failed) 3d amr cartesian interface vertex z4c
+	 53 - athena.z4c_vertex_gauge_wave_2d_cartesian_o2 (Failed) 2d analytic gauge_wave o2 vertex z4c
+	 54 - athena.z4c_vertex_gauge_wave_3d_cartesian_o2 (Failed) 3d analytic gauge_wave o2 vertex z4c
+	 55 - athena.z4c_vertex_gauge_wave_2d_cartesian_o4 (Failed) 2d analytic gauge_wave o4 vertex z4c
+	 56 - athena.z4c_vertex_gauge_wave_3d_cartesian_o4 (Failed) 3d analytic gauge_wave o4 vertex z4c
+	 57 - athena.z4c_vertex_gauge_wave_2d_cartesian_o6 (Failed) 2d analytic gauge_wave o6 vertex z4c
+	 58 - athena.z4c_vertex_gauge_wave_3d_cartesian_o6 (Failed) 3d analytic gauge_wave o6 vertex z4c
+Errors while running CTest

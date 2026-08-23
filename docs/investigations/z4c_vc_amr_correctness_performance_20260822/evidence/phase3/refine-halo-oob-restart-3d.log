@@ -1,0 +1,29 @@
+Internal ctest changing into directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp
+Test project /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp
+    Start 59: athena.z4c_vc_restart_3d_cartesian
+1/1 Test #59: athena.z4c_vc_restart_3d_cartesian ...***Failed    2.33 sec
+Traceback (most recent call last):
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 190, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 132, in main
+    require(payload(final) == payload(resumed_final),
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 20, in require
+    raise RuntimeError(message)
+RuntimeError: after_refine continuation changed the final binary payload
+
+
+0% tests passed, 1 tests failed out of 1
+
+Label Time Summary:
+3d           =   2.33 sec*proc (1 test)
+cartesian    =   2.33 sec*proc (1 test)
+restart      =   2.33 sec*proc (1 test)
+vertex       =   2.33 sec*proc (1 test)
+z4c          =   2.33 sec*proc (1 test)
+
+Total Test time (real) =   2.33 sec
+
+The following tests FAILED:
+	 59 - athena.z4c_vc_restart_3d_cartesian (Failed)
+Errors while running CTest

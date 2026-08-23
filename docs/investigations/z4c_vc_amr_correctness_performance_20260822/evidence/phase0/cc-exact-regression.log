@@ -1,0 +1,73 @@
+[OUTPUT] 
+Internal ctest changing into directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp
+
+[HANDLER_VERBOSE_OUTPUT] 
+UpdateCTestConfiguration  from :/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp/DartConfiguration.tcl
+
+UpdateCTestConfiguration  from :/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp/DartConfiguration.tcl
+[HANDLER_OUTPUT] 
+Test project /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp
+
+[HANDLER_VERBOSE_OUTPUT] 
+Constructing a list of tests
+
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 74
+[HANDLER_OUTPUT] 
+    Start  74: athena.z4c_cc_selector_equivalence
+
+[HANDLER_VERBOSE_OUTPUT] 
+
+74: Test command: /usr/bin/python3 "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_cc_selector_equivalence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/inputs/z4c_kerr_half_plane_init.athinput" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp/z4c_cc_selector_equivalence_test"
+
+74: Working Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp
+74: Test timeout computed to be: 120
+74: PASS: implicit/default and explicit cell-centered Z4c are exact
+[HANDLER_OUTPUT] 
+1/2 Test  #74: athena.z4c_cc_selector_equivalence ............
+   Passed    0.18 sec
+[HANDLER_VERBOSE_OUTPUT] 
+test 112
+
+[HANDLER_OUTPUT] 
+    Start 112: athena.z4c_rhs_policy_production_host_exact
+
+[HANDLER_VERBOSE_OUTPUT] 
+
+112: Test command: /usr/bin/cmake "-DATHENA=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp/src/athena" "-DPYTHON_EXECUTABLE=/usr/bin/python3" "-DSOURCE_DIR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate" "-DTEST_DIR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp/z4c_rhs_policy_production" "-P" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_rhs_policy_production_test.cmake"
+
+112: Working Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp
+112: Test timeout computed to be: 10000000
+112: -- order 2 numeric fingerprints: state=a0066730ef5c8968c2540feee6d32ac3d0033a30cd3883faaefc05110e6a5c0a diagnostic=89e90c07392c67c70fa3dbb2bb7ffe6afc59c832a6f09b96b2771f2ef82b4e89 history=c1a7ae2b78b5efb350f9660f224bbee8bf2b1c8daa1ebf47368150402f35bcdf waveform=31884bda4eb16526f926ca848652b8479e4cb9b7aabe18d43a29b1ed11bcb745
+112: -- order 4 lifecycle sentinel: t=0 maxAbsKret=inf (pre-ADM initialization); post-initialization history is finite
+112: -- order 4 numeric fingerprints: state=52166804e0cef64625d6abaae9d3494f90e6ffdd5cbe534d153ff400bef4bd54 diagnostic=25451e2201e7aea356ee569d61f13ca011d42e45215ca39af940240183770dbb history=9c3695edb87ea6fc9655f9dab33aa49a9c0d8542ce996e8637db23fd10d4a1e1 waveform=6dbfc708bc97b0ddc729ce938ab96c0d9d2663bd16464d0ddcca441ebdbca374
+112: -- order 6 lifecycle sentinel: t=0 maxAbsKret=inf (pre-ADM initialization); post-initialization history is finite
+112: -- order 6 numeric fingerprints: state=f807db641a0f50aee23413d4b980f23a6e348d50d9cee4f182b6374d4c8dba8e diagnostic=0941c2019c8d94a7f4a02ac6ac6b9a1747eaa2463ad81b749c0d28d1c2208673 history=a29e01e294b50428e653fd59cae9c941721b1b67cff67d7df249c96452d74192 waveform=d8d493b2e9072c3b5962748d36c957d29b53ca39a150438af59c178e5efa667e
+112: -- Enforced Cartesian Z4c base/golden regression passed on OpenMP
+112: 
+112: -- Cartesian production RHS/constraints/Sbc/diagnostics/Weyl orders passed
+[HANDLER_OUTPUT] 
+2/2 Test #112: athena.z4c_rhs_policy_production_host_exact ...
+   Passed    0.36 sec
+[HANDLER_VERBOSE_OUTPUT] 
+
+The following tests passed:
+
+	athena.z4c_cc_selector_equivalence
+	athena.z4c_rhs_policy_production_host_exact
+[HANDLER_OUTPUT] 
+
+100% tests passed, 0 tests failed out of 2
+
+
+Label Time Summary:
+cell                     =   0.18 sec*proc (1 test)
+host-exact-regression    =   0.54 sec*proc (2 tests)
+regression               =   0.18 sec*proc (1 test)
+z4c                      =   0.18 sec*proc (1 test)
+
+Total Test time (real) =   0.54 sec

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_dynamic_linear_wave_test.py", line 143, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_dynamic_linear_wave_test.py", line 132, in main
+    require(errors[1][0] < errors[0][0] and order >= 1.5,
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_dynamic_linear_wave_test.py", line 19, in require
+    raise RuntimeError(message)
+RuntimeError: nonconstant AMR mismatch does not decrease robustly: errors=[(1.185856836092841e-06, 1.1657549767976247e-05), (2.2893815833157216e-06, 2.924735125701657e-05)] order=-0.9490280951280053

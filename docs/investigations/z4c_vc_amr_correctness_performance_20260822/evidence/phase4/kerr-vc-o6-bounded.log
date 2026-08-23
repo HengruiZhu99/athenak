@@ -1,0 +1,10 @@
+AthenaK Kokkos default execution space: OpenMP
+
+Root grid = 2 x 4 x 1 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+### FATAL ERROR in /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/src/pgen/z4c/kerr_puncture.cpp
+kerr_puncture requires a sampling topology that does not contain r=0: the physical ADM carrier diverges at the second asymptotic end. A true vertex grid containing the puncture is therefore rejected; no epsilon clipping is permitted

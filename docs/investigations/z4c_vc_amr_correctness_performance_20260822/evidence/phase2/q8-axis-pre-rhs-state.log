@@ -1,0 +1,15 @@
+AthenaK Kokkos default execution space: OpenMP
+
+Root grid = 2 x 2 x 1 MeshBlocks
+Total number of MeshBlocks = 4
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=3.220145e-02 cycle=0 time=0.000000e+00 dt=8.838835e-03
+CARTOON_AMR_TRANSACTION cycle=1 requested_refine=1 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=3 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.266078e-01 cycle=1 time=8.838835e-03 dt=4.419417e-03
+### FATAL ERROR: VC axis regularity correction rejected at cycle 1 stage 1 checkpoint=pre_ko_rhs max_abs=80.0622 max_scaled=1 tolerance=1e-08 component=12 gid=0 z=0 nonfinite=0

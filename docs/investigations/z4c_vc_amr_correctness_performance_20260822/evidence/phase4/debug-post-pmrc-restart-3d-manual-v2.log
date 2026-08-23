@@ -1,0 +1,55 @@
+Traceback (most recent call last):
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 190, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 129, in main
+    run([args.athena, "-r", str(checkpoint), "-d", str(resumed)],
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 31, in run
+    require((result.returncode == 0) == success,
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 20, in require
+    raise RuntimeError(message)
+RuntimeError: unexpected exit 1 for /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase4-debug-asan-ubsan/src/athena -r /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase4-debug-asan-ubsan/manual-post-pmrc-restart-3d-v2/fresh/rst/z4c_vc_minkowski_dynamic.00000.rst -d /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase4-debug-asan-ubsan/manual-post-pmrc-restart-3d-v2/before_refine:
+AthenaK Kokkos default execution space: OpenMP
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=1.467857e+00 cycle=0 time=0.000000e+00 dt=1.767767e-02
+elapsed=3.364124e+01 cycle=1 time=1.767767e-02 dt=8.838835e-03
+elapsed=1.159492e+02 cycle=2 time=2.651650e-02 dt=1.767767e-02
+output wall time = 1.729489e-01
+elapsed=1.261047e+02 cycle=3 time=4.419417e-02 dt=1.767767e-02
+
+Terminating on cycle limit
+time=4.419417e-02 cycle=3
+tlim=1.000000e+00 nlim=3 nmb_total_limit=-1
+
+Current number of MeshBlocks = 1
+7 MeshBlocks created, 7 deleted by AMR
+
+MeshBlock-cycles = 10
+cpu time used  = 1.246368e+02
+zone-cycles/cpu_second = 3.286348e+02
+particle-updates/cpu_second = 0.000000e+00
+
+
+=================================================================
+==2212==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 8 byte(s) in 1 object(s) allocated from:
+    #0 0x79cb18efe6c8 in operator new[](unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:98
+    #1 0x6021032a9bd2 in ProblemGenerator::ProblemGenerator(ParameterInput*, Mesh*, IOWrapper, bool) /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/src/pgen/pgen.cpp:230
+    #2 0x6020ffa86cd3 in std::__detail::_MakeUniq<ProblemGenerator>::__single_object std::make_unique<ProblemGenerator, ParameterInput*&, Mesh*&, IOWrapper&, bool&>(ParameterInput*&, Mesh*&, IOWrapper&, bool&) (/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase4-debug-asan-ubsan/src/athena+0xd0ddcd3) (BuildId: 5ca16f71ca54c709dece1c8d9a106782312e9d29)
+    #3 0x6020ffa7c09c in main /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/src/main.cpp:435
+    #4 0x79cb17e2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #5 0x79cb17e2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #6 0x6020ffa75d24 in _start (/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase4-debug-asan-ubsan/src/athena+0xd0ccd24) (BuildId: 5ca16f71ca54c709dece1c8d9a106782312e9d29)
+
+SUMMARY: AddressSanitizer: 8 byte(s) leaked in 1 allocation(s).
+

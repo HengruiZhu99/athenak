@@ -1,0 +1,27 @@
+Internal ctest changing into directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp
+Test project /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase0-release-openmp
+    Start  32: athena.z4c_vc_dynamic_amr_3d_cartesian_o6
+1/5 Test  #32: athena.z4c_vc_dynamic_amr_3d_cartesian_o6 .....   Passed    2.48 sec
+    Start  63: athena.z4c_vc_restart_3d_cartesian
+2/5 Test  #63: athena.z4c_vc_restart_3d_cartesian ............   Passed   10.64 sec
+    Start  64: athena.z4c_vc_amr_transfer
+3/5 Test  #64: athena.z4c_vc_amr_transfer ....................   Passed    0.01 sec
+    Start  79: athena.z4c_cc_selector_equivalence
+4/5 Test  #79: athena.z4c_cc_selector_equivalence ............   Passed    0.27 sec
+    Start 117: athena.z4c_rhs_policy_production_host_exact
+5/5 Test #117: athena.z4c_rhs_policy_production_host_exact ...   Passed    1.27 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Label Time Summary:
+3d                       =  13.12 sec*proc (2 tests)
+amr                      =   2.48 sec*proc (1 test)
+cartesian                =  13.12 sec*proc (2 tests)
+cell                     =   0.27 sec*proc (1 test)
+host-exact-regression    =   1.55 sec*proc (2 tests)
+regression               =   0.27 sec*proc (1 test)
+restart                  =  10.64 sec*proc (1 test)
+vertex                   =  13.12 sec*proc (2 tests)
+z4c                      =  13.39 sec*proc (3 tests)
+
+Total Test time (real) =  14.68 sec

@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 146, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 80, in main
+    require(completed.returncode == 0,
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 16, in require
+    raise RuntimeError(message)
+RuntimeError: vertex-centered dynamic AMR run failed:
+AthenaK Kokkos default execution space: SYCL
+### FATAL ERROR in /home/hzhu/athenak-vc-qual-20260822/src/mesh/build_tree.cpp at line 250
+Fewer MeshBlocks (nmb_total=1) than MPI ranks (nranks=4)
+### FATAL ERROR in /home/hzhu/athenak-vc-qual-20260822/src/mesh/build_tree.cpp at line 250
+Fewer MeshBlocks (nmb_total=1) than MPI ranks (nranks=4)
+### FATAL ERROR in /home/hzhu/athenak-vc-qual-20260822/src/mesh/build_tree.cpp at line 250
+Fewer MeshBlocks (nmb_total=1) than MPI ranks (nranks=4)
+### FATAL ERROR in /home/hzhu/athenak-vc-qual-20260822/src/mesh/build_tree.cpp at line 250
+Fewer MeshBlocks (nmb_total=1) than MPI ranks (nranks=4)
+
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+x4600c0s2b0n0.hsn.cm.aurora.alcf.anl.gov: rank 2 exited with code 1
+

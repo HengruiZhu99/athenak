@@ -1,0 +1,35 @@
+Traceback (most recent call last):
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 163, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 96, in main
+    require(completed.returncode == 0,
+  File "/home/hzhu/athenak-vc-qual-20260822/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: vertex-centered dynamic AMR run failed:
+AthenaK Kokkos default execution space: SYCL
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 4
+  Rank = 0: 2 MeshBlocks, cost = 2
+  Rank = 1: 2 MeshBlocks, cost = 2
+  Rank = 2: 2 MeshBlocks, cost = 2
+  Rank = 3: 2 MeshBlocks, cost = 2
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=4.029594e-01 cycle=0 time=0.000000e+00 dt=8.838835e-03
+Segmentation fault from GPU at 0xff000008037ff000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 0 (Read), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+
+Segmentation fault from GPU at 0xff000008037ff000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 0 (Read), banned: 1, aborting.
+x4311c6s7b0n0.hsn.cm.aurora.alcf.anl.gov: rank 0 died from signal 6
+x4311c6s7b0n0.hsn.cm.aurora.alcf.anl.gov: rank 2 died from signal 15
+

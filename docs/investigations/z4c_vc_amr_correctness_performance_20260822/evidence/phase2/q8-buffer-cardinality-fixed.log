@@ -1,0 +1,30 @@
+AthenaK Kokkos default execution space: OpenMP
+
+Root grid = 2 x 2 x 1 MeshBlocks
+Total number of MeshBlocks = 4
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=3.331068e-02 cycle=0 time=0.000000e+00 dt=8.838835e-03
+CARTOON_AMR_TRANSACTION cycle=1 requested_refine=1 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=3 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.231793e-02 cycle=1 time=8.838835e-03 dt=4.419417e-03
+CARTOON_AMR_TRANSACTION cycle=2 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=1 created_leaves=0 deleted_leaves=3 mirror_mismatches=0
+elapsed=5.334230e-02 cycle=2 time=1.325825e-02 dt=8.838835e-03
+output wall time = 3.112768e-03
+elapsed=5.988818e-02 cycle=3 time=2.209709e-02 dt=8.838835e-03
+
+Terminating on cycle limit
+time=2.209709e-02 cycle=3
+tlim=1.000000e+00 nlim=3 nmb_total_limit=-1
+
+Current number of MeshBlocks = 4
+3 MeshBlocks created, 3 deleted by AMR
+
+MeshBlock-cycles = 15
+cpu time used  = 2.657968e-02
+zone-cycles/cpu_second = 1.444712e+05
+particle-updates/cpu_second = 0.000000e+00

@@ -1,0 +1,94 @@
+Internal ctest changing into directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase4-debug-asan-ubsan
+Test project /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase4-debug-asan-ubsan
+    Start 32: athena.z4c_vc_dynamic_amr_3d_cartesian_o6
+1/3 Test #32: athena.z4c_vc_dynamic_amr_3d_cartesian_o6 ...***Timeout 120.02 sec
+
+    Start 63: athena.z4c_vc_restart_3d_cartesian
+2/3 Test #63: athena.z4c_vc_restart_3d_cartesian ..........***Failed  129.94 sec
+Traceback (most recent call last):
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 190, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 92, in main
+    run([args.athena, "-i", args.input], fresh, True,
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 31, in run
+    require((result.returncode == 0) == success,
+  File "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/unit/z4c/z4c_vertex_restart_test.py", line 20, in require
+    raise RuntimeError(message)
+RuntimeError: unexpected exit 1 for /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase4-debug-asan-ubsan/src/athena -i /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput:
+AthenaK Kokkos default execution space: OpenMP
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=4.521618e+00 cycle=0 time=0.000000e+00 dt=1.767767e-02
+elapsed=3.656418e+01 cycle=1 time=1.767767e-02 dt=8.838835e-03
+elapsed=1.189046e+02 cycle=2 time=2.651650e-02 dt=1.767767e-02
+output wall time = 1.837917e-01
+elapsed=1.290801e+02 cycle=3 time=4.419417e-02 dt=1.767767e-02
+
+Terminating on cycle limit
+time=4.419417e-02 cycle=3
+tlim=1.000000e+00 nlim=3 nmb_total_limit=-1
+
+Current number of MeshBlocks = 1
+7 MeshBlocks created, 7 deleted by AMR
+
+MeshBlock-cycles = 10
+cpu time used  = 1.245585e+02
+zone-cycles/cpu_second = 3.288416e+02
+particle-updates/cpu_second = 0.000000e+00
+
+
+=================================================================
+==4154118==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 88 byte(s) in 1 object(s) allocated from:
+    #0 0x7eca590fe548 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95
+    #1 0x59a535178971 in MeshRefinement::MeshRefinement(Mesh*, ParameterInput*) /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/src/mesh/mesh_refinement.cpp:224
+    #2 0x59a532758361 in main /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/src/main.cpp:445
+    #3 0x7eca5802a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #4 0x7eca5802a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #5 0x59a532751d24 in _start (/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase4-debug-asan-ubsan/src/athena+0xd0ccd24) (BuildId: 2e568204608489c5e3b96a65443a9dbb3ad924ce)
+
+Indirect leak of 152 byte(s) in 1 object(s) allocated from:
+    #0 0x7eca590fe548 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95
+    #1 0x59a5353a1dca in std::__new_allocator<RefCritData>::allocate(unsigned long, void const*) /usr/include/c++/13/bits/new_allocator.h:151
+    #2 0x59a5353a1119 in std::allocator_traits<std::allocator<RefCritData> >::allocate(std::allocator<RefCritData>&, unsigned long) /usr/include/c++/13/bits/alloc_traits.h:482
+    #3 0x59a5353a1119 in std::_Vector_base<RefCritData, std::allocator<RefCritData> >::_M_allocate(unsigned long) /usr/include/c++/13/bits/stl_vector.h:381
+    #4 0x59a53539e42b in void std::vector<RefCritData, std::allocator<RefCritData> >::_M_realloc_insert<RefCritData&>(__gnu_cxx::__normal_iterator<RefCritData*, std::vector<RefCritData, std::allocator<RefCritData> > >, RefCritData&) /usr/include/c++/13/bits/vector.tcc:459
+    #5 0x59a53539d860 in RefCritData& std::vector<RefCritData, std::allocator<RefCritData> >::emplace_back<RefCritData&>(RefCritData&) /usr/include/c++/13/bits/vector.tcc:123
+    #6 0x59a535364a91 in RefinementCriteria::RefinementCriteria(Mesh*, ParameterInput*) /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/src/mesh/refinement_criteria.cpp:62
+    #7 0x59a5351789b8 in MeshRefinement::MeshRefinement(Mesh*, ParameterInput*) /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/src/mesh/mesh_refinement.cpp:224
+    #8 0x59a532758361 in main /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/src/main.cpp:445
+    #9 0x7eca5802a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #10 0x7eca5802a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #11 0x59a532751d24 in _start (/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_amr_correctness_performance_20260822/candidate/build/phase4-debug-asan-ubsan/src/athena+0xd0ccd24) (BuildId: 2e568204608489c5e3b96a65443a9dbb3ad924ce)
+
+SUMMARY: AddressSanitizer: 240 byte(s) leaked in 2 allocation(s).
+
+
+    Start 64: athena.z4c_vc_amr_transfer
+3/3 Test #64: athena.z4c_vc_amr_transfer ..................   Passed    0.17 sec
+
+33% tests passed, 2 tests failed out of 3
+
+Label Time Summary:
+3d           = 249.96 sec*proc (2 tests)
+amr          = 120.02 sec*proc (1 test)
+cartesian    = 249.96 sec*proc (2 tests)
+restart      = 129.94 sec*proc (1 test)
+vertex       = 249.96 sec*proc (2 tests)
+z4c          = 249.96 sec*proc (2 tests)
+
+Total Test time (real) = 250.14 sec
+
+The following tests FAILED:
+	 32 - athena.z4c_vc_dynamic_amr_3d_cartesian_o6 (Timeout)
+	 63 - athena.z4c_vc_restart_3d_cartesian (Failed)

@@ -1,0 +1,105 @@
+#!/bin/bash -l
+#PBS -N z4c-vc-amr-remain
+#PBS -A CompactBinaryMerger
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+source_root=/home/hzhu/athenak-vc-qual-20260822
+stage=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-amr-21b91213-20260822
+build_root=${stage}/build-sycl
+result_root=${stage}/qualification-sycl-v2-remainder
+expected_source=21b9121339185ba2629ead53b6993596bbc64b62
+expected_kokkos=6739bc623081648af9e752b616d9671527922cbf
+expected_executable=8b90b70d649d203d7cb40e9e2cb177438d541e224ee512bb4eec21d5293b3149
+
+test ! -e "${result_root}"
+test "$(git -C "${source_root}" rev-parse HEAD)" = "${expected_source}"
+test -z "$(git -C "${source_root}" status --porcelain)"
+test "$(git -C "${source_root}/kokkos" rev-parse HEAD)" = "${expected_kokkos}"
+test "$(sha256sum "${build_root}/src/athena" | awk '{print $1}')" = \
+  "${expected_executable}"
+
+mkdir -p "${result_root}/evidence" "${result_root}/run"
+finish() {
+  code=$?
+  trap - EXIT
+  set +e
+  printf '%s\n' "${code}" > "${result_root}/orchestration-status"
+  qstat -f "${PBS_JOBID}" > "${result_root}/evidence/qstat-final.txt" 2>&1
+  find "${result_root}" -type f ! -name SHA256SUMS ! -name SHA256SUMS.sha256 \
+    -print0 | LC_ALL=C sort -z | xargs -0r sha256sum \
+    > "${result_root}/SHA256SUMS"
+  (cd "${result_root}" && sha256sum -c SHA256SUMS >/dev/null)
+  sha256sum "${result_root}/SHA256SUMS" \
+    > "${result_root}/SHA256SUMS.sha256"
+  exit "${code}"
+}
+trap finish EXIT
+
+workflow=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/collapse-critical-workflow
+export ATHENAK_ROOT="${source_root}"
+export ATHENAK_BUILD_DIR="${build_root}"
+export IRISK_ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/bbhk
+export IRISK_BUILD_DIR="${IRISK_ROOT}/build/aurora-pvc"
+source "${workflow}/profiles/aurora-pvc.sh"
+module load py-numpy/2.3.4 py-h5py/3.14.0
+export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPIR_CVAR_ENABLE_GPU=1 MPICH_GPU_SUPPORT_ENABLED=1
+
+{
+  date --iso-8601=seconds
+  hostname
+  git -C "${source_root}" rev-parse HEAD HEAD^{tree}
+  git -C "${source_root}" submodule status -- kokkos
+  module list
+  python3 -c 'import numpy, h5py; print(numpy.__version__, h5py.__version__)'
+  sycl-ls
+  sha256sum "${build_root}/src/athena" "${build_root}/CMakeCache.txt"
+} > "${result_root}/evidence/runtime-provenance.txt" 2>&1
+
+ctest --test-dir "${build_root}" --output-on-failure -j1 \
+  -R '^(athena\.z4c_vc_static_multilevel_(2d_cartesian_o4|2d_cartoon_axis_o4|3d_cartesian_o4)|athena\.z4c_vertex_gauge_wave_(2d|3d)_cartesian_o(2|4|6))$' \
+  > "${result_root}/evidence/python-dependent-ctest.log" 2>&1
+
+mpi_wrapper="${source_root}/docs/investigations/z4c_vc_hardening_20260822/aurora_mpiexec_tile_wrapper.sh"
+test -x "${mpi_wrapper}"
+
+for ranks in 2 4; do
+  python3 "${source_root}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" \
+    --athena "${build_root}/src/athena" \
+    --input "${source_root}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" \
+    --work-dir "${result_root}/run/mpi${ranks}-cartoon-o4" \
+    --dimensions 2 --geometry cartoon --order 4 --root-leaves 4 \
+    --expected-volume 201.06192982974676 \
+    --mpiexec "${mpi_wrapper}" --np-flag=-n --ranks "${ranks}" \
+    > "${result_root}/evidence/mpi${ranks}-cartoon-o4.log" 2>&1
+done
+
+python3 "${source_root}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" \
+  --athena "${build_root}/src/athena" \
+  --input "${source_root}/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" \
+  --work-dir "${result_root}/run/mpi4-3d-o6" \
+  --dimensions 3 --geometry cartesian --order 6 --root-leaves 1 \
+  --expected-volume 64.0 \
+  --mpiexec "${mpi_wrapper}" --np-flag=-n --ranks 4 \
+  > "${result_root}/evidence/mpi4-3d-o6.log" 2>&1
+
+ATHENA_TEST_COMMAND_TIMEOUT=180 python3 \
+  "${source_root}/tst/unit/z4c/z4c_vertex_restart_test.py" \
+  --athena "${build_root}/src/athena" \
+  --input "${source_root}/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" \
+  --work-dir "${result_root}/run/restart-rank-change-3d" \
+  --dimensions 3 --active-n1 17 --active-n2 17 --active-n3 17 \
+  --mpiexec "${mpi_wrapper}" --np-flag=-n \
+  > "${result_root}/evidence/restart-rank-change-3d.log" 2>&1
+
+printf 'AURORA_CURRENT_SOURCE_SYCL_REMAINDER_PASS\n' \
+  > "${result_root}/status"
