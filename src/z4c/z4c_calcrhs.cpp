@@ -183,10 +183,18 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
       opt.shift_advection_order == Z4cShiftAdvectionOrder::o2;
   auto &chi_provenance_terms = pmy_pack->pz4c->chi_provenance_terms;
   DvceArray5D<Real> rhs_stage_terms;
+  DvceArray5D<Real> rhs_raw_pre_axis;
+  DvceArray5D<Real> rhs_post_axis_pre_ko;
   if (collect_rhs_stage_diagnostics) {
     rhs_stage_terms = DvceArray5D<Real>("z4c rhs stage terms", nmb, 75,
                                        u_rhs.extent_int(2), u_rhs.extent_int(3),
                                        u_rhs.extent_int(4));
+    rhs_raw_pre_axis = DvceArray5D<Real>(
+        "z4c raw pre-axis RHS", u_rhs.extent_int(0), u_rhs.extent_int(1),
+        u_rhs.extent_int(2), u_rhs.extent_int(3), u_rhs.extent_int(4));
+    rhs_post_axis_pre_ko = DvceArray5D<Real>(
+        "z4c post-axis pre-KO RHS", u_rhs.extent_int(0), u_rhs.extent_int(1),
+        u_rhs.extent_int(2), u_rhs.extent_int(3), u_rhs.extent_int(4));
   }
 
   // ===================================================================================
@@ -1022,12 +1030,18 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   Real &diss = pmy_pack->pz4c->diss;
   auto &u0 = pmy_pack->pz4c->u0;
   auto &u_rhs = pmy_pack->pz4c->u_rhs;
+  if (collect_rhs_stage_diagnostics) {
+    Kokkos::deep_copy(rhs_raw_pre_axis, u_rhs);
+  }
   if constexpr (std::is_same_v<Centering, VertexCenteredZ4c> &&
                 std::is_same_v<Symmetry, CartoonSO2>) {
     // The non-KO continuum RHS must already preserve the evolved-axis
     // subspace. This strict pre-gate prevents the KO projection below from
     // hiding a geometric, gauge, or boundary inconsistency.
     ApplyVertexAxisRegularity(u_rhs, stage, "pre_ko_rhs");
+    if (collect_rhs_stage_diagnostics) {
+      Kokkos::deep_copy(rhs_post_axis_pre_ko, u_rhs);
+    }
     auto &mb_bcs = pmy_pack->pmb->mb_bcs;
     par_for("SO2-invariant vertex K-O dissipation", DevExeSpace(), 0, nmb - 1,
             ks, ke, js, je, is, ie,
@@ -1067,6 +1081,9 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
           }
         });
   } else {
+    if (collect_rhs_stage_diagnostics) {
+      Kokkos::deep_copy(rhs_post_axis_pre_ko, u_rhs);
+    }
     par_for("K-O Dissipation",
     DevExeSpace(),0,nmb-1,0,nz4c-1,ks,ke,js,je,is,ie,
     KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
@@ -1108,6 +1125,10 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
     auto host_rhs = Kokkos::create_mirror_view_and_copy(HostMemSpace(), u_rhs);
     auto host_terms =
         Kokkos::create_mirror_view_and_copy(HostMemSpace(), rhs_stage_terms);
+    auto host_raw_pre_axis =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), rhs_raw_pre_axis);
+    auto host_post_axis_pre_ko = Kokkos::create_mirror_view_and_copy(
+        HostMemSpace(), rhs_post_axis_pre_ko);
     pmy_pack->pmb->mb_size.sync_host();
     pmy_pack->pmb->mb_gid.sync_host();
     auto host_size = pmy_pack->pmb->mb_size.h_view;
@@ -1225,6 +1246,65 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         "Gamma_ddiv_x", "Gamma_ddiv_y", "Gamma_ddiv_z",
         "Gamma_contraction_x", "Gamma_contraction_y", "Gamma_contraction_z",
         "Gamma_second_x", "Gamma_second_y", "Gamma_second_z"};
+
+    // Preserve all phase values and every named term at the physical central-axis
+    // vertex.  Maxima alone are insufficient because their locations can move with
+    // resolution and the pre-axis projection deliberately makes the final A_rr-A_yy
+    // difference vanish.
+    if constexpr (std::is_same_v<Centering, VertexCenteredZ4c> &&
+                  std::is_same_v<Symmetry, CartoonSO2>) {
+      int central_m = -1;
+      int central_j = -1;
+      Real central_abs_z = std::numeric_limits<Real>::max();
+      for (int m = 0; m < nmb; ++m) {
+        if (host_size(m).x1min != 0.0) continue;
+        for (int j = js; j <= je; ++j) {
+          const Real z = Z4cPointX<Centering>(j - js, nx2,
+                                              host_size(m).x2min,
+                                              host_size(m).x2max);
+          if (fabs(z) < central_abs_z ||
+              (fabs(z) == central_abs_z && host_gid(m) < host_gid(central_m))) {
+            central_abs_z = fabs(z);
+            central_m = m;
+            central_j = j;
+          }
+        }
+      }
+      if (central_m >= 0) {
+        const Real z = Z4cPointX<Centering>(central_j - js, nx2,
+                                            host_size(central_m).x2min,
+                                            host_size(central_m).x2max);
+        for (int n = 0; n < nz4c; ++n) {
+          const Real raw = host_raw_pre_axis(central_m, n, ks, central_j, is);
+          const Real projected =
+              host_post_axis_pre_ko(central_m, n, ks, central_j, is);
+          const Real post_ko = host_rhs(central_m, n, ks, central_j, is);
+          diagnostic_output << std::setprecision(17)
+                            << "Z4C_AXIS_RHS_PHASE_DIAGNOSTIC rank="
+                            << global_variable::my_rank
+                            << " cycle=" << pmy_pack->pmesh->ncycle
+                            << " time=" << time << " stage=" << stage
+                            << " variable=" << Z4c_names[n]
+                            << " gid=" << host_gid(central_m) << " rho=0"
+                            << " z=" << z << " raw_pre_axis=" << raw
+                            << " post_axis_pre_ko=" << projected
+                            << " axis_correction=" << projected - raw
+                            << " ko_contribution=" << post_ko - projected
+                            << " post_ko=" << post_ko << '\n';
+        }
+        for (int term = 0; term < 75; ++term) {
+          diagnostic_output << std::setprecision(17)
+                            << "Z4C_AXIS_TERM_POINT_DIAGNOSTIC rank="
+                            << global_variable::my_rank
+                            << " cycle=" << pmy_pack->pmesh->ncycle
+                            << " time=" << time << " stage=" << stage
+                            << " term=" << term_names[term]
+                            << " gid=" << host_gid(central_m) << " rho=0"
+                            << " z=" << z << " value="
+                            << host_terms(central_m, term, ks, central_j, is) << '\n';
+        }
+      }
+    }
     for (int term = 0; term < 75; ++term) {
       Real term_max = 0.0;
       Real term_value = 0.0;
