@@ -3,10 +3,11 @@
 ## Status
 
 This branch implements the equation-preserving feedback clock requested in the
-controlling goal.  Local T0--T2 gates pass, including exact prescribed-law
-equivalence and restart continuity.  The required Aurora tau-8 replay has not
-run, so the risk thresholds below remain **candidates**, T3 has not started,
-and no closed-loop continuation or stability claim is made.
+controlling goal.  Local and twelve-tile Aurora T0--T2 gates pass, including
+exact prescribed-law equivalence and restart continuity.  The required Aurora
+tau-8 replay completed through t=4M, and the controller thresholds below were
+frozen before any closed-loop run.  T3 has not started, so no closed-loop
+continuation or stability claim is made.
 
 The work is based exactly on
 `9c438dc619aa742404530c953243d71b2a01d8e6` from
@@ -16,26 +17,32 @@ inputs are commit `9b86a5d97af9abb46b18c82c4895feb9887f0d5d`, with the
 stronger manufactured-history audit in
 `55eed5d4267d2eea833c4fe3ec6e8ff3af3bc732`.
 
-Aurora authentication was restored and debug job `8777229` ran on node
-`x4311c6s7b0n0`.  It proved twelve distinct PVC tile mappings (`0.0` through
-`5.1`), built the intended Kokkos `SERIAL;SYCL`/PVC/MPI executable, and wrote
-the exact 272-block mesh tree.  The direct mesh-only process then returned 139
-during SYCL teardown before any controller test ran.  This is a launcher-gate
-failure, not solver evidence.  Following the mature Aurora pattern, one
-equation-preserving script correction maps mesh-only mode through one MPI tile
-and accepts 139 only after the complete expected tree is verified.  A single
-focused rerun is pending; no numerical or controller source was changed.  The
-launcher correction is commit `0944be6b18dcc89f04a1e98fb34dfaef2a18622d`.
+Aurora debug job `8777274` passed the complete twelve-tile gate on node
+`x4600c0s5b0n0`.  It proved distinct PVC mappings `0.0` through `5.1`, exact
+prescribed-law payload equivalence (`Linf=0`), all manufactured controller
+histories, and an actual checkpoint/restart.  Restart differences were
+`1.1679398845623745e-09` in the spacetime payload,
+`1.0869126779167182e-16` in xi, and `2.570860191397628e-15` in xi_dot, all below
+their gates.  Earlier jobs `8777229` and `8777250` remain preserved as explicit
+mesh-teardown and Python-3.6 harness failures rather than solver evidence.
 
-The corrected job `8777250` then passed the mapped mesh audit, the strengthened
-controller unit test on all twelve ranks, and both one-cycle PVC evolutions.
-An off-node comparison proves their CBIN payloads are bitwise equal
-(`Linf=0`).  The job stopped before restart testing because Aurora's default
-`python3` is 3.6.15 and rejected `from __future__ import annotations` in the
-analysis script.  Aurora also provides `/usr/bin/python3.10` with NumPy 2.2.6;
-the harnesses now pin and record that interpreter in
-`7a69477bec06f426c6f105300b724bd25977ce45`.  This is a harness portability
-fix only.  Job `8777250` is therefore partial evidence, not a passed gate.
+Capacity job `8777287` replayed the old-medium fixed-core tau-8 path on all
+twelve PVC tiles, restarted at t=2M, and completed t=4M.  Its safe envelope was
+`kappa_G=3.744620538609028`, `a_max=1.574613081656999`,
+`v2_max=0.03321661761817533`, and normalized risk
+`0.6349398434951364`.  The accumulated characteristic distance was
+`3.3145760789006498M` on the deliberately old `[-6M,6M]^3` calibration domain.
+Native normalized maxima were GH `3.064056190379227e-3`, reduction
+`8.455093154513271e-4`, and curl `1.4093099168983025e-2`.
+
+The replay exposed a diagnostic-only bug: prescribed modes returned before
+copying those native norms into the controller history, leaving its three
+columns zero even though the native history was valid.  Commit
+`8b7c0841585004c9168d57700f1128f9bbdbca6e` moves that return after norm
+publication while keeping all veto state changes feedback-only.  A local
+prescribed one-cycle test matches all three independently normalized native
+values to `2.65e-23` Linf or better.  No GH equation, controller equation, or
+threshold changed.
 
 ## Fixed mathematical scope
 
@@ -77,24 +84,26 @@ evaluate the GH RHS, and update PDE/controller state.  `xi`, `xi_dot`, cache
 generation, veto state, freeze state, completion state, and veto timing are
 persisted in restart metadata.
 
-## Safety policy and candidate thresholds
+## Frozen safety policy and thresholds
 
 The hard absolute caps are enforced in the parser:
 
-| Quantity | candidate stop | immutable cap |
+| Quantity | frozen stop | immutable cap |
 |---|---:|---:|
 | `kappa_G` | 8 | <= 8 |
 | `a_min` | 0.5 | >= 0.5 |
 | `a_max` | 3 | <= 3 |
 | `v2_max` | 0.20 | <= 0.20 |
 
-The risk ramp currently slows at `R=0.70` and stops at `R=1`.  These values are
-not frozen scientifically until the mandated old-medium tau-8 replay records
-its envelope.  They must not be retuned after T1 replay or after observing a
-closed-loop outcome.
+The risk ramp slows at `R=0.70` and stops at `R=1`.  Job `8777287` established a
+maximum safe tau-8 risk of `0.6349398434951364`, so `R_slow=0.70` lies modestly
+above the successful envelope.  The absolute stop values in the table and the
+risk thresholds are now frozen and must not be retuned after a closed-loop
+outcome.
 
-The native-constraint warning levels are GH L2 `2e-2`, reduction L2 `5e-3`,
-and curl L2 `8e-2`; smaller values are rejected.  A warning commands
+The frozen native-constraint warning levels are GH L2 `2e-2`, reduction L2
+`5e-3`, and curl L2 `8e-2`.  The tau-8 maxima are lower by factors of about
+6.53, 5.91, and 5.68 respectively.  A warning commands
 `v_cmd=0` while evolution continues at fixed commanded xi.  Twice a warning,
 or growth after a 0.5M freeze, fails closed.  These are safety vetoes, not
 convergence criteria.
@@ -132,20 +141,14 @@ fine variants preserve the tree with `dx_min=M/16` and `M/32`.
 
 ## Remaining ordered gates
 
-1. Complete one twelve-tile debug job with
-   `scripts/ref_gh/aurora_feedback_continuation_debug12.pbs`; do not leave a
-   competing request.  Jobs `8777229` and `8777250` preserve the mesh-launcher
-   and Python-harness failures; the latter proves controller/PVC execution and
-   exact prescribed equivalence but did not reach restart testing.
-2. Pass the PVC T0--T2/restart gate, then replay the existing medium fixed-core
-   tau-8 run to t=4M with
-   `scripts/ref_gh/aurora_feedback_tau8_replay12.pbs` and freeze thresholds
-   from its new diagnostics.  The replay script launches no feedback case and
-   emits a fail-closed threshold-freeze decision for review.
-3. Run T3 cheap medium only to `xi>=0.5` or t=5M.
-4. Run T4 on the enlarged medium domain through xi=1 plus a 2M hold, t=20M, or
+1. Run one focused PVC prescribed-history check for commit `8b7c0841`, then run
+   T3 cheap medium only to `xi>=0.5` or t=5M.
+2. Run T4 on the enlarged medium domain through xi=1 plus a 2M hold, t=20M, or
    fail closed; then T5 aggressive prescribed four-M discriminator.
-5. Run the three-resolution T6 gate only if T4 passes.
+3. Run the three-resolution T6 gate only if T4 passes.  If the measured
+   characteristic travel distance makes the `[-12M,12M]^3` clean window too
+   short, push only the outer boundary outward with SMR while preserving the
+   fixed inner spacings and full finest coverage of the 0.30--0.60M shell.
 
 No statement of feedback success, convergence, full activation, trumpet
 establishment, or long-time stability is justified by the current evidence.

@@ -1,0 +1,30 @@
+{
+  "schema": "ref-gh-feedback-threshold-freeze-final-v1",
+  "decision": "FROZEN_BEFORE_CLOSED_LOOP",
+  "replay_job": "8777287",
+  "replay_final_time": 4.0,
+  "feedback_launched_before_freeze": false,
+  "observed_safe_envelope": {
+    "condition_max": 3.744620538609028,
+    "relative_lapse_min": 0.9999936978615015,
+    "relative_lapse_max": 1.574613081656999,
+    "v2_max": 0.03321661761817533,
+    "normalized_risk_max": 0.6349398434951364,
+    "gh_l2_max": 0.003064056190379227,
+    "reduction_l2_max": 0.0008455093154513271,
+    "curl_l2_max": 0.014093099168983025
+  },
+  "frozen_thresholds": {
+    "risk_slow": 0.70,
+    "risk_stop": 1.0,
+    "condition_stop": 8.0,
+    "relative_lapse_min_stop": 0.5,
+    "relative_lapse_max_stop": 3.0,
+    "v2_stop": 0.20,
+    "gh_warning": 0.02,
+    "reduction_warning": 0.005,
+    "curl_warning": 0.08,
+    "constraint_growth_time": 0.5
+  },
+  "retuning_after_closed_loop_is_forbidden": true
+}

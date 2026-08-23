@@ -1,0 +1,24 @@
+{
+  "schema": "ref-gh-feedback-tau8-native-constraint-envelope-v1",
+  "source_commit": "1df6c71dc2f790fcdab74e95a958200786cfcb62",
+  "source_histories": {
+    "to_2": {
+      "path": "to_2/refgh_feedback_tau8_replay.ref_gh.hst",
+      "sha256": "2ded6f26d80016eea05124dd593b5ffb14d20af7e5a27ae4e2c9b6a916228348"
+    },
+    "to_4": {
+      "path": "to_4/refgh_feedback_tau8_replay.ref_gh.hst",
+      "sha256": "2d13e3d07c0da243767c158b1368791864b2775434742d8dd3ca24302247d154"
+    }
+  },
+  "normalization": "sqrt(volume_weighted_square_sum / proper_volume)",
+  "rows_after_restart_deduplication": 81,
+  "initial_time": 0.0,
+  "final_time": 4.0,
+  "maxima": {
+    "gh_l2": {"value": 0.003064056190379227, "time": 4.0},
+    "reduction_l2": {"value": 0.0008455093154513271, "time": 4.0},
+    "curl_l2": {"value": 0.014093099168983025, "time": 4.0}
+  },
+  "diagnostic_note": "The pre-fix prescribed-mode user history published zeros because UpdateContinuationConstraintVeto returned before norm calculation. The native Ref-GH history remained valid. Commit 8b7c0841585004c9168d57700f1128f9bbdbca6e moves the non-feedback return after norm publication without enabling veto state changes."
+}

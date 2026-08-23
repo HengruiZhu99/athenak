@@ -1,0 +1,205 @@
+#!/bin/bash -l
+# T3 cheap medium feedback continuation on the old [-6M,6M]^3 calibration mesh.
+# The run stops at the first 0.5M checkpoint with xi>=0.5, or at t=5M.
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=03:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_fb_t3
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_feedback_continuation_medium.athinput"
+CHECK_INPUT="${SRC}/tst/inputs/ref_gh_feedback_equivalence_12rank.athinput"
+ANALYZE="${SRC}/scripts/ref_gh/analyze_feedback_continuation.py"
+VERIFY="${SRC}/scripts/ref_gh/verify_feedback_constraint_history.py"
+OUT="${CAMPAIGN_ROOT}/runs/t3_feedback_medium12_${PBS_JOBID}"
+LABEL=refgh_feedback_t3_medium
+PYTHON=${PYTHON:-/usr/bin/python3.10}
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+test -x "${PYTHON}"
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "stage=T3_old_medium_feedback"
+  echo "thresholds_frozen_before_feedback=true"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  "${PYTHON}" --version
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${CHECK_INPUT}" "${ANALYZE}" "${VERIFY}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 12
+
+# Focused validation of the prescribed-mode constraint-history publication fix.
+mkdir prescribed_history_check
+cd prescribed_history_check
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${CHECK_INPUT}" \
+  ref_gh/continuation_mode=legacy_time time/nlim=1 time/tlim=0.01 \
+  > prescribed_history_check.log 2>&1
+"${PYTHON}" "${VERIFY}" ref_gh_feedback_equivalence.user.hst \
+  ref_gh_feedback_equivalence.ref_gh.hst \
+  --json prescribed_constraint_history.json \
+  > prescribed_constraint_history.stdout.json
+cd "${OUT}"
+
+previous_checkpoint=
+segment_directories=()
+for target in 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0; do
+  tag=${target/./p}
+  directory="${OUT}/to_${tag}"
+  segment_directories+=("${directory}")
+  mkdir -p "${directory}"
+  cd "${directory}"
+  command=("${EXE}")
+  if test -n "${previous_checkpoint}"; then
+    command+=( -r "${previous_checkpoint}" -i "${INPUT}" )
+  else
+    command+=( -i "${INPUT}" )
+  fi
+  set +e
+  /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+    gpu_tile_compact.sh "${command[@]}" \
+    job/basename="${LABEL}" ref_gh/continuation_mode=feedback \
+    ref_gh/transition_path=fixed_core ref_gh/phi_ordering=compatible \
+    ref_gh/controller_delta_q=0.0 ref_gh/controller_delta_q_dot=0.0 \
+    ref_gh/controller_delta_p=0.0 ref_gh/controller_delta_p_dot=0.0 \
+    time/tlim="${target}" time/nlim=-1 output2/dt=0.5 \
+    > "${LABEL}.log" 2>&1
+  status=$?
+  set -e
+  {
+    echo "exit_status=${status}"
+    echo "target=${target}"
+    test -s "${LABEL}.user.hst" && tail -1 "${LABEL}.user.hst"
+  } > segment_status.txt
+  if test "${status}" -ne 0; then
+    echo "result=FAIL" > "${OUT}/t3_status.txt"
+    echo "failed_target=${target}" >> "${OUT}/t3_status.txt"
+    exit "${status}"
+  fi
+  previous_checkpoint=$(find rst -type f -name '*.rst' | sort | tail -1)
+  test -s "${previous_checkpoint}"
+  sha256sum "${previous_checkpoint}" > checkpoint.sha256
+  xi=$(awk 'NF && $1 !~ /^#/ {value=$20} END {print value}' "${LABEL}.user.hst")
+  reached=$("${PYTHON}" - "${xi}" <<'PY'
+import sys
+print(1 if float(sys.argv[1]) >= 0.5 else 0)
+PY
+)
+  if test "${reached}" -eq 1; then
+    break
+  fi
+done
+
+cd "${OUT}"
+first=${segment_directories[0]}
+{
+  head -2 "${first}/${LABEL}.user.hst"
+  for directory in "${segment_directories[@]}"; do
+    grep -v '^#' "${directory}/${LABEL}.user.hst"
+  done
+} > "${LABEL}.combined.user.hst"
+{
+  head -2 "${first}/${LABEL}.ref_gh.hst"
+  for directory in "${segment_directories[@]}"; do
+    grep -v '^#' "${directory}/${LABEL}.ref_gh.hst"
+  done
+} > "${LABEL}.combined.ref_gh.hst"
+
+"${PYTHON}" "${ANALYZE}" "${LABEL}.combined.user.hst" \
+  --outer-distance 6.0 --json t3_summary.json > t3_summary.stdout.json
+"${PYTHON}" "${VERIFY}" "${LABEL}.combined.user.hst" \
+  "${LABEL}.combined.ref_gh.hst" --json t3_constraint_history.json \
+  > t3_constraint_history.stdout.json
+"${PYTHON}" - t3_summary.json <<'PY' > t3_acceptance.json
+import json, pathlib, sys
+summary = json.loads(pathlib.Path(sys.argv[1]).read_text())
+reached = summary["final_xi"] >= 0.5
+bounded_time = summary["final_time"] >= 5.0 - 1.0e-10
+feedback_slowed = summary["first_feedback_slowing"] is not None
+all_risk_safe = summary["maxima"]["risk"] < 0.70
+result = {
+    "schema": "ref-gh-feedback-t3-acceptance-v1",
+    "reached_xi_half": reached,
+    "reached_time_limit": bounded_time,
+    "actual_feedback_slowing": feedback_slowed,
+    "all_risk_strictly_below_slow_if_unslowed": all_risk_safe,
+    "pass": (
+        (reached or bounded_time)
+        and summary["finite"]
+        and summary["monotone_xi"]
+        and summary["nonnegative_xi_dot"]
+        and summary["deltas_exact_zero"]
+        and (feedback_slowed or (reached and all_risk_safe))
+    ),
+}
+print(json.dumps(result, indent=2, sort_keys=True))
+if not result["pass"]:
+    raise SystemExit(1)
+PY
+
+{
+  echo "result=PASS"
+  echo "stage=T3_old_medium_feedback"
+  echo "thresholds_frozen_before_feedback=true"
+  echo "final_time=$("${PYTHON}" -c 'import json; print(json.load(open("t3_summary.json"))["final_time"])')"
+  echo "final_xi=$("${PYTHON}" -c 'import json; print(json.load(open("t3_summary.json"))["final_xi"])')"
+  sha256sum "${EXE}"
+} > t3_status.txt
+find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.json' \
+  -o -name '*.hst' -o -name '*.sha256' \) -print0 | sort -z | \
+  xargs -0 sha256sum > compact_sha256.txt
