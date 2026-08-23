@@ -4,9 +4,12 @@
 //========================================================================================
 
 #include <array>
+#include <cmath>
 #include <cstddef>
 #include <stdexcept>
+#include <vector>
 
+#include "pgen/z4c_brill_global_basis.hpp"
 #include "pgen/z4c_irisk_coordinate_map.hpp"
 
 namespace {
@@ -91,6 +94,23 @@ int main() {
   passed &= z4c_irisk::SelectAdmMap(cartesian) == AdmMap::cartesian_xyz;
   passed &= z4c_irisk::SelectAdmMap(cartoon) ==
             AdmMap::half_rho_z_suppressed_y_v2;
+
+  // l>0 residuals must not make the single physical origin angle dependent.
+  // The alternating signs are sin((2m+1) pi/2).
+  const std::vector<double> origin_coefficients{
+      0.1, 30.0, -40.0,
+      0.02, -50.0, 60.0};
+  const double regular_origin = z4c_irisk::RegularGlobalBrillOriginPsi(
+      2, 3, origin_coefficients);
+  passed &= std::abs(regular_origin - 1.08) < 1.0e-15;
+  bool bad_origin_dimensions_rejected = false;
+  try {
+    static_cast<void>(z4c_irisk::RegularGlobalBrillOriginPsi(
+        2, 3, std::vector<double>{0.1, 0.2}));
+  } catch (const std::invalid_argument &) {
+    bad_origin_dimensions_rejected = true;
+  }
+  passed &= bad_origin_dimensions_rejected;
 
   for (const auto invalid : {
            z4c::Z4cSymmetryConfig{z4c::Z4cSymmetryMode::cartesian3d,

@@ -30,6 +30,7 @@
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
+#include "pgen/z4c_brill_global_basis.hpp"
 #include "pgen/z4c_irisk_coordinate_map.hpp"
 #include "z4c/cartoon_axis_boundary.hpp"
 #include "z4c/z4c.hpp"
@@ -174,6 +175,11 @@ BrillGlobalCoefficients ReadBrillGlobalCoefficients(
 
 double EvaluateGlobalBrillPsi(const BrillGlobalCoefficients &coefficients,
                               const double radius, const double z) {
+  if (radius == 0.0) {
+    return z4c_irisk::RegularGlobalBrillOriginPsi(
+        coefficients.radial_points, coefficients.angular_points,
+        coefficients.values);
+  }
   const double theta = radius > 0.0
                            ? std::acos(std::clamp(std::abs(z) / radius, 0.0, 1.0))
                            : 0.0;
