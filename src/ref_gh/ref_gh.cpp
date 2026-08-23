@@ -30,6 +30,58 @@ void RunFeedbackContinuationSelfTest() {
   const FeedbackContinuationObservables safe{1.0, 1.0, 1.0, 0.0};
   const FeedbackContinuationObservables unsafe{8.0, 0.5, 3.0, 0.20};
   constexpr Real dt = 1.0e-4;
+
+  // Verify the activation two-jet directly, including the exact constant
+  // endpoint branches required by the continuation contract.
+  const ReferenceJet left_endpoint = QuinticSmoothstep(
+      ControllerJet(0.0, 0.125, -0.25));
+  const ReferenceJet right_endpoint = QuinticSmoothstep(
+      ControllerJet(1.0, 0.125, -0.25));
+  if (left_endpoint.value != 0.0 || left_endpoint.d[0] != 0.0
+      || left_endpoint.dd[0][0] != 0.0 || right_endpoint.value != 1.0
+      || right_endpoint.d[0] != 0.0 || right_endpoint.dd[0][0] != 0.0) {
+    std::cout << "### FATAL ERROR: continuation activation endpoint jets are not "
+                 "exact constants."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  for (int sample = 1; sample < 1000; ++sample) {
+    const Real value = static_cast<Real>(sample)/1000.0;
+    const Real first = 0.05 + 0.10*value;
+    const Real second = -0.02 + 0.04*value;
+    const ReferenceJet actual = QuinticSmoothstep(
+        ControllerJet(value, first, second));
+    const Real derivative = 30.0*value*value*(1.0 - value)*(1.0 - value);
+    const Real second_derivative =
+        60.0*value*(1.0 - value)*(1.0 - 2.0*value);
+    const Real expected_value = ScalarQuinticSmoothstep(value);
+    const Real expected_first = derivative*first;
+    const Real expected_second =
+        second_derivative*first*first + derivative*second;
+    const Real tolerance = 256.0*std::numeric_limits<Real>::epsilon();
+    if (std::abs(actual.value - expected_value) > tolerance
+        || std::abs(actual.d[0] - expected_first) > tolerance
+        || std::abs(actual.dd[0][0] - expected_second) > tolerance) {
+      std::cout << "### FATAL ERROR: continuation activation two-jet chain rule "
+                   "failed at xi=" << value << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
+  constexpr Real endpoint_probe = 1.0e-6;
+  const ReferenceJet near_left = QuinticSmoothstep(
+      ControllerJet(endpoint_probe, 0.2, 0.1));
+  const ReferenceJet near_right = QuinticSmoothstep(
+      ControllerJet(1.0 - endpoint_probe, 0.2, 0.1));
+  if (std::abs(near_left.d[0]) > 2.0e-11
+      || std::abs(near_right.d[0]) > 2.0e-11
+      || std::abs(near_left.dd[0][0]) > 3.0e-6
+      || std::abs(near_right.dd[0][0]) > 3.0e-6) {
+    std::cout << "### FATAL ERROR: continuation activation jet does not approach "
+                 "its C2 endpoint continuously."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
   Real xi = 0.0;
   Real xi_dot = 0.0;
   Real previous_xi = xi;
@@ -86,6 +138,81 @@ void RunFeedbackContinuationSelfTest() {
   }
   if (previous_command != 0.0) {
     std::cout << "### FATAL ERROR: stop risk does not produce zero command."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  // Evolve an actual temporary excursion.  The command must freeze, xi must
+  // remain monotone while the rate relaxes, and the rate must resume smoothly
+  // once the safe history returns.
+  xi = 0.25;
+  xi_dot = 0.10;
+  previous_xi = xi;
+  Real previous_xi_dot = xi_dot;
+  for (int step = 0; step < 10000; ++step) {
+    const auto command = EvaluateFeedbackContinuation(
+        parameters, unsafe, xi, xi_dot, false, false);
+    if (command.v_cmd != 0.0) {
+      std::cout << "### FATAL ERROR: temporary unsafe history did not freeze the "
+                   "continuation command."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    xi += dt*command.xi_rhs;
+    xi_dot += dt*command.xi_dot_rhs;
+    if (xi < previous_xi || xi_dot < 0.0
+        || std::abs(xi_dot - previous_xi_dot) > 6.0e-5) {
+      std::cout << "### FATAL ERROR: temporary unsafe history lost monotonicity "
+                   "or rate smoothness."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    previous_xi = xi;
+    previous_xi_dot = xi_dot;
+  }
+  const Real frozen_rate = xi_dot;
+  for (int step = 0; step < 10000; ++step) {
+    const auto command = EvaluateFeedbackContinuation(
+        parameters, safe, xi, xi_dot, false, false);
+    xi += dt*command.xi_rhs;
+    xi_dot += dt*command.xi_dot_rhs;
+    if (xi < previous_xi || xi_dot < 0.0
+        || std::abs(xi_dot - previous_xi_dot) > 6.0e-5) {
+      std::cout << "### FATAL ERROR: recovered safe history lost monotonicity or "
+                   "rate smoothness."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    previous_xi = xi;
+    previous_xi_dot = xi_dot;
+  }
+  if (!(xi_dot > frozen_rate)) {
+    std::cout << "### FATAL ERROR: continuation rate did not resume after a "
+                 "temporary unsafe history."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  // A permanently unsafe history must never reverse xi and must asymptotically
+  // remove the residual forward rate without producing a nonzero command.
+  xi = 0.40;
+  xi_dot = 0.10;
+  previous_xi = xi;
+  for (int step = 0; step < 50000; ++step) {
+    const auto command = EvaluateFeedbackContinuation(
+        parameters, unsafe, xi, xi_dot, false, false);
+    xi += dt*command.xi_rhs;
+    xi_dot += dt*command.xi_dot_rhs;
+    if (command.v_cmd != 0.0 || xi < previous_xi || xi_dot < 0.0) {
+      std::cout << "### FATAL ERROR: permanently unsafe history violated freeze "
+                   "or monotonicity."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    previous_xi = xi;
+  }
+  if (xi_dot > 5.0e-6 || xi >= 0.46) {
+    std::cout << "### FATAL ERROR: permanently unsafe continuation did not settle."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
