@@ -6,6 +6,8 @@ campaign_root=/pscratch/sd/h/hzhu/z4c-vc-cartoon-axis-boundary-20260823
 source_root=${authority_root}/source/athenak
 build_root=${authority_root}/build/current-cuda-mpi
 tag=${ATHENA_FIXED_GRID_GATE_TAG:-final}
+resolutions=${ATHENA_FIXED_GRID_RESOLUTIONS:-"128 256 512"}
+extrap_order=${ATHENA_FIXED_GRID_EXTRAP_ORDER:-2}
 run_root=${campaign_root}/runs/fixed-grid-gate-${tag}
 evidence_root=${campaign_root}/evidence/fixed-grid-gate-${tag}
 input=${source_root}/docs/investigations/z4c_vc_cartoon_axis_boundary_20260823/fixed_grid_brill_dense.athinput
@@ -52,7 +54,7 @@ ctest --test-dir "${build_root}" --output-on-failure -j 1 -R "${ctest_regex}" \
   > "${evidence_root}/ctest-cuda-selected.log" 2>&1
 grep -F '100% tests passed' "${evidence_root}/ctest-cuda-selected.log" >/dev/null
 
-for resolution in 128 256 512; do
+for resolution in ${resolutions}; do
   meshblock=$((resolution / 4))
   run=${run_root}/N${resolution}
   basename=z4c_vc_axis_fixed_${tag}_N${resolution}
@@ -62,6 +64,7 @@ for resolution in 128 256 512; do
     job/basename="${basename}" \
     mesh/nx1="${resolution}" mesh/nx2="$((2 * resolution))" \
     meshblock/nx1="${meshblock}" meshblock/nx2="${meshblock}" \
+    z4c/extrap_order="${extrap_order}" \
     problem/brill_global_coefficients_file="${coefficient}" \
     problem/constraint_summary_file="${run}/${basename}.constraints.dat" \
     > "${evidence_root}/N${resolution}.stdout.log" \
