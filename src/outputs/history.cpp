@@ -484,6 +484,7 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
   auto *module = pm->pmb_pack->prefgh;
   for (int n = 0; n < NHIST_REF_GH; ++n) pdata->hdata[n] = 0.0;
   module->UpdateDiagnostics();
+  module->AppendMaxLocationDiagnostics();
   auto &indcs = pm->mb_indcs;
   auto &size = pm->pmb_pack->pmb->mb_size;
   const auto state = module->u0;

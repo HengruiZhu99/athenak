@@ -1,33 +1,32 @@
-# Three-resolution open/closed-loop Schwarzschild reference transition.
-# The root grid is 3^3 MeshBlocks on [-6,6]^3.  Refining the central root
-# MeshBlock produces 26 level-0 plus 8 level-1 blocks and finest coverage
-# [-2,2]^3.  Override root/MB cells together as 96/32, 144/48, or 192/64.
+# Medium-resolution SMR discriminator for open-loop Schwarzschild reference paths.
+# Override ref_gh/reference=wormhole for the frozen case, or select one of the
+# controlled transition_path values. Controller feedback remains disabled.
 
 <job>
-basename = ref_gh_controlled_transition_dx16
+basename = ref_gh_transition_path_medium
 
 <mesh>
 nghost = 4
-nx1 = 96
+nx1 = 144
 x1min = -6.0
 x1max = 6.0
 ix1_bc = outflow
 ox1_bc = outflow
-nx2 = 96
+nx2 = 144
 x2min = -6.0
 x2max = 6.0
 ix2_bc = outflow
 ox2_bc = outflow
-nx3 = 96
+nx3 = 144
 x3min = -6.0
 x3max = 6.0
 ix3_bc = outflow
 ox3_bc = outflow
 
 <meshblock>
-nx1 = 32
-nx2 = 32
-nx3 = 32
+nx1 = 48
+nx2 = 48
+nx3 = 48
 
 <mesh_refinement>
 refinement = static
@@ -68,8 +67,6 @@ kappa_core = 1.0
 tau_transition = 4.0
 r_fit_min = 0.15
 r_fit_max = 0.40
-# The default remains the conservative four-cell example.  One cell is used
-# here because four finest cells exceed r_fit_min at dx=M/16 and M/24.
 controller_fit_buffer_cells = 1.0
 regularization_outer_start = 0.50
 regularization_outer_end = 0.60
@@ -96,14 +93,4 @@ data_format = %20.15e
 
 <output2>
 file_type = rst
-dt = 1.0
-
-<output3>
-file_type = cbin
-variable = adm_common
-id = adm_common
-dt = 4.0
-coarsen_factor = 1
-compute_moments = false
-binary64 = true
-single_file_per_rank = false
+dt = 0.50

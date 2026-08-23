@@ -2,15 +2,20 @@
 //! \file source_unit.cpp
 //! \brief Device regressions for flat and nonflat covariant Ref-GH sources.
 //========================================================================================
+#include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <limits>
+#include <string>
 
 #include "athena.hpp"
+#include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
+#include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
@@ -614,12 +619,197 @@ void CheckDynamicSpatialReference() {
             << ", dt spatial frame scale=" << dt_frame_scale << std::endl;
 }
 
+void FillTrumpetTable(DvceArray2D<Real> &table) {
+  Kokkos::realloc(table, ref_gh::kTrumpetProfiles, ref_gh::kTrumpetTableSize);
+  auto host = Kokkos::create_mirror_view(table);
+  for (int i = 0; i < ref_gh::kTrumpetTableSize; ++i) {
+    host(ref_gh::kProfileAlpha, i) = ref_gh::kTrumpetAlpha[i];
+    host(ref_gh::kProfileAlphaDy, i) = ref_gh::kTrumpetAlphaDy[i];
+    host(ref_gh::kProfileAlphaDyy, i) = ref_gh::kTrumpetAlphaDyy[i];
+    host(ref_gh::kProfileArealRadius, i) = ref_gh::kTrumpetArealRadius[i];
+    host(ref_gh::kProfileArealRadiusDy, i) = ref_gh::kTrumpetArealRadiusDy[i];
+    host(ref_gh::kProfileArealRadiusDyy, i) = ref_gh::kTrumpetArealRadiusDyy[i];
+    host(ref_gh::kProfileShiftQ, i) = ref_gh::kTrumpetShiftQ[i];
+    host(ref_gh::kProfileShiftQDy, i) = ref_gh::kTrumpetShiftQDy[i];
+    host(ref_gh::kProfileShiftQDyy, i) = ref_gh::kTrumpetShiftQDyy[i];
+    host(ref_gh::kCoeffAlpha, i) = ref_gh::kTrumpetAlphaA0[i];
+    host(ref_gh::kCoeffAlpha + 1, i) = ref_gh::kTrumpetAlphaA1[i];
+    host(ref_gh::kCoeffAlpha + 2, i) = ref_gh::kTrumpetAlphaA2[i];
+    host(ref_gh::kCoeffAlpha + 3, i) = ref_gh::kTrumpetAlphaA3[i];
+    host(ref_gh::kCoeffAlpha + 4, i) = ref_gh::kTrumpetAlphaA4[i];
+    host(ref_gh::kCoeffAlpha + 5, i) = ref_gh::kTrumpetAlphaA5[i];
+    host(ref_gh::kCoeffArealRadius, i) = ref_gh::kTrumpetArealRadiusA0[i];
+    host(ref_gh::kCoeffArealRadius + 1, i) = ref_gh::kTrumpetArealRadiusA1[i];
+    host(ref_gh::kCoeffArealRadius + 2, i) = ref_gh::kTrumpetArealRadiusA2[i];
+    host(ref_gh::kCoeffArealRadius + 3, i) = ref_gh::kTrumpetArealRadiusA3[i];
+    host(ref_gh::kCoeffArealRadius + 4, i) = ref_gh::kTrumpetArealRadiusA4[i];
+    host(ref_gh::kCoeffArealRadius + 5, i) = ref_gh::kTrumpetArealRadiusA5[i];
+    host(ref_gh::kCoeffShiftQ, i) = ref_gh::kTrumpetShiftQA0[i];
+    host(ref_gh::kCoeffShiftQ + 1, i) = ref_gh::kTrumpetShiftQA1[i];
+    host(ref_gh::kCoeffShiftQ + 2, i) = ref_gh::kTrumpetShiftQA2[i];
+    host(ref_gh::kCoeffShiftQ + 3, i) = ref_gh::kTrumpetShiftQA3[i];
+    host(ref_gh::kCoeffShiftQ + 4, i) = ref_gh::kTrumpetShiftQA4[i];
+    host(ref_gh::kCoeffShiftQ + 5, i) = ref_gh::kTrumpetShiftQA5[i];
+  }
+  Kokkos::deep_copy(table, host);
+}
+
+void ScanReferencePaths(ParameterInput *pin) {
+  constexpr int kSamples = 32769;
+  constexpr int kMeasures = 7;
+  constexpr Real times[] = {0.0, 0.5, 1.0, 1.25, 1.4,
+                            1.5, 1.6, 1.7, 2.0};
+  constexpr const char *path_names[] = {
+    "shrinking_width", "frozen_wormhole", "fixed_core"
+  };
+  constexpr const char *measure_names[kMeasures] = {
+    "Ricci", "Riemann", "spin", "spin_derivative",
+    "matched_source", "dB_dr", "d2B_dr2"
+  };
+  DvceArray2D<Real> table("ref_gh path scan trumpet table", 1, 1);
+  FillTrumpetTable(table);
+  DvceArray2D<Real> samples("ref_gh path scan samples", kMeasures, kSamples);
+  const ref_gh::ControlledReferenceParameters base{
+      1.0, {0.0, 0.0, 0.0}, 0.30, 1.5, 1.0,
+      ref_gh::kShrinkingWidthPath, 0.20, 4.0, 0.50, 0.60,
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+  const std::string filename =
+      pin->GetString("job", "basename") + ".reference_path_scan.tsv";
+  FILE *file = nullptr;
+  if (global_variable::my_rank == 0) {
+    file = std::fopen(filename.c_str(), "w");
+    if (file == nullptr) {
+      std::cout << "### FATAL ERROR: cannot open reference path scan "
+                << filename << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    std::fprintf(file, "path\ttime\tr_core\tr_min\tr_max\tsamples\t"
+                       "measure\tmaximum\tradius\tr_over_r_core\n");
+  }
+
+  for (int path = 0; path < 3; ++path) {
+    for (const Real time : times) {
+      ref_gh::ControlledReferenceParameters params = base;
+      if (path == 2) params.transition_path = ref_gh::kFixedCorePath;
+      const Real r_core = path == 2 ? 0.30 : 0.30*std::exp(-time/1.5);
+      const Real r_min = 0.5*r_core;
+      const Real r_max = std::fmax(0.6, 3.0*r_core);
+      const bool frozen = path == 1;
+      Kokkos::parallel_for(
+          "ref_gh reference path scan",
+          Kokkos::RangePolicy<>(DevExeSpace(), 0, kSamples),
+          KOKKOS_LAMBDA(const int sample) {
+            const Real radius = r_min + (r_max - r_min)
+                *static_cast<Real>(sample)/static_cast<Real>(kSamples - 1);
+            ref_gh::ReferenceGeometry reference;
+            ref_gh::ReferenceJet core_blend = ref_gh::ConstantJet(0.0);
+            if (frozen) {
+              const ref_gh::WormholeSchwarzschildReference wormhole{
+                  1.0, {0.0, 0.0, 0.0}};
+              wormhole.Populate(time, radius, 0.0, 0.0, reference);
+            } else {
+              ref_gh::ReferenceJet alpha;
+              ref_gh::ReferenceJet psi2;
+              ref_gh::ReferenceJet shift;
+              ref_gh::ControlledTransitionProfileJets(
+                  table, params, time, radius, 0.0, 0.0,
+                  alpha, psi2, shift, nullptr, nullptr, &core_blend);
+              ref_gh::PopulateIsotropicReferenceGeometry(
+                  alpha, psi2, shift, radius, 0.0, 0.0,
+                  0.0, 0.0, 0.0, reference);
+            }
+            Real ricci2 = 0.0;
+            Real riemann2 = 0.0;
+            Real spin2 = 0.0;
+            Real spin_derivative2 = 0.0;
+            for (int A = 0; A < 4; ++A) {
+              for (int B = 0; B < 4; ++B) {
+                ricci2 += reference.ricci_frame[A][B]
+                          *reference.ricci_frame[A][B];
+                for (int C = 0; C < 4; ++C) {
+                  spin2 += reference.spin[A][B][C]*reference.spin[A][B][C];
+                  for (int D = 0; D < 4; ++D) {
+                    riemann2 += reference.riemann_frame[A][B][C][D]
+                                *reference.riemann_frame[A][B][C][D];
+                    spin_derivative2 += reference.spin_derivative[D][A][B][C]
+                        *reference.spin_derivative[D][A][B][C];
+                  }
+                }
+              }
+            }
+
+            Real psi[4][4] = {};       // NOLINT(runtime/arrays)
+            Real d_psi[4][4][4] = {}; // NOLINT(runtime/arrays)
+            Real pi[4][4] = {};        // NOLINT(runtime/arrays)
+            Real phi[3][4][4] = {};   // NOLINT(runtime/arrays)
+            for (int A = 0; A < 4; ++A) psi[A][A] = A == 0 ? -1.0 : 1.0;
+            ref_gh::CoordinateGhGeometry geometry;
+            Real determinant = 0.0;
+            Real source[4][4];  // NOLINT(runtime/arrays)
+            ref_gh::CovariantSourceSectors sectors;
+            Real source2 = std::numeric_limits<Real>::max();
+            if (ref_gh::ComputeCoordinateGhGeometry(
+                    psi, d_psi, reference, geometry, determinant)
+                && ref_gh::CovariantGhScalarWaveSource(
+                    psi, pi, phi, reference, geometry, 0.0,
+                    source, sectors)) {
+              source2 = 0.0;
+              for (int A = 0; A < 4; ++A) {
+                for (int B = 0; B < 4; ++B) source2 += source[A][B]*source[A][B];
+              }
+            }
+            samples(0, sample) = Kokkos::sqrt(ricci2);
+            samples(1, sample) = Kokkos::sqrt(riemann2);
+            samples(2, sample) = Kokkos::sqrt(spin2);
+            samples(3, sample) = Kokkos::sqrt(spin_derivative2);
+            samples(4, sample) = Kokkos::sqrt(source2);
+            samples(5, sample) = Kokkos::abs(core_blend.d[1]);
+            samples(6, sample) = Kokkos::abs(core_blend.dd[1][1]);
+          });
+      Kokkos::fence();
+      using MaxLoc = Kokkos::MaxLoc<Real, int>;
+      for (int measure = 0; measure < kMeasures; ++measure) {
+        MaxLoc::value_type maximum;
+        Kokkos::parallel_reduce(
+            "ref_gh reference path scan maximum",
+            Kokkos::RangePolicy<>(DevExeSpace(), 0, kSamples),
+            KOKKOS_LAMBDA(const int sample,
+                          MaxLoc::value_type &local_maximum) {
+              const Real value = samples(measure, sample);
+              if (value >= local_maximum.val) {
+                local_maximum.val = value;
+                local_maximum.loc = sample;
+              }
+            }, MaxLoc(maximum));
+        if (global_variable::my_rank == 0) {
+          const Real radius = r_min + (r_max - r_min)
+              *static_cast<Real>(maximum.loc)/static_cast<Real>(kSamples - 1);
+          std::fprintf(file,
+              "%s\t%.17e\t%.17e\t%.17e\t%.17e\t%d\t%s\t%.17e\t"
+              "%.17e\t%.17e\n",
+              path_names[path], time, r_core, r_min, r_max, kSamples,
+              measure_names[measure], maximum.val, radius, radius/r_core);
+        }
+      }
+    }
+  }
+  if (file != nullptr) std::fclose(file);
+  if (global_variable::my_rank == 0) {
+    std::cout << "reference-GH reference-only path scan written to "
+              << filename << std::endl;
+  }
+}
+
 }  // namespace
 
 void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) {
   CheckFlatCovariantSource();
   CheckNonflatCovariantSource();
   CheckDynamicSpatialReference();
+  if (pin->GetOrAddBoolean("problem", "reference_path_scan", false)) {
+    ScanReferencePaths(pin);
+  }
   // Leave a valid exact state for the zero-time AthenaK task sequence.
   RefGhMinkowski(pin, restart);
 }

@@ -43,6 +43,8 @@ class RefGh {
     int source_kind;
     bool debug_task_fences;
     bool validate_reference_cache;
+    bool max_location_diagnostics;
+    int transition_path;
     Real gamma0;
     Real diss;
     Real fail_closed_dt;
@@ -51,6 +53,7 @@ class RefGh {
     Real r_core0;
     Real tau_core;
     Real kappa_core;
+    Real transition_width;
     Real tau_transition;
     Real r_fit_min;
     Real r_fit_max;
@@ -109,6 +112,8 @@ class RefGh {
   DvceArray2D<Real> reference_table;
   Real reference_cache_time;
   Real reference_diagnostic_time;
+  Real max_location_diagnostic_time;
+  int max_location_diagnostic_cycle;
   std::uint64_t controller_generation;
   std::uint64_t reference_cache_generation;
   std::uint64_t reference_diagnostic_generation;
@@ -130,6 +135,7 @@ class RefGh {
   void RefGhToADM();
   void CacheMetricCondition();
   void UpdateDiagnostics();
+  void AppendMaxLocationDiagnostics();
   static void SetADMVariables(MeshBlockPack *pack);
   TaskStatus InitRecv(Driver *driver, int stage);
   TaskStatus ClearRecv(Driver *driver, int stage);

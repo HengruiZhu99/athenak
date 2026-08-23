@@ -573,8 +573,9 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
   controller_diagnostics.inverse_psi_max = inverse_psi_max;
   controller_diagnostics.fitting_shell_valid = shell_valid;
 
-  controller_diagnostics.r_core = opt.r_core0*mass
-      *std::exp(-stage_time/(opt.tau_core*mass));
+  controller_diagnostics.r_core = opt.transition_path == kFixedCorePath
+      ? opt.r_core0*mass
+      : opt.r_core0*mass*std::exp(-stage_time/(opt.tau_core*mass));
   const Real activation_coordinate = stage_time/(opt.tau_transition*mass);
   if (activation_coordinate <= 0.0) {
     controller_diagnostics.transition_amplitude = 0.0;
@@ -585,7 +586,9 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
     controller_diagnostics.transition_amplitude =
         u*u*u*(10.0 + u*(-15.0 + 6.0*u));
   }
-  const Real r_full = (1.0 + opt.kappa_core)*controller_diagnostics.r_core;
+  const Real r_full = opt.transition_path == kFixedWidthPath
+      ? controller_diagnostics.r_core + opt.transition_width*mass
+      : (1.0 + opt.kappa_core)*controller_diagnostics.r_core;
   const bool feedback_active = opt.controller_enabled && shell_valid
       && r_full + opt.controller_fit_buffer_cells*finest_spacing < fit_min;
   controller_diagnostics.feedback_active = feedback_active;
@@ -687,7 +690,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   const Real center_z = opt.reference_center[2];
   const ControlledReferenceParameters controlled{
       mass, {center_x, center_y, center_z}, opt.r_core0, opt.tau_core,
-      opt.kappa_core, opt.tau_transition, opt.regularization_outer_start,
+      opt.kappa_core, opt.transition_path, opt.transition_width,
+      opt.tau_transition, opt.regularization_outer_start,
       opt.regularization_outer_end, controller.delta_q,
       controller.delta_q_dot, controller_rhs.delta_q_dot,
       controller.delta_p, controller.delta_p_dot,
@@ -1030,17 +1034,11 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       const int m = work/n3;
       const int B = component/4;
       const int D = component % 4;
-      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                                 size.d_view(m).x1min, size.d_view(m).x1max);
-      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                                 size.d_view(m).x2min, size.d_view(m).x2max);
-      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                                 size.d_view(m).x3min, size.d_view(m).x3max);
-      const ReferenceProviderPoint point{provider, m, k, j, i};
+      const ReferenceCachePoint reference{
+          evolution, diagnostic, m, k, j, i};
       Real ricci = 0.0;
       for (int A = 0; A < 4; ++A) {
-        ricci += ProviderRiemann(reference_kind, point, mass, x, y, z,
-                                 center_x, center_y, center_z, A, B, A, D);
+        ricci += ReferenceRiemann(reference, A, B, A, D);
       }
       diagnostic(m, kRefRicci + component, k, j, i) = ricci;
     });

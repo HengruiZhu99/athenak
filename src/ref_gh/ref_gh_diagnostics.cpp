@@ -3,15 +3,25 @@
 //! \brief ADM reconstruction and constraint refresh for reference-frame GH.
 //========================================================================================
 #include <cmath>
+#include <cstdio>
+#include <limits>
+#include <string>
+#include <vector>
 
 #include "athena.hpp"
 #include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
+#include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
+#include "parameter_input.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_cache.hpp"
+
+#if MPI_PARALLEL_ENABLED
+#include <mpi.h>
+#endif
 
 namespace ref_gh {
 
@@ -106,6 +116,239 @@ void RefGh::UpdateDiagnostics() {
   DebugFence("ref_gh diagnostics constraints");
   CacheMetricCondition();
   DebugFence("ref_gh diagnostics metric condition");
+}
+
+void RefGh::AppendMaxLocationDiagnostics() {
+  if (!opt.max_location_diagnostics) return;
+  if (max_location_diagnostic_time == pmy_pack->pmesh->time
+      && max_location_diagnostic_cycle == pmy_pack->pmesh->ncycle) return;
+  max_location_diagnostic_time = pmy_pack->pmesh->time;
+  max_location_diagnostic_cycle = pmy_pack->pmesh->ncycle;
+
+  enum Diagnostic : int {
+    kReferenceRicci, kReferenceRiemann, kSpin, kSpinDerivative,
+    kPsi, kQ, kDelta, kPi, kPhi, kGhConstraint, kReductionConstraint,
+    kCurlConstraint, kSourceCurvature, kSourceQq, kSourceDeltaDelta,
+    kSourceDamping, kSourceFrameCorrection, kShiftLapseRatio,
+    kDiagnosticCount
+  };
+  constexpr const char *names[kDiagnosticCount] = {
+    "reference_Ricci", "reference_Riemann", "spin_connection",
+    "spin_derivative", "Psi", "Q", "Delta", "Pi", "Phi",
+    "GH_constraint", "reduction_constraint", "curl_constraint",
+    "source_curvature", "source_QQ", "source_DeltaDelta",
+    "source_damping", "source_frame_correction", "shift_lapse_ratio"
+  };
+  constexpr int kRecordFields = 12;
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  auto &size = pmy_pack->pmb->mb_size;
+  const auto state = u0;
+  const auto constraints = u_con;
+  const auto reference_cache = reference_evolution;
+  const auto reference_extra = reference_diagnostic;
+  const auto adm_vars = pmy_pack->padm->adm;
+  const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  Real local_records[kDiagnosticCount*kRecordFields] = {};  // NOLINT
+
+  using MaxLoc = Kokkos::MaxLoc<Real, int>;
+  for (int diagnostic_index = 0; diagnostic_index < kDiagnosticCount;
+       ++diagnostic_index) {
+    MaxLoc::value_type maximum;
+    Kokkos::parallel_reduce(
+        "ref_gh diagnostic maximum location",
+        Kokkos::RangePolicy<>(DevExeSpace(),
+            0, pmy_pack->nmb_thispack*ncells),
+        KOKKOS_LAMBDA(const int idx, MaxLoc::value_type &local_maximum) {
+          int work = idx;
+          const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+          const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+          const int k = work % indcs.nx3 + indcs.ks;
+          const int m = work/indcs.nx3;
+          const ReferenceCachePoint reference{
+              reference_cache, reference_extra, m, k, j, i};
+          Real value2 = 0.0;
+          if (diagnostic_index == kReferenceRicci) {
+            const Real value = constraints(
+                m, kDiagnosticOffset + 2, k, j, i);
+            value2 = value*value;
+          } else if (diagnostic_index == kReferenceRiemann) {
+            for (int A = 0; A < 4; ++A) {
+              for (int B = 0; B < 4; ++B) {
+                for (int C = 0; C < 4; ++C) {
+                  for (int D = 0; D < 4; ++D) {
+                    const Real value = ReferenceRiemann(reference, A, B, C, D);
+                    value2 += value*value;
+                  }
+                }
+              }
+            }
+          } else if (diagnostic_index == kSpin) {
+            for (int A = 0; A < 4; ++A) {
+              for (int B = 0; B < 4; ++B) {
+                for (int C = 0; C < 4; ++C) {
+                  const Real value = ReferenceSpin(reference, A, B, C);
+                  value2 += value*value;
+                }
+              }
+            }
+          } else if (diagnostic_index == kSpinDerivative) {
+            for (int D = 0; D < 4; ++D) {
+              for (int A = 0; A < 4; ++A) {
+                for (int B = 0; B < 4; ++B) {
+                  for (int C = 0; C < 4; ++C) {
+                    const Real value =
+                        ReferenceSpinDerivative(reference, D, A, B, C);
+                    value2 += value*value;
+                  }
+                }
+              }
+            }
+          } else if (diagnostic_index == kPsi) {
+            for (int n = kPsiOffset; n < kPiOffset; ++n) {
+              const Real value = state(m, n, k, j, i);
+              value2 += value*value;
+            }
+          } else if (diagnostic_index == kQ) {
+            const Real value = constraints(
+                m, kDiagnosticOffset + 0, k, j, i);
+            value2 = value*value;
+          } else if (diagnostic_index == kDelta) {
+            const Real value = constraints(
+                m, kDiagnosticOffset + 1, k, j, i);
+            value2 = value*value;
+          } else if (diagnostic_index == kPi) {
+            for (int n = kPiOffset; n < kPhiOffset; ++n) {
+              const Real value = state(m, n, k, j, i);
+              value2 += value*value;
+            }
+          } else if (diagnostic_index == kPhi) {
+            for (int n = kPhiOffset; n < nvar; ++n) {
+              const Real value = state(m, n, k, j, i);
+              value2 += value*value;
+            }
+          } else if (diagnostic_index == kGhConstraint) {
+            for (int A = 0; A < 4; ++A) {
+              const Real value = constraints(m, A, k, j, i);
+              value2 += value*value;
+            }
+          } else if (diagnostic_index == kReductionConstraint) {
+            const Real value = constraints(m, 4, k, j, i);
+            value2 = value*value;
+          } else if (diagnostic_index == kCurlConstraint) {
+            const Real value = constraints(m, 5, k, j, i);
+            value2 = value*value;
+          } else if (diagnostic_index >= kSourceCurvature
+                     && diagnostic_index <= kSourceFrameCorrection) {
+            const int source_slot = kDiagnosticOffset + 4
+                                    + diagnostic_index - kSourceCurvature;
+            const Real value = constraints(m, source_slot, k, j, i);
+            value2 = value*value;
+          } else {
+            const Real alpha = adm_vars.alpha(m, k, j, i);
+            Real shift2 = 0.0;
+            for (int a = 0; a < 3; ++a) {
+              for (int b = 0; b < 3; ++b) {
+                shift2 += adm_vars.g_dd(m, a, b, k, j, i)
+                          *adm_vars.beta_u(m, a, k, j, i)
+                          *adm_vars.beta_u(m, b, k, j, i);
+              }
+            }
+            const Real ratio = shift2/(alpha*alpha);
+            value2 = ratio*ratio;
+          }
+          const Real value = Kokkos::sqrt(value2);
+          const Real comparable = Kokkos::isfinite(value)
+              ? value : std::numeric_limits<Real>::max();
+          if (comparable >= local_maximum.val) {
+            local_maximum.val = comparable;
+            local_maximum.loc = idx;
+          }
+        }, MaxLoc(maximum));
+
+    int work = maximum.loc;
+    const int ii = work % indcs.nx1; work /= indcs.nx1;
+    const int jj = work % indcs.nx2; work /= indcs.nx2;
+    const int kk = work % indcs.nx3;
+    const int m = work/indcs.nx3;
+    const Real x = CellCenterX(ii, indcs.nx1,
+                               size.h_view(m).x1min, size.h_view(m).x1max);
+    const Real y = CellCenterX(jj, indcs.nx2,
+                               size.h_view(m).x2min, size.h_view(m).x2max);
+    const Real z = CellCenterX(kk, indcs.nx3,
+                               size.h_view(m).x3min, size.h_view(m).x3max);
+    const Real dx = x - opt.reference_center[0];
+    const Real dy = y - opt.reference_center[1];
+    const Real dz = z - opt.reference_center[2];
+    const Real radius = std::sqrt(dx*dx + dy*dy + dz*dz);
+    const int offset = diagnostic_index*kRecordFields;
+    local_records[offset + 0] = maximum.val;
+    local_records[offset + 1] = radius;
+    local_records[offset + 2] = 0.0;
+    local_records[offset + 3] = pmy_pack->pmb->mb_lev.h_view(m);
+    local_records[offset + 4] = global_variable::my_rank;
+    local_records[offset + 5] = pmy_pack->pmb->mb_gid.h_view(m);
+    local_records[offset + 6] = x;
+    local_records[offset + 7] = y;
+    local_records[offset + 8] = z;
+    local_records[offset + 9] = ii;
+    local_records[offset + 10] = jj;
+    local_records[offset + 11] = kk;
+  }
+
+  const Real time = pmy_pack->pmesh->time;
+  const Real r_core = opt.transition_path == kFixedCorePath
+      ? opt.r_core0*opt.reference_mass
+      : opt.r_core0*opt.reference_mass
+          *std::exp(-time/(opt.tau_core*opt.reference_mass));
+  for (int n = 0; n < kDiagnosticCount; ++n) {
+    const int offset = n*kRecordFields;
+    local_records[offset + 2] = local_records[offset + 1]/r_core;
+  }
+
+  std::vector<Real> gathered;
+#if MPI_PARALLEL_ENABLED
+  if (global_variable::my_rank == 0) {
+    gathered.resize(global_variable::nranks*kDiagnosticCount*kRecordFields);
+  }
+  MPI_Gather(local_records, kDiagnosticCount*kRecordFields, MPI_ATHENA_REAL,
+             gathered.data(), kDiagnosticCount*kRecordFields, MPI_ATHENA_REAL,
+             0, MPI_COMM_WORLD);
+#else
+  gathered.assign(local_records,
+                  local_records + kDiagnosticCount*kRecordFields);
+#endif
+  if (global_variable::my_rank != 0) return;
+
+  const std::string filename =
+      pinput->GetString("job", "basename") + ".ref_gh_maxloc.tsv";
+  FILE *file = std::fopen(filename.c_str(), "a+");
+  if (file == nullptr) {
+    std::cout << "### FATAL ERROR: unable to open Ref-GH max-location file "
+              << filename << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::fseek(file, 0, SEEK_END);
+  if (std::ftell(file) == 0) {
+    std::fprintf(file, "time\tcycle\tdiagnostic\tmaximum\tradius\t"
+                       "r_over_r_core\tlevel\trank\tgid\tx\ty\tz\ti\tj\tk\n");
+  }
+  for (int n = 0; n < kDiagnosticCount; ++n) {
+    const Real *best = nullptr;
+    for (int rank = 0; rank < global_variable::nranks; ++rank) {
+      const Real *candidate = gathered.data()
+          + (rank*kDiagnosticCount + n)*kRecordFields;
+      if (best == nullptr || candidate[0] > best[0]) best = candidate;
+    }
+    std::fprintf(file,
+        "%.17e\t%d\t%s\t%.17e\t%.17e\t%.17e\t%d\t%d\t%d\t"
+        "%.17e\t%.17e\t%.17e\t%d\t%d\t%d\n",
+        time, pmy_pack->pmesh->ncycle, names[n], best[0], best[1], best[2],
+        static_cast<int>(best[3]), static_cast<int>(best[4]),
+        static_cast<int>(best[5]), best[6], best[7], best[8],
+        static_cast<int>(best[9]), static_cast<int>(best[10]),
+        static_cast<int>(best[11]));
+  }
+  std::fclose(file);
 }
 
 }  // namespace ref_gh

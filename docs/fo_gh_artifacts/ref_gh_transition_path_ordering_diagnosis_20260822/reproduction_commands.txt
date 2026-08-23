@@ -1,0 +1,28 @@
+# Local current-source build
+git submodule update --init kokkos
+cmake -S . -B build_refgh_diagnosis_cpu \
+  -DCMAKE_BUILD_TYPE=Debug -DPROBLEM=built_in_pgens \
+  -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_OPENMP=OFF \
+  -DAthena_ENABLE_MPI=OFF -DAthena_ENABLE_OPENMP=OFF
+cmake --build build_refgh_diagnosis_cpu --parallel 4
+
+# Existing source oracles
+build_refgh_diagnosis_cpu/src/athena \
+  -i inputs/ref_gh/ref_gh_source_unit.athinput
+
+# Full reference-only scan and summary
+build_refgh_diagnosis_cpu/src/athena \
+  -i inputs/ref_gh/ref_gh_reference_path_scan.athinput
+python3 scripts/ref_gh/analyze_reference_path_scan.py \
+  ref_gh_reference_path_scan.reference_path_scan.tsv \
+  --json reference_path_scan_summary.json \
+  --table reference_path_comparison.tsv
+
+# Local medium mesh tree
+build_refgh_diagnosis_cpu/src/athena -m \
+  -i inputs/ref_gh/ref_gh_transition_path_medium.athinput
+
+# Aurora, after cloning the exact pushed commit into a fresh CAMPAIGN_ROOT/src
+qsub -v CAMPAIGN_ROOT=<fresh-absolute-path>,EXPECTED_COMMIT=<full-sha> \
+  -o <fresh-absolute-path>/medium_path_pbs.log \
+  scripts/ref_gh/aurora_transition_path_medium.pbs

@@ -1,0 +1,204 @@
+#!/bin/bash -l
+# Cheapest-decisive medium-resolution Aurora path discriminator.
+# The job stops immediately if frozen wormhole or fixed-core does not reach t=4M.
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=14:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_path_med
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+OUT="${CAMPAIGN_ROOT}/runs/medium_${PBS_JOBID}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_transition_path_medium.athinput"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens \
+  > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n 8 --ppn 8 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 8
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 8
+
+set +e
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -m -i "${INPUT}" > mesh_structure.txt 2>&1
+mesh_status=$?
+set -e
+echo "mesh_only_exit_status=${mesh_status}" >> mesh_structure.txt
+test "${mesh_status}" -eq 0 -o "${mesh_status}" -eq 139
+grep -q 'Root grid = 3 x 3 x 3 MeshBlocks' mesh_structure.txt
+grep -q 'Total number of MeshBlocks = 34' mesh_structure.txt
+grep -q 'Number of physical levels of refinement = 1 (2 levels total)' mesh_structure.txt
+
+validate_segment() {
+  local directory="$1"
+  local label="$2"
+  local target="$3"
+  local status="$4"
+  {
+    echo "exit_status=${status}"
+    echo "target=${target}"
+    for history in "${label}.ref_gh.hst" "${label}.user.hst"; do
+      if test -s "${directory}/${history}"; then
+        echo -n "last_${history}="
+        tail -1 "${directory}/${history}"
+      fi
+    done
+  } > "${directory}/segment_status.txt"
+  test "${status}" -eq 0
+  test -s "${directory}/${label}.ref_gh.hst"
+  test -s "${directory}/${label}.user.hst"
+  test -s "${directory}/${label}.ref_gh_maxloc.tsv"
+  awk -v target="${target}" \
+    'BEGIN {ok=0} !/^#/ && $1 >= target-1.e-10 && $22 == 0 {ok=1} END {exit !ok}' \
+    "${directory}/${label}.ref_gh.hst"
+  awk 'BEGIN {ok=1} !/^#/ && ($3 != 0 || $5 != 0 || $25 != 0) {ok=0} END {exit !ok}' \
+    "${directory}/${label}.user.hst"
+  ! grep -Eiq 'NotPresent|page fault|SYCL exception|(^|[^[:alpha:]])(nan|inf)([^[:alpha:]]|$)' \
+    "${directory}/${label}.log"
+}
+
+run_initial() {
+  local label="$1"
+  local reference="$2"
+  local path="$3"
+  local target=2.2
+  local directory="${OUT}/${label}_to_2p2"
+  mkdir -p "${directory}"
+  cd "${directory}"
+  set +e
+  /usr/bin/time -p mpiexec -n 8 --ppn 8 --depth=16 --cpu-bind depth \
+    gpu_tile_compact.sh "${EXE}" -i "${INPUT}" \
+    job/basename="${label}" ref_gh/reference="${reference}" \
+    ref_gh/transition_path="${path}" ref_gh/controller_enabled=false \
+    time/tlim="${target}" time/nlim=-1 > "${label}.log" 2>&1
+  local status=$?
+  set -e
+  if ! validate_segment "${directory}" "${label}" "${target}" "${status}"; then
+    return 1
+  fi
+  find rst -type f -name '*.rst' | sort | tail -1
+}
+
+run_continuation() {
+  local label="$1"
+  local reference="$2"
+  local path="$3"
+  local checkpoint="$4"
+  local target=4.0
+  local directory="${OUT}/${label}_to_4"
+  mkdir -p "${directory}"
+  cd "${directory}"
+  set +e
+  /usr/bin/time -p mpiexec -n 8 --ppn 8 --depth=16 --cpu-bind depth \
+    gpu_tile_compact.sh "${EXE}" -r "${checkpoint}" -i "${INPUT}" \
+    job/basename="${label}" ref_gh/reference="${reference}" \
+    ref_gh/transition_path="${path}" ref_gh/controller_enabled=false \
+    time/tlim="${target}" time/nlim=-1 > "${label}.log" 2>&1
+  local status=$?
+  set -e
+  validate_segment "${directory}" "${label}" "${target}" "${status}"
+}
+
+run_path_to_four() {
+  local label="$1"
+  local reference="$2"
+  local path="$3"
+  local relative_checkpoint
+  if ! relative_checkpoint=$(run_initial "${label}" "${reference}" "${path}"); then
+    return 1
+  fi
+  local checkpoint="${OUT}/${label}_to_2p2/${relative_checkpoint}"
+  if ! test -s "${checkpoint}"; then
+    return 1
+  fi
+  sha256sum "${checkpoint}" > "${OUT}/${label}_to_2p2/checkpoint.sha256"
+  run_continuation "${label}" "${reference}" "${path}" "${checkpoint}"
+}
+
+campaign=FAIL
+if ! run_path_to_four frozen_wormhole wormhole shrinking_width; then
+  cd "${OUT}"
+  echo 'decision=A_frozen_wormhole_failed' > decision.txt
+  exit 20
+fi
+if ! run_path_to_four fixed_core controlled_transition fixed_core; then
+  cd "${OUT}"
+  echo 'decision=C_fixed_core_failed' > decision.txt
+  exit 21
+fi
+if ! run_path_to_four fixed_width controlled_transition fixed_width; then
+  cd "${OUT}"
+  echo 'decision=fixed_core_survives_fixed_width_failed' > decision.txt
+  exit 22
+fi
+cd "${OUT}"
+campaign=PASS
+echo 'decision=B_fixed_width_candidate_survives' > decision.txt
+{
+  echo "campaign=${campaign}"
+  echo "controller_enabled=false"
+  echo "delta_q=0"
+  echo "delta_p=0"
+} > campaign_status.txt
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*status.txt' \
+  -o -name 'decision.txt' -o -name 'provenance.txt' \
+  -o -name 'rank_gpu_mapping.txt' -o -name 'mesh_structure.txt' \
+  -o -name 'checkpoint.sha256' \) -print0 | sort -z | xargs -0 sha256sum \
+  > compact_sha256.txt

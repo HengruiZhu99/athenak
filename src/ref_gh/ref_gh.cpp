@@ -61,6 +61,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     reference_diagnostic("ref_gh reference diagnostic", 1, 1, 1, 1, 1),
     reference_table("ref_gh reference table", 1, 1),
     reference_cache_time(NAN), reference_diagnostic_time(NAN),
+    max_location_diagnostic_time(NAN), max_location_diagnostic_cycle(-1),
     controller_generation(0), reference_cache_generation(0),
     reference_diagnostic_generation(0),
     controller{0.0, 0.0, 0.0, 0.0},
@@ -113,6 +114,22 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       pin->GetOrAddBoolean("ref_gh", "debug_task_fences", false);
   opt.validate_reference_cache =
       pin->GetOrAddBoolean("ref_gh", "validate_reference_cache", false);
+  opt.max_location_diagnostics =
+      pin->GetOrAddBoolean("ref_gh", "max_location_diagnostics", false);
+  const std::string transition_path =
+      pin->GetOrAddString("ref_gh", "transition_path", "shrinking_width");
+  if (transition_path == "shrinking_width") {
+    opt.transition_path = 0;
+  } else if (transition_path == "fixed_core") {
+    opt.transition_path = 1;
+  } else if (transition_path == "fixed_width") {
+    opt.transition_path = 2;
+  } else {
+    std::cout << "### FATAL ERROR: ref_gh transition_path must be "
+                 "shrinking_width, fixed_core, or fixed_width."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.gamma0 = pin->GetOrAddReal("ref_gh", "gamma0", 1.0);
   opt.diss = pin->GetOrAddReal("ref_gh", "diss", 0.02);
   opt.fail_closed_dt = pin->GetOrAddReal("ref_gh", "fail_closed_dt", 0.0);
@@ -123,6 +140,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.r_core0 = pin->GetOrAddReal("ref_gh", "r_core0", 0.30);
   opt.tau_core = pin->GetOrAddReal("ref_gh", "tau_core", 1.5);
   opt.kappa_core = pin->GetOrAddReal("ref_gh", "kappa_core", 1.0);
+  opt.transition_width =
+      pin->GetOrAddReal("ref_gh", "transition_width", 0.20);
   opt.tau_transition = pin->GetOrAddReal("ref_gh", "tau_transition", 4.0);
   opt.r_fit_min = pin->GetOrAddReal("ref_gh", "r_fit_min", 0.15);
   opt.r_fit_max = pin->GetOrAddReal("ref_gh", "r_fit_max", 0.40);
@@ -171,7 +190,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   if (opt.gamma0 <= 0.0 || opt.diss < 0.0 || opt.fail_closed_dt < 0.0
       || opt.reference_mass <= 0.0
       || opt.r_core0 <= 0.0 || opt.tau_core <= 0.0
-      || opt.kappa_core <= 0.0 || opt.tau_transition <= 0.0
+      || opt.kappa_core <= 0.0 || opt.transition_width <= 0.0
+      || opt.tau_transition <= 0.0
       || opt.r_fit_min <= 0.0 || opt.r_fit_max <= opt.r_fit_min
       || opt.controller_fit_buffer_cells <= 0.0
       || opt.regularization_outer_start <= opt.r_fit_max

@@ -17,6 +17,8 @@ struct ControlledReferenceParameters {
   Real r_core0;
   Real tau_core;
   Real kappa_core;
+  int transition_path;
+  Real transition_width;
   Real tau_transition;
   Real regularization_outer_start;
   Real regularization_outer_end;
@@ -26,6 +28,12 @@ struct ControlledReferenceParameters {
   Real delta_p;
   Real delta_p_dot;
   Real delta_p_ddot;
+};
+
+enum ControlledReferencePath : int {
+  kShrinkingWidthPath = 0,
+  kFixedCorePath = 1,
+  kFixedWidthPath = 2
 };
 
 KOKKOS_INLINE_FUNCTION
@@ -79,7 +87,8 @@ void ControlledTransitionProfileJets(
     const Real time, const Real x, const Real y, const Real z,
     ReferenceJet &alpha, ReferenceJet &psi2, ReferenceJet &shift_q,
     ReferenceJet *r_core_out = nullptr,
-    ReferenceJet *activation_out = nullptr) {
+    ReferenceJet *activation_out = nullptr,
+    ReferenceJet *core_blend_out = nullptr) {
   const Real dx[3] = {x - params.center[0], y - params.center[1],
                       z - params.center[2]};
   const Real radius_value = Kokkos::sqrt(dx[0]*dx[0] + dx[1]*dx[1]
@@ -87,11 +96,16 @@ void ControlledTransitionProfileJets(
   const ReferenceJet radius = ControlledRadiusJet(
       x, y, z, params.center[0], params.center[1], params.center[2]);
   const ReferenceJet time_jet = CoordinateJet(time, 0);
-  const ReferenceJet r_core = ConstantJet(params.r_core0*params.mass)
-      *Exp(ConstantJet(-1.0/(params.tau_core*params.mass))*time_jet);
+  const ReferenceJet r_core = params.transition_path == kFixedCorePath
+      ? ConstantJet(params.r_core0*params.mass)
+      : ConstantJet(params.r_core0*params.mass)
+          *Exp(ConstantJet(-1.0/(params.tau_core*params.mass))*time_jet);
   const ReferenceJet transition_coordinate =
-      (radius*Reciprocal(r_core) + ConstantJet(-1.0))
-      *ConstantJet(1.0/params.kappa_core);
+      params.transition_path == kFixedWidthPath
+      ? (radius + (-r_core))*ConstantJet(
+            1.0/(params.transition_width*params.mass))
+      : (radius*Reciprocal(r_core) + ConstantJet(-1.0))
+          *ConstantJet(1.0/params.kappa_core);
   const ReferenceJet core_blend = QuinticSmoothstep(transition_coordinate);
   const ReferenceJet activation = QuinticSmoothstep(
       time_jet*ConstantJet(1.0/(params.tau_transition*params.mass)));
@@ -144,6 +158,7 @@ void ControlledTransitionProfileJets(
   alpha = Exp(log_alpha);
   if (r_core_out != nullptr) *r_core_out = r_core;
   if (activation_out != nullptr) *activation_out = activation;
+  if (core_blend_out != nullptr) *core_blend_out = core_blend;
 }
 
 KOKKOS_INLINE_FUNCTION

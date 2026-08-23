@@ -1,0 +1,43 @@
+# Host/CPU-only prescribed-reference scan for the controlled Schwarzschild path.
+
+<job>
+basename = ref_gh_reference_path_scan
+
+<mesh>
+nghost = 4
+nx1 = 8
+x1min = -1.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 8
+x2min = -1.0
+x2max = 1.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 8
+x3min = -1.0
+x3max = 1.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+nlim = 0
+tlim = 0.0
+
+<ref_gh>
+reference = minkowski
+fd_order = 4
+gamma0 = 1.0
+
+<problem>
+pgen_name = ref_gh_source_unit
+reference_path_scan = true

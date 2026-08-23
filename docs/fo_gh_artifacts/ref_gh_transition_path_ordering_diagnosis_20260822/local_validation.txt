@@ -1,0 +1,15 @@
+Source base: d36c8315e47a949cc188cb01b982db3af8b50737
+Local backend: Kokkos 4.7.2 SERIAL, Debug, GCC 13.3.0
+
+Fresh configure/build: PASS
+Existing flat covariant source oracle: PASS, 6.93889e-17
+Existing nonflat covariant source oracle: PASS, 3.33067e-16
+Existing dynamic spatial curvature oracle: PASS, 8.67502e-18
+Existing dynamic spatial source oracle: PASS, 4.996e-16
+Exact Minkowski: PASS, zero
+Reference-only matrix: PASS, 189/189 records, 32769 radii per record
+Max-location evolved smoke: PASS, finite through t=0.04604472861863394M
+Max-location uniqueness: PASS, 18 records at each of two time/cycle pairs
+Medium mesh-only tree: PASS, 34 blocks, one physical refinement level
+
+No local result qualifies Aurora PVC execution or medium-resolution stability.
