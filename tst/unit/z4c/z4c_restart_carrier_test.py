@@ -547,7 +547,8 @@ def main():
     schema = args.work_dir / "schema.rst"
     schema.write_bytes(replace_value(restart_data, "carrier_schema", "1", "2"))
     run([args.athena, "-r", schema], args.work_dir, False,
-        ("invalid restart-origin Z4c carrier", "<z4c_restart>/carrier_schema=2"))
+        ("invalid restart-origin Z4c carrier", "vertex centering carrier",
+         "<z4c_restart>/grid_centering"))
 
     # The central schema is deliberately fail-closed: schema-1 carriers lack the
     # new constraint/curvature/owner fields and are never silently inferred.

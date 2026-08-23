@@ -69,10 +69,13 @@ struct Z4cMeshRestartState {
 
 struct Z4cRestartState {
   static constexpr int kLegacyCellCarrierSchema = 1;
-  static constexpr int kCurrentCarrierSchema = 2;
+  static constexpr int kLegacyVertexCarrierSchema = 2;
+  static constexpr int kCurrentCarrierSchema = 3;
 
   // Default construction remains the historical cell-centered carrier.
-  // Native vertex centering opts into schema 2 through the validated factory.
+  // Native vertex centering opts into the current carrier through the
+  // validated factory.  Schema 2 is accepted as the pre-selector VC contract
+  // and is interpreted as the historical `auto` transfer.
   int carrier_schema = kLegacyCellCarrierSchema;
   Z4cSymmetryConfig config;
   Z4cGridLayout layout;

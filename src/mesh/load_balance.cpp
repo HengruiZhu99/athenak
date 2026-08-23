@@ -183,8 +183,8 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
   int vc_refinement_halo = 0;
   if (nvc_tosend > 0) {
     vlayout = pmy_mesh->pmb_pack->pz4c->layout;
-    vc_refinement_halo = vertex_amr::RequiredRefinementHaloForSpatialOrder(
-        pmy_mesh->pmb_pack->pz4c->opt.spatial_order);
+    vc_refinement_halo = vertex_amr::RequiredRefinementHaloForTransferOrder(
+        pmy_mesh->pmb_pack->pz4c->opt.vertex_prolongation_order);
   }
 
   int rb_idx = 0;   // recv buffer index
@@ -497,8 +497,8 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   int vc_refinement_halo = 0;
   if (nvc_tosend > 0) {
     vlayout = pmy_mesh->pmb_pack->pz4c->layout;
-    vc_refinement_halo = vertex_amr::RequiredRefinementHaloForSpatialOrder(
-        pmy_mesh->pmb_pack->pz4c->opt.spatial_order);
+    vc_refinement_halo = vertex_amr::RequiredRefinementHaloForTransferOrder(
+        pmy_mesh->pmb_pack->pz4c->opt.vertex_prolongation_order);
   }
 
   int sb_idx = 0;   // send buffer index

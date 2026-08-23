@@ -219,7 +219,7 @@ class MeshBoundaryValuesVC : public MeshBoundaryValues {
   TaskStatus PackAndSendVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
   TaskStatus RecvAndUnpackVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
   void ProlongateVC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
-                    int spatial_order, int positive_component = -1);
+                   int transfer_order, int positive_component = -1);
 
   const VertexBoundaryLayout layout;
   DualArray1D<MeshBufferIndcs> prolongation_bounds;

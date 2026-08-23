@@ -13,6 +13,7 @@
 #include <string>
 #include <type_traits>
 
+#include "mesh/vertex_amr.hpp"
 #include "z4c/cartoon_derivatives.hpp"
 #include "z4c/z4c_symmetry.hpp"
 
@@ -120,6 +121,37 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
               << " requires at least " << config.stencil_width
               << " ghost cells, but <mesh>/nghost=" << input.nghost;
       return Invalid(config, message.str());
+    }
+    if (config.grid_centering == Z4cGridCentering::cell) {
+      if (input.vertex_prolongation_order_specified) {
+        return Invalid(config,
+                       "<z4c>/vertex_prolongation_order is valid only for "
+                       "grid_centering=vertex");
+      }
+      config.vertex_prolongation_order = 0;
+    } else {
+      int requested_transfer_order = 0;
+      if (input.requested_vertex_prolongation_order == "4") {
+        requested_transfer_order = 4;
+      } else if (input.requested_vertex_prolongation_order == "6") {
+        requested_transfer_order = 6;
+      } else if (input.requested_vertex_prolongation_order == "8") {
+        requested_transfer_order = 8;
+      } else if (input.requested_vertex_prolongation_order != "auto") {
+        return Invalid(config,
+                       "<z4c>/vertex_prolongation_order must be auto, 4, 6, "
+                       "or 8");
+      }
+      config.vertex_prolongation_order = vertex_amr::ResolveTransferOrder(
+          spatial_order, requested_transfer_order);
+      if (config.vertex_prolongation_order == 0) {
+        std::ostringstream message;
+        message << "unsupported native-VC spatial/prolongation order pair: "
+                << "spatial_order=" << spatial_order
+                << " vertex_prolongation_order="
+                << input.requested_vertex_prolongation_order;
+        return Invalid(config, message.str());
+      }
     }
   }
 

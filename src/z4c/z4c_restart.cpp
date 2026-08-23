@@ -143,15 +143,31 @@ Z4cRestartResult RequireKeys(ParameterInput *pin,
       "stored_n3", "coarse_active_n1", "coarse_active_n2",
       "coarse_active_n3", "coarse_stored_n1", "coarse_stored_n2",
       "coarse_stored_n3"};
-  if (carrier_schema == Z4cRestartState::kCurrentCarrierSchema) {
+  const bool vertex_layout_schema =
+      carrier_schema == Z4cRestartState::kLegacyVertexCarrierSchema ||
+      carrier_schema == Z4cRestartState::kCurrentCarrierSchema;
+  if (vertex_layout_schema) {
     if (enforce_schema_shape) {
       for (const char *key : layout_keys) {
         if (!Has(pin, key)) {
           return Invalid(std::string("partial <") + kZ4cRestartBlock +
-                         ">/carrier_schema=2 centering carrier: missing <" +
+                         ">/vertex centering carrier: missing <" +
                          kZ4cRestartBlock +
                          ">/" + key);
         }
+      }
+      const bool has_transfer = Has(pin, "vertex_prolongation_order");
+      if (carrier_schema == Z4cRestartState::kCurrentCarrierSchema &&
+          !has_transfer) {
+        return Invalid(std::string("partial <") + kZ4cRestartBlock +
+                       ">/carrier_schema=3 transfer carrier: missing <" +
+                       kZ4cRestartBlock + ">/vertex_prolongation_order");
+      }
+      if (carrier_schema == Z4cRestartState::kLegacyVertexCarrierSchema &&
+          has_transfer) {
+        return Invalid(std::string("legacy <") + kZ4cRestartBlock +
+                       ">/carrier_schema=2 must not contain "
+                       "vertex_prolongation_order");
       }
     }
   } else if (carrier_schema == Z4cRestartState::kLegacyCellCarrierSchema) {
@@ -259,18 +275,33 @@ Z4cRestartResult ReadState(ParameterInput *pin, Z4cRestartState *state) {
       return Invalid("invalid <z4c_restart>/grid_centering='" + centering + "'");
     }
     if (state->config.grid_centering != Z4cGridCentering::vertex) {
-      return Invalid("<z4c_restart>/carrier_schema=2 is reserved for native vertex "
-                     "centering; legacy/schema-1 is the immutable cell format");
+      return Invalid("<z4c_restart>/vertex carrier schema is reserved for native "
+                     "vertex centering; schema-1 is the immutable cell format");
     }
     READ_INTEGER("centering_schema", state->config.centering_schema)
     if (state->config.centering_schema != Z4cGridLayout::kCenteringSchema) {
       return Invalid("unsupported <z4c_restart>/centering_schema=" +
                      std::to_string(state->config.centering_schema));
     }
+    if (state->carrier_schema == Z4cRestartState::kCurrentCarrierSchema) {
+      READ_INTEGER("vertex_prolongation_order",
+                   state->config.vertex_prolongation_order)
+    } else {
+      state->config.vertex_prolongation_order =
+          vertex_amr::TransferOrderForSpatialOrder(
+              state->effective_spatial_order);
+    }
+    if (vertex_amr::ResolveTransferOrder(
+            state->effective_spatial_order,
+            state->config.vertex_prolongation_order) !=
+        state->config.vertex_prolongation_order) {
+      return Invalid("inconsistent spatial/vertex-prolongation order in "
+                     "<z4c_restart>");
+    }
     state->layout = MakeZ4cGridLayout(
         state->config.grid_centering, restart_indices,
-        vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(
-            state->effective_spatial_order, nghost));
+        vertex_amr::RequiredCoarseGhostWidthForTransferOrder(
+            state->config.vertex_prolongation_order, nghost));
 #define REQUIRE_LAYOUT_INTEGER(KEY, EXPECTED)                               \
     {                                                                       \
       int stored_layout_value = 0;                                          \
@@ -474,10 +505,15 @@ Z4cRestartResult CompareCarrierParameters(ParameterInput *pin,
   COMPARE_INTEGER("requested_spatial_order", stored.requested_spatial_order)
   COMPARE_INTEGER("effective_spatial_order", stored.effective_spatial_order)
   COMPARE_INTEGER("stencil_width", stored.config.stencil_width)
-  if (stored.carrier_schema == Z4cRestartState::kCurrentCarrierSchema) {
+  if (stored.carrier_schema == Z4cRestartState::kLegacyVertexCarrierSchema ||
+      stored.carrier_schema == Z4cRestartState::kCurrentCarrierSchema) {
     COMPARE_STRING("grid_centering",
                    std::string(ToString(stored.config.grid_centering)))
     COMPARE_INTEGER("centering_schema", stored.config.centering_schema)
+    if (stored.carrier_schema == Z4cRestartState::kCurrentCarrierSchema) {
+      COMPARE_INTEGER("vertex_prolongation_order",
+                      stored.config.vertex_prolongation_order)
+    }
     COMPARE_INTEGER("nghost", stored.layout.ng)
     COMPARE_INTEGER("coarse_nghost", stored.layout.coarse_ng)
     COMPARE_INTEGER("active_n1", stored.layout.ie - stored.layout.is + 1)
@@ -566,8 +602,8 @@ Z4cRestartState MakeDefaultZ4cRestartState(const Z4cSymmetryConfig &config,
     int nx1, nx2, nx3, ng;
   };
   const int coarse_ng = config.grid_centering == Z4cGridCentering::vertex
-      ? vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(
-            state.effective_spatial_order, nghost)
+      ? vertex_amr::RequiredCoarseGhostWidthForTransferOrder(
+            config.vertex_prolongation_order, nghost)
       : nghost;
   state.layout = MakeZ4cGridLayout(
       config.grid_centering,
@@ -650,6 +686,25 @@ Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
                    snapshot.state.effective_spatial_order,
                    EffectiveZ4cSpatialOrder(requested_order, nghost));
   if (!result.valid) return result;
+  if (snapshot.state.config.grid_centering == Z4cGridCentering::vertex) {
+    const std::string requested_transfer =
+        pin->DoesParameterExist("z4c", "vertex_prolongation_order")
+            ? pin->GetString("z4c", "vertex_prolongation_order") : "auto";
+    int requested_transfer_order = 0;
+    if (requested_transfer == "4") requested_transfer_order = 4;
+    else if (requested_transfer == "6") requested_transfer_order = 6;
+    else if (requested_transfer == "8") requested_transfer_order = 8;
+    else if (requested_transfer != "auto") {
+      return Invalid("invalid restart override <z4c>/vertex_prolongation_order='" +
+                     requested_transfer + "'");
+    }
+    const int effective_transfer = vertex_amr::ResolveTransferOrder(
+        snapshot.state.effective_spatial_order, requested_transfer_order);
+    result = Compare("z4c", "vertex_prolongation_order",
+                     snapshot.state.config.vertex_prolongation_order,
+                     effective_transfer);
+    if (!result.valid) return result;
+  }
 
   // These aliases are emitted for compatibility with validation consumers. They are
   // identity-bearing too: check every present copy before canonical restoration.
@@ -701,9 +756,11 @@ Z4cRestartResult ValidateAndRestoreZ4cRestartSnapshot(
   pin->SetString("z4c", "coordinate_map", ToString(snapshot.state.config.coordinate_map));
   pin->SetInteger("z4c", "symmetry_schema", snapshot.state.config.schema);
   pin->SetInteger("z4c", "spatial_order", snapshot.state.requested_spatial_order);
-  if (snapshot.state.carrier_schema == Z4cRestartState::kCurrentCarrierSchema) {
+  if (snapshot.state.config.grid_centering == Z4cGridCentering::vertex) {
     pin->SetString("z4c", "grid_centering",
                    ToString(snapshot.state.config.grid_centering));
+    pin->SetInteger("z4c", "vertex_prolongation_order",
+                    snapshot.state.config.vertex_prolongation_order);
   }
   pin->SetString("z4c", "restart_symmetry", ToString(snapshot.state.config.mode));
   pin->SetString("z4c", "restart_coordinate_map",
@@ -754,8 +811,8 @@ Z4cRestartResult ValidateZ4cRestartBinaryDimensions(
   const int binary_nghost = pin->GetInteger("mesh", "nghost");
   const int binary_coarse_ng =
       stored.config.grid_centering == Z4cGridCentering::vertex
-          ? vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(
-                stored.effective_spatial_order, binary_nghost)
+          ? vertex_amr::RequiredCoarseGhostWidthForTransferOrder(
+                stored.config.vertex_prolongation_order, binary_nghost)
           : binary_nghost;
   const auto binary_layout = MakeZ4cGridLayout(
       stored.config.grid_centering,
@@ -807,13 +864,21 @@ void StoreZ4cRestartState(ParameterInput *pin, const Z4cRestartState &state) {
   const bool legacy_cell =
       state.carrier_schema == Z4cRestartState::kLegacyCellCarrierSchema &&
       state.config.grid_centering == Z4cGridCentering::cell;
+  const bool vertex_layout =
+      (state.carrier_schema == Z4cRestartState::kLegacyVertexCarrierSchema ||
+       state.carrier_schema == Z4cRestartState::kCurrentCarrierSchema) &&
+      state.config.grid_centering == Z4cGridCentering::vertex;
   const bool current_layout =
       state.carrier_schema == Z4cRestartState::kCurrentCarrierSchema &&
-      state.config.grid_centering == Z4cGridCentering::vertex;
-  if ((!legacy_cell && !current_layout) ||
+      vertex_layout;
+  if ((!legacy_cell && !vertex_layout) ||
       state.config.centering_schema != Z4cGridLayout::kCenteringSchema ||
       state.layout.centering != state.config.grid_centering ||
-      state.layout.centering_schema != state.config.centering_schema) {
+      state.layout.centering_schema != state.config.centering_schema ||
+      (vertex_layout && vertex_amr::ResolveTransferOrder(
+                            state.effective_spatial_order,
+                            state.config.vertex_prolongation_order) !=
+                            state.config.vertex_prolongation_order)) {
     std::cerr << "### FATAL ERROR in " << __FILE__
               << ": invalid current Z4c centering restart state" << std::endl;
     std::exit(EXIT_FAILURE);
@@ -828,11 +893,15 @@ void StoreZ4cRestartState(ParameterInput *pin, const Z4cRestartState &state) {
   pin->SetInteger(kZ4cRestartBlock, "effective_spatial_order",
                   state.effective_spatial_order);
   pin->SetInteger(kZ4cRestartBlock, "stencil_width", state.config.stencil_width);
-  if (current_layout) {
+  if (vertex_layout) {
     pin->SetString(kZ4cRestartBlock, "grid_centering",
                    ToString(state.config.grid_centering));
     pin->SetInteger(kZ4cRestartBlock, "centering_schema",
                     state.config.centering_schema);
+    if (current_layout) {
+      pin->SetInteger(kZ4cRestartBlock, "vertex_prolongation_order",
+                      state.config.vertex_prolongation_order);
+    }
     pin->SetInteger(kZ4cRestartBlock, "nghost", state.layout.ng);
     pin->SetInteger(kZ4cRestartBlock, "coarse_nghost", state.layout.coarse_ng);
     pin->SetInteger(kZ4cRestartBlock, "active_n1",

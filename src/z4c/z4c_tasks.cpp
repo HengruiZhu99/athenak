@@ -546,7 +546,8 @@ TaskStatus Z4c::FinalizeVertexAcceptedState(Driver *pdrive, int stage) {
   vertex_topology_plan->SynchronizeSharedNodes(u0);
   FillBuiltInPhysicalBoundaryGhosts();
   if (pmy_pack->pmesh->multilevel) {
-    pbval_u_vc->ProlongateVC(u0, coarse_u0, opt.spatial_order, I_Z4C_CHI);
+    pbval_u_vc->ProlongateVC(u0, coarse_u0,
+                             opt.vertex_prolongation_order, I_Z4C_CHI);
   }
   FillBuiltInPhysicalBoundaryGhosts();
   ApplyVertexAxisRegularity(u0, stage, "post_accepted_boundary");
@@ -635,7 +636,7 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
 TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
   if (pmy_pack->pmesh->multilevel) {  // only prolongate with SMR/AMR
     if (layout.centering == Z4cGridCentering::vertex) {
-      pbval_u_vc->ProlongateVC(u0, coarse_u0, opt.spatial_order,
+      pbval_u_vc->ProlongateVC(u0, coarse_u0, opt.vertex_prolongation_order,
                                I_Z4C_CHI);
       CheckStateAdmissibility(pdrive, stage,
                               Z4cStateCheckpoint::post_prolongation);
@@ -911,7 +912,7 @@ TaskStatus Z4c::ProlongateWeyl(Driver *pdrive, int stage) {
       if (pmy_pack->pmesh->multilevel) {
         if (layout.centering == Z4cGridCentering::vertex) {
           pbval_weyl_vc->ProlongateVC(u_weyl, coarse_u_weyl,
-                                      opt.spatial_order);
+                                      opt.vertex_prolongation_order);
         } else {
           pbval_weyl->ProlongateCC(u_weyl, coarse_u_weyl);
         }

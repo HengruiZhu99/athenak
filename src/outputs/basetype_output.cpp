@@ -791,6 +791,8 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
     pin->SetString(out_params.block_name, "grid_sampling", "vertex");
     pin->SetInteger(out_params.block_name, "centering_schema",
                     z4c::Z4cGridLayout::kCenteringSchema);
+    pin->SetInteger(out_params.block_name, "vertex_prolongation_order",
+                    pm->pmb_pack->pz4c->opt.vertex_prolongation_order);
     const auto &layout = pm->pmb_pack->pz4c->layout;
     pin->SetInteger(out_params.block_name, "active_n1", layout.ie - layout.is + 1);
     pin->SetInteger(out_params.block_name, "active_n2", layout.je - layout.js + 1);

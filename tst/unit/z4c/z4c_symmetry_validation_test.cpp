@@ -103,6 +103,32 @@ bool CheckCenteringSelection() {
   return Rejects(input, "without a centering-aware sampler");
 }
 
+bool CheckVertexProlongationSelection() {
+  auto input = ValidCartoonInput();
+  input.requested_grid_centering = "vertex";
+  auto result = z4c::ValidateZ4cSymmetry(input);
+  if (!result.valid || result.config.vertex_prolongation_order != 8) return false;
+
+  input.requested_spatial_order = 4;
+  input.vertex_prolongation_order_specified = true;
+  input.requested_vertex_prolongation_order = "4";
+  result = z4c::ValidateZ4cSymmetry(input);
+  if (!result.valid || result.config.vertex_prolongation_order != 4) return false;
+  input.requested_vertex_prolongation_order = "6";
+  result = z4c::ValidateZ4cSymmetry(input);
+  if (!result.valid || result.config.vertex_prolongation_order != 6) return false;
+  input.requested_vertex_prolongation_order = "8";
+  if (!Rejects(input, "unsupported native-VC")) return false;
+  input.requested_vertex_prolongation_order = "invalid";
+  if (!Rejects(input, "must be auto, 4, 6, or 8")) return false;
+
+  input = ValidCartoonInput();
+  input.requested_grid_centering = "cell";
+  input.vertex_prolongation_order_specified = true;
+  input.requested_vertex_prolongation_order = "6";
+  return Rejects(input, "valid only for grid_centering=vertex");
+}
+
 bool CheckStencilDispatch() {
   for (const int spatial_order : {2, 4, 6}) {
     auto input = ValidCartoonInput();
@@ -430,6 +456,7 @@ bool CheckIrisImporterProductionAdmission() {
 
 int main() {
   const bool passed = CheckDefaultCartesian() && CheckCenteringSelection() &&
+                      CheckVertexProlongationSelection() &&
                       CheckStencilDispatch() &&
                       CheckNonpositiveSpatialOrderFallback() &&
                       CheckMeshAndPhysicsFailures() &&

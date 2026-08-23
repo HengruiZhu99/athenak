@@ -193,14 +193,33 @@ void CheckTransferOrderAndHalo() {
               vertex_amr::TransferOrderForSpatialOrder(6) == 8 &&
               vertex_amr::TransferOrderForSpatialOrder(3) == 0,
           "Z4c p-to-q transfer-order contract");
+  Require(vertex_amr::ResolveTransferOrder(2, 0) == 4 &&
+              vertex_amr::ResolveTransferOrder(4, 0) == 6 &&
+              vertex_amr::ResolveTransferOrder(6, 0) == 8 &&
+              vertex_amr::ResolveTransferOrder(4, 4) == 4 &&
+              vertex_amr::ResolveTransferOrder(4, 6) == 6 &&
+              vertex_amr::ResolveTransferOrder(6, 6) == 6 &&
+              vertex_amr::ResolveTransferOrder(6, 8) == 8 &&
+              vertex_amr::ResolveTransferOrder(2, 6) == 0 &&
+              vertex_amr::ResolveTransferOrder(4, 8) == 0 &&
+              vertex_amr::ResolveTransferOrder(6, 4) == 0,
+          "explicit native-VC transfer-order contract");
   Require(vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(2, 2) == 2 &&
               vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(4, 4) == 4 &&
               vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(6, 4) == 5,
           "coarse ghost width contract");
+  Require(vertex_amr::RequiredCoarseGhostWidthForTransferOrder(4, 4) == 4 &&
+              vertex_amr::RequiredCoarseGhostWidthForTransferOrder(6, 4) == 4 &&
+              vertex_amr::RequiredCoarseGhostWidthForTransferOrder(8, 4) == 5,
+          "transfer-order coarse ghost width contract");
   Require(vertex_amr::RequiredRefinementHaloForSpatialOrder(2) == 1 &&
               vertex_amr::RequiredRefinementHaloForSpatialOrder(4) == 2 &&
               vertex_amr::RequiredRefinementHaloForSpatialOrder(6) == 3,
           "new-child refinement halo contract");
+  Require(vertex_amr::RequiredRefinementHaloForTransferOrder(4) == 1 &&
+              vertex_amr::RequiredRefinementHaloForTransferOrder(6) == 2 &&
+              vertex_amr::RequiredRefinementHaloForTransferOrder(8) == 3,
+          "explicit transfer-order refinement halo contract");
   Require(vertex_amr::SupportsSingleHopCoarseHalo(5, 5) &&
               !vertex_amr::SupportsSingleHopCoarseHalo(4, 5),
           "single-hop coarse communication feasibility contract");

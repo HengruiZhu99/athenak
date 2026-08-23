@@ -87,7 +87,10 @@ void FormattedTableOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     std::fprintf(pfile, "# Athena++ data at time=%e", pm->time);
     std::fprintf(pfile, "  cycle=%d \n", pm->ncycle);
     if (output_sampling == OutputGridSampling::vertex) {
-      std::fprintf(pfile, "# grid_sampling=vertex centering_schema=1\n");
+      std::fprintf(pfile,
+                   "# grid_sampling=vertex centering_schema=1 "
+                   "vertex_prolongation_order=%d\n",
+                   pm->pmb_pack->pz4c->opt.vertex_prolongation_order);
     }
 
     // write one of x1, x2, x3 column headers

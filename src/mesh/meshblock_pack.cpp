@@ -78,6 +78,12 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
     if (input.schema_specified) {
       input.schema = pin->GetInteger("z4c", "symmetry_schema");
     }
+    input.vertex_prolongation_order_specified =
+        pin->DoesParameterExist("z4c", "vertex_prolongation_order");
+    if (input.vertex_prolongation_order_specified) {
+      input.requested_vertex_prolongation_order =
+          pin->GetString("z4c", "vertex_prolongation_order");
+    }
   }
 
   input.nghost = mesh.mb_indcs.ng;

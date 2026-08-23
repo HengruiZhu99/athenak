@@ -45,9 +45,16 @@ def payload(path: Path) -> bytes:
 def remove_carrier_key(data: bytes, key: bytes) -> bytes:
     header, binary = data.split(MARKER, 1)
     lines = header.splitlines(keepends=True)
-    matches = [line for line in lines if line.lstrip().startswith(key + b" ")]
+    carrier = False
+    matches = []
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith(b"<") and stripped.endswith(b">"):
+            carrier = stripped == b"<z4c_restart>"
+        elif carrier and line.lstrip().startswith(key + b" "):
+            matches.append(index)
     require(len(matches) == 1, f"expected one carrier line for {key!r}")
-    lines.remove(matches[0])
+    del lines[matches[0]]
     return b"".join(lines) + MARKER + binary
 
 
@@ -101,9 +108,10 @@ def main() -> int:
         require(checkpoint.is_file(), f"missing restart checkpoint {checkpoint}")
     header = post_refine.read_bytes().split(MARKER, 1)[0]
     records = [
-        b"carrier_schema             = 2",
+        b"carrier_schema             = 3",
         b"grid_centering             = vertex",
         b"centering_schema           = 1",
+        f"vertex_prolongation_order  = {transfer_order}".encode(),
         f"nghost                     = {nghost}".encode(),
         f"coarse_nghost              = {coarse_nghost}".encode(),
     ]
@@ -118,6 +126,28 @@ def main() -> int:
         ))
     for record in records:
         require(record in header, f"VC restart omitted {record!r}")
+
+    # Schema 2 is the pre-selector native-VC carrier.  It is interpreted as the
+    # historical `auto` contract and upgraded to schema 3 on the next output.
+    legacy_data = remove_carrier_key(post_refine.read_bytes(),
+                                     b"vertex_prolongation_order")
+    old_schema = b"carrier_schema             = 3"
+    require(legacy_data.count(old_schema) == 1,
+            "current VC checkpoint lacks a unique carrier schema")
+    legacy_data = legacy_data.replace(
+        old_schema, b"carrier_schema             = 2", 1)
+    legacy_restart = root / "legacy_vc_schema2.rst"
+    legacy_restart.write_bytes(legacy_data)
+    legacy = root / "legacy_vc_schema2"
+    legacy.mkdir()
+    run([args.athena, "-r", str(legacy_restart), "-d", str(legacy)],
+        root, True)
+    upgraded = legacy / "rst" / "z4c_vc_minkowski_dynamic.00003.rst"
+    upgraded_header = upgraded.read_bytes().split(MARKER, 1)[0]
+    require(b"carrier_schema             = 3" in upgraded_header and
+            f"vertex_prolongation_order  = {transfer_order}".encode() in
+            upgraded_header,
+            "legacy VC schema 2 did not upgrade to the explicit transfer carrier")
 
     # Checkpoints immediately before refinement, after refinement, and after
     # derefinement must continue to the identical accepted state.
@@ -146,7 +176,11 @@ def main() -> int:
     # Immutable command-line conflicts must fail before mesh/physics construction.
     conflicts = (
         ("z4c/grid_centering=cell", "<z4c>/grid_centering"),
+        ("z4c/vertex_prolongation_order=4",
+         "<z4c>/vertex_prolongation_order"),
         ("z4c_restart/grid_centering=cell", "<z4c_restart>/grid_centering"),
+        ("z4c_restart/vertex_prolongation_order=4",
+         "<z4c_restart>/vertex_prolongation_order"),
         ("z4c_restart/centering_schema=2", "<z4c_restart>/centering_schema"),
         ("z4c_restart/stored_n1=24", "<z4c_restart>/stored_n1"),
         ("z4c_restart/carrier_schema=1", "<z4c_restart>/carrier_schema"),
@@ -163,6 +197,11 @@ def main() -> int:
                                               b"stored_n1"))
     run([args.athena, "-r", str(incomplete)], root, False,
         ("invalid restart-origin Z4c carrier", "stored_n1"))
+    incomplete_transfer = root / "missing_vertex_prolongation_order.rst"
+    incomplete_transfer.write_bytes(remove_carrier_key(
+        post_refine.read_bytes(), b"vertex_prolongation_order"))
+    run([args.athena, "-r", str(incomplete_transfer)], root, False,
+        ("invalid restart-origin Z4c carrier", "vertex_prolongation_order"))
 
     # A real legacy/schema-1 CC checkpoint means cell centering.  It must reject
     # a VC override rather than reinterpret its shorter payload.

@@ -74,6 +74,27 @@ KOKKOS_INLINE_FUNCTION constexpr int TransferOrderForSpatialOrder(
        : spatial_order == 6 ? 8 : 0;
 }
 
+KOKKOS_INLINE_FUNCTION constexpr bool IsSupportedTransferOrder(
+    const int transfer_order) {
+  return transfer_order == 4 || transfer_order == 6 || transfer_order == 8;
+}
+
+//! Resolve the user-facing VC prolongation selector.  requested_order=0 is
+//! `auto`, which preserves the repaired elevated-order contract.  Explicit
+//! selectors expose the matched/elevated pairs needed for qualification while
+//! rejecting combinations that would lower a p-th order bulk scheme by more
+//! than the intended matched-order comparison.
+KOKKOS_INLINE_FUNCTION constexpr int ResolveTransferOrder(
+    const int spatial_order, const int requested_order) {
+  if (requested_order == 0) return TransferOrderForSpatialOrder(spatial_order);
+  if (spatial_order == 2 && requested_order == 4) return requested_order;
+  if (spatial_order == 4 &&
+      (requested_order == 4 || requested_order == 6)) return requested_order;
+  if (spatial_order == 6 &&
+      (requested_order == 6 || requested_order == 8)) return requested_order;
+  return 0;
+}
+
 struct DirectionStencil {
   int count = 1;
   int index[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -194,19 +215,31 @@ KOKKOS_INLINE_FUNCTION constexpr int RequiredRefinementHalo() {
   return TRANSFER_ORDER / 2 - 1;
 }
 
+KOKKOS_INLINE_FUNCTION constexpr int RequiredRefinementHaloForTransferOrder(
+    const int transfer_order) {
+  return transfer_order == 4 ? RequiredRefinementHalo<4>()
+       : transfer_order == 6 ? RequiredRefinementHalo<6>()
+       : transfer_order == 8 ? RequiredRefinementHalo<8>() : 0;
+}
+
+KOKKOS_INLINE_FUNCTION constexpr int RequiredCoarseGhostWidthForTransferOrder(
+    const int transfer_order, const int fine_ghost_width) {
+  return transfer_order == 4 ? RequiredCoarseGhostWidth<4>(fine_ghost_width)
+       : transfer_order == 6 ? RequiredCoarseGhostWidth<6>(fine_ghost_width)
+       : transfer_order == 8 ? RequiredCoarseGhostWidth<8>(fine_ghost_width)
+                             : 0;
+}
+
 KOKKOS_INLINE_FUNCTION constexpr int RequiredRefinementHaloForSpatialOrder(
     const int spatial_order) {
-  return spatial_order == 2 ? RequiredRefinementHalo<4>()
-       : spatial_order == 4 ? RequiredRefinementHalo<6>()
-       : spatial_order == 6 ? RequiredRefinementHalo<8>() : 0;
+  return RequiredRefinementHaloForTransferOrder(
+      TransferOrderForSpatialOrder(spatial_order));
 }
 
 KOKKOS_INLINE_FUNCTION constexpr int RequiredCoarseGhostWidthForSpatialOrder(
     const int spatial_order, const int fine_ghost_width) {
-  return spatial_order == 2 ? RequiredCoarseGhostWidth<4>(fine_ghost_width)
-       : spatial_order == 4 ? RequiredCoarseGhostWidth<6>(fine_ghost_width)
-       : spatial_order == 6 ? RequiredCoarseGhostWidth<8>(fine_ghost_width)
-                            : 0;
+  return RequiredCoarseGhostWidthForTransferOrder(
+      TransferOrderForSpatialOrder(spatial_order), fine_ghost_width);
 }
 
 KOKKOS_INLINE_FUNCTION constexpr bool SupportsSingleHopCoarseHalo(

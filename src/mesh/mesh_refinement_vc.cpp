@@ -101,8 +101,8 @@ void MeshRefinement::RestrictVC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu) {
 void MeshRefinement::CopyForRefinementVC(DvceArray5D<Real> &a,
                                           DvceArray5D<Real> &ca) {
   const auto layout = pmy_mesh->pmb_pack->pz4c->layout;
-  const int refine_halo = vertex_amr::RequiredRefinementHaloForSpatialOrder(
-      pmy_mesh->pmb_pack->pz4c->opt.spatial_order);
+  const int refine_halo = vertex_amr::RequiredRefinementHaloForTransferOrder(
+      pmy_mesh->pmb_pack->pz4c->opt.vertex_prolongation_order);
   if (refine_halo <= 0 || refine_halo > layout.ng ||
       refine_halo > layout.coarse_ng) {
     AbortVC("native VC refinement halo is incompatible with allocated storage");
@@ -188,12 +188,12 @@ void MeshRefinement::RefineVC(DualArray1D<int> &new_to_old,
                               DvceArray5D<Real> &ca) {
   auto *z4c = pmy_mesh->pmb_pack->pz4c;
   const auto layout = z4c->layout;
-  const int order = z4c->opt.spatial_order;
-  if (order != 2 && order != 4 && order != 6) {
-    AbortVC("RefineVC requires O2, O4, or O6 spatial order");
+  const int transfer_order = z4c->opt.vertex_prolongation_order;
+  if (!vertex_amr::IsSupportedTransferOrder(transfer_order)) {
+    AbortVC("RefineVC requires transfer order 4, 6, or 8");
   }
   const int required =
-      vertex_amr::RequiredRefinementHaloForSpatialOrder(order);
+      vertex_amr::RequiredRefinementHaloForTransferOrder(transfer_order);
   if (layout.coarse_ng < required) {
     AbortVC("native VC coarse ghost allocation is too narrow for midpoint interpolation");
   }
@@ -271,12 +271,12 @@ void MeshRefinement::RefineVC(DualArray1D<int> &new_to_old,
                     const int j, const int i) {
         if (flags(new_to_old_device(m + first_gid)) <= 0) return;
         Real value = 0.0;
-        if (order == 2) {
+        if (transfer_order == 4) {
           value = vertex_amr::ProlongVCPoint<4>(
               m, v, k, j, i, layout.is, layout.js, layout.ks,
               layout.cis, layout.cjs, layout.cks,
               layout.nx2 <= 1, layout.nx3 <= 1, ca, a);
-        } else if (order == 4) {
+        } else if (transfer_order == 6) {
           value = vertex_amr::ProlongVCPoint<6>(
               m, v, k, j, i, layout.is, layout.js, layout.ks,
               layout.cis, layout.cjs, layout.cks,

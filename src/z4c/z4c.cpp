@@ -46,16 +46,13 @@ namespace z4c {
 
 namespace {
 
-int NativeCoarseGhostWidth(MeshBlockPack *ppack, ParameterInput *pin) {
+int NativeCoarseGhostWidth(MeshBlockPack *ppack) {
   const auto &indcs = ppack->pmesh->mb_indcs;
   if (ppack->z4c_symmetry.grid_centering != Z4cGridCentering::vertex) {
     return indcs.ng;
   }
-  const int requested = pin->GetOrAddInteger(
-      "z4c", "spatial_order", 2 * (indcs.ng - 1));
-  const int effective = EffectiveZ4cSpatialOrder(requested, indcs.ng);
-  return vertex_amr::RequiredCoarseGhostWidthForSpatialOrder(effective,
-                                                              indcs.ng);
+  return vertex_amr::RequiredCoarseGhostWidthForTransferOrder(
+      ppack->z4c_symmetry.vertex_prolongation_order, indcs.ng);
 }
 
 }  // namespace
@@ -172,7 +169,7 @@ void Z4c::ValidateNativeStorageExtents() const {
 Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   layout(MakeZ4cGridLayout(ppack->z4c_symmetry.grid_centering,
                            ppack->pmesh->mb_indcs,
-                           NativeCoarseGhostWidth(ppack, pin))),
+                           NativeCoarseGhostWidth(ppack))),
   u_con("u_con",1,1,1,1,1),
   //u_mat("u_mat",1,1,1,1,1),
   u0("u0 z4c",1,1,1,1,1),
@@ -492,6 +489,21 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
               << " requires at least " << opt.fd_stencil
               << " ghost cells, but <mesh>/nghost=" << indcs.ng << std::endl;
     std::exit(EXIT_FAILURE);
+  }
+  opt.vertex_prolongation_order = 0;
+  if (layout.centering == Z4cGridCentering::vertex) {
+    // Materialize this option only for native VC.  Cell-centered parameter and
+    // restart bytes therefore remain unchanged.
+    pin->GetOrAddString("z4c", "vertex_prolongation_order", "auto");
+    opt.vertex_prolongation_order =
+        pmy_pack->z4c_symmetry.vertex_prolongation_order;
+    if (!vertex_amr::IsSupportedTransferOrder(
+            opt.vertex_prolongation_order)) {
+      std::cerr << "### FATAL ERROR: invalid validated native-VC prolongation "
+                   "order="
+                << opt.vertex_prolongation_order << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
   }
   if (layout.centering == Z4cGridCentering::vertex &&
       pmy_pack->pmesh->multilevel &&

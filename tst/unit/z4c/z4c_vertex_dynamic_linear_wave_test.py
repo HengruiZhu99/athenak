@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import math
 import os
 from pathlib import Path
@@ -21,15 +22,27 @@ def require(condition: bool, message: str) -> None:
 
 def run_case(athena: Path, input_path: Path, root: Path, dimensions: int,
              resolution: int, adaptive: bool, order: int, integrator: str,
-             meshblocks_per_dim: int) -> tuple[dict, dict[float, list[float]], str]:
-    label = (f"{'amr' if adaptive else 'uniform'}_o{order}_{integrator}_"
+             meshblocks_per_dim: int,
+             vertex_prolongation_order: str) -> tuple[dict, dict[float, list[float]], str]:
+    label = (f"{'amr' if adaptive else 'uniform'}_o{order}_"
+             f"q{vertex_prolongation_order}_{integrator}_"
              f"n{resolution}")
     work = root / label
     work.mkdir(parents=True)
     basename = f"z4c_vc_dynamic_linear_wave_{label}"
+    configured_input = work / input_path.name
+    input_text = input_path.read_text(encoding="utf-8")
+    marker = "grid_centering = vertex"
+    require(input_text.count(marker) == 1,
+            "VC dynamic fixture lacks a unique centering selector")
+    configured_input.write_text(
+        input_text.replace(
+            marker, marker + "\nvertex_prolongation_order = " +
+            vertex_prolongation_order),
+        encoding="utf-8")
     meshblock_resolution = resolution // meshblocks_per_dim
     command = [
-        str(athena), "-i", str(input_path), "-d", str(work),
+        str(athena), "-i", str(configured_input), "-d", str(work),
         f"job/basename={basename}",
         f"mesh/nx1={resolution}", f"meshblock/nx1={meshblock_resolution}",
         f"mesh/nx2={resolution}", f"meshblock/nx2={meshblock_resolution}",
@@ -109,10 +122,17 @@ def main() -> int:
     parser.add_argument("--order", type=int, choices=(2, 4, 6), default=4)
     parser.add_argument("--integrator", choices=("rk1", "rk2", "rk3", "rk4"),
                         default="rk4")
+    parser.add_argument("--vertex-prolongation-order",
+                        choices=("auto", "4", "6", "8"), default="auto")
     parser.add_argument("--meshblocks-per-dim", type=int, default=2)
     parser.add_argument("--resolutions", nargs="+", type=int,
                         default=(16, 32),
                         help="root resolutions used for the convergence check")
+    parser.add_argument(
+        "--minimum-observed-order", type=float,
+        help="override the default p-1 qualification gate for diagnostic ablations")
+    parser.add_argument("--json-output", type=Path,
+                        help="optional machine-readable convergence evidence")
     args = parser.parse_args()
     require(len(args.resolutions) >= 2 and
             all(resolution > 0 and resolution % 2 == 0
@@ -123,7 +143,9 @@ def main() -> int:
                 for resolution in args.resolutions),
             "every resolution must be divisible by --meshblocks-per-dim")
     fine_nghost = 4
-    transfer_order = {2: 4, 4: 6, 6: 8}[args.order]
+    transfer_order = ({2: 4, 4: 6, 6: 8}[args.order]
+                      if args.vertex_prolongation_order == "auto"
+                      else int(args.vertex_prolongation_order))
     coarse_nghost = max(
         fine_nghost, (fine_nghost - 1) // 2 + transfer_order // 2)
     require(all((resolution // args.meshblocks_per_dim) // 2 >= coarse_nghost
@@ -148,11 +170,11 @@ def main() -> int:
         uniform, uniform_line, _ = run_case(
             args.athena.resolve(), args.input.resolve(), root,
             args.dimensions, resolution, False, args.order, args.integrator,
-            args.meshblocks_per_dim)
+            args.meshblocks_per_dim, args.vertex_prolongation_order)
         adaptive, adaptive_line, _ = run_case(
             args.athena.resolve(), args.input.resolve(), root,
             args.dimensions, resolution, True, args.order, args.integrator,
-            args.meshblocks_per_dim)
+            args.meshblocks_per_dim, args.vertex_prolongation_order)
         errors.append(payload_difference(
             uniform, adaptive, uniform_line, adaptive_line))
     require(all(error[0] > 0.0 for error in errors),
@@ -164,14 +186,36 @@ def main() -> int:
     # The coarse member may precede the asymptotic regime, so require at least
     # p-1 on every interval while retaining strict monotonic decrease.  The
     # measured orders are always reported for the qualification matrix.
-    minimum_order = max(1.5, args.order - 1.0)
+    minimum_order = (max(1.5, args.order - 1.0)
+                     if args.minimum_observed_order is None
+                     else args.minimum_observed_order)
+    result = {
+        "schema": 1,
+        "dimensions": args.dimensions,
+        "spatial_order": args.order,
+        "vertex_prolongation_order": args.vertex_prolongation_order,
+        "integrator": args.integrator,
+        "resolutions": args.resolutions,
+        "errors": [{"rms": error[0], "linf": error[1]} for error in errors],
+        "observed_orders": orders,
+        "qualification_minimum_order": minimum_order,
+        "monotone": all(fine[0] < coarse[0] for coarse, fine in
+                        zip(errors, errors[1:])),
+        "meets_nominal_p_minus_one": min(orders) >= max(1.5, args.order - 1.0),
+    }
+    if args.json_output is not None:
+        args.json_output.parent.mkdir(parents=True, exist_ok=True)
+        args.json_output.write_text(
+            json.dumps(result, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8")
     require(all(fine[0] < coarse[0] for coarse, fine in
                 zip(errors, errors[1:])) and min(orders) >= minimum_order,
             f"nonconstant AMR mismatch does not decrease robustly: "
             f"errors={errors} orders={orders}")
     require(errors[-1][1] < 1.0e-6,
             f"nonconstant AMR Linf mismatch is unexpectedly large: {errors}")
-    print(f"PASS: native-VC {args.dimensions}D O{args.order} {args.integrator} "
+    print(f"PASS: native-VC {args.dimensions}D O{args.order} "
+          f"Q{args.vertex_prolongation_order} {args.integrator} "
           "nonconstant dynamic AMR "
           f"errors={errors} observed_orders={orders}")
     return 0

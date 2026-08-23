@@ -46,6 +46,10 @@ struct Z4cSymmetryConfig {
   int stencil_width = 2;
   Z4cGridCentering grid_centering = Z4cGridCentering::cell;
   int centering_schema = Z4cGridLayout::kCenteringSchema;
+  // Effective native-VC midpoint interpolation order.  Zero is the immutable
+  // cell-centered value and prevents the VC-only selector from leaking into
+  // legacy cell configuration/restart provenance.
+  int vertex_prolongation_order = 0;
 };
 
 constexpr int ExpectedZ4cSymmetrySchema(const Z4cSymmetryMode mode) {
@@ -81,6 +85,8 @@ struct Z4cValidationInput {
   bool z4c_enabled = false;
   int nghost = 2;
   int requested_spatial_order = 2;
+  bool vertex_prolongation_order_specified = false;
+  std::string requested_vertex_prolongation_order = "auto";
   int mesh_nx1 = 1;
   int mesh_nx2 = 1;
   int mesh_nx3 = 1;

@@ -27,7 +27,8 @@ for fragment in (
     "pbval_u_vc->InitRecv(nz4c)",
     "pbval_u_vc->PackAndSendVC(u0, coarse_u0)",
     "pbval_u_vc->RecvAndUnpackVC(u0, coarse_u0)",
-    "pbval_u_vc->ProlongateVC(u0, coarse_u0, opt.spatial_order, I_Z4C_CHI)",
+    "pbval_u_vc->ProlongateVC(u0, coarse_u0,\n"
+    "                             opt.vertex_prolongation_order, I_Z4C_CHI)",
     "ReconstructAxisParityGhosts()",
 ):
     require(fragment, f"accepted VC rebuild is missing {fragment}")

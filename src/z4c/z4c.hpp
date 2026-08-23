@@ -278,6 +278,8 @@ class Z4c {
     int extrap_order;
     // Spatial finite-difference order for Z4c derivatives
     int spatial_order;
+    // Effective native-VC midpoint interpolation order.  Zero in cell mode.
+    int vertex_prolongation_order;
     // Internal finite-difference stencil selector: 2, 3, 4 -> 2nd, 4th, 6th order
     int fd_stencil;
     // Interlevel transfer only; does not change the bulk spatial order.

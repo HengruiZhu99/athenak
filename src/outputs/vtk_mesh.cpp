@@ -29,6 +29,7 @@
 #include "mesh/mesh.hpp"
 #include "hydro/hydro.hpp"
 #include "outputs.hpp"
+#include "z4c/z4c.hpp"
 
 //----------------------------------------------------------------------------------------
 // ctor: also calls BaseTypeOutput base class constructor
@@ -108,6 +109,10 @@ void MeshVTKOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
       << "  cycle=" << pm->ncycle
       << "  variables=" << out_params.variable
       << (vertex ? "  grid_sampling=vertex" : "")
+      << (vertex ? "  vertex_prolongation_order=" +
+                       std::to_string(
+                           pm->pmb_pack->pz4c->opt.vertex_prolongation_order)
+                 : "")
       << std::endl << "BINARY" << std::endl
       << "DATASET STRUCTURED_POINTS" << std::endl
       << "DIMENSIONS " << ncoord1 << " " << ncoord2 << " " << ncoord3 << std::endl;

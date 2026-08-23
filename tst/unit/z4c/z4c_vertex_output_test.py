@@ -91,7 +91,8 @@ def main() -> int:
     run([args.athena, "-i", args.input, "-d", str(vc)], root, True)
 
     table = (vc / "tab/z4c_vc_output.z4c_chi.00000.tab").read_text()
-    require("# grid_sampling=vertex centering_schema=1" in table,
+    require("# grid_sampling=vertex centering_schema=1 "
+            "vertex_prolongation_order=8" in table,
             "formatted VC output omitted nodal sampling metadata")
     rows = [line.split() for line in table.splitlines() if not line.startswith("#")]
     expected_table_points = args.active_n1
@@ -106,6 +107,8 @@ def main() -> int:
     binary = (vc / "bin/z4c_vc_output.z4c_chi.00000.bin").read_bytes()
     binary_header = binary.decode("latin-1", errors="ignore")
     require(re.search(r"(?m)^grid_sampling\s*=\s*vertex\b", binary_header) and
+            re.search(r"(?m)^vertex_prolongation_order\s*=\s*8\b",
+                      binary_header) and
             re.search(rf"(?m)^active_n1\s*=\s*{args.active_n1}\b", binary_header) and
             re.search(rf"(?m)^active_n2\s*=\s*{args.active_n2}\b", binary_header) and
             re.search(rf"(?m)^active_n3\s*=\s*{args.active_n3}\b", binary_header),
@@ -116,6 +119,8 @@ def main() -> int:
                 f"native VC {file_id} output was not produced")
         native_header = native_file.read_bytes().decode("latin-1", errors="ignore")
         require(re.search(r"(?m)^grid_sampling\s*=\s*vertex\b", native_header) and
+                re.search(r"(?m)^vertex_prolongation_order\s*=\s*8\b",
+                          native_header) and
                 re.search(rf"(?m)^active_n1\s*=\s*{args.active_n1}\b", native_header) and
                 re.search(rf"(?m)^active_n3\s*=\s*{args.active_n3}\b", native_header),
                 f"native VC {file_id} output lost point-sampling metadata")
@@ -124,7 +129,9 @@ def main() -> int:
     dimensions_record = (f"DIMENSIONS {args.active_n1} {args.active_n2} "
                          f"{args.active_n3}").encode()
     point_count = args.active_n1 * args.active_n2 * args.active_n3
-    require(b"grid_sampling=vertex" in vtk and dimensions_record in vtk and
+    require(b"grid_sampling=vertex" in vtk and
+            b"vertex_prolongation_order=8" in vtk and
+            dimensions_record in vtk and
             f"POINT_DATA {point_count}".encode() in vtk and b"CELL_DATA" not in vtk,
             "legacy VTK did not encode the native VC field as POINT_DATA")
 

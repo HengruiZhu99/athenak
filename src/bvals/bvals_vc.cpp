@@ -259,10 +259,10 @@ TaskStatus MeshBoundaryValuesVC::RecvAndUnpackVC(DvceArray5D<Real> &a,
 
 void MeshBoundaryValuesVC::ProlongateVC(DvceArray5D<Real> &a,
                                         DvceArray5D<Real> &ca,
-                                        const int spatial_order,
+                                        const int transfer_order,
                                         const int positive_component) {
-  if (spatial_order != 2 && spatial_order != 4 && spatial_order != 6) {
-    AbortVCCommunication("ProlongateVC requires O2, O4, or O6");
+  if (!vertex_amr::IsSupportedTransferOrder(transfer_order)) {
+    AbortVCCommunication("ProlongateVC requires transfer order 4, 6, or 8");
   }
   const int nmb = pmy_pack->nmb_thispack;
   const int nnghbr = pmy_pack->pmb->nnghbr;
@@ -325,13 +325,13 @@ void MeshBoundaryValuesVC::ProlongateVC(DvceArray5D<Real> &a,
                       return;
                     }
                     Real value = 0.0;
-                    if (spatial_order == 2) {
+                    if (transfer_order == 4) {
                       value = vertex_amr::ProlongVCPoint<4>(
                           m, v, k, j, i, vertex_layout.is, vertex_layout.js,
                           vertex_layout.ks, vertex_layout.cis, vertex_layout.cjs,
                           vertex_layout.cks, vertex_layout.collapse_x2,
                           vertex_layout.collapse_x3, ca, a);
-                    } else if (spatial_order == 4) {
+                    } else if (transfer_order == 6) {
                       value = vertex_amr::ProlongVCPoint<6>(
                           m, v, k, j, i, vertex_layout.is, vertex_layout.js,
                           vertex_layout.ks, vertex_layout.cis, vertex_layout.cjs,
