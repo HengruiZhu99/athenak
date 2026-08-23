@@ -85,6 +85,13 @@ void ProblemGenerator::Z4cLinearWave(ParameterInput *pin, const bool restart) {
 
   // Wave amplitude
   Real amp = pin->GetOrAddReal("problem", "amp", 0.001);
+  // Default-off semidiscrete AMR diagnostic state.  It deliberately excites all
+  // 25 evolved variables with a smooth periodic carrier so the production RHS
+  // can be compared component-by-component on uniform and static hierarchies.
+  // The option is test-only in effect and is not materialized in ordinary inputs.
+  const bool rhs_interface_manufactured_state =
+      pin->DoesParameterExist("problem", "rhs_interface_manufactured_state") &&
+      pin->GetBoolean("problem", "rhs_interface_manufactured_state");
 
   // compute solution in u1 register. For initial conditions, set u1 -> u0.
   auto &u1 = (set_initial_conditions)? pmbp->pz4c->u0 : pmbp->pz4c->u1;
@@ -167,6 +174,25 @@ void ProblemGenerator::Z4cLinearWave(ParameterInput *pin, const bool restart) {
         u1(m,pz4c->I_Z4C_GAMX,k,j,i) = 0;
         u1(m,pz4c->I_Z4C_GAMY,k,j,i) = 0;
         u1(m,pz4c->I_Z4C_GAMZ,k,j,i) = 0;
+
+        if (rhs_interface_manufactured_state) {
+          const Real phase = M_PI * x1v + 2.0 * M_PI * x2v +
+                             2.0 * M_PI * x3v;
+          for (int variable = 0; variable < pz4c->nz4c; ++variable) {
+            const bool unit_background =
+                variable == pz4c->I_Z4C_CHI ||
+                variable == pz4c->I_Z4C_GXX ||
+                variable == pz4c->I_Z4C_GYY ||
+                variable == pz4c->I_Z4C_GZZ ||
+                variable == pz4c->I_Z4C_ALPHA;
+            const Real carrier =
+                (1.0 + 0.02 * variable) *
+                    sin(phase + 0.37 * variable) +
+                0.35 * cos(2.0 * phase - 0.19 * variable);
+            u1(m, variable, k, j, i) =
+                (unit_background ? 1.0 : 0.0) + amp * carrier;
+          }
+        }
       });
   return;
 }

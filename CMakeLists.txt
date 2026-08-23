@@ -894,6 +894,24 @@ if (Athena_BUILD_UNIT_TESTS)
       athena.z4c_vc_restart_2d_cartesian
       z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput 2 17 17 1
       "2d;cartesian")
+  foreach(transfer IN ITEMS 4 6)
+    add_test(
+        NAME athena.z4c_vc_restart_2d_cartesian_o4_q${transfer}
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_restart_test.py
+        --athena $<TARGET_FILE:athena>
+        --input
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput
+        --work-dir
+        ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_restart_2d_cartesian_o4_q${transfer}
+        --dimensions 2 --active-n1 17 --active-n2 17 --active-n3 1
+        --spatial-order 4 --vertex-prolongation-order ${transfer})
+    set_tests_properties(
+        athena.z4c_vc_restart_2d_cartesian_o4_q${transfer}
+        PROPERTIES TIMEOUT 180
+        LABELS "z4c;vertex;restart;2d;cartesian;o4;q${transfer}")
+  endforeach()
   add_z4c_vc_restart_case(
       athena.z4c_vc_restart_2d_cartoon
       z4c_vc_minkowski_dynamic_amr.athinput 2 17 17 1 "2d;cartoon")
@@ -902,6 +920,25 @@ if (Athena_BUILD_UNIT_TESTS)
       z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput 3 17 17 17
       "3d;cartesian")
   if (Athena_ENABLE_MPI)
+    foreach(transfer IN ITEMS 4 6)
+      add_test(
+          NAME athena.z4c_vc_restart_rank_change_o4_q${transfer}
+          COMMAND
+          ${PYTHON_EXECUTABLE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_restart_test.py
+          --athena $<TARGET_FILE:athena>
+          --input
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput
+          --work-dir
+          ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_restart_rank_change_o4_q${transfer}
+          --dimensions 2 --active-n1 17 --active-n2 17 --active-n3 1
+          --spatial-order 4 --vertex-prolongation-order ${transfer}
+          --mpiexec ${MPIEXEC_EXECUTABLE} --np-flag=${MPIEXEC_NUMPROC_FLAG})
+      set_tests_properties(
+          athena.z4c_vc_restart_rank_change_o4_q${transfer}
+          PROPERTIES TIMEOUT 180
+          LABELS "z4c;vertex;restart;2d;cartesian;o4;q${transfer};mpi")
+    endforeach()
     add_test(
         NAME athena.z4c_vc_restart_rank_change
         COMMAND

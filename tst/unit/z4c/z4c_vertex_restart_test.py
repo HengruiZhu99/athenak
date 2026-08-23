@@ -69,6 +69,9 @@ def main() -> int:
     parser.add_argument("--active-n1", type=int, default=17)
     parser.add_argument("--active-n2", type=int, default=17)
     parser.add_argument("--active-n3", type=int, default=1)
+    parser.add_argument("--vertex-prolongation-order",
+                        choices=("auto", "4", "6", "8"), default="auto")
+    parser.add_argument("--spatial-order", type=int, choices=(2, 4, 6))
     args = parser.parse_args()
 
     input_text = Path(args.input).read_text(encoding="utf-8")
@@ -79,8 +82,14 @@ def main() -> int:
     require(nghost_match is not None and order_match is not None,
             "VC restart fixture must declare nghost and spatial_order")
     nghost = int(nghost_match.group(1))
-    spatial_order = int(order_match.group(1))
-    transfer_order = {2: 4, 4: 6, 6: 8}[spatial_order]
+    spatial_order = (int(order_match.group(1)) if args.spatial_order is None
+                     else args.spatial_order)
+    if args.spatial_order is not None:
+        input_text = (input_text[:order_match.start(1)] + str(spatial_order) +
+                      input_text[order_match.end(1):])
+    transfer_order = ({2: 4, 4: 6, 6: 8}[spatial_order]
+                      if args.vertex_prolongation_order == "auto"
+                      else int(args.vertex_prolongation_order))
     coarse_nghost = max(nghost, (nghost - 1) // 2 + transfer_order // 2)
     active = (args.active_n1, args.active_n2, args.active_n3)
     stored = tuple(value + 2 * nghost if value > 1 else 1 for value in active)
@@ -94,9 +103,21 @@ def main() -> int:
     if root.exists():
         shutil.rmtree(root)
     root.mkdir(parents=True)
+    configured_input = root / Path(args.input).name
+    if args.vertex_prolongation_order == "auto":
+        configured_input.write_text(input_text, encoding="utf-8")
+    else:
+        marker = "grid_centering = vertex"
+        require(input_text.count(marker) == 1,
+                "VC restart fixture lacks a unique centering selector")
+        configured_input.write_text(
+            input_text.replace(
+                marker, marker + "\nvertex_prolongation_order = " +
+                args.vertex_prolongation_order),
+            encoding="utf-8")
     fresh = root / "fresh"
     fresh.mkdir()
-    run([args.athena, "-i", args.input], fresh, True,
+    run([args.athena, "-i", str(configured_input)], fresh, True,
         (f"{changed_leaves} MeshBlocks created, {changed_leaves} deleted by AMR",))
 
     checkpoints = fresh / "rst"
@@ -129,25 +150,26 @@ def main() -> int:
 
     # Schema 2 is the pre-selector native-VC carrier.  It is interpreted as the
     # historical `auto` contract and upgraded to schema 3 on the next output.
-    legacy_data = remove_carrier_key(post_refine.read_bytes(),
-                                     b"vertex_prolongation_order")
-    old_schema = b"carrier_schema             = 3"
-    require(legacy_data.count(old_schema) == 1,
-            "current VC checkpoint lacks a unique carrier schema")
-    legacy_data = legacy_data.replace(
-        old_schema, b"carrier_schema             = 2", 1)
-    legacy_restart = root / "legacy_vc_schema2.rst"
-    legacy_restart.write_bytes(legacy_data)
-    legacy = root / "legacy_vc_schema2"
-    legacy.mkdir()
-    run([args.athena, "-r", str(legacy_restart), "-d", str(legacy)],
-        root, True)
-    upgraded = legacy / "rst" / "z4c_vc_minkowski_dynamic.00003.rst"
-    upgraded_header = upgraded.read_bytes().split(MARKER, 1)[0]
-    require(b"carrier_schema             = 3" in upgraded_header and
-            f"vertex_prolongation_order  = {transfer_order}".encode() in
-            upgraded_header,
-            "legacy VC schema 2 did not upgrade to the explicit transfer carrier")
+    if args.vertex_prolongation_order == "auto":
+        legacy_data = remove_carrier_key(post_refine.read_bytes(),
+                                         b"vertex_prolongation_order")
+        old_schema = b"carrier_schema             = 3"
+        require(legacy_data.count(old_schema) == 1,
+                "current VC checkpoint lacks a unique carrier schema")
+        legacy_data = legacy_data.replace(
+            old_schema, b"carrier_schema             = 2", 1)
+        legacy_restart = root / "legacy_vc_schema2.rst"
+        legacy_restart.write_bytes(legacy_data)
+        legacy = root / "legacy_vc_schema2"
+        legacy.mkdir()
+        run([args.athena, "-r", str(legacy_restart), "-d", str(legacy)],
+            root, True)
+        upgraded = legacy / "rst" / "z4c_vc_minkowski_dynamic.00003.rst"
+        upgraded_header = upgraded.read_bytes().split(MARKER, 1)[0]
+        require(b"carrier_schema             = 3" in upgraded_header and
+                f"vertex_prolongation_order  = {transfer_order}".encode() in
+                upgraded_header,
+                "legacy VC schema 2 did not upgrade to the explicit transfer carrier")
 
     # Checkpoints immediately before refinement, after refinement, and after
     # derefinement must continue to the identical accepted state.
@@ -174,12 +196,13 @@ def main() -> int:
                 "rank-change continuation changed the global binary payload")
 
     # Immutable command-line conflicts must fail before mesh/physics construction.
+    conflicting_transfer = "6" if transfer_order == 4 else "4"
     conflicts = (
         ("z4c/grid_centering=cell", "<z4c>/grid_centering"),
-        ("z4c/vertex_prolongation_order=4",
+        (f"z4c/vertex_prolongation_order={conflicting_transfer}",
          "<z4c>/vertex_prolongation_order"),
         ("z4c_restart/grid_centering=cell", "<z4c_restart>/grid_centering"),
-        ("z4c_restart/vertex_prolongation_order=4",
+        (f"z4c_restart/vertex_prolongation_order={conflicting_transfer}",
          "<z4c_restart>/vertex_prolongation_order"),
         ("z4c_restart/centering_schema=2", "<z4c_restart>/centering_schema"),
         ("z4c_restart/stored_n1=24", "<z4c_restart>/stored_n1"),

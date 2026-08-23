@@ -9,10 +9,15 @@
 #include <algorithm>
 #include <cinttypes>
 #include <cstdlib>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <limits>
+#include <sstream>
+#include <string>
 
 #include "athena.hpp"
+#include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "z4c/cartoon_derivatives.hpp"
 #include "z4c/z4c.hpp"
@@ -21,6 +26,130 @@
 #include "coordinates/cell_locations.hpp"
 
 namespace z4c {
+
+namespace {
+
+//! Write one default-off, read-only snapshot of the complete production RHS.
+//!
+//! A separate file is used for every rank so the diagnostic cannot perturb the
+//! production communication order.  Every active local copy is retained: this is
+//! important at shared and coarse/fine vertices, where choosing a canonical owner
+//! before analysis would hide the very interface discrepancy being measured.
+void DumpVertexRHSFieldDiagnostic(Z4c *z4c, MeshBlockPack *pack,
+                                  Driver *pdriver, const int stage,
+                                  const char *path_prefix) {
+  (void)pdriver;
+  // Driver initialization invokes BoundaryRHS with stage zero before CalcRHS;
+  // that storage is intentionally zero and is not a semidiscrete operator sample.
+  if (stage <= 0 || path_prefix == nullptr || path_prefix[0] == '\0') return;
+  std::ostringstream path;
+  path << path_prefix << ".rank" << std::setfill('0') << std::setw(6)
+       << global_variable::my_rank << ".csv";
+  std::ifstream prior(path.str());
+  if (prior.good()) return;
+  prior.close();
+
+  auto *mesh = pack->pmesh;
+  auto *blocks = pack->pmb;
+  auto &topology = *z4c->vertex_topology_plan;
+  blocks->mb_gid.sync_host();
+  blocks->mb_lev.sync_host();
+  blocks->mb_size.sync_host();
+  topology.records.sync_host();
+  const auto host_rhs =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), z4c->u_rhs);
+  const auto host_state =
+      Kokkos::create_mirror_view_and_copy(HostMemSpace(), z4c->u0);
+
+  std::ofstream output(path.str(), std::ios::trunc);
+  if (!output) {
+    std::cerr << "### FATAL ERROR: cannot open native VC RHS field diagnostic "
+              << path.str() << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  output << "schema,rank,nranks,time,cycle,rk_stage,topology_generation,"
+            "local_m,gid,level,relative_level,lx1,lx2,lx3,k,j,i,"
+            "key1,key2,key3,role,canonical_owner,topological_multiplicity,"
+            "local_edge_codimension,local_edge_distance,rho,x2,x3";
+  output << ",nx1_intervals,nx2_intervals,nx3_intervals,"
+            "x1min,x1max,x2min,x2max,x3min,x3max";
+  for (int variable = 0; variable < Z4c::nz4c; ++variable) {
+    output << ",state_" << Z4c::Z4c_names[variable];
+  }
+  for (int variable = 0; variable < Z4c::nz4c; ++variable) {
+    output << ",rhs_" << Z4c::Z4c_names[variable];
+  }
+  output << '\n' << std::setprecision(std::numeric_limits<Real>::max_digits10);
+
+  const auto &layout = z4c->layout;
+  for (int m = 0; m < pack->nmb_thispack; ++m) {
+    const int gid = blocks->mb_gid.h_view(m);
+    const auto &location = mesh->lloc_eachmb[gid];
+    const auto &size = blocks->mb_size.h_view(m);
+    for (int k = layout.ks; k <= layout.ke; ++k) {
+      for (int j = layout.js; j <= layout.je; ++j) {
+        for (int i = layout.is; i <= layout.ie; ++i) {
+          const auto &record = topology.records.h_view(m, k, j, i);
+          const int on_x1_edge = layout.nx1 > 1 &&
+              (i == layout.is || i == layout.ie);
+          const int on_x2_edge = layout.nx2 > 1 &&
+              (j == layout.js || j == layout.je);
+          const int on_x3_edge = layout.nx3 > 1 &&
+              (k == layout.ks || k == layout.ke);
+          const int edge_codimension = on_x1_edge + on_x2_edge + on_x3_edge;
+          int edge_distance = std::min(i - layout.is, layout.ie - i);
+          if (layout.nx2 > 1) {
+            edge_distance = std::min(
+                edge_distance, std::min(j - layout.js, layout.je - j));
+          }
+          if (layout.nx3 > 1) {
+            edge_distance = std::min(
+                edge_distance, std::min(k - layout.ks, layout.ke - k));
+          }
+          const Real rho = Z4cPointX<VertexCenteredZ4c>(
+              i - layout.is, layout.nx1, size.x1min, size.x1max);
+          const Real x2 = Z4cPointX<VertexCenteredZ4c>(
+              j - layout.js, layout.nx2, size.x2min, size.x2max);
+          const Real x3 = layout.nx3 > 1
+              ? Z4cPointX<VertexCenteredZ4c>(
+                    k - layout.ks, layout.nx3, size.x3min, size.x3max)
+              : 0.0;
+          output << "z4c_vc_rhs_field_v1," << global_variable::my_rank << ','
+                 << global_variable::nranks << ',' << mesh->time << ','
+                 << mesh->ncycle << ',' << stage << ',' << topology.generation
+                 << ',' << m << ',' << gid << ',' << location.level << ','
+                 << location.level - mesh->root_level << ',' << location.lx1
+                 << ',' << location.lx2 << ',' << location.lx3 << ',' << k
+                 << ',' << j << ',' << i << ',' << record.key.i1 << ','
+                 << record.key.i2 << ',' << record.key.i3 << ','
+                 << vertex_topology::VertexNodeRoleName(record.role) << ','
+                 << static_cast<int>(record.canonical_diagnostic_owner) << ','
+                 << static_cast<int>(record.topological_multiplicity) << ','
+                 << edge_codimension << ',' << edge_distance << ',' << rho
+                 << ',' << x2 << ',' << x3 << ',' << layout.nx1 << ','
+                 << layout.nx2 << ',' << layout.nx3 << ',' << size.x1min
+                 << ',' << size.x1max << ',' << size.x2min << ','
+                 << size.x2max << ',' << size.x3min << ',' << size.x3max;
+          for (int variable = 0; variable < Z4c::nz4c; ++variable) {
+            output << ',' << host_state(m, variable, k, j, i);
+          }
+          for (int variable = 0; variable < Z4c::nz4c; ++variable) {
+            output << ',' << host_rhs(m, variable, k, j, i);
+          }
+          output << '\n';
+        }
+      }
+    }
+  }
+  if (!output) {
+    std::cerr << "### FATAL ERROR: failed while writing native VC RHS field "
+                 "diagnostic "
+              << path.str() << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+}
+
+}  // namespace
 
 //----------------------------------------------------------------------------------------
 //! \fn void Z4c::Z4cSommerfeld
@@ -316,6 +445,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
     Kokkos::deep_copy(rhs_copy, u_rhs);
     vertex_topology_plan->SynchronizeSharedNodes(
         rhs_copy, "ATHENA_Z4C_VC_RHS_SYNC_DIAGNOSTIC");
+  }
+  if (status == TaskStatus::complete &&
+      layout.centering == Z4cGridCentering::vertex) {
+    DumpVertexRHSFieldDiagnostic(
+        this, pmy_pack, pdriver, stage,
+        std::getenv("ATHENA_Z4C_VC_RHS_FIELD_DIAGNOSTIC"));
   }
   return status;
 }
