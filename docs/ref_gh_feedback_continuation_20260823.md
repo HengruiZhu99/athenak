@@ -27,6 +27,16 @@ and accepts 139 only after the complete expected tree is verified.  A single
 focused rerun is pending; no numerical or controller source was changed.  The
 launcher correction is commit `0944be6b18dcc89f04a1e98fb34dfaef2a18622d`.
 
+The corrected job `8777250` then passed the mapped mesh audit, the strengthened
+controller unit test on all twelve ranks, and both one-cycle PVC evolutions.
+An off-node comparison proves their CBIN payloads are bitwise equal
+(`Linf=0`).  The job stopped before restart testing because Aurora's default
+`python3` is 3.6.15 and rejected `from __future__ import annotations` in the
+analysis script.  Aurora also provides `/usr/bin/python3.10` with NumPy 2.2.6;
+the harnesses now pin and record that interpreter in
+`7a69477bec06f426c6f105300b724bd25977ce45`.  This is a harness portability
+fix only.  Job `8777250` is therefore partial evidence, not a passed gate.
+
 ## Fixed mathematical scope
 
 The radial family, GH equations, compatible Phi ordering, dissipation, and
@@ -122,10 +132,11 @@ fine variants preserve the tree with `dx_min=M/16` and `M/32`.
 
 ## Remaining ordered gates
 
-1. Rerun exactly one corrected twelve-tile debug job with
+1. Complete one twelve-tile debug job with
    `scripts/ref_gh/aurora_feedback_continuation_debug12.pbs`; do not leave a
-   competing request.  Job `8777229` stopped at post-output mesh teardown and
-   did not qualify controller execution.
+   competing request.  Jobs `8777229` and `8777250` preserve the mesh-launcher
+   and Python-harness failures; the latter proves controller/PVC execution and
+   exact prescribed equivalence but did not reach restart testing.
 2. Pass the PVC T0--T2/restart gate, then replay the existing medium fixed-core
    tau-8 run to t=4M with
    `scripts/ref_gh/aurora_feedback_tau8_replay12.pbs` and freeze thresholds

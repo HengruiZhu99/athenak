@@ -6,6 +6,7 @@
   "implementation_commit": "9b86a5d97af9abb46b18c82c4895feb9887f0d5d",
   "controller_test_commit": "55eed5d4267d2eea833c4fe3ec6e8ff3af3bc732",
   "aurora_mesh_launcher_correction_commit": "0944be6b18dcc89f04a1e98fb34dfaef2a18622d",
+  "aurora_python_harness_correction_commit": "7a69477bec06f426c6f105300b724bd25977ce45",
   "local_executable_sha256": "e23c7449ba5691c2142b010623d0d9a76ca0589ca45875d94a1c4e08f412cb6c",
   "completed": {
     "local_t0_regressions": true,
@@ -31,7 +32,7 @@
     "medium_dx_min": 0.041666666666666664
   },
   "pending": {
-    "aurora_12_tile_debug_gate": "corrected_rerun_pending_after_job_8777229_mesh_teardown_139",
+    "aurora_12_tile_debug_gate": "python310_rerun_pending_after_job_8777250_partial_pass",
     "tau8_threshold_freeze": true,
     "t3_cheap_medium": true,
     "t4_definitive_medium": true,
@@ -48,6 +49,18 @@
     "mesh_tree_complete": true,
     "controller_tests_started": false,
     "classification": "post-output mesh-only SYCL teardown"
+  },
+  "aurora_job_8777250": {
+    "queue": "debug",
+    "node": "x4302c2s3b0n0",
+    "exit_status": 1,
+    "walltime": "00:06:14",
+    "distinct_pvc_tiles": 12,
+    "controller_unit_passed_all_ranks": true,
+    "legacy_prescribed_payload_linf": 0.0,
+    "legacy_prescribed_payload_bitwise_equal": true,
+    "restart_test_started": false,
+    "classification": "default Python 3.6 analysis harness failure"
   },
   "scientific_claim": "none"
 }
