@@ -260,7 +260,10 @@ const char *LayerRegion(const int) { return "all-bulk"; }
 
 template <int NGHOST>
 constexpr int ExpectedFixedHalfCellOrder(const int) {
-  return 2 * (NGHOST - 1);
+  // The legacy CC bulk quotient path loses one power of h at fixed rho/h
+  // because its centered derivative truncation error is divided by rho=O(h).
+  // Native VC has a separate nodal regular-coefficient qualification below.
+  return 2 * (NGHOST - 1) - 1;
 }
 
 template <int NGHOST>
@@ -1185,6 +1188,68 @@ bool CheckFixedRadiusRawConvergence(const double rho_sample) {
 }
 
 template <int NGHOST>
+bool CheckVertexNearAxisConvergence() {
+  constexpr int order = 2 * (NGHOST - 1);
+  constexpr double coarse_h = 0.125;
+  constexpr double medium_h = 0.0625;
+  constexpr double fine_h = 0.03125;
+  bool passed = true;
+  for (int layer = 0;
+       layer <= z4c::DerivativeProvider<z4c::CartoonSO2, NGHOST>::
+                    RegularizedVertexLayers();
+       ++layer) {
+    const auto location =
+        layer == 0 ? z4c::CartoonAxisLocation::evolved_vertex_axis
+                   : z4c::CartoonAxisLocation::evolved_vertex;
+    const ErrorSummary coarse =
+        MeasureSample<NGHOST>(coarse_h, 0.0, layer, 0.25, location);
+    const ErrorSummary medium =
+        MeasureSample<NGHOST>(medium_h, 0.0, layer, 0.25, location);
+    const ErrorSummary fine =
+        MeasureSample<NGHOST>(fine_h, 0.0, layer, 0.25, location);
+    const double observed_order = std::log2(medium.derivative / fine.derivative);
+    if (!(fine.derivative < medium.derivative &&
+          medium.derivative < coarse.derivative &&
+          observed_order >= order - 0.25)) {
+      std::cerr << "order " << order
+                << " native-VC near-axis convergence failed at rho/h=" << layer
+                << ": coarse=" << coarse.derivative
+                << " medium=" << medium.derivative
+                << " fine=" << fine.derivative
+                << " observed order=" << observed_order
+                << " worst=" << ResultName(fine.worst_result)
+                << " expected=" << fine.worst_expected
+                << " observed=" << fine.worst_observed << '\n';
+      passed = false;
+    }
+    constexpr const char *family_names[3] = {"scalar", "vector", "tensor"};
+    for (int family = 0; family < 3; ++family) {
+      const double family_order =
+          std::log2(medium.family[family] / fine.family[family]);
+      if (!(fine.family[family] < medium.family[family] &&
+            medium.family[family] < coarse.family[family] &&
+            family_order >= order - 0.25)) {
+        std::cerr << "order " << order << " native-VC near-axis "
+                  << family_names[family] << " family failed at rho/h=" << layer
+                  << ": coarse=" << coarse.family[family]
+                  << " medium=" << medium.family[family]
+                  << " fine=" << fine.family[family]
+                  << " observed order=" << family_order
+                  << " worst=" << ResultName(fine.family_worst_result[family])
+                  << '\n';
+        passed = false;
+      }
+    }
+    std::cout << "order=" << order << " rho/h=" << layer
+              << " region=native-vc-axis-closure"
+              << " observed_order=" << observed_order
+              << " finest_error=" << fine.derivative
+              << " worst_result=" << ResultName(fine.worst_result) << '\n';
+  }
+  return passed;
+}
+
+template <int NGHOST>
 bool CheckOrder() {
   constexpr int order = 2 * (NGHOST - 1);
   const auto fixed_half_cell_offsets = SignedFixedHalfCellOffsets();
@@ -1194,7 +1259,8 @@ bool CheckOrder() {
       !CheckFullApiAndCartesianDelegation<NGHOST>(0.5) ||
       !CheckFullApiAndCartesianDelegation<NGHOST>(-0.5) ||
       !CheckFixedRadiusRawConvergence<NGHOST>(0.5) ||
-      !CheckFixedRadiusRawConvergence<NGHOST>(-0.5)) {
+      !CheckFixedRadiusRawConvergence<NGHOST>(-0.5) ||
+      !CheckVertexNearAxisConvergence<NGHOST>()) {
     return false;
   }
   const ErrorSummary coarse = MeasureSample<NGHOST>(

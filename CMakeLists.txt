@@ -329,8 +329,8 @@ if (Athena_BUILD_UNIT_TESTS)
   enable_testing()
   find_package(PythonInterp 3 REQUIRED)
   # Low-frequency qualification only: each order has its own translation unit to
-  # bound compiler memory, and the expensive grid convergence is driven by the
-  # input-selected production MMS rather than routine CTest.
+  # bound compiler memory. The explicit target covers the complete manufactured
+  # SO(2) API at the evolved VC axis and first four radial layers.
   add_executable(
       athena_cartoon_derivatives_unit_test EXCLUDE_FROM_ALL
       tst/unit/z4c/cartoon_derivatives_test.cpp
@@ -490,7 +490,7 @@ if (Athena_BUILD_UNIT_TESTS)
       ${CMAKE_CURRENT_BINARY_DIR})
   target_link_libraries(
       athena_z4c_cartoon_vertex_axis_unit_test PRIVATE Kokkos::kokkos)
-  foreach(axis_contract IN ITEMS scalar vector tensor rhs_regularity)
+  foreach(axis_contract IN ITEMS scalar vector tensor adm constraint rhs_regularity)
     add_test(
         NAME athena.z4c_vc_cartoon_axis_${axis_contract}
         COMMAND athena_z4c_cartoon_vertex_axis_unit_test ${axis_contract})

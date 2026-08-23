@@ -72,6 +72,16 @@ cross-audited against `src/z4c/cartoon_derivatives.hpp`. Component order and
 variance are explicit template inputs; mixed-index tensors do not reuse the
 all-lower/all-upper table.
 
+At the first four positive VC layers, direct quotient evaluation would lose
+one formal order: a centered `O(h^p)` derivative error divided by
+`rho=q h` is only `O(h^(p-1))` at fixed layer `q`. Production therefore fits
+the regular coefficients in `s=rho^2` on local nodal samples. Even fields use
+`F(s)`; odd fields use `V/rho`; and tensor isotropy differences and `T_rho y`
+use their quadratic coefficients divided by `rho^2`. A degree `NGHOST-1`
+functional gives O2/O4/O6-compatible coefficient derivatives for
+`NGHOST=2/3/4`. This closure is selected only by the native-VC location tag;
+the legacy CC path and VC points outside layers 1--4 retain the bulk identities.
+
 ## Analytic axis limits
 
 No production axis branch evaluates `1/rho` or `1/rho^2`. Smooth parity and
@@ -127,4 +137,3 @@ Primary references are Cook et al. [arXiv:1603.00362], especially Section 4
 and Appendix C, and Pretorius [arXiv:gr-qc/0407110] for the modified-Cartoon
 reduced-hyperplane method. Exact source provenance is recorded in
 `z4c_vertex_centered_sources.md`.
-

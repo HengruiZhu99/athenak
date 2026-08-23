@@ -9,18 +9,20 @@ the fresh three-grid Kerr campaign and CPU/CUDA comparison pass.
 
 ## Geometry and component convention
 
-The SO(2) evolution domain is the cell-centred half-plane
+The SO(2) evolution domain is the nonnegative-rho half-plane. Z4c supports
+both legacy cell-centered (CC) and native vertex-centered (VC) storage:
 
 ```text
-  parity ghost storage             active storage
- ... -5h/2 -3h/2 -h/2 | h/2 3h/2 5h/2 ...
-                       rho=0
+  CC: ... -5h/2 -3h/2 -h/2 | h/2 3h/2 5h/2 ...
+  VC: ...   -3h   -2h   -h |  0    h    2h   3h ...
+                              rho=0
 ```
 
 The root mesh has `x1min=0`, `x1max>0`, and no active negative-rho cell.
-`rho=0` is the inner x1 face, never a cell centre.  The negative-rho cells are
-derived ghost values only.  The active directions are x1=rho and x2=z; x3 is
-collapsed and represents the suppressed Cartesian y direction.
+In CC mode `rho=0` is the inner x1 face. In native VC mode it is an evolved
+axis vertex. Negative-rho entries are derived ghost values only in both modes.
+The active directions are x1=rho and x2=z; x3 is collapsed and represents the
+suppressed Cartesian y direction.
 
 Physical component order is `(rho,z,y)=(0,1,2)`.  The legacy packed names map
 as follows:
@@ -149,12 +151,15 @@ d_y V^y = V^rho/rho
 d_y^2 V^rho = d_rho V^rho/rho - V^rho/rho^2.
 ```
 
-Because active centres have `rho>=h/2`, the bulk quotients never divide by
-zero. Every active half-cell uses the same expression assembled from the
-ordinary centered radial derivative through exact parity ghosts and the local
-field values. There is no special `s=rho^2` reconstruction, fit width, radial
-blending, or layer switch. Exact-axis analytic limits remain diagnostic-only:
-the production half-plane samples and evolves no active `rho=0` point.
+The CC path has active centers at `rho>=h/2` and retains the bulk quotient
+expressions. Native VC uses analytic limits at its evolved `rho=0` vertex, so
+no axis branch evaluates `1/rho` or `1/rho^2`. At VC layers `rho/h=1,2,3,4`,
+regular fields are written as coefficients of `s=rho^2` and differentiated by
+a local O2/O4/O6-compatible polynomial functional. This bounded closure
+prevents the centered derivative's `O(h^p)` error from becoming `O(h^(p-1))`
+after division by `rho=O(h)`. Ordinary active rho/z derivatives remain the
+standard centered stencils; the regular-coefficient functional is not a
+one-sided replacement for them.
 
 The initial required operator inventory is the set reached by the shared
 provider API:
@@ -251,7 +256,7 @@ that narrower stage-local instrumentation remains a diagnostic follow-up.
 ## Stability and qualification
 
 The frozen-operator utility compares the legacy fitted closure, the parity
-centred half-plane operator, and the production regular-coefficient closure in
+centred CC half-plane operator, and the native-VC regular-coefficient closure in
 a documented six-field radial proxy.  It reports eigenvalues, numerical
 abscissa, eigenvector conditioning where meaningful, transient amplification,
 RK4 amplification, and mode localization for O2/O4/O6.  Exact tests cover the
@@ -271,7 +276,8 @@ Christodoulou masses, spin, radii, center, residuals, and reflection consistency
 must converge with the constraints.  A chi=0.99 case starts only after chi=0.5
 qualifies.
 
-The legacy side-local fit exists only as immutable baseline bytes loaded by the
-stability test through `git show`. It is not compiled into or selectable from
-the half-plane production provider. Final legacy-removal status remains
-provisional until the half-plane implementation passes all qualification gates.
+The legacy half-cell fit exists only as immutable baseline bytes loaded by the
+stability test through `git show`. The compiled VC closure is a distinct nodal
+functional on `rho/h=0,1,2,...`; it is not the former CC half-cell code.
+Final qualification remains provisional until the fixed-grid physical gates
+pass.

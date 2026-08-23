@@ -3,7 +3,7 @@
 // Licensed under the 3-clause BSD License, see LICENSE file for details
 //========================================================================================
 //! \file cartoon_axis_boundary.hpp
-//! \brief Exact cell-centered parity extension across the half-plane SO(2) axis.
+//! \brief Centering-aware parity extension across the half-plane SO(2) axis.
 
 #ifndef Z4C_CARTOON_AXIS_BOUNDARY_HPP_
 #define Z4C_CARTOON_AXIS_BOUNDARY_HPP_
@@ -120,6 +120,15 @@ KOKKOS_INLINE_FUNCTION bool FillConstraintAxisGhostLine(
     const Array5D &state, const int meshblock, const int component,
     const int k, const int j, const int active_start, const int ghost_depth) {
   return FillAxisGhostLine(
+      state, meshblock, component, k, j, active_start, ghost_depth,
+      ConstraintAxisParitySignFromPackedIndex(component));
+}
+
+template <typename Centering, typename Array5D>
+KOKKOS_INLINE_FUNCTION bool FillCenteredConstraintAxisGhostLine(
+    const Array5D &state, const int meshblock, const int component,
+    const int k, const int j, const int active_start, const int ghost_depth) {
+  return FillCenteredAxisGhostLine<Centering>(
       state, meshblock, component, k, j, active_start, ghost_depth,
       ConstraintAxisParitySignFromPackedIndex(component));
 }

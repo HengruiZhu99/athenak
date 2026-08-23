@@ -443,6 +443,20 @@ def main() -> int:
             "FillCenteredZ4cAxisGhostLine<CellCenteredZ4c>" in axis_fill and
             "Z4cBCs" not in axis_fill and "user_bcs" not in axis_fill,
             "pre-RHS axis task is not a centering-aware half-plane parity fill")
+    constraint_fill = tasks[
+        tasks.index("void Z4c::ReconstructConstraintAxisParityGhosts("):
+        tasks.index("//! \\brief sends cell-centered conserved variables")]
+    require("const int ng = layout.ng;" in constraint_fill and
+            "const int n2 = layout.n2;" in constraint_fill and
+            "const int n3 = layout.n3;" in constraint_fill and
+            "const int is = layout.is;" in constraint_fill and
+            "FillCenteredConstraintAxisGhostLine<VertexCenteredZ4c>" in
+            constraint_fill and
+            "FillCenteredConstraintAxisGhostLine<CellCenteredZ4c>" in
+            constraint_fill and
+            "mb_indcs" not in constraint_fill and
+            "FillConstraintAxisGhostLine(" not in constraint_fill,
+            "constraint parity reconstruction is not centering-aware")
     require(queue.index("Z4c_BCS") < queue.index("Z4c_Prolong"),
             "normal RK physical/prolongation task ordering changed")
     task_order = [tasks.index(marker) for marker in

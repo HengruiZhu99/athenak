@@ -50,6 +50,7 @@ KOKKOS_INLINE_FUNCTION Real Z4cPointX(const int offset, const int intervals,
 enum class CartoonAxisLocation {
   cell_centered,
   diagnostic_axis,
+  evolved_vertex,
   evolved_vertex_axis,
 };
 
@@ -275,11 +276,12 @@ class DerivativeProvider<Cartesian3D, NGHOST> {
 //! advection before a Cartoon problem generator may be enabled.
 //!
 //! Ordinary rho/z derivatives always use AthenaK's centered finite differences through
-//! exact parity ghosts. Every active rho>0 cell, including rho/h=0.5, uses the same bulk
-//! SO(2) quotient identity; there is no layer-dependent s=rho^2 reconstruction. The
-//! diagnostic-axis limits below are reachable only by explicit diagnostic probes because
-//! the production half-plane has its symmetry axis on a cell face and evolves no rho=0
-//! point.
+//! exact parity ghosts. Native vertex-centered points at rho=0 use analytic SO(2) limits.
+//! At the first four positive-rho VC layers, quotient identities are evaluated through
+//! parity-compatible polynomial fits of the regular coefficients in s=rho^2. This avoids
+//! losing one power of h when a nominal O2/O4/O6 derivative error is divided by rho=O(h).
+//! Cell-centered points and VC points outside that bounded axis closure retain the bulk
+//! quotient formulas.
 template <int NGHOST>
 class DerivativeProvider<CartoonSO2, NGHOST> {
  public:
@@ -297,6 +299,8 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
   }
 
   KOKKOS_INLINE_FUNCTION static constexpr int ScalarParity() { return 1; }
+
+  KOKKOS_INLINE_FUNCTION static constexpr int RegularizedVertexLayers() { return 4; }
 
   KOKKOS_INLINE_FUNCTION static constexpr int VectorParity(const int component) {
     return (component == ZDirection()) ? 1 : -1;
@@ -330,6 +334,9 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     if (OnAxis()) {
       return ActiveSecond(RhoDirection(), RhoDirection(), field);
     }
+    if (NearAxisVertex()) {
+      return 2.0 * PhysicalRadialDerivative(VertexEvenFit(field));
+    }
     return ActiveFirst(RhoDirection(), field) / rho_;
   }
 
@@ -348,6 +355,12 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
         return -ActiveFirst(RhoDirection(), SuppressedDirection(), field);
       }
       return ActiveFirst(RhoDirection(), RhoDirection(), field);
+    }
+    if (NearAxisVertex()) {
+      if (component == RhoDirection()) {
+        return -VertexOddCoefficientFit(field, SuppressedDirection()).value;
+      }
+      return VertexOddCoefficientFit(field, RhoDirection()).value;
     }
     if (component == RhoDirection()) {
       return -Value(field, SuppressedDirection()) / rho_;
@@ -390,11 +403,22 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
       if (OnAxis()) {
         return 0.0;
       }
+      if (NearAxisVertex()) {
+        return sign * rho_ *
+               VertexQuadraticCoefficientFit(field, RhoDirection(),
+                                             SuppressedDirection()).value;
+      }
       return sign * Value(field, RhoDirection(), SuppressedDirection()) / rho_;
     }
     if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
       if (OnAxis()) {
         return 0.0;
+      }
+      if (NearAxisVertex()) {
+        return rho_ *
+               VertexQuadraticDifferenceFit(
+                   field, RhoDirection(), RhoDirection(), SuppressedDirection(),
+                   SuppressedDirection()).value;
       }
       return (Value(field, RhoDirection(), RhoDirection()) -
               Value(field, SuppressedDirection(), SuppressedDirection())) / rho_;
@@ -403,11 +427,18 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
       if (OnAxis()) {
         return -ActiveFirst(RhoDirection(), SuppressedDirection(), ZDirection(), field);
       }
+      if (NearAxisVertex()) {
+        return -VertexOddCoefficientFit(field, SuppressedDirection(), ZDirection())
+                    .value;
+      }
       return -Value(field, SuppressedDirection(), ZDirection()) / rho_;
     }
     if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
       if (OnAxis()) {
         return ActiveFirst(RhoDirection(), RhoDirection(), ZDirection(), field);
+      }
+      if (NearAxisVertex()) {
+        return VertexOddCoefficientFit(field, RhoDirection(), ZDirection()).value;
       }
       return Value(field, RhoDirection(), ZDirection()) / rho_;
     }
@@ -440,6 +471,11 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
     if (OnAxis()) {
       return 2.0 * ActiveFirst(RhoDirection(), RhoDirection(), field) +
              ActiveFirst(ZDirection(), ZDirection(), field);
+    }
+    if (NearAxisVertex()) {
+      return ActiveFirst(RhoDirection(), RhoDirection(), field) +
+             ActiveFirst(ZDirection(), ZDirection(), field) +
+             VertexOddCoefficientFit(field, RhoDirection()).value;
     }
     return ActiveFirst(RhoDirection(), RhoDirection(), field) +
            ActiveFirst(ZDirection(), ZDirection(), field) +
@@ -568,9 +604,251 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
            axis_location_ == CartoonAxisLocation::evolved_vertex_axis;
   }
 
+  KOKKOS_INLINE_FUNCTION int NearestInteger(const Real value) const {
+    return static_cast<int>(value + (value < 0.0 ? -0.5 : 0.5));
+  }
+
+  KOKKOS_INLINE_FUNCTION bool NearAxisVertex() const {
+    if (axis_location_ != CartoonAxisLocation::evolved_vertex) return false;
+    const Real vertex_index = rho_ * inverse_spacing_[RhoDirection()];
+    const int rounded_index = NearestInteger(vertex_index);
+    const Real grid_tolerance = (sizeof(Real) == sizeof(float)) ? 1.0e-4 : 1.0e-10;
+    return rounded_index >= 1 && rounded_index <= RegularizedVertexLayers() &&
+           fabs(vertex_index - rounded_index) <= grid_tolerance;
+  }
+
   KOKKOS_INLINE_FUNCTION static bool IsComponentPair(const int a, const int b,
                                                      const int c, const int d) {
     return (a == c && b == d) || (a == d && b == c);
+  }
+
+  struct RadialFit {
+    Real value;
+    Real derivative;
+  };
+
+  KOKKOS_INLINE_FUNCTION int VertexAxisIndex() const {
+    return i_ - NearestInteger(rho_ * inverse_spacing_[RhoDirection()]);
+  }
+
+  //! Interpolate a regular coefficient as a polynomial in dimensionless
+  //! s=(rho/h)^2. `first_node=0` is used for even fields; `first_node=1` for
+  //! odd/rho and quadratic/rho^2 coefficients whose axis value is not stored
+  //! independently. The returned derivative is with respect to dimensionless s.
+  KOKKOS_INLINE_FUNCTION RadialFit FitVertexRadialSamples(
+      const Real samples[NGHOST], const int first_node) const {
+    const Real target = SQR(rho_ * inverse_spacing_[RhoDirection()]);
+    RadialFit fit{0.0, 0.0};
+    for (int point = 0; point < NGHOST; ++point) {
+      const Real point_radius = static_cast<Real>(first_node + point);
+      const Real point_s = point_radius * point_radius;
+      Real basis = 1.0;
+      for (int other = 0; other < NGHOST; ++other) {
+        if (other == point) continue;
+        const Real other_radius = static_cast<Real>(first_node + other);
+        const Real other_s = other_radius * other_radius;
+        basis *= (target - other_s) / (point_s - other_s);
+      }
+      Real basis_derivative = 0.0;
+      for (int differentiated = 0; differentiated < NGHOST; ++differentiated) {
+        if (differentiated == point) continue;
+        const Real differentiated_radius =
+            static_cast<Real>(first_node + differentiated);
+        const Real differentiated_s = differentiated_radius * differentiated_radius;
+        Real term = 1.0 / (point_s - differentiated_s);
+        for (int other = 0; other < NGHOST; ++other) {
+          if (other == point || other == differentiated) continue;
+          const Real other_radius = static_cast<Real>(first_node + other);
+          const Real other_s = other_radius * other_radius;
+          term *= (target - other_s) / (point_s - other_s);
+        }
+        basis_derivative += term;
+      }
+      fit.value += basis * samples[point];
+      fit.derivative += basis_derivative * samples[point];
+    }
+    return fit;
+  }
+
+  KOKKOS_INLINE_FUNCTION Real PhysicalRadialDerivative(const RadialFit &fit) const {
+    return fit.derivative * inverse_spacing_[RhoDirection()] *
+           inverse_spacing_[RhoDirection()];
+  }
+
+  KOKKOS_INLINE_FUNCTION int VertexNodeIndex(const int node) const {
+    return VertexAxisIndex() + node;
+  }
+
+  KOKKOS_INLINE_FUNCTION int VertexFitFirstNode(const int minimum_node) const {
+    const int target_node =
+        NearestInteger(rho_ * inverse_spacing_[RhoDirection()]);
+    const int centered_first = target_node - NGHOST / 2;
+    return centered_first > minimum_node ? centered_first : minimum_node;
+  }
+
+  template <typename ScalarField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexEvenFit(const ScalarField &field) const {
+    Real samples[NGHOST];
+    const int first_node = VertexFitFirstNode(0);
+    for (int point = 0; point < NGHOST; ++point) {
+      samples[point] = field(m_, k_, j_, VertexNodeIndex(first_node + point));
+    }
+    return FitVertexRadialSamples(samples, first_node);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexEvenFit(const VectorField &field,
+                                                 const int component) const {
+    Real samples[NGHOST];
+    const int first_node = VertexFitFirstNode(0);
+    for (int point = 0; point < NGHOST; ++point) {
+      samples[point] =
+          field(m_, component, k_, j_, VertexNodeIndex(first_node + point));
+    }
+    return FitVertexRadialSamples(samples, first_node);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexEvenFit(const TensorField &field,
+                                                 const int a, const int b) const {
+    Real samples[NGHOST];
+    const int first_node = VertexFitFirstNode(0);
+    for (int point = 0; point < NGHOST; ++point) {
+      samples[point] =
+          field(m_, a, b, k_, j_, VertexNodeIndex(first_node + point));
+    }
+    return FitVertexRadialSamples(samples, first_node);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexOddCoefficientFit(
+      const VectorField &field, const int component) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    const int first_node = VertexFitFirstNode(1);
+    for (int point = 0; point < NGHOST; ++point) {
+      const int node = first_node + point;
+      samples[point] =
+          field(m_, component, k_, j_, VertexNodeIndex(node)) /
+          (static_cast<Real>(node) * spacing);
+    }
+    return FitVertexRadialSamples(samples, first_node);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexOddCoefficientFit(
+      const TensorField &field, const int a, const int b) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    const int first_node = VertexFitFirstNode(1);
+    for (int point = 0; point < NGHOST; ++point) {
+      const int node = first_node + point;
+      samples[point] = field(m_, a, b, k_, j_, VertexNodeIndex(node)) /
+                       (static_cast<Real>(node) * spacing);
+    }
+    return FitVertexRadialSamples(samples, first_node);
+  }
+
+  template <typename VectorField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexOddDerivativeCoefficientFit(
+      VectorField &field, const int direction, const int component) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    const int first_node = VertexFitFirstNode(1);
+    for (int point = 0; point < NGHOST; ++point) {
+      const int node = first_node + point;
+      samples[point] =
+          Dx<NGHOST>(direction, inverse_spacing_, field, m_, component, k_, j_,
+                     VertexNodeIndex(node)) /
+          (static_cast<Real>(node) * spacing);
+    }
+    return FitVertexRadialSamples(samples, first_node);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexOddDerivativeCoefficientFit(
+      TensorField &field, const int direction, const int a, const int b) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    const int first_node = VertexFitFirstNode(1);
+    for (int point = 0; point < NGHOST; ++point) {
+      const int node = first_node + point;
+      samples[point] =
+          Dx<NGHOST>(direction, inverse_spacing_, field, m_, a, b, k_, j_,
+                     VertexNodeIndex(node)) /
+          (static_cast<Real>(node) * spacing);
+    }
+    return FitVertexRadialSamples(samples, first_node);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexQuadraticCoefficientFit(
+      const TensorField &field, const int a, const int b) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    const int first_node = VertexFitFirstNode(1);
+    for (int point = 0; point < NGHOST; ++point) {
+      const int node = first_node + point;
+      const Real radius = static_cast<Real>(node) * spacing;
+      samples[point] = field(m_, a, b, k_, j_, VertexNodeIndex(node)) /
+                       (radius * radius);
+    }
+    return FitVertexRadialSamples(samples, first_node);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexQuadraticDifferenceFit(
+      const TensorField &field, const int a, const int b, const int c,
+      const int d) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    const int first_node = VertexFitFirstNode(1);
+    for (int point = 0; point < NGHOST; ++point) {
+      const int node = first_node + point;
+      const Real radius = static_cast<Real>(node) * spacing;
+      samples[point] =
+          (field(m_, a, b, k_, j_, VertexNodeIndex(node)) -
+           field(m_, c, d, k_, j_, VertexNodeIndex(node))) /
+          (radius * radius);
+    }
+    return FitVertexRadialSamples(samples, first_node);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexQuadraticDerivativeFit(
+      TensorField &field, const int direction, const int a, const int b) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    const int first_node = VertexFitFirstNode(1);
+    for (int point = 0; point < NGHOST; ++point) {
+      const int node = first_node + point;
+      const Real radius = static_cast<Real>(node) * spacing;
+      samples[point] =
+          Dx<NGHOST>(direction, inverse_spacing_, field, m_, a, b, k_, j_,
+                     VertexNodeIndex(node)) /
+          (radius * radius);
+    }
+    return FitVertexRadialSamples(samples, first_node);
+  }
+
+  template <typename TensorField>
+  KOKKOS_INLINE_FUNCTION RadialFit VertexQuadraticDifferenceDerivativeFit(
+      TensorField &field, const int direction, const int a, const int b,
+      const int c, const int d) const {
+    Real samples[NGHOST];
+    const Real spacing = 1.0 / inverse_spacing_[RhoDirection()];
+    const int first_node = VertexFitFirstNode(1);
+    for (int point = 0; point < NGHOST; ++point) {
+      const int node = first_node + point;
+      const Real radius = static_cast<Real>(node) * spacing;
+      samples[point] =
+          (Dx<NGHOST>(direction, inverse_spacing_, field, m_, a, b, k_, j_,
+                      VertexNodeIndex(node)) -
+           Dx<NGHOST>(direction, inverse_spacing_, field, m_, c, d, k_, j_,
+                      VertexNodeIndex(node))) /
+          (radius * radius);
+    }
+    return FitVertexRadialSamples(samples, first_node);
   }
 
   template <typename ScalarField>
@@ -655,6 +933,13 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
       }
       return 0.0;
     }
+    if (NearAxisVertex()) {
+      if (component == ZDirection()) {
+        return 2.0 * PhysicalRadialDerivative(VertexEvenFit(field, component));
+      }
+      const RadialFit coefficient = VertexOddCoefficientFit(field, component);
+      return 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+    }
     const Real radial_derivative = ActiveFirst(RhoDirection(), component, field);
     if (component == ZDirection()) {
       return radial_derivative / rho_;
@@ -683,6 +968,15 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
                                       ? SuppressedDirection()
                                       : RhoDirection();
     const Real sign = (component == RhoDirection()) ? -1.0 : 1.0;
+    if (NearAxisVertex()) {
+      if (active_direction == RhoDirection()) {
+        const RadialFit coefficient =
+            VertexOddCoefficientFit(field, rotated_component);
+        return sign * 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+      }
+      return sign * VertexOddDerivativeCoefficientFit(
+                        field, active_direction, rotated_component).value;
+    }
     const Real derivative = ActiveFirst(active_direction, rotated_component, field);
     Real result = sign * derivative / rho_;
     if (active_direction == RhoDirection()) {
@@ -712,6 +1006,34 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
                             field);
       }
       return 0.0;
+    }
+
+    if (NearAxisVertex()) {
+      if (a == RhoDirection() && b == RhoDirection()) {
+        const RadialFit component = VertexEvenFit(field, a, b);
+        const RadialFit difference = VertexQuadraticDifferenceFit(
+            field, RhoDirection(), RhoDirection(), SuppressedDirection(),
+            SuppressedDirection());
+        return 2.0 * PhysicalRadialDerivative(component) - 2.0 * difference.value;
+      }
+      if (a == SuppressedDirection() && b == SuppressedDirection()) {
+        const RadialFit component = VertexEvenFit(field, a, b);
+        const RadialFit difference = VertexQuadraticDifferenceFit(
+            field, RhoDirection(), RhoDirection(), SuppressedDirection(),
+            SuppressedDirection());
+        return 2.0 * PhysicalRadialDerivative(component) + 2.0 * difference.value;
+      }
+      if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+        const RadialFit coefficient = VertexQuadraticCoefficientFit(field, a, b);
+        return 2.0 * rho_ * rho_ * PhysicalRadialDerivative(coefficient) -
+               2.0 * coefficient.value;
+      }
+      if (IsComponentPair(a, b, RhoDirection(), ZDirection()) ||
+          IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
+        const RadialFit coefficient = VertexOddCoefficientFit(field, a, b);
+        return 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+      }
+      return 2.0 * PhysicalRadialDerivative(VertexEvenFit(field, a, b));
     }
 
     const Real radial_derivative = ActiveFirst(RhoDirection(), a, b, field);
@@ -745,6 +1067,72 @@ class DerivativeProvider<CartoonSO2, NGHOST> {
                                                     TensorField &field) const {
     if (OnAxis()) {
       return TensorMixedSuppressedAxis(active_direction, a, b, field);
+    }
+
+    if (NearAxisVertex()) {
+      if (active_direction == RhoDirection()) {
+        if (a == RhoDirection() && b == RhoDirection()) {
+          const RadialFit coefficient = VertexQuadraticCoefficientFit(
+              field, RhoDirection(), SuppressedDirection());
+          return -2.0 * coefficient.value -
+                 4.0 * rho_ * rho_ * PhysicalRadialDerivative(coefficient);
+        }
+        if (a == SuppressedDirection() && b == SuppressedDirection()) {
+          const RadialFit coefficient = VertexQuadraticCoefficientFit(
+              field, RhoDirection(), SuppressedDirection());
+          return 2.0 * coefficient.value +
+                 4.0 * rho_ * rho_ * PhysicalRadialDerivative(coefficient);
+        }
+        if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+          const RadialFit difference = VertexQuadraticDifferenceFit(
+              field, RhoDirection(), RhoDirection(), SuppressedDirection(),
+              SuppressedDirection());
+          return difference.value +
+                 2.0 * rho_ * rho_ * PhysicalRadialDerivative(difference);
+        }
+        if (IsComponentPair(a, b, RhoDirection(), ZDirection())) {
+          const RadialFit coefficient = VertexOddCoefficientFit(
+              field, SuppressedDirection(), ZDirection());
+          return -2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+        }
+        if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
+          const RadialFit coefficient =
+              VertexOddCoefficientFit(field, RhoDirection(), ZDirection());
+          return 2.0 * rho_ * PhysicalRadialDerivative(coefficient);
+        }
+        return 0.0;
+      }
+
+      if (a == RhoDirection() && b == RhoDirection()) {
+        return -2.0 * rho_ *
+               VertexQuadraticDerivativeFit(
+                   field, active_direction, RhoDirection(), SuppressedDirection())
+                   .value;
+      }
+      if (a == SuppressedDirection() && b == SuppressedDirection()) {
+        return 2.0 * rho_ *
+               VertexQuadraticDerivativeFit(
+                   field, active_direction, RhoDirection(), SuppressedDirection())
+                   .value;
+      }
+      if (IsComponentPair(a, b, RhoDirection(), SuppressedDirection())) {
+        return rho_ *
+               VertexQuadraticDifferenceDerivativeFit(
+                   field, active_direction, RhoDirection(), RhoDirection(),
+                   SuppressedDirection(), SuppressedDirection())
+                   .value;
+      }
+      if (IsComponentPair(a, b, RhoDirection(), ZDirection())) {
+        return -VertexOddDerivativeCoefficientFit(
+                    field, active_direction, SuppressedDirection(), ZDirection())
+                    .value;
+      }
+      if (IsComponentPair(a, b, SuppressedDirection(), ZDirection())) {
+        return VertexOddDerivativeCoefficientFit(
+                   field, active_direction, RhoDirection(), ZDirection())
+            .value;
+      }
+      return 0.0;
     }
 
     if (a == RhoDirection() && b == RhoDirection()) {
@@ -886,7 +1274,7 @@ MakeVertexCenteredDerivativeProvider(const Real inverse_spacing[3],
     const auto axis_location =
         (i == is && size(m).x1min == 0.0)
             ? CartoonAxisLocation::evolved_vertex_axis
-            : CartoonAxisLocation::cell_centered;
+            : CartoonAxisLocation::evolved_vertex;
     return DerivativeProvider<CartoonSO2, NGHOST>(
         inverse_spacing, rho, axis_location, m, k, j, i);
   } else {

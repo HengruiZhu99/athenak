@@ -93,20 +93,23 @@ def main() -> int:
     require(digest(legacy_provider) == LEGACY_PROVIDER_SHA,
             "frozen signed-plane provider reference changed")
     provider_text = provider.read_text()
-    for forbidden in ("FitRadialSamples", "RadialFit", "OddCoefficientFit",
-                      "QuadraticCoefficientFit", "QuadraticDifferenceFit",
-                      "NearAxisCell", "TargetLayer", "RegularCoefficientDerivative",
+    for forbidden in ("NearAxisCell", "TargetLayer", "RegularCoefficientDerivative",
                       "EvenCoefficientDerivative", "OddCoefficientDerivative",
                       "QuadraticCoefficientDerivative",
                       "QuadraticDifferenceCoefficientDerivative"):
         require(forbidden not in provider_text,
-                f"production provider retains layer-dependent closure helper {forbidden}")
+                f"production provider retains obsolete CC closure helper {forbidden}")
+    require("NearAxisVertex" in provider_text and
+            "RegularizedVertexLayers() { return 4; }" in provider_text and
+            "axis_location_ != CartoonAxisLocation::evolved_vertex" in provider_text and
+            ": CartoonAxisLocation::evolved_vertex;" in provider_text,
+            "native-VC bounded regular-coefficient closure is absent or unscoped")
     require("return ActiveFirst(RhoDirection(), field) / rho_;" in provider_text and
             "const Real radial_derivative = ActiveFirst(RhoDirection(), component, field);"
             in provider_text and
             "const Real radial_derivative = ActiveFirst(RhoDirection(), a, b, field);"
             in provider_text,
-            "half-plane provider lacks the single all-bulk SO(2) path")
+            "half-plane provider lacks the retained bulk SO(2) path")
     require(digest(finite_diff.read_bytes()) == FINITE_DIFF_SHA,
             "generated finite_diff.hpp hash changed")
     base_oracle = subprocess.check_output(

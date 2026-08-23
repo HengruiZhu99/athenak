@@ -454,21 +454,33 @@ void Z4c::ReconstructConstraintAxisParityGhosts(
     return;
   }
 
-  const auto &indcs = pmy_pack->pmesh->mb_indcs;
-  const int ng = indcs.ng;
-  const int n2 = indcs.nx2 > 1 ? indcs.nx2 + 2 * ng : 1;
-  const int n3 = indcs.nx3 > 1 ? indcs.nx3 + 2 * ng : 1;
-  const int is = indcs.is;
+  const int ng = layout.ng;
+  const int n2 = layout.n2;
+  const int n3 = layout.n3;
+  const int is = layout.is;
   const int nmb = pmy_pack->nmb_thispack;
   auto &mb_bcs = pmy_pack->pmb->mb_bcs;
-  par_for("Z4c half-plane constraint axis parity", DevExeSpace(),
-          0, nmb - 1, 0, ncon - 1, 0, n3 - 1, 0, n2 - 1,
-      KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
-        if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
-            !FillConstraintAxisGhostLine(constraints, m, n, k, j, is, ng)) {
-          Kokkos::abort("invalid constraint component in axis parity fill");
-        }
-      });
+  if (layout.centering == Z4cGridCentering::vertex) {
+    par_for("Z4c VC half-plane constraint axis parity", DevExeSpace(),
+            0, nmb - 1, 0, ncon - 1, 0, n3 - 1, 0, n2 - 1,
+        KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
+          if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
+              !FillCenteredConstraintAxisGhostLine<VertexCenteredZ4c>(
+                  constraints, m, n, k, j, is, ng)) {
+            Kokkos::abort("invalid constraint component in VC axis parity fill");
+          }
+        });
+  } else {
+    par_for("Z4c CC half-plane constraint axis parity", DevExeSpace(),
+            0, nmb - 1, 0, ncon - 1, 0, n3 - 1, 0, n2 - 1,
+        KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
+          if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
+              !FillCenteredConstraintAxisGhostLine<CellCenteredZ4c>(
+                  constraints, m, n, k, j, is, ng)) {
+            Kokkos::abort("invalid constraint component in CC axis parity fill");
+          }
+        });
+  }
   Kokkos::fence();
 }
 
