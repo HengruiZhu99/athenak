@@ -355,12 +355,27 @@ void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const
   const auto layout = z4c->layout;
   const int nmb = pmy_mesh->pmb_pack->nmb_thispack;
   const int nvar = z4c->u0.extent_int(1);
-  const auto active = Kokkos::subview(
-      z4c->u0, std::make_pair(0, nmb), Kokkos::ALL,
-      std::make_pair(layout.ks, layout.ke + 1),
-      std::make_pair(layout.js, layout.je + 1),
-      std::make_pair(layout.is, layout.ie + 1));
-  const auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), active);
+  const int nk = layout.ke - layout.ks + 1;
+  const int nj = layout.je - layout.js + 1;
+  const int ni = layout.ie - layout.is + 1;
+  // An active-region subview is strided in its MeshBlock and variable dimensions.
+  // Kokkos cannot deep-copy that non-contiguous CUDA view directly to HostSpace.
+  // Pack it on the device first so this default-off diagnostic remains backend-portable.
+  DvceArray5D<Real> packed("native VC lifecycle active", nmb, nvar, nk, nj, ni);
+  if (nmb > 0) {
+    auto u0 = z4c->u0;
+    const int ks = layout.ks;
+    const int js = layout.js;
+    const int is = layout.is;
+    par_for("pack native VC lifecycle active", DevExeSpace(), 0, nmb - 1,
+      0, nvar - 1, 0, nk - 1, 0, nj - 1, 0, ni - 1,
+      KOKKOS_LAMBDA(const int m, const int variable, const int k,
+                    const int j, const int i) {
+        packed(m, variable, k, j, i) =
+            u0(m, variable, ks + k, js + j, is + i);
+      });
+  }
+  const auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), packed);
   std::vector<std::uint64_t> hashes(nvar, 1469598103934665603ULL);
   std::vector<std::uint64_t> interior_hashes(nvar, 1469598103934665603ULL);
   std::vector<Real> minima(nvar, std::numeric_limits<Real>::max());
