@@ -1,0 +1,62 @@
+{
+  "schema": "z4c_vc_figure3_evidence_manifest_v1",
+  "date": "2026-08-23",
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "branch": "codex/z4c-vc-figure3-convergence-20260823",
+  "source_authority": {
+    "compiled_source_commit": "6ad9cf4048af6a93aa73cf9940fc78c3b439c8fe",
+    "evidence_base_commit": "3a3ba1a983d493457a47e2862c040f6e8b53f62c",
+    "perlmutter_source": "/pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/source/athenak",
+    "perlmutter_build": "/pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi",
+    "cuda_binary_sha256": "87b86be33725ddb0d55dbd3484fdb36cf570f3436e7677c0e6bbcae823773204",
+    "cmake_cache_sha256": "d68ef8d282c2caf4820ceed4ad52eb8c84413825cdd8759588a5e87780a0f5b4"
+  },
+  "figure3_authority": {
+    "published_pdf_sha256": "bbbfdd618909eef7d4d9597859590457f310b3d790aef0ca51252c60787375d5",
+    "reference_csv": "../brill_o4_dchi001_replay_convergence_20260821/evidence/reference/figure3_published_curves.csv",
+    "reference_csv_sha256": "947f92f72af32caf631d5efe9d720c7c56800b2e4578dcb6bcc26107cabc8adf",
+    "reference_metadata_sha256": "b623b340ded776acb4165c8d69fc79a41d41a92dc5f459b131cab8a94927859d",
+    "coefficients": "../z4c_vc_cartoon_axis_boundary_20260823/evidence/brill_global_128x32_origin_control.coefficients",
+    "coefficients_sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10",
+    "adm_mass": 2.6606354586228815,
+    "origin_residual": 2.808107125489922e-12,
+    "provenance_limitation": "coefficients were exported by a dirty uncommitted IrisK worktree"
+  },
+  "perlmutter_campaign_root": "/pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823",
+  "jobs": [
+    {"id": 57490370, "case": "N256 authority", "qos": "gpu_shared_interactive", "gpus": 1, "state": "CANCELLED by operator after bounded runaway", "exit": "143 in run artifact"},
+    {"id": 57490631, "case": "N128 replay", "qos": "gpu_shared_interactive", "gpus": 1, "state": "COMPLETED", "exit": 0},
+    {"id": 57490750, "case": "N512 replay", "qos": "gpu_shared_interactive", "gpus": 1, "state": "FAILED", "exit": 1}
+  ],
+  "key_artifacts": [
+    {"path": "brill_vc_figure3.athinput", "sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b", "role": "frozen production input"},
+    {"path": "perlmutter_run_segment.sh", "sha256": "9324516f5f08a08afa4be7235a4998e362422abbdd637485c696476aa37b3a88", "role": "fail-closed runner"},
+    {"path": "analyze_histories.py", "sha256": "a8c6f3682063e73308907126b76b16e43a02ddfa6423d48934d27b8baaf0cd78", "role": "history, event, Figure-3 and causality reducer"},
+    {"path": "analyze_fields.py", "sha256": "0c218e96532fac4b6db70665e25fdde3f90dca3fa1f88d8b3a7d83b33135d99a", "role": "common-vertex field and regional convergence reducer"},
+    {"path": "summarize_runtime.py", "sha256": "b0959c05abaf38836a19d9a178b6cf084157254a59ddf6ec42e9ff3edc5e7071", "role": "axis, replay, shadow and state-failure reducer"},
+    {"path": "evidence/authority/n256_amr_history.jsonl", "sha256": "ce3cdea1a8d0465a7c19e4ac1134ce474d8908b5f5cb12be6f20110d12e9c851", "role": "complete N256 accepted leaf authority"},
+    {"path": "evidence/runs/n128/n128.amr_history_replay.jsonl", "sha256": "050373c98704e137678fd8296fbf9816fb0ab4b90acb717eefc41c377ddb45a4", "role": "N128 exact replay ledger"},
+    {"path": "evidence/runs/n512/n512.amr_history_replay.jsonl", "sha256": "3c42ad63ae2323550ad5b8a509bb22eff499cb2af8f3869b4972f090cb2b1314", "role": "N512 exact replay ledger through failure"},
+    {"path": "evidence/runs/n512/z4c_state_failure.json", "sha256": "076e689c26597972b22f4691687db6a9e5f5cc3dec67599cfb2f7d5b261781e1", "role": "strict terminal admissibility evidence"},
+    {"path": "evidence/analysis/history_final/comparison_summary.history.json", "sha256": "fb7ff1b56cf56760085d91263fdd9d25708ae7e3d779660c8117565825b6be16", "role": "history/event/causality summary"},
+    {"path": "evidence/analysis/fields_final/field_summary.json", "sha256": "85d0c106989feb5dae52b9f0c137ec3a577c36f02b0725bd3260494b6030a91a", "role": "all-field regional summary"},
+    {"path": "evidence/analysis/runtime_summary.json", "sha256": "9b375b9d7f6bf1eabedc6feb46ed035c3935b29ffb1b36f5d6e695403007f564", "role": "runtime/replay/axis/shadow summary"},
+    {"path": "evidence/regressions/host-LastTest.log", "sha256": "f37e699b8f7b13788752b8f9c7d6d1ecf4eea8b0fa14696ca75a4d9fe7cd63fc", "role": "complete enabled host suite log"},
+    {"path": "evidence/regressions/cuda-selected-ctest.log", "sha256": "a41822a678bc961ff9330b16e3e02b6ef4f76ebf687ebce6a6eaf86c67028a24", "role": "selected current-source CUDA matrix"}
+  ],
+  "raw_data_policy": {
+    "committed": "replay/authority/failure ledgers, reducers, reduced CSV/JSON, plots and regression logs",
+    "not_committed": "approximately gigabyte-scale binary field dumps and verbose raw stdout",
+    "raw_data_location": "/pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823/runs",
+    "per_run_product_hash_lists": "evidence/runs/<case>/SHA256SUMS"
+  },
+  "claim_bindings": {
+    "exact_replay": ["evidence/runs/n128/n128.amr_history_replay.jsonl", "evidence/runs/n512/n512.amr_history_replay.jsonl"],
+    "event3_jump": ["evidence/authority/n256_amr_history.jsonl", "evidence/analysis/history_final/amr_event_constraint_jumps.csv"],
+    "trusted_core_resolution_worsening": ["evidence/analysis/fields_final/field_convergence.csv", "evidence/analysis/history_final/causal_protection.csv"],
+    "axis_not_leading": ["evidence/analysis/runtime_summary.json", "evidence/analysis/fields_final/field_convergence.csv"],
+    "n512_failure": ["evidence/runs/n512/z4c_state_failure.json"],
+    "regressions": ["evidence/regressions/host-LastTest.log", "evidence/regressions/cuda-selected-ctest.log"]
+  },
+  "qualification_limit": "No Figure-3 reproduction, convergence, horizon, critical behavior, SYCL qualification, or unique AMR source-bug claim"
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "z4c_vc_figure3_convergence_summary_v1",
+  "verdict": "VC_AMR_INTERFACE_LIMITED",
+  "figure3_reproduced": false,
+  "three_resolution_convergent": false,
+  "source_under_test": "6ad9cf4048af6a93aa73cf9940fc78c3b439c8fe",
+  "evidence_base": "3a3ba1a983d493457a47e2862c040f6e8b53f62c",
+  "cuda_binary_sha256": "87b86be33725ddb0d55dbd3484fdb36cf570f3436e7677c0e6bbcae823773204",
+  "coefficient_sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10",
+  "adm_mass": 2.6606354586228815,
+  "authority_sha256": "ce3cdea1a8d0465a7c19e4ac1134ce474d8908b5f5cb12be6f20110d12e9c851",
+  "first_catastrophic_transaction": {
+    "event": 3,
+    "coordinate_time": 0.2979919496568637,
+    "n256_axis_proper_time": 0.18352626039152617,
+    "kind": "derefinement",
+    "leaf_count_before": 50,
+    "leaf_count_after": 44,
+    "max_logical_level_before": 5,
+    "max_logical_level_after": 4,
+    "constraint_bracketing_ratios": {
+      "C": {"N128": 471467.1513323214, "N256": 494155884.60769016, "N512": 242398921339.26587},
+      "H": {"N128": 1232648.067449845, "N256": 952070381.3189386, "N512": 338159999929.8895},
+      "M": {"N128": 2207.843209163283, "N256": 2594336.0603731233, "N512": 135847486.72053403},
+      "Z": {"N128": 37295.71980504137, "N256": 15172291.349531678, "N512": 4822929949.812258}
+    }
+  },
+  "runs": {
+    "N128": {"job": 57490631, "exit": 0, "exact_replay_events": 114, "terminal_time": 3.869765069127305, "terminal_axis_tau": 2.3748996330045706},
+    "N256": {"job": 57490370, "exit": 143, "operator_cancelled_after_runaway": true, "authority_events": 115, "terminal_history_time": 3.8697653345828513},
+    "N512": {"job": 57490750, "exit": 1, "exact_replay_events": 24, "failure_time": 2.4953913377091808, "failure_axis_tau": 1.5368600101449119, "failure_reason": "nonpositive_metric_pivot_2", "failure_rho": 3.421875, "failure_z": -0.9140625}
+  },
+  "causality": {"n256_terminal_trusted_radius": 9.002715847608425, "n512_failure_radius": 3.5418552722452183},
+  "regressions": {"host_enabled_passed": 131, "host_failed": 0, "host_disabled_cuda_required": 2, "cuda_selected_passed": 14, "cuda_selected_failed": 0, "sycl_available": false},
+  "limitations": [
+    "early gate failed; Figure-3 endpoint was not run",
+    "exact replay is not convergence evidence",
+    "N256 was operator-cancelled after runaway rather than hitting an admissibility gate",
+    "field common-time analysis ends at coordinate time 2",
+    "no unique first AMR writer is isolated",
+    "corrected IrisK coefficient provenance is a dirty exporter worktree",
+    "SYCL was unavailable"
+  ]
+}
+

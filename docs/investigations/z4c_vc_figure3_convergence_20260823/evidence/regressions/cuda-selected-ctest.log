@@ -1,0 +1,44 @@
+Internal ctest changing into directory: /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi
+Test project /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi
+      Start  11: athena.z4c_vc_cartoon_derivatives_o2
+ 1/14 Test  #11: athena.z4c_vc_cartoon_derivatives_o2 ..................   Passed    0.71 sec
+      Start  12: athena.z4c_vc_cartoon_derivatives_o4
+ 2/14 Test  #12: athena.z4c_vc_cartoon_derivatives_o4 ..................   Passed    0.36 sec
+      Start  13: athena.z4c_vc_cartoon_derivatives_o6
+ 3/14 Test  #13: athena.z4c_vc_cartoon_derivatives_o6 ..................   Passed    0.36 sec
+      Start  16: athena.z4c_vc_cartoon_axis_scalar
+ 4/14 Test  #16: athena.z4c_vc_cartoon_axis_scalar .....................   Passed    0.33 sec
+      Start  17: athena.z4c_vc_cartoon_axis_vector
+ 5/14 Test  #17: athena.z4c_vc_cartoon_axis_vector .....................   Passed    0.33 sec
+      Start  18: athena.z4c_vc_cartoon_axis_tensor
+ 6/14 Test  #18: athena.z4c_vc_cartoon_axis_tensor .....................   Passed    0.32 sec
+      Start  19: athena.z4c_vc_cartoon_axis_adm
+ 7/14 Test  #19: athena.z4c_vc_cartoon_axis_adm ........................   Passed    0.33 sec
+      Start  20: athena.z4c_vc_cartoon_axis_constraint
+ 8/14 Test  #20: athena.z4c_vc_cartoon_axis_constraint .................   Passed    0.35 sec
+      Start  21: athena.z4c_vc_cartoon_axis_rhs_regularity
+ 9/14 Test  #21: athena.z4c_vc_cartoon_axis_rhs_regularity .............   Passed    0.32 sec
+      Start  77: athena.z4c_vc_restart_2d_cartoon
+10/14 Test  #77: athena.z4c_vc_restart_2d_cartoon ......................   Passed    8.03 sec
+      Start  86: athena.z4c_vc_output_2d_cartoon
+11/14 Test  #86: athena.z4c_vc_output_2d_cartoon .......................   Passed    2.39 sec
+      Start  91: athena.z4c_sommerfeld_derivatives
+12/14 Test  #91: athena.z4c_sommerfeld_derivatives .....................   Passed    0.02 sec
+      Start  95: athena.z4c_irisk_coordinate_map
+13/14 Test  #95: athena.z4c_irisk_coordinate_map .......................   Passed    0.02 sec
+      Start 140: athena.z4c_cartoon_production_kernels_cuda_required
+14/14 Test #140: athena.z4c_cartoon_production_kernels_cuda_required ...   Passed    0.43 sec
+
+100% tests passed, 0 tests failed out of 14
+
+Label Time Summary:
+2d                            =  10.43 sec*proc (2 tests)
+cartoon                       =  10.43 sec*proc (2 tests)
+cartoon-production-kernels    =   0.43 sec*proc (1 test)
+cuda-required                 =   0.43 sec*proc (1 test)
+output                        =   2.39 sec*proc (1 test)
+restart                       =   8.03 sec*proc (1 test)
+vertex                        =  10.43 sec*proc (2 tests)
+z4c                           =  10.43 sec*proc (2 tests)
+
+Total Test time (real) =  14.34 sec

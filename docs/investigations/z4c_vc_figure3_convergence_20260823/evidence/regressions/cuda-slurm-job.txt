@@ -1,0 +1,30 @@
+JobId=57485375 JobName=interactive
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:05 TimeLimit=00:20:00 TimeMin=N/A
+   SubmitTime=2026-08-23T14:04:33 EligibleTime=2026-08-23T14:04:33
+   AccrueTime=2026-08-23T14:04:34
+   StartTime=2026-08-23T14:05:06 EndTime=2026-08-23T14:25:06 Deadline=N/A
+   PreemptEligibleTime=2026-08-23T14:05:06 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-23T14:05:06 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login29:224355
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid001000
+   BatchHost=nid001000
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100&hbm40g DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=bash
+   SubmitLine=salloc -A m3328_g -C gpu&hbm40g -q shared_interactive -N 1 -n 1 -c 32 --gpus=1 -t 00:20:00 bash -lc set -euo pipefail; src=/pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/source/athenak; build=/pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi; out=/pscratch/sd/h/hzhu/z4c-vc-cartoon-axis-boundary-20260823/evidence/current-source-cuda-6ad9cf40; test ! -e "$out"; mkdir -p "$out"; scontrol show job "$SLURM_JOB_ID" > "$out/slurm-job.txt"; nvidia-smi -L > "$out/nvidia-smi.txt"; git -C "$src" rev-parse HEAD > "$out/source-commit.txt"; sha256sum "$build/src/athena" "$build/CMakeCache.txt" > "$out/authority-products.sha256"; export OMP_NUM_THREADS=1 OMP_PROC_BIND=false; ctest --test-dir "$build" --output-on-failure -j1 -R "^athena[.](z4c_sommerfeld_derivatives|z4c_vc_cartoon_derivatives_o2|z4c_vc_cartoon_derivatives_o4|z4c_vc_cartoon_derivatives_o6|z4c_vc_cartoon_axis_scalar|z4c_vc_cartoon_axis_vector|z4c_vc_cartoon_axis_tensor|z4c_vc_cartoon_axis_adm|z4c_vc_cartoon_axis_constraint|z4c_vc_cartoon_axis_rhs_regularity|z4c_irisk_coordinate_map|z4c_vc_restart_2d_cartoon|z4c_vc_output_2d_cartoon|z4c_cartoon_production_kernels_cuda_required)$" > "$out/ctest.log" 2>&1; grep -F "100% tests passed" "$out/ctest.log"; printf "CURRENT_SOURCE_CUDA_SELECTED_PASSED\n" > "$out/verdict.txt"; find "$out" -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > "$out/SHA256SUMS"
+   WorkDir=/global/u1/h/hzhu
+   TresPerJob=gres/gpu:1
+   TresPerTask=cpu=32
+   ResvPorts=63601-63603
+

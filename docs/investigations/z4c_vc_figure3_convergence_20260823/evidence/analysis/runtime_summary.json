@@ -1,0 +1,175 @@
+{
+  "cases": {
+    "n128": {
+      "axis_regularity": {
+        "max_abs": 9.2296908361226e-15,
+        "max_scaled": 9.2296908361226e-15,
+        "nonfinite_rows": 0,
+        "rows": 12700
+      },
+      "command": "srun --nodes=1 --ntasks=1 --ntasks-per-node=1 --cpus-per-task=32 --gpus-per-task=1 --gpu-bind=map_gpu:0 --cpu-bind=cores --exact --kill-on-bad-exit=1 /global/common/software/nersc/pe/conda-envs/24.1.0/python-3.11/nersc-python/bin/python3 /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/source/athenak/tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py --evidence-dir /pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823/runs/n128/segment0/rank-bindings --require-cuda -- /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi/src/athena -i brill_vc_figure3.athinput -t 01:35:00 mesh/nx1=64 mesh/nx2=128 meshblock/nx1=16 meshblock/nx2=16 mesh_refinement/max_nmb_per_rank=4096 mesh_refinement/amr_history_mode=replay mesh_refinement/amr_history_file=/pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823/authority/n256_amr_history.jsonl time/tlim=3.8697650691273049 time/nlim=-1 job/basename=n128 problem/brill_global_coefficients_file=brill_global_128x32.coefficients problem/constraint_summary_file=n128-constraints.dat",
+      "disposition": "REACHED_TLIM",
+      "native_shadow": {
+        "classification_counts": {
+          "AGREES": 491,
+          "OTHER": 48,
+          "WOULD_DEREFINE": 260212,
+          "WOULD_NOT_REFINE": 34,
+          "WOULD_REFINE_EARLIER": 5663
+        },
+        "native_action_counts": {
+          "derefine": 260296,
+          "refine": 5713,
+          "same": 439
+        },
+        "rows": 266448
+      },
+      "replay": {
+        "all_exact": true,
+        "events": 114,
+        "last_event": 114,
+        "last_tree_checksum": "163bcb25912a8344"
+      },
+      "root": "/pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823/runs/n128/segment0",
+      "run_status": "athena_exit=0",
+      "state_failure": null
+    },
+    "n256": {
+      "axis_regularity": {
+        "max_abs": 3.8619548583059126e-14,
+        "max_scaled": 3.8619548583059126e-14,
+        "nonfinite_rows": 0,
+        "rows": 28052
+      },
+      "command": "srun --nodes=1 --ntasks=1 --ntasks-per-node=1 --cpus-per-task=32 --gpus-per-task=1 --gpu-bind=map_gpu:0 --cpu-bind=cores --exact --kill-on-bad-exit=1 /global/common/software/nersc/pe/conda-envs/24.1.0/python-3.11/nersc-python/bin/python3 /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/source/athenak/tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py --evidence-dir /pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823/runs/n256/segment0/rank-bindings --require-cuda -- /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi/src/athena -i brill_vc_figure3.athinput -t 01:35:00 mesh/nx1=128 mesh/nx2=256 meshblock/nx1=32 meshblock/nx2=32 mesh_refinement/max_nmb_per_rank=4096 mesh_refinement/amr_history_mode=record mesh_refinement/amr_history_file=/pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823/authority/n256_amr_history.jsonl time/tlim=5.0 time/nlim=-1 job/basename=n256 problem/brill_global_coefficients_file=brill_global_128x32.coefficients problem/constraint_summary_file=n256-constraints.dat",
+      "disposition": "FAIL_CLOSED_NUMERICAL_OR_RUNTIME_FAILURE",
+      "native_shadow": {
+        "classification_counts": {},
+        "native_action_counts": {},
+        "rows": 0
+      },
+      "replay": null,
+      "root": "/pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823/runs/n256/segment0",
+      "run_status": "athena_exit=143",
+      "state_failure": null
+    },
+    "n512": {
+      "axis_regularity": {
+        "max_abs": 1.480504460197564e-13,
+        "max_scaled": 1.480504460197564e-13,
+        "nonfinite_rows": 0,
+        "rows": 35545
+      },
+      "command": "srun --nodes=1 --ntasks=1 --ntasks-per-node=1 --cpus-per-task=32 --gpus-per-task=1 --gpu-bind=map_gpu:0 --cpu-bind=cores --exact --kill-on-bad-exit=1 /global/common/software/nersc/pe/conda-envs/24.1.0/python-3.11/nersc-python/bin/python3 /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/source/athenak/tst/test_suite/unit_tests/cartoon_mms_rank_wrapper.py --evidence-dir /pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823/runs/n512/segment0/rank-bindings --require-cuda -- /pscratch/sd/h/hzhu/z4c-vc-brill-transfer-qualification-20260823/build/current-cuda-mpi/src/athena -i brill_vc_figure3.athinput -t 01:35:00 mesh/nx1=256 mesh/nx2=512 meshblock/nx1=64 meshblock/nx2=64 mesh_refinement/max_nmb_per_rank=2048 mesh_refinement/amr_history_mode=replay mesh_refinement/amr_history_file=/pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823/authority/n256_amr_history.jsonl time/tlim=3.8697650691273049 time/nlim=-1 job/basename=n512 problem/brill_global_coefficients_file=brill_global_128x32.coefficients problem/constraint_summary_file=n512-constraints.dat",
+      "disposition": "FAIL_CLOSED_NUMERICAL_OR_RUNTIME_FAILURE",
+      "native_shadow": {
+        "classification_counts": {
+          "AGREES": 6371,
+          "OTHER": 6,
+          "WOULD_DEREFINE": 772460,
+          "WOULD_NOT_REFINE": 16,
+          "WOULD_REFINE_EARLIER": 8814
+        },
+        "native_action_counts": {
+          "derefine": 772506,
+          "refine": 8857,
+          "same": 6304
+        },
+        "rows": 787667
+      },
+      "replay": {
+        "all_exact": true,
+        "events": 24,
+        "last_event": 24,
+        "last_tree_checksum": "89f3599d5f78b40e"
+      },
+      "root": "/pscratch/sd/h/hzhu/z4c-vc-figure3-convergence-20260823/runs/n512/segment0",
+      "run_status": "athena_exit=1",
+      "state_failure": {
+        "B": [
+          -0.000266796799906492,
+          -0.001214718887392445,
+          0
+        ],
+        "Khat": 445.2460755822858,
+        "Theta": -226.285181065212,
+        "alpha": 0.5253411389223905,
+        "axis_distance": 3.421875,
+        "beta": [
+          -0.6516135095548944,
+          0.9122336848681979,
+          0
+        ],
+        "block_edge_distance": 0.078125,
+        "checkpoint": "POST_RK_UPDATE",
+        "chi": 0.11603771763269363,
+        "coarse_fine_interface_distance": null,
+        "cycle": 8885,
+        "det_gtilde": -0.1638329849153013,
+        "first_nonfinite_component": -1,
+        "global_gid": 22,
+        "gtilde": [
+          2.199609625792645,
+          0.16179132684848663,
+          0,
+          20.026053963248998,
+          0,
+          -0.00372150414103028
+        ],
+        "include_ghosts": false,
+        "level": 6,
+        "local_indices": [
+          58,
+          15,
+          0
+        ],
+        "logical_location": [
+          6,
+          6,
+          30,
+          0
+        ],
+        "reason": "nonpositive_metric_pivot_2",
+        "relative_level": 3,
+        "rho": 3.421875,
+        "rk_stage": 1,
+        "schema": "z4c_state_admissibility_v1",
+        "spd_pivots": [
+          2.199609625792645,
+          44.02332463076205,
+          -0.1638329849153013
+        ],
+        "state25": [
+          0.11603771763269363,
+          2.199609625792645,
+          0.16179132684848663,
+          0,
+          20.026053963248998,
+          0,
+          -0.00372150414103028,
+          445.2460755822858,
+          -1058.8424663613096,
+          -3.1672717485934476,
+          0,
+          -10959.446347048959,
+          0,
+          32.946986498453036,
+          -155.78407357295745,
+          251.03983139508398,
+          0,
+          -226.285181065212,
+          0.5253411389223905,
+          -0.6516135095548944,
+          0.9122336848681979,
+          0,
+          -0.000266796799906492,
+          -0.001214718887392445,
+          0
+        ],
+        "time": 2.4953913377091808,
+        "z": -0.9140625
+      }
+    }
+  },
+  "schema": "z4c_vc_figure3_runtime_summary_v1"
+}
