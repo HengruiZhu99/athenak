@@ -1695,6 +1695,11 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_amr_derefine_factor_static_test.py
       --source-root ${CMAKE_CURRENT_SOURCE_DIR})
+  add_test(
+      NAME athena.z4c_history_deterministic_reduction_static
+      COMMAND ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_history_deterministic_reduction_static_test.py
+      --source-root ${CMAKE_CURRENT_SOURCE_DIR})
   if (Athena_ENABLE_MPI)
     add_test(
         NAME athena.amr_history_mpi2

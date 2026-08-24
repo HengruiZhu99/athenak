@@ -36,8 +36,6 @@
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
 
-namespace {
-
 constexpr int kCartoonConstraintFamilies = 4;
 constexpr int kCartoonAxisLayers = 5;
 constexpr int kCartoonRegionStride = kCartoonConstraintFamilies + 1;
@@ -46,6 +44,22 @@ constexpr int kCartoonOffAxisSumBase = kCartoonAxisSumBase + kCartoonRegionStrid
 constexpr int kCartoonLayerSumBase = kCartoonOffAxisSumBase + kCartoonRegionStride;
 constexpr int kCartoonDiagnosticSums =
     kCartoonLayerSumBase + kCartoonAxisLayers * kCartoonRegionStride;
+
+namespace cartoon_history_sum {
+using DiagnosticSum = array_sum::array_type<Real, kCartoonDiagnosticSums>;
+}  // namespace cartoon_history_sum
+
+namespace Kokkos {
+template <>
+struct reduction_identity<cartoon_history_sum::DiagnosticSum> {
+  KOKKOS_FORCEINLINE_FUNCTION
+  static cartoon_history_sum::DiagnosticSum sum() {
+    return cartoon_history_sum::DiagnosticSum();
+  }
+};
+}  // namespace Kokkos
+
+namespace {
 
 struct ConstraintMaximum {
   Real value = 0.0;
@@ -570,14 +584,14 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
     pdata->hdata[n] = sum_this_mb.the_array[n];
   }
   if (cartoon) {
-    DvceArray1D<Real> diagnostic_sums(
-        "Cartoon constraint region sums", kCartoonDiagnosticSums);
-    Kokkos::deep_copy(diagnostic_sums, 0.0);
+    cartoon_history_sum::DiagnosticSum diagnostic_sums;
     const Real excise_chi = opt.excise_chi;
-    Kokkos::parallel_for(
+    Kokkos::parallel_reduce(
         "Cartoon constraint axis off-axis and layer sums",
         Kokkos::RangePolicy<DevExeSpace>(0, nmkji),
-        KOKKOS_LAMBDA(const int idx) {
+        KOKKOS_LAMBDA(
+            const int idx,
+            cartoon_history_sum::DiagnosticSum &thread_sums) {
           const int m = idx / nkji;
           const int k0 = (idx - m * nkji) / nji;
           const int j0 = (idx - m * nkji - k0 * nji) / nx1;
@@ -622,56 +636,49 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
           if (radial_layer >= 0 && radial_layer < kCartoonAxisLayers) {
             if (diagnostic_owner) {
               for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
-                Kokkos::atomic_add(
-                    &diagnostic_sums(kCartoonAxisSumBase + family),
-                    squared[family]);
-                Kokkos::atomic_add(
-                    &diagnostic_sums(
-                        kCartoonLayerSumBase +
-                        radial_layer * kCartoonRegionStride + family),
-                    squared[family]);
+                thread_sums.the_array[kCartoonAxisSumBase + family] +=
+                    squared[family];
+                thread_sums.the_array[
+                    kCartoonLayerSumBase +
+                    radial_layer * kCartoonRegionStride + family] +=
+                    squared[family];
               }
-              Kokkos::atomic_add(
-                  &diagnostic_sums(
-                      kCartoonAxisSumBase + kCartoonConstraintFamilies),
-                  1.0);
-              Kokkos::atomic_add(
-                  &diagnostic_sums(
-                      kCartoonLayerSumBase +
-                      radial_layer * kCartoonRegionStride +
-                      kCartoonConstraintFamilies),
-                  1.0);
+              thread_sums.the_array[
+                  kCartoonAxisSumBase + kCartoonConstraintFamilies] += 1.0;
+              thread_sums.the_array[
+                  kCartoonLayerSumBase +
+                  radial_layer * kCartoonRegionStride +
+                  kCartoonConstraintFamilies] += 1.0;
             }
           } else {
             for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
-              Kokkos::atomic_add(
-                  &diagnostic_sums(kCartoonOffAxisSumBase + family),
-                  physical_volume * squared[family]);
+              thread_sums.the_array[kCartoonOffAxisSumBase + family] +=
+                  physical_volume * squared[family];
             }
-            Kokkos::atomic_add(
-                &diagnostic_sums(
-                    kCartoonOffAxisSumBase + kCartoonConstraintFamilies),
-                physical_volume);
+            thread_sums.the_array[
+                kCartoonOffAxisSumBase + kCartoonConstraintFamilies] +=
+                physical_volume;
           }
-        });
-    auto host_sums =
-        Kokkos::create_mirror_view_and_copy(HostMemSpace(), diagnostic_sums);
+        },
+        Kokkos::Sum<cartoon_history_sum::DiagnosticSum>(diagnostic_sums));
     for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
       pdata->hdata[cartoon_axis_index + family] =
-          host_sums(kCartoonAxisSumBase + family);
+          diagnostic_sums.the_array[kCartoonAxisSumBase + family];
       pdata->hdata[cartoon_off_axis_index + family] =
-          host_sums(kCartoonOffAxisSumBase + family);
+          diagnostic_sums.the_array[kCartoonOffAxisSumBase + family];
     }
     pdata->hdata[cartoon_axis_index + kCartoonConstraintFamilies] =
-        host_sums(kCartoonAxisSumBase + kCartoonConstraintFamilies);
+        diagnostic_sums.the_array[
+            kCartoonAxisSumBase + kCartoonConstraintFamilies];
     pdata->hdata[cartoon_off_axis_index + kCartoonConstraintFamilies] =
-        host_sums(kCartoonOffAxisSumBase + kCartoonConstraintFamilies);
+        diagnostic_sums.the_array[
+            kCartoonOffAxisSumBase + kCartoonConstraintFamilies];
     for (int layer = 0; layer < kCartoonAxisLayers; ++layer) {
       for (int entry = 0; entry < kCartoonRegionStride; ++entry) {
         pdata->hdata[
             cartoon_layer_index + layer * kCartoonRegionStride + entry] =
-            host_sums(
-                kCartoonLayerSumBase + layer * kCartoonRegionStride + entry);
+            diagnostic_sums.the_array[
+                kCartoonLayerSumBase + layer * kCartoonRegionStride + entry];
       }
     }
 
