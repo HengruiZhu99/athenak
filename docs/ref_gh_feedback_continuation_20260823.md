@@ -6,8 +6,10 @@ This branch implements the equation-preserving feedback clock requested in the
 controlling goal.  Local and twelve-tile Aurora T0--T2 gates pass, including
 exact prescribed-law equivalence and restart continuity.  The required Aurora
 tau-8 replay completed through t=4M, and the controller thresholds below were
-frozen before any closed-loop run.  T3 has not started, so no closed-loop
-continuation or stability claim is made.
+frozen before any closed-loop run.  T3 passed, but the definitive T4 medium
+closed-loop run failed closed at t=3.70126M before full activation.  Therefore
+closed-loop continuation, convergence, and long-time stability are **not**
+established, and the conditional T6 resolution gate is disallowed.
 
 The work is based exactly on
 `9c438dc619aa742404530c953243d71b2a01d8e6` from
@@ -75,6 +77,39 @@ every risk channel stayed strictly below `R_slow=0.70`; the maximum risk was
 `2.3654e-4`, and curl `5.4938e-3`, and their controller-history copies agreed
 to `8.68e-19` Linf or better.  This is a bounded plumbing/discrimination pass,
 not a long-time or full-activation result.
+
+Capacity job `8777607` then ran the definitive T4 medium case on eight Aurora
+nodes and all 96 PVC tiles using the enlarged `[-24M,24M]^3` SMR domain.  The
+rank audit found 96 distinct host/tile mappings, the 328-block startup tree
+matched the committed mesh specification, and checkpoint-only segmented
+restart continuity passed.  The run nevertheless failed closed during the
+segment targeting t=4M.  The fatal constraint-growth veto fired at
+`t=3.70126M`; the last history record is `t=3.652311803940143M`,
+`xi=0.683570621760585`, `xi_dot=0.04823821421506104`, and
+`S(xi)=0.8145156830967849`.
+
+This is a scientific controller/formulation outcome rather than a scheduler,
+launcher, restart, or outer-boundary failure.  The first feedback slowing was
+at `t=2.800398246064391M`, when the boost-risk channel reached
+`R=0.7823771276844607`; `v_cmd` reached zero at
+`t=2.901290467804224M`, where `v2_max=0.2073056341758828` exceeded its
+frozen stop value.  Existing controller inertia continued advancing xi.  Curl
+crossed its warning at `t=3.5M`, GH crossed its warning at
+`t=3.600638481088608M`, and the twice-warning/growth rule then stopped the
+run.  At the last history record the condition number was
+`8.388962983494395`, `v2_max=2.447787612233087`, GH L2 was
+`2.719173361052207e-2`, reduction L2 was `2.866341462084266e-3`, and curl
+L2 was `1.550293561555334e-1`.  The physical lapse remained positive
+(`min alpha=4.530756565915293e-3`) and the evolved diagnostics were finite;
+no field floor, clipping, reset, or threshold change was used.
+
+The measured characteristic travel through the last history record was only
+`3.481756459835352M`, leaving `20.518243540164647M` to the nearest outer
+face.  Max-location histories place the growing source-frame correction and
+shift/lapse ratio at radii about `0.45M` and `0.56M` on the finest level.  Thus
+the observed loss of admissibility is localized near the fixed-core transition
+shell and is causally disconnected from the outer boundary.  This localization
+is an observation; it does not by itself identify the mathematical cause.
 
 ## Fixed mathematical scope
 
@@ -183,17 +218,14 @@ projected t=20 characteristic distance retains about 7.43M of margin.  The
 projection motivates the grid; only the eventual measured T4 integral will be
 used for a causal claim.
 
-## Remaining ordered gates
+## Remaining ordered gate
 
-1. Run T4 on the enlarged medium domain through xi=1 plus a 2M hold, t=20M, or
-   fail closed; then T5 aggressive prescribed four-M discriminator.
-2. Run the three-resolution T6 gate only if T4 passes.  If the measured
-   characteristic travel distance makes the `[-12M,12M]^3` clean window too
-   short, push only the outer boundary outward with SMR while preserving the
-   fixed inner spacings and full finest coverage of the 0.30--0.60M shell.
-
-No statement of feedback success, convergence, full activation, trumpet
-establishment, or long-time stability is justified by the current evidence.
+Run only T5, the required aggressive prescribed four-M open-loop discriminator,
+on the identical enlarged medium mesh.  Compare its first admissibility and
+constraint-growth transitions directly with T4.  T6 must not run because T4
+did not pass.  No statement of feedback success, convergence, full activation,
+trumpet establishment, or long-time stability is justified by the current
+evidence.
 
 ## Reproduction
 
@@ -217,4 +249,6 @@ qsub -v CAMPAIGN_ROOT=/absolute/fresh/campaign,EXPECTED_COMMIT=$(git rev-parse H
 
 The compact logs, JSON, mesh structure, hashes, and status manifest are under
 `docs/fo_gh_artifacts/ref_gh_feedback_continuation_20260823/`.  Large CBIN and
-restart outputs are intentionally excluded.
+restart outputs are intentionally excluded.  The complete T4 output and
+checkpoints remain on Aurora at
+`/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/runs/t4_feedback_outer24_8777607.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov`.
