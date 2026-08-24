@@ -14,7 +14,11 @@
 
 #include <cstdint>   // int32_t
 #include <cstdlib>   // exit
+#include <cstring>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
+#include <limits>
 #include <cmath>     // abs
 #include <algorithm> // sort
 #include <sstream>
@@ -305,6 +309,12 @@ bool MeshRefinement::VCAMRLifecycleDiagnosticEnabled() const {
 
 void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const {
   if (!VCAMRLifecycleDiagnosticEnabled()) return;
+  const char *cycle_selection =
+      std::getenv("ATHENA_Z4C_VC_AMR_LIFECYCLE_CYCLE");
+  if (cycle_selection != nullptr && cycle_selection[0] != '\0' &&
+      std::strtoll(cycle_selection, nullptr, 10) != pmy_mesh->ncycle) {
+    return;
+  }
   const std::string selection(std::getenv("ATHENA_Z4C_VC_AMR_LIFECYCLE"));
   const std::string token = "A" + std::to_string(phase);
   bool selected = selection == "1" || selection == "all";
@@ -337,6 +347,84 @@ void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const
               << " local_meshblocks=" << pmy_mesh->pmb_pack->nmb_thispack
               << std::endl;
   }
+
+  const char *jsonl_path =
+      std::getenv("ATHENA_Z4C_VC_AMR_LIFECYCLE_JSONL");
+  if (jsonl_path == nullptr || jsonl_path[0] == '\0') return;
+  const auto *z4c = pmy_mesh->pmb_pack->pz4c;
+  const auto layout = z4c->layout;
+  const int nmb = pmy_mesh->pmb_pack->nmb_thispack;
+  const int nvar = z4c->u0.extent_int(1);
+  const auto active = Kokkos::subview(
+      z4c->u0, std::make_pair(0, nmb), Kokkos::ALL,
+      std::make_pair(layout.ks, layout.ke + 1),
+      std::make_pair(layout.js, layout.je + 1),
+      std::make_pair(layout.is, layout.ie + 1));
+  const auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), active);
+  std::vector<std::uint64_t> hashes(nvar, 1469598103934665603ULL);
+  std::vector<std::uint64_t> interior_hashes(nvar, 1469598103934665603ULL);
+  std::vector<Real> minima(nvar, std::numeric_limits<Real>::max());
+  std::vector<Real> maxima(nvar, -std::numeric_limits<Real>::max());
+  for (int m = 0; m < nmb; ++m) {
+    for (int variable = 0; variable < nvar; ++variable) {
+      for (int k = 0; k < host.extent_int(2); ++k) {
+        for (int j = 0; j < host.extent_int(3); ++j) {
+          for (int i = 0; i < host.extent_int(4); ++i) {
+            const Real value = host(m, variable, k, j, i);
+            const auto *bytes = reinterpret_cast<const unsigned char *>(&value);
+            for (std::size_t byte = 0; byte < sizeof(Real); ++byte) {
+              hashes[variable] ^= bytes[byte];
+              hashes[variable] *= 1099511628211ULL;
+            }
+            const bool strict_interior = i > 0 && i + 1 < host.extent_int(4) &&
+                (host.extent_int(3) <= 1 ||
+                 (j > 0 && j + 1 < host.extent_int(3))) &&
+                (host.extent_int(2) <= 1 ||
+                 (k > 0 && k + 1 < host.extent_int(2)));
+            if (strict_interior) {
+              for (std::size_t byte = 0; byte < sizeof(Real); ++byte) {
+                interior_hashes[variable] ^= bytes[byte];
+                interior_hashes[variable] *= 1099511628211ULL;
+              }
+            }
+            minima[variable] = std::min(minima[variable], value);
+            maxima[variable] = std::max(maxima[variable], value);
+          }
+        }
+      }
+    }
+  }
+  std::string path(jsonl_path);
+#if MPI_PARALLEL_ENABLED
+  if (global_variable::nranks > 1) {
+    path += ".rank" + std::to_string(global_variable::my_rank);
+  }
+#endif
+  std::ofstream output(path, std::ios::app);
+  if (!output) {
+    std::cerr << "### FATAL ERROR: unable to append native VC lifecycle audit "
+              << path << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  output << "{\"schema\":\"athenak_vc_amr_lifecycle_v1\",\"phase\":\"A"
+         << phase << "\",\"name\":\"" << name << "\",\"cycle\":"
+         << pmy_mesh->ncycle << ",\"time\":" << std::setprecision(17)
+         << pmy_mesh->time << ",\"rank\":" << global_variable::my_rank
+         << ",\"global_meshblocks\":" << pmy_mesh->nmb_total
+         << ",\"local_meshblocks\":" << nmb << ",\"active_bounds\":["
+         << layout.is << ',' << layout.ie << ',' << layout.js << ',' << layout.je
+         << ',' << layout.ks << ',' << layout.ke << "],\"variables\":[";
+  for (int variable = 0; variable < nvar; ++variable) {
+    if (variable != 0) output << ',';
+    output << "{\"index\":" << variable << ",\"hash\":\"" << std::hex
+           << std::setfill('0') << std::setw(16) << hashes[variable] << std::dec
+           << "\",\"block_strict_interior_hash\":\"" << std::hex
+           << std::setfill('0') << std::setw(16) << interior_hashes[variable]
+           << std::dec
+           << "\",\"min\":" << std::setprecision(17) << minima[variable]
+           << ",\"max\":" << maxima[variable] << '}';
+  }
+  output << "]}\n";
 }
 
 void MeshRefinement::ValidateVCAMRMaps(const int old_nmb,
