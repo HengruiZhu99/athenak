@@ -1,0 +1,20 @@
+Ref-GH Gaussian-reference/gamma2 report provenance
+date: 2026-08-24
+parent branch: codex/ref-gh-feedback-continuation-20260823
+parent local/upstream/remote SHA: e5579269f2e979d246ab162a288b140e7076d666
+report branch: codex/ref-gh-gaussian-reference-gamma2-20260824
+T5 source SHA: 0189d495058e09a53ca36a31f08ab924bc496582
+T5 executable SHA-256: 7496ae64fe8a57c4f3111884bd04be9439e1d520acba60876aadca5944ded742
+Python: 3.12.3
+matplotlib: 3.10.9
+NumPy: 2.4.5
+pdfTeX: 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian)
+figure command: python3 scripts/ref_gh/plot_ref_gh_gaussian_gamma2_report.py
+report command: cd docs && pdflatex -interaction=nonstopmode -halt-on-error ref_gh_gaussian_reference_gamma2_20260824.tex (twice)
+visual QA: all 9 PDF pages rendered with pdftoppm at 120 dpi; pages 1, 3, 4, 6, and 9 inspected directly; corrected equation and plot-layout defects before packaging
+Aurora queue check: ssh -o BatchMode=yes -o ConnectTimeout=20 aurora 'qstat -u hzhu'
+Aurora queue result: no entries
+large outputs committed: no
+new simulation launched: no
+source implementation changed: no
+scientific claim: no Gaussian/gamma2 result, no convergent trumpet, no long-time stability
