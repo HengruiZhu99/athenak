@@ -8,6 +8,7 @@ set -euo pipefail
 : "${EXPECTED_EXE_SHA:?SHA-256 of the qualified CUDA executable}"
 
 expected_source=7927d02fd3fd34fe504dde18998c8a62fde3909e
+expected_history_source=athena-0.1-git-ba7daebccf337d3157442aec2125b9301308b2a8
 expected_coeff=1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10
 expected_history=ce3cdea1a8d0465a7c19e4ac1134ce474d8908b5f5cb12be6f20110d12e9c851
 
@@ -58,6 +59,7 @@ command=(srun --nodes=1 --ntasks=1 --ntasks-per-node=1 --cpus-per-task=32
   mesh_refinement/max_nmb_per_rank="${max_nmb}"
   mesh_refinement/amr_history_mode=replay
   mesh_refinement/amr_history_file=n256_amr_history.jsonl
+  mesh_refinement/amr_history_compatible_source_id="${expected_history_source}"
   time/tlim=0.31 time/nlim=-1 job/basename="${CASE_LABEL}_event3"
   problem/brill_global_coefficients_file=brill_global_128x32.coefficients
   problem/constraint_summary_file="${CASE_LABEL}_event3-constraints.dat")
