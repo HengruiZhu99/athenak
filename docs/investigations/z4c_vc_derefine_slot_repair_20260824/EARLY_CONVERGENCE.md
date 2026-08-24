@@ -5,6 +5,14 @@
 The documented early N128/N256/N512 gate passes through `t=2.5 M`, beyond the
 unpatched N512 failure time `2.4953913377 M`.
 
+These three evolutions used production-repair commit
+`d2596707e808aea7ec6167df937d71dc4dbe429e`. The later final review source
+`6dd20656a305f2543bbbd7001550c6ac67019180` adds only default-off diagnostics,
+test ownership fixtures, and an input declaration; it makes no production
+numerical change. The bounded N128/N256/N512 event-3 histories were rerun at
+the final source and are bitwise identical to the corresponding repaired
+event-3 histories.
+
 All runs replayed the same 24 accepted physical-time hierarchy events exactly,
 ending with 176 MeshBlocks and maximum physical refinement level 4.  Replay
 reported zero-ULP time error and exact leaf sets/checksums.  The production
@@ -71,4 +79,6 @@ qualification.
 
 Machine-readable results are in `evidence/analysis/early_history` and
 `evidence/analysis/early_fields`; compact plots are in their `figures`
-subdirectories.
+subdirectories. Exact hashes for all retained restart files are listed in
+`EVIDENCE_MANIFEST.json`; restart payloads remain on Perlmutter and are not
+committed to Git.

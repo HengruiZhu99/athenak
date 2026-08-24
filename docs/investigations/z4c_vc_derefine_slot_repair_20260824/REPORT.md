@@ -12,6 +12,12 @@ bounded production event is correct through A16 at N128/N256/N512, the early
 common-tree convergence gate passes to `t=2.5 M`, and required host/CUDA/MPI
 regressions pass.
 
+The final reviewed source is
+`6dd20656a305f2543bbbd7001550c6ac67019180`, tree
+`551b16fab36ec1d4ce913b39a6478384723aa382`. The numerical production repair
+was complete at `d2596707e808aea7ec6167df937d71dc4dbe429e`; later source changes
+are default-off diagnostics and focused test/input coverage.
+
 ## Defect and repair
 
 At event 3, family 2 had old children 29--32 but new parent GID 26.  Old GID 26
@@ -36,13 +42,16 @@ atomic conflict resolution, or change to the VC injection operator was added.
    was exposed and corrected by testing all active axes.
 5. MPI2/MPI4 pure and mixed transactions pass, including an A7 source-slot
    overlap that requires immutable local-child snapshots.
-6. One-A100 event-3 replays at N128/N256/N512 reproduce the same hierarchy
-   checksum and bitwise parent oracles with no modified live source.
-7. The prior catastrophic event-3 constraint injection is absent.
+6. One-A100 final-source event-3 writer replays at N128/N256/N512 reproduce
+   the same hierarchy checksum and bitwise parent oracles with no modified
+   live source; A5--A14 remain exact, A15 changes only projected fields, A16
+   preserves every parent and all block-strict interiors, and R0/U0 are finite.
+7. The prior catastrophic event-3 constraint injection is absent; the new
+   constraint histories are bitwise identical to the earlier repaired runs.
 8. Exact 24-event common-tree replay reaches `t=2.5 M` at all resolutions with
    positive finite trusted-core convergence and healthy state/axis diagnostics.
-9. The complete enabled host suite and selected CUDA/MPI production-path
-   regressions pass.
+9. The final-source complete enabled host suite passes 137/137; all 20
+   targeted final-source Perlmutter CPU/CUDA/MPI checks pass.
 
 ## Production impact
 
@@ -81,6 +90,10 @@ the purpose, associated gate, and whether default production behavior changes.
 | `80bc1d74b2fb376d56225cbc18ea5db241e049d2` | Early convergence runner | N128/N256/N512 to 2.5 M | No |
 | `479a123cd0b295a0837377fd5198ebeb13fa2719` | Compact evidence, plots, and regression runner | Hash-verified bundles | No |
 | `4a7bd38a40cfaf019c4eb66e0aec8d1e0ce75c94` | Qualification documents and manifest | JSON and Markdown validation | No |
+| `65af69734798b91d6e2fdf0494393fec67f0fc45` | Move-right and dual split-family ownership fixtures | Layouts C/E on MPI2/MPI4 | No |
+| `db6787981b7fd691b55091a6e361879cdd49bec6` | Per-parent A4--U0 writer diagnostic | Final-source event-3 provenance | No when diagnostic is off |
+| `6dd20656a305f2543bbbd7001550c6ac67019180` | Fourth deterministic AMR target declaration | Dual-split fixture activation | No |
+| `380b40d2975866524c14f19b6ede5c529c85ad94` | Final-source writer, host, CUDA, and MPI evidence | Completion evidence bundle | No |
 
 ## Qualification boundary
 
@@ -90,6 +103,12 @@ Figure 3.  No full collapse endpoint, horizon claim, late-time convergence, or
 SYCL runtime qualification was attempted.  The bounded event-3 history samples
 are finite-width time brackets, especially at N128.  Exact hierarchy replay is
 used only as a control; it is not itself convergence evidence.
+
+The early `t=2.5 M` runs were performed at production-repair commit `d2596707`.
+They were not repeated after adding default-off diagnostics and test-only
+fixtures; bounded final-source event-3 histories are bitwise identical. Large
+restart and binary payloads are retained under the hashed Perlmutter paths and
+excluded from Git, while their hashes remain in the manifest.
 
 ## Reproduction map
 

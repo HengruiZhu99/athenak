@@ -3,11 +3,17 @@
   "repository": "https://github.com/HengruiZhu99/athenak",
   "branch": "codex/z4c-vc-derefine-slot-repair-20260824",
   "exact_base_commit": "3c240a370084b0d2b749932386cf057921b575ef",
-  "qualified_source_commit": "d2596707e808aea7ec6167df937d71dc4dbe429e",
-  "qualified_source_tree": "1543014ef6caa141e392d8da01522c2ba71a9e3e",
+  "qualified_source_commit": "6dd20656a305f2543bbbd7001550c6ac67019180",
+  "qualified_source_tree": "551b16fab36ec1d4ce913b39a6478384723aa382",
+  "numerical_production_repair_commit": "d2596707e808aea7ec6167df937d71dc4dbe429e",
   "report_commit_note": "Resolve the branch head for the containing evidence/report commit; a Git commit cannot contain its own hash.",
   "submodules": {
     "kokkos": "6739bc623081648af9e752b616d9671527922cbf"
+  },
+  "runners": {
+    "perlmutter_event3_writer_v2.sh": "f632fc7bf9489498247304721c3be9616c2de01237c1a89832eff4f98b918da4",
+    "perlmutter_targeted_qualification_v3.sh": "7ab23324f12a659e9d12626647e69b5b7c316359c9fba5f9df44bfc278bdf927",
+    "perlmutter_final_qualification_v2.sh": "6029ca7e0d1f632b609b37a1414a8c0b02537bc10c1d07b8a3fe49825ca33f55"
   },
   "inputs": {
     "brill_input_sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b",
@@ -17,11 +23,11 @@
     "event3_tree_checksum": "b6c60694c30a2049"
   },
   "executables": {
-    "perlmutter_cuda_sha256": "d08ea0ca307416a2735b58c77eb61c1e59a7119909c60bed7ed1094746863898",
-    "perlmutter_cuda_cmake_cache_sha256": "20fac68f9053032832b3d4fcbbd8d8c290ef291d729ca10c67d7341259b66118",
-    "perlmutter_cpu_mpi_sha256": "3c794967aa8ef70ea99d5ff379698d36377e402007345563d164ec2997a31a90",
+    "perlmutter_cuda_sha256": "7f5bd2fc5d05233822c583ec677e91867eaf6f0c8e2d7ca521cfba93c091a55b",
+    "perlmutter_cuda_cmake_cache_sha256": "dd913132ce02c2a4a1ba74e1ed222d8872595c21a885eb35aaf54f9409013043",
+    "perlmutter_cpu_mpi_sha256": "dde704e91579727b6004efd1b7693bc2411f9785435d5c1e11d425d4809eeb8b",
     "perlmutter_cpu_mpi_cmake_cache_sha256": "eadabf003bc8d246631f23a3fcbf2fb16ce00456e636dfedad4402d6a8e665bd",
-    "local_host_sha256": "2ba1c93662ddad6421d95334408841a4d380e56a5da0439e0b5e565e5f5a5778",
+    "local_host_sha256": "a4d3aba52e04b82834d55f1f87f16ba002010a238a1b22474410035d64670db4",
     "local_host_cmake_cache_sha256": "218ee4d04b47632124cf72a574e8147c82f69d7e75be5cc7517535a6b954c9d0"
   },
   "red_green": {
@@ -64,6 +70,47 @@
       "slot_audit_sha256": "886e2cfd22f00faf1edcd8c4fad9ef544d39a958d6fcc38935076cfa06469846"
     }
   ],
+  "final_source_event3_writer_runs": [
+    {
+      "resolution": "N128",
+      "job_id": 57505077,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "event_cycle": 57,
+      "remote_run_directory": "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/event3_writer_6dd_n128_v1",
+      "local_evidence_directory": "evidence/perlmutter/event3_writer_6dd_n128_v1",
+      "bundle_manifest_sha256": "7ee5b1205130b45dbb86c8fba04e00b67437320cbe01b076a78ffb8702b08458",
+      "writer_jsonl_sha256": "34290d03a70f294a45e3c056df7b2791e7fb903bace72bb340adbcf7eb843b0c",
+      "lifecycle_jsonl_sha256": "888afe0138aedaddc872e6df46e6f74e0716b5f0f849c98446f27001523caad0",
+      "constraint_history_sha256": "5a2c5192c87187775b9e35036061c29b5bb4ef0de8853288ae376c5874485dd0"
+    },
+    {
+      "resolution": "N256",
+      "job_id": 57505077,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "event_cycle": 111,
+      "remote_run_directory": "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/event3_writer_6dd_n256_v1",
+      "local_evidence_directory": "evidence/perlmutter/event3_writer_6dd_n256_v1",
+      "bundle_manifest_sha256": "30db25669160a8e247a607fbaa31ede61044073bfefe02f296c352f35fc67af8",
+      "writer_jsonl_sha256": "c278422f4a7ee677dbc9d7d0d4239a67671e0eaf705f3da3870f44011abfe5d3",
+      "lifecycle_jsonl_sha256": "690ac5e075044de843e9db1744df8898c6168d750fd17362bf12071b40632d67",
+      "constraint_history_sha256": "f422ac83d30c0773adf2b3e29c208d6af8e42ee0aa9fc4b98164f6d2ab102efc"
+    },
+    {
+      "resolution": "N512",
+      "job_id": 57505077,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "event_cycle": 229,
+      "remote_run_directory": "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/event3_writer_6dd_n512_v1",
+      "local_evidence_directory": "evidence/perlmutter/event3_writer_6dd_n512_v1",
+      "bundle_manifest_sha256": "3d9c2f541350d848533b1e90ba36fc59818c7e7c5cb382ef30be9f9c3fb10933",
+      "writer_jsonl_sha256": "ab2384f3846f848c33cdae94a7c64b399b1977cad03e64b240152f8d5884f6ac",
+      "lifecycle_jsonl_sha256": "d0d5bc6b6e06985eda15cb360498bccf9d4cb7bb4bb186133865dec35c942858",
+      "constraint_history_sha256": "bec353d684bcaa3af21d078318c0c98dc03eb4ad22e41155cb46e230bf826ecd"
+    }
+  ],
   "early_runs": [
     {
       "resolution": "N128",
@@ -75,7 +122,15 @@
       "local_evidence_directory": "evidence/perlmutter/early_n128_v1",
       "bundle_manifest_sha256": "6e947e64ee62a88c2faa7cd4ce93fe61fb0a10acc80dcf7ec497b80c71ede02e",
       "history_sha256": "1ba79c610c10f58db8178609338f4ac19d321daab7058db86ac2ee6b1f072f05",
-      "replay_ledger_sha256": "b93a2ca522c9c9c82f742564d537d175099340b6e109162c6133d62ade3ff4db"
+      "replay_ledger_sha256": "b93a2ca522c9c9c82f742564d537d175099340b6e109162c6133d62ade3ff4db",
+      "restart_sha256": {
+        "n128_early.00000.rst": "5da32ac12f135a021325a642f976f780874880d72812cc6c0de02f0a3eeab5ba",
+        "n128_early.00001.rst": "2b50b2cf29616fe4cac17caee139f7186941f19962f3235506ebf3353f753fe7",
+        "n128_early.00002.rst": "3c8d022c4bd66e7484ba7ca9c37ff0d013377dc07690d73a7552a3d1ca77c885",
+        "n128_early.00003.rst": "299f73d1470525140354841c1b9ab6b6bf9ff9f98e8e6071647f6d5dd47f97a9",
+        "n128_early.00004.rst": "d852449b17603b5ac1cbf10933a4fa84d8d67af20057de3a86c0375ec4b5e895",
+        "n128_early.00005.rst": "597cb7be4fc9219caaa0be276838ff8e89ff701d88dcc757a9dca2e979896672"
+      }
     },
     {
       "resolution": "N256",
@@ -87,7 +142,15 @@
       "local_evidence_directory": "evidence/perlmutter/early_n256_v1",
       "bundle_manifest_sha256": "0f946805b8cba4633ccb66e52b5d94552f204a13b2069adb1ef73547849649ac",
       "history_sha256": "ac350c2190355b05c4eacd41b678a2d9f5dce70a540596155eff36c7d5702e04",
-      "replay_ledger_sha256": "35af3ae6dd3cb03cc6d4d52903959beb04de5939f0bfaab844e856102819821a"
+      "replay_ledger_sha256": "35af3ae6dd3cb03cc6d4d52903959beb04de5939f0bfaab844e856102819821a",
+      "restart_sha256": {
+        "n256_early.00000.rst": "1ab489e380a729bc1a3023bead21b80baed6b7c114c7209877b52a56814c483a",
+        "n256_early.00001.rst": "8f5c351e7581cade7cd4c322efbd1a088e278f5bc30db4f512d2ca6b2b05396b",
+        "n256_early.00002.rst": "2637e4af8719a4cd06f57481fcb8a0f79133b2d0d5be27a917043a69913b01b7",
+        "n256_early.00003.rst": "70b6351df57db2ffa28e437eabf5f56cd8980206774107dccd6127cfbfe633b6",
+        "n256_early.00004.rst": "4df12deb568de1b0bbf69a4d8e5aaa2d9ed9e4818f65980bb50f1b6e614be9b8",
+        "n256_early.00005.rst": "2efa4142002981e56ef31403b646bccc3ea35d5fe83ede48cd7e78c281d8a2eb"
+      }
     },
     {
       "resolution": "N512",
@@ -99,7 +162,15 @@
       "local_evidence_directory": "evidence/perlmutter/early_n512_v1",
       "bundle_manifest_sha256": "c1628598be2f4180f3eeb218375043517dce3abcf93c9c24c04ef8bff9c1dc56",
       "history_sha256": "238c453c92fb909ada35fb9d061e0462e06a0311893976d9f506970584a98ccd",
-      "replay_ledger_sha256": "3625d9fa11a5a2ebe67e91a16e19243ec79257911d6bbdf67cb1787ca76dd103"
+      "replay_ledger_sha256": "3625d9fa11a5a2ebe67e91a16e19243ec79257911d6bbdf67cb1787ca76dd103",
+      "restart_sha256": {
+        "n512_early.00000.rst": "44a84bdb68234a7ef21f0af2e1319ad28f2ca7cc8c9e5632878a8e4969d61fc7",
+        "n512_early.00001.rst": "d940647b91180eab7337488bb3b50a77981afedab0e8013264dc21c87480f7fb",
+        "n512_early.00002.rst": "b9b6a345a78e4f086d20557329a779b7a65e6ebe6714404efc2f2cb353bb852c",
+        "n512_early.00003.rst": "1295798fbcfd9907baf2b8d7d4c935be466af641ee02fb5d6d8547db6727ccb7",
+        "n512_early.00004.rst": "e330354a850779f7b398ced04184b76abe31c49e4db1ff730e58d9919a9241a0",
+        "n512_early.00005.rst": "877d2685f01f3622d57b3e76768e44335806d0dc70d7ec09859b6c13b198aff2"
+      }
     }
   ],
   "analysis": {
@@ -108,17 +179,24 @@
     "field_summary_path": "evidence/analysis/early_fields/field_summary.json",
     "field_summary_sha256": "5e9a17cb4fc4e643cf34946aea2ea2d0cc7948a6861cb9480387a91865abd054",
     "state_health_path": "evidence/analysis/early_fields/state_health.csv",
-    "state_health_sha256": "ad7862ba754740d58f267d392af26053860119297b437025b9fb0102684c6fab"
+    "state_health_sha256": "ad7862ba754740d58f267d392af26053860119297b437025b9fb0102684c6fab",
+    "event3_writer_analyzer_path": "analyze_event3_writer.py",
+    "event3_writer_analyzer_sha256": "5a621d32b5a4a5af977abb5104c430f029bad4212cf88ca9b2f5436a5f326b76",
+    "event3_writer_summary_path": "evidence/analysis/event3_writer/summary.json",
+    "event3_writer_summary_sha256": "c6ddbf5a7b45e051150f056f0d6c361c5a19eb5e2f4e8313bf1b570d2e1a0f1f"
   },
   "regressions": {
     "host": {
-      "command": "ctest --test-dir build --output-on-failure -j16",
-      "enabled_passed": 136,
+      "source_commit": "6dd20656a305f2543bbbd7001550c6ac67019180",
+      "command": "cmake --build build -j64 && ctest --test-dir build --output-on-failure -j8",
+      "enabled_passed": 137,
       "failed": 0,
       "disabled_cuda_required": 2,
       "return_code": 0,
-      "log_path": "evidence/regressions/host/LastTest.log",
-      "log_sha256": "2b4e660e531b73d0f8964fe5526ce903d2dd852ee32459b8dc02dc01291e4976"
+      "log_path": "evidence/regressions/host/LastTest_final_6dd.log",
+      "log_sha256": "f309bc00a4af92744788be2b7d62187ff50f84d180f15658f23d6d75c272f316",
+      "inventory_path": "evidence/regressions/host/ctest_inventory_final_6dd.json",
+      "inventory_sha256": "23cae87dbe92e0e1fd5ccb6d8d150ec843a1caabb8d13a4cb6a63d7ab84abd0a"
     },
     "perlmutter": {
       "runner": "perlmutter_regression_qualification.sh",
@@ -137,6 +215,29 @@
       "evidence_directory": "evidence/regressions/perlmutter/regressions_d259_v2",
       "bundle_manifest_sha256": "d3ae19031e56af43c8e179f4ac248b95dbfcc33bf169041106aff7131d92d3fe"
     },
+    "perlmutter_final_targeted": {
+      "source_commit": "6dd20656a305f2543bbbd7001550c6ac67019180",
+      "runner": "perlmutter_targeted_qualification_v3.sh",
+      "runner_sha256": "7ab23324f12a659e9d12626647e69b5b7c316359c9fba5f9df44bfc278bdf927",
+      "job_id": 57504956,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:01:07",
+      "cpu_dual_split_passed": 1,
+      "cuda_2d_and_writer_passed": 7,
+      "cuda_split_ownership_passed": 7,
+      "cuda_3d_passed": 3,
+      "cuda_kernel_passed": 2,
+      "total_statuses_zero": 20,
+      "evidence_directory": "evidence/regressions/perlmutter/regressions_6dd_targeted_v1",
+      "bundle_manifest_sha256": "e655a842435ecf532e2b31901f3b3d91cc75fbccb4cb5d1a72f1ac9b430e999f"
+    },
+    "perlmutter_broad_attempt": {
+      "job_id": 57504412,
+      "final_state": "FAILED",
+      "exit_code": "1:0",
+      "disposition": "Retained broad-suite evidence. The dual-split input declaration was fixed and retested. Remaining failures were a SymPy-version mismatch, an invalid two-rank one-root-block fixture, a shared-node timeout, and a compiler-dependent host-exact fingerprint. Shared-GPU OOM cases passed in the subsequent targeted allocation."
+    },
     "setup_failure": {
       "job_id": 57502692,
       "final_state": "FAILED",
@@ -149,10 +250,12 @@
     }
   },
   "scheduler_audit": {
-    "checked_utc": "2026-08-24",
+    "checked_utc": "2026-08-24T06:36:06Z",
     "jobs_remaining": false,
     "command": "squeue -u hzhu -h",
-    "result": "empty"
+    "result": "empty",
+    "evidence_path": "evidence/regressions/perlmutter/final_scheduler_audit.txt",
+    "evidence_sha256": "56d3f94188f8f4347893bd29c20d0a477791b2305a10c23191c1fe0869b2cbe2"
   },
   "verdict": "VC_DEREFINE_SLOT_CORRUPTION_FIXED",
   "limitations": [

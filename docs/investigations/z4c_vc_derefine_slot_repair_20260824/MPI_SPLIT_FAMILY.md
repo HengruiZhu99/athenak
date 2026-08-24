@@ -96,3 +96,29 @@ mixed refine/derefine cases.
 These results qualify the exercised ownership layouts and the A7 overlap
 discriminator. They do not yet replace the required authority event-3 replay,
 CUDA checks, or early three-resolution convergence gate.
+
+## Completed ownership matrix at final source
+
+Commits `65af69734798b91d6e2fdf0494393fec67f0fc45` and
+`6dd20656a305f2543bbbd7001550c6ac67019180` complete the previously missing
+ownership discriminators. The final matrix is:
+
+| Required layout | Fixture | MPI ranks | Evidence |
+|---|---|---:|---|
+| A: siblings and target local | local families within every comparison | 2, 4 | bitwise match |
+| B: local lower child/target, remote upper sibling | `local_lower` | 2, 4 | bitwise match |
+| C: lower child remote from target; another sibling local | `remote_lower` | 2, 4 | bitwise match; move right |
+| D: split family plus unrelated migration | `local_lower --mixed-refine` | 2, 4 | bitwise match |
+| E: two split families target one rank | `dual_split` | 4 | bitwise match |
+
+Layout E is a four-rank partition discriminator by construction: old families
+8--11 and 21--24 cross different old partitions, while new parents 8 and 12
+both target rank 1. Every multi-rank run is compared with its one-rank layout-A
+reference at the same accepted time and hierarchy. The comparison is bitwise
+for all 25 fields and includes physical and logical MeshBlock metadata.
+
+Perlmutter job `57504956` ran the final-source CPU dual-split case and all
+CUDA MPI2/MPI4 ownership cases. Every case returned zero. The bundle is
+`evidence/regressions/perlmutter/regressions_6dd_targeted_v1`; its
+`SHA256SUMS` file hashes to
+`e655a842435ecf532e2b31901f3b3d91cc75fbccb4cb5d1a72f1ac9b430e999f`.

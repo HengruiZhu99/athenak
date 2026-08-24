@@ -55,7 +55,23 @@ matrix is
 `d55b477cdf63467749278194e768717f56b65ee5ef811d8a99cd877b47465987`.
 
 This matrix covers stationary and left-moving parent slots, separated
-families, and adjacent refined-family source runs. A same-rank move-right case
-requires a load-balance partition change and is covered with the MPI ownership
-matrix rather than synthesized in one-rank storage. A mixed refine/derefine
-transaction remains to be added.
+families, adjacent refined-family source runs, and the mixed
+refine/derefine transaction. A move-right case requires a load-balance
+partition change and is covered with the MPI ownership matrix rather than
+synthesized in one-rank storage.
+
+## Final-source backend confirmation
+
+The final review source is
+`6dd20656a305f2543bbbd7001550c6ac67019180`. Its complete Serial host suite
+passed 137/137 enabled tests, including all eight multi-family cases and the
+default-off writer lifecycle test. The matching Perlmutter CUDA executable
+also passed:
+
+- the baseline dynamic-AMR case;
+- all eight 2D/3D O2/q4, O4/q6, O6/q8, constant, nonconstant, and mixed
+  multi-family cases;
+- the writer lifecycle test.
+
+All assertions remain exact and cover all 25 variables. No tolerance or
+numerical transfer rule was changed.
