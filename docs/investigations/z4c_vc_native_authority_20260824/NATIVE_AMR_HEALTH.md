@@ -20,6 +20,19 @@ The later N256 record extension fails the native-AMR health gate:
 - The sampled axis-center curvature remains only 7.40e-3, so the runaway is
   noncentral in this diagnostic.
 
+Across the complete failed authority there are 160 accepted hierarchy states
+(159 topology transactions). The authority records 211 refinement requests,
+86,134 derefinement requests, 1,521 created leaves, 186 deleted leaves, and
+888 balance-induced leaves. These request totals count recorded per-MeshBlock
+flags and are not counts of successful coarsening transactions. Of the 159
+accepted transitions, 144 grow the leaf inventory, 13 shrink it, and two leave
+the count unchanged. There are 21 changes in the sign of successive leaf-count
+increments, and 146 event records contain both refinement and derefinement
+requests. The leaf inventory grows from 32 to a peak of 1,373 and terminates at
+1,367. This is strong accepted-tree turnover during the late cascade, not a
+simple monotonic sequence of refinements; it does not by itself identify the
+upstream instability.
+
 Observation: substantial constraint growth begins on the fixed hierarchy
 before the late refinement cascade. Inference: the current chi-only native
 sensor is late relative to the shortest/error-bearing scale, or a bulk mode

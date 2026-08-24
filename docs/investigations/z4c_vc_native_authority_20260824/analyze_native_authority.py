@@ -160,6 +160,36 @@ def main() -> None:
     event_time = np.asarray([float(event["time"]) for event in failure_events])
     event_leaves = np.asarray([event["leaf_count"] for event in failure_events])
     event_level = np.asarray([event["max_level"] for event in failure_events])
+    leaf_delta = np.diff(event_leaves)
+    leaf_sign = np.sign(leaf_delta)
+    health = {
+        "accepted_states": len(failure_events),
+        "accepted_transactions": len(failure_events) - 1,
+        "requested_refine_total": sum(int(event.get("requested_refine", 0))
+                                      for event in failure_events),
+        "requested_derefine_total": sum(int(event.get("requested_derefine", 0))
+                                        for event in failure_events),
+        "created_total": sum(int(event.get("created", 0))
+                             for event in failure_events),
+        "deleted_total": sum(int(event.get("deleted", 0))
+                             for event in failure_events),
+        "balance_induced_total": sum(int(event.get("balance_induced", 0))
+                                     for event in failure_events),
+        "transactions_growing_leaves": int(np.count_nonzero(leaf_delta > 0)),
+        "transactions_shrinking_leaves": int(np.count_nonzero(leaf_delta < 0)),
+        "transactions_unchanged_leaves": int(np.count_nonzero(leaf_delta == 0)),
+        "leaf_change_sign_turnovers": int(np.count_nonzero(
+            leaf_sign[:-1] * leaf_sign[1:] < 0)),
+        "events_with_both_request_types": sum(
+            int(event.get("requested_refine", 0)) > 0 and
+            int(event.get("requested_derefine", 0)) > 0
+            for event in failure_events),
+        "initial_leaf_count": int(event_leaves[0]),
+        "maximum_leaf_count": int(np.max(event_leaves)),
+        "terminal_leaf_count": int(event_leaves[-1]),
+        "maximum_logical_level": int(np.max(event_level)),
+        "maximum_physical_refinement_level": int(np.max(failure["maxRefLev"])),
+    }
 
     fig, axes = plt.subplots(3, 1, figsize=(11.0, 9.0), sharex=True,
                              constrained_layout=True)
@@ -236,6 +266,7 @@ def main() -> None:
             "fresh_first_post_repair_event": event_summary(failure_events[4]),
             "failure_terminal_event": event_summary(failure_events[-1]),
             "failure_event_count": len(failure_events),
+            "native_amr_health": health,
         },
         "tau4": {
             "history_median_constraint_order": history_summary["median_constraint_order"],

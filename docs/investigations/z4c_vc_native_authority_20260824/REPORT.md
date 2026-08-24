@@ -34,6 +34,14 @@ reaches logical level 23, physical level 20, 1,367 leaves, and
 `dt=1.07e-8 M` at `t=11.192887945 M`, while C reaches 1.40e14 and domain max
 |Kretschmann| reaches 1.60e25. Job 57525753 was cancelled at that fail gate.
 
+The failed authority contains 160 accepted hierarchy states and 159 topology
+transactions: 144 increase, 13 decrease, and two preserve the leaf count.
+It records 1,521 created leaves, 186 deleted leaves, 888 balance-induced
+leaves, and 21 successive leaf-growth/shrinkage sign changes. The inventory
+peaks at 1,373 leaves before terminating at 1,367. Refinement and derefinement
+requests coexist in 146 event records; these per-MeshBlock request counts are
+diagnostic flags, not accepted-coarsening counts.
+
 The observations strongly show that the instability is already developing
 before the refinement cascade. They do not yet decide whether the primary
 cause is parent under-resolution/poor chi sensing, a continuum or bulk
@@ -50,4 +58,5 @@ not evidence of critical behavior. The failed authority is preserved for
 diagnosis only.
 
 See `analysis/native_summary.json` for machine-readable results and
-`EVIDENCE_MANIFEST.json` for exact paths and hashes.
+`EVIDENCE_MANIFEST.json` for exact paths and hashes. The controlling-prompt
+gate mapping is recorded in `COMPLETION_AUDIT.md`.
