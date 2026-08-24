@@ -23,5 +23,39 @@ is to treat x2 as active in both 2D and 3D when selecting the all-lower child:
 (two_d || three_d) && (lower_child.lx2 & 1)
 ```
 
-No tolerance or transfer rule should be changed. Green results and the rest
-of the matrix are pending that predicate repair.
+No tolerance or transfer rule was changed. The x2 active-dimension predicate
+was repaired in both the production family selector and its independent audit.
+
+## Green matrix
+
+Command:
+
+```text
+ctest --test-dir build/vc-derefine-release-openmp \
+  -R '^athena\.z4c_vc_multi_family_derefine' \
+  --output-on-failure --timeout 180
+```
+
+All seven focused one-rank tests pass:
+
+| dimensions/state | bulk/transfer | families | old/new leaves | slot shifts |
+|---|---:|---:|---:|---:|
+| 2D nonconstant | O2/q4 | 2 | 38/32 | 0, -3 |
+| 2D nonconstant | O4/q6 | 3 | 41/32 | 0, -3, -6 |
+| 2D nonconstant | O6/q8 | 3 | 41/32 | 0, -3, -6 |
+| 2D constant | O2/q4 | 3 | 41/32 | 0, -3, -6 |
+| 3D nonconstant | O2/q4 | 2 | 30/16 | 0, -7 |
+| 3D nonconstant | O4/q6 | 2 | 30/16 | 0, -7 |
+| 3D nonconstant | O6/q8 | 2 | 30/16 | 0, -7 |
+
+Every reconstructed parent matches the independent coincident-node oracle at
+A5 and A6 for all 25 variables. Every `a5_modified_live_old_gids` and
+`a6_bad_unaffected_old_gids` list is empty. The executable SHA-256 for this
+matrix is
+`d55b477cdf63467749278194e768717f56b65ee5ef811d8a99cd877b47465987`.
+
+This matrix covers stationary and left-moving parent slots, separated
+families, and adjacent refined-family source runs. A same-rank move-right case
+requires a load-balance partition change and is covered with the MPI ownership
+matrix rather than synthesized in one-rank storage. A mixed refine/derefine
+transaction remains to be added.

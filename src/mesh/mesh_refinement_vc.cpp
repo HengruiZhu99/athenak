@@ -291,7 +291,7 @@ void BeginVCDerefineSlotAudit(
     if (refine_flag.h_view(old_gid) >= -1) continue;
     const auto &location = mesh->lloc_eachmb[old_gid];
     if ((location.lx1 & 1) != 0 ||
-        (mesh->two_d && (location.lx2 & 1) != 0) ||
+        ((mesh->two_d || mesh->three_d) && (location.lx2 & 1) != 0) ||
         (mesh->three_d && (location.lx3 & 1) != 0)) {
       continue;
     }
@@ -746,7 +746,7 @@ void MeshRefinement::DerefineVCSameRank(DvceArray5D<Real> &a,
     if (refine_flag.h_view(oldm) >= -1) continue;
     const auto &lower_child = pmy_mesh->lloc_eachmb[oldm];
     if ((lower_child.lx1 & 1) != 0 ||
-        (two_d && (lower_child.lx2 & 1) != 0) ||
+        ((two_d || three_d) && (lower_child.lx2 & 1) != 0) ||
         (three_d && (lower_child.lx3 & 1) != 0)) {
       continue;
     }
