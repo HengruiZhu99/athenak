@@ -40,6 +40,7 @@ cp "${coeff}" "${RUN_ROOT}/brill_global_128x32.coefficients"
 export ATHENA_Z4C_VC_AMR_LIFECYCLE=all
 export ATHENA_Z4C_VC_AMR_LIFECYCLE_JSONL="${RUN_ROOT}/vc_amr_lifecycle.jsonl"
 export ATHENA_Z4C_VC_DEREFINE_SLOT_AUDIT="${RUN_ROOT}/vc_derefine_slot_audit.json"
+export ATHENA_AMR_HISTORY_COMPATIBLE_SOURCE_ID="${expected_history_source}"
 # The legacy z4c/amr_jump_diagnostic path is CC-only and deliberately rejects
 # native VC storage.  The VC lifecycle and slot-oracle diagnostics above are
 # the bounded writer evidence for this replay.
@@ -59,7 +60,6 @@ command=(srun --nodes=1 --ntasks=1 --ntasks-per-node=1 --cpus-per-task=32
   mesh_refinement/max_nmb_per_rank="${max_nmb}"
   mesh_refinement/amr_history_mode=replay
   mesh_refinement/amr_history_file=n256_amr_history.jsonl
-  mesh_refinement/amr_history_compatible_source_id="${expected_history_source}"
   time/tlim=0.31 time/nlim=-1 job/basename="${CASE_LABEL}_event3"
   problem/brill_global_coefficients_file=brill_global_128x32.coefficients
   problem/constraint_summary_file="${CASE_LABEL}_event3-constraints.dat")
