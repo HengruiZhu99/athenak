@@ -1,0 +1,59 @@
+JobId=57504956 JobName=interactive
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:07 TimeLimit=01:00:00 TimeMin=N/A
+   SubmitTime=2026-08-23T23:06:08 EligibleTime=2026-08-23T23:06:08
+   AccrueTime=Unknown
+   StartTime=2026-08-23T23:06:08 EndTime=2026-08-24T00:06:08 Deadline=N/A
+   PreemptEligibleTime=2026-08-23T23:06:08 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-23T23:06:08 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login01:1117560
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid001000
+   BatchHost=nid001000
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=4 CPUs/Task=8 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=8 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100&hbm40g DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=bash
+   SubmitLine=salloc -A m3328_g -C gpu&hbm40g -q shared_interactive -N 1 -n 4 -c 8 --gpus=1 -t 01:00:00 bash -lc export COLLAPSE_ROOT=/pscratch/sd/h/hzhu/collapse-critical-perlmutter; source /pscratch/sd/h/hzhu/collapse-critical-perlmutter/workflow/profiles/perlmutter-a100.sh; export SOURCE_ROOT=/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/source CPU_BUILD_ROOT=/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/build-cpu-mpi-openmp CUDA_BUILD_ROOT=/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/build-cuda-mpi OUTPUT_ROOT=/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/regressions_6dd_targeted_v1; /pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/perlmutter_targeted_qualification_v3.sh
+   WorkDir=/global/u1/h/hzhu
+   TresPerJob=gres/gpu:1
+   TresPerTask=cpu=8
+   ResvPorts=63972-63980
+
+
+Currently Loaded Modules:
+  1) gcc-native/14       (c)        8) craype-x86-milan      (cpe)
+  2) craype/2.7.36       (c)        9) cray-mpich/9.1.0      (mpi)
+  3) cray-dsmml/0.3.1              10) cudatoolkit/13.2      (g)
+  4) libfabric/1.22.0              11) craype-accel-nvidia80 (cpe)
+  5) craype-network-ofi  (cpe)     12) cray-hdf5/1.12.2.9
+  6) cray-libsci/26.03.0           13) cmake/3.30.2
+  7) PrgEnv-gnu/8.7.0    (prgenv)
+
+  Where:
+   c:       Compiler
+   cpe:     Cray Programming Environment Modules
+   g:       built for GPU
+   mpi:     MPI Providers
+   prgenv:  Programming Environment Modules
+
+ 
+
+6dd20656a305f2543bbbd7001550c6ac67019180
+551b16fab36ec1d4ce913b39a6478384723aa382
+6739bc623081648af9e752b616d9671527922cbf
+dde704e91579727b6004efd1b7693bc2411f9785435d5c1e11d425d4809eeb8b  /pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/build-cpu-mpi-openmp/src/athena
+eadabf003bc8d246631f23a3fcbf2fb16ce00456e636dfedad4402d6a8e665bd  /pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/build-cpu-mpi-openmp/CMakeCache.txt
+7f5bd2fc5d05233822c583ec677e91867eaf6f0c8e2d7ca521cfba93c091a55b  /pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/build-cuda-mpi/src/athena
+dd913132ce02c2a4a1ba74e1ed222d8872595c21a885eb35aaf54f9409013043  /pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/build-cuda-mpi/CMakeCache.txt
+Python 3.11.7
+GPU 0: NVIDIA A100-PCIE-40GB (UUID: GPU-a0a426b9-74ff-48c5-9d0a-f1b6ff09c18d)
+0, NVIDIA A100-PCIE-40GB, 40960 MiB, 7518 MiB, 32924 MiB

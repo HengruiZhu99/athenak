@@ -1,0 +1,2333 @@
+Start testing: Aug 24 02:18 EDT
+----------------------------------------------------------
+43/139 Testing: athena.z4c_vc_dynamic_amr_3d_cartesian_o6
+43/139 Test: athena.z4c_vc_dynamic_amr_3d_cartesian_o6
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_3d_cartesian_o6" "--dimensions" "3" "--geometry" "cartesian" "--order" "6" "--root-leaves" "1" "--expected-volume" "64.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_3d_cartesian_o6" start time: Aug 24 02:18 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 3D cartesian O6 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   3.82 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_3d_cartesian_o6" end time: Aug 24 02:18 EDT
+"athena.z4c_vc_dynamic_amr_3d_cartesian_o6" time elapsed: 00:00:03
+----------------------------------------------------------
+
+33/139 Testing: athena.z4c_vc_multi_family_derefine_3d_o6_q8
+33/139 Test: athena.z4c_vc_multi_family_derefine_3d_o6_q8
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_multi_family_derefine_3d.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_multi_family_derefine_3d_o6_q8" "--dimensions" "3" "--family-count" "2" "--order" "6" "--transfer-order" "8"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_multi_family_derefine_3d_o6_q8" start time: Aug 24 02:18 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC multi-family derefinement preserves exact staging and logical relocation for all 25 variables
+<end of output>
+Test time =   9.99 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_multi_family_derefine_3d_o6_q8" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_multi_family_derefine_3d_o6_q8" time elapsed: 00:00:09
+----------------------------------------------------------
+
+2/139 Testing: athena.z4c_cartoon_mms_static
+2/139 Test: athena.z4c_cartoon_mms_static
+Command: "/home/hzhu/.local/bin/uv" "run" "--no-project" "--with-requirements" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/requirements-z4c-cartoon-mms.txt" "python" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_cartoon_mms_static_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_mms_static" start time: Aug 24 02:18 EDT
+Output:
+----------------------------------------------------------
+57d8e9edd333e0450b94caf415df5ecdda917138de6514f77c9fa506269ebaf3 src/pgen/unit_tests/z4c_cartoon_derivatives_oracle.hpp
+4e3b61961097af105b915169c29f7f19e577218ec73061bb94204b7dbdfa43ad tst/unit/z4c/z4c_cartoon_derivatives_reference.json
+eda57946cce1af9ae3acfb439c9d89e21b8980bbf48a9f375e8948e527ac2ba8 tst/unit/z4c/z4c_cartoon_derivatives_series.json
+Cartoon MMS static and coverage gates passed
+<end of output>
+Test time =  12.03 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_mms_static" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_mms_static" time elapsed: 00:00:12
+----------------------------------------------------------
+
+40/139 Testing: athena.z4c_vc_dynamic_amr_3d_cartesian_o4
+40/139 Test: athena.z4c_vc_dynamic_amr_3d_cartesian_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_3d_cartesian_o4" "--dimensions" "3" "--geometry" "cartesian" "--order" "4" "--root-leaves" "1" "--expected-volume" "64.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_3d_cartesian_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 3D cartesian O4 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   4.82 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_3d_cartesian_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_3d_cartesian_o4" time elapsed: 00:00:04
+----------------------------------------------------------
+
+96/139 Testing: athena.z4c_cartoon_frozen_operator_analysis
+96/139 Test: athena.z4c_cartoon_frozen_operator_analysis
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_cartoon_frozen_operator_analysis.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "--output" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_cartoon_frozen_operator_analysis.json"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_frozen_operator_analysis" start time: Aug 24 02:18 EDT
+Output:
+----------------------------------------------------------
+Frozen Cartoon radial operator analysis passed
+<end of output>
+Test time =  13.94 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_frozen_operator_analysis" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_frozen_operator_analysis" time elapsed: 00:00:13
+----------------------------------------------------------
+
+37/139 Testing: athena.z4c_vc_dynamic_amr_3d_cartesian_o2
+37/139 Test: athena.z4c_vc_dynamic_amr_3d_cartesian_o2
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_3d_cartesian_o2" "--dimensions" "3" "--geometry" "cartesian" "--order" "2" "--root-leaves" "1" "--expected-volume" "64.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_3d_cartesian_o2" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 3D cartesian O2 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   3.48 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_3d_cartesian_o2" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_3d_cartesian_o2" time elapsed: 00:00:03
+----------------------------------------------------------
+
+49/139 Testing: athena.z4c_cc_lifecycle_3d_cartesian
+49/139 Test: athena.z4c_cc_lifecycle_3d_cartesian
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_cc_lifecycle_3d_cartesian" "--centering" "cell" "--dimensions" "3" "--geometry" "cartesian" "--order" "6" "--root-leaves" "1" "--expected-volume" "64.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cc_lifecycle_3d_cartesian" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: cell-centered 3D cartesian O6 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   6.38 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cc_lifecycle_3d_cartesian" end time: Aug 24 02:19 EDT
+"athena.z4c_cc_lifecycle_3d_cartesian" time elapsed: 00:00:06
+----------------------------------------------------------
+
+50/139 Testing: athena.z4c_vc_dynamic_amr_invalid_target
+50/139 Test: athena.z4c_vc_dynamic_amr_invalid_target
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_invalid_target" "--dimensions" "3" "--geometry" "cartesian" "--order" "6" "--root-leaves" "1" "--expected-volume" "64.0" "--invalid-target-test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_invalid_target" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: invalid vertex-centered deterministic AMR target fails closed
+<end of output>
+Test time =   1.47 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_invalid_target" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_invalid_target" time elapsed: 00:00:01
+----------------------------------------------------------
+
+53/139 Testing: athena.z4c_vc_static_multilevel_wave
+53/139 Test: athena.z4c_vc_static_multilevel_wave
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_static_multilevel_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_static_multilevel_wave.athinput" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_vc_static_multilevel_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_static_multilevel_wave" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC static multilevel wave shared_mismatch=0.0 interface_constraint_rms=1.5393915533403667e-08 interior_constraint_rms=2.2556796494649476e-08 axis_constraint_rms=0.0
+<end of output>
+Test time =   1.48 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_static_multilevel_wave" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_static_multilevel_wave" time elapsed: 00:00:01
+----------------------------------------------------------
+
+62/139 Testing: athena.z4c_cell_gauge_wave_3d_cartesian_o6
+62/139 Test: athena.z4c_cell_gauge_wave_3d_cartesian_o6
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_cell_gauge_wave_3d_cartesian_o6" "--centering" "cell" "--order" "6"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cell_gauge_wave_3d_cartesian_o6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: cell O6 analytic gauge wave errors=[(2.5713565194109073e-08, 5.643562252287751e-08), (4.113896091066561e-10, 9.074221008929448e-10)] observed_order=5.96588048926701
+<end of output>
+Test time =   1.88 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cell_gauge_wave_3d_cartesian_o6" end time: Aug 24 02:19 EDT
+"athena.z4c_cell_gauge_wave_3d_cartesian_o6" time elapsed: 00:00:01
+----------------------------------------------------------
+
+56/139 Testing: athena.z4c_vc_static_multilevel_3d_cartesian_o4
+56/139 Test: athena.z4c_vc_static_multilevel_3d_cartesian_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_static_multilevel_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_static_multilevel_wave.athinput" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_static_multilevel_3d_cartesian_o4" "--expected-leaves" "9" "--interface-x1" "0.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_static_multilevel_3d_cartesian_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC static multilevel wave shared_mismatch=0.0 interface_constraint_rms=1.5393915533403667e-08 interior_constraint_rms=2.2556796494649476e-08 axis_constraint_rms=0.0
+<end of output>
+Test time =   1.52 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_static_multilevel_3d_cartesian_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_static_multilevel_3d_cartesian_o4" time elapsed: 00:00:01
+----------------------------------------------------------
+
+63/139 Testing: athena.z4c_vertex_gauge_wave_2d_cartesian_o2
+63/139 Test: athena.z4c_vertex_gauge_wave_2d_cartesian_o2
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vertex_gauge_wave_2d_cartesian_o2" "--centering" "vertex" "--order" "2"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vertex_gauge_wave_2d_cartesian_o2" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex O2 analytic gauge wave errors=[(1.474600377701754e-05, 3.5840660781522905e-05), (3.778113825466844e-06, 9.301526172251899e-06)] observed_order=1.9645859591926467
+<end of output>
+Test time =   0.26 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vertex_gauge_wave_2d_cartesian_o2" end time: Aug 24 02:19 EDT
+"athena.z4c_vertex_gauge_wave_2d_cartesian_o2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+64/139 Testing: athena.z4c_vertex_gauge_wave_3d_cartesian_o2
+64/139 Test: athena.z4c_vertex_gauge_wave_3d_cartesian_o2
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vertex_gauge_wave_3d_cartesian_o2" "--centering" "vertex" "--order" "2"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vertex_gauge_wave_3d_cartesian_o2" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex O2 analytic gauge wave errors=[(1.474600377701754e-05, 3.5840660781522905e-05), (3.778113825466844e-06, 9.301526172251899e-06)] observed_order=1.9645859591926467
+<end of output>
+Test time =   1.23 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vertex_gauge_wave_3d_cartesian_o2" end time: Aug 24 02:19 EDT
+"athena.z4c_vertex_gauge_wave_3d_cartesian_o2" time elapsed: 00:00:01
+----------------------------------------------------------
+
+65/139 Testing: athena.z4c_vertex_gauge_wave_2d_cartesian_o4
+65/139 Test: athena.z4c_vertex_gauge_wave_2d_cartesian_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vertex_gauge_wave_2d_cartesian_o4" "--centering" "vertex" "--order" "4"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vertex_gauge_wave_2d_cartesian_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex O4 analytic gauge wave errors=[(5.796347706330965e-07, 1.4368087497718552e-06), (3.680730637991287e-08, 9.256519956904376e-08)] observed_order=3.9770800607747967
+<end of output>
+Test time =   0.28 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vertex_gauge_wave_2d_cartesian_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_vertex_gauge_wave_2d_cartesian_o4" time elapsed: 00:00:00
+----------------------------------------------------------
+
+68/139 Testing: athena.z4c_vertex_gauge_wave_3d_cartesian_o6
+68/139 Test: athena.z4c_vertex_gauge_wave_3d_cartesian_o6
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vertex_gauge_wave_3d_cartesian_o6" "--centering" "vertex" "--order" "6"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vertex_gauge_wave_3d_cartesian_o6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex O6 analytic gauge wave errors=[(2.099511661255432e-08, 5.557380722926927e-08), (3.358988512213581e-10, 9.086175980989493e-10)] observed_order=5.965883129544064
+<end of output>
+Test time =   2.60 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vertex_gauge_wave_3d_cartesian_o6" end time: Aug 24 02:19 EDT
+"athena.z4c_vertex_gauge_wave_3d_cartesian_o6" time elapsed: 00:00:02
+----------------------------------------------------------
+
+76/139 Testing: athena.z4c_vc_restart_3d_cartesian
+76/139 Test: athena.z4c_vc_restart_3d_cartesian
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_restart_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_restart_3d_cartesian" "--dimensions" "3" "--active-n1" "17" "--active-n2" "17" "--active-n3" "17"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_restart_3d_cartesian" start time: Aug 24 02:18 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC restart, AMR continuation, rank change, and rejection
+<end of output>
+Test time =  24.44 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_restart_3d_cartesian" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_restart_3d_cartesian" time elapsed: 00:00:24
+----------------------------------------------------------
+
+31/139 Testing: athena.z4c_vc_multi_family_derefine_3d_o2_q4
+31/139 Test: athena.z4c_vc_multi_family_derefine_3d_o2_q4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_multi_family_derefine_3d.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_multi_family_derefine_3d_o2_q4" "--dimensions" "3" "--family-count" "2" "--order" "2" "--transfer-order" "4"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_multi_family_derefine_3d_o2_q4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC multi-family derefinement preserves exact staging and logical relocation for all 25 variables
+<end of output>
+Test time =   4.46 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_multi_family_derefine_3d_o2_q4" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_multi_family_derefine_3d_o2_q4" time elapsed: 00:00:04
+----------------------------------------------------------
+
+60/139 Testing: athena.z4c_cell_gauge_wave_3d_cartesian_o4
+60/139 Test: athena.z4c_cell_gauge_wave_3d_cartesian_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_cell_gauge_wave_3d_cartesian_o4" "--centering" "cell" "--order" "4"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cell_gauge_wave_3d_cartesian_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: cell O4 analytic gauge wave errors=[(7.098985188388475e-07, 1.4557546108901918e-06), (4.507914386437367e-08, 9.245270010628179e-08)] observed_order=3.977080782269314
+<end of output>
+Test time =   1.22 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cell_gauge_wave_3d_cartesian_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_cell_gauge_wave_3d_cartesian_o4" time elapsed: 00:00:01
+----------------------------------------------------------
+
+32/139 Testing: athena.z4c_vc_multi_family_derefine_3d_o4_q6
+32/139 Test: athena.z4c_vc_multi_family_derefine_3d_o4_q6
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_multi_family_derefine_3d.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_multi_family_derefine_3d_o4_q6" "--dimensions" "3" "--family-count" "2" "--order" "4" "--transfer-order" "6"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_multi_family_derefine_3d_o4_q6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC multi-family derefinement preserves exact staging and logical relocation for all 25 variables
+<end of output>
+Test time =   5.73 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_multi_family_derefine_3d_o4_q6" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_multi_family_derefine_3d_o4_q6" time elapsed: 00:00:05
+----------------------------------------------------------
+
+69/139 Testing: athena.z4c_vc_amr_history
+69/139 Test: athena.z4c_vc_amr_history
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_amr_history_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_vc_amr_history_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_amr_history" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC 2D AMR history record/replay, 2x cells, restart, MPI decomposition, and explicit CC-topology bridge
+<end of output>
+Test time =   2.48 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_amr_history" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_amr_history" time elapsed: 00:00:02
+----------------------------------------------------------
+
+58/139 Testing: athena.z4c_cell_gauge_wave_3d_cartesian_o2
+58/139 Test: athena.z4c_cell_gauge_wave_3d_cartesian_o2
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_cell_gauge_wave_3d_cartesian_o2" "--centering" "cell" "--order" "2"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cell_gauge_wave_3d_cartesian_o2" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: cell O2 analytic gauge wave errors=[(1.8059466581905667e-05, 3.6289472910669125e-05), (4.6270659284944515e-06, 9.29051623683552e-06)] observed_order=1.9645857205905086
+<end of output>
+Test time =   0.85 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cell_gauge_wave_3d_cartesian_o2" end time: Aug 24 02:19 EDT
+"athena.z4c_cell_gauge_wave_3d_cartesian_o2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+89/139 Testing: athena.z4c_kerr_puncture_reference
+89/139 Test: athena.z4c_kerr_puncture_reference
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/kerr_puncture_reference_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_kerr_puncture_reference" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+kerr_puncture_reference=PASS records=13 H=1.206636e-08 M=5.297250e-10
+<end of output>
+Test time =   0.70 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_kerr_puncture_reference" end time: Aug 24 02:19 EDT
+"athena.z4c_kerr_puncture_reference" time elapsed: 00:00:00
+----------------------------------------------------------
+
+131/139 Testing: athena.z4c_rhs_policy_production_host_exact
+131/139 Test: athena.z4c_rhs_policy_production_host_exact
+Command: "/usr/bin/cmake" "-DATHENA=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "-DPYTHON_EXECUTABLE=/usr/bin/python3" "-DSOURCE_DIR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "-DTEST_DIR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_rhs_policy_production" "-P" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_rhs_policy_production_test.cmake"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_rhs_policy_production_host_exact" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+-- order 2 numeric fingerprints: state=a0066730ef5c8968c2540feee6d32ac3d0033a30cd3883faaefc05110e6a5c0a diagnostic=89e90c07392c67c70fa3dbb2bb7ffe6afc59c832a6f09b96b2771f2ef82b4e89 history=7327ee50dc7373b689651c34b156d02767c58b10f2f7710995075f35def1e6ed waveform=31884bda4eb16526f926ca848652b8479e4cb9b7aabe18d43a29b1ed11bcb745
+-- order 4 lifecycle sentinel: t=0 maxAbsKret=inf (pre-ADM initialization); post-initialization history is finite
+-- order 4 numeric fingerprints: state=52166804e0cef64625d6abaae9d3494f90e6ffdd5cbe534d153ff400bef4bd54 diagnostic=25451e2201e7aea356ee569d61f13ca011d42e45215ca39af940240183770dbb history=1c3a367c3ed66e8725e1a33bb4300517fa0770fa3b751ede934e895db7d92ab2 waveform=6dbfc708bc97b0ddc729ce938ab96c0d9d2663bd16464d0ddcca441ebdbca374
+-- order 6 lifecycle sentinel: t=0 maxAbsKret=inf (pre-ADM initialization); post-initialization history is finite
+-- order 6 numeric fingerprints: state=f807db641a0f50aee23413d4b980f23a6e348d50d9cee4f182b6374d4c8dba8e diagnostic=0941c2019c8d94a7f4a02ac6ac6b9a1747eaa2463ad81b749c0d28d1c2208673 history=6fc421deef87802913cadd5c0599ad26b04729206132beecf860d61444f88a60 waveform=d8d493b2e9072c3b5962748d36c957d29b53ca39a150438af59c178e5efa667e
+-- Enforced Cartesian Z4c base/golden regression passed on Serial
+
+-- Cartesian production RHS/constraints/Sbc/diagnostics/Weyl orders passed
+<end of output>
+Test time =   0.48 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_rhs_policy_production_host_exact" end time: Aug 24 02:19 EDT
+"athena.z4c_rhs_policy_production_host_exact" time elapsed: 00:00:00
+----------------------------------------------------------
+
+66/139 Testing: athena.z4c_vertex_gauge_wave_3d_cartesian_o4
+66/139 Test: athena.z4c_vertex_gauge_wave_3d_cartesian_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vertex_gauge_wave_3d_cartesian_o4" "--centering" "vertex" "--order" "4"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vertex_gauge_wave_3d_cartesian_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex O4 analytic gauge wave errors=[(5.796347705716381e-07, 1.436808750177672e-06), (3.6807306406900035e-08, 9.256519958714994e-08)] observed_order=3.977080059564043
+<end of output>
+Test time =   1.75 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vertex_gauge_wave_3d_cartesian_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_vertex_gauge_wave_3d_cartesian_o4" time elapsed: 00:00:01
+----------------------------------------------------------
+
+75/139 Testing: athena.z4c_vc_restart_2d_cartoon
+75/139 Test: athena.z4c_vc_restart_2d_cartoon
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_restart_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_restart_2d_cartoon" "--dimensions" "2" "--active-n1" "17" "--active-n2" "17" "--active-n3" "1"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_restart_2d_cartoon" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC restart, AMR continuation, rank change, and rejection
+<end of output>
+Test time =   0.99 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_restart_2d_cartoon" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_restart_2d_cartoon" time elapsed: 00:00:00
+----------------------------------------------------------
+
+71/139 Testing: athena.z4c_vc_restart
+71/139 Test: athena.z4c_vc_restart
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_restart_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_vc_restart_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_restart" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC restart, AMR continuation, rank change, and rejection
+<end of output>
+Test time =   0.98 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_restart" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_restart" time elapsed: 00:00:00
+----------------------------------------------------------
+
+73/139 Testing: athena.z4c_vc_restart_2d_cartesian_o4_q4
+73/139 Test: athena.z4c_vc_restart_2d_cartesian_o4_q4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_restart_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_restart_2d_cartesian_o4_q4" "--dimensions" "2" "--active-n1" "17" "--active-n2" "17" "--active-n3" "1" "--spatial-order" "4" "--vertex-prolongation-order" "4"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_restart_2d_cartesian_o4_q4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC restart, AMR continuation, rank change, and rejection
+<end of output>
+Test time =   0.67 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_restart_2d_cartesian_o4_q4" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_restart_2d_cartesian_o4_q4" time elapsed: 00:00:00
+----------------------------------------------------------
+
+72/139 Testing: athena.z4c_vc_restart_2d_cartesian
+72/139 Test: athena.z4c_vc_restart_2d_cartesian
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_restart_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_restart_2d_cartesian" "--dimensions" "2" "--active-n1" "17" "--active-n2" "17" "--active-n3" "1"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_restart_2d_cartesian" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC restart, AMR continuation, rank change, and rejection
+<end of output>
+Test time =   0.87 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_restart_2d_cartesian" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_restart_2d_cartesian" time elapsed: 00:00:00
+----------------------------------------------------------
+
+94/139 Testing: athena.z4c_kerr_half_plane_amr_orders
+94/139 Test: athena.z4c_kerr_half_plane_amr_orders
+Command: "/usr/bin/cmake" "-DATHENA=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "-DINPUT=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_kerr_half_plane_amr.athinput" "-DTEST_DIR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_kerr_half_plane_amr_test" "-P" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_kerr_half_plane_amr_test.cmake"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_kerr_half_plane_amr_orders" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+-- half-plane Kerr O2/O4/O6 axis-touching and multi-block AMR runs passed
+<end of output>
+Test time =   0.48 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_kerr_half_plane_amr_orders" end time: Aug 24 02:19 EDT
+"athena.z4c_kerr_half_plane_amr_orders" time elapsed: 00:00:00
+----------------------------------------------------------
+
+74/139 Testing: athena.z4c_vc_restart_2d_cartesian_o4_q6
+74/139 Test: athena.z4c_vc_restart_2d_cartesian_o4_q6
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_restart_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_restart_2d_cartesian_o4_q6" "--dimensions" "2" "--active-n1" "17" "--active-n2" "17" "--active-n3" "1" "--spatial-order" "4" "--vertex-prolongation-order" "6"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_restart_2d_cartesian_o4_q6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC restart, AMR continuation, rank change, and rejection
+<end of output>
+Test time =   0.66 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_restart_2d_cartesian_o4_q6" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_restart_2d_cartesian_o4_q6" time elapsed: 00:00:00
+----------------------------------------------------------
+
+138/139 Testing: athena.z4c_preallocation
+138/139 Test: athena.z4c_preallocation
+Command: "/usr/bin/cmake" "-DATHENA=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "-DSOURCE_DIR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "-DTEST_DIR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_preallocation_test" "-P" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_preallocation_test.cmake"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_preallocation" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+-- Z4c production preallocation process tests passed
+<end of output>
+Test time =   0.39 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_preallocation" end time: Aug 24 02:19 EDT
+"athena.z4c_preallocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/139 Testing: athena.z4c_vc_multi_family_derefine_2d_o4_q6
+28/139 Test: athena.z4c_vc_multi_family_derefine_2d_o4_q6
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_multi_family_derefine_2d_o4_q6" "--dimensions" "2" "--family-count" "3" "--order" "4" "--transfer-order" "6"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_multi_family_derefine_2d_o4_q6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC multi-family derefinement preserves exact staging and logical relocation for all 25 variables
+<end of output>
+Test time =   0.33 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_multi_family_derefine_2d_o4_q6" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_multi_family_derefine_2d_o4_q6" time elapsed: 00:00:00
+----------------------------------------------------------
+
+55/139 Testing: athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4
+55/139 Test: athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_static_multilevel_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_static_multilevel_2d_cartoon_axis.athinput" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4" "--expected-leaves" "5" "--interface-x1" "1.0" "--cartoon-axis"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC static multilevel wave shared_mismatch=0.0 interface_constraint_rms=6.183746169487156e-14 interior_constraint_rms=1.0739248963471691e-14 axis_constraint_rms=4.827845055271407e-30
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/139 Testing: athena.z4c_vc_multi_family_derefine_2d_o6_q8
+29/139 Test: athena.z4c_vc_multi_family_derefine_2d_o6_q8
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_multi_family_derefine_2d_o6_q8" "--dimensions" "2" "--family-count" "3" "--order" "6" "--transfer-order" "8"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_multi_family_derefine_2d_o6_q8" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC multi-family derefinement preserves exact staging and logical relocation for all 25 variables
+<end of output>
+Test time =   0.44 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_multi_family_derefine_2d_o6_q8" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_multi_family_derefine_2d_o6_q8" time elapsed: 00:00:00
+----------------------------------------------------------
+
+130/139 Testing: athena.z4c_policy_migration
+130/139 Test: athena.z4c_policy_migration
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_policy_migration_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_policy_migration" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c policy migration ownership and host-dispatch contract passed
+<end of output>
+Test time =   0.23 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_policy_migration" end time: Aug 24 02:19 EDT
+"athena.z4c_policy_migration" time elapsed: 00:00:00
+----------------------------------------------------------
+
+61/139 Testing: athena.z4c_cell_gauge_wave_2d_cartesian_o6
+61/139 Test: athena.z4c_cell_gauge_wave_2d_cartesian_o6
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_cell_gauge_wave_2d_cartesian_o6" "--centering" "cell" "--order" "6"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cell_gauge_wave_2d_cartesian_o6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: cell O6 analytic gauge wave errors=[(2.5713565236717202e-08, 5.643562234826675e-08), (4.1138970451943163e-10, 9.074221461041754e-10)] observed_order=5.96588015705624
+<end of output>
+Test time =   0.27 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cell_gauge_wave_2d_cartesian_o6" end time: Aug 24 02:19 EDT
+"athena.z4c_cell_gauge_wave_2d_cartesian_o6" time elapsed: 00:00:00
+----------------------------------------------------------
+
+57/139 Testing: athena.z4c_cell_gauge_wave_2d_cartesian_o2
+57/139 Test: athena.z4c_cell_gauge_wave_2d_cartesian_o2
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_cell_gauge_wave_2d_cartesian_o2" "--centering" "cell" "--order" "2"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cell_gauge_wave_2d_cartesian_o2" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: cell O2 analytic gauge wave errors=[(1.8059466581905667e-05, 3.6289472910669125e-05), (4.6270659284944515e-06, 9.29051623683552e-06)] observed_order=1.9645857205905086
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cell_gauge_wave_2d_cartesian_o2" end time: Aug 24 02:19 EDT
+"athena.z4c_cell_gauge_wave_2d_cartesian_o2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+67/139 Testing: athena.z4c_vertex_gauge_wave_2d_cartesian_o6
+67/139 Test: athena.z4c_vertex_gauge_wave_2d_cartesian_o6
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vertex_gauge_wave_2d_cartesian_o6" "--centering" "vertex" "--order" "6"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vertex_gauge_wave_2d_cartesian_o6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex O6 analytic gauge wave errors=[(2.0995116697046382e-08, 5.5573807350049395e-08), (3.358988688521292e-10, 9.086186359514789e-10)] observed_order=5.965883059625342
+<end of output>
+Test time =   0.34 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vertex_gauge_wave_2d_cartesian_o6" end time: Aug 24 02:19 EDT
+"athena.z4c_vertex_gauge_wave_2d_cartesian_o6" time elapsed: 00:00:00
+----------------------------------------------------------
+
+54/139 Testing: athena.z4c_vc_static_multilevel_2d_cartesian_o4
+54/139 Test: athena.z4c_vc_static_multilevel_2d_cartesian_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_static_multilevel_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_static_multilevel_2d_cartesian.athinput" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_static_multilevel_2d_cartesian_o4" "--expected-leaves" "5" "--interface-x1" "0.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_static_multilevel_2d_cartesian_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC static multilevel wave shared_mismatch=0.0 interface_constraint_rms=1.5895523956917604e-08 interior_constraint_rms=2.2507344723312517e-08 axis_constraint_rms=0.0
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_static_multilevel_2d_cartesian_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_static_multilevel_2d_cartesian_o4" time elapsed: 00:00:00
+----------------------------------------------------------
+
+48/139 Testing: athena.z4c_cc_lifecycle_2d_cartoon
+48/139 Test: athena.z4c_cc_lifecycle_2d_cartoon
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_cc_lifecycle_2d_cartoon" "--centering" "cell" "--dimensions" "2" "--geometry" "cartoon" "--order" "6" "--root-leaves" "4" "--expected-volume" "201.06192982974676"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cc_lifecycle_2d_cartoon" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: cell-centered 2D cartoon O6 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.23 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cc_lifecycle_2d_cartoon" end time: Aug 24 02:19 EDT
+"athena.z4c_cc_lifecycle_2d_cartoon" time elapsed: 00:00:00
+----------------------------------------------------------
+
+95/139 Testing: athena.z4c_kerr_half_plane_restart
+95/139 Test: athena.z4c_kerr_half_plane_restart
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_kerr_half_plane_restart_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_kerr_half_plane_restart.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_kerr_half_plane_restart_test" "--python" "/usr/bin/python3" "--history-validator" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_cartoon_history_test.py"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_kerr_half_plane_restart" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+half-plane Cartoon restart continuation is byte-identical
+<end of output>
+Test time =   0.30 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_kerr_half_plane_restart" end time: Aug 24 02:19 EDT
+"athena.z4c_kerr_half_plane_restart" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/139 Testing: athena.z4c_cc_lifecycle_2d_cartesian
+47/139 Test: athena.z4c_cc_lifecycle_2d_cartesian
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_cc_lifecycle_2d_cartesian" "--centering" "cell" "--dimensions" "2" "--geometry" "cartesian" "--order" "6" "--root-leaves" "4" "--expected-volume" "16.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cc_lifecycle_2d_cartesian" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: cell-centered 2D cartesian O6 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.22 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cc_lifecycle_2d_cartesian" end time: Aug 24 02:19 EDT
+"athena.z4c_cc_lifecycle_2d_cartesian" time elapsed: 00:00:00
+----------------------------------------------------------
+
+91/139 Testing: athena.z4c_kerr_half_plane_init
+91/139 Test: athena.z4c_kerr_half_plane_init
+Command: "/usr/bin/cmake" "-DATHENA=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "-DINPUT=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_kerr_half_plane_init.athinput" "-DTEST_DIR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_kerr_half_plane_init_test" "-DPYTHON=/usr/bin/python3" "-DSOURCE_DIR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "-DHISTORY_VALIDATOR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_cartoon_history_test.py" "-DFAILURE_REGION_EXTRACTOR=/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_cartoon_failure_region_extract.py" "-P" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_kerr_half_plane_init_test.cmake"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_kerr_half_plane_init" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+-- half-plane Kerr initialization, RK parity tasks, diagnostic history, and failure-region extraction passed
+<end of output>
+Test time =   0.25 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_kerr_half_plane_init" end time: Aug 24 02:19 EDT
+"athena.z4c_kerr_half_plane_init" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/139 Testing: athena.z4c_vc_multi_family_derefine_2d_constant
+34/139 Test: athena.z4c_vc_multi_family_derefine_2d_constant
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_multi_family_derefine_2d_constant" "--dimensions" "2" "--family-count" "3" "--order" "2" "--transfer-order" "4" "--amplitude" "0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_multi_family_derefine_2d_constant" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC multi-family derefinement preserves exact staging and logical relocation for all 25 variables
+<end of output>
+Test time =   0.34 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_multi_family_derefine_2d_constant" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_multi_family_derefine_2d_constant" time elapsed: 00:00:00
+----------------------------------------------------------
+
+93/139 Testing: athena.z4c_cc_selector_equivalence
+93/139 Test: athena.z4c_cc_selector_equivalence
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_cc_selector_equivalence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_kerr_half_plane_init.athinput" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_cc_selector_equivalence_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cc_selector_equivalence" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: implicit/default and explicit cell-centered Z4c are exact
+<end of output>
+Test time =   0.29 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cc_selector_equivalence" end time: Aug 24 02:19 EDT
+"athena.z4c_cc_selector_equivalence" time elapsed: 00:00:00
+----------------------------------------------------------
+
+59/139 Testing: athena.z4c_cell_gauge_wave_2d_cartesian_o4
+59/139 Test: athena.z4c_cell_gauge_wave_2d_cartesian_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_gauge_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_gauge_wave_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_cell_gauge_wave_2d_cartesian_o4" "--centering" "cell" "--order" "4"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cell_gauge_wave_2d_cartesian_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: cell O4 analytic gauge wave errors=[(7.098985188668222e-07, 1.455754610741602e-06), (4.507914368326486e-08, 9.245270025590169e-08)] observed_order=3.9770807881223007
+<end of output>
+Test time =   0.23 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cell_gauge_wave_2d_cartesian_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_cell_gauge_wave_2d_cartesian_o4" time elapsed: 00:00:00
+----------------------------------------------------------
+
+42/139 Testing: athena.z4c_vc_dynamic_amr_2d_cartoon_o6
+42/139 Test: athena.z4c_vc_dynamic_amr_2d_cartoon_o6
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_2d_cartoon_o6" "--dimensions" "2" "--geometry" "cartoon" "--order" "6" "--root-leaves" "4" "--expected-volume" "201.06192982974676"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_2d_cartoon_o6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 2D cartoon O6 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.24 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_2d_cartoon_o6" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_2d_cartoon_o6" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/139 Testing: athena.z4c_vc_multi_family_derefine_2d_mixed_refine
+30/139 Test: athena.z4c_vc_multi_family_derefine_2d_mixed_refine
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_multi_family_derefine_2d_mixed_refine" "--dimensions" "2" "--family-count" "3" "--order" "4" "--transfer-order" "6" "--mixed-refine"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_multi_family_derefine_2d_mixed_refine" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC multi-family derefinement preserves exact staging and logical relocation for all 25 variables
+<end of output>
+Test time =   0.33 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_multi_family_derefine_2d_mixed_refine" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_multi_family_derefine_2d_mixed_refine" time elapsed: 00:00:00
+----------------------------------------------------------
+
+81/139 Testing: athena.z4c_vc_output_3d_cartesian
+81/139 Test: athena.z4c_vc_output_3d_cartesian
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_output_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_output_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_output_3d_cartesian" "--dimensions" "3" "--active-n1" "9" "--active-n2" "9" "--active-n3" "9" "--multiblock-nx1" "16"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_output_3d_cartesian" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC 3D binary/table/VTK sampling, table de-duplication, and frozen CC output
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_output_3d_cartesian" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_output_3d_cartesian" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/139 Testing: athena.z4c_vc_dynamic_amr
+25/139 Test: athena.z4c_vc_dynamic_amr
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_vc_dynamic_amr_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 2D cartoon O6 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+41/139 Testing: athena.z4c_vc_dynamic_amr_2d_cartesian_o6
+41/139 Test: athena.z4c_vc_dynamic_amr_2d_cartesian_o6
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_2d_cartesian_o6" "--dimensions" "2" "--geometry" "cartesian" "--order" "6" "--root-leaves" "4" "--expected-volume" "16.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 2D cartesian O6 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.19 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o6" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o6" time elapsed: 00:00:00
+----------------------------------------------------------
+
+128/139 Testing: athena.z4c_shock_avoiding_gauge_static
+128/139 Test: athena.z4c_shock_avoiding_gauge_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_shock_avoiding_gauge_static_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_shock_avoiding_gauge_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Shock-avoiding Bona-Masso source contract passed
+<end of output>
+Test time =   0.10 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_shock_avoiding_gauge_static" end time: Aug 24 02:19 EDT
+"athena.z4c_shock_avoiding_gauge_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+1/139 Testing: athena.z4c_cartoon_mms_structure
+1/139 Test: athena.z4c_cartoon_mms_structure
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_cartoon_mms_structure_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_mms_structure" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_mms_structure" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_mms_structure" time elapsed: 00:00:00
+----------------------------------------------------------
+
+51/139 Testing: athena.z4c_vc_dynamic_amr_invalid_halo
+51/139 Test: athena.z4c_vc_dynamic_amr_invalid_halo
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_invalid_halo" "--dimensions" "3" "--geometry" "cartesian" "--order" "6" "--root-leaves" "8" "--expected-volume" "64.0" "--invalid-halo-test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_invalid_halo" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: undersized native-VC coarse halo fails closed
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_invalid_halo" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_invalid_halo" time elapsed: 00:00:00
+----------------------------------------------------------
+
+39/139 Testing: athena.z4c_vc_dynamic_amr_2d_cartoon_o4
+39/139 Test: athena.z4c_vc_dynamic_amr_2d_cartoon_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_2d_cartoon_o4" "--dimensions" "2" "--geometry" "cartoon" "--order" "4" "--root-leaves" "4" "--expected-volume" "201.06192982974676"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_2d_cartoon_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 2D cartoon O4 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_2d_cartoon_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_2d_cartoon_o4" time elapsed: 00:00:00
+----------------------------------------------------------
+
+38/139 Testing: athena.z4c_vc_dynamic_amr_2d_cartesian_o4
+38/139 Test: athena.z4c_vc_dynamic_amr_2d_cartesian_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_2d_cartesian_o4" "--dimensions" "2" "--geometry" "cartesian" "--order" "4" "--root-leaves" "4" "--expected-volume" "16.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 2D cartesian O4 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4" time elapsed: 00:00:00
+----------------------------------------------------------
+
+44/139 Testing: athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk1
+44/139 Test: athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk1
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk1" "--dimensions" "2" "--geometry" "cartesian" "--order" "4" "--integrator" "rk1" "--root-leaves" "4" "--expected-volume" "16.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk1" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 2D cartesian O4 qauto rk1 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.12 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk1" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk1" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/139 Testing: athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk3
+46/139 Test: athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk3
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk3" "--dimensions" "2" "--geometry" "cartesian" "--order" "4" "--integrator" "rk3" "--root-leaves" "4" "--expected-volume" "16.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk3" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 2D cartesian O4 qauto rk3 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.14 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk3" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk3" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/139 Testing: athena.z4c_vc_dynamic_amr_2d_cartoon_o2
+36/139 Test: athena.z4c_vc_dynamic_amr_2d_cartoon_o2
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_2d_cartoon_o2" "--dimensions" "2" "--geometry" "cartoon" "--order" "2" "--root-leaves" "4" "--expected-volume" "201.06192982974676"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_2d_cartoon_o2" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 2D cartoon O2 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_2d_cartoon_o2" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_2d_cartoon_o2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+35/139 Testing: athena.z4c_vc_dynamic_amr_2d_cartesian_o2
+35/139 Test: athena.z4c_vc_dynamic_amr_2d_cartesian_o2
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_2d_cartesian_o2" "--dimensions" "2" "--geometry" "cartesian" "--order" "2" "--root-leaves" "4" "--expected-volume" "16.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o2" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 2D cartesian O2 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o2" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+98/139 Testing: athena.z4c_kerr_half_plane_convergence_analyzer
+98/139 Test: athena.z4c_kerr_half_plane_convergence_analyzer
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/test_suite/z4c/cartoon_half_plane_kerr_convergence.py" "--self-test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_kerr_half_plane_convergence_analyzer" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Cartoon half-plane Kerr convergence analyzer self-test passed
+<end of output>
+Test time =   0.12 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_kerr_half_plane_convergence_analyzer" end time: Aug 24 02:19 EDT
+"athena.z4c_kerr_half_plane_convergence_analyzer" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/139 Testing: athena.z4c_vc_multi_family_derefine
+26/139 Test: athena.z4c_vc_multi_family_derefine
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_multi_family_derefine_2d.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_vc_multi_family_derefine_test" "--authority-map"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_multi_family_derefine" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC multi-family derefinement preserves exact staging and logical relocation for all 25 variables
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_multi_family_derefine" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_multi_family_derefine" time elapsed: 00:00:00
+----------------------------------------------------------
+
+45/139 Testing: athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk2
+45/139 Test: athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk2
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_2d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk2" "--dimensions" "2" "--geometry" "cartesian" "--order" "4" "--integrator" "rk2" "--root-leaves" "4" "--expected-volume" "16.0"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk2" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: vertex-centered 2D cartesian O4 qauto rk2 dynamic refine/derefine lifecycle and quadrature
+<end of output>
+Test time =   0.14 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk2" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_dynamic_amr_2d_cartesian_o4_rk2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+108/139 Testing: athena.z4c_chi_preupdate_diagnostic_static
+108/139 Test: athena.z4c_chi_preupdate_diagnostic_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/chi_preupdate_diagnostic_static_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_chi_preupdate_diagnostic_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+CHI_PREUPDATE_DIAGNOSTIC_STATIC_PASS
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_chi_preupdate_diagnostic_static" end time: Aug 24 02:19 EDT
+"athena.z4c_chi_preupdate_diagnostic_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+80/139 Testing: athena.z4c_vc_output_2d_cartoon
+80/139 Test: athena.z4c_vc_output_2d_cartoon
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_output_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_output.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_output_2d_cartoon"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_output_2d_cartoon" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC 2D binary/table/VTK sampling, table de-duplication, and frozen CC output
+<end of output>
+Test time =   0.12 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_output_2d_cartoon" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_output_2d_cartoon" time elapsed: 00:00:00
+----------------------------------------------------------
+
+106/139 Testing: athena.z4c_coarse_cache_ownership
+106/139 Test: athena.z4c_coarse_cache_ownership
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_coarse_cache_ownership_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_coarse_cache_ownership" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c coarse-cache ownership regression passed
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_coarse_cache_ownership" end time: Aug 24 02:19 EDT
+"athena.z4c_coarse_cache_ownership" time elapsed: 00:00:00
+----------------------------------------------------------
+
+115/139 Testing: athena.z4c_telegraph_damping_static
+115/139 Test: athena.z4c_telegraph_damping_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_telegraph_damping_static_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_telegraph_damping_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c telegraph damping static contract passed
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_telegraph_damping_static" end time: Aug 24 02:19 EDT
+"athena.z4c_telegraph_damping_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+110/139 Testing: athena.z4c_state_admissibility_static
+110/139 Test: athena.z4c_state_admissibility_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/state_admissibility_static_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_state_admissibility_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4C_STATE_ADMISSIBILITY_STATIC_PASS
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_state_admissibility_static" end time: Aug 24 02:19 EDT
+"athena.z4c_state_admissibility_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+87/139 Testing: athena.z4c_irisk_import_static
+87/139 Test: athena.z4c_irisk_import_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_irisk_import_static_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_irisk_import_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c Iris input dispatch and Brill manifest static checks passed
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_irisk_import_static" end time: Aug 24 02:19 EDT
+"athena.z4c_irisk_import_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+92/139 Testing: athena.z4c_vc_kerr_puncture_rejection
+92/139 Test: athena.z4c_vc_kerr_puncture_rejection
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vc_kerr_puncture_rejection_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_kerr_half_plane_amr.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_kerr_puncture_rejection"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_kerr_puncture_rejection" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: singular true-vertex Kerr puncture fails closed without clipping
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_kerr_puncture_rejection" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_kerr_puncture_rejection" time elapsed: 00:00:00
+----------------------------------------------------------
+
+79/139 Testing: athena.z4c_vc_output
+79/139 Test: athena.z4c_vc_output
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_output_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_output.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_vc_output_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_output" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC 2D binary/table/VTK sampling, table de-duplication, and frozen CC output
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_output" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_output" time elapsed: 00:00:00
+----------------------------------------------------------
+
+116/139 Testing: athena.z4c_amr_chi_refresh_static
+116/139 Test: athena.z4c_amr_chi_refresh_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_amr_chi_refresh_static_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_amr_chi_refresh_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c chi AMR refresh static checks passed
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_amr_chi_refresh_static" end time: Aug 24 02:19 EDT
+"athena.z4c_amr_chi_refresh_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+117/139 Testing: athena.z4c_o4_symmetric_contract_static
+117/139 Test: athena.z4c_o4_symmetric_contract_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_o4_symmetric_contract_static_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_o4_symmetric_contract_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+O4 symmetric production source contract passed
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_o4_symmetric_contract_static" end time: Aug 24 02:19 EDT
+"athena.z4c_o4_symmetric_contract_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+126/139 Testing: athena.z4c_amr_derefine_factor_static
+126/139 Test: athena.z4c_amr_derefine_factor_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_amr_derefine_factor_static_test.py" "--source-root" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_amr_derefine_factor_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4C_AMR_DEREFINE_FACTOR_STATIC_TEST_PASS
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_amr_derefine_factor_static" end time: Aug 24 02:19 EDT
+"athena.z4c_amr_derefine_factor_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+127/139 Testing: athena.z4c_cartoon_amr_static
+127/139 Test: athena.z4c_cartoon_amr_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/cartoon_amr_static_test.py"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_amr_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+cartoon AMR static checks passed
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_amr_static" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_amr_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+112/139 Testing: athena.z4c_timestep_contract_static
+112/139 Test: athena.z4c_timestep_contract_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/timestep_contract_static_test.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_timestep_contract_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4C_TIMESTEP_CONTRACT_STATIC_PASS
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_timestep_contract_static" end time: Aug 24 02:19 EDT
+"athena.z4c_timestep_contract_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+113/139 Testing: athena.z4c_shift_control_static
+113/139 Test: athena.z4c_shift_control_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_shift_control_static_test.py"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_shift_control_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: Z4c prescribed-zero and isolated O2 shift-advection source contract
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_shift_control_static" end time: Aug 24 02:19 EDT
+"athena.z4c_shift_control_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+132/139 Testing: athena.z4c_cartoon_production_kernels
+132/139 Test: athena.z4c_cartoon_production_kernels
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--z4c-cartoon-kernel-test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_production_kernels" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+AthenaK Kokkos default execution space: Serial
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+Cartoon CalcRHS/constraints/Sommerfeld/Weyl production kernels passed for collapsed NGHOST 2/3/4 on Serial
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_production_kernels" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_production_kernels" time elapsed: 00:00:00
+----------------------------------------------------------
+
+124/139 Testing: athena.amr_history_shadow_static
+124/139 Test: athena.amr_history_shadow_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/mesh/amr_history_shadow_static_test.py" "--source-root" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.amr_history_shadow_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+AMR_HISTORY_SHADOW_STATIC_PASS
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"athena.amr_history_shadow_static" end time: Aug 24 02:19 EDT
+"athena.amr_history_shadow_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+122/139 Testing: athena.z4c_amr_configuration_static
+122/139 Test: athena.z4c_amr_configuration_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_amr_configuration_static_test.py" "--source-root" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_amr_configuration_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4C_AMR_CONFIGURATION_STATIC_TEST_PASS
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_amr_configuration_static" end time: Aug 24 02:19 EDT
+"athena.z4c_amr_configuration_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+136/139 Testing: athena.pdf_scatter_backend
+136/139 Test: athena.pdf_scatter_backend
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_pdf_scatter_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.pdf_scatter_backend" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PDF production Cartesian/Cartoon 1-D/2-D accumulation, scatter races, and cylindrical oracle passed on Serial
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.pdf_scatter_backend" end time: Aug 24 02:19 EDT
+"athena.pdf_scatter_backend" time elapsed: 00:00:00
+----------------------------------------------------------
+
+123/139 Testing: athena.amr_history_extension_static
+123/139 Test: athena.amr_history_extension_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/mesh/amr_history_extension_static_test.py" "--source-root" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.amr_history_extension_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+AMR_HISTORY_EXTENSION_STATIC_PASS
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"athena.amr_history_extension_static" end time: Aug 24 02:19 EDT
+"athena.amr_history_extension_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+99/139 Testing: athena.z4c_kerr_half_plane_campaign
+99/139 Test: athena.z4c_kerr_half_plane_campaign
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/test_suite/z4c/cartoon_half_plane_kerr_campaign.py" "self-test" "--template" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_kerr_half_plane_convergence.athinput"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_kerr_half_plane_campaign" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Cartoon half-plane Kerr campaign self-test passed
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_kerr_half_plane_campaign" end time: Aug 24 02:19 EDT
+"athena.z4c_kerr_half_plane_campaign" time elapsed: 00:00:00
+----------------------------------------------------------
+
+97/139 Testing: athena.z4c_cartoon_operator_inventory
+97/139 Test: athena.z4c_cartoon_operator_inventory
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/generate_z4c_cartoon_operator_table.py" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_operator_inventory" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+half-plane SO(2) direct-operator inventory verified
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_operator_inventory" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_operator_inventory" time elapsed: 00:00:00
+----------------------------------------------------------
+
+120/139 Testing: athena.amr_history_format
+120/139 Test: athena.amr_history_format
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_amr_history_format_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.amr_history_format" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+AMR_HISTORY_FORMAT_TEST_PASS
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.amr_history_format" end time: Aug 24 02:19 EDT
+"athena.amr_history_format" time elapsed: 00:00:00
+----------------------------------------------------------
+
+121/139 Testing: athena.amr_cadence
+121/139 Test: athena.amr_cadence
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_amr_cadence_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.amr_cadence" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+AMR cadence validation regression passed
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.amr_cadence" end time: Aug 24 02:19 EDT
+"athena.amr_cadence" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/139 Testing: athena.z4c_vc_boundary_indices
+23/139 Test: athena.z4c_vc_boundary_indices
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_boundary_indices_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_boundary_indices" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC same/coarse/fine boundary index contract
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_boundary_indices" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_boundary_indices" time elapsed: 00:00:00
+----------------------------------------------------------
+
+90/139 Testing: athena.z4c_kerr_half_plane_static
+90/139 Test: athena.z4c_kerr_half_plane_static
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_kerr_half_plane_static_test.py"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_kerr_half_plane_static" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Kerr half-plane initialization static checks passed
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_kerr_half_plane_static" end time: Aug 24 02:19 EDT
+"athena.z4c_kerr_half_plane_static" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/139 Testing: athena.z4c_vc_task_order
+24/139 Test: athena.z4c_vc_task_order
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_task_order_static_test.py"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_task_order" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC accepted-state task ordering
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_task_order" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_task_order" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/139 Testing: athena.z4c_cartoon_mms_generated_reference
+3/139 Test: athena.z4c_cartoon_mms_generated_reference
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_cartoon_mms_generated_reference_unit_test" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_cartoon_derivatives_reference.json"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_mms_generated_reference" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_mms_generated_reference" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_mms_generated_reference" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/139 Testing: athena.z4c_vc_vertex_topology
+22/139 Test: athena.z4c_vc_vertex_topology
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_topology_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_vertex_topology" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+canonical VC topology contract passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_vertex_topology" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_vertex_topology" time elapsed: 00:00:00
+----------------------------------------------------------
+
+114/139 Testing: athena.z4c_telegraph_damping
+114/139 Test: athena.z4c_telegraph_damping
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_telegraph_damping_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_telegraph_damping" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c telegraph damping unit/MMS check passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_telegraph_damping" end time: Aug 24 02:19 EDT
+"athena.z4c_telegraph_damping" time elapsed: 00:00:00
+----------------------------------------------------------
+
+111/139 Testing: athena.z4c_timestep_contract
+111/139 Test: athena.z4c_timestep_contract
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_timestep_contract_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_timestep_contract" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4C_TIMESTEP_CONTRACT_UNIT_PASS
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_timestep_contract" end time: Aug 24 02:19 EDT
+"athena.z4c_timestep_contract" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/139 Testing: athena.z4c_vc_cartoon_axis_rhs_regularity
+21/139 Test: athena.z4c_vc_cartoon_axis_rhs_regularity
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_vertex_axis_unit_test" "rhs_regularity"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartoon_axis_rhs_regularity" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+vertex Cartoon axis contract passed for rhs_regularity
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartoon_axis_rhs_regularity" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartoon_axis_rhs_regularity" time elapsed: 00:00:00
+----------------------------------------------------------
+
+101/139 Testing: athena.z4c_shared_geometry_policy
+101/139 Test: athena.z4c_shared_geometry_policy
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_shared_geometry_policy_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_shared_geometry_policy" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Shared Cartesian/Cartoon curvature policy tests passed on Serial
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_shared_geometry_policy" end time: Aug 24 02:19 EDT
+"athena.z4c_shared_geometry_policy" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/139 Testing: athena.z4c_vc_cartoon_axis_constraint
+20/139 Test: athena.z4c_vc_cartoon_axis_constraint
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_vertex_axis_unit_test" "constraint"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartoon_axis_constraint" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+vertex Cartoon axis contract passed for constraint
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartoon_axis_constraint" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartoon_axis_constraint" time elapsed: 00:00:00
+----------------------------------------------------------
+
+135/139 Testing: athena.pdf_validation
+135/139 Test: athena.pdf_validation
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_pdf_validation_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.pdf_validation" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PDF validation and ownership tests passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.pdf_validation" end time: Aug 24 02:19 EDT
+"athena.pdf_validation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/139 Testing: athena.z4c_vc_cartoon_axis_adm
+19/139 Test: athena.z4c_vc_cartoon_axis_adm
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_vertex_axis_unit_test" "adm"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartoon_axis_adm" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+vertex Cartoon axis contract passed for adm
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartoon_axis_adm" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartoon_axis_adm" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/139 Testing: athena.z4c_vc_cartoon_axis_vector
+17/139 Test: athena.z4c_vc_cartoon_axis_vector
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_vertex_axis_unit_test" "vector"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartoon_axis_vector" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+vertex Cartoon axis contract passed for vector
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartoon_axis_vector" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartoon_axis_vector" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/139 Testing: athena.z4c_vc_cartoon_axis_tensor
+18/139 Test: athena.z4c_vc_cartoon_axis_tensor
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_vertex_axis_unit_test" "tensor"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartoon_axis_tensor" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+vertex Cartoon axis contract passed for tensor
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartoon_axis_tensor" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartoon_axis_tensor" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/139 Testing: athena.z4c_vc_cartoon_axis_scalar
+16/139 Test: athena.z4c_vc_cartoon_axis_scalar
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_vertex_axis_unit_test" "scalar"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartoon_axis_scalar" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+vertex Cartoon axis contract passed for scalar
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartoon_axis_scalar" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartoon_axis_scalar" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/139 Testing: athena.z4c_cartoon_axis_parity
+14/139 Test: athena.z4c_cartoon_axis_parity
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_axis_parity_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_axis_parity" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+half-plane Cartoon axis parity contract passed
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_axis_parity" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_axis_parity" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/139 Testing: athena.z4c_vc_cartoon_derivatives_o6
+13/139 Test: athena.z4c_vc_cartoon_derivatives_o6
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_derivatives_unit_test" "cartoon_o6"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartoon_derivatives_o6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c Cartesian/Cartoon VC derivative factories passed on Serial
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartoon_derivatives_o6" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartoon_derivatives_o6" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/139 Testing: athena.z4c_cartoon_axis_boundary
+15/139 Test: athena.z4c_cartoon_axis_boundary
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_axis_boundary_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_axis_boundary" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+half-plane axis ghost parity contract passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_axis_boundary" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_axis_boundary" time elapsed: 00:00:00
+----------------------------------------------------------
+
+119/139 Testing: athena.z4c_amr_jump_diagnostic
+119/139 Test: athena.z4c_amr_jump_diagnostic
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_amr_jump_diagnostic_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_amr_jump_diagnostic" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+AMR jump diagnostic configuration, measure, and ledger tests passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_amr_jump_diagnostic" end time: Aug 24 02:19 EDT
+"athena.z4c_amr_jump_diagnostic" time elapsed: 00:00:00
+----------------------------------------------------------
+
+109/139 Testing: athena.z4c_state_admissibility
+109/139 Test: athena.z4c_state_admissibility
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_state_admissibility_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_state_admissibility" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4C_STATE_ADMISSIBILITY_UNIT_PASS
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_state_admissibility" end time: Aug 24 02:19 EDT
+"athena.z4c_state_admissibility" time elapsed: 00:00:00
+----------------------------------------------------------
+
+118/139 Testing: athena.z4c_amr_shadow_sensor
+118/139 Test: athena.z4c_amr_shadow_sensor
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_amr_shadow_sensor_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_amr_shadow_sensor" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c AMR shadow sensor regression passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_amr_shadow_sensor" end time: Aug 24 02:19 EDT
+"athena.z4c_amr_shadow_sensor" time elapsed: 00:00:00
+----------------------------------------------------------
+
+134/139 Testing: athena.z4c_cartoon_cuda_requirement_rejects_host
+134/139 Test: athena.z4c_cartoon_cuda_requirement_rejects_host
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--z4c-cartoon-kernel-test" "--require-cuda"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_cuda_requirement_rejects_host" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+AthenaK Kokkos default execution space: Serial
+Cartoon production kernel test requires compile-time and runtime Cuda; observed Serial
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_cuda_requirement_rejects_host" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_cuda_requirement_rejects_host" time elapsed: 00:00:00
+----------------------------------------------------------
+
+77/139 Testing: athena.z4c_vc_amr_transfer
+77/139 Test: athena.z4c_vc_amr_transfer
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_amr_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_amr_transfer" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC injection and symmetric midpoint transfer
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_amr_transfer" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_amr_transfer" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/139 Testing: athena.z4c_vc_cartoon_derivatives_o4
+12/139 Test: athena.z4c_vc_cartoon_derivatives_o4
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_derivatives_unit_test" "cartoon_o4"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartoon_derivatives_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Cartoon native-VC O4 convergence whole=4.17755,4.30396 axis=3.96545,3.98798
+Z4c Cartesian/Cartoon VC derivative factories passed on Serial
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartoon_derivatives_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartoon_derivatives_o4" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/139 Testing: athena.z4c_vc_cartoon_derivatives_o2
+11/139 Test: athena.z4c_vc_cartoon_derivatives_o2
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_derivatives_unit_test" "cartoon_o2"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartoon_derivatives_o2" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c Cartesian/Cartoon VC derivative factories passed on Serial
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartoon_derivatives_o2" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartoon_derivatives_o2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/139 Testing: athena.z4c_vc_cartesian_derivatives_o2
+8/139 Test: athena.z4c_vc_cartesian_derivatives_o2
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_derivatives_unit_test" "cartesian_o2"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartesian_derivatives_o2" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c Cartesian/Cartoon VC derivative factories passed on Serial
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartesian_derivatives_o2" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartesian_derivatives_o2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/139 Testing: athena.z4c_vc_cartesian_derivatives_o6
+10/139 Test: athena.z4c_vc_cartesian_derivatives_o6
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_derivatives_unit_test" "cartesian_o6"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartesian_derivatives_o6" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c Cartesian/Cartoon VC derivative factories passed on Serial
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartesian_derivatives_o6" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartesian_derivatives_o6" time elapsed: 00:00:00
+----------------------------------------------------------
+
+103/139 Testing: athena.z4c_cartoon_amr_transfer_qualification
+103/139 Test: athena.z4c_cartoon_amr_transfer_qualification
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_amr_transfer_qualification_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_amr_transfer_qualification" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+AMR_TRANSFER_FOURIER order=2 max_child_to_parent_rms_gain=1.2965737272678386 mode_rho=1 mode_z=8 restriction_null_modes=0
+AMR_TRANSFER_FOURIER order=3 max_child_to_parent_rms_gain=3.4443389472700869 mode_rho=7 mode_z=8 restriction_null_modes=0
+AMR_TRANSFER_FOURIER order=4 max_child_to_parent_rms_gain=3.7965698987568763 mode_rho=7 mode_z=8 restriction_null_modes=0
+Cartoon Z4c AMR transfer qualification passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_amr_transfer_qualification" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_amr_transfer_qualification" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/139 Testing: athena.z4c_vc_collapsed_dimension
+7/139 Test: athena.z4c_vc_collapsed_dimension
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_grid_layout_unit_test" "collapsed"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_collapsed_dimension" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c grid collapsed test passed
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_collapsed_dimension" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_collapsed_dimension" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/139 Testing: athena.z4c_vc_cartesian_derivatives_o4
+9/139 Test: athena.z4c_vc_cartesian_derivatives_o4
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_derivatives_unit_test" "cartesian_o4"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_cartesian_derivatives_o4" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c Cartesian/Cartoon VC derivative factories passed on Serial
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_cartesian_derivatives_o4" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_cartesian_derivatives_o4" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/139 Testing: athena.z4c_vc_layout
+5/139 Test: athena.z4c_vc_layout
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_grid_layout_unit_test" "layout"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_layout" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c grid layout test passed
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_layout" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_layout" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/139 Testing: athena.z4c_vc_coordinates
+6/139 Test: athena.z4c_vc_coordinates
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_grid_layout_unit_test" "coordinates"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_coordinates" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c grid coordinates test passed
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_coordinates" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_coordinates" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/139 Testing: athena.z4c_symmetry_dispatch
+4/139 Test: athena.z4c_symmetry_dispatch
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_symmetry_dispatch_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_symmetry_dispatch" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c host symmetry/stencil dispatch tests passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_symmetry_dispatch" end time: Aug 24 02:19 EDT
+"athena.z4c_symmetry_dispatch" time elapsed: 00:00:00
+----------------------------------------------------------
+
+102/139 Testing: athena.z4c_chi_prolongation
+102/139 Test: athena.z4c_chi_prolongation
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_chi_prolongation_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_chi_prolongation" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c chi prolongation positivity test passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_chi_prolongation" end time: Aug 24 02:19 EDT
+"athena.z4c_chi_prolongation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+129/139 Testing: athena.z4c_cartoon_m0_fastflow
+129/139 Test: athena.z4c_cartoon_m0_fastflow
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_m0_fastflow_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_m0_fastflow" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_m0_fastflow" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_m0_fastflow" time elapsed: 00:00:00
+----------------------------------------------------------
+
+83/139 Testing: athena.z4c_cartoon_axis_centered_derivatives
+83/139 Test: athena.z4c_cartoon_axis_centered_derivatives
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_axis_centered_derivatives_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_axis_centered_derivatives" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+centered half-plane O2/O4/O6 rho derivatives passed on Serial
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_axis_centered_derivatives" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_axis_centered_derivatives" time elapsed: 00:00:00
+----------------------------------------------------------
+
+88/139 Testing: athena.z4c_irisk_coordinate_map
+88/139 Test: athena.z4c_irisk_coordinate_map
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_irisk_coordinate_map_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_irisk_coordinate_map" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_irisk_coordinate_map" end time: Aug 24 02:19 EDT
+"athena.z4c_irisk_coordinate_map" time elapsed: 00:00:00
+----------------------------------------------------------
+
+100/139 Testing: athena.stored_domain_bounds
+100/139 Test: athena.stored_domain_bounds
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_stored_domain_bounds_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.stored_domain_bounds" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Stored-domain bounds tests passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.stored_domain_bounds" end time: Aug 24 02:19 EDT
+"athena.stored_domain_bounds" time elapsed: 00:00:00
+----------------------------------------------------------
+
+82/139 Testing: athena.z4c_vc_to_cc_adm
+82/139 Test: athena.z4c_vc_to_cc_adm
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_to_cell_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_to_cc_adm" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: symmetric native VC-to-CC ADM interpolation
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_to_cc_adm" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_to_cc_adm" time elapsed: 00:00:00
+----------------------------------------------------------
+
+84/139 Testing: athena.z4c_cartoon_regular_functionals
+84/139 Test: athena.z4c_cartoon_regular_functionals
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_regular_functionals_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_regular_functionals" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+half-plane O2/O4/O6 fixed regularity functionals passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_regular_functionals" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_regular_functionals" time elapsed: 00:00:00
+----------------------------------------------------------
+
+86/139 Testing: athena.z4c_symmetry_validation
+86/139 Test: athena.z4c_symmetry_validation
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_symmetry_validation_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_symmetry_validation" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c Cartoon preallocation validation tests passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_symmetry_validation" end time: Aug 24 02:19 EDT
+"athena.z4c_symmetry_validation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+78/139 Testing: athena.z4c_vc_history_quadrature
+78/139 Test: athena.z4c_vc_history_quadrature
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_vertex_history_quadrature_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_history_quadrature" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC leaf quadrature, ring volume, and metric gate
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_history_quadrature" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_history_quadrature" time elapsed: 00:00:00
+----------------------------------------------------------
+
+104/139 Testing: athena.z4c_cartoon_lattice_index
+104/139 Test: athena.z4c_cartoon_lattice_index
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_cartoon_lattice_index_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_lattice_index" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Cartoon lattice-index rounding passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_lattice_index" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_lattice_index" time elapsed: 00:00:00
+----------------------------------------------------------
+
+85/139 Testing: athena.z4c_sommerfeld_derivatives
+85/139 Test: athena.z4c_sommerfeld_derivatives
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_sommerfeld_derivatives_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_sommerfeld_derivatives" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_sommerfeld_derivatives" end time: Aug 24 02:19 EDT
+"athena.z4c_sommerfeld_derivatives" time elapsed: 00:00:00
+----------------------------------------------------------
+
+133/139 Testing: athena.z4c_cartoon_production_kernels_cuda_required
+133/139 Test: athena.z4c_cartoon_production_kernels_cuda_required
+Command: ""
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_cartoon_production_kernels_cuda_required" start time: 
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_cartoon_production_kernels_cuda_required" end time: Aug 24 02:19 EDT
+"athena.z4c_cartoon_production_kernels_cuda_required" time elapsed: 00:00:00
+----------------------------------------------------------
+
+137/139 Testing: athena.pdf_scatter_cuda_required
+137/139 Test: athena.pdf_scatter_cuda_required
+Command: ""
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.pdf_scatter_cuda_required" start time: 
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.pdf_scatter_cuda_required" end time: Aug 24 02:19 EDT
+"athena.pdf_scatter_cuda_required" time elapsed: 00:00:00
+----------------------------------------------------------
+
+105/139 Testing: athena.z4c_amr_radius
+105/139 Test: athena.z4c_amr_radius
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_amr_radius_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_amr_radius" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+Z4c AMR radius AABB regression passed
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_amr_radius" end time: Aug 24 02:19 EDT
+"athena.z4c_amr_radius" time elapsed: 00:00:00
+----------------------------------------------------------
+
+107/139 Testing: athena.z4c_chi_preupdate_diagnostic
+107/139 Test: athena.z4c_chi_preupdate_diagnostic
+Command: "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena_z4c_chi_preupdate_diagnostic_unit_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_chi_preupdate_diagnostic" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+CHI_PREUPDATE_DIAGNOSTIC_UNIT_PASS
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_chi_preupdate_diagnostic" end time: Aug 24 02:19 EDT
+"athena.z4c_chi_preupdate_diagnostic" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/139 Testing: athena.z4c_vc_derefine_writer_lifecycle
+27/139 Test: athena.z4c_vc_derefine_writer_lifecycle
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_vc_derefine_writer_lifecycle" "--dimensions" "2" "--family-count" "3" "--order" "4" "--transfer-order" "6" "--writer-lifecycle"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_derefine_writer_lifecycle" start time: Aug 24 02:19 EDT
+Output:
+----------------------------------------------------------
+PASS: native-VC multi-family derefinement preserves exact staging and logical relocation for all 25 variables
+<end of output>
+Test time =   0.83 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_derefine_writer_lifecycle" end time: Aug 24 02:19 EDT
+"athena.z4c_vc_derefine_writer_lifecycle" time elapsed: 00:00:00
+----------------------------------------------------------
+
+125/139 Testing: athena.amr_history_integration
+125/139 Test: athena.amr_history_integration
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/mesh/amr_history_integration_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/amr_history_lwave.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/amr_history_integration_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.amr_history_integration" start time: Aug 24 02:18 EDT
+Output:
+----------------------------------------------------------
+AMR_HISTORY_INTEGRATION_TEST_PASS
+<end of output>
+Test time =  63.56 sec
+----------------------------------------------------------
+Test Passed.
+"athena.amr_history_integration" end time: Aug 24 02:19 EDT
+"athena.amr_history_integration" time elapsed: 00:01:03
+----------------------------------------------------------
+
+70/139 Testing: athena.z4c_vc_amr_history_3d_cartesian
+70/139 Test: athena.z4c_vc_amr_history_3d_cartesian
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_amr_history_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_minkowski_dynamic_amr_3d_cartesian.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/athena.z4c_vc_amr_history_3d_cartesian" "--dimensions" "3"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_amr_history_3d_cartesian" start time: Aug 24 02:18 EDT
+Output:
+----------------------------------------------------------
+PASS: native VC 3D AMR history record/replay, 2x cells, restart, MPI decomposition, and explicit CC-topology bridge
+<end of output>
+Test time =  74.95 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_amr_history_3d_cartesian" end time: Aug 24 02:20 EDT
+"athena.z4c_vc_amr_history_3d_cartesian" time elapsed: 00:01:14
+----------------------------------------------------------
+
+139/139 Testing: athena.z4c_restart_carrier
+139/139 Test: athena.z4c_restart_carrier
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_restart_carrier_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_restart_carrier.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_restart_carrier_test" "--source-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate" "--legacy-base" "ea59e07ce7026b8b06720c7cb32bfe6788652978"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_restart_carrier" start time: Aug 24 02:18 EDT
+Output:
+----------------------------------------------------------
+Z4c immutable restart carrier tests passed
+<end of output>
+Test time = 154.92 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_restart_carrier" end time: Aug 24 02:21 EDT
+"athena.z4c_restart_carrier" time elapsed: 00:02:34
+----------------------------------------------------------
+
+52/139 Testing: athena.z4c_vc_linear_wave_convergence_o4
+52/139 Test: athena.z4c_vc_linear_wave_convergence_o4
+Command: "/usr/bin/python3" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/unit/z4c/z4c_vertex_linear_wave_convergence_test.py" "--athena" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/src/athena" "--input" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/tst/inputs/z4c_vc_linear_wave_o4.athinput" "--work-dir" "/home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build/z4c_vc_linear_wave_o4_test"
+Directory: /home/hzhu/Desktop/research/gr/collapse/athenak_horizon_audit_20260808/worktrees/z4c_vc_derefine_slot_repair_20260824/candidate/build
+"athena.z4c_vc_linear_wave_convergence_o4" start time: Aug 24 02:18 EDT
+Output:
+----------------------------------------------------------
+native-VC Cartesian O4 convergence passed: wave_orders={'z4c_gyy': 3.9937370648344044, 'z4c_gzz': 3.9935134438397997, 'z4c_Ayy': 3.9955255939589494, 'z4c_Azz': 4.000851197478704} wave_differences={'z4c_gyy': [2.149349149571531e-10, 1.3491875301868949e-11], 'z4c_gzz': [2.1493537096479703e-10, 1.3493995364050927e-11], 'z4c_Ayy': [6.751865257518512e-10, 4.2330238416176214e-11], 'z4c_Azz': [6.752408223115643e-10, 4.217765901658442e-11]} all_state_differences=[2.031057179968271e-10, 2.0726783645424617e-11] analytic_norms=[(8.063557e-08, 7.622836e-11), (8.063567e-08, 3.811478e-11), (8.06328e-08, 1.905861e-11)]
+<end of output>
+Test time = 387.32 sec
+----------------------------------------------------------
+Test Passed.
+"athena.z4c_vc_linear_wave_convergence_o4" end time: Aug 24 02:25 EDT
+"athena.z4c_vc_linear_wave_convergence_o4" time elapsed: 00:06:27
+----------------------------------------------------------
+
+End testing: Aug 24 02:25 EDT
+
+2d =   9.64 sec*proc
+
+3d = 150.94 sec*proc
+
+amr = 189.24 sec*proc
+
+analytic =  11.11 sec*proc
+
+cartesian = 536.14 sec*proc
+
+cartoon =  16.13 sec*proc
+
+cartoon-production-kernels =   0.00 sec*proc
+
+cell =  11.78 sec*proc
+
+constant =   0.34 sec*proc
+
+convergence = 387.32 sec*proc
+
+cuda-required =   0.00 sec*proc
+
+derefine =  22.58 sec*proc
+
+diagnostic =   0.83 sec*proc
+
+gauge_wave =  11.11 sec*proc
+
+history = 141.00 sec*proc
+
+host-exact-regression =   0.77 sec*proc
+
+host-negative =   0.00 sec*proc
+
+interface =   3.40 sec*proc
+
+kerr =   0.06 sec*proc
+
+lifecycle =   6.83 sec*proc
+
+mpi =   2.48 sec*proc
+
+negative =   1.67 sec*proc
+
+o2 =   2.53 sec*proc
+
+o4 =   4.82 sec*proc
+
+o6 =   5.09 sec*proc
+
+output =   0.42 sec*proc
+
+python =  13.94 sec*proc
+
+q4 =   0.67 sec*proc
+
+q6 =   0.66 sec*proc
+
+refine =   0.33 sec*proc
+
+regression =  28.87 sec*proc
+
+restart =  28.62 sec*proc
+
+rk1 =   0.12 sec*proc
+
+rk2 =   0.14 sec*proc
+
+rk3 =   0.14 sec*proc
+
+serial =  63.56 sec*proc
+
+stability =  13.94 sec*proc
+
+vertex = 541.73 sec*proc
+
+z4c = 553.51 sec*proc
+

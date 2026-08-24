@@ -1,0 +1,6 @@
+checked_utc=2026-08-24T06:31:03Z
+command=sacct -j 57504956,57505077 --format=JobID,State,ExitCode,Elapsed,AllocTRES -n -P
+57504956|COMPLETED|0:0|00:01:07|billing=32,cpu=32,energy=27663,gres/gpu:a100=1,gres/gpu=1,mem=57472M,node=1
+57505077|COMPLETED|0:0|00:01:10|billing=32,cpu=32,energy=28198,gres/gpu:a100=1,gres/gpu=1,mem=57472M,node=1
+command=squeue -u hzhu -h -o %i|%T|%j|%R
+result=empty

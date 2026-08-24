@@ -1,0 +1,149 @@
+AthenaK Kokkos default execution space: Cuda
+
+Root grid = 4 x 8 x 1 MeshBlocks
+Total number of MeshBlocks = 32
+Number of logical  levels of refinement = 23 (24 levels total)
+Number of physical levels of refinement = 20 (21 levels total)
+  Physical level = 0 (logical level = 3): 32 MeshBlocks, cost = 32
+Number of parallel ranks = 1
+AssembleZ4cTasks
+Direct global Brill coefficient import: radial_points=128 angular_points=32 adm_mass=2.6606354586228815 min_psi4=1.2508593099257228 lapse=psi^-2 min_lapse=0.31260438298701243 max_lapse=0.89411991335365681
+Converted imported ADM data to Z4c proper_box_C_rms=9.1989478020873627e-06 proper_box_H_rms=9.1761024807172038e-06 proper_box_M_rms=0 proper_box_Z_rms=3.2395367296246831e-07 coordinate_support_H_rms=3.4438285062437475e-09 coordinate_support_M_rms=0
+Initialized Z4c from IrisK data mode=direct_global_coefficients path=/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/event3_writer_6dd_n512_v1/brill_global_128x32.coefficients bytes=95927
+AMR_HISTORY_SOURCE_COMPATIBILITY recorded_source_id=athena-0.1-git-ba7daebccf337d3157442aec2125b9301308b2a8 current_source_id=athena-0.1-git-db6787981b7fd691b55091a6e361879cdd49bec6 explicit_match=true
+
+Setup complete, executing task list(s)...
+
+elapsed=1.836898e+00 cycle=0 time=0.000000e+00 dt=5.404204e-03
+AMR_HISTORY_TIMESTEP_CLIP event=1 time_hex=0x1.61f217a4cdd3cp-7 candidate_dt_hex=0x1.614baa871fbdfp-8 applied_dt_hex=0x1.6cdfd020caep-16 target_time_hex=0x1.62a8878cde393p-7
+CARTOON_AMR_TRANSACTION cycle=3 requested_refine=2 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=1 time_hex=0x1.62a8878cde393p-7 requested_leaves=38 accepted_leaves=38 max_level=4 checksum=6d1dc10512d42608 exact_match=true shadow_refine=2 shadow_derefine=0
+elapsed=2.062217e+00 cycle=4 time=1.086681e-02 dt=8.699280e-05
+elapsed=2.196385e+00 cycle=8 time=1.217170e-02 dt=1.391885e-03
+AMR_HISTORY_TIMESTEP_CLIP event=2 time_hex=0x1.bc739bc4f0265p-7 candidate_dt_hex=0x1.60f36458412cbp-9 applied_dt_hex=0x1.5b6b0362b6284p-9 target_time_hex=0x1.09a72e4eced83p-6
+CARTOON_AMR_TRANSACTION cycle=10 requested_refine=4 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=2 time_hex=0x1.09a72e4eced83p-6 requested_leaves=50 accepted_leaves=50 max_level=5 checksum=e38dd0ebe7826578 exact_match=true shadow_refine=0 shadow_derefine=6
+elapsed=2.453352e+00 cycle=12 time=1.890450e-02 dt=1.344360e-03
+elapsed=2.609982e+00 cycle=16 time=2.427872e-02 dt=1.342209e-03
+elapsed=2.809367e+00 cycle=20 time=2.964414e-02 dt=1.339952e-03
+elapsed=2.998316e+00 cycle=24 time=3.500043e-02 dt=1.337598e-03
+elapsed=3.162320e+00 cycle=28 time=4.034729e-02 dt=1.335196e-03
+elapsed=3.395556e+00 cycle=32 time=4.568445e-02 dt=1.332763e-03
+elapsed=3.553434e+00 cycle=36 time=5.101173e-02 dt=1.330271e-03
+elapsed=3.785483e+00 cycle=40 time=5.632906e-02 dt=1.327738e-03
+elapsed=3.945797e+00 cycle=44 time=6.163627e-02 dt=1.325227e-03
+elapsed=4.183978e+00 cycle=48 time=6.693332e-02 dt=1.322675e-03
+elapsed=4.339570e+00 cycle=52 time=7.222026e-02 dt=1.320136e-03
+elapsed=4.530599e+00 cycle=56 time=7.749701e-02 dt=1.317631e-03
+elapsed=4.730879e+00 cycle=60 time=8.276376e-02 dt=1.315106e-03
+elapsed=4.890880e+00 cycle=64 time=8.802048e-02 dt=1.312660e-03
+elapsed=5.124777e+00 cycle=68 time=9.326740e-02 dt=1.310187e-03
+elapsed=5.280203e+00 cycle=72 time=9.850455e-02 dt=1.307812e-03
+elapsed=5.503649e+00 cycle=76 time=1.037322e-01 dt=1.305429e-03
+elapsed=5.669460e+00 cycle=80 time=1.089505e-01 dt=1.303135e-03
+elapsed=5.832530e+00 cycle=84 time=1.141596e-01 dt=1.300874e-03
+elapsed=6.085714e+00 cycle=88 time=1.193598e-01 dt=1.298671e-03
+elapsed=6.241274e+00 cycle=92 time=1.245513e-01 dt=1.296562e-03
+elapsed=6.476005e+00 cycle=96 time=1.297344e-01 dt=1.294458e-03
+elapsed=6.641017e+00 cycle=100 time=1.349092e-01 dt=1.292469e-03
+elapsed=6.851763e+00 cycle=104 time=1.400762e-01 dt=1.290528e-03
+elapsed=7.016974e+00 cycle=108 time=1.452354e-01 dt=1.288644e-03
+elapsed=7.173065e+00 cycle=112 time=1.503873e-01 dt=1.286872e-03
+elapsed=7.403973e+00 cycle=116 time=1.555322e-01 dt=1.285134e-03
+elapsed=7.564226e+00 cycle=120 time=1.606702e-01 dt=1.283471e-03
+elapsed=7.796167e+00 cycle=124 time=1.658017e-01 dt=1.281917e-03
+elapsed=7.956415e+00 cycle=128 time=1.709271e-01 dt=1.280411e-03
+elapsed=8.151859e+00 cycle=132 time=1.760466e-01 dt=1.278968e-03
+elapsed=8.343844e+00 cycle=136 time=1.811604e-01 dt=1.277633e-03
+elapsed=8.503024e+00 cycle=140 time=1.862691e-01 dt=1.276378e-03
+elapsed=8.757913e+00 cycle=144 time=1.913727e-01 dt=1.275154e-03
+elapsed=8.923564e+00 cycle=148 time=1.964716e-01 dt=1.274034e-03
+elapsed=9.191488e+00 cycle=152 time=2.015662e-01 dt=1.273017e-03
+elapsed=9.356522e+00 cycle=156 time=2.066568e-01 dt=1.272035e-03
+elapsed=9.563074e+00 cycle=160 time=2.117436e-01 dt=1.271128e-03
+elapsed=9.742023e+00 cycle=164 time=2.168268e-01 dt=1.270320e-03
+elapsed=9.902279e+00 cycle=168 time=2.219070e-01 dt=1.269610e-03
+elapsed=1.013219e+01 cycle=172 time=2.269844e-01 dt=1.268911e-03
+elapsed=1.029245e+01 cycle=176 time=2.320591e-01 dt=1.268308e-03
+elapsed=1.052360e+01 cycle=180 time=2.371315e-01 dt=1.267799e-03
+elapsed=1.068291e+01 cycle=184 time=2.422021e-01 dt=1.267376e-03
+elapsed=1.085192e+01 cycle=188 time=2.472709e-01 dt=1.266971e-03
+elapsed=1.127781e+01 cycle=192 time=2.523383e-01 dt=1.266657e-03
+elapsed=1.150319e+01 cycle=196 time=2.574046e-01 dt=1.266435e-03
+elapsed=1.166320e+01 cycle=200 time=2.624701e-01 dt=1.266293e-03
+elapsed=1.190027e+01 cycle=204 time=2.675351e-01 dt=1.266169e-03
+elapsed=1.206050e+01 cycle=208 time=2.725997e-01 dt=1.266132e-03
+elapsed=1.226271e+01 cycle=212 time=2.776642e-01 dt=1.266182e-03
+elapsed=1.244888e+01 cycle=216 time=2.827291e-01 dt=1.266313e-03
+elapsed=1.260923e+01 cycle=220 time=2.877946e-01 dt=1.266455e-03
+elapsed=1.284502e+01 cycle=224 time=2.928607e-01 dt=1.266681e-03
+AMR_HISTORY_TIMESTEP_CLIP event=3 time_hex=0x1.311400903b6b7p-2 candidate_dt_hex=0x1.4c22359aa1984p-10 applied_dt_hex=0x1.0cca8c2075p-14 target_time_hex=0x1.3124cd38fd72cp-2
+elapsed=1.300518e+01 cycle=228 time=2.979279e-01 dt=6.408482e-05
+CARTOON_AMR_TRANSACTION cycle=229 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=2 created_leaves=0 deleted_leaves=6 mirror_mismatches=0
+VC_AMR_LIFECYCLE phase=A0 name=before_RedistAndRefineMeshBlocks cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A1 name=logical_locations_and_maps_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A2 name=load_balance_and_capacity_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A3 name=InitRecvAMR_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A4 name=PackAndSendAMR_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A5 name=DerefineVCSameRank_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A6 name=CopyVC_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A7 name=CopyForRefinementVC_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A8 name=AMR_MPI_and_UnpackAMRBuffersVC_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A9 name=new_to_old_DualView_synchronized cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A10 name=RefineVC_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A11 name=new_mesh_and_rank_metadata_installed cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A12 name=MeshBlock_and_Coordinates_reconstructed cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A13 name=SetNeighbors_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A14 name=RebuildVertexTopologyPlan_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A15 name=post_regrid_EnforceAlgConstr_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A150 name=InitBndry_Z4c_RestrictU_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A151 name=InitBndry_Z4c_InitRecv_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A152 name=InitBndry_Z4c_SendU_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A153 name=InitBndry_Z4c_ClearSendRecv_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A154 name=InitBndry_Z4c_RecvU_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A155 name=InitBndry_Z4c_BoundaryRHS_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A156 name=InitBndry_Z4c_ApplyPhysicalBCs_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A157 name=InitBndry_Z4c_Prolongate_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A158 name=InitBndry_Z4c_BuiltInPhysicalGhosts_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A159 name=InitBndry_Z4c_AxisParityGhosts_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A16 name=InitBoundaryValuesAndPrimitives_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A17 name=ConvertZ4cToADM_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A18 name=ADMConstraints_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A19 name=NewTimeStep_complete cycle=229 event_cycle=229 stage=-1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+AMR_HISTORY_REPLAY event=3 time_hex=0x1.3124cd38fd72cp-2 requested_leaves=44 accepted_leaves=44 max_level=4 checksum=b6c60694c30a2049 exact_match=true shadow_refine=0 shadow_derefine=22
+VC_AMR_LIFECYCLE phase=R0 name=first_post_event_rhs cycle=229 event_cycle=229 stage=1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=U0 name=first_post_event_rk_update cycle=229 event_cycle=229 stage=1 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+elapsed=1.937265e+01 cycle=232 time=2.988891e-01 dt=1.025357e-03
+AMR_HISTORY_TIMESTEP_CLIP event=4 time_hex=0x1.35365e17fb382p-2 candidate_dt_hex=0x1.4c369871d1861p-9 applied_dt_hex=0x1.1ee97db6e7fp-10 target_time_hex=0x1.36554795b2201p-2
+CARTOON_AMR_TRANSACTION cycle=235 requested_refine=10 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=4 time_hex=0x1.36554795b2201p-2 requested_leaves=74 accepted_leaves=74 max_level=5 checksum=b8885b7761cc086f exact_match=true shadow_refine=0 shadow_derefine=16
+AMR_HISTORY_TIMESTEP_CLIP event=5 time_hex=0x1.37a1844bbf9a6p-2 candidate_dt_hex=0x1.4c42d96b21bf9p-10 applied_dt_hex=0x1.46a50d563e8p-10 target_time_hex=0x1.38e8295915d8ep-2
+elapsed=1.956712e+01 cycle=236 time=3.043271e-01 dt=1.246051e-03
+CARTOON_AMR_TRANSACTION cycle=237 requested_refine=21 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=63 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=5 time_hex=0x1.38e8295915d8ep-2 requested_leaves=137 accepted_leaves=137 max_level=6 checksum=94cf46d8f9a7742f exact_match=true shadow_refine=0 shadow_derefine=50
+AMR_HISTORY_TIMESTEP_CLIP event=6 time_hex=0x1.398e4d4bc2d14p-2 candidate_dt_hex=0x1.4c4b923a566bfp-11 applied_dt_hex=0x1.4675ce0d694p-11 target_time_hex=0x1.3a318832c985ep-2
+CARTOON_AMR_TRANSACTION cycle=239 requested_refine=14 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=42 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=6 time_hex=0x1.3a318832c985ep-2 requested_leaves=179 accepted_leaves=179 max_level=7 checksum=547d385e7b2c0a49 exact_match=true shadow_refine=0 shadow_derefine=114
+AMR_HISTORY_TIMESTEP_CLIP event=7 time_hex=0x1.3a88650bd5a58p-2 candidate_dt_hex=0x1.5b6dbaa124f43p-12 applied_dt_hex=0x1.36f08348e44p-12 target_time_hex=0x1.3ad6212ca7de9p-2
+elapsed=2.013537e+01 cycle=240 time=3.071609e-01 dt=2.965350e-04
+CARTOON_AMR_TRANSACTION cycle=241 requested_refine=1 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=3 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=7 time_hex=0x1.3ad6212ca7de9p-2 requested_leaves=182 accepted_leaves=182 max_level=7 checksum=4db5e3ab5c94bb35 exact_match=true shadow_refine=0 shadow_derefine=156
+AMR_HISTORY_TIMESTEP_CLIP event=8 time_hex=0x1.3b2cfb5841d3cp-2 candidate_dt_hex=0x1.5b63103724746p-12 applied_dt_hex=0x1.371bb24abdcp-12 target_time_hex=0x1.3b7ac244d4833p-2
+CARTOON_AMR_TRANSACTION cycle=243 requested_refine=1 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=3 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=8 time_hex=0x1.3b7ac244d4833p-2 requested_leaves=185 accepted_leaves=185 max_level=7 checksum=9cc67268db29a22a exact_match=true shadow_refine=0 shadow_derefine=159
+elapsed=2.079530e+01 cycle=244 time=3.084168e-01 dt=3.312546e-04
+elapsed=2.131594e+01 cycle=248 time=3.097416e-01 dt=2.583546e-04
+output wall time = 1.680939e+00
+
+Terminating on time limit
+time=3.100000e-01 cycle=249
+tlim=3.100000e-01 nlim=-1 nmb_total_limit=-1
+
+Current number of MeshBlocks = 185
+159 MeshBlocks created, 6 deleted by AMR
+0 communicated for load balancing, load balancing efficiency = 0.000000e+00
+
+MeshBlock-cycles = 13830
+cpu time used  = 2.060847e+01
+zone-cycles/cpu_second = 2.748757e+06
+particle-updates/cpu_second = 0.000000e+00

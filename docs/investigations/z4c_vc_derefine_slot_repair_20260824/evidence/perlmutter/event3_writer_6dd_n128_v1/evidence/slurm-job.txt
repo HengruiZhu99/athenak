@@ -1,0 +1,30 @@
+JobId=57505077 JobName=interactive
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:08 TimeLimit=00:30:00 TimeMin=N/A
+   SubmitTime=2026-08-23T23:09:40 EligibleTime=2026-08-23T23:09:40
+   AccrueTime=Unknown
+   StartTime=2026-08-23T23:09:40 EndTime=2026-08-23T23:39:40 Deadline=N/A
+   PreemptEligibleTime=2026-08-23T23:09:40 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-23T23:09:40 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login06:637788
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid001000
+   BatchHost=nid001000
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100&hbm40g DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=bash
+   SubmitLine=salloc -A m3328_g -C gpu&hbm40g -q shared_interactive -N 1 -n 1 -c 32 --gpus=1 -t 00:30:00 bash -lc export COLLAPSE_ROOT=/pscratch/sd/h/hzhu/collapse-critical-perlmutter; source /pscratch/sd/h/hzhu/collapse-critical-perlmutter/workflow/profiles/perlmutter-a100.sh; export SOURCE_ROOT=/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/source BUILD_ROOT=/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/build-cuda-mpi EXPECTED_EXE_SHA=7f5bd2fc5d05233822c583ec677e91867eaf6f0c8e2d7ca521cfba93c091a55b; for c in n128 n256 n512; do export CASE_LABEL=$c RUN_ROOT=/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/event3_writer_6dd_${c}_v1; /pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/perlmutter_event3_writer_v2.sh || exit; done
+   WorkDir=/global/u1/h/hzhu
+   TresPerJob=gres/gpu:1
+   TresPerTask=cpu=32
+   ResvPorts=63454-63456
+
