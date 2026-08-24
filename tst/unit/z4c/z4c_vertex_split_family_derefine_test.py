@@ -79,8 +79,8 @@ def main() -> int:
 
     mismatches = []
     for variable in one["var_names"]:
-        reference = one["mb_data"][variable]
-        candidate = split["mb_data"][variable]
+        reference = np.stack(one["mb_data"][variable])
+        candidate = np.stack(split["mb_data"][variable])
         indices = np.argwhere(reference != candidate)
         if len(indices):
             first = tuple(int(value) for value in indices[0])
