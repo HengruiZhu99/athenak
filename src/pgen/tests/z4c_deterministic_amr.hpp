@@ -10,6 +10,8 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
@@ -23,7 +25,7 @@ struct DeterministicAmrTarget {
   int lx3 = 0;
 };
 
-inline DeterministicAmrTarget deterministic_amr_target;
+inline std::vector<DeterministicAmrTarget> deterministic_amr_targets;
 inline bool deterministic_amr_uses_time = false;
 inline Real deterministic_amr_refine_time = 0.0;
 inline Real deterministic_amr_derefine_time = 0.0;
@@ -33,7 +35,6 @@ inline void DeterministicRefinementSchedule(MeshBlockPack *pack) {
   Mesh *mesh = pack->pmesh;
   auto &flags = mesh->pmr->refine_flag;
   const int first_gid = mesh->gids_eachrank[global_variable::my_rank];
-  const auto target = deterministic_amr_target;
   const bool refine_event = deterministic_amr_uses_time
       ? deterministic_amr_phase == 0 &&
             mesh->time >= deterministic_amr_refine_time
@@ -46,16 +47,18 @@ inline void DeterministicRefinementSchedule(MeshBlockPack *pack) {
     const int gid = first_gid + m;
     const auto &location = mesh->lloc_eachmb[gid];
     int flag = 0;
-    if (refine_event && location.level == mesh->root_level &&
-        location.lx1 == target.lx1 && location.lx2 == target.lx2 &&
-        location.lx3 == target.lx3) {
-      flag = 1;
-    } else if (derefine_event &&
-               location.level == mesh->root_level + 1 &&
-               (location.lx1 >> 1) == target.lx1 &&
-               (location.lx2 >> 1) == target.lx2 &&
-               (location.lx3 >> 1) == target.lx3) {
-      flag = -1;
+    for (const auto &target : deterministic_amr_targets) {
+      if (refine_event && location.level == mesh->root_level &&
+          location.lx1 == target.lx1 && location.lx2 == target.lx2 &&
+          location.lx3 == target.lx3) {
+        flag = 1;
+      } else if (derefine_event &&
+                 location.level == mesh->root_level + 1 &&
+                 (location.lx1 >> 1) == target.lx1 &&
+                 (location.lx2 >> 1) == target.lx2 &&
+                 (location.lx3 >> 1) == target.lx3) {
+        flag = -1;
+      }
     }
     flags.h_view(gid) = flag;
   }
@@ -107,24 +110,47 @@ inline bool ConfigureDeterministicRefinementSchedule(ParameterInput *pin,
     }
   }
 
-  deterministic_amr_target.lx1 =
-      pin->GetOrAddInteger("problem", "amr_target_lx1", 0);
-  deterministic_amr_target.lx2 = pin->GetOrAddInteger(
-      "problem", "amr_target_lx2", mesh->nmb_rootx2 > 1 ? 1 : 0);
-  deterministic_amr_target.lx3 = pin->GetOrAddInteger(
-      "problem", "amr_target_lx3", mesh->nmb_rootx3 > 1 ? 1 : 0);
-  const auto target = deterministic_amr_target;
-  const bool valid_target =
-      target.lx1 >= 0 && target.lx1 < mesh->nmb_rootx1 &&
-      target.lx2 >= 0 && target.lx2 < mesh->nmb_rootx2 &&
-      target.lx3 >= 0 && target.lx3 < mesh->nmb_rootx3;
-  if (!valid_target) {
-    std::cerr << "### FATAL ERROR: " << pgen_name << " AMR target ("
-              << target.lx1 << "," << target.lx2 << "," << target.lx3
-              << ") lies outside the root MeshBlock lattice ("
-              << mesh->nmb_rootx1 << "," << mesh->nmb_rootx2 << ","
-              << mesh->nmb_rootx3 << ")" << std::endl;
+  const int target_count =
+      pin->GetOrAddInteger("problem", "amr_target_count", 1);
+  if (target_count < 1) {
+    std::cerr << "### FATAL ERROR: " << pgen_name
+              << " requires amr_target_count >= 1" << std::endl;
     std::exit(EXIT_FAILURE);
+  }
+  deterministic_amr_targets.clear();
+  deterministic_amr_targets.reserve(target_count);
+  for (int index = 0; index < target_count; ++index) {
+    const std::string suffix = index == 0 ? "" : std::to_string(index);
+    DeterministicAmrTarget target;
+    target.lx1 = pin->GetOrAddInteger(
+        "problem", "amr_target" + suffix + "_lx1", 0);
+    target.lx2 = pin->GetOrAddInteger(
+        "problem", "amr_target" + suffix + "_lx2",
+        mesh->nmb_rootx2 > 1 ? 1 : 0);
+    target.lx3 = pin->GetOrAddInteger(
+        "problem", "amr_target" + suffix + "_lx3",
+        mesh->nmb_rootx3 > 1 ? 1 : 0);
+    const bool valid_target =
+        target.lx1 >= 0 && target.lx1 < mesh->nmb_rootx1 &&
+        target.lx2 >= 0 && target.lx2 < mesh->nmb_rootx2 &&
+        target.lx3 >= 0 && target.lx3 < mesh->nmb_rootx3;
+    if (!valid_target) {
+      std::cerr << "### FATAL ERROR: " << pgen_name << " AMR target " << index
+                << " (" << target.lx1 << "," << target.lx2 << ","
+                << target.lx3 << ") lies outside the root MeshBlock lattice ("
+                << mesh->nmb_rootx1 << "," << mesh->nmb_rootx2 << ","
+                << mesh->nmb_rootx3 << ")" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    for (const auto &previous : deterministic_amr_targets) {
+      if (target.lx1 == previous.lx1 && target.lx2 == previous.lx2 &&
+          target.lx3 == previous.lx3) {
+        std::cerr << "### FATAL ERROR: " << pgen_name
+                  << " deterministic AMR targets must be unique" << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+    }
+    deterministic_amr_targets.push_back(target);
   }
   return true;
 }

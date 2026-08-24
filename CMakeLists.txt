@@ -541,6 +541,19 @@ if (Athena_BUILD_UNIT_TESTS)
   set_tests_properties(
       athena.z4c_vc_dynamic_amr PROPERTIES TIMEOUT 60 LABELS "z4c;vertex;amr")
 
+  add_test(
+      NAME athena.z4c_vc_multi_family_derefine
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py
+      --athena $<TARGET_FILE:athena>
+      --input
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_multi_family_derefine_2d.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_multi_family_derefine_test)
+  set_tests_properties(
+      athena.z4c_vc_multi_family_derefine PROPERTIES TIMEOUT 120
+      LABELS "z4c;vertex;2d;cartesian;amr;derefine;regression")
+
   function(add_z4c_vc_dynamic_amr_case name input dimensions geometry order
            root_leaves expected_volume)
     add_test(
