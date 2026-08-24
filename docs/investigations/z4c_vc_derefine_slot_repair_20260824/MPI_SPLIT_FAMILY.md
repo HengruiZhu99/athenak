@@ -35,4 +35,64 @@ active array into the parent, and A8 overwrites only the received quadrants.
 
 ## Green result
 
-Pending deterministic split-parent assembly and the 2-/4-rank matrix.
+Commit `661d25d67451f7a920709efe8b065d0a08028f6c` replaced independent
+receive-buffer writers with one parent-variable writer. Children are visited in
+canonical logical-child order, coincident values are checked before one
+canonical value is written, and local and received siblings each contribute
+exactly once. The ordinary CC/FC unpack paths are unchanged.
+
+The first Python harness attempt was invalid because the binary reader returns a
+list of per-block arrays; commit `9247a595feb3cd8d2485a23d0e72d5ac3e9c02f5`
+stacks those arrays before comparison. This is a test-only correction. On that
+revision the pure-derefinement MPI2 and MPI4 cases were bitwise identical to the
+one-rank reference for all 25 variables (Perlmutter job `57499971`).
+
+## Mixed refine/derefine red result
+
+The pure-derefinement result did not cover A7. A bounded mixed transaction was
+therefore added in commits `a9ff43eb4e88648ef750920543b5ae2d71f3d2d7` and
+`8ce7b3002d0cbd8760649cf284b7a96646c1c34b`. It derefines the same three
+families while refining root Z-order GID 16. Its new child slots overlap old
+local child slots 18:20 of the split family rooted at GID 15.
+
+On job `57500192`, MPI2 passed but MPI4 failed at A8 with:
+
+```text
+native VC split-derefinement assembly
+missing_or_nonfinite=0 inconsistent_shared_vertices=323
+```
+
+This is direct evidence that A7 `CopyForRefinementVC` overwrote at least one
+local coarse-child contribution before the A8 split-parent writer consumed it.
+It is not a tolerance or physics failure: the same mixed one-rank transaction
+passed, the failure occurred before evolution resumed, and the existing strict
+shared-vertex consistency check detected it.
+
+## Mixed-transaction repair and qualification
+
+Commit `8548bc2ffe5a7eef558125c9a472e5ec61504e53` constructs the split-parent
+source map at A3 while the old hierarchy is authoritative and snapshots only
+the required local child coarse arrays into compact immutable storage. A8 then
+assembles each parent from those snapshots and the completed receive buffers.
+The snapshot is explicitly fenced before A4/A5/A6/A7 can reuse old storage.
+
+Perlmutter job `57500409` ran the complete focused matrix against executable
+SHA-256
+`ded6117c9532f042a3c720e7e560c1a02472d3cc4024ef99d959c31055b1b449`:
+
+| Test | Result |
+|---|---|
+| pure derefinement, MPI2 | bitwise pass, all 25 variables |
+| mixed refine/derefine, MPI2 | bitwise pass, all 25 variables |
+| pure derefinement, MPI4 | bitwise pass, all 25 variables |
+| mixed refine/derefine, MPI4 | bitwise pass, all 25 variables |
+
+The allocation completed normally in 15 seconds. The CPU/OpenMP executable was
+run with `MPICH_GPU_SUPPORT_ENABLED=0`; the reserved A100 was not used by this
+CPU-backend test. The corresponding same-rank host matrix remains green at
+8/8, including 2D/3D, O2/q4, O4/q6, O6/q8, constant, smooth nonconstant, and
+mixed refine/derefine cases.
+
+These results qualify the exercised ownership layouts and the A7 overlap
+discriminator. They do not yet replace the required authority event-3 replay,
+CUDA checks, or early three-resolution convergence gate.
