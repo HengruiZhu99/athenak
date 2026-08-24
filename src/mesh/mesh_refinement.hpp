@@ -35,6 +35,9 @@ struct AMRBufferData {
   int offset=0;              // starting index of data for this buffer
   int lid;                   // local ID (gid - gids) of MeshBlock on this rank
   bool use_coarse=false;     // pack/unpack from coarse array when true
+  // Receive-side native-VC metadata.  Nonnegative values identify the logical
+  // child of a derefined parent; -1 denotes same-level or refinement traffic.
+  int vc_derefine_child=-1;
 };
 #endif
 

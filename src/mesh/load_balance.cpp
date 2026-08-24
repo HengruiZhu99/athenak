@@ -229,6 +229,7 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
                                          nfc_tosend*(recvbuf.h_view(rb_idx).cntfc);
           recvbuf.h_view(rb_idx).lid   = newm - nmbs;
           recvbuf.h_view(rb_idx).use_coarse = false;
+          recvbuf.h_view(rb_idx).vc_derefine_child = l;
           if (rb_idx > 0) {
             recvbuf.h_view(rb_idx).offset = recvbuf.h_view((rb_idx-1)).offset +
                                              recvbuf.h_view((rb_idx-1)).cnt;
@@ -262,6 +263,7 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
                                      nfc_tosend*(recvbuf.h_view(rb_idx).cntfc);
         recvbuf.h_view(rb_idx).lid = newm - nmbs;
         recvbuf.h_view(rb_idx).use_coarse = false;
+        recvbuf.h_view(rb_idx).vc_derefine_child = -1;
         if (rb_idx > 0) {
           recvbuf.h_view(rb_idx).offset = recvbuf.h_view((rb_idx-1)).offset +
                                           recvbuf.h_view((rb_idx-1)).cnt;
@@ -312,6 +314,7 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
                                      nfc_tosend*(recvbuf.h_view(rb_idx).cntfc);
         recvbuf.h_view(rb_idx).lid = newm - nmbs;
         recvbuf.h_view(rb_idx).use_coarse = true;
+        recvbuf.h_view(rb_idx).vc_derefine_child = -1;
         if (rb_idx > 0) {
           recvbuf.h_view(rb_idx).offset = recvbuf.h_view((rb_idx-1)).offset +
                                           recvbuf.h_view((rb_idx-1)).cnt;
@@ -1077,11 +1080,16 @@ void MeshRefinement::UnpackAMRBuffersVC(DvceArray5D<Real> &a, DvceArray5D<Real> 
   auto &rbuf = recvbuf;
   auto &rdata = recv_data;
   const int nvar = a.extent_int(1);
+  // Same-level and refinement traffic has one nonoverlapping writer per
+  // destination.  Split-family derefinement is assembled separately below:
+  // its child quadrants overlap on midpoint planes/edges/corners and therefore
+  // must not be unpacked by independent receive-buffer teams.
   Kokkos::TeamPolicy<> policy(DevExeSpace(), nmb_recv * nvar, Kokkos::AUTO);
   Kokkos::parallel_for("Unpack native VC AMR buffers", policy,
       KOKKOS_LAMBDA(TeamMember_t member) {
         const int n = member.league_rank() / nvar;
         const int v = member.league_rank() % nvar;
+        if (rbuf.d_view(n).vc_derefine_child >= 0) return;
         const int il = rbuf.d_view(n).vbis;
         const int jl = rbuf.d_view(n).vbjs;
         const int kl = rbuf.d_view(n).vbks;
@@ -1106,6 +1114,157 @@ void MeshRefinement::UnpackAMRBuffersVC(DvceArray5D<Real> &a, DvceArray5D<Real> 
               }
             });
       });
+
+  const auto layout = pmy_mesh->pmb_pack->pz4c->layout;
+  const int rank = global_variable::my_rank;
+  const int first_old = pmy_mesh->gids_eachrank[rank];
+  const int last_old = first_old + pmy_mesh->nmb_eachrank[rank] - 1;
+  const int first_new = new_gids_eachrank[rank];
+  const int local_new_count = new_nmb_eachrank[rank];
+  const int nleaf = pmy_mesh->three_d ? 8 : pmy_mesh->two_d ? 4 : 2;
+
+  // Each source entry is encoded as local-old-slot+1 or -(receive-buffer+1).
+  // Zero means the new local block is not a split derefined parent.
+  DualArray2D<int> child_sources("native VC split derefine child sources",
+                                 local_new_count, nleaf);
+  for (int local_new = 0; local_new < local_new_count; ++local_new) {
+    for (int child = 0; child < nleaf; ++child) {
+      child_sources.h_view(local_new, child) = 0;
+    }
+  }
+  for (int local_new = 0; local_new < local_new_count; ++local_new) {
+    const int new_gid = first_new + local_new;
+    const int old_base = newtoold[new_gid];
+    if (pmy_mesh->lloc_eachmb[old_base].level <=
+        new_lloc_eachmb[new_gid].level) {
+      continue;
+    }
+    bool split = false;
+    for (int child = 0; child < nleaf; ++child) {
+      split = split || pmy_mesh->rank_eachmb[old_base + child] != rank;
+    }
+    if (!split) continue;
+
+    for (int child = 0; child < nleaf; ++child) {
+      int source = 0;
+      for (int recv_index = 0; recv_index < nmb_recv; ++recv_index) {
+        if (recvbuf.h_view(recv_index).lid == local_new &&
+            recvbuf.h_view(recv_index).vc_derefine_child == child) {
+          source = -(recv_index + 1);
+          break;
+        }
+      }
+      if (source == 0 &&
+          pmy_mesh->rank_eachmb[old_base + child] == rank &&
+          old_base + child >= first_old && old_base + child <= last_old) {
+        source = old_base + child - first_old + 1;
+      }
+      if (source == 0) {
+        std::cerr << "### FATAL ERROR: missing native VC split-derefinement child "
+                  << child << " for parent new_gid=" << new_gid
+                  << " on rank=" << rank << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+      child_sources.h_view(local_new, child) = source;
+    }
+  }
+  child_sources.template modify<HostMemSpace>();
+  child_sources.template sync<DevExeSpace>();
+
+  DvceArray1D<unsigned long long> assembly_errors(
+      "native VC split derefine assembly errors", 2);
+  Kokkos::deep_copy(assembly_errors, 0ULL);
+  const bool two_d = pmy_mesh->two_d;
+  const bool three_d = pmy_mesh->three_d;
+  const int points = (layout.ie - layout.is + 1) *
+      (layout.je - layout.js + 1) * (layout.ke - layout.ks + 1);
+  Kokkos::TeamPolicy<> parent_policy(
+      DevExeSpace(), local_new_count * nvar, Kokkos::AUTO);
+  Kokkos::parallel_for("Assemble split native VC derefine parents", parent_policy,
+      KOKKOS_LAMBDA(TeamMember_t member) {
+        const int m = member.league_rank() / nvar;
+        const int v = member.league_rank() % nvar;
+        if (child_sources.d_view(m, 0) == 0) return;
+        Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, points),
+            [&](const int index) {
+              const int ni = layout.ie - layout.is + 1;
+              const int nj = layout.je - layout.js + 1;
+              const int i = layout.is + index % ni;
+              const int j = layout.js + (index / ni) % nj;
+              const int k = layout.ks + index / (ni * nj);
+              const int qi = i - layout.is;
+              const int qj = layout.nx2 <= 1 ? 0 : j - layout.js;
+              const int qk = layout.nx3 <= 1 ? 0 : k - layout.ks;
+              Real canonical = 0.0;
+              Real minimum = std::numeric_limits<Real>::max();
+              Real maximum = -std::numeric_limits<Real>::max();
+              int count = 0;
+              for (int child = 0; child < nleaf; ++child) {
+                const int bx = child & 1;
+                const int by = two_d || three_d ? (child >> 1) & 1 : 0;
+                const int bz = three_d ? (child >> 2) & 1 : 0;
+                const bool x_has = bx == 0 ? qi <= layout.cnx1
+                                            : qi >= layout.cnx1;
+                const bool y_has = layout.nx2 <= 1 ||
+                    (by == 0 ? qj <= layout.cnx2 : qj >= layout.cnx2);
+                const bool z_has = layout.nx3 <= 1 ||
+                    (bz == 0 ? qk <= layout.cnx3 : qk >= layout.cnx3);
+                if (!x_has || !y_has || !z_has) continue;
+
+                const int source = child_sources.d_view(m, child);
+                Real value = 0.0;
+                if (source > 0) {
+                  const int old_slot = source - 1;
+                  const int ci = layout.cis + qi - bx * layout.cnx1;
+                  const int cj = layout.nx2 <= 1 ? 0
+                      : layout.cjs + qj - by * layout.cnx2;
+                  const int ck = layout.nx3 <= 1 ? 0
+                      : layout.cks + qk - bz * layout.cnx3;
+                  value = ca(old_slot, v, ck, cj, ci);
+                } else {
+                  const int recv_index = -source - 1;
+                  const int il = rbuf.d_view(recv_index).vbis;
+                  const int jl = rbuf.d_view(recv_index).vbjs;
+                  const int kl = rbuf.d_view(recv_index).vbks;
+                  const int rni = rbuf.d_view(recv_index).vbie - il + 1;
+                  const int rnj = rbuf.d_view(recv_index).vbje - jl + 1;
+                  const int rnk = rbuf.d_view(recv_index).vbke - kl + 1;
+                  const int cells = rni * rnj * rnk;
+                  const int offset = rbuf.d_view(recv_index).offset +
+                      ncc * rbuf.d_view(recv_index).cntcc +
+                      nvc * rbuf.d_view(recv_index).cntvc +
+                      nfc * rbuf.d_view(recv_index).cntfc;
+                  const int recv_cell = (i - il) + rni *
+                      ((j - jl) + rnj * (k - kl));
+                  value = rdata(offset + recv_cell + cells * v);
+                }
+                if (count == 0) canonical = value;
+                minimum = value < minimum ? value : minimum;
+                maximum = value > maximum ? value : maximum;
+                ++count;
+              }
+              if (count == 0 || !Kokkos::isfinite(minimum) ||
+                  !Kokkos::isfinite(maximum)) {
+                Kokkos::atomic_inc(&assembly_errors(0));
+                return;
+              }
+              const Real scale = fmax(1.0, fmax(fabs(minimum), fabs(maximum)));
+              if (maximum - minimum >
+                  64.0 * std::numeric_limits<Real>::epsilon() * scale) {
+                Kokkos::atomic_inc(&assembly_errors(1));
+                return;
+              }
+              a(m, v, k, j, i) = canonical;
+            });
+      });
+  const auto errors = Kokkos::create_mirror_view_and_copy(
+      HostMemSpace(), assembly_errors);
+  if (errors(0) != 0 || errors(1) != 0) {
+    std::cerr << "### FATAL ERROR: native VC split-derefinement assembly "
+              << "missing_or_nonfinite=" << errors(0)
+              << " inconsistent_shared_vertices=" << errors(1) << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 #endif
 }
 
