@@ -7,7 +7,7 @@ set -euo pipefail
 : "${RUN_ROOT:?fresh output directory}"
 : "${EXPECTED_EXE_SHA:?SHA-256 of the qualified CUDA executable}"
 
-expected_source=7927d02fd3fd34fe504dde18998c8a62fde3909e
+expected_source=d2596707e808aea7ec6167df937d71dc4dbe429e
 expected_history_source=athena-0.1-git-ba7daebccf337d3157442aec2125b9301308b2a8
 expected_coeff=1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10
 expected_history=ce3cdea1a8d0465a7c19e4ac1134ce474d8908b5f5cb12be6f20110d12e9c851
