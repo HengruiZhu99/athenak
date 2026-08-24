@@ -1,0 +1,95 @@
+# Wider native-VC fixture for three-family and O2/O4/O6 derefinement coverage.
+
+<job>
+basename = z4c_vc_multi_family_derefine_2d_wide
+
+<mesh>
+nghost = 4
+nx1 = 64
+x1min = -1.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 128
+x2min = -2.0
+x2max = 2.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 1
+
+<mesh_refinement>
+refinement = adaptive
+max_nmb_per_rank = 64
+num_levels = 2
+ncycle_check = 1
+refinement_interval = 1
+
+<amr_criterion0>
+method = user
+
+<time>
+evolution = dynamic
+integrator = rk1
+cfl_number = 0.02
+nlim = 2
+tlim = 1.0
+ndiag = 1
+
+<z4c>
+grid_centering = vertex
+symmetry = cartesian3d
+coordinate_map = cartesian_xyz
+symmetry_schema = 1
+spatial_order = 4
+vertex_prolongation_order = 6
+diss = 0.02
+floor_chi = false
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+lapse_oplog = 0.0
+lapse_harmonic = 0.0
+lapse_advect = 0.0
+shift_mode = prescribed_zero
+shift_Gamma = 0.0
+shift_eta = 0.0
+shift_advect = 0.0
+
+<problem>
+pgen_name = z4c_linear_wave
+amp = 1.0e-6
+kx1 = 0.5
+kx2 = 0.25
+kx3 = 0.0
+write_period_error = false
+rhs_interface_manufactured_state = true
+exercise_deterministic_amr = true
+amr_target_count = 3
+amr_target_lx1 = 0
+amr_target_lx2 = 0
+amr_target_lx3 = 0
+amr_target1_lx1 = 0
+amr_target1_lx2 = 4
+amr_target1_lx3 = 0
+amr_target2_lx1 = 3
+amr_target2_lx2 = 7
+amr_target2_lx3 = 0
+
+<output1>
+file_type = hst
+dcycle = 1
+data_format = %24.16e
+
+<output2>
+file_type = bin
+variable = z4c
+id = state
+dcycle = 1

@@ -549,10 +549,58 @@ if (Athena_BUILD_UNIT_TESTS)
       --athena $<TARGET_FILE:athena>
       --input
       ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_multi_family_derefine_2d.athinput
-      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_multi_family_derefine_test)
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_multi_family_derefine_test
+      --authority-map)
   set_tests_properties(
       athena.z4c_vc_multi_family_derefine PROPERTIES TIMEOUT 120
       LABELS "z4c;vertex;2d;cartesian;amr;derefine;regression")
+
+  function(add_z4c_vc_multi_family_case name input dimensions families order
+           transfer_order)
+    add_test(
+        NAME ${name}
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py
+        --athena $<TARGET_FILE:athena>
+        --input ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/${input}
+        --work-dir ${CMAKE_CURRENT_BINARY_DIR}/${name}
+        --dimensions ${dimensions} --family-count ${families}
+        --order ${order} --transfer-order ${transfer_order})
+    set_tests_properties(
+        ${name} PROPERTIES TIMEOUT 180
+        LABELS "z4c;vertex;${dimensions}d;cartesian;amr;derefine;regression")
+  endfunction()
+  add_z4c_vc_multi_family_case(
+      athena.z4c_vc_multi_family_derefine_2d_o4_q6
+      z4c_vc_multi_family_derefine_2d_wide.athinput 2 3 4 6)
+  add_z4c_vc_multi_family_case(
+      athena.z4c_vc_multi_family_derefine_2d_o6_q8
+      z4c_vc_multi_family_derefine_2d_wide.athinput 2 3 6 8)
+  add_z4c_vc_multi_family_case(
+      athena.z4c_vc_multi_family_derefine_3d_o2_q4
+      z4c_vc_multi_family_derefine_3d.athinput 3 2 2 4)
+  add_z4c_vc_multi_family_case(
+      athena.z4c_vc_multi_family_derefine_3d_o4_q6
+      z4c_vc_multi_family_derefine_3d.athinput 3 2 4 6)
+  add_z4c_vc_multi_family_case(
+      athena.z4c_vc_multi_family_derefine_3d_o6_q8
+      z4c_vc_multi_family_derefine_3d.athinput 3 2 6 8)
+  add_test(
+      NAME athena.z4c_vc_multi_family_derefine_2d_constant
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py
+      --athena $<TARGET_FILE:athena>
+      --input
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput
+      --work-dir
+      ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_multi_family_derefine_2d_constant
+      --dimensions 2 --family-count 3 --order 2 --transfer-order 4
+      --amplitude 0)
+  set_tests_properties(
+      athena.z4c_vc_multi_family_derefine_2d_constant PROPERTIES TIMEOUT 180
+      LABELS "z4c;vertex;2d;cartesian;amr;derefine;regression;constant")
 
   function(add_z4c_vc_dynamic_amr_case name input dimensions geometry order
            root_leaves expected_volume)
