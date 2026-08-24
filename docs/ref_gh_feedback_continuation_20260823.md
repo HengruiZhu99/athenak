@@ -171,6 +171,18 @@ logical coverage is `[-4M,4M]^3`, which contains the complete 0.30--0.60M
 transition shell.  Medium resolution has `dx_min=M/24`; the planned coarse and
 fine variants preserve the tree with `dx_min=M/16` and `M/32`.
 
+T3 accumulated `2.071034491084857M` of maximum-characteristic travel by
+t=2.5M.  A linear extrapolation gives `16.5683M` by t=20M, so the 12M faces
+would not support a clean time-limit outcome if the controller froze.  Under
+the user's explicit SMR-boundary authorization, the definitive input therefore
+moves the faces to 24M and adds one coarser outer level without changing the
+inner spacing.  Its audited 328-block tree has 208 leaves over `[-24,24]^3` at
+`dx=M/6`, 56 over `[-8,8]^3` at `dx=M/12`, and 64 over `[-4,4]^3` at
+`dx=M/24`.  Thus the fixed-core shell remains on the finest level while the
+projected t=20 characteristic distance retains about 7.43M of margin.  The
+projection motivates the grid; only the eventual measured T4 integral will be
+used for a causal claim.
+
 ## Remaining ordered gates
 
 1. Run T4 on the enlarged medium domain through xi=1 plus a 2M hold, t=20M, or

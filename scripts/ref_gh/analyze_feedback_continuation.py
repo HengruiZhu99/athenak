@@ -80,6 +80,11 @@ def summarize(path: Path, outer_distance: float) -> dict[str, object]:
         "final_xi": data[-1][USER_COLUMNS["xi"]],
         "final_xi_dot": data[-1][USER_COLUMNS["xi_dot"]],
         "final_transition": data[-1][USER_COLUMNS["transition"]],
+        "minimum_dt": min(row[USER_COLUMNS["dt"]] for row in data),
+        "maximum_characteristic_speed": max(
+            row[USER_COLUMNS["characteristic_max"]] for row in data),
+        "final_v_cmd": data[-1][USER_COLUMNS["v_cmd"]],
+        "final_risk": data[-1][USER_COLUMNS["risk"]],
         "reached_xi_one": any(row[USER_COLUMNS["xi"]] >= 1.0 for row in data),
         "time_to_xi_one": first_time(data, "xi", lambda value: value >= 1.0),
         "first_feedback_slowing": first_time(

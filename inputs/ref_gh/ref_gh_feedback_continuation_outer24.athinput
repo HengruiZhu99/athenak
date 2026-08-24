@@ -1,0 +1,153 @@
+# T4--T6 feedback continuation with a user-authorized farther SMR boundary.
+# The outer root is one factor of two coarser than the [-12M,12M] input, while
+# the added refinement level preserves dx_min=M/24 and the complete fixed-core
+# transition shell on the finest level.  Override root and MeshBlock cells
+# together as 96/32, 144/48, or 192/64 for coarse/medium/fine.
+
+<job>
+basename = ref_gh_feedback_outer24_medium
+
+<mesh>
+nghost = 4
+nx1 = 144
+x1min = -24.0
+x1max = 24.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 144
+x2min = -24.0
+x2max = 24.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 144
+x3min = -24.0
+x3max = 24.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 48
+nx2 = 48
+nx3 = 48
+
+<mesh_refinement>
+refinement = static
+num_levels = 4
+max_nmb_per_rank = 128
+
+<refined_region1>
+level = 1
+x1min = -12.0
+x1max = 12.0
+x2min = -12.0
+x2max = 12.0
+x3min = -12.0
+x3max = 12.0
+
+<refined_region2>
+level = 2
+x1min = -4.0
+x1max = 4.0
+x2min = -4.0
+x2max = 4.0
+x3min = -4.0
+x3max = 4.0
+
+<refined_region3>
+level = 3
+x1min = -2.0
+x1max = 2.0
+x2min = -2.0
+x2max = 2.0
+x3min = -2.0
+x3max = 2.0
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+nlim = -1
+tlim = 20.0
+ndiag = 10
+
+<ref_gh>
+reference = controlled_transition
+continuation_mode = feedback
+continuation_self_test = false
+phi_ordering = compatible
+source = covariant
+reference_mass = 1.0
+fd_order = 4
+debug_task_fences = false
+validate_reference_cache = false
+max_location_diagnostics = true
+controller_enabled = false
+transition_path = fixed_core
+transition_width = 0.20
+r_core0 = 0.30
+tau_core = 1.5
+kappa_core = 1.0
+tau_transition = 8.0
+r_fit_min = 0.15
+r_fit_max = 0.40
+controller_fit_buffer_cells = 1.0
+regularization_outer_start = 0.50
+regularization_outer_end = 0.60
+controller_delta_q = 0.0
+controller_delta_q_dot = 0.0
+controller_delta_p = 0.0
+controller_delta_p_dot = 0.0
+continuation_xi = 0.0
+continuation_xi_dot = 0.0
+continuation_v_max = 0.25
+continuation_tau_v = 0.5
+continuation_xi_end_start = 0.90
+# Frozen from the successful job-8777287 tau-8 envelope before closed loop.
+continuation_risk_slow = 0.70
+continuation_risk_stop = 1.0
+continuation_condition_stop = 8.0
+continuation_lapse_min_stop = 0.5
+continuation_lapse_max_stop = 3.0
+continuation_v2_stop = 0.20
+continuation_gh_warning = 2.0e-2
+continuation_reduction_warning = 5.0e-3
+continuation_curl_warning = 8.0e-2
+continuation_growth_time = 0.5
+gamma0 = 1.0
+diss = 0.02
+fail_closed_dt = 1.0e-12
+
+<problem>
+pgen_name = ref_gh_controlled_transition
+user_hist = true
+common_adm_history = true
+common_adm_fd_order = 4
+
+<output1>
+file_type = hst
+dt = 0.05
+data_format = %20.15e
+
+<output2>
+file_type = rst
+dt = 0.50
+
+<output3>
+file_type = cbin
+variable = adm_common
+id = adm_common
+dt = 1.0
+coarsen_factor = 1
+compute_moments = false
+binary64 = true
+single_file_per_rank = false
+
+<output4>
+file_type = cbin
+variable = ref_gh_native_con
+id = ref_gh_native_con
+dt = 1.0
+coarsen_factor = 1
+compute_moments = false
+binary64 = true
+single_file_per_rank = false

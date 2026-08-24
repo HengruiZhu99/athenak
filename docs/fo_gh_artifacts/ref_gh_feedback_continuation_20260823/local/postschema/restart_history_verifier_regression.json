@@ -1,0 +1,20 @@
+{
+  "schema": "ref-gh-feedback-restart-history-verifier-regression-v1",
+  "valid_case": {
+    "source": "aurora/job_8777507_t3_pass/to_*/*.user.hst",
+    "boundaries": 4,
+    "maximum_time_gap": 0.053460387651562025,
+    "maximum_xi_increase": 0.012991754790565413,
+    "pass": true
+  },
+  "reset_case": {
+    "source": "aurora/job_8777396_invalid_controller_reset/to_*/*.user.hst",
+    "first_three_xi_changes": [
+      -0.04529544616590062,
+      -0.04537400243089824,
+      -0.04537464307764725
+    ],
+    "pass": false
+  },
+  "interpretation": "The cadence-gap verifier accepts the qualified monotone checkpoint-only trajectory and rejects the preserved input-reapplied controller resets. Exact payload restart equivalence remains separately established by job 8777274."
+}

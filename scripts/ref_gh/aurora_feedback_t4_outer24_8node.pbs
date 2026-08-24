@@ -1,0 +1,299 @@
+#!/bin/bash -l
+# T4 definitive medium feedback continuation on the outer-24M SMR mesh.
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=8
+#PBS -l place=scatter
+#PBS -l walltime=06:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_fb_t4
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_feedback_continuation_outer24.athinput"
+ANALYZE="${SRC}/scripts/ref_gh/analyze_feedback_continuation.py"
+VERIFY_CONSTRAINTS="${SRC}/scripts/ref_gh/verify_feedback_constraint_history.py"
+VERIFY_RESTART="${SRC}/scripts/ref_gh/verify_feedback_restart_history.py"
+OUT="${CAMPAIGN_ROOT}/runs/t4_feedback_outer24_${PBS_JOBID}"
+LABEL=refgh_feedback_t4_outer24
+PYTHON=${PYTHON:-/usr/bin/python3.10}
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+test -x "${PYTHON}"
+
+nodes=$(sort -u "${PBS_NODEFILE}" | wc -l)
+test "${nodes}" -eq 8
+ranks=$((12*nodes))
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "stage=T4_outer24_medium_feedback"
+  echo "thresholds_frozen_before_feedback=true"
+  echo "nodes=${nodes}"
+  echo "ranks=${ranks}"
+  sort -u "${PBS_NODEFILE}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  "${PYTHON}" --version
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${ANALYZE}" "${VERIFY_CONSTRAINTS}" \
+    "${VERIFY_RESTART}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n "${ranks}" --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq "${ranks}"
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/^host=\([^ ]*\).*ZE_AFFINITY_MASK=\([^ ]*\).*/\1:\2/p' \
+  | sort -u | wc -l)" -eq "${ranks}"
+awk '/^host=/ {split($1, part, "="); count[part[2]]++}
+     END {for (host in count) if (count[host] != 12) exit 1}' \
+  rank_gpu_mapping.txt
+
+mkdir mesh
+cd mesh
+set +e
+mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -m -i "${INPUT}" > mesh_structure.txt 2>&1
+mesh_status=$?
+set -e
+echo "mesh_only_exit_status=${mesh_status}" >> mesh_structure.txt
+test "${mesh_status}" -eq 0 -o "${mesh_status}" -eq 139
+grep -q 'Root grid = 3 x 3 x 3 MeshBlocks' mesh_structure.txt
+grep -q 'Total number of MeshBlocks = 328' mesh_structure.txt
+grep -q 'Physical level = 1.*208 MeshBlocks' mesh_structure.txt
+grep -q 'Physical level = 2.*56 MeshBlocks' mesh_structure.txt
+grep -q 'Physical level = 3.*64 MeshBlocks' mesh_structure.txt
+cd "${OUT}"
+
+previous_checkpoint=
+completion_time=
+runtime_status=0
+failed_target=
+segment_directories=()
+for target in $(seq -f '%.1f' 0.5 0.5 20.0); do
+  tag=${target/./p}
+  directory="${OUT}/to_${tag}"
+  segment_directories+=("${directory}")
+  mkdir -p "${directory}"
+  cd "${directory}"
+  command=("${EXE}")
+  if test -n "${previous_checkpoint}"; then
+    command+=( -r "${previous_checkpoint}" )
+  else
+    command+=( -i "${INPUT}" )
+  fi
+  set +e
+  /usr/bin/time -p mpiexec -n "${ranks}" --ppn 12 --depth=8 --cpu-bind depth \
+    gpu_tile_compact.sh "${command[@]}" \
+    job/basename="${LABEL}" ref_gh/continuation_mode=feedback \
+    ref_gh/transition_path=fixed_core ref_gh/phi_ordering=compatible \
+    ref_gh/controller_delta_q=0.0 ref_gh/controller_delta_q_dot=0.0 \
+    ref_gh/controller_delta_p=0.0 ref_gh/controller_delta_p_dot=0.0 \
+    time/tlim="${target}" time/nlim=-1 output2/dt=0.5 \
+    > "${LABEL}.log" 2>&1
+  status=$?
+  set -e
+  {
+    echo "exit_status=${status}"
+    echo "target=${target}"
+    test -s "${LABEL}.user.hst" && tail -1 "${LABEL}.user.hst"
+  } > segment_status.txt
+  if test "${status}" -ne 0; then
+    runtime_status=${status}
+    failed_target=${target}
+    break
+  fi
+  previous_checkpoint=$(find "${directory}/rst" -type f -name '*.rst' \
+    | sort | tail -1)
+  test -s "${previous_checkpoint}"
+  sha256sum "${previous_checkpoint}" > checkpoint.sha256
+  if test -z "${completion_time}"; then
+    completion_time=$(awk 'NF && $1 !~ /^#/ && $20 >= 1.0 {print $1; exit}' \
+      "${LABEL}.user.hst")
+  fi
+  if test -n "${completion_time}"; then
+    hold_complete=$("${PYTHON}" - "${target}" "${completion_time}" <<'PY'
+import sys
+print(1 if float(sys.argv[1]) >= float(sys.argv[2]) + 2.0 - 1.0e-12 else 0)
+PY
+)
+    if test "${hold_complete}" -eq 1; then
+      break
+    fi
+  fi
+done
+
+cd "${OUT}"
+history_directories=()
+for directory in "${segment_directories[@]}"; do
+  if test -s "${directory}/${LABEL}.user.hst" \
+      -a -s "${directory}/${LABEL}.ref_gh.hst"; then
+    history_directories+=("${directory}")
+  fi
+done
+test "${#history_directories[@]}" -gt 0
+first=${history_directories[0]}
+{
+  head -2 "${first}/${LABEL}.user.hst"
+  for directory in "${history_directories[@]}"; do
+    grep -v '^#' "${directory}/${LABEL}.user.hst"
+  done
+} > "${LABEL}.combined.user.hst"
+{
+  head -2 "${first}/${LABEL}.ref_gh.hst"
+  for directory in "${history_directories[@]}"; do
+    grep -v '^#' "${directory}/${LABEL}.ref_gh.hst"
+  done
+} > "${LABEL}.combined.ref_gh.hst"
+for chunk in 0 1 2 3 4 5; do
+  {
+    head -2 "${first}/${LABEL}.adm_common${chunk}.hst"
+    for directory in "${history_directories[@]}"; do
+      grep -v '^#' "${directory}/${LABEL}.adm_common${chunk}.hst"
+    done
+  } > "${LABEL}.combined.adm_common${chunk}.hst"
+done
+
+"${PYTHON}" "${ANALYZE}" "${LABEL}.combined.user.hst" \
+  --outer-distance 24.0 --json t4_summary.json > t4_summary.stdout.json
+"${PYTHON}" "${VERIFY_CONSTRAINTS}" "${LABEL}.combined.user.hst" \
+  "${LABEL}.combined.ref_gh.hst" --json t4_constraint_history.json \
+  > t4_constraint_history.stdout.json
+restart_histories=()
+for directory in "${history_directories[@]}"; do
+  restart_histories+=("${directory}/${LABEL}.user.hst")
+done
+if test "${#restart_histories[@]}" -ge 2; then
+  set +e
+  "${PYTHON}" "${VERIFY_RESTART}" "${restart_histories[@]}" \
+    --json t4_restart_history.json > t4_restart_history.stdout.json
+  restart_history_status=$?
+  set -e
+else
+  printf '%s\n' '{"pass": false, "reason": "fewer than two segments"}' \
+    > t4_restart_history.json
+  restart_history_status=1
+fi
+
+set +e
+"${PYTHON}" - "${LABEL}.combined.user.hst" t4_summary.json \
+  t4_restart_history.json "${runtime_status}" "${failed_target}" \
+  > t4_acceptance.json <<'PY'
+import json, math, pathlib, sys
+history, summary_path, restart_path = map(pathlib.Path, sys.argv[1:4])
+runtime_status = int(sys.argv[4])
+failed_target = sys.argv[5]
+by_time = {}
+for line in history.read_text().splitlines():
+    if line.strip() and not line.lstrip().startswith("#"):
+        row = [float(value) for value in line.split()]
+        by_time[row[0]] = row
+rows = [by_time[time] for time in sorted(by_time)]
+summary = json.loads(summary_path.read_text())
+restart = json.loads(restart_path.read_text())
+completion = next((row[0] for row in rows if row[19] >= 1.0), None)
+hold = 0.0 if completion is None else rows[-1][0] - completion
+post = [] if completion is None else [row for row in rows if row[0] >= completion]
+stationary = bool(post) and all(
+    row[19] == 1.0 and row[20] == 0.0 and row[33] > 0.5 for row in post)
+first_risk_slowing = next((row[0] for row in rows
+                           if row[19] < 0.90 and row[22] < 0.25 - 1.0e-14), None)
+checks = {
+    "runtime_exit_zero": runtime_status == 0,
+    "reached_xi_one": completion is not None,
+    "two_M_hold": hold >= 2.0 - 1.0e-12,
+    "stationary_completion_state": stationary,
+    "finite": summary["finite"],
+    "monotone_xi": summary["monotone_xi"],
+    "nonnegative_xi_dot": summary["nonnegative_xi_dot"],
+    "delta_q_delta_p_exact_zero": summary["deltas_exact_zero"],
+    "positive_physical_lapse": summary["minima"]["physical_lapse_min"] > 0.0,
+    "condition_below_stop": summary["maxima"]["condition"] < 8.0,
+    "relative_lapse_min_above_stop": summary["minima"]["relative_lapse_min"] > 0.5,
+    "relative_lapse_max_below_stop": summary["maxima"]["relative_lapse_max"] < 3.0,
+    "v2_below_stop": summary["maxima"]["v2_max"] < 0.20,
+    "no_timestep_collapse": summary["minimum_dt"] > 1.0e-12,
+    "causally_clean_to_stop": summary["remaining_causal_distance"] > 0.0,
+    "segmented_restart_continuity": bool(restart.get("pass")),
+}
+result = {
+    "schema": "ref-gh-feedback-t4-acceptance-v1",
+    "runtime_status": runtime_status,
+    "failed_target": failed_target or None,
+    "completion_time": completion,
+    "final_time": rows[-1][0],
+    "hold_duration": hold,
+    "first_risk_slowing": first_risk_slowing,
+    "checks": checks,
+    "pass": all(checks.values()),
+}
+print(json.dumps(result, indent=2, sort_keys=True))
+if not result["pass"]:
+    raise SystemExit(1)
+PY
+acceptance_status=$?
+set -e
+
+{
+  if test "${acceptance_status}" -eq 0; then
+    echo "result=PASS"
+  elif test "${runtime_status}" -eq 0; then
+    echo "result=LIMITING_OR_INCOMPLETE"
+  else
+    echo "result=FAIL_CLOSED_OR_RUNTIME_ERROR"
+  fi
+  echo "stage=T4_outer24_medium_feedback"
+  echo "runtime_status=${runtime_status}"
+  echo "restart_history_status=${restart_history_status}"
+  echo "failed_target=${failed_target}"
+  sha256sum "${EXE}"
+} > t4_status.txt
+find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.json' \
+  -o -name '*.hst' -o -name '*.tsv' -o -name '*.sha256' \) -print0 \
+  | sort -z | xargs -0 sha256sum > compact_sha256.txt
+exit "${acceptance_status}"
