@@ -1,0 +1,166 @@
+{
+  "schema": "athenak_z4c_vc_derefine_slot_repair_evidence_v1",
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "branch": "codex/z4c-vc-derefine-slot-repair-20260824",
+  "exact_base_commit": "3c240a370084b0d2b749932386cf057921b575ef",
+  "qualified_source_commit": "d2596707e808aea7ec6167df937d71dc4dbe429e",
+  "qualified_source_tree": "1543014ef6caa141e392d8da01522c2ba71a9e3e",
+  "report_commit_note": "Resolve the branch head for the containing evidence/report commit; a Git commit cannot contain its own hash.",
+  "submodules": {
+    "kokkos": "6739bc623081648af9e752b616d9671527922cbf"
+  },
+  "inputs": {
+    "brill_input_sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b",
+    "authority_history_sha256": "ce3cdea1a8d0465a7c19e4ac1134ce474d8908b5f5cb12be6f20110d12e9c851",
+    "coefficient_file_sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10",
+    "authority_source_id": "athena-0.1-git-ba7daebccf337d3157442aec2125b9301308b2a8",
+    "event3_tree_checksum": "b6c60694c30a2049"
+  },
+  "executables": {
+    "perlmutter_cuda_sha256": "d08ea0ca307416a2735b58c77eb61c1e59a7119909c60bed7ed1094746863898",
+    "perlmutter_cuda_cmake_cache_sha256": "20fac68f9053032832b3d4fcbbd8d8c290ef291d729ca10c67d7341259b66118",
+    "perlmutter_cpu_mpi_sha256": "3c794967aa8ef70ea99d5ff379698d36377e402007345563d164ec2997a31a90",
+    "perlmutter_cpu_mpi_cmake_cache_sha256": "eadabf003bc8d246631f23a3fcbf2fb16ce00456e636dfedad4402d6a8e665bd",
+    "local_host_sha256": "2ba1c93662ddad6421d95334408841a4d380e56a5da0439e0b5e565e5f5a5778",
+    "local_host_cmake_cache_sha256": "218ee4d04b47632124cf72a574e8147c82f69d7e75be5cc7517535a6b954c9d0"
+  },
+  "red_green": {
+    "event_map_path": "EVENT3_MAP.json",
+    "event_map_sha256": "181dca72c101f8363df4c39eb0f249d507392c5e08cfb7952811b6fc55e589e9",
+    "red_audit_path": "red_base_slot_audit.json",
+    "red_audit_sha256": "a112680f30119b671228a5e26751ab8d5e3542a05712a67da09b1f34ebfbf6ef",
+    "green_audit_path": "green_same_rank_slot_audit.json",
+    "green_audit_sha256": "afbd0f9ec3b14f0af0f45cec4fdc82427f9f46887e0ed706fa618856b759fa0c"
+  },
+  "event3_runs": [
+    {
+      "resolution": "N128",
+      "job_id": 57501348,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "remote_run_directory": "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/runs/event3_n128_v5",
+      "local_evidence_directory": "evidence/perlmutter/event3_n128_v5",
+      "bundle_manifest_sha256": "3777fcfbe9baea1acbefaab648f64e00876979fbf6833941b468d561d350c19c",
+      "slot_audit_sha256": "e0bfc9f6458ea193d1ace419ec7ee22ba11ea83944ee6438e828aaad8cabe35c"
+    },
+    {
+      "resolution": "N256",
+      "job_id": 57501404,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "remote_run_directory": "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/runs/event3_n256_v1",
+      "local_evidence_directory": "evidence/perlmutter/event3_n256_v1",
+      "bundle_manifest_sha256": "4c813e02aa6c647e73f452aa83596c4fb8cd0440d206df19032ab23500844eea",
+      "slot_audit_sha256": "dfdc35d0e7d7a09ffb2fb7a5ebe782394fef4d20ffe7ab05aafdf4c2caa580b4"
+    },
+    {
+      "resolution": "N512",
+      "job_id": 57501480,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "remote_run_directory": "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/runs/event3_n512_v1",
+      "local_evidence_directory": "evidence/perlmutter/event3_n512_v1",
+      "bundle_manifest_sha256": "d502bb92a207f321ed40c8ac07d1c1eaa167360295fbe40b936d06212239753a",
+      "slot_audit_sha256": "886e2cfd22f00faf1edcd8c4fad9ef544d39a958d6fcc38935076cfa06469846"
+    }
+  ],
+  "early_runs": [
+    {
+      "resolution": "N128",
+      "job_id": 57501690,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "terminal_time": 2.5,
+      "remote_run_directory": "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/runs/early_n128_v1",
+      "local_evidence_directory": "evidence/perlmutter/early_n128_v1",
+      "bundle_manifest_sha256": "6e947e64ee62a88c2faa7cd4ce93fe61fb0a10acc80dcf7ec497b80c71ede02e",
+      "history_sha256": "1ba79c610c10f58db8178609338f4ac19d321daab7058db86ac2ee6b1f072f05",
+      "replay_ledger_sha256": "b93a2ca522c9c9c82f742564d537d175099340b6e109162c6133d62ade3ff4db"
+    },
+    {
+      "resolution": "N256",
+      "job_id": 57501741,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "terminal_time": 2.5,
+      "remote_run_directory": "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/runs/early_n256_v1",
+      "local_evidence_directory": "evidence/perlmutter/early_n256_v1",
+      "bundle_manifest_sha256": "0f946805b8cba4633ccb66e52b5d94552f204a13b2069adb1ef73547849649ac",
+      "history_sha256": "ac350c2190355b05c4eacd41b678a2d9f5dce70a540596155eff36c7d5702e04",
+      "replay_ledger_sha256": "35af3ae6dd3cb03cc6d4d52903959beb04de5939f0bfaab844e856102819821a"
+    },
+    {
+      "resolution": "N512",
+      "job_id": 57501875,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "terminal_time": 2.5,
+      "remote_run_directory": "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/runs/early_n512_v1",
+      "local_evidence_directory": "evidence/perlmutter/early_n512_v1",
+      "bundle_manifest_sha256": "c1628598be2f4180f3eeb218375043517dce3abcf93c9c24c04ef8bff9c1dc56",
+      "history_sha256": "238c453c92fb909ada35fb9d061e0462e06a0311893976d9f506970584a98ccd",
+      "replay_ledger_sha256": "3625d9fa11a5a2ebe67e91a16e19243ec79257911d6bbdf67cb1787ca76dd103"
+    }
+  ],
+  "analysis": {
+    "history_summary_path": "evidence/analysis/early_history/comparison_summary.history.json",
+    "history_summary_sha256": "806b72f6be763f4243ebdcad98794e0ffab862438db42194d442c5300a662e50",
+    "field_summary_path": "evidence/analysis/early_fields/field_summary.json",
+    "field_summary_sha256": "5e9a17cb4fc4e643cf34946aea2ea2d0cc7948a6861cb9480387a91865abd054",
+    "state_health_path": "evidence/analysis/early_fields/state_health.csv",
+    "state_health_sha256": "ad7862ba754740d58f267d392af26053860119297b437025b9fb0102684c6fab"
+  },
+  "regressions": {
+    "host": {
+      "command": "ctest --test-dir build --output-on-failure -j16",
+      "enabled_passed": 136,
+      "failed": 0,
+      "disabled_cuda_required": 2,
+      "return_code": 0,
+      "log_path": "evidence/regressions/host/LastTest.log",
+      "log_sha256": "2b4e660e531b73d0f8964fe5526ce903d2dd852ee32459b8dc02dc01291e4976"
+    },
+    "perlmutter": {
+      "runner": "perlmutter_regression_qualification.sh",
+      "job_id": 57502832,
+      "final_state": "COMPLETED",
+      "exit_code": "0:0",
+      "cpu_mpi_passed": 4,
+      "cuda_same_rank_passed": 8,
+      "cuda_cell_centered_controls_passed": 3,
+      "cuda_kernel_passed": 2,
+      "status": {
+        "cpu_mpi": 0,
+        "cuda_python": 0,
+        "cuda_kernel": 0
+      },
+      "evidence_directory": "evidence/regressions/perlmutter/regressions_d259_v2",
+      "bundle_manifest_sha256": "d3ae19031e56af43c8e179f4ac248b95dbfcc33bf169041106aff7131d92d3fe"
+    },
+    "setup_failure": {
+      "job_id": 57502692,
+      "final_state": "FAILED",
+      "exit_code": "1:0",
+      "science_or_numerical_disposition": "No numerical regression result; launcher task capacity and obsolete cached Python interpreter caused setup failure."
+    },
+    "sycl": {
+      "executed": false,
+      "reason": "No real current-source SYCL runtime was available; no compilation-only qualification claim is made."
+    }
+  },
+  "scheduler_audit": {
+    "checked_utc": "2026-08-24",
+    "jobs_remaining": false,
+    "command": "squeue -u hzhu -h",
+    "result": "empty"
+  },
+  "verdict": "VC_DEREFINE_SLOT_CORRUPTION_FIXED",
+  "limitations": [
+    "This is not VC_AMR_QUALIFIED.",
+    "Figure 3 was not reproduced.",
+    "No complete late-time collapse evolution or horizon claim was made.",
+    "No SYCL runtime qualification was performed.",
+    "N128 event-3 history bracketing also crosses the next closely spaced event.",
+    "Exact hierarchy replay is a control and is not itself convergence evidence."
+  ]
+}
