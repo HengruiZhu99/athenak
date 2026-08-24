@@ -11,6 +11,7 @@
 #include <limits> // numeric_limits<>
 #include <algorithm> // max
 #include <utility> // make_pair
+#include <vector>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -97,6 +98,8 @@ void Mesh::LoadBalance(float *clist, int *rlist, int *slist, int *nlist, int nb)
 
 void MeshRefinement::InitRecvAMR(int nleaf) {
 #if MPI_PARALLEL_ENABLED
+  vc_derefine_child_sources = DualArray2D<int>();
+  vc_derefine_local_data = DvceArray5D<Real>();
   // Step 1. (InitRecvAMR)
   // loop over new MBs on this rank, count number of MeshBlocks received by this rank
   nmb_recv = 0;
@@ -137,6 +140,7 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
 
   // count number of cell- and face-centered variables communicated depending on physics
   int ncc_tosend=0, nvc_tosend=0, nfc_tosend=0;
+  z4c::Z4c *pz4c = pmy_mesh->pmb_pack->pz4c;
   if (pmy_mesh->pmb_pack->phydro != nullptr) {
     ncc_tosend += (pmy_mesh->pmb_pack->phydro->nhydro +
                    pmy_mesh->pmb_pack->phydro->nscalars);
@@ -149,12 +153,12 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
   if (pmy_mesh->pmb_pack->prad != nullptr) {
     ncc_tosend += (pmy_mesh->pmb_pack->prad->prgeo->nangles);
   }
-  if (pmy_mesh->pmb_pack->pz4c != nullptr) {
-    if (pmy_mesh->pmb_pack->pz4c->layout.centering ==
+  if (pz4c != nullptr) {
+    if (pz4c->layout.centering ==
         z4c::Z4cGridCentering::vertex) {
-      nvc_tosend += pmy_mesh->pmb_pack->pz4c->nz4c;
+      nvc_tosend += pz4c->nz4c;
     } else {
-      ncc_tosend += pmy_mesh->pmb_pack->pz4c->nz4c;
+      ncc_tosend += pz4c->nz4c;
     }
   }
 
@@ -328,6 +332,106 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
   // Sync dual array
   recvbuf.template modify<HostMemSpace>();
   recvbuf.template sync<DevExeSpace>();
+
+  // Build the complete deterministic source map for split native-VC
+  // derefinement parents while the old hierarchy is still authoritative.
+  // Remote children are represented by their receive buffer.  Local children
+  // are copied now into compact immutable storage because A7 can overwrite
+  // coarse_u0 slots during a mixed refine/derefine transaction before A8.
+  if (pz4c != nullptr &&
+      pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
+    const int rank = global_variable::my_rank;
+    const int first_old = pmy_mesh->gids_eachrank[rank];
+    const int last_old = first_old + pmy_mesh->nmb_eachrank[rank] - 1;
+    const int local_new_count = new_nmb_eachrank[rank];
+    vc_derefine_child_sources = DualArray2D<int>(
+        "native VC split derefine child sources", local_new_count, nleaf);
+    for (int local_new = 0; local_new < local_new_count; ++local_new) {
+      for (int child = 0; child < nleaf; ++child) {
+        vc_derefine_child_sources.h_view(local_new, child) = 0;
+      }
+    }
+    std::vector<int> local_old_slots;
+    for (int local_new = 0; local_new < local_new_count; ++local_new) {
+      const int new_gid = nmbs + local_new;
+      const int old_base = newtoold[new_gid];
+      if (pmy_mesh->lloc_eachmb[old_base].level <=
+          new_lloc_eachmb[new_gid].level) {
+        continue;
+      }
+      bool split = false;
+      for (int child = 0; child < nleaf; ++child) {
+        split = split || pmy_mesh->rank_eachmb[old_base + child] != rank;
+      }
+      if (!split) continue;
+
+      for (int child = 0; child < nleaf; ++child) {
+        int source = 0;
+        for (int recv_index = 0; recv_index < nmb_recv; ++recv_index) {
+          if (recvbuf.h_view(recv_index).lid == local_new &&
+              recvbuf.h_view(recv_index).vc_derefine_child == child) {
+            source = -(recv_index + 1);
+            break;
+          }
+        }
+        if (source == 0 &&
+            pmy_mesh->rank_eachmb[old_base + child] == rank &&
+            old_base + child >= first_old && old_base + child <= last_old) {
+          local_old_slots.push_back(old_base + child - first_old);
+          source = static_cast<int>(local_old_slots.size());
+        }
+        if (source == 0) {
+          std::cerr << "### FATAL ERROR: missing native VC split-derefinement "
+                       "child " << child << " for parent new_gid=" << new_gid
+                    << " on rank=" << rank << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        vc_derefine_child_sources.h_view(local_new, child) = source;
+      }
+    }
+    vc_derefine_child_sources.template modify<HostMemSpace>();
+    vc_derefine_child_sources.template sync<DevExeSpace>();
+
+    if (!local_old_slots.empty()) {
+      const int local_count = static_cast<int>(local_old_slots.size());
+      const int ni = vlayout.cie - vlayout.cis + 1;
+      const int nj = vlayout.cje - vlayout.cjs + 1;
+      const int nk = vlayout.cke - vlayout.cks + 1;
+      vc_derefine_local_data = DvceArray5D<Real>(
+          "native VC split derefine local snapshots", local_count,
+          pz4c->nz4c, nk, nj, ni);
+      DualArray1D<int> source_slots(
+          "native VC split derefine local old slots", local_count);
+      for (int source = 0; source < local_count; ++source) {
+        source_slots.h_view(source) = local_old_slots[source];
+      }
+      source_slots.template modify<HostMemSpace>();
+      source_slots.template sync<DevExeSpace>();
+      const auto source_slots_device = source_slots.d_view;
+      const auto coarse = pz4c->coarse_u0;
+      const auto snapshots = vc_derefine_local_data;
+      const int nvar = pz4c->nz4c;
+      Kokkos::TeamPolicy<> snapshot_policy(
+          DevExeSpace(), local_count * nvar, Kokkos::AUTO);
+      Kokkos::parallel_for("Snapshot split native VC local derefine children",
+          snapshot_policy, KOKKOS_LAMBDA(TeamMember_t member) {
+            const int source = member.league_rank() / nvar;
+            const int variable = member.league_rank() % nvar;
+            const int old_slot = source_slots_device(source);
+            Kokkos::parallel_for(
+                Kokkos::TeamThreadRange<>(member, ni * nj * nk),
+                [&](const int index) {
+                  const int i = index % ni;
+                  const int j = (index / ni) % nj;
+                  const int k = index / (ni * nj);
+                  snapshots(source, variable, k, j, i) = coarse(
+                      old_slot, variable, vlayout.cks + k,
+                      vlayout.cjs + j, vlayout.cis + i);
+                });
+          });
+      Kokkos::fence("Complete split native VC local-child snapshots");
+    }
+  }
   // Note: No need to reallocate recv_data buffer as it is fixed length
 
   // Step 3. (InitRecvAMR)
@@ -1117,59 +1221,16 @@ void MeshRefinement::UnpackAMRBuffersVC(DvceArray5D<Real> &a, DvceArray5D<Real> 
 
   const auto layout = pmy_mesh->pmb_pack->pz4c->layout;
   const int rank = global_variable::my_rank;
-  const int first_old = pmy_mesh->gids_eachrank[rank];
-  const int last_old = first_old + pmy_mesh->nmb_eachrank[rank] - 1;
-  const int first_new = new_gids_eachrank[rank];
   const int local_new_count = new_nmb_eachrank[rank];
   const int nleaf = pmy_mesh->three_d ? 8 : pmy_mesh->two_d ? 4 : 2;
-
-  // Each source entry is encoded as local-old-slot+1 or -(receive-buffer+1).
-  // Zero means the new local block is not a split derefined parent.
-  DualArray2D<int> child_sources("native VC split derefine child sources",
-                                 local_new_count, nleaf);
-  for (int local_new = 0; local_new < local_new_count; ++local_new) {
-    for (int child = 0; child < nleaf; ++child) {
-      child_sources.h_view(local_new, child) = 0;
-    }
+  if (vc_derefine_child_sources.extent_int(0) != local_new_count ||
+      vc_derefine_child_sources.extent_int(1) != nleaf) {
+    std::cerr << "### FATAL ERROR: native VC split-derefinement source map "
+                 "does not match the accepted local hierarchy" << std::endl;
+    std::exit(EXIT_FAILURE);
   }
-  for (int local_new = 0; local_new < local_new_count; ++local_new) {
-    const int new_gid = first_new + local_new;
-    const int old_base = newtoold[new_gid];
-    if (pmy_mesh->lloc_eachmb[old_base].level <=
-        new_lloc_eachmb[new_gid].level) {
-      continue;
-    }
-    bool split = false;
-    for (int child = 0; child < nleaf; ++child) {
-      split = split || pmy_mesh->rank_eachmb[old_base + child] != rank;
-    }
-    if (!split) continue;
-
-    for (int child = 0; child < nleaf; ++child) {
-      int source = 0;
-      for (int recv_index = 0; recv_index < nmb_recv; ++recv_index) {
-        if (recvbuf.h_view(recv_index).lid == local_new &&
-            recvbuf.h_view(recv_index).vc_derefine_child == child) {
-          source = -(recv_index + 1);
-          break;
-        }
-      }
-      if (source == 0 &&
-          pmy_mesh->rank_eachmb[old_base + child] == rank &&
-          old_base + child >= first_old && old_base + child <= last_old) {
-        source = old_base + child - first_old + 1;
-      }
-      if (source == 0) {
-        std::cerr << "### FATAL ERROR: missing native VC split-derefinement child "
-                  << child << " for parent new_gid=" << new_gid
-                  << " on rank=" << rank << std::endl;
-        std::exit(EXIT_FAILURE);
-      }
-      child_sources.h_view(local_new, child) = source;
-    }
-  }
-  child_sources.template modify<HostMemSpace>();
-  child_sources.template sync<DevExeSpace>();
+  const auto child_sources = vc_derefine_child_sources.d_view;
+  const auto local_snapshots = vc_derefine_local_data;
 
   DvceArray1D<unsigned long long> assembly_errors(
       "native VC split derefine assembly errors", 2);
@@ -1184,7 +1245,7 @@ void MeshRefinement::UnpackAMRBuffersVC(DvceArray5D<Real> &a, DvceArray5D<Real> 
       KOKKOS_LAMBDA(TeamMember_t member) {
         const int m = member.league_rank() / nvar;
         const int v = member.league_rank() % nvar;
-        if (child_sources.d_view(m, 0) == 0) return;
+        if (child_sources(m, 0) == 0) return;
         Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, points),
             [&](const int index) {
               const int ni = layout.ie - layout.is + 1;
@@ -1211,16 +1272,16 @@ void MeshRefinement::UnpackAMRBuffersVC(DvceArray5D<Real> &a, DvceArray5D<Real> 
                     (bz == 0 ? qk <= layout.cnx3 : qk >= layout.cnx3);
                 if (!x_has || !y_has || !z_has) continue;
 
-                const int source = child_sources.d_view(m, child);
+                const int source = child_sources(m, child);
                 Real value = 0.0;
                 if (source > 0) {
-                  const int old_slot = source - 1;
-                  const int ci = layout.cis + qi - bx * layout.cnx1;
-                  const int cj = layout.nx2 <= 1 ? 0
-                      : layout.cjs + qj - by * layout.cnx2;
-                  const int ck = layout.nx3 <= 1 ? 0
-                      : layout.cks + qk - bz * layout.cnx3;
-                  value = ca(old_slot, v, ck, cj, ci);
+                  const int snapshot = source - 1;
+                  const int si = qi - bx * layout.cnx1;
+                  const int sj = layout.nx2 <= 1 ? 0
+                      : qj - by * layout.cnx2;
+                  const int sk = layout.nx3 <= 1 ? 0
+                      : qk - bz * layout.cnx3;
+                  value = local_snapshots(snapshot, v, sk, sj, si);
                 } else {
                   const int recv_index = -source - 1;
                   const int il = rbuf.d_view(recv_index).vbis;

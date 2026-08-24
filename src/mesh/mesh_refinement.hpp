@@ -104,6 +104,12 @@ class MeshRefinement {
   DualArray1D<AMRBufferData> sendbuf, recvbuf; // send/recv buffer metadata
   MPI_Request *send_req, *recv_req;
   DvceArray1D<Real> send_data, recv_data;      // send/recv device data
+  // Immutable local-child snapshots used by the one-writer split-family VC
+  // derefinement assembly.  A7 may reuse coarse-array slots for newly refined
+  // blocks before A8 consumes the derefinement receives, so A8 must not read
+  // local child contributions directly from coarse_u0.
+  DualArray2D<int> vc_derefine_child_sources;
+  DvceArray5D<Real> vc_derefine_local_data;
 #endif
 
   // functions
