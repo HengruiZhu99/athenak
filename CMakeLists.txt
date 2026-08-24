@@ -762,7 +762,39 @@ if (Athena_BUILD_UNIT_TESTS)
           athena.z4c_vc_split_family_mixed_amr_mpi${ranks} PROPERTIES TIMEOUT 240
           PROCESSORS ${ranks}
           LABELS "z4c;vertex;2d;cartesian;amr;refine;derefine;mpi;regression")
+      add_test(
+          NAME athena.z4c_vc_split_family_remote_lower_mpi${ranks}
+          COMMAND
+          ${PYTHON_EXECUTABLE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_split_family_derefine_test.py
+          --athena $<TARGET_FILE:athena>
+          --input
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput
+          --work-dir
+          ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_split_family_remote_lower_mpi${ranks}
+          --mpiexec ${MPIEXEC_EXECUTABLE} --np-flag=${MPIEXEC_NUMPROC_FLAG}
+          --ranks ${ranks} --ownership-case remote_lower)
+      set_tests_properties(
+          athena.z4c_vc_split_family_remote_lower_mpi${ranks}
+          PROPERTIES TIMEOUT 240 PROCESSORS ${ranks}
+          LABELS "z4c;vertex;2d;cartesian;amr;derefine;mpi;regression;move-right")
     endforeach()
+    add_test(
+        NAME athena.z4c_vc_split_family_dual_target_mpi4
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_split_family_derefine_test.py
+        --athena $<TARGET_FILE:athena>
+        --input
+        ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput
+        --work-dir
+        ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_split_family_dual_target_mpi4
+        --mpiexec ${MPIEXEC_EXECUTABLE} --np-flag=${MPIEXEC_NUMPROC_FLAG}
+        --ranks 4 --ownership-case dual_split)
+    set_tests_properties(
+        athena.z4c_vc_split_family_dual_target_mpi4
+        PROPERTIES TIMEOUT 240 PROCESSORS 4
+        LABELS "z4c;vertex;2d;cartesian;amr;derefine;mpi;regression;dual-split")
 
     function(add_z4c_vc_dynamic_amr_mpi_case name input dimensions geometry
              ranks root_leaves expected_volume meshblocks_per_dim)
