@@ -11,6 +11,14 @@ closed-loop run failed closed at t=3.70126M before full activation.  Therefore
 closed-loop continuation, convergence, and long-time stability are **not**
 established, and the conditional T6 resolution gate is disallowed.
 
+The bounded T5 prescribed-tau-4 discriminator also failed: job `8777824`
+became ill-conditioned at stage time `t=3.18677M` after completing all segments
+through `t=3M`.  Its last history point is `t=3.150078211271024M`,
+`xi=0.7875195528177561`.  The campaign is now paused, no T6 or other follow-on
+run was submitted, and PBS reports no remaining campaign job.  The detailed
+formulation and code audit is in
+[`ref_gh_formulation_code_review_20260824.md`](ref_gh_formulation_code_review_20260824.md).
+
 The work is based exactly on
 `9c438dc619aa742404530c953243d71b2a01d8e6` from
 `codex/ref-gh-transition-path-ordering-diagnosis-20260822`.  The implementation
@@ -110,6 +118,25 @@ shift/lapse ratio at radii about `0.45M` and `0.56M` on the finest level.  Thus
 the observed loss of admissibility is localized near the fixed-core transition
 shell and is causally disconnected from the outer boundary.  This localization
 is an observation; it does not by itself identify the mathematical cause.
+
+Capacity job `8777824` ran the required T5 aggressive prescribed-tau-4
+discriminator on the identical eight-node, 96-tile, 328-block grid.  Mapping,
+startup, and checkpoint/restart gates passed, but the segment targeting
+`t=3.5M` stopped when relative conditioning became invalid at stage time
+`3.18677M`.  At the last history point (`t=3.150078211271024M`) the prescribed
+path had `xi=0.7875195528177561`, condition number `7.700589313786415`,
+`v2_max=3.947033492622919`, GH L2 `4.499013219443283e-2`, reduction L2
+`3.611535758786963e-3`, and curl L2 `2.365672088208585e-1`.  The physical
+lapse was positive and recorded histories were finite, but the subsequent
+stage failure means T5 did not reach full activation or `t=4M`.
+
+Feedback delayed growth in coordinate time because it activated less of the
+reference, but it was not better at equal activation after approximately
+`xi=0.60`.  At `xi=0.675`, T4 had larger conditioning, v2, GH, reduction, and
+curl measures than T5.  The feedback path therefore did not demonstrate a
+more admissible fixed-activation state or reach a higher stable activation.
+The compact comparison is
+[`feedback_vs_open_loop_comparison.json`](fo_gh_artifacts/ref_gh_feedback_continuation_20260823/feedback_vs_open_loop_comparison.json).
 
 ## Fixed mathematical scope
 
@@ -218,14 +245,15 @@ projected t=20 characteristic distance retains about 7.43M of margin.  The
 projection motivates the grid; only the eventual measured T4 integral will be
 used for a causal claim.
 
-## Remaining ordered gate
+## Campaign pause
 
-Run only T5, the required aggressive prescribed four-M open-loop discriminator,
-on the identical enlarged medium mesh.  Compare its first admissibility and
-constraint-growth transitions directly with T4.  T6 must not run because T4
-did not pass.  No statement of feedback success, convergence, full activation,
-trumpet establishment, or long-time stability is justified by the current
-evidence.
+Both ordered medium discriminators are complete failures: T4 failed closed at
+`t=3.70126M`, and T5 became ill-conditioned at stage time `t=3.18677M`.  T6
+must not run because T4 did not pass.  No statement of feedback success,
+convergence, full activation, trumpet establishment, or long-time stability is
+justified by this evidence.  The campaign is paused for the formulation and
+code review documented in
+[`ref_gh_formulation_code_review_20260824.md`](ref_gh_formulation_code_review_20260824.md).
 
 ## Reproduction
 
@@ -252,3 +280,5 @@ The compact logs, JSON, mesh structure, hashes, and status manifest are under
 restart outputs are intentionally excluded.  The complete T4 output and
 checkpoints remain on Aurora at
 `/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/runs/t4_feedback_outer24_8777607.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov`.
+The complete T5 output and checkpoints remain at
+`/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_feedback_continuation_20260823_2466879e_v1/runs/t5_prescribed_outer24_8777824.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov`.
