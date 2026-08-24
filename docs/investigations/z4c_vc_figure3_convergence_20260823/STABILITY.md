@@ -46,6 +46,11 @@ These observations implicate the transaction/interface path. They do not yet
 identify whether restriction, redistributed active state, cache/ghost refresh,
 q6 interface closure, or the first post-event RHS is the first writer.
 
+The retained history and quarter-time field cadence also cannot establish the
+first variable/location of a high-k branch at event 3. No such spectral claim
+is made. The bounded replay below must add the native-resolution spectrum or a
+local O6/O4 disagreement census at each writer phase.
+
 ## Parent under-resolution
 
 It is not mathematically ruled out. Native shadow sensors do not select the
@@ -73,4 +78,3 @@ Record the first writer, location, level, block-edge/coarse-fine distance,
 high-order value, lower-order shadow value, and O6/O4 derivative disagreement.
 This bounded replay distinguishes state-transfer injection from derivative
 closure amplification without another long collapse run.
-

@@ -144,6 +144,9 @@ identified.
   this is not an upstream exporter qualification.
 - Field convergence is available at common coordinate times through `t=2`;
   later raw output is intentionally not treated as convergent science.
+- The history cadence identifies event 3 but does not retain a stage-resolved
+  first-writer location or per-variable high-k spectrum at the transaction.
+  High-k interface growth is therefore a hypothesis for the bounded replay,
+  not a measured claim from this campaign.
 - Exact replay is hierarchy control, not convergence evidence.
 - No unique AMR source bug has yet been isolated.
-
