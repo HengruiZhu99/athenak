@@ -1,0 +1,321 @@
+AthenaK Kokkos default execution space: Cuda
+
+Root grid = 4 x 8 x 1 MeshBlocks
+Total number of MeshBlocks = 32
+Number of logical  levels of refinement = 23 (24 levels total)
+Number of physical levels of refinement = 20 (21 levels total)
+  Physical level = 0 (logical level = 3): 32 MeshBlocks, cost = 32
+Number of parallel ranks = 1
+AssembleZ4cTasks
+Direct global Brill coefficient import: radial_points=128 angular_points=32 adm_mass=2.6606354586228815 min_psi4=1.239025152113626 lapse=psi^-2 min_lapse=0.31535016221506207 max_lapse=0.89837971810372397
+Converted imported ADM data to Z4c proper_box_C_rms=0.0019330746848076072 proper_box_H_rms=0.0019277860733824227 proper_box_M_rms=0 proper_box_Z_rms=7.1446819937647286e-05 coordinate_support_H_rms=9.6915287474313304e-07 coordinate_support_M_rms=0
+Initialized Z4c from IrisK data mode=direct_global_coefficients path=/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/runs/event3_n128_v5/brill_global_128x32.coefficients bytes=95927
+AMR_HISTORY_SOURCE_COMPATIBILITY recorded_source_id=athena-0.1-git-ba7daebccf337d3157442aec2125b9301308b2a8 current_source_id=athena-0.1-git-7927d02fd3fd34fe504dde18998c8a62fde3909e explicit_match=true
+VC_AMR_LIFECYCLE phase=A150 name=InitBndry_Z4c_RestrictU_complete cycle=0 time=0 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A151 name=InitBndry_Z4c_InitRecv_complete cycle=0 time=0 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A152 name=InitBndry_Z4c_SendU_complete cycle=0 time=0 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A153 name=InitBndry_Z4c_ClearSendRecv_complete cycle=0 time=0 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A154 name=InitBndry_Z4c_RecvU_complete cycle=0 time=0 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A155 name=InitBndry_Z4c_BoundaryRHS_complete cycle=0 time=0 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A156 name=InitBndry_Z4c_ApplyPhysicalBCs_complete cycle=0 time=0 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A157 name=InitBndry_Z4c_Prolongate_complete cycle=0 time=0 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A158 name=InitBndry_Z4c_BuiltInPhysicalGhosts_complete cycle=0 time=0 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A159 name=InitBndry_Z4c_AxisParityGhosts_complete cycle=0 time=0 global_meshblocks=32 local_meshblocks=32
+AMR_HISTORY_TIMESTEP_CLIP event=1 time_hex=0x0p+0 candidate_dt_hex=0x1.62a8878cde393p-6 applied_dt_hex=0x1.62a8878cde393p-7 target_time_hex=0x1.62a8878cde393p-7
+
+Setup complete, executing task list(s)...
+
+elapsed=7.519906e-01 cycle=0 time=0.000000e+00 dt=1.082331e-02
+CARTOON_AMR_TRANSACTION cycle=1 requested_refine=2 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+VC_AMR_LIFECYCLE phase=A0 name=before_RedistAndRefineMeshBlocks cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A1 name=logical_locations_and_maps_complete cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A2 name=load_balance_and_capacity_complete cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A3 name=InitRecvAMR_complete cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A4 name=PackAndSendAMR_complete cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A5 name=DerefineVCSameRank_complete cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A6 name=CopyVC_complete cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A7 name=CopyForRefinementVC_complete cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A8 name=AMR_MPI_and_UnpackAMRBuffersVC_complete cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A9 name=new_to_old_DualView_synchronized cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A10 name=RefineVC_complete cycle=1 time=1.082331e-02 global_meshblocks=32 local_meshblocks=32
+VC_AMR_LIFECYCLE phase=A11 name=new_mesh_and_rank_metadata_installed cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A12 name=MeshBlock_and_Coordinates_reconstructed cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A13 name=SetNeighbors_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A14 name=RebuildVertexTopologyPlan_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A15 name=post_regrid_EnforceAlgConstr_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A150 name=InitBndry_Z4c_RestrictU_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A151 name=InitBndry_Z4c_InitRecv_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A152 name=InitBndry_Z4c_SendU_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A153 name=InitBndry_Z4c_ClearSendRecv_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A154 name=InitBndry_Z4c_RecvU_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A155 name=InitBndry_Z4c_BoundaryRHS_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A156 name=InitBndry_Z4c_ApplyPhysicalBCs_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A157 name=InitBndry_Z4c_Prolongate_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A158 name=InitBndry_Z4c_BuiltInPhysicalGhosts_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A159 name=InitBndry_Z4c_AxisParityGhosts_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A16 name=InitBoundaryValuesAndPrimitives_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A17 name=ConvertZ4cToADM_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A18 name=ADMConstraints_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A19 name=NewTimeStep_complete cycle=1 time=1.082331e-02 global_meshblocks=38 local_meshblocks=38
+AMR_HISTORY_REPLAY event=1 time_hex=0x1.62a8878cde393p-7 requested_leaves=38 accepted_leaves=38 max_level=4 checksum=6d1dc10512d42608 exact_match=true shadow_refine=9 shadow_derefine=0
+AMR_HISTORY_TIMESTEP_CLIP event=2 time_hex=0x1.62a8878cde393p-7 candidate_dt_hex=0x1.61883b42f83efp-7 applied_dt_hex=0x1.614baa217eee6p-8 target_time_hex=0x1.09a72e4eced83p-6
+CARTOON_AMR_TRANSACTION cycle=2 requested_refine=4 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+VC_AMR_LIFECYCLE phase=A0 name=before_RedistAndRefineMeshBlocks cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A1 name=logical_locations_and_maps_complete cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A2 name=load_balance_and_capacity_complete cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A3 name=InitRecvAMR_complete cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A4 name=PackAndSendAMR_complete cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A5 name=DerefineVCSameRank_complete cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A6 name=CopyVC_complete cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A7 name=CopyForRefinementVC_complete cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A8 name=AMR_MPI_and_UnpackAMRBuffersVC_complete cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A9 name=new_to_old_DualView_synchronized cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A10 name=RefineVC_complete cycle=2 time=1.621418e-02 global_meshblocks=38 local_meshblocks=38
+VC_AMR_LIFECYCLE phase=A11 name=new_mesh_and_rank_metadata_installed cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A12 name=MeshBlock_and_Coordinates_reconstructed cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A13 name=SetNeighbors_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A14 name=RebuildVertexTopologyPlan_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A15 name=post_regrid_EnforceAlgConstr_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A150 name=InitBndry_Z4c_RestrictU_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A151 name=InitBndry_Z4c_InitRecv_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A152 name=InitBndry_Z4c_SendU_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A153 name=InitBndry_Z4c_ClearSendRecv_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A154 name=InitBndry_Z4c_RecvU_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A155 name=InitBndry_Z4c_BoundaryRHS_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A156 name=InitBndry_Z4c_ApplyPhysicalBCs_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A157 name=InitBndry_Z4c_Prolongate_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A158 name=InitBndry_Z4c_BuiltInPhysicalGhosts_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A159 name=InitBndry_Z4c_AxisParityGhosts_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A16 name=InitBoundaryValuesAndPrimitives_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A17 name=ConvertZ4cToADM_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A18 name=ADMConstraints_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A19 name=NewTimeStep_complete cycle=2 time=1.621418e-02 global_meshblocks=50 local_meshblocks=50
+AMR_HISTORY_REPLAY event=2 time_hex=0x1.09a72e4eced83p-6 requested_leaves=50 accepted_leaves=50 max_level=5 checksum=e38dd0ebe7826578 exact_match=true shadow_refine=9 shadow_derefine=0
+elapsed=1.150918e+00 cycle=4 time=2.697372e-02 dt=5.365868e-03
+elapsed=1.208007e+00 cycle=8 time=4.838516e-02 dt=5.328828e-03
+elapsed=1.264588e+00 cycle=12 time=6.963968e-02 dt=5.289735e-03
+elapsed=1.321881e+00 cycle=16 time=9.073900e-02 dt=5.249132e-03
+elapsed=1.378850e+00 cycle=20 time=1.116797e-01 dt=5.213418e-03
+elapsed=1.436065e+00 cycle=24 time=1.324833e-01 dt=5.179169e-03
+elapsed=1.493186e+00 cycle=28 time=1.531530e-01 dt=5.149315e-03
+elapsed=1.550342e+00 cycle=32 time=1.737137e-01 dt=5.126337e-03
+elapsed=1.608233e+00 cycle=36 time=1.941881e-01 dt=5.105465e-03
+elapsed=1.665512e+00 cycle=40 time=2.145839e-01 dt=5.089391e-03
+elapsed=1.722554e+00 cycle=44 time=2.349247e-01 dt=5.079521e-03
+elapsed=1.899380e+00 cycle=48 time=2.552350e-01 dt=5.075471e-03
+elapsed=1.957959e+00 cycle=52 time=2.755301e-01 dt=5.072074e-03
+AMR_HISTORY_TIMESTEP_CLIP event=3 time_hex=0x1.2eeb613a6547ap-2 candidate_dt_hex=0x1.4c8961e202cf3p-8 applied_dt_hex=0x1.1cb5ff4c159p-9 target_time_hex=0x1.3124cd38fd72cp-2
+elapsed=2.014912e+00 cycle=56 time=2.958198e-01 dt=2.172172e-03
+CARTOON_AMR_TRANSACTION cycle=57 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=2 created_leaves=0 deleted_leaves=6 mirror_mismatches=0
+VC_AMR_LIFECYCLE phase=A0 name=before_RedistAndRefineMeshBlocks cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A1 name=logical_locations_and_maps_complete cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A2 name=load_balance_and_capacity_complete cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A3 name=InitRecvAMR_complete cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A4 name=PackAndSendAMR_complete cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A5 name=DerefineVCSameRank_complete cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A6 name=CopyVC_complete cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A7 name=CopyForRefinementVC_complete cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A8 name=AMR_MPI_and_UnpackAMRBuffersVC_complete cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A9 name=new_to_old_DualView_synchronized cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A10 name=RefineVC_complete cycle=57 time=2.979919e-01 global_meshblocks=50 local_meshblocks=50
+VC_AMR_LIFECYCLE phase=A11 name=new_mesh_and_rank_metadata_installed cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A12 name=MeshBlock_and_Coordinates_reconstructed cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A13 name=SetNeighbors_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A14 name=RebuildVertexTopologyPlan_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A15 name=post_regrid_EnforceAlgConstr_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A150 name=InitBndry_Z4c_RestrictU_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A151 name=InitBndry_Z4c_InitRecv_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A152 name=InitBndry_Z4c_SendU_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A153 name=InitBndry_Z4c_ClearSendRecv_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A154 name=InitBndry_Z4c_RecvU_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A155 name=InitBndry_Z4c_BoundaryRHS_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A156 name=InitBndry_Z4c_ApplyPhysicalBCs_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A157 name=InitBndry_Z4c_Prolongate_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A158 name=InitBndry_Z4c_BuiltInPhysicalGhosts_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A159 name=InitBndry_Z4c_AxisParityGhosts_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A16 name=InitBoundaryValuesAndPrimitives_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A17 name=ConvertZ4cToADM_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A18 name=ADMConstraints_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A19 name=NewTimeStep_complete cycle=57 time=2.979919e-01 global_meshblocks=44 local_meshblocks=44
+AMR_HISTORY_REPLAY event=3 time_hex=0x1.3124cd38fd72cp-2 requested_leaves=44 accepted_leaves=44 max_level=4 checksum=b6c60694c30a2049 exact_match=true shadow_refine=6 shadow_derefine=0
+AMR_HISTORY_TIMESTEP_CLIP event=4 time_hex=0x1.3597a5362dc9p-2 candidate_dt_hex=0x1.f63fa8371d1cp-8 applied_dt_hex=0x1.7b44bf08ae2p-11 target_time_hex=0x1.36554795b2201p-2
+CARTOON_AMR_TRANSACTION cycle=59 requested_refine=10 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=30 deleted_leaves=0 mirror_mismatches=0
+VC_AMR_LIFECYCLE phase=A0 name=before_RedistAndRefineMeshBlocks cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A1 name=logical_locations_and_maps_complete cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A2 name=load_balance_and_capacity_complete cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A3 name=InitRecvAMR_complete cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A4 name=PackAndSendAMR_complete cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A5 name=DerefineVCSameRank_complete cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A6 name=CopyVC_complete cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A7 name=CopyForRefinementVC_complete cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A8 name=AMR_MPI_and_UnpackAMRBuffersVC_complete cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A9 name=new_to_old_DualView_synchronized cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A10 name=RefineVC_complete cycle=59 time=3.030597e-01 global_meshblocks=44 local_meshblocks=44
+VC_AMR_LIFECYCLE phase=A11 name=new_mesh_and_rank_metadata_installed cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A12 name=MeshBlock_and_Coordinates_reconstructed cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A13 name=SetNeighbors_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A14 name=RebuildVertexTopologyPlan_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A15 name=post_regrid_EnforceAlgConstr_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A150 name=InitBndry_Z4c_RestrictU_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A151 name=InitBndry_Z4c_InitRecv_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A152 name=InitBndry_Z4c_SendU_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A153 name=InitBndry_Z4c_ClearSendRecv_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A154 name=InitBndry_Z4c_RecvU_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A155 name=InitBndry_Z4c_BoundaryRHS_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A156 name=InitBndry_Z4c_ApplyPhysicalBCs_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A157 name=InitBndry_Z4c_Prolongate_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A158 name=InitBndry_Z4c_BuiltInPhysicalGhosts_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A159 name=InitBndry_Z4c_AxisParityGhosts_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A16 name=InitBoundaryValuesAndPrimitives_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A17 name=ConvertZ4cToADM_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A18 name=ADMConstraints_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A19 name=NewTimeStep_complete cycle=59 time=3.030597e-01 global_meshblocks=74 local_meshblocks=74
+AMR_HISTORY_REPLAY event=4 time_hex=0x1.36554795b2201p-2 requested_leaves=74 accepted_leaves=74 max_level=5 checksum=b8885b7761cc086f exact_match=true shadow_refine=6 shadow_derefine=0
+AMR_HISTORY_TIMESTEP_CLIP event=5 time_hex=0x1.37d08c54bace3p-2 candidate_dt_hex=0x1.7b44bf08ae2p-9 applied_dt_hex=0x1.179d045b0abp-10 target_time_hex=0x1.38e8295915d8ep-2
+elapsed=2.705462e+00 cycle=60 time=3.045065e-01 dt=1.066640e-03
+CARTOON_AMR_TRANSACTION cycle=61 requested_refine=21 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=63 deleted_leaves=0 mirror_mismatches=0
+VC_AMR_LIFECYCLE phase=A0 name=before_RedistAndRefineMeshBlocks cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A1 name=logical_locations_and_maps_complete cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A2 name=load_balance_and_capacity_complete cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A3 name=InitRecvAMR_complete cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A4 name=PackAndSendAMR_complete cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A5 name=DerefineVCSameRank_complete cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A6 name=CopyVC_complete cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A7 name=CopyForRefinementVC_complete cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A8 name=AMR_MPI_and_UnpackAMRBuffersVC_complete cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A9 name=new_to_old_DualView_synchronized cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A10 name=RefineVC_complete cycle=61 time=3.055731e-01 global_meshblocks=74 local_meshblocks=74
+VC_AMR_LIFECYCLE phase=A11 name=new_mesh_and_rank_metadata_installed cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A12 name=MeshBlock_and_Coordinates_reconstructed cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A13 name=SetNeighbors_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A14 name=RebuildVertexTopologyPlan_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A15 name=post_regrid_EnforceAlgConstr_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A150 name=InitBndry_Z4c_RestrictU_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A151 name=InitBndry_Z4c_InitRecv_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A152 name=InitBndry_Z4c_SendU_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A153 name=InitBndry_Z4c_ClearSendRecv_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A154 name=InitBndry_Z4c_RecvU_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A155 name=InitBndry_Z4c_BoundaryRHS_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A156 name=InitBndry_Z4c_ApplyPhysicalBCs_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A157 name=InitBndry_Z4c_Prolongate_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A158 name=InitBndry_Z4c_BuiltInPhysicalGhosts_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A159 name=InitBndry_Z4c_AxisParityGhosts_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A16 name=InitBoundaryValuesAndPrimitives_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A17 name=ConvertZ4cToADM_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A18 name=ADMConstraints_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A19 name=NewTimeStep_complete cycle=61 time=3.055731e-01 global_meshblocks=137 local_meshblocks=137
+AMR_HISTORY_REPLAY event=5 time_hex=0x1.38e8295915d8ep-2 requested_leaves=137 accepted_leaves=137 max_level=6 checksum=94cf46d8f9a7742f exact_match=true shadow_refine=2 shadow_derefine=4
+AMR_HISTORY_TIMESTEP_CLIP event=6 time_hex=0x1.38e8295915d8ep-2 candidate_dt_hex=0x1.179d045b0abp-9 applied_dt_hex=0x1.495ed9b3adp-10 target_time_hex=0x1.3a318832c985ep-2
+CARTOON_AMR_TRANSACTION cycle=62 requested_refine=14 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=42 deleted_leaves=0 mirror_mismatches=0
+VC_AMR_LIFECYCLE phase=A0 name=before_RedistAndRefineMeshBlocks cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A1 name=logical_locations_and_maps_complete cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A2 name=load_balance_and_capacity_complete cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A3 name=InitRecvAMR_complete cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A4 name=PackAndSendAMR_complete cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A5 name=DerefineVCSameRank_complete cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A6 name=CopyVC_complete cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A7 name=CopyForRefinementVC_complete cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A8 name=AMR_MPI_and_UnpackAMRBuffersVC_complete cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A9 name=new_to_old_DualView_synchronized cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A10 name=RefineVC_complete cycle=62 time=3.068296e-01 global_meshblocks=137 local_meshblocks=137
+VC_AMR_LIFECYCLE phase=A11 name=new_mesh_and_rank_metadata_installed cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A12 name=MeshBlock_and_Coordinates_reconstructed cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A13 name=SetNeighbors_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A14 name=RebuildVertexTopologyPlan_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A15 name=post_regrid_EnforceAlgConstr_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A150 name=InitBndry_Z4c_RestrictU_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A151 name=InitBndry_Z4c_InitRecv_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A152 name=InitBndry_Z4c_SendU_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A153 name=InitBndry_Z4c_ClearSendRecv_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A154 name=InitBndry_Z4c_RecvU_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A155 name=InitBndry_Z4c_BoundaryRHS_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A156 name=InitBndry_Z4c_ApplyPhysicalBCs_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A157 name=InitBndry_Z4c_Prolongate_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A158 name=InitBndry_Z4c_BuiltInPhysicalGhosts_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A159 name=InitBndry_Z4c_AxisParityGhosts_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A16 name=InitBoundaryValuesAndPrimitives_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A17 name=ConvertZ4cToADM_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A18 name=ADMConstraints_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A19 name=NewTimeStep_complete cycle=62 time=3.068296e-01 global_meshblocks=179 local_meshblocks=179
+AMR_HISTORY_REPLAY event=6 time_hex=0x1.3a318832c985ep-2 requested_leaves=179 accepted_leaves=179 max_level=7 checksum=547d385e7b2c0a49 exact_match=true shadow_refine=2 shadow_derefine=72
+AMR_HISTORY_TIMESTEP_CLIP event=7 time_hex=0x1.3a318832c985ep-2 candidate_dt_hex=0x1.5bd1a18ce06d9p-10 applied_dt_hex=0x1.4931f3bcb16p-11 target_time_hex=0x1.3ad6212ca7de9p-2
+CARTOON_AMR_TRANSACTION cycle=63 requested_refine=1 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=3 deleted_leaves=0 mirror_mismatches=0
+VC_AMR_LIFECYCLE phase=A0 name=before_RedistAndRefineMeshBlocks cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A1 name=logical_locations_and_maps_complete cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A2 name=load_balance_and_capacity_complete cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A3 name=InitRecvAMR_complete cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A4 name=PackAndSendAMR_complete cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A5 name=DerefineVCSameRank_complete cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A6 name=CopyVC_complete cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A7 name=CopyForRefinementVC_complete cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A8 name=AMR_MPI_and_UnpackAMRBuffersVC_complete cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A9 name=new_to_old_DualView_synchronized cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A10 name=RefineVC_complete cycle=63 time=3.074575e-01 global_meshblocks=179 local_meshblocks=179
+VC_AMR_LIFECYCLE phase=A11 name=new_mesh_and_rank_metadata_installed cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A12 name=MeshBlock_and_Coordinates_reconstructed cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A13 name=SetNeighbors_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A14 name=RebuildVertexTopologyPlan_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A15 name=post_regrid_EnforceAlgConstr_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A150 name=InitBndry_Z4c_RestrictU_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A151 name=InitBndry_Z4c_InitRecv_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A152 name=InitBndry_Z4c_SendU_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A153 name=InitBndry_Z4c_ClearSendRecv_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A154 name=InitBndry_Z4c_RecvU_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A155 name=InitBndry_Z4c_BoundaryRHS_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A156 name=InitBndry_Z4c_ApplyPhysicalBCs_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A157 name=InitBndry_Z4c_Prolongate_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A158 name=InitBndry_Z4c_BuiltInPhysicalGhosts_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A159 name=InitBndry_Z4c_AxisParityGhosts_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A16 name=InitBoundaryValuesAndPrimitives_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A17 name=ConvertZ4cToADM_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A18 name=ADMConstraints_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A19 name=NewTimeStep_complete cycle=63 time=3.074575e-01 global_meshblocks=182 local_meshblocks=182
+AMR_HISTORY_REPLAY event=7 time_hex=0x1.3ad6212ca7de9p-2 requested_leaves=182 accepted_leaves=182 max_level=7 checksum=4db5e3ab5c94bb35 exact_match=true shadow_refine=2 shadow_derefine=115
+AMR_HISTORY_TIMESTEP_CLIP event=8 time_hex=0x1.3ad6212ca7de9p-2 candidate_dt_hex=0x1.4931f3bcb16p-10 applied_dt_hex=0x1.49423059494p-11 target_time_hex=0x1.3b7ac244d4833p-2
+CARTOON_AMR_TRANSACTION cycle=64 requested_refine=1 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=3 deleted_leaves=0 mirror_mismatches=0
+VC_AMR_LIFECYCLE phase=A0 name=before_RedistAndRefineMeshBlocks cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A1 name=logical_locations_and_maps_complete cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A2 name=load_balance_and_capacity_complete cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A3 name=InitRecvAMR_complete cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A4 name=PackAndSendAMR_complete cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A5 name=DerefineVCSameRank_complete cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A6 name=CopyVC_complete cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A7 name=CopyForRefinementVC_complete cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A8 name=AMR_MPI_and_UnpackAMRBuffersVC_complete cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A9 name=new_to_old_DualView_synchronized cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A10 name=RefineVC_complete cycle=64 time=3.080855e-01 global_meshblocks=182 local_meshblocks=182
+VC_AMR_LIFECYCLE phase=A11 name=new_mesh_and_rank_metadata_installed cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A12 name=MeshBlock_and_Coordinates_reconstructed cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A13 name=SetNeighbors_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A14 name=RebuildVertexTopologyPlan_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A15 name=post_regrid_EnforceAlgConstr_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A150 name=InitBndry_Z4c_RestrictU_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A151 name=InitBndry_Z4c_InitRecv_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A152 name=InitBndry_Z4c_SendU_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A153 name=InitBndry_Z4c_ClearSendRecv_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A154 name=InitBndry_Z4c_RecvU_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A155 name=InitBndry_Z4c_BoundaryRHS_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A156 name=InitBndry_Z4c_ApplyPhysicalBCs_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A157 name=InitBndry_Z4c_Prolongate_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A158 name=InitBndry_Z4c_BuiltInPhysicalGhosts_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A159 name=InitBndry_Z4c_AxisParityGhosts_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A16 name=InitBoundaryValuesAndPrimitives_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A17 name=ConvertZ4cToADM_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A18 name=ADMConstraints_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+VC_AMR_LIFECYCLE phase=A19 name=NewTimeStep_complete cycle=64 time=3.080855e-01 global_meshblocks=185 local_meshblocks=185
+AMR_HISTORY_REPLAY event=8 time_hex=0x1.3b7ac244d4833p-2 requested_leaves=185 accepted_leaves=185 max_level=7 checksum=9cc67268db29a22a exact_match=true shadow_refine=2 shadow_derefine=118
+elapsed=4.641310e+00 cycle=64 time=3.080855e-01 dt=1.256022e-03
+output wall time = 7.875357e-01
+
+Terminating on time limit
+time=3.100000e-01 cycle=66
+tlim=3.100000e-01 nlim=-1 nmb_total_limit=-1
+
+Current number of MeshBlocks = 185
+159 MeshBlocks created, 6 deleted by AMR
+0 communicated for load balancing, load balancing efficiency = 0.000000e+00
+
+MeshBlock-cycles = 3924
+cpu time used  = 4.416011e+00
+zone-cycles/cpu_second = 2.274777e+05
+particle-updates/cpu_second = 0.000000e+00
