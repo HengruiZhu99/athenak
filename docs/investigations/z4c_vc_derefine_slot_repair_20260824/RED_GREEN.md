@@ -42,4 +42,24 @@ not a norm-only or constant-state discriminator.
 
 ## Green result
 
-Pending the minimal staging repair.
+The minimal repair stages each reconstructed VC parent in its old lower-child
+slot and leaves A6 `CopyVC`/`CopyCC` responsible for relocation. No transfer
+formula, tolerance, or lifecycle ordering changed.
+
+The same command returned code 0; the focused test passed in 0.05 seconds.
+For both families, the A5 staging hash and A6 final-parent hash equal the
+independent oracle hash. No still-live old source changed during A5, and no
+unaffected logical block differed after A6. For family 2 specifically:
+
+```text
+oracle             f38f65d160905c93
+A5 old slot 29     f38f65d160905c93
+A5 new slot 26     2c74da7019454039  (correctly left untouched)
+A6 new slot 26     f38f65d160905c93
+```
+
+Evidence:
+
+- `green_same_rank_slot_audit.json`
+- audit SHA-256: `afbd0f9ec3b14f0af0f45cec4fdc82427f9f46887e0ed706fa618856b759fa0c`
+- executable SHA-256: `4cd345a0a41d74cf2212af49b083674ec2cb936a1cccad014acda47f376997c1`

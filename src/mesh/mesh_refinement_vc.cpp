@@ -734,7 +734,6 @@ void MeshRefinement::DerefineVCSameRank(DvceArray5D<Real> &a,
   const int first_old = pmy_mesh->gids_eachrank[global_variable::my_rank];
   const int last_old = first_old +
       pmy_mesh->nmb_eachrank[global_variable::my_rank] - 1;
-  const int first_new = new_gids_eachrank[global_variable::my_rank];
   const int nvar = a.extent_int(1);
   const bool two_d = pmy_mesh->two_d;
   const bool three_d = pmy_mesh->three_d;
@@ -760,12 +759,16 @@ void MeshRefinement::DerefineVCSameRank(DvceArray5D<Real> &a,
     }
     // A family split across ranks is reconstructed by the AMR receive/unpack path.
     if (!all_siblings_local) continue;
-    const int destination_m = newm - first_new;
+    // A5 still operates on the old MeshBlock-slot layout.  Stage the parent in
+    // its old lower-child slot; A6 CopyVC/CopyCC relocates that slot to the new
+    // parent slot.  Writing directly to the new slot here can clobber a live old
+    // source before A6 has copied it.
+    const int source_base = oldm - first_old;
+    const int staging_m = source_base;
     // Every target node is assigned by one deterministic thread.  At shared sibling
     // planes all available copies are checked and averaged in logical child order.
     DvceArray1D<unsigned long long> inconsistent("inconsistent VC siblings", 1);
     Kokkos::deep_copy(inconsistent, 0ULL);
-    const int source_base = oldm - first_old;
     par_for("native VC deterministic derefine", DevExeSpace(), 0, nvar - 1,
             layout.ks, layout.ke, layout.js, layout.je, layout.is, layout.ie,
         KOKKOS_LAMBDA(const int v, const int k, const int j, const int i) {
@@ -805,7 +808,7 @@ void MeshRefinement::DerefineVCSameRank(DvceArray5D<Real> &a,
           if (maximum - minimum > 64.0 * std::numeric_limits<Real>::epsilon() * scale) {
             Kokkos::atomic_inc(&inconsistent(0));
           }
-          a(destination_m, v, k, j, i) = sum / static_cast<Real>(count);
+          a(staging_m, v, k, j, i) = sum / static_cast<Real>(count);
         });
     const auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), inconsistent);
     if (host(0) != 0) {
