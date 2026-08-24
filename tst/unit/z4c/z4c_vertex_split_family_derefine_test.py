@@ -33,7 +33,12 @@ def run_case(args: argparse.Namespace, ranks: int, work: Path) -> dict:
                "problem/amr_target1_lx1=3",
                "problem/amr_target1_lx2=3"]
     if args.mixed_refine:
-        command.append("problem/exercise_mixed_amr=true")
+        # Root Z-order GID 16 follows the split parent at root GID 15.  Its
+        # new child slots overlap old local child slots 18:20, exercising
+        # preservation of split-family sources across A7 refinement copying.
+        command.extend(("problem/exercise_mixed_amr=true",
+                        "problem/amr_mixed_refine_lx1=0",
+                        "problem/amr_mixed_refine_lx2=4"))
     environment = os.environ.copy()
     environment["OMP_NUM_THREADS"] = str(args.threads)
     environment.setdefault("OMP_PROC_BIND", "false")
