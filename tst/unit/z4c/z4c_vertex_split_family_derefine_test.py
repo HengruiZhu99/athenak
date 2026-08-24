@@ -32,6 +32,8 @@ def run_case(args: argparse.Namespace, ranks: int, work: Path) -> dict:
                # with its lower child.
                "problem/amr_target1_lx1=3",
                "problem/amr_target1_lx2=3"]
+    if args.mixed_refine:
+        command.append("problem/exercise_mixed_amr=true")
     environment = os.environ.copy()
     environment["OMP_NUM_THREADS"] = str(args.threads)
     environment.setdefault("OMP_PROC_BIND", "false")
@@ -41,8 +43,10 @@ def run_case(args: argparse.Namespace, ranks: int, work: Path) -> dict:
             f"{ranks}-rank split-family fixture failed "
             f"({completed.returncode})\nstdout:\n{completed.stdout}\n"
             f"stderr:\n{completed.stderr}")
-    require("Current number of MeshBlocks = 32" in completed.stdout and
-            "9 MeshBlocks created, 9 deleted by AMR" in completed.stdout,
+    terminal_blocks = 35 if args.mixed_refine else 32
+    created_blocks = 12 if args.mixed_refine else 9
+    require(f"Current number of MeshBlocks = {terminal_blocks}" in completed.stdout and
+            f"{created_blocks} MeshBlocks created, 9 deleted by AMR" in completed.stdout,
             f"{ranks}-rank fixture lost its three-family hierarchy")
     outputs = sorted((work / "bin").glob("*.bin"))
     require(outputs, f"{ranks}-rank fixture omitted native-VC output")
@@ -50,7 +54,7 @@ def run_case(args: argparse.Namespace, ranks: int, work: Path) -> dict:
     import bin_convert  # pylint: disable=import-error,import-outside-toplevel
     accepted = [bin_convert.read_binary(str(path)) for path in outputs]
     final = next((state for state in accepted
-                  if state["cycle"] == 2 and state["n_mbs"] == 32), None)
+                  if state["cycle"] == 2 and state["n_mbs"] == terminal_blocks), None)
     require(final is not None, f"{ranks}-rank output omitted the post-derefine state")
     return final
 
@@ -64,6 +68,7 @@ def main() -> int:
     parser.add_argument("--np-flag", default="-n")
     parser.add_argument("--ranks", choices=(2, 4), type=int, required=True)
     parser.add_argument("--threads", type=int, default=1)
+    parser.add_argument("--mixed-refine", action="store_true")
     args = parser.parse_args()
 
     shutil.rmtree(args.work_dir, ignore_errors=True)

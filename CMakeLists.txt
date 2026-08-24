@@ -577,6 +577,21 @@ if (Athena_BUILD_UNIT_TESTS)
   add_z4c_vc_multi_family_case(
       athena.z4c_vc_multi_family_derefine_2d_o6_q8
       z4c_vc_multi_family_derefine_2d_wide.athinput 2 3 6 8)
+  add_test(
+      NAME athena.z4c_vc_multi_family_derefine_2d_mixed_refine
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py
+      --athena $<TARGET_FILE:athena>
+      --input
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput
+      --work-dir
+      ${CMAKE_CURRENT_BINARY_DIR}/athena.z4c_vc_multi_family_derefine_2d_mixed_refine
+      --dimensions 2 --family-count 3 --order 4 --transfer-order 6
+      --mixed-refine)
+  set_tests_properties(
+      athena.z4c_vc_multi_family_derefine_2d_mixed_refine PROPERTIES TIMEOUT 180
+      LABELS "z4c;vertex;2d;cartesian;amr;refine;derefine;regression")
   add_z4c_vc_multi_family_case(
       athena.z4c_vc_multi_family_derefine_3d_o2_q4
       z4c_vc_multi_family_derefine_3d.athinput 3 2 2 4)
@@ -731,6 +746,22 @@ if (Athena_BUILD_UNIT_TESTS)
           athena.z4c_vc_split_family_derefine_mpi${ranks} PROPERTIES TIMEOUT 240
           PROCESSORS ${ranks}
           LABELS "z4c;vertex;2d;cartesian;amr;derefine;mpi;regression")
+      add_test(
+          NAME athena.z4c_vc_split_family_mixed_amr_mpi${ranks}
+          COMMAND
+          ${PYTHON_EXECUTABLE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_split_family_derefine_test.py
+          --athena $<TARGET_FILE:athena>
+          --input
+          ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput
+          --work-dir
+          ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_split_family_mixed_amr_mpi${ranks}
+          --mpiexec ${MPIEXEC_EXECUTABLE} --np-flag=${MPIEXEC_NUMPROC_FLAG}
+          --ranks ${ranks} --mixed-refine)
+      set_tests_properties(
+          athena.z4c_vc_split_family_mixed_amr_mpi${ranks} PROPERTIES TIMEOUT 240
+          PROCESSORS ${ranks}
+          LABELS "z4c;vertex;2d;cartesian;amr;refine;derefine;mpi;regression")
     endforeach()
 
     function(add_z4c_vc_dynamic_amr_mpi_case name input dimensions geometry

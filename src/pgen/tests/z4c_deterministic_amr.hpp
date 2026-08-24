@@ -26,6 +26,8 @@ struct DeterministicAmrTarget {
 };
 
 inline std::vector<DeterministicAmrTarget> deterministic_amr_targets;
+inline bool deterministic_amr_has_mixed_refine_target = false;
+inline DeterministicAmrTarget deterministic_amr_mixed_refine_target;
 inline bool deterministic_amr_uses_time = false;
 inline Real deterministic_amr_refine_time = 0.0;
 inline Real deterministic_amr_derefine_time = 0.0;
@@ -59,6 +61,13 @@ inline void DeterministicRefinementSchedule(MeshBlockPack *pack) {
                  (location.lx3 >> 1) == target.lx3) {
         flag = -1;
       }
+    }
+    if (derefine_event && deterministic_amr_has_mixed_refine_target &&
+        location.level == mesh->root_level &&
+        location.lx1 == deterministic_amr_mixed_refine_target.lx1 &&
+        location.lx2 == deterministic_amr_mixed_refine_target.lx2 &&
+        location.lx3 == deterministic_amr_mixed_refine_target.lx3) {
+      flag = 1;
     }
     flags.h_view(gid) = flag;
   }
@@ -151,6 +160,36 @@ inline bool ConfigureDeterministicRefinementSchedule(ParameterInput *pin,
       }
     }
     deterministic_amr_targets.push_back(target);
+  }
+  deterministic_amr_has_mixed_refine_target =
+      pin->GetOrAddBoolean("problem", "exercise_mixed_amr", false);
+  if (deterministic_amr_has_mixed_refine_target) {
+    deterministic_amr_mixed_refine_target.lx1 =
+        pin->GetOrAddInteger("problem", "amr_mixed_refine_lx1", 0);
+    deterministic_amr_mixed_refine_target.lx2 =
+        pin->GetOrAddInteger("problem", "amr_mixed_refine_lx2", 0);
+    deterministic_amr_mixed_refine_target.lx3 =
+        pin->GetOrAddInteger("problem", "amr_mixed_refine_lx3", 0);
+    const auto &target = deterministic_amr_mixed_refine_target;
+    const bool valid_target =
+        target.lx1 >= 0 && target.lx1 < mesh->nmb_rootx1 &&
+        target.lx2 >= 0 && target.lx2 < mesh->nmb_rootx2 &&
+        target.lx3 >= 0 && target.lx3 < mesh->nmb_rootx3;
+    if (!valid_target) {
+      std::cerr << "### FATAL ERROR: " << pgen_name
+                << " mixed AMR refinement target lies outside the root "
+                   "MeshBlock lattice" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    for (const auto &previous : deterministic_amr_targets) {
+      if (target.lx1 == previous.lx1 && target.lx2 == previous.lx2 &&
+          target.lx3 == previous.lx3) {
+        std::cerr << "### FATAL ERROR: " << pgen_name
+                  << " mixed AMR refinement target must differ from all "
+                     "derefine-family targets" << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+    }
   }
   return true;
 }

@@ -27,6 +27,7 @@ def main() -> int:
     parser.add_argument("--order", choices=(2, 4, 6), type=int)
     parser.add_argument("--transfer-order", choices=(4, 6, 8), type=int)
     parser.add_argument("--amplitude", type=float)
+    parser.add_argument("--mixed-refine", action="store_true")
     parser.add_argument("--threads", type=int, default=16)
     args = parser.parse_args()
 
@@ -46,6 +47,8 @@ def main() -> int:
             f"z4c/vertex_prolongation_order={args.transfer_order}")
     if args.amplitude is not None:
         command.append(f"problem/amp={args.amplitude:.17g}")
+    if args.mixed_refine:
+        command.append("problem/exercise_mixed_amr=true")
     completed = subprocess.run(command, cwd=args.work_dir, env=environment,
                                text=True, capture_output=True, check=False)
     require(completed.returncode == 0,
@@ -59,8 +62,11 @@ def main() -> int:
             audit["first_new"] == 0,
             "fixture did not remain a one-rank zero-based slot transaction")
     child_count = 1 << args.dimensions
+    expected_net_deletion = ((args.family_count -
+                              (1 if args.mixed_refine else 0)) *
+                             (child_count - 1))
     require(audit["old_count"] - audit["new_count"] ==
-            args.family_count * (child_count - 1),
+            expected_net_deletion,
             "fixture did not create the intended multi-family hierarchy")
     require(audit["variables"] == 25,
             "slot audit did not cover all 25 evolved Z4c variables")
