@@ -46,6 +46,10 @@ struct VCAuditFamily {
   int new_gid = -1;
   int source_m = -1;
   int destination_m = -1;
+  LogicalLocation parent_location{0, 0, 0, 0};
+  std::vector<int> sibling_gids;
+  std::vector<int> sibling_ranks;
+  bool all_siblings_local = false;
   std::vector<Real> oracle;
   bool a5_staging_matches = false;
   bool a5_destination_matches = false;
@@ -54,11 +58,31 @@ struct VCAuditFamily {
   std::string a5_staging_hash;
   std::string a5_destination_hash;
   std::string a6_parent_hash;
+  std::vector<std::string> pre_lower_variable_hashes;
+  std::vector<std::string> pre_destination_variable_hashes;
+  std::vector<std::string> oracle_variable_hashes;
+  std::vector<std::string> a5_staging_variable_hashes;
+  std::vector<std::string> a5_destination_variable_hashes;
+  std::vector<std::string> a6_parent_variable_hashes;
+  VCAuditMismatch first_oracle_mismatch;
+  VCAuditMismatch maximum_oracle_mismatch;
+};
+
+struct VCAuditSurvivor {
+  int old_gid = -1;
+  int new_gid = -1;
+  int old_slot = -1;
+  int new_slot = -1;
+  bool exact = false;
+  std::vector<std::string> pre_variable_hashes;
+  std::vector<std::string> post_variable_hashes;
 };
 
 struct VCDerefineSlotAudit {
   bool active = false;
+  bool summary_enabled = false;
   std::string path;
+  std::string writer_path;
   int cycle = -1;
   Real time = 0.0;
   int first_old = 0;
@@ -79,6 +103,7 @@ struct VCDerefineSlotAudit {
   std::vector<int> newtoold;
   std::vector<int> old_flags;
   std::vector<VCAuditFamily> families;
+  std::vector<VCAuditSurvivor> relocation_survivors;
   std::vector<int> a5_modified_live_old_gids;
   std::vector<int> a6_bad_unaffected_old_gids;
   VCAuditMismatch first_a5_live_mismatch;
@@ -142,6 +167,59 @@ std::string AuditSlotHash(const std::vector<Real> &values,
                           const VCDerefineSlotAudit &audit, const int slot) {
   const std::size_t count = AuditPointsPerSlot(audit);
   return AuditHash(values.data() + static_cast<std::size_t>(slot) * count, count);
+}
+
+std::vector<std::string> AuditVariableHashes(
+    const std::vector<Real> &values, const VCDerefineSlotAudit &audit,
+    const int slot) {
+  const std::size_t points_per_variable =
+      static_cast<std::size_t>(audit.ke - audit.ks + 1) *
+      (audit.je - audit.js + 1) * (audit.ie - audit.is + 1);
+  std::vector<std::string> hashes;
+  hashes.reserve(audit.nvar);
+  for (int variable = 0; variable < audit.nvar; ++variable) {
+    const std::size_t offset =
+        (static_cast<std::size_t>(slot) * audit.nvar + variable) *
+        points_per_variable;
+    hashes.push_back(AuditHash(values.data() + offset, points_per_variable));
+  }
+  return hashes;
+}
+
+unsigned long long AuditULPDistance(Real left, Real right);
+
+VCAuditMismatch MaximumAuditOracleMismatch(
+    const std::vector<Real> &oracle, const std::vector<Real> &actual,
+    const int actual_slot, const VCDerefineSlotAudit &audit) {
+  VCAuditMismatch maximum;
+  maximum.slot = actual_slot;
+  for (int variable = 0; variable < audit.nvar; ++variable) {
+    for (int k = audit.ks; k <= audit.ke; ++k) {
+      for (int j = audit.js; j <= audit.je; ++j) {
+        for (int i = audit.is; i <= audit.ie; ++i) {
+          const Real expected = oracle[AuditIndex(audit, 0, variable, k, j, i)];
+          const Real observed = actual[AuditIndex(
+              audit, actual_slot, variable, k, j, i)];
+          if (std::memcmp(&expected, &observed, sizeof(Real)) == 0) continue;
+          const Real absolute = std::fabs(expected - observed);
+          const unsigned long long ulp = AuditULPDistance(expected, observed);
+          if (!maximum.found || absolute > maximum.absolute ||
+              (absolute == maximum.absolute && ulp > maximum.ulp)) {
+            maximum.found = true;
+            maximum.variable = variable;
+            maximum.k = k;
+            maximum.j = j;
+            maximum.i = i;
+            maximum.expected = expected;
+            maximum.actual = observed;
+            maximum.absolute = absolute;
+            maximum.ulp = ulp;
+          }
+        }
+      }
+    }
+  }
+  return maximum;
 }
 
 unsigned long long AuditULPDistance(const Real left, const Real right) {
@@ -221,6 +299,132 @@ void WriteMismatchJSON(std::ostream &output, const VCAuditMismatch &mismatch) {
          << ",\"ulp\":" << mismatch.ulp << "}";
 }
 
+void WriteHashVectorJSON(std::ostream &output,
+                         const std::vector<std::string> &hashes) {
+  output << '[';
+  for (std::size_t variable = 0; variable < hashes.size(); ++variable) {
+    if (variable != 0) output << ',';
+    output << "{\"index\":" << variable << ",\"name\":\""
+           << z4c::Z4c::Z4c_names[variable] << "\",\"hash\":\""
+           << hashes[variable] << "\"}";
+  }
+  output << ']';
+}
+
+void WriteIntVectorJSON(std::ostream &output, const std::vector<int> &values) {
+  output << '[';
+  for (std::size_t index = 0; index < values.size(); ++index) {
+    if (index != 0) output << ',';
+    output << values[index];
+  }
+  output << ']';
+}
+
+[[noreturn]] void AbortVC(const char *message);
+
+void AppendVCDerefineWriterCheckpoint(
+    const char *checkpoint, const DvceArray5D<Real> &state, const int stage,
+    const int slots, const int observed_cycle, const Real observed_time) {
+  auto &audit = vc_slot_audit;
+  if (!audit.active || audit.writer_path.empty() || slots <= 0) return;
+  const auto values = CaptureAuditActive(state, audit, slots);
+  std::string path = audit.writer_path;
+#if MPI_PARALLEL_ENABLED
+  if (global_variable::nranks > 1) {
+    path += ".rank" + std::to_string(global_variable::my_rank);
+  }
+#endif
+  std::ofstream output(path, std::ios::app);
+  if (!output) AbortVC("cannot append native VC derefine writer audit");
+  for (const auto &family : audit.families) {
+    const std::string phase(checkpoint);
+    std::string checkpoint_name = phase;
+    if (phase == "A4") checkpoint_name = "A4_PRE_DEREFINE";
+    if (phase == "A5") checkpoint_name = "A5_POST_LOCAL_DEREFINE";
+    if (phase == "A6") checkpoint_name = "A6_POST_INRANK_COPY";
+    if (phase == "A8") checkpoint_name = "A8_POST_MPI_UNPACK";
+    if (phase == "A14") checkpoint_name = "A14_POST_TOPOLOGY_REBUILD";
+    if (phase == "A15") checkpoint_name = "A15_POST_ACTIVE_PROJECTION";
+    if (phase == "A16") checkpoint_name = "A16_POST_BOUNDARY_CACHE_REBUILD";
+    if (phase == "R0") checkpoint_name = "R0_FIRST_POST_EVENT_RHS";
+    if (phase == "U0") checkpoint_name = "U0_FIRST_POST_EVENT_RK_UPDATE";
+    const bool old_layout = std::string(checkpoint) == "A4" ||
+                            std::string(checkpoint) == "A5";
+    const int checkpoint_slot = old_layout ? family.source_m : family.destination_m;
+    std::vector<std::string> checkpoint_hashes;
+    if (checkpoint_slot >= 0 && checkpoint_slot < slots) {
+      checkpoint_hashes = AuditVariableHashes(values, audit, checkpoint_slot);
+    }
+    output << std::setprecision(17)
+           << "{\"schema\":\"athenak_vc_derefine_writer_v1\","
+           << "\"phase\":\"" << phase << "\",\"checkpoint\":\""
+           << checkpoint_name << "\",\"cycle\":"
+           << audit.cycle << ",\"time\":" << audit.time
+           << ",\"observed_cycle\":" << observed_cycle
+           << ",\"observed_time\":" << observed_time
+           << ",\"stage\":" << stage << ",\"rank\":"
+           << global_variable::my_rank << ",\"parent_location\":{"
+           << "\"level\":" << family.parent_location.level
+           << ",\"lx1\":" << family.parent_location.lx1
+           << ",\"lx2\":" << family.parent_location.lx2
+           << ",\"lx3\":" << family.parent_location.lx3 << "},"
+           << "\"old_lower_child_gid\":" << family.old_gid
+           << ",\"old_lower_child_local_slot\":" << family.source_m
+           << ",\"sibling_gids\":";
+    WriteIntVectorJSON(output, family.sibling_gids);
+    output << ",\"sibling_ranks\":";
+    WriteIntVectorJSON(output, family.sibling_ranks);
+    output << ",\"new_parent_gid\":" << family.new_gid
+           << ",\"new_parent_local_slot\":" << family.destination_m
+           << ",\"source_base\":" << family.source_m
+           << ",\"destination_m\":" << family.destination_m
+           << ",\"signed_slot_shift\":"
+           << family.destination_m - family.source_m
+           << ",\"all_siblings_local\":"
+           << (family.all_siblings_local ? "true" : "false")
+           << ",\"state_kind\":\""
+           << (std::string(checkpoint) == "R0" ? "rhs" : "evolved_state")
+           << "\",\"hashes\":{";
+    output << "\"pre_a5_lower_child\":";
+    WriteHashVectorJSON(output, family.pre_lower_variable_hashes);
+    output << ",\"pre_a5_destination\":";
+    WriteHashVectorJSON(output, family.pre_destination_variable_hashes);
+    output << ",\"independent_restriction_oracle\":";
+    WriteHashVectorJSON(output, family.oracle_variable_hashes);
+    output << ",\"post_a5_staging\":";
+    WriteHashVectorJSON(output, family.a5_staging_variable_hashes);
+    output << ",\"post_a5_destination\":";
+    WriteHashVectorJSON(output, family.a5_destination_variable_hashes);
+    output << ",\"post_a6_final_parent\":";
+    WriteHashVectorJSON(output, family.a6_parent_variable_hashes);
+    output << ",\"checkpoint_parent\":";
+    WriteHashVectorJSON(output, checkpoint_hashes);
+    output << "},\"first_oracle_mismatch\":";
+    WriteMismatchJSON(output, family.first_oracle_mismatch);
+    output << ",\"maximum_oracle_mismatch\":";
+    WriteMismatchJSON(output, family.maximum_oracle_mismatch);
+    output << ",\"post_a6_relocation_survivors\":[";
+    for (std::size_t survivor = 0; survivor < audit.relocation_survivors.size();
+         ++survivor) {
+      if (survivor != 0) output << ',';
+      const auto &entry = audit.relocation_survivors[survivor];
+      output << "{\"old_gid\":" << entry.old_gid
+             << ",\"new_gid\":" << entry.new_gid
+             << ",\"old_slot\":" << entry.old_slot
+             << ",\"new_slot\":" << entry.new_slot
+             << ",\"exact\":" << (entry.exact ? "true" : "false")
+             << ",\"pre_hashes\":";
+      WriteHashVectorJSON(output, entry.pre_variable_hashes);
+      output << ",\"post_hashes\":";
+      WriteHashVectorJSON(output, entry.post_variable_hashes);
+      output << '}';
+    }
+    output << "]}\n";
+  }
+  output.close();
+  if (!output) AbortVC("failed to append native VC derefine writer audit");
+}
+
 enum class VCAMRDeviceError : long long {
   none = 0,
   new_gid_out_of_range = 1,
@@ -277,8 +481,18 @@ void BeginVCDerefineSlotAudit(
     const DvceArray5D<Real> &a, const DvceArray5D<Real> &ca,
     const z4c::Z4cGridLayout &layout) {
   const char *path = std::getenv("ATHENA_Z4C_VC_DEREFINE_SLOT_AUDIT");
+  const char *writer_path =
+      std::getenv("ATHENA_Z4C_VC_DEREFINE_WRITER_JSONL");
   vc_slot_audit = VCDerefineSlotAudit{};
-  if (path == nullptr || path[0] == '\0') return;
+  const bool summary_enabled = path != nullptr && path[0] != '\0';
+  const bool writer_enabled = writer_path != nullptr && writer_path[0] != '\0';
+  if (!summary_enabled && !writer_enabled) return;
+  const char *cycle_selection =
+      std::getenv("ATHENA_Z4C_VC_DEREFINE_WRITER_CYCLE");
+  if (writer_enabled && cycle_selection != nullptr && cycle_selection[0] != '\0' &&
+      std::strtoll(cycle_selection, nullptr, 10) != mesh->ncycle) {
+    if (!summary_enabled) return;
+  }
   const int rank = global_variable::my_rank;
   const int first_old = mesh->gids_eachrank[rank];
   const int old_count = mesh->nmb_eachrank[rank];
@@ -303,11 +517,18 @@ void BeginVCDerefineSlotAudit(
     }
     if (all_local) family_old_gids.push_back(old_gid);
   }
-  if (family_old_gids.size() < 2) return;
+  if (family_old_gids.empty() ||
+      (family_old_gids.size() < 2 && !writer_enabled)) return;
 
   auto &audit = vc_slot_audit;
   audit.active = true;
-  audit.path = path;
+  audit.summary_enabled = summary_enabled;
+  if (summary_enabled) audit.path = path;
+  if (writer_enabled &&
+      (cycle_selection == nullptr || cycle_selection[0] == '\0' ||
+       std::strtoll(cycle_selection, nullptr, 10) == mesh->ncycle)) {
+    audit.writer_path = writer_path;
+  }
   audit.cycle = mesh->ncycle;
   audit.time = mesh->time;
   audit.first_old = first_old;
@@ -340,6 +561,16 @@ void BeginVCDerefineSlotAudit(
     family.new_gid = oldtonew[old_gid];
     family.source_m = old_gid - first_old;
     family.destination_m = family.new_gid - first_new;
+    const auto &lower = mesh->lloc_eachmb[old_gid];
+    family.parent_location = {lower.lx1 / 2, lower.lx2 / 2,
+                              lower.lx3 / 2, lower.level - 1};
+    family.all_siblings_local = true;
+    for (int child = 0; child < nleaf; ++child) {
+      family.sibling_gids.push_back(old_gid + child);
+      family.sibling_ranks.push_back(mesh->rank_eachmb[old_gid + child]);
+      family.all_siblings_local = family.all_siblings_local &&
+          mesh->rank_eachmb[old_gid + child] == rank;
+    }
     family.oracle.resize(points);
     for (int variable = 0; variable < audit.nvar; ++variable) {
       for (int k = layout.ks; k <= layout.ke; ++k) {
@@ -377,8 +608,18 @@ void BeginVCDerefineSlotAudit(
       }
     }
     family.oracle_hash = AuditHash(family.oracle.data(), points);
+    family.pre_lower_variable_hashes =
+        AuditVariableHashes(audit.pre_a, audit, family.source_m);
+    if (family.destination_m >= 0 && family.destination_m < audit.old_count) {
+      family.pre_destination_variable_hashes =
+          AuditVariableHashes(audit.pre_a, audit, family.destination_m);
+    }
+    family.oracle_variable_hashes =
+        AuditVariableHashes(family.oracle, audit, 0);
     audit.families.push_back(std::move(family));
   }
+  AppendVCDerefineWriterCheckpoint(
+      "A4", a, -1, audit.old_count, mesh->ncycle, mesh->time);
 }
 
 void RecordVCDerefineSlotAuditA5(const DvceArray5D<Real> &a) {
@@ -395,6 +636,13 @@ void RecordVCDerefineSlotAuditA5(const DvceArray5D<Real> &a) {
     family.a5_staging_hash = AuditSlotHash(audit.a5_a, audit, family.source_m);
     family.a5_destination_hash =
         AuditSlotHash(audit.a5_a, audit, family.destination_m);
+    family.a5_staging_variable_hashes =
+        AuditVariableHashes(audit.a5_a, audit, family.source_m);
+    family.a5_destination_variable_hashes =
+        AuditVariableHashes(audit.a5_a, audit, family.destination_m);
+    family.first_oracle_mismatch = staging;
+    family.maximum_oracle_mismatch = MaximumAuditOracleMismatch(
+        family.oracle, audit.a5_a, family.source_m, audit);
   }
   for (int local_old = 0; local_old < audit.old_count; ++local_old) {
     if (audit.old_flags[local_old] != 0) continue;
@@ -419,6 +667,20 @@ void FinishVCDerefineSlotAuditA6(const DvceArray5D<Real> &a) {
     family.a6_parent_matches = !mismatch.found;
     family.a6_parent_hash =
         AuditSlotHash(audit.a6_a, audit, family.destination_m);
+    family.a6_parent_variable_hashes =
+        AuditVariableHashes(audit.a6_a, audit, family.destination_m);
+    if (mismatch.found && !family.first_oracle_mismatch.found) {
+      family.first_oracle_mismatch = mismatch;
+    }
+    const auto maximum = MaximumAuditOracleMismatch(
+        family.oracle, audit.a6_a, family.destination_m, audit);
+    if (maximum.found &&
+        (!family.maximum_oracle_mismatch.found ||
+         maximum.absolute > family.maximum_oracle_mismatch.absolute ||
+         (maximum.absolute == family.maximum_oracle_mismatch.absolute &&
+          maximum.ulp > family.maximum_oracle_mismatch.ulp))) {
+      family.maximum_oracle_mismatch = maximum;
+    }
     if (mismatch.found && !audit.first_a6_parent_mismatch.found) {
       audit.first_a6_parent_mismatch = mismatch;
     }
@@ -439,9 +701,37 @@ void FinishVCDerefineSlotAuditA6(const DvceArray5D<Real> &a) {
     }
   }
 
-  std::ofstream output(audit.path, std::ios::out | std::ios::trunc);
-  if (!output) AbortVC("cannot open native VC derefine slot audit output");
-  output << std::setprecision(17)
+  for (int local_old = 0; local_old < audit.old_count; ++local_old) {
+    if (audit.old_flags[local_old] != 0) continue;
+    const int new_gid = audit.oldtonew[local_old];
+    const int local_new = new_gid - audit.first_new;
+    if (local_new < 0 || local_new >= audit.new_count) continue;
+    bool affected = false;
+    for (const auto &family : audit.families) {
+      const int lo = std::min(family.source_m, family.destination_m);
+      const int hi = std::max(family.source_m, family.destination_m);
+      affected = affected || (local_old >= lo && local_old <= hi) ||
+                 (local_new >= lo && local_new <= hi);
+    }
+    if (!affected) continue;
+    VCAuditSurvivor survivor;
+    survivor.old_gid = audit.first_old + local_old;
+    survivor.new_gid = new_gid;
+    survivor.old_slot = local_old;
+    survivor.new_slot = local_new;
+    survivor.exact = !CompareAuditSlot(
+        audit.pre_a, local_old, audit.a6_a, local_new, audit).found;
+    survivor.pre_variable_hashes =
+        AuditVariableHashes(audit.pre_a, audit, local_old);
+    survivor.post_variable_hashes =
+        AuditVariableHashes(audit.a6_a, audit, local_new);
+    audit.relocation_survivors.push_back(std::move(survivor));
+  }
+
+  if (audit.summary_enabled) {
+    std::ofstream output(audit.path, std::ios::out | std::ios::trunc);
+    if (!output) AbortVC("cannot open native VC derefine slot audit output");
+    output << std::setprecision(17)
          << "{\n  \"schema\": \"athenak_vc_derefine_slot_audit_v1\",\n"
          << "  \"cycle\": " << audit.cycle << ",\n  \"time\": "
          << audit.time << ",\n  \"rank\": " << global_variable::my_rank
@@ -487,9 +777,10 @@ void FinishVCDerefineSlotAuditA6(const DvceArray5D<Real> &a) {
   output << ",\n  \"first_a6_parent_mismatch\": ";
   WriteMismatchJSON(output, audit.first_a6_parent_mismatch);
   output << "\n}\n";
-  output.close();
-  if (!output) AbortVC("failed to write native VC derefine slot audit output");
-  audit.active = false;
+    output.close();
+    if (!output) AbortVC("failed to write native VC derefine slot audit output");
+  }
+  if (audit.writer_path.empty()) audit.active = false;
 }
 
 }  // namespace
@@ -498,6 +789,18 @@ void MeshRefinement::CopyVC(DvceArray5D<Real> &a) {
   // Moving a complete native array between MeshBlock slots is centering independent.
   CopyCC(a);
   FinishVCDerefineSlotAuditA6(a);
+}
+
+void MeshRefinement::VCAMRWriterCheckpoint(
+    const char *checkpoint, const DvceArray5D<Real> &state,
+    const int stage) const {
+  if (!vc_slot_audit.active || vc_slot_audit.writer_path.empty()) return;
+  const std::string token(checkpoint);
+  const int slots = token == "A5" ? vc_slot_audit.old_count
+                                   : vc_slot_audit.new_count;
+  AppendVCDerefineWriterCheckpoint(
+      checkpoint, state, stage, slots, pmy_mesh->ncycle, pmy_mesh->time);
+  if (token == "U0") vc_slot_audit.active = false;
 }
 
 void MeshRefinement::RestrictVC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu) {

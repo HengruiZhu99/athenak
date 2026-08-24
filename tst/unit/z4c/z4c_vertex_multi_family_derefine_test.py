@@ -28,6 +28,7 @@ def main() -> int:
     parser.add_argument("--transfer-order", choices=(4, 6, 8), type=int)
     parser.add_argument("--amplitude", type=float)
     parser.add_argument("--mixed-refine", action="store_true")
+    parser.add_argument("--writer-lifecycle", action="store_true")
     parser.add_argument("--threads", type=int, default=16)
     args = parser.parse_args()
 
@@ -36,6 +37,12 @@ def main() -> int:
     audit_path = args.work_dir / "vc_derefine_slot_audit.json"
     environment = os.environ.copy()
     environment["ATHENA_Z4C_VC_DEREFINE_SLOT_AUDIT"] = str(audit_path)
+    writer_path = args.work_dir / "vc_derefine_writer.jsonl"
+    lifecycle_path = args.work_dir / "vc_amr_lifecycle.jsonl"
+    if args.writer_lifecycle:
+        environment["ATHENA_Z4C_VC_DEREFINE_WRITER_JSONL"] = str(writer_path)
+        environment["ATHENA_Z4C_VC_AMR_LIFECYCLE"] = "all"
+        environment["ATHENA_Z4C_VC_AMR_LIFECYCLE_JSONL"] = str(lifecycle_path)
     environment["OMP_NUM_THREADS"] = str(args.threads)
     environment.setdefault("OMP_PROC_BIND", "false")
     command = [str(args.athena.resolve()), "-i", str(args.input.resolve()),
@@ -49,6 +56,8 @@ def main() -> int:
         command.append(f"problem/amp={args.amplitude:.17g}")
     if args.mixed_refine:
         command.append("problem/exercise_mixed_amr=true")
+    if args.writer_lifecycle:
+        command.append("time/nlim=3")
     completed = subprocess.run(command, cwd=args.work_dir, env=environment,
                                text=True, capture_output=True, check=False)
     require(completed.returncode == 0,
@@ -98,6 +107,41 @@ def main() -> int:
     require(audit["a6_bad_unaffected_old_gids"] == [],
             "A6 corrupted an unaffected logical block; "
             f"to remain exact, got {audit['a6_bad_unaffected_old_gids']}")
+    if args.writer_lifecycle:
+        require(writer_path.is_file(), "per-parent writer JSONL was not emitted")
+        writer_rows = [json.loads(line) for line in
+                       writer_path.read_text(encoding="utf-8").splitlines()]
+        required = {"A4", "A5", "A6", "A8", "A14", "A15", "A16",
+                    "R0", "U0"}
+        observed = {row["phase"] for row in writer_rows}
+        require(required <= observed,
+                f"writer lifecycle omitted checkpoints {sorted(required-observed)}")
+        for checkpoint in required:
+            rows = [row for row in writer_rows if row["phase"] == checkpoint]
+            require(len(rows) == args.family_count,
+                    f"{checkpoint} omitted a derefined parent")
+            for row in rows:
+                require(len(row["hashes"]["pre_a5_lower_child"]) == 25 and
+                        len(row["hashes"]["independent_restriction_oracle"]) == 25 and
+                        len(row["hashes"]["checkpoint_parent"]) == 25,
+                        f"{checkpoint} omitted per-variable hashes")
+        a16_rows = [row for row in writer_rows if row["phase"] == "A16"]
+        require(all(not row["first_oracle_mismatch"]["found"]
+                    for row in a16_rows),
+                "the repaired parent was already wrong at A5/A6")
+        require(all(all(entry["exact"] for entry in
+                        row["post_a6_relocation_survivors"])
+                    for row in a16_rows),
+                "an unaffected relocation survivor changed at A6")
+        require(lifecycle_path.is_file(), "global lifecycle JSONL was not emitted")
+        lifecycle = [json.loads(line) for line in
+                     lifecycle_path.read_text(encoding="utf-8").splitlines()]
+        require({"R0", "U0"} <= {row["phase"] for row in lifecycle},
+                "global lifecycle omitted first post-event RHS/update")
+        require(all(len(row["variables"]) == 25 and
+                    all(variable["nonfinite"] == 0 for variable in row["variables"])
+                    for row in lifecycle if row["phase"] in {"R0", "U0"}),
+                "R0/U0 lifecycle hashes are incomplete or nonfinite")
     print("PASS: native-VC multi-family derefinement preserves exact staging and "
           "logical relocation for all 25 variables")
     return 0

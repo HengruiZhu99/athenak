@@ -19,6 +19,7 @@
 #include "athena.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/mesh_refinement.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/cartoon_derivatives.hpp"
 #include "z4c/cartoon_vertex_axis.hpp"
@@ -1444,6 +1445,11 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   // complete RHS before any RK stage consumes it.  In diagnostic mode the host
   // census above observes, but does not modify, the pre-projection state first.
   ApplyVertexAxisRegularity(u_rhs, stage, "post_rhs");
+  if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
+    if (pmy_pack->pmesh->pmr != nullptr) {
+      pmy_pack->pmesh->pmr->VCAMRLifecycleMarkFirstPostEventRHS(u_rhs, stage);
+    }
+  }
 
   return TaskStatus::complete;
 }

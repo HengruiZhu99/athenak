@@ -298,7 +298,11 @@ MeshRefinement::~MeshRefinement() {
 
 bool MeshRefinement::VCAMRLifecycleDiagnosticEnabled() const {
   const char *selection = std::getenv("ATHENA_Z4C_VC_AMR_LIFECYCLE");
-  if (selection == nullptr || selection[0] == '\0' || std::string(selection) == "0") {
+  const char *writer = std::getenv("ATHENA_Z4C_VC_DEREFINE_WRITER_JSONL");
+  const bool lifecycle_requested = selection != nullptr && selection[0] != '\0' &&
+      std::string(selection) != "0";
+  const bool writer_requested = writer != nullptr && writer[0] != '\0';
+  if (!lifecycle_requested && !writer_requested) {
     return false;
   }
   return pmy_mesh != nullptr && pmy_mesh->pmb_pack != nullptr &&
@@ -309,14 +313,33 @@ bool MeshRefinement::VCAMRLifecycleDiagnosticEnabled() const {
 
 void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const {
   if (!VCAMRLifecycleDiagnosticEnabled()) return;
+  const std::string token = "A" + std::to_string(phase);
+  VCAMRLifecycleMarkState(token.c_str(), name,
+                          pmy_mesh->pmb_pack->pz4c->u0, -1,
+                          pmy_mesh->ncycle);
+  // A4 is captured inside BeginVCDerefineSlotAudit, after the independent
+  // restriction oracle and per-parent ownership metadata have been assembled.
+  if (phase == 5 || phase == 6 || phase == 8 || phase == 14 ||
+      phase == 15 || phase == 16) {
+    VCAMRWriterCheckpoint(token.c_str(), pmy_mesh->pmb_pack->pz4c->u0, -1);
+  }
+}
+
+void MeshRefinement::VCAMRLifecycleMarkState(
+    const char *checkpoint, const char *name, const DvceArray5D<Real> &state,
+    const int stage, const int event_cycle) const {
+  if (!VCAMRLifecycleDiagnosticEnabled()) return;
+  const char *selection_env = std::getenv("ATHENA_Z4C_VC_AMR_LIFECYCLE");
+  if (selection_env == nullptr || selection_env[0] == '\0' ||
+      std::string(selection_env) == "0") return;
   const char *cycle_selection =
       std::getenv("ATHENA_Z4C_VC_AMR_LIFECYCLE_CYCLE");
   if (cycle_selection != nullptr && cycle_selection[0] != '\0' &&
-      std::strtoll(cycle_selection, nullptr, 10) != pmy_mesh->ncycle) {
+      std::strtoll(cycle_selection, nullptr, 10) != event_cycle) {
     return;
   }
-  const std::string selection(std::getenv("ATHENA_Z4C_VC_AMR_LIFECYCLE"));
-  const std::string token = "A" + std::to_string(phase);
+  const std::string selection(selection_env);
+  const std::string token(checkpoint);
   bool selected = selection == "1" || selection == "all";
   if (!selected) {
     std::size_t begin = 0;
@@ -342,6 +365,8 @@ void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const
     std::cout << "VC_AMR_LIFECYCLE phase=" << token
               << " name=" << name
               << " cycle=" << pmy_mesh->ncycle
+              << " event_cycle=" << event_cycle
+              << " stage=" << stage
               << " time=" << pmy_mesh->time
               << " global_meshblocks=" << pmy_mesh->nmb_total
               << " local_meshblocks=" << pmy_mesh->pmb_pack->nmb_thispack
@@ -354,7 +379,7 @@ void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const
   const auto *z4c = pmy_mesh->pmb_pack->pz4c;
   const auto layout = z4c->layout;
   const int nmb = pmy_mesh->pmb_pack->nmb_thispack;
-  const int nvar = z4c->u0.extent_int(1);
+  const int nvar = state.extent_int(1);
   const int nk = layout.ke - layout.ks + 1;
   const int nj = layout.je - layout.js + 1;
   const int ni = layout.ie - layout.is + 1;
@@ -363,7 +388,7 @@ void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const
   // Pack it on the device first so this default-off diagnostic remains backend-portable.
   DvceArray5D<Real> packed("native VC lifecycle active", nmb, nvar, nk, nj, ni);
   if (nmb > 0) {
-    auto u0 = z4c->u0;
+    auto source = state;
     const int ks = layout.ks;
     const int js = layout.js;
     const int is = layout.is;
@@ -372,7 +397,7 @@ void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const
       KOKKOS_LAMBDA(const int m, const int variable, const int k,
                     const int j, const int i) {
         packed(m, variable, k, j, i) =
-            u0(m, variable, ks + k, js + j, is + i);
+            source(m, variable, ks + k, js + j, is + i);
       });
   }
   const auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), packed);
@@ -380,6 +405,8 @@ void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const
   std::vector<std::uint64_t> interior_hashes(nvar, 1469598103934665603ULL);
   std::vector<Real> minima(nvar, std::numeric_limits<Real>::max());
   std::vector<Real> maxima(nvar, -std::numeric_limits<Real>::max());
+  std::vector<Real> max_abs(nvar, 0.0);
+  std::vector<std::uint64_t> nonfinite(nvar, 0);
   for (int m = 0; m < nmb; ++m) {
     for (int variable = 0; variable < nvar; ++variable) {
       for (int k = 0; k < host.extent_int(2); ++k) {
@@ -402,8 +429,13 @@ void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const
                 interior_hashes[variable] *= 1099511628211ULL;
               }
             }
-            minima[variable] = std::min(minima[variable], value);
-            maxima[variable] = std::max(maxima[variable], value);
+            if (std::isfinite(value)) {
+              minima[variable] = std::min(minima[variable], value);
+              maxima[variable] = std::max(maxima[variable], value);
+              max_abs[variable] = std::max(max_abs[variable], std::fabs(value));
+            } else {
+              ++nonfinite[variable];
+            }
           }
         }
       }
@@ -421,25 +453,56 @@ void MeshRefinement::VCAMRLifecycleMark(const int phase, const char *name) const
               << path << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  output << "{\"schema\":\"athenak_vc_amr_lifecycle_v1\",\"phase\":\"A"
-         << phase << "\",\"name\":\"" << name << "\",\"cycle\":"
+  output << "{\"schema\":\"athenak_vc_amr_lifecycle_v2\",\"phase\":\""
+         << token << "\",\"name\":\"" << name << "\",\"cycle\":"
          << pmy_mesh->ncycle << ",\"time\":" << std::setprecision(17)
-         << pmy_mesh->time << ",\"rank\":" << global_variable::my_rank
+         << pmy_mesh->time << ",\"event_cycle\":" << event_cycle
+         << ",\"stage\":" << stage
+         << ",\"rank\":" << global_variable::my_rank
          << ",\"global_meshblocks\":" << pmy_mesh->nmb_total
          << ",\"local_meshblocks\":" << nmb << ",\"active_bounds\":["
          << layout.is << ',' << layout.ie << ',' << layout.js << ',' << layout.je
          << ',' << layout.ks << ',' << layout.ke << "],\"variables\":[";
   for (int variable = 0; variable < nvar; ++variable) {
     if (variable != 0) output << ',';
-    output << "{\"index\":" << variable << ",\"hash\":\"" << std::hex
+    const std::uint64_t count = static_cast<std::uint64_t>(nmb) * nk * nj * ni;
+    output << "{\"index\":" << variable << ",\"name\":\""
+           << z4c::Z4c::Z4c_names[variable] << "\",\"hash\":\"" << std::hex
            << std::setfill('0') << std::setw(16) << hashes[variable] << std::dec
            << "\",\"block_strict_interior_hash\":\"" << std::hex
            << std::setfill('0') << std::setw(16) << interior_hashes[variable]
-           << std::dec
-           << "\",\"min\":" << std::setprecision(17) << minima[variable]
-           << ",\"max\":" << maxima[variable] << '}';
+           << std::dec << "\",\"min\":" << std::setprecision(17)
+           << (nonfinite[variable] == count ? 0.0 : minima[variable])
+           << ",\"max\":" << (nonfinite[variable] == count ? 0.0 : maxima[variable])
+           << ",\"max_abs\":" << max_abs[variable]
+           << ",\"nonfinite\":" << nonfinite[variable] << '}';
   }
   output << "]}\n";
+}
+
+void MeshRefinement::VCAMRLifecycleArmPostEvent() {
+  if (!VCAMRLifecycleDiagnosticEnabled()) return;
+  vc_lifecycle_waiting_rhs = true;
+  vc_lifecycle_waiting_update = true;
+  vc_lifecycle_event_cycle = pmy_mesh->ncycle;
+}
+
+void MeshRefinement::VCAMRLifecycleMarkFirstPostEventRHS(
+    const DvceArray5D<Real> &rhs, const int stage) {
+  if (!vc_lifecycle_waiting_rhs) return;
+  VCAMRLifecycleMarkState("R0", "first_post_event_rhs", rhs, stage,
+                          vc_lifecycle_event_cycle);
+  VCAMRWriterCheckpoint("R0", rhs, stage);
+  vc_lifecycle_waiting_rhs = false;
+}
+
+void MeshRefinement::VCAMRLifecycleMarkFirstPostEventUpdate(
+    const DvceArray5D<Real> &state, const int stage) {
+  if (!vc_lifecycle_waiting_update) return;
+  VCAMRLifecycleMarkState("U0", "first_post_event_rk_update", state, stage,
+                          vc_lifecycle_event_cycle);
+  VCAMRWriterCheckpoint("U0", state, stage);
+  vc_lifecycle_waiting_update = false;
 }
 
 void MeshRefinement::ValidateVCAMRMaps(const int old_nmb,
@@ -568,6 +631,7 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     }
     pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
     VCAMRLifecycleMark(16, "InitBoundaryValuesAndPrimitives_complete");
+    VCAMRLifecycleArmPostEvent();
 
     if (pmbp->phydro != nullptr) {
       (void) pmbp->phydro->NewTimeStep(pdriver, pdriver->nexp_stages);

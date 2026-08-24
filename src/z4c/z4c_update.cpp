@@ -10,6 +10,7 @@
 
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/mesh_refinement.hpp"
 #include "driver/driver.hpp"
 #include "coordinates/coordinates.hpp"
 #include "globals.hpp"
@@ -122,6 +123,10 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
         ChiProvenanceCheckpoint::s0_after_rk, stage, pbval_u);
   }
   CheckStateAdmissibility(pdriver, stage, Z4cStateCheckpoint::post_rk_update);
+  if (layout.centering == Z4cGridCentering::vertex &&
+      pmy_pack->pmesh->pmr != nullptr) {
+    pmy_pack->pmesh->pmr->VCAMRLifecycleMarkFirstPostEventUpdate(u0, stage);
+  }
   return TaskStatus::complete;
 }
 } // namespace z4c

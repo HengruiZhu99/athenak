@@ -555,6 +555,21 @@ if (Athena_BUILD_UNIT_TESTS)
       athena.z4c_vc_multi_family_derefine PROPERTIES TIMEOUT 120
       LABELS "z4c;vertex;2d;cartesian;amr;derefine;regression")
 
+  add_test(
+      NAME athena.z4c_vc_derefine_writer_lifecycle
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/z4c/z4c_vertex_multi_family_derefine_test.py
+      --athena $<TARGET_FILE:athena>
+      --input
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/inputs/z4c_vc_multi_family_derefine_2d_wide.athinput
+      --work-dir ${CMAKE_CURRENT_BINARY_DIR}/z4c_vc_derefine_writer_lifecycle
+      --dimensions 2 --family-count 3 --order 4 --transfer-order 6
+      --writer-lifecycle)
+  set_tests_properties(
+      athena.z4c_vc_derefine_writer_lifecycle PROPERTIES TIMEOUT 180
+      LABELS "z4c;vertex;2d;cartesian;amr;derefine;diagnostic")
+
   function(add_z4c_vc_multi_family_case name input dimensions families order
            transfer_order)
     add_test(

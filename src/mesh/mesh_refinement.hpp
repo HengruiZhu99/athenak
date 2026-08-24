@@ -123,6 +123,16 @@ class MeshRefinement {
   // parameter.  A completion marker is emitted only after a device fence and MPI barrier.
   bool VCAMRLifecycleDiagnosticEnabled() const;
   void VCAMRLifecycleMark(int phase, const char *name) const;
+  void VCAMRLifecycleMarkState(const char *checkpoint, const char *name,
+                               const DvceArray5D<Real> &state, int stage,
+                               int event_cycle) const;
+  void VCAMRLifecycleArmPostEvent();
+  void VCAMRLifecycleMarkFirstPostEventRHS(const DvceArray5D<Real> &rhs,
+                                           int stage);
+  void VCAMRLifecycleMarkFirstPostEventUpdate(const DvceArray5D<Real> &state,
+                                              int stage);
+  void VCAMRWriterCheckpoint(const char *checkpoint,
+                             const DvceArray5D<Real> &state, int stage) const;
   void ValidateVCAMRMaps(int old_nmb, int new_nmb) const;
 
   void DerefineCCSameRank(DvceArray5D<Real> &a, DvceArray5D<Real> &ca);
@@ -170,5 +180,8 @@ class MeshRefinement {
  private:
   // data
   Mesh *pmy_mesh;
+  bool vc_lifecycle_waiting_rhs = false;
+  bool vc_lifecycle_waiting_update = false;
+  int vc_lifecycle_event_cycle = -1;
 };
 #endif // MESH_MESH_REFINEMENT_HPP_
