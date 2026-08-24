@@ -1,66 +1,47 @@
 {
-  "schema": "ref-gh-feedback-continuation-status-v1",
-  "date": "2026-08-23",
+  "schema": "ref-gh-feedback-continuation-status-v2",
+  "date": "2026-08-24",
   "branch": "codex/ref-gh-feedback-continuation-20260823",
   "parent_commit": "9c438dc619aa742404530c953243d71b2a01d8e6",
   "implementation_commit": "9b86a5d97af9abb46b18c82c4895feb9887f0d5d",
-  "controller_test_commit": "55eed5d4267d2eea833c4fe3ec6e8ff3af3bc732",
-  "aurora_mesh_launcher_correction_commit": "0944be6b18dcc89f04a1e98fb34dfaef2a18622d",
-  "aurora_python_harness_correction_commit": "7a69477bec06f426c6f105300b724bd25977ce45",
-  "local_executable_sha256": "e23c7449ba5691c2142b010623d0d9a76ca0589ca45875d94a1c4e08f412cb6c",
+  "t5_source_commit": "0189d495058e09a53ca36a31f08ab924bc496582",
+  "t5_executable_sha256": "7496ae64fe8a57c4f3111884bd04be9439e1d520acba60876aadca5944ded742",
   "completed": {
     "local_t0_regressions": true,
     "local_t1_prescribed_equivalence": true,
     "local_t2_manufactured_histories": true,
     "local_restart_equivalence": true,
-    "enlarged_mesh_audit": true
+    "aurora_12_tile_gate_job_8777274": "pass",
+    "tau8_threshold_freeze_job_8777287": "pass",
+    "t3_feedback_job_8777507": "pass",
+    "t4_feedback_job_8777607": "fail_closed",
+    "t5_prescribed_job_8777824": "ill_conditioned"
   },
-  "prescribed_equivalence_linf": 0.0,
-  "restart": {
-    "payload_linf": 4.919683421929222e-08,
-    "payload_tolerance": 1e-07,
-    "xi_difference": 1.4122687394535482e-13,
-    "xi_dot_difference": 1.3966466871906391e-12,
-    "controller_tolerance": 1e-11
-  },
-  "mesh": {
-    "domain": [-12.0, 12.0],
-    "root_meshblocks": [3, 3, 3],
-    "total_meshblocks": 272,
+  "definitive_mesh": {
+    "domain": [-24.0, 24.0],
+    "total_meshblocks": 328,
     "physical_level_1_meshblocks": 208,
-    "physical_level_2_meshblocks": 64,
+    "physical_level_2_meshblocks": 56,
+    "physical_level_3_meshblocks": 64,
     "medium_dx_min": 0.041666666666666664
   },
-  "pending": {
-    "aurora_12_tile_debug_gate": "python310_rerun_pending_after_job_8777250_partial_pass",
-    "tau8_threshold_freeze": true,
-    "t3_cheap_medium": true,
-    "t4_definitive_medium": true,
-    "t5_open_loop_discriminator": true,
-    "t6_three_resolution": true
+  "t4": {
+    "job": "8777607",
+    "fatal_time": 3.70126,
+    "last_history_time": 3.652311803940143,
+    "last_xi": 0.683570621760585,
+    "classification": "constraint_growth_veto"
+  },
+  "t5": {
+    "job": "8777824",
+    "failed_target": 3.5,
+    "fatal_stage_time": 3.18677,
+    "last_history_time": 3.150078211271024,
+    "last_xi": 0.7875195528177561,
+    "classification": "invalid_relative_conditioning"
   },
   "active_or_submitted_jobs_from_this_work": 0,
-  "aurora_job_8777229": {
-    "queue": "debug",
-    "node": "x4311c6s7b0n0",
-    "exit_status": 139,
-    "walltime": "00:06:01",
-    "distinct_pvc_tiles": 12,
-    "mesh_tree_complete": true,
-    "controller_tests_started": false,
-    "classification": "post-output mesh-only SYCL teardown"
-  },
-  "aurora_job_8777250": {
-    "queue": "debug",
-    "node": "x4302c2s3b0n0",
-    "exit_status": 1,
-    "walltime": "00:06:14",
-    "distinct_pvc_tiles": 12,
-    "controller_unit_passed_all_ranks": true,
-    "legacy_prescribed_payload_linf": 0.0,
-    "legacy_prescribed_payload_bitwise_equal": true,
-    "restart_test_started": false,
-    "classification": "default Python 3.6 analysis harness failure"
-  },
-  "scientific_claim": "none"
+  "t6": "forbidden_by_t4_failure_and_not_run",
+  "campaign_state": "paused_for_formulation_and_code_review",
+  "scientific_claim": "no_trumpet_stability_or_convergence"
 }

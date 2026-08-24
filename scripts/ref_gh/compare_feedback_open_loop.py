@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare controlled T4 and prescribed T5 histories on the common time window."""
+"""Compare controlled T4 and prescribed T5 histories at common time and xi."""
 
 from __future__ import annotations
 
@@ -52,6 +52,29 @@ def interpolate(rows: list[list[float]], time: float) -> dict[str, float]:
     }
 
 
+def interpolate_at_xi(rows: list[list[float]], xi: float) -> dict[str, float]:
+    index = COLUMNS["xi"]
+    if xi < rows[0][index] or xi > rows[-1][index]:
+        raise ValueError(
+            f"xi {xi} outside [{rows[0][index]}, {rows[-1][index]}]")
+    right = next((i for i, row in enumerate(rows) if row[index] >= xi), None)
+    assert right is not None
+    if rows[right][index] == xi or right == 0:
+        result = {key: rows[right][column] for key, column in COLUMNS.items()}
+        result["time"] = rows[right][0]
+        return result
+    left = right - 1
+    fraction = ((xi - rows[left][index])
+                /(rows[right][index] - rows[left][index]))
+    result = {
+        key: rows[left][column]
+             + fraction*(rows[right][column] - rows[left][column])
+        for key, column in COLUMNS.items()
+    }
+    result["time"] = rows[left][0] + fraction*(rows[right][0] - rows[left][0])
+    return result
+
+
 def first_crossing(rows: list[list[float]], column: str, threshold: float,
                    above: bool = True) -> float | None:
     index = COLUMNS[column]
@@ -78,13 +101,20 @@ def main() -> None:
     controlled = read_rows(args.controlled)
     prescribed = read_rows(args.prescribed)
     common_end = min(controlled[-1][0], prescribed[-1][0])
+    common_xi_end = min(controlled[-1][COLUMNS["xi"]],
+                        prescribed[-1][COLUMNS["xi"]])
     sample_times = [time for time in (0.5, 1.0, 1.5, 2.0, 2.5, 3.0,
                                       3.5, common_end)
                     if controlled[0][0] <= time <= common_end]
     sample_times = sorted(set(sample_times))
+    sample_xi = [xi for xi in (0.50, 0.55, 0.60, 0.625, 0.65, 0.675,
+                               common_xi_end)
+                 if controlled[0][COLUMNS["xi"]] <= xi <= common_xi_end]
+    sample_xi = sorted(set(sample_xi))
     result = {
         "schema": "ref-gh-feedback-open-loop-comparison-v1",
         "common_end_time": common_end,
+        "common_end_xi": common_xi_end,
         "controlled_final_time": controlled[-1][0],
         "prescribed_final_time": prescribed[-1][0],
         "events": {
@@ -111,6 +141,14 @@ def main() -> None:
                 "prescribed": interpolate(prescribed, time),
             }
             for time in sample_times
+        ],
+        "activation_samples": [
+            {
+                "xi": xi,
+                "controlled": interpolate_at_xi(controlled, xi),
+                "prescribed": interpolate_at_xi(prescribed, xi),
+            }
+            for xi in sample_xi
         ],
         "finite": all(math.isfinite(value) for rows in (controlled, prescribed)
                       for row in rows for value in row),
