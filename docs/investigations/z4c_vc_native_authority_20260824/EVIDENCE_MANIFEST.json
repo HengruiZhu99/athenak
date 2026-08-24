@@ -1,0 +1,1678 @@
+{
+  "branch": "codex/z4c-vc-figure3-native-authority-20260824",
+  "build": {
+    "cmake_cache_sha256": "4079cdbf0ee8bfc12be32cd43a65d8a97978a21dd6c8198e5d3343c4280f1c1e",
+    "cuda_executable_sha256": "3a395bfdaf217d617fee43d2cbcd38e7a13c2a0f4207e3a764c3513eb8c0405f",
+    "focused_a100_tests": "20/20 passed in job 57524292",
+    "host_enabled_tests": "140/141 passed in concurrent aggregate; sole AMR-history timeout passed isolated in 177.96 s; 2 CUDA-required tests disabled"
+  },
+  "diagnostic_determinism_commit": "d63519328214a6315a9cc1f7d5e4a1aa4bca21b0",
+  "failed_non_science_allocations": [
+    {
+      "disposition": "shell quoting failed before Athena",
+      "job": "57522958"
+    },
+    {
+      "disposition": "cancelled pending; bad constraint quoting",
+      "job": "57523029"
+    },
+    {
+      "disposition": "runner environment assertion; no science",
+      "job": "57523096"
+    },
+    {
+      "disposition": "regression used system Python; no science",
+      "job": "57524210"
+    }
+  ],
+  "files": [
+    {
+      "bytes": 1928,
+      "path": "AUTHORITY.md",
+      "sha256": "8a2ff649557409ba64e6f99b0b3c05ab5d6438c8300ba13a477b582d1e8d92c8"
+    },
+    {
+      "bytes": 1474,
+      "path": "EARLY_CONVERGENCE.md",
+      "sha256": "e1627333e84cefa6fd945bcaa16dc8f476538f6459f33d7c9d8d749bdf6c7f13"
+    },
+    {
+      "bytes": 433,
+      "path": "FIGURE3.md",
+      "sha256": "2e1a64e8b19354930b3f389f95840e41190bdc17a32afadf1e68b92692b4e28a"
+    },
+    {
+      "bytes": 1833,
+      "path": "NATIVE_AMR_HEALTH.md",
+      "sha256": "76f61f751c6d31206dc21ea0e08d9ba5f3b098befd30584100252c5247b5c080"
+    },
+    {
+      "bytes": 1299,
+      "path": "NATIVE_AUTHORITY_COMPARISON.md",
+      "sha256": "70ec366aaf5c7bbba25a255a27e056a9bc7ad21c7df135120778e478023d60ea"
+    },
+    {
+      "bytes": 2551,
+      "path": "REPORT.md",
+      "sha256": "d1cbfd7d4717b689753767a908b3410b5e640f3142bed04aabc4ab9558d66a2f"
+    },
+    {
+      "bytes": 226146,
+      "path": "REPORT.pdf",
+      "sha256": "376a36b950551cfb313328a441295b35614bc5eb7b4eab6b538625b4442310ef"
+    },
+    {
+      "bytes": 6777,
+      "path": "REPORT.tex",
+      "sha256": "1fc906a3b9fca25b86bdb5b430ee57e39adedf8bcc6a01fb3d0b033328902f53"
+    },
+    {
+      "bytes": 181,
+      "path": "TAU10P5.md",
+      "sha256": "961643c2f000e1367772892559ce946f27dac95d628780311709e9c2a9b1386c"
+    },
+    {
+      "bytes": 896,
+      "path": "TAU4.md",
+      "sha256": "524536ff937faf11c3c8bc14765f2dedee66680575ea5f47f657f7ceed083270"
+    },
+    {
+      "bytes": 493,
+      "path": "TAU7.md",
+      "sha256": "90dd843c665dee735f589b83479fae8755d9eedc339cc00ac33242fd6bce6f8c"
+    },
+    {
+      "bytes": 15150,
+      "path": "analysis/figures/authority_historical_vs_repaired.pdf",
+      "sha256": "2d394c29bcba8fadd6c00407c8087e00a2c68d0a1ceb7141716d0d080ff03e96"
+    },
+    {
+      "bytes": 99490,
+      "path": "analysis/figures/authority_historical_vs_repaired.png",
+      "sha256": "24b7754dde2b6fac29a1156a8983db0586e021a20ca1d666b18d1363c940868a"
+    },
+    {
+      "bytes": 22901,
+      "path": "analysis/figures/failure_constraints_curvature_timestep.pdf",
+      "sha256": "deee11fc319a97c18527b417679baadc80ed9e3e6570681c38687d8193b7626f"
+    },
+    {
+      "bytes": 199548,
+      "path": "analysis/figures/failure_constraints_curvature_timestep.png",
+      "sha256": "9ce7349cdf0810292479e1ff1c51ee54c4d6f40c22fa8d9162318554f2e1291e"
+    },
+    {
+      "bytes": 13716,
+      "path": "analysis/figures/failure_native_amr_health.pdf",
+      "sha256": "c64941f99fbebe6a750cf4c5115107f04ec2613457970bb4e54496b49b895217"
+    },
+    {
+      "bytes": 104734,
+      "path": "analysis/figures/failure_native_amr_health.png",
+      "sha256": "d549fea9a4cb4778ceee8ac0493bbf5c301d2b2dad2f977c6a0d1613787e7658"
+    },
+    {
+      "bytes": 18974,
+      "path": "analysis/figures/figure3_tau4_overlay.pdf",
+      "sha256": "0fc2d096ff16891a1708504ef649c505bff8750119a375fb33dfc578b2bcf7c2"
+    },
+    {
+      "bytes": 81153,
+      "path": "analysis/figures/figure3_tau4_overlay.png",
+      "sha256": "ae0f4720c380189b9f341b9dcd1803f0d365df98a58e2fdb12bb4fde33d95ad2"
+    },
+    {
+      "bytes": 22267,
+      "path": "analysis/figures/tau4_constraint_order.pdf",
+      "sha256": "f28c9c1c5ff912d705bb84e018ef7fcd9862da71975468d0e32c2c7f9242c636"
+    },
+    {
+      "bytes": 193361,
+      "path": "analysis/figures/tau4_constraint_order.png",
+      "sha256": "4d8652ab52ca05b42e5b8081b5c3f0d4b7031e9c356dfe37801de2d1b1d8b536"
+    },
+    {
+      "bytes": 29834,
+      "path": "analysis/figures/tau4_constraints.pdf",
+      "sha256": "32e611b4ea172ca071de9fd019f827b06a52e1f6cfc9a01f1064ca415542a97e"
+    },
+    {
+      "bytes": 312871,
+      "path": "analysis/figures/tau4_constraints.png",
+      "sha256": "02ed0aead2c308c2245e4228a52ac8f97bae79934757ae1c112c61ea6e094ac3"
+    },
+    {
+      "bytes": 9144,
+      "path": "analysis/native_summary.json",
+      "sha256": "b5776d80bd790d389d538f8ef9c75b34bf8272b8a5bb0d2fec3efe559084d6d2"
+    },
+    {
+      "bytes": 18134,
+      "path": "analysis/record_replay_verification.json",
+      "sha256": "4723f9d243ca0931c9f8b7c016337d0079774ca86848a099c50dccaca8c09ba8"
+    },
+    {
+      "bytes": 9144,
+      "path": "analysis.stdout.json",
+      "sha256": "b5776d80bd790d389d538f8ef9c75b34bf8272b8a5bb0d2fec3efe559084d6d2"
+    },
+    {
+      "bytes": 807,
+      "path": "analyze_fields_milestone.py",
+      "sha256": "511e8811e017eeb7901e52b6bb0dd5110027f7cc1153890aa7dbf2676441c871"
+    },
+    {
+      "bytes": 12262,
+      "path": "analyze_native_authority.py",
+      "sha256": "caf234146f984a846f444807ae9be7363389d2d4697a750163554e34999aa330"
+    },
+    {
+      "bytes": 5230,
+      "path": "build_evidence_manifest.py",
+      "sha256": "0282d01c7f5d4e1954c679120309ea3c142b3c9e5f152ae1692d50939ab8f8e2"
+    },
+    {
+      "bytes": 90,
+      "path": "evidence/compact-evidence-tar.sha256",
+      "sha256": "f39e245e163df39d12739f96d595dd9c2389b058a7252653213d083193f1bcd7"
+    },
+    {
+      "bytes": 699,
+      "path": "evidence/host-regression-summary.txt",
+      "sha256": "2a02626231f158203e7941f0dafab5359c6eeea92d839b7da8e44f0093bdef2d"
+    },
+    {
+      "bytes": 10757,
+      "path": "evidence/perlmutter/analysis/fields-tau4-v1/constraints_vs_time_core.csv",
+      "sha256": "ce59ab1074a941f676a0dd7f47c3f3e20e0ea9794c46d8857c95636b3090c3b3"
+    },
+    {
+      "bytes": 629450,
+      "path": "evidence/perlmutter/analysis/fields-tau4-v1/field_convergence.csv",
+      "sha256": "aac208365151a6513bad9a4f34b966399f873d22b6ee4f935505c2c7a006f2be"
+    },
+    {
+      "bytes": 116299,
+      "path": "evidence/perlmutter/analysis/fields-tau4-v1/field_sampling_provenance.json",
+      "sha256": "2d19f99ed5d5ba637c629f5ea02e290048da88dd8ff09ef726b59fc5e7008db4"
+    },
+    {
+      "bytes": 2995,
+      "path": "evidence/perlmutter/analysis/fields-tau4-v1/field_summary.json",
+      "sha256": "54526b1ccb8ffe49ec9b65cd20074644e2fa5283b3da7323f5461d183b64a6d6"
+    },
+    {
+      "bytes": 24094,
+      "path": "evidence/perlmutter/analysis/fields-tau4-v1/figures/constraints_vs_time_core.pdf",
+      "sha256": "47521848d826871ce5e31b2b095951601a6019a5ba04a3dcb2588901faa5dae7"
+    },
+    {
+      "bytes": 325886,
+      "path": "evidence/perlmutter/analysis/fields-tau4-v1/figures/constraints_vs_time_core.png",
+      "sha256": "c02e6936e64767881f6fed0a5ebd3016ccf5f1b5046c7ee63a4e392189f88c33"
+    },
+    {
+      "bytes": 24582,
+      "path": "evidence/perlmutter/analysis/fields-tau4-v1/figures/trusted_core_field_convergence.pdf",
+      "sha256": "877106214b8ad43144c0311e29291dde65706d0a974e80e116d1a460c92fdf62"
+    },
+    {
+      "bytes": 391481,
+      "path": "evidence/perlmutter/analysis/fields-tau4-v1/figures/trusted_core_field_convergence.png",
+      "sha256": "b84d0560579d7ebaff40cac348090582432730ff9dde9697268dc63cc206806a"
+    },
+    {
+      "bytes": 4621,
+      "path": "evidence/perlmutter/analysis/fields-tau4-v1/state_health.csv",
+      "sha256": "23ecb96c59bf924c9edce4cb9d3eb3f9a67709150abd2a9982ee5f03fdc1e619"
+    },
+    {
+      "bytes": 5817,
+      "path": "evidence/perlmutter/analysis/fields-v1/constraints_vs_time_core.csv",
+      "sha256": "6ee5acc7071a6142f02bb2fc79e6bb8ace7b42d21ad1e3e60f28d79d02f0b003"
+    },
+    {
+      "bytes": 330920,
+      "path": "evidence/perlmutter/analysis/fields-v1/field_convergence.csv",
+      "sha256": "18e035297718c05510514879120e5bd47fc7cd128d33a39f89cee3ac69974952"
+    },
+    {
+      "bytes": 63060,
+      "path": "evidence/perlmutter/analysis/fields-v1/field_sampling_provenance.json",
+      "sha256": "6b5a70cf85b5dee3c76e82f5a8534f345d746bae5684fe7901685bc577f1247b"
+    },
+    {
+      "bytes": 2952,
+      "path": "evidence/perlmutter/analysis/fields-v1/field_summary.json",
+      "sha256": "3b232ee359cd1476b05c684da173043bf478cbc22a5eec936e45c7685a0e0c17"
+    },
+    {
+      "bytes": 23062,
+      "path": "evidence/perlmutter/analysis/fields-v1/figures/constraints_vs_time_core.pdf",
+      "sha256": "4461f83763bb645236007caae5626ebe2f1e63d824c024de022e51bfeea1a2e6"
+    },
+    {
+      "bytes": 276839,
+      "path": "evidence/perlmutter/analysis/fields-v1/figures/constraints_vs_time_core.png",
+      "sha256": "b86a24a6188b40256a5917d9bc4f05eee90ce95c9d7ac7b3193d7783fcdd589e"
+    },
+    {
+      "bytes": 23075,
+      "path": "evidence/perlmutter/analysis/fields-v1/figures/trusted_core_field_convergence.pdf",
+      "sha256": "d4ff883a6a838542f631ccd5b2fec3756014a37f88792e889a38bfa1646d37ed"
+    },
+    {
+      "bytes": 337327,
+      "path": "evidence/perlmutter/analysis/fields-v1/figures/trusted_core_field_convergence.png",
+      "sha256": "6a6470c3cee2f55dc20cbd7c27ceb06408d59b19a5bf96446b84aff6165a9e03"
+    },
+    {
+      "bytes": 2592,
+      "path": "evidence/perlmutter/analysis/fields-v1/state_health.csv",
+      "sha256": "77fd20fe3fd84d0b40624c9a6870476cedb92d8f943aafe8c570ebf436deb883"
+    },
+    {
+      "bytes": 5429,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/amr_event_constraint_jumps.csv",
+      "sha256": "8567fa48fd9112593f2ec0f2df882aea9250f7ad9613507a5d377a6529dc37b4"
+    },
+    {
+      "bytes": 97663,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/causal_protection.csv",
+      "sha256": "ff34ae0cfd7d7139e8f7b9348f42892bfed8dce2b73091897847ee975566bca3"
+    },
+    {
+      "bytes": 3047,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/comparison_summary.history.json",
+      "sha256": "8d52e392d2f69313efdb2e3a86d5cd2cdb626b19f5c135488ac6110819158dcf"
+    },
+    {
+      "bytes": 222193,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/constraints_vs_time.csv",
+      "sha256": "ebbc4861a414868eb76a42a211a1bc74cae06647a1ee472588682a480d30c466"
+    },
+    {
+      "bytes": 276060,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/convergence.csv",
+      "sha256": "19fb1e205b0d32c7d4b92a90e377ee0a344b925f470ca177b767cc075b23fd05"
+    },
+    {
+      "bytes": 22270,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/constraint_convergence_order_vs_time.pdf",
+      "sha256": "cf1b69479455d508e895fc351d4feb80f733f87e3427b102e7ef574fa21f8190"
+    },
+    {
+      "bytes": 192100,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/constraint_convergence_order_vs_time.png",
+      "sha256": "830ac0c09ae01c19a07cdf044dfaa546743fc6ba8a7312a8841f2fbf0c8d1807"
+    },
+    {
+      "bytes": 30022,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/constraints_vs_time_global.pdf",
+      "sha256": "5edd6d1a8b085e531905fa936a78bb524debb83b10aa998e4e4f8a9153d8c201"
+    },
+    {
+      "bytes": 334456,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/constraints_vs_time_global.png",
+      "sha256": "7ff4eab4acc53ab88b9738d90ec221b8bb9afaed780d2f73db1028a46620859f"
+    },
+    {
+      "bytes": 27314,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/curvature_timestep_level.pdf",
+      "sha256": "dbdbc5cb6274aad143d2aa0b8191f5cb36cc95cd0a07982eada5b99bd4976709"
+    },
+    {
+      "bytes": 241834,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/curvature_timestep_level.png",
+      "sha256": "84e91564b6218d769392cdc65d208c6812f52605667dd8cae245563fb6b08d84"
+    },
+    {
+      "bytes": 17449,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/event3_constraint_jump_ratios.pdf",
+      "sha256": "6932b9b7e20a840e903dd40e64679ef65b147e6e93ec7774df7b6996eaef6ac5"
+    },
+    {
+      "bytes": 134092,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/event3_constraint_jump_ratios.png",
+      "sha256": "892ff0c69b8c14c734cbd8dc711531452fe17c0b4d13d1f46921f02b25d8cbfa"
+    },
+    {
+      "bytes": 21200,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/figure3_vc_N128.pdf",
+      "sha256": "6636389b64909f894d3e471e227ffa5669bf78a1ba83f9124961153d7e6f945c"
+    },
+    {
+      "bytes": 118297,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/figure3_vc_N128.png",
+      "sha256": "df860a93a721850fe9f0f26059e36884a1579fd503604d358fdc965e5d08df5e"
+    },
+    {
+      "bytes": 21781,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/figure3_vc_N256.pdf",
+      "sha256": "4cc214ca896d4bc6954579b0aade0f151f9eed99736c114f383b74a7250a76ce"
+    },
+    {
+      "bytes": 116648,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/figure3_vc_N256.png",
+      "sha256": "72c8d57aa71765fd9864a9ea87b77baddd3d259977d090cb0d82b91555427649"
+    },
+    {
+      "bytes": 21310,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/figure3_vc_N512.pdf",
+      "sha256": "d1812d322b6c14bc78ab187a5c6a23a9726b85fa2fa04e78db44645e6e97b56f"
+    },
+    {
+      "bytes": 114011,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/figure3_vc_N512.png",
+      "sha256": "376a3c23d74b04a99a84919a91ddd16268a8f3767260fbe11b62d38d0187e0ae"
+    },
+    {
+      "bytes": 22781,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/figure3_vc_overlay.pdf",
+      "sha256": "c412e6f7b59e97cc6e8c38f102d9568c7ae99bc68139e33c068db100a5d12451"
+    },
+    {
+      "bytes": 149017,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/figure3_vc_overlay.png",
+      "sha256": "1cee5c05679c673aa818b4c758b3fe40696bf3903a7f6caa8275f39413e0a611"
+    },
+    {
+      "bytes": 18099,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/timestep_level_meshblocks.pdf",
+      "sha256": "f939469e837664736f4462938dbfc904c4b81a8c606f77e2d62d4b177a566804"
+    },
+    {
+      "bytes": 131925,
+      "path": "evidence/perlmutter/analysis/history-tau4-v1/figures/timestep_level_meshblocks.png",
+      "sha256": "3d94ea01c46c90cc7d19359462cfac8c9accefd434db16dee342b8cb8211ec46"
+    },
+    {
+      "bytes": 5429,
+      "path": "evidence/perlmutter/analysis/history-v1/amr_event_constraint_jumps.csv",
+      "sha256": "8567fa48fd9112593f2ec0f2df882aea9250f7ad9613507a5d377a6529dc37b4"
+    },
+    {
+      "bytes": 42861,
+      "path": "evidence/perlmutter/analysis/history-v1/causal_protection.csv",
+      "sha256": "b263c4510d89f492fe57f33160ab4419e0c5ab5695eb82b57192c9d9e577da21"
+    },
+    {
+      "bytes": 3047,
+      "path": "evidence/perlmutter/analysis/history-v1/comparison_summary.history.json",
+      "sha256": "2977ce2c15a3675df29963b54466200d9d409cd974b57c3f5990546eb19389ac"
+    },
+    {
+      "bytes": 98202,
+      "path": "evidence/perlmutter/analysis/history-v1/constraints_vs_time.csv",
+      "sha256": "aad2e068b5ca9947e6c15de6d27359b1c93f5c8f1d9d78d22716d11d0f422f93"
+    },
+    {
+      "bytes": 277535,
+      "path": "evidence/perlmutter/analysis/history-v1/convergence.csv",
+      "sha256": "e53bc2f13b65c3801246367fb997decbc383fd2501c179f5053556c6d43fe877"
+    },
+    {
+      "bytes": 21366,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/constraint_convergence_order_vs_time.pdf",
+      "sha256": "77dfaf33a72eaef43ca380f64c7d99443cb7228413cfaba6f95b46c9a525fabf"
+    },
+    {
+      "bytes": 190158,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/constraint_convergence_order_vs_time.png",
+      "sha256": "b9b5c039f7e335a8ec29809783fd40174b84317ddad8c6a0f788afb27dafcce2"
+    },
+    {
+      "bytes": 31191,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/constraints_vs_time_global.pdf",
+      "sha256": "4cb45ba494171508542cf7d335f2c7c6dbe36a4f4c5da0215a9934d996294c3f"
+    },
+    {
+      "bytes": 326855,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/constraints_vs_time_global.png",
+      "sha256": "c4e3b261c5bce1b6d421cf1c60fcad5d05a9b20009de16509894999bf3e4723c"
+    },
+    {
+      "bytes": 27807,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/curvature_timestep_level.pdf",
+      "sha256": "67ce4921fce0ddd2dd9001c937a634cd2789f5cc885077e26d2e7c617eb0d2d8"
+    },
+    {
+      "bytes": 257670,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/curvature_timestep_level.png",
+      "sha256": "3cf0b3d543e2b8ab33f9e352ab6ee45875426dad9d8aef1c2f096b4dc04d837c"
+    },
+    {
+      "bytes": 17449,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/event3_constraint_jump_ratios.pdf",
+      "sha256": "3de7df0fa72ccbdcaf1400d23720fbee31707ef6a30e4c01a5ddbcf9ea7ee16d"
+    },
+    {
+      "bytes": 134092,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/event3_constraint_jump_ratios.png",
+      "sha256": "892ff0c69b8c14c734cbd8dc711531452fe17c0b4d13d1f46921f02b25d8cbfa"
+    },
+    {
+      "bytes": 21289,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/figure3_vc_N128.pdf",
+      "sha256": "66b988663f8f088d7630953477dd6c104fbb9a27a5a2c0386d49168a1a576f86"
+    },
+    {
+      "bytes": 114647,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/figure3_vc_N128.png",
+      "sha256": "f1258b2dff20f396c2e11d2135b6af1fa5c3a8b1a819b54821e24dbeefdb3cc8"
+    },
+    {
+      "bytes": 22183,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/figure3_vc_N256.pdf",
+      "sha256": "8b653f9ea71b3aba52707c4f438593ff4c9b79993e6bce843783be646bee6c99"
+    },
+    {
+      "bytes": 114834,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/figure3_vc_N256.png",
+      "sha256": "02c8b967a53c6faa6b976b5b72ca7c935e9632014831d516357363f12f11c0d4"
+    },
+    {
+      "bytes": 21102,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/figure3_vc_N512.pdf",
+      "sha256": "03d65c1a8400cc33014fdc4b82fe1cd5fbf9bd6098f1c5436758050e00993beb"
+    },
+    {
+      "bytes": 114301,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/figure3_vc_N512.png",
+      "sha256": "836849225008a38428e3ddbf5b33d2fcbb93a3375a564d74237e5146f240a28e"
+    },
+    {
+      "bytes": 22990,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/figure3_vc_overlay.pdf",
+      "sha256": "e195cb6afb5553a178cc500d1566bc4982f1215906ffc93eeb8af47f2b42ec49"
+    },
+    {
+      "bytes": 143154,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/figure3_vc_overlay.png",
+      "sha256": "846757daf367f868a6a5d8218b054fed85bfc389851f683f7c33e91fa8db4356"
+    },
+    {
+      "bytes": 20120,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/timestep_level_meshblocks.pdf",
+      "sha256": "28a8c1cbaed23d00ab661105e11294f0d032bce597f1b08d7f44d5d972199937"
+    },
+    {
+      "bytes": 134770,
+      "path": "evidence/perlmutter/analysis/history-v1/figures/timestep_level_meshblocks.png",
+      "sha256": "963d9f9f4a46ca19200aa0e3143c8f751b974a069c4d0de3e4f794c435325f3d"
+    },
+    {
+      "bytes": 338,
+      "path": "evidence/perlmutter/evidence/build-deterministic-history/SHA256SUMS",
+      "sha256": "7799e6f07ea8f0a05a712f49582d77e7490bf196616133c049412311169312a3"
+    },
+    {
+      "bytes": 144484,
+      "path": "evidence/perlmutter/evidence/build-deterministic-history/build.log",
+      "sha256": "b827335d11e592651e44f043320704713e73d45fc1a03d75d66899a898a7ecc5"
+    },
+    {
+      "bytes": 2570,
+      "path": "evidence/perlmutter/evidence/build-deterministic-history/configure.log",
+      "sha256": "4aa830e080e0476bd977392f712b9267308a1d01dad1d5c5579fbaaa9ecd0575"
+    },
+    {
+      "bytes": 82,
+      "path": "evidence/perlmutter/evidence/build-deterministic-history/source.txt",
+      "sha256": "68f07d2ed59204ae7006b3a0929907401cb413466f0cef8fe452cec9b255fe5d"
+    },
+    {
+      "bytes": 319,
+      "path": "evidence/perlmutter/evidence/compact-extra-sha256.txt",
+      "sha256": "8f4a24486d019d791f1f127a5af0cc2aa920c1b175a5bae98d331b178de91fbd"
+    },
+    {
+      "bytes": 743627,
+      "path": "evidence/perlmutter/evidence/historical/n256_historical_authority.jsonl",
+      "sha256": "ce3cdea1a8d0465a7c19e4ac1134ce474d8908b5f5cb12be6f20110d12e9c851"
+    },
+    {
+      "bytes": 11125,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/SHA256SUMS",
+      "sha256": "4fa0d68accc21df2ce127d39b49bda67d6ebef674cded3e0628dddcb6a875034"
+    },
+    {
+      "bytes": 3134,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/provenance.txt",
+      "sha256": "62495f80814734f4395603ffa67b649ff27661ea88421bcc7a560c0f73531ca2"
+    },
+    {
+      "bytes": 10,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/status.txt",
+      "sha256": "7eeb001f2187a8a959b780debf8d18d68494ed2cd6101f39e5440ac3ace19b91"
+    },
+    {
+      "bytes": 300,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_150.command",
+      "sha256": "fd90d2371e508248c8c4b131414729811ca8752ca008f4fe462ea997ebeef53a"
+    },
+    {
+      "bytes": 67,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_150.log",
+      "sha256": "d6565156ad8246c13199bae9e24d2feea5f7d29fd53199cca5a6471b60de07ab"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_150.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 129,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_156.command",
+      "sha256": "0aa8b907e26633ac18756948928b2bcfc4fd1df32f40d2c960cdbfe13598f93e"
+    },
+    {
+      "bytes": 798,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_156.log",
+      "sha256": "b8d2647de9617b1f1f3b54ec30dd1ae8c1837d786a300aab471bec265f9e3e04"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_156.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 146,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_157.command",
+      "sha256": "cb9a066a3e952187995415cf6f54d1a437a76aff4737038a982a3f35724ef560"
+    },
+    {
+      "bytes": 798,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_157.log",
+      "sha256": "b8d2647de9617b1f1f3b54ec30dd1ae8c1837d786a300aab471bec265f9e3e04"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_157.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 566,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_25.command",
+      "sha256": "394c70052cceec6b3fcbb043024b815b8ce4a2f73f69d13490c26aaf736bd537"
+    },
+    {
+      "bytes": 95,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_25.log",
+      "sha256": "e879b7b406dec827c627f4c1aef5307619e9a4eed09188c6158fe10227d94abb"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_25.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 607,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_26.command",
+      "sha256": "fe5df5902578b9df97645b5a85b3a1f7a309b5bee0df531de7dee7ebd64a0e4a"
+    },
+    {
+      "bytes": 110,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_26.log",
+      "sha256": "2c7ffd45dbf7442c7f0f51a6ff60e175d07a20e6a4204b120c5970ca8b94abab"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_26.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 691,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_27.command",
+      "sha256": "3c31b289271187acc4359722dfd24d3f5eee0beb92fe844f52fa78840eb7db41"
+    },
+    {
+      "bytes": 110,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_27.log",
+      "sha256": "2c7ffd45dbf7442c7f0f51a6ff60e175d07a20e6a4204b120c5970ca8b94abab"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_27.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 682,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_28.command",
+      "sha256": "45b508962db1179a2bc238658c0692b9df0bd158b1b5ebd2ca33efc14c44d208"
+    },
+    {
+      "bytes": 110,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_28.log",
+      "sha256": "2c7ffd45dbf7442c7f0f51a6ff60e175d07a20e6a4204b120c5970ca8b94abab"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_28.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 682,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_29.command",
+      "sha256": "5fa9c580078d77fe3ea37778fc45513af304886385101be201289e9d6ac11124"
+    },
+    {
+      "bytes": 110,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_29.log",
+      "sha256": "2c7ffd45dbf7442c7f0f51a6ff60e175d07a20e6a4204b120c5970ca8b94abab"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_29.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 706,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_30.command",
+      "sha256": "c1bba41b6050339fa4b42a7062d7145818f5792a0aeb9822560e370eebfd6fff"
+    },
+    {
+      "bytes": 110,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_30.log",
+      "sha256": "2c7ffd45dbf7442c7f0f51a6ff60e175d07a20e6a4204b120c5970ca8b94abab"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_30.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 677,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_31.command",
+      "sha256": "5f04ec6281ec1a66136c3bf2573982b5bec93a82c30de5a4dce17e1bb9f6e09b"
+    },
+    {
+      "bytes": 110,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_31.log",
+      "sha256": "2c7ffd45dbf7442c7f0f51a6ff60e175d07a20e6a4204b120c5970ca8b94abab"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_31.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 677,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_32.command",
+      "sha256": "4f4ca5e5d731821521b118ad6bd16e1ad7dbb9cba06313e52bdf1f6839c8ee8b"
+    },
+    {
+      "bytes": 110,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_32.log",
+      "sha256": "2c7ffd45dbf7442c7f0f51a6ff60e175d07a20e6a4204b120c5970ca8b94abab"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_32.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 677,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_33.command",
+      "sha256": "3d871ee91855c23f00267f874272f3f682241809b028a709c693b05f4bfc4598"
+    },
+    {
+      "bytes": 110,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_33.log",
+      "sha256": "2c7ffd45dbf7442c7f0f51a6ff60e175d07a20e6a4204b120c5970ca8b94abab"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_33.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 703,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_34.command",
+      "sha256": "2e45e2a70b4515ea39952bf744fa90bf518584bbe33b31dbd6f83ee1d1b6d243"
+    },
+    {
+      "bytes": 110,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_34.log",
+      "sha256": "2c7ffd45dbf7442c7f0f51a6ff60e175d07a20e6a4204b120c5970ca8b94abab"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_34.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 651,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_52.command",
+      "sha256": "09d0decb5bff718896be7501ec19420eb451b0c216e02317990a77213e300517"
+    },
+    {
+      "bytes": 137,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_52.log",
+      "sha256": "49e0f3502b38b78109960dcb7791129e2c9dd3827b5e03ec439bce17382cf3b6"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_52.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 669,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_53.command",
+      "sha256": "49ddeb3460c47846d6fda5ce78474f47f36c282bc9bd0343d3d300df03ad77e0"
+    },
+    {
+      "bytes": 137,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_53.log",
+      "sha256": "49e0f3502b38b78109960dcb7791129e2c9dd3827b5e03ec439bce17382cf3b6"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_53.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 689,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_54.command",
+      "sha256": "489b303a96e0686924a2251bf017688c8b0145f10361773aad2f67023e5f4ea7"
+    },
+    {
+      "bytes": 138,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_54.log",
+      "sha256": "2a82fd782bf93104e133b10b79a47682df9e15f44d43fa1ebbadcc008321d14b"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_54.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 651,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_55.command",
+      "sha256": "8510dfa4438cb25f13c3a0abb643dbc4faf99410d4172bec4a7882d31cc4226b"
+    },
+    {
+      "bytes": 137,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_55.log",
+      "sha256": "2235294313f90fc6785b4825d9b46bd3aa2107e28549abcb1787510323443977"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_55.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 669,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_56.command",
+      "sha256": "71bca49de5e34e13e2082ccb8b0f5db8a8292087e6c8edd2cc28db04d46c4370"
+    },
+    {
+      "bytes": 137,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_56.log",
+      "sha256": "2235294313f90fc6785b4825d9b46bd3aa2107e28549abcb1787510323443977"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_56.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 689,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_57.command",
+      "sha256": "fbb64869f68360a73575463d7e92504f331456663d9084eff9b80e408d7a3fba"
+    },
+    {
+      "bytes": 138,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_57.log",
+      "sha256": "2ce0dc4315bd732dd407b0e7cda74250af93ae2e512ebff242cbaf61f26259fd"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_57.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 686,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_58.command",
+      "sha256": "147cba55e9a2d2909674d6dc7e208f87b5652544c479f1acd1021ba41221c839"
+    },
+    {
+      "bytes": 136,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_58.log",
+      "sha256": "d66d8b70db0329b101c7d5bed425165417c0c971adba9848e0740610212bad5d"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/evidence/regressions/deterministic-history-v2/test_58.status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 9757,
+      "path": "evidence/perlmutter/evidence/scheduler/sacct.txt",
+      "sha256": "1cbf2e50755f63a4bf28380a15ee07b9f128e1e0befe4067eab8c6c012a61d83"
+    },
+    {
+      "bytes": 11423,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/SHA256SUMS",
+      "sha256": "a9648ebc911c77a2d50ea51a2b0744134c56ae89e39ac81d72e05d7935f12d91"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/athena-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 95927,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/brill_global_128x32.coefficients",
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10"
+    },
+    {
+      "bytes": 2527,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/brill_vc_figure3.athinput",
+      "sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b"
+    },
+    {
+      "bytes": 1035,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/command.txt",
+      "sha256": "f5b2c3dd2e32c6ebb9e1bd5f637347b592fbcec0805adade303c8e0d49d06db5"
+    },
+    {
+      "bytes": 28404,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/evidence/environment.txt",
+      "sha256": "180d3dce0373b6d277107aa8b17b0e4dad44ea84f2bc0a61810385be17980aef"
+    },
+    {
+      "bytes": 1587,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/evidence/provenance.txt",
+      "sha256": "6c7f02e1858e9dbd6c66258c7e3c500131c6cff1cc510ee4daed34ae054325ee"
+    },
+    {
+      "bytes": 1905,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/evidence/slurm-job.txt",
+      "sha256": "ecd932a3c0a863d48b2057da4c5b515890216504513c4288092e85dcf42f4e12"
+    },
+    {
+      "bytes": 904,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/n128_native_replay-constraints.dat",
+      "sha256": "87ef071409549a60fed9ed39802915ed477bdc0bed1e71883323271db8d4a27c"
+    },
+    {
+      "bytes": 1216,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/n128_native_replay.amr_history_replay.jsonl",
+      "sha256": "74b17bc2e40645cbdaa692dd6de24cdf4f24070f26fd88d2be57ee748a7e17ee"
+    },
+    {
+      "bytes": 105855,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/n128_native_replay.z4c.user.hst",
+      "sha256": "b978670c4f35af89ee1f7ae7c2a7a08b09d031a282982813904a16418166332a"
+    },
+    {
+      "bytes": 3281,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/n256_native_authority.jsonl",
+      "sha256": "fd08e6b32b094ef9e8e928a7ad8e061edcc6e67617609952f0aefa47e4b0f694"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6763,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/stdout.log",
+      "sha256": "ed1b5a647578132e9376f8e950946b9c20abad4166d814c4ffce40968c8ae59f"
+    },
+    {
+      "bytes": 33471,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/z4c_timestep_contract.csv",
+      "sha256": "1346dbd8d12c9dcb8f23badbbd6e4b21e9b6ca234b0ddff96b8dc225f7a03dfd"
+    },
+    {
+      "bytes": 87217,
+      "path": "evidence/perlmutter/runs/n128_native_replay_t2p5_v1_dethist/z4c_vertex_axis_regularity.csv",
+      "sha256": "0c1d814bd329c22c65425b1efb6fba16a4407c80c522bdbd52335d59526a1e4d"
+    },
+    {
+      "bytes": 22399,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/SHA256SUMS",
+      "sha256": "ee9e78647333de55c5da2f79ccb321d688e6397c86789f1c725123cd6a285ee4"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/athena-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 95927,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/brill_global_128x32.coefficients",
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10"
+    },
+    {
+      "bytes": 2527,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/brill_vc_figure3.athinput",
+      "sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b"
+    },
+    {
+      "bytes": 1027,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/command.txt",
+      "sha256": "f7da8b8b17ffabd3b1d740617b052fe90f2e64f048b46dcb91f4a4421585d988"
+    },
+    {
+      "bytes": 28409,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/evidence/environment.txt",
+      "sha256": "7c837e0d919b2a4573aa88dc65bfb5cb10c2f4ff1760fa668898bdc62d6bd153"
+    },
+    {
+      "bytes": 1574,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/evidence/provenance.txt",
+      "sha256": "91c0bd61cd57c6c0bb3bb9bbe4bdfe065728c77405ec499df344ad57351aa300"
+    },
+    {
+      "bytes": 1912,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/evidence/slurm-job.txt",
+      "sha256": "6ab301dae2261f434a4a7988e7830328e8993c7ede2a8047f16a44c5b2ec0e8f"
+    },
+    {
+      "bytes": 904,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/n128_native_replay-constraints.dat",
+      "sha256": "2b1fdb957518a7e769b8be5e223045104d7dec3f755a5a091f1b99ccfddb01b1"
+    },
+    {
+      "bytes": 1216,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/n128_native_replay.amr_history_replay.jsonl",
+      "sha256": "74b17bc2e40645cbdaa692dd6de24cdf4f24070f26fd88d2be57ee748a7e17ee"
+    },
+    {
+      "bytes": 239055,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/n128_native_replay.z4c.user.hst",
+      "sha256": "30fedcd37b90b874e69472d1d08f179256b05314e1a3e45950b4597d2120f408"
+    },
+    {
+      "bytes": 3281,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/n256_native_authority.jsonl",
+      "sha256": "fd08e6b32b094ef9e8e928a7ad8e061edcc6e67617609952f0aefa47e4b0f694"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 11630,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/stdout.log",
+      "sha256": "273eb57024e398aa7d17f7c2559d906ab6317fbec4c28dc77769455f8e6dc447"
+    },
+    {
+      "bytes": 76082,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/z4c_timestep_contract.csv",
+      "sha256": "d659a954a023e758aefcae6a0030adbe1aaddf0aa610efd47a936b7658ed1b22"
+    },
+    {
+      "bytes": 199041,
+      "path": "evidence/perlmutter/runs/n128_native_replay_tau4_v1/z4c_vertex_axis_regularity.csv",
+      "sha256": "51f03e5a2762c0d26091252722a3aa8fb5883ec9d1521b7c0779fb88f50b1910"
+    },
+    {
+      "bytes": 11209,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/SHA256SUMS",
+      "sha256": "4107da7838e4807dba0dd9acd83d87d7ccb4f955a0cffade18fe2bbda3577a18"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/athena-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 95927,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/brill_global_128x32.coefficients",
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10"
+    },
+    {
+      "bytes": 2527,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/brill_vc_figure3.athinput",
+      "sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b"
+    },
+    {
+      "bytes": 1036,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/command.txt",
+      "sha256": "eb3fdd87d4acac7e261bae68f2390127a4e9e211b068b5634dc3c57a87ac9203"
+    },
+    {
+      "bytes": 28309,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/evidence/environment.txt",
+      "sha256": "84a5cca26381537a7e4cf3c7a3f9697bbfe0c12f6142c69216b50cd739d18965"
+    },
+    {
+      "bytes": 1589,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/evidence/provenance.txt",
+      "sha256": "f3c22b0e077abf2046955891c1f8e20c5318d80fc6ce0cccdd0ba9e4ac767aaa"
+    },
+    {
+      "bytes": 1813,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/evidence/slurm-job.txt",
+      "sha256": "791a3a1cb9e7019c99bddded54d01e12db1318c264aa57700e791fa6ff6bab84"
+    },
+    {
+      "bytes": 3281,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/n256_native_authority.jsonl",
+      "sha256": "fd08e6b32b094ef9e8e928a7ad8e061edcc6e67617609952f0aefa47e4b0f694"
+    },
+    {
+      "bytes": 602,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/n256_native_authority.jsonl.ledger.jsonl",
+      "sha256": "fb10d1a260475f00f73972fcfec15162f69e53c1f6d271b2d40b0761c3c0d11a"
+    },
+    {
+      "bytes": 904,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/n256_native_record-constraints.dat",
+      "sha256": "0f7de2e3029872488680b274dc7eda66897285468f097e5485191c133f78b217"
+    },
+    {
+      "bytes": 207087,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/n256_native_record.z4c.user.hst",
+      "sha256": "22bf0e78f3bb8c15167d78262e37407ea8f3cc565d8644ac29bc003b0cab3082"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 83760,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/stdout.log",
+      "sha256": "039e4e9183113dd9b10f07146a415cecc9eb580846f88bc102a321d434ff63ee"
+    },
+    {
+      "bytes": 66435,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/z4c_timestep_contract.csv",
+      "sha256": "d1530ab30ed86bacad765be987e0fc67206f3e819aa0fa3c5c02c5bec3235686"
+    },
+    {
+      "bytes": 174608,
+      "path": "evidence/perlmutter/runs/n256_native_record_t2p5_v2_dethist/z4c_vertex_axis_regularity.csv",
+      "sha256": "f8bd3aa6ab6e48ea80610cdab66a5e23ee0adaa724580e477f535860a0592bef"
+    },
+    {
+      "bytes": 14686,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/SHA256SUMS",
+      "sha256": "82325e1616bc57fdca492b7af72f48709c29937354e6111b66b660f4b97b1d7a"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/athena-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 95927,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/brill_global_128x32.coefficients",
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10"
+    },
+    {
+      "bytes": 2527,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/brill_vc_figure3.athinput",
+      "sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b"
+    },
+    {
+      "bytes": 1039,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/command.txt",
+      "sha256": "99a3bc7e8b7e8f33f7d05d9f4f3160ac78fe6171f0a6c6c5a72b4eec1cd23ecb"
+    },
+    {
+      "bytes": 28352,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/evidence/environment.txt",
+      "sha256": "28bf1793a51f317e41850cf22bde2392085ae994fdf2b76a19cc9fc6fe28c51b"
+    },
+    {
+      "bytes": 1536,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/evidence/provenance.txt",
+      "sha256": "21fafaad0cdb704845a7d0f47b0c3333a019d7fc549683cb019eaa4ecca962f6"
+    },
+    {
+      "bytes": 126,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/evidence/restart-input.txt",
+      "sha256": "b7dad754f4766731ee8debfaa06dece20319ff2f5495f8652574c0c75b53bfd1"
+    },
+    {
+      "bytes": 1957,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/evidence/slurm-job.txt",
+      "sha256": "bd9ad9cf69ff2ec6ccae7478a7503350685c9b0989db0f4018d8fc7be37362e0"
+    },
+    {
+      "bytes": 3281,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/n256_native_authority.jsonl",
+      "sha256": "fd08e6b32b094ef9e8e928a7ad8e061edcc6e67617609952f0aefa47e4b0f694"
+    },
+    {
+      "bytes": 265695,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/n256_native_record.z4c.user.hst",
+      "sha256": "2dd63a87e7d8c5ac0a6246dfd5e8512c80d3097440373923f3d8ad65296e94bb"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 107388,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/stdout.log",
+      "sha256": "6111f5e069f57a449360882dca6227f5580ff47d305bab44e563f3389185a48e"
+    },
+    {
+      "bytes": 86161,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/z4c_timestep_contract.csv",
+      "sha256": "7536c09f206e5021cea324abbc0c34b43d6ad1974dc6602de59c83a13ee694d0"
+    },
+    {
+      "bytes": 226358,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau4_segment1_v1/z4c_vertex_axis_regularity.csv",
+      "sha256": "13bd9968e1fa598e000d29acf0e25328ac5018c70d15ebb7b95b8f2119aadebb"
+    },
+    {
+      "bytes": 16742,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/SHA256SUMS",
+      "sha256": "1d67c0867f04fe26a17ad57068ae7090b73918b7133f313372f7ba4d15575a8d"
+    },
+    {
+      "bytes": 4,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/athena-exit",
+      "sha256": "9d9b18720961e9b4689fd763b85e7b6f36160ccd3a8a1c9ddc5103bb0f66c396"
+    },
+    {
+      "bytes": 95927,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/brill_global_128x32.coefficients",
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10"
+    },
+    {
+      "bytes": 2527,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/brill_vc_figure3.athinput",
+      "sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b"
+    },
+    {
+      "bytes": 1041,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/command.txt",
+      "sha256": "fdac7c5379e5ce31f8aa17abeabc64b803f826a7ba8f1b3bd3cdb71e423223fc"
+    },
+    {
+      "bytes": 260,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/evidence/disposition.txt",
+      "sha256": "1cbc361aa6f47cd0c5363528717b1e303ceca6b3fcddb14c6ca60b2bbad9e8f5"
+    },
+    {
+      "bytes": 28354,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/evidence/environment.txt",
+      "sha256": "105b6da77894f1c1e96381bc2510cd33ea4bf876f175ece47a0d88d30f189424"
+    },
+    {
+      "bytes": 1537,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/evidence/provenance.txt",
+      "sha256": "a2fd7ace07ff50211ba3d2ece298ba0c4cbf82b02b4d863bf8f2d7df57bfb29a"
+    },
+    {
+      "bytes": 127,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/evidence/restart-input.txt",
+      "sha256": "5df48f373a83d7409e3b53f84f3f4b2b9266655c6408552ef59058fe36258eac"
+    },
+    {
+      "bytes": 506,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/evidence/sacct.txt",
+      "sha256": "59612ee2813326e9cf82d8d2da11ee9a87944266ada965324692de89cc88dee3"
+    },
+    {
+      "bytes": 1879,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/evidence/slurm-job.txt",
+      "sha256": "e3108f0910691c9b61cccb487f5d04dc070ca05f27f32e833a98c0518d724e9e"
+    },
+    {
+      "bytes": 2070063,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/n256_native_authority.jsonl",
+      "sha256": "6c1fc27308cc85ad5b69d9cc7ed2aa060ca85ab41717a407a4868ea5af14ac67"
+    },
+    {
+      "bytes": 24560,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/n256_native_authority.jsonl.ledger.jsonl",
+      "sha256": "a11186d443b3476acbf095a1dca6c43694ca5e09e57895275722ffb92f61eb88"
+    },
+    {
+      "bytes": 1050687,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/n256_native_record.z4c.user.hst",
+      "sha256": "f00d88ef138104e156adc3d5db9136d4ae0b23ce217a8956babe3e5da1a661b7"
+    },
+    {
+      "bytes": 280,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/stderr.log",
+      "sha256": "b3a5a8a1afb850a789debc5dd3315d12ed46c100378261381f8f5e45a384786c"
+    },
+    {
+      "bytes": 449407,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/stdout.log",
+      "sha256": "ad93a487f68ecf1d6c97febaf85271564822bbd56d21974d4dc09627279b70ff"
+    },
+    {
+      "bytes": 389365,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/z4c_timestep_contract.csv",
+      "sha256": "6bd2c0a4bc26e35d3a8fcbab491b5ef68e25ed8d861c883effe386b1418a0317"
+    },
+    {
+      "bytes": 909812,
+      "path": "evidence/perlmutter/runs/n256_native_record_tau7_segment2_v1/z4c_vertex_axis_regularity.csv",
+      "sha256": "9b764a4e89c72783e8654cf9c97ca66858cf5af00595ce472eab4687fab5cf4b"
+    },
+    {
+      "bytes": 11423,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/SHA256SUMS",
+      "sha256": "744f7429079a405c16bd9fe911a699b3a68ea95230755a310b7233749400ef20"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/athena-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 95927,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/brill_global_128x32.coefficients",
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10"
+    },
+    {
+      "bytes": 2527,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/brill_vc_figure3.athinput",
+      "sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b"
+    },
+    {
+      "bytes": 1036,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/command.txt",
+      "sha256": "b20640c7b9b5b18b8c1ca7531c2765572e2d2bcb1d1b16e0b418fefaf23195da"
+    },
+    {
+      "bytes": 28403,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/evidence/environment.txt",
+      "sha256": "380be2a5db32c460d9f903104b967613ae88062d4c516aad1dc6adcdef2d29d8"
+    },
+    {
+      "bytes": 1590,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/evidence/provenance.txt",
+      "sha256": "ee049bc2b478e60cd68a34566ad90dda60d4f56a82783e4e24bb2fac5b9c6e21"
+    },
+    {
+      "bytes": 1907,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/evidence/slurm-job.txt",
+      "sha256": "a1a50cf00e8e7345c97c7efc0368f6f0dd2b772e137aca8c96ebf4cec179ee18"
+    },
+    {
+      "bytes": 3281,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/n256_native_authority.jsonl",
+      "sha256": "fd08e6b32b094ef9e8e928a7ad8e061edcc6e67617609952f0aefa47e4b0f694"
+    },
+    {
+      "bytes": 904,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/n256_native_replay-constraints.dat",
+      "sha256": "0f7de2e3029872488680b274dc7eda66897285468f097e5485191c133f78b217"
+    },
+    {
+      "bytes": 1221,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/n256_native_replay.amr_history_replay.jsonl",
+      "sha256": "d783816a8b46cc1e5d50e545862301f0d319f56a6510b3b21c3691fe6f393dfc"
+    },
+    {
+      "bytes": 207087,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/n256_native_replay.z4c.user.hst",
+      "sha256": "22bf0e78f3bb8c15167d78262e37407ea8f3cc565d8644ac29bc003b0cab3082"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 9963,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/stdout.log",
+      "sha256": "2e92d6e802c500a82eaea3a2f01bfd46cbe99d6627653b7d700cfd1461d229ff"
+    },
+    {
+      "bytes": 66435,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/z4c_timestep_contract.csv",
+      "sha256": "d1530ab30ed86bacad765be987e0fc67206f3e819aa0fa3c5c02c5bec3235686"
+    },
+    {
+      "bytes": 174608,
+      "path": "evidence/perlmutter/runs/n256_native_replay_t2p5_v3_dethist/z4c_vertex_axis_regularity.csv",
+      "sha256": "f8bd3aa6ab6e48ea80610cdab66a5e23ee0adaa724580e477f535860a0592bef"
+    },
+    {
+      "bytes": 22399,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/SHA256SUMS",
+      "sha256": "1e07747d1a5888c7bf0f140dce0f05289db4b8fd7d7ba6cbac46f22c6768c9fe"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/athena-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 95927,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/brill_global_128x32.coefficients",
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10"
+    },
+    {
+      "bytes": 2527,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/brill_vc_figure3.athinput",
+      "sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b"
+    },
+    {
+      "bytes": 1028,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/command.txt",
+      "sha256": "ab5bb6aa55eafc90b0002e780374bb9e3d86b6cd73c4ad26715e450fd467fbd7"
+    },
+    {
+      "bytes": 28409,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/evidence/environment.txt",
+      "sha256": "7cb1e44d58ea9d200a2f25be5ae74f90c4e3feebe39045d04d22e139fe4c42e8"
+    },
+    {
+      "bytes": 1574,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/evidence/provenance.txt",
+      "sha256": "78b82650b26b58a1537c173fb0beb48556339a80935c00cee443e4f8a963a601"
+    },
+    {
+      "bytes": 1913,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/evidence/slurm-job.txt",
+      "sha256": "2702ab3a3900a92dcee4b6637c6ad9cd9decc2f796d7b172b2a5ea54bebbfe31"
+    },
+    {
+      "bytes": 3281,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/n256_native_authority.jsonl",
+      "sha256": "fd08e6b32b094ef9e8e928a7ad8e061edcc6e67617609952f0aefa47e4b0f694"
+    },
+    {
+      "bytes": 904,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/n256_native_replay-constraints.dat",
+      "sha256": "fc246b6bdfb3712ff253f359998796391821d85f11e7991fa2bd86bf123f47ef"
+    },
+    {
+      "bytes": 1221,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/n256_native_replay.amr_history_replay.jsonl",
+      "sha256": "d783816a8b46cc1e5d50e545862301f0d319f56a6510b3b21c3691fe6f393dfc"
+    },
+    {
+      "bytes": 469935,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/n256_native_replay.z4c.user.hst",
+      "sha256": "d222555eab1064d70fc7bd8a96cc9f6a73bf2ed1518e5d73c9ad4e89cae52d25"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 19589,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/stdout.log",
+      "sha256": "3eb88bd79accc9b68c26ab391214a7fa6523013255f096d10e1cb118f326c72e"
+    },
+    {
+      "bytes": 152340,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/z4c_timestep_contract.csv",
+      "sha256": "1bbed6f64a11f8c5896cd1c120241ba814bd824e580a1f67bbb3e0cf150ed466"
+    },
+    {
+      "bytes": 400817,
+      "path": "evidence/perlmutter/runs/n256_native_replay_tau4_v1/z4c_vertex_axis_regularity.csv",
+      "sha256": "825f7e33c4dd7e1e973e091f34ced22c560cf7fbc859458c60e6fbac2205dfab"
+    },
+    {
+      "bytes": 11423,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/SHA256SUMS",
+      "sha256": "2ea6353a7c1151913c0a1309e665724d2464f107e05deb61f1d8220428ba0d57"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/athena-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 95927,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/brill_global_128x32.coefficients",
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10"
+    },
+    {
+      "bytes": 2527,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/brill_vc_figure3.athinput",
+      "sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b"
+    },
+    {
+      "bytes": 1036,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/command.txt",
+      "sha256": "b0ed8d93f43a1f84961f9c11636f4c2fa9afcb8d5a4667fcc3aef0933cb9cc3d"
+    },
+    {
+      "bytes": 28403,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/evidence/environment.txt",
+      "sha256": "806a3c1b633c764625daf18971014ec2289aef90441ef0cd58c32a02aadfdf32"
+    },
+    {
+      "bytes": 1590,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/evidence/provenance.txt",
+      "sha256": "223ff8100eadf71776c16ecb84adc15bb1d727c44f12a5ca62ba07fc02d0e430"
+    },
+    {
+      "bytes": 1923,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/evidence/slurm-job.txt",
+      "sha256": "c2da615265c389b85dd2184e12cdc0ff44dfd0e2b902a18e9ab3654c319b0677"
+    },
+    {
+      "bytes": 3281,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/n256_native_authority.jsonl",
+      "sha256": "fd08e6b32b094ef9e8e928a7ad8e061edcc6e67617609952f0aefa47e4b0f694"
+    },
+    {
+      "bytes": 908,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/n512_native_replay-constraints.dat",
+      "sha256": "cda000974c32baab3597b1daf8991be0fb26e774f8c498dd0f4c0a24ca539835"
+    },
+    {
+      "bytes": 1216,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/n512_native_replay.amr_history_replay.jsonl",
+      "sha256": "7546cb9414cc8f2b3040eea44709d7133d57f9ca43425becff80d0d459220e19"
+    },
+    {
+      "bytes": 414879,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/n512_native_replay.z4c.user.hst",
+      "sha256": "7fa76e07200cd8c82c30427078ad6500b7d02b7e6a4cb7d08c7d50d56ca5ad8e"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 18093,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/stdout.log",
+      "sha256": "556b793122760b3dfd0f1a91237585e4911f19eae267a9fb01461680f0fa080e"
+    },
+    {
+      "bytes": 134622,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/z4c_timestep_contract.csv",
+      "sha256": "18fcba86cb31b6c8fa386fa1690639d4a4f1023ff95a724e9f526e7708f4d6f4"
+    },
+    {
+      "bytes": 357658,
+      "path": "evidence/perlmutter/runs/n512_native_replay_t2p5_v1_dethist/z4c_vertex_axis_regularity.csv",
+      "sha256": "d5043dd785f000102bb814b625c3d4b2d5a9cffd54ac2569c7dc125aabf2e251"
+    },
+    {
+      "bytes": 22399,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/SHA256SUMS",
+      "sha256": "4872765e32c3d47b73be35dd0ab4baf0b0f4c41d74e5281b84133faf480ccf84"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/athena-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 95927,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/brill_global_128x32.coefficients",
+      "sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10"
+    },
+    {
+      "bytes": 2527,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/brill_vc_figure3.athinput",
+      "sha256": "ebb804541e9ddf0e3329388bd2c7430d63d6177cb16d674f249ae86cb6c2e91b"
+    },
+    {
+      "bytes": 1028,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/command.txt",
+      "sha256": "4e14649df1368dba23f8e0deca96f44219b784e9c38af755f24a9207c7db71f5"
+    },
+    {
+      "bytes": 28410,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/evidence/environment.txt",
+      "sha256": "ad080e89def42e018ad8dfb8d940164036492376a93d4ee2f446d1fdbf8e146a"
+    },
+    {
+      "bytes": 1574,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/evidence/provenance.txt",
+      "sha256": "1807e0eb575a2fef87640e206c4a43303e009b05ae58a6d72fcf4a5c922726b7"
+    },
+    {
+      "bytes": 1912,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/evidence/slurm-job.txt",
+      "sha256": "6c44dbe397125b390063e7db9c12f3764d691e68aee7f9ee29ff56228cd23b8d"
+    },
+    {
+      "bytes": 3281,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/n256_native_authority.jsonl",
+      "sha256": "fd08e6b32b094ef9e8e928a7ad8e061edcc6e67617609952f0aefa47e4b0f694"
+    },
+    {
+      "bytes": 908,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/n512_native_replay-constraints.dat",
+      "sha256": "a1862ba9381260182712b8a53cfdb17f3d9114117b042d828a6627f1b0ac3bba"
+    },
+    {
+      "bytes": 1216,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/n512_native_replay.amr_history_replay.jsonl",
+      "sha256": "7546cb9414cc8f2b3040eea44709d7133d57f9ca43425becff80d0d459220e19"
+    },
+    {
+      "bytes": 942351,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/n512_native_replay.z4c.user.hst",
+      "sha256": "437cde580196412e7052be2c32b91cc0df4a0f8d05fb2354cbb9869fce246ea8"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 37670,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/stdout.log",
+      "sha256": "36f9770c99a3e564beb5341b98cdb77f4567d9f856468cdcadddb25cf4065ee4"
+    },
+    {
+      "bytes": 307337,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/z4c_timestep_contract.csv",
+      "sha256": "f831b3f1e0b817a0808086c0922c6eeabff19857f28293a1090fb66b242a9cb8"
+    },
+    {
+      "bytes": 818378,
+      "path": "evidence/perlmutter/runs/n512_native_replay_tau4_v1/z4c_vertex_axis_regularity.csv",
+      "sha256": "971a3d7d2c6337087776d3a546fd445c9f00e0639dc0198eb312b8493d966514"
+    },
+    {
+      "bytes": 4618,
+      "path": "perlmutter_native_run.sh",
+      "sha256": "3aa06a159e23828306c115d483194a3dbd7c0c0474f55285facbb9837ba032d2"
+    },
+    {
+      "bytes": 3426,
+      "path": "perlmutter_record_extension.sh",
+      "sha256": "3012367e4749d0c3409a2645c971a2314fc46c9d1e0793cc84c57b47189eced8"
+    },
+    {
+      "bytes": 2139,
+      "path": "perlmutter_targeted_regression.sh",
+      "sha256": "2529f18893c9a6c37d63a8ad85a5e002bef38b42627c6acf7d7dec1b82b25116"
+    },
+    {
+      "bytes": 4009,
+      "path": "verify_record_replay.py",
+      "sha256": "700b7b2f6aa1fb2bf496a939a7946c148c820e83962b9ccce1bf8b844d57d384"
+    }
+  ],
+  "key_artifacts": {
+    "compact_remote_evidence_tar_sha256": "f0c82c74fa64a883bb33c530b6da66f6821595e160e239fa401d4e52104c45b2",
+    "failed_extension_authority_sha256": "6c1fc27308cc85ad5b69d9cc7ed2aa060ca85ab41717a407a4868ea5af14ac67",
+    "failed_extension_history_sha256": "f00d88ef138104e156adc3d5db9136d4ae0b23ce217a8956babe3e5da1a661b7",
+    "failed_extension_sha256_manifest_sha256": "1d67c0867f04fe26a17ad57068ae7090b73918b7133f313372f7ba4d15575a8d",
+    "fresh_early_authority_sha256": "fd08e6b32b094ef9e8e928a7ad8e061edcc6e67617609952f0aefa47e4b0f694",
+    "historical_authority_sha256": "ce3cdea1a8d0465a7c19e4ac1134ce474d8908b5f5cb12be6f20110d12e9c851"
+  },
+  "limitations": [
+    "Raw binary/restart container hashes differ across record/replay headers; numerical payloads are exact.",
+    "No cross-resolution replay was run past the failed N256 tau approximately 7 gate.",
+    "No tau approximately 10.5 or full Figure-3 run was attempted.",
+    "The failure evidence does not isolate parent under-resolution from transfer/interface feedback."
+  ],
+  "perlmutter_root": "/pscratch/sd/h/hzhu/z4c-vc-native-authority-20260824",
+  "production_source_tree": "9fa84d4b79c2d50ce935f5416fba6d57f99aa5b4",
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "reviewed_numerical_commit": "6dd20656a305f2543bbbd7001550c6ac67019180",
+  "schema": "z4c_vc_native_authority_evidence_manifest_v1",
+  "science_runs": [
+    {
+      "case": "N256 record",
+      "job": "57524377",
+      "status": "completed",
+      "target": "t=2.5"
+    },
+    {
+      "case": "N256 replay",
+      "job": "57524427",
+      "status": "completed",
+      "target": "t=2.5"
+    },
+    {
+      "case": "N128 replay",
+      "job": "57524489",
+      "status": "completed",
+      "target": "t=2.5"
+    },
+    {
+      "case": "N512 replay",
+      "job": "57524522",
+      "status": "completed",
+      "target": "t=2.5"
+    },
+    {
+      "case": "N256 record continuation",
+      "job": "57525084",
+      "status": "completed",
+      "target": "tau approximately 4"
+    },
+    {
+      "case": "N128 replay",
+      "job": "57525355",
+      "status": "completed",
+      "target": "tau approximately 4"
+    },
+    {
+      "case": "N256 replay",
+      "job": "57525422",
+      "status": "completed",
+      "target": "tau approximately 4"
+    },
+    {
+      "case": "N512 replay",
+      "job": "57525474",
+      "status": "completed",
+      "target": "tau approximately 4"
+    },
+    {
+      "case": "N256 record continuation",
+      "job": "57525753",
+      "status": "cancelled at fail gate",
+      "target": "tau approximately 7",
+      "terminal_tau": 6.847212341657571,
+      "terminal_time": 11.192887945084333
+    }
+  ],
+  "verdict": "NATIVE_AMR_UNSTABLE"
+}

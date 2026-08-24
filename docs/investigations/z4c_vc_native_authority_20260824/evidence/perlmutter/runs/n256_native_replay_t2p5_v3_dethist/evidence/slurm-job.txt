@@ -1,0 +1,31 @@
+JobId=57524427 JobName=interactive
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:06 TimeLimit=00:10:00 TimeMin=N/A
+   SubmitTime=2026-08-24T07:12:17 EligibleTime=2026-08-24T07:12:17
+   AccrueTime=Unknown
+   StartTime=2026-08-24T07:12:17 EndTime=2026-08-24T07:22:17 Deadline=N/A
+   PreemptEligibleTime=2026-08-24T07:12:17 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-24T07:12:17 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login21:1762589
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid001000
+   BatchHost=nid001000
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=1:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100&hbm40g DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=bash
+   SubmitLine=salloc -A m3328_g -C gpu&hbm40g -q shared_interactive -N 1 --ntasks=1 --cpus-per-task=32 --gpus-per-task=1 -t 00:10:00 bash -lc export CASE_LABEL=n256 AMR_HISTORY_MODE=replay RUN_ROOT=/pscratch/sd/h/hzhu/z4c-vc-native-authority-20260824/runs/n256_native_replay_t2p5_v3_dethist AUTHORITY_FILE=/pscratch/sd/h/hzhu/z4c-vc-native-authority-20260824/runs/n256_native_record_t2p5_v2_dethist/n256_native_authority.jsonl; /pscratch/sd/h/hzhu/z4c-vc-native-authority-20260824/perlmutter_native_run.sh
+   WorkDir=/global/u1/h/hzhu
+   TresBind=gres/gpu:per_task:1
+   TresPerNode=gres/gpu:1
+   TresPerTask=cpu=32,gres/gpu=1
+   ResvPorts=63215-63217
+

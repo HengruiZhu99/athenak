@@ -1,0 +1,154 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.82in]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{microtype}
+\graphicspath{{docs/investigations/z4c_vc_native_authority_20260824/analysis/figures/}}
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black}
+\title{Repaired Native-VC Brill Authority Qualification}
+\author{AthenaK evidence campaign}
+\date{24 August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\fbox{\Large\texttt{NATIVE\_AMR\_UNSTABLE}}
+\end{center}
+
+\begin{abstract}
+We generated a fresh N256 vertex-centered Cartoon AMR authority after repair
+of derefinement-slot corruption, verified deterministic record/replay, and
+replayed the authority at N128 and N512.  The repaired scheme converges cleanly
+through central proper time $\tau\simeq4$.  A later N256 extension develops
+large constraints on a fixed 44-leaf hierarchy before native refinement
+activates, then undergoes a refinement cascade to logical level 23 and stalls
+near $t=11.192887945M$.  The result qualifies the early window but is neither a
+full Figure-3 reproduction nor a convergence result for late collapse.
+\end{abstract}
+
+\section{Authority and deterministic replay}
+
+The reviewed numerical baseline is commit
+\texttt{6dd20656a305f2543bbbd7001550c6ac67019180}.  A diagnostics-only repair at
+\texttt{d63519328214a6315a9cc1f7d5e4a1aa4bca21b0} replaces unordered CUDA
+atomics in regional history sums with a Kokkos reduction.  It changes no
+evolution variable, AMR decision, transfer operator, equation, gauge, RK, KO,
+or CFL choice.  In the post-repair aggregate host run, 140/141 enabled tests
+passed; the sole AMR-history timeout passed in isolation in 177.96 seconds.
+The focused one-A100 suite passed 20/20 tests.
+
+N256 record and replay have identical accepted events, times, checksums,
+history bytes, auxiliary diagnostics, and numerical payloads for all 33 binary
+outputs and six restarts.  Complete binary/restart containers differ in their
+authenticated parameter headers because one records mode \texttt{record} and
+the other \texttt{replay}; numerical identity follows the repository contract
+and hashes bytes after \texttt{<par\_end>}.
+
+The repaired and historical authorities agree exactly through event 3.  The
+historical tree immediately re-refines at $t=0.30305969M$ to 74 leaves.  The
+repaired tree instead stays at 44 leaves through $t=6.5M$ and next refines only
+at $t=10.27866870M$ (Figure~\ref{fig:authority}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.91\linewidth]{authority_historical_vs_repaired.pdf}
+  \caption{Historical pre-repair and fresh repaired hierarchy histories.  The
+  dotted line marks the repaired event-3 derefinement.}
+  \label{fig:authority}
+\end{figure}
+
+\section{Qualified early and $\tau\simeq4$ windows}
+
+N128, N256, and N512 replay the same logical tree at identical physical event
+times.  At $t=6.5M$, their central proper times are 3.98615, 3.98694, and
+3.98712.  Every global constraint decreases monotonically with resolution.
+
+\begin{table}[htbp]
+\centering
+\caption{Global constraint diagnostics at $t=6.5M$.}
+\begin{tabular}{lrrrr}
+\toprule
+Resolution & $C$ & $H$ & $M$ & $Z$ \\
+\midrule
+N128 & $5.5801\times10^{-2}$ & $2.1558\times10^{-2}$ & $8.6428\times10^{-3}$ & $4.0712\times10^{-3}$ \\
+N256 & $3.2850\times10^{-3}$ & $3.5072\times10^{-4}$ & $4.2914\times10^{-4}$ & $5.0544\times10^{-4}$ \\
+N512 & $1.8080\times10^{-3}$ & $1.2559\times10^{-4}$ & $5.7452\times10^{-5}$ & $4.0103\times10^{-4}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Median effective history orders are 6.746, 6.794, 6.127, and 7.029 for
+$C,H,M,Z$.  Every nonzero evolved field has positive minimum trusted-core
+order; the lowest is 1.053 for $\Theta$.  Minimum $\chi$ is 0.3211, the
+minimum conformal-metric SPD pivot is 0.1974, and sampled same-level and
+coarse-fine shared-node spreads are zero.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.94\linewidth]{tau4_constraints.pdf}
+  \caption{Global constraints through the qualified $\tau\simeq4$ milestone.}
+  \label{fig:tau4}
+\end{figure}
+
+\section{Native-AMR failure before $\tau\simeq7$}
+
+The later N256 segment first exceeds $C=0.01$ at $t=7.2894893M$
+($\tau=4.45109$) and $C=1$ at $t=9.2042653M$ ($\tau=5.61265$), while the
+hierarchy remains fixed at 44 leaves and physical level 1.  The first late
+refinement occurs only at $t=10.2786687M$ ($\tau\simeq6.28$), when the nearest
+history sample already has $C\simeq20.9$.
+
+The hierarchy then reaches logical level 7 at $t=11.1038229M$.  Event 22 at
+$t=11.19248494M$ reaches logical level 14 and begins an effectively
+coordinate-time-stagnant cascade.  At cancellation, event 159 has 1,367
+leaves, logical level 23, physical refinement level 20, and
+$\Delta t=1.07\times10^{-8}M$.  The global $C$ diagnostic is
+$1.40\times10^{14}$ and the domain maximum absolute Kretschmann scalar is
+$1.60\times10^{25}$, while the sampled axis-center value is only
+$7.40\times10^{-3}$.  The runaway is therefore noncentral in this diagnostic.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.94\linewidth]{failure_constraints_curvature_timestep.pdf}
+  \caption{Constraint growth, noncentral curvature runaway, and timestep
+  collapse in the failed N256 extension.  The dotted line marks the first late
+  accepted refinement.}
+  \label{fig:failure}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.92\linewidth]{failure_native_amr_health.pdf}
+  \caption{Accepted leaves and logical/physical refinement levels during the
+  late native-AMR cascade.}
+  \label{fig:health}
+\end{figure}
+
+\section{Interpretation and qualification boundary}
+
+Observation: substantial constraint growth begins on the fixed parent
+hierarchy before the refinement cascade.  Inference: the current chi-only
+sensor activates late relative to the shortest or error-bearing scale, or a
+bulk numerical mode grows before refinement exposes it.  Hypothesis: repeated
+high-order transfer and interface coupling then accelerates the existing
+error.  This campaign does not distinguish those mechanisms and does not
+establish a source-level bug.
+
+Job 57525753 was cancelled at the fail gate.  No N128/N512 replay was launched
+for the failed authority, and no $\tau\simeq10.5$ or full published-interval
+calculation was attempted.  Figure~\ref{fig:fig3} is only a direct, unshifted
+overlay over the qualified partial interval.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.90\linewidth]{figure3_tau4_overlay.pdf}
+  \caption{Authenticated Figure-3 curves and AthenaK results over the
+  qualified partial interval.  No time shift, amplitude scaling, or coordinate
+  rescaling is applied.}
+  \label{fig:fig3}
+\end{figure}
+
+\end{document}

@@ -1,0 +1,1 @@
+/global/common/software/nersc/pe/conda-envs/24.1.0/python-3.11/nersc-python/bin/python3 "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/source/tst/unit/z4c/z4c_history_deterministic_reduction_static_test.py" "--source-root" "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/source"

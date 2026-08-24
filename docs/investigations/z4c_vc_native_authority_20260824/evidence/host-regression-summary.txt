@@ -1,0 +1,21 @@
+Post-repair host regression, build/native-host-tests, 2026-08-24
+
+Aggregate command:
+  ctest --test-dir build/native-host-tests -j4 --output-on-failure
+
+Aggregate result:
+  140/141 enabled tests passed.
+  athena.amr_history_integration timed out at its fixed 600.07 s limit.
+  athena.z4c_cartoon_production_kernels_cuda_required disabled on host.
+  athena.pdf_scatter_cuda_required disabled on host.
+
+Isolated command:
+  ctest --test-dir build/native-host-tests \
+    -R '^athena.amr_history_integration$' --output-on-failure
+
+Isolated result:
+  1/1 passed in 177.96 s.
+
+Disposition:
+  All 141 enabled tests pass when the aggregate timeout artifact is rerun in
+  isolation. No test failure remains.
