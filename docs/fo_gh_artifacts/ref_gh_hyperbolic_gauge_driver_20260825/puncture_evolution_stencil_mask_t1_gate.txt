@@ -1,0 +1,82 @@
+Ref-GH full evolution-stencil puncture mask and t=1 local gate, 2026-08-25
+
+Base commit before this correction:
+  6019e77ffa00f0f74bb8d1cee7e1e9c6d3fd1ed4
+Correction implementation commit:
+  a1a0c928
+Kokkos:
+  6739bc623081648af9e752b616d9671527922cbf
+Current Serial executable SHA-256:
+  55497150ef5303dc86cf65a26506b6c76b82eb7627d4b06eb6bc834c1ce29436
+Current OpenMP executable SHA-256:
+  7e470df4bd5ad1dd007801eaa7c2cac382ad7f4b9f0dd83a406d82de05a0682d
+
+Mask correction
+---------------
+For fourth-order Ref-GH, centered first derivatives reach two cells but the
+enabled sixth-derivative Kreiss-Oliger operator reaches three.  The earlier
+radius-two exclusion therefore did not cover every evolution stencil.  Source
+histories and stationary/perturbed diagnostics now use
+
+  fd_order/2 + (dissipation > 0 ? 1 : 0).
+
+The offline analyzer requires an explicit maximum stencil radius and rejects a
+target if any tensor-interpolation source cell has a support box containing the
+puncture.  All results below use radius three.  This is a diagnostic correction;
+the evolved equations and field data are unchanged.
+
+Current-build replay check
+--------------------------
+A current-build n=24 replay through t=1 produced field and native-constraint
+cbin arrays numerically identical, element for element, to the pre-correction
+run (maximum difference zero).  The embedded cbin input headers differ because
+the basenames differ.  The Ref-GH included volume changed from 320.8778771460
+to 295.6879548343 and the included near volume from 224.4206033309 to
+199.2306810192, proving that the history mask changed.  The reported final
+native-constraint Linf changed from 1.7211388e-4 to 1.3167640e-4.
+
+Masked convergence
+------------------
+case                              samples  field L2  field Linf  constraint L2  constraint Linf
+r0 Gaussian, 32/48/64, t=0.2       1833     3.91881   3.33032      4.02956        3.62092
+r8 regular, 24/32/48, t=0.2         252     4.91219   5.32081      5.16572        5.67994
+r8 regular, 24/32/48, t=1.0         252     4.70022   4.74212      3.94836        3.01510
+
+For the exact common-time r8 sequence, field/constraint L2 orders are
+4.438/3.163 at t=0.4, 3.613/3.808 at t=0.6, 3.553/3.741 at t=0.8, and
+4.700/3.948 at t=1.0.  The sequence is resolution improving and approximately
+fourth order in L2, but it is not uniformly fourth order at every checkpoint.
+
+All three t=1 cases remained finite.  Their maximum characteristic speeds were
+0.60369, 0.60648, and 0.60922.  With outer faces at 2M and analysis restricted
+to r<1M, the earliest face-to-analysis-region arrival estimates are 1.656M,
+1.649M, and 1.641M, later than this gate.  The grid is uniform, so there is no
+SMR interface.  Maximum masked differences occur at r=0.759M or 0.924M, not
+on a retained puncture-overlap stencil.
+
+Performance and external-device status
+--------------------------------------
+The OpenMP t=1 runs used 16.52, 45.27, and 206.04 seconds for n=24,32,48.
+An accidental Serial n=24 run required 268.80 seconds; it was stopped before
+starting the larger Serial cases.  No Athena process remains.
+
+Local B580 Level Zero enumeration hung and was timed out; the two exact sycl-ls
+probe processes were terminated.  No SYCL build or GPU claim was made.  Aurora
+remains inaccessible because the SSH ControlMaster socket is absent and
+BatchMode cannot satisfy keyboard-interactive authentication.  No Aurora job
+was submitted.
+
+Large local outputs and checkpoints are not committed.  They remain at:
+  /tmp/refgh_r8_t1_omp_njUlqX
+  /tmp/refgh_r8_exact_times_omp_aukcDz
+  /tmp/refgh_r8_radius3_replay_n24_hj80jv
+
+Claims
+------
+Supported: conservative full-stencil masking, unchanged evolved payload,
+finite local r8 evolution through t=1, and approximately fourth-order masked
+uniform-grid L2 self-convergence through t=1.
+
+Not supported: the literal same-r/h direct-FD exponent-estimator gate, q
+control, time-dependent gauge-reference subtraction, SMR, Aurora/PVC
+qualification, wormhole-to-trumpet tracking, or long-time trumpet stability.

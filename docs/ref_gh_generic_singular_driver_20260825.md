@@ -1,7 +1,8 @@
 # Generic singular-reference Ref-GH driver: implementation and qualification log
 
-Status: work in progress, stopped at the initial puncture-exponent hard gate on
-2026-08-24.  No closed-loop controller or black-hole evolution claim is made.
+Status: work in progress. The stationary hyperbolic-gauge gate has advanced,
+but the literal same-`r/h` puncture-exponent comparison remains a hard stop for
+closed-loop control. No controller or wormhole-evolution claim is made.
 
 ## Frozen base and branch
 
@@ -159,14 +160,11 @@ and the frozen reduction and curl subsidiary damping to
 0.7962 with `gamma2=1`. Both runs remain finite. This focused CPU result is not
 a long-time or GPU qualification.
 
-## GH and gauge equations still to implement
+## Subsequent hyperbolic-gauge checkpoint
 
-The code still evolves only 50 Einstein fields and uses the background
-wave-map specialization equivalent to ordinary
-\(\widehat H^a=-g^{bc}\bar\Gamma^a{}_{bc}\). Evolved
-\(\widehat H_A,\theta_A,\Upsilon^i\) do not yet exist.
-
-The sign relation to implement follows by equating
+The code now evolves 61 fields: the original 50 Einstein fields plus
+\(\widehat H_A\), \(\theta_A\), and \(\Upsilon^i\). The sign relation was
+implemented after equating
 
 \[
 C^a=\widehat H^a+g^{bc}\Gamma^a{}_{bc}
@@ -179,14 +177,23 @@ which gives
 H_{bg}^a=\widehat H^a+g^{bc}\bar\Gamma^a{}_{bc}.
 \]
 
-The nonzero-\(\widehat H\) source, frame-motion, combined gauge characteristics,
-new-state restart, boundary, and stationary fixed-point work remains
-unimplemented in this branch.
-The improved driver must be translated from Eqs. (9) and (11) and the combined
-characteristics from Appendix B of Lindblom--Szilagyi (2009); the first-order GH
-system and damping terms are Eqs. (35)--(37) of Lindblom et al. (2006); the
-conformal Gamma-driver target with \(\Upsilon^i\) is Eqs. (60)--(62) of
-Lindblom et al. (2008).
+The improved Lindblom--Szilagyi driver, exact frame-motion terms, advective
+1+log target, conformal Gamma-driver target, nonzero-\(\widehat H\) source,
+combined characteristics, boundary communication, output, and restart paths
+are implemented and locally tested. Raw gauge fields were not puncture regular;
+the evolved arrays therefore store equation-preserving differences from an
+analytic static-reference gauge baseline. The exact trumpet is a roundoff
+fixed point through \(t=1\) at three resolutions.
+
+With KO enabled, the full evolved stencil reaches three cells rather than the
+two-cell centered-derivative radius. Corrected source/history and interpolation-
+support masks use this maximum footprint. A regular perturbed
+\(24^3/32^3/48^3\) ladder is finite through \(t=1\), with field and native-
+constraint L2 self-orders 4.700 and 3.948 at the final time. Exact checkpoint
+orders are approximately, but not uniformly, fourth order.
+
+Time-dependent-reference gauge subtraction remains unavailable because the
+analytic time derivative of the theta baseline is not yet implemented.
 
 Primary sources:
 
@@ -201,13 +208,18 @@ Primary sources:
 - Prescribed Gaussian reference two-jets/cache: passed locally on Kokkos Serial.
 - Closed-loop q control: not started; blocked by the hard estimator gate.
 - Runtime gamma2: local algebra and bounded robust-Minkowski checks passed.
-- Hyperbolic gauge driver and physical gauge target: not implemented.
-- Stationary trumpet, generic-reference trumpet, wormhole evolution: not run.
-- SMR, restart of new state, CUDA, Aurora PVC: not run.
+- Hyperbolic gauge driver and physical target: implemented; local oracles and
+  static-reference stationary fixed-point gate passed.
+- Regular perturbed stationary trumpet: finite and approximately fourth-order
+  in masked L2 self-differences through `t=1` on local uniform grids.
+- New 61-field restart path: focused direct/split gate passed.
+- Generic/time-dependent-reference gauge evolution, closed-loop q recovery,
+  wormhole evolution, SMR, CUDA, and Aurora PVC: not established.
 
-No Aurora allocation was requested because the failure is a local mathematical
-discriminator and the specification requires stationary/controller gates before
-black-hole production work.
+No Aurora job was submitted in this checkpoint. The SSH ControlMaster socket is
+currently absent, and noninteractive login cannot satisfy Aurora's keyboard-
+interactive authentication. Local B580 Level Zero enumeration also hung, so no
+SYCL build or device claim was made.
 
 The controlling specification needs one clarification before closed-loop work:
 either retain the first-order-state estimator as the controller quantity and

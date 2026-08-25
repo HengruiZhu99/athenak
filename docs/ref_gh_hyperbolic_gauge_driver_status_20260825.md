@@ -43,14 +43,23 @@ radial reference frames from hiding that error.
 ## Puncture-stencil policy
 
 Convergence/error samples are discarded when the puncture lies inside the
-axis-aligned support box of the complete local centered stencil. For spacing
-`h_i` and stencil radius `s`, a point is excluded exactly when
+axis-aligned support box of the complete relevant stencil. For spacing `h_i`
+and stencil radius `s`, a point is excluded exactly when
 
 ```
 abs(x_i - x_puncture_i) <= s h_i
 ```
 
-for all three coordinates. This policy is used by the stationary-trumpet
+for all three coordinates. Fourth-order centered derivatives have `s=2`, but
+the enabled matching KO operator has `s=3`; histories and evolved-state
+diagnostics therefore use
+
+```
+s = fd_order/2 + (dissipation > 0 ? 1 : 0).
+```
+
+The previous radius-two results did not satisfy the stricter full evolution-
+stencil interpretation and have been superseded. This policy is used by the stationary-trumpet
 field/RHS/native-constraint diagnostics, the Ref-GH history constraint sums,
 and the common ADM `H/M` regional sums and maxima. Finite-state and physical
 extrema still inspect every active cell. The primary common ADM history uses
@@ -92,15 +101,29 @@ Between `32^3` and `48^3`, the observed orders were:
 | Gauge-state error | 3.329 | 3.648 | 3.722 |
 | Native constraint | 3.311 | 3.756 | 3.784 |
 
-The perturbed convergence analyzer now applies the same conservative
-puncture-support policy to every contributing interpolation source cell. For a
-leading-class-preserving `r^8 exp(-r^2/w^2)` perturbation through `t=0.2`, the
-masked `24^3/32^3/48^3` ladder gives field L2 order `3.9425`, Psi L2 order
-`3.6691`, and native-constraint L2 order `4.6395`. The field and native-
-constraint Linf orders are only `3.3504` and `1.4868`; the weak constraint
-Linf behavior is unresolved. The absolute constraints approach the nonzero
-gauge-violation profile intentionally planted by the perturbation, so only
-inter-resolution differences are used for this convergence statement.
+The perturbed convergence analyzer applies the same conservative maximum
+stencil footprint to every contributing interpolation source cell. For a
+leading-class-preserving `r^8 exp(-r^2/w^2)` perturbation, the masked
+`24^3/32^3/48^3` ladder gives field/native-constraint L2 orders
+`4.9122/5.1657` at `t=0.2` and `4.7002/3.9484` at `t=1`. The corresponding
+`t=1` Linf orders are `4.7421/3.0151`. At exact common times
+`t=0.4,0.6,0.8,1.0`, field L2 orders are `4.438,3.613,3.553,4.700` and
+native-constraint L2 orders are `3.163,3.808,3.741,3.948`. This is finite,
+resolution improving, and approximately fourth order in L2, but not uniformly
+fourth order at every checkpoint.
+
+A current-build `24^3` replay has elementwise-identical final field and
+constraint cbin payloads to the pre-correction run. Only diagnostic inclusion
+changed: the included history volume decreased from `320.878` to `295.688` and
+the final reported native-constraint Linf from `1.7211e-4` to `1.3168e-4`.
+The absolute constraints approach the nonzero gauge-violation profile planted
+by the perturbation, so only inter-resolution differences are used for the
+convergence statement.
+
+The outer faces are at `2M`; measured maximum characteristic speeds are below
+`0.610`, giving earliest face-to-`r<1M` arrival estimates later than `1.64M`.
+The `t=1` comparison is therefore earlier than this causal estimate. The grids
+are uniform and have no SMR interface.
 
 ## Preserved failures and interpretation
 
@@ -116,10 +139,11 @@ The same-shell gate therefore remains red. It has not been weakened, and the
 direct-FD result is not used to repair or replace the first-order state.
 
 The original centered `r^0` Gaussian changes the leading anisotropic puncture
-class. Even with puncture-overlap support removed, its masked `32^3/48^3/64^3`
-ladder gives field L2 order `4.3735` but native-constraint L2 order only
-`1.4212`. This negative result is preserved separately from the regular `r^8`
-test.
+class and is not the controlling physical perturbation. With the corrected
+full-stencil mask, however, its `32^3/48^3/64^3` ladder is numerically
+resolution improving at `t=0.2`: field and native-constraint L2 orders are
+`3.9188` and `4.0296`. The earlier `1.4212` constraint order came from the
+incomplete radius-two mask and is superseded.
 
 ## Claims not established
 
@@ -127,8 +151,8 @@ No Aurora run was launched. This work does not establish time-dependent or
 generic-reference evolution, wormhole-to-trumpet evolution, q control, SMR,
 long-time stability, production performance, or a broad convergent-trumpet
 claim. The supported claims are narrower: a local static-reference exact fixed
-point through `t=1`, and fourth-order L2 convergence for the stated regular
-uniform-grid perturbation through `t=0.2`, with weak constraint Linf behavior.
+point through `t=1`, and approximately fourth-order masked L2 convergence for
+the stated regular uniform-grid perturbation through `t=1`.
 
 The remaining near-puncture estimator decision is whether the independent
 direct-FD qualification must remain on a fixed-`r/h` shell (which the present

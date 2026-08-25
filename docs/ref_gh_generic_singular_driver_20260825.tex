@@ -8,7 +8,7 @@
 \title{Generic Singular-Reference Ref-GH Driver\\
 Implementation and Qualification Checkpoint}
 \author{AthenaK Ref-GH development record}
-\date{24 August 2026}
+\date{25 August 2026}
 
 \begin{document}
 \maketitle
@@ -20,11 +20,11 @@ reference-independent first-order-state puncture-exponent estimator and a
 Gaussian-localized analytic singular reference were implemented and exercised
 locally.  The analytic estimator and the prescribed reference-jet scan pass,
 but the required direct-finite-difference comparison fails for a scale
-invariance reason on the prescribed shell.  Therefore the overall status is
-\status{stopped at the initial estimator hard gate}. A focused standard
-$\gamma_2$ slice also passes local algebra and bounded Minkowski checks. No
-closed-loop control, hyperbolic gauge-driver, stationary black-hole, SMR, or
-PVC qualification claim is made.
+invariance reason on the prescribed shell.  Therefore closed-loop control is
+still \status{stopped at the initial estimator hard gate}. The subsequent
+standard $\gamma_2$, hyperbolic gauge-driver, exact stationary-trumpet, and
+regular perturbed-trumpet local gates have advanced. No closed-loop control,
+wormhole evolution, SMR, or PVC qualification claim is made.
 \end{abstract}
 
 \section{Provenance and scope}
@@ -45,8 +45,8 @@ Hyperbolic gauge driver & controls the physical coordinate gauge,\\
 $\gamma_0/\gamma_2$ & controls GH and first-order constraints.
 \end{tabular}
 \end{center}
-The reference/estimator slice and standard $\gamma_2$ additions are implemented
-in this checkpoint; the physical gauge driver is not.
+The reference/estimator slice, standard $\gamma_2$ additions, and physical
+hyperbolic gauge driver are implemented in this checkpoint.
 
 \section{Primary equations and convention map}
 
@@ -63,15 +63,15 @@ Equality of the physical constraint gives the sign relation
 \begin{equation}
  H_{\rm bg}^a=\widehat H^a+g^{bc}\bar\Gamma^a{}_{bc}.
 \end{equation}
-The parent source currently specializes to the background wave-map choice,
-equivalently $\widehat H^a=-g^{bc}\bar\Gamma^a{}_{bc}$.
+Production reconstructs this relation from evolved ordinary
+$\widehat H_A$ and the current reference geometry.
 
-The runtime $\gamma_2$ additions and Einstein characteristic map now implement
-Eqs.~(35)--(37) and (32)--(34) of Ref.~\cite{lindblom2006}. The remaining
-implementation must add the conformal Gamma-driver with its
-auxiliary $\Upsilon^i$ from Eqs.~(60)--(62) of Ref.~\cite{lindblom2008}; and
-the improved $\widehat H_a,\theta_a$ driver from Eqs.~(9) and (11), including
-the combined characteristic system in Appendix B, of Ref.~\cite{lindblom2009}.
+The runtime $\gamma_2$ additions and Einstein characteristic map implement
+Eqs.~(35)--(37) and (32)--(34) of Ref.~\cite{lindblom2006}. The conformal
+Gamma-driver with auxiliary $\Upsilon^i$ follows Eqs.~(60)--(62) of
+Ref.~\cite{lindblom2008}; the improved $\widehat H_a,\theta_a$ driver follows
+Eqs.~(9) and (11), with the combined characteristic system mapped from
+Appendix B of Ref.~\cite{lindblom2009}.
 
 \section{Pointwise physical exponent estimator}
 
@@ -171,6 +171,42 @@ In a bounded robust-Minkowski CPU comparison at $t=0.2$, the reduction norm
 changes by 0.9725 for $\gamma_2=0$ and by 0.7962 for $\gamma_2=1$; both runs
 remain finite. This is not long-time or GPU qualification.
 
+\section{Hyperbolic gauge and static-reference regularization}
+
+The evolved state now includes four $\widehat H_A$, four $\theta_A$, and three
+$\Upsilon^i$ fields.  Exact frame-motion terms, the advective 1+log target,
+the conformal Gamma-driver target, nonzero-$\widehat H$ source terms, combined
+characteristics, communication, output, and restart paths are included.
+
+Raw ordinary-gauge frame components are singular at the puncture.  For static
+references the stored variables are therefore
+\begin{equation}
+ \delta\widehat H_A=\widehat H_A-\widehat H^{\rm ref}_A,
+ \qquad
+ \delta\theta_A=\theta_A-\theta^{\rm ref}_A.
+\end{equation}
+Physical sources reconstruct the unchanged raw fields.  With this
+equation-preserving representation, the exact trumpet is a roundoff fixed point
+through $t=1$ at $16^3$, $24^3$, and $32^3$. Time-dependent-reference
+subtraction still fails closed pending an analytic time derivative of the
+$\theta$ baseline.
+
+For fourth-order Ref-GH the centered derivative radius is two cells, while the
+enabled KO operator reaches three.  All evolved-state histories and convergence
+results now discard the full radius-three support.  The offline tensor-product
+comparison rejects a target if any contributing source cell has a support box
+containing the puncture.  A current-build replay changes only the included
+diagnostic volume; its field and constraint arrays are elementwise identical to
+the pre-correction payload.
+
+For a regular $r^8\exp(-r^2/w^2)$ perturbation, the masked
+$24^3/32^3/48^3$ self-orders at $t=1$ are 4.700 for field L2, 4.742 for field
+Linf, 3.948 for native-constraint L2, and 3.015 for native-constraint Linf.
+All three cases remain finite. Exact-time L2 orders between $t=0.4$ and $t=1$
+are resolution improving and approximately, but not uniformly, fourth order.
+The outer faces at $2M$ cannot reach the $r<1M$ analysis region before
+$t\simeq1.64M$ at the measured maximum characteristic speeds.
+
 \section{Gaussian singular reference and prescribed trajectory}
 
 The new positive isotropic Cholesky factor is
@@ -223,14 +259,17 @@ Direct-FD same-shell convergence & \status{Failed}\\
 Prescribed Gaussian two-jets and staged cache & Passed locally on Kokkos Serial\\
 Runtime $\gamma_2$ algebra and bounded robust Minkowski & Passed locally\\
 Closed-loop $q$ control & Not started; blocked by estimator gate\\
-Dynamic $\widehat H/\theta/\Upsilon$ gauge system & Not implemented\\
-Stationary/generic trumpet and wormhole evolution & Not run\\
-SMR, restart, CUDA, Aurora PVC & Not run\\
+Dynamic $\widehat H/\theta/\Upsilon$ gauge system & Implemented; local oracles pass\\
+Exact stationary trumpet through $t=1$ & Roundoff fixed point locally\\
+Regular perturbed trumpet through $t=1$ & Finite; approximately fourth-order masked L2\\
+Focused 61-field restart & Passed locally\\
+Generic/time-dependent gauge, wormhole, SMR, CUDA, Aurora PVC & Not established\\
 \bottomrule
 \end{tabular}
 
-No Aurora allocation was requested because the discriminator is local and
-mathematical.  Before feedback work, the specification must choose between a
+No Aurora job was submitted in this checkpoint: the SSH ControlMaster socket
+is absent and noninteractive authentication fails. Local B580 Level Zero
+enumeration also hung, so no device claim is made. Before feedback work, the specification must choose between a
 fixed-physical-annulus direct-FD convergence check or a fixed-$r/h$ known-bias
 comparison.  Both avoid interpolation; neither is the literal present demand.
 

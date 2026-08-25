@@ -29,27 +29,29 @@ done
 
 # Leading-class-preserving perturbed runs. The production input has
 # perturb_radial_power=8 and gauge_reference_subtraction=true. Run the three
-# resolutions through t=0.2, retaining field and native-constraint cbin output.
+# resolutions through t=1, retaining field and native-constraint cbin output.
 for n in 24 32 48; do
-  ./build-feedback-local/src/athena \
+  OMP_NUM_THREADS=32 OMP_PROC_BIND=spread OMP_PLACES=threads \
+  ./build-feedback-omp/src/athena \
     -d "/tmp/refgh_perturbed_r8_${n}" \
     -i inputs/ref_gh/ref_gh_perturbed_trumpet.athinput \
     mesh/nx1=$n mesh/nx2=$n mesh/nx3=$n \
     meshblock/nx1=$n meshblock/nx2=$n meshblock/nx3=$n \
-    time/tlim=0.2
+    time/tlim=1.0
 done
 
 # Replace the six file arguments below with the final field and constraint
 # cbins created by the preceding runs. The analyzer rejects a target whenever
 # any tensor-interpolation source cell has an FD support box containing the
-# puncture.
+# puncture. Fourth-order derivatives reach two cells, but enabled KO reaches
+# three, so the controlling maximum radius is 3.
 python3 scripts/ref_gh/analyze_perturbed_trumpet_convergence.py \
   --field N24_FIELD.cbin N32_FIELD.cbin N48_FIELD.cbin \
   --constraint N24_CONSTRAINT.cbin N32_CONSTRAINT.cbin N48_CONSTRAINT.cbin \
   --resolutions 24 32 48 \
   --target-n 24 \
   --analysis-radius 1.0 \
-  --fd-stencil-radius 2 \
+  --fd-stencil-radius 3 \
   --puncture 0 0 0 \
-  --expected-time 0.2 \
-  --output perturbed_regular_r8_masked_24_32_48_t0p2.json
+  --expected-time 1.0 \
+  --output perturbed_regular_r8_masked_24_32_48_t1.json
