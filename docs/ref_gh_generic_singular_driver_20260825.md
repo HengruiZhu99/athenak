@@ -80,9 +80,10 @@ The first-order-state estimator passes the pointwise checks:
 
 The production estimate uses the complete shell. Following the subsequent
 puncture-stencil instruction, the direct-FD comparison conservatively discards
-a point whenever any fourth-order directional stencil spans the puncture
-coordinate, \(|X^i|\le2h\). The `safe state` and direct-FD columns use the same
-retained points.
+a point whenever the puncture lies in the complete axis-aligned support box of
+any contributing stencil. For the fourth-order direct derivative this is the
+box \(|X^i|\le2h\) in all three directions. The `safe state` and direct-FD
+columns use the same retained points.
 
 | \(h/M\) | wormhole production | wormhole safe state | wormhole FD | trumpet production | trumpet safe state | trumpet FD |
 |---:|---:|---:|---:|---:|---:|---:|
@@ -210,8 +211,35 @@ support masks use this maximum footprint. A regular perturbed
 constraint L2 self-orders 4.700 and 3.948 at the final time. Exact checkpoint
 orders are approximately, but not uniformly, fourth order.
 
-Time-dependent-reference gauge subtraction remains unavailable because the
-analytic time derivative of the theta baseline is not yet implemented.
+Time-dependent-reference gauge subtraction now uses a minimal mixed jet rather
+than a full third-order tensor. Each scalar reference jet carries the twelve
+components \(\partial_t\partial_i\partial_q\); staged kernels form
+\(\partial_t\partial_i H_A^{ref}\) and then differentiate
+
+\[
+ \theta_A^{ref}=-\beta^i\partial_iH_A^{ref}
+ -(\Omega_{At}{}^B-\beta^i\Omega_{Ai}{}^B)H_B^{ref}
+\]
+
+analytically. The delta-theta RHS subtracts this result. Provider storage grows
+from 64 to 100 Reals, symmetric metric storage reduces the staging workspace
+from 416 to 410 Reals, and the hot 313-Real evolution cache is unchanged.
+
+Closed-form jet tests pass to \(2.22\times10^{-16}\). Independent validation
+against a fourth-order time difference passes for the smooth lapse and moving-
+spatial-frame references at every tested RK stage (maximum scaled errors
+\(4.94\times10^{-14}\) and \(2.89\times10^{-15}\)), and for the generic
+reference at the interior time \(t=4M\) (\(6.71\times10^{-13}\)). Serial and
+Kokkos OpenMP source/cache oracles pass, and both smooth references complete a
+one-cycle binary64 full-state smoke run.
+
+One limitation is deliberately preserved: the generic transition's clamped
+quintic smoothstep is only \(C^2\) at \(t=0\). A centered fourth-order
+validation stencil that crosses that endpoint is therefore not a valid
+fourth-order oracle and fails by \(2.65\times10^{-6}\). The threshold was not
+weakened. The analytic generic path completes one bounded cycle with the
+endpoint finite-difference oracle disabled, but that is neither stability nor
+convergence evidence.
 
 Primary sources:
 
@@ -229,11 +257,16 @@ Primary sources:
   reduction, and curl subsidiary matrices passed.
 - Hyperbolic gauge driver and physical target: implemented; local oracles and
   static-reference stationary fixed-point gate passed.
+- Smooth time-dependent gauge-reference subtraction: analytic mixed-jet and
+  one-cycle local CPU gates passed; PVC portability is untested.
+- Generic time-dependent subtraction: interior-time analytic gate passed and a
+  one-cycle finite smoke completed, but the clamped-quintic `t=0` validation
+  endpoint remains an explicit smoothness limitation.
 - Regular perturbed stationary trumpet: finite and approximately fourth-order
   in masked L2 self-differences through `t=1` on local uniform grids.
 - New 61-field restart path: focused direct/split gate passed.
-- Generic/time-dependent-reference gauge evolution, closed-loop q recovery,
-  wormhole evolution, SMR, CUDA, and Aurora PVC: not established.
+- Generic puncture stability/convergence, closed-loop q recovery, wormhole
+  evolution, SMR, CUDA, and Aurora PVC: not established.
 
 No Aurora job was submitted in this checkpoint. The SSH ControlMaster socket is
 currently absent, and noninteractive login cannot satisfy Aurora's keyboard-

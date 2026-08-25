@@ -1,0 +1,34 @@
+Date: 2026-08-25
+Branch: codex/ref-gh-generic-singular-driver-20260825
+Parent commit: 23a124f0fa272054ae260e64aaf5114a44db9c63
+Kokkos commit: 6739bc623081648af9e752b616d9671527922cbf
+Compiler: g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+
+Serial build:
+  CMAKE_BUILD_TYPE=Release
+  CMAKE_CXX_COMPILER=/usr/bin/c++
+  Kokkos_ENABLE_SERIAL=ON
+  Kokkos_ENABLE_OPENMP=OFF
+  executable SHA-256=0ce0415c0da3a0b0de7f23bede0ca5293a57e4fd6e83b86355059d392b6a7dcb
+
+OpenMP build:
+  CMAKE_BUILD_TYPE=Release
+  CMAKE_CXX_COMPILER=/usr/bin/c++
+  Kokkos_ENABLE_SERIAL=ON
+  Kokkos_ENABLE_OPENMP=ON
+  KOKKOS_NUM_THREADS=4
+  executable SHA-256=1c0c2cc6e6691209f2a05a937a4b75ec6a570f956e5b200bbdd8dbe3af0a1b46
+
+Core commands:
+  cmake --build build-feedback-local -j 8
+  ./build-feedback-local/src/athena -i tst/inputs/ref_gh_time_dependent_reference.athinput
+  ./build-feedback-local/src/athena -i tst/inputs/ref_gh_time_dependent_spatial.athinput
+  ./build-feedback-local/src/athena -i tst/inputs/ref_gh_generic_singular_reference.athinput problem/generic_reference_scan=false
+  ./build-feedback-local/src/athena -i tst/inputs/ref_gh_time_dependent_gauge_subtraction.athinput ref_gh/reference=time_dependent_lapse_test
+  ./build-feedback-local/src/athena -i tst/inputs/ref_gh_time_dependent_gauge_subtraction.athinput ref_gh/reference=time_dependent_spatial_test
+  ./build-feedback-local/src/athena -i tst/inputs/ref_gh_time_dependent_gauge_subtraction.athinput ref_gh/reference=generic_singular ref_gh/validate_reference_cache=false
+  cmake --build build-feedback-omp -j 8
+  KOKKOS_NUM_THREADS=4 ./build-feedback-omp/src/athena -i tst/inputs/ref_gh_generic_singular_reference.athinput problem/generic_reference_scan=false
+
+This is local CPU evidence only. No Aurora job was submitted and no PVC
+qualification is claimed.
