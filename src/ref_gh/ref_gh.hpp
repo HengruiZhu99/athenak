@@ -52,6 +52,10 @@ class RefGh {
     Real fail_closed_dt;
     Real reference_mass;
     Real reference_center[3];  // NOLINT(runtime/arrays)
+    Real generic_gaussian_width;
+    Real generic_q_initial;
+    Real generic_q_final;
+    Real generic_transition_time;
     Real r_core0;
     Real tau_core;
     Real kappa_core;

@@ -306,10 +306,12 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     opt.reference_kind = 4;
   } else if (reference_name == "controlled_transition") {
     opt.reference_kind = 5;
+  } else if (reference_name == "generic_singular") {
+    opt.reference_kind = 6;
   } else {
     std::cout << "### FATAL ERROR: ref_gh reference must be minkowski, trumpet, "
                  "time_dependent_lapse_test, time_dependent_spatial_test, "
-                 "wormhole, or controlled_transition."
+                 "wormhole, controlled_transition, or generic_singular."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -383,6 +385,13 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.reference_center[0] = pin->GetOrAddReal("ref_gh", "reference_x", 0.0);
   opt.reference_center[1] = pin->GetOrAddReal("ref_gh", "reference_y", 0.0);
   opt.reference_center[2] = pin->GetOrAddReal("ref_gh", "reference_z", 0.0);
+  opt.generic_gaussian_width =
+      pin->GetOrAddReal("ref_gh", "generic_gaussian_width", 3.0);
+  opt.generic_q_initial =
+      pin->GetOrAddReal("ref_gh", "generic_q_initial", 2.0);
+  opt.generic_q_final = pin->GetOrAddReal("ref_gh", "generic_q_final", 1.0);
+  opt.generic_transition_time =
+      pin->GetOrAddReal("ref_gh", "generic_transition_time", 8.0);
   opt.r_core0 = pin->GetOrAddReal("ref_gh", "r_core0", 0.30);
   opt.tau_core = pin->GetOrAddReal("ref_gh", "tau_core", 1.5);
   opt.kappa_core = pin->GetOrAddReal("ref_gh", "kappa_core", 1.0);
@@ -476,6 +485,12 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   if (opt.gamma0 <= 0.0 || opt.diss < 0.0 || opt.fail_closed_dt < 0.0
       || opt.reference_mass <= 0.0
+      || opt.generic_gaussian_width <= 0.0
+      || !std::isfinite(opt.generic_q_initial)
+      || !std::isfinite(opt.generic_q_final)
+      || opt.generic_q_initial < 0.5 || opt.generic_q_initial > 2.5
+      || opt.generic_q_final < 0.5 || opt.generic_q_final > 2.5
+      || opt.generic_transition_time <= 0.0
       || opt.r_core0 <= 0.0 || opt.tau_core <= 0.0
       || opt.kappa_core <= 0.0 || opt.transition_width <= 0.0
       || opt.tau_transition <= 0.0

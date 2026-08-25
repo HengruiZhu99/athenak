@@ -8,6 +8,7 @@
 #include "athena.hpp"
 #include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
+#include "ref_gh/reference_generic_singular.hpp"
 #include "ref_gh/reference_time_dependent_lapse.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
@@ -21,7 +22,8 @@ struct ReferenceProviderMetadata {
 KOKKOS_INLINE_FUNCTION
 constexpr ReferenceProviderMetadata GetReferenceProviderMetadata(
     const int reference_kind) {
-  return {reference_kind == 2 || reference_kind == 3 || reference_kind == 5};
+  return {reference_kind == 2 || reference_kind == 3 || reference_kind == 5
+          || reference_kind == 6};
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -125,6 +127,7 @@ void PopulateReferenceProviderCache(
     const Real center_x, const Real center_y, const Real center_z,
     const Real time, const Real x, const Real y, const Real z,
     const ControlledReferenceParameters &controlled,
+    const GenericSingularReferenceParameters &generic,
     const ReferenceProviderPoint &point) {
   if (reference_kind == 0) {
     for (int component = 0; component < kReferenceProviderSize; ++component) {
@@ -171,6 +174,19 @@ void PopulateReferenceProviderCache(
                                     alpha, psi2, shift_q);
     StoreProviderJet(alpha, kRefProviderAlpha, point);
     StoreProviderJet(psi2, kRefProviderPsi2, point);
+    StoreProviderJet(shift_q, kRefProviderShiftQ, point);
+    point.provider(point.m, kRefProviderArealRadius,
+                   point.k, point.j, point.i) = 0.0;
+    return;
+  }
+  if (reference_kind == 6) {
+    ReferenceJet alpha;
+    ReferenceJet spatial_cholesky;
+    ReferenceJet shift_q;
+    GenericSingularProfileJets(generic, time, x, y, z, alpha,
+                               spatial_cholesky, shift_q);
+    StoreProviderJet(alpha, kRefProviderAlpha, point);
+    StoreProviderJet(spatial_cholesky, kRefProviderPsi2, point);
     StoreProviderJet(shift_q, kRefProviderShiftQ, point);
     point.provider(point.m, kRefProviderArealRadius,
                    point.k, point.j, point.i) = 0.0;

@@ -9,6 +9,7 @@
 #include "ref_gh/ref_gh_state.hpp"
 #include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
+#include "ref_gh/reference_generic_singular.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_time_dependent_lapse.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
@@ -158,9 +159,15 @@ void GetReferenceGeometry(const int reference_kind,
                           const Real time, const Real x,
                           const Real y, const Real z,
                           const ControlledReferenceParameters &controlled,
+                          const GenericSingularReferenceParameters &generic,
                           ReferenceGeometry &reference) {
   if (reference_kind == 5) {
     const ControlledSchwarzschildReference provider{table, controlled};
+    provider.Populate(time, x, y, z, reference);
+    return;
+  }
+  if (reference_kind == 6) {
+    const GenericSingularReference provider{generic};
     provider.Populate(time, x, y, z, reference);
     return;
   }

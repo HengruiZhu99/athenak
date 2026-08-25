@@ -868,6 +868,10 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       controller.delta_q_dot, controller_rhs.delta_q_dot,
       controller.delta_p, controller.delta_p_dot,
       controller_rhs.delta_p_dot};
+  const GenericSingularReferenceParameters generic{
+      mass, {center_x, center_y, center_z}, opt.generic_gaussian_width,
+      opt.generic_q_initial, opt.generic_q_final,
+      opt.generic_transition_time};
 
   if (!production_current) {
     // Stage 1: evaluate the provider/profile two-jets once per point.
@@ -888,7 +892,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       const ReferenceProviderPoint point{provider, m, k, j, i};
       PopulateReferenceProviderCache(reference_kind, table, mass,
                                      center_x, center_y, center_z,
-                                     time, x, y, z, controlled, point);
+                                     time, x, y, z, controlled, generic, point);
     });
 
     // Stage 2: populate frame/coframe values and frame derivatives component by
@@ -1241,7 +1245,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       ReferenceGeometry oracle;
       GetReferenceGeometry(reference_kind, table, mass, center_x, center_y,
-                           center_z, time, x, y, z, controlled, oracle);
+                           center_z, time, x, y, z, controlled, generic, oracle);
       const ReferenceCachePoint cached{evolution, diagnostic, m, k, j, i};
       for (int A = 0; A < 4; ++A) {
         for (int a = 0; a < 4; ++a) {

@@ -1,0 +1,55 @@
+# Mid-transition cache/oracle gate for the Gaussian-localized generic singular
+# reference.  Starting at t=tau/2 exercises nonzero q_dot and q_ddot terms
+# without evolving the physical state.
+
+<job>
+basename = ref_gh_generic_singular_reference
+
+<mesh>
+nghost = 4
+nx1 = 16
+x1min = -1.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 16
+x2min = -1.0
+x2max = 1.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 16
+x3min = -1.0
+x3max = 1.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 16
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+start_time = 4.0
+nlim = 0
+tlim = 4.0
+ndiag = 1
+
+<ref_gh>
+reference = generic_singular
+source = covariant
+reference_mass = 1.0
+generic_gaussian_width = 3.0
+generic_q_initial = 2.0
+generic_q_final = 1.0
+generic_transition_time = 8.0
+fd_order = 4
+validate_reference_cache = true
+gamma0 = 1.0
+diss = 0.0
+
+<problem>
+pgen_name = ref_gh_source_unit
+generic_reference_scan = true

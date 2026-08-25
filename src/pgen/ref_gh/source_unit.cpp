@@ -16,13 +16,491 @@
 #include "pgen/pgen.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
 #include "ref_gh/phi_ordering.hpp"
+#include "ref_gh/puncture_exponent.hpp"
+#include "ref_gh/ref_gh.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_geometry.hpp"
+#include "ref_gh/reference_generic_singular.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 
 namespace {
+
+struct ExponentSample {
+  Real q_state;
+  Real p_state;
+  Real q_exact;
+  Real p_exact;
+  Real q_fd;
+  bool valid;
+};
+
+KOKKOS_INLINE_FUNCTION
+void IsotropicMetricPoint(const Real alpha, const Real psi2,
+                          const Real d_alpha[3], const Real d_psi2[3],
+                          Real metric[4][4], Real d_metric[4][4][4]) {
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      metric[a][b] = 0.0;
+      for (int p = 0; p < 4; ++p) d_metric[p][a][b] = 0.0;
+    }
+  }
+  metric[0][0] = -alpha*alpha;
+  for (int i = 0; i < 3; ++i) {
+    metric[i + 1][i + 1] = psi2*psi2;
+    d_metric[i + 1][0][0] = -2.0*alpha*d_alpha[i];
+    for (int j = 0; j < 3; ++j) {
+      d_metric[i + 1][j + 1][j + 1] = 2.0*psi2*d_psi2[i];
+    }
+  }
+}
+
+KOKKOS_INLINE_FUNCTION
+Real WormholePsi2(const Real mass, const Real x, const Real y, const Real z) {
+  const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+  const Real psi = 1.0 + mass/(2.0*radius);
+  return psi*psi;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real TrumpetPsi2(const DvceArray2D<Real> &table, const Real mass,
+                 const Real x, const Real y, const Real z) {
+  const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+  return ref_gh::ArealRadiusToPsi2(
+      ref_gh::InterpolateTrumpetProfile(
+          table, ref_gh::kCoeffArealRadius, radius/mass), radius/mass).value;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real FourthOrderSpatialMetricExponent(
+    const int geometry_kind, const DvceArray2D<Real> &table,
+    const Real mass, const Real h, const Real x, const Real y, const Real z) {
+  const Real position[3] = {x, y, z};
+  Real psi2_center = 1.0;
+  if (geometry_kind == 1) {
+    psi2_center = WormholePsi2(mass, x, y, z);
+  } else if (geometry_kind == 2) {
+    psi2_center = TrumpetPsi2(table, mass, x, y, z);
+  }
+  const Real inverse_diagonal_metric = 1.0/(psi2_center*psi2_center);
+  Real radial_metric_derivative = 0.0;
+  for (int direction = 0; direction < 3; ++direction) {
+    Real diagonal_metric[4];  // NOLINT(runtime/arrays)
+    for (int sample = 0; sample < 4; ++sample) {
+      Real shifted[3] = {position[0], position[1], position[2]};
+      const int offset = sample < 2 ? sample - 2 : sample - 1;
+      shifted[direction] += static_cast<Real>(offset)*h;
+      Real psi2 = 1.0;
+      if (geometry_kind == 1) {
+        psi2 = WormholePsi2(mass, shifted[0], shifted[1], shifted[2]);
+      } else if (geometry_kind == 2) {
+        psi2 = TrumpetPsi2(table, mass, shifted[0], shifted[1], shifted[2]);
+      }
+      diagonal_metric[sample] = psi2*psi2;
+    }
+    const Real derivative = (diagonal_metric[0] - 8.0*diagonal_metric[1]
+                             + 8.0*diagonal_metric[2] - diagonal_metric[3])
+                            /(12.0*h);
+    // gamma^{ij} partial_k gamma_ij is three times the derivative
+    // of the common isotropic diagonal component.
+    radial_metric_derivative +=
+        3.0*position[direction]*inverse_diagonal_metric*derivative;
+  }
+  return -radial_metric_derivative/6.0;
+}
+
+KOKKOS_INLINE_FUNCTION
+ExponentSample EvaluateExponentSample(const int geometry_kind,
+                                      const DvceArray2D<Real> &table,
+                                      const Real mass, const Real h,
+                                      const Real x, const Real y, const Real z) {
+  const Real displacement[3] = {x, y, z};
+  const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+  Real metric[4][4];             // NOLINT(runtime/arrays)
+  Real d_metric[4][4][4];       // NOLINT(runtime/arrays)
+  Real q_exact = 0.0;
+  Real p_exact = 0.0;
+  if (geometry_kind == 0) {
+    const Real zero[3] = {0.0, 0.0, 0.0};
+    IsotropicMetricPoint(1.0, 1.0, zero, zero, metric, d_metric);
+  } else if (geometry_kind == 1) {
+    const Real psi = 1.0 + mass/(2.0*radius);
+    const Real psi2 = psi*psi;
+    const Real alpha = 1.0/psi2;
+    Real d_alpha[3];  // NOLINT(runtime/arrays)
+    Real d_psi2[3];   // NOLINT(runtime/arrays)
+    for (int k = 0; k < 3; ++k) {
+      const Real d_psi = -0.5*mass*displacement[k]/(radius*radius*radius);
+      d_psi2[k] = 2.0*psi*d_psi;
+      d_alpha[k] = -d_psi2[k]/(psi2*psi2);
+    }
+    IsotropicMetricPoint(alpha, psi2, d_alpha, d_psi2, metric, d_metric);
+    q_exact = mass/(radius + 0.5*mass);
+    p_exact = q_exact;
+  } else {
+    ref_gh::ReferenceGeometry reference;
+    const ref_gh::TrumpetSchwarzschildReference provider{
+        table, mass, {0.0, 0.0, 0.0}};
+    provider.Populate(0.0, x, y, z, reference);
+    for (int a = 0; a < 4; ++a) {
+      for (int b = 0; b < 4; ++b) {
+        metric[a][b] = reference.metric[a][b];
+        for (int p = 0; p < 4; ++p) {
+          d_metric[p][a][b] = reference.d_metric[p][a][b];
+        }
+      }
+    }
+    const Real rho = radius/mass;
+    const ref_gh::RadialProfile alpha = ref_gh::InterpolateTrumpetProfile(
+        table, ref_gh::kCoeffAlpha, rho);
+    const ref_gh::RadialProfile psi2 = ref_gh::ArealRadiusToPsi2(
+        ref_gh::InterpolateTrumpetProfile(
+            table, ref_gh::kCoeffArealRadius, rho), rho);
+    q_exact = -rho*psi2.d1/psi2.value;
+    p_exact = rho*alpha.d1/alpha.value;
+  }
+  const ref_gh::LocalPunctureExponents exponents =
+      ref_gh::ComputeLocalPunctureExponents(metric, d_metric, displacement);
+  return {exponents.q, exponents.p, q_exact, p_exact,
+          FourthOrderSpatialMetricExponent(
+              geometry_kind, table, mass, h, x, y, z),
+          exponents.spatial_valid && exponents.lapse_valid};
+}
+
+void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
+                                         const bool strict_gate) {
+  constexpr int nside = 20;
+  constexpr int ncells = nside*nside*nside;
+  constexpr int nresolution = 5;
+  constexpr Real inverse_resolutions[nresolution] = {
+      16.0, 24.0, 32.0, 48.0, 64.0};
+  constexpr Real mass = 1.0;
+  constexpr Real gaussian_width = 3.0;
+  Real previous_wormhole = 0.0;
+  Real previous_trumpet = 0.0;
+  Real first_fd_difference[3] = {0.0, 0.0, 0.0};
+  Real final_fd_difference[3] = {0.0, 0.0, 0.0};
+
+  for (int geometry_kind = 0; geometry_kind < 3; ++geometry_kind) {
+    for (int resolution = 0; resolution < nresolution; ++resolution) {
+      const Real h = mass/inverse_resolutions[resolution];
+      Real sum_w = 0.0;
+      Real sum_w2 = 0.0;
+      Real sum_wq = 0.0;
+      Real sum_wq2 = 0.0;
+      Real sum_wq_fd = 0.0;
+      Real maximum_state_error = 0.0;
+      Real maximum_fd_error = 0.0;
+      int count = 0;
+      Kokkos::parallel_reduce(
+          "ref_gh local puncture exponent estimator",
+          Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
+          KOKKOS_LAMBDA(const int index, Real &local_sum_w,
+                        Real &local_sum_w2, Real &local_sum_wq,
+                        Real &local_sum_wq2, Real &local_sum_wq_fd,
+                        Real &local_maximum_state_error,
+                        Real &local_maximum_fd_error, int &local_count) {
+            int work = index;
+            const int ix = work % nside; work /= nside;
+            const int iy = work % nside;
+            const int iz = work/nside;
+            const Real x = (static_cast<Real>(ix) - 0.5*(nside - 1))*h;
+            const Real y = (static_cast<Real>(iy) - 0.5*(nside - 1))*h;
+            const Real z = (static_cast<Real>(iz) - 0.5*(nside - 1))*h;
+            const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+            if (!ref_gh::InPunctureEstimatorShell(
+                    radius, h, gaussian_width)) return;
+            const ExponentSample sample = EvaluateExponentSample(
+                geometry_kind, table, mass, h, x, y, z);
+            if (!sample.valid) {
+              local_maximum_state_error =
+                  std::numeric_limits<Real>::infinity();
+              return;
+            }
+            const Real weight = ref_gh::PunctureEstimatorWeight(radius, h);
+            local_sum_w += weight;
+            local_sum_w2 += weight*weight;
+            local_sum_wq += weight*sample.q_state;
+            local_sum_wq2 += weight*sample.q_state*sample.q_state;
+            local_sum_wq_fd += weight*sample.q_fd;
+            local_maximum_state_error = fmax(
+                local_maximum_state_error,
+                Kokkos::abs(sample.q_state - sample.q_exact));
+            local_maximum_state_error = fmax(
+                local_maximum_state_error,
+                Kokkos::abs(sample.p_state - sample.p_exact));
+            local_maximum_fd_error = fmax(
+                local_maximum_fd_error,
+                Kokkos::abs(sample.q_fd - sample.q_exact));
+            ++local_count;
+          }, Kokkos::Sum<Real>(sum_w), Kokkos::Sum<Real>(sum_w2),
+          Kokkos::Sum<Real>(sum_wq), Kokkos::Sum<Real>(sum_wq2),
+          Kokkos::Sum<Real>(sum_wq_fd), Kokkos::Max<Real>(maximum_state_error),
+          Kokkos::Max<Real>(maximum_fd_error), Kokkos::Sum<int>(count));
+      const Real q_est = sum_wq/sum_w;
+      const Real q_fd_est = sum_wq_fd/sum_w;
+      const Real variance = fmax(0.0, sum_wq2/sum_w - q_est*q_est);
+      const Real n_eff = sum_w*sum_w/sum_w2;
+      if (count <= 0 || !(n_eff > 1.0) || !std::isfinite(variance)
+          || maximum_state_error > 2.0e-11
+          || (geometry_kind == 0 && maximum_fd_error > 2.0e-13)) {
+        std::cout << "### FATAL ERROR: local puncture exponent estimator failed: "
+                  << "geometry=" << geometry_kind << " h=" << h
+                  << " count=" << count << " N_eff=" << n_eff
+                  << " state-error=" << maximum_state_error
+                  << " FD-error=" << maximum_fd_error << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+      const Real fd_difference = Kokkos::abs(q_fd_est - q_est);
+      if (resolution == 0) first_fd_difference[geometry_kind] = fd_difference;
+      if (resolution == nresolution - 1) {
+        final_fd_difference[geometry_kind] = fd_difference;
+      }
+      if (geometry_kind == 1) {
+        if (resolution > 0 && !(q_est > previous_wormhole)) {
+          std::cout << "### FATAL ERROR: wormhole q_est did not approach 2."
+                    << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        previous_wormhole = q_est;
+      }
+      if (geometry_kind == 2) {
+        if (resolution > 0 && !(Kokkos::abs(q_est - 1.0)
+                                < Kokkos::abs(previous_trumpet - 1.0))) {
+          std::cout << "### FATAL ERROR: trumpet q_est did not approach 1."
+                    << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        previous_trumpet = q_est;
+      }
+      std::cout << "reference-GH local exponent: geometry=" << geometry_kind
+                << " h=" << h << " q_est=" << q_est
+                << " q_fd_est=" << q_fd_est << " variance=" << variance
+                << " N_eff=" << n_eff << " samples=" << count
+                << " state-error=" << maximum_state_error
+                << " FD-error=" << maximum_fd_error << std::endl;
+    }
+  }
+  const bool direct_fd_converged =
+      final_fd_difference[0] <= 2.0e-13
+      && final_fd_difference[1] < 0.5*first_fd_difference[1]
+      && final_fd_difference[2] < 0.5*first_fd_difference[2];
+  std::cout << "reference-GH first-order-state puncture-exponent estimator passed; "
+            << "direct-FD same-shell convergence="
+            << (direct_fd_converged ? "PASS" : "FAIL")
+            << " wormhole(initial,final)=(" << first_fd_difference[1] << ","
+            << final_fd_difference[1] << ") trumpet(initial,final)=("
+            << first_fd_difference[2] << "," << final_fd_difference[2] << ")"
+            << std::endl;
+  if (strict_gate && !direct_fd_converged) {
+    std::cout << "### FATAL ERROR: the direct-FD estimator does not converge to "
+                 "the first-order-state estimator on the prescribed r/h shell."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+}
+
+void ScanGenericSingularReference(ParameterInput *pin) {
+  constexpr int nside = 8;
+  constexpr int ncells = nside*nside*nside;
+  constexpr int nmeasures = 16;
+  constexpr int nresolutions = 6;
+  constexpr Real inverse_resolutions[nresolutions] = {
+      16.0, 24.0, 32.0, 48.0, 64.0, 128.0};
+  constexpr int ntransition_times = 3;
+  constexpr Real transition_times[ntransition_times] = {4.0, 8.0, 16.0};
+  constexpr int nwidths = 3;
+  constexpr Real widths[nwidths] = {2.0, 3.0, 4.0};
+  const char *measure_names[nmeasures] = {
+    "qdot-W-logrho", "qdot2-W2-logrho2", "dt-frame", "dtt-frame",
+    "spin", "spin-derivative", "reference-Ricci", "reference-Riemann",
+    "source-q", "source-delta", "source-curvature", "source-qq",
+    "source-delta-product", "source-damping", "source-frame-correction",
+    "source-total"
+  };
+  const std::string filename = pin->GetOrAddString(
+      "problem", "generic_reference_scan_file",
+      pin->GetString("job", "basename") + "-generic-reference-scan.tsv");
+  FILE *file = nullptr;
+  if (global_variable::my_rank == 0) {
+    file = std::fopen(filename.c_str(), "w");
+    if (file == nullptr) std::exit(EXIT_FAILURE);
+    std::fprintf(file, "# mode\ttau_M\tR_G_M\th_M\tmeasure\tmaximum\tradius_M\t"
+                       "radius_over_h\n");
+  }
+  DvceArray2D<Real> samples("generic singular reference scan", nmeasures, ncells);
+  for (int tau_index = 0; tau_index < ntransition_times; ++tau_index) {
+    for (int width_index = 0; width_index < nwidths; ++width_index) {
+      for (int mode = 0; mode < 2; ++mode) {
+        for (int resolution = 0; resolution < nresolutions; ++resolution) {
+          const Real tau = transition_times[tau_index];
+          const Real width = widths[width_index];
+          const Real h = 1.0/inverse_resolutions[resolution];
+          const Real time = 0.5*tau;
+          const ref_gh::GenericSingularReferenceParameters params{
+              1.0, {0.0, 0.0, 0.0}, width,
+              mode == 0 ? 2.0 : 1.5, mode == 0 ? 1.0 : 1.5, tau};
+          Kokkos::parallel_for(
+              "ref_gh generic singular reference scan",
+              Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
+              KOKKOS_LAMBDA(const int index) {
+                int work = index;
+                const int ix = work % nside; work /= nside;
+                const int iy = work % nside;
+                const int iz = work/nside;
+                const Real x = (static_cast<Real>(ix) - 0.5*(nside - 1))*h;
+                const Real y = (static_cast<Real>(iy) - 0.5*(nside - 1))*h;
+                const Real z = (static_cast<Real>(iz) - 0.5*(nside - 1))*h;
+                const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+                ref_gh::ReferenceJet alpha;
+                ref_gh::ReferenceJet spatial_cholesky;
+                ref_gh::ReferenceJet shift_q;
+                ref_gh::ReferenceJet q;
+                ref_gh::ReferenceJet window;
+                ref_gh::GenericSingularProfileJets(
+                    params, time, x, y, z, alpha, spatial_cholesky, shift_q,
+                    &q, &window);
+                const Real logarithm = Kokkos::log(radius);
+                samples(0, index) = Kokkos::abs(q.d[0]*window.value*logarithm);
+                samples(1, index) = q.d[0]*q.d[0]*window.value*window.value
+                                    *logarithm*logarithm;
+
+                ref_gh::ReferenceGeometry reference;
+                const ref_gh::GenericSingularReference provider{params};
+                provider.Populate(time, x, y, z, reference);
+                Real dt_frame = 0.0;
+                Real dtt_frame = 0.0;
+                Real spin = 0.0;
+                Real spin_derivative = 0.0;
+                Real ricci = 0.0;
+                Real riemann = 0.0;
+                for (int A = 0; A < 4; ++A) {
+                  for (int a = 0; a < 4; ++a) {
+                    dt_frame = fmax(dt_frame,
+                                    Kokkos::abs(reference.d_frame[0][A][a]));
+                    dtt_frame = fmax(
+                        dtt_frame, Kokkos::abs(reference.dd_frame[0][0][A][a]));
+                  }
+                  for (int B = 0; B < 4; ++B) {
+                    ricci = fmax(ricci, Kokkos::abs(reference.ricci_frame[A][B]));
+                    for (int C = 0; C < 4; ++C) {
+                      spin = fmax(spin, Kokkos::abs(reference.spin[A][B][C]));
+                      for (int D = 0; D < 4; ++D) {
+                        spin_derivative = fmax(
+                            spin_derivative,
+                            Kokkos::abs(reference.spin_derivative[A][B][C][D]));
+                        riemann = fmax(
+                            riemann,
+                            Kokkos::abs(reference.riemann_frame[A][B][C][D]));
+                      }
+                    }
+                  }
+                }
+                samples(2, index) = dt_frame;
+                samples(3, index) = dtt_frame;
+                samples(4, index) = spin;
+                samples(5, index) = spin_derivative;
+                samples(6, index) = ricci;
+                samples(7, index) = riemann;
+
+                Real psi[4][4] = {};       // NOLINT(runtime/arrays)
+                Real pi[4][4] = {};        // NOLINT(runtime/arrays)
+                Real phi[3][4][4] = {};   // NOLINT(runtime/arrays)
+                for (int A = 0; A < 4; ++A) psi[A][A] = A == 0 ? -1.0 : 1.0;
+                ref_gh::CoordinateGhGeometry geometry;
+                Real determinant = 0.0;
+                Real source[4][4];  // NOLINT(runtime/arrays)
+                ref_gh::CovariantSourceSectors sectors;
+                if (!ref_gh::ComputeCoordinateGhGeometry(
+                        reference.metric, reference.d_metric, reference,
+                        geometry, determinant)
+                    || !ref_gh::CovariantGhScalarWaveSource(
+                        psi, pi, phi, reference, geometry, 1.0, source, sectors)) {
+                  for (int measure = 8; measure < nmeasures; ++measure) {
+                    samples(measure, index) =
+                        std::numeric_limits<Real>::infinity();
+                  }
+                  return;
+                }
+                Real source_q = 0.0;
+                Real source_delta = 0.0;
+                Real source_curvature = 0.0;
+                Real source_qq = 0.0;
+                Real source_delta_product = 0.0;
+                Real source_damping = 0.0;
+                Real source_frame_correction = 0.0;
+                Real source_total = 0.0;
+                for (int A = 0; A < 4; ++A) {
+                  source_delta = fmax(
+                      source_delta, Kokkos::abs(sectors.delta[A]));
+                  for (int B = 0; B < 4; ++B) {
+                    source_curvature = fmax(
+                        source_curvature, Kokkos::abs(sectors.curvature[A][B]));
+                    source_qq = fmax(source_qq, Kokkos::abs(sectors.qq[A][B]));
+                    source_delta_product = fmax(
+                        source_delta_product,
+                        Kokkos::abs(sectors.delta_product[A][B]));
+                    source_damping = fmax(
+                        source_damping, Kokkos::abs(sectors.damping[A][B]));
+                    source_frame_correction = fmax(
+                        source_frame_correction,
+                        Kokkos::abs(sectors.frame_correction[A][B]));
+                    source_total = fmax(source_total, Kokkos::abs(source[A][B]));
+                    for (int C = 0; C < 4; ++C) {
+                      source_q = fmax(source_q,
+                                      Kokkos::abs(sectors.q[A][B][C]));
+                    }
+                  }
+                }
+                samples(8, index) = source_q;
+                samples(9, index) = source_delta;
+                samples(10, index) = source_curvature;
+                samples(11, index) = source_qq;
+                samples(12, index) = source_delta_product;
+                samples(13, index) = source_damping;
+                samples(14, index) = source_frame_correction;
+                samples(15, index) = source_total;
+              });
+          Kokkos::fence();
+          using MaxLoc = Kokkos::MaxLoc<Real, int>;
+          for (int measure = 0; measure < nmeasures; ++measure) {
+            MaxLoc::value_type maximum;
+            Kokkos::parallel_reduce(
+                "ref_gh generic singular reference maximum",
+                Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
+                KOKKOS_LAMBDA(const int index, MaxLoc::value_type &local_maximum) {
+                  const Real value = samples(measure, index);
+                  if (value >= local_maximum.val) {
+                    local_maximum.val = value;
+                    local_maximum.loc = index;
+                  }
+                }, MaxLoc(maximum));
+            int location = maximum.loc;
+            const int ix = location % nside; location /= nside;
+            const int iy = location % nside;
+            const int iz = location/nside;
+            const Real x = (static_cast<Real>(ix) - 0.5*(nside - 1))*h;
+            const Real y = (static_cast<Real>(iy) - 0.5*(nside - 1))*h;
+            const Real z = (static_cast<Real>(iz) - 0.5*(nside - 1))*h;
+            const Real radius = std::sqrt(x*x + y*y + z*z);
+            if (file != nullptr) {
+              std::fprintf(file, "%s\t%.17e\t%.17e\t%.17e\t%s\t%.17e\t%.17e\t"
+                                 "%.17e\n", mode == 0 ? "dynamic" : "static",
+                           tau, width, h,
+                           measure_names[measure], maximum.val, radius, radius/h);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (file != nullptr) std::fclose(file);
+  if (global_variable::my_rank == 0) {
+    std::cout << "reference-GH generic singular reference scan written to "
+              << filename << std::endl;
+  }
+}
 
 void CheckPhiOrderingAlgebra() {
   constexpr int nsamples = 1024;
@@ -932,6 +1410,14 @@ void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) 
   CheckFlatCovariantSource();
   CheckNonflatCovariantSource();
   CheckDynamicSpatialReference();
+  if (pin->GetOrAddBoolean("problem", "puncture_exponent_gate", false)) {
+    CheckLocalPunctureExponentEstimator(
+        pmy_mesh_->pmb_pack->prefgh->reference_table,
+        pin->GetOrAddBoolean("problem", "puncture_exponent_gate_strict", true));
+  }
+  if (pin->GetOrAddBoolean("problem", "generic_reference_scan", false)) {
+    ScanGenericSingularReference(pin);
+  }
   if (pin->GetOrAddBoolean("problem", "reference_path_scan", false)) {
     ScanReferencePaths(pin);
   }
