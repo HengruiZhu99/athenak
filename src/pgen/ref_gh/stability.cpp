@@ -9,6 +9,7 @@
 #include <string>
 
 #include "athena.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
@@ -31,6 +32,17 @@ unsigned long long MixBits(unsigned long long value) {  // NOLINT(runtime/int)
   value ^= value >> 27;
   value *= 0x94d049bb133111ebULL;
   return value ^ (value >> 31);
+}
+
+Real ModifiedWaveNumber(const int fd_order, const Real wave_number,
+                        const Real spacing) {
+  const Real phase = wave_number*spacing;
+  if (fd_order == 2) return std::sin(phase)/spacing;
+  if (fd_order == 4) {
+    return (8.0*std::sin(phase) - std::sin(2.0*phase))/(6.0*spacing);
+  }
+  return (45.0*std::sin(phase) - 9.0*std::sin(2.0*phase)
+          + std::sin(3.0*phase))/(30.0*spacing);
 }
 
 Real PerturbationL2(Mesh *mesh) {
@@ -170,12 +182,61 @@ void ProblemGenerator::RefGhStability(ParameterInput *pin, const bool restart) {
     std::exit(EXIT_FAILURE);
   }
   const Real amplitude = pin->GetOrAddReal("problem", "amp", 1.0e-10);
+  const std::string perturbation =
+      pin->GetOrAddString("problem", "perturbation", "random");
   auto &indcs = pack->pmesh->mb_indcs;
   const int n1 = indcs.nx1 + 2*indcs.ng;
   const int n2 = (indcs.nx2 > 1) ? indcs.nx2 + 2*indcs.ng : 1;
   const int n3 = (indcs.nx3 > 1) ? indcs.nx3 + 2*indcs.ng : 1;
   const auto state = pack->prefgh->u0;
   const int gid0 = pack->gids;
+  if (perturbation == "gh_transverse") {
+    const Real length = pmy_mesh_->mesh_size.x1max - pmy_mesh_->mesh_size.x1min;
+    const Real spacing = length/static_cast<Real>(pmy_mesh_->mesh_indcs.nx1);
+    const Real wave_number = 2.0*M_PI/length;
+    const Real modified_wave_number = ModifiedWaveNumber(
+        pack->prefgh->opt.fd_order, wave_number, spacing);
+    const Real gamma0 = pack->prefgh->opt.gamma0;
+    const Real omega2 = modified_wave_number*modified_wave_number
+                        - 0.25*gamma0*gamma0;
+    if (!(omega2 > 0.0) || pack->prefgh->opt.gauge_driver_enabled) {
+      std::cout << "GH transverse stability mode requires an underdamped wave "
+                   "and gauge_driver_enabled=false." << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    const Real omega = std::sqrt(omega2);
+    const Real x1min = pmy_mesh_->mesh_size.x1min;
+    auto &size = pack->pmb->mb_size;
+    par_for("ref_gh transverse GH constraint", DevExeSpace(),
+    0, pack->nmb_thispack - 1, 0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
+    KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+      for (int n = 0; n < ref_gh::nvar; ++n) state(m, n, k, j, i) = 0.0;
+      state(m, ref_gh::PsiIndex(0, 0), k, j, i) = -1.0;
+      state(m, ref_gh::PsiIndex(1, 1), k, j, i) = 1.0;
+      state(m, ref_gh::PsiIndex(2, 2), k, j, i) = 1.0;
+      state(m, ref_gh::PsiIndex(3, 3), k, j, i) = 1.0;
+      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min, size.d_view(m).x1max);
+      const Real phase = wave_number*(x - x1min);
+      const Real cosine = Kokkos::cos(phase);
+      const Real sine = Kokkos::sin(phase);
+      const Real h0y = amplitude*(0.5*gamma0*cosine + omega*sine)
+                       /(modified_wave_number*modified_wave_number);
+      const Real dx_h0y = amplitude*(-0.5*gamma0*sine + omega*cosine)
+                           /modified_wave_number;
+      state(m, ref_gh::PsiIndex(0, 2), k, j, i) = h0y;
+      state(m, ref_gh::PiIndex(0, 2), k, j, i) = amplitude*cosine;
+      state(m, ref_gh::PhiIndex(0, 0, 2), k, j, i) = dx_h0y;
+    });
+    initial_l2 = PerturbationL2(pmy_mesh_);
+    initial_reduction_l2 = ReductionL2(pmy_mesh_);
+    return;
+  }
+  if (perturbation != "random") {
+    std::cout << "Unknown Ref-GH stability perturbation: " << perturbation
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   par_for("ref_gh robust noise", DevExeSpace(), 0, pack->nmb_thispack - 1,
   0, ref_gh::nvar - 1, 0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
   KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
