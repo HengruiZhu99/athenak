@@ -1,0 +1,28 @@
+# Run from the repository root after configuring build-feedback-local.
+cmake --build build-feedback-local -j 8
+
+./build-feedback-local/src/athena \
+  -d /tmp/refgh_source \
+  -i inputs/ref_gh/ref_gh_source_unit.athinput
+
+./build-feedback-local/src/athena \
+  -d /tmp/refgh_minkowski \
+  -i tst/inputs/ref_gh_minkowski.athinput
+
+# Expected to exit nonzero at the preserved same-r/h direct-FD gate.
+./build-feedback-local/src/athena \
+  -d /tmp/refgh_estimator \
+  -i tst/inputs/ref_gh_generic_singular_estimator.athinput
+
+for n in 16 24 32 48; do
+  ./build-feedback-local/src/athena \
+    -d "/tmp/refgh_trumpet_${n}" \
+    -i tst/inputs/ref_gh_stationary_trumpet.athinput \
+    mesh/nx1=$n mesh/nx2=$n mesh/nx3=$n \
+    meshblock/nx1=$n meshblock/nx2=$n meshblock/nx3=$n \
+    time/nlim=100 time/tlim=0.01
+done
+
+# Restart test pattern: run two cycles directly; run one cycle with
+# output2/dcycle=1; resume checkpoint-only with -r to cycle two; compare the
+# final *.ref_gh.hst rows byte for byte.
