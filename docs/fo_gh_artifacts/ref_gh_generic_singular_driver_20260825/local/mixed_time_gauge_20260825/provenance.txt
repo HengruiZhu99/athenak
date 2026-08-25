@@ -1,6 +1,7 @@
 Date: 2026-08-25
 Branch: codex/ref-gh-generic-singular-driver-20260825
 Parent commit: 23a124f0fa272054ae260e64aaf5114a44db9c63
+Evidence source commit: e085426e06804ecfaa75359451c880feab9ef72a
 Kokkos commit: 6739bc623081648af9e752b616d9671527922cbf
 Compiler: g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
 
@@ -9,7 +10,7 @@ Serial build:
   CMAKE_CXX_COMPILER=/usr/bin/c++
   Kokkos_ENABLE_SERIAL=ON
   Kokkos_ENABLE_OPENMP=OFF
-  executable SHA-256=0ce0415c0da3a0b0de7f23bede0ca5293a57e4fd6e83b86355059d392b6a7dcb
+  executable SHA-256=5e4fd289baeff25c78c90ad686fa0c8dd23d525299277e2aea2ed619a7d7cf95
 
 OpenMP build:
   CMAKE_BUILD_TYPE=Release
@@ -17,7 +18,7 @@ OpenMP build:
   Kokkos_ENABLE_SERIAL=ON
   Kokkos_ENABLE_OPENMP=ON
   KOKKOS_NUM_THREADS=4
-  executable SHA-256=1c0c2cc6e6691209f2a05a937a4b75ec6a570f956e5b200bbdd8dbe3af0a1b46
+  executable SHA-256=61d1933fa546057e877f12a891468d851fc56792fd39ad7caa5687f6247a6739
 
 Core commands:
   cmake --build build-feedback-local -j 8
@@ -29,6 +30,13 @@ Core commands:
   ./build-feedback-local/src/athena -i tst/inputs/ref_gh_time_dependent_gauge_subtraction.athinput ref_gh/reference=generic_singular ref_gh/validate_reference_cache=false
   cmake --build build-feedback-omp -j 8
   KOKKOS_NUM_THREADS=4 ./build-feedback-omp/src/athena -i tst/inputs/ref_gh_generic_singular_reference.athinput problem/generic_reference_scan=false
+  ./build-feedback-local/src/athena -d /tmp/refgh_current_serial_t0 -i tst/inputs/ref_gh_time_dependent_gauge_subtraction.athinput job/basename=t0_serial_current mesh/nx1=6 mesh/nx2=6 mesh/nx3=6 meshblock/nx1=6 meshblock/nx2=6 meshblock/nx3=6 ref_gh/reference=generic_singular time/nlim=1
+  KOKKOS_NUM_THREADS=4 ./build-feedback-omp/src/athena -d /tmp/refgh_current_openmp_t0 -i tst/inputs/ref_gh_time_dependent_gauge_subtraction.athinput job/basename=t0_openmp_current mesh/nx1=6 mesh/nx2=6 mesh/nx3=6 meshblock/nx1=6 meshblock/nx2=6 meshblock/nx3=6 ref_gh/reference=generic_singular time/nlim=1
+  # Temporal ladder: the three invocations used the same 6^3 native grid,
+  # tlim=0.008, generic_singular reference, gauge_reference_subtraction=true,
+  # validate_reference_cache=false, and CFL 0.05, 0.025, 0.0125 respectively.
+  # The accepted timestep sequences are recorded in generic_temporal_analysis.json.
+  python3 scripts/ref_gh/analyze_time_dependent_gauge_temporal.py --field <coarse> <medium> <fine> --log <coarse.log> <medium.log> <fine.log> --fd-stencil-radius 2 --puncture 0 0 0 --output <analysis.json>
 
 This is local CPU evidence only. No Aurora job was submitted and no PVC
 qualification is claimed.

@@ -1,0 +1,82 @@
+{
+  "method": "three-level self-convergence normalized by the actual variable-step RK4 leading-error weight sum(dt^5)",
+  "final_time": 0.008,
+  "shape": [
+    61,
+    6,
+    6,
+    6
+  ],
+  "variables": 61,
+  "gauge_component_offset": 50,
+  "analysis_sample_count": 152,
+  "total_native_cell_count": 216,
+  "puncture_stencil_mask": {
+    "enabled": true,
+    "fd_stencil_radius": 2,
+    "puncture": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rule": "reject a native cell when its full axis-aligned finite-difference support box contains the puncture",
+    "scope": "caller-supplied maximum evolution footprint, including Kreiss-Oliger dissipation"
+  },
+  "accepted_steps": [
+    [
+      0.008
+    ],
+    [
+      0.004655101,
+      0.003344899
+    ],
+    [
+      0.002327551,
+      0.0023275689999999994,
+      0.002327623,
+      0.0010172570000000006
+    ]
+  ],
+  "rk4_leading_weights": [
+    3.2768e-11,
+    2.6046884100765645e-12,
+    2.0603806421653534e-13
+  ],
+  "rk4_predicted_self_difference_ratio": 12.575118187602481,
+  "all": {
+    "coarse_medium_L2": 1.3696800516790635e-09,
+    "medium_fine_L2": 1.0873330721218971e-10,
+    "ratio_L2": 12.596692649163838,
+    "variable_step_order_L2": 4.0029024787356775,
+    "ratio_L2_over_RK4_prediction": 1.0017156468225188,
+    "coarse_medium_Linf": 2.0326379177038056e-08,
+    "medium_fine_Linf": 1.6105814321099032e-09,
+    "ratio_Linf": 12.620522484485603,
+    "variable_step_order_Linf": 4.006102796194689,
+    "ratio_Linf_over_RK4_prediction": 1.0036106457375396
+  },
+  "einstein": {
+    "coarse_medium_L2": 1.5113492536192652e-09,
+    "medium_fine_L2": 1.1997758606275266e-10,
+    "ratio_L2": 12.59693000348227,
+    "variable_step_order_L2": 4.002934383993098,
+    "ratio_L2_over_RK4_prediction": 1.0017345217400258,
+    "coarse_medium_Linf": 2.0326379177038056e-08,
+    "medium_fine_Linf": 1.6105814321099032e-09,
+    "ratio_Linf": 12.620522484485603,
+    "variable_step_order_Linf": 4.006102796194689,
+    "ratio_Linf_over_RK4_prediction": 1.0036106457375396
+  },
+  "gauge": {
+    "coarse_medium_L2": 1.4415955845892444e-10,
+    "medium_fine_L2": 1.155146611342214e-11,
+    "ratio_L2": 12.479762918701663,
+    "variable_step_order_L2": 3.9871135991985076,
+    "ratio_L2_over_RK4_prediction": 0.9924171473000686,
+    "coarse_medium_Linf": 9.046432449071583e-10,
+    "medium_fine_Linf": 7.264644960116066e-11,
+    "ratio_Linf": 12.45268350860611,
+    "variable_step_order_Linf": 3.9834366967905153,
+    "ratio_Linf_over_RK4_prediction": 0.9902637353248038
+  }
+}

@@ -233,13 +233,24 @@ reference at the interior time \(t=4M\) (\(6.71\times10^{-13}\)). Serial and
 Kokkos OpenMP source/cache oracles pass, and both smooth references complete a
 one-cycle binary64 full-state smoke run.
 
-One limitation is deliberately preserved: the generic transition's clamped
-quintic smoothstep is only \(C^2\) at \(t=0\). A centered fourth-order
-validation stencil that crosses that endpoint is therefore not a valid
-fourth-order oracle and fails by \(2.65\times10^{-6}\). The threshold was not
-weakened. The analytic generic path completes one bounded cycle with the
-endpoint finite-difference oracle disabled, but that is neither stability nor
-convergence evidence.
+The generic transition's clamped quintic smoothstep is only \(C^2\) at
+\(t=0\). A centered fourth-order validation stencil crossing that endpoint is
+therefore not a valid fourth-order oracle and fails by
+\(2.65\times10^{-6}\). That negative result remains preserved and its
+threshold was not weakened. The validator now chooses a fourth-order one-sided
+stencil only when a centered stencil would cross a prescribed clamp. It passes
+at \(t=0\) with scaled error \(1.77\times10^{-17}\), then returns to the
+centered stencil at interior RK stages.
+
+An independent fixed-grid temporal ladder reaches \(t=0.008M\) in one, two,
+and four adaptive RK4 steps. Normalizing the self-difference ratios by the
+actual variable-step leading-error weight \(\sum_n\Delta t_n^5\), after
+discarding every native cell whose active finite-difference support box
+overlaps the puncture, gives effective L2/Linf orders 4.003/4.006 for the 50
+Einstein fields and 3.987/3.983 for the 11 gauge fields. This KO-off test uses
+the active two-cell fourth-order radius and retains 152 of 216 cells. This
+resolves the validation-stencil artifact for the bounded test; it is not
+puncture stability or long-time convergence evidence.
 
 Primary sources:
 
@@ -260,8 +271,8 @@ Primary sources:
 - Smooth time-dependent gauge-reference subtraction: analytic mixed-jet and
   one-cycle local CPU gates passed; PVC portability is untested.
 - Generic time-dependent subtraction: interior-time analytic gate passed and a
-  one-cycle finite smoke completed, but the clamped-quintic `t=0` validation
-  endpoint remains an explicit smoothness limitation.
+  one-cycle finite smoke completed; an endpoint-aware oracle and short temporal
+  ladder retain approximately fourth-order behavior across `t=0`.
 - Regular perturbed stationary trumpet: finite and approximately fourth-order
   in masked L2 self-differences through `t=1` on local uniform grids.
 - New 61-field restart path: focused direct/split gate passed.
