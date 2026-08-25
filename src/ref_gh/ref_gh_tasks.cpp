@@ -1553,14 +1553,46 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
     }
   }
 
-  if (opt.validate_reference_cache && opt.reference_time_dependent) {
+  // A direct time-difference oracle cannot reproduce controller-state time
+  // derivatives when continuation activation is supplied as an independent
+  // ODE jet. All prescribed-time providers remain independently testable.
+  const bool theta_oracle_available =
+      !(reference_kind == 5 && opt.continuation_mode != 0);
+  int theta_oracle_side = 0;  // central=0, forward=1, backward=-1
+  constexpr Real theta_oracle_step = 2.0e-4;
+  if (reference_kind == 6) {
+    const Real transition_end = generic.transition_time*generic.mass;
+    if (time <= 2.0*theta_oracle_step) theta_oracle_side = 1;
+    if (time >= transition_end - 2.0*theta_oracle_step
+        && time <= transition_end) {
+      theta_oracle_side = -1;
+    }
+    if (time > transition_end
+        && time <= transition_end + 2.0*theta_oracle_step) {
+      theta_oracle_side = 1;
+    }
+  }
+  if (reference_kind == 5 && opt.continuation_mode == 0) {
+    const Real transition_end = opt.tau_transition*mass;
+    if (time <= 2.0*theta_oracle_step) theta_oracle_side = 1;
+    if (time >= transition_end - 2.0*theta_oracle_step
+        && time <= transition_end) {
+      theta_oracle_side = -1;
+    }
+    if (time > transition_end
+        && time <= transition_end + 2.0*theta_oracle_step) {
+      theta_oracle_side = 1;
+    }
+  }
+  if (opt.validate_reference_cache && opt.reference_time_dependent
+      && theta_oracle_available) {
     // Validation-only independent oracle: a centered fourth-order time
     // difference of the direct provider's theta baseline.  Production never
     // differentiates reference data numerically; it uses the mixed analytic
     // jets assembled above.
     using MaxLoc = Kokkos::MaxLoc<Real, int>;
     MaxLoc::value_type maximum_error;
-    constexpr Real step = 2.0e-4;
+    const int oracle_side = theta_oracle_side;
     Kokkos::parallel_reduce(
     "ref_gh reference theta derivative oracle",
     Kokkos::RangePolicy<>(DevExeSpace(),
@@ -1578,19 +1610,38 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
                                  size.d_view(m).x2min, size.d_view(m).x2max);
       const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                  size.d_view(m).x3min, size.d_view(m).x3max);
-      Real theta[4];  // NOLINT(runtime/arrays)
-      constexpr Real offsets[4] = {-2.0, -1.0, 1.0, 2.0}; // NOLINT
-      for (int sample = 0; sample < 4; ++sample) {
+      Real offsets[5] = {-2.0, -1.0, 0.0, 1.0, 2.0}; // NOLINT
+      Real coefficients[5] = {1.0, -8.0, 0.0, 8.0, -1.0}; // NOLINT
+      if (oracle_side > 0) {
+        const Real forward_offsets[5] = {0.0, 1.0, 2.0, 3.0, 4.0}; // NOLINT
+        const Real forward_coefficients[5] = { // NOLINT(runtime/arrays)
+          -25.0, 48.0, -36.0, 16.0, -3.0};
+        for (int sample = 0; sample < 5; ++sample) {
+          offsets[sample] = forward_offsets[sample];
+          coefficients[sample] = forward_coefficients[sample];
+        }
+      } else if (oracle_side < 0) {
+        const Real backward_offsets[5] = {0.0, -1.0, -2.0, -3.0, -4.0}; // NOLINT
+        const Real backward_coefficients[5] = { // NOLINT(runtime/arrays)
+          25.0, -48.0, 36.0, -16.0, 3.0};
+        for (int sample = 0; sample < 5; ++sample) {
+          offsets[sample] = backward_offsets[sample];
+          coefficients[sample] = backward_coefficients[sample];
+        }
+      }
+      Real finite_difference = 0.0;
+      for (int sample = 0; sample < 5; ++sample) {
         ReferenceGeometry oracle;
         GetReferenceGeometry(reference_kind, table, mass, center_x, center_y,
-                             center_z, time + offsets[sample]*step,
+                             center_z,
+                             time + offsets[sample]*theta_oracle_step,
                              x, y, z, controlled, generic, oracle);
         const ReferenceGaugeBaseline baseline =
             ComputeReferenceGaugeBaseline(oracle);
-        theta[sample] = baseline.valid ? baseline.theta[A] : NAN;
+        finite_difference += coefficients[sample]
+            *(baseline.valid ? baseline.theta[A] : NAN);
       }
-      const Real finite_difference =
-          (theta[0] - 8.0*theta[1] + 8.0*theta[2] - theta[3])/(12.0*step);
+      finite_difference /= 12.0*theta_oracle_step;
       const ReferenceCachePoint cached{evolution, diagnostic, m, k, j, i};
       const Real analytic = ReferenceDtTheta(cached, A);
       Real scale = 1.0;
@@ -1615,8 +1666,17 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
     if (global_variable::my_rank == 0) {
       std::cout << "reference-GH analytic theta time derivative oracle passed: "
                 << "scaled Linf=" << maximum_error.val
-                << ", time=" << time << std::endl;
+                << ", time=" << time
+                << ", stencil="
+                << (theta_oracle_side > 0 ? "forward"
+                    : (theta_oracle_side < 0 ? "backward" : "centered"))
+                << std::endl;
     }
+  } else if (opt.validate_reference_cache && opt.reference_time_dependent
+             && !theta_oracle_available && global_variable::my_rank == 0) {
+    std::cout << "reference-GH theta time-difference oracle unavailable for "
+                 "ODE-controlled continuation jets; analytic controller-jet "
+                 "oracles remain required." << std::endl;
   }
 }
 
