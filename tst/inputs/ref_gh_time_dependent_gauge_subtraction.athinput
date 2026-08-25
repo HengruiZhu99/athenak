@@ -1,0 +1,72 @@
+# One-cycle full-state smoke test for analytic time-dependent gauge-reference
+# subtraction. The robust-noise initializer is reused only to make every
+# evolved field nontrivial; this bounded gate is not a stability claim.
+
+<job>
+basename = ref_gh_time_dependent_gauge_subtraction
+
+<mesh>
+nghost = 4
+nx1 = 8
+x1min = -1.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 8
+x2min = -1.0
+x2max = 1.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 8
+x3min = -1.0
+x3max = 1.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+nlim = 1
+tlim = 0.02
+ndiag = 1
+
+<ref_gh>
+reference = time_dependent_spatial_test
+source = covariant
+fd_order = 4
+validate_reference_cache = true
+gamma0 = 1.0
+gamma2 = 1.0
+gauge_driver_enabled = true
+gauge_reference_subtraction = true
+gauge_mu = 1.0
+gauge_eta = 1.0
+shift_nu = 0.75
+shift_eta = 1.0
+diss = 0.0
+
+<problem>
+pgen_name = ref_gh_stability
+amp = 1.0e-10
+perturbation = random
+
+<output1>
+file_type = hst
+dt = 0.01
+data_format = %20.15e
+
+<output2>
+file_type = cbin
+variable = ref_gh
+id = ref_gh
+dt = 0.01
+coarsen_factor = 1
+compute_moments = false
+binary64 = true
+single_file_per_rank = false

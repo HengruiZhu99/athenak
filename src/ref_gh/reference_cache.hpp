@@ -34,18 +34,19 @@ enum ReferenceDiagnosticComponent : int {
   kRefDDFrame = 0,                         // sym(4,4) x 4 x 4
   kRefDChristoffel = kRefDDFrame + 160,    // 4 x 4 x sym(4,4)
   kRefRicci = kRefDChristoffel + 160,      // 4 x 4
-  kReferenceDiagnosticSize = kRefRicci + 16
+  kRefDtTheta = kRefRicci + 16,            // 4 final + 8 update scratch
+  kReferenceDiagnosticSize = kRefDtTheta + 12
 };
 
 // Provider/profile data are evaluated once per cell per RK stage. Each scalar
-// jet is laid out as value, four first derivatives, and sixteen second
-// derivatives. The time argument belongs to the provider API even though the
-// present trumpet provider is stationary.
+// jet is laid out as value, four first derivatives, sixteen second derivatives,
+// and the twelve mixed third derivatives d_t d_i d_q needed by time-dependent
+// gauge-reference subtraction.
 enum ReferenceProviderComponent : int {
   kRefProviderAlpha = 0,
-  kRefProviderPsi2 = kRefProviderAlpha + 21,
-  kRefProviderShiftQ = kRefProviderPsi2 + 21,
-  kRefProviderArealRadius = kRefProviderShiftQ + 21,
+  kRefProviderPsi2 = kRefProviderAlpha + 33,
+  kRefProviderShiftQ = kRefProviderPsi2 + 33,
+  kRefProviderArealRadius = kRefProviderShiftQ + 33,
   kReferenceProviderSize = kRefProviderArealRadius + 1
 };
 
@@ -54,8 +55,9 @@ enum ReferenceProviderComponent : int {
 // coordinate spin derivatives, so no separate per-stage scratch allocation is
 // required.
 enum ReferenceWorkspaceComponent : int {
-  kRefWorkspaceMetricJet = 0,                 // 4 x 4 x 21
-  kRefWorkspaceInverseMetricJet = kRefWorkspaceMetricJet + 336,
+  kRefWorkspaceMetricJet = 0,                 // sym(4,4) x 33
+  kRefWorkspaceInverseMetricJet = kRefWorkspaceMetricJet + 330,
+                                                // sym(4,4) x (1 + 4 + 3)
   kRefWorkspaceCoframeDerivative = 0,         // 4 x 4 x 4 (reuse)
   kRefWorkspaceSpinCoordinateDerivative = 64,// 4 x 6 x 4 (reuse)
   kReferenceWorkspaceSize = kRefWorkspaceInverseMetricJet + 80
@@ -63,11 +65,11 @@ enum ReferenceWorkspaceComponent : int {
 
 static_assert(kReferenceEvolutionSize == 313,
               "Ref-GH production reference-cache layout changed");
-static_assert(kReferenceDiagnosticSize == 336,
+static_assert(kReferenceDiagnosticSize == 348,
               "Ref-GH derivative/diagnostic cache layout changed");
-static_assert(kReferenceProviderSize == 64,
+static_assert(kReferenceProviderSize == 100,
               "Ref-GH provider cache layout changed");
-static_assert(kReferenceWorkspaceSize == 416,
+static_assert(kReferenceWorkspaceSize == 410,
               "Ref-GH update workspace layout changed");
 
 KOKKOS_INLINE_FUNCTION constexpr int RefMatrix4(const int offset,
@@ -137,6 +139,10 @@ KOKKOS_INLINE_FUNCTION constexpr int RefJetSecondDerivative(const int offset,
                                                              const int p,
                                                              const int q) {
   return offset + 5 + 4*p + q;
+}
+KOKKOS_INLINE_FUNCTION constexpr int RefJetMixedTimeThirdDerivative(
+    const int offset, const int i, const int q) {
+  return offset + 21 + 4*i + q;
 }
 
 struct ReferenceCachePoint {
@@ -325,6 +331,10 @@ Real ReferenceRicci(const ReferenceGeometry &r, const int A, const int B) {
 KOKKOS_INLINE_FUNCTION
 Real ReferenceRicci(const ReferenceCachePoint &r, const int A, const int B) {
   return r.diagnostic(r.m, RefMatrix4(kRefRicci, A, B), r.k, r.j, r.i);
+}
+KOKKOS_INLINE_FUNCTION
+Real ReferenceDtTheta(const ReferenceCachePoint &r, const int A) {
+  return r.diagnostic(r.m, kRefDtTheta + A, r.k, r.j, r.i);
 }
 
 }  // namespace ref_gh

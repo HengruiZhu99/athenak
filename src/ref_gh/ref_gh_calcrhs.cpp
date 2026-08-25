@@ -42,6 +42,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   const Real gamma2 = opt.gamma2;
   const bool gauge_driver_enabled = opt.gauge_driver_enabled;
   const bool gauge_reference_subtraction = opt.gauge_reference_subtraction;
+  const bool reference_time_dependent = opt.reference_time_dependent;
   const Real gauge_mu = opt.gauge_mu;
   const Real gauge_eta = opt.gauge_eta;
   const Real shift_nu = opt.shift_nu;
@@ -172,7 +173,9 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       for (int A = 0; A < 4; ++A) {
         state_rhs(m, kHhatOffset + A, k, j, i) = gauge_rhs.hhat[A]
             - (gauge_reference_subtraction ? baseline.d_hhat[0][A] : 0.0);
-        state_rhs(m, kThetaOffset + A, k, j, i) = gauge_rhs.theta[A];
+        state_rhs(m, kThetaOffset + A, k, j, i) = gauge_rhs.theta[A]
+            - ((gauge_reference_subtraction && reference_time_dependent)
+                   ? ReferenceDtTheta(reference, A) : 0.0);
       }
       for (int p = 0; p < 3; ++p) {
         state_rhs(m, kUpsilonOffset + p, k, j, i) = gauge_rhs.upsilon[p];

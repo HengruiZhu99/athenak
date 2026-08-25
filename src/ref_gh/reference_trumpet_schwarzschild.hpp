@@ -64,12 +64,16 @@ RadialProfile ArealRadiusToPsi2(const RadialProfile &areal, const Real rho) {
               + 2.0*areal.value*inverse_rho*inverse_rho*inverse_rho};
 }
 
-// A value with coordinate first and second partial derivatives.  This small local
-// second-order jet keeps all reference derivatives analytic and internally consistent.
+// A value with coordinate first and second partial derivatives, plus the mixed
+// third derivatives d_t d_i d_q required by a time-dependent gauge-reference
+// subtraction.  Only this 3x4 slice of the full third-derivative tensor is
+// carried: it is closed under the algebra below and avoids storing the unused
+// pure-spatial and three-time derivatives.
 struct ReferenceJet {
   Real value;
   Real d[4];      // NOLINT(runtime/arrays)
   Real dd[4][4];  // NOLINT(runtime/arrays)
+  Real dt_dd[3][4];  // d_t d_{i+1} d_q, NOLINT(runtime/arrays)
 };
 
 KOKKOS_INLINE_FUNCTION
@@ -79,6 +83,9 @@ ReferenceJet ConstantJet(const Real value) {
   for (int a = 0; a < 4; ++a) {
     result.d[a] = 0.0;
     for (int b = 0; b < 4; ++b) result.dd[a][b] = 0.0;
+  }
+  for (int i = 0; i < 3; ++i) {
+    for (int q = 0; q < 4; ++q) result.dt_dd[i][q] = 0.0;
   }
   return result;
 }
@@ -98,6 +105,11 @@ ReferenceJet operator+(const ReferenceJet &left, const ReferenceJet &right) {
     result.d[a] = left.d[a] + right.d[a];
     for (int b = 0; b < 4; ++b) result.dd[a][b] = left.dd[a][b] + right.dd[a][b];
   }
+  for (int i = 0; i < 3; ++i) {
+    for (int q = 0; q < 4; ++q) {
+      result.dt_dd[i][q] = left.dt_dd[i][q] + right.dt_dd[i][q];
+    }
+  }
   return result;
 }
 
@@ -108,6 +120,9 @@ ReferenceJet operator-(const ReferenceJet &value) {
   for (int a = 0; a < 4; ++a) {
     result.d[a] = -value.d[a];
     for (int b = 0; b < 4; ++b) result.dd[a][b] = -value.dd[a][b];
+  }
+  for (int i = 0; i < 3; ++i) {
+    for (int q = 0; q < 4; ++q) result.dt_dd[i][q] = -value.dt_dd[i][q];
   }
   return result;
 }
@@ -123,67 +138,79 @@ ReferenceJet operator*(const ReferenceJet &left, const ReferenceJet &right) {
                         + left.d[a]*right.d[b] + left.d[b]*right.d[a];
     }
   }
+  for (int i = 0; i < 3; ++i) {
+    const int s = i + 1;
+    for (int q = 0; q < 4; ++q) {
+      result.dt_dd[i][q] =
+          left.dt_dd[i][q]*right.value
+          + left.dd[0][s]*right.d[q]
+          + left.dd[0][q]*right.d[s]
+          + left.dd[s][q]*right.d[0]
+          + left.d[0]*right.dd[s][q]
+          + left.d[s]*right.dd[0][q]
+          + left.d[q]*right.dd[0][s]
+          + left.value*right.dt_dd[i][q];
+    }
+  }
+  return result;
+}
+
+KOKKOS_INLINE_FUNCTION
+ReferenceJet UnaryJet(const ReferenceJet &input, const Real value,
+                      const Real first, const Real second,
+                      const Real third) {
+  ReferenceJet result;
+  result.value = value;
+  for (int a = 0; a < 4; ++a) {
+    result.d[a] = first*input.d[a];
+    for (int b = 0; b < 4; ++b) {
+      result.dd[a][b] = first*input.dd[a][b]
+                        + second*input.d[a]*input.d[b];
+    }
+  }
+  for (int i = 0; i < 3; ++i) {
+    const int s = i + 1;
+    for (int q = 0; q < 4; ++q) {
+      result.dt_dd[i][q] =
+          first*input.dt_dd[i][q]
+          + second*(input.d[0]*input.dd[s][q]
+                    + input.d[s]*input.dd[0][q]
+                    + input.d[q]*input.dd[0][s])
+          + third*input.d[0]*input.d[s]*input.d[q];
+    }
+  }
   return result;
 }
 
 KOKKOS_INLINE_FUNCTION
 ReferenceJet Reciprocal(const ReferenceJet &input) {
-  ReferenceJet result;
   const Real inverse = 1.0/input.value;
-  result.value = inverse;
-  for (int a = 0; a < 4; ++a) {
-    result.d[a] = -input.d[a]*inverse*inverse;
-    for (int b = 0; b < 4; ++b) {
-      result.dd[a][b] = 2.0*input.d[a]*input.d[b]*inverse*inverse*inverse
-                        - input.dd[a][b]*inverse*inverse;
-    }
-  }
-  return result;
+  const Real inverse2 = inverse*inverse;
+  return UnaryJet(input, inverse, -inverse2, 2.0*inverse2*inverse,
+                  -6.0*inverse2*inverse2);
 }
 
 KOKKOS_INLINE_FUNCTION
 ReferenceJet Log(const ReferenceJet &input) {
-  ReferenceJet result;
   const Real inverse = 1.0/input.value;
-  result.value = Kokkos::log(input.value);
-  for (int a = 0; a < 4; ++a) {
-    result.d[a] = input.d[a]*inverse;
-    for (int b = 0; b < 4; ++b) {
-      result.dd[a][b] = input.dd[a][b]*inverse
-                        - input.d[a]*input.d[b]*inverse*inverse;
-    }
-  }
-  return result;
+  return UnaryJet(input, Kokkos::log(input.value), inverse,
+                  -inverse*inverse, 2.0*inverse*inverse*inverse);
 }
 
 KOKKOS_INLINE_FUNCTION
 ReferenceJet Exp(const ReferenceJet &input) {
-  ReferenceJet result;
-  result.value = Kokkos::exp(input.value);
-  for (int a = 0; a < 4; ++a) {
-    result.d[a] = result.value*input.d[a];
-    for (int b = 0; b < 4; ++b) {
-      result.dd[a][b] = result.value
-                        *(input.dd[a][b] + input.d[a]*input.d[b]);
-    }
-  }
-  return result;
+  const Real value = Kokkos::exp(input.value);
+  return UnaryJet(input, value, value, value, value);
 }
 
 KOKKOS_INLINE_FUNCTION
 ReferenceJet Sqrt(const ReferenceJet &input) {
-  ReferenceJet result;
-  result.value = Kokkos::sqrt(input.value);
-  const Real inverse_two_root = 0.5/result.value;
-  const Real inverse_four_root3 = 0.25/(result.value*result.value*result.value);
-  for (int a = 0; a < 4; ++a) {
-    result.d[a] = inverse_two_root*input.d[a];
-    for (int b = 0; b < 4; ++b) {
-      result.dd[a][b] = inverse_two_root*input.dd[a][b]
-                        - inverse_four_root3*input.d[a]*input.d[b];
-    }
-  }
-  return result;
+  const Real value = Kokkos::sqrt(input.value);
+  const Real inverse_root = 1.0/value;
+  return UnaryJet(input, value, 0.5*inverse_root,
+                  -0.25*inverse_root*inverse_root*inverse_root,
+                  0.375*inverse_root*inverse_root*inverse_root
+                      *inverse_root*inverse_root);
 }
 
 KOKKOS_INLINE_FUNCTION

@@ -38,12 +38,23 @@ void StoreProviderJet(const ReferenceJet &jet, const int offset,
                      point.k, point.j, point.i) = jet.dd[p][q];
     }
   }
+  for (int i = 0; i < 3; ++i) {
+    for (int q = 0; q < 4; ++q) {
+      point.provider(point.m, RefJetMixedTimeThirdDerivative(offset, i, q),
+                     point.k, point.j, point.i) = jet.dt_dd[i][q];
+    }
+  }
+}
+
+KOKKOS_INLINE_FUNCTION
+constexpr int WorkspaceMetricJetOffset(const int a, const int b) {
+  return kRefWorkspaceMetricJet + 33*RefSymmetricPair4(a, b);
 }
 
 KOKKOS_INLINE_FUNCTION
 void StoreWorkspaceMetricJet(const ReferenceJet &jet, const int a, const int b,
                              const ReferenceWorkspacePoint &point) {
-  const int offset = kRefWorkspaceMetricJet + 21*(4*a + b);
+  const int offset = WorkspaceMetricJetOffset(a, b);
   point.workspace(point.m, offset, point.k, point.j, point.i) = jet.value;
   for (int p = 0; p < 4; ++p) {
     point.workspace(point.m, RefJetDerivative(offset, p),
@@ -53,34 +64,58 @@ void StoreWorkspaceMetricJet(const ReferenceJet &jet, const int a, const int b,
                       point.k, point.j, point.i) = jet.dd[p][q];
     }
   }
+  for (int i = 0; i < 3; ++i) {
+    for (int q = 0; q < 4; ++q) {
+      point.workspace(point.m, RefJetMixedTimeThirdDerivative(offset, i, q),
+                      point.k, point.j, point.i) = jet.dt_dd[i][q];
+    }
+  }
 }
 
 KOKKOS_INLINE_FUNCTION
-ReferenceJet LoadWorkspaceMetricJet(const ReferenceWorkspacePoint &point,
-  const int a, const int b) {
-  const int offset = kRefWorkspaceMetricJet + 21*(4*a + b);
-  ReferenceJet jet;
-  jet.value = point.workspace(point.m, offset, point.k, point.j, point.i);
-  for (int p = 0; p < 4; ++p) {
-    jet.d[p] = point.workspace(point.m, RefJetDerivative(offset, p),
-                              point.k, point.j, point.i);
-    for (int q = 0; q < 4; ++q) {
-      jet.dd[p][q] = point.workspace(
-          point.m, RefJetSecondDerivative(offset, p, q),
-          point.k, point.j, point.i);
-    }
-  }
-  return jet;
+Real WorkspaceMetric(const ReferenceWorkspacePoint &point,
+                     const int a, const int b) {
+  return point.workspace(point.m, WorkspaceMetricJetOffset(a, b),
+                         point.k, point.j, point.i);
+}
+
+KOKKOS_INLINE_FUNCTION
+Real WorkspaceDMetric(const ReferenceWorkspacePoint &point, const int p,
+                      const int a, const int b) {
+  return point.workspace(point.m,
+      RefJetDerivative(WorkspaceMetricJetOffset(a, b), p),
+      point.k, point.j, point.i);
+}
+
+KOKKOS_INLINE_FUNCTION
+Real WorkspaceDDMetric(const ReferenceWorkspacePoint &point, const int p,
+                       const int q, const int a, const int b) {
+  return point.workspace(point.m,
+      RefJetSecondDerivative(WorkspaceMetricJetOffset(a, b), p, q),
+      point.k, point.j, point.i);
+}
+
+KOKKOS_INLINE_FUNCTION
+Real WorkspaceDtDDMetric(const ReferenceWorkspacePoint &point, const int i,
+                         const int q, const int a, const int b) {
+  return point.workspace(point.m,
+      RefJetMixedTimeThirdDerivative(WorkspaceMetricJetOffset(a, b), i, q),
+      point.k, point.j, point.i);
 }
 
 KOKKOS_INLINE_FUNCTION
 void StoreWorkspaceInverseMetricJet(const ReferenceJet &jet,
                                     const int a, const int b,
                                     const ReferenceWorkspacePoint &point) {
-  const int offset = kRefWorkspaceInverseMetricJet + 5*(4*a + b);
+  const int offset = kRefWorkspaceInverseMetricJet
+                     + 8*RefSymmetricPair4(a, b);
   point.workspace(point.m, offset, point.k, point.j, point.i) = jet.value;
   for (int p = 0; p < 4; ++p) {
     point.workspace(point.m, offset + 1 + p, point.k, point.j, point.i) = jet.d[p];
+  }
+  for (int i = 0; i < 3; ++i) {
+    point.workspace(point.m, offset + 5 + i, point.k, point.j, point.i) =
+        jet.dd[0][i + 1];
   }
 }
 
@@ -88,7 +123,8 @@ KOKKOS_INLINE_FUNCTION
 Real WorkspaceInverseMetric(const ReferenceWorkspacePoint &point,
                             const int a, const int b) {
   return point.workspace(
-      point.m, kRefWorkspaceInverseMetricJet + 5*(4*a + b),
+      point.m, kRefWorkspaceInverseMetricJet
+                   + 8*RefSymmetricPair4(a, b),
       point.k, point.j, point.i);
 }
 
@@ -97,7 +133,16 @@ Real WorkspaceDInverseMetric(const ReferenceWorkspacePoint &point,
                              const int p, const int a, const int b) {
   return point.workspace(
       point.m, kRefWorkspaceInverseMetricJet
-                 + 5*(4*a + b) + 1 + p,
+                 + 8*RefSymmetricPair4(a, b) + 1 + p,
+      point.k, point.j, point.i);
+}
+
+KOKKOS_INLINE_FUNCTION
+Real WorkspaceDtDInverseMetric(const ReferenceWorkspacePoint &point,
+                               const int i, const int a, const int b) {
+  return point.workspace(
+      point.m, kRefWorkspaceInverseMetricJet
+                   + 8*RefSymmetricPair4(a, b) + 5 + i,
       point.k, point.j, point.i);
 }
 
@@ -112,6 +157,13 @@ ReferenceJet LoadProviderJet(const ReferenceProviderPoint &point,
     for (int q = 0; q < 4; ++q) {
       jet.dd[p][q] = point.provider(
           point.m, RefJetSecondDerivative(offset, p, q),
+          point.k, point.j, point.i);
+    }
+  }
+  for (int i = 0; i < 3; ++i) {
+    for (int q = 0; q < 4; ++q) {
+      jet.dt_dd[i][q] = point.provider(
+          point.m, RefJetMixedTimeThirdDerivative(offset, i, q),
           point.k, point.j, point.i);
     }
   }

@@ -18,6 +18,37 @@ struct ReferenceGaugeBaseline {
   bool valid;
 };
 
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+Real ReferenceCoframeDerivative(const Reference &reference, const int p,
+                                const int A, const int a) {
+  Real derivative = 0.0;
+  for (int B = 0; B < 4; ++B) {
+    for (int b = 0; b < 4; ++b) {
+      derivative -= ReferenceCoframe(reference, B, a)
+                    *ReferenceDFrame(reference, p, B, b)
+                    *ReferenceCoframe(reference, A, b);
+    }
+  }
+  return derivative;
+}
+
+// d_t Omega_{A lambda}^B for
+// Omega_{A lambda}^B=(d_lambda e_A^a) theta^B_a.
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+Real ReferenceDtFrameMotion(const Reference &reference, const int A,
+                            const int lambda, const int B) {
+  Real derivative = 0.0;
+  for (int a = 0; a < 4; ++a) {
+    derivative += ReferenceDDFrame(reference, 0, lambda, A, a)
+                  *ReferenceCoframe(reference, B, a)
+                  + ReferenceDFrame(reference, lambda, A, a)
+                    *ReferenceCoframeDerivative(reference, 0, B, a);
+  }
+  return derivative;
+}
+
 // Construct the ordinary GH source of the reference metric,
 //
 //   Href_a = -gbar_ab gbar^{cd} barGamma^b_cd,

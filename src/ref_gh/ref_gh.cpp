@@ -549,12 +549,6 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
                  "gauge_driver_enabled=true." << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  if (opt.gauge_reference_subtraction && opt.reference_time_dependent) {
-    std::cout << "### FATAL ERROR: time-dependent reference gauge subtraction "
-                 "requires an analytic theta-baseline time derivative and is "
-                 "not yet enabled." << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
   if (opt.reference_controlled && opt.continuation_mode != 0
       && (opt.transition_path != kFixedCorePath || opt.phi_ordering != 0
           || opt.controller_enabled || controller.delta_q != 0.0

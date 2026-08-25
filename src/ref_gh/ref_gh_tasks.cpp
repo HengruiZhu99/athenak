@@ -19,6 +19,7 @@
 #include "ref_gh/feedback_continuation.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_cache.hpp"
+#include "ref_gh/reference_gauge_baseline.hpp"
 #include "ref_gh/reference_provider_cache.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 #include "ref_gh/stationary_gauge_data.hpp"
@@ -989,15 +990,16 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
 
     Kokkos::parallel_for(
     "ref_gh reference metric jets",
-    Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*16), KOKKOS_LAMBDA(const int idx) {
+    Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*10), KOKKOS_LAMBDA(const int idx) {
       const int component = idx/ncells;
       int work = idx % ncells;
       const int i = work % n1; work /= n1;
       const int j = work % n2; work /= n2;
       const int k = work % n3;
       const int m = work/n3;
-      const int a = component/4;
-      const int b = component % 4;
+      int a = 0;
+      int b = 0;
+      RefDecodeSymmetricPair4(component, a, b);
       const Real x = CellCenterX(i - indcs.is, indcs.nx1,
                                  size.d_view(m).x1min, size.d_view(m).x1max);
       const Real y = CellCenterX(j - indcs.js, indcs.nx2,
@@ -1035,17 +1037,17 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       Real christoffel = 0.0;
       Real d_christoffel[4] = {0.0, 0.0, 0.0, 0.0}; // NOLINT
       for (int ell = 0; ell < 4; ++ell) {
-        const ReferenceJet metric_ell_c = LoadWorkspaceMetricJet(point, ell, c);
-        const ReferenceJet metric_ell_b = LoadWorkspaceMetricJet(point, ell, b);
-        const ReferenceJet metric_b_c = LoadWorkspaceMetricJet(point, b, c);
-        const Real first_kind = 0.5*(metric_ell_c.d[b] + metric_ell_b.d[c]
-                                     - metric_b_c.d[ell]);
+        const Real first_kind = 0.5*(
+            WorkspaceDMetric(point, b, ell, c)
+            + WorkspaceDMetric(point, c, ell, b)
+            - WorkspaceDMetric(point, ell, b, c));
         const Real inverse = WorkspaceInverseMetric(point, a, ell);
         christoffel += inverse*first_kind;
         for (int p = 0; p < 4; ++p) {
-          const Real d_first = 0.5*(metric_ell_c.dd[p][b]
-                                    + metric_ell_b.dd[p][c]
-                                    - metric_b_c.dd[p][ell]);
+          const Real d_first = 0.5*(
+              WorkspaceDDMetric(point, p, b, ell, c)
+              + WorkspaceDDMetric(point, p, c, ell, b)
+              - WorkspaceDDMetric(point, p, ell, b, c));
           d_christoffel[p] +=
               WorkspaceDInverseMetric(point, p, a, ell)*first_kind
               + inverse*d_first;
@@ -1057,6 +1059,187 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
             d_christoffel[p];
       }
     });
+
+    if (opt.reference_time_dependent) {
+      // A time-dependent theta baseline needs d_t d_i Href.  Compute its
+      // contravariant coordinate components while the mixed metric jets still
+      // occupy the update workspace.  The twelve diagnostic-tail slots are
+      // scratch here and are consumed immediately by the following kernel.
+      Kokkos::parallel_for(
+      "ref_gh reference mixed gauge derivative",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*12),
+      KOKKOS_LAMBDA(const int idx) {
+        const int component = idx/ncells;
+        int work = idx % ncells;
+        const int i = work % n1; work /= n1;
+        const int j = work % n2; work /= n2;
+        const int k = work % n3;
+        const int m = work/n3;
+        const int a = component/3;
+        const int spatial = component % 3;
+        const int s = spatial + 1;
+        const ReferenceWorkspacePoint workspace_point{workspace, m, k, j, i};
+        const ReferenceCachePoint reference{evolution, diagnostic, m, k, j, i};
+        Real dt_di_h_upper = 0.0;
+        for (int b = 0; b < 4; ++b) {
+          for (int c = 0; c < 4; ++c) {
+            Real dt_di_christoffel = 0.0;
+            for (int ell = 0; ell < 4; ++ell) {
+              const Real first = 0.5*(
+                  WorkspaceDMetric(workspace_point, b, ell, c)
+                  + WorkspaceDMetric(workspace_point, c, ell, b)
+                  - WorkspaceDMetric(workspace_point, ell, b, c));
+              const Real first_t = 0.5*(
+                  WorkspaceDDMetric(workspace_point, 0, b, ell, c)
+                  + WorkspaceDDMetric(workspace_point, 0, c, ell, b)
+                  - WorkspaceDDMetric(workspace_point, 0, ell, b, c));
+              const Real first_i = 0.5*(
+                  WorkspaceDDMetric(workspace_point, s, b, ell, c)
+                  + WorkspaceDDMetric(workspace_point, s, c, ell, b)
+                  - WorkspaceDDMetric(workspace_point, s, ell, b, c));
+              const Real first_ti = 0.5*(
+                  WorkspaceDtDDMetric(workspace_point, spatial, b, ell, c)
+                  + WorkspaceDtDDMetric(workspace_point, spatial, c, ell, b)
+                  - WorkspaceDtDDMetric(
+                        workspace_point, spatial, ell, b, c));
+              dt_di_christoffel +=
+                  WorkspaceDtDInverseMetric(workspace_point, spatial, a, ell)
+                    *first
+                  + WorkspaceDInverseMetric(workspace_point, s, a, ell)
+                    *first_t
+                  + WorkspaceDInverseMetric(workspace_point, 0, a, ell)
+                    *first_i
+                  + WorkspaceInverseMetric(workspace_point, a, ell)*first_ti;
+            }
+            dt_di_h_upper -=
+                WorkspaceDtDInverseMetric(workspace_point, spatial, b, c)
+                  *ReferenceChristoffel(reference, a, b, c)
+                + WorkspaceDInverseMetric(workspace_point, s, b, c)
+                  *ReferenceDChristoffel(reference, 0, a, b, c)
+                + WorkspaceDInverseMetric(workspace_point, 0, b, c)
+                  *ReferenceDChristoffel(reference, s, a, b, c)
+                + WorkspaceInverseMetric(workspace_point, b, c)
+                  *dt_di_christoffel;
+          }
+        }
+        diagnostic(m, kRefDtTheta + component, k, j, i) = dt_di_h_upper;
+      });
+
+      // Convert d_t d_i h^a to frame-projected d_t d_i H_A and differentiate
+      // theta_ref=-beta^i d_i H-(Omega_t-beta^i Omega_i)H analytically.
+      Kokkos::parallel_for(
+      "ref_gh reference theta time derivative",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
+      KOKKOS_LAMBDA(const int idx) {
+        int work = idx;
+        const int i = work % n1; work /= n1;
+        const int j = work % n2; work /= n2;
+        const int k = work % n3;
+        const int m = work/n3;
+        const ReferenceWorkspacePoint workspace_point{workspace, m, k, j, i};
+        const ReferenceCachePoint reference{evolution, diagnostic, m, k, j, i};
+        Real h_upper[4] = {};       // NOLINT(runtime/arrays)
+        Real d_h_upper[4][4] = {};  // NOLINT(runtime/arrays)
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            for (int c = 0; c < 4; ++c) {
+              h_upper[a] -= WorkspaceInverseMetric(workspace_point, b, c)
+                            *ReferenceChristoffel(reference, a, b, c);
+              for (int p = 0; p < 4; ++p) {
+                d_h_upper[p][a] -=
+                    WorkspaceDInverseMetric(workspace_point, p, b, c)
+                      *ReferenceChristoffel(reference, a, b, c)
+                    + WorkspaceInverseMetric(workspace_point, b, c)
+                      *ReferenceDChristoffel(reference, p, a, b, c);
+              }
+            }
+          }
+        }
+        Real h_lower[4] = {};          // NOLINT(runtime/arrays)
+        Real d_h_lower[4][4] = {};     // NOLINT(runtime/arrays)
+        Real dt_di_h_lower[3][4] = {}; // NOLINT(runtime/arrays)
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            const Real metric = WorkspaceMetric(workspace_point, a, b);
+            h_lower[a] += metric*h_upper[b];
+            for (int p = 0; p < 4; ++p) {
+              d_h_lower[p][a] +=
+                  WorkspaceDMetric(workspace_point, p, a, b)*h_upper[b]
+                  + metric*d_h_upper[p][b];
+            }
+            for (int spatial = 0; spatial < 3; ++spatial) {
+              const int s = spatial + 1;
+              const Real dt_di_h_upper = diagnostic(
+                  m, kRefDtTheta + 3*b + spatial, k, j, i);
+              dt_di_h_lower[spatial][a] +=
+                  WorkspaceDDMetric(workspace_point, 0, s, a, b)*h_upper[b]
+                  + WorkspaceDMetric(workspace_point, s, a, b)
+                    *d_h_upper[0][b]
+                  + WorkspaceDMetric(workspace_point, 0, a, b)
+                    *d_h_upper[s][b]
+                  + metric*dt_di_h_upper;
+            }
+          }
+        }
+        Real hhat[4] = {};             // NOLINT(runtime/arrays)
+        Real d_hhat[4][4] = {};        // NOLINT(runtime/arrays)
+        Real dt_di_hhat[3][4] = {};    // NOLINT(runtime/arrays)
+        for (int A = 0; A < 4; ++A) {
+          for (int a = 0; a < 4; ++a) {
+            hhat[A] += ReferenceFrame(reference, A, a)*h_lower[a];
+            for (int p = 0; p < 4; ++p) {
+              d_hhat[p][A] += ReferenceDFrame(reference, p, A, a)*h_lower[a]
+                              + ReferenceFrame(reference, A, a)*d_h_lower[p][a];
+            }
+            for (int spatial = 0; spatial < 3; ++spatial) {
+              const int s = spatial + 1;
+              dt_di_hhat[spatial][A] +=
+                  ReferenceDDFrame(reference, 0, s, A, a)*h_lower[a]
+                  + ReferenceDFrame(reference, s, A, a)*d_h_lower[0][a]
+                  + ReferenceDFrame(reference, 0, A, a)*d_h_lower[s][a]
+                  + ReferenceFrame(reference, A, a)
+                    *dt_di_h_lower[spatial][a];
+            }
+          }
+        }
+        const Real inverse00 =
+            WorkspaceInverseMetric(workspace_point, 0, 0);
+        const Real lapse = 1.0/Kokkos::sqrt(-inverse00);
+        const Real dt_lapse = 0.5*lapse*lapse*lapse
+            *WorkspaceDInverseMetric(workspace_point, 0, 0, 0);
+        Real shift[3];     // NOLINT(runtime/arrays)
+        Real dt_shift[3];  // NOLINT(runtime/arrays)
+        for (int spatial = 0; spatial < 3; ++spatial) {
+          const Real inverse0i = WorkspaceInverseMetric(
+              workspace_point, 0, spatial + 1);
+          shift[spatial] = lapse*lapse*inverse0i;
+          dt_shift[spatial] = 2.0*lapse*dt_lapse*inverse0i
+              + lapse*lapse*WorkspaceDInverseMetric(
+                    workspace_point, 0, 0, spatial + 1);
+        }
+        for (int A = 0; A < 4; ++A) {
+          Real dt_theta = 0.0;
+          for (int spatial = 0; spatial < 3; ++spatial) {
+            dt_theta -= dt_shift[spatial]*d_hhat[spatial + 1][A]
+                        + shift[spatial]*dt_di_hhat[spatial][A];
+          }
+          for (int B = 0; B < 4; ++B) {
+            Real motion = ReferenceFrameMotion(reference, A, 0, B);
+            Real dt_motion = ReferenceDtFrameMotion(reference, A, 0, B);
+            for (int spatial = 0; spatial < 3; ++spatial) {
+              const Real spatial_motion = ReferenceFrameMotion(
+                  reference, A, spatial + 1, B);
+              motion -= shift[spatial]*spatial_motion;
+              dt_motion -= dt_shift[spatial]*spatial_motion
+                  + shift[spatial]*ReferenceDtFrameMotion(
+                        reference, A, spatial + 1, B);
+            }
+            dt_theta -= dt_motion*hhat[B] + motion*d_hhat[0][B];
+          }
+          diagnostic(m, kRefDtTheta + A, k, j, i) = dt_theta;
+        }
+      });
+    }
 
     // Stage 5: spin connection, compressed in its metric antisymmetric pair.
     Kokkos::parallel_for(
@@ -1367,6 +1550,72 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
     if (global_variable::my_rank == 0) {
       std::cout << "reference-GH production cache oracle conditioned scaled Linf = "
                 << maximum_error.val << ", time=" << time << std::endl;
+    }
+  }
+
+  if (opt.validate_reference_cache && opt.reference_time_dependent) {
+    // Validation-only independent oracle: a centered fourth-order time
+    // difference of the direct provider's theta baseline.  Production never
+    // differentiates reference data numerically; it uses the mixed analytic
+    // jets assembled above.
+    using MaxLoc = Kokkos::MaxLoc<Real, int>;
+    MaxLoc::value_type maximum_error;
+    constexpr Real step = 2.0e-4;
+    Kokkos::parallel_reduce(
+    "ref_gh reference theta derivative oracle",
+    Kokkos::RangePolicy<>(DevExeSpace(),
+    0, pmy_pack->nmb_thispack*n3*n2*n1*4),
+    KOKKOS_LAMBDA(const int idx, MaxLoc::value_type &local_maximum) {
+      int work = idx;
+      const int A = work % 4; work /= 4;
+      const int i = work % n1; work /= n1;
+      const int j = work % n2; work /= n2;
+      const int k = work % n3;
+      const int m = work/n3;
+      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min, size.d_view(m).x1max);
+      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                 size.d_view(m).x2min, size.d_view(m).x2max);
+      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                 size.d_view(m).x3min, size.d_view(m).x3max);
+      Real theta[4];  // NOLINT(runtime/arrays)
+      constexpr Real offsets[4] = {-2.0, -1.0, 1.0, 2.0}; // NOLINT
+      for (int sample = 0; sample < 4; ++sample) {
+        ReferenceGeometry oracle;
+        GetReferenceGeometry(reference_kind, table, mass, center_x, center_y,
+                             center_z, time + offsets[sample]*step,
+                             x, y, z, controlled, generic, oracle);
+        const ReferenceGaugeBaseline baseline =
+            ComputeReferenceGaugeBaseline(oracle);
+        theta[sample] = baseline.valid ? baseline.theta[A] : NAN;
+      }
+      const Real finite_difference =
+          (theta[0] - 8.0*theta[1] + 8.0*theta[2] - theta[3])/(12.0*step);
+      const ReferenceCachePoint cached{evolution, diagnostic, m, k, j, i};
+      const Real analytic = ReferenceDtTheta(cached, A);
+      Real scale = 1.0;
+      if (Kokkos::abs(analytic) > scale) scale = Kokkos::abs(analytic);
+      if (Kokkos::abs(finite_difference) > scale) {
+        scale = Kokkos::abs(finite_difference);
+      }
+      const Real error = Kokkos::abs(analytic - finite_difference)/scale;
+      if (error > local_maximum.val) {
+        local_maximum.val = error;
+        local_maximum.loc = A;
+      }
+    }, MaxLoc(maximum_error));
+    constexpr Real tolerance = 1.0e-8;
+    if (!(maximum_error.val <= tolerance)) {
+      std::cout << "### FATAL ERROR: Ref-GH analytic reference theta time "
+                   "derivative disagrees with fourth-order validation oracle: "
+                << maximum_error.val << " component=" << maximum_error.loc
+                << " tolerance=" << tolerance << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    if (global_variable::my_rank == 0) {
+      std::cout << "reference-GH analytic theta time derivative oracle passed: "
+                << "scaled Linf=" << maximum_error.val
+                << ", time=" << time << std::endl;
     }
   }
 }
