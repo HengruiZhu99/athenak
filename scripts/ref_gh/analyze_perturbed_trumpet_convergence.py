@@ -169,13 +169,14 @@ def norm_summary(coarse: np.ndarray, medium: np.ndarray, fine: np.ndarray,
     second_linf = float(np.max(np.abs(second)))
     ratio_l2 = first_l2/second_l2 if second_l2 > 0.0 else math.nan
     ratio_linf = first_linf/second_linf if second_linf > 0.0 else math.nan
+    n0, n1, n2 = resolutions
     return {
-        "difference_64_96_L2": first_l2,
-        "difference_96_128_L2": second_l2,
+        f"difference_{n0}_{n1}_L2": first_l2,
+        f"difference_{n1}_{n2}_L2": second_l2,
         "ratio_L2": ratio_l2,
         "order_L2": effective_self_order(ratio_l2, resolutions),
-        "difference_64_96_Linf": first_linf,
-        "difference_96_128_Linf": second_linf,
+        f"difference_{n0}_{n1}_Linf": first_linf,
+        f"difference_{n1}_{n2}_Linf": second_linf,
         "ratio_Linf": ratio_linf,
         "order_Linf": effective_self_order(ratio_linf, resolutions),
     }
@@ -194,6 +195,31 @@ def load_triplet(paths, target_n: int):
                                for item in loaded], loaded
 
 
+def puncture_clear_mask(metadata: dict, target_n: int, stencil_radius: int,
+                        puncture) -> np.ndarray:
+    """Mask target samples whose complete source support avoids the puncture.
+
+    A target interpolation depends on a tensor-product set of source cells.
+    It is rejected if any contributing source cell has an axis-aligned
+    finite-difference support box containing the puncture.
+    """
+    source_shape = metadata["data"].shape[-3:][::-1]
+    support_near = []
+    for axis, (lower, upper) in enumerate(metadata["bounds"]):
+        n_source = source_shape[axis]
+        source = lower + (np.arange(n_source) + 0.5)*(upper - lower)/n_source
+        weights = interpolation_matrix(n_source, target_n, lower, upper)
+        reach = stencil_radius*(upper - lower)/n_source
+        contributes = np.abs(weights) > 32.0*np.finfo(np.float64).eps
+        support_near.append(np.any(
+            contributes & (np.abs(source[None, :] - puncture[axis]) <= reach),
+            axis=1))
+    invalid = (support_near[2][:, None, None]
+               & support_near[1][None, :, None]
+               & support_near[0][None, None, :])
+    return ~invalid
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--field", nargs=3, type=Path, required=True,
@@ -202,6 +228,9 @@ def main() -> None:
                         metavar=("N64", "N96", "N128"))
     parser.add_argument("--target-n", type=int, default=32)
     parser.add_argument("--analysis-radius", type=float, default=1.0)
+    parser.add_argument("--fd-stencil-radius", type=int, default=2)
+    parser.add_argument("--puncture", nargs=3, type=float, default=(0.0, 0.0, 0.0),
+                        metavar=("X", "Y", "Z"))
     parser.add_argument("--expected-time", type=float)
     parser.add_argument("--resolutions", nargs=3, type=int, default=(64, 96, 128),
                         metavar=("N0", "N1", "N2"))
@@ -223,6 +252,13 @@ def main() -> None:
     z, y, x = np.meshgrid(coordinates[2], coordinates[1], coordinates[0],
                           indexing="ij")
     mask = x*x + y*y + z*z < args.analysis_radius*args.analysis_radius
+    clear_masks = [puncture_clear_mask(
+        item, args.target_n, args.fd_stencil_radius, args.puncture)
+        for item in field_meta + constraint_meta]
+    for clear in clear_masks:
+        mask &= clear
+    if not np.any(mask):
+        raise ValueError("puncture-support and radius masks remove every sample")
 
     variable_size = field_meta[0]["variable_size"]
     constraint_variable_size = constraint_meta[0]["variable_size"]
@@ -233,6 +269,14 @@ def main() -> None:
         "field_precision": "binary64" if binary64 else "binary32",
         "target_n": args.target_n,
         "analysis_radius": args.analysis_radius,
+        "analysis_sample_count": int(np.count_nonzero(mask)),
+        "puncture_stencil_mask": {
+            "enabled": True,
+            "fd_stencil_radius": args.fd_stencil_radius,
+            "puncture": args.puncture,
+            "rule": ("reject a target if any tensor-interpolation source cell "
+                     "has a finite-difference support box containing the puncture"),
+        },
         "resolutions": args.resolutions,
         "field_variables": field_names,
         "primary_field_variables": field_names if binary64 else field_names[2:],
