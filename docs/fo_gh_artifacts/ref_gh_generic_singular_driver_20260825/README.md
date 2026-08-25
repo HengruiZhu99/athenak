@@ -22,6 +22,10 @@ checkpoint.  It does not contain field dumps or restart files.
   maxima for all requested tau, Gaussian-width, and resolution combinations.
 - `local/generic_reference_scan_analysis.json`: model fits and prescribed-q
   verdict produced by `scripts/ref_gh/analyze_generic_singular_reference.py`.
+- `local/gamma_damping_20260825/`: current-build raw histories, final summaries,
+  and analyses for the gamma0 transverse GH mode and the gamma2 reduction/curl
+  matrix with KO off and on. The maximum trajectory errors are `5.35e-7` for
+  gamma0, `7.07e-7` for gamma2 reduction, and `2.87e-6` for gamma2 curl.
 
 ## Exact local commands
 

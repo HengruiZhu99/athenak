@@ -156,7 +156,7 @@ Thus the claim ``local puncture-exponent estimator established'' is not made
 under the controlling same-shell comparison, despite the analytic success of
 the first-order-state path.
 
-\section{Standard $\gamma_2$ checkpoint}
+\section{Standard $\gamma_0/\gamma_2$ checkpoint}
 
 Runtime \texttt{gamma2} defaults to zero. For fixed $\gamma_1=-1$, production
 now adds
@@ -167,9 +167,27 @@ now adds
 The device gate checks the forward/inverse characteristic map
 $u^{1\pm}=\Pi\pm s^I\Phi_I-\gamma_2\Psi$, the standard symmetrizer, and the
 frozen reduction and curl subsidiary damping to $3.33\times10^{-16}$.
-In a bounded robust-Minkowski CPU comparison at $t=0.2$, the reduction norm
-changes by 0.9725 for $\gamma_2=0$ and by 0.7962 for $\gamma_2=1$; both runs
-remain finite. This is not long-time or GPU qualification.
+
+A six-case periodic runtime matrix through $t=0.2$ covers
+$\gamma_2=0,0.5,1$ with KO off and on.  Reduction and curl histories obey
+\begin{equation}
+ \|C(t)\|_2=\|C_{\gamma_2=0}(t)\|_2e^{-\gamma_2t}
+\end{equation}
+with maximum absolute growth-factor errors $7.07\times10^{-7}$ and
+$2.87\times10^{-6}$.  The $\gamma_2=0$ histories independently measure the
+KO contribution.
+
+For $\gamma_0$, a reduction-clean transverse GH-constraint eigenmode is built
+from Eq.~(21) of Ref.~\cite{lindblom2006}.  Matrices at
+$\gamma_0=0.25,0.5,1$, with KO off and on, obey
+\begin{equation}
+ \|C_y(t)\|_2=\|C_y(0)\|_2
+ e^{-(\gamma_0/2+\lambda_{\rm KO})t}
+\end{equation}
+to $5.35\times10^{-7}$.  The largest accompanying reduction norm is
+$7.19\times10^{-18}$ and curl is zero.  These are local linearized/robust
+subsidiary tests, not nonlinear black-hole, long-time, SMR, or GPU
+qualification.
 
 \section{Hyperbolic gauge and static-reference regularization}
 
@@ -257,7 +275,7 @@ Gate & Status\\
 First-order-state estimator, analytic initial geometries & Passed locally\\
 Direct-FD same-shell convergence & \status{Failed}\\
 Prescribed Gaussian two-jets and staged cache & Passed locally on Kokkos Serial\\
-Runtime $\gamma_2$ algebra and bounded robust Minkowski & Passed locally\\
+Runtime $\gamma_0/\gamma_2$ GH, reduction, curl subsidiary matrices & Passed locally\\
 Closed-loop $q$ control & Not started; blocked by estimator gate\\
 Dynamic $\widehat H/\theta/\Upsilon$ gauge system & Implemented; local oracles pass\\
 Exact stationary trumpet through $t=1$ & Roundoff fixed point locally\\

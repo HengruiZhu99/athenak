@@ -1,0 +1,127 @@
+{
+  "absolute_tolerance": 2e-05,
+  "gh_constraint_qualification": "not assessed by this matrix; the random GH seed does not have the single exponential gamma2 subsidiary prediction",
+  "history_columns": {
+    "curl_l2_squared": 5,
+    "gh_l2_squared": 3,
+    "reduction_l2_squared": 4
+  },
+  "matrix": {
+    "dissipation": [
+      0.0,
+      0.02
+    ],
+    "gamma2": [
+      0.0,
+      0.5,
+      1.0
+    ]
+  },
+  "prediction": "C_L2(gamma2,diss,t) = C_L2(0,diss,t) exp(-gamma2 t)",
+  "records": [
+    {
+      "curl_pass": true,
+      "dissipation": 0.0,
+      "final_curl_growth": 1.0,
+      "final_curl_ko_factor": 1.0,
+      "final_curl_predicted": 1.0,
+      "final_gh_growth": 0.9255861061753148,
+      "final_reduction_growth": 1.0,
+      "final_reduction_ko_factor": 1.0,
+      "final_reduction_predicted": 1.0,
+      "final_time": 0.2,
+      "gamma2": 0.0,
+      "max_curl_absolute_error": 0.0,
+      "max_reduction_absolute_error": 0.0,
+      "reduction_pass": true,
+      "tag": "g0p0_d0p0"
+    },
+    {
+      "curl_pass": true,
+      "dissipation": 0.0,
+      "final_curl_growth": 0.9048382303051906,
+      "final_curl_ko_factor": 1.0,
+      "final_curl_predicted": 0.9048374180359595,
+      "final_gh_growth": 0.9693230705680357,
+      "final_reduction_growth": 0.9048375220653099,
+      "final_reduction_ko_factor": 1.0,
+      "final_reduction_predicted": 0.9048374180359595,
+      "final_time": 0.2,
+      "gamma2": 0.5,
+      "max_curl_absolute_error": 1.9677801844641962e-06,
+      "max_reduction_absolute_error": 8.993432522030886e-07,
+      "reduction_pass": true,
+      "tag": "g0p5_d0p0"
+    },
+    {
+      "curl_pass": true,
+      "dissipation": 0.0,
+      "final_curl_growth": 0.8187316056157844,
+      "final_curl_ko_factor": 1.0,
+      "final_curl_predicted": 0.8187307530779818,
+      "final_gh_growth": 1.1469274034845713,
+      "final_reduction_growth": 0.8187312205075479,
+      "final_reduction_ko_factor": 1.0,
+      "final_reduction_predicted": 0.8187307530779818,
+      "final_time": 0.2,
+      "gamma2": 1.0,
+      "max_curl_absolute_error": 1.9677801844641962e-06,
+      "max_reduction_absolute_error": 6.297480950046008e-07,
+      "reduction_pass": true,
+      "tag": "g1p0_d0p0"
+    },
+    {
+      "curl_pass": true,
+      "dissipation": 0.02,
+      "final_curl_growth": 0.9718943688484402,
+      "final_curl_ko_factor": 0.9718943688484402,
+      "final_curl_predicted": 0.9718943688484402,
+      "final_gh_growth": 0.8990018915032115,
+      "final_reduction_growth": 0.9720308640269057,
+      "final_reduction_ko_factor": 0.9720308640269057,
+      "final_reduction_predicted": 0.9720308640269057,
+      "final_time": 0.2,
+      "gamma2": 0.0,
+      "max_curl_absolute_error": 0.0,
+      "max_reduction_absolute_error": 0.0,
+      "reduction_pass": true,
+      "tag": "g0p0_d0p02"
+    },
+    {
+      "curl_pass": true,
+      "dissipation": 0.02,
+      "final_curl_growth": 0.8794065901446825,
+      "final_curl_ko_factor": 0.9718943688484402,
+      "final_curl_predicted": 0.8794063913125111,
+      "final_gh_growth": 0.9419554184032666,
+      "final_reduction_growth": 0.8795297921821209,
+      "final_reduction_ko_factor": 0.9720308640269057,
+      "final_reduction_predicted": 0.8795298972573682,
+      "final_time": 0.2,
+      "gamma2": 0.5,
+      "max_curl_absolute_error": 2.5191994493800607e-06,
+      "max_reduction_absolute_error": 6.499371214552241e-07,
+      "reduction_pass": true,
+      "tag": "g0p5_d0p02"
+    },
+    {
+      "curl_pass": true,
+      "dissipation": 0.02,
+      "final_curl_growth": 0.7957201494142386,
+      "final_curl_ko_factor": 0.9718943688484402,
+      "final_curl_predicted": 0.7957198085195333,
+      "final_gh_growth": 1.1148151646116435,
+      "final_reduction_growth": 0.7958314090791436,
+      "final_reduction_ko_factor": 0.9720308640269057,
+      "final_reduction_predicted": 0.7958315613197899,
+      "final_time": 0.2,
+      "gamma2": 1.0,
+      "max_curl_absolute_error": 2.863621965665253e-06,
+      "max_reduction_absolute_error": 7.063396911810571e-07,
+      "reduction_pass": true,
+      "tag": "g1p0_d0p02"
+    }
+  ],
+  "reduction_and_curl_pass": true,
+  "schema": "ref-gh-gamma2-subsidiary-matrix-v1"
+}

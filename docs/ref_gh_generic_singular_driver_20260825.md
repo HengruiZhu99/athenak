@@ -142,7 +142,7 @@ The compact analyzer reports `prescribed_q_gate=PASS` and zero dynamic groups
 with classified positive algebraic growth.  This supports only the prescribed
 reference-jet gate; it is not evidence for a controller or a physical solution.
 
-## Standard gamma2 checkpoint
+## Standard gamma0/gamma2 checkpoint
 
 Runtime `<ref_gh>/gamma2` now defaults to zero. For fixed `gamma1=-1`, the
 implemented additions are
@@ -155,10 +155,28 @@ implemented additions are
 The device algebra checks the forward/inverse characteristic map
 \(u^{1\pm}=\Pi\pm s^I\Phi_I-\gamma_2\Psi\), the standard symmetrizer,
 and the frozen reduction and curl subsidiary damping to
-\(3.33\times10^{-16}\). In the bounded robust-Minkowski runtime comparison at
-\(t=0.2\), the reduction norm changes by a factor 0.9725 with `gamma2=0` and
-0.7962 with `gamma2=1`. Both runs remain finite. This focused CPU result is not
-a long-time or GPU qualification.
+\(3.33\times10^{-16}\).
+
+A six-case periodic runtime matrix at \(t=0.2\) now covers
+`gamma2=0,0.5,1.0` with KO off and on. Every reduction and curl history agrees
+with
+
+\[
+ \|C(t)\|_2=\|C_{\gamma_2=0}(t)\|_2e^{-\gamma_2t}
+\]
+
+to maximum absolute growth-factor errors \(7.07\times10^{-7}\) and
+\(2.87\times10^{-6}\), respectively. The `gamma2=0` histories independently
+measure the KO contribution instead of folding it into gamma2.
+
+For gamma0, a separate reduction-clean transverse GH constraint eigenmode is
+constructed from the linearized subsidiary system in Lindblom et al. (2006),
+Eq. (21). For `gamma0=0.25,0.5,1.0`, with KO off and on, all six histories obey
+\(\|C_y(t)\|_2=\|C_y(0)\|_2e^{-(\gamma_0/2+\lambda_{KO})t}\) with maximum
+error \(5.35\times10^{-7}\). The largest accompanying reduction norm is
+\(7.19\times10^{-18}\), and curl is zero. These tests establish the stated
+local linearized/robust subsidiary behavior, not nonlinear black-hole,
+long-time, SMR, or GPU constraint control.
 
 ## Subsequent hyperbolic-gauge checkpoint
 
@@ -207,7 +225,8 @@ Primary sources:
 - Direct-FD same-shell comparison: failed for a scale-invariance reason.
 - Prescribed Gaussian reference two-jets/cache: passed locally on Kokkos Serial.
 - Closed-loop q control: not started; blocked by the hard estimator gate.
-- Runtime gamma2: local algebra and bounded robust-Minkowski checks passed.
+- Standard gamma0/gamma2 damping: local algebra plus the KO-off/on GH,
+  reduction, and curl subsidiary matrices passed.
 - Hyperbolic gauge driver and physical target: implemented; local oracles and
   static-reference stationary fixed-point gate passed.
 - Regular perturbed stationary trumpet: finite and approximately fourth-order

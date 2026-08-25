@@ -1,0 +1,98 @@
+{
+  "absolute_tolerance": 2e-05,
+  "grid": {
+    "dissipation_operator_order": 6,
+    "fd_order": 4,
+    "length": 1.0,
+    "nx": [
+      32,
+      8,
+      8
+    ]
+  },
+  "linearized_prediction": "C_y L2(t) = C_y L2(0) exp[-(gamma0/2 + lambda_KO)t]",
+  "overall_pass": true,
+  "primary_reference_equation": "Lindblom et al. 2006 Eq. (21), transverse short-wavelength mode",
+  "purity_tolerance": 1e-14,
+  "records": [
+    {
+      "dissipation": 0.0,
+      "final_gh_growth": 0.975310207062348,
+      "final_gh_predicted": 0.9753099120283326,
+      "final_time": 0.2,
+      "gamma0": 0.25,
+      "ko_rate": 0.0,
+      "max_curl_l2": 0.0,
+      "max_gh_absolute_error": 4.5359096023656065e-07,
+      "max_reduction_l2": 7.181622379379189e-18,
+      "pass": true,
+      "tag": "g0p25_d0p0"
+    },
+    {
+      "dissipation": 0.0,
+      "final_gh_growth": 0.9512297304016523,
+      "final_gh_predicted": 0.951229424500714,
+      "final_time": 0.2,
+      "gamma0": 0.5,
+      "ko_rate": 0.0,
+      "max_curl_l2": 0.0,
+      "max_gh_absolute_error": 4.834678882792431e-07,
+      "max_reduction_l2": 7.069462497248288e-18,
+      "pass": true,
+      "tag": "g0p5_d0p0"
+    },
+    {
+      "dissipation": 0.0,
+      "final_gh_growth": 0.9048370018959216,
+      "final_gh_predicted": 0.9048374180359595,
+      "final_time": 0.2,
+      "gamma0": 1.0,
+      "ko_rate": 0.0,
+      "max_curl_l2": 0.0,
+      "max_gh_absolute_error": 5.343867809370906e-07,
+      "max_reduction_l2": 6.949287733286053e-18,
+      "pass": true,
+      "tag": "g1p0_d0p0"
+    },
+    {
+      "dissipation": 0.02,
+      "final_gh_growth": 0.975310207062348,
+      "final_gh_predicted": 0.9753098013239666,
+      "final_time": 0.2,
+      "gamma0": 0.25,
+      "ko_rate": 5.67534334371256e-07,
+      "max_curl_l2": 0.0,
+      "max_gh_absolute_error": 4.92794899775717e-07,
+      "max_reduction_l2": 7.18158756821916e-18,
+      "pass": true,
+      "tag": "g0p25_d0p02"
+    },
+    {
+      "dissipation": 0.02,
+      "final_gh_growth": 0.9512297304016523,
+      "final_gh_predicted": 0.9512293165296485,
+      "final_time": 0.2,
+      "gamma0": 0.5,
+      "ko_rate": 5.67534334371256e-07,
+      "max_curl_l2": 0.0,
+      "max_gh_absolute_error": 5.198021636454442e-07,
+      "max_reduction_l2": 7.069427133792384e-18,
+      "pass": true,
+      "tag": "g0p5_d0p02"
+    },
+    {
+      "dissipation": 0.02,
+      "final_gh_growth": 0.9048370018959216,
+      "final_gh_predicted": 0.904837315330705,
+      "final_time": 0.2,
+      "gamma0": 1.0,
+      "ko_rate": 5.67534334371256e-07,
+      "max_curl_l2": 0.0,
+      "max_gh_absolute_error": 5.171508163925864e-07,
+      "max_reduction_l2": 6.949258953298546e-18,
+      "pass": true,
+      "tag": "g1p0_d0p02"
+    }
+  ],
+  "schema": "ref-gh-gamma0-transverse-mode-v1"
+}
