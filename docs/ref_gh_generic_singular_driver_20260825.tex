@@ -1,0 +1,232 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,array,xcolor,hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
+\setlength{\emergencystretch}{3em}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\status}[1]{\textcolor{red!70!black}{\textbf{#1}}}
+\title{Generic Singular-Reference Ref-GH Driver\\
+Implementation and Qualification Checkpoint}
+\author{AthenaK Ref-GH development record}
+\date{24 August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report records the first implementation checkpoint for a generic
+puncture-adapted reference-frame generalized-harmonic system.  A
+reference-independent first-order-state puncture-exponent estimator and a
+Gaussian-localized analytic singular reference were implemented and exercised
+locally.  The analytic estimator and the prescribed reference-jet scan pass,
+but the required direct-finite-difference comparison fails for a scale
+invariance reason on the prescribed shell.  Therefore the overall status is
+\status{stopped at the initial estimator hard gate}.  No closed-loop control,
+hyperbolic gauge-driver, runtime $\gamma_2$, stationary black-hole, SMR, or PVC
+qualification claim is made.
+\end{abstract}
+
+\section{Provenance and scope}
+
+The mandated parent branch, its upstream-tracking reference, and the remote
+reference all equaled
+\path{0e248310a562c8a84327421eecf70f2f5d1da4a3} before editing.  Work was
+performed on \path{codex/ref-gh-generic-singular-driver-20260825}; the Kokkos
+submodule is \path{6739bc623081648af9e752b616d9671527922cbf}.  The local
+executable is a Release Kokkos Serial build with GCC 13.3.0.  Existing work in
+other worktrees was not modified.
+
+The three mechanisms remain conceptually separate:
+\begin{center}
+\begin{tabular}{>{\bfseries}l p{0.60\linewidth}}
+Reference geometry & regularizes singular evolved components,\\
+Hyperbolic gauge driver & controls the physical coordinate gauge,\\
+$\gamma_0/\gamma_2$ & controls GH and first-order constraints.
+\end{tabular}
+\end{center}
+Only the first mechanism and the initial exponent diagnostic are implemented
+in this checkpoint.
+
+\section{Primary equations and convention map}
+
+Ordinary GH uses
+\begin{equation}
+ C^a=\widehat H^a+g^{bc}\Gamma^a{}_{bc},
+\end{equation}
+while the background-covariant form is
+\begin{equation}
+ C^a=H_{\rm bg}^a+g^{bc}
+       \left(\Gamma^a{}_{bc}-\bar\Gamma^a{}_{bc}\right).
+\end{equation}
+Equality of the physical constraint gives the sign relation
+\begin{equation}
+ H_{\rm bg}^a=\widehat H^a+g^{bc}\bar\Gamma^a{}_{bc}.
+\end{equation}
+The parent source currently specializes to the background wave-map choice,
+equivalently $\widehat H^a=-g^{bc}\bar\Gamma^a{}_{bc}$.
+
+The future implementation must translate the complete first-order GH system,
+constraint additions, and characteristic fields from Eqs.~(35)--(37) and
+(32)--(34) of Ref.~\cite{lindblom2006}; the conformal Gamma-driver with its
+auxiliary $\Upsilon^i$ from Eqs.~(60)--(62) of Ref.~\cite{lindblom2008}; and
+the improved $\widehat H_a,\theta_a$ driver from Eqs.~(9) and (11), including
+the combined characteristic system in Appendix B, of Ref.~\cite{lindblom2009}.
+Those changes are not present yet.
+
+\section{Pointwise physical exponent estimator}
+
+At each actual Cartesian cell center, with $X^i=x^i-x^i_{\rm puncture}$,
+the implemented production quantity is
+\begin{equation}
+ q_{\rm loc}=-\frac{1}{6}X^k\gamma^{ij}\partial_k\gamma_{ij}.
+\end{equation}
+The physical metric and derivative are reconstructed from $\Psi$, $\Phi$, and
+the reference two-jets; no additional derivative is taken.  The offline lapse
+diagnostic is
+\begin{equation}
+ p_{\rm loc}=X^k\partial_k\ln\alpha,
+ \qquad \alpha=(-g^{00})^{-1/2}.
+\end{equation}
+The selection and weighting are
+\begin{equation}
+ 2h\le r<8h,\qquad 8h<R_G/2,\qquad
+ w_i=(2h/r_i)^3,
+\end{equation}
+with weighted variance and
+$N_{\rm eff}=(\sum_iw_i)^2/\sum_iw_i^2$.  No clipping, rays, radial
+interpolation, binning, or puncture extrapolation is used.
+
+For wormhole data,
+\begin{equation}
+ \psi_W=1+\frac{M}{2r},\qquad
+ q_{\rm loc}(r)=-2r\frac{d\ln\psi_W}{dr}
+ =\frac{M}{r+M/2}.
+\end{equation}
+The first-order-state calculation agrees pointwise to at most
+$1.6\times10^{-15}$.  For the stationary trumpet it agrees with the
+independent profile derivative to at most $7.1\times10^{-13}$, and Minkowski
+is exactly zero.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{ccccc}
+\toprule
+$h/M$ & wormhole state & wormhole FD & trumpet state & trumpet FD\\
+\midrule
+$1/16$ & 1.32184 & 1.15447 & 0.856373 & 0.847683\\
+$1/24$ & 1.48531 & 1.26485 & 0.902691 & 0.893362\\
+$1/32$ & 1.58484 & 1.32892 & 0.926983 & 0.917320\\
+$1/48$ & 1.70032 & 1.40061 & 0.951826 & 0.941823\\
+$1/64$ & 1.76543 & 1.43989 & 0.964342 & 0.954166\\
+\bottomrule
+\end{tabular}
+\caption{Weighted exponent estimates on the required $2h\le r<8h$ shell.
+The state estimator approaches the known asymptotic exponent; direct FD does
+not approach the state estimator.}
+\end{table}
+
+\section{Direct-FD hard-gate failure}
+
+The independent diagnostic reconstructs $\gamma_{ij}$ on neighboring actual
+cell centers and applies AthenaK's fourth-order centered operator directly.
+The resulting state--FD discrepancy grows from 0.167366 to 0.325534 for the
+wormhole and from 0.00869049 to 0.0101752 for the trumpet over the table above.
+The strict executable therefore exits nonzero.
+
+This behavior follows from scale invariance.  For
+$\gamma_{ij}=r^{-2q}\delta_{ij}$, write a selected cell as $x^i=h\xi^i$.
+Any fixed centered stencil obeys
+\begin{equation}
+ D_h\gamma(h\xi)=h^{-2q-1}D_1\gamma(\xi).
+\end{equation}
+Because $X^k=h\xi^k$ and
+$\gamma^{ij}=h^{2q}\delta^{ij}$, the discrete contraction
+$X^k\gamma^{ij}D_k\gamma_{ij}$ is independent of $h$ at fixed $r/h$.
+Unless the stencil is exact for the singular power, the bias cannot converge
+away.  The weighted pure-power limits for this stencil and shell are about
+0.989337 for $q=1$ and 1.575776 for $q=2$.
+
+Thus the claim ``local puncture-exponent estimator established'' is not made
+under the controlling same-shell comparison, despite the analytic success of
+the first-order-state path.
+
+\section{Gaussian singular reference and prescribed trajectory}
+
+The new positive isotropic Cholesky factor is
+\begin{equation}
+ \sigma_q(r,t)=\exp[-q(t)W(r)\ln(r/M)],\qquad
+ W(r)=\exp[-(r/R_G)^2].
+\end{equation}
+A quintic endpoint-flat $q:2\rightarrow1$ trajectory supplies analytic value,
+first derivative, and second derivative.  Consequently the reference jets
+retain both
+\begin{equation}
+ \partial_t\ln\sigma_q=-\dot q W\ln(r/M)
+\end{equation}
+and the $\ddot qW\ln(r/M)$ and
+$\dot q^2W^2\ln^2(r/M)$ second-time-derivative structures.
+
+The scan covers $\tau/M=4,8,16$, $R_G/M=2,3,4$, and
+$h/M=1/16,1/24,1/32,1/48,1/64,1/128$.  Each dynamic midpoint has a static
+$q=1.5$ control.  The staged production cache agrees with the full geometry
+oracle to $1.11\times10^{-15}$ at $t=\tau/2$.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lrrl}
+\toprule
+Measure, $\tau=8M,R_G=3M$ & $h=M/16$ & $h=M/128$ & model\\
+\midrule
+$|\dot qW\ln\rho|$ & 0.683316 & 1.170901 & log\\
+$\dot q^2W^2\ln^2\rho$ & 0.466920 & 1.371010 & log-squared\\
+reference Ricci maximum & 1.42809 & 4.11641 & log-squared\\
+total source maximum & 2.85617 & 8.23283 & log-squared\\
+\bottomrule
+\end{tabular}
+\caption{Representative prescribed reference-jet scaling.}
+\end{table}
+
+The compact analyzer finds no dynamic measure classified as unexpected
+positive algebraic growth.  The prescribed-$q(t)$ reference-jet gate therefore
+passes locally.  This result says nothing about physical evolution or feedback.
+
+\section{Qualification matrix and stop condition}
+
+\begin{tabular}{p{0.48\linewidth}p{0.42\linewidth}}
+\toprule
+Gate & Status\\
+\midrule
+First-order-state estimator, analytic initial geometries & Passed locally\\
+Direct-FD same-shell convergence & \status{Failed}\\
+Prescribed Gaussian two-jets and staged cache & Passed locally on Kokkos Serial\\
+Closed-loop $q$ control & Not started; blocked by estimator gate\\
+Dynamic $\widehat H/\theta/\Upsilon$ gauge system & Not implemented\\
+Runtime full $\gamma_0/\gamma_2$ system & Not implemented\\
+Stationary/generic trumpet and wormhole evolution & Not run\\
+SMR, restart, CUDA, Aurora PVC & Not run\\
+\bottomrule
+\end{tabular}
+
+No Aurora allocation was requested because the discriminator is local and
+mathematical.  Before feedback work, the specification must choose between a
+fixed-physical-annulus direct-FD convergence check or a fixed-$r/h$ known-bias
+comparison.  Both avoid interpolation; neither is the literal present demand.
+
+\begin{thebibliography}{9}
+\bibitem{lindblom2006}
+L. Lindblom, M. A. Scheel, L. E. Kidder, R. Owen, and O. Rinne,
+``A New Generalized Harmonic Evolution System,''
+\href{https://arxiv.org/abs/gr-qc/0512093}{arXiv:gr-qc/0512093}.
+\bibitem{lindblom2008}
+L. Lindblom, K. D. Matthews, O. Rinne, and M. A. Scheel,
+``Gauge Drivers for the Generalized Harmonic Einstein Equations,''
+\href{https://arxiv.org/abs/0711.2084}{arXiv:0711.2084}.
+\bibitem{lindblom2009}
+L. Lindblom and B. Szilagyi,
+``An Improved Gauge Driver for the Generalized Harmonic Einstein System,''
+\href{https://arxiv.org/abs/0904.4873}{arXiv:0904.4873}.
+\end{thebibliography}
+
+\end{document}
