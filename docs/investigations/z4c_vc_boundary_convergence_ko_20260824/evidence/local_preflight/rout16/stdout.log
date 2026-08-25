@@ -1,0 +1,29 @@
+AthenaK Kokkos default execution space: OpenMP
+
+Root grid = 4 x 8 x 1 MeshBlocks
+Total number of MeshBlocks = 32
+Number of logical  levels of refinement = 23 (24 levels total)
+Number of physical levels of refinement = 20 (21 levels total)
+  Physical level = 0 (logical level = 3): 32 MeshBlocks, cost = 32
+Number of parallel ranks = 1
+AssembleZ4cTasks
+Direct global Brill coefficient import: radial_points=128 angular_points=32 adm_mass=2.6606354586228815 min_psi4=1.2467877953990329 lapse=psi^-2 min_lapse=0.31260438298701243 max_lapse=0.8955786439525143
+Converted imported ADM data to Z4c proper_box_C_rms=0.00014028215946339787 proper_box_H_rms=0.00013992246604329934 proper_box_M_rms=0 proper_box_Z_rms=5.0196553685475757e-06 coordinate_support_H_rms=7.7623626591758142e-08 coordinate_support_M_rms=0
+Initialized Z4c from IrisK data mode=direct_global_coefficients path=/tmp/z4c-rout16-init-bV2exg/brill_global_128x32.coefficients bytes=95927
+
+Setup complete, executing task list(s)...
+
+output wall time = 0.36456270000000002
+elapsed=5.238227e+00 cycle=0 time=0.000000e+00 dt=1.082331e-02
+
+Terminating on cycle limit
+time=0.000000e+00 cycle=0
+tlim=0.000000e+00 nlim=0 nmb_total_limit=-1
+
+Current number of MeshBlocks = 32
+0 MeshBlocks created, 0 deleted by AMR
+
+MeshBlock-cycles = 0
+cpu time used  = 7.957777e-02
+zone-cycles/cpu_second = 0.000000e+00
+particle-updates/cpu_second = 0.000000e+00

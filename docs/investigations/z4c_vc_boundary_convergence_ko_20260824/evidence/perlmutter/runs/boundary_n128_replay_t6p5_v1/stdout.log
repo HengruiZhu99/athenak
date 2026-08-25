@@ -1,0 +1,174 @@
+AthenaK Kokkos default execution space: Cuda
+
+Root grid = 4 x 8 x 1 MeshBlocks
+Total number of MeshBlocks = 104
+Number of logical  levels of refinement = 26 (27 levels total)
+Number of physical levels of refinement = 23 (24 levels total)
+  Physical level = 0 (logical level = 3): 24 MeshBlocks, cost = 24
+  Physical level = 1 (logical level = 4): 24 MeshBlocks, cost = 24
+  Physical level = 2 (logical level = 5): 24 MeshBlocks, cost = 24
+  Physical level = 3 (logical level = 6): 32 MeshBlocks, cost = 32
+Number of parallel ranks = 1
+AssembleZ4cTasks
+Direct global Brill coefficient import: radial_points=128 angular_points=32 adm_mass=2.6606354586228815 min_psi4=1.0279531157476369 lapse=psi^-2 min_lapse=0.31535016221506207 max_lapse=0.98630979563544652
+Converted imported ADM data to Z4c proper_box_C_rms=0.00032858672468397425 proper_box_H_rms=0.00032768775915512863 proper_box_M_rms=0 proper_box_Z_rms=1.2144629867068043e-05 coordinate_support_H_rms=9.6915287474313304e-07 coordinate_support_M_rms=0
+Initialized Z4c from IrisK data mode=direct_global_coefficients path=/pscratch/sd/h/hzhu/z4c-vc-boundary-convergence-ko-scan-20260824/runs/boundary_n128_replay_t6p5_v1/brill_global_128x32.coefficients bytes=95927
+AMR_HISTORY_TIMESTEP_CLIP event=1 time_hex=0x0p+0 candidate_dt_hex=0x1.62a8878cde393p-6 applied_dt_hex=0x1.62a8878cde393p-7 target_time_hex=0x1.62a8878cde393p-7
+
+Setup complete, executing task list(s)...
+
+elapsed=8.026405e-01 cycle=0 time=0.000000e+00 dt=1.082331e-02
+CARTOON_AMR_TRANSACTION cycle=1 requested_refine=32 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=96 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=1 time_hex=0x1.62a8878cde393p-7 requested_leaves=200 accepted_leaves=200 max_level=7 checksum=24316947a3a67cd8 exact_match=true shadow_refine=39 shadow_derefine=0
+AMR_HISTORY_TIMESTEP_CLIP event=2 time_hex=0x1.62a8878cde393p-7 candidate_dt_hex=0x1.61883b42f83efp-7 applied_dt_hex=0x1.614baa217eee6p-8 target_time_hex=0x1.09a72e4eced83p-6
+CARTOON_AMR_TRANSACTION cycle=2 requested_refine=4 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=2 time_hex=0x1.09a72e4eced83p-6 requested_leaves=212 accepted_leaves=212 max_level=8 checksum=cf0d2384b11c1d42 exact_match=true shadow_refine=9 shadow_derefine=30
+elapsed=9.967200e-01 cycle=4 time=2.697372e-02 dt=5.365868e-03
+elapsed=1.127335e+00 cycle=8 time=4.838516e-02 dt=5.328828e-03
+elapsed=1.340726e+00 cycle=12 time=6.963968e-02 dt=5.289735e-03
+elapsed=1.489757e+00 cycle=16 time=9.073900e-02 dt=5.249132e-03
+elapsed=1.681452e+00 cycle=20 time=1.116797e-01 dt=5.213418e-03
+elapsed=1.810178e+00 cycle=24 time=1.324833e-01 dt=5.179169e-03
+elapsed=2.005360e+00 cycle=28 time=1.531530e-01 dt=5.149315e-03
+elapsed=2.144559e+00 cycle=32 time=1.737137e-01 dt=5.126337e-03
+elapsed=2.272971e+00 cycle=36 time=1.941881e-01 dt=5.105465e-03
+elapsed=2.571925e+00 cycle=40 time=2.145839e-01 dt=5.089391e-03
+elapsed=2.705963e+00 cycle=44 time=2.349247e-01 dt=5.079521e-03
+elapsed=3.353776e+00 cycle=48 time=2.552350e-01 dt=5.075471e-03
+elapsed=3.525166e+00 cycle=52 time=2.755301e-01 dt=5.072074e-03
+AMR_HISTORY_TIMESTEP_CLIP event=3 time_hex=0x1.2eeb613a6547ap-2 candidate_dt_hex=0x1.4c8961e202cf3p-8 applied_dt_hex=0x1.1cb5ff4c159p-9 target_time_hex=0x1.3124cd38fd72cp-2
+elapsed=3.657684e+00 cycle=56 time=2.958198e-01 dt=2.172172e-03
+CARTOON_AMR_TRANSACTION cycle=57 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=2 created_leaves=0 deleted_leaves=6 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=3 time_hex=0x1.3124cd38fd72cp-2 requested_leaves=206 accepted_leaves=206 max_level=7 checksum=0ca3eb7a28f554f5 exact_match=true shadow_refine=6 shadow_derefine=30
+elapsed=3.876694e+00 cycle=60 time=3.211959e-01 dt=1.017585e-02
+elapsed=4.003330e+00 cycle=64 time=3.619538e-01 dt=1.022006e-02
+elapsed=4.132823e+00 cycle=68 time=4.029433e-01 dt=1.029991e-02
+elapsed=4.338930e+00 cycle=72 time=4.443007e-01 dt=1.041116e-02
+elapsed=4.464967e+00 cycle=76 time=4.861213e-01 dt=1.052612e-02
+elapsed=5.163721e+00 cycle=80 time=5.284193e-01 dt=1.066069e-02
+elapsed=5.338595e+00 cycle=84 time=5.712939e-01 dt=1.082002e-02
+elapsed=5.470405e+00 cycle=88 time=6.148051e-01 dt=1.097350e-02
+elapsed=5.648248e+00 cycle=92 time=6.589491e-01 dt=1.114465e-02
+elapsed=5.794501e+00 cycle=96 time=7.037955e-01 dt=1.131553e-02
+elapsed=5.933765e+00 cycle=100 time=7.493144e-01 dt=1.149109e-02
+elapsed=6.609061e+00 cycle=104 time=7.955478e-01 dt=1.166180e-02
+elapsed=6.736908e+00 cycle=108 time=8.424508e-01 dt=1.183663e-02
+elapsed=6.863621e+00 cycle=112 time=8.900492e-01 dt=1.199729e-02
+elapsed=7.067552e+00 cycle=116 time=9.382875e-01 dt=1.216763e-02
+elapsed=7.195261e+00 cycle=120 time=9.871773e-01 dt=1.231390e-02
+elapsed=7.845463e+00 cycle=124 time=1.036672e+00 dt=1.247448e-02
+elapsed=7.976153e+00 cycle=128 time=1.086763e+00 dt=1.260819e-02
+elapsed=8.107079e+00 cycle=132 time=1.137423e+00 dt=1.275350e-02
+elapsed=8.300613e+00 cycle=136 time=1.188619e+00 dt=1.287931e-02
+elapsed=8.427041e+00 cycle=140 time=1.240348e+00 dt=1.301065e-02
+elapsed=9.053628e+00 cycle=144 time=1.292560e+00 dt=1.312851e-02
+elapsed=9.222198e+00 cycle=148 time=1.345269e+00 dt=1.324719e-02
+elapsed=9.348408e+00 cycle=152 time=1.398416e+00 dt=1.335730e-02
+elapsed=9.506735e+00 cycle=156 time=1.452024e+00 dt=1.346497e-02
+elapsed=1.018946e+01 cycle=160 time=1.506031e+00 dt=1.356763e-02
+elapsed=1.032224e+01 cycle=164 time=1.560466e+00 dt=1.366554e-02
+elapsed=1.052570e+01 cycle=168 time=1.615266e+00 dt=1.376111e-02
+elapsed=1.065520e+01 cycle=172 time=1.670460e+00 dt=1.385071e-02
+elapsed=1.078445e+01 cycle=176 time=1.725990e+00 dt=1.393956e-02
+elapsed=1.145812e+01 cycle=180 time=1.781886e+00 dt=1.402185e-02
+elapsed=1.158624e+01 cycle=184 time=1.838092e+00 dt=1.410436e-02
+elapsed=1.175246e+01 cycle=188 time=1.894636e+00 dt=1.418041e-02
+elapsed=1.191779e+01 cycle=192 time=1.951464e+00 dt=1.423091e-02
+elapsed=1.255415e+01 cycle=196 time=2.008380e+00 dt=1.422686e-02
+elapsed=1.276693e+01 cycle=200 time=2.065288e+00 dt=1.422821e-02
+elapsed=1.289628e+01 cycle=204 time=2.122209e+00 dt=1.423504e-02
+elapsed=1.302443e+01 cycle=208 time=2.179123e+00 dt=1.421743e-02
+elapsed=1.322789e+01 cycle=212 time=2.235971e+00 dt=1.420421e-02
+elapsed=1.381493e+01 cycle=216 time=2.292772e+00 dt=1.418775e-02
+elapsed=1.394329e+01 cycle=220 time=2.349479e+00 dt=1.415949e-02
+elapsed=1.414565e+01 cycle=224 time=2.406082e+00 dt=1.413700e-02
+elapsed=1.427584e+01 cycle=228 time=2.462603e+00 dt=1.412022e-02
+elapsed=1.494486e+01 cycle=232 time=2.519063e+00 dt=1.409881e-02
+elapsed=1.509507e+01 cycle=236 time=2.575398e+00 dt=1.405985e-02
+elapsed=1.522609e+01 cycle=240 time=2.631586e+00 dt=1.402648e-02
+elapsed=1.542710e+01 cycle=244 time=2.687648e+00 dt=1.399867e-02
+elapsed=1.555503e+01 cycle=248 time=2.743608e+00 dt=1.397636e-02
+elapsed=1.617403e+01 cycle=252 time=2.799486e+00 dt=1.395951e-02
+elapsed=1.634930e+01 cycle=256 time=2.855305e+00 dt=1.394159e-02
+elapsed=1.647703e+01 cycle=260 time=2.911016e+00 dt=1.390552e-02
+elapsed=1.665351e+01 cycle=264 time=2.966590e+00 dt=1.387463e-02
+elapsed=1.733684e+01 cycle=268 time=3.022048e+00 dt=1.384888e-02
+elapsed=1.746516e+01 cycle=272 time=3.077411e+00 dt=1.382821e-02
+elapsed=1.770448e+01 cycle=276 time=3.132699e+00 dt=1.381255e-02
+elapsed=1.783275e+01 cycle=280 time=3.187932e+00 dt=1.380183e-02
+elapsed=1.796359e+01 cycle=284 time=3.243111e+00 dt=1.377677e-02
+elapsed=1.863787e+01 cycle=288 time=3.298174e+00 dt=1.374832e-02
+elapsed=1.876904e+01 cycle=292 time=3.353130e+00 dt=1.372456e-02
+elapsed=1.892686e+01 cycle=296 time=3.407998e+00 dt=1.370545e-02
+elapsed=1.910732e+01 cycle=300 time=3.462797e+00 dt=1.369094e-02
+elapsed=1.974899e+01 cycle=304 time=3.517544e+00 dt=1.368096e-02
+elapsed=1.995889e+01 cycle=308 time=3.572258e+00 dt=1.367512e-02
+elapsed=2.008867e+01 cycle=312 time=3.626917e+00 dt=1.364836e-02
+elapsed=2.022134e+01 cycle=316 time=3.681476e+00 dt=1.362589e-02
+elapsed=2.043236e+01 cycle=320 time=3.735951e+00 dt=1.360770e-02
+elapsed=2.102147e+01 cycle=324 time=3.790359e+00 dt=1.359373e-02
+elapsed=2.115821e+01 cycle=328 time=3.844718e+00 dt=1.358397e-02
+elapsed=2.136693e+01 cycle=332 time=3.899044e+00 dt=1.357836e-02
+elapsed=2.152792e+01 cycle=336 time=3.953353e+00 dt=1.356936e-02
+elapsed=2.221407e+01 cycle=340 time=4.007596e+00 dt=1.354739e-02
+elapsed=2.236480e+01 cycle=344 time=4.061757e+00 dt=1.352938e-02
+elapsed=2.254556e+01 cycle=348 time=4.115853e+00 dt=1.351532e-02
+elapsed=2.267256e+01 cycle=352 time=4.169897e+00 dt=1.350518e-02
+elapsed=2.283347e+01 cycle=356 time=4.223908e+00 dt=1.349896e-02
+elapsed=2.348731e+01 cycle=360 time=4.277899e+00 dt=1.349662e-02
+elapsed=2.361686e+01 cycle=364 time=4.331874e+00 dt=1.348292e-02
+elapsed=2.380769e+01 cycle=368 time=4.385777e+00 dt=1.346461e-02
+elapsed=2.394582e+01 cycle=372 time=4.439612e+00 dt=1.345002e-02
+elapsed=2.407387e+01 cycle=376 time=4.493395e+00 dt=1.343913e-02
+elapsed=2.477419e+01 cycle=380 time=4.547139e+00 dt=1.343194e-02
+elapsed=2.490274e+01 cycle=384 time=4.600861e+00 dt=1.342844e-02
+elapsed=2.502988e+01 cycle=388 time=4.654573e+00 dt=1.342771e-02
+elapsed=2.523222e+01 cycle=392 time=4.708255e+00 dt=1.340878e-02
+elapsed=2.582036e+01 cycle=396 time=4.761866e+00 dt=1.339338e-02
+elapsed=2.604670e+01 cycle=400 time=4.815420e+00 dt=1.338151e-02
+elapsed=2.617483e+01 cycle=404 time=4.868933e+00 dt=1.337317e-02
+elapsed=2.633564e+01 cycle=408 time=4.922417e+00 dt=1.336837e-02
+elapsed=2.651153e+01 cycle=412 time=4.975888e+00 dt=1.336711e-02
+elapsed=2.715684e+01 cycle=416 time=5.029353e+00 dt=1.335876e-02
+elapsed=2.736742e+01 cycle=420 time=5.082763e+00 dt=1.334241e-02
+elapsed=2.749442e+01 cycle=424 time=5.136112e+00 dt=1.332946e-02
+elapsed=2.762122e+01 cycle=428 time=5.189414e+00 dt=1.331991e-02
+elapsed=2.782413e+01 cycle=432 time=5.242684e+00 dt=1.331377e-02
+elapsed=2.841933e+01 cycle=436 time=5.295934e+00 dt=1.331105e-02
+elapsed=2.857343e+01 cycle=440 time=5.349178e+00 dt=1.331175e-02
+elapsed=2.875391e+01 cycle=444 time=5.402400e+00 dt=1.329520e-02
+elapsed=2.888524e+01 cycle=448 time=5.455559e+00 dt=1.328114e-02
+elapsed=2.955975e+01 cycle=452 time=5.508666e+00 dt=1.327037e-02
+elapsed=2.969708e+01 cycle=456 time=5.561735e+00 dt=1.326290e-02
+elapsed=2.982438e+01 cycle=460 time=5.614780e+00 dt=1.325873e-02
+elapsed=3.003383e+01 cycle=464 time=5.667812e+00 dt=1.325787e-02
+elapsed=3.016217e+01 cycle=468 time=5.720842e+00 dt=1.325041e-02
+elapsed=3.076427e+01 cycle=472 time=5.773820e+00 dt=1.323526e-02
+elapsed=3.096951e+01 cycle=476 time=5.826742e+00 dt=1.322330e-02
+elapsed=3.110187e+01 cycle=480 time=5.879621e+00 dt=1.321452e-02
+elapsed=3.124344e+01 cycle=484 time=5.932470e+00 dt=1.320894e-02
+elapsed=3.144842e+01 cycle=488 time=5.985301e+00 dt=1.320658e-02
+elapsed=3.212605e+01 cycle=492 time=6.038127e+00 dt=1.320704e-02
+elapsed=3.225888e+01 cycle=496 time=6.090930e+00 dt=1.319078e-02
+elapsed=3.251533e+01 cycle=500 time=6.143673e+00 dt=1.317758e-02
+elapsed=3.265002e+01 cycle=504 time=6.196367e+00 dt=1.316748e-02
+elapsed=3.277796e+01 cycle=508 time=6.249025e+00 dt=1.316048e-02
+elapsed=3.344850e+01 cycle=512 time=6.301660e+00 dt=1.315659e-02
+elapsed=3.358092e+01 cycle=516 time=6.354285e+00 dt=1.315584e-02
+elapsed=3.370922e+01 cycle=520 time=6.406901e+00 dt=1.314620e-02
+elapsed=3.391192e+01 cycle=524 time=6.459463e+00 dt=1.313167e-02
+output wall time = 1.325825e+01
+elapsed=3.455337e+01 cycle=528 time=6.500000e+00 dt=2.301641e-03
+
+Terminating on time limit
+time=6.500000e+00 cycle=528
+tlim=6.500000e+00 nlim=-1 nmb_total_limit=-1
+
+Current number of MeshBlocks = 206
+108 MeshBlocks created, 6 deleted by AMR
+0 communicated for load balancing, load balancing efficiency = 0.000000e+00
+
+MeshBlock-cycles = 108990
+cpu time used  = 3.375072e+01
+zone-cycles/cpu_second = 8.266916e+05
+particle-updates/cpu_second = 0.000000e+00

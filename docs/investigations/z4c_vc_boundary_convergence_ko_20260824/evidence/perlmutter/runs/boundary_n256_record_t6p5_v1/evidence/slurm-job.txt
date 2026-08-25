@@ -1,0 +1,30 @@
+JobId=57566483 JobName=interactive
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:40 TimeLimit=02:00:00 TimeMin=N/A
+   SubmitTime=2026-08-24T19:28:25 EligibleTime=2026-08-24T19:28:25
+   AccrueTime=Unknown
+   StartTime=2026-08-24T19:28:25 EndTime=2026-08-24T21:28:25 Deadline=N/A
+   PreemptEligibleTime=2026-08-24T19:28:25 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-24T19:28:25 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login21:457287
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid001001
+   BatchHost=nid001001
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100 DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=bash
+   SubmitLine=salloc -N 1 -C gpu -q shared_interactive -A m3328_g -t 02:00:00 --gpus=1 --ntasks=1 --cpus-per-task=32 bash --noprofile --norc
+   WorkDir=/global/u1/h/hzhu
+   TresPerJob=gres/gpu:1
+   TresPerTask=cpu=32
+   ResvPorts=63127-63129
+

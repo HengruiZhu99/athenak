@@ -1,0 +1,1347 @@
+AthenaK Kokkos default execution space: Cuda
+
+Root grid = 4 x 8 x 1 MeshBlocks
+Total number of MeshBlocks = 32
+Number of logical  levels of refinement = 23 (24 levels total)
+Number of physical levels of refinement = 20 (21 levels total)
+  Physical level = 0 (logical level = 3): 32 MeshBlocks, cost = 32
+Number of parallel ranks = 1
+AssembleZ4cTasks
+Direct global Brill coefficient import: radial_points=128 angular_points=32 adm_mass=2.6606354586228815 min_psi4=1.2467877953990329 lapse=psi^-2 min_lapse=0.31260438298701243 max_lapse=0.8955786439525143
+Converted imported ADM data to Z4c proper_box_C_rms=0.00014028215946305404 proper_box_H_rms=0.00013992246604295375 proper_box_M_rms=0 proper_box_Z_rms=5.0196553685532509e-06 coordinate_support_H_rms=7.7623624693829033e-08 coordinate_support_M_rms=0
+Initialized Z4c from IrisK data mode=direct_global_coefficients path=/pscratch/sd/h/hzhu/z4c-vc-boundary-convergence-ko-scan-20260824/runs/ko_n256_diss0p50_t6p5_v1/brill_global_128x32.coefficients bytes=95927
+AMR_HISTORY_RECORD event=0 time_hex=0x0p+0 cycle=0 leaves=32 max_level=3 checksum=c06467c519b4501d
+
+Setup complete, executing task list(s)...
+
+elapsed=8.806688e-01 cycle=0 time=0.000000e+00 dt=1.082331e-02
+CARTOON_AMR_TRANSACTION cycle=1 requested_refine=2 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=6 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_RECORD event=1 time_hex=0x1.62a8878cde393p-7 cycle=1 leaves=38 max_level=4 checksum=6d1dc10512d42608
+CARTOON_AMR_TRANSACTION cycle=2 requested_refine=2 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_RECORD event=2 time_hex=0x1.09a734d090212p-6 cycle=2 leaves=50 max_level=5 checksum=e38dd0ebe7826578
+CARTOON_AMR_TRANSACTION cycle=3 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=4 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=9.983078e-01 cycle=4 time=2.159391e-02 dt=2.686766e-03
+CARTOON_AMR_TRANSACTION cycle=5 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=6 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=7 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=8 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.087610e+00 cycle=8 time=3.232719e-02 dt=2.677741e-03
+CARTOON_AMR_TRANSACTION cycle=9 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=10 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=11 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=12 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.176792e+00 cycle=12 time=4.302368e-02 dt=2.668013e-03
+CARTOON_AMR_TRANSACTION cycle=13 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=14 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=15 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=16 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.371870e+00 cycle=16 time=5.368138e-02 dt=2.658092e-03
+CARTOON_AMR_TRANSACTION cycle=17 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=18 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=19 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=20 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.464321e+00 cycle=20 time=6.429864e-02 dt=2.648205e-03
+CARTOON_AMR_TRANSACTION cycle=21 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=22 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=23 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=24 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.553810e+00 cycle=24 time=7.487573e-02 dt=2.637823e-03
+CARTOON_AMR_TRANSACTION cycle=25 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=26 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=27 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=28 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.642697e+00 cycle=28 time=8.541240e-02 dt=2.628036e-03
+CARTOON_AMR_TRANSACTION cycle=29 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=30 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=31 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=32 requested_refine=0 requested_derefine_leaves=7 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.846662e+00 cycle=32 time=9.590932e-02 dt=2.618078e-03
+CARTOON_AMR_TRANSACTION cycle=33 requested_refine=0 requested_derefine_leaves=7 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=34 requested_refine=0 requested_derefine_leaves=7 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=35 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=36 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.940287e+00 cycle=36 time=1.063678e-01 dt=2.608919e-03
+CARTOON_AMR_TRANSACTION cycle=37 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=38 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=39 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=40 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.029543e+00 cycle=40 time=1.167893e-01 dt=2.599648e-03
+CARTOON_AMR_TRANSACTION cycle=41 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=42 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=43 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=44 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.118901e+00 cycle=44 time=1.271751e-01 dt=2.591303e-03
+CARTOON_AMR_TRANSACTION cycle=45 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=46 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=47 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=48 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.321998e+00 cycle=48 time=1.375282e-01 dt=2.583181e-03
+CARTOON_AMR_TRANSACTION cycle=49 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=50 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=51 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=52 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.412542e+00 cycle=52 time=1.478494e-01 dt=2.575648e-03
+CARTOON_AMR_TRANSACTION cycle=53 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=54 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=55 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=56 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.501840e+00 cycle=56 time=1.581417e-01 dt=2.569004e-03
+CARTOON_AMR_TRANSACTION cycle=57 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=58 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=59 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=60 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.590947e+00 cycle=60 time=1.684080e-01 dt=2.562523e-03
+CARTOON_AMR_TRANSACTION cycle=61 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=62 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=63 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=64 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.787600e+00 cycle=64 time=1.786491e-01 dt=2.556756e-03
+CARTOON_AMR_TRANSACTION cycle=65 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=66 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=67 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=68 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.880187e+00 cycle=68 time=1.888685e-01 dt=2.551837e-03
+CARTOON_AMR_TRANSACTION cycle=69 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=70 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=71 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=72 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.969894e+00 cycle=72 time=1.990693e-01 dt=2.547371e-03
+CARTOON_AMR_TRANSACTION cycle=73 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=74 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=75 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=76 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.059373e+00 cycle=76 time=2.092525e-01 dt=2.543338e-03
+CARTOON_AMR_TRANSACTION cycle=77 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=78 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=79 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=80 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.243290e+00 cycle=80 time=2.194207e-01 dt=2.540108e-03
+CARTOON_AMR_TRANSACTION cycle=81 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=82 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=83 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=84 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.334789e+00 cycle=84 time=2.295773e-01 dt=2.537655e-03
+CARTOON_AMR_TRANSACTION cycle=85 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=86 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=87 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=88 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.425787e+00 cycle=88 time=2.397246e-01 dt=2.535444e-03
+CARTOON_AMR_TRANSACTION cycle=89 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=90 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=91 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=92 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.515373e+00 cycle=92 time=2.498637e-01 dt=2.533822e-03
+CARTOON_AMR_TRANSACTION cycle=93 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=94 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=95 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=96 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.782793e+00 cycle=96 time=2.599974e-01 dt=2.532931e-03
+CARTOON_AMR_TRANSACTION cycle=97 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=98 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=99 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=100 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.872498e+00 cycle=100 time=2.701286e-01 dt=2.532748e-03
+CARTOON_AMR_TRANSACTION cycle=101 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=102 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=103 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=104 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.961425e+00 cycle=104 time=2.802597e-01 dt=2.532772e-03
+CARTOON_AMR_TRANSACTION cycle=105 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=106 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=107 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=108 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.154478e+00 cycle=108 time=2.903914e-01 dt=2.533338e-03
+CARTOON_AMR_TRANSACTION cycle=109 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=110 requested_refine=0 requested_derefine_leaves=10 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=111 requested_refine=0 requested_derefine_leaves=12 accepted_derefine_parents=2 created_leaves=0 deleted_leaves=6 mirror_mismatches=0
+AMR_HISTORY_RECORD event=3 time_hex=0x1.3124dc40206abp-2 cycle=111 leaves=44 max_level=4 checksum=b6c60694c30a2049
+CARTOON_AMR_TRANSACTION cycle=112 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.250454e+00 cycle=112 time=3.030599e-01 dt=5.069956e-03
+CARTOON_AMR_TRANSACTION cycle=113 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=114 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=115 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=116 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.335307e+00 cycle=116 time=3.233522e-01 dt=5.079319e-03
+CARTOON_AMR_TRANSACTION cycle=117 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=118 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=119 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=120 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.420484e+00 cycle=120 time=3.436883e-01 dt=5.091341e-03
+CARTOON_AMR_TRANSACTION cycle=121 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=122 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=123 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=124 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.595813e+00 cycle=124 time=3.640736e-01 dt=5.105612e-03
+CARTOON_AMR_TRANSACTION cycle=125 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=126 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=127 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=128 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.684992e+00 cycle=128 time=3.845229e-01 dt=5.124383e-03
+CARTOON_AMR_TRANSACTION cycle=129 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=130 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=131 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=132 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.771559e+00 cycle=132 time=4.050536e-01 dt=5.147376e-03
+CARTOON_AMR_TRANSACTION cycle=133 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=134 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=135 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=136 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.859971e+00 cycle=136 time=4.256798e-01 dt=5.171445e-03
+CARTOON_AMR_TRANSACTION cycle=137 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=138 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=139 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=140 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=4.987131e+00 cycle=140 time=4.464042e-01 dt=5.197977e-03
+CARTOON_AMR_TRANSACTION cycle=141 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=142 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=143 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=144 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=5.137849e+00 cycle=144 time=4.672404e-01 dt=5.228258e-03
+CARTOON_AMR_TRANSACTION cycle=145 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=146 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=147 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=148 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=5.222607e+00 cycle=148 time=4.882028e-01 dt=5.260689e-03
+CARTOON_AMR_TRANSACTION cycle=149 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=150 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=151 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=152 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=5.497258e+00 cycle=152 time=5.092938e-01 dt=5.293581e-03
+CARTOON_AMR_TRANSACTION cycle=153 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=154 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=155 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=156 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=5.624613e+00 cycle=156 time=5.305215e-01 dt=5.329829e-03
+CARTOON_AMR_TRANSACTION cycle=157 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=158 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=159 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=160 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=5.713603e+00 cycle=160 time=5.518982e-01 dt=5.367431e-03
+CARTOON_AMR_TRANSACTION cycle=161 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=162 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=163 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=164 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=5.907012e+00 cycle=164 time=5.734241e-01 dt=5.405529e-03
+CARTOON_AMR_TRANSACTION cycle=165 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=166 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=167 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=168 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=5.992102e+00 cycle=168 time=5.951070e-01 dt=5.446633e-03
+CARTOON_AMR_TRANSACTION cycle=169 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=170 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=171 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=172 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=6.077290e+00 cycle=172 time=6.169538e-01 dt=5.486737e-03
+CARTOON_AMR_TRANSACTION cycle=173 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=174 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=175 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=176 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=6.282092e+00 cycle=176 time=6.389634e-01 dt=5.529075e-03
+CARTOON_AMR_TRANSACTION cycle=177 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=178 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=179 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=180 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=6.372262e+00 cycle=180 time=6.611446e-01 dt=5.571443e-03
+CARTOON_AMR_TRANSACTION cycle=181 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=182 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=183 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=184 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=6.457968e+00 cycle=184 time=6.834942e-01 dt=5.614553e-03
+CARTOON_AMR_TRANSACTION cycle=185 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=186 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=187 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=188 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=6.542711e+00 cycle=188 time=7.060191e-01 dt=5.657985e-03
+CARTOON_AMR_TRANSACTION cycle=189 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=190 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=191 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=192 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=6.690971e+00 cycle=192 time=7.287154e-01 dt=5.701471e-03
+CARTOON_AMR_TRANSACTION cycle=193 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=194 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=195 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=196 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=6.941494e+00 cycle=196 time=7.515885e-01 dt=5.745017e-03
+CARTOON_AMR_TRANSACTION cycle=197 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=198 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=199 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=200 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=7.027104e+00 cycle=200 time=7.746330e-01 dt=5.788545e-03
+CARTOON_AMR_TRANSACTION cycle=201 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=202 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=203 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=204 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=7.206487e+00 cycle=204 time=7.978533e-01 dt=5.831473e-03
+CARTOON_AMR_TRANSACTION cycle=205 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=206 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=207 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=208 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=7.291124e+00 cycle=208 time=8.212433e-01 dt=5.874766e-03
+CARTOON_AMR_TRANSACTION cycle=209 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=210 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=211 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=212 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=7.376379e+00 cycle=212 time=8.448065e-01 dt=5.916537e-03
+CARTOON_AMR_TRANSACTION cycle=213 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=214 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=215 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=216 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=7.461881e+00 cycle=216 time=8.685361e-01 dt=5.959374e-03
+CARTOON_AMR_TRANSACTION cycle=217 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=218 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=219 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=220 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=7.606293e+00 cycle=220 time=8.924343e-01 dt=5.999610e-03
+CARTOON_AMR_TRANSACTION cycle=221 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=222 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=223 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=224 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=7.741055e+00 cycle=224 time=9.164952e-01 dt=6.041687e-03
+CARTOON_AMR_TRANSACTION cycle=225 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=226 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=227 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=228 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=7.825662e+00 cycle=228 time=9.407189e-01 dt=6.080275e-03
+CARTOON_AMR_TRANSACTION cycle=229 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=230 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=231 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=232 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=7.910258e+00 cycle=232 time=9.651013e-01 dt=6.120527e-03
+CARTOON_AMR_TRANSACTION cycle=233 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=234 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=235 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=236 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=7.995342e+00 cycle=236 time=9.896391e-01 dt=6.158260e-03
+CARTOON_AMR_TRANSACTION cycle=237 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=238 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=239 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=240 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=8.331095e+00 cycle=240 time=1.014332e+00 dt=6.196602e-03
+CARTOON_AMR_TRANSACTION cycle=241 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=242 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=243 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=244 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=8.416754e+00 cycle=244 time=1.039172e+00 dt=6.233413e-03
+CARTOON_AMR_TRANSACTION cycle=245 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=246 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=247 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=248 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=8.577738e+00 cycle=248 time=1.064163e+00 dt=6.269823e-03
+CARTOON_AMR_TRANSACTION cycle=249 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=250 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=251 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=252 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=8.680306e+00 cycle=252 time=1.089295e+00 dt=6.305668e-03
+CARTOON_AMR_TRANSACTION cycle=253 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=254 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=255 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=256 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=8.765507e+00 cycle=256 time=1.114572e+00 dt=6.340174e-03
+CARTOON_AMR_TRANSACTION cycle=257 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=258 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=259 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=260 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=8.851052e+00 cycle=260 time=1.139984e+00 dt=6.375026e-03
+CARTOON_AMR_TRANSACTION cycle=261 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=262 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=263 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=264 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=8.976565e+00 cycle=264 time=1.165535e+00 dt=6.407689e-03
+CARTOON_AMR_TRANSACTION cycle=265 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=266 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=267 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=268 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=9.130475e+00 cycle=268 time=1.191215e+00 dt=6.441534e-03
+CARTOON_AMR_TRANSACTION cycle=269 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=270 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=271 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=272 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=9.215681e+00 cycle=272 time=1.217028e+00 dt=6.472436e-03
+CARTOON_AMR_TRANSACTION cycle=273 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=274 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=275 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=276 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=9.300518e+00 cycle=276 time=1.242966e+00 dt=6.505269e-03
+CARTOON_AMR_TRANSACTION cycle=277 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=278 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=279 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=280 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=9.563647e+00 cycle=280 time=1.269031e+00 dt=6.534506e-03
+CARTOON_AMR_TRANSACTION cycle=281 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=282 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=283 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=284 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=9.649187e+00 cycle=284 time=1.295216e+00 dt=6.566102e-03
+CARTOON_AMR_TRANSACTION cycle=285 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=286 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=287 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=288 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=9.736362e+00 cycle=288 time=1.321521e+00 dt=6.594003e-03
+CARTOON_AMR_TRANSACTION cycle=289 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=290 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=291 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=292 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=9.825095e+00 cycle=292 time=1.347943e+00 dt=6.624069e-03
+CARTOON_AMR_TRANSACTION cycle=293 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=294 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=295 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=296 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.001385e+01 cycle=296 time=1.374478e+00 dt=6.651041e-03
+CARTOON_AMR_TRANSACTION cycle=297 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=298 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=299 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=300 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.010542e+01 cycle=300 time=1.401126e+00 dt=6.679669e-03
+CARTOON_AMR_TRANSACTION cycle=301 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=302 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=303 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=304 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.019349e+01 cycle=304 time=1.427883e+00 dt=6.705732e-03
+CARTOON_AMR_TRANSACTION cycle=305 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=306 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=307 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=308 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.027846e+01 cycle=308 time=1.454749e+00 dt=6.733016e-03
+CARTOON_AMR_TRANSACTION cycle=309 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=310 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=311 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=312 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.048932e+01 cycle=312 time=1.481718e+00 dt=6.758193e-03
+CARTOON_AMR_TRANSACTION cycle=313 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=314 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=315 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=316 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.072880e+01 cycle=316 time=1.508791e+00 dt=6.784220e-03
+CARTOON_AMR_TRANSACTION cycle=317 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=318 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=319 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=320 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.084397e+01 cycle=320 time=1.535964e+00 dt=6.808534e-03
+CARTOON_AMR_TRANSACTION cycle=321 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=322 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=323 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=324 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.100498e+01 cycle=324 time=1.563237e+00 dt=6.833389e-03
+CARTOON_AMR_TRANSACTION cycle=325 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=326 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=327 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=328 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.108998e+01 cycle=328 time=1.590605e+00 dt=6.856865e-03
+CARTOON_AMR_TRANSACTION cycle=329 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=330 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=331 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=332 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.117469e+01 cycle=332 time=1.618070e+00 dt=6.880626e-03
+CARTOON_AMR_TRANSACTION cycle=333 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=334 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=335 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=336 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.125963e+01 cycle=336 time=1.645625e+00 dt=6.903288e-03
+CARTOON_AMR_TRANSACTION cycle=337 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=338 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=339 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=340 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.145905e+01 cycle=340 time=1.673275e+00 dt=6.926028e-03
+CARTOON_AMR_TRANSACTION cycle=341 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=342 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=343 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=344 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.154382e+01 cycle=344 time=1.701011e+00 dt=6.947900e-03
+CARTOON_AMR_TRANSACTION cycle=345 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=346 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=347 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=348 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.162956e+01 cycle=348 time=1.728837e+00 dt=6.969688e-03
+CARTOON_AMR_TRANSACTION cycle=349 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=350 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=351 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=352 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.183408e+01 cycle=352 time=1.756747e+00 dt=6.990794e-03
+CARTOON_AMR_TRANSACTION cycle=353 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=354 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=355 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=356 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.197329e+01 cycle=356 time=1.784743e+00 dt=7.011691e-03
+CARTOON_AMR_TRANSACTION cycle=357 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=358 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=359 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=360 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.205884e+01 cycle=360 time=1.812820e+00 dt=7.032053e-03
+CARTOON_AMR_TRANSACTION cycle=361 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=362 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=363 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=364 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.214362e+01 cycle=364 time=1.840980e+00 dt=7.052117e-03
+CARTOON_AMR_TRANSACTION cycle=365 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=366 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=367 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=368 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.225362e+01 cycle=368 time=1.869217e+00 dt=7.071759e-03
+CARTOON_AMR_TRANSACTION cycle=369 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=370 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=371 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=372 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.243322e+01 cycle=372 time=1.897535e+00 dt=7.091041e-03
+CARTOON_AMR_TRANSACTION cycle=373 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=374 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=375 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=376 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.251808e+01 cycle=376 time=1.925927e+00 dt=7.109750e-03
+CARTOON_AMR_TRANSACTION cycle=377 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=378 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=379 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=380 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.260295e+01 cycle=380 time=1.954369e+00 dt=7.110698e-03
+CARTOON_AMR_TRANSACTION cycle=381 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=382 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=383 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=384 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.270066e+01 cycle=384 time=1.982809e+00 dt=7.109583e-03
+CARTOON_AMR_TRANSACTION cycle=385 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=386 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=387 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=388 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.303873e+01 cycle=388 time=2.011247e+00 dt=7.109150e-03
+CARTOON_AMR_TRANSACTION cycle=389 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=390 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=391 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=392 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.312390e+01 cycle=392 time=2.039684e+00 dt=7.109408e-03
+CARTOON_AMR_TRANSACTION cycle=393 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=394 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=395 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=396 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.328429e+01 cycle=396 time=2.068122e+00 dt=7.109194e-03
+CARTOON_AMR_TRANSACTION cycle=397 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=398 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=399 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=400 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.338896e+01 cycle=400 time=2.096555e+00 dt=7.106796e-03
+CARTOON_AMR_TRANSACTION cycle=401 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=402 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=403 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=404 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.347408e+01 cycle=404 time=2.124979e+00 dt=7.105087e-03
+CARTOON_AMR_TRANSACTION cycle=405 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=406 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=407 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=408 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.355880e+01 cycle=408 time=2.153398e+00 dt=7.104071e-03
+CARTOON_AMR_TRANSACTION cycle=409 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=410 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=411 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=412 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.368372e+01 cycle=412 time=2.181813e+00 dt=7.103414e-03
+CARTOON_AMR_TRANSACTION cycle=413 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=414 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=415 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=416 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.384038e+01 cycle=416 time=2.210224e+00 dt=7.100881e-03
+CARTOON_AMR_TRANSACTION cycle=417 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=418 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=419 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=420 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.392502e+01 cycle=420 time=2.238623e+00 dt=7.098182e-03
+CARTOON_AMR_TRANSACTION cycle=421 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=422 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=423 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=424 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.418653e+01 cycle=424 time=2.267012e+00 dt=7.095125e-03
+CARTOON_AMR_TRANSACTION cycle=425 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=426 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=427 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=428 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.432403e+01 cycle=428 time=2.295383e+00 dt=7.087892e-03
+CARTOON_AMR_TRANSACTION cycle=429 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=430 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=431 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=432 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.440924e+01 cycle=432 time=2.323723e+00 dt=7.080398e-03
+CARTOON_AMR_TRANSACTION cycle=433 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=434 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=435 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=436 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.449412e+01 cycle=436 time=2.352034e+00 dt=7.073637e-03
+CARTOON_AMR_TRANSACTION cycle=437 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=438 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=439 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=440 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.458491e+01 cycle=440 time=2.380319e+00 dt=7.067610e-03
+CARTOON_AMR_TRANSACTION cycle=441 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=442 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=443 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=444 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.475705e+01 cycle=444 time=2.408582e+00 dt=7.062316e-03
+CARTOON_AMR_TRANSACTION cycle=445 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=446 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=447 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=448 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.484230e+01 cycle=448 time=2.436824e+00 dt=7.056417e-03
+CARTOON_AMR_TRANSACTION cycle=449 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=450 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=451 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=452 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.492795e+01 cycle=452 time=2.465037e+00 dt=7.048178e-03
+CARTOON_AMR_TRANSACTION cycle=453 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=454 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=455 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=456 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.501254e+01 cycle=456 time=2.493218e+00 dt=7.040661e-03
+CARTOON_AMR_TRANSACTION cycle=457 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=458 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=459 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=460 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.525639e+01 cycle=460 time=2.521370e+00 dt=7.033865e-03
+CARTOON_AMR_TRANSACTION cycle=461 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=462 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=463 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=464 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.534155e+01 cycle=464 time=2.549496e+00 dt=7.027788e-03
+CARTOON_AMR_TRANSACTION cycle=465 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=466 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=467 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=468 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.543647e+01 cycle=468 time=2.577599e+00 dt=7.022428e-03
+CARTOON_AMR_TRANSACTION cycle=469 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=470 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=471 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=472 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.556616e+01 cycle=472 time=2.605681e+00 dt=7.015800e-03
+CARTOON_AMR_TRANSACTION cycle=473 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=474 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=475 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=476 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.571707e+01 cycle=476 time=2.633732e+00 dt=7.007733e-03
+CARTOON_AMR_TRANSACTION cycle=477 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=478 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=479 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=480 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.580179e+01 cycle=480 time=2.661751e+00 dt=7.000368e-03
+CARTOON_AMR_TRANSACTION cycle=481 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=482 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=483 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=484 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.599553e+01 cycle=484 time=2.689743e+00 dt=6.993703e-03
+CARTOON_AMR_TRANSACTION cycle=485 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=486 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=487 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=488 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.608076e+01 cycle=488 time=2.717708e+00 dt=6.987734e-03
+CARTOON_AMR_TRANSACTION cycle=489 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=490 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=491 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=492 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.616581e+01 cycle=492 time=2.745651e+00 dt=6.982459e-03
+CARTOON_AMR_TRANSACTION cycle=493 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=494 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=495 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=496 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.645849e+01 cycle=496 time=2.773573e+00 dt=6.976475e-03
+CARTOON_AMR_TRANSACTION cycle=497 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=498 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=499 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=500 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.654307e+01 cycle=500 time=2.801467e+00 dt=6.968679e-03
+CARTOON_AMR_TRANSACTION cycle=501 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=502 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=503 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=504 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.662808e+01 cycle=504 time=2.829331e+00 dt=6.961559e-03
+CARTOON_AMR_TRANSACTION cycle=505 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=506 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=507 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=508 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.671290e+01 cycle=508 time=2.857167e+00 dt=6.955113e-03
+CARTOON_AMR_TRANSACTION cycle=509 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=510 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=511 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=512 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.690649e+01 cycle=512 time=2.884979e+00 dt=6.949337e-03
+CARTOON_AMR_TRANSACTION cycle=513 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=514 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=515 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=516 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.699144e+01 cycle=516 time=2.912769e+00 dt=6.944229e-03
+CARTOON_AMR_TRANSACTION cycle=517 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=518 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=519 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=520 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.707626e+01 cycle=520 time=2.940539e+00 dt=6.939784e-03
+CARTOON_AMR_TRANSACTION cycle=521 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=522 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=523 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=524 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.716080e+01 cycle=524 time=2.968286e+00 dt=6.932301e-03
+CARTOON_AMR_TRANSACTION cycle=525 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=526 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=527 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=528 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.731602e+01 cycle=528 time=2.996005e+00 dt=6.925460e-03
+CARTOON_AMR_TRANSACTION cycle=529 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=530 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=531 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=532 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.758618e+01 cycle=532 time=3.023697e+00 dt=6.919265e-03
+CARTOON_AMR_TRANSACTION cycle=533 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=534 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=535 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=536 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.767128e+01 cycle=536 time=3.051366e+00 dt=6.913711e-03
+CARTOON_AMR_TRANSACTION cycle=537 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=538 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=539 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=540 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.785124e+01 cycle=540 time=3.079013e+00 dt=6.908797e-03
+CARTOON_AMR_TRANSACTION cycle=541 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=542 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=543 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=544 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.793664e+01 cycle=544 time=3.106642e+00 dt=6.904519e-03
+CARTOON_AMR_TRANSACTION cycle=545 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=546 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=547 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=548 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.802446e+01 cycle=548 time=3.134253e+00 dt=6.899233e-03
+CARTOON_AMR_TRANSACTION cycle=549 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=550 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=551 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=552 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.810952e+01 cycle=552 time=3.161840e+00 dt=6.892663e-03
+CARTOON_AMR_TRANSACTION cycle=553 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=554 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=555 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=556 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.830738e+01 cycle=556 time=3.189402e+00 dt=6.886710e-03
+CARTOON_AMR_TRANSACTION cycle=557 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=558 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=559 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=560 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.839279e+01 cycle=560 time=3.216940e+00 dt=6.881370e-03
+CARTOON_AMR_TRANSACTION cycle=561 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=562 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=563 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=564 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.847788e+01 cycle=564 time=3.244459e+00 dt=6.876641e-03
+CARTOON_AMR_TRANSACTION cycle=565 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=566 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=567 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=568 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.877992e+01 cycle=568 time=3.271959e+00 dt=6.872521e-03
+CARTOON_AMR_TRANSACTION cycle=569 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=570 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=571 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=572 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.886502e+01 cycle=572 time=3.299443e+00 dt=6.869006e-03
+CARTOON_AMR_TRANSACTION cycle=573 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=574 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=575 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=576 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.895028e+01 cycle=576 time=3.326912e+00 dt=6.863305e-03
+CARTOON_AMR_TRANSACTION cycle=577 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=578 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=579 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=580 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.903560e+01 cycle=580 time=3.354356e+00 dt=6.857560e-03
+CARTOON_AMR_TRANSACTION cycle=581 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=582 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=583 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=584 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.921524e+01 cycle=584 time=3.381778e+00 dt=6.852402e-03
+CARTOON_AMR_TRANSACTION cycle=585 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=586 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=587 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=588 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.930110e+01 cycle=588 time=3.409181e+00 dt=6.847828e-03
+CARTOON_AMR_TRANSACTION cycle=589 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=590 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=591 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=592 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.938746e+01 cycle=592 time=3.436566e+00 dt=6.843835e-03
+CARTOON_AMR_TRANSACTION cycle=593 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=594 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=595 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=596 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.947231e+01 cycle=596 time=3.463936e+00 dt=6.840422e-03
+CARTOON_AMR_TRANSACTION cycle=597 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=598 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=599 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=600 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.961799e+01 cycle=600 time=3.491293e+00 dt=6.837226e-03
+CARTOON_AMR_TRANSACTION cycle=601 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=602 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=603 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=604 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.990409e+01 cycle=604 time=3.518634e+00 dt=6.831643e-03
+CARTOON_AMR_TRANSACTION cycle=605 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=606 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=607 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=608 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=1.998928e+01 cycle=608 time=3.545953e+00 dt=6.826622e-03
+CARTOON_AMR_TRANSACTION cycle=609 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=610 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=611 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=612 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.019810e+01 cycle=612 time=3.573252e+00 dt=6.822160e-03
+CARTOON_AMR_TRANSACTION cycle=613 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=614 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=615 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=616 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.028287e+01 cycle=616 time=3.600535e+00 dt=6.818255e-03
+CARTOON_AMR_TRANSACTION cycle=617 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=618 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=619 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=620 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.036796e+01 cycle=620 time=3.627803e+00 dt=6.814906e-03
+CARTOON_AMR_TRANSACTION cycle=621 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=622 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=623 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=624 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.045720e+01 cycle=624 time=3.655058e+00 dt=6.812110e-03
+CARTOON_AMR_TRANSACTION cycle=625 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=626 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=627 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=628 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.067845e+01 cycle=628 time=3.682302e+00 dt=6.808630e-03
+CARTOON_AMR_TRANSACTION cycle=629 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=630 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=631 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=632 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.076379e+01 cycle=632 time=3.709529e+00 dt=6.803698e-03
+CARTOON_AMR_TRANSACTION cycle=633 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=634 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=635 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=636 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.084938e+01 cycle=636 time=3.736737e+00 dt=6.799303e-03
+CARTOON_AMR_TRANSACTION cycle=637 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=638 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=639 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=640 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.112088e+01 cycle=640 time=3.763929e+00 dt=6.795442e-03
+CARTOON_AMR_TRANSACTION cycle=641 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=642 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=643 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=644 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.120664e+01 cycle=644 time=3.791105e+00 dt=6.792115e-03
+CARTOON_AMR_TRANSACTION cycle=645 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=646 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=647 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=648 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.129182e+01 cycle=648 time=3.818269e+00 dt=6.789321e-03
+CARTOON_AMR_TRANSACTION cycle=649 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=650 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=651 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=652 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.138058e+01 cycle=652 time=3.845423e+00 dt=6.787057e-03
+CARTOON_AMR_TRANSACTION cycle=653 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=654 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=655 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=656 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.157590e+01 cycle=656 time=3.872567e+00 dt=6.783236e-03
+CARTOON_AMR_TRANSACTION cycle=657 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=658 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=659 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=660 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.166758e+01 cycle=660 time=3.899693e+00 dt=6.778864e-03
+CARTOON_AMR_TRANSACTION cycle=661 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=662 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=663 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=664 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.175506e+01 cycle=664 time=3.926803e+00 dt=6.775008e-03
+CARTOON_AMR_TRANSACTION cycle=665 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=666 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=667 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=668 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.184807e+01 cycle=668 time=3.953897e+00 dt=6.771666e-03
+CARTOON_AMR_TRANSACTION cycle=669 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=670 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=671 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=672 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.200214e+01 cycle=672 time=3.980980e+00 dt=6.768837e-03
+CARTOON_AMR_TRANSACTION cycle=673 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=674 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=675 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=676 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.227396e+01 cycle=676 time=4.008051e+00 dt=6.766520e-03
+CARTOON_AMR_TRANSACTION cycle=677 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=678 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=679 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=680 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.235982e+01 cycle=680 time=4.035115e+00 dt=6.764714e-03
+CARTOON_AMR_TRANSACTION cycle=681 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=682 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=683 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=684 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.253951e+01 cycle=684 time=4.062167e+00 dt=6.760458e-03
+CARTOON_AMR_TRANSACTION cycle=685 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=686 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=687 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=688 requested_refine=0 requested_derefine_leaves=5 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.262432e+01 cycle=688 time=4.089203e+00 dt=6.756570e-03
+CARTOON_AMR_TRANSACTION cycle=689 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=690 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=691 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=692 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.270948e+01 cycle=692 time=4.116224e+00 dt=6.753180e-03
+CARTOON_AMR_TRANSACTION cycle=693 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=694 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=695 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=696 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.279462e+01 cycle=696 time=4.143232e+00 dt=6.750285e-03
+CARTOON_AMR_TRANSACTION cycle=697 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=698 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=699 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=700 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.299206e+01 cycle=700 time=4.170230e+00 dt=6.747887e-03
+CARTOON_AMR_TRANSACTION cycle=701 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=702 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=703 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=704 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.307629e+01 cycle=704 time=4.197218e+00 dt=6.745984e-03
+CARTOON_AMR_TRANSACTION cycle=705 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=706 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=707 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=708 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.316136e+01 cycle=708 time=4.224200e+00 dt=6.743728e-03
+CARTOON_AMR_TRANSACTION cycle=709 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=710 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=711 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=712 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.336645e+01 cycle=712 time=4.251169e+00 dt=6.739781e-03
+CARTOON_AMR_TRANSACTION cycle=713 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=714 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=715 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=716 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.351538e+01 cycle=716 time=4.278122e+00 dt=6.736315e-03
+CARTOON_AMR_TRANSACTION cycle=717 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=718 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=719 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=720 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.360017e+01 cycle=720 time=4.305063e+00 dt=6.733331e-03
+CARTOON_AMR_TRANSACTION cycle=721 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=722 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=723 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=724 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.368490e+01 cycle=724 time=4.331992e+00 dt=6.730827e-03
+CARTOON_AMR_TRANSACTION cycle=725 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=726 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=727 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=728 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.376985e+01 cycle=728 time=4.358912e+00 dt=6.728805e-03
+CARTOON_AMR_TRANSACTION cycle=729 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=730 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=731 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=732 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.395084e+01 cycle=732 time=4.385825e+00 dt=6.727264e-03
+CARTOON_AMR_TRANSACTION cycle=733 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=734 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=735 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=736 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.403615e+01 cycle=736 time=4.412731e+00 dt=6.724338e-03
+CARTOON_AMR_TRANSACTION cycle=737 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=738 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=739 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=740 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.412124e+01 cycle=740 time=4.439623e+00 dt=6.720777e-03
+CARTOON_AMR_TRANSACTION cycle=741 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=742 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=743 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=744 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.420839e+01 cycle=744 time=4.466501e+00 dt=6.717683e-03
+CARTOON_AMR_TRANSACTION cycle=745 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=746 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=747 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=748 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.440733e+01 cycle=748 time=4.493368e+00 dt=6.715057e-03
+CARTOON_AMR_TRANSACTION cycle=749 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=750 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=751 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=752 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.463681e+01 cycle=752 time=4.520225e+00 dt=6.712900e-03
+CARTOON_AMR_TRANSACTION cycle=753 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=754 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=755 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=756 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.475675e+01 cycle=756 time=4.547074e+00 dt=6.711212e-03
+CARTOON_AMR_TRANSACTION cycle=757 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=758 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=759 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=760 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.492389e+01 cycle=760 time=4.573917e+00 dt=6.709989e-03
+CARTOON_AMR_TRANSACTION cycle=761 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=762 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=763 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=764 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.500898e+01 cycle=764 time=4.600751e+00 dt=6.706317e-03
+CARTOON_AMR_TRANSACTION cycle=765 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=766 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=767 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=768 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.509363e+01 cycle=768 time=4.627571e+00 dt=6.703100e-03
+CARTOON_AMR_TRANSACTION cycle=769 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=770 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=771 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=772 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.517853e+01 cycle=772 time=4.654379e+00 dt=6.700340e-03
+CARTOON_AMR_TRANSACTION cycle=773 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=774 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=775 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=776 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.536057e+01 cycle=776 time=4.681177e+00 dt=6.698037e-03
+CARTOON_AMR_TRANSACTION cycle=777 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=778 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=779 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=780 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.545077e+01 cycle=780 time=4.707966e+00 dt=6.696191e-03
+CARTOON_AMR_TRANSACTION cycle=781 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=782 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=783 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=784 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.553606e+01 cycle=784 time=4.734749e+00 dt=6.694804e-03
+CARTOON_AMR_TRANSACTION cycle=785 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=786 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=787 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=788 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.579354e+01 cycle=788 time=4.761526e+00 dt=6.692731e-03
+CARTOON_AMR_TRANSACTION cycle=789 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=790 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=791 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=792 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.588300e+01 cycle=792 time=4.788292e+00 dt=6.689382e-03
+CARTOON_AMR_TRANSACTION cycle=793 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=794 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=795 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=796 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.600160e+01 cycle=796 time=4.815045e+00 dt=6.686479e-03
+CARTOON_AMR_TRANSACTION cycle=797 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=798 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=799 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=800 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.615125e+01 cycle=800 time=4.841787e+00 dt=6.684023e-03
+CARTOON_AMR_TRANSACTION cycle=801 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=802 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=803 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=804 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.623600e+01 cycle=804 time=4.868520e+00 dt=6.682014e-03
+CARTOON_AMR_TRANSACTION cycle=805 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=806 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=807 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=808 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.635103e+01 cycle=808 time=4.895245e+00 dt=6.680453e-03
+CARTOON_AMR_TRANSACTION cycle=809 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=810 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=811 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=812 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.651114e+01 cycle=812 time=4.921965e+00 dt=6.679341e-03
+CARTOON_AMR_TRANSACTION cycle=813 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=814 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=815 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=816 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.659606e+01 cycle=816 time=4.948679e+00 dt=6.676367e-03
+CARTOON_AMR_TRANSACTION cycle=817 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=818 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=819 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=820 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.668119e+01 cycle=820 time=4.975380e+00 dt=6.673315e-03
+CARTOON_AMR_TRANSACTION cycle=821 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=822 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=823 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=824 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.690883e+01 cycle=824 time=5.002069e+00 dt=6.670701e-03
+CARTOON_AMR_TRANSACTION cycle=825 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=826 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=827 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=828 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.699728e+01 cycle=828 time=5.028748e+00 dt=6.668525e-03
+CARTOON_AMR_TRANSACTION cycle=829 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=830 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=831 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=832 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.708207e+01 cycle=832 time=5.055420e+00 dt=6.666789e-03
+CARTOON_AMR_TRANSACTION cycle=833 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=834 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=835 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=836 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.716708e+01 cycle=836 time=5.082085e+00 dt=6.665492e-03
+CARTOON_AMR_TRANSACTION cycle=837 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=838 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=839 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=840 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.730081e+01 cycle=840 time=5.108745e+00 dt=6.663922e-03
+CARTOON_AMR_TRANSACTION cycle=841 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=842 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=843 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=844 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.745015e+01 cycle=844 time=5.135396e+00 dt=6.660720e-03
+CARTOON_AMR_TRANSACTION cycle=845 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=846 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=847 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=848 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.753524e+01 cycle=848 time=5.162035e+00 dt=6.657947e-03
+CARTOON_AMR_TRANSACTION cycle=849 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=850 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=851 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=852 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.762059e+01 cycle=852 time=5.188663e+00 dt=6.655603e-03
+CARTOON_AMR_TRANSACTION cycle=853 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=854 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=855 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=856 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.770570e+01 cycle=856 time=5.215282e+00 dt=6.653689e-03
+CARTOON_AMR_TRANSACTION cycle=857 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=858 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=859 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=860 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.789850e+01 cycle=860 time=5.241895e+00 dt=6.652208e-03
+CARTOON_AMR_TRANSACTION cycle=861 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=862 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=863 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=864 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.810600e+01 cycle=864 time=5.268502e+00 dt=6.651159e-03
+CARTOON_AMR_TRANSACTION cycle=865 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=866 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=867 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=868 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.822526e+01 cycle=868 time=5.295103e+00 dt=6.648590e-03
+CARTOON_AMR_TRANSACTION cycle=869 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=870 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=871 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=872 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.837301e+01 cycle=872 time=5.321693e+00 dt=6.645657e-03
+CARTOON_AMR_TRANSACTION cycle=873 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=874 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=875 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=876 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.845803e+01 cycle=876 time=5.348272e+00 dt=6.643145e-03
+CARTOON_AMR_TRANSACTION cycle=877 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=878 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=879 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=880 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.854343e+01 cycle=880 time=5.374841e+00 dt=6.641056e-03
+CARTOON_AMR_TRANSACTION cycle=881 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=882 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=883 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=884 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.862839e+01 cycle=884 time=5.401403e+00 dt=6.639392e-03
+CARTOON_AMR_TRANSACTION cycle=885 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=886 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=887 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=888 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.882488e+01 cycle=888 time=5.427958e+00 dt=6.638153e-03
+CARTOON_AMR_TRANSACTION cycle=889 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=890 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=891 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=892 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.891053e+01 cycle=892 time=5.454510e+00 dt=6.636841e-03
+CARTOON_AMR_TRANSACTION cycle=893 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=894 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=895 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=896 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.899821e+01 cycle=896 time=5.481052e+00 dt=6.633750e-03
+CARTOON_AMR_TRANSACTION cycle=897 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=898 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=899 requested_refine=0 requested_derefine_leaves=6 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=900 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.926884e+01 cycle=900 time=5.507583e+00 dt=6.631072e-03
+CARTOON_AMR_TRANSACTION cycle=901 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=902 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=903 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=904 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.935425e+01 cycle=904 time=5.534104e+00 dt=6.628810e-03
+CARTOON_AMR_TRANSACTION cycle=905 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=906 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=907 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=908 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.943986e+01 cycle=908 time=5.560616e+00 dt=6.626965e-03
+CARTOON_AMR_TRANSACTION cycle=909 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=910 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=911 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=912 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.952495e+01 cycle=912 time=5.587122e+00 dt=6.625538e-03
+CARTOON_AMR_TRANSACTION cycle=913 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=914 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=915 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=916 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.967999e+01 cycle=916 time=5.613622e+00 dt=6.624531e-03
+CARTOON_AMR_TRANSACTION cycle=917 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=918 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=919 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=920 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.979197e+01 cycle=920 time=5.640118e+00 dt=6.622158e-03
+CARTOON_AMR_TRANSACTION cycle=921 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=922 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=923 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=924 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.987869e+01 cycle=924 time=5.666602e+00 dt=6.619317e-03
+CARTOON_AMR_TRANSACTION cycle=925 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=926 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=927 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=928 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=2.996345e+01 cycle=928 time=5.693076e+00 dt=6.616884e-03
+CARTOON_AMR_TRANSACTION cycle=929 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=930 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=931 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=932 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.009813e+01 cycle=932 time=5.719540e+00 dt=6.614861e-03
+CARTOON_AMR_TRANSACTION cycle=933 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=934 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=935 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=936 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.025745e+01 cycle=936 time=5.745997e+00 dt=6.613249e-03
+CARTOON_AMR_TRANSACTION cycle=937 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=938 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=939 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=940 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.047059e+01 cycle=940 time=5.772448e+00 dt=6.612049e-03
+CARTOON_AMR_TRANSACTION cycle=941 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=942 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=943 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=944 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.067493e+01 cycle=944 time=5.798895e+00 dt=6.610820e-03
+CARTOON_AMR_TRANSACTION cycle=945 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=946 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=947 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=948 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.076457e+01 cycle=948 time=5.825334e+00 dt=6.607816e-03
+CARTOON_AMR_TRANSACTION cycle=949 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=950 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=951 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=952 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.084990e+01 cycle=952 time=5.851761e+00 dt=6.605213e-03
+CARTOON_AMR_TRANSACTION cycle=953 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=954 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=955 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=956 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.093586e+01 cycle=956 time=5.878178e+00 dt=6.603012e-03
+CARTOON_AMR_TRANSACTION cycle=957 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=958 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=959 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=960 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.106615e+01 cycle=960 time=5.904587e+00 dt=6.601216e-03
+CARTOON_AMR_TRANSACTION cycle=961 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=962 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=963 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=964 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.121298e+01 cycle=964 time=5.930990e+00 dt=6.599826e-03
+CARTOON_AMR_TRANSACTION cycle=965 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=966 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=967 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=968 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.129841e+01 cycle=968 time=5.957388e+00 dt=6.598843e-03
+CARTOON_AMR_TRANSACTION cycle=969 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=970 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=971 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=972 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.138901e+01 cycle=972 time=5.983781e+00 dt=6.596497e-03
+CARTOON_AMR_TRANSACTION cycle=973 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=974 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=975 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=976 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.162486e+01 cycle=976 time=6.010162e+00 dt=6.593724e-03
+CARTOON_AMR_TRANSACTION cycle=977 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=978 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=979 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=980 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.171048e+01 cycle=980 time=6.036533e+00 dt=6.591345e-03
+CARTOON_AMR_TRANSACTION cycle=981 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=982 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=983 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=984 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.180377e+01 cycle=984 time=6.062896e+00 dt=6.589364e-03
+CARTOON_AMR_TRANSACTION cycle=985 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=986 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=987 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=988 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.189187e+01 cycle=988 time=6.089251e+00 dt=6.587782e-03
+CARTOON_AMR_TRANSACTION cycle=989 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=990 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=991 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=992 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.208931e+01 cycle=992 time=6.115600e+00 dt=6.586600e-03
+CARTOON_AMR_TRANSACTION cycle=993 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=994 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=995 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=996 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.217826e+01 cycle=996 time=6.141945e+00 dt=6.585276e-03
+CARTOON_AMR_TRANSACTION cycle=997 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=998 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=999 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1000 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.226343e+01 cycle=1000 time=6.168282e+00 dt=6.582327e-03
+CARTOON_AMR_TRANSACTION cycle=1001 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1002 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1003 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1004 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.234844e+01 cycle=1004 time=6.194607e+00 dt=6.579767e-03
+CARTOON_AMR_TRANSACTION cycle=1005 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1006 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1007 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1008 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.251309e+01 cycle=1008 time=6.220923e+00 dt=6.577597e-03
+CARTOON_AMR_TRANSACTION cycle=1009 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1010 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1011 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1012 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.262558e+01 cycle=1012 time=6.247230e+00 dt=6.575818e-03
+CARTOON_AMR_TRANSACTION cycle=1013 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1014 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1015 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1016 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.283167e+01 cycle=1016 time=6.273531e+00 dt=6.574432e-03
+CARTOON_AMR_TRANSACTION cycle=1017 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1018 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1019 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1020 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.301646e+01 cycle=1020 time=6.299827e+00 dt=6.573442e-03
+CARTOON_AMR_TRANSACTION cycle=1021 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1022 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1023 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1024 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.310169e+01 cycle=1024 time=6.326118e+00 dt=6.570912e-03
+CARTOON_AMR_TRANSACTION cycle=1025 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1026 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1027 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1028 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.318709e+01 cycle=1028 time=6.352398e+00 dt=6.568162e-03
+CARTOON_AMR_TRANSACTION cycle=1029 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1030 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1031 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1032 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.327262e+01 cycle=1032 time=6.378667e+00 dt=6.565795e-03
+CARTOON_AMR_TRANSACTION cycle=1033 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1034 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1035 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1036 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.344340e+01 cycle=1036 time=6.404927e+00 dt=6.563812e-03
+CARTOON_AMR_TRANSACTION cycle=1037 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1038 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1039 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1040 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.355262e+01 cycle=1040 time=6.431179e+00 dt=6.562215e-03
+CARTOON_AMR_TRANSACTION cycle=1041 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1042 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1043 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1044 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.363736e+01 cycle=1044 time=6.457426e+00 dt=6.561000e-03
+CARTOON_AMR_TRANSACTION cycle=1045 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1046 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1047 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1048 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+elapsed=3.372285e+01 cycle=1048 time=6.483669e+00 dt=6.559343e-03
+CARTOON_AMR_TRANSACTION cycle=1049 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1050 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+CARTOON_AMR_TRANSACTION cycle=1051 requested_refine=0 requested_derefine_leaves=4 accepted_derefine_parents=0 created_leaves=0 deleted_leaves=0 mirror_mismatches=0
+output wall time = 4.133093e+00
+
+Terminating on time limit
+time=6.500000e+00 cycle=1051
+tlim=6.500000e+00 nlim=-1 nmb_total_limit=-1
+
+Current number of MeshBlocks = 44
+18 MeshBlocks created, 6 deleted by AMR
+0 communicated for load balancing, load balancing efficiency = 0.000000e+00
+
+MeshBlock-cycles = 46880
+cpu time used  = 3.304985e+01
+zone-cycles/cpu_second = 1.452507e+06
+particle-updates/cpu_second = 0.000000e+00

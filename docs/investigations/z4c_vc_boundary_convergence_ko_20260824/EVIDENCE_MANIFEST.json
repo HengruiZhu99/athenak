@@ -1,0 +1,186 @@
+{
+  "schema": "z4c_vc_boundary_convergence_ko_evidence_v1",
+  "date": "2026-08-24",
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "base_branch": "codex/z4c-vc-figure3-native-authority-20260824",
+  "base_commit": "953f2724c00a2efd2f9fad91ae9a784639954a3b",
+  "base_tree": "a03bd3f61b9d766adc7083c87ee701bd6d62becb",
+  "campaign_branch": "codex/z4c-vc-boundary-convergence-ko-scan-20260824",
+  "production_source_modified": false,
+  "software_authority": {
+    "perlmutter_source_commit": "d63519328214a6315a9cc1f7d5e4a1aa4bca21b0",
+    "perlmutter_source_tree": "9fa84d4b79c2d50ce935f5416fba6d57f99aa5b4",
+    "executable_sha256": "3a395bfdaf217d617fee43d2cbcd38e7a13c2a0f4207e3a764c3513eb8c0405f",
+    "large_input_sha256": "1aa50746d12e51c91c3e7adbc4728e325a73ce98e687c6aaf218df70b4eb4699",
+    "ko_input_sha256": "60c1414fd3c2cda8f0879c8ad1645d7b52c7b98f4cb9b169535531fad8e74e17",
+    "brill_coefficients_sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10"
+  },
+  "remote_roots": {
+    "campaign": "/pscratch/sd/h/hzhu/z4c-vc-boundary-convergence-ko-scan-20260824",
+    "original_authenticated_runs": "/pscratch/sd/h/hzhu/z4c-vc-native-authority-20260824/runs",
+    "source": "/pscratch/sd/h/hzhu/z4c-vc-derefine-slot-repair-20260824/source",
+    "build": "/pscratch/sd/h/hzhu/z4c-vc-native-authority-20260824/build-cuda-mpi-deterministic-history"
+  },
+  "allocations": [
+    {
+      "job_id": 57566483,
+      "qos": "gpu_shared_interactive",
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "gpu_count": 1,
+      "mpi_ranks": 1,
+      "cpus_per_task": 32,
+      "state": "COMPLETED",
+      "elapsed": "00:35:40"
+    },
+    {
+      "job_id": 57568295,
+      "qos": "gpu_shared_interactive",
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "gpu_count": 1,
+      "mpi_ranks": 1,
+      "cpus_per_task": 32,
+      "state": "COMPLETED",
+      "elapsed": "00:03:08"
+    }
+  ],
+  "allocation_release_evidence": "evidence/perlmutter/allocation_release_verification.txt",
+  "boundary_runs": [
+    {
+      "label": "N256 record",
+      "relative_remote_root": "runs/boundary_n256_record_t6p5_v1",
+      "exit": 0,
+      "terminal_time": 6.5,
+      "max_leaf_count": 212,
+      "final_leaf_count": 206,
+      "max_physical_level": 5,
+      "peak_hbm_mib": 5815
+    },
+    {
+      "label": "N256 identity replay",
+      "relative_remote_root": "runs/boundary_n256_replay_t6p5_v1",
+      "exit": 0,
+      "terminal_time": 6.5,
+      "exact_replay": true,
+      "history_bitwise_identical": true,
+      "history_sha256": "701f3093893017ea064087e96ddc0dbcd4136cae36b50f0330c657d98c5fb9c5",
+      "peak_hbm_mib": 7082
+    },
+    {
+      "label": "N128 replay",
+      "relative_remote_root": "runs/boundary_n128_replay_t6p5_v1",
+      "exit": 0,
+      "terminal_time": 6.5,
+      "exact_replay": true,
+      "peak_hbm_mib": 5815
+    },
+    {
+      "label": "N512 replay",
+      "relative_remote_root": "runs/boundary_n512_replay_t6p5_v1",
+      "exit": 0,
+      "terminal_time": 6.5,
+      "exact_replay": true,
+      "peak_hbm_mib": 36581
+    }
+  ],
+  "ko_runs": {
+    "0.02": {
+      "segments": [
+        "runs/ko_n256_diss0p02_t6p5_v1",
+        "runs/ko_n256_diss0p02_t9p5_v1",
+        "runs/ko_n256_diss0p02_t11p3_v1"
+      ],
+      "segment_exits": [0, 0, 130],
+      "terminal_time": 11.19191699534206,
+      "terminal_axis_tau": 6.846604456067693,
+      "terminal_C": 16114920146479704.0,
+      "first_late_refinement": 10.275815835005098,
+      "max_leaf_count": 1526,
+      "max_physical_level": 20,
+      "status": "bounded termination after timestep collapse"
+    },
+    "0.05": {
+      "segments": [
+        "runs/ko_n256_diss0p05_t6p5_v1",
+        "runs/ko_n256_diss0p05_t9p5_v1",
+        "runs/ko_n256_diss0p05_t11p3_v1"
+      ],
+      "segment_exits": [0, 0, 0],
+      "terminal_time": 11.3,
+      "terminal_axis_tau": 6.91531987023357,
+      "terminal_C": 255.51891050378637,
+      "first_late_refinement": 10.365813507616425,
+      "max_leaf_count": 65,
+      "max_physical_level": 3,
+      "status": "reached tlim"
+    },
+    "0.10": {
+      "segments": [
+        "runs/ko_n256_diss0p10_t6p5_v1",
+        "runs/ko_n256_diss0p10_t9p5_v1",
+        "runs/ko_n256_diss0p10_t11p3_v1"
+      ],
+      "segment_exits": [0, 0, 0],
+      "terminal_time": 11.3,
+      "terminal_axis_tau": 6.917003386065598,
+      "terminal_C": 1593.389274143281,
+      "first_late_refinement": 10.73935019548469,
+      "max_leaf_count": 86,
+      "max_physical_level": 4,
+      "status": "reached tlim"
+    },
+    "0.20": {
+      "segments": [
+        "runs/ko_n256_diss0p20_t6p5_v1",
+        "runs/ko_n256_diss0p20_t9p5_v1",
+        "runs/ko_n256_diss0p20_t11p3_v1"
+      ],
+      "segment_exits": [0, 0, 0],
+      "terminal_time": 11.3,
+      "terminal_axis_tau": 6.919452631449983,
+      "terminal_C": 53.63171713913177,
+      "first_late_refinement": 11.10447907506535,
+      "max_leaf_count": 50,
+      "max_physical_level": 2,
+      "status": "reached tlim"
+    },
+    "0.50": {
+      "segments": [
+        "runs/ko_n256_diss0p50_t6p5_v1",
+        "runs/ko_n256_diss0p50_t9p5_v1",
+        "runs/ko_n256_diss0p50_t11p3_v1"
+      ],
+      "segment_exits": [0, 0, 0],
+      "terminal_time": 11.3,
+      "terminal_axis_tau": 6.923736666532958,
+      "terminal_C": 0.26954428974687905,
+      "first_late_refinement": null,
+      "max_leaf_count": 50,
+      "max_physical_level": 2,
+      "status": "reached tlim without late accepted refinement"
+    }
+  },
+  "key_artifact_sha256": {
+    "REPORT.pdf": "a843766e31ebdd39076484418f2c7a071f655c8f1c75623795ed716e3e65e9c2",
+    "analysis/small_domain_radial/radial_constraint_summary.json": "b8e8910545b72764c221edc9766a5f661e06b3ec9290501c131965c7ebe67490",
+    "analysis/large_domain_radial_shells/radial_constraint_summary.json": "32276fa40240f1dfdc4dc578e15305bfcf5590af03c5d0c1c2cbe292baf9ca12",
+    "analysis/boundary_comparison/boundary_terminal_tables.csv": "0c9557c9f33c1a3cf6c408bf4327915e36ca56c956bad7abc7cf12c69b45b2f8",
+    "analysis/boundary_comparison/boundary_sensitivity.csv": "99a5bfb6ed36087c7bd4fdc75e7b6fe45bbd71574fa236fa4d4a23758fe6881d",
+    "analysis/ko_stageC/ko_summary.csv": "c90a03751671bae25ee71c2d239a7166c8a600066a8d11cea86c2712a74e7671",
+    "analysis/ko_stageC/ko_summary.json": "3c5798b85861c9d7bb4bfe13874cc41924a6ab8a747e6f95adf0ce15e2ae583c",
+    "evidence/perlmutter/runs/boundary_n256_record_t6p5_v1/n256_boundary_authority.jsonl": "92bd7b257c9c2844fec1af6bd5e3435cbceb1e9479fe50c8fae22f1fa712a0d2"
+  },
+  "verdicts": {
+    "boundary": "BOUNDARY_CONTAMINATION_CONFIRMED",
+    "ko": "KO_STRONG_EFFECT"
+  },
+  "limitations": [
+    "Boundary qualification ends at t=6.5M; the optional late Rout=128 N256 control was not run.",
+    "The KO scan is a one-resolution stability discriminator, not a convergence qualification.",
+    "No Figure-3 late-time convergence, horizon, critical exponent, or continuum-stability claim is made.",
+    "Multi-gigabyte binaries and restarts remain only at the exact remote roots.",
+    "Verbose cross-resolution native-shadow streams were omitted locally; originals remain remote.",
+    "The isolated 36577 MiB diss=0.20 Stage-A HBM sample is retained but treated as a monitor outlier."
+  ],
+  "complete_local_sha256_inventory": "SHA256SUMS"
+}
+

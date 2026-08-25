@@ -1,0 +1,301 @@
+AthenaK Kokkos default execution space: Cuda
+
+Root grid = 4 x 8 x 1 MeshBlocks
+Total number of MeshBlocks = 104
+Number of logical  levels of refinement = 26 (27 levels total)
+Number of physical levels of refinement = 23 (24 levels total)
+  Physical level = 0 (logical level = 3): 24 MeshBlocks, cost = 24
+  Physical level = 1 (logical level = 4): 24 MeshBlocks, cost = 24
+  Physical level = 2 (logical level = 5): 24 MeshBlocks, cost = 24
+  Physical level = 3 (logical level = 6): 32 MeshBlocks, cost = 32
+Number of parallel ranks = 1
+AssembleZ4cTasks
+Direct global Brill coefficient import: radial_points=128 angular_points=32 adm_mass=2.6606354586228815 min_psi4=1.0288090836816972 lapse=psi^-2 min_lapse=0.31260438298701243 max_lapse=0.98589940596828018
+Converted imported ADM data to Z4c proper_box_C_rms=2.384524686220126e-05 proper_box_H_rms=2.3784105955689499e-05 proper_box_M_rms=0 proper_box_Z_rms=8.5324407525841095e-07 coordinate_support_H_rms=7.7623624693829033e-08 coordinate_support_M_rms=0
+Initialized Z4c from IrisK data mode=direct_global_coefficients path=/pscratch/sd/h/hzhu/z4c-vc-boundary-convergence-ko-scan-20260824/runs/boundary_n256_replay_t6p5_v1/brill_global_128x32.coefficients bytes=95927
+
+Setup complete, executing task list(s)...
+
+elapsed=1.787432e+00 cycle=0 time=0.000000e+00 dt=1.082331e-02
+CARTOON_AMR_TRANSACTION cycle=1 requested_refine=32 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=96 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=1 time_hex=0x1.62a8878cde393p-7 requested_leaves=200 accepted_leaves=200 max_level=7 checksum=24316947a3a67cd8 exact_match=true shadow_refine=32 shadow_derefine=0
+CARTOON_AMR_TRANSACTION cycle=2 requested_refine=4 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=12 deleted_leaves=0 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=2 time_hex=0x1.09a72e4eced83p-6 requested_leaves=212 accepted_leaves=212 max_level=8 checksum=cf0d2384b11c1d42 exact_match=true shadow_refine=2 shadow_derefine=30
+elapsed=2.142286e+00 cycle=4 time=2.159390e-02 dt=2.686763e-03
+elapsed=2.440600e+00 cycle=8 time=3.232716e-02 dt=2.677737e-03
+elapsed=2.672074e+00 cycle=12 time=4.302364e-02 dt=2.668009e-03
+elapsed=2.949025e+00 cycle=16 time=5.368132e-02 dt=2.658089e-03
+elapsed=3.181838e+00 cycle=20 time=6.429857e-02 dt=2.648201e-03
+elapsed=3.474464e+00 cycle=24 time=7.487565e-02 dt=2.637820e-03
+elapsed=3.741121e+00 cycle=28 time=8.541231e-02 dt=2.628033e-03
+elapsed=3.975313e+00 cycle=32 time=9.590921e-02 dt=2.618075e-03
+elapsed=4.264296e+00 cycle=36 time=1.063677e-01 dt=2.608916e-03
+elapsed=4.491759e+00 cycle=40 time=1.167891e-01 dt=2.599646e-03
+elapsed=4.771804e+00 cycle=44 time=1.271749e-01 dt=2.591300e-03
+elapsed=5.034231e+00 cycle=48 time=1.375281e-01 dt=2.583179e-03
+elapsed=5.278842e+00 cycle=52 time=1.478492e-01 dt=2.575646e-03
+elapsed=5.573365e+00 cycle=56 time=1.581415e-01 dt=2.569003e-03
+elapsed=5.801166e+00 cycle=60 time=1.684078e-01 dt=2.562522e-03
+elapsed=6.078761e+00 cycle=64 time=1.786490e-01 dt=2.556754e-03
+elapsed=6.362468e+00 cycle=68 time=1.888683e-01 dt=2.551835e-03
+elapsed=6.629921e+00 cycle=72 time=1.990691e-01 dt=2.547370e-03
+elapsed=6.909959e+00 cycle=76 time=2.092523e-01 dt=2.543337e-03
+elapsed=7.187910e+00 cycle=80 time=2.194205e-01 dt=2.540107e-03
+elapsed=7.424012e+00 cycle=84 time=2.295770e-01 dt=2.537655e-03
+elapsed=7.710674e+00 cycle=88 time=2.397244e-01 dt=2.535444e-03
+elapsed=7.942924e+00 cycle=92 time=2.498635e-01 dt=2.533821e-03
+elapsed=8.773545e+00 cycle=96 time=2.599972e-01 dt=2.532930e-03
+elapsed=9.056613e+00 cycle=100 time=2.701284e-01 dt=2.532747e-03
+elapsed=9.317880e+00 cycle=104 time=2.802594e-01 dt=2.532770e-03
+elapsed=9.597363e+00 cycle=108 time=2.903912e-01 dt=2.533337e-03
+CARTOON_AMR_TRANSACTION cycle=111 requested_refine=0 requested_derefine_leaves=8 accepted_derefine_parents=2 created_leaves=0 deleted_leaves=6 mirror_mismatches=0
+AMR_HISTORY_REPLAY event=3 time_hex=0x1.3124cd38fd72cp-2 requested_leaves=206 accepted_leaves=206 max_level=7 checksum=0ca3eb7a28f554f5 exact_match=true shadow_refine=0 shadow_derefine=42
+elapsed=9.901622e+00 cycle=112 time=3.030597e-01 dt=5.069953e-03
+elapsed=1.012230e+01 cycle=116 time=3.233520e-01 dt=5.079317e-03
+elapsed=1.041192e+01 cycle=120 time=3.436881e-01 dt=5.091338e-03
+elapsed=1.063517e+01 cycle=124 time=3.640734e-01 dt=5.105608e-03
+elapsed=1.090269e+01 cycle=128 time=3.845226e-01 dt=5.124378e-03
+elapsed=1.116031e+01 cycle=132 time=4.050533e-01 dt=5.147370e-03
+elapsed=1.139194e+01 cycle=136 time=4.256795e-01 dt=5.171439e-03
+elapsed=1.167626e+01 cycle=140 time=4.464038e-01 dt=5.197971e-03
+elapsed=1.189782e+01 cycle=144 time=4.672400e-01 dt=5.228253e-03
+elapsed=1.216651e+01 cycle=148 time=4.882024e-01 dt=5.260681e-03
+elapsed=1.305184e+01 cycle=152 time=5.092934e-01 dt=5.293574e-03
+elapsed=1.327377e+01 cycle=156 time=5.305210e-01 dt=5.329823e-03
+elapsed=1.354834e+01 cycle=160 time=5.518978e-01 dt=5.367424e-03
+elapsed=1.380430e+01 cycle=164 time=5.734236e-01 dt=5.405523e-03
+elapsed=1.404127e+01 cycle=168 time=5.951065e-01 dt=5.446630e-03
+elapsed=1.431178e+01 cycle=172 time=6.169532e-01 dt=5.486732e-03
+elapsed=1.453305e+01 cycle=176 time=6.389628e-01 dt=5.529073e-03
+elapsed=1.482454e+01 cycle=180 time=6.611440e-01 dt=5.571438e-03
+elapsed=1.504635e+01 cycle=184 time=6.834936e-01 dt=5.614551e-03
+elapsed=1.531627e+01 cycle=188 time=7.060185e-01 dt=5.657979e-03
+elapsed=1.558340e+01 cycle=192 time=7.287148e-01 dt=5.701468e-03
+elapsed=1.637030e+01 cycle=196 time=7.515878e-01 dt=5.745012e-03
+elapsed=1.663474e+01 cycle=200 time=7.746323e-01 dt=5.788542e-03
+elapsed=1.691530e+01 cycle=204 time=7.978527e-01 dt=5.831468e-03
+elapsed=1.717831e+01 cycle=208 time=8.212426e-01 dt=5.874764e-03
+elapsed=1.742638e+01 cycle=212 time=8.448058e-01 dt=5.916530e-03
+elapsed=1.771973e+01 cycle=216 time=8.685354e-01 dt=5.959371e-03
+elapsed=1.793945e+01 cycle=220 time=8.924336e-01 dt=5.999601e-03
+elapsed=1.825019e+01 cycle=224 time=9.164944e-01 dt=6.041673e-03
+elapsed=1.850059e+01 cycle=228 time=9.407181e-01 dt=6.080264e-03
+elapsed=1.874099e+01 cycle=232 time=9.651005e-01 dt=6.120512e-03
+elapsed=1.901345e+01 cycle=236 time=9.896382e-01 dt=6.158248e-03
+elapsed=1.993237e+01 cycle=240 time=1.014331e+00 dt=6.196585e-03
+elapsed=2.015567e+01 cycle=244 time=1.039171e+00 dt=6.233399e-03
+elapsed=2.044057e+01 cycle=248 time=1.064162e+00 dt=6.269804e-03
+elapsed=2.066495e+01 cycle=252 time=1.089294e+00 dt=6.305653e-03
+elapsed=2.092814e+01 cycle=256 time=1.114570e+00 dt=6.340153e-03
+elapsed=2.119196e+01 cycle=260 time=1.139982e+00 dt=6.375009e-03
+elapsed=2.143105e+01 cycle=264 time=1.165533e+00 dt=6.407666e-03
+elapsed=2.169610e+01 cycle=268 time=1.191214e+00 dt=6.441515e-03
+elapsed=2.191755e+01 cycle=272 time=1.217027e+00 dt=6.472411e-03
+elapsed=2.219089e+01 cycle=276 time=1.242965e+00 dt=6.505249e-03
+elapsed=2.300919e+01 cycle=280 time=1.269029e+00 dt=6.534480e-03
+elapsed=2.322849e+01 cycle=284 time=1.295214e+00 dt=6.566073e-03
+elapsed=2.351766e+01 cycle=288 time=1.321519e+00 dt=6.593976e-03
+elapsed=2.373667e+01 cycle=292 time=1.347940e+00 dt=6.624039e-03
+elapsed=2.400528e+01 cycle=296 time=1.374476e+00 dt=6.651012e-03
+elapsed=2.425643e+01 cycle=300 time=1.401124e+00 dt=6.679638e-03
+elapsed=2.451311e+01 cycle=304 time=1.427881e+00 dt=6.705703e-03
+elapsed=2.479419e+01 cycle=308 time=1.454746e+00 dt=6.732983e-03
+elapsed=2.502136e+01 cycle=312 time=1.481715e+00 dt=6.758162e-03
+elapsed=2.593912e+01 cycle=316 time=1.508788e+00 dt=6.784186e-03
+elapsed=2.620962e+01 cycle=320 time=1.535961e+00 dt=6.808503e-03
+elapsed=2.648475e+01 cycle=324 time=1.563234e+00 dt=6.833354e-03
+elapsed=2.673738e+01 cycle=328 time=1.590602e+00 dt=6.856832e-03
+elapsed=2.700694e+01 cycle=332 time=1.618066e+00 dt=6.880589e-03
+elapsed=2.726167e+01 cycle=336 time=1.645622e+00 dt=6.903254e-03
+elapsed=2.750340e+01 cycle=340 time=1.673271e+00 dt=6.925991e-03
+elapsed=2.778635e+01 cycle=344 time=1.701007e+00 dt=6.947866e-03
+elapsed=2.800798e+01 cycle=348 time=1.728833e+00 dt=6.969649e-03
+elapsed=2.883502e+01 cycle=352 time=1.756742e+00 dt=6.990759e-03
+elapsed=2.912894e+01 cycle=356 time=1.784739e+00 dt=7.011651e-03
+elapsed=2.935826e+01 cycle=360 time=1.812815e+00 dt=7.032019e-03
+elapsed=2.964709e+01 cycle=364 time=1.840975e+00 dt=7.052076e-03
+elapsed=2.986883e+01 cycle=368 time=1.869212e+00 dt=7.071725e-03
+elapsed=3.013443e+01 cycle=372 time=1.897530e+00 dt=7.091000e-03
+elapsed=3.041683e+01 cycle=376 time=1.925922e+00 dt=7.109734e-03
+elapsed=3.064685e+01 cycle=380 time=1.954364e+00 dt=7.110693e-03
+elapsed=3.091550e+01 cycle=384 time=1.982804e+00 dt=7.109575e-03
+elapsed=3.179491e+01 cycle=388 time=2.011242e+00 dt=7.109140e-03
+elapsed=3.201459e+01 cycle=392 time=2.039679e+00 dt=7.109395e-03
+elapsed=3.228359e+01 cycle=396 time=2.068117e+00 dt=7.109192e-03
+elapsed=3.250322e+01 cycle=400 time=2.096550e+00 dt=7.106791e-03
+elapsed=3.278755e+01 cycle=404 time=2.124974e+00 dt=7.105079e-03
+elapsed=3.303731e+01 cycle=408 time=2.153393e+00 dt=7.104061e-03
+elapsed=3.329013e+01 cycle=412 time=2.181808e+00 dt=7.103402e-03
+elapsed=3.357923e+01 cycle=416 time=2.210219e+00 dt=7.100878e-03
+elapsed=3.379808e+01 cycle=420 time=2.238618e+00 dt=7.098177e-03
+elapsed=3.459657e+01 cycle=424 time=2.267007e+00 dt=7.095084e-03
+elapsed=3.485528e+01 cycle=428 time=2.295377e+00 dt=7.087875e-03
+elapsed=3.508867e+01 cycle=432 time=2.323717e+00 dt=7.080376e-03
+elapsed=3.538123e+01 cycle=436 time=2.352029e+00 dt=7.073610e-03
+elapsed=3.560056e+01 cycle=440 time=2.380314e+00 dt=7.067578e-03
+elapsed=3.587114e+01 cycle=444 time=2.408576e+00 dt=7.062279e-03
+elapsed=3.609056e+01 cycle=448 time=2.436818e+00 dt=7.056404e-03
+elapsed=3.639505e+01 cycle=452 time=2.465031e+00 dt=7.048160e-03
+elapsed=3.666169e+01 cycle=456 time=2.493212e+00 dt=7.040638e-03
+elapsed=3.759453e+01 cycle=460 time=2.521364e+00 dt=7.033837e-03
+elapsed=3.781540e+01 cycle=464 time=2.549490e+00 dt=7.027755e-03
+elapsed=3.808450e+01 cycle=468 time=2.577593e+00 dt=7.022390e-03
+elapsed=3.830278e+01 cycle=472 time=2.605674e+00 dt=7.015786e-03
+elapsed=3.859439e+01 cycle=476 time=2.633725e+00 dt=7.007714e-03
+elapsed=3.884587e+01 cycle=480 time=2.661745e+00 dt=7.000344e-03
+elapsed=3.908521e+01 cycle=484 time=2.689736e+00 dt=6.993673e-03
+elapsed=3.938827e+01 cycle=488 time=2.717701e+00 dt=6.987700e-03
+elapsed=3.960755e+01 cycle=492 time=2.745644e+00 dt=6.982421e-03
+elapsed=4.039214e+01 cycle=496 time=2.773566e+00 dt=6.976460e-03
+elapsed=4.064941e+01 cycle=500 time=2.801460e+00 dt=6.968660e-03
+elapsed=4.087987e+01 cycle=504 time=2.829324e+00 dt=6.961535e-03
+elapsed=4.115158e+01 cycle=508 time=2.857160e+00 dt=6.955084e-03
+elapsed=4.137340e+01 cycle=512 time=2.884971e+00 dt=6.949303e-03
+elapsed=4.165020e+01 cycle=516 time=2.912761e+00 dt=6.944190e-03
+elapsed=4.192487e+01 cycle=520 time=2.940531e+00 dt=6.939741e-03
+elapsed=4.214641e+01 cycle=524 time=2.968278e+00 dt=6.932281e-03
+elapsed=4.243718e+01 cycle=528 time=2.995997e+00 dt=6.925436e-03
+elapsed=4.333059e+01 cycle=532 time=3.023689e+00 dt=6.919235e-03
+elapsed=4.358409e+01 cycle=536 time=3.051358e+00 dt=6.913677e-03
+elapsed=4.383873e+01 cycle=540 time=3.079005e+00 dt=6.908759e-03
+elapsed=4.411518e+01 cycle=544 time=3.106633e+00 dt=6.904476e-03
+elapsed=4.433650e+01 cycle=548 time=3.134245e+00 dt=6.899214e-03
+elapsed=4.462414e+01 cycle=552 time=3.161831e+00 dt=6.892639e-03
+elapsed=4.485005e+01 cycle=556 time=3.189393e+00 dt=6.886681e-03
+elapsed=4.512715e+01 cycle=560 time=3.216931e+00 dt=6.881337e-03
+elapsed=4.538886e+01 cycle=564 time=3.244449e+00 dt=6.876604e-03
+elapsed=4.621024e+01 cycle=568 time=3.271949e+00 dt=6.872479e-03
+elapsed=4.652968e+01 cycle=572 time=3.299434e+00 dt=6.868960e-03
+elapsed=4.679336e+01 cycle=576 time=3.326902e+00 dt=6.863282e-03
+elapsed=4.703407e+01 cycle=580 time=3.354346e+00 dt=6.857532e-03
+elapsed=4.732559e+01 cycle=584 time=3.381769e+00 dt=6.852369e-03
+elapsed=4.755006e+01 cycle=588 time=3.409171e+00 dt=6.847791e-03
+elapsed=4.782300e+01 cycle=592 time=3.436556e+00 dt=6.843794e-03
+elapsed=4.810074e+01 cycle=596 time=3.463926e+00 dt=6.840377e-03
+elapsed=4.833276e+01 cycle=600 time=3.491283e+00 dt=6.837204e-03
+elapsed=4.921408e+01 cycle=604 time=3.518623e+00 dt=6.831617e-03
+elapsed=4.950162e+01 cycle=608 time=3.545942e+00 dt=6.826591e-03
+elapsed=4.972293e+01 cycle=612 time=3.573241e+00 dt=6.822125e-03
+elapsed=5.000450e+01 cycle=616 time=3.600524e+00 dt=6.818216e-03
+elapsed=5.024854e+01 cycle=620 time=3.627792e+00 dt=6.814862e-03
+elapsed=5.051510e+01 cycle=624 time=3.655047e+00 dt=6.812062e-03
+elapsed=5.079345e+01 cycle=628 time=3.682291e+00 dt=6.808605e-03
+elapsed=5.101634e+01 cycle=632 time=3.709518e+00 dt=6.803669e-03
+elapsed=5.130799e+01 cycle=636 time=3.736726e+00 dt=6.799269e-03
+elapsed=5.210286e+01 cycle=640 time=3.763917e+00 dt=6.795404e-03
+elapsed=5.232402e+01 cycle=644 time=3.791093e+00 dt=6.792074e-03
+elapsed=5.260215e+01 cycle=648 time=3.818257e+00 dt=6.789275e-03
+elapsed=5.286005e+01 cycle=652 time=3.845411e+00 dt=6.787007e-03
+elapsed=5.309455e+01 cycle=656 time=3.872554e+00 dt=6.783209e-03
+elapsed=5.338312e+01 cycle=660 time=3.899680e+00 dt=6.778833e-03
+elapsed=5.360573e+01 cycle=664 time=3.926790e+00 dt=6.774972e-03
+elapsed=5.387815e+01 cycle=668 time=3.953884e+00 dt=6.771626e-03
+elapsed=5.409995e+01 cycle=672 time=3.980966e+00 dt=6.768793e-03
+elapsed=5.506994e+01 cycle=676 time=4.008038e+00 dt=6.766472e-03
+elapsed=5.530689e+01 cycle=680 time=4.035101e+00 dt=6.764663e-03
+elapsed=5.559242e+01 cycle=684 time=4.062153e+00 dt=6.760429e-03
+elapsed=5.581699e+01 cycle=688 time=4.089189e+00 dt=6.756537e-03
+elapsed=5.609111e+01 cycle=692 time=4.116210e+00 dt=6.753142e-03
+elapsed=5.631575e+01 cycle=696 time=4.143218e+00 dt=6.750243e-03
+elapsed=5.661312e+01 cycle=700 time=4.170215e+00 dt=6.747841e-03
+elapsed=5.687748e+01 cycle=704 time=4.197204e+00 dt=6.745934e-03
+elapsed=5.711073e+01 cycle=708 time=4.224185e+00 dt=6.743702e-03
+elapsed=5.793916e+01 cycle=712 time=4.251154e+00 dt=6.739750e-03
+elapsed=5.820973e+01 cycle=716 time=4.278107e+00 dt=6.736280e-03
+elapsed=5.844901e+01 cycle=720 time=4.305048e+00 dt=6.733291e-03
+elapsed=5.871640e+01 cycle=724 time=4.331977e+00 dt=6.730784e-03
+elapsed=5.893731e+01 cycle=728 time=4.358897e+00 dt=6.728757e-03
+elapsed=5.923786e+01 cycle=732 time=4.385810e+00 dt=6.727212e-03
+elapsed=5.948310e+01 cycle=736 time=4.412715e+00 dt=6.724310e-03
+elapsed=5.973396e+01 cycle=740 time=4.439607e+00 dt=6.720744e-03
+elapsed=6.000542e+01 cycle=744 time=4.466485e+00 dt=6.717646e-03
+elapsed=6.022429e+01 cycle=748 time=4.493352e+00 dt=6.715016e-03
+elapsed=6.108907e+01 cycle=752 time=4.520208e+00 dt=6.712855e-03
+elapsed=6.138164e+01 cycle=756 time=4.547057e+00 dt=6.711163e-03
+elapsed=6.160047e+01 cycle=760 time=4.573900e+00 dt=6.709939e-03
+elapsed=6.186983e+01 cycle=764 time=4.600734e+00 dt=6.706287e-03
+elapsed=6.213922e+01 cycle=768 time=4.627554e+00 dt=6.703066e-03
+elapsed=6.235951e+01 cycle=772 time=4.654362e+00 dt=6.700301e-03
+elapsed=6.264596e+01 cycle=776 time=4.681160e+00 dt=6.697994e-03
+elapsed=6.286549e+01 cycle=780 time=4.707949e+00 dt=6.696144e-03
+elapsed=6.314104e+01 cycle=784 time=4.734731e+00 dt=6.694753e-03
+elapsed=6.393308e+01 cycle=788 time=4.761508e+00 dt=6.692705e-03
+elapsed=6.415305e+01 cycle=792 time=4.788274e+00 dt=6.689351e-03
+elapsed=6.444386e+01 cycle=796 time=4.815027e+00 dt=6.686443e-03
+elapsed=6.466191e+01 cycle=800 time=4.841769e+00 dt=6.683983e-03
+elapsed=6.493643e+01 cycle=804 time=4.868501e+00 dt=6.681969e-03
+elapsed=6.519535e+01 cycle=808 time=4.895227e+00 dt=6.680404e-03
+elapsed=6.544049e+01 cycle=812 time=4.921947e+00 dt=6.679288e-03
+elapsed=6.570985e+01 cycle=816 time=4.948660e+00 dt=6.676339e-03
+elapsed=6.592901e+01 cycle=820 time=4.975361e+00 dt=6.673283e-03
+elapsed=6.684087e+01 cycle=824 time=5.002050e+00 dt=6.670664e-03
+elapsed=6.711176e+01 cycle=828 time=5.028729e+00 dt=6.668484e-03
+elapsed=6.733355e+01 cycle=832 time=5.055400e+00 dt=6.666742e-03
+elapsed=6.761606e+01 cycle=836 time=5.082065e+00 dt=6.665441e-03
+elapsed=6.787881e+01 cycle=840 time=5.108725e+00 dt=6.663899e-03
+elapsed=6.810917e+01 cycle=844 time=5.135376e+00 dt=6.660691e-03
+elapsed=6.839136e+01 cycle=848 time=5.162015e+00 dt=6.657913e-03
+elapsed=6.861064e+01 cycle=852 time=5.188643e+00 dt=6.655564e-03
+elapsed=6.888415e+01 cycle=856 time=5.215262e+00 dt=6.653646e-03
+elapsed=6.910577e+01 cycle=860 time=5.241874e+00 dt=6.652160e-03
+elapsed=6.997544e+01 cycle=864 time=5.268481e+00 dt=6.651106e-03
+elapsed=7.026078e+01 cycle=868 time=5.295083e+00 dt=6.648565e-03
+elapsed=7.048235e+01 cycle=872 time=5.321672e+00 dt=6.645627e-03
+elapsed=7.074811e+01 cycle=876 time=5.348251e+00 dt=6.643110e-03
+elapsed=7.101494e+01 cycle=880 time=5.374820e+00 dt=6.641016e-03
+elapsed=7.125826e+01 cycle=884 time=5.401381e+00 dt=6.639346e-03
+elapsed=7.152722e+01 cycle=888 time=5.427937e+00 dt=6.638102e-03
+elapsed=7.174913e+01 cycle=892 time=5.454488e+00 dt=6.636821e-03
+elapsed=7.202128e+01 cycle=896 time=5.481030e+00 dt=6.633724e-03
+elapsed=7.294859e+01 cycle=900 time=5.507561e+00 dt=6.631041e-03
+elapsed=7.321695e+01 cycle=904 time=5.534082e+00 dt=6.628774e-03
+elapsed=7.343722e+01 cycle=908 time=5.560594e+00 dt=6.626923e-03
+elapsed=7.372061e+01 cycle=912 time=5.587099e+00 dt=6.625491e-03
+elapsed=7.397404e+01 cycle=916 time=5.613600e+00 dt=6.624478e-03
+elapsed=7.420785e+01 cycle=920 time=5.640095e+00 dt=6.622137e-03
+elapsed=7.449750e+01 cycle=924 time=5.666579e+00 dt=6.619290e-03
+elapsed=7.471651e+01 cycle=928 time=5.693053e+00 dt=6.616851e-03
+elapsed=7.500005e+01 cycle=932 time=5.719517e+00 dt=6.614822e-03
+elapsed=7.521848e+01 cycle=936 time=5.745974e+00 dt=6.613204e-03
+elapsed=7.603101e+01 cycle=940 time=5.772424e+00 dt=6.611999e-03
+elapsed=7.632488e+01 cycle=944 time=5.798871e+00 dt=6.610804e-03
+elapsed=7.655799e+01 cycle=948 time=5.825310e+00 dt=6.607794e-03
+elapsed=7.682856e+01 cycle=952 time=5.851737e+00 dt=6.605185e-03
+elapsed=7.708310e+01 cycle=956 time=5.878154e+00 dt=6.602978e-03
+elapsed=7.731755e+01 cycle=960 time=5.904563e+00 dt=6.601176e-03
+elapsed=7.761809e+01 cycle=964 time=5.930966e+00 dt=6.599779e-03
+elapsed=7.783932e+01 cycle=968 time=5.957363e+00 dt=6.598790e-03
+elapsed=7.812322e+01 cycle=972 time=5.983756e+00 dt=6.596482e-03
+elapsed=7.898906e+01 cycle=976 time=6.010137e+00 dt=6.593701e-03
+elapsed=7.923300e+01 cycle=980 time=6.036509e+00 dt=6.591316e-03
+elapsed=7.952144e+01 cycle=984 time=6.062871e+00 dt=6.589328e-03
+elapsed=7.978113e+01 cycle=988 time=6.089226e+00 dt=6.587739e-03
+elapsed=8.001324e+01 cycle=992 time=6.115575e+00 dt=6.586550e-03
+elapsed=8.029480e+01 cycle=996 time=6.141919e+00 dt=6.585267e-03
+elapsed=8.051614e+01 cycle=1000 time=6.168256e+00 dt=6.582311e-03
+elapsed=8.078625e+01 cycle=1004 time=6.194581e+00 dt=6.579743e-03
+elapsed=8.100801e+01 cycle=1008 time=6.220897e+00 dt=6.577565e-03
+elapsed=8.127414e+01 cycle=1012 time=6.247204e+00 dt=6.575779e-03
+elapsed=8.209698e+01 cycle=1016 time=6.273505e+00 dt=6.574386e-03
+elapsed=8.237294e+01 cycle=1020 time=6.299801e+00 dt=6.573388e-03
+elapsed=8.259879e+01 cycle=1024 time=6.326092e+00 dt=6.570902e-03
+elapsed=8.286422e+01 cycle=1028 time=6.352371e+00 dt=6.568145e-03
+elapsed=8.313151e+01 cycle=1032 time=6.378640e+00 dt=6.565769e-03
+elapsed=8.336724e+01 cycle=1036 time=6.404900e+00 dt=6.563778e-03
+elapsed=8.364344e+01 cycle=1040 time=6.431153e+00 dt=6.562173e-03
+elapsed=8.386734e+01 cycle=1044 time=6.457399e+00 dt=6.560949e-03
+elapsed=8.414986e+01 cycle=1048 time=6.483642e+00 dt=6.559341e-03
+output wall time = 1.692762e+01
+
+Terminating on time limit
+time=6.500000e+00 cycle=1051
+tlim=6.500000e+00 nlim=-1 nmb_total_limit=-1
+
+Current number of MeshBlocks = 206
+108 MeshBlocks created, 6 deleted by AMR
+0 communicated for load balancing, load balancing efficiency = 0.000000e+00
+
+MeshBlock-cycles = 217052
+cpu time used  = 8.317757e+01
+zone-cycles/cpu_second = 2.672130e+06
+particle-updates/cpu_second = 0.000000e+00
