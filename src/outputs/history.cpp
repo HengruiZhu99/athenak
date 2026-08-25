@@ -157,7 +157,13 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
   const Real puncture_x = pdata->puncture_center[0];
   const Real puncture_y = pdata->puncture_center[1];
   const Real puncture_z = pdata->puncture_center[2];
-  const int stencil_radius = pdata->fd_order/2;
+  int stencil_radius = pdata->fd_order/2;
+  if (pm->pmb_pack->prefgh != nullptr) {
+    const auto &ref_opt = pm->pmb_pack->prefgh->opt;
+    const int evolution_radius = ref_gh::PunctureEvolutionStencilRadius(
+        ref_opt.fd_order, ref_opt.diss);
+    if (evolution_radius > stencil_radius) stencil_radius = evolution_radius;
+  }
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   array_sum::GlobalSum sums;
   Kokkos::parallel_reduce(
@@ -542,7 +548,8 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
   const Real center_z = module->opt.reference_center[2];
   const bool exclude_puncture_stencils =
       module->opt.exclude_puncture_stencil_diagnostics;
-  const int stencil_radius = module->opt.fd_order/2;
+  const int stencil_radius = ref_gh::PunctureEvolutionStencilRadius(
+      module->opt.fd_order, module->opt.diss);
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   array_sum::GlobalSum sums;
   Kokkos::parallel_reduce(

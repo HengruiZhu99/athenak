@@ -130,6 +130,7 @@ for item in 02:0.2 04:0.4 06:0.6; do
       "${OUT}/${coarse}/cbin_ref_gh_native_con_1/${coarse}.ref_gh_native_con.00001.cbin" \
       "${OUT}/${medium}/cbin_ref_gh_native_con_1/${medium}.ref_gh_native_con.00001.cbin" \
       "${OUT}/${fine}/cbin_ref_gh_native_con_1/${fine}.ref_gh_native_con.00001.cbin" \
+    --fd-stencil-radius 3 \
     --expected-time "${expected_time}" \
     --output "convergence_t${expected_time}.json" \
     > "convergence_t${expected_time}.log"

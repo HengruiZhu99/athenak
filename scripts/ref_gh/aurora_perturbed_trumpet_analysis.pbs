@@ -36,6 +36,7 @@ python3 "${ANALYZER}" \
     "${RUN}/ref_gh_perturbed_trumpet_n64/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n64.ref_gh_native_con.00001.cbin" \
     "${RUN}/ref_gh_perturbed_trumpet_n96/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n96.ref_gh_native_con.00001.cbin" \
     "${RUN}/ref_gh_perturbed_trumpet_n128/cbin_ref_gh_native_con_1/ref_gh_perturbed_trumpet_n128.ref_gh_native_con.00001.cbin" \
+  --fd-stencil-radius 3 \
   --output convergence.json > convergence.log
 
 test -s convergence.json

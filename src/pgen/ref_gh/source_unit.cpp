@@ -843,7 +843,12 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
     const Real clear_in_y[3] = {0.0, 1.0 + 1.0e-12, 0.0};
     if (ref_gh::PunctureStencilIsClear(overlapping, spacing, 2)
         || !ref_gh::PunctureStencilIsClear(clear_in_x, spacing, 2)
-        || !ref_gh::PunctureStencilIsClear(clear_in_y, spacing, 2)) {
+        || !ref_gh::PunctureStencilIsClear(clear_in_y, spacing, 2)
+        || ref_gh::PunctureEvolutionStencilRadius(2, 0.0) != 1
+        || ref_gh::PunctureEvolutionStencilRadius(2, 0.1) != 2
+        || ref_gh::PunctureEvolutionStencilRadius(4, 0.0) != 2
+        || ref_gh::PunctureEvolutionStencilRadius(4, 0.1) != 3
+        || ref_gh::PunctureEvolutionStencilRadius(6, 0.1) != 4) {
       std::cout << "### FATAL ERROR: puncture stencil-footprint mask failed."
                 << std::endl;
       std::exit(EXIT_FAILURE);

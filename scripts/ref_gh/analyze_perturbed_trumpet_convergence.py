@@ -182,6 +182,30 @@ def norm_summary(coarse: np.ndarray, medium: np.ndarray, fine: np.ndarray,
     }
 
 
+def maximum_summary(coarse: np.ndarray, medium: np.ndarray, fine: np.ndarray,
+                    mask: np.ndarray, resolutions, variable_names,
+                    coordinates) -> dict:
+    """Locate masked inter-resolution Linf differences on the target grid."""
+    result = {}
+    for left, right, n_left, n_right in (
+            (coarse, medium, resolutions[0], resolutions[1]),
+            (medium, fine, resolutions[1], resolutions[2])):
+        difference = np.where(mask[None, ...], np.abs(left - right), -np.inf)
+        variable, k, j, i = np.unravel_index(
+            int(np.argmax(difference)), difference.shape)
+        x = float(coordinates[0][i])
+        y = float(coordinates[1][j])
+        z = float(coordinates[2][k])
+        result[f"difference_{n_left}_{n_right}"] = {
+            "Linf": float(difference[variable, k, j, i]),
+            "variable": variable_names[variable],
+            "coordinate": [x, y, z],
+            "radius": math.sqrt(x*x + y*y + z*z),
+            "target_index_ijk": [int(i), int(j), int(k)],
+        }
+    return result
+
+
 def load_triplet(paths, target_n: int):
     loaded = [read_cbin(path) for path in paths]
     variables = loaded[0]["variables"]
@@ -228,7 +252,11 @@ def main() -> None:
                         metavar=("N64", "N96", "N128"))
     parser.add_argument("--target-n", type=int, default=32)
     parser.add_argument("--analysis-radius", type=float, default=1.0)
-    parser.add_argument("--fd-stencil-radius", type=int, default=2)
+    parser.add_argument("--analysis-inner-radius", type=float, default=0.0)
+    parser.add_argument(
+        "--fd-stencil-radius", type=int, required=True,
+        help=("maximum cell radius of every relevant stencil; for fourth-order "
+              "Ref-GH with nonzero KO dissipation this is 3, not 2"))
     parser.add_argument("--puncture", nargs=3, type=float, default=(0.0, 0.0, 0.0),
                         metavar=("X", "Y", "Z"))
     parser.add_argument("--expected-time", type=float)
@@ -236,6 +264,11 @@ def main() -> None:
                         metavar=("N0", "N1", "N2"))
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+
+    if not (0.0 <= args.analysis_inner_radius < args.analysis_radius):
+        raise ValueError("require 0 <= analysis-inner-radius < analysis-radius")
+    if args.fd_stencil_radius < 1:
+        raise ValueError("fd-stencil-radius must be positive")
 
     field_names, bounds, fields, field_meta = load_triplet(args.field, args.target_n)
     constraint_names, constraint_bounds, constraints, constraint_meta = load_triplet(
@@ -251,7 +284,9 @@ def main() -> None:
                    /args.target_n for lower, upper in bounds]
     z, y, x = np.meshgrid(coordinates[2], coordinates[1], coordinates[0],
                           indexing="ij")
-    mask = x*x + y*y + z*z < args.analysis_radius*args.analysis_radius
+    radius2 = x*x + y*y + z*z
+    mask = ((radius2 >= args.analysis_inner_radius*args.analysis_inner_radius)
+            & (radius2 < args.analysis_radius*args.analysis_radius))
     clear_masks = [puncture_clear_mask(
         item, args.target_n, args.fd_stencil_radius, args.puncture)
         for item in field_meta + constraint_meta]
@@ -269,6 +304,11 @@ def main() -> None:
         "field_precision": "binary64" if binary64 else "binary32",
         "target_n": args.target_n,
         "analysis_radius": args.analysis_radius,
+        "analysis_inner_radius": args.analysis_inner_radius,
+        "analysis_region": {
+            "inner_radius_inclusive": args.analysis_inner_radius,
+            "outer_radius_exclusive": args.analysis_radius,
+        },
         "analysis_sample_count": int(np.count_nonzero(mask)),
         "puncture_stencil_mask": {
             "enabled": True,
@@ -276,6 +316,8 @@ def main() -> None:
             "puncture": args.puncture,
             "rule": ("reject a target if any tensor-interpolation source cell "
                      "has a finite-difference support box containing the puncture"),
+            "scope": ("caller-supplied maximum footprint across diagnostic and "
+                      "evolution operators, including KO dissipation"),
         },
         "resolutions": args.resolutions,
         "field_variables": field_names,
@@ -286,10 +328,18 @@ def main() -> None:
             "constraint": [item["time"] for item in constraint_meta],
         },
         "field": norm_summary(*fields, mask, tuple(args.resolutions)),
+        "field_difference_maxima": maximum_summary(
+            *fields, mask, tuple(args.resolutions), field_names, coordinates),
         "dynamic_field": norm_summary(
             *dynamic_fields, mask, tuple(args.resolutions)),
+        "dynamic_field_difference_maxima": maximum_summary(
+            *dynamic_fields, mask, tuple(args.resolutions), field_names[2:],
+            coordinates),
         "native_constraint": norm_summary(
             *constraints, mask, tuple(args.resolutions)),
+        "native_constraint_difference_maxima": maximum_summary(
+            *constraints, mask, tuple(args.resolutions), constraint_names,
+            coordinates),
         "psi": norm_summary(
             fields[0][:2], fields[1][:2], fields[2][:2], mask,
             tuple(args.resolutions)),

@@ -104,6 +104,17 @@ bool PunctureStencilIsClear(const Real displacement[3], const Real h,
   return PunctureStencilIsClear(displacement, spacing, stencil_radius);
 }
 
+// The centered first derivative for order 2p reaches p cells.  AthenaK's
+// matching Kreiss-Oliger operator Diss<p+1> reaches one cell farther whenever
+// it is enabled.  A diagnostic that promises to exclude every point whose
+// evolved domain of dependence touches the puncture must use this larger
+// footprint, not just the derivative stencil.
+KOKKOS_INLINE_FUNCTION
+int PunctureEvolutionStencilRadius(const int fd_order,
+                                   const Real dissipation) {
+  return fd_order/2 + ((dissipation > 0.0) ? 1 : 0);
+}
+
 }  // namespace ref_gh
 
 #endif  // REF_GH_PUNCTURE_EXPONENT_HPP_

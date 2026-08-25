@@ -65,7 +65,8 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
       pack->prefgh->opt.gauge_driver_enabled && !perturbed_trumpet;
   const bool gauge_reference_subtraction =
       pack->prefgh->opt.gauge_reference_subtraction;
-  const int stencil_radius = pack->prefgh->opt.fd_order/2;
+  const int stencil_radius = ref_gh::PunctureEvolutionStencilRadius(
+      pack->prefgh->opt.fd_order, pack->prefgh->opt.diss);
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   Real field_linf = 0.0;
   Real constraint_linf = 0.0;
@@ -632,7 +633,8 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
   }
   const auto rhs = pack->prefgh->u_rhs;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
-  const int rhs_stencil_radius = pack->prefgh->opt.fd_order/2;
+  const int rhs_stencil_radius = ref_gh::PunctureEvolutionStencilRadius(
+      pack->prefgh->opt.fd_order, pack->prefgh->opt.diss);
   using MaxLoc = Kokkos::MaxLoc<Real, int>;
   MaxLoc::value_type rhs_maximum;
   Kokkos::parallel_reduce(
