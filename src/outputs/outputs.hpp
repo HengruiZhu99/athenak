@@ -193,6 +193,8 @@ struct HistoryData {
   int nhist;
   int instance;
   int fd_order;
+  bool exclude_puncture_stencils;
+  Real puncture_center[3];
   PhysicsModule physics;
   std::string label[NHISTORY_VARIABLES];
   Real hdata[NHISTORY_VARIABLES];
@@ -200,7 +202,8 @@ struct HistoryData {
   bool header_written;
   // constructor
   explicit HistoryData(PhysicsModule name, int id=0) :
-      instance(id), fd_order(4), physics(name), header_written(false) {
+      instance(id), fd_order(4), exclude_puncture_stencils(false),
+      puncture_center{0.0, 0.0, 0.0}, physics(name), header_written(false) {
     for (int n = 0; n < NHISTORY_VARIABLES; ++n) use_max[n] = false;
   }
 };

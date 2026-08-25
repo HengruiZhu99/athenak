@@ -25,6 +25,7 @@
 #include "fo_gh/fo_gh.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
+#include "ref_gh/puncture_exponent.hpp"
 #include "z4c/z4c.hpp"
 
 #include "coordinates/adm.hpp"
@@ -66,6 +67,14 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
       for (int chunk = 0; chunk < 6; ++chunk) {
         hist_data.emplace_back(PhysicsModule::CommonADMConstraints, chunk);
         hist_data.back().fd_order = common_fd_order;
+        hist_data.back().exclude_puncture_stencils = pin->GetOrAddBoolean(
+            "problem", "common_adm_exclude_puncture_stencils", false);
+        hist_data.back().puncture_center[0] = pin->GetOrAddReal(
+            "problem", "common_adm_puncture_x", 0.0);
+        hist_data.back().puncture_center[1] = pin->GetOrAddReal(
+            "problem", "common_adm_puncture_y", 0.0);
+        hist_data.back().puncture_center[2] = pin->GetOrAddReal(
+            "problem", "common_adm_puncture_z", 0.0);
       }
     }
   }
@@ -98,8 +107,10 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
   }
 }
 
-// Two fixed physical regions are stored per file so the standard 20-entry reduction
-// buffer is not enlarged.  No lapse or chi mask is applied to these common diagnostics.
+// Two fixed physical regions are stored per file so the standard reduction buffer is
+// not enlarged.  No lapse or chi mask is applied.  Puncture data may instead request
+// the resolution-local, coordinate-fixed exclusion of samples whose full FD support
+// contains the puncture.
 void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
   if (pdata->instance == 0) {
     switch (pdata->fd_order) {
@@ -142,6 +153,11 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
   const auto common = pm->pmb_pack->padm->u_common;
   const auto adm_vars = pm->pmb_pack->padm->adm;
   const int first_region = 2*pdata->instance;
+  const bool exclude_puncture_stencils = pdata->exclude_puncture_stencils;
+  const Real puncture_x = pdata->puncture_center[0];
+  const Real puncture_y = pdata->puncture_center[1];
+  const Real puncture_z = pdata->puncture_center[2];
+  const int stencil_radius = pdata->fd_order/2;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   array_sum::GlobalSum sums;
   Kokkos::parallel_reduce(
@@ -161,9 +177,19 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
                                    size.d_view(m).x2min, size.d_view(m).x2max);
         const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                    size.d_view(m).x3min, size.d_view(m).x3max);
-        const Real r = std::sqrt(x*x + y*y + z*z);
-        const Real cube_r = fmax(Kokkos::abs(x),
-                                fmax(Kokkos::abs(y), Kokkos::abs(z)));
+        const Real displacement[3] = {
+          x - puncture_x, y - puncture_y, z - puncture_z};
+        const Real spacing[3] = {
+          size.d_view(m).dx1, size.d_view(m).dx2, size.d_view(m).dx3};
+        if (exclude_puncture_stencils
+            && !ref_gh::PunctureStencilIsClear(
+                displacement, spacing, stencil_radius)) return;
+        const Real r = std::sqrt(displacement[0]*displacement[0]
+                                 + displacement[1]*displacement[1]
+                                 + displacement[2]*displacement[2]);
+        const Real cube_r = fmax(Kokkos::abs(displacement[0]),
+                                fmax(Kokkos::abs(displacement[1]),
+                                     Kokkos::abs(displacement[2])));
         const Real detg = adm::SpatialDet(
             adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
             adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
@@ -218,9 +244,19 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
                                      size.d_view(m).x2min, size.d_view(m).x2max);
           const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                      size.d_view(m).x3min, size.d_view(m).x3max);
-          const Real r = std::sqrt(x*x + y*y + z*z);
-          const Real cube_r = fmax(Kokkos::abs(x),
-                                  fmax(Kokkos::abs(y), Kokkos::abs(z)));
+          const Real displacement[3] = {
+            x - puncture_x, y - puncture_y, z - puncture_z};
+          const Real spacing[3] = {
+            size.d_view(m).dx1, size.d_view(m).dx2, size.d_view(m).dx3};
+          if (exclude_puncture_stencils
+              && !ref_gh::PunctureStencilIsClear(
+                  displacement, spacing, stencil_radius)) return;
+          const Real r = std::sqrt(displacement[0]*displacement[0]
+                                   + displacement[1]*displacement[1]
+                                   + displacement[2]*displacement[2]);
+          const Real cube_r = fmax(Kokkos::abs(displacement[0]),
+                                  fmax(Kokkos::abs(displacement[1]),
+                                       Kokkos::abs(displacement[2])));
           bool include = region == 0 || (region == 1 && r < 1.0)
               || (region == 2 && r < 2.0)
               || (region == 3 && r >= 2.0 && r < 4.0)
@@ -250,9 +286,19 @@ void HistoryOutput::LoadCommonADMHistoryData(HistoryData *pdata, Mesh *pm) {
                                      size.d_view(m).x2min, size.d_view(m).x2max);
           const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                      size.d_view(m).x3min, size.d_view(m).x3max);
-          const Real r = std::sqrt(x*x + y*y + z*z);
-          const Real cube_r = fmax(Kokkos::abs(x),
-                                  fmax(Kokkos::abs(y), Kokkos::abs(z)));
+          const Real displacement[3] = {
+            x - puncture_x, y - puncture_y, z - puncture_z};
+          const Real spacing[3] = {
+            size.d_view(m).dx1, size.d_view(m).dx2, size.d_view(m).dx3};
+          if (exclude_puncture_stencils
+              && !ref_gh::PunctureStencilIsClear(
+                  displacement, spacing, stencil_radius)) return;
+          const Real r = std::sqrt(displacement[0]*displacement[0]
+                                   + displacement[1]*displacement[1]
+                                   + displacement[2]*displacement[2]);
+          const Real cube_r = fmax(Kokkos::abs(displacement[0]),
+                                  fmax(Kokkos::abs(displacement[1]),
+                                       Kokkos::abs(displacement[2])));
           bool include = region == 0 || (region == 1 && r < 1.0)
               || (region == 2 && r < 2.0)
               || (region == 3 && r >= 2.0 && r < 4.0)
@@ -494,6 +540,9 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
   const Real center_x = module->opt.reference_center[0];
   const Real center_y = module->opt.reference_center[1];
   const Real center_z = module->opt.reference_center[2];
+  const bool exclude_puncture_stencils =
+      module->opt.exclude_puncture_stencil_diagnostics;
+  const int stencil_radius = module->opt.fd_order/2;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   array_sum::GlobalSum sums;
   Kokkos::parallel_reduce(
@@ -505,6 +554,19 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
         const int k = work % indcs.nx3 + indcs.ks;
         const int m = work/indcs.nx3;
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        const Real displacement[3] = {
+          x - center_x, y - center_y, z - center_z};
+        const Real spacing[3] = {
+          size.d_view(m).dx1, size.d_view(m).dx2, size.d_view(m).dx3};
+        if (exclude_puncture_stencils
+            && !ref_gh::PunctureStencilIsClear(
+                displacement, spacing, stencil_radius)) return;
         const Real detg = adm::SpatialDet(
             adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
             adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
@@ -538,12 +600,6 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
             phi2 += value*value;
           }
         }
-        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                                   size.d_view(m).x1min, size.d_view(m).x1max);
-        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                                   size.d_view(m).x2min, size.d_view(m).x2max);
-        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                                   size.d_view(m).x3min, size.d_view(m).x3max);
         const bool near = (x-center_x)*(x-center_x) + (y-center_y)*(y-center_y)
                           + (z-center_z)*(z-center_z) < 4.0*mass*mass;
         total.the_array[HIST_GH] += volume*gh2;
