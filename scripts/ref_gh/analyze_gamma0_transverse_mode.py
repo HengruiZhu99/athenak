@@ -104,7 +104,8 @@ def main() -> None:
     }
     args.output_json.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     with args.output_csv.open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=tuple(records[0]))
+        writer = csv.DictWriter(
+            stream, fieldnames=tuple(records[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(records)
     print(json.dumps(result, indent=2, sort_keys=True))

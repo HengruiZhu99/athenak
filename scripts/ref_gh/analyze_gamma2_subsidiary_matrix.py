@@ -124,7 +124,8 @@ def main() -> None:
 
     columns = tuple(records[0])
     with args.output_csv.open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=columns)
+        writer = csv.DictWriter(
+            stream, fieldnames=columns, lineterminator="\n")
         writer.writeheader()
         writer.writerows(records)
     print(json.dumps(result, indent=2, sort_keys=True))
