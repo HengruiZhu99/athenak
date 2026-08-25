@@ -21,9 +21,10 @@ Gaussian-localized analytic singular reference were implemented and exercised
 locally.  The analytic estimator and the prescribed reference-jet scan pass,
 but the required direct-finite-difference comparison fails for a scale
 invariance reason on the prescribed shell.  Therefore the overall status is
-\status{stopped at the initial estimator hard gate}.  No closed-loop control,
-hyperbolic gauge-driver, runtime $\gamma_2$, stationary black-hole, SMR, or PVC
-qualification claim is made.
+\status{stopped at the initial estimator hard gate}. A focused standard
+$\gamma_2$ slice also passes local algebra and bounded Minkowski checks. No
+closed-loop control, hyperbolic gauge-driver, stationary black-hole, SMR, or
+PVC qualification claim is made.
 \end{abstract}
 
 \section{Provenance and scope}
@@ -44,8 +45,8 @@ Hyperbolic gauge driver & controls the physical coordinate gauge,\\
 $\gamma_0/\gamma_2$ & controls GH and first-order constraints.
 \end{tabular}
 \end{center}
-Only the first mechanism and the initial exponent diagnostic are implemented
-in this checkpoint.
+The reference/estimator slice and standard $\gamma_2$ additions are implemented
+in this checkpoint; the physical gauge driver is not.
 
 \section{Primary equations and convention map}
 
@@ -65,13 +66,12 @@ Equality of the physical constraint gives the sign relation
 The parent source currently specializes to the background wave-map choice,
 equivalently $\widehat H^a=-g^{bc}\bar\Gamma^a{}_{bc}$.
 
-The future implementation must translate the complete first-order GH system,
-constraint additions, and characteristic fields from Eqs.~(35)--(37) and
-(32)--(34) of Ref.~\cite{lindblom2006}; the conformal Gamma-driver with its
+The runtime $\gamma_2$ additions and Einstein characteristic map now implement
+Eqs.~(35)--(37) and (32)--(34) of Ref.~\cite{lindblom2006}. The remaining
+implementation must add the conformal Gamma-driver with its
 auxiliary $\Upsilon^i$ from Eqs.~(60)--(62) of Ref.~\cite{lindblom2008}; and
 the improved $\widehat H_a,\theta_a$ driver from Eqs.~(9) and (11), including
 the combined characteristic system in Appendix B, of Ref.~\cite{lindblom2009}.
-Those changes are not present yet.
 
 \section{Pointwise physical exponent estimator}
 
@@ -110,29 +110,34 @@ is exactly zero.
 \begin{table}[ht]
 \centering
 \small
-\begin{tabular}{ccccc}
+The production estimate uses every valid shell point. For the independent FD
+comparison, a point is discarded if any fourth-order directional stencil spans
+a puncture coordinate, $|X^i|\le2h$. The state and FD values below use the same
+puncture-clear subset.
+
+\begin{tabular}{crrrrrr}
 \toprule
-$h/M$ & wormhole state & wormhole FD & trumpet state & trumpet FD\\
+$h/M$ & W prod. & W safe & W FD & T prod. & T safe & T FD\\
 \midrule
-$1/16$ & 1.32184 & 1.15447 & 0.856373 & 0.847683\\
-$1/24$ & 1.48531 & 1.26485 & 0.902691 & 0.893362\\
-$1/32$ & 1.58484 & 1.32892 & 0.926983 & 0.917320\\
-$1/48$ & 1.70032 & 1.40061 & 0.951826 & 0.941823\\
-$1/64$ & 1.76543 & 1.43989 & 0.964342 & 0.954166\\
+$1/16$ & 1.32184 & 1.11591 & 1.11851 & 0.856373 & 0.791536 & 0.792402\\
+$1/24$ & 1.48531 & 1.30752 & 1.31097 & 0.902691 & 0.856383 & 0.857347\\
+$1/32$ & 1.58484 & 1.43073 & 1.43477 & 0.926983 & 0.891313 & 0.892331\\
+$1/48$ & 1.70032 & 1.58002 & 1.58484 & 0.951826 & 0.927678 & 0.928754\\
+$1/64$ & 1.76543 & 1.66723 & 1.67252 & 0.964342 & 0.946240 & 0.947345\\
 \bottomrule
 \end{tabular}
-\caption{Weighted exponent estimates on the required $2h\le r<8h$ shell.
-The state estimator approaches the known asymptotic exponent; direct FD does
-not approach the state estimator.}
+\caption{Weighted estimates on the required shell. The full production sample
+has 2,144 points and $N_{\rm eff}=595.547$; the safe comparison has 480 points
+and $N_{\rm eff}=370.885$.}
 \end{table}
 
 \section{Direct-FD hard-gate failure}
 
 The independent diagnostic reconstructs $\gamma_{ij}$ on neighboring actual
 cell centers and applies AthenaK's fourth-order centered operator directly.
-The resulting state--FD discrepancy grows from 0.167366 to 0.325534 for the
-wormhole and from 0.00869049 to 0.0101752 for the trumpet over the table above.
-The strict executable therefore exits nonzero.
+The puncture exclusion substantially reduces the state--FD discrepancy, but it
+still grows from 0.00260102 to 0.00528934 for the wormhole and from 0.000865660
+to 0.00110559 for the trumpet. The strict executable therefore exits nonzero.
 
 This behavior follows from scale invariance.  For
 $\gamma_{ij}=r^{-2q}\delta_{ij}$, write a selected cell as $x^i=h\xi^i$.
@@ -150,6 +155,21 @@ away.  The weighted pure-power limits for this stencil and shell are about
 Thus the claim ``local puncture-exponent estimator established'' is not made
 under the controlling same-shell comparison, despite the analytic success of
 the first-order-state path.
+
+\section{Standard $\gamma_2$ checkpoint}
+
+Runtime \texttt{gamma2} defaults to zero. For fixed $\gamma_1=-1$, production
+now adds
+\begin{equation}
+ \delta\Pi_{AB,t}=-\gamma_2\beta^I C_{IAB},\qquad
+ \delta\Phi_{IAB,t}=\alpha\gamma_2 C_{IAB}.
+\end{equation}
+The device gate checks the forward/inverse characteristic map
+$u^{1\pm}=\Pi\pm s^I\Phi_I-\gamma_2\Psi$, the standard symmetrizer, and the
+frozen reduction and curl subsidiary damping to $3.33\times10^{-16}$.
+In a bounded robust-Minkowski CPU comparison at $t=0.2$, the reduction norm
+changes by 0.9725 for $\gamma_2=0$ and by 0.7962 for $\gamma_2=1$; both runs
+remain finite. This is not long-time or GPU qualification.
 
 \section{Gaussian singular reference and prescribed trajectory}
 
@@ -201,9 +221,9 @@ Gate & Status\\
 First-order-state estimator, analytic initial geometries & Passed locally\\
 Direct-FD same-shell convergence & \status{Failed}\\
 Prescribed Gaussian two-jets and staged cache & Passed locally on Kokkos Serial\\
+Runtime $\gamma_2$ algebra and bounded robust Minkowski & Passed locally\\
 Closed-loop $q$ control & Not started; blocked by estimator gate\\
 Dynamic $\widehat H/\theta/\Upsilon$ gauge system & Not implemented\\
-Runtime full $\gamma_0/\gamma_2$ system & Not implemented\\
 Stationary/generic trumpet and wormhole evolution & Not run\\
 SMR, restart, CUDA, Aurora PVC & Not run\\
 \bottomrule

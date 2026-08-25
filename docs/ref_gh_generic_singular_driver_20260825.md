@@ -77,23 +77,31 @@ The first-order-state estimator passes the pointwise checks:
 - The weighted estimates approach the expected asymptotic values without being
   forced to equal them at finite radius.
 
-| \(h/M\) | wormhole state \(q_{est}\) | wormhole direct FD | trumpet state \(q_{est}\) | trumpet direct FD |
-|---:|---:|---:|---:|---:|
-| 1/16 | 1.32184 | 1.15447 | 0.856373 | 0.847683 |
-| 1/24 | 1.48531 | 1.26485 | 0.902691 | 0.893362 |
-| 1/32 | 1.58484 | 1.32892 | 0.926983 | 0.917320 |
-| 1/48 | 1.70032 | 1.40061 | 0.951826 | 0.941823 |
-| 1/64 | 1.76543 | 1.43989 | 0.964342 | 0.954166 |
+The production estimate uses the complete shell. Following the subsequent
+puncture-stencil instruction, the direct-FD comparison conservatively discards
+a point whenever any fourth-order directional stencil spans the puncture
+coordinate, \(|X^i|\le2h\). The `safe state` and direct-FD columns use the same
+retained points.
 
-The selected shell contains 2,144 cell centers with effective sample size
-\(N_{eff}=595.547\) at every resolution.
+| \(h/M\) | wormhole production | wormhole safe state | wormhole FD | trumpet production | trumpet safe state | trumpet FD |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1/16 | 1.32184 | 1.11591 | 1.11851 | 0.856373 | 0.791536 | 0.792402 |
+| 1/24 | 1.48531 | 1.30752 | 1.31097 | 0.902691 | 0.856383 | 0.857347 |
+| 1/32 | 1.58484 | 1.43073 | 1.43477 | 0.926983 | 0.891313 | 0.892331 |
+| 1/48 | 1.70032 | 1.58002 | 1.58484 | 0.951826 | 0.927678 | 0.928754 |
+| 1/64 | 1.76543 | 1.66723 | 1.67252 | 0.964342 | 0.946240 | 0.947345 |
+
+The selected production shell contains 2,144 cell centers with effective
+sample size \(N_{eff}=595.547\). The puncture-clear direct-FD subset contains
+480 centers with \(N_{eff}=370.885\), at every resolution.
 
 ## Hard-gate failure: direct FD cannot converge on a fixed-r/h shell
 
 The strict test exits nonzero because the direct-FD estimator does not converge
-toward the first-order-state estimator.  The weighted discrepancy grows from
-0.167366 to 0.325534 for the wormhole and from 0.00869049 to 0.0101752 for the
-trumpet between \(h=M/16\) and \(M/64\).
+toward the first-order-state estimator. The puncture-overlap exclusion reduces
+the discrepancy substantially, but it still grows from 0.00260102 to
+0.00528934 for the wormhole and from 0.000865660 to 0.00110559 for the trumpet
+between \(h=M/16\) and \(M/64\).
 
 This is not a threshold choice.  For a pure power-law spatial metric
 \(\gamma_{ij}=r^{-2q}\delta_{ij}\), write a selected cell as
@@ -133,11 +141,29 @@ The compact analyzer reports `prescribed_q_gate=PASS` and zero dynamic groups
 with classified positive algebraic growth.  This supports only the prescribed
 reference-jet gate; it is not evidence for a controller or a physical solution.
 
+## Standard gamma2 checkpoint
+
+Runtime `<ref_gh>/gamma2` now defaults to zero. For fixed `gamma1=-1`, the
+implemented additions are
+
+\[
+  \delta\Pi_{AB,t}=-\gamma_2\beta^I C_{IAB},\qquad
+  \delta\Phi_{IAB,t}=\alpha\gamma_2 C_{IAB}.
+\]
+
+The device algebra checks the forward/inverse characteristic map
+\(u^{1\pm}=\Pi\pm s^I\Phi_I-\gamma_2\Psi\), the standard symmetrizer,
+and the frozen reduction and curl subsidiary damping to
+\(3.33\times10^{-16}\). In the bounded robust-Minkowski runtime comparison at
+\(t=0.2\), the reduction norm changes by a factor 0.9725 with `gamma2=0` and
+0.7962 with `gamma2=1`. Both runs remain finite. This focused CPU result is not
+a long-time or GPU qualification.
+
 ## GH and gauge equations still to implement
 
-The parent code evolves only 50 Einstein fields and uses the background
+The code still evolves only 50 Einstein fields and uses the background
 wave-map specialization equivalent to ordinary
-\(\widehat H^a=-g^{bc}\bar\Gamma^a{}_{bc}\).  Runtime `gamma2` and evolved
+\(\widehat H^a=-g^{bc}\bar\Gamma^a{}_{bc}\). Evolved
 \(\widehat H_A,\theta_A,\Upsilon^i\) do not yet exist.
 
 The sign relation to implement follows by equating
@@ -153,8 +179,9 @@ which gives
 H_{bg}^a=\widehat H^a+g^{bc}\bar\Gamma^a{}_{bc}.
 \]
 
-The source, frame-motion, full \(\gamma_0/\gamma_2\), characteristic, restart,
-boundary, and stationary fixed-point work remains unimplemented in this branch.
+The nonzero-\(\widehat H\) source, frame-motion, combined gauge characteristics,
+new-state restart, boundary, and stationary fixed-point work remains
+unimplemented in this branch.
 The improved driver must be translated from Eqs. (9) and (11) and the combined
 characteristics from Appendix B of Lindblom--Szilagyi (2009); the first-order GH
 system and damping terms are Eqs. (35)--(37) of Lindblom et al. (2006); the
@@ -173,7 +200,8 @@ Primary sources:
 - Direct-FD same-shell comparison: failed for a scale-invariance reason.
 - Prescribed Gaussian reference two-jets/cache: passed locally on Kokkos Serial.
 - Closed-loop q control: not started; blocked by the hard estimator gate.
-- Hyperbolic gauge driver, physical gauge target, runtime gamma2: not implemented.
+- Runtime gamma2: local algebra and bounded robust-Minkowski checks passed.
+- Hyperbolic gauge driver and physical gauge target: not implemented.
 - Stationary trumpet, generic-reference trumpet, wormhole evolution: not run.
 - SMR, restart of new state, CUDA, Aurora PVC: not run.
 
