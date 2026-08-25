@@ -87,23 +87,25 @@ columns use the same retained points.
 
 | \(h/M\) | wormhole production | wormhole safe state | wormhole FD | trumpet production | trumpet safe state | trumpet FD |
 |---:|---:|---:|---:|---:|---:|---:|
-| 1/16 | 1.32184 | 1.11591 | 1.11851 | 0.856373 | 0.791536 | 0.792402 |
-| 1/24 | 1.48531 | 1.30752 | 1.31097 | 0.902691 | 0.856383 | 0.857347 |
-| 1/32 | 1.58484 | 1.43073 | 1.43477 | 0.926983 | 0.891313 | 0.892331 |
-| 1/48 | 1.70032 | 1.58002 | 1.58484 | 0.951826 | 0.927678 | 0.928754 |
-| 1/64 | 1.76543 | 1.66723 | 1.67252 | 0.964342 | 0.946240 | 0.947345 |
+| 1/16 | 1.32184 | 1.27690 | 1.04007 | 0.856373 | 0.843726 | 0.826173 |
+| 1/24 | 1.48531 | 1.44795 | 1.14110 | 0.902691 | 0.893842 | 0.875202 |
+| 1/32 | 1.58484 | 1.55318 | 1.19997 | 0.926983 | 0.920237 | 0.901033 |
+| 1/48 | 1.70032 | 1.67625 | 1.26615 | 0.951826 | 0.947307 | 0.927529 |
+| 1/64 | 1.76543 | 1.74606 | 1.30258 | 0.964342 | 0.960971 | 0.940906 |
 
 The selected production shell contains 2,144 cell centers with effective
 sample size \(N_{eff}=595.547\). The puncture-clear direct-FD subset contains
-480 centers with \(N_{eff}=370.885\), at every resolution.
+2,112 centers with \(N_{eff}=815.121\), at every resolution. A current-build
+replay corrected an older table that had retained values from the superseded
+``near any coordinate plane'' mask instead of the implemented three-dimensional
+support-box rule.
 
 ## Hard-gate failure: direct FD cannot converge on a fixed-r/h shell
 
 The strict test exits nonzero because the direct-FD estimator does not converge
-toward the first-order-state estimator. The puncture-overlap exclusion reduces
-the discrepancy substantially, but it still grows from 0.00260102 to
-0.00528934 for the wormhole and from 0.000865660 to 0.00110559 for the trumpet
-between \(h=M/16\) and \(M/64\).
+toward the first-order-state estimator. With the current support-box exclusion,
+the discrepancy grows from 0.236831 to 0.443482 for the wormhole and from
+0.0175538 to 0.0200649 for the trumpet between \(h=M/16\) and \(M/64\).
 
 This is not a threshold choice.  For a pure power-law spatial metric
 \(\gamma_{ij}=r^{-2q}\delta_{ij}\), write a selected cell as

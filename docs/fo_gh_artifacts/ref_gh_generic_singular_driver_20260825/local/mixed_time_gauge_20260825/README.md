@@ -7,9 +7,9 @@ are not committed; their sizes and SHA-256 hashes are recorded in
 `field_output_hashes.txt`.
 
 The current checkpoint text is also incorporated in
-`docs/ref_gh_generic_singular_driver_20260825.md`. The sibling PDF remains the
-prior checkpoint because the required PDF-operation marker was unavailable in
-this environment; it was not silently regenerated from stale TeX.
+`docs/ref_gh_generic_singular_driver_20260825.md`. The sibling TeX/PDF report
+has now been regenerated from the current source and visually checked after
+the required PDF-operation marker became available.
 
 ## Implemented slice
 

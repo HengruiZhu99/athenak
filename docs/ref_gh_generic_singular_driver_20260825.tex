@@ -24,7 +24,9 @@ invariance reason on the prescribed shell.  Therefore closed-loop control is
 still \status{stopped at the initial estimator hard gate}. The subsequent
 standard $\gamma_2$, hyperbolic gauge-driver, exact stationary-trumpet, and
 regular perturbed-trumpet local gates have advanced. No closed-loop control,
-wormhole evolution, SMR, or PVC qualification claim is made.
+wormhole evolution, SMR, or PVC qualification claim is made.  The current
+mixed-time gauge-reference and temporal evidence uses a puncture-clear
+finite-difference support mask.
 \end{abstract}
 
 \section{Provenance and scope}
@@ -34,8 +36,10 @@ reference all equaled
 \path{0e248310a562c8a84327421eecf70f2f5d1da4a3} before editing.  Work was
 performed on \path{codex/ref-gh-generic-singular-driver-20260825}; the Kokkos
 submodule is \path{6739bc623081648af9e752b616d9671527922cbf}.  The local
-executable is a Release Kokkos Serial build with GCC 13.3.0.  Existing work in
-other worktrees was not modified.
+evidence checkpoint is
+\path{5fcb5d70392ac09f395626cfe7c8618a4b3f7f84}.  The local executables are
+Release Kokkos Serial and OpenMP builds with GCC 13.3.0. Existing work in other
+worktrees was not modified.
 
 The three mechanisms remain conceptually separate:
 \begin{center}
@@ -119,25 +123,27 @@ puncture-clear subset.
 \toprule
 $h/M$ & W prod. & W safe & W FD & T prod. & T safe & T FD\\
 \midrule
-$1/16$ & 1.32184 & 1.11591 & 1.11851 & 0.856373 & 0.791536 & 0.792402\\
-$1/24$ & 1.48531 & 1.30752 & 1.31097 & 0.902691 & 0.856383 & 0.857347\\
-$1/32$ & 1.58484 & 1.43073 & 1.43477 & 0.926983 & 0.891313 & 0.892331\\
-$1/48$ & 1.70032 & 1.58002 & 1.58484 & 0.951826 & 0.927678 & 0.928754\\
-$1/64$ & 1.76543 & 1.66723 & 1.67252 & 0.964342 & 0.946240 & 0.947345\\
+$1/16$ & 1.32184 & 1.27690 & 1.04007 & 0.856373 & 0.843726 & 0.826173\\
+$1/24$ & 1.48531 & 1.44795 & 1.14110 & 0.902691 & 0.893842 & 0.875202\\
+$1/32$ & 1.58484 & 1.55318 & 1.19997 & 0.926983 & 0.920237 & 0.901033\\
+$1/48$ & 1.70032 & 1.67625 & 1.26615 & 0.951826 & 0.947307 & 0.927529\\
+$1/64$ & 1.76543 & 1.74606 & 1.30258 & 0.964342 & 0.960971 & 0.940906\\
 \bottomrule
 \end{tabular}
 \caption{Weighted estimates on the required shell. The full production sample
-has 2,144 points and $N_{\rm eff}=595.547$; the safe comparison has 480 points
-and $N_{\rm eff}=370.885$.}
+has 2,144 points and $N_{\rm eff}=595.547$; the support-box-safe comparison has
+2,112 points and $N_{\rm eff}=815.121$.}
 \end{table}
 
 \section{Direct-FD hard-gate failure}
 
 The independent diagnostic reconstructs $\gamma_{ij}$ on neighboring actual
 cell centers and applies AthenaK's fourth-order centered operator directly.
-The puncture exclusion substantially reduces the state--FD discrepancy, but it
-still grows from 0.00260102 to 0.00528934 for the wormhole and from 0.000865660
-to 0.00110559 for the trumpet. The strict executable therefore exits nonzero.
+With the current support-box exclusion, the state--FD discrepancy grows from
+0.236831 to 0.443482 for the wormhole and from 0.0175538 to 0.0200649 for the
+trumpet. The strict executable therefore exits nonzero. A current-build replay
+also corrected an older table that had retained values from a superseded
+``near any coordinate plane'' mask.
 
 This behavior follows from scale invariance.  For
 $\gamma_{ij}=r^{-2q}\delta_{ij}$, write a selected cell as $x^i=h\xi^i$.
@@ -205,9 +211,31 @@ references the stored variables are therefore
 \end{equation}
 Physical sources reconstruct the unchanged raw fields.  With this
 equation-preserving representation, the exact trumpet is a roundoff fixed point
-through $t=1$ at $16^3$, $24^3$, and $32^3$. Time-dependent-reference
-subtraction still fails closed pending an analytic time derivative of the
-$\theta$ baseline.
+through $t=1$ at $16^3$, $24^3$, and $32^3$.
+
+Time-dependent-reference subtraction uses a minimal mixed jet containing the
+twelve components $\partial_t\partial_i\partial_q$ for each scalar reference
+jet. Staged kernels form $\partial_t\partial_iH_A^{\rm ref}$ and analytically
+differentiate
+\begin{equation}
+ \theta_A^{\rm ref}=-\beta^i\partial_iH_A^{\rm ref}
+ -(\Omega_{At}{}^B-\beta^i\Omega_{Ai}{}^B)H_B^{\rm ref}.
+\end{equation}
+The $\delta\theta_A$ equation subtracts the resulting
+$\partial_t\theta_A^{\rm ref}$. Closed-form mixed-jet tests pass to
+$2.22\times10^{-16}$; independent time-difference oracles pass for smooth
+lapse, moving-frame, and interior generic references with maximum scaled
+errors $4.94\times10^{-14}$, $2.89\times10^{-15}$, and
+$6.71\times10^{-13}$.
+
+The prescribed generic transition is clamped at $t=0$. A centered validator
+crossing that $C^2$ endpoint gives the preserved negative result
+$2.65\times10^{-6}$. An endpoint-aware fourth-order forward stencil instead
+checks the relevant one-sided evolution derivative and passes with scaled
+error $1.77\times10^{-17}$, returning to the centered stencil at interior RK
+stages. A fixed-grid temporal ladder through $t=0.008M$ gives variable-step
+RK4 effective L2/Linf orders 4.003/4.006 for the 50 Einstein fields and
+3.987/3.983 for the 11 gauge fields.
 
 For fourth-order Ref-GH the centered derivative radius is two cells, while the
 enabled KO operator reaches three.  All evolved-state histories and convergence
@@ -215,7 +243,9 @@ results now discard the full radius-three support.  The offline tensor-product
 comparison rejects a target if any contributing source cell has a support box
 containing the puncture.  A current-build replay changes only the included
 diagnostic volume; its field and constraint arrays are elementwise identical to
-the pre-correction payload.
+the pre-correction payload. The KO-off temporal ladder uses the active
+radius-two support and rejects 64 puncture-overlap cells, retaining 152 of 216
+native cells; no contaminated point enters its reported orders.
 
 For a regular $r^8\exp(-r^2/w^2)$ perturbation, the masked
 $24^3/32^3/48^3$ self-orders at $t=1$ are 4.700 for field L2, 4.742 for field
@@ -268,6 +298,9 @@ passes locally.  This result says nothing about physical evolution or feedback.
 
 \section{Qualification matrix and stop condition}
 
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.18}
 \begin{tabular}{p{0.48\linewidth}p{0.42\linewidth}}
 \toprule
 Gate & Status\\
@@ -278,16 +311,19 @@ Prescribed Gaussian two-jets and staged cache & Passed locally on Kokkos Serial\
 Runtime $\gamma_0/\gamma_2$ GH, reduction, curl subsidiary matrices & Passed locally\\
 Closed-loop $q$ control & Not started; blocked by estimator gate\\
 Dynamic $\widehat H/\theta/\Upsilon$ gauge system & Implemented; local oracles pass\\
+Time-dependent gauge-reference subtraction & Serial/OpenMP mixed-jet and short temporal gates pass\\
 Exact stationary trumpet through $t=1$ & Roundoff fixed point locally\\
 Regular perturbed trumpet through $t=1$ & Finite; approximately fourth-order masked L2\\
 Focused 61-field restart & Passed locally\\
 Generic/time-dependent gauge, wormhole, SMR, CUDA, Aurora PVC & Not established\\
 \bottomrule
 \end{tabular}
+\endgroup
 
 No Aurora job was submitted in this checkpoint: the SSH ControlMaster socket
 is absent and noninteractive authentication fails. Local B580 Level Zero
-enumeration also hung, so no device claim is made. Before feedback work, the specification must choose between a
+enumeration also hung, so no device claim is made. Before feedback work, the
+specification must choose between a
 fixed-physical-annulus direct-FD convergence check or a fixed-$r/h$ known-bias
 comparison.  Both avoid interpolation; neither is the literal present demand.
 

@@ -7,9 +7,9 @@ checkpoint.  It does not contain field dumps or restart files.
 
 - `local/exponent_estimator_strict.log`: expected nonzero hard-gate run.  The
   first-order estimator passes analytic pointwise checks.  Direct-FD samples
-  whose fourth-order stencil spans any puncture coordinate are excluded, but
-  the remaining direct-FD estimate still fails to converge on the prescribed
-  fixed-`r/h` shell.
+  whose complete fourth-order support box contains the puncture are excluded,
+  but the remaining direct-FD estimate still fails to converge on the
+  prescribed fixed-`r/h` shell.
 - `local/gamma2_source_unit.log`: device algebra for the complete standard
   `gamma2` additions, characteristic/inverse maps, symmetrizer, and frozen
   reduction/curl subsidiary systems.
@@ -61,12 +61,13 @@ python3 scripts/ref_gh/analyze_generic_singular_reference.py \
 
 ## Local provenance
 
-- Parent/source SHA: `0e248310a562c8a84327421eecf70f2f5d1da4a3`
+- Required parent SHA: `0e248310a562c8a84327421eecf70f2f5d1da4a3`
+- Current strict-run source SHA: `e085426e06804ecfaa75359451c880feab9ef72a`
 - Branch: `codex/ref-gh-generic-singular-driver-20260825`
 - Kokkos SHA: `6739bc623081648af9e752b616d9671527922cbf`
 - Compiler: Ubuntu GCC 13.3.0
 - Build: Release, `-O3 -DNDEBUG`, Kokkos Serial
 - Executable SHA-256:
-  `10578c70fc145a857edbf80ac3b2b5f3e2a03348d2fb6bafc14019dac234f434`
+  `5e4fd289baeff25c78c90ad686fa0c8dd23d525299277e2aea2ed619a7d7cf95`
 
 This is local CPU evidence only.  It is not CUDA or Aurora PVC qualification.
