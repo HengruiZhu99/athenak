@@ -252,7 +252,10 @@ char const * const RefGh::StateNames[RefGh::nref_gh] = {
   "ref_gh_Phi223", "ref_gh_Phi233",
   "ref_gh_Phi300", "ref_gh_Phi301", "ref_gh_Phi302", "ref_gh_Phi303",
   "ref_gh_Phi311", "ref_gh_Phi312", "ref_gh_Phi313", "ref_gh_Phi322",
-  "ref_gh_Phi323", "ref_gh_Phi333"
+  "ref_gh_Phi323", "ref_gh_Phi333",
+  "ref_gh_Hhat0", "ref_gh_Hhat1", "ref_gh_Hhat2", "ref_gh_Hhat3",
+  "ref_gh_theta0", "ref_gh_theta1", "ref_gh_theta2", "ref_gh_theta3",
+  "ref_gh_Upsilon1", "ref_gh_Upsilon2", "ref_gh_Upsilon3"
 };
 
 char const * const RefGh::ConstraintNames[RefGh::ncon] = {
@@ -380,6 +383,14 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   opt.gamma0 = pin->GetOrAddReal("ref_gh", "gamma0", 1.0);
   opt.gamma2 = pin->GetOrAddReal("ref_gh", "gamma2", 0.0);
+  opt.gauge_driver_enabled =
+      pin->GetOrAddBoolean("ref_gh", "gauge_driver_enabled", false);
+  opt.gauge_mu = pin->GetOrAddReal("ref_gh", "gauge_mu", 1.0);
+  opt.gauge_eta = pin->GetOrAddReal("ref_gh", "gauge_eta", 1.0);
+  opt.shift_nu = pin->GetOrAddReal("ref_gh", "shift_nu", 0.75);
+  opt.shift_eta = pin->GetOrAddReal("ref_gh", "shift_eta", 1.0);
+  opt.exclude_puncture_stencil_diagnostics = pin->GetOrAddBoolean(
+      "ref_gh", "exclude_puncture_stencil_diagnostics", false);
   opt.diss = pin->GetOrAddReal("ref_gh", "diss", 0.02);
   opt.fail_closed_dt = pin->GetOrAddReal("ref_gh", "fail_closed_dt", 0.0);
   opt.reference_mass = pin->GetOrAddReal("ref_gh", "reference_mass", 1.0);
@@ -485,6 +496,10 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     std::exit(EXIT_FAILURE);
   }
   if (opt.gamma0 <= 0.0 || opt.gamma2 < 0.0 || !std::isfinite(opt.gamma2)
+      || opt.gauge_mu <= 0.0 || !std::isfinite(opt.gauge_mu)
+      || opt.gauge_eta <= 0.0 || !std::isfinite(opt.gauge_eta)
+      || opt.shift_nu <= 0.0 || !std::isfinite(opt.shift_nu)
+      || opt.shift_eta <= 0.0 || !std::isfinite(opt.shift_eta)
       || opt.diss < 0.0 || opt.fail_closed_dt < 0.0
       || opt.reference_mass <= 0.0
       || opt.generic_gaussian_width <= 0.0
@@ -520,7 +535,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       || opt.continuation_growth_time <= 0.0
       || opt.extrap_order < 2 || opt.extrap_order > 4) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-              << std::endl << "ref_gh requires gamma0>0, gamma2>=0, diss>=0, "
+              << std::endl << "ref_gh requires gamma0>0, gamma2>=0, positive "
+              << "finite gauge-driver parameters, diss>=0, "
               << "fail_closed_dt>=0, "
               << "valid positive reference/controller scales, and extrap_order "
                  "in [2,4]." << std::endl;
@@ -579,11 +595,16 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   Kokkos::realloc(reference_workspace, nmb, kReferenceWorkspaceSize, n3, n2, n1);
   Kokkos::realloc(reference_evolution, nmb, kReferenceEvolutionSize, n3, n2, n1);
   Kokkos::realloc(reference_diagnostic, nmb, kReferenceDiagnosticSize, n3, n2, n1);
+  Kokkos::deep_copy(u0, 0.0);
+  Kokkos::deep_copy(u1, 0.0);
+  Kokkos::deep_copy(u_rhs, 0.0);
+  Kokkos::deep_copy(u_con, 0.0);
   if (ppack->pmesh->multilevel) {
     const int cn1 = indcs.cnx1 + 2*indcs.ng;
     const int cn2 = (indcs.cnx2 > 1) ? indcs.cnx2 + 2*indcs.ng : 1;
     const int cn3 = (indcs.cnx3 > 1) ? indcs.cnx3 + 2*indcs.ng : 1;
     Kokkos::realloc(coarse_u0, nmb, nref_gh, cn3, cn2, cn1);
+    Kokkos::deep_copy(coarse_u0, 0.0);
   }
   if (opt.reference_kind == 1 || opt.reference_kind == 5) {
     Kokkos::realloc(reference_table, kTrumpetProfiles, kTrumpetTableSize);

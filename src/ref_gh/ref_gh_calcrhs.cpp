@@ -10,7 +10,9 @@
 #include "mesh/mesh.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
 #include "ref_gh/gamma2_damping.hpp"
+#include "ref_gh/gauge_driver.hpp"
 #include "ref_gh/phi_ordering.hpp"
+#include "ref_gh/physical_gauge_target.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/standard_gh_source.hpp"
@@ -36,6 +38,11 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   const int phi_ordering = opt.phi_ordering;
   const Real gamma0 = opt.gamma0;
   const Real gamma2 = opt.gamma2;
+  const bool gauge_driver_enabled = opt.gauge_driver_enabled;
+  const Real gauge_mu = opt.gauge_mu;
+  const Real gauge_eta = opt.gauge_eta;
+  const Real shift_nu = opt.shift_nu;
+  const Real shift_eta = opt.shift_eta;
   Kokkos::deep_copy(state_rhs, 0.0);
   DebugFence("ref_gh CalcRHS zero");
 
@@ -99,6 +106,63 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   });
   DebugFence("ref_gh CalcRHS psi");
 
+  if (gauge_driver_enabled) {
+    par_for("ref_gh improved gauge driver", DevExeSpace(), 0, nmb - 1,
+    indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+    KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+      const ReferenceCachePoint reference{
+          reference_cache, reference_extra, m, k, j, i};
+      Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
+      Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
+      CoordinateGhGeometry geometry;
+      Real determinant = 0.0;
+      if (!LoadPointGeometry(state, reference, m, k, j, i, psi, pi, phi,
+                             d_psi, metric, d_metric, geometry, determinant)) {
+        for (int n = kHhatOffset; n < nvar; ++n) {
+          state_rhs(m, n, k, j, i) = NAN;
+        }
+        return;
+      }
+      const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
+                           1.0/size.d_view(m).dx3};
+      Real hhat[4];          // NOLINT(runtime/arrays)
+      Real theta[4];         // NOLINT(runtime/arrays)
+      Real upsilon[3];       // NOLINT(runtime/arrays)
+      Real d_hhat[3][4];     // NOLINT(runtime/arrays)
+      for (int A = 0; A < 4; ++A) {
+        hhat[A] = state(m, kHhatOffset + A, k, j, i);
+        theta[A] = state(m, kThetaOffset + A, k, j, i);
+        for (int p = 0; p < 3; ++p) {
+          d_hhat[p][A] = Dx<FDNG>(p, idx, state, m, kHhatOffset + A,
+                                  k, j, i);
+        }
+      }
+      for (int p = 0; p < 3; ++p) {
+        upsilon[p] = state(m, kUpsilonOffset + p, k, j, i);
+      }
+      PhysicalGaugeTarget target;
+      if (!ComputePhysicalGaugeTarget(metric, d_metric, geometry, reference,
+                                      upsilon, shift_nu, shift_eta, target)) {
+        for (int n = kHhatOffset; n < nvar; ++n) {
+          state_rhs(m, n, k, j, i) = NAN;
+        }
+        return;
+      }
+      const GaugeDriverRhs gauge_rhs = ComputeGaugeDriverRhs(
+          reference, hhat, theta, upsilon, d_hhat, geometry.shift,
+          target.frame, target.conformal_gamma, gauge_mu, gauge_eta,
+          shift_eta);
+      for (int A = 0; A < 4; ++A) {
+        state_rhs(m, kHhatOffset + A, k, j, i) = gauge_rhs.hhat[A];
+        state_rhs(m, kThetaOffset + A, k, j, i) = gauge_rhs.theta[A];
+      }
+      for (int p = 0; p < 3; ++p) {
+        state_rhs(m, kUpsilonOffset + p, k, j, i) = gauge_rhs.upsilon[p];
+      }
+    });
+    DebugFence("ref_gh CalcRHS gauge_driver");
+  }
+
   // The lean source and principal Pi update share the same reconstructed point
   // geometry.  Keep the source implementation in a separate inline function so
   // its large contraction temporaries end before the Pi working set begins.
@@ -116,6 +180,8 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
       return;
     }
+    const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
+                         1.0/size.d_view(m).dx3};
     Real scalar_source[4][4];  // NOLINT(runtime/arrays)
     if (source_kind == 0) {
       if (!CovariantGhScalarWaveSourceProduction(
@@ -130,8 +196,21 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       TransformPartialWaveSource(metric, d_metric, partial_source, d_psi,
                                  reference, geometry, scalar_source);
     }
-    const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
-                         1.0/size.d_view(m).dx3};
+    if (gauge_driver_enabled) {
+      Real hhat[4];       // NOLINT(runtime/arrays)
+      Real d_hhat[4][4];  // NOLINT(runtime/arrays)
+      for (int A = 0; A < 4; ++A) {
+        hhat[A] = state(m, kHhatOffset + A, k, j, i);
+        d_hhat[0][A] = state_rhs(m, kHhatOffset + A, k, j, i);
+        for (int p = 0; p < 3; ++p) {
+          d_hhat[p + 1][A] = Dx<FDNG>(
+              p, idx, state, m, kHhatOffset + A, k, j, i);
+        }
+      }
+      AddOrdinaryGaugePartialWaveSource(
+          metric, d_metric, reference, geometry, hhat, d_hhat, gamma0,
+          scalar_source);
+    }
     Real spatial_inverse[3][3];  // NOLINT(runtime/arrays)
     Real spatial_determinant = 0.0;
     if (!InvertSpatial3(metric, spatial_inverse, spatial_determinant)) {
@@ -430,6 +509,7 @@ void RefGh::CalcConstraints() {
   const auto reference_cache = reference_evolution;
   const auto reference_extra = reference_diagnostic;
   const int source_kind = opt.source_kind;
+  const bool gauge_driver_enabled = opt.gauge_driver_enabled;
   const int active_dimensions = pmy_pack->pmesh->one_d ? 1
       : (pmy_pack->pmesh->two_d ? 2 : 3);
   Kokkos::deep_copy(constraints, 0.0);
@@ -459,10 +539,28 @@ void RefGh::CalcConstraints() {
     if (source_kind == 0) {
       for (int A = 0; A < 4; ++A) {
         constraints(m, A, k, j, i) = source_sectors.delta[A];
+        if (gauge_driver_enabled) {
+          Real baseline_frame = 0.0;
+          for (int a = 0; a < 4; ++a) {
+            baseline_frame += ReferenceFrame(reference, A, a)
+                              *geometry.gauge_source[a];
+          }
+          constraints(m, A, k, j, i) +=
+              state(m, kHhatOffset + A, k, j, i) - baseline_frame;
+        }
       }
     } else {
       for (int a = 0; a < 4; ++a) {
         constraints(m, a, k, j, i) = geometry.gauge_constraint[a];
+        if (gauge_driver_enabled) {
+          Real hhat_coordinate = 0.0;
+          for (int A = 0; A < 4; ++A) {
+            hhat_coordinate += ReferenceCoframe(reference, A, a)
+                               *state(m, kHhatOffset + A, k, j, i);
+          }
+          constraints(m, a, k, j, i) +=
+              hhat_coordinate - geometry.gauge_source[a];
+        }
       }
     }
 

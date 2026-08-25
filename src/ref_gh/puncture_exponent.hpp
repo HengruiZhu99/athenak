@@ -82,19 +82,26 @@ bool InPunctureEstimatorShell(const Real radius, const Real h,
          && 8.0*h < 0.5*gaussian_width;
 }
 
-// A centered directional stencil is conservatively treated as puncture-
-// overlapping if its coordinate interval reaches across the puncture in any
-// Cartesian direction.  This excludes samples whose direct-FD support sees
-// both sides of a singular coordinate location even when the puncture itself
-// lies between cells.
+// Treat the union of centered directional stencils by its axis-aligned support
+// box.  A sample is puncture-overlapping only when the puncture lies inside
+// that complete box, i.e. every coordinate displacement is within the stencil
+// reach.  In particular, a point far from the puncture is not rejected merely
+// because it lies close to one coordinate plane through the puncture.
+KOKKOS_INLINE_FUNCTION
+bool PunctureStencilIsClear(const Real displacement[3], const Real spacing[3],
+                            const int stencil_radius) {
+  for (int p = 0; p < 3; ++p) {
+    const Real reach = static_cast<Real>(stencil_radius)*spacing[p];
+    if (Kokkos::abs(displacement[p]) > reach) return true;
+  }
+  return false;
+}
+
 KOKKOS_INLINE_FUNCTION
 bool PunctureStencilIsClear(const Real displacement[3], const Real h,
                             const int stencil_radius) {
-  const Real reach = static_cast<Real>(stencil_radius)*h;
-  for (int p = 0; p < 3; ++p) {
-    if (Kokkos::abs(displacement[p]) <= reach) return false;
-  }
-  return true;
+  const Real spacing[3] = {h, h, h};
+  return PunctureStencilIsClear(displacement, spacing, stencil_radius);
 }
 
 }  // namespace ref_gh

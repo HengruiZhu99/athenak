@@ -209,9 +209,9 @@ Real CoframeDerivative(const Reference &reference, const int p,
   Real derivative = 0.0;
   for (int b = 0; b < 4; ++b) {
     for (int B = 0; B < 4; ++B) {
-      derivative -= ReferenceCoframe(reference, A, b)
+      derivative -= ReferenceCoframe(reference, B, a)
                     *ReferenceDFrame(reference, p, B, b)
-                    *ReferenceCoframe(reference, B, a);
+                    *ReferenceCoframe(reference, A, b);
     }
   }
   return derivative;

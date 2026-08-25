@@ -1,5 +1,5 @@
 //========================================================================================
-// Separate 50-field puncture-adapted reference-frame first-order GH module.
+// Puncture-adapted reference-frame first-order GH plus hyperbolic gauge driver.
 // Licensed under the 3-clause BSD License, see LICENSE for details.
 //========================================================================================
 #ifndef REF_GH_REF_GH_HPP_
@@ -49,6 +49,12 @@ class RefGh {
     int phi_ordering;
     Real gamma0;
     Real gamma2;
+    bool gauge_driver_enabled;
+    Real gauge_mu;
+    Real gauge_eta;
+    Real shift_nu;
+    Real shift_eta;
+    bool exclude_puncture_stencil_diagnostics;
     Real diss;
     Real fail_closed_dt;
     Real reference_mass;

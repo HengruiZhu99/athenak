@@ -21,6 +21,7 @@
 #include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_provider_cache.hpp"
 #include "ref_gh/standard_gh_source.hpp"
+#include "ref_gh/stationary_gauge_data.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "tasklist/numerical_relativity.hpp"
@@ -30,6 +31,22 @@
 #endif
 
 namespace ref_gh {
+
+KOKKOS_INLINE_FUNCTION
+Real StationaryTrumpetBoundaryValue(
+    const int variable, const DvceArray2D<Real> &table, const Real mass,
+    const Real center_x, const Real center_y, const Real center_z,
+    const Real x, const Real y, const Real z) {
+  if (variable == PsiIndex(0, 0)) return -1.0;
+  if (variable == PsiIndex(1, 1) || variable == PsiIndex(2, 2)
+      || variable == PsiIndex(3, 3)) return 1.0;
+  if (variable < kHhatOffset || variable >= kUpsilonOffset) return 0.0;
+  const StationaryGaugeState gauge = ComputeStationaryTrumpetGaugeState(
+      table, mass, center_x, center_y, center_z, x, y, z);
+  if (!gauge.valid) return NAN;
+  if (variable < kThetaOffset) return gauge.hhat[variable - kHhatOffset];
+  return gauge.theta[variable - kThetaOffset];
+}
 
 template <typename MaxLocation>
 KOKKOS_INLINE_FUNCTION
@@ -1079,9 +1096,9 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       Real derivative = 0.0;
       for (int B = 0; B < 4; ++B) {
         for (int b = 0; b < 4; ++b) {
-          derivative -= ReferenceCoframe(reference, A, b)
+          derivative -= ReferenceCoframe(reference, B, a)
                         *ReferenceDFrame(reference, p, B, b)
-                        *ReferenceCoframe(reference, B, a);
+                        *ReferenceCoframe(reference, A, b);
         }
       }
       workspace(m, kRefWorkspaceCoframeDerivative + component, k, j, i) = derivative;
@@ -1486,21 +1503,57 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
   const int nmb = pmy_pack->nmb_thispack;
   const auto state = u0;
   const auto mb_bcs = pmy_pack->pmb->mb_bcs.d_view;
+  const auto &size = pmy_pack->pmb->mb_size;
+  const bool stationary_gauge_boundary =
+      opt.reference_kind == 1 && opt.gauge_driver_enabled;
+  const auto table = reference_table;
+  const Real mass = opt.reference_mass;
+  const Real center_x = opt.reference_center[0];
+  const Real center_y = opt.reference_center[1];
+  const Real center_z = opt.reference_center[2];
 
   if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x1] != BoundaryFlag::periodic) {
     par_for("ref_gh exact trumpet x1 boundaries", DevExeSpace(), 0, nmb - 1,
     0, nref_gh - 1, 0, n3 - 1, 0, n2 - 1,
     KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
-      Real value = 0.0;
-      if (n == PsiIndex(0, 0)) value = -1.0;
-      if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2) || n == PsiIndex(3, 3)) {
-        value = 1.0;
-      }
       if (mb_bcs(m, BoundaryFace::inner_x1) != BoundaryFlag::block) {
-        for (int g = 1; g <= ng; ++g) state(m, n, k, j, is - g) = value;
+        for (int g = 1; g <= ng; ++g) {
+          Real value = 0.0;
+          if (n == PsiIndex(0, 0)) value = -1.0;
+          if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2)
+              || n == PsiIndex(3, 3)) value = 1.0;
+          if (stationary_gauge_boundary && n >= kHhatOffset) {
+            const Real x = CellCenterX(
+                -g, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max);
+            const Real y = CellCenterX(
+                j - js, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max);
+            const Real z = CellCenterX(
+                k - ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
+            value = StationaryTrumpetBoundaryValue(
+                n, table, mass, center_x, center_y, center_z, x, y, z);
+          }
+          state(m, n, k, j, is - g) = value;
+        }
       }
       if (mb_bcs(m, BoundaryFace::outer_x1) != BoundaryFlag::block) {
-        for (int g = 1; g <= ng; ++g) state(m, n, k, j, ie + g) = value;
+        for (int g = 1; g <= ng; ++g) {
+          Real value = 0.0;
+          if (n == PsiIndex(0, 0)) value = -1.0;
+          if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2)
+              || n == PsiIndex(3, 3)) value = 1.0;
+          if (stationary_gauge_boundary && n >= kHhatOffset) {
+            const Real x = CellCenterX(
+                indcs.nx1 - 1 + g, indcs.nx1,
+                size.d_view(m).x1min, size.d_view(m).x1max);
+            const Real y = CellCenterX(
+                j - js, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max);
+            const Real z = CellCenterX(
+                k - ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
+            value = StationaryTrumpetBoundaryValue(
+                n, table, mass, center_x, center_y, center_z, x, y, z);
+          }
+          state(m, n, k, j, ie + g) = value;
+        }
       }
     });
   }
@@ -1508,16 +1561,44 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
     par_for("ref_gh exact trumpet x2 boundaries", DevExeSpace(), 0, nmb - 1,
     0, nref_gh - 1, 0, n3 - 1, 0, n1 - 1,
     KOKKOS_LAMBDA(const int m, const int n, const int k, const int i) {
-      Real value = 0.0;
-      if (n == PsiIndex(0, 0)) value = -1.0;
-      if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2) || n == PsiIndex(3, 3)) {
-        value = 1.0;
-      }
       if (mb_bcs(m, BoundaryFace::inner_x2) != BoundaryFlag::block) {
-        for (int g = 1; g <= ng; ++g) state(m, n, k, js - g, i) = value;
+        for (int g = 1; g <= ng; ++g) {
+          Real value = 0.0;
+          if (n == PsiIndex(0, 0)) value = -1.0;
+          if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2)
+              || n == PsiIndex(3, 3)) value = 1.0;
+          if (stationary_gauge_boundary && n >= kHhatOffset) {
+            const Real x = CellCenterX(
+                i - is, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max);
+            const Real y = CellCenterX(
+                -g, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max);
+            const Real z = CellCenterX(
+                k - ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
+            value = StationaryTrumpetBoundaryValue(
+                n, table, mass, center_x, center_y, center_z, x, y, z);
+          }
+          state(m, n, k, js - g, i) = value;
+        }
       }
       if (mb_bcs(m, BoundaryFace::outer_x2) != BoundaryFlag::block) {
-        for (int g = 1; g <= ng; ++g) state(m, n, k, je + g, i) = value;
+        for (int g = 1; g <= ng; ++g) {
+          Real value = 0.0;
+          if (n == PsiIndex(0, 0)) value = -1.0;
+          if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2)
+              || n == PsiIndex(3, 3)) value = 1.0;
+          if (stationary_gauge_boundary && n >= kHhatOffset) {
+            const Real x = CellCenterX(
+                i - is, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max);
+            const Real y = CellCenterX(
+                indcs.nx2 - 1 + g, indcs.nx2,
+                size.d_view(m).x2min, size.d_view(m).x2max);
+            const Real z = CellCenterX(
+                k - ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
+            value = StationaryTrumpetBoundaryValue(
+                n, table, mass, center_x, center_y, center_z, x, y, z);
+          }
+          state(m, n, k, je + g, i) = value;
+        }
       }
     });
   }
@@ -1525,16 +1606,44 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
     par_for("ref_gh exact trumpet x3 boundaries", DevExeSpace(), 0, nmb - 1,
     0, nref_gh - 1, 0, n2 - 1, 0, n1 - 1,
     KOKKOS_LAMBDA(const int m, const int n, const int j, const int i) {
-      Real value = 0.0;
-      if (n == PsiIndex(0, 0)) value = -1.0;
-      if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2) || n == PsiIndex(3, 3)) {
-        value = 1.0;
-      }
       if (mb_bcs(m, BoundaryFace::inner_x3) != BoundaryFlag::block) {
-        for (int g = 1; g <= ng; ++g) state(m, n, ks - g, j, i) = value;
+        for (int g = 1; g <= ng; ++g) {
+          Real value = 0.0;
+          if (n == PsiIndex(0, 0)) value = -1.0;
+          if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2)
+              || n == PsiIndex(3, 3)) value = 1.0;
+          if (stationary_gauge_boundary && n >= kHhatOffset) {
+            const Real x = CellCenterX(
+                i - is, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max);
+            const Real y = CellCenterX(
+                j - js, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max);
+            const Real z = CellCenterX(
+                -g, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
+            value = StationaryTrumpetBoundaryValue(
+                n, table, mass, center_x, center_y, center_z, x, y, z);
+          }
+          state(m, n, ks - g, j, i) = value;
+        }
       }
       if (mb_bcs(m, BoundaryFace::outer_x3) != BoundaryFlag::block) {
-        for (int g = 1; g <= ng; ++g) state(m, n, ke + g, j, i) = value;
+        for (int g = 1; g <= ng; ++g) {
+          Real value = 0.0;
+          if (n == PsiIndex(0, 0)) value = -1.0;
+          if (n == PsiIndex(1, 1) || n == PsiIndex(2, 2)
+              || n == PsiIndex(3, 3)) value = 1.0;
+          if (stationary_gauge_boundary && n >= kHhatOffset) {
+            const Real x = CellCenterX(
+                i - is, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max);
+            const Real y = CellCenterX(
+                j - js, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max);
+            const Real z = CellCenterX(
+                indcs.nx3 - 1 + g, indcs.nx3,
+                size.d_view(m).x3min, size.d_view(m).x3max);
+            value = StationaryTrumpetBoundaryValue(
+                n, table, mass, center_x, center_y, center_z, x, y, z);
+          }
+          state(m, n, ke + g, j, i) = value;
+        }
       }
     });
   }

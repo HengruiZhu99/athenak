@@ -1,4 +1,4 @@
-# Exact dynamic Minkowski smoke test for the 50-field reference-frame GH module.
+# Exact dynamic Minkowski smoke test for Ref-GH plus the gauge driver.
 
 <job>
 basename = ref_gh_minkowski
@@ -38,6 +38,12 @@ ndiag = 1
 phi_ordering = compatible
 fd_order = 2
 gamma0 = 1.0
+gamma2 = 0.0
+gauge_driver_enabled = true
+gauge_mu = 0.8
+gauge_eta = 1.3
+shift_nu = 0.75
+shift_eta = 0.9
 diss = 0.0
 
 <problem>

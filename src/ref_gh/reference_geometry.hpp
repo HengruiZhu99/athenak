@@ -98,8 +98,8 @@ void CompleteReferenceFrameGeometry(ReferenceGeometry &reference) {
         d_coframe[p][A][a] = 0.0;
         for (int B = 0; B < 4; ++B) {
           for (int b = 0; b < 4; ++b) {
-            d_coframe[p][A][a] -= reference.coframe[A][b]
-                *reference.d_frame[p][B][b]*reference.coframe[B][a];
+            d_coframe[p][A][a] -= reference.coframe[B][a]
+                *reference.d_frame[p][B][b]*reference.coframe[A][b];
           }
         }
       }

@@ -1,7 +1,8 @@
 # Exact stationary n=2 Schwarzschild trumpet reference-frame GH evolution.
-# The analytic physical boundary sets Psi=eta and Pi=Phi=0.  Override the
-# root and MeshBlock sizes together with 96/48 and 128/64 for the dx=1/24
-# and dx=1/32 members of the uniform-grid ladder.
+# The analytic physical boundary sets Psi=eta, Pi=Phi=0, and the exact
+# stationary Hhat/theta/Upsilon state. Override the root and MeshBlock sizes
+# together with 96/48 and 128/64 for the dx=1/24 and dx=1/32 members of the
+# uniform-grid ladder.
 
 <job>
 basename = ref_gh_stationary_trumpet_dx16
@@ -45,6 +46,13 @@ fd_order = 4
 debug_task_fences = false
 validate_reference_cache = false
 gamma0 = 1.0
+gamma2 = 1.0
+gauge_driver_enabled = true
+gauge_mu = 1.0
+gauge_eta = 1.0
+shift_nu = 0.75
+shift_eta = 1.0
+exclude_puncture_stencil_diagnostics = true
 diss = 0.02
 fail_closed_dt = 1.0e-12
 
@@ -52,6 +60,10 @@ fail_closed_dt = 1.0e-12
 pgen_name = ref_gh_stationary_trumpet
 common_adm_history = true
 common_adm_fd_order = 4
+common_adm_exclude_puncture_stencils = true
+common_adm_puncture_x = 0.0
+common_adm_puncture_y = 0.0
+common_adm_puncture_z = 0.0
 debug_repeat_initial_rhs = false
 
 <output1>

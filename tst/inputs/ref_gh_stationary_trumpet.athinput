@@ -41,14 +41,30 @@ reference_mass = 1.0
 fd_order = 4
 validate_reference_cache = false
 gamma0 = 1.0
+gamma2 = 1.0
+gauge_driver_enabled = true
+gauge_mu = 1.0
+gauge_eta = 1.0
+shift_nu = 0.75
+shift_eta = 1.0
+exclude_puncture_stencil_diagnostics = true
 diss = 0.0
 
 <problem>
 pgen_name = ref_gh_stationary_trumpet
+stationary_rhs_convergence_mode = true
 common_adm_history = true
 common_adm_fd_order = 4
+common_adm_exclude_puncture_stencils = true
+common_adm_puncture_x = 0.0
+common_adm_puncture_y = 0.0
+common_adm_puncture_z = 0.0
 
 <output1>
 file_type = hst
 dt = 0.01
 data_format = %20.15e
+
+<output2>
+file_type = rst
+dcycle = 0

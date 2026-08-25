@@ -16,10 +16,13 @@
 #include "pgen/pgen.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
 #include "ref_gh/gamma2_damping.hpp"
+#include "ref_gh/gauge_driver.hpp"
 #include "ref_gh/phi_ordering.hpp"
+#include "ref_gh/physical_gauge_target.hpp"
 #include "ref_gh/puncture_exponent.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_characteristics.hpp"
+#include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_generic_singular.hpp"
@@ -28,6 +31,322 @@
 #include "ref_gh/standard_gh_source.hpp"
 
 namespace {
+
+void CheckCoframeDerivativeIdentity() {
+  ref_gh::ReferenceGeometry reference;
+  ref_gh::ZeroReferenceGeometry(reference);
+  const Real frame[4][4] = {
+    {1.2, 0.17, -0.08, 0.11},
+    {-0.09, 0.94, 0.13, -0.04},
+    {0.06, -0.12, 1.11, 0.15},
+    {-0.07, 0.05, -0.10, 0.88}};
+  Real inverse[4][4];  // NOLINT(runtime/arrays)
+  Real determinant = 0.0;
+  if (!ref_gh::Invert4(frame, inverse, determinant)) {
+    std::cout << "### FATAL ERROR: coframe derivative oracle frame is singular."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int a = 0; a < 4; ++a) {
+      reference.frame[A][a] = frame[A][a];
+      reference.coframe[A][a] = inverse[a][A];
+      for (int p = 0; p < 4; ++p) {
+        reference.d_frame[p][A][a] =
+            0.007*static_cast<Real>(1 + 3*p - 2*A + 5*a)
+            + 0.003*static_cast<Real>((p + A + a) % 3);
+      }
+    }
+  }
+  Real maximum = 0.0;
+  for (int p = 0; p < 4; ++p) {
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        Real derivative_of_identity = 0.0;
+        for (int a = 0; a < 4; ++a) {
+          derivative_of_identity +=
+              reference.d_frame[p][A][a]*reference.coframe[B][a]
+              + reference.frame[A][a]
+                    *ref_gh::CoframeDerivative(reference, p, B, a);
+        }
+        maximum = fmax(maximum, Kokkos::abs(derivative_of_identity));
+      }
+    }
+  }
+  if (maximum > 2.0e-15) {
+    std::cout << "### FATAL ERROR: inverse-coframe derivative identity failed: "
+              << maximum << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH inverse-coframe derivative identity passed: max error = "
+            << maximum << std::endl;
+}
+
+void CheckGaugeDriverAlgebra() {
+  constexpr int nsamples = 512;
+  Real maximum = 0.0;
+  Real source_maximum = 0.0;
+  Real target_maximum = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh gauge driver algebra",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum,
+                    Real &local_source_maximum, Real &local_target_maximum) {
+        const Real scale = static_cast<Real>(sample % 41 - 20)/20.0;
+        const Real time = 0.3 + 0.013*static_cast<Real>(sample % 67);
+        const Real x = 0.17 + 0.03*scale;
+        const Real y = -0.21 + 0.02*scale;
+        const Real z = 0.11 - 0.01*scale;
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::TimeDependentSpatialReference().Populate(
+            time, x, y, z, reference);
+        const Real shift[3] = {0.13, -0.07 + 0.01*scale, 0.09};
+        const Real h_coordinate[4] = {
+          0.11 - 0.02*scale, -0.08, 0.14 + 0.01*scale, -0.05};
+        const Real theta_coordinate[4] = {
+          -0.04, 0.07 + 0.01*scale, -0.09, 0.12 - 0.02*scale};
+        const Real target_coordinate[4] = {
+          0.03 + 0.01*scale, -0.02, 0.06, -0.01*scale};
+        Real d_h_coordinate[3][4];  // NOLINT(runtime/arrays)
+        for (int p = 0; p < 3; ++p) {
+          for (int a = 0; a < 4; ++a) {
+            d_h_coordinate[p][a] =
+                0.01*static_cast<Real>(1 + 3*p - 2*a) + 0.003*scale;
+          }
+        }
+        Real hhat[4] = {};       // NOLINT(runtime/arrays)
+        Real theta[4] = {};      // NOLINT(runtime/arrays)
+        Real target[4] = {};     // NOLINT(runtime/arrays)
+        Real d_hhat[3][4] = {};  // NOLINT(runtime/arrays)
+        for (int A = 0; A < 4; ++A) {
+          for (int a = 0; a < 4; ++a) {
+            hhat[A] += reference.frame[A][a]*h_coordinate[a];
+            theta[A] += reference.frame[A][a]*theta_coordinate[a];
+            target[A] += reference.frame[A][a]*target_coordinate[a];
+          }
+          for (int p = 0; p < 3; ++p) {
+            for (int a = 0; a < 4; ++a) {
+              d_hhat[p][A] += reference.d_frame[p + 1][A][a]
+                                  *h_coordinate[a]
+                              + reference.frame[A][a]
+                                  *d_h_coordinate[p][a];
+            }
+          }
+        }
+        const Real upsilon[3] = {0.05, -0.03 + 0.01*scale, 0.08};
+        const Real conformal_gamma[3] = {
+          -0.02, 0.07 - 0.01*scale, -0.04};
+        const Real mu = 0.8;
+        const Real eta = 1.3;
+        const Real eta_beta = 0.9;
+        const ref_gh::GaugeDriverRhs rhs = ref_gh::ComputeGaugeDriverRhs(
+            reference, hhat, theta, upsilon, d_hhat, shift, target,
+            conformal_gamma, mu, eta, eta_beta);
+
+        Real h_coordinate_rhs[4];      // NOLINT(runtime/arrays)
+        Real theta_coordinate_rhs[4];  // NOLINT(runtime/arrays)
+        for (int a = 0; a < 4; ++a) {
+          Real advection = 0.0;
+          for (int p = 0; p < 3; ++p) {
+            advection += shift[p]*d_h_coordinate[p][a];
+          }
+          h_coordinate_rhs[a] = advection
+              - mu*(h_coordinate[a] - target_coordinate[a])
+              + theta_coordinate[a];
+          theta_coordinate_rhs[a] = -eta*theta_coordinate[a] - eta*advection;
+        }
+        for (int A = 0; A < 4; ++A) {
+          Real expected_h = 0.0;
+          Real expected_theta = 0.0;
+          for (int a = 0; a < 4; ++a) {
+            expected_h += reference.d_frame[0][A][a]*h_coordinate[a]
+                          + reference.frame[A][a]*h_coordinate_rhs[a];
+            expected_theta +=
+                reference.d_frame[0][A][a]*theta_coordinate[a]
+                + reference.frame[A][a]*theta_coordinate_rhs[a];
+          }
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(rhs.hhat[A] - expected_h));
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(rhs.theta[A] - expected_theta));
+        }
+        for (int p = 0; p < 3; ++p) {
+          const Real expected = conformal_gamma[p] - eta_beta*upsilon[p];
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(rhs.upsilon[p] - expected));
+        }
+
+        // Independently invert the target definitions on an exact, moving
+        // reference metric.  This checks both physical gauge identities rather
+        // than comparing the helper with a duplicate expression.
+        ref_gh::CoordinateGhGeometry geometry;
+        Real determinant = 0.0;
+        if (!ref_gh::ComputeCoordinateGhGeometry(
+                reference.metric, reference.d_metric, reference, geometry,
+                determinant)) {
+          local_maximum = fmax(local_maximum, 1.0);
+          return;
+        }
+        Real source_with_hhat[4][4] = {};  // NOLINT(runtime/arrays)
+        Real all_d_hhat[4][4];             // NOLINT(runtime/arrays)
+        for (int A = 0; A < 4; ++A) {
+          all_d_hhat[0][A] = rhs.hhat[A];
+          for (int p = 0; p < 3; ++p) {
+            all_d_hhat[p + 1][A] = d_hhat[p][A];
+          }
+        }
+        constexpr Real gamma0 = 0.6;
+        ref_gh::AddOrdinaryGaugePartialWaveSource(
+            reference.metric, reference.d_metric, reference, geometry, hhat,
+            all_d_hhat, gamma0, source_with_hhat);
+        Real d_inverse[4][4][4];   // NOLINT(runtime/arrays)
+        Real d_base_upper[4][4];   // NOLINT(runtime/arrays)
+        Real d_base_lower[4][4];   // NOLINT(runtime/arrays)
+        for (int p = 0; p < 4; ++p) {
+          for (int a = 0; a < 4; ++a) {
+            for (int b = 0; b < 4; ++b) {
+              d_inverse[p][a][b] = 0.0;
+              for (int c = 0; c < 4; ++c) {
+                for (int d = 0; d < 4; ++d) {
+                  d_inverse[p][a][b] -= geometry.inverse_metric[a][c]
+                      *geometry.inverse_metric[b][d]
+                      *reference.d_metric[p][c][d];
+                }
+              }
+            }
+          }
+        }
+        for (int p = 0; p < 4; ++p) {
+          for (int a = 0; a < 4; ++a) {
+            d_base_upper[p][a] = 0.0;
+            for (int b = 0; b < 4; ++b) {
+              for (int c = 0; c < 4; ++c) {
+                d_base_upper[p][a] -= d_inverse[p][b][c]
+                    *reference.christoffel[a][b][c]
+                    + geometry.inverse_metric[b][c]
+                        *reference.d_christoffel[p][a][b][c];
+              }
+            }
+          }
+        }
+        for (int p = 0; p < 4; ++p) {
+          for (int a = 0; a < 4; ++a) {
+            d_base_lower[p][a] = 0.0;
+            for (int b = 0; b < 4; ++b) {
+              d_base_lower[p][a] += reference.d_metric[p][a][b]
+                      *geometry.gauge_source_upper[b]
+                  + reference.metric[a][b]*d_base_upper[p][b];
+            }
+          }
+        }
+        Real coordinate_extra[4][4];  // NOLINT(runtime/arrays)
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            const Real d_h_ab = ((a == 0) ? h_coordinate_rhs[b]
+                                           : d_h_coordinate[a - 1][b])
+                                - d_base_lower[a][b];
+            const Real d_h_ba = ((b == 0) ? h_coordinate_rhs[a]
+                                           : d_h_coordinate[b - 1][a])
+                                - d_base_lower[b][a];
+            Real expected = -d_h_ab - d_h_ba;
+            for (int c = 0; c < 4; ++c) {
+              const Real increment =
+                  h_coordinate[c] - geometry.gauge_source[c];
+              expected += 2.0*geometry.christoffel[c][a][b]
+                          *increment;
+              const Real projector =
+                  ((c == a) ? geometry.normal_lower[b] : 0.0)
+                  + ((c == b) ? geometry.normal_lower[a] : 0.0)
+                  - reference.metric[a][b]*geometry.normal_upper[c];
+              expected += gamma0*projector*increment;
+            }
+            coordinate_extra[a][b] = expected;
+          }
+        }
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            Real expected = 0.0;
+            for (int a = 0; a < 4; ++a) {
+              for (int b = 0; b < 4; ++b) {
+                expected += reference.frame[A][a]*reference.frame[B][b]
+                            *coordinate_extra[a][b];
+              }
+            }
+            local_source_maximum = fmax(
+                local_source_maximum,
+                Kokkos::abs(source_with_hhat[A][B] - expected));
+          }
+        }
+        ref_gh::PhysicalGaugeTarget physical_target;
+        constexpr Real nu = 0.75;
+        if (!ref_gh::ComputePhysicalGaugeTarget(
+                reference.metric, reference.d_metric, geometry, reference,
+                upsilon, nu, eta_beta, physical_target)) {
+          local_maximum = fmax(local_maximum, 1.0);
+          return;
+        }
+        const Real normal_target =
+            (physical_target.coordinate[0]
+             - geometry.shift[0]*physical_target.coordinate[1]
+             - geometry.shift[1]*physical_target.coordinate[2]
+             - geometry.shift[2]*physical_target.coordinate[3])/geometry.lapse;
+        local_target_maximum = fmax(
+            local_target_maximum,
+            Kokkos::abs(normal_target
+                        - (2.0/geometry.lapse - 1.0)*physical_target.trace_k));
+        Real inverse_spatial[3][3];  // NOLINT(runtime/arrays)
+        Real spatial_determinant = 0.0;
+        if (!ref_gh::InvertSpatial3(
+                reference.metric, inverse_spatial, spatial_determinant)) {
+          local_maximum = fmax(local_maximum, 1.0);
+          return;
+        }
+        Real contracted_spatial_connection[3] = {};  // NOLINT(runtime/arrays)
+        for (int i = 0; i < 3; ++i) {
+          for (int j = 0; j < 3; ++j) {
+            for (int k = 0; k < 3; ++k) {
+              contracted_spatial_connection[i] += 0.5*inverse_spatial[j][k]
+                  *(reference.d_metric[j + 1][i + 1][k + 1]
+                    + reference.d_metric[k + 1][i + 1][j + 1]
+                    - reference.d_metric[i + 1][j + 1][k + 1]);
+            }
+          }
+        }
+        for (int i = 0; i < 3; ++i) {
+          Real recovered_d0_shift = 0.0;
+          for (int j = 0; j < 3; ++j) {
+            recovered_d0_shift += geometry.lapse*geometry.lapse
+                *inverse_spatial[i][j]
+                *(physical_target.coordinate[j + 1]
+                  - physical_target.d_alpha[j]/geometry.lapse
+                  + contracted_spatial_connection[j]);
+          }
+          Real recovered_dt_shift = recovered_d0_shift;
+          for (int p = 0; p < 3; ++p) {
+            recovered_dt_shift +=
+                geometry.shift[p]*physical_target.d_shift[p][i];
+          }
+          const Real expected_dt_shift = nu*(physical_target.conformal_gamma[i]
+                                             - eta_beta*upsilon[i]);
+          local_target_maximum = fmax(
+              local_target_maximum,
+              Kokkos::abs(recovered_dt_shift - expected_dt_shift));
+        }
+      }, Kokkos::Max<Real>(maximum), Kokkos::Max<Real>(source_maximum),
+         Kokkos::Max<Real>(target_maximum));
+  Kokkos::fence();
+  if (!(maximum < 3.0e-13) || !(source_maximum < 3.0e-13)
+      || !(target_maximum < 3.0e-13)) {
+    std::cout << "### FATAL ERROR: reference-GH gauge-driver algebra failed: "
+              << maximum << ", source error=" << source_maximum
+              << ", target error=" << target_maximum << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH improved gauge-driver frame and physical-target "
+               "algebra passed: max error = "
+            << maximum << ", source error = " << source_maximum
+            << ", target error = " << target_maximum << std::endl;
+}
 
 void CheckGamma2Algebra() {
   constexpr int nsamples = 1024;
@@ -208,6 +527,172 @@ void CheckGamma2Algebra() {
             << maximum << std::endl;
 }
 
+void CheckCombinedGaugeCharacteristics() {
+  constexpr int nsamples = 512;
+  Real maximum = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh combined characteristics",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum) {
+        const Real scale = static_cast<Real>(sample % 31 - 15)/15.0;
+        const Real alpha = 0.71 + 0.09*static_cast<Real>(sample % 17)/16.0;
+        const Real beta_s = -0.16 + 0.04*scale;
+        const Real gamma2 = 0.4 + 0.3*static_cast<Real>(sample % 13)/12.0;
+        const Real eta = 1.1;
+        const Real inverse_spatial[3][3] = {
+          {1.15, 0.07, -0.03}, {0.07, 0.92, 0.05}, {-0.03, 0.05, 1.08}};
+        Real s_cov[3] = {0.34 + 0.01*scale, -0.42, 0.73};
+        Real norm2 = 0.0;
+        for (int I = 0; I < 3; ++I) {
+          for (int J = 0; J < 3; ++J) {
+            norm2 += s_cov[I]*inverse_spatial[I][J]*s_cov[J];
+          }
+        }
+        const Real inverse_norm = 1.0/Kokkos::sqrt(norm2);
+        for (int I = 0; I < 3; ++I) s_cov[I] *= inverse_norm;
+        const Real s_frame[4] = {
+          0.21 - 0.02*scale, s_cov[0], s_cov[1], s_cov[2]};
+        Real psi[ref_gh::kSymmetric4Size];          // NOLINT(runtime/arrays)
+        Real pi[ref_gh::kSymmetric4Size];           // NOLINT(runtime/arrays)
+        Real phi[3][ref_gh::kSymmetric4Size];       // NOLINT(runtime/arrays)
+        Real hhat[4];                               // NOLINT(runtime/arrays)
+        Real theta[4];                              // NOLINT(runtime/arrays)
+        Real upsilon[3];                            // NOLINT(runtime/arrays)
+        for (int component = 0; component < ref_gh::kSymmetric4Size;
+             ++component) {
+          psi[component] = 0.02*static_cast<Real>(component - 4) + 0.01*scale;
+          pi[component] = -0.03*static_cast<Real>(component - 3) + 0.02*scale;
+          for (int I = 0; I < 3; ++I) {
+            phi[I][component] =
+                0.01*static_cast<Real>(2*component - 3*I + 1) - 0.01*scale;
+          }
+        }
+        for (int A = 0; A < 4; ++A) {
+          hhat[A] = 0.04*static_cast<Real>(A - 1) + 0.01*scale;
+          theta[A] = -0.03*static_cast<Real>(A - 2) - 0.02*scale;
+        }
+        for (int I = 0; I < 3; ++I) {
+          upsilon[I] = 0.05*static_cast<Real>(I - 1) + 0.01*scale;
+        }
+        const ref_gh::CombinedGhCharacteristicFields characteristic =
+            ref_gh::ToCombinedGhCharacteristicFields(
+                psi, pi, phi, hhat, theta, upsilon, gamma2, eta,
+                inverse_spatial, s_cov, s_frame);
+        Real recovered_psi[ref_gh::kSymmetric4Size];     // NOLINT
+        Real recovered_pi[ref_gh::kSymmetric4Size];      // NOLINT
+        Real recovered_phi[3][ref_gh::kSymmetric4Size];  // NOLINT
+        Real recovered_hhat[4], recovered_theta[4], recovered_upsilon[3];
+        ref_gh::FromCombinedGhCharacteristicFields(
+            characteristic, gamma2, eta, s_cov, s_frame, recovered_psi,
+            recovered_pi, recovered_phi, recovered_hhat, recovered_theta,
+            recovered_upsilon);
+        for (int component = 0; component < ref_gh::kSymmetric4Size;
+             ++component) {
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(recovered_psi[component]
+                                         - psi[component]));
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(recovered_pi[component]
+                                         - pi[component]));
+          for (int I = 0; I < 3; ++I) {
+            local_maximum = fmax(
+                local_maximum, Kokkos::abs(recovered_phi[I][component]
+                                           - phi[I][component]));
+          }
+        }
+        for (int A = 0; A < 4; ++A) {
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(recovered_hhat[A] - hhat[A]));
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(recovered_theta[A] - theta[A]));
+        }
+        for (int I = 0; I < 3; ++I) {
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(recovered_upsilon[I] - upsilon[I]));
+        }
+
+        Real a_psi[ref_gh::kSymmetric4Size] = {};     // NOLINT
+        Real a_pi[ref_gh::kSymmetric4Size];           // NOLINT
+        Real a_phi[3][ref_gh::kSymmetric4Size];       // NOLINT
+        Real a_hhat[4], a_theta[4];                   // NOLINT
+        Real a_upsilon[3] = {};                       // NOLINT
+        Real s_upper[3] = {};                         // NOLINT
+        for (int I = 0; I < 3; ++I) {
+          for (int J = 0; J < 3; ++J) {
+            s_upper[I] += inverse_spatial[I][J]*s_cov[J];
+          }
+        }
+        for (int A = 0; A < 4; ++A) {
+          a_hhat[A] = -beta_s*hhat[A];
+          a_theta[A] = eta*beta_s*hhat[A];
+        }
+        for (int A = 0; A < 4; ++A) {
+          for (int B = A; B < 4; ++B) {
+            const int component = ref_gh::Symmetric4Index(A, B);
+            Real normal_phi = 0.0;
+            for (int I = 0; I < 3; ++I) {
+              normal_phi += s_upper[I]*phi[I][component];
+            }
+            const Real gauge_coupling =
+                s_frame[A]*hhat[B] + s_frame[B]*hhat[A];
+            a_pi[component] = gamma2*beta_s*psi[component]
+                              - beta_s*pi[component]
+                              + alpha*normal_phi + alpha*gauge_coupling;
+            for (int I = 0; I < 3; ++I) {
+              a_phi[I][component] =
+                  -alpha*gamma2*s_cov[I]*psi[component]
+                  + alpha*s_cov[I]*pi[component]
+                  - beta_s*phi[I][component];
+            }
+          }
+        }
+        const ref_gh::CombinedGhCharacteristicFields a_characteristic =
+            ref_gh::ToCombinedGhCharacteristicFields(
+                a_psi, a_pi, a_phi, a_hhat, a_theta, a_upsilon, gamma2,
+                eta, inverse_spatial, s_cov, s_frame);
+        for (int component = 0; component < ref_gh::kSymmetric4Size;
+             ++component) {
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(a_characteristic.metric[component]));
+          local_maximum = fmax(
+              local_maximum,
+              Kokkos::abs(a_characteristic.plus[component]
+                          - (-beta_s + alpha)*characteristic.plus[component]));
+          local_maximum = fmax(
+              local_maximum,
+              Kokkos::abs(a_characteristic.minus[component]
+                          - (-beta_s - alpha)*characteristic.minus[component]));
+          for (int I = 0; I < 3; ++I) {
+            local_maximum = fmax(
+                local_maximum,
+                Kokkos::abs(a_characteristic.transverse[I][component]
+                            + beta_s*characteristic.transverse[I][component]));
+          }
+        }
+        for (int A = 0; A < 4; ++A) {
+          local_maximum = fmax(
+              local_maximum,
+              Kokkos::abs(a_characteristic.gauge_advective[A]
+                          + beta_s*characteristic.gauge_advective[A]));
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(a_characteristic.gauge_zero[A]));
+        }
+        for (int I = 0; I < 3; ++I) {
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(a_characteristic.upsilon_zero[I]));
+        }
+      }, Kokkos::Max<Real>(maximum));
+  Kokkos::fence();
+  if (!(maximum < 4.0e-13)) {
+    std::cout << "### FATAL ERROR: reference-GH combined characteristic "
+                 "oracle failed: " << maximum << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH combined Einstein/gauge characteristic and "
+               "inverse oracle passed: max error = "
+            << maximum << std::endl;
+}
+
 struct ExponentSample {
   Real q_state;
   Real p_state;
@@ -351,6 +836,19 @@ ExponentSample EvaluateExponentSample(const int geometry_kind,
 
 void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
                                          const bool strict_gate) {
+  {
+    const Real spacing[3] = {1.0, 0.5, 0.25};
+    const Real overlapping[3] = {2.0, 1.0, 0.5};
+    const Real clear_in_x[3] = {2.0 + 1.0e-12, 0.0, 0.0};
+    const Real clear_in_y[3] = {0.0, 1.0 + 1.0e-12, 0.0};
+    if (ref_gh::PunctureStencilIsClear(overlapping, spacing, 2)
+        || !ref_gh::PunctureStencilIsClear(clear_in_x, spacing, 2)
+        || !ref_gh::PunctureStencilIsClear(clear_in_y, spacing, 2)) {
+      std::cout << "### FATAL ERROR: puncture stencil-footprint mask failed."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
   constexpr int nside = 20;
   constexpr int ncells = nside*nside*nside;
   constexpr int nresolution = 5;
@@ -362,6 +860,8 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
   Real previous_trumpet = 0.0;
   Real first_fd_difference[3] = {0.0, 0.0, 0.0};
   Real final_fd_difference[3] = {0.0, 0.0, 0.0};
+  Real first_fixed_fd_difference[3] = {0.0, 0.0, 0.0};
+  Real final_fixed_fd_difference[3] = {0.0, 0.0, 0.0};
 
   for (int geometry_kind = 0; geometry_kind < 3; ++geometry_kind) {
     for (int resolution = 0; resolution < nresolution; ++resolution) {
@@ -454,9 +954,56 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
         std::exit(EXIT_FAILURE);
       }
       const Real fd_difference = Kokkos::abs(q_fd_est - safe_q_est);
+      Real fixed_fd_difference = 0.0;
+      constexpr int nfixed_samples = 48;
+      Kokkos::parallel_reduce(
+          "ref_gh fixed-coordinate direct-FD exponent comparison",
+          Kokkos::RangePolicy<>(DevExeSpace(), 0, nfixed_samples),
+          KOKKOS_LAMBDA(const int sample, Real &maximum) {
+            const int permutation = sample % 6;
+            const int signs = sample/6;
+            const Real a = 0.75 + 0.5*h;
+            const Real b = 0.25 + 0.5*h;
+            const Real c = 0.125 + 0.5*h;
+            Real coordinate[3];  // NOLINT(runtime/arrays)
+            if (permutation == 0) {
+              coordinate[0] = a; coordinate[1] = b; coordinate[2] = c;
+            } else if (permutation == 1) {
+              coordinate[0] = a; coordinate[1] = c; coordinate[2] = b;
+            } else if (permutation == 2) {
+              coordinate[0] = b; coordinate[1] = a; coordinate[2] = c;
+            } else if (permutation == 3) {
+              coordinate[0] = b; coordinate[1] = c; coordinate[2] = a;
+            } else if (permutation == 4) {
+              coordinate[0] = c; coordinate[1] = a; coordinate[2] = b;
+            } else {
+              coordinate[0] = c; coordinate[1] = b; coordinate[2] = a;
+            }
+            for (int p = 0; p < 3; ++p) {
+              if ((signs & (1 << p)) != 0) coordinate[p] = -coordinate[p];
+            }
+            if (!ref_gh::PunctureStencilIsClear(coordinate, h, 2)) {
+              maximum = std::numeric_limits<Real>::infinity();
+              return;
+            }
+            const ExponentSample sample_value = EvaluateExponentSample(
+                geometry_kind, table, mass, h, coordinate[0], coordinate[1],
+                coordinate[2]);
+            if (!sample_value.valid) {
+              maximum = std::numeric_limits<Real>::infinity();
+              return;
+            }
+            maximum = fmax(
+                maximum,
+                Kokkos::abs(sample_value.q_fd - sample_value.q_state));
+          }, Kokkos::Max<Real>(fixed_fd_difference));
       if (resolution == 0) first_fd_difference[geometry_kind] = fd_difference;
+      if (resolution == 0) {
+        first_fixed_fd_difference[geometry_kind] = fixed_fd_difference;
+      }
       if (resolution == nresolution - 1) {
         final_fd_difference[geometry_kind] = fd_difference;
+        final_fixed_fd_difference[geometry_kind] = fixed_fd_difference;
       }
       if (geometry_kind == 1) {
         if (resolution > 0 && !(q_est > previous_wormhole)) {
@@ -483,19 +1030,34 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
                 << " safe_N_eff=" << safe_n_eff
                 << " safe_samples=" << safe_count
                 << " state-error=" << maximum_state_error
-                << " FD-error=" << maximum_fd_error << std::endl;
+                << " FD-error=" << maximum_fd_error
+                << " fixed-coordinate-FD-error=" << fixed_fd_difference
+                << std::endl;
     }
   }
   const bool direct_fd_converged =
       final_fd_difference[0] <= 2.0e-13
       && final_fd_difference[1] < 0.5*first_fd_difference[1]
       && final_fd_difference[2] < 0.5*first_fd_difference[2];
+  const bool fixed_direct_fd_converged =
+      final_fixed_fd_difference[0] <= 2.0e-13
+      && final_fixed_fd_difference[1]
+             < 0.02*first_fixed_fd_difference[1]
+      && final_fixed_fd_difference[2]
+             < 0.02*first_fixed_fd_difference[2];
   std::cout << "reference-GH first-order-state puncture-exponent estimator passed; "
             << "direct-FD same-shell convergence="
             << (direct_fd_converged ? "PASS" : "FAIL")
             << " wormhole(initial,final)=(" << first_fd_difference[1] << ","
             << final_fd_difference[1] << ") trumpet(initial,final)=("
             << first_fd_difference[2] << "," << final_fd_difference[2] << ")"
+            << " fixed-coordinate="
+            << (fixed_direct_fd_converged ? "PASS" : "FAIL")
+            << " wormhole(initial,final)=("
+            << first_fixed_fd_difference[1] << ","
+            << final_fixed_fd_difference[1] << ") trumpet(initial,final)=("
+            << first_fixed_fd_difference[2] << ","
+            << final_fixed_fd_difference[2] << ")"
             << std::endl;
   if (strict_gate && !direct_fd_converged) {
     std::cout << "### FATAL ERROR: the direct-FD estimator does not converge to "
@@ -1003,9 +1565,9 @@ void CoordinateStateFromFrame(const ref_gh::ReferenceGeometry &reference,
         d_coframe[c][A][a] = 0.0;
         for (int B = 0; B < 4; ++B) {
           for (int b = 0; b < 4; ++b) {
-            d_coframe[c][A][a] -= reference.coframe[A][b]
+            d_coframe[c][A][a] -= reference.coframe[B][a]
                                       *reference.d_frame[c][B][b]
-                                      *reference.coframe[B][a];
+                                      *reference.coframe[A][b];
           }
         }
       }
@@ -1610,7 +2172,10 @@ void ScanReferencePaths(ParameterInput *pin) {
 }  // namespace
 
 void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) {
+  CheckCoframeDerivativeIdentity();
+  CheckGaugeDriverAlgebra();
   CheckGamma2Algebra();
+  CheckCombinedGaugeCharacteristics();
   CheckPhiOrderingAlgebra();
   CheckFlatCovariantSource();
   CheckNonflatCovariantSource();

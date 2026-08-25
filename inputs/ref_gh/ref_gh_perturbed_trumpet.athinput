@@ -46,6 +46,13 @@ fd_order = 4
 debug_task_fences = false
 validate_reference_cache = false
 gamma0 = 1.0
+gamma2 = 1.0
+gauge_driver_enabled = true
+gauge_mu = 1.0
+gauge_eta = 1.0
+shift_nu = 0.75
+shift_eta = 1.0
+exclude_puncture_stencil_diagnostics = true
 diss = 0.02
 fail_closed_dt = 1.0e-12
 
@@ -55,6 +62,10 @@ perturb_amplitude = 1.0e-6
 perturb_width = 0.5
 common_adm_history = true
 common_adm_fd_order = 4
+common_adm_exclude_puncture_stencils = true
+common_adm_puncture_x = 0.0
+common_adm_puncture_y = 0.0
+common_adm_puncture_z = 0.0
 debug_repeat_initial_rhs = false
 
 <output1>

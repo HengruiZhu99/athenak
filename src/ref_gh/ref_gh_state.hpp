@@ -16,9 +16,13 @@ constexpr int kSpatialDimension = 3;
 constexpr int kPsiOffset = 0;
 constexpr int kPiOffset = kPsiOffset + kSymmetric4Size;
 constexpr int kPhiOffset = kPiOffset + kSymmetric4Size;
-constexpr int nvar = kPhiOffset + kSpatialDimension*kSymmetric4Size;
+constexpr int kHhatOffset = kPhiOffset + kSpatialDimension*kSymmetric4Size;
+constexpr int kThetaOffset = kHhatOffset + 4;
+constexpr int kUpsilonOffset = kThetaOffset + 4;
+constexpr int nvar = kUpsilonOffset + kSpatialDimension;
 
-static_assert(nvar == 50, "Reference-frame FO-GH must evolve exactly 50 fields.");
+static_assert(nvar == 61,
+              "Reference-frame FO-GH plus gauge driver must evolve 61 fields.");
 
 KOKKOS_INLINE_FUNCTION
 constexpr int Symmetric4Index(const int a, const int b) {
@@ -48,6 +52,9 @@ struct PointState {
   Real psi[kSymmetric4Size];  // NOLINT(runtime/arrays)
   Real pi[kSymmetric4Size];   // NOLINT(runtime/arrays)
   Real phi[kSpatialDimension][kSymmetric4Size];  // NOLINT(runtime/arrays)
+  Real hhat[4];               // NOLINT(runtime/arrays)
+  Real theta[4];              // NOLINT(runtime/arrays)
+  Real upsilon[kSpatialDimension];  // NOLINT(runtime/arrays)
 };
 
 }  // namespace ref_gh

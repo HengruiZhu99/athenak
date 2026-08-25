@@ -164,6 +164,56 @@ bool ComputeCoordinateGhGeometry(const Real metric[4][4],
   return Kokkos::isfinite(geometry.lapse) && geometry.lapse > 0.0;
 }
 
+// Coordinate derivative of the implicit ordinary gauge source used by the
+// Hhat=0 background-covariant formulation,
+// Hbase_a=-g_ab g^{cd} barGamma^b_cd.
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+void ImplicitGaugeSourceDerivative(
+    const Real metric[4][4], const Real d_metric[4][4][4],
+    const Reference &reference, const CoordinateGhGeometry &geometry,
+    Real d_base_lower[4][4]) {
+  Real d_inverse[4][4][4];  // NOLINT(runtime/arrays)
+  Real d_base_upper[4][4];  // NOLINT(runtime/arrays)
+  for (int p = 0; p < 4; ++p) {
+    for (int a = 0; a < 4; ++a) {
+      for (int b = 0; b < 4; ++b) {
+        d_inverse[p][a][b] = 0.0;
+        for (int c = 0; c < 4; ++c) {
+          for (int d = 0; d < 4; ++d) {
+            d_inverse[p][a][b] -= geometry.inverse_metric[a][c]
+                                    *geometry.inverse_metric[b][d]
+                                    *d_metric[p][c][d];
+          }
+        }
+      }
+    }
+  }
+  for (int p = 0; p < 4; ++p) {
+    for (int a = 0; a < 4; ++a) {
+      d_base_upper[p][a] = 0.0;
+      for (int b = 0; b < 4; ++b) {
+        for (int c = 0; c < 4; ++c) {
+          d_base_upper[p][a] -=
+              d_inverse[p][b][c]*ReferenceChristoffel(reference, a, b, c)
+              + geometry.inverse_metric[b][c]
+                    *ReferenceDChristoffel(reference, p, a, b, c);
+        }
+      }
+    }
+  }
+  for (int p = 0; p < 4; ++p) {
+    for (int a = 0; a < 4; ++a) {
+      d_base_lower[p][a] = 0.0;
+      for (int b = 0; b < 4; ++b) {
+        d_base_lower[p][a] +=
+            d_metric[p][a][b]*geometry.gauge_source_upper[b]
+            + metric[a][b]*d_base_upper[p][b];
+      }
+    }
+  }
+}
+
 // Evaluate Eq. (18) of Lindblom et al., arXiv:gr-qc/0512093v3.  The derivative
 // of H_a is analytic in g, dg, barGamma, and d(barGamma); no finite difference of H
 // or of a coordinate metric is used.
@@ -243,6 +293,91 @@ void StandardGhPartialWaveSource(const Real metric[4][4],
         value += gamma0*projector*geometry.gauge_constraint[c];
       }
       source[a][b] = value;
+    }
+  }
+}
+
+// Replace the implicit baseline ordinary gauge source
+// Hbase_mu=-g_{mu nu}g^{rho sigma}barGamma^nu_{rho sigma} by the evolved,
+// reference-independent Hhat_mu.  hhat[A]=e_A^mu Hhat_mu and
+// d_hhat[p][A]=partial_p hhat_A, with p=0 supplied by the same-stage gauge
+// RHS.  The increment is built from J_mu=Hhat_mu-Hbase_mu, and is exactly
+//
+//   -nabla_a Hhat_b-nabla_b Hhat_a
+//   +gamma0[2 delta^c_(a n_b)-g_ab n^c]Hhat_c,
+//
+// transformed back to the reference frame.  Equivalently, J is the
+// background-covariant source H_bg=Hhat+g.barGamma in the convention of the
+// controlling specification.
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+void AddOrdinaryGaugePartialWaveSource(
+    const Real metric[4][4], const Real d_metric[4][4][4],
+    const Reference &reference,
+    const CoordinateGhGeometry &geometry, const Real hhat[4],
+    const Real d_hhat[4][4], const Real gamma0, Real source[4][4]) {
+  Real coordinate_hhat[4] = {};       // NOLINT(runtime/arrays)
+  Real d_coordinate_hhat[4][4] = {};  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int A = 0; A < 4; ++A) {
+      coordinate_hhat[a] += ReferenceCoframe(reference, A, a)*hhat[A];
+    }
+  }
+  for (int p = 0; p < 4; ++p) {
+    for (int a = 0; a < 4; ++a) {
+      for (int A = 0; A < 4; ++A) {
+        Real d_coframe = 0.0;
+        for (int B = 0; B < 4; ++B) {
+          for (int b = 0; b < 4; ++b) {
+            d_coframe -= ReferenceCoframe(reference, B, a)
+                         *ReferenceDFrame(reference, p, B, b)
+                         *ReferenceCoframe(reference, A, b);
+          }
+        }
+        d_coordinate_hhat[p][a] +=
+            d_coframe*hhat[A] + ReferenceCoframe(reference, A, a)*d_hhat[p][A];
+      }
+    }
+  }
+  Real d_base_lower[4][4];  // NOLINT(runtime/arrays)
+  ImplicitGaugeSourceDerivative(
+      metric, d_metric, reference, geometry, d_base_lower);
+  Real coordinate_increment[4];       // NOLINT(runtime/arrays)
+  Real d_coordinate_increment[4][4];  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    coordinate_increment[a] = coordinate_hhat[a] - geometry.gauge_source[a];
+    for (int p = 0; p < 4; ++p) {
+      d_coordinate_increment[p][a] =
+          d_coordinate_hhat[p][a] - d_base_lower[p][a];
+    }
+  }
+  Real coordinate_extra[4][4];  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      Real nabla_ab = d_coordinate_increment[a][b];
+      Real nabla_ba = d_coordinate_increment[b][a];
+      for (int c = 0; c < 4; ++c) {
+        nabla_ab -= geometry.christoffel[c][a][b]*coordinate_increment[c];
+        nabla_ba -= geometry.christoffel[c][b][a]*coordinate_increment[c];
+      }
+      coordinate_extra[a][b] = -nabla_ab - nabla_ba;
+      for (int c = 0; c < 4; ++c) {
+        const Real projector = ((c == a) ? geometry.normal_lower[b] : 0.0)
+                               + ((c == b) ? geometry.normal_lower[a] : 0.0)
+                               - metric[a][b]*geometry.normal_upper[c];
+        coordinate_extra[a][b] += gamma0*projector*coordinate_increment[c];
+      }
+    }
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int a = 0; a < 4; ++a) {
+        for (int b = 0; b < 4; ++b) {
+          source[A][B] += ReferenceFrame(reference, A, a)
+                          *ReferenceFrame(reference, B, b)
+                          *coordinate_extra[a][b];
+        }
+      }
     }
   }
 }
