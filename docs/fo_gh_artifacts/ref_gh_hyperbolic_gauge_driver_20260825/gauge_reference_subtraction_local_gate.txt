@@ -1,0 +1,65 @@
+Ref-GH static-reference gauge subtraction local gate, 2026-08-25
+
+Source commits under test:
+  1ff3321b fix(ref-gh): regularize singular gauge driver state
+  2579e5d5 fix(analysis): mask puncture-overlap interpolation support
+Kokkos:
+  6739bc623081648af9e752b616d9671527922cbf
+Serial executable SHA-256:
+  33be56ae88ea3958b144a2dd355472bf84211092dd4f34e6b9a9243fba5d633b
+OpenMP executable SHA-256:
+  d261bd85ed2d1426de4447924d58ef7bd75b177bd6fa886c7107a6a78fb92604
+
+Observed failure mechanism
+--------------------------
+Raw ordinary-gauge frame components are not puncture regular.  From n=16 to
+48, |Hhat_A|_inf grew 7.48325 -> 125.126 and |theta_A|_inf grew 19.3337 ->
+1786.14.  The raw n=24 and n=32 exact stationary runs aborted at approximately
+t=0.828 and t=0.629 respectively.  Failure moved earlier under refinement.
+
+Equation-preserving correction
+------------------------------
+For static references the stored variables are
+
+  delta_Hhat_A = Hhat_A - Href_A
+  delta_theta_A = theta_A - theta_ref_A.
+
+Href, theta_ref, and partial_mu Href are reconstructed analytically from the
+reference two-jet.  The physical driver, GH source, gauge constraint, and
+boundary data reconstruct the same raw Hhat and theta.  Spatial differencing
+and KO act only on regular differences.  Time-dependent reference subtraction
+fails closed until an analytic partial_t theta_ref is implemented.
+
+Executed local gates
+--------------------
+- Kokkos Serial build: pass.
+- Kokkos OpenMP build: pass.
+- Source, frame, target, gamma2, and characteristic oracles: pass at roundoff.
+- Exact gauge-enabled Minkowski with subtraction: exact, max error 0.
+- Exact stationary trumpet n=16/24/32 through t=1: all finite and at roundoff;
+  see stationary_t1_local_gate.csv.  Because the signal is at roundoff this is
+  a fixed-point result, not a measured truncation order.
+- Direct two-cycle versus one-cycle/checkpoint/restart/two-cycle final Ref-GH
+  history row: byte-identical, SHA-256
+  ef51d76fee971c5b474ea200c97d264bae1bfc79de73b5ba7a6c1de2965be0e0.
+
+Perturbed convergence with puncture-overlap support removed
+-----------------------------------------------------------
+- The old r^0 Gaussian changes the leading anisotropic puncture class.  On the
+  masked 32/48/64 ladder, field L2 order is 4.3735 but native-constraint L2
+  order is only 1.4212.  This negative result is preserved in
+  perturbed_gaussian_r0_masked_32_48_64_t0p2.json.
+- A leading-class-preserving r^8 exp[-r^2/w^2] perturbation on 24/32/48 gives
+  field L2 order 3.9425 and native-constraint L2 order 4.6395 at t=0.2.
+  Linf orders are only 3.3504 and 1.4868 respectively and remain a limitation.
+  Full data are in perturbed_regular_r8_masked_24_32_48_t0p2.json.
+
+Claims and blockers
+-------------------
+Supported: local static-reference exact stationary fixed point through t=1 and
+fourth-order L2 convergence for a regular nonzero perturbation.
+
+Not supported: Aurora/PVC qualification, time-dependent-reference gauge
+subtraction, fixed-r/h direct-FD exponent-estimator convergence, q control,
+generic reference evolution, wormhole-to-trumpet tracking, SMR, or long-time
+stability.  No trumpet-stability or production claim is made.

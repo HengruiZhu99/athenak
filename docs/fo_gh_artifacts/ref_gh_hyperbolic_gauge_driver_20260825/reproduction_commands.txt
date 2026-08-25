@@ -14,15 +14,42 @@ cmake --build build-feedback-local -j 8
   -d /tmp/refgh_estimator \
   -i tst/inputs/ref_gh_generic_singular_estimator.athinput
 
-for n in 16 24 32 48; do
+for n in 16 24 32; do
   ./build-feedback-local/src/athena \
     -d "/tmp/refgh_trumpet_${n}" \
     -i tst/inputs/ref_gh_stationary_trumpet.athinput \
     mesh/nx1=$n mesh/nx2=$n mesh/nx3=$n \
     meshblock/nx1=$n meshblock/nx2=$n meshblock/nx3=$n \
-    time/nlim=100 time/tlim=0.01
+    time/tlim=1.0
 done
 
 # Restart test pattern: run two cycles directly; run one cycle with
 # output2/dcycle=1; resume checkpoint-only with -r to cycle two; compare the
 # final *.ref_gh.hst rows byte for byte.
+
+# Leading-class-preserving perturbed runs. The production input has
+# perturb_radial_power=8 and gauge_reference_subtraction=true. Run the three
+# resolutions through t=0.2, retaining field and native-constraint cbin output.
+for n in 24 32 48; do
+  ./build-feedback-local/src/athena \
+    -d "/tmp/refgh_perturbed_r8_${n}" \
+    -i inputs/ref_gh/ref_gh_perturbed_trumpet.athinput \
+    mesh/nx1=$n mesh/nx2=$n mesh/nx3=$n \
+    meshblock/nx1=$n meshblock/nx2=$n meshblock/nx3=$n \
+    time/tlim=0.2
+done
+
+# Replace the six file arguments below with the final field and constraint
+# cbins created by the preceding runs. The analyzer rejects a target whenever
+# any tensor-interpolation source cell has an FD support box containing the
+# puncture.
+python3 scripts/ref_gh/analyze_perturbed_trumpet_convergence.py \
+  --field N24_FIELD.cbin N32_FIELD.cbin N48_FIELD.cbin \
+  --constraint N24_CONSTRAINT.cbin N32_CONSTRAINT.cbin N48_CONSTRAINT.cbin \
+  --resolutions 24 32 48 \
+  --target-n 24 \
+  --analysis-radius 1.0 \
+  --fd-stencil-radius 2 \
+  --puncture 0 0 0 \
+  --expected-time 0.2 \
+  --output perturbed_regular_r8_masked_24_32_48_t0p2.json
