@@ -50,6 +50,7 @@ class RefGh {
     Real gamma0;
     Real gamma2;
     bool gauge_driver_enabled;
+    bool gauge_reference_subtraction;
     Real gauge_mu;
     Real gauge_eta;
     Real shift_nu;

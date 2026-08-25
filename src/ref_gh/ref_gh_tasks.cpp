@@ -36,11 +36,13 @@ KOKKOS_INLINE_FUNCTION
 Real StationaryTrumpetBoundaryValue(
     const int variable, const DvceArray2D<Real> &table, const Real mass,
     const Real center_x, const Real center_y, const Real center_z,
-    const Real x, const Real y, const Real z) {
+    const Real x, const Real y, const Real z,
+    const bool gauge_reference_subtraction) {
   if (variable == PsiIndex(0, 0)) return -1.0;
   if (variable == PsiIndex(1, 1) || variable == PsiIndex(2, 2)
       || variable == PsiIndex(3, 3)) return 1.0;
   if (variable < kHhatOffset || variable >= kUpsilonOffset) return 0.0;
+  if (gauge_reference_subtraction) return 0.0;
   const StationaryGaugeState gauge = ComputeStationaryTrumpetGaugeState(
       table, mass, center_x, center_y, center_z, x, y, z);
   if (!gauge.valid) return NAN;
@@ -1506,6 +1508,7 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
   const auto &size = pmy_pack->pmb->mb_size;
   const bool stationary_gauge_boundary =
       opt.reference_kind == 1 && opt.gauge_driver_enabled;
+  const bool gauge_reference_subtraction = opt.gauge_reference_subtraction;
   const auto table = reference_table;
   const Real mass = opt.reference_mass;
   const Real center_x = opt.reference_center[0];
@@ -1530,7 +1533,8 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
             const Real z = CellCenterX(
                 k - ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
             value = StationaryTrumpetBoundaryValue(
-                n, table, mass, center_x, center_y, center_z, x, y, z);
+                n, table, mass, center_x, center_y, center_z, x, y, z,
+                gauge_reference_subtraction);
           }
           state(m, n, k, j, is - g) = value;
         }
@@ -1550,7 +1554,8 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
             const Real z = CellCenterX(
                 k - ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
             value = StationaryTrumpetBoundaryValue(
-                n, table, mass, center_x, center_y, center_z, x, y, z);
+                n, table, mass, center_x, center_y, center_z, x, y, z,
+                gauge_reference_subtraction);
           }
           state(m, n, k, j, ie + g) = value;
         }
@@ -1575,7 +1580,8 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
             const Real z = CellCenterX(
                 k - ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
             value = StationaryTrumpetBoundaryValue(
-                n, table, mass, center_x, center_y, center_z, x, y, z);
+                n, table, mass, center_x, center_y, center_z, x, y, z,
+                gauge_reference_subtraction);
           }
           state(m, n, k, js - g, i) = value;
         }
@@ -1595,7 +1601,8 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
             const Real z = CellCenterX(
                 k - ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
             value = StationaryTrumpetBoundaryValue(
-                n, table, mass, center_x, center_y, center_z, x, y, z);
+                n, table, mass, center_x, center_y, center_z, x, y, z,
+                gauge_reference_subtraction);
           }
           state(m, n, k, je + g, i) = value;
         }
@@ -1620,7 +1627,8 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
             const Real z = CellCenterX(
                 -g, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
             value = StationaryTrumpetBoundaryValue(
-                n, table, mass, center_x, center_y, center_z, x, y, z);
+                n, table, mass, center_x, center_y, center_z, x, y, z,
+                gauge_reference_subtraction);
           }
           state(m, n, ks - g, j, i) = value;
         }
@@ -1640,7 +1648,8 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
                 indcs.nx3 - 1 + g, indcs.nx3,
                 size.d_view(m).x3min, size.d_view(m).x3max);
             value = StationaryTrumpetBoundaryValue(
-                n, table, mass, center_x, center_y, center_z, x, y, z);
+                n, table, mass, center_x, center_y, center_z, x, y, z,
+                gauge_reference_subtraction);
           }
           state(m, n, ke + g, j, i) = value;
         }

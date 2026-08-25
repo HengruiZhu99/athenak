@@ -385,6 +385,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.gamma2 = pin->GetOrAddReal("ref_gh", "gamma2", 0.0);
   opt.gauge_driver_enabled =
       pin->GetOrAddBoolean("ref_gh", "gauge_driver_enabled", false);
+  opt.gauge_reference_subtraction = pin->GetOrAddBoolean(
+      "ref_gh", "gauge_reference_subtraction", false);
   opt.gauge_mu = pin->GetOrAddReal("ref_gh", "gauge_mu", 1.0);
   opt.gauge_eta = pin->GetOrAddReal("ref_gh", "gauge_eta", 1.0);
   opt.shift_nu = pin->GetOrAddReal("ref_gh", "shift_nu", 0.75);
@@ -540,6 +542,17 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
               << "fail_closed_dt>=0, "
               << "valid positive reference/controller scales, and extrap_order "
                  "in [2,4]." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.gauge_reference_subtraction && !opt.gauge_driver_enabled) {
+    std::cout << "### FATAL ERROR: ref_gh gauge_reference_subtraction requires "
+                 "gauge_driver_enabled=true." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.gauge_reference_subtraction && opt.reference_time_dependent) {
+    std::cout << "### FATAL ERROR: time-dependent reference gauge subtraction "
+                 "requires an analytic theta-baseline time derivative and is "
+                 "not yet enabled." << std::endl;
     std::exit(EXIT_FAILURE);
   }
   if (opt.reference_controlled && opt.continuation_mode != 0

@@ -13,6 +13,7 @@
 #include "ref_gh/gauge_driver.hpp"
 #include "ref_gh/phi_ordering.hpp"
 #include "ref_gh/physical_gauge_target.hpp"
+#include "ref_gh/reference_gauge_baseline.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/standard_gh_source.hpp"
@@ -25,7 +26,8 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   // The queued UpdateReference task normally prepares this cache.  Keep the
   // guard here for initialization/unit-test callers that invoke CalcRHS
   // directly outside the stage task list.
-  FillReferenceCache(StageTime(driver, stage), opt.source_kind != 0);
+  FillReferenceCache(StageTime(driver, stage),
+                     opt.source_kind != 0 || opt.gauge_reference_subtraction);
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   const int radius = FDNG - 1;
@@ -39,6 +41,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   const Real gamma0 = opt.gamma0;
   const Real gamma2 = opt.gamma2;
   const bool gauge_driver_enabled = opt.gauge_driver_enabled;
+  const bool gauge_reference_subtraction = opt.gauge_reference_subtraction;
   const Real gauge_mu = opt.gauge_mu;
   const Real gauge_eta = opt.gauge_eta;
   const Real shift_nu = opt.shift_nu;
@@ -129,12 +132,26 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       Real theta[4];         // NOLINT(runtime/arrays)
       Real upsilon[3];       // NOLINT(runtime/arrays)
       Real d_hhat[3][4];     // NOLINT(runtime/arrays)
+      ReferenceGaugeBaseline baseline{};
+      if (gauge_reference_subtraction) {
+        baseline = ComputeReferenceGaugeBaseline(reference);
+        if (!baseline.valid) {
+          for (int n = kHhatOffset; n < nvar; ++n) {
+            state_rhs(m, n, k, j, i) = NAN;
+          }
+          return;
+        }
+      }
       for (int A = 0; A < 4; ++A) {
-        hhat[A] = state(m, kHhatOffset + A, k, j, i);
-        theta[A] = state(m, kThetaOffset + A, k, j, i);
+        hhat[A] = state(m, kHhatOffset + A, k, j, i)
+                  + (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
+        theta[A] = state(m, kThetaOffset + A, k, j, i)
+                   + (gauge_reference_subtraction ? baseline.theta[A] : 0.0);
         for (int p = 0; p < 3; ++p) {
           d_hhat[p][A] = Dx<FDNG>(p, idx, state, m, kHhatOffset + A,
-                                  k, j, i);
+                                  k, j, i)
+                          + (gauge_reference_subtraction
+                                 ? baseline.d_hhat[p + 1][A] : 0.0);
         }
       }
       for (int p = 0; p < 3; ++p) {
@@ -153,7 +170,8 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
           target.frame, target.conformal_gamma, gauge_mu, gauge_eta,
           shift_eta);
       for (int A = 0; A < 4; ++A) {
-        state_rhs(m, kHhatOffset + A, k, j, i) = gauge_rhs.hhat[A];
+        state_rhs(m, kHhatOffset + A, k, j, i) = gauge_rhs.hhat[A]
+            - (gauge_reference_subtraction ? baseline.d_hhat[0][A] : 0.0);
         state_rhs(m, kThetaOffset + A, k, j, i) = gauge_rhs.theta[A];
       }
       for (int p = 0; p < 3; ++p) {
@@ -199,12 +217,25 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
     if (gauge_driver_enabled) {
       Real hhat[4];       // NOLINT(runtime/arrays)
       Real d_hhat[4][4];  // NOLINT(runtime/arrays)
+      ReferenceGaugeBaseline baseline{};
+      if (gauge_reference_subtraction) {
+        baseline = ComputeReferenceGaugeBaseline(reference);
+        if (!baseline.valid) {
+          for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
+          return;
+        }
+      }
       for (int A = 0; A < 4; ++A) {
-        hhat[A] = state(m, kHhatOffset + A, k, j, i);
-        d_hhat[0][A] = state_rhs(m, kHhatOffset + A, k, j, i);
+        hhat[A] = state(m, kHhatOffset + A, k, j, i)
+                  + (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
+        d_hhat[0][A] = state_rhs(m, kHhatOffset + A, k, j, i)
+                       + (gauge_reference_subtraction
+                              ? baseline.d_hhat[0][A] : 0.0);
         for (int p = 0; p < 3; ++p) {
           d_hhat[p + 1][A] = Dx<FDNG>(
-              p, idx, state, m, kHhatOffset + A, k, j, i);
+              p, idx, state, m, kHhatOffset + A, k, j, i)
+              + (gauge_reference_subtraction
+                     ? baseline.d_hhat[p + 1][A] : 0.0);
         }
       }
       AddOrdinaryGaugePartialWaveSource(
@@ -510,6 +541,7 @@ void RefGh::CalcConstraints() {
   const auto reference_extra = reference_diagnostic;
   const int source_kind = opt.source_kind;
   const bool gauge_driver_enabled = opt.gauge_driver_enabled;
+  const bool gauge_reference_subtraction = opt.gauge_reference_subtraction;
   const int active_dimensions = pmy_pack->pmesh->one_d ? 1
       : (pmy_pack->pmesh->two_d ? 2 : 3);
   Kokkos::deep_copy(constraints, 0.0);
@@ -537,6 +569,14 @@ void RefGh::CalcConstraints() {
       return;
     }
     if (source_kind == 0) {
+      ReferenceGaugeBaseline baseline{};
+      if (gauge_driver_enabled && gauge_reference_subtraction) {
+        baseline = ComputeReferenceGaugeBaseline(reference);
+        if (!baseline.valid) {
+          for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
+          return;
+        }
+      }
       for (int A = 0; A < 4; ++A) {
         constraints(m, A, k, j, i) = source_sectors.delta[A];
         if (gauge_driver_enabled) {
@@ -546,17 +586,29 @@ void RefGh::CalcConstraints() {
                               *geometry.gauge_source[a];
           }
           constraints(m, A, k, j, i) +=
-              state(m, kHhatOffset + A, k, j, i) - baseline_frame;
+              state(m, kHhatOffset + A, k, j, i)
+              + (gauge_reference_subtraction ? baseline.hhat[A] : 0.0)
+              - baseline_frame;
         }
       }
     } else {
+      ReferenceGaugeBaseline baseline{};
+      if (gauge_driver_enabled && gauge_reference_subtraction) {
+        baseline = ComputeReferenceGaugeBaseline(reference);
+        if (!baseline.valid) {
+          for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
+          return;
+        }
+      }
       for (int a = 0; a < 4; ++a) {
         constraints(m, a, k, j, i) = geometry.gauge_constraint[a];
         if (gauge_driver_enabled) {
           Real hhat_coordinate = 0.0;
           for (int A = 0; A < 4; ++A) {
             hhat_coordinate += ReferenceCoframe(reference, A, a)
-                               *state(m, kHhatOffset + A, k, j, i);
+                               *(state(m, kHhatOffset + A, k, j, i)
+                                 + (gauge_reference_subtraction
+                                        ? baseline.hhat[A] : 0.0));
           }
           constraints(m, a, k, j, i) +=
               hhat_coordinate - geometry.gauge_source[a];

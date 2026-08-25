@@ -20,6 +20,7 @@
 #include "ref_gh/puncture_exponent.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
+#include "ref_gh/reference_gauge_baseline.hpp"
 #include "ref_gh/stationary_gauge_data.hpp"
 #include "utils/finite_diff.hpp"
 
@@ -42,6 +43,7 @@ Real initial_rhs_radius = -1.0;
 bool perturbed_trumpet = false;
 Real perturbation_amplitude = 0.0;
 Real perturbation_width = 0.0;
+int perturbation_radial_power = 0;
 
 void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
   auto *pack = mesh->pmb_pack;
@@ -61,6 +63,8 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
   const auto reference_table = pack->prefgh->reference_table;
   const bool compare_stationary_gauge =
       pack->prefgh->opt.gauge_driver_enabled && !perturbed_trumpet;
+  const bool gauge_reference_subtraction =
+      pack->prefgh->opt.gauge_reference_subtraction;
   const int stencil_radius = pack->prefgh->opt.fd_order/2;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   Real field_linf = 0.0;
@@ -168,14 +172,18 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
               return;
             }
             for (int A = 0; A < 4; ++A) {
+              const Real expected_hhat = gauge_reference_subtraction
+                  ? 0.0 : expected.hhat[A];
+              const Real expected_theta = gauge_reference_subtraction
+                  ? 0.0 : expected.theta[A];
               gauge_maximum = fmax(
                   gauge_maximum,
                   Kokkos::abs(state(m, ref_gh::kHhatOffset + A, k, j, i)
-                              - expected.hhat[A]));
+                              - expected_hhat));
               gauge_maximum = fmax(
                   gauge_maximum,
                   Kokkos::abs(state(m, ref_gh::kThetaOffset + A, k, j, i)
-                              - expected.theta[A]));
+                              - expected_theta));
             }
             for (int p = 0; p < 3; ++p) {
               gauge_maximum = fmax(
@@ -277,10 +285,14 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
       ? pin->GetOrAddReal("problem", "perturb_amplitude", 1.0e-6) : 0.0;
   perturbation_width = perturbed_trumpet
       ? pin->GetOrAddReal("problem", "perturb_width", 0.5) : 0.0;
+  perturbation_radial_power = perturbed_trumpet
+      ? pin->GetOrAddInteger("problem", "perturb_radial_power", 0) : 0;
   if (perturbed_trumpet
-      && (!(perturbation_amplitude > 0.0) || !(perturbation_width > 0.0))) {
+      && (!(perturbation_amplitude > 0.0) || !(perturbation_width > 0.0)
+          || perturbation_radial_power < 0 || perturbation_radial_power > 12
+          || perturbation_radial_power % 2 != 0)) {
     std::cout << "### FATAL ERROR: perturbed trumpet requires positive amplitude "
-                 "and width." << std::endl;
+                 "and width, and an even radial power in [0,12]." << std::endl;
     std::exit(EXIT_FAILURE);
   }
   pgen_final_func = &CheckRefGhStationaryTrumpet;
@@ -304,6 +316,7 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
   const auto table = pack->prefgh->reference_table;
   const Real amplitude = perturbation_amplitude;
   const Real width = perturbation_width;
+  const int radial_power = perturbation_radial_power;
   Real minimum_radius = std::numeric_limits<Real>::max();
   Kokkos::parallel_reduce(
       "ref_gh minimum puncture radius", Kokkos::RangePolicy<>(DevExeSpace(),
@@ -357,14 +370,26 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
                            + displacement[1]*displacement[1]
                            + displacement[2]*displacement[2];
       const Real width2 = width*width;
-      const Real bump = amplitude*Kokkos::exp(-radius2/width2);
+      const Real normalized_radius2 = radius2/width2;
+      Real radial_factor = 1.0;
+      for (int power = 0; power < radial_power/2; ++power) {
+        radial_factor *= normalized_radius2;
+      }
+      const Real bump = amplitude*radial_factor
+                        *Kokkos::exp(-normalized_radius2);
       state(m, ref_gh::PsiIndex(2, 2), k, j, i) += bump;
       state(m, ref_gh::PsiIndex(3, 3), k, j, i) -= bump;
       ref_gh::ReferencePsiKinematics reference;
       ref_gh::GetReferencePsiKinematics(
           1, table, mass, cx, cy, cz, 0.0, x, y, z, reference);
       for (int I = 0; I < 3; ++I) {
-        const Real gradient = -2.0*bump*displacement[I]/width2;
+        Real logarithmic_radial_derivative = -2.0/width2;
+        if (radial_power > 0 && radius2 > 0.0) {
+          logarithmic_radial_derivative +=
+              static_cast<Real>(radial_power)/radius2;
+        }
+        const Real gradient = bump*logarithmic_radial_derivative
+                              *displacement[I];
         const Real frame_gradient =
             gradient/reference.spatial_coframe[I][I];
         state(m, ref_gh::PhiIndex(I, 2, 2), k, j, i) = frame_gradient;
@@ -376,6 +401,8 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
     const Real shift_nu = pack->prefgh->opt.shift_nu;
     const Real shift_eta = pack->prefgh->opt.shift_eta;
     const bool is_perturbed = perturbed_trumpet;
+    const bool gauge_reference_subtraction =
+        pack->prefgh->opt.gauge_reference_subtraction;
     par_for("ref_gh stationary trumpet gauge data", DevExeSpace(), 0,
     pack->nmb_thispack - 1, 0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
     KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
@@ -410,8 +437,19 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
         }
         return;
       }
+      ref_gh::ReferenceGaugeBaseline baseline{};
+      if (gauge_reference_subtraction) {
+        baseline = ref_gh::ComputeReferenceGaugeBaseline(reference);
+        if (!baseline.valid) {
+          for (int n = ref_gh::kHhatOffset; n < ref_gh::nvar; ++n) {
+            state(m, n, k, j, i) = NAN;
+          }
+          return;
+        }
+      }
       for (int A = 0; A < 4; ++A) {
-        state(m, ref_gh::kHhatOffset + A, k, j, i) = target.frame[A];
+        state(m, ref_gh::kHhatOffset + A, k, j, i) = target.frame[A]
+            - (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
       }
     });
     if (!is_perturbed) {
@@ -422,6 +460,12 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
       indcs.js - radius, indcs.je + radius,
       indcs.is - radius, indcs.ie + radius,
       KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+        if (gauge_reference_subtraction) {
+          for (int A = 0; A < 4; ++A) {
+            state(m, ref_gh::kThetaOffset + A, k, j, i) = 0.0;
+          }
+          return;
+        }
         const Real x = CellCenterX(i - indcs.is, indcs.nx1,
                                    size.d_view(m).x1min, size.d_view(m).x1max);
         const Real y = CellCenterX(j - indcs.js, indcs.nx2,
@@ -490,13 +534,16 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
     }
     Real target_baseline_linf = 0.0;
     Real conformal_gamma_linf = 0.0;
+    Real hhat_linf = 0.0;
+    Real theta_linf = 0.0;
     const int active_cells = indcs.nx1*indcs.nx2*indcs.nx3;
     Kokkos::parallel_reduce(
         "ref_gh stationary gauge initialization audit",
         Kokkos::RangePolicy<>(DevExeSpace(),
             0, pack->nmb_thispack*active_cells),
         KOKKOS_LAMBDA(const int idx, Real &local_target,
-                      Real &local_conformal_gamma) {
+                      Real &local_conformal_gamma, Real &local_hhat,
+                      Real &local_theta) {
           int work = idx;
           const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
           const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
@@ -534,23 +581,36 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
             }
             local_target = fmax(
                 local_target, Kokkos::abs(target.frame[A] - baseline));
+            local_hhat = fmax(
+                local_hhat,
+                Kokkos::abs(state(m, ref_gh::kHhatOffset + A, k, j, i)));
+            local_theta = fmax(
+                local_theta,
+                Kokkos::abs(state(m, ref_gh::kThetaOffset + A, k, j, i)));
           }
           for (int p = 0; p < 3; ++p) {
             local_conformal_gamma = fmax(
                 local_conformal_gamma, Kokkos::abs(target.conformal_gamma[p]));
           }
         }, Kokkos::Max<Real>(target_baseline_linf),
-           Kokkos::Max<Real>(conformal_gamma_linf));
+           Kokkos::Max<Real>(conformal_gamma_linf),
+           Kokkos::Max<Real>(hhat_linf), Kokkos::Max<Real>(theta_linf));
 #if MPI_PARALLEL_ENABLED
     MPI_Allreduce(MPI_IN_PLACE, &target_baseline_linf, 1, MPI_ATHENA_REAL,
                   MPI_MAX, MPI_COMM_WORLD);
     MPI_Allreduce(MPI_IN_PLACE, &conformal_gamma_linf, 1, MPI_ATHENA_REAL,
+                  MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &hhat_linf, 1, MPI_ATHENA_REAL,
+                  MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &theta_linf, 1, MPI_ATHENA_REAL,
                   MPI_MAX, MPI_COMM_WORLD);
 #endif
     if (global_variable::my_rank == 0) {
       std::cout << "reference-GH stationary physical-target audit: "
                 << "|F-H_constraint|_Linf=" << target_baseline_linf
                 << ", |tildeGamma|_Linf=" << conformal_gamma_linf
+                << ", |stored_Hhat_A|_Linf=" << hhat_linf
+                << ", |stored_theta_A|_Linf=" << theta_linf
                 << std::endl;
     }
   }
