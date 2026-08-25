@@ -9,6 +9,7 @@
 #include "driver/driver.hpp"
 #include "mesh/mesh.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
+#include "ref_gh/gamma2_damping.hpp"
 #include "ref_gh/phi_ordering.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
@@ -34,6 +35,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   const int source_kind = opt.source_kind;
   const int phi_ordering = opt.phi_ordering;
   const Real gamma0 = opt.gamma0;
+  const Real gamma2 = opt.gamma2;
   Kokkos::deep_copy(state_rhs, 0.0);
   DebugFence("ref_gh CalcRHS zero");
 
@@ -327,6 +329,73 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       }
     });
     DebugFence("ref_gh CalcRHS standard_phi");
+  }
+
+  // Complete standard first-order GH reduction-constraint damping for
+  // gamma1=-1.  In frame notation C_IAB=E_I(Psi_AB)-Phi_IAB, and the additions
+  // are -gamma2 beta^I C_IAB in Pi_t and +alpha gamma2 C_IAB in Phi_IAB,t.
+  // Computing the coordinate representative first makes the contraction exact
+  // for a non-coordinate, time-dependent reference frame:
+  //   beta^I C_I = beta^i(partial_i Psi-theta^I_i Phi_I).
+  if (gamma2 > 0.0) {
+    par_for("ref_gh gamma2 reduction damping", DevExeSpace(), 0, nmb - 1,
+    indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+    KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+      const ReferenceCachePoint reference{
+          reference_cache, reference_extra, m, k, j, i};
+      const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
+                           1.0/size.d_view(m).dx3};
+      Real psi[4][4];     // NOLINT(runtime/arrays)
+      Real metric[4][4];  // NOLINT(runtime/arrays)
+      Real inverse[4][4]; // NOLINT(runtime/arrays)
+      LoadSymmetric(state, kPsiOffset, m, k, j, i, psi);
+      for (int a = 0; a < 4; ++a) {
+        for (int b = 0; b < 4; ++b) {
+          metric[a][b] = 0.0;
+          for (int A = 0; A < 4; ++A) {
+            for (int B = 0; B < 4; ++B) {
+              metric[a][b] += ReferenceCoframe(reference, A, a)
+                              *ReferenceCoframe(reference, B, b)*psi[A][B];
+            }
+          }
+        }
+      }
+      Real determinant = 0.0;
+      if (!Invert4(metric, inverse, determinant) || !(inverse[0][0] < 0.0)) {
+        for (int n = kPiOffset; n < nvar; ++n) {
+          state_rhs(m, n, k, j, i) = NAN;
+        }
+        return;
+      }
+      const Real lapse = 1.0/Kokkos::sqrt(-inverse[0][0]);
+      Real shift[3];  // NOLINT(runtime/arrays)
+      for (int p = 0; p < 3; ++p) {
+        shift[p] = lapse*lapse*inverse[0][p + 1];
+      }
+      for (int component = 0; component < kSymmetric4Size; ++component) {
+        Real coordinate_reduction[3];  // NOLINT(runtime/arrays)
+        Real spatial_frame[3][3];      // NOLINT(runtime/arrays)
+        for (int p = 0; p < 3; ++p) {
+          coordinate_reduction[p] =
+              Dx<FDNG>(p, idx, state, m, kPsiOffset + component, k, j, i);
+          for (int I = 0; I < 3; ++I) {
+            coordinate_reduction[p] -= ReferenceSpatialCoframe(reference, I, p)
+                *state(m, kPhiOffset + I*kSymmetric4Size + component, k, j, i);
+          }
+          for (int I = 0; I < 3; ++I) {
+            spatial_frame[I][p] = ReferenceSpatialFrame(reference, I, p);
+          }
+        }
+        const Gamma2DampingRhs damping = ComputeGamma2DampingRhs(
+            lapse, shift, coordinate_reduction, spatial_frame, gamma2);
+        state_rhs(m, kPiOffset + component, k, j, i) += damping.pi;
+        for (int I = 0; I < 3; ++I) {
+          state_rhs(m, kPhiOffset + I*kSymmetric4Size + component, k, j, i) +=
+              damping.phi[I];
+        }
+      }
+    });
+    DebugFence("ref_gh CalcRHS gamma2");
   }
 
   if (opt.diss > 0.0) {

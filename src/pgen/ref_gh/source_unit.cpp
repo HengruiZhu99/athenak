@@ -15,9 +15,11 @@
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
+#include "ref_gh/gamma2_damping.hpp"
 #include "ref_gh/phi_ordering.hpp"
 #include "ref_gh/puncture_exponent.hpp"
 #include "ref_gh/ref_gh.hpp"
+#include "ref_gh/ref_gh_characteristics.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_generic_singular.hpp"
@@ -26,6 +28,185 @@
 #include "ref_gh/standard_gh_source.hpp"
 
 namespace {
+
+void CheckGamma2Algebra() {
+  constexpr int nsamples = 1024;
+  Real maximum = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh gamma2 algebra", Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum) {
+        const Real scale = static_cast<Real>(sample % 37 - 18)/18.0;
+        const Real alpha = 0.63 + 0.17*static_cast<Real>(sample % 19)/18.0;
+        const Real gamma2 = 0.2 + 1.3*static_cast<Real>(sample % 23)/22.0;
+        const Real inverse_spatial_metric[3][3] = {
+          {1.2, 0.1, -0.04}, {0.1, 0.9, 0.06}, {-0.04, 0.06, 1.1}};
+        Real s_cov[3] = {0.31 + 0.02*scale, -0.47, 0.79 - 0.01*scale};
+        Real norm2 = 0.0;
+        for (int I = 0; I < 3; ++I) {
+          for (int J = 0; J < 3; ++J) {
+            norm2 += s_cov[I]*inverse_spatial_metric[I][J]*s_cov[J];
+          }
+        }
+        const Real beta[3] = {0.19, -0.08 + 0.01*scale, 0.11};
+        const Real coordinate_reduction[3] = {
+          0.13 - 0.01*scale, -0.07, 0.21 + 0.02*scale};
+        const Real spatial_frame[3][3] = {
+          {1.1, 0.03, -0.02}, {0.0, 0.9, 0.04}, {0.01, -0.05, 1.2}};
+        const ref_gh::Gamma2DampingRhs damping =
+            ref_gh::ComputeGamma2DampingRhs(
+                alpha, beta, coordinate_reduction, spatial_frame, gamma2);
+        Real expected_pi = 0.0;
+        for (int p = 0; p < 3; ++p) {
+          expected_pi -= gamma2*beta[p]*coordinate_reduction[p];
+        }
+        local_maximum = fmax(
+            local_maximum, Kokkos::abs(damping.pi - expected_pi));
+        for (int I = 0; I < 3; ++I) {
+          Real expected_phi = 0.0;
+          for (int p = 0; p < 3; ++p) {
+            expected_phi += alpha*gamma2*spatial_frame[I][p]
+                            *coordinate_reduction[p];
+          }
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(damping.phi[I] - expected_phi));
+        }
+        const Real inverse_norm = 1.0/Kokkos::sqrt(norm2);
+        for (int I = 0; I < 3; ++I) s_cov[I] *= inverse_norm;
+        Real beta_s = 0.0;
+        Real s_upper[3] = {};  // NOLINT(runtime/arrays)
+        for (int I = 0; I < 3; ++I) {
+          beta_s += beta[I]*s_cov[I];
+          for (int J = 0; J < 3; ++J) {
+            s_upper[I] += inverse_spatial_metric[I][J]*s_cov[J];
+          }
+        }
+        const Real psi = 0.27 - 0.09*scale;
+        const Real pi = -0.14 + 0.07*scale;
+        const Real phi[3] = {0.12 + 0.03*scale, -0.21, 0.08 - 0.02*scale};
+        const ref_gh::GhCharacteristicFields characteristic =
+            ref_gh::ToGhCharacteristicFields(
+                psi, pi, phi, gamma2, inverse_spatial_metric, s_cov);
+        Real recovered_psi = 0.0;
+        Real recovered_pi = 0.0;
+        Real recovered_phi[3];  // NOLINT(runtime/arrays)
+        ref_gh::FromGhCharacteristicFields(
+            characteristic, gamma2, s_cov, recovered_psi, recovered_pi,
+            recovered_phi);
+        local_maximum = fmax(local_maximum, Kokkos::abs(recovered_psi - psi));
+        local_maximum = fmax(local_maximum, Kokkos::abs(recovered_pi - pi));
+        Real transverse_normal = 0.0;
+        for (int I = 0; I < 3; ++I) {
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(recovered_phi[I] - phi[I]));
+          transverse_normal += s_upper[I]*characteristic.transverse[I];
+        }
+        local_maximum = fmax(local_maximum, Kokkos::abs(transverse_normal));
+
+        // Frozen-coefficient principal symbol for gamma1=-1.
+        Real a_phi[3];  // NOLINT(runtime/arrays)
+        Real normal_phi = 0.0;
+        for (int I = 0; I < 3; ++I) normal_phi += s_upper[I]*phi[I];
+        const Real a_psi = 0.0;
+        const Real a_pi = gamma2*beta_s*psi - beta_s*pi + alpha*normal_phi;
+        for (int I = 0; I < 3; ++I) {
+          a_phi[I] = -alpha*gamma2*s_cov[I]*psi + alpha*s_cov[I]*pi
+                     - beta_s*phi[I];
+        }
+        const ref_gh::GhCharacteristicFields a_characteristic =
+            ref_gh::ToGhCharacteristicFields(
+                a_psi, a_pi, a_phi, gamma2, inverse_spatial_metric, s_cov);
+        local_maximum = fmax(local_maximum, Kokkos::abs(a_characteristic.metric));
+        local_maximum = fmax(
+            local_maximum,
+            Kokkos::abs(a_characteristic.plus
+                        - (-beta_s + alpha)*characteristic.plus));
+        local_maximum = fmax(
+            local_maximum,
+            Kokkos::abs(a_characteristic.minus
+                        - (-beta_s - alpha)*characteristic.minus));
+        for (int I = 0; I < 3; ++I) {
+          local_maximum = fmax(
+              local_maximum,
+              Kokkos::abs(a_characteristic.transverse[I]
+                          + beta_s*characteristic.transverse[I]));
+        }
+
+        // The standard symmetrizer must satisfy H A(s)=(H A(s))^T when
+        // Lambda^2>gamma2^2.
+        Real principal[5][5] = {};   // NOLINT(runtime/arrays)
+        Real symmetrizer[5][5] = {}; // NOLINT(runtime/arrays)
+        principal[1][0] = gamma2*beta_s;
+        principal[1][1] = -beta_s;
+        for (int I = 0; I < 3; ++I) {
+          principal[1][I + 2] = alpha*s_upper[I];
+          principal[I + 2][0] = -alpha*gamma2*s_cov[I];
+          principal[I + 2][1] = alpha*s_cov[I];
+          principal[I + 2][I + 2] = -beta_s;
+        }
+        symmetrizer[0][0] = gamma2*gamma2 + 1.0;
+        symmetrizer[0][1] = symmetrizer[1][0] = -gamma2;
+        symmetrizer[1][1] = 1.0;
+        for (int I = 0; I < 3; ++I) {
+          for (int J = 0; J < 3; ++J) {
+            symmetrizer[I + 2][J + 2] = inverse_spatial_metric[I][J];
+          }
+        }
+        Real product[5][5] = {};  // NOLINT(runtime/arrays)
+        for (int row = 0; row < 5; ++row) {
+          for (int column = 0; column < 5; ++column) {
+            for (int inner = 0; inner < 5; ++inner) {
+              product[row][column] +=
+                  symmetrizer[row][inner]*principal[inner][column];
+            }
+          }
+        }
+        for (int row = 0; row < 5; ++row) {
+          for (int column = 0; column < 5; ++column) {
+            local_maximum = fmax(
+                local_maximum,
+                Kokkos::abs(product[row][column] - product[column][row]));
+          }
+        }
+
+        // Independent reduction and curl subsidiary-system identities.
+        Real d_psi[3] = {0.17, -0.12 + 0.01*scale, 0.09};
+        Real d_phi[3][3];   // NOLINT(runtime/arrays)
+        Real dd_psi[3][3];  // NOLINT(runtime/arrays)
+        for (int I = 0; I < 3; ++I) {
+          for (int J = 0; J < 3; ++J) {
+            d_phi[I][J] = 0.03*static_cast<Real>(2*I - J + 1) + 0.01*scale;
+            dd_psi[I][J] = 0.04*static_cast<Real>(I + J + 1);
+          }
+        }
+        for (int I = 0; I < 3; ++I) {
+          const Real reduction = d_psi[I] - phi[I];
+          const Real reduction_rhs = -alpha*gamma2*reduction;
+          const Real phi_rhs = alpha*gamma2*reduction;
+          local_maximum = fmax(
+              local_maximum, Kokkos::abs(reduction_rhs + phi_rhs));
+          for (int J = I + 1; J < 3; ++J) {
+            const Real curl = d_phi[I][J] - d_phi[J][I];
+            const Real d_phi_rhs_ij =
+                alpha*gamma2*(dd_psi[I][J] - d_phi[I][J]);
+            const Real d_phi_rhs_ji =
+                alpha*gamma2*(dd_psi[J][I] - d_phi[J][I]);
+            const Real curl_rhs = d_phi_rhs_ij - d_phi_rhs_ji;
+            local_maximum = fmax(
+                local_maximum,
+                Kokkos::abs(curl_rhs + alpha*gamma2*curl));
+          }
+        }
+      }, Kokkos::Max<Real>(maximum));
+  Kokkos::fence();
+  if (!(maximum < 2.0e-13)) {
+    std::cout << "### FATAL ERROR: reference-GH gamma2 algebra failed: "
+              << maximum << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH gamma2 characteristic, symmetrizer, reduction, "
+               "and curl algebra passed: max error = "
+            << maximum << std::endl;
+}
 
 struct ExponentSample {
   Real q_state;
@@ -189,18 +370,25 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
       Real sum_w2 = 0.0;
       Real sum_wq = 0.0;
       Real sum_wq2 = 0.0;
+      Real safe_sum_w = 0.0;
+      Real safe_sum_w2 = 0.0;
+      Real safe_sum_wq = 0.0;
       Real sum_wq_fd = 0.0;
       Real maximum_state_error = 0.0;
       Real maximum_fd_error = 0.0;
       int count = 0;
+      int safe_count = 0;
       Kokkos::parallel_reduce(
           "ref_gh local puncture exponent estimator",
           Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
           KOKKOS_LAMBDA(const int index, Real &local_sum_w,
                         Real &local_sum_w2, Real &local_sum_wq,
-                        Real &local_sum_wq2, Real &local_sum_wq_fd,
+                        Real &local_sum_wq2, Real &local_safe_sum_w,
+                        Real &local_safe_sum_w2, Real &local_safe_sum_wq,
+                        Real &local_sum_wq_fd,
                         Real &local_maximum_state_error,
-                        Real &local_maximum_fd_error, int &local_count) {
+                        Real &local_maximum_fd_error, int &local_count,
+                        int &local_safe_count) {
             int work = index;
             const int ix = work % nside; work /= nside;
             const int iy = work % nside;
@@ -223,26 +411,39 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
             local_sum_w2 += weight*weight;
             local_sum_wq += weight*sample.q_state;
             local_sum_wq2 += weight*sample.q_state*sample.q_state;
-            local_sum_wq_fd += weight*sample.q_fd;
             local_maximum_state_error = fmax(
                 local_maximum_state_error,
                 Kokkos::abs(sample.q_state - sample.q_exact));
             local_maximum_state_error = fmax(
                 local_maximum_state_error,
                 Kokkos::abs(sample.p_state - sample.p_exact));
-            local_maximum_fd_error = fmax(
-                local_maximum_fd_error,
-                Kokkos::abs(sample.q_fd - sample.q_exact));
             ++local_count;
+            const Real displacement[3] = {x, y, z};
+            if (ref_gh::PunctureStencilIsClear(displacement, h, 2)) {
+              local_safe_sum_w += weight;
+              local_safe_sum_w2 += weight*weight;
+              local_safe_sum_wq += weight*sample.q_state;
+              local_sum_wq_fd += weight*sample.q_fd;
+              local_maximum_fd_error = fmax(
+                  local_maximum_fd_error,
+                  Kokkos::abs(sample.q_fd - sample.q_exact));
+              ++local_safe_count;
+            }
           }, Kokkos::Sum<Real>(sum_w), Kokkos::Sum<Real>(sum_w2),
           Kokkos::Sum<Real>(sum_wq), Kokkos::Sum<Real>(sum_wq2),
+          Kokkos::Sum<Real>(safe_sum_w), Kokkos::Sum<Real>(safe_sum_w2),
+          Kokkos::Sum<Real>(safe_sum_wq),
           Kokkos::Sum<Real>(sum_wq_fd), Kokkos::Max<Real>(maximum_state_error),
-          Kokkos::Max<Real>(maximum_fd_error), Kokkos::Sum<int>(count));
+          Kokkos::Max<Real>(maximum_fd_error), Kokkos::Sum<int>(count),
+          Kokkos::Sum<int>(safe_count));
       const Real q_est = sum_wq/sum_w;
-      const Real q_fd_est = sum_wq_fd/sum_w;
+      const Real safe_q_est = safe_sum_wq/safe_sum_w;
+      const Real q_fd_est = sum_wq_fd/safe_sum_w;
       const Real variance = fmax(0.0, sum_wq2/sum_w - q_est*q_est);
       const Real n_eff = sum_w*sum_w/sum_w2;
-      if (count <= 0 || !(n_eff > 1.0) || !std::isfinite(variance)
+      const Real safe_n_eff = safe_sum_w*safe_sum_w/safe_sum_w2;
+      if (count <= 0 || safe_count <= 0 || !(n_eff > 1.0)
+          || !(safe_n_eff > 1.0) || !std::isfinite(variance)
           || maximum_state_error > 2.0e-11
           || (geometry_kind == 0 && maximum_fd_error > 2.0e-13)) {
         std::cout << "### FATAL ERROR: local puncture exponent estimator failed: "
@@ -252,7 +453,7 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
                   << " FD-error=" << maximum_fd_error << std::endl;
         std::exit(EXIT_FAILURE);
       }
-      const Real fd_difference = Kokkos::abs(q_fd_est - q_est);
+      const Real fd_difference = Kokkos::abs(q_fd_est - safe_q_est);
       if (resolution == 0) first_fd_difference[geometry_kind] = fd_difference;
       if (resolution == nresolution - 1) {
         final_fd_difference[geometry_kind] = fd_difference;
@@ -276,8 +477,11 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
       }
       std::cout << "reference-GH local exponent: geometry=" << geometry_kind
                 << " h=" << h << " q_est=" << q_est
+                << " safe_q_est=" << safe_q_est
                 << " q_fd_est=" << q_fd_est << " variance=" << variance
                 << " N_eff=" << n_eff << " samples=" << count
+                << " safe_N_eff=" << safe_n_eff
+                << " safe_samples=" << safe_count
                 << " state-error=" << maximum_state_error
                 << " FD-error=" << maximum_fd_error << std::endl;
     }
@@ -1406,6 +1610,7 @@ void ScanReferencePaths(ParameterInput *pin) {
 }  // namespace
 
 void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) {
+  CheckGamma2Algebra();
   CheckPhiOrderingAlgebra();
   CheckFlatCovariantSource();
   CheckNonflatCovariantSource();

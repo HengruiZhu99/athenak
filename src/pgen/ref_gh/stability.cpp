@@ -14,6 +14,7 @@
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "ref_gh/ref_gh.hpp"
+#include "utils/finite_diff.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -21,6 +22,7 @@
 
 namespace {
 Real initial_l2 = 0.0;
+Real initial_reduction_l2 = 0.0;
 
 KOKKOS_INLINE_FUNCTION
 unsigned long long MixBits(unsigned long long value) {  // NOLINT(runtime/int)
@@ -60,9 +62,58 @@ Real PerturbationL2(Mesh *mesh) {
   return std::sqrt(sum/(mesh->nmb_total*ncells*ref_gh::nvar));
 }
 
+template <int FDNG>
+Real ReductionL2(Mesh *mesh) {
+  auto *pack = mesh->pmb_pack;
+  auto &indcs = mesh->mb_indcs;
+  auto &size = pack->pmb->mb_size;
+  const auto state = pack->prefgh->u0;
+  const int radius = FDNG - 1;
+  const int n1 = indcs.nx1 - 2*radius;
+  const int n2 = indcs.nx2 - 2*radius;
+  const int n3 = indcs.nx3 - 2*radius;
+  const int ncells = n1*n2*n3;
+  Real sum = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh robust reduction", Kokkos::RangePolicy<>(DevExeSpace(), 0,
+      pack->nmb_thispack*3*ref_gh::kSymmetric4Size*ncells),
+      KOKKOS_LAMBDA(const int index, Real &local_sum) {
+    int work = index;
+    const int i = work % n1 + indcs.is + radius; work /= n1;
+    const int j = work % n2 + indcs.js + radius; work /= n2;
+    const int k = work % n3 + indcs.ks + radius; work /= n3;
+    const int component = work % ref_gh::kSymmetric4Size;
+    work /= ref_gh::kSymmetric4Size;
+    const int direction = work % 3;
+    const int m = work/3;
+    const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
+                         1.0/size.d_view(m).dx3};
+    const Real reduction = Dx<FDNG>(
+        direction, idx, state, m, ref_gh::kPsiOffset + component, k, j, i)
+        - state(m, ref_gh::kPhiOffset
+                     + direction*ref_gh::kSymmetric4Size + component,
+                k, j, i);
+    local_sum += reduction*reduction;
+  }, Kokkos::Sum<Real>(sum));
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &sum, 1, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  const Real samples = static_cast<Real>(
+      mesh->nmb_total*3*ref_gh::kSymmetric4Size*n1*n2*n3);
+  return std::sqrt(sum/samples);
+}
+
+Real ReductionL2(Mesh *mesh) {
+  const int order = mesh->pmb_pack->prefgh->opt.fd_order;
+  if (order == 2) return ReductionL2<2>(mesh);
+  if (order == 4) return ReductionL2<3>(mesh);
+  return ReductionL2<4>(mesh);
+}
+
 void RefGhStabilityErrors(ParameterInput *pin, Mesh *mesh) {
   auto *pack = mesh->pmb_pack;
   const Real final_l2 = PerturbationL2(mesh);
+  const Real final_reduction_l2 = ReductionL2(mesh);
   auto &indcs = mesh->mb_indcs;
   const auto state = pack->prefgh->u0;
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
@@ -92,13 +143,19 @@ void RefGhStabilityErrors(ParameterInput *pin, Mesh *mesh) {
     const std::string filename = pin->GetString("job", "basename") + "-stability.dat";
     FILE *file = std::fopen(filename.c_str(), "w");
     if (file == nullptr) std::exit(EXIT_FAILURE);
-    std::fprintf(file, "# nx1 cycles time initial_L2 final_L2 growth rate Linf\n");
-    std::fprintf(file, "%d %d %.17e %.17e %.17e %.17e %.17e %.17e\n",
+    std::fprintf(file, "# nx1 cycles time initial_L2 final_L2 growth rate Linf "
+                       "initial_reduction_L2 final_reduction_L2 "
+                       "reduction_growth\n");
+    std::fprintf(file, "%d %d %.17e %.17e %.17e %.17e %.17e %.17e %.17e "
+                       "%.17e %.17e\n",
                  mesh->mesh_indcs.nx1, mesh->ncycle, mesh->time, initial_l2,
-                 final_l2, growth, rate, linf);
+                 final_l2, growth, rate, linf, initial_reduction_l2,
+                 final_reduction_l2, final_reduction_l2/initial_reduction_l2);
     std::fclose(file);
     std::cout << "reference-GH robust stability: growth=" << growth
-              << ", rate=" << rate << ", Linf=" << linf << std::endl;
+              << ", rate=" << rate << ", Linf=" << linf
+              << ", reduction_growth="
+              << final_reduction_l2/initial_reduction_l2 << std::endl;
   }
 }
 
@@ -136,4 +193,5 @@ void ProblemGenerator::RefGhStability(ParameterInput *pin, const bool restart) {
     state(m, n, k, j, i) = background + amplitude*(2.0*unit - 1.0);
   });
   initial_l2 = PerturbationL2(pmy_mesh_);
+  initial_reduction_l2 = ReductionL2(pmy_mesh_);
 }

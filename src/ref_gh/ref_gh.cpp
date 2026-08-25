@@ -379,6 +379,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     std::exit(EXIT_FAILURE);
   }
   opt.gamma0 = pin->GetOrAddReal("ref_gh", "gamma0", 1.0);
+  opt.gamma2 = pin->GetOrAddReal("ref_gh", "gamma2", 0.0);
   opt.diss = pin->GetOrAddReal("ref_gh", "diss", 0.02);
   opt.fail_closed_dt = pin->GetOrAddReal("ref_gh", "fail_closed_dt", 0.0);
   opt.reference_mass = pin->GetOrAddReal("ref_gh", "reference_mass", 1.0);
@@ -483,7 +484,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
               << "fd_order ghost cells for its compatible two-pass update." << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  if (opt.gamma0 <= 0.0 || opt.diss < 0.0 || opt.fail_closed_dt < 0.0
+  if (opt.gamma0 <= 0.0 || opt.gamma2 < 0.0 || !std::isfinite(opt.gamma2)
+      || opt.diss < 0.0 || opt.fail_closed_dt < 0.0
       || opt.reference_mass <= 0.0
       || opt.generic_gaussian_width <= 0.0
       || !std::isfinite(opt.generic_q_initial)
@@ -518,7 +520,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       || opt.continuation_growth_time <= 0.0
       || opt.extrap_order < 2 || opt.extrap_order > 4) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-              << std::endl << "ref_gh requires gamma0>0, diss>=0, fail_closed_dt>=0, "
+              << std::endl << "ref_gh requires gamma0>0, gamma2>=0, diss>=0, "
+              << "fail_closed_dt>=0, "
               << "valid positive reference/controller scales, and extrap_order "
                  "in [2,4]." << std::endl;
     std::exit(EXIT_FAILURE);

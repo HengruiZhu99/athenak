@@ -48,6 +48,7 @@ class RefGh {
     int transition_path;
     int phi_ordering;
     Real gamma0;
+    Real gamma2;
     Real diss;
     Real fail_closed_dt;
     Real reference_mass;
