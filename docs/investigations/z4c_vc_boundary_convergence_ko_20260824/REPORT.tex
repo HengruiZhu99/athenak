@@ -71,8 +71,16 @@ $r=12M$: 50.53\% in $12<r\le16M$ and 49.34\% in the square corners with
 $r>16M$.
 
 \begin{figure}[H]\centering
-\includegraphics[width=0.97\textwidth]{analysis/figures/original_rout16_global_figure2.png}
-\caption{Authenticated $R_{\rm out}=16M$ global constraint histories.}
+\begin{minipage}[t]{0.49\textwidth}\centering
+\includegraphics[width=\linewidth]{analysis/figures/original_rout16_global_figure2.png}\\[-2pt]
+\small (a) Authenticated global Figure-2 histories.
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}\centering
+\includegraphics[width=\linewidth]{analysis/small_domain_radial/figures/constraints_R12.png}\\[-2pt]
+\small (b) Production-matched $r\le12M$ replacement.
+\end{minipage}
+\caption{Old global constraint history and the radius-restricted diagnostic
+shown next to one another.}
 \end{figure}
 
 \subsection{Large-domain construction and authority}
@@ -111,6 +119,66 @@ C/H/M/Z. Conversely, $r\le4M$ agrees to about one part in $10^9$. The maximum
 small/large difference in $\log_{10}|I(0)|$ is only
 $6.7\times10^{-9}$ dex.
 
+\subsection{Complete terminal boundary tables}
+
+The required radius-restricted inventories for both domains are shown below.
+All rows use the common $\tau_c=3.98614742555601M$ and the production ring
+measure.
+
+\begin{table}[H]\centering\scriptsize
+\begin{tabular}{llrrrrr}
+\toprule
+domain & field & N128 & N256 & N512 & $p_{128,256}$ & $p_{256,512}$\\
+\midrule
+$R_{\rm out}=16$ & C & $1.348006{\times}10^{-2}$ & $8.465296{\times}10^{-5}$ & $3.717430{\times}10^{-7}$ & 7.315 & 7.831\\
+ & H & $8.550495{\times}10^{-3}$ & $5.558939{\times}10^{-5}$ & $2.442657{\times}10^{-7}$ & 7.265 & 7.830\\
+ & M & $2.469862{\times}10^{-3}$ & $1.576264{\times}10^{-5}$ & $7.093297{\times}10^{-8}$ & 7.292 & 7.796\\
+ & Z & $4.702325{\times}10^{-4}$ & $2.470709{\times}10^{-6}$ & $1.043120{\times}10^{-8}$ & 7.572 & 7.888\\
+$R_{\rm out}=128$ & C & $1.348006{\times}10^{-2}$ & $8.465296{\times}10^{-5}$ & $3.717430{\times}10^{-7}$ & 7.315 & 7.831\\
+ & H & $8.550495{\times}10^{-3}$ & $5.558939{\times}10^{-5}$ & $2.442657{\times}10^{-7}$ & 7.265 & 7.830\\
+ & M & $2.469862{\times}10^{-3}$ & $1.576264{\times}10^{-5}$ & $7.093297{\times}10^{-8}$ & 7.292 & 7.796\\
+ & Z & $4.702325{\times}10^{-4}$ & $2.470709{\times}10^{-6}$ & $1.043120{\times}10^{-8}$ & 7.572 & 7.888\\
+\bottomrule
+\end{tabular}
+\caption{Terminal inventories inside $r\le4M$.}
+\end{table}
+
+\begin{table}[H]\centering\scriptsize
+\begin{tabular}{llrrrrr}
+\toprule
+domain & field & N128 & N256 & N512 & $p_{128,256}$ & $p_{256,512}$\\
+\midrule
+$R_{\rm out}=16$ & C & $4.844766{\times}10^{-2}$ & $1.162071{\times}10^{-3}$ & $3.342641{\times}10^{-5}$ & 5.382 & 5.120\\
+ & H & $2.055927{\times}10^{-2}$ & $2.092869{\times}10^{-4}$ & $1.751192{\times}10^{-6}$ & 6.618 & 6.901\\
+ & M & $7.919856{\times}10^{-3}$ & $3.781460{\times}10^{-4}$ & $1.976259{\times}10^{-5}$ & 4.388 & 4.258\\
+ & Z & $2.767653{\times}10^{-3}$ & $2.999699{\times}10^{-5}$ & $4.438367{\times}10^{-7}$ & 6.528 & 6.079\\
+$R_{\rm out}=128$ & C & $4.844786{\times}10^{-2}$ & $1.162073{\times}10^{-3}$ & $3.342642{\times}10^{-5}$ & 5.382 & 5.120\\
+ & H & $2.055927{\times}10^{-2}$ & $2.092869{\times}10^{-4}$ & $1.751192{\times}10^{-6}$ & 6.618 & 6.901\\
+ & M & $7.919855{\times}10^{-3}$ & $3.781460{\times}10^{-4}$ & $1.976259{\times}10^{-5}$ & 4.388 & 4.258\\
+ & Z & $2.767707{\times}10^{-3}$ & $2.999754{\times}10^{-5}$ & $4.438403{\times}10^{-7}$ & 6.528 & 6.079\\
+\bottomrule
+\end{tabular}
+\caption{Terminal inventories inside $r\le8M$.}
+\end{table}
+
+\begin{table}[H]\centering\scriptsize
+\begin{tabular}{llrrrrr}
+\toprule
+domain & field & N128 & N256 & N512 & $p_{128,256}$ & $p_{256,512}$\\
+\midrule
+$R_{\rm out}=16$ & C & $5.352846{\times}10^{-2}$ & $1.200157{\times}10^{-3}$ & $3.580198{\times}10^{-5}$ & 5.479 & 5.067\\
+ & H & $2.142197{\times}10^{-2}$ & $2.180944{\times}10^{-4}$ & $3.331186{\times}10^{-6}$ & 6.618 & 6.033\\
+ & M & $8.600886{\times}10^{-3}$ & $3.868941{\times}10^{-4}$ & $2.022954{\times}10^{-5}$ & 4.474 & 4.257\\
+ & Z & $3.558256{\times}10^{-3}$ & $3.457498{\times}10^{-5}$ & $5.225604{\times}10^{-7}$ & 6.685 & 6.048\\
+$R_{\rm out}=128$ & C & $5.352804{\times}10^{-2}$ & $1.198378{\times}10^{-3}$ & $3.384100{\times}10^{-5}$ & 5.481 & 5.146\\
+ & H & $2.142163{\times}10^{-2}$ & $2.167933{\times}10^{-4}$ & $1.916765{\times}10^{-6}$ & 6.627 & 6.822\\
+ & M & $8.600726{\times}10^{-3}$ & $3.865970{\times}10^{-4}$ & $1.989037{\times}10^{-5}$ & 4.476 & 4.281\\
+ & Z & $3.558281{\times}10^{-3}$ & $3.453064{\times}10^{-5}$ & $4.709351{\times}10^{-7}$ & 6.687 & 6.196\\
+\bottomrule
+\end{tabular}
+\caption{Terminal inventories inside $r\le12M$.}
+\end{table}
+
 \begin{figure}[H]\centering
 \includegraphics[width=0.98\textwidth]{analysis/boundary_comparison/figures/boundary_fine_pair_orders.png}
 \caption{Direct fine-pair order before and after moving the outer boundary.}
@@ -129,18 +197,18 @@ $6.7\times10^{-9}$ dex.
 Each $R_{\rm out}=16M$ case starts from scratch in native-AMR record mode.
 Only KO dissipation changes.
 
-\begin{table}[H]\centering\small
-\begin{tabular}{rrrrrrl}
+\begin{table}[H]\centering\scriptsize
+\resizebox{\textwidth}{!}{\begin{tabular}{rrrrrrrrrl}
 \toprule
-diss & C(6.5) & C(9.2) & first late refine & max leaves & terminal $t$ & status\\
+diss & C(6.5) & C(9.2) & first late refine & max leaves & max level & terminal $t$ & terminal $\tau_c$ & max $\Delta\log_{10}|I(0)|$ & status\\
 \midrule
-0.02 & $3.285{\times}10^{-3}$ & 1.032 & 10.2758 & 1526 & 11.191917 & timestep collapse\\
-0.05 & $2.693{\times}10^{-3}$ & 0.692 & 10.3658 & 65 & 11.3 & reached tlim\\
-0.10 & $2.224{\times}10^{-3}$ & 0.390 & 10.7394 & 86 & 11.3 & reached tlim\\
-0.20 & $1.850{\times}10^{-3}$ & 0.168 & 11.1045 & 50 & 11.3 & reached tlim\\
-0.50 & $1.518{\times}10^{-3}$ & 0.0437 & none & 50 & 11.3 & reached tlim\\
+0.02 & $3.285{\times}10^{-3}$ & 1.032 & 10.2758 & 1526 & 20 & 11.191917 & 6.84660 & 0 & timestep collapse\\
+0.05 & $2.693{\times}10^{-3}$ & 0.692 & 10.3658 & 65 & 3 & 11.3 & 6.91532 & 0.0278 & reached tlim\\
+0.10 & $2.224{\times}10^{-3}$ & 0.390 & 10.7394 & 86 & 4 & 11.3 & 6.91700 & 0.0556 & reached tlim\\
+0.20 & $1.850{\times}10^{-3}$ & 0.168 & 11.1045 & 50 & 2 & 11.3 & 6.91945 & 0.0861 & reached tlim\\
+0.50 & $1.518{\times}10^{-3}$ & 0.0437 & none & 50 & 2 & 11.3 & 6.92374 & 0.1103 & no late refine\\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \caption{Independent N256 KO scan.}
 \end{table}
 
@@ -149,6 +217,27 @@ level 20, and 1,526 leaves before bounded termination. Diss=0.50 has no new
 late accepted refinement and ends with C=0.2695. The maximum baseline-relative
 central-trace deviation is 0.028, 0.056, 0.086, and 0.110 dex for diss
 0.05--0.50 respectively.
+
+The requested native-refinement totals are 254, 7, 12, 6, and 4 as diss
+increases. The sampled minimum chi remains above 0.32136 and the conformal
+metric pivot above 0.19738 in every case. An offline census of retained
+curvature binaries localizes every late sampled maximum to the equatorial
+annulus near $\rho=5M$:
+
+\begin{table}[H]\centering\small
+\begin{tabular}{rrrrr}
+\toprule
+diss & sampled peak $t$ & maxAbsKret & $\rho$ & $z$\\
+\midrule
+0.02 & 11.00014 & $8.820{\times}10^3$ & 5.0000 & 0.0000\\
+0.05 & 10.75039 & $8.991{\times}10^2$ & 5.0625 & 0.03125\\
+0.10 & 11.30000 & $1.360{\times}10^5$ & 5.03125 & 0.0000\\
+0.20 & 11.30000 & $2.227{\times}10^2$ & 5.03125 & 0.0625\\
+0.50 & 0.00000 & $9.541{\times}10^1$ & 5.2500 & 0.0000\\
+\bottomrule
+\end{tabular}
+\caption{Snapshot-resolved campaign maxima; between-output extrema are not claimed.}
+\end{table}
 
 \begin{figure}[H]\centering
 \includegraphics[width=0.98\textwidth]{analysis/ko_stageC/figures/ko_global_constraints.png}
@@ -190,4 +279,3 @@ stability claim is made. Multi-gigabyte state/restart files remain at the exact
 Perlmutter paths recorded in the evidence manifest.
 
 \end{document}
-

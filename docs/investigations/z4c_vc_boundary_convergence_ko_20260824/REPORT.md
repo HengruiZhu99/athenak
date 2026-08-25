@@ -47,6 +47,10 @@ same-resolution replay has a bitwise-identical 264 by 71 history. N128 and
 N512 replay the exact tree at physical event times and finish cleanly. The
 large boundary is conservatively causally unable to reach `r<=12M`.
 
+The old global plot and its radius-restricted replacement are shown together
+in `REPORT.pdf`; the complete terminal tables for both domains are reproduced
+below.
+
 ![Old global versus large-domain orders](analysis/boundary_comparison/figures/boundary_fine_pair_orders.png)
 
 ![Z localization](analysis/boundary_comparison/figures/z_boundary_contamination.png)
@@ -60,13 +64,13 @@ Detailed tables: [small-domain radial convergence](SMALL_DOMAIN_RADIAL_CONVERGEN
 Only `z4c/diss` changes across 0.02, 0.05, 0.10, 0.20, and 0.50. Every case
 uses a fresh native-AMR record authority; no baseline tree is replayed.
 
-| diss | C(6.5) | C(~9.2) | first late refinement | max leaves | terminal t | status |
-|---:|---:|---:|---:|---:|---:|---|
-| 0.02 | 3.285e-3 | 1.032 | 10.2758 | 1526 | 11.191917 | bounded termination after timestep collapse |
-| 0.05 | 2.693e-3 | 0.692 | 10.3658 | 65 | 11.3 | reached tlim |
-| 0.10 | 2.224e-3 | 0.390 | 10.7394 | 86 | 11.3 | reached tlim |
-| 0.20 | 1.850e-3 | 0.168 | 11.1045 | 50 | 11.3 | reached tlim |
-| 0.50 | 1.518e-3 | 0.0437 | none | 50 | 11.3 | reached tlim |
+| diss | C(6.5) | C(~9.2) | first late refinement | max leaves | max level | terminal t | terminal axisTau | max axisKret deviation | status |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| 0.02 | 3.285e-3 | 1.032 | 10.2758 | 1526 | 20 | 11.191917 | 6.84660 | 0 | bounded termination after timestep collapse |
+| 0.05 | 2.693e-3 | 0.692 | 10.3658 | 65 | 3 | 11.3 | 6.91532 | 0.0278 dex | reached tlim |
+| 0.10 | 2.224e-3 | 0.390 | 10.7394 | 86 | 4 | 11.3 | 6.91700 | 0.0556 dex | reached tlim |
+| 0.20 | 1.850e-3 | 0.168 | 11.1045 | 50 | 2 | 11.3 | 6.91945 | 0.0861 dex | reached tlim |
+| 0.50 | 1.518e-3 | 0.0437 | none | 50 | 2 | 11.3 | 6.92374 | 0.1103 dex | reached tlim; no late refinement |
 
 ![KO constraint scan](analysis/ko_stageC/figures/ko_global_constraints.png)
 
@@ -78,6 +82,13 @@ retaining diss=0.50 as a stability control. Diss=0.20 is chosen as a compromise,
 not a qualified production default. A three-resolution comparison must show
 that its remaining late growth converges away and that the small physical
 trace change shrinks with resolution.
+
+The existing curvature binaries were also censused offline. All late sampled
+curvature and C/H/M/Z maxima localize to the equatorial annulus near `rho=5M`;
+the per-case, per-field coordinates are in
+`analysis/ko_stageC/ko_extrema_summary.csv` and
+`ko_constraint_extrema_summary.csv`. These locations are snapshot-resolved
+and do not claim an exact between-output maximum.
 
 ## Evidence boundaries and limitations
 
@@ -103,6 +114,63 @@ trace change shrinks with resolution.
 - [SMR layout proof](SMR_LAYOUT_PROOF.md)
 - [Large-domain authority](LARGE_DOMAIN_AUTHORITY.md)
 - [KO scan](KO_SCAN_N256.md)
+- [Requirement-by-requirement completion audit](COMPLETION_AUDIT.md)
 - [Strict evidence manifest](EVIDENCE_MANIFEST.json)
 - `REPORT.tex` and `REPORT.pdf`
 
+## Required terminal boundary tables
+
+All values are evaluated at the common `axisTau=3.98614742555601M`. They are
+extensive squared-constraint inventories using the production ring measure.
+
+### r <= 4M
+
+| domain | constraint | N128 | N256 | N512 | p128-256 | p256-512 |
+|---|---|---:|---:|---:|---:|---:|
+| Rout16 | C | 1.348006e-02 | 8.465296e-05 | 3.717430e-07 | 7.315 | 7.831 |
+| Rout16 | H | 8.550495e-03 | 5.558939e-05 | 2.442657e-07 | 7.265 | 7.830 |
+| Rout16 | M | 2.469862e-03 | 1.576264e-05 | 7.093297e-08 | 7.292 | 7.796 |
+| Rout16 | Z | 4.702325e-04 | 2.470709e-06 | 1.043120e-08 | 7.572 | 7.888 |
+| Rout128 | C | 1.348006e-02 | 8.465296e-05 | 3.717430e-07 | 7.315 | 7.831 |
+| Rout128 | H | 8.550495e-03 | 5.558939e-05 | 2.442657e-07 | 7.265 | 7.830 |
+| Rout128 | M | 2.469862e-03 | 1.576264e-05 | 7.093297e-08 | 7.292 | 7.796 |
+| Rout128 | Z | 4.702325e-04 | 2.470709e-06 | 1.043120e-08 | 7.572 | 7.888 |
+
+### r <= 8M
+
+| domain | constraint | N128 | N256 | N512 | p128-256 | p256-512 |
+|---|---|---:|---:|---:|---:|---:|
+| Rout16 | C | 4.844766e-02 | 1.162071e-03 | 3.342641e-05 | 5.382 | 5.120 |
+| Rout16 | H | 2.055927e-02 | 2.092869e-04 | 1.751192e-06 | 6.618 | 6.901 |
+| Rout16 | M | 7.919856e-03 | 3.781460e-04 | 1.976259e-05 | 4.388 | 4.258 |
+| Rout16 | Z | 2.767653e-03 | 2.999699e-05 | 4.438367e-07 | 6.528 | 6.079 |
+| Rout128 | C | 4.844786e-02 | 1.162073e-03 | 3.342642e-05 | 5.382 | 5.120 |
+| Rout128 | H | 2.055927e-02 | 2.092869e-04 | 1.751192e-06 | 6.618 | 6.901 |
+| Rout128 | M | 7.919855e-03 | 3.781460e-04 | 1.976259e-05 | 4.388 | 4.258 |
+| Rout128 | Z | 2.767707e-03 | 2.999754e-05 | 4.438403e-07 | 6.528 | 6.079 |
+
+### r <= 12M
+
+| domain | constraint | N128 | N256 | N512 | p128-256 | p256-512 |
+|---|---|---:|---:|---:|---:|---:|
+| Rout16 | C | 5.352846e-02 | 1.200157e-03 | 3.580198e-05 | 5.479 | 5.067 |
+| Rout16 | H | 2.142197e-02 | 2.180944e-04 | 3.331186e-06 | 6.618 | 6.033 |
+| Rout16 | M | 8.600886e-03 | 3.868941e-04 | 2.022954e-05 | 4.474 | 4.257 |
+| Rout16 | Z | 3.558256e-03 | 3.457498e-05 | 5.225604e-07 | 6.685 | 6.048 |
+| Rout128 | C | 5.352804e-02 | 1.198378e-03 | 3.384100e-05 | 5.481 | 5.146 |
+| Rout128 | H | 2.142163e-02 | 2.167933e-04 | 1.916765e-06 | 6.627 | 6.822 |
+| Rout128 | M | 8.600726e-03 | 3.865970e-04 | 1.989037e-05 | 4.476 | 4.281 |
+| Rout128 | Z | 3.558281e-03 | 3.453064e-05 | 4.709351e-07 | 6.687 | 6.196 |
+
+### Full domains
+
+| domain | constraint | N128 | N256 | N512 | p128-256 | p256-512 |
+|---|---|---:|---:|---:|---:|---:|
+| Rout16 | C | 5.580143e-02 | 3.281336e-03 | 1.806338e-03 | 4.088 | 0.861 |
+| Rout16 | H | 2.155806e-02 | 3.504860e-04 | 1.254982e-04 | 5.943 | 1.482 |
+| Rout16 | M | 8.642785e-03 | 4.283244e-04 | 5.734945e-05 | 4.335 | 2.901 |
+| Rout16 | Z | 4.071228e-03 | 5.050659e-04 | 4.006896e-04 | 3.011 | 0.334 |
+| Rout128 | C | 5.352967e-02 | 1.198424e-03 | 3.385614e-05 | 5.481 | 5.146 |
+| Rout128 | H | 2.142183e-02 | 2.168081e-04 | 1.917581e-06 | 6.627 | 6.821 |
+| Rout128 | M | 8.600811e-03 | 3.865976e-04 | 1.989052e-05 | 4.476 | 4.281 |
+| Rout128 | Z | 3.558604e-03 | 3.453812e-05 | 4.743682e-07 | 6.687 | 6.186 |

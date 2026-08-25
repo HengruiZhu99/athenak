@@ -22,6 +22,12 @@ numerical-runaway disposition, not a successful t=11.3 endpoint.
 | 0.20 | 1.850e-3 | 0.168 | 11.1045 | 50 | 2 | 11.3 | 6.91945 | 0.0861 dex | reached tlim |
 | 0.50 | 1.518e-3 | 0.0437 | none by 11.3 | 50 | 2 | 11.3 | 6.92374 | 0.1103 dex | reached tlim; no new late refinement |
 
+The requested native-refinement totals are 254, 7, 12, 6, and 4 for
+diss=0.02, 0.05, 0.10, 0.20, and 0.50. The minimum sampled chi remains
+between 0.3213601 and 0.3213608, and the minimum conformal metric pivot is
+0.1973846 in every case. Thus the comparison is not being decided by an
+admissibility floor or weakened gate.
+
 The diss=0.02 terminal state has `C=1.61e16`,
 `dt=7.98e-9M`, physical level 20, and 1,526 leaves at
 `t=11.191916995M`. Continuing to 11.3 would not have been computationally
@@ -31,6 +37,29 @@ At t=11.3, terminal C is 255.5, 1593.4, 53.63, and 0.2695 for diss 0.05,
 0.10, 0.20, and 0.50 respectively. The non-monotonic 0.05/0.10 terminal
 ordering tracks their different accepted AMR trees; it is not evidence of a
 monotone truncation-error law.
+
+## Location audit from existing binary snapshots
+
+An offline census of every retained curvature snapshot gives the following
+sampled campaign maxima. This is snapshot-resolved evidence, not a claim that
+the exact between-output maximum is known.
+
+| diss | sampled peak time | maxAbsKret | rho | z |
+|---:|---:|---:|---:|---:|
+| 0.02 | 11.00014 | 8.820e3 | 5.0000 | 0.0000 |
+| 0.05 | 10.75039 | 8.991e2 | 5.0625 | 0.03125 |
+| 0.10 | 11.30000 | 1.360e5 | 5.03125 | 0.0000 |
+| 0.20 | 11.30000 | 2.227e2 | 5.03125 | 0.0625 |
+| 0.50 | 0.00000 | 9.541e1 | 5.2500 | 0.0000 |
+
+For diss=0.50 the campaign maximum is the initial-data value; its terminal
+sample is only 0.4834 at `(rho,z)=(5,0)`. The sampled C/H/M/Z maxima for all
+five cases likewise lie in the equatorial annulus `4.9375<=rho<=5.0781` and
+`|z|<=0.0625`. The exact per-field values, times, and locations are in
+`analysis/ko_stageC/ko_constraint_extrema_summary.csv`; the curvature census
+is in `ko_curvature_extrema_by_snapshot.csv` and `ko_extrema_summary.csv` in
+the same directory. This localizes the KO-sensitive mode but does not by
+itself identify its source.
 
 ## Physical-trajectory check
 
@@ -72,4 +101,3 @@ monitoring/out-of-step outlier, not as a dissipation-dependent memory result.
 ![Core KO constraints](analysis/ko_stageC/figures/ko_constraints_R4.png)
 
 ![KO central trace and Figure 3](analysis/ko_stageC/figures/ko_axisKret_figure3_overlay.png)
-

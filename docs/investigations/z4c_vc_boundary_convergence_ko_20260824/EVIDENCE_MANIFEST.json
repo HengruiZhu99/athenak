@@ -159,14 +159,30 @@
       "status": "reached tlim without late accepted refinement"
     }
   },
+  "offline_extrema_audit": {
+    "method": "read-only census of retained curvature binaries plus production-matched constraint snapshots; no AthenaK execution",
+    "remote_working_root": "/pscratch/sd/h/hzhu/z4c-vc-boundary-convergence-ko-scan-20260824/offline_extrema_audit",
+    "curvature_snapshot_count": 233,
+    "qualification": "sampled extrema only; no between-output maximum claim",
+    "outputs": [
+      "analysis/ko_stageC/ko_curvature_extrema_by_snapshot.csv",
+      "analysis/ko_stageC/ko_extrema_summary.csv",
+      "analysis/ko_stageC/ko_constraint_extrema_summary.csv"
+    ]
+  },
   "key_artifact_sha256": {
-    "REPORT.pdf": "a843766e31ebdd39076484418f2c7a071f655c8f1c75623795ed716e3e65e9c2",
+    "REPORT.pdf": "97d6989439f1dbaffd43baa1b720889022cd9b44ae33023a9bd1ae18009d5f41",
     "analysis/small_domain_radial/radial_constraint_summary.json": "b8e8910545b72764c221edc9766a5f661e06b3ec9290501c131965c7ebe67490",
+    "analysis/small_domain_radial/convergence_checkpoints.csv": "0f6f08e56a1e23bb92950f55c5c42c92c3175d1293ae32f38e4c13bd6009fdf8",
     "analysis/large_domain_radial_shells/radial_constraint_summary.json": "32276fa40240f1dfdc4dc578e15305bfcf5590af03c5d0c1c2cbe292baf9ca12",
+    "analysis/large_domain_radial_shells/convergence_checkpoints.csv": "710d5abd12f7b6d332785c15a895635c39241399337e43a62d09dca011b26404",
     "analysis/boundary_comparison/boundary_terminal_tables.csv": "0c9557c9f33c1a3cf6c408bf4327915e36ca56c956bad7abc7cf12c69b45b2f8",
     "analysis/boundary_comparison/boundary_sensitivity.csv": "99a5bfb6ed36087c7bd4fdc75e7b6fe45bbd71574fa236fa4d4a23758fe6881d",
     "analysis/ko_stageC/ko_summary.csv": "c90a03751671bae25ee71c2d239a7166c8a600066a8d11cea86c2712a74e7671",
     "analysis/ko_stageC/ko_summary.json": "3c5798b85861c9d7bb4bfe13874cc41924a6ab8a747e6f95adf0ce15e2ae583c",
+    "analysis/ko_stageC/ko_curvature_extrema_by_snapshot.csv": "833942a57c2444fa8e20141ec0f28105afcf4ceea3b4cc297d6f5a2f9be0c826",
+    "analysis/ko_stageC/ko_extrema_summary.csv": "0fb4f8650dbb269a69b85243f7f2cf9b32b3d3efe9a8919175aaad6b09955762",
+    "analysis/ko_stageC/ko_constraint_extrema_summary.csv": "0e10bcc75ff71cda759461b505a079068cefc8746d2880bd9a77b6b9cd3c5d4e",
     "evidence/perlmutter/runs/boundary_n256_record_t6p5_v1/n256_boundary_authority.jsonl": "92bd7b257c9c2844fec1af6bd5e3435cbceb1e9479fe50c8fae22f1fa712a0d2"
   },
   "verdicts": {
@@ -183,4 +199,3 @@
   ],
   "complete_local_sha256_inventory": "SHA256SUMS"
 }
-
