@@ -15,10 +15,10 @@ build_root=${BUILD_ROOT:-/pscratch/sd/h/hzhu/z4c-vc-native-authority-20260824/bu
 coefficient_source=${COEFFICIENT_SOURCE:-${source_root}/docs/investigations/z4c_vc_cartoon_axis_boundary_20260823/evidence/brill_global_128x32_origin_control.coefficients}
 profile=${PERLMUTTER_PROFILE:-/pscratch/sd/h/hzhu/collapse-critical-perlmutter/workflow/profiles/perlmutter-a100.sh}
 python_bin=${NERSC_PYTHON:-/global/common/software/nersc/pe/conda-envs/24.1.0/python-3.11/nersc-python/bin/python3}
-expected_source=d63519328214a6315a9cc1f7d5e4a1aa4bca21b0
-expected_tree=9fa84d4b79c2d50ce935f5416fba6d57f99aa5b4
-expected_exe=3a395bfdaf217d617fee43d2cbcd38e7a13c2a0f4207e3a764c3513eb8c0405f
-expected_coeff=1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10
+expected_source=${EXPECTED_SOURCE:-d63519328214a6315a9cc1f7d5e4a1aa4bca21b0}
+expected_tree=${EXPECTED_TREE:-9fa84d4b79c2d50ce935f5416fba6d57f99aa5b4}
+expected_exe=${EXPECTED_EXE:-3a395bfdaf217d617fee43d2cbcd38e7a13c2a0f4207e3a764c3513eb8c0405f}
+expected_coeff=${EXPECTED_COEFF:-1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10}
 
 test "${SLURM_NNODES:-}" = 1
 test "${SLURM_NTASKS:-}" = 1
