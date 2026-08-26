@@ -17,6 +17,43 @@ struct LocalPunctureExponents {
   bool lapse_valid;
 };
 
+// Evaluate the physical/reference spatial-exponent mismatch directly from the
+// first-order Ref-GH state,
+//
+//   epsilon_G = -(1/6) X^k (G^-1)^IJ bar_theta^K_k Phi_KIJ.
+//
+// Here G_IJ is the spatial block of Psi_AB.  This is a diagnostic independent
+// of the coordinate-metric reconstruction used by q_loc; no coordinate-space
+// finite difference or interpolation is involved.
+KOKKOS_INLINE_FUNCTION
+bool ComputeRelativeSpatialExponentMismatch(
+    const Real relative_metric[4][4], const Real phi[3][4][4],
+    const Real reference_spatial_coframe[3][3],
+    const Real displacement[3], Real &epsilon_g) {
+  Real spatial_inverse[3][3];  // NOLINT(runtime/arrays)
+  Real spatial_determinant = 0.0;
+  if (!InvertSpatial3(relative_metric, spatial_inverse,
+                      spatial_determinant)) {
+    epsilon_g = NAN;
+    return false;
+  }
+  Real radial_log_determinant_derivative = 0.0;
+  for (int k = 0; k < 3; ++k) {
+    for (int I = 0; I < 3; ++I) {
+      for (int J = 0; J < 3; ++J) {
+        for (int K = 0; K < 3; ++K) {
+          radial_log_determinant_derivative +=
+              displacement[k]*spatial_inverse[I][J]
+              *reference_spatial_coframe[K][k]
+              *phi[K][I + 1][J + 1];
+        }
+      }
+    }
+  }
+  epsilon_g = -radial_log_determinant_derivative/6.0;
+  return Kokkos::isfinite(epsilon_g);
+}
+
 // Evaluate the local physical exponents directly at one Cartesian point:
 //
 //   q_loc = -(1/6) X^k gamma^{ij} partial_k gamma_ij,
@@ -77,9 +114,8 @@ Real PunctureEstimatorWeight(const Real radius, const Real h) {
 
 KOKKOS_INLINE_FUNCTION
 bool InPunctureEstimatorShell(const Real radius, const Real h,
-                              const Real gaussian_width) {
-  return radius >= 2.0*h && radius < 8.0*h
-         && 8.0*h < 0.5*gaussian_width;
+                              const Real /*gaussian_width*/) {
+  return radius >= 2.0*h && radius < 8.0*h;
 }
 
 // Treat the union of centered directional stencils by its axis-aligned support

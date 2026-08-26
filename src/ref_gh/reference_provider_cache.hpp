@@ -12,6 +12,7 @@
 #include "ref_gh/reference_time_dependent_lapse.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
+#include "ref_gh/reference_trumpet_q_controlled.hpp"
 
 namespace ref_gh {
 
@@ -23,7 +24,7 @@ KOKKOS_INLINE_FUNCTION
 constexpr ReferenceProviderMetadata GetReferenceProviderMetadata(
     const int reference_kind) {
   return {reference_kind == 2 || reference_kind == 3 || reference_kind == 5
-          || reference_kind == 6};
+          || reference_kind == 6 || reference_kind == 7};
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -180,6 +181,7 @@ void PopulateReferenceProviderCache(
     const Real time, const Real x, const Real y, const Real z,
     const ControlledReferenceParameters &controlled,
     const GenericSingularReferenceParameters &generic,
+    const TrumpetQControlledReferenceParameters &q_controlled,
     const ReferenceProviderPoint &point) {
   if (reference_kind == 0) {
     for (int component = 0; component < kReferenceProviderSize; ++component) {
@@ -237,6 +239,19 @@ void PopulateReferenceProviderCache(
     ReferenceJet shift_q;
     GenericSingularProfileJets(generic, time, x, y, z, alpha,
                                spatial_cholesky, shift_q);
+    StoreProviderJet(alpha, kRefProviderAlpha, point);
+    StoreProviderJet(spatial_cholesky, kRefProviderPsi2, point);
+    StoreProviderJet(shift_q, kRefProviderShiftQ, point);
+    point.provider(point.m, kRefProviderArealRadius,
+                   point.k, point.j, point.i) = 0.0;
+    return;
+  }
+  if (reference_kind == 7) {
+    ReferenceJet alpha;
+    ReferenceJet spatial_cholesky;
+    ReferenceJet shift_q;
+    TrumpetQControlledProfileJets(table, q_controlled, x, y, z, alpha,
+                                  spatial_cholesky, shift_q);
     StoreProviderJet(alpha, kRefProviderAlpha, point);
     StoreProviderJet(spatial_cholesky, kRefProviderPsi2, point);
     StoreProviderJet(shift_q, kRefProviderShiftQ, point);

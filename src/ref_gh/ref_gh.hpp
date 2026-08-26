@@ -39,7 +39,10 @@ class RefGh {
     int reference_kind;
     bool reference_time_dependent;
     bool reference_controlled;
+    bool reference_q_controlled;
     bool controller_enabled;
+    bool q_controller_enabled;
+    bool q_prescribed_enabled;
     int continuation_mode;
     int source_kind;
     bool debug_task_fences;
@@ -64,6 +67,16 @@ class RefGh {
     Real generic_q_initial;
     Real generic_q_final;
     Real generic_transition_time;
+    Real q_gaussian_width;
+    Real q_initial;
+    Real q_min;
+    Real q_max;
+    Real q_rate_limit;
+    Real q_acceleration_limit;
+    Real q_omega;
+    Real q_zeta;
+    Real q_prescribed_target;
+    Real q_prescribed_duration;
     Real r_core0;
     Real tau_core;
     Real kappa_core;
@@ -104,6 +117,11 @@ class RefGh {
     Real xi_dot;
   };
 
+  struct QControllerState {
+    Real q;
+    Real q_dot;
+  };
+
   struct ControllerDiagnostics {
     Real e_G;
     Real e_alpha;
@@ -139,6 +157,16 @@ class RefGh {
     bool constraint_veto;
     bool controller_frozen;
     bool controller_completed;
+    Real q_est;
+    Real q_analytic;
+    Real q_variance;
+    Real q_effective_sample_size;
+    Real q_min;
+    Real q_max;
+    Real q_cell_count;
+    Real epsilon_g_mean;
+    Real epsilon_g_variance;
+    bool q_shell_valid;
   };
 
   RefGh(MeshBlockPack *ppack, ParameterInput *pin);
@@ -159,15 +187,20 @@ class RefGh {
   Real max_location_diagnostic_time;
   int max_location_diagnostic_cycle;
   std::uint64_t controller_generation;
+  std::uint64_t q_controller_generation;
   std::uint64_t reference_cache_generation;
   std::uint64_t reference_diagnostic_generation;
   ControllerState controller;
   ControllerState controller_base;
   ControllerState controller_rhs;
   ControllerDiagnostics controller_diagnostics;
+  QControllerState q_controller;
+  QControllerState q_controller_base;
+  QControllerState q_controller_rhs;
   bool continuation_constraint_veto;
   bool continuation_frozen;
   bool continuation_completed;
+  bool q_controller_frozen;
   Real continuation_veto_start_time;
   Real continuation_veto_start_level;
   Real continuation_veto_last_level;
@@ -193,6 +226,7 @@ class RefGh {
   TaskStatus CopyU(Driver *driver, int stage);
   TaskStatus MeasureController(Driver *driver, int stage);
   void MeasureControllerAtTime(Real stage_time);
+  void MeasureQControllerAtTime(Real stage_time);
   bool UpdateContinuationConstraintVeto(Real time);
   TaskStatus UpdateReferenceGeometry(Driver *driver, int stage);
   TaskStatus ExpRKUpdate(Driver *driver, int stage);

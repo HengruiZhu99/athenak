@@ -281,14 +281,18 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     reference_table("ref_gh reference table", 1, 1),
     reference_cache_time(NAN), reference_diagnostic_time(NAN),
     max_location_diagnostic_time(NAN), max_location_diagnostic_cycle(-1),
-    controller_generation(0), reference_cache_generation(0),
+    controller_generation(0), q_controller_generation(0),
+    reference_cache_generation(0),
     reference_diagnostic_generation(0),
     controller{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
     controller_base{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
     controller_rhs{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
     controller_diagnostics{},
+    q_controller{1.0, 0.0}, q_controller_base{1.0, 0.0},
+    q_controller_rhs{0.0, 0.0},
     continuation_constraint_veto(false), continuation_frozen(false),
-    continuation_completed(false), continuation_veto_start_time(-1.0),
+    continuation_completed(false), q_controller_frozen(false),
+    continuation_veto_start_time(-1.0),
     continuation_veto_start_level(-1.0), continuation_veto_last_level(-1.0),
     reference_cache_oracle_validated(false),
     reference_diagnostic_oracle_validated(false),
@@ -311,18 +315,30 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     opt.reference_kind = 5;
   } else if (reference_name == "generic_singular") {
     opt.reference_kind = 6;
+  } else if (reference_name == "trumpet_q_controlled") {
+    opt.reference_kind = 7;
   } else {
     std::cout << "### FATAL ERROR: ref_gh reference must be minkowski, trumpet, "
                  "time_dependent_lapse_test, time_dependent_spatial_test, "
-                 "wormhole, controlled_transition, or generic_singular."
+                 "wormhole, controlled_transition, generic_singular, or "
+                 "trumpet_q_controlled."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
   opt.reference_time_dependent =
       GetReferenceProviderMetadata(opt.reference_kind).time_dependent;
   opt.reference_controlled = opt.reference_kind == 5;
+  opt.reference_q_controlled = opt.reference_kind == 7;
   opt.controller_enabled =
       pin->GetOrAddBoolean("ref_gh", "controller_enabled", false);
+  opt.q_controller_enabled =
+      pin->GetOrAddBoolean("ref_gh", "q_controller_enabled", false);
+  opt.q_prescribed_enabled =
+      pin->GetOrAddBoolean("ref_gh", "q_prescribed_enabled", false);
+  if (opt.reference_kind == 7
+      && !opt.q_controller_enabled && !opt.q_prescribed_enabled) {
+    opt.reference_time_dependent = false;
+  }
   const bool continuation_self_test =
       pin->GetOrAddBoolean("ref_gh", "continuation_self_test", false);
   const std::string continuation_mode =
@@ -406,6 +422,20 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.generic_q_final = pin->GetOrAddReal("ref_gh", "generic_q_final", 1.0);
   opt.generic_transition_time =
       pin->GetOrAddReal("ref_gh", "generic_transition_time", 8.0);
+  opt.q_gaussian_width =
+      pin->GetOrAddReal("ref_gh", "q_gaussian_width", 3.0);
+  opt.q_initial = pin->GetOrAddReal("ref_gh", "q_initial", 1.0);
+  opt.q_min = pin->GetOrAddReal("ref_gh", "q_min", 0.5);
+  opt.q_max = pin->GetOrAddReal("ref_gh", "q_max", 2.5);
+  opt.q_rate_limit = pin->GetOrAddReal("ref_gh", "q_rate_limit", 0.25);
+  opt.q_acceleration_limit =
+      pin->GetOrAddReal("ref_gh", "q_acceleration_limit", 0.25);
+  opt.q_omega = pin->GetOrAddReal("ref_gh", "q_omega", 0.5);
+  opt.q_zeta = pin->GetOrAddReal("ref_gh", "q_zeta", 1.0);
+  opt.q_prescribed_target =
+      pin->GetOrAddReal("ref_gh", "q_prescribed_target", 0.9);
+  opt.q_prescribed_duration =
+      pin->GetOrAddReal("ref_gh", "q_prescribed_duration", 8.0);
   opt.r_core0 = pin->GetOrAddReal("ref_gh", "r_core0", 0.30);
   opt.tau_core = pin->GetOrAddReal("ref_gh", "tau_core", 1.5);
   opt.kappa_core = pin->GetOrAddReal("ref_gh", "kappa_core", 1.0);
@@ -468,12 +498,16 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   controller.xi = pin->GetOrAddReal("ref_gh", "continuation_xi", 0.0);
   controller.xi_dot =
       pin->GetOrAddReal("ref_gh", "continuation_xi_dot", 0.0);
+  q_controller.q = pin->GetOrAddReal("ref_gh", "q", opt.q_initial);
+  q_controller.q_dot = pin->GetOrAddReal("ref_gh", "q_dot", 0.0);
   continuation_constraint_veto =
       pin->GetOrAddBoolean("ref_gh", "continuation_constraint_veto", false);
   continuation_frozen =
       pin->GetOrAddBoolean("ref_gh", "continuation_frozen", false);
   continuation_completed =
       pin->GetOrAddBoolean("ref_gh", "continuation_completed", false);
+  q_controller_frozen =
+      pin->GetOrAddBoolean("ref_gh", "q_controller_frozen", false);
   continuation_veto_start_time =
       pin->GetOrAddReal("ref_gh", "continuation_veto_start_time", -1.0);
   continuation_veto_start_level =
@@ -488,7 +522,18 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     std::exit(EXIT_FAILURE);
   }
   controller_generation = static_cast<std::uint64_t>(stored_generation);
+  const Real stored_q_generation =
+      pin->GetOrAddReal("ref_gh", "q_controller_generation", 0.0);
+  if (!(stored_q_generation >= 0.0)
+      || !std::isfinite(stored_q_generation)) {
+    std::cout << "### FATAL ERROR: invalid stored Ref-GH q-controller generation."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  q_controller_generation =
+      static_cast<std::uint64_t>(stored_q_generation);
   controller_base = controller;
+  q_controller_base = q_controller;
   const int derivative_radius = opt.fd_order/2;
   if ((opt.fd_order != 2 && opt.fd_order != 4 && opt.fd_order != 6)
       || ppack->pmesh->mb_indcs.ng < 2*derivative_radius) {
@@ -510,6 +555,16 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       || opt.generic_q_initial < 0.5 || opt.generic_q_initial > 2.5
       || opt.generic_q_final < 0.5 || opt.generic_q_final > 2.5
       || opt.generic_transition_time <= 0.0
+      || opt.q_gaussian_width <= 0.0 || !std::isfinite(opt.q_initial)
+      || opt.q_min < 0.5 || opt.q_max > 2.5 || opt.q_max <= opt.q_min
+      || q_controller.q < opt.q_min || q_controller.q > opt.q_max
+      || !std::isfinite(q_controller.q_dot)
+      || opt.q_rate_limit <= 0.0 || opt.q_acceleration_limit <= 0.0
+      || opt.q_omega <= 0.0 || opt.q_zeta <= 0.0
+      || !std::isfinite(opt.q_prescribed_target)
+      || opt.q_prescribed_target < opt.q_min
+      || opt.q_prescribed_target > opt.q_max
+      || !(opt.q_prescribed_duration > 0.0)
       || opt.r_core0 <= 0.0 || opt.tau_core <= 0.0
       || opt.kappa_core <= 0.0 || opt.transition_width <= 0.0
       || opt.tau_transition <= 0.0
@@ -547,6 +602,37 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   if (opt.gauge_reference_subtraction && !opt.gauge_driver_enabled) {
     std::cout << "### FATAL ERROR: ref_gh gauge_reference_subtraction requires "
                  "gauge_driver_enabled=true." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.q_controller_enabled && !opt.reference_q_controlled) {
+    std::cout << "### FATAL ERROR: q_controller_enabled requires "
+                 "reference=trumpet_q_controlled." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.q_prescribed_enabled && !opt.reference_q_controlled) {
+    std::cout << "### FATAL ERROR: q_prescribed_enabled requires "
+                 "reference=trumpet_q_controlled." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.q_controller_enabled && opt.q_prescribed_enabled) {
+    std::cout << "### FATAL ERROR: closed-loop and prescribed q modes are "
+                 "mutually exclusive." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.q_prescribed_enabled && opt.q_initial != 1.0) {
+    std::cout << "### FATAL ERROR: the prescribed q pulse requires "
+                 "q_initial=1." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.reference_q_controlled && ppack->pmesh->multilevel) {
+    std::cout << "### FATAL ERROR: trumpet_q_controlled qualification is "
+                 "uniform-grid only; SMR is out of scope." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (!opt.q_controller_enabled && !opt.q_prescribed_enabled
+      && q_controller.q_dot != 0.0) {
+    std::cout << "### FATAL ERROR: a static q-controlled reference requires "
+                 "q_dot=0 when q_controller_enabled=false." << std::endl;
     std::exit(EXIT_FAILURE);
   }
   if (opt.reference_controlled && opt.continuation_mode != 0
@@ -613,7 +699,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     Kokkos::realloc(coarse_u0, nmb, nref_gh, cn3, cn2, cn1);
     Kokkos::deep_copy(coarse_u0, 0.0);
   }
-  if (opt.reference_kind == 1 || opt.reference_kind == 5) {
+  if (opt.reference_kind == 1 || opt.reference_kind == 5
+      || opt.reference_kind == 7) {
     Kokkos::realloc(reference_table, kTrumpetProfiles, kTrumpetTableSize);
     auto host_table = Kokkos::create_mirror_view(reference_table);
     for (int i = 0; i < kTrumpetTableSize; ++i) {

@@ -14,6 +14,7 @@
 #include "ref_gh/reference_time_dependent_lapse.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
+#include "ref_gh/reference_trumpet_q_controlled.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 
 namespace ref_gh {
@@ -160,6 +161,7 @@ void GetReferenceGeometry(const int reference_kind,
                           const Real y, const Real z,
                           const ControlledReferenceParameters &controlled,
                           const GenericSingularReferenceParameters &generic,
+                          const TrumpetQControlledReferenceParameters &q_controlled,
                           ReferenceGeometry &reference) {
   if (reference_kind == 5) {
     const ControlledSchwarzschildReference provider{table, controlled};
@@ -168,6 +170,11 @@ void GetReferenceGeometry(const int reference_kind,
   }
   if (reference_kind == 6) {
     const GenericSingularReference provider{generic};
+    provider.Populate(time, x, y, z, reference);
+    return;
+  }
+  if (reference_kind == 7) {
+    const TrumpetQControlledReference provider{table, q_controlled};
     provider.Populate(time, x, y, z, reference);
     return;
   }

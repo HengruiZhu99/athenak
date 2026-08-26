@@ -17,13 +17,17 @@
 #include "mesh/mesh_refinement.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/feedback_continuation.hpp"
+#include "ref_gh/puncture_exponent.hpp"
+#include "ref_gh/q_relaxed_controller.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_gauge_baseline.hpp"
+#include "ref_gh/reference_projection.hpp"
 #include "ref_gh/reference_provider_cache.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 #include "ref_gh/stationary_gauge_data.hpp"
 #include "ref_gh/reference_geometry.hpp"
+#include "ref_gh/reference_trumpet_q_controlled.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "tasklist/numerical_relativity.hpp"
 
@@ -51,21 +55,90 @@ Real StationaryTrumpetBoundaryValue(
   return gauge.theta[variable - kThetaOffset];
 }
 
+template <typename StateView>
+KOKKOS_INLINE_FUNCTION
+void StoreQControlledStationaryTrumpetState(
+    const StateView &state, const int m, const int k, const int j, const int i,
+    const DvceArray2D<Real> &table, const Real mass, const Real center_x,
+    const Real center_y, const Real center_z, const Real gaussian_width,
+    const Real q, const Real q_dot, const Real q_ddot, const Real x,
+    const Real y, const Real z, const bool gauge_driver_enabled,
+    const bool gauge_reference_subtraction) {
+  for (int n = 0; n < nvar; ++n) state(m, n, k, j, i) = 0.0;
+  ReferenceGeometry physical;
+  const TrumpetSchwarzschildReference physical_provider{
+      table, mass, {center_x, center_y, center_z}};
+  physical_provider.Populate(0.0, x, y, z, physical);
+  const TrumpetQControlledReferenceParameters parameters{
+      mass, {center_x, center_y, center_z}, gaussian_width,
+      q, q_dot, q_ddot};
+  ReferenceGeometry current;
+  const TrumpetQControlledReference current_provider{table, parameters};
+  current_provider.Populate(0.0, x, y, z, current);
+  const ProjectedFirstOrderMetric metric =
+      ProjectPhysicalMetricToReference(
+          physical.metric, physical.d_metric, current);
+  if (!metric.valid) {
+    for (int n = 0; n < nvar; ++n) state(m, n, k, j, i) = NAN;
+    return;
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = A; B < 4; ++B) {
+      state(m, PsiIndex(A, B), k, j, i) = metric.psi[A][B];
+      state(m, PiIndex(A, B), k, j, i) = metric.pi[A][B];
+      for (int I = 0; I < 3; ++I) {
+        state(m, PhiIndex(I, A, B), k, j, i) = metric.phi[I][A][B];
+      }
+    }
+  }
+  if (!gauge_driver_enabled) return;
+  const ProjectedStationaryGaugeState gauge =
+      ProjectStationaryPhysicalGaugeToReference(physical, current);
+  ReferenceGaugeBaseline baseline{};
+  if (gauge_reference_subtraction) {
+    baseline = ComputeReferenceGaugeBaseline(current);
+  }
+  if (!gauge.valid
+      || (gauge_reference_subtraction && !baseline.valid)) {
+    for (int n = kHhatOffset; n < nvar; ++n) {
+      state(m, n, k, j, i) = NAN;
+    }
+    return;
+  }
+  for (int A = 0; A < 4; ++A) {
+    state(m, kHhatOffset + A, k, j, i) = gauge.hhat[A]
+        - (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
+    state(m, kThetaOffset + A, k, j, i) = gauge.theta[A]
+        - (gauge_reference_subtraction ? baseline.theta[A] : 0.0);
+  }
+}
+
 template <typename MaxLocation>
 KOKKOS_INLINE_FUNCTION
 void UpdateReferenceOracleMaximum(const Real cached, const Real oracle,
                                   const int category,
-                                  MaxLocation &maximum) {
+                                  MaxLocation &maximum,
+                                  const Real conditioning_scale = 1.0) {
   Real scale = 1.0;
   const Real cached_magnitude = Kokkos::abs(cached);
   const Real oracle_magnitude = Kokkos::abs(oracle);
   if (cached_magnitude > scale) scale = cached_magnitude;
   if (oracle_magnitude > scale) scale = oracle_magnitude;
-  // A spin derivative is a projected contraction of 4x4x4 two-jet terms.
-  // Near the puncture those terms cancel strongly even when the final value is
-  // O(1). Account for the contraction depth when comparing algebraically
-  // equivalent operation orders; primitive/cache categories retain unit scale.
-  const Real operation_scale = (category == 5) ? 32.0 : 1.0;
+  if (conditioning_scale > scale) scale = conditioning_scale;
+  // Spin terms and the q-provider connection derivatives are projected
+  // contractions of metric jets. Near the puncture those terms cancel
+  // strongly even when the final value is O(1). Account for the contraction
+  // depth when comparing algebraically equivalent operation orders;
+  // primitive/cache categories and every established provider retain their
+  // original unit scale.
+  const Real operation_scale =
+      (category == 5) ? 32.0
+      : ((category == 14) ? 256.0
+      : ((category == 15) ? 256.0
+         : ((category == 16) ? 4.0
+            : ((category == 17) ? 16.0
+               : ((category == 18) ? 32.0
+                  : ((category == 19) ? 16.0 : 1.0))))));
   const Real error = Kokkos::abs(cached - oracle)/(scale*operation_scale);
   if (error > maximum.val) {
     maximum.val = error;
@@ -89,6 +162,32 @@ Real RawReferenceSpin(const ReferenceCachePoint &reference,
     }
   }
   return value;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real RawReferenceSpinCondition(const ReferenceGeometry &reference,
+                               const int A, const int B, const int C) {
+  Real condition = 0.0;
+  for (int a = 0; a < 4; ++a) {
+    for (int c = 0; c < 4; ++c) {
+      Real derivative = reference.d_frame[c][B][a];
+      for (int d = 0; d < 4; ++d) {
+        derivative += reference.christoffel[a][c][d]
+                      *reference.frame[B][d];
+      }
+      condition += Kokkos::abs(
+          reference.coframe[A][a]*reference.frame[C][c]*derivative);
+    }
+  }
+  return condition;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real ReferenceSpinCondition(const ReferenceGeometry &reference,
+                            const int A, const int B, const int C) {
+  if (A == B) return 1.0;
+  return 0.5*(RawReferenceSpinCondition(reference, A, B, C)
+              + RawReferenceSpinCondition(reference, B, A, C));
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -135,6 +234,55 @@ Real RawReferenceSpinCoordinateDerivative(const ReferenceCachePoint &reference,
 }
 
 KOKKOS_INLINE_FUNCTION
+Real RawReferenceSpinDerivativeCondition(
+    const ReferenceGeometry &reference, const int D, const int A,
+    const int B, const int C) {
+  Real condition = 0.0;
+  for (int p = 0; p < 4; ++p) {
+    Real coordinate_condition = 0.0;
+    for (int a = 0; a < 4; ++a) {
+      const Real d_coframe =
+          ReferenceCoframeDerivative(reference, p, A, a);
+      for (int c = 0; c < 4; ++c) {
+        Real frame_covariant_derivative =
+            reference.d_frame[c][B][a];
+        Real d_frame_covariant_derivative =
+            reference.dd_frame[p][c][B][a];
+        for (int d = 0; d < 4; ++d) {
+          frame_covariant_derivative +=
+              reference.christoffel[a][c][d]*reference.frame[B][d];
+          d_frame_covariant_derivative +=
+              reference.d_christoffel[p][a][c][d]
+                *reference.frame[B][d]
+              + reference.christoffel[a][c][d]
+                *reference.d_frame[p][B][d];
+        }
+        const Real first_factor =
+            d_coframe*reference.frame[C][c]
+            + reference.coframe[A][a]*reference.d_frame[p][C][c];
+        const Real second_factor =
+            reference.coframe[A][a]*reference.frame[C][c];
+        coordinate_condition +=
+            Kokkos::abs(first_factor*frame_covariant_derivative)
+            + Kokkos::abs(second_factor*d_frame_covariant_derivative);
+      }
+    }
+    condition += Kokkos::abs(reference.frame[D][p])*coordinate_condition;
+  }
+  return condition;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real ReferenceSpinDerivativeCondition(
+    const ReferenceGeometry &reference, const int D, const int A,
+    const int B, const int C) {
+  if (A == B) return 1.0;
+  return 0.5*(
+      RawReferenceSpinDerivativeCondition(reference, D, A, B, C)
+      + RawReferenceSpinDerivativeCondition(reference, D, B, A, C));
+}
+
+KOKKOS_INLINE_FUNCTION
 Real RawReferenceStructure4(const ReferenceCachePoint &reference,
                             const int E, const int C, const int D) {
   Real value = 0.0;
@@ -148,6 +296,39 @@ Real RawReferenceStructure4(const ReferenceCachePoint &reference,
     }
   }
   return value;
+}
+
+// Reproduce the compact bivector symmetrization used by the production cache
+// from a direct provider geometry.  Ricci contractions can cancel large
+// curvature components; comparing the cache contraction against an
+// unsymmetrized full-tensor contraction otherwise measures harmless roundoff
+// in identities that the compact representation enforces exactly.
+KOKKOS_INLINE_FUNCTION
+Real CompactOracleRiemann(const ReferenceGeometry &reference,
+                          const int A, const int B,
+                          const int C, const int D) {
+  if (A == B || C == D) return 0.0;
+  const Real first_orientation = (A < B) ? 1.0 : -1.0;
+  const Real second_orientation = (C < D) ? 1.0 : -1.0;
+  int first_pair = RefAntisymmetricPair4(A, B);
+  int second_pair = RefAntisymmetricPair4(C, D);
+  if (second_pair < first_pair) {
+    const int temporary = first_pair;
+    first_pair = second_pair;
+    second_pair = temporary;
+  }
+  int canonical_a = 0;
+  int canonical_b = 0;
+  int canonical_c = 0;
+  int canonical_d = 0;
+  RefDecodeAntisymmetricPair4(first_pair, canonical_a, canonical_b);
+  RefDecodeAntisymmetricPair4(second_pair, canonical_c, canonical_d);
+  const Real canonical_lower =
+      ((canonical_a == 0) ? -1.0 : 1.0)
+      *reference.riemann_frame[canonical_a][canonical_b]
+                              [canonical_c][canonical_d];
+  return ((A == 0) ? -1.0 : 1.0)
+         *first_orientation*second_orientation*canonical_lower;
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -281,6 +462,7 @@ TaskStatus RefGh::CopyU(Driver *driver, int stage) {
     if (stage == 1) {
       Kokkos::deep_copy(DevExeSpace(), u1, u0);
       controller_base = controller;
+      q_controller_base = q_controller;
     } else {
       const Real delta = driver->delta[stage - 1];
       const auto state = u0;
@@ -296,10 +478,13 @@ TaskStatus RefGh::CopyU(Driver *driver, int stage) {
       controller_base.delta_p_dot += delta*controller.delta_p_dot;
       controller_base.xi += delta*controller.xi;
       controller_base.xi_dot += delta*controller.xi_dot;
+      q_controller_base.q += delta*q_controller.q;
+      q_controller_base.q_dot += delta*q_controller.q_dot;
     }
   } else if (stage == 1) {
     Kokkos::deep_copy(DevExeSpace(), u1, u0);
     controller_base = controller;
+    q_controller_base = q_controller;
   }
   DebugFence("ref_gh CopyU");
   return TaskStatus::complete;
@@ -327,11 +512,235 @@ void RefGh::PersistControllerState() {
                   continuation_veto_last_level);
   pinput->SetReal("ref_gh", "controller_generation",
                   static_cast<Real>(controller_generation));
+  pinput->SetReal("ref_gh", "q", q_controller.q);
+  pinput->SetReal("ref_gh", "q_dot", q_controller.q_dot);
+  pinput->SetReal("ref_gh", "q_controller_generation",
+                  static_cast<Real>(q_controller_generation));
+  pinput->SetBoolean("ref_gh", "q_controller_frozen", q_controller_frozen);
+  pinput->SetReal("ref_gh", "q_est", controller_diagnostics.q_est);
+  pinput->SetReal("ref_gh", "q_analytic",
+                  controller_diagnostics.q_analytic);
+  pinput->SetReal("ref_gh", "q_est_variance",
+                  controller_diagnostics.q_variance);
+  pinput->SetReal("ref_gh", "q_est_effective_sample_size",
+                  controller_diagnostics.q_effective_sample_size);
+  pinput->SetReal("ref_gh", "q_est_cell_count",
+                  controller_diagnostics.q_cell_count);
 }
 
 TaskStatus RefGh::MeasureController(Driver *driver, const int stage) {
   if (opt.reference_controlled) MeasureControllerAtTime(StageTime(driver, stage));
+  if (opt.reference_q_controlled) {
+    MeasureQControllerAtTime(StageTime(driver, stage));
+  }
   return TaskStatus::complete;
+}
+
+void RefGh::MeasureQControllerAtTime(const Real stage_time) {
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  auto &size = pmy_pack->pmb->mb_size;
+  const auto state = u0;
+  const auto table = reference_table;
+  const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
+  const Real mass = opt.reference_mass;
+  const Real center_x = opt.reference_center[0];
+  const Real center_y = opt.reference_center[1];
+  const Real center_z = opt.reference_center[2];
+  const Real gaussian_width = opt.q_gaussian_width;
+  const Real q = q_controller.q;
+  const Real q_dot = q_controller.q_dot;
+  const int stencil_radius = PunctureEvolutionStencilRadius(
+      opt.fd_order, opt.diss);
+  Real h = std::numeric_limits<Real>::max();
+  for (int m = 0; m < pmy_pack->nmb_thispack; ++m) {
+    h = std::min(h, std::min(
+        pmy_pack->pmb->mb_size.h_view(m).dx1,
+        std::min(pmy_pack->pmb->mb_size.h_view(m).dx2,
+                 pmy_pack->pmb->mb_size.h_view(m).dx3)));
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &h, 1, MPI_ATHENA_REAL, MPI_MIN, MPI_COMM_WORLD);
+#endif
+
+  enum MomentIndex {
+    kW, kW2, kWQ, kWQ2, kWQAnalytic, kWEpsilon, kWEpsilon2,
+    kCount, kInvalid,
+    kMomentCount
+  };
+  static_assert(kMomentCount <= NREDUCTION_VARIABLES,
+                "q-estimator moments exceed the fixed reduction array");
+  array_sum::GlobalSum sums;
+  Real minus_q_min = 0.0;
+  Real q_max = 0.0;
+  const TrumpetQControlledReferenceParameters parameters{
+      mass, {center_x, center_y, center_z}, gaussian_width,
+      q, q_dot, 0.0};
+  Kokkos::parallel_reduce(
+      "ref_gh current-q physical exponent shell",
+      Kokkos::RangePolicy<>(DevExeSpace(),
+          0, pmy_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, array_sum::GlobalSum &total,
+                    Real &local_minus_q_min, Real &local_q_max) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real x = CellCenterX(
+            i - indcs.is, indcs.nx1,
+            size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(
+            j - indcs.js, indcs.nx2,
+            size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(
+            k - indcs.ks, indcs.nx3,
+            size.d_view(m).x3min, size.d_view(m).x3max);
+        const Real displacement[3] = {
+            x - center_x, y - center_y, z - center_z};
+        const Real radius = Kokkos::sqrt(
+            displacement[0]*displacement[0]
+            + displacement[1]*displacement[1]
+            + displacement[2]*displacement[2]);
+        if (!InPunctureEstimatorShell(
+                radius, h, gaussian_width*mass)) return;
+        const Real spacing[3] = {
+            size.d_view(m).dx1, size.d_view(m).dx2, size.d_view(m).dx3};
+        if (!PunctureStencilIsClear(
+                displacement, spacing, stencil_radius)) return;
+
+        ReferenceJet alpha;
+        ReferenceJet spatial_cholesky;
+        ReferenceJet shift_q;
+        TrumpetQControlledProfileJets(
+            table, parameters, x, y, z, alpha, spatial_cholesky, shift_q);
+        const Real normalized_radius = radius/mass;
+        const RadialProfile analytic_spatial_cholesky =
+            ArealRadiusToPsi2(
+                InterpolateTrumpetProfile(
+                    table, kCoeffArealRadius, normalized_radius),
+                normalized_radius);
+        Real relative_metric[4][4] = {};  // NOLINT(runtime/arrays)
+        Real phi[3][4][4] = {};           // NOLINT(runtime/arrays)
+        Real spatial_coframe[3][3] = {};  // NOLINT(runtime/arrays)
+        for (int A = 0; A < 4; ++A) {
+          for (int B = A; B < 4; ++B) {
+            relative_metric[A][B] = relative_metric[B][A] =
+                state(m, PsiIndex(A, B), k, j, i);
+            for (int I = 0; I < 3; ++I) {
+              phi[I][A][B] = phi[I][B][A] =
+                  state(m, PhiIndex(I, A, B), k, j, i);
+            }
+          }
+        }
+        for (int I = 0; I < 3; ++I) {
+          spatial_coframe[I][I] = spatial_cholesky.value;
+        }
+        Real epsilon_g = NAN;
+        if (!ComputeRelativeSpatialExponentMismatch(
+                relative_metric, phi, spatial_coframe, displacement,
+                epsilon_g)) {
+          total.the_array[kInvalid] += 1.0;
+          return;
+        }
+        Real q_reference = 0.0;
+        for (int p = 0; p < 3; ++p) {
+          q_reference -= displacement[p]
+                         *spatial_cholesky.d[p + 1]
+                         /spatial_cholesky.value;
+        }
+        const Real q_loc = q_reference + epsilon_g;
+        const Real q_analytic = -normalized_radius
+            *analytic_spatial_cholesky.d1/analytic_spatial_cholesky.value;
+        if (!Kokkos::isfinite(q_loc) || !Kokkos::isfinite(q_analytic)) {
+          total.the_array[kInvalid] += 1.0;
+          return;
+        }
+        const Real weight = PunctureEstimatorWeight(radius, h);
+        total.the_array[kW] += weight;
+        total.the_array[kW2] += weight*weight;
+        total.the_array[kWQ] += weight*q_loc;
+        total.the_array[kWQ2] += weight*q_loc*q_loc;
+        total.the_array[kWQAnalytic] += weight*q_analytic;
+        total.the_array[kWEpsilon] += weight*epsilon_g;
+        total.the_array[kWEpsilon2] += weight*epsilon_g*epsilon_g;
+        total.the_array[kCount] += 1.0;
+        local_minus_q_min = fmax(local_minus_q_min, -q_loc);
+        local_q_max = fmax(local_q_max, q_loc);
+      }, Kokkos::Sum<array_sum::GlobalSum>(sums),
+      Kokkos::Max<Real>(minus_q_min), Kokkos::Max<Real>(q_max));
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, sums.the_array, NREDUCTION_VARIABLES,
+                MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+  Real extrema[2] = {minus_q_min, q_max};
+  MPI_Allreduce(MPI_IN_PLACE, extrema, 2, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+  minus_q_min = extrema[0];
+  q_max = extrema[1];
+#endif
+  const Real sum_w = sums.the_array[kW];
+  const bool shell_valid = sums.the_array[kCount] >= 8.0
+      && sums.the_array[kInvalid] == 0.0 && sum_w > 0.0
+      && sums.the_array[kW2] > 0.0 && std::isfinite(sum_w);
+  controller_diagnostics.q_shell_valid = shell_valid;
+  controller_diagnostics.q_cell_count = sums.the_array[kCount];
+  controller_diagnostics.q_est =
+      shell_valid ? sums.the_array[kWQ]/sum_w : NAN;
+  controller_diagnostics.q_analytic =
+      shell_valid ? sums.the_array[kWQAnalytic]/sum_w : NAN;
+  controller_diagnostics.q_variance = shell_valid
+      ? std::max(0.0, sums.the_array[kWQ2]/sum_w
+                         - controller_diagnostics.q_est
+                           *controller_diagnostics.q_est)
+      : NAN;
+  controller_diagnostics.q_effective_sample_size = shell_valid
+      ? sum_w*sum_w/sums.the_array[kW2] : NAN;
+  controller_diagnostics.q_min = shell_valid ? -minus_q_min : NAN;
+  controller_diagnostics.q_max = shell_valid ? q_max : NAN;
+  controller_diagnostics.epsilon_g_mean = shell_valid
+      ? sums.the_array[kWEpsilon]/sum_w : NAN;
+  controller_diagnostics.epsilon_g_variance = shell_valid
+      ? std::max(0.0, sums.the_array[kWEpsilon2]/sum_w
+                         - controller_diagnostics.epsilon_g_mean
+                           *controller_diagnostics.epsilon_g_mean)
+      : NAN;
+  q_controller_rhs = {0.0, 0.0};
+  q_controller_frozen =
+      !(opt.q_controller_enabled || opt.q_prescribed_enabled);
+  if (opt.q_prescribed_enabled) {
+    const PrescribedQTrajectory prescribed =
+        EvaluatePrescribedQTrajectory(
+            stage_time, opt.q_prescribed_target,
+            opt.q_prescribed_duration*mass);
+    const Real rate = Kokkos::abs(prescribed.q_dot)*mass;
+    const Real acceleration = Kokkos::abs(prescribed.q_ddot)*mass*mass;
+    if (rate > opt.q_rate_limit
+        || acceleration > opt.q_acceleration_limit) {
+      std::cout << "### FATAL ERROR: prescribed q trajectory exceeds a hard "
+                   "rate/acceleration limit at stage_time=" << stage_time
+                << " rate*M=" << rate
+                << " acceleration*M^2=" << acceleration << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    q_controller_rhs = {q_controller.q_dot, prescribed.q_ddot};
+    q_controller_frozen = false;
+  } else if (opt.q_controller_enabled) {
+    if (!shell_valid) {
+      std::cout << "### FATAL ERROR: Ref-GH q-controller shell is invalid at "
+                << "stage_time=" << stage_time
+                << " count=" << sums.the_array[kCount]
+                << " invalid=" << sums.the_array[kInvalid] << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    const Real omega = opt.q_omega/mass;
+    const Real acceleration_limit = opt.q_acceleration_limit/(mass*mass);
+    const QRelaxedControllerRhs rhs = EvaluateQRelaxedControllerRhs(
+        q_controller.q, q_controller.q_dot, controller_diagnostics.q_est,
+        omega, opt.q_zeta, acceleration_limit);
+    q_controller_rhs = {rhs.q, rhs.q_dot};
+    q_controller_frozen = false;
+  }
+  PersistControllerState();
+  DebugFence("ref_gh MeasureQController");
 }
 
 void RefGh::MeasureControllerAtTime(const Real stage_time) {
@@ -841,10 +1250,15 @@ Real RefGh::StageTime(const Driver *driver, const int target_stage) const {
 void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) {
   const bool diagnostics_requested =
       include_diagnostics || opt.validate_reference_cache;
-  const bool production_generation_current = !opt.reference_controlled
-      || reference_cache_generation == controller_generation;
-  const bool diagnostic_generation_current = !opt.reference_controlled
-      || reference_diagnostic_generation == controller_generation;
+  const bool reference_state_controlled =
+      opt.reference_controlled || opt.reference_q_controlled;
+  const std::uint64_t current_reference_generation =
+      opt.reference_q_controlled ? q_controller_generation
+                                 : controller_generation;
+  const bool production_generation_current = !reference_state_controlled
+      || reference_cache_generation == current_reference_generation;
+  const bool diagnostic_generation_current = !reference_state_controlled
+      || reference_diagnostic_generation == current_reference_generation;
   const bool production_current = std::isfinite(reference_cache_time)
       && (!opt.reference_time_dependent || reference_cache_time == time)
       && production_generation_current;
@@ -892,6 +1306,9 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       mass, {center_x, center_y, center_z}, opt.generic_gaussian_width,
       opt.generic_q_initial, opt.generic_q_final,
       opt.generic_transition_time};
+  const TrumpetQControlledReferenceParameters q_controlled{
+      mass, {center_x, center_y, center_z}, opt.q_gaussian_width,
+      q_controller.q, q_controller.q_dot, q_controller_rhs.q_dot};
 
   if (!production_current) {
     // Stage 1: evaluate the provider/profile two-jets once per point.
@@ -912,7 +1329,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       const ReferenceProviderPoint point{provider, m, k, j, i};
       PopulateReferenceProviderCache(reference_kind, table, mass,
                                      center_x, center_y, center_z,
-                                     time, x, y, z, controlled, generic, point);
+                                     time, x, y, z, controlled, generic,
+                                     q_controlled, point);
     });
 
     // Stage 2: populate frame/coframe values and frame derivatives component by
@@ -1394,7 +1812,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
           ((A == 0) ? -1.0 : 1.0)*raised;
     });
     reference_cache_time = time;
-    reference_cache_generation = controller_generation;
+    reference_cache_generation = current_reference_generation;
     reference_diagnostic_time = NAN;
   }
 
@@ -1421,13 +1839,17 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       diagnostic(m, kRefRicci + component, k, j, i) = ricci;
     });
     reference_diagnostic_time = time;
-    reference_diagnostic_generation = controller_generation;
+    reference_diagnostic_generation = current_reference_generation;
   }
 
   if (opt.validate_reference_cache
       && (opt.reference_time_dependent
           || !reference_cache_oracle_validated
           || !reference_diagnostic_oracle_validated)) {
+    const bool exclude_puncture_stencils =
+        opt.exclude_puncture_stencil_diagnostics;
+    const int oracle_stencil_radius =
+        PunctureEvolutionStencilRadius(opt.fd_order, opt.diss);
     using MaxLoc = Kokkos::MaxLoc<Real, int>;
     MaxLoc::value_type maximum_error;
     Kokkos::parallel_reduce(
@@ -1445,9 +1867,17 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
                                  size.d_view(m).x2min, size.d_view(m).x2max);
       const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                  size.d_view(m).x3min, size.d_view(m).x3max);
+      const Real displacement[3] = {
+          x - center_x, y - center_y, z - center_z};
+      const Real spacing[3] = {
+          size.d_view(m).dx1, size.d_view(m).dx2, size.d_view(m).dx3};
+      if (exclude_puncture_stencils
+          && !PunctureStencilIsClear(
+              displacement, spacing, oracle_stencil_radius)) return;
       ReferenceGeometry oracle;
       GetReferenceGeometry(reference_kind, table, mass, center_x, center_y,
-                           center_z, time, x, y, z, controlled, generic, oracle);
+                           center_z, time, x, y, z, controlled, generic,
+                           q_controlled, oracle);
       const ReferenceCachePoint cached{evolution, diagnostic, m, k, j, i};
       for (int A = 0; A < 4; ++A) {
         for (int a = 0; a < 4; ++a) {
@@ -1470,18 +1900,27 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
             if (B <= C) {
               UpdateReferenceOracleMaximum(
                   ReferenceChristoffel(cached, A, B, C),
-                  oracle.christoffel[A][B][C], 3, local_maximum);
+                  oracle.christoffel[A][B][C],
+                  reference_kind == 7 ? 16 : 3, local_maximum);
             }
             UpdateReferenceOracleMaximum(
                 ReferenceSpin(cached, A, B, C), oracle.spin[A][B][C],
-                4, local_maximum);
+                reference_kind == 7 ? 18 : 4, local_maximum,
+                reference_kind == 7
+                    ? ReferenceSpinCondition(oracle, A, B, C) : 1.0);
             for (int D = 0; D < 4; ++D) {
               UpdateReferenceOracleMaximum(
                   ReferenceSpinDerivative(cached, A, B, C, D),
-                  oracle.spin_derivative[A][B][C][D], 5, local_maximum);
+                  oracle.spin_derivative[A][B][C][D],
+                  reference_kind == 7 ? 19 : 5, local_maximum,
+                  reference_kind == 7
+                      ? ReferenceSpinDerivativeCondition(
+                            oracle, A, B, C, D)
+                      : 1.0);
               UpdateReferenceOracleMaximum(
                   ReferenceRiemann(cached, A, B, C, D),
-                  oracle.riemann_frame[A][B][C][D], 6, local_maximum);
+                  oracle.riemann_frame[A][B][C][D],
+                  reference_kind == 7 ? 14 : 6, local_maximum);
             }
           }
         }
@@ -1520,7 +1959,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
               if (b <= c) {
                 UpdateReferenceOracleMaximum(
                     ReferenceDChristoffel(cached, p, a, b, c),
-                    oracle.d_christoffel[p][a][b][c], 12, local_maximum);
+                    oracle.d_christoffel[p][a][b][c],
+                    reference_kind == 7 ? 17 : 12, local_maximum);
               }
             }
           }
@@ -1528,9 +1968,18 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       }
       for (int A = 0; A < 4; ++A) {
         for (int B = 0; B < 4; ++B) {
+          Real compact_oracle_ricci = 0.0;
+          Real compact_oracle_condition = 0.0;
+          for (int C = 0; C < 4; ++C) {
+            const Real term =
+                CompactOracleRiemann(oracle, C, A, C, B);
+            compact_oracle_ricci += term;
+            compact_oracle_condition += Kokkos::abs(term);
+          }
           UpdateReferenceOracleMaximum(
-              ReferenceRicci(cached, A, B), oracle.ricci_frame[A][B],
-              13, local_maximum);
+              ReferenceRicci(cached, A, B), compact_oracle_ricci,
+              reference_kind == 7 ? 15 : 13, local_maximum,
+              reference_kind == 7 ? compact_oracle_condition : 1.0);
         }
       }
     }, MaxLoc(maximum_error));
@@ -1557,7 +2006,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   // derivatives when continuation activation is supplied as an independent
   // ODE jet. All prescribed-time providers remain independently testable.
   const bool theta_oracle_available =
-      !(reference_kind == 5 && opt.continuation_mode != 0);
+      !(reference_kind == 5 && opt.continuation_mode != 0)
+      && reference_kind != 7;
   int theta_oracle_side = 0;  // central=0, forward=1, backward=-1
   constexpr Real theta_oracle_step = 2.0e-4;
   if (reference_kind == 6) {
@@ -1635,7 +2085,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
         GetReferenceGeometry(reference_kind, table, mass, center_x, center_y,
                              center_z,
                              time + offsets[sample]*theta_oracle_step,
-                             x, y, z, controlled, generic, oracle);
+                             x, y, z, controlled, generic, q_controlled, oracle);
         const ReferenceGaugeBaseline baseline =
             ComputeReferenceGaugeBaseline(oracle);
         finite_difference += coefficients[sample]
@@ -1675,7 +2125,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   } else if (opt.validate_reference_cache && opt.reference_time_dependent
              && !theta_oracle_available && global_variable::my_rank == 0) {
     std::cout << "reference-GH theta time-difference oracle unavailable for "
-                 "ODE-controlled continuation jets; analytic controller-jet "
+                 "ODE-controlled reference jets; analytic controller-jet "
                  "oracles remain required." << std::endl;
   }
 }
@@ -1759,6 +2209,29 @@ TaskStatus RefGh::ExpRKUpdate(Driver *driver, int stage) {
     }
     PersistControllerState();
   }
+  if (opt.reference_q_controlled
+      && (opt.q_controller_enabled || opt.q_prescribed_enabled)) {
+    q_controller.q = gam0*q_controller.q
+                     + gam1*q_controller_base.q
+                     + beta_dt*q_controller_rhs.q;
+    q_controller.q_dot = gam0*q_controller.q_dot
+                         + gam1*q_controller_base.q_dot
+                         + beta_dt*q_controller_rhs.q_dot;
+    ++q_controller_generation;
+    const Real mass = opt.reference_mass;
+    const bool invalid = !std::isfinite(q_controller.q)
+        || !std::isfinite(q_controller.q_dot)
+        || q_controller.q < opt.q_min || q_controller.q > opt.q_max
+        || std::abs(q_controller.q_dot)*mass > opt.q_rate_limit;
+    if (invalid) {
+      std::cout << "### FATAL ERROR: Ref-GH q-controller crossed a hard state "
+                   "bound: q=" << q_controller.q
+                << " q_dot*M=" << q_controller.q_dot*mass
+                << " generation=" << q_controller_generation << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    PersistControllerState();
+  }
   DebugFence("ref_gh ExpRKUpdate");
   return TaskStatus::complete;
 }
@@ -1788,7 +2261,7 @@ TaskStatus RefGh::Prolongate(Driver *, int) {
 TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
   if (pmy_pack->pmesh->strictly_periodic) return TaskStatus::complete;
   if (opt.reference_kind != 1 && opt.reference_kind != 4
-      && opt.reference_kind != 5) {
+      && opt.reference_kind != 5 && opt.reference_kind != 7) {
     std::cout << "### FATAL ERROR: non-periodic ref_gh boundaries are currently "
               << "implemented only for Schwarzschild reference states."
               << std::endl;
@@ -1823,6 +2296,127 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
   const Real center_z = opt.reference_center[2];
+
+  if (opt.reference_kind == 7) {
+    const Real gaussian_width = opt.q_gaussian_width;
+    const Real q = q_controller.q;
+    const Real q_dot = q_controller.q_dot;
+    const Real q_ddot = q_controller_rhs.q_dot;
+    const bool gauge_driver_enabled = opt.gauge_driver_enabled;
+    if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x1]
+        != BoundaryFlag::periodic) {
+      par_for("ref_gh projected trumpet x1 boundaries", DevExeSpace(),
+      0, nmb - 1, 0, n3 - 1, 0, n2 - 1,
+      KOKKOS_LAMBDA(const int m, const int k, const int j) {
+        const Real y = CellCenterX(
+            j - js, indcs.nx2,
+            size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(
+            k - ks, indcs.nx3,
+            size.d_view(m).x3min, size.d_view(m).x3max);
+        if (mb_bcs(m, BoundaryFace::inner_x1) != BoundaryFlag::block) {
+          for (int g = 1; g <= ng; ++g) {
+            const Real x = CellCenterX(
+                -g, indcs.nx1,
+                size.d_view(m).x1min, size.d_view(m).x1max);
+            StoreQControlledStationaryTrumpetState(
+                state, m, k, j, is - g, table, mass,
+                center_x, center_y, center_z, gaussian_width,
+                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
+                gauge_reference_subtraction);
+          }
+        }
+        if (mb_bcs(m, BoundaryFace::outer_x1) != BoundaryFlag::block) {
+          for (int g = 1; g <= ng; ++g) {
+            const Real x = CellCenterX(
+                indcs.nx1 - 1 + g, indcs.nx1,
+                size.d_view(m).x1min, size.d_view(m).x1max);
+            StoreQControlledStationaryTrumpetState(
+                state, m, k, j, ie + g, table, mass,
+                center_x, center_y, center_z, gaussian_width,
+                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
+                gauge_reference_subtraction);
+          }
+        }
+      });
+    }
+    if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x2]
+        != BoundaryFlag::periodic) {
+      par_for("ref_gh projected trumpet x2 boundaries", DevExeSpace(),
+      0, nmb - 1, 0, n3 - 1, 0, n1 - 1,
+      KOKKOS_LAMBDA(const int m, const int k, const int i) {
+        const Real x = CellCenterX(
+            i - is, indcs.nx1,
+            size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real z = CellCenterX(
+            k - ks, indcs.nx3,
+            size.d_view(m).x3min, size.d_view(m).x3max);
+        if (mb_bcs(m, BoundaryFace::inner_x2) != BoundaryFlag::block) {
+          for (int g = 1; g <= ng; ++g) {
+            const Real y = CellCenterX(
+                -g, indcs.nx2,
+                size.d_view(m).x2min, size.d_view(m).x2max);
+            StoreQControlledStationaryTrumpetState(
+                state, m, k, js - g, i, table, mass,
+                center_x, center_y, center_z, gaussian_width,
+                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
+                gauge_reference_subtraction);
+          }
+        }
+        if (mb_bcs(m, BoundaryFace::outer_x2) != BoundaryFlag::block) {
+          for (int g = 1; g <= ng; ++g) {
+            const Real y = CellCenterX(
+                indcs.nx2 - 1 + g, indcs.nx2,
+                size.d_view(m).x2min, size.d_view(m).x2max);
+            StoreQControlledStationaryTrumpetState(
+                state, m, k, je + g, i, table, mass,
+                center_x, center_y, center_z, gaussian_width,
+                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
+                gauge_reference_subtraction);
+          }
+        }
+      });
+    }
+    if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x3]
+        != BoundaryFlag::periodic) {
+      par_for("ref_gh projected trumpet x3 boundaries", DevExeSpace(),
+      0, nmb - 1, 0, n2 - 1, 0, n1 - 1,
+      KOKKOS_LAMBDA(const int m, const int j, const int i) {
+        const Real x = CellCenterX(
+            i - is, indcs.nx1,
+            size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(
+            j - js, indcs.nx2,
+            size.d_view(m).x2min, size.d_view(m).x2max);
+        if (mb_bcs(m, BoundaryFace::inner_x3) != BoundaryFlag::block) {
+          for (int g = 1; g <= ng; ++g) {
+            const Real z = CellCenterX(
+                -g, indcs.nx3,
+                size.d_view(m).x3min, size.d_view(m).x3max);
+            StoreQControlledStationaryTrumpetState(
+                state, m, ks - g, j, i, table, mass,
+                center_x, center_y, center_z, gaussian_width,
+                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
+                gauge_reference_subtraction);
+          }
+        }
+        if (mb_bcs(m, BoundaryFace::outer_x3) != BoundaryFlag::block) {
+          for (int g = 1; g <= ng; ++g) {
+            const Real z = CellCenterX(
+                indcs.nx3 - 1 + g, indcs.nx3,
+                size.d_view(m).x3min, size.d_view(m).x3max);
+            StoreQControlledStationaryTrumpetState(
+                state, m, ke + g, j, i, table, mass,
+                center_x, center_y, center_z, gaussian_width,
+                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
+                gauge_reference_subtraction);
+          }
+        }
+      });
+    }
+    DebugFence("ref_gh ApplyPhysicalBCs projected trumpet");
+    return TaskStatus::complete;
+  }
 
   if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x1] != BoundaryFlag::periodic) {
     par_for("ref_gh exact trumpet x1 boundaries", DevExeSpace(), 0, nmb - 1,

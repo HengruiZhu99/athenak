@@ -26,6 +26,7 @@
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/puncture_exponent.hpp"
+#include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "z4c/z4c.hpp"
 
 #include "coordinates/adm.hpp"
@@ -511,12 +512,15 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
     HIST_Q_MAX, HIST_DELTA_MAX, HIST_FRAME_RICCI_MAX,
     HIST_COORDINATE_RICCI_MAX, HIST_SOURCE_CURVATURE_MAX, HIST_SOURCE_QQ_MAX,
     HIST_SOURCE_DELTA_DELTA_MAX, HIST_SOURCE_DAMPING_MAX,
-    HIST_SOURCE_FRAME_CORRECTION_MAX, NHIST_REF_GH
+    HIST_SOURCE_FRAME_CORRECTION_MAX, HIST_CONTROLLER_Q,
+    HIST_CONTROLLER_Q_DOT, HIST_CONTROLLER_Q_EST, NHIST_REF_GH
   };
   static_assert(NHIST_REF_GH <= NHISTORY_VARIABLES,
                 "reference-GH history exceeds NHISTORY_VARIABLES");
+  auto *module = pm->pmb_pack->prefgh;
+  const bool physical_trumpet_errors = module->opt.reference_kind == 7;
   pdata->nhist = NHIST_REF_GH;
-  const char *labels[NHIST_REF_GH] = {
+  const char *labels[NHIST_REF_GH] = {  // NOLINT(runtime/arrays)
     "GH-L2sq", "Reduction-L2sq", "Curl-L2sq", "PsiError-L2sq",
     "Pi-L2sq", "Phi-L2sq", "GHnear-L2sq", "ReductionNear-L2sq",
     "CurlNear-L2sq", "Volume", "alpha-max", "minus-alpha-min",
@@ -524,8 +528,14 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
     "effective-CFL", "minus-detg-margin", "NearVolume", "bad-state",
     "Q-Linf", "Delta-Linf", "frame-Ricci-Linf", "coordinate-Ricci-Linf",
     "source-curvature-Linf", "source-QQ-Linf", "source-DeltaDelta-Linf",
-    "source-damping-Linf", "source-frame-correction-Linf"
+    "source-damping-Linf", "source-frame-correction-Linf", "q", "q-dot",
+    "q-est"
   };
+  if (physical_trumpet_errors) {
+    labels[HIST_PSI_ERROR] = "physical-g-error-L2sq";
+    labels[HIST_PI] = "physical-alpha-error-L2sq";
+    labels[HIST_PHI] = "physical-beta-error-L2sq";
+  }
   for (int n = 0; n < NHIST_REF_GH; ++n) pdata->label[n] = labels[n];
   for (int n = HIST_ALPHA_MAX; n <= HIST_DETERMINANT_MARGIN; ++n) {
     pdata->use_max[n] = true;
@@ -533,7 +543,6 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->use_max[HIST_BAD_STATE] = true;
   for (int n = HIST_Q_MAX; n < NHIST_REF_GH; ++n) pdata->use_max[n] = true;
 
-  auto *module = pm->pmb_pack->prefgh;
   for (int n = 0; n < NHIST_REF_GH; ++n) pdata->hdata[n] = 0.0;
   module->UpdateDiagnostics();
   module->AppendMaxLocationDiagnostics();
@@ -546,6 +555,7 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
   const Real center_x = module->opt.reference_center[0];
   const Real center_y = module->opt.reference_center[1];
   const Real center_z = module->opt.reference_center[2];
+  const auto reference_table = module->reference_table;
   const bool exclude_puncture_stencils =
       module->opt.exclude_puncture_stencil_diagnostics;
   const int stencil_radius = ref_gh::PunctureEvolutionStencilRadius(
@@ -589,22 +599,58 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
         Real psi_error2 = 0.0;
         Real pi2 = 0.0;
         Real phi2 = 0.0;
-        for (int component = 0; component < ref_gh::kSymmetric4Size; ++component) {
-          Real expected = 0.0;
-          if (component == ref_gh::Symmetric4Index(0, 0)) expected = -1.0;
-          if (component == ref_gh::Symmetric4Index(1, 1)
-              || component == ref_gh::Symmetric4Index(2, 2)
-              || component == ref_gh::Symmetric4Index(3, 3)) expected = 1.0;
-          const Real difference = state(m, ref_gh::kPsiOffset + component, k, j, i)
-                                  - expected;
-          psi_error2 += difference*difference;
-          pi2 += state(m, ref_gh::kPiOffset + component, k, j, i)
-                 *state(m, ref_gh::kPiOffset + component, k, j, i);
-          for (int I = 0; I < 3; ++I) {
-            const Real value = state(m, ref_gh::kPhiOffset
-                                      + I*ref_gh::kSymmetric4Size + component,
-                                     k, j, i);
-            phi2 += value*value;
+        if (physical_trumpet_errors) {
+          ref_gh::ReferenceGeometry exact;
+          const ref_gh::TrumpetSchwarzschildReference exact_provider{
+              reference_table, mass, {center_x, center_y, center_z}};
+          exact_provider.Populate(0.0, x, y, z, exact);
+          Real exact_inverse[4][4];  // NOLINT(runtime/arrays)
+          Real exact_determinant = 0.0;
+          if (!ref_gh::Invert4(
+                  exact.metric, exact_inverse, exact_determinant)
+              || !(exact_inverse[0][0] < 0.0)) {
+            psi_error2 = NAN;
+            pi2 = NAN;
+            phi2 = NAN;
+          } else {
+            const Real exact_lapse =
+                1.0/Kokkos::sqrt(-exact_inverse[0][0]);
+            const Real lapse_difference =
+                adm_vars.alpha(m, k, j, i) - exact_lapse;
+            pi2 = lapse_difference*lapse_difference;
+            for (int a = 0; a < 3; ++a) {
+              for (int b = a; b < 3; ++b) {
+                const Real difference = adm_vars.g_dd(m, a, b, k, j, i)
+                    - exact.metric[a + 1][b + 1];
+                psi_error2 += difference*difference;
+              }
+              const Real exact_shift = exact_lapse*exact_lapse
+                                       *exact_inverse[0][a + 1];
+              const Real difference =
+                  adm_vars.beta_u(m, a, k, j, i) - exact_shift;
+              phi2 += difference*difference;
+            }
+          }
+        } else {
+          for (int component = 0;
+               component < ref_gh::kSymmetric4Size; ++component) {
+            Real expected = 0.0;
+            if (component == ref_gh::Symmetric4Index(0, 0)) expected = -1.0;
+            if (component == ref_gh::Symmetric4Index(1, 1)
+                || component == ref_gh::Symmetric4Index(2, 2)
+                || component == ref_gh::Symmetric4Index(3, 3)) expected = 1.0;
+            const Real difference =
+                state(m, ref_gh::kPsiOffset + component, k, j, i) - expected;
+            psi_error2 += difference*difference;
+            pi2 += state(m, ref_gh::kPiOffset + component, k, j, i)
+                   *state(m, ref_gh::kPiOffset + component, k, j, i);
+            for (int I = 0; I < 3; ++I) {
+              const Real value = state(
+                  m, ref_gh::kPhiOffset
+                     + I*ref_gh::kSymmetric4Size + component,
+                  k, j, i);
+              phi2 += value*value;
+            }
           }
         }
         const bool near = (x-center_x)*(x-center_x) + (y-center_y)*(y-center_y)
@@ -778,6 +824,10 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->hdata[HIST_SOURCE_DELTA_DELTA_MAX] = source_delta_delta_max;
   pdata->hdata[HIST_SOURCE_DAMPING_MAX] = source_damping_max;
   pdata->hdata[HIST_SOURCE_FRAME_CORRECTION_MAX] = source_frame_correction_max;
+  pdata->hdata[HIST_CONTROLLER_Q] = module->q_controller.q;
+  pdata->hdata[HIST_CONTROLLER_Q_DOT] = module->q_controller.q_dot;
+  pdata->hdata[HIST_CONTROLLER_Q_EST] =
+      module->controller_diagnostics.q_est;
   module->max_char_speed = characteristic_max;
   pdata->hdata[HIST_EFFECTIVE_CFL] = module->dtnew > 0.0 ? pm->dt/module->dtnew : 0.0;
 }

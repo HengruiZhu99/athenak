@@ -13,14 +13,18 @@
 #include "coordinates/cell_locations.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
+#include "outputs/outputs.hpp"
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "ref_gh/gauge_driver.hpp"
 #include "ref_gh/physical_gauge_target.hpp"
 #include "ref_gh/puncture_exponent.hpp"
+#include "ref_gh/q_relaxed_controller.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_gauge_baseline.hpp"
+#include "ref_gh/reference_projection.hpp"
+#include "ref_gh/reference_trumpet_q_controlled.hpp"
 #include "ref_gh/stationary_gauge_data.hpp"
 #include "utils/finite_diff.hpp"
 
@@ -31,8 +35,10 @@
 namespace {
 Real initial_rhs_linf = 0.0;
 constexpr int kFixedRadiusCount = 3;
-constexpr Real kFixedMinimumRadius[kFixedRadiusCount] = {0.5, 1.0, 1.5};
-constexpr Real kFixedMaximumRadius[kFixedRadiusCount] = {1.0, 1.5, 2.0};
+constexpr Real kDefaultMinimumRadius[kFixedRadiusCount] = {0.5, 1.0, 1.5};
+constexpr Real kDefaultMaximumRadius[kFixedRadiusCount] = {1.0, 1.5, 2.0};
+Real fixed_minimum_radius[kFixedRadiusCount] = {0.5, 1.0, 1.5};
+Real fixed_maximum_radius[kFixedRadiusCount] = {1.0, 1.5, 2.0};
 Real initial_rhs_fixed_linf[kFixedRadiusCount] = {};
 Real initial_reference_ricci_linf = 0.0;
 Real initial_frame_ricci_linf = 0.0;
@@ -44,6 +50,69 @@ bool perturbed_trumpet = false;
 Real perturbation_amplitude = 0.0;
 Real perturbation_width = 0.0;
 int perturbation_radial_power = 0;
+
+void QControlledTrumpetHistory(HistoryData *pdata, Mesh *mesh) {
+  enum Index {
+    kQ, kQDot, kQDdot, kQEst, kQAnalytic, kQEstMinusAnalytic,
+    kQVariance, kQEffectiveSamples, kQMinimum, kQMaximum, kQCells,
+    kEpsilonMean, kEpsilonVariance, kShellValid, kGeneration, kFrozen,
+    kPrescribedQ, kPrescribedQDot, kPrescribedQDdot,
+    kPrescribedQError, kPrescribedQDotError, kHistoryCount
+  };
+  static_assert(kHistoryCount <= NHISTORY_VARIABLES,
+                "q-controlled trumpet history exceeds fixed storage");
+  const char *labels[kHistoryCount] = {  // NOLINT(runtime/arrays)
+    "q", "q-dot", "q-ddot", "q-est", "q-analytic",
+    "qest-minus-analytic", "q-variance", "q-effective-samples",
+    "q-min", "q-max", "q-cells", "epsilon-G-mean",
+    "epsilon-G-variance", "q-shell-valid", "q-generation", "q-frozen",
+    "prescribed-q", "prescribed-q-dot", "prescribed-q-ddot",
+    "prescribed-q-error", "prescribed-qdot-error"
+  };
+  pdata->nhist = kHistoryCount;
+  for (int n = 0; n < kHistoryCount; ++n) {
+    pdata->label[n] = labels[n];
+    pdata->hdata[n] = 0.0;
+    pdata->use_max[n] = true;
+  }
+  auto *module = mesh->pmb_pack->prefgh;
+  module->MeasureQControllerAtTime(mesh->time);
+  const auto &diagnostics = module->controller_diagnostics;
+  pdata->hdata[kQ] = module->q_controller.q;
+  pdata->hdata[kQDot] = module->q_controller.q_dot;
+  pdata->hdata[kQDdot] = module->q_controller_rhs.q_dot;
+  pdata->hdata[kQEst] = diagnostics.q_est;
+  pdata->hdata[kQAnalytic] = diagnostics.q_analytic;
+  pdata->hdata[kQEstMinusAnalytic] = diagnostics.q_est
+                                     - diagnostics.q_analytic;
+  pdata->hdata[kQVariance] = diagnostics.q_variance;
+  pdata->hdata[kQEffectiveSamples] = diagnostics.q_effective_sample_size;
+  pdata->hdata[kQMinimum] = diagnostics.q_min;
+  pdata->hdata[kQMaximum] = diagnostics.q_max;
+  pdata->hdata[kQCells] = diagnostics.q_cell_count;
+  pdata->hdata[kEpsilonMean] = diagnostics.epsilon_g_mean;
+  pdata->hdata[kEpsilonVariance] = diagnostics.epsilon_g_variance;
+  pdata->hdata[kShellValid] = diagnostics.q_shell_valid ? 1.0 : 0.0;
+  pdata->hdata[kGeneration] =
+      static_cast<Real>(module->q_controller_generation);
+  pdata->hdata[kFrozen] = module->q_controller_frozen ? 1.0 : 0.0;
+  if (module->opt.q_prescribed_enabled) {
+    const ref_gh::PrescribedQTrajectory prescribed =
+        ref_gh::EvaluatePrescribedQTrajectory(
+            mesh->time, module->opt.q_prescribed_target,
+            module->opt.q_prescribed_duration*module->opt.reference_mass);
+    pdata->hdata[kPrescribedQ] = prescribed.q;
+    pdata->hdata[kPrescribedQDot] = prescribed.q_dot;
+    pdata->hdata[kPrescribedQDdot] = prescribed.q_ddot;
+    pdata->hdata[kPrescribedQError] = module->q_controller.q - prescribed.q;
+    pdata->hdata[kPrescribedQDotError] =
+        module->q_controller.q_dot - prescribed.q_dot;
+  } else {
+    for (int n = kPrescribedQ; n <= kPrescribedQDotError; ++n) {
+      pdata->hdata[n] = NAN;
+    }
+  }
+}
 
 void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
   auto *pack = mesh->pmb_pack;
@@ -61,6 +130,11 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
   const Real center_z = pack->prefgh->opt.reference_center[2];
   const Real reference_mass = pack->prefgh->opt.reference_mass;
   const auto reference_table = pack->prefgh->reference_table;
+  const int reference_kind = pack->prefgh->opt.reference_kind;
+  const Real q_gaussian_width = pack->prefgh->opt.q_gaussian_width;
+  const Real q_value = pack->prefgh->q_controller.q;
+  const Real q_dot = pack->prefgh->q_controller.q_dot;
+  const Real q_ddot = pack->prefgh->q_controller_rhs.q_dot;
   const bool compare_stationary_gauge =
       pack->prefgh->opt.gauge_driver_enabled && !perturbed_trumpet;
   const bool gauge_reference_subtraction =
@@ -69,14 +143,22 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
       pack->prefgh->opt.fd_order, pack->prefgh->opt.diss);
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   Real field_linf = 0.0;
+  Real physical_metric_linf = 0.0;
+  Real physical_lapse_linf = 0.0;
+  Real physical_shift_linf = 0.0;
   Real constraint_linf = 0.0;
   Real field_fixed_linf[kFixedRadiusCount] = {};
   Real gauge_fixed_linf[kFixedRadiusCount] = {};
   Real constraint_fixed_linf[kFixedRadiusCount] = {};
+  Real physical_metric_fixed_linf[kFixedRadiusCount] = {};
+  Real physical_lapse_fixed_linf[kFixedRadiusCount] = {};
+  Real physical_shift_fixed_linf[kFixedRadiusCount] = {};
   Kokkos::parallel_reduce(
       "ref_gh stationary trumpet error", Kokkos::RangePolicy<>(DevExeSpace(),
       0, pack->nmb_thispack*ncells),
-      KOKKOS_LAMBDA(const int idx, Real &maximum) {
+      KOKKOS_LAMBDA(const int idx, Real &maximum,
+                    Real &metric_maximum, Real &lapse_maximum,
+                    Real &shift_maximum) {
         int work = idx;
         const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
@@ -93,14 +175,97 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
           size.d_view(m).dx1, size.d_view(m).dx2, size.d_view(m).dx3};
         if (!ref_gh::PunctureStencilIsClear(
                 displacement, spacing, stencil_radius)) return;
-        for (int n = 0; n < ref_gh::kHhatOffset; ++n) {
-          Real expected = 0.0;
-          if (n == ref_gh::PsiIndex(0, 0)) expected = -1.0;
-          if (n == ref_gh::PsiIndex(1, 1) || n == ref_gh::PsiIndex(2, 2)
-              || n == ref_gh::PsiIndex(3, 3)) expected = 1.0;
-          maximum = fmax(maximum, Kokkos::abs(state(m, n, k, j, i) - expected));
+        const Real x = displacement[0] + center_x;
+        const Real y = displacement[1] + center_y;
+        const Real z = displacement[2] + center_z;
+        ref_gh::ReferenceGeometry physical;
+        const ref_gh::TrumpetSchwarzschildReference physical_provider{
+            reference_table, reference_mass,
+            {center_x, center_y, center_z}};
+        physical_provider.Populate(0.0, x, y, z, physical);
+        ref_gh::ReferenceGeometry current;
+        if (reference_kind == 7) {
+          const ref_gh::TrumpetQControlledReferenceParameters parameters{
+              reference_mass, {center_x, center_y, center_z},
+              q_gaussian_width, q_value, q_dot, q_ddot};
+          const ref_gh::TrumpetQControlledReference current_provider{
+              reference_table, parameters};
+          current_provider.Populate(0.0, x, y, z, current);
+        } else {
+          current = physical;
         }
-      }, Kokkos::Max<Real>(field_linf));
+        const ref_gh::ProjectedFirstOrderMetric expected =
+            ref_gh::ProjectPhysicalMetricToReference(
+                physical.metric, physical.d_metric, current);
+        if (!expected.valid) {
+          maximum = std::numeric_limits<Real>::infinity();
+          metric_maximum = std::numeric_limits<Real>::infinity();
+          return;
+        }
+        for (int A = 0; A < 4; ++A) {
+          for (int B = A; B < 4; ++B) {
+            maximum = fmax(maximum, Kokkos::abs(
+                state(m, ref_gh::PsiIndex(A, B), k, j, i)
+                - expected.psi[A][B]));
+            maximum = fmax(maximum, Kokkos::abs(
+                state(m, ref_gh::PiIndex(A, B), k, j, i)
+                - expected.pi[A][B]));
+            for (int I = 0; I < 3; ++I) {
+              maximum = fmax(maximum, Kokkos::abs(
+                  state(m, ref_gh::PhiIndex(I, A, B), k, j, i)
+                  - expected.phi[I][A][B]));
+            }
+          }
+        }
+        Real numerical_metric[4][4] = {};  // NOLINT(runtime/arrays)
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            for (int A = 0; A < 4; ++A) {
+              for (int B = 0; B < 4; ++B) {
+                numerical_metric[a][b] += current.coframe[A][a]
+                    *current.coframe[B][b]
+                    *state(m, ref_gh::PsiIndex(A, B), k, j, i);
+              }
+            }
+            metric_maximum = fmax(
+                metric_maximum,
+                Kokkos::abs(numerical_metric[a][b]
+                            - physical.metric[a][b]));
+          }
+        }
+        Real numerical_inverse[4][4];  // NOLINT(runtime/arrays)
+        Real physical_inverse[4][4];   // NOLINT(runtime/arrays)
+        Real numerical_determinant = 0.0;
+        Real physical_determinant = 0.0;
+        if (!ref_gh::Invert4(
+                numerical_metric, numerical_inverse, numerical_determinant)
+            || !ref_gh::Invert4(
+                physical.metric, physical_inverse, physical_determinant)
+            || !(numerical_inverse[0][0] < 0.0)
+            || !(physical_inverse[0][0] < 0.0)) {
+          lapse_maximum = std::numeric_limits<Real>::infinity();
+          shift_maximum = std::numeric_limits<Real>::infinity();
+          return;
+        }
+        const Real numerical_lapse =
+            1.0/Kokkos::sqrt(-numerical_inverse[0][0]);
+        const Real physical_lapse =
+            1.0/Kokkos::sqrt(-physical_inverse[0][0]);
+        lapse_maximum = fmax(
+            lapse_maximum, Kokkos::abs(numerical_lapse - physical_lapse));
+        for (int p = 0; p < 3; ++p) {
+          const Real numerical_shift = numerical_lapse*numerical_lapse
+                                       *numerical_inverse[0][p + 1];
+          const Real physical_shift = physical_lapse*physical_lapse
+                                      *physical_inverse[0][p + 1];
+          shift_maximum = fmax(
+              shift_maximum,
+              Kokkos::abs(numerical_shift - physical_shift));
+        }
+      }, Kokkos::Max<Real>(field_linf),
+         Kokkos::Max<Real>(physical_metric_linf),
+         Kokkos::Max<Real>(physical_lapse_linf),
+         Kokkos::Max<Real>(physical_shift_linf));
   Kokkos::parallel_reduce(
       "ref_gh stationary trumpet constraints", Kokkos::RangePolicy<>(DevExeSpace(),
       0, pack->nmb_thispack*ncells),
@@ -126,13 +291,15 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
         }
       }, Kokkos::Max<Real>(constraint_linf));
   for (int region = 0; region < kFixedRadiusCount; ++region) {
-    const Real minimum_radius = kFixedMinimumRadius[region];
-    const Real maximum_radius = kFixedMaximumRadius[region];
+    const Real minimum_radius = fixed_minimum_radius[region];
+    const Real maximum_radius = fixed_maximum_radius[region];
     Kokkos::parallel_reduce(
         "ref_gh stationary trumpet fixed-radius field error",
         Kokkos::RangePolicy<>(DevExeSpace(),
         0, pack->nmb_thispack*ncells),
-        KOKKOS_LAMBDA(const int idx, Real &maximum, Real &gauge_maximum) {
+        KOKKOS_LAMBDA(const int idx, Real &maximum, Real &gauge_maximum,
+                      Real &metric_maximum, Real &lapse_maximum,
+                      Real &shift_maximum) {
           int work = idx;
           const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
           const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
@@ -154,15 +321,134 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
           if (radius < minimum_radius || radius >= maximum_radius
               || !ref_gh::PunctureStencilIsClear(
                   displacement, spacing, stencil_radius)) return;
-          for (int n = 0; n < ref_gh::kHhatOffset; ++n) {
-            Real expected = 0.0;
-            if (n == ref_gh::PsiIndex(0, 0)) expected = -1.0;
-            if (n == ref_gh::PsiIndex(1, 1) || n == ref_gh::PsiIndex(2, 2)
-                || n == ref_gh::PsiIndex(3, 3)) expected = 1.0;
-            maximum = fmax(
-                maximum, Kokkos::abs(state(m, n, k, j, i) - expected));
+          if (reference_kind == 7) {
+            ref_gh::ReferenceGeometry physical;
+            const ref_gh::TrumpetSchwarzschildReference physical_provider{
+                reference_table, reference_mass,
+                {center_x, center_y, center_z}};
+            physical_provider.Populate(
+                0.0, displacement[0] + center_x,
+                displacement[1] + center_y,
+                displacement[2] + center_z, physical);
+            const ref_gh::TrumpetQControlledReferenceParameters parameters{
+                reference_mass, {center_x, center_y, center_z},
+                q_gaussian_width, q_value, q_dot, q_ddot};
+            ref_gh::ReferenceGeometry current;
+            const ref_gh::TrumpetQControlledReference current_provider{
+                reference_table, parameters};
+            current_provider.Populate(
+                0.0, displacement[0] + center_x,
+                displacement[1] + center_y,
+                displacement[2] + center_z, current);
+            const ref_gh::ProjectedFirstOrderMetric expected =
+                ref_gh::ProjectPhysicalMetricToReference(
+                    physical.metric, physical.d_metric, current);
+            if (!expected.valid) {
+              maximum = std::numeric_limits<Real>::infinity();
+              gauge_maximum = std::numeric_limits<Real>::infinity();
+              return;
+            }
+            for (int A = 0; A < 4; ++A) {
+              for (int B = A; B < 4; ++B) {
+                maximum = fmax(maximum, Kokkos::abs(
+                    state(m, ref_gh::PsiIndex(A, B), k, j, i)
+                    - expected.psi[A][B]));
+                maximum = fmax(maximum, Kokkos::abs(
+                    state(m, ref_gh::PiIndex(A, B), k, j, i)
+                    - expected.pi[A][B]));
+                for (int I = 0; I < 3; ++I) {
+                  maximum = fmax(maximum, Kokkos::abs(
+                      state(m, ref_gh::PhiIndex(I, A, B), k, j, i)
+                      - expected.phi[I][A][B]));
+                }
+              }
+            }
+            Real numerical_metric[4][4] = {};  // NOLINT(runtime/arrays)
+            for (int a = 0; a < 4; ++a) {
+              for (int b = 0; b < 4; ++b) {
+                for (int A = 0; A < 4; ++A) {
+                  for (int B = 0; B < 4; ++B) {
+                    numerical_metric[a][b] += current.coframe[A][a]
+                        *current.coframe[B][b]
+                        *state(m, ref_gh::PsiIndex(A, B), k, j, i);
+                  }
+                }
+                metric_maximum = fmax(metric_maximum, Kokkos::abs(
+                    numerical_metric[a][b] - physical.metric[a][b]));
+              }
+            }
+            Real numerical_inverse[4][4];  // NOLINT(runtime/arrays)
+            Real physical_inverse[4][4];   // NOLINT(runtime/arrays)
+            Real numerical_determinant = 0.0;
+            Real physical_determinant = 0.0;
+            if (!ref_gh::Invert4(
+                    numerical_metric, numerical_inverse,
+                    numerical_determinant)
+                || !ref_gh::Invert4(
+                    physical.metric, physical_inverse,
+                    physical_determinant)
+                || !(numerical_inverse[0][0] < 0.0)
+                || !(physical_inverse[0][0] < 0.0)) {
+              lapse_maximum = std::numeric_limits<Real>::infinity();
+              shift_maximum = std::numeric_limits<Real>::infinity();
+              return;
+            }
+            const Real numerical_lapse =
+                1.0/Kokkos::sqrt(-numerical_inverse[0][0]);
+            const Real physical_lapse =
+                1.0/Kokkos::sqrt(-physical_inverse[0][0]);
+            lapse_maximum = fmax(
+                lapse_maximum,
+                Kokkos::abs(numerical_lapse - physical_lapse));
+            for (int p = 0; p < 3; ++p) {
+              const Real numerical_shift = numerical_lapse*numerical_lapse
+                                           *numerical_inverse[0][p + 1];
+              const Real physical_shift = physical_lapse*physical_lapse
+                                          *physical_inverse[0][p + 1];
+              shift_maximum = fmax(
+                  shift_maximum,
+                  Kokkos::abs(numerical_shift - physical_shift));
+            }
+            if (compare_stationary_gauge) {
+              const ref_gh::ProjectedStationaryGaugeState expected_gauge =
+                  ref_gh::ProjectStationaryPhysicalGaugeToReference(
+                      physical, current);
+              ref_gh::ReferenceGaugeBaseline baseline{};
+              if (gauge_reference_subtraction) {
+                baseline = ref_gh::ComputeReferenceGaugeBaseline(current);
+              }
+              if (!expected_gauge.valid
+                  || (gauge_reference_subtraction && !baseline.valid)) {
+                gauge_maximum = std::numeric_limits<Real>::infinity();
+                return;
+              }
+              for (int A = 0; A < 4; ++A) {
+                const Real expected_hhat = expected_gauge.hhat[A]
+                    - (gauge_reference_subtraction
+                       ? baseline.hhat[A] : 0.0);
+                const Real expected_theta = expected_gauge.theta[A]
+                    - (gauge_reference_subtraction
+                       ? baseline.theta[A] : 0.0);
+                gauge_maximum = fmax(gauge_maximum, Kokkos::abs(
+                    state(m, ref_gh::kHhatOffset + A, k, j, i)
+                    - expected_hhat));
+                gauge_maximum = fmax(gauge_maximum, Kokkos::abs(
+                    state(m, ref_gh::kThetaOffset + A, k, j, i)
+                    - expected_theta));
+              }
+            }
+          } else {
+            for (int n = 0; n < ref_gh::kHhatOffset; ++n) {
+              Real expected = 0.0;
+              if (n == ref_gh::PsiIndex(0, 0)) expected = -1.0;
+              if (n == ref_gh::PsiIndex(1, 1)
+                  || n == ref_gh::PsiIndex(2, 2)
+                  || n == ref_gh::PsiIndex(3, 3)) expected = 1.0;
+              maximum = fmax(maximum, Kokkos::abs(
+                  state(m, n, k, j, i) - expected));
+            }
           }
-          if (compare_stationary_gauge) {
+          if (compare_stationary_gauge && reference_kind == 1) {
             const ref_gh::StationaryGaugeState expected =
                 ref_gh::ComputeStationaryTrumpetGaugeState(
                     reference_table, reference_mass, center_x, center_y,
@@ -193,7 +479,10 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
             }
           }
         }, Kokkos::Max<Real>(field_fixed_linf[region]),
-           Kokkos::Max<Real>(gauge_fixed_linf[region]));
+           Kokkos::Max<Real>(gauge_fixed_linf[region]),
+           Kokkos::Max<Real>(physical_metric_fixed_linf[region]),
+           Kokkos::Max<Real>(physical_lapse_fixed_linf[region]),
+           Kokkos::Max<Real>(physical_shift_fixed_linf[region]));
     Kokkos::parallel_reduce(
         "ref_gh stationary trumpet fixed-radius constraints",
         Kokkos::RangePolicy<>(DevExeSpace(),
@@ -228,6 +517,12 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
   }
 #if MPI_PARALLEL_ENABLED
   MPI_Allreduce(MPI_IN_PLACE, &field_linf, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &physical_metric_linf, 1, MPI_ATHENA_REAL,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &physical_lapse_linf, 1, MPI_ATHENA_REAL,
+                MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &physical_shift_linf, 1, MPI_ATHENA_REAL,
+                MPI_MAX, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &constraint_linf, 1, MPI_ATHENA_REAL, MPI_MAX,
                 MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, field_fixed_linf, kFixedRadiusCount,
@@ -236,6 +531,12 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
                 MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, constraint_fixed_linf, kFixedRadiusCount,
                 MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, physical_metric_fixed_linf, kFixedRadiusCount,
+                MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, physical_lapse_fixed_linf, kFixedRadiusCount,
+                MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, physical_shift_fixed_linf, kFixedRadiusCount,
+                MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
 #endif
   if (global_variable::my_rank == 0) {
     const std::string suffix =
@@ -243,19 +544,32 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
     const std::string filename = pin->GetString("job", "basename") + suffix;
     FILE *file = std::fopen(filename.c_str(), "w");
     if (file == nullptr) std::exit(EXIT_FAILURE);
+    std::fprintf(file,
+                 "# region_bounds %.17e %.17e %.17e %.17e %.17e %.17e\n",
+                 fixed_minimum_radius[0], fixed_maximum_radius[0],
+                 fixed_minimum_radius[1], fixed_maximum_radius[1],
+                 fixed_minimum_radius[2], fixed_maximum_radius[2]);
     std::fprintf(file, "# nx1 cycles time field_Linf constraint_Linf "
                        "rhs_estimate coordinate_reference_Ricci_Linf "
                        "frame_reference_Ricci_Linf spin_antisymmetry_Linf "
                        "structure_antisymmetry_Linf rhs_component rhs_radius "
-                       "rhs_r0p5to1 rhs_r1to1p5 rhs_r1p5to2 "
-                       "field_r0p5to1 field_r1to1p5 field_r1p5to2 "
-                       "gauge_r0p5to1 gauge_r1to1p5 gauge_r1p5to2 "
-                       "constraint_r0p5to1 constraint_r1to1p5 "
-                       "constraint_r1p5to2\n");
+                       "rhs_region0 rhs_region1 rhs_region2 "
+                       "field_region0 field_region1 field_region2 "
+                       "gauge_region0 gauge_region1 gauge_region2 "
+                       "constraint_region0 constraint_region1 "
+                       "constraint_region2 physical_metric_Linf "
+                       "physical_lapse_Linf physical_shift_Linf "
+                       "physical_metric_region0 physical_metric_region1 "
+                       "physical_metric_region2 physical_lapse_region0 "
+                       "physical_lapse_region1 physical_lapse_region2 "
+                       "physical_shift_region0 physical_shift_region1 "
+                       "physical_shift_region2\n");
     const Real rhs_estimate = initial_rhs_linf;
     std::fprintf(file, "%d %d %.17e %.17e %.17e %.17e %.17e %.17e %.17e "
                        "%.17e %d %.17e %.17e %.17e %.17e %.17e %.17e %.17e "
-                       "%.17e %.17e %.17e %.17e %.17e %.17e\n",
+                       "%.17e %.17e %.17e %.17e %.17e %.17e %.17e %.17e "
+                       "%.17e %.17e %.17e %.17e %.17e %.17e %.17e %.17e "
+                       "%.17e %.17e\n",
                  mesh->mesh_indcs.nx1, mesh->ncycle, mesh->time, field_linf,
                  constraint_linf, rhs_estimate, initial_reference_ricci_linf,
                  initial_frame_ricci_linf, initial_spin_antisymmetry_linf,
@@ -267,11 +581,24 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
                  gauge_fixed_linf[0], gauge_fixed_linf[1],
                  gauge_fixed_linf[2],
                  constraint_fixed_linf[0], constraint_fixed_linf[1],
-                 constraint_fixed_linf[2]);
+                 constraint_fixed_linf[2], physical_metric_linf,
+                 physical_lapse_linf, physical_shift_linf,
+                 physical_metric_fixed_linf[0],
+                 physical_metric_fixed_linf[1],
+                 physical_metric_fixed_linf[2],
+                 physical_lapse_fixed_linf[0],
+                 physical_lapse_fixed_linf[1],
+                 physical_lapse_fixed_linf[2],
+                 physical_shift_fixed_linf[0],
+                 physical_shift_fixed_linf[1],
+                 physical_shift_fixed_linf[2]);
     std::fclose(file);
     std::cout << "reference-GH "
               << (perturbed_trumpet ? "perturbed" : "stationary")
               << " trumpet: field Linf=" << field_linf
+              << ", physical metric Linf=" << physical_metric_linf
+              << ", lapse Linf=" << physical_lapse_linf
+              << ", shift Linf=" << physical_shift_linf
               << ", constraint Linf=" << constraint_linf
               << ", RHS estimate=" << rhs_estimate << std::endl;
   }
@@ -288,6 +615,21 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
       ? pin->GetOrAddReal("problem", "perturb_width", 0.5) : 0.0;
   perturbation_radial_power = perturbed_trumpet
       ? pin->GetOrAddInteger("problem", "perturb_radial_power", 0) : 0;
+  for (int region = 0; region < kFixedRadiusCount; ++region) {
+    const std::string prefix =
+        "stationary_region" + std::to_string(region);
+    fixed_minimum_radius[region] = pin->GetOrAddReal(
+        "problem", prefix + "_min", kDefaultMinimumRadius[region]);
+    fixed_maximum_radius[region] = pin->GetOrAddReal(
+        "problem", prefix + "_max", kDefaultMaximumRadius[region]);
+    if (!(fixed_minimum_radius[region] >= 0.0)
+        || !(fixed_maximum_radius[region]
+             > fixed_minimum_radius[region])) {
+      std::cout << "### FATAL ERROR: stationary diagnostic region "
+                << region << " has invalid radial bounds." << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
   if (perturbed_trumpet
       && (!(perturbation_amplitude > 0.0) || !(perturbation_width > 0.0)
           || perturbation_radial_power < 0 || perturbation_radial_power > 12
@@ -297,11 +639,20 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
     std::exit(EXIT_FAILURE);
   }
   pgen_final_func = &CheckRefGhStationaryTrumpet;
+  user_hist_func = &QControlledTrumpetHistory;
   if (restart) return;
   auto *pack = pmy_mesh_->pmb_pack;
-  if (pack->prefgh == nullptr || pack->prefgh->opt.reference_kind != 1) {
-    std::cout << "stationary trumpet data require ref_gh/reference=trumpet."
+  if (pack->prefgh == nullptr
+      || (pack->prefgh->opt.reference_kind != 1
+          && pack->prefgh->opt.reference_kind != 7)) {
+    std::cout << "stationary trumpet data require ref_gh/reference=trumpet "
+                 "or trumpet_q_controlled."
               << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (perturbed_trumpet && pack->prefgh->opt.reference_kind == 7) {
+    std::cout << "### FATAL ERROR: perturbed trumpet reprojection into the "
+                 "q-controlled reference is not implemented." << std::endl;
     std::exit(EXIT_FAILURE);
   }
   auto &indcs = pack->pmesh->mb_indcs;
@@ -315,6 +666,10 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
   const Real cz = pack->prefgh->opt.reference_center[2];
   const Real mass = pack->prefgh->opt.reference_mass;
   const auto table = pack->prefgh->reference_table;
+  const int reference_kind = pack->prefgh->opt.reference_kind;
+  const Real q_gaussian_width = pack->prefgh->opt.q_gaussian_width;
+  const Real q_value = pack->prefgh->q_controller.q;
+  const Real q_dot = pack->prefgh->q_controller.q_dot;
   const Real amplitude = perturbation_amplitude;
   const Real width = perturbation_width;
   const int radial_power = perturbation_radial_power;
@@ -355,6 +710,44 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
   pack->nmb_thispack - 1, 0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     for (int n = 0; n < ref_gh::nvar; ++n) state(m, n, k, j, i) = 0.0;
+    if (reference_kind == 7) {
+      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min, size.d_view(m).x1max);
+      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                 size.d_view(m).x2min, size.d_view(m).x2max);
+      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                 size.d_view(m).x3min, size.d_view(m).x3max);
+      ref_gh::ReferenceGeometry physical;
+      const ref_gh::TrumpetSchwarzschildReference physical_provider{
+          table, mass, {cx, cy, cz}};
+      physical_provider.Populate(0.0, x, y, z, physical);
+      const ref_gh::TrumpetQControlledReferenceParameters parameters{
+          mass, {cx, cy, cz}, q_gaussian_width, q_value, q_dot, 0.0};
+      ref_gh::ReferenceGeometry current;
+      const ref_gh::TrumpetQControlledReference current_provider{
+          table, parameters};
+      current_provider.Populate(0.0, x, y, z, current);
+      const ref_gh::ProjectedFirstOrderMetric projected =
+          ref_gh::ProjectPhysicalMetricToReference(
+              physical.metric, physical.d_metric, current);
+      if (!projected.valid) {
+        for (int n = 0; n < ref_gh::kHhatOffset; ++n) {
+          state(m, n, k, j, i) = NAN;
+        }
+        return;
+      }
+      for (int A = 0; A < 4; ++A) {
+        for (int B = A; B < 4; ++B) {
+          state(m, ref_gh::PsiIndex(A, B), k, j, i) = projected.psi[A][B];
+          state(m, ref_gh::PiIndex(A, B), k, j, i) = projected.pi[A][B];
+          for (int I = 0; I < 3; ++I) {
+            state(m, ref_gh::PhiIndex(I, A, B), k, j, i) =
+                projected.phi[I][A][B];
+          }
+        }
+      }
+      return;
+    }
     state(m, ref_gh::PsiIndex(0, 0), k, j, i) = -1.0;
     state(m, ref_gh::PsiIndex(1, 1), k, j, i) = 1.0;
     state(m, ref_gh::PsiIndex(2, 2), k, j, i) = 1.0;
@@ -413,6 +806,42 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
                                  size.d_view(m).x2min, size.d_view(m).x2max);
       const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                  size.d_view(m).x3min, size.d_view(m).x3max);
+      if (reference_kind == 7) {
+        ref_gh::ReferenceGeometry physical;
+        const ref_gh::TrumpetSchwarzschildReference physical_provider{
+            table, mass, {cx, cy, cz}};
+        physical_provider.Populate(0.0, x, y, z, physical);
+        const ref_gh::TrumpetQControlledReferenceParameters parameters{
+            mass, {cx, cy, cz}, q_gaussian_width, q_value, q_dot, 0.0};
+        ref_gh::ReferenceGeometry current;
+        const ref_gh::TrumpetQControlledReference current_provider{
+            table, parameters};
+        current_provider.Populate(0.0, x, y, z, current);
+        const ref_gh::ProjectedStationaryGaugeState projected =
+            ref_gh::ProjectStationaryPhysicalGaugeToReference(
+                physical, current);
+        ref_gh::ReferenceGaugeBaseline baseline{};
+        if (gauge_reference_subtraction) {
+          baseline = ref_gh::ComputeReferenceGaugeBaseline(current);
+        }
+        if (!projected.valid
+            || (gauge_reference_subtraction && !baseline.valid)) {
+          for (int n = ref_gh::kHhatOffset; n < ref_gh::nvar; ++n) {
+            state(m, n, k, j, i) = NAN;
+          }
+          return;
+        }
+        for (int A = 0; A < 4; ++A) {
+          state(m, ref_gh::kHhatOffset + A, k, j, i) = projected.hhat[A]
+              - (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
+          state(m, ref_gh::kThetaOffset + A, k, j, i) = projected.theta[A]
+              - (gauge_reference_subtraction ? baseline.theta[A] : 0.0);
+        }
+        for (int I = 0; I < 3; ++I) {
+          state(m, ref_gh::kUpsilonOffset + I, k, j, i) = 0.0;
+        }
+        return;
+      }
       ref_gh::ReferenceGeometry reference;
       ref_gh::GetReferenceGeometry(
           1, table, mass, cx, cy, cz, 0.0, x, y, z, reference);
@@ -453,7 +882,7 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
             - (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
       }
     });
-    if (!is_perturbed) {
+    if (!is_perturbed && reference_kind == 1) {
       const int fd_order = pack->prefgh->opt.fd_order;
       const int radius = fd_order/2;
       par_for("ref_gh stationary trumpet theta data", DevExeSpace(), 0,
@@ -537,6 +966,9 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
     Real conformal_gamma_linf = 0.0;
     Real hhat_linf = 0.0;
     Real theta_linf = 0.0;
+    const int gauge_stencil_radius =
+        ref_gh::PunctureEvolutionStencilRadius(
+            pack->prefgh->opt.fd_order, pack->prefgh->opt.diss);
     const int active_cells = indcs.nx1*indcs.nx2*indcs.nx3;
     Kokkos::parallel_reduce(
         "ref_gh stationary gauge initialization audit",
@@ -556,6 +988,13 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
                                      size.d_view(m).x2min, size.d_view(m).x2max);
           const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                      size.d_view(m).x3min, size.d_view(m).x3max);
+          const Real displacement[3] = {
+              x - cx, y - cy, z - cz};
+          const Real spacing[3] = {
+              size.d_view(m).dx1, size.d_view(m).dx2,
+              size.d_view(m).dx3};
+          if (!ref_gh::PunctureStencilIsClear(
+                  displacement, spacing, gauge_stencil_radius)) return;
           ref_gh::ReferenceGeometry reference;
           ref_gh::GetReferenceGeometry(
               1, table, mass, cx, cy, cz, 0.0, x, y, z, reference);
@@ -684,8 +1123,8 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
                                  + (rhs_z-cz)*(rhs_z-cz));
 
   for (int region = 0; region < kFixedRadiusCount; ++region) {
-    const Real minimum_radius = kFixedMinimumRadius[region];
-    const Real maximum_radius = kFixedMaximumRadius[region];
+    const Real minimum_radius = fixed_minimum_radius[region];
+    const Real maximum_radius = fixed_maximum_radius[region];
     Kokkos::parallel_reduce(
         "ref_gh stationary fixed-radius initial RHS",
         Kokkos::RangePolicy<>(DevExeSpace(),

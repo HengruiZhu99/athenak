@@ -1,33 +1,31 @@
-# Local pointwise puncture-exponent analytic gate.  The production first-order
-# state estimator is checked against finite-radius and finite-h analytic
-# wormhole/trumpet oracles.  Same-r/h direct-FD values are retained only as a
-# diagnostic of the expected scale-invariant stencil bias.
+# Static q-controlled trumpet provider/cache oracle.  This checks the dedicated
+# reference dispatch at q != 1 without activating feedback or evolving data.
 
 <job>
-basename = ref_gh_generic_singular_estimator
+basename = ref_gh_q_controlled_reference
 
 <mesh>
 nghost = 4
-nx1 = 8
+nx1 = 16
 x1min = -1.0
 x1max = 1.0
 ix1_bc = periodic
 ox1_bc = periodic
-nx2 = 8
+nx2 = 16
 x2min = -1.0
 x2max = 1.0
 ix2_bc = periodic
 ox2_bc = periodic
-nx3 = 8
+nx3 = 16
 x3min = -1.0
 x3max = 1.0
 ix3_bc = periodic
 ox3_bc = periodic
 
 <meshblock>
-nx1 = 8
-nx2 = 8
-nx3 = 8
+nx1 = 16
+nx2 = 16
+nx3 = 16
 
 <time>
 evolution = dynamic
@@ -38,8 +36,12 @@ tlim = 0.0
 ndiag = 1
 
 <ref_gh>
-reference = trumpet
+reference = trumpet_q_controlled
 source = covariant
+reference_mass = 1.0
+q_gaussian_width = 3.0
+q_initial = 0.9
+q_controller_enabled = false
 fd_order = 4
 validate_reference_cache = true
 gamma0 = 1.0
@@ -48,4 +50,5 @@ diss = 0.0
 
 <problem>
 pgen_name = ref_gh_source_unit
-puncture_exponent_gate = true
+q_controlled_reference_gate = true
+q_controller_self_test = true

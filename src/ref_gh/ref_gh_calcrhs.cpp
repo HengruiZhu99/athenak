@@ -3,6 +3,8 @@
 //! \brief Flat-reference nonlinear GH RHS and compatible Phi update.
 //========================================================================================
 #include <cmath>
+#include <cstdlib>
+#include <iostream>
 
 #include "athena.hpp"
 #include "coordinates/cell_locations.hpp"
@@ -28,6 +30,17 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   // directly outside the stage task list.
   FillReferenceCache(StageTime(driver, stage),
                      opt.source_kind != 0 || opt.gauge_reference_subtraction);
+  const std::uint64_t expected_reference_generation =
+      opt.reference_q_controlled ? q_controller_generation
+                                 : controller_generation;
+  if ((opt.reference_controlled || opt.reference_q_controlled)
+      && reference_cache_generation != expected_reference_generation) {
+    std::cout << "### FATAL ERROR: Ref-GH RHS observed a stale reference cache: "
+              << "cache_generation=" << reference_cache_generation
+              << " state_generation=" << expected_reference_generation
+              << " stage=" << stage << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   const int radius = FDNG - 1;

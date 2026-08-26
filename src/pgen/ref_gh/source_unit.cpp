@@ -20,14 +20,18 @@
 #include "ref_gh/phi_ordering.hpp"
 #include "ref_gh/physical_gauge_target.hpp"
 #include "ref_gh/puncture_exponent.hpp"
+#include "ref_gh/q_relaxed_controller.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_characteristics.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_generic_singular.hpp"
+#include "ref_gh/reference_projection.hpp"
+#include "ref_gh/reference_gauge_baseline.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
+#include "ref_gh/reference_trumpet_q_controlled.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 
 namespace {
@@ -834,8 +838,578 @@ ExponentSample EvaluateExponentSample(const int geometry_kind,
           exponents.spatial_valid && exponents.lapse_valid};
 }
 
-void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
-                                         const bool strict_gate) {
+void CheckRelativeExponentIdentity() {
+  constexpr int nsamples = 7;
+  Real maximum_error = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh relative exponent identity",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum) {
+        const Real displacement[3] = {
+            0.21 + 0.037*sample, -0.33 + 0.019*sample,
+            0.27 + 0.011*sample};
+        const Real radius2 = displacement[0]*displacement[0]
+                             + displacement[1]*displacement[1]
+                             + displacement[2]*displacement[2];
+        const Real radius = Kokkos::sqrt(radius2);
+        const Real q_reference = 0.65 + 0.09*sample;
+        const Real epsilon_exact = -0.18 + 0.055*sample;
+        const Real lambda = Kokkos::pow(radius, -q_reference);
+        const Real relative_scale = Kokkos::pow(radius, -2.0*epsilon_exact);
+        const Real seed[3][3] = {
+            {1.4, 0.12, -0.07}, {0.12, 0.9, 0.08},
+            {-0.07, 0.08, 1.2}};
+        Real relative_metric[4][4] = {};  // NOLINT(runtime/arrays)
+        relative_metric[0][0] = -1.0;
+        Real phi[3][4][4] = {};  // NOLINT(runtime/arrays)
+        Real spatial_coframe[3][3] = {};  // NOLINT(runtime/arrays)
+        Real physical_metric[4][4] = {};  // NOLINT(runtime/arrays)
+        Real d_physical_metric[4][4][4] = {};  // NOLINT(runtime/arrays)
+        physical_metric[0][0] = -1.0;
+        for (int I = 0; I < 3; ++I) {
+          spatial_coframe[I][I] = lambda;
+          for (int J = 0; J < 3; ++J) {
+            relative_metric[I + 1][J + 1] = relative_scale*seed[I][J];
+            physical_metric[I + 1][J + 1] =
+                lambda*lambda*relative_metric[I + 1][J + 1];
+          }
+        }
+        for (int K = 0; K < 3; ++K) {
+          for (int I = 0; I < 3; ++I) {
+            for (int J = 0; J < 3; ++J) {
+              const Real d_g = -2.0*epsilon_exact*displacement[K]/radius2
+                               *relative_metric[I + 1][J + 1];
+              phi[K][I + 1][J + 1] = d_g/lambda;
+            }
+          }
+        }
+        for (int k = 0; k < 3; ++k) {
+          for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+              d_physical_metric[k + 1][i + 1][j + 1] =
+                  -2.0*(q_reference + epsilon_exact)
+                  *displacement[k]/radius2
+                  *physical_metric[i + 1][j + 1];
+            }
+          }
+        }
+        Real epsilon_g = NAN;
+        const bool valid = ref_gh::ComputeRelativeSpatialExponentMismatch(
+            relative_metric, phi, spatial_coframe, displacement, epsilon_g);
+        const ref_gh::LocalPunctureExponents physical =
+            ref_gh::ComputeLocalPunctureExponents(
+                physical_metric, d_physical_metric, displacement);
+        if (!valid || !physical.spatial_valid) {
+          local_maximum = std::numeric_limits<Real>::infinity();
+          return;
+        }
+        local_maximum = fmax(
+            local_maximum, Kokkos::abs(epsilon_g - epsilon_exact));
+        local_maximum = fmax(
+            local_maximum,
+            Kokkos::abs(physical.q - (q_reference + epsilon_g)));
+      }, Kokkos::Max<Real>(maximum_error));
+  if (!(maximum_error <= 2.0e-13)) {
+    std::cout << "### FATAL ERROR: relative exponent identity failed: error="
+              << maximum_error << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH relative exponent identity passed: max-error="
+            << maximum_error << std::endl;
+}
+
+void CheckTrumpetQControlledReference(const DvceArray2D<Real> &table) {
+  constexpr int nsamples = 64;
+  Real maximum_identity_error = 0.0;
+  Real maximum_profile_error = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh q-controlled trumpet reference",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_identity,
+                    Real &local_profile) {
+        const Real x = 0.41 + 0.013*(sample % 4);
+        const Real y = -0.36 + 0.017*((sample/4) % 4);
+        const Real z = 0.29 + 0.019*((sample/16) % 4);
+        const Real displacement[3] = {x, y, z};
+        const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+        const Real rho = radius;
+
+        const ref_gh::TrumpetQControlledReferenceParameters identity_params{
+            1.0, {0.0, 0.0, 0.0}, 3.0, 1.0, 0.0, 0.0};
+        ref_gh::ReferenceGeometry controlled_identity;
+        const ref_gh::TrumpetQControlledReference identity_provider{
+            table, identity_params};
+        identity_provider.Populate(0.0, x, y, z, controlled_identity);
+        ref_gh::ReferenceGeometry exact;
+        const ref_gh::TrumpetSchwarzschildReference exact_provider{
+            table, 1.0, {0.0, 0.0, 0.0}};
+        exact_provider.Populate(0.0, x, y, z, exact);
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            local_identity = fmax(
+                local_identity,
+                Kokkos::abs(controlled_identity.metric[a][b]
+                            - exact.metric[a][b]));
+            for (int p = 0; p < 4; ++p) {
+              local_identity = fmax(
+                  local_identity,
+                  Kokkos::abs(controlled_identity.d_metric[p][a][b]
+                              - exact.d_metric[p][a][b]));
+            }
+          }
+        }
+
+        const Real q_value = 0.75 + 0.5*static_cast<Real>(sample % 5)/4.0;
+        const Real q_dot = -0.08 + 0.04*static_cast<Real>((sample/5) % 5);
+        const Real q_ddot = 0.03 - 0.015*static_cast<Real>((sample/25) % 3);
+        const ref_gh::TrumpetQControlledReferenceParameters params{
+            1.0, {0.0, 0.0, 0.0}, 3.0, q_value, q_dot, q_ddot};
+        ref_gh::ReferenceJet alpha;
+        ref_gh::ReferenceJet spatial_cholesky;
+        ref_gh::ReferenceJet shift_q;
+        ref_gh::ReferenceJet q;
+        ref_gh::ReferenceJet window;
+        ref_gh::TrumpetQControlledProfileJets(
+            table, params, x, y, z, alpha, spatial_cholesky, shift_q,
+            &q, &window);
+        const ref_gh::RadialProfile alpha_profile =
+            ref_gh::InterpolateTrumpetProfile(
+                table, ref_gh::kCoeffAlpha, rho);
+        const ref_gh::RadialProfile psi2_profile =
+            ref_gh::ArealRadiusToPsi2(
+                ref_gh::InterpolateTrumpetProfile(
+                    table, ref_gh::kCoeffArealRadius, rho), rho);
+        ref_gh::RadialProfile shift_profile =
+            ref_gh::InterpolateTrumpetProfile(
+                table, ref_gh::kCoeffShiftQ, rho);
+        const Real expected_window = Kokkos::exp(-(radius/3.0)*(radius/3.0));
+        const Real expected_factor = Kokkos::exp(
+            -(q_value - 1.0)*expected_window*Kokkos::log(rho));
+        local_profile = fmax(
+            local_profile, Kokkos::abs(alpha.value - alpha_profile.value));
+        local_profile = fmax(
+            local_profile, Kokkos::abs(shift_q.value - shift_profile.value));
+        local_profile = fmax(
+            local_profile,
+            Kokkos::abs(spatial_cholesky.value
+                        - psi2_profile.value*expected_factor));
+        local_profile = fmax(local_profile, Kokkos::abs(q.value - q_value));
+        local_profile = fmax(local_profile, Kokkos::abs(q.d[0] - q_dot));
+        local_profile = fmax(local_profile, Kokkos::abs(q.dd[0][0] - q_ddot));
+        local_profile = fmax(
+            local_profile, Kokkos::abs(window.value - expected_window));
+        for (int p = 1; p < 4; ++p) {
+          local_profile = fmax(local_profile, Kokkos::abs(alpha.d[0]));
+          local_profile = fmax(local_profile, Kokkos::abs(shift_q.d[0]));
+          local_profile = fmax(local_profile, Kokkos::abs(q.d[p]));
+        }
+      }, Kokkos::Max<Real>(maximum_identity_error),
+      Kokkos::Max<Real>(maximum_profile_error));
+  if (!(maximum_identity_error <= 2.0e-13)
+      || !(maximum_profile_error <= 2.0e-13)) {
+    std::cout << "### FATAL ERROR: q-controlled trumpet reference oracle failed: "
+              << "q=1 identity=" << maximum_identity_error
+              << " profile=" << maximum_profile_error << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH q-controlled trumpet provider passed: q=1 identity="
+            << maximum_identity_error
+            << " profile=" << maximum_profile_error << std::endl;
+}
+
+void CheckTrumpetQReprojection(const DvceArray2D<Real> &table) {
+  constexpr int nsamples = 96;
+  Real maximum_metric_error = 0.0;
+  Real maximum_derivative_error = 0.0;
+  Real minimum_pi_magnitude = std::numeric_limits<Real>::max();
+  Kokkos::parallel_reduce(
+      "ref_gh q-controlled trumpet reprojection",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_metric,
+                    Real &local_derivative, Real &local_minimum_pi) {
+        const Real x = 0.38 + 0.011*(sample % 4);
+        const Real y = -0.31 + 0.013*((sample/4) % 4);
+        const Real z = 0.27 + 0.017*((sample/16) % 6);
+        ref_gh::ReferenceGeometry physical;
+        const ref_gh::TrumpetSchwarzschildReference physical_provider{
+            table, 1.0, {0.0, 0.0, 0.0}};
+        physical_provider.Populate(0.0, x, y, z, physical);
+        const Real q_value = 0.75 + 0.5*static_cast<Real>(sample % 7)/6.0;
+        const ref_gh::TrumpetQControlledReferenceParameters params{
+            1.0, {0.0, 0.0, 0.0}, 3.0, q_value, 0.0, 0.0};
+        ref_gh::ReferenceGeometry current;
+        const ref_gh::TrumpetQControlledReference current_provider{
+            table, params};
+        current_provider.Populate(0.0, x, y, z, current);
+        const ref_gh::ProjectedFirstOrderMetric projected =
+            ref_gh::ProjectPhysicalMetricToReference(
+                physical.metric, physical.d_metric, current);
+        if (!projected.valid) {
+          local_metric = std::numeric_limits<Real>::infinity();
+          return;
+        }
+        Real reconstructed[4][4] = {};  // NOLINT(runtime/arrays)
+        Real d_reconstructed[4][4][4] = {};  // NOLINT(runtime/arrays)
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            for (int A = 0; A < 4; ++A) {
+              for (int B = 0; B < 4; ++B) {
+                reconstructed[a][b] += current.coframe[A][a]
+                                         *current.coframe[B][b]
+                                         *projected.psi[A][B];
+              }
+            }
+          }
+        }
+        Real inverse[4][4];  // NOLINT(runtime/arrays)
+        Real determinant = 0.0;
+        if (!ref_gh::Invert4(reconstructed, inverse, determinant)
+            || !(inverse[0][0] < 0.0)) {
+          local_metric = std::numeric_limits<Real>::infinity();
+          return;
+        }
+        const Real lapse = 1.0/Kokkos::sqrt(-inverse[0][0]);
+        Real shift[3];  // NOLINT(runtime/arrays)
+        for (int i = 0; i < 3; ++i) {
+          shift[i] = lapse*lapse*inverse[0][i + 1];
+        }
+        Real recovered_d_psi[4][4][4] = {};  // NOLINT(runtime/arrays)
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            for (int i = 0; i < 3; ++i) {
+              for (int I = 0; I < 3; ++I) {
+                recovered_d_psi[i + 1][A][B] +=
+                    current.spatial_coframe[I][i]
+                    *projected.phi[I][A][B];
+              }
+            }
+            recovered_d_psi[0][A][B] = -lapse*projected.pi[A][B];
+            for (int i = 0; i < 3; ++i) {
+              recovered_d_psi[0][A][B] +=
+                  shift[i]*recovered_d_psi[i + 1][A][B];
+            }
+          }
+        }
+        for (int p = 0; p < 4; ++p) {
+          Real frame_corrected[4][4];  // NOLINT(runtime/arrays)
+          for (int A = 0; A < 4; ++A) {
+            for (int B = 0; B < 4; ++B) {
+              frame_corrected[A][B] = recovered_d_psi[p][A][B];
+              for (int a = 0; a < 4; ++a) {
+                for (int b = 0; b < 4; ++b) {
+                  frame_corrected[A][B] -=
+                      (current.d_frame[p][A][a]*current.frame[B][b]
+                       + current.frame[A][a]*current.d_frame[p][B][b])
+                      *reconstructed[a][b];
+                }
+              }
+            }
+          }
+          for (int a = 0; a < 4; ++a) {
+            for (int b = 0; b < 4; ++b) {
+              for (int A = 0; A < 4; ++A) {
+                for (int B = 0; B < 4; ++B) {
+                  d_reconstructed[p][a][b] +=
+                      current.coframe[A][a]*current.coframe[B][b]
+                      *frame_corrected[A][B];
+                }
+              }
+            }
+          }
+        }
+        Real pi_magnitude = 0.0;
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            pi_magnitude = fmax(
+                pi_magnitude, Kokkos::abs(projected.pi[A][B]));
+          }
+        }
+        if (q_value != 1.0) {
+          local_minimum_pi = fmin(local_minimum_pi, pi_magnitude);
+        }
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            const Real metric_scale = fmax(1.0, Kokkos::abs(
+                physical.metric[a][b]));
+            local_metric = fmax(
+                local_metric,
+                Kokkos::abs(reconstructed[a][b] - physical.metric[a][b])
+                    /metric_scale);
+            for (int p = 0; p < 4; ++p) {
+              const Real derivative_scale = fmax(
+                  1.0, Kokkos::abs(physical.d_metric[p][a][b]));
+              local_derivative = fmax(
+                  local_derivative,
+                  Kokkos::abs(d_reconstructed[p][a][b]
+                              - physical.d_metric[p][a][b])
+                      /derivative_scale);
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(maximum_metric_error),
+      Kokkos::Max<Real>(maximum_derivative_error),
+      Kokkos::Min<Real>(minimum_pi_magnitude));
+  if (!(maximum_metric_error <= 2.0e-13)
+      || !(maximum_derivative_error <= 2.0e-12)
+      || !(minimum_pi_magnitude > 1.0e-8)) {
+    std::cout << "### FATAL ERROR: q-controlled trumpet reprojection failed: "
+              << "metric=" << maximum_metric_error
+              << " derivative=" << maximum_derivative_error
+              << " min-nontrivial-Pi=" << minimum_pi_magnitude << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH q-controlled trumpet reprojection passed: metric="
+            << maximum_metric_error
+            << " derivative=" << maximum_derivative_error
+            << " min-nontrivial-Pi=" << minimum_pi_magnitude << std::endl;
+}
+
+void CheckTrumpetQGaugeReprojection(const DvceArray2D<Real> &table) {
+  constexpr int nsamples = 80;
+  Real maximum_hhat_error = 0.0;
+  Real maximum_theta_error = 0.0;
+  Real maximum_subtraction_error = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh q-controlled trumpet gauge reprojection",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_hhat, Real &local_theta,
+                    Real &local_subtraction) {
+        const Real x = 0.43 + 0.009*(sample % 4);
+        const Real y = -0.34 + 0.012*((sample/4) % 4);
+        const Real z = 0.25 + 0.014*((sample/16) % 5);
+        ref_gh::ReferenceGeometry physical;
+        const ref_gh::TrumpetSchwarzschildReference physical_provider{
+            table, 1.0, {0.0, 0.0, 0.0}};
+        physical_provider.Populate(0.0, x, y, z, physical);
+        const Real q_value = 0.75 + 0.5*static_cast<Real>(sample % 9)/8.0;
+        const Real q_dot = -0.06 + 0.02*static_cast<Real>((sample/9) % 7);
+        const ref_gh::TrumpetQControlledReferenceParameters params{
+            1.0, {0.0, 0.0, 0.0}, 3.0, q_value, q_dot, -0.025};
+        ref_gh::ReferenceGeometry current;
+        const ref_gh::TrumpetQControlledReference current_provider{
+            table, params};
+        current_provider.Populate(0.0, x, y, z, current);
+        const ref_gh::ProjectedStationaryGaugeState projected =
+            ref_gh::ProjectStationaryPhysicalGaugeToReference(
+                physical, current);
+        const ref_gh::ReferenceGaugeBaseline baseline =
+            ref_gh::ComputeReferenceGaugeBaseline(current);
+        if (!projected.valid || !baseline.valid) {
+          local_hhat = std::numeric_limits<Real>::infinity();
+          return;
+        }
+        ref_gh::CoordinateGhGeometry geometry;
+        Real determinant = 0.0;
+        if (!ref_gh::ComputeCoordinateGhGeometry(
+                physical.metric, physical.d_metric, physical, geometry,
+                determinant)) {
+          local_hhat = std::numeric_limits<Real>::infinity();
+          return;
+        }
+        Real d_hhat_coordinate[4][4] = {};  // NOLINT(runtime/arrays)
+        ref_gh::ImplicitGaugeSourceDerivative(
+            physical.metric, physical.d_metric, physical, geometry,
+            d_hhat_coordinate);
+        Real expected_theta_coordinate[4] = {};  // NOLINT(runtime/arrays)
+        for (int a = 0; a < 4; ++a) {
+          for (int i = 0; i < 3; ++i) {
+            expected_theta_coordinate[a] -=
+                geometry.shift[i]*d_hhat_coordinate[i + 1][a];
+          }
+          Real recovered_hhat = 0.0;
+          Real recovered_theta = 0.0;
+          Real recovered_subtracted_hhat = 0.0;
+          Real recovered_subtracted_theta = 0.0;
+          for (int A = 0; A < 4; ++A) {
+            recovered_hhat += current.coframe[A][a]*projected.hhat[A];
+            recovered_theta += current.coframe[A][a]*projected.theta[A];
+            const Real delta_hhat = projected.hhat[A] - baseline.hhat[A];
+            const Real delta_theta = projected.theta[A] - baseline.theta[A];
+            recovered_subtracted_hhat +=
+                current.coframe[A][a]*(delta_hhat + baseline.hhat[A]);
+            recovered_subtracted_theta +=
+                current.coframe[A][a]*(delta_theta + baseline.theta[A]);
+          }
+          local_hhat = fmax(
+              local_hhat,
+              Kokkos::abs(recovered_hhat - geometry.gauge_source[a]));
+          local_theta = fmax(
+              local_theta,
+              Kokkos::abs(recovered_theta - expected_theta_coordinate[a]));
+          local_subtraction = fmax(
+              local_subtraction,
+              Kokkos::abs(recovered_subtracted_hhat
+                          - geometry.gauge_source[a]));
+          local_subtraction = fmax(
+              local_subtraction,
+              Kokkos::abs(recovered_subtracted_theta
+                          - expected_theta_coordinate[a]));
+        }
+      }, Kokkos::Max<Real>(maximum_hhat_error),
+      Kokkos::Max<Real>(maximum_theta_error),
+      Kokkos::Max<Real>(maximum_subtraction_error));
+  if (!(maximum_hhat_error <= 2.0e-12)
+      || !(maximum_theta_error <= 2.0e-12)
+      || !(maximum_subtraction_error <= 2.0e-12)) {
+    std::cout << "### FATAL ERROR: q-controlled gauge reprojection failed: "
+              << "Hhat=" << maximum_hhat_error
+              << " theta=" << maximum_theta_error
+              << " subtraction=" << maximum_subtraction_error << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH q-controlled gauge reprojection passed: Hhat="
+            << maximum_hhat_error << " theta=" << maximum_theta_error
+            << " subtraction=" << maximum_subtraction_error << std::endl;
+}
+
+ref_gh::QRelaxedControllerRhs ManufacturedQControllerRhs(
+    const Real q, const Real q_dot, const Real time,
+    const bool varying_target) {
+  const Real q_est = varying_target ? 1.0 + 0.05*std::sin(0.1*time) : 1.0;
+  return ref_gh::EvaluateQRelaxedControllerRhs(
+      q, q_dot, q_est, 0.5, 1.0, 1.0e6);
+}
+
+void AdvanceManufacturedQController(Real &q, Real &q_dot, Real &time,
+                                    const Real dt, const int steps,
+                                    const bool varying_target) {
+  for (int step = 0; step < steps; ++step) {
+    const ref_gh::QRelaxedControllerRhs k1 = ManufacturedQControllerRhs(
+        q, q_dot, time, varying_target);
+    const ref_gh::QRelaxedControllerRhs k2 = ManufacturedQControllerRhs(
+        q + 0.5*dt*k1.q, q_dot + 0.5*dt*k1.q_dot,
+        time + 0.5*dt, varying_target);
+    const ref_gh::QRelaxedControllerRhs k3 = ManufacturedQControllerRhs(
+        q + 0.5*dt*k2.q, q_dot + 0.5*dt*k2.q_dot,
+        time + 0.5*dt, varying_target);
+    const ref_gh::QRelaxedControllerRhs k4 = ManufacturedQControllerRhs(
+        q + dt*k3.q, q_dot + dt*k3.q_dot, time + dt, varying_target);
+    q += dt*(k1.q + 2.0*k2.q + 2.0*k3.q + k4.q)/6.0;
+    q_dot += dt*(k1.q_dot + 2.0*k2.q_dot
+                 + 2.0*k3.q_dot + k4.q_dot)/6.0;
+    time += dt;
+  }
+}
+
+void CheckQRelaxedController() {
+  const ref_gh::QRelaxedControllerRhs positive =
+      ref_gh::EvaluateQRelaxedControllerRhs(0.9, 0.0, 1.0, 0.5, 1.0, 1.0);
+  const ref_gh::QRelaxedControllerRhs negative =
+      ref_gh::EvaluateQRelaxedControllerRhs(1.1, 0.0, 1.0, 0.5, 1.0, 1.0);
+  if (!(positive.q_dot > 0.0) || !(negative.q_dot < 0.0)) {
+    std::cout << "### FATAL ERROR: q-controller sign oracle failed."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  constexpr Real dt = 1.0/256.0;
+  constexpr int steps = 2048;
+  Real q = 0.75;
+  Real q_dot = 0.0;
+  Real time = 0.0;
+  AdvanceManufacturedQController(q, q_dot, time, dt, steps, false);
+  const Real omega = 0.5;
+  const Real displacement0 = -0.25;
+  const Real exact_q = 1.0
+      + (displacement0 + omega*displacement0*time)*std::exp(-omega*time);
+  const Real exact_q_dot =
+      -omega*omega*displacement0*time*std::exp(-omega*time);
+  const Real critical_error = std::max(
+      std::abs(q - exact_q), std::abs(q_dot - exact_q_dot));
+
+  Real uninterrupted_q = 1.08;
+  Real uninterrupted_q_dot = -0.03;
+  Real uninterrupted_time = 0.0;
+  AdvanceManufacturedQController(
+      uninterrupted_q, uninterrupted_q_dot, uninterrupted_time,
+      dt, steps, true);
+  Real restarted_q = 1.08;
+  Real restarted_q_dot = -0.03;
+  Real restarted_time = 0.0;
+  AdvanceManufacturedQController(
+      restarted_q, restarted_q_dot, restarted_time, dt, steps/2, true);
+  const Real checkpoint_q = restarted_q;
+  const Real checkpoint_q_dot = restarted_q_dot;
+  const Real checkpoint_time = restarted_time;
+  restarted_q = checkpoint_q;
+  restarted_q_dot = checkpoint_q_dot;
+  restarted_time = checkpoint_time;
+  AdvanceManufacturedQController(
+      restarted_q, restarted_q_dot, restarted_time, dt, steps/2, true);
+  const bool restart_exact = restarted_q == uninterrupted_q
+      && restarted_q_dot == uninterrupted_q_dot
+      && restarted_time == uninterrupted_time;
+  const Real final_target = 1.0 + 0.05*std::sin(0.1*uninterrupted_time);
+  const Real varying_lag = std::abs(uninterrupted_q - final_target);
+  constexpr Real prescribed_duration = 8.0;
+  constexpr Real prescribed_time = 2.3;
+  constexpr Real prescribed_step = 1.0e-4;
+  Real prescribed_error = 0.0;
+  const Real prescribed_targets[4] = {0.90, 1.10, 0.75, 1.25};
+  for (const Real target : prescribed_targets) {
+    const ref_gh::PrescribedQTrajectory start =
+        ref_gh::EvaluatePrescribedQTrajectory(
+            0.0, target, prescribed_duration);
+    const ref_gh::PrescribedQTrajectory peak =
+        ref_gh::EvaluatePrescribedQTrajectory(
+            0.5*prescribed_duration, target, prescribed_duration);
+    const ref_gh::PrescribedQTrajectory end =
+        ref_gh::EvaluatePrescribedQTrajectory(
+            prescribed_duration, target, prescribed_duration);
+    const ref_gh::PrescribedQTrajectory center =
+        ref_gh::EvaluatePrescribedQTrajectory(
+            prescribed_time, target, prescribed_duration);
+    const ref_gh::PrescribedQTrajectory minus =
+        ref_gh::EvaluatePrescribedQTrajectory(
+            prescribed_time - prescribed_step, target,
+            prescribed_duration);
+    const ref_gh::PrescribedQTrajectory plus =
+        ref_gh::EvaluatePrescribedQTrajectory(
+            prescribed_time + prescribed_step, target,
+            prescribed_duration);
+    const Real fd_q_dot =
+        (plus.q - minus.q)/(2.0*prescribed_step);
+    const Real fd_q_ddot =
+        (plus.q - 2.0*center.q + minus.q)
+        /(prescribed_step*prescribed_step);
+    prescribed_error = std::max(
+        prescribed_error, std::abs(start.q - 1.0));
+    prescribed_error = std::max(
+        prescribed_error, std::abs(start.q_dot));
+    prescribed_error = std::max(
+        prescribed_error, std::abs(start.q_ddot));
+    prescribed_error = std::max(
+        prescribed_error, std::abs(peak.q - target));
+    prescribed_error = std::max(
+        prescribed_error, std::abs(peak.q_dot));
+    prescribed_error = std::max(
+        prescribed_error, std::abs(end.q - 1.0));
+    prescribed_error = std::max(
+        prescribed_error, std::abs(end.q_dot));
+    prescribed_error = std::max(
+        prescribed_error, std::abs(end.q_ddot));
+    prescribed_error = std::max(
+        prescribed_error, std::abs(center.q_dot - fd_q_dot));
+    prescribed_error = std::max(
+        prescribed_error, std::abs(center.q_ddot - fd_q_ddot));
+  }
+  if (!(critical_error < 2.0e-11) || !restart_exact
+      || !(varying_lag < 0.03) || !(uninterrupted_q > 0.5)
+      || !(uninterrupted_q < 2.5) || !(prescribed_error < 2.0e-8)) {
+    std::cout << "### FATAL ERROR: q-controller manufactured history failed: "
+              << "critical-error=" << critical_error
+              << " restart-exact=" << restart_exact
+              << " varying-lag=" << varying_lag
+              << " prescribed-error=" << prescribed_error << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH q-controller manufactured histories passed: "
+            << "critical-error=" << critical_error
+            << " restart-exact=" << restart_exact
+            << " varying-lag=" << varying_lag
+            << " prescribed-error=" << prescribed_error << std::endl;
+}
+
+void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table) {
   {
     const Real spacing[3] = {1.0, 0.5, 0.25};
     const Real overlapping[3] = {2.0, 1.0, 0.5};
@@ -875,12 +1449,19 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
       Real sum_w2 = 0.0;
       Real sum_wq = 0.0;
       Real sum_wq2 = 0.0;
+      Real sum_wq_exact = 0.0;
       Real safe_sum_w = 0.0;
       Real safe_sum_w2 = 0.0;
       Real safe_sum_wq = 0.0;
+      Real safe_sum_wq2 = 0.0;
+      Real safe_sum_wq_exact = 0.0;
       Real sum_wq_fd = 0.0;
       Real maximum_state_error = 0.0;
       Real maximum_fd_error = 0.0;
+      Real minimum_q = std::numeric_limits<Real>::max();
+      Real maximum_q = -std::numeric_limits<Real>::max();
+      Real safe_minimum_q = std::numeric_limits<Real>::max();
+      Real safe_maximum_q = -std::numeric_limits<Real>::max();
       int count = 0;
       int safe_count = 0;
       Kokkos::parallel_reduce(
@@ -890,9 +1471,13 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
                         Real &local_sum_w2, Real &local_sum_wq,
                         Real &local_sum_wq2, Real &local_safe_sum_w,
                         Real &local_safe_sum_w2, Real &local_safe_sum_wq,
-                        Real &local_sum_wq_fd,
+                        Real &local_safe_sum_wq2,
+                        Real &local_safe_sum_wq_exact,
+                        Real &local_sum_wq_fd, Real &local_sum_wq_exact,
                         Real &local_maximum_state_error,
-                        Real &local_maximum_fd_error, int &local_count,
+                        Real &local_maximum_fd_error, Real &local_minimum_q,
+                        Real &local_maximum_q, Real &local_safe_minimum_q,
+                        Real &local_safe_maximum_q, int &local_count,
                         int &local_safe_count) {
             int work = index;
             const int ix = work % nside; work /= nside;
@@ -916,6 +1501,9 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
             local_sum_w2 += weight*weight;
             local_sum_wq += weight*sample.q_state;
             local_sum_wq2 += weight*sample.q_state*sample.q_state;
+            local_sum_wq_exact += weight*sample.q_exact;
+            local_minimum_q = fmin(local_minimum_q, sample.q_state);
+            local_maximum_q = fmax(local_maximum_q, sample.q_state);
             local_maximum_state_error = fmax(
                 local_maximum_state_error,
                 Kokkos::abs(sample.q_state - sample.q_exact));
@@ -928,6 +1516,12 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
               local_safe_sum_w += weight;
               local_safe_sum_w2 += weight*weight;
               local_safe_sum_wq += weight*sample.q_state;
+              local_safe_sum_wq2 += weight*sample.q_state*sample.q_state;
+              local_safe_sum_wq_exact += weight*sample.q_exact;
+              local_safe_minimum_q = fmin(
+                  local_safe_minimum_q, sample.q_state);
+              local_safe_maximum_q = fmax(
+                  local_safe_maximum_q, sample.q_state);
               local_sum_wq_fd += weight*sample.q_fd;
               local_maximum_fd_error = fmax(
                   local_maximum_fd_error,
@@ -937,18 +1531,25 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
           }, Kokkos::Sum<Real>(sum_w), Kokkos::Sum<Real>(sum_w2),
           Kokkos::Sum<Real>(sum_wq), Kokkos::Sum<Real>(sum_wq2),
           Kokkos::Sum<Real>(safe_sum_w), Kokkos::Sum<Real>(safe_sum_w2),
-          Kokkos::Sum<Real>(safe_sum_wq),
-          Kokkos::Sum<Real>(sum_wq_fd), Kokkos::Max<Real>(maximum_state_error),
-          Kokkos::Max<Real>(maximum_fd_error), Kokkos::Sum<int>(count),
+          Kokkos::Sum<Real>(safe_sum_wq), Kokkos::Sum<Real>(safe_sum_wq2),
+          Kokkos::Sum<Real>(safe_sum_wq_exact),
+          Kokkos::Sum<Real>(sum_wq_fd), Kokkos::Sum<Real>(sum_wq_exact),
+          Kokkos::Max<Real>(maximum_state_error),
+          Kokkos::Max<Real>(maximum_fd_error), Kokkos::Min<Real>(minimum_q),
+          Kokkos::Max<Real>(maximum_q), Kokkos::Min<Real>(safe_minimum_q),
+          Kokkos::Max<Real>(safe_maximum_q), Kokkos::Sum<int>(count),
           Kokkos::Sum<int>(safe_count));
-      const Real q_est = sum_wq/sum_w;
-      const Real safe_q_est = safe_sum_wq/safe_sum_w;
+      const Real full_q_est = sum_wq/sum_w;
+      const Real q_est = safe_sum_wq/safe_sum_w;
+      const Real q_analytic = safe_sum_wq_exact/safe_sum_w;
       const Real q_fd_est = sum_wq_fd/safe_sum_w;
-      const Real variance = fmax(0.0, sum_wq2/sum_w - q_est*q_est);
+      const Real variance = fmax(
+          0.0, safe_sum_wq2/safe_sum_w - q_est*q_est);
       const Real n_eff = sum_w*sum_w/sum_w2;
       const Real safe_n_eff = safe_sum_w*safe_sum_w/safe_sum_w2;
       if (count <= 0 || safe_count <= 0 || !(n_eff > 1.0)
           || !(safe_n_eff > 1.0) || !std::isfinite(variance)
+          || Kokkos::abs(q_est - q_analytic) > 2.0e-13
           || maximum_state_error > 2.0e-11
           || (geometry_kind == 0 && maximum_fd_error > 2.0e-13)) {
         std::cout << "### FATAL ERROR: local puncture exponent estimator failed: "
@@ -958,7 +1559,7 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
                   << " FD-error=" << maximum_fd_error << std::endl;
         std::exit(EXIT_FAILURE);
       }
-      const Real fd_difference = Kokkos::abs(q_fd_est - safe_q_est);
+      const Real fd_difference = Kokkos::abs(q_fd_est - q_est);
       Real fixed_fd_difference = 0.0;
       constexpr int nfixed_samples = 48;
       Kokkos::parallel_reduce(
@@ -1029,11 +1630,17 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
       }
       std::cout << "reference-GH local exponent: geometry=" << geometry_kind
                 << " h=" << h << " q_est=" << q_est
-                << " safe_q_est=" << safe_q_est
+                << " q_analytic=" << q_analytic
                 << " q_fd_est=" << q_fd_est << " variance=" << variance
-                << " N_eff=" << n_eff << " samples=" << count
-                << " safe_N_eff=" << safe_n_eff
-                << " safe_samples=" << safe_count
+                << " N_eff=" << safe_n_eff
+                << " samples=" << safe_count
+                << " q_min=" << safe_minimum_q
+                << " q_max=" << safe_maximum_q
+                << " unmasked_q_est=" << full_q_est
+                << " unmasked_N_eff=" << n_eff
+                << " unmasked_samples=" << count
+                << " unmasked_q_min=" << minimum_q
+                << " unmasked_q_max=" << maximum_q
                 << " state-error=" << maximum_state_error
                 << " FD-error=" << maximum_fd_error
                 << " fixed-coordinate-FD-error=" << fixed_fd_difference
@@ -1064,12 +1671,9 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table,
             << first_fixed_fd_difference[2] << ","
             << final_fixed_fd_difference[2] << ")"
             << std::endl;
-  if (strict_gate && !direct_fd_converged) {
-    std::cout << "### FATAL ERROR: the direct-FD estimator does not converge to "
-                 "the first-order-state estimator on the prescribed r/h shell."
-              << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
+  // Same-r/h direct-FD behavior is intentionally diagnostic-only.  A centered
+  // stencil samples identical dimensionless points of a self-similar singular
+  // profile as h changes, so its relative bias need not converge to zero.
 }
 
 void ScanGenericSingularReference(ParameterInput *pin) {
@@ -2296,9 +2900,21 @@ void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) 
   CheckNonflatCovariantSource();
   CheckDynamicSpatialReference();
   if (pin->GetOrAddBoolean("problem", "puncture_exponent_gate", false)) {
+    CheckRelativeExponentIdentity();
     CheckLocalPunctureExponentEstimator(
-        pmy_mesh_->pmb_pack->prefgh->reference_table,
-        pin->GetOrAddBoolean("problem", "puncture_exponent_gate_strict", true));
+        pmy_mesh_->pmb_pack->prefgh->reference_table);
+  }
+  if (pin->GetOrAddBoolean(
+          "problem", "q_controlled_reference_gate", false)) {
+    CheckTrumpetQControlledReference(
+        pmy_mesh_->pmb_pack->prefgh->reference_table);
+    CheckTrumpetQReprojection(
+        pmy_mesh_->pmb_pack->prefgh->reference_table);
+    CheckTrumpetQGaugeReprojection(
+        pmy_mesh_->pmb_pack->prefgh->reference_table);
+  }
+  if (pin->GetOrAddBoolean("problem", "q_controller_self_test", false)) {
+    CheckQRelaxedController();
   }
   if (pin->GetOrAddBoolean("problem", "generic_reference_scan", false)) {
     ScanGenericSingularReference(pin);
