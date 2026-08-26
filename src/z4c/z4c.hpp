@@ -56,6 +56,11 @@ enum class Z4cShiftAdvectionOrder {
   o2,
 };
 
+enum class Z4cBoundaryRHSMode {
+  sommerfeld,
+  full_constraint_bjorhus,
+};
+
 // The name is deliberately a writer/checkpoint label, rather than an inferred
 // root cause.  A failure record can therefore distinguish a bad RK update from
 // a later AMR, communication, or boundary write without retaining a large
@@ -274,6 +279,9 @@ class Z4c {
     bool use_z4c;
     // Apply the Sommerfeld condition for user BCs.
     bool user_Sbc;
+    // Active-cell RHS treatment at open physical boundaries.  The established
+    // Sommerfeld closure remains the default.
+    Z4cBoundaryRHSMode boundary_rhs_mode;
     // Boundary extrapolation order
     int extrap_order;
     // Spatial finite-difference order for Z4c derivatives
@@ -369,6 +377,8 @@ class Z4c {
   TaskStatus Z4cBoundaryRHS(Driver *d, int stage);
   template <typename Centering, typename Symmetry>
   TaskStatus Z4cBoundaryRHSImpl(Driver *d, int stage);
+  template <typename Centering, typename Symmetry>
+  TaskStatus Z4cFullConstraintBjorhusRHSImpl(Driver *d, int stage);
   TaskStatus RestrictU(Driver *d, int stage);
   TaskStatus RestrictWeyl(Driver *d, int stage);
   TaskStatus CCEDump(Driver *pdrive, int stage);

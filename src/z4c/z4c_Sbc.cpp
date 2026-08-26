@@ -20,6 +20,7 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "z4c/cartoon_derivatives.hpp"
+#include "z4c/full_constraint_bjorhus.hpp"
 #include "z4c/sommerfeld_derivatives.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_symmetry.hpp"
@@ -262,6 +263,61 @@ static Real OneSidedTensorFirst(const int direction, const int side,
       side, inverse_spacing[direction], value);
 }
 
+//! Differentiate a just-computed RHS without reading a stale RHS ghost.
+//!
+//! CalcRHS writes active points only and BoundaryRHS runs before the RK update and
+//! subsequent communication.  Consequently a centered tangential stencil at a local
+//! MeshBlock edge must not consume the preceding stage's RHS ghost.  Use the same
+//! robust O2 closure toward the local active interior at those edges.  The collapsed
+//! Cartoon direction remains a tensor-aware analytic derivative supplied by `provider`.
+template <typename DerivativeProvider, typename ScalarField>
+KOKKOS_INLINE_FUNCTION
+static Real StageCurrentScalarFirst(
+    const int direction, const int physical_side, const Real inverse_spacing[3],
+    ScalarField &field, const DerivativeProvider &provider,
+    const Z4cGridLayout &layout, const int m, const int k, const int j,
+    const int i) {
+  if (layout.nx3 == 1 && direction == 2) {
+    return provider.ScalarFirst(direction, field);
+  }
+  const int index[3] = {i, j, k};
+  const int lower[3] = {layout.is, layout.js, layout.ks};
+  const int upper[3] = {layout.ie, layout.je, layout.ke};
+  int closure_side = physical_side;
+  if (closure_side == 0 && index[direction] == lower[direction]) closure_side = -1;
+  if (closure_side == 0 && index[direction] == upper[direction]) closure_side = 1;
+  if (closure_side != 0) {
+    return OneSidedScalarFirst<2>(direction, closure_side, inverse_spacing,
+                                  field, m, k, j, i);
+  }
+  return Dx<2>(direction, inverse_spacing, field, m, k, j, i);
+}
+
+template <typename DerivativeProvider, typename TensorField>
+KOKKOS_INLINE_FUNCTION
+static Real StageCurrentTensorFirst(
+    const int direction, const int physical_side, const Real inverse_spacing[3],
+    TensorField &field, const int component_a, const int component_b,
+    const DerivativeProvider &provider, const Z4cGridLayout &layout,
+    const int m, const int k, const int j, const int i) {
+  if (layout.nx3 == 1 && direction == 2) {
+    return provider.template TensorFirst<TensorVariance::all_lower>(
+        direction, component_a, component_b, field);
+  }
+  const int index[3] = {i, j, k};
+  const int lower[3] = {layout.is, layout.js, layout.ks};
+  const int upper[3] = {layout.ie, layout.je, layout.ke};
+  int closure_side = physical_side;
+  if (closure_side == 0 && index[direction] == lower[direction]) closure_side = -1;
+  if (closure_side == 0 && index[direction] == upper[direction]) closure_side = 1;
+  if (closure_side != 0) {
+    return OneSidedTensorFirst<2>(direction, closure_side, inverse_spacing,
+                                  field, component_a, component_b, m, k, j, i);
+  }
+  return Dx<2>(direction, inverse_spacing, field, m, component_a,
+               component_b, k, j, i);
+}
+
 //----------------------------------------------------------------------------------------
 //! \fn void Z4c::Z4cSommerfeld
 //! \brief apply Sommerfeld BCs to the given set of points
@@ -392,6 +448,199 @@ static void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
         rhs.vA_dd(m,a,b,k,j,i) -= s_u(c) * dA_ddd(c,a,b);
       }
     }
+  }
+}
+
+//! Apply the four incoming full-field constraint compatibility equations at one point.
+//!
+//! The complete volume RHS is already present.  Physical-normal derivatives always use
+//! the robust O2 inward stencil, independently of the bulk spatial order.  Nonincident
+//! coordinate contributions (needed when the metric normal is oblique) use centered O2
+//! only where both active neighbors are stage-current, with an inward O2 closure at
+//! local block edges.  This deliberately avoids reading a stale RHS ghost.
+template <typename Centering, typename Symmetry, int NGHOST>
+KOKKOS_INLINE_FUNCTION
+static void ApplyFullConstraintBjorhusAtPoint(
+    const Z4c::Z4c_vars &z4c, const Z4c::Z4c_vars &rhs,
+    const Z4cGridLayout &layout, const DualArray1D<RegionSize> &size,
+    const DvceArray2D<BoundaryFlag> &bcs, const bool user_sbc,
+    const int direction, const int m, const int k, const int j, const int i) {
+  const int side[3] = {
+      SommerfeldBoundarySide(bcs, user_sbc, m, 0, i, layout.is, layout.ie),
+      SommerfeldBoundarySide(bcs, user_sbc, m, 1, j, layout.js, layout.je),
+      SommerfeldBoundarySide(bcs, user_sbc, m, 2, k, layout.ks, layout.ke)};
+  const bool cartoon_axis_point =
+      std::is_same_v<Symmetry, CartoonSO2> && i == layout.is &&
+      bcs(m, BoundaryFace::inner_x1) == BoundaryFlag::axis;
+  if (!FullConstraintBjorhusOwnsPoint(direction, side, cartoon_axis_point)) return;
+
+  Real metric_dd[3][3];
+  for (int a = 0; a < 3; ++a) {
+    for (int b = a; b < 3; ++b) {
+      metric_dd[a][b] = metric_dd[b][a] = z4c.g_dd(m, a, b, k, j, i);
+    }
+  }
+  FullConstraintBjorhusFrame frame;
+  if (MakeFullConstraintBjorhusFrame(metric_dd, side, &frame) !=
+      FullConstraintBjorhusStatus::valid) {
+    Kokkos::abort("full_constraint_bjorhus: invalid conformal boundary frame");
+  }
+
+  const Real chi = z4c.chi(m, k, j, i);
+  const Real alpha = z4c.alpha(m, k, j, i);
+  if (!(isfinite(chi) && isfinite(alpha)) || chi <= 0.0 || alpha <= 0.0) {
+    Kokkos::abort("full_constraint_bjorhus: invalid lapse or conformal factor");
+  }
+  const Real sqrt_chi = sqrt(chi);
+  Real beta_normal = 0.0;
+  for (int a = 0; a < 3; ++a) {
+    beta_normal += frame.normal_d[a] * z4c.beta_u(m, a, k, j, i);
+  }
+  const Real light_speed = alpha * sqrt_chi;
+  const Real lambda_incoming = beta_normal + light_speed;
+  const Real lambda_outgoing = beta_normal - light_speed;
+  if (!(isfinite(lambda_incoming) && isfinite(lambda_outgoing)) ||
+      lambda_incoming <= 0.0 || lambda_outgoing >= 0.0) {
+    Kokkos::abort(
+        "full_constraint_bjorhus: boundary does not have one incoming and one "
+        "outgoing physical-speed member");
+  }
+
+  const Real inverse_spacing[3] = {
+      1.0 / size.d_view(m).dx1, 1.0 / size.d_view(m).dx2,
+      1.0 / size.d_view(m).dx3};
+  auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
+      inverse_spacing, size.d_view, layout.nx1, layout.is, m, k, j, i,
+      layout.nx3 == 1);
+
+  Real derivative_rhs_chi = 0.0;
+  Real derivative_rhs_metric[3][3] = {};
+  for (int normal_direction = 0; normal_direction < 3; ++normal_direction) {
+    const Real normal_component = frame.normal_u[normal_direction];
+    if (fabs(normal_component) <= 32.0 * std::numeric_limits<Real>::epsilon()) {
+      continue;
+    }
+    const Real dchi = StageCurrentScalarFirst(
+        normal_direction, side[normal_direction], inverse_spacing, rhs.chi,
+        derivatives, layout, m, k, j, i);
+    derivative_rhs_chi += normal_component * dchi;
+    for (int a = 0; a < 3; ++a) {
+      for (int b = a; b < 3; ++b) {
+        const Real derivative = StageCurrentTensorFirst(
+            normal_direction, side[normal_direction], inverse_spacing,
+            rhs.g_dd, a, b, derivatives, layout, m, k, j, i);
+        derivative_rhs_metric[a][b] += normal_component * derivative;
+        if (a != b) derivative_rhs_metric[b][a] = derivative_rhs_metric[a][b];
+      }
+    }
+  }
+
+  Real rhs_A[3][3];
+  Real rhs_A_trace = 0.0;
+  Real derivative_rhs_metric_trace = 0.0;
+  Real gamma_rhs_normal = 0.0;
+  for (int a = 0; a < 3; ++a) {
+    gamma_rhs_normal += frame.normal_d[a] * rhs.vGam_u(m, a, k, j, i);
+    for (int b = 0; b < 3; ++b) {
+      rhs_A[a][b] = rhs.vA_dd(m, a, b, k, j, i);
+      rhs_A_trace += frame.metric_uu[a][b] * rhs_A[a][b];
+      derivative_rhs_metric_trace +=
+          frame.metric_uu[a][b] * derivative_rhs_metric[a][b];
+    }
+  }
+  Real rhs_A_ss = 0.0;
+  Real derivative_rhs_metric_ss = 0.0;
+  for (int a = 0; a < 3; ++a) {
+    for (int b = 0; b < 3; ++b) {
+      rhs_A_ss += frame.normal_u[a] * frame.normal_u[b] * rhs_A[a][b];
+      derivative_rhs_metric_ss +=
+          frame.normal_u[a] * frame.normal_u[b] * derivative_rhs_metric[a][b];
+    }
+  }
+  rhs_A_ss -= rhs_A_trace / 3.0;
+  derivative_rhs_metric_ss -= derivative_rhs_metric_trace / 3.0;
+
+  FullConstraintBjorhusRates volume_rates;
+  const Real theta_rhs = rhs.vTheta(m, k, j, i);
+  volume_rates.theta = sqrt_chi * theta_rhs +
+                       0.5 * chi * gamma_rhs_normal + derivative_rhs_chi;
+  volume_rates.z_normal =
+      (4.0 * rhs.vKhat(m, k, j, i) / 3.0 + 2.0 * theta_rhs / 3.0 -
+       2.0 * rhs_A_ss) /
+          sqrt_chi -
+      gamma_rhs_normal + derivative_rhs_metric_ss;
+  for (int a = 0; a < 3; ++a) {
+    volume_rates.vector_covector[a] = 0.0;
+    for (int b = 0; b < 3; ++b) {
+      volume_rates.vector_covector[a] +=
+          -2.0 * rhs_A[a][b] * frame.normal_u[b] / sqrt_chi -
+          frame.metric_dd[a][b] * rhs.vGam_u(m, b, k, j, i) +
+          derivative_rhs_metric[a][b] * frame.normal_u[b];
+    }
+  }
+
+  FullConstraintBjorhusCorrection correction;
+  if (SolveFullConstraintBjorhusCorrection(chi, frame, volume_rates,
+                                           &correction) !=
+      FullConstraintBjorhusStatus::valid) {
+    Kokkos::abort("full_constraint_bjorhus: singular incoming constraint map");
+  }
+
+  // Assert the local algebra before mutating the production RHS.  The vector result is
+  // tested only in the tangent plane; its normal covector component is not an independent
+  // incoming row.
+  const FullConstraintBjorhusRates corrected =
+      ApplyFullConstraintBjorhusCorrectionToRates(chi, frame, volume_rates,
+                                                   correction);
+  Real corrected_vector_normal = 0.0;
+  Real scale = fmax(1.0, fmax(fabs(volume_rates.theta),
+                              fabs(volume_rates.z_normal)));
+  for (int a = 0; a < 3; ++a) {
+    corrected_vector_normal +=
+        frame.normal_u[a] * corrected.vector_covector[a];
+    scale = fmax(scale, fabs(volume_rates.vector_covector[a]));
+  }
+  Real tangent_error = 0.0;
+  for (int a = 0; a < 3; ++a) {
+    const Real component = corrected.vector_covector[a] -
+                           frame.normal_d[a] * corrected_vector_normal;
+    tangent_error = fmax(tangent_error, fabs(component));
+  }
+  const Real tolerance = 2048.0 * std::numeric_limits<Real>::epsilon() * scale;
+  if (fabs(corrected.theta) > tolerance ||
+      fabs(corrected.z_normal) > tolerance || tangent_error > tolerance) {
+    Kokkos::abort("full_constraint_bjorhus: incoming compatibility residual");
+  }
+
+  rhs.vTheta(m, k, j, i) += correction.theta;
+  for (int a = 0; a < 3; ++a) {
+    rhs.vGam_u(m, a, k, j, i) += correction.gamma_u[a];
+  }
+}
+
+template <typename Centering, typename Symmetry>
+KOKKOS_INLINE_FUNCTION
+static void ApplyFullConstraintBjorhusConfigured(
+    const Z4c::Z4c_vars &z4c, const Z4c::Z4c_vars &rhs,
+    const Z4cGridLayout &layout, const DualArray1D<RegionSize> &size,
+    const DvceArray2D<BoundaryFlag> &bcs, const bool user_sbc,
+    const int fd_stencil, const int direction, const int m, const int k,
+    const int j, const int i) {
+  switch (fd_stencil) {
+    case 2:
+      ApplyFullConstraintBjorhusAtPoint<Centering, Symmetry, 2>(
+          z4c, rhs, layout, size, bcs, user_sbc, direction, m, k, j, i);
+      break;
+    case 3:
+      ApplyFullConstraintBjorhusAtPoint<Centering, Symmetry, 3>(
+          z4c, rhs, layout, size, bcs, user_sbc, direction, m, k, j, i);
+      break;
+    case 4:
+      ApplyFullConstraintBjorhusAtPoint<Centering, Symmetry, 4>(
+          z4c, rhs, layout, size, bcs, user_sbc, direction, m, k, j, i);
+      break;
+    default:
+      Kokkos::abort("full_constraint_bjorhus: invalid derivative stencil");
   }
 }
 
@@ -601,16 +850,105 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
   return TaskStatus::complete;
 }
 
+template <typename Centering, typename Symmetry>
+TaskStatus Z4c::Z4cFullConstraintBjorhusRHSImpl(Driver *pdriver, int stage) {
+  (void)pdriver;
+  // Driver initialization invokes the boundary task once before a volume RHS exists.
+  if (stage <= 0) return TaskStatus::complete;
+
+  const auto layout_ = layout;
+  const int nmb = pmy_pack->nmb_thispack;
+  const int is = layout_.is, ie = layout_.ie;
+  const int js = layout_.js, je = layout_.je;
+  const int ks = layout_.ks, ke = layout_.ke;
+  const auto &size = pmy_pack->pmb->mb_size;
+  const auto bcs = pmy_pack->pmb->mb_bcs.d_view;
+  const bool user_sbc = opt.user_Sbc;
+  const int fd_stencil = opt.fd_stencil;
+  const auto &z4c_ = z4c;
+  const auto &rhs_ = rhs;
+
+  // Orientation ownership is disjoint: x1 owns x1-x2/x1-x3 corners, x2 owns the
+  // remaining x2-x3 corners, and x3 owns only points not incident on x1/x2.  Each
+  // owning thread constructs one composite normal from every incident physical face.
+  par_for("z4c full constraint Bjorhus x1", DevExeSpace(), 0, nmb - 1, ks, ke,
+          js, je,
+      KOKKOS_LAMBDA(const int m, const int k, const int j) {
+        ApplyFullConstraintBjorhusConfigured<Centering, Symmetry>(
+            z4c_, rhs_, layout_, size, bcs, user_sbc, fd_stencil, 0, m, k, j,
+            is);
+        if (ie != is) {
+          ApplyFullConstraintBjorhusConfigured<Centering, Symmetry>(
+              z4c_, rhs_, layout_, size, bcs, user_sbc, fd_stencil, 0, m, k, j,
+              ie);
+        }
+      });
+
+  if (layout_.nx2 > 1) {
+    par_for("z4c full constraint Bjorhus x2", DevExeSpace(), 0, nmb - 1, ks,
+            ke, is, ie,
+        KOKKOS_LAMBDA(const int m, const int k, const int i) {
+          ApplyFullConstraintBjorhusConfigured<Centering, Symmetry>(
+              z4c_, rhs_, layout_, size, bcs, user_sbc, fd_stencil, 1, m, k,
+              js, i);
+          if (je != js) {
+            ApplyFullConstraintBjorhusConfigured<Centering, Symmetry>(
+                z4c_, rhs_, layout_, size, bcs, user_sbc, fd_stencil, 1, m, k,
+                je, i);
+          }
+        });
+  }
+
+  if constexpr (std::is_same_v<Symmetry, Cartesian3D>) {
+    if (layout_.nx3 > 1) {
+      par_for("z4c full constraint Bjorhus x3", DevExeSpace(), 0, nmb - 1, js,
+              je, is, ie,
+          KOKKOS_LAMBDA(const int m, const int j, const int i) {
+            ApplyFullConstraintBjorhusConfigured<Centering, Symmetry>(
+                z4c_, rhs_, layout_, size, bcs, user_sbc, fd_stencil, 2, m,
+                ks, j, i);
+            if (ke != ks) {
+              ApplyFullConstraintBjorhusConfigured<Centering, Symmetry>(
+                  z4c_, rhs_, layout_, size, bcs, user_sbc, fd_stencil, 2, m,
+                  ke, j, i);
+            }
+          });
+    }
+  }
+
+  return TaskStatus::complete;
+}
+
 TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   TaskStatus status;
   if (pmy_pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) {
-    status = layout.centering == Z4cGridCentering::vertex
-                 ? Z4cBoundaryRHSImpl<VertexCenteredZ4c, CartoonSO2>(pdriver, stage)
-                 : Z4cBoundaryRHSImpl<CellCenteredZ4c, CartoonSO2>(pdriver, stage);
+    if (opt.boundary_rhs_mode == Z4cBoundaryRHSMode::full_constraint_bjorhus) {
+      status = layout.centering == Z4cGridCentering::vertex
+                   ? Z4cFullConstraintBjorhusRHSImpl<VertexCenteredZ4c,
+                                                     CartoonSO2>(pdriver, stage)
+                   : Z4cFullConstraintBjorhusRHSImpl<CellCenteredZ4c,
+                                                     CartoonSO2>(pdriver, stage);
+    } else {
+      status = layout.centering == Z4cGridCentering::vertex
+                   ? Z4cBoundaryRHSImpl<VertexCenteredZ4c, CartoonSO2>(pdriver,
+                                                                      stage)
+                   : Z4cBoundaryRHSImpl<CellCenteredZ4c, CartoonSO2>(pdriver,
+                                                                    stage);
+    }
   } else {
-    status = layout.centering == Z4cGridCentering::vertex
-                 ? Z4cBoundaryRHSImpl<VertexCenteredZ4c, Cartesian3D>(pdriver, stage)
-                 : Z4cBoundaryRHSImpl<CellCenteredZ4c, Cartesian3D>(pdriver, stage);
+    if (opt.boundary_rhs_mode == Z4cBoundaryRHSMode::full_constraint_bjorhus) {
+      status = layout.centering == Z4cGridCentering::vertex
+                   ? Z4cFullConstraintBjorhusRHSImpl<VertexCenteredZ4c,
+                                                     Cartesian3D>(pdriver, stage)
+                   : Z4cFullConstraintBjorhusRHSImpl<CellCenteredZ4c,
+                                                     Cartesian3D>(pdriver, stage);
+    } else {
+      status = layout.centering == Z4cGridCentering::vertex
+                   ? Z4cBoundaryRHSImpl<VertexCenteredZ4c, Cartesian3D>(pdriver,
+                                                                       stage)
+                   : Z4cBoundaryRHSImpl<CellCenteredZ4c, Cartesian3D>(pdriver,
+                                                                     stage);
+    }
   }
   if (status == TaskStatus::complete && chi_parent_provenance != nullptr) {
     chi_parent_provenance->AnalyzePreUpdate(pdriver, stage);
@@ -641,5 +979,13 @@ template TaskStatus Z4c::Z4cBoundaryRHSImpl<CellCenteredZ4c, Cartesian3D>(Driver
 template TaskStatus Z4c::Z4cBoundaryRHSImpl<CellCenteredZ4c, CartoonSO2>(Driver *, int);
 template TaskStatus Z4c::Z4cBoundaryRHSImpl<VertexCenteredZ4c, Cartesian3D>(Driver *, int);
 template TaskStatus Z4c::Z4cBoundaryRHSImpl<VertexCenteredZ4c, CartoonSO2>(Driver *, int);
+template TaskStatus
+Z4c::Z4cFullConstraintBjorhusRHSImpl<CellCenteredZ4c, Cartesian3D>(Driver *, int);
+template TaskStatus
+Z4c::Z4cFullConstraintBjorhusRHSImpl<CellCenteredZ4c, CartoonSO2>(Driver *, int);
+template TaskStatus
+Z4c::Z4cFullConstraintBjorhusRHSImpl<VertexCenteredZ4c, Cartesian3D>(Driver *, int);
+template TaskStatus
+Z4c::Z4cFullConstraintBjorhusRHSImpl<VertexCenteredZ4c, CartoonSO2>(Driver *, int);
 
 } // end namespace z4c

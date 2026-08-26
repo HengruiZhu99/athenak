@@ -465,6 +465,27 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 
   opt.user_Sbc = pin->GetOrAddBoolean("z4c", "user_Sbc", false);
 
+  const std::string boundary_rhs =
+      pin->GetOrAddString("z4c", "boundary_rhs", "sommerfeld");
+  if (boundary_rhs == "sommerfeld") {
+    opt.boundary_rhs_mode = Z4cBoundaryRHSMode::sommerfeld;
+  } else if (boundary_rhs == "full_constraint_bjorhus") {
+    opt.boundary_rhs_mode = Z4cBoundaryRHSMode::full_constraint_bjorhus;
+    if (!opt.use_z4c) {
+      std::cerr << "### FATAL ERROR in " << __FILE__
+                << ": <z4c>/boundary_rhs=full_constraint_bjorhus requires "
+                   "<z4c>/use_z4c=true"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  } else {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": unknown <z4c>/boundary_rhs=" << boundary_rhs
+              << "; expected sommerfeld or full_constraint_bjorhus"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
   opt.excise_chi = pin->GetOrAddReal("z4c", "excise_chi", 0.0625);
 
   opt.extrap_order = fmax(2,fmin(indcs.ng,fmin(4,
