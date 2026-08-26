@@ -212,6 +212,36 @@ inline CartoonMeridionalStencil LocateNativeCartoonMeridionalPoint(
       mesh, rho, z, mesh->pmb_pack->pz4c->layout.centering);
 }
 
+//! Resolve an exact native-VC query to its stored vertex index.  A finest leaf
+//! touching an AMR interface can own the query on either its lower endpoint
+//! (weight zero) or its upper endpoint (weight one).  Both are exact evolved
+//! vertices; rejecting the latter makes a harmless asymmetric refinement at
+//! the origin look like invalid common-level geometry.
+inline bool ResolveCartoonNativeVertexIndex(
+    const CartoonMeridionalStencil &stencil, int *i, int *j) {
+  const Real tolerance = 128.0 * std::numeric_limits<Real>::epsilon();
+  const auto endpoint_offset = [tolerance](const Real weight, int *offset) {
+    if (std::fabs(weight) <= tolerance) {
+      *offset = 0;
+      return true;
+    }
+    if (std::fabs(weight - 1.0) <= tolerance) {
+      *offset = 1;
+      return true;
+    }
+    return false;
+  };
+  int di = 0;
+  int dj = 0;
+  if (!stencil.valid || !endpoint_offset(stencil.wi, &di) ||
+      !endpoint_offset(stencil.wj, &dj)) {
+    return false;
+  }
+  *i = stencil.i0 + di;
+  *j = stencil.j0 + dj;
+  return true;
+}
+
 struct CartoonCentralSample {
   bool valid = false;
   Real lapse = 0.0;
@@ -786,12 +816,12 @@ inline CartoonCentralSample SampleCartoonCentralVertexDiagnostics(Mesh *mesh) {
       LocateNativeCartoonMeridionalPoint(mesh, 0.0, 0.0);
   sample.gid = center.gid;
   sample.level = center.level;
-  const Real tolerance = 128.0 * std::numeric_limits<Real>::epsilon();
-  if (!center.valid || std::fabs(center.wi) > tolerance ||
-      std::fabs(center.wj) > tolerance) {
-    sample.status = center.valid
-                        ? CartoonCentralSample::Status::invalid_common_lattice
-                        : CartoonCentralSample::Status::missing_center_leaf;
+  int center_i = 0;
+  int center_j = 0;
+  if (!ResolveCartoonNativeVertexIndex(center, &center_i, &center_j)) {
+    sample.status = !center.valid
+                        ? CartoonCentralSample::Status::missing_center_leaf
+                        : CartoonCentralSample::Status::invalid_common_lattice;
     return sample;
   }
 
@@ -817,8 +847,8 @@ inline CartoonCentralSample SampleCartoonCentralVertexDiagnostics(Mesh *mesh) {
         Kokkos::RangePolicy<DevExeSpace>(0, 1), KOKKOS_LAMBDA(const int) {
           const int m = center.local_block;
           const int k = center.k;
-          const int j = center.j0;
-          const int i = center.i0;
+          const int j = center_j;
+          const int i = center_i;
           const Real inverse_spacing[3] = {
               1.0 / size(m).dx1, 1.0 / size(m).dx2, 1.0 / size(m).dx3};
           auto derivatives =

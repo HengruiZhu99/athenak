@@ -402,6 +402,35 @@ bool CheckMeridionalMeasureAndState() {
   stencil.j0 = 1;
   stencil.wi = 0.25;
   stencil.wj = 0.75;
+
+  // At a nonconforming origin, the deterministic finest owner can touch the
+  // native vertex on any combination of lower/upper block endpoints.  All
+  // four exact endpoint combinations must resolve to the same physical node;
+  // an interior interpolation weight must remain invalid.
+  z4c::CartoonMeridionalStencil endpoint = stencil;
+  endpoint.valid = true;
+  endpoint.i0 = 8;
+  endpoint.j0 = 11;
+  int endpoint_i = -1;
+  int endpoint_j = -1;
+  for (const Real wi : {Real(0.0), Real(1.0)}) {
+    for (const Real wj : {Real(0.0), Real(1.0)}) {
+      endpoint.wi = wi;
+      endpoint.wj = wj;
+      if (!z4c::ResolveCartoonNativeVertexIndex(
+              endpoint, &endpoint_i, &endpoint_j) ||
+          endpoint_i != endpoint.i0 + static_cast<int>(wi) ||
+          endpoint_j != endpoint.j0 + static_cast<int>(wj)) {
+        return false;
+      }
+    }
+  }
+  endpoint.wi = 0.5;
+  endpoint.wj = 0.0;
+  if (z4c::ResolveCartoonNativeVertexIndex(
+          endpoint, &endpoint_i, &endpoint_j)) {
+    return false;
+  }
   Kokkos::parallel_for(
       "Cartoon meridional helper oracle", Kokkos::RangePolicy<>(0, 1),
       KOKKOS_LAMBDA(const int) {
