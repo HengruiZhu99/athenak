@@ -19,6 +19,9 @@ expected_source=${EXPECTED_SOURCE:-d63519328214a6315a9cc1f7d5e4a1aa4bca21b0}
 expected_tree=${EXPECTED_TREE:-9fa84d4b79c2d50ce935f5416fba6d57f99aa5b4}
 expected_exe=${EXPECTED_EXE:-3a395bfdaf217d617fee43d2cbcd38e7a13c2a0f4207e3a764c3513eb8c0405f}
 expected_coeff=${EXPECTED_COEFF:-1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10}
+expected_cache=${EXPECTED_CMAKE_CACHE:-}
+irisk_library=${IRISK_LIBRARY:-}
+expected_irisk=${EXPECTED_IRISK_LIBRARY_SHA256:-}
 
 test "${SLURM_NNODES:-}" = 1
 test "${SLURM_NTASKS:-}" = 1
@@ -30,6 +33,13 @@ athena=${build_root}/src/athena
 test -x "${athena}"
 test "$(sha256sum "${athena}" | awk '{print $1}')" = "${expected_exe}"
 test "$(sha256sum "${coefficient_source}" | awk '{print $1}')" = "${expected_coeff}"
+if [[ -n "${expected_cache}" ]]; then
+  test "$(sha256sum "${build_root}/CMakeCache.txt" | awk '{print $1}')" = "${expected_cache}"
+fi
+if [[ -n "${expected_irisk}" ]]; then
+  test -s "${irisk_library}"
+  test "$(sha256sum "${irisk_library}" | awk '{print $1}')" = "${expected_irisk}"
+fi
 test -r "${profile}"
 test ! -e "${RUN_ROOT}"
 
@@ -67,6 +77,7 @@ env | LC_ALL=C sort > "${root}/evidence/environment.txt"
   sha256sum "${athena}" "${build_root}/CMakeCache.txt" \
     "${root}/brill_vc_rout128_ko05.athinput" \
     "${root}/brill_global_128x32.coefficients"
+  if [[ -n "${expected_irisk}" ]]; then sha256sum "${irisk_library}"; fi
   module list
   nvidia-smi -L
   nvidia-smi --query-gpu=index,name,memory.total,memory.used,memory.free \
