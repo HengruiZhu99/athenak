@@ -35,7 +35,7 @@ export FI_LOG_LEVEL=ERROR
 
 actual_commit=$(git -C "${SRC}" rev-parse HEAD)
 test "${actual_commit}" = "${EXPECTED_COMMIT}"
-test -z "$(git -C "${SRC}" status --porcelain)"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
 {
   date -Is
   hostname

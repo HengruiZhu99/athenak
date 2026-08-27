@@ -57,14 +57,13 @@ Real StationaryTrumpetBoundaryValue(
 
 template <typename StateView>
 KOKKOS_INLINE_FUNCTION
-void StoreQControlledStationaryTrumpetState(
+void StoreQControlledStationaryTrumpetMetricState(
     const StateView &state, const int m, const int k, const int j, const int i,
     const DvceArray2D<Real> &table, const Real mass, const Real center_x,
     const Real center_y, const Real center_z, const Real gaussian_width,
     const Real q, const Real q_dot, const Real q_ddot, const Real x,
-    const Real y, const Real z, const bool gauge_driver_enabled,
-    const bool gauge_reference_subtraction) {
-  for (int n = 0; n < nvar; ++n) state(m, n, k, j, i) = 0.0;
+    const Real y, const Real z) {
+  for (int n = 0; n < kHhatOffset; ++n) state(m, n, k, j, i) = 0.0;
   ReferenceGeometry physical;
   const TrumpetSchwarzschildReference physical_provider{
       table, mass, {center_x, center_y, center_z}};
@@ -91,7 +90,27 @@ void StoreQControlledStationaryTrumpetState(
       }
     }
   }
-  if (!gauge_driver_enabled) return;
+}
+
+template <typename StateView>
+KOKKOS_INLINE_FUNCTION
+void StoreQControlledStationaryTrumpetGaugeState(
+    const StateView &state, const int m, const int k, const int j, const int i,
+    const DvceArray2D<Real> &table, const Real mass, const Real center_x,
+    const Real center_y, const Real center_z, const Real gaussian_width,
+    const Real q, const Real q_dot, const Real q_ddot, const Real x,
+    const Real y, const Real z, const bool gauge_reference_subtraction) {
+  for (int n = kHhatOffset; n < nvar; ++n) state(m, n, k, j, i) = 0.0;
+  ReferenceGeometry physical;
+  const TrumpetSchwarzschildReference physical_provider{
+      table, mass, {center_x, center_y, center_z}};
+  physical_provider.Populate(0.0, x, y, z, physical);
+  const TrumpetQControlledReferenceParameters parameters{
+      mass, {center_x, center_y, center_z}, gaussian_width,
+      q, q_dot, q_ddot};
+  ReferenceGeometry current;
+  const TrumpetQControlledReference current_provider{table, parameters};
+  current_provider.Populate(0.0, x, y, z, current);
   const ProjectedStationaryGaugeState gauge =
       ProjectStationaryPhysicalGaugeToReference(physical, current);
   ReferenceGaugeBaseline baseline{};
@@ -2303,118 +2322,135 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
     const Real q_dot = q_controller.q_dot;
     const Real q_ddot = q_controller_rhs.q_dot;
     const bool gauge_driver_enabled = opt.gauge_driver_enabled;
-    if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x1]
-        != BoundaryFlag::periodic) {
-      par_for("ref_gh projected trumpet x1 boundaries", DevExeSpace(),
-      0, nmb - 1, 0, n3 - 1, 0, n2 - 1,
-      KOKKOS_LAMBDA(const int m, const int k, const int j) {
+    const bool physical_inner_x1 =
+        pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x1]
+        != BoundaryFlag::periodic;
+    const bool physical_outer_x1 =
+        pmy_pack->pmesh->mesh_bcs[BoundaryFace::outer_x1]
+        != BoundaryFlag::periodic;
+    const bool physical_inner_x2 =
+        pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x2]
+        != BoundaryFlag::periodic;
+    const bool physical_outer_x2 =
+        pmy_pack->pmesh->mesh_bcs[BoundaryFace::outer_x2]
+        != BoundaryFlag::periodic;
+    const bool physical_inner_x3 =
+        pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x3]
+        != BoundaryFlag::periodic;
+    const bool physical_outer_x3 =
+        pmy_pack->pmesh->mesh_bcs[BoundaryFace::outer_x3]
+        != BoundaryFlag::periodic;
+    const int ghost_cells = nmb*n3*n2*n1;
+
+    // Use the same one-cell-per-work-item structure as the qualified initial
+    // data path.  In particular, do not inline four complete metric-and-gauge
+    // projections into one face work item: that shape spills a large private
+    // stack on PVC.  A cell is owned by this kernel if at least one of its
+    // out-of-range directions is a physical, nonperiodic block face.
+    Kokkos::parallel_for(
+    "ref_gh projected trumpet metric boundaries",
+    Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
+    KOKKOS_LAMBDA(const int idx) {
+      int work = idx;
+      const int i = work % n1; work /= n1;
+      const int j = work % n2; work /= n2;
+      const int k = work % n3;
+      const int m = work/n3;
+      bool physical = false;
+      if (i < is && physical_inner_x1
+          && mb_bcs(m, BoundaryFace::inner_x1) != BoundaryFlag::block) {
+        physical = true;
+      }
+      if (i > ie && physical_outer_x1
+          && mb_bcs(m, BoundaryFace::outer_x1) != BoundaryFlag::block) {
+        physical = true;
+      }
+      if (j < js && physical_inner_x2
+          && mb_bcs(m, BoundaryFace::inner_x2) != BoundaryFlag::block) {
+        physical = true;
+      }
+      if (j > je && physical_outer_x2
+          && mb_bcs(m, BoundaryFace::outer_x2) != BoundaryFlag::block) {
+        physical = true;
+      }
+      if (k < ks && physical_inner_x3
+          && mb_bcs(m, BoundaryFace::inner_x3) != BoundaryFlag::block) {
+        physical = true;
+      }
+      if (k > ke && physical_outer_x3
+          && mb_bcs(m, BoundaryFace::outer_x3) != BoundaryFlag::block) {
+        physical = true;
+      }
+      if (!physical) return;
+      const Real x = CellCenterX(
+          i - is, indcs.nx1,
+          size.d_view(m).x1min, size.d_view(m).x1max);
+      const Real y = CellCenterX(
+          j - js, indcs.nx2,
+          size.d_view(m).x2min, size.d_view(m).x2max);
+      const Real z = CellCenterX(
+          k - ks, indcs.nx3,
+          size.d_view(m).x3min, size.d_view(m).x3max);
+      StoreQControlledStationaryTrumpetMetricState(
+          state, m, k, j, i, table, mass,
+          center_x, center_y, center_z, gaussian_width,
+          q, q_dot, q_ddot, x, y, z);
+    });
+    DebugFence("ref_gh ApplyPhysicalBCs projected trumpet metric");
+
+    if (gauge_driver_enabled) {
+      Kokkos::parallel_for(
+      "ref_gh projected trumpet gauge boundaries",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
+      KOKKOS_LAMBDA(const int idx) {
+        int work = idx;
+        const int i = work % n1; work /= n1;
+        const int j = work % n2; work /= n2;
+        const int k = work % n3;
+        const int m = work/n3;
+        bool physical = false;
+        if (i < is && physical_inner_x1
+            && mb_bcs(m, BoundaryFace::inner_x1) != BoundaryFlag::block) {
+          physical = true;
+        }
+        if (i > ie && physical_outer_x1
+            && mb_bcs(m, BoundaryFace::outer_x1) != BoundaryFlag::block) {
+          physical = true;
+        }
+        if (j < js && physical_inner_x2
+            && mb_bcs(m, BoundaryFace::inner_x2) != BoundaryFlag::block) {
+          physical = true;
+        }
+        if (j > je && physical_outer_x2
+            && mb_bcs(m, BoundaryFace::outer_x2) != BoundaryFlag::block) {
+          physical = true;
+        }
+        if (k < ks && physical_inner_x3
+            && mb_bcs(m, BoundaryFace::inner_x3) != BoundaryFlag::block) {
+          physical = true;
+        }
+        if (k > ke && physical_outer_x3
+            && mb_bcs(m, BoundaryFace::outer_x3) != BoundaryFlag::block) {
+          physical = true;
+        }
+        if (!physical) return;
+        const Real x = CellCenterX(
+            i - is, indcs.nx1,
+            size.d_view(m).x1min, size.d_view(m).x1max);
         const Real y = CellCenterX(
             j - js, indcs.nx2,
             size.d_view(m).x2min, size.d_view(m).x2max);
         const Real z = CellCenterX(
             k - ks, indcs.nx3,
             size.d_view(m).x3min, size.d_view(m).x3max);
-        if (mb_bcs(m, BoundaryFace::inner_x1) != BoundaryFlag::block) {
-          for (int g = 1; g <= ng; ++g) {
-            const Real x = CellCenterX(
-                -g, indcs.nx1,
-                size.d_view(m).x1min, size.d_view(m).x1max);
-            StoreQControlledStationaryTrumpetState(
-                state, m, k, j, is - g, table, mass,
-                center_x, center_y, center_z, gaussian_width,
-                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
-                gauge_reference_subtraction);
-          }
-        }
-        if (mb_bcs(m, BoundaryFace::outer_x1) != BoundaryFlag::block) {
-          for (int g = 1; g <= ng; ++g) {
-            const Real x = CellCenterX(
-                indcs.nx1 - 1 + g, indcs.nx1,
-                size.d_view(m).x1min, size.d_view(m).x1max);
-            StoreQControlledStationaryTrumpetState(
-                state, m, k, j, ie + g, table, mass,
-                center_x, center_y, center_z, gaussian_width,
-                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
-                gauge_reference_subtraction);
-          }
-        }
+        StoreQControlledStationaryTrumpetGaugeState(
+            state, m, k, j, i, table, mass,
+            center_x, center_y, center_z, gaussian_width,
+            q, q_dot, q_ddot, x, y, z,
+            gauge_reference_subtraction);
       });
+      DebugFence("ref_gh ApplyPhysicalBCs projected trumpet gauge");
     }
-    if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x2]
-        != BoundaryFlag::periodic) {
-      par_for("ref_gh projected trumpet x2 boundaries", DevExeSpace(),
-      0, nmb - 1, 0, n3 - 1, 0, n1 - 1,
-      KOKKOS_LAMBDA(const int m, const int k, const int i) {
-        const Real x = CellCenterX(
-            i - is, indcs.nx1,
-            size.d_view(m).x1min, size.d_view(m).x1max);
-        const Real z = CellCenterX(
-            k - ks, indcs.nx3,
-            size.d_view(m).x3min, size.d_view(m).x3max);
-        if (mb_bcs(m, BoundaryFace::inner_x2) != BoundaryFlag::block) {
-          for (int g = 1; g <= ng; ++g) {
-            const Real y = CellCenterX(
-                -g, indcs.nx2,
-                size.d_view(m).x2min, size.d_view(m).x2max);
-            StoreQControlledStationaryTrumpetState(
-                state, m, k, js - g, i, table, mass,
-                center_x, center_y, center_z, gaussian_width,
-                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
-                gauge_reference_subtraction);
-          }
-        }
-        if (mb_bcs(m, BoundaryFace::outer_x2) != BoundaryFlag::block) {
-          for (int g = 1; g <= ng; ++g) {
-            const Real y = CellCenterX(
-                indcs.nx2 - 1 + g, indcs.nx2,
-                size.d_view(m).x2min, size.d_view(m).x2max);
-            StoreQControlledStationaryTrumpetState(
-                state, m, k, je + g, i, table, mass,
-                center_x, center_y, center_z, gaussian_width,
-                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
-                gauge_reference_subtraction);
-          }
-        }
-      });
-    }
-    if (pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x3]
-        != BoundaryFlag::periodic) {
-      par_for("ref_gh projected trumpet x3 boundaries", DevExeSpace(),
-      0, nmb - 1, 0, n2 - 1, 0, n1 - 1,
-      KOKKOS_LAMBDA(const int m, const int j, const int i) {
-        const Real x = CellCenterX(
-            i - is, indcs.nx1,
-            size.d_view(m).x1min, size.d_view(m).x1max);
-        const Real y = CellCenterX(
-            j - js, indcs.nx2,
-            size.d_view(m).x2min, size.d_view(m).x2max);
-        if (mb_bcs(m, BoundaryFace::inner_x3) != BoundaryFlag::block) {
-          for (int g = 1; g <= ng; ++g) {
-            const Real z = CellCenterX(
-                -g, indcs.nx3,
-                size.d_view(m).x3min, size.d_view(m).x3max);
-            StoreQControlledStationaryTrumpetState(
-                state, m, ks - g, j, i, table, mass,
-                center_x, center_y, center_z, gaussian_width,
-                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
-                gauge_reference_subtraction);
-          }
-        }
-        if (mb_bcs(m, BoundaryFace::outer_x3) != BoundaryFlag::block) {
-          for (int g = 1; g <= ng; ++g) {
-            const Real z = CellCenterX(
-                indcs.nx3 - 1 + g, indcs.nx3,
-                size.d_view(m).x3min, size.d_view(m).x3max);
-            StoreQControlledStationaryTrumpetState(
-                state, m, ke + g, j, i, table, mass,
-                center_x, center_y, center_z, gaussian_width,
-                q, q_dot, q_ddot, x, y, z, gauge_driver_enabled,
-                gauge_reference_subtraction);
-          }
-        }
-      });
-    }
-    DebugFence("ref_gh ApplyPhysicalBCs projected trumpet");
     return TaskStatus::complete;
   }
 
