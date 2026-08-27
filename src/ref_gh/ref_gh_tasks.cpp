@@ -1429,6 +1429,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
                                      time, x, y, z, controlled, generic,
                                      q_controlled, point);
     });
+    DebugFence("ref_gh reference provider profiles");
 
     // Stage 2: populate frame/coframe values and frame derivatives component by
     // component. Each work item holds only two scalar jets, not a full geometry.
@@ -1464,6 +1465,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
         }
       }
     });
+    DebugFence("ref_gh reference frame jets");
 
     // Stage 3: spatial frame maps and their commutator coefficients.
     Kokkos::parallel_for(
@@ -1485,6 +1487,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       evolution(m, RefMatrix3(kRefDtSpatialFrame, I, p), k, j, i) =
           ProviderDtSpatialFrame(reference_kind, point, I, p);
     });
+    DebugFence("ref_gh reference spatial frame");
     Kokkos::parallel_for(
     "ref_gh reference structure coefficients",
     Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*9), KOKKOS_LAMBDA(const int idx) {
@@ -1502,6 +1505,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       evolution(m, kRefStructure + component, k, j, i) =
           ProviderStructure(reference_kind, point, I, J, K);
     });
+    DebugFence("ref_gh reference structure coefficients");
 
     Kokkos::parallel_for(
     "ref_gh reference metric jets",
@@ -1532,6 +1536,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
                                    center_x, center_y, center_z, a, b),
           a, b, workspace_point);
     });
+    DebugFence("ref_gh reference metric jets");
 
     // Stage 4: connection and its coordinate derivative. Metric jets are
     // read from the compact update workspace, keeping this kernel scalar-small.
@@ -1574,6 +1579,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
             d_christoffel[p];
       }
     });
+    DebugFence("ref_gh reference connection");
 
     if (opt.reference_time_dependent) {
       // A time-dependent theta baseline needs d_t d_i Href.  Compute its
@@ -1639,6 +1645,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
         }
         diagnostic(m, kRefDtTheta + component, k, j, i) = dt_di_h_upper;
       });
+      DebugFence("ref_gh reference mixed gauge derivative");
 
       // Convert d_t d_i h^a to frame-projected d_t d_i H_A and differentiate
       // theta_ref=-beta^i d_i H-(Omega_t-beta^i Omega_i)H analytically.
@@ -1754,6 +1761,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
           diagnostic(m, kRefDtTheta + A, k, j, i) = dt_theta;
         }
       });
+      DebugFence("ref_gh reference theta time derivative");
     }
 
     // Stage 5: spin connection, compressed in its metric antisymmetric pair.
@@ -1777,6 +1785,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
                                   - eta_B*RawReferenceSpin(reference, B, A, C));
       evolution(m, kRefSpin + component, k, j, i) = eta_A*projected;
     });
+    DebugFence("ref_gh reference spin connection");
 
     // Stage 6a: cache d(coframe) once. The metric-jet workspace is no longer
     // needed after connection assembly, so it is deliberately reused here.
@@ -1803,6 +1812,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       }
       workspace(m, kRefWorkspaceCoframeDerivative + component, k, j, i) = derivative;
     });
+    DebugFence("ref_gh reference coframe derivative");
 
     // Stage 6b: form coordinate derivatives of the projected spin connection.
     Kokkos::parallel_for(
@@ -1832,6 +1842,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       workspace(m, kRefWorkspaceSpinCoordinateDerivative + component,
                 k, j, i) = eta_A*projected;
     });
+    DebugFence("ref_gh reference coordinate spin derivative");
 
     // Stage 6c: convert the coordinate derivative index to the frame index.
     Kokkos::parallel_for(
@@ -1856,6 +1867,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       }
       evolution(m, kRefSpinDerivative + component, k, j, i) = derivative;
     });
+    DebugFence("ref_gh reference spin derivative");
 
     // Stage 7: curvature in compact bivector form. Preserve the optimized exact
     // Schwarzschild Weyl tensor for the stationary trumpet. All other
@@ -1908,6 +1920,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       evolution(m, kRefRiemann + component, k, j, i) =
           ((A == 0) ? -1.0 : 1.0)*raised;
     });
+    DebugFence("ref_gh reference curvature");
     reference_cache_time = time;
     reference_cache_generation = current_reference_generation;
     reference_diagnostic_time = NAN;
@@ -1935,6 +1948,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       }
       diagnostic(m, kRefRicci + component, k, j, i) = ricci;
     });
+    DebugFence("ref_gh reference Ricci");
     reference_diagnostic_time = time;
     reference_diagnostic_generation = current_reference_generation;
   }
