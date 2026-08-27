@@ -115,6 +115,29 @@ run_pulse() {
   ! grep -Eiq 'FATAL ERROR|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' run.log
 }
 
+# Localize the exact first evolved cycle before spending the allocation on the
+# complete prescribed excursions.  Debug fences are enabled only for this
+# bounded discriminator; the production pulse runs below keep them disabled.
+cycle_gate="${OUT}/q090_cycle_n16"
+mkdir -p "${cycle_gate}"
+cd "${cycle_gate}"
+mpiexec -n 8 --ppn 8 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${PULSE_INPUT}" \
+  mesh/nx1=16 mesh/nx2=16 mesh/nx3=16 \
+  mesh/x1min=-0.5 mesh/x1max=0.5 \
+  mesh/x2min=-0.5 mesh/x2max=0.5 \
+  mesh/x3min=-0.5 mesh/x3max=0.5 \
+  meshblock/nx1=8 meshblock/nx2=8 meshblock/nx3=8 \
+  ref_gh/q_prescribed_target=0.90 \
+  ref_gh/q_prescribed_duration=4.0 \
+  ref_gh/validate_reference_cache=false \
+  ref_gh/debug_task_fences=true \
+  time/nlim=1 time/tlim=1.0 output1/dt=0.1 output2/dt=100.0 \
+  job/basename=q090_cycle_n16 > run.log 2>&1
+grep -q 'Terminating on cycle limit' run.log
+grep -q 'ref_gh debug fence passed: ref_gh NewTimeStep' run.log
+! grep -Eiq 'FATAL ERROR|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' run.log
+
 # Complete all four prescribed excursions on the h=M/16 grid.
 run_pulse q090 0.90 4.0 4.0 16 8
 run_pulse q110 1.10 4.0 4.0 16 8

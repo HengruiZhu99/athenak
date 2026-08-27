@@ -132,6 +132,62 @@ void StoreQControlledStationaryTrumpetGaugeState(
   }
 }
 
+template <typename StateView>
+KOKKOS_INLINE_FUNCTION
+bool EvaluateQControlledPhysicalExponent(
+    const StateView &state, const DvceArray2D<Real> &table,
+    const TrumpetQControlledReferenceParameters &parameters,
+    const int m, const int k, const int j, const int i,
+    const Real x, const Real y, const Real z,
+    Real &q_loc, Real &q_analytic, Real &epsilon_g) {
+  const Real displacement[3] = {
+      x - parameters.center[0], y - parameters.center[1],
+      z - parameters.center[2]};
+  const Real radius = Kokkos::sqrt(
+      displacement[0]*displacement[0]
+      + displacement[1]*displacement[1]
+      + displacement[2]*displacement[2]);
+  ReferenceJet alpha;
+  ReferenceJet spatial_cholesky;
+  ReferenceJet shift_q;
+  TrumpetQControlledProfileJets(
+      table, parameters, x, y, z, alpha, spatial_cholesky, shift_q);
+  const Real normalized_radius = radius/parameters.mass;
+  const RadialProfile analytic_spatial_cholesky = ArealRadiusToPsi2(
+      InterpolateTrumpetProfile(
+          table, kCoeffArealRadius, normalized_radius),
+      normalized_radius);
+  Real relative_metric[4][4] = {};  // NOLINT(runtime/arrays)
+  Real phi[3][4][4] = {};           // NOLINT(runtime/arrays)
+  Real spatial_coframe[3][3] = {};  // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    for (int B = A; B < 4; ++B) {
+      relative_metric[A][B] = relative_metric[B][A] =
+          state(m, PsiIndex(A, B), k, j, i);
+      for (int I = 0; I < 3; ++I) {
+        phi[I][A][B] = phi[I][B][A] =
+            state(m, PhiIndex(I, A, B), k, j, i);
+      }
+    }
+  }
+  for (int I = 0; I < 3; ++I) {
+    spatial_coframe[I][I] = spatial_cholesky.value;
+  }
+  if (!ComputeRelativeSpatialExponentMismatch(
+          relative_metric, phi, spatial_coframe, displacement, epsilon_g)) {
+    return false;
+  }
+  Real q_reference = 0.0;
+  for (int p = 0; p < 3; ++p) {
+    q_reference -= displacement[p]*spatial_cholesky.d[p + 1]
+                   /spatial_cholesky.value;
+  }
+  q_loc = q_reference + epsilon_g;
+  q_analytic = -normalized_radius*analytic_spatial_cholesky.d1
+               /analytic_spatial_cholesky.value;
+  return Kokkos::isfinite(q_loc) && Kokkos::isfinite(q_analytic);
+}
+
 template <typename MaxLocation>
 KOKKOS_INLINE_FUNCTION
 void UpdateReferenceOracleMaximum(const Real cached, const Real oracle,
@@ -589,22 +645,38 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
   static_assert(kMomentCount <= NREDUCTION_VARIABLES,
                 "q-estimator moments exceed the fixed reduction array");
   array_sum::GlobalSum sums;
-  Real minus_q_min = 0.0;
-  Real q_max = 0.0;
   const TrumpetQControlledReferenceParameters parameters{
       mass, {center_x, center_y, center_z}, gaussian_width,
       q, q_dot, 0.0};
-  Kokkos::parallel_reduce(
-      "ref_gh current-q physical exponent shell",
-      Kokkos::RangePolicy<>(DevExeSpace(),
+  enum QSampleIndex {
+    kSampleWeight, kSampleQLoc, kSampleQAnalytic, kSampleEpsilon,
+    kSampleValidity, kQSampleCount
+  };
+  static_assert(static_cast<int>(kQSampleCount)
+                    <= static_cast<int>(kReferenceWorkspaceSize),
+                "q-estimator sample exceeds the reference workspace");
+  const auto samples = reference_workspace;
+  const DevExeSpace execution_space;
+
+  // This is the lightweight current-q snapshot required by the coupled RK
+  // ordering.  The full reference-cache construction immediately following
+  // this measurement overwrites the same staging workspace.  Evaluate the
+  // expensive physical exponent once, then follow the mature history pattern
+  // of separate aggregate and extrema reductions.  In particular, avoid a
+  // hot mixed GlobalSum+Max+Max CombinedReducer whose SYCL implementation
+  // writes several unmanaged HostSpace results from one repeatedly launched
+  // device kernel.
+  Kokkos::parallel_for(
+      "ref_gh current-q physical exponent samples",
+      Kokkos::RangePolicy<>(execution_space,
           0, pmy_pack->nmb_thispack*ncells),
-      KOKKOS_LAMBDA(const int idx, array_sum::GlobalSum &total,
-                    Real &local_minus_q_min, Real &local_q_max) {
+      KOKKOS_LAMBDA(const int idx) {
         int work = idx;
         const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
         const int k = work % indcs.nx3 + indcs.ks;
         const int m = work/indcs.nx3;
+        samples(m, kSampleValidity, k, j, i) = 0.0;
         const Real x = CellCenterX(
             i - indcs.is, indcs.nx1,
             size.d_view(m).x1min, size.d_view(m).x1max);
@@ -626,55 +698,44 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
             size.d_view(m).dx1, size.d_view(m).dx2, size.d_view(m).dx3};
         if (!PunctureStencilIsClear(
                 displacement, spacing, stencil_radius)) return;
-
-        ReferenceJet alpha;
-        ReferenceJet spatial_cholesky;
-        ReferenceJet shift_q;
-        TrumpetQControlledProfileJets(
-            table, parameters, x, y, z, alpha, spatial_cholesky, shift_q);
-        const Real normalized_radius = radius/mass;
-        const RadialProfile analytic_spatial_cholesky =
-            ArealRadiusToPsi2(
-                InterpolateTrumpetProfile(
-                    table, kCoeffArealRadius, normalized_radius),
-                normalized_radius);
-        Real relative_metric[4][4] = {};  // NOLINT(runtime/arrays)
-        Real phi[3][4][4] = {};           // NOLINT(runtime/arrays)
-        Real spatial_coframe[3][3] = {};  // NOLINT(runtime/arrays)
-        for (int A = 0; A < 4; ++A) {
-          for (int B = A; B < 4; ++B) {
-            relative_metric[A][B] = relative_metric[B][A] =
-                state(m, PsiIndex(A, B), k, j, i);
-            for (int I = 0; I < 3; ++I) {
-              phi[I][A][B] = phi[I][B][A] =
-                  state(m, PhiIndex(I, A, B), k, j, i);
-            }
-          }
-        }
-        for (int I = 0; I < 3; ++I) {
-          spatial_coframe[I][I] = spatial_cholesky.value;
-        }
+        Real q_loc = NAN;
+        Real q_analytic = NAN;
         Real epsilon_g = NAN;
-        if (!ComputeRelativeSpatialExponentMismatch(
-                relative_metric, phi, spatial_coframe, displacement,
-                epsilon_g)) {
+        if (!EvaluateQControlledPhysicalExponent(
+                state, table, parameters, m, k, j, i, x, y, z,
+                q_loc, q_analytic, epsilon_g)) {
+          samples(m, kSampleValidity, k, j, i) = -1.0;
+          return;
+        }
+        samples(m, kSampleWeight, k, j, i) =
+            PunctureEstimatorWeight(radius, h);
+        samples(m, kSampleQLoc, k, j, i) = q_loc;
+        samples(m, kSampleQAnalytic, k, j, i) = q_analytic;
+        samples(m, kSampleEpsilon, k, j, i) = epsilon_g;
+        samples(m, kSampleValidity, k, j, i) = 1.0;
+      });
+  DebugFence("ref_gh q-controller samples");
+
+  Kokkos::parallel_reduce(
+      "ref_gh current-q physical exponent shell",
+      Kokkos::RangePolicy<>(execution_space,
+          0, pmy_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, array_sum::GlobalSum &total) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        const Real validity = samples(m, kSampleValidity, k, j, i);
+        if (validity < 0.0) {
           total.the_array[kInvalid] += 1.0;
           return;
         }
-        Real q_reference = 0.0;
-        for (int p = 0; p < 3; ++p) {
-          q_reference -= displacement[p]
-                         *spatial_cholesky.d[p + 1]
-                         /spatial_cholesky.value;
-        }
-        const Real q_loc = q_reference + epsilon_g;
-        const Real q_analytic = -normalized_radius
-            *analytic_spatial_cholesky.d1/analytic_spatial_cholesky.value;
-        if (!Kokkos::isfinite(q_loc) || !Kokkos::isfinite(q_analytic)) {
-          total.the_array[kInvalid] += 1.0;
-          return;
-        }
-        const Real weight = PunctureEstimatorWeight(radius, h);
+        if (validity == 0.0) return;
+        const Real weight = samples(m, kSampleWeight, k, j, i);
+        const Real q_loc = samples(m, kSampleQLoc, k, j, i);
+        const Real q_analytic = samples(m, kSampleQAnalytic, k, j, i);
+        const Real epsilon_g = samples(m, kSampleEpsilon, k, j, i);
         total.the_array[kW] += weight;
         total.the_array[kW2] += weight*weight;
         total.the_array[kWQ] += weight*q_loc;
@@ -683,18 +744,35 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
         total.the_array[kWEpsilon] += weight*epsilon_g;
         total.the_array[kWEpsilon2] += weight*epsilon_g*epsilon_g;
         total.the_array[kCount] += 1.0;
-        local_minus_q_min = fmax(local_minus_q_min, -q_loc);
-        local_q_max = fmax(local_q_max, q_loc);
-      }, Kokkos::Sum<array_sum::GlobalSum>(sums),
-      Kokkos::Max<Real>(minus_q_min), Kokkos::Max<Real>(q_max));
+      }, Kokkos::Sum<array_sum::GlobalSum>(sums));
+  DebugFence("ref_gh q-controller sums");
+
+  using QMinMax = Kokkos::MinMax<Real, Kokkos::HostSpace>;
+  QMinMax::value_type q_extrema;
+  Kokkos::parallel_reduce(
+      "ref_gh current-q physical exponent extrema",
+      Kokkos::RangePolicy<>(execution_space,
+          0, pmy_pack->nmb_thispack*ncells),
+      KOKKOS_LAMBDA(const int idx, QMinMax::value_type &local_extrema) {
+        int work = idx;
+        const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+        const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+        const int k = work % indcs.nx3 + indcs.ks;
+        const int m = work/indcs.nx3;
+        if (samples(m, kSampleValidity, k, j, i) <= 0.0) return;
+        const Real q_loc = samples(m, kSampleQLoc, k, j, i);
+        if (q_loc < local_extrema.min_val) local_extrema.min_val = q_loc;
+        if (q_loc > local_extrema.max_val) local_extrema.max_val = q_loc;
+      }, QMinMax(q_extrema));
+  DebugFence("ref_gh q-controller extrema");
 #if MPI_PARALLEL_ENABLED
   MPI_Allreduce(MPI_IN_PLACE, sums.the_array, NREDUCTION_VARIABLES,
                 MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
-  Real extrema[2] = {minus_q_min, q_max};
+  Real extrema[2] = {-q_extrema.min_val, q_extrema.max_val};
   MPI_Allreduce(MPI_IN_PLACE, extrema, 2, MPI_ATHENA_REAL, MPI_MAX,
                 MPI_COMM_WORLD);
-  minus_q_min = extrema[0];
-  q_max = extrema[1];
+  q_extrema.min_val = -extrema[0];
+  q_extrema.max_val = extrema[1];
 #endif
   const Real sum_w = sums.the_array[kW];
   const bool shell_valid = sums.the_array[kCount] >= 8.0
@@ -713,8 +791,8 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
       : NAN;
   controller_diagnostics.q_effective_sample_size = shell_valid
       ? sum_w*sum_w/sums.the_array[kW2] : NAN;
-  controller_diagnostics.q_min = shell_valid ? -minus_q_min : NAN;
-  controller_diagnostics.q_max = shell_valid ? q_max : NAN;
+  controller_diagnostics.q_min = shell_valid ? q_extrema.min_val : NAN;
+  controller_diagnostics.q_max = shell_valid ? q_extrema.max_val : NAN;
   controller_diagnostics.epsilon_g_mean = shell_valid
       ? sums.the_array[kWEpsilon]/sum_w : NAN;
   controller_diagnostics.epsilon_g_variance = shell_valid
