@@ -6,8 +6,10 @@ This directory is the compact, commit-safe evidence bundle for branch
 
 The evidence is partial.  It supports the analytic/source-unit gates, a local
 controller-off static-reference ladder through `t=0.1M`, an early prescribed-q
-smoke test through `t=0.05M`, and preservation of two reproducible Aurora PVC
-first-cycle failures.  It does not establish complete moving-reference
+smoke test through `t=0.05M`, and preservation of three reproducible Aurora PVC
+failures. The third discriminator localizes the fault to the first dynamic
+reference-cache rebuild at RK stage two. It does not establish complete
+moving-reference
 convergence, closed-loop relaxation, restart equivalence, evolved PVC
 qualification, or production readiness.
 
@@ -24,6 +26,8 @@ qualification, or production readiness.
 - `local/boundary_refactor_equivalence/`: compact pre/post histories for the
   equation-preserving boundary-kernel split.  Every numeric file is identical
   after normalizing only the output basename.
+- `local/q_estimator_staging_equivalence/`: compact full-output history and
+  source-unit evidence for the equation-preserving staged q reductions.
 - `aurora/job_8785612_wrapper/`: pre-build wrapper failure caused by PBS stdout
   appearing in a strict-clean checkout.
 - `aurora/job_8785680_failed/`: implementation commit `e403baf0`; one-tile
@@ -32,8 +36,13 @@ qualification, or production readiness.
 - `aurora/job_8785718_failed/`: boundary-layout commit `a3d98182`; the same
   one-tile gate passed and the same eight-rank first-cycle fault recurred on a
   different node.
+- `aurora/job_8785796_failed/`: staged-reduction commit `f184fcde`; the
+  source-unit gate and first RK stage passed, then all ranks failed before the
+  first dynamic stage-two reference-cache rebuild completed.
 - `aurora/qstat_user_after_8785718.txt`: empty output confirming no owned Aurora
   job remained in PBS at collection time.
+- `aurora/qstat_user_after_8785796.txt`: compact confirmation that no owned
+  queued or running Aurora job remained after the focused discriminator.
 - `STATUS.json`: concise claim boundary and retained-large-output location.
 - `SHA256SUMS`: hashes for every compact file in this directory except the hash
   file itself.
@@ -45,6 +54,12 @@ retained Aurora campaign root is:
 
 ```text
 /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_q_relaxed_20260826_e403baf_v1
+```
+
+The focused `f184fcde` discriminator is retained separately at:
+
+```text
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_q_relaxed_20260827_f184fcde_v2
 ```
 
 The compact job bundles include provenance, exact rank-to-tile mappings,

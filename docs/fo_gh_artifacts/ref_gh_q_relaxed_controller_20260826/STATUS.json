@@ -4,7 +4,8 @@
   "branch": "codex/ref-gh-q-relaxed-controller-20260826",
   "implementation_commit": "e403baf03775a04d14c7fa8d50b31a0d44c50c24",
   "pvc_boundary_layout_commit": "a3d9818220a509d9b749373f315a2e82ddb44902",
-  "qualification_status": "partial_blocked_by_reproducible_pvc_first_cycle_fault",
+  "pvc_q_reduction_staging_commit": "f184fcde3d53b0bed36a855c2a2e07c515abf594",
+  "qualification_status": "partial_blocked_by_dynamic_reference_cache_pvc_fault",
   "supported_claims": [
     "analytic_and_source_unit_gates_pass",
     "controller_off_static_ladder_finite_through_t_0p1M",
@@ -22,8 +23,12 @@
   "aurora_jobs": {
     "8785612": "wrapper_failure_before_build",
     "8785680": "first_evolved_cycle_level_zero_notpresent_exit_134",
-    "8785718": "first_evolved_cycle_level_zero_notpresent_exit_134"
+    "8785718": "first_evolved_cycle_level_zero_notpresent_exit_134",
+    "8785796": "stage_two_dynamic_reference_cache_level_zero_notpresent_exit_134"
   },
   "aurora_owned_jobs_after_collection": 0,
-  "large_output_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_q_relaxed_20260826_e403baf_v1"
+  "large_output_roots": [
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_q_relaxed_20260826_e403baf_v1",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_q_relaxed_20260827_f184fcde_v2"
+  ]
 }

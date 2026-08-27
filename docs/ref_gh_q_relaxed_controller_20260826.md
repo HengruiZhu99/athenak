@@ -5,6 +5,7 @@ Branch: `codex/ref-gh-q-relaxed-controller-20260826`
 Exact base: `70e1579c2ed117e538e79b4cdf9b461ec58330e8`
 Implementation commit: `e403baf03775a04d14c7fa8d50b31a0d44c50c24`
 PVC boundary-layout correction: `a3d9818220a509d9b749373f315a2e82ddb44902`
+PVC q-reduction staging: `f184fcde3d53b0bed36a855c2a2e07c515abf594`
 
 ## Status and claim boundary
 
@@ -16,11 +17,12 @@ the same stationary physical trumpet at approximately third-to-fourth order.
 The exact `q=1` representation remains at binary64 roundoff.
 
 The required prescribed moving-reference and closed-loop qualifications are
-**not complete**.  Two Aurora PVC attempts passed the one-tile analytic source
+**not complete**. Three Aurora PVC attempts passed the one-tile analytic source
 unit but suffered an eight-rank Level Zero `NotPresent` GPU write fault in the
-first evolved cycle.  The second attempt followed one equation-preserving
-boundary-kernel refactor and reproduced the fault.  No further Aurora jobs were
-launched.  Consequently this report does **not** claim finite-resolution-relaxed
+evolved path. Equation-preserving boundary and q-reduction refactors narrowed
+the third failure to the first dynamic reference-cache rebuild at RK stage two.
+No further Aurora job was launched after that discriminator. Consequently this
+report does **not** claim finite-resolution-relaxed
 control established, moving-reference convergence, closed-loop relaxation,
 restart qualification, portability qualification, or production readiness.
 
@@ -231,12 +233,24 @@ The new kernels spill only about 19 and 17 registers.
 Job `8785718` rebuilt `a3d98182`, passed the same one-tile source-unit/cache
 gate, and reproduced the same eight-rank first-cycle `NotPresent` write fault
 on a different node.  Therefore boundary spill pressure was reduced but is not
-the established root cause.  Remaining hypotheses include the new combined
-q-shell reduction, repeated stage cache rebuild, or another first-cycle
-multi-rank device path.  These are hypotheses only.  No third micro-experiment
-was launched.
+the established root cause.
 
-No owned Aurora job remained queued or running after `8785718`.
+Commit `f184fcde` then staged the q estimator into one current-q sample kernel
+and separate sum and min/max reductions, preserving the estimator and
+controller mathematics. A local fenced full-output cycle matched all
+pre-refactor numerical histories exactly. Aurora job `8785796`, charged to
+`CompactBinaryMerger` in the `debug` queue, rebuilt that commit, demonstrated
+12 distinct rank-to-tile mappings, and passed the one-tile source-unit/cache
+gate. The evolved case used eight ranks. All ranks completed the first RK stage
+and the next stage's `CopyU` and q sample/sum/extrema tasks. No
+rank reached the next `UpdateReference` fence before the Level Zero write
+fault. This rules out the former combined q reduction as the established root
+cause and localizes the blocker to the first dynamic `FillReferenceCache`
+rebuild at RK stage two. The exact cache subkernel remains unknown. Static-q
+source-unit cases explicitly disable `reference_time_dependent`, so their pass
+does not qualify this dynamic path.
+
+No owned Aurora job remained queued or running after `8785796`.
 
 ## Phase audit
 
@@ -246,7 +260,7 @@ No owned Aurora job remained queued or running after `8785718`.
 |1-5|Pass locally/source-unit: production estimator, finite-radius oracles, weighted shell, finite-h target, epsilon_G identity.|
 |6-9|Pass analytically/local: provider, metric/gauge reprojection, exact current-q boundary algebra. PVC evolved boundary/runtime remains unqualified.|
 |10-12|Implemented and locally tested: state, ODE, same-RK ordering, generation guards, restart serialization code. Runtime restart gate pending.|
-|13|Partial: analytic jets and early local smoke pass; complete four pulses and moving-reference convergence missing; PVC first cycle fails.|
+|13|Partial: analytic jets and early local smoke pass; complete four pulses and moving-reference convergence missing; PVC dynamic cache rebuild fails.|
 |14|Pass manufactured scalar histories; per-resolution equilibrium runtime test pending.|
 |15|Partial: all static cases finite through 0.1M and regular annuli converge; innermost metric Linf nonmonotone.|
 |16-18|Not run: closed-loop, large mismatch, and three-resolution finite-h equilibria.|
@@ -259,7 +273,7 @@ No owned Aurora job remained queued or running after `8785718`.
 Compact evidence is under
 `docs/fo_gh_artifacts/ref_gh_q_relaxed_controller_20260826/`.  It includes the
 nine static histories and logs, generated convergence JSON/Markdown, local unit
-logs, interrupted local pulse histories, both Aurora failure bundles, exact
+logs, interrupted local pulse histories, three Aurora failure bundles, exact
 rank-to-tile mappings, compiler/configuration provenance, qstat records, and
 compact SHA-256 manifests.  Large field output and the 16 MB Aurora restart are
 not committed.
