@@ -26,6 +26,66 @@ struct TrumpetQControlledReferenceParameters {
 // The exact trumpet lapse, shift, and every finite-radius trumpet profile are
 // unchanged.  q, q_dot, and q_ddot are supplied by the coupled RK state.
 KOKKOS_INLINE_FUNCTION
+ReferenceJet TrumpetQControlledAlphaJet(
+    const DvceArray2D<Real> &table,
+    const TrumpetQControlledReferenceParameters &params,
+    const Real x, const Real y, const Real z) {
+  const Real displacement[3] = {x - params.center[0], y - params.center[1],
+                                z - params.center[2]};
+  const Real radius = Kokkos::sqrt(
+      displacement[0]*displacement[0] + displacement[1]*displacement[1]
+      + displacement[2]*displacement[2]);
+  return RadialJet(
+      InterpolateTrumpetProfile(table, kCoeffAlpha, radius/params.mass),
+      params.mass, displacement, radius);
+}
+
+KOKKOS_INLINE_FUNCTION
+ReferenceJet TrumpetQControlledSpatialCholeskyJet(
+    const DvceArray2D<Real> &table,
+    const TrumpetQControlledReferenceParameters &params,
+    const Real x, const Real y, const Real z) {
+  const Real displacement[3] = {x - params.center[0], y - params.center[1],
+                                z - params.center[2]};
+  const Real radius_value = Kokkos::sqrt(
+      displacement[0]*displacement[0] + displacement[1]*displacement[1]
+      + displacement[2]*displacement[2]);
+  const Real rho_value = radius_value/params.mass;
+  const ReferenceJet radius = ControlledRadiusJet(
+      x, y, z, params.center[0], params.center[1], params.center[2]);
+  const ReferenceJet rho = radius*ConstantJet(1.0/params.mass);
+  const ReferenceJet scaled_radius = radius*ConstantJet(
+      1.0/(params.gaussian_width*params.mass));
+  const ReferenceJet window = Exp(-(scaled_radius*scaled_radius));
+  const ReferenceJet q = ControllerJet(params.q, params.q_dot, params.q_ddot);
+  const ReferenceJet trumpet_cholesky = RadialJet(
+      ArealRadiusToPsi2(
+          InterpolateTrumpetProfile(table, kCoeffArealRadius, rho_value),
+          rho_value),
+      params.mass, displacement, radius_value);
+  return trumpet_cholesky*Exp(
+      -((q + ConstantJet(-1.0))*window*Log(rho)));
+}
+
+KOKKOS_INLINE_FUNCTION
+ReferenceJet TrumpetQControlledShiftQJet(
+    const DvceArray2D<Real> &table,
+    const TrumpetQControlledReferenceParameters &params,
+    const Real x, const Real y, const Real z) {
+  const Real displacement[3] = {x - params.center[0], y - params.center[1],
+                                z - params.center[2]};
+  const Real radius = Kokkos::sqrt(
+      displacement[0]*displacement[0] + displacement[1]*displacement[1]
+      + displacement[2]*displacement[2]);
+  RadialProfile shift_profile = InterpolateTrumpetProfile(
+      table, kCoeffShiftQ, radius/params.mass);
+  shift_profile.value /= params.mass;
+  shift_profile.d1 /= params.mass;
+  shift_profile.d2 /= params.mass;
+  return RadialJet(shift_profile, params.mass, displacement, radius);
+}
+
+KOKKOS_INLINE_FUNCTION
 void TrumpetQControlledProfileJets(
     const DvceArray2D<Real> &table,
     const TrumpetQControlledReferenceParameters &params,

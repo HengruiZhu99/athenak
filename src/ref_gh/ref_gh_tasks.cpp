@@ -1409,27 +1409,68 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
 
   if (!production_current) {
     // Stage 1: evaluate the provider/profile two-jets once per point.
-    Kokkos::parallel_for(
-    "ref_gh reference provider profiles",
-    Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells), KOKKOS_LAMBDA(const int idx) {
-      int work = idx;
-      const int i = work % n1; work /= n1;
-      const int j = work % n2; work /= n2;
-      const int k = work % n3;
-      const int m = work/n3;
-      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                                 size.d_view(m).x1min, size.d_view(m).x1max);
-      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                                 size.d_view(m).x2min, size.d_view(m).x2max);
-      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                                 size.d_view(m).x3min, size.d_view(m).x3max);
-      const ReferenceProviderPoint point{provider, m, k, j, i};
-      PopulateReferenceProviderCache(reference_kind, table, mass,
-                                     center_x, center_y, center_z,
-                                     time, x, y, z, controlled, generic,
-                                     q_controlled, point);
-    });
-    DebugFence("ref_gh reference provider profiles");
+    if (reference_kind == 7) {
+      // The q-controlled provider is rebuilt every RK stage.  Materialize only
+      // one 33-Real jet per work item so PVC does not need three simultaneous
+      // profile jets or the unrelated controlled/generic provider captures.
+      Kokkos::parallel_for(
+      "ref_gh q-controlled provider profiles",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells*3),
+      KOKKOS_LAMBDA(const int idx) {
+        const int component = idx/ncells;
+        int work = idx % ncells;
+        const int i = work % n1; work /= n1;
+        const int j = work % n2; work /= n2;
+        const int k = work % n3;
+        const int m = work/n3;
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        const ReferenceProviderPoint point{provider, m, k, j, i};
+        if (component == 0) {
+          StoreProviderJet(
+              TrumpetQControlledAlphaJet(table, q_controlled, x, y, z),
+              kRefProviderAlpha, point);
+          provider(m, kRefProviderArealRadius, k, j, i) = 0.0;
+        } else if (component == 1) {
+          StoreProviderJet(
+              TrumpetQControlledSpatialCholeskyJet(
+                  table, q_controlled, x, y, z),
+              kRefProviderPsi2, point);
+        } else {
+          StoreProviderJet(
+              TrumpetQControlledShiftQJet(table, q_controlled, x, y, z),
+              kRefProviderShiftQ, point);
+        }
+      });
+      DebugFence("ref_gh q-controlled provider profiles");
+    } else {
+      Kokkos::parallel_for(
+      "ref_gh reference provider profiles",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
+      KOKKOS_LAMBDA(const int idx) {
+        int work = idx;
+        const int i = work % n1; work /= n1;
+        const int j = work % n2; work /= n2;
+        const int k = work % n3;
+        const int m = work/n3;
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        const ReferenceProviderPoint point{provider, m, k, j, i};
+        PopulateReferenceProviderCache(reference_kind, table, mass,
+                                       center_x, center_y, center_z,
+                                       time, x, y, z, controlled, generic,
+                                       q_controlled, point);
+      });
+      DebugFence("ref_gh reference provider profiles");
+    }
 
     // Stage 2: populate frame/coframe values and frame derivatives component by
     // component. Each work item holds only two scalar jets, not a full geometry.
