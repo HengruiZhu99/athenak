@@ -138,6 +138,20 @@ grep -q 'Terminating on cycle limit' run.log
 grep -q 'ref_gh debug fence passed: ref_gh NewTimeStep' run.log
 ! grep -Eiq 'FATAL ERROR|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' run.log
 
+if [[ "${CYCLE_GATE_ONLY:-0}" == "1" ]]; then
+  cd "${OUT}"
+  {
+    echo 'result=PASS_BOUNDED_CYCLE_GATE_ONLY'
+    echo 'scientific_analysis=not_applicable'
+    echo 'production_pulses=not_run'
+    sha256sum "${EXE}"
+  } > gate_status.txt
+  find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.hst' \
+    -o -name '*-trumpet.dat' \) -print0 | sort -z | xargs -0 sha256sum \
+    > compact_sha256.txt
+  exit 0
+fi
+
 # Complete all four prescribed excursions on the h=M/16 grid.
 run_pulse q090 0.90 4.0 4.0 16 8
 run_pulse q110 1.10 4.0 4.0 16 8
