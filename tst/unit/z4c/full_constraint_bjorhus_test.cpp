@@ -136,6 +136,45 @@ bool CheckCornerFrameAndAxisOwnership() {
          !z4c::FullConstraintBjorhusOwnsPoint(1, z_only_side, true);
 }
 
+bool CheckNonDiagonalMetricFrameAndProjection() {
+  const Real metric[3][3] = {{2.0, 0.3, 0.1},
+                             {0.3, 1.5, -0.2},
+                             {0.1, -0.2, 0.8}};
+  const int side[3] = {0, -1, 0};
+  z4c::FullConstraintBjorhusFrame frame;
+  if (z4c::MakeFullConstraintBjorhusFrame(metric, side, &frame) !=
+      z4c::FullConstraintBjorhusStatus::valid) {
+    return false;
+  }
+
+  Real normal_norm = 0.0;
+  for (int a = 0; a < 3; ++a) {
+    normal_norm += frame.normal_d[a] * frame.normal_u[a];
+    Real lowered = 0.0;
+    for (int b = 0; b < 3; ++b) lowered += metric[a][b] * frame.normal_u[b];
+    if (!NearlyEqual(lowered, frame.normal_d[a])) return false;
+  }
+  if (!NearlyEqual(normal_norm, 1.0)) return false;
+
+  z4c::FullConstraintBjorhusRates rates;
+  rates.theta = -0.31;
+  rates.z_normal = 0.27;
+  rates.vector_covector[0] = 0.41;
+  rates.vector_covector[1] = -0.53;
+  rates.vector_covector[2] = 0.19;
+  z4c::FullConstraintBjorhusCorrection correction;
+  if (z4c::SolveFullConstraintBjorhusCorrection(0.76, frame, rates,
+                                                &correction) !=
+      z4c::FullConstraintBjorhusStatus::valid) {
+    return false;
+  }
+  const auto corrected = z4c::ApplyFullConstraintBjorhusCorrectionToRates(
+      0.76, frame, rates, correction);
+  return NearlyEqual(corrected.theta, 0.0) &&
+         NearlyEqual(corrected.z_normal, 0.0) &&
+         TangentialRateError(frame, corrected) < 2.0e-13;
+}
+
 bool CheckFailClosed() {
   auto frame = CartesianFrame(1);
   z4c::FullConstraintBjorhusRates rates;
@@ -199,7 +238,8 @@ int main(int argc, char **argv) {
   Real induced_outgoing_rate = 0.0;
   bool passed = CheckOutgoingPulse() &&
                 CheckIncomingThetaZPulse(&induced_outgoing_rate) &&
-                CheckCornerFrameAndAxisOwnership() && CheckFailClosed();
+                CheckCornerFrameAndAxisOwnership() &&
+                CheckNonDiagonalMetricFrameAndProjection() && CheckFailClosed();
   const std::uint64_t checksum = DeterministicChecksum();
   passed = passed && checksum != 0;
 #if MPI_PARALLEL_ENABLED

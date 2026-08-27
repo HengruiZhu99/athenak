@@ -109,13 +109,18 @@ FullConstraintBjorhusStatus MakeFullConstraintBjorhusFrame(
   const Real inverse_norm = 1.0 / Kokkos::sqrt(normal_squared);
   for (int a = 0; a < 3; ++a) {
     frame->normal_d[a] = side[a] * inverse_norm;
-    frame->normal_u[a] = 0.0;
-    for (int b = 0; b < 3; ++b) {
-      frame->normal_u[a] += inverse[a][b] * frame->normal_d[b];
-    }
     for (int b = 0; b < 3; ++b) {
       frame->metric_dd[a][b] = metric_dd[a][b];
       frame->metric_uu[a][b] = inverse[a][b];
+    }
+  }
+  // All covariant components must exist before raising the index.  Interleaving
+  // these loops silently omitted not-yet-written components for non-diagonal
+  // metrics and broke the unit-normal and tangential-projection identities.
+  for (int a = 0; a < 3; ++a) {
+    frame->normal_u[a] = 0.0;
+    for (int b = 0; b < 3; ++b) {
+      frame->normal_u[a] += inverse[a][b] * frame->normal_d[b];
     }
   }
   return FullConstraintBjorhusStatus::valid;
