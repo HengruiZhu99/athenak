@@ -86,7 +86,6 @@ Suggested checkout and integrity verification:
 ```bash
 git fetch origin codex/ref-gh-q-relaxed-controller-20260826
 git switch --detach origin/codex/ref-gh-q-relaxed-controller-20260826
-cd docs/fo_gh_artifacts/ref_gh_q_relaxed_controller_20260826
-sha256sum -c SHA256SUMS
+sha256sum -c \
+  docs/fo_gh_artifacts/ref_gh_q_relaxed_controller_20260826/SHA256SUMS
 ```
-
