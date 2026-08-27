@@ -6,7 +6,7 @@ This directory is the compact, commit-safe evidence bundle for branch
 
 The evidence is partial.  It supports the analytic/source-unit gates, a local
 controller-off static-reference ladder through `t=0.1M`, an early prescribed-q
-smoke test through `t=0.05M`, and preservation of four reproducible Aurora PVC
+smoke test through `t=0.05M`, and preservation of five reproducible Aurora PVC
 failures. The latest discriminator localizes the first fault to the provider
 profile kernel in the first dynamic reference-cache rebuild. It does not
 establish complete
@@ -29,6 +29,8 @@ qualification, or production readiness.
   after normalizing only the output basename.
 - `local/q_estimator_staging_equivalence/`: compact full-output history and
   source-unit evidence for the equation-preserving staged q reductions.
+- `local/q_provider_split_equivalence/`: source-unit and full-cycle evidence
+  for the specialized one-profile-jet provider launch.
 - `aurora/job_8785612_wrapper/`: pre-build wrapper failure caused by PBS stdout
   appearing in a strict-clean checkout.
 - `aurora/job_8785680_failed/`: implementation commit `e403baf0`; one-tile
@@ -43,12 +45,16 @@ qualification, or production readiness.
 - `aurora/job_8785833_failed/`: fence-instrumented commit `bd40d98b`; initial
   cache construction and the first RK stage passed, then the provider-profile
   kernel faulted on its first dynamic rebuild.
+- `aurora/job_8785882_failed/`: specialized-provider commit `5ac38180`; the
+  same bounded provider-profile fault recurred, so the split was insufficient.
 - `aurora/qstat_user_after_8785718.txt`: empty output confirming no owned Aurora
   job remained in PBS at collection time.
 - `aurora/qstat_user_after_8785796.txt`: compact confirmation that no owned
   queued or running Aurora job remained after the focused discriminator.
 - `aurora/qstat_user_after_8785833.txt`: compact confirmation that no owned
   queued or running Aurora job remained after provider-kernel localization.
+- `aurora/qstat_user_after_8785882.txt`: compact confirmation that no owned
+  queued or running Aurora job remained after the specialized-provider gate.
 - `STATUS.json`: concise claim boundary and retained-large-output location.
 - `SHA256SUMS`: hashes for every compact file in this directory except the hash
   file itself.
@@ -72,6 +78,12 @@ The provider-kernel localization run is retained at:
 
 ```text
 /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_q_relaxed_20260827_bd40d98b_v1
+```
+
+The specialized-provider discriminator is retained at:
+
+```text
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_q_relaxed_20260827_5ac38180_v1
 ```
 
 The compact job bundles include provenance, exact rank-to-tile mappings,

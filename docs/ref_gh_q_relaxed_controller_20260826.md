@@ -8,6 +8,7 @@ PVC boundary-layout correction: `a3d9818220a509d9b749373f315a2e82ddb44902`
 PVC q-reduction staging: `f184fcde3d53b0bed36a855c2a2e07c515abf594`
 PVC cache instrumentation: `52dcc573a918b8a794f4273f77b31b7692320edf`
 Bounded provider discriminator: `bd40d98b64c4a124e5b8c36679c71a62d1dc6071`
+Specialized q-provider correction: `5ac381803ed1ac04da24ff626e4cda1ac57564f8`
 
 ## Status and claim boundary
 
@@ -19,7 +20,7 @@ the same stationary physical trumpet at approximately third-to-fourth order.
 The exact `q=1` representation remains at binary64 roundoff.
 
 The required prescribed moving-reference and closed-loop qualifications are
-**not complete**. Four Aurora PVC attempts passed the one-tile analytic source
+**not complete**. Five Aurora PVC attempts passed the one-tile analytic source
 unit but suffered an eight-rank Level Zero `NotPresent` GPU write fault in the
 evolved path. Equation-preserving boundary and q-reduction refactors narrowed
 the latest failure to the provider-profile kernel in the first dynamic
@@ -268,6 +269,25 @@ not an established conclusion.
 
 No owned Aurora job remained queued or running after `8785833`.
 
+Commit `5ac38180` made one equation-preserving portability correction to that
+launch: the q-controlled path now evaluates and stores one profile jet per work
+item and does not capture unrelated controlled/generic provider state. The
+local source-unit/cache gate and an identical full RK4 cycle passed. The
+physical trumpet summary was bitwise identical; nonzero histories changed only
+at roundoff, with a maximum principal-history relative difference of
+`1.45e-15`.
+
+Aurora job `8785882` reran exactly one bounded `debug` gate. Initial cache
+construction and the first RK stage again passed, but all ranks faulted before
+the specialized provider fence on the first dynamic rebuild. The correction
+was therefore insufficient, and the three-simultaneous-jet capture hypothesis
+is not a complete explanation. The first failing launch remains the
+q-controlled provider-profile kernel, while the exact write target and cause
+remain unresolved. Per the focused-gate stop rule, no further micro-experiment
+or production pulse was launched.
+
+No owned Aurora job remained queued or running after `8785882`.
+
 ## Phase audit
 
 | Phase | Evidence status |
@@ -289,7 +309,7 @@ No owned Aurora job remained queued or running after `8785833`.
 Compact evidence is under
 `docs/fo_gh_artifacts/ref_gh_q_relaxed_controller_20260826/`.  It includes the
 nine static histories and logs, generated convergence JSON/Markdown, local unit
-logs, interrupted local pulse histories, four Aurora failure bundles, exact
+logs, interrupted local pulse histories, five Aurora failure bundles, exact
 rank-to-tile mappings, compiler/configuration provenance, qstat records, and
 compact SHA-256 manifests.  Large field output and the 16 MB Aurora restart are
 not committed.
