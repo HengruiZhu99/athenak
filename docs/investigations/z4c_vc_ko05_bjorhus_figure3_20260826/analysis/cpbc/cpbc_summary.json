@@ -1,0 +1,113 @@
+{
+  "central_log10_axisKret_max_deviation": {
+    "Rout128": 0.0,
+    "Rout16": 8.370735886664704e-07
+  },
+  "limitations": [
+    "The planned four-way discriminator is incomplete and no CPBC comparison is qualified.",
+    "A and C reached t=6.5; B failed closed at t=3.244461; D was intentionally cancelled at t=1.508791 and is excluded from conclusions.",
+    "The Bjorhus option cancels incoming principal rates but does not preserve all outgoing rates.",
+    "A replay-matched tree isolates boundary treatment but suppresses boundary-induced topology divergence."
+  ],
+  "manufactured": {
+    "incoming_after_absolute_bound": 2e-13,
+    "maximum_induced_outgoing_rate": 0.686111
+  },
+  "replay": {
+    "B": {
+      "all_exact": true,
+      "events": 3,
+      "last_event": 3
+    },
+    "D": {
+      "all_exact": true,
+      "events": 3,
+      "last_event": 3
+    }
+  },
+  "schema": "z4c_vc_ko05_cpbc_discriminator_v1",
+  "status": {
+    "A": {
+      "disposition": "REACHED_TLIM",
+      "orchestration_status": "0",
+      "run_status": "athena_exit=0"
+    },
+    "B": {
+      "disposition": "FAIL_CLOSED_NUMERICAL_OR_RUNTIME_FAILURE",
+      "orchestration_status": "134",
+      "run_status": "athena_exit=134"
+    },
+    "C": {
+      "disposition": "REACHED_TLIM",
+      "orchestration_status": "0",
+      "run_status": "athena_exit=0"
+    },
+    "D": {
+      "disposition": "FAIL_CLOSED_NUMERICAL_OR_RUNTIME_FAILURE",
+      "orchestration_status": "143",
+      "run_status": "athena_exit=143"
+    }
+  },
+  "terminal": {
+    "A": {
+      "C-Linf": 0.011266423602165648,
+      "C-norm2": 0.0015175926401299622,
+      "C-rho": 5.25,
+      "C-z": 0.0,
+      "H-norm2": 0.00019108459541168383,
+      "M-norm2": 0.00018711659677235164,
+      "Z-norm2": 0.00022916424543835604,
+      "axisKret": 0.002138748451179288,
+      "axisTau": 3.986826892199771,
+      "dt": 0.006426716274967603,
+      "maxRefLev": 1.0,
+      "nmb_total": 44.0,
+      "time": 6.5
+    },
+    "B": {
+      "C-Linf": 40.70702800110337,
+      "C-norm2": 3633.600335330967,
+      "C-rho": 16.0,
+      "C-z": -16.0,
+      "H-norm2": 3082.705695859887,
+      "M-norm2": 468.13427408970506,
+      "Z-norm2": 16.4072804382387,
+      "axisKret": 0.0005416957296970277,
+      "axisTau": 1.9984750346022409,
+      "dt": 0.006877881986719369,
+      "maxRefLev": 1.0,
+      "nmb_total": 44.0,
+      "time": 3.244461166925543
+    },
+    "C": {
+      "C-Linf": 0.011266423602165867,
+      "C-norm2": 0.0005811998688235094,
+      "C-rho": 5.25,
+      "C-z": 0.0,
+      "H-norm2": 0.00011938393986716059,
+      "M-norm2": 0.00016911032975935343,
+      "Z-norm2": 2.698392036663897e-05,
+      "axisKret": 0.002138748450801648,
+      "axisTau": 3.9868268921997694,
+      "dt": 0.006426716274965827,
+      "maxRefLev": 4.0,
+      "nmb_total": 206.0,
+      "time": 6.5
+    },
+    "D": {
+      "C-Linf": 0.0008389491071741501,
+      "C-norm2": 9.671102187614017e-05,
+      "C-rho": 5.0,
+      "C-z": 0.0,
+      "H-norm2": 1.8077665604645785e-05,
+      "M-norm2": 1.3493494887410475e-05,
+      "Z-norm2": 1.5443005994828024e-05,
+      "axisKret": 0.0005602886145950705,
+      "axisTau": 0.9292366543959275,
+      "dt": 0.0067785917572514625,
+      "maxRefLev": 4.0,
+      "nmb_total": 206.0,
+      "time": 1.5087910750714824
+    }
+  }
+}

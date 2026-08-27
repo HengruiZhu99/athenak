@@ -1,0 +1,18 @@
+:0: : block: [1,0,0], thread: [0,37,0] Assertion `full_constraint_bjorhus: boundary does not have one incoming and one outgoing physical-speed member` failed.
+:0: : block: [11,0,0], thread: [0,43,0] Assertion `full_constraint_bjorhus: boundary does not have one incoming and one outgoing physical-speed member` failed.
+cudaEventSynchronize( CudaInternal::constantMemReusablePerDevice[cuda_device]) error( cudaErrorAssert): device-side assert triggered /pscratch/sd/h/hzhu/z4c-vc-ko05-bjorhus-figure3-20260826/source-cpbc/kokkos/core/src/Cuda/Kokkos_Cuda_KernelLaunch.hpp:585
+Backtrace:
+[0x144b3f3] 
+[0x1428ae7] 
+[0x145356b] 
+[0x13282c0] 
+[0x135e1bb] 
+[0x1330535] 
+[0x68e2ec] 
+[0x690f7f] 
+[0x4c4599] 
+[0x7faf979a5eec] 
+[0x7faf979a5fb5] __libc_start_main
+[0x4f53e1] 
+srun: error: nid001012: task 0: Aborted
+srun: Terminating StepId=57636959.4
