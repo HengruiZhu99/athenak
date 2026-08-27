@@ -6,6 +6,8 @@ Exact base: `70e1579c2ed117e538e79b4cdf9b461ec58330e8`
 Implementation commit: `e403baf03775a04d14c7fa8d50b31a0d44c50c24`
 PVC boundary-layout correction: `a3d9818220a509d9b749373f315a2e82ddb44902`
 PVC q-reduction staging: `f184fcde3d53b0bed36a855c2a2e07c515abf594`
+PVC cache instrumentation: `52dcc573a918b8a794f4273f77b31b7692320edf`
+Bounded provider discriminator: `bd40d98b64c4a124e5b8c36679c71a62d1dc6071`
 
 ## Status and claim boundary
 
@@ -17,10 +19,11 @@ the same stationary physical trumpet at approximately third-to-fourth order.
 The exact `q=1` representation remains at binary64 roundoff.
 
 The required prescribed moving-reference and closed-loop qualifications are
-**not complete**. Three Aurora PVC attempts passed the one-tile analytic source
+**not complete**. Four Aurora PVC attempts passed the one-tile analytic source
 unit but suffered an eight-rank Level Zero `NotPresent` GPU write fault in the
 evolved path. Equation-preserving boundary and q-reduction refactors narrowed
-the third failure to the first dynamic reference-cache rebuild at RK stage two.
+the latest failure to the provider-profile kernel in the first dynamic
+reference-cache rebuild at RK stage two.
 No further Aurora job was launched after that discriminator. Consequently this
 report does **not** claim finite-resolution-relaxed
 control established, moving-reference convergence, closed-loop relaxation,
@@ -250,7 +253,20 @@ rebuild at RK stage two. The exact cache subkernel remains unknown. Static-q
 source-unit cases explicitly disable `reference_time_dependent`, so their pass
 does not qualify this dynamic path.
 
-No owned Aurora job remained queued or running after `8785796`.
+Commit `52dcc573` added fence-only labels between every production cache
+subkernel. Commit `bd40d98b` added a submission-time `CYCLE_GATE_ONLY=1` stop
+that prevents a successful discriminator from falling through into expensive
+pulses. Aurora job `8785833` used that bound in the `debug` queue. Initial cache
+construction passed every labeled subkernel on all eight evolved ranks, and
+the first RK stage completed. At the next stage, all ranks passed the q
+estimator but none reached the provider-profile fence. The Level Zero write
+fault therefore occurs inside the q-controlled provider-profile launch on its
+first dynamic rebuild; no downstream frame, connection, mixed-gauge, theta,
+spin, or curvature kernel starts. The present provider kernel constructs three
+33-Real jets per work item, making private/spill state a portability hypothesis,
+not an established conclusion.
+
+No owned Aurora job remained queued or running after `8785833`.
 
 ## Phase audit
 
@@ -260,7 +276,7 @@ No owned Aurora job remained queued or running after `8785796`.
 |1-5|Pass locally/source-unit: production estimator, finite-radius oracles, weighted shell, finite-h target, epsilon_G identity.|
 |6-9|Pass analytically/local: provider, metric/gauge reprojection, exact current-q boundary algebra. PVC evolved boundary/runtime remains unqualified.|
 |10-12|Implemented and locally tested: state, ODE, same-RK ordering, generation guards, restart serialization code. Runtime restart gate pending.|
-|13|Partial: analytic jets and early local smoke pass; complete four pulses and moving-reference convergence missing; PVC dynamic cache rebuild fails.|
+|13|Partial: analytic jets and early local smoke pass; complete four pulses and moving-reference convergence missing; PVC q-provider rebuild fails.|
 |14|Pass manufactured scalar histories; per-resolution equilibrium runtime test pending.|
 |15|Partial: all static cases finite through 0.1M and regular annuli converge; innermost metric Linf nonmonotone.|
 |16-18|Not run: closed-loop, large mismatch, and three-resolution finite-h equilibria.|
@@ -273,7 +289,7 @@ No owned Aurora job remained queued or running after `8785796`.
 Compact evidence is under
 `docs/fo_gh_artifacts/ref_gh_q_relaxed_controller_20260826/`.  It includes the
 nine static histories and logs, generated convergence JSON/Markdown, local unit
-logs, interrupted local pulse histories, three Aurora failure bundles, exact
+logs, interrupted local pulse histories, four Aurora failure bundles, exact
 rank-to-tile mappings, compiler/configuration provenance, qstat records, and
 compact SHA-256 manifests.  Large field output and the 16 MB Aurora restart are
 not committed.

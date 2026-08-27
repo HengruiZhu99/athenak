@@ -6,9 +6,10 @@ This directory is the compact, commit-safe evidence bundle for branch
 
 The evidence is partial.  It supports the analytic/source-unit gates, a local
 controller-off static-reference ladder through `t=0.1M`, an early prescribed-q
-smoke test through `t=0.05M`, and preservation of three reproducible Aurora PVC
-failures. The third discriminator localizes the fault to the first dynamic
-reference-cache rebuild at RK stage two. It does not establish complete
+smoke test through `t=0.05M`, and preservation of four reproducible Aurora PVC
+failures. The latest discriminator localizes the first fault to the provider
+profile kernel in the first dynamic reference-cache rebuild. It does not
+establish complete
 moving-reference
 convergence, closed-loop relaxation, restart equivalence, evolved PVC
 qualification, or production readiness.
@@ -39,10 +40,15 @@ qualification, or production readiness.
 - `aurora/job_8785796_failed/`: staged-reduction commit `f184fcde`; the
   source-unit gate and first RK stage passed, then all ranks failed before the
   first dynamic stage-two reference-cache rebuild completed.
+- `aurora/job_8785833_failed/`: fence-instrumented commit `bd40d98b`; initial
+  cache construction and the first RK stage passed, then the provider-profile
+  kernel faulted on its first dynamic rebuild.
 - `aurora/qstat_user_after_8785718.txt`: empty output confirming no owned Aurora
   job remained in PBS at collection time.
 - `aurora/qstat_user_after_8785796.txt`: compact confirmation that no owned
   queued or running Aurora job remained after the focused discriminator.
+- `aurora/qstat_user_after_8785833.txt`: compact confirmation that no owned
+  queued or running Aurora job remained after provider-kernel localization.
 - `STATUS.json`: concise claim boundary and retained-large-output location.
 - `SHA256SUMS`: hashes for every compact file in this directory except the hash
   file itself.
@@ -60,6 +66,12 @@ The focused `f184fcde` discriminator is retained separately at:
 
 ```text
 /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_q_relaxed_20260827_f184fcde_v2
+```
+
+The provider-kernel localization run is retained at:
+
+```text
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_q_relaxed_20260827_bd40d98b_v1
 ```
 
 The compact job bundles include provenance, exact rank-to-tile mappings,
