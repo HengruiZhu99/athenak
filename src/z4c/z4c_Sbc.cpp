@@ -621,6 +621,31 @@ static void ApplyFullConstraintBjorhusAtPoint(
   const Real tolerance = 2048.0 * std::numeric_limits<Real>::epsilon() * scale;
   if (fabs(corrected.theta) > tolerance ||
       fabs(corrected.z_normal) > tolerance || tangent_error > tolerance) {
+    Kokkos::printf(
+        "FULL_CONSTRAINT_BJORHUS_RESIDUAL m=%d k=%d j=%d i=%d "
+        "chi=%.17e theta=%.17e z_normal=%.17e tangent=%.17e "
+        "tolerance=%.17e scale=%.17e rates=[%.17e,%.17e,%.17e,%.17e,%.17e] "
+        "correction=[%.17e,%.17e,%.17e,%.17e] normal_u=[%.17e,%.17e,%.17e] "
+        "normal_d=[%.17e,%.17e,%.17e]\n",
+        m, k, j, i, static_cast<double>(chi),
+        static_cast<double>(corrected.theta),
+        static_cast<double>(corrected.z_normal),
+        static_cast<double>(tangent_error), static_cast<double>(tolerance),
+        static_cast<double>(scale), static_cast<double>(volume_rates.theta),
+        static_cast<double>(volume_rates.z_normal),
+        static_cast<double>(volume_rates.vector_covector[0]),
+        static_cast<double>(volume_rates.vector_covector[1]),
+        static_cast<double>(volume_rates.vector_covector[2]),
+        static_cast<double>(correction.theta),
+        static_cast<double>(correction.gamma_u[0]),
+        static_cast<double>(correction.gamma_u[1]),
+        static_cast<double>(correction.gamma_u[2]),
+        static_cast<double>(frame.normal_u[0]),
+        static_cast<double>(frame.normal_u[1]),
+        static_cast<double>(frame.normal_u[2]),
+        static_cast<double>(frame.normal_d[0]),
+        static_cast<double>(frame.normal_d[1]),
+        static_cast<double>(frame.normal_d[2]));
     Kokkos::abort("full_constraint_bjorhus: incoming compatibility residual");
   }
 
