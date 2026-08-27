@@ -1,0 +1,56 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 8
+  Rank = 0: 1 MeshBlocks, cost = 1
+  Rank = 1: 1 MeshBlocks, cost = 1
+  Rank = 2: 1 MeshBlocks, cost = 1
+  Rank = 3: 1 MeshBlocks, cost = 1
+  Rank = 4: 1 MeshBlocks, cost = 1
+  Rank = 5: 1 MeshBlocks, cost = 1
+  Rank = 6: 1 MeshBlocks, cost = 1
+  Rank = 7: 1 MeshBlocks, cost = 1
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+reference-GH puncture minimum cell-center radius = 0.0541266
+reference-GH stationary physical-target audit: |F-H_constraint|_Linf=3.35376e-12, |tildeGamma|_Linf=3.05861e-15, |stored_Hhat_A|_Linf=1.84741e-13, |stored_theta_A|_Linf=7.67386e-13
+reference-GH stationary initial RHS Linf = 6.83048e-12, component=53, radius=0.16238, coordinate reference Ricci Linf=4.14162e-10, frame reference Ricci Linf=1.38778e-16
+
+Setup complete, executing task list(s)...
+
+elapsed=1.581270e+01 cycle=0 time=0.000000e+00 dt=1.292972e-02
+Segmentation fault from GPU at 0xff000009a6088000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff000009a6088000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff000009a5e03000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff000009a5e03000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff000009ce304000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff000009ce304000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff0000099b2af000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff0000099b2af000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff0000099b0cc000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff0000099b0cc000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000991c25000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff00000991c25000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff000009b026a000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff000009b01c8000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff000009b026a000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff000009b01c8000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 2 (PDP), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+x4219c2s3b0n0.hsn.cm.aurora.alcf.anl.gov: rank 6 died from signal 6

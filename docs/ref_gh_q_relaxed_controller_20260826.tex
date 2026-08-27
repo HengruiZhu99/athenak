@@ -1,0 +1,279 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.78in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,longtable,tabularx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\hypersetup{colorlinks=true,linkcolor=MidnightBlue,urlcolor=MidnightBlue}
+\definecolor{pass}{RGB}{22,112,67}
+\definecolor{fail}{RGB}{170,42,42}
+\definecolor{partial}{RGB}{168,104,0}
+\newcommand{\Pass}{\textcolor{pass}{\textbf{PASS}}}
+\newcommand{\Fail}{\textcolor{fail}{\textbf{FAIL}}}
+\newcommand{\Partial}{\textcolor{partial}{\textbf{PARTIAL}}}
+\newcommand{\code}[1]{\texttt{#1}}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Ref-GH finite-resolution q controller}
+\rhead{2026-08-26/27}
+\cfoot{\thepage}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\lstset{basicstyle=\ttfamily\small,breaklines=true,frame=single,
+  backgroundcolor=\color{black!3}}
+
+\title{Finite-Resolution-Relaxed Ref-GH Puncture-Exponent Controller\\
+\large Partial Qualification Report and Aurora PVC Blocker}
+\author{AthenaK vacuum reference-frame first-order GH}
+\date{26--27 August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+Branch & \code{codex/ref-gh-q-relaxed-controller-20260826}\\
+Exact base & \code{70e1579c2ed117e538e79b4cdf9b461ec58330e8}\\
+Implementation & \code{e403baf03775a04d14c7fa8d50b31a0d44c50c24}\\
+PVC layout correction & \code{a3d9818220a509d9b749373f315a2e82ddb44902}\\
+\end{tabularx}
+
+\section{Executive status}
+
+The analytic estimator, finite-$h$ oracle, q-controlled provider, physical and
+gauge reprojection, scalar controller, stage ordering, and controller-off
+static-reference ladder are implemented.  Nine local cases reach $t=0.1M$ at
+$h=M/16,M/24,M/32$.  In the regular annulus
+$0.25M\leq r<0.375M$, the $q=0.9$ and $q=1.1$ representations approach the same
+physical stationary trumpet at roughly third-to-fourth order; $q=1$ remains at
+roundoff.
+
+The prescribed moving-reference and closed-loop gates are \Fail.  Aurora jobs
+8785680 and 8785718 pass the one-tile analytic/cache gate, then encounter the
+same eight-rank Level Zero \code{NotPresent} GPU write fault in the first evolved
+cycle.  The second job follows one equation-preserving boundary refactor on a
+different node.  No third micro-experiment was launched.  This document does
+\emph{not} claim finite-resolution control established, closed-loop
+relaxation, moving-reference convergence, restart qualification, PVC evolved
+qualification, or production readiness.
+
+\section{Estimator and finite-resolution target}
+
+At each active Cartesian cell, with $X^i=x^i-x^i_{\rm p}$,
+\begin{equation}
+q_{\rm loc}=-\frac16 X^k\gamma^{ij}\partial_k\gamma_{ij}
+           =-\frac16 X^k\partial_k\ln\det\gamma.
+\end{equation}
+The physical metric derivative is reconstructed from $\Psi$, $\Phi$, the
+current reference frame/coframe, and analytic reference jets.  The production
+controller performs no spatial finite difference, ray interpolation, radial
+binning, or interpolation to $r=0$.
+
+For actual cells in $2h\leq r<8h$,
+\begin{equation}
+w_i=\left(\frac{2h}{r_i}\right)^3,\qquad
+q_{\rm est}=\frac{\sum_iw_iq_{{\rm loc},i}}{\sum_iw_i}.
+\end{equation}
+Variance, effective sample size, extrema, and count are recorded.  The exact
+finite-grid target $q_T^{\rm analytic}(h)$ applies the identical cell set and
+weights to the provider-derived finite-radius exponent.  The controller is not
+told that the continuum limit is one.
+
+The independent relative diagnostic is
+\begin{equation}
+\epsilon_G=-\frac16X^k(G^{-1})^{IJ}\bar\theta^K{}_k\Phi_{KIJ},
+\qquad q_{\rm phys,loc}=q_{\rm ref,loc}+\epsilon_G.
+\end{equation}
+The identity passes analytic/random-state tests; $\epsilon_G$ is recorded and
+is not forced to zero.
+
+\subsection{Puncture-stencil exclusion}
+
+Every primary field, constraint, common-ADM, exponent, gauge, and cache-oracle
+sample is discarded whenever its complete FD support can overlap the puncture.
+The conservative support box uses each block direction's spacing.  An order
+$2p$ centered derivative has radius $p$; enabled matching KO adds one cell.
+The common ADM mask uses the larger of its diagnostic and evolution footprints.
+The anisotropic-spacing oracle passes and retains 2,112 of 2,144 estimator
+cells.  No post-hoc mask was introduced after inspecting the runs.
+
+\section{Static analytic gates}
+
+Minkowski gives $q_{\rm loc}=0$ to roundoff.  For
+$\psi=1+M/(2r)$, the exact wormhole result
+\begin{equation}
+q_{\rm exact}(r)=\frac{M}{r+M/2}
+\end{equation}
+is reproduced at selected cells and approaches two under refinement.  The
+trumpet comparator uses the same interpolated profile and analytic derivative
+as the provider.  Its weighted values are
+\begin{center}
+\begin{tabular}{c@{\qquad}c}
+\toprule
+$h/M$ & $q_T^{\rm analytic}(h)$\\
+\midrule
+$1/16$ & 0.8437263470\\
+$1/24$ & 0.8938418434\\
+$1/32$ & 0.9202374342\\
+\bottomrule
+\end{tabular}
+\end{center}
+and trend toward one.  The same-$r/h$ direct-FD estimate is retained only as a
+diagnostic of scale-invariant singular-stencil bias.  Its hard gate was
+removed; a fixed-coordinate annulus FD check converges.
+
+\section{q-controlled reference and reprojection}
+
+Only the exact trumpet spatial Cholesky factor changes:
+\begin{equation}
+W(r)=e^{-(r/R_G)^2},\qquad
+L(q)=L_T\exp[-(q-1)W(r)\ln(r/M)],\qquad R_G=3M.
+\end{equation}
+Lapse, shift, finite-radius profiles, and $R_G$ remain fixed.  At $q=1$ the
+provider agrees with $L_T$ to binary64 accuracy.
+
+For $q\ne1$, the same physical stationary coordinate metric and derivatives
+are projected into the current tetrad.  The resulting $\Pi$ is generally
+nonzero because the physical shift advects the relative metric.  Reconstruction
+errors are $4.44\times10^{-16}$ for the metric and
+$9.86\times10^{-16}$ for its derivative; the smallest deliberately nontrivial
+$|\Pi|$ is 0.125187.  The ordinary-GH $\hat H$ and stationary improved-driver
+$\theta$ are likewise projected and subtract the matching current-reference
+baseline.  Their source-unit errors are $1.11\times10^{-16}$ and
+$2.22\times10^{-16}$.
+
+Nonperiodic boundaries project this same physical metric and gauge state at
+the stage values $(q,\dot q,\ddot q)$.  They never reuse
+$\Psi=\eta,\Pi=\Phi=0$ for a mismatched reference.
+
+\section{Controller and RK coupling}
+
+The replicated state $(q,\dot q)$ obeys
+\begin{align}
+\dot q &= q_{\rm dot},\\
+\dot q_{\rm dot} &= -2\zeta\omega_q q_{\rm dot}
+                    +\omega_q^2(q_{\rm est}-q),
+\end{align}
+with a smooth acceleration limiter.  Defaults are $\zeta=1$,
+$\omega_qM=0.5$, $q\in[0.5,2.5]$, and $|\dot q|M\leq0.25$.  State-bound
+crossing fails the run; there is no clipping-and-continuation path.
+
+The PDE and controller use identical RK stages.  A stage copies the PDE and
+controller state, builds a lightweight current-q spatial snapshot, measures
+$q_{\rm est}$, computes $\ddot q$, builds the full two-jet cache with the same
+generation, computes the Ref-GH/gauge RHS, and performs the common update.
+Generation assertions reject stale reference use.  Restart headers persist the
+controller state, generation, frozen state, and estimator diagnostics.
+
+The manufactured scalar histories verify sign, critical damping, slowly
+varying response, exact restart continuation, prescribed C2 pulses, and absence
+of clipping.  Critical-history error is approximately $1.03\times10^{-15}$;
+the Aurora/SYCL prescribed oracle error is $3.02\times10^{-9}$.
+
+\section{Controller-off static ladder}
+
+All cases use $[-0.5M,0.5M]^3$, exact projected boundaries, CFL 0.05, RK4,
+fourth-order FD, $\gamma_0=\gamma_2=1$, no KO, and the complete puncture mask.
+Every case reaches $t=0.1M$ finite without intervention.
+
+\begin{center}\small
+\begin{tabular}{ccrrrr}
+\toprule
+$q$ & $h/M$ & metric & native constraint & lapse & shift\\
+\midrule
+0.9 & 1/16 & 1.5568e-3 & 1.5670e-2 & 6.4446e-7 & 9.8937e-7\\
+0.9 & 1/24 & 3.6211e-4 & 4.1008e-3 & 1.7590e-7 & 9.5102e-8\\
+0.9 & 1/32 & 1.2322e-4 & 1.4604e-3 & 3.8504e-8 & 1.4421e-8\\
+1.1 & 1/16 & 2.0136e-3 & 1.5609e-2 & 7.9275e-7 & 1.0139e-6\\
+1.1 & 1/24 & 4.8115e-4 & 4.0819e-3 & 2.1548e-7 & 9.9415e-8\\
+1.1 & 1/32 & 1.6607e-4 & 1.4529e-3 & 6.9710e-8 & 2.0521e-8\\
+\bottomrule
+\end{tabular}
+\end{center}
+These are puncture-safe Linf values in $0.25M\leq r<0.375M$.  Metric orders
+are 3.60, 3.75 for $q=0.9$ and 3.53, 3.70 for $q=1.1$; constraint orders are
+3.31, 3.59 for both signs.  The $q=1$ errors lie at roughly
+$10^{-15}$--$10^{-12}$, so no convergence order is assigned.
+
+The innermost $0.125M\leq r<0.25M$ metric Linf is \Fail{} monotone:
+$q=0.9$ gives 4.8404e-2, 6.5666e-3, 1.1201e-2, and $q=1.1$ gives
+6.6575e-2, 1.2940e-2, 1.5590e-2.  This negative result is retained.
+
+\section{Prescribed moving-q evidence}
+
+A local full-output $1\rightarrow0.9\rightarrow1$ startup reaches $t=0.05M$
+finite.  Trajectory errors are about $10^{-15}$ in $q$ and
+$2.4\times10^{-14}$ in $\dot q$.  Final metric, lapse, and shift errors are
+$8.27\times10^{-11}$, $3.18\times10^{-13}$, and $1.24\times10^{-12}$; the
+native constraint Linf is $3.47\times10^{-9}$.  This is only an early smoke
+test.  Four local full-pulse attempts were deliberately interrupted at
+$t=0.284454M$ after proving too costly; their partial histories do not establish
+a complete excursion.
+
+\section{Aurora PVC blocker}
+
+The isolated campaign root is
+\begin{lstlisting}
+/lus/flare/projects/CompactBinaryMerger/hzhu/
+  refgh_q_relaxed_20260826_e403baf_v1
+\end{lstlisting}
+Job 8785612 was a wrapper-only clean-tree failure and never built.  Job 8785680
+used \code{e403baf0}; job 8785718 used \code{a3d98182}.  Both numerical jobs:
+\begin{itemize}
+\item mapped twelve distinct Aurora PVC tiles;
+\item configured Kokkos \code{SERIAL;SYCL}, Intel PVC, and GPU-aware MPI;
+\item built successfully with IntelLLVM 2025.3.2 and Kokkos 4.7.2;
+\item passed provider, reprojection, gauge, scalar-controller, and cache oracles
+      on an actual PVC tile;
+\item completed eight-rank setup and wrote $t=0$ histories;
+\item failed in the first evolved cycle on every rank with a Level Zero
+      \code{NotPresent} write fault and exit status 134.
+\end{itemize}
+
+The intervening boundary refactor splits metric/gauge projection and maps one
+ghost cell per work item.  Local pre/post histories are byte-identical.  PVC
+spilling falls from about 119 registers to 19/17, but the fault remains on a
+different node.  Therefore boundary spill pressure is not the established root
+cause.  The combined q-shell reduction, repeated stage cache rebuild, and other
+first-cycle multi-rank paths remain hypotheses only.  No third micro-experiment
+was submitted, and no owned Aurora job remains.
+
+\section{Phase audit and remaining work}
+
+\small
+\begin{longtable}{@{}p{0.08\textwidth}p{0.86\textwidth}@{}}
+\toprule
+Phase & Evidence\\
+\midrule
+0 & \Pass{}: invalid same-$r/h$ direct-FD gate is diagnostic-only.\\
+1--5 & \Pass{} locally/source-unit: estimator, finite-radius oracles, weighted shell, finite-$h$ target, and $\epsilon_G$ identity.\\
+6--9 & \Partial{}: provider and local metric/gauge/boundary algebra pass; evolved PVC path fails.\\
+10--12 & \Partial{}: controller and same-RK ordering implemented and local/manufactured gates pass; runtime restart is pending.\\
+13 & \Fail{} qualification: analytic jets and early smoke pass, but complete pulses and moving-reference convergence are absent; PVC first cycle fails.\\
+14 & \Pass{} manufactured scalar histories; per-resolution runtime equilibration remains pending.\\
+15 & \Partial{}: regular annuli converge through $0.1M$; innermost metric Linf is nonmonotone.\\
+16--18 & Not run: closed loop, large mismatch, and three-resolution finite-$h$ equilibrium.\\
+19 & \Pass{} diagnostic policy; fixed-$r/h$ nonconvergence retained.\\
+20 & \Pass{} scope: uniform grid only; no SMR qualification attempted.\\
+21 & \Fail{}: evolved PVC and runtime restart/host/MPI/device matrix incomplete.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+Before the controlling success phrase can be used, the first-cycle PVC fault
+must be fixed with a focused full-output gate.  The four complete prescribed
+pulses, moving-q resolution ladder, closed-loop $q(0)=0.9,1.0,1.1$ ladders,
+untuned 0.75/1.25 cases, finite-$h$ equilibria, physical/constraint convergence,
+exact restart trajectory, and host/MPI/CUDA/PVC matrix must then all pass
+without intervention.
+
+Compact logs, histories, convergence JSON, qstat records, mappings, provenance,
+and SHA-256 manifests live under
+\code{docs/fo\_gh\_artifacts/ref\_gh\_q\_relaxed\_controller\_20260826}.
+Large field output and the 16 MB restart are intentionally excluded.
+
+\end{document}
