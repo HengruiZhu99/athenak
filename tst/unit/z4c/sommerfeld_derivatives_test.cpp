@@ -31,12 +31,24 @@ bool CheckPolynomial(const int side) {
   return std::abs(derivative - coefficient[1]) < 2.0e-11;
 }
 
+bool CheckCenteredPolynomial() {
+  constexpr Real h = 0.125;
+  constexpr Real slope = -0.875;
+  const auto quadratic = [&](const int q) {
+    const Real x = q * h;
+    return 1.25 + slope * x + 0.4 * x * x;
+  };
+  return std::abs(z4c::BoundaryCenteredFirst(1.0 / h, quadratic) - slope) <
+         1.0e-14;
+}
+
 }  // namespace
 
 int main() {
   return CheckPolynomial<2>(-1) && CheckPolynomial<2>(1) &&
                  CheckPolynomial<3>(-1) && CheckPolynomial<3>(1) &&
-                 CheckPolynomial<4>(-1) && CheckPolynomial<4>(1)
+                 CheckPolynomial<4>(-1) && CheckPolynomial<4>(1) &&
+                 CheckCenteredPolynomial()
              ? 0
              : 1;
 }

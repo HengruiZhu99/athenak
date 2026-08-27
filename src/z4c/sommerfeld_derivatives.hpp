@@ -3,7 +3,7 @@
 // Licensed under the 3-clause BSD License, see LICENSE for details
 //========================================================================================
 //! \file sommerfeld_derivatives.hpp
-//! \brief One-sided physical-face derivatives for Z4c Sommerfeld closure.
+//! \brief Local boundary derivatives for Z4c RHS closures.
 
 #ifndef Z4C_SOMMERFELD_DERIVATIVES_HPP_
 #define Z4C_SOMMERFELD_DERIVATIVES_HPP_
@@ -11,6 +11,13 @@
 #include "athena.hpp"
 
 namespace z4c {
+
+template <typename Sampler>
+KOKKOS_INLINE_FUNCTION
+Real BoundaryCenteredFirst(const Real inverse_spacing,
+                           const Sampler &value) {
+  return 0.5 * inverse_spacing * (value(1) - value(-1));
+}
 
 template <int NGHOST, typename Sampler>
 KOKKOS_INLINE_FUNCTION

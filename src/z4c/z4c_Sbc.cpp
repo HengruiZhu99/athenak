@@ -290,7 +290,13 @@ static Real StageCurrentScalarFirst(
     return OneSidedScalarFirst<2>(direction, closure_side, inverse_spacing,
                                   field, m, k, j, i);
   }
-  return Dx<2>(direction, inverse_spacing, field, m, k, j, i);
+  const int sk = direction == 2;
+  const int sj = direction == 1;
+  const int si = direction == 0;
+  const auto value = [&](const int q) {
+    return field(m, k + q * sk, j + q * sj, i + q * si);
+  };
+  return BoundaryCenteredFirst(inverse_spacing[direction], value);
 }
 
 template <typename DerivativeProvider, typename TensorField>
@@ -314,8 +320,14 @@ static Real StageCurrentTensorFirst(
     return OneSidedTensorFirst<2>(direction, closure_side, inverse_spacing,
                                   field, component_a, component_b, m, k, j, i);
   }
-  return Dx<2>(direction, inverse_spacing, field, m, component_a,
-               component_b, k, j, i);
+  const int sk = direction == 2;
+  const int sj = direction == 1;
+  const int si = direction == 0;
+  const auto value = [&](const int q) {
+    return field(m, component_a, component_b, k + q * sk, j + q * sj,
+                 i + q * si);
+  };
+  return BoundaryCenteredFirst(inverse_spacing[direction], value);
 }
 
 //----------------------------------------------------------------------------------------
