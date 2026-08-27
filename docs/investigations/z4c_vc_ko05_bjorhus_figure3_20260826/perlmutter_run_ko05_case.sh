@@ -22,13 +22,20 @@ expected_coeff=${EXPECTED_COEFF:-1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c
 expected_cache=${EXPECTED_CMAKE_CACHE:-}
 irisk_library=${IRISK_LIBRARY:-}
 expected_irisk=${EXPECTED_IRISK_LIBRARY_SHA256:-}
+expected_source_diff=${EXPECTED_SOURCE_DIFF_SHA256:-}
 
 test "${SLURM_NNODES:-}" = 1
 test "${SLURM_NTASKS:-}" = 1
 test "${SLURM_GPUS_ON_NODE:-1}" -ge 1
 test "$(git -C "${source_root}" rev-parse HEAD)" = "${expected_source}"
 test "$(git -C "${source_root}" rev-parse 'HEAD^{tree}')" = "${expected_tree}"
-test -z "$(git -C "${source_root}" status --porcelain=v1)"
+if [[ -z "${expected_source_diff}" ]]; then
+  test -z "$(git -C "${source_root}" status --porcelain=v1)"
+else
+  ! git -C "${source_root}" status --porcelain=v1 | grep -q '^??'
+  test "$(git -C "${source_root}" diff HEAD --binary | sha256sum | awk '{print $1}')" \
+    = "${expected_source_diff}"
+fi
 athena=${build_root}/src/athena
 test -x "${athena}"
 test "$(sha256sum "${athena}" | awk '{print $1}')" = "${expected_exe}"
@@ -70,6 +77,11 @@ root=$(cd "${RUN_ROOT}" && pwd)
 scontrol show job "${SLURM_JOB_ID}" > "${root}/evidence/slurm-job.txt"
 scontrol show node "${SLURM_NODELIST}" -o > "${root}/evidence/node.txt"
 env | LC_ALL=C sort > "${root}/evidence/environment.txt"
+if [[ -n "${expected_source_diff}" ]]; then
+  git -C "${source_root}" diff HEAD --binary > "${root}/evidence/source-delta.patch"
+  sha256sum "${root}/evidence/source-delta.patch" > \
+    "${root}/evidence/source-delta.patch.sha256"
+fi
 {
   date --iso-8601=seconds
   git -C "${source_root}" rev-parse HEAD 'HEAD^{tree}'
