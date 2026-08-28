@@ -1,0 +1,50 @@
+Aurora compact analytic radial-q PVC discriminator: second failed build evidence
+Date: 2026-08-28
+Job: 8789291
+Project: CompactBinaryMerger
+Queue: debug
+Node: x4302c2s1b0n0
+Source commit: 1aac418eeca8c3a996c804184f37339b8c277713
+State: F
+Exit status: 2
+Start: 2026-08-28 14:42:56
+Wall time: 00:08:12
+
+Campaign root:
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_analytic_radial_q_20260828_1aac418e_retry2
+
+Preserved full logs:
+runs/analytic_q_pvc_8789291.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/build.log
+  bytes: 368383
+  sha256: 615c20e97bf5f58d1b891bdbf03eabc52ede81b108cae6c347e39500a8b7654f
+runs/analytic_q_pvc_8789291.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/configure.log
+  bytes: 3371
+  sha256: b8a3a0b0d89f8eba17293fd354537eaefe0dba2562289915b482d4a8b9cced74
+runs/analytic_q_pvc_8789291.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/provenance.txt
+  bytes: 7056
+  sha256: d8984fd484f94c91b48042828954c2400f83b33d32caa0a2f4523db5beb282e2
+
+Outcome of the first correction:
+All four split ProblemGenerator::FoGhRhsUnit PVC kernels compiled. The build
+then failed while Intel IGC generated the device image for
+pgen/ref_gh/source_unit.cpp.o. This translation unit contains the full generic
+and recursive analytic correctness oracles, including the monolithic generated
+geometry scaffolding. No executable, GPU mapping, numerical cycle, comparison,
+or benchmark ran.
+
+Exact terminal diagnostic:
+IGC: Internal Compiler Error: Segmentation violation
+Build failed with error code: -11
+icpx: error: gen compiler command failed with exit code 245
+gmake[2]: *** [src/CMakeFiles/athena.dir/build.make:2039:
+src/CMakeFiles/athena.dir/pgen/ref_gh/source_unit.cpp.o] Error 1
+
+Structural correction prepared after this failure:
+The Ref-GH source-unit oracle pgen is now a default-on CMake component that can
+be explicitly omitted from a production executable. Validation builds retain
+the independent oracle unchanged. The PVC production build disables only that
+pgen, so monolithic/recursive correctness scaffolding is absent from its device
+image. A fresh default-on build passes the complete source-unit oracle, and a
+fresh oracle-disabled production build passes a closed-loop analytic dynamic-q
+RK cycle locally with generic_bytes=0.
+

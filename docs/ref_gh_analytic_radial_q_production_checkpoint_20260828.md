@@ -83,8 +83,14 @@ named oracle method and is not called by production dispatch.
   `artifacts/ref_gh_analytic_radial_q_20260828/aurora_pvc_8789242_failure.txt`.
   That unrelated unit-test kernel has subsequently been split into four
   equation-identical device reductions and both the FO-GH RHS unit and complete
-  Ref-GH q-controlled source unit pass locally; the corrected PVC rerun remains
-  pending.
+  Ref-GH q-controlled source unit pass locally.  The first corrected rerun,
+  job 8789291, compiled all four split FO-GH kernels but exposed a second IGC
+  crash in the monolithic Ref-GH source-unit device image.  Its compact record
+  is `artifacts/ref_gh_analytic_radial_q_20260828/aurora_pvc_8789291_failure.txt`.
+  The oracle pgen is now a default-on validation component that is explicitly
+  excluded from the production PVC executable; a default-on oracle build and
+  an oracle-disabled analytic production cycle both pass locally.  The next
+  corrected PVC rerun remains pending.
 - Warmed-up 64-cubed Ref-GH/Z4c performance ratio: **not measured**.
 - Production ready: **no**.
 

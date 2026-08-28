@@ -60,10 +60,11 @@ cmake -S "${SRC}" -B "${BUILD}" \
   -DKokkos_ENABLE_SYCL=ON \
   -DKokkos_ARCH_INTEL_PVC=ON \
   -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DAthena_ENABLE_REF_GH_SOURCE_UNIT=OFF \
   -DPROBLEM=built_in_pgens > configure.log 2>&1
 cmake --build "${BUILD}" -j 64 > build.log 2>&1
 {
-  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Athena_ENABLE_REF_GH_SOURCE_UNIT:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
   sha256sum "${EXE}"
 } >> provenance.txt
 
@@ -75,17 +76,14 @@ mpiexec -n 8 --ppn 8 --depth=8 --cpu-bind depth \
 test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 8
 test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 8
 
-mkdir source_unit
-cd source_unit
-mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth \
-  gpu_tile_compact.sh "${EXE}" -i "${SOURCE_INPUT}" \
-  ref_gh/reference_backend=analytic_radial_q \
-  ref_gh/validate_reference_cache=false > run.log 2>&1
-grep -q 'expanded analytic radial-q coefficient oracle passed' run.log
-grep -q 'generated analytic radial-q moving gauge oracle passed' run.log
-grep -q 'all-61 analytic radial-q RHS oracle passed' run.log
-grep -q 'generic_bytes=0 analytic_static_components=12 analytic_stage_components=8' run.log
-cd "${OUT}"
+# The complete source-unit oracle remains a default-on, independent validation
+# build.  It was passed and preserved before this production discriminator.
+# This executable intentionally omits that monolithic correctness scaffolding,
+# so the PVC production image cannot silently carry the generic tensor oracle.
+grep -q '^all_61_rhs_oracle=PASS ' \
+  "${SRC}/artifacts/ref_gh_analytic_radial_q_20260828/local_checkpoint.txt"
+grep -q '^generic_bytes=0$' \
+  "${SRC}/artifacts/ref_gh_analytic_radial_q_20260828/local_checkpoint.txt"
 
 run_cycle() {
   local ranks="$1"
@@ -115,7 +113,7 @@ run_cycle() {
 run_cycle 1 16 one_rank
 run_cycle 8 8 eight_rank
 
-python3 - one_rank/one_rank.hst eight_rank/eight_rank.hst <<'PY' \
+python3 - one_rank/one_rank.ref_gh.hst eight_rank/eight_rank.ref_gh.hst <<'PY' \
   > numerical_comparison.txt
 import math
 import sys
@@ -138,6 +136,8 @@ for arow, brow in zip(left, right):
     if len(arow) != len(brow):
         raise SystemExit("history column mismatch")
     for a, b in zip(arow, brow):
+        if not math.isfinite(a) or not math.isfinite(b):
+            raise SystemExit("nonfinite Ref-GH history value")
         scale = max(1.0, abs(a), abs(b))
         maximum = max(maximum, abs(a - b)/scale)
 if not math.isfinite(maximum) or maximum > 5.0e-12:

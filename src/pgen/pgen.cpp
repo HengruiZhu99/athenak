@@ -1054,8 +1054,10 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     RefGhMinkowski(pin, is_restart);
   } else if (pgen_fun_name.compare("ref_gh_linear_wave") == 0) {
     RefGhLinearWave(pin, is_restart);
+#if REF_GH_SOURCE_UNIT_ENABLED
   } else if (pgen_fun_name.compare("ref_gh_source_unit") == 0) {
     RefGhSourceUnit(pin, is_restart);
+#endif
   } else if (pgen_fun_name.compare("ref_gh_stability") == 0) {
     RefGhStability(pin, is_restart);
   } else if (pgen_fun_name.compare("ref_gh_stationary_trumpet") == 0) {

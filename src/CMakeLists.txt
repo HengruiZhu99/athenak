@@ -166,7 +166,6 @@ add_executable(
         pgen/fo_gh/puncture.cpp
         pgen/ref_gh/minkowski.cpp
         pgen/ref_gh/linear_wave.cpp
-        pgen/ref_gh/source_unit.cpp
         pgen/ref_gh/stability.cpp
         pgen/ref_gh/stationary_trumpet.cpp
         pgen/ref_gh/controlled_transition.cpp
@@ -224,6 +223,13 @@ add_executable(
         z4c/z4c_amr.cpp
         z4c/cce/cce.cpp
 )
+
+# The source-unit pgen contains the full recursive/generic Ref-GH geometry
+# oracles.  Keep it in normal validation builds, but permit a production
+# executable to omit that correctness scaffolding entirely.
+if (Athena_ENABLE_REF_GH_SOURCE_UNIT)
+  target_sources(athena PRIVATE pgen/ref_gh/source_unit.cpp)
+endif()
 
 # custom problem generator to be included in compile
 # specify on command line using '-D PROBLEM=file' where 'file' is name of file in

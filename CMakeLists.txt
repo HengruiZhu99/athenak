@@ -34,6 +34,8 @@ endif()
 option(Athena_SINGLE_PRECISION "Compile for single precision" OFF)
 option(Athena_ENABLE_MPI "Compile with MPI parallelism enabled" OFF)
 option(Athena_ENABLE_OPENMP "Compile with OpenMP parallelism enabled" OFF)
+option(Athena_ENABLE_REF_GH_SOURCE_UNIT
+       "Compile the Ref-GH source-unit oracle problem generator" ON)
 set(PROBLEM built_in_pgens CACHE STRING "Name of problem generator function")
 
 #------ set macros exported to config.hpp ------------------------------------------------
@@ -75,6 +77,12 @@ if (ENABLE_OPENMP)
   set(OPENMP_PARALLEL_ENABLED 1)
 else()
   set(OPENMP_PARALLEL_ENABLED 0)
+endif()
+
+if (Athena_ENABLE_REF_GH_SOURCE_UNIT)
+  set(REF_GH_SOURCE_UNIT_ENABLED 1)
+else()
+  set(REF_GH_SOURCE_UNIT_ENABLED 0)
 endif()
 
 #set user problem generator flag
@@ -254,4 +262,3 @@ target_include_directories(athena PUBLIC
 configure_file(config.hpp.in config.hpp)
 
 install( TARGETS athena DESTINATION bin )
-
