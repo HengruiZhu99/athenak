@@ -145,7 +145,6 @@ seconds per call (`2.414x`).  Raw throughput fell `26.03%`, from `1.031481e5` to
 the production source has been restored to the previously qualified joint-CSE
 form.  The discriminator script and compact failure evidence are retained in
 `artifacts/ref_gh_analytic_radial_q_20260828/component_cse_8789565_regression.txt`.
-
 The matched benchmark input now explicitly selects `trumpet_q_controlled` and
 `analytic_radial_q`.  Its closed-loop and static control modes both pass a
 one-cycle local dispatch smoke; this is input validation only, not performance

@@ -8,7 +8,7 @@ analytic scalar-source/Pi kernel.
 Change:
 - The symbolic curvature and moving-frame corrections are mathematically
   unchanged.
-- SymPy now performs CSE independently for each of the ten symmetric source
+- SymPy performs CSE independently for each of the ten symmetric source
   components and emits compile-time component specializations.
 - The existing matrix API calls those specializations sequentially, retaining
   one physical point-geometry reconstruction and the existing task graph.
@@ -43,7 +43,11 @@ Code-size warning:
   maximum_curvature_component_cse_temporaries=1697
   maximum_frame_component_cse_temporaries=1739
 
-The large code expansion and only moderate reduction in maximum per-component
-CSE width make this an experimental compiler discriminator, not an accepted
-performance improvement.  PVC compilation/spill evidence and timing are still
-required before retaining it.
+Aurora decision:
+  job=8789565
+  evolved_cycle=PASS
+  scalar_source_slowdown=2.41403517150
+  throughput_change_percent=-26.0337030
+  decision=REJECT_AND_REVERT
+
+The experiment is preserved as evidence but is not the production source.

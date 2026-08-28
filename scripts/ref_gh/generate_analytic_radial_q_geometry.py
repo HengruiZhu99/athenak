@@ -1126,59 +1126,6 @@ def emit_contracted_group(lines: List[str], values: Dict[Index, sp.Expr],
                 f"  {target}[{index[1]}][{index[0]}] = {target}{indices};")
 
 
-def emit_symmetric_component_function(
-        lines: List[str], values: Dict[Index, sp.Expr], prefix: str,
-        function_name: str, arguments: List[str]) -> None:
-    """Emit independently CSE'd compile-time components plus a matrix wrapper.
-
-    CSE across all ten symmetric outputs creates thousands of simultaneously
-    visible temporaries after device inlining.  The component specializations
-    preserve the exact symbolic expressions while bounding each call's live
-    range.  The matrix wrapper is retained for oracle/debug callers; production
-    receives the same ten values without materializing spin or Riemann tensors.
-    """
-    lines.extend([
-        "template <int IA, int IB>",
-        "KOKKOS_INLINE_FUNCTION",
-        f"Real {function_name}Component(",
-    ])
-    for position, argument in enumerate(arguments):
-        suffix = ") {" if position + 1 == len(arguments) else ","
-        lines.append(f"    {argument}{suffix}")
-    lines.append(
-        '  static_assert(IA >= 0 && IA < 4 && IB >= IA && IB < 4, '
-        '"invalid symmetric source component");')
-    for ordinal, (index, expression) in enumerate(values.items()):
-        keyword = "if" if ordinal == 0 else "else if"
-        lines.append(
-            f"  {keyword} constexpr (IA == {index[0]} && IB == {index[1]}) {{")
-        lines.extend(f"  {line}" for line in compact_scalar_declarations())
-        replacements, reduced = sp.cse(
-            [expression], symbols=sp.numbered_symbols(prefix),
-            order="canonical")
-        for symbol, replacement in replacements:
-            lines.append(f"    const Real {symbol} = {cpp(replacement)};")
-        lines.append(f"    return {cpp(reduced[0])};")
-        lines.append("  }")
-    lines.extend(["  return NAN;", "}", "", "KOKKOS_INLINE_FUNCTION",
-                  f"void {function_name}("])
-    for position, argument in enumerate(arguments):
-        lines.append(f"    {argument},")
-    lines[-1] = lines[-1][:-1] + ", Real source[4][4]) {"
-    for a, b in values:
-        lines.append(
-            f"  source[{a}][{b}] = {function_name}Component<{a}, {b}>(")
-        for position, argument in enumerate(arguments):
-            name = argument.split()[-1]
-            # Strip array extents from names such as psi[4][4].
-            name = name.split("[")[0].lstrip("&*")
-            suffix = ");" if position + 1 == len(arguments) else ","
-            lines.append(f"      {name}{suffix}")
-        if a != b:
-            lines.append(f"  source[{b}][{a}] = source[{a}][{b}];")
-    lines.extend(["}", ""])
-
-
 def emit_source(output: Path) -> None:
     fields = build_geometry()
     q_correction, curvature, frame_correction = source_contractions(fields)
@@ -1209,34 +1156,34 @@ def emit_source(output: Path) -> None:
     ]
     lines.extend(compact_scalar_declarations())
     emit_contracted_group(lines, q_correction, "ref_q_cse_", "correction")
-    lines.extend(["}", ""])
-    emit_symmetric_component_function(
-        lines, curvature, "ref_curvature_cse_",
-        "GeneratedAnalyticRadialQCurvatureSource", [
-            "const AnalyticRadialScalar &alpha_jet",
-            "const AnalyticRadialScalar &l_jet",
-            "const AnalyticRadialScalar &b_jet",
-            "const Real displacement[3]",
-            "const Real radius",
-            "const Real inverse[4][4]",
-            "const Real psi[4][4]",
-        ])
-    emit_symmetric_component_function(
-        lines, frame_correction, "ref_frame_cse_",
-        "GeneratedAnalyticRadialQFrameCorrection", [
-            "const AnalyticRadialScalar &alpha_jet",
-            "const AnalyticRadialScalar &l_jet",
-            "const AnalyticRadialScalar &b_jet",
-            "const Real displacement[3]",
-            "const Real radius",
-            "const Real inverse[4][4]",
-            "const Real psi[4][4]",
-            "const Real p[4][4][4]",
-            "const Real q[4][4][4]",
-            "const Real delta_upper[4][4][4]",
-        ])
     lines.extend([
-        "KOKKOS_INLINE_FUNCTION",
+        "}", "", "KOKKOS_INLINE_FUNCTION",
+        "void GeneratedAnalyticRadialQCurvatureSource(",
+        "    const AnalyticRadialScalar &alpha_jet,",
+        "    const AnalyticRadialScalar &l_jet,",
+        "    const AnalyticRadialScalar &b_jet, const Real displacement[3],",
+        "    const Real radius, const Real inverse[4][4],",
+        "    const Real psi[4][4], Real source[4][4]) {",
+    ])
+    lines.extend(compact_scalar_declarations())
+    emit_contracted_group(
+        lines, curvature, "ref_curvature_cse_", "source", True)
+    lines.extend([
+        "}", "", "KOKKOS_INLINE_FUNCTION",
+        "void GeneratedAnalyticRadialQFrameCorrection(",
+        "    const AnalyticRadialScalar &alpha_jet,",
+        "    const AnalyticRadialScalar &l_jet,",
+        "    const AnalyticRadialScalar &b_jet, const Real displacement[3],",
+        "    const Real radius, const Real inverse[4][4],",
+        "    const Real psi[4][4], const Real p[4][4][4],",
+        "    const Real q[4][4][4], const Real delta_upper[4][4][4],",
+        "    Real source[4][4]) {",
+    ])
+    lines.extend(compact_scalar_declarations())
+    emit_contracted_group(
+        lines, frame_correction, "ref_frame_cse_", "source", True)
+    lines.extend([
+        "}", "", "KOKKOS_INLINE_FUNCTION",
         "void GeneratedAnalyticRadialQPhysicalGaugeUpper(",
         "    const AnalyticRadialScalar &alpha_jet,",
         "    const AnalyticRadialScalar &l_jet,",
