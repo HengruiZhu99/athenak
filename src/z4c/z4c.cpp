@@ -691,7 +691,7 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
         for (int variable = 0; variable < nz4c; ++variable) {
           values[variable] = state(m, variable, k, j, i);
         }
-        if (EvaluateZ4cState(values, nz4c).reason ==
+        if (EvaluateZ4cState(values, nz4c, !opt.lapse_shock_avoiding).reason ==
             Z4cStateFailureReason::valid) return;
         const unsigned long long ordinal =
             (static_cast<unsigned long long>(k - ks) * nx2 + (j - js)) * nx1 +
@@ -738,7 +738,8 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
     Kokkos::fence();
     const auto values =
         Kokkos::create_mirror_view_and_copy(HostMemSpace(), packed_values);
-    const auto admissibility = EvaluateZ4cState(values.data(), nz4c);
+    const auto admissibility =
+        EvaluateZ4cState(values.data(), nz4c, !opt.lapse_shock_avoiding);
     const auto &size = pmy_pack->pmb->mb_size.h_view(m);
     const Real offset = layout.centering == Z4cGridCentering::vertex ? 0.0 : 0.5;
     const Real rho = size.x1min + (static_cast<Real>(i - layout.is) + offset) * size.dx1;

@@ -1,0 +1,173 @@
+<job>
+basename = brill_vc_reference_shock
+
+<mesh>
+nghost = 4
+nx1 = 128
+x1min = 0.0
+x1max = 128.0
+ix1_bc = axis
+ox1_bc = outflow
+nx2 = 256
+x2min = -128.0
+x2max = 128.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 32
+nx2 = 32
+nx3 = 1
+
+<mesh_refinement>
+refinement = adaptive
+max_nmb_per_rank = 4096
+num_levels = 24
+ncycle_check = 1
+refinement_interval = 1
+amr_history_mode = off
+amr_history_file = UNUSED
+
+<refined_region1>
+level = 1
+x1min = 0.0
+x1max = 64.0
+x2min = -64.0
+x2max = 64.0
+
+<refined_region2>
+level = 2
+x1min = 0.0
+x1max = 32.0
+x2min = -32.0
+x2max = 32.0
+
+<refined_region3>
+level = 3
+x1min = 0.0
+x1max = 16.0
+x2min = -16.0
+x2max = 16.0
+
+<amr_criterion0>
+method = user
+
+<z4c_amr>
+method = dchi
+dchi_max = 0.02
+dchi_derefine_factor = 0.25
+max_ref_lev = 23
+radius_0_rad = 90.50966799187809
+radius_0_reflevel = 1
+radius_1_rad = 45.254833995939045
+radius_1_reflevel = 2
+radius_2_rad = 22.627416997969522
+radius_2_reflevel = 3
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.15
+nlim = -1
+tlim = 30.0
+nmb_total_limit = -1
+ndiag = 4
+
+<z4c>
+grid_centering = vertex
+vertex_prolongation_order = 6
+symmetry = cartoon_so2
+coordinate_map = half_rho_z_suppressed_y_v2
+symmetry_schema = 2
+spatial_order = 4
+extrap_order = 3
+history_kretschmann = true
+diss = 0.50
+boundary_rhs = sommerfeld
+excise_chi = 0.0
+floor_chi = false
+lapse_oplog = 0.0
+lapse_harmonic = 0.0
+lapse_advect = 1.0
+lapse_shock_avoiding = true
+lapse_shock_avoiding_kappa = 1.0
+slow_start_lapse = false
+telegraph_lapse = false
+telegraph_max_K = false
+telegraph_damping_prescription = fixed
+telegraph_tau = 1.0
+telegraph_kappa = 1.0
+shift_mode = prescribed_zero
+shift_Gamma = 0.0
+shift_alpha2Gamma = 0.0
+shift_H = 0.0
+shift_eta = 0.0
+shift_eta_max_K = false
+shift_advect = 0.0
+shift_invariant_diagnostic = false
+sss_damping_amp = 0.0
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+damp_kappa1_max_K = false
+roll_kappa = false
+target_kappa1 = 0.0
+amr_jump_diagnostic = false
+chi_parent_provenance_diagnostic = false
+rhs_stage_diagnostics = false
+
+<fastflow>
+num_horizons = 0
+
+<problem>
+pgen_name = z4c_irisk_xcts
+irisk_adm_import_mode = direct_global_coefficients
+irisk_adm_spectral_file = UNUSED
+brill_global_coefficients_file = brill_global_128x32.coefficients
+brill_direct_initial_lapse = unit
+require_ghost_coverage = true
+write_constraint_summary = true
+constraint_summary_file = brill_vc_reference_shock-constraints.dat
+fail_if_c_rms_above = 1.0e300
+fail_if_h_rms_above = 1.0e300
+fail_if_m_rms_above = 1.0e300
+fail_if_z_rms_above = 1.0e300
+stop_on_horizon = false
+stop_on_dispersion = false
+xy_plane_output = EMPTY
+xz_plane_output = EMPTY
+
+<output1>
+file_type = hst
+data_format = %24.16e
+dcycle = 4
+
+<output2>
+file_type = rst
+id = restart
+dt = 0.5
+
+<output3>
+file_type = bin
+variable = z4c
+id = state
+dt = 0.25
+single_file_per_rank = true
+
+<output4>
+file_type = bin
+variable = con
+id = constraints
+dt = 0.25
+single_file_per_rank = true
+
+<output5>
+file_type = bin
+variable = z4c_diag
+id = curvature
+dt = 0.25
+single_file_per_rank = true

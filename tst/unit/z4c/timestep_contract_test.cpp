@@ -67,6 +67,8 @@ int main() {
 
   Near(z4c::BonaMassoCoordinateSpeed(1.0, 2.0, 1.0), std::sqrt(2.0), 1.0e-15,
        "flat 1+log gauge speed mismatch");
+  Near(z4c::PhysicalLightCoordinateSpeed(-2.0, 4.0), 4.0, 1.0e-15,
+       "negative lapse changed physical light-speed magnitude");
   Near(z4c::TelegraphCoordinateSpeed(1.0, 4.0, 1.0), 2.0, 1.0e-15,
        "flat telegraph speed mismatch");
   Near(z4c::GammaDriverCoordinateSpeed(3.0, 1.0), 2.0, 1.0e-15,
@@ -93,6 +95,9 @@ int main() {
   Require(!std::isfinite(z4c::BonaMassoCoordinateSpeed(1.0,
               std::numeric_limits<Real>::quiet_NaN(), 1.0)),
           "NaN gauge speed was accepted");
+  Require(!std::isfinite(z4c::PhysicalLightCoordinateSpeed(
+              std::numeric_limits<Real>::quiet_NaN(), 1.0)),
+          "NaN lapse was accepted by physical light-speed helper");
 
   std::cout << "Z4C_TIMESTEP_CONTRACT_UNIT_PASS\n";
   return EXIT_SUCCESS;

@@ -110,6 +110,9 @@ int main() {
   state = EvaluateZ4cState(values.data(), static_cast<int>(values.size()));
   Require(state.reason == Z4cStateFailureReason::nonpositive_lapse,
           "nonpositive lapse accepted");
+  state = EvaluateZ4cState(values.data(), static_cast<int>(values.size()), false);
+  Require(state.reason == Z4cStateFailureReason::valid,
+          "shock-avoiding negative-lapse policy was not honored");
 
   constexpr unsigned long long rank0 = (41ULL << 32) | 9ULL;
   constexpr unsigned long long rank1 = (19ULL << 32) | 27ULL;

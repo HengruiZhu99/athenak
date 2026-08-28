@@ -24,6 +24,7 @@ def main() -> int:
     header = (source / "src/z4c/z4c.hpp").read_text(encoding="utf-8")
     setup = (source / "src/z4c/z4c.cpp").read_text(encoding="utf-8")
     rhs = (source / "src/z4c/z4c_calcrhs.cpp").read_text(encoding="utf-8")
+    newdt = (source / "src/z4c/z4c_newdt.cpp").read_text(encoding="utf-8")
     policy_input = (source / "tst/inputs/z4c_shock_avoiding_gauge.athinput").read_text(
         encoding="utf-8")
 
@@ -54,6 +55,10 @@ def main() -> int:
     for forbidden in ("abs", "max", "floor", "clip", "telegraph"):
         require(forbidden not in shock_block.lower(),
                 f"shock-avoiding driver contains forbidden {forbidden}")
+    require(newdt.count("(!opt.lapse_shock_avoiding && !(alpha > 0.0))") == 2,
+            "shock-avoiding timestep path still rejects negative lapse")
+    require("Kokkos::fabs(alpha) * Kokkos::sqrt(physical_inverse)" in newdt,
+            "physical light speed does not use the negative-lapse magnitude")
     require(policy_input.count("lapse_shock_avoiding = false") == 1,
             "regression input must exercise the default-off legacy path")
     require(policy_input.count("lapse_shock_avoiding_kappa = 1.0") == 1,

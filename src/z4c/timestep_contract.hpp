@@ -103,6 +103,18 @@ inline Real BonaMassoCoordinateSpeed(const Real alpha, const Real lapse_f,
   return alpha * std::sqrt(lapse_f * physical_inverse_diagonal);
 }
 
+//! Magnitude of the physical light-cone speed in coordinates.  A negative lapse
+//! reverses the direction of coordinate-time advance relative to the slice normal,
+//! but it does not make the CFL speed negative.
+inline Real PhysicalLightCoordinateSpeed(const Real alpha,
+                                         const Real physical_inverse_diagonal) {
+  if (!std::isfinite(alpha) || !std::isfinite(physical_inverse_diagonal) ||
+      physical_inverse_diagonal <= 0.0) {
+    return std::numeric_limits<Real>::quiet_NaN();
+  }
+  return std::fabs(alpha) * std::sqrt(physical_inverse_diagonal);
+}
+
 inline Real TelegraphCoordinateSpeed(const Real chi, const Real gradient,
                                      const Real conformal_inverse_diagonal) {
   if (!std::isfinite(chi) || !std::isfinite(gradient) ||

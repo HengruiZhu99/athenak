@@ -125,7 +125,8 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
             state.g_dd(m, 0, 0, k, j, i), state.g_dd(m, 0, 1, k, j, i),
             state.g_dd(m, 0, 2, k, j, i), state.g_dd(m, 1, 1, k, j, i),
             state.g_dd(m, 1, 2, k, j, i), state.g_dd(m, 2, 2, k, j, i));
-        if (!Kokkos::isfinite(alpha) || !Kokkos::isfinite(chi) || !(alpha > 0.0) ||
+        if (!Kokkos::isfinite(alpha) || !Kokkos::isfinite(chi) ||
+            (!opt.lapse_shock_avoiding && !(alpha > 0.0)) ||
             !(chi > 0.0) || !Kokkos::isfinite(detg) || !(detg > 0.0)) {
           result = std::numeric_limits<Real>::infinity();
           return;
@@ -218,7 +219,8 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
         state.g_dd(m, 0, 0, k, j, i), state.g_dd(m, 0, 1, k, j, i),
         state.g_dd(m, 0, 2, k, j, i), state.g_dd(m, 1, 1, k, j, i),
         state.g_dd(m, 1, 2, k, j, i), state.g_dd(m, 2, 2, k, j, i));
-    if (!Kokkos::isfinite(alpha) || !Kokkos::isfinite(chi) || !(alpha > 0.0) ||
+    if (!Kokkos::isfinite(alpha) || !Kokkos::isfinite(chi) ||
+        (!opt.lapse_shock_avoiding && !(alpha > 0.0)) ||
         !(chi > 0.0) || !Kokkos::isfinite(detg) || !(detg > 0.0)) {
       result = minimum ? 0.0 : std::numeric_limits<Real>::infinity();
       return;
@@ -267,7 +269,8 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
           ? Kokkos::sqrt((4.0 / 3.0) * gamma_driver_coefficient * conformal_inverse)
           : 0.0;
       const Real coordinate_speed = CoordinateCharacteristicSpeed(
-          state.beta_u(m, direction, k, j, i), alpha * Kokkos::sqrt(physical_inverse),
+          state.beta_u(m, direction, k, j, i),
+          Kokkos::fabs(alpha) * Kokkos::sqrt(physical_inverse),
           lapse_speed, telegraph_speed, gamma_speed);
       if (!Kokkos::isfinite(coordinate_speed) || !(coordinate_speed > 0.0)) {
         result = minimum ? 0.0 : std::numeric_limits<Real>::infinity();

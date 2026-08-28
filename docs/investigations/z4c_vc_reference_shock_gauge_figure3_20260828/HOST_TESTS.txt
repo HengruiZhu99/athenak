@@ -1,0 +1,18 @@
+Host verification date: 2026-08-28
+Source base: c67edf54ce97536ad9410adcf6029a4478038139
+
+Command:
+ctest --test-dir build-host -R 'athena.z4c_(state_admissibility|timestep_contract|shock_avoiding_gauge_static)' --output-on-failure
+
+Result:
+athena.z4c_state_admissibility ........... Passed
+athena.z4c_state_admissibility_static .... Passed
+athena.z4c_timestep_contract ............. Passed
+athena.z4c_timestep_contract_static ...... Passed
+athena.z4c_shock_avoiding_gauge_static ... Passed
+
+100% tests passed, 0 tests failed out of 5.
+
+Qualification boundary:
+These are focused host unit/static checks. No Perlmutter CUDA execution and no
+scientific N256 evolution were performed for this campaign.
