@@ -680,6 +680,9 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
   const int nx2 = je - js + 1;
   const auto state = u0;
   const auto gids = pmy_pack->pmb->mb_gid.d_view;
+  // Device kernels must not reach through the host-resident Z4c object.  Copy
+  // the gauge-dependent policy to a scalar before entering the lambda.
+  const bool require_positive_lapse = !opt.lapse_shock_avoiding;
   constexpr unsigned long long kNoFailure =
       std::numeric_limits<unsigned long long>::max();
   Kokkos::View<unsigned long long *> first_key("z4c first inadmissible key", 1);
@@ -691,7 +694,7 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
         for (int variable = 0; variable < nz4c; ++variable) {
           values[variable] = state(m, variable, k, j, i);
         }
-        if (EvaluateZ4cState(values, nz4c, !opt.lapse_shock_avoiding).reason ==
+        if (EvaluateZ4cState(values, nz4c, require_positive_lapse).reason ==
             Z4cStateFailureReason::valid) return;
         const unsigned long long ordinal =
             (static_cast<unsigned long long>(k - ks) * nx2 + (j - js)) * nx1 +
@@ -739,7 +742,7 @@ void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
     const auto values =
         Kokkos::create_mirror_view_and_copy(HostMemSpace(), packed_values);
     const auto admissibility =
-        EvaluateZ4cState(values.data(), nz4c, !opt.lapse_shock_avoiding);
+        EvaluateZ4cState(values.data(), nz4c, require_positive_lapse);
     const auto &size = pmy_pack->pmb->mb_size.h_view(m);
     const Real offset = layout.centering == Z4cGridCentering::vertex ? 0.0 : 0.5;
     const Real rho = size.x1min + (static_cast<Real>(i - layout.is) + offset) * size.dx1;

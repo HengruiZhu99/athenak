@@ -59,6 +59,21 @@ def main() -> int:
             "shock-avoiding timestep path still rejects negative lapse")
     require("Kokkos::fabs(alpha) * Kokkos::sqrt(physical_inverse)" in newdt,
             "physical light speed does not use the negative-lapse magnitude")
+    admissibility = setup.split(
+        "void Z4c::CheckStateAdmissibility(Driver *driver", 1)[1].split(
+            "\nvoid Z4c::", 1)[0]
+    require(admissibility.count(
+        "const bool require_positive_lapse = !opt.lapse_shock_avoiding;") == 1,
+        "admissibility policy is not copied out of the host Z4c object")
+    require(admissibility.count(
+        "EvaluateZ4cState(values, nz4c, require_positive_lapse)") == 1,
+        "device admissibility scan does not use the capture-safe lapse policy")
+    require(admissibility.count(
+        "EvaluateZ4cState(values.data(), nz4c, require_positive_lapse)") == 1,
+        "host admissibility report disagrees with the device lapse policy")
+    device_scan = admissibility.split("KOKKOS_LAMBDA", 1)[1].split("});", 1)[0]
+    require("opt." not in device_scan,
+            "admissibility device lambda captures the host Z4c options object")
     require(policy_input.count("lapse_shock_avoiding = false") == 1,
             "regression input must exercise the default-off legacy path")
     require(policy_input.count("lapse_shock_avoiding_kappa = 1.0") == 1,
