@@ -1,0 +1,193 @@
+#!/bin/bash -l
+# Matched warmed one-PVC-tile 64^3 Ref-GH/Z4c performance measurement.
+# Run only after the bounded eight-tile analytic dynamic-q gate passes.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_analytic_perf
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+: "${GATE_COMMIT:?submit with GATE_COMMIT=<qualified source SHA>}"
+: "${GATE_JOB:?submit with GATE_JOB=<qualified job ID>}"
+SRC="${CAMPAIGN_ROOT}/src"
+REF_BUILD="${CAMPAIGN_ROOT}/build_${GATE_COMMIT:0:12}"
+Z4C_BUILD="${CAMPAIGN_ROOT}/build_z4c_${EXPECTED_COMMIT:0:12}"
+GATE_RUN=$(find "${CAMPAIGN_ROOT}/runs" -maxdepth 1 -type d \
+  -name "analytic_q_pvc_${GATE_JOB}*" -print -quit)
+OUT="${CAMPAIGN_ROOT}/runs/analytic_q_performance_${PBS_JOBID}"
+REF_EXE="${REF_BUILD}/src/athena"
+Z4C_EXE="${Z4C_BUILD}/src/athena"
+REF_INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet_benchmark.athinput"
+Z4C_INPUT="${SRC}/inputs/ref_gh/z4c_onepuncture_benchmark.athinput"
+TOOL="${OUT}/librefgh_kokkos_kernel_timer.so"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+test -x "${REF_EXE}"
+test -n "${GATE_RUN}"
+grep -q '^result=PASS_BOUNDED_EIGHT_TILE_DYNAMIC_Q_CYCLE$' \
+  "${GATE_RUN}/gate_status.txt"
+# Only compact evidence and this benchmark script may differ from the qualified
+# executable's commit.  Never reuse it across a production-source change.
+git -C "${SRC}" diff --quiet "${GATE_COMMIT}" "${EXPECTED_COMMIT}" -- \
+  CMakeLists.txt src kokkos
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "qualified_gate_commit=${GATE_COMMIT}"
+  echo "qualified_gate_job=${GATE_JOB}"
+  echo "qualified_gate_run=${GATE_RUN}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${REF_EXE}" "${REF_INPUT}" "${Z4C_INPUT}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${Z4C_BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DAthena_ENABLE_REF_GH_SOURCE_UNIT=OFF \
+  -DPROBLEM=z4c/z4c_one_puncture > configure_z4c.log 2>&1
+cmake --build "${Z4C_BUILD}" -j 64 > build_z4c.log 2>&1
+sha256sum "${Z4C_EXE}" >> provenance.txt
+
+icpx -std=c++17 -O2 -fPIC -shared \
+  "${SRC}/scripts/ref_gh/kokkos_kernel_timer.cpp" -o "${TOOL}"
+sha256sum "${TOOL}" >> provenance.txt
+
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > gpu_mapping.txt 2>&1
+grep -q 'ZE_AFFINITY_MASK=0.0' gpu_mapping.txt
+
+run_refgh() {
+  local label="$1"
+  local q_enabled="$2"
+  local cycles="$3"
+  local profile_file="${4:-}"
+  mkdir "${label}"
+  cd "${label}"
+  if [[ -n "${profile_file}" ]]; then
+    KOKKOS_TOOLS_LIBS="${TOOL}" REF_GH_KERNEL_TIMING_FILE="${OUT}/${profile_file}" \
+      /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+      gpu_tile_compact.sh "${REF_EXE}" -i "${REF_INPUT}" \
+      ref_gh/reference=trumpet_q_controlled \
+      ref_gh/reference_backend=analytic_radial_q \
+      ref_gh/q_controller_enabled="${q_enabled}" \
+      ref_gh/q_initial=1.0 ref_gh/validate_reference_cache=false \
+      time/nlim="${cycles}" time/tlim=100.0 job/basename="${label}" \
+      > run.log 2>&1
+  else
+    /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+      gpu_tile_compact.sh "${REF_EXE}" -i "${REF_INPUT}" \
+      ref_gh/reference=trumpet_q_controlled \
+      ref_gh/reference_backend=analytic_radial_q \
+      ref_gh/q_controller_enabled="${q_enabled}" \
+      ref_gh/q_initial=1.0 ref_gh/validate_reference_cache=false \
+      time/nlim="${cycles}" time/tlim=100.0 job/basename="${label}" \
+      > run.log 2>&1
+  fi
+  grep -q "cycle=${cycles}" run.log
+  grep -q 'zone-cycles/cpu_second' run.log
+  grep -q 'generic_bytes=0 analytic_static_components=12 analytic_stage_components=8' run.log
+  ! grep -Eiq 'NotPresent|page fault|SYCL exception|FATAL ERROR' run.log
+  cd "${OUT}"
+}
+
+run_z4c() {
+  local label="$1"
+  local cycles="$2"
+  local profile_file="${3:-}"
+  mkdir "${label}"
+  cd "${label}"
+  if [[ -n "${profile_file}" ]]; then
+    KOKKOS_TOOLS_LIBS="${TOOL}" REF_GH_KERNEL_TIMING_FILE="${OUT}/${profile_file}" \
+      /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+      gpu_tile_compact.sh "${Z4C_EXE}" -i "${Z4C_INPUT}" \
+      time/nlim="${cycles}" time/tlim=100.0 job/basename="${label}" \
+      > run.log 2>&1
+  else
+    /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+      gpu_tile_compact.sh "${Z4C_EXE}" -i "${Z4C_INPUT}" \
+      time/nlim="${cycles}" time/tlim=100.0 job/basename="${label}" \
+      > run.log 2>&1
+  fi
+  grep -q "cycle=${cycles}" run.log
+  grep -q 'zone-cycles/cpu_second' run.log
+  ! grep -Eiq 'NotPresent|page fault|SYCL exception|FATAL ERROR' run.log
+  cd "${OUT}"
+}
+
+# Populate the device/compiler caches before each matched measurement.
+run_refgh refgh_dynamic_warmup true 20
+run_refgh refgh_dynamic true 100
+run_refgh refgh_static_warmup false 20
+run_refgh refgh_static false 100
+run_z4c z4c_warmup 20
+run_z4c z4c 100
+
+# Synchronized per-kernel profiles are separate from throughput measurements;
+# the profiling tool's global fences are therefore not included in throughput.
+run_refgh refgh_dynamic_profile true 20 refgh_dynamic_kernels.tsv
+run_refgh refgh_static_profile false 20 refgh_static_kernels.tsv
+run_z4c z4c_profile 20 z4c_kernels.tsv
+
+python3 - <<'PY' > performance_summary.tsv
+from pathlib import Path
+
+def throughput(case):
+    for line in (Path(case) / "run.log").read_text().splitlines():
+        if "zone-cycles/cpu_second" in line:
+            return float(line.split("=", 1)[1])
+    raise RuntimeError(case)
+
+dynamic = throughput("refgh_dynamic")
+static = throughput("refgh_static")
+z4c = throughput("z4c")
+print("metric\tvalue")
+print(f"refgh_dynamic_zone_cycles_per_s\t{dynamic:.17e}")
+print(f"refgh_static_zone_cycles_per_s\t{static:.17e}")
+print(f"z4c_zone_cycles_per_s\t{z4c:.17e}")
+print(f"dynamic_q_over_static_time\t{static/dynamic:.17e}")
+print(f"refgh_over_z4c_complete_time\t{z4c/dynamic:.17e}")
+PY
+
+find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.tsv' \) \
+  -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
+echo 'result=PASS_MATCHED_WARMED_64_CUBED_RAW_PROFILE' > benchmark_status.txt
+echo 'analysis=kernel_category_aggregation_required' >> benchmark_status.txt

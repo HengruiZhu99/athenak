@@ -42,7 +42,7 @@ fixed_q_both_constraint_linf=4.984912e-03
 prescribed_q_one_cycle_analytic=PASS time=2.090302e-02 field_linf=1.067468e-10 constraint_linf=1.087655e-10
 closed_loop_q_one_cycle_analytic=PASS time=2.090302e-02 local_q_sample_count=2112 q_sample_bytes=25344
 
-aurora_pvc_eight_tile_dynamic_q_cycle=NOT_RUN
+aurora_pvc_eight_tile_dynamic_q_cycle=PASS job=8789426 one_eight_rank_conditioned_linf=3.88980825583101983e-14 tolerance=5e-12
 matched_64_cubed_performance=NOT_RUN
 production_ready=NO
 
@@ -53,3 +53,4 @@ q_controlled_source_unit_recheck=PASS original_samples=216 expanded_samples=2160
 direct_adm_full_output_cycle=PASS
 direct_adm_history_conditioned_linf=0.0 tolerance=5.684341886080802e-14 finite_values=447 matching_nan_values=21
 aurora_job_8789358=FAIL_INVALID_TYPED_ADM_KERNEL_NAME
+analytic_benchmark_control_smoke=PASS modes=closed_loop,static cells=16^3 cycles=1

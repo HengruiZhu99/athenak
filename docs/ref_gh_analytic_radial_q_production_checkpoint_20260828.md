@@ -76,7 +76,15 @@ named oracle method and is not called by production dispatch.
 - Mixed-third-derivative moving-gauge path qualified locally: **yes**.
 - All-61-RHS equivalence qualified locally: **yes**.
 - Analytic production allocation integrated locally: **yes**.
-- Aurora PVC eight-rank/eight-tile evolved dynamic-q cycle: **not qualified**.
+- Aurora PVC eight-rank/eight-tile evolved dynamic-q cycle: **qualified** by
+  job 8789426 at commit `58db23dcb6055f9fc17c10accbe0dde7746f108e`.
+  Eight ranks mapped to distinct PVC tiles `0.0` through `3.1`, both the
+  one-rank and eight-rank full-output dynamic-q RK cycles completed, and their
+  finite Ref-GH histories agreed to conditioned Linf `3.88981e-14` against the
+  unchanged `5e-12` gate.  The compact pass record is
+  `artifacts/ref_gh_analytic_radial_q_20260828/aurora_pvc_8789426_pass.txt`.
+
+  The preceding compiler-portability sequence is retained for provenance.
   Job 8789242 stopped during PVC code generation before producing an
   executable: IGC segfaulted on the pre-existing monolithic FO-GH RHS unit
   kernel.  The compact failure record and hashes are in
@@ -105,12 +113,16 @@ named oracle method and is not called by production dispatch.
   `Gamma^0_ij`, without simultaneously materializing the full coordinate GH
   geometry.  A local full-output RK cycle is bit-for-bit identical to the saved
   pre-refactor histories for all 447 finite entries, at the unchanged `256
-  epsilon` gate.  The next corrected PVC rerun remains pending.
+  epsilon` gate.  That correction produced the passing job 8789426 above.
 - Warmed-up 64-cubed Ref-GH/Z4c performance ratio: **not measured**.
 - Production ready: **no**.
 
-Before a production claim, the analytic dispatch still needs the bounded PVC
-dynamic-q cycle, direct one-rank/eight-rank numerical comparison, task timing,
-and the matched warmed-up Z4c benchmark.  Compiler-guided source splitting or
+Before a production claim, the analytic dispatch still needs task timing and
+the matched warmed-up Z4c benchmark.  Compiler-guided source splitting or
 team-per-cell experiments are out of scope unless the measured Ref-GH RHS is
 above twice the Z4c RHS.
+
+The matched benchmark input now explicitly selects `trumpet_q_controlled` and
+`analytic_radial_q`.  Its closed-loop and static control modes both pass a
+one-cycle local dispatch smoke; this is input validation only, not performance
+evidence.

@@ -1,0 +1,59 @@
+Aurora compact analytic radial-q PVC discriminator: PASS
+Date: 2026-08-28
+Job: 8789426
+Project: CompactBinaryMerger
+Queue: debug
+Node: x4018c6s2b0n0
+Source commit: 58db23dcb6055f9fc17c10accbe0dde7746f108e
+State: F
+Exit status: 0
+Wall time: 00:09:28
+
+Campaign root:
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_analytic_radial_q_20260828_58db23dc_retry5
+
+Run directory:
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_analytic_radial_q_20260828_58db23dc_retry5/runs/analytic_q_pvc_8789426.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+
+Result:
+  PASS_BOUNDED_EIGHT_TILE_DYNAMIC_Q_CYCLE
+  one/eight-rank conditioned Ref-GH history Linf = 3.88980825583101983e-14
+  unchanged gate tolerance = 5.00000000000000000e-12
+  executable SHA-256 =
+    2bf07eb91620d4c433c9d93c213b0bed81ed1ba50fda40e30cb00fc43624a0f4
+
+Completed evidence:
+- The production image was built with Athena_ENABLE_REF_GH_SOURCE_UNIT=OFF.
+- The analytic backend allocated exactly 12 static and 8 stage Reals per
+  ghosted cell, with generic_bytes=0.
+- Eight MPI ranks mapped to distinct PVC tile masks 0.0 through 3.1 on one
+  Data Center GPU Max node.
+- The one-rank and eight-rank cases evolved the identical global 16^3 problem
+  through one complete dynamic-q RK4 cycle.
+- Reference preparation, q reduction, all CalcRHS sectors, RK updates,
+  communication, projected physical boundaries, timestep, ADM reconstruction,
+  constraints, and full history output passed their debug fences.
+- All compared Ref-GH history values were finite.
+
+Preserved compact files and SHA-256:
+  gate_status.txt
+    cf118328c2eecfd5d1517c9e195b9926678ef863663f7cc06252a3bf4409a4d0
+  numerical_comparison.txt
+    800377f73f7205ef6296f0624ca3432bb9b51f0a91066763b433f5b642f9b3a8
+  rank_gpu_mapping.txt
+    e1f7054a898b604af9c4b9f2c56ab5709ac2b9ab3f26051d912424c3701f7ebb
+  provenance.txt
+    9990f54cf901ef7c0fe937bb0b1ddadc9718286ccc5f3e5bb7397b179d00150a
+  configure.log
+    8231dc59fe17db56bdae70a93a9f936b80a81b4096518c6737593303b56e21a1
+  build.log
+    0b504e7a526a6a8a009946ad34e1ab25bbc73f1417a834f99ce9e8040aef8616
+  one_rank/run.log
+    444222636d2cfc4951f997ad4b7b37864500b75a880f966407cc024ac5cc695f
+  eight_rank/run.log
+    3c93f93866ad0af247020a54481cd1185385ef7ef57520e9e36a4ec44b18991c
+
+Claim boundary:
+This qualifies the bounded PVC evolved cycle and one/eight-rank equivalence.
+It is not a warmed performance result, a convergence result, a long evolution,
+or a production-readiness claim.

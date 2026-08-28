@@ -36,9 +36,12 @@ tlim = 100.0
 ndiag = 1000000
 
 <ref_gh>
-reference = trumpet
+reference = trumpet_q_controlled
+reference_backend = analytic_radial_q
 source = covariant
 reference_mass = 1.0
+q_initial = 1.0
+q_controller_enabled = false
 fd_order = 4
 debug_task_fences = false
 validate_reference_cache = false
