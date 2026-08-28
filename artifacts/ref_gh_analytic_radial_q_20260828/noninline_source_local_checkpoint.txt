@@ -1,0 +1,51 @@
+date=2026-08-28
+parent_commit=570f6517830e4552a57fddee86188ebd086a1cee
+branch=codex/ref-gh-analytic-device-view-performance-20260828
+experiment=joint_cse_noninline_team_source
+math_or_algorithm_change=NO
+
+design=The accepted joint-CSE matrix curvature and frame-correction expressions are retained in algebra and isolated as non-inlined generated device functions. One team lane evaluates them into 20 symmetric rank-2 contracted values in per-team scratch. Ten symmetric lanes then share the already reconstructed physical geometry and compact source workspace for the GH source, Pi, Phi, gauge-driver, gamma0, and gamma2 updates.
+generic_backend=UNCHANGED_INDEPENDENT_ORACLE
+persistent_analytic_allocation=12_static_plus_8_stage_reals_per_ghosted_cell
+generic_views_allocated_in_analytic_backend=NO
+prior_common_source_workspace_reals=280
+contracted_team_scratch_reals=32
+total_compact_source_workspace_reals=312
+monolithic_generated_geometry_called_in_production=NO
+recursive_spin_or_riemann_called_in_analytic_production=NO
+full_spin_or_riemann_arrays_materialized_in_production=NO
+
+sympy_version=1.14.0
+deterministic_regeneration=PASS
+second_regeneration_directory=/tmp/refgh-nonline-determinism.TzpfPN
+generator_sha256=eb920c367690648025f389a406a225c3c548ca537782b522ba91ef8ac355b730
+generated_geometry_sha256=bb3138fec251fdbd1b3458ff52af37e9600c393350857ca296545e459c5f19f9
+generated_gauge_sha256=41b50c6b080397f5b8d66b37a9bac243b949a6bb66d8e7f028e248f58af4807f
+generated_source_sha256=f1bf51f38a514a0ae75f4695a86e16aeb0ad4f3f37d4fd8a1540547e395d90ac
+generated_source_lines=5832
+
+local_build=PASS
+local_build_directory=build-feedback-local
+local_compiler=GCC-13.3
+local_kokkos_backend=SERIAL
+
+original_coefficient_oracle=PASS samples=216 max_error=8.88178e-15
+expanded_coefficient_oracle=PASS samples=2160 conditioned_error=1.48837e-13 tolerance=2e-13
+generated_geometry_oracle=PASS samples=2376 conditioned_error=2.33147e-15 tolerance=5.684341886080802e-14
+moving_gauge_oracle=PASS samples=2160 Hhat=1.16535e-15 dHhat=1.07001e-15 theta=7.08259e-16 dtTheta=3.54866e-17 motion=1.24829e-14 tolerance=5.684341886080802e-14
+boundary_projection_oracle=PASS samples=2160 metric=4.56474e-14 gauge=9.21858e-16 subtracted_gauge=7.11991e-16 tolerance=5.684341886080802e-14
+all_61_rhs_oracle=PASS samples=4320 conditioned_error=2.84217e-14 tolerance=5.684341886080802e-14 phi_orderings=compatible,standard
+q_controlled_source_unit=PASS
+generic_cache_oracle=PASS conditioned_error=1.63758e-14
+
+compatible_evolved_cycle=PASS
+compatible_evolved_rows_conditioned_linf=4.32986979603811051e-15
+compatible_all_rows_conditioned_linf=6.89231657857725111e-14
+all_rows_larger_value_reason=established_initial_ADM_shell_conditioning
+finite_values=441
+paired_intentional_nan_values=21
+mismatched_nonfinite_values=0
+
+pvc_evolved_cycle=PENDING
+matched_performance=NOT_RUN
+production_ready=NO

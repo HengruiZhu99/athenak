@@ -18,10 +18,10 @@ struct CompactAnalyticCoordinateGeometry {
   Real d_reference_gauge[4][4];  // NOLINT(runtime/arrays)
 };
 
-// Common data for the team-per-cell source discriminator.  This is team
-// scratch, never a persistent per-cell view: one lane prepares it from the
-// already shared physical point geometry and the ten symmetric lanes consume
-// it.  The ordinary matrix-valued source function below remains the independent
+// Common data for the team-per-cell production source.  This is team scratch,
+// never a persistent per-cell view: one lane prepares it from the already
+// shared physical point geometry and the ten symmetric lanes consume it.  The
+// ordinary matrix-valued source function below remains the independent
 // RangePolicy/oracle implementation.
 struct CompactAnalyticSourceWorkspace {
   Real inverse[4][4];          // NOLINT(runtime/arrays)
@@ -31,7 +31,14 @@ struct CompactAnalyticSourceWorkspace {
   Real delta_lower[4][4][4];   // NOLINT(runtime/arrays)
   Real delta_upper[4][4][4];   // NOLINT(runtime/arrays)
   Real delta[4];               // NOLINT(runtime/arrays)
+  // These are the only reference-source tensors materialized by production:
+  // two symmetric rank-2 contractions (20 independent values), held in
+  // per-team scratch.  They are not spin, spin-derivative, or Riemann caches.
+  Real curvature[4][4];         // NOLINT(runtime/arrays)
+  Real frame_correction[4][4];  // NOLINT(runtime/arrays)
 };
+static_assert(sizeof(CompactAnalyticSourceWorkspace) == 312*sizeof(Real),
+              "compact analytic source scratch size changed");
 
 // Reconstruct physical point geometry once while obtaining the implicit
 // reference gauge contractions from generated compact expressions.  This is
@@ -335,6 +342,16 @@ bool PrepareCompactAnalyticRadialQScalarWaveSource(
       }
     }
   }
+  // The generator preserves the qualified joint-CSE arithmetic and emits
+  // these as non-inlined device functions.  The call boundaries end their
+  // large temporary lifetimes before the physical principal-part update.
+  GeneratedAnalyticRadialQCurvatureSource(
+      reference.alpha, reference.l, reference.b, reference.displacement,
+      reference.radius, workspace.inverse, psi, workspace.curvature);
+  GeneratedAnalyticRadialQFrameCorrection(
+      reference.alpha, reference.l, reference.b, reference.displacement,
+      reference.radius, workspace.inverse, psi, workspace.p, workspace.q,
+      workspace.delta_upper, workspace.frame_correction);
   return true;
 }
 
@@ -345,15 +362,6 @@ Real CompactAnalyticRadialQScalarWaveSourceComponent(
     const Real gamma0, const CompactAnalyticSourceWorkspace &workspace) {
   static_assert(A >= 0 && A < 4 && B >= A && B < 4,
                 "invalid symmetric source component");
-  const Real curvature =
-      GeneratedAnalyticRadialQCurvatureSourceComponent<A, B>(
-          reference.alpha, reference.l, reference.b, reference.displacement,
-          reference.radius, workspace.inverse, psi);
-  const Real frame_correction =
-      GeneratedAnalyticRadialQFrameCorrectionComponent<A, B>(
-          reference.alpha, reference.l, reference.b, reference.displacement,
-          reference.radius, workspace.inverse, psi, workspace.p, workspace.q,
-          workspace.delta_upper);
   Real qq = 0.0;
   Real delta_product = 0.0;
   Real damping = 0.0;
@@ -381,7 +389,8 @@ Real CompactAnalyticRadialQScalarWaveSourceComponent(
                                  - psi[A][B]*workspace.normal[C];
     damping += gamma0*frame_projector*workspace.delta[C];
   }
-  return curvature + qq + delta_product + damping + frame_correction;
+  return workspace.curvature[A][B] + qq + delta_product + damping
+         + workspace.frame_correction[A][B];
 }
 
 KOKKOS_INLINE_FUNCTION

@@ -216,3 +216,37 @@ not inferred from compilation.  The bounded follow-up caps device teams at 16
 lanes (ten active symmetric components) and host-only teams at one lane;
 equations and component arithmetic are unchanged.  See
 `artifacts/ref_gh_analytic_radial_q_20260828/team_per_cell_pvc_8789799_failure.txt`.
+
+Aurora job 8789862 confirmed that the explicit team cap fixes the launch: both
+the one-rank and eight-rank evolved cycles completed and ranks mapped to all
+eight distinct PVC tiles.  The full-output gate nevertheless failed closed
+because the native GH, reduction, and curl histories were nonfinite from their
+initial row, while physical field observables remained finite and agreed at
+printed precision.  The compiler still reported about 1,150 spilled Reals.
+No performance run followed; see
+`artifacts/ref_gh_analytic_radial_q_20260828/team_per_cell_pvc_8789862_failure.txt`.
+
+### Joint-CSE call-boundary correction
+
+The independently CSE'd component experiment exposed the wrong granularity:
+each component expands to roughly 600--1800 additive terms and more than one
+thousand CSE temporaries.  The corrected source schedule keeps the accepted
+joint-CSE matrix expressions and their algebra, but isolates the generated q
+correction, curvature, frame correction, and physical-gauge contractions as
+non-inlined device functions.  One team lane writes only the two symmetric
+rank-2 curvature/frame contractions into per-team scratch, after which the ten
+symmetric component lanes consume them together with the one shared physical
+geometry.  No spin, spin-derivative, or Riemann array is materialized, and the
+persistent analytic allocation remains exactly 12 static plus 8 stage Reals
+per ghosted cell.
+
+The generated source shrank from 36,504 to 5,832 lines.  A second SymPy 1.14.0
+regeneration was byte-identical.  The unchanged local coefficient (216 and
+2160 samples), geometry (2376), mixed moving-gauge (2160), boundary projection
+(2160), and complete compatible/standard all-61 RHS (4320) gates all pass at
+their original tolerances.  A compatible one-cycle analytic/generic comparison
+also passes on evolved rows at a conditioned error of
+`4.32986979603811051e-15`, with no nonfinite mismatch.  The all-row value is
+`6.89231657857725111e-14` solely from the already recorded initial ADM shell
+conditioning.  This correction remains locally qualified only until a fresh
+full-output PVC evolved discriminator passes.

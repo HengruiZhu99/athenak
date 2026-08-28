@@ -1126,43 +1126,6 @@ def emit_contracted_group(lines: List[str], values: Dict[Index, sp.Expr],
                 f"  {target}[{index[1]}][{index[0]}] = {target}{indices};")
 
 
-def emit_symmetric_component_function(
-        lines: List[str], values: Dict[Index, sp.Expr], prefix: str,
-        function_name: str, arguments: List[str]) -> None:
-    """Emit independently CSE'd compile-time symmetric components.
-
-    The matrix-valued generated functions above remain the deterministic
-    oracle/RangePolicy implementation.  These specializations are a separate
-    performance-portability interface for a team-per-cell kernel: one team
-    thread evaluates one symmetric component while common physical geometry is
-    held in team scratch.  No component reconstructs a spin or Riemann tensor.
-    """
-    lines.extend([
-        "template <int IA, int IB>",
-        "KOKKOS_INLINE_FUNCTION",
-        f"Real {function_name}(",
-    ])
-    for position, argument in enumerate(arguments):
-        suffix = ") {" if position + 1 == len(arguments) else ","
-        lines.append(f"    {argument}{suffix}")
-    lines.append(
-        '  static_assert(IA >= 0 && IA < 4 && IB >= IA && IB < 4, '
-        '"invalid symmetric source component");')
-    for ordinal, (index, expression) in enumerate(values.items()):
-        keyword = "if" if ordinal == 0 else "else if"
-        lines.append(
-            f"  {keyword} constexpr (IA == {index[0]} && IB == {index[1]}) {{")
-        lines.extend(f"  {line}" for line in compact_scalar_declarations())
-        replacements, reduced = sp.cse(
-            [expression], symbols=sp.numbered_symbols(prefix),
-            order="canonical")
-        for symbol, replacement in replacements:
-            lines.append(f"    const Real {symbol} = {cpp(replacement)};")
-        lines.append(f"    return {cpp(reduced[0])};")
-        lines.append("  }")
-    lines.extend(["  return NAN;", "}", ""])
-
-
 def emit_source(output: Path) -> None:
     fields = build_geometry()
     q_correction, curvature, frame_correction = source_contractions(fields)
@@ -1181,9 +1144,20 @@ def emit_source(output: Path) -> None:
         "#include \"athena.hpp\"",
         "#include \"ref_gh/reference_analytic_radial_q.hpp\"",
         "",
+        "// These joint-CSE contractions are deliberately isolated from the",
+        "// caller's physical-geometry working set.  Inlining them into the",
+        "// main RHS kernel recreates the generic-cache register pressure on",
+        "// PVC.  `inline` provides header linkage; the attribute controls",
+        "// optimization, not the accepted arithmetic.",
+        "#if defined(__clang__) || defined(__GNUC__)",
+        "#define REF_GH_GENERATED_NOINLINE __attribute__((noinline))",
+        "#else",
+        "#define REF_GH_GENERATED_NOINLINE",
+        "#endif",
+        "",
         "namespace ref_gh {",
         "",
-        "KOKKOS_INLINE_FUNCTION",
+        "KOKKOS_FUNCTION REF_GH_GENERATED_NOINLINE inline",
         "void GeneratedAnalyticRadialQQCorrection(",
         "    const AnalyticRadialScalar &alpha_jet,",
         "    const AnalyticRadialScalar &l_jet,",
@@ -1194,7 +1168,7 @@ def emit_source(output: Path) -> None:
     lines.extend(compact_scalar_declarations())
     emit_contracted_group(lines, q_correction, "ref_q_cse_", "correction")
     lines.extend([
-        "}", "", "KOKKOS_INLINE_FUNCTION",
+        "}", "", "KOKKOS_FUNCTION REF_GH_GENERATED_NOINLINE inline",
         "void GeneratedAnalyticRadialQCurvatureSource(",
         "    const AnalyticRadialScalar &alpha_jet,",
         "    const AnalyticRadialScalar &l_jet,",
@@ -1206,20 +1180,8 @@ def emit_source(output: Path) -> None:
     emit_contracted_group(
         lines, curvature, "ref_curvature_cse_", "source", True)
     lines.append("}")
-    lines.append("")
-    emit_symmetric_component_function(
-        lines, curvature, "ref_curvature_component_cse_",
-        "GeneratedAnalyticRadialQCurvatureSourceComponent", [
-            "const AnalyticRadialScalar &alpha_jet",
-            "const AnalyticRadialScalar &l_jet",
-            "const AnalyticRadialScalar &b_jet",
-            "const Real displacement[3]",
-            "const Real radius",
-            "const Real inverse[4][4]",
-            "const Real psi[4][4]",
-        ])
     lines.extend([
-        "KOKKOS_INLINE_FUNCTION",
+        "", "KOKKOS_FUNCTION REF_GH_GENERATED_NOINLINE inline",
         "void GeneratedAnalyticRadialQFrameCorrection(",
         "    const AnalyticRadialScalar &alpha_jet,",
         "    const AnalyticRadialScalar &l_jet,",
@@ -1233,23 +1195,8 @@ def emit_source(output: Path) -> None:
     emit_contracted_group(
         lines, frame_correction, "ref_frame_cse_", "source", True)
     lines.append("}")
-    lines.append("")
-    emit_symmetric_component_function(
-        lines, frame_correction, "ref_frame_component_cse_",
-        "GeneratedAnalyticRadialQFrameCorrectionComponent", [
-            "const AnalyticRadialScalar &alpha_jet",
-            "const AnalyticRadialScalar &l_jet",
-            "const AnalyticRadialScalar &b_jet",
-            "const Real displacement[3]",
-            "const Real radius",
-            "const Real inverse[4][4]",
-            "const Real psi[4][4]",
-            "const Real p[4][4][4]",
-            "const Real q[4][4][4]",
-            "const Real delta_upper[4][4][4]",
-        ])
     lines.extend([
-        "KOKKOS_INLINE_FUNCTION",
+        "", "KOKKOS_FUNCTION REF_GH_GENERATED_NOINLINE inline",
         "void GeneratedAnalyticRadialQPhysicalGaugeUpper(",
         "    const AnalyticRadialScalar &alpha_jet,",
         "    const AnalyticRadialScalar &l_jet,",
@@ -1265,6 +1212,7 @@ def emit_source(output: Path) -> None:
         lines, physical_d_h_upper, "ref_physical_dh_cse_", "d_h_upper")
     lines.extend([
         "}", "", "}  // namespace ref_gh", "",
+        "#undef REF_GH_GENERATED_NOINLINE", "",
         "#endif  // REF_GH_GENERATED_ANALYTIC_RADIAL_Q_SOURCE_HPP_", ""])
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text("\n".join(lines), encoding="utf-8")
