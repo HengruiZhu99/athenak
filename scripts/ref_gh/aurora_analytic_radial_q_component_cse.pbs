@@ -1,0 +1,132 @@
+#!/bin/bash -l
+# Bounded PVC compiler/timing discriminator for per-component generated CSE.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_cse_split
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+OUT="${CAMPAIGN_ROOT}/runs/component_cse_${PBS_JOBID}"
+EXE="${BUILD}/src/athena"
+CYCLE_INPUT="${SRC}/tst/inputs/ref_gh_q_controlled_trumpet_reprojection.athinput"
+BENCH_INPUT="${SRC}/inputs/ref_gh/ref_gh_stationary_trumpet_benchmark.athinput"
+TOOL="${OUT}/librefgh_kokkos_kernel_timer.so"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${CYCLE_INPUT}" "${BENCH_INPUT}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DAthena_ENABLE_REF_GH_SOURCE_UNIT=OFF \
+  -DPROBLEM=built_in_pgens > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+sha256sum "${EXE}" >> provenance.txt
+
+icpx -std=c++17 -O2 -fPIC -shared \
+  "${SRC}/scripts/ref_gh/kokkos_kernel_timer.cpp" -o "${TOOL}"
+sha256sum "${TOOL}" >> provenance.txt
+
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > gpu_mapping.txt 2>&1
+grep -q 'ZE_AFFINITY_MASK=0.0' gpu_mapping.txt
+
+mkdir full_cycle
+cd full_cycle
+mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${CYCLE_INPUT}" \
+  ref_gh/reference_backend=analytic_radial_q \
+  ref_gh/validate_reference_cache=false ref_gh/q_controller_enabled=true \
+  ref_gh/debug_task_fences=true \
+  meshblock/nx1=16 meshblock/nx2=16 meshblock/nx3=16 \
+  time/nlim=1 time/tlim=1.0 output1/dt=0.005 output2/dt=0.005 \
+  job/basename=component_cse_cycle > run.log 2>&1
+grep -q 'Terminating on cycle limit' run.log
+grep -q 'ref_gh debug fence passed: ref_gh diagnostics constraints' run.log
+grep -q 'generic_bytes=0 analytic_static_components=12 analytic_stage_components=8' run.log
+! grep -Eiq 'FATAL ERROR|NotPresent|page fault|SYCL exception|UR_RESULT_ERROR' run.log
+cd "${OUT}"
+
+run_benchmark() {
+  local label="$1"
+  local cycles="$2"
+  local profile_file="${3:-}"
+  mkdir "${label}"
+  cd "${label}"
+  if [[ -n "${profile_file}" ]]; then
+    KOKKOS_TOOLS_LIBS="${TOOL}" REF_GH_KERNEL_TIMING_FILE="${OUT}/${profile_file}" \
+      /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+      gpu_tile_compact.sh "${EXE}" -i "${BENCH_INPUT}" \
+      ref_gh/q_controller_enabled=true time/nlim="${cycles}" time/tlim=100.0 \
+      job/basename="${label}" > run.log 2>&1
+  else
+    /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=16 --cpu-bind depth \
+      gpu_tile_compact.sh "${EXE}" -i "${BENCH_INPUT}" \
+      ref_gh/q_controller_enabled=true time/nlim="${cycles}" time/tlim=100.0 \
+      job/basename="${label}" > run.log 2>&1
+  fi
+  grep -q "cycle=${cycles}" run.log
+  grep -q 'zone-cycles/cpu_second' run.log
+  ! grep -Eiq 'FATAL ERROR|NotPresent|page fault|SYCL exception|UR_RESULT_ERROR' run.log
+  cd "${OUT}"
+}
+
+run_benchmark warmup 10
+run_benchmark measured 20
+run_benchmark profile 10 component_cse_kernels.tsv
+grep -q '^ref_gh scalar source and pi rhs' component_cse_kernels.tsv
+
+{
+  echo 'result=PASS_COMPONENT_CSE_PVC_DISCRIMINATOR'
+  awk -F'= ' '/zone-cycles\/cpu_second/ {print "zone_cycles_per_s=" $2}' \
+    measured/run.log
+  grep '^ref_gh scalar source and pi rhs' component_cse_kernels.tsv
+  grep '^ref_gh projected trumpet metric boundaries' component_cse_kernels.tsv
+} > discriminator_status.txt
+find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.tsv' \) \
+  -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
