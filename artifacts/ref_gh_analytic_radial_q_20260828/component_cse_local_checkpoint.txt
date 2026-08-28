@@ -1,0 +1,49 @@
+Compiler-guided Ref-GH source split: local checkpoint
+Date: 2026-08-28
+Starting performance commit: c0ea5efd46033a63796d30a7619fe27a77e9902d
+Motivation: Aurora job 8789453 measured Ref-GH/Z4c RHS = 10.062883 and
+the qualified IGC build reported approximately 1279 spilled Reals in the
+analytic scalar-source/Pi kernel.
+
+Change:
+- The symbolic curvature and moving-frame corrections are mathematically
+  unchanged.
+- SymPy now performs CSE independently for each of the ten symmetric source
+  components and emits compile-time component specializations.
+- The existing matrix API calls those specializations sequentially, retaining
+  one physical point-geometry reconstruction and the existing task graph.
+- No precision, tolerance, equation, q ansatz, allocation, or algorithmic
+  option changed.
+
+Deterministic generation:
+  result=PASS
+  second_directory=/tmp/refgh-component-cse-determinism.T0JF12
+  generator_sha256=9cc8a5868339df0f66612a9eff53838dcd6129dabd8f4d2d2686ef1ba345d695
+  geometry_sha256=67a641d3d705a880ad5c303c35955018e423ef22b54056d663fb56542363b3a2
+  gauge_sha256=67016112986e5eed59227b3166f85392da535173173c4a762c3cc42e1522d989
+  source_sha256=7d8f8de23f31179be59601e74758e36a2e65144ccaa55b5b2c915ad13b70a5cb
+  sympy_version=1.14.0
+
+Local gates, unchanged tolerances:
+  production_build=PASS
+  default_oracle_build=PASS
+  original_coefficient_oracle=PASS samples=216 max_error=8.88178e-15
+  expanded_coefficient_oracle=PASS samples=2160 error=1.48837e-13 tolerance=2e-13
+  generated_geometry_oracle=PASS samples=2376 error=2.33147e-15 tolerance=5.684341886080802e-14
+  moving_gauge_oracle=PASS samples=2160 dtTheta=3.54866e-17 motion=1.24829e-14 tolerance=5.684341886080802e-14
+  all_61_rhs_oracle=PASS samples=4320 error=2.84217e-14 tolerance=5.684341886080802e-14
+  q_source_unit=PASS
+  generic_cache_oracle=PASS error=1.63758e-14
+  full_output_dynamic_q_cycle=PASS
+  history_vs_pre_split_conditioned_linf=1.54221472698165603e-14 tolerance=5.684341886080802e-14 finite_values=447 matching_nan_values=21
+
+Code-size warning:
+  baseline_generated_source_lines=5819
+  component_split_generated_source_lines=32417
+  maximum_curvature_component_cse_temporaries=1697
+  maximum_frame_component_cse_temporaries=1739
+
+The large code expansion and only moderate reduction in maximum per-component
+CSE width make this an experimental compiler discriminator, not an accepted
+performance improvement.  PVC compilation/spill evidence and timing are still
+required before retaining it.
