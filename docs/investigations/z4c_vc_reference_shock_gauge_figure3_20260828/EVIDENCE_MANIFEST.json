@@ -1,106 +1,68 @@
 {
-  "schema": "athenak.z4c.reference_shock_gauge_figure3.evidence.v1",
-  "generated_utc": "2026-08-28T12:25:00Z",
+  "schema": "athenak.z4c.reference_shock_gauge_figure3.evidence.v2",
+  "generated_utc": "2026-08-28T15:05:00Z",
   "repository": "https://github.com/HengruiZhu99/athenak",
   "branch": "codex/z4c-vc-reference-shock-gauge-figure3-20260828",
-  "base_commit": "c67edf54ce97536ad9410adcf6029a4478038139",
-  "evidence_commit": "151bf20d13c4838793f1c26e0b6b6e669cb7b765",
-  "evidence_tree": "5eb8b918082159ca4c9e56beb40e3079fc131414",
-  "base_to_evidence_binary_diff_sha256": "94b91e471da07f625ddac1f27889dffee0898532f26df69e841a7c80705dc4a9",
-  "verdict": "REFERENCE_GAUGE_IMPLEMENTATION_INCOMPLETE",
+  "source_base_commit": "c67edf54ce97536ad9410adcf6029a4478038139",
+  "source_patch_commit": "151bf20d13c4838793f1c26e0b6b6e669cb7b765",
+  "pre_campaign_manifest_commit": "00e66dfa5e0e7f7f2c711166998806a05decbd55",
+  "campaign_artifact_commit": "034b78cce301a722515b92ec5fcd4f48c1bd3e7b",
+  "campaign_artifact_tree": "82b6e94e3c551c345f46c377c53144ffb1b4106d",
+  "verdict": "SOURCE_PATCH_HOST_QUALIFIED; PERLMUTTER_RUNTIME_AND_SCIENCE_UNEXECUTED",
   "execution": {
     "host_unit_static_tests": "passed_5_of_5",
-    "perlmutter_cuda_test": "unexecuted",
-    "n256_production": "unexecuted",
+    "perlmutter_cuda_build": "completed",
+    "perlmutter_cuda_runtime_test": "unexecuted_partition_down",
+    "interactive_request_57670453": "revoked_before_allocation_zero_gpu_time",
+    "qualification_job_57670461": "cancelled_after_partition_down_zero_elapsed",
+    "n256_production": "not_submitted",
     "n128_replay": "not_reached",
     "n512_replay": "not_reached",
     "fresh_amr_authority": "absent",
-    "scheduler_state_at_wrap": "no_active_user_jobs",
-    "additional_jobs_submitted_during_wrap": 0
+    "active_campaign_jobs_at_wrap": 0
+  },
+  "perlmutter_build": {
+    "source_commit": "00e66dfa5e0e7f7f2c711166998806a05decbd55",
+    "source_tree": "578bfd4ede74ddc7464f82e4c7b76f4111a4ad76",
+    "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf",
+    "athena_sha256": "c5153a5c25c4b2aba22737061baa00628badcd6eade2c66461ac182708677e55",
+    "cmake_cache_sha256": "273fe5f79f18d39f19748aff573c1ac204ebe9aae14f61533ca99c42a3c13f8a",
+    "irisk_library_sha256": "d4afad6d3a20a8dd8197eb7d70d5a23903a7e2401a5d8b034d32005bf07f3f39",
+    "brill_coefficients_sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10",
+    "input_sha256": "6c694cf871a3d694d745f0fb58b279b6cd07516463ac8ad54f1c91d2689c90ba"
   },
   "claims_supported": [
-    "The audited AthenaK shock-avoiding lapse RHS uses Khat plus 2 Theta.",
-    "The base timestep and stage admissibility paths rejected nonpositive lapse.",
-    "The narrow patch permits finite negative lapse only for shock-avoiding slicing and uses the lapse magnitude for the physical light CFL speed.",
-    "Five focused host unit and static checks passed."
+    "The audited shock-avoiding lapse RHS uses Khat plus 2 Theta.",
+    "The source patch permits finite negative lapse only for shock-avoiding slicing and preserves positive-lapse gates for other gauges.",
+    "Five focused host unit and static checks passed.",
+    "An exact-source Perlmutter CUDA build completed.",
+    "No Perlmutter GPU runtime or science evolution executed before wrap-up."
   ],
   "claims_not_supported": [
-    "Perlmutter CUDA qualification",
+    "Perlmutter A100 runtime qualification",
     "N256 stability or numerical failure",
     "Figure-3 reproduction",
-    "AMR replay correctness for this campaign",
+    "Fresh AMR authority or replay correctness",
     "N128 N256 N512 convergence"
   ],
   "artifacts": [
-    {
-      "path": "src/z4c/timestep_contract.hpp",
-      "sha256": "50451695b2f487c8a62d0cef32958a00aa891d76b364592cd46e9357c20277ae"
-    },
-    {
-      "path": "src/z4c/z4c.cpp",
-      "sha256": "43924c4d04a59aaa72b1bf72da621f935c4fad0f55d86e9002cb01e80a358149"
-    },
-    {
-      "path": "src/z4c/z4c_newdt.cpp",
-      "sha256": "d9e31828b952301f2c0fa181f465b45ce7694a809e43b07be2f3561a17cd1339"
-    },
-    {
-      "path": "tst/unit/z4c/state_admissibility_test.cpp",
-      "sha256": "502384c4a707db4fc915371440e982ed5aabd6339a812187cc0f3a10506a40ed"
-    },
-    {
-      "path": "tst/unit/z4c/timestep_contract_test.cpp",
-      "sha256": "7c5e5b5ea6df99124636747bf5cfcbd93a190db4f08b479f14be1120c7c4f30e"
-    },
-    {
-      "path": "tst/unit/z4c/z4c_shock_avoiding_gauge_static_test.py",
-      "sha256": "6a7e4d204501be628ce54652ccb19b07a23095caa323349561364edef8a65d65"
-    },
-    {
-      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REFERENCE_GAUGE.md",
-      "sha256": "ee97d176867bd3f7cf336ad21bc89c92849bad0d6c0f51db802221ebde6ddbae"
-    },
-    {
-      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/GAUGE_IMPLEMENTATION_AUDIT.md",
-      "sha256": "79ee6b38ff76e2f79e05c66506721a8f0294920d2de3e72e00331c65452b7335"
-    },
-    {
-      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/brill_vc_reference_shock_gauge.athinput",
-      "sha256": "6c694cf871a3d694d745f0fb58b279b6cd07516463ac8ad54f1c91d2689c90ba"
-    },
-    {
-      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/N256_REPRODUCTION.md",
-      "sha256": "b5ffd44958cea8b069a6f1d1c5ea851616caac9e3691db1add3dbbfde95da079"
-    },
-    {
-      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/CONVERGENCE.md",
-      "sha256": "d656bd91c4be137ae893df7ffb893f6271fc6fd7b5ba75fc2e02a2a956046fbb"
-    },
-    {
-      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/HOST_TESTS.txt",
-      "sha256": "4621b1b29f88ec91825820f38d5dc0a5779f80f5a7eefab58334dd393f361883"
-    },
-    {
-      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.md",
-      "sha256": "2f4a2973e5f8982d4b353219424aa96a0390c0de60989ff3cf8aca9e18213b40"
-    },
-    {
-      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.tex",
-      "sha256": "ef974feecc1332dc3cbaa80121b9f0dfa8829ec21534925cc704daf2089cd56b"
-    },
-    {
-      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.pdf",
-      "sha256": "543b57e14ead7c089fc373caecd7518783eda1f9dd05b184208ed59f3cf3d231"
-    }
-  ],
-  "literature_freeze": [
-    {
-      "path": "/home/hzhu/Desktop/research/gr/collapse/artifacts/axisymmetric_cartoon_z4c_2026-08-10/continuation/literature/arxiv2607_10843v1_freeze_2026-08-11/original/2607.10843v1.pdf",
-      "sha256": "8fad9241eee63d919eef19fd78a65b43f76e9a6112fbf56d0d3aa8cac0c20517"
-    },
-    {
-      "path": "/home/hzhu/Desktop/research/gr/collapse/artifacts/axisymmetric_cartoon_z4c_2026-08-10/continuation/literature/arxiv2607_10843v1_freeze_2026-08-11/original/2607.10843v1.tar",
-      "sha256": "191d17a04647de81d388a5f29c93f06a2a3cdfbbffc0ebaa4045cee6ebea59ff"
-    }
+    {"path": "src/z4c/timestep_contract.hpp", "sha256": "50451695b2f487c8a62d0cef32958a00aa891d76b364592cd46e9357c20277ae"},
+    {"path": "src/z4c/z4c.cpp", "sha256": "43924c4d04a59aaa72b1bf72da621f935c4fad0f55d86e9002cb01e80a358149"},
+    {"path": "src/z4c/z4c_newdt.cpp", "sha256": "d9e31828b952301f2c0fa181f465b45ce7694a809e43b07be2f3561a17cd1339"},
+    {"path": "tst/unit/z4c/state_admissibility_test.cpp", "sha256": "502384c4a707db4fc915371440e982ed5aabd6339a812187cc0f3a10506a40ed"},
+    {"path": "tst/unit/z4c/timestep_contract_test.cpp", "sha256": "7c5e5b5ea6df99124636747bf5cfcbd93a190db4f08b479f14be1120c7c4f30e"},
+    {"path": "tst/unit/z4c/z4c_shock_avoiding_gauge_static_test.py", "sha256": "6a7e4d204501be628ce54652ccb19b07a23095caa323349561364edef8a65d65"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.md", "sha256": "6653fceda6d7d6accc82dbbabe5308c203ed24173ce0d0957912370673657fce"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/PERLMUTTER_CUDA_TESTS.md", "sha256": "00d927fb4cec3b707428db05fced9eccfae6d853f37a3a521c13f4d1022f158d"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/PERLMUTTER_SCHEDULER_DISPOSITION.txt", "sha256": "601c8cac11b2a238c3108dd97a337156fc02de446f2ce58a3912cb92a5214ce6"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/N256_REPRODUCTION.md", "sha256": "827d4a1b69e51bb82c45d77bde20d3996ea00cc6585a8917a5df13a09c683beb"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/CONVERGENCE.md", "sha256": "d656bd91c4be137ae893df7ffb893f6271fc6fd7b5ba75fc2e02a2a956046fbb"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analyze_reference_n256.py", "sha256": "5102170d744fbd6ed6280d46da9843f289691245e595676b0075da603c61a3ad"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/figure3_published_curves.csv", "sha256": "947f92f72af32caf631d5efe9d720c7c56800b2e4578dcb6bcc26107cabc8adf"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/perlmutter_cuda_qualification.sbatch", "sha256": "b01b711a89ef08e0b1df9e8e3c43bd3a22d18d75e96e9f68352bd8695256bb2f"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/perlmutter_run_reference_n256.sh", "sha256": "31347a0689a1d20c45c4ab834792aa53402bea1c03c9e0454c51a03496066a62"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/perlmutter_reference_n256_seg000.sbatch", "sha256": "36ded09f8b1364b7079397f9a2125bac89669dd6cb45cae5a9bac1a688a1d679"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/perlmutter_run_reference_replay.sh", "sha256": "fe939f8150b7944e7d8a598318db3efac9f3b14fef44da2518ff6dac3a0c3d48"},
+    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/perlmutter_reference_replay_case.sbatch", "sha256": "8acf1184b2224c3ecfb7c012db2e044de3163bf8cc42b2ceb0d5e13cba035078"}
   ]
 }
