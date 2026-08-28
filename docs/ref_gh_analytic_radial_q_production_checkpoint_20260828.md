@@ -159,6 +159,27 @@ passes at unchanged `256 epsilon` with conditioned errors `4.56474e-14`
 (metric), `9.21858e-16` (gauge), and `7.11991e-16` (subtracted gauge).  The
 corrected full-output analytic/generic cycles agree to `4.32393e-14` in the
 primary Ref-GH history and give identical error summaries at printed
-precision.  This is local qualification only; current-source PVC and matched
-performance reruns remain required.  See
+precision.  See
 `artifacts/ref_gh_analytic_radial_q_20260828/compact_boundary_local_checkpoint.txt`.
+
+The current source subsequently passed Aurora job 8789663: one node, eight
+ranks, eight distinct PVC tiles, and an evolved dynamic-q RK cycle.  Its
+one-rank/eight-rank conditioned Ref-GH history difference was `3.88981e-14`
+against the unchanged `5e-12` gate.  The executable SHA-256 was
+`76231605157bb22518411720b3d4af93dbd56a65cc5a66194646e23f9b0a1287`.
+
+Aurora job 8789684 then completed the matched warmed-up `64^3` benchmark on
+one PVC tile.  Dynamic Ref-GH reached `7.368637e5` active zone-cycles/s,
+static Ref-GH `7.470968e5`, and Z4c `7.230060e6`.  The compact boundary costs
+`0.00665974` seconds per stage (`7.95%`), a `79.22x` reduction from the
+historical job-8789453 boundary timing.  Dynamic Ref-GH throughput improved
+`7.14x` over that historical baseline.
+
+The three required overhead targets pass: q control is `0.628%` of a warmed
+stage, reference preparation is `0.0495%`, and dynamic/static complete time is
+`1.0181`.  The central performance gate remains failed: Ref-GH is `9.185x`
+Z4c in complete warmed-stage time and `10.525x` in main-RHS time without
+dissipation.  Thus the compact boundary optimization is retained, but the
+backend remains **not production ready**.  Full compact evidence and the
+remote artifact locations are recorded in
+`artifacts/ref_gh_analytic_radial_q_20260828/compact_boundary_pvc_performance_20260828.txt`.
