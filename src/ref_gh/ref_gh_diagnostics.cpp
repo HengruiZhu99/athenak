@@ -66,13 +66,22 @@ void RefGh::RefGhToADMImpl() {
     const auto reference = MakeTypedProductionReferencePoint<Analytic>(
         reference_cache, reference_extra, analytic_static, analytic_stage,
         m, k, j, i, x, y, z, center_x, center_y, center_z);
-    Real psi[4][4], pi[4][4], phi[3][4][4], d_psi[4][4][4]; // NOLINT
-    Real metric[4][4], d_metric[4][4][4]; // NOLINT
-    CoordinateGhGeometry geometry;
+    Real metric[4][4];  // NOLINT(runtime/arrays)
     Real determinant = 0.0;
-    if (!LoadProductionPointGeometry(state, reference, m, k, j, i, psi, pi,
-                                     phi, d_psi, metric, d_metric, geometry,
-                                     determinant)) {
+    for (int a = 0; a < 4; ++a) {
+      for (int b = 0; b < 4; ++b) {
+        metric[a][b] = 0.0;
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            metric[a][b] += ReferenceCoframe(reference, A, a)
+                            *ReferenceCoframe(reference, B, b)
+                            *state(m, PsiIndex(A, B), k, j, i);
+          }
+        }
+      }
+    }
+    Real inverse[4][4];  // NOLINT(runtime/arrays)
+    if (!Invert4(metric, inverse, determinant) || !(inverse[0][0] < 0.0)) {
       adm_vars.alpha(m, k, j, i) = NAN;
       adm_vars.psi4(m, k, j, i) = NAN;
       for (int a = 0; a < 3; ++a) {
@@ -84,13 +93,30 @@ void RefGh::RefGhToADMImpl() {
       }
       return;
     }
-    adm_vars.alpha(m, k, j, i) = geometry.lapse;
+    const Real lapse = 1.0/Kokkos::sqrt(-inverse[0][0]);
+    Real shift[3];  // NOLINT(runtime/arrays)
+    for (int p = 0; p < 3; ++p) {
+      shift[p] = lapse*lapse*inverse[0][p + 1];
+    }
+    adm_vars.alpha(m, k, j, i) = lapse;
     for (int a = 0; a < 3; ++a) {
-      adm_vars.beta_u(m, a, k, j, i) = geometry.shift[a];
+      adm_vars.beta_u(m, a, k, j, i) = shift[a];
       for (int b = a; b < 3; ++b) {
         adm_vars.g_dd(m, a, b, k, j, i) = metric[a + 1][b + 1];
-        adm_vars.vK_dd(m, a, b, k, j, i) =
-            -geometry.lapse*geometry.christoffel[0][a + 1][b + 1];
+        Real christoffel = 0.0;
+        for (int ell = 0; ell < 4; ++ell) {
+          christoffel += 0.5*inverse[0][ell]*(
+              ProductionCoordinateMetricDerivative(
+                  state, reference, m, k, j, i, metric, lapse, shift,
+                  a + 1, ell, b + 1)
+              + ProductionCoordinateMetricDerivative(
+                  state, reference, m, k, j, i, metric, lapse, shift,
+                  b + 1, ell, a + 1)
+              - ProductionCoordinateMetricDerivative(
+                  state, reference, m, k, j, i, metric, lapse, shift,
+                  ell, a + 1, b + 1));
+        }
+        adm_vars.vK_dd(m, a, b, k, j, i) = -lapse*christoffel;
       }
     }
     const Real det_spatial = adm::SpatialDet(

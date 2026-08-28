@@ -44,6 +44,53 @@ auto MakeTypedProductionReferencePoint(
   }
 }
 
+// Compute one coordinate metric derivative without materializing the full
+// dPsi/dg/CoordinateGhGeometry working set.  This is the same frame-derivative
+// contraction used by LoadProductionPointGeometry, specialized to the single
+// component needed by compact diagnostic kernels.
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+Real ProductionCoordinateMetricDerivative(
+    const DvceArray5D<Real> &state, const Reference &reference,
+    const int m, const int k, const int j, const int i,
+    const Real metric[4][4], const Real lapse, const Real shift[3],
+    const int p, const int a, const int b) {
+  Real derivative = 0.0;
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      Real d_psi = 0.0;
+      if (p == 0) {
+        d_psi = -lapse*state(m, PiIndex(A, B), k, j, i);
+        for (int q = 0; q < 3; ++q) {
+          Real spatial_d_psi = 0.0;
+          for (int I = 0; I < 3; ++I) {
+            spatial_d_psi += ReferenceSpatialCoframe(reference, I, q)
+                *state(m, PhiIndex(I, A, B), k, j, i);
+          }
+          d_psi += shift[q]*spatial_d_psi;
+        }
+      } else {
+        for (int I = 0; I < 3; ++I) {
+          d_psi += ReferenceSpatialCoframe(reference, I, p - 1)
+              *state(m, PhiIndex(I, A, B), k, j, i);
+        }
+      }
+      for (int c = 0; c < 4; ++c) {
+        for (int d = 0; d < 4; ++d) {
+          d_psi -=
+              (ReferenceDFrame(reference, p, A, c)
+                 *ReferenceFrame(reference, B, d)
+               + ReferenceFrame(reference, A, c)
+                 *ReferenceDFrame(reference, p, B, d))*metric[c][d];
+        }
+      }
+      derivative += ReferenceCoframe(reference, A, a)
+                    *ReferenceCoframe(reference, B, b)*d_psi;
+    }
+  }
+  return derivative;
+}
+
 // Exact overload selected by the analytic CalcRHS instantiation.  This keeps
 // the recursive frame-derivative implementation out of the PVC kernel image.
 KOKKOS_INLINE_FUNCTION

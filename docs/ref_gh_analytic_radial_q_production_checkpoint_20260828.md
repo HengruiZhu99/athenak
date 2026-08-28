@@ -95,8 +95,17 @@ named oracle method and is not called by production dispatch.
   RefGhToADM kernel with `UR_RESULT_ERROR_INVALID_KERNEL_NAME`; see
   `artifacts/ref_gh_analytic_radial_q_20260828/aurora_pvc_8789324_failure.txt`.
   RefGhToADM and CalcConstraints now use the same host-side compile-time
-  analytic/generic dispatch as CalcRHS, and the typed full-diagnostic cycle
-  passes locally.  The next corrected PVC rerun remains pending.
+  analytic/generic dispatch as CalcRHS.  Job 8789358 showed that the typed
+  analytic RefGhToADM kernel itself exceeded IGC's permitted per-thread scratch
+  space: the build reported success after dropping SIMD, but the kernel was
+  absent at runtime and failed with `UR_RESULT_ERROR_INVALID_KERNEL_NAME`.
+  Its compact record is
+  `artifacts/ref_gh_analytic_radial_q_20260828/aurora_pvc_8789358_failure.txt`.
+  RefGhToADM now evaluates only the individual metric derivatives needed for
+  `Gamma^0_ij`, without simultaneously materializing the full coordinate GH
+  geometry.  A local full-output RK cycle is bit-for-bit identical to the saved
+  pre-refactor histories for all 447 finite entries, at the unchanged `256
+  epsilon` gate.  The next corrected PVC rerun remains pending.
 - Warmed-up 64-cubed Ref-GH/Z4c performance ratio: **not measured**.
 - Production ready: **no**.
 

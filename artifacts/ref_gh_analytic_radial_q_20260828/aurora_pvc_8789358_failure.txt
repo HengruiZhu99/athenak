@@ -1,0 +1,63 @@
+Aurora compact analytic radial-q PVC discriminator: typed ADM kernel image failure
+Date: 2026-08-28
+Job: 8789358
+Project: CompactBinaryMerger
+Queue: debug
+Node: x4216c4s2b0n0
+Source commit: 9ff9fc8427165ebf487df1cad7d57a2ce324ee4f
+State: F
+Exit status: 134
+Start: 2026-08-28 15:21:12
+Wall time: 00:08:35
+
+Campaign root:
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_analytic_radial_q_20260828_9ff9fc84_retry4
+
+Run directory:
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_analytic_radial_q_20260828_9ff9fc84_retry4/runs/analytic_q_pvc_8789358.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+
+Preserved full files and SHA-256:
+  build.log (370901 bytes)
+    c532f30ebdb0d24f0ce406d49a54969cb29bc41d5edc57a2e2e1d923b920b727
+  configure.log (3371 bytes)
+    c72bfdb8b8381517bb5a84b00918136a42942059780ad6645ed3bdc9f686d150
+  provenance.txt (7717 bytes)
+    86f1da47d249e70f0d6e40705d555a57b7c4f259cfebc7a92732cefaac64bf3b
+  rank_gpu_mapping.txt (1464 bytes)
+    5882dd50ae209c8b6be5bad783e2906415993253ea3f24c256ba870ce3d66f37
+  one_rank/run.log (1952 bytes)
+    8440250176cb9d140ea7397476b8c433341d5ab75633c2d2873609c3e3b774b7
+
+Completed evidence:
+- Production build with Athena_ENABLE_REF_GH_SOURCE_UNIT=OFF succeeded.
+- All eight ranks mapped to distinct PVC tiles.
+- The one-rank analytic allocation reported generic_bytes=0 and exact 12/8
+  compact components.
+- Initial analytic CalcRHS and projected physical boundaries passed their
+  debug fences.
+
+Failure:
+The one-rank initialization passed `ref_gh diagnostics reference` and failed
+while launching the compile-time typed analytic RefGhToADM kernel:
+  UR_RESULT_ERROR_INVALID_KERNEL_NAME
+No eight-rank evolved cycle, one/eight-rank comparison, or benchmark ran.
+
+Compiler evidence and equation-preserving correction:
+IGC's retry manager reported that RefGhToADMImpl<true> could not compile within
+the permitted per-thread scratch-space limit without dropping SIMD.  Although
+the overall build returned success, that kernel was absent at runtime.  The
+subsequent correction keeps the same coordinate metric and extrinsic-curvature
+contractions but computes only the individual metric derivatives required for
+Gamma^0_ij.  It no longer materializes Psi, Pi, Phi, dPsi, dMetric, and the
+complete CoordinateGhGeometry simultaneously inside this diagnostic kernel.
+
+The direct reconstruction completed a full-output local RK cycle and all 447
+finite values in its eight history files were bit-for-bit identical to the
+saved typed-kernel baseline.  The same 21 q-extrema entries were NaN in both
+runs; those secondary extrema are intentionally unavailable from the compact
+one-reduction estimator and are not used in the Ref-GH numerical comparison.
+
+Additional risk visible in the build log:
+The analytic CalcConstraints kernels compiled at SIMD16 with approximately
+1284--1292 spilled Reals.  This is preserved as a portability risk, not treated
+as a failure before that kernel is actually launched by the corrected gate.
