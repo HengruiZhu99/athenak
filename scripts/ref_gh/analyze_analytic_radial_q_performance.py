@@ -56,11 +56,19 @@ def main():
     dynamic_profile_stages = dynamic["ref_gh RK update"][0]
     z4c_profile_stages = z4c["z4c RK update"][0]
 
-    rhs_names = [
-        "ref_gh psi rhs",
-        "ref_gh scalar source and pi rhs",
-        "ref_gh compatible phi rhs",
-    ]
+    if "ref_gh scalar source and pi rhs team" in dynamic:
+        # The team-per-cell analytic kernel owns scalar/Pi, compatible or
+        # standard Phi, and gamma2.  Do not add the retired split kernels.
+        rhs_names = [
+            "ref_gh psi rhs",
+            "ref_gh scalar source and pi rhs team",
+        ]
+    else:
+        rhs_names = [
+            "ref_gh psi rhs",
+            "ref_gh scalar source and pi rhs",
+            "ref_gh compatible phi rhs",
+        ]
     refgh_rhs = total(dynamic, rhs_names) / dynamic["ref_gh psi rhs"][0]
     refgh_diss = dynamic["ref_gh dissipation"][1] / dynamic["ref_gh dissipation"][0]
     z4c_rhs = z4c["z4c rhs loop"][1] / z4c["z4c rhs loop"][0]

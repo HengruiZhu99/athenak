@@ -2734,6 +2734,36 @@ ref_gh::GaugeDriverRhs CompactAnalyticGaugeDriverRhs(
   return rhs;
 }
 
+KOKKOS_INLINE_FUNCTION
+Real CompactAnalyticTeamSourceOracleComponent(
+    const int component, const Real psi[4][4],
+    const ref_gh::AnalyticRadialQPoint &reference, const Real gamma0,
+    const ref_gh::CompactAnalyticSourceWorkspace &workspace) {
+  switch (component) {
+    case 0: return ref_gh::CompactAnalyticRadialQScalarWaveSourceComponent<0, 0>(
+        psi, reference, gamma0, workspace);
+    case 1: return ref_gh::CompactAnalyticRadialQScalarWaveSourceComponent<0, 1>(
+        psi, reference, gamma0, workspace);
+    case 2: return ref_gh::CompactAnalyticRadialQScalarWaveSourceComponent<0, 2>(
+        psi, reference, gamma0, workspace);
+    case 3: return ref_gh::CompactAnalyticRadialQScalarWaveSourceComponent<0, 3>(
+        psi, reference, gamma0, workspace);
+    case 4: return ref_gh::CompactAnalyticRadialQScalarWaveSourceComponent<1, 1>(
+        psi, reference, gamma0, workspace);
+    case 5: return ref_gh::CompactAnalyticRadialQScalarWaveSourceComponent<1, 2>(
+        psi, reference, gamma0, workspace);
+    case 6: return ref_gh::CompactAnalyticRadialQScalarWaveSourceComponent<1, 3>(
+        psi, reference, gamma0, workspace);
+    case 7: return ref_gh::CompactAnalyticRadialQScalarWaveSourceComponent<2, 2>(
+        psi, reference, gamma0, workspace);
+    case 8: return ref_gh::CompactAnalyticRadialQScalarWaveSourceComponent<2, 3>(
+        psi, reference, gamma0, workspace);
+    case 9: return ref_gh::CompactAnalyticRadialQScalarWaveSourceComponent<3, 3>(
+        psi, reference, gamma0, workspace);
+  }
+  return NAN;
+}
+
 template <bool CompactBackend, typename Reference>
 KOKKOS_INLINE_FUNCTION
 bool EvaluateRhsOraclePoint(
@@ -2915,9 +2945,19 @@ bool EvaluateRhsOraclePoint(
   Real scalar_source[4][4];  // NOLINT(runtime/arrays)
   Real scalar_source_condition[4][4] = {};  // NOLINT(runtime/arrays)
   if constexpr (CompactBackend) {
-    if (!ref_gh::CompactAnalyticRadialQScalarWaveSource(
+    ref_gh::CompactAnalyticSourceWorkspace source_workspace;
+    if (!ref_gh::PrepareCompactAnalyticRadialQScalarWaveSource(
             psi, pi, phi, analytic_reference, geometry,
-            gamma0, scalar_source)) return false;
+            source_workspace)) return false;
+    int component = 0;
+    for (int A = 0; A < 4; ++A) {
+      for (int B = A; B < 4; ++B) {
+        const Real value = CompactAnalyticTeamSourceOracleComponent(
+            component, psi, analytic_reference, gamma0, source_workspace);
+        scalar_source[A][B] = scalar_source[B][A] = value;
+        ++component;
+      }
+    }
   } else {
     ref_gh::CovariantSourceSectors sectors;
     if (!ref_gh::CovariantGhScalarWaveSource(

@@ -183,3 +183,26 @@ dissipation.  Thus the compact boundary optimization is retained, but the
 backend remains **not production ready**.  Full compact evidence and the
 remote artifact locations are recorded in
 `artifacts/ref_gh_analytic_radial_q_20260828/compact_boundary_pvc_performance_20260828.txt`.
+
+## Team-per-cell RHS discriminator
+
+Because the remeasured main RHS remains `10.525x` Z4c, the next authorized
+compiler-guided discriminator assigns one Kokkos team to each active cell.
+One team lane prepares the compact physical geometry and common source
+workspace in per-team scratch; the ten symmetric component iterations then
+evaluate generated curvature/frame contractions and Pi/Phi/gamma2 updates.
+The gauge target, gauge driver, reference subtraction, ordinary gauge source,
+scalar source, Pi, compatible or standard Phi, and gamma0/gamma2 paths share
+that one geometry.  The generic backend and the established matrix-valued
+generated source remain independent oracle implementations.
+
+The generator now emits additional independently CSE'd compile-time component
+expressions without replacing the accepted joint-CSE matrix functions.  A
+second full SymPy 1.14 regeneration was byte-identical.  The strengthened
+all-61 oracle exercises the prepared workspace and component expressions over
+all 4,320 cases and passes at `2.84217e-14` against unchanged `256 epsilon`.
+Actual compatible- and standard-ordering evolved cycles agree with the generic
+backend to `2.24305e-15` and `3.77065e-14`, respectively, in evolved common
+histories.  This is local correctness evidence only; PVC and performance are
+not yet qualified.  See
+`artifacts/ref_gh_analytic_radial_q_20260828/team_per_cell_local_checkpoint.txt`.

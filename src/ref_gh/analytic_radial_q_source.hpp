@@ -18,6 +18,21 @@ struct CompactAnalyticCoordinateGeometry {
   Real d_reference_gauge[4][4];  // NOLINT(runtime/arrays)
 };
 
+// Common data for the team-per-cell source discriminator.  This is team
+// scratch, never a persistent per-cell view: one lane prepares it from the
+// already shared physical point geometry and the ten symmetric lanes consume
+// it.  The ordinary matrix-valued source function below remains the independent
+// RangePolicy/oracle implementation.
+struct CompactAnalyticSourceWorkspace {
+  Real inverse[4][4];          // NOLINT(runtime/arrays)
+  Real normal[4];              // NOLINT(runtime/arrays)
+  Real p[4][4][4];             // NOLINT(runtime/arrays)
+  Real q[4][4][4];             // NOLINT(runtime/arrays)
+  Real delta_lower[4][4][4];   // NOLINT(runtime/arrays)
+  Real delta_upper[4][4][4];   // NOLINT(runtime/arrays)
+  Real delta[4];               // NOLINT(runtime/arrays)
+};
+
 // Reconstruct physical point geometry once while obtaining the implicit
 // reference gauge contractions from generated compact expressions.  This is
 // the analytic counterpart of ComputeCoordinateGhGeometry plus
@@ -251,12 +266,131 @@ bool CompactAnalyticRadialQScalarWaveSource(
 }
 
 KOKKOS_INLINE_FUNCTION
-void AddCompactAnalyticOrdinaryGaugeSource(
+bool PrepareCompactAnalyticRadialQScalarWaveSource(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const AnalyticRadialQPoint &reference,
+    const CoordinateGhGeometry &geometry,
+    CompactAnalyticSourceWorkspace &workspace) {
+  Real determinant = 0.0;
+  if (!Invert4(psi, workspace.inverse, determinant)) return false;
+
+  for (int A = 0; A < 4; ++A) {
+    workspace.normal[A] = 0.0;
+    workspace.delta[A] = 0.0;
+    for (int a = 0; a < 4; ++a) {
+      workspace.normal[A] += ReferenceCoframe(reference, A, a)
+                             *geometry.normal_upper[a];
+    }
+  }
+  if (!(workspace.normal[0] > 0.0)
+      || !Kokkos::isfinite(workspace.normal[0])) return false;
+
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int I = 0; I < 3; ++I) workspace.p[I + 1][A][B] = phi[I][A][B];
+      workspace.p[0][A][B] = -pi[A][B];
+      for (int I = 0; I < 3; ++I) {
+        workspace.p[0][A][B] -= workspace.normal[I + 1]*phi[I][A][B];
+      }
+      workspace.p[0][A][B] /= workspace.normal[0];
+    }
+  }
+  Real q_correction[4][4][4];  // NOLINT(runtime/arrays)
+  GeneratedAnalyticRadialQQCorrection(
+      reference.alpha, reference.l, reference.b, reference.displacement,
+      reference.radius, psi, q_correction);
+  for (int C = 0; C < 4; ++C) {
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        workspace.q[C][A][B] = workspace.p[C][A][B]
+                                - q_correction[C][A][B];
+      }
+    }
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int C = 0; C < 4; ++C) {
+        workspace.delta_lower[A][B][C] =
+            0.5*(workspace.q[B][A][C] + workspace.q[C][A][B]
+                 - workspace.q[A][B][C]);
+      }
+    }
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int C = 0; C < 4; ++C) {
+        workspace.delta_upper[A][B][C] = 0.0;
+        for (int D = 0; D < 4; ++D) {
+          workspace.delta_upper[A][B][C] += workspace.inverse[A][D]
+                                             *workspace.delta_lower[D][B][C];
+        }
+      }
+    }
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int C = 0; C < 4; ++C) {
+        workspace.delta[A] += workspace.inverse[B][C]
+                              *workspace.delta_lower[A][B][C];
+      }
+    }
+  }
+  return true;
+}
+
+template <int A, int B>
+KOKKOS_INLINE_FUNCTION
+Real CompactAnalyticRadialQScalarWaveSourceComponent(
+    const Real psi[4][4], const AnalyticRadialQPoint &reference,
+    const Real gamma0, const CompactAnalyticSourceWorkspace &workspace) {
+  static_assert(A >= 0 && A < 4 && B >= A && B < 4,
+                "invalid symmetric source component");
+  const Real curvature =
+      GeneratedAnalyticRadialQCurvatureSourceComponent<A, B>(
+          reference.alpha, reference.l, reference.b, reference.displacement,
+          reference.radius, workspace.inverse, psi);
+  const Real frame_correction =
+      GeneratedAnalyticRadialQFrameCorrectionComponent<A, B>(
+          reference.alpha, reference.l, reference.b, reference.displacement,
+          reference.radius, workspace.inverse, psi, workspace.p, workspace.q,
+          workspace.delta_upper);
+  Real qq = 0.0;
+  Real delta_product = 0.0;
+  Real damping = 0.0;
+  for (int C = 0; C < 4; ++C) {
+    for (int D = 0; D < 4; ++D) {
+      for (int E = 0; E < 4; ++E) {
+        for (int F = 0; F < 4; ++F) {
+          qq += 2.0*workspace.inverse[C][D]*workspace.inverse[E][F]
+                *workspace.q[E][C][A]*workspace.q[F][D][B];
+          delta_product -= 2.0*workspace.inverse[C][D]
+                           *workspace.inverse[E][F]
+                           *workspace.delta_lower[A][C][E]
+                           *workspace.delta_lower[B][D][F];
+        }
+      }
+    }
+    Real normal_lower_A = 0.0;
+    Real normal_lower_B = 0.0;
+    for (int D = 0; D < 4; ++D) {
+      normal_lower_A += psi[A][D]*workspace.normal[D];
+      normal_lower_B += psi[B][D]*workspace.normal[D];
+    }
+    const Real frame_projector = ((C == A) ? normal_lower_B : 0.0)
+                                 + ((C == B) ? normal_lower_A : 0.0)
+                                 - psi[A][B]*workspace.normal[C];
+    damping += gamma0*frame_projector*workspace.delta[C];
+  }
+  return curvature + qq + delta_product + damping + frame_correction;
+}
+
+KOKKOS_INLINE_FUNCTION
+void ComputeCompactAnalyticOrdinaryGaugeCoordinateExtra(
     const Real metric[4][4], const Real d_metric[4][4][4],
     const AnalyticRadialQPoint &reference,
     const CompactAnalyticCoordinateGeometry &compact_geometry,
     const Real hhat[4], const Real d_hhat[4][4], const Real gamma0,
-    Real source[4][4]) {
+    Real coordinate_extra[4][4]) {
   const CoordinateGhGeometry &geometry = compact_geometry.geometry;
   Real coordinate_hhat[4] = {};       // NOLINT(runtime/arrays)
   Real d_coordinate_hhat[4][4] = {};  // NOLINT(runtime/arrays)
@@ -279,7 +413,6 @@ void AddCompactAnalyticOrdinaryGaugeSource(
                           - compact_geometry.d_reference_gauge[p][a];
     }
   }
-  Real coordinate_extra[4][4];  // NOLINT(runtime/arrays)
   for (int a = 0; a < 4; ++a) {
     for (int b = 0; b < 4; ++b) {
       Real nabla_ab = d_increment[a][b];
@@ -297,6 +430,19 @@ void AddCompactAnalyticOrdinaryGaugeSource(
       }
     }
   }
+}
+
+KOKKOS_INLINE_FUNCTION
+void AddCompactAnalyticOrdinaryGaugeSource(
+    const Real metric[4][4], const Real d_metric[4][4][4],
+    const AnalyticRadialQPoint &reference,
+    const CompactAnalyticCoordinateGeometry &compact_geometry,
+    const Real hhat[4], const Real d_hhat[4][4], const Real gamma0,
+    Real source[4][4]) {
+  Real coordinate_extra[4][4];  // NOLINT(runtime/arrays)
+  ComputeCompactAnalyticOrdinaryGaugeCoordinateExtra(
+      metric, d_metric, reference, compact_geometry, hhat, d_hhat, gamma0,
+      coordinate_extra);
   for (int A = 0; A < 4; ++A) {
     for (int B = 0; B < 4; ++B) {
       for (int a = 0; a < 4; ++a) {

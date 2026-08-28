@@ -2,7 +2,7 @@
 // Do not edit by hand.
 // Compact production contractions: this header never materializes
 // ReferenceGeometry, spin, spin-derivative, or Riemann arrays.
-// generator_sha256=2c19efa4affd02c0d97ebbe26ea51a3f6bbb23467f3cb3c3e07c134320e26cc3
+// generator_sha256=c4a71e1c6a182c6c94df8a964a2142758845b11cfeb5029cd267467241b92257
 // sympy_version=1.14.0
 #ifndef REF_GH_GENERATED_ANALYTIC_RADIAL_Q_GAUGE_HPP_
 #define REF_GH_GENERATED_ANALYTIC_RADIAL_Q_GAUGE_HPP_

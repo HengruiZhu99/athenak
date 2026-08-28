@@ -1,0 +1,48 @@
+date=2026-08-28
+parent_commit=94c66b0252510afa8f16887a1a5e18d69fcfa363
+branch=codex/ref-gh-analytic-device-view-performance-20260828
+experiment=team_per_cell_compact_analytic_primary_rhs
+math_or_algorithm_change=NO
+
+design=One Kokkos team per active cell prepares one compact physical geometry and common source workspace in per-team scratch. Ten symmetric component iterations evaluate generated curvature/frame contractions and the Pi/Phi/gamma2 updates. Gauge target, gauge driver, reference subtraction, ordinary gauge source, scalar source, Pi, Phi, and gamma0/gamma2 share the same physical geometry.
+generic_backend=UNCHANGED_INDEPENDENT_ORACLE
+persistent_analytic_allocation=12_static_plus_8_stage_reals_per_ghosted_cell
+generic_views_allocated_in_analytic_backend=NO
+monolithic_generated_geometry_called_in_production=NO
+recursive_spin_or_riemann_called_in_analytic_production=NO
+
+sympy_version=1.14.0
+deterministic_regeneration=PASS
+second_regeneration_directory=/tmp/refgh-team-determinism.popJvL
+generator_sha256=c4a71e1c6a182c6c94df8a964a2142758845b11cfeb5029cd267467241b92257
+generated_geometry_sha256=ec240fdbdb104aa4d0d9311695cb1e4ff02c84fb989a64d4d18b5d8d029539de
+generated_gauge_sha256=6feb84b26ee8046c31b92344915a901c5980d095c1051e91ba4fca3e5da20ab4
+generated_source_sha256=d9af6bf2c2242212c64107ba7bdd84b7d7ef64c5e3b85b4754eda8b565171aa0
+generated_source_lines=36504
+
+local_build=PASS
+local_build_directory=/tmp/athenak-refgh-analytic-fresh.WtkTu6
+local_compiler=GCC-13.3
+local_kokkos_backend=SERIAL
+
+original_coefficient_oracle=PASS samples=216 max_error=8.88178e-15
+expanded_coefficient_oracle=PASS samples=2160 conditioned_error=1.48837e-13 tolerance=2e-13
+generated_geometry_oracle=PASS samples=2376 conditioned_error=2.33147e-15 tolerance=5.684341886080802e-14
+moving_gauge_oracle=PASS samples=2160 Hhat=1.16535e-15 dHhat=1.07001e-15 theta=7.08259e-16 dtTheta=3.54866e-17 motion=1.24829e-14 tolerance=5.684341886080802e-14
+all_61_rhs_oracle=PASS samples=4320 conditioned_error=2.84217e-14 tolerance=5.684341886080802e-14 phi_orderings=compatible,standard compact_path=prepared_team_workspace_components
+q_controlled_source_unit=PASS
+generic_cache_oracle=PASS conditioned_error=1.63758e-14
+
+compatible_evolved_cycle=PASS
+compatible_evolved_common_history_conditioned_linf=2.24305280853574431e-15
+standard_evolved_cycle=PASS
+standard_evolved_common_history_conditioned_linf=3.77065051132147257e-14
+all_common_history_conditioned_linf_including_initial_diagnostics=6.86333191283871081e-14
+finite_values=441
+paired_intentional_nan_values=21
+mismatched_nonfinite_values=0
+excluded_backend_specific_history_columns=frame_Ricci,coordinate_Ricci
+
+pvc_evolved_cycle=NOT_RUN
+matched_performance=NOT_RUN
+production_ready=NO
