@@ -1144,20 +1144,9 @@ def emit_source(output: Path) -> None:
         "#include \"athena.hpp\"",
         "#include \"ref_gh/reference_analytic_radial_q.hpp\"",
         "",
-        "// These joint-CSE contractions are deliberately isolated from the",
-        "// caller's physical-geometry working set.  Inlining them into the",
-        "// main RHS kernel recreates the generic-cache register pressure on",
-        "// PVC.  `inline` provides header linkage; the attribute controls",
-        "// optimization, not the accepted arithmetic.",
-        "#if defined(__clang__) || defined(__GNUC__)",
-        "#define REF_GH_GENERATED_NOINLINE __attribute__((noinline))",
-        "#else",
-        "#define REF_GH_GENERATED_NOINLINE",
-        "#endif",
-        "",
         "namespace ref_gh {",
         "",
-        "KOKKOS_FUNCTION REF_GH_GENERATED_NOINLINE inline",
+        "KOKKOS_INLINE_FUNCTION",
         "void GeneratedAnalyticRadialQQCorrection(",
         "    const AnalyticRadialScalar &alpha_jet,",
         "    const AnalyticRadialScalar &l_jet,",
@@ -1168,7 +1157,7 @@ def emit_source(output: Path) -> None:
     lines.extend(compact_scalar_declarations())
     emit_contracted_group(lines, q_correction, "ref_q_cse_", "correction")
     lines.extend([
-        "}", "", "KOKKOS_FUNCTION REF_GH_GENERATED_NOINLINE inline",
+        "}", "", "KOKKOS_INLINE_FUNCTION",
         "void GeneratedAnalyticRadialQCurvatureSource(",
         "    const AnalyticRadialScalar &alpha_jet,",
         "    const AnalyticRadialScalar &l_jet,",
@@ -1179,9 +1168,8 @@ def emit_source(output: Path) -> None:
     lines.extend(compact_scalar_declarations())
     emit_contracted_group(
         lines, curvature, "ref_curvature_cse_", "source", True)
-    lines.append("}")
     lines.extend([
-        "", "KOKKOS_FUNCTION REF_GH_GENERATED_NOINLINE inline",
+        "}", "", "KOKKOS_INLINE_FUNCTION",
         "void GeneratedAnalyticRadialQFrameCorrection(",
         "    const AnalyticRadialScalar &alpha_jet,",
         "    const AnalyticRadialScalar &l_jet,",
@@ -1194,9 +1182,8 @@ def emit_source(output: Path) -> None:
     lines.extend(compact_scalar_declarations())
     emit_contracted_group(
         lines, frame_correction, "ref_frame_cse_", "source", True)
-    lines.append("}")
     lines.extend([
-        "", "KOKKOS_FUNCTION REF_GH_GENERATED_NOINLINE inline",
+        "}", "", "KOKKOS_INLINE_FUNCTION",
         "void GeneratedAnalyticRadialQPhysicalGaugeUpper(",
         "    const AnalyticRadialScalar &alpha_jet,",
         "    const AnalyticRadialScalar &l_jet,",
@@ -1212,7 +1199,6 @@ def emit_source(output: Path) -> None:
         lines, physical_d_h_upper, "ref_physical_dh_cse_", "d_h_upper")
     lines.extend([
         "}", "", "}  // namespace ref_gh", "",
-        "#undef REF_GH_GENERATED_NOINLINE", "",
         "#endif  // REF_GH_GENERATED_ANALYTIC_RADIAL_Q_SOURCE_HPP_", ""])
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text("\n".join(lines), encoding="utf-8")

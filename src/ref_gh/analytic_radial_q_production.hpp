@@ -257,12 +257,17 @@ ReferenceGaugeBaseline ComputeProductionReferenceGaugeBaseline(
 }
 
 KOKKOS_INLINE_FUNCTION
-bool LoadCompactAnalyticPointGeometry(
-    const DvceArray5D<Real> &state, const AnalyticRadialQPoint &reference,
+bool LoadProductionPointGeometry(
+    const DvceArray5D<Real> &state, const ProductionReferencePoint &reference,
     const int m, const int k, const int j, const int i,
     Real psi[4][4], Real pi[4][4], Real phi[3][4][4],
     Real d_psi[4][4][4], Real metric[4][4], Real d_metric[4][4][4],
-    CompactAnalyticCoordinateGeometry &compact, Real &determinant) {
+    CoordinateGhGeometry &geometry, Real &determinant) {
+  if (reference.backend == 0) {
+    return LoadPointGeometry(state, reference.generic, m, k, j, i, psi, pi,
+                             phi, d_psi, metric, d_metric, geometry,
+                             determinant);
+  }
   LoadSymmetric(state, kPsiOffset, m, k, j, i, psi);
   LoadSymmetric(state, kPiOffset, m, k, j, i, pi);
   for (int p = 0; p < 3; ++p) {
@@ -278,8 +283,9 @@ bool LoadCompactAnalyticPointGeometry(
       metric[a][b] = 0.0;
       for (int A = 0; A < 4; ++A) {
         for (int B = 0; B < 4; ++B) {
-          metric[a][b] += ReferenceCoframe(reference, A, a)
-                          *ReferenceCoframe(reference, B, b)*psi[A][B];
+          metric[a][b] += ReferenceCoframe(reference.analytic, A, a)
+                          *ReferenceCoframe(reference.analytic, B, b)
+                          *psi[A][B];
         }
       }
     }
@@ -297,7 +303,7 @@ bool LoadCompactAnalyticPointGeometry(
         d_psi[p + 1][A][B] = 0.0;
         for (int I = 0; I < 3; ++I) {
           d_psi[p + 1][A][B] +=
-              ReferenceSpatialCoframe(reference, I, p)*phi[I][A][B];
+              ReferenceSpatialCoframe(reference.analytic, I, p)*phi[I][A][B];
         }
       }
       d_psi[0][A][B] = -lapse*pi[A][B];
@@ -314,10 +320,10 @@ bool LoadCompactAnalyticPointGeometry(
         for (int a = 0; a < 4; ++a) {
           for (int b = 0; b < 4; ++b) {
             frame_corrected[A][B] -=
-                (ReferenceDFrame(reference, p, A, a)
-                   *ReferenceFrame(reference, B, b)
-                 + ReferenceFrame(reference, A, a)
-                   *ReferenceDFrame(reference, p, B, b))*metric[a][b];
+                (ReferenceDFrame(reference.analytic, p, A, a)
+                   *ReferenceFrame(reference.analytic, B, b)
+                 + ReferenceFrame(reference.analytic, A, a)
+                   *ReferenceDFrame(reference.analytic, p, B, b))*metric[a][b];
           }
         }
       }
@@ -327,34 +333,20 @@ bool LoadCompactAnalyticPointGeometry(
         d_metric[p][a][b] = 0.0;
         for (int A = 0; A < 4; ++A) {
           for (int B = 0; B < 4; ++B) {
-            d_metric[p][a][b] += ReferenceCoframe(reference, A, a)
-                                     *ReferenceCoframe(reference, B, b)
-                                     *frame_corrected[A][B];
+            d_metric[p][a][b] +=
+                ReferenceCoframe(reference.analytic, A, a)
+                *ReferenceCoframe(reference.analytic, B, b)
+                *frame_corrected[A][B];
           }
         }
       }
     }
   }
-  return ComputeCompactAnalyticCoordinateGeometry(
-      metric, d_metric, reference, compact, determinant);
-}
-
-KOKKOS_INLINE_FUNCTION
-bool LoadProductionPointGeometry(
-    const DvceArray5D<Real> &state, const ProductionReferencePoint &reference,
-    const int m, const int k, const int j, const int i,
-    Real psi[4][4], Real pi[4][4], Real phi[3][4][4],
-    Real d_psi[4][4][4], Real metric[4][4], Real d_metric[4][4][4],
-    CoordinateGhGeometry &geometry, Real &determinant) {
-  if (reference.backend == 0) {
-    return LoadPointGeometry(state, reference.generic, m, k, j, i, psi, pi,
-                             phi, d_psi, metric, d_metric, geometry,
-                             determinant);
-  }
   CompactAnalyticCoordinateGeometry compact;
-  if (!LoadCompactAnalyticPointGeometry(
-          state, reference.analytic, m, k, j, i, psi, pi, phi, d_psi,
-          metric, d_metric, compact, determinant)) return false;
+  if (!ComputeCompactAnalyticCoordinateGeometry(
+          metric, d_metric, reference.analytic, compact, determinant)) {
+    return false;
+  }
   geometry = compact.geometry;
   return true;
 }

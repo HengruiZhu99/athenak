@@ -250,3 +250,12 @@ also passes on evolved rows at a conditioned error of
 `6.89231657857725111e-14` solely from the already recorded initial ADM shell
 conditioning.  This correction remains locally qualified only until a fresh
 full-output PVC evolved discriminator passes.
+
+Aurora job 8789983 failed that discriminator: the one- and eight-rank cycles
+completed, but the native GH/reduction/curl histories were again nonfinite from
+the initial row.  The team kernel also still spilled roughly 1257--1263 Reals.
+No benchmark followed.  Both team-per-cell variants are rejected, and the
+final production source is restored exactly to the compact-boundary source
+qualified by job 8789663 and measured by job 8789684.  The controlling measured
+main-RHS ratio therefore remains `10.5245x` Z4c, and production readiness is
+still **not established**.

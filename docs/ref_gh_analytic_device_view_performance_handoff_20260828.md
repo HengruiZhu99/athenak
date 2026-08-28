@@ -1,135 +1,124 @@
-# Ref-GH analytic device-view performance handoff
+# Ref-GH analytic radial-q production and performance handoff
 
-## Review status
+## Final checkpoint status
 
-This is a deliberately partial checkpoint for external review.  The analytic
-radial-q coefficient and geometry oracle is implemented and passes the focused
-local CPU gate.  The production Ref-GH task graph still uses the generic
-1171-Real-per-cell reference-cache pipeline.  No Aurora PVC run or performance
-claim belongs to this checkpoint.
+Branch: `codex/ref-gh-analytic-device-view-performance-20260828`
 
-Branch and source provenance:
+Required starting commit:
+`2d99137ca41de7df12ef1e3234f076b0ef2d8835`
 
-- branch: `codex/ref-gh-analytic-device-view-performance-20260828`
-- required parent: `3dc7e622ab920e98cb6becd325dbd328f5e8009b`
-- implementation checkpoint before this report: `e5dfd5a1b0963798960a260ed35c402ceeb693df`
-- Kokkos submodule: `6739bc623081648af9e752b616d9671527922cbf`
+This checkpoint retains the last full-output PVC-qualified compact analytic
+production source from `94c66b0252510afa8f16887a1a5e18d69fcfa363`
+(source-equivalent to the tested commit `77f2c8e04ff1f1b50e7a53257b707d74d283d390`).
+Two later team-per-cell compiler experiments are preserved in history and
+artifacts but rejected from the final source because their PVC full-output
+diagnostics failed.
 
-The unrelated dirty checkout at `/home/hzhu/Desktop/research/gr/athenak` was
-not modified.  Work was performed in the clean continuation worktree
-`/home/hzhu/Desktop/research/gr/athenak-ref-gh-feedback-continuation-20260823`.
+The generic 1171-Real reference-cache pipeline remains available only as
+`generic_cache_oracle`.  The analytic production backend allocates exactly 12
+static plus 8 stage Reals per ghosted cell and allocates none of
+`reference_provider`, `reference_workspace`, `reference_evolution`, or
+`reference_diagnostic`.
 
-## Implemented milestone
+## Qualification matrix
 
-`src/ref_gh/reference_analytic_radial_q.hpp` introduces independent compact
-radial data layouts:
+- Analytic coefficient and generated geometry: **qualified locally**.  The
+  unchanged 216-point coefficient oracle passes at `8.88178e-15`; the expanded
+  radial oracle passes 2160 samples at `1.48837e-13` against `2e-13`; generated
+  geometry passes 2376 samples at `2.33147e-15` against `256 epsilon`.
+- Mixed-jet moving gauge path: **qualified locally**.  The 2160-sample gate
+  covers `Hhat`, `dHhat`, `theta`, `dtTheta`, `L_ttr`, and `L_trr`; its largest
+  reported conditioned error is `1.24829e-14` against `256 epsilon`.
+- All-61 RHS equivalence: **qualified locally** for compatible and standard Phi
+  ordering.  All 4320 deterministic physical states pass at
+  `2.84217e-14` against `256 epsilon`, including gamma0, gamma2, the gauge
+  driver, and gauge-reference subtraction.
+- Analytic production backend: **integrated**.  The monolithic generated
+  `ReferenceGeometry` routine and recursive spin/Riemann accessors are not used
+  by CalcRHS, q measurement, physical boundaries, timestep, or ordinary
+  production reference updates.
+- Analytic allocation: **qualified locally**.  A 16-cubed one-block case
+  reports zero generic bytes, 1,327,104 static bytes, and 884,736 stage bytes.
+- Compact q estimator: **integrated**.  Closed-loop mode uses the compact
+  precomputed cell/weight list and one device reduction plus one collective;
+  disabled/prescribed modes do not schedule stage-by-stage measurement.
+- PVC evolved cycle: **qualified for the retained production source** by job
+  8789663.  Eight ranks mapped to eight distinct PVC tiles; one/eight-rank
+  conditioned history error was `3.88980825583101983e-14` against `5e-12`.
+- Production readiness: **not established** because the measured RHS ratio
+  remains above the performance target.
 
-- 12 static Reals per point: trumpet alpha, L_T, B and their first and second
-  radial derivatives, plus u, u_r, and u_rr;
-- 8 stage Reals per point: L and its t/r derivatives through L_ttr and L_trr.
+## Measured performance
 
-Both layouts have compile-time upper bounds of 16 Reals.  The implementation
-uses the exact nonperturbative law
+Aurora job 8789684 is the controlling matched warmed-up 64-cubed measurement:
 
-`L = L_T exp[-(q-1) W log(r/M)]`
+- dynamic Ref-GH: `7.368637e5` active zone-cycles/s;
+- static Ref-GH: `7.470968e5` active zone-cycles/s;
+- Z4c: `7.230060e6` active zone-cycles/s;
+- q controller: `0.628%` of complete stage, passing the 2% target;
+- analytic reference update: `0.0495%`, passing the 10% target;
+- dynamic/static complete-time ratio: `1.0181`, passing the 1.10 target;
+- Ref-GH/Z4c complete-stage ratio: `9.1853`;
+- Ref-GH/Z4c main-RHS ratio without dissipation: `10.5245`, failing the
+  stretch objective of at most 2.
 
-and reconstructs Cartesian derivatives from radial data.  Lightweight analytic
-accessors provide the same geometry interface as the generic reference object.
+The compact physical boundary is `7.95%` of the dynamic stage and is 79.22
+times faster than the previous generic projected boundary.  No later
+performance result supersedes job 8789684.
 
-`scripts/ref_gh/generate_analytic_radial_q_geometry.py` is a deterministic
-SymPy generator that starts from the analytic coframe and derives the metric,
-inverse metric, coordinate derivatives, frame/coframe, Christoffels,
-spin connection and derivative, frame Riemann tensor, and Ricci tensor.  Its
-generated header is committed at
-`src/ref_gh/generated/analytic_radial_q_geometry.hpp`.
+## Rejected compiler experiments
 
-Generator provenance:
+The first team-per-cell source candidate at `441a6c05` passed all local oracles
+and evolved comparisons.  Job 8789799 failed because Kokkos AUTO selected a
+work-group above PVC's 512-work-item limit.  The explicit 16-lane correction at
+`17b52c0f` allowed one- and eight-rank cycles to complete in job 8789862, but
+native GH/reduction/curl histories were nonfinite from the initial row.  The
+team kernel still spilled about 1150 Reals.
 
-- pinned SymPy version: 1.14.0
-- generator SHA-256:
-  `eaaf013057806d4c40dd67da7d83f902cace7585cefaba78a1342e58d252ea02`
-- generated-header SHA-256:
-  `bd09c1ca507f682b2694c25c355726d8b38dcff47daffb77da95b33ced85aae5`
-- regeneration was checked byte-for-byte deterministic.
+The follow-up `9867f1d6` retained the accepted joint-CSE matrix algebra, moved
+the large contractions behind non-inlined device call boundaries, and stored
+only two rank-2 contractions in per-team scratch.  It passed deterministic
+regeneration, every local oracle, and a local evolved analytic/generic
+comparison.  Job 8789983 nevertheless reproduced the nonfinite native
+diagnostics, and the team kernel spilled about 1257--1263 Reals.  Both physical
+field outputs remained finite and agreed at printed precision, but that does
+not satisfy the full-output gate.  No benchmark followed either failure.
 
-`src/pgen/ref_gh/source_unit.cpp` adds two device-side oracle gates over the
-required parameter matrix
+The production source was therefore restored exactly to the qualified compact
+boundary implementation.  The failed candidates remain reviewable in Git
+history; they are not active production dispatch.
 
-- q = 0.75, 0.9, 1.0, 1.1, 1.25, 2.0;
-- qdot M = -0.1, 0, 0.1;
-- qddot M^2 = -0.05, 0, 0.05;
-- four deterministic off-axis points, for 216 samples total.
+## Evidence and remote artifacts
 
-The compact coefficients are compared against the independent generic provider.
-The generated geometry is compared against the generic geometry using the
-existing conditioned category scaling and the unchanged `256 epsilon`
-tolerance.
+Compact local evidence is under
+`artifacts/ref_gh_analytic_radial_q_20260828/`.  Controlling files include:
 
-## Verified local evidence
+- `local_checkpoint.txt`;
+- `compact_boundary_pvc_performance_20260828.txt`;
+- `compact_boundary_performance_8789684_analysis.json`;
+- `team_per_cell_pvc_8789799_failure.txt`;
+- `team_per_cell_pvc_8789862_failure.txt`;
+- `noninline_source_local_checkpoint.txt`;
+- `noninline_source_pvc_8789983_failure.txt`.
 
-A fresh Release build used GCC 13.3.0, Kokkos 4.7.2 Serial, MPI off, OpenMP
-off, CUDA off, and SYCL off.  This command exited zero:
+Large restart files were not committed.  They remain at the remote run paths
+recorded in each failure report, with SHA-256 manifests sufficient to identify
+them.  In particular, job 8789983 data are under:
 
-```text
-athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
-```
+`/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_noninline_source_20260828_9867f1d6_gate1/runs/analytic_q_pvc_8789983.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov`
 
-Relevant output from the fresh rerun:
+## Claim boundary and next review
 
-```text
-reference-GH q-controlled trumpet provider passed: q=1 identity=4.44089e-16 profile=1.11022e-16
-reference-GH analytic radial-q coefficient oracle passed: samples=216 max error=8.88178e-15
-reference-GH generated analytic radial-q geometry oracle passed: samples=216 conditioned error=7.10543e-15 category=20
-reference-GH q-controlled trumpet reprojection passed: metric=4.44089e-16 derivative=9.85933e-16 min-nontrivial-Pi=0.125187
-reference-GH q-controlled gauge reprojection passed: Hhat=1.11022e-16 theta=2.22045e-16 subtraction=2.22045e-16
-```
+This checkpoint qualifies the compact coefficient/geometry algebra, the mixed
+gauge jet, all-61 RHS equivalence, analytic allocation, retained compact
+production dispatch, and its bounded eight-tile PVC cycle.  It does **not**
+qualify the rejected team-per-cell implementations, the `<=2x` RHS objective,
+overall production readiness, convergence, trumpet formation, or long-time
+stability.
 
-The generator passes `py_compile`, a second generation has the same SHA-256,
-and `git diff --check` passes.
-
-An initial raw absolute comparison of every geometry component reached
-`4.54747e-13`.  It was replaced by the pre-existing production oracle's
-conditioned category norm, not by loosening that norm or its `256 epsilon`
-tolerance.  The conditioned maximum above is the controlling result.
-
-## Not implemented and not established
-
-The following controlling-goal items remain open:
-
-- Production backend dispatch and replacement of the four generic arrays of
-  100 + 410 + 313 + 348 = 1171 Reals per cell.
-- A compact production implementation of contracted GH reference-source terms.
-  The current generated full-geometry routine and direct curvature accessors
-  are correctness scaffolding and are not suitable hot-kernel code.
-- Analytic gauge-reference and `dtTheta` integration.
-- Generic-versus-analytic comparison of all ten source components and all 61
-  evolved RHS components.
-- Z4c-like task-graph integration, compact q-estimator sample lists, analytic
-  boundary population, restart coverage, and scientific regressions.
-- Aurora PVC execution, memory evidence, matched timings, or performance uplift.
-
-Therefore this branch does not yet fix the prior Aurora Level Zero failure and
-does not establish trumpet convergence, stability, production readiness, or
-the requested memory/performance target.
-
-## External-review request
-
-Please review the changes from parent `3dc7e622` through the branch tip, with
-special attention to:
-
-1. exact differentiation of the radial q ansatz, especially `L_ttr`, `L_trr`,
-   and the `qdot`/`qddot` cross terms;
-2. tensor index ordering, sign conventions, and frame-versus-coordinate bases
-   in the independent generated geometry;
-3. whether the conditioned oracle compares every generated component with an
-   appropriate category scale and cannot silently skip a component;
-4. Kokkos device portability, stack/register pressure, and accidental hot-path
-   use of the monolithic generated geometry;
-5. a production design that preserves the generic cache as an independent
-   oracle while selecting the analytic backend once on the host and allocating
-   no large generic arrays in analytic production mode.
-
-Do not infer Aurora qualification or scientific convergence from this local
-oracle checkpoint.  The next implementation milestone should first add compact
-contracted-source generation and an all-61-RHS local oracle before requesting a
-bounded PVC discriminator.
+A follow-up performance/code review should begin from the retained source and
+the compiler/profiling evidence, not by re-enabling either rejected team
+candidate.  The main open issue is to reduce the compact primary RHS cost
+without expanding persistent storage, materializing spin/Riemann caches,
+reconstructing physical geometry in multiple kernels, or weakening the
+full-output PVC gate.
