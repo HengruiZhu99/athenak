@@ -1,0 +1,40 @@
+result=FAIL_CLOSED_NONFINITE_NATIVE_REF_GH_DIAGNOSTICS
+job=8789983
+queue=debug
+account=CompactBinaryMerger
+node=x4610c7s7b0n0
+walltime=00:16:40
+exit_status=1
+source_commit=9867f1d6589d58febc79ad91f473c73f29509eaa
+remote_campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_noninline_source_20260828_9867f1d6_gate1
+remote_run=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_noninline_source_20260828_9867f1d6_gate1/runs/analytic_q_pvc_8789983.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+
+The one-rank and eight-rank dynamic-q evolved cycles both completed one RK
+cycle.  Ranks 0--7 mapped to the eight distinct PVC tiles 0.0, 0.1, 1.0, 1.1,
+2.0, 2.1, 3.0, and 3.1.
+
+The full-output numerical gate failed closed exactly as in job 8789862.  The
+native Ref-GH history contains NaN for GH-L2sq, Reduction-L2sq, Curl-L2sq and
+their near-puncture counterparts beginning with the t=0 row.  Source-sector
+diagnostic maxima and the stationary-trumpet constraint maximum retain the
+invalid -DBL_MAX sentinel.  The comparison script stopped with "nonfinite
+Ref-GH history value" and produced an empty numerical_comparison.txt.
+
+Physical field observables remain finite and agree at printed precision in the
+one-rank and eight-rank outputs after the cycle:
+
+  field_Linf=2.05536920919038857e-03
+  physical_metric_Linf=6.50100868746505967e-05
+  physical_lapse_Linf=2.84809452466561197e-07
+  physical_shift_Linf=8.66306288434709525e-08
+
+The non-inlined joint-CSE call boundaries did not relieve team-kernel register
+pressure: the compiler reports approximately 1263, 1263, and 1257 spilled
+Reals for FDNG=2, 3, and 4.  The ordinary analytic CalcRHS kernels report about
+503 spilled Reals.  No matched benchmark or production pulse was launched.
+
+Compact complete logs and histories are retained beside this report.  Large
+restart files remain only at the remote_run path above, with hashes in
+noninline_source_pvc_8789983_remote_sha256.txt.  This attempt does not qualify
+the team-per-cell implementation, PVC full-output evolution, numerical
+equivalence, convergence, long-time stability, or production readiness.
