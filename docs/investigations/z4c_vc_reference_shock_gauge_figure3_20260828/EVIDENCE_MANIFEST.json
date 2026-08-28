@@ -1,0 +1,106 @@
+{
+  "schema": "athenak.z4c.reference_shock_gauge_figure3.evidence.v1",
+  "generated_utc": "2026-08-28T12:25:00Z",
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "branch": "codex/z4c-vc-reference-shock-gauge-figure3-20260828",
+  "base_commit": "c67edf54ce97536ad9410adcf6029a4478038139",
+  "evidence_commit": "151bf20d13c4838793f1c26e0b6b6e669cb7b765",
+  "evidence_tree": "5eb8b918082159ca4c9e56beb40e3079fc131414",
+  "base_to_evidence_binary_diff_sha256": "94b91e471da07f625ddac1f27889dffee0898532f26df69e841a7c80705dc4a9",
+  "verdict": "REFERENCE_GAUGE_IMPLEMENTATION_INCOMPLETE",
+  "execution": {
+    "host_unit_static_tests": "passed_5_of_5",
+    "perlmutter_cuda_test": "unexecuted",
+    "n256_production": "unexecuted",
+    "n128_replay": "not_reached",
+    "n512_replay": "not_reached",
+    "fresh_amr_authority": "absent",
+    "scheduler_state_at_wrap": "no_active_user_jobs",
+    "additional_jobs_submitted_during_wrap": 0
+  },
+  "claims_supported": [
+    "The audited AthenaK shock-avoiding lapse RHS uses Khat plus 2 Theta.",
+    "The base timestep and stage admissibility paths rejected nonpositive lapse.",
+    "The narrow patch permits finite negative lapse only for shock-avoiding slicing and uses the lapse magnitude for the physical light CFL speed.",
+    "Five focused host unit and static checks passed."
+  ],
+  "claims_not_supported": [
+    "Perlmutter CUDA qualification",
+    "N256 stability or numerical failure",
+    "Figure-3 reproduction",
+    "AMR replay correctness for this campaign",
+    "N128 N256 N512 convergence"
+  ],
+  "artifacts": [
+    {
+      "path": "src/z4c/timestep_contract.hpp",
+      "sha256": "50451695b2f487c8a62d0cef32958a00aa891d76b364592cd46e9357c20277ae"
+    },
+    {
+      "path": "src/z4c/z4c.cpp",
+      "sha256": "43924c4d04a59aaa72b1bf72da621f935c4fad0f55d86e9002cb01e80a358149"
+    },
+    {
+      "path": "src/z4c/z4c_newdt.cpp",
+      "sha256": "d9e31828b952301f2c0fa181f465b45ce7694a809e43b07be2f3561a17cd1339"
+    },
+    {
+      "path": "tst/unit/z4c/state_admissibility_test.cpp",
+      "sha256": "502384c4a707db4fc915371440e982ed5aabd6339a812187cc0f3a10506a40ed"
+    },
+    {
+      "path": "tst/unit/z4c/timestep_contract_test.cpp",
+      "sha256": "7c5e5b5ea6df99124636747bf5cfcbd93a190db4f08b479f14be1120c7c4f30e"
+    },
+    {
+      "path": "tst/unit/z4c/z4c_shock_avoiding_gauge_static_test.py",
+      "sha256": "6a7e4d204501be628ce54652ccb19b07a23095caa323349561364edef8a65d65"
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REFERENCE_GAUGE.md",
+      "sha256": "ee97d176867bd3f7cf336ad21bc89c92849bad0d6c0f51db802221ebde6ddbae"
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/GAUGE_IMPLEMENTATION_AUDIT.md",
+      "sha256": "79ee6b38ff76e2f79e05c66506721a8f0294920d2de3e72e00331c65452b7335"
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/brill_vc_reference_shock_gauge.athinput",
+      "sha256": "6c694cf871a3d694d745f0fb58b279b6cd07516463ac8ad54f1c91d2689c90ba"
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/N256_REPRODUCTION.md",
+      "sha256": "b5ffd44958cea8b069a6f1d1c5ea851616caac9e3691db1add3dbbfde95da079"
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/CONVERGENCE.md",
+      "sha256": "d656bd91c4be137ae893df7ffb893f6271fc6fd7b5ba75fc2e02a2a956046fbb"
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/HOST_TESTS.txt",
+      "sha256": "4621b1b29f88ec91825820f38d5dc0a5779f80f5a7eefab58334dd393f361883"
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.md",
+      "sha256": "2f4a2973e5f8982d4b353219424aa96a0390c0de60989ff3cf8aca9e18213b40"
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.tex",
+      "sha256": "ef974feecc1332dc3cbaa80121b9f0dfa8829ec21534925cc704daf2089cd56b"
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.pdf",
+      "sha256": "543b57e14ead7c089fc373caecd7518783eda1f9dd05b184208ed59f3cf3d231"
+    }
+  ],
+  "literature_freeze": [
+    {
+      "path": "/home/hzhu/Desktop/research/gr/collapse/artifacts/axisymmetric_cartoon_z4c_2026-08-10/continuation/literature/arxiv2607_10843v1_freeze_2026-08-11/original/2607.10843v1.pdf",
+      "sha256": "8fad9241eee63d919eef19fd78a65b43f76e9a6112fbf56d0d3aa8cac0c20517"
+    },
+    {
+      "path": "/home/hzhu/Desktop/research/gr/collapse/artifacts/axisymmetric_cartoon_z4c_2026-08-10/continuation/literature/arxiv2607_10843v1_freeze_2026-08-11/original/2607.10843v1.tar",
+      "sha256": "191d17a04647de81d388a5f29c93f06a2a3cdfbbffc0ebaa4045cee6ebea59ff"
+    }
+  ]
+}
