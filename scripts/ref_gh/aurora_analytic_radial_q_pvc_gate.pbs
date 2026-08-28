@@ -82,6 +82,8 @@ test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]
 # so the PVC production image cannot silently carry the generic tensor oracle.
 grep -q '^all_61_rhs_oracle=PASS ' \
   "${SRC}/artifacts/ref_gh_analytic_radial_q_20260828/local_checkpoint.txt"
+grep -q '^compact_boundary_projection_oracle=PASS ' \
+  "${SRC}/artifacts/ref_gh_analytic_radial_q_20260828/local_checkpoint.txt"
 grep -q '^generic_bytes=0$' \
   "${SRC}/artifacts/ref_gh_analytic_radial_q_20260828/local_checkpoint.txt"
 
