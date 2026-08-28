@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <limits>
+#include <type_traits>
 
 #include "athena.hpp"
 #include "bvals/bvals.hpp"
@@ -40,6 +41,38 @@
 namespace ref_gh {
 
 KOKKOS_INLINE_FUNCTION
+AnalyticRadialQPoint MakeQControlledBoundaryAnalyticPoint(
+    const DvceArray5D<Real> &reference_static,
+    const int m, const int k, const int j, const int i,
+    const Real x, const Real y, const Real z,
+    const Real center_x, const Real center_y, const Real center_z,
+    const Real q, const Real q_dot, const Real q_ddot) {
+  Real coefficients[kAnalyticRadialQStaticSize];  // NOLINT(runtime/arrays)
+  Real stage[kAnalyticRadialQStageSize];          // NOLINT(runtime/arrays)
+  for (int component = 0; component < kAnalyticRadialQStaticSize;
+       ++component) {
+    coefficients[component] = reference_static(m, component, k, j, i);
+  }
+  EvaluateAnalyticRadialQStage(coefficients, q, q_dot, q_ddot, stage);
+  AnalyticRadialQPoint point{
+      {coefficients[kAnalyticAlpha], 0.0,
+       coefficients[kAnalyticAlphaR], 0.0, 0.0,
+       coefficients[kAnalyticAlphaRR], 0.0, 0.0},
+      {stage[kAnalyticL], stage[kAnalyticLT], stage[kAnalyticLR],
+       stage[kAnalyticLTT], stage[kAnalyticLTR], stage[kAnalyticLRR],
+       stage[kAnalyticLTTR], stage[kAnalyticLTRR]},
+      {coefficients[kAnalyticShiftB], 0.0,
+       coefficients[kAnalyticShiftBR], 0.0, 0.0,
+       coefficients[kAnalyticShiftBRR], 0.0, 0.0},
+      {x - center_x, y - center_y, z - center_z}, 0.0};
+  point.radius = Kokkos::sqrt(
+      point.displacement[0]*point.displacement[0]
+      + point.displacement[1]*point.displacement[1]
+      + point.displacement[2]*point.displacement[2]);
+  return point;
+}
+
+KOKKOS_INLINE_FUNCTION
 Real StationaryTrumpetBoundaryValue(
     const int variable, const DvceArray2D<Real> &table, const Real mass,
     const Real center_x, const Real center_y, const Real center_z,
@@ -57,28 +90,43 @@ Real StationaryTrumpetBoundaryValue(
   return gauge.theta[variable - kThetaOffset];
 }
 
-template <typename StateView>
+template <bool Analytic, typename StateView>
 KOKKOS_INLINE_FUNCTION
 void StoreQControlledStationaryTrumpetMetricState(
     const StateView &state, const int m, const int k, const int j, const int i,
-    const DvceArray2D<Real> &table, const Real mass, const Real center_x,
-    const Real center_y, const Real center_z, const Real gaussian_width,
-    const Real q, const Real q_dot, const Real q_ddot, const Real x,
-    const Real y, const Real z) {
+    const DvceArray5D<Real> &reference_static,
+    const DvceArray2D<Real> &table, const Real mass,
+    const Real center_x, const Real center_y, const Real center_z,
+    const Real gaussian_width, const Real q, const Real q_dot,
+    const Real q_ddot,
+    const Real x, const Real y, const Real z) {
   for (int n = 0; n < kHhatOffset; ++n) state(m, n, k, j, i) = 0.0;
-  ReferenceGeometry physical;
-  const TrumpetSchwarzschildReference physical_provider{
-      table, mass, {center_x, center_y, center_z}};
-  physical_provider.Populate(0.0, x, y, z, physical);
-  const TrumpetQControlledReferenceParameters parameters{
-      mass, {center_x, center_y, center_z}, gaussian_width,
-      q, q_dot, q_ddot};
-  ReferenceGeometry current;
-  const TrumpetQControlledReference current_provider{table, parameters};
-  current_provider.Populate(0.0, x, y, z, current);
-  const ProjectedFirstOrderMetric metric =
-      ProjectPhysicalMetricToReference(
-          physical.metric, physical.d_metric, current);
+  ProjectedFirstOrderMetric metric{};
+  if constexpr (Analytic) {
+    const AnalyticRadialQPoint current =
+        MakeQControlledBoundaryAnalyticPoint(
+            reference_static, m, k, j, i, x, y, z,
+            center_x, center_y, center_z, q, q_dot, q_ddot);
+    AnalyticRadialQPoint physical = current;
+    physical.l = {
+        reference_static(m, kAnalyticTrumpetL, k, j, i), 0.0,
+        reference_static(m, kAnalyticTrumpetLR, k, j, i), 0.0, 0.0,
+        reference_static(m, kAnalyticTrumpetLRR, k, j, i), 0.0, 0.0};
+    metric = ProjectAnalyticPhysicalMetricToReference(physical, current);
+  } else {
+    ReferenceGeometry physical;
+    const TrumpetSchwarzschildReference physical_provider{
+        table, mass, {center_x, center_y, center_z}};
+    physical_provider.Populate(0.0, x, y, z, physical);
+    const TrumpetQControlledReferenceParameters parameters{
+        mass, {center_x, center_y, center_z}, gaussian_width,
+        q, q_dot, q_ddot};
+    ReferenceGeometry current;
+    const TrumpetQControlledReference current_provider{table, parameters};
+    current_provider.Populate(0.0, x, y, z, current);
+    metric = ProjectPhysicalMetricToReference(
+        physical.metric, physical.d_metric, current);
+  }
   if (!metric.valid) {
     for (int n = 0; n < nvar; ++n) state(m, n, k, j, i) = NAN;
     return;
@@ -94,30 +142,50 @@ void StoreQControlledStationaryTrumpetMetricState(
   }
 }
 
-template <typename StateView>
+template <bool Analytic, typename StateView>
 KOKKOS_INLINE_FUNCTION
 void StoreQControlledStationaryTrumpetGaugeState(
     const StateView &state, const int m, const int k, const int j, const int i,
-    const DvceArray2D<Real> &table, const Real mass, const Real center_x,
-    const Real center_y, const Real center_z, const Real gaussian_width,
-    const Real q, const Real q_dot, const Real q_ddot, const Real x,
-    const Real y, const Real z, const bool gauge_reference_subtraction) {
+    const DvceArray5D<Real> &reference_static,
+    const DvceArray2D<Real> &table, const Real mass,
+    const Real center_x, const Real center_y, const Real center_z,
+    const Real gaussian_width, const Real q, const Real q_dot,
+    const Real q_ddot,
+    const Real x, const Real y, const Real z,
+    const bool gauge_reference_subtraction) {
   for (int n = kHhatOffset; n < nvar; ++n) state(m, n, k, j, i) = 0.0;
-  ReferenceGeometry physical;
-  const TrumpetSchwarzschildReference physical_provider{
-      table, mass, {center_x, center_y, center_z}};
-  physical_provider.Populate(0.0, x, y, z, physical);
-  const TrumpetQControlledReferenceParameters parameters{
-      mass, {center_x, center_y, center_z}, gaussian_width,
-      q, q_dot, q_ddot};
-  ReferenceGeometry current;
-  const TrumpetQControlledReference current_provider{table, parameters};
-  current_provider.Populate(0.0, x, y, z, current);
-  const ProjectedStationaryGaugeState gauge =
-      ProjectStationaryPhysicalGaugeToReference(physical, current);
+  ProjectedStationaryGaugeState gauge{};
   ReferenceGaugeBaseline baseline{};
-  if (gauge_reference_subtraction) {
-    baseline = ComputeReferenceGaugeBaseline(current);
+  if constexpr (Analytic) {
+    const AnalyticRadialQPoint current =
+        MakeQControlledBoundaryAnalyticPoint(
+            reference_static, m, k, j, i, x, y, z,
+            center_x, center_y, center_z, q, q_dot, q_ddot);
+    AnalyticRadialQPoint physical = current;
+    physical.l = {
+        reference_static(m, kAnalyticTrumpetL, k, j, i), 0.0,
+        reference_static(m, kAnalyticTrumpetLR, k, j, i), 0.0, 0.0,
+        reference_static(m, kAnalyticTrumpetLRR, k, j, i), 0.0, 0.0};
+    gauge = ProjectAnalyticStationaryPhysicalGaugeToReference(
+        physical, current);
+    if (gauge_reference_subtraction) {
+      baseline = ComputeProductionReferenceGaugeBaseline(current);
+    }
+  } else {
+    ReferenceGeometry physical;
+    const TrumpetSchwarzschildReference physical_provider{
+        table, mass, {center_x, center_y, center_z}};
+    physical_provider.Populate(0.0, x, y, z, physical);
+    const TrumpetQControlledReferenceParameters parameters{
+        mass, {center_x, center_y, center_z}, gaussian_width,
+        q, q_dot, q_ddot};
+    ReferenceGeometry current;
+    const TrumpetQControlledReference current_provider{table, parameters};
+    current_provider.Populate(0.0, x, y, z, current);
+    gauge = ProjectStationaryPhysicalGaugeToReference(physical, current);
+    if (gauge_reference_subtraction) {
+      baseline = ComputeReferenceGaugeBaseline(current);
+    }
   }
   if (!gauge.valid
       || (gauge_reference_subtraction && !baseline.valid)) {
@@ -2665,6 +2733,8 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
   const Real center_z = opt.reference_center[2];
 
   if (opt.reference_kind == 7) {
+    const auto analytic_static = reference_static;
+    const bool analytic_backend = opt.reference_backend == 1;
     const Real gaussian_width = opt.q_gaussian_width;
     const Real q = q_controller.q;
     const Real q_dot = q_controller.q_dot;
@@ -2695,10 +2765,12 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
     // projections into one face work item: that shape spills a large private
     // stack on PVC.  A cell is owned by this kernel if at least one of its
     // out-of-range directions is a physical, nonperiodic block face.
-    Kokkos::parallel_for(
-    "ref_gh projected trumpet metric boundaries",
-    Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
-    KOKKOS_LAMBDA(const int idx) {
+    const auto launch_metric_boundary = [&](const auto analytic_tag) {
+      constexpr bool kAnalytic = decltype(analytic_tag)::value;
+      Kokkos::parallel_for(
+      "ref_gh projected trumpet metric boundaries",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
+      KOKKOS_LAMBDA(const int idx) {
       int work = idx;
       const int i = work % n1; work /= n1;
       const int j = work % n2; work /= n2;
@@ -2739,18 +2811,26 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
       const Real z = CellCenterX(
           k - ks, indcs.nx3,
           size.d_view(m).x3min, size.d_view(m).x3max);
-      StoreQControlledStationaryTrumpetMetricState(
-          state, m, k, j, i, table, mass,
-          center_x, center_y, center_z, gaussian_width,
-          q, q_dot, q_ddot, x, y, z);
-    });
+      StoreQControlledStationaryTrumpetMetricState<kAnalytic>(
+          state, m, k, j, i, analytic_static,
+          table, mass, center_x, center_y, center_z,
+          gaussian_width, q, q_dot, q_ddot, x, y, z);
+      });
+    };
+    if (analytic_backend) {
+      launch_metric_boundary(std::true_type{});
+    } else {
+      launch_metric_boundary(std::false_type{});
+    }
     DebugFence("ref_gh ApplyPhysicalBCs projected trumpet metric");
 
     if (gauge_driver_enabled) {
-      Kokkos::parallel_for(
-      "ref_gh projected trumpet gauge boundaries",
-      Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
-      KOKKOS_LAMBDA(const int idx) {
+      const auto launch_gauge_boundary = [&](const auto analytic_tag) {
+        constexpr bool kAnalytic = decltype(analytic_tag)::value;
+        Kokkos::parallel_for(
+        "ref_gh projected trumpet gauge boundaries",
+        Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
+        KOKKOS_LAMBDA(const int idx) {
         int work = idx;
         const int i = work % n1; work /= n1;
         const int j = work % n2; work /= n2;
@@ -2791,12 +2871,18 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
         const Real z = CellCenterX(
             k - ks, indcs.nx3,
             size.d_view(m).x3min, size.d_view(m).x3max);
-        StoreQControlledStationaryTrumpetGaugeState(
-            state, m, k, j, i, table, mass,
-            center_x, center_y, center_z, gaussian_width,
-            q, q_dot, q_ddot, x, y, z,
+        StoreQControlledStationaryTrumpetGaugeState<kAnalytic>(
+            state, m, k, j, i, analytic_static,
+            table, mass, center_x, center_y, center_z,
+            gaussian_width, q, q_dot, q_ddot, x, y, z,
             gauge_reference_subtraction);
-      });
+        });
+      };
+      if (analytic_backend) {
+        launch_gauge_boundary(std::true_type{});
+      } else {
+        launch_gauge_boundary(std::false_type{});
+      }
       DebugFence("ref_gh ApplyPhysicalBCs projected trumpet gauge");
     }
     return TaskStatus::complete;

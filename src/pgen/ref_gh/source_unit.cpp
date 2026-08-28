@@ -2289,6 +2289,326 @@ void CheckGeneratedAnalyticRadialQGauge(const DvceArray2D<Real> &table) {
             << " motion=" << maximum_motion << std::endl;
 }
 
+KOKKOS_INLINE_FUNCTION
+Real BoundaryMetricProjectionCondition(
+    const ref_gh::ReferenceGeometry &physical,
+    const ref_gh::ReferenceGeometry &current, const int A, const int B,
+    const int field, const int spatial = 0) {
+  Real psi_condition = 0.0;
+  Real d_psi[4] = {};            // NOLINT(runtime/arrays)
+  Real d_psi_condition[4] = {};  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      psi_condition += Kokkos::abs(
+          current.frame[A][a]*current.frame[B][b]*physical.metric[a][b]);
+      for (int p = 0; p < 4; ++p) {
+        const Real frame_term =
+            (current.d_frame[p][A][a]*current.frame[B][b]
+             + current.frame[A][a]*current.d_frame[p][B][b])
+            *physical.metric[a][b];
+        const Real metric_term = current.frame[A][a]*current.frame[B][b]
+                                 *physical.d_metric[p][a][b];
+        d_psi[p] += frame_term + metric_term;
+        d_psi_condition[p] +=
+            Kokkos::abs(frame_term) + Kokkos::abs(metric_term);
+      }
+    }
+  }
+  if (field == 0) return psi_condition;
+  const Real lapse = 1.0/Kokkos::sqrt(-physical.inverse_metric[0][0]);
+  Real shift[3];  // NOLINT(runtime/arrays)
+  for (int i = 0; i < 3; ++i) {
+    shift[i] = lapse*lapse*physical.inverse_metric[0][i + 1];
+  }
+  if (field == 1) {
+    Real condition = (Kokkos::abs(d_psi[0]) + d_psi_condition[0])/lapse;
+    for (int i = 0; i < 3; ++i) {
+      condition += Kokkos::abs(shift[i])
+                   *(Kokkos::abs(d_psi[i + 1])
+                     + d_psi_condition[i + 1])/lapse;
+    }
+    return condition;
+  }
+  Real condition = 0.0;
+  for (int i = 0; i < 3; ++i) {
+    condition += Kokkos::abs(current.spatial_frame[spatial][i])
+                 *(Kokkos::abs(d_psi[i + 1])
+                   + d_psi_condition[i + 1]);
+  }
+  return condition;
+}
+
+void CheckCompactAnalyticRadialQBoundaryProjection(
+    const DvceArray2D<Real> &table) {
+  constexpr int nq = 6;
+  constexpr int nrate = 3;
+  constexpr int nacceleration = 3;
+  constexpr int npoints = kAnalyticOraclePointCount;
+  constexpr int nsamples = nq*nrate*nacceleration*npoints;
+  using BoundaryMaxLoc = Kokkos::MaxLoc<Real, int>;
+  BoundaryMaxLoc::value_type maximum_metric;
+  BoundaryMaxLoc::value_type maximum_gauge;
+  BoundaryMaxLoc::value_type maximum_subtracted_gauge;
+  Kokkos::parallel_reduce(
+      "ref_gh compact analytic radial-q boundary projection",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample,
+                    BoundaryMaxLoc::value_type &local_metric,
+                    BoundaryMaxLoc::value_type &local_gauge,
+                    BoundaryMaxLoc::value_type &local_subtracted_gauge) {
+        const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
+        const Real q_dot_values[nrate] = {-0.1, 0.0, 0.1};
+        const Real q_ddot_values[nacceleration] = {-0.05, 0.0, 0.05};
+        int work = sample;
+        const Real q = q_values[work % nq]; work /= nq;
+        const Real q_dot = q_dot_values[work % nrate]; work /= nrate;
+        const Real q_ddot = q_ddot_values[work % nacceleration];
+        work /= nacceleration;
+        Real x = 0.0;
+        Real y = 0.0;
+        Real z = 0.0;
+        AnalyticOraclePoint(work, x, y, z);
+        const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+
+        Real static_coefficients[ref_gh::kAnalyticRadialQStaticSize];
+        Real current_stage[ref_gh::kAnalyticRadialQStageSize];
+        Real physical_stage[ref_gh::kAnalyticRadialQStageSize];
+        ref_gh::EvaluateAnalyticRadialQStatic(
+            table, 1.0, 3.0, x, y, z, 0.0, 0.0, 0.0,
+            static_coefficients);
+        ref_gh::EvaluateAnalyticRadialQStage(
+            static_coefficients, q, q_dot, q_ddot, current_stage);
+        ref_gh::EvaluateAnalyticRadialQStage(
+            static_coefficients, 1.0, 0.0, 0.0, physical_stage);
+        const ref_gh::AnalyticRadialScalar alpha{
+            static_coefficients[ref_gh::kAnalyticAlpha], 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialScalar shift_b{
+            static_coefficients[ref_gh::kAnalyticShiftB], 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialScalar current_l{
+            current_stage[ref_gh::kAnalyticL],
+            current_stage[ref_gh::kAnalyticLT],
+            current_stage[ref_gh::kAnalyticLR],
+            current_stage[ref_gh::kAnalyticLTT],
+            current_stage[ref_gh::kAnalyticLTR],
+            current_stage[ref_gh::kAnalyticLRR],
+            current_stage[ref_gh::kAnalyticLTTR],
+            current_stage[ref_gh::kAnalyticLTRR]};
+        const ref_gh::AnalyticRadialScalar physical_l{
+            physical_stage[ref_gh::kAnalyticL],
+            physical_stage[ref_gh::kAnalyticLT],
+            physical_stage[ref_gh::kAnalyticLR],
+            physical_stage[ref_gh::kAnalyticLTT],
+            physical_stage[ref_gh::kAnalyticLTR],
+            physical_stage[ref_gh::kAnalyticLRR],
+            physical_stage[ref_gh::kAnalyticLTTR],
+            physical_stage[ref_gh::kAnalyticLTRR]};
+        const ref_gh::AnalyticRadialQPoint analytic_current{
+            alpha, current_l, shift_b, {x, y, z}, radius};
+        const ref_gh::AnalyticRadialQPoint analytic_physical{
+            alpha, physical_l, shift_b, {x, y, z}, radius};
+
+        // The independent coefficient/provider agreement is the preceding
+        // 2160-point gate.  Feed those already-qualified compact coefficients
+        // into the generic geometry builder here so this strict 256-epsilon
+        // gate isolates only boundary projection and subtraction algebra.
+        const ref_gh::ReferenceJet physical_alpha =
+            ref_gh::AnalyticRadialScalarOracleJet(
+                analytic_physical, analytic_physical.alpha);
+        const ref_gh::ReferenceJet physical_l_jet =
+            ref_gh::AnalyticRadialScalarOracleJet(
+                analytic_physical, analytic_physical.l);
+        const ref_gh::ReferenceJet physical_b =
+            ref_gh::AnalyticRadialScalarOracleJet(
+                analytic_physical, analytic_physical.b);
+        const ref_gh::ReferenceJet current_alpha =
+            ref_gh::AnalyticRadialScalarOracleJet(
+                analytic_current, analytic_current.alpha);
+        const ref_gh::ReferenceJet current_l_jet =
+            ref_gh::AnalyticRadialScalarOracleJet(
+                analytic_current, analytic_current.l);
+        const ref_gh::ReferenceJet current_b =
+            ref_gh::AnalyticRadialScalarOracleJet(
+                analytic_current, analytic_current.b);
+        ref_gh::ReferenceGeometry generic_physical;
+        ref_gh::PopulateIsotropicReferenceGeometry(
+            physical_alpha, physical_l_jet, physical_b,
+            x, y, z, 0.0, 0.0, 0.0, generic_physical);
+        ref_gh::ReferenceGeometry generic_current;
+        ref_gh::PopulateIsotropicReferenceGeometry(
+            current_alpha, current_l_jet, current_b,
+            x, y, z, 0.0, 0.0, 0.0, generic_current);
+
+        const ref_gh::ProjectedFirstOrderMetric compact_metric =
+            ref_gh::ProjectAnalyticPhysicalMetricToReference(
+                analytic_physical, analytic_current);
+        const ref_gh::ProjectedFirstOrderMetric generic_metric =
+            ref_gh::ProjectPhysicalMetricToReference(
+                generic_physical.metric, generic_physical.d_metric,
+                generic_current);
+        const ref_gh::ProjectedStationaryGaugeState compact_gauge =
+            ref_gh::ProjectAnalyticStationaryPhysicalGaugeToReference(
+                analytic_physical, analytic_current);
+        const ref_gh::ProjectedStationaryGaugeState generic_gauge =
+            ref_gh::ProjectStationaryPhysicalGaugeToReference(
+                generic_physical, generic_current);
+        const ref_gh::AnalyticRadialQGaugeBaseline compact_baseline =
+            ref_gh::PopulateGeneratedAnalyticRadialQGauge(
+                analytic_current.alpha, analytic_current.l,
+                analytic_current.b, analytic_current.displacement,
+                analytic_current.radius);
+        const ref_gh::ReferenceGaugeBaseline generic_baseline =
+            ref_gh::ComputeReferenceGaugeBaseline(generic_current);
+        const ref_gh::ReferenceGaugeBaseline generic_physical_baseline =
+            ref_gh::ComputeReferenceGaugeBaseline(generic_physical);
+        if (!compact_metric.valid || !generic_metric.valid
+            || !compact_gauge.valid || !generic_gauge.valid
+            || !compact_baseline.valid || !generic_baseline.valid) {
+          local_metric.val = std::numeric_limits<Real>::infinity();
+          local_metric.loc = sample*100;
+          return;
+        }
+
+        Real unused_dt_theta[4];  // NOLINT(runtime/arrays)
+        Real physical_hhat_condition[4];  // NOLINT(runtime/arrays)
+        Real physical_d_hhat_condition[4][4];  // NOLINT(runtime/arrays)
+        Real physical_theta_condition[4];  // NOLINT(runtime/arrays)
+        Real physical_dt_theta_condition[4];  // NOLINT(runtime/arrays)
+        Real current_hhat_condition[4];  // NOLINT(runtime/arrays)
+        Real current_d_hhat_condition[4][4];  // NOLINT(runtime/arrays)
+        Real current_theta_condition[4];  // NOLINT(runtime/arrays)
+        Real current_dt_theta_condition[4];  // NOLINT(runtime/arrays)
+        if (!GenericReferenceDtThetaOracle(
+                physical_alpha, physical_l_jet, physical_b,
+                analytic_physical.displacement, generic_physical,
+                unused_dt_theta, physical_hhat_condition,
+                physical_d_hhat_condition, physical_theta_condition,
+                physical_dt_theta_condition)
+            || !GenericReferenceDtThetaOracle(
+                current_alpha, current_l_jet, current_b,
+                analytic_current.displacement, generic_current,
+                unused_dt_theta, current_hhat_condition,
+                current_d_hhat_condition, current_theta_condition,
+                current_dt_theta_condition)) {
+          local_gauge.val = std::numeric_limits<Real>::infinity();
+          local_gauge.loc = sample*100;
+          return;
+        }
+        for (int A = 0; A < 4; ++A) {
+          Real projected_hhat_condition = 0.0;
+          Real projected_theta_condition = 0.0;
+          for (int a = 0; a < 4; ++a) {
+            Real coordinate_hhat_condition = 0.0;
+            Real coordinate_theta_condition = 0.0;
+            for (int P = 0; P < 4; ++P) {
+              coordinate_hhat_condition +=
+                  Kokkos::abs(generic_physical.coframe[P][a])
+                  *(Kokkos::abs(generic_physical_baseline.hhat[P])
+                    + physical_hhat_condition[P]);
+              coordinate_theta_condition +=
+                  Kokkos::abs(generic_physical.coframe[P][a])
+                  *(Kokkos::abs(generic_physical_baseline.theta[P])
+                    + physical_theta_condition[P]);
+            }
+            projected_hhat_condition +=
+                Kokkos::abs(generic_current.frame[A][a])
+                *coordinate_hhat_condition;
+            projected_theta_condition +=
+                Kokkos::abs(generic_current.frame[A][a])
+                *coordinate_theta_condition;
+          }
+          Real error = ScaledGaugeOracleError(
+              compact_gauge.hhat[A], generic_gauge.hhat[A],
+              projected_hhat_condition);
+          if (error > local_gauge.val) {
+            local_gauge.val = error;
+            local_gauge.loc = sample*100 + A;
+          }
+          error = ScaledGaugeOracleError(
+              compact_gauge.theta[A], generic_gauge.theta[A],
+              projected_theta_condition);
+          if (error > local_gauge.val) {
+            local_gauge.val = error;
+            local_gauge.loc = sample*100 + 10 + A;
+          }
+          error = ScaledGaugeOracleError(
+              compact_gauge.hhat[A] - compact_baseline.hhat[A],
+              generic_gauge.hhat[A] - generic_baseline.hhat[A],
+              projected_hhat_condition + current_hhat_condition[A]
+              + Kokkos::abs(generic_gauge.hhat[A])
+              + Kokkos::abs(generic_baseline.hhat[A]));
+          if (error > local_subtracted_gauge.val) {
+            local_subtracted_gauge.val = error;
+            local_subtracted_gauge.loc = sample*100 + A;
+          }
+          error = ScaledGaugeOracleError(
+              compact_gauge.theta[A] - compact_baseline.theta[A],
+              generic_gauge.theta[A] - generic_baseline.theta[A],
+              projected_theta_condition + current_theta_condition[A]
+              + Kokkos::abs(generic_gauge.theta[A])
+              + Kokkos::abs(generic_baseline.theta[A]));
+          if (error > local_subtracted_gauge.val) {
+            local_subtracted_gauge.val = error;
+            local_subtracted_gauge.loc = sample*100 + 10 + A;
+          }
+          for (int B = A; B < 4; ++B) {
+            error = ScaledGaugeOracleError(
+                compact_metric.psi[A][B], generic_metric.psi[A][B],
+                BoundaryMetricProjectionCondition(
+                    generic_physical, generic_current, A, B, 0));
+            if (error > local_metric.val) {
+              local_metric.val = error;
+              local_metric.loc = sample*100 + 10*A + B;
+            }
+            error = ScaledGaugeOracleError(
+                compact_metric.pi[A][B], generic_metric.pi[A][B],
+                BoundaryMetricProjectionCondition(
+                    generic_physical, generic_current, A, B, 1));
+            if (error > local_metric.val) {
+              local_metric.val = error;
+              local_metric.loc = sample*100 + 20 + 10*A + B;
+            }
+            for (int I = 0; I < 3; ++I) {
+              error = ScaledGaugeOracleError(
+                  compact_metric.phi[I][A][B],
+                  generic_metric.phi[I][A][B],
+                  BoundaryMetricProjectionCondition(
+                      generic_physical, generic_current, A, B, 2, I));
+              if (error > local_metric.val) {
+                local_metric.val = error;
+                local_metric.loc = sample*100 + 40 + 20*I + 4*A + B;
+              }
+            }
+          }
+        }
+      }, BoundaryMaxLoc(maximum_metric), BoundaryMaxLoc(maximum_gauge),
+      BoundaryMaxLoc(maximum_subtracted_gauge));
+  Kokkos::fence();
+  constexpr Real tolerance =
+      256.0*std::numeric_limits<Real>::epsilon();
+  if (!(maximum_metric.val <= tolerance)
+      || !(maximum_gauge.val <= tolerance)
+      || !(maximum_subtracted_gauge.val <= tolerance)) {
+    std::cout << "### FATAL ERROR: compact analytic radial-q boundary "
+                 "projection oracle failed: metric=" << maximum_metric.val
+              << "@" << maximum_metric.loc
+              << " gauge=" << maximum_gauge.val << "@" << maximum_gauge.loc
+              << " subtracted-gauge=" << maximum_subtracted_gauge.val
+              << "@" << maximum_subtracted_gauge.loc
+              << " tolerance=" << tolerance << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH compact analytic radial-q boundary projection "
+               "oracle passed: samples=" << nsamples
+            << " metric=" << maximum_metric.val
+            << " gauge=" << maximum_gauge.val
+            << " subtracted-gauge=" << maximum_subtracted_gauge.val
+            << std::endl;
+}
+
 template <typename Reference>
 KOKKOS_INLINE_FUNCTION
 bool BuildRhsOracleMetricData(
@@ -4802,6 +5122,8 @@ void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) 
     CheckGeneratedAnalyticRadialQGeometry(
         pmy_mesh_->pmb_pack->prefgh->reference_table);
     CheckGeneratedAnalyticRadialQGauge(
+        pmy_mesh_->pmb_pack->prefgh->reference_table);
+    CheckCompactAnalyticRadialQBoundaryProjection(
         pmy_mesh_->pmb_pack->prefgh->reference_table);
     CheckAll61AnalyticRadialQRhs(
         pmy_mesh_->pmb_pack->prefgh->reference_table);
