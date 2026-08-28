@@ -377,6 +377,26 @@ bool ProductionCovariantScalarWaveSourceDiagnostics(
 }
 
 KOKKOS_INLINE_FUNCTION
+bool ProductionCovariantScalarWaveSourceDiagnostics(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const AnalyticRadialQPoint &reference,
+    const CoordinateGhGeometry &geometry, const Real gamma0,
+    Real source[4][4], CovariantSourceSectors &sectors) {
+  return CompactAnalyticRadialQScalarWaveSource(
+      psi, pi, phi, reference, geometry, gamma0, source, &sectors);
+}
+
+KOKKOS_INLINE_FUNCTION
+bool ProductionCovariantScalarWaveSourceDiagnostics(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const ReferenceCachePoint &reference,
+    const CoordinateGhGeometry &geometry, const Real gamma0,
+    Real source[4][4], CovariantSourceSectors &sectors) {
+  return CovariantGhScalarWaveSource(
+      psi, pi, phi, reference, geometry, gamma0, source, sectors);
+}
+
+KOKKOS_INLINE_FUNCTION
 void AddProductionOrdinaryGaugeSource(
     const Real metric[4][4], const Real d_metric[4][4][4],
     const ProductionReferencePoint &reference,

@@ -669,6 +669,15 @@ template TaskStatus RefGh::CalcRHS<4>(Driver *, int);
 
 template <int FDNG>
 void RefGh::CalcConstraints() {
+  if (opt.reference_backend == 1) {
+    CalcConstraintsImpl<FDNG, true>();
+  } else {
+    CalcConstraintsImpl<FDNG, false>();
+  }
+}
+
+template <int FDNG, bool Analytic>
+void RefGh::CalcConstraintsImpl() {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   const auto state = u0;
@@ -677,7 +686,6 @@ void RefGh::CalcConstraints() {
   const auto reference_extra = reference_diagnostic;
   const auto analytic_static = reference_static;
   const auto analytic_stage = reference_stage;
-  const int reference_backend = opt.reference_backend;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
   const Real center_z = opt.reference_center[2];
@@ -696,9 +704,9 @@ void RefGh::CalcConstraints() {
                                size.d_view(m).x2min, size.d_view(m).x2max);
     const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                size.d_view(m).x3min, size.d_view(m).x3max);
-    const ProductionReferencePoint reference = MakeProductionReferencePoint(
-        reference_backend, reference_cache, reference_extra, analytic_static,
-        analytic_stage, m, k, j, i, x, y, z, center_x, center_y, center_z);
+    const auto reference = MakeTypedProductionReferencePoint<Analytic>(
+        reference_cache, reference_extra, analytic_static, analytic_stage,
+        m, k, j, i, x, y, z, center_x, center_y, center_z);
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
     Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
@@ -778,9 +786,9 @@ void RefGh::CalcConstraints() {
     Real frame_correction2 = 0.0;
     for (int A = 0; A < 4; ++A) {
       for (int B = 0; B < 4; ++B) {
-        if (reference_backend == 0) {
-          frame_ricci2 += ReferenceRicci(reference.generic, A, B)
-                          *ReferenceRicci(reference.generic, A, B);
+        if constexpr (!Analytic) {
+          frame_ricci2 += ReferenceRicci(reference, A, B)
+                          *ReferenceRicci(reference, A, B);
         }
         curvature2 += source_sectors.curvature[A][B]*source_sectors.curvature[A][B];
         qq2 += source_sectors.qq[A][B]*source_sectors.qq[A][B];
@@ -794,18 +802,18 @@ void RefGh::CalcConstraints() {
           delta2 += source_sectors.delta_lower[A][B][C]
                     *source_sectors.delta_lower[A][B][C];
         }
-        if (reference_backend == 0) {
+        if constexpr (!Analytic) {
           Real coordinate_ricci = 0.0;
           for (int C = 0; C < 4; ++C) {
             coordinate_ricci +=
-                ReferenceDChristoffel(reference.generic, C, C, A, B)
-                - ReferenceDChristoffel(reference.generic, B, C, A, C);
+                ReferenceDChristoffel(reference, C, C, A, B)
+                - ReferenceDChristoffel(reference, B, C, A, C);
             for (int D = 0; D < 4; ++D) {
               coordinate_ricci +=
-                  ReferenceChristoffel(reference.generic, C, C, D)
-                    *ReferenceChristoffel(reference.generic, D, A, B)
-                  - ReferenceChristoffel(reference.generic, C, B, D)
-                    *ReferenceChristoffel(reference.generic, D, A, C);
+                  ReferenceChristoffel(reference, C, C, D)
+                    *ReferenceChristoffel(reference, D, A, B)
+                  - ReferenceChristoffel(reference, C, B, D)
+                    *ReferenceChristoffel(reference, D, A, C);
             }
           }
           coordinate_ricci2 += coordinate_ricci*coordinate_ricci;

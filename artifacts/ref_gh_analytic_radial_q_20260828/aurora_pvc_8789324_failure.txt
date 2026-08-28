@@ -1,0 +1,49 @@
+Aurora compact analytic radial-q PVC discriminator: runtime portability failure
+Date: 2026-08-28
+Job: 8789324
+Project: CompactBinaryMerger
+Queue: debug
+Node: x4702c2s4b0n0
+Source commit: e63d2afac602a218937b654bdf5047e48700087c
+State: F
+Exit status: 134
+Start: 2026-08-28 15:04:28
+Wall time: 00:08:28
+
+Campaign root:
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_analytic_radial_q_20260828_e63d2afa_retry3
+
+Preserved full files and SHA-256:
+  build.log (367070 bytes)
+    2da7f63d28b79a8d1d47e23f2496843ed10716003e2325192d1cd514266a355c
+  configure.log (3371 bytes)
+    f5ba93a2debb980ca4f1d706b9ec8eab54ccb4cdd29568f5f3defd3e614d7e66
+  provenance.txt (7718 bytes)
+    14678bc281a13253e358c61f3ea8c649c7119342965e8eb2aa3b15f4f2ce880a
+  rank_gpu_mapping.txt (1464 bytes)
+    12ca157ad92b9eae7d6dffda3eb337ba9ed5958c5bed17cf911f89a102fef227
+  one_rank/run.log (1952 bytes)
+    c35d8f40993b6e6a9fa7256caa9b6ec709b3eb83ce73cd440198fb8603db48e4
+
+Completed evidence:
+- Production build with Athena_ENABLE_REF_GH_SOURCE_UNIT=OFF succeeded.
+- The production executable contained no source-unit oracle pgen.
+- All eight ranks mapped to distinct PVC tiles 0.0 through 3.1.
+- The one-rank analytic allocation reported generic_bytes=0 and exact 12/8
+  compact components.
+- Initial analytic CalcRHS and projected physical boundaries passed their
+  debug fences.
+
+Failure:
+The one-rank evolved initialization reached UpdateDiagnostics, passed the
+compact reference fence, and failed while launching RefGhToADM:
+  UR_RESULT_ERROR_INVALID_KERNEL_NAME
+No eight-rank evolved cycle, one/eight-rank comparison, or benchmark ran.
+
+Equation-preserving correction prepared afterward:
+RefGhToADM and CalcConstraints now dispatch on the host to compile-time typed
+generic or analytic kernels, matching CalcRHS. The analytic device kernels no
+longer carry the runtime ProductionReferencePoint union or generic-cache
+accessors. Both the default-on full source oracle and an oracle-disabled
+closed-loop full-diagnostic RK cycle pass locally after this change.
+

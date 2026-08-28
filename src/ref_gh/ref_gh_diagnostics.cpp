@@ -29,6 +29,15 @@ namespace ref_gh {
 void RefGh::SetADMVariables(MeshBlockPack *pack) { pack->prefgh->RefGhToADM(); }
 
 void RefGh::RefGhToADM() {
+  if (opt.reference_backend == 1) {
+    RefGhToADMImpl<true>();
+  } else {
+    RefGhToADMImpl<false>();
+  }
+}
+
+template <bool Analytic>
+void RefGh::RefGhToADMImpl() {
   if (pmy_pack->padm == nullptr) return;
   FillReferenceCache(pmy_pack->pmesh->time, false);
   auto &indcs = pmy_pack->pmesh->mb_indcs;
@@ -40,7 +49,6 @@ void RefGh::RefGhToADM() {
   const auto reference_extra = reference_diagnostic;
   const auto analytic_static = reference_static;
   const auto analytic_stage = reference_stage;
-  const int reference_backend = opt.reference_backend;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
   const Real center_z = opt.reference_center[2];
@@ -55,9 +63,9 @@ void RefGh::RefGhToADM() {
                                size.d_view(m).x2min, size.d_view(m).x2max);
     const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                size.d_view(m).x3min, size.d_view(m).x3max);
-    const ProductionReferencePoint reference = MakeProductionReferencePoint(
-        reference_backend, reference_cache, reference_extra, analytic_static,
-        analytic_stage, m, k, j, i, x, y, z, center_x, center_y, center_z);
+    const auto reference = MakeTypedProductionReferencePoint<Analytic>(
+        reference_cache, reference_extra, analytic_static, analytic_stage,
+        m, k, j, i, x, y, z, center_x, center_y, center_z);
     Real psi[4][4], pi[4][4], phi[3][4][4], d_psi[4][4][4]; // NOLINT
     Real metric[4][4], d_metric[4][4][4]; // NOLINT
     CoordinateGhGeometry geometry;

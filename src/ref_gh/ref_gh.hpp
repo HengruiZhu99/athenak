@@ -253,6 +253,10 @@ class RefGh {
  private:
   template <int FDNG, bool Analytic>
   TaskStatus CalcRHSImpl(Driver *driver, int stage);
+  template <int FDNG, bool Analytic>
+  void CalcConstraintsImpl();
+  template <bool Analytic>
+  void RefGhToADMImpl();
   Real StageTime(const Driver *driver, int stage) const;
   void FillReferenceCache(Real time, bool include_diagnostics);
   void PersistControllerState();

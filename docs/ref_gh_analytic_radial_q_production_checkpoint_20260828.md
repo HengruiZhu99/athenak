@@ -89,8 +89,14 @@ named oracle method and is not called by production dispatch.
   is `artifacts/ref_gh_analytic_radial_q_20260828/aurora_pvc_8789291_failure.txt`.
   The oracle pgen is now a default-on validation component that is explicitly
   excluded from the production PVC executable; a default-on oracle build and
-  an oracle-disabled analytic production cycle both pass locally.  The next
-  corrected PVC rerun remains pending.
+  an oracle-disabled analytic production cycle both pass locally.  Job 8789324
+  then built that production image and proved eight distinct PVC tile mappings,
+  but its one-rank full-output initialization failed at the runtime-dispatched
+  RefGhToADM kernel with `UR_RESULT_ERROR_INVALID_KERNEL_NAME`; see
+  `artifacts/ref_gh_analytic_radial_q_20260828/aurora_pvc_8789324_failure.txt`.
+  RefGhToADM and CalcConstraints now use the same host-side compile-time
+  analytic/generic dispatch as CalcRHS, and the typed full-diagnostic cycle
+  passes locally.  The next corrected PVC rerun remains pending.
 - Warmed-up 64-cubed Ref-GH/Z4c performance ratio: **not measured**.
 - Production ready: **no**.
 
