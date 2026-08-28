@@ -76,7 +76,15 @@ named oracle method and is not called by production dispatch.
 - Mixed-third-derivative moving-gauge path qualified locally: **yes**.
 - All-61-RHS equivalence qualified locally: **yes**.
 - Analytic production allocation integrated locally: **yes**.
-- Aurora PVC eight-rank/eight-tile evolved dynamic-q cycle: **not yet run**.
+- Aurora PVC eight-rank/eight-tile evolved dynamic-q cycle: **not qualified**.
+  Job 8789242 stopped during PVC code generation before producing an
+  executable: IGC segfaulted on the pre-existing monolithic FO-GH RHS unit
+  kernel.  The compact failure record and hashes are in
+  `artifacts/ref_gh_analytic_radial_q_20260828/aurora_pvc_8789242_failure.txt`.
+  That unrelated unit-test kernel has subsequently been split into four
+  equation-identical device reductions and both the FO-GH RHS unit and complete
+  Ref-GH q-controlled source unit pass locally; the corrected PVC rerun remains
+  pending.
 - Warmed-up 64-cubed Ref-GH/Z4c performance ratio: **not measured**.
 - Production ready: **no**.
 

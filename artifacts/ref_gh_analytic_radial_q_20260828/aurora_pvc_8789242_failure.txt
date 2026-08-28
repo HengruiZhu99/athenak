@@ -1,0 +1,54 @@
+Aurora compact analytic radial-q PVC discriminator: failed build evidence
+Date: 2026-08-28
+Job: 8789242
+Project: CompactBinaryMerger
+Queue: debug
+Node: x4310c7s7b0n0
+Source commit: b86fd373fcb88813c405d2c18d5f4eb659bbc764
+State: F
+Exit status: 2
+Start: 2026-08-28 14:20:09
+Wall time: 00:09:11
+
+Campaign root:
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_analytic_radial_q_20260828_b86fd373_20260828T141657
+
+Preserved full logs:
+runs/analytic_q_pvc_8789242.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/build.log
+  bytes: 362812
+  sha256: 1c7ab82d5a82f6d2af40b466dbd5bf2f732e389804b6bc25b9a80e2766e95e33
+runs/analytic_q_pvc_8789242.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/provenance.txt
+  bytes: 7128
+  sha256: ee09c30d8bedd0ffe2db776ae94d0083b12fa48eac015739ba36daf0f26f4594
+src/refgh_analytic_q.o8789242
+  bytes: 0
+  sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+Failure classification:
+The host compilation reached Intel PVC device-code generation. IGC then
+segfaulted while lowering the single monolithic Kokkos reduction in
+ProblemGenerator::FoGhRhsUnit. The failing source target reported by make was
+pgen/ref_gh/source_unit.cpp.o because SYCL device linking collects kernels
+across translation units; the kernel name in the IGC diagnostic identifies
+FoGhRhsUnit directly.
+
+Exact terminal diagnostic:
+IGC: Internal Compiler Error: Segmentation violation
+Build failed with error code: -11
+icpx: error: gen compiler command failed with exit code 245
+gmake[2]: *** [src/CMakeFiles/athena.dir/build.make:2039:
+src/CMakeFiles/athena.dir/pgen/ref_gh/source_unit.cpp.o] Error 1
+
+No executable, GPU mapping, source-unit oracle, dynamic-q cycle, numerical
+comparison, or benchmark was run by job 8789242.
+
+Equation-preserving correction prepared after this failure:
+Split the FO-GH RHS unit superkernel into four independent device reductions,
+without changing the tested expressions or tolerances. Post-split local gates:
+  FO-GH RHS unit: PASS
+  complete Ref-GH q-controlled source unit: PASS
+  local FO-GH log sha256:
+    31ebc1515a0986a6e589de8978477db2cab0d761f883cbd6f76dc1045266b046
+  local Ref-GH log sha256:
+    c672af02a96615bab80e57d7c64d90a25370f3485b90fed1edd62a7fea6c8168
+

@@ -22,9 +22,13 @@
 void ProblemGenerator::FoGhRhsUnit(ParameterInput *pin, const bool restart) {
   (void)pin;
   (void)restart;
-  int errors = 0;
+  // Keep the independent identities in separate device kernels.  Besides
+  // reducing live state, this avoids asking accelerator compilers to lower a
+  // single monolithic unit-test kernel containing every FO-GH work tensor.
+  // The tested expressions and tolerances are unchanged.
+  int minkowski_errors = 0;
   Kokkos::parallel_reduce(
-      "FO-GH RHS unit", Kokkos::RangePolicy<>(DevExeSpace(), 0, 1),
+      "FO-GH RHS unit Minkowski", Kokkos::RangePolicy<>(DevExeSpace(), 0, 1),
       KOKKOS_LAMBDA(const int, int &local_errors) {
         constexpr Real tol = 3.0e-13;
         fo_gh::RegularPointState u;
@@ -78,7 +82,16 @@ void ProblemGenerator::FoGhRhsUnit(ParameterInput *pin, const bool restart) {
         if (Kokkos::abs(fo_gh::DivergenceC(u, d.geometry, geo)) > tol) {
           ++local_errors;
         }
+      }, minkowski_errors);
 
+  int gauge_errors = 0;
+  Kokkos::parallel_reduce(
+      "FO-GH RHS unit gauge", Kokkos::RangePolicy<>(DevExeSpace(), 0, 1),
+      KOKKOS_LAMBDA(const int, int &local_errors) {
+        constexpr Real tol = 3.0e-13;
+        fo_gh::RegularPointState u;
+        fo_gh::EvolutionDerivatives d;
+        fo_gh::PrimaryRhs rhs;
         // With h=f and zero shift advection, the weight-zero equations must reduce
         // exactly to 1+log lapse and the Gamma-driver target.
         u.ZeroClear();
@@ -113,7 +126,16 @@ void ProblemGenerator::FoGhRhsUnit(ParameterInput *pin, const bool restart) {
             ++local_errors;
           }
         }
+      }, gauge_errors);
 
+  int contraction_errors = 0;
+  Kokkos::parallel_reduce(
+      "FO-GH RHS unit contractions", Kokkos::RangePolicy<>(DevExeSpace(), 0, 1),
+      KOKKOS_LAMBDA(const int, int &local_errors) {
+        constexpr Real tol = 3.0e-13;
+        fo_gh::RegularPointState u;
+        fo_gh::EvolutionDerivatives d;
+        fo_gh::PrimaryRhs rhs;
         // The Lambda equation contracts the covectors a_k and X_k with the
         // twice-raised Atilde^{ik}.  A diagonal/identity metric cannot detect
         // an accidental mixed-index Atilde^i_k here, so use a non-diagonal
@@ -174,7 +196,16 @@ void ProblemGenerator::FoGhRhsUnit(ParameterInput *pin, const bool restart) {
             Kokkos::abs(rhs.pi - expected_pi) > tol) {
           ++local_errors;
         }
+      }, contraction_errors);
 
+  int full_errors = 0;
+  Kokkos::parallel_reduce(
+      "FO-GH RHS unit full non-diagonal",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, 1),
+      KOKKOS_LAMBDA(const int, int &local_errors) {
+        fo_gh::RegularPointState u;
+        fo_gh::EvolutionDerivatives d;
+        fo_gh::PrimaryRhs rhs;
         // Full non-diagonal Atilde/Lambda oracle.  Assemble the fixed equations
         // directly from independently indexed 3x3 work arrays, including both
         // trace-free projections, shift second derivatives, the Lambda vector
@@ -325,8 +356,10 @@ void ProblemGenerator::FoGhRhsUnit(ParameterInput *pin, const bool restart) {
             ++local_errors;
           }
         }
-      }, errors);
+      }, full_errors);
 
+  const int errors = minkowski_errors + gauge_errors + contraction_errors
+                     + full_errors;
   if (errors != 0) {
     std::cout << "FO-GH RHS unit test failed with " << errors
               << " errors." << std::endl;
