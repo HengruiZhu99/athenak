@@ -1,0 +1,47 @@
+date=2026-08-28
+starting_head=2d99137ca41de7df12ef1e3234f076b0ef2d8835
+branch=codex/ref-gh-analytic-device-view-performance-20260828
+build_type=Release
+compiler=GCC-13.3
+kokkos_backend=SERIAL
+build_directory=/tmp/athenak-refgh-analytic-fresh.WtkTu6
+
+deterministic_regeneration=PASS
+second_regeneration_directory=/tmp/refgh-regeneration-20260828.cMAFMa
+generated_geometry_sha256=6b4b3976f8cfc62924aabaf6cb960cd79a09677e8a7dd59441b5d3a4f90184e7
+generated_gauge_sha256=f6ec5bb54d10c490f65f78d9d9e7df07c7f080eef4d6edd3fff55d45053908
+generated_source_sha256=b5dff1d44bd1e0ed53070fdd5fa4b30d0c4c176a13c2d0924dd6b0ad51012f21
+generator_sha256=2c19efa4affd02c0d97ebbe26ea51a3f6bbb23467f3cb3c3e07c134320e26cc3
+sympy_version=1.14.0
+
+original_coefficient_oracle=PASS samples=216 max_error=8.88178e-15
+expanded_coefficient_oracle=PASS samples=2160 conditioned_error=1.48837e-13 tolerance=2e-13
+expanded_near_r_le_0.125=1.48837e-13
+expanded_gaussian_r_eq_3=5.55112e-17
+expanded_far_r_eq_5=1.79054e-16
+generated_geometry_oracle=PASS samples=2376 conditioned_error=2.33147e-15 tolerance=5.684341886080802e-14
+moving_gauge_oracle=PASS samples=2160 Hhat=1.16535e-15 dHhat=1.07001e-15 theta=7.08259e-16 dtTheta=3.54866e-17 motion=1.24829e-14 tolerance=5.684341886080802e-14
+all_61_rhs_oracle=PASS samples=4320 conditioned_error=2.84217e-14 tolerance=5.684341886080802e-14 phi_orderings=compatible,standard
+existing_q_source_unit_gate=PASS
+generic_production_cache_oracle=PASS conditioned_scaled_linf=1.63758e-14
+
+analytic_allocation_gate=PASS
+generic_bytes=0
+analytic_static_components=12
+analytic_stage_components=8
+analytic_static_bytes=1327104
+analytic_stage_bytes=884736
+
+fixed_q_one_cycle_analytic=PASS time=2.090302e-02
+fixed_q_one_cycle_generic=PASS time=2.090302e-02
+fixed_q_both_field_linf=1.548652e-03
+fixed_q_both_physical_metric_linf=3.693307e-05
+fixed_q_both_lapse_linf=1.393833e-08
+fixed_q_both_shift_linf=2.797825e-08
+fixed_q_both_constraint_linf=4.984912e-03
+prescribed_q_one_cycle_analytic=PASS time=2.090302e-02 field_linf=1.067468e-10 constraint_linf=1.087655e-10
+closed_loop_q_one_cycle_analytic=PASS time=2.090302e-02 local_q_sample_count=2112 q_sample_bytes=25344
+
+aurora_pvc_eight_tile_dynamic_q_cycle=NOT_RUN
+matched_64_cubed_performance=NOT_RUN
+production_ready=NO

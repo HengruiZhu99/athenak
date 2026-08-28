@@ -76,7 +76,9 @@ void QControlledTrumpetHistory(HistoryData *pdata, Mesh *mesh) {
     pdata->use_max[n] = true;
   }
   auto *module = mesh->pmb_pack->prefgh;
-  module->MeasureQControllerAtTime(mesh->time);
+  if (module->opt.q_controller_enabled) {
+    module->MeasureQControllerAtTime(mesh->time);
+  }
   const auto &diagnostics = module->controller_diagnostics;
   pdata->hdata[kQ] = module->q_controller.q;
   pdata->hdata[kQDot] = module->q_controller.q_dot;

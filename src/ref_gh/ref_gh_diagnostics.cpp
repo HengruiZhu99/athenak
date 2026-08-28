@@ -15,6 +15,7 @@
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
 #include "parameter_input.hpp"
+#include "ref_gh/analytic_radial_q_production.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_cache.hpp"
@@ -37,18 +38,33 @@ void RefGh::RefGhToADM() {
   const auto state = u0;
   const auto reference_cache = reference_evolution;
   const auto reference_extra = reference_diagnostic;
+  const auto analytic_static = reference_static;
+  const auto analytic_stage = reference_stage;
+  const int reference_backend = opt.reference_backend;
+  const Real center_x = opt.reference_center[0];
+  const Real center_y = opt.reference_center[1];
+  const Real center_z = opt.reference_center[2];
+  auto &size = pmy_pack->pmb->mb_size;
   const auto adm_vars = pmy_pack->padm->adm;
   par_for("ref_gh to ADM", DevExeSpace(), 0, pmy_pack->nmb_thispack - 1,
   0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const ReferenceCachePoint reference{
-        reference_cache, reference_extra, m, k, j, i};
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    const ProductionReferencePoint reference = MakeProductionReferencePoint(
+        reference_backend, reference_cache, reference_extra, analytic_static,
+        analytic_stage, m, k, j, i, x, y, z, center_x, center_y, center_z);
     Real psi[4][4], pi[4][4], phi[3][4][4], d_psi[4][4][4]; // NOLINT
     Real metric[4][4], d_metric[4][4][4]; // NOLINT
     CoordinateGhGeometry geometry;
     Real determinant = 0.0;
-    if (!LoadPointGeometry(state, reference, m, k, j, i, psi, pi, phi, d_psi,
-                           metric, d_metric, geometry, determinant)) {
+    if (!LoadProductionPointGeometry(state, reference, m, k, j, i, psi, pi,
+                                     phi, d_psi, metric, d_metric, geometry,
+                                     determinant)) {
       adm_vars.alpha(m, k, j, i) = NAN;
       adm_vars.psi4(m, k, j, i) = NAN;
       for (int a = 0; a < 3; ++a) {

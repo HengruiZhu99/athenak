@@ -37,6 +37,7 @@ class RefGh {
     int fd_order;
     int extrap_order;
     int reference_kind;
+    int reference_backend;
     bool reference_time_dependent;
     bool reference_controlled;
     bool reference_q_controlled;
@@ -181,6 +182,15 @@ class RefGh {
   DvceArray5D<Real> reference_workspace;
   DvceArray5D<Real> reference_evolution;
   DvceArray5D<Real> reference_diagnostic;
+  // The analytic radial-q backend owns exactly 12 static and 8 stage values
+  // per ghosted cell.  Generic cache arrays remain unallocated in that mode.
+  DvceArray5D<Real> reference_static;
+  DvceArray5D<Real> reference_stage;
+  // Closed-loop q feedback owns a compact, predeclared list of eligible
+  // active cells.  Disabled and prescribed-q runs leave these unallocated.
+  DvceArray1D<int> q_sample_cells;
+  DvceArray1D<Real> q_sample_weights;
+  int q_sample_count;
   DvceArray2D<Real> reference_table;
   Real reference_cache_time;
   Real reference_diagnostic_time;
@@ -206,6 +216,7 @@ class RefGh {
   Real continuation_veto_last_level;
   bool reference_cache_oracle_validated;
   bool reference_diagnostic_oracle_validated;
+  bool analytic_static_initialized;
   Real dtnew;
   Real max_char_speed;
   MeshBoundaryValuesCC *pbval_u;
@@ -227,6 +238,7 @@ class RefGh {
   TaskStatus MeasureController(Driver *driver, int stage);
   void MeasureControllerAtTime(Real stage_time);
   void MeasureQControllerAtTime(Real stage_time);
+  void MeasureQControllerLegacyWorkspaceOracleAtTime(Real stage_time);
   bool UpdateContinuationConstraintVeto(Real time);
   TaskStatus UpdateReferenceGeometry(Driver *driver, int stage);
   TaskStatus ExpRKUpdate(Driver *driver, int stage);
@@ -239,6 +251,8 @@ class RefGh {
   void DebugFence(const char *label) const;
 
  private:
+  template <int FDNG, bool Analytic>
+  TaskStatus CalcRHSImpl(Driver *driver, int stage);
   Real StageTime(const Driver *driver, int stage) const;
   void FillReferenceCache(Real time, bool include_diagnostics);
   void PersistControllerState();

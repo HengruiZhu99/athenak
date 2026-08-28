@@ -10,6 +10,7 @@
 #include "coordinates/cell_locations.hpp"
 #include "driver/driver.hpp"
 #include "mesh/mesh.hpp"
+#include "ref_gh/analytic_radial_q_production.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
 #include "ref_gh/gamma2_damping.hpp"
 #include "ref_gh/gauge_driver.hpp"
@@ -25,6 +26,13 @@ namespace ref_gh {
 
 template <int FDNG>
 TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
+  return opt.reference_backend == 1
+      ? CalcRHSImpl<FDNG, true>(driver, stage)
+      : CalcRHSImpl<FDNG, false>(driver, stage);
+}
+
+template <int FDNG, bool Analytic>
+TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
   // The queued UpdateReference task normally prepares this cache.  Keep the
   // guard here for initialization/unit-test callers that invoke CalcRHS
   // directly outside the stage task list.
@@ -49,6 +57,12 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   const auto state_rhs = u_rhs;
   const auto reference_cache = reference_evolution;
   const auto reference_extra = reference_diagnostic;
+  const auto analytic_static = reference_static;
+  const auto analytic_stage = reference_stage;
+  constexpr int reference_backend = Analytic ? 1 : 0;
+  const Real center_x = opt.reference_center[0];
+  const Real center_y = opt.reference_center[1];
+  const Real center_z = opt.reference_center[2];
   const int source_kind = opt.source_kind;
   const int phi_ordering = opt.phi_ordering;
   const Real gamma0 = opt.gamma0;
@@ -71,8 +85,15 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   indcs.js - radius, indcs.je + radius,
   indcs.is - radius, indcs.ie + radius,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const ReferenceCachePoint reference{
-        reference_cache, reference_extra, m, k, j, i};
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    const auto reference = MakeTypedProductionReferencePoint<Analytic>(
+        reference_cache, reference_extra, analytic_static, analytic_stage,
+        m, k, j, i, x, y, z, center_x, center_y, center_z);
     Real psi[4][4], metric[4][4], inverse[4][4], pi[4][4]; // NOLINT
     Real phi[3][4][4]; // NOLINT
     LoadSymmetric(state, kPsiOffset, m, k, j, i, psi);
@@ -123,18 +144,29 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   });
   DebugFence("ref_gh CalcRHS psi");
 
-  if (gauge_driver_enabled) {
+  // The generic oracle retains its independently qualified split kernel.  The
+  // analytic production backend evaluates this block in the main active-cell
+  // kernel below so physical point geometry is reconstructed only once.
+  if (reference_backend == 0 && gauge_driver_enabled) {
     par_for("ref_gh improved gauge driver", DevExeSpace(), 0, nmb - 1,
     indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
     KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-      const ReferenceCachePoint reference{
-          reference_cache, reference_extra, m, k, j, i};
+      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min, size.d_view(m).x1max);
+      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                 size.d_view(m).x2min, size.d_view(m).x2max);
+      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                 size.d_view(m).x3min, size.d_view(m).x3max);
+      const auto reference = MakeTypedProductionReferencePoint<Analytic>(
+          reference_cache, reference_extra, analytic_static, analytic_stage,
+          m, k, j, i, x, y, z, center_x, center_y, center_z);
       Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
       Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
       CoordinateGhGeometry geometry;
       Real determinant = 0.0;
-      if (!LoadPointGeometry(state, reference, m, k, j, i, psi, pi, phi,
-                             d_psi, metric, d_metric, geometry, determinant)) {
+      if (!LoadProductionPointGeometry(state, reference, m, k, j, i, psi, pi,
+                                       phi, d_psi, metric, d_metric, geometry,
+                                       determinant)) {
         for (int n = kHhatOffset; n < nvar; ++n) {
           state_rhs(m, n, k, j, i) = NAN;
         }
@@ -148,7 +180,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       Real d_hhat[3][4];     // NOLINT(runtime/arrays)
       ReferenceGaugeBaseline baseline{};
       if (gauge_reference_subtraction) {
-        baseline = ComputeReferenceGaugeBaseline(reference);
+        baseline = ComputeProductionReferenceGaugeBaseline(reference);
         if (!baseline.valid) {
           for (int n = kHhatOffset; n < nvar; ++n) {
             state_rhs(m, n, k, j, i) = NAN;
@@ -188,7 +220,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
             - (gauge_reference_subtraction ? baseline.d_hhat[0][A] : 0.0);
         state_rhs(m, kThetaOffset + A, k, j, i) = gauge_rhs.theta[A]
             - ((gauge_reference_subtraction && reference_time_dependent)
-                   ? ReferenceDtTheta(reference, A) : 0.0);
+                   ? ProductionReferenceDtTheta(reference, A) : 0.0);
       }
       for (int p = 0; p < 3; ++p) {
         state_rhs(m, kUpsilonOffset + p, k, j, i) = gauge_rhs.upsilon[p];
@@ -203,30 +235,97 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
   par_for("ref_gh scalar source and pi rhs", DevExeSpace(), 0, nmb - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const ReferenceCachePoint reference{
-        reference_cache, reference_extra, m, k, j, i};
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    const auto reference = MakeTypedProductionReferencePoint<Analytic>(
+        reference_cache, reference_extra, analytic_static, analytic_stage,
+        m, k, j, i, x, y, z, center_x, center_y, center_z);
     Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
     Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
     CoordinateGhGeometry geometry;
     Real determinant = 0.0;
-    if (!LoadPointGeometry(state, reference, m, k, j, i, psi, pi, phi, d_psi,
-                           metric, d_metric, geometry, determinant)) {
+    if (!LoadProductionPointGeometry(state, reference, m, k, j, i, psi, pi,
+                                     phi, d_psi, metric, d_metric, geometry,
+                                     determinant)) {
       for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
       return;
     }
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
+    if (reference_backend == 1 && gauge_driver_enabled) {
+      Real hhat[4];          // NOLINT(runtime/arrays)
+      Real theta[4];         // NOLINT(runtime/arrays)
+      Real upsilon[3];       // NOLINT(runtime/arrays)
+      Real d_hhat[3][4];     // NOLINT(runtime/arrays)
+      ReferenceGaugeBaseline baseline{};
+      if (gauge_reference_subtraction) {
+        baseline = ComputeProductionReferenceGaugeBaseline(reference);
+        if (!baseline.valid) {
+          for (int n = kHhatOffset; n < nvar; ++n) {
+            state_rhs(m, n, k, j, i) = NAN;
+          }
+          return;
+        }
+      }
+      for (int A = 0; A < 4; ++A) {
+        hhat[A] = state(m, kHhatOffset + A, k, j, i)
+                  + (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
+        theta[A] = state(m, kThetaOffset + A, k, j, i)
+                   + (gauge_reference_subtraction ? baseline.theta[A] : 0.0);
+        for (int p = 0; p < 3; ++p) {
+          d_hhat[p][A] = Dx<FDNG>(p, idx, state, m, kHhatOffset + A,
+                                  k, j, i)
+                          + (gauge_reference_subtraction
+                                 ? baseline.d_hhat[p + 1][A] : 0.0);
+        }
+      }
+      for (int p = 0; p < 3; ++p) {
+        upsilon[p] = state(m, kUpsilonOffset + p, k, j, i);
+      }
+      PhysicalGaugeTarget target;
+      if (!ComputePhysicalGaugeTarget(metric, d_metric, geometry, reference,
+                                      upsilon, shift_nu, shift_eta, target)) {
+        for (int n = kHhatOffset; n < nvar; ++n) {
+          state_rhs(m, n, k, j, i) = NAN;
+        }
+        return;
+      }
+      const GaugeDriverRhs gauge_rhs = ComputeGaugeDriverRhs(
+          reference, hhat, theta, upsilon, d_hhat, geometry.shift,
+          target.frame, target.conformal_gamma, gauge_mu, gauge_eta,
+          shift_eta);
+      for (int A = 0; A < 4; ++A) {
+        state_rhs(m, kHhatOffset + A, k, j, i) = gauge_rhs.hhat[A]
+            - (gauge_reference_subtraction ? baseline.d_hhat[0][A] : 0.0);
+        state_rhs(m, kThetaOffset + A, k, j, i) = gauge_rhs.theta[A]
+            - ((gauge_reference_subtraction && reference_time_dependent)
+                   ? ProductionReferenceDtTheta(reference, A) : 0.0);
+      }
+      for (int p = 0; p < 3; ++p) {
+        state_rhs(m, kUpsilonOffset + p, k, j, i) = gauge_rhs.upsilon[p];
+      }
+    }
     Real scalar_source[4][4];  // NOLINT(runtime/arrays)
-    if (source_kind == 0) {
-      if (!CovariantGhScalarWaveSourceProduction(
+    if constexpr (Analytic) {
+      if (!ProductionCovariantScalarWaveSource(
+              psi, pi, phi, reference, geometry, gamma0, scalar_source)) {
+        for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
+        return;
+      }
+    } else if (source_kind == 0) {
+      if (!ProductionCovariantScalarWaveSource(
               psi, pi, phi, reference, geometry, gamma0, scalar_source)) {
         for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
         return;
       }
     } else {
       Real partial_source[4][4];  // NOLINT(runtime/arrays)
-      StandardGhPartialWaveSource(metric, d_metric, reference, geometry, gamma0,
-                                  partial_source);
+      StandardGhPartialWaveSource(metric, d_metric, reference,
+                                  geometry, gamma0, partial_source);
       TransformPartialWaveSource(metric, d_metric, partial_source, d_psi,
                                  reference, geometry, scalar_source);
     }
@@ -235,7 +334,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
       Real d_hhat[4][4];  // NOLINT(runtime/arrays)
       ReferenceGaugeBaseline baseline{};
       if (gauge_reference_subtraction) {
-        baseline = ComputeReferenceGaugeBaseline(reference);
+        baseline = ComputeProductionReferenceGaugeBaseline(reference);
         if (!baseline.valid) {
           for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
           return;
@@ -254,7 +353,7 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
                      ? baseline.d_hhat[p + 1][A] : 0.0);
         }
       }
-      AddOrdinaryGaugePartialWaveSource(
+      AddProductionOrdinaryGaugeSource(
           metric, d_metric, reference, geometry, hhat, d_hhat, gamma0,
           scalar_source);
     }
@@ -345,8 +444,15 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
     par_for("ref_gh compatible phi rhs", DevExeSpace(), 0, nmb - 1,
     indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
     KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-      const ReferenceCachePoint reference{
-          reference_cache, reference_extra, m, k, j, i};
+      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min, size.d_view(m).x1max);
+      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                 size.d_view(m).x2min, size.d_view(m).x2max);
+      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                 size.d_view(m).x3min, size.d_view(m).x3max);
+      const auto reference = MakeTypedProductionReferencePoint<Analytic>(
+          reference_cache, reference_extra, analytic_static, analytic_stage,
+          m, k, j, i, x, y, z, center_x, center_y, center_z);
       const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                            1.0/size.d_view(m).dx3};
       for (int I = 0; I < 3; ++I) {
@@ -372,8 +478,15 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
     par_for("ref_gh standard phi rhs", DevExeSpace(), 0, nmb - 1,
     indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
     KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-      const ReferenceCachePoint reference{
-          reference_cache, reference_extra, m, k, j, i};
+      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min, size.d_view(m).x1max);
+      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                 size.d_view(m).x2min, size.d_view(m).x2max);
+      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                 size.d_view(m).x3min, size.d_view(m).x3max);
+      const auto reference = MakeTypedProductionReferencePoint<Analytic>(
+          reference_cache, reference_extra, analytic_static, analytic_stage,
+          m, k, j, i, x, y, z, center_x, center_y, center_z);
       const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                            1.0/size.d_view(m).dx3};
 
@@ -467,8 +580,15 @@ TaskStatus RefGh::CalcRHS(Driver *driver, int stage) {
     par_for("ref_gh gamma2 reduction damping", DevExeSpace(), 0, nmb - 1,
     indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
     KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-      const ReferenceCachePoint reference{
-          reference_cache, reference_extra, m, k, j, i};
+      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min, size.d_view(m).x1max);
+      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                 size.d_view(m).x2min, size.d_view(m).x2max);
+      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                 size.d_view(m).x3min, size.d_view(m).x3max);
+      const auto reference = MakeTypedProductionReferencePoint<Analytic>(
+          reference_cache, reference_extra, analytic_static, analytic_stage,
+          m, k, j, i, x, y, z, center_x, center_y, center_z);
       const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                            1.0/size.d_view(m).dx3};
       Real psi[4][4];     // NOLINT(runtime/arrays)
@@ -555,6 +675,12 @@ void RefGh::CalcConstraints() {
   const auto constraints = u_con;
   const auto reference_cache = reference_evolution;
   const auto reference_extra = reference_diagnostic;
+  const auto analytic_static = reference_static;
+  const auto analytic_stage = reference_stage;
+  const int reference_backend = opt.reference_backend;
+  const Real center_x = opt.reference_center[0];
+  const Real center_y = opt.reference_center[1];
+  const Real center_z = opt.reference_center[2];
   const int source_kind = opt.source_kind;
   const bool gauge_driver_enabled = opt.gauge_driver_enabled;
   const bool gauge_reference_subtraction = opt.gauge_reference_subtraction;
@@ -564,30 +690,39 @@ void RefGh::CalcConstraints() {
   par_for("ref_gh flat constraints", DevExeSpace(), 0, pmy_pack->nmb_thispack - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    const ReferenceCachePoint reference{
-        reference_cache, reference_extra, m, k, j, i};
+    const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    const ProductionReferencePoint reference = MakeProductionReferencePoint(
+        reference_backend, reference_cache, reference_extra, analytic_static,
+        analytic_stage, m, k, j, i, x, y, z, center_x, center_y, center_z);
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
     Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
     Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
     CoordinateGhGeometry geometry;
     Real determinant = 0.0;
-    if (!LoadPointGeometry(state, reference, m, k, j, i, psi, pi, phi, d_psi,
-                           metric, d_metric, geometry, determinant)) {
+    if (!LoadProductionPointGeometry(state, reference, m, k, j, i, psi, pi,
+                                     phi, d_psi, metric, d_metric, geometry,
+                                     determinant)) {
       for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
       return;
     }
     Real scalar_source[4][4];  // NOLINT(runtime/arrays)
     CovariantSourceSectors source_sectors;
-    if (!CovariantGhScalarWaveSource(psi, pi, phi, reference, geometry, 0.0,
-                                     scalar_source, source_sectors)) {
+    if (!ProductionCovariantScalarWaveSourceDiagnostics(
+            psi, pi, phi, reference, geometry, 0.0, scalar_source,
+            source_sectors)) {
       for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
       return;
     }
     if (source_kind == 0) {
       ReferenceGaugeBaseline baseline{};
       if (gauge_driver_enabled && gauge_reference_subtraction) {
-        baseline = ComputeReferenceGaugeBaseline(reference);
+        baseline = ComputeProductionReferenceGaugeBaseline(reference);
         if (!baseline.valid) {
           for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
           return;
@@ -610,7 +745,7 @@ void RefGh::CalcConstraints() {
     } else {
       ReferenceGaugeBaseline baseline{};
       if (gauge_driver_enabled && gauge_reference_subtraction) {
-        baseline = ComputeReferenceGaugeBaseline(reference);
+        baseline = ComputeProductionReferenceGaugeBaseline(reference);
         if (!baseline.valid) {
           for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
           return;
@@ -643,8 +778,10 @@ void RefGh::CalcConstraints() {
     Real frame_correction2 = 0.0;
     for (int A = 0; A < 4; ++A) {
       for (int B = 0; B < 4; ++B) {
-        frame_ricci2 += ReferenceRicci(reference, A, B)
-                        *ReferenceRicci(reference, A, B);
+        if (reference_backend == 0) {
+          frame_ricci2 += ReferenceRicci(reference.generic, A, B)
+                          *ReferenceRicci(reference.generic, A, B);
+        }
         curvature2 += source_sectors.curvature[A][B]*source_sectors.curvature[A][B];
         qq2 += source_sectors.qq[A][B]*source_sectors.qq[A][B];
         delta_product2 += source_sectors.delta_product[A][B]
@@ -657,18 +794,22 @@ void RefGh::CalcConstraints() {
           delta2 += source_sectors.delta_lower[A][B][C]
                     *source_sectors.delta_lower[A][B][C];
         }
-        Real coordinate_ricci = 0.0;
-        for (int C = 0; C < 4; ++C) {
-          coordinate_ricci += ReferenceDChristoffel(reference, C, C, A, B)
-                              - ReferenceDChristoffel(reference, B, C, A, C);
-          for (int D = 0; D < 4; ++D) {
-            coordinate_ricci += ReferenceChristoffel(reference, C, C, D)
-                                *ReferenceChristoffel(reference, D, A, B)
-                              - ReferenceChristoffel(reference, C, B, D)
-                                *ReferenceChristoffel(reference, D, A, C);
+        if (reference_backend == 0) {
+          Real coordinate_ricci = 0.0;
+          for (int C = 0; C < 4; ++C) {
+            coordinate_ricci +=
+                ReferenceDChristoffel(reference.generic, C, C, A, B)
+                - ReferenceDChristoffel(reference.generic, B, C, A, C);
+            for (int D = 0; D < 4; ++D) {
+              coordinate_ricci +=
+                  ReferenceChristoffel(reference.generic, C, C, D)
+                    *ReferenceChristoffel(reference.generic, D, A, B)
+                  - ReferenceChristoffel(reference.generic, C, B, D)
+                    *ReferenceChristoffel(reference.generic, D, A, C);
+            }
           }
+          coordinate_ricci2 += coordinate_ricci*coordinate_ricci;
         }
-        coordinate_ricci2 += coordinate_ricci*coordinate_ricci;
       }
     }
     constraints(m, kDiagnosticOffset + 0, k, j, i) = Kokkos::sqrt(q2);

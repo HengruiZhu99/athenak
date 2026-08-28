@@ -1,0 +1,87 @@
+# Ref-GH analytic radial-q production checkpoint (2026-08-28)
+
+## Scope and provenance
+
+This checkpoint starts from
+`2d99137ca41de7df12ef1e3234f076b0ef2d8835` on
+`codex/ref-gh-analytic-device-view-performance-20260828`.  It retains the
+accepted 12-Real static and 8-Real stage radial-q representation and does not
+change the radial-q ansatz or the Ref-GH equations.
+
+The generic 1171-Real cache remains an independently dispatched oracle.  The
+analytic backend allocates none of `reference_provider`, `reference_workspace`,
+`reference_evolution`, or `reference_diagnostic`.
+
+## Completed local gates
+
+- Original deterministic coefficient oracle: 216 samples, maximum error
+  `8.88178e-15`.
+- Expanded coefficient oracle: 2160 samples over ten radii from `0.03M` to
+  `5M`, four fixed off-axis directions, and the unchanged q/qdot/qddot matrix;
+  maximum operation-conditioned error `1.48837e-13` against the unchanged
+  `2e-13` threshold.
+- Generated full-geometry oracle: 2376 samples; maximum conditioned error
+  `2.33147e-15` against `256 epsilon`.
+- Generated moving-gauge oracle: 2160 samples.  Maximum conditioned errors are
+  `Hhat=1.16535e-15`, `dHhat=1.07001e-15`, `theta=7.08259e-16`,
+  `dtTheta=3.54866e-17`, and frame motion `1.24829e-14`, all below
+  `256 epsilon`.
+- Complete 61-component RHS oracle: 4320 comparisons covering compatible and
+  standard Phi ordering, gamma0, gamma2, gauge driving, and reference gauge
+  subtraction; maximum conditioned error `2.84217e-14` below `256 epsilon`.
+- Fresh GCC 13.3 / Kokkos Serial build and the existing q-controlled source
+  unit gate pass without weakened tolerances.
+
+The smallest-radius generic gauge contractions are cancellation-conditioned.
+The gates therefore propagate the independent generic contraction operation
+condition, rather than enlarging any tolerance.  Both raw differences and the
+condition scale remain available in the failure telemetry.
+
+## Production integration status
+
+`reference_backend=analytic_radial_q` now allocates exactly 12 static and 8
+stage Reals per ghosted cell.  In the 16-cubed one-block local gate this is
+`1,327,104 + 884,736` bytes, with `generic_bytes=0`.
+
+The production RHS, ADM reconstruction, constraints, and timestep paths build
+compact analytic points from those views.  The covariant scalar source and
+moving gauge baseline call generated contracted expressions and never invoke
+the monolithic `PopulateGeneratedAnalyticRadialQGeometry`, recursive
+`ReferenceSpin`, `ReferenceSpinDerivative`, or `ReferenceRiemann` interfaces.
+The monolithic generated geometry remains oracle-only.
+
+A fixed-q stationary-trumpet RK4 cycle completed locally in both dispatches.
+At the printed precision both gave:
+
+```
+time=2.090302e-02
+field Linf=1.548652e-03
+physical metric Linf=3.693307e-05
+lapse Linf=1.393833e-08
+shift Linf=2.797825e-08
+constraint Linf=4.984912e-03
+```
+
+This is dispatch smoke evidence, not a convergence or performance result.
+
+Disabled fixed-q runs queue no q-measurement task.  Prescribed q evaluates its
+trajectory without physical-state sampling.  Closed-loop q owns a compact
+precomputed eligible-cell/weight list and uses one device reduction and one MPI
+collective.  The former 410-Real workspace estimator is retained only as a
+named oracle method and is not called by production dispatch.
+
+## Claim boundary and remaining work
+
+- Analytic coefficient/geometry qualified locally: **yes**.
+- Mixed-third-derivative moving-gauge path qualified locally: **yes**.
+- All-61-RHS equivalence qualified locally: **yes**.
+- Analytic production allocation integrated locally: **yes**.
+- Aurora PVC eight-rank/eight-tile evolved dynamic-q cycle: **not yet run**.
+- Warmed-up 64-cubed Ref-GH/Z4c performance ratio: **not measured**.
+- Production ready: **no**.
+
+Before a production claim, the analytic dispatch still needs the bounded PVC
+dynamic-q cycle, direct one-rank/eight-rank numerical comparison, task timing,
+and the matched warmed-up Z4c benchmark.  Compiler-guided source splitting or
+team-per-cell experiments are out of scope unless the measured Ref-GH RHS is
+above twice the Z4c RHS.

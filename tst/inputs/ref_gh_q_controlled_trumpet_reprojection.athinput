@@ -37,13 +37,14 @@ ndiag = 1
 
 <ref_gh>
 reference = trumpet_q_controlled
+reference_backend = analytic_radial_q
 source = covariant
 reference_mass = 1.0
 q_gaussian_width = 3.0
 q_initial = 0.9
 q_controller_enabled = false
 fd_order = 4
-validate_reference_cache = true
+validate_reference_cache = false
 gamma0 = 1.0
 gamma2 = 1.0
 gauge_driver_enabled = true
@@ -76,3 +77,7 @@ stationary_region2_max = 0.5
 file_type = hst
 dt = 0.005
 data_format = %20.15e
+
+<output2>
+file_type = rst
+dt = 100.0

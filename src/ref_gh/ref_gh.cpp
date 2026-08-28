@@ -6,19 +6,29 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <string>
+#include <vector>
 
 #include "athena.hpp"
 #include "bvals/bvals.hpp"
 #include "coordinates/adm.hpp"
+#include "coordinates/cell_locations.hpp"
+#include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/feedback_continuation.hpp"
+#include "ref_gh/puncture_exponent.hpp"
 #include "ref_gh/reference_cache.hpp"
+#include "ref_gh/reference_analytic_radial_q.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_provider_cache.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
+
+#if MPI_PARALLEL_ENABLED
+#include <mpi.h>
+#endif
 
 namespace ref_gh {
 
@@ -274,10 +284,9 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     u_rhs("u_rhs ref_gh", 1, 1, 1, 1, 1),
     u_con("u_con ref_gh", 1, 1, 1, 1, 1),
     coarse_u0("coarse u0 ref_gh", 1, 1, 1, 1, 1),
-    reference_provider("ref_gh reference provider", 1, 1, 1, 1, 1),
-    reference_workspace("ref_gh reference workspace", 1, 1, 1, 1, 1),
-    reference_evolution("ref_gh reference evolution", 1, 1, 1, 1, 1),
-    reference_diagnostic("ref_gh reference diagnostic", 1, 1, 1, 1, 1),
+    reference_provider(), reference_workspace(), reference_evolution(),
+    reference_diagnostic(), reference_static(), reference_stage(),
+    q_sample_cells(), q_sample_weights(), q_sample_count(0),
     reference_table("ref_gh reference table", 1, 1),
     reference_cache_time(NAN), reference_diagnostic_time(NAN),
     max_location_diagnostic_time(NAN), max_location_diagnostic_cycle(-1),
@@ -296,6 +305,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     continuation_veto_start_level(-1.0), continuation_veto_last_level(-1.0),
     reference_cache_oracle_validated(false),
     reference_diagnostic_oracle_validated(false),
+    analytic_static_initialized(false),
     dtnew(0.0), max_char_speed(0.0), pmy_pack(ppack), pinput(pin) {
   opt.fd_order = pin->GetOrAddInteger("ref_gh", "fd_order", 4);
   opt.extrap_order = pin->GetOrAddInteger("ref_gh", "extrap_order", 2);
@@ -329,6 +339,24 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       GetReferenceProviderMetadata(opt.reference_kind).time_dependent;
   opt.reference_controlled = opt.reference_kind == 5;
   opt.reference_q_controlled = opt.reference_kind == 7;
+  const std::string reference_backend = pin->GetOrAddString(
+      "ref_gh", "reference_backend", "generic_cache_oracle");
+  if (reference_backend == "generic_cache_oracle") {
+    opt.reference_backend = 0;
+  } else if (reference_backend == "analytic_radial_q") {
+    opt.reference_backend = 1;
+  } else {
+    std::cout << "### FATAL ERROR: ref_gh reference_backend must be "
+                 "generic_cache_oracle or analytic_radial_q."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.reference_backend == 1 && !opt.reference_q_controlled) {
+    std::cout << "### FATAL ERROR: analytic_radial_q requires "
+                 "reference=trumpet_q_controlled."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.controller_enabled =
       pin->GetOrAddBoolean("ref_gh", "controller_enabled", false);
   opt.q_controller_enabled =
@@ -363,6 +391,13 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     opt.source_kind = 1;
   } else {
     std::cout << "### FATAL ERROR: ref_gh source must be covariant or coordinate_oracle."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.reference_backend == 1 && opt.source_kind != 0) {
+    std::cout << "### FATAL ERROR: analytic_radial_q is a covariant-source "
+                 "production backend; coordinate_oracle retains the generic "
+                 "cache backend."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -684,10 +719,115 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   Kokkos::realloc(u1, nmb, nref_gh, n3, n2, n1);
   Kokkos::realloc(u_rhs, nmb, nref_gh, n3, n2, n1);
   Kokkos::realloc(u_con, nmb, ncon, n3, n2, n1);
-  Kokkos::realloc(reference_provider, nmb, kReferenceProviderSize, n3, n2, n1);
-  Kokkos::realloc(reference_workspace, nmb, kReferenceWorkspaceSize, n3, n2, n1);
-  Kokkos::realloc(reference_evolution, nmb, kReferenceEvolutionSize, n3, n2, n1);
-  Kokkos::realloc(reference_diagnostic, nmb, kReferenceDiagnosticSize, n3, n2, n1);
+  if (opt.reference_backend == 1) {
+    Kokkos::realloc(reference_static, nmb, kAnalyticRadialQStaticSize,
+                    n3, n2, n1);
+    Kokkos::realloc(reference_stage, nmb, kAnalyticRadialQStageSize,
+                    n3, n2, n1);
+  } else {
+    Kokkos::realloc(
+        reference_provider, nmb, kReferenceProviderSize, n3, n2, n1);
+    Kokkos::realloc(
+        reference_workspace, nmb, kReferenceWorkspaceSize, n3, n2, n1);
+    Kokkos::realloc(
+        reference_evolution, nmb, kReferenceEvolutionSize, n3, n2, n1);
+    Kokkos::realloc(
+        reference_diagnostic, nmb, kReferenceDiagnosticSize, n3, n2, n1);
+  }
+  if (global_variable::my_rank == 0) {
+    const std::size_t generic_bytes = sizeof(Real)*(
+        reference_provider.size() + reference_workspace.size()
+        + reference_evolution.size() + reference_diagnostic.size());
+    const std::size_t analytic_static_bytes =
+        sizeof(Real)*reference_static.size();
+    const std::size_t analytic_stage_bytes =
+        sizeof(Real)*reference_stage.size();
+    std::cout << "ref_gh reference allocation backend="
+              << (opt.reference_backend == 1
+                      ? "analytic_radial_q" : "generic_cache_oracle")
+              << " generic_bytes=" << generic_bytes
+              << " analytic_static_components="
+              << (opt.reference_backend == 1 ? kAnalyticRadialQStaticSize : 0)
+              << " analytic_stage_components="
+              << (opt.reference_backend == 1 ? kAnalyticRadialQStageSize : 0)
+              << " analytic_static_bytes=" << analytic_static_bytes
+              << " analytic_stage_bytes=" << analytic_stage_bytes
+              << std::endl;
+  }
+  if (opt.reference_q_controlled && opt.q_controller_enabled) {
+    Real h = std::numeric_limits<Real>::max();
+    for (int m = 0; m < ppack->nmb_thispack; ++m) {
+      h = std::min(h, std::min(
+          ppack->pmb->mb_size.h_view(m).dx1,
+          std::min(ppack->pmb->mb_size.h_view(m).dx2,
+                   ppack->pmb->mb_size.h_view(m).dx3)));
+    }
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, &h, 1, MPI_ATHENA_REAL, MPI_MIN,
+                  MPI_COMM_WORLD);
+#endif
+    const int stencil_radius = PunctureEvolutionStencilRadius(
+        opt.fd_order, opt.diss);
+    std::vector<int> cells;
+    std::vector<Real> weights;
+    for (int m = 0; m < ppack->nmb_thispack; ++m) {
+      for (int kk = 0; kk < indcs.nx3; ++kk) {
+        for (int jj = 0; jj < indcs.nx2; ++jj) {
+          for (int ii = 0; ii < indcs.nx1; ++ii) {
+            const Real x = CellCenterX(
+                ii, indcs.nx1, ppack->pmb->mb_size.h_view(m).x1min,
+                ppack->pmb->mb_size.h_view(m).x1max);
+            const Real y = CellCenterX(
+                jj, indcs.nx2, ppack->pmb->mb_size.h_view(m).x2min,
+                ppack->pmb->mb_size.h_view(m).x2max);
+            const Real z = CellCenterX(
+                kk, indcs.nx3, ppack->pmb->mb_size.h_view(m).x3min,
+                ppack->pmb->mb_size.h_view(m).x3max);
+            const Real displacement[3] = {
+                x - opt.reference_center[0], y - opt.reference_center[1],
+                z - opt.reference_center[2]};
+            const Real radius = std::sqrt(
+                displacement[0]*displacement[0]
+                + displacement[1]*displacement[1]
+                + displacement[2]*displacement[2]);
+            if (!InPunctureEstimatorShell(
+                    radius, h, opt.q_gaussian_width*opt.reference_mass)) {
+              continue;
+            }
+            const Real spacing[3] = {
+                ppack->pmb->mb_size.h_view(m).dx1,
+                ppack->pmb->mb_size.h_view(m).dx2,
+                ppack->pmb->mb_size.h_view(m).dx3};
+            if (!PunctureStencilIsClear(
+                    displacement, spacing, stencil_radius)) continue;
+            const int packed = ((m*indcs.nx3 + kk)*indcs.nx2 + jj)
+                               *indcs.nx1 + ii;
+            cells.push_back(packed);
+            weights.push_back(PunctureEstimatorWeight(radius, h));
+          }
+        }
+      }
+    }
+    q_sample_count = static_cast<int>(cells.size());
+    q_sample_cells = DvceArray1D<int>("ref_gh q sample cells", q_sample_count);
+    q_sample_weights =
+        DvceArray1D<Real>("ref_gh q sample weights", q_sample_count);
+    auto host_cells = Kokkos::create_mirror_view(q_sample_cells);
+    auto host_weights = Kokkos::create_mirror_view(q_sample_weights);
+    for (int n = 0; n < q_sample_count; ++n) {
+      host_cells(n) = cells[n];
+      host_weights(n) = weights[n];
+    }
+    Kokkos::deep_copy(q_sample_cells, host_cells);
+    Kokkos::deep_copy(q_sample_weights, host_weights);
+    if (global_variable::my_rank == 0) {
+      std::cout << "ref_gh compact q sample list local_count="
+                << q_sample_count << " bytes="
+                << sizeof(int)*q_sample_cells.size()
+                       + sizeof(Real)*q_sample_weights.size()
+                << std::endl;
+    }
+  }
   Kokkos::deep_copy(u0, 0.0);
   Kokkos::deep_copy(u1, 0.0);
   Kokkos::deep_copy(u_rhs, 0.0);

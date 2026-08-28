@@ -15,12 +15,14 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
+#include "ref_gh/analytic_radial_q_production.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/feedback_continuation.hpp"
 #include "ref_gh/puncture_exponent.hpp"
 #include "ref_gh/q_relaxed_controller.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_cache.hpp"
+#include "ref_gh/reference_analytic_radial_q.hpp"
 #include "ref_gh/reference_gauge_baseline.hpp"
 #include "ref_gh/reference_projection.hpp"
 #include "ref_gh/reference_provider_cache.hpp"
@@ -490,10 +492,18 @@ void RefGh::QueueTasks() {
   auto *pnr = pmy_pack->pnr;
   pnr->QueueTask(&RefGh::InitRecv, this, RefGh_Recv, "RefGh_Recv", Task_Start);
   pnr->QueueTask(&RefGh::CopyU, this, RefGh_CopyU, "RefGh_CopyU", Task_Run);
-  pnr->QueueTask(&RefGh::MeasureController, this, RefGh_MeasureController,
-                 "RefGh_MeasureController", Task_Run, {RefGh_CopyU});
-  pnr->QueueTask(&RefGh::UpdateReferenceGeometry, this, RefGh_UpdateReference,
-                 "RefGh_UpdateReference", Task_Run, {RefGh_MeasureController});
+  if (opt.reference_controlled || opt.q_controller_enabled
+      || opt.q_prescribed_enabled) {
+    pnr->QueueTask(&RefGh::MeasureController, this, RefGh_MeasureController,
+                   "RefGh_MeasureController", Task_Run, {RefGh_CopyU});
+    pnr->QueueTask(&RefGh::UpdateReferenceGeometry, this, RefGh_UpdateReference,
+                   "RefGh_UpdateReference", Task_Run,
+                   {RefGh_MeasureController});
+  } else {
+    // A fixed reference queues no controller/q-measurement task.
+    pnr->QueueTask(&RefGh::UpdateReferenceGeometry, this, RefGh_UpdateReference,
+                   "RefGh_UpdateReference", Task_Run, {RefGh_CopyU});
+  }
   if (opt.fd_order == 2) {
     pnr->QueueTask(&RefGh::CalcRHS<2>, this, RefGh_CalcRHS, "RefGh_CalcRHS",
                    Task_Run, {RefGh_UpdateReference});
@@ -606,12 +616,151 @@ void RefGh::PersistControllerState() {
 TaskStatus RefGh::MeasureController(Driver *driver, const int stage) {
   if (opt.reference_controlled) MeasureControllerAtTime(StageTime(driver, stage));
   if (opt.reference_q_controlled) {
-    MeasureQControllerAtTime(StageTime(driver, stage));
+    const Real stage_time = StageTime(driver, stage);
+    if (opt.q_controller_enabled) {
+      MeasureQControllerAtTime(stage_time);
+    } else {
+      // Disabled and prescribed trajectories need no physical-state sampling.
+      // In particular the analytic backend never touches the unallocated
+      // 410-Real generic workspace merely because q is prescribed.
+      q_controller_rhs = {0.0, 0.0};
+      q_controller_frozen = !opt.q_prescribed_enabled;
+      if (opt.q_prescribed_enabled) {
+        const Real mass = opt.reference_mass;
+        const PrescribedQTrajectory prescribed = EvaluatePrescribedQTrajectory(
+            stage_time, opt.q_prescribed_target,
+            opt.q_prescribed_duration*mass);
+        const Real rate = Kokkos::abs(prescribed.q_dot)*mass;
+        const Real acceleration = Kokkos::abs(prescribed.q_ddot)*mass*mass;
+        if (rate > opt.q_rate_limit
+            || acceleration > opt.q_acceleration_limit) {
+          std::cout << "### FATAL ERROR: prescribed q trajectory exceeds a hard "
+                       "rate/acceleration limit at stage_time=" << stage_time
+                    << " rate*M=" << rate
+                    << " acceleration*M^2=" << acceleration << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        q_controller_rhs = {q_controller.q_dot, prescribed.q_ddot};
+        q_controller_frozen = false;
+      }
+      PersistControllerState();
+    }
   }
   return TaskStatus::complete;
 }
 
 void RefGh::MeasureQControllerAtTime(const Real stage_time) {
+  enum MomentIndex {
+    kW, kW2, kWQ, kWQ2, kWQAnalytic, kWEpsilon, kWEpsilon2,
+    kCount, kInvalid, kMomentCount
+  };
+  static_assert(kMomentCount <= NREDUCTION_VARIABLES,
+                "q-estimator moments exceed the fixed reduction array");
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  auto &size = pmy_pack->pmb->mb_size;
+  const auto state = u0;
+  const auto table = reference_table;
+  const auto cells = q_sample_cells;
+  const auto weights = q_sample_weights;
+  const Real mass = opt.reference_mass;
+  const Real center_x = opt.reference_center[0];
+  const Real center_y = opt.reference_center[1];
+  const Real center_z = opt.reference_center[2];
+  const TrumpetQControlledReferenceParameters parameters{
+      mass, {center_x, center_y, center_z}, opt.q_gaussian_width,
+      q_controller.q, q_controller.q_dot, 0.0};
+  array_sum::GlobalSum sums;
+  Kokkos::parallel_reduce(
+      "ref_gh compact current-q reduction",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, q_sample_count),
+      KOKKOS_LAMBDA(const int sample, array_sum::GlobalSum &total) {
+        int work = cells(sample);
+        const int ii = work % indcs.nx1; work /= indcs.nx1;
+        const int jj = work % indcs.nx2; work /= indcs.nx2;
+        const int kk = work % indcs.nx3;
+        const int m = work/indcs.nx3;
+        const int i = ii + indcs.is;
+        const int j = jj + indcs.js;
+        const int k = kk + indcs.ks;
+        const Real x = CellCenterX(
+            ii, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(
+            jj, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(
+            kk, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
+        Real q_loc = NAN;
+        Real q_analytic = NAN;
+        Real epsilon_g = NAN;
+        if (!EvaluateQControlledPhysicalExponent(
+                state, table, parameters, m, k, j, i, x, y, z,
+                q_loc, q_analytic, epsilon_g)) {
+          total.the_array[kInvalid] += 1.0;
+          return;
+        }
+        const Real weight = weights(sample);
+        total.the_array[kW] += weight;
+        total.the_array[kW2] += weight*weight;
+        total.the_array[kWQ] += weight*q_loc;
+        total.the_array[kWQ2] += weight*q_loc*q_loc;
+        total.the_array[kWQAnalytic] += weight*q_analytic;
+        total.the_array[kWEpsilon] += weight*epsilon_g;
+        total.the_array[kWEpsilon2] += weight*epsilon_g*epsilon_g;
+        total.the_array[kCount] += 1.0;
+      }, Kokkos::Sum<array_sum::GlobalSum>(sums));
+  DebugFence("ref_gh compact q-controller reduction");
+#if MPI_PARALLEL_ENABLED
+  // This is the sole collective in the closed-loop q measurement.
+  MPI_Allreduce(MPI_IN_PLACE, sums.the_array, NREDUCTION_VARIABLES,
+                MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  const Real sum_w = sums.the_array[kW];
+  const bool shell_valid = sums.the_array[kCount] >= 8.0
+      && sums.the_array[kInvalid] == 0.0 && sum_w > 0.0
+      && sums.the_array[kW2] > 0.0 && std::isfinite(sum_w);
+  controller_diagnostics.q_shell_valid = shell_valid;
+  controller_diagnostics.q_cell_count = sums.the_array[kCount];
+  controller_diagnostics.q_est =
+      shell_valid ? sums.the_array[kWQ]/sum_w : NAN;
+  controller_diagnostics.q_analytic =
+      shell_valid ? sums.the_array[kWQAnalytic]/sum_w : NAN;
+  controller_diagnostics.q_variance = shell_valid
+      ? std::max(0.0, sums.the_array[kWQ2]/sum_w
+                         - controller_diagnostics.q_est
+                           *controller_diagnostics.q_est)
+      : NAN;
+  controller_diagnostics.q_effective_sample_size = shell_valid
+      ? sum_w*sum_w/sums.the_array[kW2] : NAN;
+  controller_diagnostics.q_min = NAN;
+  controller_diagnostics.q_max = NAN;
+  controller_diagnostics.epsilon_g_mean = shell_valid
+      ? sums.the_array[kWEpsilon]/sum_w : NAN;
+  controller_diagnostics.epsilon_g_variance = shell_valid
+      ? std::max(0.0, sums.the_array[kWEpsilon2]/sum_w
+                         - controller_diagnostics.epsilon_g_mean
+                           *controller_diagnostics.epsilon_g_mean)
+      : NAN;
+  if (!shell_valid) {
+    std::cout << "### FATAL ERROR: Ref-GH compact q-controller shell is "
+                 "invalid at stage_time=" << stage_time
+              << " count=" << sums.the_array[kCount]
+              << " invalid=" << sums.the_array[kInvalid] << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  const Real omega = opt.q_omega/mass;
+  const Real acceleration_limit = opt.q_acceleration_limit/(mass*mass);
+  const QRelaxedControllerRhs rhs = EvaluateQRelaxedControllerRhs(
+      q_controller.q, q_controller.q_dot, controller_diagnostics.q_est,
+      omega, opt.q_zeta, acceleration_limit);
+  q_controller_rhs = {rhs.q, rhs.q_dot};
+  q_controller_frozen = false;
+  PersistControllerState();
+  DebugFence("ref_gh compact MeasureQController");
+}
+
+// Retained only as a numerical oracle while analytic production qualification
+// is incomplete.  Production dispatch never calls this 410-Real staging path.
+void RefGh::MeasureQControllerLegacyWorkspaceOracleAtTime(
+    const Real stage_time) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   const auto state = u0;
@@ -1406,6 +1555,72 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   const TrumpetQControlledReferenceParameters q_controlled{
       mass, {center_x, center_y, center_z}, opt.q_gaussian_width,
       q_controller.q, q_controller.q_dot, q_controller_rhs.q_dot};
+
+  if (opt.reference_backend == 1) {
+    const auto static_view = reference_static;
+    const auto stage_view = reference_stage;
+    if (!analytic_static_initialized) {
+      Kokkos::parallel_for(
+      "ref_gh analytic radial-q static reference",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
+      KOKKOS_LAMBDA(const int idx) {
+        int work = idx;
+        const int i = work % n1; work /= n1;
+        const int j = work % n2; work /= n2;
+        const int k = work % n3;
+        const int m = work/n3;
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        Real coefficients[kAnalyticRadialQStaticSize];  // NOLINT(runtime/arrays)
+        EvaluateAnalyticRadialQStatic(
+            table, mass, q_controlled.gaussian_width, x, y, z,
+            center_x, center_y, center_z, coefficients);
+        for (int component = 0; component < kAnalyticRadialQStaticSize;
+             ++component) {
+          static_view(m, component, k, j, i) = coefficients[component];
+        }
+      });
+      Kokkos::fence("ref_gh analytic radial-q static reference");
+      analytic_static_initialized = true;
+    }
+    Kokkos::parallel_for(
+    "ref_gh analytic radial-q stage reference",
+    Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
+    KOKKOS_LAMBDA(const int idx) {
+      int work = idx;
+      const int i = work % n1; work /= n1;
+      const int j = work % n2; work /= n2;
+      const int k = work % n3;
+      const int m = work/n3;
+      Real coefficients[kAnalyticRadialQStaticSize];  // NOLINT(runtime/arrays)
+      Real stage[kAnalyticRadialQStageSize];          // NOLINT(runtime/arrays)
+      for (int component = 0; component < kAnalyticRadialQStaticSize;
+           ++component) {
+        coefficients[component] = static_view(m, component, k, j, i);
+      }
+      EvaluateAnalyticRadialQStage(
+          coefficients, q_controlled.q, q_controlled.q_dot,
+          q_controlled.q_ddot, stage);
+      for (int component = 0; component < kAnalyticRadialQStageSize;
+           ++component) {
+        stage_view(m, component, k, j, i) = stage[component];
+      }
+    });
+    Kokkos::fence("ref_gh analytic radial-q stage reference");
+    reference_cache_time = time;
+    reference_cache_generation = current_reference_generation;
+    if (diagnostics_requested) {
+      // Compact gauge/source diagnostics are computed directly from the same
+      // analytic point.  No generic diagnostic view is allocated or filled.
+      reference_diagnostic_time = time;
+      reference_diagnostic_generation = current_reference_generation;
+    }
+    return;
+  }
 
   if (!production_current) {
     // Stage 1: evaluate the provider/profile two-jets once per point.
@@ -2739,6 +2954,12 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
   const auto state = u0;
   const auto reference_cache = reference_evolution;
   const auto reference_extra = reference_diagnostic;
+  const auto analytic_static = reference_static;
+  const auto analytic_stage = reference_stage;
+  const int reference_backend = opt.reference_backend;
+  const Real center_x = opt.reference_center[0];
+  const Real center_y = opt.reference_center[1];
+  const Real center_z = opt.reference_center[2];
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   Kokkos::parallel_reduce(
       "ref_gh dt", Kokkos::RangePolicy<>(DevExeSpace(),
@@ -2749,8 +2970,16 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
         const int k = work % indcs.nx3 + indcs.ks;
         const int m = work/indcs.nx3;
-        const ReferenceCachePoint reference{
-            reference_cache, reference_extra, m, k, j, i};
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min, size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min, size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min, size.d_view(m).x3max);
+        const ProductionReferencePoint reference = MakeProductionReferencePoint(
+            reference_backend, reference_cache, reference_extra,
+            analytic_static, analytic_stage, m, k, j, i, x, y, z,
+            center_x, center_y, center_z);
         Real psi[4][4], metric[4][4];  // NOLINT(runtime/arrays)
         for (int a = 0; a < 4; ++a) {
           for (int b = a; b < 4; ++b) {

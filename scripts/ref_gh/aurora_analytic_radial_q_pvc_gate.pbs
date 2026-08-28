@@ -1,0 +1,156 @@
+#!/bin/bash -l
+# Bounded eight-rank/eight-tile production discriminator for the compact
+# analytic radial-q Ref-GH backend.  No benchmark follows a failed gate.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_analytic_q
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+OUT="${CAMPAIGN_ROOT}/runs/analytic_q_pvc_${PBS_JOBID}"
+EXE="${BUILD}/src/athena"
+SOURCE_INPUT="${SRC}/tst/inputs/ref_gh_q_controlled_reference.athinput"
+EVOLVE_INPUT="${SRC}/tst/inputs/ref_gh_q_controlled_trumpet_reprojection.athinput"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${SOURCE_INPUT}" "${EVOLVE_INPUT}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n 8 --ppn 8 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 8
+test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 8
+
+mkdir source_unit
+cd source_unit
+mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${EXE}" -i "${SOURCE_INPUT}" \
+  ref_gh/reference_backend=analytic_radial_q \
+  ref_gh/validate_reference_cache=false > run.log 2>&1
+grep -q 'expanded analytic radial-q coefficient oracle passed' run.log
+grep -q 'generated analytic radial-q moving gauge oracle passed' run.log
+grep -q 'all-61 analytic radial-q RHS oracle passed' run.log
+grep -q 'generic_bytes=0 analytic_static_components=12 analytic_stage_components=8' run.log
+cd "${OUT}"
+
+run_cycle() {
+  local ranks="$1"
+  local block="$2"
+  local tag="$3"
+  mkdir "${tag}"
+  cd "${tag}"
+  mpiexec -n "${ranks}" --ppn "${ranks}" --depth=8 --cpu-bind depth \
+    gpu_tile_compact.sh "${EXE}" -i "${EVOLVE_INPUT}" \
+    ref_gh/reference_backend=analytic_radial_q \
+    ref_gh/validate_reference_cache=false \
+    ref_gh/q_controller_enabled=true \
+    ref_gh/debug_task_fences=true \
+    meshblock/nx1="${block}" meshblock/nx2="${block}" meshblock/nx3="${block}" \
+    time/nlim=1 time/tlim=1.0 output1/dt=0.005 output2/dt=0.005 \
+    job/basename="${tag}" > run.log 2>&1
+  grep -q 'Terminating on cycle limit' run.log
+  grep -q 'ref_gh debug fence passed: ref_gh compact q-controller reduction' run.log
+  grep -q 'ref_gh debug fence passed: ref_gh CalcRHS' run.log
+  grep -q 'ref_gh debug fence passed: ref_gh NewTimeStep' run.log
+  grep -q 'generic_bytes=0 analytic_static_components=12 analytic_stage_components=8' run.log
+  ! grep -Eiq 'FATAL ERROR|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' run.log
+  cd "${OUT}"
+}
+
+# Identical active grid: one 16^3 block versus eight 8^3 blocks.
+run_cycle 1 16 one_rank
+run_cycle 8 8 eight_rank
+
+python3 - one_rank/one_rank.hst eight_rank/eight_rank.hst <<'PY' \
+  > numerical_comparison.txt
+import math
+import sys
+
+def rows(path):
+    result = []
+    with open(path, encoding="utf-8") as stream:
+        for line in stream:
+            if line.lstrip().startswith("#") or not line.strip():
+                continue
+            result.append([float(value) for value in line.split()])
+    return result
+
+left = rows(sys.argv[1])
+right = rows(sys.argv[2])
+if len(left) != len(right) or not left:
+    raise SystemExit("history row mismatch")
+maximum = 0.0
+for arow, brow in zip(left, right):
+    if len(arow) != len(brow):
+        raise SystemExit("history column mismatch")
+    for a, b in zip(arow, brow):
+        scale = max(1.0, abs(a), abs(b))
+        maximum = max(maximum, abs(a - b)/scale)
+if not math.isfinite(maximum) or maximum > 5.0e-12:
+    raise SystemExit(f"one/eight-rank mismatch {maximum:.17e}")
+print(f"one_eight_rank_conditioned_linf={maximum:.17e}")
+print("tolerance=5.00000000000000000e-12")
+PY
+
+{
+  echo 'result=PASS_BOUNDED_EIGHT_TILE_DYNAMIC_Q_CYCLE'
+  echo 'benchmark=not_run'
+  cat numerical_comparison.txt
+  sha256sum "${EXE}"
+} > gate_status.txt
+find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.hst' \) \
+  -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
