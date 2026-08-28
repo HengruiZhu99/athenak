@@ -114,13 +114,25 @@ named oracle method and is not called by production dispatch.
   geometry.  A local full-output RK cycle is bit-for-bit identical to the saved
   pre-refactor histories for all 447 finite entries, at the unchanged `256
   epsilon` gate.  That correction produced the passing job 8789426 above.
-- Warmed-up 64-cubed Ref-GH/Z4c performance ratio: **not measured**.
+- Warmed-up 64-cubed performance: **measured, unacceptable overall**.  Aurora
+  job 8789453 measured `1.031481e5` active zone-cycles/s for dynamic-q Ref-GH,
+  `1.034160e5` for static Ref-GH, and `7.135298e6` for the matched-grid Z4c
+  hardware control.  Initialization-cancelled complete-stage times give
+  dynamic/static `1.00165` and Ref-GH/Z4c `65.19`.
+
+  The q reduction is `0.0874%` of a dynamic stage and the compact reference
+  update is `0.00672%`, passing their `2%` and `10%` targets.  The directly
+  measured Ref-GH/Z4c RHS ratio is `10.06` without dissipation (`9.62` with
+  dissipation), failing the stretch target.  The projected physical boundary
+  is the larger complete-stage bottleneck at `87.52%`; it still reconstructs
+  two full reference geometries per boundary cell.  See
+  `artifacts/ref_gh_analytic_radial_q_20260828/aurora_performance_8789453.txt`.
 - Production ready: **no**.
 
-Before a production claim, the analytic dispatch still needs task timing and
-the matched warmed-up Z4c benchmark.  Compiler-guided source splitting or
-team-per-cell experiments are out of scope unless the measured Ref-GH RHS is
-above twice the Z4c RHS.
+The measured RHS ratio is above twice Z4c, so compiler-guided source splitting
+or team-per-cell tests are now authorized.  Production readiness still requires
+repair and remeasurement of both the heavily spilled scalar-source/Pi kernel
+and the generic-geometry projected boundary path.
 
 The matched benchmark input now explicitly selects `trumpet_q_controlled` and
 `analytic_radial_q`.  Its closed-loop and static control modes both pass a

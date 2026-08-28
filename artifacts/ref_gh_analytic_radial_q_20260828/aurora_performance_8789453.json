@@ -1,0 +1,49 @@
+{
+  "fractions_of_complete_dynamic_stage": {
+    "analytic_reference": 6.72312549781623e-05,
+    "communication_device_pack_unpack": 0.0004096580836215854,
+    "complete_warmed_stage": 1.0,
+    "dissipation": 0.002031672532658187,
+    "main_rhs_without_dissipation": 0.11730171017304589,
+    "physical_boundary": 0.8751871499408299,
+    "q_control": 0.0008740797927747475,
+    "rk_update": 0.001110254411963457
+  },
+  "limitations": [
+    "One MPI rank on one PVC tile; no inter-rank communication is present.",
+    "Communication timing is device SendBuff/RecvBuff only; host overhead is in the complete-stage residual.",
+    "The synchronized kernel profiles are separate from the unfenced throughput measurements.",
+    "Z4c is a matched grid/hardware execution control, not equal arithmetic work."
+  ],
+  "method": {
+    "active_cells": 262144,
+    "complete_stage_method": "(100-cycle cpu - 20-cycle cpu) / 320 stages",
+    "measured_cycles": 100,
+    "profile_cycles": 20,
+    "profile_method": "separate globally fenced Kokkos kernel profile",
+    "rk_stages_per_cycle": 4,
+    "warmup_cycles": 20
+  },
+  "ratios": {
+    "dynamic_q_over_static_complete_time": 1.001652688372047,
+    "refgh_over_z4c_complete_time": 65.19400748380124,
+    "refgh_over_z4c_rhs_with_dissipation": 9.62386107143682,
+    "refgh_over_z4c_rhs_without_dissipation": 10.062883114576692
+  },
+  "seconds_per_stage": {
+    "analytic_reference": 4.0526876543209874e-05,
+    "communication_device_pack_unpack": 0.0002469411375,
+    "complete_warmed_stage": 0.6027981562500001,
+    "dissipation": 0.0012246884567901233,
+    "main_rhs_without_dissipation": 0.07070925461728395,
+    "physical_boundary": 0.5275612003580247,
+    "q_control": 0.0005268936874999999,
+    "rk_update": 0.0006692593125
+  },
+  "targets": {
+    "dynamic_q_lt_1.10_static": true,
+    "q_control_lt_0.02_stage": true,
+    "reference_lt_0.10_stage": true,
+    "refgh_rhs_le_2_z4c_rhs": false
+  }
+}

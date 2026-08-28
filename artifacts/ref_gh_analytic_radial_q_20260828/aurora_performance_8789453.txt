@@ -1,0 +1,90 @@
+Aurora matched warmed 64^3 analytic Ref-GH/Z4c benchmark: PASS, targets mixed
+Date: 2026-08-28
+Job: 8789453
+Project: CompactBinaryMerger
+Queue: debug
+Node: x4018c6s7b0n0
+Control commit: d554132a5972cfbec4ccfc41855c11b1a1b742f2
+Qualified Ref-GH executable commit: 58db23dcb6055f9fc17c10accbe0dde7746f108e
+State: F
+Exit status: 0
+Wall time: 00:21:20
+
+Run directory:
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_analytic_radial_q_20260828_58db23dc_retry5/runs/analytic_q_performance_8789453.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+
+Method:
+- One MPI rank on one PVC tile, identical 64^3 active grid and RK4/CFL 0.05.
+- Separate 20-cycle warmup and 100-cycle unfenced measured runs.
+- Dynamic-q analytic Ref-GH, static analytic Ref-GH, and mature Z4c control.
+- Separate 20-cycle globally fenced Kokkos profiles; these profile timings are
+  not used as throughput timings.
+- Warmed complete-stage estimates subtract the 20-cycle total from the
+  100-cycle total and divide by the remaining 320 RK stages, cancelling fixed
+  initialization/final-diagnostic costs.
+
+Raw unfenced throughput:
+  dynamic-q Ref-GH = 1.031481e5 active zone-cycles/s
+  static Ref-GH    = 1.034160e5 active zone-cycles/s
+  Z4c              = 7.135298e6 active zone-cycles/s
+
+Warmed complete stage:
+  dynamic-q Ref-GH = 6.027981562500001e-1 s/stage
+  static Ref-GH    = 6.018035625000000e-1 s/stage
+  Z4c              = 9.246220312500001e-3 s/stage
+  dynamic/static time ratio = 1.001652688372047
+  Ref-GH/Z4c complete-stage ratio = 65.19400748380124
+
+Dynamic Ref-GH synchronized device categories:
+  q reduction                 = 5.268936875e-4 s/stage = 0.0874080%
+  analytic stage reference    = 4.052687654e-5 s/call  = 0.0067231%
+  main RHS, no dissipation    = 7.070925462e-2 s/stage = 11.7301710%
+  dissipation                 = 1.224688457e-3 s/stage = 0.2031673%
+  RK update                   = 6.692593125e-4 s/stage = 0.1110254%
+  device SendBuff + RecvBuff = 2.469411375e-4 s/stage = 0.0409658%
+  projected physical boundary= 5.275612004e-1 s/call  = 87.5187150%
+
+RHS comparison:
+  Ref-GH/Z4c without dissipation = 10.062883114576692
+  Ref-GH/Z4c with dissipation    = 9.62386107143682
+
+Target decisions:
+  T_q-control < 0.02 T_stage: PASS
+  T_reference < 0.10 T_stage: PASS
+  T_dynamic-q < 1.10 T_static: PASS
+  Ref-GH RHS / Z4c RHS <= 2: FAIL
+
+The failed RHS stretch target authorizes the prompt's compiler-guided source
+splitting/team-per-cell tests.  IGC reported approximately 1279 spilled Reals
+for the analytic scalar-source/Pi kernel, consistent with its measured cost.
+The larger complete-stage failure is dominated by the projected q-controlled
+physical boundary, which still reconstructs two full ReferenceGeometry objects
+per ghost cell.  This is a measured cost center, not a formulation result.
+
+Limitations:
+- One rank has no inter-rank MPI communication.  The communication category is
+  device pack/unpack only; host/runtime overhead remains in the stage residual.
+- The Z4c run is a matched grid/hardware control, not equal arithmetic work.
+- This is performance evidence only, not convergence or long-time stability.
+
+Preserved compact file SHA-256:
+  performance_summary.tsv
+    d1e3413e1fd52c398c11f4e9f1d4f57db53140c3818890dba021ea706bd969e9
+  benchmark_status.txt
+    0ccd461ed19542ae4ef350d9f24ea16dea320f1f46465f7136c5d0214034f091
+  gpu_mapping.txt
+    8b1fc435ceeaf0c2213b0ab22f4ec7bd2657b3631b98d0ff87062336ca9a363f
+  provenance.txt
+    d3614acec2601634f3494f7c4ef22d16c1e2d2169523350c8f3eab7fd689bfbc
+  configure_z4c.log
+    6ecd418d57693c0ac2737845a91ba8e2fc1fa4015f33ebe9b077f28acc23a382
+  build_z4c.log
+    9faa2ec59143472084caf8662249992f56f978ce6451be37e3f5ae76b746d623
+  refgh_dynamic_kernels.tsv
+    7b17a99f332aad23a0a900e8f4bd3a7a94e55856ab01385db628ee00be1cf49f
+  refgh_static_kernels.tsv
+    ce42520c785054608db09b48f1f4d8bd0316908ee7203c78d8514115c52b569d
+  z4c_kernels.tsv
+    60f7ad2bebf1c82dbd3911a39f985701925283643bb6f67b7ca16d731bf7e67e
+  compact_sha256.txt
+    678883dfdd7f8c10f0584b13fe2eeb9715618a1ac3ef20fcc1e96ed4b2e4aad1

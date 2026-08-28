@@ -43,7 +43,11 @@ prescribed_q_one_cycle_analytic=PASS time=2.090302e-02 field_linf=1.067468e-10 c
 closed_loop_q_one_cycle_analytic=PASS time=2.090302e-02 local_q_sample_count=2112 q_sample_bytes=25344
 
 aurora_pvc_eight_tile_dynamic_q_cycle=PASS job=8789426 one_eight_rank_conditioned_linf=3.88980825583101983e-14 tolerance=5e-12
-matched_64_cubed_performance=NOT_RUN
+matched_64_cubed_performance=PASS job=8789453 dynamic_zone_cycles_per_s=1.031481e5 static_zone_cycles_per_s=1.034160e5 z4c_zone_cycles_per_s=7.135298e6
+performance_targets=q_control_PASS,reference_PASS,dynamic_static_PASS,rhs_stretch_FAIL
+refgh_z4c_rhs_ratio_without_dissipation=10.062883114576692
+refgh_z4c_rhs_ratio_with_dissipation=9.62386107143682
+projected_boundary_fraction_of_dynamic_stage=0.8751871499408299
 production_ready=NO
 
 post_typed_adm_portability_recheck=PASS
