@@ -1,0 +1,40 @@
+result=FAIL_CLOSED_NONFINITE_NATIVE_REF_GH_DIAGNOSTICS
+job=8789862
+queue=debug
+account=CompactBinaryMerger
+node=x4310c1s1b0n0
+source_commit=17b52c0f40887df3289d705740020ee1db02b514
+remote_campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_team_per_cell_20260828_17b52c0f_gate2
+remote_run=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_team_per_cell_20260828_17b52c0f_gate2/runs/analytic_q_pvc_8789862.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+
+The equation-preserving team-size cap fixed the prior SYCL launch failure.
+The one-rank and eight-rank dynamic-q evolved cycles both completed one RK
+cycle, and the eight-rank launch mapped ranks 0--7 to the eight distinct PVC
+tiles 0.0, 0.1, 1.0, 1.1, 2.0, 2.1, 3.0, and 3.1.
+
+The numerical gate nevertheless failed closed.  The native Ref-GH history
+contains NaN for GH-L2sq, Reduction-L2sq, Curl-L2sq and their near-puncture
+counterparts beginning with the t=0 history row.  Source-sector diagnostic
+maxima and the stationary-trumpet constraint maximum retain the invalid
+-DBL_MAX sentinel.  The comparison script therefore stopped with
+"nonfinite Ref-GH history value" and produced an empty
+numerical_comparison.txt.  This is not an intentional prescribed-q NaN.
+
+The physical field observables remain finite and agree at the printed
+precision in the one-rank and eight-rank outputs after the cycle:
+
+  field_Linf=2.05536920919038857e-03
+  physical_metric_Linf=6.50100868746505967e-05
+  physical_lapse_Linf=2.84809452466561197e-07
+  physical_shift_Linf=8.66306288434709525e-08
+
+The compiler still reports approximately 1152, 1148, and 1147 spilled Reals
+for the FDNG=2, 3, and 4 team RHS kernels.  The team conversion therefore did
+not establish the intended register-pressure relief even before performance
+measurement.  No matched benchmark or production pulse was launched.
+
+Compact logs and histories are retained beside this report.  Large restart
+files remain only at the remote_run path above.  Their hashes are recorded in
+team_per_cell_pvc_8789862_remote_sha256.txt.  This attempt does not qualify the
+team-per-cell implementation, PVC full-output evolution, numerical
+equivalence, convergence, long-time stability, or production readiness.
