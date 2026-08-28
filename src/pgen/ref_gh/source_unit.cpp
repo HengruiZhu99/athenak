@@ -15,8 +15,10 @@
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
+#include "ref_gh/analytic_radial_q_source.hpp"
 #include "ref_gh/gamma2_damping.hpp"
 #include "ref_gh/generated/analytic_radial_q_geometry.hpp"
+#include "ref_gh/generated/analytic_radial_q_gauge.hpp"
 #include "ref_gh/gauge_driver.hpp"
 #include "ref_gh/phi_ordering.hpp"
 #include "ref_gh/physical_gauge_target.hpp"
@@ -38,15 +40,439 @@
 
 namespace {
 
+constexpr int kAnalyticOracleRadiusCount = 10;
+constexpr int kAnalyticOracleDirectionCount = 4;
+constexpr int kAnalyticOraclePointCount =
+    kAnalyticOracleRadiusCount*kAnalyticOracleDirectionCount;
+constexpr int kGeneratedAnalyticOriginalPointCount = 4;
+constexpr int kGeneratedAnalyticOraclePointCount =
+    kGeneratedAnalyticOriginalPointCount + kAnalyticOraclePointCount;
+
+KOKKOS_INLINE_FUNCTION
+void AnalyticOraclePoint(const int point, Real &x, Real &y, Real &z) {
+  // Fixed before running the oracle.  Every direction is non-axis-aligned and
+  // normalized.  The radii cover the puncture-adjacent logarithm, the RG=3M
+  // Gaussian transition, and the far-field q-correction tail without r=0.
+  constexpr Real radii[kAnalyticOracleRadiusCount] = {
+      0.03, 0.05, 0.08, 0.125, 0.2, 0.4, 0.8, 1.5, 3.0, 5.0};
+  constexpr Real inv_sqrt_14 = 0.26726124191242438468;
+  constexpr Real directions[kAnalyticOracleDirectionCount][3] = {
+      {inv_sqrt_14, 2.0*inv_sqrt_14, 3.0*inv_sqrt_14},
+      {-2.0/3.0, 1.0/3.0, 2.0/3.0},
+      {2.0*inv_sqrt_14, 3.0*inv_sqrt_14, -inv_sqrt_14},
+      {3.0*inv_sqrt_14, -inv_sqrt_14, -2.0*inv_sqrt_14}};
+  const int direction = point % kAnalyticOracleDirectionCount;
+  const int radial = point/kAnalyticOracleDirectionCount;
+  x = radii[radial]*directions[direction][0];
+  y = radii[radial]*directions[direction][1];
+  z = radii[radial]*directions[direction][2];
+}
+
+KOKKOS_INLINE_FUNCTION
+void GeneratedAnalyticOraclePoint(const int point, Real &x, Real &y, Real &z) {
+  if (point < kGeneratedAnalyticOriginalPointCount) {
+    // Preserve the exact four-point matrix used by the original 216-sample
+    // generated-geometry and recursive-accessor checkpoint.
+    x = 0.31 + 0.071*point;
+    y = -0.43 + 0.053*point;
+    z = 0.27 - 0.037*point;
+    return;
+  }
+  AnalyticOraclePoint(point - kGeneratedAnalyticOriginalPointCount, x, y, z);
+}
+
+KOKKOS_INLINE_FUNCTION
+Real GeneratedRawSpinCondition(const ref_gh::ReferenceGeometry &reference,
+                               const int A, const int B, const int C) {
+  Real condition = 0.0;
+  for (int a = 0; a < 4; ++a) {
+    for (int c = 0; c < 4; ++c) {
+      Real derivative = reference.d_frame[c][B][a];
+      for (int d = 0; d < 4; ++d) {
+        derivative += reference.christoffel[a][c][d]
+                      *reference.frame[B][d];
+      }
+      condition += Kokkos::abs(
+          reference.coframe[A][a]*reference.frame[C][c]*derivative);
+    }
+  }
+  return condition;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real GeneratedSpinCondition(const ref_gh::ReferenceGeometry &reference,
+                            const int A, const int B, const int C) {
+  if (A == B) return 1.0;
+  return 0.5*(GeneratedRawSpinCondition(reference, A, B, C)
+              + GeneratedRawSpinCondition(reference, B, A, C));
+}
+
+KOKKOS_INLINE_FUNCTION
+Real GeneratedRawSpinDerivativeCondition(
+    const ref_gh::ReferenceGeometry &reference, const int D,
+    const int A, const int B, const int C) {
+  Real condition = 0.0;
+  for (int p = 0; p < 4; ++p) {
+    Real coordinate_condition = 0.0;
+    for (int a = 0; a < 4; ++a) {
+      const Real d_coframe =
+          ref_gh::ReferenceCoframeDerivative(reference, p, A, a);
+      for (int c = 0; c < 4; ++c) {
+        Real frame_covariant_derivative = reference.d_frame[c][B][a];
+        Real d_frame_covariant_derivative =
+            reference.dd_frame[p][c][B][a];
+        for (int d = 0; d < 4; ++d) {
+          frame_covariant_derivative +=
+              reference.christoffel[a][c][d]*reference.frame[B][d];
+          d_frame_covariant_derivative +=
+              reference.d_christoffel[p][a][c][d]
+                *reference.frame[B][d]
+              + reference.christoffel[a][c][d]
+                *reference.d_frame[p][B][d];
+        }
+        const Real first_factor =
+            d_coframe*reference.frame[C][c]
+            + reference.coframe[A][a]*reference.d_frame[p][C][c];
+        const Real second_factor =
+            reference.coframe[A][a]*reference.frame[C][c];
+        coordinate_condition +=
+            Kokkos::abs(first_factor*frame_covariant_derivative)
+            + Kokkos::abs(second_factor*d_frame_covariant_derivative);
+      }
+    }
+    condition += Kokkos::abs(reference.frame[D][p])*coordinate_condition;
+  }
+  return condition;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real GeneratedSpinDerivativeCondition(
+    const ref_gh::ReferenceGeometry &reference, const int D,
+    const int A, const int B, const int C) {
+  if (A == B) return 1.0;
+  return 0.5*(GeneratedRawSpinDerivativeCondition(reference, D, A, B, C)
+              + GeneratedRawSpinDerivativeCondition(
+                    reference, D, B, A, C));
+}
+
+KOKKOS_INLINE_FUNCTION
+Real GeneratedRiemannCondition(const ref_gh::ReferenceGeometry &reference,
+                               const int A, const int B,
+                               const int C, const int D) {
+  // Propagate the inner spin/spin-derivative contraction scales.  Near the
+  // puncture a final O(1) curvature component can inherit roundoff from much
+  // larger differentiated-frame terms even when the outer Cartan sum itself
+  // is not strongly cancelling.
+  Real condition = GeneratedSpinDerivativeCondition(reference, C, A, B, D)
+                   + GeneratedSpinDerivativeCondition(reference, D, A, B, C);
+  for (int E = 0; E < 4; ++E) {
+    const Real first_left = reference.spin[A][E][C];
+    const Real first_right = reference.spin[E][B][D];
+    condition += Kokkos::abs(first_left)
+                   *GeneratedSpinCondition(reference, E, B, D)
+                 + Kokkos::abs(first_right)
+                   *GeneratedSpinCondition(reference, A, E, C);
+    const Real second_left = reference.spin[A][E][D];
+    const Real second_right = reference.spin[E][B][C];
+    condition += Kokkos::abs(second_left)
+                   *GeneratedSpinCondition(reference, E, B, C)
+                 + Kokkos::abs(second_right)
+                   *GeneratedSpinCondition(reference, A, E, D);
+    condition += Kokkos::abs(reference.structure4[E][C][D])
+                 *GeneratedSpinCondition(reference, A, B, E);
+  }
+  return condition;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real GeneratedRicciCondition(const ref_gh::ReferenceGeometry &reference,
+                             const int A, const int B) {
+  Real condition = 0.0;
+  for (int C = 0; C < 4; ++C) {
+    condition += GeneratedRiemannCondition(reference, C, A, C, B);
+  }
+  return condition;
+}
+
+// Independent generic-jet oracle for the mixed-third portion of the moving
+// reference gauge subtraction.  This deliberately follows the mature cache
+// update staging and is never used by the analytic production backend.
+KOKKOS_INLINE_FUNCTION
+bool GenericReferenceDtThetaOracle(
+    const ref_gh::ReferenceJet &alpha, const ref_gh::ReferenceJet &psi2,
+    const ref_gh::ReferenceJet &shift_q, const Real displacement[3],
+    const ref_gh::ReferenceGeometry &reference, Real dt_theta[4],
+    Real hhat_condition[4], Real d_hhat_condition[4][4],
+    Real theta_condition[4], Real dt_theta_condition[4]) {
+  const ref_gh::ReferenceJet inverse_alpha = ref_gh::Reciprocal(alpha);
+  const ref_gh::ReferenceJet inverse_psi2 = ref_gh::Reciprocal(psi2);
+  const ref_gh::ReferenceJet coordinates[3] = {
+      ref_gh::CoordinateJet(displacement[0], 1),
+      ref_gh::CoordinateJet(displacement[1], 2),
+      ref_gh::CoordinateJet(displacement[2], 3)};
+  ref_gh::ReferenceJet coframe[4][4];        // NOLINT(runtime/arrays)
+  ref_gh::ReferenceJet frame[4][4];          // NOLINT(runtime/arrays)
+  ref_gh::ReferenceJet metric[4][4];         // NOLINT(runtime/arrays)
+  ref_gh::ReferenceJet inverse_metric[4][4]; // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    for (int a = 0; a < 4; ++a) {
+      coframe[A][a] = ref_gh::ConstantJet(0.0);
+      frame[A][a] = ref_gh::ConstantJet(0.0);
+    }
+  }
+  coframe[0][0] = alpha;
+  frame[0][0] = inverse_alpha;
+  for (int I = 0; I < 3; ++I) {
+    coframe[I + 1][0] = psi2*shift_q*coordinates[I];
+    coframe[I + 1][I + 1] = psi2;
+    frame[0][I + 1] = -(shift_q*coordinates[I]*inverse_alpha);
+    frame[I + 1][I + 1] = inverse_psi2;
+  }
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      metric[a][b] = -(coframe[0][a]*coframe[0][b]);
+      inverse_metric[a][b] = -(frame[0][a]*frame[0][b]);
+      for (int I = 1; I < 4; ++I) {
+        metric[a][b] = metric[a][b] + coframe[I][a]*coframe[I][b];
+        inverse_metric[a][b] =
+            inverse_metric[a][b] + frame[I][a]*frame[I][b];
+      }
+    }
+  }
+
+  Real h_upper[4] = {};       // NOLINT(runtime/arrays)
+  Real d_h_upper[4][4] = {};  // NOLINT(runtime/arrays)
+  Real dt_di_h_upper[3][4] = {};  // NOLINT(runtime/arrays)
+  Real h_upper_condition[4] = {};  // NOLINT(runtime/arrays)
+  Real d_h_upper_condition[4][4] = {};  // NOLINT(runtime/arrays)
+  Real dt_di_h_upper_condition[3][4] = {};  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      for (int c = 0; c < 4; ++c) {
+        h_upper[a] -= inverse_metric[b][c].value
+                      *reference.christoffel[a][b][c];
+        h_upper_condition[a] += Kokkos::abs(
+            inverse_metric[b][c].value*reference.christoffel[a][b][c]);
+        for (int p = 0; p < 4; ++p) {
+          d_h_upper[p][a] -=
+              inverse_metric[b][c].d[p]*reference.christoffel[a][b][c]
+              + inverse_metric[b][c].value
+                *reference.d_christoffel[p][a][b][c];
+          d_h_upper_condition[p][a] += Kokkos::abs(
+              inverse_metric[b][c].d[p]*reference.christoffel[a][b][c])
+              + Kokkos::abs(inverse_metric[b][c].value
+                            *reference.d_christoffel[p][a][b][c]);
+        }
+        for (int spatial = 0; spatial < 3; ++spatial) {
+          const int s = spatial + 1;
+          Real dt_di_christoffel = 0.0;
+          Real dt_di_christoffel_condition = 0.0;
+          for (int ell = 0; ell < 4; ++ell) {
+            const Real first = 0.5*(
+                metric[ell][c].d[b] + metric[ell][b].d[c]
+                - metric[b][c].d[ell]);
+            const Real first_t = 0.5*(
+                metric[ell][c].dd[0][b] + metric[ell][b].dd[0][c]
+                - metric[b][c].dd[0][ell]);
+            const Real first_i = 0.5*(
+                metric[ell][c].dd[s][b] + metric[ell][b].dd[s][c]
+                - metric[b][c].dd[s][ell]);
+            const Real first_ti = 0.5*(
+                metric[ell][c].dt_dd[spatial][b]
+                + metric[ell][b].dt_dd[spatial][c]
+                - metric[b][c].dt_dd[spatial][ell]);
+            dt_di_christoffel +=
+                inverse_metric[a][ell].dd[0][s]*first
+                + inverse_metric[a][ell].d[s]*first_t
+                + inverse_metric[a][ell].d[0]*first_i
+                + inverse_metric[a][ell].value*first_ti;
+            dt_di_christoffel_condition += Kokkos::abs(
+                inverse_metric[a][ell].dd[0][s]*first)
+                + Kokkos::abs(inverse_metric[a][ell].d[s]*first_t)
+                + Kokkos::abs(inverse_metric[a][ell].d[0]*first_i)
+                + Kokkos::abs(inverse_metric[a][ell].value*first_ti);
+          }
+          dt_di_h_upper[spatial][a] -=
+              inverse_metric[b][c].dd[0][s]
+                *reference.christoffel[a][b][c]
+              + inverse_metric[b][c].d[s]
+                *reference.d_christoffel[0][a][b][c]
+              + inverse_metric[b][c].d[0]
+                *reference.d_christoffel[s][a][b][c]
+              + inverse_metric[b][c].value*dt_di_christoffel;
+          dt_di_h_upper_condition[spatial][a] += Kokkos::abs(
+              inverse_metric[b][c].dd[0][s]
+                *reference.christoffel[a][b][c])
+              + Kokkos::abs(inverse_metric[b][c].d[s]
+                            *reference.d_christoffel[0][a][b][c])
+              + Kokkos::abs(inverse_metric[b][c].d[0]
+                            *reference.d_christoffel[s][a][b][c])
+              + Kokkos::abs(inverse_metric[b][c].value)
+                *(Kokkos::abs(dt_di_christoffel)
+                  + dt_di_christoffel_condition);
+        }
+      }
+    }
+  }
+  Real h_lower[4] = {};             // NOLINT(runtime/arrays)
+  Real d_h_lower[4][4] = {};        // NOLINT(runtime/arrays)
+  Real dt_di_h_lower[3][4] = {};    // NOLINT(runtime/arrays)
+  Real h_lower_condition[4] = {};   // NOLINT(runtime/arrays)
+  Real d_h_lower_condition[4][4] = {};  // NOLINT(runtime/arrays)
+  Real dt_di_h_lower_condition[3][4] = {};  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      h_lower[a] += metric[a][b].value*h_upper[b];
+      h_lower_condition[a] += Kokkos::abs(metric[a][b].value)
+          *(Kokkos::abs(h_upper[b]) + h_upper_condition[b]);
+      for (int p = 0; p < 4; ++p) {
+        d_h_lower[p][a] += metric[a][b].d[p]*h_upper[b]
+                           + metric[a][b].value*d_h_upper[p][b];
+        d_h_lower_condition[p][a] +=
+            Kokkos::abs(metric[a][b].d[p])
+              *(Kokkos::abs(h_upper[b]) + h_upper_condition[b])
+            + Kokkos::abs(metric[a][b].value)
+              *(Kokkos::abs(d_h_upper[p][b])
+                + d_h_upper_condition[p][b]);
+      }
+      for (int spatial = 0; spatial < 3; ++spatial) {
+        const int s = spatial + 1;
+        dt_di_h_lower[spatial][a] +=
+            metric[a][b].dd[0][s]*h_upper[b]
+            + metric[a][b].d[s]*d_h_upper[0][b]
+            + metric[a][b].d[0]*d_h_upper[s][b]
+            + metric[a][b].value*dt_di_h_upper[spatial][b];
+        dt_di_h_lower_condition[spatial][a] +=
+            Kokkos::abs(metric[a][b].dd[0][s])
+              *(Kokkos::abs(h_upper[b]) + h_upper_condition[b])
+            + Kokkos::abs(metric[a][b].d[s])
+              *(Kokkos::abs(d_h_upper[0][b])
+                + d_h_upper_condition[0][b])
+            + Kokkos::abs(metric[a][b].d[0])
+              *(Kokkos::abs(d_h_upper[s][b])
+                + d_h_upper_condition[s][b])
+            + Kokkos::abs(metric[a][b].value)
+              *(Kokkos::abs(dt_di_h_upper[spatial][b])
+                + dt_di_h_upper_condition[spatial][b]);
+      }
+    }
+  }
+  Real hhat[4] = {};             // NOLINT(runtime/arrays)
+  Real d_hhat[4][4] = {};        // NOLINT(runtime/arrays)
+  Real dt_di_hhat[3][4] = {};    // NOLINT(runtime/arrays)
+  Real dt_di_hhat_condition[3][4] = {};  // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    hhat_condition[A] = 0.0;
+    theta_condition[A] = 0.0;
+    dt_theta_condition[A] = 0.0;
+    for (int p = 0; p < 4; ++p) d_hhat_condition[p][A] = 0.0;
+    for (int a = 0; a < 4; ++a) {
+      hhat[A] += reference.frame[A][a]*h_lower[a];
+      hhat_condition[A] += Kokkos::abs(reference.frame[A][a])
+          *(Kokkos::abs(h_lower[a]) + h_lower_condition[a]);
+      for (int p = 0; p < 4; ++p) {
+        d_hhat[p][A] += reference.d_frame[p][A][a]*h_lower[a]
+                        + reference.frame[A][a]*d_h_lower[p][a];
+        d_hhat_condition[p][A] +=
+            Kokkos::abs(reference.d_frame[p][A][a])
+              *(Kokkos::abs(h_lower[a]) + h_lower_condition[a])
+            + Kokkos::abs(reference.frame[A][a])
+              *(Kokkos::abs(d_h_lower[p][a])
+                + d_h_lower_condition[p][a]);
+      }
+      for (int spatial = 0; spatial < 3; ++spatial) {
+        const int s = spatial + 1;
+        dt_di_hhat[spatial][A] +=
+            reference.dd_frame[0][s][A][a]*h_lower[a]
+            + reference.d_frame[s][A][a]*d_h_lower[0][a]
+            + reference.d_frame[0][A][a]*d_h_lower[s][a]
+            + reference.frame[A][a]*dt_di_h_lower[spatial][a];
+        dt_di_hhat_condition[spatial][A] +=
+            Kokkos::abs(reference.dd_frame[0][s][A][a])
+              *(Kokkos::abs(h_lower[a]) + h_lower_condition[a])
+            + Kokkos::abs(reference.d_frame[s][A][a])
+              *(Kokkos::abs(d_h_lower[0][a])
+                + d_h_lower_condition[0][a])
+            + Kokkos::abs(reference.d_frame[0][A][a])
+              *(Kokkos::abs(d_h_lower[s][a])
+                + d_h_lower_condition[s][a])
+            + Kokkos::abs(reference.frame[A][a])
+              *(Kokkos::abs(dt_di_h_lower[spatial][a])
+                + dt_di_h_lower_condition[spatial][a]);
+      }
+    }
+  }
+  if (!(inverse_metric[0][0].value < 0.0)) return false;
+  const Real lapse = 1.0/Kokkos::sqrt(-inverse_metric[0][0].value);
+  const Real dt_lapse = 0.5*lapse*lapse*lapse*inverse_metric[0][0].d[0];
+  Real shift[3];     // NOLINT(runtime/arrays)
+  Real dt_shift[3];  // NOLINT(runtime/arrays)
+  for (int spatial = 0; spatial < 3; ++spatial) {
+    const Real inverse0i = inverse_metric[0][spatial + 1].value;
+    shift[spatial] = lapse*lapse*inverse0i;
+    dt_shift[spatial] = 2.0*lapse*dt_lapse*inverse0i
+        + lapse*lapse*inverse_metric[0][spatial + 1].d[0];
+  }
+  for (int A = 0; A < 4; ++A) {
+    dt_theta[A] = 0.0;
+    for (int spatial = 0; spatial < 3; ++spatial) {
+      dt_theta[A] -= dt_shift[spatial]*d_hhat[spatial + 1][A]
+                     + shift[spatial]*dt_di_hhat[spatial][A];
+      theta_condition[A] += Kokkos::abs(shift[spatial])
+          *(Kokkos::abs(d_hhat[spatial + 1][A])
+            + d_hhat_condition[spatial + 1][A]);
+      dt_theta_condition[A] +=
+          Kokkos::abs(dt_shift[spatial])
+            *(Kokkos::abs(d_hhat[spatial + 1][A])
+              + d_hhat_condition[spatial + 1][A])
+          + Kokkos::abs(shift[spatial])
+            *(Kokkos::abs(dt_di_hhat[spatial][A])
+              + dt_di_hhat_condition[spatial][A]);
+    }
+    for (int B = 0; B < 4; ++B) {
+      Real motion = ref_gh::ReferenceFrameMotion(reference, A, 0, B);
+      Real dt_motion = ref_gh::ReferenceDtFrameMotion(reference, A, 0, B);
+      Real motion_condition = Kokkos::abs(motion);
+      Real dt_motion_condition = Kokkos::abs(dt_motion);
+      for (int spatial = 0; spatial < 3; ++spatial) {
+        const Real spatial_motion = ref_gh::ReferenceFrameMotion(
+            reference, A, spatial + 1, B);
+        motion -= shift[spatial]*spatial_motion;
+        const Real dt_spatial_motion = ref_gh::ReferenceDtFrameMotion(
+            reference, A, spatial + 1, B);
+        dt_motion -= dt_shift[spatial]*spatial_motion
+                     + shift[spatial]*dt_spatial_motion;
+        motion_condition += Kokkos::abs(
+            shift[spatial]*spatial_motion);
+        dt_motion_condition += Kokkos::abs(
+            dt_shift[spatial]*spatial_motion)
+            + Kokkos::abs(shift[spatial]*dt_spatial_motion);
+      }
+      dt_theta[A] -= dt_motion*hhat[B] + motion*d_hhat[0][B];
+      theta_condition[A] += motion_condition
+          *(Kokkos::abs(hhat[B]) + hhat_condition[B]);
+      dt_theta_condition[A] +=
+          dt_motion_condition*(Kokkos::abs(hhat[B]) + hhat_condition[B])
+          + motion_condition*(Kokkos::abs(d_hhat[0][B])
+                              + d_hhat_condition[0][B]);
+    }
+    if (!Kokkos::isfinite(dt_theta[A])) return false;
+  }
+  return true;
+}
+
 template <typename Maximum>
 KOKKOS_INLINE_FUNCTION
 void UpdateGeneratedAnalyticOracleMaximum(const Real generated,
                                           const Real generic,
                                           const int category,
-                                          Maximum &maximum) {
+                                          Maximum &maximum,
+                                          const Real conditioning_scale = 1.0,
+                                          const int diagnostic_location = -1) {
   Real scale = 1.0;
   scale = fmax(scale, Kokkos::abs(generated));
   scale = fmax(scale, Kokkos::abs(generic));
+  scale = fmax(scale, conditioning_scale);
   // Keep the production-cache oracle's established contraction-depth scales.
   const Real operation_scale =
       (category == 14 || category == 15) ? 256.0
@@ -57,7 +483,7 @@ void UpdateGeneratedAnalyticOracleMaximum(const Real generated,
                      /(scale*operation_scale);
   if (error > maximum.val) {
     maximum.val = error;
-    maximum.loc = category;
+    maximum.loc = diagnostic_location >= 0 ? diagnostic_location : category;
   }
 }
 
@@ -1043,6 +1469,8 @@ void CheckTrumpetQControlledReference(const DvceArray2D<Real> &table) {
 }
 
 void CheckAnalyticRadialQCoefficients(const DvceArray2D<Real> &table) {
+  // Preserve the accepted 216-point raw-absolute oracle unchanged.  The
+  // expanded radial gate below is additional coverage, not a replacement.
   constexpr int nq = 6;
   constexpr int nrate = 3;
   constexpr int nacceleration = 3;
@@ -1145,18 +1573,32 @@ void CheckAnalyticRadialQCoefficients(const DvceArray2D<Real> &table) {
             << std::endl;
 }
 
-void CheckGeneratedAnalyticRadialQGeometry(const DvceArray2D<Real> &table) {
+KOKKOS_INLINE_FUNCTION
+Real ConditionedAnalyticCoefficientError(const Real analytic,
+                                         const Real generic) {
+  const Real scale = fmax(1.0, fmax(Kokkos::abs(analytic),
+                                   Kokkos::abs(generic)));
+  return Kokkos::abs(analytic - generic)/scale;
+}
+
+void CheckExpandedAnalyticRadialQCoefficients(
+    const DvceArray2D<Real> &table) {
   constexpr int nq = 6;
   constexpr int nrate = 3;
   constexpr int nacceleration = 3;
-  constexpr int npoints = 4;
+  constexpr int npoints = kAnalyticOraclePointCount;
   constexpr int nsamples = nq*nrate*nacceleration*npoints;
-  using MaxLoc = Kokkos::MaxLoc<Real, int>;
-  MaxLoc::value_type maximum;
+  Real maximum = 0.0;
+  Real near_puncture_maximum = 0.0;
+  Real gaussian_transition_maximum = 0.0;
+  Real far_field_maximum = 0.0;
   Kokkos::parallel_reduce(
-      "ref_gh generated analytic radial-q geometry",
+      "ref_gh analytic radial-q coefficients",
       Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
-      KOKKOS_LAMBDA(const int sample, MaxLoc::value_type &local_maximum) {
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum,
+                    Real &local_near_puncture,
+                    Real &local_gaussian_transition,
+                    Real &local_far_field) {
         const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
         const Real q_dot_values[nrate] = {-0.1, 0.0, 0.1};
         const Real q_ddot_values[nacceleration] = {-0.05, 0.0, 0.05};
@@ -1167,10 +1609,143 @@ void CheckGeneratedAnalyticRadialQGeometry(const DvceArray2D<Real> &table) {
         work /= nrate;
         const Real q_ddot = q_ddot_values[work % nacceleration];
         work /= nacceleration;
-        const Real point = static_cast<Real>(work);
-        const Real x = 0.31 + 0.071*point;
-        const Real y = -0.43 + 0.053*point;
-        const Real z = 0.27 - 0.037*point;
+        Real x = 0.0;
+        Real y = 0.0;
+        Real z = 0.0;
+        AnalyticOraclePoint(work, x, y, z);
+        const Real displacement[3] = {x, y, z};
+        const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+
+        Real static_coefficients[ref_gh::kAnalyticRadialQStaticSize];
+        Real stage_coefficients[ref_gh::kAnalyticRadialQStageSize];
+        ref_gh::EvaluateAnalyticRadialQStatic(
+            table, 1.0, 3.0, x, y, z, 0.0, 0.0, 0.0,
+            static_coefficients);
+        ref_gh::EvaluateAnalyticRadialQStage(
+            static_coefficients, q, q_dot, q_ddot, stage_coefficients);
+        const ref_gh::AnalyticRadialScalar analytic_alpha{
+            static_coefficients[ref_gh::kAnalyticAlpha], 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialScalar analytic_l{
+            stage_coefficients[ref_gh::kAnalyticL],
+            stage_coefficients[ref_gh::kAnalyticLT],
+            stage_coefficients[ref_gh::kAnalyticLR],
+            stage_coefficients[ref_gh::kAnalyticLTT],
+            stage_coefficients[ref_gh::kAnalyticLTR],
+            stage_coefficients[ref_gh::kAnalyticLRR],
+            stage_coefficients[ref_gh::kAnalyticLTTR],
+            stage_coefficients[ref_gh::kAnalyticLTRR]};
+        const ref_gh::AnalyticRadialScalar analytic_b{
+            static_coefficients[ref_gh::kAnalyticShiftB], 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBRR], 0.0, 0.0};
+
+        const ref_gh::TrumpetQControlledReferenceParameters parameters{
+            1.0, {0.0, 0.0, 0.0}, 3.0, q, q_dot, q_ddot};
+        ref_gh::ReferenceJet alpha;
+        ref_gh::ReferenceJet spatial_cholesky;
+        ref_gh::ReferenceJet shift_b;
+        ref_gh::TrumpetQControlledProfileJets(
+            table, parameters, x, y, z, alpha, spatial_cholesky, shift_b);
+        const ref_gh::AnalyticRadialScalar analytic[3] = {
+            analytic_alpha, analytic_l, analytic_b};
+        const ref_gh::ReferenceJet generic[3] = {
+            alpha, spatial_cholesky, shift_b};
+        Real sample_maximum = 0.0;
+        for (int scalar = 0; scalar < 3; ++scalar) {
+          sample_maximum = fmax(
+              sample_maximum,
+              ConditionedAnalyticCoefficientError(
+                  analytic[scalar].value, generic[scalar].value));
+          for (int p = 0; p < 4; ++p) {
+            sample_maximum = fmax(
+                sample_maximum,
+                ConditionedAnalyticCoefficientError(
+                    analytic[scalar].D(displacement, radius, p),
+                    generic[scalar].d[p]));
+            for (int r = 0; r < 4; ++r) {
+              sample_maximum = fmax(
+                  sample_maximum,
+                  ConditionedAnalyticCoefficientError(
+                      analytic[scalar].DD(displacement, radius, p, r),
+                      generic[scalar].dd[p][r]));
+            }
+          }
+          for (int i = 0; i < 3; ++i) {
+            for (int p = 0; p < 4; ++p) {
+              sample_maximum = fmax(
+                  sample_maximum,
+                  ConditionedAnalyticCoefficientError(
+                      analytic[scalar].DtDD(
+                          displacement, radius, i, p),
+                      generic[scalar].dt_dd[i][p]));
+            }
+          }
+        }
+        local_maximum = fmax(local_maximum, sample_maximum);
+        const int radial = work/kAnalyticOracleDirectionCount;
+        if (radial <= 3) {
+          local_near_puncture = fmax(local_near_puncture, sample_maximum);
+        }
+        if (radial == 8) {
+          local_gaussian_transition =
+              fmax(local_gaussian_transition, sample_maximum);
+        }
+        if (radial == 9) {
+          local_far_field = fmax(local_far_field, sample_maximum);
+        }
+      }, Kokkos::Max<Real>(maximum),
+      Kokkos::Max<Real>(near_puncture_maximum),
+      Kokkos::Max<Real>(gaussian_transition_maximum),
+      Kokkos::Max<Real>(far_field_maximum));
+  Kokkos::fence();
+  if (!(maximum <= 2.0e-13)) {
+    std::cout << "### FATAL ERROR: expanded analytic radial-q coefficient "
+                 "oracle failed: "
+              << maximum << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH expanded analytic radial-q coefficient oracle "
+               "passed: samples=" << nsamples
+            << " conditioned error=" << maximum
+            << " near-r<=0.125=" << near_puncture_maximum
+            << " gaussian-r=3=" << gaussian_transition_maximum
+            << " far-r=5=" << far_field_maximum
+            << std::endl;
+}
+
+void ReportGeneratedGeometryMismatch(const DvceArray2D<Real> &table,
+                                     const int encoded_location) {
+  const int diagnostic_kind = encoded_location/1000000;
+  if (diagnostic_kind < 1 || diagnostic_kind > 4) return;
+  int work = encoded_location - diagnostic_kind*1000000;
+  const int sample = work/256;
+  work %= 256;
+  const int a = work/64; work %= 64;
+  const int b = work/16; work %= 16;
+  const int c = work/4;
+  const int d = work % 4;
+  DvceArray1D<Real> values("ref_gh generated mismatch values", 12);
+  Kokkos::parallel_for(
+      "ref_gh generated mismatch detail", Kokkos::RangePolicy<>(DevExeSpace(), 0, 1),
+      KOKKOS_LAMBDA(const int) {
+        constexpr int nq = 6;
+        constexpr int nrate = 3;
+        constexpr int nacceleration = 3;
+        const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
+        const Real q_dot_values[nrate] = {-0.1, 0.0, 0.1};
+        const Real q_ddot_values[nacceleration] = {-0.05, 0.0, 0.05};
+        int sample_work = sample;
+        const Real q = q_values[sample_work % nq]; sample_work /= nq;
+        const Real q_dot = q_dot_values[sample_work % nrate];
+        sample_work /= nrate;
+        const Real q_ddot = q_ddot_values[sample_work % nacceleration];
+        sample_work /= nacceleration;
+        Real x = 0.0;
+        Real y = 0.0;
+        Real z = 0.0;
+        GeneratedAnalyticOraclePoint(sample_work, x, y, z);
         const Real displacement[3] = {x, y, z};
         const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
         Real static_coefficients[ref_gh::kAnalyticRadialQStaticSize];
@@ -1203,11 +1778,144 @@ void CheckGeneratedAnalyticRadialQGeometry(const DvceArray2D<Real> &table) {
             generated);
         const ref_gh::AnalyticRadialQPoint accessor{
             analytic_alpha, analytic_l, analytic_b, {x, y, z}, radius};
-        const ref_gh::TrumpetQControlledReferenceParameters parameters{
-            1.0, {0.0, 0.0, 0.0}, 3.0, q, q_dot, q_ddot};
         ref_gh::ReferenceGeometry generic;
-        const ref_gh::TrumpetQControlledReference provider{table, parameters};
-        provider.Populate(0.0, x, y, z, generic);
+        ref_gh::PopulateIsotropicReferenceGeometry(
+            ref_gh::AnalyticRadialScalarOracleJet(accessor, analytic_alpha),
+            ref_gh::AnalyticRadialScalarOracleJet(accessor, analytic_l),
+            ref_gh::AnalyticRadialScalarOracleJet(accessor, analytic_b),
+            x, y, z, 0.0, 0.0, 0.0, generic);
+        if (diagnostic_kind == 2) {
+          values(0) = generated.spin_derivative[a][b][c][d];
+          values(1) = generic.spin_derivative[a][b][c][d];
+          values(2) = GeneratedSpinDerivativeCondition(generic, a, b, c, d);
+        } else if (diagnostic_kind == 1) {
+          values(0) = generated.riemann_frame[a][b][c][d];
+          values(1) = generic.riemann_frame[a][b][c][d];
+          values(2) = GeneratedRiemannCondition(generic, a, b, c, d);
+        } else {
+          values(0) = diagnostic_kind == 3
+              ? generated.d_christoffel[a][b][c][d]
+              : ref_gh::ReferenceDChristoffel(accessor, a, b, c, d);
+          values(1) = generic.d_christoffel[a][b][c][d];
+          values(2) = 1.0;
+        }
+        values(3) = radius;
+        for (int n = 4; n < 12; ++n) values(n) = 0.0;
+        for (int p = 0; p < 4; ++p) {
+          for (int aa = 0; aa < 4; ++aa) {
+            for (int bb = 0; bb < 4; ++bb) {
+              values(4) = fmax(values(4), Kokkos::abs(
+                  generated.metric[aa][bb] - generic.metric[aa][bb]));
+              values(5) = fmax(values(5), Kokkos::abs(
+                  generated.d_metric[p][aa][bb]
+                  - generic.d_metric[p][aa][bb]));
+              values(7) = fmax(values(7), Kokkos::abs(
+                  generated.frame[aa][bb] - generic.frame[aa][bb]));
+              values(8) = fmax(values(8), Kokkos::abs(
+                  generated.d_frame[p][aa][bb]
+                  - generic.d_frame[p][aa][bb]));
+              for (int qq = 0; qq < 4; ++qq) {
+                values(6) = fmax(values(6), Kokkos::abs(
+                    generated.dd_metric[p][qq][aa][bb]
+                    - generic.dd_metric[p][qq][aa][bb]));
+                values(9) = fmax(values(9), Kokkos::abs(
+                    generated.dd_frame[p][qq][aa][bb]
+                    - generic.dd_frame[p][qq][aa][bb]));
+              }
+              values(10) = fmax(values(10), Kokkos::abs(
+                  generated.christoffel[aa][p][bb]
+                  - generic.christoffel[aa][p][bb]));
+              for (int qq = 0; qq < 4; ++qq) {
+                values(11) = fmax(values(11), Kokkos::abs(
+                    generated.d_christoffel[qq][aa][p][bb]
+                    - generic.d_christoffel[qq][aa][p][bb]));
+              }
+            }
+          }
+        }
+      });
+  const auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), values);
+  const char *kind_name = diagnostic_kind == 1 ? "Riemann"
+      : (diagnostic_kind == 2 ? "spin derivative"
+         : (diagnostic_kind == 3 ? "dChristoffel" : "accessor dChristoffel"));
+  std::cout << "generated " << kind_name
+            << " mismatch detail: sample=" << sample
+            << " component=" << a << b << c << d
+            << " radius=" << host(3)
+            << " generated=" << host(0)
+            << " generic=" << host(1)
+            << " condition=" << host(2)
+            << " primitive_abs(metric,dmetric,ddmetric,frame,dframe,ddframe,"
+               "Gamma,dGamma)="
+            << host(4) << "," << host(5) << "," << host(6) << ","
+            << host(7) << "," << host(8) << "," << host(9) << ","
+            << host(10) << "," << host(11) << std::endl;
+}
+
+void CheckGeneratedAnalyticRadialQGeometry(const DvceArray2D<Real> &table) {
+  constexpr int nq = 6;
+  constexpr int nrate = 3;
+  constexpr int nacceleration = 3;
+  constexpr int npoints = kGeneratedAnalyticOraclePointCount;
+  constexpr int nsamples = nq*nrate*nacceleration*npoints;
+  using MaxLoc = Kokkos::MaxLoc<Real, int>;
+  MaxLoc::value_type maximum;
+  Kokkos::parallel_reduce(
+      "ref_gh generated analytic radial-q geometry",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, MaxLoc::value_type &local_maximum) {
+        const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
+        const Real q_dot_values[nrate] = {-0.1, 0.0, 0.1};
+        const Real q_ddot_values[nacceleration] = {-0.05, 0.0, 0.05};
+        int work = sample;
+        const Real q = q_values[work % nq];
+        work /= nq;
+        const Real q_dot = q_dot_values[work % nrate];
+        work /= nrate;
+        const Real q_ddot = q_ddot_values[work % nacceleration];
+        work /= nacceleration;
+        Real x = 0.0;
+        Real y = 0.0;
+        Real z = 0.0;
+        GeneratedAnalyticOraclePoint(work, x, y, z);
+        const Real displacement[3] = {x, y, z};
+        const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+        Real static_coefficients[ref_gh::kAnalyticRadialQStaticSize];
+        Real stage_coefficients[ref_gh::kAnalyticRadialQStageSize];
+        ref_gh::EvaluateAnalyticRadialQStatic(
+            table, 1.0, 3.0, x, y, z, 0.0, 0.0, 0.0,
+            static_coefficients);
+        ref_gh::EvaluateAnalyticRadialQStage(
+            static_coefficients, q, q_dot, q_ddot, stage_coefficients);
+        const ref_gh::AnalyticRadialScalar analytic_alpha{
+            static_coefficients[ref_gh::kAnalyticAlpha], 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialScalar analytic_l{
+            stage_coefficients[ref_gh::kAnalyticL],
+            stage_coefficients[ref_gh::kAnalyticLT],
+            stage_coefficients[ref_gh::kAnalyticLR],
+            stage_coefficients[ref_gh::kAnalyticLTT],
+            stage_coefficients[ref_gh::kAnalyticLTR],
+            stage_coefficients[ref_gh::kAnalyticLRR],
+            stage_coefficients[ref_gh::kAnalyticLTTR],
+            stage_coefficients[ref_gh::kAnalyticLTRR]};
+        const ref_gh::AnalyticRadialScalar analytic_b{
+            static_coefficients[ref_gh::kAnalyticShiftB], 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBRR], 0.0, 0.0};
+        ref_gh::ReferenceGeometry generated;
+        ref_gh::PopulateGeneratedAnalyticRadialQGeometry(
+            analytic_alpha, analytic_l, analytic_b, displacement, radius,
+            generated);
+        const ref_gh::AnalyticRadialQPoint accessor{
+            analytic_alpha, analytic_l, analytic_b, {x, y, z}, radius};
+        ref_gh::ReferenceGeometry generic;
+        ref_gh::PopulateIsotropicReferenceGeometry(
+            ref_gh::AnalyticRadialScalarOracleJet(accessor, analytic_alpha),
+            ref_gh::AnalyticRadialScalarOracleJet(accessor, analytic_l),
+            ref_gh::AnalyticRadialScalarOracleJet(accessor, analytic_b),
+            x, y, z, 0.0, 0.0, 0.0, generic);
         for (int a = 0; a < 4; ++a) {
           for (int b = 0; b < 4; ++b) {
             UpdateGeneratedAnalyticOracleMaximum(
@@ -1218,19 +1926,21 @@ void CheckGeneratedAnalyticRadialQGeometry(const DvceArray2D<Real> &table) {
                 20, local_maximum);
             UpdateGeneratedAnalyticOracleMaximum(
                 generated.ricci_frame[a][b], generic.ricci_frame[a][b], 15,
-                local_maximum);
+                local_maximum, GeneratedRicciCondition(generic, a, b));
             UpdateGeneratedAnalyticOracleMaximum(
                 generated.coframe[a][b], generic.coframe[a][b], 0,
                 local_maximum);
             UpdateGeneratedAnalyticOracleMaximum(
                 generated.frame[a][b], generic.frame[a][b], 1,
                 local_maximum);
-            UpdateGeneratedAnalyticOracleMaximum(
-                ref_gh::ReferenceCoframe(accessor, a, b),
-                generic.coframe[a][b], 0, local_maximum);
-            UpdateGeneratedAnalyticOracleMaximum(
-                ref_gh::ReferenceFrame(accessor, a, b), generic.frame[a][b],
-                1, local_maximum);
+            if (work < kGeneratedAnalyticOriginalPointCount) {
+              UpdateGeneratedAnalyticOracleMaximum(
+                  ref_gh::ReferenceCoframe(accessor, a, b),
+                  generic.coframe[a][b], 0, local_maximum);
+              UpdateGeneratedAnalyticOracleMaximum(
+                  ref_gh::ReferenceFrame(accessor, a, b), generic.frame[a][b],
+                  1, local_maximum);
+            }
             for (int c = 0; c < 4; ++c) {
               UpdateGeneratedAnalyticOracleMaximum(
                   generated.d_metric[c][a][b], generic.d_metric[c][a][b], 20,
@@ -1243,20 +1953,24 @@ void CheckGeneratedAnalyticRadialQGeometry(const DvceArray2D<Real> &table) {
                   generic.christoffel[a][b][c], 16, local_maximum);
               UpdateGeneratedAnalyticOracleMaximum(
                   generated.spin[a][b][c], generic.spin[a][b][c], 18,
-                  local_maximum);
+                  local_maximum,
+                  GeneratedSpinCondition(generic, a, b, c));
               UpdateGeneratedAnalyticOracleMaximum(
                   generated.structure4[a][b][c], generic.structure4[a][b][c],
                   20, local_maximum);
-              UpdateGeneratedAnalyticOracleMaximum(
-                  ref_gh::ReferenceDFrame(accessor, c, a, b),
-                  generic.d_frame[c][a][b], 2, local_maximum);
-              UpdateGeneratedAnalyticOracleMaximum(
-                  ref_gh::ReferenceChristoffel(accessor, a, b, c),
-                  generic.christoffel[a][b][c], 16, local_maximum);
+              if (work < kGeneratedAnalyticOriginalPointCount) {
+                UpdateGeneratedAnalyticOracleMaximum(
+                    ref_gh::ReferenceDFrame(accessor, c, a, b),
+                    generic.d_frame[c][a][b], 2, local_maximum);
+                UpdateGeneratedAnalyticOracleMaximum(
+                    ref_gh::ReferenceChristoffel(accessor, a, b, c),
+                    generic.christoffel[a][b][c], 16, local_maximum);
+              }
               if (sample < 4) {
                 UpdateGeneratedAnalyticOracleMaximum(
                     ref_gh::ReferenceSpin(accessor, a, b, c),
-                    generic.spin[a][b][c], 18, local_maximum);
+                    generic.spin[a][b][c], 18, local_maximum,
+                    GeneratedSpinCondition(generic, a, b, c));
               }
               for (int d = 0; d < 4; ++d) {
                 UpdateGeneratedAnalyticOracleMaximum(
@@ -1264,31 +1978,43 @@ void CheckGeneratedAnalyticRadialQGeometry(const DvceArray2D<Real> &table) {
                     generic.dd_metric[c][d][a][b], 20, local_maximum);
                 UpdateGeneratedAnalyticOracleMaximum(
                     generated.d_christoffel[d][a][b][c],
-                    generic.d_christoffel[d][a][b][c], 17, local_maximum);
+                    generic.d_christoffel[d][a][b][c], 17, local_maximum,
+                    1.0, 3000000 + 256*sample + 64*d + 16*a + 4*b + c);
                 UpdateGeneratedAnalyticOracleMaximum(
                     generated.dd_frame[c][d][a][b],
                     generic.dd_frame[c][d][a][b], 11, local_maximum);
                 UpdateGeneratedAnalyticOracleMaximum(
                     generated.spin_derivative[d][a][b][c],
-                    generic.spin_derivative[d][a][b][c], 19, local_maximum);
+                    generic.spin_derivative[d][a][b][c], 19, local_maximum,
+                    GeneratedSpinDerivativeCondition(
+                        generic, d, a, b, c),
+                    2000000 + 256*sample + 64*d + 16*a + 4*b + c);
                 UpdateGeneratedAnalyticOracleMaximum(
                     generated.riemann_frame[a][b][c][d],
-                    generic.riemann_frame[a][b][c][d], 14, local_maximum);
-                UpdateGeneratedAnalyticOracleMaximum(
-                    ref_gh::ReferenceDDFrame(accessor, c, d, a, b),
-                    generic.dd_frame[c][d][a][b], 11, local_maximum);
-                UpdateGeneratedAnalyticOracleMaximum(
-                    ref_gh::ReferenceDChristoffel(accessor, d, a, b, c),
-                    generic.d_christoffel[d][a][b][c], 17, local_maximum);
+                    generic.riemann_frame[a][b][c][d], 14, local_maximum,
+                    GeneratedRiemannCondition(generic, a, b, c, d),
+                    1000000 + 256*sample + 64*a + 16*b + 4*c + d);
+                if (work < kGeneratedAnalyticOriginalPointCount) {
+                  UpdateGeneratedAnalyticOracleMaximum(
+                      ref_gh::ReferenceDDFrame(accessor, c, d, a, b),
+                      generic.dd_frame[c][d][a][b], 11, local_maximum);
+                  UpdateGeneratedAnalyticOracleMaximum(
+                      ref_gh::ReferenceDChristoffel(accessor, d, a, b, c),
+                      generic.d_christoffel[d][a][b][c], 17, local_maximum,
+                      1.0, 4000000 + 256*sample + 64*d + 16*a + 4*b + c);
+                }
                 if (sample == 0) {
                   UpdateGeneratedAnalyticOracleMaximum(
                       ref_gh::ReferenceSpinDerivative(
                           accessor, d, a, b, c),
                       generic.spin_derivative[d][a][b][c], 19,
-                      local_maximum);
+                      local_maximum,
+                      GeneratedSpinDerivativeCondition(
+                          generic, d, a, b, c));
                   UpdateGeneratedAnalyticOracleMaximum(
                       ref_gh::ReferenceRiemann(accessor, a, b, c, d),
-                      generic.riemann_frame[a][b][c][d], 14, local_maximum);
+                      generic.riemann_frame[a][b][c][d], 14, local_maximum,
+                      GeneratedRiemannCondition(generic, a, b, c, d));
                 }
               }
             }
@@ -1305,22 +2031,26 @@ void CheckGeneratedAnalyticRadialQGeometry(const DvceArray2D<Real> &table) {
             UpdateGeneratedAnalyticOracleMaximum(
                 generated.dt_spatial_frame[i][j],
                 generic.dt_spatial_frame[i][j], 9, local_maximum);
-            UpdateGeneratedAnalyticOracleMaximum(
-                ref_gh::ReferenceSpatialFrame(accessor, i, j),
-                generic.spatial_frame[i][j], 7, local_maximum);
-            UpdateGeneratedAnalyticOracleMaximum(
-                ref_gh::ReferenceSpatialCoframe(accessor, i, j),
-                generic.spatial_coframe[i][j], 8, local_maximum);
-            UpdateGeneratedAnalyticOracleMaximum(
-                ref_gh::ReferenceDtSpatialFrame(accessor, i, j),
-                generic.dt_spatial_frame[i][j], 9, local_maximum);
+            if (work < kGeneratedAnalyticOriginalPointCount) {
+              UpdateGeneratedAnalyticOracleMaximum(
+                  ref_gh::ReferenceSpatialFrame(accessor, i, j),
+                  generic.spatial_frame[i][j], 7, local_maximum);
+              UpdateGeneratedAnalyticOracleMaximum(
+                  ref_gh::ReferenceSpatialCoframe(accessor, i, j),
+                  generic.spatial_coframe[i][j], 8, local_maximum);
+              UpdateGeneratedAnalyticOracleMaximum(
+                  ref_gh::ReferenceDtSpatialFrame(accessor, i, j),
+                  generic.dt_spatial_frame[i][j], 9, local_maximum);
+            }
             for (int k = 0; k < 3; ++k) {
               UpdateGeneratedAnalyticOracleMaximum(
                   generated.structure[i][j][k], generic.structure[i][j][k],
                   10, local_maximum);
-              UpdateGeneratedAnalyticOracleMaximum(
-                  ref_gh::ReferenceStructure(accessor, i, j, k),
-                  generic.structure[i][j][k], 10, local_maximum);
+              if (work < kGeneratedAnalyticOriginalPointCount) {
+                UpdateGeneratedAnalyticOracleMaximum(
+                    ref_gh::ReferenceStructure(accessor, i, j, k),
+                    generic.structure[i][j][k], 10, local_maximum);
+              }
             }
           }
         }
@@ -1328,6 +2058,7 @@ void CheckGeneratedAnalyticRadialQGeometry(const DvceArray2D<Real> &table) {
   Kokkos::fence();
   constexpr Real tolerance = 256.0*std::numeric_limits<Real>::epsilon();
   if (!(maximum.val <= tolerance)) {
+    ReportGeneratedGeometryMismatch(table, maximum.loc);
     std::cout << "### FATAL ERROR: generated analytic radial-q geometry "
               << "oracle failed: " << maximum.val
               << " category=" << maximum.loc
@@ -1338,6 +2069,839 @@ void CheckGeneratedAnalyticRadialQGeometry(const DvceArray2D<Real> &table) {
             << "passed: samples=" << nsamples << " conditioned error="
             << maximum.val << " category=" << maximum.loc
             << std::endl;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real ScaledGaugeOracleError(const Real analytic, const Real generic,
+                            const Real operation_condition = 1.0) {
+  return Kokkos::abs(analytic - generic)
+         /fmax(operation_condition,
+               fmax(1.0, fmax(Kokkos::abs(analytic), Kokkos::abs(generic))));
+}
+
+void CheckGeneratedAnalyticRadialQGauge(const DvceArray2D<Real> &table) {
+  constexpr int nq = 6;
+  constexpr int nrate = 3;
+  constexpr int nacceleration = 3;
+  constexpr int npoints = kAnalyticOraclePointCount;
+  constexpr int nsamples = nq*nrate*nacceleration*npoints;
+  Real maximum_hhat = 0.0;
+  Real maximum_d_hhat = 0.0;
+  Real maximum_theta = 0.0;
+  Real maximum_dt_theta = 0.0;
+  Real maximum_motion = 0.0;
+  Real maximum_r_ge_02 = 0.0;
+  using GaugeMaxLoc = Kokkos::MaxLoc<Real, int>;
+  GaugeMaxLoc::value_type maximum_location;
+  DvceArray1D<Real> gauge_diagnostic("ref_gh gauge diagnostic", 12);
+  Kokkos::parallel_reduce(
+      "ref_gh generated analytic radial-q gauge",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_hhat,
+                    Real &local_d_hhat, Real &local_theta,
+                    Real &local_dt_theta, Real &local_motion,
+                    Real &local_r_ge_02,
+                    GaugeMaxLoc::value_type &local_location) {
+        const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
+        const Real q_dot_values[nrate] = {-0.1, 0.0, 0.1};
+        const Real q_ddot_values[nacceleration] = {-0.05, 0.0, 0.05};
+        int work = sample;
+        const Real q = q_values[work % nq]; work /= nq;
+        const Real q_dot = q_dot_values[work % nrate]; work /= nrate;
+        const Real q_ddot = q_ddot_values[work % nacceleration]; work /= nacceleration;
+        Real x = 0.0;
+        Real y = 0.0;
+        Real z = 0.0;
+        const int radial_index = work/kAnalyticOracleDirectionCount;
+        AnalyticOraclePoint(work, x, y, z);
+        const Real displacement[3] = {x, y, z};
+        const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+        Real static_coefficients[ref_gh::kAnalyticRadialQStaticSize];
+        Real stage_coefficients[ref_gh::kAnalyticRadialQStageSize];
+        ref_gh::EvaluateAnalyticRadialQStatic(
+            table, 1.0, 3.0, x, y, z, 0.0, 0.0, 0.0,
+            static_coefficients);
+        ref_gh::EvaluateAnalyticRadialQStage(
+            static_coefficients, q, q_dot, q_ddot, stage_coefficients);
+        const ref_gh::AnalyticRadialScalar analytic_alpha{
+            static_coefficients[ref_gh::kAnalyticAlpha], 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialScalar analytic_l{
+            stage_coefficients[ref_gh::kAnalyticL],
+            stage_coefficients[ref_gh::kAnalyticLT],
+            stage_coefficients[ref_gh::kAnalyticLR],
+            stage_coefficients[ref_gh::kAnalyticLTT],
+            stage_coefficients[ref_gh::kAnalyticLTR],
+            stage_coefficients[ref_gh::kAnalyticLRR],
+            stage_coefficients[ref_gh::kAnalyticLTTR],
+            stage_coefficients[ref_gh::kAnalyticLTRR]};
+        const ref_gh::AnalyticRadialScalar analytic_b{
+            static_coefficients[ref_gh::kAnalyticShiftB], 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialQGaugeBaseline analytic =
+            ref_gh::PopulateGeneratedAnalyticRadialQGauge(
+                analytic_alpha, analytic_l, analytic_b, displacement, radius);
+        const ref_gh::AnalyticRadialQPoint analytic_point{
+            analytic_alpha, analytic_l, analytic_b, {x, y, z}, radius};
+        const ref_gh::ReferenceJet generic_alpha =
+            ref_gh::AnalyticRadialScalarOracleJet(
+                analytic_point, analytic_alpha);
+        const ref_gh::ReferenceJet generic_l =
+            ref_gh::AnalyticRadialScalarOracleJet(analytic_point, analytic_l);
+        const ref_gh::ReferenceJet generic_b =
+            ref_gh::AnalyticRadialScalarOracleJet(analytic_point, analytic_b);
+        ref_gh::ReferenceGeometry generic_geometry;
+        ref_gh::PopulateIsotropicReferenceGeometry(
+            generic_alpha, generic_l, generic_b, x, y, z,
+            0.0, 0.0, 0.0, generic_geometry);
+        const ref_gh::ReferenceGaugeBaseline generic =
+            ref_gh::ComputeReferenceGaugeBaseline(generic_geometry);
+        Real generic_dt_theta[4];  // NOLINT(runtime/arrays)
+        Real hhat_condition[4];  // NOLINT(runtime/arrays)
+        Real d_hhat_condition[4][4];  // NOLINT(runtime/arrays)
+        Real theta_condition[4];  // NOLINT(runtime/arrays)
+        Real dt_theta_condition[4];  // NOLINT(runtime/arrays)
+        const bool generic_dt_valid = GenericReferenceDtThetaOracle(
+            generic_alpha, generic_l, generic_b, displacement,
+            generic_geometry, generic_dt_theta, hhat_condition,
+            d_hhat_condition, theta_condition, dt_theta_condition);
+        if (!analytic.valid || !generic.valid || !generic_dt_valid) {
+          local_dt_theta = std::numeric_limits<Real>::infinity();
+          return;
+        }
+        if (sample == 143) {
+          gauge_diagnostic(0) = analytic.d_hhat[0][0];
+          gauge_diagnostic(1) = generic.d_hhat[0][0];
+          gauge_diagnostic(2) = analytic.hhat[0];
+          gauge_diagnostic(3) = generic.hhat[0];
+          gauge_diagnostic(4) = analytic.theta[0];
+          gauge_diagnostic(5) = generic.theta[0];
+          gauge_diagnostic(6) = analytic.dt_theta[0];
+          gauge_diagnostic(7) = generic_dt_theta[0];
+          gauge_diagnostic(8) = d_hhat_condition[0][0];
+          gauge_diagnostic(9) = hhat_condition[0];
+          gauge_diagnostic(10) = theta_condition[0];
+          gauge_diagnostic(11) = dt_theta_condition[0];
+        }
+        for (int A = 0; A < 4; ++A) {
+          const Real hhat_error = ScaledGaugeOracleError(
+              analytic.hhat[A], generic.hhat[A], hhat_condition[A]);
+          const Real theta_error = ScaledGaugeOracleError(
+              analytic.theta[A], generic.theta[A], theta_condition[A]);
+          const Real dt_theta_error = ScaledGaugeOracleError(
+              analytic.dt_theta[A], generic_dt_theta[A],
+              dt_theta_condition[A]);
+          local_hhat = fmax(local_hhat, hhat_error);
+          local_theta = fmax(local_theta, theta_error);
+          local_dt_theta = fmax(local_dt_theta, dt_theta_error);
+          if (hhat_error > local_location.val) {
+            local_location.val = hhat_error;
+            local_location.loc = 100*sample + A;
+          }
+          if (theta_error > local_location.val) {
+            local_location.val = theta_error;
+            local_location.loc = 100*sample + 40 + A;
+          }
+          if (dt_theta_error > local_location.val) {
+            local_location.val = dt_theta_error;
+            local_location.loc = 100*sample + 50 + A;
+          }
+          if (radial_index >= 4) {
+            local_r_ge_02 = fmax(local_r_ge_02, ScaledGaugeOracleError(
+                analytic.hhat[A], generic.hhat[A], hhat_condition[A]));
+            local_r_ge_02 = fmax(local_r_ge_02, ScaledGaugeOracleError(
+                analytic.theta[A], generic.theta[A], theta_condition[A]));
+            local_r_ge_02 = fmax(local_r_ge_02, ScaledGaugeOracleError(
+                analytic.dt_theta[A], generic_dt_theta[A],
+                dt_theta_condition[A]));
+          }
+          for (int p = 0; p < 4; ++p) {
+            const Real d_hhat_error = ScaledGaugeOracleError(
+                analytic.d_hhat[p][A], generic.d_hhat[p][A],
+                d_hhat_condition[p][A]);
+            local_d_hhat = fmax(local_d_hhat, d_hhat_error);
+            if (d_hhat_error > local_location.val) {
+              local_location.val = d_hhat_error;
+              local_location.loc = 100*sample + 10 + 4*p + A;
+            }
+            if (radial_index >= 4) {
+              local_r_ge_02 = fmax(local_r_ge_02, ScaledGaugeOracleError(
+                  analytic.d_hhat[p][A], generic.d_hhat[p][A],
+                  d_hhat_condition[p][A]));
+            }
+            for (int B = 0; B < 4; ++B) {
+              local_motion = fmax(local_motion, ScaledGaugeOracleError(
+                  ref_gh::GeneratedAnalyticRadialQFrameMotion(
+                      analytic_alpha, analytic_l, analytic_b, displacement,
+                      radius, A, p, B),
+                  ref_gh::ReferenceFrameMotion(generic_geometry, A, p, B)));
+              local_motion = fmax(local_motion, ScaledGaugeOracleError(
+                  ref_gh::GeneratedAnalyticRadialQDtFrameMotion(
+                      analytic_alpha, analytic_l, analytic_b, displacement,
+                      radius, A, p, B),
+                  ref_gh::ReferenceDtFrameMotion(
+                      generic_geometry, A, p, B)));
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(maximum_hhat),
+      Kokkos::Max<Real>(maximum_d_hhat), Kokkos::Max<Real>(maximum_theta),
+      Kokkos::Max<Real>(maximum_dt_theta), Kokkos::Max<Real>(maximum_motion),
+      Kokkos::Max<Real>(maximum_r_ge_02), GaugeMaxLoc(maximum_location));
+  Kokkos::fence();
+  constexpr Real tolerance =
+      256.0*std::numeric_limits<Real>::epsilon();
+  if (!(maximum_hhat <= tolerance) || !(maximum_d_hhat <= tolerance)
+      || !(maximum_theta <= tolerance) || !(maximum_dt_theta <= tolerance)
+      || !(maximum_motion <= tolerance)) {
+    const auto diagnostic_host = Kokkos::create_mirror_view_and_copy(
+        HostMemSpace(), gauge_diagnostic);
+    std::cout << "generated gauge diagnostic sample=143 dH00="
+              << diagnostic_host(0) << "/" << diagnostic_host(1)
+              << " H0=" << diagnostic_host(2) << "/" << diagnostic_host(3)
+              << " theta0=" << diagnostic_host(4) << "/" << diagnostic_host(5)
+              << " dtTheta0=" << diagnostic_host(6) << "/"
+              << diagnostic_host(7)
+              << " conditions(dH,H,theta,dtTheta)="
+              << diagnostic_host(8) << "," << diagnostic_host(9) << ","
+              << diagnostic_host(10) << "," << diagnostic_host(11)
+              << std::endl;
+    std::cout << "### FATAL ERROR: generated analytic radial-q moving gauge "
+                 "oracle failed: Hhat=" << maximum_hhat
+              << " dHhat=" << maximum_d_hhat
+              << " theta=" << maximum_theta
+              << " dtTheta=" << maximum_dt_theta
+              << " motion=" << maximum_motion
+              << " r>=0.2=" << maximum_r_ge_02
+              << " worst=" << maximum_location.val
+              << " location=" << maximum_location.loc
+              << " tolerance=" << tolerance << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH generated analytic radial-q moving gauge oracle "
+               "passed: samples=" << nsamples
+            << " Hhat=" << maximum_hhat
+            << " dHhat=" << maximum_d_hhat
+            << " theta=" << maximum_theta
+            << " dtTheta=" << maximum_dt_theta
+            << " motion=" << maximum_motion << std::endl;
+}
+
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+bool BuildRhsOracleMetricData(
+    const Reference &reference, const Real psi[4][4],
+    const Real pi[4][4], const Real phi[3][4][4],
+    Real metric[4][4], Real d_metric[4][4][4]) {
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      metric[a][b] = 0.0;
+      for (int A = 0; A < 4; ++A) {
+        for (int B = 0; B < 4; ++B) {
+          metric[a][b] += ref_gh::ReferenceCoframe(reference, A, a)
+                          *ref_gh::ReferenceCoframe(reference, B, b)
+                          *psi[A][B];
+        }
+      }
+    }
+  }
+  Real inverse[4][4];  // NOLINT(runtime/arrays)
+  Real determinant = 0.0;
+  if (!ref_gh::Invert4(metric, inverse, determinant)
+      || !(inverse[0][0] < 0.0)) return false;
+  const Real lapse = 1.0/Kokkos::sqrt(-inverse[0][0]);
+  Real shift[3];  // NOLINT(runtime/arrays)
+  for (int p = 0; p < 3; ++p) {
+    shift[p] = lapse*lapse*inverse[0][p + 1];
+  }
+  Real d_psi[4][4][4];  // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int p = 0; p < 3; ++p) {
+        d_psi[p + 1][A][B] = 0.0;
+        for (int I = 0; I < 3; ++I) {
+          d_psi[p + 1][A][B] +=
+              ref_gh::ReferenceSpatialCoframe(reference, I, p)
+              *phi[I][A][B];
+        }
+      }
+      d_psi[0][A][B] = -lapse*pi[A][B];
+      for (int p = 0; p < 3; ++p) {
+        d_psi[0][A][B] += shift[p]*d_psi[p + 1][A][B];
+      }
+    }
+  }
+  for (int p = 0; p < 4; ++p) {
+    Real frame_corrected[4][4];  // NOLINT(runtime/arrays)
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        frame_corrected[A][B] = d_psi[p][A][B];
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            frame_corrected[A][B] -=
+                (ref_gh::ReferenceDFrame(reference, p, A, a)
+                   *ref_gh::ReferenceFrame(reference, B, b)
+                 + ref_gh::ReferenceFrame(reference, A, a)
+                   *ref_gh::ReferenceDFrame(reference, p, B, b))*metric[a][b];
+          }
+        }
+      }
+    }
+    for (int a = 0; a < 4; ++a) {
+      for (int b = 0; b < 4; ++b) {
+        d_metric[p][a][b] = 0.0;
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            d_metric[p][a][b] +=
+                ref_gh::ReferenceCoframe(reference, A, a)
+                *ref_gh::ReferenceCoframe(reference, B, b)
+                *frame_corrected[A][B];
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+bool BuildGenericRhsOraclePointGeometry(
+    const Reference &reference, const Real psi[4][4],
+    const Real pi[4][4], const Real phi[3][4][4],
+    Real metric[4][4], Real d_metric[4][4][4],
+    ref_gh::CoordinateGhGeometry &geometry, Real &determinant) {
+  return BuildRhsOracleMetricData(
+             reference, psi, pi, phi, metric, d_metric)
+         && ref_gh::ComputeCoordinateGhGeometry(
+             metric, d_metric, reference, geometry, determinant);
+}
+
+KOKKOS_INLINE_FUNCTION
+ref_gh::GaugeDriverRhs CompactAnalyticGaugeDriverRhs(
+    const ref_gh::AnalyticRadialQPoint &reference,
+    const Real hhat[4], const Real theta[4], const Real upsilon[3],
+    const Real d_hhat[3][4], const Real shift[3],
+    const Real target_hhat[4], const Real conformal_gamma[3],
+    const Real mu, const Real eta, const Real eta_beta) {
+  ref_gh::GaugeDriverRhs rhs{};
+  for (int A = 0; A < 4; ++A) {
+    Real shift_d_hhat = 0.0;
+    for (int p = 0; p < 3; ++p) shift_d_hhat += shift[p]*d_hhat[p][A];
+    rhs.hhat[A] = shift_d_hhat - mu*(hhat[A] - target_hhat[A]) + theta[A];
+    rhs.theta[A] = -eta*theta[A] - eta*shift_d_hhat;
+    for (int B = 0; B < 4; ++B) {
+      const Real omega_t = ref_gh::GeneratedAnalyticRadialQFrameMotion(
+          reference.alpha, reference.l, reference.b, reference.displacement,
+          reference.radius, A, 0, B);
+      rhs.hhat[A] += omega_t*hhat[B];
+      rhs.theta[A] += omega_t*theta[B];
+      for (int p = 0; p < 3; ++p) {
+        const Real beta_omega = shift[p]
+            *ref_gh::GeneratedAnalyticRadialQFrameMotion(
+                reference.alpha, reference.l, reference.b,
+                reference.displacement, reference.radius, A, p + 1, B);
+        rhs.hhat[A] -= beta_omega*hhat[B];
+        rhs.theta[A] += eta*beta_omega*hhat[B];
+      }
+    }
+  }
+  for (int p = 0; p < 3; ++p) {
+    rhs.upsilon[p] = conformal_gamma[p] - eta_beta*upsilon[p];
+  }
+  return rhs;
+}
+
+template <bool CompactBackend, typename Reference>
+KOKKOS_INLINE_FUNCTION
+bool EvaluateRhsOraclePoint(
+    const Reference &reference,
+    const ref_gh::AnalyticRadialQPoint &analytic_reference,
+    const int phi_ordering, const int seed,
+    Real rhs[ref_gh::nvar], Real rhs_condition[ref_gh::nvar]) {
+  constexpr Real gamma0 = 0.73;
+  constexpr Real gamma2 = 0.41;
+  constexpr Real gauge_mu = 0.62;
+  constexpr Real gauge_eta = 0.57;
+  constexpr Real shift_nu = 0.83;
+  constexpr Real shift_eta = 0.36;
+  Real psi[4][4], pi[4][4], phi[3][4][4];  // NOLINT(runtime/arrays)
+  Real d_pi[3][4][4], d_phi[3][3][4][4];  // NOLINT(runtime/arrays)
+  Real d_psi_rhs[3][4][4];                 // NOLINT(runtime/arrays)
+  for (int n = 0; n < ref_gh::nvar; ++n) {
+    rhs[n] = 0.0;
+    rhs_condition[n] = 1.0;
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = A; B < 4; ++B) {
+      const int code = 1 + A + 3*B + seed;
+      const Real perturb = 2.0e-4*static_cast<Real>((code % 9) - 4);
+      const Real diagonal = A == B ? (A == 0 ? -1.0 : 1.0) : 0.0;
+      psi[A][B] = psi[B][A] = diagonal + perturb;
+      pi[A][B] = pi[B][A] =
+          3.0e-4*static_cast<Real>(((2*code + 1) % 11) - 5);
+      for (int I = 0; I < 3; ++I) {
+        phi[I][A][B] = phi[I][B][A] =
+            2.0e-4*static_cast<Real>(((code + 4*I) % 13) - 6);
+        d_psi_rhs[I][A][B] = d_psi_rhs[I][B][A] =
+            1.0e-4*static_cast<Real>(((3*code + I) % 15) - 7);
+        d_pi[I][A][B] = d_pi[I][B][A] =
+            1.0e-4*static_cast<Real>(((code + 5*I) % 17) - 8);
+        for (int J = 0; J < 3; ++J) {
+          d_phi[I][J][A][B] = d_phi[I][J][B][A] =
+              7.0e-5*static_cast<Real>(
+                  ((2*code + 3*I + J) % 19) - 9);
+        }
+      }
+    }
+  }
+  Real metric[4][4], d_metric[4][4][4];  // NOLINT(runtime/arrays)
+  ref_gh::CoordinateGhGeometry geometry;
+  ref_gh::CompactAnalyticCoordinateGeometry compact_geometry;
+  Real determinant = 0.0;
+  if (!BuildRhsOracleMetricData(
+          reference, psi, pi, phi, metric, d_metric)) return false;
+  if constexpr (CompactBackend) {
+    if (!ref_gh::ComputeCompactAnalyticCoordinateGeometry(
+            metric, d_metric, analytic_reference,
+            compact_geometry, determinant)) return false;
+    geometry = compact_geometry.geometry;
+  } else if (!ref_gh::ComputeCoordinateGhGeometry(
+                 metric, d_metric, reference, geometry, determinant)) {
+    return false;
+  }
+
+  for (int A = 0; A < 4; ++A) {
+    for (int B = A; B < 4; ++B) {
+      Real value = -geometry.lapse*pi[A][B];
+      for (int p = 0; p < 3; ++p) {
+        Real coordinate_d_psi = 0.0;
+        for (int I = 0; I < 3; ++I) {
+          coordinate_d_psi += ref_gh::ReferenceSpatialCoframe(
+              reference, I, p)*phi[I][A][B];
+        }
+        value += geometry.shift[p]*coordinate_d_psi;
+      }
+      rhs[ref_gh::PsiIndex(A, B)] = value;
+    }
+  }
+
+  Real delta_hhat[4], delta_theta[4], upsilon[3];  // NOLINT(runtime/arrays)
+  Real d_delta_hhat[3][4];                         // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    delta_hhat[A] = 1.0e-3*static_cast<Real>(((seed + 2*A) % 9) - 4);
+    delta_theta[A] = 8.0e-4*static_cast<Real>(((seed + 3*A) % 11) - 5);
+    for (int p = 0; p < 3; ++p) {
+      d_delta_hhat[p][A] =
+          6.0e-4*static_cast<Real>(((seed + A + 2*p) % 13) - 6);
+    }
+  }
+  for (int p = 0; p < 3; ++p) {
+    upsilon[p] = 7.0e-4*static_cast<Real>(((seed + 4*p) % 7) - 3);
+  }
+  Real hhat[4], theta[4], d_hhat_spatial[3][4];  // NOLINT(runtime/arrays)
+  Real baseline_d_hhat[4][4];                    // NOLINT(runtime/arrays)
+  Real baseline_dt_theta[4];                     // NOLINT(runtime/arrays)
+  Real gauge_h_condition[4] = {};                // NOLINT(runtime/arrays)
+  Real gauge_dh_condition[4][4] = {};             // NOLINT(runtime/arrays)
+  Real gauge_theta_condition[4] = {};             // NOLINT(runtime/arrays)
+  Real gauge_dt_theta_condition[4] = {};          // NOLINT(runtime/arrays)
+  if constexpr (CompactBackend) {
+    const ref_gh::AnalyticRadialQGaugeBaseline baseline =
+        ref_gh::PopulateGeneratedAnalyticRadialQGauge(
+            analytic_reference.alpha, analytic_reference.l,
+            analytic_reference.b, analytic_reference.displacement,
+            analytic_reference.radius);
+    if (!baseline.valid) return false;
+    for (int A = 0; A < 4; ++A) {
+      hhat[A] = delta_hhat[A] + baseline.hhat[A];
+      theta[A] = delta_theta[A] + baseline.theta[A];
+      baseline_dt_theta[A] = baseline.dt_theta[A];
+      for (int p = 0; p < 4; ++p) {
+        baseline_d_hhat[p][A] = baseline.d_hhat[p][A];
+      }
+    }
+  } else {
+    const ref_gh::ReferenceGaugeBaseline baseline =
+        ref_gh::ComputeReferenceGaugeBaseline(reference);
+    if (!baseline.valid) return false;
+    Real generic_dt_theta[4];  // NOLINT(runtime/arrays)
+    const ref_gh::ReferenceJet generic_alpha =
+        ref_gh::AnalyticRadialScalarOracleJet(
+            analytic_reference, analytic_reference.alpha);
+    const ref_gh::ReferenceJet generic_l =
+        ref_gh::AnalyticRadialScalarOracleJet(
+            analytic_reference, analytic_reference.l);
+    const ref_gh::ReferenceJet generic_b =
+        ref_gh::AnalyticRadialScalarOracleJet(
+            analytic_reference, analytic_reference.b);
+    if (!GenericReferenceDtThetaOracle(
+            generic_alpha, generic_l, generic_b,
+            analytic_reference.displacement, reference, generic_dt_theta,
+            gauge_h_condition, gauge_dh_condition,
+            gauge_theta_condition, gauge_dt_theta_condition)) return false;
+    for (int A = 0; A < 4; ++A) {
+      hhat[A] = delta_hhat[A] + baseline.hhat[A];
+      theta[A] = delta_theta[A] + baseline.theta[A];
+      baseline_dt_theta[A] = generic_dt_theta[A];
+      for (int p = 0; p < 4; ++p) baseline_d_hhat[p][A] = baseline.d_hhat[p][A];
+    }
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int p = 0; p < 3; ++p) {
+      d_hhat_spatial[p][A] = d_delta_hhat[p][A]
+                             + baseline_d_hhat[p + 1][A];
+    }
+  }
+  ref_gh::PhysicalGaugeTarget target;
+  if (!ref_gh::ComputePhysicalGaugeTarget(
+          metric, d_metric, geometry, reference, upsilon, shift_nu,
+          shift_eta, target)) return false;
+  ref_gh::GaugeDriverRhs gauge_rhs;
+  if constexpr (CompactBackend) {
+    gauge_rhs = CompactAnalyticGaugeDriverRhs(
+        analytic_reference, hhat, theta, upsilon, d_hhat_spatial,
+        geometry.shift, target.frame, target.conformal_gamma,
+        gauge_mu, gauge_eta, shift_eta);
+  } else {
+    gauge_rhs = ref_gh::ComputeGaugeDriverRhs(
+        reference, hhat, theta, upsilon, d_hhat_spatial,
+        geometry.shift, target.frame, target.conformal_gamma,
+        gauge_mu, gauge_eta, shift_eta);
+  }
+  for (int A = 0; A < 4; ++A) {
+    rhs[ref_gh::kHhatOffset + A] = gauge_rhs.hhat[A]
+                                   - baseline_d_hhat[0][A];
+    rhs[ref_gh::kThetaOffset + A] = gauge_rhs.theta[A]
+                                    - baseline_dt_theta[A];
+    if constexpr (!CompactBackend) {
+      Real gauge_condition = gauge_h_condition[A]
+                             + gauge_theta_condition[A];
+      for (int p = 0; p < 4; ++p) {
+        gauge_condition += gauge_dh_condition[p][A];
+      }
+      rhs_condition[ref_gh::kHhatOffset + A] =
+          gauge_condition + gauge_dh_condition[0][A];
+      rhs_condition[ref_gh::kThetaOffset + A] =
+          gauge_condition + gauge_dt_theta_condition[A];
+    }
+  }
+  for (int p = 0; p < 3; ++p) {
+    rhs[ref_gh::kUpsilonOffset + p] = gauge_rhs.upsilon[p];
+  }
+
+  Real scalar_source[4][4];  // NOLINT(runtime/arrays)
+  Real scalar_source_condition[4][4] = {};  // NOLINT(runtime/arrays)
+  if constexpr (CompactBackend) {
+    if (!ref_gh::CompactAnalyticRadialQScalarWaveSource(
+            psi, pi, phi, analytic_reference, geometry,
+            gamma0, scalar_source)) return false;
+  } else {
+    ref_gh::CovariantSourceSectors sectors;
+    if (!ref_gh::CovariantGhScalarWaveSource(
+            psi, pi, phi, reference, geometry,
+            gamma0, scalar_source, sectors)) return false;
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        scalar_source_condition[A][B] =
+            Kokkos::abs(sectors.curvature[A][B])
+            + Kokkos::abs(sectors.qq[A][B])
+            + Kokkos::abs(sectors.delta_product[A][B])
+            + Kokkos::abs(sectors.damping[A][B])
+            + Kokkos::abs(sectors.frame_correction[A][B]);
+      }
+    }
+  }
+  Real full_d_hhat[4][4];  // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    full_d_hhat[0][A] = gauge_rhs.hhat[A];
+    for (int p = 0; p < 3; ++p) {
+      full_d_hhat[p + 1][A] = d_hhat_spatial[p][A];
+    }
+  }
+  if constexpr (CompactBackend) {
+    ref_gh::AddCompactAnalyticOrdinaryGaugeSource(
+        metric, d_metric, analytic_reference, compact_geometry,
+        hhat, full_d_hhat, gamma0, scalar_source);
+  } else {
+    ref_gh::AddOrdinaryGaugePartialWaveSource(
+        metric, d_metric, reference, geometry, hhat, full_d_hhat,
+        gamma0, scalar_source);
+    Real gauge_condition_sum = 0.0;
+    for (int A = 0; A < 4; ++A) {
+      gauge_condition_sum += gauge_h_condition[A]
+                             + gauge_theta_condition[A]
+                             + gauge_dt_theta_condition[A];
+      for (int p = 0; p < 4; ++p) {
+        gauge_condition_sum += gauge_dh_condition[p][A];
+      }
+    }
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        scalar_source_condition[A][B] += gauge_condition_sum;
+      }
+    }
+  }
+
+  Real spatial_inverse[3][3];  // NOLINT(runtime/arrays)
+  Real spatial_determinant = 0.0;
+  if (!ref_gh::InvertSpatial3(metric, spatial_inverse, spatial_determinant)) {
+    return false;
+  }
+  Real spatial_connection[3][3][3] = {};  // NOLINT(runtime/arrays)
+  for (int q = 0; q < 3; ++q) {
+    for (int p = 0; p < 3; ++p) {
+      for (int r = 0; r < 3; ++r) {
+        for (int ell = 0; ell < 3; ++ell) {
+          spatial_connection[q][p][r] += 0.5*spatial_inverse[q][ell]
+              *(d_metric[p + 1][ell + 1][r + 1]
+                + d_metric[r + 1][ell + 1][p + 1]
+                - d_metric[ell + 1][p + 1][r + 1]);
+        }
+      }
+    }
+  }
+  Real trace_k = 0.0;
+  for (int p = 0; p < 3; ++p) {
+    for (int q = 0; q < 3; ++q) {
+      trace_k -= geometry.lapse*spatial_inverse[p][q]
+                 *geometry.christoffel[0][p + 1][q + 1];
+    }
+  }
+  Real d_alpha[3];  // NOLINT(runtime/arrays)
+  for (int p = 0; p < 3; ++p) {
+    Real d_inverse_00 = 0.0;
+    for (int a = 0; a < 4; ++a) {
+      for (int b = 0; b < 4; ++b) {
+        d_inverse_00 -= geometry.inverse_metric[0][a]
+                        *geometry.inverse_metric[0][b]
+                        *d_metric[p + 1][a][b];
+      }
+    }
+    d_alpha[p] = 0.5*geometry.lapse*geometry.lapse*geometry.lapse*d_inverse_00;
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = A; B < 4; ++B) {
+      Real divergence = 0.0;
+      Real lapse_gradient_term = 0.0;
+      for (int p = 0; p < 3; ++p) {
+        for (int q = 0; q < 3; ++q) {
+          Real partial_tilde_phi = 0.0;
+          Real tilde_phi_q = 0.0;
+          for (int I = 0; I < 3; ++I) {
+            partial_tilde_phi +=
+                ref_gh::CoframeDerivative(reference, p + 1, I + 1, q + 1)
+                  *phi[I][A][B]
+                + ref_gh::ReferenceSpatialCoframe(reference, I, q)
+                  *d_phi[p][I][A][B];
+            tilde_phi_q += ref_gh::ReferenceSpatialCoframe(reference, I, q)
+                           *phi[I][A][B];
+          }
+          Real covariant_derivative = partial_tilde_phi;
+          for (int r = 0; r < 3; ++r) {
+            Real tilde_phi_r = 0.0;
+            for (int I = 0; I < 3; ++I) {
+              tilde_phi_r += ref_gh::ReferenceSpatialCoframe(reference, I, r)
+                             *phi[I][A][B];
+            }
+            covariant_derivative -= spatial_connection[r][p][q]*tilde_phi_r;
+          }
+          divergence += spatial_inverse[p][q]*covariant_derivative;
+          lapse_gradient_term += spatial_inverse[p][q]*d_alpha[p]*tilde_phi_q;
+        }
+      }
+      Real pi_rhs = geometry.lapse*(trace_k*pi[A][B] - divergence
+                                    + scalar_source[A][B])
+                    - lapse_gradient_term;
+      for (int p = 0; p < 3; ++p) pi_rhs += geometry.shift[p]*d_pi[p][A][B];
+      rhs[ref_gh::PiIndex(A, B)] = pi_rhs;
+      if constexpr (!CompactBackend) {
+        rhs_condition[ref_gh::PiIndex(A, B)] =
+            Kokkos::abs(geometry.lapse)
+              *(Kokkos::abs(scalar_source[A][B])
+                + scalar_source_condition[A][B])
+            + Kokkos::abs(pi_rhs);
+      }
+    }
+  }
+
+  Real beta_frame[3] = {};            // NOLINT(runtime/arrays)
+  Real structure[3][3][3];            // NOLINT(runtime/arrays)
+  for (int J = 0; J < 3; ++J) {
+    for (int p = 0; p < 3; ++p) {
+      beta_frame[J] += ref_gh::ReferenceSpatialCoframe(reference, J, p)
+                       *geometry.shift[p];
+    }
+    for (int I = 0; I < 3; ++I) {
+      for (int K = 0; K < 3; ++K) {
+        structure[I][J][K] = ref_gh::ReferenceStructure(reference, I, J, K);
+      }
+    }
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = A; B < 4; ++B) {
+      Real frame_derivative[3][3];  // NOLINT(runtime/arrays)
+      for (int I = 0; I < 3; ++I) {
+        for (int J = 0; J < 3; ++J) {
+          frame_derivative[I][J] = 0.0;
+          for (int p = 0; p < 3; ++p) {
+            frame_derivative[I][J] +=
+                ref_gh::ReferenceSpatialFrame(reference, I, p)
+                *d_phi[p][J][A][B];
+          }
+        }
+      }
+      Real phi_values[3] = {phi[0][A][B], phi[1][A][B], phi[2][A][B]};
+      for (int I = 0; I < 3; ++I) {
+        Real phi_rhs = 0.0;
+        for (int p = 0; p < 3; ++p) {
+          phi_rhs += ref_gh::ReferenceSpatialFrame(reference, I, p)
+                     *d_psi_rhs[p][A][B];
+          Real coordinate_d_psi = 0.0;
+          for (int J = 0; J < 3; ++J) {
+            coordinate_d_psi += ref_gh::ReferenceSpatialCoframe(
+                reference, J, p)*phi[J][A][B];
+          }
+          phi_rhs += ref_gh::ReferenceDtSpatialFrame(reference, I, p)
+                     *coordinate_d_psi;
+        }
+        if (phi_ordering != 0) {
+          phi_rhs -= ref_gh::StandardPhiOrderingCorrection(
+              I, beta_frame, frame_derivative, structure, phi_values);
+        }
+        rhs[ref_gh::PhiIndex(I, A, B)] = phi_rhs;
+      }
+      Real coordinate_reduction[3];  // NOLINT(runtime/arrays)
+      Real spatial_frame[3][3];      // NOLINT(runtime/arrays)
+      for (int p = 0; p < 3; ++p) {
+        coordinate_reduction[p] =
+            9.0e-5*static_cast<Real>(((seed + A + B + p) % 11) - 5);
+        for (int I = 0; I < 3; ++I) {
+          coordinate_reduction[p] -= ref_gh::ReferenceSpatialCoframe(
+              reference, I, p)*phi[I][A][B];
+          spatial_frame[I][p] = ref_gh::ReferenceSpatialFrame(reference, I, p);
+        }
+      }
+      const ref_gh::Gamma2DampingRhs damping =
+          ref_gh::ComputeGamma2DampingRhs(
+              geometry.lapse, geometry.shift, coordinate_reduction,
+              spatial_frame, gamma2);
+      rhs[ref_gh::PiIndex(A, B)] += damping.pi;
+      for (int I = 0; I < 3; ++I) {
+        rhs[ref_gh::PhiIndex(I, A, B)] += damping.phi[I];
+      }
+    }
+  }
+  for (int n = 0; n < ref_gh::nvar; ++n) {
+    if (!Kokkos::isfinite(rhs[n])) return false;
+  }
+  return true;
+}
+
+void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
+  constexpr int nq = 6;
+  constexpr int nrate = 3;
+  constexpr int nacceleration = 3;
+  constexpr int npoints = kAnalyticOraclePointCount;
+  constexpr int norderings = 2;
+  constexpr int nsamples = nq*nrate*nacceleration*npoints*norderings;
+  using MaxLoc = Kokkos::MaxLoc<Real, int>;
+  MaxLoc::value_type maximum;
+  Kokkos::parallel_reduce(
+      "ref_gh all-61 analytic radial-q RHS",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, MaxLoc::value_type &local_maximum) {
+        const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
+        const Real q_dot_values[nrate] = {-0.1, 0.0, 0.1};
+        const Real q_ddot_values[nacceleration] = {-0.05, 0.0, 0.05};
+        int work = sample;
+        const int phi_ordering = work % norderings; work /= norderings;
+        const Real q = q_values[work % nq]; work /= nq;
+        const Real q_dot = q_dot_values[work % nrate]; work /= nrate;
+        const Real q_ddot = q_ddot_values[work % nacceleration]; work /= nacceleration;
+        Real x = 0.0;
+        Real y = 0.0;
+        Real z = 0.0;
+        AnalyticOraclePoint(work, x, y, z);
+        const Real displacement[3] = {x, y, z};
+        const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+        Real static_coefficients[ref_gh::kAnalyticRadialQStaticSize];
+        Real stage_coefficients[ref_gh::kAnalyticRadialQStageSize];
+        ref_gh::EvaluateAnalyticRadialQStatic(
+            table, 1.0, 3.0, x, y, z, 0.0, 0.0, 0.0,
+            static_coefficients);
+        ref_gh::EvaluateAnalyticRadialQStage(
+            static_coefficients, q, q_dot, q_ddot, stage_coefficients);
+        const ref_gh::AnalyticRadialScalar analytic_alpha{
+            static_coefficients[ref_gh::kAnalyticAlpha], 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialScalar analytic_l{
+            stage_coefficients[ref_gh::kAnalyticL],
+            stage_coefficients[ref_gh::kAnalyticLT],
+            stage_coefficients[ref_gh::kAnalyticLR],
+            stage_coefficients[ref_gh::kAnalyticLTT],
+            stage_coefficients[ref_gh::kAnalyticLTR],
+            stage_coefficients[ref_gh::kAnalyticLRR],
+            stage_coefficients[ref_gh::kAnalyticLTTR],
+            stage_coefficients[ref_gh::kAnalyticLTRR]};
+        const ref_gh::AnalyticRadialScalar analytic_b{
+            static_coefficients[ref_gh::kAnalyticShiftB], 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialQPoint analytic_reference{
+            analytic_alpha, analytic_l, analytic_b, {x, y, z}, radius};
+        ref_gh::ReferenceGeometry generic_reference;
+        ref_gh::PopulateIsotropicReferenceGeometry(
+            ref_gh::AnalyticRadialScalarOracleJet(
+                analytic_reference, analytic_alpha),
+            ref_gh::AnalyticRadialScalarOracleJet(
+                analytic_reference, analytic_l),
+            ref_gh::AnalyticRadialScalarOracleJet(
+                analytic_reference, analytic_b),
+            x, y, z, 0.0, 0.0, 0.0, generic_reference);
+        Real generic_rhs[ref_gh::nvar];  // NOLINT(runtime/arrays)
+        Real compact_rhs[ref_gh::nvar];  // NOLINT(runtime/arrays)
+        Real generic_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
+        Real compact_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
+        const bool generic_valid = EvaluateRhsOraclePoint<false>(
+            generic_reference, analytic_reference,
+            phi_ordering, sample, generic_rhs, generic_condition);
+        const bool compact_valid = EvaluateRhsOraclePoint<true>(
+            analytic_reference, analytic_reference,
+            phi_ordering, sample, compact_rhs, compact_condition);
+        if (!generic_valid || !compact_valid) {
+          local_maximum.val = std::numeric_limits<Real>::infinity();
+          local_maximum.loc = ref_gh::nvar*sample;
+          return;
+        }
+        for (int n = 0; n < ref_gh::nvar; ++n) {
+          const Real scale = fmax(generic_condition[n], fmax(
+              1.0, fmax(Kokkos::abs(generic_rhs[n]),
+                        Kokkos::abs(compact_rhs[n]))));
+          const Real error = Kokkos::abs(generic_rhs[n] - compact_rhs[n])/scale;
+          if (error > local_maximum.val) {
+            local_maximum.val = error;
+            local_maximum.loc = ref_gh::nvar*sample + n;
+          }
+        }
+      }, MaxLoc(maximum));
+  Kokkos::fence();
+  constexpr Real tolerance =
+      256.0*std::numeric_limits<Real>::epsilon();
+  if (!(maximum.val <= tolerance)) {
+    std::cout << "### FATAL ERROR: all-61 analytic radial-q RHS oracle failed: "
+              << "error=" << maximum.val
+              << " sample=" << maximum.loc/ref_gh::nvar
+              << " component=" << maximum.loc % ref_gh::nvar
+              << " tolerance=" << tolerance << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH all-61 analytic radial-q RHS oracle passed: "
+            << "samples=" << nsamples << " error=" << maximum.val
+            << " compatible+standard Phi" << std::endl;
 }
 
 void CheckTrumpetQReprojection(const DvceArray2D<Real> &table) {
@@ -3233,7 +4797,13 @@ void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) 
         pmy_mesh_->pmb_pack->prefgh->reference_table);
     CheckAnalyticRadialQCoefficients(
         pmy_mesh_->pmb_pack->prefgh->reference_table);
+    CheckExpandedAnalyticRadialQCoefficients(
+        pmy_mesh_->pmb_pack->prefgh->reference_table);
     CheckGeneratedAnalyticRadialQGeometry(
+        pmy_mesh_->pmb_pack->prefgh->reference_table);
+    CheckGeneratedAnalyticRadialQGauge(
+        pmy_mesh_->pmb_pack->prefgh->reference_table);
+    CheckAll61AnalyticRadialQRhs(
         pmy_mesh_->pmb_pack->prefgh->reference_table);
     CheckTrumpetQReprojection(
         pmy_mesh_->pmb_pack->prefgh->reference_table);

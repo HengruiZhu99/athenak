@@ -302,6 +302,30 @@ struct AnalyticRadialQPoint {
   Real radius;
 };
 
+// Oracle adapter only: materialize the generic 33-Real jet at one point so the
+// compact coefficient algebra and the independent generic geometry builder can
+// be tested as two separate stages.  Production must never call this adapter.
+KOKKOS_INLINE_FUNCTION
+ReferenceJet AnalyticRadialScalarOracleJet(
+    const AnalyticRadialQPoint &point,
+    const AnalyticRadialScalar &radial) {
+  ReferenceJet jet;
+  jet.value = radial.value;
+  for (int p = 0; p < 4; ++p) {
+    jet.d[p] = radial.D(point.displacement, point.radius, p);
+    for (int q = 0; q < 4; ++q) {
+      jet.dd[p][q] = radial.DD(point.displacement, point.radius, p, q);
+    }
+  }
+  for (int i = 0; i < 3; ++i) {
+    for (int q = 0; q < 4; ++q) {
+      jet.dt_dd[i][q] =
+          radial.DtDD(point.displacement, point.radius, i, q);
+    }
+  }
+  return jet;
+}
+
 KOKKOS_INLINE_FUNCTION
 AnalyticRadialQPoint MakeAnalyticRadialQPoint(
     const DvceArray5D<Real> &reference_static,
@@ -390,6 +414,45 @@ Real AnalyticCoordinateProductDD(const AnalyticRadialQPoint &point,
 }
 
 KOKKOS_INLINE_FUNCTION
+Real AnalyticCoordinateDtDD(const AnalyticRadialQPoint &point,
+                            const AnalyticRadialScalar &radial,
+                            const int spatial, const int coordinate,
+                            const int q) {
+  const int p = spatial + 1;
+  Real value = radial.DtDD(
+      point.displacement, point.radius, spatial, q)
+      *point.displacement[coordinate];
+  if (q == coordinate + 1) {
+    value += radial.DD(point.displacement, point.radius, 0, p);
+  }
+  if (p == coordinate + 1) {
+    value += radial.DD(point.displacement, point.radius, 0, q);
+  }
+  return value;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real AnalyticCoordinateProductDtDD(
+    const AnalyticRadialQPoint &point,
+    const AnalyticRadialScalar &radial, const int spatial,
+    const int first, const int second, const int q) {
+  const int p = spatial + 1;
+  const Real x_first = point.displacement[first];
+  const Real x_second = point.displacement[second];
+  const Real dt_p = radial.DD(point.displacement, point.radius, 0, p);
+  const Real dt_q = radial.DD(point.displacement, point.radius, 0, q);
+  Real value = radial.DtDD(
+      point.displacement, point.radius, spatial, q)*x_first*x_second;
+  if (p == first + 1) value += dt_q*x_second;
+  if (p == second + 1) value += dt_q*x_first;
+  if (q == first + 1) value += dt_p*x_second;
+  if (q == second + 1) value += dt_p*x_first;
+  if ((p == first + 1 && q == second + 1)
+      || (p == second + 1 && q == first + 1)) value += radial.dt;
+  return value;
+}
+
+KOKKOS_INLINE_FUNCTION
 Real AnalyticMetric(const AnalyticRadialQPoint &point,
                     const int a, const int b) {
   if (a == 0 && b == 0) {
@@ -447,6 +510,27 @@ Real AnalyticDDMetric(const AnalyticRadialQPoint &point, const int p,
 }
 
 KOKKOS_INLINE_FUNCTION
+Real AnalyticDtDDMetric(const AnalyticRadialQPoint &point,
+                        const int spatial, const int q,
+                        const int a, const int b) {
+  if (a == 0 && b == 0) {
+    const AnalyticRadialScalar lb = point.l*point.b;
+    const AnalyticRadialScalar radial_radius2{
+        point.radius*point.radius, 0.0, 2.0*point.radius, 0.0, 0.0,
+        2.0, 0.0, 0.0};
+    return (-(point.alpha*point.alpha) + lb*lb*radial_radius2)
+        .DtDD(point.displacement, point.radius, spatial, q);
+  }
+  if (a == 0 || b == 0) {
+    const int coordinate = (a == 0 ? b : a) - 1;
+    return AnalyticCoordinateDtDD(
+        point, point.l*point.l*point.b, spatial, coordinate, q);
+  }
+  return (a == b) ? (point.l*point.l).DtDD(
+      point.displacement, point.radius, spatial, q) : 0.0;
+}
+
+KOKKOS_INLINE_FUNCTION
 Real AnalyticInverseMetric(const AnalyticRadialQPoint &point,
                            const int a, const int b) {
   const AnalyticRadialScalar inverse_alpha =
@@ -484,6 +568,31 @@ Real AnalyticDInverseMetric(const AnalyticRadialQPoint &point, const int p,
   value -= AnalyticCoordinateProductD(
       point, point.b*point.b*inverse_alpha*inverse_alpha,
       a - 1, b - 1, p);
+  return value;
+}
+
+KOKKOS_INLINE_FUNCTION
+Real AnalyticDtDInverseMetric(const AnalyticRadialQPoint &point,
+                              const int spatial,
+                              const int a, const int b) {
+  const AnalyticRadialScalar inverse_alpha =
+      AnalyticRadialReciprocal(point.alpha);
+  const AnalyticRadialScalar inverse_l = AnalyticRadialReciprocal(point.l);
+  if (a == 0 && b == 0) {
+    return -(inverse_alpha*inverse_alpha).DD(
+        point.displacement, point.radius, 0, spatial + 1);
+  }
+  if (a == 0 || b == 0) {
+    const int coordinate = (a == 0 ? b : a) - 1;
+    return AnalyticCoordinateDtDD(
+        point, point.b*inverse_alpha*inverse_alpha,
+        spatial, coordinate, 0);
+  }
+  Real value = (a == b) ? (inverse_l*inverse_l).DD(
+      point.displacement, point.radius, 0, spatial + 1) : 0.0;
+  value -= AnalyticCoordinateProductDtDD(
+      point, point.b*point.b*inverse_alpha*inverse_alpha,
+      spatial, a - 1, b - 1, 0);
   return value;
 }
 
