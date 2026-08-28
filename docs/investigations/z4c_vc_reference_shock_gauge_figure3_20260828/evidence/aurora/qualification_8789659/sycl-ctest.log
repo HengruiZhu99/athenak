@@ -1,0 +1,66 @@
+START 1/11 athena.z4c_vc_dynamic_amr_2d_cartoon_o4
+PASS: vertex-centered 2D cartoon O4 qauto rk4 dynamic refine/derefine lifecycle and quadrature
+END 1/11 athena.z4c_vc_dynamic_amr_2d_cartoon_o4 status=0 seconds=3.221926
+START 2/11 athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4
+PASS: native-VC static multilevel wave shared_mismatch=0.0 interface_constraint_rms=1.4252232479203262e-13 interior_constraint_rms=1.5620878603376678e-13 axis_constraint_rms=2.5781751424521683e-13
+END 2/11 athena.z4c_vc_static_multilevel_2d_cartoon_axis_o4 status=0 seconds=3.942441
+START 3/11 athena.z4c_vc_amr_history
+PASS: native VC 2D AMR history record/replay, 2x cells, restart, MPI decomposition, and explicit CC-topology bridge
+END 3/11 athena.z4c_vc_amr_history status=0 seconds=25.138987
+START 4/11 athena.z4c_cartoon_amr_transfer_qualification
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+AMR_TRANSFER_FOURIER order=2 max_child_to_parent_rms_gain=1.2965737272678381 mode_rho=0 mode_z=1 restriction_null_modes=0
+AMR_TRANSFER_FOURIER order=3 max_child_to_parent_rms_gain=3.4443389472700856 mode_rho=8 mode_z=7 restriction_null_modes=0
+AMR_TRANSFER_FOURIER order=4 max_child_to_parent_rms_gain=3.7965698987568768 mode_rho=8 mode_z=7 restriction_null_modes=0
+Cartoon Z4c AMR transfer qualification passed
+END 4/11 athena.z4c_cartoon_amr_transfer_qualification status=0 seconds=0.642627
+START 5/11 athena.z4c_state_admissibility
+Z4C_STATE_ADMISSIBILITY_UNIT_PASS
+END 5/11 athena.z4c_state_admissibility status=0 seconds=0.305690
+START 6/11 athena.z4c_state_admissibility_static
+Z4C_STATE_ADMISSIBILITY_STATIC_PASS
+END 6/11 athena.z4c_state_admissibility_static status=0 seconds=0.177002
+START 7/11 athena.z4c_timestep_contract
+Z4C_TIMESTEP_CONTRACT_UNIT_PASS
+END 7/11 athena.z4c_timestep_contract status=0 seconds=0.253726
+START 8/11 athena.z4c_timestep_contract_static
+Z4C_TIMESTEP_CONTRACT_STATIC_PASS
+END 8/11 athena.z4c_timestep_contract_static status=0 seconds=0.092767
+START 9/11 athena.z4c_shift_control_static
+PASS: Z4c prescribed-zero and isolated O2 shift-advection source contract
+END 9/11 athena.z4c_shift_control_static status=0 seconds=0.061092
+START 10/11 athena.z4c_shock_avoiding_gauge_static
+Shock-avoiding Bona-Masso source contract passed
+END 10/11 athena.z4c_shock_avoiding_gauge_static status=0 seconds=1.833568
+START 11/11 athena.z4c_cartoon_production_kernels
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+AthenaK Kokkos default execution space: SYCL
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+Cartoon CalcRHS/constraints/Sommerfeld/Weyl production kernels passed for collapsed NGHOST 2/3/4 on SYCL
+END 11/11 athena.z4c_cartoon_production_kernels status=0 seconds=0.785467
+100% tests passed, 0 tests failed out of 11

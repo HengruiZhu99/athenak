@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828/evidence/pvc-regression-bisect-8789460/source/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 180, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828/evidence/pvc-regression-bisect-8789460/source/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 112, in main
+    require(completed.returncode == 0,
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828/evidence/pvc-regression-bisect-8789460/source/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: vertex-centered dynamic AMR run failed:
+AthenaK Kokkos default execution space: SYCL
+
+Root grid = 2 x 2 x 1 MeshBlocks
+Total number of MeshBlocks = 4
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+Segmentation fault from GPU at 0x10e8c000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 3 (PML4), access: 0 (Read), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+
+Segmentation fault from GPU at 0x10e8c000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 3 (PML4), access: 0 (Read), banned: 1, aborting.
+

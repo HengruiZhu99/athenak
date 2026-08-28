@@ -1,131 +1,180 @@
 # Reference shock-avoiding Figure-3 campaign handoff
 
-## Final verdict
+## Verdict
 
-`SOURCE_PATCH_HOST_QUALIFIED; PERLMUTTER_RUNTIME_AND_SCIENCE_UNEXECUTED`
+`AURORA_PVC_QUALIFIED; N256_REACHED_TLIM; PARTIAL_FIGURE3_AGREEMENT; CONSTRAINT_INVALID_AT_FIRST_PEAK; CONVERGENCE_NOT_RUN`
 
-The exact literature gauge was identified and the AthenaK mapping was audited.
-The existing lapse RHS already implements
+The corrected shock-avoiding/effectively-zero-shift implementation passed a
+fresh Aurora PVC qualification. The N256 reference run then reached coordinate
+time `30 M`, but it did not qualify as a Figure-3 reproduction: its apparent
+first curvature peak occurs at almost the published proper time, while the
+constraint integrals are already undergoing catastrophic growth. The run ends
+at central proper time `11.2863 M`, before the published deep-minimum and
+rebound region near `12.6--13.2 M`. The conditional N128/N512 replay campaign
+was therefore not run and no convergence claim is supported.
+
+## Narrow source correction and PVC qualification
+
+The literature-aligned lapse/shift choice is
 
 ```text
 partial_t alpha = beta^i partial_i alpha
-                - (alpha^2 + kappa) (Khat + 2 Theta),
-kappa = 1, beta^i = 0.
+                - (alpha^2 + 1) (Khat + 2 Theta),
+alpha(t=0) = 1, beta^i = 0.
 ```
 
-The base source nevertheless rejected `alpha <= 0` in its timestep and stage
-admissibility checks, even though the reference shock-avoiding slicing permits
-the lapse to cross zero. The narrow source correction allows any finite lapse
-only when `lapse_shock_avoiding=true`, retains positive-lapse requirements for
-all other gauge modes, and uses `abs(alpha)` only in the physical light-cone
-CFL speed magnitude. The gauge characteristic speed remains
-`sqrt((alpha^2+kappa) gamma^nn)`.
+The lapse RHS was already correct. The original admissibility implementation,
+however, accessed host-owned `Z4c::opt` from a device lambda. Host and
+bounds-checked CPU tests passed, but the Aurora PVC kernel faulted. Job
+`8789460` bisected the first bad source commit to
+`151bf20d13c4838793f1c26e0b6b6e669cb7b765`. The repair copies the required
+boolean policy to a scalar before entering the Kokkos lambda. It does not change
+the gauge equation, AMR operators, damping, KO dissipation, or boundary
+conditions.
 
-Five focused host unit/static tests pass. A fresh, exact-source Perlmutter CUDA
-build also completed, but the A100 runtime qualification could not execute
-because the GPU partition was down. Qualification job `57670461` was cancelled
-at wrap-up with zero elapsed time. No N256 production evolution was submitted.
-The prepared qualification, N256, replay, and analysis files are configuration
-and workflow evidence only.
-
-## Published reference gauge
-
-The Figure-3 paper states that sphGR used shock-avoiding Bona-Masso slicing and
-vanishing shift. The supporting sphGR literature gives
+Source repair commit:
 
 ```text
-(partial_t - beta^i partial_i) alpha = -alpha^2 f(alpha) K,
-f(alpha) = 1 + 1/alpha^2,
-alpha(t=0) = 1,
-beta^i = 0.
+commit f8303c6be7eb214fa1e91b646123ee0d434b3698
+tree   7a585ca487b12351b084eb425bb812775849b001
 ```
 
-With AthenaK's standard extrinsic-curvature convention and Z4c variable
-`Khat = K - 2 Theta`, the source is `-(alpha^2+1)(Khat+2 Theta)`.
-`REFERENCE_GAUGE.md` records the authority chain and the isolated sign
-ambiguity in one 2026 source.
+Aurora qualification job `8789659` used one PVC charged to
+`CompactBinaryMerger`, exited zero, and wrote
+`AURORA_PVC_QUALIFICATION_PASS`. Eleven focused tests passed, including native
+vertex-centered Cartoon production kernels, multilevel O4 Cartoon paths, and a
+two-cycle shock-avoiding/prescribed-zero-shift smoke. Static multilevel Cartoon
+constraint RMS values were approximately `1.43e-13--2.58e-13`.
 
-## Source audit and correction
-
-At base commit `c67edf54ce97536ad9410adcf6029a4478038139`:
-
-- the shock-avoiding lapse RHS and `Khat+2*Theta` mapping were already correct;
-- `shift_mode=prescribed_zero` already zeroed the evolved shift;
-- the gauge CFL speed already used `sqrt((alpha^2+kappa) gamma^nn)`;
-- two timestep scans and the stage-state gate unconditionally required
-  positive lapse.
-
-The current patch changes only the last item and the physical light-speed CFL
-magnitude. It does not floor, clip, regularize, or modify the lapse evolution;
-it does not alter telegraph lapse, Gamma-driver shift, damping, KO, AMR
-transfer, or boundary conditions.
-
-## Verification
-
-The focused host test selection passed 5/5 on 2026-08-28:
+Exact build authority:
 
 ```text
-athena.z4c_state_admissibility
-athena.z4c_state_admissibility_static
-athena.z4c_timestep_contract
-athena.z4c_timestep_contract_static
-athena.z4c_shock_avoiding_gauge_static
+AthenaK commit        f8303c6be7eb214fa1e91b646123ee0d434b3698
+AthenaK executable    aae7ccb8739fb4951221ad7be69ea0e220548b52d402086f57d7857fa2c97a13
+CMake cache           8da40bcb47564d9184119ca207f9847a33a3d1b5bd2930627d705cda8fb36386
+Kokkos commit         6739bc623081648af9e752b616d9671527922cbf
+IrisK source          620acca67c2736d9add98ecae3ec76f0f2800b29
+IrisK library         380a90d5b1d9762fe7f9076edcb27fb4a209f4cd8c070da376c36284a438c7a1
+Brill coefficients    1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10
+N256 input            6c694cf871a3d694d745f0fb58b279b6cd07516463ac8ad54f1c91d2689c90ba
 ```
 
-These checks establish the narrow source contract only. They do not establish
-GPU correctness, evolution stability, Figure-3 agreement, or convergence.
+Qualification evidence manifest SHA-256:
+`8acb38caa52c15236c3537e9d074bf76e9429409dc5120d66c7d75ce18e4ba27`.
 
-## Perlmutter disposition
+## N256 execution
 
-A clean checkout of commit `00e66dfa5e0e7f7f2c711166998806a05decbd55`
-was configured and built with CUDA, MPI, IrisK, unit tests, and Ampere80 on
-Perlmutter. The resulting executable SHA-256 is
-`c5153a5c25c4b2aba22737061baa00628badcd6eade2c66461ac182708677e55`.
+Science job `8789703` used one Aurora PVC in the debug queue under
+`CompactBinaryMerger`, exited zero, and recorded `REACHED_TLIM`.
 
-The scheduler rejected shared-interactive and normal-interactive access while
-the GPU partition was down. Debug qualification job `57670461` never allocated
-and was cancelled at wrap-up; `sacct` reported `CANCELLED by 102811` and
-`00:00:00`. No GPU runtime evidence or science data exists. Build success must
-not be presented as CUDA qualification.
+The run used native vertex-centered axisymmetric Cartoon SO(2), an N256 root
+grid (`128 x 256` active vertices represented by `32 x 32` MeshBlocks), outer
+radius `128 M`, initial refinement radii `64/32/16 M`, O4 finite differences,
+q6 prolongation, RK4 at CFL `0.15`, KO `0.5`, `dchi_max=0.02`, derefinement at
+`0.25 dchi_max`, no Z4c constraint damping, shock-avoiding lapse with
+`kappa=1`, unit initial lapse, prescribed zero shift, and telegraph gauge off.
 
-## N256 and convergence disposition
+```text
+Imported ADM mass                       2.6606354586228815
+Initial proper-box C_rms                2.384524686e-05
+Initial proper-box H_rms                2.378410596e-05
+Final coordinate time                   30.0 M
+Cycles                                  5791
+Final central proper time               11.2863067801 M
+Minimum sampled axis lapse              0.1434111145
+Axis lapse zero crossings               none
+Maximum refinement level                5
+Maximum MeshBlocks                      212
+```
 
-The fresh N256 run was not submitted or executed. Consequently:
+The hierarchy changed in the first two cycles, from 104 blocks reaching
+physical level 3 to 212 blocks reaching physical level 5. The first retained
+history row with the final topology is at `t=0.0249029532 M`. The hierarchy then
+remained fixed through `t=30 M`; later logs report no refinement requests and
+rejected derefinement requests. Thus the late runaway is not synchronized with
+repeated topology changes in this run.
 
-- no fresh N256 AMR authority exists;
-- there is no central Kretschmann-versus-proper-time comparison;
-- the N256 reproduction gate was neither passed nor failed;
-- N128/N512 replay was correctly not attempted;
-- no convergence order can be reported.
+## Figure-3 comparison and constraint qualification
 
-No active Perlmutter campaign job remained at wrap-up, and no production job
-was submitted.
+No time, amplitude, or vertical offset was fitted. The direct apparent
+first-peak comparison is:
 
-## Exact artifacts
+| Curve | central proper time | `log10(abs(Kretschmann))` |
+|---|---:|---:|
+| AthenaK N256 | 10.30333 | 5.01349 |
+| bamps | 10.30683 | 5.47778 |
+| Prague | 10.31154 | 5.48688 |
+| sphGR | 10.31384 | 5.47833 |
 
-- `REFERENCE_GAUGE.md`: literature equation and parameter authority.
-- `GAUGE_IMPLEMENTATION_AUDIT.md`: source mapping and defect boundary.
-- `brill_vc_reference_shock_gauge.athinput`: unexecuted N256 configuration.
-- `N256_REPRODUCTION.md`: explicit unexecuted disposition.
-- `CONVERGENCE.md`: explicit gate-not-reached disposition.
-- `HOST_TESTS.txt`: focused host verification record.
-- `PERLMUTTER_CUDA_TESTS.md`: exact build and unexecuted runtime disposition.
-- `PERLMUTTER_SCHEDULER_DISPOSITION.txt`: terminal scheduler evidence.
-- `perlmutter_cuda_qualification.sbatch`: unexecuted bounded A100 gate.
-- `perlmutter_run_reference_n256.sh` and companion sbatch: unexecuted fresh
-  N256 workflow.
-- `perlmutter_run_reference_replay.sh` and companion sbatch: unexecuted,
-  gate-protected N128/N512 replay workflow.
-- `analyze_reference_n256.py` and `figure3_published_curves.csv`: offline
-  direct-comparison analysis and authenticated curve data; no fresh N256 data
-  were supplied to them.
-- `EVIDENCE_MANIFEST.json`: strict file hashes and claim limits.
+The timing is close, and the AthenaK curve follows the published curves well
+at early proper time, but its peak is about `0.47 dex` low. More importantly,
+the constraint squared-integrals grow rapidly before and through this point:
 
-## Remaining limitations
+| Quantity | Initial | Maximum | Time of maximum | Final |
+|---|---:|---:|---:|---:|
+| C | 6.8505e-4 | 48.2330 | 25.3091 | 3.1583 |
+| H | 6.8152e-4 | 41.1314 | 25.3091 | 2.3658 |
+| M | 0 | 9.53227 | 25.4556 | 0.64059 |
+| Z | 8.8166e-7 | 0.0550105 | 26.3318 | 0.0366208 |
 
-The source correction still requires Perlmutter A100 runtime qualification.
-The reference-gauge N256 run, comparison against the authenticated curves,
-terminal failure localization if needed, fresh AMR recording, conditional
-N128/N512 replay, and constraint convergence are all outstanding. This handoff
-must not be cited as GPU qualification, Figure-3 reproduction, numerical
-failure, or convergence evidence.
+The C integral first crosses `0.01`, `0.1`, `1`, and `10` at coordinate times
+`20.12825`, `21.99447`, `23.37376`, and `24.40678 M`, respectively. The global
+and sampled-axis Kretschmann maximum is `1.0315458e5` at coordinate time
+`25.37186 M`, central proper time `10.30333 M`, inside this constraint
+catastrophe. Consequently the apparent peak-time agreement is descriptive,
+not scientific reproduction evidence.
+
+The run did not reach the published deep minimum or rebound. No horizon finder
+was enabled (`num_horizons=0`), so the artifacts support no horizon statement.
+
+## Diagnostic measure and AMR interpretation
+
+The Cartoon history measure is already the physical axisymmetric ring measure,
+
+```text
+2 pi rho dx1 dx2 sqrt(abs(det gamma)),
+```
+
+with vertex trapezoid weights and canonical ownership of shared nodes. There is
+no fictitious collapsed-y factor in these constraint histories.
+
+Current evidence shows a late instability on a fixed hierarchy after an early
+single refinement event. It does not isolate whether the source is bulk
+evolution, a persistent AMR-interface mode, a missed short scale in a non-chi
+field, or their combination. The observation that the chi sensor requests no
+additional refinement while curvature and constraints explode makes a bounded
+all-field resolution/spectral audit a natural next discriminator, but it is
+not itself proof that chi is the wrong refinement variable.
+
+## Setup-only attempts
+
+Job `8789668` terminated during a one-second preflight because Aurora does not
+export `PBS_NNODES`; no science ran. Job `8789692` initialized IrisK but stopped
+before evolution because the AMR-history authority parent directory was
+missing. These are setup failures, not science evidence.
+
+## Claim boundary
+
+Supported:
+
+- the narrow device-capture correction is host and Aurora-PVC qualified;
+- the exact N256 run reached its coordinate-time limit with finite history
+  rows;
+- its early central-curvature curve and apparent peak time partially agree
+  with the published Figure-3 curves;
+- its first apparent peak is constraint invalid;
+- the constraint normalization is already the correct axisymmetric measure.
+
+Not supported:
+
+- a full Figure-3 reproduction;
+- stable self-similar collapse through the deep minimum and rebound;
+- N128/N256/N512 convergence;
+- a horizon conclusion;
+- identification of a unique source bug or continuum formulation failure.
+
+The smallest useful next step is a bounded, location-resolved diagnostic on the
+existing pre-runaway state: compare high-frequency content and cheap
+O6-versus-O4/undivided-difference indicators across all evolved Z4c variables,
+and separate bulk active-state growth from coarse-fine/interface ghosts before
+changing production numerics.

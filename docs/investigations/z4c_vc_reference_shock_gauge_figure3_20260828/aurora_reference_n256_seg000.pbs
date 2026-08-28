@@ -1,0 +1,19 @@
+#!/bin/bash -l
+#PBS -N z4c-shock-n256
+#PBS -A CompactBinaryMerger
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828
+: "${QUALIFICATION_ID:?submit with the passed Aurora qualification job ID}"
+export RUN_ROOT=${campaign}/runs/n256_reference_shock_seg000_retry1
+export HISTORY_FILE=${campaign}/authority/n256_reference_shock_authority.jsonl
+export RUN_TLIM=30.0
+export QUALIFICATION_ID
+exec "${campaign}/aurora_run_reference_n256.sh"

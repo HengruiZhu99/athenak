@@ -1,0 +1,74 @@
+#!/bin/bash -l
+#PBS -N z4c-vc-life
+#PBS -A CompactBinaryMerger
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:20:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828
+source_root=${campaign}/source
+build_root=${campaign}/build-sycl-mpi
+evidence=${campaign}/evidence/pvc-lifecycle-probe-${PBS_JOBID%%.*}
+workflow=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/collapse-critical-workflow
+tile_wrapper=/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh
+expected_source=c256480cfc936dda3039c492ab9c280178bf8bc3
+expected_exe=60eea7ed9311916542bc4f536501f2f8ea1b97fe0685cbe4dd6c309e50ae067b
+expected_cache=9e9d29b47ed837028a11395fa573e9caef8f37e2eef457d408c5f7144426cad3
+
+test ! -e "${evidence}"
+test "$(git -C "${source_root}" rev-parse HEAD)" = "${expected_source}"
+test -z "$(git -C "${source_root}" status --porcelain=v1)"
+athena=${build_root}/src/athena
+test "$(sha256sum "${athena}" | awk '{print $1}')" = "${expected_exe}"
+test "$(sha256sum "${build_root}/CMakeCache.txt" | awk '{print $1}')" = "${expected_cache}"
+mkdir -p "${evidence}/run"
+
+finish() {
+  code=$?
+  trap - EXIT
+  set +e
+  printf '%s\n' "${code}" > "${evidence}/orchestration-status"
+  qstat -f "${PBS_JOBID}" > "${evidence}/qstat-final.txt" 2>&1
+  find "${evidence}" -type f ! -name SHA256SUMS ! -name SHA256SUMS.sha256 \
+    -print0 | LC_ALL=C sort -z | xargs -0r sha256sum > "${evidence}/SHA256SUMS"
+  (cd "${evidence}" && sha256sum -c SHA256SUMS >/dev/null)
+  sha256sum "${evidence}/SHA256SUMS" > "${evidence}/SHA256SUMS.sha256"
+  exit "${code}"
+}
+trap finish EXIT
+
+export ATHENAK_ROOT=${source_root}
+export ATHENAK_BUILD_DIR=${build_root}
+source "${workflow}/profiles/aurora-pvc.sh"
+export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPIR_CVAR_ENABLE_GPU=1 MPICH_GPU_SUPPORT_ENABLED=1
+export ATHENA_Z4C_VC_AMR_LIFECYCLE=all
+export ATHENA_Z4C_VC_AMR_LIFECYCLE_JSONL=${evidence}/lifecycle.jsonl
+
+{
+  date --iso-8601=seconds
+  hostname
+  git -C "${source_root}" rev-parse HEAD 'HEAD^{tree}'
+  sha256sum "${athena}" "${build_root}/CMakeCache.txt"
+  module list
+  sycl-ls
+  qstat -f "${PBS_JOBID}"
+} > "${evidence}/provenance.txt" 2>&1
+
+python3 "${source_root}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" \
+  --athena "${athena}" \
+  --input "${source_root}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" \
+  --work-dir "${evidence}/run/cartoon-o4" --dimensions 2 --geometry cartoon \
+  --order 4 --root-leaves 4 --expected-volume 201.06192982974676 \
+  --mpiexec "${campaign}/aurora_mpiexec_wrapper.sh" --np-flag=-n --ranks 1 \
+  > "${evidence}/probe.log" 2>&1
+
+grep -Fq 'on SYCL' "${evidence}/probe.log"
+printf 'AURORA_PVC_LIFECYCLE_PROBE_PASS\n' > "${evidence}/disposition"

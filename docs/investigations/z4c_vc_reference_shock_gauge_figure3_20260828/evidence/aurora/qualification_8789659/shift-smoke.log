@@ -1,0 +1,29 @@
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+AthenaK Kokkos default execution space: SYCL
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=9.809778e-01 cycle=0 time=0.000000e+00 dt=8.838835e-03
+elapsed=1.445329e+00 cycle=1 time=8.838835e-03 dt=8.838835e-03
+output wall time = 1.996748e+00
+elapsed=2.276667e+00 cycle=2 time=1.767767e-02 dt=8.838835e-03
+
+Terminating on cycle limit
+time=1.767767e-02 cycle=2
+tlim=5.000000e-02 nlim=2 nmb_total_limit=-1
+
+MeshBlock-cycles = 2
+cpu time used  = 1.295692e+00
+zone-cycles/cpu_second = 7.903112e+02
+particle-updates/cpu_second = 0.000000e+00

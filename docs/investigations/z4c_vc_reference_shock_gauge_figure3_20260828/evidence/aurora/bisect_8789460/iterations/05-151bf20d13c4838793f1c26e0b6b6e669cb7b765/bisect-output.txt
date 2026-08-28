@@ -1,0 +1,32 @@
+151bf20d13c4838793f1c26e0b6b6e669cb7b765 is the first bad commit
+commit 151bf20d13c4838793f1c26e0b6b6e669cb7b765
+Author: Hengrui Zhu <hz0693@princeton.edu>
+Date:   Fri Aug 28 08:24:12 2026 -0400
+
+    fix(z4c): qualify reference shock-avoiding lapse
+
+ .../CONVERGENCE.md                                 |  13 ++
+ .../GAUGE_IMPLEMENTATION_AUDIT.md                  |  80 ++++++++++
+ .../HOST_TESTS.txt                                 |  18 +++
+ .../N256_REPRODUCTION.md                           |  22 +++
+ .../REFERENCE_GAUGE.md                             |  95 +++++++++++
+ .../REPORT.md                                      | 104 +++++++++++++
+ .../REPORT.pdf                                     | Bin 0 -> 179937 bytes
+ .../REPORT.tex                                     |  60 +++++++
+ .../brill_vc_reference_shock_gauge.athinput        | 173 +++++++++++++++++++++
+ src/z4c/timestep_contract.hpp                      |  12 ++
+ src/z4c/z4c.cpp                                    |   5 +-
+ src/z4c/z4c_newdt.cpp                              |   9 +-
+ tst/unit/z4c/state_admissibility_test.cpp          |   3 +
+ tst/unit/z4c/timestep_contract_test.cpp            |   5 +
+ .../z4c/z4c_shock_avoiding_gauge_static_test.py    |   5 +
+ 15 files changed, 599 insertions(+), 5 deletions(-)
+ create mode 100644 docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/CONVERGENCE.md
+ create mode 100644 docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/GAUGE_IMPLEMENTATION_AUDIT.md
+ create mode 100644 docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/HOST_TESTS.txt
+ create mode 100644 docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/N256_REPRODUCTION.md
+ create mode 100644 docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REFERENCE_GAUGE.md
+ create mode 100644 docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.md
+ create mode 100644 docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.pdf
+ create mode 100644 docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.tex
+ create mode 100644 docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/brill_vc_reference_shock_gauge.athinput

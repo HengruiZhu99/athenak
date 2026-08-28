@@ -1,0 +1,16 @@
+# bad: [c256480cfc936dda3039c492ab9c280178bf8bc3] docs(z4c): seal deferred Perlmutter campaign evidence
+# good: [99a4eb5ba7713f7de73239cf75a27c1fb9ac6cbb] style(cmake): restore lifecycle helper indentation
+git bisect start 'c256480cfc936dda3039c492ab9c280178bf8bc3' '99a4eb5ba7713f7de73239cf75a27c1fb9ac6cbb' '--' 'CMakeLists.txt' 'src/driver' 'src/mesh' 'src/z4c'
+# good: [76f05c8598f777b46eebfa4aff9aed42295be2cb] test(z4c): expand multi-family VC derefine coverage
+git bisect good 76f05c8598f777b46eebfa4aff9aed42295be2cb
+# good: [65af69734798b91d6e2fdf0494393fec67f0fc45] test(mesh): complete split-rank VC ownership layouts
+git bisect good 65af69734798b91d6e2fdf0494393fec67f0fc45
+# good: [b27e2eeea70aaa61b801dc770a9c1209013f5edc] feat(z4c): add full-field Bjorhus compatibility RHS
+git bisect good b27e2eeea70aaa61b801dc770a9c1209013f5edc
+# good: [0a6921019fb170b85ca42e8af3c055646cfa0dcc] diagnostic(z4c): expose CPBC residual provenance
+git bisect good 0a6921019fb170b85ca42e8af3c055646cfa0dcc
+# good: [d39822c6522688749fe5ead8025907bc055f02f8] fix(z4c): initialize complete CPBC normal before raising
+git bisect good d39822c6522688749fe5ead8025907bc055f02f8
+# bad: [151bf20d13c4838793f1c26e0b6b6e669cb7b765] fix(z4c): qualify reference shock-avoiding lapse
+git bisect bad 151bf20d13c4838793f1c26e0b6b6e669cb7b765
+# first bad commit: [151bf20d13c4838793f1c26e0b6b6e669cb7b765] fix(z4c): qualify reference shock-avoiding lapse

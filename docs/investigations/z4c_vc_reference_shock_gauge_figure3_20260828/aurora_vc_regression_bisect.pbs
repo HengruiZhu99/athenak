@@ -1,0 +1,160 @@
+#!/bin/bash -l
+#PBS -N z4c-vc-bisect
+#PBS -A CompactBinaryMerger
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828
+authority=${campaign}/source
+root=${campaign}/evidence/pvc-regression-bisect-${PBS_JOBID%%.*}
+source_root=${root}/source
+build_root=${root}/build
+workflow=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/collapse-critical-workflow
+irisk_root=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/bbhk
+irisk_library=${irisk_root}/build/aurora-pvc/src/libiris_athenak_interpolator.a
+good=99a4eb5ba7713f7de73239cf75a27c1fb9ac6cbb
+bad=c256480cfc936dda3039c492ab9c280178bf8bc3
+expected_kokkos=6739bc623081648af9e752b616d9671527922cbf
+
+test ! -e "${root}"
+test "$(git -C "${authority}" rev-parse HEAD)" = "${bad}"
+test -z "$(git -C "${authority}" status --porcelain=v1)"
+mkdir -p "${root}/iterations"
+
+finish() {
+  code=$?
+  trap - EXIT
+  set +e
+  printf '%s\n' "${code}" > "${root}/orchestration-status"
+  qstat -f "${PBS_JOBID}" > "${root}/qstat-final.txt" 2>&1
+  git -C "${source_root}" bisect log > "${root}/bisect.log" 2>&1
+  git -C "${source_root}" status --short --branch > "${root}/source-status.final" 2>&1
+  find "${root}" -path "${source_root}" -prune -o \
+    -path "${build_root}" -prune -o -type f \
+    ! -name SHA256SUMS ! -name SHA256SUMS.sha256 -print0 | \
+    LC_ALL=C sort -z | xargs -0r sha256sum > "${root}/SHA256SUMS"
+  (cd "${root}" && sha256sum -c SHA256SUMS >/dev/null)
+  sha256sum "${root}/SHA256SUMS" > "${root}/SHA256SUMS.sha256"
+  exit "${code}"
+}
+trap finish EXIT
+
+git clone --local --no-hardlinks "${authority}" "${source_root}" \
+  > "${root}/clone.log" 2>&1
+# Aurora compute nodes have no outbound GitHub route.  Reuse the exact, already
+# verified Kokkos authority staged with the campaign rather than attempting the
+# URL recorded in .gitmodules.
+git -C "${source_root}" config submodule.kokkos.url "${authority}/kokkos"
+git -C "${source_root}" submodule update --init --recursive \
+  > "${root}/submodule.log" 2>&1
+test "$(git -C "${source_root}/kokkos" rev-parse HEAD)" = "${expected_kokkos}"
+
+export ATHENAK_ROOT=${source_root}
+export ATHENAK_BUILD_DIR=${build_root}
+export IRISK_ROOT=${irisk_root}
+source "${workflow}/profiles/aurora-pvc.sh"
+export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPIR_CVAR_ENABLE_GPU=1 MPICH_GPU_SUPPORT_ENABLED=1
+
+{
+  date --iso-8601=seconds
+  hostname
+  git -C "${authority}" rev-parse HEAD 'HEAD^{tree}'
+  git -C "${source_root}" rev-parse "${good}^{commit}" "${bad}^{commit}"
+  sha256sum "${irisk_library}"
+  module list
+  icpx --version | head -1
+  mpicxx -show
+  cmake --version | head -1
+  sycl-ls
+  qstat -f "${PBS_JOBID}"
+} > "${root}/provenance.txt" 2>&1
+
+git -C "${source_root}" bisect start "${bad}" "${good}" -- \
+  CMakeLists.txt src/driver src/mesh src/z4c \
+  > "${root}/bisect-start.log" 2>&1
+
+first_bad=
+for iteration in $(seq 0 11); do
+  commit=$(git -C "${source_root}" rev-parse HEAD)
+  idir=${root}/iterations/$(printf '%02d' "${iteration}")-${commit}
+  mkdir -p "${idir}/run"
+  printf '%s\n' "${commit}" > "${idir}/commit"
+
+  set +e
+  cmake -S "${source_root}" -B "${build_root}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=mpicc \
+    -DCMAKE_CXX_COMPILER=mpicxx \
+    -DAthena_ENABLE_MPI=ON \
+    -DAthena_ENABLE_OPENMP=ON \
+    -DAthena_BUILD_UNIT_TESTS=ON \
+    -DAthena_ENABLE_IRISK_INTERPOLATOR=ON \
+    -DKokkos_ENABLE_SERIAL=ON \
+    -DKokkos_ENABLE_OPENMP=ON \
+    -DKokkos_ENABLE_SYCL=ON \
+    -DKokkos_ARCH_INTEL_PVC=ON \
+    -DPROBLEM=built_in_pgens \
+    -DIRISK_ROOT="${irisk_root}" \
+    -DIRISK_INTERPOLATOR_LIBRARY="${irisk_library}" \
+    > "${idir}/configure.log" 2>&1
+  configure_status=$?
+  if [[ ${configure_status} -eq 0 ]]; then
+    cmake --build "${build_root}" --target athena --parallel 64 \
+      > "${idir}/build.log" 2> "${idir}/build.err"
+    build_status=$?
+  else
+    build_status=125
+  fi
+  set -e
+  printf 'configure=%s build=%s\n' "${configure_status}" "${build_status}" \
+    > "${idir}/build.status"
+
+  if [[ ${configure_status} -ne 0 || ${build_status} -ne 0 ]]; then
+    verdict=skip
+  else
+    athena=${build_root}/src/athena
+    sha256sum "${athena}" "${build_root}/CMakeCache.txt" > "${idir}/build.sha256"
+    export ZE_AFFINITY_MASK="$((iteration / 2)).$((iteration % 2))"
+    set +e
+    python3 "${source_root}/tst/unit/z4c/z4c_vertex_dynamic_amr_test.py" \
+      --athena "${athena}" \
+      --input "${source_root}/tst/inputs/z4c_vc_minkowski_dynamic_amr.athinput" \
+      --work-dir "${idir}/run/cartoon-o4" --dimensions 2 --geometry cartoon \
+      --order 4 --root-leaves 4 --expected-volume 201.06192982974676 \
+      > "${idir}/probe.log" 2>&1
+    probe_status=$?
+    set -e
+    printf '%s\n' "${probe_status}" > "${idir}/probe.status"
+    if [[ ${probe_status} -eq 0 ]]; then
+      verdict=good
+    else
+      verdict=bad
+    fi
+  fi
+  printf '%s\n' "${verdict}" > "${idir}/verdict"
+
+  set +e
+  bisect_output=$(git -C "${source_root}" bisect "${verdict}" 2>&1)
+  bisect_status=$?
+  set -e
+  printf '%s\n' "${bisect_output}" > "${idir}/bisect-output.txt"
+  if grep -Fq 'is the first bad commit' "${idir}/bisect-output.txt"; then
+    first_bad=$(awk '/is the first bad commit/{gsub(/\[/,"",$1); print $1}' \
+      "${idir}/bisect-output.txt")
+    break
+  fi
+  test ${bisect_status} -eq 0
+done
+
+test -n "${first_bad}"
+printf '%s\n' "${first_bad}" > "${root}/first-bad-commit"
+printf 'AURORA_PVC_REGRESSION_BISECT_COMPLETE\n' > "${root}/disposition"

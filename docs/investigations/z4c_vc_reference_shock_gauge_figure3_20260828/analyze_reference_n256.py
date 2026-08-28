@@ -96,6 +96,12 @@ def direct_rmse(x: np.ndarray, y: np.ndarray, reference_x: np.ndarray,
     return float(np.sqrt(np.mean(residual * residual)))
 
 
+def first_threshold_time(time: np.ndarray, values: np.ndarray,
+                         threshold: float) -> float | None:
+    indices = np.flatnonzero(np.isfinite(values) & (values >= threshold))
+    return None if len(indices) == 0 else float(time[indices[0]])
+
+
 def write_compact(path: Path, data: dict[str, np.ndarray]) -> None:
     columns = (
         "time", "axisTau", "dt", "cycle", "axisKret", "axisLapse",
@@ -142,6 +148,21 @@ def main() -> None:
     }
 
     crossing_tau = zero_crossings(data["axisTau"], data["axisLapse"])
+    constraint_summary = {}
+    for field in CONSTRAINTS:
+        values = data[field]
+        maximum = int(np.nanargmax(values))
+        constraint_summary[field] = {
+            "initial": float(values[0]),
+            "final": float(values[-1]),
+            "maximum": float(values[maximum]),
+            "maximum_coordinate_time": float(data["time"][maximum]),
+        }
+    topology_changes = np.flatnonzero(
+        (np.diff(data["maxRefLev"]) != 0.0) |
+        (np.diff(data["nmb_total"]) != 0.0)) + 1
+    axis_peak = int(np.nanargmax(np.abs(data["axisKret"])))
+    global_peak = int(np.nanargmax(data["maxAbsKret"]))
     summary = {
         "coordinate_time_final": float(data["time"][-1]),
         "axis_proper_time_final": float(data["axisTau"][-1]),
@@ -154,7 +175,28 @@ def main() -> None:
         "max_refinement_level": int(np.nanmax(data["maxRefLev"])),
         "max_meshblocks": int(np.nanmax(data["nmb_total"])),
         "max_abs_kretschmann": float(np.nanmax(data["maxAbsKret"])),
+        "max_abs_kretschmann_coordinate_time":
+            float(data["time"][global_peak]),
+        "max_abs_kretschmann_axis_proper_time":
+            float(data["axisTau"][global_peak]),
+        "max_axis_abs_kretschmann": float(np.abs(data["axisKret"][axis_peak])),
+        "max_axis_abs_kretschmann_coordinate_time":
+            float(data["time"][axis_peak]),
+        "max_axis_abs_kretschmann_proper_time":
+            float(data["axisTau"][axis_peak]),
         "final_C_Linf": float(data["C-Linf"][-1]),
+        "constraint_squared_integrals": constraint_summary,
+        "C_norm2_first_threshold_coordinate_time": {
+            str(threshold): first_threshold_time(
+                data["time"], data["C-norm2"], threshold)
+            for threshold in (1.0e-2, 1.0e-1, 1.0, 10.0)
+        },
+        "topology_changes": [
+            {"coordinate_time": float(data["time"][index]),
+             "max_refinement_level": int(data["maxRefLev"][index]),
+             "meshblocks": int(data["nmb_total"][index])}
+            for index in topology_changes
+        ],
         "figure3_milestones": milestones,
         "direct_unshifted_log_curve_rmse": {
             name: direct_rmse(tau, log_kret, xx, yy)
@@ -182,6 +224,32 @@ def main() -> None:
     fig.savefig(figures / "figure3_reference_n256.pdf")
     plt.close(fig)
 
+    fig, axes = plt.subplots(2, 1, figsize=(10.4, 8.0), sharex=True,
+                             constrained_layout=True,
+                             gridspec_kw={"height_ratios": (2.0, 1.0)})
+    for name, (xx, yy) in reference.items():
+        axes[0].plot(xx, yy, linewidth=1.2, alpha=0.65,
+                     label=f"published {name}")
+    axes[0].plot(tau, log_kret, color="black", linewidth=1.7,
+                 label="AthenaK N256")
+    for field in CONSTRAINTS:
+        axes[1].semilogy(data["axisTau"], np.maximum(data[field], 1.0e-8),
+                         label=field)
+    peak_tau = data["axisTau"][axis_peak]
+    for axis in axes:
+        axis.axvline(peak_tau, color="#e41a1c", linestyle="--", linewidth=0.9,
+                     label="AthenaK curvature maximum" if axis is axes[0] else None)
+        axis.grid(alpha=0.22, which="both")
+    axes[0].set(ylabel=r"$\log_{10}|\mathrm{Kretschmann}(0)|$",
+                xlim=(0.0, 15.0), ylim=(-8.0, 8.0))
+    axes[1].set(xlabel="central proper time",
+                ylabel="constraint squared integral", ylim=(1.0e-8, 1.0e2))
+    axes[0].legend(fontsize=8, ncol=2)
+    axes[1].legend(fontsize=8, ncol=4)
+    fig.savefig(figures / "figure3_with_constraint_validity.png", dpi=240)
+    fig.savefig(figures / "figure3_with_constraint_validity.pdf")
+    plt.close(fig)
+
     fig, axis = plt.subplots(figsize=(10.0, 4.8), constrained_layout=True)
     axis.plot(data["axisTau"], data["axisLapse"], color="#984ea3")
     axis.axhline(0.0, color="black", linewidth=0.8)
@@ -194,11 +262,12 @@ def main() -> None:
     fig, axes = plt.subplots(2, 1, figsize=(10.5, 7.0), sharex=True,
                              constrained_layout=True)
     for field in CONSTRAINTS:
-        axes[0].semilogy(data["time"], np.maximum(data[field], 1.0e-300), label=field)
+        axes[0].semilogy(data["time"], np.maximum(data[field], 1.0e-8), label=field)
     radius = np.hypot(data["C-rho"], data["C-z"])
     axes[1].plot(data["time"], radius, color="#e41a1c", label="C-Linf radius")
     axes[1].axhline(5.0, color="black", linestyle="--", linewidth=0.8)
-    axes[0].set_ylabel("squared inventory")
+    axes[0].set_ylabel("proper-volume squared inventory")
+    axes[0].set_ylim(1.0e-8, 1.0e2)
     axes[1].set(xlabel="coordinate time", ylabel="radius of C-Linf")
     axes[0].legend(fontsize=8, ncol=4)
     for axis in axes:

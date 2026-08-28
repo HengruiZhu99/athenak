@@ -1,0 +1,191 @@
+#!/bin/bash -l
+#PBS -N z4c-shock-qual
+#PBS -A CompactBinaryMerger
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -q debug
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828
+source_root=${campaign}/source
+build_root=${campaign}/build-sycl-mpi-f8303c6b
+evidence=${campaign}/evidence/pvc-qualification-${PBS_JOBID%%.*}
+reuse_build=${REUSE_BUILD:-0}
+workflow=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/collapse-critical-workflow
+irisk_root=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/bbhk
+irisk_build=${irisk_root}/build/aurora-pvc
+irisk_library=${irisk_build}/src/libiris_athenak_interpolator.a
+mpi_wrapper=${campaign}/aurora_mpiexec_wrapper.sh
+tile_wrapper=/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh
+
+expected_source=f8303c6be7eb214fa1e91b646123ee0d434b3698
+expected_tree=7a585ca487b12351b084eb425bb812775849b001
+expected_kokkos=6739bc623081648af9e752b616d9671527922cbf
+expected_irisk_source=620acca67c2736d9add98ecae3ec76f0f2800b29
+expected_irisk_library=380a90d5b1d9762fe7f9076edcb27fb4a209f4cd8c070da376c36284a438c7a1
+expected_athena=aae7ccb8739fb4951221ad7be69ea0e220548b52d402086f57d7857fa2c97a13
+expected_cache=8da40bcb47564d9184119ca207f9847a33a3d1b5bd2930627d705cda8fb36386
+
+test ! -e "${evidence}"
+if [[ ${reuse_build} -eq 0 ]]; then
+  test ! -e "${build_root}"
+else
+  test -d "${build_root}"
+fi
+test -x "${mpi_wrapper}"
+test -x "${tile_wrapper}"
+test "$(git -C "${source_root}" rev-parse HEAD)" = "${expected_source}"
+test "$(git -C "${source_root}" rev-parse 'HEAD^{tree}')" = "${expected_tree}"
+test -z "$(git -C "${source_root}" status --porcelain=v1)"
+test "$(git -C "${source_root}/kokkos" rev-parse HEAD)" = "${expected_kokkos}"
+test "$(git -C "${irisk_root}" rev-parse HEAD)" = "${expected_irisk_source}"
+test "$(sha256sum "${irisk_library}" | awk '{print $1}')" = "${expected_irisk_library}"
+
+mkdir -p "${evidence}/shift-smoke" "${evidence}/run"
+finish() {
+  code=$?
+  trap - EXIT
+  set +e
+  printf '%s\n' "${code}" > "${evidence}/orchestration-status"
+  git -C "${source_root}" status --porcelain=v1 > "${evidence}/source-status.final"
+  qstat -f "${PBS_JOBID}" > "${evidence}/qstat-final.txt" 2>&1
+  find "${evidence}" -type f ! -name SHA256SUMS ! -name SHA256SUMS.sha256 \
+    -print0 | LC_ALL=C sort -z | xargs -0r sha256sum > "${evidence}/SHA256SUMS"
+  (cd "${evidence}" && sha256sum -c SHA256SUMS >/dev/null)
+  sha256sum "${evidence}/SHA256SUMS" > "${evidence}/SHA256SUMS.sha256"
+  exit "${code}"
+}
+trap finish EXIT
+
+export ATHENAK_ROOT=${source_root}
+export ATHENAK_BUILD_DIR=${build_root}
+export IRISK_ROOT=${irisk_root}
+export IRISK_BUILD_DIR=${irisk_build}
+source "${workflow}/profiles/aurora-pvc.sh"
+module load py-numpy/2.3.4 py-h5py/3.14.0
+export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPIR_CVAR_ENABLE_GPU=1 MPICH_GPU_SUPPORT_ENABLED=1
+
+{
+  date --iso-8601=seconds
+  hostname
+  git -C "${source_root}" rev-parse HEAD 'HEAD^{tree}'
+  git -C "${source_root}" submodule status -- kokkos
+  git -C "${irisk_root}" rev-parse HEAD
+  sha256sum "${irisk_library}"
+  module list
+  command -v icpx mpicc mpicxx mpiexec sycl-ls cmake
+  icpx --version | head -1
+  mpicxx -show
+  cmake --version | head -1
+  sycl-ls
+  qstat -f "${PBS_JOBID}"
+} > "${evidence}/provenance.txt" 2>&1
+
+if [[ ${reuse_build} -eq 0 ]]; then
+  cmake -S "${source_root}" -B "${build_root}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=mpicc \
+    -DCMAKE_CXX_COMPILER=mpicxx \
+    -DAthena_ENABLE_MPI=ON \
+    -DAthena_ENABLE_OPENMP=ON \
+    -DAthena_BUILD_UNIT_TESTS=ON \
+    -DAthena_ENABLE_IRISK_INTERPOLATOR=ON \
+    -DKokkos_ENABLE_SERIAL=ON \
+    -DKokkos_ENABLE_OPENMP=ON \
+    -DKokkos_ENABLE_SYCL=ON \
+    -DKokkos_ARCH_INTEL_PVC=ON \
+    -DPROBLEM=built_in_pgens \
+    -DIRISK_ROOT="${irisk_root}" \
+    -DIRISK_INTERPOLATOR_LIBRARY="${irisk_library}" \
+    > "${evidence}/configure.log" 2>&1
+  cmake --build "${build_root}" --parallel 64 \
+    > "${evidence}/build.log" 2> "${evidence}/build.err"
+else
+  test "$(sha256sum "${build_root}/src/athena" | awk '{print $1}')" = \
+    "${expected_athena}"
+  test "$(sha256sum "${build_root}/CMakeCache.txt" | awk '{print $1}')" = \
+    "${expected_cache}"
+  printf 'REUSED_VERIFIED_FRESH_BUILD_FROM_JOB_8789572\n' \
+    > "${evidence}/build-reuse.txt"
+fi
+
+athena=${build_root}/src/athena
+test -x "${athena}"
+grep -qx 'Kokkos_ENABLE_SYCL:BOOL=ON' "${build_root}/CMakeCache.txt"
+grep -qx 'Kokkos_ARCH_INTEL_PVC:BOOL=ON' "${build_root}/CMakeCache.txt"
+grep -qx 'Athena_ENABLE_MPI:BOOL=ON' "${build_root}/CMakeCache.txt"
+grep -qx 'Athena_BUILD_UNIT_TESTS:BOOL=ON' "${build_root}/CMakeCache.txt"
+sha256sum "${athena}" "${build_root}/CMakeCache.txt" \
+  > "${evidence}/build.sha256"
+
+regex='^athena[.](z4c_state_admissibility|z4c_state_admissibility_static|z4c_timestep_contract|z4c_timestep_contract_static|z4c_shift_control_static|z4c_shock_avoiding_gauge_static|z4c_vc_dynamic_amr_2d_cartoon_o4|z4c_vc_static_multilevel_2d_cartoon_axis_o4|z4c_vc_amr_history|z4c_cartoon_amr_transfer_qualification|z4c_cartoon_production_kernels)$'
+ctest --test-dir "${build_root}" --show-only=json-v1 -R "${regex}" \
+  > "${evidence}/ctest-inventory.json"
+python3 - "${evidence}/ctest-inventory.json" "${build_root}" \
+  "${mpi_wrapper}" "${tile_wrapper}" \
+  > "${evidence}/sycl-ctest.log" 2>&1 <<'PY'
+import json, os, pathlib, subprocess, sys, time
+inventory = json.loads(pathlib.Path(sys.argv[1]).read_text())
+build_root = pathlib.Path(sys.argv[2])
+mpi_wrapper, tile_wrapper = sys.argv[3:5]
+tests = inventory["tests"]
+assert len(tests) == 11, [test["name"] for test in tests]
+for index, test in enumerate(tests, 1):
+    command = list(test["command"])
+    environment = os.environ.copy()
+    if "--mpiexec" in command:
+        location = command.index("--mpiexec")
+        command[location + 1] = mpi_wrapper
+    elif pathlib.Path(command[0]).name.startswith("python"):
+        # Python test drivers launch one or more Athena subprocesses themselves.
+        # Pin their descendants to one tile; do not nest the driver inside mpiexec.
+        environment["ZE_AFFINITY_MASK"] = "0.0"
+    else:
+        command = ["mpiexec", "-n", "1", "-ppn", "1", "--depth", "8",
+                   "--cpu-bind", "depth", tile_wrapper] + command
+    timeout = 300.0
+    for prop in test.get("properties", []):
+        if prop["name"] == "TIMEOUT":
+            timeout = float(prop["value"])
+        assert prop["name"] not in {"DISABLED", "WILL_FAIL",
+                                    "SKIP_RETURN_CODE",
+                                    "SKIP_REGULAR_EXPRESSION"}
+    print(f"START {index}/{len(tests)} {test['name']}", flush=True)
+    start = time.monotonic()
+    result = subprocess.run(command, cwd=build_root, text=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT, timeout=timeout,
+                            env=environment)
+    print(result.stdout, end="")
+    print(f"END {index}/{len(tests)} {test['name']} "
+          f"status={result.returncode} seconds={time.monotonic()-start:.6f}",
+          flush=True)
+    if result.returncode != 0:
+        raise SystemExit(result.returncode)
+print(f"100% tests passed, 0 tests failed out of {len(tests)}", flush=True)
+PY
+
+mpiexec -n 1 -ppn 1 --depth 8 --cpu-bind depth "${tile_wrapper}" \
+  "${athena}" --z4c-cartoon-kernel-test \
+  > "${evidence}/sycl-kernel.log" 2>&1
+mpiexec -n 1 -ppn 1 --depth 8 --cpu-bind depth "${tile_wrapper}" \
+  "${athena}" -i "${source_root}/tst/inputs/z4c_shock_avoiding_gauge.athinput" \
+  -d "${evidence}/shift-smoke" job/basename=shock_zero_shift \
+  time/nlim=2 z4c/telegraph_lapse=false z4c/lapse_oplog=0 \
+  z4c/lapse_harmonic=0 z4c/lapse_shock_avoiding=true \
+  z4c/lapse_shock_avoiding_kappa=1 \
+  z4c/shift_Gamma=0 z4c/shift_alpha2Gamma=0 z4c/shift_H=0 \
+  z4c/shift_advect=0 z4c/shift_eta=0 \
+  > "${evidence}/shift-smoke.log" 2>&1
+
+grep -Fq 'on SYCL' "${evidence}/sycl-kernel.log"
+grep -Fq 'cycle=2' "${evidence}/shift-smoke.log"
+grep -Fq '100% tests passed' "${evidence}/sycl-ctest.log"
+printf 'AURORA_PVC_QUALIFICATION_PASS\n' > "${evidence}/disposition"
