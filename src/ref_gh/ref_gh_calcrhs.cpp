@@ -465,7 +465,19 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
     const int nk = indcs.ke - indcs.ks + 1;
     const int nji = nj*ni;
     const int nkji = nk*nji;
-    Kokkos::TeamPolicy<> policy(DevExeSpace(), nmb*nkji, Kokkos::AUTO);
+#if defined(KOKKOS_ENABLE_CUDA) || defined(KOKKOS_ENABLE_HIP) \
+    || defined(KOKKOS_ENABLE_SYCL)
+    // AUTO selected a work-group larger than the 512-work-item limit of this
+    // register-heavy PVC kernel.  Sixteen lanes cover the ten independent
+    // symmetric components without changing their arithmetic.
+    constexpr int primary_team_size = 16;
+#else
+    // Serial and host-only backends support a one-thread team; TeamThreadRange
+    // preserves the same component order there.
+    constexpr int primary_team_size = 1;
+#endif
+    Kokkos::TeamPolicy<> policy(
+        DevExeSpace(), nmb*nkji, primary_team_size);
     Kokkos::parallel_for(
     "ref_gh scalar source and pi rhs team", policy.set_scratch_size(
         0, Kokkos::PerTeam(sizeof(AnalyticPrimaryTeamScratch))),

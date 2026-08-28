@@ -1,0 +1,46 @@
+Aurora team-per-cell PVC gate failure
+Date: 2026-08-28
+Source commit: 441a6c05eccb03b5d7cc9d21c04ab356a2d25cfc
+Job: 8789799
+Queue: debug
+Node: x4216c4s2b0n0
+Wall time: 00:27:59
+Exit status: 134
+
+Completed evidence:
+- The production-only SYCL/PVC image configured and built.
+- Eight ranks mapped to eight distinct PVC tiles 0.0 through 3.1.
+- The analytic backend reported generic_bytes=0 and exactly 12 static plus 8
+  stage components.
+- The one-rank cycle completed initialization and the Psi RHS fence.
+
+Failure:
+- The first team-per-cell primary-RHS launch threw a SYCL exception:
+  "Total number of work-items in a work-group cannot exceed 512 for this kernel".
+- The one-rank evolved cycle did not complete.
+- The eight-rank cycle and numerical comparison did not run.
+- No performance benchmark followed.
+
+Compiler evidence:
+- The team kernels were emitted and compiled at SIMD16.
+- The FDNG=2,3,4 analytic team kernels still reported approximately 1152,
+  1148, and 1147 spilled Reals, respectively.
+- This job therefore provides no evidence that team-per-cell improved the
+  source register-pressure bottleneck.
+
+Bounded portability correction:
+- Replace Kokkos AUTO team sizing with 16 lanes on CUDA/HIP/SYCL and one lane
+  on host-only backends.  This only caps launch geometry; the ten component
+  expressions and their arithmetic are unchanged.
+
+Remote complete artifacts:
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_team_per_cell_20260828_441a6c05_gate1/runs/analytic_q_pvc_8789799.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+
+Remote SHA-256:
+build.log b4e293e108194aff346a632bcbc952931de21db08b62494822261d6af2034a14
+configure.log fe779bc692c62ebf243dddd25dc6112e314a3ca5329190f8e48971023e51303c
+provenance.txt 92224caf7e0aab721b77f638301317eedc566c4daac57b4cf8095f05d2cf4c91
+rank_gpu_mapping.txt 05e0f1ebf2719e03f064e6da828d1bfa14d7767885c5d06c94dfdd9403321174
+one_rank/run.log 50e127913a8afb04d7a572c5e777361b2b2db6a65c12fd138e2e10e4e3c4a947
+
+Decision: FAIL_CLOSED_AND_RERUN_ONE_FOCUSED_GATE_AFTER_TEAM_SIZE_CAP

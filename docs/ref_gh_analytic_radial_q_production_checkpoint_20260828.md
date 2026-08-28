@@ -206,3 +206,13 @@ backend to `2.24305e-15` and `3.77065e-14`, respectively, in evolved common
 histories.  This is local correctness evidence only; PVC and performance are
 not yet qualified.  See
 `artifacts/ref_gh_analytic_radial_q_20260828/team_per_cell_local_checkpoint.txt`.
+
+Aurora job 8789799 built the production PVC image and mapped eight ranks to
+eight distinct tiles, but its one-rank primary-RHS launch failed before an
+evolved cycle: Kokkos AUTO selected more than the kernel's 512-work-item PVC
+limit.  No eight-rank comparison or benchmark followed.  The compiler also
+reported roughly 1,150 spilled Reals for the team kernels, so performance is
+not inferred from compilation.  The bounded follow-up caps device teams at 16
+lanes (ten active symmetric components) and host-only teams at one lane;
+equations and component arithmetic are unchanged.  See
+`artifacts/ref_gh_analytic_radial_q_20260828/team_per_cell_pvc_8789799_failure.txt`.
