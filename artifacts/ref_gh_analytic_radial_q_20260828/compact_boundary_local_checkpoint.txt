@@ -1,0 +1,76 @@
+Compact q-controlled physical-boundary checkpoint
+Date: 2026-08-28
+Code commit: b892b15181203221ff3514656ea0ecd970805d37
+Parent production checkpoint: 9f2b09fb9c44dd58a8728f354239dd6fe20d56e5
+
+Change:
+- The analytic q-controlled physical-boundary path no longer materializes the
+  stationary physical or current ReferenceGeometry objects.
+- Metric projection evaluates the physical coordinate metric and first jet
+  directly from compact radial scalars and projects them with compact
+  frame/coframe accessors.
+- Gauge projection uses the generated stationary physical gauge baseline,
+  converts it to a coordinate covector, and projects it into the current frame.
+- Projected dPsi scratch was reduced from 64 simultaneous Reals to four, and
+  only the ten symmetric metric components are evaluated.
+- The generic-cache implementation remains a separately instantiated oracle;
+  it is absent from the analytic device kernel image.
+- Because physical boundaries execute after the controller RK update, the
+  analytic path reconstructs only the eight stage radial scalars from the
+  resident 12-scalar static coefficients and the post-update q/qdot/qddot jet.
+  It performs no trumpet-table lookup and does not read the pre-update stage
+  view at this task boundary.
+- No equation, radial-q ansatz, precision, discretization, or tolerance changed.
+
+Hard-gate history:
+- An initial compact implementation incorrectly read the pre-RK-update stage
+  view.  The expanded pointwise projection oracle passed after conditioning,
+  but the evolved analytic/generic comparison differed at O(1e-3) in a common
+  ADM shell diagnostic.  This was rejected and not committed.
+- Reconstructing the eight stage scalars from post-update controller state
+  repaired the mismatch.  The corrected full-cycle primary Ref-GH history
+  agrees with the generic backend to conditioned Linf 4.32393473493565921e-14.
+- Across primary, user, and six common-ADM histories, excluding only the two
+  backend-specific reference-curvature columns that are intentionally absent
+  for the zero-allocation analytic backend, conditioned Linf is
+  6.89231657857725111e-14.  The worst entry is the initial secondary
+  adm_common5 shell diagnostic; all 441 compared finite entries and 21 paired
+  intentional NaNs match structurally.
+
+Fresh local gates, unchanged tolerances:
+- GCC 13.3 / Kokkos Serial production build: PASS.
+- GCC 13.3 / Kokkos Serial default oracle build: PASS.
+- Original coefficient oracle: PASS, 216 samples, 8.88178e-15.
+- Expanded coefficient oracle: PASS, 2160 samples, 1.48837e-13 <= 2e-13.
+- Generated geometry oracle: PASS, 2376 samples, 2.33147e-15 <= 256 epsilon.
+- Moving gauge oracle: PASS, 2160 samples, dtTheta 3.54866e-17 and frame
+  motion 1.24829e-14 <= 256 epsilon.
+- Compact boundary projection oracle: PASS, 2160 samples, metric
+  4.56474e-14, gauge 9.21858e-16, subtracted gauge 7.11991e-16, all <=
+  256 epsilon.
+- All-61 RHS oracle: PASS, 4320 compatible+standard comparisons,
+  2.84217e-14 <= 256 epsilon.
+- Corrected full-output analytic dynamic-q RK cycle: PASS.
+- Generic-cache full-output comparison cycle: PASS.
+- Both cycles report identical stationary error summaries at printed precision:
+  field 2.055369e-03, physical metric 6.501009e-05, lapse 2.848095e-07,
+  shift 8.663063e-08, constraint 4.984820e-03.
+
+Local executable SHA-256:
+- production: 9c028c4903010be3c5497497020d5bbbfb1dbe27221d7d0cef3b3a8deda97bb5
+- oracle: fdde22ee5e3a1172b705fa480f57068a9bbdf1546e6206403037d422c0860b1b
+
+Local log SHA-256:
+- final source-unit gate:
+  c0fabbeff2221a5a9915d9b6c3cd916154b25e37ee686f9b885478949d70fab9
+- corrected analytic cycle:
+  4bf988005b9394c6f94a2e2630776e007be22e6d203110a3d79ebd62842aad2e
+- corrected generic cycle:
+  573ca6043c2bdd7996c78b4ad8b00653e4f7c9360a7ce212f9109626cc094059
+
+Claim boundary:
+- Compact boundary algebra qualified locally: yes.
+- Correct post-controller-RK staging qualified locally: yes.
+- Current-source PVC evolved cycle: not yet rerun.
+- Current-source matched 64^3 performance: not yet measured.
+- Production ready: no.

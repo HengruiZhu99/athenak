@@ -149,3 +149,16 @@ The matched benchmark input now explicitly selects `trumpet_q_controlled` and
 `analytic_radial_q`.  Its closed-loop and static control modes both pass a
 one-cycle local dispatch smoke; this is input validation only, not performance
 evidence.
+
+The next equation-preserving optimization replaces the measured dominant
+q-controlled physical-boundary path with compact radial projection.  The
+analytic boundary kernel no longer constructs either full reference geometry;
+it reconstructs only the eight post-controller-RK stage scalars from the
+resident 12-scalar static coefficients.  A new 2160-sample projection oracle
+passes at unchanged `256 epsilon` with conditioned errors `4.56474e-14`
+(metric), `9.21858e-16` (gauge), and `7.11991e-16` (subtracted gauge).  The
+corrected full-output analytic/generic cycles agree to `4.32393e-14` in the
+primary Ref-GH history and give identical error summaries at printed
+precision.  This is local qualification only; current-source PVC and matched
+performance reruns remain required.  See
+`artifacts/ref_gh_analytic_radial_q_20260828/compact_boundary_local_checkpoint.txt`.
