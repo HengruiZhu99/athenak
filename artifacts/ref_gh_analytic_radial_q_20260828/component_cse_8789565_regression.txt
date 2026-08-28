@@ -1,0 +1,60 @@
+Aurora per-component CSE PVC discriminator: FUNCTIONAL PASS, PERFORMANCE REJECT
+Date: 2026-08-28
+Job: 8789565
+Project: CompactBinaryMerger
+Queue: debug
+Node: x4313c1s5b0n0
+Source commit: 4e8a55aab4c219e9e4acc7d28117f4133320eb30
+Experiment commit: f1a6abfc6d28ed13368e826024ff7df992e57084
+State: F
+Exit status: 0
+Wall time: 00:25:17
+
+Run directory:
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_component_cse_20260828_4e8a55aa_test1/runs/component_cse_8789565.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+
+Functional discriminator:
+- Production-only SYCL/PVC build: PASS.
+- One rank mapped to PVC tile 0.0 and reported Intel Data Center GPU Max 1550.
+- Full-output evolved dynamic-q RK cycle: PASS.
+- Every requested task fence through ADM reconstruction, constraints, histories,
+  projected physical boundaries, and timestep: PASS.
+- Exact production allocation line retained generic_bytes=0 and the 12-static /
+  8-stage compact views.
+- Scheduler exit status: 0.
+
+Matched 64^3 timing decision:
+- Baseline job 8789453 scalar-source/Pi kernel: 0.0659391444691 s/call.
+- Component-CSE job 8789565 scalar-source/Pi kernel: 0.159179413927 s/call.
+- Kernel slowdown: 2.41403517150x.
+- Baseline job 8789453 throughput: 1.031481e5 active zone-cycles/s.
+- Component-CSE job 8789565 throughput: 7.629483e4 active zone-cycles/s.
+- Throughput change: -26.0337030%.
+- Projected-boundary time changed only from 0.5275612004 to
+  0.5332886543 s/call (1.01086x), so it does not explain the source regression.
+
+Compiler evidence:
+- The analytic CalcRHS primary kernel still compiled at SIMD16 with about 1300
+  spilled Reals; the experiment did not remove the register-pressure failure.
+- The generated source expanded from 5,819 to 32,417 lines and took roughly
+  21 minutes to compile before the runtime discriminator began.
+
+Decision:
+- Reject the per-component CSE grouping as a production optimization.
+- Preserve this compact evidence and the bounded rerun script.
+- Revert only the experimental generator/generated-source change, returning to
+  the previously qualified contracted expressions and tolerances.
+- Do not interpret the evolved-cycle pass as performance acceptance,
+  convergence, long-time stability, or production readiness.
+
+Committed companion files:
+- component_cse_8789565_status.txt
+- component_cse_8789565_gpu_mapping.txt
+- component_cse_8789565_kernels.tsv
+- component_cse_8789565_full_cycle.log
+- component_cse_8789565_measured.log
+- component_cse_8789565_provenance.txt
+- component_cse_8789565_remote_sha256.txt
+
+The complete 370816-byte compiler log remains at the run directory above and
+has SHA-256 3bf68e27982beddda6ef37b32f5899360f3b697eea14575f76f8aca7364bcba5.

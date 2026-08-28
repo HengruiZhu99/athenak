@@ -134,16 +134,17 @@ or team-per-cell tests are now authorized.  Production readiness still requires
 repair and remeasurement of both the heavily spilled scalar-source/Pi kernel
 and the generic-geometry projected boundary path.
 
-The first authorized compiler discriminator changes only CSE grouping: the ten
-generated curvature and moving-frame source components are independently CSE'd
-and called sequentially.  It retains one physical-geometry reconstruction and
-the existing task graph.  Deterministic regeneration, both local builds, all
-q/source oracles, and the full-output cycle pass at unchanged tolerances; the
-history difference from the pre-split cycle is `1.54221e-14` against `256
-epsilon`.  The generated source grows from 5,819 to 32,417 lines and the widest
-component still contains 1,739 CSE temporaries, so this remains an experimental
-PVC compiler/timing discriminator rather than an accepted improvement.  See
-`artifacts/ref_gh_analytic_radial_q_20260828/component_cse_local_checkpoint.txt`.
+The first authorized compiler discriminator changed only CSE grouping: the ten
+generated curvature and moving-frame source components were independently
+CSE'd and called sequentially.  Local determinism, both builds, all source
+oracles, and a full-output cycle passed at unchanged tolerances.  Aurora job
+8789565 also passed the bounded evolved PVC cycle, but the primary scalar-source
+kernel still spilled about 1300 Reals and slowed from `0.0659391` to `0.159179`
+seconds per call (`2.414x`).  Raw throughput fell `26.03%`, from `1.031481e5` to
+`7.629483e4` active zone-cycles/s.  This optimization is therefore rejected and
+the production source has been restored to the previously qualified joint-CSE
+form.  The discriminator script and compact failure evidence are retained in
+`artifacts/ref_gh_analytic_radial_q_20260828/component_cse_8789565_regression.txt`.
 
 The matched benchmark input now explicitly selects `trumpet_q_controlled` and
 `analytic_radial_q`.  Its closed-loop and static control modes both pass a
