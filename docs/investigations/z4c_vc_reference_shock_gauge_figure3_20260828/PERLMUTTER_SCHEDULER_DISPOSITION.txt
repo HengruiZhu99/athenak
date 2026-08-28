@@ -1,0 +1,29 @@
+Perlmutter reference shock-gauge campaign scheduler disposition
+Date: 2026-08-28
+
+Interactive allocation request 57670453
+  observed state: PENDING / Partition in DOWN state
+  disposition: intentionally revoked before allocation
+  GPU runtime: 00:00:00
+  science data: none
+
+CUDA qualification job 57670461
+  last pre-cancel squeue state: PENDING
+  last pre-cancel reason: PartitionDown
+  final sacct state: CANCELLED by 102811
+  final elapsed: 00:00:00
+  GPU runtime: 00:00:00
+  qualification evidence: none
+  science data: none
+
+N256 production
+  submission: not submitted
+  execution: unexecuted
+
+N128/N512 replay
+  submission: not submitted
+  execution: not reached
+
+Claim boundary
+  The fresh CUDA build completed. No A100 runtime qualification or science
+  evolution executed, and build success is not runtime evidence.

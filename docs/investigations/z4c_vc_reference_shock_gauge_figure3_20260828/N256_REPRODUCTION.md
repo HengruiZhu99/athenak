@@ -6,9 +6,10 @@
 
 The fresh N256 native vertex-centered Cartoon run required by the reproduction
 gate was not submitted or run. Work was wrapped at the user's request after the
-reference-gauge source audit and focused host tests. There are no N256 history,
-restart, field, constraint, AMR-authority, GPU, or terminal-state artifacts for
-this campaign.
+reference-gauge source audit, focused host tests, and a successful CUDA build.
+The prerequisite A100 runtime gate could not execute because the Perlmutter GPU
+partition was down. There are no N256 history, restart, field, constraint,
+AMR-authority, GPU-runtime, or terminal-state artifacts for this campaign.
 
 The input `brill_vc_reference_shock_gauge.athinput` freezes the intended setup,
 but an input file is not execution evidence. In particular, this campaign has
