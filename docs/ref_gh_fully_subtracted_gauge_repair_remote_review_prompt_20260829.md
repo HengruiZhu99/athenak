@@ -95,6 +95,7 @@ Evidence to inspect:
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791292_predicate_failed/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791352_numerical_pass_postprocess_failed/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase7_diagnostic_local/`
+- `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase7_aurora_8791429_pass/`
 
 Validate each `SHA256SUMS` file and distinguish current passing evidence from
 the intentionally preserved negative result. The key current observations are:
@@ -152,7 +153,13 @@ the intentionally preserved negative result. The key current observations are:
   postprocessor; the saved TSV passes the unchanged criteria independently,
   and the launcher correction changes only the unused error-message spelling;
 - no positive-time evolution or 64/96/128 stationary ladder has run at this
-  checkpoint.
+  checkpoint through job `8791352`;
+- Aurora job `8791429`: the 64/96/128 STANDARD cycle-zero ladder passed on 12
+  PVC tiles with stored residuals, production delta F, actual/driver gauge
+  RHS, ordinary-gauge Pi increment, and gauge KO sectors all bitwise zero;
+- the old full-target diagnostic still grows from `3.03757e-13` to
+  `1.49782e-11`, directly demonstrating the cancellation avoided by production;
+- positive-time stability and evolved convergence remain untested.
 
 Please return:
 

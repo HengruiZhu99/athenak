@@ -1,0 +1,66 @@
+
+Root grid = 6 x 6 x 6 MeshBlocks
+Total number of MeshBlocks = 216
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 12
+  Rank = 0: 18 MeshBlocks, cost = 18
+  Rank = 1: 18 MeshBlocks, cost = 18
+  Rank = 2: 18 MeshBlocks, cost = 18
+  Rank = 3: 18 MeshBlocks, cost = 18
+  Rank = 4: 18 MeshBlocks, cost = 18
+  Rank = 5: 18 MeshBlocks, cost = 18
+  Rank = 6: 18 MeshBlocks, cost = 18
+  Rank = 7: 18 MeshBlocks, cost = 18
+  Rank = 8: 18 MeshBlocks, cost = 18
+  Rank = 9: 18 MeshBlocks, cost = 18
+  Rank = 10: 18 MeshBlocks, cost = 18
+  Rank = 11: 18 MeshBlocks, cost = 18
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+ref_gh reference allocation backend=analytic_radial_q generic_bytes=0 analytic_static_components=12 analytic_stage_components=8 analytic_static_bytes=23887872 analytic_stage_bytes=15925248
+reference-GH puncture minimum cell-center radius = 0.0360844
+reference-GH stationary physical-target audit: |F-H_constraint|_Linf=2.82796e-12, |tildeGamma|_Linf=2.60696e-15, |stored_Hhat_A|_Linf=0, |stored_theta_A|_Linf=0
+reference-GH stationary residual-target audit: |deltaF_A|_Linf=0, |delta_tildeGamma|_Linf=0, |delta_beta|_Linf=0
+reference-GH initial RHS sector decomposition passed: conditioned error=0, production rerun=0, file=fixed_point_n96.ref_gh_rhs_sectors.tsv
+reference-GH stationary initial RHS Linf = 3.1002e-13, component=10, radius=0.170528, coordinate reference Ricci Linf=1.37611e-08, frame reference Ricci Linf=2.77556e-16
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output2>/file_type = rst was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output3>/file_type = cbin was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output3>/variable = ref_gh was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output3>/id = ref_gh_health was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output3>/coarsen_factor = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output3>/compute_moments = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output3>/binary64 = true was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output3>/single_file_per_rank = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output4>/file_type = cbin was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output4>/variable = ref_gh_native_con was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output4>/id = ref_gh_native_health was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output4>/coarsen_factor = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output4>/compute_moments = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output4>/binary64 = true was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output4>/single_file_per_rank = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output5>/file_type = cbin was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output5>/variable = adm_common was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output5>/id = adm_common_health was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output5>/coarsen_factor = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output5>/compute_moments = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output5>/binary64 = true was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output5>/single_file_per_rank = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_3c9a34c8_phase7_v1/src/src/parameter_input.cpp: input parameter <output5>/common_adm_fd_order = 4 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+reference-GH stationary trumpet: field Linf=0, physical metric Linf=8.88178e-16, lapse Linf=4.996e-16, shift Linf=4.67641e-16, constraint Linf=8.7752e-13, RHS estimate=3.1002e-13
+elapsed=1.752301e+01 cycle=0 time=0.000000e+00 dt=3.404497e-03
+
+Terminating on cycle limit
+time=0.000000e+00 cycle=0
+tlim=0.000000e+00 nlim=0
+
+MeshBlock-cycles = 0
+cpu time used  = 3.643188e+00
+zone-cycles/cpu_second = 0.000000e+00
+particle-updates/cpu_second = 0.000000e+00
+real 18.80
+user 0.00
+sys 0.00

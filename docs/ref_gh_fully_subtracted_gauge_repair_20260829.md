@@ -666,6 +666,43 @@ and Python-3.6-compatible analyzer will next apply these exact-zero gates at
 64^3, 96^3, and 128^3 with the full FD4+KO puncture stencil excluded.  This
 local diagnostic checkpoint is not the three-resolution ladder result.
 
+## Phase 7 Aurora stationary residual ladder
+
+Aurora job `8791429` passed with PBS exit 0 at commit
+`3c9a34c8c3123c2570eb33e8ec77368feb1f1c61`.  A production source-unit-off
+SYCL image ran across 12 distinct PVC tiles.  The fixed physical box and 16^3
+MeshBlocks produced 64, 216, and 512 MeshBlocks at 64^3, 96^3, and 128^3.
+The FD4+KO mask excludes the full three-cell stencil, so the first included
+radius moves as
+
+\[
+ r_{\min}/M=0.2231696384,\ 0.1487797589,\ 0.1115848192,
+ \qquad r_{\min}/h=\sqrt{12.75}.
+\]
+
+At all three resolutions the stored Hhat/theta residuals, production
+`deltaF_A`, delta conformal Gamma, delta shift, actual and driver
+Hhat/theta/Upsilon RHS, ordinary-gauge Pi increment, and all gauge KO sectors
+are bitwise zero.  Reproduction and production-rerun decomposition errors are
+also exactly zero.  Hence the frozen discriminator's moving-`r/h`
+`r^-5.2 -> r^-7.27` gauge envelope is absent after analytic subtraction.
+
+The old full-target cancellation diagnostic is intentionally retained and
+still grows from `3.03757e-13` to `1.49782e-11`.  It no longer enters the exact
+matched production path.  The complete nonzero RHS is confined to the existing
+covariant-vacuum Pi source and changes from `2.07099e-13` through
+`3.10020e-13` to `3.80172e-13`.  The frame-reference Ricci diagnostic remains
+at `1.39e-16` to `3.33e-16`, while the secondary coordinate-reference Ricci
+reconstruction grows from `4.14e-10` to `4.69e-8`.
+
+For the strict static, uncontrolled, unprescribed q=1 STANDARD dispatch, the
+appropriate checkpoint classification is:
+
+`FULLY SUBTRACTED GAUGE FORMULATION ALGEBRAICALLY QUALIFIED`
+
+This claim does not extend to positive-time behavior, moving references,
+feedback/prescribed q, or production readiness.
+
 ## Remaining gates
 
 The following are not yet complete: independent all-radius high-precision

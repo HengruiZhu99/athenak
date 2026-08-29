@@ -146,7 +146,8 @@ python3 "${ANALYZE}" --run-root . \
   sha256sum "${EXE}"
 } > gate_status.txt
 
-find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+echo "phase7_ladder_complete=$(date -Is)"
+find . -type f ! -name 'compact_sha256.txt' \
+  \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
   -o -name '*.log' -o -name '*.json' -o -name '*-trumpet.dat' \) \
   -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
-echo "phase7_ladder_complete=$(date -Is)"
