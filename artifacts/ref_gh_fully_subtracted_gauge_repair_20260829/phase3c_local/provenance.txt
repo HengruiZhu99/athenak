@@ -1,0 +1,15 @@
+date=2026-08-29T14:53:04-04:00
+branch=codex/ref-gh-fully-subtracted-gauge-repair-20260829
+source_commit=b5330d257433251b61d1295d34e1b816601dafe8
+parent_checkpoint=76251cd1
+kokkos=6739bc623081648af9e752b616d9671527922cbf
+compiler=g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+cmake=3.28.3
+build=Release Serial
+build_command=cmake --build build_fully_subtracted_serial -j 8
+run_command=./build_fully_subtracted_serial/src/athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
+build_status=0
+run_status=0
+executable_sha256=24bdd22126cf1b77c52e39afa020bb10d4dba3bc1cd8eebb40f7c42b754a7604
+production_dispatch=disabled
+aurora_job=none

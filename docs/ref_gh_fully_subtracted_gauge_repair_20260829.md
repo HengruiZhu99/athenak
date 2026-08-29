@@ -324,6 +324,28 @@ reference forcing in the exact matched `q=1` branch. It does not yet qualify
 the all-radius perturbed driver, moving-reference forcing, or production
 dispatch. Compact evidence is in `phase3b_local`.
 
+### Phase 3c compact analytic residual source
+
+The compact radial-q implementation now evaluates the Einstein gauge increment
+without the recursive generic reference accessors. The generated upper-index
+gauge contraction is linear in \(g^{ab}\) and \(\partial_\mu g^{ab}\). Feeding
+it the exact residuals of those quantities gives \(\Delta B^a\) and
+\(\partial_\mu\Delta B^a\) directly. Lowering uses
+
+\[
+ \Delta B_a=\delta g_{ab}B^b(g)+\bar g_{ab}\Delta B^b,
+\]
+
+and its four-term differentiated product identity. The resulting \(J_a\),
+\(\partial_\mu J_a\), covariant derivative, damping projector, and frame
+projection are the same expressions as in the generic residual oracle.
+
+The matched `q=1` compact source is bitwise zero at all ten expanded radii.
+Perturbed compact/generic residual sources pass at the unchanged conditioned
+radii. Their all-radius maximum difference is `3.05105e-12` at `r=0.03M`;
+this is retained as a coefficient-conditioning diagnostic for Phase 4.
+The compact function remains outside `CalcRHS` at this checkpoint.
+
 ## Principal part
 
 The rewrite is an algebraic change of dependent variables plus lower-order
