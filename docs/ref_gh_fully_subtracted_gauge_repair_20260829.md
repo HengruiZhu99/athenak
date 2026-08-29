@@ -528,14 +528,58 @@ production candidate.  Phase 4 shows that the unchanged local principal
 symbol does not by itself provide a resolution-uniform bound on the singular
 lower-order coefficient maps in the ordinary stored-variable norm.
 
+## Phase 6 local production residual dispatch
+
+Commit `ab30fa963f5d1d7ce54748ffb287c91c87705153` dispatches the
+cancellation-free equations from production `CalcRHS` only under the strict
+static, uncontrolled, unprescribed `q=1` predicate.  The driver consumes the
+stored residuals and spatial derivatives directly.  Its genuine reference
+coefficient is generated as
+
+\[
+ {\cal K}^{\rm ref}_{iA}
+ =e_A{}^a\partial_iH^{\rm ref}_a,
+\]
+
+rather than reconstructed as the cancellation-prone
+\(\partial_iH_A^{\rm ref}-\Omega_{Ai}{}^BH_B^{\rm ref}\).  The same-stage
+residual Hhat RHS supplies \(\partial_t\delta H_A\) to the direct residual
+Einstein gauge increment.  Generic, moving, prescribed, and feedback
+production modes retain the legacy dispatch until separately qualified.
+
+The deterministic generator produced byte-identical headers in two fresh
+passes.  The direct Kref oracle passes at `1.15471e-15` under the unchanged
+`256*epsilon` conditioned gate.  The all-61 oracle now compares the legacy
+generic full-reference evaluator to the fully subtracted compact evaluator for
+all 4320 q/rate/acceleration/radius/Phi-ordering samples.  It includes the
+moving-reference `dtTheta` forcing, gauge target, gauge driver, ordinary-GH
+Einstein increment, gamma0, gamma2, and both compatible and STANDARD Phi
+ordering, and passes at `4.13003e-14` under the unchanged `256*epsilon` gate.
+
+Removing a tautological overwrite in the residual-target oracle exposes the
+all-radius physical-target association discrepancy `6.02413e-10`.  The raw
+target-delta and full-driver diagnostics remain `1.3918e-06` and `1.05256`.
+These are near-puncture diagnostics because neither binary64 full construction
+is an independent truth there.  Exact matched target, driver, and Einstein
+gauge-source residuals remain bitwise zero at every sampled radius; perturbed
+comparisons retain the unchanged tolerance in the established conditioned
+region `r>=0.8M`.
+
+A focused 16^3 STANDARD production initialization has exact-zero Hhat, theta,
+Upsilon, ordinary-gauge Pi increment, and KO gauge sectors.  The remaining
+total Pi RHS is `5.681872526233013e-14`, entirely in the existing covariant
+vacuum source at its maximum.  This is a local Kokkos Serial algebra/fixed-point
+checkpoint.  It does not qualify an Aurora device path, the 64/96/128 residual
+ladder, or any evolution.
+
 ## Remaining gates
 
 The following are not yet complete: independent all-radius high-precision
 qualification of cancellation-free \(\delta F_A\), independent qualification
-of the direct \(\Delta B_a\) and derivative evaluator, production residual
-dispatch, host/device and all-61 equivalence, the repaired 64/96/128
+of the direct \(\Delta B_a\) and derivative evaluator below the conditioned
+binary64 region, Aurora/PVC device equivalence, the repaired 64/96/128
 fixed-point ladder, the 3M/5M discriminator, the resolution ladder, 20M, and
-conditional 100M qualification.  Exact matched-state fill is implemented and
-locally tested, but its initial production RHS remains the legacy residual
-dispatch baseline rather than a fixed-point result.  Performance optimization
-remains out of scope for this campaign.
+conditional 100M qualification.  Exact matched-state fill and strict static
+q=1 residual production dispatch are locally tested.  General moving-reference
+production dispatch remains legacy pending a separate qualification.
+Performance optimization remains out of scope for this campaign.

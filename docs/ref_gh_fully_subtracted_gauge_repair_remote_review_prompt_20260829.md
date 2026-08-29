@@ -4,9 +4,10 @@ Review `HengruiZhu99/athenak` in read-only mode on branch
 `codex/ref-gh-fully-subtracted-gauge-repair-20260829`. Verify the branch tip
 reported by the requester before beginning. The repair branch was forked from
 frozen discriminator commit `223947486ac4498bab2e197feca56462c77e6d76`.
-The latest source-and-evidence checkpoint to audit is
-`b290c2bda559d4db62213266b093458c020920b5`; a later tip may contain only this
-updated review prompt and report corrections.
+The latest source checkpoint to audit is
+`ab30fa963f5d1d7ce54748ffb287c91c87705153`; the branch tip also contains
+compact Phase-6 evidence and documentation updates. Verify both commits from
+the repository history rather than assuming the source checkpoint is the tip.
 
 Please perform a detailed formulation, implementation, test, and evidence
 audit of the work through the current branch tip. Do not modify the branch,
@@ -55,12 +56,12 @@ Primary review targets:
    for the precisely matched, static, uncontrolled, unprescribed `q=1` case;
    that every nearby or moving case takes the general path; and that initial and
    physical-boundary data remain consistent.
-9. Verify the claim boundary: none of the new residual driver/Einstein-source
-   paths is yet dispatched from production `CalcRHS`. Exact matched-state
-   initialization is implemented and locally tested, but host/device all-61
-   equivalence, fixed-point ladders, evolved PVC gates, convergence, and
-   long-time stability remain unqualified. The retained initial RHS
-   `5.80111e-14` is the legacy-production baseline, not a fixed-point pass.
+9. Verify the claim boundary: the new residual driver/Einstein-source paths
+   are dispatched only under the strict static, uncontrolled, unprescribed
+   `q=1` predicate. Audit that production predicate and both the generic and
+   analytic dispatches in `src/ref_gh/ref_gh_calcrhs.cpp`. General moving and
+   controlled production modes must remain on the legacy path at this
+   checkpoint.
 10. Check that standard Phi ordering remains the production candidate and that
    this lower-order rewrite does not silently change the standard first-order GH
    principal part. Treat compatible ordering only as an oracle/research mode.
@@ -75,6 +76,7 @@ Evidence to inspect:
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase3c_local/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase4_local/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase5_local/`
+- `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_local/`
 
 Validate each `SHA256SUMS` file and distinguish current passing evidence from
 the intentionally preserved negative result. The key current observations are:
@@ -98,8 +100,14 @@ the intentionally preserved negative result. The key current observations are:
 - Phase-5 exact initialization: stored-field, stored-Hhat, and stored-theta
   Linf errors are exactly zero; physical reconstruction errors are at most
   `3.33067e-16`;
-- Phase-5 initial production RHS: `5.80111e-14`, because production still uses
-  the legacy reconstruction path.
+- Phase-6 direct generated Kref conditioned error: `1.15471e-15`;
+- Phase-6 all-61 legacy-generic versus fully-subtracted compact RHS error:
+  `4.13003e-14` over 4320 samples, including moving-reference `dtTheta` and
+  compatible plus STANDARD Phi ordering;
+- Phase-6 exact STANDARD production gauge sectors: bitwise zero;
+- Phase-6 remaining total Pi RHS: `5.681872526233013e-14`, entirely in the
+  existing covariant-vacuum source at its maximum;
+- non-tautological all-radius physical-target diagnostic: `6.02413e-10`.
 
 Please return:
 

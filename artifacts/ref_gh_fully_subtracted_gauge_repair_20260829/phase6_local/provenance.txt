@@ -1,0 +1,37 @@
+date: 2026-08-29T16:05:02-04:00
+host: Kip
+kernel: Linux 6.17.0-35-generic x86_64
+branch: codex/ref-gh-fully-subtracted-gauge-repair-20260829
+source checkpoint: ab30fa963f5d1d7ce54748ffb287c91c87705153
+frozen parent: 223947486ac4498bab2e197feca56462c77e6d76
+kokkos: 6739bc623081648af9e752b616d9671527922cbf (4.7.02)
+compiler: g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+cmake: 3.28.3
+sympy: 1.14.0
+build: Release Kokkos Serial
+executable sha256: 8d8b9ba985377d04340fd190e21aec246ed91de08b3e28623a5d0c7a793fba12
+CMakeCache.txt sha256: 3bcdf8664cf1ea305a0a189715c1d22af55bedb055d3d97f3068551d83b4ca29
+
+generator command:
+/tmp/refgh-sympy-1.14/bin/python scripts/ref_gh/generate_analytic_radial_q_geometry.py --output src/ref_gh/generated/analytic_radial_q_geometry.hpp --gauge-output src/ref_gh/generated/analytic_radial_q_gauge.hpp --source-output src/ref_gh/generated/analytic_radial_q_source.hpp
+
+generator pass A: 362.25 s
+generator pass B: 370.61 s
+geometry/gauge/source byte comparisons: identical
+generator sha256: f24ca36a00cbec6b6c2178202b174076a2db0148009e007020eff89d2aa22182
+geometry header sha256: 15bc80db10c11e4bdff3911d6d2179881384c910db135d2d5c47f267c584eee2
+gauge header sha256: 4e9c9d0bc0b1d20fe8de2129de1fd61d7ff76f2d1af4aac907a43ef178cbd29c
+source header sha256: 28b66f21e7cb5c7957f0ea6725ff28e6477c3ebbdaeb32d75d792680e4281f42
+
+build command:
+cmake --build build_fully_subtracted_serial -j2
+
+source-unit command:
+./build_fully_subtracted_serial/src/athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
+
+STANDARD fixed-point initialization command:
+./build_fully_subtracted_serial/src/athena -i inputs/ref_gh/ref_gh_ordering_gauge_fixed_point.athinput mesh/nx1=16 mesh/nx2=16 mesh/nx3=16 meshblock/nx1=16 meshblock/nx2=16 meshblock/nx3=16 ref_gh/phi_ordering=standard job/basename=phase6_standard_residual_dispatch_init_final
+
+Aurora job: none
+evolution cycles: zero
+production residual dispatch: strict static q=1 path only
