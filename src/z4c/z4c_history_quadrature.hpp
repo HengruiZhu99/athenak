@@ -15,6 +15,16 @@
 
 namespace z4c {
 
+//! True when a diagnostic point belongs to the configured spherical region.
+//! Negative radius retains the historical full-domain behavior.  The strict
+//! comparison implements the input contract r < history_constraint_radius.
+KOKKOS_INLINE_FUNCTION
+bool Z4cHistoryInsideRadius(const Real radius, const Real x1,
+                            const Real x2, const Real x3) {
+  return radius < 0.0 ||
+         x1 * x1 + x2 * x2 + x3 * x3 < radius * radius;
+}
+
 inline constexpr Real kZ4cHistoryTwoPi =
     6.2831853071795864769252867665590057683943387987502;
 

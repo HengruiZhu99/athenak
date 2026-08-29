@@ -256,6 +256,9 @@ class Z4c {
     bool damp_kappa1_max_K;
     // Compute the volume-global maximum Kretschmann scalar in Z4c history output.
     bool history_kretschmann;
+    // Spherical coordinate-radius cutoff for Z4c constraint history diagnostics.
+    // A value of -1 retains the complete active domain.
+    Real history_constraint_radius;
     // Default-off, fail-visible stage diagnostics for bounded instability audits.
     bool rhs_stage_diagnostics;
     Real rhs_stage_diagnostics_start_time;

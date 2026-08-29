@@ -72,6 +72,7 @@ template <int FAMILY, typename ConstraintView, typename ChiView,
 ConstraintMaximum CartoonConstraintMaximum(
     const ConstraintView &constraints, const ChiView &chi,
     MeshBlockSizeDualView &size, const Real excise_chi,
+    const Real history_constraint_radius,
     const int nmb, const int nx1, const int nx2, const int nx3,
     const int is, const int js, const int ks, const bool vertex,
     const TopologyView topology) {
@@ -95,6 +96,18 @@ ConstraintMaximum CartoonConstraintMaximum(
         const int k = k0 + ks;
         if (vertex && !topology(m, k, j, i).canonical_diagnostic_owner) return;
         if (chi(m, k, j, i) < excise_chi) return;
+        const Real rho = vertex
+                             ? VertexX(i0, nx1 - 1, size.d_view(m).x1min,
+                                       size.d_view(m).x1max)
+                             : CellCenterX(i0, nx1, size.d_view(m).x1min,
+                                           size.d_view(m).x1max);
+        const Real z = vertex
+                           ? VertexX(j0, nx2 - 1, size.d_view(m).x2min,
+                                     size.d_view(m).x2max)
+                           : CellCenterX(j0, nx2, size.d_view(m).x2min,
+                                         size.d_view(m).x2max);
+        if (!z4c::Z4cHistoryInsideRadius(
+                history_constraint_radius, rho, z, 0.0)) return;
         const Real raw = constraints(m, FAMILY, k, j, i);
         Real magnitude = 0.0;
         if constexpr (FAMILY == 1) {
@@ -374,6 +387,7 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
 
 void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   auto &opt = pm->pmb_pack->pz4c->opt;
+  const Real history_constraint_radius = opt.history_constraint_radius;
   const bool cartoon =
       pm->pmb_pack->z4c_symmetry.mode == z4c::Z4cSymmetryMode::cartoon_so2;
   // set number of and names of history variables for z4c
@@ -532,6 +546,20 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
                                    size.d_view(m).x1min, size.d_view(m).x1max)
                          : CellCenterX(i - is, indcs.nx1,
                                        size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real x2 = vertex
+                        ? VertexX(j - js, layout.nx2,
+                                  size.d_view(m).x2min, size.d_view(m).x2max)
+                        : CellCenterX(j - js, indcs.nx2,
+                                      size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real x3 = (symmetry_mode == z4c::Z4cSymmetryMode::cartoon_so2)
+                        ? 0.0
+                        : (vertex
+                               ? VertexX(k - ks, layout.nx3,
+                                         size.d_view(m).x3min,
+                                         size.d_view(m).x3max)
+                               : CellCenterX(k - ks, indcs.nx3,
+                                             size.d_view(m).x3min,
+                                             size.d_view(m).x3max));
     const Real vol = vertex
         ? z4c::Z4cDiagnosticVertexMeasure(
               symmetry_mode, rho, size.d_view(m).dx1, size.d_view(m).dx2,
@@ -548,7 +576,9 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 
     // Excise the punctures based on chi
     array_sum::GlobalSum hvars;
-    if (z4c.chi(m,k,j,i)>=opt.excise_chi) {
+    if (z4c.chi(m,k,j,i)>=opt.excise_chi &&
+        z4c::Z4cHistoryInsideRadius(
+            history_constraint_radius, rho, x2, x3)) {
       hvars.the_array[0] = vol*u_con_(m,0,k,j,i); // ||C||^2 (comes already squared)
       hvars.the_array[1] = vol*SQR(u_con_(m,1,k,j,i)); //||H||^2
       hvars.the_array[2] = vol*u_con_(m,2,k,j,i); // ||M||^2 (comes already squared)
@@ -609,6 +639,15 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
                                : CellCenterX(i0, indcs.nx1,
                                              size.d_view(m).x1min,
                                              size.d_view(m).x1max);
+          const Real z = vertex
+                             ? VertexX(j0, layout.nx2,
+                                       size.d_view(m).x2min,
+                                       size.d_view(m).x2max)
+                             : CellCenterX(j0, indcs.nx2,
+                                           size.d_view(m).x2min,
+                                           size.d_view(m).x2max);
+          if (!z4c::Z4cHistoryInsideRadius(
+                  history_constraint_radius, rho, z, 0.0)) return;
           const int radial_layer = static_cast<int>(Kokkos::floor(rho / dx1));
           const Real detg = adm::SpatialDet(
               g_dd(m,0,0,k,j,i), g_dd(m,0,1,k,j,i),
@@ -684,15 +723,19 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 
     const std::array<ConstraintMaximum, kCartoonConstraintFamilies> maxima = {
         CartoonConstraintMaximum<0>(u_con_, z4c.chi, size, excise_chi,
+                                    history_constraint_radius,
                                     pm->pmb_pack->nmb_thispack,
                                     nx1, nx2, nx3, is, js, ks, vertex, topology),
         CartoonConstraintMaximum<1>(u_con_, z4c.chi, size, excise_chi,
+                                    history_constraint_radius,
                                     pm->pmb_pack->nmb_thispack,
                                     nx1, nx2, nx3, is, js, ks, vertex, topology),
         CartoonConstraintMaximum<2>(u_con_, z4c.chi, size, excise_chi,
+                                    history_constraint_radius,
                                     pm->pmb_pack->nmb_thispack,
                                     nx1, nx2, nx3, is, js, ks, vertex, topology),
         CartoonConstraintMaximum<3>(u_con_, z4c.chi, size, excise_chi,
+                                    history_constraint_radius,
                                     pm->pmb_pack->nmb_thispack,
                                     nx1, nx2, nx3, is, js, ks, vertex, topology)};
     for (int family = 0; family < kCartoonConstraintFamilies; ++family) {

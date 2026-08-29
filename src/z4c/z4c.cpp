@@ -365,6 +365,17 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
       pin->GetOrAddBoolean("z4c", "damp_kappa1_max_K", false);
   opt.history_kretschmann =
       pin->GetOrAddBoolean("z4c", "history_kretschmann", false);
+  opt.history_constraint_radius =
+      pin->GetOrAddReal("z4c", "history_constraint_radius", -1.0);
+  if (!std::isfinite(opt.history_constraint_radius) ||
+      (opt.history_constraint_radius != -1.0 &&
+       opt.history_constraint_radius <= 0.0)) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": <z4c>/history_constraint_radius must be -1 "
+                 "(full domain) or finite and positive"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.rhs_stage_diagnostics =
       pin->GetOrAddBoolean("z4c", "rhs_stage_diagnostics", false);
   opt.rhs_stage_diagnostics_start_time =

@@ -98,13 +98,21 @@ bool TestAxisAndMetricFailure() {
   return axis == 0.0 && std::isnan(invalid);
 }
 
+bool TestHistoryRadiusSelection() {
+  return z4c::Z4cHistoryInsideRadius(-1.0, 1.0e6, -1.0e6, 1.0e6) &&
+         z4c::Z4cHistoryInsideRadius(5.0, 3.0, 3.0, 0.0) &&
+         !z4c::Z4cHistoryInsideRadius(5.0, 3.0, 4.0, 0.0) &&
+         !z4c::Z4cHistoryInsideRadius(5.0, 5.0, 0.0, 0.0);
+}
+
 }  // namespace
 
 int main(int argc, char **argv) {
   Kokkos::initialize(argc, argv);
   const bool pass = TestSingleBlockRingVolumeAndPolynomial() &&
                     TestMultipleBlocksAndDecompositionOrder() &&
-                    TestCoarseFineLeafPartition() && TestAxisAndMetricFailure();
+                    TestCoarseFineLeafPartition() && TestAxisAndMetricFailure() &&
+                    TestHistoryRadiusSelection();
   Kokkos::finalize();
   if (!pass) {
     std::cerr << "native VC history quadrature regression failed" << std::endl;
