@@ -1,21 +1,21 @@
 {
-  "schema": "athenak.z4c.reference_shock_gauge_figure3.evidence.v3",
-  "generated_utc": "2026-08-28T20:35:00Z",
+  "schema": "athenak.z4c.reference_shock_gauge_figure3.evidence.v4",
+  "generated_utc": "2026-08-29T00:28:05+00:00",
   "repository": "https://github.com/HengruiZhu99/athenak",
   "branch": "codex/z4c-vc-reference-shock-gauge-figure3-20260828",
   "source_fix_commit": "f8303c6be7eb214fa1e91b646123ee0d434b3698",
   "source_fix_tree": "7a585ca487b12351b084eb425bb812775849b001",
-  "verdict": "AURORA_PVC_QUALIFIED; N256_REACHED_TLIM; PARTIAL_FIGURE3_AGREEMENT; CONSTRAINT_INVALID_AT_FIRST_PEAK; CONVERGENCE_NOT_RUN",
-  "execution": {
-    "aurora_account": "CompactBinaryMerger",
-    "device_bisect_job": "8789460",
-    "device_bisect_disposition": "first_bad_151bf20d13c4838793f1c26e0b6b6e669cb7b765",
-    "pvc_qualification_job": "8789659",
-    "pvc_qualification_disposition": "passed_11_of_11_and_two_cycle_shock_smoke",
-    "n256_science_job": "8789703",
-    "n256_science_disposition": "reached_tlim_30M_in_5791_cycles",
-    "n128_replay": "not_run_n256_scientific_gate_failed",
-    "n512_replay": "not_run_n256_scientific_gate_failed"
+  "verdict": "AURORA_PVC_QUALIFIED; N128_N512_EXACT_N256_TREE_REPLAY; STRONG_RESOLUTION_IMPROVEMENT; N512_COVERS_FIGURE3_INTERVAL; CONSTRAINT_INVALID_AT_FIRST_PEAK; UNIFORM_CONVERGENCE_NOT_ESTABLISHED",
+  "fixed_numerics": {
+    "lapse": "shock-avoiding Bona-Masso kappa=1 with unit initial lapse",
+    "shift": "prescribed zero shift",
+    "telegraph_lapse": false,
+    "discretization": "native vertex-centered Cartoon SO(2), O4, q6, RK4",
+    "cfl": 0.15,
+    "ko_dissipation_parameter": 0.5,
+    "z4c_kappa1": 0.0,
+    "z4c_kappa2": 0.0,
+    "outer_boundary_M": 128.0
   },
   "build_authority": {
     "athenak_commit": "f8303c6be7eb214fa1e91b646123ee0d434b3698",
@@ -25,54 +25,1133 @@
     "irisk_source_commit": "620acca67c2736d9add98ecae3ec76f0f2800b29",
     "irisk_library_sha256": "380a90d5b1d9762fe7f9076edcb27fb4a209f4cd8c070da376c36284a438c7a1",
     "brill_coefficients_sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10",
-    "n256_input_sha256": "6c694cf871a3d694d745f0fb58b279b6cd07516463ac8ad54f1c91d2689c90ba"
+    "input_sha256": "6c694cf871a3d694d745f0fb58b279b6cd07516463ac8ad54f1c91d2689c90ba",
+    "pvc_qualification_job": 8789659,
+    "pvc_qualification": "11 of 11 focused tests passed"
   },
-  "n256_observations": {
-    "coordinate_time_final_M": 30.0,
-    "axis_proper_time_final_M": 11.286306780061583,
-    "axis_lapse_min": 0.143411114502615,
-    "axis_lapse_zero_crossings": 0,
-    "maximum_physical_refinement_level": 5,
-    "maximum_meshblocks": 212,
-    "max_axis_abs_kretschmann": 103154.57668529954,
-    "max_axis_abs_kretschmann_proper_time_M": 10.303327789519376,
-    "max_C_squared_integral": 48.233017130731284,
-    "max_H_squared_integral": 41.13138677931991,
-    "all_history_values_finite": true,
-    "history_measure": "2*pi*rho*dx1*dx2*sqrt(abs(det_gamma)) with VC trapezoid weights and canonical shared-node ownership"
+  "hierarchy_authority": {
+    "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/authority/n256_reference_shock_authority.jsonl",
+    "sha256": "7055de601e6181e5ad7e1432b5c20a111b0ba67e0e8d5377c170ea80e7bedcde",
+    "initial_leaves": 104,
+    "event_1_leaves": 200,
+    "event_1_checksum": "24316947a3a67cd8",
+    "event_2_leaves": 212,
+    "event_2_checksum": "cf0d2384b11c1d42",
+    "terminal_physical_level": 5,
+    "n128_exact_replay": true,
+    "n512_exact_replay": true
+  },
+  "execution": {
+    "aurora_account": "CompactBinaryMerger",
+    "queue": "debug-scaling",
+    "nodes_per_segment": 2,
+    "mpi_ranks_per_segment": 24,
+    "n128_jobs": [
+      8790272,
+      8790338
+    ],
+    "n256_authority_job": 8789703,
+    "n512_jobs": [
+      8789895,
+      8789956,
+      8790025,
+      8790135,
+      8790202,
+      8790242
+    ],
+    "n512_segment_0_limitation": "Athena completed cleanly and wrote a usable restart, but PBS exit -29 occurred during a redundant second full artifact hash pass; later segments are sealed and exit zero.",
+    "active_jobs_at_handoff": 0
+  },
+  "case_observations": {
+    "n128": {
+      "coordinate_time_final_M": 45.0,
+      "central_proper_time_final_M": 19.332397517508756,
+      "first_peak_tau_M": 10.313957475928007,
+      "first_peak_log10_abs_kretschmann": 4.297648610475093,
+      "max_C_squared_integral": 107.60843422037156
+    },
+    "n256": {
+      "coordinate_time_final_M": 30.0,
+      "central_proper_time_final_M": 11.286306780061583,
+      "first_peak_tau_M": 10.303327789519376,
+      "first_peak_log10_abs_kretschmann": 5.013488501190193,
+      "max_C_squared_integral": 48.233017130731284
+    },
+    "n512": {
+      "coordinate_time_final_M": 38.65233198686742,
+      "central_proper_time_final_M": 14.982526976960017,
+      "first_peak_tau_M": 10.30810787031197,
+      "first_peak_log10_abs_kretschmann": 5.381115645566895,
+      "deep_minimum_tau_M": 12.622799481368615,
+      "deep_minimum_log10_abs_kretschmann": -6.0787503048865625,
+      "rebound_tau_M": 13.216292031619886,
+      "rebound_log10_abs_kretschmann": -2.818493659098744,
+      "max_C_squared_integral": 4.099301297753094
+    }
+  },
+  "convergence_observations": {
+    "common_proper_time_max_M": 11.286306780061583,
+    "central_kretschmann_median_order": {
+      "tau_0_8": 4.8629540656172345,
+      "tau_8_10": 3.3427263758082746,
+      "tau_10_11_286": 2.0959588228488637
+    },
+    "central_lapse_median_order": {
+      "tau_0_8": 3.934542276119108,
+      "tau_8_10": 3.3585123851430208,
+      "tau_10_11_286": 1.395423777943999
+    },
+    "constraint_pair_orders": "positive but inconsistent between N128/N256 and N256/N512"
+  },
+  "diagnostic_observations": {
+    "constraint_history_measure": "2*pi*rho*sqrt(abs(det_gamma))*drho*dz with VC trapezoid weights and canonical shared-node ownership",
+    "collapsed_y_normalization_artifact": false,
+    "maxima_location": "N256 and N512 C/H maxima are axis-adjacent and far from a coarse-fine interface; this is geometric classification, not causal attribution.",
+    "rho5_high_frequency": "No measured rho near 5 high-k branch grows with resolution on the stitched 25-field patch."
   },
   "claims_supported": [
-    "The narrow device-capture correction is host and Aurora-PVC qualified.",
-    "The exact N256 job reached coordinate-time tlim with finite retained history rows.",
-    "The direct early curvature curve and apparent first-peak time partially agree with published Figure-3 curves.",
-    "The apparent first curvature peak occurs during catastrophic constraint growth.",
-    "The Cartoon history measure has no fictitious collapsed-y volume factor."
+    "N128 and N512 replay the complete N256 LogicalLocation hierarchy and both event times exactly.",
+    "Increasing cells per physical MeshBlock strongly improves the central curve and constraints on the same AMR tree.",
+    "N512 directly covers the published first peak, deep minimum, and rebound without fitting.",
+    "Early central curvature and lapse are compatible with O4 convergence before order degrades through collapse.",
+    "Bulk or parent under-resolution is a major contributor to the N256 failure and is not ruled out.",
+    "The Cartoon history norm already uses the physical axisymmetric ring measure."
   ],
   "claims_not_supported": [
-    "A full Figure-3 reproduction",
-    "Stable self-similar collapse through the deep minimum and rebound",
-    "N128 N256 N512 convergence",
-    "A horizon conclusion",
-    "A unique AMR source bug or continuum formulation failure"
+    "A constraint-qualified Figure-3 reproduction",
+    "Uniform convergence through collapse",
+    "Exclusion of axis or coarse-fine interface contributions",
+    "A unique source-level defect or continuum formulation instability",
+    "A production numerical correction",
+    "A horizon conclusion"
   ],
+  "natural_next_step": "A bounded shared-RHS audit at the retained N512 peak state, separately accumulating active-axis, same-level seam, coarse-fine ghost/interface, and clean-interior contributions while holding the exact tree and all numerics fixed.",
+  "artifact_selection_note": "Includes final reports, generators, final analyses, compact histories, scheduler/provenance records, and sealed segment evidence. Intermediate partial-analysis directories and the reviewer prompt are excluded.",
   "artifacts": [
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.md", "sha256": "7cbf46d8d54523a818abd9a424d7d80468eabab79e1a41ead9e8c4e095a0519c"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/N256_REPRODUCTION.md", "sha256": "ccdb72fad8fc3dff889d016c3b5d59e8f5fd8c674d8b82495b12b61ebb9af0c1"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/CONVERGENCE.md", "sha256": "3f3e11cdf78fff05237c0378224809f755c20432abbb1b1b991f54c05d724601"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/AURORA_PVC_TESTS.md", "sha256": "1c28683eb9f77f9655e5227bd1c63ecedf08b0d4b5c7f82d9f14440532acef18"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analyze_reference_n256.py", "sha256": "eac3995985aa3412358bc68f10a4d44864d1bac29e9d88fc6fd1d3e72e4f9e10"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/n256_summary.json", "sha256": "bc52a01fd7cef960dac870440526bd3bdaa76e7b80f6a63c5e3bc61baa67005d"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/n256_history_compact.csv", "sha256": "21715019d85e117a162832d6680f605bbf5e337448ca680a560f811fcf2e29ca"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/figure3_reference_n256.png", "sha256": "18e4f86d4e1fa43e9df98242ed4f2caf1f662c7caf2ee7e1c7a801f04c9bb1a2"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/figure3_with_constraint_validity.png", "sha256": "5a06198af5810947044fca4750d453fbebfea1c41bd104d51ea3dac15231fd29"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/constraints_and_rho5_mode.png", "sha256": "1fd055dd480163c18a1e3380949259dc5943901abb1bfb376fcc9c322443bc64"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/axis_lapse_history.png", "sha256": "7aec6c8533a0ce65014769b2d835cd19a03d1f6d38f4a3574ef0975daaf86386"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/timestep_refinement_meshblocks.png", "sha256": "2731626419d3227e4a828837482d159974d0549e6f95e65ba2191e5b90b97705"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/bisect_8789460/SHA256SUMS", "sha256": "17d9d08a8758985ac896c291f99d4e78d3400f0a0074daf2914f46ca26510559"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/SHA256SUMS", "sha256": "8acb38caa52c15236c3537e9d074bf76e9429409dc5120d66c7d75ce18e4ba27"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/SHA256SUMS", "sha256": "52b1977b5f6798c6417601f06a5ec319606331361b9e63771cf83ab80a18b8f1"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/n256_reference_shock_record.z4c.user.hst", "sha256": "261b1273c90a3e4ad7b04b8b931dc7479c9a167bb59cd18abd641182afad425b"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/n256_reference_shock_record-constraints.dat", "sha256": "5fed85349dc686d71cdc6e753c6fef16b723373739040cf54d351b2ad9e3586f"},
-    {"path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/authority/n256_reference_shock_authority.jsonl", "sha256": "7055de601e6181e5ad7e1432b5c20a111b0ba67e0e8d5377c170ea80e7bedcde"}
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/AURORA_PVC_TESTS.md",
+      "sha256": "1c28683eb9f77f9655e5227bd1c63ecedf08b0d4b5c7f82d9f14440532acef18",
+      "bytes": 1426
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/CONVERGENCE.md",
+      "sha256": "531de77b3255b726986fd6b1906ee3ede9e014bcbc43c844cd049aa3784e5002",
+      "bytes": 4253
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/GAUGE_IMPLEMENTATION_AUDIT.md",
+      "sha256": "79ee6b38ff76e2f79e05c66506721a8f0294920d2de3e72e00331c65452b7335",
+      "bytes": 2436
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/N256_REPRODUCTION.md",
+      "sha256": "ccdb72fad8fc3dff889d016c3b5d59e8f5fd8c674d8b82495b12b61ebb9af0c1",
+      "bytes": 1246
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/N512_REPLAY.md",
+      "sha256": "faf36ec25a08a9e8dfb70998bef624884c7a8c324a9e8199dbc3bd541c59b058",
+      "bytes": 6458
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REFERENCE_GAUGE.md",
+      "sha256": "ee97d176867bd3f7cf336ad21bc89c92849bad0d6c0f51db802221ebde6ddbae",
+      "bytes": 3073
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.md",
+      "sha256": "7c3015c849253e098e12869d348aed3af78b6bd9eb5ffbe38715b3da941a1609",
+      "bytes": 8684
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.pdf",
+      "sha256": "bb7bbab1b280a831890ed2392bd0778647b00b1497c093f1e01d24d39f776820",
+      "bytes": 1074989
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.tex",
+      "sha256": "47d583627fa59d13de29587a196a4a199c579ff49ab1df46a7aaef7044495d79",
+      "bytes": 9114
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512/final/constraint_amplitudes_n128_n256_n512.pdf",
+      "sha256": "847122d4afbe66480101b6199181f097b7e3e02225f8e847a327efd09992b687",
+      "bytes": 39763
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512/final/constraint_amplitudes_n128_n256_n512.png",
+      "sha256": "3d5d129e028afa4eeed6f1b9f2554e8ae6f7bfd5c6bb35ff8e21ce0a7d30f481",
+      "bytes": 281927
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512/final/constraint_pairwise_orders.pdf",
+      "sha256": "c3b34a3d7a7f508f5ec076e8f0006658cb4e0176bfcbe354d862ecf102f34f2a",
+      "bytes": 28943
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512/final/constraint_pairwise_orders.png",
+      "sha256": "3d5a9da62fd60c0ac85500daf0d27913899f3c656b36236afda510fcb08cae27",
+      "bytes": 226519
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512/final/figure3_n128_n256_n512.pdf",
+      "sha256": "4db18611825c32c4957fca593b924f0db03453f1d33b6b3c826b3cf6c84046d4",
+      "bytes": 27052
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512/final/figure3_n128_n256_n512.png",
+      "sha256": "910c5eed52027a7605636a5c1b16498090cf1a53c4dfff08ca10b7f704b5d1a0",
+      "bytes": 176497
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512/final/three_resolution_aligned.csv",
+      "sha256": "4a80bf36816c2b02142a0baa41130456649ce065f64e89b653caa3ea440084e9",
+      "bytes": 816350
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512/final/three_resolution_summary.json",
+      "sha256": "54cf001af5919da36b698f3f76ca97cc7c667e7063f469e7e6ecadc4f8b27772",
+      "bytes": 14917
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/axis_lapse_history.pdf",
+      "sha256": "ef453695ffdebfcdddf394c26bfbb898e8aba246456cf5392ca5ce6ac44a1bae",
+      "bytes": 11892
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/axis_lapse_history.png",
+      "sha256": "7aec6c8533a0ce65014769b2d835cd19a03d1f6d38f4a3574ef0975daaf86386",
+      "bytes": 70606
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/constraints_and_rho5_mode.pdf",
+      "sha256": "af01d3952af01b52cff9c53d8327c5c52f75c7dfcff80066e0bca4dd5faf5253",
+      "bytes": 24381
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/constraints_and_rho5_mode.png",
+      "sha256": "1fd055dd480163c18a1e3380949259dc5943901abb1bfb376fcc9c322443bc64",
+      "bytes": 202414
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/figure3_reference_n256.pdf",
+      "sha256": "a80b88551780c49f166adf771a46ebd186457ce7aef579f8c6108cc0668dd263",
+      "bytes": 21590
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/figure3_reference_n256.png",
+      "sha256": "18e4f86d4e1fa43e9df98242ed4f2caf1f662c7caf2ee7e1c7a801f04c9bb1a2",
+      "bytes": 152907
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/figure3_with_constraint_validity.pdf",
+      "sha256": "3a0dee45d7985ab4960f7065994c2fb2acdf0778736b3268d116ab3460c732a8",
+      "bytes": 30094
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/figure3_with_constraint_validity.png",
+      "sha256": "5a06198af5810947044fca4750d453fbebfea1c41bd104d51ea3dac15231fd29",
+      "bytes": 252089
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/timestep_refinement_meshblocks.pdf",
+      "sha256": "364478f15decf1c120d8ebe2bf1201b37f08b480c504e7d9db34b80dc98562ec",
+      "bytes": 14101
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/timestep_refinement_meshblocks.png",
+      "sha256": "2731626419d3227e4a828837482d159974d0549e6f95e65ba2191e5b90b97705",
+      "bytes": 87938
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/n256_history_compact.csv",
+      "sha256": "21715019d85e117a162832d6680f605bbf5e337448ca680a560f811fcf2e29ca",
+      "bytes": 389395
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/n256_summary.json",
+      "sha256": "bc52a01fd7cef960dac870440526bd3bdaa76e7b80f6a63c5e3bc61baa67005d",
+      "bytes": 3303
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/field_patch/comparison/field_eta4_ranking_near_peak.pdf",
+      "sha256": "b4d7be2632d1b13cedf5099eaec65e562dddd3c7cc50509ca128f6354130dc0a",
+      "bytes": 22259
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/field_patch/comparison/field_eta4_ranking_near_peak.png",
+      "sha256": "c1dd4d1267902e8f6f215e46acb5164c1ad22b66fffa791f07523233c006d11f",
+      "bytes": 73044
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/field_patch/comparison/field_patch_comparison.csv",
+      "sha256": "c10a694f044478fbc7fa26e2b27ce59f43020c41e1f1ddf4aea02b18588650a6",
+      "bytes": 52699
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/field_patch/comparison/field_patch_comparison_summary.json",
+      "sha256": "0ae559e18193b3b2339e7a3967cd1a1f43d158a06a0784679206a47f6c691611",
+      "bytes": 1895
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/field_patch/comparison/tracked_field_high_frequency_vs_tau.pdf",
+      "sha256": "157ef2ddf143606cfd1961b82b1f88a55777d92b964bdb752a99f63ece76eabf",
+      "bytes": 21219
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/field_patch/comparison/tracked_field_high_frequency_vs_tau.png",
+      "sha256": "1428d5f972d995b495a3f05196cab07d87059fa36056d112f62c57513af09e61",
+      "bytes": 384368
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/field_patch/n256/n256_field_patch_metrics.csv",
+      "sha256": "d2d8a61c9ee052917f38117752bb55cfba842870037e3154acecf942d04cf26d",
+      "bytes": 42559
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/field_patch/n256/n256_field_patch_summary.json",
+      "sha256": "a6b45d4b8e1a975291fd0a2e2f212cb1837326304d3bccc2de1c18bd96be4718",
+      "bytes": 1279
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/field_patch/n512/n512_field_patch_metrics.csv",
+      "sha256": "9e9f453b4685cfb98b1794965464887a60f69fb7858ebd146eeca3ae44428c50",
+      "bytes": 42788
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/field_patch/n512/n512_field_patch_summary.json",
+      "sha256": "eaed2eb81a69296ea377f99f77a6573a1cc7e632098e8fa418b2de2f8d699f97",
+      "bytes": 1376
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/comparison_summary.json",
+      "sha256": "c1a37540fc5ba184ab8f670cda547e135a623b3fa2ff40e765dee6cf5023d5d7",
+      "bytes": 10365
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/constraint_location_rho5.pdf",
+      "sha256": "78af69a32d62adbd84ac25f9597cf8285c3828af676e2bf599174bcc96d6c48e",
+      "bytes": 34458
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/constraint_location_rho5.png",
+      "sha256": "76d9306d18b5796898db2496f612bad1967d0390e666975b5524ba223f765319",
+      "bytes": 226889
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/constraints_n256_n512.pdf",
+      "sha256": "0c7a0d54656486f52645ed86e8d04d13a86973ce70149463dd0c558bce647990",
+      "bytes": 29576
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/constraints_n256_n512.png",
+      "sha256": "94e16fe99cc87c739962b9831666a5e5dee135edc22dc4b1a3d2560ae0e15645",
+      "bytes": 265343
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/figure3_n256_n512.pdf",
+      "sha256": "7840c80d7c92cd87aa025e06d1402525d8b104b6cb429dfcdf2208159763dbbb",
+      "bytes": 23683
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/figure3_n256_n512.png",
+      "sha256": "cf28701a5c2630702d96d5737993dc1d3cc74db5dbef6cd98d92988adf51b4d2",
+      "bytes": 143219
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/lapse_timestep_curvature_topology.pdf",
+      "sha256": "c749c8a05d3bb3f3de733b23dcafe8a0f8c64cad916636231652aafedaa08ef3",
+      "bytes": 32984
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/lapse_timestep_curvature_topology.png",
+      "sha256": "6bc9dcb4ecb81ce0e3328862748233155bccd18a456fe531f52e255f78b80800",
+      "bytes": 294948
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/location/constraint_location_classification.csv",
+      "sha256": "0455e6bf66b06e8b0ad7c1f41eaa1c87610ee6186e57a250296e80e79c04a146",
+      "bytes": 3130131
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/location/constraint_location_summary.json",
+      "sha256": "0571767d974756f5fea117732c5d547c82fe0e7bee20ae767912b6fdb663edba",
+      "bytes": 3305
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/n256_history_compact.csv",
+      "sha256": "21715019d85e117a162832d6680f605bbf5e337448ca680a560f811fcf2e29ca",
+      "bytes": 389395
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256_n512/final/n512_history_compact.csv",
+      "sha256": "7a9e19600253b54c86d68e2add09691e72535125d428f25a89c052ee690ba586",
+      "bytes": 1035512
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analyze_reference_comparison.py",
+      "sha256": "22d5b51dd042a65eb8a34706b9fb1fb09ca1ca07c413a6e1c9bdae3bdf113a63",
+      "bytes": 12876
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analyze_reference_convergence.py",
+      "sha256": "333fa1c58b53b62cacff14e0dcfc7e69669a1877720677f4088ebd35373778d9",
+      "bytes": 7648
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analyze_reference_field_patch.py",
+      "sha256": "405e4ecf0a153e1f9c6e6ebce50e1beff911238798dee9b5c4cb5da7314a25ff",
+      "bytes": 14669
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analyze_reference_n256.py",
+      "sha256": "eac3995985aa3412358bc68f10a4d44864d1bac29e9d88fc6fd1d3e72e4f9e10",
+      "bytes": 12934
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/aurora_reference_n128_segment.pbs",
+      "sha256": "e75cca469dea4141b0ac76dabf8aaaefc72c883134f6093940f75b5b1b20f0eb",
+      "bytes": 1271
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/aurora_reference_n512_segment.pbs",
+      "sha256": "63ac687284816cf393ef6d78334182d4f1c6bea71f420686af1c49f3f0cfa1f9",
+      "bytes": 1271
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/aurora_run_reference_replay.sh",
+      "sha256": "46d314a15fe98232c17e50b3f280f2c64cbda0573dd743a5efc98b70631a6d8b",
+      "bytes": 6629
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/brill_vc_reference_shock_gauge.athinput",
+      "sha256": "6c694cf871a3d694d745f0fb58b279b6cd07516463ac8ad54f1c91d2689c90ba",
+      "bytes": 3077
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/build_evidence_manifest.py",
+      "sha256": "97a2cc9824278d3903d40dc8310cc2623dea84c189b88b4987b75fe5d109b6f3",
+      "bytes": 10216
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/classify_reference_constraint_locations.py",
+      "sha256": "a4b740f9f8115d11dd278d3e65eabf140322ea8f065b517d85e84fab36b69458",
+      "bytes": 10631
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/compare_reference_field_patch.py",
+      "sha256": "86501321bd7b544308ef0f7106a4a4ec830ce5b0ee2483387a7fa21929297a0e",
+      "bytes": 8199
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/authority/n256_reference_shock_authority.jsonl",
+      "sha256": "7055de601e6181e5ad7e1432b5c20a111b0ba67e0e8d5377c170ea80e7bedcde",
+      "bytes": 6892
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/authority/n256_reference_shock_authority.jsonl.ledger.jsonl",
+      "sha256": "b5446150d5e8f36b0cfcc58cc93c865929211754ea29620f407fb6a2ecdcfc66",
+      "bytes": 451
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/SHA256SUMS.sha256",
+      "sha256": "dc03930929266f4a5e6a54855e563bb4ce2e8b068573a9ca1d2a1d18d137b543",
+      "bytes": 208
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/command.txt",
+      "sha256": "3015ab7e4805ff67f52f2d1fb24384f9a9e21a43b444377bebcab567b29cbfcb",
+      "bytes": 1046
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/disposition",
+      "sha256": "0d28bd72bb0ef6274e9a225f85e1a0b167d3645b7673f9cdb8e7b22eab455f15",
+      "bytes": 34
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/evidence/provenance.txt",
+      "sha256": "2c2fad12e7c389e2b814b1c466d72121d780d21b795dd83d9f522ee821b0f4b5",
+      "bytes": 3081
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/evidence/qstat-final.txt",
+      "sha256": "108cecfe24c7b8fbc5f6c558b7f03b2fb0dd416d2339ad8d0dd2d2b0120aacf1",
+      "bytes": 5283
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/evidence/qstat-start.txt",
+      "sha256": "6c8e6b4a31363fa7012b644d8451c6dbc46816e45a37052e58305290fc1bd8ae",
+      "bytes": 5364
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/n128_reference_shock_replay-constraints.dat",
+      "sha256": "077e2778c84b60d6532398e9e56a58a7c6d4167abf1c80bb04418317c17cdf50",
+      "bytes": 904
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/n128_reference_shock_replay.z4c.user.hst",
+      "sha256": "459c24991090c2fdf48c9e64f4b823c05c4db1c77fdd23962ae6e1d7e37a4986",
+      "bytes": 1100505
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/orchestration-status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/run-status",
+      "sha256": "7750176025ee68d48efd1dd1594eaf899a25c0fa6bb9daab55c40f981ab15920",
+      "bytes": 14
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/shift_invariant_check.csv",
+      "sha256": "3fc700b464458568805480a870e66d875fd886a89eff31007a3fa6c107059ed2",
+      "bytes": 279623
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/stderr.log",
+      "sha256": "a80ae45cbc27e0cb0d33e777455375944af98a7f70633fb8b931e350f6d376e7",
+      "bytes": 7056
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/stdout.log",
+      "sha256": "23faf97edb575a9e43549438164fc00dbaef826c2c6f914af4f1cb531f339ce5",
+      "bytes": 45738
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg000/z4c_timestep_contract.csv",
+      "sha256": "200187868b7f863eb979771e5e6a70abbb9ed8e3bf5c07e7dfde103abab18e3a",
+      "bytes": 379843
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/SHA256SUMS.sha256",
+      "sha256": "7d59332f2460ebcfbe577975ad0a44f3fd01134b2f31d3a83ea35b0b20d80a5a",
+      "bytes": 208
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/command.txt",
+      "sha256": "232eddb5320d75a283e99cf16f1b156b6d090403b02f80f349eec9e887eecaf1",
+      "bytes": 1179
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/disposition",
+      "sha256": "50afabd00ad3fb73a006b276d45bd2cf902492afc261b951e9937fd83abf7be7",
+      "bytes": 13
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/evidence/provenance.txt",
+      "sha256": "fd3ee7bd44dcc84f7a48cbc1836978b508eea5263b11cb907dbd278d8bfd5190",
+      "bytes": 3081
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/evidence/qstat-final.txt",
+      "sha256": "d97dba349d5043304b99aef1ee7999ff10e14df2997635de3da4ca9e0f9fc56e",
+      "bytes": 5326
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/evidence/qstat-start.txt",
+      "sha256": "e00db62385968a93162e34c96e63761221a9c38a5bc6dbc1d233a5e00be4a03a",
+      "bytes": 5407
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/evidence/restart-input.sha256",
+      "sha256": "dba6c9b8d4ec250ce427b61c3a90c00bd17ccf9f6ae2805ab2ea8f098e47f75b",
+      "bytes": 239
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/n128_reference_shock_replay.z4c.user.hst",
+      "sha256": "7b4574667af46358bad8e927b23d4faa2c745536637779aa94b0c2fa1a70a638",
+      "bytes": 864043
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/orchestration-status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/run-status",
+      "sha256": "7750176025ee68d48efd1dd1594eaf899a25c0fa6bb9daab55c40f981ab15920",
+      "bytes": 14
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/shift_invariant_check.csv",
+      "sha256": "230672a9d2607f2fc0a5dd9ad0c6635438a66f9833661fc327388e317ee511a2",
+      "bytes": 222535
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/stderr.log",
+      "sha256": "2ab33d46853fa8b7b10b2a00935f436c70e0668975ca2c2dac574522918f04f4",
+      "bytes": 7056
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/stdout.log",
+      "sha256": "4e0ae5c1f1d11e42fd0d47bc965c7945e3bbc28dd9d3b3916c83b7f7ae651add",
+      "bytes": 35399
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n128_reference_shock_seg001/z4c_timestep_contract.csv",
+      "sha256": "b4c2d1c0a7675159e4018637f5e99243e8fa17a69b5afd181916fb1e7c5b7774",
+      "bytes": 300124
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/SHA256SUMS",
+      "sha256": "52b1977b5f6798c6417601f06a5ec319606331361b9e63771cf83ab80a18b8f1",
+      "bytes": 116893
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/SHA256SUMS.sha256",
+      "sha256": "e14cb0e72f9331ed3c9cb993479d4c8bd171110214b7c6343f8b60baef5fb0d3",
+      "bytes": 215
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/command.txt",
+      "sha256": "d52eb9c944887d978114eeae639f449ade01aa5e99c43da47998178e78f77325",
+      "bytes": 949
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/disposition",
+      "sha256": "50afabd00ad3fb73a006b276d45bd2cf902492afc261b951e9937fd83abf7be7",
+      "bytes": 13
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/evidence/environment.txt",
+      "sha256": "e3fc91f750a1b776da3f6d7102b7f57cd4f51c0a81794d0696a7f6884698184a",
+      "bytes": 54631
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/evidence/provenance.txt",
+      "sha256": "e24d40c37251cdfabc03c237b1f147e06cd816af66d40b5a8fc97c17d1707e1d",
+      "bytes": 2884
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/evidence/qstat-final.txt",
+      "sha256": "9f0acb42561d36db13fa1a9a256a1eea8e71c9f9ada2d8fc636dde59ecc15767",
+      "bytes": 5131
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/evidence/qstat-start.txt",
+      "sha256": "ee1be86d8465c9737cbc1296459710c4f89264a379a213d085ba9d053e074725",
+      "bytes": 5122
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/evidence/source-status.final",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/n256_reference_shock_record-constraints.dat",
+      "sha256": "5fed85349dc686d71cdc6e753c6fef16b723373739040cf54d351b2ad9e3586f",
+      "bytes": 906
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/n256_reference_shock_record.z4c.user.hst",
+      "sha256": "261b1273c90a3e4ad7b04b8b931dc7479c9a167bb59cd18abd641182afad425b",
+      "bytes": 2502017
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/orchestration-status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/run-status",
+      "sha256": "7750176025ee68d48efd1dd1594eaf899a25c0fa6bb9daab55c40f981ab15920",
+      "bytes": 14
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/stderr.log",
+      "sha256": "da1d1f994c37cfd055c517389bad4c49f3fc3f735ffe0ec689f29b64fe869973",
+      "bytes": 294
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n256_reference_shock_seg000_retry1/stdout.log",
+      "sha256": "86edbaa15dee9e7cf8626575095499ce9482f1d6d2e0a6ff39696a860fe8d3af",
+      "bytes": 1051717
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/command.txt",
+      "sha256": "b3980d155af9ac14ba47d817ddc05179c6461c63324749336d32029b5420d635",
+      "bytes": 1049
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/disposition",
+      "sha256": "0d28bd72bb0ef6274e9a225f85e1a0b167d3645b7673f9cdb8e7b22eab455f15",
+      "bytes": 34
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/evidence/provenance.txt",
+      "sha256": "d79f37ab6af79f9bb0e386a6efd4e6df4ade0005797c92687a96322b8fc44bed",
+      "bytes": 3081
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/evidence/qstat-final.txt",
+      "sha256": "47436df2f09e43c895a419a4bcfe7cc181f48d574da1b0b7cc2ccafafea495a7",
+      "bytes": 5287
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/evidence/qstat-start.txt",
+      "sha256": "d610576ab30f8062157af78d7763b7c283e08d77debc59cfec763ae771f43e51",
+      "bytes": 5368
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/n512_reference_shock_replay-constraints.dat",
+      "sha256": "3f1983f499409ba6fb71ecfd95392c432d61c95269f6a97ec4ad88b038498bb5",
+      "bytes": 908
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/n512_reference_shock_replay.z4c.user.hst",
+      "sha256": "22bbd3509efcc172184b7ef182a5353795ad43f1e04c7a005d8f21fdf57d407b",
+      "bytes": 1727043
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/orchestration-status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/run-status",
+      "sha256": "7750176025ee68d48efd1dd1594eaf899a25c0fa6bb9daab55c40f981ab15920",
+      "bytes": 14
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/shift_invariant_check.csv",
+      "sha256": "5d4f2fefcd868a33b1d6bbcc4ee1e65a98b70d73d229446bcccbff16922747e2",
+      "bytes": 443567
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/stderr.log",
+      "sha256": "2ab33d46853fa8b7b10b2a00935f436c70e0668975ca2c2dac574522918f04f4",
+      "bytes": 7056
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/stdout.log",
+      "sha256": "7ea86040a49e4e872cd69235bf1aedd8b507ede4f04979af166b4b46c0b2a8b8",
+      "bytes": 69709
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg000/z4c_timestep_contract.csv",
+      "sha256": "7611e5b3d524491add6c7c08c19c860455e6f0e2aaf326da25408a79b22bf354",
+      "bytes": 601076
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/SHA256SUMS.sha256",
+      "sha256": "2f480c5373924b90d1e93035c7a291a6bbce9a0cbc7979bf1084aea67ea0f2d5",
+      "bytes": 208
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/command.txt",
+      "sha256": "6b13c2efebcc5d8e6641a310befec29969f1b3b7ad91e44479351d23c929f32f",
+      "bytes": 1180
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/disposition",
+      "sha256": "0d28bd72bb0ef6274e9a225f85e1a0b167d3645b7673f9cdb8e7b22eab455f15",
+      "bytes": 34
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/evidence/provenance.txt",
+      "sha256": "96b168fb3b5eb2ee376104d39d23842a22467a72d63e10eacacbf929e2396d18",
+      "bytes": 3081
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/evidence/qstat-final.txt",
+      "sha256": "035d2cbcff56c0a0729276b07fd3e3b664b9ebaee2b553b63dbf22c452133be2",
+      "bytes": 5326
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/evidence/qstat-start.txt",
+      "sha256": "94136175c6213eafdd98c4d2a672a74dce6b86819b95ba60eb3bb1019b99a7e0",
+      "bytes": 5407
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/evidence/restart-input.sha256",
+      "sha256": "95e9aaf2634b7a2d68298317469814755b5e64fb32558ee35ae15f55aaffe4e8",
+      "bytes": 239
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/n512_reference_shock_replay.z4c.user.hst",
+      "sha256": "ed6125a0264e35a33a7e1ee681fac625f2d9a573ca0c5d25c461aceb17c9465c",
+      "bytes": 917549
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/orchestration-status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/run-status",
+      "sha256": "7750176025ee68d48efd1dd1594eaf899a25c0fa6bb9daab55c40f981ab15920",
+      "bytes": 14
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/shift_invariant_check.csv",
+      "sha256": "2dcafc4e0ae357feb880cd18cbd4eb673cd4922a931cdf39ed0a162821ef8f80",
+      "bytes": 236503
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/stderr.log",
+      "sha256": "795bfacd2632682c3d159091b9d2614a3dd45212f2d64b74f7a7e4405d994f39",
+      "bytes": 7056
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/stdout.log",
+      "sha256": "3aa92b005aabb33877fcba669d2f42c3c548b72eecc8a349baac2843b6fca938",
+      "bytes": 37451
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg001/z4c_timestep_contract.csv",
+      "sha256": "17911318c7c26cf73ca2da89498179fe45f0fdbe4ecedf71540d0f57048b8b71",
+      "bytes": 319432
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/SHA256SUMS.sha256",
+      "sha256": "5c2faef619107a11448fdca3336781c1def74d0c9139c2c13ea351aee5c273d5",
+      "bytes": 208
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/command.txt",
+      "sha256": "64922a0500858579f1eae84ed317dd11b64af098764f128c1a72678febe6d8a7",
+      "bytes": 1180
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/disposition",
+      "sha256": "0d28bd72bb0ef6274e9a225f85e1a0b167d3645b7673f9cdb8e7b22eab455f15",
+      "bytes": 34
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/evidence/provenance.txt",
+      "sha256": "8f20c5b2488024b9fadc32b2ed493454f1efdbecff6f25ff96dec99d81748471",
+      "bytes": 3081
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/evidence/qstat-final.txt",
+      "sha256": "40d6de2a4c08970263c98e698a847c5d14c7e05349c966c80defd4c31ed68649",
+      "bytes": 5326
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/evidence/qstat-start.txt",
+      "sha256": "4ac7a2bd1feddf003fe58affe35ef2a6f2f7b94014c3d80465669851b93af2d4",
+      "bytes": 5407
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/evidence/restart-input.sha256",
+      "sha256": "e255f8042ab63d2a44c83d142fcf532d2b1ea43822f513e7ae724602c378d6ef",
+      "bytes": 239
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/n512_reference_shock_replay.z4c.user.hst",
+      "sha256": "ad595c5e650f3c9e3587716a65c59f5cc2c08b13750e6de28f15eef29cab2f56",
+      "bytes": 832975
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/orchestration-status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/run-status",
+      "sha256": "7750176025ee68d48efd1dd1594eaf899a25c0fa6bb9daab55c40f981ab15920",
+      "bytes": 14
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/shift_invariant_check.csv",
+      "sha256": "ea3443a460612f2dcdbe030491fbfd549e63d14bc23547695fa65b067157a9a4",
+      "bytes": 214359
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/stderr.log",
+      "sha256": "f5ae7d5aecad18051c9ed95309bd941a960d4a683950eb00eb5169db2b86156f",
+      "bytes": 7056
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/stdout.log",
+      "sha256": "168b9b496d29b44d19033d95a383f59e3a91b111a4bc7c881a152b92d2eb7053",
+      "bytes": 34217
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg002/z4c_timestep_contract.csv",
+      "sha256": "d61e68a4c301d940f02252d2655fab8ff5d6f8ddeed260f34889c4a76af0848a",
+      "bytes": 289605
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/SHA256SUMS.sha256",
+      "sha256": "4f25db30eca52753f3a489403056bfe6b5e965707059197448763f3e3740bed9",
+      "bytes": 208
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/command.txt",
+      "sha256": "4199e50a7863d6d76335e163f6642ce1919e1e7c995d5d6a4fcd71757dd327fc",
+      "bytes": 1180
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/disposition",
+      "sha256": "0d28bd72bb0ef6274e9a225f85e1a0b167d3645b7673f9cdb8e7b22eab455f15",
+      "bytes": 34
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/evidence/provenance.txt",
+      "sha256": "6bb33bd55c8f7929a6321cf1b508f3c287f49df44c17716c9dc95490f47fdff3",
+      "bytes": 3081
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/evidence/qstat-final.txt",
+      "sha256": "217730f135c87ff29f9e730adcfca4bc90e65f328fc05b664f0cf47130a54abc",
+      "bytes": 5326
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/evidence/qstat-start.txt",
+      "sha256": "50f48da445b7ef14643780fa64a41f1cb1a2b08c381cf36b1dcc694cf03222f3",
+      "bytes": 5398
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/evidence/restart-input.sha256",
+      "sha256": "8b7b78f481131d7284918cd7d40939fc3c53d3a4af3118e6b6387fdad8dead3e",
+      "bytes": 239
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/n512_reference_shock_replay.z4c.user.hst",
+      "sha256": "56e001757673509b73d8e56b8eec77bfaf835b88490aa42996b25cbc5030ce39",
+      "bytes": 1262749
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/orchestration-status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/run-status",
+      "sha256": "7750176025ee68d48efd1dd1594eaf899a25c0fa6bb9daab55c40f981ab15920",
+      "bytes": 14
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/shift_invariant_check.csv",
+      "sha256": "42362d21be58681cc6698ae6dc7147347c94e9d59bebfc05cf619eee1e47f4a7",
+      "bytes": 329711
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/stderr.log",
+      "sha256": "2ab33d46853fa8b7b10b2a00935f436c70e0668975ca2c2dac574522918f04f4",
+      "bytes": 7056
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/stdout.log",
+      "sha256": "9084776a53ee921069c6f50badb7bb080f295bbdf477f63b1f69701e548a03db",
+      "bytes": 50958
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg003/z4c_timestep_contract.csv",
+      "sha256": "a1befcd94b5961cdf6120bd87af7bf7ca7e43508b2143ffb400827426800a9ae",
+      "bytes": 440998
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/SHA256SUMS.sha256",
+      "sha256": "48be27dd1dfb80a7571d3becd309293623b822da2d8fc88e3365c1d7f9f71f89",
+      "bytes": 208
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/command.txt",
+      "sha256": "b8efefbf42de799a03a686c3ca56b32ab52796443ffb6486e96f1e88e916e974",
+      "bytes": 1180
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/disposition",
+      "sha256": "0d28bd72bb0ef6274e9a225f85e1a0b167d3645b7673f9cdb8e7b22eab455f15",
+      "bytes": 34
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/evidence/provenance.txt",
+      "sha256": "4c126c8de9a1cfcd7e97b3b886269b1fdc27d90451de269a346689d16177353d",
+      "bytes": 3081
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/evidence/qstat-final.txt",
+      "sha256": "c7698d007963c84f05caca598ad860397e1b94f55ac38c098e6746dfa444a064",
+      "bytes": 5325
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/evidence/qstat-start.txt",
+      "sha256": "652fe630b82129903d41404a3411a23b38b003773bea03dc49a79d438d8cfa6a",
+      "bytes": 5314
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/evidence/restart-input.sha256",
+      "sha256": "bc43468fb566c47979ac46c6237ce59b7d756ec1b69fda153a720b39e91fc7ae",
+      "bytes": 239
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/n512_reference_shock_replay.z4c.user.hst",
+      "sha256": "6aecc7689a6bad2b98f7c7f8ee9ab7dc694c803795eb05bd3960b8203ad53df2",
+      "bytes": 907193
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/orchestration-status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/run-status",
+      "sha256": "7750176025ee68d48efd1dd1594eaf899a25c0fa6bb9daab55c40f981ab15920",
+      "bytes": 14
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/shift_invariant_check.csv",
+      "sha256": "46ccd2c2ce392658493156fd5b927393f49ac02d7f109617f94a76f46ce36fd0",
+      "bytes": 242259
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/stderr.log",
+      "sha256": "2ab33d46853fa8b7b10b2a00935f436c70e0668975ca2c2dac574522918f04f4",
+      "bytes": 7056
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/stdout.log",
+      "sha256": "0bc67f2824ab026427abc9ef272f69486409663797d31e9b904399d81736f698",
+      "bytes": 37580
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg004/z4c_timestep_contract.csv",
+      "sha256": "61895dfbd0b094d7821e2df7ac2baa1d01359c6fc3cd5ed7bfd68910f10e53e4",
+      "bytes": 318063
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/SHA256SUMS.sha256",
+      "sha256": "b6dfec005e5ef1c183355d28e1221abf10acd81c293b5fef310f820dc396f64d",
+      "bytes": 208
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/command.txt",
+      "sha256": "75fcc617e492dcef8725a806e49ab582af9e6eea69f487a1bd63b4437e9a8952",
+      "bytes": 1180
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/disposition",
+      "sha256": "0d28bd72bb0ef6274e9a225f85e1a0b167d3645b7673f9cdb8e7b22eab455f15",
+      "bytes": 34
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/evidence/provenance.txt",
+      "sha256": "de78400d4e232ae947753334d36925f9ff2a16b7342c1b1b98edb9900a4aa82f",
+      "bytes": 3081
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/evidence/qstat-final.txt",
+      "sha256": "10b0ddb7f8bff571721e5c9ff8538ec75a03087c3ac6e5d647bb2d13adbc9a00",
+      "bytes": 5325
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/evidence/qstat-start.txt",
+      "sha256": "0a594f0539a0100173a6ac7d6e7a6ef055e1821ec799c0d24ca5ae014e26416c",
+      "bytes": 5406
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/evidence/restart-input.sha256",
+      "sha256": "16b38e864fd414ad6148ffd814b8e1c191ec94f8953ca07d233c8e4e968c2e09",
+      "bytes": 239
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/n512_reference_shock_replay.z4c.user.hst",
+      "sha256": "43d22c5d0603c64d6f467a7e90731f49b5acf17cf2a476a3eb14c0fb55f52eff",
+      "bytes": 931357
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/orchestration-status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/run-status",
+      "sha256": "7750176025ee68d48efd1dd1594eaf899a25c0fa6bb9daab55c40f981ab15920",
+      "bytes": 14
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/shift_invariant_check.csv",
+      "sha256": "5226df3f4ab0664dea0c590492726633db2b7584b596c0c74423cab10493a110",
+      "bytes": 248843
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/stderr.log",
+      "sha256": "2ab33d46853fa8b7b10b2a00935f436c70e0668975ca2c2dac574522918f04f4",
+      "bytes": 7056
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/stdout.log",
+      "sha256": "79a6d106db24a2db463124f5f76d90ac30ab70b1264c01d98c0a6c2af3b38d04",
+      "bytes": 38518
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/n512_reference_shock_seg005/z4c_timestep_contract.csv",
+      "sha256": "c3c72d1f39aafa6010c02153008d30120932f1b168b3e5e9ada01286f3f33124",
+      "bytes": 326564
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/SHA256SUMS",
+      "sha256": "8acb38caa52c15236c3537e9d074bf76e9429409dc5120d66c7d75ce18e4ba27",
+      "bytes": 5093
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/SHA256SUMS.sha256",
+      "sha256": "40a9052fd71e897125a163d790b65af705fca1ee5be5736f673cf9790ec3e7fa",
+      "bytes": 210
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/build-reuse.txt",
+      "sha256": "5a362c3381268805ef2be117b674407a463e830aece83cfc4ba2a1d936219062",
+      "bytes": 45
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/build.sha256",
+      "sha256": "3fb4c4612d689e04986db40f0fe2a10b95e368eae0a07c3071e2a5e0d05e9945",
+      "bytes": 402
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/ctest-inventory.json",
+      "sha256": "cc5b4043a9a031c226f75a3c589339d6bb9e4648d684d2e9b222126a25f96576",
+      "bytes": 12228
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/disposition",
+      "sha256": "5c86111e319f97ad45c0f25db4382d30777190c6e81a1b646299e9b80557f0af",
+      "bytes": 30
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/orchestration-status",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/provenance.txt",
+      "sha256": "c01d821c76cd9d6a6415e964fed61ca7dc28722c3b6f805212bc6b2b9f613aa7",
+      "bytes": 7976
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/qstat-final.txt",
+      "sha256": "1b5896d407be570487fe543de9127e300461ab10c16dbecbe62825a54a3c78af",
+      "bytes": 5109
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/shift-smoke.log",
+      "sha256": "23ab5d84308ad925a01b7f6a4f2ec949e5cc6f0f4dd48f58153652e907b40e92",
+      "bytes": 1068
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/source-status.final",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/sycl-ctest.log",
+      "sha256": "e83b43c3ed20b7fb11792484651d01b10809c13f01dc5d01eeaad41a1f5c45f9",
+      "bytes": 3832
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/qualification_8789659/sycl-kernel.log",
+      "sha256": "e18e6993c731ab63a346e98dc279eb1278664d3955f734192618348ecdfb8a1e",
+      "bytes": 1092
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/figure3_published_curves.csv",
+      "sha256": "947f92f72af32caf631d5efe9d720c7c56800b2e4578dcb6bcc26107cabc8adf",
+      "bytes": 44892
+    }
   ]
 }

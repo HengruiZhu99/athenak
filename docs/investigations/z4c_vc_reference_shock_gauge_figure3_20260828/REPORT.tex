@@ -1,0 +1,236 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.82in]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{AthenaK Z4c reference-gauge investigation}
+\rhead{2026-08-28}
+\cfoot{\thepage}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\claim}[1]{\fcolorbox{blue!55!black}{blue!4}{\parbox{0.94\linewidth}{#1}}}
+
+\title{Reference-gauge Figure-3 same-tree resolution investigation}
+\author{AthenaK Z4c / native vertex-centered Cartoon SO(2)}
+\date{28 August 2026}
+
+\begin{document}
+\maketitle
+
+\claim{\textbf{Verdict:} Aurora PVC qualified; exact replay verified; strong
+resolution improvement; early O4-compatible behavior; first peak remains
+constraint invalid; full convergence is not established.}
+
+\section{Question and controlled experiment}
+
+The experiment asks whether simply increasing the cells per physical
+MeshBlock cures the constraint-invalid Brill-collapse Figure-3 result.  N128,
+N256, and N512 use the same root MeshBlock layout, physical MeshBlock bounds,
+accepted LogicalLocation hierarchy, and AMR event times.  Only the cells per
+MeshBlock change in the sequence $16^2$, $32^2$, and $64^2$.
+
+All cases use the shock-avoiding Bona--Masso lapse with $\kappa=1$, unit
+initial lapse, prescribed zero shift, disabled telegraph lapse, native
+vertex-centered Cartoon SO(2), O4 finite differences, q6 prolongation, RK4,
+CFL 0.15, KO dissipation 0.50, zero Z4c constraint damping, and outer boundary
+$128M$.  No gauge, transfer, KO, CFL, or AMR parameter was tuned.
+
+The N256 authority has SHA-256
+\code{7055de601e6181e5ad7e1432b5c20a111b0ba67e0e8d5377c170ea80e7bedcde}.
+N128 and N512 accepted both replay events exactly, ending at 212 leaf
+MeshBlocks and physical level 5.
+
+\section{Execution and provenance}
+
+The qualified executable SHA-256 is
+\code{aae7ccb8739fb4951221ad7be69ea0e220548b52d402086f57d7857fa2c97a13}
+from source commit
+\code{f8303c6be7eb214fa1e91b646123ee0d434b3698}.  Aurora qualification job
+8789659 passed eleven focused PVC tests.
+
+\begin{center}
+\begin{tabular}{lrrl}
+\toprule
+Case & final coordinate time & final proper time & disposition \\
+\midrule
+N128 & 45.0000 & 19.33240 & reached tlim; constraint invalid \\
+N256 & 30.0000 & 11.28631 & reached tlim; constraint invalid \\
+N512 & 38.6523 & 14.98253 & gate exceeded; constraint invalid at peak \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+N512 used jobs 8789895, 8789956, 8790025, 8790135, 8790202, and 8790242.
+N128 used jobs 8790272 and 8790338.  No science job remains active.
+Segment N512/000 completed Athena cleanly, but PBS killed the allocation during
+a redundant second full artifact verification pass.  Its science restart and
+disposition were already written.  Every later segment has a complete sealed
+manifest and scheduler exit zero.
+
+\section{Direct Figure-3 comparison}
+
+No time, amplitude, or vertical transform was fitted.
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Case & peak $\tau$ & peak $\log_{10}|\mathcal K|$ & peak $\int C^2\,dV$ \\
+\midrule
+N128 & 10.31396 & 4.29765 & 107.608 \\
+N256 & 10.30333 & 5.01349 & 48.2330 \\
+N512 & 10.30811 & 5.38112 & 4.09930 \\
+Published & 10.30683--10.31384 & 5.47778--5.48688 & -- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{analysis/aurora_n128_n256_n512/final/figure3_n128_n256_n512.png}
+\caption{Direct central Kretschmann comparison with the published curves.}
+\end{figure}
+
+N512 resolves the deep minimum at $\tau=12.62280$,
+$\log_{10}|\mathcal K|=-6.07875$, and the rebound at $\tau=13.21629$,
+$\log_{10}|\mathcal K|=-2.81849$.  These lie inside the ranges of the three
+published curves.  N128's nominal late extrema are constraint dominated, and
+N256 does not reach the interval.
+
+\clearpage
+\section{Constraint qualification}
+
+The history measure is already the physical axisymmetric ring measure,
+\[
+  2\pi\rho\sqrt{|\det\gamma|}\,d\rho\,dz,
+\]
+with canonical vertex ownership and trapezoid endpoint weights.  The result is
+not a fictitious collapsed-$y$ normalization artifact.
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Squared integral & N128 maximum & N256 maximum & N512 maximum \\
+\midrule
+$C$ & 107.608 & 48.2330 & 4.09930 \\
+$H$ & 88.4516 & 41.1314 & 3.63079 \\
+$M$ & 25.3663 & 9.53227 & 0.682824 \\
+$Z$ & 0.643210 & 0.0550105 & 0.00462028 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{analysis/aurora_n128_n256_n512/final/constraint_amplitudes_n128_n256_n512.png}
+\caption{Physical-volume constraint amplitudes, plotted as the square root of
+the stored squared integrals.}
+\end{figure}
+
+At N512, aggregate C first crosses 0.01, 0.1, and 1 at proper times 9.88652,
+10.05721, and 10.19025.  C and H peak at $\tau=10.29711$, essentially
+coincident with the curvature peak.  The improved Figure-3 curve is therefore
+still constraint invalid.
+
+The N256 and N512 C/H maxima are on the symmetry axis and far from a
+coarse-fine interface.  M is within one radial spacing of the axis.  This is a
+geometric classification, not proof of an axis source defect.
+
+\clearpage
+\section{rho near 5 high-frequency diagnostic}
+
+All 25 evolved fields were stitched over the finest physical patch
+$4\leq\rho\leq6$, $-2\leq z\leq2$ before differencing and Fourier analysis.
+Shared vertices agree to roundoff.  Matched slices were analyzed at proper
+times approximately 8.03, 9.50, 10.27, and 11.00.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{analysis/aurora_n256_n512/field_patch/comparison/tracked_field_high_frequency_vs_tau.png}
+\caption{Fourth-difference and above-N256-Nyquist diagnostics on the stitched
+rho=4--6 patch.}
+\end{figure}
+
+At the near-peak slice, N512/N256 fourth-difference ratios are about 0.36 for
+$\chi$, 0.25 for $\hat K$ and sampled conformal connections, and 0.23--0.48
+for representative $\tilde A_{ij}$ components.  $\Theta$ has the largest
+normalized pre-peak indicator, but its absolute fluctuation is only 3.5--6.2
+percent of N256 and its power above half the N256 Nyquist stays below
+$3.1\times10^{-7}$.  By proper time 11 its normalized indicator is smaller as
+well.  No measured rho near 5 high-k branch grows with resolution.
+
+\clearpage
+\section{Three-resolution convergence assessment}
+
+At common central proper time, the Richardson estimator is
+\[
+ p=\log_2\left(\frac{|u_{128}-u_{256}|}{|u_{256}-u_{512}|}\right).
+\]
+
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Proper-time window & central Kretschmann & central lapse \\
+\midrule
+0--8 & 4.86 & 3.93 \\
+8--10 & 3.34 & 3.36 \\
+10--11.286 & 2.10 & 1.40 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The central fields are O4-compatible early, then lose order through collapse.
+Constraint-amplitude pair orders are positive but inconsistent.  For aggregate
+C, N128/N256 versus N256/N512 median orders are 3.46 versus 1.06 in $\tau<8$
+and 1.03 versus 2.38 in $10<\tau<11.286$.  No single order describes both
+pairs.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{analysis/aurora_n128_n256_n512/final/constraint_pairwise_orders.png}
+\caption{Pairwise convergence orders of the physical-volume constraint
+amplitudes.  The mismatch between pairs prevents a uniform order claim.}
+\end{figure}
+
+N256 ends at $\tau=11.286$, so three-level order cannot be measured through the
+deep-minimum/rebound interval.
+
+\clearpage
+\section{Interpretation and next step}
+
+The identical interface geometry becomes markedly better behaved as cells per
+MeshBlock increase.  N512 moves the peak toward the published amplitude,
+reduces peak constraints by about an order of magnitude relative to N256,
+suppresses rho near 5 numerical content, and survives through the full
+Figure-3 interval.  Bulk/parent under-resolution is therefore a major driver
+of the N256 failure and is not ruled out.
+
+This does not prove that AMR interfaces or the axis are harmless.  N512 still
+has an order-unity constraint episode at the peak, and the global maxima are
+axis-adjacent.  A residual interface or axis contribution can coexist with
+bulk under-resolution.
+
+The natural next step is a bounded shared-RHS audit at the retained N512 peak
+state, separating active-axis stencils, same-level seams, and coarse-fine ghost
+and interface contributions.  Gauge, KO, transfer, positivity checks, and the
+exact tree should remain unchanged.
+
+\section{Claim boundary}
+
+\textbf{Supported:} exact N128/N512 hierarchy replay; strong resolution
+improvement; early O4-compatible central fields; N512 coverage of the published
+peak, minimum, and rebound; smaller/later constraints and weaker rho near 5
+high-frequency content.
+
+\textbf{Not supported:} a constraint-qualified Figure-3 reproduction; uniform
+convergence through collapse; exclusion of all axis/interface mechanisms; a
+unique source-level defect; or a production numerical correction.
+
+\end{document}
