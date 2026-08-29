@@ -572,6 +572,25 @@ vacuum source at its maximum.  This is a local Kokkos Serial algebra/fixed-point
 checkpoint.  It does not qualify an Aurora device path, the 64/96/128 residual
 ladder, or any evolution.
 
+### First Aurora attempt and staged all-61 portability correction
+
+Aurora debug job `8791211` configured the exact source checkpoint
+`ef130480bfdbecc5b7d8f21169085be5da6c8cc4` with IntelLLVM 2025.3.2,
+Kokkos 4.7.2 `SERIAL;SYCL`, and `Kokkos_ARCH_INTEL_PVC=ON`.  Compilation
+failed in the monolithic `source_unit.cpp` device image before rank mapping or
+kernel execution.  IGC reported an internal segmentation violation and `icpx`
+exit 245 while lowering the all-61 oracle.  PBS recorded exit 2 after
+00:10:41.  This is a preserved compiler failure, not a numerical result.
+
+The equation-preserving portability correction stages the legacy-generic and
+fully-subtracted compact RHS evaluations in two independent device kernels,
+stores their 61-component outputs, and applies the original conditioned
+comparison in a third reduction.  The parameter matrix, 4320 samples, both
+Phi orderings, generic oracle, scale definition, and `256*epsilon` tolerance
+are unchanged.  A fresh local Kokkos Serial build and source-unit run retain
+the exact `4.13003e-14` all-61 result.  Aurora device qualification remains
+open until the focused rerun compiles and executes these staged kernels.
+
 ## Remaining gates
 
 The following are not yet complete: independent all-radius high-precision

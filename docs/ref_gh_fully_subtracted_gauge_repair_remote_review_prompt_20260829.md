@@ -77,6 +77,8 @@ Evidence to inspect:
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase4_local/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase5_local/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_local/`
+- `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791211_failed/`
+- `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_staged_all61_local/`
 
 Validate each `SHA256SUMS` file and distinguish current passing evidence from
 the intentionally preserved negative result. The key current observations are:
@@ -108,6 +110,10 @@ the intentionally preserved negative result. The key current observations are:
 - Phase-6 remaining total Pi RHS: `5.681872526233013e-14`, entirely in the
   existing covariant-vacuum source at its maximum;
 - non-tautological all-radius physical-target diagnostic: `6.02413e-10`.
+- Aurora job `8791211`: compile gate failed before device execution because
+  IGC segfaulted while lowering the monolithic all-61 kernel (`icpx` exit 245);
+- staged generic/compact/comparison kernels: local Serial regression retains
+  the identical `4.13003e-14` result, but PVC qualification is pending.
 
 Please return:
 

@@ -3242,12 +3242,23 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
   constexpr int npoints = kAnalyticOraclePointCount;
   constexpr int norderings = 2;
   constexpr int nsamples = nq*nrate*nacceleration*npoints*norderings;
-  using MaxLoc = Kokkos::MaxLoc<Real, int>;
-  MaxLoc::value_type maximum;
-  Kokkos::parallel_reduce(
-      "ref_gh all-61 analytic radial-q RHS",
+  DvceArray2D<Real> generic_rhs(
+      "ref_gh all-61 generic RHS", nsamples, ref_gh::nvar);
+  DvceArray2D<Real> generic_condition(
+      "ref_gh all-61 generic condition", nsamples, ref_gh::nvar);
+  DvceArray2D<Real> compact_rhs(
+      "ref_gh all-61 compact RHS", nsamples, ref_gh::nvar);
+
+  // Keep the independent generic and compact evaluators in separate device
+  // kernels.  Besides making their independence structurally explicit, this
+  // avoids asking PVC's device compiler to inline both complete 61-component
+  // evaluators into one monolithic kernel.  The third kernel below performs
+  // exactly the same conditioned comparison and reduction as the original
+  // combined oracle; no equations, samples, or tolerances change.
+  Kokkos::parallel_for(
+      "ref_gh all-61 generic radial-q RHS",
       Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
-      KOKKOS_LAMBDA(const int sample, MaxLoc::value_type &local_maximum) {
+      KOKKOS_LAMBDA(const int sample) {
         const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
         const Real q_dot_values[nrate] = {-0.1, 0.0, 0.1};
         const Real q_ddot_values[nacceleration] = {-0.05, 0.0, 0.05};
@@ -3255,12 +3266,12 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
         const int phi_ordering = work % norderings; work /= norderings;
         const Real q = q_values[work % nq]; work /= nq;
         const Real q_dot = q_dot_values[work % nrate]; work /= nrate;
-        const Real q_ddot = q_ddot_values[work % nacceleration]; work /= nacceleration;
+        const Real q_ddot = q_ddot_values[work % nacceleration];
+        work /= nacceleration;
         Real x = 0.0;
         Real y = 0.0;
         Real z = 0.0;
         AnalyticOraclePoint(work, x, y, z);
-        const Real displacement[3] = {x, y, z};
         const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
         Real static_coefficients[ref_gh::kAnalyticRadialQStaticSize];
         Real stage_coefficients[ref_gh::kAnalyticRadialQStageSize];
@@ -3297,34 +3308,104 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
             ref_gh::AnalyticRadialScalarOracleJet(
                 analytic_reference, analytic_b),
             x, y, z, 0.0, 0.0, 0.0, generic_reference);
-        Real generic_rhs[ref_gh::nvar];  // NOLINT(runtime/arrays)
-        Real compact_rhs[ref_gh::nvar];  // NOLINT(runtime/arrays)
-        Real generic_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
-        Real compact_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
+        Real rhs[ref_gh::nvar];        // NOLINT(runtime/arrays)
+        Real condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
         const bool exact_matched_static = q == 1.0 && q_dot == 0.0
                                           && q_ddot == 0.0;
-        const bool generic_valid = EvaluateRhsOraclePoint<false>(
+        const bool valid = EvaluateRhsOraclePoint<false>(
             generic_reference, analytic_reference,
-            phi_ordering, exact_matched_static, sample,
-            generic_rhs, generic_condition);
-        const bool compact_valid = EvaluateRhsOraclePoint<true>(
+            phi_ordering, exact_matched_static, sample, rhs, condition);
+        for (int n = 0; n < ref_gh::nvar; ++n) {
+          generic_rhs(sample, n) = valid
+              ? rhs[n] : std::numeric_limits<Real>::infinity();
+          generic_condition(sample, n) = valid
+              ? condition[n] : std::numeric_limits<Real>::infinity();
+        }
+      });
+  Kokkos::fence();
+
+  Kokkos::parallel_for(
+      "ref_gh all-61 compact radial-q RHS",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample) {
+        const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
+        const Real q_dot_values[nrate] = {-0.1, 0.0, 0.1};
+        const Real q_ddot_values[nacceleration] = {-0.05, 0.0, 0.05};
+        int work = sample;
+        const int phi_ordering = work % norderings; work /= norderings;
+        const Real q = q_values[work % nq]; work /= nq;
+        const Real q_dot = q_dot_values[work % nrate]; work /= nrate;
+        const Real q_ddot = q_ddot_values[work % nacceleration];
+        work /= nacceleration;
+        Real x = 0.0;
+        Real y = 0.0;
+        Real z = 0.0;
+        AnalyticOraclePoint(work, x, y, z);
+        const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
+        Real static_coefficients[ref_gh::kAnalyticRadialQStaticSize];
+        Real stage_coefficients[ref_gh::kAnalyticRadialQStageSize];
+        ref_gh::EvaluateAnalyticRadialQStatic(
+            table, 1.0, 3.0, x, y, z, 0.0, 0.0, 0.0,
+            static_coefficients);
+        ref_gh::EvaluateAnalyticRadialQStage(
+            static_coefficients, q, q_dot, q_ddot, stage_coefficients);
+        const ref_gh::AnalyticRadialScalar analytic_alpha{
+            static_coefficients[ref_gh::kAnalyticAlpha], 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialScalar analytic_l{
+            stage_coefficients[ref_gh::kAnalyticL],
+            stage_coefficients[ref_gh::kAnalyticLT],
+            stage_coefficients[ref_gh::kAnalyticLR],
+            stage_coefficients[ref_gh::kAnalyticLTT],
+            stage_coefficients[ref_gh::kAnalyticLTR],
+            stage_coefficients[ref_gh::kAnalyticLRR],
+            stage_coefficients[ref_gh::kAnalyticLTTR],
+            stage_coefficients[ref_gh::kAnalyticLTRR]};
+        const ref_gh::AnalyticRadialScalar analytic_b{
+            static_coefficients[ref_gh::kAnalyticShiftB], 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialQPoint analytic_reference{
+            analytic_alpha, analytic_l, analytic_b, {x, y, z}, radius};
+        Real rhs[ref_gh::nvar];        // NOLINT(runtime/arrays)
+        Real condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
+        const bool exact_matched_static = q == 1.0 && q_dot == 0.0
+                                          && q_ddot == 0.0;
+        const bool valid = EvaluateRhsOraclePoint<true>(
             analytic_reference, analytic_reference,
-            phi_ordering, exact_matched_static, sample,
-            compact_rhs, compact_condition);
-        if (!generic_valid || !compact_valid) {
+            phi_ordering, exact_matched_static, sample, rhs, condition);
+        for (int n = 0; n < ref_gh::nvar; ++n) {
+          compact_rhs(sample, n) = valid
+              ? rhs[n] : std::numeric_limits<Real>::infinity();
+        }
+      });
+  Kokkos::fence();
+
+  using MaxLoc = Kokkos::MaxLoc<Real, int>;
+  MaxLoc::value_type maximum;
+  Kokkos::parallel_reduce(
+      "ref_gh all-61 staged radial-q RHS comparison",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples*ref_gh::nvar),
+      KOKKOS_LAMBDA(const int index, MaxLoc::value_type &local_maximum) {
+        const int sample = index/ref_gh::nvar;
+        const int n = index % ref_gh::nvar;
+        const Real generic = generic_rhs(sample, n);
+        const Real compact = compact_rhs(sample, n);
+        const Real condition = generic_condition(sample, n);
+        if (!Kokkos::isfinite(generic) || !Kokkos::isfinite(compact)
+            || !Kokkos::isfinite(condition)) {
           local_maximum.val = std::numeric_limits<Real>::infinity();
-          local_maximum.loc = ref_gh::nvar*sample;
+          local_maximum.loc = index;
           return;
         }
-        for (int n = 0; n < ref_gh::nvar; ++n) {
-          const Real scale = fmax(generic_condition[n], fmax(
-              1.0, fmax(Kokkos::abs(generic_rhs[n]),
-                        Kokkos::abs(compact_rhs[n]))));
-          const Real error = Kokkos::abs(generic_rhs[n] - compact_rhs[n])/scale;
-          if (error > local_maximum.val) {
-            local_maximum.val = error;
-            local_maximum.loc = ref_gh::nvar*sample + n;
-          }
+        const Real scale = fmax(
+            condition, fmax(1.0, fmax(Kokkos::abs(generic),
+                                     Kokkos::abs(compact))));
+        const Real error = Kokkos::abs(generic - compact)/scale;
+        if (error > local_maximum.val) {
+          local_maximum.val = error;
+          local_maximum.loc = index;
         }
       }, MaxLoc(maximum));
   Kokkos::fence();

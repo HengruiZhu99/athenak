@@ -1,0 +1,15 @@
+date=2026-08-29
+host=Kip
+branch=codex/ref-gh-fully-subtracted-gauge-repair-20260829
+base_commit=ef130480bfdbecc5b7d8f21169085be5da6c8cc4
+source_unit_cpp_sha256=8136b737a16039f350a394ed37e0ebce998a076c7eca52770c7d4ab1aa3db39d
+kokkos_commit=6739bc623081648af9e752b616d9671527922cbf
+execution_space=Kokkos Serial
+build_command=cmake --build build_fully_subtracted_serial -j2
+run_command=./build_fully_subtracted_serial/src/athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
+executable_sha256=3b33ec7a10517cc524538ff1b0e7f5bac53ddcb83bb591293b3c0c3b1340d225
+all_61_samples=4320
+all_61_error=4.13003e-14
+phi_orderings=compatible,standard
+tolerance_rule=256*binary64_epsilon
+aurora_device_execution=not_yet_rerun
