@@ -25,8 +25,8 @@ tile_wrapper=/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compac
 kokkos_tools=${campaign}/tools/kokkos-tools
 kokkos_timer=${kokkos_tools}/build/profiling/simple-kernel-timer/libkp_kernel_timer.so
 
-test "$(git -C "${source_root}" rev-parse HEAD)" = 03477a598918338eb3b89aea16f0b2a42b7221a7
-test "$(sha256sum "${athena}" | awk '{print $1}')" = 0388e65db521ca9c551a2cff2a3417f950f9bcef09d1018ee710769c0194fa6c
+test "$(git -C "${source_root}" rev-parse HEAD)" = 98bb0ac3a0037c3bfc7ee0831b4cc22f7ed1b6c2
+test "$(sha256sum "${athena}" | awk '{print $1}')" = ffc91426a771792dde6622e30522b44108710799ed974679b32b7fd4e5565d39
 test "$(sha256sum "${input}" | awk '{print $1}')" = d86595adeaf7d4c72e1f150d044cd5277f7b4e3507eea4e6d03f427c8dc38838
 test "$(sha256sum "${history}" | awk '{print $1}')" = 7055de601e6181e5ad7e1432b5c20a111b0ba67e0e8d5377c170ea80e7bedcde
 test "$(sha256sum "${restart}" | awk '{print $1}')" = 44b8e55957d3b455adf24862d36946e08fc10465df7a30cc5f247ac0e19fa997
