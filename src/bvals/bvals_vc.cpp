@@ -40,15 +40,21 @@ TaskStatus MeshBoundaryValuesVC::PackAndSendVC(DvceArray5D<Real> &a,
 
   const int my_rank = global_variable::my_rank;
   const bool multilevel = pmy_pack->pmesh->multilevel;
+  const bool fold_variables = pmy_pack->pz4c != nullptr &&
+                              pmy_pack->pz4c->opt.lean_runtime;
   auto &sbuf = sendbuf;
   auto &rbuf = recvbuf;
-  Kokkos::TeamPolicy<> policy(DevExeSpace(), nmb * nnghbr * nvar, Kokkos::AUTO);
+  const int neighbor_teams = nmb * nnghbr;
+  const int league_size = fold_variables ? neighbor_teams
+                                         : neighbor_teams * nvar;
+  Kokkos::TeamPolicy<> policy(DevExeSpace(), league_size, Kokkos::AUTO);
   Kokkos::parallel_for("Pack VC same-level buffers", policy,
       KOKKOS_LAMBDA(TeamMember_t member) {
         const int league = member.league_rank();
-        const int m = league / (nnghbr * nvar);
-        const int n = (league / nvar) % nnghbr;
-        const int v = league % nvar;
+        const int neighbor = fold_variables ? league : league / nvar;
+        const int m = neighbor / nnghbr;
+        const int n = neighbor % nnghbr;
+        const int fixed_v = fold_variables ? 0 : league % nvar;
         if (nghbr.d_view(m, n).gid < 0) return;
         const int neighbor_level = nghbr.d_view(m, n).lev;
         const int local_level = mblev.d_view(m);
@@ -60,8 +66,13 @@ TaskStatus MeshBoundaryValuesVC::PackAndSendVC(DvceArray5D<Real> &a,
         const int nk = bounds.bke - bounds.bks + 1;
         const int destination_m = nghbr.d_view(m, n).gid - mbgid.d_view(0);
         const int destination_n = nghbr.d_view(m, n).dest;
-        Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, nk * nj),
-            [&](const int kj) {
+        const int points_per_variable = nk * nj;
+        const int work = fold_variables ? nvar * points_per_variable
+                                        : points_per_variable;
+        Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, work),
+            [&](const int q) {
+              const int v = fold_variables ? q / points_per_variable : fixed_v;
+              const int kj = fold_variables ? q % points_per_variable : q;
               const int k = bounds.bks + kj / nj;
               const int j = bounds.bjs + kj % nj;
               Kokkos::parallel_for(
@@ -88,9 +99,10 @@ TaskStatus MeshBoundaryValuesVC::PackAndSendVC(DvceArray5D<Real> &a,
     Kokkos::parallel_for("Pack VC same-level coarse buffers", policy,
         KOKKOS_LAMBDA(TeamMember_t member) {
           const int league = member.league_rank();
-          const int m = league / (nnghbr * nvar);
-          const int n = (league / nvar) % nnghbr;
-          const int v = league % nvar;
+          const int neighbor = fold_variables ? league : league / nvar;
+          const int m = neighbor / nnghbr;
+          const int n = neighbor % nnghbr;
+          const int fixed_v = fold_variables ? 0 : league % nvar;
           if (nghbr.d_view(m, n).gid < 0 ||
               nghbr.d_view(m, n).lev != mblev.d_view(m)) return;
           const auto bounds = sbuf[n].isame_z4c;
@@ -100,8 +112,13 @@ TaskStatus MeshBoundaryValuesVC::PackAndSendVC(DvceArray5D<Real> &a,
           const int destination_m = nghbr.d_view(m, n).gid - mbgid.d_view(0);
           const int destination_n = nghbr.d_view(m, n).dest;
           const int base = nvar * sbuf[n].isame_ndat;
-          Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, nk * nj),
-              [&](const int kj) {
+          const int points_per_variable = nk * nj;
+          const int work = fold_variables ? nvar * points_per_variable
+                                          : points_per_variable;
+          Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, work),
+              [&](const int q) {
+                const int v = fold_variables ? q / points_per_variable : fixed_v;
+                const int kj = fold_variables ? q % points_per_variable : q;
                 const int k = bounds.bks + kj / nj;
                 const int j = bounds.bjs + kj % nj;
                 Kokkos::parallel_for(
@@ -162,6 +179,8 @@ TaskStatus MeshBoundaryValuesVC::RecvAndUnpackVC(DvceArray5D<Real> &a,
   auto &nghbr = pmy_pack->pmb->nghbr;
   auto &mblev = pmy_pack->pmb->mb_lev;
   const bool multilevel = pmy_pack->pmesh->multilevel;
+  const bool fold_variables = pmy_pack->pz4c != nullptr &&
+                              pmy_pack->pz4c->opt.lean_runtime;
 
 #if MPI_PARALLEL_ENABLED
   bool incomplete = false;
@@ -186,13 +205,17 @@ TaskStatus MeshBoundaryValuesVC::RecvAndUnpackVC(DvceArray5D<Real> &a,
 
   auto &rbuf = recvbuf;
   const auto vertex_layout = layout;
-  Kokkos::TeamPolicy<> policy(DevExeSpace(), nmb * nnghbr * nvar, Kokkos::AUTO);
+  const int neighbor_teams = nmb * nnghbr;
+  const int league_size = fold_variables ? neighbor_teams
+                                         : neighbor_teams * nvar;
+  Kokkos::TeamPolicy<> policy(DevExeSpace(), league_size, Kokkos::AUTO);
   Kokkos::parallel_for("Unpack VC same-level buffers", policy,
       KOKKOS_LAMBDA(TeamMember_t member) {
         const int league = member.league_rank();
-        const int m = league / (nnghbr * nvar);
-        const int n = (league / nvar) % nnghbr;
-        const int v = league % nvar;
+        const int neighbor = fold_variables ? league : league / nvar;
+        const int m = neighbor / nnghbr;
+        const int n = neighbor % nnghbr;
+        const int fixed_v = fold_variables ? 0 : league % nvar;
         if (nghbr.d_view(m, n).gid < 0) return;
         const int neighbor_level = nghbr.d_view(m, n).lev;
         const int local_level = mblev.d_view(m);
@@ -202,8 +225,13 @@ TaskStatus MeshBoundaryValuesVC::RecvAndUnpackVC(DvceArray5D<Real> &a,
         const int ni = bounds.bie - bounds.bis + 1;
         const int nj = bounds.bje - bounds.bjs + 1;
         const int nk = bounds.bke - bounds.bks + 1;
-        Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, nk * nj),
-            [&](const int kj) {
+        const int points_per_variable = nk * nj;
+        const int work = fold_variables ? nvar * points_per_variable
+                                        : points_per_variable;
+        Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, work),
+            [&](const int q) {
+              const int v = fold_variables ? q / points_per_variable : fixed_v;
+              const int kj = fold_variables ? q % points_per_variable : q;
               const int k = bounds.bks + kj / nj;
               const int j = bounds.bjs + kj % nj;
               Kokkos::parallel_for(
@@ -230,9 +258,10 @@ TaskStatus MeshBoundaryValuesVC::RecvAndUnpackVC(DvceArray5D<Real> &a,
     Kokkos::parallel_for("Unpack VC same-level coarse buffers", policy,
         KOKKOS_LAMBDA(TeamMember_t member) {
           const int league = member.league_rank();
-          const int m = league / (nnghbr * nvar);
-          const int n = (league / nvar) % nnghbr;
-          const int v = league % nvar;
+          const int neighbor = fold_variables ? league : league / nvar;
+          const int m = neighbor / nnghbr;
+          const int n = neighbor % nnghbr;
+          const int fixed_v = fold_variables ? 0 : league % nvar;
           if (nghbr.d_view(m, n).gid < 0 ||
               nghbr.d_view(m, n).lev != mblev.d_view(m)) return;
           const auto bounds = rbuf[n].isame_z4c;
@@ -240,8 +269,13 @@ TaskStatus MeshBoundaryValuesVC::RecvAndUnpackVC(DvceArray5D<Real> &a,
           const int nj = bounds.bje - bounds.bjs + 1;
           const int nk = bounds.bke - bounds.bks + 1;
           const int base = nvar * rbuf[n].isame_ndat;
-          Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, nk * nj),
-              [&](const int kj) {
+          const int points_per_variable = nk * nj;
+          const int work = fold_variables ? nvar * points_per_variable
+                                          : points_per_variable;
+          Kokkos::parallel_for(Kokkos::TeamThreadRange<>(member, work),
+              [&](const int q) {
+                const int v = fold_variables ? q / points_per_variable : fixed_v;
+                const int kj = fold_variables ? q % points_per_variable : q;
                 const int k = bounds.bks + kj / nj;
                 const int j = bounds.bjs + kj % nj;
                 Kokkos::parallel_for(
