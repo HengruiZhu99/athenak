@@ -9,6 +9,7 @@
 #include "ref_gh/covariant_gh_source.hpp"
 #include "ref_gh/generated/analytic_radial_q_source.hpp"
 #include "ref_gh/reference_analytic_radial_q.hpp"
+#include "ref_gh/reference_residual.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 
 namespace ref_gh {
@@ -16,6 +17,7 @@ namespace ref_gh {
 struct CompactAnalyticCoordinateGeometry {
   CoordinateGhGeometry geometry;
   Real d_reference_gauge[4][4];  // NOLINT(runtime/arrays)
+  Real d_gauge_source_upper[4][4];  // NOLINT(runtime/arrays)
 };
 
 // Reconstruct physical point geometry once while obtaining the implicit
@@ -92,6 +94,11 @@ bool ComputeCompactAnalyticCoordinateGeometry(
       reference.alpha, reference.l, reference.b, reference.displacement,
       reference.radius, geometry.inverse_metric, d_inverse,
       h_upper, d_h_upper);
+  for (int p = 0; p < 4; ++p) {
+    for (int a = 0; a < 4; ++a) {
+      result.d_gauge_source_upper[p][a] = d_h_upper[p][a];
+    }
+  }
   for (int a = 0; a < 4; ++a) {
     geometry.gauge_source[a] = 0.0;
     geometry.gauge_source_upper[a] = h_upper[a];
@@ -107,6 +114,152 @@ bool ComputeCompactAnalyticCoordinateGeometry(
                                    + geometry.contracted_first[a];
   }
   return Kokkos::isfinite(geometry.lapse) && geometry.lapse > 0.0;
+}
+
+// Cancellation-free compact analytic implementation of
+//
+//   J_a=E^A_a delta_H_A-[B_a(g;gbar)-B_a(gbar;gbar)].
+//
+// GeneratedAnalyticRadialQPhysicalGaugeUpper is linear in g^{ab} and in
+// partial_p g^{ab}.  Supplying their exact residuals therefore evaluates the
+// upper-index gauge-source residual directly, without materializing the
+// reference connection or subtracting two singular full sources.
+KOKKOS_INLINE_FUNCTION
+bool AddCompactAnalyticOrdinaryGaugeResidualSource(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const Real metric[4][4],
+    const Real d_metric[4][4][4], const AnalyticRadialQPoint &reference,
+    const CompactAnalyticCoordinateGeometry &compact_geometry,
+    const Real delta_hhat[4], const Real d_delta_hhat[4][4],
+    const Real gamma0, Real source[4][4]) {
+  const CoordinateGhGeometry &geometry = compact_geometry.geometry;
+  ReferenceRelativeCoordinateData relative;
+  if (!BuildReferenceRelativeCoordinateData(
+          psi, pi, phi, metric, d_metric, geometry, reference, relative)) {
+    return false;
+  }
+
+  ReferenceResidualValue inverse[4][4];  // NOLINT(runtime/arrays)
+  ReferenceResidualValue dg[4][4][4];    // NOLINT(runtime/arrays)
+  ReferenceResidualValue d_inverse[4][4][4];  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      Real delta_inverse = 0.0;
+      for (int c = 0; c < 4; ++c) {
+        for (int d = 0; d < 4; ++d) {
+          delta_inverse -= geometry.inverse_metric[a][c]
+              *relative.delta_metric[c][d]*relative.reference_inverse[d][b];
+        }
+      }
+      inverse[a][b] = MakeReferenceResidual(
+          relative.reference_inverse[a][b], geometry.inverse_metric[a][b],
+          delta_inverse);
+      for (int p = 0; p < 4; ++p) {
+        dg[p][a][b] = MakeReferenceResidual(
+            relative.reference_d_metric[p][a][b], d_metric[p][a][b],
+            relative.delta_d_metric[p][a][b]);
+      }
+    }
+  }
+  for (int p = 0; p < 4; ++p) {
+    for (int a = 0; a < 4; ++a) {
+      for (int b = 0; b < 4; ++b) {
+        d_inverse[p][a][b] = ReferenceResidualConstant(0.0);
+        for (int c = 0; c < 4; ++c) {
+          for (int d = 0; d < 4; ++d) {
+            d_inverse[p][a][b] = d_inverse[p][a][b]
+                - inverse[a][c]*inverse[b][d]*dg[p][c][d];
+          }
+        }
+      }
+    }
+  }
+
+  Real delta_inverse[4][4];       // NOLINT(runtime/arrays)
+  Real delta_d_inverse[4][4][4];  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      delta_inverse[a][b] = inverse[a][b].delta;
+      for (int p = 0; p < 4; ++p) {
+        delta_d_inverse[p][a][b] = d_inverse[p][a][b].delta;
+      }
+    }
+  }
+  Real delta_base_upper[4];       // NOLINT(runtime/arrays)
+  Real d_delta_base_upper[4][4];  // NOLINT(runtime/arrays)
+  GeneratedAnalyticRadialQPhysicalGaugeUpper(
+      reference.alpha, reference.l, reference.b, reference.displacement,
+      reference.radius, delta_inverse, delta_d_inverse,
+      delta_base_upper, d_delta_base_upper);
+
+  Real delta_base[4] = {};       // NOLINT(runtime/arrays)
+  Real d_delta_base[4][4] = {};  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      delta_base[a] +=
+          relative.delta_metric[a][b]*geometry.gauge_source_upper[b]
+          + relative.reference_metric[a][b]*delta_base_upper[b];
+      for (int p = 0; p < 4; ++p) {
+        d_delta_base[p][a] +=
+            relative.delta_d_metric[p][a][b]
+                *geometry.gauge_source_upper[b]
+            + relative.reference_d_metric[p][a][b]
+                *delta_base_upper[b]
+            + relative.delta_metric[a][b]
+                *compact_geometry.d_gauge_source_upper[p][b]
+            + relative.reference_metric[a][b]
+                *d_delta_base_upper[p][b];
+      }
+    }
+  }
+
+  Real j[4] = {};       // NOLINT(runtime/arrays)
+  Real d_j[4][4] = {};  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    j[a] = -delta_base[a];
+    for (int A = 0; A < 4; ++A) {
+      j[a] += ReferenceCoframe(reference, A, a)*delta_hhat[A];
+    }
+    for (int p = 0; p < 4; ++p) {
+      d_j[p][a] = -d_delta_base[p][a];
+      for (int A = 0; A < 4; ++A) {
+        d_j[p][a] += AnalyticDCoframe(reference, p, A, a)*delta_hhat[A]
+                      + ReferenceCoframe(reference, A, a)
+                          *d_delta_hhat[p][A];
+      }
+    }
+  }
+
+  Real coordinate_extra[4][4];  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      Real nabla_ab = d_j[a][b];
+      Real nabla_ba = d_j[b][a];
+      for (int c = 0; c < 4; ++c) {
+        nabla_ab -= geometry.christoffel[c][a][b]*j[c];
+        nabla_ba -= geometry.christoffel[c][b][a]*j[c];
+      }
+      coordinate_extra[a][b] = -nabla_ab - nabla_ba;
+      for (int c = 0; c < 4; ++c) {
+        const Real projector = ((c == a) ? geometry.normal_lower[b] : 0.0)
+                               + ((c == b) ? geometry.normal_lower[a] : 0.0)
+                               - metric[a][b]*geometry.normal_upper[c];
+        coordinate_extra[a][b] += gamma0*projector*j[c];
+      }
+    }
+  }
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int a = 0; a < 4; ++a) {
+        for (int b = 0; b < 4; ++b) {
+          source[A][B] += ReferenceFrame(reference, A, a)
+                          *ReferenceFrame(reference, B, b)
+                          *coordinate_extra[a][b];
+        }
+      }
+    }
+  }
+  return true;
 }
 
 // This is the analytic all-source oracle and future production entry point.

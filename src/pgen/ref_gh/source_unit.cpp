@@ -8,6 +8,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <type_traits>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -3312,7 +3313,8 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
     const bool well_conditioned, const bool static_q1,
     Real &matched_maximum,
     Real &physical_maximum, Real &delta_maximum, Real &source_maximum,
-    Real &raw_driver_maximum, int &maximum_category) {
+    Real &compact_source_maximum, Real &raw_driver_maximum,
+    int &maximum_category) {
   constexpr Real nu = 0.83;
   constexpr Real eta_beta = 0.36;
   Real psi[4][4] = {};       // NOLINT(runtime/arrays)
@@ -3359,6 +3361,7 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
   physical_maximum = 0.0;
   delta_maximum = 0.0;
   source_maximum = 0.0;
+  compact_source_maximum = 0.0;
   raw_driver_maximum = 0.0;
   maximum_category = -1;
   for (int A = 0; A < 4; ++A) {
@@ -3493,6 +3496,28 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
         matched_exact = matched_exact && gauge_source[A][B] == 0.0;
       }
     }
+    if constexpr (std::is_same_v<Reference,
+                                 ref_gh::AnalyticRadialQPoint>) {
+      ref_gh::CompactAnalyticCoordinateGeometry compact;
+      Real compact_determinant = 0.0;
+      Real compact_source[4][4] = {};  // NOLINT(runtime/arrays)
+      if (!ref_gh::ComputeCompactAnalyticCoordinateGeometry(
+              matched_metric, matched_d_metric, reference, compact,
+              compact_determinant)
+          || !ref_gh::AddCompactAnalyticOrdinaryGaugeResidualSource(
+              matched_psi, matched_pi, matched_phi, matched_metric,
+              matched_d_metric, reference, compact, zero_hhat,
+              d_zero_hhat, 0.73, compact_source)) {
+        return std::numeric_limits<Real>::infinity();
+      }
+      for (int A = 0; A < 4; ++A) {
+        for (int B = 0; B < 4; ++B) {
+          matched_maximum = fmax(
+              matched_maximum, Kokkos::abs(compact_source[A][B]));
+          matched_exact = matched_exact && compact_source[A][B] == 0.0;
+        }
+      }
+    }
 
     constexpr Real gauge_mu = 0.62;
     constexpr Real gauge_eta = 0.57;
@@ -3583,6 +3608,35 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
             &perturbed_diagnostics)) {
       return std::numeric_limits<Real>::infinity();
     }
+    if constexpr (std::is_same_v<Reference,
+                                 ref_gh::AnalyticRadialQPoint>) {
+      ref_gh::CompactAnalyticCoordinateGeometry compact;
+      Real compact_determinant = 0.0;
+      Real compact_source[4][4] = {};  // NOLINT(runtime/arrays)
+      if (!ref_gh::ComputeCompactAnalyticCoordinateGeometry(
+              metric, d_metric, reference, compact, compact_determinant)
+          || !ref_gh::AddCompactAnalyticOrdinaryGaugeResidualSource(
+              psi, pi, phi, metric, d_metric, reference, compact,
+              delta_hhat, delta_d_hhat, gamma0, compact_source)) {
+        return std::numeric_limits<Real>::infinity();
+      }
+      for (int A = 0; A < 4; ++A) {
+        for (int B = 0; B < 4; ++B) {
+          const Real scale = fmax(
+              1.0, fmax(Kokkos::abs(residual_source[A][B]),
+                        Kokkos::abs(compact_source[A][B])));
+          const Real compact_error =
+              Kokkos::abs(compact_source[A][B]
+                          - residual_source[A][B])/scale;
+          source_maximum = fmax(source_maximum, compact_error);
+          compact_source_maximum = fmax(
+              compact_source_maximum, compact_error);
+          UpdateResidualTargetOracleError(
+              compact_error, 90 + (A == B ? A : 4), well_conditioned,
+              maximum, physical_maximum, delta_maximum, maximum_category);
+        }
+      }
+    }
     Real legacy_d_base[4][4];  // NOLINT(runtime/arrays)
     ref_gh::ImplicitGaugeSourceDerivative(
         metric, d_metric, reference, geometry, legacy_d_base);
@@ -3654,6 +3708,7 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
   Real maximum_physical = 0.0;
   Real maximum_delta = 0.0;
   Real maximum_source = 0.0;
+  Real maximum_compact_source = 0.0;
   Real maximum_raw_driver = 0.0;
   Real maximum_matched = 0.0;
   int matched_failure = 0;
@@ -3664,7 +3719,8 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
       Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
       KOKKOS_LAMBDA(const int sample, Real &local_maximum,
                     Real &local_physical, Real &local_delta,
-                    Real &local_source, Real &local_raw_driver,
+                    Real &local_source, Real &local_compact_source,
+                    Real &local_raw_driver,
                     Real &local_matched, int &local_failure,
                     MaxLoc::value_type &local_location) {
         const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
@@ -3722,6 +3778,8 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
         Real analytic_delta = 0.0;
         Real generic_source = 0.0;
         Real analytic_source = 0.0;
+        Real generic_compact_source = 0.0;
+        Real analytic_compact_source = 0.0;
         Real generic_raw_driver = 0.0;
         Real analytic_raw_driver = 0.0;
         int generic_category = -1;
@@ -3737,17 +3795,21 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
         const Real generic_error = EvaluateResidualPhysicalGaugeTargetOracle(
             generic, sample, generic_exact, well_conditioned, static_q1,
             generic_matched, generic_physical, generic_delta, generic_source,
-            generic_raw_driver, generic_category);
+            generic_compact_source, generic_raw_driver, generic_category);
         const Real analytic_error = EvaluateResidualPhysicalGaugeTargetOracle(
             analytic, sample, analytic_exact, well_conditioned, static_q1,
             analytic_matched, analytic_physical, analytic_delta,
-            analytic_source, analytic_raw_driver, analytic_category);
+            analytic_source, analytic_compact_source, analytic_raw_driver,
+            analytic_category);
         local_maximum = fmax(local_maximum, fmax(generic_error, analytic_error));
         local_physical = fmax(
             local_physical, fmax(generic_physical, analytic_physical));
         local_delta = fmax(local_delta, fmax(generic_delta, analytic_delta));
         local_source = fmax(
             local_source, fmax(generic_source, analytic_source));
+        local_compact_source = fmax(
+            local_compact_source,
+            fmax(generic_compact_source, analytic_compact_source));
         local_raw_driver = fmax(
             local_raw_driver,
             fmax(generic_raw_driver, analytic_raw_driver));
@@ -3769,6 +3831,7 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
       }, Kokkos::Max<Real>(maximum_error),
       Kokkos::Max<Real>(maximum_physical), Kokkos::Max<Real>(maximum_delta),
       Kokkos::Max<Real>(maximum_source),
+      Kokkos::Max<Real>(maximum_compact_source),
       Kokkos::Max<Real>(maximum_raw_driver),
       Kokkos::Max<Real>(maximum_matched), Kokkos::Max<int>(matched_failure),
       MaxLoc(maximum_location));
@@ -3784,6 +3847,7 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
               << " physical_error=" << maximum_physical
               << " raw_delta_error=" << maximum_delta
               << " source_error=" << maximum_source
+              << " compact_source_error=" << maximum_compact_source
               << " raw_driver_error=" << maximum_raw_driver
               << " location=" << maximum_location.loc
               << " tolerance=" << tolerance << std::endl;
@@ -3794,6 +3858,7 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
             << " physical=" << maximum_physical
             << " raw-delta-diagnostic=" << maximum_delta
             << " source=" << maximum_source
+            << " compact-source-diagnostic=" << maximum_compact_source
             << " raw-driver-diagnostic=" << maximum_raw_driver
             << " matched_exact=1" << std::endl;
 }
