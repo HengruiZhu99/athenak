@@ -1,0 +1,227 @@
+#!/bin/bash -l
+# Full-resolution Phase-2 diagnostic gate followed by the frozen Phase-3 A-D
+# ordering/gamma2/gauge matrix.  No conditional t=5 continuation is launched
+# here; the four t=3 trajectories must be interpreted together first.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_ord_gauge
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${EXPECTED_COMMIT:0:12}"
+OUT="${CAMPAIGN_ROOT}/runs/ordering_gauge_phase23_${PBS_JOBID}"
+EXE="${BUILD}/src/athena"
+FIXED_INPUT="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_fixed_point.athinput"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+BINDER=$(command -v gpu_tile_compact.sh)
+test -x "${BINDER}"
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "required_grid=96x96x96"
+  echo "required_meshblocks=216"
+  echo "required_ranks=12"
+  echo "required_blocks_per_rank=18"
+  echo "gpu_tile_binder=${BINDER}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${FIXED_INPUT}" \
+    "${SRC}"/inputs/ref_gh/ref_gh_ordering_gauge_case_?.athinput "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DAthena_ENABLE_REF_GH_SOURCE_UNIT=OFF \
+  -DPROBLEM=built_in_pgens > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Athena_ENABLE_REF_GH_SOURCE_UNIT:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+  sha256sum "${EXE}"
+} >> provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
+  | sort -u | wc -l)" -eq 12
+
+# Hard diagnostic gate: full 96^3, 216-block, 12-rank fixed point.  A-D cannot
+# execute unless the exact production RHS rerun and sector sum both pass.
+mkdir fixed_point
+(
+  cd fixed_point
+  /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+    "${BINDER}" "${EXE}" -i "${FIXED_INPUT}" > run.log 2>&1
+)
+grep -q 'Root grid = 6 x 6 x 6 MeshBlocks' fixed_point/run.log
+grep -q 'Total number of MeshBlocks = 216' fixed_point/run.log
+grep -q 'Number of parallel ranks = 12' fixed_point/run.log
+grep -q 'reference-GH initial RHS sector decomposition passed' fixed_point/run.log
+test -s fixed_point/ref_gh_ordering_gauge_fixed_point.ref_gh_rhs_sectors.tsv
+python3 - fixed_point/ref_gh_ordering_gauge_fixed_point.ref_gh_rhs_sectors.tsv <<'PY'
+import math
+import pathlib
+import re
+import sys
+
+text = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8")
+reproduction = float(re.search(r"reproduction_conditioned_linf=([^\s]+)", text).group(1))
+rerun = float(re.search(r"production_rerun_conditioned_linf=([^\s]+)", text).group(1))
+tolerance = float(re.search(r"tolerance=([^\s]+)", text).group(1))
+if not all(math.isfinite(value) for value in (reproduction, rerun, tolerance)):
+    raise SystemExit("nonfinite RHS decomposition gate")
+if reproduction > tolerance or rerun > tolerance:
+    raise SystemExit(
+        f"RHS decomposition failed: reproduction={reproduction} rerun={rerun} tolerance={tolerance}"
+    )
+print(f"reproduction_conditioned_linf={reproduction:.17e}")
+print(f"production_rerun_conditioned_linf={rerun:.17e}")
+print(f"tolerance={tolerance:.17e}")
+PY
+! grep -Eiq 'FATAL ERROR|NotPresent|page fault|SYCL exception|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' \
+  fixed_point/run.log
+
+run_case() {
+  local case_name="$1"
+  local input="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_case_${case_name}.athinput"
+
+  # Independent binary64 accepted-state snapshot trajectory through t=0.2M.
+  mkdir "case_${case_name}_snapshot"
+  set +e
+  (
+    cd "case_${case_name}_snapshot"
+    /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+      "${BINDER}" "${EXE}" -i "${input}" \
+      job/basename="case_${case_name}_snapshot" \
+      time/tlim=0.2 time/nlim=-1 output2/dt=-1 \
+      output3/dt=0.2 output4/dt=0.2 output5/dt=0.2 > run.log 2>&1
+  )
+  local snapshot_status=$?
+  set -e
+  local snapshot_count
+  snapshot_count=$(find "case_${case_name}_snapshot" -type f -name '*.cbin' | wc -l)
+  {
+    echo "case=${case_name}"
+    echo "run_exit_status=${snapshot_status}"
+    echo "requested_final_time=0.2"
+    echo "binary64_file_count=${snapshot_count}"
+    tail -1 "case_${case_name}_snapshot/case_${case_name}_snapshot.ref_gh.hst" \
+      2>/dev/null || true
+  } > "case_${case_name}_snapshot/run_status.txt"
+
+  # Controlling t=3M trajectory.  Binary payload is disabled here because the
+  # required t=0 and t=0.2 snapshots were preserved by the run above.
+  mkdir "case_${case_name}_t3"
+  set +e
+  (
+    cd "case_${case_name}_t3"
+    /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+      "${BINDER}" "${EXE}" -i "${input}" \
+      job/basename="case_${case_name}_t3" \
+      time/tlim=3.0 time/nlim=-1 \
+      output3/dt=-1 output4/dt=-1 output5/dt=-1 > run.log 2>&1
+  )
+  local status=$?
+  set -e
+  local history="case_${case_name}_t3/case_${case_name}_t3.ref_gh.hst"
+  local last_time
+  last_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' "${history}" 2>/dev/null || echo 0)
+  {
+    echo "case=${case_name}"
+    echo "run_exit_status=${status}"
+    echo "requested_final_time=3.0"
+    echo "latest_history_time=${last_time}"
+    tail -1 "${history}" 2>/dev/null || true
+    tail -1 "case_${case_name}_t3/case_${case_name}_t3.user.hst" 2>/dev/null || true
+  } > "case_${case_name}_t3/run_status.txt"
+}
+
+# Preserve every negative result.  A failed trajectory does not suppress the
+# remaining cases because all four are required for system identification.
+for case_name in a b c d; do
+  run_case "${case_name}"
+done
+
+python3 - . <<'PY' > phase3_status.tsv
+import math
+import pathlib
+import re
+import sys
+
+root = pathlib.Path(sys.argv[1])
+print("case\tsnapshot_exit_status\tbinary64_files\texit_status\tlast_time\tfinite_log\treached_3M")
+for case_name in "abcd":
+    directory = root / f"case_{case_name}_t3"
+    snapshot_text = (root / f"case_{case_name}_snapshot" / "run_status.txt").read_text(
+        encoding="utf-8"
+    )
+    snapshot_status = int(
+        re.search(r"run_exit_status=([^\s]+)", snapshot_text).group(1)
+    )
+    binary64_files = int(
+        re.search(r"binary64_file_count=([^\s]+)", snapshot_text).group(1)
+    )
+    status_text = (directory / "run_status.txt").read_text(encoding="utf-8")
+    status = int(re.search(r"run_exit_status=([^\s]+)", status_text).group(1))
+    last_time = float(re.search(r"latest_history_time=([^\s]+)", status_text).group(1))
+    log = (directory / "run.log").read_text(encoding="utf-8")
+    nonfinite = re.search(r"(^|[^A-Za-z0-9_])(nan|[-+]?inf)([^A-Za-z0-9_]|$)", log, re.I)
+    finite_log = nonfinite is None
+    reached = math.isfinite(last_time) and last_time >= 3.0 - 1.0e-10
+    print(
+        f"{case_name}\t{snapshot_status}\t{binary64_files}\t{status}\t"
+        f"{last_time:.17e}\t{int(finite_log)}\t{int(reached)}"
+    )
+PY
+
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' -o -name '*.json' \) -print0 \
+  | sort -z | xargs -0 sha256sum > compact_sha256.txt
+
+# Exit success only if the diagnostic gate completed.  Individual A-D failures
+# are scientific outputs recorded in phase3_status.tsv, not scheduler failures.
+echo 'result=PASS_PHASE2_GATE_PHASE3_MATRIX_COMPLETED' > gate_status.txt
