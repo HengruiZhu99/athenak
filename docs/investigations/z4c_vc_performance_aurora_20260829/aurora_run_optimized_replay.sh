@@ -9,6 +9,7 @@ set -euo pipefail
 : "${HISTORY_FILE:?absolute AMR-history authority}"
 : "${ATHENA_WALL_LIMIT:=00:08:00}"
 : "${RUN_SMOKE:=0}"
+: "${ALLOCATED_NODES:=${RUN_NODES}}"
 
 campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-performance-aurora-20260829
 reference=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828
@@ -33,7 +34,7 @@ expected_history=7055de601e6181e5ad7e1432b5c20a111b0ba67e0e8d5377c170ea80e7bedcd
 expected_restart=44b8e55957d3b455adf24862d36946e08fc10465df7a30cc5f247ac0e19fa997
 
 test -r "${PBS_NODEFILE:-}"
-test "$(LC_ALL=C sort -u "${PBS_NODEFILE}" | wc -l)" -eq "${RUN_NODES}"
+test "$(LC_ALL=C sort -u "${PBS_NODEFILE}" | wc -l)" -eq "${ALLOCATED_NODES}"
 test "$(git -C "${source_root}" rev-parse HEAD)" = "${expected_source}"
 test "$(git -C "${source_root}" rev-parse 'HEAD^{tree}')" = "${expected_tree}"
 test -z "$(git -C "${source_root}" status --porcelain=v1)"
