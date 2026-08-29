@@ -647,6 +647,25 @@ device pass with a transparently preserved wrapper failure, not a green PBS
 job.  It qualifies only the named device oracles and one 96^3 cycle-zero fixed
 point; it is not positive-time evolution evidence.
 
+## Phase 7 diagnostic preparation
+
+The cycle-zero stationary diagnostic now evaluates the existing
+cancellation-free physical target on the actual stored state and reports
+`deltaF_A`, delta conformal Gamma, and delta shift separately.  It retains the
+legacy independently reconstructed `F-H_constraint` value as a secondary
+conditioning diagnostic.  This changes no evolved field, RHS, task ordering,
+tolerance, stencil, or mask.
+
+A local 16^3 STANDARD matched-state check reports exact zero for all three new
+residual quantities.  Stored Hhat/theta, actual and driver gauge RHS sectors,
+the ordinary-gauge Pi increment, and all gauge KO sectors are also exact zero.
+The remaining total Pi RHS is `5.681872526233013e-14`, entirely in the existing
+covariant-vacuum source.  The complete source-unit suite remains unchanged at
+`4.13003e-14` for the 4320 all-61 comparisons.  The dedicated Phase-7 launcher
+and Python-3.6-compatible analyzer will next apply these exact-zero gates at
+64^3, 96^3, and 128^3 with the full FD4+KO puncture stencil excluded.  This
+local diagnostic checkpoint is not the three-resolution ladder result.
+
 ## Remaining gates
 
 The following are not yet complete: independent all-radius high-precision

@@ -72,6 +72,11 @@ Primary review targets:
     arithmetic and conditioned comparison, `per_kernel` is confined to the
     validation translation unit under SYCL, and the `min()` predicate probes
     test exact rejection without altering the production predicate.
+12. Audit the diagnostic-only residual-target measurement in
+    `src/pgen/ref_gh/stationary_trumpet.cpp` and the Phase-7 analyzer. Confirm
+    that it evaluates the existing production residual algebra on the stored
+    state, retains the legacy full-target value separately, applies the full
+    FD4+KO puncture-stencil exclusion, and does not alter evolution.
 
 Evidence to inspect:
 
@@ -89,6 +94,7 @@ Evidence to inspect:
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791265_failed/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791292_predicate_failed/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791352_numerical_pass_postprocess_failed/`
+- `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase7_diagnostic_local/`
 
 Validate each `SHA256SUMS` file and distinguish current passing evidence from
 the intentionally preserved negative result. The key current observations are:

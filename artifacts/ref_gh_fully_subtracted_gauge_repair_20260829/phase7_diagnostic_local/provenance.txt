@@ -1,0 +1,10 @@
+date=2026-08-29
+machine=local
+backend=Kokkos Serial
+parent_commit=b5f69dfb1234d21dcb58fb475ba82fc83fdd4fc2
+working_diff_sha256=757fa468beac0e404bf34e9710ab52bf1f22a34f6917837c1e862bd9b5d02249
+executable_sha256=318e23a24ebd13beb1da675ec0ce766792c3add90dd960d75fdc9f7b58a707fd
+compiler=c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+source_unit_command=./build_fully_subtracted_serial/src/athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
+fixed_point_command=build_fully_subtracted_serial/src/athena -i inputs/ref_gh/ref_gh_ordering_gauge_fixed_point.athinput ref_gh/phi_ordering=standard job/basename=phase7_local_n16 mesh/nx1=16 mesh/nx2=16 mesh/nx3=16 time/tlim=0 time/nlim=0 output2/dt=-1 output3/dt=-1 output4/dt=-1 output5/dt=-1
+positive_time_cycles=0

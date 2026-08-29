@@ -1026,6 +1026,9 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
     Real conformal_gamma_linf = 0.0;
     Real hhat_linf = 0.0;
     Real theta_linf = 0.0;
+    Real delta_target_linf = 0.0;
+    Real delta_conformal_gamma_linf = 0.0;
+    Real delta_shift_linf = 0.0;
     const int gauge_stencil_radius =
         ref_gh::PunctureEvolutionStencilRadius(
             pack->prefgh->opt.fd_order, pack->prefgh->opt.diss);
@@ -1036,7 +1039,9 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
             0, pack->nmb_thispack*active_cells),
         KOKKOS_LAMBDA(const int idx, Real &local_target,
                       Real &local_conformal_gamma, Real &local_hhat,
-                      Real &local_theta) {
+                      Real &local_theta, Real &local_delta_target,
+                      Real &local_delta_conformal_gamma,
+                      Real &local_delta_shift) {
           int work = idx;
           const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
           const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
@@ -1092,9 +1097,51 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
             local_conformal_gamma = fmax(
                 local_conformal_gamma, Kokkos::abs(target.conformal_gamma[p]));
           }
+
+          // Record the production residual target itself on the stored state.
+          // The legacy full-target comparison above is retained as a
+          // conditioning diagnostic, but it is not the quantity evolved by
+          // the fully subtracted exact-matched path.
+          Real psi[4][4], pi[4][4], phi[3][4][4];  // NOLINT(runtime/arrays)
+          Real d_psi[4][4][4], metric[4][4];       // NOLINT(runtime/arrays)
+          Real d_metric[4][4][4];                  // NOLINT(runtime/arrays)
+          ref_gh::CoordinateGhGeometry physical_geometry;
+          if (!ref_gh::LoadPointGeometry(
+                  state, reference, m, k, j, i, psi, pi, phi, d_psi,
+                  metric, d_metric, physical_geometry, determinant)) {
+            local_delta_target = std::numeric_limits<Real>::infinity();
+            local_delta_conformal_gamma =
+                std::numeric_limits<Real>::infinity();
+            local_delta_shift = std::numeric_limits<Real>::infinity();
+            return;
+          }
+          ref_gh::PhysicalGaugeTargetResidual residual;
+          if (!ref_gh::ComputePhysicalGaugeTargetResidual(
+                  psi, pi, phi, metric, d_metric, physical_geometry,
+                  reference, upsilon, shift_nu, shift_eta, residual)) {
+            local_delta_target = std::numeric_limits<Real>::infinity();
+            local_delta_conformal_gamma =
+                std::numeric_limits<Real>::infinity();
+            local_delta_shift = std::numeric_limits<Real>::infinity();
+            return;
+          }
+          for (int A = 0; A < 4; ++A) {
+            local_delta_target = fmax(
+                local_delta_target, Kokkos::abs(residual.delta_frame[A]));
+          }
+          for (int p = 0; p < 3; ++p) {
+            local_delta_conformal_gamma = fmax(
+                local_delta_conformal_gamma,
+                Kokkos::abs(residual.delta_conformal_gamma[p]));
+            local_delta_shift = fmax(
+                local_delta_shift, Kokkos::abs(residual.delta_shift[p]));
+          }
         }, Kokkos::Max<Real>(target_baseline_linf),
            Kokkos::Max<Real>(conformal_gamma_linf),
-           Kokkos::Max<Real>(hhat_linf), Kokkos::Max<Real>(theta_linf));
+           Kokkos::Max<Real>(hhat_linf), Kokkos::Max<Real>(theta_linf),
+           Kokkos::Max<Real>(delta_target_linf),
+           Kokkos::Max<Real>(delta_conformal_gamma_linf),
+           Kokkos::Max<Real>(delta_shift_linf));
 #if MPI_PARALLEL_ENABLED
     MPI_Allreduce(MPI_IN_PLACE, &target_baseline_linf, 1, MPI_ATHENA_REAL,
                   MPI_MAX, MPI_COMM_WORLD);
@@ -1104,6 +1151,12 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
                   MPI_MAX, MPI_COMM_WORLD);
     MPI_Allreduce(MPI_IN_PLACE, &theta_linf, 1, MPI_ATHENA_REAL,
                   MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &delta_target_linf, 1, MPI_ATHENA_REAL,
+                  MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &delta_conformal_gamma_linf, 1,
+                  MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &delta_shift_linf, 1, MPI_ATHENA_REAL,
+                  MPI_MAX, MPI_COMM_WORLD);
 #endif
     if (global_variable::my_rank == 0) {
       std::cout << "reference-GH stationary physical-target audit: "
@@ -1111,6 +1164,12 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
                 << ", |tildeGamma|_Linf=" << conformal_gamma_linf
                 << ", |stored_Hhat_A|_Linf=" << hhat_linf
                 << ", |stored_theta_A|_Linf=" << theta_linf
+                << std::endl;
+      std::cout << "reference-GH stationary residual-target audit: "
+                << "|deltaF_A|_Linf=" << delta_target_linf
+                << ", |delta_tildeGamma|_Linf="
+                << delta_conformal_gamma_linf
+                << ", |delta_beta|_Linf=" << delta_shift_linf
                 << std::endl;
     }
   }

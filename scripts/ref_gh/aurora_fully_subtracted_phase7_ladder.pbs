@@ -1,0 +1,152 @@
+#!/bin/bash -l
+# Three-resolution cycle-zero fixed-point ladder for the fully subtracted
+# STANDARD Ref-GH gauge path. No positive-time evolution is performed.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_sub_p7
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_phase7_ladder_${PBS_JOBID}"
+OUT="${CAMPAIGN_ROOT}/runs/phase7_ladder_${PBS_JOBID}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_fixed_point.athinput"
+ANALYZE="${SRC}/scripts/ref_gh/analyze_fully_subtracted_fixed_point_ladder.py"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "phase7_ladder_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+BINDER=$(command -v gpu_tile_compact.sh)
+test -x "${BINDER}"
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+test -f "${SRC}/kokkos/CMakeLists.txt"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "source_commit=${actual_commit}"
+  echo "resolutions=64,96,128"
+  echo "phi_ordering=standard"
+  echo "puncture_stencil_exclusion=true"
+  echo "positive_time_cycles=0"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  python3 --version
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${ANALYZE}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DAthena_ENABLE_REF_GH_SOURCE_UNIT=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens > configure.log 2>&1
+cmake --build "${BUILD}" --verbose -j 64 > build.log 2>&1
+
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Athena_ENABLE_REF_GH_SOURCE_UNIT:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+    "${BUILD}/CMakeCache.txt"
+  sha256sum "${BUILD}/CMakeCache.txt" "${EXE}"
+} >> provenance.txt
+grep -q '^Athena_ENABLE_MPI:BOOL=ON$' "${BUILD}/CMakeCache.txt"
+grep -q '^Athena_ENABLE_REF_GH_SOURCE_UNIT:BOOL=OFF$' "${BUILD}/CMakeCache.txt"
+grep -q '^Kokkos_ENABLE_SYCL:BOOL=ON$' "${BUILD}/CMakeCache.txt"
+grep -q '^Kokkos_ARCH_INTEL_PVC:BOOL=ON$' "${BUILD}/CMakeCache.txt"
+grep -q '^Kokkos_ENABLE_OPENMP:BOOL=OFF$' "${BUILD}/CMakeCache.txt"
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
+  | sort -u | wc -l)" -eq 12
+
+run_fixed_point() {
+  local nx="$1"
+  local blocks=$((nx / 16))
+  local directory="fixed_point_n${nx}"
+  mkdir "${directory}"
+  (
+    cd "${directory}"
+    /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+      "${BINDER}" "${EXE}" -i "${INPUT}" \
+      job/basename="fixed_point_n${nx}" \
+      ref_gh/phi_ordering=standard \
+      mesh/nx1="${nx}" mesh/nx2="${nx}" mesh/nx3="${nx}" \
+      time/tlim=0.0 time/nlim=0 \
+      output2/dt=-1 output3/dt=-1 output4/dt=-1 output5/dt=-1 \
+      > run.log 2>&1
+  )
+  grep -q "Root grid = ${blocks} x ${blocks} x ${blocks} MeshBlocks" \
+    "${directory}/run.log"
+  grep -q 'Number of parallel ranks = 12' "${directory}/run.log"
+  grep -q 'reference-GH stationary residual-target audit:' \
+    "${directory}/run.log"
+  grep -q 'reference-GH initial RHS sector decomposition passed:' \
+    "${directory}/run.log"
+  test -s "${directory}/fixed_point_n${nx}.ref_gh_rhs_sectors.tsv"
+  ! grep -Eiq 'FATAL ERROR|NotPresent|page fault|SYCL exception|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' \
+    "${directory}/run.log"
+}
+
+for nx in 64 96 128; do
+  run_fixed_point "${nx}"
+done
+
+python3 "${ANALYZE}" --run-root . \
+  --output-tsv fixed_point_ladder.tsv \
+  --output-json fixed_point_ladder_summary.json \
+  > fixed_point_ladder_analysis.log
+
+{
+  echo 'result=PASS_PHASE7_FULLY_SUBTRACTED_FIXED_POINT_LADDER'
+  echo 'resolutions=64,96,128'
+  echo 'required_gauge_residuals=EXACT_ZERO'
+  echo 'positive_time_cycles=0'
+  sha256sum "${EXE}"
+} > gate_status.txt
+
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' -o -name '*.json' -o -name '*-trumpet.dat' \) \
+  -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
+echo "phase7_ladder_complete=$(date -Is)"
