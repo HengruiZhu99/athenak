@@ -486,8 +486,10 @@ the reference is not time dependent, and the binary64 state is exactly
 
 There is deliberately no tolerance and no radial condition.  The source-unit
 test verifies that changing any Boolean condition, changing (q) by one ULP,
-or supplying the smallest nonzero binary64 value for either time derivative
-disables the predicate.
+or supplying the smallest positive normal binary64 value for either time
+derivative disables the predicate.  A subnormal is deliberately not used in
+this portability test because Aurora's active Intel floating-point mode may
+flush it to zero before the exact production predicate sees it.
 
 For this exact reference, the stationary physical metric is the reference
 metric itself.  Initial and physical-boundary data are therefore filled as
@@ -601,8 +603,27 @@ smaller compilation units.  The follow-up therefore overrides device splitting
 to `per_kernel` only for `source_unit.cpp` when the validation oracle and SYCL
 are both enabled.  Production executables omit this file and retain Kokkos'
 default.  The equations and runtime task graph are unchanged.  Aurora device
-qualification remains open until this compile-topology correction passes the
-same focused gate.
+qualification remained open pending the same focused gate.
+
+Focused rerun `8791292` used commit
+`28eee9d8efaab0d567fcbeda5ae549210c87d9f8`.  The complete executable compiled
+successfully with the source-unit-only `per_kernel` option, and all 12 ranks
+reported distinct Level Zero PVC tile mappings from `0.0` through `5.1` on
+Aurora node `x4516c7s4b0n0`.  This resolves the prior IGC image-size blocker.
+The one-rank source-unit process then stopped in its first host-side predicate
+check before any oracle kernel ran.  Its false-case test supplied
+`denorm_min()` as a nonzero rate/acceleration, but the active Intel mode flushed
+that subnormal to zero and thereby presented the exact accepted state.  The
+follow-up changes only those two test probes to `min()`, the smallest positive
+normal value.  The exact production predicate, equations, tolerances, and task
+graph are unchanged, and a fresh local Kokkos Serial source-unit run passes
+with the identical all-61 maximum `4.13003e-14`.
+
+Job `8791292` therefore establishes successful PVC compilation and distinct
+12-tile mapping, but not all-61 device equivalence, production fixed-point
+execution, or evolution.  Its full build log, compile-option proof, mapping,
+provenance, PBS record, and checksums are preserved in
+`phase6_aurora_8791292_predicate_failed`.
 
 ## Remaining gates
 

@@ -54,6 +54,9 @@ constexpr int kGeneratedAnalyticOraclePointCount =
 void CheckExactMatchedQ1Predicate() {
   const bool exact = ref_gh::IsExactMatchedQ1StaticReference(
       true, false, false, false, 1.0, 0.0, 0.0);
+  // Use the smallest normal probe for the rate/acceleration false cases.
+  // Accelerator validation builds may flush subnormals to zero, which would
+  // test the compiler mode rather than this exact production predicate.
   const bool false_cases[] = {  // NOLINT(runtime/arrays)
       ref_gh::IsExactMatchedQ1StaticReference(
           false, false, false, false, 1.0, 0.0, 0.0),
@@ -68,10 +71,10 @@ void CheckExactMatchedQ1Predicate() {
           std::nextafter(1.0, 2.0), 0.0, 0.0),
       ref_gh::IsExactMatchedQ1StaticReference(
           true, false, false, false, 1.0,
-          std::numeric_limits<Real>::denorm_min(), 0.0),
+          std::numeric_limits<Real>::min(), 0.0),
       ref_gh::IsExactMatchedQ1StaticReference(
           true, false, false, false, 1.0, 0.0,
-          std::numeric_limits<Real>::denorm_min()),
+          std::numeric_limits<Real>::min()),
   };
   bool valid = exact;
   for (const bool value : false_cases) valid = valid && !value;

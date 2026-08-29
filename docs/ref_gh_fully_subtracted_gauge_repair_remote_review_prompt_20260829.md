@@ -4,10 +4,12 @@ Review `HengruiZhu99/athenak` in read-only mode on branch
 `codex/ref-gh-fully-subtracted-gauge-repair-20260829`. Verify the branch tip
 reported by the requester before beginning. The repair branch was forked from
 frozen discriminator commit `223947486ac4498bab2e197feca56462c77e6d76`.
-The latest source checkpoint to audit is
+The residual-production source checkpoint is
 `ab30fa963f5d1d7ce54748ffb287c91c87705153`; the branch tip also contains
-compact Phase-6 evidence and documentation updates. Verify both commits from
-the repository history rather than assuming the source checkpoint is the tip.
+equation-preserving validation-kernel staging, a source-unit-only SYCL
+compile-topology correction, a test-only normal-value predicate probe, and
+compact Phase-6 evidence. Verify every intervening commit from the repository
+history rather than assuming the source checkpoint is the tip.
 
 Please perform a detailed formulation, implementation, test, and evidence
 audit of the work through the current branch tip. Do not modify the branch,
@@ -65,6 +67,11 @@ Primary review targets:
 10. Check that standard Phi ordering remains the production candidate and that
    this lower-order rewrite does not silently change the standard first-order GH
    principal part. Treat compatible ordering only as an oracle/research mode.
+11. Audit the portability corrections in `src/pgen/ref_gh/source_unit.cpp` and
+    `src/CMakeLists.txt`. Confirm that staging preserves the original all-61
+    arithmetic and conditioned comparison, `per_kernel` is confined to the
+    validation translation unit under SYCL, and the `min()` predicate probes
+    test exact rejection without altering the production predicate.
 
 Evidence to inspect:
 
@@ -80,6 +87,7 @@ Evidence to inspect:
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791211_failed/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_staged_all61_local/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791265_failed/`
+- `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791292_predicate_failed/`
 
 Validate each `SHA256SUMS` file and distinguish current passing evidence from
 the intentionally preserved negative result. The key current observations are:
@@ -118,7 +126,17 @@ the intentionally preserved negative result. The key current observations are:
 - Aurora job `8791265`: the staged source still failed in IGC because Kokkos'
   `device-code-split=off` kept the full validation TU in one SPIR-V module;
 - source-unit-only `per_kernel` device splitting: implemented as a compile
-  topology correction, but PVC qualification is pending.
+  topology correction;
+- Aurora job `8791292`: the full image compiled and 12 ranks mapped to distinct
+  PVC tiles, but the first host-side predicate test failed before any oracle
+  kernel because Intel's active mode flushed its `denorm_min()` false-case
+  probe to zero;
+- the follow-up replaces only those two test probes with `min()`, the smallest
+  positive normal value; the production predicate, equations, task graph, and
+  tolerances are unchanged, and the local Serial all-61 result remains
+  `4.13003e-14`;
+- no Aurora all-61 device equivalence, fixed-point execution, or evolution has
+  passed at this checkpoint.
 
 Please return:
 

@@ -1,0 +1,2 @@
+bootstrap_begin=2026-08-29T21:29:01+00:00
+phase6_device_failure status=1 line=116 command=( cd source_unit; /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth "${BINDER}" "${EXE}" -i "${SOURCE_INPUT}" > source_unit.log 2>&1 )
