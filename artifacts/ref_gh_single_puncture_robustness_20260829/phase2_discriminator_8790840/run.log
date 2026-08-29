@@ -1,0 +1,68 @@
+
+Root grid = 6 x 6 x 6 MeshBlocks
+Total number of MeshBlocks = 216
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 12
+  Rank = 0: 18 MeshBlocks, cost = 18
+  Rank = 1: 18 MeshBlocks, cost = 18
+  Rank = 2: 18 MeshBlocks, cost = 18
+  Rank = 3: 18 MeshBlocks, cost = 18
+  Rank = 4: 18 MeshBlocks, cost = 18
+  Rank = 5: 18 MeshBlocks, cost = 18
+  Rank = 6: 18 MeshBlocks, cost = 18
+  Rank = 7: 18 MeshBlocks, cost = 18
+  Rank = 8: 18 MeshBlocks, cost = 18
+  Rank = 9: 18 MeshBlocks, cost = 18
+  Rank = 10: 18 MeshBlocks, cost = 18
+  Rank = 11: 18 MeshBlocks, cost = 18
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+ref_gh reference allocation backend=analytic_radial_q generic_bytes=0 analytic_static_components=12 analytic_stage_components=8 analytic_static_bytes=23887872 analytic_stage_bytes=15925248
+reference-GH puncture minimum cell-center radius = 0.0360844
+reference-GH stationary physical-target audit: |F-H_constraint|_Linf=2.82796e-12, |tildeGamma|_Linf=2.60696e-15, |stored_Hhat_A|_Linf=5.47118e-13, |stored_theta_A|_Linf=2.51532e-12
+reference-GH stationary initial RHS Linf = 5.84253e-11, component=10, radius=1.42324, coordinate reference Ricci Linf=1.37611e-08, frame reference Ricci Linf=2.77556e-16
+
+Setup complete, executing task list(s)...
+
+elapsed=3.907354e+01 cycle=0 time=0.000000e+00 dt=3.404497e-03
+elapsed=4.102387e+01 cycle=10 time=3.404497e-02 dt=3.404497e-03
+elapsed=4.297788e+01 cycle=20 time=6.808994e-02 dt=3.404497e-03
+elapsed=4.492236e+01 cycle=30 time=1.021349e-01 dt=3.404497e-03
+elapsed=4.686531e+01 cycle=40 time=1.361799e-01 dt=3.404497e-03
+elapsed=4.881243e+01 cycle=50 time=1.702249e-01 dt=3.404497e-03
+elapsed=5.111256e+01 cycle=60 time=2.042698e-01 dt=3.404497e-03
+elapsed=5.306769e+01 cycle=70 time=2.383148e-01 dt=3.404497e-03
+elapsed=5.501999e+01 cycle=80 time=2.723598e-01 dt=3.404497e-03
+elapsed=5.696935e+01 cycle=90 time=3.064048e-01 dt=3.404497e-03
+elapsed=5.892326e+01 cycle=100 time=3.404497e-01 dt=3.404497e-03
+elapsed=6.087647e+01 cycle=110 time=3.744947e-01 dt=3.404497e-03
+elapsed=6.412471e+01 cycle=120 time=4.085397e-01 dt=3.404497e-03
+elapsed=6.607059e+01 cycle=130 time=4.425846e-01 dt=3.404497e-03
+elapsed=6.801943e+01 cycle=140 time=4.766296e-01 dt=3.404497e-03
+elapsed=6.996510e+01 cycle=150 time=5.106746e-01 dt=3.404497e-03
+elapsed=7.191465e+01 cycle=160 time=5.447196e-01 dt=3.404497e-03
+elapsed=7.386654e+01 cycle=170 time=5.787645e-01 dt=3.404497e-03
+elapsed=7.606849e+01 cycle=180 time=6.128095e-01 dt=3.404497e-03
+elapsed=7.801269e+01 cycle=190 time=6.468545e-01 dt=3.404497e-03
+elapsed=7.995712e+01 cycle=200 time=6.808994e-01 dt=3.404497e-03
+elapsed=8.189591e+01 cycle=210 time=7.149444e-01 dt=3.404497e-03
+elapsed=8.384893e+01 cycle=220 time=7.489894e-01 dt=3.404497e-03
+elapsed=8.579697e+01 cycle=230 time=7.830344e-01 dt=3.404497e-03
+elapsed=9.365861e+01 cycle=240 time=8.170793e-01 dt=3.404497e-03
+elapsed=9.559988e+01 cycle=250 time=8.511243e-01 dt=3.404497e-03
+elapsed=9.754896e+01 cycle=260 time=8.851693e-01 dt=3.404497e-03
+elapsed=9.949114e+01 cycle=270 time=9.192143e-01 dt=3.404497e-03
+elapsed=1.014386e+02 cycle=280 time=9.532592e-01 dt=3.404497e-03
+elapsed=1.033869e+02 cycle=290 time=9.873042e-01 dt=3.404497e-03
+elapsed=1.056713e+02 cycle=300 time=1.021349e+00 dt=3.404497e-03
+elapsed=1.076198e+02 cycle=310 time=1.055394e+00 dt=3.404497e-03
+elapsed=1.095734e+02 cycle=320 time=1.089439e+00 dt=3.404497e-03
+elapsed=1.115242e+02 cycle=330 time=1.123484e+00 dt=3.404497e-03
+### FATAL ERROR: ref_gh reached an invalid effective timestep.
+Kokkos::SYCL ERROR: Failed to call Kokkos::SYCL::finalize()
+x4705c2s4b0n0.hsn.cm.aurora.alcf.anl.gov: rank 3 exited with code 1
+x4705c2s4b0n0.hsn.cm.aurora.alcf.anl.gov: rank 2 died from signal 15
+real 113.96
+user 0.00
+sys 0.00
