@@ -2184,6 +2184,7 @@ void CheckGeneratedAnalyticRadialQGauge(const DvceArray2D<Real> &table) {
   constexpr int nsamples = nq*nrate*nacceleration*npoints;
   Real maximum_hhat = 0.0;
   Real maximum_d_hhat = 0.0;
+  Real maximum_reference_k = 0.0;
   Real maximum_theta = 0.0;
   Real maximum_dt_theta = 0.0;
   Real maximum_motion = 0.0;
@@ -2195,7 +2196,8 @@ void CheckGeneratedAnalyticRadialQGauge(const DvceArray2D<Real> &table) {
       "ref_gh generated analytic radial-q gauge",
       Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
       KOKKOS_LAMBDA(const int sample, Real &local_hhat,
-                    Real &local_d_hhat, Real &local_theta,
+                    Real &local_d_hhat, Real &local_reference_k,
+                    Real &local_theta,
                     Real &local_dt_theta, Real &local_motion,
                     Real &local_r_ge_02,
                     GaugeMaxLoc::value_type &local_location) {
@@ -2342,15 +2344,40 @@ void CheckGeneratedAnalyticRadialQGauge(const DvceArray2D<Real> &table) {
                       generic_geometry, A, p, B)));
             }
           }
+          for (int p = 0; p < 3; ++p) {
+            Real reference_k_condition =
+                Kokkos::abs(generic.d_hhat[p + 1][A])
+                + d_hhat_condition[p + 1][A];
+            for (int B = 0; B < 4; ++B) {
+              reference_k_condition += Kokkos::abs(
+                  ref_gh::ReferenceFrameMotion(
+                      generic_geometry, A, p + 1, B)*generic.hhat[B]);
+            }
+            const Real reference_k_error = ScaledGaugeOracleError(
+                analytic.reference_k[p][A], generic.reference_k[p][A],
+                reference_k_condition);
+            local_reference_k = fmax(
+                local_reference_k, reference_k_error);
+            if (reference_k_error > local_location.val) {
+              local_location.val = reference_k_error;
+              local_location.loc = 100*sample + 60 + 4*p + A;
+            }
+            if (radial_index >= 4) {
+              local_r_ge_02 = fmax(local_r_ge_02, reference_k_error);
+            }
+          }
         }
       }, Kokkos::Max<Real>(maximum_hhat),
-      Kokkos::Max<Real>(maximum_d_hhat), Kokkos::Max<Real>(maximum_theta),
+      Kokkos::Max<Real>(maximum_d_hhat),
+      Kokkos::Max<Real>(maximum_reference_k),
+      Kokkos::Max<Real>(maximum_theta),
       Kokkos::Max<Real>(maximum_dt_theta), Kokkos::Max<Real>(maximum_motion),
       Kokkos::Max<Real>(maximum_r_ge_02), GaugeMaxLoc(maximum_location));
   Kokkos::fence();
   constexpr Real tolerance =
       256.0*std::numeric_limits<Real>::epsilon();
   if (!(maximum_hhat <= tolerance) || !(maximum_d_hhat <= tolerance)
+      || !(maximum_reference_k <= tolerance)
       || !(maximum_theta <= tolerance) || !(maximum_dt_theta <= tolerance)
       || !(maximum_motion <= tolerance)) {
     const auto diagnostic_host = Kokkos::create_mirror_view_and_copy(
@@ -2366,8 +2393,9 @@ void CheckGeneratedAnalyticRadialQGauge(const DvceArray2D<Real> &table) {
               << diagnostic_host(10) << "," << diagnostic_host(11)
               << std::endl;
     std::cout << "### FATAL ERROR: generated analytic radial-q moving gauge "
-                 "oracle failed: Hhat=" << maximum_hhat
+              "oracle failed: Hhat=" << maximum_hhat
               << " dHhat=" << maximum_d_hhat
+              << " Kref=" << maximum_reference_k
               << " theta=" << maximum_theta
               << " dtTheta=" << maximum_dt_theta
               << " motion=" << maximum_motion
@@ -2381,6 +2409,7 @@ void CheckGeneratedAnalyticRadialQGauge(const DvceArray2D<Real> &table) {
                "passed: samples=" << nsamples
             << " Hhat=" << maximum_hhat
             << " dHhat=" << maximum_d_hhat
+            << " Kref=" << maximum_reference_k
             << " theta=" << maximum_theta
             << " dtTheta=" << maximum_dt_theta
             << " motion=" << maximum_motion << std::endl;
@@ -2796,47 +2825,12 @@ bool BuildGenericRhsOraclePointGeometry(
              metric, d_metric, reference, geometry, determinant);
 }
 
-KOKKOS_INLINE_FUNCTION
-ref_gh::GaugeDriverRhs CompactAnalyticGaugeDriverRhs(
-    const ref_gh::AnalyticRadialQPoint &reference,
-    const Real hhat[4], const Real theta[4], const Real upsilon[3],
-    const Real d_hhat[3][4], const Real shift[3],
-    const Real target_hhat[4], const Real conformal_gamma[3],
-    const Real mu, const Real eta, const Real eta_beta) {
-  ref_gh::GaugeDriverRhs rhs{};
-  for (int A = 0; A < 4; ++A) {
-    Real shift_d_hhat = 0.0;
-    for (int p = 0; p < 3; ++p) shift_d_hhat += shift[p]*d_hhat[p][A];
-    rhs.hhat[A] = shift_d_hhat - mu*(hhat[A] - target_hhat[A]) + theta[A];
-    rhs.theta[A] = -eta*theta[A] - eta*shift_d_hhat;
-    for (int B = 0; B < 4; ++B) {
-      const Real omega_t = ref_gh::GeneratedAnalyticRadialQFrameMotion(
-          reference.alpha, reference.l, reference.b, reference.displacement,
-          reference.radius, A, 0, B);
-      rhs.hhat[A] += omega_t*hhat[B];
-      rhs.theta[A] += omega_t*theta[B];
-      for (int p = 0; p < 3; ++p) {
-        const Real beta_omega = shift[p]
-            *ref_gh::GeneratedAnalyticRadialQFrameMotion(
-                reference.alpha, reference.l, reference.b,
-                reference.displacement, reference.radius, A, p + 1, B);
-        rhs.hhat[A] -= beta_omega*hhat[B];
-        rhs.theta[A] += eta*beta_omega*hhat[B];
-      }
-    }
-  }
-  for (int p = 0; p < 3; ++p) {
-    rhs.upsilon[p] = conformal_gamma[p] - eta_beta*upsilon[p];
-  }
-  return rhs;
-}
-
 template <bool CompactBackend, typename Reference>
 KOKKOS_INLINE_FUNCTION
 bool EvaluateRhsOraclePoint(
     const Reference &reference,
     const ref_gh::AnalyticRadialQPoint &analytic_reference,
-    const int phi_ordering, const int seed,
+    const int phi_ordering, const bool exact_matched_static, const int seed,
     Real rhs[ref_gh::nvar], Real rhs_condition[ref_gh::nvar]) {
   constexpr Real gamma0 = 0.73;
   constexpr Real gamma2 = 0.41;
@@ -2919,7 +2913,9 @@ bool EvaluateRhsOraclePoint(
     upsilon[p] = 7.0e-4*static_cast<Real>(((seed + 4*p) % 7) - 3);
   }
   Real hhat[4], theta[4], d_hhat_spatial[3][4];  // NOLINT(runtime/arrays)
+  Real baseline_hhat[4], baseline_theta[4];      // NOLINT(runtime/arrays)
   Real baseline_d_hhat[4][4];                    // NOLINT(runtime/arrays)
+  Real baseline_reference_k[3][4];               // NOLINT(runtime/arrays)
   Real baseline_dt_theta[4];                     // NOLINT(runtime/arrays)
   Real gauge_h_condition[4] = {};                // NOLINT(runtime/arrays)
   Real gauge_dh_condition[4][4] = {};             // NOLINT(runtime/arrays)
@@ -2935,9 +2931,14 @@ bool EvaluateRhsOraclePoint(
     for (int A = 0; A < 4; ++A) {
       hhat[A] = delta_hhat[A] + baseline.hhat[A];
       theta[A] = delta_theta[A] + baseline.theta[A];
+      baseline_hhat[A] = baseline.hhat[A];
+      baseline_theta[A] = baseline.theta[A];
       baseline_dt_theta[A] = baseline.dt_theta[A];
       for (int p = 0; p < 4; ++p) {
         baseline_d_hhat[p][A] = baseline.d_hhat[p][A];
+      }
+      for (int p = 0; p < 3; ++p) {
+        baseline_reference_k[p][A] = baseline.reference_k[p][A];
       }
     }
   } else {
@@ -2962,8 +2963,13 @@ bool EvaluateRhsOraclePoint(
     for (int A = 0; A < 4; ++A) {
       hhat[A] = delta_hhat[A] + baseline.hhat[A];
       theta[A] = delta_theta[A] + baseline.theta[A];
+      baseline_hhat[A] = baseline.hhat[A];
+      baseline_theta[A] = baseline.theta[A];
       baseline_dt_theta[A] = generic_dt_theta[A];
       for (int p = 0; p < 4; ++p) baseline_d_hhat[p][A] = baseline.d_hhat[p][A];
+      for (int p = 0; p < 3; ++p) {
+        baseline_reference_k[p][A] = baseline.reference_k[p][A];
+      }
     }
   }
   for (int A = 0; A < 4; ++A) {
@@ -2972,27 +2978,37 @@ bool EvaluateRhsOraclePoint(
                              + baseline_d_hhat[p + 1][A];
     }
   }
-  ref_gh::PhysicalGaugeTarget target;
-  if (!ref_gh::ComputePhysicalGaugeTarget(
-          metric, d_metric, geometry, reference, upsilon, shift_nu,
-          shift_eta, target)) return false;
   ref_gh::GaugeDriverRhs gauge_rhs;
   if constexpr (CompactBackend) {
-    gauge_rhs = CompactAnalyticGaugeDriverRhs(
-        analytic_reference, hhat, theta, upsilon, d_hhat_spatial,
-        geometry.shift, target.frame, target.conformal_gamma,
-        gauge_mu, gauge_eta, shift_eta);
+    ref_gh::PhysicalGaugeTargetResidual target;
+    if (!ref_gh::ComputePhysicalGaugeTargetResidual(
+            psi, pi, phi, metric, d_metric, geometry, analytic_reference,
+            upsilon, shift_nu, shift_eta, target)) return false;
+    gauge_rhs = ref_gh::ComputeGaugeDriverResidualRhsWithReferenceK(
+        analytic_reference, baseline_hhat, baseline_theta, baseline_d_hhat,
+        baseline_dt_theta, baseline_reference_k,
+        delta_hhat, delta_theta, upsilon, d_delta_hhat,
+        target.physical_shift, target.reference_shift, target.delta_shift,
+        target.delta_frame, target.reference_frame,
+        target.delta_conformal_gamma, gauge_mu, gauge_eta, shift_eta,
+        exact_matched_static);
   } else {
+    ref_gh::PhysicalGaugeTarget target;
+    if (!ref_gh::ComputePhysicalGaugeTarget(
+            metric, d_metric, geometry, reference, upsilon, shift_nu,
+            shift_eta, target)) return false;
     gauge_rhs = ref_gh::ComputeGaugeDriverRhs(
         reference, hhat, theta, upsilon, d_hhat_spatial,
         geometry.shift, target.frame, target.conformal_gamma,
         gauge_mu, gauge_eta, shift_eta);
   }
   for (int A = 0; A < 4; ++A) {
-    rhs[ref_gh::kHhatOffset + A] = gauge_rhs.hhat[A]
-                                   - baseline_d_hhat[0][A];
-    rhs[ref_gh::kThetaOffset + A] = gauge_rhs.theta[A]
-                                    - baseline_dt_theta[A];
+    rhs[ref_gh::kHhatOffset + A] = CompactBackend
+        ? gauge_rhs.hhat[A]
+        : gauge_rhs.hhat[A] - baseline_d_hhat[0][A];
+    rhs[ref_gh::kThetaOffset + A] = CompactBackend
+        ? gauge_rhs.theta[A]
+        : gauge_rhs.theta[A] - baseline_dt_theta[A];
     if constexpr (!CompactBackend) {
       Real gauge_condition = gauge_h_condition[A]
                              + gauge_theta_condition[A];
@@ -3035,13 +3051,15 @@ bool EvaluateRhsOraclePoint(
   for (int A = 0; A < 4; ++A) {
     full_d_hhat[0][A] = gauge_rhs.hhat[A];
     for (int p = 0; p < 3; ++p) {
-      full_d_hhat[p + 1][A] = d_hhat_spatial[p][A];
+      full_d_hhat[p + 1][A] = CompactBackend
+          ? d_delta_hhat[p][A] : d_hhat_spatial[p][A];
     }
   }
   if constexpr (CompactBackend) {
-    ref_gh::AddCompactAnalyticOrdinaryGaugeSource(
-        metric, d_metric, analytic_reference, compact_geometry,
-        hhat, full_d_hhat, gamma0, scalar_source);
+    if (!ref_gh::AddCompactAnalyticOrdinaryGaugeResidualSource(
+            psi, pi, phi, metric, d_metric, analytic_reference,
+            compact_geometry, delta_hhat, full_d_hhat, gamma0,
+            scalar_source)) return false;
   } else {
     ref_gh::AddOrdinaryGaugePartialWaveSource(
         metric, d_metric, reference, geometry, hhat, full_d_hhat,
@@ -3283,12 +3301,16 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
         Real compact_rhs[ref_gh::nvar];  // NOLINT(runtime/arrays)
         Real generic_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
         Real compact_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
+        const bool exact_matched_static = q == 1.0 && q_dot == 0.0
+                                          && q_ddot == 0.0;
         const bool generic_valid = EvaluateRhsOraclePoint<false>(
             generic_reference, analytic_reference,
-            phi_ordering, sample, generic_rhs, generic_condition);
+            phi_ordering, exact_matched_static, sample,
+            generic_rhs, generic_condition);
         const bool compact_valid = EvaluateRhsOraclePoint<true>(
             analytic_reference, analytic_reference,
-            phi_ordering, sample, compact_rhs, compact_condition);
+            phi_ordering, exact_matched_static, sample,
+            compact_rhs, compact_condition);
         if (!generic_valid || !compact_valid) {
           local_maximum.val = std::numeric_limits<Real>::infinity();
           local_maximum.loc = ref_gh::nvar*sample;
@@ -3309,14 +3331,16 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
   constexpr Real tolerance =
       256.0*std::numeric_limits<Real>::epsilon();
   if (!(maximum.val <= tolerance)) {
-    std::cout << "### FATAL ERROR: all-61 analytic radial-q RHS oracle failed: "
+    std::cout << "### FATAL ERROR: all-61 legacy/residual radial-q RHS oracle "
+                 "failed: "
               << "error=" << maximum.val
               << " sample=" << maximum.loc/ref_gh::nvar
               << " component=" << maximum.loc % ref_gh::nvar
               << " tolerance=" << tolerance << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  std::cout << "reference-GH all-61 analytic radial-q RHS oracle passed: "
+  std::cout << "reference-GH all-61 legacy-generic versus fully-subtracted "
+               "compact RHS oracle passed: "
             << "samples=" << nsamples << " error=" << maximum.val
             << " compatible+standard Phi" << std::endl;
 }
@@ -3334,7 +3358,7 @@ void UpdateResidualTargetOracleError(
   } else {
     physical_maximum = fmax(physical_maximum, candidate);
   }
-  if ((!is_delta || well_conditioned) && candidate > maximum) {
+  if (well_conditioned && candidate > maximum) {
     maximum = candidate;
     maximum_category = category;
   }
@@ -3818,12 +3842,13 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
         Real analytic_raw_driver = 0.0;
         int generic_category = -1;
         int analytic_category = -1;
-        // Below 0.8M, F-Fref is the already-falsified binary64 subtraction,
-        // so preserve its discrepancy as a diagnostic rather than treating it
-        // as a truth oracle.  Exact matched zeros remain mandatory everywhere.
-        // The independently isolated Einstein-source comparison remains a
-        // hard gate at and above this established conditioned radius.  The
-        // raw full-driver reconstruction is reported separately.
+        // Below 0.8M, neither the legacy full target nor F-Fref is a reliable
+        // binary64 truth oracle.  Preserve every full/delta discrepancy there
+        // as a diagnostic rather than choosing one association as truth.
+        // Exact matched zeros remain mandatory everywhere.  All perturbed
+        // target/source comparisons remain hard gates at and above the
+        // established conditioned radius.  The raw full-driver reconstruction
+        // is reported separately.
         const bool well_conditioned = analytic.radius >= 0.8;
         const bool static_q1 = q == 1.0 && q_dot == 0.0 && q_ddot == 0.0;
         const Real generic_error = EvaluateResidualPhysicalGaugeTargetOracle(
@@ -3889,7 +3914,7 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
   }
   std::cout << "reference-GH fully subtracted physical gauge target passed: "
             << "samples=" << 2*nsamples << " error=" << maximum_error
-            << " physical=" << maximum_physical
+            << " all-radius-physical-diagnostic=" << maximum_physical
             << " raw-delta-diagnostic=" << maximum_delta
             << " source=" << maximum_source
             << " compact-source-diagnostic=" << maximum_compact_source

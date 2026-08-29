@@ -15,6 +15,10 @@ struct ReferenceGaugeBaseline {
   Real hhat[4];        // NOLINT(runtime/arrays)
   Real theta[4];       // NOLINT(runtime/arrays)
   Real d_hhat[4][4];   // NOLINT(runtime/arrays)
+  // Direct coordinate-covector derivative projection
+  // Kref_iA=e_A^a partial_i Href_a.  This equals d_i Href_A-Omega_Ai^B Href_B
+  // without subtracting those separately reconstructed singular terms.
+  Real reference_k[3][4];  // NOLINT(runtime/arrays)
   bool valid;
 };
 
@@ -145,6 +149,10 @@ ReferenceGaugeBaseline ComputeReferenceGaugeBaseline(
             ReferenceDFrame(reference, p, A, a)*h_lower[a]
             + ReferenceFrame(reference, A, a)*d_h_lower[p][a];
       }
+      for (int p = 0; p < 3; ++p) {
+        result.reference_k[p][A] +=
+            ReferenceFrame(reference, A, a)*d_h_lower[p + 1][a];
+      }
     }
   }
 
@@ -173,6 +181,10 @@ ReferenceGaugeBaseline ComputeReferenceGaugeBaseline(
                    && Kokkos::isfinite(result.theta[A]);
     for (int p = 0; p < 4; ++p) {
       result.valid = result.valid && Kokkos::isfinite(result.d_hhat[p][A]);
+    }
+    for (int p = 0; p < 3; ++p) {
+      result.valid = result.valid
+                     && Kokkos::isfinite(result.reference_k[p][A]);
     }
   }
   return result;

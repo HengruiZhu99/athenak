@@ -28,11 +28,12 @@ Real ReferenceFrameMotion(const Reference &reference, const int A,
 // source; it is not a near-puncture numerical switch.
 template <typename Reference>
 KOKKOS_INLINE_FUNCTION
-GaugeDriverRhs ComputeGaugeDriverResidualRhs(
+GaugeDriverRhs ComputeGaugeDriverResidualRhsWithReferenceK(
     const Reference &reference, const Real reference_hhat[4],
     const Real reference_theta[4],
     const Real reference_d_hhat[4][4],
-    const Real reference_dt_theta[4], const Real delta_hhat[4],
+    const Real reference_dt_theta[4], const Real reference_k[3][4],
+    const Real delta_hhat[4],
     const Real delta_theta[4], const Real upsilon[3],
     const Real d_delta_hhat[3][4], const Real physical_shift[3],
     const Real reference_shift[3], const Real delta_shift[3],
@@ -40,16 +41,6 @@ GaugeDriverRhs ComputeGaugeDriverResidualRhs(
     const Real conformal_gamma_residual[3], const Real mu, const Real eta,
     const Real eta_beta, const bool exact_matched_static) {
   GaugeDriverRhs rhs{};
-  Real reference_k[3][4];  // NOLINT(runtime/arrays)
-  for (int i = 0; i < 3; ++i) {
-    for (int A = 0; A < 4; ++A) {
-      reference_k[i][A] = reference_d_hhat[i + 1][A];
-      for (int B = 0; B < 4; ++B) {
-        reference_k[i][A] -=
-            ReferenceFrameMotion(reference, A, i + 1, B)*reference_hhat[B];
-      }
-    }
-  }
   for (int A = 0; A < 4; ++A) {
     Real advective_delta_hhat = 0.0;
     for (int i = 0; i < 3; ++i) {
@@ -98,6 +89,40 @@ GaugeDriverRhs ComputeGaugeDriverResidualRhs(
     rhs.upsilon[i] = conformal_gamma_residual[i] - eta_beta*upsilon[i];
   }
   return rhs;
+}
+
+// General/oracle adapter.  Analytic production supplies Kref directly through
+// ComputeGaugeDriverResidualRhsWithReferenceK; this reconstruction is retained
+// for independent generic-reference and algebra-oracle comparisons.
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+GaugeDriverRhs ComputeGaugeDriverResidualRhs(
+    const Reference &reference, const Real reference_hhat[4],
+    const Real reference_theta[4],
+    const Real reference_d_hhat[4][4],
+    const Real reference_dt_theta[4], const Real delta_hhat[4],
+    const Real delta_theta[4], const Real upsilon[3],
+    const Real d_delta_hhat[3][4], const Real physical_shift[3],
+    const Real reference_shift[3], const Real delta_shift[3],
+    const Real delta_target_hhat[4], const Real reference_target_hhat[4],
+    const Real conformal_gamma_residual[3], const Real mu, const Real eta,
+    const Real eta_beta, const bool exact_matched_static) {
+  Real reference_k[3][4];  // NOLINT(runtime/arrays)
+  for (int i = 0; i < 3; ++i) {
+    for (int A = 0; A < 4; ++A) {
+      reference_k[i][A] = reference_d_hhat[i + 1][A];
+      for (int B = 0; B < 4; ++B) {
+        reference_k[i][A] -=
+            ReferenceFrameMotion(reference, A, i + 1, B)*reference_hhat[B];
+      }
+    }
+  }
+  return ComputeGaugeDriverResidualRhsWithReferenceK(
+      reference, reference_hhat, reference_theta, reference_d_hhat,
+      reference_dt_theta, reference_k, delta_hhat, delta_theta, upsilon,
+      d_delta_hhat, physical_shift, reference_shift, delta_shift,
+      delta_target_hhat, reference_target_hhat, conformal_gamma_residual,
+      mu, eta, eta_beta, exact_matched_static);
 }
 
 // Omega_{A lambda}^B=(partial_lambda e_A^mu) theta^B_mu is the

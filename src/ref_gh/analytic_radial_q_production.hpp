@@ -12,6 +12,7 @@
 #include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_gauge_baseline.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
+#include "ref_gh/residual_gauge_source.hpp"
 
 namespace ref_gh {
 
@@ -128,6 +129,9 @@ ReferenceGaugeBaseline ComputeProductionReferenceGaugeBaseline(
     result.theta[A] = generated.theta[A];
     for (int p = 0; p < 4; ++p) {
       result.d_hhat[p][A] = generated.d_hhat[p][A];
+    }
+    for (int p = 0; p < 3; ++p) {
+      result.reference_k[p][A] = generated.reference_k[p][A];
     }
   }
   return result;
@@ -251,6 +255,9 @@ ReferenceGaugeBaseline ComputeProductionReferenceGaugeBaseline(
     result.theta[A] = generated.theta[A];
     for (int p = 0; p < 4; ++p) {
       result.d_hhat[p][A] = generated.d_hhat[p][A];
+    }
+    for (int p = 0; p < 3; ++p) {
+      result.reference_k[p][A] = generated.reference_k[p][A];
     }
   }
   return result;
@@ -441,6 +448,61 @@ bool ProductionCovariantScalarWaveSourceDiagnostics(
     Real source[4][4], CovariantSourceSectors &sectors) {
   return CovariantGhScalarWaveSource(
       psi, pi, phi, reference, geometry, gamma0, source, sectors);
+}
+
+KOKKOS_INLINE_FUNCTION
+bool AddProductionOrdinaryGaugeResidualSource(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const Real metric[4][4],
+    const Real d_metric[4][4][4],
+    const ProductionReferencePoint &reference,
+    const CoordinateGhGeometry &geometry, const Real delta_hhat[4],
+    const Real d_delta_hhat[4][4], const Real gamma0,
+    Real source[4][4]) {
+  if (reference.backend == 0) {
+    return AddOrdinaryGaugeResidualPartialWaveSource(
+        psi, pi, phi, metric, d_metric, reference.generic, geometry,
+        delta_hhat, d_delta_hhat, gamma0, source);
+  }
+  CompactAnalyticCoordinateGeometry compact;
+  Real determinant = 0.0;
+  return ComputeCompactAnalyticCoordinateGeometry(
+             metric, d_metric, reference.analytic, compact, determinant)
+      && AddCompactAnalyticOrdinaryGaugeResidualSource(
+             psi, pi, phi, metric, d_metric, reference.analytic, compact,
+             delta_hhat, d_delta_hhat, gamma0, source);
+}
+
+KOKKOS_INLINE_FUNCTION
+bool AddProductionOrdinaryGaugeResidualSource(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const Real metric[4][4],
+    const Real d_metric[4][4][4],
+    const AnalyticRadialQPoint &reference,
+    const CoordinateGhGeometry &geometry, const Real delta_hhat[4],
+    const Real d_delta_hhat[4][4], const Real gamma0,
+    Real source[4][4]) {
+  CompactAnalyticCoordinateGeometry compact;
+  Real determinant = 0.0;
+  return ComputeCompactAnalyticCoordinateGeometry(
+             metric, d_metric, reference, compact, determinant)
+      && AddCompactAnalyticOrdinaryGaugeResidualSource(
+             psi, pi, phi, metric, d_metric, reference, compact,
+             delta_hhat, d_delta_hhat, gamma0, source);
+}
+
+KOKKOS_INLINE_FUNCTION
+bool AddProductionOrdinaryGaugeResidualSource(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const Real metric[4][4],
+    const Real d_metric[4][4][4],
+    const ReferenceCachePoint &reference,
+    const CoordinateGhGeometry &geometry, const Real delta_hhat[4],
+    const Real d_delta_hhat[4][4], const Real gamma0,
+    Real source[4][4]) {
+  return AddOrdinaryGaugeResidualPartialWaveSource(
+      psi, pi, phi, metric, d_metric, reference, geometry, delta_hhat,
+      d_delta_hhat, gamma0, source);
 }
 
 KOKKOS_INLINE_FUNCTION

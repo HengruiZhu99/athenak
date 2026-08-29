@@ -330,6 +330,7 @@ def build_geometry() -> Dict[str, Dict[Index, sp.Expr]]:
                 for b in range(4))
     gauge_hhat: Dict[Index, sp.Expr] = {}
     gauge_d_hhat: Dict[Index, sp.Expr] = {}
+    gauge_reference_k: Dict[Index, sp.Expr] = {}
     frame_motion: Dict[Index, sp.Expr] = {}
     dt_frame_motion: Dict[Index, sp.Expr] = {}
     for capital_a in range(4):
@@ -339,6 +340,15 @@ def build_geometry() -> Dict[str, Dict[Index, sp.Expr]]:
             gauge_d_hhat[p, capital_a] = sum(
                 frame[capital_a, a].first[p]*h_lower[a,]
                 + frame[capital_a, a].value*d_h_lower[p, a]
+                for a in range(4))
+        # Kref_iA = partial_i Href_A - Omega_Ai^B Href_B
+        #          = e_A^a partial_i Href_a.
+        # Emit the second expression directly.  Forming the first expression
+        # in production would subtract independently reconstructed singular
+        # reference terms at the puncture.
+        for spatial in range(3):
+            gauge_reference_k[spatial, capital_a] = sum(
+                frame[capital_a, a].value*d_h_lower[spatial + 1, a]
                 for a in range(4))
         for lam in range(4):
             for capital_b in range(4):
@@ -470,6 +480,7 @@ def build_geometry() -> Dict[str, Dict[Index, sp.Expr]]:
         "ricci_frame": ricci,
         "gauge_hhat": gauge_hhat,
         "gauge_d_hhat": gauge_d_hhat,
+        "gauge_reference_k": gauge_reference_k,
         "gauge_theta": gauge_theta,
         "gauge_dt_theta": gauge_dt_theta,
         "frame_motion": frame_motion,
@@ -937,7 +948,8 @@ def emit_gauge(output: Path) -> None:
     fields = build_geometry()
     generator_sha = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     ordered_names = (
-        "gauge_hhat", "gauge_d_hhat", "gauge_theta", "gauge_dt_theta")
+        "gauge_hhat", "gauge_d_hhat", "gauge_reference_k",
+        "gauge_theta", "gauge_dt_theta")
     expressions: List[sp.Expr] = []
     targets: List[str] = []
     for field_name in ordered_names:
@@ -947,6 +959,8 @@ def emit_gauge(output: Path) -> None:
                 targets.append(f"result.hhat[{index[0]}]")
             elif field_name == "gauge_d_hhat":
                 targets.append(f"result.d_hhat[{index[0]}][{index[1]}]")
+            elif field_name == "gauge_reference_k":
+                targets.append(f"result.reference_k[{index[0]}][{index[1]}]")
             elif field_name == "gauge_theta":
                 targets.append(f"result.theta[{index[0]}]")
             else:
@@ -979,6 +993,7 @@ def emit_gauge(output: Path) -> None:
         "  Real hhat[4];        // NOLINT(runtime/arrays)",
         "  Real theta[4];       // NOLINT(runtime/arrays)",
         "  Real d_hhat[4][4];   // NOLINT(runtime/arrays)",
+        "  Real reference_k[3][4];  // NOLINT(runtime/arrays)",
         "  Real dt_theta[4];    // NOLINT(runtime/arrays)",
         "  bool valid;",
         "};",
@@ -1005,6 +1020,10 @@ def emit_gauge(output: Path) -> None:
         "    for (int p = 0; p < 4; ++p) {",
         "      result.valid = result.valid",
         "                     && Kokkos::isfinite(result.d_hhat[p][A]);",
+        "    }",
+        "    for (int i = 0; i < 3; ++i) {",
+        "      result.valid = result.valid",
+        "                     && Kokkos::isfinite(result.reference_k[i][A]);",
         "    }",
         "  }",
         "  return result;",

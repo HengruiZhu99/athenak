@@ -219,7 +219,7 @@ bool ComputePhysicalGaugeTargetResidual(
   for (int i = 0; i < 3; ++i) {
     shift[i] = lapse*lapse*inverse[0][i + 1];
     target.reference_shift[i] = shift[i].reference;
-    target.physical_shift[i] = geometry.shift[i];
+    target.physical_shift[i] = shift[i].physical;
     target.delta_shift[i] = shift[i].delta;
   }
 
@@ -379,24 +379,11 @@ bool ComputePhysicalGaugeTargetResidual(
     target.physical_coordinate[A] = coordinate[A].physical;
     target.delta_coordinate[A] = coordinate[A].delta;
   }
-  // Retain the established physical-target arithmetic for full quantities
-  // consumed by Upsilon and for the independent oracle.  Only the regular
-  // differences above use the new residual algebra; no physical-reference
-  // subtraction is performed here.
-  PhysicalGaugeTarget legacy_physical;
-  if (!ComputePhysicalGaugeTarget(
-          metric, d_metric, geometry, reference, upsilon, nu, eta_beta,
-          legacy_physical)) return false;
-  for (int A = 0; A < 4; ++A) {
-    target.physical_coordinate[A] = legacy_physical.coordinate[A];
-    target.physical_frame[A] = legacy_physical.frame[A];
-  }
-  for (int i = 0; i < 3; ++i) {
-    target.physical_conformal_gamma[i] = legacy_physical.conformal_gamma[i];
-    target.physical_shift[i] = geometry.shift[i];
-  }
-  target.physical_lapse = geometry.lapse;
-  target.physical_trace_k = legacy_physical.trace_k;
+  // Do not reconstruct the legacy full target here.  The `.physical` members
+  // above are carried by the same residual arithmetic and exist only for
+  // independent oracle comparisons and nonsingular shift advection.  Calling
+  // ComputePhysicalGaugeTarget here would both duplicate production work and
+  // make the oracle comparison tautological by overwriting its candidate.
   target.valid = Kokkos::isfinite(physical_spatial_determinant)
                  && physical_spatial_determinant > 0.0;
   for (int A = 0; A < 4; ++A) {
