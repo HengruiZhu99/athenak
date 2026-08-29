@@ -305,7 +305,7 @@ def reference_geometry(isotropic_radius, c0):
             for A in range(1, 4):
                 metric[a][b] += coframe[A][a] * coframe[A][b]
                 inverse[a][b] += frame[A][a] * frame[A][b]
-    return metric, inverse, frame, alpha_value, areal
+    return metric, inverse, frame, coframe, alpha_value, areal
 
 
 def coordinate_geometry(metric_jet, inverse_jet):
@@ -344,8 +344,8 @@ def coordinate_geometry(metric_jet, inverse_jet):
 
 
 def legacy_source(isotropic_radius, c0, gamma0=mp.mpf(1)):
-    metric_jet, inverse_jet, frame_jet, alpha_exact, areal = reference_geometry(
-        isotropic_radius, c0)
+    (metric_jet, inverse_jet, frame_jet, _, alpha_exact,
+     areal) = reference_geometry(isotropic_radius, c0)
     metric, inverse, dmetric, first, christoffel, dchristoffel = coordinate_geometry(
         metric_jet, inverse_jet)
     alpha = 1 / mp.sqrt(-inverse[0][0])
@@ -441,27 +441,109 @@ def legacy_source(isotropic_radius, c0, gamma0=mp.mpf(1)):
     }
 
 
+def stationary_gauge_identity(isotropic_radius, c0, nu=mp.mpf("0.83")):
+    """Verify F_ref=H_ref and conformal Gamma_ref=0 independently.
+
+    The target is the exact advective 1+log/conformal-Gamma target used by the
+    C++ driver.  The trumpet comes from the implicit arbitrary-precision
+    solution rather than the generated binary64 table.
+    """
+    (metric_jet, inverse_jet, frame_jet, _, _,
+     _) = reference_geometry(isotropic_radius, c0)
+    metric, inverse, dmetric, _, christoffel, _ = coordinate_geometry(
+        metric_jet, inverse_jet)
+    spatial_metric = [[metric[i + 1][j + 1] for j in range(3)]
+                      for i in range(3)]
+    spatial_inverse = inverse_matrix(spatial_metric)
+    spatial_determinant = (
+        spatial_metric[0][0] * (
+            spatial_metric[1][1] * spatial_metric[2][2]
+            - spatial_metric[1][2] * spatial_metric[2][1])
+        - spatial_metric[0][1] * (
+            spatial_metric[1][0] * spatial_metric[2][2]
+            - spatial_metric[1][2] * spatial_metric[2][0])
+        + spatial_metric[0][2] * (
+            spatial_metric[1][0] * spatial_metric[2][1]
+            - spatial_metric[1][1] * spatial_metric[2][0]))
+    lapse = 1 / mp.sqrt(-inverse[0][0])
+    shift = [lapse**2 * inverse[0][i + 1] for i in range(3)]
+    d_inverse = [[[inverse_jet[a][b].first[p] for b in range(4)]
+                  for a in range(4)] for p in range(4)]
+    d_lapse = [lapse**3 * d_inverse[p + 1][0][0] / 2
+               for p in range(3)]
+    d_shift = [[
+        2 * lapse * d_lapse[p] * inverse[0][i + 1]
+        + lapse**2 * d_inverse[p + 1][0][i + 1]
+        for i in range(3)] for p in range(3)]
+    trace_k = -lapse * sum(
+        spatial_inverse[i][j] * christoffel[0][i + 1][j + 1]
+        for i in range(3) for j in range(3))
+    determinant_factor = spatial_determinant ** (mp.mpf(1) / 3)
+    conformal_gamma = [mp.mpf(0) for _ in range(3)]
+    for i in range(3):
+        conformal_gamma[i] = determinant_factor * sum(
+            (spatial_inverse[i][k] * spatial_inverse[j][ell]
+             - spatial_inverse[i][j] * spatial_inverse[k][ell] / 3)
+            * dmetric[j + 1][k + 1][ell + 1]
+            for j in range(3) for k in range(3) for ell in range(3))
+    desired_dt_shift = [
+        nu * conformal_gamma[i]
+        - sum(shift[p] * d_shift[p][i] for p in range(3))
+        for i in range(3)]
+    target_coordinate = [mp.mpf(0) for _ in range(4)]
+    for i in range(3):
+        contracted_spatial_connection = sum(
+            spatial_inverse[j][k] * (
+                dmetric[j + 1][i + 1][k + 1]
+                + dmetric[k + 1][i + 1][j + 1]
+                - dmetric[i + 1][j + 1][k + 1]) / 2
+            for j in range(3) for k in range(3))
+        target_coordinate[i + 1] = (
+            d_lapse[i] / lapse - contracted_spatial_connection
+            + sum(metric[i + 1][j + 1] * desired_dt_shift[j]
+                  / lapse**2 for j in range(3)))
+    normal_target = (2 / lapse - 1) * trace_k
+    target_coordinate[0] = (
+        lapse * normal_target
+        + sum(shift[i] * target_coordinate[i + 1] for i in range(3)))
+    target_frame = [sum(frame_jet[A][a].value * target_coordinate[a]
+                        for a in range(4)) for A in range(4)]
+    h_upper = [-sum(inverse[b][c] * christoffel[a][b][c]
+                    for b in range(4) for c in range(4))
+               for a in range(4)]
+    h_lower = [sum(metric[a][b] * h_upper[b] for b in range(4))
+               for a in range(4)]
+    h_frame = [sum(frame_jet[A][a].value * h_lower[a] for a in range(4))
+               for A in range(4)]
+    return {
+        "target_minus_h_linf": max(
+            abs(target_frame[A] - h_frame[A]) for A in range(4)),
+        "conformal_gamma_linf": max(abs(value) for value in conformal_gamma),
+    }
+
+
 def inverse_matrix(matrix):
     """Small arbitrary-precision Gauss-Jordan inverse for the frame oracle."""
-    augmented = [[matrix[row][column] for column in range(4)]
-                 + [mp.mpf(row == column) for column in range(4)]
-                 for row in range(4)]
-    for column in range(4):
-        pivot = max(range(column, 4),
+    size = len(matrix)
+    augmented = [[matrix[row][column] for column in range(size)]
+                 + [mp.mpf(row == column) for column in range(size)]
+                 for row in range(size)]
+    for column in range(size):
+        pivot = max(range(column, size),
                     key=lambda row: abs(augmented[row][column]))
         augmented[column], augmented[pivot] = augmented[pivot], augmented[column]
         diagonal = augmented[column][column]
         if diagonal == 0:
             raise AssertionError("singular frame metric in covariant oracle")
         augmented[column] = [entry / diagonal for entry in augmented[column]]
-        for row in range(4):
+        for row in range(size):
             if row == column:
                 continue
             factor = augmented[row][column]
             augmented[row] = [augmented[row][item] - factor * augmented[column][item]
-                              for item in range(8)]
-    return [[augmented[row][column + 4] for column in range(4)]
-            for row in range(4)]
+                              for item in range(2 * size)]
+    return [[augmented[row][column + size] for column in range(size)]
+            for row in range(size)]
 
 
 def frame_geometry(metric_jet, inverse_jet, coframe_jet, frame_jet):
@@ -626,6 +708,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dps", type=int, default=100)
     parser.add_argument("--output", type=Path)
+    parser.add_argument(
+        "--gauge-only", action="store_true",
+        help="run only the expanded stationary gauge-identity matrix")
     args = parser.parse_args()
     if not 80 <= args.dps <= 150:
         raise ValueError("--dps must be in [80,150]")
@@ -637,31 +722,51 @@ def main():
         lambda radius: implicit(mp.mpf(0), radius),
         mp.mpf(0), RADIUS_C, int(mp.mp.dps * 3.6) + 32)
     c0 = normalization_constant()
-    radii = [mp.mpf(1) / denominator
-             for denominator in (8, 12, 16, 24, 32, 48, 64, 96, 128)]
     results = []
-    for radius in radii:
-        row = legacy_source(radius, c0)
-        row.update(covariant_reference_source(radius, c0))
+    if not args.gauge_only:
+        radii = [mp.mpf(1) / denominator
+                 for denominator in (8, 12, 16, 24, 32, 48, 64, 96, 128)]
+        for radius in radii:
+            row = legacy_source(radius, c0)
+            row.update(covariant_reference_source(radius, c0))
+            row["radius"] = radius
+            results.append({key: mp.nstr(value, args.dps)
+                            for key, value in row.items()})
+    gauge_radii = [mp.mpf(value) for value in (
+        "0.03", "0.05", "0.08", "0.125", "0.2", "0.4", "0.8", "1.5",
+        "3", "5")]
+    gauge_results = []
+    for radius in gauge_radii:
+        row = stationary_gauge_identity(radius, c0)
         row["radius"] = radius
-        results.append({key: mp.nstr(value, args.dps)
-                        for key, value in row.items()})
+        gauge_results.append({key: mp.nstr(value, args.dps)
+                              for key, value in row.items()})
     payload = {"decimal_digits": args.dps,
                "normalization_constant": mp.nstr(c0, args.dps),
-               "results": results}
+               "results": results,
+               "stationary_gauge_identity": gauge_results}
     encoded = json.dumps(payload, indent=2, sort_keys=True) + "\n"
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(encoded)
     print(encoded, end="")
-    maximum = max(mp.mpf(row["scalar_source_linf"]) for row in results)
-    if maximum > mp.mpf(10) ** (-(args.dps // 2)):
-        raise AssertionError(f"finite continuum scalar-source residual: {maximum}")
-    for key in ("covariant_q_linf", "covariant_delta_linf",
-                "covariant_scalar_source_linf", "covariant_frame_ricci_linf"):
-        maximum = max(mp.mpf(row[key]) for row in results)
+    if not args.gauge_only:
+        maximum = max(mp.mpf(row["scalar_source_linf"]) for row in results)
         if maximum > mp.mpf(10) ** (-(args.dps // 2)):
-            raise AssertionError(f"finite covariant reference residual {key}: {maximum}")
+            raise AssertionError(
+                f"finite continuum scalar-source residual: {maximum}")
+        for key in ("covariant_q_linf", "covariant_delta_linf",
+                    "covariant_scalar_source_linf",
+                    "covariant_frame_ricci_linf"):
+            maximum = max(mp.mpf(row[key]) for row in results)
+            if maximum > mp.mpf(10) ** (-(args.dps // 2)):
+                raise AssertionError(
+                    f"finite covariant reference residual {key}: {maximum}")
+    for key in ("target_minus_h_linf", "conformal_gamma_linf"):
+        maximum = max(mp.mpf(row[key]) for row in gauge_results)
+        if maximum > mp.mpf(10) ** (-(args.dps // 2)):
+            raise AssertionError(
+                f"finite stationary gauge identity residual {key}: {maximum}")
 
 
 if __name__ == "__main__":

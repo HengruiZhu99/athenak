@@ -3311,7 +3311,8 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
     const Reference &reference, const int seed, bool &matched_exact,
     const bool well_conditioned, const bool static_q1,
     Real &matched_maximum,
-    Real &physical_maximum, Real &delta_maximum, int &maximum_category) {
+    Real &physical_maximum, Real &delta_maximum, Real &source_maximum,
+    Real &raw_driver_maximum, int &maximum_category) {
   constexpr Real nu = 0.83;
   constexpr Real eta_beta = 0.36;
   Real psi[4][4] = {};       // NOLINT(runtime/arrays)
@@ -3357,6 +3358,8 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
   Real maximum = 0.0;
   physical_maximum = 0.0;
   delta_maximum = 0.0;
+  source_maximum = 0.0;
+  raw_driver_maximum = 0.0;
   maximum_category = -1;
   for (int A = 0; A < 4; ++A) {
     const Real frame_scale = fmax(
@@ -3533,32 +3536,35 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
       const Real theta_scale = fmax(1.0, fmax(
           Kokkos::abs(legacy_driver.theta[A]),
           Kokkos::abs(residual_driver.theta[A])));
-      UpdateResidualTargetOracleError(
+      // This reconstruction is retained only as a cancellation diagnostic.
+      // It is not a truth oracle for the residual driver on the trumpet.
+      raw_driver_maximum = fmax(
+          raw_driver_maximum,
           Kokkos::abs(residual_driver.hhat[A]
                       - (legacy_driver.hhat[A] - baseline.d_hhat[0][A]))
-              /h_scale,
-          60 + A, well_conditioned, maximum, physical_maximum,
-          delta_maximum, maximum_category);
-      UpdateResidualTargetOracleError(
+              /h_scale);
+      raw_driver_maximum = fmax(
+          raw_driver_maximum,
           Kokkos::abs(residual_driver.theta[A] - legacy_driver.theta[A])
-              /theta_scale,
-          64 + A, well_conditioned, maximum, physical_maximum,
-          delta_maximum, maximum_category);
+              /theta_scale);
     }
     for (int i = 0; i < 3; ++i) {
       const Real scale = fmax(1.0, fmax(
           Kokkos::abs(legacy_driver.upsilon[i]),
           Kokkos::abs(residual_driver.upsilon[i])));
-      UpdateResidualTargetOracleError(
+      raw_driver_maximum = fmax(
+          raw_driver_maximum,
           Kokkos::abs(residual_driver.upsilon[i]
-                      - legacy_driver.upsilon[i])/scale,
-          68 + i, well_conditioned, maximum, physical_maximum,
-          delta_maximum, maximum_category);
+                      - legacy_driver.upsilon[i])/scale);
     }
     Real full_d_hhat[4][4];   // NOLINT(runtime/arrays)
     Real delta_d_hhat[4][4];  // NOLINT(runtime/arrays)
     for (int A = 0; A < 4; ++A) {
-      full_d_hhat[0][A] = legacy_driver.hhat[A];
+      // Isolate the Einstein-source identity from the ill-conditioned full
+      // driver reconstruction.  Both paths receive the same-stage residual
+      // time derivative and the analytic reference derivative.
+      full_d_hhat[0][A] = baseline.d_hhat[0][A]
+                          + residual_driver.hhat[A];
       delta_d_hhat[0][A] = residual_driver.hhat[A];
       for (int p = 0; p < 3; ++p) {
         full_d_hhat[p + 1][A] = d_full_hhat[p][A];
@@ -3590,8 +3596,11 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
       const Real j_scale = fmax(
           1.0, fmax(Kokkos::abs(legacy_j),
                     Kokkos::abs(perturbed_diagnostics.j[a])));
+      const Real j_error =
+          Kokkos::abs(perturbed_diagnostics.j[a] - legacy_j)/j_scale;
+      source_maximum = fmax(source_maximum, j_error);
       UpdateResidualTargetOracleError(
-          Kokkos::abs(perturbed_diagnostics.j[a] - legacy_j)/j_scale,
+          j_error,
           80 + a, well_conditioned, maximum, physical_maximum,
           delta_maximum, maximum_category);
       for (int p = 0; p < 4; ++p) {
@@ -3607,9 +3616,12 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
         const Real d_j_scale = fmax(
             1.0, fmax(Kokkos::abs(legacy_d_j),
                       Kokkos::abs(perturbed_diagnostics.d_j[p][a])));
-        UpdateResidualTargetOracleError(
+        const Real d_j_error =
             Kokkos::abs(perturbed_diagnostics.d_j[p][a] - legacy_d_j)
-                /d_j_scale,
+                /d_j_scale;
+        source_maximum = fmax(source_maximum, d_j_error);
+        UpdateResidualTargetOracleError(
+            d_j_error,
             84 + p, well_conditioned, maximum, physical_maximum,
             delta_maximum, maximum_category);
       }
@@ -3619,8 +3631,11 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
         const Real scale = fmax(1.0, fmax(
             Kokkos::abs(legacy_source[A][B]),
             Kokkos::abs(residual_source[A][B])));
+        const Real source_error =
+            Kokkos::abs(residual_source[A][B] - legacy_source[A][B])/scale;
+        source_maximum = fmax(source_maximum, source_error);
         UpdateResidualTargetOracleError(
-            Kokkos::abs(residual_source[A][B] - legacy_source[A][B])/scale,
+            source_error,
             70 + (A == B ? A : 4), well_conditioned, maximum,
             physical_maximum, delta_maximum, maximum_category);
       }
@@ -3638,6 +3653,8 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
   Real maximum_error = 0.0;
   Real maximum_physical = 0.0;
   Real maximum_delta = 0.0;
+  Real maximum_source = 0.0;
+  Real maximum_raw_driver = 0.0;
   Real maximum_matched = 0.0;
   int matched_failure = 0;
   using MaxLoc = Kokkos::MaxLoc<Real, int>;
@@ -3647,6 +3664,7 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
       Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
       KOKKOS_LAMBDA(const int sample, Real &local_maximum,
                     Real &local_physical, Real &local_delta,
+                    Real &local_source, Real &local_raw_driver,
                     Real &local_matched, int &local_failure,
                     MaxLoc::value_type &local_location) {
         const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
@@ -3702,27 +3720,37 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
         Real analytic_physical = 0.0;
         Real generic_delta = 0.0;
         Real analytic_delta = 0.0;
+        Real generic_source = 0.0;
+        Real analytic_source = 0.0;
+        Real generic_raw_driver = 0.0;
+        Real analytic_raw_driver = 0.0;
         int generic_category = -1;
         int analytic_category = -1;
         // Below 0.8M, F-Fref is the already-falsified binary64 subtraction,
         // so preserve its discrepancy as a diagnostic rather than treating it
         // as a truth oracle.  Exact matched zeros remain mandatory everywhere.
-        // The new perturbed driver/source comparison remains a hard red gate
-        // at and above this established conditioned radius.
+        // The independently isolated Einstein-source comparison remains a
+        // hard gate at and above this established conditioned radius.  The
+        // raw full-driver reconstruction is reported separately.
         const bool well_conditioned = analytic.radius >= 0.8;
         const bool static_q1 = q == 1.0 && q_dot == 0.0 && q_ddot == 0.0;
         const Real generic_error = EvaluateResidualPhysicalGaugeTargetOracle(
             generic, sample, generic_exact, well_conditioned, static_q1,
-            generic_matched, generic_physical, generic_delta,
-            generic_category);
+            generic_matched, generic_physical, generic_delta, generic_source,
+            generic_raw_driver, generic_category);
         const Real analytic_error = EvaluateResidualPhysicalGaugeTargetOracle(
             analytic, sample, analytic_exact, well_conditioned, static_q1,
             analytic_matched, analytic_physical, analytic_delta,
-            analytic_category);
+            analytic_source, analytic_raw_driver, analytic_category);
         local_maximum = fmax(local_maximum, fmax(generic_error, analytic_error));
         local_physical = fmax(
             local_physical, fmax(generic_physical, analytic_physical));
         local_delta = fmax(local_delta, fmax(generic_delta, analytic_delta));
+        local_source = fmax(
+            local_source, fmax(generic_source, analytic_source));
+        local_raw_driver = fmax(
+            local_raw_driver,
+            fmax(generic_raw_driver, analytic_raw_driver));
         local_matched = fmax(local_matched,
                              fmax(generic_matched, analytic_matched));
         if (generic_error > local_location.val) {
@@ -3740,6 +3768,8 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
             local_failure > 2*sample + 2 ? local_failure : 2*sample + 2;
       }, Kokkos::Max<Real>(maximum_error),
       Kokkos::Max<Real>(maximum_physical), Kokkos::Max<Real>(maximum_delta),
+      Kokkos::Max<Real>(maximum_source),
+      Kokkos::Max<Real>(maximum_raw_driver),
       Kokkos::Max<Real>(maximum_matched), Kokkos::Max<int>(matched_failure),
       MaxLoc(maximum_location));
   Kokkos::fence();
@@ -3753,6 +3783,8 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
               << " matched_failure_location=" << matched_failure
               << " physical_error=" << maximum_physical
               << " raw_delta_error=" << maximum_delta
+              << " source_error=" << maximum_source
+              << " raw_driver_error=" << maximum_raw_driver
               << " location=" << maximum_location.loc
               << " tolerance=" << tolerance << std::endl;
     std::exit(EXIT_FAILURE);
@@ -3761,6 +3793,8 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
             << "samples=" << 2*nsamples << " error=" << maximum_error
             << " physical=" << maximum_physical
             << " raw-delta-diagnostic=" << maximum_delta
+            << " source=" << maximum_source
+            << " raw-driver-diagnostic=" << maximum_raw_driver
             << " matched_exact=1" << std::endl;
 }
 
