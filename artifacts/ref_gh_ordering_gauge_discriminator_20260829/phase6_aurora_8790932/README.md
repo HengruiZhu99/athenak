@@ -20,5 +20,7 @@ remain at:
 `/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/runs/ordering_gauge_phase6_8790932.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov`
 
 The compact files here are byte-for-byte copies of the remote logs, histories,
-tables, status, mapping, and provenance.  `compact_sha256.txt` was generated in
-the job before transfer.
+tables, status, mapping, and provenance. `compact_sha256.txt` was generated in
+the job and contains the expected self-referential entry created while that
+file was open. `verified_compact_sha256.txt` excludes both manifests and
+verifies all copied evidence plus this README and final qstat record.

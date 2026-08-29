@@ -20,3 +20,8 @@ No large CBIN or restart payload was produced by this job.  The complete
 remote directory is:
 
 `/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/runs/ordering_gauge_phase67_8790947.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov`
+
+The in-job `compact_sha256.txt` has the expected self-referential entry created
+while that file was open. `verified_compact_sha256.txt` excludes both manifests
+and verifies the transferred compact evidence plus this README and final qstat
+record.
