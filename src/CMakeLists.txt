@@ -229,6 +229,16 @@ add_executable(
 # executable to omit that correctness scaffolding entirely.
 if (Athena_ENABLE_REF_GH_SOURCE_UNIT)
   target_sources(athena PRIVATE pgen/ref_gh/source_unit.cpp)
+  # Kokkos deliberately defaults SYCL device-code splitting to off.  This
+  # validation-only translation unit contains many independent device oracles,
+  # including the generic and compact all-61 RHS paths; lowering all of them as
+  # one PVC SPIR-V module can exceed IGC even though each focused kernel is
+  # valid.  Split only this correctness-scaffolding source per kernel.  Normal
+  # production images omit source_unit.cpp and retain Kokkos' default.
+  if (Kokkos_ENABLE_SYCL)
+    set_property(SOURCE pgen/ref_gh/source_unit.cpp APPEND PROPERTY
+        COMPILE_OPTIONS "-fsycl-device-code-split=per_kernel")
+  endif()
 endif()
 
 # custom problem generator to be included in compile

@@ -79,6 +79,7 @@ Evidence to inspect:
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_local/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791211_failed/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_staged_all61_local/`
+- `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791265_failed/`
 
 Validate each `SHA256SUMS` file and distinguish current passing evidence from
 the intentionally preserved negative result. The key current observations are:
@@ -113,7 +114,11 @@ the intentionally preserved negative result. The key current observations are:
 - Aurora job `8791211`: compile gate failed before device execution because
   IGC segfaulted while lowering the monolithic all-61 kernel (`icpx` exit 245);
 - staged generic/compact/comparison kernels: local Serial regression retains
-  the identical `4.13003e-14` result, but PVC qualification is pending.
+  the identical `4.13003e-14` result;
+- Aurora job `8791265`: the staged source still failed in IGC because Kokkos'
+  `device-code-split=off` kept the full validation TU in one SPIR-V module;
+- source-unit-only `per_kernel` device splitting: implemented as a compile
+  topology correction, but PVC qualification is pending.
 
 Please return:
 

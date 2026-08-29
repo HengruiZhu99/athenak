@@ -82,11 +82,14 @@ cmake -S "${SRC}" -B "${BUILD}" \
   -DKokkos_ARCH_INTEL_PVC=ON \
   -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
   -DPROBLEM=built_in_pgens > configure.log 2>&1
-cmake --build "${BUILD}" -j 64 > build.log 2>&1
+grep -R -n -- '-fsycl-device-code-split=per_kernel' \
+  "${BUILD}/src/CMakeFiles/athena.dir" > source_unit_compile_options.txt
+cmake --build "${BUILD}" --verbose -j 64 > build.log 2>&1
 
 {
   grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Athena_ENABLE_REF_GH_SOURCE_UNIT:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
     "${BUILD}/CMakeCache.txt"
+  cat source_unit_compile_options.txt
   sha256sum "${BUILD}/CMakeCache.txt" "${EXE}"
 } >> provenance.txt
 grep -q '^Athena_ENABLE_MPI:BOOL=ON$' "${BUILD}/CMakeCache.txt"

@@ -588,8 +588,21 @@ stores their 61-component outputs, and applies the original conditioned
 comparison in a third reduction.  The parameter matrix, 4320 samples, both
 Phi orderings, generic oracle, scale definition, and `256*epsilon` tolerance
 are unchanged.  A fresh local Kokkos Serial build and source-unit run retain
-the exact `4.13003e-14` all-61 result.  Aurora device qualification remains
-open until the focused rerun compiles and executes these staged kernels.
+the exact `4.13003e-14` all-61 result.
+
+Focused rerun `8791265` compiled the staged source at commit
+`7838324471d0ecb2fe7592bd497230fc5a7d4c40`, but IGC again segfaulted while
+lowering the complete `source_unit.cpp` device image.  The log establishes why
+arithmetic staging alone was insufficient: Kokkos 4.7.2 explicitly supplies
+`-fsycl-device-code-split=off`, so every independent kernel in this 6000-line
+validation translation unit remains in one SPIR-V module.  Mature FO-GH unit
+tests and Z4c production execution instead keep focused device kernels in
+smaller compilation units.  The follow-up therefore overrides device splitting
+to `per_kernel` only for `source_unit.cpp` when the validation oracle and SYCL
+are both enabled.  Production executables omit this file and retain Kokkos'
+default.  The equations and runtime task graph are unchanged.  Aurora device
+qualification remains open until this compile-topology correction passes the
+same focused gate.
 
 ## Remaining gates
 
