@@ -12,10 +12,14 @@ This investigation begins from the completed
 `GAUGE-DRIVER COUPLING DEFECT ISOLATED` discriminator.  It does not reinterpret
 that result as a proof that cancellation is the sole exponential mechanism.
 At this checkpoint the residual-variable algebra has been derived and
-symbolically verified, and oracle-only residual driver/source scaffolding has
-been implemented.  Its first perturbed-state source-unit gate is red.  No
-production equation has changed, no repaired fixed-point ladder has run, and
-no repaired evolution, robustness, or performance claim is made.
+symbolically verified, the residual target/driver/source oracles pass at their
+unchanged conditioned tolerances, the compact analytic residual Einstein
+source has passed its current oracle gate, and the stationary trumpet
+coefficient asymptotics have been derived and independently measured.  The
+initial red perturbed-source result is retained below because it exposed an
+ill-conditioned full-driver input rather than being hidden.  No production
+equation has changed, no repaired fixed-point ladder has run, and no repaired
+evolution, robustness, or performance claim is made.
 
 The frozen A--E histories, stationary residual ladder, principal-symbol audit,
 and compact Aurora evidence remain unchanged under
@@ -345,6 +349,130 @@ Perturbed compact/generic residual sources pass at the unchanged conditioned
 radii. Their all-radius maximum difference is `3.05105e-12` at `r=0.03M`;
 this is retained as a coefficient-conditioning diagnostic for Phase 4.
 The compact function remains outside `CalcRHS` at this checkpoint.
+
+## Phase 4: genuine stationary-trumpet coefficient asymptotics
+
+The arbitrary-precision audit is implemented in
+`scripts/ref_gh/analyze_fully_subtracted_trumpet_asymptotics.py`.  It starts
+from the implicit (n=2) trumpet rather than the generated binary64 radial
+table.  It constructs the reference coordinate two-jet, differentiates the
+target with respect to the stored frame variables, evaluates the direct
+residual (\Delta B_a) identities, substitutes the same-stage residual driver
+into (\partial_tJ_a), and measures the maximum coefficient over every input
+and output component in each named family.
+
+### Leading trumpet fields
+
+Let (R_0) be the limiting areal radius and let
+(R_\alpha=(dR/d\alpha)_{\alpha=0}).  From
+
+\[
+ \frac{d\log r}{d\alpha}=\frac{R_\alpha}{\alpha R}
+\]
+
+one obtains
+
+\[
+ \alpha=a_0r^p[1+O(r^p)],\qquad
+ p=\frac{R_0}{R_\alpha}=1.09129710479541717714\ldots .
+\]
+
+The remaining stationary fields obey
+
+\[
+ R=R_0+O(r^p),\qquad L=\frac{R}{r}=O(r^{-1}),
+ \qquad B=B_0+O(r^p),\qquad \beta^i=Bx^i=O(r).
+\]
+
+Consequently the largest coframe entries are (O(r^{-1})), while
+(e_0{}^t=O(r^{-p})), (e_0{}^i=O(r^{1-p})), and
+(e_I{}^i=O(r)).  Radial differentiation lowers a power by one.  Applying
+these rules to the exact frame formulas, rather than to independently
+subtracted full fields, gives the following worst-component envelopes.
+
+| Coefficient family | Derived power | Fitted power |
+|---|---:|---:|
+| (\bar H_A) | \(-2p\) | -2.182658 |
+| (\mathcal K^{\rm ref}_{iA}) | \(-(3p+1)\) | -4.273998 |
+| (\Omega_{Ai}{}^B) | \(-(p+1)\) | -2.091304 |
+| (\partial_j\Omega_{Ai}{}^B) | \(-(p+2)\) | -3.091301 |
+| (\bar\beta^i\Omega_{Ai}{}^B) | \(-p\) | -1.091373 |
+| (\partial\delta\beta/\partial\Psi) | (p+1) | 2.091271 |
+| (\delta\beta^i\mathcal K^{\rm ref}_{iA}/\delta\Psi) | \(-2p\) | -2.182727 |
+
+The singular (\mathcal K^{\rm ref}) is therefore not by itself the
+coefficient seen by a stored metric residual: the lapse/frame factors in
+(\delta\beta) cancel (2p+2) powers.  The resulting (r^{-2p}) map is
+still genuinely divergent.  It is not a pure-reference cancellation and is
+not removed by this repair.
+
+### Target and Einstein-source coefficient maps
+
+The high-precision script forms directional Jacobians with respect to every
+symmetric stored (\Psi_{AB}), (\Pi_{AB}), (\Phi_{IAB}), all four gauge
+residuals, and all three (\Upsilon^i).  The direct (\Delta B_a) source and
+the complete same-stage source have the following maximum powers:
+
+| Map | Derived power | Fitted power |
+|---|---:|---:|
+| (\delta F/\delta\Psi) | \(-2p\) | -2.182607 |
+| (\delta F/\delta\Pi) | \(-p\) | -1.091292 |
+| (\delta F/\delta\Phi) | \(-(2p+2)\) | -4.182543 |
+| (\delta F/\delta\Upsilon) | \(-(2p+1)\) | -3.182556 |
+| direct (\Delta B:\Psi\mapsto S^{\rm gauge}) | \(-3p\) | -3.273938 |
+| direct (\Delta B:\Pi\mapsto S^{\rm gauge}) | \(-2p\) | -2.182658 |
+| direct (\Delta B:\Phi\mapsto S^{\rm gauge}) | \(-3p\) | -3.273962 |
+| complete (\Psi\mapsto S^{\rm gauge}) | \(-3p\) | -3.273923 |
+| complete (\Pi\mapsto S^{\rm gauge}) | \(-2p\) | -2.182577 |
+| complete (\Phi\mapsto S^{\rm gauge}) | \(-(3p+2)\) | -5.273827 |
+| complete (\Upsilon\mapsto S^{\rm gauge}) | \(-(3p+1)\) | -4.273841 |
+| direct (h\mapsto S^{\rm gauge}), before (\partial_t h) substitution | (0) | -0.000017 |
+| (\partial_t h\mapsto S^{\rm gauge}) | \(-p\) | -1.091285 |
+| (\partial_i h\mapsto S^{\rm gauge}) | (1-p) | -0.091318 |
+| complete same-stage (h\mapsto S^{\rm gauge}) | \(-2p\) | -2.182658 |
+
+The apparently benign direct (h\) map is an important cancellation check:
+its individual coordinate pieces contain inverse powers, but its projected
+covariant combination is bounded.  Substituting the actual same-stage driver
+reintroduces a genuine (r^{-2p}) lower-order map through
+(\bar\beta^i\Omega_{Ai}{}^B).  The more singular complete (\Phi) and
+(\Upsilon) maps arise through the unchanged physical gauge target followed
+by the (\partial_t h\) contribution to (\partial_tJ_a); they are not
+reference-minus-reference subtraction artifacts.
+
+At 90 decimal digits, all 26 fitted powers agree with the analytic predictions
+to at most (1.33\times10^{-4}), against a (5\times10^{-3}) gate.  Independent
+identities for (F^{\rm ref}-H^{\rm ref}), reference conformal Gamma,
+(\mathcal K^{\rm ref}), and the recovered shift pass a (10^{-45}) threshold;
+the largest error is (2.38\times10^{-65}).  Repeating every target Jacobian
+with centered-difference steps (10^{-30}) and (10^{-24}) produces identical
+40-digit tables and powers.  Compact evidence is in `phase4_local`.
+
+### Energy-estimate consequence
+
+The standard principal symbol and its local symmetrizer are unchanged for
+every (r>0).  This establishes local strong/symmetric hyperbolicity on any
+punctured domain (r\ge r_{\min}>0), but it does not provide a resolution-
+uniform puncture estimate.  Bounding the lower-order operator in the ordinary
+stored-variable norm gives a Gronwall constant whose worst measured envelope
+is at least (O(r_{\min}^{-(3p+2)})).  It therefore diverges as the first
+included point moves inward.
+
+A uniformly equivalent bounded change of norm has not been constructed here.
+Simple frame weights can regularize individual triangular couplings—for
+example an (\alpha) weight on the most singular time-frame gauge component—
+but the coupled (\Psi,\Pi,\Phi,\Upsilon,h) maps require mutually different
+powers, while the standard GH principal symmetrizer couples (\Pi) and
+\(\Phi).  Any claimed weighted estimate must demonstrate positivity,
+uniform equivalence (or explicitly accept a degenerate puncture norm), and
+control of the weight-derivative terms.  The present evidence therefore rules
+out only the naive uniform unweighted estimate; it neither proves nor assumes
+that no mathematically natural degenerate weighted estimate exists.
+
+This nonuniformity is a scientific limitation, not authorization to delete a
+continuum term or tune the gauge.  Exact matched-state initialization and the
+fixed-point ladder remain the next valid discriminators because every
+divergent map multiplies an exact residual that should initially vanish.
 
 ## Principal part
 
