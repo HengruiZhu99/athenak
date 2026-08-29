@@ -1,0 +1,79 @@
+{
+  "checks": {
+    "below_predeclared_catastrophic_constraint_threshold": true,
+    "finite_state_and_telemetry": true,
+    "q_shell_valid": true,
+    "q_within_hard_bounds": true,
+    "qdot_within_hard_bound": true,
+    "relative_geometry_SPD_and_Lorentzian": true
+  },
+  "constraint_thresholds": {
+    "Linf": 10.0,
+    "RMS": 1.0
+  },
+  "controller_history": {
+    "epsilon-G-mean": 0.0,
+    "epsilon-G-variance": 0.0,
+    "q": 1.0,
+    "q-analytic": 0.0,
+    "q-cells": 0.0,
+    "q-ddot": 0.0,
+    "q-dot": 0.0,
+    "q-effective-samples": 0.0,
+    "q-est": 0.0,
+    "q-frozen": 0.0,
+    "q-generation": 0.0,
+    "q-shell-valid": 0.0,
+    "q-variance": 0.0,
+    "qest-minus-analytic": 0.0
+  },
+  "cycle": 0,
+  "geometry": {
+    "Psi_abs_max": 1.0000000000000107,
+    "finite": true,
+    "inverse_Psi_abs_max": 1.000000000000001,
+    "relative_G_condition_max": 1.0,
+    "relative_G_lambda_max": 1.0000000000000002,
+    "relative_G_lambda_min": 0.9999999999999998,
+    "relative_lapse_max": 1.0000000000000053,
+    "relative_lapse_min": 0.9999999999999994,
+    "signature_valid": true
+  },
+  "h_over_M": 0.25,
+  "inputs": {
+    "constraints": "/tmp/refgh-health-smoke.KOn8ag/cbin_ref_gh_native_health_1/health_smoke.ref_gh_native_health.00000.cbin",
+    "ref_history": "/tmp/refgh-health-smoke.KOn8ag/health_smoke.ref_gh.hst",
+    "state": "/tmp/refgh-health-smoke.KOn8ag/cbin_ref_gh_health_1/health_smoke.ref_gh_health.00000.cbin",
+    "user_history": "/tmp/refgh-health-smoke.KOn8ag/health_smoke.user.hst"
+  },
+  "native_constraints": {
+    "GH_Linf": 8.127936786195718e-16,
+    "GH_RMS": 1.4072864217116998e-16,
+    "curl_Linf": 1.086222401057861e-15,
+    "curl_RMS": 3.1107468525045795e-16,
+    "reduction_Linf": 2.1408697245064055e-15,
+    "reduction_RMS": 1.2028316093709276e-15
+  },
+  "pass": true,
+  "physical": {
+    "lapse_error_RMS": 7.861151796283291e-17,
+    "metric_error_RMS": 8.357830924384434e-16,
+    "physical_lapse_max": 0.7389507129568154,
+    "physical_lapse_min": 0.1174072790492393,
+    "shift_error_RMS": 7.02376982065985e-17
+  },
+  "puncture_stencil_radius_cells": 3,
+  "q_offline": {
+    "cell_count": 1960,
+    "effective_sample_size": 1219.733780270325,
+    "epsilon_G_mean": -5.776451874468645e-18,
+    "epsilon_G_variance": 2.3469417198427764e-33,
+    "q_analytic": 0.4878873607013662,
+    "q_est": 0.48788736070136607,
+    "q_est_minus_q_analytic": -1.1102230246251565e-16,
+    "q_variance": 0.00437294884918582,
+    "shell_valid": true
+  },
+  "schema": "ref-gh-single-puncture-health-v1",
+  "time": 0.0
+}
