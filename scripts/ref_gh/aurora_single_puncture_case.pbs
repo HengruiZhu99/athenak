@@ -1,0 +1,229 @@
+#!/bin/bash -l
+# Source-frozen uniform-grid Ref-GH single-puncture production case.
+# qsub supplies select=N and the case variables documented below.
+#PBS -A CompactBinaryMerger
+#PBS -q debug-scaling
+#PBS -l select=18
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_q_case
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?fresh absolute campaign root}"
+: "${EXPECTED_COMMIT:?full source commit}"
+: "${CASE_LABEL:?unique case label}"
+: "${NROOT:?uniform root cells per direction: 64, 96, or 128}"
+: "${FINAL_TIME:?requested final time in M}"
+: "${RUN_MODE:?static, controller, or prescribed}"
+: "${Q_VALUE:?static/controller initial q, or prescribed pulse target}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD_COMMIT=${BUILD_COMMIT:-${EXPECTED_COMMIT}}
+BUILD="${CAMPAIGN_ROOT}/build_${BUILD_COMMIT:0:12}"
+EXE="${BUILD}/src/athena"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_single_puncture_robustness.athinput"
+ANALYZER="${SRC}/scripts/ref_gh/analyze_single_puncture_health.py"
+OUT="${CAMPAIGN_ROOT}/runs/${CASE_LABEL}_${PBS_JOBID}"
+PYTHON=${PYTHON:-/usr/bin/python3.10}
+RESTART_PATH=${RESTART_PATH:-}
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+
+test -x "${EXE}"
+test -x "${PYTHON}"
+test "$((NROOT % 16))" -eq 0
+blocks_per_axis=$((NROOT / 16))
+ranks=$((blocks_per_axis * blocks_per_axis * blocks_per_axis))
+nodes=$(sort -u "${PBS_NODEFILE}" | wc -l)
+test "${ranks}" -le "$((12 * nodes))"
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+test -z "$(git -C "${SRC}" diff --name-only a09caf707f88d9fb6ca71f9abf62c9302fde3bac -- src)"
+test -z "$(git -C "${SRC}" diff --name-only "${BUILD_COMMIT}" "${EXPECTED_COMMIT}" -- src)"
+
+case "${RUN_MODE}" in
+  static)
+    q_initial=${Q_VALUE}
+    q_target=0.9
+    controller=false
+    prescribed=false
+    ;;
+  controller)
+    q_initial=${Q_VALUE}
+    q_target=0.9
+    controller=true
+    prescribed=false
+    ;;
+  prescribed)
+    q_initial=1.0
+    q_target=${Q_VALUE}
+    controller=false
+    prescribed=true
+    ;;
+  *)
+    echo "invalid RUN_MODE=${RUN_MODE}" >&2
+    exit 2
+    ;;
+esac
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "build_source_commit=${BUILD_COMMIT}"
+  echo "frozen_src_commit=a09caf707f88d9fb6ca71f9abf62c9302fde3bac"
+  echo "case_label=${CASE_LABEL}"
+  echo "run_mode=${RUN_MODE}"
+  echo "q_value=${Q_VALUE}"
+  echo "q_initial=${q_initial}"
+  echo "q_target=${q_target}"
+  echo "nroot=${NROOT}"
+  echo "h_over_M=1/$((NROOT / 4))"
+  echo "meshblock=16x16x16"
+  echo "meshblocks=${ranks}"
+  echo "ranks=${ranks}"
+  echo "nodes=${nodes}"
+  echo "final_time=${FINAL_TIME}"
+  echo "restart_path=${RESTART_PATH:-none}"
+  sort -u "${PBS_NODEFILE}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  "${PYTHON}" --version
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${EXE}" "${INPUT}" "${ANALYZER}" "$0"
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Athena_ENABLE_REF_GH_SOURCE_UNIT:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' "${BUILD}/CMakeCache.txt"
+} > provenance.txt
+
+mpiexec -n "${ranks}" --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq "${ranks}"
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/^host=\([^ ]*\).*ZE_AFFINITY_MASK=\([^ ]*\).*/\1:\2/p' \
+  | sort -u | wc -l)" -eq "${ranks}"
+
+command=("${EXE}")
+if test -n "${RESTART_PATH}"; then
+  test -s "${RESTART_PATH}"
+  command+=( -r "${RESTART_PATH}" )
+else
+  command+=( -i "${INPUT}" )
+fi
+
+set +e
+/usr/bin/time -p mpiexec -n "${ranks}" --ppn 12 --depth=8 --cpu-bind depth \
+  gpu_tile_compact.sh "${command[@]}" \
+  job/basename="${CASE_LABEL}" \
+  mesh/nx1="${NROOT}" mesh/nx2="${NROOT}" mesh/nx3="${NROOT}" \
+  meshblock/nx1=16 meshblock/nx2=16 meshblock/nx3=16 \
+  time/tlim="${FINAL_TIME}" time/nlim=-1 \
+  ref_gh/q_initial="${q_initial}" ref_gh/q="${q_initial}" \
+  ref_gh/q_dot=0.0 ref_gh/q_controller_enabled="${controller}" \
+  ref_gh/q_prescribed_enabled="${prescribed}" \
+  ref_gh/q_prescribed_target="${q_target}" \
+  ref_gh/q_prescribed_duration=8.0 \
+  > run.log 2>&1
+run_status=$?
+set -e
+
+last_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' \
+  "${CASE_LABEL}.ref_gh.hst" 2>/dev/null || echo 0)
+last_checkpoint=$(find rst -type f -name '*.rst' 2>/dev/null | sort | tail -1 || true)
+{
+  echo "run_exit_status=${run_status}"
+  echo "requested_final_time=${FINAL_TIME}"
+  echo "latest_history_time=${last_time}"
+  echo "latest_checkpoint=${last_checkpoint:-none}"
+  test -n "${last_checkpoint}" && sha256sum "${last_checkpoint}"
+  tail -1 "${CASE_LABEL}.ref_gh.hst" 2>/dev/null || true
+  tail -1 "${CASE_LABEL}.user.hst" 2>/dev/null || true
+} > run_status.txt
+
+# Accepted-state telemetry is source-external and never feeds the controller.
+# Analyze every binary64 state snapshot produced by this segment.  Four host
+# workers bound peak memory while the allocated PVC tiles are idle.
+mkdir -p health
+analyze_one() {
+  state=$1
+  leaf=${state##*/}
+  index=${leaf%.cbin}
+  index=${index##*.}
+  constraints="cbin_ref_gh_native_health_1/${CASE_LABEL}.ref_gh_native_health.${index}.cbin"
+  test -s "${constraints}"
+  "${PYTHON}" "${ANALYZER}" \
+    --state "${state}" --constraints "${constraints}" \
+    --ref-history "${CASE_LABEL}.ref_gh.hst" \
+    --user-history "${CASE_LABEL}.user.hst" --source-root "${SRC}" \
+    --output "health/${index}.json" > "health/${index}.stdout.json"
+}
+export -f analyze_one
+export PYTHON ANALYZER CASE_LABEL SRC
+find cbin_ref_gh_health_1 -type f -name '*.cbin' -print0 \
+  | sort -z | xargs -0 -n 1 -P 4 bash -c 'analyze_one "$1"' _
+
+"${PYTHON}" - health health_summary.json <<'PY'
+import json
+import pathlib
+import sys
+
+source = pathlib.Path(sys.argv[1])
+records = [json.loads(path.read_text()) for path in sorted(source.glob("*.json"))]
+if not records:
+    raise SystemExit("no accepted-state health records")
+summary = {
+    "schema": "ref-gh-single-puncture-segment-v1",
+    "records": len(records),
+    "first_time": min(item["time"] for item in records),
+    "last_time": max(item["time"] for item in records),
+    "all_pass": all(item["pass"] for item in records),
+    "failed_times": [item["time"] for item in records if not item["pass"]],
+    "max_GH_RMS": max(item["native_constraints"]["GH_RMS"] for item in records),
+    "max_reduction_RMS": max(item["native_constraints"]["reduction_RMS"] for item in records),
+    "max_curl_RMS": max(item["native_constraints"]["curl_RMS"] for item in records),
+    "max_relative_G_condition": max(item["geometry"]["relative_G_condition_max"] for item in records),
+    "min_relative_G_eigenvalue": min(item["geometry"]["relative_G_lambda_min"] for item in records),
+    "min_relative_lapse": min(item["geometry"]["relative_lapse_min"] for item in records),
+    "max_relative_lapse": max(item["geometry"]["relative_lapse_max"] for item in records),
+    "max_Psi_abs": max(item["geometry"]["Psi_abs_max"] for item in records),
+    "max_inverse_Psi_abs": max(item["geometry"]["inverse_Psi_abs_max"] for item in records),
+}
+pathlib.Path(sys.argv[2]).write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+print(json.dumps(summary, indent=2, sort_keys=True))
+if not summary["all_pass"]:
+    raise SystemExit(1)
+PY
+
+{
+  find . -maxdepth 2 -type f \( -name '*.log' -o -name '*.txt' \
+    -o -name '*.hst' -o -name '*.json' \) -print0 \
+    | sort -z | xargs -0 sha256sum
+} > compact_sha256.txt
+
+if test "${run_status}" -ne 0; then
+  exit "${run_status}"
+fi
+"${PYTHON}" - "${last_time}" "${FINAL_TIME}" <<'PY'
+import sys
+if float(sys.argv[1]) < float(sys.argv[2]) - 1.0e-10:
+    raise SystemExit("run stopped before requested final time")
+PY
+echo 'result=PASS_REQUESTED_TIME_AND_HEALTH_GATE' > case_status.txt
