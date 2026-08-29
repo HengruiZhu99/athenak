@@ -3243,20 +3243,20 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
             x, y, z, 0.0, 0.0, 0.0, generic_reference);
         Real generic_rhs[ref_gh::nvar];  // NOLINT(runtime/arrays)
         Real generated_rhs[ref_gh::nvar];  // NOLINT(runtime/arrays)
-        Real hot_loop_rhs[ref_gh::nvar];   // NOLINT(runtime/arrays)
+        Real staged_rhs[ref_gh::nvar];     // NOLINT(runtime/arrays)
         Real generic_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
         Real generated_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
-        Real hot_loop_condition[ref_gh::nvar];   // NOLINT(runtime/arrays)
+        Real staged_condition[ref_gh::nvar];     // NOLINT(runtime/arrays)
         const bool generic_valid = EvaluateRhsOraclePoint<false>(
             generic_reference, analytic_reference,
             phi_ordering, sample, generic_rhs, generic_condition);
         const bool generated_valid = EvaluateRhsOraclePoint<true>(
             analytic_reference, analytic_reference,
             phi_ordering, sample, generated_rhs, generated_condition);
-        const bool hot_loop_valid = EvaluateRhsOraclePoint<true>(
+        const bool staged_valid = EvaluateRhsOraclePoint<true>(
             analytic_hot_reference, analytic_reference,
-            phi_ordering, sample, hot_loop_rhs, hot_loop_condition);
-        if (!generic_valid || !generated_valid || !hot_loop_valid) {
+            phi_ordering, sample, staged_rhs, staged_condition);
+        if (!generic_valid || !generated_valid || !staged_valid) {
           local_maximum.val = std::numeric_limits<Real>::infinity();
           local_maximum.loc = ref_gh::nvar*sample;
           return;
@@ -3265,10 +3265,10 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
           const Real scale = fmax(generic_condition[n], fmax(
               1.0, fmax(Kokkos::abs(generic_rhs[n]), fmax(
                   Kokkos::abs(generated_rhs[n]),
-                  Kokkos::abs(hot_loop_rhs[n])))));
+                  Kokkos::abs(staged_rhs[n])))));
           const Real error = fmax(
               Kokkos::abs(generic_rhs[n] - generated_rhs[n]),
-              Kokkos::abs(generic_rhs[n] - hot_loop_rhs[n]))/scale;
+              Kokkos::abs(generic_rhs[n] - staged_rhs[n]))/scale;
           if (error > local_maximum.val) {
             local_maximum.val = error;
             local_maximum.loc = ref_gh::nvar*sample + n;
@@ -3288,7 +3288,7 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
   }
   std::cout << "reference-GH all-61 analytic radial-q RHS oracle passed: "
             << "samples=" << nsamples << " error=" << maximum.val
-            << " generated+hot-loop compatible+standard Phi" << std::endl;
+            << " generated+staged compatible+standard Phi" << std::endl;
 }
 
 void CheckTrumpetQReprojection(const DvceArray2D<Real> &table) {

@@ -13,6 +13,7 @@
 #include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_gauge_baseline.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
+#include "ref_gh/staged_covariant_rhs.hpp"
 
 namespace ref_gh {
 
@@ -436,17 +437,34 @@ bool ProductionCovariantScalarWaveSource(
       psi, pi, phi, reference, geometry, gamma0, source);
 }
 
-// Qualified loop-form production source.  The 141-Real point supplies only
-// cached Cartan coefficients; frame/coframe data remain analytic 12+8 values.
-// The monolithic joint-CSE source above remains an independent oracle.
+// Point-local oracle for the staged algebra.  Production task dispatch executes
+// the same preparation and ten component contractions in separate flat kernels;
+// the monolithic joint-CSE source above remains the independent oracle.
 KOKKOS_INLINE_FUNCTION
 bool ProductionCovariantScalarWaveSource(
     const Real psi[4][4], const Real pi[4][4],
     const Real phi[3][4][4], const AnalyticRadialQHotPoint &reference,
     const CoordinateGhGeometry &geometry, const Real gamma0,
     Real source[4][4]) {
-  return CovariantGhScalarWaveSourceProduction(
-      psi, pi, phi, reference, geometry, gamma0, source);
+  Real normal[4];  // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    normal[A] = 0.0;
+    for (int a = 0; a < 4; ++a) {
+      normal[A] += ReferenceCoframe(reference, A, a)*geometry.normal_upper[a];
+    }
+  }
+  LocalStagedCovariantPoint packed{};
+  if (!PrepareStagedCovariantPoint(
+          psi, pi, phi, reference, normal, packed)) return false;
+  for (int A = 0; A < 4; ++A) {
+    for (int B = A; B < 4; ++B) {
+      const Real value = StagedCovariantSourceComponent(
+          psi, reference, normal, packed, A, B, gamma0);
+      source[A][B] = value;
+      source[B][A] = value;
+    }
+  }
+  return true;
 }
 
 KOKKOS_INLINE_FUNCTION
