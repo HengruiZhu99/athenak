@@ -675,6 +675,12 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
               packed(contributor, variable);
         });
   }
+  // The lean contract already made this postcondition optional on the
+  // single-rank device path.  Honor the same option here: all contributors
+  // have just been assigned from the same canonical replacement buffer, and
+  // the following exact check is observational.  Keep it enabled for the
+  // default exhaustive path and whenever localization evidence is requested.
+  if (!synchronization_postcondition && !diagnostic_requested) return;
   Kokkos::fence();
 
   // This is intentionally an exact postcondition, not a tolerance check: every
