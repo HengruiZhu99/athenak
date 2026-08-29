@@ -1,0 +1,83 @@
+#!/bin/bash -l
+#PBS -N z4c-vc-prof-1tile
+#PBS -A CompactBinaryMerger
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:15:00
+#PBS -l filesystems=home:flare
+#PBS -q debug-scaling
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+reference=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828
+campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-performance-aurora-20260829
+run=${campaign}/runs/profile_one_tile
+source_root=${reference}/source
+build_root=${reference}/build-sycl-mpi-f8303c6b
+athena=${build_root}/src/athena
+input=${source_root}/docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/brill_vc_reference_shock_gauge.athinput
+history=${reference}/authority/n256_reference_shock_authority.jsonl
+restart=${reference}/runs/n512_reference_shock_seg000/rst/n512_reference_shock_replay.00020.rst
+coeff=${reference}/brill_global_128x32.coefficients
+workflow=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/collapse-critical-workflow
+tile_wrapper=/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh
+kokkos_tools=${campaign}/tools/kokkos-tools
+kokkos_timer=${kokkos_tools}/build/profiling/simple-kernel-timer/libkp_kernel_timer.so
+
+test "$(git -C "${source_root}" rev-parse HEAD)" = f8303c6be7eb214fa1e91b646123ee0d434b3698
+test "$(sha256sum "${athena}" | awk '{print $1}')" = aae7ccb8739fb4951221ad7be69ea0e220548b52d402086f57d7857fa2c97a13
+test "$(sha256sum "${history}" | awk '{print $1}')" = 7055de601e6181e5ad7e1432b5c20a111b0ba67e0e8d5377c170ea80e7bedcde
+test "$(sha256sum "${restart}" | awk '{print $1}')" = 44b8e55957d3b455adf24862d36946e08fc10465df7a30cc5f247ac0e19fa997
+test "$(git -C "${kokkos_tools}" rev-parse HEAD)" = 833ad8a58862f64822fa97ef1a66444a90b39622
+test -r "${kokkos_timer}"
+test ! -e "${run}"
+mkdir -p "${run}/profile" "${run}/evidence"
+cp "${input}" "${run}/"
+cp "${coeff}" "${run}/brill_global_128x32.coefficients"
+
+export ATHENAK_ROOT=${source_root}
+export ATHENAK_BUILD_DIR=${build_root}
+export IRISK_ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/bbhk
+# shellcheck source=/dev/null
+source "${workflow}/profiles/aurora-pvc.sh"
+module load pti-gpu/0.16.0-rc1
+export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPIR_CVAR_ENABLE_GPU=1 MPICH_GPU_SUPPORT_ENABLED=1
+export KOKKOS_TOOLS_LIBS=${kokkos_timer}
+
+cd "${run}"
+qstat -f "${PBS_JOBID}" > evidence/qstat-start.txt
+env | LC_ALL=C sort > evidence/environment.txt
+sha256sum "${athena}" "${input}" "${history}" "${restart}" "${coeff}" \
+  "${kokkos_timer}" \
+  > evidence/inputs.sha256
+
+command=(mpiexec -n 1 -ppn 1 --depth 8 --cpu-bind depth "${tile_wrapper}"
+  unitrace --host-timing --device-timing --kernel-submission --verbose
+  --output-dir-path "${run}/profile"
+  "${athena}" -r "${restart}" -t 00:08:00
+  mesh/nx1=256 mesh/nx2=512 meshblock/nx1=64 meshblock/nx2=64
+  mesh_refinement/max_nmb_per_rank=2048
+  mesh_refinement/amr_history_mode=replay
+  mesh_refinement/amr_history_file="${history}"
+  time/tlim=9.65 time/nlim=-1
+  z4c/lapse_shock_avoiding=true z4c/lapse_shock_avoiding_kappa=1
+  z4c/telegraph_lapse=false z4c/shift_mode=prescribed_zero
+  z4c/shift_invariant_diagnostic=true z4c/diss=0.50
+  z4c/damp_kappa1=0 z4c/damp_kappa2=0
+  job/basename=n512_reference_shock_profile
+  problem/brill_global_coefficients_file=brill_global_128x32.coefficients
+  problem/constraint_summary_file=n512_reference_shock_profile-constraints.dat)
+printf '%q ' "${command[@]}" > command.txt
+printf '\n' >> command.txt
+set +e
+"${command[@]}" > stdout.log 2> stderr.log
+status=$?
+set -e
+printf 'athena_exit=%s\n' "${status}" > run-status
+find "${run}" -type f ! -name SHA256SUMS -print0 | LC_ALL=C sort -z | \
+  xargs -0r sha256sum > SHA256SUMS
+exit "${status}"
