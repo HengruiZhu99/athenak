@@ -474,6 +474,48 @@ continuum term or tune the gauge.  Exact matched-state initialization and the
 fixed-point ladder remain the next valid discriminators because every
 divergent map multiplies an exact residual that should initially vanish.
 
+## Phase 5: exact matched-state initialization
+
+`IsExactMatchedQ1StaticReference` is a shared strict predicate.  It returns
+true only when the reference is q-controlled, both q-control modes are off,
+the reference is not time dependent, and the binary64 state is exactly
+
+\[
+ q=1,\qquad \dot q=0,\qquad \ddot q=0.
+\]
+
+There is deliberately no tolerance and no radial condition.  The source-unit
+test verifies that changing any Boolean condition, changing (q) by one ULP,
+or supplying the smallest nonzero binary64 value for either time derivative
+disables the predicate.
+
+For this exact reference, the stationary physical metric is the reference
+metric itself.  Initial and physical-boundary data are therefore filled as
+
+\[
+ \Psi_{AB}=\eta_{AB},\qquad \Pi_{AB}=0,\qquad \Phi_{IAB}=0
+\]
+
+without a physical/reference projection.  When gauge-reference subtraction
+is enabled, the independently proved identities from Phase 3b similarly give
+
+\[
+ \delta\widehat H_A=0,\qquad \delta\theta_A=0,\qquad \Upsilon^i=0
+\]
+
+as exact binary64 fills.  Prescribed q, feedback q, a moving reference, a
+nonunit q, or unsubtracted full-gauge storage continues through the existing
+general projection path.
+
+A focused (16^3) initialized-mesh check on the analytic backend reports
+`field Linf=0`, `stored_Hhat_A Linf=0`, and `stored_theta_A Linf=0`.  Physical
+metric/lapse/shift reconstruction errors are at most (3.34\times10^{-16}).
+The source-unit suite remains green.  The initial production RHS is still
+(5.80\times10^{-14}): this checkpoint has not yet dispatched the residual
+driver or Einstein gauge source, so that value is retained as the red/legacy
+production baseline for Phase 6 rather than attributed to initialization.
+Compact evidence is in `phase5_local`.
+
 ## Principal part
 
 The rewrite is an algebraic change of dependent variables plus lower-order

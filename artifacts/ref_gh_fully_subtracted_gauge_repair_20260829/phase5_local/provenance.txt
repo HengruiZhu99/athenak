@@ -1,0 +1,21 @@
+date: 2026-08-29 America/New_York
+host: Kip
+branch: codex/ref-gh-fully-subtracted-gauge-repair-20260829
+input HEAD: 938d91b460976edf02cfa0ec9a03666adcd418b1
+kokkos submodule: 6739bc623081648af9e752b616d9671527922cbf
+compiler: g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+cmake: 3.28.3
+build: Release Serial
+executable sha256: d467e872cc4111a1b7356bf841cb67abe4d37e72901c1798fb9da1bd86f9c0f2
+
+build command:
+cmake --build build_fully_subtracted_serial -j2
+
+source-unit command:
+./build_fully_subtracted_serial/src/athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
+
+focused initialization command:
+./build_fully_subtracted_serial/src/athena -i inputs/ref_gh/ref_gh_ordering_gauge_fixed_point.athinput mesh/nx1=16 mesh/nx2=16 mesh/nx3=16 meshblock/nx1=16 meshblock/nx2=16 meshblock/nx3=16 job/basename=phase5_exact_init
+
+production residual dispatch: disabled
+Aurora job: none

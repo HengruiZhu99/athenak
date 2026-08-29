@@ -17,6 +17,7 @@
 #include "pgen/pgen.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
 #include "ref_gh/analytic_radial_q_source.hpp"
+#include "ref_gh/exact_matched_state.hpp"
 #include "ref_gh/gamma2_damping.hpp"
 #include "ref_gh/generated/analytic_radial_q_geometry.hpp"
 #include "ref_gh/generated/analytic_radial_q_gauge.hpp"
@@ -49,6 +50,39 @@ constexpr int kAnalyticOraclePointCount =
 constexpr int kGeneratedAnalyticOriginalPointCount = 4;
 constexpr int kGeneratedAnalyticOraclePointCount =
     kGeneratedAnalyticOriginalPointCount + kAnalyticOraclePointCount;
+
+void CheckExactMatchedQ1Predicate() {
+  const bool exact = ref_gh::IsExactMatchedQ1StaticReference(
+      true, false, false, false, 1.0, 0.0, 0.0);
+  const bool false_cases[] = {  // NOLINT(runtime/arrays)
+      ref_gh::IsExactMatchedQ1StaticReference(
+          false, false, false, false, 1.0, 0.0, 0.0),
+      ref_gh::IsExactMatchedQ1StaticReference(
+          true, true, false, false, 1.0, 0.0, 0.0),
+      ref_gh::IsExactMatchedQ1StaticReference(
+          true, false, true, false, 1.0, 0.0, 0.0),
+      ref_gh::IsExactMatchedQ1StaticReference(
+          true, false, false, true, 1.0, 0.0, 0.0),
+      ref_gh::IsExactMatchedQ1StaticReference(
+          true, false, false, false,
+          std::nextafter(1.0, 2.0), 0.0, 0.0),
+      ref_gh::IsExactMatchedQ1StaticReference(
+          true, false, false, false, 1.0,
+          std::numeric_limits<Real>::denorm_min(), 0.0),
+      ref_gh::IsExactMatchedQ1StaticReference(
+          true, false, false, false, 1.0, 0.0,
+          std::numeric_limits<Real>::denorm_min()),
+  };
+  bool valid = exact;
+  for (const bool value : false_cases) valid = valid && !value;
+  if (!valid) {
+    std::cout << "### FATAL ERROR: exact matched q=1 predicate admitted a "
+                 "controlled, moving, or nonidentical reference."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH exact matched q=1 predicate passed" << std::endl;
+}
 
 KOKKOS_INLINE_FUNCTION
 void AnalyticOraclePoint(const int point, Real &x, Real &y, Real &z) {
@@ -5736,6 +5770,7 @@ void ScanReferencePaths(ParameterInput *pin) {
 }  // namespace
 
 void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) {
+  CheckExactMatchedQ1Predicate();
   CheckCoframeDerivativeIdentity();
   CheckGaugeDriverAlgebra();
   CheckGamma2Algebra();

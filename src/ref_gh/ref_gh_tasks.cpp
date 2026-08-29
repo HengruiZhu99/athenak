@@ -17,6 +17,7 @@
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "ref_gh/analytic_radial_q_production.hpp"
+#include "ref_gh/exact_matched_state.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/feedback_continuation.hpp"
 #include "ref_gh/puncture_exponent.hpp"
@@ -98,9 +99,16 @@ void StoreQControlledStationaryTrumpetMetricState(
     const DvceArray2D<Real> &table, const Real mass,
     const Real center_x, const Real center_y, const Real center_z,
     const Real gaussian_width, const Real q, const Real q_dot,
-    const Real q_ddot,
+    const Real q_ddot, const bool exact_matched_static,
     const Real x, const Real y, const Real z) {
   for (int n = 0; n < kHhatOffset; ++n) state(m, n, k, j, i) = 0.0;
+  if (exact_matched_static) {
+    state(m, PsiIndex(0, 0), k, j, i) = -1.0;
+    state(m, PsiIndex(1, 1), k, j, i) = 1.0;
+    state(m, PsiIndex(2, 2), k, j, i) = 1.0;
+    state(m, PsiIndex(3, 3), k, j, i) = 1.0;
+    return;
+  }
   ProjectedFirstOrderMetric metric{};
   if constexpr (Analytic) {
     const AnalyticRadialQPoint current =
@@ -152,8 +160,10 @@ void StoreQControlledStationaryTrumpetGaugeState(
     const Real gaussian_width, const Real q, const Real q_dot,
     const Real q_ddot,
     const Real x, const Real y, const Real z,
-    const bool gauge_reference_subtraction) {
+    const bool gauge_reference_subtraction,
+    const bool exact_matched_static) {
   for (int n = kHhatOffset; n < nvar; ++n) state(m, n, k, j, i) = 0.0;
+  if (exact_matched_static) return;
   ProjectedStationaryGaugeState gauge{};
   ReferenceGaugeBaseline baseline{};
   if constexpr (Analytic) {
@@ -2739,6 +2749,12 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
     const Real q = q_controller.q;
     const Real q_dot = q_controller.q_dot;
     const Real q_ddot = q_controller_rhs.q_dot;
+    const bool exact_matched_reference = IsExactMatchedQ1StaticReference(
+        opt.reference_q_controlled, opt.q_controller_enabled,
+        opt.q_prescribed_enabled, opt.reference_time_dependent,
+        q, q_dot, q_ddot);
+    const bool exact_matched_gauge =
+        exact_matched_reference && gauge_reference_subtraction;
     const bool gauge_driver_enabled = opt.gauge_driver_enabled;
     const bool physical_inner_x1 =
         pmy_pack->pmesh->mesh_bcs[BoundaryFace::inner_x1]
@@ -2814,7 +2830,8 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
       StoreQControlledStationaryTrumpetMetricState<kAnalytic>(
           state, m, k, j, i, analytic_static,
           table, mass, center_x, center_y, center_z,
-          gaussian_width, q, q_dot, q_ddot, x, y, z);
+          gaussian_width, q, q_dot, q_ddot, exact_matched_reference,
+          x, y, z);
       });
     };
     if (analytic_backend) {
@@ -2875,7 +2892,7 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
             state, m, k, j, i, analytic_static,
             table, mass, center_x, center_y, center_z,
             gaussian_width, q, q_dot, q_ddot, x, y, z,
-            gauge_reference_subtraction);
+            gauge_reference_subtraction, exact_matched_gauge);
         });
       };
       if (analytic_backend) {

@@ -17,6 +17,7 @@
 #include "outputs/outputs.hpp"
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
+#include "ref_gh/exact_matched_state.hpp"
 #include "ref_gh/gauge_driver.hpp"
 #include "ref_gh/physical_gauge_target.hpp"
 #include "ref_gh/puncture_exponent.hpp"
@@ -142,6 +143,15 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
       pack->prefgh->opt.gauge_driver_enabled && !perturbed_trumpet;
   const bool gauge_reference_subtraction =
       pack->prefgh->opt.gauge_reference_subtraction;
+  const bool exact_matched_reference =
+      ref_gh::IsExactMatchedQ1StaticReference(
+          pack->prefgh->opt.reference_q_controlled,
+          pack->prefgh->opt.q_controller_enabled,
+          pack->prefgh->opt.q_prescribed_enabled,
+          pack->prefgh->opt.reference_time_dependent,
+          q_value, q_dot, q_ddot);
+  const bool exact_matched_gauge =
+      exact_matched_reference && gauge_reference_subtraction;
   const int stencil_radius = ref_gh::PunctureEvolutionStencilRadius(
       pack->prefgh->opt.fd_order, pack->prefgh->opt.diss);
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
@@ -197,9 +207,17 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
         } else {
           current = physical;
         }
-        const ref_gh::ProjectedFirstOrderMetric expected =
-            ref_gh::ProjectPhysicalMetricToReference(
-                physical.metric, physical.d_metric, current);
+        ref_gh::ProjectedFirstOrderMetric expected{};
+        if (exact_matched_reference) {
+          expected.valid = true;
+          expected.psi[0][0] = -1.0;
+          expected.psi[1][1] = 1.0;
+          expected.psi[2][2] = 1.0;
+          expected.psi[3][3] = 1.0;
+        } else {
+          expected = ref_gh::ProjectPhysicalMetricToReference(
+              physical.metric, physical.d_metric, current);
+        }
         if (!expected.valid) {
           maximum = std::numeric_limits<Real>::infinity();
           metric_maximum = std::numeric_limits<Real>::infinity();
@@ -343,9 +361,17 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
                 0.0, displacement[0] + center_x,
                 displacement[1] + center_y,
                 displacement[2] + center_z, current);
-            const ref_gh::ProjectedFirstOrderMetric expected =
-                ref_gh::ProjectPhysicalMetricToReference(
-                    physical.metric, physical.d_metric, current);
+            ref_gh::ProjectedFirstOrderMetric expected{};
+            if (exact_matched_reference) {
+              expected.valid = true;
+              expected.psi[0][0] = -1.0;
+              expected.psi[1][1] = 1.0;
+              expected.psi[2][2] = 1.0;
+              expected.psi[3][3] = 1.0;
+            } else {
+              expected = ref_gh::ProjectPhysicalMetricToReference(
+                  physical.metric, physical.d_metric, current);
+            }
             if (!expected.valid) {
               maximum = std::numeric_limits<Real>::infinity();
               gauge_maximum = std::numeric_limits<Real>::infinity();
@@ -413,25 +439,33 @@ void CheckRefGhStationaryTrumpet(ParameterInput *pin, Mesh *mesh) {
                   Kokkos::abs(numerical_shift - physical_shift));
             }
             if (compare_stationary_gauge) {
-              const ref_gh::ProjectedStationaryGaugeState expected_gauge =
-                  ref_gh::ProjectStationaryPhysicalGaugeToReference(
-                      physical, current);
+              ref_gh::ProjectedStationaryGaugeState expected_gauge{};
+              if (exact_matched_gauge) {
+                expected_gauge.valid = true;
+              } else {
+                expected_gauge =
+                    ref_gh::ProjectStationaryPhysicalGaugeToReference(
+                        physical, current);
+              }
               ref_gh::ReferenceGaugeBaseline baseline{};
-              if (gauge_reference_subtraction) {
+              if (gauge_reference_subtraction && !exact_matched_gauge) {
                 baseline = ref_gh::ComputeReferenceGaugeBaseline(current);
               }
               if (!expected_gauge.valid
-                  || (gauge_reference_subtraction && !baseline.valid)) {
+                  || (gauge_reference_subtraction && !exact_matched_gauge
+                      && !baseline.valid)) {
                 gauge_maximum = std::numeric_limits<Real>::infinity();
                 return;
               }
               for (int A = 0; A < 4; ++A) {
-                const Real expected_hhat = expected_gauge.hhat[A]
-                    - (gauge_reference_subtraction
-                       ? baseline.hhat[A] : 0.0);
-                const Real expected_theta = expected_gauge.theta[A]
-                    - (gauge_reference_subtraction
-                       ? baseline.theta[A] : 0.0);
+                const Real expected_hhat = exact_matched_gauge ? 0.0
+                    : expected_gauge.hhat[A]
+                        - (gauge_reference_subtraction
+                           ? baseline.hhat[A] : 0.0);
+                const Real expected_theta = exact_matched_gauge ? 0.0
+                    : expected_gauge.theta[A]
+                        - (gauge_reference_subtraction
+                           ? baseline.theta[A] : 0.0);
                 gauge_maximum = fmax(gauge_maximum, Kokkos::abs(
                     state(m, ref_gh::kHhatOffset + A, k, j, i)
                     - expected_hhat));
@@ -673,6 +707,14 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
   const Real q_gaussian_width = pack->prefgh->opt.q_gaussian_width;
   const Real q_value = pack->prefgh->q_controller.q;
   const Real q_dot = pack->prefgh->q_controller.q_dot;
+  const Real q_ddot = pack->prefgh->q_controller_rhs.q_dot;
+  const bool exact_matched_reference =
+      ref_gh::IsExactMatchedQ1StaticReference(
+          pack->prefgh->opt.reference_q_controlled,
+          pack->prefgh->opt.q_controller_enabled,
+          pack->prefgh->opt.q_prescribed_enabled,
+          pack->prefgh->opt.reference_time_dependent,
+          q_value, q_dot, q_ddot);
   const Real amplitude = perturbation_amplitude;
   const Real width = perturbation_width;
   const int radial_power = perturbation_radial_power;
@@ -714,6 +756,13 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     for (int n = 0; n < ref_gh::nvar; ++n) state(m, n, k, j, i) = 0.0;
     if (reference_kind == 7) {
+      if (exact_matched_reference) {
+        state(m, ref_gh::PsiIndex(0, 0), k, j, i) = -1.0;
+        state(m, ref_gh::PsiIndex(1, 1), k, j, i) = 1.0;
+        state(m, ref_gh::PsiIndex(2, 2), k, j, i) = 1.0;
+        state(m, ref_gh::PsiIndex(3, 3), k, j, i) = 1.0;
+        return;
+      }
       const Real x = CellCenterX(i - indcs.is, indcs.nx1,
                                  size.d_view(m).x1min, size.d_view(m).x1max);
       const Real y = CellCenterX(j - indcs.js, indcs.nx2,
@@ -800,6 +849,8 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
     const bool is_perturbed = perturbed_trumpet;
     const bool gauge_reference_subtraction =
         pack->prefgh->opt.gauge_reference_subtraction;
+    const bool exact_matched_gauge =
+        exact_matched_reference && gauge_reference_subtraction;
     par_for("ref_gh stationary trumpet gauge data", DevExeSpace(), 0,
     pack->nmb_thispack - 1, 0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
     KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
@@ -810,6 +861,12 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
       const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       if (reference_kind == 7) {
+        if (exact_matched_gauge) {
+          for (int n = ref_gh::kHhatOffset; n < ref_gh::nvar; ++n) {
+            state(m, n, k, j, i) = 0.0;
+          }
+          return;
+        }
         ref_gh::ReferenceGeometry physical;
         const ref_gh::TrumpetSchwarzschildReference physical_provider{
             table, mass, {cx, cy, cz}};
