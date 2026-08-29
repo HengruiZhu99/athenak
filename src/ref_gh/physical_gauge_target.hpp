@@ -7,6 +7,7 @@
 
 #include "athena.hpp"
 #include "ref_gh/reference_cache.hpp"
+#include "ref_gh/reference_residual.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 
 namespace ref_gh {
@@ -18,6 +19,28 @@ struct PhysicalGaugeTarget {
   Real d_alpha[3];          // NOLINT(runtime/arrays)
   Real d_shift[3][3];       // NOLINT(runtime/arrays)
   Real trace_k;
+};
+
+struct PhysicalGaugeTargetResidual {
+  Real reference_coordinate[4];       // NOLINT(runtime/arrays)
+  Real physical_coordinate[4];        // NOLINT(runtime/arrays)
+  Real delta_coordinate[4];           // NOLINT(runtime/arrays)
+  Real reference_frame[4];            // NOLINT(runtime/arrays)
+  Real physical_frame[4];             // NOLINT(runtime/arrays)
+  Real delta_frame[4];                // NOLINT(runtime/arrays)
+  Real reference_conformal_gamma[3];  // NOLINT(runtime/arrays)
+  Real physical_conformal_gamma[3];   // NOLINT(runtime/arrays)
+  Real delta_conformal_gamma[3];      // NOLINT(runtime/arrays)
+  Real reference_shift[3];            // NOLINT(runtime/arrays)
+  Real physical_shift[3];             // NOLINT(runtime/arrays)
+  Real delta_shift[3];                // NOLINT(runtime/arrays)
+  Real reference_lapse;
+  Real physical_lapse;
+  Real delta_lapse;
+  Real reference_trace_k;
+  Real physical_trace_k;
+  Real delta_trace_k;
+  bool valid;
 };
 
 // This constructs the ordinary/reference-independent covector F_mu.  The
@@ -125,6 +148,263 @@ bool ComputePhysicalGaugeTarget(
     }
   }
   return Kokkos::isfinite(target.trace_k);
+}
+
+// Evaluate F(g)-F(gbar) through exact residual identities.  No output delta is
+// formed by subtracting independently evaluated physical and reference gauge
+// targets.  The redundant full members exist only for oracle comparison and
+// for nonsingular coefficients consumed elsewhere in the existing equations.
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+bool ComputePhysicalGaugeTargetResidual(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const Real metric[4][4],
+    const Real d_metric[4][4][4], const CoordinateGhGeometry &geometry,
+    const Reference &reference, const Real upsilon[3], const Real nu,
+    const Real eta_beta, PhysicalGaugeTargetResidual &target) {
+  target.valid = false;
+  ReferenceRelativeCoordinateData relative;
+  if (!BuildReferenceRelativeCoordinateData(
+          psi, pi, phi, metric, d_metric, geometry, reference, relative)) {
+    return false;
+  }
+
+  ReferenceResidualValue g[4][4];      // NOLINT(runtime/arrays)
+  ReferenceResidualValue dg[4][4][4];  // NOLINT(runtime/arrays)
+  ReferenceResidualValue inverse[4][4];  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      g[a][b] = MakeReferenceResidual(
+          relative.reference_metric[a][b], metric[a][b],
+          relative.delta_metric[a][b]);
+      for (int p = 0; p < 4; ++p) {
+        dg[p][a][b] = MakeReferenceResidual(
+            relative.reference_d_metric[p][a][b], d_metric[p][a][b],
+            relative.delta_d_metric[p][a][b]);
+      }
+      Real delta_inverse = 0.0;
+      for (int c = 0; c < 4; ++c) {
+        for (int d = 0; d < 4; ++d) {
+          delta_inverse -= geometry.inverse_metric[a][c]
+              *relative.delta_metric[c][d]*relative.reference_inverse[d][b];
+        }
+      }
+      inverse[a][b] = MakeReferenceResidual(
+          relative.reference_inverse[a][b], geometry.inverse_metric[a][b],
+          delta_inverse);
+    }
+  }
+
+  ReferenceResidualValue d_inverse[3][4][4];  // NOLINT(runtime/arrays)
+  for (int p = 0; p < 3; ++p) {
+    for (int a = 0; a < 4; ++a) {
+      for (int b = 0; b < 4; ++b) {
+        d_inverse[p][a][b] = ReferenceResidualConstant(0.0);
+        for (int c = 0; c < 4; ++c) {
+          for (int d = 0; d < 4; ++d) {
+            d_inverse[p][a][b] = d_inverse[p][a][b]
+                - inverse[a][c]*inverse[b][d]*dg[p + 1][c][d];
+          }
+        }
+      }
+    }
+  }
+
+  const ReferenceResidualValue lapse = ReferenceResidualConstant(1.0)
+      /ReferenceResidualSqrt(-inverse[0][0]);
+  target.reference_lapse = lapse.reference;
+  target.physical_lapse = lapse.physical;
+  target.delta_lapse = lapse.delta;
+  ReferenceResidualValue shift[3];  // NOLINT(runtime/arrays)
+  for (int i = 0; i < 3; ++i) {
+    shift[i] = lapse*lapse*inverse[0][i + 1];
+    target.reference_shift[i] = shift[i].reference;
+    target.physical_shift[i] = geometry.shift[i];
+    target.delta_shift[i] = shift[i].delta;
+  }
+
+  Real physical_spatial_inverse[3][3];  // NOLINT(runtime/arrays)
+  Real physical_spatial_determinant = 0.0;
+  if (!InvertSpatial3(metric, physical_spatial_inverse,
+                      physical_spatial_determinant)) return false;
+  Real reference_spatial_inverse[3][3] = {};  // NOLINT(runtime/arrays)
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      for (int I = 0; I < 3; ++I) {
+        reference_spatial_inverse[i][j] +=
+            ReferenceSpatialFrame(reference, I, i)
+            *ReferenceSpatialFrame(reference, I, j);
+      }
+    }
+  }
+  ReferenceResidualValue spatial_inverse[3][3];  // NOLINT(runtime/arrays)
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      Real delta = 0.0;
+      for (int k = 0; k < 3; ++k) {
+        for (int l = 0; l < 3; ++l) {
+          delta -= physical_spatial_inverse[i][k]
+              *relative.delta_metric[k + 1][l + 1]
+              *reference_spatial_inverse[l][j];
+        }
+      }
+      spatial_inverse[i][j] = MakeReferenceResidual(
+          reference_spatial_inverse[i][j], physical_spatial_inverse[i][j],
+          delta);
+    }
+  }
+
+  ReferenceResidualValue christoffel_first[4][4][4];  // NOLINT(runtime/arrays)
+  ReferenceResidualValue christoffel[4][4][4];        // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      for (int c = 0; c < 4; ++c) {
+        christoffel_first[a][b][c] =
+            0.5*(dg[b][a][c] + dg[c][a][b] - dg[a][b][c]);
+      }
+    }
+  }
+  // The first-kind array must be complete before raising its first index.
+  // Interleaving these loops reads not-yet-initialized d-components.
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      for (int c = 0; c < 4; ++c) {
+        christoffel[a][b][c] = ReferenceResidualConstant(0.0);
+        for (int d = 0; d < 4; ++d) {
+          christoffel[a][b][c] = christoffel[a][b][c]
+              + inverse[a][d]*christoffel_first[d][b][c];
+        }
+      }
+    }
+  }
+  ReferenceResidualValue trace_k = ReferenceResidualConstant(0.0);
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      trace_k = trace_k
+          - lapse*spatial_inverse[i][j]*christoffel[0][i + 1][j + 1];
+    }
+  }
+  target.reference_trace_k = trace_k.reference;
+  target.physical_trace_k = trace_k.physical;
+  target.delta_trace_k = trace_k.delta;
+
+  ReferenceResidualValue d_alpha[3];  // NOLINT(runtime/arrays)
+  for (int p = 0; p < 3; ++p) {
+    d_alpha[p] = 0.5*lapse*lapse*lapse*d_inverse[p][0][0];
+  }
+
+  const ReferenceResidualValue a = g[1][1];
+  const ReferenceResidualValue b = g[1][2];
+  const ReferenceResidualValue c = g[1][3];
+  const ReferenceResidualValue d = g[2][2];
+  const ReferenceResidualValue e = g[2][3];
+  const ReferenceResidualValue f = g[3][3];
+  const ReferenceResidualValue spatial_determinant =
+      a*(d*f - e*e) - b*(b*f - c*e) + c*(b*e - c*d);
+  const ReferenceResidualValue determinant_factor =
+      ReferenceResidualCubeRoot(spatial_determinant);
+
+  ReferenceResidualValue conformal_gamma[3];  // NOLINT(runtime/arrays)
+  for (int i = 0; i < 3; ++i) {
+    conformal_gamma[i] = ReferenceResidualConstant(0.0);
+    for (int j = 0; j < 3; ++j) {
+      for (int k = 0; k < 3; ++k) {
+        for (int l = 0; l < 3; ++l) {
+          const ReferenceResidualValue projector =
+              spatial_inverse[i][k]*spatial_inverse[j][l]
+              - (1.0/3.0)*spatial_inverse[i][j]*spatial_inverse[k][l];
+          conformal_gamma[i] = conformal_gamma[i]
+              + determinant_factor*projector*dg[j + 1][k + 1][l + 1];
+        }
+      }
+    }
+    target.reference_conformal_gamma[i] = conformal_gamma[i].reference;
+    target.physical_conformal_gamma[i] = conformal_gamma[i].physical;
+    target.delta_conformal_gamma[i] = conformal_gamma[i].delta;
+  }
+
+  ReferenceResidualValue desired_d0_shift[3];  // NOLINT(runtime/arrays)
+  for (int i = 0; i < 3; ++i) {
+    ReferenceResidualValue advective_shift = ReferenceResidualConstant(0.0);
+    for (int p = 0; p < 3; ++p) {
+      const ReferenceResidualValue d_shift =
+          2.0*lapse*d_alpha[p]*inverse[0][i + 1]
+          + lapse*lapse*d_inverse[p][0][i + 1];
+      advective_shift = advective_shift + shift[p]*d_shift;
+    }
+    const ReferenceResidualValue upsilon_value =
+        MakeReferenceResidual(0.0, upsilon[i], upsilon[i]);
+    desired_d0_shift[i] =
+        nu*(conformal_gamma[i] - eta_beta*upsilon_value) - advective_shift;
+  }
+
+  ReferenceResidualValue coordinate[4];  // NOLINT(runtime/arrays)
+  for (int i = 0; i < 3; ++i) {
+    ReferenceResidualValue contracted_spatial_connection =
+        ReferenceResidualConstant(0.0);
+    for (int j = 0; j < 3; ++j) {
+      for (int k = 0; k < 3; ++k) {
+        const ReferenceResidualValue connection_first = 0.5*(
+            dg[j + 1][i + 1][k + 1]
+            + dg[k + 1][i + 1][j + 1]
+            - dg[i + 1][j + 1][k + 1]);
+        contracted_spatial_connection = contracted_spatial_connection
+            + spatial_inverse[j][k]*connection_first;
+      }
+    }
+    coordinate[i + 1] = d_alpha[i]/lapse
+                        - contracted_spatial_connection;
+    for (int j = 0; j < 3; ++j) {
+      coordinate[i + 1] = coordinate[i + 1]
+          + g[i + 1][j + 1]*desired_d0_shift[j]/(lapse*lapse);
+    }
+  }
+  const ReferenceResidualValue normal_target =
+      (2.0/lapse - ReferenceResidualConstant(1.0))*trace_k;
+  coordinate[0] = lapse*normal_target;
+  for (int i = 0; i < 3; ++i) {
+    coordinate[0] = coordinate[0] + shift[i]*coordinate[i + 1];
+  }
+
+  for (int A = 0; A < 4; ++A) {
+    ReferenceResidualValue frame = ReferenceResidualConstant(0.0);
+    for (int a_index = 0; a_index < 4; ++a_index) {
+      frame = frame
+          + ReferenceFrame(reference, A, a_index)*coordinate[a_index];
+    }
+    target.reference_frame[A] = frame.reference;
+    target.physical_frame[A] = frame.physical;
+    target.delta_frame[A] = frame.delta;
+    target.reference_coordinate[A] = coordinate[A].reference;
+    target.physical_coordinate[A] = coordinate[A].physical;
+    target.delta_coordinate[A] = coordinate[A].delta;
+  }
+  // Retain the established physical-target arithmetic for full quantities
+  // consumed by Upsilon and for the independent oracle.  Only the regular
+  // differences above use the new residual algebra; no physical-reference
+  // subtraction is performed here.
+  PhysicalGaugeTarget legacy_physical;
+  if (!ComputePhysicalGaugeTarget(
+          metric, d_metric, geometry, reference, upsilon, nu, eta_beta,
+          legacy_physical)) return false;
+  for (int A = 0; A < 4; ++A) {
+    target.physical_coordinate[A] = legacy_physical.coordinate[A];
+    target.physical_frame[A] = legacy_physical.frame[A];
+  }
+  for (int i = 0; i < 3; ++i) {
+    target.physical_conformal_gamma[i] = legacy_physical.conformal_gamma[i];
+    target.physical_shift[i] = geometry.shift[i];
+  }
+  target.physical_lapse = geometry.lapse;
+  target.physical_trace_k = legacy_physical.trace_k;
+  target.valid = Kokkos::isfinite(physical_spatial_determinant)
+                 && physical_spatial_determinant > 0.0;
+  for (int A = 0; A < 4; ++A) {
+    target.valid = target.valid
+        && Kokkos::isfinite(target.delta_frame[A])
+        && Kokkos::isfinite(target.physical_frame[A]);
+  }
+  return target.valid;
 }
 
 }  // namespace ref_gh

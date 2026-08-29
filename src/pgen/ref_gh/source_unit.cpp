@@ -3224,6 +3224,283 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
             << " compatible+standard Phi" << std::endl;
 }
 
+KOKKOS_INLINE_FUNCTION
+void UpdateResidualTargetOracleError(
+    const Real candidate, const int category, const bool well_conditioned,
+    Real &maximum, Real &physical_maximum, Real &delta_maximum,
+    int &maximum_category) {
+  const bool is_delta = (category >= 20 && category < 30)
+                        || (category >= 40 && category < 50);
+  if (is_delta) {
+    delta_maximum = fmax(delta_maximum, candidate);
+  } else {
+    physical_maximum = fmax(physical_maximum, candidate);
+  }
+  if ((!is_delta || well_conditioned) && candidate > maximum) {
+    maximum = candidate;
+    maximum_category = category;
+  }
+}
+
+template <typename Reference>
+KOKKOS_INLINE_FUNCTION
+Real EvaluateResidualPhysicalGaugeTargetOracle(
+    const Reference &reference, const int seed, bool &matched_exact,
+    const bool well_conditioned, Real &matched_maximum,
+    Real &physical_maximum, Real &delta_maximum, int &maximum_category) {
+  constexpr Real nu = 0.83;
+  constexpr Real eta_beta = 0.36;
+  Real psi[4][4] = {};       // NOLINT(runtime/arrays)
+  Real pi[4][4] = {};        // NOLINT(runtime/arrays)
+  Real phi[3][4][4] = {};    // NOLINT(runtime/arrays)
+  Real upsilon[3];           // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    for (int B = A; B < 4; ++B) {
+      const int code = 1 + A + 3*B + seed;
+      const Real diagonal = A == B ? (A == 0 ? -1.0 : 1.0) : 0.0;
+      const Real perturb = 2.0e-4*static_cast<Real>((code % 9) - 4);
+      psi[A][B] = psi[B][A] = diagonal + perturb;
+      pi[A][B] = pi[B][A] =
+          3.0e-4*static_cast<Real>(((2*code + 1) % 11) - 5);
+      for (int I = 0; I < 3; ++I) {
+        phi[I][A][B] = phi[I][B][A] =
+            2.0e-4*static_cast<Real>(((code + 4*I) % 13) - 6);
+      }
+    }
+  }
+  for (int i = 0; i < 3; ++i) {
+    upsilon[i] = 7.0e-4*static_cast<Real>(((seed + 4*i) % 7) - 3);
+  }
+  Real metric[4][4], d_metric[4][4][4];  // NOLINT(runtime/arrays)
+  ref_gh::CoordinateGhGeometry geometry;
+  Real determinant = 0.0;
+  if (!BuildRhsOracleMetricData(
+          reference, psi, pi, phi, metric, d_metric)
+      || !ref_gh::ComputeCoordinateGhGeometry(
+          metric, d_metric, reference, geometry, determinant)) {
+    return std::numeric_limits<Real>::infinity();
+  }
+  ref_gh::PhysicalGaugeTarget legacy;
+  ref_gh::PhysicalGaugeTargetResidual residual;
+  if (!ref_gh::ComputePhysicalGaugeTarget(
+          metric, d_metric, geometry, reference, upsilon, nu, eta_beta,
+          legacy)
+      || !ref_gh::ComputePhysicalGaugeTargetResidual(
+          psi, pi, phi, metric, d_metric, geometry, reference, upsilon,
+          nu, eta_beta, residual)) {
+    return std::numeric_limits<Real>::infinity();
+  }
+  Real maximum = 0.0;
+  physical_maximum = 0.0;
+  delta_maximum = 0.0;
+  maximum_category = -1;
+  for (int A = 0; A < 4; ++A) {
+    const Real frame_scale = fmax(
+        1.0, fmax(Kokkos::abs(legacy.frame[A]),
+                  Kokkos::abs(residual.reference_frame[A])));
+    UpdateResidualTargetOracleError(
+        Kokkos::abs(residual.physical_frame[A] - legacy.frame[A])/frame_scale,
+        10 + A, well_conditioned, maximum, physical_maximum, delta_maximum,
+        maximum_category);
+    UpdateResidualTargetOracleError(
+        Kokkos::abs(residual.delta_frame[A]
+                    - (legacy.frame[A] - residual.reference_frame[A]))
+            /frame_scale, 20 + A, well_conditioned, maximum,
+        physical_maximum, delta_maximum, maximum_category);
+  }
+  for (int i = 0; i < 3; ++i) {
+    const Real gamma_scale = fmax(
+        1.0, fmax(Kokkos::abs(legacy.conformal_gamma[i]),
+                  Kokkos::abs(residual.reference_conformal_gamma[i])));
+    UpdateResidualTargetOracleError(
+        Kokkos::abs(residual.physical_conformal_gamma[i]
+                    - legacy.conformal_gamma[i])/gamma_scale, 30 + i,
+        well_conditioned, maximum, physical_maximum, delta_maximum,
+        maximum_category);
+    UpdateResidualTargetOracleError(
+        Kokkos::abs(residual.delta_conformal_gamma[i]
+                    - (legacy.conformal_gamma[i]
+                       - residual.reference_conformal_gamma[i]))
+            /gamma_scale, 40 + i, well_conditioned, maximum,
+        physical_maximum, delta_maximum, maximum_category);
+    UpdateResidualTargetOracleError(
+        Kokkos::abs(residual.physical_shift[i] - geometry.shift[i]), 50 + i,
+        well_conditioned, maximum, physical_maximum, delta_maximum,
+        maximum_category);
+  }
+
+  Real matched_psi[4][4] = {};       // NOLINT(runtime/arrays)
+  Real matched_pi[4][4] = {};        // NOLINT(runtime/arrays)
+  Real matched_phi[3][4][4] = {};    // NOLINT(runtime/arrays)
+  Real zero_upsilon[3] = {};         // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) matched_psi[A][A] = A == 0 ? -1.0 : 1.0;
+  Real matched_metric[4][4], matched_d_metric[4][4][4];  // NOLINT
+  ref_gh::CoordinateGhGeometry matched_geometry;
+  if (!BuildRhsOracleMetricData(
+          reference, matched_psi, matched_pi, matched_phi,
+          matched_metric, matched_d_metric)
+      || !ref_gh::ComputeCoordinateGhGeometry(
+          matched_metric, matched_d_metric, reference, matched_geometry,
+          determinant)
+      || !ref_gh::ComputePhysicalGaugeTargetResidual(
+          matched_psi, matched_pi, matched_phi, matched_metric,
+          matched_d_metric, matched_geometry, reference, zero_upsilon,
+          nu, eta_beta, residual)) {
+    return std::numeric_limits<Real>::infinity();
+  }
+  matched_exact = true;
+  matched_maximum = 0.0;
+  for (int A = 0; A < 4; ++A) {
+    matched_maximum = fmax(matched_maximum,
+                           Kokkos::abs(residual.delta_frame[A]));
+    matched_maximum = fmax(matched_maximum,
+                           Kokkos::abs(residual.delta_coordinate[A]));
+    matched_exact = matched_exact && residual.delta_frame[A] == 0.0
+                    && residual.delta_coordinate[A] == 0.0;
+  }
+  for (int i = 0; i < 3; ++i) {
+    matched_maximum = fmax(matched_maximum,
+                           Kokkos::abs(residual.delta_conformal_gamma[i]));
+    matched_maximum = fmax(matched_maximum,
+                           Kokkos::abs(residual.delta_shift[i]));
+    matched_exact = matched_exact
+                    && residual.delta_conformal_gamma[i] == 0.0
+                    && residual.delta_shift[i] == 0.0;
+  }
+  return maximum;
+}
+
+void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
+  constexpr int nq = 6;
+  constexpr int nrate = 3;
+  constexpr int nacceleration = 3;
+  constexpr int npoints = kAnalyticOraclePointCount;
+  constexpr int nsamples = nq*nrate*nacceleration*npoints;
+  Real maximum_error = 0.0;
+  Real maximum_physical = 0.0;
+  Real maximum_delta = 0.0;
+  Real maximum_matched = 0.0;
+  int matched_failure = 0;
+  using MaxLoc = Kokkos::MaxLoc<Real, int>;
+  MaxLoc::value_type maximum_location;
+  Kokkos::parallel_reduce(
+      "ref_gh fully subtracted physical gauge target",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_maximum,
+                    Real &local_physical, Real &local_delta,
+                    Real &local_matched, int &local_failure,
+                    MaxLoc::value_type &local_location) {
+        const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
+        const Real q_dot_values[nrate] = {-0.1, 0.0, 0.1};
+        const Real q_ddot_values[nacceleration] = {-0.05, 0.0, 0.05};
+        int work = sample;
+        const Real q = q_values[work % nq]; work /= nq;
+        const Real q_dot = q_dot_values[work % nrate]; work /= nrate;
+        const Real q_ddot = q_ddot_values[work % nacceleration]; work /= nacceleration;
+        Real x = 0.0;
+        Real y = 0.0;
+        Real z = 0.0;
+        AnalyticOraclePoint(work, x, y, z);
+        Real static_coefficients[ref_gh::kAnalyticRadialQStaticSize];
+        Real stage_coefficients[ref_gh::kAnalyticRadialQStageSize];
+        ref_gh::EvaluateAnalyticRadialQStatic(
+            table, 1.0, 3.0, x, y, z, 0.0, 0.0, 0.0,
+            static_coefficients);
+        ref_gh::EvaluateAnalyticRadialQStage(
+            static_coefficients, q, q_dot, q_ddot, stage_coefficients);
+        const ref_gh::AnalyticRadialScalar alpha{
+            static_coefficients[ref_gh::kAnalyticAlpha], 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticAlphaRR], 0.0, 0.0};
+        const ref_gh::AnalyticRadialScalar l{
+            stage_coefficients[ref_gh::kAnalyticL],
+            stage_coefficients[ref_gh::kAnalyticLT],
+            stage_coefficients[ref_gh::kAnalyticLR],
+            stage_coefficients[ref_gh::kAnalyticLTT],
+            stage_coefficients[ref_gh::kAnalyticLTR],
+            stage_coefficients[ref_gh::kAnalyticLRR],
+            stage_coefficients[ref_gh::kAnalyticLTTR],
+            stage_coefficients[ref_gh::kAnalyticLTRR]};
+        const ref_gh::AnalyticRadialScalar b{
+            static_coefficients[ref_gh::kAnalyticShiftB], 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBR], 0.0, 0.0,
+            static_coefficients[ref_gh::kAnalyticShiftBRR], 0.0, 0.0};
+        const Real displacement[3] = {x, y, z};
+        const ref_gh::AnalyticRadialQPoint analytic{
+            alpha, l, b, {x, y, z}, Kokkos::sqrt(x*x + y*y + z*z)};
+        ref_gh::ReferenceGeometry generic;
+        ref_gh::PopulateIsotropicReferenceGeometry(
+            ref_gh::AnalyticRadialScalarOracleJet(analytic, alpha),
+            ref_gh::AnalyticRadialScalarOracleJet(analytic, l),
+            ref_gh::AnalyticRadialScalarOracleJet(analytic, b),
+            displacement[0], displacement[1], displacement[2],
+            0.0, 0.0, 0.0, generic);
+        bool generic_exact = false;
+        bool analytic_exact = false;
+        Real generic_matched = 0.0;
+        Real analytic_matched = 0.0;
+        Real generic_physical = 0.0;
+        Real analytic_physical = 0.0;
+        Real generic_delta = 0.0;
+        Real analytic_delta = 0.0;
+        int generic_category = -1;
+        int analytic_category = -1;
+        // Below 0.8M, F-Fref is the already-falsified binary64 subtraction,
+        // so preserve its discrepancy as a diagnostic rather than treating it
+        // as a truth oracle.  Exact matched zeros remain mandatory everywhere.
+        const bool well_conditioned = analytic.radius >= 0.8;
+        const Real generic_error = EvaluateResidualPhysicalGaugeTargetOracle(
+            generic, sample, generic_exact, well_conditioned, generic_matched,
+            generic_physical, generic_delta, generic_category);
+        const Real analytic_error = EvaluateResidualPhysicalGaugeTargetOracle(
+            analytic, sample, analytic_exact, well_conditioned,
+            analytic_matched, analytic_physical, analytic_delta,
+            analytic_category);
+        local_maximum = fmax(local_maximum, fmax(generic_error, analytic_error));
+        local_physical = fmax(
+            local_physical, fmax(generic_physical, analytic_physical));
+        local_delta = fmax(local_delta, fmax(generic_delta, analytic_delta));
+        local_matched = fmax(local_matched,
+                             fmax(generic_matched, analytic_matched));
+        if (generic_error > local_location.val) {
+          local_location.val = generic_error;
+          local_location.loc = 1000*sample + generic_category;
+        }
+        if (analytic_error > local_location.val) {
+          local_location.val = analytic_error;
+          local_location.loc = 1000*sample + 100 + analytic_category;
+        }
+        if (local_failure < 0) local_failure = 0;
+        if (!generic_exact) local_failure =
+            local_failure > 2*sample + 1 ? local_failure : 2*sample + 1;
+        if (!analytic_exact) local_failure =
+            local_failure > 2*sample + 2 ? local_failure : 2*sample + 2;
+      }, Kokkos::Max<Real>(maximum_error),
+      Kokkos::Max<Real>(maximum_physical), Kokkos::Max<Real>(maximum_delta),
+      Kokkos::Max<Real>(maximum_matched), Kokkos::Max<int>(matched_failure),
+      MaxLoc(maximum_location));
+  Kokkos::fence();
+  constexpr Real tolerance =
+      1024.0*std::numeric_limits<Real>::epsilon();
+  if (!(maximum_error <= tolerance) || matched_failure != 0) {
+    std::cout << "### FATAL ERROR: fully subtracted physical gauge target "
+              << "oracle failed: error=" << maximum_error
+              << " matched_exact=" << (matched_failure == 0)
+              << " matched_max=" << maximum_matched
+              << " matched_failure_location=" << matched_failure
+              << " physical_error=" << maximum_physical
+              << " raw_delta_error=" << maximum_delta
+              << " location=" << maximum_location.loc
+              << " tolerance=" << tolerance << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH fully subtracted physical gauge target passed: "
+            << "samples=" << 2*nsamples << " error=" << maximum_error
+            << " physical=" << maximum_physical
+            << " raw-delta-diagnostic=" << maximum_delta
+            << " matched_exact=1" << std::endl;
+}
+
 void CheckTrumpetQReprojection(const DvceArray2D<Real> &table) {
   constexpr int nsamples = 96;
   Real maximum_metric_error = 0.0;
@@ -5122,6 +5399,8 @@ void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) 
     CheckGeneratedAnalyticRadialQGeometry(
         pmy_mesh_->pmb_pack->prefgh->reference_table);
     CheckGeneratedAnalyticRadialQGauge(
+        pmy_mesh_->pmb_pack->prefgh->reference_table);
+    CheckResidualPhysicalGaugeTarget(
         pmy_mesh_->pmb_pack->prefgh->reference_table);
     CheckCompactAnalyticRadialQBoundaryProjection(
         pmy_mesh_->pmb_pack->prefgh->reference_table);
