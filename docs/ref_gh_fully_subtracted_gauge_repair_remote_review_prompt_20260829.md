@@ -176,3 +176,12 @@ Please return:
 Do not claim trumpet convergence, long-time stability, Aurora/PVC
 qualification, acceptable performance, or production readiness from this
 checkpoint.
+
+The branch tip may also contain the pending Phase-8 launch checkpoint:
+`scripts/ref_gh/aurora_fully_subtracted_phase8_t3.pbs` and
+`scripts/ref_gh/analyze_fully_subtracted_phase8.py`.  Audit that it freezes the
+Case-D parameters, reuses the Phase-7 executable only when `src/` is identical,
+stops at 3M before any 5M continuation, and that its replay discriminator
+rejects frozen Case D without turning descriptive control comparisons into
+adjustable pass thresholds.  The presence of these scripts is not evolved
+evidence.

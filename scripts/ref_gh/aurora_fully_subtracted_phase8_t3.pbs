@@ -1,0 +1,177 @@
+#!/bin/bash -l
+# Phase-8 first positive-time gate: repaired STANDARD/gamma2=1/gauge-on
+# matched trumpet at 96^3 through t=3M.  This job intentionally stops before
+# the separate t=5M checkpoint so the 3M gate can be reviewed first.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_sub_p8t3
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?existing dedicated Phase-7 campaign root}"
+: "${EXPECTED_COMMIT:?full launcher/source commit}"
+: "${BUILD_COMMIT:?commit used to build the preserved executable}"
+: "${BUILD_DIR:?absolute preserved Phase-7 build directory}"
+: "${EXPECTED_EXE_SHA256:?preserved executable SHA-256}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+EXE="${BUILD_DIR}/src/athena"
+OUT="${CAMPAIGN_ROOT}/runs/phase8_t3_${PBS_JOBID}"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_case_d.athinput"
+ANALYZE="${SRC}/scripts/ref_gh/analyze_fully_subtracted_phase8.py"
+CONTROL_ROOT="${SRC}/artifacts/ref_gh_ordering_gauge_discriminator_20260829/phase67_aurora_8790947"
+CONTROL_A="${CONTROL_ROOT}/case_a_t5_fresh/case_a_t5_fresh.ref_gh.hst"
+CONTROL_B="${CONTROL_ROOT}/case_b_t5_fresh/case_b_t5_fresh.ref_gh.hst"
+TARGET_TIME=3.0
+BASENAME=phase8_standard_t3
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "phase8_t3_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+BINDER=$(command -v gpu_tile_compact.sh)
+test -x "${BINDER}"
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+actual_exe_sha256=$(sha256sum "${EXE}" | awk '{print $1}')
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test "${actual_exe_sha256}" = "${EXPECTED_EXE_SHA256}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+git -C "${SRC}" diff --quiet "${BUILD_COMMIT}" "${EXPECTED_COMMIT}" -- src
+test -s "${INPUT}"
+test -s "${ANALYZE}"
+test -s "${CONTROL_A}"
+test -s "${CONTROL_B}"
+
+# Fail closed if the frozen Case-D numerical/formulation parameters drifted.
+for required in \
+  'nx1 = 96' 'x1min = -2.0' 'x1max = 2.0' 'nghost = 4' \
+  'integrator = rk4' 'cfl_number = 0.05' \
+  'reference_backend = analytic_radial_q' 'phi_ordering = standard' \
+  'q = 1.0' 'q_controller_enabled = false' \
+  'q_prescribed_enabled = false' 'fd_order = 4' \
+  'gamma0 = 1.0' 'gamma2 = 1.0' 'gauge_driver_enabled = true' \
+  'gauge_reference_subtraction = true' 'gauge_mu = 1.0' \
+  'gauge_eta = 1.0' 'shift_nu = 0.75' 'shift_eta = 1.0' \
+  'exclude_puncture_stencil_diagnostics = true' 'diss = 0.02' \
+  'common_adm_exclude_puncture_stencils = true'; do
+  grep -Fqx "${required}" "${INPUT}"
+done
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "source_commit=${actual_commit}"
+  echo "build_commit=${BUILD_COMMIT}"
+  echo "build_dir=${BUILD_DIR}"
+  echo "executable_sha256=${actual_exe_sha256}"
+  echo "target_time=${TARGET_TIME}"
+  echo "grid=96x96x96"
+  echo "meshblocks=216"
+  echo "mpi_ranks=12"
+  echo "phi_ordering=standard"
+  echo "gamma0=1 gamma2=1 gauge_driver=on"
+  echo "q=1 q_controller=off q_prescribed=off"
+  echo "FD4 RK4 CFL=0.05 KO=0.02"
+  echo "puncture_stencil_exclusion=true"
+  echo "field_outputs=disabled"
+  echo "restart_interval=1M"
+  echo "gpu_tile_binder=${BINDER}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  python3 --version
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${ANALYZE}" "${CONTROL_A}" "${CONTROL_B}" "$0"
+  sha256sum "${BUILD_DIR}/CMakeCache.txt" "${EXE}"
+  git -C "${SRC}" diff --stat "${BUILD_COMMIT}" "${EXPECTED_COMMIT}" -- src
+} > provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
+  | sort -u | wc -l)" -eq 12
+
+mkdir run_t3
+set +e
+(
+  cd run_t3
+  /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+    "${BINDER}" "${EXE}" -i "${INPUT}" \
+    job/basename="${BASENAME}" time/tlim="${TARGET_TIME}" time/nlim=-1 \
+    output2/dt=1.0 output3/dt=-1 output4/dt=-1 output5/dt=-1 \
+    > run.log 2>&1
+)
+run_status=$?
+set -e
+
+history="run_t3/${BASENAME}.ref_gh.hst"
+last_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' \
+  "${history}" 2>/dev/null || echo 0)
+{
+  echo "run_exit_status=${run_status}"
+  echo "requested_final_time=${TARGET_TIME}"
+  echo "latest_history_time=${last_time}"
+  echo "command=mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth ${BINDER} ${EXE} -i ${INPUT} job/basename=${BASENAME} time/tlim=${TARGET_TIME} time/nlim=-1 output2/dt=1.0 output3/dt=-1 output4/dt=-1 output5/dt=-1"
+  tail -1 "${history}" 2>/dev/null || true
+} > run_t3/run_status.txt
+
+find run_t3 -type f -name '*.rst' -print0 | sort -z | xargs -0 -r sha256sum \
+  > restart_sha256.txt
+
+set +e
+python3 "${ANALYZE}" \
+  --run-dir run_t3 --basename "${BASENAME}" --target-time "${TARGET_TIME}" \
+  --control-history "${CONTROL_A}" --control-history "${CONTROL_B}" \
+  --output-json phase8_t3_summary.json --output-tsv phase8_t3_summary.tsv \
+  --require-hard-gate > phase8_t3_analysis.log 2>&1
+analysis_status=$?
+set -e
+
+if [ "${analysis_status}" -eq 0 ]; then
+  result=PASS_PHASE8_T3_FINITE_DISCRIMINATOR
+else
+  result=FAIL_PHASE8_T3_FINITE_DISCRIMINATOR
+fi
+{
+  echo "result=${result}"
+  echo "run_exit_status=${run_status}"
+  echo "analysis_exit_status=${analysis_status}"
+  echo "requested_final_time=${TARGET_TIME}"
+  echo "latest_history_time=${last_time}"
+  echo "t5_continuation_launched=false"
+  echo "claim_boundary=single 96^3 STANDARD evolution through at most 3M"
+  sha256sum "${EXE}"
+} > gate_status.txt
+
+echo "phase8_t3_complete=$(date -Is)"
+find . -type f ! -name 'compact_sha256.txt' ! -name '*.rst' \
+  \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' -o -name '*.json' -o -name '*-trumpet.dat' \) \
+  -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
+
+exit "${analysis_status}"

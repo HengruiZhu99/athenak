@@ -6,6 +6,33 @@ Branch: `codex/ref-gh-fully-subtracted-gauge-repair-20260829`
 
 Frozen parent: `223947486ac4498bab2e197feca56462c77e6d76`
 
+## Phase 8 launch checkpoint
+
+The Phase-7 ladder passed, so the next authorized scientific step is the
+repaired positive-time discriminator.  The first job is deliberately bounded
+to the frozen Case-D `96^3` STANDARD, `gamma0=gamma2=1`, gauge-enabled setup
+through `t=3M`.  It retains q=1 with both q-control modes disabled, FD4, RK4,
+CFL 0.05, KO 0.02, the existing gauge gains, the `[-2M,2M]^3` outflow box,
+and the complete puncture-stencil diagnostic exclusion.  Field outputs are
+disabled; restart checkpoints remain at 1M intervals on Aurora.
+
+`scripts/ref_gh/aurora_fully_subtracted_phase8_t3.pbs` reuses the already
+qualified Phase-7 production executable only after checking its SHA-256 and
+proving that `src/` is identical between the build commit and launch commit.
+It performs no rebuild and no additional generic GPU test.  The job stops at
+3M even if successful; a 5M restart continuation is permitted only after the
+3M histories are reviewed.
+
+`scripts/ref_gh/analyze_fully_subtracted_phase8.py` records all finite-state,
+timestep, GH/reduction/curl, metric-error, near-puncture, RHS-max-location, and
+gauge-off-control comparisons without hiding them behind a tunable scientific
+threshold.  Its explicit old-mode discriminator uses the frozen Case-D GH
+growth rate `26.654903904216415/M` and flags a recurrence only when the new fit
+is within 25 percent of that rate with `R^2 >= 0.95`.  A local replay exactly
+recovers the frozen Case-D e-folding time `0.037516548684379786M` and rejects
+that run, while accepting the completed Case-A gauge-off 5M control.  These are
+analyzer-validation results, not repaired evolution evidence.
+
 ## Claim boundary
 
 This investigation begins from the completed
@@ -17,8 +44,9 @@ unchanged conditioned tolerances, the compact analytic residual Einstein
 source has passed its current oracle gate, and the stationary trumpet
 coefficient asymptotics have been derived and independently measured.  The
 initial red perturbed-source result is retained below because it exposed an
-ill-conditioned full-driver input rather than being hidden.  No production
-equation has changed, no repaired fixed-point ladder has run, and no repaired
+ill-conditioned full-driver input rather than being hidden.  No intended
+continuum equation or frozen numerical parameter has changed.  The repaired
+64/96/128 cycle-zero ladder has passed, but no repaired positive-time
 evolution, robustness, or performance claim is made.
 
 The frozen A--E histories, stationary residual ladder, principal-symbol audit,
@@ -708,8 +736,8 @@ feedback/prescribed q, or production readiness.
 The following are not yet complete: independent all-radius high-precision
 qualification of cancellation-free \(\delta F_A\), independent qualification
 of the direct \(\Delta B_a\) and derivative evaluator below the conditioned
-binary64 region, the repaired 64/96/128 fixed-point ladder, the 3M/5M
-discriminator, the resolution ladder, 20M, and conditional 100M qualification.
+binary64 region, the 3M/5M discriminator, the evolved resolution ladder, 20M,
+and conditional 100M qualification.
 The Phase-6 PVC all-61 and 96^3 exact fixed-point workloads pass.  Exact
 matched-state fill and strict static q=1 residual production dispatch are
 locally and device tested.  General moving-reference production dispatch
