@@ -230,6 +230,7 @@ class RefGh {
   void CacheMetricCondition();
   void UpdateDiagnostics();
   void AppendMaxLocationDiagnostics();
+  void WriteInitialRhsSectorDiagnostics();
   static void SetADMVariables(MeshBlockPack *pack);
   TaskStatus InitRecv(Driver *driver, int stage);
   TaskStatus ClearRecv(Driver *driver, int stage);
@@ -257,6 +258,10 @@ class RefGh {
   void CalcConstraintsImpl();
   template <bool Analytic>
   void RefGhToADMImpl();
+  template <bool Analytic>
+  void AppendMaxLocationDiagnosticsImpl();
+  template <bool Analytic>
+  void WriteInitialRhsSectorDiagnosticsImpl();
   Real StageTime(const Driver *driver, int stage) const;
   void FillReferenceCache(Real time, bool include_diagnostics);
   void PersistControllerState();

@@ -1,0 +1,141 @@
+# Case C: compatible Phi with the evolved gauge driver, but gamma2=0.
+#
+# The physical solution is the exact unit-mass n=2 stationary Schwarzschild
+# trumpet.  The default is the Phase-2 matched, controller-off q=1 medium
+# member.  Campaign scripts override only the declared resolution, final time,
+# and q trajectory/mode.  The 16^3 MeshBlock size is held fixed for every
+# resolution so debug-scaling changes decomposition, not the physical grid.
+
+<job>
+basename = ref_gh_ordering_gauge_case_c
+
+<mesh>
+nghost = 4
+nx1 = 96
+x1min = -2.0
+x1max = 2.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 96
+x2min = -2.0
+x2max = 2.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 96
+x3min = -2.0
+x3max = 2.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 16
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+nlim = -1
+tlim = 3.0
+ndiag = 10
+
+<ref_gh>
+reference = trumpet_q_controlled
+reference_backend = analytic_radial_q
+source = covariant
+phi_ordering = compatible
+reference_mass = 1.0
+reference_x = 0.0
+reference_y = 0.0
+reference_z = 0.0
+q_gaussian_width = 3.0
+q_initial = 1.0
+q = 1.0
+q_dot = 0.0
+q_controller_enabled = false
+q_prescribed_enabled = false
+q_prescribed_target = 0.9
+q_prescribed_duration = 8.0
+q_min = 0.5
+q_max = 2.5
+q_rate_limit = 0.25
+q_acceleration_limit = 0.25
+q_omega = 0.5
+q_zeta = 1.0
+fd_order = 4
+extrap_order = 2
+debug_task_fences = false
+validate_reference_cache = false
+max_location_diagnostics = true
+gamma0 = 1.0
+gamma2 = 0.0
+gauge_driver_enabled = true
+gauge_reference_subtraction = true
+gauge_mu = 1.0
+gauge_eta = 1.0
+shift_nu = 0.75
+shift_eta = 1.0
+exclude_puncture_stencil_diagnostics = true
+diss = 0.02
+fail_closed_dt = 1.0e-12
+
+<problem>
+pgen_name = ref_gh_stationary_trumpet
+user_hist = true
+stationary_rhs_convergence_mode = true
+initial_rhs_sector_diagnostics = false
+common_adm_history = true
+common_adm_fd_order = 4
+common_adm_exclude_puncture_stencils = true
+common_adm_puncture_x = 0.0
+common_adm_puncture_y = 0.0
+common_adm_puncture_z = 0.0
+stationary_region0_min = 0.5
+stationary_region0_max = 1.0
+stationary_region1_min = 1.0
+stationary_region1_max = 1.5
+stationary_region2_min = 1.5
+stationary_region2_max = 2.0
+
+<output1>
+file_type = hst
+dt = 0.05
+data_format = %20.15e
+
+<output2>
+file_type = rst
+dt = 1.0
+
+# Binary64 accepted-state telemetry.  These are scratch outputs; compact
+# summaries and hashes, not the field payloads, are committed.
+<output3>
+file_type = cbin
+variable = ref_gh
+id = ref_gh_health
+dt = 100.0
+coarsen_factor = 1
+compute_moments = false
+binary64 = true
+single_file_per_rank = false
+
+<output4>
+file_type = cbin
+variable = ref_gh_native_con
+id = ref_gh_native_health
+dt = 100.0
+coarsen_factor = 1
+compute_moments = false
+binary64 = true
+single_file_per_rank = false
+
+<output5>
+file_type = cbin
+variable = adm_common
+id = adm_common_health
+dt = 100.0
+coarsen_factor = 1
+compute_moments = false
+binary64 = true
+single_file_per_rank = false
+common_adm_fd_order = 4

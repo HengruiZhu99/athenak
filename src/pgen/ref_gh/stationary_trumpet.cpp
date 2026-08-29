@@ -8,6 +8,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <vector>
 
 #include "athena.hpp"
 #include "coordinates/cell_locations.hpp"
@@ -1061,6 +1062,7 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
     case 4: (void)pack->prefgh->CalcRHS<3>(nullptr, 1); break;
     case 6: (void)pack->prefgh->CalcRHS<4>(nullptr, 1); break;
   }
+  pack->prefgh->WriteInitialRhsSectorDiagnostics();
   if (pin->GetOrAddBoolean("problem", "debug_repeat_initial_rhs", false)) {
     switch (pack->prefgh->opt.fd_order) {
       case 2: (void)pack->prefgh->CalcRHS<2>(nullptr, 1); break;
@@ -1123,6 +1125,42 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
                                  rhs_block.x3min, rhs_block.x3max);
   initial_rhs_radius = std::sqrt((rhs_x-cx)*(rhs_x-cx) + (rhs_y-cy)*(rhs_y-cy)
                                  + (rhs_z-cz)*(rhs_z-cz));
+#if MPI_PARALLEL_ENABLED
+  // Preserve the location associated with the global maximum.  Reducing only
+  // the value left the component/radius rank-local in earlier campaign logs.
+  constexpr int kRhsLocationFields = 4;
+  Real local_rhs_location[kRhsLocationFields] = {
+    initial_rhs_linf, static_cast<Real>(initial_rhs_component),
+    initial_rhs_radius, static_cast<Real>(global_variable::my_rank)};
+  std::vector<Real> gathered_rhs_locations;
+  if (global_variable::my_rank == 0) {
+    gathered_rhs_locations.resize(
+        global_variable::nranks*kRhsLocationFields);
+  }
+  MPI_Gather(local_rhs_location, kRhsLocationFields, MPI_ATHENA_REAL,
+             gathered_rhs_locations.data(), kRhsLocationFields,
+             MPI_ATHENA_REAL, 0, MPI_COMM_WORLD);
+  Real global_rhs_location[kRhsLocationFields] = {};
+  if (global_variable::my_rank == 0) {
+    const Real *best = gathered_rhs_locations.data();
+    for (int rank = 1; rank < global_variable::nranks; ++rank) {
+      const Real *candidate = gathered_rhs_locations.data()
+          + rank*kRhsLocationFields;
+      if (candidate[0] > best[0]
+          || (candidate[0] == best[0] && candidate[2] < best[2])) {
+        best = candidate;
+      }
+    }
+    for (int field = 0; field < kRhsLocationFields; ++field) {
+      global_rhs_location[field] = best[field];
+    }
+  }
+  MPI_Bcast(global_rhs_location, kRhsLocationFields, MPI_ATHENA_REAL, 0,
+            MPI_COMM_WORLD);
+  initial_rhs_linf = global_rhs_location[0];
+  initial_rhs_component = static_cast<int>(global_rhs_location[1]);
+  initial_rhs_radius = global_rhs_location[2];
+#endif
 
   for (int region = 0; region < kFixedRadiusCount; ++region) {
     const Real minimum_radius = fixed_minimum_radius[region];
@@ -1283,8 +1321,6 @@ void ProblemGenerator::RefGhStationaryTrumpet(ParameterInput *pin, const bool re
     initial_structure_antisymmetry_linf = NAN;
   }
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, &initial_rhs_linf, 1, MPI_ATHENA_REAL, MPI_MAX,
-                MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, initial_rhs_fixed_linf, kFixedRadiusCount,
                 MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &initial_reference_ricci_linf, 1, MPI_ATHENA_REAL,
