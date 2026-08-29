@@ -81,15 +81,15 @@ test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]
 # This executable intentionally omits that monolithic correctness scaffolding,
 # so the PVC production image cannot silently carry the generic tensor oracle.
 grep -q '^all_61_rhs_oracle=PASS ' \
-  "${SRC}/artifacts/ref_gh_staged_rhs_performance_20260828/candidate2_local/status.txt"
+  "${SRC}/artifacts/ref_gh_staged_rhs_performance_20260828/candidate3_local/status.txt"
 grep -q '^compact_boundary_oracle=PASS ' \
-  "${SRC}/artifacts/ref_gh_staged_rhs_performance_20260828/candidate2_local/status.txt"
+  "${SRC}/artifacts/ref_gh_staged_rhs_performance_20260828/candidate3_local/status.txt"
 grep -q '^generic_bytes=0$' \
-  "${SRC}/artifacts/ref_gh_staged_rhs_performance_20260828/candidate2_local/status.txt"
+  "${SRC}/artifacts/ref_gh_staged_rhs_performance_20260828/candidate3_local/status.txt"
 grep -q '^analytic_hot_components=141$' \
-  "${SRC}/artifacts/ref_gh_staged_rhs_performance_20260828/candidate2_local/status.txt"
-grep -q '^staged_total_components_per_active_cell=106$' \
-  "${SRC}/artifacts/ref_gh_staged_rhs_performance_20260828/candidate2_local/status.txt"
+  "${SRC}/artifacts/ref_gh_staged_rhs_performance_20260828/candidate3_local/status.txt"
+grep -q '^staged_total_components_per_active_cell=126$' \
+  "${SRC}/artifacts/ref_gh_staged_rhs_performance_20260828/candidate3_local/status.txt"
 
 run_cycle() {
   local ranks="$1"
@@ -111,6 +111,7 @@ run_cycle() {
   grep -q 'ref_gh debug fence passed: ref_gh CalcRHS' run.log
   grep -q 'ref_gh debug fence passed: ref_gh NewTimeStep' run.log
   grep -q 'generic_bytes=0 analytic_static_components=12 analytic_stage_components=8 analytic_hot_components=141' run.log
+  grep -q 'rhs_physical_components=32 rhs_coordinate_components=84 rhs_scalar_components=10' run.log
   ! grep -Eiq 'FATAL ERROR|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' run.log
   cd "${OUT}"
 }

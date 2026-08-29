@@ -1,0 +1,29 @@
+source_worktree=/home/hzhu/Desktop/research/gr/athenak-ref-gh-staged-rhs-performance-20260828
+source_commit=627b0d447c39c67e364dda36ca2fcbc1e83e30f8
+build=/tmp/athenak-refgh-staged-baseline.QpPyb0
+compiler=/usr/bin/g++
+compiler_version=13.3.0
+kokkos_backend=SERIAL
+kokkos_commit=6739bc623081648af9e752b616d9671527922cbf
+sympy_environment=/tmp/refgh-staged-rhs-sympy-venv
+sympy_version=1.14.0
+
+configure_reproduction_command_from_committed_CMakeCache:
+cmake -S /home/hzhu/Desktop/research/gr/athenak-ref-gh-staged-rhs-performance-20260828 -B /tmp/athenak-refgh-staged-baseline.QpPyb0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DAthena_ENABLE_MPI=OFF -DAthena_ENABLE_OPENMP=OFF -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_OPENMP=OFF -DAthena_ENABLE_REF_GH_SOURCE_UNIT=ON -DPROBLEM=built_in_pgens
+
+build_command:
+cmake --build /tmp/athenak-refgh-staged-baseline.QpPyb0 -j8
+
+source_unit_command:
+/tmp/athenak-refgh-staged-baseline.QpPyb0/src/athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
+
+evolved_command_template:
+/tmp/athenak-refgh-staged-baseline.QpPyb0/src/athena -i tst/inputs/ref_gh_q_controlled_trumpet_prescribed.athinput time/nlim=1 time/tlim=1.0 ref_gh/reference_backend=<analytic_radial_q|generic_cache_oracle> ref_gh/phi_ordering=<compatible|standard> output1/dt=0.005 output2/dt=100
+
+comparison_command_template:
+python3 scripts/ref_gh/compare_ref_gh_evolved_histories.py <analytic_dir> <generic_dir> --output <comparison.json>
+
+deterministic_regeneration:
+Preserved from candidate 1 because no generator or generated header changed.
+The exact command and two SymPy 1.14 byte-identical outputs remain in
+candidate1_local/provenance.txt and candidate1_local/status.txt.
