@@ -1,0 +1,40 @@
+date=2026-08-28
+code_commit=ba563692e7e0c541eae35c94e35b33ee29a1336e
+branch=codex/ref-gh-staged-rhs-performance-20260828
+parent_baseline_commit=5b1e04d6b8c72091ed35a40434821ae974f1a6a3
+kokkos_commit=6739bc623081648af9e752b616d9671527922cbf
+compiler=GCC-13.3.0
+kokkos_backend=SERIAL
+sympy_version=1.14.0
+deterministic_regeneration=PASS
+regeneration_a_seconds=468.56
+regeneration_b_seconds=470.90
+generator_sha256=aed92b81ec14b9e9f6a081fbf87fcd6bd195ecf461849f8758d5031aba0ae10d
+generated_geometry_sha256=3b52e68fe86bf329b98dfd267b77fb38c94c5ca814b0da1adaeb9862faae17ea
+generated_gauge_sha256=676d680584ff07a5baa86d4614663111c84c5e1d8d389ee83371d641205855fd
+generated_source_sha256=4a698d5aebc2e86e9018c8e52661792e5a4ada20a897ae09d0c9af2831032575
+generated_hot_reference_sha256=2200c2e1c70cdb539ddfb43f8b03278ea7644eb8db3c50d5c15609e45d2f914c
+source_unit_executable_sha256=e7ef4c1366383233ef337f78dc084d4f026ae30bbf4c846e2d392ceb3fceddf2
+coefficient_oracle=PASS samples=216 error=8.88178e-15
+expanded_coefficient_oracle=PASS samples=2160 error=1.48837e-13
+generated_geometry_oracle=PASS samples=2376 error=2.33147e-15
+moving_gauge_oracle=PASS samples=2160 motion_error=1.24829e-14 dtTheta_error=3.54866e-17
+compact_boundary_projection_oracle=PASS samples=2160 metric_error=4.56474e-14 gauge_error=9.21858e-16 subtracted_gauge_error=7.11991e-16
+all_61_rhs_oracle=PASS samples=4320 error=2.84217e-14 backends=generic_cache,generated_joint_cse,hot_loop phi_orderings=compatible,standard
+generic_cache_oracle=PASS error=1.63758e-14
+generic_bytes=0
+analytic_static_components=12
+analytic_stage_components=8
+analytic_hot_components=141
+analytic_static_bytes=1327104
+analytic_stage_bytes=884736
+analytic_hot_bytes=15593472
+compatible_evolved_conditioned_linf=2.9721190786258234e-13
+compatible_common_adm_conditioned_linf=6.5378785419353676e-15
+standard_evolved_conditioned_linf=2.9721190786258234e-13
+standard_common_adm_conditioned_linf=4.385380947269368e-15
+evolved_tolerance=5.0e-12
+local_candidate=PASS
+aurora_pvc=PENDING
+matched_benchmark=PENDING
+retention_decision=PENDING_AURORA_COMPLETE_STAGE_TIMING

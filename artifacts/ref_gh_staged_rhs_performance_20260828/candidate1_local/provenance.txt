@@ -1,0 +1,25 @@
+source_worktree=/home/hzhu/Desktop/research/gr/athenak-ref-gh-staged-rhs-performance-20260828
+source_commit=ba563692e7e0c541eae35c94e35b33ee29a1336e
+build=/tmp/athenak-refgh-staged-baseline.QpPyb0
+compiler=/usr/bin/g++
+compiler_version=13.3.0
+kokkos_backend=SERIAL
+sympy_environment=/tmp/refgh-staged-rhs-sympy-venv
+
+configure_reproduction_command_from_committed_CMakeCache:
+cmake -S /home/hzhu/Desktop/research/gr/athenak-ref-gh-staged-rhs-performance-20260828 -B /tmp/athenak-refgh-staged-baseline.QpPyb0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DAthena_ENABLE_MPI=OFF -DAthena_ENABLE_OPENMP=OFF -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_OPENMP=OFF -DAthena_ENABLE_REF_GH_SOURCE_UNIT=ON -DPROBLEM=built_in_pgens
+
+build_command:
+cmake --build /tmp/athenak-refgh-staged-baseline.QpPyb0 -j4
+
+regeneration_command:
+/tmp/refgh-staged-rhs-sympy-venv/bin/python scripts/ref_gh/generate_analytic_radial_q_geometry.py --output <dir>/analytic_radial_q_geometry.hpp --gauge-output <dir>/analytic_radial_q_gauge.hpp --source-output <dir>/analytic_radial_q_source.hpp --hot-reference-output <dir>/analytic_radial_q_hot_reference.hpp
+
+source_unit_command:
+/tmp/athenak-refgh-staged-baseline.QpPyb0/src/athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
+
+evolved_command_template:
+/tmp/athenak-refgh-staged-baseline.QpPyb0/src/athena -i tst/inputs/ref_gh_q_controlled_trumpet_prescribed.athinput time/nlim=1 time/tlim=8.0 ref_gh/reference_backend=<analytic_radial_q|generic_cache_oracle> ref_gh/phi_ordering=<compatible|standard> output2/dt=100
+
+comparison_command_template:
+python3 scripts/ref_gh/compare_ref_gh_evolved_histories.py <analytic_dir> <generic_dir> --output <comparison.json>
