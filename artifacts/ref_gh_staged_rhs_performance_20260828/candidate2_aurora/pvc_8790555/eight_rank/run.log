@@ -1,0 +1,1386 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 8
+  Rank = 0: 1 MeshBlocks, cost = 1
+  Rank = 1: 1 MeshBlocks, cost = 1
+  Rank = 2: 1 MeshBlocks, cost = 1
+  Rank = 3: 1 MeshBlocks, cost = 1
+  Rank = 4: 1 MeshBlocks, cost = 1
+  Rank = 5: 1 MeshBlocks, cost = 1
+  Rank = 6: 1 MeshBlocks, cost = 1
+  Rank = 7: 1 MeshBlocks, cost = 1
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+ref_gh reference allocation backend=analytic_radial_q generic_bytes=0 analytic_static_components=12 analytic_stage_components=8 analytic_hot_components=141 analytic_static_bytes=393216 analytic_stage_bytes=262144 analytic_hot_bytes=4620288 rhs_physical_components=32 rhs_covariant_components=64 rhs_scalar_components=10 rhs_physical_bytes=131072 rhs_covariant_bytes=262144 rhs_scalar_bytes=40960
+ref_gh compact q sample list local_count=264 bytes=3168
+reference-GH puncture minimum cell-center radius = 0.216506
+reference-GH stationary physical-target audit: |F-H_constraint|_Linf=1.02141e-14, |tildeGamma|_Linf=4.72002e-16, |stored_Hhat_A|_Linf=0.223356, |stored_theta_A|_Linf=0.0525357
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+reference-GH stationary initial RHS Linf = 0.0864387, component=56, radius=0.649519, coordinate reference Ricci Linf=7.94092e-12, frame reference Ricci Linf=1.11022e-16
+reference-GH stationary RHS retained as a convergence observable; no single-resolution stationarity claim is made.
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+
+Setup complete, executing task list(s)...
+
+elapsed=9.007960e+00 cycle=0 time=0.000000e+00 dt=2.090302e-02
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh InitRecv
+ref_gh debug fence passed: ref_gh CopyU
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh UpdateReference
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS zero
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS psi
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged physical geometry and gauge
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged covariant preparation
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh CalcRHS staged scalar source components
+ref_gh debug fence passed: ref_gh CalcRHS staged pi principal components
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh CalcRHS compatible_phi
+ref_gh debug fence passed: ref_gh CalcRHS gamma2
+ref_gh debug fence passed: ref_gh CalcRHS
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh ExpRKUpdate
+ref_gh debug fence passed: ref_gh RestrictU
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh SendU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh RecvU
+ref_gh debug fence passed: ref_gh Prolongate
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: ref_gh NewTimeStep
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh compact q-controller reduction
+ref_gh debug fence passed: ref_gh compact MeasureQController
+ref_gh debug fence passed: ref_gh diagnostics reference
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh diagnostics constraints
+ref_gh debug fence passed: ref_gh diagnostics metric condition
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history sums
+ref_gh debug fence passed: ref_gh history state maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+ref_gh debug fence passed: ref_gh history diagnostic maxima
+ref_gh debug fence passed: ref_gh history geometry maxima
+reference-GH stationary trumpet: field Linf=2.055369e-03, physical metric Linf=6.501009e-05, lapse Linf=2.848095e-07, shift Linf=8.663063e-08, constraint Linf=4.984820e-03, RHS estimate=8.643866e-02
+elapsed=2.469522e+01 cycle=1 time=2.090302e-02 dt=2.090300e-02
+
+Terminating on cycle limit
+time=2.090302e-02 cycle=1
+tlim=1.000000e+00 nlim=1
+
+MeshBlock-cycles = 8
+cpu time used  = 1.568727e+01
+zone-cycles/cpu_second = 2.611034e+02
+particle-updates/cpu_second = 0.000000e+00

@@ -1,0 +1,57 @@
+{
+  "fractions_of_complete_dynamic_stage": {
+    "analytic_reference": 0.07255375777274756,
+    "communication_device_pack_unpack": 0.0024015949826024247,
+    "complete_warmed_stage": 1.0,
+    "dissipation": 0.011622618089909036,
+    "main_rhs_without_dissipation": 0.8414132951877962,
+    "physical_boundary": 0.05022293754567526,
+    "q_control": 0.0008364533071301852,
+    "rk_update": 0.0064489316595947276,
+    "staged_covariant_preparation": 0.008234296092749725,
+    "staged_physical_geometry_and_gauge": 0.2566386430415372,
+    "staged_pi_principal_components": 0.023830291885558772,
+    "staged_scalar_source_components": 0.5407745518264193
+  },
+  "limitations": [
+    "One MPI rank on one PVC tile; no inter-rank communication is present.",
+    "Communication timing is device SendBuff/RecvBuff only; host overhead is in the complete-stage residual.",
+    "The synchronized kernel profiles are separate from the unfenced throughput measurements.",
+    "Z4c is a matched grid/hardware execution control, not equal arithmetic work."
+  ],
+  "method": {
+    "active_cells": 262144,
+    "complete_stage_method": "(100-cycle cpu - 20-cycle cpu) / 320 stages",
+    "measured_cycles": 100,
+    "profile_cycles": 20,
+    "profile_method": "separate globally fenced Kokkos kernel profile",
+    "rk_stages_per_cycle": 4,
+    "warmup_cycles": 20
+  },
+  "ratios": {
+    "dynamic_q_over_static_complete_time": 1.0886524588191915,
+    "refgh_over_z4c_complete_time": 11.438815561514923,
+    "refgh_over_z4c_rhs_with_dissipation": 12.194939669221865,
+    "refgh_over_z4c_rhs_without_dissipation": 12.78507280150908
+  },
+  "seconds_per_stage": {
+    "analytic_reference": 0.007838279469135801,
+    "communication_device_pack_unpack": 0.0002594541375,
+    "complete_warmed_stage": 0.10803409375000002,
+    "dissipation": 0.001255639012345679,
+    "main_rhs_without_dissipation": 0.0909013228148148,
+    "physical_boundary": 0.005425789543209877,
+    "q_control": 9.036547499999999e-05,
+    "rk_update": 0.0006967044875,
+    "staged_covariant_preparation": 0.0008895847160493827,
+    "staged_physical_geometry_and_gauge": 0.02772572322222222,
+    "staged_pi_principal_components": 0.002574483987654321,
+    "staged_scalar_source_components": 0.05842208862962962
+  },
+  "targets": {
+    "dynamic_q_lt_1.10_static": true,
+    "q_control_lt_0.02_stage": true,
+    "reference_lt_0.10_stage": true,
+    "refgh_rhs_le_2_z4c_rhs": false
+  }
+}

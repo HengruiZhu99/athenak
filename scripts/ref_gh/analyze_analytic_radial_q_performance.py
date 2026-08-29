@@ -64,7 +64,17 @@ def main():
     dynamic_profile_stages = dynamic["ref_gh RK update"][0]
     z4c_profile_stages = z4c["z4c RK update"][0]
 
-    if "ref_gh scalar source and pi rhs team" in dynamic:
+    staged_names = [
+        "ref_gh psi rhs",
+        "ref_gh staged physical geometry and gauge",
+        "ref_gh staged covariant source preparation",
+        "ref_gh staged covariant scalar source components",
+        "ref_gh staged pi principal components",
+        "ref_gh compatible phi rhs",
+    ]
+    if "ref_gh staged covariant scalar source components" in dynamic:
+        rhs_names = staged_names
+    elif "ref_gh scalar source and pi rhs team" in dynamic:
         # The team-per-cell analytic kernel owns scalar/Pi, compatible or
         # standard Phi, and gamma2.  Do not add the retired split kernels.
         rhs_names = [
@@ -89,10 +99,15 @@ def main():
             "ref_gh compact current-q reduction",
         ],
     )
+    reference_names = ["ref_gh analytic radial-q stage reference"]
+    if "ref_gh analytic radial-q hot reference" in dynamic:
+        reference_names.append("ref_gh analytic radial-q hot reference")
+    reference_seconds = sum(
+        dynamic[name][1]/dynamic[name][0] for name in reference_names
+    )
     categories = {
         "q_control": dynamic[q_kernel][1] / dynamic[q_kernel][0],
-        "analytic_reference": dynamic["ref_gh analytic radial-q stage reference"][1]
-        / dynamic["ref_gh analytic radial-q stage reference"][0],
+        "analytic_reference": reference_seconds,
         "main_rhs_without_dissipation": refgh_rhs,
         "dissipation": refgh_diss,
         "rk_update": dynamic["ref_gh RK update"][1] / dynamic_profile_stages,
@@ -104,6 +119,21 @@ def main():
         / dynamic["ref_gh projected trumpet metric boundaries"][0],
         "complete_warmed_stage": dynamic_stage,
     }
+    if "ref_gh staged covariant scalar source components" in dynamic:
+        categories.update({
+            "staged_physical_geometry_and_gauge":
+                dynamic["ref_gh staged physical geometry and gauge"][1]
+                / dynamic["ref_gh staged physical geometry and gauge"][0],
+            "staged_covariant_preparation":
+                dynamic["ref_gh staged covariant source preparation"][1]
+                / dynamic["ref_gh staged covariant source preparation"][0],
+            "staged_scalar_source_components":
+                dynamic["ref_gh staged covariant scalar source components"][1]
+                / dynamic["ref_gh staged covariant scalar source components"][0],
+            "staged_pi_principal_components":
+                dynamic["ref_gh staged pi principal components"][1]
+                / dynamic["ref_gh staged pi principal components"][0],
+        })
     result = {
         "method": {
             "active_cells": 64**3,

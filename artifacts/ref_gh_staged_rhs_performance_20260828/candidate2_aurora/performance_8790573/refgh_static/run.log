@@ -1,0 +1,28 @@
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+ref_gh reference allocation backend=analytic_radial_q generic_bytes=0 analytic_static_components=12 analytic_stage_components=8 analytic_hot_components=141 analytic_static_bytes=35831808 analytic_stage_bytes=23887872 analytic_hot_bytes=421023744 rhs_physical_components=32 rhs_covariant_components=64 rhs_scalar_components=10 rhs_physical_bytes=67108864 rhs_covariant_bytes=134217728 rhs_scalar_bytes=20971520
+reference-GH puncture minimum cell-center radius = 0.0541266
+reference-GH stationary initial RHS Linf = 3.40419e-13, component=10, radius=0.22317, coordinate reference Ricci Linf=4.14162e-10, frame reference Ricci Linf=1.38778e-16
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_staged_rhs_20260829_candidate2_475e0963/src/src/parameter_input.cpp: input parameter <problem>/common_adm_history = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_staged_rhs_20260829_candidate2_475e0963/src/src/parameter_input.cpp: input parameter <problem>/common_adm_fd_order = 4 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=3.867400e+00 cycle=0 time=0.000000e+00 dt=5.118043e-03
+reference-GH stationary trumpet: field Linf=1.462164e-13, physical metric Linf=6.210144e-12, lapse Linf=5.351275e-14, shift Linf=6.035526e-16, constraint Linf=3.495920e-12, RHS estimate=3.404194e-13
+
+Terminating on cycle limit
+time=5.118043e-01 cycle=100
+tlim=1.000000e+02 nlim=100
+
+MeshBlock-cycles = 100
+cpu time used  = 4.216618e+01
+zone-cycles/cpu_second = 6.216925e+05
+particle-updates/cpu_second = 0.000000e+00
+real 46.63
+user 0.00
+sys 0.00

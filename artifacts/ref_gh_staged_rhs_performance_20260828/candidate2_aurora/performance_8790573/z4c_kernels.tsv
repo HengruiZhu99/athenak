@@ -1,0 +1,59 @@
+kernel	calls	total_seconds	average_seconds	percent
+z4c rhs loop	80	0.568796591	0.0071099573875	76.437090177
+ADM constraints loop	21	0.060198204	0.00286658114286	8.08966794184
+K-O Dissipation	80	0.035762115	0.0004470264375	4.80585160394
+z4c RK update	80	0.016312229	0.0002039028625	2.1921005484
+z4crhs_bc_x1	81	0.010204736	0.000125984395062	1.37135197047
+CopyCons	60	0.009667034	0.000161117233333	1.29909349193
+SendBuff	162	0.007640132	4.7161308642e-05	1.02671054625
+RecvBuff	162	0.006421317	3.96377592593e-05	0.862921463226
+z4cbc_x1	81	0.006106652	7.53907654321e-05	0.820635561094
+initialize z4c fields	22	0.005450417	0.000247746227273	0.732448158662
+z4crhs_bc_x2	81	0.003979834	4.91337530864e-05	0.534825516117
+z4crhs_bc_x3	81	0.003881814	4.79236296296e-05	0.521653208657
+Alg constr loop	21	0.001963861	9.35171904762e-05	0.263911251803
+Z4c dt	21	0.001570656	7.47931428571e-05	0.211070840101
+Kokkos::View::initialization [] via memset	209	0.001542807	7.38185167464e-06	0.207328383557
+z4cbc_x2	81	0.001374962	1.69748395062e-05	0.184772722001
+z4cbc_x3	81	0.001369507	1.69074938272e-05	0.184039657961
+pgen one puncture	1	0.00071938	0.00071938	0.0966730722398
+GaugePreCollapsedLapse	1	0.000386964	0.000386964	0.0520017219358
+Kokkos::View::initialization [mb_gid] via memset	1	0.000128957	0.000128957	0.0173297414118
+initialize Gamma	1	8.1708e-05	8.1708e-05	0.010980237686
+invert z4c metric	1	5.8231e-05	5.8231e-05	0.00782530744474
+Kokkos::View::initialization [u_rhs z4c] via memset	2	4.6276e-05	2.3138e-05	0.00621874821509
+Kokkos::View::initialization [u1 z4c] via memset	2	4.1763e-05	2.08815e-05	0.00561227378569
+Kokkos::View::initialization [u0 z4c] via memset	2	4.1733e-05	2.08665e-05	0.00560824226943
+Kokkos::View::initialization [uin] via memset	4	3.3922e-05	8.4805e-06	0.00455856981918
+Kokkos::View::initialization [u_adm] via memset	2	3.136e-05	1.568e-05	0.00421427833056
+Kokkos::View::initialization [iin] via memset	4	2.8975e-05	7.24375e-06	0.00389377278789
+Kokkos::View::initialization [bin] via memset	4	2.8851e-05	7.21275e-06	0.00387710918734
+Kokkos::View::initialization [u_con] via memset	2	2.8828e-05	1.4414e-05	0.00387401835821
+Kokkos::View::initialization [g_uu] via memset	1	2.5999e-05	2.5999e-05	0.00349384637488
+Kokkos::View::initialization [recv_agg_offset] via memset	3	2.4366e-05	8.122e-06	0.00327439750646
+Kokkos::View::initialization [send_agg_offset] via memset	3	2.1875e-05	7.29166666667e-06	0.00293964727299
+Kokkos::View::initialization [u_common_adm_constraints] via memset	2	1.9245e-05	9.6225e-06	0.00258621768086
+Kokkos::View::initialization [u_weyl] via memset	2	1.884e-05	9.42e-06	0.00253179221135
+Kokkos::View::initialization [ru] via memset	1	1.5304e-05	1.5304e-05	0.00205661082816
+Kokkos::View::initialization [rank_sendbuf_vars] via memset	2	1.5271e-05	7.6355e-06	0.00205217616027
+Kokkos::View::initialization [rank_recvbuf_vars] via memset	2	1.4798e-05	7.399e-06	0.00198861258723
+Kokkos::View::initialization [mbsize] via memset	1	1.1811e-05	1.1811e-05	0.0015872079516
+Kokkos::View::initialization [mb_lev] via memset	1	1.1644e-05	1.1644e-05	0.00156476584442
+Kokkos::View::initialization [excision_floor] via memset	1	1.055e-05	1.055e-05	0.0014177498848
+Kokkos::View::initialization [excision_flux] via memset	1	1.0389e-05	1.0389e-05	0.00139611408087
+Kokkos::View::initialization [mbbcs] via memset	1	8.761e-06	8.761e-06	0.00117733713183
+Kokkos::View::initialization [coarse_u_weyl] via memset	1	7.577e-06	7.577e-06	0.00101822662343
+Kokkos::View::initialization [coarse u0 z4c] via memset	1	7.518e-06	7.518e-06	0.00101029797478
+Kokkos::View::initialization [DualView::modified_flags] via memset	11	4.564e-06	4.14909090909e-07	0.000613328007037
+Kokkos::View::initialization [bin_mirror] via memset	4	1.436e-06	3.59e-07	0.000192975244984
+Kokkos::View::initialization [uin_mirror] via memset	4	1.334e-06	3.335e-07	0.000179268089699
+Kokkos::View::initialization [iin_mirror] via memset	4	1.182e-06	2.955e-07	0.000158841740648
+Kokkos::View::initialization [rank_sendhdr_vars] via memset	2	6.89e-07	3.445e-07	9.25904901071e-05
+Kokkos::View::initialization [recv_agg_offset_mirror] via memset	1	5.98e-07	5.98e-07	8.03615574514e-05
+Kokkos::View::initialization [_mirror] via memset	1	5.62e-07	5.62e-07	7.55237379393e-05
+Kokkos::View::initialization [rank_recvhdr_vars] via memset	2	5.58e-07	2.79e-07	7.4986202438e-05
+Kokkos::View::initialization [mb_gid_mirror] via memset	1	5.47e-07	5.47e-07	7.35079798093e-05
+Kokkos::View::initialization [mbbcs_mirror] via memset	1	4.97e-07	4.97e-07	6.67887860424e-05
+Kokkos::View::initialization [send_agg_offset_mirror] via memset	1	4.64e-07	4.64e-07	6.23541181563e-05
+Kokkos::View::initialization [mbsize_mirror] via memset	1	4.08e-07	4.08e-07	5.48286211374e-05
+Kokkos::View::initialization [mb_lev_mirror] via memset	1	2.94e-07	2.94e-07	3.9508859349e-05

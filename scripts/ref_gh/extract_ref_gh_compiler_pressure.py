@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 
 
-LAMBDA_NAMES = {
+GENERIC_LAMBDA_NAMES = {
     "": "psi_rhs",
     "0": "generic_gauge_driver",
     "1": "scalar_source_and_pi_rhs",
@@ -18,6 +18,21 @@ LAMBDA_NAMES = {
     "5": "dissipation",
 }
 
+ANALYTIC_LAMBDA_NAMES = {
+    "": "psi_rhs",
+    "0": "staged_physical_geometry_and_gauge",
+    "1": "staged_covariant_preparation",
+    "2": "compatible_phi_rhs",
+    "3": "standard_phi_rhs",
+    "4": "gamma2_reduction_damping",
+    "5": "dissipation",
+}
+
+ANALYTIC_FLAT_NAMES = {
+    "0": "staged_scalar_source_components",
+    "1": "staged_pi_principal_components",
+}
+
 
 def main() -> None:
     parser = argparse.ArgumentParser()
@@ -25,21 +40,36 @@ def main() -> None:
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     rows = ["line\tfdng\tanalytic\tlambda\tkernel\tsimd\tregs\tspill_reals"]
-    pattern = re.compile(
+    par_for_pattern = re.compile(
         r"CalcRHSImplILi(?P<fdng>\d+)ELb(?P<analytic>[01]).*?"
         r"EUliiiiE(?P<lambda>\d*)_.*?compiled SIMD(?P<simd>\d+) "
         r"allocated (?P<regs>\d+) regs and spilled around (?P<spill>\d+)")
+    flat_pattern = re.compile(
+        r"CalcRHSImplILi(?P<fdng>\d+)ELb1EEE.*?EUliE(?P<lambda>\d+)_.*?"
+        r"compiled SIMD(?P<simd>\d+) allocated (?P<regs>\d+) regs and "
+        r"spilled around (?P<spill>\d+)")
     for line_number, line in enumerate(
             args.build_log.read_text(encoding="utf-8", errors="replace").splitlines(),
             start=1):
-        match = pattern.search(line)
+        match = flat_pattern.search(line)
+        policy = "flat"
+        if match is None:
+            match = par_for_pattern.search(line)
+            policy = "par_for"
         if match is None:
             continue
         values = match.groupdict()
         lambda_id = values["lambda"]
+        analytic = values.get("analytic", "1")
+        if policy == "flat":
+            kernel = ANALYTIC_FLAT_NAMES.get(lambda_id, "unknown_flat")
+        elif analytic == "1":
+            kernel = ANALYTIC_LAMBDA_NAMES.get(lambda_id, "unknown")
+        else:
+            kernel = GENERIC_LAMBDA_NAMES.get(lambda_id, "unknown")
         rows.append("\t".join((
-            str(line_number), values["fdng"], values["analytic"],
-            lambda_id or "base", LAMBDA_NAMES.get(lambda_id, "unknown"),
+            str(line_number), values["fdng"], analytic,
+            lambda_id or "base", kernel,
             values["simd"], values["regs"], values["spill"])))
     rendered = "\n".join(rows) + "\n"
     if args.output is None:

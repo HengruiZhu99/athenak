@@ -259,3 +259,31 @@ final production source is restored exactly to the compact-boundary source
 qualified by job 8789663 and measured by job 8789684.  The controlling measured
 main-RHS ratio therefore remains `10.5245x` Z4c, and production readiness is
 still **not established**.
+
+## Staged active-cell discriminator
+
+The next bounded implementation split the analytic primary RHS into ordinary
+flat kernels with exactly 106 transient Reals per active cell: 32 physical,
+64 packed covariant-source preparation, and 10 scalar-source components.  The
+generic oracle dispatch remained unchanged.  Local deterministic regeneration,
+all coefficient/geometry/gauge/all-61 gates, and fresh compatible and standard
+full-output comparisons passed at unchanged tolerances.
+
+Aurora job 8790555 qualified the one/eight-rank full-output dynamic-q cycle at
+commit `7e8ab79b41213546be882b22d728b7f95eec3051`; the conditioned history
+difference was `1.56518125145110397e-14` against `5e-12`.  Job 8790573 then
+provided the controlling warm and synchronized profile.  The FD4 staged scalar
+source spilled only 7 Reals, but took `0.0584221 s` per stage, 54.08% of the
+complete `0.1080341 s` stage.  Physical geometry/gauge took `0.0277257 s`
+(25.66%).  The complete Ref-GH/Z4c ratio was `11.4388x` and the no-dissipation
+RHS ratio `12.7851x`, both worse than the frozen compact-boundary production
+baseline.  Candidate 2 is therefore rejected despite passing correctness and
+the q/reference/dynamic-static overhead gates.
+
+The low-spill scalar source is now demonstrated to be arithmetic-bound.  This
+activates the prescribed coordinate-source A/B discriminator: a componentized
+standard-coordinate GH source followed by the analytic frame transform, with
+the generic covariant path retained as oracle.  It may use up to 128 transient
+Reals per active cell only because the measured 106-Real covariant schedule is
+the dominant regression.  No claim is made until the replacement passes the
+all-61 oracle, the PVC evolved gate, and a fresh matched profile.
