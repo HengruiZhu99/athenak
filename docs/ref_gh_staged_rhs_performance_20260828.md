@@ -11,14 +11,15 @@ matched that commit before this separate worktree and branch were created.
 Branch under development:
 `codex/ref-gh-staged-rhs-performance-20260828`.
 
-The controlling baseline is the retained ordinary-RangePolicy production path:
+The controlling inherited baseline is the retained ordinary-RangePolicy
+production path:
 
 - 12 static plus 8 stage analytic radial-q Reals per ghosted cell;
 - no generic provider/workspace/evolution/diagnostic allocation in analytic
   mode;
 - `T_RefGH,RHS/T_Z4c,RHS = 10.524508196915962` from Aurora job 8789684;
-- the retained primary analytic RHS kernel previously reported about 503
-  spilled Reals per work item.
+- a handoff estimate of about 503 spilled Reals per work item, superseded below
+  by the fresh exact-current-build compiler report.
 
 The rejected team-per-cell and non-inlined-team variants are not part of this
 work.  Equations, q dependence, gauge driver, gamma0/gamma2, Phi ordering,
@@ -68,17 +69,57 @@ Compact logs and histories are under
 `artifacts/ref_gh_staged_rhs_performance_20260828/baseline_local/`; restart
 files remain only in the temporary run directory and are not committed.
 
-## Phase 1 Aurora status
+## Phase 1 Aurora baseline
 
 A fresh remote source clone is staged at:
 
 `/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_staged_rhs_20260828_baseline_a09caf_phase1`
 
-The first submission attempt on 2026-08-28 was rejected before a job was
-created because another unrelated user job occupied the per-user queued-job
-limit.  That job and its directory were not touched.  The required fresh
-one/eight-tile full-output baseline, current compiler register/spill report,
-and matched warmed 64-cubed benchmark therefore remain pending.
+An initial `qsub` command printed a per-user queued-job-limit diagnostic, but
+inspection found that it had nevertheless created job 8790322.  No other job
+or directory was touched.  Both retained jobs ran in Aurora's `debug` queue,
+charged to `CompactBinaryMerger`:
+
+- job 8790322, node `x4610c7s6b0n0`, passed the bounded dynamic-q one/eight-rank
+  full-output evolved gate;
+- all eight ranks mapped to distinct PVC tiles (`0.0` through `3.1`);
+- one/eight-rank conditioned Linf difference was
+  `3.88980825583101983e-14`, below the unchanged `5e-12` tolerance;
+- executable SHA-256 was
+  `5d56f36afa384694fa55704affd08e478c637b9e6425113df79fbc25fd9a166f`;
+- job 8790348, node `x4610c7s2b0n0`, completed the matched warmed 64-cubed
+  dynamic/static Ref-GH and Z4c measurement.
+
+The fresh compiler report is authoritative for this exact build.  For finite
+difference orders 4 and 3 the primary analytic scalar-source/Pi kernel uses
+SIMD16, 256 registers and reports 1,279 spilled Reals per work item; order 2
+reports 1,282.  This supersedes the inherited approximate 503-Real estimate,
+which was not from this exact retained build.  The generic gauge-driver kernel
+also reports 386 spilled Reals, but it is not active in the matched benchmark.
+
+The warmed, unchanged-input aggregate is:
+
+| Metric | Value |
+|---|---:|
+| dynamic-q Ref-GH complete stage | 0.08696205 s |
+| static Ref-GH complete stage | 0.08636561 s |
+| Z4c complete stage | 0.009406503 s |
+| dynamic/static complete-stage ratio | 1.006906 |
+| Ref-GH/Z4c complete-stage ratio | 9.244886 |
+| Ref-GH/Z4c RHS ratio, no dissipation | 10.902828 |
+| Ref-GH/Z4c RHS ratio, including dissipation | 10.422812 |
+| q-control fraction of Ref-GH stage | 0.6073% |
+| analytic-reference fraction of Ref-GH stage | 0.0475% |
+| main RHS fraction of Ref-GH stage | 88.8541% |
+| physical-boundary fraction of Ref-GH stage | 7.7391% |
+
+Thus all compact-controller/reference overhead targets pass, while the required
+RHS ratio of at most 2 does not.  Raw throughput-only ratios in the job's
+`performance_summary.tsv` do not subtract the 20-cycle warmup and are not used
+for the controlling comparison.  The deterministic analyzer and exact compiler
+extractor are committed under `scripts/ref_gh/`; their JSON/TSV results and all
+compact logs are under
+`artifacts/ref_gh_staged_rhs_performance_20260828/baseline_aurora/`.
 
 ## Qualification and claim boundary
 
@@ -88,8 +129,10 @@ Current state:
 - deterministic generation: fresh pass;
 - local coefficient/geometry/mixed-gauge/boundary/all-61 gates: fresh pass;
 - local analytic allocation: fresh pass;
-- fresh Aurora one/eight-tile baseline: pending;
-- fresh Aurora matched benchmark: pending;
+- fresh Aurora one/eight-tile baseline: passed;
+- fresh Aurora matched benchmark: complete, target failed at 10.902828 RHS;
+- exact primary RHS compiler pressure: 256 registers, 1,279--1,282 spilled
+  Reals per work item;
 - staged hot-reference or physical scratch implementation: not started;
 - Ref-GH performance target: not established.
 

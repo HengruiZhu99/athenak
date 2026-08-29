@@ -1,0 +1,57 @@
+{
+  "fractions_of_complete_dynamic_stage": {
+    "analytic_reference": 0.00047526167886169287,
+    "communication_device_pack_unpack": 0.0028104444269959005,
+    "complete_warmed_dynamic_stage": 1.0,
+    "dissipation": 0.014121467469763747,
+    "main_rhs_without_dissipation": 0.8885408501572644,
+    "physical_boundary": 0.0773910724956596,
+    "q_control": 0.0060727678795221545,
+    "rk_update": 0.007639568770212437
+  },
+  "limitations": [
+    "One MPI rank on one PVC tile; no inter-rank communication is present.",
+    "Synchronized kernel profiles are separate from unfenced throughput.",
+    "Device SendBuff/RecvBuff timings omit host and MPI overhead.",
+    "Z4c is a matched grid/hardware control, not equal arithmetic work."
+  ],
+  "method": {
+    "complete_stage_method": "(measured cpu - warmup cpu) / (cycle delta * 4)",
+    "profile_method": "separate globally fenced Kokkos kernel profile",
+    "profile_refgh_stages": 80,
+    "profile_z4c_stages": 80,
+    "refgh_dynamic_measured_cycles": 100,
+    "refgh_dynamic_warmup_cycles": 20,
+    "refgh_static_measured_cycles": 100,
+    "refgh_static_warmup_cycles": 20,
+    "rk_stages_per_cycle": 4,
+    "z4c_measured_cycles": 100,
+    "z4c_warmup_cycles": 20
+  },
+  "ratios": {
+    "dynamic_q_over_static_complete_time": 1.0069059970849217,
+    "refgh_over_z4c_complete_time": 9.244886383116361,
+    "refgh_over_z4c_rhs_with_dissipation": 10.422812008961026,
+    "refgh_over_z4c_rhs_without_dissipation": 10.902828308096677
+  },
+  "seconds_per_stage": {
+    "analytic_reference": 4.132972839506173e-05,
+    "communication_device_pack_unpack": 0.000244402,
+    "complete_warmed_dynamic_stage": 0.086962046875,
+    "complete_warmed_static_stage": 0.08636560625,
+    "complete_warmed_z4c_stage": 0.0094065025,
+    "dissipation": 0.0012280317160493826,
+    "main_rhs_without_dissipation": 0.07726933106172838,
+    "physical_boundary": 0.006730086074074074,
+    "q_control": 0.000528100325,
+    "rk_update": 0.0006643525375,
+    "z4c_dissipation": 0.00044421319999999996,
+    "z4c_rhs_without_dissipation": 0.0070870905125
+  },
+  "targets": {
+    "dynamic_q_lt_1.10_static": true,
+    "q_control_lt_0.02_stage": true,
+    "reference_lt_0.10_stage": true,
+    "refgh_rhs_le_2_z4c_rhs": false
+  }
+}
