@@ -1,0 +1,2 @@
+bootstrap_begin=2026-08-29T23:45:04+00:00
+phase8_t3_failure status=134 line=128 command=( cd run_t3; /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth "${BINDER}" "${EXE}" -i "${INPUT}" job/basename="${BASENAME}" time/tlim="${TARGET_TIME}" time/nlim=-1 output2/dt=1.0 output3/dt=-1 output4/dt=-1 output5/dt=-1 > run.log 2>&1 )

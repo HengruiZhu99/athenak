@@ -185,3 +185,11 @@ stops at 3M before any 5M continuation, and that its replay discriminator
 rejects frozen Case D without turning descriptive control comparisons into
 adjustable pass thresholds.  The presence of these scripts is not evolved
 evidence.
+
+Also inspect
+`artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase8_aurora_8791456_cycle0_gpu_fault/`.
+Job `8791456` initialized the exact 96^3 state and cycle-zero diagnostics on 12
+PVC tiles, then hit a Level Zero `NotPresent` write page fault before positive
+time.  Treat it as a task/view portability failure, not a gauge-mode or
+stability result.  Audit the first-stage task/view lifetimes and advise the
+smallest equation-preserving localization or correction.

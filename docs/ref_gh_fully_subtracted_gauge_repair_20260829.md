@@ -33,6 +33,18 @@ recovers the frozen Case-D e-folding time `0.037516548684379786M` and rejects
 that run, while accepting the completed Case-A gauge-off 5M control.  These are
 analyzer-validation results, not repaired evolution evidence.
 
+The first launch, Aurora debug job `8791456`, did not produce evolved
+scientific evidence.  The source-identical Phase-7 executable initialized the
+96^3 state on 12 distinct PVC tiles and reproduced the exact-zero residual
+gauge sectors at cycle zero.  Immediately after cycle-zero output, all ranks
+reported Level Zero `NotPresent` GPU write page faults and the Intel runtime
+aborted with PBS exit 134.  No positive time was reached.  This is currently
+classified as a first-stage PVC task/view portability failure, not recurrence
+of the old `0.0375M` mode and not a formulation verdict.  Compact logs are in
+`phase8_aurora_8791456_cycle0_gpu_fault`; the 1.46-GB initial restart is
+recorded by remote path but not committed.  A single fence-instrumented cycle
+is the next bounded discriminator before any further 3M attempt.
+
 ## Claim boundary
 
 This investigation begins from the completed
