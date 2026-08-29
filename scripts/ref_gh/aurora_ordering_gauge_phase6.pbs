@@ -1,0 +1,182 @@
+#!/bin/bash -l
+# Conditional Phase-6 discriminator after A/B pass and C/D fail: extend the
+# two healthy gauge-off cases to 5M and run standard-ordering gauge-off Case E.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_gauge_e
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?fresh campaign root from Phase 2/3}"
+: "${EXPECTED_COMMIT:?full source/input commit}"
+: "${BUILD_COMMIT:?commit used by the preserved executable}"
+: "${EXPECTED_EXE_SHA256:?preserved executable SHA-256}"
+: "${PHASE23_JOBID:?successful Phase 2/3 PBS job id}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${BUILD_COMMIT:0:12}"
+EXE="${BUILD}/src/athena"
+PREVIOUS=$(find "${CAMPAIGN_ROOT}/runs" -mindepth 1 -maxdepth 1 -type d \
+  -name "ordering_gauge_phase23_${PHASE23_JOBID}*" -print -quit)
+OUT="${CAMPAIGN_ROOT}/runs/ordering_gauge_phase6_${PBS_JOBID}"
+INPUT_E="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_case_e.athinput"
+
+test -n "${PREVIOUS}"
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "phase6_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+BINDER=$(command -v gpu_tile_compact.sh)
+test -x "${BINDER}"
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+actual_exe_sha256=$(sha256sum "${EXE}" | awk '{print $1}')
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test "${actual_exe_sha256}" = "${EXPECTED_EXE_SHA256}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+test -z "$(git -C "${SRC}" diff --name-only "${BUILD_COMMIT}" "${EXPECTED_COMMIT}" -- src)"
+test -s "${PREVIOUS}/gate_status.txt"
+grep -q 'PASS_PHASE2_GATE_PHASE3_MATRIX_COMPLETED' "${PREVIOUS}/gate_status.txt"
+echo "bootstrap_checks=PASS"
+
+restart_a="${PREVIOUS}/case_a_t3/rst/case_a_t3.00003.rst"
+restart_b="${PREVIOUS}/case_b_t3/rst/case_b_t3.00003.rst"
+test -s "${restart_a}"
+test -s "${restart_b}"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "build_commit=${BUILD_COMMIT}"
+  echo "executable_sha256=${actual_exe_sha256}"
+  echo "phase23_jobid=${PHASE23_JOBID}"
+  echo "phase23_output=${PREVIOUS}"
+  echo "restart_a=${restart_a}"
+  echo "restart_b=${restart_b}"
+  sha256sum "${restart_a}" "${restart_b}" "${INPUT_E}" "$0"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+} > provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
+  | sort -u | wc -l)" -eq 12
+
+continue_case() {
+  local case_name="$1"
+  local restart_path="$2"
+  local directory="case_${case_name}_t5"
+  mkdir "${directory}"
+  set +e
+  (
+    cd "${directory}"
+    /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+      "${BINDER}" "${EXE}" -r "${restart_path}" \
+      job/basename="case_${case_name}_t5" time/tlim=5.0 time/nlim=-1 \
+      output3/dt=-1 output4/dt=-1 output5/dt=-1 > run.log 2>&1
+  )
+  local status=$?
+  set -e
+  local history="${directory}/case_${case_name}_t5.ref_gh.hst"
+  local last_time
+  last_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' \
+    "${history}" 2>/dev/null || echo 0)
+  {
+    echo "case=${case_name}"
+    echo "run_exit_status=${status}"
+    echo "restart_path=${restart_path}"
+    echo "requested_final_time=5.0"
+    echo "latest_history_time=${last_time}"
+    tail -1 "${history}" 2>/dev/null || true
+  } > "${directory}/run_status.txt"
+}
+
+continue_case a "${restart_a}"
+continue_case b "${restart_b}"
+
+# Independent binary64 snapshot trajectory for the prescribed Case E.
+mkdir case_e_snapshot
+set +e
+(
+  cd case_e_snapshot
+  /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+    "${BINDER}" "${EXE}" -i "${INPUT_E}" \
+    job/basename=case_e_snapshot time/tlim=0.2 time/nlim=-1 \
+    output2/dt=-1 output3/dt=0.2 output4/dt=0.2 output5/dt=0.2 > run.log 2>&1
+)
+snapshot_status=$?
+set -e
+snapshot_count=$(find case_e_snapshot -type f -name '*.cbin' | wc -l)
+{
+  echo "case=e"
+  echo "run_exit_status=${snapshot_status}"
+  echo "requested_final_time=0.2"
+  echo "binary64_file_count=${snapshot_count}"
+  tail -1 case_e_snapshot/case_e_snapshot.ref_gh.hst 2>/dev/null || true
+} > case_e_snapshot/run_status.txt
+
+mkdir case_e_t3
+set +e
+(
+  cd case_e_t3
+  /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+    "${BINDER}" "${EXE}" -i "${INPUT_E}" \
+    job/basename=case_e_t3 time/tlim=3.0 time/nlim=-1 \
+    output3/dt=-1 output4/dt=-1 output5/dt=-1 > run.log 2>&1
+)
+case_e_status=$?
+set -e
+case_e_last=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' \
+  case_e_t3/case_e_t3.ref_gh.hst 2>/dev/null || echo 0)
+{
+  echo "case=e"
+  echo "run_exit_status=${case_e_status}"
+  echo "requested_final_time=3.0"
+  echo "latest_history_time=${case_e_last}"
+  tail -1 case_e_t3/case_e_t3.ref_gh.hst 2>/dev/null || true
+} > case_e_t3/run_status.txt
+
+python3 - . <<'PY' > phase6_status.tsv
+import pathlib
+import re
+
+root = pathlib.Path(".")
+print("case\texit_status\tlast_time\treached_target")
+for case_name, target in (("a", 5.0), ("b", 5.0), ("e", 3.0)):
+    directory = root / f"case_{case_name}_t{int(target)}"
+    text = (directory / "run_status.txt").read_text(encoding="utf-8")
+    status = int(re.search(r"run_exit_status=([^\s]+)", text).group(1))
+    last_time = float(re.search(r"latest_history_time=([^\s]+)", text).group(1))
+    reached = last_time >= target - 1.0e-10
+    print(f"{case_name}\t{status}\t{last_time:.17e}\t{int(reached)}")
+PY
+
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' -o -name '*.json' \) -print0 \
+  | sort -z | xargs -0 sha256sum > compact_sha256.txt
+echo 'result=PHASE6_CASE_E_COMPLETED' > gate_status.txt
