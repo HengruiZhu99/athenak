@@ -1,0 +1,144 @@
+#!/bin/bash -l
+# Complete the bounded Phase-6/7 evidence: fresh A/B to 5M plus a three-grid
+# cycle-zero stationary gauge-driver residual oracle.  No formulation change.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -N refgh_phase67
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?existing isolated campaign root}"
+: "${EXPECTED_COMMIT:?full source/input/script commit}"
+: "${BUILD_COMMIT:?commit used by the preserved executable}"
+: "${EXPECTED_EXE_SHA256:?preserved executable SHA-256}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_${BUILD_COMMIT:0:12}"
+EXE="${BUILD}/src/athena"
+OUT="${CAMPAIGN_ROOT}/runs/ordering_gauge_phase67_${PBS_JOBID}"
+INPUT_A="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_case_a.athinput"
+INPUT_B="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_case_b.athinput"
+INPUT_FIXED="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_fixed_point.athinput"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "phase67_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+BINDER=$(command -v gpu_tile_compact.sh)
+test -x "${BINDER}"
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+actual_exe_sha256=$(sha256sum "${EXE}" | awk '{print $1}')
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test "${actual_exe_sha256}" = "${EXPECTED_EXE_SHA256}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+test -z "$(git -C "${SRC}" diff --name-only "${BUILD_COMMIT}" "${EXPECTED_COMMIT}" -- src)"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "source_commit=${actual_commit}"
+  echo "build_commit=${BUILD_COMMIT}"
+  echo "executable_sha256=${actual_exe_sha256}"
+  sha256sum "${INPUT_A}" "${INPUT_B}" "${INPUT_FIXED}" "$0"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+} > provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
+  | sort -u | wc -l)" -eq 12
+
+run_fresh_case() {
+  local case_name="$1"
+  local input="$2"
+  local directory="case_${case_name}_t5_fresh"
+  mkdir "${directory}"
+  set +e
+  (
+    cd "${directory}"
+    /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+      "${BINDER}" "${EXE}" -i "${input}" \
+      job/basename="case_${case_name}_t5_fresh" time/tlim=5.0 time/nlim=-1 \
+      output2/dt=-1 output3/dt=-1 output4/dt=-1 output5/dt=-1 > run.log 2>&1
+  )
+  local status=$?
+  set -e
+  local history="${directory}/case_${case_name}_t5_fresh.ref_gh.hst"
+  local last_time
+  last_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' \
+    "${history}" 2>/dev/null || echo 0)
+  {
+    echo "case=${case_name}"
+    echo "run_exit_status=${status}"
+    echo "requested_final_time=5.0"
+    echo "latest_history_time=${last_time}"
+    tail -1 "${history}" 2>/dev/null || true
+  } > "${directory}/run_status.txt"
+}
+
+run_fixed_point() {
+  local nx="$1"
+  local directory="fixed_point_n${nx}"
+  mkdir "${directory}"
+  (
+    cd "${directory}"
+    /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+      "${BINDER}" "${EXE}" -i "${INPUT_FIXED}" \
+      job/basename="fixed_point_n${nx}" \
+      mesh/nx1="${nx}" mesh/nx2="${nx}" mesh/nx3="${nx}" \
+      time/tlim=0.0 time/nlim=0 output2/dt=-1 output3/dt=-1 \
+      output4/dt=-1 output5/dt=-1 > run.log 2>&1
+  )
+  grep -q 'reference-GH initial RHS sector decomposition passed' \
+    "${directory}/run.log"
+  test -s "${directory}/fixed_point_n${nx}.ref_gh_rhs_sectors.tsv"
+}
+
+# Cheap exact-state oracle first; then the two bounded healthy controls.
+for nx in 64 96 128; do
+  run_fixed_point "${nx}"
+done
+run_fresh_case a "${INPUT_A}"
+run_fresh_case b "${INPUT_B}"
+
+python3 - . <<'PY' > phase67_status.tsv
+import pathlib
+import re
+
+root = pathlib.Path(".")
+print("case\texit_status\tlast_time\treached_target")
+for case_name in ("a", "b"):
+    text = (root / f"case_{case_name}_t5_fresh/run_status.txt").read_text()
+    status = int(re.search(r"run_exit_status=([^\s]+)", text).group(1))
+    last_time = float(re.search(r"latest_history_time=([^\s]+)", text).group(1))
+    print(f"{case_name}\t{status}\t{last_time:.17e}\t{int(last_time >= 5.0 - 1e-10)}")
+PY
+
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' -o -name '*.json' \) -print0 \
+  | sort -z | xargs -0 sha256sum > compact_sha256.txt
+echo 'result=PHASE67_FIXED_POINT_AND_FRESH_CONTROLS_COMPLETED' > gate_status.txt
