@@ -310,8 +310,12 @@ void MeshBoundaryValuesVC::ProlongateVC(DvceArray5D<Real> &a,
   const int neighbor_work = compact_work ? nprolongation_neighbor_work
                                          : nmb * nnghbr;
   const auto vertex_layout = layout;
-  DvceArray1D<unsigned long long> invalid("invalid VC boundary prolongation", 1);
-  Kokkos::deep_copy(invalid, 0ULL);
+  DvceArray1D<unsigned long long> invalid;
+  if (!compact_work) {
+    invalid = DvceArray1D<unsigned long long>(
+        "invalid VC boundary prolongation", 1);
+    Kokkos::deep_copy(invalid, 0ULL);
+  }
   Kokkos::TeamPolicy<> policy(DevExeSpace(), neighbor_work * nvar, Kokkos::AUTO);
   Kokkos::parallel_for("Prolong VC coarse-fine boundaries", policy,
       KOKKOS_LAMBDA(TeamMember_t member) {
@@ -387,11 +391,20 @@ void MeshBoundaryValuesVC::ProlongateVC(DvceArray5D<Real> &a,
                     }
                     if (!Kokkos::isfinite(value) ||
                         (v == positive_component && !(value > 0.0))) {
-                      Kokkos::atomic_inc(&invalid(0));
+                      if (compact_work) {
+                        Kokkos::abort(
+                            "coarse/fine interpolation produced invalid state");
+                      } else {
+                        Kokkos::atomic_inc(&invalid(0));
+                      }
                     }
                   });
             });
       });
+  // The lean path fails directly on device and remains ordered before the next
+  // task in the same execution space.  The exhaustive path retains its
+  // deterministic global count and host-side report.
+  if (compact_work) return;
   Kokkos::fence();
   const auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), invalid);
   unsigned long long global_invalid = host(0);
