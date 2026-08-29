@@ -203,6 +203,53 @@ obey the driver, the implementation may use that proved identity to remove the
 forcing, provided the moving mixed-jet/`dtTheta` oracle remains an independent
 gate.
 
+## Phase 2 checkpoint: residual physical target scaffolding
+
+`src/ref_gh/reference_residual.hpp` now carries a reference value, the
+independently reconstructed physical value, and an algebraically evaluated
+regular difference.  Its product, quotient, square-root, and cube-root rules
+implement exact finite identities rather than `physical-reference`.  The
+coordinate metric residual is constructed directly from
+
+\[
+ \Psi_{AB}-\eta_{AB},\qquad \Pi_{AB},\qquad \Phi_{IAB},
+\]
+
+and the reference frame.  In particular,
+
+\[
+ \delta g_{ab}=E^A{}_aE^B{}_b(\Psi_{AB}-\eta_{AB})
+\]
+
+and the product-rule expression for \(\delta(\partial_\mu g_{ab})\) contain no
+subtraction of coordinate trumpet fields.  Inverse differences use
+
+\[
+ \delta g^{-1}=-g^{-1}\delta g\,\bar g^{-1}.
+\]
+
+`ComputePhysicalGaugeTargetResidual` evaluates the unchanged advective
+1+log/conformal-Gamma target in this residual algebra.  It does not yet
+participate in `CalcRHS`.
+
+The source-unit gate covers both generic and compact analytic references for
+the full 2160-point \((q,\dot q,\ddot q,r,\Omega)\) matrix, or 4320 backend
+samples.  The matched reference returns bitwise-zero target, conformal-Gamma,
+and shift residuals at every sample.  The established full physical target is
+still used for non-residual outputs and remains unchanged.  Direct comparison
+against `F-Fref` is gated only at \(r\ge0.8M\), where that subtraction remains
+conditioned, and passes at `3.82012e-14` under the unchanged
+`1024 epsilon_binary64` threshold.
+
+Across all radii, the raw independently evaluated subtraction differs from the
+residual path by as much as `1.3918e-06`.  This value is retained as a
+diagnostic, not accepted by a weakened tolerance.  Near the puncture the old
+subtraction is the quantity already demonstrated to be ill-conditioned, so it
+cannot serve as a binary64 truth oracle for the repaired residual.  A
+high-precision or independently generated residual oracle is still required
+before production dispatch.  Consequently Phase 2 is a tested scaffolding
+checkpoint, not yet complete qualification.
+
 ## Principal part
 
 The rewrite is an algebraic change of dependent variables plus lower-order
@@ -216,7 +263,8 @@ the trumpet coefficient asymptotics required by Phase 4.
 
 ## Remaining gates
 
-The following are not yet complete: cancellation-free \(\delta F_A\), direct
+The following are not yet complete: independent all-radius high-precision
+qualification of cancellation-free \(\delta F_A\), direct
 \(\Delta B_a\) and derivative evaluators, production residual dispatch,
 exact matched-state fill, host/device and all-61 equivalence, the repaired
 64/96/128 fixed-point ladder, the 3M/5M discriminator, the resolution ladder,
