@@ -738,17 +738,17 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
   const TrumpetQControlledReferenceParameters parameters{
       mass, {center_x, center_y, center_z}, opt.q_gaussian_width,
       q_controller.q, q_controller.q_dot, 0.0};
-  // Keep the reducer destination in device memory.  Passing a stack scalar to
-  // Kokkos::Sum makes the SYCL backend launch a kernel that writes directly to
-  // a HostSpace address.  That path is address-layout-sensitive on PVC and can
-  // fault after otherwise unrelated device allocations.  The explicit device
-  // result and one mirror copy preserve the identical reduction and the single
-  // device reduction / single MPI collective production design.
+  // Accumulate the nine active moments into a compact device view.  Kokkos's
+  // custom 32-Real reducer faults on PVC for some otherwise unrelated device
+  // allocation layouts even when its result lives in SYCLDeviceUSMSpace.  One
+  // atomic accumulation kernel avoids that backend path while preserving the
+  // identical estimator, one compact device reduction, and one MPI collective.
   const auto device_sums = q_reduction_result;
-  Kokkos::parallel_reduce(
-      "ref_gh compact current-q reduction",
+  Kokkos::deep_copy(DevExeSpace(), device_sums, 0.0);
+  Kokkos::parallel_for(
+      "ref_gh compact current-q atomic reduction",
       Kokkos::RangePolicy<>(DevExeSpace(), 0, q_sample_count),
-      KOKKOS_LAMBDA(const int sample, array_sum::GlobalSum &total) {
+      KOKKOS_LAMBDA(const int sample) {
         int work = cells(sample);
         const int ii = work % indcs.nx1; work /= indcs.nx1;
         const int jj = work % indcs.nx2; work /= indcs.nx2;
@@ -769,22 +769,26 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
         if (!EvaluateQControlledPhysicalExponent(
                 state, table, parameters, m, k, j, i, x, y, z,
                 q_loc, q_analytic, epsilon_g)) {
-          total.the_array[kInvalid] += 1.0;
+          Kokkos::atomic_add(&device_sums(kInvalid), 1.0);
           return;
         }
         const Real weight = weights(sample);
-        total.the_array[kW] += weight;
-        total.the_array[kW2] += weight*weight;
-        total.the_array[kWQ] += weight*q_loc;
-        total.the_array[kWQ2] += weight*q_loc*q_loc;
-        total.the_array[kWQAnalytic] += weight*q_analytic;
-        total.the_array[kWEpsilon] += weight*epsilon_g;
-        total.the_array[kWEpsilon2] += weight*epsilon_g*epsilon_g;
-        total.the_array[kCount] += 1.0;
-      }, Kokkos::Sum<array_sum::GlobalSum, DevMemSpace>(device_sums));
+        Kokkos::atomic_add(&device_sums(kW), weight);
+        Kokkos::atomic_add(&device_sums(kW2), weight*weight);
+        Kokkos::atomic_add(&device_sums(kWQ), weight*q_loc);
+        Kokkos::atomic_add(&device_sums(kWQ2), weight*q_loc*q_loc);
+        Kokkos::atomic_add(&device_sums(kWQAnalytic), weight*q_analytic);
+        Kokkos::atomic_add(&device_sums(kWEpsilon), weight*epsilon_g);
+        Kokkos::atomic_add(&device_sums(kWEpsilon2),
+                           weight*epsilon_g*epsilon_g);
+        Kokkos::atomic_add(&device_sums(kCount), 1.0);
+      });
   const auto host_sums = Kokkos::create_mirror_view_and_copy(
       HostMemSpace(), device_sums);
-  array_sum::GlobalSum sums = host_sums();
+  array_sum::GlobalSum sums;
+  for (int moment = 0; moment < NREDUCTION_VARIABLES; ++moment) {
+    sums.the_array[moment] = host_sums(moment);
+  }
   DebugFence("ref_gh compact q-controller reduction");
 #if MPI_PARALLEL_ENABLED
   // This is the sole collective in the closed-loop q measurement.

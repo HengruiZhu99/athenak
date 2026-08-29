@@ -765,8 +765,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
               << std::endl;
   }
   if (opt.reference_q_controlled && opt.q_controller_enabled) {
-    q_reduction_result = decltype(q_reduction_result)(
-        "ref_gh q reduction result");
+    q_reduction_result = DvceArray1D<Real>(
+        "ref_gh q reduction result", NREDUCTION_VARIABLES);
     Real h = std::numeric_limits<Real>::max();
     for (int m = 0; m < ppack->nmb_thispack; ++m) {
       h = std::min(h, std::min(
