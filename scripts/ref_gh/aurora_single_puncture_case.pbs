@@ -43,9 +43,12 @@ test -x "${EXE}"
 test -x "${PYTHON}"
 test "$((NROOT % 16))" -eq 0
 blocks_per_axis=$((NROOT / 16))
-ranks=$((blocks_per_axis * blocks_per_axis * blocks_per_axis))
+meshblocks=$((blocks_per_axis * blocks_per_axis * blocks_per_axis))
+ranks=${RANKS_OVERRIDE:-${meshblocks}}
 nodes=$(sort -u "${PBS_NODEFILE}" | wc -l)
+test "${ranks}" -gt 0
 test "${ranks}" -le "$((12 * nodes))"
+test "$((meshblocks % ranks))" -eq 0
 actual_commit=$(git -C "${SRC}" rev-parse HEAD)
 test "${actual_commit}" = "${EXPECTED_COMMIT}"
 test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
@@ -94,8 +97,9 @@ cd "${OUT}"
   echo "nroot=${NROOT}"
   echo "h_over_M=1/$((NROOT / 4))"
   echo "meshblock=16x16x16"
-  echo "meshblocks=${ranks}"
+  echo "meshblocks=${meshblocks}"
   echo "ranks=${ranks}"
+  echo "meshblocks_per_rank=$((meshblocks / ranks))"
   echo "nodes=${nodes}"
   echo "final_time=${FINAL_TIME}"
   echo "restart_path=${RESTART_PATH:-none}"

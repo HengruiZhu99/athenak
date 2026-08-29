@@ -1,0 +1,79 @@
+{
+  "checks": {
+    "below_predeclared_catastrophic_constraint_threshold": true,
+    "finite_state_and_telemetry": true,
+    "q_shell_valid": true,
+    "q_within_hard_bounds": true,
+    "qdot_within_hard_bound": true,
+    "relative_geometry_SPD_and_Lorentzian": true
+  },
+  "constraint_thresholds": {
+    "Linf": 10.0,
+    "RMS": 1.0
+  },
+  "controller_history": {
+    "epsilon-G-mean": 0.0,
+    "epsilon-G-variance": 0.0,
+    "q": 1.0,
+    "q-analytic": 0.0,
+    "q-cells": 0.0,
+    "q-ddot": 0.0,
+    "q-dot": 0.0,
+    "q-effective-samples": 0.0,
+    "q-est": 0.0,
+    "q-frozen": 0.0,
+    "q-generation": 0.0,
+    "q-shell-valid": 0.0,
+    "q-variance": 0.0,
+    "qest-minus-analytic": 0.0
+  },
+  "cycle": 0,
+  "geometry": {
+    "Psi_abs_max": 1.0000000000002305,
+    "finite": true,
+    "inverse_Psi_abs_max": 1.0000000000006115,
+    "relative_G_condition_max": 1.0,
+    "relative_G_lambda_max": 1.0000000000000002,
+    "relative_G_lambda_min": 0.9999999999999997,
+    "relative_lapse_max": 1.0000000000001152,
+    "relative_lapse_min": 0.9999999999996942,
+    "signature_valid": true
+  },
+  "h_over_M": 0.041666666666666664,
+  "inputs": {
+    "constraints": "cbin_ref_gh_native_health_1/phase2_matched_q100_h24.ref_gh_native_health.00000.cbin",
+    "ref_history": "phase2_matched_q100_h24.ref_gh.hst",
+    "state": "cbin_ref_gh_health_1/phase2_matched_q100_h24.ref_gh_health.00000.cbin",
+    "user_history": "phase2_matched_q100_h24.user.hst"
+  },
+  "native_constraints": {
+    "GH_Linf": 8.809495015345875e-13,
+    "GH_RMS": 6.007916721079504e-15,
+    "curl_Linf": 1.4375428498072483e-13,
+    "curl_RMS": 2.7054728353406325e-15,
+    "reduction_Linf": 9.201400142040339e-14,
+    "reduction_RMS": 6.9685007532403095e-15
+  },
+  "pass": true,
+  "physical": {
+    "lapse_error_RMS": 1.1571182971740582e-16,
+    "metric_error_RMS": 3.5308789296502866e-15,
+    "physical_lapse_max": 0.7503530107351781,
+    "physical_lapse_min": 0.01819120615543702,
+    "shift_error_RMS": 6.227203105508028e-17
+  },
+  "puncture_stencil_radius_cells": 3,
+  "q_offline": {
+    "cell_count": 1960,
+    "effective_sample_size": 1219.7337802703255,
+    "epsilon_G_mean": -6.10216531716869e-18,
+    "epsilon_G_variance": 5.7990795033130836e-33,
+    "q_analytic": 0.8752388563218179,
+    "q_est": 0.8752388563218179,
+    "q_est_minus_q_analytic": 0.0,
+    "q_variance": 0.0007842094138230671,
+    "shell_valid": true
+  },
+  "schema": "ref-gh-single-puncture-health-v1",
+  "time": 0.0
+}
