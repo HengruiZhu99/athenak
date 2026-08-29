@@ -163,7 +163,8 @@ if not all(math.isfinite(value) for value in (reproduction, rerun, tolerance)):
     raise SystemExit("nonfinite fixed-point reproduction gate")
 if reproduction > tolerance or rerun > tolerance:
     raise SystemExit(
-        f"fixed-point reproduction failed: {reproduction=} {rerun=} {tolerance=}"
+        f"fixed-point reproduction failed: reproduction={reproduction} "
+        f"rerun={rerun} tolerance={tolerance}"
     )
 
 rows = {}

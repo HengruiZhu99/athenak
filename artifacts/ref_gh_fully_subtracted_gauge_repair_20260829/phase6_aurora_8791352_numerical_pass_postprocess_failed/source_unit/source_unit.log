@@ -1,0 +1,47 @@
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+ref_gh reference allocation backend=generic_cache_oracle generic_bytes=129503232 analytic_static_components=0 analytic_stage_components=0 analytic_static_bytes=0 analytic_stage_bytes=0
+reference-GH exact matched q=1 predicate passed
+reference-GH inverse-coframe derivative identity passed: max error = 4.16334e-17
+reference-GH improved gauge-driver frame and physical-target algebra passed: max error = 1.249e-16, source error = 1.38778e-16, target error = 1.38778e-17
+reference-GH gamma2 characteristic, symmetrizer, reduction, and curl algebra passed: max error = 2.77556e-16
+reference-GH combined Einstein/gauge characteristic and inverse oracle passed: max error = 1.19697e-16
+reference-GH mixed-time jet algebra passed: max error = 2.22045e-16
+reference-GH Phi-ordering algebra maximum error = 4.44089e-16
+reference-GH flat covariant source unit passed: samples = 1000, max error = 5.55112e-17
+reference-GH nonflat covariant source unit passed: samples = 128, max error = 3.33067e-16
+reference-GH dynamic spatial oracle passed: frame-coordinate curvature Linf=9.17435e-18, coordinate curvature Linf=3.16585e-17, source Linf=3.88578e-16, spin scale=1.41746e-17, dt spatial frame scale=0.0714141
+reference-GH q-controlled trumpet provider passed: q=1 identity=6.66134e-16 profile=5.29997e-16
+reference-GH analytic radial-q coefficient oracle passed: samples=216 max error=7.10543e-15
+reference-GH expanded analytic radial-q coefficient oracle passed: samples=2160 conditioned error=4.11338e-14 near-r<=0.125=4.11338e-14 gaussian-r=3=2.08167e-17 far-r=5=4.16334e-17
+reference-GH generated analytic radial-q geometry oracle passed: samples=2376 conditioned error=2.3211e-15 category=16
+reference-GH generated analytic radial-q moving gauge oracle passed: samples=2160 Hhat=9.50332e-16 dHhat=6.74438e-16 Kref=7.33707e-16 theta=4.13312e-16 dtTheta=3.17981e-17 motion=1.39574e-14
+reference-GH fully subtracted physical gauge target passed: samples=4320 error=4.01905e-14 all-radius-physical-diagnostic=4.51712e-10 raw-delta-diagnostic=1.02607e-06 source=8.93281e-09 compact-source-diagnostic=2.50355e-12 raw-driver-diagnostic=1.05256 matched_exact=1
+reference-GH compact analytic radial-q boundary projection oracle passed: samples=2160 metric=4.53959e-14 gauge=9.58357e-16 subtracted-gauge=7.33241e-16
+reference-GH all-61 legacy-generic versus fully-subtracted compact RHS oracle passed: samples=4320 error=5.46091e-14 compatible+standard Phi
+reference-GH q-controlled trumpet reprojection passed: metric=4.44089e-16 derivative=9.85933e-16 min-nontrivial-Pi=0.125187
+reference-GH q-controlled gauge reprojection passed: Hhat=1.11022e-16 theta=2.22045e-16 subtraction=2.22045e-16
+reference-GH q-controller manufactured histories passed: critical-error=1.02349e-15 restart-exact=1 varying-lag=0.0129417 prescribed-error=3.02297e-09
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_fully_subtracted_gauge_repair_20260829_4ec57dd2_phase6_v4/src/src/parameter_input.cpp: input parameter <job>/basename = ref_gh_q_controlled_reference was not used by the code (check for a typo)
+reference-GH production cache oracle conditioned scaled Linf = 2.00432e-14, time=0
+
+Setup complete, executing task list(s)...
+
+reference-GH Minkowski evolution passed: max error = 0
+elapsed=4.448144e+01 cycle=0 time=0.000000e+00 dt=1.570646e-02
+
+Terminating on cycle limit
+time=0.000000e+00 cycle=0
+tlim=0.000000e+00 nlim=0
+
+MeshBlock-cycles = 0
+cpu time used  = 1.006900e-04
+zone-cycles/cpu_second = 0.000000e+00
+particle-updates/cpu_second = 0.000000e+00
+real 45.15
+user 0.00
+sys 0.00

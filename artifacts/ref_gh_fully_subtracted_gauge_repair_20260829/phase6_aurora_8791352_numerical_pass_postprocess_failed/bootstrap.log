@@ -1,0 +1,56 @@
+bootstrap_begin=2026-08-29T22:19:27+00:00
+  File "<fstring>", line 1
+    (reproduction=)
+                 ^
+SyntaxError: invalid syntax
+phase6_device_failure status=1 line=150 command=python3 - fixed_point_standard/phase6_standard_pvc_fixed.ref_gh_rhs_sectors.tsv > fixed_point_gate.txt  <<'PY'
+import math
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+reproduction = float(re.search(r"reproduction_conditioned_linf=([^\s]+)", text).group(1))
+rerun = float(re.search(r"production_rerun_conditioned_linf=([^\s]+)", text).group(1))
+tolerance = float(re.search(r"tolerance=([^\s]+)", text).group(1))
+if not all(math.isfinite(value) for value in (reproduction, rerun, tolerance)):
+    raise SystemExit("nonfinite fixed-point reproduction gate")
+if reproduction > tolerance or rerun > tolerance:
+    raise SystemExit(
+        f"fixed-point reproduction failed: {reproduction=} {rerun=} {tolerance=}"
+    )
+
+rows = {}
+for line in text.splitlines():
+    if not line or line.startswith("#") or line.startswith("sector"):
+        continue
+    fields = line.split("\t")
+    if len(fields) >= 3:
+        rows[(fields[0], fields[1])] = float(fields[2])
+
+required_exact_zero = (
+    ("actual", "Hhat"),
+    ("actual", "theta"),
+    ("actual", "Upsilon"),
+    ("ordinary_gauge_increment", "Pi"),
+    ("driver", "Hhat"),
+    ("driver", "theta"),
+    ("driver", "Upsilon"),
+    ("KO", "Hhat"),
+    ("KO", "theta"),
+    ("KO", "Upsilon"),
+)
+for key in required_exact_zero:
+    if key not in rows:
+        raise SystemExit(f"missing fixed-point sector {key}")
+    if rows[key] != 0.0:
+        raise SystemExit(f"nonzero fixed-point sector {key}: {rows[key]:.17e}")
+
+print(f"reproduction_conditioned_linf={reproduction:.17e}")
+print(f"production_rerun_conditioned_linf={rerun:.17e}")
+print(f"tolerance={tolerance:.17e}")
+for key in required_exact_zero:
+    print(f"exact_zero_{key[0]}_{key[1]}={rows[key]:.17e}")
+PY
+

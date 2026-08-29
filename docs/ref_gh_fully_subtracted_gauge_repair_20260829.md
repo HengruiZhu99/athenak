@@ -625,14 +625,37 @@ execution, or evolution.  Its full build log, compile-option proof, mapping,
 provenance, PBS record, and checksums are preserved in
 `phase6_aurora_8791292_predicate_failed`.
 
+Focused job `8791352` used the test-portable predicate probes at commit
+`4ec57dd25358ac0d774f4cb5f1c7a89b041dac67`.  The one-tile PVC source-unit
+suite passed completely.  In particular, the moving-reference mixed-jet path
+passed and all 4320 compatible/STANDARD all-61 comparisons passed with
+conditioned maximum `5.46091e-14` under the unchanged `256*epsilon` gate.  The
+12-tile 96^3 STANDARD exact matched fixed point then completed with exact-zero
+actual Hhat/theta/Upsilon, ordinary-gauge Pi increment, driver
+Hhat/theta/Upsilon, and KO Hhat/theta/Upsilon.  Its reproduction and production
+rerun conditioned errors were both exactly zero against tolerance `5e-13`.
+All 12 ranks reported distinct Level Zero PVC mappings from `0.0` through
+`5.1`.
+
+PBS nevertheless returned exit 1 after the numerical work because Aurora's
+default Python 3.6.15 rejected the diagnostic-only f-string debug syntax
+`{reproduction=}` in the postprocessor.  The saved TSV passes the unchanged
+parser under Python 3.12.3, and the launcher now spells only that unused error
+message in Python-3.6-compatible form.  No numerical rerun is required to
+reinterpret already-written values.  This is therefore a numerical Phase-6
+device pass with a transparently preserved wrapper failure, not a green PBS
+job.  It qualifies only the named device oracles and one 96^3 cycle-zero fixed
+point; it is not positive-time evolution evidence.
+
 ## Remaining gates
 
 The following are not yet complete: independent all-radius high-precision
 qualification of cancellation-free \(\delta F_A\), independent qualification
 of the direct \(\Delta B_a\) and derivative evaluator below the conditioned
-binary64 region, Aurora/PVC device equivalence, the repaired 64/96/128
-fixed-point ladder, the 3M/5M discriminator, the resolution ladder, 20M, and
-conditional 100M qualification.  Exact matched-state fill and strict static
-q=1 residual production dispatch are locally tested.  General moving-reference
-production dispatch remains legacy pending a separate qualification.
-Performance optimization remains out of scope for this campaign.
+binary64 region, the repaired 64/96/128 fixed-point ladder, the 3M/5M
+discriminator, the resolution ladder, 20M, and conditional 100M qualification.
+The Phase-6 PVC all-61 and 96^3 exact fixed-point workloads pass.  Exact
+matched-state fill and strict static q=1 residual production dispatch are
+locally and device tested.  General moving-reference production dispatch
+remains legacy pending a separate qualification.  Performance optimization
+remains out of scope for this campaign.

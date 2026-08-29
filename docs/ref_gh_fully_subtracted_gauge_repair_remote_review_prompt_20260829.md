@@ -88,6 +88,7 @@ Evidence to inspect:
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_staged_all61_local/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791265_failed/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791292_predicate_failed/`
+- `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase6_aurora_8791352_numerical_pass_postprocess_failed/`
 
 Validate each `SHA256SUMS` file and distinguish current passing evidence from
 the intentionally preserved negative result. The key current observations are:
@@ -136,7 +137,16 @@ the intentionally preserved negative result. The key current observations are:
   tolerances are unchanged, and the local Serial all-61 result remains
   `4.13003e-14`;
 - no Aurora all-61 device equivalence, fixed-point execution, or evolution has
-  passed at this checkpoint.
+  passed through job `8791292`;
+- Aurora job `8791352`: the one-tile PVC source-unit suite and all 4320 all-61
+  comparisons passed (`5.46091e-14`), and the 12-tile 96^3 STANDARD fixed
+  point completed with exact zeros in every required gauge/driver/KO sector;
+- job `8791352` nevertheless exited 1 after the numerical work because Python
+  3.6 rejected diagnostic-only `{value=}` f-string syntax in the TSV
+  postprocessor; the saved TSV passes the unchanged criteria independently,
+  and the launcher correction changes only the unused error-message spelling;
+- no positive-time evolution or 64/96/128 stationary ladder has run at this
+  checkpoint.
 
 Please return:
 
