@@ -271,15 +271,22 @@ void MeshBoundaryValuesVC::ProlongateVC(DvceArray5D<Real> &a,
   auto &mblev = pmy_pack->pmb->mb_lev;
   auto records = pmy_pack->pz4c->vertex_topology_plan->records.d_view;
   auto iprol = prolongation_bounds.d_view;
+  const bool compact_work = pmy_pack->pz4c->opt.lean_runtime;
+  const auto prolongation_work = prolongation_neighbor_work.d_view;
+  const int neighbor_work = compact_work ? nprolongation_neighbor_work
+                                         : nmb * nnghbr;
   const auto vertex_layout = layout;
   DvceArray1D<unsigned long long> invalid("invalid VC boundary prolongation", 1);
   Kokkos::deep_copy(invalid, 0ULL);
-  Kokkos::TeamPolicy<> policy(DevExeSpace(), nmb * nnghbr * nvar, Kokkos::AUTO);
+  Kokkos::TeamPolicy<> policy(DevExeSpace(), neighbor_work * nvar, Kokkos::AUTO);
   Kokkos::parallel_for("Prolong VC coarse-fine boundaries", policy,
       KOKKOS_LAMBDA(TeamMember_t member) {
         const int league = member.league_rank();
-        const int m = league / (nnghbr * nvar);
-        const int n = (league / nvar) % nnghbr;
+        const int row = league / nvar;
+        const int m = compact_work ? prolongation_work(row, 0)
+                                   : row / nnghbr;
+        const int n = compact_work ? prolongation_work(row, 1)
+                                   : row % nnghbr;
         const int v = league % nvar;
         if (nghbr.d_view(m, n).gid < 0 ||
             nghbr.d_view(m, n).lev >= mblev.d_view(m)) return;

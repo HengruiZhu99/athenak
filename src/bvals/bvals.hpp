@@ -210,6 +210,7 @@ class MeshBoundaryValuesVC : public MeshBoundaryValues {
                        const VertexBoundaryLayout &layout);
 
   void InitializeBuffers(int nvar);
+  void RefreshCompactWorkLists();
   void InitSendIndices(MeshBoundaryBuffer &b, int o1, int o2, int o3,
                        int f1, int f2) override;
   void InitRecvIndices(MeshBoundaryBuffer &b, int o1, int o2, int o3,
@@ -223,6 +224,11 @@ class MeshBoundaryValuesVC : public MeshBoundaryValues {
 
   const VertexBoundaryLayout layout;
   DualArray1D<MeshBufferIndcs> prolongation_bounds;
+  // Compact immutable (MeshBlock, neighbor-slot) work lists.  The lean path
+  // uses these to avoid launching teams for absent or irrelevant neighbors;
+  // the default path retains the historical rectangular league geometry.
+  DualArray2D<int> prolongation_neighbor_work;
+  int nprolongation_neighbor_work = 0;
 };
 
 //----------------------------------------------------------------------------------------

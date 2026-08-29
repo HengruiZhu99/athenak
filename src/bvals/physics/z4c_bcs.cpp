@@ -187,12 +187,17 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
   int nmb = ppack->nmb_thispack;
   const bool vertex = ppack->pz4c->layout.centering ==
                       z4c::Z4cGridCentering::vertex;
+  const bool compact_work = vertex && ppack->pz4c->opt.lean_runtime;
 
   // only apply BCs unless periodic or shear_periodic
   if (pm->mesh_bcs[BoundaryFace::inner_x1] != BoundaryFlag::periodic
       && pm->mesh_bcs[BoundaryFace::inner_x1] != BoundaryFlag::shear_periodic) {
-    par_for("z4cbc_x1", DevExeSpace(), 0,(nmb-1),0,(nvar-1),0,(n3-1),0,(n2-1),
-    KOKKOS_LAMBDA(int m, int n, int k, int j) {
+    const auto boundary_work = ppack->pz4c->physical_boundary_x1_work.d_view;
+    const int work_count = compact_work
+        ? ppack->pz4c->nphysical_boundary_x1_work : nmb;
+    par_for("z4cbc_x1", DevExeSpace(), 0,(work_count-1),0,(nvar-1),0,(n3-1),0,(n2-1),
+    KOKKOS_LAMBDA(int row, int n, int k, int j) {
+      const int m = compact_work ? boundary_work(row) : row;
       // apply physical boundaries to inner_x1
       switch (mb_bcs.d_view(m,BoundaryFace::inner_x1)) {
         case BoundaryFlag::axis:
@@ -267,8 +272,12 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
 
   // only apply BCs if not periodic
   if (pm->mesh_bcs[BoundaryFace::inner_x2] != BoundaryFlag::periodic) {
-    par_for("z4cbc_x2", DevExeSpace(), 0,(nmb-1),0,(nvar-1),0,(n3-1),0,(n1-1),
-    KOKKOS_LAMBDA(int m, int n, int k, int i) {
+    const auto boundary_work = ppack->pz4c->physical_boundary_x2_work.d_view;
+    const int work_count = compact_work
+        ? ppack->pz4c->nphysical_boundary_x2_work : nmb;
+    par_for("z4cbc_x2", DevExeSpace(), 0,(work_count-1),0,(nvar-1),0,(n3-1),0,(n1-1),
+    KOKKOS_LAMBDA(int row, int n, int k, int i) {
+      const int m = compact_work ? boundary_work(row) : row;
       // apply physical boundaries to inner_x2
       switch (mb_bcs.d_view(m,BoundaryFace::inner_x2)) {
         case BoundaryFlag::reflect:
@@ -334,8 +343,12 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
 
   // only apply BCs if not periodic
   if (pm->mesh_bcs[BoundaryFace::inner_x3] == BoundaryFlag::periodic) return;
-  par_for("z4cbc_x3", DevExeSpace(), 0,(nmb-1),0,(nvar-1),0,(n2-1),0,(n1-1),
-  KOKKOS_LAMBDA(int m, int n, int j, int i) {
+  const auto boundary_work = ppack->pz4c->physical_boundary_x3_work.d_view;
+  const int work_count = compact_work
+      ? ppack->pz4c->nphysical_boundary_x3_work : nmb;
+  par_for("z4cbc_x3", DevExeSpace(), 0,(work_count-1),0,(nvar-1),0,(n2-1),0,(n1-1),
+  KOKKOS_LAMBDA(int row, int n, int j, int i) {
+    const int m = compact_work ? boundary_work(row) : row;
     // apply physical boundaries to inner_x3
     switch (mb_bcs.d_view(m,BoundaryFace::inner_x3)) {
       case BoundaryFlag::reflect:

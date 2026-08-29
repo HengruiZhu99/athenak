@@ -647,6 +647,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     pbval_weyl = new MeshBoundaryValuesCC(ppack, pin, true);
     pbval_weyl->InitializeBuffers((2));
   }
+  RebuildLeanPhysicalBoundaryWorkLists();
   Kokkos::Profiling::popRegion();
 
   // wave extraction spheres
@@ -730,6 +731,60 @@ void Z4c::RebuildVertexTopologyPlan() {
     std::exit(EXIT_FAILURE);
   }
   vertex_topology_plan->Rebuild(pmy_pack, layout);
+}
+
+void Z4c::RebuildLeanPhysicalBoundaryWorkLists() {
+  const int nmb = pmy_pack->nmb_thispack;
+  const auto &bcs = pmy_pack->pmb->mb_bcs;
+  auto is_builtin_physical = [](const BoundaryFlag flag) {
+    return flag == BoundaryFlag::reflect || flag == BoundaryFlag::inflow ||
+           flag == BoundaryFlag::outflow || flag == BoundaryFlag::diode ||
+           flag == BoundaryFlag::vacuum || flag == BoundaryFlag::axis ||
+           flag == BoundaryFlag::user;
+  };
+
+  nphysical_boundary_x1_work = 0;
+  nphysical_boundary_x2_work = 0;
+  nphysical_boundary_x3_work = 0;
+  for (int m = 0; m < nmb; ++m) {
+    if (is_builtin_physical(bcs.h_view(m, BoundaryFace::inner_x1)) ||
+        is_builtin_physical(bcs.h_view(m, BoundaryFace::outer_x1))) {
+      ++nphysical_boundary_x1_work;
+    }
+    if (is_builtin_physical(bcs.h_view(m, BoundaryFace::inner_x2)) ||
+        is_builtin_physical(bcs.h_view(m, BoundaryFace::outer_x2))) {
+      ++nphysical_boundary_x2_work;
+    }
+    if (is_builtin_physical(bcs.h_view(m, BoundaryFace::inner_x3)) ||
+        is_builtin_physical(bcs.h_view(m, BoundaryFace::outer_x3))) {
+      ++nphysical_boundary_x3_work;
+    }
+  }
+
+  Kokkos::realloc(physical_boundary_x1_work, nphysical_boundary_x1_work);
+  Kokkos::realloc(physical_boundary_x2_work, nphysical_boundary_x2_work);
+  Kokkos::realloc(physical_boundary_x3_work, nphysical_boundary_x3_work);
+  int x1 = 0, x2 = 0, x3 = 0;
+  for (int m = 0; m < nmb; ++m) {
+    if (is_builtin_physical(bcs.h_view(m, BoundaryFace::inner_x1)) ||
+        is_builtin_physical(bcs.h_view(m, BoundaryFace::outer_x1))) {
+      physical_boundary_x1_work.h_view(x1++) = m;
+    }
+    if (is_builtin_physical(bcs.h_view(m, BoundaryFace::inner_x2)) ||
+        is_builtin_physical(bcs.h_view(m, BoundaryFace::outer_x2))) {
+      physical_boundary_x2_work.h_view(x2++) = m;
+    }
+    if (is_builtin_physical(bcs.h_view(m, BoundaryFace::inner_x3)) ||
+        is_builtin_physical(bcs.h_view(m, BoundaryFace::outer_x3))) {
+      physical_boundary_x3_work.h_view(x3++) = m;
+    }
+  }
+  physical_boundary_x1_work.template modify<HostMemSpace>();
+  physical_boundary_x2_work.template modify<HostMemSpace>();
+  physical_boundary_x3_work.template modify<HostMemSpace>();
+  physical_boundary_x1_work.template sync<DevExeSpace>();
+  physical_boundary_x2_work.template sync<DevExeSpace>();
+  physical_boundary_x3_work.template sync<DevExeSpace>();
 }
 
 //----------------------------------------------------------------------------------------

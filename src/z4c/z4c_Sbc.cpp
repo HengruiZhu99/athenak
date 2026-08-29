@@ -739,6 +739,8 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
   bool &user_Sbc = opt.user_Sbc;
   const int fd_stencil = opt.fd_stencil;
   auto bcs = mb_bcs.d_view;
+  const bool compact_work = layout.centering == Z4cGridCentering::vertex &&
+                            opt.lean_runtime;
 
   // We only need to apply this condition for outflow boundaries
   if (pm->mesh_bcs[BoundaryFace::inner_x1] == BoundaryFlag::outflow
@@ -749,8 +751,11 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
       || pm->mesh_bcs[BoundaryFace::outer_x1] == BoundaryFlag::diode
       || pm->mesh_bcs[BoundaryFace::outer_x1] == BoundaryFlag::vacuum
       || pm->mesh_bcs[BoundaryFace::outer_x1] == BoundaryFlag::user) {
-    par_for("z4crhs_bc_x1", DevExeSpace(), 0, (nmb-1), ks, ke, js, je,
-    KOKKOS_LAMBDA(int m, int k, int j) {
+    const auto boundary_work = physical_boundary_x1_work.d_view;
+    const int work_count = compact_work ? nphysical_boundary_x1_work : nmb;
+    par_for("z4crhs_bc_x1", DevExeSpace(), 0, (work_count-1), ks, ke, js, je,
+    KOKKOS_LAMBDA(int row, int k, int j) {
+      const int m = compact_work ? boundary_work(row) : row;
       // Inner boundary
       switch(mb_bcs.d_view(m,BoundaryFace::inner_x1)) {
         case BoundaryFlag::diode:
@@ -795,8 +800,11 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
       || pm->mesh_bcs[BoundaryFace::outer_x2] == BoundaryFlag::diode
       || pm->mesh_bcs[BoundaryFace::outer_x2] == BoundaryFlag::vacuum
       || pm->mesh_bcs[BoundaryFace::outer_x2] == BoundaryFlag::user) {
-    par_for("z4crhs_bc_x2", DevExeSpace(), 0, (nmb-1), ks, ke, is, ie,
-    KOKKOS_LAMBDA(int m, int k, int i) {
+    const auto boundary_work = physical_boundary_x2_work.d_view;
+    const int work_count = compact_work ? nphysical_boundary_x2_work : nmb;
+    par_for("z4crhs_bc_x2", DevExeSpace(), 0, (work_count-1), ks, ke, is, ie,
+    KOKKOS_LAMBDA(int row, int k, int i) {
+      const int m = compact_work ? boundary_work(row) : row;
       // Inner boundary
       switch(mb_bcs.d_view(m,BoundaryFace::inner_x2)) {
         case BoundaryFlag::diode:
@@ -844,8 +852,11 @@ TaskStatus Z4c::Z4cBoundaryRHSImpl(Driver *pdriver, int stage) {
       || pm->mesh_bcs[BoundaryFace::outer_x3] == BoundaryFlag::diode
       || pm->mesh_bcs[BoundaryFace::outer_x3] == BoundaryFlag::vacuum
       || pm->mesh_bcs[BoundaryFace::outer_x3] == BoundaryFlag::user) {
-    par_for("z4crhs_bc_x3", DevExeSpace(), 0, (nmb-1), js, je, is, ie,
-    KOKKOS_LAMBDA(int m, int j, int i) {
+    const auto boundary_work = physical_boundary_x3_work.d_view;
+    const int work_count = compact_work ? nphysical_boundary_x3_work : nmb;
+    par_for("z4crhs_bc_x3", DevExeSpace(), 0, (work_count-1), js, je, is, ie,
+    KOKKOS_LAMBDA(int row, int j, int i) {
+      const int m = compact_work ? boundary_work(row) : row;
       // Inner boundary
       switch(mb_bcs.d_view(m,BoundaryFace::inner_x3)) {
         case BoundaryFlag::diode:

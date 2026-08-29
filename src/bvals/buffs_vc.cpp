@@ -57,6 +57,40 @@ void MeshBoundaryValuesVC::InitializeBuffers(const int nvar) {
   }
   prolongation_bounds.template modify<HostMemSpace>();
   prolongation_bounds.template sync<DevExeSpace>();
+
+  RefreshCompactWorkLists();
+}
+
+void MeshBoundaryValuesVC::RefreshCompactWorkLists() {
+  const int nmb = pmy_pack->nmb_thispack;
+  const int nnghbr = pmy_pack->pmb->nnghbr;
+  const auto &neighbors = pmy_pack->pmb->nghbr;
+  const auto &levels = pmy_pack->pmb->mb_lev;
+  nprolongation_neighbor_work = 0;
+  for (int m = 0; m < nmb; ++m) {
+    for (int n = 0; n < nnghbr; ++n) {
+      if (neighbors.h_view(m, n).gid < 0) continue;
+      if (neighbors.h_view(m, n).lev < levels.h_view(m)) {
+        ++nprolongation_neighbor_work;
+      }
+    }
+  }
+
+  Kokkos::realloc(prolongation_neighbor_work,
+                  nprolongation_neighbor_work, 2);
+  int prolongation_row = 0;
+  for (int m = 0; m < nmb; ++m) {
+    for (int n = 0; n < nnghbr; ++n) {
+      if (neighbors.h_view(m, n).gid < 0) continue;
+      if (neighbors.h_view(m, n).lev < levels.h_view(m)) {
+        prolongation_neighbor_work.h_view(prolongation_row, 0) = m;
+        prolongation_neighbor_work.h_view(prolongation_row, 1) = n;
+        ++prolongation_row;
+      }
+    }
+  }
+  prolongation_neighbor_work.template modify<HostMemSpace>();
+  prolongation_neighbor_work.template sync<DevExeSpace>();
 }
 
 void MeshBoundaryValuesVC::InitSendIndices(MeshBoundaryBuffer &buf,

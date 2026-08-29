@@ -1185,6 +1185,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   VCAMRLifecycleMark(13, "SetNeighbors_complete");
   if (pz4c != nullptr &&
       pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
+    pz4c->pbval_u_vc->RefreshCompactWorkLists();
+    pz4c->pbval_weyl_vc->RefreshCompactWorkLists();
+    pz4c->RebuildLeanPhysicalBoundaryWorkLists();
     pz4c->RebuildVertexTopologyPlan();
   }
   VCAMRLifecycleMark(14, "RebuildVertexTopologyPlan_complete");

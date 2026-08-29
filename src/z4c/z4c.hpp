@@ -159,6 +159,15 @@ class Z4c {
   // existing adm::ADM object remains the cell-centred adapter used by legacy
   // cell consumers.
   DvceArray5D<Real> u_adm_native;
+  // Compact physical-boundary MeshBlock lists used only by the lean native-VC
+  // launch geometry.  They contain local MeshBlock indices and are rebuilt
+  // whenever AMR installs a new block layout.
+  DualArray1D<int> physical_boundary_x1_work;
+  DualArray1D<int> physical_boundary_x2_work;
+  DualArray1D<int> physical_boundary_x3_work;
+  int nphysical_boundary_x1_work = 0;
+  int nphysical_boundary_x2_work = 0;
+  int nphysical_boundary_x3_work = 0;
 
   struct ADM_vars {
     AthenaTensor<Real, TensorSymm::NONE, 3, 0> alpha;
@@ -364,6 +373,7 @@ class Z4c {
   TaskStatus FillAxisParityGhosts(Driver *d, int stage);
   void ReconstructAxisParityGhosts();
   void RebuildVertexTopologyPlan();
+  void RebuildLeanPhysicalBoundaryWorkLists();
   void ApplyVertexAxisRegularity(DvceArray5D<Real> &state, int stage,
                                  const char *checkpoint);
   void ReconstructConstraintAxisParityGhosts();
