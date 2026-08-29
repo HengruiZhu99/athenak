@@ -1,0 +1,17 @@
+result=FAIL_PVC_WRITE_PAGE_FAULT
+job=8790590
+node=x4504c1s3b0n0
+queue=debug
+account=CompactBinaryMerger
+exit_status=134
+source_commit=7a8d67a73a5a81ae7998dd666245bb0c588ac36a
+one_rank_initial_full_output=PASS
+one_rank_first_evolved_calcrhs=PASS
+one_rank_first_evolved_rk_update=PASS
+one_rank_first_evolved_restrict_comm_prolongate=PASS
+one_rank_first_evolved_physical_boundary=FAIL_BEFORE_FENCE
+fault=GPU_NotPresent_level2_PDP_write
+eight_rank=NOT_RUN
+numerical_comparison=NOT_RUN
+benchmark=NOT_RUN
+profile=NOT_RUN

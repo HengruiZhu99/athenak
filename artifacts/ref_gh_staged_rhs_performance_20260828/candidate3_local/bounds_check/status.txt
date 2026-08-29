@@ -1,0 +1,17 @@
+result=PASS_LOCAL_DEBUG_KOKKOS_BOUNDS_ONE_CYCLE
+date=2026-08-29
+source_commit=7a8d67a73a5a81ae7998dd666245bb0c588ac36a
+build_type=Debug
+kokkos_backend=SERIAL
+kokkos_debug=ON
+kokkos_debug_bounds_check=ON
+mpi=OFF
+executable_sha256=586dd1aee3c0c8a107a692180731ce10569a9272aa61e4c1e293bf4f1748a3f0
+input=tst/inputs/ref_gh_q_controlled_trumpet_reprojection.athinput
+meshblock=16x16x16
+rk_stages=4
+cycles=1
+physical_boundary_fences=PASS_ALL_STAGES
+diagnostic_fences=PASS
+termination=cycle_limit
+qualification_scope=host_bounds_discriminator_only_not_PVC_qualification
