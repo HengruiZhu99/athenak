@@ -540,6 +540,10 @@ void MeshRefinement::ValidateVCAMRMaps(const int old_nmb,
 void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin) {
   z4c::Z4c *diagnostic_z4c = pmy_mesh->pmb_pack->pz4c;
   if (amr_history != nullptr && amr_history->replay()) {
+    // Once the complete authority has been replayed, no future topology change
+    // is possible. Avoid reevaluating and serializing the native criterion as a
+    // shadow on every subsequent cycle of a frozen-hierarchy production run.
+    if (!amr_history->ReplayHasPendingEvent()) return;
     // Preserve the record-mode criterion execution path and refinement-age state, but
     // discard its flags before applying the recorded physical-time hierarchy below.
     CheckForRefinement(pmy_mesh->pmb_pack);

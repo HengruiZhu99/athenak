@@ -112,7 +112,7 @@ def main() -> int:
     work = Path(args.work_dir)
     fresh(work)
     roots = {name: work / name for name in (
-        "record", "replay", "high", "restart_prefix", "restart_continue",
+        "record", "replay", "lean_replay", "high", "restart_prefix", "restart_continue",
         "cell_record", "bridge_reject", "bridge_accept", "mpi_replay")}
     for root in roots.values():
         fresh(root)
@@ -134,6 +134,19 @@ def main() -> int:
             "different-CFL VC replay did not clip to an authority time")
     replay = replay_records(roots["replay"] / "vc_replay.amr_history_replay.jsonl")
     require_same_authority(events, replay)
+
+    lean_log = execute(command(
+        args.athena, args.input, "vc_lean", "replay", authority,
+        ["time/cfl_number=0.07", "time/nlim=6", "z4c/lean_runtime=true"]),
+        roots["lean_replay"])
+    require("AMR_HISTORY_REPLAY event=2 " in lean_log,
+            "lean-runtime VC replay did not finish the authority")
+    lean = replay_records(
+        roots["lean_replay"] / "vc_lean.amr_history_replay.jsonl")
+    require_same_authority(events, lean)
+    require((roots["replay"] / "vc_replay.z4c.user.hst").read_bytes() ==
+            (roots["lean_replay"] / "vc_lean.z4c.user.hst").read_bytes(),
+            "lean-runtime replay changed the Z4c history bytes")
 
     high_resolution = ["mesh/nx1=64", "mesh/nx2=64",
                        "meshblock/nx1=32", "meshblock/nx2=32"]

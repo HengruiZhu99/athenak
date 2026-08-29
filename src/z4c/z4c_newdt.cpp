@@ -110,7 +110,13 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
   // covers t=0, where a previous RHS profile does not yet exist, with the same helper the
   // RHS uses for every prescription.
   Real local_max_source_rate = 0.0;
-  Kokkos::parallel_reduce(
+  const bool source_rate_structurally_zero =
+      opt.timestep_structural_shortcuts && !opt.telegraph_lapse &&
+      (opt.shift_mode == Z4cShiftMode::prescribed_zero ||
+       !(shift_eta_eff > 0.0)) &&
+      !(kappa1_eff > 0.0) && !opt.slow_start_lapse;
+  if (!source_rate_structurally_zero) {
+    Kokkos::parallel_reduce(
       "z4c timestep source rate", Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
       KOKKOS_LAMBDA(const int idx, Real &result) {
         const int m = idx / nkji;
@@ -200,11 +206,12 @@ TaskStatus ComputeZ4cTimestepContracts(Z4c *self, MeshBlockPack *pack, Driver *d
           return;
         }
         result = fmax(result, rate);
-      }, Kokkos::Max<Real>(local_max_source_rate));
+        }, Kokkos::Max<Real>(local_max_source_rate));
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, &local_max_source_rate, 1, MPI_ATHENA_REAL, MPI_MAX,
-                MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &local_max_source_rate, 1, MPI_ATHENA_REAL,
+                  MPI_MAX, MPI_COMM_WORLD);
 #endif
+  }
 
   auto ComputeCoordinateSpeed = KOKKOS_LAMBDA(const int idx, Real &result,
                                                 const bool minimum) {
@@ -361,6 +368,7 @@ TaskStatus Z4c::NewTimeStep(Driver *driver, int stage) {
 }
 
 void Z4c::WriteTimestepContractRecord(const Real final_dt) const {
+  if (!opt.timestep_contract_diagnostic) return;
   if (global_variable::my_rank != 0) return;
   std::ofstream output("z4c_timestep_contract.csv", std::ios::app);
   if (!output) {

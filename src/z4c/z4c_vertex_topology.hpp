@@ -46,6 +46,9 @@ constexpr bool VertexContributorHasAuthority(const int contributor_level,
 class Z4cVertexTopologyPlan {
  public:
   Z4cVertexTopologyPlan() = default;
+  void ConfigureRuntime(bool single_rank_device_sync,
+                        bool synchronization_postcondition,
+                        int maximum_variables);
   void Rebuild(MeshBlockPack *pack, const Z4cGridLayout &layout);
   void SynchronizeSharedNodes(
       DvceArray5D<Real> &state,
@@ -65,6 +68,15 @@ class Z4cVertexTopologyPlan {
   std::vector<int> global_group_for_contributor;
   std::vector<int> local_group;
   DualArray2D<int> local_indices;
+  DualArray1D<int> device_local_group;
+  DualArray1D<int> device_authority_contributors;
+  DualArray1D<int> device_authority_begin;
+  DualArray1D<int> device_authority_end;
+  mutable DvceArray2D<Real> device_group_values;
+  bool single_rank_device_sync = false;
+  bool synchronization_postcondition = true;
+  int maximum_variables = 0;
+  int group_count = 0;
   mutable std::uint64_t synchronization_calls = 0;
 };
 

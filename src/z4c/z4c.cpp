@@ -68,6 +68,7 @@ const char *Z4cStateCheckpointName(const Z4cStateCheckpoint checkpoint) {
     case Z4cStateCheckpoint::pre_algconstr: return "PRE_ALGCONSTR";
     case Z4cStateCheckpoint::post_algconstr: return "POST_ALGCONSTR";
     case Z4cStateCheckpoint::post_amr_transfer: return "POST_AMR_TRANSFER";
+    case Z4cStateCheckpoint::final_accepted_state: return "FINAL_ACCEPTED_STATE";
   }
   return "UNKNOWN";
 }
@@ -253,6 +254,31 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.chi_min_floor = pin->GetOrAddReal("z4c", "chi_min_floor", 1e-12);
   opt.floor_chi = pin->GetOrAddBoolean("z4c", "floor_chi", false);
   opt.diss = pin->GetOrAddReal("z4c", "diss", 0.0);
+  opt.lean_runtime = pin->GetOrAddBoolean("z4c", "lean_runtime", false);
+  const std::string admissibility_checks = pin->GetOrAddString(
+      "z4c", "admissibility_checks",
+      opt.lean_runtime ? "consume_and_accept" : "exhaustive");
+  if (admissibility_checks == "exhaustive") {
+    opt.admissibility_checks = Z4cAdmissibilityChecks::exhaustive;
+  } else if (admissibility_checks == "consume_and_accept") {
+    opt.admissibility_checks = Z4cAdmissibilityChecks::consume_and_accept;
+  } else {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": unknown <z4c>/admissibility_checks="
+              << admissibility_checks
+              << "; expected exhaustive or consume_and_accept" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  opt.vertex_axis_regularity_audit = pin->GetOrAddBoolean(
+      "z4c", "vertex_axis_regularity_audit", !opt.lean_runtime);
+  opt.vc_single_rank_device_sync = pin->GetOrAddBoolean(
+      "z4c", "vc_single_rank_device_sync", opt.lean_runtime);
+  opt.vc_sync_postcondition = pin->GetOrAddBoolean(
+      "z4c", "vc_sync_postcondition", !opt.lean_runtime);
+  opt.timestep_structural_shortcuts = pin->GetOrAddBoolean(
+      "z4c", "timestep_structural_shortcuts", opt.lean_runtime);
+  opt.timestep_contract_diagnostic = pin->GetOrAddBoolean(
+      "z4c", "timestep_contract_diagnostic", !opt.lean_runtime);
   // Do not materialize a VC-only default in legacy CC input/output bytes.
   opt.vertex_axis_correction_tolerance =
       layout.centering == Z4cGridCentering::vertex
@@ -550,6 +576,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   ValidateNativeStorageExtents();
   if (layout.centering == Z4cGridCentering::vertex) {
     vertex_topology_plan = std::make_unique<Z4cVertexTopologyPlan>();
+    vertex_topology_plan->ConfigureRuntime(
+        opt.vc_single_rank_device_sync, opt.vc_sync_postcondition, nz4c);
     RebuildVertexTopologyPlan();
   }
   Kokkos::Profiling::popRegion();
@@ -669,6 +697,14 @@ void Z4c::RebuildVertexTopologyPlan() {
 void Z4c::CheckStateAdmissibility(Driver *driver, const int stage,
                                   const Z4cStateCheckpoint checkpoint,
                                   const bool include_ghosts) {
+  if (opt.admissibility_checks ==
+      Z4cAdmissibilityChecks::consume_and_accept) {
+    const bool required = checkpoint == Z4cStateCheckpoint::pre_rhs ||
+                          checkpoint == Z4cStateCheckpoint::pre_algconstr ||
+                          checkpoint ==
+                              Z4cStateCheckpoint::final_accepted_state;
+    if (!required) return;
+  }
   const int is = include_ghosts ? 0 : layout.is;
   const int ie = include_ghosts ? layout.n1 - 1 : layout.ie;
   const int js = include_ghosts ? 0 : layout.js;

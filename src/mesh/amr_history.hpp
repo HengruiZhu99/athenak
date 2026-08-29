@@ -20,6 +20,7 @@ class AMRHistory {
   bool active() const { return mode_ != Mode::off; }
   bool record() const { return mode_ == Mode::record; }
   bool replay() const { return mode_ == Mode::replay; }
+  bool ReplayHasPendingEvent() const;
 
   void Initialize(bool restart);
   void LimitTimestep();

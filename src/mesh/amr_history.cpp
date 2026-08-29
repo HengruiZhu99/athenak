@@ -407,6 +407,10 @@ void AMRHistory::Initialize(bool restart) {
   initialized_ = true;
 }
 
+bool AMRHistory::ReplayHasPendingEvent() const {
+  return replay() && initialized_ && next_event_ < events_.size();
+}
+
 void AMRHistory::LimitTimestep() {
   if (!replay() || !initialized_ || next_event_ >= events_.size()) return;
   double next_time = 0.0;

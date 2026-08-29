@@ -74,6 +74,29 @@ bool VertexContributorLess(const VertexContributor &left,
                   right.lx2, right.lx3, right.gid, right.k, right.j, right.i);
 }
 
+void Z4cVertexTopologyPlan::ConfigureRuntime(
+    const bool use_single_rank_device_sync,
+    const bool use_synchronization_postcondition,
+    const int requested_maximum_variables) {
+  if (requested_maximum_variables <= 0) {
+    std::cerr << "### FATAL ERROR: native VC synchronization requires a positive "
+                 "maximum variable count"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  single_rank_device_sync = use_single_rank_device_sync;
+  synchronization_postcondition = use_synchronization_postcondition;
+  maximum_variables = requested_maximum_variables;
+  device_local_group = DualArray1D<int>("VC shared local groups", 1);
+  device_authority_contributors =
+      DualArray1D<int>("VC shared authority contributors", 1);
+  device_authority_begin =
+      DualArray1D<int>("VC shared authority begin", 1);
+  device_authority_end = DualArray1D<int>("VC shared authority end", 1);
+  device_group_values = DvceArray2D<Real>(
+      "VC shared group values", 1, maximum_variables);
+}
+
 void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
                                     const Z4cGridLayout &layout) {
   if (layout.centering != Z4cGridCentering::vertex) {
@@ -303,6 +326,7 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
     }
     global_group_for_contributor[global_index] = group;
   }
+  group_count = group + 1;
   local_group.resize(local_count);
   const int my_displacement =
       contributor_displacements[global_variable::my_rank];
@@ -318,6 +342,61 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
   }
   local_indices.template modify<HostMemSpace>();
   local_indices.template sync<DevExeSpace>();
+
+  Kokkos::realloc(device_local_group, local_count);
+  for (int local = 0; local < local_count; ++local) {
+    device_local_group.h_view(local) = local_group[local];
+  }
+  device_local_group.template modify<HostMemSpace>();
+  device_local_group.template sync<DevExeSpace>();
+
+  Kokkos::realloc(device_authority_begin, group_count);
+  Kokkos::realloc(device_authority_end, group_count);
+  Kokkos::realloc(device_group_values, group_count, maximum_variables);
+  std::vector<int> authority_level(group_count,
+                                   std::numeric_limits<int>::min());
+  for (const int global_index : sorted_global_indices) {
+    const int owner_group = global_group_for_contributor[global_index];
+    authority_level[owner_group] = std::max(
+        authority_level[owner_group], global_contributors[global_index].level);
+  }
+  std::vector<int> authority_begin(group_count, 0);
+  std::vector<int> authority_end(group_count, 0);
+  std::vector<int> authority_contributors;
+  authority_contributors.reserve(global_count);
+  for (int owner_group = 0; owner_group < group_count; ++owner_group) {
+    authority_begin[owner_group] =
+        static_cast<int>(authority_contributors.size());
+    for (const int global_index : sorted_global_indices) {
+      if (global_group_for_contributor[global_index] == owner_group &&
+          global_contributors[global_index].level ==
+              authority_level[owner_group]) {
+        authority_contributors.push_back(global_index);
+      }
+    }
+    authority_end[owner_group] =
+        static_cast<int>(authority_contributors.size());
+    if (authority_begin[owner_group] == authority_end[owner_group]) {
+      std::cerr << "### FATAL ERROR: VC shared group has no finest-level authority"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    device_authority_begin.h_view(owner_group) = authority_begin[owner_group];
+    device_authority_end.h_view(owner_group) = authority_end[owner_group];
+  }
+  Kokkos::realloc(device_authority_contributors,
+                  authority_contributors.size());
+  for (std::size_t contributor = 0;
+       contributor < authority_contributors.size(); ++contributor) {
+    device_authority_contributors.h_view(contributor) =
+        authority_contributors[contributor];
+  }
+  device_authority_contributors.template modify<HostMemSpace>();
+  device_authority_contributors.template sync<DevExeSpace>();
+  device_authority_begin.template modify<HostMemSpace>();
+  device_authority_begin.template sync<DevExeSpace>();
+  device_authority_end.template modify<HostMemSpace>();
+  device_authority_end.template sync<DevExeSpace>();
   // Mark exactly the first contributor in the canonical global order as diagnostic
   // owner.  Evolution synchronization still averages every contributor.
   for (int sorted = 0; sorted < global_count; ++sorted) {
@@ -347,6 +426,77 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
   const int global_count = static_cast<int>(global_contributors.size());
   const int nvar = state.extent_int(1);
   if (global_count == 0 || nvar == 0) return;
+  const char *diagnostic_path = std::getenv(diagnostic_environment);
+  const bool diagnostic_requested =
+      diagnostic_path != nullptr && diagnostic_path[0] != '\0';
+  if (single_rank_device_sync && global_variable::nranks == 1 &&
+      !diagnostic_requested) {
+    if (nvar > maximum_variables) {
+      std::cerr << "### FATAL ERROR: native VC synchronization received " << nvar
+                << " variables, exceeding configured capacity "
+                << maximum_variables << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    const auto indices = local_indices.d_view;
+    const auto local_groups = device_local_group.d_view;
+    const auto authority_contributors =
+        device_authority_contributors.d_view;
+    const auto authority_begin = device_authority_begin.d_view;
+    const auto authority_end = device_authority_end.d_view;
+    auto group_values = device_group_values;
+    par_for("compute deterministic VC shared averages on device",
+            DevExeSpace(), 0, group_count - 1, 0, nvar - 1,
+        KOKKOS_LAMBDA(const int group, const int variable) {
+          Real sum = 0.0;
+          for (int entry = authority_begin(group);
+               entry < authority_end(group); ++entry) {
+            const int contributor = authority_contributors(entry);
+            const Real value = state(indices(contributor, 0), variable,
+                                     indices(contributor, 1),
+                                     indices(contributor, 2),
+                                     indices(contributor, 3));
+            if (!Kokkos::isfinite(value)) {
+              Kokkos::abort("nonfinite VC shared contributor on device");
+            }
+            sum += value;
+          }
+          group_values(group, variable) =
+              sum / static_cast<Real>(authority_end(group) -
+                                      authority_begin(group));
+        });
+    par_for("apply deterministic VC shared averages on device",
+            DevExeSpace(), 0, local_count - 1, 0, nvar - 1,
+        KOKKOS_LAMBDA(const int contributor, const int variable) {
+          state(indices(contributor, 0), variable, indices(contributor, 1),
+                indices(contributor, 2), indices(contributor, 3)) =
+              group_values(local_groups(contributor), variable);
+        });
+    if (!synchronization_postcondition) return;
+
+    DvceArray1D<unsigned long long> mismatches(
+        "VC shared device sync mismatches", 1);
+    Kokkos::deep_copy(mismatches, 0ULL);
+    par_for("verify deterministic VC shared averages on device",
+            DevExeSpace(), 0, local_count - 1, 0, nvar - 1,
+        KOKKOS_LAMBDA(const int contributor, const int variable) {
+          const Real expected =
+              group_values(local_groups(contributor), variable);
+          const Real actual =
+              state(indices(contributor, 0), variable, indices(contributor, 1),
+                    indices(contributor, 2), indices(contributor, 3));
+          if (actual != expected) Kokkos::atomic_inc(&mismatches(0));
+        });
+    Kokkos::fence();
+    const auto host_mismatches =
+        Kokkos::create_mirror_view_and_copy(HostMemSpace(), mismatches);
+    if (host_mismatches(0) != 0) {
+      std::cerr << "### FATAL ERROR: one-rank device VC synchronization left "
+                << host_mismatches(0) << " mismatched contributor values"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    return;
+  }
   DvceArray2D<Real> packed("VC shared contributors", local_count, nvar);
   const auto indices = local_indices.d_view;
   if (local_count > 0) {
@@ -434,9 +584,7 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
   // so this diagnostic observes (but does not alter) the exact inputs to the shared-node
   // reconciliation.  A caller-provided path keeps ordinary runs and restart state free
   // of new parameters or side effects.
-  const char *diagnostic_path = std::getenv(diagnostic_environment);
-  if (diagnostic_path != nullptr && diagnostic_path[0] != '\0' &&
-      global_variable::my_rank == 0) {
+  if (diagnostic_requested && global_variable::my_rank == 0) {
     std::vector<Real> minima(groups * nvar,
                              std::numeric_limits<Real>::max());
     std::vector<Real> maxima(groups * nvar,

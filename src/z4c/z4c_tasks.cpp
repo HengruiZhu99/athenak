@@ -301,14 +301,29 @@ void Z4c::ApplyVertexAxisRegularity(DvceArray5D<Real> &state, const int stage,
     return;
   }
   const int nmb = pmy_pack->nmb_thispack;
+  auto &mb_bcs = pmy_pack->pmb->mb_bcs;
+  const int is = layout.is;
+  if (!opt.vertex_axis_regularity_audit) {
+    const Real tolerance = opt.vertex_axis_correction_tolerance;
+    par_for("enforce evolved vertex axis regularity lean", DevExeSpace(),
+            0, nmb - 1, layout.ks, layout.ke, layout.js, layout.je,
+        KOKKOS_LAMBDA(const int m, const int k, const int j) {
+          if (mb_bcs.d_view(m, BoundaryFace::inner_x1) !=
+              BoundaryFlag::axis) return;
+          const VertexAxisCorrection correction =
+              EnforceVertexAxisZ4cPoint(state, m, k, j, is);
+          if (correction.nonfinite != 0 || correction.max_rel > tolerance) {
+            Kokkos::abort("VC axis regularity correction rejected in lean runtime");
+          }
+        });
+    return;
+  }
   const int active_n2 = layout.je - layout.js + 1;
   const int active_n3 = layout.ke - layout.ks + 1;
   const int points_per_block = active_n2 * active_n3;
   DvceArray2D<Real> records("vertex axis regularity records",
                             nmb * points_per_block, 4);
   Kokkos::deep_copy(records, 0.0);
-  auto &mb_bcs = pmy_pack->pmb->mb_bcs;
-  const int is = layout.is;
   const int js = layout.js;
   const int ks = layout.ks;
   par_for("enforce evolved vertex axis regularity", DevExeSpace(), 0, nmb - 1,
@@ -565,7 +580,7 @@ TaskStatus Z4c::FinalizeVertexAcceptedState(Driver *pdrive, int stage) {
   ApplyVertexAxisRegularity(u0, stage, "post_accepted_boundary");
   ReconstructAxisParityGhosts();
   CheckStateAdmissibility(pdrive, stage,
-                          Z4cStateCheckpoint::post_amr_transfer);
+                          Z4cStateCheckpoint::final_accepted_state);
   return TaskStatus::complete;
 }
 

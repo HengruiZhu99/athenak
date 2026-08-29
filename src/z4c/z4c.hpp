@@ -61,6 +61,11 @@ enum class Z4cBoundaryRHSMode {
   full_constraint_bjorhus,
 };
 
+enum class Z4cAdmissibilityChecks {
+  exhaustive,
+  consume_and_accept,
+};
+
 // The name is deliberately a writer/checkpoint label, rather than an inferred
 // root cause.  A failure record can therefore distinguish a bad RK update from
 // a later AMR, communication, or boundary write without retaining a large
@@ -75,6 +80,7 @@ enum class Z4cStateCheckpoint {
   pre_algconstr,
   post_algconstr,
   post_amr_transfer,
+  final_accepted_state,
 };
 
 const char *Z4cStateCheckpointName(Z4cStateCheckpoint checkpoint);
@@ -220,6 +226,15 @@ class Z4c {
     // where a square root is necessary.
     Real diss;            // amount of numerical dissipation
     Real eps_floor;       // a small number O(10^-12)
+    // Default-off production path that removes observational synchronization
+    // without changing the evolution operators or accepted state.
+    bool lean_runtime;
+    Z4cAdmissibilityChecks admissibility_checks;
+    bool vertex_axis_regularity_audit;
+    bool vc_single_rank_device_sync;
+    bool vc_sync_postcondition;
+    bool timestep_structural_shortcuts;
+    bool timestep_contract_diagnostic;
     // Fail-visible bound for the exact evolved-axis regularity projection.
     Real vertex_axis_correction_tolerance;
     // Safety factor applied only to the explicit local-source stability ceiling.
