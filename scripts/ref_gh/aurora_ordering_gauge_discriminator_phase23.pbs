@@ -24,6 +24,9 @@ FIXED_INPUT="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_fixed_point.athinput"
 
 mkdir -p "${OUT}"
 cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "bootstrap_or_run_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+echo "bootstrap_begin=$(date -Is)"
 source "${HOME}/athenak_env"
 export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
 export MPICH_GPU_SUPPORT_ENABLED=1
@@ -36,8 +39,15 @@ BINDER=$(command -v gpu_tile_compact.sh)
 test -x "${BINDER}"
 
 actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+echo "bootstrap_actual_commit=${actual_commit}"
+echo "bootstrap_expected_commit=${EXPECTED_COMMIT}"
 test "${actual_commit}" = "${EXPECTED_COMMIT}"
-test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+tracked_status=$(git -C "${SRC}" status --porcelain --untracked-files=no)
+if test -n "${tracked_status}"; then
+  echo "bootstrap_tracked_status=${tracked_status}"
+  exit 1
+fi
+echo "bootstrap_checks=PASS"
 
 {
   date -Is
