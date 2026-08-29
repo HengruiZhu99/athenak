@@ -288,7 +288,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     reference_provider(), reference_workspace(), reference_evolution(),
     reference_diagnostic(), reference_static(), reference_stage(),
     reference_hot(),
-    q_sample_cells(), q_sample_weights(), q_sample_count(0),
+    q_sample_cells(), q_sample_weights(), q_reduction_result(),
+    q_sample_count(0),
     reference_table("ref_gh reference table", 1, 1),
     reference_cache_time(NAN), reference_diagnostic_time(NAN),
     max_location_diagnostic_time(NAN), max_location_diagnostic_cycle(-1),
@@ -764,6 +765,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
               << std::endl;
   }
   if (opt.reference_q_controlled && opt.q_controller_enabled) {
+    q_reduction_result = decltype(q_reduction_result)(
+        "ref_gh q reduction result");
     Real h = std::numeric_limits<Real>::max();
     for (int m = 0; m < ppack->nmb_thispack; ++m) {
       h = std::min(h, std::min(

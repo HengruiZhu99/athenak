@@ -192,6 +192,7 @@ class RefGh {
   // active cells.  Disabled and prescribed-q runs leave these unallocated.
   DvceArray1D<int> q_sample_cells;
   DvceArray1D<Real> q_sample_weights;
+  Kokkos::View<array_sum::GlobalSum, DevMemSpace> q_reduction_result;
   int q_sample_count;
   DvceArray2D<Real> reference_table;
   Real reference_cache_time;

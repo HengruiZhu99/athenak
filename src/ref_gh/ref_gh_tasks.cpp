@@ -738,7 +738,13 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
   const TrumpetQControlledReferenceParameters parameters{
       mass, {center_x, center_y, center_z}, opt.q_gaussian_width,
       q_controller.q, q_controller.q_dot, 0.0};
-  array_sum::GlobalSum sums;
+  // Keep the reducer destination in device memory.  Passing a stack scalar to
+  // Kokkos::Sum makes the SYCL backend launch a kernel that writes directly to
+  // a HostSpace address.  That path is address-layout-sensitive on PVC and can
+  // fault after otherwise unrelated device allocations.  The explicit device
+  // result and one mirror copy preserve the identical reduction and the single
+  // device reduction / single MPI collective production design.
+  const auto device_sums = q_reduction_result;
   Kokkos::parallel_reduce(
       "ref_gh compact current-q reduction",
       Kokkos::RangePolicy<>(DevExeSpace(), 0, q_sample_count),
@@ -775,7 +781,10 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
         total.the_array[kWEpsilon] += weight*epsilon_g;
         total.the_array[kWEpsilon2] += weight*epsilon_g*epsilon_g;
         total.the_array[kCount] += 1.0;
-      }, Kokkos::Sum<array_sum::GlobalSum>(sums));
+      }, Kokkos::Sum<array_sum::GlobalSum, DevMemSpace>(device_sums));
+  const auto host_sums = Kokkos::create_mirror_view_and_copy(
+      HostMemSpace(), device_sums);
+  const array_sum::GlobalSum sums = host_sums();
   DebugFence("ref_gh compact q-controller reduction");
 #if MPI_PARALLEL_ENABLED
   // This is the sole collective in the closed-loop q measurement.
