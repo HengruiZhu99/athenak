@@ -22,10 +22,12 @@ def fresh(path: Path) -> None:
     path.mkdir(parents=True)
 
 
-def execute(command: list[str], cwd: Path, expect_success: bool = True) -> str:
+def execute(command: list[str], cwd: Path, expect_success: bool = True,
+            env_updates: dict[str, str] | None = None) -> str:
     environment = dict(os.environ)
     environment.setdefault("OMP_NUM_THREADS", "2")
     environment.setdefault("OMP_PROC_BIND", "false")
+    environment.update(env_updates or {})
     completed = subprocess.run(
         command, cwd=cwd, env=environment, text=True, capture_output=True, check=False)
     (cwd / "stdout.log").write_text(completed.stdout, encoding="utf-8")
@@ -112,7 +114,8 @@ def main() -> int:
     work = Path(args.work_dir)
     fresh(work)
     roots = {name: work / name for name in (
-        "record", "replay", "lean_replay", "high", "restart_prefix", "restart_continue",
+        "record", "replay", "lean_replay", "legacy_lean", "legacy_lean_resume",
+        "high", "restart_prefix", "restart_continue",
         "cell_record", "bridge_reject", "bridge_accept", "mpi_replay")}
     for root in roots.values():
         fresh(root)
@@ -147,6 +150,32 @@ def main() -> int:
     require((roots["replay"] / "vc_replay.z4c.user.hst").read_bytes() ==
             (roots["lean_replay"] / "vc_lean.z4c.user.hst").read_bytes(),
             "lean-runtime replay changed the Z4c history bytes")
+
+    legacy_input = work / "legacy-no-lean-runtime.athinput"
+    legacy_text = Path(args.input).read_text(encoding="utf-8")
+    require("lean_runtime = false\n" in legacy_text,
+            "lean-runtime fixture declaration is missing")
+    legacy_input.write_text(
+        legacy_text.replace("lean_runtime = false\n", "", 1), encoding="utf-8")
+    legacy_log = execute(command(
+        args.athena, str(legacy_input), "vc_legacy_lean", "replay", authority,
+        ["time/cfl_number=0.07", "time/nlim=6"]), roots["legacy_lean"],
+        env_updates={"ATHENA_Z4C_LEAN_RUNTIME": "1"})
+    require("AMR_HISTORY_REPLAY event=2 " in legacy_log,
+            "environment-selected legacy-input replay did not finish authority")
+    require((roots["replay"] / "vc_replay.z4c.user.hst").read_bytes() ==
+            (roots["legacy_lean"] / "vc_legacy_lean.z4c.user.hst").read_bytes(),
+            "environment-selected legacy replay changed the Z4c history bytes")
+    legacy_restart = sorted(
+        (roots["legacy_lean"] / "rst").glob("vc_legacy_lean.*.rst"))[-1]
+    require(b"lean_runtime" not in legacy_restart.read_bytes(),
+            "environment runtime selector was materialized into a legacy restart")
+    legacy_resume_log = execute(
+        [args.athena, "-r", str(legacy_restart), "time/nlim=7"],
+        roots["legacy_lean_resume"],
+        env_updates={"ATHENA_Z4C_LEAN_RUNTIME": "1"})
+    require("cycle=7" in legacy_resume_log,
+            "environment-selected lean runtime did not resume a legacy restart")
 
     high_resolution = ["mesh/nx1=64", "mesh/nx2=64",
                        "meshblock/nx1=32", "meshblock/nx2=32"]
