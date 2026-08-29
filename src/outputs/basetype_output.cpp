@@ -937,6 +937,41 @@ void BaseTypeOutput::LoadOutputData(Mesh *pm) {
     ComputeDerivedVariable(out_params.variable, pm);
   }
 
+  // Lean Z4c output blocks are homogeneous in the production benchmark: all
+  // variables in a block reference one device view (u0, u_con, or
+  // derived_var).  Mirror that source once and extract the requested active
+  // ranges on host.  This preserves every stored value while avoiding one
+  // allocation, pack kernel, D2H copy, and host synchronization per
+  // (variable, MeshBlock) pair.  Mixed-source and default runs retain the
+  // historical path below.
+  const bool lean_z4c = nout_mbs > 0 && !outvars.empty() &&
+      pm->pmb_pack->pz4c != nullptr &&
+      pm->pmb_pack->pz4c->opt.lean_runtime;
+  const bool homogeneous_source = lean_z4c && std::all_of(
+      outvars.begin(), outvars.end(), [&](const OutputVariableInfo &variable) {
+        return variable.data_ptr == outvars.front().data_ptr;
+      });
+  if (homogeneous_source) {
+    const auto host_source = Kokkos::create_mirror_view_and_copy(
+        HostMemSpace(), *(outvars.front().data_ptr));
+    for (int n = 0; n < nout_vars; ++n) {
+      const int source_variable = outvars[n].data_index;
+      for (int m = 0; m < nout_mbs; ++m) {
+        const int mbi = pm->FindMeshBlockIndex(outmbs[m].mb_gid);
+        for (int k = outmbs[m].oks; k <= outmbs[m].oke; ++k) {
+          for (int j = outmbs[m].ojs; j <= outmbs[m].oje; ++j) {
+            for (int i = outmbs[m].ois; i <= outmbs[m].oie; ++i) {
+              outarray(n, m, k - outmbs[m].oks, j - outmbs[m].ojs,
+                       i - outmbs[m].ois) =
+                  host_source(mbi, source_variable, k, j, i);
+            }
+          }
+        }
+      }
+    }
+    return;
+  }
+
   // Now copy data to host (outarray) over all variables and MeshBlocks
   for (int n=0; n<nout_vars; ++n) {
     for (int m=0; m<nout_mbs; ++m) {
