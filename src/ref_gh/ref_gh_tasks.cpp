@@ -101,8 +101,6 @@ void StoreQControlledStationaryTrumpetMetricState(
     const Real gaussian_width, const Real q, const Real q_dot,
     const Real q_ddot,
     const Real x, const Real y, const Real z) {
-  for (int n = 0; n < kHhatOffset; ++n) state(m, n, k, j, i) = 0.0;
-  ProjectedFirstOrderMetric metric{};
   if constexpr (Analytic) {
     const AnalyticRadialQPoint current =
         MakeQControlledBoundaryAnalyticPoint(
@@ -113,21 +111,70 @@ void StoreQControlledStationaryTrumpetMetricState(
         reference_static(m, kAnalyticTrumpetL, k, j, i), 0.0,
         reference_static(m, kAnalyticTrumpetLR, k, j, i), 0.0, 0.0,
         reference_static(m, kAnalyticTrumpetLRR, k, j, i), 0.0, 0.0};
-    metric = ProjectAnalyticPhysicalMetricToReference(physical, current);
-  } else {
-    ReferenceGeometry physical;
-    const TrumpetSchwarzschildReference physical_provider{
-        table, mass, {center_x, center_y, center_z}};
-    physical_provider.Populate(0.0, x, y, z, physical);
-    const TrumpetQControlledReferenceParameters parameters{
-        mass, {center_x, center_y, center_z}, gaussian_width,
-        q, q_dot, q_ddot};
-    ReferenceGeometry current;
-    const TrumpetQControlledReference current_provider{table, parameters};
-    current_provider.Populate(0.0, x, y, z, current);
-    metric = ProjectPhysicalMetricToReference(
-        physical.metric, physical.d_metric, current);
+    const Real lapse = physical.alpha.value;
+    const Real shift[3] = {
+        physical.b.value*physical.displacement[0],
+        physical.b.value*physical.displacement[1],
+        physical.b.value*physical.displacement[2]};
+    bool valid = lapse > 0.0 && Kokkos::isfinite(lapse);
+    // Store one symmetric component before advancing to the next.  This is
+    // the same contraction as ProjectPhysicalMetricToReferenceImpl, but it
+    // avoids simultaneously retaining its 16-Real metric, 64-Real metric
+    // derivative, and 50-Real returned state in the PVC boundary kernel.
+    for (int A = 0; A < 4; ++A) {
+      for (int B = A; B < 4; ++B) {
+        Real psi = 0.0;
+        Real d_psi[4] = {};  // NOLINT(runtime/arrays)
+        for (int a = 0; a < 4; ++a) {
+          const Real frame_a = ReferenceFrame(current, A, a);
+          for (int b = 0; b < 4; ++b) {
+            const Real frame_b = ReferenceFrame(current, B, b);
+            const Real metric_ab = AnalyticMetric(physical, a, b);
+            psi += frame_a*frame_b*metric_ab;
+            for (int p = 0; p < 4; ++p) {
+              d_psi[p] +=
+                  (ReferenceDFrame(current, p, A, a)*frame_b
+                   + frame_a*ReferenceDFrame(current, p, B, b))*metric_ab
+                  + frame_a*frame_b*AnalyticDMetric(physical, p, a, b);
+            }
+          }
+        }
+        Real pi = -d_psi[0]/lapse;
+        for (int p = 0; p < 3; ++p) pi += shift[p]*d_psi[p + 1]/lapse;
+        state(m, PsiIndex(A, B), k, j, i) = psi;
+        state(m, PiIndex(A, B), k, j, i) = pi;
+        valid = valid && Kokkos::isfinite(psi) && Kokkos::isfinite(pi);
+        for (int I = 0; I < 3; ++I) {
+          Real phi = 0.0;
+          for (int p = 0; p < 3; ++p) {
+            phi += ReferenceSpatialFrame(current, I, p)*d_psi[p + 1];
+          }
+          state(m, PhiIndex(I, A, B), k, j, i) = phi;
+          valid = valid && Kokkos::isfinite(phi);
+        }
+      }
+    }
+    if (!valid) {
+      for (int n = 0; n < kHhatOffset; ++n) {
+        state(m, n, k, j, i) = NAN;
+      }
+    }
+    return;
   }
+
+  for (int n = 0; n < kHhatOffset; ++n) state(m, n, k, j, i) = 0.0;
+  ReferenceGeometry physical;
+  const TrumpetSchwarzschildReference physical_provider{
+      table, mass, {center_x, center_y, center_z}};
+  physical_provider.Populate(0.0, x, y, z, physical);
+  const TrumpetQControlledReferenceParameters parameters{
+      mass, {center_x, center_y, center_z}, gaussian_width,
+      q, q_dot, q_ddot};
+  ReferenceGeometry current;
+  const TrumpetQControlledReference current_provider{table, parameters};
+  current_provider.Populate(0.0, x, y, z, current);
+  const ProjectedFirstOrderMetric metric = ProjectPhysicalMetricToReference(
+      physical.metric, physical.d_metric, current);
   if (!metric.valid) {
     for (int n = 0; n < nvar; ++n) state(m, n, k, j, i) = NAN;
     return;
