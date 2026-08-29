@@ -32,6 +32,14 @@ def total(profile, names):
     return sum(profile[name][1] for name in names)
 
 
+def first_kernel(profile, names):
+    """Return the first available name from an equation-equivalent kernel family."""
+    for name in names:
+        if name in profile:
+            return name
+    raise RuntimeError(f"none of the expected kernels are present: {names}")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("run_directory", type=Path)
@@ -74,9 +82,15 @@ def main():
     z4c_rhs = z4c["z4c rhs loop"][1] / z4c["z4c rhs loop"][0]
     z4c_diss = z4c["K-O Dissipation"][1] / z4c["K-O Dissipation"][0]
 
+    q_kernel = first_kernel(
+        dynamic,
+        [
+            "ref_gh compact current-q atomic reduction",
+            "ref_gh compact current-q reduction",
+        ],
+    )
     categories = {
-        "q_control": dynamic["ref_gh compact current-q reduction"][1]
-        / dynamic["ref_gh compact current-q reduction"][0],
+        "q_control": dynamic[q_kernel][1] / dynamic[q_kernel][0],
         "analytic_reference": dynamic["ref_gh analytic radial-q stage reference"][1]
         / dynamic["ref_gh analytic radial-q stage reference"][0],
         "main_rhs_without_dissipation": refgh_rhs,

@@ -138,3 +138,63 @@ Current state:
 
 No convergence, trumpet stability, production readiness, or performance
 improvement is claimed from this local checkpoint.
+
+## Phase 2/3 hot-reference discriminator
+
+Candidate 1 added exactly 141 analytic hot-reference Reals per ghosted cell:
+24 antisymmetric spin coefficients, 96 symmetry-packed spin derivatives, and
+21 bivector-symmetric Riemann components.  The generated direct fill consumes
+only the accepted 12-static/8-stage radial representation.  Analytic mode
+allocated 1,327,104 static bytes, 884,736 stage bytes, and 15,593,472 hot bytes
+for the local test mesh, with zero generic-cache bytes.  The generic 1171-Real
+path remained an oracle only.
+
+Fresh local gates passed at `ba563692e7e0c541eae35c94e35b33ee29a1336e`:
+
+- deterministic SymPy regeneration, twice, byte-identical;
+- 216 and 2160 coefficient samples;
+- 2376 generated-geometry samples;
+- 2160 moving mixed-jet gauge/dtTheta samples;
+- 2160 compact-boundary samples;
+- 4320 compatible/standard all-61 comparisons, maximum `2.84217e-14`;
+- analytic/generic one-cycle histories, conditioned Linf below `3e-13`.
+
+An additional exploratory comparison of individual generated hot coefficients
+showed near-puncture absolute differences up to about `3.3e-6` for very large
+coefficients.  It was not a controlling oracle and was removed rather than
+weakening the accepted binary64-conditioned end-to-end gates.  The consumed
+covariant contractions retain their generated-source and all-61 oracle.  This
+is a documented limitation of individual-coefficient interpretation, not a
+claim that each stored coefficient is independently pointwise qualified near
+the puncture.
+
+Aurora exposed two pre-existing portability pressure points while qualifying
+the candidate.  Jobs 8790472, 8790490, 8790496, and 8790507 preserve the exact
+failures.  Equation-preserving corrections replaced the custom q reducer with
+one compact nine-moment atomic device accumulation plus one MPI collective and
+computed the analytic boundary metric one symmetric component at a time.
+After fresh local all-61 and evolved checks, exact commit
+`e02e8ced53a66ae45de5615ae8943081c217f8ac` passed job 8790518:
+
+- one/eight full-output dynamic-q evolved cycle: pass;
+- all eight ranks on distinct PVC tiles: pass;
+- finite native GH/reduction/curl diagnostics from the initial row: pass;
+- one/eight conditioned Linf: `1.36191095905485950e-14 < 5e-12`.
+
+Matched warmed job 8790530 then rejected the production loop-source candidate:
+
+| Metric | Baseline | Hot loop candidate |
+|---|---:|---:|
+| complete Ref-GH/Z4c stage | 9.244886 | 14.956614 |
+| RHS ratio, no dissipation | 10.902828 | 17.269546 |
+| RHS ratio, with dissipation | 10.422812 | 16.401222 |
+| main RHS seconds/stage | 0.0772693 | 0.121589 |
+| primary-kernel spill Reals | 1279 | 895 |
+
+The q controller (`0.0634%` of stage), reference-stage update (`0.0300%`), and
+dynamic/static ratio (`1.07595`) meet their targets.  However, lower compiler-
+reported spill did not offset the loop contraction and hot-cache traffic: the
+primary source kernel increased from `0.072283` to `0.116564` seconds/call.
+The production loop-source discriminator is rejected.  This triggers the
+flat-RangePolicy staged physical/source/Pi phases; it does not establish the
+performance target.

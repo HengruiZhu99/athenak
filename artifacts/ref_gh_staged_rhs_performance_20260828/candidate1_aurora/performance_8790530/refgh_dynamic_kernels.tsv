@@ -1,0 +1,70 @@
+kernel	calls	total_seconds	average_seconds	percent
+ref_gh scalar source and pi rhs	81	9.441663102	0.116563742	55.9806072591
+ref_gh stationary trumpet data	1	1.799715231	1.799715231	10.6706996889
+ref_gh stationary trumpet error	1	1.548081052	1.548081052	9.17873434383
+ref_gh stationary frame reference audits	1	0.6954537	0.6954537	4.12341766763
+ref_gh stationary reference Ricci	1	0.693872012	0.693872012	4.11403967417
+ref_gh analytic radial-q hot reference	81	0.582309784	0.00718900967901	3.45257556524
+ref_gh stationary trumpet fixed-radius field error	3	0.55438991	0.184796636667	3.28703571445
+ref_gh projected trumpet metric boundaries	81	0.409466648	0.00505514380247	2.42777054844
+ref_gh psi rhs	81	0.37374236	0.00461410320988	2.21595751143
+ref_gh flat constraints	2	0.323175624	0.161587812	1.91614204906
+ref_gh dissipation	81	0.099394572	0.00122709348148	0.589320804895
+ref_gh to ADM	1	0.08030352	0.08030352	0.476127962423
+ref_gh dt	21	0.059345964	0.00282599828571	0.351868422671
+ref_gh RK update	80	0.053256174	0.000665702175	0.315761421331
+ref_gh analytic radial-q static reference	1	0.036916701	0.036916701	0.218882978312
+ref_gh compatible phi rhs	81	0.033265872	0.000410689777778	0.197236831631
+ref_gh rk4 base	60	0.030467105	0.000507785083333	0.180642649595
+ref_gh minimum puncture radius	1	0.016424819	0.016424819	0.0973844683725
+SendBuff	162	0.01062843	6.56075925926e-05	0.0630170722237
+RecvBuff	162	0.00920884	5.6844691358e-05	0.0546001747555
+ref_gh compact current-q atomic reduction	80	0.00707855	8.8481875e-05	0.0419694627136
+ref_gh analytic radial-q stage reference	81	0.003386289	4.1806037037e-05	0.0200776613746
+Kokkos::View::initialization [] via memset	108	0.001290967	1.19533981481e-05	0.0076542782591
+ref_gh stationary fixed-radius initial RHS	3	0.001063858	0.000354619333333	0.00630772526344
+ref_gh stationary initial RHS	1	0.000413839	0.000413839	0.0024536946804
+Kokkos::View::initialization [ref_gh reference table_mirror] via memset	1	0.000389271	0.000389271	0.00230802844085
+ref_gh stationary trumpet fixed-radius constraints	3	0.000209196	6.9732e-05	0.00124034494661
+Kokkos::View::initialization [u_rhs ref_gh] via memset	2	0.000163675	8.18375e-05	0.000970446180312
+Kokkos::View::initialization [u1 ref_gh] via memset	2	0.000161292	8.0646e-05	0.00095631712427
+Kokkos::View::initialization [mb_gid] via memset	1	0.000129133	0.000129133	0.000765643052404
+ref_gh stationary trumpet constraints	1	0.000100505	0.000100505	0.000595904648555
+Kokkos::View::initialization [u0 ref_gh] via memset	2	9.6861e-05	4.84305e-05	0.000574298991729
+ref_gh cache metric condition	1	5.3619e-05	5.3619e-05	0.000317912654603
+Kokkos::View::initialization [u_con ref_gh] via memset	2	4.7549e-05	2.37745e-05	0.000281922990241
+Kokkos::View::initialization [u_adm] via memset	2	3.7952e-05	1.8976e-05	0.000225021374279
+Kokkos::View::initialization [u_common_adm_constraints] via memset	2	2.112e-05	1.056e-05	0.000125222687204
+Kokkos::View::initialization [uin] via memset	2	1.8947e-05	9.4735e-06	0.000112338743109
+Kokkos::View::initialization [ref_gh reference table] via memset	2	1.6764e-05	8.382e-06	9.93955079685e-05
+Kokkos::View::initialization [ru] via memset	1	1.6416e-05	1.6416e-05	9.73321795998e-05
+Kokkos::View::initialization [recv_agg_offset] via memset	2	1.5947e-05	7.9735e-06	9.45514295856e-05
+Kokkos::View::initialization [bin] via memset	2	1.5123e-05	7.5615e-06	8.96658474712e-05
+Kokkos::View::initialization [iin] via memset	2	1.3682e-05	6.841e-06	8.11220078755e-05
+Kokkos::View::initialization [send_agg_offset] via memset	2	1.3488e-05	6.744e-06	7.9971761601e-05
+Kokkos::View::initialization [mb_lev] via memset	1	1.0612e-05	1.0612e-05	6.29196570366e-05
+Kokkos::View::initialization [ref_gh q sample weights] via memset	1	1.0281e-05	1.0281e-05	6.09571234445e-05
+Kokkos::View::initialization [excision_floor] via memset	1	1.0263e-05	1.0263e-05	6.08503995634e-05
+Kokkos::View::initialization [mbsize] via memset	1	1.0078e-05	1.0078e-05	5.97535152295e-05
+Kokkos::View::initialization [ref_gh q sample cells] via memset	1	9.709e-06	9.709e-06	5.75656756661e-05
+Kokkos::View::initialization [excision_flux] via memset	1	9.616e-06	9.616e-06	5.70142689469e-05
+Kokkos::View::initialization [mbbcs] via memset	1	9.369e-06	9.369e-06	5.55497801334e-05
+Kokkos::View::initialization [rank_recvbuf_vars] via memset	1	7.834e-06	7.834e-06	4.6448604714e-05
+Kokkos::View::initialization [rank_sendbuf_vars] via memset	1	7.419e-06	7.419e-06	4.39880263433e-05
+Kokkos::View::initialization [ref_gh q reduction result] via memset	1	6.869e-06	6.869e-06	4.0727018864e-05
+Kokkos::View::initialization [coarse u0 ref_gh] via memset	1	6.76e-06	6.76e-06	4.00807464726e-05
+Kokkos::View::initialization [ref_gh q sample weights_mirror] via memset	1	5.141e-06	5.141e-06	3.04815262745e-05
+Kokkos::View::initialization [DualView::modified_flags] via memset	8	4.002e-06	5.0025e-07	2.37282762402e-05
+Kokkos::View::initialization [ref_gh q sample cells_mirror] via memset	1	2.35e-06	2.35e-06	1.39333955933e-05
+Kokkos::View::initialization [uin_mirror] via memset	2	1.545e-06	7.725e-07	9.16046646453e-06
+Kokkos::View::initialization [iin_mirror] via memset	2	1.07e-06	5.35e-07	6.34414182333e-06
+Kokkos::View::initialization [bin_mirror] via memset	2	9.34e-07	4.67e-07	5.53778361027e-06
+Kokkos::View::initialization [mbbcs_mirror] via memset	1	6.42e-07	6.42e-07	3.806485094e-06
+Kokkos::View::initialization [mbsize_mirror] via memset	1	5.73e-07	5.73e-07	3.39737688296e-06
+Kokkos::View::initialization [mb_gid_mirror] via memset	1	4.88e-07	4.88e-07	2.8934029998e-06
+Kokkos::View::initialization [send_agg_offset_mirror] via memset	1	4.68e-07	4.68e-07	2.77482090964e-06
+Kokkos::View::initialization [_mirror] via memset	1	4.33e-07	4.33e-07	2.56730225187e-06
+Kokkos::View::initialization [recv_agg_offset_mirror] via memset	1	4.3e-07	4.3e-07	2.54951493835e-06
+Kokkos::View::initialization [rank_sendhdr_vars] via memset	1	3.59e-07	3.59e-07	2.12854851829e-06
+Kokkos::View::initialization [mb_lev_mirror] via memset	1	3.2e-07	3.2e-07	1.89731344249e-06
+Kokkos::View::initialization [rank_recvhdr_vars] via memset	1	3.16e-07	3.16e-07	1.87359702446e-06
