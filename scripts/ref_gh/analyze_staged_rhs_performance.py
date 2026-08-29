@@ -72,7 +72,11 @@ def main() -> None:
     gamma2 = average(dynamic, "ref_gh gamma2 reduction damping")
     main_rhs = psi + scalar_pi + compatible_phi + standard_phi + gamma2
     dissipation = average(dynamic, "ref_gh dissipation")
-    reference = average(dynamic, "ref_gh analytic radial-q stage reference")
+    reference_stage = average(
+        dynamic, "ref_gh analytic radial-q stage reference")
+    reference_hot = average(
+        dynamic, "ref_gh analytic radial-q hot reference")
+    reference = reference_stage + reference_hot
     q_control = average(dynamic, "ref_gh compact current-q reduction")
     boundary = average(dynamic, "ref_gh projected trumpet metric boundaries")
     rk_update = average(dynamic, "ref_gh RK update")
@@ -87,6 +91,8 @@ def main() -> None:
         "complete_warmed_static_stage": complete["refgh_static"],
         "complete_warmed_z4c_stage": complete["z4c"],
         "analytic_reference": reference,
+        "analytic_reference_stage_coefficients": reference_stage,
+        "analytic_reference_hot_coefficients": reference_hot,
         "q_control": q_control,
         "main_rhs_without_dissipation": main_rhs,
         "dissipation": dissipation,

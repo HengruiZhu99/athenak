@@ -24,6 +24,7 @@
 #include "ref_gh/reference_analytic_radial_q.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_provider_cache.hpp"
+#include "ref_gh/reference_analytic_hot.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 
 #if MPI_PARALLEL_ENABLED
@@ -286,6 +287,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     coarse_u0("coarse u0 ref_gh", 1, 1, 1, 1, 1),
     reference_provider(), reference_workspace(), reference_evolution(),
     reference_diagnostic(), reference_static(), reference_stage(),
+    reference_hot(),
     q_sample_cells(), q_sample_weights(), q_sample_count(0),
     reference_table("ref_gh reference table", 1, 1),
     reference_cache_time(NAN), reference_diagnostic_time(NAN),
@@ -724,6 +726,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
                     n3, n2, n1);
     Kokkos::realloc(reference_stage, nmb, kAnalyticRadialQStageSize,
                     n3, n2, n1);
+    Kokkos::realloc(reference_hot, nmb, kReferenceAnalyticHotSize,
+                    n3, n2, n1);
   } else {
     Kokkos::realloc(
         reference_provider, nmb, kReferenceProviderSize, n3, n2, n1);
@@ -742,6 +746,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
         sizeof(Real)*reference_static.size();
     const std::size_t analytic_stage_bytes =
         sizeof(Real)*reference_stage.size();
+    const std::size_t analytic_hot_bytes =
+        sizeof(Real)*reference_hot.size();
     std::cout << "ref_gh reference allocation backend="
               << (opt.reference_backend == 1
                       ? "analytic_radial_q" : "generic_cache_oracle")
@@ -750,8 +756,11 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
               << (opt.reference_backend == 1 ? kAnalyticRadialQStaticSize : 0)
               << " analytic_stage_components="
               << (opt.reference_backend == 1 ? kAnalyticRadialQStageSize : 0)
+              << " analytic_hot_components="
+              << (opt.reference_backend == 1 ? kReferenceAnalyticHotSize : 0)
               << " analytic_static_bytes=" << analytic_static_bytes
               << " analytic_stage_bytes=" << analytic_stage_bytes
+              << " analytic_hot_bytes=" << analytic_hot_bytes
               << std::endl;
   }
   if (opt.reference_q_controlled && opt.q_controller_enabled) {

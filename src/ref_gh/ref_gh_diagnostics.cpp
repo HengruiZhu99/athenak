@@ -49,6 +49,7 @@ void RefGh::RefGhToADMImpl() {
   const auto reference_extra = reference_diagnostic;
   const auto analytic_static = reference_static;
   const auto analytic_stage = reference_stage;
+  const auto analytic_hot = reference_hot;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
   const Real center_z = opt.reference_center[2];
@@ -65,6 +66,7 @@ void RefGh::RefGhToADMImpl() {
                                size.d_view(m).x3min, size.d_view(m).x3max);
     const auto reference = MakeTypedProductionReferencePoint<Analytic>(
         reference_cache, reference_extra, analytic_static, analytic_stage,
+        analytic_hot,
         m, k, j, i, x, y, z, center_x, center_y, center_z);
     Real metric[4][4];  // NOLINT(runtime/arrays)
     Real determinant = 0.0;

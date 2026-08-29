@@ -17,6 +17,7 @@
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "ref_gh/analytic_radial_q_production.hpp"
+#include "ref_gh/generated/analytic_radial_q_hot_reference.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/feedback_continuation.hpp"
 #include "ref_gh/puncture_exponent.hpp"
@@ -1627,6 +1628,7 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   if (opt.reference_backend == 1) {
     const auto static_view = reference_static;
     const auto stage_view = reference_stage;
+    const auto hot_view = reference_hot;
     if (!analytic_static_initialized) {
       Kokkos::parallel_for(
       "ref_gh analytic radial-q static reference",
@@ -1679,6 +1681,39 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       }
     });
     Kokkos::fence("ref_gh analytic radial-q stage reference");
+    // Direct generated component expressions fill only the 24 spin, 96 spin
+    // derivative, and 21 Riemann coefficients consumed repeatedly by the
+    // covariant source.  The flat component-by-cell policy ensures that no
+    // work item owns a full tensor or any generic metric-jet workspace.
+    Kokkos::parallel_for(
+    "ref_gh analytic radial-q hot reference",
+    Kokkos::RangePolicy<>(DevExeSpace(), 0,
+                          ncells*kReferenceAnalyticHotSize),
+    KOKKOS_LAMBDA(const int idx) {
+      const int component = idx/ncells;
+      int work = idx % ncells;
+      const int i = work % n1; work /= n1;
+      const int j = work % n2; work /= n2;
+      const int k = work % n3;
+      const int m = work/n3;
+      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                 size.d_view(m).x1min,
+                                 size.d_view(m).x1max);
+      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                 size.d_view(m).x2min,
+                                 size.d_view(m).x2max);
+      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                 size.d_view(m).x3min,
+                                 size.d_view(m).x3max);
+      const AnalyticRadialQPoint point = MakeAnalyticRadialQPoint(
+          static_view, stage_view, m, k, j, i, x, y, z,
+          center_x, center_y, center_z);
+      hot_view(m, component, k, j, i) =
+          GeneratedAnalyticRadialQHotReferenceComponent(
+              point.alpha, point.l, point.b, point.displacement,
+              point.radius, component);
+    });
+    Kokkos::fence("ref_gh analytic radial-q hot reference");
     reference_cache_time = time;
     reference_cache_generation = current_reference_generation;
     if (diagnostics_requested) {
@@ -3042,6 +3077,7 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
   const auto reference_extra = reference_diagnostic;
   const auto analytic_static = reference_static;
   const auto analytic_stage = reference_stage;
+  const auto analytic_hot = reference_hot;
   const int reference_backend = opt.reference_backend;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
@@ -3064,7 +3100,8 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
                                    size.d_view(m).x3min, size.d_view(m).x3max);
         const ProductionReferencePoint reference = MakeProductionReferencePoint(
             reference_backend, reference_cache, reference_extra,
-            analytic_static, analytic_stage, m, k, j, i, x, y, z,
+            analytic_static, analytic_stage, analytic_hot,
+            m, k, j, i, x, y, z,
             center_x, center_y, center_z);
         Real psi[4][4], metric[4][4];  // NOLINT(runtime/arrays)
         for (int a = 0; a < 4; ++a) {

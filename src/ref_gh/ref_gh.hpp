@@ -182,10 +182,12 @@ class RefGh {
   DvceArray5D<Real> reference_workspace;
   DvceArray5D<Real> reference_evolution;
   DvceArray5D<Real> reference_diagnostic;
-  // The analytic radial-q backend owns exactly 12 static and 8 stage values
-  // per ghosted cell.  Generic cache arrays remain unallocated in that mode.
+  // The analytic radial-q backend owns exactly 12 static, 8 stage, and 141 hot
+  // symmetry-reduced values per ghosted cell.  Generic cache arrays remain
+  // unallocated in that mode.
   DvceArray5D<Real> reference_static;
   DvceArray5D<Real> reference_stage;
+  DvceArray5D<Real> reference_hot;
   // Closed-loop q feedback owns a compact, predeclared list of eligible
   // active cells.  Disabled and prescribed-q runs leave these unallocated.
   DvceArray1D<int> q_sample_cells;

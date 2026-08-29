@@ -9,6 +9,7 @@
 #include "ref_gh/analytic_radial_q_source.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
 #include "ref_gh/generated/analytic_radial_q_gauge.hpp"
+#include "ref_gh/reference_analytic_hot.hpp"
 #include "ref_gh/reference_cache.hpp"
 #include "ref_gh/reference_gauge_baseline.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
@@ -16,13 +17,15 @@
 namespace ref_gh {
 
 // One compile-time-independent point handle keeps the established generic
-// cache path available as the oracle while allowing the production task code
-// to dispatch to the exact 12+8 analytic views.  The analytic branch never
-// reads the generic views; those views have zero allocation in that mode.
+// cache path available as the oracle while allowing production task code to
+// dispatch to the 12+8 analytic coefficient views and the selective 141-Real
+// hot view.  The analytic branch never reads the generic views; those views
+// have zero allocation in that mode.
 struct ProductionReferencePoint {
   int backend;
   ReferenceCachePoint generic;
   AnalyticRadialQPoint analytic;
+  AnalyticRadialQHotPoint analytic_hot;
 };
 
 template <bool Analytic>
@@ -32,12 +35,13 @@ auto MakeTypedProductionReferencePoint(
     const DvceArray5D<Real> &diagnostic,
     const DvceArray5D<Real> &reference_static,
     const DvceArray5D<Real> &reference_stage,
+    const DvceArray5D<Real> &reference_hot,
     const int m, const int k, const int j, const int i,
     const Real x, const Real y, const Real z,
     const Real center_x, const Real center_y, const Real center_z) {
   if constexpr (Analytic) {
-    return MakeAnalyticRadialQPoint(
-        reference_static, reference_stage, m, k, j, i, x, y, z,
+    return MakeAnalyticRadialQHotPoint(
+        reference_static, reference_stage, reference_hot, m, k, j, i, x, y, z,
         center_x, center_y, center_z);
   } else {
     return ReferenceCachePoint{evolution, diagnostic, m, k, j, i};
@@ -102,11 +106,23 @@ Real ReferenceFrameMotion(const AnalyticRadialQPoint &point, const int A,
 }
 
 KOKKOS_INLINE_FUNCTION
+Real ReferenceFrameMotion(const AnalyticRadialQHotPoint &point, const int A,
+                          const int lambda, const int B) {
+  return ReferenceFrameMotion(point.analytic, A, lambda, B);
+}
+
+KOKKOS_INLINE_FUNCTION
 Real ProductionReferenceDtTheta(const AnalyticRadialQPoint &point,
                                 const int A) {
   return PopulateGeneratedAnalyticRadialQGauge(
       point.alpha, point.l, point.b, point.displacement,
       point.radius).dt_theta[A];
+}
+
+KOKKOS_INLINE_FUNCTION
+Real ProductionReferenceDtTheta(const AnalyticRadialQHotPoint &point,
+                                const int A) {
+  return ProductionReferenceDtTheta(point.analytic, A);
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -135,6 +151,12 @@ ReferenceGaugeBaseline ComputeProductionReferenceGaugeBaseline(
 
 KOKKOS_INLINE_FUNCTION
 ReferenceGaugeBaseline ComputeProductionReferenceGaugeBaseline(
+    const AnalyticRadialQHotPoint &point) {
+  return ComputeProductionReferenceGaugeBaseline(point.analytic);
+}
+
+KOKKOS_INLINE_FUNCTION
+ReferenceGaugeBaseline ComputeProductionReferenceGaugeBaseline(
     const ReferenceCachePoint &point) {
   return ComputeReferenceGaugeBaseline(point);
 }
@@ -145,15 +167,18 @@ ProductionReferencePoint MakeProductionReferencePoint(
     const DvceArray5D<Real> &diagnostic,
     const DvceArray5D<Real> &reference_static,
     const DvceArray5D<Real> &reference_stage,
+    const DvceArray5D<Real> &reference_hot,
     const int m, const int k, const int j, const int i,
     const Real x, const Real y, const Real z,
     const Real center_x, const Real center_y, const Real center_z) {
   ProductionReferencePoint point{
-      backend, {evolution, diagnostic, m, k, j, i}, {}};
+      backend, {evolution, diagnostic, m, k, j, i}, {}, {}};
   if (backend == 1) {
     point.analytic = MakeAnalyticRadialQPoint(
         reference_static, reference_stage, m, k, j, i, x, y, z,
         center_x, center_y, center_z);
+    point.analytic_hot = {
+        point.analytic, reference_hot, m, k, j, i};
   }
   return point;
 }
@@ -376,14 +401,26 @@ bool LoadProductionPointGeometry(
 }
 
 KOKKOS_INLINE_FUNCTION
+bool LoadProductionPointGeometry(
+    const DvceArray5D<Real> &state, const AnalyticRadialQHotPoint &reference,
+    const int m, const int k, const int j, const int i,
+    Real psi[4][4], Real pi[4][4], Real phi[3][4][4],
+    Real d_psi[4][4][4], Real metric[4][4], Real d_metric[4][4][4],
+    CoordinateGhGeometry &geometry, Real &determinant) {
+  return LoadProductionPointGeometry(
+      state, reference.analytic, m, k, j, i, psi, pi, phi, d_psi, metric,
+      d_metric, geometry, determinant);
+}
+
+KOKKOS_INLINE_FUNCTION
 bool ProductionCovariantScalarWaveSource(
     const Real psi[4][4], const Real pi[4][4],
     const Real phi[3][4][4], const ProductionReferencePoint &reference,
     const CoordinateGhGeometry &geometry, const Real gamma0,
     Real source[4][4]) {
   return reference.backend == 1
-      ? CompactAnalyticRadialQScalarWaveSource(
-            psi, pi, phi, reference.analytic, geometry, gamma0, source)
+      ? CovariantGhScalarWaveSourceProduction(
+            psi, pi, phi, reference.analytic_hot, geometry, gamma0, source)
       : CovariantGhScalarWaveSourceProduction(
             psi, pi, phi, reference.generic, geometry, gamma0, source);
 }
@@ -394,7 +431,21 @@ bool ProductionCovariantScalarWaveSource(
     const Real phi[3][4][4], const AnalyticRadialQPoint &reference,
     const CoordinateGhGeometry &geometry, const Real gamma0,
     Real source[4][4]) {
+  // Oracle/debug overload only; production task dispatch uses the hot point.
   return CompactAnalyticRadialQScalarWaveSource(
+      psi, pi, phi, reference, geometry, gamma0, source);
+}
+
+// Qualified loop-form production source.  The 141-Real point supplies only
+// cached Cartan coefficients; frame/coframe data remain analytic 12+8 values.
+// The monolithic joint-CSE source above remains an independent oracle.
+KOKKOS_INLINE_FUNCTION
+bool ProductionCovariantScalarWaveSource(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const AnalyticRadialQHotPoint &reference,
+    const CoordinateGhGeometry &geometry, const Real gamma0,
+    Real source[4][4]) {
+  return CovariantGhScalarWaveSourceProduction(
       psi, pi, phi, reference, geometry, gamma0, source);
 }
 
@@ -415,9 +466,9 @@ bool ProductionCovariantScalarWaveSourceDiagnostics(
     const CoordinateGhGeometry &geometry, const Real gamma0,
     Real source[4][4], CovariantSourceSectors &sectors) {
   return reference.backend == 1
-      ? CompactAnalyticRadialQScalarWaveSource(
-            psi, pi, phi, reference.analytic, geometry, gamma0, source,
-            &sectors)
+      ? CovariantGhScalarWaveSource(
+            psi, pi, phi, reference.analytic_hot, geometry, gamma0, source,
+            sectors)
       : CovariantGhScalarWaveSource(
             psi, pi, phi, reference.generic, geometry, gamma0, source,
             sectors);
@@ -429,8 +480,20 @@ bool ProductionCovariantScalarWaveSourceDiagnostics(
     const Real phi[3][4][4], const AnalyticRadialQPoint &reference,
     const CoordinateGhGeometry &geometry, const Real gamma0,
     Real source[4][4], CovariantSourceSectors &sectors) {
+  // Oracle/debug overload only.  Production task dispatch has the hot-point
+  // type and cannot select this monolithic generated contraction.
   return CompactAnalyticRadialQScalarWaveSource(
       psi, pi, phi, reference, geometry, gamma0, source, &sectors);
+}
+
+KOKKOS_INLINE_FUNCTION
+bool ProductionCovariantScalarWaveSourceDiagnostics(
+    const Real psi[4][4], const Real pi[4][4],
+    const Real phi[3][4][4], const AnalyticRadialQHotPoint &reference,
+    const CoordinateGhGeometry &geometry, const Real gamma0,
+    Real source[4][4], CovariantSourceSectors &sectors) {
+  return CovariantGhScalarWaveSource(
+      psi, pi, phi, reference, geometry, gamma0, source, sectors);
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -485,6 +548,17 @@ void AddProductionOrdinaryGaugeSource(
   }
   AddCompactAnalyticOrdinaryGaugeSource(
       metric, d_metric, reference, compact, hhat, d_hhat, gamma0, source);
+}
+
+KOKKOS_INLINE_FUNCTION
+void AddProductionOrdinaryGaugeSource(
+    const Real metric[4][4], const Real d_metric[4][4][4],
+    const AnalyticRadialQHotPoint &reference,
+    const CoordinateGhGeometry &geometry, const Real hhat[4],
+    const Real d_hhat[4][4], const Real gamma0, Real source[4][4]) {
+  AddProductionOrdinaryGaugeSource(
+      metric, d_metric, reference.analytic, geometry, hhat, d_hhat, gamma0,
+      source);
 }
 
 KOKKOS_INLINE_FUNCTION

@@ -59,6 +59,7 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
   const auto reference_extra = reference_diagnostic;
   const auto analytic_static = reference_static;
   const auto analytic_stage = reference_stage;
+  const auto analytic_hot = reference_hot;
   constexpr int reference_backend = Analytic ? 1 : 0;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
@@ -93,6 +94,7 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                size.d_view(m).x3min, size.d_view(m).x3max);
     const auto reference = MakeTypedProductionReferencePoint<Analytic>(
         reference_cache, reference_extra, analytic_static, analytic_stage,
+        analytic_hot,
         m, k, j, i, x, y, z, center_x, center_y, center_z);
     Real psi[4][4], metric[4][4], inverse[4][4], pi[4][4]; // NOLINT
     Real phi[3][4][4]; // NOLINT
@@ -159,6 +161,7 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       const auto reference = MakeTypedProductionReferencePoint<Analytic>(
           reference_cache, reference_extra, analytic_static, analytic_stage,
+          analytic_hot,
           m, k, j, i, x, y, z, center_x, center_y, center_z);
       Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
       Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
@@ -243,6 +246,7 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                size.d_view(m).x3min, size.d_view(m).x3max);
     const auto reference = MakeTypedProductionReferencePoint<Analytic>(
         reference_cache, reference_extra, analytic_static, analytic_stage,
+        analytic_hot,
         m, k, j, i, x, y, z, center_x, center_y, center_z);
     Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
     Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
@@ -452,6 +456,7 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       const auto reference = MakeTypedProductionReferencePoint<Analytic>(
           reference_cache, reference_extra, analytic_static, analytic_stage,
+          analytic_hot,
           m, k, j, i, x, y, z, center_x, center_y, center_z);
       const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                            1.0/size.d_view(m).dx3};
@@ -486,6 +491,7 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       const auto reference = MakeTypedProductionReferencePoint<Analytic>(
           reference_cache, reference_extra, analytic_static, analytic_stage,
+          analytic_hot,
           m, k, j, i, x, y, z, center_x, center_y, center_z);
       const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                            1.0/size.d_view(m).dx3};
@@ -588,6 +594,7 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       const auto reference = MakeTypedProductionReferencePoint<Analytic>(
           reference_cache, reference_extra, analytic_static, analytic_stage,
+          analytic_hot,
           m, k, j, i, x, y, z, center_x, center_y, center_z);
       const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                            1.0/size.d_view(m).dx3};
@@ -686,6 +693,7 @@ void RefGh::CalcConstraintsImpl() {
   const auto reference_extra = reference_diagnostic;
   const auto analytic_static = reference_static;
   const auto analytic_stage = reference_stage;
+  const auto analytic_hot = reference_hot;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
   const Real center_z = opt.reference_center[2];
@@ -706,6 +714,7 @@ void RefGh::CalcConstraintsImpl() {
                                size.d_view(m).x3min, size.d_view(m).x3max);
     const auto reference = MakeTypedProductionReferencePoint<Analytic>(
         reference_cache, reference_extra, analytic_static, analytic_stage,
+        analytic_hot,
         m, k, j, i, x, y, z, center_x, center_y, center_z);
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
