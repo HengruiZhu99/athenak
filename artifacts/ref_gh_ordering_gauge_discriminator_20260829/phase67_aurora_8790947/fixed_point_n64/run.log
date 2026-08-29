@@ -1,0 +1,67 @@
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 4 x 4 x 4 MeshBlocks
+Total number of MeshBlocks = 64
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 12
+  Rank = 0: 5 MeshBlocks, cost = 5
+  Rank = 1: 5 MeshBlocks, cost = 5
+  Rank = 2: 5 MeshBlocks, cost = 5
+  Rank = 3: 5 MeshBlocks, cost = 5
+  Rank = 4: 5 MeshBlocks, cost = 5
+  Rank = 5: 5 MeshBlocks, cost = 5
+  Rank = 6: 5 MeshBlocks, cost = 5
+  Rank = 7: 5 MeshBlocks, cost = 5
+  Rank = 8: 6 MeshBlocks, cost = 6
+  Rank = 9: 6 MeshBlocks, cost = 6
+  Rank = 10: 6 MeshBlocks, cost = 6
+  Rank = 11: 6 MeshBlocks, cost = 6
+Load Balancing:
+  Maximum normalized cost = 1.2, Average = 1.06667
+ref_gh reference allocation backend=analytic_radial_q generic_bytes=0 analytic_static_components=12 analytic_stage_components=8 analytic_static_bytes=6635520 analytic_stage_bytes=4423680
+reference-GH puncture minimum cell-center radius = 0.0541266
+reference-GH stationary physical-target audit: |F-H_constraint|_Linf=3.03757e-13, |tildeGamma|_Linf=1.06232e-15, |stored_Hhat_A|_Linf=4.61853e-14, |stored_theta_A|_Linf=1.84741e-13
+reference-GH initial RHS sector decomposition passed: conditioned error=5.04871e-29, production rerun=0, file=fixed_point_n64.ref_gh_rhs_sectors.tsv
+reference-GH stationary initial RHS Linf = 2.80832e-12, component=54, radius=0.22317, coordinate reference Ricci Linf=4.14162e-10, frame reference Ricci Linf=1.38778e-16
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output2>/file_type = rst was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output3>/file_type = cbin was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output3>/variable = ref_gh was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output3>/id = ref_gh_health was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output3>/coarsen_factor = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output3>/compute_moments = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output3>/binary64 = true was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output3>/single_file_per_rank = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output4>/file_type = cbin was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output4>/variable = ref_gh_native_con was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output4>/id = ref_gh_native_health was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output4>/coarsen_factor = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output4>/compute_moments = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output4>/binary64 = true was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output4>/single_file_per_rank = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output5>/file_type = cbin was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output5>/variable = adm_common was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output5>/id = adm_common_health was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output5>/coarsen_factor = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output5>/compute_moments = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output5>/binary64 = true was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output5>/single_file_per_rank = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output5>/common_adm_fd_order = 4 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+reference-GH stationary trumpet: field Linf=0, physical metric Linf=7.10543e-15, lapse Linf=4.71845e-16, shift Linf=4.65176e-16, constraint Linf=1.16681e-13, RHS estimate=2.80832e-12
+elapsed=1.570605e+01 cycle=0 time=0.000000e+00 dt=5.118043e-03
+
+Terminating on cycle limit
+time=0.000000e+00 cycle=0
+tlim=0.000000e+00 nlim=0
+
+MeshBlock-cycles = 0
+cpu time used  = 2.759019e+00
+zone-cycles/cpu_second = 0.000000e+00
+particle-updates/cpu_second = 0.000000e+00
+real 16.86
+user 0.00
+sys 0.00
