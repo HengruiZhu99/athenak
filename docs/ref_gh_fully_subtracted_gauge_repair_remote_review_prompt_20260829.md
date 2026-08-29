@@ -4,6 +4,9 @@ Review `HengruiZhu99/athenak` in read-only mode on branch
 `codex/ref-gh-fully-subtracted-gauge-repair-20260829`. Verify the branch tip
 reported by the requester before beginning. The repair branch was forked from
 frozen discriminator commit `223947486ac4498bab2e197feca56462c77e6d76`.
+The latest source-and-evidence checkpoint to audit is
+`b290c2bda559d4db62213266b093458c020920b5`; a later tip may contain only this
+updated review prompt and report corrections.
 
 Please perform a detailed formulation, implementation, test, and evidence
 audit of the work through the current branch tip. Do not modify the branch,
@@ -39,11 +42,26 @@ Primary review targets:
    conditioning or evidence of an algebraic defect. Do not recommend simply
    loosening the tolerance. Suggest an independent high-precision discriminator
    and the coefficient/asymptotics checks required before production dispatch.
-7. Verify the claim boundary: none of the new residual paths is yet dispatched
-   from production `CalcRHS`; exact matched-state production initialization,
-   host/device all-61 equivalence, fixed-point ladders, evolved PVC gates,
-   convergence, and long-time stability remain unqualified.
-8. Check that standard Phi ordering remains the production candidate and that
+7. Audit the stationary-trumpet coefficient analysis in
+   `scripts/ref_gh/analyze_fully_subtracted_trumpet_asymptotics.py`. Independently
+   check the lapse exponent, the 26 reported coefficient powers, the
+   high-precision identities, and the epsilon-sensitivity test. Pay particular
+   attention to whether the lower-order maps are genuine residual coefficients
+   rather than canceled pure-reference terms, and whether the stated energy
+   estimate limitations are neither too weak nor too strong.
+8. Audit `src/ref_gh/exact_matched_state.hpp` and its use in
+   `src/pgen/ref_gh/stationary_trumpet.cpp` and
+   `src/ref_gh/ref_gh_tasks.cpp`. Confirm that exact zero fills are selected only
+   for the precisely matched, static, uncontrolled, unprescribed `q=1` case;
+   that every nearby or moving case takes the general path; and that initial and
+   physical-boundary data remain consistent.
+9. Verify the claim boundary: none of the new residual driver/Einstein-source
+   paths is yet dispatched from production `CalcRHS`. Exact matched-state
+   initialization is implemented and locally tested, but host/device all-61
+   equivalence, fixed-point ladders, evolved PVC gates, convergence, and
+   long-time stability remain unqualified. The retained initial RHS
+   `5.80111e-14` is the legacy-production baseline, not a fixed-point pass.
+10. Check that standard Phi ordering remains the production candidate and that
    this lower-order rewrite does not silently change the standard first-order GH
    principal part. Treat compatible ordering only as an oracle/research mode.
 
@@ -55,6 +73,8 @@ Evidence to inspect:
   (the preserved red gate)
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase3b_local/`
 - `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase3c_local/`
+- `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase4_local/`
+- `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase5_local/`
 
 Validate each `SHA256SUMS` file and distinguish current passing evidence from
 the intentionally preserved negative result. The key current observations are:
@@ -68,6 +88,18 @@ the intentionally preserved negative result. The key current observations are:
 - all-radius compact/generic diagnostic: `3.05105e-12`, worst at `r=0.03M`;
 - raw reconstructed full-driver diagnostic: `1.05256`, explicitly not treated
   as truth because it is cancellation corrupted.
+- stationary trumpet lapse exponent:
+  `p = 1.091297104795417177142734699770404899977`;
+- all 26 fitted Phase-4 powers agree with their derived powers to at most
+  `1.323972251e-4`, against a `5e-3` gate;
+- Phase-4 independent identity maximum: `2.3738919364e-65`, against `1e-45`;
+- the `1e-30` and `1e-24` high-precision differencing runs have identical
+  40-digit JSON/TSV results;
+- Phase-5 exact initialization: stored-field, stored-Hhat, and stored-theta
+  Linf errors are exactly zero; physical reconstruction errors are at most
+  `3.33067e-16`;
+- Phase-5 initial production RHS: `5.80111e-14`, because production still uses
+  the legacy reconstruction path.
 
 Please return:
 
@@ -77,8 +109,8 @@ Please return:
 3. an oracle-independence and test-coverage verdict;
 4. a specific analysis of the `r=0.03M` discrepancy;
 5. the minimal equation-preserving corrections, if any;
-6. a go/no-go decision for Phase 4 coefficient asymptotics and, separately,
-   for production dispatch;
+6. separate verdicts on the Phase-4 coefficient/asymptotics evidence, the
+   Phase-5 exact-state implementation, and production residual dispatch;
 7. an explicit list of claims supported and not supported by the repository.
 
 Do not claim trumpet convergence, long-time stability, Aurora/PVC

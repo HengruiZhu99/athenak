@@ -524,15 +524,18 @@ STANDARD first-order GH plus driver system.  Therefore the already-audited
 standard principal symbol and characteristic fields are preserved.  The
 separate compatible-ordering loss of strong hyperbolicity is also unchanged;
 compatible ordering remains an oracle/research option and is not the
-production candidate.  A full claim about uniform lower-order behavior awaits
-the trumpet coefficient asymptotics required by Phase 4.
+production candidate.  Phase 4 shows that the unchanged local principal
+symbol does not by itself provide a resolution-uniform bound on the singular
+lower-order coefficient maps in the ordinary stored-variable norm.
 
 ## Remaining gates
 
 The following are not yet complete: independent all-radius high-precision
 qualification of cancellation-free \(\delta F_A\), independent qualification
-of the direct \(\Delta B_a\) and derivative evaluator, production residual dispatch,
-exact matched-state fill, host/device and all-61 equivalence, the repaired
-64/96/128 fixed-point ladder, the 3M/5M discriminator, the resolution ladder,
-20M, and conditional 100M qualification.  Performance optimization remains
-out of scope for this campaign.
+of the direct \(\Delta B_a\) and derivative evaluator, production residual
+dispatch, host/device and all-61 equivalence, the repaired 64/96/128
+fixed-point ladder, the 3M/5M discriminator, the resolution ladder, 20M, and
+conditional 100M qualification.  Exact matched-state fill is implemented and
+locally tested, but its initial production RHS remains the legacy residual
+dispatch baseline rather than a fixed-point result.  Performance optimization
+remains out of scope for this campaign.
