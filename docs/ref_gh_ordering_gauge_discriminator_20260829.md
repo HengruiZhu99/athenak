@@ -99,15 +99,70 @@ has been made.
 
 ## Remaining controlled work
 
-1. Build and validate the diagnostic-only changes with MPI/SYCL on Aurora.
-2. Run the full-resolution fixed-point sector decomposition and preserve its
-   compact tables.
-3. Run the fixed A-D matrix at identical resolution and parameters, initially
-   to 3M and conditionally to 5M.
-4. Apply the predetermined interpretation gate and only its authorized
-   follow-up.
-5. Derive and evaluate the four requested principal symbols before making a
-   formulation claim.
+## Phase 2 full-resolution fixed point
+
+Aurora debug job `8790897` built exact commit `68bc1ee30c0ac64c3afe8d3961bead65efce205a`
+on node `x4610c7s7b0n0` and mapped 12 ranks to 12 distinct PVC tiles.  The
+96^3 grid contained 216 MeshBlocks, exactly 18 per rank.  The diagnostic
+sector sum reproduced the production RHS with conditioned error
+`8.07793566946316089e-28`, and the exact production rerun differed by zero.
+
+The globally associated maximum is `5.84252885406934375e-11` in theta
+component 54 at `r=0.148779758927976M`, rank 3, gid 63.  Thus the previously
+reported radii `2.49052M` and `1.42324M` were rank-local metadata and are
+superseded.  At the corrected maximum, the actual RHS is the sum of a driver
+contribution `-6.2168543626826e-13` and KO contribution
+`5.90469739769617e-11`; all Einstein-sector entries are zero because this is a
+theta component.  This identifies the cycle-zero seed but does not establish
+which term drives the later exponential mode.
+
+## Phase 3 A-D matrix through 3M
+
+All four cases used the frozen 96^3, `[-2M,2M]^3`, h=M/24, FD4, RK4,
+CFL 0.05, KO 0.02, gamma0=1 configuration and the same 12-rank/18-block
+decomposition.  Each independent snapshot trajectory produced binary64 state,
+native-constraint, and common-ADM files at t=0 and approximately 0.2M.
+
+| Case | Ordering / gamma2 / gauge | Result | Last accepted history |
+|---|---|---|---:|
+| A | compatible / 0 / off | passed requested gate | 3.000000M |
+| B | compatible / 1 / off | passed requested gate | 3.000000M |
+| C | compatible / 0 / on | invalid effective timestep at cycle 330 | 1.103057M |
+| D | standard / 1 / on | invalid effective timestep at cycle 330 | 1.103057M |
+
+The fatal logs for C and D report the failure at `t=1.123484M`, matching the
+earlier full-compatible failure.  Fits over accepted histories with t>=0.2M
+give GH-RMS e-folding times `0.037543M` (C) and `0.037517M` (D), and
+source-frame-correction e-folding times `0.032512M` and `0.032492M`.
+Hhat, theta, and Pi RHS maxima share approximately `0.0376M` growth and end at
+`r=0.1487798M`.  A and B instead finish with GH RMS `8.39e-14` and
+`2.60e-13`, respectively, and physical metric errors about `3.4e-11`.
+
+The physical chi_beta profile is effectively stationary in A and B despite a
+global/inner maximum `38.8265`, a `0.5<=r<1` maximum `1.91125`, and values
+below one for `r>=1`.  Therefore `chi_beta>1` alone is not sufficient to
+trigger the observed failure: compatible/gamma2-off A remains healthy there.
+
+The predetermined interpretation is now that gamma2 alone and compatible Phi
+alone do not explain the regression, while enabling the evolved gauge system
+does.  Standard ordering does not repair it.  The primary suspect is therefore
+the hyperbolic gauge driver / Einstein-gauge coupling.  The final Phase-8 claim
+remains withheld until standard/gamma2 gauge-off Case E and the stationary
+driver audit are complete.
+
+Job `8790895` was a pre-build bootstrap failure with no numerical work and no
+captured failing command.  The source-external bootstrap logging correction
+was commit `68bc1ee3`; rerun `8790897` passed and exited zero.  Both jobs are
+preserved as campaign evidence.
+
+## Remaining controlled work
+
+1. Extend healthy A and B from their 3M checkpoints to 5M.
+2. Run prescribed Phase-6 Case E (standard, gamma2=1, gauge system off) to 3M.
+3. Audit and add the discrete stationary-driver fixed-point oracle without
+   changing the target or equations.
+4. Derive and evaluate the four requested principal symbols.
+5. Make the bounded Phase-8 classification and preserve all compact evidence.
 
 No q feedback, p control, wormhole collapse, moving-center, AMR, binary, or
 performance-optimization work is in scope.

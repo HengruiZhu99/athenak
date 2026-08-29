@@ -1,0 +1,47 @@
+
+Root grid = 6 x 6 x 6 MeshBlocks
+Total number of MeshBlocks = 216
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 12
+  Rank = 0: 18 MeshBlocks, cost = 18
+  Rank = 1: 18 MeshBlocks, cost = 18
+  Rank = 2: 18 MeshBlocks, cost = 18
+  Rank = 3: 18 MeshBlocks, cost = 18
+  Rank = 4: 18 MeshBlocks, cost = 18
+  Rank = 5: 18 MeshBlocks, cost = 18
+  Rank = 6: 18 MeshBlocks, cost = 18
+  Rank = 7: 18 MeshBlocks, cost = 18
+  Rank = 8: 18 MeshBlocks, cost = 18
+  Rank = 9: 18 MeshBlocks, cost = 18
+  Rank = 10: 18 MeshBlocks, cost = 18
+  Rank = 11: 18 MeshBlocks, cost = 18
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+ref_gh reference allocation backend=analytic_radial_q generic_bytes=0 analytic_static_components=12 analytic_stage_components=8 analytic_static_bytes=23887872 analytic_stage_bytes=15925248
+reference-GH puncture minimum cell-center radius = 0.0360844
+reference-GH stationary physical-target audit: |F-H_constraint|_Linf=2.82796e-12, |tildeGamma|_Linf=2.60696e-15, |stored_Hhat_A|_Linf=5.47118e-13, |stored_theta_A|_Linf=2.51532e-12
+reference-GH stationary initial RHS Linf = 5.84253e-11, component=54, radius=0.14878, coordinate reference Ricci Linf=1.37611e-08, frame reference Ricci Linf=2.77556e-16
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_ordering_gauge_discriminator_phase23_20260829_2c848055/src/src/parameter_input.cpp: input parameter <output2>/file_type = rst was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=1.443264e+01 cycle=0 time=0.000000e+00 dt=3.404497e-03
+elapsed=1.612266e+01 cycle=10 time=3.404497e-02 dt=3.404497e-03
+elapsed=1.813517e+01 cycle=20 time=6.808994e-02 dt=3.404497e-03
+elapsed=2.013486e+01 cycle=30 time=1.021349e-01 dt=3.404497e-03
+elapsed=2.184819e+01 cycle=40 time=1.361799e-01 dt=3.404497e-03
+elapsed=2.385643e+01 cycle=50 time=1.702249e-01 dt=3.404497e-03
+reference-GH stationary trumpet: field Linf=9.299902e-12, physical metric Linf=7.688072e-12, lapse Linf=3.141931e-14, shift Linf=6.091794e-16, constraint Linf=3.045582e-12, RHS estimate=5.842529e-11
+
+Terminating on time limit
+time=2.000000e-01 cycle=59
+tlim=2.000000e-01 nlim=-1
+
+MeshBlock-cycles = 12744
+cpu time used  = 2.771520e+01
+zone-cycles/cpu_second = 1.883422e+06
+particle-updates/cpu_second = 0.000000e+00
+real 43.98
+user 0.00
+sys 0.00
