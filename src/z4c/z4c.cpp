@@ -15,6 +15,7 @@
 #include <limits>
 #include <string>
 #include <algorithm>
+#include <cstdlib>
 #include <memory>    // make_unique, unique_ptr
 #include <type_traits>
 #include <vector>    // vector
@@ -254,10 +255,45 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.chi_min_floor = pin->GetOrAddReal("z4c", "chi_min_floor", 1e-12);
   opt.floor_chi = pin->GetOrAddBoolean("z4c", "floor_chi", false);
   opt.diss = pin->GetOrAddReal("z4c", "diss", 0.0);
-  opt.lean_runtime = pin->GetOrAddBoolean("z4c", "lean_runtime", false);
-  const std::string admissibility_checks = pin->GetOrAddString(
-      "z4c", "admissibility_checks",
-      opt.lean_runtime ? "consume_and_accept" : "exhaustive");
+  // Preserve legacy parameter/output bytes unless the new runtime family is
+  // explicitly opted into by the input deck.  Athena command-line overrides
+  // are applied before construction, so an explicitly declared false value is
+  // still sufficient to select lean_runtime=true at launch.
+  const bool runtime_parameter_declared =
+      pin->DoesParameterExist("z4c", "lean_runtime");
+  const char *runtime_environment =
+      std::getenv("ATHENA_Z4C_LEAN_RUNTIME");
+  const bool runtime_environment_declared = runtime_environment != nullptr;
+  bool runtime_environment_value = false;
+  if (runtime_environment_declared) {
+    const std::string value(runtime_environment);
+    if (value == "1" || value == "true" || value == "on") {
+      runtime_environment_value = true;
+    } else if (value == "0" || value == "false" || value == "off") {
+      runtime_environment_value = false;
+    } else {
+      std::cerr << "### FATAL ERROR in " << __FILE__
+                << ": ATHENA_Z4C_LEAN_RUNTIME=" << value
+                << "; expected 0/1, false/true, or off/on" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
+  const bool runtime_parameter_value = runtime_parameter_declared
+      ? pin->GetBoolean("z4c", "lean_runtime") : false;
+  if (runtime_parameter_declared && runtime_environment_declared &&
+      runtime_parameter_value != runtime_environment_value) {
+    std::cerr << "### FATAL ERROR in " << __FILE__
+              << ": <z4c>/lean_runtime and ATHENA_Z4C_LEAN_RUNTIME disagree"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  opt.lean_runtime = runtime_parameter_declared
+      ? runtime_parameter_value : runtime_environment_value;
+  const std::string admissibility_checks = runtime_parameter_declared
+      ? pin->GetOrAddString("z4c", "admissibility_checks",
+                            opt.lean_runtime ? "consume_and_accept"
+                                             : "exhaustive")
+      : (opt.lean_runtime ? "consume_and_accept" : "exhaustive");
   if (admissibility_checks == "exhaustive") {
     opt.admissibility_checks = Z4cAdmissibilityChecks::exhaustive;
   } else if (admissibility_checks == "consume_and_accept") {
@@ -269,16 +305,26 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
               << "; expected exhaustive or consume_and_accept" << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  opt.vertex_axis_regularity_audit = pin->GetOrAddBoolean(
-      "z4c", "vertex_axis_regularity_audit", !opt.lean_runtime);
-  opt.vc_single_rank_device_sync = pin->GetOrAddBoolean(
-      "z4c", "vc_single_rank_device_sync", opt.lean_runtime);
-  opt.vc_sync_postcondition = pin->GetOrAddBoolean(
-      "z4c", "vc_sync_postcondition", !opt.lean_runtime);
-  opt.timestep_structural_shortcuts = pin->GetOrAddBoolean(
-      "z4c", "timestep_structural_shortcuts", opt.lean_runtime);
-  opt.timestep_contract_diagnostic = pin->GetOrAddBoolean(
-      "z4c", "timestep_contract_diagnostic", !opt.lean_runtime);
+  opt.vertex_axis_regularity_audit = runtime_parameter_declared
+      ? pin->GetOrAddBoolean("z4c", "vertex_axis_regularity_audit",
+                             !opt.lean_runtime)
+      : !opt.lean_runtime;
+  opt.vc_single_rank_device_sync = runtime_parameter_declared
+      ? pin->GetOrAddBoolean("z4c", "vc_single_rank_device_sync",
+                             opt.lean_runtime)
+      : opt.lean_runtime;
+  opt.vc_sync_postcondition = runtime_parameter_declared
+      ? pin->GetOrAddBoolean("z4c", "vc_sync_postcondition",
+                             !opt.lean_runtime)
+      : !opt.lean_runtime;
+  opt.timestep_structural_shortcuts = runtime_parameter_declared
+      ? pin->GetOrAddBoolean("z4c", "timestep_structural_shortcuts",
+                             opt.lean_runtime)
+      : opt.lean_runtime;
+  opt.timestep_contract_diagnostic = runtime_parameter_declared
+      ? pin->GetOrAddBoolean("z4c", "timestep_contract_diagnostic",
+                             !opt.lean_runtime)
+      : !opt.lean_runtime;
   // Do not materialize a VC-only default in legacy CC input/output bytes.
   opt.vertex_axis_correction_tolerance =
       layout.centering == Z4cGridCentering::vertex

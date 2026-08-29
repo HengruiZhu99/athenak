@@ -62,6 +62,7 @@ export OMP_NUM_THREADS=8 KOKKOS_NUM_THREADS=8
 export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
 export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
 export MPIR_CVAR_ENABLE_GPU=1 MPICH_GPU_SUPPORT_ENABLED=1
+export ATHENA_Z4C_LEAN_RUNTIME=1
 
 finish() {
   code=$?
@@ -112,7 +113,7 @@ command=(mpiexec -n "${total_ranks}" -ppn "${RANKS_PER_NODE}" --depth 8
   time/tlim="${RUN_TLIM}" time/nlim=-1
   z4c/lapse_shock_avoiding=true z4c/lapse_shock_avoiding_kappa=1
   z4c/telegraph_lapse=false z4c/shift_mode=prescribed_zero
-  z4c/lean_runtime=true z4c/shift_invariant_diagnostic=false z4c/diss=0.50
+  z4c/shift_invariant_diagnostic=false z4c/diss=0.50
   z4c/damp_kappa1=0 z4c/damp_kappa2=0
   job/basename="${basename}"
   problem/brill_global_coefficients_file=brill_global_128x32.coefficients
