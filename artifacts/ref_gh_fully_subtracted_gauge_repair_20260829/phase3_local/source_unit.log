@@ -1,0 +1,22 @@
+
+Root grid = 1 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 1
+Number of logical  levels of refinement = 0 (1 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+ref_gh reference allocation backend=generic_cache_oracle generic_bytes=129503232 analytic_static_components=0 analytic_stage_components=0 analytic_static_bytes=0 analytic_stage_bytes=0
+reference-GH inverse-coframe derivative identity passed: max error = 2.77556e-17
+reference-GH improved gauge-driver frame and physical-target algebra passed: max error = 1.38778e-16, source error = 1.38778e-16, target error = 1.38778e-17
+reference-GH gamma2 characteristic, symmetrizer, reduction, and curl algebra passed: max error = 3.33067e-16
+reference-GH combined Einstein/gauge characteristic and inverse oracle passed: max error = 1.66533e-16
+reference-GH mixed-time jet algebra passed: max error = 2.22045e-16
+reference-GH Phi-ordering algebra maximum error = 6.93889e-16
+reference-GH flat covariant source unit passed: samples = 1000, max error = 6.93889e-17
+reference-GH nonflat covariant source unit passed: samples = 128, max error = 3.88578e-16
+reference-GH dynamic spatial oracle passed: frame-coordinate curvature Linf=8.67502e-18, coordinate curvature Linf=2.55872e-17, source Linf=4.44089e-16, spin scale=2.08311e-17, dt spatial frame scale=0.0714141
+reference-GH q-controlled trumpet provider passed: q=1 identity=4.44089e-16 profile=1.11022e-16
+reference-GH analytic radial-q coefficient oracle passed: samples=216 max error=8.88178e-15
+reference-GH expanded analytic radial-q coefficient oracle passed: samples=2160 conditioned error=1.48837e-13 near-r<=0.125=1.48837e-13 gaussian-r=3=5.55112e-17 far-r=5=1.79054e-16
+reference-GH generated analytic radial-q geometry oracle passed: samples=2376 conditioned error=2.33147e-15 category=16
+reference-GH generated analytic radial-q moving gauge oracle passed: samples=2160 Hhat=1.16535e-15 dHhat=1.07001e-15 theta=7.08259e-16 dtTheta=3.54866e-17 motion=1.24829e-14
+### FATAL ERROR: fully subtracted physical gauge target oracle failed: error=0.103832 matched_exact=1 matched_max=0 matched_failure_location=0 physical_error=0 raw_delta_error=1.26167 location=1322174 tolerance=2.27374e-13

@@ -11,10 +11,11 @@ Frozen parent: `223947486ac4498bab2e197feca56462c77e6d76`
 This investigation begins from the completed
 `GAUGE-DRIVER COUPLING DEFECT ISOLATED` discriminator.  It does not reinterpret
 that result as a proof that cancellation is the sole exponential mechanism.
-At this checkpoint only the residual-variable algebra has been derived and
-symbolically verified.  No production equation has changed, no repaired
-fixed-point ladder has run, and no repaired evolution, robustness, or
-performance claim is made.
+At this checkpoint the residual-variable algebra has been derived and
+symbolically verified, and oracle-only residual driver/source scaffolding has
+been implemented.  Its first perturbed-state source-unit gate is red.  No
+production equation has changed, no repaired fixed-point ladder has run, and
+no repaired evolution, robustness, or performance claim is made.
 
 The frozen A--E histories, stationary residual ladder, principal-symbol audit,
 and compact Aurora evidence remain unchanged under
@@ -250,6 +251,38 @@ high-precision or independently generated residual oracle is still required
 before production dispatch.  Consequently Phase 2 is a tested scaffolding
 checkpoint, not yet complete qualification.
 
+## Phase 3 checkpoint: residual driver and Einstein-source scaffolding
+
+`ComputeGaugeDriverResidualRhs` implements the complete general residual
+driver derived above, including frame motion, reference forcing, and
+`delta(beta) Kref`. A source-unit identity test with independent synthetic
+full/reference/residual data agrees with the full driver at `1.38778e-16`.
+For the proved static matched `q=1` identities, the exact residual driver
+returns bitwise zero.
+
+`AddOrdinaryGaugeResidualPartialWaveSource` evaluates `J`, `dJ`, and the
+ordinary-GH Einstein gauge increment with `ReferenceResidualValue` arithmetic.
+It is explicitly oracle-only for `AnalyticRadialQPoint`: it is not dispatched
+from `CalcRHS` and must not become the production implementation because its
+recursive reference-Christoffel access would recreate the generic tensor cost.
+The exact matched `q=1` source is bitwise zero across the expanded radial
+sample set.
+
+The new perturbed-state comparison is red under the unchanged
+`1024 epsilon_binary64` tolerance. The maximum conditioned error is
+`0.103832` at encoded location `1322174`, which decodes to analytic backend,
+sample 1322 (`q=1`, `q_dot=q_ddot=0`, `r=0.8M`, first angular direction), and
+an off-diagonal Einstein gauge-source category. The complete compact log is
+under `artifacts/ref_gh_fully_subtracted_gauge_repair_20260829/phase3_local/`.
+
+This mismatch is not yet assigned to the residual implementation: the legacy
+comparison reconstructs singular full driver/source quantities in binary64,
+which is the cancellation mechanism this repair is intended to avoid. It is
+therefore evidence of an unresolved oracle disagreement, not evidence that
+either side is correct. The next hard gate is an independent high-precision
+or generated perturbed residual driver/source oracle. Production dispatch
+remains disabled until that gate passes.
+
 ## Principal part
 
 The rewrite is an algebraic change of dependent variables plus lower-order
@@ -264,8 +297,8 @@ the trumpet coefficient asymptotics required by Phase 4.
 ## Remaining gates
 
 The following are not yet complete: independent all-radius high-precision
-qualification of cancellation-free \(\delta F_A\), direct
-\(\Delta B_a\) and derivative evaluators, production residual dispatch,
+qualification of cancellation-free \(\delta F_A\), independent qualification
+of the direct \(\Delta B_a\) and derivative evaluator, production residual dispatch,
 exact matched-state fill, host/device and all-61 equivalence, the repaired
 64/96/128 fixed-point ladder, the 3M/5M discriminator, the resolution ladder,
 20M, and conditional 100M qualification.  Performance optimization remains
