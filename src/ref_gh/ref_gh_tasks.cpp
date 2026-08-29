@@ -784,7 +784,7 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
       }, Kokkos::Sum<array_sum::GlobalSum, DevMemSpace>(device_sums));
   const auto host_sums = Kokkos::create_mirror_view_and_copy(
       HostMemSpace(), device_sums);
-  const array_sum::GlobalSum sums = host_sums();
+  array_sum::GlobalSum sums = host_sums();
   DebugFence("ref_gh compact q-controller reduction");
 #if MPI_PARALLEL_ENABLED
   // This is the sole collective in the closed-loop q measurement.
