@@ -1,0 +1,212 @@
+#!/bin/bash -l
+# Phase-6 device qualification for the fully subtracted Ref-GH gauge repair.
+# This bounded job runs the complete source-unit/all-61 oracle on one PVC tile
+# and the exact STANDARD q=1 production fixed point on all twelve tiles.  It
+# performs no positive-time evolution, resolution ladder, or benchmark.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_sub_p6
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with CAMPAIGN_ROOT=<fresh absolute path>}"
+: "${EXPECTED_COMMIT:?submit with EXPECTED_COMMIT=<full source SHA>}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+BUILD="${CAMPAIGN_ROOT}/build_phase6_device_${PBS_JOBID}"
+OUT="${CAMPAIGN_ROOT}/runs/phase6_device_${PBS_JOBID}"
+EXE="${BUILD}/src/athena"
+SOURCE_INPUT="${SRC}/tst/inputs/ref_gh_q_controlled_reference.athinput"
+FIXED_INPUT="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_fixed_point.athinput"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "phase6_device_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+BINDER=$(command -v gpu_tile_compact.sh)
+test -x "${BINDER}"
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+test -f "${SRC}/kokkos/CMakeLists.txt"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "source_commit=${actual_commit}"
+  echo "source_unit_ranks=1"
+  echo "fixed_point_grid=96x96x96"
+  echo "fixed_point_meshblocks=216"
+  echo "fixed_point_ranks=12"
+  echo "fixed_point_phi_ordering=standard"
+  echo "positive_time_cycles=0"
+  echo "gpu_tile_binder=${BINDER}"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${SOURCE_INPUT}" "${FIXED_INPUT}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DAthena_ENABLE_REF_GH_SOURCE_UNIT=ON \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens > configure.log 2>&1
+cmake --build "${BUILD}" -j 64 > build.log 2>&1
+
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Athena_ENABLE_REF_GH_SOURCE_UNIT:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+    "${BUILD}/CMakeCache.txt"
+  sha256sum "${BUILD}/CMakeCache.txt" "${EXE}"
+} >> provenance.txt
+grep -q '^Athena_ENABLE_MPI:BOOL=ON$' "${BUILD}/CMakeCache.txt"
+grep -q '^Athena_ENABLE_REF_GH_SOURCE_UNIT:BOOL=ON$' "${BUILD}/CMakeCache.txt"
+grep -q '^Kokkos_ENABLE_SYCL:BOOL=ON$' "${BUILD}/CMakeCache.txt"
+grep -q '^Kokkos_ARCH_INTEL_PVC:BOOL=ON$' "${BUILD}/CMakeCache.txt"
+grep -q '^Kokkos_ENABLE_OPENMP:BOOL=OFF$' "${BUILD}/CMakeCache.txt"
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
+  | sort -u | wc -l)" -eq 12
+
+mkdir source_unit
+(
+  cd source_unit
+  /usr/bin/time -p mpiexec -n 1 --ppn 1 --depth=8 --cpu-bind depth \
+    "${BINDER}" "${EXE}" -i "${SOURCE_INPUT}" > source_unit.log 2>&1
+)
+grep -q 'reference-GH generated analytic radial-q moving gauge oracle passed:' \
+  source_unit/source_unit.log
+grep -q 'Kref=' source_unit/source_unit.log
+grep -q 'reference-GH fully subtracted physical gauge target passed:' \
+  source_unit/source_unit.log
+grep -q 'matched_exact=1' source_unit/source_unit.log
+grep -q 'reference-GH all-61 legacy-generic versus fully-subtracted compact RHS oracle passed:' \
+  source_unit/source_unit.log
+grep -q 'samples=4320' source_unit/source_unit.log
+grep -q 'compatible+standard Phi' source_unit/source_unit.log
+! grep -Eiq 'FATAL ERROR|NotPresent|page fault|SYCL exception|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' \
+  source_unit/source_unit.log
+
+mkdir fixed_point_standard
+(
+  cd fixed_point_standard
+  /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+    "${BINDER}" "${EXE}" -i "${FIXED_INPUT}" \
+    ref_gh/phi_ordering=standard \
+    job/basename=phase6_standard_pvc_fixed \
+    time/tlim=0.0 time/nlim=0 \
+    output2/dt=-1 output3/dt=-1 output4/dt=-1 output5/dt=-1 \
+    > run.log 2>&1
+)
+grep -q 'Root grid = 6 x 6 x 6 MeshBlocks' fixed_point_standard/run.log
+grep -q 'Total number of MeshBlocks = 216' fixed_point_standard/run.log
+grep -q 'Number of parallel ranks = 12' fixed_point_standard/run.log
+grep -q 'reference-GH initial RHS sector decomposition passed:' \
+  fixed_point_standard/run.log
+test -s fixed_point_standard/phase6_standard_pvc_fixed.ref_gh_rhs_sectors.tsv
+! grep -Eiq 'FATAL ERROR|NotPresent|page fault|SYCL exception|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' \
+  fixed_point_standard/run.log
+
+python3 - fixed_point_standard/phase6_standard_pvc_fixed.ref_gh_rhs_sectors.tsv \
+  > fixed_point_gate.txt <<'PY'
+import math
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+reproduction = float(re.search(r"reproduction_conditioned_linf=([^\s]+)", text).group(1))
+rerun = float(re.search(r"production_rerun_conditioned_linf=([^\s]+)", text).group(1))
+tolerance = float(re.search(r"tolerance=([^\s]+)", text).group(1))
+if not all(math.isfinite(value) for value in (reproduction, rerun, tolerance)):
+    raise SystemExit("nonfinite fixed-point reproduction gate")
+if reproduction > tolerance or rerun > tolerance:
+    raise SystemExit(
+        f"fixed-point reproduction failed: {reproduction=} {rerun=} {tolerance=}"
+    )
+
+rows = {}
+for line in text.splitlines():
+    if not line or line.startswith("#") or line.startswith("sector"):
+        continue
+    fields = line.split("\t")
+    if len(fields) >= 3:
+        rows[(fields[0], fields[1])] = float(fields[2])
+
+required_exact_zero = (
+    ("actual", "Hhat"),
+    ("actual", "theta"),
+    ("actual", "Upsilon"),
+    ("ordinary_gauge_increment", "Pi"),
+    ("driver", "Hhat"),
+    ("driver", "theta"),
+    ("driver", "Upsilon"),
+    ("KO", "Hhat"),
+    ("KO", "theta"),
+    ("KO", "Upsilon"),
+)
+for key in required_exact_zero:
+    if key not in rows:
+        raise SystemExit(f"missing fixed-point sector {key}")
+    if rows[key] != 0.0:
+        raise SystemExit(f"nonzero fixed-point sector {key}: {rows[key]:.17e}")
+
+print(f"reproduction_conditioned_linf={reproduction:.17e}")
+print(f"production_rerun_conditioned_linf={rerun:.17e}")
+print(f"tolerance={tolerance:.17e}")
+for key in required_exact_zero:
+    print(f"exact_zero_{key[0]}_{key[1]}={rows[key]:.17e}")
+PY
+
+{
+  echo 'result=PASS_PHASE6_FULLY_SUBTRACTED_DEVICE_GATE'
+  echo 'source_unit=PASS_ONE_PVC_TILE'
+  echo 'all_61_standard_and_compatible=PASS_4320_SAMPLES'
+  echo 'fixed_point_standard=PASS_TWELVE_PVC_TILES'
+  echo 'positive_time_cycles=0'
+  cat fixed_point_gate.txt
+  sha256sum "${EXE}"
+} > gate_status.txt
+
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' -o -name '*.json' -o -name '*-trumpet.dat' \) \
+  -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
+echo "phase6_device_complete=$(date -Is)"
