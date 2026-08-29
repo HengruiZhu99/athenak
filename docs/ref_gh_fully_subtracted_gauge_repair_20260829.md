@@ -283,6 +283,47 @@ either side is correct. The next hard gate is an independent high-precision
 or generated perturbed residual driver/source oracle. Production dispatch
 remains disabled until that gate passes.
 
+### Phase 3b diagnosis of the red source gate
+
+The red phase-3 comparison was not an isolated Einstein-source test. It gave
+the residual source the direct residual driver time derivative, while the
+legacy source received an independently reconstructed full driver derivative.
+That raw full derivative contains the singular binary64 cancellation being
+removed. The source mismatch therefore inherited a driver-input mismatch.
+
+When both source paths receive the same-stage regular derivative
+
+\[
+ \partial_t H_A=\partial_t\bar H_A+\partial_t\delta H_A,
+\]
+
+the complete source-unit gate passes without changing the
+`1024 epsilon_binary64` tolerance. The all-radius raw source discrepancy is
+`6.96333e-09`; the combined conditioned gate at radii at least `0.8M` is
+`3.82012e-14`. The independently reconstructed full driver remains a separate
+diagnostic and differs by as much as `1.05256`; it is not used as truth for the
+subtracted trumpet driver.
+
+The arbitrary-precision implicit-trumpet oracle now evaluates the exact
+advective 1+log/conformal-Gamma target independently of the generated
+binary64 table. At 80 decimal digits over
+
+\[
+ r/M=0.03,0.05,0.08,0.125,0.2,0.4,0.8,1.5,3,5,
+\]
+
+it finds
+
+\[
+ \max |F_A^{\rm ref}-H_A^{\rm ref}|=7.60\times10^{-75},\qquad
+ \max |\widetilde\Gamma^i_{\rm ref}|=4.77\times10^{-80}.
+\]
+
+This independently proves the static identities used to remove the pure
+reference forcing in the exact matched `q=1` branch. It does not yet qualify
+the all-radius perturbed driver, moving-reference forcing, or production
+dispatch. Compact evidence is in `phase3b_local`.
+
 ## Principal part
 
 The rewrite is an algebraic change of dependent variables plus lower-order
