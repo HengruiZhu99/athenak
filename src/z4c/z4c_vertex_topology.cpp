@@ -74,6 +74,16 @@ bool VertexContributorLess(const VertexContributor &left,
                   right.lx2, right.lx3, right.gid, right.k, right.j, right.i);
 }
 
+Z4cVertexTopologyPlan::~Z4cVertexTopologyPlan() {
+#if MPI_PARALLEL_ENABLED
+  if (sparse_communicator != MPI_COMM_NULL) {
+    int finalized = 0;
+    MPI_Finalized(&finalized);
+    if (finalized == 0) MPI_Comm_free(&sparse_communicator);
+  }
+#endif
+}
+
 void Z4cVertexTopologyPlan::ConfigureRuntime(
     const bool use_single_rank_device_sync,
     const bool use_synchronization_postcondition,
@@ -95,6 +105,11 @@ void Z4cVertexTopologyPlan::ConfigureRuntime(
   device_authority_end = DualArray1D<int>("VC shared authority end", 1);
   device_group_values = DvceArray2D<Real>(
       "VC shared group values", 1, maximum_variables);
+#if MPI_PARALLEL_ENABLED
+  if (global_variable::nranks > 1 && sparse_communicator == MPI_COMM_NULL) {
+    MPI_Comm_dup(MPI_COMM_WORLD, &sparse_communicator);
+  }
+#endif
 }
 
 void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
@@ -397,6 +412,215 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
   device_authority_begin.template sync<DevExeSpace>();
   device_authority_end.template modify<HostMemSpace>();
   device_authority_end.template sync<DevExeSpace>();
+
+  // Build the lean MPI owner/participant plan once per topology generation.
+  // Metadata construction may use global host information here; the RK hot
+  // path below exchanges only authoritative values between participant ranks.
+  const int nranks = global_variable::nranks;
+  const int my_rank = global_variable::my_rank;
+  std::vector<int> global_rank(global_count, 0);
+  for (int rank = 0; rank < nranks; ++rank) {
+    for (int local = 0; local < contributor_counts[rank]; ++local) {
+      global_rank[contributor_displacements[rank] + local] = rank;
+    }
+  }
+  std::vector<std::vector<int>> group_authorities(group_count);
+  std::vector<std::set<int>> group_participants(group_count);
+  for (const int global_index : sorted_global_indices) {
+    const int owner_group = global_group_for_contributor[global_index];
+    group_participants[owner_group].insert(global_rank[global_index]);
+    if (global_contributors[global_index].level ==
+        authority_level[owner_group]) {
+      group_authorities[owner_group].push_back(global_index);
+    }
+  }
+  std::vector<int> group_owner(group_count, -1);
+  for (int owner_group = 0; owner_group < group_count; ++owner_group) {
+    if (group_authorities[owner_group].empty()) {
+      std::cerr << "### FATAL ERROR: sparse VC group has no authority"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    group_owner[owner_group] =
+        global_rank[group_authorities[owner_group].front()];
+  }
+
+  using RankLists = std::vector<std::vector<std::vector<int>>>;
+  RankLists contribution_lists(
+      nranks, std::vector<std::vector<int>>(nranks));
+  for (int source = 0; source < nranks; ++source) {
+    const int begin = contributor_displacements[source];
+    const int end = begin + contributor_counts[source];
+    for (int global_index = begin; global_index < end; ++global_index) {
+      const int owner_group = global_group_for_contributor[global_index];
+      if (global_contributors[global_index].level ==
+          authority_level[owner_group]) {
+        contribution_lists[source][group_owner[owner_group]].push_back(
+            global_index);
+      }
+    }
+  }
+  auto prefix_displacements = [](const std::vector<int> &counts) {
+    std::vector<int> displacements(counts.size(), 0);
+    for (std::size_t rank = 1; rank < counts.size(); ++rank) {
+      displacements[rank] = displacements[rank - 1] + counts[rank - 1];
+    }
+    return displacements;
+  };
+  sparse_contribution_send_counts.assign(nranks, 0);
+  sparse_contribution_recv_counts.assign(nranks, 0);
+  for (int peer = 0; peer < nranks; ++peer) {
+    sparse_contribution_send_counts[peer] =
+        static_cast<int>(contribution_lists[my_rank][peer].size());
+    sparse_contribution_recv_counts[peer] =
+        static_cast<int>(contribution_lists[peer][my_rank].size());
+  }
+  sparse_contribution_send_displacements =
+      prefix_displacements(sparse_contribution_send_counts);
+  sparse_contribution_recv_displacements =
+      prefix_displacements(sparse_contribution_recv_counts);
+  sparse_contribution_send_entries =
+      sparse_contribution_send_displacements.back() +
+      sparse_contribution_send_counts.back();
+  sparse_contribution_recv_entries =
+      sparse_contribution_recv_displacements.back() +
+      sparse_contribution_recv_counts.back();
+  Kokkos::realloc(sparse_contribution_local_index,
+                  std::max(1, sparse_contribution_send_entries));
+  int send_entry = 0;
+  for (int destination = 0; destination < nranks; ++destination) {
+    for (const int global_index :
+         contribution_lists[my_rank][destination]) {
+      sparse_contribution_local_index.h_view(send_entry++) =
+          global_index - contributor_displacements[my_rank];
+    }
+  }
+  sparse_contribution_local_index.template modify<HostMemSpace>();
+  sparse_contribution_local_index.template sync<DevExeSpace>();
+
+  std::vector<int> contribution_recv_entry(global_count, -1);
+  for (int source = 0; source < nranks; ++source) {
+    int entry = sparse_contribution_recv_displacements[source];
+    for (const int global_index : contribution_lists[source][my_rank]) {
+      contribution_recv_entry[global_index] = entry++;
+    }
+  }
+  std::vector<int> owned_groups;
+  std::vector<int> owned_authority_begin;
+  std::vector<int> owned_authority_end;
+  std::vector<int> owned_authority_entries;
+  for (int owner_group = 0; owner_group < group_count; ++owner_group) {
+    if (group_owner[owner_group] != my_rank) continue;
+    owned_groups.push_back(owner_group);
+    owned_authority_begin.push_back(
+        static_cast<int>(owned_authority_entries.size()));
+    for (const int global_index : group_authorities[owner_group]) {
+      const int entry = contribution_recv_entry[global_index];
+      if (entry < 0) {
+        std::cerr << "### FATAL ERROR: sparse VC authority receive map is incomplete"
+                  << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+      owned_authority_entries.push_back(entry);
+    }
+    owned_authority_end.push_back(
+        static_cast<int>(owned_authority_entries.size()));
+  }
+  sparse_owned_groups = static_cast<int>(owned_groups.size());
+  sparse_owned_authority_entries =
+      static_cast<int>(owned_authority_entries.size());
+  Kokkos::realloc(sparse_owned_group, std::max(1, sparse_owned_groups));
+  Kokkos::realloc(sparse_owned_authority_begin,
+                  std::max(1, sparse_owned_groups));
+  Kokkos::realloc(sparse_owned_authority_end,
+                  std::max(1, sparse_owned_groups));
+  Kokkos::realloc(sparse_owned_authority_recv_entry,
+                  std::max(1, sparse_owned_authority_entries));
+  for (int owned = 0; owned < sparse_owned_groups; ++owned) {
+    sparse_owned_group.h_view(owned) = owned_groups[owned];
+    sparse_owned_authority_begin.h_view(owned) = owned_authority_begin[owned];
+    sparse_owned_authority_end.h_view(owned) = owned_authority_end[owned];
+  }
+  for (int entry = 0; entry < sparse_owned_authority_entries; ++entry) {
+    sparse_owned_authority_recv_entry.h_view(entry) =
+        owned_authority_entries[entry];
+  }
+  sparse_owned_group.template modify<HostMemSpace>();
+  sparse_owned_group.template sync<DevExeSpace>();
+  sparse_owned_authority_begin.template modify<HostMemSpace>();
+  sparse_owned_authority_begin.template sync<DevExeSpace>();
+  sparse_owned_authority_end.template modify<HostMemSpace>();
+  sparse_owned_authority_end.template sync<DevExeSpace>();
+  sparse_owned_authority_recv_entry.template modify<HostMemSpace>();
+  sparse_owned_authority_recv_entry.template sync<DevExeSpace>();
+
+  RankLists average_lists(nranks, std::vector<std::vector<int>>(nranks));
+  for (int owner_group = 0; owner_group < group_count; ++owner_group) {
+    const int owner = group_owner[owner_group];
+    for (const int participant : group_participants[owner_group]) {
+      average_lists[owner][participant].push_back(owner_group);
+    }
+  }
+  sparse_average_send_counts.assign(nranks, 0);
+  sparse_average_recv_counts.assign(nranks, 0);
+  for (int peer = 0; peer < nranks; ++peer) {
+    sparse_average_send_counts[peer] =
+        static_cast<int>(average_lists[my_rank][peer].size());
+    sparse_average_recv_counts[peer] =
+        static_cast<int>(average_lists[peer][my_rank].size());
+  }
+  sparse_average_send_displacements =
+      prefix_displacements(sparse_average_send_counts);
+  sparse_average_recv_displacements =
+      prefix_displacements(sparse_average_recv_counts);
+  sparse_average_send_entries = sparse_average_send_displacements.back() +
+                                sparse_average_send_counts.back();
+  sparse_average_recv_entries = sparse_average_recv_displacements.back() +
+                                sparse_average_recv_counts.back();
+  Kokkos::realloc(sparse_average_send_group,
+                  std::max(1, sparse_average_send_entries));
+  send_entry = 0;
+  for (int destination = 0; destination < nranks; ++destination) {
+    for (const int owner_group : average_lists[my_rank][destination]) {
+      sparse_average_send_group.h_view(send_entry++) = owner_group;
+    }
+  }
+  sparse_average_send_group.template modify<HostMemSpace>();
+  sparse_average_send_group.template sync<DevExeSpace>();
+
+  std::vector<int> group_recv_entry(group_count, -1);
+  for (int owner = 0; owner < nranks; ++owner) {
+    int entry = sparse_average_recv_displacements[owner];
+    for (const int owner_group : average_lists[owner][my_rank]) {
+      group_recv_entry[owner_group] = entry++;
+    }
+  }
+  Kokkos::realloc(sparse_local_average_recv_entry, std::max(1, local_count));
+  for (int local = 0; local < local_count; ++local) {
+    const int entry = group_recv_entry[local_group[local]];
+    if (entry < 0) {
+      std::cerr << "### FATAL ERROR: sparse VC average receive map is incomplete"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    sparse_local_average_recv_entry.h_view(local) = entry;
+  }
+  sparse_local_average_recv_entry.template modify<HostMemSpace>();
+  sparse_local_average_recv_entry.template sync<DevExeSpace>();
+
+  const int contribution_send_values = std::max(
+      1, sparse_contribution_send_entries * maximum_variables);
+  const int contribution_recv_values = std::max(
+      1, sparse_contribution_recv_entries * maximum_variables);
+  const int average_send_values = std::max(
+      1, sparse_average_send_entries * maximum_variables);
+  const int average_recv_values = std::max(
+      1, sparse_average_recv_entries * maximum_variables);
+  Kokkos::realloc(sparse_contribution_send, contribution_send_values);
+  Kokkos::realloc(sparse_contribution_recv, contribution_recv_values);
+  Kokkos::realloc(sparse_average_send, average_send_values);
+  Kokkos::realloc(sparse_average_recv, average_recv_values);
+
   // Mark exactly the first contributor in the canonical global order as diagnostic
   // owner.  Evolution synchronization still averages every contributor.
   for (int sorted = 0; sorted < global_count; ++sorted) {
@@ -497,6 +721,137 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
     }
     return;
   }
+#if MPI_PARALLEL_ENABLED
+  if (single_rank_device_sync && global_variable::nranks > 1 &&
+      !diagnostic_requested && !synchronization_postcondition) {
+    if (nvar > maximum_variables) {
+      std::cerr << "### FATAL ERROR: sparse native VC synchronization received "
+                << nvar << " variables, exceeding configured capacity "
+                << maximum_variables << std::endl;
+      MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+    }
+    if (sparse_communicator == MPI_COMM_NULL) {
+      std::cerr << "### FATAL ERROR: sparse native VC communicator is null"
+                << std::endl;
+      MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+    }
+
+    const auto indices = local_indices.d_view;
+    const auto contribution_local_index =
+        sparse_contribution_local_index.d_view;
+    auto contribution_send = sparse_contribution_send;
+    auto contribution_recv = sparse_contribution_recv;
+    if (sparse_contribution_send_entries > 0) {
+      par_for("pack sparse VC authority contributions", DevExeSpace(), 0,
+              sparse_contribution_send_entries - 1, 0, nvar - 1,
+          KOKKOS_LAMBDA(const int entry, const int variable) {
+            const int contributor = contribution_local_index(entry);
+            const Real value =
+                state(indices(contributor, 0), variable,
+                      indices(contributor, 1), indices(contributor, 2),
+                      indices(contributor, 3));
+            if (!Kokkos::isfinite(value)) {
+              Kokkos::abort("nonfinite sparse VC authority contribution");
+            }
+            contribution_send(entry * nvar + variable) = value;
+          });
+    }
+
+    auto sparse_exchange =
+        [&](DvceArray1D<Real> &send, DvceArray1D<Real> &recv,
+            const std::vector<int> &send_counts,
+            const std::vector<int> &send_displacements,
+            const std::vector<int> &recv_counts,
+            const std::vector<int> &recv_displacements, const int tag) {
+          Kokkos::fence();
+          std::vector<MPI_Request> requests;
+          requests.reserve(2 * global_variable::nranks);
+          for (int peer = 0; peer < global_variable::nranks; ++peer) {
+            if (recv_counts[peer] <= 0) continue;
+            requests.push_back(MPI_REQUEST_NULL);
+            MPI_Irecv(recv.data() + recv_displacements[peer] * nvar,
+                      recv_counts[peer] * nvar, MPI_ATHENA_REAL, peer, tag,
+                      sparse_communicator, &requests.back());
+          }
+          for (int peer = 0; peer < global_variable::nranks; ++peer) {
+            if (send_counts[peer] <= 0) continue;
+            requests.push_back(MPI_REQUEST_NULL);
+            MPI_Isend(send.data() + send_displacements[peer] * nvar,
+                      send_counts[peer] * nvar, MPI_ATHENA_REAL, peer, tag,
+                      sparse_communicator, &requests.back());
+          }
+          if (!requests.empty()) {
+            MPI_Waitall(static_cast<int>(requests.size()), requests.data(),
+                        MPI_STATUSES_IGNORE);
+          }
+        };
+
+    sparse_exchange(
+        contribution_send, contribution_recv,
+        sparse_contribution_send_counts,
+        sparse_contribution_send_displacements,
+        sparse_contribution_recv_counts,
+        sparse_contribution_recv_displacements, 1);
+
+    const auto owned_group = sparse_owned_group.d_view;
+    const auto owned_authority_begin =
+        sparse_owned_authority_begin.d_view;
+    const auto owned_authority_end = sparse_owned_authority_end.d_view;
+    const auto owned_authority_recv_entry =
+        sparse_owned_authority_recv_entry.d_view;
+    auto group_values = device_group_values;
+    if (sparse_owned_groups > 0) {
+      par_for("compute sparse deterministic VC shared averages", DevExeSpace(),
+              0, sparse_owned_groups - 1, 0, nvar - 1,
+          KOKKOS_LAMBDA(const int owned, const int variable) {
+            Real sum = 0.0;
+            for (int position = owned_authority_begin(owned);
+                 position < owned_authority_end(owned); ++position) {
+              const int entry = owned_authority_recv_entry(position);
+              const Real value = contribution_recv(entry * nvar + variable);
+              if (!Kokkos::isfinite(value)) {
+                Kokkos::abort("nonfinite sparse VC authority receive");
+              }
+              sum += value;
+            }
+            group_values(owned_group(owned), variable) =
+                sum / static_cast<Real>(owned_authority_end(owned) -
+                                        owned_authority_begin(owned));
+          });
+    }
+
+    const auto average_send_group = sparse_average_send_group.d_view;
+    auto average_send = sparse_average_send;
+    auto average_recv = sparse_average_recv;
+    if (sparse_average_send_entries > 0) {
+      par_for("pack sparse VC shared averages", DevExeSpace(), 0,
+              sparse_average_send_entries - 1, 0, nvar - 1,
+          KOKKOS_LAMBDA(const int entry, const int variable) {
+            average_send(entry * nvar + variable) =
+                group_values(average_send_group(entry), variable);
+          });
+    }
+    sparse_exchange(average_send, average_recv, sparse_average_send_counts,
+                    sparse_average_send_displacements,
+                    sparse_average_recv_counts,
+                    sparse_average_recv_displacements, 2);
+
+    const auto local_average_recv_entry =
+        sparse_local_average_recv_entry.d_view;
+    if (local_count > 0) {
+      par_for("apply sparse deterministic VC shared averages", DevExeSpace(),
+              0, local_count - 1, 0, nvar - 1,
+          KOKKOS_LAMBDA(const int contributor, const int variable) {
+            state(indices(contributor, 0), variable,
+                  indices(contributor, 1), indices(contributor, 2),
+                  indices(contributor, 3)) =
+                average_recv(local_average_recv_entry(contributor) * nvar +
+                             variable);
+          });
+    }
+    return;
+  }
+#endif
   DvceArray2D<Real> packed("VC shared contributors", local_count, nvar);
   const auto indices = local_indices.d_view;
   if (local_count > 0) {

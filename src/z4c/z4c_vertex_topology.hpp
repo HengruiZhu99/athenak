@@ -14,6 +14,10 @@
 #include "bvals/vertex_topology.hpp"
 #include "z4c/z4c_grid.hpp"
 
+#if MPI_PARALLEL_ENABLED
+#include <mpi.h>
+#endif
+
 class MeshBlockPack;
 
 namespace z4c {
@@ -46,6 +50,9 @@ constexpr bool VertexContributorHasAuthority(const int contributor_level,
 class Z4cVertexTopologyPlan {
  public:
   Z4cVertexTopologyPlan() = default;
+  ~Z4cVertexTopologyPlan();
+  Z4cVertexTopologyPlan(const Z4cVertexTopologyPlan &) = delete;
+  Z4cVertexTopologyPlan &operator=(const Z4cVertexTopologyPlan &) = delete;
   void ConfigureRuntime(bool single_rank_device_sync,
                         bool synchronization_postcondition,
                         int maximum_variables);
@@ -73,6 +80,37 @@ class Z4cVertexTopologyPlan {
   DualArray1D<int> device_authority_begin;
   DualArray1D<int> device_authority_end;
   mutable DvceArray2D<Real> device_group_values;
+  // Precomputed sparse owner/participant exchange used by lean MPI runs.
+  // Entry counts/displacements are in contributor/group entries; runtime
+  // messages multiply them by the active variable count.
+  DualArray1D<int> sparse_contribution_local_index;
+  DualArray1D<int> sparse_owned_group;
+  DualArray1D<int> sparse_owned_authority_begin;
+  DualArray1D<int> sparse_owned_authority_end;
+  DualArray1D<int> sparse_owned_authority_recv_entry;
+  DualArray1D<int> sparse_average_send_group;
+  DualArray1D<int> sparse_local_average_recv_entry;
+  mutable DvceArray1D<Real> sparse_contribution_send;
+  mutable DvceArray1D<Real> sparse_contribution_recv;
+  mutable DvceArray1D<Real> sparse_average_send;
+  mutable DvceArray1D<Real> sparse_average_recv;
+  std::vector<int> sparse_contribution_send_counts;
+  std::vector<int> sparse_contribution_send_displacements;
+  std::vector<int> sparse_contribution_recv_counts;
+  std::vector<int> sparse_contribution_recv_displacements;
+  std::vector<int> sparse_average_send_counts;
+  std::vector<int> sparse_average_send_displacements;
+  std::vector<int> sparse_average_recv_counts;
+  std::vector<int> sparse_average_recv_displacements;
+  int sparse_contribution_send_entries = 0;
+  int sparse_contribution_recv_entries = 0;
+  int sparse_average_send_entries = 0;
+  int sparse_average_recv_entries = 0;
+  int sparse_owned_groups = 0;
+  int sparse_owned_authority_entries = 0;
+#if MPI_PARALLEL_ENABLED
+  MPI_Comm sparse_communicator = MPI_COMM_NULL;
+#endif
   bool single_rank_device_sync = false;
   bool synchronization_postcondition = true;
   int maximum_variables = 0;
