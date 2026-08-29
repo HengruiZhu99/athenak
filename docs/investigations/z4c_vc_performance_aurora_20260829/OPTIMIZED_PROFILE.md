@@ -1,4 +1,4 @@
-# First-candidate single-PVC profile
+# Optimized single-PVC profiles
 
 ## Scope
 
@@ -47,3 +47,30 @@ equivalence remain qualification requirements; this document does not infer
 their outcome.
 
 Raw evidence is under `evidence/optimized_profile_one_tile/`.
+
+## Frozen hard-pass profile
+
+After the compact P6/boundary launches, variable-folded VC communication,
+device-side P6 gate, and homogeneous-source output mirror were combined,
+Aurora job `8790685` profiled source `02a9b465` over the same 21-cycle window.
+
+| quantity | unmodified | frozen hard-pass | change |
+|---|---:|---:|---:|
+| profiled wall time | 21.35330 s | 5.78705 s | 3.69x faster |
+| Kokkos kernel time | 5.50499 s | 3.40051 s | 38.2% lower |
+| outside-Kokkos time | 15.84830 s | 2.38654 s | 84.9% lower |
+| outside-Kokkos fraction | 74.22% | 41.24% | -32.98 points |
+| Kokkos calls | 37,177 | 3,635 | 90.2% lower |
+
+The dominant remaining kernels were the main Z4c RHS (`0.857972 s`, 84 calls)
+and P6 coarse-fine prolongation (`0.699207 s`, 106 calls). The four same-level
+VC pack/unpack families totaled `0.096686 s`, down from approximately
+`0.958 s` in the original profile. Shared-node averaging plus application
+cost `0.135621 s` on one rank.
+
+This profile shows why the campaign stopped pursuing the `5x` stretch target:
+the remaining device budget is dominated by required RHS and transfer
+arithmetic, while the largest removable launch/staging path had already been
+reduced by roughly an order of magnitude. More aggressive arithmetic fusion
+would have carried substantially greater numerical-risk for limited measured
+headroom. Raw evidence is under `evidence/optimized_profile_one_tile_v8/`.

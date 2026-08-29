@@ -1,0 +1,86 @@
+{
+  "schema": "z4c_vc_performance_aurora_evidence_v1",
+  "campaign": "z4c_vc_performance_aurora_20260829",
+  "branch": "codex/z4c-vc-performance-aurora-20260829",
+  "source": {
+    "commit": "62993e7bac8fbaed13f592834282ca09142a5c2d",
+    "tree": "339b8f6a134a50fe7916013fd96f5cf93ea3a58d",
+    "aurora_executable_sha256": "b070bf3b856be712134b0e38028304bbb2fde506aa271350f98b3d8ee243c1e2",
+    "cmake_cache_sha256": "cfb772dc21b7161565bac7e3ffeac1047a3ed9ccdde146eea4054a66f573d656",
+    "embedded_source_id": "athena-0.1-git-9c98bd14f996ea5a2b3b0020b060e8fb62467b5e",
+    "embedded_source_id_disposition": "stale configure-time metadata; run scripts independently verified the clean commit, tree, and executable hash"
+  },
+  "authority": {
+    "baseline_commit": "f8303c6be7eb214fa1e91b646123ee0d434b3698",
+    "baseline_executable_sha256": "aae7ccb8739fb4951221ad7be69ea0e220548b52d402086f57d7857fa2c97a13",
+    "input_sha256": "d86595adeaf7d4c72e1f150d044cd5277f7b4e3507eea4e6d03f427c8dc38838",
+    "coefficients_sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10",
+    "restart_sha256": "44b8e55957d3b455adf24862d36946e08fc10465df7a30cc5f247ac0e19fa997",
+    "amr_history_sha256": "7055de601e6181e5ad7e1432b5c20a111b0ba67e0e8d5377c170ea80e7bedcde",
+    "configuration": {
+      "grid": "native vertex-centered Cartoon SO2",
+      "spatial_order": 4,
+      "vertex_prolongation_order": 6,
+      "integrator": "rk4",
+      "cfl": 0.15,
+      "ko_dissipation": 0.5,
+      "lapse": "shock_avoiding_kappa_1",
+      "shift": "prescribed_zero",
+      "z4c_kappa1": 0.0,
+      "z4c_kappa2": 0.0,
+      "boundary_rhs": "sommerfeld",
+      "domain_rho": [0.0, 128.0],
+      "domain_z": [-128.0, 128.0]
+    }
+  },
+  "performance": {
+    "baseline_job": "8790557",
+    "final_one_tile_job": "8790731",
+    "sparse_2_24_job": "8790725",
+    "sparse_12_job": "8790735",
+    "baseline_zone_cycles_per_second": 1763040.0,
+    "final_one_tile_zone_cycles_per_second": 5958188.0,
+    "single_tile_speedup": 3.379496778292041,
+    "hard_gate": "PASS",
+    "stretch_gate": "NOT_MET",
+    "final_scaling": [
+      {"tiles": 1, "zone_cycles_per_second": 5958188.0, "speedup": 1.0, "parallel_efficiency": 1.0},
+      {"tiles": 2, "zone_cycles_per_second": 2558434.0, "speedup": 0.4293979981833403, "parallel_efficiency": 0.21469899909167015},
+      {"tiles": 12, "zone_cycles_per_second": 4815004.0, "speedup": 0.8081322710864444, "parallel_efficiency": 0.06734435592387036},
+      {"tiles": 24, "zone_cycles_per_second": 6974422.0, "speedup": 1.1705609154998131, "parallel_efficiency": 0.04877337147915888}
+    ]
+  },
+  "numerical_equivalence": {
+    "verdict": "BITWISE_EVOLVED_STATE",
+    "history_sha256": "de03537e989bfdba1425af13efde52dd060cb5a52fe5d470354df81f962fb0fd",
+    "restart_numerical_payload_sha256": "e498614cad5e50677a1698bc20680e5b34131e0a098c3421e1d64564702c6ab6",
+    "one_tile_comparison_json": "evidence/optimized_one_tile_v9/evidence/numerical-equivalence.json",
+    "one_tile_comparison_json_sha256": "bd976b3436eeb53ce0d742d1f90aaa0ad200d91491e6356372c050209945b117",
+    "multi_rank_history_exact": [2, 12, 24],
+    "multi_rank_restart_payload_exact": [2, 12, 24]
+  },
+  "run_manifests": [
+    {"path": "evidence/baseline_one_tile/SHA256SUMS", "sha256": "4888f5ca568cb9e726a07829a8e59ffab66b4468ac979ee8a1590f4b60d96bce"},
+    {"path": "evidence/profile_one_tile/SHA256SUMS", "sha256": "0476115c76c48390a027137bf4b47f231f21958eed21ccf318a4f1079ea0f910"},
+    {"path": "evidence/optimized_profile_one_tile_v8/SHA256SUMS", "sha256": "93f4b4709e4a085a07b7c3778f1c39d6c62980662550567b2b3e26c934671513"},
+    {"path": "evidence/optimized_one_tile_v9/SHA256SUMS", "sha256": "dc99c57e202859d9a7aa93d68f96c6181ff78ffc3fb668b075f09afc5973ea08"},
+    {"path": "evidence/scaling_sparse_2_tiles/SHA256SUMS", "sha256": "e8bf372d918564334aadf02d219dac632552e137a8b04fe681b300dcdc96de0f"},
+    {"path": "evidence/scaling_sparse_12_tiles/SHA256SUMS", "sha256": "8f2920c87ae6342026c3f25c2101d69d5179a7c6f9659449bb43b03bcd4f19b1"},
+    {"path": "evidence/scaling_sparse_24_tiles/SHA256SUMS", "sha256": "04032e5aff9548a4c8a77d1f8bf5add650b7db80d899a25d5e6e10e3fd523ba4"}
+  ],
+  "derived_artifacts": [
+    {"path": "REPORT.md", "sha256": "f1c5e06a3fe1ec443c189a2d54b4f67af767ae922c88c6d349d546e32d000c30"},
+    {"path": "scaling.csv", "sha256": "259ad83a92186b9b51e7281ca2d9b724dcd4011fb26b08f0682f8c7ab06cb771"},
+    {"path": "scaling.json", "sha256": "e6d55bc3cbe7d91fe4b98f3e36c90dd7fed816724f7e501250ea09542201d63f"},
+    {"path": "scaling_final.csv", "sha256": "0137de0f8670f6019b376f1c790efc70880223613b760b1ddc88bc2615d63176"},
+    {"path": "scaling_final.json", "sha256": "fb697c7165a38e2225a6e355bffce1179334093990a3b9081d244c38408cd14b"}
+  ],
+  "limitations": [
+    "bounded frozen-hierarchy benchmark only",
+    "final source not rerun at 4 or 6 tiles",
+    "filesystem output timing is noisy",
+    "no final GPU-utilization or MPI-time decomposition",
+    "no N1024 science production",
+    "no convergence, long-time stability, Figure 3 reproduction, boundary-independence, or physical-criticality claim"
+  ]
+}

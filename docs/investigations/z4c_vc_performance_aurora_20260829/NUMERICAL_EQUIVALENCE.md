@@ -1,5 +1,66 @@
 # Numerical equivalence
 
+## Final-source single-PVC gate
+
+The required post-change rerun is Aurora job `8790731`, source
+`62993e7bac8fbaed13f592834282ca09142a5c2d`, executable SHA-256
+`b070bf3b856be712134b0e38028304bbb2fde506aa271350f98b3d8ee243c1e2`.
+It reached `t=9.85 M` with 212 MeshBlocks and no topology change.
+
+The independent comparison against unmodified job `8790557` reports:
+
+- complete Z4c history bytes exact, SHA-256
+  `de03537e989bfdba1425af13efde52dd060cb5a52fe5d470354df81f962fb0fd`;
+- final restart numerical payload exact, SHA-256
+  `e498614cad5e50677a1698bc20680e5b34131e0a098c3421e1d64564702c6ab6`;
+- identical final time, cycle, MeshBlock count, and maximum level;
+- verdict `BITWISE_EVOLVED_STATE`;
+- end-to-end speedup `3.379496778x`.
+
+The authoritative offline comparison is
+`evidence/optimized_one_tile_v9/evidence/numerical-equivalence.json`, SHA-256
+`bd976b3436eeb53ce0d742d1f90aaa0ad200d91491e6356372c050209945b117`.
+It was created after the run's immutable root manifest closed and therefore
+has its own explicit hash rather than being retroactively inserted into that
+manifest.
+
+## Sparse multi-rank gate
+
+Aurora job `8790725` compared the final sparse exchange against the matched
+postcondition-only path at 2 and 24 ranks. At both rank counts, the complete
+history is byte-identical and the final restart numerical payload is exact.
+All four restart payloads have SHA-256
+`e498614cad5e50677a1698bc20680e5b34131e0a098c3421e1d64564702c6ab6`.
+
+## Pre-sparse hard-pass gate
+
+The first bounded N512 hard-pass run was Aurora job `8790667`, source
+`02a9b4654679bd34d8ae3b06b04245b1da5fba2d`, executable SHA-256
+`b4dd1710284c3948a1913e0ff48a3b817d5a4a81ac412ac871de9f97926a7387`.
+It reached `t=9.85 M` with 212 MeshBlocks and no topology change.
+
+The independent comparison against unmodified job `8790557` reports:
+
+- complete Z4c history bytes exact, SHA-256
+  `de03537e989bfdba1425af13efde52dd060cb5a52fe5d470354df81f962fb0fd`;
+- final restart numerical payload exact, SHA-256
+  `e498614cad5e50677a1698bc20680e5b34131e0a098c3421e1d64564702c6ab6`;
+- identical final time, cycle, MeshBlock count, and maximum level;
+- verdict `BITWISE_EVOLVED_STATE`.
+
+The output-staging A/B fixture also produced byte-identical state, ADM,
+constraint, and Z4c-diagnostic files.  Its only lean/default directory
+difference was the intentionally disabled timestep-contract CSV diagnostic.
+
+Its comparison JSON is
+`evidence/optimized_one_tile_v8/evidence/numerical-equivalence.json`.
+
+## Claim boundary
+
+These checks qualify numerical identity over the bounded frozen-hierarchy
+benchmark.  They do not establish convergence, Figure-3 reproduction,
+long-time stability, or independence from the outer boundary.
+
 ## Matched N512 comparison
 
 The authoritative comparison uses the same retained N512 restart, complete

@@ -1,0 +1,325 @@
+ *v*)
+ *v*x*)
+ *x*)
+ ;;
+ ;;
+ ;;
+ __lmod_my_status=$?;
+ __lmod_sh_dbg='v'
+ __lmod_sh_dbg='vx'
+ __lmod_sh_dbg='x'
+ case "$-" in 
+ echo "Shell debugging restarted" 1>&2;
+ echo "Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output" 1>&2;
+ esac;
+ eval "$($LMOD_CMD shell "$@")" && eval "$(${LMOD_SETTARG_CMD:-:} -s sh)";
+ fi;
+ fi;
+ fi;
+ if [ -n "${__lmod_sh_dbg:-}" ]; then
+ if [ -n "${__lmod_sh_dbg:-}" ]; then
+ return $__lmod_my_status
+ set +$__lmod_sh_dbg;
+ set -$__lmod_sh_dbg;
+ unset __lmod_sh_dbg;
+A21_SDK_ROOT=/opt/aurora/26.26.0
+ACLOCAL_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/cmake-3.31.11-pss2phi/share/aclocal
+ADVISOR_2025_DIR=/opt/aurora/26.26.0/oneapi/advisor/latest
+ALLOCATED_NODES=2
+APM=/opt/aurora/26.26.0/oneapi/advisor/latest/perfmodels
+ATHENAK_BUILD_DIR=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-performance-aurora-20260829/build-sycl-mpi-9c98bd14
+ATHENAK_ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-performance-aurora-20260829/source
+ATHENA_AMR_HISTORY_COMPATIBLE_SOURCE_ID=athena-0.1-git-f8303c6be7eb214fa1e91b646123ee0d434b3698
+ATHENA_BIN=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-performance-aurora-20260829/build-sycl-mpi-9c98bd14/src/athena
+ATHENA_WALL_LIMIT=00:08:00
+ATHENA_Z4C_LEAN_RUNTIME=1
+AURORA_BASE_ENV=2025.3.1
+BASH_ENV=/usr/share/lmod/lmod/init/bash
+BASH_FUNC_ml%%=() {  eval "$($LMOD_DIR/ml_cmd "$@")"
+BASH_FUNC_module%%=() {  if [ -z "${LMOD_SH_DBG_ON+x}" ]; then
+BUILD_JOBS=64
+BZIP2_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po
+C3_RSH=ssh -oConnectTimeout=10 -oForwardX11=no
+CC=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/bin/gcc
+CCL_CONFIGURATION=cpu_gpu_dpcpp
+CCL_CONFIGURATION_PATH=
+CCL_ROOT=/opt/aurora/26.26.0/oneapi/ccl/latest
+CLASSPATH=/opt/aurora/26.26.0/oneapi/dal/latest/lib
+CMAKE_PREFIX_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/intel-oneapi-runtime-2025.3.1-h4uj4w3:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-runtime-13.4.0-2tg3zy7:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/cmake-3.31.11-pss2phi:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p:/opt/aurora/26.26.0/support/libraries/khronos/default:/opt/aurora/26.26.0/oneapi/ishmem/latest/lib/cmake/ishmem:/opt/aurora/26.26.0/oneapi/pti/latest/lib/cmake/pti:/opt/aurora/26.26.0/oneapi/ipp/latest/lib/cmake/ipp:/opt/aurora/26.26.0/oneapi/dpl/latest/lib/cmake/oneDPL:/opt/aurora/26.26.0/oneapi/ccl/latest/lib/cmake/oneCCL:/opt/aurora/26.26.0/oneapi/dal/latest:/opt/aurora/26.26.0/oneapi/dnnl/latest/lib/cmake:/opt/aurora/26.26.0/oneapi/tbb/latest:/opt/aurora/26.26.0/oneapi/mkl/latest/lib/cmake:/opt/aurora/26.26.0/oneapi/compiler/latest
+CMPLR_ROOT=/opt/aurora/26.26.0/oneapi/compiler/latest
+CMPROOT=/opt/aurora/26.26.0/oneapi/compiler/latest
+COLLAPSE_HOST_THREADS=8
+COLORTERM=1
+CPATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/include:/opt/aurora/26.26.0/support/libraries/khronos/default/include:/opt/aurora/26.26.0/oneapi/umf/latest/include:/opt/aurora/26.26.0/oneapi/mkl/latest/include
+CPLUS_INCLUDE_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/include:/opt/aurora/26.26.0/oneapi/ishmem/latest/include:/opt/aurora/26.26.0/oneapi/pti/latest/include:/opt/aurora/26.26.0/oneapi/umf/latest/include:/opt/aurora/26.26.0/oneapi/ipp/latest/include:/opt/aurora/26.26.0/oneapi/ippcp/latest/include:/opt/aurora/26.26.0/oneapi/dpcpp-ct/latest/include:/opt/aurora/26.26.0/oneapi/dpl/latest/include:/opt/aurora/26.26.0/oneapi/ccl/latest/include:/opt/aurora/26.26.0/oneapi/dal/latest/include/dal:/opt/aurora/26.26.0/oneapi/dal/latest/include:/opt/aurora/26.26.0/oneapi/dnnl/latest/include:/opt/aurora/26.26.0/oneapi/tbb/latest/include:/opt/aurora/26.26.0/oneapi/mkl/latest/include
+CPU=x86_64
+CSHEDIT=emacs
+CXX=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/bin/g++
+C_INCLUDE_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/include:/opt/aurora/26.26.0/oneapi/ishmem/latest/include:/opt/aurora/26.26.0/oneapi/pti/latest/include:/opt/aurora/26.26.0/oneapi/umf/latest/include:/opt/aurora/26.26.0/oneapi/ipp/latest/include:/opt/aurora/26.26.0/oneapi/ippcp/latest/include:/opt/aurora/26.26.0/oneapi/dnnl/latest/include:/opt/aurora/26.26.0/oneapi/tbb/latest/include:/opt/aurora/26.26.0/oneapi/mkl/latest/include
+DAALROOT=/opt/aurora/26.26.0/oneapi/dal/latest
+DALROOT=/opt/aurora/26.26.0/oneapi/dal/latest
+DAL_MAJOR_BINARY=3
+DAL_MINOR_BINARY=0
+DNNLROOT=/opt/aurora/26.26.0/oneapi/dnnl/latest
+DNNL_ROOT=/opt/aurora/26.26.0/oneapi/dnnl/latest
+DPCTROOT=/opt/aurora/26.26.0/oneapi/dpcpp-ct/latest
+DPCT_BUNDLE_ROOT=/opt/aurora/26.26.0/oneapi/dpcpp-ct/latest
+DPLROOT=/opt/aurora/26.26.0/oneapi/dpl/latest
+DPL_ROOT=/opt/aurora/26.26.0/oneapi/dpl/latest
+ENVIRONMENT=BATCH
+EXPAT_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt
+EnableChipsetUniqueUUID=1
+F77=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/bin/gfortran
+FC=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/bin/gfortran
+FI_CXI_DEFAULT_CQ_SIZE=131072
+FI_CXI_DEFAULT_TX_SIZE=1024
+FI_CXI_OFLOW_BUF_COUNT=3
+FI_CXI_OFLOW_BUF_SIZE=12582912
+FI_CXI_RDZV_EAGER_SIZE=2048
+FI_CXI_RDZV_THRESHOLD=16384
+FI_CXI_REQ_BUF_MAX_CACHED=0
+FI_CXI_REQ_BUF_MIN_POSTED=6
+FI_CXI_REQ_BUF_SIZE=12582912
+FI_CXI_RX_MATCH_MODE=hardware
+FI_MR_CACHE_MAX_COUNT=524288
+FI_MR_CACHE_MAX_SIZE=-1
+FI_PROVIDER=cxi,tcp;ofi_rxm
+FPATH=/usr/share/lmod/lmod/init/ksh_funcs
+FROM_HEADER=
+GCC_RUNTIME_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-runtime-13.4.0-2tg3zy7
+GDBM_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq
+GDBROOT=/opt/aurora/26.26.0/oneapi/debugger/latest
+GDB_INFO=/opt/aurora/26.26.0/oneapi/debugger/latest/share/info
+GPG_TTY=not a tty
+G_BROKEN_FILENAMES=1
+G_FILENAME_ENCODING=@locale,UTF-8,ISO-8859-15,CP1252
+HDF5_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog
+HISTORY_FILE=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828/authority/n256_reference_shock_authority.jsonl
+HISTSIZE=1000
+HOME=/home/hzhu
+HOST=x4705c2s0b0n0
+HOSTNAME=x4705c2s0b0n0
+HOSTTYPE=x86_64
+HWLOC_THISSYSTEM=1
+HWLOC_XMLFILE=/run/hwloc/topology.xml
+IDPROOT=/opt/aurora/26.26.0/oneapi/intel-conda-miniforge
+INCLUDE=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/include:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/include
+INFOPATH=/opt/aurora/26.26.0/oneapi/debugger/latest/share/info
+INTEL_ONEAPI_RUNTIME_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/intel-oneapi-runtime-2025.3.1-h4uj4w3
+INTEL_PYTHONHOME=/opt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger
+INTEL_PYTHON_SHADOW_PREFIX=/opt/aurora/26.26.0
+IPPCP_TARGET_ARCH=intel64
+IPPCRYPTOROOT=/opt/aurora/26.26.0/oneapi/ippcp/latest
+IPPROOT=/opt/aurora/26.26.0/oneapi/ipp/latest
+IPP_TARGET_ARCH=intel64
+IRISK_BIN=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/bbhk/build/aurora-pvc/src/iris
+IRISK_BUILD_DIR=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/bbhk/build/aurora-pvc
+IRISK_INTERPOLATOR_LIBRARY=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/bbhk/build/aurora-pvc/src/libiris_athenak_interpolator.a
+IRISK_ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/bbhk
+ISHMEM_ROOT=/opt/aurora/26.26.0/oneapi/ishmem/latest
+KOKKOS_NUM_THREADS=8
+LANG=en_US.UTF-8
+LANGUAGE=en_US.UTF-8
+LD_LIBRARY_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/intel-oneapi-runtime-2025.3.1-h4uj4w3/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-runtime-13.4.0-2tg3zy7/lib:/opt/cray/pals/1.8/lib:/opt/cray/libfabric/1.22.0/lib64:/opt/cray/libfabric/1.22.0/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/lib64:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/lib:/opt/aurora/26.26.0/support/libraries/khronos/default/lib64:/opt/aurora/26.26.0/oneapi/ishmem/latest/lib:/opt/aurora/26.26.0/oneapi/pti/latest/lib:/opt/aurora/26.26.0/oneapi/tcm/latest/lib:/opt/aurora/26.26.0/oneapi/umf/latest/lib:/opt/aurora/26.26.0/oneapi/ipp/latest/lib:/opt/aurora/26.26.0/oneapi/ippcp/latest/lib:/opt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger/lib:/opt/aurora/26.26.0/oneapi/ccl/latest/lib:/opt/aurora/26.26.0/oneapi/dal/latest/lib:/opt/aurora/26.26.0/oneapi/dnnl/latest/lib:/opt/aurora/26.26.0/oneapi/tbb/latest/lib/intel64/gcc4.8:/opt/aurora/26.26.0/oneapi/mkl/latest/lib:/opt/aurora/26.26.0/oneapi/compiler/latest/opt/compiler/lib:/opt/aurora/26.26.0/oneapi/compiler/latest/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/lib
+LESS=-M -I -R
+LESSCLOSE=lessclose.sh %s %s
+LESSKEY=/etc/lesskey.bin
+LESSOPEN=lessopen.sh %s
+LESS_ADVANCED_PREPROCESSOR=no
+LIBOMPTARGET_PLUGIN=LEVEL0
+LIBRARY_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/intel-oneapi-runtime-2025.3.1-h4uj4w3/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-runtime-13.4.0-2tg3zy7/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/lib64:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/lib:/opt/aurora/26.26.0/support/libraries/khronos/default/lib64:/opt/aurora/26.26.0/oneapi/ishmem/latest/lib:/opt/aurora/26.26.0/oneapi/pti/latest/lib:/opt/aurora/26.26.0/oneapi/tcm/latest/lib:/opt/aurora/26.26.0/oneapi/umf/latest/lib:/opt/aurora/26.26.0/oneapi/ipp/latest/lib:/opt/aurora/26.26.0/oneapi/ippcp/latest/lib:/opt/aurora/26.26.0/oneapi/ccl/latest/lib:/opt/aurora/26.26.0/oneapi/dal/latest/lib:/opt/aurora/26.26.0/oneapi/dnnl/latest/lib:/opt/aurora/26.26.0/oneapi/tbb/latest/lib/intel64/gcc4.8:/opt/aurora/26.26.0/oneapi/mkl/latest/lib:/opt/aurora/26.26.0/oneapi/compiler/latest/lib
+LMOD_CMD=/usr/share/lmod/lmod/libexec/lmod
+LMOD_DIR=/usr/share/lmod/lmod/libexec
+LMOD_FAMILY_COMPILER=gcc
+LMOD_FAMILY_COMPILER_VERSION=13.4.0
+LMOD_FAMILY_MPI=mpich
+LMOD_FAMILY_MPI_VERSION=opt/5.0.0.aurora_test.3c70a61
+LMOD_FAMILY_ONEAPI=oneapi
+LMOD_FAMILY_ONEAPI_VERSION=release/2025.3.1
+LMOD_MPI_NAME=mpich
+LMOD_MPI_VERSION=5.0.0.aurora_test.3c70a61-hlkigtk
+LMOD_PKG=/usr/share/lmod/lmod
+LMOD_ROOT=/usr/share/lmod
+LMOD_SETTARG_FULL_SUPPORT=no
+LMOD_SYSTEM_DEFAULT_MODULES=oneapi/release/2025.3.1:mpich/opt/5.0.0.aurora_test.3c70a61:libfabric/1.22.0:cray-pals/1.8.0:cray-libpals/1.8.0
+LMOD_VERSION=8.7.59
+LMOD_sys=Linux
+LOADEDMODULES=oneapi/release/2025.3.1:gcc/13.4.0:mpich/opt/5.0.0.aurora_test.3c70a61:libfabric/1.22.0:cray-pals/1.8.0:cray-libpals/1.8.0:cmake/3.31.11:gcc-runtime/13.4.0-2tg3zy7:intel-oneapi-runtime/2025.3.1-h4uj4w3:hdf5/1.14.6:bzip2/1.0.8:expat/2.7.3-6auksxt:gdbm/1.25:sqlite/3.50.4-s65ksrg:util-linux-uuid/2.41-ytoy2bg:python/3.12.12
+LOGNAME=hzhu
+MACHTYPE=x86_64-suse-linux
+MAIL=/var/spool/mail/hzhu
+MANPATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/share/man:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/share/man:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/share/man:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/share/man:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/share/man:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/man:/opt/cray/pals/1.8/man:/opt/cray/libfabric/1.22.0/share/man:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/share/man:/opt/aurora/26.26.0/oneapi/debugger/latest/share/man:/opt/aurora/26.26.0/oneapi/compiler/latest/share/man:/usr/share/lmod/lmod/share/man:/home/hzhu/.local/share/man:/usr/local/man:/usr/share/man:/opt/c3/man:/opt/pbs/share/man:/opt/clmgr/man:/opt/sgi/share/man:/opt/clmgr/share/man:/opt/clmgr/lib/cm-cli/man::
+MINICOM=-c on
+MKLROOT=/opt/aurora/26.26.0/oneapi/mkl/latest
+MKL_ROOT=/opt/aurora/26.26.0/oneapi/mkl/latest
+MODULEPATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/mpich/5.0.0.aurora_test.3c70a61-hlkigtk/Core:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/mpich/5.0.0.aurora_test.3c70a61-hlkigtk/intel-oneapi-compilers/2025.3.1:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/intel-oneapi-compilers/2025.3.1:/usr/share/lmod/modulefiles/Linux:/usr/share/lmod/modulefiles/Core:/usr/share/lmod/lmod/modulefiles/Core:/opt/cray/pals/lmod/modulefiles/core:/opt/cray/modulefiles:/opt/aurora/26.26.0/modulefiles:/opt/aurora/25.190.0/modulefiles
+MODULEPATH_ROOT=/usr/share/lmod/modulefiles
+MODULESHOME=/usr/share/lmod/lmod
+MORE=-sl
+MPICC=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin/mpicc
+MPICH_GPU_SUPPORT_ENABLED=1
+MPICH_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk
+MPICXX=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin/mpicxx
+MPIF77=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin/mpif77
+MPIF90=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin/mpif90
+MPIR_CVAR_CH4_OFI_MAX_NICS=1
+MPIR_CVAR_CH4_SHM_POSIX_TOPO_ENABLE=1
+MPIR_CVAR_ENABLE_GPU=1
+MPIR_CVAR_INIT_SKIP_PMI_BARRIER=0
+MPI_HOME=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk
+MPI_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk
+NCPUS=208
+NEOReadDebugKeys=1
+NEO_CACHE_PERSISTENT=0
+NLSPATH=/opt/aurora/26.26.0/oneapi/compiler/latest/lib/compiler/locale/%l_%t/%N
+OCL_ICD_FILENAMES=libigdrcl.so:libintelocl.so
+OMP_NUM_THREADS=8
+OMP_TARGET_OFFLOAD=MANDATORY
+ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+ONEAPI_ROOT=/opt/aurora/26.26.0/oneapi
+OSCAR_HOME=/opt/oscar
+OSTYPE=linux
+PAGER=less
+PALS_PMI=pmix
+PALS_TRANSFER=0
+PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/cmake-3.31.11-pss2phi/bin:/opt/cray/pals/1.8/bin:/opt/cray/libfabric/1.22.0/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/bin:/opt/aurora/26.26.0/support/tools/gpu_validation:/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils:/opt/aurora/26.26.0/oneapi/ishmem/latest/bin:/opt/aurora/26.26.0/oneapi/dpcpp-ct/latest/bin:/opt/aurora/26.26.0/oneapi/advisor/latest/bin64:/opt/aurora/26.26.0/oneapi/vtune/latest/bin64:/opt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger/bin:/opt/aurora/26.26.0/oneapi/mkl/latest/bin:/opt/aurora/26.26.0/oneapi/compiler/latest/bin:/home/hzhu/.local/bin:/home/hzhu/bin:/opt/clmgr/sbin:/opt/clmgr/bin:/opt/sgi/sbin:/opt/sgi/bin:/usr/local/bin:/usr/bin:/bin:/opt/c3/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin:/opt/pbs/bin:/sbin
+PBS_ACCOUNT=CompactBinaryMerger
+PBS_ENVIRONMENT=PBS_BATCH
+PBS_HOOK_RESOURCES=eJylUjuT2yAQ/kNOBhRJ1pihyqS4JtX1DKDFVoxAx8OO/30WST5Lc2VUiW+X3e9BhHCDIHrpo/BTFCZywuIGnCCYr2jGQ0HpEzVWBtghZ9BXv7t58eO+5Sbt0AszWIiPmGCMfG05PMcdttsOW0KHDWUmrfV3IbX22SWhL7haGDnYHAC3LVUHZ5mGG4hy1PjrXandZegFHuHsw4O//f759v5rRdNjghX5VpGqZUrqK7K1OFsnH3hXt4S80FH+5U05RxBRe9zdUKauWvRgBjfMG7Ufp5yQRA4+SDEF34symxwpeafHuqFE9JVqlVKiU0aDMUzl4EQojDn5XtOaMJ1DAFS6lVK1zbH70ZGOMHBSWRCVQ3OntkaZK/Kkyj97zGD8q343E5YK9pRIO1KAfUKnOR62yfyiRjH6Hjhiib2CdnrKkde0ZW4QAaLPQQNfxDOHF3TiFfP4GIpI3D1ZiQ0RRSUIDO35gy1o0+DDkB68aljwxb+NktlqobyPaX5rdhkanV4ofWTZs+STtFu/KorZLd9anKlS0lY1u2NjGkbghJxoc8IWdObTkuXSR4ZceGzDXrH/j3wZ9DXHHb5mt2D7BBZsZ8E/RLluHA==
+PBS_JOBCOOKIE=6FDA15B65B6EB38712FB120439CE35DB
+PBS_JOBDIR=/home/hzhu
+PBS_JOBID=8790675.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+PBS_JOBID_SHORT=8790675.aurora
+PBS_JOBNAME=z4c-vc-opt-scale
+PBS_MOMPORT=15003
+PBS_NODEFILE=/var/spool/pbs/aux/8790675.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+PBS_NODENUM=0
+PBS_O_HOME=/home/hzhu
+PBS_O_HOST=aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov
+PBS_O_INTERACTIVE_AUTH_METHOD=resvport
+PBS_O_LANG=en_US.UTF-8
+PBS_O_LOGNAME=hzhu
+PBS_O_MAIL=/var/spool/mail/hzhu
+PBS_O_PATH=/home/hzhu/.local/bin:/home/hzhu/bin:/opt/cray/pals/1.8/bin:/opt/cray/libfabric/1.22.0/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin:/opt/aurora/26.26.0/support/tools/gpu_validation:/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils:/opt/aurora/26.26.0/oneapi/ishmem/latest/bin:/opt/aurora/26.26.0/oneapi/dpcpp-ct/latest/bin:/opt/aurora/26.26.0/oneapi/advisor/latest/bin64:/opt/aurora/26.26.0/oneapi/vtune/latest/bin64:/opt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger/bin:/opt/aurora/26.26.0/oneapi/mkl/latest/bin:/opt/aurora/26.26.0/oneapi/compiler/latest/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/bin:/opt/clmgr/sbin:/opt/clmgr/bin:/opt/sgi/sbin:/opt/sgi/bin:/home/hzhu/.local/bin:/home/hzhu/bin:/usr/local/bin:/usr/bin:/bin:/opt/c3/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin:/opt/pbs/bin:/sbin
+PBS_O_QUEUE=debug-scaling
+PBS_O_SHELL=/bin/bash
+PBS_O_SYSTEM=Linux
+PBS_O_WORKDIR=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-performance-aurora-20260829
+PBS_QUEUE=debug-scaling
+PBS_TASKNUM=1
+PELOCAL_PRGENV=true
+PE_PALS_PKGCONFIG_LIBS=libpals
+PE_PKGCONFIG_PRODUCTS=PE_PALS
+PKG_CONFIG_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/lib/pkgconfig:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/lib/pkgconfig:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/lib/pkgconfig:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/lib/pkgconfig:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/lib/pkgconfig:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/lib/pkgconfig:/opt/cray/pals/1.8/lib/pkgconfig:/opt/cray/libfabric/1.22.0/lib64/pkgconfig:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib/pkgconfig:/opt/aurora/26.26.0/oneapi/ishmem/latest/lib/pkgconfig:/opt/aurora/26.26.0/oneapi/ippcp/latest/lib/pkgconfig:/opt/aurora/26.26.0/oneapi/advisor/latest/include/pkgconfig/lib64:/opt/aurora/26.26.0/oneapi/vtune/latest/include/pkgconfig/lib64:/opt/aurora/26.26.0/oneapi/dpl/latest/lib/pkgconfig:/opt/aurora/26.26.0/oneapi/ccl/latest/lib/pkgconfig:/opt/aurora/26.26.0/oneapi/dal/latest/lib/pkgconfig:/opt/aurora/26.26.0/oneapi/dnnl/latest/lib/pkgconfig:/opt/aurora/26.26.0/oneapi/tbb/latest/lib/pkgconfig:/opt/aurora/26.26.0/oneapi/mkl/latest/lib/pkgconfig:/opt/aurora/26.26.0/oneapi/compiler/latest/lib/pkgconfig
+PROFILEREAD=true
+PTIROOT=/opt/aurora/26.26.0/oneapi/pti/latest
+PWD=/home/hzhu
+PYTHONPATH=/opt/aurora/26.26.0/oneapi/advisor/latest/pythonapi
+PYTHONSTARTUP=/etc/pythonstart
+PYTHON_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk
+Pti_DIR=/opt/aurora/26.26.0/oneapi/pti/latest/lib/cmake/pti
+QT_SYSTEM_DIR=/usr/share/desktop-data
+RANKS_PER_NODE=1
+RESTART_FILE=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828/runs/n512_reference_shock_seg000/rst/n512_reference_shock_replay.00020.rst
+RUN_NODES=1
+RUN_ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-performance-aurora-20260829/runs/scaling_1_tiles
+RUN_SMOKE=0
+RUN_TLIM=9.85
+SHELL=/bin/bash
+SHLVL=3
+SQLITE_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg
+TBBROOT=/opt/aurora/26.26.0/oneapi/tbb/latest
+TBB_ROOT=/opt/aurora/26.26.0/oneapi/tbb/latest
+TCMROOT=/opt/aurora/26.26.0/oneapi/tcm/latest
+TCM_ROOT=/opt/aurora/26.26.0/oneapi/tcm/latest
+TMOUT=1800
+TMPDIR=/var/tmp/pbs.8790675.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+TZ=Etc/UTC
+UMFROOT=/opt/aurora/26.26.0/oneapi/umf/latest
+UMF_ROOT=/opt/aurora/26.26.0/oneapi/umf/latest
+USER=hzhu
+USE_PCM_DB=2
+UTIL_LINUX_UUID_ROOT=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg
+VTUNE_PROFILER_2025_DIR=/opt/aurora/26.26.0/oneapi/vtune/latest
+VTUNE_PROFILER_DIR=/opt/aurora/26.26.0/oneapi/vtune/latest
+WINDOWMANAGER=xterm
+WORKFLOW_ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/collapse-critical/collapse-critical-workflow
+XCURSOR_THEME=DMZ
+XDG_CONFIG_DIRS=/etc/xdg
+XDG_DATA_DIRS=/usr/share
+XDG_RUNTIME_DIR=/run/user/40304
+XKEYSYMDB=/usr/X11R6/lib/X11/XKeysymDB
+XNLSPATH=/usr/share/X11/nls
+ZE_ENABLE_API_TRACING=1
+ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+_=/usr/bin/env
+_LMFILES_=/opt/aurora/26.26.0/modulefiles/oneapi/release/2025.3.1:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core/gcc/13.4.0.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/intel-oneapi-compilers/2025.3.1/mpich/opt/5.0.0.aurora_test.3c70a61.lua:/opt/cray/modulefiles/libfabric/1.22.0:/opt/cray/pals/lmod/modulefiles/core/cray-pals/1.8.0.lua:/opt/cray/pals/lmod/modulefiles/core/cray-libpals/1.8.0.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core/cmake/3.31.11.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core/gcc-runtime/13.4.0-2tg3zy7.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core/intel-oneapi-runtime/2025.3.1-h4uj4w3.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/mpich/5.0.0.aurora_test.3c70a61-hlkigtk/intel-oneapi-compilers/2025.3.1/hdf5/1.14.6.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core/bzip2/1.0.8.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core/expat/2.7.3-6auksxt.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core/gdbm/1.25.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core/sqlite/3.50.4-s65ksrg.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core/util-linux-uuid/2.41-ytoy2bg.lua:/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core/python/3.12.12.lua
+_ModuleTable001_=X01vZHVsZVRhYmxlXyA9IHsKTVR2ZXJzaW9uID0gMywKY19yZWJ1aWxkVGltZSA9IGZhbHNlLApjX3Nob3J0VGltZSA9IGZhbHNlLApkZXB0aFQgPSB7fSwKZmFtaWx5ID0gewpjb21waWxlciA9ICJnY2MiLAptcGkgPSAibXBpY2giLApvbmVhcGkgPSAib25lYXBpIiwKfSwKbVQgPSB7CmJ6aXAyID0gewpmbiA9ICIvb3B0L2F1cm9yYS8yNi4yNi4wL3NwYWNrL3VuaWZpZWQvMS4xLjEvaW5zdGFsbC9tb2R1bGVmaWxlcy9Db3JlL2J6aXAyLzEuMC44Lmx1YSIsCmZ1bGxOYW1lID0gImJ6aXAyLzEuMC44IiwKbG9hZE9yZGVyID0gMTEsCnByb3BUID0ge30sCnJlZl9jb3VudCA9IDEsCnN0YWNrRGVwdGggPSAxLApzdGF0dXMgPSAiYWN0aXZlIiwKdXNlck5hbWUgPSAiYnppcDIv
+_ModuleTable002_=MS4wLjgiLAp3ViA9ICIwMDAwMDAwMDEuMDAwMDAwMDAwLjAwMDAwMDAwOC4qemZpbmFsIiwKfSwKY21ha2UgPSB7CmZuID0gIi9vcHQvYXVyb3JhLzI2LjI2LjAvc3BhY2svdW5pZmllZC8xLjEuMS9pbnN0YWxsL21vZHVsZWZpbGVzL0NvcmUvY21ha2UvMy4zMS4xMS5sdWEiLApmdWxsTmFtZSA9ICJjbWFrZS8zLjMxLjExIiwKbG9hZE9yZGVyID0gNywKcHJvcFQgPSB7fSwKc3RhY2tEZXB0aCA9IDAsCnN0YXR1cyA9ICJhY3RpdmUiLAp1c2VyTmFtZSA9ICJjbWFrZS8zLjMxLjExIiwKd1YgPSAiMDAwMDAwMDAzLjAwMDAwMDAzMS4wMDAwMDAwMTEuKnpmaW5hbCIsCn0sClsiY3JheS1saWJwYWxzIl0gPSB7CmZuID0gIi9vcHQvY3JheS9wYWxzL2xtb2QvbW9kdWxlZmlsZXMv
+_ModuleTable003_=Y29yZS9jcmF5LWxpYnBhbHMvMS44LjAubHVhIiwKZnVsbE5hbWUgPSAiY3JheS1saWJwYWxzLzEuOC4wIiwKbG9hZE9yZGVyID0gNiwKcHJvcFQgPSB7fSwKc3RhY2tEZXB0aCA9IDAsCnN0YXR1cyA9ICJhY3RpdmUiLAp1c2VyTmFtZSA9ICJjcmF5LWxpYnBhbHMvMS44LjAiLAp3ViA9ICJeMDAwMDAwMDEuMDAwMDAwMDA4Lip6ZmluYWwiLAp9LApbImNyYXktcGFscyJdID0gewpmbiA9ICIvb3B0L2NyYXkvcGFscy9sbW9kL21vZHVsZWZpbGVzL2NvcmUvY3JheS1wYWxzLzEuOC4wLmx1YSIsCmZ1bGxOYW1lID0gImNyYXktcGFscy8xLjguMCIsCmxvYWRPcmRlciA9IDUsCnByb3BUID0ge30sCnN0YWNrRGVwdGggPSAwLApzdGF0dXMgPSAiYWN0aXZlIiwKdXNlck5hbWUgPSAi
+_ModuleTable004_=Y3JheS1wYWxzLzEuOC4wIiwKd1YgPSAiXjAwMDAwMDAxLjAwMDAwMDAwOC4qemZpbmFsIiwKfSwKZXhwYXQgPSB7CmZuID0gIi9vcHQvYXVyb3JhLzI2LjI2LjAvc3BhY2svdW5pZmllZC8xLjEuMS9pbnN0YWxsL21vZHVsZWZpbGVzL0NvcmUvZXhwYXQvMi43LjMtNmF1a3N4dC5sdWEiLApmdWxsTmFtZSA9ICJleHBhdC8yLjcuMy02YXVrc3h0IiwKbG9hZE9yZGVyID0gMTIsCm1vZHVsZUtpbmRUID0gewpraW5kID0gImhpZGRlbiIsCn0sCnByb3BUID0ge30sCnJlZl9jb3VudCA9IDEsCnN0YWNrRGVwdGggPSAxLApzdGF0dXMgPSAiYWN0aXZlIiwKdXNlck5hbWUgPSAiZXhwYXQvMi43LjMtNmF1a3N4dCIsCndWID0gIjAwMDAwMDAwMi4wMDAwMDAwMDcuMDAwMDAwMDAzLip6
+_ModuleTable005_=ZmluYWwtLjAwMDAwMDAwNi4qYXVrc3h0Lip6ZmluYWwiLAp9LApnY2MgPSB7CmFjdGlvbkEgPSB7CiJwcmVwZW5kX3BhdGgoXCJNT0RVTEVQQVRIXCIsXCIvb3B0L2F1cm9yYS8yNi4yNi4wL3NwYWNrL3VuaWZpZWQvMS4xLjEvaW5zdGFsbC9tb2R1bGVmaWxlcy9Db3JlXCIpIiwKfSwKZm4gPSAiL29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbW9kdWxlZmlsZXMvQ29yZS9nY2MvMTMuNC4wLmx1YSIsCmZ1bGxOYW1lID0gImdjYy8xMy40LjAiLApsb2FkT3JkZXIgPSAyLApwcm9wVCA9IHt9LApzdGFja0RlcHRoID0gMCwKc3RhdHVzID0gImFjdGl2ZSIsCnVzZXJOYW1lID0gImdjYy8xMy40LjAiLAp3ViA9ICIwMDAwMDAwMTMuMDAwMDAw
+_ModuleTable006_=MDA0Lip6ZmluYWwiLAp9LApbImdjYy1ydW50aW1lIl0gPSB7CmZuID0gIi9vcHQvYXVyb3JhLzI2LjI2LjAvc3BhY2svdW5pZmllZC8xLjEuMS9pbnN0YWxsL21vZHVsZWZpbGVzL0NvcmUvZ2NjLXJ1bnRpbWUvMTMuNC4wLTJ0ZzN6eTcubHVhIiwKZnVsbE5hbWUgPSAiZ2NjLXJ1bnRpbWUvMTMuNC4wLTJ0ZzN6eTciLApsb2FkT3JkZXIgPSA4LAptb2R1bGVLaW5kVCA9IHsKa2luZCA9ICJoaWRkZW4iLAp9LApwcm9wVCA9IHt9LApyZWZfY291bnQgPSA3LApzdGFja0RlcHRoID0gMiwKc3RhdHVzID0gImFjdGl2ZSIsCnVzZXJOYW1lID0gImdjYy1ydW50aW1lLzEzLjQuMC0ydGczenk3IiwKd1YgPSAiMDAwMDAwMDEzLjAwMDAwMDAwNC4qemZpbmFsLS4wMDAwMDAwMDIuKnRn
+_ModuleTable007_=LjAwMDAwMDAwMy4qenkuMDAwMDAwMDA3Lip6ZmluYWwiLAp9LApnZGJtID0gewpmbiA9ICIvb3B0L2F1cm9yYS8yNi4yNi4wL3NwYWNrL3VuaWZpZWQvMS4xLjEvaW5zdGFsbC9tb2R1bGVmaWxlcy9Db3JlL2dkYm0vMS4yNS5sdWEiLApmdWxsTmFtZSA9ICJnZGJtLzEuMjUiLApsb2FkT3JkZXIgPSAxMywKcHJvcFQgPSB7fSwKcmVmX2NvdW50ID0gMSwKc3RhY2tEZXB0aCA9IDEsCnN0YXR1cyA9ICJhY3RpdmUiLAp1c2VyTmFtZSA9ICJnZGJtLzEuMjUiLAp3ViA9ICIwMDAwMDAwMDEuMDAwMDAwMDI1Lip6ZmluYWwiLAp9LApoZGY1ID0gewpmbiA9ICIvb3B0L2F1cm9yYS8yNi4yNi4wL3NwYWNrL3VuaWZpZWQvMS4xLjEvaW5zdGFsbC9tb2R1bGVmaWxlcy9tcGljaC81LjAu
+_ModuleTable008_=MC5hdXJvcmFfdGVzdC4zYzcwYTYxLWhsa2lndGsvaW50ZWwtb25lYXBpLWNvbXBpbGVycy8yMDI1LjMuMS9oZGY1LzEuMTQuNi5sdWEiLApmdWxsTmFtZSA9ICJoZGY1LzEuMTQuNiIsCmxvYWRPcmRlciA9IDEwLApwcm9wVCA9IHt9LApzdGFja0RlcHRoID0gMCwKc3RhdHVzID0gImFjdGl2ZSIsCnVzZXJOYW1lID0gImhkZjUvMS4xNC42IiwKd1YgPSAiXjAwMDAwMDAxLjAwMDAwMDAxNC4wMDAwMDAwMDYuKnpmaW5hbCIsCn0sClsiaW50ZWwtb25lYXBpLXJ1bnRpbWUiXSA9IHsKZm4gPSAiL29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbW9kdWxlZmlsZXMvQ29yZS9pbnRlbC1vbmVhcGktcnVudGltZS8yMDI1LjMuMS1oNHVqNHczLmx1
+_ModuleTable009_=YSIsCmZ1bGxOYW1lID0gImludGVsLW9uZWFwaS1ydW50aW1lLzIwMjUuMy4xLWg0dWo0dzMiLApsb2FkT3JkZXIgPSA5LAptb2R1bGVLaW5kVCA9IHsKa2luZCA9ICJoaWRkZW4iLAp9LApwcm9wVCA9IHt9LApyZWZfY291bnQgPSAxLApzdGFja0RlcHRoID0gMSwKc3RhdHVzID0gImFjdGl2ZSIsCnVzZXJOYW1lID0gImludGVsLW9uZWFwaS1ydW50aW1lLzIwMjUuMy4xLWg0dWo0dzMiLAp3ViA9ICIwMDAwMDIwMjUuMDAwMDAwMDAzLjAwMDAwMDAwMS4qaC4wMDAwMDAwMDQuKnVqLjAwMDAwMDAwNC4qdy4wMDAwMDAwMDMuKnpmaW5hbCIsCn0sCmxpYmZhYnJpYyA9IHsKZm4gPSAiL29wdC9jcmF5L21vZHVsZWZpbGVzL2xpYmZhYnJpYy8xLjIyLjAiLApmdWxsTmFtZSA9ICJs
+_ModuleTable010_=aWJmYWJyaWMvMS4yMi4wIiwKbG9hZE9yZGVyID0gNCwKcHJvcFQgPSB7fSwKc3RhY2tEZXB0aCA9IDAsCnN0YXR1cyA9ICJhY3RpdmUiLAp1c2VyTmFtZSA9ICJsaWJmYWJyaWMvMS4yMi4wIiwKd1YgPSAiXjAwMDAwMDAxLjAwMDAwMDAyMi4qemZpbmFsIiwKfSwKbXBpY2ggPSB7CmFjdGlvbkEgPSB7CgoicHJlcGVuZF9wYXRoKFwiTU9EVUxFUEFUSFwiLFwiL29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbW9kdWxlZmlsZXMvbXBpY2gvNS4wLjAuYXVyb3JhX3Rlc3QuM2M3MGE2MS1obGtpZ3RrL2ludGVsLW9uZWFwaS1jb21waWxlcnMvMjAyNS4zLjFcIikiLCAicHJlcGVuZF9wYXRoKFwiTU9EVUxFUEFUSFwiLFwiL29wdC9hdXJvcmEv
+_ModuleTable011_=MjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbW9kdWxlZmlsZXMvbXBpY2gvNS4wLjAuYXVyb3JhX3Rlc3QuM2M3MGE2MS1obGtpZ3RrL0NvcmVcIikiLAp9LApmbiA9ICIvb3B0L2F1cm9yYS8yNi4yNi4wL3NwYWNrL3VuaWZpZWQvMS4xLjEvaW5zdGFsbC9tb2R1bGVmaWxlcy9pbnRlbC1vbmVhcGktY29tcGlsZXJzLzIwMjUuMy4xL21waWNoL29wdC81LjAuMC5hdXJvcmFfdGVzdC4zYzcwYTYxLmx1YSIsCmZ1bGxOYW1lID0gIm1waWNoL29wdC81LjAuMC5hdXJvcmFfdGVzdC4zYzcwYTYxIiwKbG9hZE9yZGVyID0gMywKcHJvcFQgPSB7fSwKc3RhY2tEZXB0aCA9IDAsCnN0YXR1cyA9ICJhY3RpdmUiLAp1c2VyTmFtZSA9ICJtcGljaC9vcHQvNS4wLjAuYXVy
+_ModuleTable012_=b3JhX3Rlc3QuM2M3MGE2MSIsCndWID0gIl5vcHQvXjAwMDAwMDA1LiphdXJvcmEuKl8uKnRlc3QuMDAwMDAwMDAzLipjLjAwMDAwMDA3MC4qYS4wMDAwMDAwNjEuKnpmaW5hbCIsCn0sCm9uZWFwaSA9IHsKYWN0aW9uQSA9IHsKCiJwcmVwZW5kX3BhdGgoXCJNT0RVTEVQQVRIXCIsXCIvb3B0L2F1cm9yYS8yNi4yNi4wL3NwYWNrL3VuaWZpZWQvMS4xLjEvaW5zdGFsbC9tb2R1bGVmaWxlcy9Db3JlXCIpIiwgInByZXBlbmRfcGF0aChcIk1PRFVMRVBBVEhcIixcIi9vcHQvYXVyb3JhLzI2LjI2LjAvc3BhY2svdW5pZmllZC8xLjEuMS9pbnN0YWxsL21vZHVsZWZpbGVzL2ludGVsLW9uZWFwaS1jb21waWxlcnMvMjAyNS4zLjFcIikiLAp9LApmbiA9ICIvb3B0L2F1cm9yYS8yNi4y
+_ModuleTable013_=Ni4wL21vZHVsZWZpbGVzL29uZWFwaS9yZWxlYXNlLzIwMjUuMy4xIiwKZnVsbE5hbWUgPSAib25lYXBpL3JlbGVhc2UvMjAyNS4zLjEiLApsb2FkT3JkZXIgPSAxLApwcm9wVCA9IHt9LApzdGFja0RlcHRoID0gMCwKc3RhdHVzID0gImFjdGl2ZSIsCnVzZXJOYW1lID0gIm9uZWFwaS9yZWxlYXNlLzIwMjUuMy4xIiwKd1YgPSAiXnJlbGVhc2UvXjAwMDAyMDI1LjAwMDAwMDAwMy4wMDAwMDAwMDEuKnpmaW5hbCIsCn0sCnB5dGhvbiA9IHsKZm4gPSAiL29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbW9kdWxlZmlsZXMvQ29yZS9weXRob24vMy4xMi4xMi5sdWEiLApmdWxsTmFtZSA9ICJweXRob24vMy4xMi4xMiIsCmxvYWRPcmRlciA9IDE2
+_ModuleTable014_=LApwcm9wVCA9IHt9LApzdGFja0RlcHRoID0gMCwKc3RhdHVzID0gImFjdGl2ZSIsCnVzZXJOYW1lID0gInB5dGhvbi8zLjEyLjEyIiwKd1YgPSAiMDAwMDAwMDAzLjAwMDAwMDAxMi4wMDAwMDAwMTIuKnpmaW5hbCIsCn0sCnNxbGl0ZSA9IHsKZm4gPSAiL29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbW9kdWxlZmlsZXMvQ29yZS9zcWxpdGUvMy41MC40LXM2NWtzcmcubHVhIiwKZnVsbE5hbWUgPSAic3FsaXRlLzMuNTAuNC1zNjVrc3JnIiwKbG9hZE9yZGVyID0gMTQsCm1vZHVsZUtpbmRUID0gewpraW5kID0gImhpZGRlbiIsCn0sCnByb3BUID0ge30sCnJlZl9jb3VudCA9IDEsCnN0YWNrRGVwdGggPSAxLApzdGF0dXMgPSAiYWN0aXZl
+_ModuleTable015_=IiwKdXNlck5hbWUgPSAic3FsaXRlLzMuNTAuNC1zNjVrc3JnIiwKd1YgPSAiMDAwMDAwMDAzLjAwMDAwMDA1MC4wMDAwMDAwMDQuKnMuMDAwMDAwMDY1Liprc3JnLip6ZmluYWwiLAp9LApbInV0aWwtbGludXgtdXVpZCJdID0gewpmbiA9ICIvb3B0L2F1cm9yYS8yNi4yNi4wL3NwYWNrL3VuaWZpZWQvMS4xLjEvaW5zdGFsbC9tb2R1bGVmaWxlcy9Db3JlL3V0aWwtbGludXgtdXVpZC8yLjQxLXl0b3kyYmcubHVhIiwKZnVsbE5hbWUgPSAidXRpbC1saW51eC11dWlkLzIuNDEteXRveTJiZyIsCmxvYWRPcmRlciA9IDE1LAptb2R1bGVLaW5kVCA9IHsKa2luZCA9ICJoaWRkZW4iLAp9LApwcm9wVCA9IHt9LApyZWZfY291bnQgPSAxLApzdGFja0RlcHRoID0gMSwKc3RhdHVzID0g
+_ModuleTable016_=ImFjdGl2ZSIsCnVzZXJOYW1lID0gInV0aWwtbGludXgtdXVpZC8yLjQxLXl0b3kyYmciLAp3ViA9ICIwMDAwMDAwMDIuMDAwMDAwMDQxLip5dG95LjAwMDAwMDAwMi4qYmcuKnpmaW5hbCIsCn0sCn0sCm1wYXRoQSA9IHsKCiIvb3B0L2F1cm9yYS8yNi4yNi4wL3NwYWNrL3VuaWZpZWQvMS4xLjEvaW5zdGFsbC9tb2R1bGVmaWxlcy9tcGljaC81LjAuMC5hdXJvcmFfdGVzdC4zYzcwYTYxLWhsa2lndGsvQ29yZSIKLCAiL29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbW9kdWxlZmlsZXMvbXBpY2gvNS4wLjAuYXVyb3JhX3Rlc3QuM2M3MGE2MS1obGtpZ3RrL2ludGVsLW9uZWFwaS1jb21waWxlcnMvMjAyNS4zLjEiCiwgIi9vcHQvYXVyb3Jh
+_ModuleTable017_=LzI2LjI2LjAvc3BhY2svdW5pZmllZC8xLjEuMS9pbnN0YWxsL21vZHVsZWZpbGVzL0NvcmUiCiwgIi9vcHQvYXVyb3JhLzI2LjI2LjAvc3BhY2svdW5pZmllZC8xLjEuMS9pbnN0YWxsL21vZHVsZWZpbGVzL2ludGVsLW9uZWFwaS1jb21waWxlcnMvMjAyNS4zLjEiCiwgIi91c3Ivc2hhcmUvbG1vZC9tb2R1bGVmaWxlcy9MaW51eCIsICIvdXNyL3NoYXJlL2xtb2QvbW9kdWxlZmlsZXMvQ29yZSIKLCAiL3Vzci9zaGFyZS9sbW9kL2xtb2QvbW9kdWxlZmlsZXMvQ29yZSIKLCAiL29wdC9jcmF5L3BhbHMvbG1vZC9tb2R1bGVmaWxlcy9jb3JlIiwgIi9vcHQvY3JheS9tb2R1bGVmaWxlcyIKLCAiL29wdC9hdXJvcmEvMjYuMjYuMC9tb2R1bGVmaWxlcyIsICIvb3B0L2F1cm9yYS8y
+_ModuleTable018_=NS4xOTAuMC9tb2R1bGVmaWxlcyIsCn0sCnN5c3RlbUJhc2VNUEFUSCA9ICIvdXNyL3NoYXJlL2xtb2QvbW9kdWxlZmlsZXMvTGludXg6L3Vzci9zaGFyZS9sbW9kL21vZHVsZWZpbGVzL0NvcmU6L3Vzci9zaGFyZS9sbW9kL2xtb2QvbW9kdWxlZmlsZXMvQ29yZTovb3B0L2NyYXkvcGFscy9sbW9kL21vZHVsZWZpbGVzL2NvcmU6L29wdC9jcmF5L21vZHVsZWZpbGVzOi9vcHQvYXVyb3JhLzI2LjI2LjAvbW9kdWxlZmlsZXM6L29wdC9hdXJvcmEvMjUuMTkwLjAvbW9kdWxlZmlsZXMiLAp9Cg==
+_ModuleTable_Sz_=18
+__LMOD_REF_COUNT_ACLOCAL_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/cmake-3.31.11-pss2phi/share/aclocal:1
+__LMOD_REF_COUNT_CLASSPATH=/opt/aurora/26.26.0/oneapi/dal/latest/lib:1
+__LMOD_REF_COUNT_CMAKE_PREFIX_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/intel-oneapi-runtime-2025.3.1-h4uj4w3:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-runtime-13.4.0-2tg3zy7:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/cmake-3.31.11-pss2phi:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p:1;/opt/aurora/26.26.0/support/libraries/khronos/default:1;/opt/aurora/26.26.0/oneapi/ishmem/latest/lib/cmake/ishmem:1;/opt/aurora/26.26.0/oneapi/pti/latest/lib/cmake/pti:1;/opt/aurora/26.26.0/oneapi/ipp/latest/lib/cmake/ipp:1;/opt/aurora/26.26.0/oneapi/dpl/latest/lib/cmake/oneDPL:1;/opt/aurora/26.26.0/oneapi/ccl/latest/lib/cmake/oneCCL:1;/opt/aurora/26.26.0/oneapi/dal/latest:1;/opt/aurora/26.26.0/oneapi/dnnl/latest/lib/cmake:1;/opt/aurora/26.26.0/oneapi/tbb/latest:1;/opt/aurora/26.26.0/oneapi/mkl/latest/lib/cmake:1;/opt/aurora/26.26.0/oneapi/compiler/latest:1
+__LMOD_REF_COUNT_CPATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/include:1;/opt/aurora/26.26.0/support/libraries/khronos/default/include:1;/opt/aurora/26.26.0/oneapi/umf/latest/include:1;/opt/aurora/26.26.0/oneapi/mkl/latest/include:1
+__LMOD_REF_COUNT_CPLUS_INCLUDE_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/include:1;/opt/aurora/26.26.0/oneapi/ishmem/latest/include:1;/opt/aurora/26.26.0/oneapi/pti/latest/include:1;/opt/aurora/26.26.0/oneapi/umf/latest/include:1;/opt/aurora/26.26.0/oneapi/ipp/latest/include:1;/opt/aurora/26.26.0/oneapi/ippcp/latest/include:1;/opt/aurora/26.26.0/oneapi/dpcpp-ct/latest/include:1;/opt/aurora/26.26.0/oneapi/dpl/latest/include:1;/opt/aurora/26.26.0/oneapi/ccl/latest/include:1;/opt/aurora/26.26.0/oneapi/dal/latest/include/dal:1;/opt/aurora/26.26.0/oneapi/dal/latest/include:1;/opt/aurora/26.26.0/oneapi/dnnl/latest/include:1;/opt/aurora/26.26.0/oneapi/tbb/latest/include:1;/opt/aurora/26.26.0/oneapi/mkl/latest/include:1
+__LMOD_REF_COUNT_C_INCLUDE_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/include:1;/opt/aurora/26.26.0/oneapi/ishmem/latest/include:1;/opt/aurora/26.26.0/oneapi/pti/latest/include:1;/opt/aurora/26.26.0/oneapi/umf/latest/include:1;/opt/aurora/26.26.0/oneapi/ipp/latest/include:1;/opt/aurora/26.26.0/oneapi/ippcp/latest/include:1;/opt/aurora/26.26.0/oneapi/dnnl/latest/include:1;/opt/aurora/26.26.0/oneapi/tbb/latest/include:1;/opt/aurora/26.26.0/oneapi/mkl/latest/include:1
+__LMOD_REF_COUNT_INCLUDE=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/include:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/include:1
+__LMOD_REF_COUNT_INFOPATH=/opt/aurora/26.26.0/oneapi/debugger/latest/share/info:1
+__LMOD_REF_COUNT_LD_LIBRARY_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/intel-oneapi-runtime-2025.3.1-h4uj4w3/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-runtime-13.4.0-2tg3zy7/lib:1;/opt/cray/pals/1.8/lib:1;/opt/cray/libfabric/1.22.0/lib64:2;/opt/cray/libfabric/1.22.0/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/lib64:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/lib:1;/opt/aurora/26.26.0/support/libraries/khronos/default/lib64:1;/opt/aurora/26.26.0/oneapi/ishmem/latest/lib:1;/opt/aurora/26.26.0/oneapi/pti/latest/lib:1;/opt/aurora/26.26.0/oneapi/tcm/latest/lib:1;/opt/aurora/26.26.0/oneapi/umf/latest/lib:1;/opt/aurora/26.26.0/oneapi/ipp/latest/lib:1;/opt/aurora/26.26.0/oneapi/ippcp/latest/lib:1;/opt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger/lib:1;/opt/aurora/26.26.0/oneapi/ccl/latest/lib:1;/opt/aurora/26.26.0/oneapi/dal/latest/lib:1;/opt/aurora/26.26.0/oneapi/dnnl/latest/lib:1;/opt/aurora/26.26.0/oneapi/tbb/latest/lib/intel64/gcc4.8:1;/opt/aurora/26.26.0/oneapi/mkl/latest/lib:1;/opt/aurora/26.26.0/oneapi/compiler/latest/opt/compiler/lib:1;/opt/aurora/26.26.0/oneapi/compiler/latest/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/lib:2
+__LMOD_REF_COUNT_LIBRARY_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/intel-oneapi-runtime-2025.3.1-h4uj4w3/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-runtime-13.4.0-2tg3zy7/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/lib64:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/lib:1;/opt/aurora/26.26.0/support/libraries/khronos/default/lib64:1;/opt/aurora/26.26.0/oneapi/ishmem/latest/lib:1;/opt/aurora/26.26.0/oneapi/pti/latest/lib:1;/opt/aurora/26.26.0/oneapi/tcm/latest/lib:1;/opt/aurora/26.26.0/oneapi/umf/latest/lib:1;/opt/aurora/26.26.0/oneapi/ipp/latest/lib:1;/opt/aurora/26.26.0/oneapi/ippcp/latest/lib:1;/opt/aurora/26.26.0/oneapi/ccl/latest/lib:1;/opt/aurora/26.26.0/oneapi/dal/latest/lib:1;/opt/aurora/26.26.0/oneapi/dnnl/latest/lib:1;/opt/aurora/26.26.0/oneapi/tbb/latest/lib/intel64/gcc4.8:1;/opt/aurora/26.26.0/oneapi/mkl/latest/lib:1;/opt/aurora/26.26.0/oneapi/compiler/latest/lib:1
+__LMOD_REF_COUNT_MANPATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/share/man:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/share/man:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/share/man:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/share/man:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/share/man:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/man:2;/opt/cray/pals/1.8/man:2;/opt/cray/libfabric/1.22.0/share/man:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/share/man:1;/opt/aurora/26.26.0/oneapi/debugger/latest/share/man:1;/opt/aurora/26.26.0/oneapi/compiler/latest/share/man:1;/usr/share/lmod/lmod/share/man:1;/home/hzhu/.local/share/man:1;/usr/local/man:1;/usr/share/man:1;/opt/c3/man:1;/opt/pbs/share/man:1;/opt/clmgr/man:1;/opt/sgi/share/man:1;/opt/clmgr/share/man:1;/opt/clmgr/lib/cm-cli/man:1;:7
+__LMOD_REF_COUNT_MODULEPATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/mpich/5.0.0.aurora_test.3c70a61-hlkigtk/Core:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/mpich/5.0.0.aurora_test.3c70a61-hlkigtk/intel-oneapi-compilers/2025.3.1:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/Core:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/modulefiles/intel-oneapi-compilers/2025.3.1:1;/usr/share/lmod/modulefiles/Linux:1;/usr/share/lmod/modulefiles/Core:1;/usr/share/lmod/lmod/modulefiles/Core:1;/opt/cray/pals/lmod/modulefiles/core:1;/opt/cray/modulefiles:1;/opt/aurora/26.26.0/modulefiles:1;/opt/aurora/25.190.0/modulefiles:1
+__LMOD_REF_COUNT_NLSPATH=/opt/aurora/26.26.0/oneapi/compiler/latest/lib/compiler/locale/%l_%t/%N:1
+__LMOD_REF_COUNT_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/bin:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/bin:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/bin:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gdbm-1.25-skzvkbq/bin:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/bin:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/bin:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/bin:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/cmake-3.31.11-pss2phi/bin:2;/opt/cray/pals/1.8/bin:1;/opt/cray/libfabric/1.22.0/bin:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-13.4.0-hgnyg4p/bin:2;/opt/aurora/26.26.0/support/tools/gpu_validation:1;/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils:1;/opt/aurora/26.26.0/oneapi/ishmem/latest/bin:1;/opt/aurora/26.26.0/oneapi/dpcpp-ct/latest/bin:1;/opt/aurora/26.26.0/oneapi/advisor/latest/bin64:1;/opt/aurora/26.26.0/oneapi/vtune/latest/bin64:1;/opt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger/bin:1;/opt/aurora/26.26.0/oneapi/mkl/latest/bin:1;/opt/aurora/26.26.0/oneapi/compiler/latest/bin:1;/home/hzhu/.local/bin:5;/home/hzhu/bin:5;/opt/clmgr/sbin:1;/opt/clmgr/bin:1;/opt/sgi/sbin:1;/opt/sgi/bin:1;/usr/local/bin:1;/usr/bin:1;/bin:2;/opt/c3/bin:1;/usr/lib/mit/bin:1;/usr/lib/mit/sbin:1;/opt/pbs/bin:1;/sbin:1
+__LMOD_REF_COUNT_PE_PALS_PKGCONFIG_LIBS=libpals:1
+__LMOD_REF_COUNT_PE_PKGCONFIG_PRODUCTS=PE_PALS:1
+__LMOD_REF_COUNT_PKG_CONFIG_PATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/python-3.12.12-nvje3vk/lib/pkgconfig:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/util-linux-uuid-2.41-ytoy2bg/lib/pkgconfig:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/sqlite-3.50.4-s65ksrg/lib/pkgconfig:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/expat-2.7.3-6auksxt/lib/pkgconfig:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/bzip2-1.0.8-lpab4po/lib/pkgconfig:2;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hdf5-1.14.6-ehlefog/lib/pkgconfig:2;/opt/cray/pals/1.8/lib/pkgconfig:1;/opt/cray/libfabric/1.22.0/lib64/pkgconfig:1;/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib/pkgconfig:2;/opt/aurora/26.26.0/oneapi/ishmem/latest/lib/pkgconfig:1;/opt/aurora/26.26.0/oneapi/ippcp/latest/lib/pkgconfig:1;/opt/aurora/26.26.0/oneapi/advisor/latest/include/pkgconfig/lib64:1;/opt/aurora/26.26.0/oneapi/vtune/latest/include/pkgconfig/lib64:1;/opt/aurora/26.26.0/oneapi/dpl/latest/lib/pkgconfig:1;/opt/aurora/26.26.0/oneapi/ccl/latest/lib/pkgconfig:1;/opt/aurora/26.26.0/oneapi/dal/latest/lib/pkgconfig:1;/opt/aurora/26.26.0/oneapi/dnnl/latest/lib/pkgconfig:1;/opt/aurora/26.26.0/oneapi/tbb/latest/lib/pkgconfig:1;/opt/aurora/26.26.0/oneapi/mkl/latest/lib/pkgconfig:1;/opt/aurora/26.26.0/oneapi/compiler/latest/lib/pkgconfig:1
+__LMOD_REF_COUNT_PYTHONPATH=/opt/aurora/26.26.0/oneapi/advisor/latest/pythonapi:1
+__LMOD_STACK_FI_CXI_DEFAULT_CQ_SIZE=MTMxMDcy
+__LMOD_STACK_FI_CXI_DEFAULT_TX_SIZE=MTAyNA==
+__LMOD_STACK_FI_CXI_OFLOW_BUF_COUNT=Mw==
+__LMOD_STACK_FI_CXI_OFLOW_BUF_SIZE=MTI1ODI5MTI=
+__LMOD_STACK_FI_CXI_RDZV_EAGER_SIZE=MjA0OA==
+__LMOD_STACK_FI_CXI_RDZV_THRESHOLD=MTYzODQ=
+__LMOD_STACK_FI_CXI_REQ_BUF_MAX_CACHED=MA==
+__LMOD_STACK_FI_CXI_REQ_BUF_MIN_POSTED=Ng==
+__LMOD_STACK_FI_CXI_REQ_BUF_SIZE=MTI1ODI5MTI=
+__LMOD_STACK_FI_CXI_RX_MATCH_MODE=aGFyZHdhcmU=
+__LMOD_STACK_FI_MR_CACHE_MAX_COUNT=NTI0Mjg4
+__LMOD_STACK_FI_MR_CACHE_MAX_SIZE=LTE=
+__LMOD_STACK_FI_PROVIDER=Y3hpLHRjcDtvZmlfcnht
+__LMOD_STACK_HWLOC_THISSYSTEM=MQ==
+__LMOD_STACK_HWLOC_XMLFILE=L3J1bi9od2xvYy90b3BvbG9neS54bWw=
+__LMOD_STACK_LMOD_MPI_NAME=bXBpY2g=
+__LMOD_STACK_LMOD_MPI_VERSION=NS4wLjAuYXVyb3JhX3Rlc3QuM2M3MGE2MS1obGtpZ3Rr
+__LMOD_STACK_MPICC=L29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbGludXgteDg2XzY0L21waWNoLTUuMC4wLmF1cm9yYV90ZXN0LjNjNzBhNjEtaGxraWd0ay9iaW4vbXBpY2M=
+__LMOD_STACK_MPICH_ROOT=L29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbGludXgteDg2XzY0L21waWNoLTUuMC4wLmF1cm9yYV90ZXN0LjNjNzBhNjEtaGxraWd0aw==
+__LMOD_STACK_MPICXX=L29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbGludXgteDg2XzY0L21waWNoLTUuMC4wLmF1cm9yYV90ZXN0LjNjNzBhNjEtaGxraWd0ay9iaW4vbXBpY3h4
+__LMOD_STACK_MPIF77=L29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbGludXgteDg2XzY0L21waWNoLTUuMC4wLmF1cm9yYV90ZXN0LjNjNzBhNjEtaGxraWd0ay9iaW4vbXBpZjc3
+__LMOD_STACK_MPIF90=L29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbGludXgteDg2XzY0L21waWNoLTUuMC4wLmF1cm9yYV90ZXN0LjNjNzBhNjEtaGxraWd0ay9iaW4vbXBpZjkw
+__LMOD_STACK_MPIR_CVAR_CH4_OFI_MAX_NICS=MQ==
+__LMOD_STACK_MPIR_CVAR_CH4_SHM_POSIX_TOPO_ENABLE=MQ==
+__LMOD_STACK_MPIR_CVAR_INIT_SKIP_PMI_BARRIER=MA==
+__LMOD_STACK_MPI_HOME=L29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbGludXgteDg2XzY0L21waWNoLTUuMC4wLmF1cm9yYV90ZXN0LjNjNzBhNjEtaGxraWd0aw==
+__LMOD_STACK_MPI_ROOT=L29wdC9hdXJvcmEvMjYuMjYuMC9zcGFjay91bmlmaWVkLzEuMS4xL2luc3RhbGwvbGludXgteDg2XzY0L21waWNoLTUuMC4wLmF1cm9yYV90ZXN0LjNjNzBhNjEtaGxraWd0aw==
+__LMOD_STACK_PALS_PMI=cG1peA==
+dnnl_ROOT=/opt/aurora/26.26.0/oneapi/dnnl
+}
+}

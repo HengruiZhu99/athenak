@@ -1,0 +1,277 @@
+KokkosP: Simple Kernel Timer Library Initialized (sequence is 0, version: 20240906)
+AthenaK Kokkos default execution space: SYCL
+
+Root grid = 4 x 8 x 1 MeshBlocks
+Total number of MeshBlocks = 212
+Number of logical  levels of refinement = 26 (27 levels total)
+Number of physical levels of refinement = 23 (24 levels total)
+  Physical level = 0 (logical level = 3): 14 MeshBlocks, cost = 14
+  Physical level = 1 (logical level = 4): 54 MeshBlocks, cost = 54
+  Physical level = 2 (logical level = 5): 54 MeshBlocks, cost = 54
+  Physical level = 3 (logical level = 6): 68 MeshBlocks, cost = 68
+  Physical level = 4 (logical level = 7): 14 MeshBlocks, cost = 14
+  Physical level = 5 (logical level = 8): 8 MeshBlocks, cost = 8
+Number of parallel ranks = 1
+AssembleZ4cTasks
+AMR_HISTORY_SOURCE_COMPATIBILITY recorded_source_id=athena-0.1-git-f8303c6be7eb214fa1e91b646123ee0d434b3698 current_source_id=athena-0.1-git-9c98bd14f996ea5a2b3b0020b060e8fb62467b5e explicit_match=true
+
+Setup complete, executing task list(s)...
+
+elapsed=1.736983e+00 cycle=3996 time=9.600108e+00 dt=2.738968e-03
+elapsed=2.488489e+00 cycle=4000 time=9.611064e+00 dt=2.739192e-03
+elapsed=3.252934e+00 cycle=4004 time=9.622021e+00 dt=2.739417e-03
+elapsed=4.009206e+00 cycle=4008 time=9.632979e+00 dt=2.739641e-03
+elapsed=4.784285e+00 cycle=4012 time=9.643938e+00 dt=2.739866e-03
+output wall time = 3.469680e+00
+
+Terminating on time limit
+time=9.650000e+00 cycle=4015
+tlim=9.650000e+00 nlim=-1 nmb_total_limit=-1
+
+Current number of MeshBlocks = 212
+0 MeshBlocks created, 0 deleted by AMR
+0 communicated for load balancing, load balancing efficiency = 0.000000e+00
+
+MeshBlock-cycles = 4452
+cpu time used  = 7.287564e+00
+zone-cycles/cpu_second = 2.502262e+06
+particle-updates/cpu_second = 0.000000e+00
+
+ (Type)   Total Time, Call Count, Avg. Time per Call, %Total Time in Kernels, %Total Program Time
+-------------------------------------------------------------------------
+
+Regions: 
+
+- Tensor fields
+ (Region)   0.457944 1 0.457944 10.022871 5.357987
+- Buffers
+ (Region)   0.008645 1 0.008645 0.189212 0.101148
+
+-------------------------------------------------------------------------
+Kernels: 
+
+- z4c rhs loop
+ (ParFor)   0.860502 84 0.010244 18.833525 10.067952
+- Prolong VC coarse-fine boundaries
+ (ParFor)   0.654166 106 0.006171 14.317525 7.653807
+- Pack VC same-level buffers
+ (ParFor)   0.260039 106 0.002453 5.691392 3.042482
+- Unpack VC same-level buffers
+ (ParFor)   0.254638 106 0.002402 5.573174 2.979285
+- Pack VC same-level coarse buffers
+ (ParFor)   0.223032 106 0.002104 4.881440 2.609501
+- Unpack VC same-level coarse buffers
+ (ParFor)   0.217962 106 0.002056 4.770470 2.550179
+- Kokkos::ViewCopy-3D
+ (ParFor)   0.181818 10176 0.000018 3.979387 2.127285
+- Kokkos::View::initialization [d_out_var] via memset
+ (ParFor)   0.177744 10176 0.000017 3.890218 2.079618
+- enforce evolved vertex axis regularity lean
+ (ParFor)   0.148490 294 0.000505 3.249962 1.737352
+- z4cbc_x1
+ (ParFor)   0.128725 256 0.000503 2.817364 1.506095
+- compute deterministic VC shared averages on device
+ (ParFor)   0.118073 212 0.000557 2.584231 1.381468
+- z4c Gamma rhs loop
+ (ParFor)   0.103211 84 0.001229 2.258939 1.207575
+- GlobalCurvatureMaxKretschmann
+ (ParRed)   0.102605 6 0.017101 2.245674 1.200484
+- ADM Hamiltonian constraint loop
+ (ParFor)   0.100832 22 0.004583 2.206877 1.179744
+- z4c VC half-plane axis parity
+ (ParFor)   0.098310 190 0.000517 2.151690 1.150242
+- SO2-invariant vertex K-O dissipation
+ (ParFor)   0.087450 84 0.001041 1.913985 1.023171
+- Kokkos::View::initialization [cc_outvar] via memset
+ (ParFor)   0.079055 8 0.009882 1.730253 0.924952
+- z4crhs_bc_x1
+ (ParFor)   0.078562 85 0.000924 1.719472 0.919189
+- z4c RK update
+ (ParFor)   0.061361 84 0.000730 1.342990 0.717930
+- ADM momentum constraint loop
+ (ParFor)   0.060251 22 0.002739 1.318699 0.704945
+- z4crhs_bc_x2
+ (ParFor)   0.058382 85 0.000687 1.277778 0.683070
+- Kokkos::View::initialization [] via memset
+ (ParFor)   0.055048 60 0.000917 1.204807 0.644061
+- Kokkos::View::initialization [rst-cc-in] via memset
+ (ParFor)   0.054657 2 0.027328 1.196260 0.639492
+- z4c gauge rhs loop
+ (ParFor)   0.046302 84 0.000551 1.013393 0.541736
+- CopyCons
+ (ParFor)   0.038796 63 0.000616 0.849125 0.453922
+- z4c timestep spatial
+ (ParRed)   0.032864 22 0.001494 0.719291 0.384516
+- z4c state admissibility
+ (ParFor)   0.032157 126 0.000255 0.703809 0.376239
+- z4c_diag
+ (ParFor)   0.028269 1 0.028269 0.618716 0.330751
+- initialize z4c fields
+ (ParFor)   0.027704 22 0.001259 0.606343 0.324137
+- inject native VC restriction
+ (ParFor)   0.018569 106 0.000175 0.406414 0.217259
+- HistSums
+ (ParRed)   0.015383 6 0.002564 0.336688 0.179985
+- Alg constr loop
+ (ParFor)   0.014416 21 0.000686 0.315507 0.168663
+- GlobalCurvatureMaxAbsK
+ (ParRed)   0.014334 6 0.002389 0.313718 0.167706
+- apply deterministic VC shared averages on device
+ (ParFor)   0.014009 212 0.000066 0.306605 0.163904
+- fill active order-matched VC-to-CC ADM adapter
+ (ParFor)   0.013972 22 0.000635 0.305796 0.163471
+- Cartoon native vertex center diagnostic
+ (ParFor)   0.013876 22 0.000631 0.303709 0.162356
+- fill bounded VC-to-CC ADM adapter ghosts
+ (ParFor)   0.012882 22 0.000586 0.281939 0.150718
+- Z4c VC half-plane constraint axis parity
+ (ParFor)   0.012327 22 0.000560 0.269807 0.144232
+- z4cbc_x2
+ (ParFor)   0.008063 256 0.000031 0.176474 0.094339
+- Kokkos::View::initialization [d_out_var_mirror] via memset
+ (ParFor)   0.007935 10176 0.000001 0.173661 0.092835
+- Kokkos::View::initialization [_mirror]
+ (ParFor)   0.007792 3 0.002597 0.170536 0.091164
+- z4c timestep speed
+ (ParRed)   0.005641 22 0.000256 0.123468 0.066003
+- Kokkos::View::initialization []
+ (ParFor)   0.005202 3 0.001734 0.113856 0.060865
+- Cartoon constraint axis off-axis and layer sums
+ (ParRed)   0.004229 6 0.000705 0.092560 0.049481
+- Kokkos::ViewFill-1D
+ (ParFor)   0.003290 127 0.000026 0.072016 0.038498
+- Kokkos::View::initialization [z4c first inadmissible key] via memset
+ (ParFor)   0.002843 126 0.000023 0.062227 0.033265
+- Cartoon constraint Linf location
+ (ParRed)   0.002779 24 0.000116 0.060823 0.032515
+- Kokkos::View::initialization [invalid VC boundary prolongation] via memset
+ (ParFor)   0.001957 106 0.000018 0.042831 0.022896
+- Kokkos::View::initialization [lb send data] via memset
+ (ParFor)   0.001849 2 0.000924 0.040467 0.021633
+- Kokkos::View::initialization [u0 z4c] via memset
+ (ParFor)   0.001838 2 0.000919 0.040227 0.021504
+- Kokkos::View::initialization [u_rhs z4c] via memset
+ (ParFor)   0.001838 2 0.000919 0.040222 0.021502
+- Kokkos::View::initialization [u1 z4c] via memset
+ (ParFor)   0.001836 2 0.000918 0.040185 0.021482
+- Kokkos::View::initialization [lb recv data] via memset
+ (ParFor)   0.001787 2 0.000893 0.039110 0.020907
+- Kokkos::View::initialization [derived-var] via memset
+ (ParFor)   0.001370 6 0.000228 0.029994 0.016034
+- Kokkos::View::initialization [u_adm native z4c] via memset
+ (ParFor)   0.001252 2 0.000626 0.027406 0.014651
+- Kokkos::View::initialization [lb send buff]
+ (ParFor)   0.001207 1 0.001207 0.026414 0.014121
+- Kokkos::View::initialization [u_adm] via memset
+ (ParFor)   0.001184 2 0.000592 0.025908 0.013850
+- Z4cHistoryMaxAbsK
+ (ParRed)   0.000644 6 0.000107 0.014094 0.007534
+- Kokkos::View::initialization [coarse u0 z4c] via memset
+ (ParFor)   0.000596 2 0.000298 0.013045 0.006974
+- Kokkos::View::initialization [Cartoon native vertex center values] via memset
+ (ParFor)   0.000540 22 0.000025 0.011830 0.006324
+- Kokkos::View::initialization [u_con] via memset
+ (ParFor)   0.000443 2 0.000221 0.009690 0.005180
+- Kokkos::View::initialization [Cartoon native vertex center flags] via memset
+ (ParFor)   0.000371 22 0.000017 0.008114 0.004338
+- Kokkos::View::initialization [_mirror] via memset
+ (ParFor)   0.000327 11 0.000030 0.007154 0.003824
+- Kokkos::View::initialization [u_weyl] via memset
+ (ParFor)   0.000160 2 0.000080 0.003507 0.001875
+- Kokkos::View::initialization [VC shared authority contributors] via memset
+ (ParFor)   0.000106 2 0.000053 0.002317 0.001239
+- Kokkos::View::initialization [u_telegraph_mu] via memset
+ (ParFor)   0.000090 2 0.000045 0.001972 0.001054
+- Kokkos::View::initialization [VC shared authority contributors_mirror] via memset
+ (ParFor)   0.000086 2 0.000043 0.001884 0.001007
+- Kokkos::View::initialization [rflag] via memset
+ (ParFor)   0.000085 1 0.000085 0.001858 0.000993
+- Kokkos::View::initialization [mb_gid] via memset
+ (ParFor)   0.000085 1 0.000085 0.001858 0.000993
+- Kokkos::View::initialization [VC shared local groups_mirror] via memset
+ (ParFor)   0.000081 2 0.000040 0.001769 0.000946
+- Kokkos::View::initialization [uin] via memset
+ (ParFor)   0.000076 4 0.000019 0.001665 0.000890
+- Kokkos::View::initialization [coarse_u_weyl] via memset
+ (ParFor)   0.000063 2 0.000032 0.001383 0.000739
+- Kokkos::View::initialization [bin] via memset
+ (ParFor)   0.000061 4 0.000015 0.001336 0.000714
+- Kokkos::View::initialization [iin] via memset
+ (ParFor)   0.000058 4 0.000015 0.001273 0.000681
+- Kokkos::View::initialization [VC shared authority end_mirror] via memset
+ (ParFor)   0.000048 2 0.000024 0.001054 0.000563
+- Kokkos::View::initialization [VC shared local groups] via memset
+ (ParFor)   0.000040 2 0.000020 0.000877 0.000469
+- Kokkos::View::initialization [VC shared authority begin] via memset
+ (ParFor)   0.000039 2 0.000019 0.000851 0.000455
+- Kokkos::View::initialization [VC shared authority begin_mirror] via memset
+ (ParFor)   0.000038 2 0.000019 0.000835 0.000446
+- Kokkos::View::initialization [VC shared authority end] via memset
+ (ParFor)   0.000034 2 0.000017 0.000741 0.000396
+- Kokkos::View::initialization [VC shared group values] via memset
+ (ParFor)   0.000034 2 0.000017 0.000741 0.000396
+- Kokkos::View::initialization [lb recv buff]
+ (ParFor)   0.000025 1 0.000025 0.000548 0.000293
+- Kokkos::View::initialization [lb send buff_mirror]
+ (ParFor)   0.000022 1 0.000022 0.000480 0.000257
+- Kokkos::View::initialization [mbsize] via memset
+ (ParFor)   0.000019 1 0.000019 0.000412 0.000220
+- Kokkos::View::initialization [derived_ref_vars] via memset
+ (ParFor)   0.000017 1 0.000017 0.000370 0.000198
+- Kokkos::View::initialization [mb_lev] via memset
+ (ParFor)   0.000016 1 0.000016 0.000350 0.000187
+- Kokkos::View::initialization [mbbcs] via memset
+ (ParFor)   0.000016 1 0.000016 0.000350 0.000187
+- Kokkos::View::initialization [excision_floor] via memset
+ (ParFor)   0.000016 1 0.000016 0.000350 0.000187
+- Kokkos::View::initialization [ru] via memset
+ (ParFor)   0.000016 1 0.000016 0.000350 0.000187
+- Kokkos::View::initialization [DualView::modified_flags] via memset
+ (ParFor)   0.000015 32 0.000000 0.000334 0.000179
+- Kokkos::View::initialization [excision_flux] via memset
+ (ParFor)   0.000015 1 0.000015 0.000329 0.000176
+- Kokkos::View::initialization [chi provenance terms] via memset
+ (ParFor)   0.000015 1 0.000015 0.000329 0.000176
+- Kokkos::View::initialization [fc_outvar.x3f] via memset
+ (ParFor)   0.000005 5 0.000001 0.000110 0.000059
+- Kokkos::View::initialization [mbsize_mirror] via memset
+ (ParFor)   0.000004 1 0.000004 0.000089 0.000047
+- Kokkos::View::initialization [lb recv buff_mirror]
+ (ParFor)   0.000003 1 0.000003 0.000068 0.000036
+- Kokkos::View::initialization [iin_mirror] via memset
+ (ParFor)   0.000003 4 0.000001 0.000068 0.000036
+- Kokkos::View::initialization [bin_mirror] via memset
+ (ParFor)   0.000003 4 0.000001 0.000063 0.000033
+- Kokkos::View::initialization [fc_outvar.x2f] via memset
+ (ParFor)   0.000002 5 0.000000 0.000042 0.000022
+- Kokkos::View::initialization [uin_mirror] via memset
+ (ParFor)   0.000002 4 0.000000 0.000042 0.000022
+- Kokkos::View::initialization [fc_outvar.x1f] via memset
+ (ParFor)   0.000001 5 0.000000 0.000026 0.000014
+- Kokkos::View::initialization [mb_gid_mirror] via memset
+ (ParFor)   0.000001 1 0.000001 0.000026 0.000014
+- Kokkos::View::initialization [rst-fc-in.x3f] via memset
+ (ParFor)   0.000001 1 0.000001 0.000021 0.000011
+- Kokkos::View::initialization [rflag_mirror] via memset
+ (ParFor)   0.000001 1 0.000001 0.000021 0.000011
+- Kokkos::View::initialization [mbbcs_mirror] via memset
+ (ParFor)   0.000001 1 0.000001 0.000021 0.000011
+- Kokkos::View::initialization [rst-fc-in.x1f] via memset
+ (ParFor)   0.000000 1 0.000000 0.000000 0.000000
+- Kokkos::View::initialization [cyc_since_ref] via memset
+ (ParFor)   0.000000 1 0.000000 0.000000 0.000000
+- Kokkos::View::initialization [rst-fc-in.x2f] via memset
+ (ParFor)   0.000000 1 0.000000 0.000000 0.000000
+- Kokkos::View::initialization [mb_lev_mirror] via memset
+ (ParFor)   0.000000 1 0.000000 0.000000 0.000000
+
+-------------------------------------------------------------------------
+Summary:
+
+Total Execution Time (incl. Kokkos + non-Kokkos):                   8.54694 seconds
+Total Time in Kokkos kernels:                                       4.56899 seconds
+   -> Time outside Kokkos kernels:                                  3.97795 seconds
+   -> Percentage in Kokkos kernels:                                   53.46 %
+Total Calls to Kokkos Kernels:                                        34269
+-------------------------------------------------------------------------
+

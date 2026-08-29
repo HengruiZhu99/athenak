@@ -1,0 +1,28 @@
+AthenaK Kokkos default execution space: SYCL
+
+Root grid = 2 x 2 x 1 MeshBlocks
+Total number of MeshBlocks = 4
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Setup complete, executing task list(s)...
+
+elapsed=1.637930e+00 cycle=0 time=0.000000e+00 dt=8.838835e-03
+CARTOON_AMR_TRANSACTION cycle=1 requested_refine=1 requested_derefine_leaves=0 accepted_derefine_parents=0 created_leaves=3 deleted_leaves=0 mirror_mismatches=0
+output wall time = 4.911252e+00
+elapsed=5.145652e+00 cycle=1 time=8.838835e-03 dt=4.419417e-03
+
+Terminating on cycle limit
+time=8.838835e-03 cycle=1
+tlim=1.000000e+00 nlim=1 nmb_total_limit=-1
+
+Current number of MeshBlocks = 7
+3 MeshBlocks created, 0 deleted by AMR
+0 communicated for load balancing, load balancing efficiency = 0.000000e+00
+
+MeshBlock-cycles = 4
+cpu time used  = 3.507725e+00
+zone-cycles/cpu_second = 2.919271e+02
+particle-updates/cpu_second = 0.000000e+00

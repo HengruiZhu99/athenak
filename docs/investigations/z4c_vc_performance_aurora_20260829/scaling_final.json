@@ -1,0 +1,61 @@
+{
+  "rows": [
+    {
+      "execution_seconds": 13.69965,
+      "meshblock_cycles": 19928,
+      "meshblocks": 212,
+      "meshblocks_per_rank": 212.0,
+      "output_seconds": 1.962092,
+      "parallel_efficiency": 1.0,
+      "ranks": 1,
+      "root": "docs/investigations/z4c_vc_performance_aurora_20260829/evidence/optimized_one_tile_v9",
+      "speedup": 1.0,
+      "tiles": 1,
+      "zone_cycles_per_second": 5958188.0,
+      "zone_cycles_per_second_per_tile": 5958188.0
+    },
+    {
+      "execution_seconds": 31.90431,
+      "meshblock_cycles": 19928,
+      "meshblocks": 212,
+      "meshblocks_per_rank": 106.0,
+      "output_seconds": 15.06642,
+      "parallel_efficiency": 0.21469899909167015,
+      "ranks": 2,
+      "root": "docs/investigations/z4c_vc_performance_aurora_20260829/evidence/scaling_sparse_2_tiles",
+      "speedup": 0.4293979981833403,
+      "tiles": 2,
+      "zone_cycles_per_second": 2558434.0,
+      "zone_cycles_per_second_per_tile": 1279217.0
+    },
+    {
+      "execution_seconds": 16.95224,
+      "meshblock_cycles": 19928,
+      "meshblocks": 212,
+      "meshblocks_per_rank": 17.666666666666668,
+      "output_seconds": 10.18705,
+      "parallel_efficiency": 0.06734435592387036,
+      "ranks": 12,
+      "root": "docs/investigations/z4c_vc_performance_aurora_20260829/evidence/scaling_sparse_12_tiles",
+      "speedup": 0.8081322710864444,
+      "tiles": 12,
+      "zone_cycles_per_second": 4815004.0,
+      "zone_cycles_per_second_per_tile": 401250.3333333333
+    },
+    {
+      "execution_seconds": 11.70349,
+      "meshblock_cycles": 19928,
+      "meshblocks": 212,
+      "meshblocks_per_rank": 8.833333333333334,
+      "output_seconds": 5.059599,
+      "parallel_efficiency": 0.04877337147915888,
+      "ranks": 24,
+      "root": "docs/investigations/z4c_vc_performance_aurora_20260829/evidence/scaling_sparse_24_tiles",
+      "speedup": 1.1705609154998131,
+      "tiles": 24,
+      "zone_cycles_per_second": 6974422.0,
+      "zone_cycles_per_second_per_tile": 290600.9166666667
+    }
+  ],
+  "schema": "z4c_vc_n512_aurora_scaling_v1"
+}

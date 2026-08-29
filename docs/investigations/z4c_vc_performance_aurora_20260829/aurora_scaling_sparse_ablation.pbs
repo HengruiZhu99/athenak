@@ -1,0 +1,30 @@
+#!/bin/bash -l
+#PBS -N z4c-vc-scale-sparse
+#PBS -A CompactBinaryMerger
+#PBS -l select=2
+#PBS -l place=scatter
+#PBS -l walltime=00:10:00
+#PBS -l filesystems=home:flare
+#PBS -q debug-scaling
+#PBS -k doe
+#PBS -j oe
+set -euo pipefail
+
+reference=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-reference-shock-gauge-figure3-aurora-20260828
+campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/z4c-vc-performance-aurora-20260829
+runner=${campaign}/aurora_run_optimized_replay.sh
+
+export ALLOCATED_NODES=2
+export ATHENA_WALL_LIMIT=00:08:00
+export HISTORY_FILE=${reference}/authority/n256_reference_shock_authority.jsonl
+export RESTART_FILE=${reference}/runs/n512_reference_shock_seg000/rst/n512_reference_shock_replay.00020.rst
+export RUN_TLIM=9.85
+export RUN_SMOKE=0
+
+for spec in 1:2 2:12; do
+  export RUN_NODES=${spec%%:*}
+  export RANKS_PER_NODE=${spec##*:}
+  total_ranks=$((RUN_NODES * RANKS_PER_NODE))
+  export RUN_ROOT=${campaign}/runs/scaling_sparse_${total_ranks}_tiles
+  "${runner}"
+done

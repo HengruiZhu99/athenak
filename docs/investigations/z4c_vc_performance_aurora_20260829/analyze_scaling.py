@@ -18,10 +18,13 @@ def last(pattern: str, text: str, label: str) -> float:
 
 
 def parse(root: Path) -> dict[str, float | int | str]:
-    match = re.search(r"scaling_(\d+)_tiles$", root.name)
-    if match is None:
+    match = re.search(r"scaling(?:_[a-z]+)*_(\d+)_tiles$", root.name)
+    if root.name == "optimized_one_tile_v9":
+        tiles = 1
+    elif match is not None:
+        tiles = int(match.group(1))
+    else:
         raise RuntimeError(f"cannot infer tile count from {root}")
-    tiles = int(match.group(1))
     text = (root / "stdout.log").read_text(encoding="utf-8")
     command = (root / "command.txt").read_text(encoding="utf-8")
     ranks_match = re.search(r"mpiexec\s+-n\s+(\d+)", command)
