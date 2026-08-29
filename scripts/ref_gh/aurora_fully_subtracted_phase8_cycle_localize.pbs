@@ -1,0 +1,130 @@
+#!/bin/bash -l
+# One-cycle task-fence localization for the Phase-8 PVC write fault.  This is
+# not a scientific evolution or a generic GPU qualification test.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=00:15:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_sub_p8loc
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?existing dedicated Phase-7/8 campaign root}"
+: "${EXPECTED_COMMIT:?full launch commit}"
+: "${BUILD_COMMIT:?commit used to build the preserved executable}"
+: "${BUILD_DIR:?absolute preserved Phase-7 build directory}"
+: "${EXPECTED_EXE_SHA256:?preserved executable SHA-256}"
+
+SRC="${CAMPAIGN_ROOT}/src"
+EXE="${BUILD_DIR}/src/athena"
+OUT="${CAMPAIGN_ROOT}/runs/phase8_cycle_localize_${PBS_JOBID}"
+INPUT="${SRC}/inputs/ref_gh/ref_gh_ordering_gauge_case_d.athinput"
+BASENAME=phase8_cycle_localize
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "phase8_localize_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+BINDER=$(command -v gpu_tile_compact.sh)
+test -x "${BINDER}"
+
+actual_commit=$(git -C "${SRC}" rev-parse HEAD)
+actual_exe_sha256=$(sha256sum "${EXE}" | awk '{print $1}')
+test "${actual_commit}" = "${EXPECTED_COMMIT}"
+test "${actual_exe_sha256}" = "${EXPECTED_EXE_SHA256}"
+test -z "$(git -C "${SRC}" status --porcelain --untracked-files=no)"
+git -C "${SRC}" diff --quiet "${BUILD_COMMIT}" "${EXPECTED_COMMIT}" -- src
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "source_commit=${actual_commit}"
+  echo "build_commit=${BUILD_COMMIT}"
+  echo "build_dir=${BUILD_DIR}"
+  echo "executable_sha256=${actual_exe_sha256}"
+  echo "purpose=one-cycle task-fence localization"
+  echo "grid=96x96x96 meshblocks=216 ranks=12"
+  echo "frozen_parameters=STANDARD gamma0=1 gamma2=1 gauge-on q=1 FD4 RK4 CFL=0.05 KO=0.02"
+  echo "debug_task_fences=true"
+  echo "cycle_limit=1"
+  echo "restart_and_field_outputs=disabled"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "$0" "${BUILD_DIR}/CMakeCache.txt" "${EXE}"
+} > provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
+  | sort -u | wc -l)" -eq 12
+
+mkdir run_cycle
+if (
+  cd run_cycle
+  /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+    "${BINDER}" "${EXE}" -i "${INPUT}" \
+    job/basename="${BASENAME}" time/tlim=0.01 time/nlim=1 \
+    ref_gh/debug_task_fences=true \
+    output2/dt=-1 output3/dt=-1 output4/dt=-1 output5/dt=-1 \
+    > run.log 2>&1
+); then
+  run_status=0
+else
+  run_status=$?
+fi
+
+grep 'ref_gh debug fence passed:' run_cycle/run.log > fence_trace.txt || true
+last_fence=$(tail -1 fence_trace.txt 2>/dev/null || true)
+history="run_cycle/${BASENAME}.ref_gh.hst"
+last_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' \
+  "${history}" 2>/dev/null || echo 0)
+{
+  echo "run_exit_status=${run_status}"
+  echo "requested_cycle_limit=1"
+  echo "latest_history_time=${last_time}"
+  echo "last_completed_fence=${last_fence}"
+  echo "positive_time_qualification=false"
+} > run_status.txt
+
+if [ "${run_status}" -eq 0 ]; then
+  result=PASS_PHASE8_ONE_CYCLE_TASK_FENCE_LOCALIZATION
+else
+  result=FAIL_PHASE8_ONE_CYCLE_TASK_FENCE_LOCALIZATION
+fi
+{
+  echo "result=${result}"
+  cat run_status.txt
+  echo "claim_boundary=one diagnostic cycle with task fences; no stability claim"
+  sha256sum "${EXE}"
+} > gate_status.txt
+
+echo "phase8_cycle_localize_complete=$(date -Is)"
+find . -type f ! -name compact_sha256.txt \
+  \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' -o -name '*.json' -o -name '*-trumpet.dat' \) \
+  -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
+
+exit "${run_status}"

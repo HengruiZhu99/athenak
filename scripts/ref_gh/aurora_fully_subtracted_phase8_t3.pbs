@@ -117,17 +117,18 @@ test "$(grep '^host=' rank_gpu_mapping.txt \
   | sort -u | wc -l)" -eq 12
 
 mkdir run_t3
-set +e
-(
+if (
   cd run_t3
   /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
     "${BINDER}" "${EXE}" -i "${INPUT}" \
     job/basename="${BASENAME}" time/tlim="${TARGET_TIME}" time/nlim=-1 \
     output2/dt=1.0 output3/dt=-1 output4/dt=-1 output5/dt=-1 \
     > run.log 2>&1
-)
-run_status=$?
-set -e
+); then
+  run_status=0
+else
+  run_status=$?
+fi
 
 history="run_t3/${BASENAME}.ref_gh.hst"
 last_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' \
@@ -143,14 +144,15 @@ last_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' \
 find run_t3 -type f -name '*.rst' -print0 | sort -z | xargs -0 -r sha256sum \
   > restart_sha256.txt
 
-set +e
-python3 "${ANALYZE}" \
+if python3 "${ANALYZE}" \
   --run-dir run_t3 --basename "${BASENAME}" --target-time "${TARGET_TIME}" \
   --control-history "${CONTROL_A}" --control-history "${CONTROL_B}" \
   --output-json phase8_t3_summary.json --output-tsv phase8_t3_summary.tsv \
-  --require-hard-gate > phase8_t3_analysis.log 2>&1
-analysis_status=$?
-set -e
+  --require-hard-gate > phase8_t3_analysis.log 2>&1; then
+  analysis_status=0
+else
+  analysis_status=$?
+fi
 
 if [ "${analysis_status}" -eq 0 ]; then
   result=PASS_PHASE8_T3_FINITE_DISCRIMINATOR

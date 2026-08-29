@@ -45,6 +45,12 @@ of the old `0.0375M` mode and not a formulation verdict.  Compact logs are in
 recorded by remote path but not committed.  A single fence-instrumented cycle
 is the next bounded discriminator before any further 3M attempt.
 
+The focused localization launcher enables only the existing
+`debug_task_fences` option, caps the run at one RK cycle, and disables restart
+and field output.  It retains every scientific parameter and the same 12-tile
+96^3 workload.  Its sole purpose is to identify the last completed task fence;
+it cannot support an evolution or stability claim.
+
 ## Claim boundary
 
 This investigation begins from the completed
