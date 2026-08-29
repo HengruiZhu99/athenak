@@ -288,7 +288,8 @@ bool LoadProductionPointGeometry(
     const int m, const int k, const int j, const int i,
     Real psi[4][4], Real pi[4][4], Real phi[3][4][4],
     Real d_psi[4][4][4], Real metric[4][4], Real d_metric[4][4][4],
-    CoordinateGhGeometry &geometry, Real &determinant) {
+    CoordinateGhGeometry &geometry, Real &determinant,
+    CompactAnalyticCoordinateGeometry *analytic_compact = nullptr) {
   if (reference.backend == 0) {
     return LoadPointGeometry(state, reference.generic, m, k, j, i, psi, pi,
                              phi, d_psi, metric, d_metric, geometry,
@@ -374,6 +375,7 @@ bool LoadProductionPointGeometry(
     return false;
   }
   geometry = compact.geometry;
+  if (analytic_compact != nullptr) *analytic_compact = compact;
   return true;
 }
 
@@ -394,11 +396,12 @@ bool LoadProductionPointGeometry(
     const int m, const int k, const int j, const int i,
     Real psi[4][4], Real pi[4][4], Real phi[3][4][4],
     Real d_psi[4][4][4], Real metric[4][4], Real d_metric[4][4][4],
-    CoordinateGhGeometry &geometry, Real &determinant) {
+    CoordinateGhGeometry &geometry, Real &determinant,
+    CompactAnalyticCoordinateGeometry *analytic_compact = nullptr) {
   const ProductionReferencePoint wrapper{1, {}, reference};
   return LoadProductionPointGeometry(
       state, wrapper, m, k, j, i, psi, pi, phi, d_psi, metric, d_metric,
-      geometry, determinant);
+      geometry, determinant, analytic_compact);
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -407,10 +410,11 @@ bool LoadProductionPointGeometry(
     const int m, const int k, const int j, const int i,
     Real psi[4][4], Real pi[4][4], Real phi[3][4][4],
     Real d_psi[4][4][4], Real metric[4][4], Real d_metric[4][4][4],
-    CoordinateGhGeometry &geometry, Real &determinant) {
+    CoordinateGhGeometry &geometry, Real &determinant,
+    CompactAnalyticCoordinateGeometry *analytic_compact = nullptr) {
   return LoadProductionPointGeometry(
       state, reference.analytic, m, k, j, i, psi, pi, phi, d_psi, metric,
-      d_metric, geometry, determinant);
+      d_metric, geometry, determinant, analytic_compact);
 }
 
 KOKKOS_INLINE_FUNCTION

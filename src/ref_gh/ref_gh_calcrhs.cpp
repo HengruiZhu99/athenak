@@ -20,6 +20,7 @@
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/staged_covariant_rhs.hpp"
+#include "ref_gh/staged_coordinate_rhs.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 #include "utils/finite_diff.hpp"
 
@@ -62,7 +63,7 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
   const auto analytic_stage = reference_stage;
   const auto analytic_hot = reference_hot;
   const auto physical_scratch = rhs_physical_scratch;
-  const auto covariant_scratch = rhs_covariant_scratch;
+  const auto coordinate_scratch = rhs_coordinate_scratch;
   const auto scalar_scratch = rhs_scalar_scratch;
   constexpr int reference_backend = Analytic ? 1 : 0;
   const Real center_x = opt.reference_center[0];
@@ -450,10 +451,10 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
   }
 
   if constexpr (Analytic) {
-    // Pass A: reconstruct coordinate geometry once, retain only the exact
-    // 32-Real physical layout, and finish the eleven gauge-driver RHS fields.
-    // The optional ten-component ordinary-gauge increment occupies the final
-    // slots of the 64-Real covariant scratch.
+    // Pass A: reconstruct coordinate geometry once, retain the exact 32-Real
+    // principal/gauge layout and the symmetry-packed coordinate source data,
+    // and finish the eleven gauge-driver RHS fields.  The complete transient
+    // footprint is 32 + 84 + 10 = 126 Reals/active cell.
     par_for("ref_gh staged physical geometry and gauge", DevExeSpace(),
     0, nmb - 1, indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
     KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
@@ -473,15 +474,19 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
       Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
       Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
       CoordinateGhGeometry geometry;
+      CompactAnalyticCoordinateGeometry compact_geometry;
       Real determinant = 0.0;
       if (!LoadProductionPointGeometry(
               state, reference, m, k, j, i, psi, pi, phi, d_psi,
-              metric, d_metric, geometry, determinant)) {
+              metric, d_metric, geometry, determinant, &compact_geometry)) {
         for (int n = 0; n < kStagedPhysicalSize; ++n) {
           physical_scratch(m, n, ak, aj, ai) = NAN;
         }
+        for (int n = 0; n < kStagedCoordinateSize; ++n) {
+          coordinate_scratch(m, n, ak, aj, ai) = NAN;
+        }
         for (int n = 0; n < kSymmetric4Size; ++n) {
-          covariant_scratch(m, kStagedGaugeSource + n, ak, aj, ai) = NAN;
+          scalar_scratch(m, n, ak, aj, ai) = NAN;
         }
         if (gauge_driver_enabled) {
           for (int n = kHhatOffset; n < nvar; ++n) {
@@ -496,8 +501,8 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
         for (int n = 0; n < kStagedPhysicalSize; ++n) {
           physical_scratch(m, n, ak, aj, ai) = NAN;
         }
-        for (int n = 0; n < kSymmetric4Size; ++n) {
-          covariant_scratch(m, kStagedGaugeSource + n, ak, aj, ai) = NAN;
+        for (int n = 0; n < kStagedCoordinateSize; ++n) {
+          coordinate_scratch(m, n, ak, aj, ai) = NAN;
         }
         return;
       }
@@ -553,9 +558,36 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
         physical_scratch(m, kStagedDAlpha + p, ak, aj, ai) =
             0.5*geometry.lapse*geometry.lapse*geometry.lapse*d_inverse_00;
       }
+      for (int a = 0; a < 4; ++a) {
+        coordinate_scratch(
+            m, kStagedCoordinateGaugeSource + a, ak, aj, ai) =
+            compact_geometry.geometry.gauge_source[a];
+        coordinate_scratch(
+            m, kStagedCoordinateGaugeConstraint + a, ak, aj, ai) =
+            compact_geometry.geometry.gauge_constraint[a];
+        for (int b = a; b < 4; ++b) {
+          coordinate_scratch(
+              m, kStagedCoordinateMetric + Symmetric4Index(a, b), ak, aj, ai)
+              = metric[a][b];
+        }
+        for (int p = 0; p < 4; ++p) {
+          coordinate_scratch(
+              m, kStagedCoordinateDReferenceGauge + 4*p + a, ak, aj, ai)
+              = compact_geometry.d_reference_gauge[p][a];
+        }
+      }
+      for (int p = 0; p < 4; ++p) {
+        for (int a = 0; a < 4; ++a) {
+          for (int b = a; b < 4; ++b) {
+            coordinate_scratch(
+                m, kStagedCoordinateDMetric + 10*p + Symmetric4Index(a, b),
+                ak, aj, ai) = d_metric[p][a][b];
+          }
+        }
+      }
       for (int component = 0; component < kSymmetric4Size; ++component) {
-        covariant_scratch(
-            m, kStagedGaugeSource + component, ak, aj, ai) = 0.0;
+        coordinate_scratch(
+            m, kStagedCoordinateFinalSource + component, ak, aj, ai) = 0.0;
       }
       if (!gauge_driver_enabled) return;
 
@@ -574,8 +606,8 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
             state_rhs(m, n, k, j, i) = NAN;
           }
           for (int n = 0; n < kSymmetric4Size; ++n) {
-            covariant_scratch(
-                m, kStagedGaugeSource + n, ak, aj, ai) = NAN;
+            coordinate_scratch(
+                m, kStagedCoordinateFinalSource + n, ak, aj, ai) = NAN;
           }
           return;
         }
@@ -603,7 +635,8 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
           state_rhs(m, n, k, j, i) = NAN;
         }
         for (int n = 0; n < kSymmetric4Size; ++n) {
-          covariant_scratch(m, kStagedGaugeSource + n, ak, aj, ai) = NAN;
+          coordinate_scratch(
+              m, kStagedCoordinateFinalSource + n, ak, aj, ai) = NAN;
         }
         return;
       }
@@ -628,78 +661,52 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
         }
       }
       Real gauge_source[4][4] = {};  // NOLINT(runtime/arrays)
-      AddProductionOrdinaryGaugeSource(
-          metric, d_metric, reference, geometry, hhat, full_d_hhat,
-          gamma0, gauge_source);
+      AddCompactAnalyticOrdinaryGaugeSource(
+          metric, d_metric, reference.analytic, compact_geometry,
+          hhat, full_d_hhat, gamma0, gauge_source);
       for (int A = 0; A < 4; ++A) {
         for (int B = A; B < 4; ++B) {
-          covariant_scratch(
-              m, kStagedGaugeSource + Symmetric4Index(A, B), ak, aj, ai)
+          coordinate_scratch(
+              m, kStagedCoordinateFinalSource + Symmetric4Index(A, B),
+              ak, aj, ai)
               = gauge_source[A][B];
         }
       }
     });
     DebugFence("ref_gh CalcRHS staged physical geometry and gauge");
 
-    // Pass B: exactly 10 inverse-Psi, 40 q, and four Delta Reals/cell.
-    par_for("ref_gh staged covariant source preparation", DevExeSpace(),
-    0, nmb - 1, indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
-    KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-      const int ak = k - indcs.ks;
-      const int aj = j - indcs.js;
-      const int ai = i - indcs.is;
-      const Real x = CellCenterX(ai, indcs.nx1,
-                                 size.d_view(m).x1min, size.d_view(m).x1max);
-      const Real y = CellCenterX(aj, indcs.nx2,
-                                 size.d_view(m).x2min, size.d_view(m).x2max);
-      const Real z = CellCenterX(ak, indcs.nx3,
-                                 size.d_view(m).x3min, size.d_view(m).x3max);
-      const auto reference = MakeTypedProductionReferencePoint<true>(
-          reference_cache, reference_extra, analytic_static, analytic_stage,
-          analytic_hot, m, k, j, i, x, y, z,
-          center_x, center_y, center_z);
-      Real psi[4][4], pi[4][4], phi[3][4][4];  // NOLINT
-      LoadSymmetric(state, kPsiOffset, m, k, j, i, psi);
-      LoadSymmetric(state, kPiOffset, m, k, j, i, pi);
-      for (int I = 0; I < 3; ++I) {
-        for (int A = 0; A < 4; ++A) {
-          for (int B = A; B < 4; ++B) {
-            phi[I][A][B] = phi[I][B][A] =
-                state(m, PhiIndex(I, A, B), k, j, i);
-          }
-        }
-      }
-      const Real lapse = physical_scratch(m, kStagedLapse, ak, aj, ai);
-      Real coordinate_normal[4];  // NOLINT(runtime/arrays)
-      coordinate_normal[0] = 1.0/lapse;
-      for (int p = 0; p < 3; ++p) {
-        coordinate_normal[p + 1] =
-            -physical_scratch(m, kStagedShift + p, ak, aj, ai)/lapse;
-      }
-      Real normal[4];  // NOLINT(runtime/arrays)
-      for (int A = 0; A < 4; ++A) {
-        normal[A] = 0.0;
-        for (int a = 0; a < 4; ++a) {
-          normal[A] += ReferenceCoframe(reference, A, a)*coordinate_normal[a];
-        }
-      }
-      DeviceStagedCovariantPoint packed{
-          covariant_scratch, m, ak, aj, ai};
-      if (!PrepareStagedCovariantPoint(
-              psi, pi, phi, reference, normal, packed)) {
-        for (int n = 0; n < kStagedGaugeSource; ++n) {
-          covariant_scratch(m, n, ak, aj, ai) = NAN;
-        }
-      }
-    });
-    DebugFence("ref_gh CalcRHS staged covariant preparation");
-
-    // Pass C: a flat ordinary RangePolicy over N_active x 10.  Components are
-    // the outer index so adjacent work items traverse adjacent active cells.
+    // Pass B: one flat work item per coordinate symmetric pair evaluates the
+    // standard-GH partial-wave source.  No reference tensors are materialized.
     const int cells_per_block = indcs.nx1*indcs.nx2*indcs.nx3;
     const int active_cells = nmb*cells_per_block;
     Kokkos::parallel_for(
-        "ref_gh staged covariant scalar source components",
+        "ref_gh staged coordinate partial source components",
+        Kokkos::RangePolicy<DevExeSpace>(0, kSymmetric4Size*active_cells),
+        KOKKOS_LAMBDA(const int linear) {
+          const int component = linear/active_cells;
+          int work = linear - component*active_cells;
+          const int ai = work % indcs.nx1;
+          work /= indcs.nx1;
+          const int aj = work % indcs.nx2;
+          work /= indcs.nx2;
+          const int ak = work % indcs.nx3;
+          const int m = work/indcs.nx3;
+          int a = 0;
+          int b = 0;
+          Symmetric4Pair(component, a, b);
+          const DeviceStagedCoordinatePoint packed{
+              coordinate_scratch, physical_scratch, scalar_scratch,
+              m, ak, aj, ai};
+          scalar_scratch(m, component, ak, aj, ai) =
+              StagedCoordinateStandardSourceComponent(packed, a, b, gamma0);
+        });
+    DebugFence("ref_gh CalcRHS staged coordinate partial source components");
+
+    // Pass C: transform the completed coordinate source to one reference-frame
+    // component.  The already-contracted ordinary-gauge increment from pass A
+    // is added in the final ten slots of the 84-Real scratch.
+    Kokkos::parallel_for(
+        "ref_gh staged coordinate frame transform components",
         Kokkos::RangePolicy<DevExeSpace>(0, kSymmetric4Size*active_cells),
         KOKKOS_LAMBDA(const int linear) {
           const int component = linear/active_cells;
@@ -726,32 +733,29 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
               reference_cache, reference_extra, analytic_static, analytic_stage,
               analytic_hot, m, k, j, i, x, y, z,
               center_x, center_y, center_z);
-          Real psi[4][4];  // NOLINT(runtime/arrays)
-          LoadSymmetric(state, kPsiOffset, m, k, j, i, psi);
-          const Real lapse = physical_scratch(m, kStagedLapse, ak, aj, ai);
-          Real coordinate_normal[4];  // NOLINT(runtime/arrays)
-          coordinate_normal[0] = 1.0/lapse;
+          Real d_psi[4];  // NOLINT(runtime/arrays)
           for (int p = 0; p < 3; ++p) {
-            coordinate_normal[p + 1] =
-                -physical_scratch(m, kStagedShift + p, ak, aj, ai)/lapse;
-          }
-          Real normal[4];  // NOLINT(runtime/arrays)
-          for (int C = 0; C < 4; ++C) {
-            normal[C] = 0.0;
-            for (int a = 0; a < 4; ++a) {
-              normal[C] += ReferenceCoframe(reference, C, a)
-                           *coordinate_normal[a];
+            d_psi[p + 1] = 0.0;
+            for (int I = 0; I < 3; ++I) {
+              d_psi[p + 1] += ReferenceSpatialCoframe(reference, I, p)
+                              *state(m, PhiIndex(I, A, B), k, j, i);
             }
           }
-          const DeviceStagedCovariantPoint packed{
-              covariant_scratch, m, ak, aj, ai};
-          scalar_scratch(m, component, ak, aj, ai) =
-              StagedCovariantSourceComponent(
-                  psi, reference, normal, packed, A, B, gamma0)
-              + covariant_scratch(
-                    m, kStagedGaugeSource + component, ak, aj, ai);
+          const Real lapse = physical_scratch(m, kStagedLapse, ak, aj, ai);
+          d_psi[0] = -lapse*state(m, PiIndex(A, B), k, j, i);
+          for (int p = 0; p < 3; ++p) {
+            d_psi[0] += physical_scratch(m, kStagedShift + p, ak, aj, ai)
+                        *d_psi[p + 1];
+          }
+          const DeviceStagedCoordinatePoint packed{
+              coordinate_scratch, physical_scratch, scalar_scratch,
+              m, ak, aj, ai};
+          packed.SetFinalSource(
+              A, B, packed.FinalSource(A, B)
+                    + StagedCoordinateTransformComponent(
+                          packed, reference, d_psi, A, B));
         });
-    DebugFence("ref_gh CalcRHS staged scalar source components");
+    DebugFence("ref_gh CalcRHS staged coordinate frame transform components");
 
     // Pass D: one symmetric Pi component per flat work item.  Only that
     // component's Phi/Pi stencil values are live.
@@ -824,7 +828,8 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
           }
           Real pi_rhs = lapse*(
               trace_k*state(m, PiIndex(A, B), k, j, i) - divergence
-              + scalar_scratch(m, component, ak, aj, ai))
+              + coordinate_scratch(
+                    m, kStagedCoordinateFinalSource + component, ak, aj, ai))
               - lapse_gradient_term;
           for (int p = 0; p < 3; ++p) {
             pi_rhs += physical_scratch(m, kStagedShift + p, ak, aj, ai)

@@ -71,6 +71,12 @@ Real ReferenceDFrame(const AnalyticRadialQHotPoint &point, const int p,
 }
 
 KOKKOS_INLINE_FUNCTION
+Real ReferenceDDFrame(const AnalyticRadialQHotPoint &point, const int p,
+                      const int q, const int A, const int a) {
+  return ReferenceDDFrame(point.analytic, p, q, A, a);
+}
+
+KOKKOS_INLINE_FUNCTION
 Real ReferenceSpatialFrame(const AnalyticRadialQHotPoint &point,
                            const int I, const int i) {
   return ReferenceSpatialFrame(point.analytic, I, i);

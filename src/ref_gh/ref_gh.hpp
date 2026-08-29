@@ -189,9 +189,10 @@ class RefGh {
   DvceArray5D<Real> reference_stage;
   DvceArray5D<Real> reference_hot;
   // Analytic production RHS scratch is active-cell only: exactly 32 physical,
-  // 64 covariant-preparation, and 10 scalar-source Reals per cell.
+  // 84 coordinate-source/transform, and 10 partial-source Reals per cell.
+  // Their combined 126-Real footprint remains below the hard 128-Real cap.
   DvceArray5D<Real> rhs_physical_scratch;
-  DvceArray5D<Real> rhs_covariant_scratch;
+  DvceArray5D<Real> rhs_coordinate_scratch;
   DvceArray5D<Real> rhs_scalar_scratch;
   // Closed-loop q feedback owns a compact, predeclared list of eligible
   // active cells.  Disabled and prescribed-q runs leave these unallocated.

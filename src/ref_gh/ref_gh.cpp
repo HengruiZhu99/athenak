@@ -26,7 +26,7 @@
 #include "ref_gh/reference_provider_cache.hpp"
 #include "ref_gh/reference_analytic_hot.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
-#include "ref_gh/staged_covariant_rhs.hpp"
+#include "ref_gh/staged_coordinate_rhs.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -288,7 +288,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     coarse_u0("coarse u0 ref_gh", 1, 1, 1, 1, 1),
     reference_provider(), reference_workspace(), reference_evolution(),
     reference_diagnostic(), reference_static(), reference_stage(),
-    reference_hot(), rhs_physical_scratch(), rhs_covariant_scratch(),
+    reference_hot(), rhs_physical_scratch(), rhs_coordinate_scratch(),
     rhs_scalar_scratch(),
     q_sample_cells(), q_sample_weights(), q_reduction_result(),
     q_sample_count(0),
@@ -733,7 +733,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
                     n3, n2, n1);
     Kokkos::realloc(rhs_physical_scratch, nmb, kStagedPhysicalSize,
                     indcs.nx3, indcs.nx2, indcs.nx1);
-    Kokkos::realloc(rhs_covariant_scratch, nmb, kStagedCovariantSize,
+    Kokkos::realloc(rhs_coordinate_scratch, nmb, kStagedCoordinateSize,
                     indcs.nx3, indcs.nx2, indcs.nx1);
     Kokkos::realloc(rhs_scalar_scratch, nmb, kSymmetric4Size,
                     indcs.nx3, indcs.nx2, indcs.nx1);
@@ -759,8 +759,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
         sizeof(Real)*reference_hot.size();
     const std::size_t rhs_physical_bytes =
         sizeof(Real)*rhs_physical_scratch.size();
-    const std::size_t rhs_covariant_bytes =
-        sizeof(Real)*rhs_covariant_scratch.size();
+    const std::size_t rhs_coordinate_bytes =
+        sizeof(Real)*rhs_coordinate_scratch.size();
     const std::size_t rhs_scalar_bytes =
         sizeof(Real)*rhs_scalar_scratch.size();
     std::cout << "ref_gh reference allocation backend="
@@ -778,12 +778,12 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
               << " analytic_hot_bytes=" << analytic_hot_bytes
               << " rhs_physical_components="
               << (opt.reference_backend == 1 ? kStagedPhysicalSize : 0)
-              << " rhs_covariant_components="
-              << (opt.reference_backend == 1 ? kStagedCovariantSize : 0)
+              << " rhs_coordinate_components="
+              << (opt.reference_backend == 1 ? kStagedCoordinateSize : 0)
               << " rhs_scalar_components="
               << (opt.reference_backend == 1 ? kSymmetric4Size : 0)
               << " rhs_physical_bytes=" << rhs_physical_bytes
-              << " rhs_covariant_bytes=" << rhs_covariant_bytes
+              << " rhs_coordinate_bytes=" << rhs_coordinate_bytes
               << " rhs_scalar_bytes=" << rhs_scalar_bytes
               << std::endl;
   }

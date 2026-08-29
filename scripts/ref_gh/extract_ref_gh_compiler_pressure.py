@@ -21,16 +21,16 @@ GENERIC_LAMBDA_NAMES = {
 ANALYTIC_LAMBDA_NAMES = {
     "": "psi_rhs",
     "0": "staged_physical_geometry_and_gauge",
-    "1": "staged_covariant_preparation",
-    "2": "compatible_phi_rhs",
-    "3": "standard_phi_rhs",
-    "4": "gamma2_reduction_damping",
-    "5": "dissipation",
+    "1": "compatible_phi_rhs",
+    "2": "standard_phi_rhs",
+    "3": "gamma2_reduction_damping",
+    "4": "dissipation",
 }
 
 ANALYTIC_FLAT_NAMES = {
-    "0": "staged_scalar_source_components",
-    "1": "staged_pi_principal_components",
+    "0": "staged_coordinate_partial_source_components",
+    "1": "staged_coordinate_frame_transform_components",
+    "2": "staged_pi_principal_components",
 }
 
 

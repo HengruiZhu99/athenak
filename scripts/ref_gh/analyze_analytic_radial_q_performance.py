@@ -64,7 +64,7 @@ def main():
     dynamic_profile_stages = dynamic["ref_gh RK update"][0]
     z4c_profile_stages = z4c["z4c RK update"][0]
 
-    staged_names = [
+    covariant_staged_names = [
         "ref_gh psi rhs",
         "ref_gh staged physical geometry and gauge",
         "ref_gh staged covariant source preparation",
@@ -72,8 +72,18 @@ def main():
         "ref_gh staged pi principal components",
         "ref_gh compatible phi rhs",
     ]
-    if "ref_gh staged covariant scalar source components" in dynamic:
-        rhs_names = staged_names
+    coordinate_staged_names = [
+        "ref_gh psi rhs",
+        "ref_gh staged physical geometry and gauge",
+        "ref_gh staged coordinate partial source components",
+        "ref_gh staged coordinate frame transform components",
+        "ref_gh staged pi principal components",
+        "ref_gh compatible phi rhs",
+    ]
+    if "ref_gh staged coordinate frame transform components" in dynamic:
+        rhs_names = coordinate_staged_names
+    elif "ref_gh staged covariant scalar source components" in dynamic:
+        rhs_names = covariant_staged_names
     elif "ref_gh scalar source and pi rhs team" in dynamic:
         # The team-per-cell analytic kernel owns scalar/Pi, compatible or
         # standard Phi, and gamma2.  Do not add the retired split kernels.
@@ -119,7 +129,22 @@ def main():
         / dynamic["ref_gh projected trumpet metric boundaries"][0],
         "complete_warmed_stage": dynamic_stage,
     }
-    if "ref_gh staged covariant scalar source components" in dynamic:
+    if "ref_gh staged coordinate frame transform components" in dynamic:
+        categories.update({
+            "staged_physical_geometry_and_gauge":
+                dynamic["ref_gh staged physical geometry and gauge"][1]
+                / dynamic["ref_gh staged physical geometry and gauge"][0],
+            "staged_coordinate_partial_source_components":
+                dynamic["ref_gh staged coordinate partial source components"][1]
+                / dynamic["ref_gh staged coordinate partial source components"][0],
+            "staged_coordinate_frame_transform_components":
+                dynamic["ref_gh staged coordinate frame transform components"][1]
+                / dynamic["ref_gh staged coordinate frame transform components"][0],
+            "staged_pi_principal_components":
+                dynamic["ref_gh staged pi principal components"][1]
+                / dynamic["ref_gh staged pi principal components"][0],
+        })
+    elif "ref_gh staged covariant scalar source components" in dynamic:
         categories.update({
             "staged_physical_geometry_and_gauge":
                 dynamic["ref_gh staged physical geometry and gauge"][1]
