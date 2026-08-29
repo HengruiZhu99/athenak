@@ -1,0 +1,25 @@
+date=2026-08-29 America/New_York
+branch=codex/ref-gh-fully-subtracted-gauge-repair-20260829
+frozen_parent=223947486ac4498bab2e197feca56462c77e6d76
+frozen_local_head=223947486ac4498bab2e197feca56462c77e6d76
+frozen_upstream=223947486ac4498bab2e197feca56462c77e6d76
+frozen_remote=223947486ac4498bab2e197feca56462c77e6d76
+production_source_diff_from_frozen_parent=clean
+kokkos=6739bc623081648af9e752b616d9671527922cbf
+compiler=g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+cmake=3.28.3
+sympy=1.14.0
+build=Release Serial
+executable_sha256=9eb16b6189ac61335255735604dce65698164a99ffe7a9b00bb11a6da85181d8
+configure_command=cmake -S . -B build_fully_subtracted_serial -DCMAKE_BUILD_TYPE=Release -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_OPENMP=OFF
+build_command=cmake --build build_fully_subtracted_serial -j 8
+source_unit_command=./build_fully_subtracted_serial/src/athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
+generator_sha256=2c19efa4affd02c0d97ebbe26ea51a3f6bbb23467f3cb3c3e07c134320e26cc3
+generated_geometry_sha256=6b4b3976f8cfc62924aabaf6cb960cd79a09677e8a7dd59441b5d3a4f90184e7
+generated_gauge_sha256=f6ec5bb54d10c490f65f78d9d9a9e7df07c7f080eef4d6edd3fff55d45053908
+generated_source_sha256=b5dff1d44bd1e0ed53070fdd5fa4b30d0c4c176a13c2d0924dd6b0ad51012f21
+regen_a_real_seconds=272.91
+regen_b_real_seconds=276.31
+regen_a_equals_regen_b=yes
+regen_a_equals_committed=yes
+generator_command=python scripts/ref_gh/generate_analytic_radial_q_geometry.py --output geometry.hpp --gauge-output gauge.hpp --source-output source.hpp
