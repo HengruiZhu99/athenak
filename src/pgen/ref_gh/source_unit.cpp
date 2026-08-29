@@ -33,6 +33,7 @@
 #include "ref_gh/reference_generic_singular.hpp"
 #include "ref_gh/reference_projection.hpp"
 #include "ref_gh/reference_gauge_baseline.hpp"
+#include "ref_gh/residual_gauge_source.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "ref_gh/reference_trumpet_q_controlled.hpp"
@@ -629,6 +630,67 @@ void CheckGaugeDriverAlgebra() {
           const Real expected = conformal_gamma[p] - eta_beta*upsilon[p];
           local_maximum = fmax(
               local_maximum, Kokkos::abs(rhs.upsilon[p] - expected));
+        }
+
+        // General time-dependent residual-variable equivalence.  These
+        // reference and delta values are independent, so this exercises every
+        // explicit S_H/S_theta, delta-beta, and frame-motion term.
+        Real reference_hhat[4];        // NOLINT(runtime/arrays)
+        Real reference_theta[4];       // NOLINT(runtime/arrays)
+        Real reference_d_hhat[4][4];   // NOLINT(runtime/arrays)
+        Real reference_dt_theta[4];    // NOLINT(runtime/arrays)
+        Real reference_target[4];      // NOLINT(runtime/arrays)
+        Real delta_hhat[4];            // NOLINT(runtime/arrays)
+        Real delta_theta[4];           // NOLINT(runtime/arrays)
+        Real delta_target[4];          // NOLINT(runtime/arrays)
+        Real d_delta_hhat[3][4];       // NOLINT(runtime/arrays)
+        for (int A = 0; A < 4; ++A) {
+          reference_hhat[A] = 0.021*static_cast<Real>(A - 1) + 0.004*scale;
+          reference_theta[A] = -0.017*static_cast<Real>(A + 1)
+                               + 0.003*scale;
+          reference_dt_theta[A] = 0.013*static_cast<Real>(2 - A)
+                                  - 0.002*scale;
+          reference_target[A] = -0.019*static_cast<Real>(A - 2)
+                                + 0.005*scale;
+          delta_hhat[A] = hhat[A] - reference_hhat[A];
+          delta_theta[A] = theta[A] - reference_theta[A];
+          delta_target[A] = target[A] - reference_target[A];
+          reference_d_hhat[0][A] =
+              0.015*static_cast<Real>(A + 1) - 0.003*scale;
+          for (int p = 0; p < 3; ++p) {
+            reference_d_hhat[p + 1][A] =
+                0.009*static_cast<Real>(1 + A - 2*p) + 0.002*scale;
+            d_delta_hhat[p][A] =
+                d_hhat[p][A] - reference_d_hhat[p + 1][A];
+          }
+        }
+        const Real delta_shift[3] = {
+          0.012, -0.008 + 0.001*scale, 0.006};
+        Real reference_shift[3];  // NOLINT(runtime/arrays)
+        for (int p = 0; p < 3; ++p) {
+          reference_shift[p] = shift[p] - delta_shift[p];
+        }
+        const ref_gh::GaugeDriverRhs residual_rhs =
+            ref_gh::ComputeGaugeDriverResidualRhs(
+                reference, reference_hhat, reference_theta,
+                reference_d_hhat, reference_dt_theta, delta_hhat,
+                delta_theta, upsilon, d_delta_hhat, shift, reference_shift,
+                delta_shift, delta_target, reference_target,
+                conformal_gamma, mu, eta, eta_beta, false);
+        for (int A = 0; A < 4; ++A) {
+          local_maximum = fmax(
+              local_maximum,
+              Kokkos::abs(residual_rhs.hhat[A]
+                          - (rhs.hhat[A] - reference_d_hhat[0][A])));
+          local_maximum = fmax(
+              local_maximum,
+              Kokkos::abs(residual_rhs.theta[A]
+                          - (rhs.theta[A] - reference_dt_theta[A])));
+        }
+        for (int p = 0; p < 3; ++p) {
+          local_maximum = fmax(
+              local_maximum,
+              Kokkos::abs(residual_rhs.upsilon[p] - rhs.upsilon[p]));
         }
 
         // Independently invert the target definitions on an exact, moving
@@ -3230,7 +3292,8 @@ void UpdateResidualTargetOracleError(
     Real &maximum, Real &physical_maximum, Real &delta_maximum,
     int &maximum_category) {
   const bool is_delta = (category >= 20 && category < 30)
-                        || (category >= 40 && category < 50);
+                        || (category >= 40 && category < 50)
+                        || (category >= 60 && category < 100);
   if (is_delta) {
     delta_maximum = fmax(delta_maximum, candidate);
   } else {
@@ -3246,7 +3309,8 @@ template <typename Reference>
 KOKKOS_INLINE_FUNCTION
 Real EvaluateResidualPhysicalGaugeTargetOracle(
     const Reference &reference, const int seed, bool &matched_exact,
-    const bool well_conditioned, Real &matched_maximum,
+    const bool well_conditioned, const bool static_q1,
+    Real &matched_maximum,
     Real &physical_maximum, Real &delta_maximum, int &maximum_category) {
   constexpr Real nu = 0.83;
   constexpr Real eta_beta = 0.36;
@@ -3367,6 +3431,201 @@ Real EvaluateResidualPhysicalGaugeTargetOracle(
                     && residual.delta_conformal_gamma[i] == 0.0
                     && residual.delta_shift[i] == 0.0;
   }
+  if (static_q1) {
+    const ref_gh::ReferenceGaugeBaseline baseline =
+        ref_gh::ComputeReferenceGaugeBaseline(reference);
+    Real zero_hhat[4] = {};         // NOLINT(runtime/arrays)
+    Real zero_theta[4] = {};        // NOLINT(runtime/arrays)
+    Real zero_dt_theta[4] = {};     // NOLINT(runtime/arrays)
+    Real zero_d_hhat[3][4] = {};    // NOLINT(runtime/arrays)
+    if (!baseline.valid) return std::numeric_limits<Real>::infinity();
+    const ref_gh::GaugeDriverRhs fixed_rhs =
+        ref_gh::ComputeGaugeDriverResidualRhs(
+            reference, baseline.hhat, baseline.theta, baseline.d_hhat,
+            zero_dt_theta, zero_hhat, zero_theta, zero_upsilon,
+            zero_d_hhat, residual.physical_shift, residual.reference_shift,
+            residual.delta_shift, residual.delta_frame,
+            residual.reference_frame, residual.delta_conformal_gamma,
+            0.62, 0.57, eta_beta, true);
+    for (int A = 0; A < 4; ++A) {
+      matched_maximum = fmax(
+          matched_maximum, Kokkos::abs(fixed_rhs.hhat[A]));
+      matched_maximum = fmax(
+          matched_maximum, Kokkos::abs(fixed_rhs.theta[A]));
+      matched_exact = matched_exact && fixed_rhs.hhat[A] == 0.0
+                      && fixed_rhs.theta[A] == 0.0;
+    }
+    for (int i = 0; i < 3; ++i) {
+      matched_maximum = fmax(
+          matched_maximum, Kokkos::abs(fixed_rhs.upsilon[i]));
+      matched_exact = matched_exact && fixed_rhs.upsilon[i] == 0.0;
+    }
+    Real d_zero_hhat[4][4] = {};  // NOLINT(runtime/arrays)
+    Real gauge_source[4][4] = {}; // NOLINT(runtime/arrays)
+    ref_gh::OrdinaryGaugeResidualDiagnostics diagnostics;
+    if (!ref_gh::AddOrdinaryGaugeResidualPartialWaveSource(
+            matched_psi, matched_pi, matched_phi, matched_metric,
+            matched_d_metric, reference, matched_geometry, zero_hhat,
+            d_zero_hhat, 0.73, gauge_source, &diagnostics)) {
+      return std::numeric_limits<Real>::infinity();
+    }
+    for (int A = 0; A < 4; ++A) {
+      matched_maximum = fmax(
+          matched_maximum, Kokkos::abs(diagnostics.j[A]));
+      matched_maximum = fmax(
+          matched_maximum, Kokkos::abs(diagnostics.delta_base[A]));
+      matched_exact = matched_exact && diagnostics.j[A] == 0.0
+                      && diagnostics.delta_base[A] == 0.0;
+      for (int p = 0; p < 4; ++p) {
+        matched_maximum = fmax(
+            matched_maximum, Kokkos::abs(diagnostics.d_j[p][A]));
+        matched_maximum = fmax(
+            matched_maximum, Kokkos::abs(diagnostics.d_delta_base[p][A]));
+        matched_exact = matched_exact && diagnostics.d_j[p][A] == 0.0
+                        && diagnostics.d_delta_base[p][A] == 0.0;
+      }
+      for (int B = 0; B < 4; ++B) {
+        matched_maximum = fmax(
+            matched_maximum, Kokkos::abs(gauge_source[A][B]));
+        matched_exact = matched_exact && gauge_source[A][B] == 0.0;
+      }
+    }
+
+    constexpr Real gauge_mu = 0.62;
+    constexpr Real gauge_eta = 0.57;
+    constexpr Real gamma0 = 0.73;
+    Real delta_hhat[4];          // NOLINT(runtime/arrays)
+    Real delta_theta[4];         // NOLINT(runtime/arrays)
+    Real d_delta_hhat[3][4];     // NOLINT(runtime/arrays)
+    Real full_hhat[4];           // NOLINT(runtime/arrays)
+    Real full_theta[4];          // NOLINT(runtime/arrays)
+    Real d_full_hhat[3][4];      // NOLINT(runtime/arrays)
+    for (int A = 0; A < 4; ++A) {
+      delta_hhat[A] = 1.0e-3*static_cast<Real>(((seed + 2*A) % 9) - 4);
+      delta_theta[A] =
+          8.0e-4*static_cast<Real>(((seed + 3*A) % 11) - 5);
+      full_hhat[A] = baseline.hhat[A] + delta_hhat[A];
+      full_theta[A] = baseline.theta[A] + delta_theta[A];
+      for (int p = 0; p < 3; ++p) {
+        d_delta_hhat[p][A] =
+            6.0e-4*static_cast<Real>(((seed + A + 2*p) % 13) - 6);
+        d_full_hhat[p][A] =
+            baseline.d_hhat[p + 1][A] + d_delta_hhat[p][A];
+      }
+    }
+    const ref_gh::GaugeDriverRhs legacy_driver =
+        ref_gh::ComputeGaugeDriverRhs(
+            reference, full_hhat, full_theta, upsilon, d_full_hhat,
+            geometry.shift, legacy.frame, legacy.conformal_gamma, gauge_mu,
+            gauge_eta, eta_beta);
+    const ref_gh::GaugeDriverRhs residual_driver =
+        ref_gh::ComputeGaugeDriverResidualRhs(
+            reference, baseline.hhat, baseline.theta, baseline.d_hhat,
+            zero_dt_theta, delta_hhat, delta_theta, upsilon, d_delta_hhat,
+            geometry.shift, residual.reference_shift, residual.delta_shift,
+            residual.delta_frame, residual.reference_frame,
+            residual.delta_conformal_gamma, gauge_mu, gauge_eta, eta_beta,
+            true);
+    for (int A = 0; A < 4; ++A) {
+      const Real h_scale = fmax(1.0, fmax(
+          Kokkos::abs(legacy_driver.hhat[A]),
+          Kokkos::abs(residual_driver.hhat[A])));
+      const Real theta_scale = fmax(1.0, fmax(
+          Kokkos::abs(legacy_driver.theta[A]),
+          Kokkos::abs(residual_driver.theta[A])));
+      UpdateResidualTargetOracleError(
+          Kokkos::abs(residual_driver.hhat[A]
+                      - (legacy_driver.hhat[A] - baseline.d_hhat[0][A]))
+              /h_scale,
+          60 + A, well_conditioned, maximum, physical_maximum,
+          delta_maximum, maximum_category);
+      UpdateResidualTargetOracleError(
+          Kokkos::abs(residual_driver.theta[A] - legacy_driver.theta[A])
+              /theta_scale,
+          64 + A, well_conditioned, maximum, physical_maximum,
+          delta_maximum, maximum_category);
+    }
+    for (int i = 0; i < 3; ++i) {
+      const Real scale = fmax(1.0, fmax(
+          Kokkos::abs(legacy_driver.upsilon[i]),
+          Kokkos::abs(residual_driver.upsilon[i])));
+      UpdateResidualTargetOracleError(
+          Kokkos::abs(residual_driver.upsilon[i]
+                      - legacy_driver.upsilon[i])/scale,
+          68 + i, well_conditioned, maximum, physical_maximum,
+          delta_maximum, maximum_category);
+    }
+    Real full_d_hhat[4][4];   // NOLINT(runtime/arrays)
+    Real delta_d_hhat[4][4];  // NOLINT(runtime/arrays)
+    for (int A = 0; A < 4; ++A) {
+      full_d_hhat[0][A] = legacy_driver.hhat[A];
+      delta_d_hhat[0][A] = residual_driver.hhat[A];
+      for (int p = 0; p < 3; ++p) {
+        full_d_hhat[p + 1][A] = d_full_hhat[p][A];
+        delta_d_hhat[p + 1][A] = d_delta_hhat[p][A];
+      }
+    }
+    Real legacy_source[4][4] = {};    // NOLINT(runtime/arrays)
+    Real residual_source[4][4] = {};  // NOLINT(runtime/arrays)
+    ref_gh::OrdinaryGaugeResidualDiagnostics perturbed_diagnostics;
+    ref_gh::AddOrdinaryGaugePartialWaveSource(
+        metric, d_metric, reference, geometry, full_hhat, full_d_hhat,
+        gamma0, legacy_source);
+    if (!ref_gh::AddOrdinaryGaugeResidualPartialWaveSource(
+            psi, pi, phi, metric, d_metric, reference, geometry, delta_hhat,
+            delta_d_hhat, gamma0, residual_source,
+            &perturbed_diagnostics)) {
+      return std::numeric_limits<Real>::infinity();
+    }
+    Real legacy_d_base[4][4];  // NOLINT(runtime/arrays)
+    ref_gh::ImplicitGaugeSourceDerivative(
+        metric, d_metric, reference, geometry, legacy_d_base);
+    for (int a = 0; a < 4; ++a) {
+      Real coordinate_hhat = 0.0;
+      for (int A = 0; A < 4; ++A) {
+        coordinate_hhat +=
+            ref_gh::ReferenceCoframe(reference, A, a)*full_hhat[A];
+      }
+      const Real legacy_j = coordinate_hhat - geometry.gauge_source[a];
+      const Real j_scale = fmax(
+          1.0, fmax(Kokkos::abs(legacy_j),
+                    Kokkos::abs(perturbed_diagnostics.j[a])));
+      UpdateResidualTargetOracleError(
+          Kokkos::abs(perturbed_diagnostics.j[a] - legacy_j)/j_scale,
+          80 + a, well_conditioned, maximum, physical_maximum,
+          delta_maximum, maximum_category);
+      for (int p = 0; p < 4; ++p) {
+        Real d_coordinate_hhat = 0.0;
+        for (int A = 0; A < 4; ++A) {
+          d_coordinate_hhat +=
+              ref_gh::ResidualReferenceCoframeDerivative(
+                  reference, p, A, a)*full_hhat[A]
+              + ref_gh::ReferenceCoframe(reference, A, a)
+                  *full_d_hhat[p][A];
+        }
+        const Real legacy_d_j = d_coordinate_hhat - legacy_d_base[p][a];
+        const Real d_j_scale = fmax(
+            1.0, fmax(Kokkos::abs(legacy_d_j),
+                      Kokkos::abs(perturbed_diagnostics.d_j[p][a])));
+        UpdateResidualTargetOracleError(
+            Kokkos::abs(perturbed_diagnostics.d_j[p][a] - legacy_d_j)
+                /d_j_scale,
+            84 + p, well_conditioned, maximum, physical_maximum,
+            delta_maximum, maximum_category);
+      }
+    }
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        const Real scale = fmax(1.0, fmax(
+            Kokkos::abs(legacy_source[A][B]),
+            Kokkos::abs(residual_source[A][B])));
+        UpdateResidualTargetOracleError(
+            Kokkos::abs(residual_source[A][B] - legacy_source[A][B])/scale,
+            70 + (A == B ? A : 4), well_conditioned, maximum,
+            physical_maximum, delta_maximum, maximum_category);
+      }
+    }
+  }
   return maximum;
 }
 
@@ -3448,12 +3707,16 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
         // Below 0.8M, F-Fref is the already-falsified binary64 subtraction,
         // so preserve its discrepancy as a diagnostic rather than treating it
         // as a truth oracle.  Exact matched zeros remain mandatory everywhere.
+        // The new perturbed driver/source comparison remains a hard red gate
+        // at and above this established conditioned radius.
         const bool well_conditioned = analytic.radius >= 0.8;
+        const bool static_q1 = q == 1.0 && q_dot == 0.0 && q_ddot == 0.0;
         const Real generic_error = EvaluateResidualPhysicalGaugeTargetOracle(
-            generic, sample, generic_exact, well_conditioned, generic_matched,
-            generic_physical, generic_delta, generic_category);
+            generic, sample, generic_exact, well_conditioned, static_q1,
+            generic_matched, generic_physical, generic_delta,
+            generic_category);
         const Real analytic_error = EvaluateResidualPhysicalGaugeTargetOracle(
-            analytic, sample, analytic_exact, well_conditioned,
+            analytic, sample, analytic_exact, well_conditioned, static_q1,
             analytic_matched, analytic_physical, analytic_delta,
             analytic_category);
         local_maximum = fmax(local_maximum, fmax(generic_error, analytic_error));
