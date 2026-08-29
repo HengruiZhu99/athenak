@@ -937,60 +937,6 @@ void BaseTypeOutput::LoadOutputData(Mesh *pm) {
     ComputeDerivedVariable(out_params.variable, pm);
   }
 
-  // In the default path, preserve the historical per-variable/per-MeshBlock
-  // staging below.  Native-VC Z4c lean runs instead gather each variable over
-  // all selected MeshBlocks on device and perform one aggregate D2H transfer.
-  // This changes neither the output sampling nor a stored value; it removes
-  // O(nvars*nmb) allocations, kernel submissions, and host synchronizations.
-  const bool aggregate_device_output =
-      nout_mbs > 0 && pm->pmb_pack->pz4c != nullptr &&
-      pm->pmb_pack->pz4c->opt.lean_runtime;
-  if (aggregate_device_output) {
-    const int nout1 = outmbs[0].oie - outmbs[0].ois + 1;
-    const int nout2 = outmbs[0].oje - outmbs[0].ojs + 1;
-    const int nout3 = outmbs[0].oke - outmbs[0].oks + 1;
-
-    // Columns are local MeshBlock index and source i/j/k origins.
-    DvceArray2D<int> d_output_indices("aggregate output indices", nout_mbs, 4);
-    auto h_output_indices = Kokkos::create_mirror_view(d_output_indices);
-    for (int m = 0; m < nout_mbs; ++m) {
-      h_output_indices(m, 0) = pm->FindMeshBlockIndex(outmbs[m].mb_gid);
-      h_output_indices(m, 1) = outmbs[m].ois;
-      h_output_indices(m, 2) = outmbs[m].ojs;
-      h_output_indices(m, 3) = outmbs[m].oks;
-    }
-    Kokkos::deep_copy(d_output_indices, h_output_indices);
-
-    DvceArray5D<Real> d_outarray("aggregate cc_outvar", nout_vars, nout_mbs,
-                                nout3, nout2, nout1);
-    const std::int64_t cells_per_variable =
-        static_cast<std::int64_t>(nout_mbs) * nout3 * nout2 * nout1;
-    using OutputRange =
-        Kokkos::RangePolicy<DevExeSpace, Kokkos::IndexType<std::int64_t>>;
-    for (int n = 0; n < nout_vars; ++n) {
-      const auto source = *(outvars[n].data_ptr);
-      const int source_variable = outvars[n].data_index;
-      Kokkos::parallel_for(
-          "aggregate output variable", OutputRange(0, cells_per_variable),
-          KOKKOS_LAMBDA(const std::int64_t linear) {
-            std::int64_t rem = linear;
-            const int i = rem % nout1;
-            rem /= nout1;
-            const int j = rem % nout2;
-            rem /= nout2;
-            const int k = rem % nout3;
-            const int m = rem / nout3;
-            d_outarray(n, m, k, j, i) =
-                source(d_output_indices(m, 0), source_variable,
-                       d_output_indices(m, 3) + k,
-                       d_output_indices(m, 2) + j,
-                       d_output_indices(m, 1) + i);
-          });
-    }
-    Kokkos::deep_copy(outarray, d_outarray);
-    return;
-  }
-
   // Now copy data to host (outarray) over all variables and MeshBlocks
   for (int n=0; n<nout_vars; ++n) {
     for (int m=0; m<nout_mbs; ++m) {
