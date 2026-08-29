@@ -124,7 +124,7 @@ run_refgh() {
   fi
   grep -q "cycle=${cycles}" run.log
   grep -q 'zone-cycles/cpu_second' run.log
-  grep -q 'generic_bytes=0 analytic_static_components=12 analytic_stage_components=8 analytic_hot_components=141' run.log
+  grep -q 'generic_bytes=0 analytic_static_components=12 analytic_stage_components=8' run.log
   ! grep -Eiq 'NotPresent|page fault|SYCL exception|FATAL ERROR' run.log
   cd "${OUT}"
 }

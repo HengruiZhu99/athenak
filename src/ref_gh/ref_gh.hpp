@@ -182,23 +182,14 @@ class RefGh {
   DvceArray5D<Real> reference_workspace;
   DvceArray5D<Real> reference_evolution;
   DvceArray5D<Real> reference_diagnostic;
-  // The analytic radial-q backend owns exactly 12 static, 8 stage, and 141 hot
-  // symmetry-reduced values per ghosted cell.  Generic cache arrays remain
-  // unallocated in that mode.
+  // The analytic radial-q backend owns exactly 12 static and 8 stage values
+  // per ghosted cell.  Generic cache arrays remain unallocated in that mode.
   DvceArray5D<Real> reference_static;
   DvceArray5D<Real> reference_stage;
-  DvceArray5D<Real> reference_hot;
-  // Analytic production RHS scratch is active-cell only: exactly 32 physical,
-  // 84 coordinate-source/transform, and 10 partial-source Reals per cell.
-  // Their combined 126-Real footprint remains below the hard 128-Real cap.
-  DvceArray5D<Real> rhs_physical_scratch;
-  DvceArray5D<Real> rhs_coordinate_scratch;
-  DvceArray5D<Real> rhs_scalar_scratch;
   // Closed-loop q feedback owns a compact, predeclared list of eligible
   // active cells.  Disabled and prescribed-q runs leave these unallocated.
   DvceArray1D<int> q_sample_cells;
   DvceArray1D<Real> q_sample_weights;
-  DvceArray1D<Real> q_reduction_result;
   int q_sample_count;
   DvceArray2D<Real> reference_table;
   Real reference_cache_time;

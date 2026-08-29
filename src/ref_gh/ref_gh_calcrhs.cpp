@@ -19,8 +19,6 @@
 #include "ref_gh/reference_gauge_baseline.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
-#include "ref_gh/staged_covariant_rhs.hpp"
-#include "ref_gh/staged_coordinate_rhs.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 #include "utils/finite_diff.hpp"
 
@@ -61,10 +59,6 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
   const auto reference_extra = reference_diagnostic;
   const auto analytic_static = reference_static;
   const auto analytic_stage = reference_stage;
-  const auto analytic_hot = reference_hot;
-  const auto physical_scratch = rhs_physical_scratch;
-  const auto coordinate_scratch = rhs_coordinate_scratch;
-  const auto scalar_scratch = rhs_scalar_scratch;
   constexpr int reference_backend = Analytic ? 1 : 0;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
@@ -99,7 +93,6 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                size.d_view(m).x3min, size.d_view(m).x3max);
     const auto reference = MakeTypedProductionReferencePoint<Analytic>(
         reference_cache, reference_extra, analytic_static, analytic_stage,
-        analytic_hot,
         m, k, j, i, x, y, z, center_x, center_y, center_z);
     Real psi[4][4], metric[4][4], inverse[4][4], pi[4][4]; // NOLINT
     Real phi[3][4][4]; // NOLINT
@@ -166,7 +159,6 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       const auto reference = MakeTypedProductionReferencePoint<Analytic>(
           reference_cache, reference_extra, analytic_static, analytic_stage,
-          analytic_hot,
           m, k, j, i, x, y, z, center_x, center_y, center_z);
       Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
       Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
@@ -237,11 +229,10 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
     DebugFence("ref_gh CalcRHS gauge_driver");
   }
 
-  // The generic-cache backend remains the independent, qualified oracle.  Its
-  // task graph is intentionally unchanged while analytic production uses the
-  // explicit active-cell stages below.
-  if constexpr (!Analytic) {
-    par_for("ref_gh scalar source and pi rhs", DevExeSpace(), 0, nmb - 1,
+  // The lean source and principal Pi update share the same reconstructed point
+  // geometry.  Keep the source implementation in a separate inline function so
+  // its large contraction temporaries end before the Pi working set begins.
+  par_for("ref_gh scalar source and pi rhs", DevExeSpace(), 0, nmb - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     const Real x = CellCenterX(i - indcs.is, indcs.nx1,
@@ -252,7 +243,6 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                size.d_view(m).x3min, size.d_view(m).x3max);
     const auto reference = MakeTypedProductionReferencePoint<Analytic>(
         reference_cache, reference_extra, analytic_static, analytic_stage,
-        analytic_hot,
         m, k, j, i, x, y, z, center_x, center_y, center_z);
     Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
     Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
@@ -446,399 +436,8 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
         state_rhs(m, PiIndex(a, b), k, j, i) = pi_rhs;
       }
     }
-    });
-    DebugFence("ref_gh CalcRHS primary generic");
-  }
-
-  if constexpr (Analytic) {
-    // Pass A: reconstruct coordinate geometry once, retain the exact 32-Real
-    // principal/gauge layout and the symmetry-packed coordinate source data,
-    // and finish the eleven gauge-driver RHS fields.  The complete transient
-    // footprint is 32 + 84 + 10 = 126 Reals/active cell.
-    par_for("ref_gh staged physical geometry and gauge", DevExeSpace(),
-    0, nmb - 1, indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
-    KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-      const int ak = k - indcs.ks;
-      const int aj = j - indcs.js;
-      const int ai = i - indcs.is;
-      const Real x = CellCenterX(ai, indcs.nx1,
-                                 size.d_view(m).x1min, size.d_view(m).x1max);
-      const Real y = CellCenterX(aj, indcs.nx2,
-                                 size.d_view(m).x2min, size.d_view(m).x2max);
-      const Real z = CellCenterX(ak, indcs.nx3,
-                                 size.d_view(m).x3min, size.d_view(m).x3max);
-      const auto reference = MakeTypedProductionReferencePoint<true>(
-          reference_cache, reference_extra, analytic_static, analytic_stage,
-          analytic_hot, m, k, j, i, x, y, z,
-          center_x, center_y, center_z);
-      Real psi[4][4], metric[4][4], pi[4][4], phi[3][4][4]; // NOLINT
-      Real d_psi[4][4][4], d_metric[4][4][4]; // NOLINT
-      CoordinateGhGeometry geometry;
-      CompactAnalyticCoordinateGeometry compact_geometry;
-      Real determinant = 0.0;
-      if (!LoadProductionPointGeometry(
-              state, reference, m, k, j, i, psi, pi, phi, d_psi,
-              metric, d_metric, geometry, determinant, &compact_geometry)) {
-        for (int n = 0; n < kStagedPhysicalSize; ++n) {
-          physical_scratch(m, n, ak, aj, ai) = NAN;
-        }
-        for (int n = 0; n < kStagedCoordinateSize; ++n) {
-          coordinate_scratch(m, n, ak, aj, ai) = NAN;
-        }
-        for (int n = 0; n < kSymmetric4Size; ++n) {
-          scalar_scratch(m, n, ak, aj, ai) = NAN;
-        }
-        if (gauge_driver_enabled) {
-          for (int n = kHhatOffset; n < nvar; ++n) {
-            state_rhs(m, n, k, j, i) = NAN;
-          }
-        }
-        return;
-      }
-      Real spatial_inverse[3][3];  // NOLINT(runtime/arrays)
-      Real spatial_determinant = 0.0;
-      if (!InvertSpatial3(metric, spatial_inverse, spatial_determinant)) {
-        for (int n = 0; n < kStagedPhysicalSize; ++n) {
-          physical_scratch(m, n, ak, aj, ai) = NAN;
-        }
-        for (int n = 0; n < kStagedCoordinateSize; ++n) {
-          coordinate_scratch(m, n, ak, aj, ai) = NAN;
-        }
-        return;
-      }
-      physical_scratch(m, kStagedLapse, ak, aj, ai) = geometry.lapse;
-      for (int p = 0; p < 3; ++p) {
-        physical_scratch(m, kStagedShift + p, ak, aj, ai) = geometry.shift[p];
-        for (int q = p; q < 3; ++q) {
-          physical_scratch(
-              m, kStagedInverseSpatial + Symmetric3Index(p, q), ak, aj, ai)
-              = spatial_inverse[p][q];
-        }
-      }
-      Real spatial_connection[3][3][3];  // NOLINT(runtime/arrays)
-      for (int q = 0; q < 3; ++q) {
-        for (int p = 0; p < 3; ++p) {
-          for (int r = 0; r < 3; ++r) {
-            spatial_connection[q][p][r] = 0.0;
-            for (int ell = 0; ell < 3; ++ell) {
-              spatial_connection[q][p][r] += 0.5*spatial_inverse[q][ell]
-                  *(d_metric[p + 1][ell + 1][r + 1]
-                    + d_metric[r + 1][ell + 1][p + 1]
-                    - d_metric[ell + 1][p + 1][r + 1]);
-            }
-          }
-        }
-      }
-      for (int q = 0; q < 3; ++q) {
-        for (int p = 0; p < 3; ++p) {
-          for (int r = p; r < 3; ++r) {
-            physical_scratch(
-                m, kStagedSpatialConnection + 6*q + Symmetric3Index(p, r),
-                ak, aj, ai) = spatial_connection[q][p][r];
-          }
-        }
-      }
-      Real trace_k = 0.0;
-      for (int p = 0; p < 3; ++p) {
-        for (int q = 0; q < 3; ++q) {
-          trace_k -= geometry.lapse*spatial_inverse[p][q]
-                     *geometry.christoffel[0][p + 1][q + 1];
-        }
-      }
-      physical_scratch(m, kStagedTraceK, ak, aj, ai) = trace_k;
-      for (int p = 0; p < 3; ++p) {
-        Real d_inverse_00 = 0.0;
-        for (int a = 0; a < 4; ++a) {
-          for (int b = 0; b < 4; ++b) {
-            d_inverse_00 -= geometry.inverse_metric[0][a]
-                            *geometry.inverse_metric[0][b]
-                            *d_metric[p + 1][a][b];
-          }
-        }
-        physical_scratch(m, kStagedDAlpha + p, ak, aj, ai) =
-            0.5*geometry.lapse*geometry.lapse*geometry.lapse*d_inverse_00;
-      }
-      for (int a = 0; a < 4; ++a) {
-        coordinate_scratch(
-            m, kStagedCoordinateGaugeSource + a, ak, aj, ai) =
-            compact_geometry.geometry.gauge_source[a];
-        coordinate_scratch(
-            m, kStagedCoordinateGaugeConstraint + a, ak, aj, ai) =
-            compact_geometry.geometry.gauge_constraint[a];
-        for (int b = a; b < 4; ++b) {
-          coordinate_scratch(
-              m, kStagedCoordinateMetric + Symmetric4Index(a, b), ak, aj, ai)
-              = metric[a][b];
-        }
-        for (int p = 0; p < 4; ++p) {
-          coordinate_scratch(
-              m, kStagedCoordinateDReferenceGauge + 4*p + a, ak, aj, ai)
-              = compact_geometry.d_reference_gauge[p][a];
-        }
-      }
-      for (int p = 0; p < 4; ++p) {
-        for (int a = 0; a < 4; ++a) {
-          for (int b = a; b < 4; ++b) {
-            coordinate_scratch(
-                m, kStagedCoordinateDMetric + 10*p + Symmetric4Index(a, b),
-                ak, aj, ai) = d_metric[p][a][b];
-          }
-        }
-      }
-      for (int component = 0; component < kSymmetric4Size; ++component) {
-        coordinate_scratch(
-            m, kStagedCoordinateFinalSource + component, ak, aj, ai) = 0.0;
-      }
-      if (!gauge_driver_enabled) return;
-
-      const Real idx[3] = {1.0/size.d_view(m).dx1,
-                           1.0/size.d_view(m).dx2,
-                           1.0/size.d_view(m).dx3};
-      Real hhat[4];          // NOLINT(runtime/arrays)
-      Real theta[4];         // NOLINT(runtime/arrays)
-      Real upsilon[3];       // NOLINT(runtime/arrays)
-      Real d_hhat[3][4];     // NOLINT(runtime/arrays)
-      ReferenceGaugeBaseline baseline{};
-      if (gauge_reference_subtraction) {
-        baseline = ComputeProductionReferenceGaugeBaseline(reference);
-        if (!baseline.valid) {
-          for (int n = kHhatOffset; n < nvar; ++n) {
-            state_rhs(m, n, k, j, i) = NAN;
-          }
-          for (int n = 0; n < kSymmetric4Size; ++n) {
-            coordinate_scratch(
-                m, kStagedCoordinateFinalSource + n, ak, aj, ai) = NAN;
-          }
-          return;
-        }
-      }
-      for (int A = 0; A < 4; ++A) {
-        hhat[A] = state(m, kHhatOffset + A, k, j, i)
-                  + (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
-        theta[A] = state(m, kThetaOffset + A, k, j, i)
-                   + (gauge_reference_subtraction ? baseline.theta[A] : 0.0);
-        for (int p = 0; p < 3; ++p) {
-          d_hhat[p][A] = Dx<FDNG>(
-              p, idx, state, m, kHhatOffset + A, k, j, i)
-              + (gauge_reference_subtraction
-                     ? baseline.d_hhat[p + 1][A] : 0.0);
-        }
-      }
-      for (int p = 0; p < 3; ++p) {
-        upsilon[p] = state(m, kUpsilonOffset + p, k, j, i);
-      }
-      PhysicalGaugeTarget target;
-      if (!ComputePhysicalGaugeTarget(
-              metric, d_metric, geometry, reference, upsilon,
-              shift_nu, shift_eta, target)) {
-        for (int n = kHhatOffset; n < nvar; ++n) {
-          state_rhs(m, n, k, j, i) = NAN;
-        }
-        for (int n = 0; n < kSymmetric4Size; ++n) {
-          coordinate_scratch(
-              m, kStagedCoordinateFinalSource + n, ak, aj, ai) = NAN;
-        }
-        return;
-      }
-      const GaugeDriverRhs gauge_rhs = ComputeGaugeDriverRhs(
-          reference, hhat, theta, upsilon, d_hhat, geometry.shift,
-          target.frame, target.conformal_gamma, gauge_mu, gauge_eta, shift_eta);
-      for (int A = 0; A < 4; ++A) {
-        state_rhs(m, kHhatOffset + A, k, j, i) = gauge_rhs.hhat[A]
-            - (gauge_reference_subtraction ? baseline.d_hhat[0][A] : 0.0);
-        state_rhs(m, kThetaOffset + A, k, j, i) = gauge_rhs.theta[A]
-            - ((gauge_reference_subtraction && reference_time_dependent)
-                   ? ProductionReferenceDtTheta(reference, A) : 0.0);
-      }
-      for (int p = 0; p < 3; ++p) {
-        state_rhs(m, kUpsilonOffset + p, k, j, i) = gauge_rhs.upsilon[p];
-      }
-      Real full_d_hhat[4][4];  // NOLINT(runtime/arrays)
-      for (int A = 0; A < 4; ++A) {
-        full_d_hhat[0][A] = gauge_rhs.hhat[A];
-        for (int p = 0; p < 3; ++p) {
-          full_d_hhat[p + 1][A] = d_hhat[p][A];
-        }
-      }
-      Real gauge_source[4][4] = {};  // NOLINT(runtime/arrays)
-      AddCompactAnalyticOrdinaryGaugeSource(
-          metric, d_metric, reference.analytic, compact_geometry,
-          hhat, full_d_hhat, gamma0, gauge_source);
-      for (int A = 0; A < 4; ++A) {
-        for (int B = A; B < 4; ++B) {
-          coordinate_scratch(
-              m, kStagedCoordinateFinalSource + Symmetric4Index(A, B),
-              ak, aj, ai)
-              = gauge_source[A][B];
-        }
-      }
-    });
-    DebugFence("ref_gh CalcRHS staged physical geometry and gauge");
-
-    // Pass B: one flat work item per coordinate symmetric pair evaluates the
-    // standard-GH partial-wave source.  No reference tensors are materialized.
-    const int cells_per_block = indcs.nx1*indcs.nx2*indcs.nx3;
-    const int active_cells = nmb*cells_per_block;
-    Kokkos::parallel_for(
-        "ref_gh staged coordinate partial source components",
-        Kokkos::RangePolicy<DevExeSpace>(0, kSymmetric4Size*active_cells),
-        KOKKOS_LAMBDA(const int linear) {
-          const int component = linear/active_cells;
-          int work = linear - component*active_cells;
-          const int ai = work % indcs.nx1;
-          work /= indcs.nx1;
-          const int aj = work % indcs.nx2;
-          work /= indcs.nx2;
-          const int ak = work % indcs.nx3;
-          const int m = work/indcs.nx3;
-          int a = 0;
-          int b = 0;
-          Symmetric4Pair(component, a, b);
-          const DeviceStagedCoordinatePoint packed{
-              coordinate_scratch, physical_scratch, scalar_scratch,
-              m, ak, aj, ai};
-          scalar_scratch(m, component, ak, aj, ai) =
-              StagedCoordinateStandardSourceComponent(packed, a, b, gamma0);
-        });
-    DebugFence("ref_gh CalcRHS staged coordinate partial source components");
-
-    // Pass C: transform the completed coordinate source to one reference-frame
-    // component.  The already-contracted ordinary-gauge increment from pass A
-    // is added in the final ten slots of the 84-Real scratch.
-    Kokkos::parallel_for(
-        "ref_gh staged coordinate frame transform components",
-        Kokkos::RangePolicy<DevExeSpace>(0, kSymmetric4Size*active_cells),
-        KOKKOS_LAMBDA(const int linear) {
-          const int component = linear/active_cells;
-          int work = linear - component*active_cells;
-          const int ai = work % indcs.nx1;
-          work /= indcs.nx1;
-          const int aj = work % indcs.nx2;
-          work /= indcs.nx2;
-          const int ak = work % indcs.nx3;
-          const int m = work/indcs.nx3;
-          const int i = ai + indcs.is;
-          const int j = aj + indcs.js;
-          const int k = ak + indcs.ks;
-          int A = 0;
-          int B = 0;
-          Symmetric4Pair(component, A, B);
-          const Real x = CellCenterX(
-              ai, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max);
-          const Real y = CellCenterX(
-              aj, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max);
-          const Real z = CellCenterX(
-              ak, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
-          const auto reference = MakeTypedProductionReferencePoint<true>(
-              reference_cache, reference_extra, analytic_static, analytic_stage,
-              analytic_hot, m, k, j, i, x, y, z,
-              center_x, center_y, center_z);
-          Real d_psi[4];  // NOLINT(runtime/arrays)
-          for (int p = 0; p < 3; ++p) {
-            d_psi[p + 1] = 0.0;
-            for (int I = 0; I < 3; ++I) {
-              d_psi[p + 1] += ReferenceSpatialCoframe(reference, I, p)
-                              *state(m, PhiIndex(I, A, B), k, j, i);
-            }
-          }
-          const Real lapse = physical_scratch(m, kStagedLapse, ak, aj, ai);
-          d_psi[0] = -lapse*state(m, PiIndex(A, B), k, j, i);
-          for (int p = 0; p < 3; ++p) {
-            d_psi[0] += physical_scratch(m, kStagedShift + p, ak, aj, ai)
-                        *d_psi[p + 1];
-          }
-          const DeviceStagedCoordinatePoint packed{
-              coordinate_scratch, physical_scratch, scalar_scratch,
-              m, ak, aj, ai};
-          packed.SetFinalSource(
-              A, B, packed.FinalSource(A, B)
-                    + StagedCoordinateTransformComponent(
-                          packed, reference, d_psi, A, B));
-        });
-    DebugFence("ref_gh CalcRHS staged coordinate frame transform components");
-
-    // Pass D: one symmetric Pi component per flat work item.  Only that
-    // component's Phi/Pi stencil values are live.
-    Kokkos::parallel_for(
-        "ref_gh staged pi principal components",
-        Kokkos::RangePolicy<DevExeSpace>(0, kSymmetric4Size*active_cells),
-        KOKKOS_LAMBDA(const int linear) {
-          const int component = linear/active_cells;
-          int work = linear - component*active_cells;
-          const int ai = work % indcs.nx1;
-          work /= indcs.nx1;
-          const int aj = work % indcs.nx2;
-          work /= indcs.nx2;
-          const int ak = work % indcs.nx3;
-          const int m = work/indcs.nx3;
-          const int i = ai + indcs.is;
-          const int j = aj + indcs.js;
-          const int k = ak + indcs.ks;
-          int A = 0;
-          int B = 0;
-          Symmetric4Pair(component, A, B);
-          const Real x = CellCenterX(
-              ai, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max);
-          const Real y = CellCenterX(
-              aj, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max);
-          const Real z = CellCenterX(
-              ak, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max);
-          const auto reference = MakeTypedProductionReferencePoint<true>(
-              reference_cache, reference_extra, analytic_static, analytic_stage,
-              analytic_hot, m, k, j, i, x, y, z,
-              center_x, center_y, center_z);
-          const Real idx[3] = {1.0/size.d_view(m).dx1,
-                               1.0/size.d_view(m).dx2,
-                               1.0/size.d_view(m).dx3};
-          const Real lapse = physical_scratch(m, kStagedLapse, ak, aj, ai);
-          const Real trace_k = physical_scratch(m, kStagedTraceK, ak, aj, ai);
-          Real divergence = 0.0;
-          Real lapse_gradient_term = 0.0;
-          for (int p = 0; p < 3; ++p) {
-            const Real d_alpha =
-                physical_scratch(m, kStagedDAlpha + p, ak, aj, ai);
-            for (int q = 0; q < 3; ++q) {
-              const Real inverse_pq = physical_scratch(
-                  m, kStagedInverseSpatial + Symmetric3Index(p, q),
-                  ak, aj, ai);
-              Real partial_tilde_phi = 0.0;
-              Real tilde_phi_q = 0.0;
-              for (int I = 0; I < 3; ++I) {
-                const Real phi_i = state(m, PhiIndex(I, A, B), k, j, i);
-                partial_tilde_phi +=
-                    CoframeDerivative(reference, p + 1, I + 1, q + 1)*phi_i
-                    + ReferenceSpatialCoframe(reference, I, q)
-                      *Dx<FDNG>(p, idx, state, m, PhiIndex(I, A, B), k, j, i);
-                tilde_phi_q += ReferenceSpatialCoframe(reference, I, q)*phi_i;
-              }
-              Real covariant_derivative = partial_tilde_phi;
-              for (int r = 0; r < 3; ++r) {
-                Real tilde_phi_r = 0.0;
-                for (int I = 0; I < 3; ++I) {
-                  tilde_phi_r += ReferenceSpatialCoframe(reference, I, r)
-                      *state(m, PhiIndex(I, A, B), k, j, i);
-                }
-                covariant_derivative -= physical_scratch(
-                    m, kStagedSpatialConnection + 6*r
-                         + Symmetric3Index(p, q), ak, aj, ai)*tilde_phi_r;
-              }
-              divergence += inverse_pq*covariant_derivative;
-              lapse_gradient_term += inverse_pq*d_alpha*tilde_phi_q;
-            }
-          }
-          Real pi_rhs = lapse*(
-              trace_k*state(m, PiIndex(A, B), k, j, i) - divergence
-              + coordinate_scratch(
-                    m, kStagedCoordinateFinalSource + component, ak, aj, ai))
-              - lapse_gradient_term;
-          for (int p = 0; p < 3; ++p) {
-            pi_rhs += physical_scratch(m, kStagedShift + p, ak, aj, ai)
-                      *Dx<FDNG>(p, idx, state, m, PiIndex(A, B), k, j, i);
-          }
-          state_rhs(m, PiIndex(A, B), k, j, i) = pi_rhs;
-        });
-    DebugFence("ref_gh CalcRHS staged pi principal components");
-  }
+  });
+  DebugFence("ref_gh CalcRHS primary");
 
   if (phi_ordering == 0) {
     // Preserve the qualified compatible kernel and its arithmetic exactly.
@@ -853,7 +452,6 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       const auto reference = MakeTypedProductionReferencePoint<Analytic>(
           reference_cache, reference_extra, analytic_static, analytic_stage,
-          analytic_hot,
           m, k, j, i, x, y, z, center_x, center_y, center_z);
       const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                            1.0/size.d_view(m).dx3};
@@ -888,7 +486,6 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       const auto reference = MakeTypedProductionReferencePoint<Analytic>(
           reference_cache, reference_extra, analytic_static, analytic_stage,
-          analytic_hot,
           m, k, j, i, x, y, z, center_x, center_y, center_z);
       const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                            1.0/size.d_view(m).dx3};
@@ -991,7 +588,6 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                  size.d_view(m).x3min, size.d_view(m).x3max);
       const auto reference = MakeTypedProductionReferencePoint<Analytic>(
           reference_cache, reference_extra, analytic_static, analytic_stage,
-          analytic_hot,
           m, k, j, i, x, y, z, center_x, center_y, center_z);
       const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                            1.0/size.d_view(m).dx3};
@@ -1090,7 +686,6 @@ void RefGh::CalcConstraintsImpl() {
   const auto reference_extra = reference_diagnostic;
   const auto analytic_static = reference_static;
   const auto analytic_stage = reference_stage;
-  const auto analytic_hot = reference_hot;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
   const Real center_z = opt.reference_center[2];
@@ -1111,7 +706,6 @@ void RefGh::CalcConstraintsImpl() {
                                size.d_view(m).x3min, size.d_view(m).x3max);
     const auto reference = MakeTypedProductionReferencePoint<Analytic>(
         reference_cache, reference_extra, analytic_static, analytic_stage,
-        analytic_hot,
         m, k, j, i, x, y, z, center_x, center_y, center_z);
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};

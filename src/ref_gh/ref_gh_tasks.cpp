@@ -17,7 +17,6 @@
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "ref_gh/analytic_radial_q_production.hpp"
-#include "ref_gh/generated/analytic_radial_q_hot_reference.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/feedback_continuation.hpp"
 #include "ref_gh/puncture_exponent.hpp"
@@ -101,6 +100,8 @@ void StoreQControlledStationaryTrumpetMetricState(
     const Real gaussian_width, const Real q, const Real q_dot,
     const Real q_ddot,
     const Real x, const Real y, const Real z) {
+  for (int n = 0; n < kHhatOffset; ++n) state(m, n, k, j, i) = 0.0;
+  ProjectedFirstOrderMetric metric{};
   if constexpr (Analytic) {
     const AnalyticRadialQPoint current =
         MakeQControlledBoundaryAnalyticPoint(
@@ -111,70 +112,21 @@ void StoreQControlledStationaryTrumpetMetricState(
         reference_static(m, kAnalyticTrumpetL, k, j, i), 0.0,
         reference_static(m, kAnalyticTrumpetLR, k, j, i), 0.0, 0.0,
         reference_static(m, kAnalyticTrumpetLRR, k, j, i), 0.0, 0.0};
-    const Real lapse = physical.alpha.value;
-    const Real shift[3] = {
-        physical.b.value*physical.displacement[0],
-        physical.b.value*physical.displacement[1],
-        physical.b.value*physical.displacement[2]};
-    bool valid = lapse > 0.0 && Kokkos::isfinite(lapse);
-    // Store one symmetric component before advancing to the next.  This is
-    // the same contraction as ProjectPhysicalMetricToReferenceImpl, but it
-    // avoids simultaneously retaining its 16-Real metric, 64-Real metric
-    // derivative, and 50-Real returned state in the PVC boundary kernel.
-    for (int A = 0; A < 4; ++A) {
-      for (int B = A; B < 4; ++B) {
-        Real psi = 0.0;
-        Real d_psi[4] = {};  // NOLINT(runtime/arrays)
-        for (int a = 0; a < 4; ++a) {
-          const Real frame_a = ReferenceFrame(current, A, a);
-          for (int b = 0; b < 4; ++b) {
-            const Real frame_b = ReferenceFrame(current, B, b);
-            const Real metric_ab = AnalyticMetric(physical, a, b);
-            psi += frame_a*frame_b*metric_ab;
-            for (int p = 0; p < 4; ++p) {
-              d_psi[p] +=
-                  (ReferenceDFrame(current, p, A, a)*frame_b
-                   + frame_a*ReferenceDFrame(current, p, B, b))*metric_ab
-                  + frame_a*frame_b*AnalyticDMetric(physical, p, a, b);
-            }
-          }
-        }
-        Real pi = -d_psi[0]/lapse;
-        for (int p = 0; p < 3; ++p) pi += shift[p]*d_psi[p + 1]/lapse;
-        state(m, PsiIndex(A, B), k, j, i) = psi;
-        state(m, PiIndex(A, B), k, j, i) = pi;
-        valid = valid && Kokkos::isfinite(psi) && Kokkos::isfinite(pi);
-        for (int I = 0; I < 3; ++I) {
-          Real phi = 0.0;
-          for (int p = 0; p < 3; ++p) {
-            phi += ReferenceSpatialFrame(current, I, p)*d_psi[p + 1];
-          }
-          state(m, PhiIndex(I, A, B), k, j, i) = phi;
-          valid = valid && Kokkos::isfinite(phi);
-        }
-      }
-    }
-    if (!valid) {
-      for (int n = 0; n < kHhatOffset; ++n) {
-        state(m, n, k, j, i) = NAN;
-      }
-    }
-    return;
+    metric = ProjectAnalyticPhysicalMetricToReference(physical, current);
+  } else {
+    ReferenceGeometry physical;
+    const TrumpetSchwarzschildReference physical_provider{
+        table, mass, {center_x, center_y, center_z}};
+    physical_provider.Populate(0.0, x, y, z, physical);
+    const TrumpetQControlledReferenceParameters parameters{
+        mass, {center_x, center_y, center_z}, gaussian_width,
+        q, q_dot, q_ddot};
+    ReferenceGeometry current;
+    const TrumpetQControlledReference current_provider{table, parameters};
+    current_provider.Populate(0.0, x, y, z, current);
+    metric = ProjectPhysicalMetricToReference(
+        physical.metric, physical.d_metric, current);
   }
-
-  for (int n = 0; n < kHhatOffset; ++n) state(m, n, k, j, i) = 0.0;
-  ReferenceGeometry physical;
-  const TrumpetSchwarzschildReference physical_provider{
-      table, mass, {center_x, center_y, center_z}};
-  physical_provider.Populate(0.0, x, y, z, physical);
-  const TrumpetQControlledReferenceParameters parameters{
-      mass, {center_x, center_y, center_z}, gaussian_width,
-      q, q_dot, q_ddot};
-  ReferenceGeometry current;
-  const TrumpetQControlledReference current_provider{table, parameters};
-  current_provider.Populate(0.0, x, y, z, current);
-  const ProjectedFirstOrderMetric metric = ProjectPhysicalMetricToReference(
-      physical.metric, physical.d_metric, current);
   if (!metric.valid) {
     for (int n = 0; n < nvar; ++n) state(m, n, k, j, i) = NAN;
     return;
@@ -785,17 +737,11 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
   const TrumpetQControlledReferenceParameters parameters{
       mass, {center_x, center_y, center_z}, opt.q_gaussian_width,
       q_controller.q, q_controller.q_dot, 0.0};
-  // Accumulate the nine active moments into a compact device view.  Kokkos's
-  // custom 32-Real reducer faults on PVC for some otherwise unrelated device
-  // allocation layouts even when its result lives in SYCLDeviceUSMSpace.  One
-  // atomic accumulation kernel avoids that backend path while preserving the
-  // identical estimator, one compact device reduction, and one MPI collective.
-  const auto device_sums = q_reduction_result;
-  Kokkos::deep_copy(DevExeSpace(), device_sums, 0.0);
-  Kokkos::parallel_for(
-      "ref_gh compact current-q atomic reduction",
+  array_sum::GlobalSum sums;
+  Kokkos::parallel_reduce(
+      "ref_gh compact current-q reduction",
       Kokkos::RangePolicy<>(DevExeSpace(), 0, q_sample_count),
-      KOKKOS_LAMBDA(const int sample) {
+      KOKKOS_LAMBDA(const int sample, array_sum::GlobalSum &total) {
         int work = cells(sample);
         const int ii = work % indcs.nx1; work /= indcs.nx1;
         const int jj = work % indcs.nx2; work /= indcs.nx2;
@@ -816,26 +762,19 @@ void RefGh::MeasureQControllerAtTime(const Real stage_time) {
         if (!EvaluateQControlledPhysicalExponent(
                 state, table, parameters, m, k, j, i, x, y, z,
                 q_loc, q_analytic, epsilon_g)) {
-          Kokkos::atomic_add(&device_sums(kInvalid), 1.0);
+          total.the_array[kInvalid] += 1.0;
           return;
         }
         const Real weight = weights(sample);
-        Kokkos::atomic_add(&device_sums(kW), weight);
-        Kokkos::atomic_add(&device_sums(kW2), weight*weight);
-        Kokkos::atomic_add(&device_sums(kWQ), weight*q_loc);
-        Kokkos::atomic_add(&device_sums(kWQ2), weight*q_loc*q_loc);
-        Kokkos::atomic_add(&device_sums(kWQAnalytic), weight*q_analytic);
-        Kokkos::atomic_add(&device_sums(kWEpsilon), weight*epsilon_g);
-        Kokkos::atomic_add(&device_sums(kWEpsilon2),
-                           weight*epsilon_g*epsilon_g);
-        Kokkos::atomic_add(&device_sums(kCount), 1.0);
-      });
-  const auto host_sums = Kokkos::create_mirror_view_and_copy(
-      HostMemSpace(), device_sums);
-  array_sum::GlobalSum sums;
-  for (int moment = 0; moment < NREDUCTION_VARIABLES; ++moment) {
-    sums.the_array[moment] = host_sums(moment);
-  }
+        total.the_array[kW] += weight;
+        total.the_array[kW2] += weight*weight;
+        total.the_array[kWQ] += weight*q_loc;
+        total.the_array[kWQ2] += weight*q_loc*q_loc;
+        total.the_array[kWQAnalytic] += weight*q_analytic;
+        total.the_array[kWEpsilon] += weight*epsilon_g;
+        total.the_array[kWEpsilon2] += weight*epsilon_g*epsilon_g;
+        total.the_array[kCount] += 1.0;
+      }, Kokkos::Sum<array_sum::GlobalSum>(sums));
   DebugFence("ref_gh compact q-controller reduction");
 #if MPI_PARALLEL_ENABLED
   // This is the sole collective in the closed-loop q measurement.
@@ -1688,7 +1627,6 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   if (opt.reference_backend == 1) {
     const auto static_view = reference_static;
     const auto stage_view = reference_stage;
-    const auto hot_view = reference_hot;
     if (!analytic_static_initialized) {
       Kokkos::parallel_for(
       "ref_gh analytic radial-q static reference",
@@ -1741,39 +1679,6 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       }
     });
     Kokkos::fence("ref_gh analytic radial-q stage reference");
-    // Direct generated component expressions fill only the 24 spin, 96 spin
-    // derivative, and 21 Riemann coefficients consumed repeatedly by the
-    // covariant source.  The flat component-by-cell policy ensures that no
-    // work item owns a full tensor or any generic metric-jet workspace.
-    Kokkos::parallel_for(
-    "ref_gh analytic radial-q hot reference",
-    Kokkos::RangePolicy<>(DevExeSpace(), 0,
-                          ncells*kReferenceAnalyticHotSize),
-    KOKKOS_LAMBDA(const int idx) {
-      const int component = idx/ncells;
-      int work = idx % ncells;
-      const int i = work % n1; work /= n1;
-      const int j = work % n2; work /= n2;
-      const int k = work % n3;
-      const int m = work/n3;
-      const Real x = CellCenterX(i - indcs.is, indcs.nx1,
-                                 size.d_view(m).x1min,
-                                 size.d_view(m).x1max);
-      const Real y = CellCenterX(j - indcs.js, indcs.nx2,
-                                 size.d_view(m).x2min,
-                                 size.d_view(m).x2max);
-      const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
-                                 size.d_view(m).x3min,
-                                 size.d_view(m).x3max);
-      const AnalyticRadialQPoint point = MakeAnalyticRadialQPoint(
-          static_view, stage_view, m, k, j, i, x, y, z,
-          center_x, center_y, center_z);
-      hot_view(m, component, k, j, i) =
-          GeneratedAnalyticRadialQHotReferenceComponent(
-              point.alpha, point.l, point.b, point.displacement,
-              point.radius, component);
-    });
-    Kokkos::fence("ref_gh analytic radial-q hot reference");
     reference_cache_time = time;
     reference_cache_generation = current_reference_generation;
     if (diagnostics_requested) {
@@ -3137,7 +3042,6 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
   const auto reference_extra = reference_diagnostic;
   const auto analytic_static = reference_static;
   const auto analytic_stage = reference_stage;
-  const auto analytic_hot = reference_hot;
   const int reference_backend = opt.reference_backend;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
@@ -3160,8 +3064,7 @@ TaskStatus RefGh::NewTimeStep(Driver *driver, int stage) {
                                    size.d_view(m).x3min, size.d_view(m).x3max);
         const ProductionReferencePoint reference = MakeProductionReferencePoint(
             reference_backend, reference_cache, reference_extra,
-            analytic_static, analytic_stage, analytic_hot,
-            m, k, j, i, x, y, z,
+            analytic_static, analytic_stage, m, k, j, i, x, y, z,
             center_x, center_y, center_z);
         Real psi[4][4], metric[4][4];  // NOLINT(runtime/arrays)
         for (int a = 0; a < 4; ++a) {

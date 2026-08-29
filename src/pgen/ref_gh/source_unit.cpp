@@ -15,12 +15,10 @@
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
 #include "ref_gh/covariant_gh_source.hpp"
-#include "ref_gh/analytic_radial_q_production.hpp"
 #include "ref_gh/analytic_radial_q_source.hpp"
 #include "ref_gh/gamma2_damping.hpp"
 #include "ref_gh/generated/analytic_radial_q_geometry.hpp"
 #include "ref_gh/generated/analytic_radial_q_gauge.hpp"
-#include "ref_gh/generated/analytic_radial_q_hot_reference.hpp"
 #include "ref_gh/gauge_driver.hpp"
 #include "ref_gh/phi_ordering.hpp"
 #include "ref_gh/physical_gauge_target.hpp"
@@ -30,7 +28,6 @@
 #include "ref_gh/ref_gh_characteristics.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_analytic_radial_q.hpp"
-#include "ref_gh/reference_analytic_hot.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_geometry.hpp"
 #include "ref_gh/reference_generic_singular.hpp"
@@ -39,7 +36,6 @@
 #include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
 #include "ref_gh/reference_trumpet_q_controlled.hpp"
-#include "ref_gh/staged_coordinate_rhs.hpp"
 #include "ref_gh/standard_gh_source.hpp"
 
 namespace {
@@ -2738,18 +2734,13 @@ ref_gh::GaugeDriverRhs CompactAnalyticGaugeDriverRhs(
   return rhs;
 }
 
-template <bool CompactBackend, bool CoordinateBackend = false,
-          typename Reference>
+template <bool CompactBackend, typename Reference>
 KOKKOS_INLINE_FUNCTION
 bool EvaluateRhsOraclePoint(
     const Reference &reference,
     const ref_gh::AnalyticRadialQPoint &analytic_reference,
     const int phi_ordering, const int seed,
-    Real rhs[ref_gh::nvar], Real rhs_condition[ref_gh::nvar],
-    Real *scalar_source_output = nullptr,
-    Real *scalar_source_condition_output = nullptr) {
-  static_assert(!CoordinateBackend || CompactBackend,
-                "coordinate discriminator requires compact analytic geometry");
+    Real rhs[ref_gh::nvar], Real rhs_condition[ref_gh::nvar]) {
   constexpr Real gamma0 = 0.73;
   constexpr Real gamma2 = 0.41;
   constexpr Real gauge_mu = 0.62;
@@ -2924,31 +2915,9 @@ bool EvaluateRhsOraclePoint(
   Real scalar_source[4][4];  // NOLINT(runtime/arrays)
   Real scalar_source_condition[4][4] = {};  // NOLINT(runtime/arrays)
   if constexpr (CompactBackend) {
-    if constexpr (CoordinateBackend) {
-      Real d_psi[4][4][4];  // NOLINT(runtime/arrays)
-      for (int A = 0; A < 4; ++A) {
-        for (int B = 0; B < 4; ++B) {
-          for (int p = 0; p < 3; ++p) {
-            d_psi[p + 1][A][B] = 0.0;
-            for (int I = 0; I < 3; ++I) {
-              d_psi[p + 1][A][B] += ref_gh::ReferenceSpatialCoframe(
-                  reference, I, p)*phi[I][A][B];
-            }
-          }
-          d_psi[0][A][B] = -geometry.lapse*pi[A][B];
-          for (int p = 0; p < 3; ++p) {
-            d_psi[0][A][B] += geometry.shift[p]*d_psi[p + 1][A][B];
-          }
-        }
-      }
-      if (!ref_gh::StagedCoordinateScalarWaveSource(
-              metric, d_metric, d_psi, reference, compact_geometry,
-              gamma0, scalar_source)) return false;
-    } else if (!ref_gh::ProductionCovariantScalarWaveSource(
-                   psi, pi, phi, reference, geometry,
-                   gamma0, scalar_source)) {
-      return false;
-    }
+    if (!ref_gh::CompactAnalyticRadialQScalarWaveSource(
+            psi, pi, phi, analytic_reference, geometry,
+            gamma0, scalar_source)) return false;
   } else {
     ref_gh::CovariantSourceSectors sectors;
     if (!ref_gh::CovariantGhScalarWaveSource(
@@ -2992,18 +2961,6 @@ bool EvaluateRhsOraclePoint(
     for (int A = 0; A < 4; ++A) {
       for (int B = 0; B < 4; ++B) {
         scalar_source_condition[A][B] += gauge_condition_sum;
-      }
-    }
-  }
-  if (scalar_source_output != nullptr) {
-    for (int A = 0; A < 4; ++A) {
-      for (int B = A; B < 4; ++B) {
-        const int component = ref_gh::Symmetric4Index(A, B);
-        scalar_source_output[component] = scalar_source[A][B];
-        if (scalar_source_condition_output != nullptr) {
-          scalar_source_condition_output[component] =
-              scalar_source_condition[A][B];
-        }
       }
     }
   }
@@ -3170,62 +3127,6 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
   constexpr int npoints = kAnalyticOraclePointCount;
   constexpr int norderings = 2;
   constexpr int nsamples = nq*nrate*nacceleration*npoints*norderings;
-  DvceArray5D<Real> hot_reference(
-      "ref_gh all-61 analytic hot reference", 1,
-      ref_gh::kReferenceAnalyticHotSize, 1, 1, nsamples);
-  DvceArray1D<Real> coordinate_source_errors(
-      "ref_gh staged coordinate pointwise source errors", nsamples);
-  Kokkos::parallel_for(
-      "ref_gh populate all-61 analytic hot reference",
-      Kokkos::RangePolicy<>(
-          DevExeSpace(), 0, nsamples*ref_gh::kReferenceAnalyticHotSize),
-      KOKKOS_LAMBDA(const int idx) {
-        const int component = idx/nsamples;
-        int work = idx % nsamples;
-        work /= norderings;
-        const Real q_values[nq] = {0.75, 0.9, 1.0, 1.1, 1.25, 2.0};
-        const Real q_dot_values[nrate] = {-0.1, 0.0, 0.1};
-        const Real q_ddot_values[nacceleration] = {-0.05, 0.0, 0.05};
-        const Real q = q_values[work % nq]; work /= nq;
-        const Real q_dot = q_dot_values[work % nrate]; work /= nrate;
-        const Real q_ddot = q_ddot_values[work % nacceleration];
-        work /= nacceleration;
-        Real x = 0.0;
-        Real y = 0.0;
-        Real z = 0.0;
-        AnalyticOraclePoint(work, x, y, z);
-        const Real displacement[3] = {x, y, z};
-        const Real radius = Kokkos::sqrt(x*x + y*y + z*z);
-        Real static_coefficients[ref_gh::kAnalyticRadialQStaticSize];
-        Real stage_coefficients[ref_gh::kAnalyticRadialQStageSize];
-        ref_gh::EvaluateAnalyticRadialQStatic(
-            table, 1.0, 3.0, x, y, z, 0.0, 0.0, 0.0,
-            static_coefficients);
-        ref_gh::EvaluateAnalyticRadialQStage(
-            static_coefficients, q, q_dot, q_ddot, stage_coefficients);
-        const ref_gh::AnalyticRadialScalar analytic_alpha{
-            static_coefficients[ref_gh::kAnalyticAlpha], 0.0,
-            static_coefficients[ref_gh::kAnalyticAlphaR], 0.0, 0.0,
-            static_coefficients[ref_gh::kAnalyticAlphaRR], 0.0, 0.0};
-        const ref_gh::AnalyticRadialScalar analytic_l{
-            stage_coefficients[ref_gh::kAnalyticL],
-            stage_coefficients[ref_gh::kAnalyticLT],
-            stage_coefficients[ref_gh::kAnalyticLR],
-            stage_coefficients[ref_gh::kAnalyticLTT],
-            stage_coefficients[ref_gh::kAnalyticLTR],
-            stage_coefficients[ref_gh::kAnalyticLRR],
-            stage_coefficients[ref_gh::kAnalyticLTTR],
-            stage_coefficients[ref_gh::kAnalyticLTRR]};
-        const ref_gh::AnalyticRadialScalar analytic_b{
-            static_coefficients[ref_gh::kAnalyticShiftB], 0.0,
-            static_coefficients[ref_gh::kAnalyticShiftBR], 0.0, 0.0,
-            static_coefficients[ref_gh::kAnalyticShiftBRR], 0.0, 0.0};
-        hot_reference(0, component, 0, 0, idx % nsamples) =
-            ref_gh::GeneratedAnalyticRadialQHotReferenceComponent(
-                analytic_alpha, analytic_l, analytic_b, displacement, radius,
-                component);
-      });
-  Kokkos::fence();
   using MaxLoc = Kokkos::MaxLoc<Real, int>;
   MaxLoc::value_type maximum;
   Kokkos::parallel_reduce(
@@ -3272,8 +3173,6 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
             static_coefficients[ref_gh::kAnalyticShiftBRR], 0.0, 0.0};
         const ref_gh::AnalyticRadialQPoint analytic_reference{
             analytic_alpha, analytic_l, analytic_b, {x, y, z}, radius};
-        const ref_gh::AnalyticRadialQHotPoint analytic_hot_reference{
-            analytic_reference, hot_reference, 0, 0, 0, sample};
         ref_gh::ReferenceGeometry generic_reference;
         ref_gh::PopulateIsotropicReferenceGeometry(
             ref_gh::AnalyticRadialScalarOracleJet(
@@ -3284,51 +3183,25 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
                 analytic_reference, analytic_b),
             x, y, z, 0.0, 0.0, 0.0, generic_reference);
         Real generic_rhs[ref_gh::nvar];  // NOLINT(runtime/arrays)
-        Real generated_rhs[ref_gh::nvar];  // NOLINT(runtime/arrays)
-        Real staged_rhs[ref_gh::nvar];     // NOLINT(runtime/arrays)
+        Real compact_rhs[ref_gh::nvar];  // NOLINT(runtime/arrays)
         Real generic_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
-        Real generated_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
-        Real staged_condition[ref_gh::nvar];     // NOLINT(runtime/arrays)
-        Real generic_source[ref_gh::kSymmetric4Size];  // NOLINT(runtime/arrays)
-        Real generic_source_condition[ref_gh::kSymmetric4Size];  // NOLINT
-        Real coordinate_source[ref_gh::kSymmetric4Size];  // NOLINT(runtime/arrays)
-        const bool generic_valid = EvaluateRhsOraclePoint<false, false>(
+        Real compact_condition[ref_gh::nvar];  // NOLINT(runtime/arrays)
+        const bool generic_valid = EvaluateRhsOraclePoint<false>(
             generic_reference, analytic_reference,
-            phi_ordering, sample, generic_rhs, generic_condition,
-            generic_source, generic_source_condition);
-        const bool generated_valid = EvaluateRhsOraclePoint<true, false>(
+            phi_ordering, sample, generic_rhs, generic_condition);
+        const bool compact_valid = EvaluateRhsOraclePoint<true>(
             analytic_reference, analytic_reference,
-            phi_ordering, sample, generated_rhs, generated_condition);
-        const bool staged_valid = EvaluateRhsOraclePoint<true, true>(
-            analytic_hot_reference, analytic_reference,
-            phi_ordering, sample, staged_rhs, staged_condition,
-            coordinate_source);
-        Real coordinate_source_error = 0.0;
-        for (int component = 0; component < ref_gh::kSymmetric4Size;
-             ++component) {
-          const Real scale = fmax(
-              generic_source_condition[component],
-              fmax(1.0, fmax(Kokkos::abs(generic_source[component]),
-                             Kokkos::abs(coordinate_source[component]))));
-          coordinate_source_error = fmax(
-              coordinate_source_error,
-              Kokkos::abs(generic_source[component]
-                          - coordinate_source[component])/scale);
-        }
-        coordinate_source_errors(sample) = coordinate_source_error;
-        if (!generic_valid || !generated_valid || !staged_valid) {
+            phi_ordering, sample, compact_rhs, compact_condition);
+        if (!generic_valid || !compact_valid) {
           local_maximum.val = std::numeric_limits<Real>::infinity();
           local_maximum.loc = ref_gh::nvar*sample;
           return;
         }
         for (int n = 0; n < ref_gh::nvar; ++n) {
           const Real scale = fmax(generic_condition[n], fmax(
-              1.0, fmax(Kokkos::abs(generic_rhs[n]), fmax(
-                  Kokkos::abs(generated_rhs[n]),
-                  Kokkos::abs(staged_rhs[n])))));
-          const Real error = fmax(
-              Kokkos::abs(generic_rhs[n] - generated_rhs[n]),
-              Kokkos::abs(generic_rhs[n] - staged_rhs[n]))/scale;
+              1.0, fmax(Kokkos::abs(generic_rhs[n]),
+                        Kokkos::abs(compact_rhs[n]))));
+          const Real error = Kokkos::abs(generic_rhs[n] - compact_rhs[n])/scale;
           if (error > local_maximum.val) {
             local_maximum.val = error;
             local_maximum.loc = ref_gh::nvar*sample + n;
@@ -3336,20 +3209,11 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
         }
       }, MaxLoc(maximum));
   Kokkos::fence();
-  Real pointwise_source_error = 0.0;
-  Kokkos::parallel_reduce(
-      "ref_gh staged coordinate pointwise source maximum",
-      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
-      KOKKOS_LAMBDA(const int sample, Real &local_maximum) {
-        local_maximum = fmax(local_maximum, coordinate_source_errors(sample));
-      }, Kokkos::Max<Real>(pointwise_source_error));
-  Kokkos::fence();
   constexpr Real tolerance =
       256.0*std::numeric_limits<Real>::epsilon();
-  if (!(maximum.val <= tolerance) || !(pointwise_source_error <= tolerance)) {
+  if (!(maximum.val <= tolerance)) {
     std::cout << "### FATAL ERROR: all-61 analytic radial-q RHS oracle failed: "
               << "error=" << maximum.val
-              << " pointwise_coordinate_source_error=" << pointwise_source_error
               << " sample=" << maximum.loc/ref_gh::nvar
               << " component=" << maximum.loc % ref_gh::nvar
               << " tolerance=" << tolerance << std::endl;
@@ -3357,8 +3221,7 @@ void CheckAll61AnalyticRadialQRhs(const DvceArray2D<Real> &table) {
   }
   std::cout << "reference-GH all-61 analytic radial-q RHS oracle passed: "
             << "samples=" << nsamples << " error=" << maximum.val
-            << " pointwise_coordinate_source_error=" << pointwise_source_error
-            << " generated+coordinate compatible+standard Phi" << std::endl;
+            << " compatible+standard Phi" << std::endl;
 }
 
 void CheckTrumpetQReprojection(const DvceArray2D<Real> &table) {

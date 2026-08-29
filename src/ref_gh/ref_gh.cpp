@@ -24,9 +24,7 @@
 #include "ref_gh/reference_analytic_radial_q.hpp"
 #include "ref_gh/reference_controlled_schwarzschild.hpp"
 #include "ref_gh/reference_provider_cache.hpp"
-#include "ref_gh/reference_analytic_hot.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
-#include "ref_gh/staged_coordinate_rhs.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -288,10 +286,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     coarse_u0("coarse u0 ref_gh", 1, 1, 1, 1, 1),
     reference_provider(), reference_workspace(), reference_evolution(),
     reference_diagnostic(), reference_static(), reference_stage(),
-    reference_hot(), rhs_physical_scratch(), rhs_coordinate_scratch(),
-    rhs_scalar_scratch(),
-    q_sample_cells(), q_sample_weights(), q_reduction_result(),
-    q_sample_count(0),
+    q_sample_cells(), q_sample_weights(), q_sample_count(0),
     reference_table("ref_gh reference table", 1, 1),
     reference_cache_time(NAN), reference_diagnostic_time(NAN),
     max_location_diagnostic_time(NAN), max_location_diagnostic_cycle(-1),
@@ -729,14 +724,6 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
                     n3, n2, n1);
     Kokkos::realloc(reference_stage, nmb, kAnalyticRadialQStageSize,
                     n3, n2, n1);
-    Kokkos::realloc(reference_hot, nmb, kReferenceAnalyticHotSize,
-                    n3, n2, n1);
-    Kokkos::realloc(rhs_physical_scratch, nmb, kStagedPhysicalSize,
-                    indcs.nx3, indcs.nx2, indcs.nx1);
-    Kokkos::realloc(rhs_coordinate_scratch, nmb, kStagedCoordinateSize,
-                    indcs.nx3, indcs.nx2, indcs.nx1);
-    Kokkos::realloc(rhs_scalar_scratch, nmb, kSymmetric4Size,
-                    indcs.nx3, indcs.nx2, indcs.nx1);
   } else {
     Kokkos::realloc(
         reference_provider, nmb, kReferenceProviderSize, n3, n2, n1);
@@ -755,14 +742,6 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
         sizeof(Real)*reference_static.size();
     const std::size_t analytic_stage_bytes =
         sizeof(Real)*reference_stage.size();
-    const std::size_t analytic_hot_bytes =
-        sizeof(Real)*reference_hot.size();
-    const std::size_t rhs_physical_bytes =
-        sizeof(Real)*rhs_physical_scratch.size();
-    const std::size_t rhs_coordinate_bytes =
-        sizeof(Real)*rhs_coordinate_scratch.size();
-    const std::size_t rhs_scalar_bytes =
-        sizeof(Real)*rhs_scalar_scratch.size();
     std::cout << "ref_gh reference allocation backend="
               << (opt.reference_backend == 1
                       ? "analytic_radial_q" : "generic_cache_oracle")
@@ -771,25 +750,11 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
               << (opt.reference_backend == 1 ? kAnalyticRadialQStaticSize : 0)
               << " analytic_stage_components="
               << (opt.reference_backend == 1 ? kAnalyticRadialQStageSize : 0)
-              << " analytic_hot_components="
-              << (opt.reference_backend == 1 ? kReferenceAnalyticHotSize : 0)
               << " analytic_static_bytes=" << analytic_static_bytes
               << " analytic_stage_bytes=" << analytic_stage_bytes
-              << " analytic_hot_bytes=" << analytic_hot_bytes
-              << " rhs_physical_components="
-              << (opt.reference_backend == 1 ? kStagedPhysicalSize : 0)
-              << " rhs_coordinate_components="
-              << (opt.reference_backend == 1 ? kStagedCoordinateSize : 0)
-              << " rhs_scalar_components="
-              << (opt.reference_backend == 1 ? kSymmetric4Size : 0)
-              << " rhs_physical_bytes=" << rhs_physical_bytes
-              << " rhs_coordinate_bytes=" << rhs_coordinate_bytes
-              << " rhs_scalar_bytes=" << rhs_scalar_bytes
               << std::endl;
   }
   if (opt.reference_q_controlled && opt.q_controller_enabled) {
-    q_reduction_result = DvceArray1D<Real>(
-        "ref_gh q reduction result", NREDUCTION_VARIABLES);
     Real h = std::numeric_limits<Real>::max();
     for (int m = 0; m < ppack->nmb_thispack; ++m) {
       h = std::min(h, std::min(
