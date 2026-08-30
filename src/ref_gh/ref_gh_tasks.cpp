@@ -2792,8 +2792,10 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
     // projections into one face work item: that shape spills a large private
     // stack on PVC.  A cell is owned by this kernel if at least one of its
     // out-of-range directions is a physical, nonperiodic block face.
-    const auto launch_metric_boundary = [&](const auto analytic_tag) {
+    const auto launch_metric_boundary = [&](const auto analytic_tag,
+                                            const auto exact_tag) {
       constexpr bool kAnalytic = decltype(analytic_tag)::value;
+      constexpr bool kExactMatched = decltype(exact_tag)::value;
       Kokkos::parallel_for(
       "ref_gh projected trumpet metric boundaries",
       Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
@@ -2838,23 +2840,41 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
       const Real z = CellCenterX(
           k - ks, indcs.nx3,
           size.d_view(m).x3min, size.d_view(m).x3max);
-      StoreQControlledStationaryTrumpetMetricState<kAnalytic>(
-          state, m, k, j, i, analytic_static,
-          table, mass, center_x, center_y, center_z,
-          gaussian_width, q, q_dot, q_ddot, exact_matched_reference,
-          x, y, z);
+      if constexpr (kExactMatched) {
+        // Dispatch this identity at compile time.  Keeping the general
+        // projection behind a runtime branch forces PVC to compile and spill
+        // its otherwise unreachable private working set into this exact-q=1
+        // boundary kernel.
+        for (int n = 0; n < kHhatOffset; ++n) {
+          state(m, n, k, j, i) = 0.0;
+        }
+        state(m, PsiIndex(0, 0), k, j, i) = -1.0;
+        state(m, PsiIndex(1, 1), k, j, i) = 1.0;
+        state(m, PsiIndex(2, 2), k, j, i) = 1.0;
+        state(m, PsiIndex(3, 3), k, j, i) = 1.0;
+      } else {
+        StoreQControlledStationaryTrumpetMetricState<kAnalytic>(
+            state, m, k, j, i, analytic_static,
+            table, mass, center_x, center_y, center_z,
+            gaussian_width, q, q_dot, q_ddot, false,
+            x, y, z);
+      }
       });
     };
-    if (analytic_backend) {
-      launch_metric_boundary(std::true_type{});
+    if (exact_matched_reference) {
+      launch_metric_boundary(std::true_type{}, std::true_type{});
+    } else if (analytic_backend) {
+      launch_metric_boundary(std::true_type{}, std::false_type{});
     } else {
-      launch_metric_boundary(std::false_type{});
+      launch_metric_boundary(std::false_type{}, std::false_type{});
     }
     DebugFence("ref_gh ApplyPhysicalBCs projected trumpet metric");
 
     if (gauge_driver_enabled) {
-      const auto launch_gauge_boundary = [&](const auto analytic_tag) {
+      const auto launch_gauge_boundary = [&](const auto analytic_tag,
+                                             const auto exact_tag) {
         constexpr bool kAnalytic = decltype(analytic_tag)::value;
+        constexpr bool kExactMatched = decltype(exact_tag)::value;
         Kokkos::parallel_for(
         "ref_gh projected trumpet gauge boundaries",
         Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
@@ -2899,17 +2919,25 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
         const Real z = CellCenterX(
             k - ks, indcs.nx3,
             size.d_view(m).x3min, size.d_view(m).x3max);
-        StoreQControlledStationaryTrumpetGaugeState<kAnalytic>(
-            state, m, k, j, i, analytic_static,
-            table, mass, center_x, center_y, center_z,
-            gaussian_width, q, q_dot, q_ddot, x, y, z,
-            gauge_reference_subtraction, exact_matched_gauge);
+        if constexpr (kExactMatched) {
+          for (int n = kHhatOffset; n < nvar; ++n) {
+            state(m, n, k, j, i) = 0.0;
+          }
+        } else {
+          StoreQControlledStationaryTrumpetGaugeState<kAnalytic>(
+              state, m, k, j, i, analytic_static,
+              table, mass, center_x, center_y, center_z,
+              gaussian_width, q, q_dot, q_ddot, x, y, z,
+              gauge_reference_subtraction, false);
+        }
         });
       };
-      if (analytic_backend) {
-        launch_gauge_boundary(std::true_type{});
+      if (exact_matched_gauge) {
+        launch_gauge_boundary(std::true_type{}, std::true_type{});
+      } else if (analytic_backend) {
+        launch_gauge_boundary(std::true_type{}, std::false_type{});
       } else {
-        launch_gauge_boundary(std::false_type{});
+        launch_gauge_boundary(std::false_type{}, std::false_type{});
       }
       DebugFence("ref_gh ApplyPhysicalBCs projected trumpet gauge");
     }

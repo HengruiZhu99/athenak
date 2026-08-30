@@ -850,3 +850,18 @@ the four Minkowski-frame diagonal values. This makes a host-side exact/general
 dispatch the next narrow equation-preserving portability correction. The
 failure remains pre-evolution portability evidence: it neither triggers the
 Phase-9 lower-order continuum isolation nor supports any positive-time claim.
+
+The next portability correction moves that existing exact/general choice to
+host dispatch. The exact metric specialization performs precisely the former
+identity branch (zero the metric sectors, then set the four frame diagonal
+components), while the exact gauge specialization zeros the stored residual
+gauge sectors. The non-exact analytic and generic projections are unchanged.
+This removes unreachable general projection state from the exact PVC kernel;
+it does not alter a boundary value, stencil, PDE term, gauge parameter, or
+task dependency.
+
+The complete Release/Serial source oracle remains unchanged, including the
+4320-sample compatible+standard all-61 maximum error `4.13003e-14`. A
+Debug/Serial ASan, UBSan, and Kokkos-bounds run completed all four stages to
+`t=0.01` with every exact metric/gauge boundary fence and no diagnostic. PVC
+qualification remains pending the single focused Aurora rerun.
