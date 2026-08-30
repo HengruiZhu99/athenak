@@ -62,7 +62,11 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
   int num_hst=0, num_rst=0, num_log=0; // count # of hst,rst,log outputs
   for (auto it = pin->block.begin(); it != pin->block.end(); ++it) {
     if (it->block_name.compare(0, 6, "output") == 0) {
-      OutputParameters opar;  // define temporary OutputParameters struct
+      // Value-initialize every member before the format-specific parser fills
+      // its subset.  Passing an indeterminate bool through the implicit copy
+      // constructor is undefined behavior even when that member is unused by
+      // the selected output type (and is diagnosed by UBSan).
+      OutputParameters opar{};
 
       // extract integer number of output block.  Save name and number
       std::string outn = it->block_name.substr(6); // 6 because counting starts at 0!
