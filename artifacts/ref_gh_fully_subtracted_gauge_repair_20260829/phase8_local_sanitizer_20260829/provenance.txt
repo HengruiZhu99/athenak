@@ -1,0 +1,22 @@
+source_commit=c19c605826c7231d891224d49785b99857acc4b5
+source_parent_with_ubsan_failure=30ee309aae3cf11c54403c4e83d0445aeb965732
+kokkos_commit=6739bc623081648af9e752b616d9671527922cbf
+kokkos_version=4.7.2
+compiler=c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+build_directory=/tmp/athenak_refgh_phase8_asan_30ee309a
+executable_sha256=add928cd7dea340c290bf59954eead167f03750ec3ea7401a4fb7dd6059b0917
+build_type=Debug
+execution_space=Kokkos Serial
+Athena_ENABLE_MPI=OFF
+Athena_ENABLE_OPENMP=OFF
+Kokkos_ENABLE_SERIAL=ON
+Kokkos_ENABLE_OPENMP=OFF
+Kokkos_ENABLE_SYCL=OFF
+Kokkos_ENABLE_DEBUG_BOUNDS_CHECK=ON
+CMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer
+CMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1:abort_on_error=1
+UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
+configure_command=cmake -S . -B /tmp/athenak_refgh_phase8_asan_30ee309a -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS='-fsanitize=address,undefined -fno-omit-frame-pointer' -DCMAKE_EXE_LINKER_FLAGS='-fsanitize=address,undefined' -DAthena_ENABLE_MPI=OFF -DAthena_ENABLE_OPENMP=OFF -DAthena_ENABLE_REF_GH_SOURCE_UNIT=OFF -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_OPENMP=OFF -DKokkos_ENABLE_SYCL=OFF -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=ON -DPROBLEM=built_in_pgens
+run_command=/tmp/athenak_refgh_phase8_asan_30ee309a/src/athena -i inputs/ref_gh/ref_gh_ordering_gauge_case_d.athinput job/basename=phase8_asan_n16 mesh/nx1=16 mesh/nx2=16 mesh/nx3=16 meshblock/nx1=16 meshblock/nx2=16 meshblock/nx3=16 time/tlim=0.01 time/nlim=1 ref_gh/debug_task_fences=true output2/dt=-1 output3/dt=-1 output4/dt=-1 output5/dt=-1
+

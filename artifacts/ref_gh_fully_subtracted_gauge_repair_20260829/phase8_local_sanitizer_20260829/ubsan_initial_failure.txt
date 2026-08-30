@@ -1,0 +1,9 @@
+source_commit=30ee309aae3cf11c54403c4e83d0445aeb965732
+result=FAIL_BEFORE_EVOLUTION
+diagnostic=load of value 11, which is not a valid value for type 'bool'
+location=src/outputs/outputs.hpp:121
+copy_site=src/outputs/outputs.cpp:228
+stack_frame_0=OutputParameters::OutputParameters(OutputParameters const&)
+stack_frame_1=Outputs::Outputs(ParameterInput*, Mesh*)
+interpretation=OutputParameters temporary was default-initialized and copied with indeterminate format-specific members
+

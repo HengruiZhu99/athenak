@@ -202,3 +202,12 @@ for an in-bounds overwrite of an adjacent allocation, an out-of-range View
 index missed with bounds checking off, GPU-aware MPI buffer lifetime errors,
 or shutdown/output work that lacks a fence.  Do not infer the culprit merely
 from the last printed boundary label.
+
+Finally inspect `phase8_local_sanitizer_20260829/` and commit `c19c6058`.
+UBSan found that `Outputs::Outputs` copied a default-initialized
+`OutputParameters` object containing indeterminate format-specific `bool`
+members.  The one-line value-initialization correction clears the local
+ASan+UBSan+Kokkos-bounds one-cycle test.  Decide whether this undefined
+behavior can plausibly explain the PVC symptom or is merely an independently
+real lifecycle defect.  Do not treat the reduced Serial pass as GPU-aware MPI,
+PVC, or stability qualification.

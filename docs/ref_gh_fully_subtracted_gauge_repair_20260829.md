@@ -63,6 +63,21 @@ no positive-time history was produced.  This narrows but does not resolve the
 portability blocker.  Bounds/ASan instrumentation is required before any
 production correction or renewed 3M attempt.
 
+The first local Debug/Serial ASan+UBSan/Kokkos-bounds discriminator found a
+separate host-side undefined behavior before evolution: the temporary
+`OutputParameters` object was default-initialized, so its implicit copy loaded
+format-specific `bool` members that had never been assigned.  UBSan observed
+the invalid value 11.  Commit `c19c6058` value-initializes the temporary object;
+this is an output-lifecycle correction and changes no Ref-GH mathematics or
+numerics.  The corrected build completed all four RK stages, final timestep,
+diagnostics, and final history output for a bounded `16^3`, one-cycle exact
+matched run at `t=0.01`, with no sanitizer or Kokkos-bounds report.  Compact
+evidence is preserved under `phase8_local_sanitizer_20260829`.  This local pass
+does not exercise GPU-aware MPI and therefore does not clear the PVC blocker.
+A local MPI sanitizer attempt was unusable because the OpenMPI launcher itself
+entered the Intel DRM flush wait before spawning ranks; it was terminated and
+is not counted as numerical evidence.
+
 ## Claim boundary
 
 This investigation begins from the completed

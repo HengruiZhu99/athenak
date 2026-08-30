@@ -1,0 +1,25 @@
+result=PASS_LOCAL_SERIAL_ASAN_UBSAN_KOKKOS_BOUNDS_ONE_CYCLE
+exit_status=0
+grid=16x16x16
+meshblocks=1
+ranks=1
+rk_cycles=1
+final_time=0.01
+phi_ordering=STANDARD
+gamma0=1
+gamma2=1
+gauge_driver=on
+q=1
+q_controller=off
+prescribed_q=off
+fd_order=4
+rk_method=RK4
+cfl=0.05
+ko=0.02
+final_field_linf=1.665335e-15
+final_physical_metric_linf=8.881784e-15
+final_constraint_linf=1.010326e-14
+sanitizer_reports=0
+kokkos_bounds_reports=0
+claim_boundary=local lifecycle and bounds discriminator only; no PVC or stability qualification
+
