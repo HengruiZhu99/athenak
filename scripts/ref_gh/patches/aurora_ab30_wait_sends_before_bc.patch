@@ -1,0 +1,24 @@
+diff --git a/src/ref_gh/ref_gh_tasks.cpp b/src/ref_gh/ref_gh_tasks.cpp
+index 98df03e..a3fb4f5 100644
+--- a/src/ref_gh/ref_gh_tasks.cpp
++++ b/src/ref_gh/ref_gh_tasks.cpp
+@@ -600,15 +600,15 @@ void RefGh::QueueTasks(Driver *pdriver, int stage) {
+                  {RefGh_RestU});
+   pnr->QueueTask(&RefGh::RecvU, this, RefGh_RecvU, "RefGh_RecvU", Task_Run,
+                  {RefGh_SendU});
++  pnr->QueueTask(&RefGh::ClearSend, this, RefGh_ClearS, "RefGh_ClearS", Task_Run,
++                 {RefGh_RecvU});
+   pnr->QueueTask(&RefGh::Prolongate, this, RefGh_Prolong, "RefGh_Prolong", Task_Run,
+-                 {RefGh_RecvU});
++                 {RefGh_ClearS});
+   pnr->QueueTask(&RefGh::ApplyPhysicalBCs, this, RefGh_BCS, "RefGh_BCS", Task_Run,
+                  {RefGh_Prolong});
+   pnr->QueueTask(&RefGh::NewTimeStep, this, RefGh_Newdt, "RefGh_Newdt", Task_Run,
+                  {RefGh_BCS});
+-  pnr->QueueTask(&RefGh::ClearSend, this, RefGh_ClearS, "RefGh_ClearS", Task_End);
+-  pnr->QueueTask(&RefGh::ClearRecv, this, RefGh_ClearR, "RefGh_ClearR", Task_End,
+-                 {RefGh_ClearS});
++  pnr->QueueTask(&RefGh::ClearRecv, this, RefGh_ClearR, "RefGh_ClearR", Task_End);
+ }
+ 
+ TaskStatus RefGh::InitRecv(Driver *, int) {

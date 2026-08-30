@@ -138,6 +138,20 @@ device-image/code-layout portability issue. It does not yet establish an
 upstream compiler bug. The smallest permanent build scope and the independent
 MPI/message-contract discriminators remain to be completed.
 
+## Phase 5: GPU-aware MPI and completion discriminators
+
+Aurora job `8791789` ran exact first-bad `ab30fa96` with the default device
+image on one rank and one PVC tile. The full 96^3 grid and all 216 MeshBlocks
+were retained, preserving the same physical-boundary kernels. It completed all
+four RK-stage RHS, update, communication, prolongation, and physical-boundary
+fences, then reproduced two Level Zero `NotPresent` writes. PBS exit status
+was 134 and executable SHA-256 was
+`a3ec043b7c2228c1a2e92a72468a03d2e8db73c829a3db9022975c629aa20671`.
+
+Off-rank GPU-aware MPI is therefore not required for the fault. The explicit
+send-only and send-plus-receive completion variants are retained as separate
+device-page-lifecycle discriminators and are not mathematical changes.
+
 ## Remaining required evidence
 
 The first-bad source bisect, hybrid matrix, one-rank comparison, explicit MPI
