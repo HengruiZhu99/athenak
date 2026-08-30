@@ -159,6 +159,15 @@ Executable SHA-256 was
 `2e6bde2a138f62ee1fe7e4c6744859d7f4f68c07f433027da562d2d4374c5dc0`.
 Waiting for sends alone therefore does not repair the regression.
 
+The send-plus-receive variant moved both `ClearSend` and `ClearRecv` ahead of
+prolongation/physical BC. Aurora job `8791820` reproduced four `NotPresent`
+writes and ended with PBS status 143. Executable SHA-256 was
+`b6f79f9448b847bf9778393c33b4e0c5bf9f18b9ddb13a67e7897a912c1786ae`.
+Explicit completion of both communication directions therefore does not
+repair the fault. Together with the one-rank failure, this removes outstanding
+GPU-aware MPI completion from the leading cause list; the temporary task-graph
+variants are not candidates for retention.
+
 ## Remaining required evidence
 
 The first-bad source bisect, hybrid matrix, one-rank comparison, explicit MPI
