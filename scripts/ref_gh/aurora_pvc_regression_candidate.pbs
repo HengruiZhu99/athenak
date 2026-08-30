@@ -20,6 +20,11 @@ set -euo pipefail
 readonly TEST_PURPOSE=${TEST_PURPOSE:-one midpoint of the W-to-R source bisect}
 readonly CLAIM_BOUNDARY=${CLAIM_BOUNDARY:-one-cycle source-bisect discriminator only}
 readonly DEVICE_CODE_SPLIT=${DEVICE_CODE_SPLIT:-default}
+readonly NRANKS=${NRANKS:-12}
+test "${NRANKS}" -ge 1
+test "${NRANKS}" -le 12
+test $((216 % NRANKS)) -eq 0
+readonly BLOCKS_PER_RANK=$((216 / NRANKS))
 
 readonly KOKKOS_COMMIT=6739bc623081648af9e752b616d9671527922cbf
 readonly SRC="${CAMPAIGN_ROOT}/sources/${CANDIDATE_LABEL}"
@@ -61,7 +66,7 @@ cmp "${INPUT}" "${CAMPAIGN_ROOT}/sources/W/inputs/ref_gh/ref_gh_ordering_gauge_c
   echo "candidate_tree=${EXPECTED_TREE}"
   echo "Kokkos_commit=${KOKKOS_COMMIT}"
   echo "purpose=${TEST_PURPOSE}"
-  echo "grid=96x96x96 meshblocks=216 ranks=12 blocks_per_rank=18"
+  echo "grid=96x96x96 meshblocks=216 ranks=${NRANKS} blocks_per_rank=${BLOCKS_PER_RANK}"
   echo "frozen_parameters=STANDARD gamma0=1 gamma2=1 gauge-on gauge-reference-subtraction-on q=1 q-controller-off q-prescribed-off FD4 RK4 CFL=0.05 KO=0.02"
   echo "debug_task_fences=true"
   echo "Kokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF"
@@ -77,15 +82,15 @@ cmp "${INPUT}" "${CAMPAIGN_ROOT}/sources/W/inputs/ref_gh/ref_gh_ordering_gauge_c
   env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
 } > provenance.txt
 
-mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+mpiexec -n "${NRANKS}" --ppn "${NRANKS}" --depth=8 --cpu-bind depth \
   "${BINDER}" bash -lc '
     echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
     sycl-ls 2>&1 | grep "Data Center GPU Max"
   ' > rank_gpu_mapping.txt 2>&1
-test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq "${NRANKS}"
 test "$(grep '^host=' rank_gpu_mapping.txt \
   | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
-  | sort -u | wc -l)" -eq 12
+  | sort -u | wc -l)" -eq "${NRANKS}"
 
 cmake_extra_args=()
 if [ "${DEVICE_CODE_SPLIT}" != default ]; then
@@ -126,7 +131,8 @@ mkdir run
 set +e
 (
   cd run
-  /usr/bin/time -p timeout 600s mpiexec -n 12 --ppn 12 --depth=8 \
+  /usr/bin/time -p timeout 600s mpiexec -n "${NRANKS}" \
+    --ppn "${NRANKS}" --depth=8 \
     --cpu-bind depth "${BINDER}" "${EXE}" -i "${INPUT}" \
     job/basename="${BASENAME}" time/tlim=0.01 time/nlim=1 \
     ref_gh/debug_task_fences=true \
