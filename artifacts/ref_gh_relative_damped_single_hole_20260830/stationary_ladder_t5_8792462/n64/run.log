@@ -1,0 +1,140 @@
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2/src/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 4 x 4 x 4 MeshBlocks
+Total number of MeshBlocks = 64
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 12
+  Rank = 0: 5 MeshBlocks, cost = 5
+  Rank = 1: 5 MeshBlocks, cost = 5
+  Rank = 2: 5 MeshBlocks, cost = 5
+  Rank = 3: 5 MeshBlocks, cost = 5
+  Rank = 4: 5 MeshBlocks, cost = 5
+  Rank = 5: 5 MeshBlocks, cost = 5
+  Rank = 6: 5 MeshBlocks, cost = 5
+  Rank = 7: 5 MeshBlocks, cost = 5
+  Rank = 8: 6 MeshBlocks, cost = 6
+  Rank = 9: 6 MeshBlocks, cost = 6
+  Rank = 10: 6 MeshBlocks, cost = 6
+  Rank = 11: 6 MeshBlocks, cost = 6
+Load Balancing:
+  Maximum normalized cost = 1.2, Average = 1.06667
+ref_gh reference allocation backend=analytic_radial_q generic_bytes=0 analytic_static_components=12 analytic_stage_components=8 analytic_static_bytes=6635520 analytic_stage_bytes=4423680
+reference-GH puncture minimum cell-center radius = 0.0541266
+reference-GH initial RHS sector decomposition passed: conditioned error=0, production rerun=0, file=refgh_relative_damped_n64_t5.ref_gh_rhs_sectors.tsv
+reference-GH stationary initial RHS Linf = 2.07099e-13, component=19, radius=0.533085, coordinate reference Ricci Linf=4.14162e-10, frame reference Ricci Linf=1.38778e-16
+
+Setup complete, executing task list(s)...
+
+elapsed=3.930392e+01 cycle=0 time=0.000000e+00 dt=5.118043e-03
+elapsed=4.008109e+01 cycle=10 time=5.118043e-02 dt=5.118043e-03
+elapsed=4.100927e+01 cycle=20 time=1.023609e-01 dt=5.118043e-03
+elapsed=4.179552e+01 cycle=30 time=1.535413e-01 dt=5.118043e-03
+elapsed=4.273195e+01 cycle=40 time=2.047217e-01 dt=5.118043e-03
+elapsed=4.352498e+01 cycle=50 time=2.559022e-01 dt=5.118043e-03
+elapsed=4.445030e+01 cycle=60 time=3.070826e-01 dt=5.118043e-03
+elapsed=4.524390e+01 cycle=70 time=3.582630e-01 dt=5.118043e-03
+elapsed=4.618291e+01 cycle=80 time=4.094435e-01 dt=5.118043e-03
+elapsed=4.710808e+01 cycle=90 time=4.606239e-01 dt=5.118043e-03
+elapsed=4.789897e+01 cycle=100 time=5.118043e-01 dt=5.118043e-03
+elapsed=4.883665e+01 cycle=110 time=5.629848e-01 dt=5.118043e-03
+elapsed=4.962437e+01 cycle=120 time=6.141652e-01 dt=5.118043e-03
+elapsed=5.055008e+01 cycle=130 time=6.653457e-01 dt=5.118043e-03
+elapsed=5.133568e+01 cycle=140 time=7.165261e-01 dt=5.118043e-03
+elapsed=5.227246e+01 cycle=150 time=7.677065e-01 dt=5.118043e-03
+elapsed=5.307238e+01 cycle=160 time=8.188870e-01 dt=5.118043e-03
+elapsed=5.401779e+01 cycle=170 time=8.700674e-01 dt=5.118043e-03
+elapsed=5.495390e+01 cycle=180 time=9.212478e-01 dt=5.118043e-03
+elapsed=5.574373e+01 cycle=190 time=9.724283e-01 dt=5.118043e-03
+elapsed=5.666922e+01 cycle=200 time=1.023609e+00 dt=5.118043e-03
+elapsed=5.745630e+01 cycle=210 time=1.074789e+00 dt=5.118043e-03
+elapsed=5.840226e+01 cycle=220 time=1.125970e+00 dt=5.118043e-03
+elapsed=5.919240e+01 cycle=230 time=1.177150e+00 dt=5.118043e-03
+elapsed=6.013531e+01 cycle=240 time=1.228330e+00 dt=5.118043e-03
+elapsed=6.092226e+01 cycle=250 time=1.279511e+00 dt=5.118043e-03
+elapsed=6.185889e+01 cycle=260 time=1.330691e+00 dt=5.118043e-03
+elapsed=6.279780e+01 cycle=270 time=1.381872e+00 dt=5.118043e-03
+elapsed=6.358517e+01 cycle=280 time=1.433052e+00 dt=5.118043e-03
+elapsed=6.455879e+01 cycle=290 time=1.484233e+00 dt=5.118043e-03
+elapsed=6.535106e+01 cycle=300 time=1.535413e+00 dt=5.118043e-03
+elapsed=6.628303e+01 cycle=310 time=1.586593e+00 dt=5.118043e-03
+elapsed=6.706908e+01 cycle=320 time=1.637774e+00 dt=5.118043e-03
+elapsed=6.800545e+01 cycle=330 time=1.688954e+00 dt=5.118043e-03
+elapsed=6.893349e+01 cycle=340 time=1.740135e+00 dt=5.118043e-03
+elapsed=7.314686e+01 cycle=350 time=1.791315e+00 dt=5.118043e-03
+elapsed=7.408321e+01 cycle=360 time=1.842496e+00 dt=5.118043e-03
+elapsed=7.504672e+01 cycle=370 time=1.893676e+00 dt=5.118043e-03
+elapsed=7.657591e+01 cycle=380 time=1.944857e+00 dt=5.118043e-03
+elapsed=8.022026e+01 cycle=390 time=1.996037e+00 dt=5.118043e-03
+elapsed=8.115555e+01 cycle=400 time=2.047217e+00 dt=5.118043e-03
+elapsed=8.194136e+01 cycle=410 time=2.098398e+00 dt=5.118043e-03
+elapsed=8.288893e+01 cycle=420 time=2.149578e+00 dt=5.118043e-03
+elapsed=8.383708e+01 cycle=430 time=2.200759e+00 dt=5.118043e-03
+elapsed=8.462183e+01 cycle=440 time=2.251939e+00 dt=5.118043e-03
+elapsed=8.555646e+01 cycle=450 time=2.303120e+00 dt=5.118043e-03
+elapsed=8.636108e+01 cycle=460 time=2.354300e+00 dt=5.118043e-03
+elapsed=8.729658e+01 cycle=470 time=2.405480e+00 dt=5.118043e-03
+elapsed=8.808357e+01 cycle=480 time=2.456661e+00 dt=5.118043e-03
+elapsed=8.901411e+01 cycle=490 time=2.507841e+00 dt=5.118043e-03
+elapsed=8.980514e+01 cycle=500 time=2.559022e+00 dt=5.118043e-03
+elapsed=9.073871e+01 cycle=510 time=2.610202e+00 dt=5.118043e-03
+elapsed=9.166653e+01 cycle=520 time=2.661383e+00 dt=5.118043e-03
+elapsed=9.245234e+01 cycle=530 time=2.712563e+00 dt=5.118043e-03
+elapsed=9.338815e+01 cycle=540 time=2.763743e+00 dt=5.118043e-03
+elapsed=9.417194e+01 cycle=550 time=2.814924e+00 dt=5.118043e-03
+elapsed=9.510015e+01 cycle=560 time=2.866104e+00 dt=5.118043e-03
+elapsed=9.588520e+01 cycle=570 time=2.917285e+00 dt=5.118043e-03
+elapsed=9.683752e+01 cycle=580 time=2.968465e+00 dt=5.118043e-03
+elapsed=9.762487e+01 cycle=590 time=3.019646e+00 dt=5.118043e-03
+elapsed=9.854804e+01 cycle=600 time=3.070826e+00 dt=5.118043e-03
+elapsed=9.953606e+01 cycle=610 time=3.122007e+00 dt=5.118043e-03
+elapsed=1.480618e+02 cycle=620 time=3.173187e+00 dt=5.118043e-03
+elapsed=1.489996e+02 cycle=630 time=3.224367e+00 dt=5.118043e-03
+elapsed=1.497921e+02 cycle=640 time=3.275548e+00 dt=5.118043e-03
+elapsed=1.507474e+02 cycle=650 time=3.326728e+00 dt=5.118043e-03
+elapsed=2.065819e+02 cycle=660 time=3.377909e+00 dt=5.118043e-03
+elapsed=2.079770e+02 cycle=670 time=3.429089e+00 dt=5.118043e-03
+elapsed=2.095107e+02 cycle=680 time=3.480270e+00 dt=5.118043e-03
+elapsed=2.107361e+02 cycle=690 time=3.531450e+00 dt=5.118043e-03
+elapsed=2.120996e+02 cycle=700 time=3.582630e+00 dt=5.118043e-03
+elapsed=2.132367e+02 cycle=710 time=3.633811e+00 dt=5.118043e-03
+elapsed=2.147853e+02 cycle=720 time=3.684991e+00 dt=5.118043e-03
+elapsed=2.158405e+02 cycle=730 time=3.736172e+00 dt=5.118043e-03
+elapsed=2.172742e+02 cycle=740 time=3.787352e+00 dt=5.118043e-03
+elapsed=2.183786e+02 cycle=750 time=3.838533e+00 dt=5.118043e-03
+elapsed=2.198989e+02 cycle=760 time=3.889713e+00 dt=5.118043e-03
+elapsed=2.212562e+02 cycle=770 time=3.940893e+00 dt=5.118043e-03
+elapsed=2.224236e+02 cycle=780 time=3.992074e+00 dt=5.118043e-03
+elapsed=2.237094e+02 cycle=790 time=4.043254e+00 dt=5.118043e-03
+elapsed=2.248083e+02 cycle=800 time=4.094435e+00 dt=5.118043e-03
+elapsed=2.257634e+02 cycle=810 time=4.145615e+00 dt=5.118043e-03
+elapsed=2.266735e+02 cycle=820 time=4.196796e+00 dt=5.118043e-03
+elapsed=2.282401e+02 cycle=830 time=4.247976e+00 dt=5.118043e-03
+elapsed=2.291713e+02 cycle=840 time=4.299157e+00 dt=5.118043e-03
+elapsed=2.301263e+02 cycle=850 time=4.350337e+00 dt=5.118043e-03
+elapsed=2.314975e+02 cycle=860 time=4.401517e+00 dt=5.118043e-03
+elapsed=2.326176e+02 cycle=870 time=4.452698e+00 dt=5.118043e-03
+elapsed=2.336742e+02 cycle=880 time=4.503878e+00 dt=5.118043e-03
+elapsed=2.344752e+02 cycle=890 time=4.555059e+00 dt=5.118043e-03
+elapsed=2.354378e+02 cycle=900 time=4.606239e+00 dt=5.118043e-03
+elapsed=2.362383e+02 cycle=910 time=4.657420e+00 dt=5.118043e-03
+elapsed=2.371817e+02 cycle=920 time=4.708600e+00 dt=5.118043e-03
+elapsed=2.379831e+02 cycle=930 time=4.759780e+00 dt=5.118043e-03
+elapsed=2.389441e+02 cycle=940 time=4.810961e+00 dt=5.118043e-03
+elapsed=2.398905e+02 cycle=950 time=4.862141e+00 dt=5.118043e-03
+elapsed=2.406856e+02 cycle=960 time=4.913322e+00 dt=5.118043e-03
+elapsed=2.416961e+02 cycle=970 time=4.964502e+00 dt=5.118043e-03
+reference-GH stationary trumpet: field Linf=2.309753e-12, physical metric Linf=6.262013e-11, lapse Linf=1.538769e-13, shift Linf=7.228597e-14, constraint Linf=6.127619e-12, RHS estimate=2.070992e-13
+
+Terminating on time limit
+time=5.000000e+00 cycle=977
+tlim=5.000000e+00 nlim=-1
+
+MeshBlock-cycles = 62528
+cpu time used  = 2.181332e+02
+zone-cycles/cpu_second = 1.174121e+06
+particle-updates/cpu_second = 0.000000e+00
+real 258.60
+user 0.00
+sys 0.01

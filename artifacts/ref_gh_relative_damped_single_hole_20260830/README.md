@@ -65,3 +65,38 @@ The full remote artifact and 273 MB executable remain at:
 ```
 
 No Aurora jobs were active when this checkpoint was collected.
+
+## Stationary progression through 5M
+
+Aurora job `8792288` evolved the fresh 96^3 case through `t=3M` on 12 PVC
+tiles.  It reached the endpoint with GH RMS `3.54051e-13`, reduction RMS
+`1.69867e-12`, curl RMS `1.10104e-13`, metric-error RMS `3.29427e-11`,
+relative-D Linf `1.30951e-12`, and relative-source Linf `1.03333e-11`.
+The GH log fit over `t>=0.2M` had slope `0.369543/M` and `R^2=0.729736`, not
+the old `26.6549/M` fast mode.
+
+Job `8792431` performed an actual restart from the hashed `t=3M` checkpoint
+and continued through `t=5M`.  It remained finite with GH RMS `5.01723e-13`,
+metric-error RMS `4.83030e-11`, relative-D Linf `1.84064e-12`, and
+relative-source Linf `1.40622e-11`.  Its segment fit had slope `0.180206/M`,
+`R^2=0.979664`, and no old-mode recurrence.  The restart file paths and hashes
+are recorded, but the multi-GB restart files are not committed.
+
+Job `8792462` ran fresh 64^3, 96^3, and 128^3 cases independently from
+`t=0` through `t=5M`.  All three stayed finite and passed the old-mode
+discriminator.  The absolute errors are roundoff-scale but are **not
+resolution-improving**:
+
+| Resolution | GH RMS | Metric-error RMS | Relative-source Linf |
+| --- | ---: | ---: | ---: |
+| 64^3 | `3.37076e-13` | `1.65407e-11` | `9.22505e-12` |
+| 96^3 | `5.00964e-13` | `4.82665e-11` | `1.40252e-11` |
+| 128^3 | `6.56073e-13` | `1.06940e-10` | `1.86723e-11` |
+
+For example, the signed GH orders are `-0.977` from 64 to 96 and `-0.938`
+from 96 to 128.  This evidence supports finite stationary evolution without
+the former fast inner instability through 5M; it does not support a positive
+stationary convergence claim.  `convergence.json` and `convergence.tsv`
+retain all signed ratios and orders.  Histories are downsampled to roughly
+0.1M spacing in Git; the full histories and maximum-location tables remain
+under the recorded Aurora job directories.

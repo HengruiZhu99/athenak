@@ -1,0 +1,137 @@
+{
+  "claim_boundary": "All cases are finite and lack the old fast mode, but these roundoff-scale errors are not resolution-improving.",
+  "metrics": {
+    "GH_RMS": {
+      "errors": [
+        3.3707606986521296e-13,
+        5.009640449814568e-13,
+        6.560730008900979e-13
+      ],
+      "pairs": [
+        {
+          "coarse_resolution": 64,
+          "fine_over_coarse": 1.4862047168812011,
+          "fine_resolution": 96,
+          "observed_order": -0.9772128170811609
+        },
+        {
+          "coarse_resolution": 96,
+          "fine_over_coarse": 1.3096209348005854,
+          "fine_resolution": 128,
+          "observed_order": -0.9376244070167045
+        }
+      ]
+    },
+    "curl_RMS": {
+      "errors": [
+        8.00442561354083e-14,
+        1.350601277425907e-13,
+        1.882342639698132e-13
+      ],
+      "pairs": [
+        {
+          "coarse_resolution": 64,
+          "fine_over_coarse": 1.687318169515047,
+          "fine_resolution": 96,
+          "observed_order": -1.2902229466830029
+        },
+        {
+          "coarse_resolution": 96,
+          "fine_over_coarse": 1.3937071370802074,
+          "fine_resolution": 128,
+          "observed_order": -1.1539377454415582
+        }
+      ]
+    },
+    "metric_error_RMS": {
+      "errors": [
+        1.654073468259941e-11,
+        4.8266514593394966e-11,
+        1.0694009388197767e-10
+      ],
+      "pairs": [
+        {
+          "coarse_resolution": 64,
+          "fine_over_coarse": 2.9180393446592534,
+          "fine_resolution": 96,
+          "observed_order": -2.64119380935144
+        },
+        {
+          "coarse_resolution": 96,
+          "fine_over_coarse": 2.2156166605950016,
+          "fine_resolution": 128,
+          "observed_order": -2.7653122770042144
+        }
+      ]
+    },
+    "reduction_RMS": {
+      "errors": [
+        1.0246148909485834e-12,
+        1.8174565458110423e-12,
+        2.7641909838131917e-12
+      ],
+      "pairs": [
+        {
+          "coarse_resolution": 64,
+          "fine_over_coarse": 1.7737947807184902,
+          "fine_resolution": 96,
+          "observed_order": -1.4134907888879584
+        },
+        {
+          "coarse_resolution": 96,
+          "fine_over_coarse": 1.5209117324891352,
+          "fine_resolution": 128,
+          "observed_order": -1.4575464347433813
+        }
+      ]
+    },
+    "relative_D_Linf": {
+      "errors": [
+        1.209865541087409e-12,
+        1.837141550003518e-12,
+        2.399858090038309e-12
+      ],
+      "pairs": [
+        {
+          "coarse_resolution": 64,
+          "fine_over_coarse": 1.5184675384277186,
+          "fine_resolution": 96,
+          "observed_order": -1.0301789710844178
+        },
+        {
+          "coarse_resolution": 96,
+          "fine_over_coarse": 1.3063000453251485,
+          "fine_resolution": 128,
+          "observed_order": -0.9287987462357982
+        }
+      ]
+    },
+    "relative_source_Linf": {
+      "errors": [
+        9.225050298417263e-12,
+        1.402521063846692e-11,
+        1.867226394440324e-11
+      ],
+      "pairs": [
+        {
+          "coarse_resolution": 64,
+          "fine_over_coarse": 1.5203397471852502,
+          "fine_resolution": 96,
+          "observed_order": -1.0332179499279133
+        },
+        {
+          "coarse_resolution": 96,
+          "fine_over_coarse": 1.3313357229153375,
+          "fine_resolution": 128,
+          "observed_order": -0.9947882353728948
+        }
+      ]
+    }
+  },
+  "resolutions": [
+    64,
+    96,
+    128
+  ],
+  "time": 5.0
+}
