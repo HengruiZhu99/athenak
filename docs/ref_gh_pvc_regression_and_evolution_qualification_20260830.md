@@ -1,6 +1,6 @@
 # Ref-GH PVC regression and evolution qualification
 
-Status: source regression established; first-bad commit bisect in progress.
+Status: `PVC PORTABILITY REGRESSION ISOLATED` at `ab30fa96`.
 
 This report tracks the source-regression and GPU-lifecycle audit required
 before the fully-subtracted stationary-trumpet evolution campaign can resume.
@@ -71,6 +71,24 @@ instrumentation at `3c9a34c8`.
 
 The compact midpoint evidence is under
 `artifacts/ref_gh_pvc_regression_repair_20260830/phase2_aurora_8791730_mid_b290c2bd_pass`.
+
+The next production candidate was
+`ab30fa963f5d1d7ce54748ffb287c91c87705153`, whose exact parent is
+`8e028cafe71df0a576ed125db820f9d983d7ae9e`. The parent has the same
+production source as the passing `b290c2bd` checkpoint. Aurora job `8791745`
+reproduced the PDE-level Level Zero `NotPresent` write fault on multiple PVC
+tiles. All ranks had passed the evolved-stage physical metric and gauge
+boundary fences; PBS then ended with status 143 before the script could write
+its ordinary result file. No positive-time history was produced. The
+executable SHA-256 was
+`0c64e3cbb784590581af847a55ad993943f93c81bfaf6f6289bfc7dec7e1f475`.
+
+Therefore `ab30fa96` is the first-bad source commit. Its source diff changes
+the production RHS and its fully-subtracted analytic gauge helpers; it does
+not change `ref_gh_tasks.cpp`, the stationary-trumpet problem generator, or
+the physical-boundary implementation relative to its parent. The complete
+source diff is preserved with the compact evidence under
+`artifacts/ref_gh_pvc_regression_repair_20260830/phase2_aurora_8791745_first_bad_ab30fa96`.
 
 ## Remaining required evidence
 

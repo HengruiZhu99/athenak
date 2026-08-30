@@ -1,0 +1,10 @@
+ src/pgen/ref_gh/source_unit.cpp                    | 159 ++++---
+ src/ref_gh/analytic_radial_q_production.hpp        |  62 +++
+ src/ref_gh/gauge_driver.hpp                        |  49 ++-
+ src/ref_gh/generated/analytic_radial_q_gauge.hpp   | 475 ++++++++++++---------
+ .../generated/analytic_radial_q_geometry.hpp       |   2 +-
+ src/ref_gh/generated/analytic_radial_q_source.hpp  |   2 +-
+ src/ref_gh/physical_gauge_target.hpp               |  25 +-
+ src/ref_gh/ref_gh_calcrhs.cpp                      | 197 ++++++---
+ src/ref_gh/reference_gauge_baseline.hpp            |  12 +
+ 9 files changed, 616 insertions(+), 367 deletions(-)
