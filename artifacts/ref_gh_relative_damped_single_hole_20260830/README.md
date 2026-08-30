@@ -161,3 +161,11 @@ but does not establish lapse/profile settling, trumpet formation, convergence,
 or long-time stability.  Complete compact histories and resolution tables are
 under \`wormhole_short_8792609/\`; endpoint restart files remain only at the
 recorded Aurora path.
+
+The AMR physical-profile reducer was checked against synthetic binary64 CBin
+snapshots containing exact isotropic-wormhole and exact stationary-trumpet
+fields.  It reproduced lapse, determinant conformal factor, and radial shift
+to the recorded binary64 tolerances while excluding the conservative
+three-cell puncture-stencil cube.  This qualifies the reduction tool, not an
+evolution; compact oracle evidence is under
+\`wormhole_profile_analyzer_oracle/\`.

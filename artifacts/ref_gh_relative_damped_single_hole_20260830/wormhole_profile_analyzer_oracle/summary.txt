@@ -1,0 +1,14 @@
+classification=PASS_SYNTHETIC_AMR_PROFILE_ORACLE
+analyzer=scripts/ref_gh/analyze_relative_damped_wormhole_profiles.py
+analyzer_sha256=09ddfd413362a2705f56bd3502e494de9b2d64fcb976e2eaa013b3902cbf0b92
+synthetic_meshblocks=1
+synthetic_cells=4096
+retained_after_three_cell_puncture_stencil_exclusion=3880
+excluded_puncture_stencil_cells=216
+snapshots=exact_wormhole,exact_stationary_trumpet
+wormhole_alpha_Linf_error_lt=1e-14
+trumpet_alpha_Linf_error_lt=1e-14
+trumpet_psi4_Linf_error_lt=1e-13
+trumpet_radial_shift_Linf_error_lt=1e-14
+empty_radial_region_handling=PASS
+claim=reader/profile-reduction oracle only; no evolution evidence
