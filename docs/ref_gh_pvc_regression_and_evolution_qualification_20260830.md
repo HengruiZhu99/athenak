@@ -1,7 +1,8 @@
 # Ref-GH PVC regression and evolution qualification
 
 Status: `PVC ONE-CYCLE PORTABILITY RESTORED` with target-scoped SYCL
-per-kernel compilation and linking.
+per-kernel compilation and linking; `GATE 8A SCIENTIFIC EVOLUTION FAILED`
+when the old fast inner mode recurred before `t=1.3M`.
 
 This report tracks the source-regression and GPU-lifecycle audit required
 before the fully-subtracted stationary-trumpet evolution campaign can resume.
@@ -283,9 +284,69 @@ one-cycle portability statement; it is not trumpet stability or convergence.
 Compact evidence is under
 `artifacts/ref_gh_pvc_regression_repair_20260830/phase7_aurora_target_scoped_three_passes`.
 
-## Remaining required evidence
+## Phase 8: repaired 3M scientific gate
 
-Required remaining gates are the positive-time 3M/5M,
-64/96/128-resolution, 20M, and optional 100M scientific runs. No
-stationary-trumpet robustness or convergence claim is made from the one-cycle
-portability evidence.
+Aurora job `8791961` reused the third qualified executable from Phase 7
+without rebuilding. The executable SHA-256 was
+`ed508b52bf344c9304d0655dc09d51fc1abbb4aeee1562d8b1e6492be26fbbcf`.
+The job used 36 ranks on 36 distinct PVC tiles across nodes
+`x4116c7s0b0n0`, `x4116c7s1b0n0`, and `x4116c7s2b0n0`, with six MeshBlocks
+per rank. It evolved the frozen 96^3 STANDARD case with `gamma0=gamma2=1`,
+the gauge driver and reference subtraction enabled, `q=1` with controllers
+disabled, FD4, RK4, CFL 0.05, and KO 0.02. History and restart intervals were
+0.01M and 0.5M. There were no Level Zero errors, so the target-scoped build
+correction remained effective during this longer multi-node run.
+
+The scientific gate nevertheless failed. History output ended at
+`t=1.280090959752213M`; the code then reported an invalid effective timestep
+at cycle 378, after the last history sample and while the logged step was
+still `3.404497e-3M`. The MPI termination returned status 143. The last
+recorded row was finite and had `bad_state=0`, but it was already far outside
+the stationary control envelope:
+
+| Diagnostic | Final value or fit |
+| --- | --- |
+| GH RMS | `2.0544e-2` |
+| near-puncture GH RMS | `2.3938e-2` |
+| Q Linf | `7.2318e4` |
+| Delta Linf | `5.0855e4` |
+| metric-error RMS | `4.2496e-4` |
+| source QQ Linf | `8.1957e8` |
+| source DeltaDelta Linf | `7.5102e8` |
+| source frame-correction Linf | `4.6336e7` |
+| effective CFL at last output | `0.05` |
+
+The prescribed old-mode test is positive. The Hhat RHS fit over `t>=0.2M`
+has slope `26.1228/M`, e-folding time `0.0382808M`, and R-squared
+`0.998635`; the old Case-D slope was `26.6549/M` and the accepted recurrence
+window was `[19.9912,33.3186]/M`. Phi, Pi, Psi, theta, and Upsilon RHS fits
+all have e-folding times between `0.03754M` and `0.03870M`. Their final
+maxima are localized at `r=0.14878M` (MeshBlocks 59 or 63), identifying this
+as the same fast inner instability rather than a boundary-arrival effect.
+
+The portability repair therefore did **not** repair the formulation-level
+scientific instability. The 5M continuation, three-resolution study, 20M
+robustness run, and optional 100M run were not launched. No stationary-trumpet
+stability, convergence, long-time robustness, or production-readiness claim
+is supported.
+
+Compact evidence is under
+`artifacts/ref_gh_pvc_regression_repair_20260830/phase8_aurora_8791961_t3_failure`.
+The three uncommitted restart files remain under
+`/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_regression_20260830_wr_v2/runs/phase8_t3_8791961.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/run/rst`;
+their SHA-256 values are recorded in `restart_sha256.txt`. No Aurora jobs
+remain active at handoff.
+
+## Final claim boundary and next review
+
+The completed evidence establishes a source-dependent PVC device-image
+regression, a real uniform-grid rank-payload contract defect, and restoration
+of the frozen one-cycle PVC gate by target-scoped per-kernel compile and link
+options. It also establishes that this portability correction is not a
+scientific cure: the fully-subtracted STANDARD evolution reproduces the old
+approximately `0.038M` fast inner mode.
+
+The next work should be a formulation/code audit of the already-defined
+lower-order gauge-coupling path. Parameters must not be tuned to hide this
+failure, and no further expensive campaign should start until that audit has
+identified and tested an equation-consistent correction.
