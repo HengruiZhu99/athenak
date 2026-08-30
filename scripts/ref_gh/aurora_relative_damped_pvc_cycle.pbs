@@ -1,7 +1,9 @@
 #!/bin/bash -l
 # Bounded 12-rank/12-tile portability gate for the relative-damped Ref-GH gauge.
-# This job builds a clean exact commit on one Aurora node and evolves one RK4
-# cycle of the 96^3 exact q=1 stationary trumpet.  It is not a stability test.
+# This job builds a clean exact commit staged under CAMPAIGN_ROOT/src and
+# evolves one RK4 cycle of the 96^3 exact q=1 stationary trumpet.  The source
+# must be staged from a login node because compute nodes have no GitHub route.
+# It is not a stability test.
 #PBS -A CompactBinaryMerger
 #PBS -q debug
 #PBS -l select=1
@@ -39,11 +41,8 @@ export FI_LOG_LEVEL=ERROR
 readonly BINDER=$(command -v gpu_tile_compact.sh)
 test -x "${BINDER}"
 
-test ! -e "${SRC}"
-git clone --branch "${SOURCE_BRANCH}" --single-branch \
-  https://github.com/HengruiZhu99/athenak.git "${SRC}"
-git -C "${SRC}" checkout --detach "${EXPECTED_COMMIT}"
-git -C "${SRC}" submodule update --init --recursive
+test -d "${SRC}/.git"
+test -f "${SRC}/kokkos/CMakeLists.txt"
 test "$(git -C "${SRC}" rev-parse HEAD)" = "${EXPECTED_COMMIT}"
 test -z "$(git -C "${SRC}" status --porcelain)"
 
