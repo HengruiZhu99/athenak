@@ -100,3 +100,21 @@ stationary convergence claim.  `convergence.json` and `convergence.tsv`
 retain all signed ratios and orders.  Histories are downsampled to roughly
 0.1M spacing in Git; the full histories and maximum-location tables remain
 under the recorded Aurora job directories.
+
+## Stationary 96^3 extension through 20M
+
+Aurora job `8792505` independently evolved the 96^3 stationary exact-reference
+case from `t=0` through `t=20M` on 12 PVC tiles.  It exited normally, stayed
+finite, recorded no bad state, and did not reproduce the former
+`26.6549/M` fast mode.  At `t=20M`, GH RMS was `3.46274e-12`, reduction
+RMS `2.69229e-12`, curl RMS `1.46371e-12`, metric-error RMS
+`4.85810e-10`, relative-D Linf `1.42217e-11`, and relative-source Linf
+`4.95378e-11`.  The GH log fit over `t>=0.2M` had slope `0.149669/M`,
+e-folding time `6.68139M`, and `R^2=0.953579`.
+
+This is a single-resolution exact-stationary extension, not a convergence or
+long-time trumpet-relaxation result.  The compact history, complete run log,
+analysis summary, provenance, rank/tile mapping, remote hashes, and restart
+hashes are retained under `stationary_t20_8792505/`.  The five large restart
+files and full histories remain in the Aurora campaign directory and are not
+committed.
