@@ -15,8 +15,10 @@ set -euo pipefail
 
 : "${CAMPAIGN_ROOT:?existing PVC regression campaign root}"
 : "${CANDIDATE_LABEL:?short candidate label}"
-: "${EXPECTED_COMMIT:?full candidate commit}"
-: "${EXPECTED_TREE:?full candidate tree}"
+: "${EXPECTED_COMMIT:?exact source identifier}"
+: "${EXPECTED_TREE:?exact tree or manifest identifier}"
+readonly TEST_PURPOSE=${TEST_PURPOSE:-one midpoint of the W-to-R source bisect}
+readonly CLAIM_BOUNDARY=${CLAIM_BOUNDARY:-one-cycle source-bisect discriminator only}
 
 readonly KOKKOS_COMMIT=6739bc623081648af9e752b616d9671527922cbf
 readonly SRC="${CAMPAIGN_ROOT}/sources/${CANDIDATE_LABEL}"
@@ -57,7 +59,7 @@ cmp "${INPUT}" "${CAMPAIGN_ROOT}/sources/W/inputs/ref_gh/ref_gh_ordering_gauge_c
   echo "candidate_commit=${EXPECTED_COMMIT}"
   echo "candidate_tree=${EXPECTED_TREE}"
   echo "Kokkos_commit=${KOKKOS_COMMIT}"
-  echo "purpose=one midpoint of the W-to-R source bisect"
+  echo "purpose=${TEST_PURPOSE}"
   echo "grid=96x96x96 meshblocks=216 ranks=12 blocks_per_rank=18"
   echo "frozen_parameters=STANDARD gamma0=1 gamma2=1 gauge-on gauge-reference-subtraction-on q=1 q-controller-off q-prescribed-off FD4 RK4 CFL=0.05 KO=0.02"
   echo "debug_task_fences=true"
@@ -145,7 +147,7 @@ fi
   echo "latest_history_time=${last_time}"
   echo "last_completed_fence=$(tail -1 fence_trace.txt 2>/dev/null || true)"
   sha256sum "${EXE}" "${INPUT}"
-  echo "claim_boundary=one-cycle source-bisect discriminator only"
+  echo "claim_boundary=${CLAIM_BOUNDARY}"
 } > result.txt
 
 find . -type f ! -name compact_sha256.txt \
