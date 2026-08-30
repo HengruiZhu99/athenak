@@ -146,3 +146,18 @@ script contained literal \`+\` tokens where shell line continuations were
 intended.  The complete scheduler/provenance evidence is retained under
 \`wormhole_short_8792573_harness_failure/\`.  The correction is mechanical
 and changes neither the controlling input nor solver/formulation code.
+
+Corrected Aurora job \`8792609\` passed the bounded two-resolution startup gate
+on 12 distinct PVC tiles.  Fresh N96 and N144 cases both reached \`t=1M\`,
+remained finite, recorded no bad state, and did not reproduce the old fast
+mode.  At the endpoint, signed N96-to-N144 orders were 1.98 for GH, 0.24 for
+reduction, and 1.56 for curl constraints.  The moving-reference \`Psi_error\`
+did not improve (signed order -0.14); this quantity measures the intended
+physical departure from the moving reference and is not a standalone
+convergence error.
+
+The result supports proceeding to the outer-domain relaxation discriminator,
+but does not establish lapse/profile settling, trumpet formation, convergence,
+or long-time stability.  Complete compact histories and resolution tables are
+under \`wormhole_short_8792609/\`; endpoint restart files remain only at the
+recorded Aurora path.
