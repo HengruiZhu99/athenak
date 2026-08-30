@@ -19,6 +19,7 @@ set -euo pipefail
 : "${EXPECTED_TREE:?exact tree or manifest identifier}"
 readonly TEST_PURPOSE=${TEST_PURPOSE:-one midpoint of the W-to-R source bisect}
 readonly CLAIM_BOUNDARY=${CLAIM_BOUNDARY:-one-cycle source-bisect discriminator only}
+readonly DEVICE_CODE_SPLIT=${DEVICE_CODE_SPLIT:-default}
 
 readonly KOKKOS_COMMIT=6739bc623081648af9e752b616d9671527922cbf
 readonly SRC="${CAMPAIGN_ROOT}/sources/${CANDIDATE_LABEL}"
@@ -65,7 +66,8 @@ cmp "${INPUT}" "${CAMPAIGN_ROOT}/sources/W/inputs/ref_gh/ref_gh_ordering_gauge_c
   echo "debug_task_fences=true"
   echo "Kokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF"
   echo "source_unit=OFF"
-  echo "device_code_split=toolchain_and_source_default"
+  echo "device_code_split_base=toolchain_and_source_default"
+  echo "device_code_split_override=${DEVICE_CODE_SPLIT}"
   echo "restart_and_field_outputs=disabled"
   sha256sum "${HOME}/athenak_env" "$0" "${INPUT}"
   module list 2>&1
@@ -85,6 +87,11 @@ test "$(grep '^host=' rank_gpu_mapping.txt \
   | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
   | sort -u | wc -l)" -eq 12
 
+cmake_extra_args=()
+if [ "${DEVICE_CODE_SPLIT}" != default ]; then
+  cmake_extra_args+=(
+    "-DCMAKE_CXX_FLAGS=-fsycl-device-code-split=${DEVICE_CODE_SPLIT}")
+fi
 cmake -S "${SRC}" -B "${BUILD}" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_C_COMPILER="$(command -v icx)" \
@@ -98,12 +105,13 @@ cmake -S "${SRC}" -B "${BUILD}" \
   -DKokkos_ENABLE_SYCL=ON \
   -DKokkos_ARCH_INTEL_PVC=ON \
   -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  "${cmake_extra_args[@]}" \
   -DPROBLEM=built_in_pgens > configure.log 2>&1
 timeout 1500s cmake --build "${BUILD}" --verbose -j 64 > build.log 2>&1
 readonly EXE="${BUILD}/src/athena"
 test -x "${EXE}"
 {
-  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Athena_ENABLE_REF_GH_SOURCE_UNIT:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_CXX_FLAGS:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Athena_ENABLE_REF_GH_SOURCE_UNIT:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
     "${BUILD}/CMakeCache.txt"
   sha256sum "${BUILD}/CMakeCache.txt" "${BUILD}/compile_commands.json" "${EXE}"
 } > build_identity.txt
