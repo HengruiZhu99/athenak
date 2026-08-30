@@ -19,9 +19,12 @@ set -euo pipefail
 : "${EXPECTED_EXE_SHA256:?submit with the qualified executable SHA-256}"
 : "${ANALYZER:?submit with the staged analysis script path}"
 
-readonly OUT="${CAMPAIGN_ROOT}/stationary_t3_${PBS_JOBID}"
+readonly TARGET_TIME=${TARGET_TIME:-3.0}
+readonly RUN_LABEL=${RUN_LABEL:-stationary_t3}
+readonly RESTART_FILE=${RESTART_FILE:-}
+readonly OUT="${CAMPAIGN_ROOT}/${RUN_LABEL}_${PBS_JOBID}"
 readonly INPUT="${QUALIFIED_SOURCE}/inputs/ref_gh/ref_gh_relative_damped_stationary_trumpet.athinput"
-readonly BASENAME=refgh_relative_damped_stationary_n96_t3
+readonly BASENAME="refgh_relative_damped_${RUN_LABEL}"
 
 mkdir -p "${OUT}"
 cd "${OUT}"
@@ -46,6 +49,9 @@ test "$(git -C "${QUALIFIED_SOURCE}" rev-parse HEAD)" = \
 test -z "$(git -C "${QUALIFIED_SOURCE}" status --porcelain)"
 test "$(sha256sum "${QUALIFIED_EXE}" | awk '{print $1}')" = \
   "${EXPECTED_EXE_SHA256}"
+if test -n "${RESTART_FILE}"; then
+  test -f "${RESTART_FILE}"
+fi
 
 {
   date -Is
@@ -60,7 +66,8 @@ test "$(sha256sum "${QUALIFIED_EXE}" | awk '{print $1}')" = \
   echo "tiles=12"
   echo "grid=96x96x96"
   echo "meshblocks=216"
-  echo "target_time=3.0"
+  echo "target_time=${TARGET_TIME}"
+  echo "restart_file=${RESTART_FILE:-none}"
   echo "history_interval=0.01"
   echo "restart_interval=0.5"
   git -C "${QUALIFIED_SOURCE}" status --short --branch
@@ -83,12 +90,16 @@ test "$(grep '^host=' rank_gpu_mapping.txt \
 
 mkdir run
 cd run
+run_arguments=(-i "${INPUT}")
+if test -n "${RESTART_FILE}"; then
+  run_arguments=(-r "${RESTART_FILE}" -i "${INPUT}")
+fi
 set +e
 /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
-  "${BINDER}" "${QUALIFIED_EXE}" -i "${INPUT}" \
+  "${BINDER}" "${QUALIFIED_EXE}" "${run_arguments[@]}" \
   job/basename="${BASENAME}" \
   ref_gh/debug_task_fences=false \
-  time/nlim=-1 time/tlim=3.0 \
+  time/nlim=-1 time/tlim="${TARGET_TIME}" \
   output1/dt=0.01 output2/dt=0.5 \
   > run.log 2>&1
 run_status=$?
@@ -102,7 +113,7 @@ set +e
 python3 "${ANALYZER}" \
   --run-dir . \
   --basename "${BASENAME}" \
-  --target-time 3.0 \
+  --target-time "${TARGET_TIME}" \
   --minimum-fit-time 0.2 \
   --output-json ../stationary_t3_summary.json \
   --output-tsv ../stationary_t3_summary.tsv \
