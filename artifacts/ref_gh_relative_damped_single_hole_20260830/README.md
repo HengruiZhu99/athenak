@@ -169,3 +169,17 @@ to the recorded binary64 tolerances while excluding the conservative
 three-cell puncture-stencil cube.  This qualifies the reduction tool, not an
 evolution; compact oracle evidence is under
 \`wormhole_profile_analyzer_oracle/\`.
+
+The first outer-24M N96 run, Aurora job \`8792643\`, is a genuine negative
+result.  It used the initial \`shrinking_width\`, tau-4 reference path and
+failed closed at RK stage time \`1.64846M\` when relative conditioning became
+invalid.  The last finite history row at \`1.60318M\` already had GH,
+reduction, and curl RMS \`2.8409e-2\`, \`1.3891e-3\`, and \`1.2395e-1\`;
+the GH log-growth fit had slope \`6.2603/M\` and \`R^2=0.9779\`.
+
+The maxima localize around \`r=0.16--0.24M\`, while retained Hhat/theta/Upsilon
+RHS families remain zero.  This reproduces the repository's previously
+documented shrinking-core reference-path failure window; it does not qualify
+the new gauge.  Complete compact failure evidence and remote large-output
+locations are under
+\`wormhole_outer24_t4_8792643_shrinking_width_failure/\`.

@@ -1,0 +1,25 @@
+classification=FAIL_SHRINKING_WIDTH_REFERENCE_PATH
+job_id=8792643.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+exit_status=1
+walltime=00:15:51
+nodes=8
+ranks=96
+distinct_host_tile_pairs=96
+first_fatal_stage_time=1.64846
+fatal=Ref-GH controller conditioning became invalid
+last_history_time=1.603180553786977
+last_GH_RMS=0.028408566701903747
+last_reduction_RMS=0.0013891236112356026
+last_curl_RMS=0.12394585139522817
+last_relative_metric_condition_max=1.276260433725967
+last_relative_lapse_max=4.029511353071908
+last_relative_D_Linf=0.1882016282861092
+last_relative_source_Linf=0.5621941942127202
+GH_log_slope_from_t0p2=6.2602924870445555
+GH_log_fit_R2=0.9778649139044691
+dominant_location_radius_approx=0.16_to_0.24
+retained_driver_rhs_exact_zero=true
+diagnosis=known shrinking-width moving-reference pathology; reference curvature grows as shrinking core contracts
+next_correction=use previously qualified fixed_core path with tau_transition=8 while retaining gauge and numerical parameters
+claim=no wormhole-to-trumpet relaxation or stability established
+remote_artifact=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2/wormhole_outer24_t4_8792643.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov

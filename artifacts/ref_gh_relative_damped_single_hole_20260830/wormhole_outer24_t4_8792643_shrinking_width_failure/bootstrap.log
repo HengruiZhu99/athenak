@@ -1,0 +1,2 @@
+bootstrap_begin=2026-08-30T23:12:43+00:00
+wormhole_outer24_t4_failure status=1 line=94 command=/usr/bin/time -p mpiexec -n 96 --ppn 12 --depth=8 --cpu-bind depth "${BINDER}" "${QUALIFIED_EXE}" -i "${STAGED_INPUT}" job/basename="${BASENAME}" ref_gh/debug_task_fences=false time/nlim=-1 time/tlim=4.0 output1/dt=0.05 output2/dt=1.0 output3/dt=4.0 output4/dt=4.0 output5/dt=4.0 output6/dt=4.0 output7/dt=4.0 > run.log 2>&1
