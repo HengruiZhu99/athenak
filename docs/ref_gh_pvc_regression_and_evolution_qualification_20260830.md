@@ -117,6 +117,27 @@ rather than the new exact-state/task/boundary semantics. The changing final
 fence location remains consistent with asynchronous fault reporting and is
 not treated as the corrupting operation.
 
+## Phase 4: device-image/code-layout discriminator
+
+Aurora job `8791775` rebuilt exact first-bad `ab30fa96` with the sole global
+build override `-fsycl-device-code-split=per_kernel`. It passed one complete
+positive-time cycle at `0.003404497M`; executable SHA-256 was
+`e4f7d1aefd16b135dbf96912f1e72760144c59f5cf1c0fa438fd3158c1d6974e`.
+
+The default and per-kernel binaries both contain 7119 unique `_ZTS` strings.
+The default binary's `sycl-spir64_gen` bundle was `0x962eb68` bytes and the
+per-kernel bundle was `0xbe78078` bytes. The corresponding text sizes were
+180,980,804 and 224,227,460 bytes. Compiler pressure did not improve: the
+compatible-Phi kernel remained near 1281 Reals of reported spill, while the
+physical-geometry/gauge kernel rose from roughly 332 to 893 Reals under
+per-kernel splitting. Thus the pass cannot be attributed to reduced private
+spill allocation.
+
+The evidence classifies the regression as a SYCL/IGC/Level Zero
+device-image/code-layout portability issue. It does not yet establish an
+upstream compiler bug. The smallest permanent build scope and the independent
+MPI/message-contract discriminators remain to be completed.
+
 ## Remaining required evidence
 
 The first-bad source bisect, hybrid matrix, one-rank comparison, explicit MPI
