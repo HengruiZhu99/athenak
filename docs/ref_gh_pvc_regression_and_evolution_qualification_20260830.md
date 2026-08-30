@@ -220,6 +220,26 @@ Compact job evidence is under
 the setup-only failure is preserved separately under
 `phase6_aurora_8791868_harness_failure`.
 
+## Phase 7: smallest device-image correction
+
+The first scope test applied `-fsycl-device-code-split=per_kernel` only while
+compiling `src/ref_gh/ref_gh_calcrhs.cpp`. Aurora job `8791895` confirmed from
+`compile_commands.json` that exactly that one source received the option. The
+12-rank frozen cycle nevertheless failed at `t=0` with four Level Zero
+`NotPresent` writes after all twelve ranks reported their final diagnostic
+history fence. Its executable SHA-256 was `c93fef98...`.
+
+Source-object splitting is therefore insufficient. This negative result is
+important because the prior global-flag discriminator passed: the remaining
+distinction is the option on the final SYCL device link. The next minimal
+candidate leaves all translation-unit compile commands unchanged and applies
+per-kernel splitting only as an `athena` target link option. This remains a
+build/code-generation correction with no arithmetic, PDE, task, or numerical
+method change. It is not qualified until three frozen twelve-rank cycles pass.
+
+Compact evidence for the failed source-only scope is under
+`artifacts/ref_gh_pvc_regression_repair_20260830/phase7_aurora_8791895_source_scoped_split_fail`.
+
 ## Remaining required evidence
 
 The smallest build-scoped device-image correction must still be selected and
