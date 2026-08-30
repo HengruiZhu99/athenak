@@ -1,0 +1,146 @@
+Job Id: 8792573.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Job_Name = refgh_worm_s
+    Job_Owner = hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov
+    resources_used.cpupercent = 36
+    resources_used.cput = 00:00:03
+    resources_used.mem = 16996kb
+    resources_used.ncpus = 208
+    resources_used.vmem = 552204kb
+    resources_used.walltime = 00:00:18
+    job_state = F
+    queue = debug
+    server = aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Account_Name = CompactBinaryMerger
+    Checkpoint = u
+    ctime = Sun Aug 30 21:55:56 2026
+    Error_Path = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu
+	/refgh_worm_s.e8792573
+    exec_host = x4217c6s7b0n0/0*208
+    exec_vnode = (x4217c6s7b0n0:ncpus=208)
+    Hold_Types = n
+    Join_Path = oe
+    Keep_Files = doe
+    Mail_Points = a
+    Mail_Users = hz0693@princeton.edu
+    mtime = Sun Aug 30 22:00:17 2026
+    Output_Path = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzh
+	u/refgh_worm_s.o8792573
+    Priority = 0
+    qtime = Sun Aug 30 21:55:56 2026
+    Rerunable = False
+    Resource_List.allow_account_check_failure = True
+    Resource_List.allow_negative_allocation = True
+    Resource_List.award_category = INCITE
+    Resource_List.award_type = INCITE-2026
+    Resource_List.backfill_factor = 84600
+    Resource_List.backfill_max = 50
+    Resource_List.base_score = 51
+    Resource_List.bkc_definition = compute_aurora_prod_20260710T174510_d2b6bbb_
+	8bfceff
+    Resource_List.burn_ratio = 0.4192
+    Resource_List.current_allocation = 12544711680
+    Resource_List.enable_2nd_fp64 = True
+    Resource_List.enable_backfill = 0
+    Resource_List.enable_fifo = 1
+    Resource_List.enable_wfp = 0
+    Resource_List.fifo_factor = 1800
+    Resource_List.filesystems = home:flare
+    Resource_List.flare_fs = True
+    Resource_List.hbm_mode = flat
+    Resource_List.home_fs = True
+    Resource_List.ncpus = 208
+    Resource_List.ni_resource = aurora
+    Resource_List.nodect = 1
+    Resource_List.overburn = False
+    Resource_List.place = scatter
+    Resource_List.project_priority = 25
+    Resource_List.route_backfill = False
+    Resource_List.score_boost = 0
+    Resource_List.select = 1
+    Resource_List.snc_mode = quad
+    Resource_List.total_allocation = 21600000000
+    Resource_List.total_cpus = 10624
+    Resource_List.walltime = 01:00:00
+    Resource_List.wfp_factor = 100000
+    stime = Sun Aug 30 21:59:28 2026
+    obittime = Sun Aug 30 22:00:17 2026
+    session_id = 2820
+    jobdir = /home/hzhu
+    substate = 93
+    Variable_List = PBS_O_HOME=/home/hzhu,PBS_O_LANG=en_US.UTF-8,
+	PBS_O_LOGNAME=hzhu,
+	PBS_O_PATH=/home/hzhu/.local/bin:/home/hzhu/bin:/opt/cray/pals/1.8/bin
+	:/opt/cray/libfabric/1.22.0/bin:/opt/aurora/26.26.0/spack/unified/1.1.1
+	/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin:/opt/
+	aurora/26.26.0/support/tools/gpu_validation:/opt/aurora/26.26.0/support
+	/tools/mpi_wrapper_utils:/opt/aurora/26.26.0/oneapi/ishmem/latest/bin:/
+	opt/aurora/26.26.0/oneapi/dpcpp-ct/latest/bin:/opt/aurora/26.26.0/oneap
+	i/advisor/latest/bin64:/opt/aurora/26.26.0/oneapi/vtune/latest/bin64:/o
+	pt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger/bin:/opt/aurora/2
+	6.26.0/oneapi/mkl/latest/bin:/opt/aurora/26.26.0/oneapi/compiler/latest
+	/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-1
+	3.4.0-hgnyg4p/bin:/opt/clmgr/sbin:/opt/clmgr/bin:/opt/sgi/sbin:/opt/sgi
+	/bin:/home/hzhu/.local/bin:/home/hzhu/bin:/usr/local/bin:/usr/bin:/bin:
+	/opt/c3/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin:/opt/pbs/bin:/sbin,
+	PBS_O_MAIL=/var/spool/mail/hzhu,PBS_O_SHELL=/bin/bash,
+	PBS_O_INTERACTIVE_AUTH_METHOD=resvport,
+	PBS_O_HOST=aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov,
+	PBS_O_WORKDIR=/home/hzhu,PBS_O_SYSTEM=Linux,
+	CAMPAIGN_ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relat
+	ive_damped_single_hole_20260830_pvc_v2,
+	QUALIFIED_SOURCE=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_re
+	lative_damped_single_hole_20260830_pvc_v2/src,
+	QUALIFIED_EXE=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relat
+	ive_damped_single_hole_20260830_pvc_v2/build_8792264.aurora-pbs-0001.ho
+	stmgmt.cm.aurora.alcf.anl.gov/src/athena,
+	EXPECTED_SOURCE_COMMIT=a7d82a367eb94f367dd5fe977248172cdd516465,
+	EXPECTED_EXE_SHA256=e21dbd0c4c24677a41d89c0cfa26dc3aedbe0d8f3431439e5b
+	96005890a7ba39,
+	CHECKPOINT_COMMIT=fa56389b9b9cc65068eba0e6a10ce715d2ea45f1,
+	STAGED_INPUT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relati
+	ve_damped_single_hole_20260830_pvc_v2/wormhole_checkpoint_fa56389b/ref_
+	gh_relative_damped_wormhole_short.athinput,
+	ANALYZER=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_d
+	amped_single_hole_20260830_pvc_v2/wormhole_checkpoint_fa56389b/analyze_
+	relative_damped_wormhole.py,PBS_O_QUEUE=debug,
+	PBS_JOBID_SHORT=8792573.aurora,XDG_RUNTIME_DIR=/run/user/40304,
+	PBS_HOOK_RESOURCES=eJylUkuP2yAQ/kNpBZbjpIs4VT3spae9I8BD1g1mvDyS5t93iJ2
+	NrT3W8sF8M8x8DyeIF4iq15gUTkm5JJlIK3CC6L6ihQ4V5Q/UeR1hg5zAnnFz8x3HbctF+6
+	FXbvCQbinDmOTSsnuM26237daEdivKQnuPV6WtxRKysu+0Wjk9+BKBts3VACedhwuoerT0i
+	aHWrjr2io5wwniTr79/vr79WtB8m2BBvjWs6YTR9kxsPc22GaM8th1jT3TUf+W+nhOoZJF2
+	77kwZ6t6cEMY7hstjlPJRKJEjFpNEXtVZ7MDZ2/80O45U31jOmOMOhpnwTlhSgwqVsaSfW/
+	5j0bYEiOQ0rWUZt+2B867IxMQtPGgmkDmTl1LMhfkQVV+9rjB4bN+dROVKvaQyI+sAtuEXu
+	7xiFXm72ZUI/YgCcviGXSwU0myYUcRBhUhYYkW5CxeBLpgM3Uh/QxVJO2evKaGRKIyREH2/
+	KEWsmnAOOSbbPYiYvVvpeRutTKIKd//NT8PTcHOlD6K7kXGrP3ar4ZTdvOzFO9UOeuaVlyp
+	MQ8jSMZfGKNXkDOflsyXPgqUymMd9oL9f+TzoK85bvAluxnbJjBjGwv+ATlQbhI=
+    comment = Job run at Sun Aug 30 at 21:59 on (x4217c6s7b0n0:ncpus=208) and f
+	ailed
+    etime = Sun Aug 30 21:55:56 2026
+    umask = 22
+    run_count = 1
+    eligible_time = 00:03:33
+    Stageout_status = 1
+    Exit_status = 1
+    Submit_arguments = -v CAMPAIGN_ROOT=/lus/flare/projects/CompactBinaryMerger
+	/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2,
+	QUALIFIED_SOURCE=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_re
+	lative_damped_single_hole_20260830_pvc_v2/src,
+	QUALIFIED_EXE=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relat
+	ive_damped_single_hole_20260830_pvc_v2/build_8792264.aurora-pbs-0001.ho
+	stmgmt.cm.aurora.alcf.anl.gov/src/athena,
+	EXPECTED_SOURCE_COMMIT=a7d82a367eb94f367dd5fe977248172cdd516465,
+	EXPECTED_EXE_SHA256=e21dbd0c4c24677a41d89c0cfa26dc3aedbe0d8f3431439e5b
+	96005890a7ba39,
+	CHECKPOINT_COMMIT=fa56389b9b9cc65068eba0e6a10ce715d2ea45f1,
+	STAGED_INPUT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relati
+	ve_damped_single_hole_20260830_pvc_v2/wormhole_checkpoint_fa56389b/ref_
+	gh_relative_damped_wormhole_short.athinput,
+	ANALYZER=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_d
+	amped_single_hole_20260830_pvc_v2/wormhole_checkpoint_fa56389b/analyze_
+	relative_damped_wormhole.py /lus/flare/projects/CompactBinaryMerger/hzh
+	u/refgh_relative_damped_single_hole_20260830_pvc_v2/wormhole_checkpoint
+	_fa56389b/aurora_relative_damped_wormhole_short.pbs
+    history_timestamp = 1788127217
+    project = CompactBinaryMerger
+    Submit_Host = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov
+

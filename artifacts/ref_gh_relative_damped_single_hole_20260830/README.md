@@ -139,3 +139,10 @@ This is only a local implementation and output-schema gate.  Its resolution is
 too low and its duration too short to demonstrate physical lapse collapse,
 trumpet settling, convergence, or the absence of a later instability.  Those
 questions require the bounded Aurora progression.
+
+Aurora job \`8792573\` did not launch Athena.  It failed in 18 seconds while
+invoking the rank-to-tile mapping wrapper because the first committed PBS
+script contained literal \`+\` tokens where shell line continuations were
+intended.  The complete scheduler/provenance evidence is retained under
+\`wormhole_short_8792573_harness_failure/\`.  The correction is mechanical
+and changes neither the controlling input nor solver/formulation code.

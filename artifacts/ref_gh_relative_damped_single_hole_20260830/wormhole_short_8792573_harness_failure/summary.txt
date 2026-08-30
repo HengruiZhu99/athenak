@@ -1,0 +1,10 @@
+classification=HARNESS_FAILURE_NO_ATHENA_LAUNCH
+job_id=8792573.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+exit_status=1
+walltime=00:00:18
+cause=literal plus tokens introduced where PBS shell line continuations were intended
+failed_command=12-rank GPU mapping wrapper
+athena_started=false
+numerical_evidence=none
+correction=mechanical PBS command-continuation repair only; no input, solver, gauge, or formulation change
+remote_artifact=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2/wormhole_short_8792573.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
