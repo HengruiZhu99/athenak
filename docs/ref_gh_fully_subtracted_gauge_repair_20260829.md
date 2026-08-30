@@ -832,3 +832,21 @@ fences. Its final field, physical-metric, and constraint Linf errors were
 `1.665335e-15`, `8.881784e-15`, and `1.010326e-14`. This is local
 equation/lifecycle evidence only; PVC correction remains unproved pending one
 focused rerun.
+
+Aurora debug job `8791548` reran that exact correction at commit `cab24341`
+with twelve distinct PVC tiles and Kokkos bounds checking. It still failed at
+`t=0` with a Level Zero level-1 PDE `NotPresent` write fault and PBS exit 143,
+so the split-gauge correction is not PVC-qualified. It nevertheless moved the
+synchronous boundary: all twelve ranks completed the separate gauge-driver,
+primary source/Pi, standard-Phi, gamma2, dissipation, complete RHS, RK update,
+restriction, MPI send/receive, and prolongation fences. No rank completed the
+next projected metric-boundary fence. No Kokkos bounds violation appeared.
+
+The next exact-q=1 boundary launch still instantiates the unused general
+projected-metric path behind a runtime `exact_matched_reference` branch. The
+compiler reports about 122 spilled Reals for that analytic boundary kernel,
+even though the selected exact branch only zeros the metric sectors and writes
+the four Minkowski-frame diagonal values. This makes a host-side exact/general
+dispatch the next narrow equation-preserving portability correction. The
+failure remains pre-evolution portability evidence: it neither triggers the
+Phase-9 lower-order continuum isolation nor supports any positive-time claim.
