@@ -1,0 +1,123 @@
+#!/bin/bash -l
+# 96^3 stationary relative-damped Ref-GH evolution through t=3M.
+# Reuse only an executable that passed the 12-tile PVC one-cycle gate.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_relg_t3
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with the existing PVC campaign root}"
+: "${QUALIFIED_SOURCE:?submit with the exact qualified source path}"
+: "${QUALIFIED_EXE:?submit with the exact qualified executable path}"
+: "${EXPECTED_SOURCE_COMMIT:?submit with the qualified source SHA}"
+: "${EXPECTED_EXE_SHA256:?submit with the qualified executable SHA-256}"
+: "${ANALYZER:?submit with the staged analysis script path}"
+
+readonly OUT="${CAMPAIGN_ROOT}/stationary_t3_${PBS_JOBID}"
+readonly INPUT="${QUALIFIED_SOURCE}/inputs/ref_gh/ref_gh_relative_damped_stationary_trumpet.athinput"
+readonly BASENAME=refgh_relative_damped_stationary_n96_t3
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "stationary_t3_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+readonly BINDER=$(command -v gpu_tile_compact.sh)
+test -x "${BINDER}"
+test -x "${QUALIFIED_EXE}"
+test -f "${ANALYZER}"
+test "$(git -C "${QUALIFIED_SOURCE}" rev-parse HEAD)" = \
+  "${EXPECTED_SOURCE_COMMIT}"
+test -z "$(git -C "${QUALIFIED_SOURCE}" status --porcelain)"
+test "$(sha256sum "${QUALIFIED_EXE}" | awk '{print $1}')" = \
+  "${EXPECTED_EXE_SHA256}"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "qualified_source=${QUALIFIED_SOURCE}"
+  echo "qualified_source_commit=${EXPECTED_SOURCE_COMMIT}"
+  echo "qualified_executable=${QUALIFIED_EXE}"
+  echo "qualified_executable_sha256=${EXPECTED_EXE_SHA256}"
+  echo "ranks=12"
+  echo "tiles=12"
+  echo "grid=96x96x96"
+  echo "meshblocks=216"
+  echo "target_time=3.0"
+  echo "history_interval=0.01"
+  echo "restart_interval=0.5"
+  git -C "${QUALIFIED_SOURCE}" status --short --branch
+  git -C "${QUALIFIED_SOURCE}" submodule status
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${ANALYZER}" "$0"
+} > provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
+  | sort -u | wc -l)" -eq 12
+
+mkdir run
+cd run
+set +e
+/usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" "${QUALIFIED_EXE}" -i "${INPUT}" \
+  job/basename="${BASENAME}" \
+  ref_gh/debug_task_fences=false \
+  time/nlim=-1 time/tlim=3.0 \
+  output1/dt=0.01 output2/dt=0.5 \
+  > run.log 2>&1
+run_status=$?
+set -e
+{
+  echo "run_exit_status=${run_status}"
+  echo "run_completed=$(date -Is)"
+} > run_status.txt
+
+set +e
+python3 "${ANALYZER}" \
+  --run-dir . \
+  --basename "${BASENAME}" \
+  --target-time 3.0 \
+  --minimum-fit-time 0.2 \
+  --output-json ../stationary_t3_summary.json \
+  --output-tsv ../stationary_t3_summary.tsv \
+  --require-pass > ../stationary_t3_analysis.log 2>&1
+analysis_status=$?
+set -e
+
+cd ..
+find run/rst -type f -print0 2>/dev/null \
+  | sort -z | xargs -0 -r sha256sum > restart_sha256.txt
+sha256sum provenance.txt rank_gpu_mapping.txt bootstrap.log \
+  stationary_t3_summary.json stationary_t3_summary.tsv \
+  stationary_t3_analysis.log run/run.log run/run_status.txt \
+  run/*.hst run/*.tsv > compact_sha256.txt
+echo "run_exit_status=${run_status}"
+echo "analysis_exit_status=${analysis_status}"
+echo "stationary_t3_complete=$(date -Is)"
+exit "${analysis_status}"
