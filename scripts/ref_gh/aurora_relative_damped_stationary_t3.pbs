@@ -1,6 +1,8 @@
 #!/bin/bash -l
-# 96^3 stationary relative-damped Ref-GH evolution through t=3M.
-# Reuse only an executable that passed the 12-tile PVC one-cycle gate.
+# 96^3 stationary relative-damped Ref-GH evolution segment.
+# Reuse only an executable that passed the 12-tile PVC one-cycle gate.  The
+# defaults reproduce the t=3M gate; environment overrides drive continuations
+# and the final bounded t=20M run without changing formulation parameters.
 #PBS -A CompactBinaryMerger
 #PBS -q debug
 #PBS -l select=1
@@ -22,6 +24,8 @@ set -euo pipefail
 readonly TARGET_TIME=${TARGET_TIME:-3.0}
 readonly RUN_LABEL=${RUN_LABEL:-stationary_t3}
 readonly RESTART_FILE=${RESTART_FILE:-}
+readonly HISTORY_INTERVAL=${HISTORY_INTERVAL:-0.01}
+readonly RESTART_INTERVAL=${RESTART_INTERVAL:-0.5}
 readonly OUT="${CAMPAIGN_ROOT}/${RUN_LABEL}_${PBS_JOBID}"
 readonly INPUT="${QUALIFIED_SOURCE}/inputs/ref_gh/ref_gh_relative_damped_stationary_trumpet.athinput"
 readonly BASENAME="refgh_relative_damped_${RUN_LABEL}"
@@ -68,8 +72,8 @@ fi
   echo "meshblocks=216"
   echo "target_time=${TARGET_TIME}"
   echo "restart_file=${RESTART_FILE:-none}"
-  echo "history_interval=0.01"
-  echo "restart_interval=0.5"
+  echo "history_interval=${HISTORY_INTERVAL}"
+  echo "restart_interval=${RESTART_INTERVAL}"
   git -C "${QUALIFIED_SOURCE}" status --short --branch
   git -C "${QUALIFIED_SOURCE}" submodule status
   module list 2>&1
@@ -100,7 +104,7 @@ set +e
   job/basename="${BASENAME}" \
   ref_gh/debug_task_fences=false \
   time/nlim=-1 time/tlim="${TARGET_TIME}" \
-  output1/dt=0.01 output2/dt=0.5 \
+  output1/dt="${HISTORY_INTERVAL}" output2/dt="${RESTART_INTERVAL}" \
   > run.log 2>&1
 run_status=$?
 set -e
