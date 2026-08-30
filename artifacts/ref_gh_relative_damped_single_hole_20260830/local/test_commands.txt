@@ -1,0 +1,7 @@
+serial_configure=cmake -S . -B build-relative-damped-serial -DCMAKE_BUILD_TYPE=Release -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_OPENMP=OFF
+serial_build=cmake --build build-relative-damped-serial --parallel 8
+source_unit=build-relative-damped-serial/src/athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
+relative_cycle=build-relative-damped-serial/src/athena -i inputs/ref_gh/ref_gh_relative_damped_stationary_trumpet.athinput mesh/nx1=16 mesh/nx2=16 mesh/nx3=16 meshblock/nx1=16 meshblock/nx2=16 meshblock/nx3=16 time/nlim=1 output2/dt=-1
+wave_map_cycle=build-relative-damped-serial/src/athena -i inputs/ref_gh/ref_gh_wave_map_stationary_trumpet.athinput mesh/nx1=16 mesh/nx2=16 mesh/nx3=16 meshblock/nx1=16 meshblock/nx2=16 meshblock/nx3=16 time/nlim=1 output2/dt=-1
+sanitize_configure=cmake -S . -B build-relative-damped-sanitize -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_OPENMP=OFF -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=ON -DKokkos_ENABLE_DEBUG_DUALVIEW_MODIFY_CHECK=ON -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined
+sanitize_run=ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 build-relative-damped-sanitize/src/athena -i tst/inputs/ref_gh_q_controlled_reference.athinput
