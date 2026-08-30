@@ -199,7 +199,26 @@ source unit without weakening tolerances. Exact compact evidence is under
 This is an equation-preserving message-contract correction, and true
 multilevel Z4c behavior is unchanged. It is not called the source-regression
 root cause: W already survived positive-time evolution with the old behavior.
-The required one-rank and twelve-rank Aurora PVC gates remain pending.
+Aurora job `8791879` then built current C plus the correction once on node
+`x4020c0s7b0n0` and ran the frozen one-rank and twelve-rank cases with one
+executable (`58964e2b...`). The one-rank case passed a complete positive-time
+cycle at `t=0.003404497M`, including all four RK stages and final diagnostics.
+The twelve-rank case still produced two PDE-level `NotPresent` writes after
+all ranks had reported their physical metric and gauge boundary fences. It
+ended with status 143 before positive time. Thus the correction repairs the
+real metadata/payload contract but does not by itself restore twelve-rank PVC
+portability.
+
+Job `8791868` was a preserved harness-only failure: `git archive` had created
+an empty submodule directory and the pinned Kokkos symlink was nested one
+level too deep. It consumed one second, did not compile, and has no numerical
+classification. The corrected source snapshot retained the same commit/tree,
+input hash, and Kokkos commit for job `8791879`.
+
+Compact job evidence is under
+`artifacts/ref_gh_pvc_regression_repair_20260830/phase6_aurora_8791879_rank_contract_gate`;
+the setup-only failure is preserved separately under
+`phase6_aurora_8791868_harness_failure`.
 
 ## Remaining required evidence
 

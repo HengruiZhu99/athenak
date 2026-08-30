@@ -1,0 +1,1 @@
+candidate_failure status=143 line=139 command=( cd "${run_dir}"; /usr/bin/time -p timeout 600s mpiexec -n "${nranks}" --ppn "${nranks}" --depth=8 --cpu-bind depth "${BINDER}" "${EXE}" -i "${INPUT}" job/basename="${run_basename}" time/tlim=0.01 time/nlim=1 ref_gh/debug_task_fences=true output2/dt=-1 output3/dt=-1 output4/dt=-1 output5/dt=-1 > run.log 2>&1 )

@@ -140,8 +140,7 @@ for nranks in "${RANK_COUNTS[@]}"; do
   run_dir="run_n${nranks}"
   run_basename="${BASENAME}_n${nranks}"
   mkdir "${run_dir}"
-  set +e
-  (
+  if (
     cd "${run_dir}"
     /usr/bin/time -p timeout 600s mpiexec -n "${nranks}" \
       --ppn "${nranks}" --depth=8 \
@@ -150,9 +149,11 @@ for nranks in "${RANK_COUNTS[@]}"; do
       ref_gh/debug_task_fences=true \
       output2/dt=-1 output3/dt=-1 output4/dt=-1 output5/dt=-1 \
       > run.log 2>&1
-  )
-  run_status=$?
-  set -e
+  ); then
+    run_status=0
+  else
+    run_status=$?
+  fi
 
   fence_trace="fence_trace_n${nranks}.txt"
   grep 'ref_gh debug fence passed:' "${run_dir}/run.log" \
