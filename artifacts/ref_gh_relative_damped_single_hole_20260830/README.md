@@ -183,3 +183,17 @@ documented shrinking-core reference-path failure window; it does not qualify
 the new gauge.  Complete compact failure evidence and remote large-output
 locations are under
 \`wormhole_outer24_t4_8792643_shrinking_width_failure/\`.
+
+The next bounded discriminator therefore changes only the reference homotopy
+to the repository's fixed-core, tau-8 path.  It retains the new
+\`relative_damped\` gauge, STANDARD Phi, gamma0=gamma2=1, FD4, RK4, CFL 0.05,
+and KO 0.02.  This correction is motivated by the prior independent
+reference-path diagnosis; it is not gauge-parameter tuning.
+
+A reduced Kokkos-Serial one-cycle check of that revised input reached
+\`t=0.0460447286M\` with finite state and no bad-state flag.  Endpoint GH,
+reduction, and curl RMS were \`2.23585e-7\`, \`8.40904e-7\`, and
+\`2.46390e-7\`; relative-D and added-source Linf were \`1.95056e-6\` and
+\`2.58297e-5\`.  The exact initial relative match had zero D and source.
+This only validates the revised input locally.  It does not cross the failed
+\`t~1.65M\` interval or support a relaxation claim.

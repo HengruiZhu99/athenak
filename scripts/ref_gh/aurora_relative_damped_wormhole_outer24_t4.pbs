@@ -1,5 +1,5 @@
 #!/bin/bash -l
-# N96 outer-24M wormhole-to-trumpet relaxation discriminator through t=4M.
+# N96 fixed-core/tau-8 outer-24M relaxation discriminator through t=4M.
 # Eight Aurora nodes reduce the 328-block production tree to 3--4 blocks/tile.
 #PBS -A CompactBinaryMerger
 #PBS -q debug-scaling
@@ -22,12 +22,13 @@ set -euo pipefail
 : "${ANALYZER:?submit with the staged wormhole analysis script}"
 : "${PROFILE_ANALYZER:?submit with the staged physical-profile analyzer}"
 
-readonly OUT="${CAMPAIGN_ROOT}/wormhole_outer24_t4_${PBS_JOBID}"
+readonly OUT="${CAMPAIGN_ROOT}/wormhole_fixed_core_outer24_t4_${PBS_JOBID}"
+readonly PRIOR_FAILURE_DIR=${PRIOR_FAILURE_DIR:-}
 
 mkdir -p "${OUT}"
 cd "${OUT}"
 exec > >(tee -a bootstrap.log) 2>&1
-trap 'status=$?; echo "wormhole_outer24_t4_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+trap 'status=$?; echo "wormhole_outer24_t4_error status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
 
 echo "bootstrap_begin=$(date -Is)"
 source "${HOME}/athenak_env"
@@ -69,6 +70,9 @@ test "$(sha256sum "${QUALIFIED_EXE}" | awk '{print $1}')" = "${EXPECTED_EXE_SHA2
   echo "history_interval=0.05"
   echo "restart_interval=1.0"
   echo "physical_field_times=0,4"
+  echo "reference_path=fixed_core"
+  echo "tau_transition=8.0"
+  echo "prior_failure_dir=${PRIOR_FAILURE_DIR:-none}"
   echo "claim=main-relaxation discriminator only; no settling or long-time claim"
   git -C "${QUALIFIED_SOURCE}" status --short --branch
   git -C "${QUALIFIED_SOURCE}" submodule status
@@ -78,6 +82,12 @@ test "$(sha256sum "${QUALIFIED_EXE}" | awk '{print $1}')" = "${EXPECTED_EXE_SHA2
   env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
   sha256sum "${STAGED_INPUT}" "${ANALYZER}" "${PROFILE_ANALYZER}" "$0"
 } > provenance.txt
+
+if test -n "${PRIOR_FAILURE_DIR}"; then
+  test -d "${PRIOR_FAILURE_DIR}/run/rst"
+  find "${PRIOR_FAILURE_DIR}/run/rst" -type f -name '*.rst' -print0 \
+    | sort -z | xargs -0 -r sha256sum > prior_failure_restart_sha256.txt
+fi
 
 mpiexec -n 96 --ppn 12 --depth=8 --cpu-bind depth \
   "${BINDER}" bash -lc '
@@ -89,7 +99,7 @@ test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/^host=\([^ ]*\).*/\1/p' |
 
 mkdir run
 cd run
-readonly BASENAME=refgh_relative_damped_wormhole_outer24_n96_t4
+readonly BASENAME=refgh_relative_damped_wormhole_fixed_core_outer24_n96_t4
 set +e
 /usr/bin/time -p mpiexec -n 96 --ppn 12 --depth=8 --cpu-bind depth \
   "${BINDER}" "${QUALIFIED_EXE}" -i "${STAGED_INPUT}" \
@@ -103,7 +113,17 @@ set -e
   echo "run_exit_status=${run_status}"
   echo "run_completed=$(date -Is)"
 } > run_status.txt
-test "${run_status}" -eq 0
+if test "${run_status}" -ne 0; then
+  cd ..
+  python3 "${ANALYZER}" \
+    --case "n96=${OUT}/run" --spacing n96=0.0625 \
+    --target 0 0.2 0.5 1 1.2 1.4 1.6 2 3 4 --target-tolerance 0.04 \
+    --outer-distance 24 --late-fit-time 1 \
+    --output-prefix "${OUT}/failure_analysis" > failure_analysis.log 2>&1 || true
+  find run/rst -type f -name '*.rst' -printf '%s %p\n' \
+    | sort -n > failure_restart_locations.txt
+  exit "${run_status}"
+fi
 grep -q 'Total number of MeshBlocks = 328' run.log
 grep -q 'Number of parallel ranks = 96' run.log
 grep -q 'reference-GH puncture vertex audit passed' run.log

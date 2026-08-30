@@ -1,7 +1,9 @@
-# Controlling Schwarzschild wormhole-to-trumpet relaxation input.  The
-# established four-level SMR tree moves the outer faces to 24M while preserving
-# dx_min=M/16 at the default 96^3 root resolution.  Override root and MeshBlock
-# cells together as 96/32 or 144/48 for the required second resolution.
+# Controlling Schwarzschild wormhole-to-trumpet relaxation input.  It uses the
+# previously validated fixed-core, tau-8 reference-path choice after the
+# shrinking-width path reproduced its known t~1.65M failure.  The established
+# four-level SMR tree moves the outer faces to 24M while preserving dx_min=M/16
+# at the default 96^3 root resolution.  Override root and MeshBlock cells
+# together as 96/32 or 144/48 for the required second resolution.
 
 <job>
 basename = ref_gh_relative_damped_wormhole_outer24_n96
@@ -72,7 +74,7 @@ ndiag = 10
 <ref_gh>
 reference = controlled_transition
 continuation_mode = legacy_time
-transition_path = shrinking_width
+transition_path = fixed_core
 source = covariant
 phi_ordering = standard
 reference_mass = 1.0
@@ -93,7 +95,7 @@ r_core0 = 0.30
 tau_core = 1.5
 kappa_core = 1.0
 transition_width = 0.20
-tau_transition = 4.0
+tau_transition = 8.0
 r_fit_min = 0.15
 r_fit_max = 0.40
 controller_fit_buffer_cells = 1.0
