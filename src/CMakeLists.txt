@@ -244,13 +244,13 @@ endif()
 # The fully-subtracted Ref-GH production image crosses an Intel PVC
 # device-code-layout correctness boundary when all linked kernels remain in
 # one monolithic SYCL module.  The identical arithmetic passes the frozen
-# 12-tile gate when the final device image is split per kernel.  Applying the
-# option only while compiling ref_gh_calcrhs.cpp is insufficient, establishing
-# that the final device-link layout is the required scope.  Keep ordinary
-# translation-unit compilation unchanged and apply the policy only to the
-# AthenaK executable link.  This changes neither equations nor kernel/task
-# ordering.
+# 12-tile gate when the application kernels are compiled and the final device
+# image is linked per kernel.  Applying the option only to ref_gh_calcrhs.cpp,
+# or only to the final link, is insufficient.  Scope the policy to the AthenaK
+# executable target, excluding Kokkos support-library targets.  This changes
+# neither equations nor kernel/task ordering.
 if (Kokkos_ENABLE_SYCL)
+  target_compile_options(athena PRIVATE "-fsycl-device-code-split=per_kernel")
   target_link_options(athena PRIVATE "-fsycl-device-code-split=per_kernel")
 endif()
 
