@@ -1,0 +1,32 @@
+case=local wormhole-to-trumpet one-cycle implementation gate
+branch=codex/ref-gh-relative-damped-single-hole-20260830
+source_head=1292f01355b575c4b9e914328cce2310f7950798
+source_implementation_commit=5755ed30281f6094a9b9a53fa445da61d04a7e13
+host=Kip
+backend=Kokkos Serial
+executable=/home/hzhu/Desktop/research/gr/athenak-ref-gh-relative-damped-single-hole-20260830/build-relative-damped-serial/src/athena
+executable_sha256=eb54bde511ae61c1ea0b6363cfbbc42ee8e4f8735f457c0c374989421cdfb523
+input=inputs/ref_gh/ref_gh_relative_damped_wormhole_short.athinput
+input_sha256=d42c0797bd0fcba9e7fe137f7ceb3657377b5bf0d6a2dc827f9a40aef12b5a1f
+analysis_script=scripts/ref_gh/analyze_relative_damped_wormhole.py
+analysis_script_sha256=b0696eb43e38dc3228ce426bbc4b957d5d214b0b5e7ba2128cfb8600f2916193
+
+The first full-size local attempt used root 24^3 and 8^3 cells per MeshBlock.
+It initialized successfully with 34 MeshBlocks and a 1,304,625,152-byte generic
+reference cache, but was deliberately terminated after approximately four wall
+minutes because a one-cycle Serial run was too slow.  This was a
+performance-only cancellation, not a numerical failure.  No process remained.
+
+Successful exact command (run in a fresh temporary directory):
+
+  /usr/bin/time -p /home/hzhu/Desktop/research/gr/athenak-ref-gh-relative-damped-single-hole-20260830/build-relative-damped-serial/src/athena -i /home/hzhu/Desktop/research/gr/athenak-ref-gh-relative-damped-single-hole-20260830/inputs/ref_gh/ref_gh_relative_damped_wormhole_short.athinput mesh/nx1=12 mesh/nx2=12 mesh/nx3=12 meshblock/nx1=4 meshblock/nx2=4 meshblock/nx3=4 time/nlim=1 time/tlim=0.1 output1/dt=0.01 output2/dt=10.0 job/basename=local_wormhole_small
+
+Analysis command:
+
+  python3 scripts/ref_gh/analyze_relative_damped_wormhole.py --case local=/tmp/refgh-wormhole-local-small-ViYszA --spacing local=0.5 --target 0 0.04604472861863394 --target-tolerance .01 --outer-distance 6 --late-fit-time .02 --output-prefix /tmp/refgh-wormhole-local-small-ViYszA/analysis
+
+The case used the mature controlled-transition isotropic-wormhole pgen,
+continuation_mode=legacy_time, shrinking_width reference motion, STANDARD Phi,
+gamma0=gamma2=1, FD4, RK4, CFL=0.05, KO=0.02, and relative_damped gauge with
+mu_L=mu_S=1, r0=0.25, r1=0.5.  It was only a one-cycle gate and is not evidence
+of wormhole-to-trumpet relaxation.

@@ -1,0 +1,114 @@
+# Genuine isotropic Schwarzschild wormhole data with the mature smooth
+# shrinking-width reference transition and the puncture-core relative-damped
+# gauge.  This bounded [-6M,6M] input is only the low-cost startup discriminator;
+# the outer24 input is the controlling relaxation/settling case.
+
+<job>
+basename = ref_gh_relative_damped_wormhole_short
+
+<mesh>
+nghost = 4
+nx1 = 96
+x1min = -6.0
+x1max = 6.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 96
+x2min = -6.0
+x2max = 6.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 96
+x3min = -6.0
+x3max = 6.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 32
+nx2 = 32
+nx3 = 32
+
+<mesh_refinement>
+refinement = static
+num_levels = 2
+max_nmb_per_rank = 128
+
+<refined_region1>
+level = 1
+x1min = -2.0
+x1max = 2.0
+x2min = -2.0
+x2max = 2.0
+x3min = -2.0
+x3max = 2.0
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+nlim = -1
+tlim = 1.0
+ndiag = 10
+
+<ref_gh>
+reference = controlled_transition
+continuation_mode = legacy_time
+transition_path = shrinking_width
+source = covariant
+phi_ordering = standard
+reference_mass = 1.0
+reference_x = 0.0
+reference_y = 0.0
+reference_z = 0.0
+fd_order = 4
+extrap_order = 2
+debug_task_fences = false
+validate_reference_cache = false
+max_location_diagnostics = true
+controller_enabled = false
+controller_delta_q = 0.0
+controller_delta_q_dot = 0.0
+controller_delta_p = 0.0
+controller_delta_p_dot = 0.0
+r_core0 = 0.30
+tau_core = 1.5
+kappa_core = 1.0
+transition_width = 0.20
+tau_transition = 4.0
+r_fit_min = 0.15
+r_fit_max = 0.40
+controller_fit_buffer_cells = 1.0
+regularization_outer_start = 0.50
+regularization_outer_end = 0.60
+gamma0 = 1.0
+gamma2 = 1.0
+gauge_mode = relative_damped
+gauge_driver_enabled = false
+gauge_reference_subtraction = false
+relative_damped_mu_l = 1.0
+relative_damped_mu_s = 1.0
+relative_damped_r0 = 0.25
+relative_damped_r1 = 0.50
+exclude_puncture_stencil_diagnostics = true
+diss = 0.02
+fail_closed_dt = 1.0e-12
+
+<problem>
+pgen_name = ref_gh_controlled_transition
+user_hist = true
+common_adm_history = true
+common_adm_fd_order = 4
+common_adm_exclude_puncture_stencils = true
+common_adm_puncture_x = 0.0
+common_adm_puncture_y = 0.0
+common_adm_puncture_z = 0.0
+
+<output1>
+file_type = hst
+dt = 0.02
+data_format = %20.15e
+
+<output2>
+file_type = rst
+dt = 0.50

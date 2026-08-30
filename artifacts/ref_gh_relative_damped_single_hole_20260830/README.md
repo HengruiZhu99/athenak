@@ -118,3 +118,24 @@ analysis summary, provenance, rank/tile mapping, remote hashes, and restart
 hashes are retained under `stationary_t20_8792505/`.  The five large restart
 files and full histories remain in the Aurora campaign directory and are not
 committed.
+
+## Wormhole-to-trumpet local implementation gate
+
+The mature `controlled_transition` problem generator was configured with
+genuine isotropic Schwarzschild wormhole data exactly matched to the initial
+wormhole reference, followed by its existing smooth `shrinking_width`
+reference transition.  The new controlling inputs retain STANDARD Phi,
+`gamma0=gamma2=1`, FD4, RK4, CFL 0.05, and KO 0.02.
+
+A deliberately reduced Kokkos-Serial case evolved one complete RK4 cycle to
+`t=0.0460447286M`.  The exact initial match had zero state and GH mismatch,
+lapse-ratio error `2.22e-16`, zero shift mismatch, and no cell at the
+puncture.  The evolved state remained finite; Hhat, theta, and Upsilon RHS
+families stayed exactly zero.  At the endpoint, GH RMS was `2.25466e-7`,
+reduction RMS `8.44052e-7`, curl RMS `2.45349e-7`, relative-D Linf
+`1.95055e-6`, and added-source Linf `2.75766e-5`.
+
+This is only a local implementation and output-schema gate.  Its resolution is
+too low and its duration too short to demonstrate physical lapse collapse,
+trumpet settling, convergence, or the absence of a later instability.  Those
+questions require the bounded Aurora progression.
