@@ -60,7 +60,6 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
   const auto reference_extra = reference_diagnostic;
   const auto analytic_static = reference_static;
   const auto analytic_stage = reference_stage;
-  constexpr int reference_backend = Analytic ? 1 : 0;
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
   const Real center_z = opt.reference_center[2];
@@ -150,10 +149,12 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
   });
   DebugFence("ref_gh CalcRHS psi");
 
-  // The generic oracle retains its independently qualified split kernel.  The
-  // analytic production backend evaluates this block in the main active-cell
-  // kernel below so physical point geometry is reconstructed only once.
-  if (reference_backend == 0 && gauge_driver_enabled) {
+  // Keep the gauge driver in its own active-cell kernel for both reference
+  // backends.  Inlining it into the already large analytic scalar-source/Pi
+  // kernel creates an extreme PVC private-memory working set and is not needed
+  // for equation equivalence; the gauge RHS written here is consumed below by
+  // the same-stage ordinary-gauge source exactly as before.
+  if (gauge_driver_enabled) {
     par_for("ref_gh improved gauge driver", DevExeSpace(), 0, nmb - 1,
     indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
     KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
@@ -294,91 +295,6 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
     }
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
-    if (reference_backend == 1 && gauge_driver_enabled) {
-      Real hhat[4];          // NOLINT(runtime/arrays)
-      Real theta[4];         // NOLINT(runtime/arrays)
-      Real upsilon[3];       // NOLINT(runtime/arrays)
-      Real d_hhat[3][4];     // NOLINT(runtime/arrays)
-      ReferenceGaugeBaseline baseline{};
-      if (gauge_reference_subtraction) {
-        baseline = ComputeProductionReferenceGaugeBaseline(reference);
-        if (!baseline.valid) {
-          for (int n = kHhatOffset; n < nvar; ++n) {
-            state_rhs(m, n, k, j, i) = NAN;
-          }
-          return;
-        }
-      }
-      for (int A = 0; A < 4; ++A) {
-        hhat[A] = state(m, kHhatOffset + A, k, j, i)
-                  + ((gauge_reference_subtraction
-                      && !exact_matched_static_gauge)
-                         ? baseline.hhat[A] : 0.0);
-        theta[A] = state(m, kThetaOffset + A, k, j, i)
-                   + ((gauge_reference_subtraction
-                       && !exact_matched_static_gauge)
-                          ? baseline.theta[A] : 0.0);
-        for (int p = 0; p < 3; ++p) {
-          d_hhat[p][A] = Dx<FDNG>(p, idx, state, m, kHhatOffset + A,
-                                  k, j, i)
-                          + ((gauge_reference_subtraction
-                              && !exact_matched_static_gauge)
-                                 ? baseline.d_hhat[p + 1][A] : 0.0);
-        }
-      }
-      for (int p = 0; p < 3; ++p) {
-        upsilon[p] = state(m, kUpsilonOffset + p, k, j, i);
-      }
-      GaugeDriverRhs gauge_rhs{};
-      if (exact_matched_static_gauge) {
-        PhysicalGaugeTargetResidual target;
-        if (!ComputePhysicalGaugeTargetResidual(
-                psi, pi, phi, metric, d_metric, geometry, reference,
-                upsilon, shift_nu, shift_eta, target)) {
-          for (int n = kHhatOffset; n < nvar; ++n) {
-            state_rhs(m, n, k, j, i) = NAN;
-          }
-          return;
-        }
-        Real zero_dt_theta[4] = {};  // NOLINT(runtime/arrays)
-        gauge_rhs = ComputeGaugeDriverResidualRhsWithReferenceK(
-            reference, baseline.hhat, baseline.theta, baseline.d_hhat,
-            zero_dt_theta, baseline.reference_k, hhat, theta, upsilon,
-            d_hhat, target.physical_shift, target.reference_shift,
-            target.delta_shift, target.delta_frame, target.reference_frame,
-            target.delta_conformal_gamma, gauge_mu, gauge_eta, shift_eta,
-            true);
-      } else {
-        PhysicalGaugeTarget target;
-        if (!ComputePhysicalGaugeTarget(
-                metric, d_metric, geometry, reference, upsilon, shift_nu,
-                shift_eta, target)) {
-          for (int n = kHhatOffset; n < nvar; ++n) {
-            state_rhs(m, n, k, j, i) = NAN;
-          }
-          return;
-        }
-        gauge_rhs = ComputeGaugeDriverRhs(
-            reference, hhat, theta, upsilon, d_hhat, geometry.shift,
-            target.frame, target.conformal_gamma, gauge_mu, gauge_eta,
-            shift_eta);
-      }
-      for (int A = 0; A < 4; ++A) {
-        state_rhs(m, kHhatOffset + A, k, j, i) = exact_matched_static_gauge
-            ? gauge_rhs.hhat[A]
-            : gauge_rhs.hhat[A]
-                - (gauge_reference_subtraction ? baseline.d_hhat[0][A]
-                                               : 0.0);
-        state_rhs(m, kThetaOffset + A, k, j, i) = exact_matched_static_gauge
-            ? gauge_rhs.theta[A]
-            : gauge_rhs.theta[A]
-                - ((gauge_reference_subtraction && reference_time_dependent)
-                       ? ProductionReferenceDtTheta(reference, A) : 0.0);
-      }
-      for (int p = 0; p < 3; ++p) {
-        state_rhs(m, kUpsilonOffset + p, k, j, i) = gauge_rhs.upsilon[p];
-      }
-    }
     Real scalar_source[4][4];  // NOLINT(runtime/arrays)
     if constexpr (Analytic) {
       if (!ProductionCovariantScalarWaveSource(

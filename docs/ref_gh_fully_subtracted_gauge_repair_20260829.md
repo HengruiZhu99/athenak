@@ -816,3 +816,19 @@ equation-preserving portability correction: dispatch the analytic gauge driver
 through the existing separate kernel and remove only its duplicate block from
 the main source/Pi kernel. The diagnosis remains a hypothesis until that exact
 source passes a focused PVC evolved-cycle gate.
+
+The local correction dispatches that same gauge calculation through the
+already-qualified separate gauge-driver kernel for both reference backends and
+deletes only the analytic duplicate from the scalar-source/Pi kernel. The
+same-stage gauge RHS remains ordered before, and consumed by, the ordinary
+Einstein gauge-source assembly. The compact 12-Real static and 8-Real stage
+reference allocations are unchanged; no per-cell scratch View was added.
+
+A fresh Release/Serial source-unit run retains the complete 4320-sample all-61
+result `4.13003e-14` with unchanged tolerances. A Debug/Serial ASan, UBSan, and
+Kokkos-bounds run then completed all four RK stages through `t=0.01`, including
+the separate gauge-driver, main RHS, RK, boundary, and communication-cleanup
+fences. Its final field, physical-metric, and constraint Linf errors were
+`1.665335e-15`, `8.881784e-15`, and `1.010326e-14`. This is local
+equation/lifecycle evidence only; PVC correction remains unproved pending one
+focused rerun.
