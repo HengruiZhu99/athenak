@@ -1,6 +1,7 @@
 # Ref-GH PVC regression and evolution qualification
 
-Status: `PVC PORTABILITY REGRESSION ISOLATED` at `ab30fa96`.
+Status: `PVC ONE-CYCLE PORTABILITY RESTORED` with target-scoped SYCL
+per-kernel compilation and linking.
 
 This report tracks the source-regression and GPU-lifecycle audit required
 before the fully-subtracted stationary-trumpet evolution campaign can resume.
@@ -254,11 +255,37 @@ global `CMAKE_CXX_FLAGS` discriminator and remains entirely build-scoped.
 Compact link-only evidence is under
 `artifacts/ref_gh_pvc_regression_repair_20260830/phase7_aurora_8791910_link_only_split_fail`.
 
+The target-scoped compile-plus-link candidate passed three independent Aurora
+jobs:
+
+| Job | Queue | Node | Result | Latest time | Executable SHA-256 prefix |
+| --- | --- | --- | --- | --- | --- |
+| `8791922` | debug | `x4217c0s5b0n0` | `PASS_ONE_CYCLE_PVC` | `0.003404497M` | `e01b3239` |
+| `8791932` | debug | `x4217c0s5b0n0` | `PASS_ONE_CYCLE_PVC` | `0.003404497M` | `a2c75bb6` |
+| `8791941` | debug-scaling | `x4217c0s5b0n0` | `PASS_ONE_CYCLE_PVC` | `0.003404497M` | `ed508b52` |
+
+Every job mapped twelve distinct PVC tiles, reported all twelve final history
+fences, and contained zero Level Zero error strings. The independently built
+executables produced bitwise-identical Ref-GH, common-ADM, and user history
+files. Compile provenance for pass 1 showed 189/214 application compile
+entries carrying the option, including nine Ref-GH entries, zero Kokkos
+support-library entries, and the option once on the final link.
+
+All three jobs were fresh allocations but the scheduler placed them on the
+same physical node. Thus this meets the required three-execution gate but does
+not establish multi-node sampling. The correction is the narrowest tested
+passing scope: source-only and link-only both failed, while target compile plus
+link passed. It is equation preserving and leaves all continuum/numerical
+parameters frozen.
+
+The classification is now `PVC ONE-CYCLE PORTABILITY RESTORED`. This is only a
+one-cycle portability statement; it is not trumpet stability or convergence.
+Compact evidence is under
+`artifacts/ref_gh_pvc_regression_repair_20260830/phase7_aurora_target_scoped_three_passes`.
+
 ## Remaining required evidence
 
-The smallest build-scoped device-image correction must still be selected and
-combined with the rank-packed contract correction. Required remaining gates
-are the rank-contract one-rank/twelve-rank PVC tests, three repeated
-twelve-rank one-cycle PVC passes of the final portability correction, and all
-positive-time 3M/5M/resolution/20M/100M scientific runs. No stationary-trumpet
-robustness or convergence claim is made.
+Required remaining gates are the positive-time 3M/5M,
+64/96/128-resolution, 20M, and optional 100M scientific runs. No
+stationary-trumpet robustness or convergence claim is made from the one-cycle
+portability evidence.
