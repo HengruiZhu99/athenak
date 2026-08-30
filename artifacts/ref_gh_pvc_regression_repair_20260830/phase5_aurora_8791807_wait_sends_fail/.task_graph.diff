@@ -1,0 +1,22 @@
+--- /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_regression_20260830_wr_v2/sources/mid_ab30fa96/src/ref_gh/ref_gh_tasks.cpp	2026-08-29 20:04:27.000000000 +0000
++++ /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_regression_20260830_wr_v2/sources/mpi_wait_sends_ab30/src/ref_gh/ref_gh_tasks.cpp	2026-08-30 07:00:14.000000000 +0000
+@@ -600,15 +600,15 @@
+                  {RefGh_RestU});
+   pnr->QueueTask(&RefGh::RecvU, this, RefGh_RecvU, "RefGh_RecvU", Task_Run,
+                  {RefGh_SendU});
+-  pnr->QueueTask(&RefGh::Prolongate, this, RefGh_Prolong, "RefGh_Prolong", Task_Run,
++  pnr->QueueTask(&RefGh::ClearSend, this, RefGh_ClearS, "RefGh_ClearS", Task_Run,
+                  {RefGh_RecvU});
++  pnr->QueueTask(&RefGh::Prolongate, this, RefGh_Prolong, "RefGh_Prolong", Task_Run,
++                 {RefGh_ClearS});
+   pnr->QueueTask(&RefGh::ApplyPhysicalBCs, this, RefGh_BCS, "RefGh_BCS", Task_Run,
+                  {RefGh_Prolong});
+   pnr->QueueTask(&RefGh::NewTimeStep, this, RefGh_Newdt, "RefGh_Newdt", Task_Run,
+                  {RefGh_BCS});
+-  pnr->QueueTask(&RefGh::ClearSend, this, RefGh_ClearS, "RefGh_ClearS", Task_End);
+-  pnr->QueueTask(&RefGh::ClearRecv, this, RefGh_ClearR, "RefGh_ClearR", Task_End,
+-                 {RefGh_ClearS});
++  pnr->QueueTask(&RefGh::ClearRecv, this, RefGh_ClearR, "RefGh_ClearR", Task_End);
+ }
+ 
+ TaskStatus RefGh::InitRecv(Driver *, int) {

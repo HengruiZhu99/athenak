@@ -152,6 +152,13 @@ Off-rank GPU-aware MPI is therefore not required for the fault. The explicit
 send-only and send-plus-receive completion variants are retained as separate
 device-page-lifecycle discriminators and are not mathematical changes.
 
+The send-only variant moved `ClearSend` immediately after `RecvU` and before
+prolongation/physical BC while retaining `ClearRecv` at stage end. Aurora job
+`8791807` reproduced 22 `NotPresent` writes and ended with PBS status 143.
+Executable SHA-256 was
+`2e6bde2a138f62ee1fe7e4c6744859d7f4f68c07f433027da562d2d4374c5dc0`.
+Waiting for sends alone therefore does not repair the regression.
+
 ## Remaining required evidence
 
 The first-bad source bisect, hybrid matrix, one-rank comparison, explicit MPI
