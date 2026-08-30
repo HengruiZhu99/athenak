@@ -211,3 +211,22 @@ ASan+UBSan+Kokkos-bounds one-cycle test.  Decide whether this undefined
 behavior can plausibly explain the PVC symptom or is merely an independently
 real lifecycle defect.  Do not treat the reduced Serial pass as GPU-aware MPI,
 PVC, or stability qualification.
+
+The current checkpoint also contains two later review targets:
+
+- commit `7c575cd690b71783ba0a563768db75e23aa5fd44` adds debug-only rank-tagged
+  fences around `ClearSend` and `ClearRecv` and suppresses incomplete-poll
+  `RecvU` fence noise.  Inspect whether these placements cover the suspected
+  post-stage communication cleanup without changing dependencies or math;
+- `phase8_local_sanitizer_post_fences_20260829/` records a reduced one-cycle
+  Serial sanitizer run in which all five `ClearSend` and `ClearRecv` entry and
+  exit pairs completed and the final state remained at roundoff.  This narrows
+  the local lifecycle check but is not PVC or MPI evidence.
+
+Audit
+`scripts/ref_gh/aurora_fully_subtracted_phase8_bounds_gate.pbs` as an unexecuted
+focused discriminator.  It should build on an Aurora compute node with SYCL,
+MPI, and Kokkos bounds checking enabled; prove twelve distinct PVC tile
+mappings; run exactly one frozen 96^3 Case-D RK cycle; preserve the fence trace;
+and make no stability or convergence claim.  Do not treat the script's
+presence as a passed Aurora gate.
