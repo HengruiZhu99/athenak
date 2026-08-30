@@ -21,7 +21,7 @@ readonly TEST_PURPOSE=${TEST_PURPOSE:-one midpoint of the W-to-R source bisect}
 readonly CLAIM_BOUNDARY=${CLAIM_BOUNDARY:-one-cycle source-bisect discriminator only}
 readonly DEVICE_CODE_SPLIT=${DEVICE_CODE_SPLIT:-default}
 readonly RANK_SEQUENCE=${RANK_SEQUENCE:-${NRANKS:-12}}
-IFS=',' read -r -a RANK_COUNTS <<< "${RANK_SEQUENCE}"
+IFS=',:' read -r -a RANK_COUNTS <<< "${RANK_SEQUENCE}"
 test "${#RANK_COUNTS[@]}" -ge 1
 for nranks in "${RANK_COUNTS[@]}"; do
   test "${nranks}" -ge 1
