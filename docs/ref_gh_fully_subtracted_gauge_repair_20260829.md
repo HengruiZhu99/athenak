@@ -788,3 +788,31 @@ matched-state fill and strict static q=1 residual production dispatch are
 locally and device tested.  General moving-reference production dispatch
 remains legacy pending a separate qualification.  Performance optimization
 remains out of scope for this campaign.
+
+## Phase 8 PVC bounds/lifecycle gate
+
+Aurora debug job `8791507` tested commit
+`c3ead1836e5c69aceab277e092a8dd2b81149c13` on twelve distinct Level Zero PVC
+tiles with Kokkos bounds checking enabled. The exact 96^3 STANDARD,
+gamma0=gamma2=1, gauge-enabled q=1 state completed initialization, cycle-zero
+diagnostics, physical boundaries, communication cleanup, and a finite t=0
+history row. The first evolved stage then reproduced the Level Zero level-2
+`NotPresent` write fault before any RK update or positive-time history. PBS
+recorded exit 143. No Kokkos bounds violation was reported.
+
+The rank-tagged trace narrows the synchronous boundary: ranks 1--11 completed
+the post-RHS-zero fence, while rank 0 did not print it. Interleaved rank output
+does not establish that zeroing is the corrupting operation, because completed
+ranks can already have entered the following Psi kernel. The output-parameter
+value-initialization correction therefore fixes genuine local UB but is not the
+sole PVC cause.
+
+Compiler diagnostics report approximately 1289--1296 spilled Reals for the
+analytic active-cell RHS kernel. The fully subtracted analytic dispatch
+currently embeds its gauge-driver calculation in that already large source/Pi
+kernel, unlike the separate-purpose Z4c RHS pattern and unlike the existing
+generic Ref-GH gauge kernel. This private-memory evidence motivates one
+equation-preserving portability correction: dispatch the analytic gauge driver
+through the existing separate kernel and remove only its duplicate block from
+the main source/Pi kernel. The diagnosis remains a hypothesis until that exact
+source passes a focused PVC evolved-cycle gate.
