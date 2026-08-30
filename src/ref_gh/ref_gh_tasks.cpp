@@ -561,7 +561,8 @@ Real WorkspaceSpinCoordinateDerivative(const ReferenceWorkspacePoint &workspace,
 void RefGh::DebugFence(const char *label) const {
   if (opt.debug_task_fences) {
     Kokkos::fence(label);
-    std::cout << "ref_gh debug fence passed: " << label << std::endl;
+    std::cout << "ref_gh debug fence passed: rank="
+              << global_variable::my_rank << " " << label << std::endl;
   }
 }
 
@@ -616,8 +617,18 @@ TaskStatus RefGh::InitRecv(Driver *, int) {
   DebugFence("ref_gh InitRecv");
   return status;
 }
-TaskStatus RefGh::ClearRecv(Driver *, int) { return pbval_u->ClearRecv(); }
-TaskStatus RefGh::ClearSend(Driver *, int) { return pbval_u->ClearSend(); }
+TaskStatus RefGh::ClearRecv(Driver *, int) {
+  DebugFence("ref_gh ClearRecv enter");
+  const auto status = pbval_u->ClearRecv();
+  if (status == TaskStatus::complete) DebugFence("ref_gh ClearRecv exit");
+  return status;
+}
+TaskStatus RefGh::ClearSend(Driver *, int) {
+  DebugFence("ref_gh ClearSend enter");
+  const auto status = pbval_u->ClearSend();
+  if (status == TaskStatus::complete) DebugFence("ref_gh ClearSend exit");
+  return status;
+}
 
 TaskStatus RefGh::CopyU(Driver *driver, int stage) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
@@ -2695,7 +2706,7 @@ TaskStatus RefGh::SendU(Driver *, int) {
 }
 TaskStatus RefGh::RecvU(Driver *, int) {
   const auto status = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
-  DebugFence("ref_gh RecvU");
+  if (status == TaskStatus::complete) DebugFence("ref_gh RecvU");
   return status;
 }
 TaskStatus RefGh::Prolongate(Driver *, int) {
