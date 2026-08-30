@@ -240,6 +240,20 @@ method change. It is not qualified until three frozen twelve-rank cycles pass.
 Compact evidence for the failed source-only scope is under
 `artifacts/ref_gh_pvc_regression_repair_20260830/phase7_aurora_8791895_source_scoped_split_fail`.
 
+The next scope test applied per-kernel splitting only on the final executable
+link, leaving all compile-database entries unchanged. Aurora job `8791910`
+confirmed the option on the link line and zero flagged source compilations,
+then failed at `t=0` with 22 `NotPresent` writes. Its executable SHA-256 was
+`d88f62ed...`. Link-only lowering is therefore also insufficient.
+
+The two negative scope tests and the positive global discriminator constrain
+the smallest remaining candidate to compile **and** link options on the
+`athena` target. That setting covers AthenaK application kernels but excludes
+Kokkos support-library targets. It is still narrower than the already-passing
+global `CMAKE_CXX_FLAGS` discriminator and remains entirely build-scoped.
+Compact link-only evidence is under
+`artifacts/ref_gh_pvc_regression_repair_20260830/phase7_aurora_8791910_link_only_split_fail`.
+
 ## Remaining required evidence
 
 The smallest build-scoped device-image correction must still be selected and
