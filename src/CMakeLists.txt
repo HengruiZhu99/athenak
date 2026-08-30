@@ -241,17 +241,17 @@ if (Athena_ENABLE_REF_GH_SOURCE_UNIT)
   endif()
 endif()
 
-# The fully-subtracted Ref-GH RHS translation unit crosses an Intel PVC
-# device-image/code-layout correctness boundary when all of its kernels are
-# lowered into one monolithic SYCL module.  The identical arithmetic passes
-# the frozen 12-tile gate when split per kernel; one-rank and explicit MPI
-# completion discriminators exclude generic off-rank communication and
-# outstanding requests as the source of that layout dependence.  Scope the
-# required compiler lowering policy to this production source only.  This
-# changes neither equations nor kernel/task ordering.
+# The fully-subtracted Ref-GH production image crosses an Intel PVC
+# device-code-layout correctness boundary when all linked kernels remain in
+# one monolithic SYCL module.  The identical arithmetic passes the frozen
+# 12-tile gate when the final device image is split per kernel.  Applying the
+# option only while compiling ref_gh_calcrhs.cpp is insufficient, establishing
+# that the final device-link layout is the required scope.  Keep ordinary
+# translation-unit compilation unchanged and apply the policy only to the
+# AthenaK executable link.  This changes neither equations nor kernel/task
+# ordering.
 if (Kokkos_ENABLE_SYCL)
-  set_property(SOURCE ref_gh/ref_gh_calcrhs.cpp APPEND PROPERTY
-      COMPILE_OPTIONS "-fsycl-device-code-split=per_kernel")
+  target_link_options(athena PRIVATE "-fsycl-device-code-split=per_kernel")
 endif()
 
 # custom problem generator to be included in compile
