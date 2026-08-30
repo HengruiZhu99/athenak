@@ -120,11 +120,9 @@ int MeshBoundaryValues::GetVarDataSize(const MeshBoundaryBuffer &buf, int m, int
   if (nghbr.h_view(m,n).lev < mblev.h_view(m)) {
     data_size *= buf.icoar_ndat;
   } else if (nghbr.h_view(m,n).lev == mblev.h_view(m)) {
-    if (is_z4c_) {
-      data_size *= buf.isame_z4c_ndat;
-    } else {
-      data_size *= buf.isame_ndat;
-    }
+    data_size = RankPackedSameLevelVarDataSize(
+        is_z4c_, pmy_pack->pmesh->multilevel, buf.isame_ndat,
+        buf.isame_z4c_ndat, nvars);
   } else {
     data_size *= buf.ifine_ndat;
   }

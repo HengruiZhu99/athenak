@@ -11,6 +11,7 @@
 #include <type_traits>
 
 #include "athena.hpp"
+#include "bvals/bvals.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
@@ -42,6 +43,37 @@
 #include "ref_gh/standard_gh_source.hpp"
 
 namespace {
+
+void CheckRankPackedBoundaryContract() {
+  constexpr int nvars = 61;
+  constexpr int isame_ndat = 128;
+  constexpr int isame_z4c_ndat = 144;
+  struct ContractCase {
+    bool is_z4c;
+    bool multilevel;
+    int expected;
+  };
+  constexpr ContractCase cases[] = {  // NOLINT(runtime/arrays)
+      {false, false, nvars*isame_ndat},
+      {false, true, nvars*isame_ndat},
+      {true, false, nvars*isame_ndat},
+      {true, true, nvars*isame_z4c_ndat},
+  };
+  bool valid = true;
+  for (const ContractCase &test : cases) {
+    valid = valid && RankPackedSameLevelVarDataSize(
+        test.is_z4c, test.multilevel, isame_ndat,
+        isame_z4c_ndat, nvars) == test.expected;
+  }
+  if (!valid) {
+    std::cout << "### FATAL ERROR: rank-packed boundary metadata does not "
+                 "match the same-level CC pack condition."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "rank-packed same-level boundary contract oracle passed"
+            << std::endl;
+}
 
 constexpr int kAnalyticOracleRadiusCount = 10;
 constexpr int kAnalyticOracleDirectionCount = 4;
@@ -5879,6 +5911,7 @@ void ScanReferencePaths(ParameterInput *pin) {
 }  // namespace
 
 void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) {
+  CheckRankPackedBoundaryContract();
   CheckExactMatchedQ1Predicate();
   CheckCoframeDerivativeIdentity();
   CheckGaugeDriverAlgebra();

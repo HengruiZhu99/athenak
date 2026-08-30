@@ -101,6 +101,22 @@ struct MeshBoundaryBuffer {
 };
 
 //----------------------------------------------------------------------------------------
+//! \fn int RankPackedSameLevelVarDataSize(bool, bool, int, int, int)
+//! \brief Return the rank-packed same-level payload size used by the CC pack kernels.
+//!
+//! Z4c-like variables append the coarse same-level payload only on a multilevel mesh.
+//! Keep rank-packed MPI metadata on exactly that condition: selecting the extended size
+//! on a uniform mesh would advertise elements that PackAndSendCC never writes.
+KOKKOS_INLINE_FUNCTION
+constexpr int RankPackedSameLevelVarDataSize(const bool is_z4c,
+                                             const bool multilevel,
+                                             const int isame_ndat,
+                                             const int isame_z4c_ndat,
+                                             const int nvars) {
+  return nvars*((is_z4c && multilevel) ? isame_z4c_ndat : isame_ndat);
+}
+
+//----------------------------------------------------------------------------------------
 //! \struct RankPackedVarEntry
 //! \brief metadata for one (MeshBlock,neighbor) var-payload in a rank-packed message
 

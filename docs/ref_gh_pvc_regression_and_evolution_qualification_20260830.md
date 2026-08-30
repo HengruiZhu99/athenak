@@ -168,10 +168,44 @@ repair the fault. Together with the one-rank failure, this removes outstanding
 GPU-aware MPI completion from the leading cause list; the temporary task-graph
 variants are not candidates for retention.
 
+## Phase 6: rank-packed uniform-grid message contract
+
+The rank-packed size inconsistency is confirmed. Before correction,
+`MeshBoundaryValues::GetVarDataSize()` selected `isame_z4c_ndat` for every
+same-level Z4c-like message. In contrast, `PackAndSendCC()` and
+`RecvAndUnpackCC()` append the coarse same-level array only under the exact
+condition `is_z4c_ && multilevel`. On a uniform grid the metadata therefore
+advertised `nvars * isame_z4c_ndat`, while the kernels transferred only
+`nvars * isame_ndat` initialized elements.
+
+The generic helper `RankPackedSameLevelVarDataSize()` now encodes the pack
+truth table and is used by rank-packed metadata:
+
+| Z4c-like | Multilevel | Same-level payload |
+| --- | --- | --- |
+| false | false | `nvars * isame_ndat` |
+| false | true | `nvars * isame_ndat` |
+| true | false | `nvars * isame_ndat` |
+| true | true | `nvars * isame_z4c_ndat` |
+
+A focused source-unit oracle covers all four cases. Fresh local validation
+passed the MPI-enabled build and source unit, the expanded q-controlled and
+all-61 RHS oracle, a two-rank uniform Z4c evolved cycle, a two-rank AMR Z4c
+evolved cycle, and a two-rank fully-subtracted Ref-GH evolved cycle. A fresh
+ASan+UBSan+Kokkos-bounds build also passed the complete q-controlled/all-61
+source unit without weakening tolerances. Exact compact evidence is under
+`artifacts/ref_gh_pvc_regression_repair_20260830/phase6_rank_packed_contract_local`.
+
+This is an equation-preserving message-contract correction, and true
+multilevel Z4c behavior is unchanged. It is not called the source-regression
+root cause: W already survived positive-time evolution with the old behavior.
+The required one-rank and twelve-rank Aurora PVC gates remain pending.
+
 ## Remaining required evidence
 
-The first-bad source bisect, hybrid matrix, one-rank comparison, explicit MPI
-completion discriminator, rank-packed message-size audit, optional device-code
-split discriminator, minimal permanent correction, repeated one-cycle PVC
-qualification, and all positive-time 3M/5M/resolution/20M/100M results remain
-unexecuted. No stationary-trumpet robustness or convergence claim is made.
+The smallest build-scoped device-image correction must still be selected and
+combined with the rank-packed contract correction. Required remaining gates
+are the rank-contract one-rank/twelve-rank PVC tests, three repeated
+twelve-rank one-cycle PVC passes of the final portability correction, and all
+positive-time 3M/5M/resolution/20M/100M scientific runs. No stationary-trumpet
+robustness or convergence claim is made.
