@@ -1,0 +1,116 @@
+#!/bin/bash -l
+# Bounded low/medium-resolution wormhole startup discriminator on 12 PVC tiles.
+# The compact [-6M,6M] tree is causal through this t=1M gate.  It is not the
+# controlling outer24 relaxation/settling run.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_worm_s
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with the established campaign root}"
+: "${QUALIFIED_SOURCE:?submit with the exact PVC-qualified source path}"
+: "${QUALIFIED_EXE:?submit with the exact PVC-qualified executable path}"
+: "${EXPECTED_SOURCE_COMMIT:?submit with the qualified source SHA}"
+: "${EXPECTED_EXE_SHA256:?submit with the qualified executable SHA-256}"
+: "${CHECKPOINT_COMMIT:?submit with the input/analysis checkpoint SHA}"
+: "${STAGED_INPUT:?submit with the staged short-wormhole input}"
+: "${ANALYZER:?submit with the staged wormhole analysis script}"
+
+readonly OUT="${CAMPAIGN_ROOT}/wormhole_short_${PBS_JOBID}"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "wormhole_short_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+readonly BINDER=$(command -v gpu_tile_compact.sh)
+
+test -x "${BINDER}"
+test -x "${QUALIFIED_EXE}"
+test -f "${STAGED_INPUT}"
+test -f "${ANALYZER}"
+test "$(git -C "${QUALIFIED_SOURCE}" rev-parse HEAD)" = "${EXPECTED_SOURCE_COMMIT}"
+test -z "$(git -C "${QUALIFIED_SOURCE}" status --porcelain)"
+test "$(sha256sum "${QUALIFIED_EXE}" | awk '{print $1}')" = "${EXPECTED_EXE_SHA256}"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "qualified_source=${QUALIFIED_SOURCE}"
+  echo "qualified_source_commit=${EXPECTED_SOURCE_COMMIT}"
+  echo "checkpoint_commit=${CHECKPOINT_COMMIT}"
+  echo "qualified_executable=${QUALIFIED_EXE}"
+  echo "qualified_executable_sha256=${EXPECTED_EXE_SHA256}"
+  echo "ranks=12"
+  echo "tiles=12"
+  echo "cases=n96_mb32_dx1/16,n144_mb48_dx1/24"
+  echo "target_time=1.0"
+  echo "claim=bounded startup and resolution-consistency gate only"
+  git -C "${QUALIFIED_SOURCE}" status --short --branch
+  git -C "${QUALIFIED_SOURCE}" submodule status
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${STAGED_INPUT}" "${ANALYZER}" "$0"
+} > provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth +  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt +  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' +  | sort -u | wc -l)" -eq 12
+
+run_case() (
+  set -euo pipefail
+  readonly label=$1
+  readonly cells=$2
+  readonly mbcells=$3
+  readonly work="${OUT}/${label}"
+  readonly basename="refgh_relative_damped_wormhole_${label}"
+  mkdir -p "${work}"
+  cd "${work}"
+  set +e
+  /usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth +    "${BINDER}" "${QUALIFIED_EXE}" -i "${STAGED_INPUT}" +    job/basename="${basename}" +    mesh/nx1="${cells}" mesh/nx2="${cells}" mesh/nx3="${cells}" +    meshblock/nx1="${mbcells}" meshblock/nx2="${mbcells}" +    meshblock/nx3="${mbcells}" +    ref_gh/debug_task_fences=false +    time/nlim=-1 time/tlim=1.0 output1/dt=0.02 output2/dt=1.0 +    > run.log 2>&1
+  run_status=$?
+  set -e
+  {
+    echo "run_exit_status=${run_status}"
+    echo "run_completed=$(date -Is)"
+  } > run_status.txt
+  test "${run_status}" -eq 0
+  grep -q 'Total number of MeshBlocks = 34' run.log
+  grep -q 'Number of parallel ranks = 12' run.log
+  grep -q 'reference-GH puncture vertex audit passed' run.log
+  grep -q 'reference-GH controlled Schwarzschild final:' run.log
+  ! grep -Eiq 'FATAL ERROR|NotPresent|page fault|SYCL exception|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' run.log
+  awk 'BEGIN {ok=0} !/^#/ && $1 >= 1.0 - 1.0e-12 && $22 == 0 {ok=1} END {exit !ok}' +    "${basename}.ref_gh.hst"
+  find rst -type f -print0 2>/dev/null +    | sort -z | xargs -0 -r sha256sum > restart_sha256.txt
+  sha256sum run.log run_status.txt *.hst *.tsv > compact_sha256.txt
+)
+
+run_case n96 96 32
+run_case n144 144 48
+
+python3 "${ANALYZER}" +  --case "n96=${OUT}/n96" --spacing n96=0.0625 +  --case "n144=${OUT}/n144" --spacing n144=0.041666666666666664 +  --target 0 0.2 0.5 1.0 --target-tolerance 0.03 +  --outer-distance 6 --late-fit-time 0.5 +  --output-prefix "${OUT}/wormhole_short" +  > analysis.log 2>&1
+python3 -m json.tool wormhole_short.json >/dev/null
+
+sha256sum provenance.txt rank_gpu_mapping.txt bootstrap.log analysis.log +  wormhole_short.json wormhole_short.tsv n*/compact_sha256.txt +  n*/restart_sha256.txt > compact_sha256.txt
+echo "wormhole_short_complete=$(date -Is)"
