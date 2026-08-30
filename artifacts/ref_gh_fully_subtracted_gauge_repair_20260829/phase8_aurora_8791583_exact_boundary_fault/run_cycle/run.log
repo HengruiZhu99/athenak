@@ -1,0 +1,673 @@
+
+Root grid = 6 x 6 x 6 MeshBlocks
+Total number of MeshBlocks = 216
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 12
+  Rank = 0: 18 MeshBlocks, cost = 18
+  Rank = 1: 18 MeshBlocks, cost = 18
+  Rank = 2: 18 MeshBlocks, cost = 18
+  Rank = 3: 18 MeshBlocks, cost = 18
+  Rank = 4: 18 MeshBlocks, cost = 18
+  Rank = 5: 18 MeshBlocks, cost = 18
+  Rank = 6: 18 MeshBlocks, cost = 18
+  Rank = 7: 18 MeshBlocks, cost = 18
+  Rank = 8: 18 MeshBlocks, cost = 18
+  Rank = 9: 18 MeshBlocks, cost = 18
+  Rank = 10: 18 MeshBlocks, cost = 18
+  Rank = 11: 18 MeshBlocks, cost = 18
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+ref_gh reference allocation backend=analytic_radial_q generic_bytes=0 analytic_static_components=12 analytic_stage_components=8 analytic_static_bytes=23887872 analytic_stage_bytes=15925248
+reference-GH puncture minimum cell-center radius = 0.0360844
+reference-GH stationary physical-target audit: |F-H_constraint|_Linf=2.82796e-12, |tildeGamma|_Linf=2.60696e-15, |stored_Hhat_A|_Linf=0, |stored_theta_A|_Linf=0
+reference-GH stationary residual-target audit: |deltaF_A|_Linf=0, |delta_tildeGamma|_Linf=0, |delta_beta|_Linf=0
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS
+reference-GH stationary initial RHS Linf = 3.1002e-13, component=10, radius=0.170528, coordinate reference Ricci Linf=1.37611e-08, frame reference Ricci Linf=2.77556e-16
+ref_gh debug fence passed: rank=1 ref_gh RestrictU
+ref_gh debug fence passed: rank=2 ref_gh RestrictU
+ref_gh debug fence passed: rank=8 ref_gh RestrictU
+ref_gh debug fence passed: rank=0 ref_gh RestrictU
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output2>/file_type = rst was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output3>/file_type = cbin was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output3>/variable = ref_gh was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output3>/id = ref_gh_health was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output3>/coarsen_factor = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output3>/compute_moments = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output3>/binary64 = true was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output3>/single_file_per_rank = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output4>/file_type = cbin was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output4>/variable = ref_gh_native_con was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output4>/id = ref_gh_native_health was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output4>/coarsen_factor = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output4>/compute_moments = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output4>/binary64 = true was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output4>/single_file_per_rank = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output5>/file_type = cbin was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output5>/variable = adm_common was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output5>/id = adm_common_health was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bref_gh debug fence passed: rank=3 ref_gh RestrictU
+ref_gh debug fence passed: rank=4 ref_gh RestrictU
+ref_gh debug fence passed: rank=5 ref_gh RestrictU
+ref_gh debug fence passed: rank=5 ref_gh InitRecv
+ref_gh debug fence passed: rank=6 ref_gh RestrictU
+ref_gh debug fence passed: rank=6 ref_gh InitRecv
+ref_gh debug fence passed: rank=7 ref_gh RestrictU
+ref_gh debug fence passed: rank=7 ref_gh InitRecv
+ref_gh debug fence passed: rank=9 ref_gh RestrictU
+ref_gh debug fence passed: rank=9 ref_gh InitRecv
+ref_gh debug fence passed: rank=10 ref_gh RestrictU
+ref_gh debug fence passed: rank=10 ref_gh InitRecv
+ref_gh debug fence passed: rank=11 ref_gh RestrictU
+ref_gh debug fence passed: rank=11 ref_gh InitRecv
+ref_gh debug fence passed: rank=0 ref_gh InitRecv
+c_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output5>/coarsen_factor = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output5>/compute_moments = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output5>/binary64 = true was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output5>/single_file_per_rank = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_phase8_exact_bc_20260830_33b2b6ec_v1/src/src/parameter_input.cpp: input parameter <output5>/common_adm_fd_order = 4 was not used by the code (check for a typo)
+ref_gh debug fence passed: rank=1 ref_gh InitRecv
+ref_gh debug fence passed: rank=2 ref_gh InitRecv
+ref_gh debug fence passed: rank=3 ref_gh InitRecv
+ref_gh debug fence passed: rank=4 ref_gh InitRecv
+ref_gh debug fence passed: rank=8 ref_gh InitRecv
+ref_gh debug fence passed: rank=8 ref_gh SendU
+ref_gh debug fence passed: rank=8 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=11 ref_gh SendU
+ref_gh debug fence passed: rank=11 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=5 ref_gh SendU
+ref_gh debug fence passed: rank=5 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=0 ref_gh SendU
+ref_gh debug fence passed: rank=0 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=7 ref_gh SendU
+ref_gh debug fence passed: rank=7 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=1 ref_gh SendU
+ref_gh debug fence passed: rank=1 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=10 ref_gh SendU
+ref_gh debug fence passed: rank=10 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=9 ref_gh SendU
+ref_gh debug fence passed: rank=9 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=4 ref_gh SendU
+ref_gh debug fence passed: rank=4 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=6 ref_gh SendU
+ref_gh debug fence passed: rank=6 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=2 ref_gh SendU
+ref_gh debug fence passed: rank=2 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=3 ref_gh SendU
+ref_gh debug fence passed: rank=3 ref_gh ClearSend enter
+ref_gh debug fence passed: rank=11 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=11 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=11 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=8 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=8 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=8 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=5 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=5 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=5 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=0 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=0 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=0 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=7 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=7 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=7 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=1 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=1 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=1 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=10 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=10 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=10 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=9 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=9 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=9 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=4 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=4 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=4 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=6 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=6 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=6 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=3 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=3 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=2 ref_gh ClearSend exit
+ref_gh debug fence passed: rank=2 ref_gh ClearRecv enter
+ref_gh debug fence passed: rank=2 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=3 ref_gh ClearRecv exit
+ref_gh debug fence passed: rank=11 ref_gh RecvU
+ref_gh debug fence passed: rank=11 ref_gh Prolongate
+ref_gh debug fence passed: rank=0 ref_gh RecvU
+ref_gh debug fence passed: rank=0 ref_gh Prolongate
+ref_gh debug fence passed: rank=5 ref_gh RecvU
+ref_gh debug fence passed: rank=5 ref_gh Prolongate
+ref_gh debug fence passed: rank=8 ref_gh RecvU
+ref_gh debug fence passed: rank=8 ref_gh Prolongate
+ref_gh debug fence passed: rank=11 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=10 ref_gh RecvU
+ref_gh debug fence passed: rank=10 ref_gh Prolongate
+ref_gh debug fence passed: rank=5 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=0 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=8 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=7 ref_gh RecvU
+ref_gh debug fence passed: rank=7 ref_gh Prolongate
+ref_gh debug fence passed: rank=11 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=11 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=9 ref_gh RecvU
+ref_gh debug fence passed: rank=9 ref_gh Prolongate
+ref_gh debug fence passed: rank=4 ref_gh RecvU
+ref_gh debug fence passed: rank=4 ref_gh Prolongate
+ref_gh debug fence passed: rank=5 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=5 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=1 ref_gh RecvU
+ref_gh debug fence passed: rank=1 ref_gh Prolongate
+ref_gh debug fence passed: rank=8 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=8 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=0 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=0 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=10 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=6 ref_gh RecvU
+ref_gh debug fence passed: rank=6 ref_gh Prolongate
+ref_gh debug fence passed: rank=7 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=3 ref_gh RecvU
+ref_gh debug fence passed: rank=3 ref_gh Prolongate
+ref_gh debug fence passed: rank=9 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=2 ref_gh RecvU
+ref_gh debug fence passed: rank=2 ref_gh Prolongate
+ref_gh debug fence passed: rank=4 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=1 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=10 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=10 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=6 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=7 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=7 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=9 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=9 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=3 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=4 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=4 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=1 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=1 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=2 ref_gh ApplyPhysicalBCs projected trumpet metric
+ref_gh debug fence passed: rank=6 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=6 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=3 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=3 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=2 ref_gh ApplyPhysicalBCs projected trumpet gauge
+ref_gh debug fence passed: rank=2 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=5 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=11 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=8 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=0 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=10 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=3 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=4 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=7 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=9 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=6 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=1 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=2 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=9 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=9 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=9 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=3 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=3 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=3 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=2 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=2 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=2 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=1 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=1 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=1 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=0 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=0 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=0 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=8 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=8 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=8 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=7 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=7 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=7 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=10 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=10 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=10 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=11 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=11 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=11 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=6 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=6 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=6 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=4 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=4 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=4 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=5 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=5 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=5 ref_gh NewTimeStep
+ref_gh debug fence passed: rank=10 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=5 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=0 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=1 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=2 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=3 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=4 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=6 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=7 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=8 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=9 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=11 ref_gh diagnostics reference
+ref_gh debug fence passed: rank=6 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=0 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=3 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=5 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=10 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=1 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=4 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=7 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=8 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=9 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=11 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=2 ref_gh diagnostics ADM reconstruction
+ref_gh debug fence passed: rank=10 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=0 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=5 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=6 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=1 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=7 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=11 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=5 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=10 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=0 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=6 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=7 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=11 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=1 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=8 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=9 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=3 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=4 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=9 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=8 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=3 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=4 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=2 ref_gh diagnostics constraints
+ref_gh debug fence passed: rank=2 ref_gh diagnostics metric condition
+ref_gh debug fence passed: rank=1 ref_gh history sums
+ref_gh debug fence passed: rank=1 ref_gh history state maxima
+ref_gh debug fence passed: rank=5 ref_gh history sums
+ref_gh debug fence passed: rank=1 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=9 ref_gh history sums
+ref_gh debug fence passed: rank=5 ref_gh history state maxima
+ref_gh debug fence passed: rank=9 ref_gh history state maxima
+ref_gh debug fence passed: rank=5 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=9 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=1 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=9 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=5 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=3 ref_gh history sums
+ref_gh debug fence passed: rank=8 ref_gh history sums
+ref_gh debug fence passed: rank=3 ref_gh history state maxima
+ref_gh debug fence passed: rank=8 ref_gh history state maxima
+ref_gh debug fence passed: rank=3 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=11 ref_gh history sums
+ref_gh debug fence passed: rank=8 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=7 ref_gh history sums
+ref_gh debug fence passed: rank=11 ref_gh history state maxima
+ref_gh debug fence passed: rank=4 ref_gh history sums
+ref_gh debug fence passed: rank=3 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=7 ref_gh history state maxima
+ref_gh debug fence passed: rank=11 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=10 ref_gh history sums
+ref_gh debug fence passed: rank=4 ref_gh history state maxima
+ref_gh debug fence passed: rank=7 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=6 ref_gh history sums
+ref_gh debug fence passed: rank=4 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=8 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=10 ref_gh history state maxima
+ref_gh debug fence passed: rank=6 ref_gh history state maxima
+ref_gh debug fence passed: rank=7 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=10 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=0 ref_gh history sums
+ref_gh debug fence passed: rank=6 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=11 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=4 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=0 ref_gh history state maxima
+ref_gh debug fence passed: rank=0 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=10 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=6 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=0 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=2 ref_gh history sums
+ref_gh debug fence passed: rank=2 ref_gh history state maxima
+ref_gh debug fence passed: rank=2 ref_gh history diagnostic maxima
+ref_gh debug fence passed: rank=2 ref_gh history geometry maxima
+ref_gh debug fence passed: rank=2 ref_gh InitRecv
+ref_gh debug fence passed: rank=4 ref_gh InitRecv
+ref_gh debug fence passed: rank=1 ref_gh InitRecv
+ref_gh debug fence passed: rank=2 ref_gh CopyU
+ref_gh debug fence passed: rank=2 ref_gh UpdateReference
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=3 ref_gh InitRecv
+ref_gh debug fence passed: rank=3 ref_gh CopyU
+ref_gh debug fence passed: rank=3 ref_gh UpdateReference
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=4 ref_gh CopyU
+ref_gh debug fence passed: rank=4 ref_gh UpdateReference
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=5 ref_gh InitRecv
+ref_gh debug fence passed: rank=5 ref_gh CopyU
+ref_gh debug fence passed: rank=5 ref_gh UpdateReference
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=6 ref_gh InitRecv
+ref_gh debug fence passed: rank=6 ref_gh CopyU
+ref_gh debug fence passed: rank=6 ref_gh UpdateReference
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=7 ref_gh InitRecv
+ref_gh debug fence passed: rank=7 ref_gh CopyU
+ref_gh debug fence passed: rank=7 ref_gh UpdateReference
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=8 ref_gh InitRecv
+ref_gh debug fence passed: rank=8 ref_gh CopyU
+ref_gh debug fence passed: rank=8 ref_gh UpdateReference
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=9 ref_gh InitRecv
+ref_gh debug fence passed: rank=9 ref_gh CopyU
+ref_gh debug fence passed: rank=9 ref_gh UpdateReference
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=10 ref_gh InitRecv
+ref_gh debug fence passed: rank=10 ref_gh CopyU
+ref_gh debug fence passed: rank=10 ref_gh UpdateReference
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=11 ref_gh InitRecv
+ref_gh debug fence passed: rank=11 ref_gh CopyU
+ref_gh debug fence passed: rank=11 ref_gh UpdateReference
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=1 ref_gh CopyU
+ref_gh debug fence passed: rank=1 ref_gh UpdateReference
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS gauge_driver
+
+Setup complete, executing task list(s)...
+
+elapsed=1.792144e+01 cycle=0 time=0.000000e+00 dt=3.404497e-03
+ref_gh debug fence passed: rank=0 ref_gh InitRecv
+ref_gh debug fence passed: rank=0 ref_gh CopyU
+ref_gh debug fence passed: rank=0 ref_gh UpdateReference
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS zero
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS psi
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS gauge_driver
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=1 ref_gh CalcRHS
+ref_gh debug fence passed: rank=1 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=1 ref_gh RestrictU
+ref_gh debug fence passed: rank=1 ref_gh SendU
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=4 ref_gh CalcRHS
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=8 ref_gh CalcRHS
+ref_gh debug fence passed: rank=4 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=4 ref_gh RestrictU
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=10 ref_gh CalcRHS
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=2 ref_gh CalcRHS
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=8 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=8 ref_gh RestrictU
+ref_gh debug fence passed: rank=10 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=10 ref_gh RestrictU
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=2 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=2 ref_gh RestrictU
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=6 ref_gh CalcRHS
+ref_gh debug fence passed: rank=6 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=6 ref_gh RestrictU
+ref_gh debug fence passed: rank=4 ref_gh SendU
+ref_gh debug fence passed: rank=8 ref_gh SendU
+ref_gh debug fence passed: rank=10 ref_gh SendU
+ref_gh debug fence passed: rank=2 ref_gh SendU
+ref_gh debug fence passed: rank=6 ref_gh SendU
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=3 ref_gh CalcRHS
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=5 ref_gh CalcRHS
+ref_gh debug fence passed: rank=5 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=5 ref_gh RestrictU
+ref_gh debug fence passed: rank=3 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=3 ref_gh RestrictU
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=11 ref_gh CalcRHS
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=9 ref_gh CalcRHS
+ref_gh debug fence passed: rank=11 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=11 ref_gh RestrictU
+ref_gh debug fence passed: rank=9 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=9 ref_gh RestrictU
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=7 ref_gh CalcRHS
+ref_gh debug fence passed: rank=7 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=7 ref_gh RestrictU
+ref_gh debug fence passed: rank=5 ref_gh SendU
+ref_gh debug fence passed: rank=3 ref_gh SendU
+ref_gh debug fence passed: rank=11 ref_gh SendU
+ref_gh debug fence passed: rank=9 ref_gh SendU
+ref_gh debug fence passed: rank=7 ref_gh SendU
+ref_gh debug fence passed: rank=8 ref_gh RecvU
+ref_gh debug fence passed: rank=8 ref_gh Prolongate
+ref_gh debug fence passed: rank=5 ref_gh RecvU
+ref_gh debug fence passed: rank=5 ref_gh Prolongate
+ref_gh debug fence passed: rank=6 ref_gh RecvU
+ref_gh debug fence passed: rank=6 ref_gh Prolongate
+ref_gh debug fence passed: rank=10 ref_gh RecvU
+ref_gh debug fence passed: rank=10 ref_gh Prolongate
+ref_gh debug fence passed: rank=11 ref_gh RecvU
+ref_gh debug fence passed: rank=11 ref_gh Prolongate
+ref_gh debug fence passed: rank=9 ref_gh RecvU
+ref_gh debug fence passed: rank=9 ref_gh Prolongate
+ref_gh debug fence passed: rank=7 ref_gh RecvU
+ref_gh debug fence passed: rank=7 ref_gh Prolongate
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS primary
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS standard_phi
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS gamma2
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS dissipation
+ref_gh debug fence passed: rank=0 ref_gh CalcRHS
+ref_gh debug fence passed: rank=0 ref_gh ExpRKUpdate
+ref_gh debug fence passed: rank=0 ref_gh RestrictU
+ref_gh debug fence passed: rank=0 ref_gh SendU
+ref_gh debug fence passed: rank=4 ref_gh RecvU
+ref_gh debug fence passed: rank=4 ref_gh Prolongate
+ref_gh debug fence passed: rank=2 ref_gh RecvU
+ref_gh debug fence passed: rank=2 ref_gh Prolongate
+ref_gh debug fence passed: rank=0 ref_gh RecvU
+ref_gh debug fence passed: rank=0 ref_gh Prolongate
+ref_gh debug fence passed: rank=3 ref_gh RecvU
+ref_gh debug fence passed: rank=3 ref_gh Prolongate
+ref_gh debug fence passed: rank=1 ref_gh RecvU
+ref_gh debug fence passed: rank=1 ref_gh Prolongate
+Segmentation fault from GPU at 0xff00000efb189000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff00000efb189000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000ef7973000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff00000ef7973000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000ef6dff000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff00000ef6dff000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000ef1599000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000ef1599000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff00000ef535b000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000ef535b000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff00000ef637e000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000ef637e000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff00000eef841000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000eef841000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff00000efcb8d000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff00000efcb8d000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000efac6d000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Segmentation fault from GPU at 0xff00000efac6d000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000ef2ba1000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+Abort was called at 288 line in file:
+/home/ubit/rpmbuild/BUILD/intel-compute-runtime-25.18.33578.42/shared/source/os_interface/linux/drm_neo.cpp
+Segmentation fault from GPU at 0xff00000ef2ba1000, ctx_id: 1 (CCS) type: 0 (NotPresent), level: 1 (PDE), access: 1 (Write), banned: 1, aborting.
+x4311c3s5b0n0.hsn.cm.aurora.alcf.anl.gov: rank 2 died from signal 6
+x4311c3s5b0n0.hsn.cm.aurora.alcf.anl.gov: rank 1 died from signal 15
+real 20.19
+user 0.00
+sys 0.01

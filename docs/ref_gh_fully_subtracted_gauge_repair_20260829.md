@@ -865,3 +865,20 @@ The complete Release/Serial source oracle remains unchanged, including the
 Debug/Serial ASan, UBSan, and Kokkos-bounds run completed all four stages to
 `t=0.01` with every exact metric/gauge boundary fence and no diagnostic. PVC
 qualification remains pending the single focused Aurora rerun.
+
+Aurora job `8791583` tested the exact-boundary specialization at commit
+`33b2b6ec` with Kokkos bounds checking on twelve PVC tiles. The compiler emits
+no private-spill warning for the selected exact metric or gauge specialization;
+the approximately 122-Real warning belongs only to the unselected non-exact
+analytic metric projection. The job nevertheless repeated the stage-one
+failure after every rank completed the full RHS, RK update, MPI exchange, and
+synchronous post-prolongation fence. Multiple tiles then reported distinct
+level-1 PDE `NotPresent` write pages before the exact metric-boundary
+completion fence. No Kokkos bounds diagnostic appeared, and the only history
+row is at `t=0`.
+
+The exact-boundary unused-spill hypothesis is therefore falsified. The
+remaining evidence is consistent with, but does not choose among, a
+boundary-view lifetime defect, a GPU-aware MPI/device-page lifecycle problem,
+or an Intel compiler/runtime defect. This remains a pre-evolution portability
+blocker. No Phase-8 3M run or Phase-9 continuum discriminator was launched.

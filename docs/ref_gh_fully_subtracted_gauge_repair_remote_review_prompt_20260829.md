@@ -230,3 +230,54 @@ MPI, and Kokkos bounds checking enabled; prove twelve distinct PVC tile
 mappings; run exactly one frozen 96^3 Case-D RK cycle; preserve the fence trace;
 and make no stability or convergence claim.  Do not treat the script's
 presence as a passed Aurora gate.
+
+## Latest Phase-8 PVC failures to audit
+
+Update the audit through at least these source commits:
+
+- `cab2434170f12505b8d8400544845ff87fe31992`: dispatches the analytic gauge
+  driver through the existing separate kernel and removes its duplicate block
+  from the large primary source/Pi kernel;
+- `33b2b6ecd0a7a8cdee0d2689a483fabf8b934b54`: moves the already-selected exact
+  q=1 metric and gauge boundary identities to compile-time host dispatch.
+
+Inspect these new compact evidence bundles and verify their `SHA256SUMS`:
+
+- `phase8_aurora_8791507_bounds_fault/`;
+- `phase8_split_gauge_local_20260830/`;
+- `phase8_aurora_8791548_split_gauge_fault/`;
+- `phase8_exact_boundary_dispatch_local_20260830/`;
+- `phase8_aurora_8791583_exact_boundary_fault/`.
+
+The first bounds job failed in the first evolved RHS stage. After the split
+gauge kernel, job `8791548` completed every RHS/RK/communication/prolongation
+fence before failing in the next projected-metric boundary launch. Job
+`8791583` repeated that boundary after the exact specialization had eliminated
+the unused general projection and its private-spill warning from the selected
+kernel. Multiple tiles reported distinct banned Level Zero `NotPresent` write
+pages; Kokkos bounds checking reported nothing. Both jobs retained only a
+finite `t=0` history row and exited 143.
+
+Review the first-stage boundary/communication lifecycle in read-only mode.
+Compare directly with mature Z4c task ordering and boundary-buffer ownership.
+In particular, audit:
+
+1. `u0`, coarse-state, send/receive-buffer, and `mb_bcs` View extents and
+   lifetimes across `ExpRKUpdate`, `RestrictU`, `SendU`, `RecvU`, `Prolongate`,
+   and `ApplyPhysicalBCs`;
+2. whether GPU-aware MPI completion guarantees permit the subsequent direct
+   boundary write on every tile;
+3. the flattened `ghost_cells` index-to-`m,k,j,i` mapping and every boundary
+   state index against actual allocation extents;
+4. capture/lifetime differences between the exact Kokkos RangePolicy kernel
+   and the corresponding Z4c boundary pattern;
+5. whether the repeated stage-one-only behavior can follow from a stale or
+   unmapped USM page even though all preceding Kokkos fences complete;
+6. whether any debug fence or task dependency itself leaves asynchronous MPI
+   ownership unresolved.
+
+Treat the two local sanitizer passes as value/lifecycle checks only. Do not
+claim that either reproduces GPU-aware MPI or PVC. Return a minimal,
+equation-preserving discriminator or correction with a precise predicted fence
+transition. Do not recommend parameter tuning, disabling gauge subtraction,
+weakening bounds, or beginning Phase 9 before a positive-time PVC cycle exists.
