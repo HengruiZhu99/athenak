@@ -1,0 +1,2039 @@
+diff --git a/src/ref_gh/analytic_radial_q_production.hpp b/src/ref_gh/analytic_radial_q_production.hpp
+index 39736399..75fb9718 100644
+--- a/src/ref_gh/analytic_radial_q_production.hpp
++++ b/src/ref_gh/analytic_radial_q_production.hpp
+@@ -12,6 +12,7 @@
+ #include "ref_gh/reference_cache.hpp"
+ #include "ref_gh/reference_gauge_baseline.hpp"
+ #include "ref_gh/ref_gh_geometry.hpp"
++#include "ref_gh/residual_gauge_source.hpp"
+ 
+ namespace ref_gh {
+ 
+@@ -129,6 +130,9 @@ ReferenceGaugeBaseline ComputeProductionReferenceGaugeBaseline(
+     for (int p = 0; p < 4; ++p) {
+       result.d_hhat[p][A] = generated.d_hhat[p][A];
+     }
++    for (int p = 0; p < 3; ++p) {
++      result.reference_k[p][A] = generated.reference_k[p][A];
++    }
+   }
+   return result;
+ }
+@@ -252,6 +256,9 @@ ReferenceGaugeBaseline ComputeProductionReferenceGaugeBaseline(
+     for (int p = 0; p < 4; ++p) {
+       result.d_hhat[p][A] = generated.d_hhat[p][A];
+     }
++    for (int p = 0; p < 3; ++p) {
++      result.reference_k[p][A] = generated.reference_k[p][A];
++    }
+   }
+   return result;
+ }
+@@ -443,6 +450,61 @@ bool ProductionCovariantScalarWaveSourceDiagnostics(
+       psi, pi, phi, reference, geometry, gamma0, source, sectors);
+ }
+ 
++KOKKOS_INLINE_FUNCTION
++bool AddProductionOrdinaryGaugeResidualSource(
++    const Real psi[4][4], const Real pi[4][4],
++    const Real phi[3][4][4], const Real metric[4][4],
++    const Real d_metric[4][4][4],
++    const ProductionReferencePoint &reference,
++    const CoordinateGhGeometry &geometry, const Real delta_hhat[4],
++    const Real d_delta_hhat[4][4], const Real gamma0,
++    Real source[4][4]) {
++  if (reference.backend == 0) {
++    return AddOrdinaryGaugeResidualPartialWaveSource(
++        psi, pi, phi, metric, d_metric, reference.generic, geometry,
++        delta_hhat, d_delta_hhat, gamma0, source);
++  }
++  CompactAnalyticCoordinateGeometry compact;
++  Real determinant = 0.0;
++  return ComputeCompactAnalyticCoordinateGeometry(
++             metric, d_metric, reference.analytic, compact, determinant)
++      && AddCompactAnalyticOrdinaryGaugeResidualSource(
++             psi, pi, phi, metric, d_metric, reference.analytic, compact,
++             delta_hhat, d_delta_hhat, gamma0, source);
++}
++
++KOKKOS_INLINE_FUNCTION
++bool AddProductionOrdinaryGaugeResidualSource(
++    const Real psi[4][4], const Real pi[4][4],
++    const Real phi[3][4][4], const Real metric[4][4],
++    const Real d_metric[4][4][4],
++    const AnalyticRadialQPoint &reference,
++    const CoordinateGhGeometry &geometry, const Real delta_hhat[4],
++    const Real d_delta_hhat[4][4], const Real gamma0,
++    Real source[4][4]) {
++  CompactAnalyticCoordinateGeometry compact;
++  Real determinant = 0.0;
++  return ComputeCompactAnalyticCoordinateGeometry(
++             metric, d_metric, reference, compact, determinant)
++      && AddCompactAnalyticOrdinaryGaugeResidualSource(
++             psi, pi, phi, metric, d_metric, reference, compact,
++             delta_hhat, d_delta_hhat, gamma0, source);
++}
++
++KOKKOS_INLINE_FUNCTION
++bool AddProductionOrdinaryGaugeResidualSource(
++    const Real psi[4][4], const Real pi[4][4],
++    const Real phi[3][4][4], const Real metric[4][4],
++    const Real d_metric[4][4][4],
++    const ReferenceCachePoint &reference,
++    const CoordinateGhGeometry &geometry, const Real delta_hhat[4],
++    const Real d_delta_hhat[4][4], const Real gamma0,
++    Real source[4][4]) {
++  return AddOrdinaryGaugeResidualPartialWaveSource(
++      psi, pi, phi, metric, d_metric, reference, geometry, delta_hhat,
++      d_delta_hhat, gamma0, source);
++}
++
+ KOKKOS_INLINE_FUNCTION
+ void AddProductionOrdinaryGaugeSource(
+     const Real metric[4][4], const Real d_metric[4][4][4],
+diff --git a/src/ref_gh/analytic_radial_q_source.hpp b/src/ref_gh/analytic_radial_q_source.hpp
+index ba99c219..fb13501c 100644
+--- a/src/ref_gh/analytic_radial_q_source.hpp
++++ b/src/ref_gh/analytic_radial_q_source.hpp
+@@ -9,6 +9,7 @@
+ #include "ref_gh/covariant_gh_source.hpp"
+ #include "ref_gh/generated/analytic_radial_q_source.hpp"
+ #include "ref_gh/reference_analytic_radial_q.hpp"
++#include "ref_gh/reference_residual.hpp"
+ #include "ref_gh/standard_gh_source.hpp"
+ 
+ namespace ref_gh {
+@@ -16,6 +17,7 @@ namespace ref_gh {
+ struct CompactAnalyticCoordinateGeometry {
+   CoordinateGhGeometry geometry;
+   Real d_reference_gauge[4][4];  // NOLINT(runtime/arrays)
++  Real d_gauge_source_upper[4][4];  // NOLINT(runtime/arrays)
+ };
+ 
+ // Reconstruct physical point geometry once while obtaining the implicit
+@@ -92,6 +94,11 @@ bool ComputeCompactAnalyticCoordinateGeometry(
+       reference.alpha, reference.l, reference.b, reference.displacement,
+       reference.radius, geometry.inverse_metric, d_inverse,
+       h_upper, d_h_upper);
++  for (int p = 0; p < 4; ++p) {
++    for (int a = 0; a < 4; ++a) {
++      result.d_gauge_source_upper[p][a] = d_h_upper[p][a];
++    }
++  }
+   for (int a = 0; a < 4; ++a) {
+     geometry.gauge_source[a] = 0.0;
+     geometry.gauge_source_upper[a] = h_upper[a];
+@@ -109,6 +116,152 @@ bool ComputeCompactAnalyticCoordinateGeometry(
+   return Kokkos::isfinite(geometry.lapse) && geometry.lapse > 0.0;
+ }
+ 
++// Cancellation-free compact analytic implementation of
++//
++//   J_a=E^A_a delta_H_A-[B_a(g;gbar)-B_a(gbar;gbar)].
++//
++// GeneratedAnalyticRadialQPhysicalGaugeUpper is linear in g^{ab} and in
++// partial_p g^{ab}.  Supplying their exact residuals therefore evaluates the
++// upper-index gauge-source residual directly, without materializing the
++// reference connection or subtracting two singular full sources.
++KOKKOS_INLINE_FUNCTION
++bool AddCompactAnalyticOrdinaryGaugeResidualSource(
++    const Real psi[4][4], const Real pi[4][4],
++    const Real phi[3][4][4], const Real metric[4][4],
++    const Real d_metric[4][4][4], const AnalyticRadialQPoint &reference,
++    const CompactAnalyticCoordinateGeometry &compact_geometry,
++    const Real delta_hhat[4], const Real d_delta_hhat[4][4],
++    const Real gamma0, Real source[4][4]) {
++  const CoordinateGhGeometry &geometry = compact_geometry.geometry;
++  ReferenceRelativeCoordinateData relative;
++  if (!BuildReferenceRelativeCoordinateData(
++          psi, pi, phi, metric, d_metric, geometry, reference, relative)) {
++    return false;
++  }
++
++  ReferenceResidualValue inverse[4][4];  // NOLINT(runtime/arrays)
++  ReferenceResidualValue dg[4][4][4];    // NOLINT(runtime/arrays)
++  ReferenceResidualValue d_inverse[4][4][4];  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      Real delta_inverse = 0.0;
++      for (int c = 0; c < 4; ++c) {
++        for (int d = 0; d < 4; ++d) {
++          delta_inverse -= geometry.inverse_metric[a][c]
++              *relative.delta_metric[c][d]*relative.reference_inverse[d][b];
++        }
++      }
++      inverse[a][b] = MakeReferenceResidual(
++          relative.reference_inverse[a][b], geometry.inverse_metric[a][b],
++          delta_inverse);
++      for (int p = 0; p < 4; ++p) {
++        dg[p][a][b] = MakeReferenceResidual(
++            relative.reference_d_metric[p][a][b], d_metric[p][a][b],
++            relative.delta_d_metric[p][a][b]);
++      }
++    }
++  }
++  for (int p = 0; p < 4; ++p) {
++    for (int a = 0; a < 4; ++a) {
++      for (int b = 0; b < 4; ++b) {
++        d_inverse[p][a][b] = ReferenceResidualConstant(0.0);
++        for (int c = 0; c < 4; ++c) {
++          for (int d = 0; d < 4; ++d) {
++            d_inverse[p][a][b] = d_inverse[p][a][b]
++                - inverse[a][c]*inverse[b][d]*dg[p][c][d];
++          }
++        }
++      }
++    }
++  }
++
++  Real delta_inverse[4][4];       // NOLINT(runtime/arrays)
++  Real delta_d_inverse[4][4][4];  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      delta_inverse[a][b] = inverse[a][b].delta;
++      for (int p = 0; p < 4; ++p) {
++        delta_d_inverse[p][a][b] = d_inverse[p][a][b].delta;
++      }
++    }
++  }
++  Real delta_base_upper[4];       // NOLINT(runtime/arrays)
++  Real d_delta_base_upper[4][4];  // NOLINT(runtime/arrays)
++  GeneratedAnalyticRadialQPhysicalGaugeUpper(
++      reference.alpha, reference.l, reference.b, reference.displacement,
++      reference.radius, delta_inverse, delta_d_inverse,
++      delta_base_upper, d_delta_base_upper);
++
++  Real delta_base[4] = {};       // NOLINT(runtime/arrays)
++  Real d_delta_base[4][4] = {};  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      delta_base[a] +=
++          relative.delta_metric[a][b]*geometry.gauge_source_upper[b]
++          + relative.reference_metric[a][b]*delta_base_upper[b];
++      for (int p = 0; p < 4; ++p) {
++        d_delta_base[p][a] +=
++            relative.delta_d_metric[p][a][b]
++                *geometry.gauge_source_upper[b]
++            + relative.reference_d_metric[p][a][b]
++                *delta_base_upper[b]
++            + relative.delta_metric[a][b]
++                *compact_geometry.d_gauge_source_upper[p][b]
++            + relative.reference_metric[a][b]
++                *d_delta_base_upper[p][b];
++      }
++    }
++  }
++
++  Real j[4] = {};       // NOLINT(runtime/arrays)
++  Real d_j[4][4] = {};  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    j[a] = -delta_base[a];
++    for (int A = 0; A < 4; ++A) {
++      j[a] += ReferenceCoframe(reference, A, a)*delta_hhat[A];
++    }
++    for (int p = 0; p < 4; ++p) {
++      d_j[p][a] = -d_delta_base[p][a];
++      for (int A = 0; A < 4; ++A) {
++        d_j[p][a] += AnalyticDCoframe(reference, p, A, a)*delta_hhat[A]
++                      + ReferenceCoframe(reference, A, a)
++                          *d_delta_hhat[p][A];
++      }
++    }
++  }
++
++  Real coordinate_extra[4][4];  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      Real nabla_ab = d_j[a][b];
++      Real nabla_ba = d_j[b][a];
++      for (int c = 0; c < 4; ++c) {
++        nabla_ab -= geometry.christoffel[c][a][b]*j[c];
++        nabla_ba -= geometry.christoffel[c][b][a]*j[c];
++      }
++      coordinate_extra[a][b] = -nabla_ab - nabla_ba;
++      for (int c = 0; c < 4; ++c) {
++        const Real projector = ((c == a) ? geometry.normal_lower[b] : 0.0)
++                               + ((c == b) ? geometry.normal_lower[a] : 0.0)
++                               - metric[a][b]*geometry.normal_upper[c];
++        coordinate_extra[a][b] += gamma0*projector*j[c];
++      }
++    }
++  }
++  for (int A = 0; A < 4; ++A) {
++    for (int B = 0; B < 4; ++B) {
++      for (int a = 0; a < 4; ++a) {
++        for (int b = 0; b < 4; ++b) {
++          source[A][B] += ReferenceFrame(reference, A, a)
++                          *ReferenceFrame(reference, B, b)
++                          *coordinate_extra[a][b];
++        }
++      }
++    }
++  }
++  return true;
++}
++
+ // This is the analytic all-source oracle and future production entry point.
+ // It consumes only the 12+8 radial coefficients at a point.  In particular it
+ // never calls PopulateGeneratedAnalyticRadialQGeometry, ReferenceSpin,
+diff --git a/src/ref_gh/exact_matched_state.hpp b/src/ref_gh/exact_matched_state.hpp
+new file mode 100644
+index 00000000..17214ec6
+--- /dev/null
++++ b/src/ref_gh/exact_matched_state.hpp
+@@ -0,0 +1,32 @@
++//========================================================================================
++//! \file exact_matched_state.hpp
++//! \brief Strict predicate for the exact stationary q=1 reference state.
++//========================================================================================
++#ifndef REF_GH_EXACT_MATCHED_STATE_HPP_
++#define REF_GH_EXACT_MATCHED_STATE_HPP_
++
++#include "athena.hpp"
++
++namespace ref_gh {
++
++// This is intentionally an exact predicate, not a tolerance or an inner-radius
++// switch.  It may select algebraic exact fills and identities only when the
++// physical stationary trumpet and the q-controlled reference are mathematically
++// identical and no controller can move the reference during the stage.
++KOKKOS_INLINE_FUNCTION
++bool IsExactMatchedQ1StaticReference(
++    const bool reference_q_controlled, const bool q_controller_enabled,
++    const bool q_prescribed_enabled, const bool reference_time_dependent,
++    const Real q, const Real q_dot, const Real q_ddot) {
++  return reference_q_controlled
++      && !q_controller_enabled
++      && !q_prescribed_enabled
++      && !reference_time_dependent
++      && q == 1.0
++      && q_dot == 0.0
++      && q_ddot == 0.0;
++}
++
++}  // namespace ref_gh
++
++#endif  // REF_GH_EXACT_MATCHED_STATE_HPP_
+diff --git a/src/ref_gh/gauge_driver.hpp b/src/ref_gh/gauge_driver.hpp
+index 745d3bf7..f79c88a8 100644
+--- a/src/ref_gh/gauge_driver.hpp
++++ b/src/ref_gh/gauge_driver.hpp
+@@ -16,6 +16,115 @@ struct GaugeDriverRhs {
+   Real upsilon[3]; // NOLINT(runtime/arrays)
+ };
+ 
++template <typename Reference>
++KOKKOS_INLINE_FUNCTION
++Real ReferenceFrameMotion(const Reference &reference, const int A,
++                          const int lambda, const int B);
++
++// Direct equations for the stored regular fields delta_Hhat and delta_theta.
++// `exact_matched_static` is allowed only for a reference proved to satisfy
++// Fref=Href, dt Href=dt theta_ref=Omega_t=0, and
++// theta_ref=-beta_ref^i Kref_i.  It removes an analytically zero reference
++// source; it is not a near-puncture numerical switch.
++template <typename Reference>
++KOKKOS_INLINE_FUNCTION
++GaugeDriverRhs ComputeGaugeDriverResidualRhsWithReferenceK(
++    const Reference &reference, const Real reference_hhat[4],
++    const Real reference_theta[4],
++    const Real reference_d_hhat[4][4],
++    const Real reference_dt_theta[4], const Real reference_k[3][4],
++    const Real delta_hhat[4],
++    const Real delta_theta[4], const Real upsilon[3],
++    const Real d_delta_hhat[3][4], const Real physical_shift[3],
++    const Real reference_shift[3], const Real delta_shift[3],
++    const Real delta_target_hhat[4], const Real reference_target_hhat[4],
++    const Real conformal_gamma_residual[3], const Real mu, const Real eta,
++    const Real eta_beta, const bool exact_matched_static) {
++  GaugeDriverRhs rhs{};
++  for (int A = 0; A < 4; ++A) {
++    Real advective_delta_hhat = 0.0;
++    for (int i = 0; i < 3; ++i) {
++      advective_delta_hhat += physical_shift[i]*d_delta_hhat[i][A];
++    }
++    rhs.hhat[A] = advective_delta_hhat
++                  - mu*(delta_hhat[A] - delta_target_hhat[A])
++                  + delta_theta[A];
++    rhs.theta[A] = -eta*delta_theta[A] - eta*advective_delta_hhat;
++    for (int B = 0; B < 4; ++B) {
++      const Real omega_t = ReferenceFrameMotion(reference, A, 0, B);
++      rhs.hhat[A] += omega_t*delta_hhat[B];
++      rhs.theta[A] += omega_t*delta_theta[B];
++      for (int i = 0; i < 3; ++i) {
++        const Real beta_omega = physical_shift[i]
++            *ReferenceFrameMotion(reference, A, i + 1, B);
++        rhs.hhat[A] -= beta_omega*delta_hhat[B];
++        rhs.theta[A] += eta*beta_omega*delta_hhat[B];
++      }
++    }
++    for (int i = 0; i < 3; ++i) {
++      rhs.hhat[A] += delta_shift[i]*reference_k[i][A];
++      rhs.theta[A] -= eta*delta_shift[i]*reference_k[i][A];
++    }
++    if (!exact_matched_static) {
++      Real reference_h_source =
++          -mu*(reference_hhat[A] - reference_target_hhat[A])
++          + reference_theta[A] - reference_d_hhat[0][A];
++      Real reference_theta_source =
++          -eta*reference_theta[A] - reference_dt_theta[A];
++      for (int i = 0; i < 3; ++i) {
++        reference_h_source += reference_shift[i]*reference_k[i][A];
++        reference_theta_source -=
++            eta*reference_shift[i]*reference_k[i][A];
++      }
++      for (int B = 0; B < 4; ++B) {
++        const Real omega_t = ReferenceFrameMotion(reference, A, 0, B);
++        reference_h_source += omega_t*reference_hhat[B];
++        reference_theta_source += omega_t*reference_theta[B];
++      }
++      rhs.hhat[A] += reference_h_source;
++      rhs.theta[A] += reference_theta_source;
++    }
++  }
++  for (int i = 0; i < 3; ++i) {
++    rhs.upsilon[i] = conformal_gamma_residual[i] - eta_beta*upsilon[i];
++  }
++  return rhs;
++}
++
++// General/oracle adapter.  Analytic production supplies Kref directly through
++// ComputeGaugeDriverResidualRhsWithReferenceK; this reconstruction is retained
++// for independent generic-reference and algebra-oracle comparisons.
++template <typename Reference>
++KOKKOS_INLINE_FUNCTION
++GaugeDriverRhs ComputeGaugeDriverResidualRhs(
++    const Reference &reference, const Real reference_hhat[4],
++    const Real reference_theta[4],
++    const Real reference_d_hhat[4][4],
++    const Real reference_dt_theta[4], const Real delta_hhat[4],
++    const Real delta_theta[4], const Real upsilon[3],
++    const Real d_delta_hhat[3][4], const Real physical_shift[3],
++    const Real reference_shift[3], const Real delta_shift[3],
++    const Real delta_target_hhat[4], const Real reference_target_hhat[4],
++    const Real conformal_gamma_residual[3], const Real mu, const Real eta,
++    const Real eta_beta, const bool exact_matched_static) {
++  Real reference_k[3][4];  // NOLINT(runtime/arrays)
++  for (int i = 0; i < 3; ++i) {
++    for (int A = 0; A < 4; ++A) {
++      reference_k[i][A] = reference_d_hhat[i + 1][A];
++      for (int B = 0; B < 4; ++B) {
++        reference_k[i][A] -=
++            ReferenceFrameMotion(reference, A, i + 1, B)*reference_hhat[B];
++      }
++    }
++  }
++  return ComputeGaugeDriverResidualRhsWithReferenceK(
++      reference, reference_hhat, reference_theta, reference_d_hhat,
++      reference_dt_theta, reference_k, delta_hhat, delta_theta, upsilon,
++      d_delta_hhat, physical_shift, reference_shift, delta_shift,
++      delta_target_hhat, reference_target_hhat, conformal_gamma_residual,
++      mu, eta, eta_beta, exact_matched_static);
++}
++
+ // Omega_{A lambda}^B=(partial_lambda e_A^mu) theta^B_mu is the
+ // component-rotation matrix for a covector projected on the reference frame.
+ template <typename Reference>
+diff --git a/src/ref_gh/generated/analytic_radial_q_gauge.hpp b/src/ref_gh/generated/analytic_radial_q_gauge.hpp
+index 914aa27d..773cceb2 100644
+--- a/src/ref_gh/generated/analytic_radial_q_gauge.hpp
++++ b/src/ref_gh/generated/analytic_radial_q_gauge.hpp
+@@ -2,7 +2,7 @@
+ // Do not edit by hand.
+ // Compact production contractions: this header never materializes
+ // ReferenceGeometry, spin, spin-derivative, or Riemann arrays.
+-// generator_sha256=2c19efa4affd02c0d97ebbe26ea51a3f6bbb23467f3cb3c3e07c134320e26cc3
++// generator_sha256=f24ca36a00cbec6b6c2178202b174076a2db0148009e007020eff89d2aa22182
+ // sympy_version=1.14.0
+ #ifndef REF_GH_GENERATED_ANALYTIC_RADIAL_Q_GAUGE_HPP_
+ #define REF_GH_GENERATED_ANALYTIC_RADIAL_Q_GAUGE_HPP_
+@@ -16,6 +16,7 @@ struct AnalyticRadialQGaugeBaseline {
+   Real hhat[4];        // NOLINT(runtime/arrays)
+   Real theta[4];       // NOLINT(runtime/arrays)
+   Real d_hhat[4][4];   // NOLINT(runtime/arrays)
++  Real reference_k[3][4];  // NOLINT(runtime/arrays)
+   Real dt_theta[4];    // NOLINT(runtime/arrays)
+   bool valid;
+ };
+@@ -101,223 +102,269 @@ AnalyticRadialQGaugeBaseline PopulateGeneratedAnalyticRadialQGauge(
+   const Real ref_gauge_cse_54 = ref_gauge_cse_14*ref_gauge_cse_53;
+   const Real ref_gauge_cse_55 = alpha_r*ref_gauge_cse_54;
+   const Real ref_gauge_cse_56 = alpha*radius;
+-  const Real ref_gauge_cse_57 = B*ref_gauge_cse_56;
+-  const Real ref_gauge_cse_58 = alpha_rr*ref_gauge_cse_57;
+-  const Real ref_gauge_cse_59 = ref_gauge_cse_14*ref_gauge_cse_3*ref_gauge_cse_58;
+-  const Real ref_gauge_cse_60 = ref_gauge_cse_14*ref_gauge_cse_58;
+-  const Real ref_gauge_cse_61 = ref_gauge_cse_6*ref_gauge_cse_60;
+-  const Real ref_gauge_cse_62 = ref_gauge_cse_60*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_63 = 3*radius*ref_gauge_cse_18*ref_gauge_cse_9;
+-  const Real ref_gauge_cse_64 = ref_gauge_cse_14*ref_gauge_cse_56;
+-  const Real ref_gauge_cse_65 = 2*alpha_r;
+-  const Real ref_gauge_cse_66 = ref_gauge_cse_4*ref_gauge_cse_64*ref_gauge_cse_65;
+-  const Real ref_gauge_cse_67 = B_r*ref_gauge_cse_64;
+-  const Real ref_gauge_cse_68 = ref_gauge_cse_6*ref_gauge_cse_65*ref_gauge_cse_67;
+-  const Real ref_gauge_cse_69 = ref_gauge_cse_65*ref_gauge_cse_67*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_70 = Kokkos::pow(alpha_r, 2);
+-  const Real ref_gauge_cse_71 = Kokkos::pow(L_r, 2);
+-  const Real ref_gauge_cse_72 = radius*ref_gauge_cse_71;
+-  const Real ref_gauge_cse_73 = ref_gauge_cse_11*ref_gauge_cse_72;
+-  const Real ref_gauge_cse_74 = ref_gauge_cse_47*ref_gauge_cse_73;
+-  const Real ref_gauge_cse_75 = ref_gauge_cse_46*ref_gauge_cse_73;
+-  const Real ref_gauge_cse_76 = ref_gauge_cse_6*ref_gauge_cse_75;
+-  const Real ref_gauge_cse_77 = ref_gauge_cse_75*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_78 = Kokkos::pow(alpha, 3);
+-  const Real ref_gauge_cse_79 = Kokkos::pow(radius, 3);
+-  const Real ref_gauge_cse_80 = 1/(ref_gauge_cse_78*ref_gauge_cse_79);
+-  const Real ref_gauge_cse_81 = ref_gauge_cse_80*(6*B*L*L_r*ref_gauge_cse_11*ref_gauge_cse_36 + 3*B*L*L_rr*radius*ref_gauge_cse_11*ref_gauge_cse_3 + 3*B*L*L_rr*radius*ref_gauge_cse_11*ref_gauge_cse_6 + 3*B*L*L_rr*radius*ref_gauge_cse_11*ref_gauge_cse_8 + B*alpha*alpha_r*ref_gauge_cse_14*ref_gauge_cse_3 + B*alpha*alpha_r*ref_gauge_cse_14*ref_gauge_cse_6 + B*alpha*alpha_r*ref_gauge_cse_14*ref_gauge_cse_8 + 2*B*radius*ref_gauge_cse_14*ref_gauge_cse_3*ref_gauge_cse_70 + 2*B*radius*ref_gauge_cse_14*ref_gauge_cse_6*ref_gauge_cse_70 + 2*B*radius*ref_gauge_cse_14*ref_gauge_cse_70*ref_gauge_cse_8 + 3*B_r*L*L_r*radius*ref_gauge_cse_11*ref_gauge_cse_3 + 3*B_r*L*L_r*radius*ref_gauge_cse_11*ref_gauge_cse_6 + 3*B_r*L*L_r*radius*ref_gauge_cse_11*ref_gauge_cse_8 + 5*B_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_36 + B_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_3 + B_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_6 + B_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_8 + 3*L*L_t*alpha*alpha_r*ref_gauge_cse_36 + 3*L_r*L_t*ref_gauge_cse_11*ref_gauge_cse_36 - ref_gauge_cse_3*ref_gauge_cse_63 - ref_gauge_cse_39 - ref_gauge_cse_41 - ref_gauge_cse_43 - ref_gauge_cse_44 - ref_gauge_cse_48 - ref_gauge_cse_50 - ref_gauge_cse_51 - ref_gauge_cse_52*ref_gauge_cse_55 - ref_gauge_cse_59 - ref_gauge_cse_6*ref_gauge_cse_63 - ref_gauge_cse_61 - ref_gauge_cse_62 - ref_gauge_cse_63*ref_gauge_cse_8 - ref_gauge_cse_66 - ref_gauge_cse_68 - ref_gauge_cse_69 - ref_gauge_cse_74 - ref_gauge_cse_76 - ref_gauge_cse_77);
+-  const Real ref_gauge_cse_82 = ref_gauge_cse_15*ref_gauge_cse_81;
+-  const Real ref_gauge_cse_83 = 1.0/ref_gauge_cse_21;
+-  const Real ref_gauge_cse_84 = 2*L_t;
+-  const Real ref_gauge_cse_85 = ref_gauge_cse_19*ref_gauge_cse_84;
+-  const Real ref_gauge_cse_86 = ref_gauge_cse_13*ref_gauge_cse_83*(L_t*ref_gauge_cse_18 + L_t*ref_gauge_cse_23 + L_t*ref_gauge_cse_25 + L_t*ref_gauge_cse_27 + L_t*ref_gauge_cse_28 - ref_gauge_cse_37 + ref_gauge_cse_85);
+-  const Real ref_gauge_cse_87 = L_r*ref_gauge_cse_78;
+-  const Real ref_gauge_cse_88 = L*ref_gauge_cse_87;
+-  const Real ref_gauge_cse_89 = ref_gauge_cse_3*ref_gauge_cse_88;
+-  const Real ref_gauge_cse_90 = alpha_r*ref_gauge_cse_40;
+-  const Real ref_gauge_cse_91 = ref_gauge_cse_3*ref_gauge_cse_90;
+-  const Real ref_gauge_cse_92 = 2*ref_gauge_cse_78;
+-  const Real ref_gauge_cse_93 = ref_gauge_cse_72*ref_gauge_cse_92;
+-  const Real ref_gauge_cse_94 = Kokkos::pow(L, 4);
+-  const Real ref_gauge_cse_95 = Kokkos::pow(X0, 4);
+-  const Real ref_gauge_cse_96 = ref_gauge_cse_94*ref_gauge_cse_95;
+-  const Real ref_gauge_cse_97 = Kokkos::pow(B_r, 2);
+-  const Real ref_gauge_cse_98 = ref_gauge_cse_56*ref_gauge_cse_97;
+-  const Real ref_gauge_cse_99 = ref_gauge_cse_96*ref_gauge_cse_98;
+-  const Real ref_gauge_cse_100 = ref_gauge_cse_14*ref_gauge_cse_70;
+-  const Real ref_gauge_cse_101 = ref_gauge_cse_100*ref_gauge_cse_56;
++  const Real ref_gauge_cse_57 = ref_gauge_cse_3*ref_gauge_cse_56;
++  const Real ref_gauge_cse_58 = B*ref_gauge_cse_14;
++  const Real ref_gauge_cse_59 = alpha_rr*ref_gauge_cse_58;
++  const Real ref_gauge_cse_60 = ref_gauge_cse_57*ref_gauge_cse_59;
++  const Real ref_gauge_cse_61 = ref_gauge_cse_56*ref_gauge_cse_59;
++  const Real ref_gauge_cse_62 = ref_gauge_cse_6*ref_gauge_cse_61;
++  const Real ref_gauge_cse_63 = ref_gauge_cse_61*ref_gauge_cse_8;
++  const Real ref_gauge_cse_64 = 3*radius*ref_gauge_cse_18*ref_gauge_cse_9;
++  const Real ref_gauge_cse_65 = ref_gauge_cse_14*ref_gauge_cse_56;
++  const Real ref_gauge_cse_66 = 2*alpha_r;
++  const Real ref_gauge_cse_67 = ref_gauge_cse_4*ref_gauge_cse_65*ref_gauge_cse_66;
++  const Real ref_gauge_cse_68 = B_r*ref_gauge_cse_65;
++  const Real ref_gauge_cse_69 = ref_gauge_cse_6*ref_gauge_cse_66*ref_gauge_cse_68;
++  const Real ref_gauge_cse_70 = ref_gauge_cse_66*ref_gauge_cse_68*ref_gauge_cse_8;
++  const Real ref_gauge_cse_71 = Kokkos::pow(alpha_r, 2);
++  const Real ref_gauge_cse_72 = Kokkos::pow(L_r, 2);
++  const Real ref_gauge_cse_73 = radius*ref_gauge_cse_72;
++  const Real ref_gauge_cse_74 = ref_gauge_cse_11*ref_gauge_cse_73;
++  const Real ref_gauge_cse_75 = ref_gauge_cse_47*ref_gauge_cse_74;
++  const Real ref_gauge_cse_76 = ref_gauge_cse_46*ref_gauge_cse_74;
++  const Real ref_gauge_cse_77 = ref_gauge_cse_6*ref_gauge_cse_76;
++  const Real ref_gauge_cse_78 = ref_gauge_cse_76*ref_gauge_cse_8;
++  const Real ref_gauge_cse_79 = Kokkos::pow(alpha, 3);
++  const Real ref_gauge_cse_80 = Kokkos::pow(radius, 3);
++  const Real ref_gauge_cse_81 = 1/(ref_gauge_cse_79*ref_gauge_cse_80);
++  const Real ref_gauge_cse_82 = ref_gauge_cse_81*(6*B*L*L_r*ref_gauge_cse_11*ref_gauge_cse_36 + 3*B*L*L_rr*radius*ref_gauge_cse_11*ref_gauge_cse_3 + 3*B*L*L_rr*radius*ref_gauge_cse_11*ref_gauge_cse_6 + 3*B*L*L_rr*radius*ref_gauge_cse_11*ref_gauge_cse_8 + B*alpha*alpha_r*ref_gauge_cse_14*ref_gauge_cse_3 + B*alpha*alpha_r*ref_gauge_cse_14*ref_gauge_cse_6 + B*alpha*alpha_r*ref_gauge_cse_14*ref_gauge_cse_8 + 2*B*radius*ref_gauge_cse_14*ref_gauge_cse_3*ref_gauge_cse_71 + 2*B*radius*ref_gauge_cse_14*ref_gauge_cse_6*ref_gauge_cse_71 + 2*B*radius*ref_gauge_cse_14*ref_gauge_cse_71*ref_gauge_cse_8 + 3*B_r*L*L_r*radius*ref_gauge_cse_11*ref_gauge_cse_3 + 3*B_r*L*L_r*radius*ref_gauge_cse_11*ref_gauge_cse_6 + 3*B_r*L*L_r*radius*ref_gauge_cse_11*ref_gauge_cse_8 + 5*B_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_36 + B_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_3 + B_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_6 + B_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_8 + 3*L*L_t*alpha*alpha_r*ref_gauge_cse_36 + 3*L_r*L_t*ref_gauge_cse_11*ref_gauge_cse_36 - ref_gauge_cse_3*ref_gauge_cse_64 - ref_gauge_cse_39 - ref_gauge_cse_41 - ref_gauge_cse_43 - ref_gauge_cse_44 - ref_gauge_cse_48 - ref_gauge_cse_50 - ref_gauge_cse_51 - ref_gauge_cse_52*ref_gauge_cse_55 - ref_gauge_cse_6*ref_gauge_cse_64 - ref_gauge_cse_60 - ref_gauge_cse_62 - ref_gauge_cse_63 - ref_gauge_cse_64*ref_gauge_cse_8 - ref_gauge_cse_67 - ref_gauge_cse_69 - ref_gauge_cse_70 - ref_gauge_cse_75 - ref_gauge_cse_77 - ref_gauge_cse_78);
++  const Real ref_gauge_cse_83 = ref_gauge_cse_15*ref_gauge_cse_82;
++  const Real ref_gauge_cse_84 = 1.0/ref_gauge_cse_21;
++  const Real ref_gauge_cse_85 = 2*L_t;
++  const Real ref_gauge_cse_86 = ref_gauge_cse_19*ref_gauge_cse_85;
++  const Real ref_gauge_cse_87 = ref_gauge_cse_13*ref_gauge_cse_84*(L_t*ref_gauge_cse_18 + L_t*ref_gauge_cse_23 + L_t*ref_gauge_cse_25 + L_t*ref_gauge_cse_27 + L_t*ref_gauge_cse_28 - ref_gauge_cse_37 + ref_gauge_cse_86);
++  const Real ref_gauge_cse_88 = ref_gauge_cse_73*ref_gauge_cse_79;
++  const Real ref_gauge_cse_89 = 2*ref_gauge_cse_88;
++  const Real ref_gauge_cse_90 = radius*ref_gauge_cse_17*ref_gauge_cse_19;
++  const Real ref_gauge_cse_91 = L_r*ref_gauge_cse_36;
++  const Real ref_gauge_cse_92 = alpha*ref_gauge_cse_22*ref_gauge_cse_91;
++  const Real ref_gauge_cse_93 = ref_gauge_cse_3*ref_gauge_cse_92;
++  const Real ref_gauge_cse_94 = Kokkos::pow(X0, 4);
++  const Real ref_gauge_cse_95 = L_r*ref_gauge_cse_56;
++  const Real ref_gauge_cse_96 = ref_gauge_cse_26*ref_gauge_cse_95;
++  const Real ref_gauge_cse_97 = ref_gauge_cse_94*ref_gauge_cse_96;
++  const Real ref_gauge_cse_98 = L_r*ref_gauge_cse_79;
++  const Real ref_gauge_cse_99 = L*ref_gauge_cse_98;
++  const Real ref_gauge_cse_100 = ref_gauge_cse_3*ref_gauge_cse_99;
++  const Real ref_gauge_cse_101 = alpha_r*ref_gauge_cse_40;
+   const Real ref_gauge_cse_102 = ref_gauge_cse_101*ref_gauge_cse_3;
+-  const Real ref_gauge_cse_103 = B_rr*ref_gauge_cse_57;
+-  const Real ref_gauge_cse_104 = radius*ref_gauge_cse_17*ref_gauge_cse_19;
+-  const Real ref_gauge_cse_105 = L_r*ref_gauge_cse_36;
+-  const Real ref_gauge_cse_106 = alpha*ref_gauge_cse_105*ref_gauge_cse_22;
+-  const Real ref_gauge_cse_107 = ref_gauge_cse_4*ref_gauge_cse_53;
+-  const Real ref_gauge_cse_108 = L_r*ref_gauge_cse_56;
+-  const Real ref_gauge_cse_109 = ref_gauge_cse_108*ref_gauge_cse_26;
+-  const Real ref_gauge_cse_110 = ref_gauge_cse_79*ref_gauge_cse_94;
+-  const Real ref_gauge_cse_111 = alpha*ref_gauge_cse_20;
+-  const Real ref_gauge_cse_112 = ref_gauge_cse_110*ref_gauge_cse_111;
+-  const Real ref_gauge_cse_113 = -L*L_r*ref_gauge_cse_36*ref_gauge_cse_78;
+-  const Real ref_gauge_cse_114 = -alpha_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_36;
+-  const Real ref_gauge_cse_115 = B_r*ref_gauge_cse_53;
+-  const Real ref_gauge_cse_116 = ref_gauge_cse_36*ref_gauge_cse_94;
+-  const Real ref_gauge_cse_117 = ref_gauge_cse_115*ref_gauge_cse_116;
+-  const Real ref_gauge_cse_118 = ref_gauge_cse_94*ref_gauge_cse_98;
+-  const Real ref_gauge_cse_119 = ref_gauge_cse_118*ref_gauge_cse_3;
+-  const Real ref_gauge_cse_120 = ref_gauge_cse_119*ref_gauge_cse_6;
+-  const Real ref_gauge_cse_121 = ref_gauge_cse_103*ref_gauge_cse_94;
+-  const Real ref_gauge_cse_122 = ref_gauge_cse_121*ref_gauge_cse_3;
+-  const Real ref_gauge_cse_123 = ref_gauge_cse_108*ref_gauge_cse_25;
+-  const Real ref_gauge_cse_124 = -B*B_r*alpha*ref_gauge_cse_3*ref_gauge_cse_6*ref_gauge_cse_94 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_3*ref_gauge_cse_6*ref_gauge_cse_94 + ref_gauge_cse_112 + ref_gauge_cse_113 + ref_gauge_cse_114 + ref_gauge_cse_117*ref_gauge_cse_8 + ref_gauge_cse_120 + ref_gauge_cse_122*ref_gauge_cse_6 + ref_gauge_cse_123*ref_gauge_cse_6;
+-  const Real ref_gauge_cse_125 = ref_gauge_cse_119*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_126 = -B*B_r*alpha*ref_gauge_cse_3*ref_gauge_cse_8*ref_gauge_cse_94 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_3*ref_gauge_cse_8*ref_gauge_cse_94 + ref_gauge_cse_117*ref_gauge_cse_6 + ref_gauge_cse_122*ref_gauge_cse_8 + ref_gauge_cse_123*ref_gauge_cse_8 + ref_gauge_cse_125;
+-  const Real ref_gauge_cse_127 = ref_gauge_cse_80*ref_gauge_cse_83;
+-  const Real ref_gauge_cse_128 = ref_gauge_cse_121*ref_gauge_cse_6;
+-  const Real ref_gauge_cse_129 = ref_gauge_cse_118*ref_gauge_cse_6;
+-  const Real ref_gauge_cse_130 = ref_gauge_cse_118*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_131 = ref_gauge_cse_108*ref_gauge_cse_27;
+-  const Real ref_gauge_cse_132 = B*B_r*alpha*ref_gauge_cse_3*ref_gauge_cse_94 + B*B_r*alpha*ref_gauge_cse_6*ref_gauge_cse_94 + B*B_r*alpha*ref_gauge_cse_8*ref_gauge_cse_94 + 2*B*B_r*alpha_r*radius*ref_gauge_cse_3*ref_gauge_cse_94 + 2*B*B_r*alpha_r*radius*ref_gauge_cse_6*ref_gauge_cse_94 + 2*B*B_r*alpha_r*radius*ref_gauge_cse_8*ref_gauge_cse_94 + L*L_rr*radius*ref_gauge_cse_78 + 2*alpha_r*ref_gauge_cse_20*ref_gauge_cse_36*ref_gauge_cse_94 + alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14 - ref_gauge_cse_101 - ref_gauge_cse_104 - ref_gauge_cse_106 - ref_gauge_cse_108*ref_gauge_cse_28 - 4*ref_gauge_cse_117 - ref_gauge_cse_119 - ref_gauge_cse_121*ref_gauge_cse_8 - ref_gauge_cse_122 - ref_gauge_cse_123 - ref_gauge_cse_128 - ref_gauge_cse_129 - ref_gauge_cse_130 - ref_gauge_cse_131 - ref_gauge_cse_88 - ref_gauge_cse_90 - ref_gauge_cse_93;
+-  const Real ref_gauge_cse_133 = X0*ref_gauge_cse_127*ref_gauge_cse_132;
+-  const Real ref_gauge_cse_134 = X1*ref_gauge_cse_133;
+-  const Real ref_gauge_cse_135 = X2*ref_gauge_cse_133;
+-  const Real ref_gauge_cse_136 = ref_gauge_cse_6*ref_gauge_cse_88;
+-  const Real ref_gauge_cse_137 = ref_gauge_cse_6*ref_gauge_cse_90;
+-  const Real ref_gauge_cse_138 = Kokkos::pow(X1, 4);
+-  const Real ref_gauge_cse_139 = ref_gauge_cse_118*ref_gauge_cse_138;
+-  const Real ref_gauge_cse_140 = ref_gauge_cse_101*ref_gauge_cse_6;
+-  const Real ref_gauge_cse_141 = ref_gauge_cse_115*ref_gauge_cse_94;
+-  const Real ref_gauge_cse_142 = ref_gauge_cse_129*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_143 = -B*B_r*alpha*ref_gauge_cse_6*ref_gauge_cse_8*ref_gauge_cse_94 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_6*ref_gauge_cse_8*ref_gauge_cse_94 + ref_gauge_cse_107*ref_gauge_cse_116 + ref_gauge_cse_128*ref_gauge_cse_8 + ref_gauge_cse_131*ref_gauge_cse_8 + ref_gauge_cse_142;
+-  const Real ref_gauge_cse_144 = X1*X2*ref_gauge_cse_127*ref_gauge_cse_132;
+-  const Real ref_gauge_cse_145 = ref_gauge_cse_8*ref_gauge_cse_88;
+-  const Real ref_gauge_cse_146 = ref_gauge_cse_8*ref_gauge_cse_90;
+-  const Real ref_gauge_cse_147 = Kokkos::pow(X2, 4);
+-  const Real ref_gauge_cse_148 = ref_gauge_cse_118*ref_gauge_cse_147;
+-  const Real ref_gauge_cse_149 = ref_gauge_cse_101*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_150 = Kokkos::pow(B, 3);
+-  const Real ref_gauge_cse_151 = ref_gauge_cse_110*ref_gauge_cse_150;
+-  const Real ref_gauge_cse_152 = 3*L_t;
+-  const Real ref_gauge_cse_153 = ref_gauge_cse_19*ref_gauge_cse_36;
+-  const Real ref_gauge_cse_154 = B*radius;
+-  const Real ref_gauge_cse_155 = ref_gauge_cse_154*ref_gauge_cse_97;
+-  const Real ref_gauge_cse_156 = ref_gauge_cse_155*ref_gauge_cse_96;
+-  const Real ref_gauge_cse_157 = ref_gauge_cse_155*ref_gauge_cse_94;
+-  const Real ref_gauge_cse_158 = ref_gauge_cse_138*ref_gauge_cse_157;
+-  const Real ref_gauge_cse_159 = ref_gauge_cse_147*ref_gauge_cse_157;
+-  const Real ref_gauge_cse_160 = ref_gauge_cse_100*ref_gauge_cse_154;
+-  const Real ref_gauge_cse_161 = radius*ref_gauge_cse_40;
+-  const Real ref_gauge_cse_162 = B_rr*ref_gauge_cse_161;
+-  const Real ref_gauge_cse_163 = L_rr*ref_gauge_cse_1;
+-  const Real ref_gauge_cse_164 = ref_gauge_cse_11*ref_gauge_cse_163;
+-  const Real ref_gauge_cse_165 = ref_gauge_cse_164*ref_gauge_cse_46;
+-  const Real ref_gauge_cse_166 = ref_gauge_cse_1*ref_gauge_cse_19;
+-  const Real ref_gauge_cse_167 = 2*ref_gauge_cse_6;
+-  const Real ref_gauge_cse_168 = B_r*ref_gauge_cse_166;
+-  const Real ref_gauge_cse_169 = 2*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_170 = 2*ref_gauge_cse_116;
+-  const Real ref_gauge_cse_171 = ref_gauge_cse_170*ref_gauge_cse_20;
+-  const Real ref_gauge_cse_172 = B_r*ref_gauge_cse_171;
+-  const Real ref_gauge_cse_173 = ref_gauge_cse_157*ref_gauge_cse_3;
+-  const Real ref_gauge_cse_174 = ref_gauge_cse_167*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_175 = B*(ref_gauge_cse_3 + ref_gauge_cse_6 + ref_gauge_cse_8);
+-  const Real ref_gauge_cse_176 = L_t*ref_gauge_cse_36;
+-  const Real ref_gauge_cse_177 = alpha*ref_gauge_cse_151;
+-  const Real ref_gauge_cse_178 = B*ref_gauge_cse_78;
+-  const Real ref_gauge_cse_179 = ref_gauge_cse_178*ref_gauge_cse_72;
+-  const Real ref_gauge_cse_180 = B*ref_gauge_cse_99;
+-  const Real ref_gauge_cse_181 = B*ref_gauge_cse_139;
+-  const Real ref_gauge_cse_182 = B*ref_gauge_cse_148;
+-  const Real ref_gauge_cse_183 = ref_gauge_cse_20*ref_gauge_cse_56;
+-  const Real ref_gauge_cse_184 = B_rr*ref_gauge_cse_183;
+-  const Real ref_gauge_cse_185 = ref_gauge_cse_184*ref_gauge_cse_96;
+-  const Real ref_gauge_cse_186 = ref_gauge_cse_184*ref_gauge_cse_94;
+-  const Real ref_gauge_cse_187 = ref_gauge_cse_138*ref_gauge_cse_186;
+-  const Real ref_gauge_cse_188 = ref_gauge_cse_147*ref_gauge_cse_186;
+-  const Real ref_gauge_cse_189 = L_r*alpha*ref_gauge_cse_23;
+-  const Real ref_gauge_cse_190 = B_r*ref_gauge_cse_189;
+-  const Real ref_gauge_cse_191 = 2*ref_gauge_cse_190;
+-  const Real ref_gauge_cse_192 = ref_gauge_cse_4*ref_gauge_cse_94;
+-  const Real ref_gauge_cse_193 = ref_gauge_cse_111*ref_gauge_cse_192;
+-  const Real ref_gauge_cse_194 = B_r*ref_gauge_cse_111*ref_gauge_cse_94;
+-  const Real ref_gauge_cse_195 = ref_gauge_cse_194*ref_gauge_cse_52;
+-  const Real ref_gauge_cse_196 = alpha*ref_gauge_cse_3;
+-  const Real ref_gauge_cse_197 = ref_gauge_cse_105*ref_gauge_cse_150*ref_gauge_cse_21;
+-  const Real ref_gauge_cse_198 = alpha*ref_gauge_cse_197;
+-  const Real ref_gauge_cse_199 = 2*B;
+-  const Real ref_gauge_cse_200 = ref_gauge_cse_186*ref_gauge_cse_3;
+-  const Real ref_gauge_cse_201 = 4*ref_gauge_cse_6;
+-  const Real ref_gauge_cse_202 = ref_gauge_cse_189*ref_gauge_cse_4;
+-  const Real ref_gauge_cse_203 = 4*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_204 = ref_gauge_cse_201*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_205 = ref_gauge_cse_127*(B*B_r*L_t*alpha*ref_gauge_cse_21*ref_gauge_cse_3*ref_gauge_cse_36 + B*B_r*L_t*alpha*ref_gauge_cse_21*ref_gauge_cse_36*ref_gauge_cse_6 + B*B_r*L_t*alpha*ref_gauge_cse_21*ref_gauge_cse_36*ref_gauge_cse_8 + B*L*L_r*ref_gauge_cse_36*ref_gauge_cse_78 + B*L*L_rr*radius*ref_gauge_cse_3*ref_gauge_cse_78 + B*L*L_rr*radius*ref_gauge_cse_6*ref_gauge_cse_78 + B*L*L_rr*radius*ref_gauge_cse_78*ref_gauge_cse_8 + B*alpha_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_36 + B*alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_3 + B*alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_6 + B*alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_8 - B*ref_gauge_cse_102 - B*ref_gauge_cse_136 - B*ref_gauge_cse_137 - B*ref_gauge_cse_140 - B*ref_gauge_cse_145 - B*ref_gauge_cse_146 - B*ref_gauge_cse_149 - B*ref_gauge_cse_89 - B*ref_gauge_cse_91 + B_r*alpha*ref_gauge_cse_138*ref_gauge_cse_20*ref_gauge_cse_94 + B_r*alpha*ref_gauge_cse_147*ref_gauge_cse_20*ref_gauge_cse_94 + 2*B_r*alpha*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_6*ref_gauge_cse_94 + 2*B_r*alpha*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_8*ref_gauge_cse_94 + 2*B_r*alpha*ref_gauge_cse_20*ref_gauge_cse_6*ref_gauge_cse_8*ref_gauge_cse_94 + B_r*alpha*ref_gauge_cse_20*ref_gauge_cse_94*ref_gauge_cse_95 + 2*B_r*alpha_r*radius*ref_gauge_cse_138*ref_gauge_cse_20*ref_gauge_cse_94 + 2*B_r*alpha_r*radius*ref_gauge_cse_147*ref_gauge_cse_20*ref_gauge_cse_94 + 4*B_r*alpha_r*radius*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_6*ref_gauge_cse_94 + 4*B_r*alpha_r*radius*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_8*ref_gauge_cse_94 + 4*B_r*alpha_r*radius*ref_gauge_cse_20*ref_gauge_cse_6*ref_gauge_cse_8*ref_gauge_cse_94 + 2*B_r*alpha_r*radius*ref_gauge_cse_20*ref_gauge_cse_94*ref_gauge_cse_95 + L_t*alpha*ref_gauge_cse_20*ref_gauge_cse_21*ref_gauge_cse_79 + 2*alpha_r*ref_gauge_cse_150*ref_gauge_cse_3*ref_gauge_cse_36*ref_gauge_cse_94 + 2*alpha_r*ref_gauge_cse_150*ref_gauge_cse_36*ref_gauge_cse_6*ref_gauge_cse_94 + 2*alpha_r*ref_gauge_cse_150*ref_gauge_cse_36*ref_gauge_cse_8*ref_gauge_cse_94 - ref_gauge_cse_11*ref_gauge_cse_17*ref_gauge_cse_176 - ref_gauge_cse_120*ref_gauge_cse_199 - ref_gauge_cse_125*ref_gauge_cse_199 - ref_gauge_cse_138*ref_gauge_cse_191 - ref_gauge_cse_142*ref_gauge_cse_199 - ref_gauge_cse_147*ref_gauge_cse_191 - ref_gauge_cse_167*ref_gauge_cse_198 - ref_gauge_cse_167*ref_gauge_cse_200 - ref_gauge_cse_169*ref_gauge_cse_198 - ref_gauge_cse_169*ref_gauge_cse_200 - ref_gauge_cse_174*ref_gauge_cse_186 - ref_gauge_cse_176*ref_gauge_cse_87 - ref_gauge_cse_177 - ref_gauge_cse_179*ref_gauge_cse_3 - ref_gauge_cse_179*ref_gauge_cse_6 - ref_gauge_cse_179*ref_gauge_cse_8 - ref_gauge_cse_180 - ref_gauge_cse_181 - ref_gauge_cse_182 - ref_gauge_cse_185 - ref_gauge_cse_187 - ref_gauge_cse_188 - ref_gauge_cse_190*ref_gauge_cse_204 - ref_gauge_cse_191*ref_gauge_cse_95 - ref_gauge_cse_193*ref_gauge_cse_52 - ref_gauge_cse_195*ref_gauge_cse_6 - ref_gauge_cse_195*ref_gauge_cse_8 - 2*ref_gauge_cse_196*ref_gauge_cse_197 - ref_gauge_cse_201*ref_gauge_cse_202 - ref_gauge_cse_202*ref_gauge_cse_203);
+-  const Real ref_gauge_cse_206 = B*ref_gauge_cse_45;
+-  const Real ref_gauge_cse_207 = ref_gauge_cse_152*ref_gauge_cse_206;
+-  const Real ref_gauge_cse_208 = 5*ref_gauge_cse_176;
+-  const Real ref_gauge_cse_209 = L_tr*ref_gauge_cse_40;
+-  const Real ref_gauge_cse_210 = ref_gauge_cse_209*ref_gauge_cse_46;
+-  const Real ref_gauge_cse_211 = ref_gauge_cse_2*ref_gauge_cse_3;
+-  const Real ref_gauge_cse_212 = 6*L_tr*ref_gauge_cse_19;
+-  const Real ref_gauge_cse_213 = ref_gauge_cse_2*ref_gauge_cse_212;
+-  const Real ref_gauge_cse_214 = ref_gauge_cse_152*ref_gauge_cse_164;
+-  const Real ref_gauge_cse_215 = B*ref_gauge_cse_6;
+-  const Real ref_gauge_cse_216 = B*ref_gauge_cse_8;
+-  const Real ref_gauge_cse_217 = ref_gauge_cse_1*ref_gauge_cse_85;
+-  const Real ref_gauge_cse_218 = B_r*ref_gauge_cse_217;
+-  const Real ref_gauge_cse_219 = L_trr*ref_gauge_cse_161;
+-  const Real ref_gauge_cse_220 = ref_gauge_cse_219*ref_gauge_cse_46;
+-  const Real ref_gauge_cse_221 = B*ref_gauge_cse_34;
+-  const Real ref_gauge_cse_222 = 6*ref_gauge_cse_73;
+-  const Real ref_gauge_cse_223 = L_t*ref_gauge_cse_222;
+-  const Real ref_gauge_cse_224 = 2*L_tr;
+-  const Real ref_gauge_cse_225 = radius*ref_gauge_cse_224;
+-  const Real ref_gauge_cse_226 = 4*ref_gauge_cse_176*ref_gauge_cse_20;
+-  const Real ref_gauge_cse_227 = ref_gauge_cse_6*ref_gauge_cse_94;
+-  const Real ref_gauge_cse_228 = B_r*ref_gauge_cse_226;
+-  const Real ref_gauge_cse_229 = ref_gauge_cse_157*ref_gauge_cse_34;
+-  const Real ref_gauge_cse_230 = ref_gauge_cse_36*ref_gauge_cse_88;
+-  const Real ref_gauge_cse_231 = L_tr*ref_gauge_cse_14*ref_gauge_cse_178;
+-  const Real ref_gauge_cse_232 = ref_gauge_cse_36*ref_gauge_cse_90;
+-  const Real ref_gauge_cse_233 = L_tr*ref_gauge_cse_2*ref_gauge_cse_87;
+-  const Real ref_gauge_cse_234 = ref_gauge_cse_163*ref_gauge_cse_78;
+-  const Real ref_gauge_cse_235 = alpha_rr*ref_gauge_cse_161;
+-  const Real ref_gauge_cse_236 = B_r*ref_gauge_cse_183;
+-  const Real ref_gauge_cse_237 = ref_gauge_cse_224*ref_gauge_cse_236;
+-  const Real ref_gauge_cse_238 = ref_gauge_cse_237*ref_gauge_cse_94;
+-  const Real ref_gauge_cse_239 = L_tr*ref_gauge_cse_150*ref_gauge_cse_170;
+-  const Real ref_gauge_cse_240 = alpha*ref_gauge_cse_239;
+-  const Real ref_gauge_cse_241 = ref_gauge_cse_194*ref_gauge_cse_208;
+-  const Real ref_gauge_cse_242 = 2*ref_gauge_cse_221;
+-  const Real ref_gauge_cse_243 = L_tr*ref_gauge_cse_183*ref_gauge_cse_192;
+-  const Real ref_gauge_cse_244 = ref_gauge_cse_186*ref_gauge_cse_34;
+-  const Real ref_gauge_cse_245 = ref_gauge_cse_80*(B*B_r*L_tt*alpha*ref_gauge_cse_3*ref_gauge_cse_36*ref_gauge_cse_94 + B*B_r*L_tt*alpha*ref_gauge_cse_36*ref_gauge_cse_6*ref_gauge_cse_94 + B*B_r*L_tt*alpha*ref_gauge_cse_36*ref_gauge_cse_8*ref_gauge_cse_94 + 2*B*L*L_r*L_t*ref_gauge_cse_3*ref_gauge_cse_78 + 2*B*L*L_r*L_t*ref_gauge_cse_6*ref_gauge_cse_78 + 2*B*L*L_r*L_t*ref_gauge_cse_78*ref_gauge_cse_8 + B*L_t*alpha*radius*ref_gauge_cse_14*ref_gauge_cse_3*ref_gauge_cse_70 + B*L_t*alpha*radius*ref_gauge_cse_14*ref_gauge_cse_6*ref_gauge_cse_70 + B*L_t*alpha*radius*ref_gauge_cse_14*ref_gauge_cse_70*ref_gauge_cse_8 + B*L_t*alpha_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_3 + B*L_t*alpha_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_6 + B*L_t*alpha_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_8 + 3*B*L_t*radius*ref_gauge_cse_3*ref_gauge_cse_71*ref_gauge_cse_78 + 3*B*L_t*radius*ref_gauge_cse_6*ref_gauge_cse_71*ref_gauge_cse_78 + 3*B*L_t*radius*ref_gauge_cse_71*ref_gauge_cse_78*ref_gauge_cse_8 - B*L_t*ref_gauge_cse_232 - B*L_t*ref_gauge_cse_235*ref_gauge_cse_6 - B*L_t*ref_gauge_cse_235*ref_gauge_cse_8 + B*L_tr*ref_gauge_cse_14*ref_gauge_cse_36*ref_gauge_cse_78 + B*L_trr*radius*ref_gauge_cse_14*ref_gauge_cse_3*ref_gauge_cse_78 + B*L_trr*radius*ref_gauge_cse_14*ref_gauge_cse_6*ref_gauge_cse_78 + B*L_trr*radius*ref_gauge_cse_14*ref_gauge_cse_78*ref_gauge_cse_8 - B*ref_gauge_cse_142*ref_gauge_cse_84 - B*ref_gauge_cse_230*ref_gauge_cse_84 - B*ref_gauge_cse_234*ref_gauge_cse_6*ref_gauge_cse_84 - B*ref_gauge_cse_234*ref_gauge_cse_8*ref_gauge_cse_84 + B_r*L_t*alpha*ref_gauge_cse_138*ref_gauge_cse_20*ref_gauge_cse_94 + B_r*L_t*alpha*ref_gauge_cse_147*ref_gauge_cse_20*ref_gauge_cse_94 + 2*B_r*L_t*alpha*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_6*ref_gauge_cse_94 + 2*B_r*L_t*alpha*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_8*ref_gauge_cse_94 + 2*B_r*L_t*alpha*ref_gauge_cse_20*ref_gauge_cse_6*ref_gauge_cse_8*ref_gauge_cse_94 + B_r*L_t*alpha*ref_gauge_cse_20*ref_gauge_cse_94*ref_gauge_cse_95 + 2*B_r*L_t*alpha_r*radius*ref_gauge_cse_138*ref_gauge_cse_20*ref_gauge_cse_94 + 2*B_r*L_t*alpha_r*radius*ref_gauge_cse_147*ref_gauge_cse_20*ref_gauge_cse_94 + 4*B_r*L_t*alpha_r*radius*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_6*ref_gauge_cse_94 + 4*B_r*L_t*alpha_r*radius*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_8*ref_gauge_cse_94 + 4*B_r*L_t*alpha_r*radius*ref_gauge_cse_20*ref_gauge_cse_6*ref_gauge_cse_8*ref_gauge_cse_94 + 2*B_r*L_t*alpha_r*radius*ref_gauge_cse_20*ref_gauge_cse_94*ref_gauge_cse_95 + 2*L*alpha_r*ref_gauge_cse_11*ref_gauge_cse_31*ref_gauge_cse_36 + 3*L_r*ref_gauge_cse_31*ref_gauge_cse_36*ref_gauge_cse_78 + 2*L_t*alpha_r*ref_gauge_cse_150*ref_gauge_cse_3*ref_gauge_cse_36*ref_gauge_cse_94 + 2*L_t*alpha_r*ref_gauge_cse_150*ref_gauge_cse_36*ref_gauge_cse_6*ref_gauge_cse_94 + 2*L_t*alpha_r*ref_gauge_cse_150*ref_gauge_cse_36*ref_gauge_cse_8*ref_gauge_cse_94 - L_t*ref_gauge_cse_177 - L_t*ref_gauge_cse_180 - L_t*ref_gauge_cse_181 - L_t*ref_gauge_cse_182 - L_t*ref_gauge_cse_185 - L_t*ref_gauge_cse_187 - L_t*ref_gauge_cse_188 - L_tr*ref_gauge_cse_203*ref_gauge_cse_227*ref_gauge_cse_236 + L_tt*alpha*ref_gauge_cse_20*ref_gauge_cse_79*ref_gauge_cse_94 - L_tt*ref_gauge_cse_230 - L_tt*ref_gauge_cse_232 - ref_gauge_cse_129*ref_gauge_cse_242 - ref_gauge_cse_130*ref_gauge_cse_242 - ref_gauge_cse_138*ref_gauge_cse_238 - ref_gauge_cse_147*ref_gauge_cse_238 - ref_gauge_cse_163*ref_gauge_cse_221*ref_gauge_cse_92 - ref_gauge_cse_167*ref_gauge_cse_233 - ref_gauge_cse_167*ref_gauge_cse_244 - ref_gauge_cse_169*ref_gauge_cse_233 - ref_gauge_cse_169*ref_gauge_cse_244 - ref_gauge_cse_176*ref_gauge_cse_32*ref_gauge_cse_78 - ref_gauge_cse_186*ref_gauge_cse_6*ref_gauge_cse_8*ref_gauge_cse_84 - ref_gauge_cse_193*ref_gauge_cse_208 - ref_gauge_cse_196*ref_gauge_cse_239 - ref_gauge_cse_201*ref_gauge_cse_243 - ref_gauge_cse_203*ref_gauge_cse_243 - ref_gauge_cse_211*ref_gauge_cse_224*ref_gauge_cse_87 - ref_gauge_cse_221*ref_gauge_cse_235 - ref_gauge_cse_231*ref_gauge_cse_3 - ref_gauge_cse_231*ref_gauge_cse_6 - ref_gauge_cse_231*ref_gauge_cse_8 - ref_gauge_cse_237*ref_gauge_cse_96 - ref_gauge_cse_240*ref_gauge_cse_6 - ref_gauge_cse_240*ref_gauge_cse_8 - ref_gauge_cse_241*ref_gauge_cse_6 - ref_gauge_cse_241*ref_gauge_cse_8)/ref_gauge_cse_94;
++  const Real ref_gauge_cse_103 = Kokkos::pow(L, 4);
++  const Real ref_gauge_cse_104 = ref_gauge_cse_103*ref_gauge_cse_94;
++  const Real ref_gauge_cse_105 = Kokkos::pow(B_r, 2);
++  const Real ref_gauge_cse_106 = ref_gauge_cse_105*ref_gauge_cse_56;
++  const Real ref_gauge_cse_107 = ref_gauge_cse_104*ref_gauge_cse_106;
++  const Real ref_gauge_cse_108 = ref_gauge_cse_14*ref_gauge_cse_71;
++  const Real ref_gauge_cse_109 = ref_gauge_cse_108*ref_gauge_cse_56;
++  const Real ref_gauge_cse_110 = ref_gauge_cse_109*ref_gauge_cse_3;
++  const Real ref_gauge_cse_111 = B*B_rr;
++  const Real ref_gauge_cse_112 = ref_gauge_cse_104*ref_gauge_cse_56;
++  const Real ref_gauge_cse_113 = ref_gauge_cse_4*ref_gauge_cse_53;
++  const Real ref_gauge_cse_114 = -B*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_94 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_94 - L*L_rr*radius*ref_gauge_cse_3*ref_gauge_cse_79 - 2*alpha_r*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_36 - alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_3 + ref_gauge_cse_100 + ref_gauge_cse_102 + ref_gauge_cse_103*ref_gauge_cse_113*ref_gauge_cse_52 + ref_gauge_cse_107 + ref_gauge_cse_110 + ref_gauge_cse_111*ref_gauge_cse_112;
++  const Real ref_gauge_cse_115 = ref_gauge_cse_25*ref_gauge_cse_95;
++  const Real ref_gauge_cse_116 = ref_gauge_cse_103*ref_gauge_cse_80;
++  const Real ref_gauge_cse_117 = alpha*ref_gauge_cse_20;
++  const Real ref_gauge_cse_118 = ref_gauge_cse_116*ref_gauge_cse_117;
++  const Real ref_gauge_cse_119 = -L*L_r*ref_gauge_cse_36*ref_gauge_cse_79;
++  const Real ref_gauge_cse_120 = -alpha_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_36;
++  const Real ref_gauge_cse_121 = B_r*ref_gauge_cse_53;
++  const Real ref_gauge_cse_122 = ref_gauge_cse_103*ref_gauge_cse_36;
++  const Real ref_gauge_cse_123 = ref_gauge_cse_121*ref_gauge_cse_122;
++  const Real ref_gauge_cse_124 = ref_gauge_cse_103*ref_gauge_cse_106;
++  const Real ref_gauge_cse_125 = ref_gauge_cse_124*ref_gauge_cse_3;
++  const Real ref_gauge_cse_126 = ref_gauge_cse_125*ref_gauge_cse_6;
++  const Real ref_gauge_cse_127 = ref_gauge_cse_103*ref_gauge_cse_111;
++  const Real ref_gauge_cse_128 = ref_gauge_cse_127*ref_gauge_cse_57;
++  const Real ref_gauge_cse_129 = -B*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_3*ref_gauge_cse_6 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_3*ref_gauge_cse_6 + ref_gauge_cse_118 + ref_gauge_cse_119 + ref_gauge_cse_120 + ref_gauge_cse_123*ref_gauge_cse_8 + ref_gauge_cse_126 + ref_gauge_cse_128*ref_gauge_cse_6;
++  const Real ref_gauge_cse_130 = ref_gauge_cse_115*ref_gauge_cse_6 + ref_gauge_cse_129;
++  const Real ref_gauge_cse_131 = ref_gauge_cse_125*ref_gauge_cse_8;
++  const Real ref_gauge_cse_132 = -B*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_3*ref_gauge_cse_8 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_3*ref_gauge_cse_8 + ref_gauge_cse_123*ref_gauge_cse_6 + ref_gauge_cse_128*ref_gauge_cse_8 + ref_gauge_cse_131;
++  const Real ref_gauge_cse_133 = ref_gauge_cse_115*ref_gauge_cse_8 + ref_gauge_cse_132;
++  const Real ref_gauge_cse_134 = ref_gauge_cse_81*ref_gauge_cse_84;
++  const Real ref_gauge_cse_135 = ref_gauge_cse_27*ref_gauge_cse_95;
++  const Real ref_gauge_cse_136 = ref_gauge_cse_28*ref_gauge_cse_95;
++  const Real ref_gauge_cse_137 = ref_gauge_cse_124*ref_gauge_cse_6;
++  const Real ref_gauge_cse_138 = ref_gauge_cse_124*ref_gauge_cse_8;
++  const Real ref_gauge_cse_139 = ref_gauge_cse_127*ref_gauge_cse_56;
++  const Real ref_gauge_cse_140 = ref_gauge_cse_139*ref_gauge_cse_6;
++  const Real ref_gauge_cse_141 = -B*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_3 - B*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_6 - B*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_8 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_3 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_6 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_8 - L*L_rr*radius*ref_gauge_cse_79 - 2*alpha_r*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_36 - alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14 + ref_gauge_cse_101 + ref_gauge_cse_109 + 4*ref_gauge_cse_123 + ref_gauge_cse_125 + ref_gauge_cse_128 + ref_gauge_cse_137 + ref_gauge_cse_138 + ref_gauge_cse_139*ref_gauge_cse_8 + ref_gauge_cse_140 + ref_gauge_cse_99;
++  const Real ref_gauge_cse_142 = -ref_gauge_cse_115 - ref_gauge_cse_135 - ref_gauge_cse_136 - ref_gauge_cse_141 - ref_gauge_cse_89 - ref_gauge_cse_90 - ref_gauge_cse_92;
++  const Real ref_gauge_cse_143 = X0*ref_gauge_cse_134;
++  const Real ref_gauge_cse_144 = ref_gauge_cse_142*ref_gauge_cse_143;
++  const Real ref_gauge_cse_145 = X1*ref_gauge_cse_144;
++  const Real ref_gauge_cse_146 = X2*ref_gauge_cse_144;
++  const Real ref_gauge_cse_147 = ref_gauge_cse_6*ref_gauge_cse_92;
++  const Real ref_gauge_cse_148 = Kokkos::pow(X1, 4);
++  const Real ref_gauge_cse_149 = ref_gauge_cse_148*ref_gauge_cse_96;
++  const Real ref_gauge_cse_150 = ref_gauge_cse_6*ref_gauge_cse_99;
++  const Real ref_gauge_cse_151 = ref_gauge_cse_101*ref_gauge_cse_6;
++  const Real ref_gauge_cse_152 = ref_gauge_cse_124*ref_gauge_cse_148;
++  const Real ref_gauge_cse_153 = ref_gauge_cse_109*ref_gauge_cse_6;
++  const Real ref_gauge_cse_154 = ref_gauge_cse_103*ref_gauge_cse_121;
++  const Real ref_gauge_cse_155 = -B*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_148 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_148 - L*L_rr*radius*ref_gauge_cse_6*ref_gauge_cse_79 - 2*alpha_r*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_36*ref_gauge_cse_6 - alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_6 + ref_gauge_cse_139*ref_gauge_cse_148 + ref_gauge_cse_150 + ref_gauge_cse_151 + ref_gauge_cse_152 + ref_gauge_cse_153 + ref_gauge_cse_154*ref_gauge_cse_52*ref_gauge_cse_6;
++  const Real ref_gauge_cse_156 = ref_gauge_cse_137*ref_gauge_cse_8;
++  const Real ref_gauge_cse_157 = -B*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_6*ref_gauge_cse_8 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_6*ref_gauge_cse_8 + ref_gauge_cse_113*ref_gauge_cse_122 + ref_gauge_cse_140*ref_gauge_cse_8 + ref_gauge_cse_156;
++  const Real ref_gauge_cse_158 = ref_gauge_cse_135*ref_gauge_cse_8 + ref_gauge_cse_157;
++  const Real ref_gauge_cse_159 = X1*X2*ref_gauge_cse_134;
++  const Real ref_gauge_cse_160 = ref_gauge_cse_142*ref_gauge_cse_159;
++  const Real ref_gauge_cse_161 = ref_gauge_cse_8*ref_gauge_cse_92;
++  const Real ref_gauge_cse_162 = Kokkos::pow(X2, 4);
++  const Real ref_gauge_cse_163 = ref_gauge_cse_162*ref_gauge_cse_96;
++  const Real ref_gauge_cse_164 = ref_gauge_cse_8*ref_gauge_cse_99;
++  const Real ref_gauge_cse_165 = ref_gauge_cse_101*ref_gauge_cse_8;
++  const Real ref_gauge_cse_166 = ref_gauge_cse_124*ref_gauge_cse_162;
++  const Real ref_gauge_cse_167 = ref_gauge_cse_109*ref_gauge_cse_8;
++  const Real ref_gauge_cse_168 = -B*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_162 - 2*B*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_162 - L*L_rr*radius*ref_gauge_cse_79*ref_gauge_cse_8 - 2*alpha_r*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_36*ref_gauge_cse_8 - alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_8 + ref_gauge_cse_118 + ref_gauge_cse_119 + ref_gauge_cse_120 + ref_gauge_cse_139*ref_gauge_cse_162 + ref_gauge_cse_154*ref_gauge_cse_52*ref_gauge_cse_8 + ref_gauge_cse_164 + ref_gauge_cse_165 + ref_gauge_cse_166 + ref_gauge_cse_167;
++  const Real ref_gauge_cse_169 = Kokkos::pow(B, 3);
++  const Real ref_gauge_cse_170 = ref_gauge_cse_116*ref_gauge_cse_169;
++  const Real ref_gauge_cse_171 = 3*L_t;
++  const Real ref_gauge_cse_172 = ref_gauge_cse_19*ref_gauge_cse_36;
++  const Real ref_gauge_cse_173 = B*radius;
++  const Real ref_gauge_cse_174 = ref_gauge_cse_105*ref_gauge_cse_173;
++  const Real ref_gauge_cse_175 = ref_gauge_cse_104*ref_gauge_cse_174;
++  const Real ref_gauge_cse_176 = ref_gauge_cse_103*ref_gauge_cse_174;
++  const Real ref_gauge_cse_177 = ref_gauge_cse_148*ref_gauge_cse_176;
++  const Real ref_gauge_cse_178 = ref_gauge_cse_162*ref_gauge_cse_176;
++  const Real ref_gauge_cse_179 = ref_gauge_cse_108*ref_gauge_cse_173;
++  const Real ref_gauge_cse_180 = radius*ref_gauge_cse_40;
++  const Real ref_gauge_cse_181 = B_rr*ref_gauge_cse_180;
++  const Real ref_gauge_cse_182 = L_rr*ref_gauge_cse_1;
++  const Real ref_gauge_cse_183 = ref_gauge_cse_11*ref_gauge_cse_182;
++  const Real ref_gauge_cse_184 = ref_gauge_cse_183*ref_gauge_cse_46;
++  const Real ref_gauge_cse_185 = ref_gauge_cse_1*ref_gauge_cse_19;
++  const Real ref_gauge_cse_186 = 2*ref_gauge_cse_6;
++  const Real ref_gauge_cse_187 = B_r*ref_gauge_cse_185;
++  const Real ref_gauge_cse_188 = 2*ref_gauge_cse_8;
++  const Real ref_gauge_cse_189 = 2*ref_gauge_cse_122;
++  const Real ref_gauge_cse_190 = ref_gauge_cse_189*ref_gauge_cse_20;
++  const Real ref_gauge_cse_191 = B_r*ref_gauge_cse_190;
++  const Real ref_gauge_cse_192 = ref_gauge_cse_176*ref_gauge_cse_3;
++  const Real ref_gauge_cse_193 = ref_gauge_cse_186*ref_gauge_cse_8;
++  const Real ref_gauge_cse_194 = ref_gauge_cse_81*(5*B*L*ref_gauge_cse_172 - alpha_r*ref_gauge_cse_0*ref_gauge_cse_36*ref_gauge_cse_58 + alpha_r*ref_gauge_cse_3*ref_gauge_cse_54 + ref_gauge_cse_170 + ref_gauge_cse_171*ref_gauge_cse_172 + ref_gauge_cse_175 + ref_gauge_cse_176*ref_gauge_cse_193 + ref_gauge_cse_177 + ref_gauge_cse_178 + ref_gauge_cse_179*ref_gauge_cse_3 + ref_gauge_cse_179*ref_gauge_cse_6 + ref_gauge_cse_179*ref_gauge_cse_8 + ref_gauge_cse_181*ref_gauge_cse_3 + ref_gauge_cse_181*ref_gauge_cse_6 + ref_gauge_cse_181*ref_gauge_cse_8 + ref_gauge_cse_183*ref_gauge_cse_47 + ref_gauge_cse_184*ref_gauge_cse_6 + ref_gauge_cse_184*ref_gauge_cse_8 + 2*ref_gauge_cse_185*ref_gauge_cse_4 + ref_gauge_cse_186*ref_gauge_cse_187 + ref_gauge_cse_186*ref_gauge_cse_192 + ref_gauge_cse_187*ref_gauge_cse_188 + ref_gauge_cse_188*ref_gauge_cse_192 + ref_gauge_cse_190*ref_gauge_cse_4 + ref_gauge_cse_191*ref_gauge_cse_6 + ref_gauge_cse_191*ref_gauge_cse_8 - ref_gauge_cse_39 - ref_gauge_cse_41 + ref_gauge_cse_42*ref_gauge_cse_52 - ref_gauge_cse_43 - ref_gauge_cse_44 - ref_gauge_cse_48 - ref_gauge_cse_50 - ref_gauge_cse_51 + ref_gauge_cse_55*ref_gauge_cse_6 + ref_gauge_cse_55*ref_gauge_cse_8 - ref_gauge_cse_60 - ref_gauge_cse_62 - ref_gauge_cse_63 - ref_gauge_cse_67 - ref_gauge_cse_69 - ref_gauge_cse_70 - ref_gauge_cse_75 - ref_gauge_cse_77 - ref_gauge_cse_78);
++  const Real ref_gauge_cse_195 = ref_gauge_cse_15*ref_gauge_cse_194;
++  const Real ref_gauge_cse_196 = ref_gauge_cse_3*ref_gauge_cse_88;
++  const Real ref_gauge_cse_197 = ref_gauge_cse_115*ref_gauge_cse_186 + ref_gauge_cse_129;
++  const Real ref_gauge_cse_198 = ref_gauge_cse_115*ref_gauge_cse_188 + ref_gauge_cse_132;
++  const Real ref_gauge_cse_199 = -2*ref_gauge_cse_115 - 2*ref_gauge_cse_135 - 2*ref_gauge_cse_136 - ref_gauge_cse_141 - ref_gauge_cse_88 - 2*ref_gauge_cse_92;
++  const Real ref_gauge_cse_200 = ref_gauge_cse_143*ref_gauge_cse_199;
++  const Real ref_gauge_cse_201 = X1*ref_gauge_cse_200;
++  const Real ref_gauge_cse_202 = X2*ref_gauge_cse_200;
++  const Real ref_gauge_cse_203 = ref_gauge_cse_6*ref_gauge_cse_88;
++  const Real ref_gauge_cse_204 = ref_gauge_cse_135*ref_gauge_cse_188 + ref_gauge_cse_157;
++  const Real ref_gauge_cse_205 = ref_gauge_cse_159*ref_gauge_cse_199;
++  const Real ref_gauge_cse_206 = ref_gauge_cse_8*ref_gauge_cse_88;
++  const Real ref_gauge_cse_207 = B*(ref_gauge_cse_3 + ref_gauge_cse_6 + ref_gauge_cse_8);
++  const Real ref_gauge_cse_208 = L_t*ref_gauge_cse_36;
++  const Real ref_gauge_cse_209 = alpha*ref_gauge_cse_170;
++  const Real ref_gauge_cse_210 = B*ref_gauge_cse_107;
++  const Real ref_gauge_cse_211 = B*ref_gauge_cse_152;
++  const Real ref_gauge_cse_212 = B*ref_gauge_cse_166;
++  const Real ref_gauge_cse_213 = B_rr*ref_gauge_cse_20;
++  const Real ref_gauge_cse_214 = ref_gauge_cse_112*ref_gauge_cse_213;
++  const Real ref_gauge_cse_215 = ref_gauge_cse_103*ref_gauge_cse_148;
++  const Real ref_gauge_cse_216 = ref_gauge_cse_213*ref_gauge_cse_56;
++  const Real ref_gauge_cse_217 = ref_gauge_cse_215*ref_gauge_cse_216;
++  const Real ref_gauge_cse_218 = ref_gauge_cse_103*ref_gauge_cse_162;
++  const Real ref_gauge_cse_219 = ref_gauge_cse_216*ref_gauge_cse_218;
++  const Real ref_gauge_cse_220 = L_r*alpha*ref_gauge_cse_23;
++  const Real ref_gauge_cse_221 = B_r*ref_gauge_cse_220;
++  const Real ref_gauge_cse_222 = 2*ref_gauge_cse_221;
++  const Real ref_gauge_cse_223 = ref_gauge_cse_103*ref_gauge_cse_4;
++  const Real ref_gauge_cse_224 = ref_gauge_cse_117*ref_gauge_cse_223;
++  const Real ref_gauge_cse_225 = B_r*ref_gauge_cse_103*ref_gauge_cse_117;
++  const Real ref_gauge_cse_226 = ref_gauge_cse_225*ref_gauge_cse_52;
++  const Real ref_gauge_cse_227 = alpha*ref_gauge_cse_3;
++  const Real ref_gauge_cse_228 = ref_gauge_cse_169*ref_gauge_cse_21*ref_gauge_cse_91;
++  const Real ref_gauge_cse_229 = alpha*ref_gauge_cse_228;
++  const Real ref_gauge_cse_230 = 2*B;
++  const Real ref_gauge_cse_231 = ref_gauge_cse_103*ref_gauge_cse_186;
++  const Real ref_gauge_cse_232 = ref_gauge_cse_213*ref_gauge_cse_57;
++  const Real ref_gauge_cse_233 = ref_gauge_cse_103*ref_gauge_cse_188;
++  const Real ref_gauge_cse_234 = 4*ref_gauge_cse_6;
++  const Real ref_gauge_cse_235 = ref_gauge_cse_220*ref_gauge_cse_4;
++  const Real ref_gauge_cse_236 = 4*ref_gauge_cse_8;
++  const Real ref_gauge_cse_237 = ref_gauge_cse_234*ref_gauge_cse_8;
++  const Real ref_gauge_cse_238 = ref_gauge_cse_134*(B*B_r*L_t*alpha*ref_gauge_cse_21*ref_gauge_cse_3*ref_gauge_cse_36 + B*B_r*L_t*alpha*ref_gauge_cse_21*ref_gauge_cse_36*ref_gauge_cse_6 + B*B_r*L_t*alpha*ref_gauge_cse_21*ref_gauge_cse_36*ref_gauge_cse_8 + B*L*L_r*ref_gauge_cse_36*ref_gauge_cse_79 + B*L*L_rr*radius*ref_gauge_cse_3*ref_gauge_cse_79 + B*L*L_rr*radius*ref_gauge_cse_6*ref_gauge_cse_79 + B*L*L_rr*radius*ref_gauge_cse_79*ref_gauge_cse_8 + B*alpha_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_36 + B*alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_3 + B*alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_6 + B*alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_8 - B*ref_gauge_cse_100 - B*ref_gauge_cse_102 - B*ref_gauge_cse_110 - B*ref_gauge_cse_150 - B*ref_gauge_cse_151 - B*ref_gauge_cse_153 - B*ref_gauge_cse_164 - B*ref_gauge_cse_165 - B*ref_gauge_cse_167 - B*ref_gauge_cse_196 - B*ref_gauge_cse_203 - B*ref_gauge_cse_206 + B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_148*ref_gauge_cse_20 + B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_162*ref_gauge_cse_20 + 2*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_6 + 2*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_8 + 2*B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_6*ref_gauge_cse_8 + B_r*alpha*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_94 + 2*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_148*ref_gauge_cse_20 + 2*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_162*ref_gauge_cse_20 + 4*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_6 + 4*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_8 + 4*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_6*ref_gauge_cse_8 + 2*B_r*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_94 + L_t*alpha*ref_gauge_cse_20*ref_gauge_cse_21*ref_gauge_cse_80 + 2*alpha_r*ref_gauge_cse_103*ref_gauge_cse_169*ref_gauge_cse_3*ref_gauge_cse_36 + 2*alpha_r*ref_gauge_cse_103*ref_gauge_cse_169*ref_gauge_cse_36*ref_gauge_cse_6 + 2*alpha_r*ref_gauge_cse_103*ref_gauge_cse_169*ref_gauge_cse_36*ref_gauge_cse_8 - ref_gauge_cse_103*ref_gauge_cse_193*ref_gauge_cse_216 - ref_gauge_cse_11*ref_gauge_cse_17*ref_gauge_cse_208 - ref_gauge_cse_126*ref_gauge_cse_230 - ref_gauge_cse_131*ref_gauge_cse_230 - ref_gauge_cse_148*ref_gauge_cse_222 - ref_gauge_cse_156*ref_gauge_cse_230 - ref_gauge_cse_162*ref_gauge_cse_222 - ref_gauge_cse_186*ref_gauge_cse_229 - ref_gauge_cse_188*ref_gauge_cse_229 - ref_gauge_cse_208*ref_gauge_cse_98 - ref_gauge_cse_209 - ref_gauge_cse_210 - ref_gauge_cse_211 - ref_gauge_cse_212 - ref_gauge_cse_214 - ref_gauge_cse_217 - ref_gauge_cse_219 - ref_gauge_cse_221*ref_gauge_cse_237 - ref_gauge_cse_222*ref_gauge_cse_94 - ref_gauge_cse_224*ref_gauge_cse_52 - ref_gauge_cse_226*ref_gauge_cse_6 - ref_gauge_cse_226*ref_gauge_cse_8 - 2*ref_gauge_cse_227*ref_gauge_cse_228 - ref_gauge_cse_231*ref_gauge_cse_232 - ref_gauge_cse_232*ref_gauge_cse_233 - ref_gauge_cse_234*ref_gauge_cse_235 - ref_gauge_cse_235*ref_gauge_cse_236);
++  const Real ref_gauge_cse_239 = B*ref_gauge_cse_45;
++  const Real ref_gauge_cse_240 = ref_gauge_cse_171*ref_gauge_cse_239;
++  const Real ref_gauge_cse_241 = 5*ref_gauge_cse_208;
++  const Real ref_gauge_cse_242 = L_tr*ref_gauge_cse_40;
++  const Real ref_gauge_cse_243 = ref_gauge_cse_242*ref_gauge_cse_46;
++  const Real ref_gauge_cse_244 = ref_gauge_cse_2*ref_gauge_cse_3;
++  const Real ref_gauge_cse_245 = 6*L_tr*ref_gauge_cse_19;
++  const Real ref_gauge_cse_246 = ref_gauge_cse_2*ref_gauge_cse_245;
++  const Real ref_gauge_cse_247 = ref_gauge_cse_171*ref_gauge_cse_183;
++  const Real ref_gauge_cse_248 = B*ref_gauge_cse_6;
++  const Real ref_gauge_cse_249 = B*ref_gauge_cse_8;
++  const Real ref_gauge_cse_250 = ref_gauge_cse_1*ref_gauge_cse_86;
++  const Real ref_gauge_cse_251 = B_r*ref_gauge_cse_250;
++  const Real ref_gauge_cse_252 = L_trr*ref_gauge_cse_180;
++  const Real ref_gauge_cse_253 = ref_gauge_cse_252*ref_gauge_cse_46;
++  const Real ref_gauge_cse_254 = B*ref_gauge_cse_34;
++  const Real ref_gauge_cse_255 = 6*ref_gauge_cse_74;
++  const Real ref_gauge_cse_256 = L_t*ref_gauge_cse_255;
++  const Real ref_gauge_cse_257 = 2*L_tr;
++  const Real ref_gauge_cse_258 = radius*ref_gauge_cse_257;
++  const Real ref_gauge_cse_259 = 4*ref_gauge_cse_20;
++  const Real ref_gauge_cse_260 = ref_gauge_cse_208*ref_gauge_cse_259;
++  const Real ref_gauge_cse_261 = ref_gauge_cse_103*ref_gauge_cse_6;
++  const Real ref_gauge_cse_262 = B_r*ref_gauge_cse_260;
++  const Real ref_gauge_cse_263 = ref_gauge_cse_176*ref_gauge_cse_34;
++  const Real ref_gauge_cse_264 = ref_gauge_cse_36*ref_gauge_cse_99;
++  const Real ref_gauge_cse_265 = L_tr*ref_gauge_cse_58*ref_gauge_cse_79;
++  const Real ref_gauge_cse_266 = ref_gauge_cse_101*ref_gauge_cse_36;
++  const Real ref_gauge_cse_267 = L_tr*ref_gauge_cse_2*ref_gauge_cse_98;
++  const Real ref_gauge_cse_268 = ref_gauge_cse_182*ref_gauge_cse_79;
++  const Real ref_gauge_cse_269 = 2*ref_gauge_cse_254;
++  const Real ref_gauge_cse_270 = alpha_rr*ref_gauge_cse_180;
++  const Real ref_gauge_cse_271 = B_r*ref_gauge_cse_20*ref_gauge_cse_257;
++  const Real ref_gauge_cse_272 = ref_gauge_cse_271*ref_gauge_cse_56;
++  const Real ref_gauge_cse_273 = L_tr*ref_gauge_cse_169*ref_gauge_cse_189;
++  const Real ref_gauge_cse_274 = alpha*ref_gauge_cse_273;
++  const Real ref_gauge_cse_275 = ref_gauge_cse_225*ref_gauge_cse_241;
++  const Real ref_gauge_cse_276 = L_tr*ref_gauge_cse_56;
++  const Real ref_gauge_cse_277 = ref_gauge_cse_223*ref_gauge_cse_259*ref_gauge_cse_276;
++  const Real ref_gauge_cse_278 = ref_gauge_cse_216*ref_gauge_cse_34;
++  const Real ref_gauge_cse_279 = ref_gauge_cse_81*(B*B_r*L_tt*alpha*ref_gauge_cse_103*ref_gauge_cse_3*ref_gauge_cse_36 + B*B_r*L_tt*alpha*ref_gauge_cse_103*ref_gauge_cse_36*ref_gauge_cse_6 + B*B_r*L_tt*alpha*ref_gauge_cse_103*ref_gauge_cse_36*ref_gauge_cse_8 + 2*B*L*L_r*L_t*ref_gauge_cse_3*ref_gauge_cse_79 + 2*B*L*L_r*L_t*ref_gauge_cse_6*ref_gauge_cse_79 + 2*B*L*L_r*L_t*ref_gauge_cse_79*ref_gauge_cse_8 + B*L_t*alpha*radius*ref_gauge_cse_14*ref_gauge_cse_3*ref_gauge_cse_71 + B*L_t*alpha*radius*ref_gauge_cse_14*ref_gauge_cse_6*ref_gauge_cse_71 + B*L_t*alpha*radius*ref_gauge_cse_14*ref_gauge_cse_71*ref_gauge_cse_8 + B*L_t*alpha_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_3 + B*L_t*alpha_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_6 + B*L_t*alpha_r*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_8 + 3*B*L_t*radius*ref_gauge_cse_3*ref_gauge_cse_72*ref_gauge_cse_79 + 3*B*L_t*radius*ref_gauge_cse_6*ref_gauge_cse_72*ref_gauge_cse_79 + 3*B*L_t*radius*ref_gauge_cse_72*ref_gauge_cse_79*ref_gauge_cse_8 - B*L_t*ref_gauge_cse_266 - B*L_t*ref_gauge_cse_270*ref_gauge_cse_6 - B*L_t*ref_gauge_cse_270*ref_gauge_cse_8 + B*L_tr*ref_gauge_cse_14*ref_gauge_cse_36*ref_gauge_cse_79 + B*L_trr*radius*ref_gauge_cse_14*ref_gauge_cse_3*ref_gauge_cse_79 + B*L_trr*radius*ref_gauge_cse_14*ref_gauge_cse_6*ref_gauge_cse_79 + B*L_trr*radius*ref_gauge_cse_14*ref_gauge_cse_79*ref_gauge_cse_8 - B*ref_gauge_cse_156*ref_gauge_cse_85 - B*ref_gauge_cse_264*ref_gauge_cse_85 - B*ref_gauge_cse_268*ref_gauge_cse_6*ref_gauge_cse_85 - B*ref_gauge_cse_268*ref_gauge_cse_8*ref_gauge_cse_85 + B_r*L_t*alpha*ref_gauge_cse_103*ref_gauge_cse_148*ref_gauge_cse_20 + B_r*L_t*alpha*ref_gauge_cse_103*ref_gauge_cse_162*ref_gauge_cse_20 + 2*B_r*L_t*alpha*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_6 + 2*B_r*L_t*alpha*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_8 + 2*B_r*L_t*alpha*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_6*ref_gauge_cse_8 + B_r*L_t*alpha*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_94 + 2*B_r*L_t*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_148*ref_gauge_cse_20 + 2*B_r*L_t*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_162*ref_gauge_cse_20 + 4*B_r*L_t*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_6 + 4*B_r*L_t*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_8 + 4*B_r*L_t*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_6*ref_gauge_cse_8 + 2*B_r*L_t*alpha_r*radius*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_94 - B_r*ref_gauge_cse_259*ref_gauge_cse_261*ref_gauge_cse_276*ref_gauge_cse_8 + 2*L*alpha_r*ref_gauge_cse_11*ref_gauge_cse_31*ref_gauge_cse_36 + 3*L_r*ref_gauge_cse_31*ref_gauge_cse_36*ref_gauge_cse_79 + 2*L_t*alpha_r*ref_gauge_cse_103*ref_gauge_cse_169*ref_gauge_cse_3*ref_gauge_cse_36 + 2*L_t*alpha_r*ref_gauge_cse_103*ref_gauge_cse_169*ref_gauge_cse_36*ref_gauge_cse_6 + 2*L_t*alpha_r*ref_gauge_cse_103*ref_gauge_cse_169*ref_gauge_cse_36*ref_gauge_cse_8 - L_t*ref_gauge_cse_209 - L_t*ref_gauge_cse_210 - L_t*ref_gauge_cse_211 - L_t*ref_gauge_cse_212 - L_t*ref_gauge_cse_214 - L_t*ref_gauge_cse_217 - L_t*ref_gauge_cse_219 + L_tt*alpha*ref_gauge_cse_103*ref_gauge_cse_20*ref_gauge_cse_80 - L_tt*ref_gauge_cse_264 - L_tt*ref_gauge_cse_266 - ref_gauge_cse_112*ref_gauge_cse_271 - ref_gauge_cse_137*ref_gauge_cse_269 - ref_gauge_cse_138*ref_gauge_cse_269 - ref_gauge_cse_186*ref_gauge_cse_267 - ref_gauge_cse_188*ref_gauge_cse_267 - ref_gauge_cse_208*ref_gauge_cse_32*ref_gauge_cse_79 - ref_gauge_cse_215*ref_gauge_cse_272 - ref_gauge_cse_216*ref_gauge_cse_261*ref_gauge_cse_8*ref_gauge_cse_85 - ref_gauge_cse_218*ref_gauge_cse_272 - ref_gauge_cse_224*ref_gauge_cse_241 - ref_gauge_cse_227*ref_gauge_cse_273 - ref_gauge_cse_231*ref_gauge_cse_278 - ref_gauge_cse_233*ref_gauge_cse_278 - ref_gauge_cse_244*ref_gauge_cse_257*ref_gauge_cse_98 - ref_gauge_cse_254*ref_gauge_cse_270 - ref_gauge_cse_265*ref_gauge_cse_3 - ref_gauge_cse_265*ref_gauge_cse_6 - ref_gauge_cse_265*ref_gauge_cse_8 - ref_gauge_cse_268*ref_gauge_cse_269 - ref_gauge_cse_274*ref_gauge_cse_6 - ref_gauge_cse_274*ref_gauge_cse_8 - ref_gauge_cse_275*ref_gauge_cse_6 - ref_gauge_cse_275*ref_gauge_cse_8 - ref_gauge_cse_277*ref_gauge_cse_6 - ref_gauge_cse_277*ref_gauge_cse_8)/ref_gauge_cse_103;
+   result.hhat[0] = ref_gauge_cse_13*(B*L*alpha_r*ref_gauge_cse_3 + B*L*alpha_r*ref_gauge_cse_6 + B*L*alpha_r*ref_gauge_cse_8 + 3*L_t*alpha*radius - ref_gauge_cse_0*ref_gauge_cse_2 - ref_gauge_cse_10*ref_gauge_cse_3 - ref_gauge_cse_10*ref_gauge_cse_6 - ref_gauge_cse_10*ref_gauge_cse_8 - ref_gauge_cse_4*ref_gauge_cse_5 - ref_gauge_cse_6*ref_gauge_cse_7 - ref_gauge_cse_7*ref_gauge_cse_8)/L;
+   result.hhat[1] = -ref_gauge_cse_16*ref_gauge_cse_29;
+   result.hhat[2] = -X1*ref_gauge_cse_30;
+   result.hhat[3] = -X2*ref_gauge_cse_30;
+   result.d_hhat[0][0] = -3*ref_gauge_cse_12*ref_gauge_cse_15*(-L_tt*ref_gauge_cse_1 + radius*ref_gauge_cse_31 + ref_gauge_cse_3*ref_gauge_cse_33 + ref_gauge_cse_33*ref_gauge_cse_6 + ref_gauge_cse_33*ref_gauge_cse_8 - ref_gauge_cse_34*ref_gauge_cse_9 - ref_gauge_cse_35*ref_gauge_cse_6 - ref_gauge_cse_35*ref_gauge_cse_8)/alpha;
+-  result.d_hhat[1][0] = -ref_gauge_cse_16*ref_gauge_cse_81;
+-  result.d_hhat[2][0] = -X1*ref_gauge_cse_82;
+-  result.d_hhat[3][0] = -X2*ref_gauge_cse_82;
+-  result.d_hhat[0][1] = -X0*ref_gauge_cse_86;
+-  result.d_hhat[1][1] = ref_gauge_cse_127*(B*B_r*alpha*ref_gauge_cse_94*ref_gauge_cse_95 + 2*B*B_r*alpha_r*radius*ref_gauge_cse_94*ref_gauge_cse_95 + L*L_rr*radius*ref_gauge_cse_3*ref_gauge_cse_78 + 2*alpha_r*ref_gauge_cse_20*ref_gauge_cse_3*ref_gauge_cse_36*ref_gauge_cse_94 + alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_3 - ref_gauge_cse_102 - ref_gauge_cse_103*ref_gauge_cse_96 - ref_gauge_cse_104*ref_gauge_cse_3 - ref_gauge_cse_106*ref_gauge_cse_3 - ref_gauge_cse_107*ref_gauge_cse_52*ref_gauge_cse_94 - ref_gauge_cse_109*ref_gauge_cse_95 - ref_gauge_cse_124 - ref_gauge_cse_126 - ref_gauge_cse_3*ref_gauge_cse_93 - ref_gauge_cse_89 - ref_gauge_cse_91 - ref_gauge_cse_99);
+-  result.d_hhat[2][1] = ref_gauge_cse_134;
+-  result.d_hhat[3][1] = ref_gauge_cse_135;
+-  result.d_hhat[0][2] = -X1*ref_gauge_cse_86;
+-  result.d_hhat[1][2] = ref_gauge_cse_134;
+-  result.d_hhat[2][2] = ref_gauge_cse_127*(B*B_r*alpha*ref_gauge_cse_138*ref_gauge_cse_94 + 2*B*B_r*alpha_r*radius*ref_gauge_cse_138*ref_gauge_cse_94 + L*L_rr*radius*ref_gauge_cse_6*ref_gauge_cse_78 + 2*alpha_r*ref_gauge_cse_20*ref_gauge_cse_36*ref_gauge_cse_6*ref_gauge_cse_94 + alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_6 - ref_gauge_cse_104*ref_gauge_cse_6 - ref_gauge_cse_106*ref_gauge_cse_6 - ref_gauge_cse_109*ref_gauge_cse_138 - ref_gauge_cse_121*ref_gauge_cse_138 - ref_gauge_cse_124 - ref_gauge_cse_136 - ref_gauge_cse_137 - ref_gauge_cse_139 - ref_gauge_cse_140 - ref_gauge_cse_141*ref_gauge_cse_52*ref_gauge_cse_6 - ref_gauge_cse_143 - ref_gauge_cse_6*ref_gauge_cse_93);
+-  result.d_hhat[3][2] = ref_gauge_cse_144;
+-  result.d_hhat[0][3] = -X2*ref_gauge_cse_86;
+-  result.d_hhat[1][3] = ref_gauge_cse_135;
+-  result.d_hhat[2][3] = ref_gauge_cse_144;
+-  result.d_hhat[3][3] = ref_gauge_cse_127*(B*B_r*alpha*ref_gauge_cse_147*ref_gauge_cse_94 + 2*B*B_r*alpha_r*radius*ref_gauge_cse_147*ref_gauge_cse_94 + L*L_rr*radius*ref_gauge_cse_78*ref_gauge_cse_8 + 2*alpha_r*ref_gauge_cse_20*ref_gauge_cse_36*ref_gauge_cse_8*ref_gauge_cse_94 + alpha_rr*radius*ref_gauge_cse_11*ref_gauge_cse_14*ref_gauge_cse_8 - ref_gauge_cse_104*ref_gauge_cse_8 - ref_gauge_cse_106*ref_gauge_cse_8 - ref_gauge_cse_109*ref_gauge_cse_147 - ref_gauge_cse_112 - ref_gauge_cse_113 - ref_gauge_cse_114 - ref_gauge_cse_121*ref_gauge_cse_147 - ref_gauge_cse_126 - ref_gauge_cse_141*ref_gauge_cse_52*ref_gauge_cse_8 - ref_gauge_cse_143 - ref_gauge_cse_145 - ref_gauge_cse_146 - ref_gauge_cse_148 - ref_gauge_cse_149 - ref_gauge_cse_8*ref_gauge_cse_93);
+-  result.theta[0] = ref_gauge_cse_15*ref_gauge_cse_175*ref_gauge_cse_80*(5*B*L*ref_gauge_cse_153 - B*alpha_r*ref_gauge_cse_0*ref_gauge_cse_14*ref_gauge_cse_36 + alpha_r*ref_gauge_cse_3*ref_gauge_cse_54 + ref_gauge_cse_151 + ref_gauge_cse_152*ref_gauge_cse_153 + ref_gauge_cse_156 + ref_gauge_cse_157*ref_gauge_cse_174 + ref_gauge_cse_158 + ref_gauge_cse_159 + ref_gauge_cse_160*ref_gauge_cse_3 + ref_gauge_cse_160*ref_gauge_cse_6 + ref_gauge_cse_160*ref_gauge_cse_8 + ref_gauge_cse_162*ref_gauge_cse_3 + ref_gauge_cse_162*ref_gauge_cse_6 + ref_gauge_cse_162*ref_gauge_cse_8 + ref_gauge_cse_164*ref_gauge_cse_47 + ref_gauge_cse_165*ref_gauge_cse_6 + ref_gauge_cse_165*ref_gauge_cse_8 + 2*ref_gauge_cse_166*ref_gauge_cse_4 + ref_gauge_cse_167*ref_gauge_cse_168 + ref_gauge_cse_167*ref_gauge_cse_173 + ref_gauge_cse_168*ref_gauge_cse_169 + ref_gauge_cse_169*ref_gauge_cse_173 + ref_gauge_cse_171*ref_gauge_cse_4 + ref_gauge_cse_172*ref_gauge_cse_6 + ref_gauge_cse_172*ref_gauge_cse_8 - ref_gauge_cse_39 - ref_gauge_cse_41 + ref_gauge_cse_42*ref_gauge_cse_52 - ref_gauge_cse_43 - ref_gauge_cse_44 - ref_gauge_cse_48 - ref_gauge_cse_50 - ref_gauge_cse_51 + ref_gauge_cse_55*ref_gauge_cse_6 + ref_gauge_cse_55*ref_gauge_cse_8 - ref_gauge_cse_59 - ref_gauge_cse_61 - ref_gauge_cse_62 - ref_gauge_cse_66 - ref_gauge_cse_68 - ref_gauge_cse_69 - ref_gauge_cse_74 - ref_gauge_cse_76 - ref_gauge_cse_77);
+-  result.theta[1] = -X0*ref_gauge_cse_205;
+-  result.theta[2] = -X1*ref_gauge_cse_205;
+-  result.theta[3] = -X2*ref_gauge_cse_205;
+-  result.dt_theta[0] = ref_gauge_cse_127*ref_gauge_cse_175*(B*ref_gauge_cse_209*ref_gauge_cse_52 - B*ref_gauge_cse_214*ref_gauge_cse_3 + L_t*ref_gauge_cse_157*ref_gauge_cse_204 + L_tt*ref_gauge_cse_38*ref_gauge_cse_45 - L_ttr*ref_gauge_cse_38*ref_gauge_cse_40 + ref_gauge_cse_151*ref_gauge_cse_84 - 6*ref_gauge_cse_153*ref_gauge_cse_31 + ref_gauge_cse_156*ref_gauge_cse_84 + ref_gauge_cse_158*ref_gauge_cse_84 + ref_gauge_cse_159*ref_gauge_cse_84 + 6*ref_gauge_cse_176*ref_gauge_cse_37 + ref_gauge_cse_192*ref_gauge_cse_226 + ref_gauge_cse_201*ref_gauge_cse_229 + ref_gauge_cse_203*ref_gauge_cse_229 - ref_gauge_cse_206*ref_gauge_cse_208 + ref_gauge_cse_207*ref_gauge_cse_3 + ref_gauge_cse_207*ref_gauge_cse_6 + ref_gauge_cse_207*ref_gauge_cse_8 - ref_gauge_cse_209*ref_gauge_cse_47 - ref_gauge_cse_210*ref_gauge_cse_6 - ref_gauge_cse_210*ref_gauge_cse_8 - ref_gauge_cse_211*ref_gauge_cse_212 - ref_gauge_cse_213*ref_gauge_cse_6 - ref_gauge_cse_213*ref_gauge_cse_8 - ref_gauge_cse_214*ref_gauge_cse_215 - ref_gauge_cse_214*ref_gauge_cse_216 + ref_gauge_cse_215*ref_gauge_cse_223 + ref_gauge_cse_216*ref_gauge_cse_223 - ref_gauge_cse_217*ref_gauge_cse_4 - ref_gauge_cse_218*ref_gauge_cse_6 - ref_gauge_cse_218*ref_gauge_cse_8 + ref_gauge_cse_219*ref_gauge_cse_47 + ref_gauge_cse_220*ref_gauge_cse_6 + ref_gauge_cse_220*ref_gauge_cse_8 + ref_gauge_cse_221*ref_gauge_cse_222 + ref_gauge_cse_225*ref_gauge_cse_41 + ref_gauge_cse_225*ref_gauge_cse_43 + ref_gauge_cse_225*ref_gauge_cse_44 + ref_gauge_cse_227*ref_gauge_cse_228 + ref_gauge_cse_228*ref_gauge_cse_8*ref_gauge_cse_94);
+-  result.dt_theta[1] = -X0*ref_gauge_cse_245;
+-  result.dt_theta[2] = -X1*ref_gauge_cse_245;
+-  result.dt_theta[3] = -X2*ref_gauge_cse_245;
++  result.d_hhat[1][0] = -ref_gauge_cse_16*ref_gauge_cse_82;
++  result.d_hhat[2][0] = -X1*ref_gauge_cse_83;
++  result.d_hhat[3][0] = -X2*ref_gauge_cse_83;
++  result.d_hhat[0][1] = -X0*ref_gauge_cse_87;
++  result.d_hhat[1][1] = ref_gauge_cse_134*(-ref_gauge_cse_114 - ref_gauge_cse_130 - ref_gauge_cse_133 - ref_gauge_cse_3*ref_gauge_cse_89 - ref_gauge_cse_3*ref_gauge_cse_90 - ref_gauge_cse_93 - ref_gauge_cse_97);
++  result.d_hhat[2][1] = ref_gauge_cse_145;
++  result.d_hhat[3][1] = ref_gauge_cse_146;
++  result.d_hhat[0][2] = -X1*ref_gauge_cse_87;
++  result.d_hhat[1][2] = ref_gauge_cse_145;
++  result.d_hhat[2][2] = ref_gauge_cse_134*(-ref_gauge_cse_130 - ref_gauge_cse_147 - ref_gauge_cse_149 - ref_gauge_cse_155 - ref_gauge_cse_158 - ref_gauge_cse_6*ref_gauge_cse_89 - ref_gauge_cse_6*ref_gauge_cse_90);
++  result.d_hhat[3][2] = ref_gauge_cse_160;
++  result.d_hhat[0][3] = -X2*ref_gauge_cse_87;
++  result.d_hhat[1][3] = ref_gauge_cse_146;
++  result.d_hhat[2][3] = ref_gauge_cse_160;
++  result.d_hhat[3][3] = ref_gauge_cse_134*(-ref_gauge_cse_133 - ref_gauge_cse_158 - ref_gauge_cse_161 - ref_gauge_cse_163 - ref_gauge_cse_168 - ref_gauge_cse_8*ref_gauge_cse_89 - ref_gauge_cse_8*ref_gauge_cse_90);
++  result.reference_k[0][0] = -ref_gauge_cse_16*ref_gauge_cse_194;
++  result.reference_k[1][0] = -X1*ref_gauge_cse_195;
++  result.reference_k[2][0] = -X2*ref_gauge_cse_195;
++  result.reference_k[0][1] = ref_gauge_cse_134*(-ref_gauge_cse_114 - ref_gauge_cse_196 - ref_gauge_cse_197 - ref_gauge_cse_198 - 2*ref_gauge_cse_93 - 2*ref_gauge_cse_97);
++  result.reference_k[1][1] = ref_gauge_cse_201;
++  result.reference_k[2][1] = ref_gauge_cse_202;
++  result.reference_k[0][2] = ref_gauge_cse_201;
++  result.reference_k[1][2] = ref_gauge_cse_134*(-2*ref_gauge_cse_147 - 2*ref_gauge_cse_149 - ref_gauge_cse_155 - ref_gauge_cse_197 - ref_gauge_cse_203 - ref_gauge_cse_204);
++  result.reference_k[2][2] = ref_gauge_cse_205;
++  result.reference_k[0][3] = ref_gauge_cse_202;
++  result.reference_k[1][3] = ref_gauge_cse_205;
++  result.reference_k[2][3] = ref_gauge_cse_134*(-2*ref_gauge_cse_161 - 2*ref_gauge_cse_163 - ref_gauge_cse_168 - ref_gauge_cse_198 - ref_gauge_cse_204 - ref_gauge_cse_206);
++  result.theta[0] = ref_gauge_cse_195*ref_gauge_cse_207;
++  result.theta[1] = -X0*ref_gauge_cse_238;
++  result.theta[2] = -X1*ref_gauge_cse_238;
++  result.theta[3] = -X2*ref_gauge_cse_238;
++  result.dt_theta[0] = ref_gauge_cse_134*ref_gauge_cse_207*(B*ref_gauge_cse_242*ref_gauge_cse_52 - B*ref_gauge_cse_247*ref_gauge_cse_3 + L_t*ref_gauge_cse_176*ref_gauge_cse_237 + L_tt*ref_gauge_cse_38*ref_gauge_cse_45 - L_ttr*ref_gauge_cse_38*ref_gauge_cse_40 + ref_gauge_cse_103*ref_gauge_cse_262*ref_gauge_cse_8 + ref_gauge_cse_170*ref_gauge_cse_85 - 6*ref_gauge_cse_172*ref_gauge_cse_31 + ref_gauge_cse_175*ref_gauge_cse_85 + ref_gauge_cse_177*ref_gauge_cse_85 + ref_gauge_cse_178*ref_gauge_cse_85 + 6*ref_gauge_cse_208*ref_gauge_cse_37 + ref_gauge_cse_223*ref_gauge_cse_260 + ref_gauge_cse_234*ref_gauge_cse_263 + ref_gauge_cse_236*ref_gauge_cse_263 - ref_gauge_cse_239*ref_gauge_cse_241 + ref_gauge_cse_240*ref_gauge_cse_3 + ref_gauge_cse_240*ref_gauge_cse_6 + ref_gauge_cse_240*ref_gauge_cse_8 - ref_gauge_cse_242*ref_gauge_cse_47 - ref_gauge_cse_243*ref_gauge_cse_6 - ref_gauge_cse_243*ref_gauge_cse_8 - ref_gauge_cse_244*ref_gauge_cse_245 - ref_gauge_cse_246*ref_gauge_cse_6 - ref_gauge_cse_246*ref_gauge_cse_8 - ref_gauge_cse_247*ref_gauge_cse_248 - ref_gauge_cse_247*ref_gauge_cse_249 + ref_gauge_cse_248*ref_gauge_cse_256 + ref_gauge_cse_249*ref_gauge_cse_256 - ref_gauge_cse_250*ref_gauge_cse_4 - ref_gauge_cse_251*ref_gauge_cse_6 - ref_gauge_cse_251*ref_gauge_cse_8 + ref_gauge_cse_252*ref_gauge_cse_47 + ref_gauge_cse_253*ref_gauge_cse_6 + ref_gauge_cse_253*ref_gauge_cse_8 + ref_gauge_cse_254*ref_gauge_cse_255 + ref_gauge_cse_258*ref_gauge_cse_41 + ref_gauge_cse_258*ref_gauge_cse_43 + ref_gauge_cse_258*ref_gauge_cse_44 + ref_gauge_cse_261*ref_gauge_cse_262);
++  result.dt_theta[1] = -X0*ref_gauge_cse_279;
++  result.dt_theta[2] = -X1*ref_gauge_cse_279;
++  result.dt_theta[3] = -X2*ref_gauge_cse_279;
+   result.valid = true;
+   for (int A = 0; A < 4; ++A) {
+     result.valid = result.valid && Kokkos::isfinite(result.hhat[A])
+@@ -327,6 +374,10 @@ AnalyticRadialQGaugeBaseline PopulateGeneratedAnalyticRadialQGauge(
+       result.valid = result.valid
+                      && Kokkos::isfinite(result.d_hhat[p][A]);
+     }
++    for (int i = 0; i < 3; ++i) {
++      result.valid = result.valid
++                     && Kokkos::isfinite(result.reference_k[i][A]);
++    }
+   }
+   return result;
+ }
+diff --git a/src/ref_gh/generated/analytic_radial_q_geometry.hpp b/src/ref_gh/generated/analytic_radial_q_geometry.hpp
+index ecb85873..53edaf60 100644
+--- a/src/ref_gh/generated/analytic_radial_q_geometry.hpp
++++ b/src/ref_gh/generated/analytic_radial_q_geometry.hpp
+@@ -2,7 +2,7 @@
+ // Do not edit by hand.
+ // ORACLE ONLY: forbidden in CalcRHS, q measurement, boundaries,
+ // timestep calculation, and ordinary production reference updates.
+-// generator_sha256=2c19efa4affd02c0d97ebbe26ea51a3f6bbb23467f3cb3c3e07c134320e26cc3
++// generator_sha256=f24ca36a00cbec6b6c2178202b174076a2db0148009e007020eff89d2aa22182
+ // sympy_version=1.14.0
+ #ifndef REF_GH_GENERATED_ANALYTIC_RADIAL_Q_GEOMETRY_HPP_
+ #define REF_GH_GENERATED_ANALYTIC_RADIAL_Q_GEOMETRY_HPP_
+diff --git a/src/ref_gh/generated/analytic_radial_q_source.hpp b/src/ref_gh/generated/analytic_radial_q_source.hpp
+index 6c0c060b..02d7aca3 100644
+--- a/src/ref_gh/generated/analytic_radial_q_source.hpp
++++ b/src/ref_gh/generated/analytic_radial_q_source.hpp
+@@ -2,7 +2,7 @@
+ // Do not edit by hand.
+ // Compact production contractions: no spin, spin-derivative, or
+ // Riemann tensor is materialized or recursively reconstructed.
+-// generator_sha256=2c19efa4affd02c0d97ebbe26ea51a3f6bbb23467f3cb3c3e07c134320e26cc3
++// generator_sha256=f24ca36a00cbec6b6c2178202b174076a2db0148009e007020eff89d2aa22182
+ // sympy_version=1.14.0
+ #ifndef REF_GH_GENERATED_ANALYTIC_RADIAL_Q_SOURCE_HPP_
+ #define REF_GH_GENERATED_ANALYTIC_RADIAL_Q_SOURCE_HPP_
+diff --git a/src/ref_gh/physical_gauge_target.hpp b/src/ref_gh/physical_gauge_target.hpp
+index 73eb33a4..6984deb1 100644
+--- a/src/ref_gh/physical_gauge_target.hpp
++++ b/src/ref_gh/physical_gauge_target.hpp
+@@ -7,6 +7,7 @@
+ 
+ #include "athena.hpp"
+ #include "ref_gh/reference_cache.hpp"
++#include "ref_gh/reference_residual.hpp"
+ #include "ref_gh/standard_gh_source.hpp"
+ 
+ namespace ref_gh {
+@@ -20,6 +21,28 @@ struct PhysicalGaugeTarget {
+   Real trace_k;
+ };
+ 
++struct PhysicalGaugeTargetResidual {
++  Real reference_coordinate[4];       // NOLINT(runtime/arrays)
++  Real physical_coordinate[4];        // NOLINT(runtime/arrays)
++  Real delta_coordinate[4];           // NOLINT(runtime/arrays)
++  Real reference_frame[4];            // NOLINT(runtime/arrays)
++  Real physical_frame[4];             // NOLINT(runtime/arrays)
++  Real delta_frame[4];                // NOLINT(runtime/arrays)
++  Real reference_conformal_gamma[3];  // NOLINT(runtime/arrays)
++  Real physical_conformal_gamma[3];   // NOLINT(runtime/arrays)
++  Real delta_conformal_gamma[3];      // NOLINT(runtime/arrays)
++  Real reference_shift[3];            // NOLINT(runtime/arrays)
++  Real physical_shift[3];             // NOLINT(runtime/arrays)
++  Real delta_shift[3];                // NOLINT(runtime/arrays)
++  Real reference_lapse;
++  Real physical_lapse;
++  Real delta_lapse;
++  Real reference_trace_k;
++  Real physical_trace_k;
++  Real delta_trace_k;
++  bool valid;
++};
++
+ // This constructs the ordinary/reference-independent covector F_mu.  The
+ // normal component follows directly from true advective 1+log,
+ // n^mu F_mu=(2/alpha-1)K.  The spatial components follow from substituting
+@@ -127,6 +150,250 @@ bool ComputePhysicalGaugeTarget(
+   return Kokkos::isfinite(target.trace_k);
+ }
+ 
++// Evaluate F(g)-F(gbar) through exact residual identities.  No output delta is
++// formed by subtracting independently evaluated physical and reference gauge
++// targets.  The redundant full members exist only for oracle comparison and
++// for nonsingular coefficients consumed elsewhere in the existing equations.
++template <typename Reference>
++KOKKOS_INLINE_FUNCTION
++bool ComputePhysicalGaugeTargetResidual(
++    const Real psi[4][4], const Real pi[4][4],
++    const Real phi[3][4][4], const Real metric[4][4],
++    const Real d_metric[4][4][4], const CoordinateGhGeometry &geometry,
++    const Reference &reference, const Real upsilon[3], const Real nu,
++    const Real eta_beta, PhysicalGaugeTargetResidual &target) {
++  target.valid = false;
++  ReferenceRelativeCoordinateData relative;
++  if (!BuildReferenceRelativeCoordinateData(
++          psi, pi, phi, metric, d_metric, geometry, reference, relative)) {
++    return false;
++  }
++
++  ReferenceResidualValue g[4][4];      // NOLINT(runtime/arrays)
++  ReferenceResidualValue dg[4][4][4];  // NOLINT(runtime/arrays)
++  ReferenceResidualValue inverse[4][4];  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      g[a][b] = MakeReferenceResidual(
++          relative.reference_metric[a][b], metric[a][b],
++          relative.delta_metric[a][b]);
++      for (int p = 0; p < 4; ++p) {
++        dg[p][a][b] = MakeReferenceResidual(
++            relative.reference_d_metric[p][a][b], d_metric[p][a][b],
++            relative.delta_d_metric[p][a][b]);
++      }
++      Real delta_inverse = 0.0;
++      for (int c = 0; c < 4; ++c) {
++        for (int d = 0; d < 4; ++d) {
++          delta_inverse -= geometry.inverse_metric[a][c]
++              *relative.delta_metric[c][d]*relative.reference_inverse[d][b];
++        }
++      }
++      inverse[a][b] = MakeReferenceResidual(
++          relative.reference_inverse[a][b], geometry.inverse_metric[a][b],
++          delta_inverse);
++    }
++  }
++
++  ReferenceResidualValue d_inverse[3][4][4];  // NOLINT(runtime/arrays)
++  for (int p = 0; p < 3; ++p) {
++    for (int a = 0; a < 4; ++a) {
++      for (int b = 0; b < 4; ++b) {
++        d_inverse[p][a][b] = ReferenceResidualConstant(0.0);
++        for (int c = 0; c < 4; ++c) {
++          for (int d = 0; d < 4; ++d) {
++            d_inverse[p][a][b] = d_inverse[p][a][b]
++                - inverse[a][c]*inverse[b][d]*dg[p + 1][c][d];
++          }
++        }
++      }
++    }
++  }
++
++  const ReferenceResidualValue lapse = ReferenceResidualConstant(1.0)
++      /ReferenceResidualSqrt(-inverse[0][0]);
++  target.reference_lapse = lapse.reference;
++  target.physical_lapse = lapse.physical;
++  target.delta_lapse = lapse.delta;
++  ReferenceResidualValue shift[3];  // NOLINT(runtime/arrays)
++  for (int i = 0; i < 3; ++i) {
++    shift[i] = lapse*lapse*inverse[0][i + 1];
++    target.reference_shift[i] = shift[i].reference;
++    target.physical_shift[i] = shift[i].physical;
++    target.delta_shift[i] = shift[i].delta;
++  }
++
++  Real physical_spatial_inverse[3][3];  // NOLINT(runtime/arrays)
++  Real physical_spatial_determinant = 0.0;
++  if (!InvertSpatial3(metric, physical_spatial_inverse,
++                      physical_spatial_determinant)) return false;
++  Real reference_spatial_inverse[3][3] = {};  // NOLINT(runtime/arrays)
++  for (int i = 0; i < 3; ++i) {
++    for (int j = 0; j < 3; ++j) {
++      for (int I = 0; I < 3; ++I) {
++        reference_spatial_inverse[i][j] +=
++            ReferenceSpatialFrame(reference, I, i)
++            *ReferenceSpatialFrame(reference, I, j);
++      }
++    }
++  }
++  ReferenceResidualValue spatial_inverse[3][3];  // NOLINT(runtime/arrays)
++  for (int i = 0; i < 3; ++i) {
++    for (int j = 0; j < 3; ++j) {
++      Real delta = 0.0;
++      for (int k = 0; k < 3; ++k) {
++        for (int l = 0; l < 3; ++l) {
++          delta -= physical_spatial_inverse[i][k]
++              *relative.delta_metric[k + 1][l + 1]
++              *reference_spatial_inverse[l][j];
++        }
++      }
++      spatial_inverse[i][j] = MakeReferenceResidual(
++          reference_spatial_inverse[i][j], physical_spatial_inverse[i][j],
++          delta);
++    }
++  }
++
++  ReferenceResidualValue christoffel_first[4][4][4];  // NOLINT(runtime/arrays)
++  ReferenceResidualValue christoffel[4][4][4];        // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      for (int c = 0; c < 4; ++c) {
++        christoffel_first[a][b][c] =
++            0.5*(dg[b][a][c] + dg[c][a][b] - dg[a][b][c]);
++      }
++    }
++  }
++  // The first-kind array must be complete before raising its first index.
++  // Interleaving these loops reads not-yet-initialized d-components.
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      for (int c = 0; c < 4; ++c) {
++        christoffel[a][b][c] = ReferenceResidualConstant(0.0);
++        for (int d = 0; d < 4; ++d) {
++          christoffel[a][b][c] = christoffel[a][b][c]
++              + inverse[a][d]*christoffel_first[d][b][c];
++        }
++      }
++    }
++  }
++  ReferenceResidualValue trace_k = ReferenceResidualConstant(0.0);
++  for (int i = 0; i < 3; ++i) {
++    for (int j = 0; j < 3; ++j) {
++      trace_k = trace_k
++          - lapse*spatial_inverse[i][j]*christoffel[0][i + 1][j + 1];
++    }
++  }
++  target.reference_trace_k = trace_k.reference;
++  target.physical_trace_k = trace_k.physical;
++  target.delta_trace_k = trace_k.delta;
++
++  ReferenceResidualValue d_alpha[3];  // NOLINT(runtime/arrays)
++  for (int p = 0; p < 3; ++p) {
++    d_alpha[p] = 0.5*lapse*lapse*lapse*d_inverse[p][0][0];
++  }
++
++  const ReferenceResidualValue a = g[1][1];
++  const ReferenceResidualValue b = g[1][2];
++  const ReferenceResidualValue c = g[1][3];
++  const ReferenceResidualValue d = g[2][2];
++  const ReferenceResidualValue e = g[2][3];
++  const ReferenceResidualValue f = g[3][3];
++  const ReferenceResidualValue spatial_determinant =
++      a*(d*f - e*e) - b*(b*f - c*e) + c*(b*e - c*d);
++  const ReferenceResidualValue determinant_factor =
++      ReferenceResidualCubeRoot(spatial_determinant);
++
++  ReferenceResidualValue conformal_gamma[3];  // NOLINT(runtime/arrays)
++  for (int i = 0; i < 3; ++i) {
++    conformal_gamma[i] = ReferenceResidualConstant(0.0);
++    for (int j = 0; j < 3; ++j) {
++      for (int k = 0; k < 3; ++k) {
++        for (int l = 0; l < 3; ++l) {
++          const ReferenceResidualValue projector =
++              spatial_inverse[i][k]*spatial_inverse[j][l]
++              - (1.0/3.0)*spatial_inverse[i][j]*spatial_inverse[k][l];
++          conformal_gamma[i] = conformal_gamma[i]
++              + determinant_factor*projector*dg[j + 1][k + 1][l + 1];
++        }
++      }
++    }
++    target.reference_conformal_gamma[i] = conformal_gamma[i].reference;
++    target.physical_conformal_gamma[i] = conformal_gamma[i].physical;
++    target.delta_conformal_gamma[i] = conformal_gamma[i].delta;
++  }
++
++  ReferenceResidualValue desired_d0_shift[3];  // NOLINT(runtime/arrays)
++  for (int i = 0; i < 3; ++i) {
++    ReferenceResidualValue advective_shift = ReferenceResidualConstant(0.0);
++    for (int p = 0; p < 3; ++p) {
++      const ReferenceResidualValue d_shift =
++          2.0*lapse*d_alpha[p]*inverse[0][i + 1]
++          + lapse*lapse*d_inverse[p][0][i + 1];
++      advective_shift = advective_shift + shift[p]*d_shift;
++    }
++    const ReferenceResidualValue upsilon_value =
++        MakeReferenceResidual(0.0, upsilon[i], upsilon[i]);
++    desired_d0_shift[i] =
++        nu*(conformal_gamma[i] - eta_beta*upsilon_value) - advective_shift;
++  }
++
++  ReferenceResidualValue coordinate[4];  // NOLINT(runtime/arrays)
++  for (int i = 0; i < 3; ++i) {
++    ReferenceResidualValue contracted_spatial_connection =
++        ReferenceResidualConstant(0.0);
++    for (int j = 0; j < 3; ++j) {
++      for (int k = 0; k < 3; ++k) {
++        const ReferenceResidualValue connection_first = 0.5*(
++            dg[j + 1][i + 1][k + 1]
++            + dg[k + 1][i + 1][j + 1]
++            - dg[i + 1][j + 1][k + 1]);
++        contracted_spatial_connection = contracted_spatial_connection
++            + spatial_inverse[j][k]*connection_first;
++      }
++    }
++    coordinate[i + 1] = d_alpha[i]/lapse
++                        - contracted_spatial_connection;
++    for (int j = 0; j < 3; ++j) {
++      coordinate[i + 1] = coordinate[i + 1]
++          + g[i + 1][j + 1]*desired_d0_shift[j]/(lapse*lapse);
++    }
++  }
++  const ReferenceResidualValue normal_target =
++      (2.0/lapse - ReferenceResidualConstant(1.0))*trace_k;
++  coordinate[0] = lapse*normal_target;
++  for (int i = 0; i < 3; ++i) {
++    coordinate[0] = coordinate[0] + shift[i]*coordinate[i + 1];
++  }
++
++  for (int A = 0; A < 4; ++A) {
++    ReferenceResidualValue frame = ReferenceResidualConstant(0.0);
++    for (int a_index = 0; a_index < 4; ++a_index) {
++      frame = frame
++          + ReferenceFrame(reference, A, a_index)*coordinate[a_index];
++    }
++    target.reference_frame[A] = frame.reference;
++    target.physical_frame[A] = frame.physical;
++    target.delta_frame[A] = frame.delta;
++    target.reference_coordinate[A] = coordinate[A].reference;
++    target.physical_coordinate[A] = coordinate[A].physical;
++    target.delta_coordinate[A] = coordinate[A].delta;
++  }
++  // Do not reconstruct the legacy full target here.  The `.physical` members
++  // above are carried by the same residual arithmetic and exist only for
++  // independent oracle comparisons and nonsingular shift advection.  Calling
++  // ComputePhysicalGaugeTarget here would both duplicate production work and
++  // make the oracle comparison tautological by overwriting its candidate.
++  target.valid = Kokkos::isfinite(physical_spatial_determinant)
++                 && physical_spatial_determinant > 0.0;
++  for (int A = 0; A < 4; ++A) {
++    target.valid = target.valid
++        && Kokkos::isfinite(target.delta_frame[A])
++        && Kokkos::isfinite(target.physical_frame[A]);
++  }
++  return target.valid;
++}
++
+ }  // namespace ref_gh
+ 
+ #endif  // REF_GH_PHYSICAL_GAUGE_TARGET_HPP_
+diff --git a/src/ref_gh/ref_gh_calcrhs.cpp b/src/ref_gh/ref_gh_calcrhs.cpp
+index e153e85f..3fbceb1f 100644
+--- a/src/ref_gh/ref_gh_calcrhs.cpp
++++ b/src/ref_gh/ref_gh_calcrhs.cpp
+@@ -12,6 +12,7 @@
+ #include "mesh/mesh.hpp"
+ #include "ref_gh/analytic_radial_q_production.hpp"
+ #include "ref_gh/covariant_gh_source.hpp"
++#include "ref_gh/exact_matched_state.hpp"
+ #include "ref_gh/gamma2_damping.hpp"
+ #include "ref_gh/gauge_driver.hpp"
+ #include "ref_gh/phi_ordering.hpp"
+@@ -74,6 +75,11 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
+   const Real gauge_eta = opt.gauge_eta;
+   const Real shift_nu = opt.shift_nu;
+   const Real shift_eta = opt.shift_eta;
++  const bool exact_matched_static_gauge = gauge_reference_subtraction
++      && IsExactMatchedQ1StaticReference(
++          opt.reference_q_controlled, opt.q_controller_enabled,
++          opt.q_prescribed_enabled, opt.reference_time_dependent,
++          q_controller.q, q_controller.q_dot, q_controller_rhs.q_dot);
+   Kokkos::deep_copy(state_rhs, 0.0);
+   DebugFence("ref_gh CalcRHS zero");
+ 
+@@ -190,37 +196,69 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
+       }
+       for (int A = 0; A < 4; ++A) {
+         hhat[A] = state(m, kHhatOffset + A, k, j, i)
+-                  + (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
++                  + ((gauge_reference_subtraction
++                      && !exact_matched_static_gauge)
++                         ? baseline.hhat[A] : 0.0);
+         theta[A] = state(m, kThetaOffset + A, k, j, i)
+-                   + (gauge_reference_subtraction ? baseline.theta[A] : 0.0);
++                   + ((gauge_reference_subtraction
++                       && !exact_matched_static_gauge)
++                          ? baseline.theta[A] : 0.0);
+         for (int p = 0; p < 3; ++p) {
+           d_hhat[p][A] = Dx<FDNG>(p, idx, state, m, kHhatOffset + A,
+                                   k, j, i)
+-                          + (gauge_reference_subtraction
++                          + ((gauge_reference_subtraction
++                              && !exact_matched_static_gauge)
+                                  ? baseline.d_hhat[p + 1][A] : 0.0);
+         }
+       }
+       for (int p = 0; p < 3; ++p) {
+         upsilon[p] = state(m, kUpsilonOffset + p, k, j, i);
+       }
+-      PhysicalGaugeTarget target;
+-      if (!ComputePhysicalGaugeTarget(metric, d_metric, geometry, reference,
+-                                      upsilon, shift_nu, shift_eta, target)) {
+-        for (int n = kHhatOffset; n < nvar; ++n) {
+-          state_rhs(m, n, k, j, i) = NAN;
++      GaugeDriverRhs gauge_rhs{};
++      if (exact_matched_static_gauge) {
++        PhysicalGaugeTargetResidual target;
++        if (!ComputePhysicalGaugeTargetResidual(
++                psi, pi, phi, metric, d_metric, geometry, reference,
++                upsilon, shift_nu, shift_eta, target)) {
++          for (int n = kHhatOffset; n < nvar; ++n) {
++            state_rhs(m, n, k, j, i) = NAN;
++          }
++          return;
+         }
+-        return;
++        Real zero_dt_theta[4] = {};  // NOLINT(runtime/arrays)
++        gauge_rhs = ComputeGaugeDriverResidualRhsWithReferenceK(
++            reference, baseline.hhat, baseline.theta, baseline.d_hhat,
++            zero_dt_theta, baseline.reference_k, hhat, theta, upsilon,
++            d_hhat, target.physical_shift, target.reference_shift,
++            target.delta_shift, target.delta_frame, target.reference_frame,
++            target.delta_conformal_gamma, gauge_mu, gauge_eta, shift_eta,
++            true);
++      } else {
++        PhysicalGaugeTarget target;
++        if (!ComputePhysicalGaugeTarget(
++                metric, d_metric, geometry, reference, upsilon, shift_nu,
++                shift_eta, target)) {
++          for (int n = kHhatOffset; n < nvar; ++n) {
++            state_rhs(m, n, k, j, i) = NAN;
++          }
++          return;
++        }
++        gauge_rhs = ComputeGaugeDriverRhs(
++            reference, hhat, theta, upsilon, d_hhat, geometry.shift,
++            target.frame, target.conformal_gamma, gauge_mu, gauge_eta,
++            shift_eta);
+       }
+-      const GaugeDriverRhs gauge_rhs = ComputeGaugeDriverRhs(
+-          reference, hhat, theta, upsilon, d_hhat, geometry.shift,
+-          target.frame, target.conformal_gamma, gauge_mu, gauge_eta,
+-          shift_eta);
+       for (int A = 0; A < 4; ++A) {
+-        state_rhs(m, kHhatOffset + A, k, j, i) = gauge_rhs.hhat[A]
+-            - (gauge_reference_subtraction ? baseline.d_hhat[0][A] : 0.0);
+-        state_rhs(m, kThetaOffset + A, k, j, i) = gauge_rhs.theta[A]
+-            - ((gauge_reference_subtraction && reference_time_dependent)
+-                   ? ProductionReferenceDtTheta(reference, A) : 0.0);
++        state_rhs(m, kHhatOffset + A, k, j, i) = exact_matched_static_gauge
++            ? gauge_rhs.hhat[A]
++            : gauge_rhs.hhat[A]
++                - (gauge_reference_subtraction ? baseline.d_hhat[0][A]
++                                               : 0.0);
++        state_rhs(m, kThetaOffset + A, k, j, i) = exact_matched_static_gauge
++            ? gauge_rhs.theta[A]
++            : gauge_rhs.theta[A]
++                - ((gauge_reference_subtraction && reference_time_dependent)
++                       ? ProductionReferenceDtTheta(reference, A) : 0.0);
+       }
+       for (int p = 0; p < 3; ++p) {
+         state_rhs(m, kUpsilonOffset + p, k, j, i) = gauge_rhs.upsilon[p];
+@@ -273,37 +311,69 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
+       }
+       for (int A = 0; A < 4; ++A) {
+         hhat[A] = state(m, kHhatOffset + A, k, j, i)
+-                  + (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
++                  + ((gauge_reference_subtraction
++                      && !exact_matched_static_gauge)
++                         ? baseline.hhat[A] : 0.0);
+         theta[A] = state(m, kThetaOffset + A, k, j, i)
+-                   + (gauge_reference_subtraction ? baseline.theta[A] : 0.0);
++                   + ((gauge_reference_subtraction
++                       && !exact_matched_static_gauge)
++                          ? baseline.theta[A] : 0.0);
+         for (int p = 0; p < 3; ++p) {
+           d_hhat[p][A] = Dx<FDNG>(p, idx, state, m, kHhatOffset + A,
+                                   k, j, i)
+-                          + (gauge_reference_subtraction
++                          + ((gauge_reference_subtraction
++                              && !exact_matched_static_gauge)
+                                  ? baseline.d_hhat[p + 1][A] : 0.0);
+         }
+       }
+       for (int p = 0; p < 3; ++p) {
+         upsilon[p] = state(m, kUpsilonOffset + p, k, j, i);
+       }
+-      PhysicalGaugeTarget target;
+-      if (!ComputePhysicalGaugeTarget(metric, d_metric, geometry, reference,
+-                                      upsilon, shift_nu, shift_eta, target)) {
+-        for (int n = kHhatOffset; n < nvar; ++n) {
+-          state_rhs(m, n, k, j, i) = NAN;
++      GaugeDriverRhs gauge_rhs{};
++      if (exact_matched_static_gauge) {
++        PhysicalGaugeTargetResidual target;
++        if (!ComputePhysicalGaugeTargetResidual(
++                psi, pi, phi, metric, d_metric, geometry, reference,
++                upsilon, shift_nu, shift_eta, target)) {
++          for (int n = kHhatOffset; n < nvar; ++n) {
++            state_rhs(m, n, k, j, i) = NAN;
++          }
++          return;
+         }
+-        return;
++        Real zero_dt_theta[4] = {};  // NOLINT(runtime/arrays)
++        gauge_rhs = ComputeGaugeDriverResidualRhsWithReferenceK(
++            reference, baseline.hhat, baseline.theta, baseline.d_hhat,
++            zero_dt_theta, baseline.reference_k, hhat, theta, upsilon,
++            d_hhat, target.physical_shift, target.reference_shift,
++            target.delta_shift, target.delta_frame, target.reference_frame,
++            target.delta_conformal_gamma, gauge_mu, gauge_eta, shift_eta,
++            true);
++      } else {
++        PhysicalGaugeTarget target;
++        if (!ComputePhysicalGaugeTarget(
++                metric, d_metric, geometry, reference, upsilon, shift_nu,
++                shift_eta, target)) {
++          for (int n = kHhatOffset; n < nvar; ++n) {
++            state_rhs(m, n, k, j, i) = NAN;
++          }
++          return;
++        }
++        gauge_rhs = ComputeGaugeDriverRhs(
++            reference, hhat, theta, upsilon, d_hhat, geometry.shift,
++            target.frame, target.conformal_gamma, gauge_mu, gauge_eta,
++            shift_eta);
+       }
+-      const GaugeDriverRhs gauge_rhs = ComputeGaugeDriverRhs(
+-          reference, hhat, theta, upsilon, d_hhat, geometry.shift,
+-          target.frame, target.conformal_gamma, gauge_mu, gauge_eta,
+-          shift_eta);
+       for (int A = 0; A < 4; ++A) {
+-        state_rhs(m, kHhatOffset + A, k, j, i) = gauge_rhs.hhat[A]
+-            - (gauge_reference_subtraction ? baseline.d_hhat[0][A] : 0.0);
+-        state_rhs(m, kThetaOffset + A, k, j, i) = gauge_rhs.theta[A]
+-            - ((gauge_reference_subtraction && reference_time_dependent)
+-                   ? ProductionReferenceDtTheta(reference, A) : 0.0);
++        state_rhs(m, kHhatOffset + A, k, j, i) = exact_matched_static_gauge
++            ? gauge_rhs.hhat[A]
++            : gauge_rhs.hhat[A]
++                - (gauge_reference_subtraction ? baseline.d_hhat[0][A]
++                                               : 0.0);
++        state_rhs(m, kThetaOffset + A, k, j, i) = exact_matched_static_gauge
++            ? gauge_rhs.theta[A]
++            : gauge_rhs.theta[A]
++                - ((gauge_reference_subtraction && reference_time_dependent)
++                       ? ProductionReferenceDtTheta(reference, A) : 0.0);
+       }
+       for (int p = 0; p < 3; ++p) {
+         state_rhs(m, kUpsilonOffset + p, k, j, i) = gauge_rhs.upsilon[p];
+@@ -332,30 +402,47 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
+     if (gauge_driver_enabled) {
+       Real hhat[4];       // NOLINT(runtime/arrays)
+       Real d_hhat[4][4];  // NOLINT(runtime/arrays)
+-      ReferenceGaugeBaseline baseline{};
+-      if (gauge_reference_subtraction) {
+-        baseline = ComputeProductionReferenceGaugeBaseline(reference);
+-        if (!baseline.valid) {
++      if (exact_matched_static_gauge) {
++        for (int A = 0; A < 4; ++A) {
++          hhat[A] = state(m, kHhatOffset + A, k, j, i);
++          d_hhat[0][A] = state_rhs(m, kHhatOffset + A, k, j, i);
++          for (int p = 0; p < 3; ++p) {
++            d_hhat[p + 1][A] = Dx<FDNG>(
++                p, idx, state, m, kHhatOffset + A, k, j, i);
++          }
++        }
++        if (!AddProductionOrdinaryGaugeResidualSource(
++                psi, pi, phi, metric, d_metric, reference, geometry, hhat,
++                d_hhat, gamma0, scalar_source)) {
+           for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
+           return;
+         }
+-      }
+-      for (int A = 0; A < 4; ++A) {
+-        hhat[A] = state(m, kHhatOffset + A, k, j, i)
+-                  + (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
+-        d_hhat[0][A] = state_rhs(m, kHhatOffset + A, k, j, i)
+-                       + (gauge_reference_subtraction
+-                              ? baseline.d_hhat[0][A] : 0.0);
+-        for (int p = 0; p < 3; ++p) {
+-          d_hhat[p + 1][A] = Dx<FDNG>(
+-              p, idx, state, m, kHhatOffset + A, k, j, i)
+-              + (gauge_reference_subtraction
+-                     ? baseline.d_hhat[p + 1][A] : 0.0);
++      } else {
++        ReferenceGaugeBaseline baseline{};
++        if (gauge_reference_subtraction) {
++          baseline = ComputeProductionReferenceGaugeBaseline(reference);
++          if (!baseline.valid) {
++            for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
++            return;
++          }
++        }
++        for (int A = 0; A < 4; ++A) {
++          hhat[A] = state(m, kHhatOffset + A, k, j, i)
++                    + (gauge_reference_subtraction ? baseline.hhat[A] : 0.0);
++          d_hhat[0][A] = state_rhs(m, kHhatOffset + A, k, j, i)
++                         + (gauge_reference_subtraction
++                                ? baseline.d_hhat[0][A] : 0.0);
++          for (int p = 0; p < 3; ++p) {
++            d_hhat[p + 1][A] = Dx<FDNG>(
++                p, idx, state, m, kHhatOffset + A, k, j, i)
++                + (gauge_reference_subtraction
++                       ? baseline.d_hhat[p + 1][A] : 0.0);
++          }
+         }
++        AddProductionOrdinaryGaugeSource(
++            metric, d_metric, reference, geometry, hhat, d_hhat, gamma0,
++            scalar_source);
+       }
+-      AddProductionOrdinaryGaugeSource(
+-          metric, d_metric, reference, geometry, hhat, d_hhat, gamma0,
+-          scalar_source);
+     }
+     Real spatial_inverse[3][3];  // NOLINT(runtime/arrays)
+     Real spatial_determinant = 0.0;
+diff --git a/src/ref_gh/reference_gauge_baseline.hpp b/src/ref_gh/reference_gauge_baseline.hpp
+index e7baf3b7..d43ae766 100644
+--- a/src/ref_gh/reference_gauge_baseline.hpp
++++ b/src/ref_gh/reference_gauge_baseline.hpp
+@@ -15,6 +15,10 @@ struct ReferenceGaugeBaseline {
+   Real hhat[4];        // NOLINT(runtime/arrays)
+   Real theta[4];       // NOLINT(runtime/arrays)
+   Real d_hhat[4][4];   // NOLINT(runtime/arrays)
++  // Direct coordinate-covector derivative projection
++  // Kref_iA=e_A^a partial_i Href_a.  This equals d_i Href_A-Omega_Ai^B Href_B
++  // without subtracting those separately reconstructed singular terms.
++  Real reference_k[3][4];  // NOLINT(runtime/arrays)
+   bool valid;
+ };
+ 
+@@ -145,6 +149,10 @@ ReferenceGaugeBaseline ComputeReferenceGaugeBaseline(
+             ReferenceDFrame(reference, p, A, a)*h_lower[a]
+             + ReferenceFrame(reference, A, a)*d_h_lower[p][a];
+       }
++      for (int p = 0; p < 3; ++p) {
++        result.reference_k[p][A] +=
++            ReferenceFrame(reference, A, a)*d_h_lower[p + 1][a];
++      }
+     }
+   }
+ 
+@@ -174,6 +182,10 @@ ReferenceGaugeBaseline ComputeReferenceGaugeBaseline(
+     for (int p = 0; p < 4; ++p) {
+       result.valid = result.valid && Kokkos::isfinite(result.d_hhat[p][A]);
+     }
++    for (int p = 0; p < 3; ++p) {
++      result.valid = result.valid
++                     && Kokkos::isfinite(result.reference_k[p][A]);
++    }
+   }
+   return result;
+ }
+diff --git a/src/ref_gh/reference_residual.hpp b/src/ref_gh/reference_residual.hpp
+new file mode 100644
+index 00000000..74673d03
+--- /dev/null
++++ b/src/ref_gh/reference_residual.hpp
+@@ -0,0 +1,271 @@
++//========================================================================================
++//! \file reference_residual.hpp
++//! \brief Cancellation-free arithmetic for reference-relative Ref-GH quantities.
++//========================================================================================
++#ifndef REF_GH_REFERENCE_RESIDUAL_HPP_
++#define REF_GH_REFERENCE_RESIDUAL_HPP_
++
++#include "athena.hpp"
++#include "ref_gh/reference_cache.hpp"
++#include "ref_gh/standard_gh_source.hpp"
++
++namespace ref_gh {
++
++// Carry the reference value, physical value, and their algebraically evaluated
++// difference together.  `delta` is authoritative: it is not recomputed as
++// physical-reference.  The redundant physical member keeps later nonlinear
++// residual identities from reconstructing a perturbed full value by adding a
++// small residual to a singular reference value.
++struct ReferenceResidualValue {
++  Real reference;
++  Real physical;
++  Real delta;
++};
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue MakeReferenceResidual(const Real reference,
++                                             const Real physical,
++                                             const Real delta) {
++  return {reference, physical, delta};
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue ReferenceResidualConstant(const Real value) {
++  return {value, value, 0.0};
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue operator+(const ReferenceResidualValue &x,
++                                 const ReferenceResidualValue &y) {
++  return {x.reference + y.reference, x.physical + y.physical,
++          x.delta + y.delta};
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue operator-(const ReferenceResidualValue &x,
++                                 const ReferenceResidualValue &y) {
++  return {x.reference - y.reference, x.physical - y.physical,
++          x.delta - y.delta};
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue operator-(const ReferenceResidualValue &x) {
++  return {-x.reference, -x.physical, -x.delta};
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue operator*(const ReferenceResidualValue &x,
++                                 const ReferenceResidualValue &y) {
++  // (xy)-(xbar ybar) = (x-xbar)y + xbar(y-ybar).
++  return {x.reference*y.reference, x.physical*y.physical,
++          x.delta*y.physical + x.reference*y.delta};
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue operator*(const Real coefficient,
++                                 const ReferenceResidualValue &x) {
++  return {coefficient*x.reference, coefficient*x.physical,
++          coefficient*x.delta};
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue operator*(const ReferenceResidualValue &x,
++                                 const Real coefficient) {
++  return coefficient*x;
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue operator/(const ReferenceResidualValue &x,
++                                 const ReferenceResidualValue &y) {
++  // x/y-xbar/ybar=(dx*ybar-xbar*dy)/(ybar*y).  This is exact and returns
++  // bitwise zero for dx=dy=0.
++  return {x.reference/y.reference, x.physical/y.physical,
++          (x.delta*y.reference - x.reference*y.delta)
++              /(y.reference*y.physical)};
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue operator/(const ReferenceResidualValue &x,
++                                 const Real denominator) {
++  return {x.reference/denominator, x.physical/denominator,
++          x.delta/denominator};
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue operator/(const Real numerator,
++                                 const ReferenceResidualValue &x) {
++  return ReferenceResidualConstant(numerator)/x;
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue ReferenceResidualSqrt(
++    const ReferenceResidualValue &x) {
++  const Real reference_root = Kokkos::sqrt(x.reference);
++  const Real physical_root = Kokkos::sqrt(x.physical);
++  return {reference_root, physical_root,
++          x.delta/(reference_root + physical_root)};
++}
++
++KOKKOS_INLINE_FUNCTION
++ReferenceResidualValue ReferenceResidualCubeRoot(
++    const ReferenceResidualValue &x) {
++  const Real one_third = 1.0/3.0;
++  const Real reference_root = Kokkos::pow(x.reference, one_third);
++  const Real physical_root = Kokkos::pow(x.physical, one_third);
++  return {reference_root, physical_root,
++          x.delta/(physical_root*physical_root
++                   + physical_root*reference_root
++                   + reference_root*reference_root)};
++}
++
++struct ReferenceRelativeCoordinateData {
++  Real reference_metric[4][4];          // NOLINT(runtime/arrays)
++  Real reference_inverse[4][4];         // NOLINT(runtime/arrays)
++  Real reference_d_metric[4][4][4];     // NOLINT(runtime/arrays)
++  Real delta_metric[4][4];              // NOLINT(runtime/arrays)
++  Real delta_d_metric[4][4][4];         // NOLINT(runtime/arrays)
++  bool valid;
++};
++
++template <typename Reference>
++KOKKOS_INLINE_FUNCTION
++Real ResidualReferenceCoframeDerivative(const Reference &reference,
++                                        const int p, const int A,
++                                        const int a) {
++  Real derivative = 0.0;
++  for (int B = 0; B < 4; ++B) {
++    for (int b = 0; b < 4; ++b) {
++      derivative -= ReferenceCoframe(reference, B, a)
++                    *ReferenceDFrame(reference, p, B, b)
++                    *ReferenceCoframe(reference, A, b);
++    }
++  }
++  return derivative;
++}
++
++// Build g-gbar and dg-dgbar directly from the regular frame fields.  The
++// reference has Psi_AB=eta_AB and dPsi_AB=Pi_AB=Phi_IAB=0.  Consequently the
++// matched state produces exact binary64 zero without subtracting coordinate
++// metrics whose components diverge toward the puncture.
++template <typename Reference>
++KOKKOS_INLINE_FUNCTION
++bool BuildReferenceRelativeCoordinateData(
++    const Real psi[4][4], const Real pi[4][4],
++    const Real phi[3][4][4], const Real metric[4][4],
++    const Real d_metric[4][4][4], const CoordinateGhGeometry &geometry,
++    const Reference &reference, ReferenceRelativeCoordinateData &result) {
++  result.valid = false;
++  Real d_coframe[4][4][4];  // NOLINT(runtime/arrays)
++  for (int p = 0; p < 4; ++p) {
++    for (int A = 0; A < 4; ++A) {
++      for (int a = 0; a < 4; ++a) {
++        d_coframe[p][A][a] =
++            ResidualReferenceCoframeDerivative(reference, p, A, a);
++      }
++    }
++  }
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      result.reference_metric[a][b] = 0.0;
++      result.reference_inverse[a][b] = 0.0;
++      result.delta_metric[a][b] = 0.0;
++      for (int A = 0; A < 4; ++A) {
++        const Real sign = (A == 0) ? -1.0 : 1.0;
++        result.reference_metric[a][b] += sign
++            *ReferenceCoframe(reference, A, a)
++            *ReferenceCoframe(reference, A, b);
++        result.reference_inverse[a][b] += sign
++            *ReferenceFrame(reference, A, a)
++            *ReferenceFrame(reference, A, b);
++        for (int B = 0; B < 4; ++B) {
++          const Real eta = (A == B) ? sign : 0.0;
++          result.delta_metric[a][b] +=
++              ReferenceCoframe(reference, A, a)
++              *ReferenceCoframe(reference, B, b)*(psi[A][B] - eta);
++        }
++      }
++      for (int p = 0; p < 4; ++p) {
++        result.reference_d_metric[p][a][b] = 0.0;
++        for (int A = 0; A < 4; ++A) {
++          const Real sign = (A == 0) ? -1.0 : 1.0;
++          result.reference_d_metric[p][a][b] += sign*(
++              d_coframe[p][A][a]*ReferenceCoframe(reference, A, b)
++              + ReferenceCoframe(reference, A, a)*d_coframe[p][A][b]);
++        }
++      }
++    }
++  }
++
++  Real d_delta_psi[4][4][4];  // NOLINT(runtime/arrays)
++  for (int A = 0; A < 4; ++A) {
++    for (int B = 0; B < 4; ++B) {
++      for (int p = 0; p < 3; ++p) {
++        d_delta_psi[p + 1][A][B] = 0.0;
++        for (int I = 0; I < 3; ++I) {
++          d_delta_psi[p + 1][A][B] +=
++              ReferenceSpatialCoframe(reference, I, p)*phi[I][A][B];
++        }
++      }
++      d_delta_psi[0][A][B] = -geometry.lapse*pi[A][B];
++      for (int p = 0; p < 3; ++p) {
++        d_delta_psi[0][A][B] +=
++            geometry.shift[p]*d_delta_psi[p + 1][A][B];
++      }
++    }
++  }
++  for (int p = 0; p < 4; ++p) {
++    Real frame_corrected_delta[4][4];  // NOLINT(runtime/arrays)
++    for (int A = 0; A < 4; ++A) {
++      for (int B = 0; B < 4; ++B) {
++        frame_corrected_delta[A][B] = d_delta_psi[p][A][B];
++        for (int a = 0; a < 4; ++a) {
++          for (int b = 0; b < 4; ++b) {
++            frame_corrected_delta[A][B] -=
++                (ReferenceDFrame(reference, p, A, a)
++                   *ReferenceFrame(reference, B, b)
++                 + ReferenceFrame(reference, A, a)
++                   *ReferenceDFrame(reference, p, B, b))
++                    *result.delta_metric[a][b];
++          }
++        }
++      }
++    }
++    for (int a = 0; a < 4; ++a) {
++      for (int b = 0; b < 4; ++b) {
++        result.delta_d_metric[p][a][b] = 0.0;
++        for (int A = 0; A < 4; ++A) {
++          for (int B = 0; B < 4; ++B) {
++            result.delta_d_metric[p][a][b] +=
++                ReferenceCoframe(reference, A, a)
++                *ReferenceCoframe(reference, B, b)
++                *frame_corrected_delta[A][B];
++          }
++        }
++      }
++    }
++  }
++
++  result.valid = true;
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      result.valid = result.valid
++          && Kokkos::isfinite(result.reference_metric[a][b])
++          && Kokkos::isfinite(result.reference_inverse[a][b])
++          && Kokkos::isfinite(result.delta_metric[a][b]);
++      for (int p = 0; p < 4; ++p) {
++        result.valid = result.valid
++            && Kokkos::isfinite(result.reference_d_metric[p][a][b])
++            && Kokkos::isfinite(result.delta_d_metric[p][a][b]);
++      }
++    }
++  }
++  // `metric` and `d_metric` are intentionally accepted as the independently
++  // reconstructed physical members used by downstream residual triples.
++  (void)metric;
++  (void)d_metric;
++  return result.valid;
++}
++
++}  // namespace ref_gh
++
++#endif  // REF_GH_REFERENCE_RESIDUAL_HPP_
+diff --git a/src/ref_gh/residual_gauge_source.hpp b/src/ref_gh/residual_gauge_source.hpp
+new file mode 100644
+index 00000000..02c96597
+--- /dev/null
++++ b/src/ref_gh/residual_gauge_source.hpp
+@@ -0,0 +1,184 @@
++//========================================================================================
++//! \file residual_gauge_source.hpp
++//! \brief Ordinary-GH Einstein increment assembled from regular residuals.
++//========================================================================================
++#ifndef REF_GH_RESIDUAL_GAUGE_SOURCE_HPP_
++#define REF_GH_RESIDUAL_GAUGE_SOURCE_HPP_
++
++#include "athena.hpp"
++#include "ref_gh/reference_residual.hpp"
++#include "ref_gh/standard_gh_source.hpp"
++
++namespace ref_gh {
++
++struct OrdinaryGaugeResidualDiagnostics {
++  Real j[4];        // NOLINT(runtime/arrays)
++  Real d_j[4][4];   // NOLINT(runtime/arrays)
++  Real delta_base[4];       // NOLINT(runtime/arrays)
++  Real d_delta_base[4][4];  // NOLINT(runtime/arrays)
++};
++
++// Oracle/general implementation of
++//
++//   J_a = E^A_a delta_H_A - [B_a(g;gbar)-B_a(gbar;gbar)].
++//
++// Every bracket is evaluated with ReferenceResidualValue identities.  This
++// function never reconstructs raw Hhat or subtracts raw Href.  The analytic
++// radial-q production dispatch must use a compact generated specialization
++// rather than invoking recursive ReferenceDChristoffel accessors through this
++// template; until that specialization exists this function is oracle-only for
++// AnalyticRadialQPoint.
++template <typename Reference>
++KOKKOS_INLINE_FUNCTION
++bool AddOrdinaryGaugeResidualPartialWaveSource(
++    const Real psi[4][4], const Real pi[4][4],
++    const Real phi[3][4][4], const Real metric[4][4],
++    const Real d_metric[4][4][4], const Reference &reference,
++    const CoordinateGhGeometry &geometry, const Real delta_hhat[4],
++    const Real d_delta_hhat[4][4], const Real gamma0, Real source[4][4],
++    OrdinaryGaugeResidualDiagnostics *diagnostics = nullptr) {
++  ReferenceRelativeCoordinateData relative;
++  if (!BuildReferenceRelativeCoordinateData(
++          psi, pi, phi, metric, d_metric, geometry, reference, relative)) {
++    return false;
++  }
++
++  ReferenceResidualValue g[4][4];         // NOLINT(runtime/arrays)
++  ReferenceResidualValue dg[4][4][4];     // NOLINT(runtime/arrays)
++  ReferenceResidualValue inverse[4][4];   // NOLINT(runtime/arrays)
++  ReferenceResidualValue d_inverse[4][4][4];  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      g[a][b] = MakeReferenceResidual(
++          relative.reference_metric[a][b], metric[a][b],
++          relative.delta_metric[a][b]);
++      for (int p = 0; p < 4; ++p) {
++        dg[p][a][b] = MakeReferenceResidual(
++            relative.reference_d_metric[p][a][b], d_metric[p][a][b],
++            relative.delta_d_metric[p][a][b]);
++      }
++      Real delta_inverse = 0.0;
++      for (int c = 0; c < 4; ++c) {
++        for (int d = 0; d < 4; ++d) {
++          delta_inverse -= geometry.inverse_metric[a][c]
++              *relative.delta_metric[c][d]*relative.reference_inverse[d][b];
++        }
++      }
++      inverse[a][b] = MakeReferenceResidual(
++          relative.reference_inverse[a][b], geometry.inverse_metric[a][b],
++          delta_inverse);
++    }
++  }
++  for (int p = 0; p < 4; ++p) {
++    for (int a = 0; a < 4; ++a) {
++      for (int b = 0; b < 4; ++b) {
++        d_inverse[p][a][b] = ReferenceResidualConstant(0.0);
++        for (int c = 0; c < 4; ++c) {
++          for (int d = 0; d < 4; ++d) {
++            d_inverse[p][a][b] = d_inverse[p][a][b]
++                - inverse[a][c]*inverse[b][d]*dg[p][c][d];
++          }
++        }
++      }
++    }
++  }
++
++  ReferenceResidualValue base_upper[4];       // NOLINT(runtime/arrays)
++  ReferenceResidualValue d_base_upper[4][4];  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    base_upper[a] = ReferenceResidualConstant(0.0);
++    for (int b = 0; b < 4; ++b) {
++      for (int c = 0; c < 4; ++c) {
++        base_upper[a] = base_upper[a]
++            - inverse[b][c]*ReferenceChristoffel(reference, a, b, c);
++      }
++    }
++    for (int p = 0; p < 4; ++p) {
++      d_base_upper[p][a] = ReferenceResidualConstant(0.0);
++      for (int b = 0; b < 4; ++b) {
++        for (int c = 0; c < 4; ++c) {
++          d_base_upper[p][a] = d_base_upper[p][a]
++              - d_inverse[p][b][c]*ReferenceChristoffel(reference, a, b, c)
++              - inverse[b][c]*ReferenceDChristoffel(reference, p, a, b, c);
++        }
++      }
++    }
++  }
++
++  ReferenceResidualValue base_lower[4];       // NOLINT(runtime/arrays)
++  ReferenceResidualValue d_base_lower[4][4];  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    base_lower[a] = ReferenceResidualConstant(0.0);
++    for (int p = 0; p < 4; ++p) {
++      d_base_lower[p][a] = ReferenceResidualConstant(0.0);
++    }
++    for (int b = 0; b < 4; ++b) {
++      base_lower[a] = base_lower[a] + g[a][b]*base_upper[b];
++      for (int p = 0; p < 4; ++p) {
++        d_base_lower[p][a] = d_base_lower[p][a]
++            + dg[p][a][b]*base_upper[b] + g[a][b]*d_base_upper[p][b];
++      }
++    }
++  }
++
++  Real j[4] = {};       // NOLINT(runtime/arrays)
++  Real d_j[4][4] = {};  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    j[a] = -base_lower[a].delta;
++    for (int A = 0; A < 4; ++A) {
++      j[a] += ReferenceCoframe(reference, A, a)*delta_hhat[A];
++    }
++    for (int p = 0; p < 4; ++p) {
++      d_j[p][a] = -d_base_lower[p][a].delta;
++      for (int A = 0; A < 4; ++A) {
++        d_j[p][a] +=
++            ResidualReferenceCoframeDerivative(reference, p, A, a)
++                *delta_hhat[A]
++            + ReferenceCoframe(reference, A, a)*d_delta_hhat[p][A];
++      }
++    }
++    if (diagnostics != nullptr) {
++      diagnostics->j[a] = j[a];
++      diagnostics->delta_base[a] = base_lower[a].delta;
++      for (int p = 0; p < 4; ++p) {
++        diagnostics->d_j[p][a] = d_j[p][a];
++        diagnostics->d_delta_base[p][a] = d_base_lower[p][a].delta;
++      }
++    }
++  }
++
++  Real coordinate_extra[4][4];  // NOLINT(runtime/arrays)
++  for (int a = 0; a < 4; ++a) {
++    for (int b = 0; b < 4; ++b) {
++      Real nabla_ab = d_j[a][b];
++      Real nabla_ba = d_j[b][a];
++      for (int c = 0; c < 4; ++c) {
++        nabla_ab -= geometry.christoffel[c][a][b]*j[c];
++        nabla_ba -= geometry.christoffel[c][b][a]*j[c];
++      }
++      coordinate_extra[a][b] = -nabla_ab - nabla_ba;
++      for (int c = 0; c < 4; ++c) {
++        const Real projector = ((c == a) ? geometry.normal_lower[b] : 0.0)
++                               + ((c == b) ? geometry.normal_lower[a] : 0.0)
++                               - metric[a][b]*geometry.normal_upper[c];
++        coordinate_extra[a][b] += gamma0*projector*j[c];
++      }
++    }
++  }
++  for (int A = 0; A < 4; ++A) {
++    for (int B = 0; B < 4; ++B) {
++      for (int a = 0; a < 4; ++a) {
++        for (int b = 0; b < 4; ++b) {
++          source[A][B] += ReferenceFrame(reference, A, a)
++                          *ReferenceFrame(reference, B, b)
++                          *coordinate_extra[a][b];
++        }
++      }
++    }
++  }
++  return true;
++}
++
++}  // namespace ref_gh
++
++#endif  // REF_GH_RESIDUAL_GAUGE_SOURCE_HPP_

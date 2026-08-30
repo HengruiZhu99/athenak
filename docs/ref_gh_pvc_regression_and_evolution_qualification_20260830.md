@@ -90,6 +90,33 @@ the physical-boundary implementation relative to its parent. The complete
 source diff is preserved with the compact evidence under
 `artifacts/ref_gh_pvc_regression_repair_20260830/phase2_aurora_8791745_first_bad_ab30fa96`.
 
+## Phase 3: RHS versus task/boundary hybrid matrix
+
+Hybrid A used W as the base, overlaid the fully-subtracted `ab30fa96`
+`ref_gh_calcrhs.cpp` plus every required changed/added helper header, and
+retained W's task and stationary problem-generator blobs exactly. Its overlay
+manifest SHA-256 was
+`3511e55316a7e0c2467b7d0dd7cf48d9d266f9885982d40a9800ce2db13fcf9f`.
+Aurora job `8791763` reproduced fourteen Level Zero `NotPresent` writes on the
+same node as the W/R control and ended with PBS status 143. Its executable
+SHA-256 was
+`4068d6e7f1574f938a11c96fde9b2cf3bd78b2c1100aa66fa1762bf5b48e340b`.
+
+Hybrid B is exactly represented by the `b290c2bd` midpoint run: its production
+`ref_gh_calcrhs.cpp` blob is byte-identical to W while its exact-state,
+stationary initialization, task, and boundary path are the repaired versions.
+That job passed one positive-time cycle.
+
+| Hybrid | RHS/device helpers | Task/init/boundary path | Result |
+| --- | --- | --- | --- |
+| A | fully-subtracted `ab30fa96` | W | `FAIL_LEVEL_ZERO` |
+| B | W | repaired `b290c2bd` | `PASS_ONE_CYCLE_PVC` |
+
+The regression therefore follows the fully-subtracted RHS/helper device image
+rather than the new exact-state/task/boundary semantics. The changing final
+fence location remains consistent with asynchronous fault reporting and is
+not treated as the corrupting operation.
+
 ## Remaining required evidence
 
 The first-bad source bisect, hybrid matrix, one-rank comparison, explicit MPI
