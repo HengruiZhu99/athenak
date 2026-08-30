@@ -1,0 +1,201 @@
+#!/bin/bash -l
+# Direct W-versus-R Aurora PVC regression control.  The source trees are
+# predeclared immutable exports.  Both are configured, built, and run on the
+# same PVC node with one toolchain and one frozen one-cycle workload.
+# This is a portability discriminator, not a scientific evolution.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_wr_pvc
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?fresh W/R control campaign root}"
+
+readonly W_COMMIT=68bc1ee30c0ac64c3afe8d3961bead65efce205a
+readonly R_COMMIT=3c9a34c8c3123c2570eb33e8ec77368feb1f1c61
+readonly KOKKOS_COMMIT=6739bc623081648af9e752b616d9671527922cbf
+readonly W_TREE=00d370276ed4b1377b2b9e46456f838e8e4cbbb0
+readonly R_TREE=677936216ba8f81d885563bcde41b6596f31cc08
+
+readonly W_SRC="${CAMPAIGN_ROOT}/sources/W"
+readonly R_SRC="${CAMPAIGN_ROOT}/sources/R"
+readonly OUT="${CAMPAIGN_ROOT}/runs/wr_control_${PBS_JOBID}"
+readonly BINDER_NAME=gpu_tile_compact.sh
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "wr_control_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+readonly BINDER=$(command -v "${BINDER_NAME}")
+test -x "${BINDER}"
+
+verify_export() {
+  local src=$1
+  local expected_commit=$2
+  local expected_tree=$3
+  test "$(cat "${src}/.source_commit")" = "${expected_commit}"
+  test "$(cat "${src}/.source_tree")" = "${expected_tree}"
+  test "$(cat "${src}/.kokkos_commit")" = "${KOKKOS_COMMIT}"
+  test -f "${src}/kokkos/CMakeLists.txt"
+  test -f "${src}/inputs/ref_gh/ref_gh_ordering_gauge_case_d.athinput"
+}
+verify_export "${W_SRC}" "${W_COMMIT}" "${W_TREE}"
+verify_export "${R_SRC}" "${R_COMMIT}" "${R_TREE}"
+cmp "${W_SRC}/inputs/ref_gh/ref_gh_ordering_gauge_case_d.athinput" \
+    "${R_SRC}/inputs/ref_gh/ref_gh_ordering_gauge_case_d.athinput"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "W_commit=${W_COMMIT}"
+  echo "W_tree=${W_TREE}"
+  echo "R_commit=${R_COMMIT}"
+  echo "R_tree=${R_TREE}"
+  echo "Kokkos_commit=${KOKKOS_COMMIT}"
+  echo "purpose=direct identical-build one-cycle W-versus-R PVC control"
+  echo "grid=96x96x96 meshblocks=216 ranks=12 blocks_per_rank=18"
+  echo "frozen_parameters=STANDARD gamma0=1 gamma2=1 gauge-on gauge-reference-subtraction-on q=1 q-controller-off q-prescribed-off FD4 RK4 CFL=0.05 KO=0.02"
+  echo "debug_task_fences=true"
+  echo "Kokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF"
+  echo "source_unit=OFF"
+  echo "device_code_split=toolchain_and_source_default"
+  echo "restart_and_field_outputs=disabled"
+  sha256sum "${HOME}/athenak_env" "$0" \
+    "${W_SRC}/inputs/ref_gh/ref_gh_ordering_gauge_case_d.athinput" \
+    "${R_SRC}/inputs/ref_gh/ref_gh_ordering_gauge_case_d.athinput"
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+} > provenance.txt
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
+  | sort -u | wc -l)" -eq 12
+
+configure_and_build() {
+  local label=$1
+  local src=$2
+  local build="${CAMPAIGN_ROOT}/build_${label}_${PBS_JOBID}"
+  mkdir -p "build_${label}"
+  cmake -S "${src}" -B "${build}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER="$(command -v icx)" \
+    -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -DAthena_ENABLE_MPI=ON \
+    -DAthena_ENABLE_OPENMP=OFF \
+    -DAthena_ENABLE_REF_GH_SOURCE_UNIT=OFF \
+    -DKokkos_ENABLE_SERIAL=ON \
+    -DKokkos_ENABLE_OPENMP=OFF \
+    -DKokkos_ENABLE_SYCL=ON \
+    -DKokkos_ARCH_INTEL_PVC=ON \
+    -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+    -DPROBLEM=built_in_pgens > "build_${label}/configure.log" 2>&1
+  timeout 1500s cmake --build "${build}" --verbose -j 64 \
+    > "build_${label}/build.log" 2>&1
+  local exe="${build}/src/athena"
+  test -x "${exe}"
+  {
+    grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Athena_ENABLE_REF_GH_SOURCE_UNIT:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+      "${build}/CMakeCache.txt"
+    sha256sum "${build}/CMakeCache.txt" "${build}/compile_commands.json" "${exe}"
+  } > "build_${label}/build_identity.txt"
+  grep -q '^Athena_ENABLE_MPI:BOOL=ON$' "${build}/CMakeCache.txt"
+  grep -q '^Athena_ENABLE_REF_GH_SOURCE_UNIT:BOOL=OFF$' "${build}/CMakeCache.txt"
+  grep -q '^Kokkos_ENABLE_SYCL:BOOL=ON$' "${build}/CMakeCache.txt"
+  grep -q '^Kokkos_ARCH_INTEL_PVC:BOOL=ON$' "${build}/CMakeCache.txt"
+  grep -q '^Kokkos_ENABLE_OPENMP:BOOL=OFF$' "${build}/CMakeCache.txt"
+  grep -q '^Kokkos_ENABLE_DEBUG_BOUNDS_CHECK:BOOL=OFF$' "${build}/CMakeCache.txt"
+}
+
+configure_and_build W "${W_SRC}"
+configure_and_build R "${R_SRC}"
+
+run_control() {
+  local label=$1
+  local src=$2
+  local build="${CAMPAIGN_ROOT}/build_${label}_${PBS_JOBID}"
+  local run="${OUT}/run_${label}"
+  local basename="wr_control_${label}"
+  local input="${src}/inputs/ref_gh/ref_gh_ordering_gauge_case_d.athinput"
+  mkdir -p "${run}"
+  set +e
+  (
+    cd "${run}"
+    /usr/bin/time -p timeout 600s mpiexec -n 12 --ppn 12 --depth=8 \
+      --cpu-bind depth "${BINDER}" "${build}/src/athena" -i "${input}" \
+      job/basename="${basename}" time/tlim=0.01 time/nlim=1 \
+      ref_gh/debug_task_fences=true \
+      output2/dt=-1 output3/dt=-1 output4/dt=-1 output5/dt=-1 \
+      > run.log 2>&1
+  )
+  local status=$?
+  set -e
+  grep 'ref_gh debug fence passed:' "${run}/run.log" \
+    > "${run}/fence_trace.txt" || true
+  local history="${run}/${basename}.ref_gh.hst"
+  local last_time
+  last_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' \
+    "${history}" 2>/dev/null || echo 0)
+  local classification
+  if [ "${status}" -eq 0 ] && awk -v t="${last_time}" \
+      'BEGIN {exit !(t > 0)}'; then
+    classification=PASS_ONE_CYCLE_PVC
+  elif grep -qE 'NotPresent|ZE_RESULT_ERROR_DEVICE_LOST|Segmentation fault from GPU' \
+      "${run}/run.log"; then
+    classification=FAIL_LEVEL_ZERO
+  else
+    classification="FAIL_OTHER_STATUS_${status}"
+  fi
+  {
+    echo "classification=${classification}"
+    echo "run_exit_status=${status}"
+    echo "latest_history_time=${last_time}"
+    echo "last_completed_fence=$(tail -1 "${run}/fence_trace.txt" 2>/dev/null || true)"
+    sha256sum "${build}/src/athena" "${input}"
+  } > "${run}/result.txt"
+}
+
+# Run W first so a failure in R cannot poison the working-control context.
+run_control W "${W_SRC}"
+run_control R "${R_SRC}"
+
+{
+  echo "W_$(grep '^classification=' run_W/result.txt)"
+  echo "R_$(grep '^classification=' run_R/result.txt)"
+  echo "same_allocation=true"
+  echo "same_node=true"
+  echo "claim_boundary=one-cycle portability control only; no evolution stability or convergence claim"
+} > comparison.txt
+
+find . -type f ! -name compact_sha256.txt \
+  \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' \
+  -o -name '*.log' -o -name '*.json' \) \
+  -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
+
+echo "wr_control_complete=$(date -Is)"
