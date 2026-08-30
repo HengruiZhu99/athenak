@@ -519,6 +519,8 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
                 "reference-GH history exceeds NHISTORY_VARIABLES");
   auto *module = pm->pmb_pack->prefgh;
   const bool physical_trumpet_errors = module->opt.reference_kind == 7;
+  const bool relative_damped_gauge =
+      module->opt.gauge_mode == ref_gh::RefGh::kRelativeDampedGauge;
   pdata->nhist = NHIST_REF_GH;
   const char *labels[NHIST_REF_GH] = {  // NOLINT(runtime/arrays)
     "GH-L2sq", "Reduction-L2sq", "Curl-L2sq", "PsiError-L2sq",
@@ -535,6 +537,14 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
     labels[HIST_PSI_ERROR] = "physical-g-error-L2sq";
     labels[HIST_PI] = "physical-alpha-error-L2sq";
     labels[HIST_PHI] = "physical-beta-error-L2sq";
+  }
+  // Reuse the three controller-only tail columns in relative-damped mode so
+  // the fixed global history-reduction width remains unchanged.  Reference-q
+  // trajectories are still available from the problem-specific histories.
+  if (relative_damped_gauge) {
+    labels[HIST_CONTROLLER_Q] = "relative-D-Linf";
+    labels[HIST_CONTROLLER_Q_DOT] = "relative-WD-Linf";
+    labels[HIST_CONTROLLER_Q_EST] = "relative-source-Linf";
   }
   for (int n = 0; n < NHIST_REF_GH; ++n) pdata->label[n] = labels[n];
   for (int n = HIST_ALPHA_MAX; n <= HIST_DETERMINANT_MARGIN; ++n) {
@@ -753,6 +763,34 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
       Kokkos::Max<Real>(g_condition_max));
   module->DebugFence("ref_gh history diagnostic maxima");
 
+  Real relative_d_max = 0.0;
+  Real relative_correction_max = 0.0;
+  Real relative_source_max = 0.0;
+  if (relative_damped_gauge) {
+    Kokkos::parallel_reduce(
+        "ref_gh relative gauge diagnostic maxima",
+        Kokkos::RangePolicy<>(DevExeSpace(),
+        0, pm->pmb_pack->nmb_thispack*ncells),
+        KOKKOS_LAMBDA(const int idx, Real &d_maximum,
+                      Real &correction_maximum, Real &source_maximum) {
+          int work = idx;
+          const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
+          const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
+          const int k = work % indcs.nx3 + indcs.ks;
+          const int m = work/indcs.nx3;
+          d_maximum = fmax(d_maximum, constraints(
+              m, ref_gh::RefGh::kRelativeDampedDMaxDiagnostic, k, j, i));
+          correction_maximum = fmax(correction_maximum, constraints(
+              m, ref_gh::RefGh::kRelativeDampedCorrectionMaxDiagnostic,
+              k, j, i));
+          source_maximum = fmax(source_maximum, constraints(
+              m, ref_gh::RefGh::kRelativeDampedSourceMaxDiagnostic, k, j, i));
+        }, Kokkos::Max<Real>(relative_d_max),
+           Kokkos::Max<Real>(relative_correction_max),
+           Kokkos::Max<Real>(relative_source_max));
+    module->DebugFence("ref_gh relative gauge diagnostic maxima");
+  }
+
   Real coordinate_g_max = 0.0;
   Real characteristic_max = 0.0;
   Real minus_det_margin = -std::numeric_limits<Real>::max();
@@ -824,10 +862,12 @@ void HistoryOutput::LoadRefGhHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->hdata[HIST_SOURCE_DELTA_DELTA_MAX] = source_delta_delta_max;
   pdata->hdata[HIST_SOURCE_DAMPING_MAX] = source_damping_max;
   pdata->hdata[HIST_SOURCE_FRAME_CORRECTION_MAX] = source_frame_correction_max;
-  pdata->hdata[HIST_CONTROLLER_Q] = module->q_controller.q;
-  pdata->hdata[HIST_CONTROLLER_Q_DOT] = module->q_controller.q_dot;
-  pdata->hdata[HIST_CONTROLLER_Q_EST] =
-      module->controller_diagnostics.q_est;
+  pdata->hdata[HIST_CONTROLLER_Q] = relative_damped_gauge
+      ? relative_d_max : module->q_controller.q;
+  pdata->hdata[HIST_CONTROLLER_Q_DOT] = relative_damped_gauge
+      ? relative_correction_max : module->q_controller.q_dot;
+  pdata->hdata[HIST_CONTROLLER_Q_EST] = relative_damped_gauge
+      ? relative_source_max : module->controller_diagnostics.q_est;
   module->max_char_speed = characteristic_max;
   pdata->hdata[HIST_EFFECTIVE_CFL] = module->dtnew > 0.0 ? pm->dt/module->dtnew : 0.0;
 }

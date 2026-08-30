@@ -36,6 +36,7 @@
 #include "ref_gh/reference_generic_singular.hpp"
 #include "ref_gh/reference_projection.hpp"
 #include "ref_gh/reference_gauge_baseline.hpp"
+#include "ref_gh/relative_damped_gauge.hpp"
 #include "ref_gh/residual_gauge_source.hpp"
 #include "ref_gh/reference_time_dependent_spatial.hpp"
 #include "ref_gh/reference_trumpet_schwarzschild.hpp"
@@ -72,6 +73,273 @@ void CheckRankPackedBoundaryContract() {
     std::exit(EXIT_FAILURE);
   }
   std::cout << "rank-packed same-level boundary contract oracle passed"
+            << std::endl;
+}
+
+void CheckRelativeDampedGaugeAlgebra() {
+  constexpr int kSamples = 16;
+  constexpr Real epsilon = 2.0e-6;
+  Real maximum_d_error = 0.0;
+  Real maximum_correction_error = 0.0;
+  Real invalid = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh relative damped gauge algebra",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, kSamples),
+      KOKKOS_LAMBDA(const int sample, Real &d_error,
+                    Real &correction_error, Real &invalid_flag) {
+        invalid_flag = fmax(invalid_flag, 0.0);
+        Real psi[4][4] = {};       // NOLINT(runtime/arrays)
+        Real d_psi[4][4][4] = {}; // NOLINT(runtime/arrays)
+        const Real scale = static_cast<Real>(sample + 1);
+        psi[0][0] = -1.0 - 0.004*scale;
+        psi[1][1] = 1.0 + 0.003*scale;
+        psi[2][2] = 1.0 + 0.002*scale;
+        psi[3][3] = 1.0 + 0.001*scale;
+        psi[0][1] = psi[1][0] = 0.0007*scale;
+        psi[0][2] = psi[2][0] = -0.0005*scale;
+        psi[0][3] = psi[3][0] = 0.0003*scale;
+        psi[1][2] = psi[2][1] = -0.0002*scale;
+        psi[1][3] = psi[3][1] = 0.00015*scale;
+        psi[2][3] = psi[3][2] = -0.0001*scale;
+        for (int p = 0; p < 4; ++p) {
+          for (int A = 0; A < 4; ++A) {
+            for (int B = A; B < 4; ++B) {
+              const Real value = 1.0e-3*(p + 1)*(A + 1)*(B + 2)
+                                 /(10.0 + scale);
+              d_psi[p][A][B] = d_psi[p][B][A] =
+                  ((p + A + B + sample) % 2 == 0) ? value : -value;
+            }
+          }
+        }
+        const Real x = 0.29 + 0.015*scale;
+        const Real y = -0.13 + 0.003*scale;
+        const Real z = 0.17 - 0.002*scale;
+        ref_gh::RelativeDampedGaugeData analytic;
+        if (!ref_gh::ComputeRelativeDampedGaugeData(
+                psi, d_psi, x, y, z, 0.0, 0.0, 0.0,
+                0.25, 0.50, 1.0, 1.0, analytic)) {
+          invalid_flag = 1.0;
+          return;
+        }
+        Real zero_derivative[4][4][4] = {};  // NOLINT(runtime/arrays)
+        for (int p = 0; p < 4; ++p) {
+          Real plus[4][4];   // NOLINT(runtime/arrays)
+          Real minus[4][4];  // NOLINT(runtime/arrays)
+          for (int A = 0; A < 4; ++A) {
+            for (int B = 0; B < 4; ++B) {
+              plus[A][B] = psi[A][B] + epsilon*d_psi[p][A][B];
+              minus[A][B] = psi[A][B] - epsilon*d_psi[p][A][B];
+            }
+          }
+          Real plus_x = x;
+          Real plus_y = y;
+          Real plus_z = z;
+          Real minus_x = x;
+          Real minus_y = y;
+          Real minus_z = z;
+          if (p == 1) { plus_x += epsilon; minus_x -= epsilon; }
+          if (p == 2) { plus_y += epsilon; minus_y -= epsilon; }
+          if (p == 3) { plus_z += epsilon; minus_z -= epsilon; }
+          ref_gh::RelativeDampedGaugeData forward;
+          ref_gh::RelativeDampedGaugeData backward;
+          if (!ref_gh::ComputeRelativeDampedGaugeData(
+                  plus, zero_derivative, plus_x, plus_y, plus_z,
+                  0.0, 0.0, 0.0, 0.25, 0.50, 1.0, 1.0, forward)
+              || !ref_gh::ComputeRelativeDampedGaugeData(
+                  minus, zero_derivative, minus_x, minus_y, minus_z,
+                  0.0, 0.0, 0.0, 0.25, 0.50, 1.0, 1.0, backward)) {
+            invalid_flag = 1.0;
+            return;
+          }
+          for (int A = 0; A < 4; ++A) {
+            const Real fd_d = (forward.d[A] - backward.d[A])/(2.0*epsilon);
+            const Real fd_correction =
+                (forward.correction[A] - backward.correction[A])
+                /(2.0*epsilon);
+            d_error = fmax(d_error, Kokkos::abs(fd_d - analytic.d_d[p][A]));
+            correction_error = fmax(
+                correction_error,
+                Kokkos::abs(fd_correction - analytic.d_correction[p][A]));
+          }
+        }
+
+        Real matched[4][4] = {};  // NOLINT(runtime/arrays)
+        matched[0][0] = -1.0;
+        matched[1][1] = matched[2][2] = matched[3][3] = 1.0;
+        ref_gh::RelativeDampedGaugeData matched_data;
+        if (!ref_gh::ComputeRelativeDampedGaugeData(
+                matched, zero_derivative, 0.8, -0.2, 0.3,
+                0.0, 0.0, 0.0, 0.25, 0.50, 1.0, 1.0, matched_data)) {
+          invalid_flag = 1.0;
+          return;
+        }
+        for (int A = 0; A < 4; ++A) {
+          if (matched_data.d[A] != 0.0
+              || matched_data.correction[A] != 0.0) invalid_flag = 1.0;
+        }
+
+        Real singular[4][4] = {};  // NOLINT(runtime/arrays)
+        ref_gh::RelativeDampedGaugeData core_data;
+        if (!ref_gh::ComputeRelativeDampedGaugeData(
+                singular, zero_derivative, 0.10, 0.0, 0.0,
+                0.0, 0.0, 0.0, 0.25, 0.50, 1.0, 1.0, core_data)
+            || core_data.window != 0.0) {
+          invalid_flag = 1.0;
+          return;
+        }
+        for (int A = 0; A < 4; ++A) {
+          if (core_data.d[A] != 0.0 || core_data.correction[A] != 0.0) {
+            invalid_flag = 1.0;
+          }
+        }
+      }, Kokkos::Max<Real>(maximum_d_error),
+         Kokkos::Max<Real>(maximum_correction_error),
+         Kokkos::Max<Real>(invalid));
+  Kokkos::fence();
+  if (invalid != 0.0 || maximum_d_error > 2.0e-9
+      || maximum_correction_error > 2.0e-9) {
+    std::cout << "### FATAL ERROR: reference-relative damped gauge algebra "
+                 "failed: invalid=" << invalid
+              << " d_error=" << maximum_d_error
+              << " correction_error=" << maximum_correction_error
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  // Independent source assembly oracle.  The direct regular J_a increment
+  // must equal the established ordinary-GH replacement operator supplied
+  // with the same nonsingular full H_a=B_a+J_a and analytic derivative.
+  constexpr Real x = 0.47;
+  constexpr Real y = -0.31;
+  constexpr Real z = 0.28;
+  ref_gh::ReferenceGeometry reference;
+  ref_gh::TimeDependentSpatialReference().Populate(0.37, x, y, z, reference);
+  Real psi[4][4] = {};       // NOLINT(runtime/arrays)
+  Real d_psi[4][4][4] = {}; // NOLINT(runtime/arrays)
+  psi[0][0] = -1.08;
+  psi[1][1] = 1.04;
+  psi[2][2] = 0.98;
+  psi[3][3] = 1.03;
+  psi[0][1] = psi[1][0] = 0.015;
+  psi[0][2] = psi[2][0] = -0.011;
+  psi[0][3] = psi[3][0] = 0.008;
+  psi[1][2] = psi[2][1] = 0.006;
+  psi[1][3] = psi[3][1] = -0.004;
+  psi[2][3] = psi[3][2] = 0.003;
+  for (int p = 0; p < 4; ++p) {
+    for (int A = 0; A < 4; ++A) {
+      for (int B = A; B < 4; ++B) {
+        const Real value = 2.0e-3*(p + 1)*(A + 2)*(B + 1)/35.0;
+        d_psi[p][A][B] = d_psi[p][B][A] =
+            ((p + A + 2*B) % 2 == 0) ? value : -value;
+      }
+    }
+  }
+  Real metric[4][4] = {};  // NOLINT(runtime/arrays)
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      for (int A = 0; A < 4; ++A) {
+        for (int B = 0; B < 4; ++B) {
+          metric[a][b] += reference.coframe[A][a]
+                          *reference.coframe[B][b]*psi[A][B];
+        }
+      }
+    }
+  }
+  Real d_metric[4][4][4] = {};  // NOLINT(runtime/arrays)
+  for (int p = 0; p < 4; ++p) {
+    Real frame_corrected[4][4];  // NOLINT(runtime/arrays)
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        frame_corrected[A][B] = d_psi[p][A][B];
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            frame_corrected[A][B] -=
+                (reference.d_frame[p][A][a]*reference.frame[B][b]
+                 + reference.frame[A][a]*reference.d_frame[p][B][b])
+                *metric[a][b];
+          }
+        }
+      }
+    }
+    for (int a = 0; a < 4; ++a) {
+      for (int b = 0; b < 4; ++b) {
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            d_metric[p][a][b] += reference.coframe[A][a]
+                                      *reference.coframe[B][b]
+                                      *frame_corrected[A][B];
+          }
+        }
+      }
+    }
+  }
+  ref_gh::CoordinateGhGeometry geometry;
+  Real determinant = 0.0;
+  if (!ref_gh::ComputeCoordinateGhGeometry(
+          metric, d_metric, reference, geometry, determinant)) {
+    std::cout << "### FATAL ERROR: relative gauge source oracle geometry invalid."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  ref_gh::RelativeDampedGaugeData gauge_data;
+  if (!ref_gh::ComputeRelativeDampedGaugeData(
+          psi, d_psi, x, y, z, 0.0, 0.0, 0.0,
+          0.25, 0.50, 1.0, 1.0, gauge_data)) {
+    std::cout << "### FATAL ERROR: relative gauge source oracle data invalid."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  Real direct_source[4][4] = {};    // NOLINT(runtime/arrays)
+  Real ordinary_source[4][4] = {};  // NOLINT(runtime/arrays)
+  if (!ref_gh::AddRelativeDampedGaugeSource(
+          psi, d_psi, metric, reference, geometry, x, y, z,
+          0.0, 0.0, 0.0, 0.25, 0.50, 1.0, 1.0, 1.0,
+          direct_source)) {
+    std::cout << "### FATAL ERROR: direct relative gauge source oracle invalid."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  Real d_base[4][4];  // NOLINT(runtime/arrays)
+  ref_gh::ImplicitGaugeSourceDerivative(
+      metric, d_metric, reference, geometry, d_base);
+  Real full_hhat[4] = {};       // NOLINT(runtime/arrays)
+  Real d_full_hhat[4][4] = {};  // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    full_hhat[A] = gauge_data.correction[A];
+    for (int a = 0; a < 4; ++a) {
+      full_hhat[A] += reference.frame[A][a]*geometry.gauge_source[a];
+    }
+    for (int p = 0; p < 4; ++p) {
+      d_full_hhat[p][A] = gauge_data.d_correction[p][A];
+      for (int a = 0; a < 4; ++a) {
+        d_full_hhat[p][A] +=
+            reference.d_frame[p][A][a]*geometry.gauge_source[a]
+            + reference.frame[A][a]*d_base[p][a];
+      }
+    }
+  }
+  ref_gh::AddOrdinaryGaugePartialWaveSource(
+      metric, d_metric, reference, geometry, full_hhat, d_full_hhat,
+      1.0, ordinary_source);
+  Real source_oracle_error = 0.0;
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      source_oracle_error = std::fmax(
+          source_oracle_error,
+          std::abs(direct_source[A][B] - ordinary_source[A][B]));
+    }
+  }
+  if (source_oracle_error > 2.0e-13) {
+    std::cout << "### FATAL ERROR: direct relative gauge source disagrees with "
+                 "ordinary-GH oracle: error=" << source_oracle_error
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-relative damped gauge algebra passed: D=0 matched, "
+               "exact zero core, derivative error=" << maximum_d_error
+            << " correction derivative error=" << maximum_correction_error
+            << " source error=" << source_oracle_error
             << std::endl;
 }
 
@@ -5912,6 +6180,7 @@ void ScanReferencePaths(ParameterInput *pin) {
 
 void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) {
   CheckRankPackedBoundaryContract();
+  CheckRelativeDampedGaugeAlgebra();
   CheckExactMatchedQ1Predicate();
   CheckCoframeDerivativeIdentity();
   CheckGaugeDriverAlgebra();

@@ -18,6 +18,7 @@
 #include "ref_gh/phi_ordering.hpp"
 #include "ref_gh/physical_gauge_target.hpp"
 #include "ref_gh/reference_gauge_baseline.hpp"
+#include "ref_gh/relative_damped_gauge.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/standard_gh_source.hpp"
@@ -67,6 +68,8 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
   const int phi_ordering = opt.phi_ordering;
   const Real gamma0 = opt.gamma0;
   const Real gamma2 = opt.gamma2;
+  const bool relative_damped_gauge =
+      opt.gauge_mode == RefGh::kRelativeDampedGauge;
   const bool gauge_driver_enabled = opt.gauge_driver_enabled;
   const bool gauge_reference_subtraction = opt.gauge_reference_subtraction;
   const bool reference_time_dependent = opt.reference_time_dependent;
@@ -74,6 +77,10 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
   const Real gauge_eta = opt.gauge_eta;
   const Real shift_nu = opt.shift_nu;
   const Real shift_eta = opt.shift_eta;
+  const Real relative_damped_mu_l = opt.relative_damped_mu_l;
+  const Real relative_damped_mu_s = opt.relative_damped_mu_s;
+  const Real relative_damped_r0 = opt.relative_damped_r0;
+  const Real relative_damped_r1 = opt.relative_damped_r1;
   const bool exact_matched_static_gauge = gauge_reference_subtraction
       && IsExactMatchedQ1StaticReference(
           opt.reference_q_controlled, opt.q_controller_enabled,
@@ -314,6 +321,15 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
                                   geometry, gamma0, partial_source);
       TransformPartialWaveSource(metric, d_metric, partial_source, d_psi,
                                  reference, geometry, scalar_source);
+    }
+    if (relative_damped_gauge
+        && !AddRelativeDampedGaugeSource(
+            psi, d_psi, metric, reference, geometry, x, y, z,
+            center_x, center_y, center_z, relative_damped_r0,
+            relative_damped_r1, relative_damped_mu_l, relative_damped_mu_s,
+            gamma0, scalar_source)) {
+      for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
+      return;
     }
     if (gauge_driver_enabled) {
       Real hhat[4];       // NOLINT(runtime/arrays)
@@ -693,8 +709,15 @@ void RefGh::CalcConstraintsImpl() {
   const Real center_y = opt.reference_center[1];
   const Real center_z = opt.reference_center[2];
   const int source_kind = opt.source_kind;
+  const bool relative_damped_gauge =
+      opt.gauge_mode == RefGh::kRelativeDampedGauge;
   const bool gauge_driver_enabled = opt.gauge_driver_enabled;
   const bool gauge_reference_subtraction = opt.gauge_reference_subtraction;
+  const Real relative_damped_mu_l = opt.relative_damped_mu_l;
+  const Real relative_damped_mu_s = opt.relative_damped_mu_s;
+  const Real relative_damped_r0 = opt.relative_damped_r0;
+  const Real relative_damped_r1 = opt.relative_damped_r1;
+  const Real gamma0 = opt.gamma0;
   const int active_dimensions = pmy_pack->pmesh->one_d ? 1
       : (pmy_pack->pmesh->two_d ? 2 : 3);
   Kokkos::deep_copy(constraints, 0.0);
@@ -730,6 +753,26 @@ void RefGh::CalcConstraintsImpl() {
       for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
       return;
     }
+    RelativeDampedGaugeData relative_gauge{};
+    RelativeDampedGaugeDiagnostics relative_diagnostics{};
+    if (relative_damped_gauge) {
+      if (!ComputeRelativeDampedGaugeData(
+              psi, d_psi, x, y, z, center_x, center_y, center_z,
+              relative_damped_r0, relative_damped_r1,
+              relative_damped_mu_l, relative_damped_mu_s, relative_gauge)) {
+        for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
+        return;
+      }
+      Real relative_source[4][4] = {};  // NOLINT(runtime/arrays)
+      if (!AddRelativeDampedGaugeSource(
+              psi, d_psi, metric, reference, geometry, x, y, z,
+              center_x, center_y, center_z, relative_damped_r0,
+              relative_damped_r1, relative_damped_mu_l, relative_damped_mu_s,
+              gamma0, relative_source, &relative_diagnostics)) {
+        for (int n = 0; n < ncon; ++n) constraints(m, n, k, j, i) = NAN;
+        return;
+      }
+    }
     if (source_kind == 0) {
       ReferenceGaugeBaseline baseline{};
       if (gauge_driver_enabled && gauge_reference_subtraction) {
@@ -741,6 +784,9 @@ void RefGh::CalcConstraintsImpl() {
       }
       for (int A = 0; A < 4; ++A) {
         constraints(m, A, k, j, i) = source_sectors.delta[A];
+        if (relative_damped_gauge) {
+          constraints(m, A, k, j, i) += relative_gauge.correction[A];
+        }
         if (gauge_driver_enabled) {
           Real baseline_frame = 0.0;
           for (int a = 0; a < 4; ++a) {
@@ -764,6 +810,12 @@ void RefGh::CalcConstraintsImpl() {
       }
       for (int a = 0; a < 4; ++a) {
         constraints(m, a, k, j, i) = geometry.gauge_constraint[a];
+        if (relative_damped_gauge) {
+          for (int A = 0; A < 4; ++A) {
+            constraints(m, a, k, j, i) +=
+                ReferenceCoframe(reference, A, a)*relative_gauge.correction[A];
+          }
+        }
         if (gauge_driver_enabled) {
           Real hhat_coordinate = 0.0;
           for (int A = 0; A < 4; ++A) {
@@ -836,6 +888,12 @@ void RefGh::CalcConstraintsImpl() {
         Kokkos::sqrt(frame_correction2);
     constraints(m, kMetricConditionDiagnostic, k, j, i) =
         ReferenceSpatialFrame(reference, 0, 0);
+    constraints(m, kRelativeDampedDMaxDiagnostic, k, j, i) =
+        relative_damped_gauge ? relative_diagnostics.d_max : 0.0;
+    constraints(m, kRelativeDampedCorrectionMaxDiagnostic, k, j, i) =
+        relative_damped_gauge ? relative_diagnostics.correction_max : 0.0;
+    constraints(m, kRelativeDampedSourceMaxDiagnostic, k, j, i) =
+        relative_damped_gauge ? relative_diagnostics.source_max : 0.0;
     Real reduction2 = 0.0;
     Real curl2 = 0.0;
     for (int I = 0; I < 3; ++I) {

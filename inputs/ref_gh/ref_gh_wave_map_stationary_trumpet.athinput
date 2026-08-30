@@ -1,0 +1,102 @@
+# Exact q=1 stationary Schwarzschild trumpet pure-wave-map control for the
+# reference-relative damped-wave gauge campaign.
+
+<job>
+basename = ref_gh_wave_map_stationary_trumpet_n96
+
+<mesh>
+nghost = 4
+nx1 = 96
+x1min = -2.0
+x1max = 2.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 96
+x2min = -2.0
+x2max = 2.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 96
+x3min = -2.0
+x3max = 2.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 16
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.05
+nlim = -1
+tlim = 3.0
+ndiag = 10
+
+<ref_gh>
+reference = trumpet_q_controlled
+reference_backend = analytic_radial_q
+source = covariant
+phi_ordering = standard
+reference_mass = 1.0
+reference_x = 0.0
+reference_y = 0.0
+reference_z = 0.0
+q_gaussian_width = 3.0
+q_initial = 1.0
+q = 1.0
+q_dot = 0.0
+q_controller_enabled = false
+q_prescribed_enabled = false
+q_min = 0.5
+q_max = 2.5
+q_rate_limit = 0.25
+q_acceleration_limit = 0.25
+q_omega = 0.5
+q_zeta = 1.0
+fd_order = 4
+extrap_order = 2
+debug_task_fences = false
+validate_reference_cache = false
+max_location_diagnostics = true
+gamma0 = 1.0
+gamma2 = 1.0
+gauge_mode = wave_map
+gauge_driver_enabled = false
+gauge_reference_subtraction = false
+relative_damped_mu_l = 1.0
+relative_damped_mu_s = 1.0
+relative_damped_r0 = 0.25
+relative_damped_r1 = 0.50
+exclude_puncture_stencil_diagnostics = true
+diss = 0.02
+fail_closed_dt = 1.0e-12
+
+<problem>
+pgen_name = ref_gh_stationary_trumpet
+user_hist = true
+stationary_rhs_convergence_mode = true
+initial_rhs_sector_diagnostics = true
+common_adm_history = true
+common_adm_fd_order = 4
+common_adm_exclude_puncture_stencils = true
+common_adm_puncture_x = 0.0
+common_adm_puncture_y = 0.0
+common_adm_puncture_z = 0.0
+stationary_region0_min = 0.5
+stationary_region0_max = 1.0
+stationary_region1_min = 1.0
+stationary_region1_max = 1.5
+stationary_region2_min = 1.5
+stationary_region2_max = 2.0
+
+<output1>
+file_type = hst
+dt = 0.05
+data_format = %20.15e
+
+<output2>
+file_type = rst
+dt = 1.0

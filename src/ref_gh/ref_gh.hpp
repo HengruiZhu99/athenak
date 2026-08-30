@@ -29,9 +29,21 @@ class RefGh {
   static constexpr int kSourceDiagnostics = 9;
   static constexpr int kMetricConditionDiagnostic =
       kDiagnosticOffset + kSourceDiagnostics;
-  static constexpr int ncon = kMetricConditionDiagnostic + 1;
+  static constexpr int kRelativeDampedDMaxDiagnostic =
+      kMetricConditionDiagnostic + 1;
+  static constexpr int kRelativeDampedCorrectionMaxDiagnostic =
+      kRelativeDampedDMaxDiagnostic + 1;
+  static constexpr int kRelativeDampedSourceMaxDiagnostic =
+      kRelativeDampedCorrectionMaxDiagnostic + 1;
+  static constexpr int ncon = kRelativeDampedSourceMaxDiagnostic + 1;
   static char const * const StateNames[nref_gh];
   static char const * const ConstraintNames[ncon];
+
+  enum GaugeMode {
+    kWaveMapGauge = 0,
+    kRelativeDampedGauge = 1,
+    kMovingPunctureDriverGauge = 2
+  };
 
   struct Options {
     int fd_order;
@@ -53,12 +65,17 @@ class RefGh {
     int phi_ordering;
     Real gamma0;
     Real gamma2;
+    int gauge_mode;
     bool gauge_driver_enabled;
     bool gauge_reference_subtraction;
     Real gauge_mu;
     Real gauge_eta;
     Real shift_nu;
     Real shift_eta;
+    Real relative_damped_mu_l;
+    Real relative_damped_mu_s;
+    Real relative_damped_r0;
+    Real relative_damped_r1;
     bool exclude_puncture_stencil_diagnostics;
     Real diss;
     Real fail_closed_dt;

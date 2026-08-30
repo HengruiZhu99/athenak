@@ -275,7 +275,8 @@ char const * const RefGh::ConstraintNames[RefGh::ncon] = {
   "ref_gh_coordinate_Ricci", "ref_gh_source_curvature",
   "ref_gh_source_QQ", "ref_gh_source_DeltaDelta",
   "ref_gh_source_damping", "ref_gh_source_frame_correction",
-  "ref_gh_metric_condition"
+  "ref_gh_metric_condition", "ref_gh_relative_D_max",
+  "ref_gh_relative_correction_max", "ref_gh_relative_source_max"
 };
 
 RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
@@ -434,10 +435,34 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   opt.gamma0 = pin->GetOrAddReal("ref_gh", "gamma0", 1.0);
   opt.gamma2 = pin->GetOrAddReal("ref_gh", "gamma2", 0.0);
+  const bool explicit_gauge_mode =
+      pin->DoesParameterExist("ref_gh", "gauge_mode");
+  int requested_gauge_mode = -1;
+  if (explicit_gauge_mode) {
+    const std::string gauge_mode = pin->GetString("ref_gh", "gauge_mode");
+    if (gauge_mode == "wave_map") {
+      requested_gauge_mode = RefGh::kWaveMapGauge;
+    } else if (gauge_mode == "relative_damped") {
+      requested_gauge_mode = RefGh::kRelativeDampedGauge;
+    } else if (gauge_mode == "moving_puncture_driver") {
+      requested_gauge_mode = RefGh::kMovingPunctureDriverGauge;
+    } else {
+      std::cout << "### FATAL ERROR: ref_gh gauge_mode must be wave_map, "
+                   "relative_damped, or moving_puncture_driver."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
   opt.gauge_driver_enabled =
-      pin->GetOrAddBoolean("ref_gh", "gauge_driver_enabled", false);
+      pin->GetOrAddBoolean(
+          "ref_gh", "gauge_driver_enabled",
+          requested_gauge_mode == RefGh::kMovingPunctureDriverGauge);
   opt.gauge_reference_subtraction = pin->GetOrAddBoolean(
-      "ref_gh", "gauge_reference_subtraction", false);
+      "ref_gh", "gauge_reference_subtraction",
+      requested_gauge_mode == RefGh::kMovingPunctureDriverGauge);
+  opt.gauge_mode = explicit_gauge_mode ? requested_gauge_mode
+      : (opt.gauge_driver_enabled ? RefGh::kMovingPunctureDriverGauge
+                                  : RefGh::kWaveMapGauge);
   opt.gauge_mu = pin->GetOrAddReal("ref_gh", "gauge_mu", 1.0);
   opt.gauge_eta = pin->GetOrAddReal("ref_gh", "gauge_eta", 1.0);
   opt.shift_nu = pin->GetOrAddReal("ref_gh", "shift_nu", 0.75);
@@ -447,6 +472,14 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.diss = pin->GetOrAddReal("ref_gh", "diss", 0.02);
   opt.fail_closed_dt = pin->GetOrAddReal("ref_gh", "fail_closed_dt", 0.0);
   opt.reference_mass = pin->GetOrAddReal("ref_gh", "reference_mass", 1.0);
+  opt.relative_damped_mu_l = pin->GetOrAddReal(
+      "ref_gh", "relative_damped_mu_l", 1.0/opt.reference_mass);
+  opt.relative_damped_mu_s = pin->GetOrAddReal(
+      "ref_gh", "relative_damped_mu_s", 1.0/opt.reference_mass);
+  opt.relative_damped_r0 = pin->GetOrAddReal(
+      "ref_gh", "relative_damped_r0", 0.25*opt.reference_mass);
+  opt.relative_damped_r1 = pin->GetOrAddReal(
+      "ref_gh", "relative_damped_r1", 0.50*opt.reference_mass);
   opt.reference_center[0] = pin->GetOrAddReal("ref_gh", "reference_x", 0.0);
   opt.reference_center[1] = pin->GetOrAddReal("ref_gh", "reference_y", 0.0);
   opt.reference_center[2] = pin->GetOrAddReal("ref_gh", "reference_z", 0.0);
@@ -582,6 +615,14 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       || opt.gauge_eta <= 0.0 || !std::isfinite(opt.gauge_eta)
       || opt.shift_nu <= 0.0 || !std::isfinite(opt.shift_nu)
       || opt.shift_eta <= 0.0 || !std::isfinite(opt.shift_eta)
+      || opt.relative_damped_mu_l <= 0.0
+      || !std::isfinite(opt.relative_damped_mu_l)
+      || opt.relative_damped_mu_s <= 0.0
+      || !std::isfinite(opt.relative_damped_mu_s)
+      || opt.relative_damped_r0 < 0.0
+      || !std::isfinite(opt.relative_damped_r0)
+      || opt.relative_damped_r1 <= opt.relative_damped_r0
+      || !std::isfinite(opt.relative_damped_r1)
       || opt.diss < 0.0 || opt.fail_closed_dt < 0.0
       || opt.reference_mass <= 0.0
       || opt.generic_gaussian_width <= 0.0
@@ -628,7 +669,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       || opt.extrap_order < 2 || opt.extrap_order > 4) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "ref_gh requires gamma0>0, gamma2>=0, positive "
-              << "finite gauge-driver parameters, diss>=0, "
+              << "finite gauge and relative-damped parameters, diss>=0, "
               << "fail_closed_dt>=0, "
               << "valid positive reference/controller scales, and extrap_order "
                  "in [2,4]." << std::endl;
@@ -637,6 +678,20 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   if (opt.gauge_reference_subtraction && !opt.gauge_driver_enabled) {
     std::cout << "### FATAL ERROR: ref_gh gauge_reference_subtraction requires "
                  "gauge_driver_enabled=true." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.gauge_mode != RefGh::kMovingPunctureDriverGauge
+      && (opt.gauge_driver_enabled || opt.gauge_reference_subtraction)) {
+    std::cout << "### FATAL ERROR: wave_map and relative_damped gauge modes "
+                 "must not enable the hyperbolic moving-puncture gauge driver."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.gauge_mode == RefGh::kMovingPunctureDriverGauge
+      && !opt.gauge_driver_enabled) {
+    std::cout << "### FATAL ERROR: moving_puncture_driver gauge mode requires "
+                 "gauge_driver_enabled=true."
+              << std::endl;
     std::exit(EXIT_FAILURE);
   }
   if (opt.q_controller_enabled && !opt.reference_q_controlled) {
