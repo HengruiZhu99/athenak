@@ -51,6 +51,18 @@ and field output.  It retains every scientific parameter and the same 12-tile
 96^3 workload.  Its sole purpose is to identify the last completed task fence;
 it cannot support an evolution or stability claim.
 
+Aurora job `8791465` executed that localization on node `x4117c6s7b0n0`.
+Across 12 ranks it recorded 60 completed instances of each CalcRHS subkernel
+and each projected metric/gauge boundary kernel, 48 RK updates, and 12 final
+timestep reductions before the same Level Zero write fault appeared.  The
+interleaved stdout cannot attribute the original corruption to the last line
+printed, and the absence of an error at a Kokkos fence does not exclude an
+earlier in-bounds corruption of an adjacent allocation or a GPU-aware MPI/view
+lifetime defect.  PBS exit 143 reflects peer termination after device abort;
+no positive-time history was produced.  This narrows but does not resolve the
+portability blocker.  Bounds/ASan instrumentation is required before any
+production correction or renewed 3M attempt.
+
 ## Claim boundary
 
 This investigation begins from the completed

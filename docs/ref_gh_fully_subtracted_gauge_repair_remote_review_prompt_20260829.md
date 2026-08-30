@@ -193,3 +193,12 @@ PVC tiles, then hit a Level Zero `NotPresent` write page fault before positive
 time.  Treat it as a task/view portability failure, not a gauge-mode or
 stability result.  Audit the first-stage task/view lifetimes and advise the
 smallest equation-preserving localization or correction.
+
+Then inspect the bounded fence run under
+`phase8_aurora_8791465_fenced_cycle_fault/`.  All recorded CalcRHS, RK,
+physical-boundary, and final-timestep fences complete before the write fault;
+multi-rank stdout ordering is not a per-rank causal trace.  Look specifically
+for an in-bounds overwrite of an adjacent allocation, an out-of-range View
+index missed with bounds checking off, GPU-aware MPI buffer lifetime errors,
+or shutdown/output work that lacks a fence.  Do not infer the culprit merely
+from the last printed boundary label.
