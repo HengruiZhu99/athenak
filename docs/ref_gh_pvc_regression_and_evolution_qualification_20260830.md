@@ -50,6 +50,28 @@ Compact evidence is under
 The full Aurora campaign remains at
 `/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_pvc_regression_20260830_wr_v2`.
 
+## Phase 2: source bisect
+
+The first midpoint was commit
+`b290c2bda559d4db62213266b093458c020920b5`, which introduces the exact
+matched q=1 initialization and boundary representation. Aurora job `8791730`
+passed one positive-time cycle on twelve PVC tiles at history time
+`0.003404497M`; its executable SHA-256 was
+`7ee9449234a630edfca604045b519d2b8ec22ea502bef758407400871e3aaa51`.
+Therefore `b290c2bd` is good and the boundary/exact-state commit is not the
+first-bad source.
+
+Commits `78383244`, `28eee9d8`, and `4ec57dd2` change only the disabled
+source-unit target or its source-unit-only device-code-split property under
+the controlling `Athena_ENABLE_REF_GH_SOURCE_UNIT=OFF` build. They cannot
+change the production executable in this gate. The remaining
+production-relevant candidates after `b290c2bd` are the fully-subtracted RHS
+dispatch at `ab30fa96` and the stationary production diagnostic
+instrumentation at `3c9a34c8`.
+
+The compact midpoint evidence is under
+`artifacts/ref_gh_pvc_regression_repair_20260830/phase2_aurora_8791730_mid_b290c2bd_pass`.
+
 ## Remaining required evidence
 
 The first-bad source bisect, hybrid matrix, one-rank comparison, explicit MPI
