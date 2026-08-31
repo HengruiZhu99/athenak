@@ -1,0 +1,10 @@
+job_compact_manifest=compact_sha256.txt
+verification_result=two_expected_post_manifest_mutation_failures
+failed_entry_1=bootstrap.log
+failed_entry_1_reason=the job appended its completion timestamp after generating compact_sha256.txt
+failed_entry_2=compact_sha256.txt
+failed_entry_2_reason=the job incorrectly included the manifest in its own checksum list, which cannot remain self-consistent
+all_other_entries=verified_ok
+repository_manifest=../SHA256SUMS
+repository_manifest_policy=generated after artifact collection and excludes SHA256SUMS itself
+scientific_data_impact=none

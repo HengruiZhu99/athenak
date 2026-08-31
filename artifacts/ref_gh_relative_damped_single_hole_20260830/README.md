@@ -274,3 +274,23 @@ the large-growth phase, and uses \`1e-12\` as the parser-admissible stand-in
 for a disabled term.  It stops at \`t=4.2M\` and remains diagnostic-only.
 Compact evidence from the invalid first control is under
 \`wormhole_sector_discriminator_8792807_control_design_failure/\`.
+
+Corrected Aurora job \`8792829\` exited normally after all three cases reached
+\`t=4.2M\` from the identical t=2M restart.  The lapse-only, shift-only, and
+pure-wave-map GH RMS values were \`5.50968e-3\`, \`3.95049e-3\`, and
+\`5.12578e-3\`; their fitted GH log slopes were \`1.15819/M\`, \`1.56124/M\`,
+and \`1.12807/M\`.  Every case stayed finite, but every case retained strong
+constraint growth localized around \`r=0.47--0.54M\` on the same prescribed
+fixed-core/tau-8 reference trajectory.  Thus neither the added relative-lapse
+nor relative-shift sector is individually necessary for the growth.  This
+implicates the prescribed moving-reference/intermediate state more broadly,
+without proving causation.
+
+This was prescribed continuation activation: \`xi(t)\` evolved on its fixed
+schedule while the exponent corrections \`delta_q=delta_p=0\` remained frozen.
+It was not a dynamically q-controlled run.  Compact histories, complete
+maximum-location tables, scheduler status, GPU mapping, provenance, and the
+deterministic analysis are under \`wormhole_sector_discriminator_8792829/\`.
+The job-generated compact manifest has two documented construction-order
+defects (its subsequently appended bootstrap log and a self-hash); every other
+entry verifies and the repository-level manifest is authoritative.
