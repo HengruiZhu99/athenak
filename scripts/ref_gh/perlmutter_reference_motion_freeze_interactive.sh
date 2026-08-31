@@ -93,8 +93,8 @@ grep -q '^Athena_ENABLE_MPI:BOOL=ON$' "${BUILD}/CMakeCache.txt"
 grep -q '^Kokkos_ENABLE_CUDA:BOOL=ON$' "${BUILD}/CMakeCache.txt"
 grep -q '^Kokkos_ARCH_AMPERE80:BOOL=ON$' "${BUILD}/CMakeCache.txt"
 
-srun -N 4 -n 16 -c 32 --gpus-per-task=1 --gpu-bind=single:1 \
-  bash -lc 'echo "host=$(hostname) rank=${SLURM_PROCID} local_rank=${SLURM_LOCALID} CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-unset}"; nvidia-smi --id="${CUDA_VISIBLE_DEVICES}" --query-gpu=index,uuid,name,memory.total --format=csv,noheader' \
+srun -N 4 -n 16 -c 32 --gpus-per-task=1 --gpu-bind=none \
+  bash -lc 'echo "host=$(hostname) rank=${SLURM_PROCID} local_rank=${SLURM_LOCALID} CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-unset}"; nvidia-smi --id="${SLURM_LOCALID}" --query-gpu=index,uuid,name,memory.total --format=csv,noheader' \
   > rank_gpu_mapping.txt 2>&1
 test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 16
 test "$(grep 'GPU-' rank_gpu_mapping.txt | sed -n 's/.*\(GPU-[0-9a-f-]*\).*/\1/p' | sort -u | wc -l)" -eq 16
@@ -106,8 +106,8 @@ awk '/^host=/ {split($1, field, "="); count[field[2]]++}
 mkdir source_oracle
 (
   cd source_oracle
-  srun -N 1 -n 1 -c 32 --gpus-per-task=1 --gpu-bind=single:1 \
-    "${EXE}" -i "${SOURCE_INPUT}" \
+  srun -N 1 -n 1 -c 32 --gpus-per-task=1 --gpu-bind=none \
+    "${EXE}" --kokkos-map-device-id-by=mpi_rank -i "${SOURCE_INPUT}" \
     > source_unit.log 2>&1
   grep -q 'controlled hard-freeze time-derivative oracle passed exactly' \
     source_unit.log
@@ -121,8 +121,8 @@ mkdir seed_to_t2
 (
   cd seed_to_t2
   /usr/bin/time -p srun -N 4 -n 16 -c 32 \
-    --gpus-per-task=1 --gpu-bind=single:1 \
-    "${EXE}" -i "${INPUT}" \
+    --gpus-per-task=1 --gpu-bind=none \
+    "${EXE}" --kokkos-map-device-id-by=mpi_rank -i "${INPUT}" \
     job/basename=refgh_reference_motion_seed \
     ref_gh/continuation_mode=legacy_time \
     time/nlim=-1 time/tlim=2.0 output1/dt=0.02 output2/dt=2.0 \
@@ -159,8 +159,8 @@ run_case() {
   set +e
   if [[ ${mode} == hard_freeze ]]; then
     /usr/bin/time -p srun -N 4 -n 16 -c 32 \
-      --gpus-per-task=1 --gpu-bind=single:1 \
-      "${EXE}" \
+      --gpus-per-task=1 --gpu-bind=none \
+      "${EXE}" --kokkos-map-device-id-by=mpi_rank \
       -r "${RESTART_FILE}" -i "${INPUT}" \
       job/basename="${basename}" \
       ref_gh/continuation_mode=hard_freeze \
@@ -174,8 +174,8 @@ run_case() {
     status=$?
   else
     /usr/bin/time -p srun -N 4 -n 16 -c 32 \
-      --gpus-per-task=1 --gpu-bind=single:1 \
-      "${EXE}" \
+      --gpus-per-task=1 --gpu-bind=none \
+      "${EXE}" --kokkos-map-device-id-by=mpi_rank \
       -r "${RESTART_FILE}" -i "${INPUT}" \
       job/basename="${basename}" \
       ref_gh/continuation_mode=legacy_time \

@@ -54,6 +54,10 @@
 #include <hip/hip_runtime.h>
 #endif
 
+#if defined(KOKKOS_ENABLE_CUDA)
+#include <cuda_runtime.h>
+#endif
+
 //----------------------------------------------------------------------------------------
 //! \fn int main(int argc, char *argv[])
 //! \brief Athena main program
@@ -73,6 +77,36 @@ int main(int argc, char *argv[]) {
   // Initialize environment (must initialize MPI first, then Kokkos)
 
 #if MPI_PARALLEL_ENABLED
+#if defined(KOKKOS_ENABLE_CUDA)
+  // Cray MPICH initializes its GPU transport during MPI_Init, before Kokkos
+  // selects a device.  On multi-GPU nodes, choose the same local-rank device
+  // that Kokkos will use while leaving peer GPUs visible for CUDA IPC.
+  // Otherwise every rank initializes the transport on device zero and later
+  // switches devices, forcing the transport to disable its IPC path.
+  const char *local_rank_text = std::getenv("SLURM_LOCALID");
+  if (local_rank_text == nullptr) {
+    local_rank_text = std::getenv("MPI_LOCALRANKID");
+  }
+  if (local_rank_text == nullptr) local_rank_text = std::getenv("PMI_LOCAL_RANK");
+  if (local_rank_text != nullptr) {
+    char *end = nullptr;
+    const long local_rank = std::strtol(local_rank_text, &end, 10);
+    int device_count = 0;
+    const cudaError_t count_status = cudaGetDeviceCount(&device_count);
+    if (end == local_rank_text || *end != '\0' || local_rank < 0
+        || count_status != cudaSuccess || device_count <= 0) {
+      std::cerr << "### FATAL ERROR: invalid CUDA local-rank mapping before "
+                   "MPI initialization." << std::endl;
+      return(EXIT_FAILURE);
+    }
+    const int device = static_cast<int>(local_rank % device_count);
+    if (cudaSetDevice(device) != cudaSuccess) {
+      std::cerr << "### FATAL ERROR: cudaSetDevice failed before MPI "
+                   "initialization." << std::endl;
+      return(EXIT_FAILURE);
+    }
+  }
+#endif
 #if defined(KOKKOS_ENABLE_HIP)
   // JMF: This is a bizarre workaround to avoid segmentation faults on Frontier.
   // See OLCFDEV-1655: Occasional seg-fault during MPI_Init inside the Frontier
