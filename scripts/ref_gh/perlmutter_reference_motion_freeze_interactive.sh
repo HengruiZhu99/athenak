@@ -8,8 +8,6 @@ set -euo pipefail
 
 : "${CAMPAIGN_ROOT:?set a fresh directory under PSCRATCH}"
 : "${EXPECTED_COMMIT:?set the exact pushed source commit}"
-: "${RESTART_FILE:?set the common pre-growth t=2M restart}"
-: "${EXPECTED_RESTART_SHA256:?set the restart SHA-256}"
 
 readonly SRC="${CAMPAIGN_ROOT}/src_clean"
 readonly BUILD="${CAMPAIGN_ROOT}/build_${SLURM_JOB_ID}"
@@ -42,9 +40,6 @@ export OMP_NUM_THREADS=1
 test "$(git -C "${SRC}" rev-parse HEAD)" = "${EXPECTED_COMMIT}"
 test -z "$(git -C "${SRC}" status --porcelain)"
 test -f "${SRC}/kokkos/CMakeLists.txt"
-test -r "${RESTART_FILE}"
-test "$(sha256sum "${RESTART_FILE}" | awk '{print $1}')" = \
-  "${EXPECTED_RESTART_SHA256}"
 
 {
   date -Is
@@ -56,9 +51,8 @@ test "$(sha256sum "${RESTART_FILE}" | awk '{print $1}')" = \
   echo "account=${SLURM_JOB_ACCOUNT:-unknown}"
   echo "campaign_root=${CAMPAIGN_ROOT}"
   echo "source_commit=${EXPECTED_COMMIT}"
-  echo "restart_file=${RESTART_FILE}"
-  echo "restart_sha256=${EXPECTED_RESTART_SHA256}"
-  echo "restart_physical_time=2.0M"
+  echo "common_restart=fresh moving-reference trajectory generated in this allocation"
+  echo "fork_physical_time=2.0M"
   echo "freeze_xi=0.25"
   echo "continued_xi_dot=0.125/M"
   echo "hard_freeze_xi_dot=0"
@@ -121,6 +115,38 @@ mkdir source_oracle
     source_unit.log
 )
 
+# Generate the common pre-growth state on this machine.  Both branches below
+# read this exact file; no cross-machine restart transfer is involved.
+mkdir seed_to_t2
+(
+  cd seed_to_t2
+  /usr/bin/time -p srun -N 4 -n 16 -c 32 \
+    --gpus-per-task=1 --gpu-bind=none \
+    "${EXE}" --kokkos-map-device-id-by=mpi_rank -i "${INPUT}" \
+    job/basename=refgh_reference_motion_seed \
+    ref_gh/continuation_mode=legacy_time \
+    time/nlim=-1 time/tlim=2.0 output1/dt=0.02 output2/dt=2.0 \
+    > run.log 2>&1
+  latest_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' \
+    refgh_reference_motion_seed.ref_gh.hst)
+  python3 - "${latest_time}" <<'PY'
+import math
+import sys
+time = float(sys.argv[1])
+if not math.isfinite(time) or abs(time-2.0) > 1.0e-12:
+    raise SystemExit(f"common seed did not reach t=2M: {time}")
+PY
+)
+readonly RESTART_FILE=$(find "${OUT}/seed_to_t2/rst" -maxdepth 1 \
+  -type f -name '*.rst' -printf '%T@ %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+test -r "${RESTART_FILE}"
+readonly RESTART_SHA256=$(sha256sum "${RESTART_FILE}" | awk '{print $1}')
+{
+  echo "restart_file=${RESTART_FILE}"
+  echo "restart_sha256=${RESTART_SHA256}"
+  stat --printf='restart_size_bytes=%s\n' "${RESTART_FILE}"
+} >> provenance.txt
+
 run_case() {
   local label=$1
   local mode=$2
@@ -175,8 +201,8 @@ run_case continued legacy_time
 run_case hard_freeze hard_freeze
 
 python3 "${ANALYZER}" \
-  --case "continued=${OUT}/continued" \
-  --case "hard_freeze=${OUT}/hard_freeze" \
+  --case "continued=${OUT}/seed_to_t2,${OUT}/continued" \
+  --case "hard_freeze=${OUT}/seed_to_t2,${OUT}/hard_freeze" \
   --freeze-time 2.0 --post-start 2.15 --post-end 4.2 \
   --output-prefix "${OUT}/reference_motion_freeze" > analysis.log 2>&1
 python3 -m json.tool reference_motion_freeze.json >/dev/null
@@ -205,7 +231,7 @@ print("claim_boundary=bounded matched reference-motion discriminator only")
 print("stable_or_convergent_trumpet_claim=false")
 PY
 
-find continued hard_freeze source_oracle -type f \
+find seed_to_t2 continued hard_freeze source_oracle -type f \
   \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' -o -name '*.log' \) \
   -print0 | sort -z | xargs -0 sha256sum > compact_sha256.txt
 sha256sum provenance.txt rank_gpu_mapping.txt configure.log build.log \
