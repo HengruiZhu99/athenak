@@ -100,15 +100,16 @@ test "$(grep '^host=' rank_gpu_mapping.txt | sed -n 's/^host=\([^ ]*\).*/\1/p' |
 mkdir run
 cd run
 readonly BASENAME=refgh_relative_damped_wormhole_fixed_core_outer24_n96_t4
-set +e
-/usr/bin/time -p mpiexec -n 96 --ppn 12 --depth=8 --cpu-bind depth \
-  "${BINDER}" "${QUALIFIED_EXE}" -i "${STAGED_INPUT}" \
-  job/basename="${BASENAME}" ref_gh/debug_task_fences=false \
-  time/nlim=-1 time/tlim=4.0 output1/dt=0.05 output2/dt=1.0 \
-  output3/dt=4.0 output4/dt=4.0 output5/dt=4.0 output6/dt=4.0 \
-  output7/dt=4.0 > run.log 2>&1
-run_status=$?
-set -e
+if /usr/bin/time -p mpiexec -n 96 --ppn 12 --depth=8 --cpu-bind depth \
+    "${BINDER}" "${QUALIFIED_EXE}" -i "${STAGED_INPUT}" \
+    job/basename="${BASENAME}" ref_gh/debug_task_fences=false \
+    time/nlim=-1 time/tlim=4.0 output1/dt=0.05 output2/dt=1.0 \
+    output3/dt=4.0 output4/dt=4.0 output5/dt=4.0 output6/dt=4.0 \
+    output7/dt=4.0 > run.log 2>&1; then
+  run_status=0
+else
+  run_status=$?
+fi
 {
   echo "run_exit_status=${run_status}"
   echo "run_completed=$(date -Is)"

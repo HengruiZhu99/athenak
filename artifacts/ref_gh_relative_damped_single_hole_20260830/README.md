@@ -236,3 +236,27 @@ is only 50% complete at this time, one bounded checkpoint continuation to
 histories and physical profiles are under
 \`wormhole_fixed_core_outer24_t4_8792715/\`; five restart and ten CBin files
 remain on Aurora and are represented by hashes.
+
+The checkpoint continuation, Aurora job \`8792764\`, resumed the exact t=4M
+restart on 144 ranks and 144 distinct PVC tiles.  It failed closed at RK stage
+\`t=4.96672M\` when relative conditioning became invalid.  The last analyzed
+target row at \`t=4.90072M\` had GH, reduction, and curl RMS
+\`4.58154e-2\`, \`6.76332e-3\`, and \`9.75056e-2\`; relative-source Linf was
+\`35.9214\`, the relative condition number was \`10.362\`, and relative
+\`v^2\` had crossed one at \`1.08635\`.  The GH log slope accelerated to
+\`3.34804/M\` over the continuation.
+
+The largest GH, Pi RHS, and source terms remain localized at
+\`r~0.54M\`, immediately outside the gauge window edge, while
+Hhat/theta/Upsilon RHS remain zero.  The wormhole-to-trumpet test therefore
+fails before the tau-8 reference transition completes.  A shell \`ERR\` trap
+also skipped the in-job failure reducer; the same deterministic reducer was
+run post hoc, and the harness has been corrected without changing solver
+code.  Compact evidence is under
+\`wormhole_fixed_core_outer24_t8_8792764_failure/\`.
+
+One final bounded diagnostic restart decomposes the algebraic target into
+lapse-only, shift-only, and pure-wave-map controls.  These controls are solely
+to distinguish the failure sector and are not candidate gauges or damping
+tuning.  No second resolution or spinning-hole test is authorized unless the
+mandatory wormhole transition becomes favorable.

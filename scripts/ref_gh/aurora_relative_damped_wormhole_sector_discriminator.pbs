@@ -1,0 +1,152 @@
+#!/bin/bash -l
+# Diagnostic-only t=4M restart controls that separate the relative lapse and
+# shift terms.  They are not candidate production gauges and do not tune gains.
+#PBS -A CompactBinaryMerger
+#PBS -q debug-scaling
+#PBS -l select=12
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_worm_sec
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with the established campaign root}"
+: "${QUALIFIED_SOURCE:?submit with the exact PVC-qualified source path}"
+: "${QUALIFIED_EXE:?submit with the exact PVC-qualified executable path}"
+: "${EXPECTED_SOURCE_COMMIT:?submit with the qualified source SHA}"
+: "${EXPECTED_EXE_SHA256:?submit with the qualified executable SHA-256}"
+: "${CHECKPOINT_COMMIT:?submit with the diagnostic checkpoint SHA}"
+: "${STAGED_INPUT:?submit with the staged fixed-core outer24 input}"
+: "${ANALYZER:?submit with the staged wormhole analysis script}"
+: "${PREVIOUS_OUT:?submit with the completed t=4M output directory}"
+: "${RESTART_FILE:?submit with the exact t=4M restart path}"
+: "${EXPECTED_RESTART_SHA256:?submit with the t=4M restart SHA-256}"
+
+readonly OUT="${CAMPAIGN_ROOT}/wormhole_sector_discriminator_${PBS_JOBID}"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "wormhole_sector_error status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+readonly BINDER=$(command -v gpu_tile_compact.sh)
+
+test -x "${BINDER}"
+test -x "${QUALIFIED_EXE}"
+test -f "${STAGED_INPUT}"
+test -f "${ANALYZER}"
+test -d "${PREVIOUS_OUT}/run"
+test -f "${RESTART_FILE}"
+test "$(git -C "${QUALIFIED_SOURCE}" rev-parse HEAD)" = "${EXPECTED_SOURCE_COMMIT}"
+test -z "$(git -C "${QUALIFIED_SOURCE}" status --porcelain)"
+test "$(sha256sum "${QUALIFIED_EXE}" | awk '{print $1}')" = "${EXPECTED_EXE_SHA256}"
+test "$(sha256sum "${RESTART_FILE}" | awk '{print $1}')" = "${EXPECTED_RESTART_SHA256}"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "qualified_source=${QUALIFIED_SOURCE}"
+  echo "qualified_source_commit=${EXPECTED_SOURCE_COMMIT}"
+  echo "checkpoint_commit=${CHECKPOINT_COMMIT}"
+  echo "qualified_executable=${QUALIFIED_EXE}"
+  echo "qualified_executable_sha256=${EXPECTED_EXE_SHA256}"
+  echo "previous_output=${PREVIOUS_OUT}"
+  echo "restart_file=${RESTART_FILE}"
+  echo "restart_sha256=${EXPECTED_RESTART_SHA256}"
+  echo "nodes=12"
+  echo "ranks=144"
+  echo "tiles=144"
+  echo "start_time=4.0"
+  echo "target_time=5.0"
+  echo "cases=lapse_only,shift_only,wave_map"
+  echo "claim=diagnostic term isolation only; none is a production candidate"
+  git -C "${QUALIFIED_SOURCE}" status --short --branch
+  git -C "${QUALIFIED_SOURCE}" submodule status
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${STAGED_INPUT}" "${ANALYZER}" "$0"
+} > provenance.txt
+
+mpiexec -n 144 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 144
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/^host=\([^ ]*\).*ZE_AFFINITY_MASK=\([^ ]*\).*/\1:\2/p' \
+  | sort -u | wc -l)" -eq 144
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/^host=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 12
+awk '/^host=/ {split($1, part, "="); count[part[2]]++}
+     END {for (host in count) if (count[host] != 12) exit 1}' \
+  rank_gpu_mapping.txt
+
+run_case() {
+  local label=$1
+  local gauge_mode=$2
+  local mu_l=$3
+  local mu_s=$4
+  local directory="${OUT}/${label}"
+  local basename="refgh_wormhole_sector_${label}"
+  local status
+
+  mkdir "${directory}"
+  cd "${directory}"
+  if /usr/bin/time -p mpiexec -n 144 --ppn 12 --depth=8 --cpu-bind depth \
+      "${BINDER}" "${QUALIFIED_EXE}" -r "${RESTART_FILE}" -i "${STAGED_INPUT}" \
+      job/basename="${basename}" ref_gh/debug_task_fences=false \
+      ref_gh/gauge_mode="${gauge_mode}" \
+      ref_gh/relative_damped_mu_l="${mu_l}" \
+      ref_gh/relative_damped_mu_s="${mu_s}" \
+      time/nlim=-1 time/tlim=5.0 output1/dt=0.02 output2/dt=-1 \
+      output3/dt=-1 output4/dt=-1 output5/dt=-1 output6/dt=-1 \
+      output7/dt=-1 > run.log 2>&1; then
+    status=0
+  else
+    status=$?
+  fi
+  {
+    echo "case=${label}"
+    echo "gauge_mode=${gauge_mode}"
+    echo "relative_damped_mu_l=${mu_l}"
+    echo "relative_damped_mu_s=${mu_s}"
+    echo "run_exit_status=${status}"
+    echo "latest_history_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' "${basename}.ref_gh.hst" 2>/dev/null || echo 0)"
+  } > run_status.txt
+  cd "${OUT}"
+}
+
+# These controls alter one algebraic target term at t=4M only to localize the
+# already observed failure.  A pass is not a production-gauge qualification.
+run_case lapse_only relative_damped 1.0 0.0
+run_case shift_only relative_damped 0.0 1.0
+run_case wave_map wave_map 1.0 1.0
+
+python3 "${ANALYZER}" \
+  --case "lapse_only=${PREVIOUS_OUT}/run,${OUT}/lapse_only" \
+  --case "shift_only=${PREVIOUS_OUT}/run,${OUT}/shift_only" \
+  --case "wave_map=${PREVIOUS_OUT}/run,${OUT}/wave_map" \
+  --target 4 4.2 4.4 4.6 4.8 4.9 5 --target-tolerance 0.04 \
+  --outer-distance 24 --late-fit-time 4 \
+  --output-prefix "${OUT}/sector_discriminator" > analysis.log 2>&1
+python3 -m json.tool sector_discriminator.json >/dev/null
+
+find . -type f \( -name '*.hst' -o -name '*.tsv' -o -name '*.json' \
+  -o -name '*.txt' -o -name '*.log' \) -print0 \
+  | sort -z | xargs -0 sha256sum > compact_sha256.txt
+echo "wormhole_sector_discriminator_complete=$(date -Is)"
