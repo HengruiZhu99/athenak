@@ -4329,6 +4329,243 @@ void CheckResidualPhysicalGaugeTarget(const DvceArray2D<Real> &table) {
             << " matched_exact=1" << std::endl;
 }
 
+KOKKOS_INLINE_FUNCTION
+bool ReconstructProjectedCoordinateGeometry(
+    const ref_gh::ProjectedFirstOrderMetric &projected,
+    const ref_gh::ReferenceGeometry &current,
+    Real metric[4][4], Real d_metric[4][4][4]) {
+  for (int a = 0; a < 4; ++a) {
+    for (int b = 0; b < 4; ++b) {
+      metric[a][b] = 0.0;
+      for (int A = 0; A < 4; ++A) {
+        for (int B = 0; B < 4; ++B) {
+          metric[a][b] += current.coframe[A][a]*current.coframe[B][b]
+                          *projected.psi[A][B];
+        }
+      }
+    }
+  }
+  Real inverse[4][4];  // NOLINT(runtime/arrays)
+  Real determinant = 0.0;
+  if (!ref_gh::Invert4(metric, inverse, determinant)
+      || !(inverse[0][0] < 0.0)) return false;
+  const Real lapse = 1.0/Kokkos::sqrt(-inverse[0][0]);
+  Real shift[3];  // NOLINT(runtime/arrays)
+  for (int i = 0; i < 3; ++i) {
+    shift[i] = lapse*lapse*inverse[0][i + 1];
+  }
+  Real d_psi[4][4][4] = {};  // NOLINT(runtime/arrays)
+  for (int A = 0; A < 4; ++A) {
+    for (int B = 0; B < 4; ++B) {
+      for (int i = 0; i < 3; ++i) {
+        for (int I = 0; I < 3; ++I) {
+          d_psi[i + 1][A][B] += current.spatial_coframe[I][i]
+                                      *projected.phi[I][A][B];
+        }
+      }
+      d_psi[0][A][B] = -lapse*projected.pi[A][B];
+      for (int i = 0; i < 3; ++i) {
+        d_psi[0][A][B] += shift[i]*d_psi[i + 1][A][B];
+      }
+    }
+  }
+  for (int p = 0; p < 4; ++p) {
+    Real frame_corrected[4][4];  // NOLINT(runtime/arrays)
+    for (int A = 0; A < 4; ++A) {
+      for (int B = 0; B < 4; ++B) {
+        frame_corrected[A][B] = d_psi[p][A][B];
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            frame_corrected[A][B] -=
+                (current.d_frame[p][A][a]*current.frame[B][b]
+                 + current.frame[A][a]*current.d_frame[p][B][b])
+                    *metric[a][b];
+          }
+        }
+      }
+    }
+    for (int a = 0; a < 4; ++a) {
+      for (int b = 0; b < 4; ++b) {
+        d_metric[p][a][b] = 0.0;
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            d_metric[p][a][b] += current.coframe[A][a]
+                                  *current.coframe[B][b]
+                                  *frame_corrected[A][B];
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+
+void FillTrumpetTable(DvceArray2D<Real> &table);
+
+void CheckControlledDirectFixedProjection() {
+  constexpr int nradii = 8;
+  constexpr int ndirections = 8;
+  constexpr int nsamples = nradii*ndirections;
+  DvceArray2D<Real> table("ref_gh direct-fixed trumpet table", 1, 1);
+  FillTrumpetTable(table);
+  Real maximum_metric_error = 0.0;
+  Real maximum_derivative_error = 0.0;
+  Real maximum_adm_error = 0.0;
+  Real maximum_reference_time_jet = 0.0;
+  Real maximum_nontrivial_first_order = 0.0;
+  Real failure_sample = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh controlled direct-fixed projection",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_metric,
+                    Real &local_derivative, Real &local_adm,
+                    Real &local_time_jet, Real &local_maximum_pi,
+                    Real &local_failure_sample) {
+        const Real radii[nradii] = {
+            0.08, 0.20, 0.30, 0.45, 0.54, 0.60, 0.90, 1.50};
+        const Real directions[ndirections][3] = {  // NOLINT(runtime/arrays)
+            {1.0, 2.0, 3.0}, {-2.0, 1.0, 3.0}, {3.0, -2.0, 1.0},
+            {-1.0, -3.0, 2.0}, {2.0, 3.0, -1.0}, {-3.0, 2.0, -1.0},
+            {1.0, -2.0, -3.0}, {-2.0, -3.0, -1.0}};
+        const Real radius = radii[sample/ndirections];
+        const int direction = sample % ndirections;
+        const Real norm = Kokkos::sqrt(
+            directions[direction][0]*directions[direction][0]
+            + directions[direction][1]*directions[direction][1]
+            + directions[direction][2]*directions[direction][2]);
+        const Real x = radius*directions[direction][0]/norm;
+        const Real y = radius*directions[direction][1]/norm;
+        const Real z = radius*directions[direction][2]/norm;
+
+        ref_gh::ReferenceGeometry physical;
+        const ref_gh::WormholeSchwarzschildReference wormhole{
+            1.0, {0.0, 0.0, 0.0}};
+        wormhole.Populate(0.0, x, y, z, physical);
+        const ref_gh::ControlledReferenceParameters parameters{
+            1.0, {0.0, 0.0, 0.0}, 0.30, 1.5, 1.0,
+            ref_gh::kFixedCorePath, 0.20, 8.0,
+            ref_gh::kContinuationActivation, 0.25, 0.0, 0.0, 0.50, 0.60,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        ref_gh::ReferenceGeometry current;
+        const ref_gh::ControlledSchwarzschildReference fixed{table, parameters};
+        fixed.Populate(0.0, x, y, z, current);
+        const ref_gh::ProjectedFirstOrderMetric projected =
+            ref_gh::ProjectPhysicalMetricToReference(
+                physical.metric, physical.d_metric, current);
+        Real reconstructed[4][4];  // NOLINT(runtime/arrays)
+        Real d_reconstructed[4][4][4];  // NOLINT(runtime/arrays)
+        if (!projected.valid) {
+          local_failure_sample = fmax(
+              local_failure_sample, static_cast<Real>(1000 + sample + 1));
+          return;
+        }
+        if (!ReconstructProjectedCoordinateGeometry(
+                projected, current, reconstructed, d_reconstructed)) {
+          local_failure_sample = fmax(
+              local_failure_sample, static_cast<Real>(2000 + sample + 1));
+          return;
+        }
+        Real physical_inverse[4][4];  // NOLINT(runtime/arrays)
+        Real reconstructed_inverse[4][4];  // NOLINT(runtime/arrays)
+        Real physical_determinant = 0.0;
+        Real reconstructed_determinant = 0.0;
+        if (!ref_gh::Invert4(
+                physical.metric, physical_inverse, physical_determinant)
+            || !ref_gh::Invert4(reconstructed, reconstructed_inverse,
+                                reconstructed_determinant)) {
+          local_failure_sample = fmax(
+              local_failure_sample, static_cast<Real>(3000 + sample + 1));
+          return;
+        }
+        const Real physical_lapse =
+            1.0/Kokkos::sqrt(-physical_inverse[0][0]);
+        const Real reconstructed_lapse =
+            1.0/Kokkos::sqrt(-reconstructed_inverse[0][0]);
+        local_adm = fmax(local_adm,
+                         Kokkos::abs(reconstructed_lapse/physical_lapse - 1.0));
+        Real first_order_magnitude = 0.0;
+        for (int A = 0; A < 4; ++A) {
+          for (int B = 0; B < 4; ++B) {
+            first_order_magnitude = fmax(
+                first_order_magnitude, Kokkos::abs(projected.pi[A][B]));
+            for (int I = 0; I < 3; ++I) {
+              first_order_magnitude = fmax(
+                  first_order_magnitude,
+                  Kokkos::abs(projected.phi[I][A][B]));
+            }
+            local_time_jet = fmax(
+                local_time_jet, Kokkos::abs(current.d_frame[0][A][B]));
+            for (int p = 0; p < 4; ++p) {
+              local_time_jet = fmax(
+                  local_time_jet, Kokkos::abs(current.dd_frame[0][p][A][B]));
+            }
+          }
+        }
+        local_maximum_pi = fmax(local_maximum_pi, first_order_magnitude);
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            const Real metric_scale = fmax(1.0, Kokkos::abs(physical.metric[a][b]));
+            local_metric = fmax(
+                local_metric,
+                Kokkos::abs(reconstructed[a][b] - physical.metric[a][b])
+                    /metric_scale);
+            if (a > 0 && b > 0) {
+              local_adm = fmax(local_adm,
+                  Kokkos::abs(reconstructed[a][b] - physical.metric[a][b])
+                      /metric_scale);
+            }
+            for (int p = 0; p < 4; ++p) {
+              const Real derivative_scale = fmax(
+                  1.0, Kokkos::abs(physical.d_metric[p][a][b]));
+              local_derivative = fmax(
+                  local_derivative,
+                  Kokkos::abs(d_reconstructed[p][a][b]
+                              - physical.d_metric[p][a][b])
+                      /derivative_scale);
+            }
+          }
+        }
+        for (int i = 0; i < 3; ++i) {
+          const Real physical_shift = physical_lapse*physical_lapse
+                                      *physical_inverse[0][i + 1];
+          const Real reconstructed_shift =
+              reconstructed_lapse*reconstructed_lapse
+              *reconstructed_inverse[0][i + 1];
+          local_adm = fmax(
+              local_adm, Kokkos::abs(reconstructed_shift - physical_shift));
+        }
+      }, Kokkos::Max<Real>(maximum_metric_error),
+      Kokkos::Max<Real>(maximum_derivative_error),
+      Kokkos::Max<Real>(maximum_adm_error),
+      Kokkos::Max<Real>(maximum_reference_time_jet),
+      Kokkos::Max<Real>(maximum_nontrivial_first_order),
+      Kokkos::Max<Real>(failure_sample));
+  if (!(maximum_metric_error <= 3.0e-13)
+      || !(maximum_derivative_error <= 3.0e-12)
+      || !(maximum_adm_error <= 3.0e-13)
+      || maximum_reference_time_jet != 0.0
+      || !(maximum_nontrivial_first_order > 1.0e-8)
+      || failure_sample > 0.0) {
+    std::cout << "### FATAL ERROR: controlled direct-fixed projection failed: "
+              << "metric=" << maximum_metric_error
+              << " derivative=" << maximum_derivative_error
+              << " ADM=" << maximum_adm_error
+              << " reference-time-jet=" << maximum_reference_time_jet
+              << " max-nontrivial-first-order="
+              << maximum_nontrivial_first_order
+              << " failure-sample=" << failure_sample << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH controlled direct-fixed projection passed: "
+            << "samples=" << nsamples
+            << " metric=" << maximum_metric_error
+            << " derivative=" << maximum_derivative_error
+            << " ADM=" << maximum_adm_error
+            << " reference-time-jet=" << maximum_reference_time_jet
+            << " max-nontrivial-first-order="
+            << maximum_nontrivial_first_order << std::endl;
+}
+
 void CheckTrumpetQReprojection(const DvceArray2D<Real> &table) {
   constexpr int nsamples = 96;
   Real maximum_metric_error = 0.0;
@@ -6364,6 +6601,7 @@ void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) 
   CheckNonflatCovariantSource();
   CheckDynamicSpatialReference();
   CheckControlledHardFreezeTimeDerivatives();
+  CheckControlledDirectFixedProjection();
   if (pin->GetOrAddBoolean("problem", "puncture_exponent_gate", false)) {
     CheckRelativeExponentIdentity();
     CheckLocalPunctureExponentEstimator(

@@ -35,6 +35,12 @@ struct InitialMatchEvidence {
   Real relative_lapse_linf = 0.0;
   Real relative_shift_linf = 0.0;
   Real minimum_cell_radius = std::numeric_limits<Real>::max();
+  Real coordinate_metric_linf = 0.0;
+  Real coordinate_derivative_linf = 0.0;
+  Real reference_time_jet_linf = 0.0;
+  Real gh_l2 = 0.0;
+  Real reduction_l2 = 0.0;
+  Real curl_l2 = 0.0;
 } initial_match;
 
 void ReprojectHardFreezeRestart(ParameterInput *pin, Mesh *mesh) {
@@ -459,15 +465,25 @@ void FinishControlledTransition(ParameterInput *pin, Mesh *mesh) {
     if (file == nullptr) std::exit(EXIT_FAILURE);
     std::fprintf(file, "# time cycles initial_state_Linf initial_G_Linf "
                        "initial_arel_Linf initial_shift_Linf min_cell_r "
+                       "initial_coordinate_metric_Linf "
+                       "initial_coordinate_derivative_Linf "
+                       "initial_reference_time_jet_Linf initial_GH_L2 "
+                       "initial_reduction_L2 initial_curl_L2 "
                        "final_state_Linf bad_state delta_q delta_p xi xi_dot "
                        "completed constraint_veto\n");
-    std::fprintf(file, "%.17e %d %.17e %.17e %.17e %.17e %.17e %.17e "
-                       "%.17e %.17e %.17e %.17e %.17e %d %d\n",
+    std::fprintf(file, "%.17e %d %.17e %.17e %.17e %.17e %.17e "
+                       "%.17e %.17e %.17e %.17e %.17e %.17e "
+                       "%.17e %.17e %.17e %.17e %.17e %.17e %d %d\n",
                  mesh->time, mesh->ncycle, initial_match.regular_state_linf,
                  initial_match.relative_spatial_linf,
                  initial_match.relative_lapse_linf,
                  initial_match.relative_shift_linf,
-                 initial_match.minimum_cell_radius, state_max, bad_state,
+                 initial_match.minimum_cell_radius,
+                 initial_match.coordinate_metric_linf,
+                 initial_match.coordinate_derivative_linf,
+                 initial_match.reference_time_jet_linf,
+                 initial_match.gh_l2, initial_match.reduction_l2,
+                 initial_match.curl_l2, state_max, bad_state,
                  module->controller.delta_q, module->controller.delta_p,
                  module->controller.xi, module->controller.xi_dot,
                  module->continuation_completed ? 1 : 0,
@@ -525,6 +541,8 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
                                                   const bool restart) {
   const bool estimator_calibration =
       pin->GetString("problem", "pgen_name") == "ref_gh_estimator_calibration";
+  const bool direct_fixed_initial_data = pin->GetOrAddBoolean(
+      "problem", "direct_fixed_initial_data", false);
   pgen_final_func = estimator_calibration
       ? &FinishEstimatorCalibration : &FinishControlledTransition;
   user_hist_func = &ControlledTransitionHistory;
@@ -538,6 +556,25 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
           && pack->prefgh->opt.reference_kind != 5)) {
     std::cout << "controlled Schwarzschild data require ref_gh/reference=wormhole "
                  "or controlled_transition." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (direct_fixed_initial_data
+      && (pack->prefgh->opt.reference_kind != 5
+          || pack->prefgh->opt.continuation_mode
+              != ref_gh::RefGh::kHardFreezeContinuation
+          || pack->prefgh->controller.xi != 0.25
+          || pack->prefgh->controller.xi_dot != 0.0
+          || pack->prefgh->controller.delta_q != 0.0
+          || pack->prefgh->controller.delta_q_dot != 0.0
+          || pack->prefgh->controller.delta_p != 0.0
+          || pack->prefgh->controller.delta_p_dot != 0.0
+          || pack->prefgh->opt.fd_order != 4
+          || !pin->GetOrAddBoolean(
+              "ref_gh", "hard_freeze_reference_already_static", false))) {
+    std::cout << "### FATAL ERROR: direct fixed initial data require the "
+                 "controlled reference in hard_freeze mode with exact "
+                 "xi=0.25, xi_dot=0, and zero exponent corrections."
+              << std::endl;
     std::exit(EXIT_FAILURE);
   }
 
@@ -597,19 +634,68 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
   const Real r_core0 = pack->prefgh->opt.r_core0;
   const Real tau_core = pack->prefgh->opt.tau_core;
   const Real kappa_core = pack->prefgh->opt.kappa_core;
+  const Real transition_width = pack->prefgh->opt.transition_width;
   const Real tau_transition = pack->prefgh->opt.tau_transition;
   const Real outer_start = pack->prefgh->opt.regularization_outer_start;
   const Real outer_end = pack->prefgh->opt.regularization_outer_end;
   const Real planted_delta_q = pack->prefgh->controller.delta_q;
   const Real planted_delta_p = pack->prefgh->controller.delta_p;
+  const Real fixed_xi = pack->prefgh->controller.xi;
   const auto table = pack->prefgh->reference_table;
   par_for(estimator_calibration ? "ref_gh estimator planted data"
-                                : "ref_gh wormhole matched data",
+          : (direct_fixed_initial_data
+             ? "ref_gh direct-fixed projected wormhole data"
+             : "ref_gh wormhole matched data"),
   DevExeSpace(), 0,
   pack->nmb_thispack - 1, 0, n3 - 1, 0, n2 - 1, 0, n1 - 1,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     for (int n = 0; n < ref_gh::nvar; ++n) state(m, n, k, j, i) = 0.0;
     if (!estimator_calibration) {
+      if (direct_fixed_initial_data) {
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min,
+                                   size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min,
+                                   size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min,
+                                   size.d_view(m).x3max);
+        ref_gh::ReferenceGeometry physical;
+        const ref_gh::WormholeSchwarzschildReference wormhole{
+            mass, {center_x, center_y, center_z}};
+        wormhole.Populate(start_time, x, y, z, physical);
+        const ref_gh::ControlledReferenceParameters parameters{
+            mass, {center_x, center_y, center_z}, r_core0, tau_core,
+            kappa_core, ref_gh::kFixedCorePath, transition_width,
+            tau_transition, ref_gh::kContinuationActivation,
+            fixed_xi, 0.0, 0.0, outer_start, outer_end,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        ref_gh::ReferenceGeometry current;
+        const ref_gh::ControlledSchwarzschildReference fixed{table, parameters};
+        fixed.Populate(start_time, x, y, z, current);
+        const ref_gh::ProjectedFirstOrderMetric projected =
+            ref_gh::ProjectPhysicalMetricToReference(
+                physical.metric, physical.d_metric, current);
+        if (!projected.valid) {
+          state(m, ref_gh::PsiIndex(0, 0), k, j, i) =
+              std::numeric_limits<Real>::quiet_NaN();
+          return;
+        }
+        for (int A = 0; A < 4; ++A) {
+          for (int B = A; B < 4; ++B) {
+            state(m, ref_gh::PsiIndex(A, B), k, j, i) =
+                projected.psi[A][B];
+            state(m, ref_gh::PiIndex(A, B), k, j, i) =
+                projected.pi[A][B];
+            for (int I = 0; I < 3; ++I) {
+              state(m, ref_gh::PhiIndex(I, A, B), k, j, i) =
+                  projected.phi[I][A][B];
+            }
+          }
+        }
+        return;
+      }
       state(m, ref_gh::PsiIndex(0, 0), k, j, i) = -1.0;
       state(m, ref_gh::PsiIndex(1, 1), k, j, i) = 1.0;
       state(m, ref_gh::PsiIndex(2, 2), k, j, i) = 1.0;
@@ -699,12 +785,22 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
     return;
   }
 
+  if (direct_fixed_initial_data) {
+    // Quantify the actual discrete initial constraints before the first RK
+    // stage.  The analytic projection is continuum exact, but sampling its
+    // first derivatives on the finite-difference mesh need not make the
+    // discrete reduction/curl constraints vanish.
+    pack->prefgh->FillReferenceCache(start_time, true);
+    pack->prefgh->CalcConstraints<3>();
+  }
   pack->prefgh->UpdateDiagnostics();
   const auto adm_vars = pack->padm->adm;
   Real state_error = 0.0;
   Real spatial_error = 0.0;
   Real lapse_error = 0.0;
   Real shift_error = 0.0;
+  Real derivative_error = 0.0;
+  Real reference_time_jet_error = 0.0;
   Real minimum_radius = std::numeric_limits<Real>::max();
   const int ncells = indcs.nx1*indcs.nx2*indcs.nx3;
   Kokkos::parallel_reduce(
@@ -712,7 +808,9 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
       Kokkos::RangePolicy<>(DevExeSpace(), 0, pack->nmb_thispack*ncells),
       KOKKOS_LAMBDA(const int idx, Real &local_state_error,
                     Real &local_spatial_error, Real &local_lapse_error,
-                    Real &local_shift_error, Real &local_minimum_radius) {
+                    Real &local_shift_error, Real &local_derivative_error,
+                    Real &local_time_jet_error,
+                    Real &local_minimum_radius) {
         int work = idx;
         const int i = work % indcs.nx1 + indcs.is; work /= indcs.nx1;
         const int j = work % indcs.nx2 + indcs.js; work /= indcs.nx2;
@@ -729,6 +827,122 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
         const Real dz = z - center[2];
         const Real radius = Kokkos::sqrt(dx*dx + dy*dy + dz*dz);
         if (radius < local_minimum_radius) local_minimum_radius = radius;
+        if (direct_fixed_initial_data) {
+          ref_gh::ReferenceGeometry physical;
+          const ref_gh::WormholeSchwarzschildReference wormhole{
+              mass, {center_x, center_y, center_z}};
+          wormhole.Populate(start_time, x, y, z, physical);
+          const ref_gh::ControlledReferenceParameters parameters{
+              mass, {center_x, center_y, center_z}, r_core0, tau_core,
+              kappa_core, ref_gh::kFixedCorePath, transition_width,
+              tau_transition, ref_gh::kContinuationActivation,
+              fixed_xi, 0.0, 0.0, outer_start, outer_end,
+              0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+          ref_gh::ReferenceGeometry current;
+          const ref_gh::ControlledSchwarzschildReference fixed{table, parameters};
+          fixed.Populate(start_time, x, y, z, current);
+          const ref_gh::ProjectedFirstOrderMetric projected =
+              ref_gh::ProjectPhysicalMetricToReference(
+                  physical.metric, physical.d_metric, current);
+          if (!projected.valid) {
+            local_state_error = std::numeric_limits<Real>::infinity();
+            return;
+          }
+          for (int n = 0; n < ref_gh::nvar; ++n) {
+            Real expected = 0.0;
+            if (n < ref_gh::kPiOffset) {
+              for (int A = 0; A < 4; ++A) {
+                for (int B = A; B < 4; ++B) {
+                  if (n == ref_gh::PsiIndex(A, B)) expected = projected.psi[A][B];
+                }
+              }
+            } else if (n < ref_gh::kPhiOffset) {
+              for (int A = 0; A < 4; ++A) {
+                for (int B = A; B < 4; ++B) {
+                  if (n == ref_gh::PiIndex(A, B)) expected = projected.pi[A][B];
+                }
+              }
+            } else if (n < ref_gh::kHhatOffset) {
+              for (int I = 0; I < 3; ++I) {
+                for (int A = 0; A < 4; ++A) {
+                  for (int B = A; B < 4; ++B) {
+                    if (n == ref_gh::PhiIndex(I, A, B)) {
+                      expected = projected.phi[I][A][B];
+                    }
+                  }
+                }
+              }
+            }
+            local_state_error = fmax(
+                local_state_error,
+                Kokkos::abs(state(m, n, k, j, i) - expected));
+          }
+          Real psi[4][4], pi[4][4], phi[3][4][4];  // NOLINT(runtime/arrays)
+          Real d_psi[4][4][4], metric[4][4], d_metric[4][4][4];  // NOLINT
+          ref_gh::CoordinateGhGeometry geometry;
+          Real determinant = 0.0;
+          if (!ref_gh::LoadPointGeometry(
+                  state, current, m, k, j, i, psi, pi, phi, d_psi,
+                  metric, d_metric, geometry, determinant)) {
+            local_state_error = std::numeric_limits<Real>::infinity();
+            return;
+          }
+          for (int a = 0; a < 4; ++a) {
+            for (int b = 0; b < 4; ++b) {
+              const Real metric_scale =
+                  fmax(1.0, Kokkos::abs(physical.metric[a][b]));
+              local_spatial_error = fmax(
+                  local_spatial_error,
+                  Kokkos::abs(metric[a][b] - physical.metric[a][b])
+                      /metric_scale);
+              for (int p = 0; p < 4; ++p) {
+                const Real derivative_scale = fmax(
+                    1.0, Kokkos::abs(physical.d_metric[p][a][b]));
+                local_derivative_error = fmax(
+                    local_derivative_error,
+                    Kokkos::abs(d_metric[p][a][b]
+                                - physical.d_metric[p][a][b])
+                        /derivative_scale);
+              }
+              local_time_jet_error = fmax(
+                  local_time_jet_error, Kokkos::abs(current.d_metric[0][a][b]));
+              for (int p = 0; p < 4; ++p) {
+                local_time_jet_error = fmax(
+                    local_time_jet_error,
+                    Kokkos::abs(current.dd_metric[0][p][a][b]));
+              }
+            }
+          }
+          for (int A = 0; A < 4; ++A) {
+            for (int a = 0; a < 4; ++a) {
+              local_time_jet_error = fmax(
+                  local_time_jet_error, Kokkos::abs(current.d_frame[0][A][a]));
+              for (int p = 0; p < 4; ++p) {
+                local_time_jet_error = fmax(
+                    local_time_jet_error,
+                    Kokkos::abs(current.dd_frame[0][p][A][a]));
+              }
+            }
+          }
+          const Real physical_psi = 1.0 + 0.5*mass/radius;
+          const Real expected_lapse = 1.0/(physical_psi*physical_psi);
+          local_lapse_error = fmax(
+              local_lapse_error,
+              Kokkos::abs(adm_vars.alpha(m, k, j, i)/expected_lapse - 1.0));
+          for (int I = 0; I < 3; ++I) {
+            local_shift_error = fmax(
+                local_shift_error, Kokkos::abs(adm_vars.beta_u(m, I, k, j, i)));
+            for (int J = 0; J < 3; ++J) {
+              const Real expected_gamma = physical.metric[I + 1][J + 1];
+              const Real gamma_scale = fmax(1.0, Kokkos::abs(expected_gamma));
+              local_lapse_error = fmax(
+                  local_lapse_error,
+                  Kokkos::abs(adm_vars.g_dd(m, I, J, k, j, i)
+                              - expected_gamma)/gamma_scale);
+            }
+          }
+          return;
+        }
         for (int n = 0; n < ref_gh::nvar; ++n) {
           Real expected = 0.0;
           if (n == ref_gh::PsiIndex(0, 0)) expected = -1.0;
@@ -756,24 +970,36 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
         }
       }, Kokkos::Max<Real>(state_error), Kokkos::Max<Real>(spatial_error),
       Kokkos::Max<Real>(lapse_error), Kokkos::Max<Real>(shift_error),
+      Kokkos::Max<Real>(derivative_error),
+      Kokkos::Max<Real>(reference_time_jet_error),
       Kokkos::Min<Real>(minimum_radius));
 #if MPI_PARALLEL_ENABLED
-  Real maxima[4] = {state_error, spatial_error, lapse_error, shift_error};
-  MPI_Allreduce(MPI_IN_PLACE, maxima, 4, MPI_ATHENA_REAL, MPI_MAX,
+  Real maxima[6] = {state_error, spatial_error, lapse_error, shift_error,
+                    derivative_error, reference_time_jet_error};
+  MPI_Allreduce(MPI_IN_PLACE, maxima, 6, MPI_ATHENA_REAL, MPI_MAX,
                 MPI_COMM_WORLD);
   state_error = maxima[0]; spatial_error = maxima[1];
   lapse_error = maxima[2]; shift_error = maxima[3];
+  derivative_error = maxima[4]; reference_time_jet_error = maxima[5];
   MPI_Allreduce(MPI_IN_PLACE, &minimum_radius, 1, MPI_ATHENA_REAL, MPI_MIN,
                 MPI_COMM_WORLD);
 #endif
+  const auto &initial_diagnostics = pack->prefgh->controller_diagnostics;
   initial_match = {state_error, spatial_error, lapse_error, shift_error,
-                   minimum_radius};
+                   minimum_radius, spatial_error, derivative_error,
+                   reference_time_jet_error, initial_diagnostics.gh_l2,
+                   initial_diagnostics.reduction_l2,
+                   initial_diagnostics.curl_l2};
   if (!(minimum_radius > 0.0) || state_error > 1.0e-13
       || spatial_error > 1.0e-13 || lapse_error > 1.0e-12
-      || shift_error > 1.0e-13) {
+      || shift_error > 1.0e-13
+      || (direct_fixed_initial_data && derivative_error > 3.0e-12)
+      || (direct_fixed_initial_data && reference_time_jet_error != 0.0)) {
     std::cout << "### FATAL ERROR: Ref-GH wormhole/reference initial match failed: "
               << "state=" << state_error << " G=" << spatial_error
               << " lapse=" << lapse_error << " shift=" << shift_error
+              << " derivative=" << derivative_error
+              << " reference-time-jet=" << reference_time_jet_error
               << " rmin=" << minimum_radius << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -784,6 +1010,12 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
     std::cout << "reference-GH puncture vertex audit passed; minimum cell radius="
               << minimum_radius << ", wormhole match state=" << state_error
               << ", G=" << spatial_error << ", lapse=" << lapse_error
-              << ", shift=" << shift_error << std::endl;
+              << ", shift=" << shift_error
+              << ", derivative=" << derivative_error
+              << ", reference-time-jet=" << reference_time_jet_error
+              << ", initial-GH-L2=" << initial_diagnostics.gh_l2
+              << ", initial-reduction-L2=" << initial_diagnostics.reduction_l2
+              << ", initial-curl-L2=" << initial_diagnostics.curl_l2
+              << std::endl;
   }
 }
