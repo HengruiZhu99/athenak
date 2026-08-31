@@ -260,3 +260,17 @@ lapse-only, shift-only, and pure-wave-map controls.  These controls are solely
 to distinguish the failure sector and are not candidate gauges or damping
 tuning.  No second resolution or spinning-hole test is authorized unless the
 mandatory wormhole transition becomes favorable.
+
+The first sector-control job, \`8792807\`, is not a valid lapse/shift
+discriminator.  The input validator correctly rejected exactly zero
+\`mu_L\` or \`mu_S\`, so those two cases never evolved.  The pure-wave-map
+case did resume from the already distorted t=4M state, but failed with an
+invalid effective timestep near \`t=4.94M\`; switching off the added source
+that late did not recover the trajectory.  This does not identify which term
+initiated the earlier growth.
+
+The corrected diagnostic uses the exact outer-domain t=2M checkpoint, before
+the large-growth phase, and uses \`1e-12\` as the parser-admissible stand-in
+for a disabled term.  It stops at \`t=4.2M\` and remains diagnostic-only.
+Compact evidence from the invalid first control is under
+\`wormhole_sector_discriminator_8792807_control_design_failure/\`.

@@ -1,0 +1,2 @@
+bootstrap_begin=2026-08-31T02:05:50+00:00
+wormhole_sector_error status=1 line=140 command=python3 "${ANALYZER}" --case "lapse_only=${PREVIOUS_OUT}/run,${OUT}/lapse_only" --case "shift_only=${PREVIOUS_OUT}/run,${OUT}/shift_only" --case "wave_map=${PREVIOUS_OUT}/run,${OUT}/wave_map" --target 4 4.2 4.4 4.6 4.8 4.9 5 --target-tolerance 0.04 --outer-distance 24 --late-fit-time 4 --output-prefix "${OUT}/sector_discriminator" > analysis.log 2>&1

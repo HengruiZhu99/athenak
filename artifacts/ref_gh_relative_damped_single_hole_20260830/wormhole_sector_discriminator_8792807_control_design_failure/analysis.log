@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2/wormhole_checkpoint_8a1fb210/analyze_relative_damped_wormhole.py", line 490, in <module>
+    main()
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2/wormhole_checkpoint_8a1fb210/analyze_relative_damped_wormhole.py", line 454, in main
+    for label, directories in case_specs
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2/wormhole_checkpoint_8a1fb210/analyze_relative_damped_wormhole.py", line 454, in <dictcomp>
+    for label, directories in case_specs
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2/wormhole_checkpoint_8a1fb210/analyze_relative_damped_wormhole.py", line 292, in load_case
+    ref_rows = merged_rows(directories, ".ref_gh.hst", 34)
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2/wormhole_checkpoint_8a1fb210/analyze_relative_damped_wormhole.py", line 95, in merged_rows
+    for row in data_rows(one_file(directory, suffix), expected_columns):
+  File "/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2/wormhole_checkpoint_8a1fb210/analyze_relative_damped_wormhole.py", line 88, in one_file
+    "{}: expected one *{}, got {}".format(directory, suffix, matches))
+ValueError: /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_single_hole_20260830_pvc_v2/wormhole_sector_discriminator_8792807.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/lapse_only: expected one *.ref_gh.hst, got []

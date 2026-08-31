@@ -1,6 +1,7 @@
 #!/bin/bash -l
-# Diagnostic-only t=4M restart controls that separate the relative lapse and
-# shift terms.  They are not candidate production gauges and do not tune gains.
+# Diagnostic-only t=2M restart controls that separate the relative lapse and
+# shift terms before the full-gauge growth becomes large.  They are not
+# candidate production gauges and do not tune gains.
 #PBS -A CompactBinaryMerger
 #PBS -q debug-scaling
 #PBS -l select=12
@@ -20,9 +21,8 @@ set -euo pipefail
 : "${CHECKPOINT_COMMIT:?submit with the diagnostic checkpoint SHA}"
 : "${STAGED_INPUT:?submit with the staged fixed-core outer24 input}"
 : "${ANALYZER:?submit with the staged wormhole analysis script}"
-: "${PREVIOUS_OUT:?submit with the completed t=4M output directory}"
-: "${RESTART_FILE:?submit with the exact t=4M restart path}"
-: "${EXPECTED_RESTART_SHA256:?submit with the t=4M restart SHA-256}"
+: "${RESTART_FILE:?submit with the exact t=2M restart path}"
+: "${EXPECTED_RESTART_SHA256:?submit with the t=2M restart SHA-256}"
 
 readonly OUT="${CAMPAIGN_ROOT}/wormhole_sector_discriminator_${PBS_JOBID}"
 
@@ -46,7 +46,6 @@ test -x "${BINDER}"
 test -x "${QUALIFIED_EXE}"
 test -f "${STAGED_INPUT}"
 test -f "${ANALYZER}"
-test -d "${PREVIOUS_OUT}/run"
 test -f "${RESTART_FILE}"
 test "$(git -C "${QUALIFIED_SOURCE}" rev-parse HEAD)" = "${EXPECTED_SOURCE_COMMIT}"
 test -z "$(git -C "${QUALIFIED_SOURCE}" status --porcelain)"
@@ -63,15 +62,15 @@ test "$(sha256sum "${RESTART_FILE}" | awk '{print $1}')" = "${EXPECTED_RESTART_S
   echo "checkpoint_commit=${CHECKPOINT_COMMIT}"
   echo "qualified_executable=${QUALIFIED_EXE}"
   echo "qualified_executable_sha256=${EXPECTED_EXE_SHA256}"
-  echo "previous_output=${PREVIOUS_OUT}"
   echo "restart_file=${RESTART_FILE}"
   echo "restart_sha256=${EXPECTED_RESTART_SHA256}"
   echo "nodes=12"
   echo "ranks=144"
   echo "tiles=144"
-  echo "start_time=4.0"
-  echo "target_time=5.0"
+  echo "start_time=2.0"
+  echo "target_time=4.2"
   echo "cases=lapse_only,shift_only,wave_map"
+  echo "disabled_relative_gain=1.0e-12"
   echo "claim=diagnostic term isolation only; none is a production candidate"
   git -C "${QUALIFIED_SOURCE}" status --short --branch
   git -C "${QUALIFIED_SOURCE}" submodule status
@@ -113,7 +112,7 @@ run_case() {
       ref_gh/gauge_mode="${gauge_mode}" \
       ref_gh/relative_damped_mu_l="${mu_l}" \
       ref_gh/relative_damped_mu_s="${mu_s}" \
-      time/nlim=-1 time/tlim=5.0 output1/dt=0.02 output2/dt=-1 \
+      time/nlim=-1 time/tlim=4.2 output1/dt=0.02 output2/dt=-1 \
       output3/dt=-1 output4/dt=-1 output5/dt=-1 output6/dt=-1 \
       output7/dt=-1 > run.log 2>&1; then
     status=0
@@ -131,18 +130,20 @@ run_case() {
   cd "${OUT}"
 }
 
-# These controls alter one algebraic target term at t=4M only to localize the
-# already observed failure.  A pass is not a production-gauge qualification.
-run_case lapse_only relative_damped 1.0 0.0
-run_case shift_only relative_damped 0.0 1.0
+# The parser requires positive gains, so 1e-12 is the diagnostic stand-in for
+# zero.  These controls alter one algebraic target term at t=2M only to
+# localize the already observed failure.  A pass is not a production-gauge
+# qualification.
+run_case lapse_only relative_damped 1.0 1.0e-12
+run_case shift_only relative_damped 1.0e-12 1.0
 run_case wave_map wave_map 1.0 1.0
 
 python3 "${ANALYZER}" \
-  --case "lapse_only=${PREVIOUS_OUT}/run,${OUT}/lapse_only" \
-  --case "shift_only=${PREVIOUS_OUT}/run,${OUT}/shift_only" \
-  --case "wave_map=${PREVIOUS_OUT}/run,${OUT}/wave_map" \
-  --target 4 4.2 4.4 4.6 4.8 4.9 5 --target-tolerance 0.04 \
-  --outer-distance 24 --late-fit-time 4 \
+  --case "lapse_only=${OUT}/lapse_only" \
+  --case "shift_only=${OUT}/shift_only" \
+  --case "wave_map=${OUT}/wave_map" \
+  --target 2 2.2 2.5 3 3.5 4 4.2 --target-tolerance 0.04 \
+  --outer-distance 24 --late-fit-time 2 \
   --output-prefix "${OUT}/sector_discriminator" > analysis.log 2>&1
 python3 -m json.tool sector_discriminator.json >/dev/null
 
