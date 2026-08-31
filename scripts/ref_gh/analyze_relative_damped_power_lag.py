@@ -240,11 +240,22 @@ def summarize(label, directories, records, power_sources, maxloc_sources,
         "relative_lapse_max": lambda item: item["relative_lapse_max"],
         "relative_v2_max": lambda item: item["relative_v2_max"],
     }
+    if direct:
+        for shell in SHELLS:
+            quantities["Delta_q_" + shell] = (
+                lambda item, name=shell: item["power"][name]["dq_mean"])
+            quantities["q_phys_" + shell] = (
+                lambda item, name=shell: item["power"][name]["qphys_mean"])
+            quantities["q_ref_" + shell] = (
+                lambda item, name=shell: item["power"][name]["qref_mean"])
     for diagnostic in MAXLOC_SECTORS:
         quantities["max_" + diagnostic] = (
             lambda item, name=diagnostic:
                 item["maxloc"].get(name, {}).get("maximum", math.nan))
-    for left_name in ("Delta_q_direct_or_proxy", "e_G", "e_alpha"):
+    left_names = ["Delta_q_direct_or_proxy", "e_G", "e_alpha"]
+    if direct:
+        left_names.extend("Delta_q_" + shell for shell in SHELLS)
+    for left_name in left_names:
         right_names = ("xi", "xi_dot", "GH_RMS", "reduction_RMS",
                        "curl_RMS", "relative_condition",
                        "relative_lapse_max", "relative_v2_max") + tuple(
@@ -252,6 +263,16 @@ def summarize(label, directories, records, power_sources, maxloc_sources,
         for right_name in right_names:
             value = pearson(records, quantities[left_name], quantities[right_name])
             correlations[left_name + "__" + right_name] = value
+    onsets = {
+        "Delta_q_direct_or_proxy": first_growth(records, dq_getter, 1.0e-3),
+        "GH_RMS": first_growth(records, quantities["GH_RMS"], 1.0e-3),
+        "reduction_RMS": first_growth(records, quantities["reduction_RMS"], 1.0e-4),
+        "curl_RMS": first_growth(records, quantities["curl_RMS"], 1.0e-3),
+    }
+    if direct:
+        for shell in SHELLS:
+            onsets["Delta_q_" + shell] = first_growth(
+                records, quantities["Delta_q_" + shell], 1.0e-3)
     return {
         "label": label,
         "directories": [str(item.resolve()) for item in directories],
@@ -261,12 +282,7 @@ def summarize(label, directories, records, power_sources, maxloc_sources,
         "maxloc_sources": maxloc_sources,
         "proxy_warning": (None if direct else
             "Direct q_phys/q_ref was not recorded. -e_G/2 is only the calibrated pure-power proxy and is not assumed exact in the blended state."),
-        "onsets": {
-            "Delta_q_direct_or_proxy": first_growth(records, dq_getter, 1.0e-3),
-            "GH_RMS": first_growth(records, quantities["GH_RMS"], 1.0e-3),
-            "reduction_RMS": first_growth(records, quantities["reduction_RMS"], 1.0e-4),
-            "curl_RMS": first_growth(records, quantities["curl_RMS"], 1.0e-3),
-        },
+        "onsets": onsets,
         "correlations": correlations,
         "samples": samples,
         "final": records[-1],
@@ -293,6 +309,35 @@ def write_tsv(path, summaries):
                           item["relative_lapse_min"], item["relative_lapse_max"],
                           item["relative_v2_max"])
                 stream.write("\t".join(str(value) for value in values) + "\n")
+
+
+def write_shell_tsv(path, summaries):
+    statistics = ("mean", "var", "min", "max", "rms")
+    with path.open("w", encoding="utf-8") as stream:
+        columns = ["case", "target", "time", "shell"]
+        columns.extend("{}_{}".format(quantity, statistic)
+                       for quantity in ("qphys", "qref", "dq")
+                       for statistic in statistics)
+        columns.extend(("cells", "effective_samples", "valid", "e_G",
+                        "e_G_plus_2Delta_q"))
+        stream.write("\t".join(columns) + "\n")
+        for summary in summaries:
+            if not summary["direct_paired_power_available"]:
+                continue
+            for sample in summary["samples"]:
+                item = sample["record"]
+                for shell in SHELLS:
+                    fit = item["power"][shell]
+                    values = [summary["label"], sample["target"],
+                              item["time"], shell]
+                    values.extend(fit["{}_{}".format(quantity, statistic)]
+                                  for quantity in ("qphys", "qref", "dq")
+                                  for statistic in statistics)
+                    values.extend((fit["cells"], fit["effective_samples"],
+                                   fit["valid"], item["e_G"],
+                                   fit["pure_power_relation_residual"]))
+                    stream.write("\t".join(str(value) for value in values)
+                                 + "\n")
 
 
 def plot(path, cases):
@@ -356,13 +401,16 @@ def main():
     }
     json_path = Path(str(args.output_prefix) + ".json")
     tsv_path = Path(str(args.output_prefix) + ".tsv")
+    shell_tsv_path = Path(str(args.output_prefix) + "_shells.tsv")
     plot_path = Path(str(args.output_prefix) + ".png")
     json_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n",
                          encoding="utf-8")
     write_tsv(tsv_path, summaries)
+    write_shell_tsv(shell_tsv_path, summaries)
     plot(plot_path, plot_cases)
     print(json_path)
     print(tsv_path)
+    print(shell_tsv_path)
     print(plot_path)
 
 

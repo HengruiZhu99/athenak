@@ -1,0 +1,197 @@
+#!/bin/bash -l
+# Bounded fresh-data frozen/prescribed/feedback discriminator.  Three disjoint
+# 12-node host sets run concurrently inside one debug-scaling allocation.
+#PBS -A CompactBinaryMerger
+#PBS -q debug-scaling
+#PBS -l select=36
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_qlag_3case
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with the established fresh campaign root}"
+: "${EXPECTED_COMMIT:?submit with the exact PVC-qualified source SHA}"
+: "${QUALIFIED_EXE:?submit with the exact PVC-qualified executable}"
+: "${EXPECTED_EXE_SHA256:?submit with its SHA-256}"
+
+readonly SRC="${CAMPAIGN_ROOT}/src_clean"
+readonly INPUT="${SRC}/inputs/ref_gh/ref_gh_relative_damped_power_lag_outer24.athinput"
+readonly ANALYZER="${SRC}/scripts/ref_gh/analyze_relative_damped_power_lag.py"
+readonly OUT="${CAMPAIGN_ROOT}/three_case_${PBS_JOBID}"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "three_case_harness_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+readonly BINDER=$(command -v gpu_tile_compact.sh)
+
+test -x "${BINDER}"
+test -x "${QUALIFIED_EXE}"
+test "$(git -C "${SRC}" rev-parse HEAD)" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain)"
+test "$(sha256sum "${QUALIFIED_EXE}" | awk '{print $1}')" = \
+  "${EXPECTED_EXE_SHA256}"
+
+mapfile -t nodes < <(sort -u "${PBS_NODEFILE}")
+test "${#nodes[@]}" -eq 36
+printf '%s\n' "${nodes[@]:0:12}" > frozen.hosts
+printf '%s\n' "${nodes[@]:12:12}" > prescribed.hosts
+printf '%s\n' "${nodes[@]:24:12}" > feedback.hosts
+test "$(cat frozen.hosts prescribed.hosts feedback.hosts | sort -u | wc -l)" -eq 36
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "source_commit=${EXPECTED_COMMIT}"
+  echo "qualified_executable=${QUALIFIED_EXE}"
+  echo "qualified_executable_sha256=${EXPECTED_EXE_SHA256}"
+  echo "cases=frozen,prescribed,feedback"
+  echo "fresh_data=true"
+  echo "phi_ordering=compatible"
+  echo "exponent_controller_enabled=false"
+  echo "delta_q=delta_q_dot=delta_p=delta_p_dot=0"
+  echo "nodes=36"
+  echo "ranks_per_case=144"
+  echo "tiles_per_case=144"
+  echo "target_time=5.2M"
+  echo "checkpoint_cadence=0.5M"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${ANALYZER}" "$0"
+  for file in frozen.hosts prescribed.hosts feedback.hosts; do
+    echo "--- ${file}"
+    cat "${file}"
+  done
+} > provenance.txt
+
+mpiexec -n 432 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 432
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/^host=\([^ ]*\).*ZE_AFFINITY_MASK=\([^ ]*\).*/\1:\2/p' \
+  | sort -u | wc -l)" -eq 432
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/^host=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 36
+awk '/^host=/ {split($1, part, "="); count[part[2]]++}
+     END {for (host in count) if (count[host] != 12) exit 1}' \
+  rank_gpu_mapping.txt
+
+run_case() {
+  local label=$1
+  local mode=$2
+  local hostfile="${OUT}/${label}.hosts"
+  local directory="${OUT}/${label}"
+  local basename="refgh_power_lag_${label}"
+  local run_status
+
+  mkdir "${directory}"
+  cd "${directory}"
+  set +e
+  /usr/bin/time -p mpiexec --hostfile "${hostfile}" \
+    -n 144 --ppn 12 --depth=8 --cpu-bind depth \
+    "${BINDER}" "${QUALIFIED_EXE}" -i "${INPUT}" \
+    job/basename="${basename}" ref_gh/continuation_mode="${mode}" \
+    ref_gh/debug_task_fences=false time/nlim=-1 time/tlim=5.2 \
+    output1/dt=0.02 output2/dt=0.50 > run.log 2>&1
+  run_status=$?
+  set -e
+  {
+    echo "case=${label}"
+    echo "continuation_mode=${mode}"
+    echo "run_exit_status=${run_status}"
+    echo "latest_ref_history_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' "${basename}.ref_gh.hst" 2>/dev/null || echo 0)"
+    echo "latest_power_history_time=$(awk 'NF && $1 ~ /^[0-9.+-]/ {value=$1} END {print value+0}' "${basename}.ref_gh_power.hst" 2>/dev/null || echo 0)"
+    echo "restart_files=$(find . -maxdepth 1 -type f -name '*.rst' | wc -l)"
+    echo "remote_directory=${directory}"
+  } > run_status.txt
+  find rst -maxdepth 1 -type f -name '*.rst' -print0 \
+    | sort -z | xargs -0 -r sha256sum > restart_sha256.txt
+  find rst -maxdepth 1 -type f -name '*.rst' -printf '%p\t%s bytes\n' \
+    | sort > restart_sizes.tsv
+  cd "${OUT}"
+}
+
+run_case frozen frozen &
+pid_frozen=$!
+run_case prescribed prescribed &
+pid_prescribed=$!
+run_case feedback feedback &
+pid_feedback=$!
+
+wait_status=0
+wait "${pid_frozen}" || wait_status=1
+wait "${pid_prescribed}" || wait_status=1
+wait "${pid_feedback}" || wait_status=1
+
+python3 "${ANALYZER}" \
+  --case "frozen=${OUT}/frozen" \
+  --case "prescribed=${OUT}/prescribed" \
+  --case "feedback=${OUT}/feedback" \
+  --target 0 0.2 0.5 1 2 3 4 4.2 4.5 4.8 5 5.2 \
+  --target-tolerance 0.04 \
+  --output-prefix "${OUT}/three_case_power_lag" > analysis.log 2>&1
+python3 -m json.tool three_case_power_lag.json >/dev/null
+
+python3 - three_case_power_lag.json > scientific_status.txt <<'PY'
+import json
+import math
+import pathlib
+import sys
+
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())["cases"]
+for label in ("frozen", "prescribed", "feedback"):
+    case = data[label]
+    final = case["final"]
+    reached = final["time"] >= 5.199
+    finite = all(math.isfinite(final[name]) for name in (
+        "GH_RMS", "reduction_RMS", "curl_RMS",
+        "relative_metric_condition_max", "relative_lapse_min",
+        "relative_lapse_max", "relative_v2_max"))
+    print("{}_final_time={:.17e}".format(label, final["time"]))
+    print("{}_reached_5p2={}".format(label, str(reached).lower()))
+    print("{}_final_finite={}".format(label, str(finite).lower()))
+    print("{}_final_xi={:.17e}".format(label, final["xi"]))
+    print("{}_controller_completed={}".format(
+        label, str(final["controller_completed"]).lower()))
+    print("{}_controller_frozen={}".format(
+        label, str(final["controller_frozen"]).lower()))
+    print("{}_GH_RMS={:.17e}".format(label, final["GH_RMS"]))
+    print("{}_reduction_RMS={:.17e}".format(label, final["reduction_RMS"]))
+    print("{}_curl_RMS={:.17e}".format(label, final["curl_RMS"]))
+    print("{}_direct_power=true".format(label))
+print("feedback_success_requires_xi_1_plus_2M_dwell=false_for_this_bounded_5p2M_design")
+print("claim_boundary=no stability, convergence, or causation claim")
+PY
+
+echo "wait_status=${wait_status}" >> scientific_status.txt
+find frozen prescribed feedback -type f \
+  \( -name '*.hst' -o -name '*.tsv' -o -name '*.txt' -o -name '*.log' \
+     -o -name '*.dat' \) \
+  -print0 | sort -z | xargs -0 sha256sum \
+  > compact_sha256.txt
+sha256sum provenance.txt rank_gpu_mapping.txt analysis.log \
+  scientific_status.txt three_case_power_lag.json three_case_power_lag.tsv \
+  three_case_power_lag.png >> compact_sha256.txt
+echo "three_case_complete=$(date -Is)"
+exit "${wait_status}"

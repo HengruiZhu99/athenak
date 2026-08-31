@@ -342,3 +342,14 @@ tau-8 activation, and the existing feedback continuation.  A frozen reference
 is only a control trajectory.  Because its pre-collapsed lapse is not the
 stationary isotropic Schwarzschild Killing lapse, physical equals reference is
 not expected to be a zero-RHS vacuum fixed point.
+
+That comparison is now complete as Aurora job `8792940`, with the important
+qualification that the prescribed case was killed by the one-hour scheduler
+limit at `t=4.96109M` rather than reaching `5.2M`.  Frozen reference reached
+`5.2M` finite; feedback failed closed at stage `3.48005M` after its safety
+command froze but before `xi_dot` reached zero.  Direct mismatch precedes the
+moving-case constraint transition, but the frozen control also develops a
+smaller mismatch without comparable growth, so mismatch is not sufficient by
+itself.  The complete scientific interpretation and fixed-point distinctions
+are in `docs/ref_gh_relative_damped_power_lag_20260831.md`; compact job evidence
+is under `power_lag_three_case_8792940/`.

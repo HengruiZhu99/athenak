@@ -1,0 +1,60 @@
+#!/bin/bash -l
+# Compute-only preservation pass for the already completed three-case job.
+# It launches no AthenaK executable and changes no numerical output.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_qlag_hash
+#PBS -j oe
+
+set -euo pipefail
+
+: "${THREE_CASE_OUT:?submit with the exact completed three-case directory}"
+test -d "${THREE_CASE_OUT}"
+cd "${THREE_CASE_OUT}"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "three_case_out=${THREE_CASE_OUT}"
+  echo "operation=SHA-256 and size manifests only; no AthenaK launch"
+  sha256sum "$0"
+} > restart_hash_provenance.txt
+
+hash_case() {
+  local label=$1
+  test -d "${label}/rst"
+  find "${label}/rst" -maxdepth 1 -type f -name '*.rst' -print0 \
+    | sort -z | xargs -0 -r sha256sum > "${label}/restart_sha256.txt"
+  find "${label}/rst" -maxdepth 1 -type f -name '*.rst' \
+    -printf '%p\t%s bytes\n' | sort > "${label}/restart_sizes.tsv"
+  test -s "${label}/restart_sha256.txt"
+  test -s "${label}/restart_sizes.tsv"
+}
+
+hash_case frozen &
+pid_frozen=$!
+hash_case prescribed &
+pid_prescribed=$!
+hash_case feedback &
+pid_feedback=$!
+wait "${pid_frozen}"
+wait "${pid_prescribed}"
+wait "${pid_feedback}"
+
+sha256sum frozen/restart_sha256.txt frozen/restart_sizes.tsv \
+  prescribed/restart_sha256.txt prescribed/restart_sizes.tsv \
+  feedback/restart_sha256.txt feedback/restart_sizes.tsv \
+  restart_hash_provenance.txt > restart_manifest_sha256.txt
+
+for label in frozen prescribed feedback; do
+  printf '%s\tfiles=%s\tbytes=%s\n' "${label}" \
+    "$(wc -l < "${label}/restart_sha256.txt")" \
+    "$(awk '{total += $(NF-1)} END {printf "%.0f", total}' \
+       "${label}/restart_sizes.tsv")"
+done > restart_hash_status.tsv
+echo "restart_hash_complete=$(date -Is)"
