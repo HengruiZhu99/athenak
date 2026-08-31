@@ -1,0 +1,122 @@
+2026-08-31T08:22:24-07:00
+nid001212
+allocation=57779143
+qos=gpu_interactive
+nodes=4
+nodelist=nid[001212-001213,001216-001217]
+account=m3328_g
+campaign_root=/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O
+source_commit=823f851d184185565fb4046927754810b551e24b
+common_restart=fresh moving-reference trajectory generated in this allocation
+fork_physical_time=2.0M
+freeze_xi=0.25
+continued_xi_dot=0.125/M
+hard_freeze_xi_dot=0
+target_time=4.2M
+cases_run_sequentially_on_all_16_A100s=true
+## codex/ref-gh-relative-damped-single-hole-20260830...origin/codex/ref-gh-relative-damped-single-hole-20260830
+ 6739bc623081648af9e752b616d9671527922cbf kokkos (4.7.02)
+craype-x86-milan
+libfabric/1.22.0
+craype-network-ofi
+xpmem/2.11.5-1.3_g73ade43320bc
+gcc-native/14
+cray-dsmml/0.3.1
+PrgEnv-gnu/8.7.0
+cray-libsci/26.03.0
+cray-mpich/9.1.0
+craype/2.7.36
+perftools-base/26.03.0
+cpe/26.03
+craype-accel-nvidia80
+gpu/1.0
+sqs/2.0
+darshan/default
+cray-pmi/6.1.17
+cray-hdf5/1.12.2.9
+cudatoolkit/13.2
+gcc-14 (SUSE Linux) 14.3.0
+g++-14 (SUSE Linux) 14.3.0
+Build cuda_13.2.r13.2/compiler.37668154_0
+cmake version 3.28.3
+JobId=57779143 JobName=interactive
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:43:21 TimeLimit=04:00:00 TimeMin=N/A
+   SubmitTime=2026-08-31T07:39:04 EligibleTime=2026-08-31T07:39:04
+   AccrueTime=2026-08-31T07:39:04
+   StartTime=2026-08-31T07:39:04 EndTime=2026-08-31T11:39:04 Deadline=N/A
+   PreemptEligibleTime=2026-08-31T07:39:04 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-31T07:39:04 Scheduler=Backfill
+   Partition=urgent_gpu_ss11 AllocNode:Sid=login33:761906
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid[001212-001213,001216-001217]
+   BatchHost=nid001212
+   StepMgrEnabled=Yes
+   NumNodes=4 NumCPUs=512 NumTasks=4 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=4,mem=919608M,node=4,billing=4,gres/gpu=16
+   AllocTRES=cpu=512,mem=919608M,node=4,billing=512,gres/gpu=16,gres/gpu:a100=16
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0
+   Features=gpu&a100 DelayBoot=00:00:00
+   OverSubscribe=NO Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=/bin/sh
+   SubmitLine=salloc -A m3328_g -C gpu -q interactive -N 4 --gpus-per-node=4 -t 04:00:00
+   WorkDir=/global/u1/h/hzhu
+   TresPerNode=gres/gpu:4
+   ResvPorts=63001-64000
+
+9d0ac39128107f099aac20234f3874e2352d7c785b724354c7d8d64a91870e83  /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/inputs/ref_gh/ref_gh_relative_damped_hard_freeze_outer24.athinput
+2ad5e1609010a5445e0336255ea1bc3b46d636336d3948d8b8b77122b23aaa7a  /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/inputs/ref_gh/ref_gh_source_unit.athinput
+98e193046b2f28c38878b1cce738903035f0118b4f14ee8b078ae4fd1497abd2  /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/scripts/ref_gh/analyze_reference_motion_freeze.py
+801be3f310d5c4bebf1f4cc9892289cf2f974eff3cf5e393a9315cfe9daae27d  /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/scripts/ref_gh/perlmutter_reference_motion_freeze_interactive.sh
+Athena_ENABLE_MPI:BOOL=ON
+Athena_ENABLE_OPENMP:BOOL=OFF
+CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_CXX_COMPILER:UNINITIALIZED=/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/kokkos/bin/nvcc_wrapper
+CMAKE_C_COMPILER:UNINITIALIZED=cc
+Kokkos_ARCH_AMPERE80:BOOL=ON
+Kokkos_ENABLE_CUDA:BOOL=ON
+Kokkos_ENABLE_DEBUG_BOUNDS_CHECK:BOOL=OFF
+Kokkos_ENABLE_OPENMP:BOOL=OFF
+Kokkos_ENABLE_SERIAL:BOOL=ON
+PROBLEM:STRING=built_in_pgens
+2dee8f19eedbef92ffa1a564503b0577dba76482ea18c1ce3e8d8174674bb337  /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/build_57779143/CMakeCache.txt
+4f9e5bd56c5d437d17880b14984678479ffb092bfeb36525a8d5ad19ca63da66  /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/build_57779143/src/athena
+	linux-vdso.so.1 (0x00007ffd331cd000)
+	libcuda.so.1 => /usr/local/cuda-13.2/compat/libcuda.so.1 (0x00007f2ee3d87000)
+	libcudart.so.13 => /opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/lib64/libcudart.so.13 (0x00007f2ee3a00000)
+	libdarshan.so.0 => /global/common/software/nersc9/darshan/3.4.6-gcc-13.2.1/lib/libdarshan.so.0 (0x00007f2ee3d38000)
+	liblustreapi.so.1 => /usr/lib64/liblustreapi.so.1 (0x00007f2ee3cd8000)
+	libz.so.1 => /usr/lib64/libz.so.1 (0x00007f2ee3cbf000)
+	libmpi_gnu.so.12 => /opt/cray/pe/lib64/libmpi_gnu.so.12 (0x00007f2ee131f000)
+	libmpi_gtl_cuda.so.0 => /opt/cray/pe/lib64/libmpi_gtl_cuda.so.0 (0x00007f2ee12c9000)
+	libxpmem.so.0 => /usr/lib64/libxpmem.so.0 (0x00007f2ee12c6000)
+	libm.so.6 => /lib64/libm.so.6 (0x00007f2ee11da000)
+	libstdc++.so.6 => /usr/lib64/libstdc++.so.6 (0x00007f2ee0f74000)
+	libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007f2ee0f47000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007f2ee0d33000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f2ee0d30000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007f2ee0d2d000)
+	librt.so.1 => /lib64/librt.so.1 (0x00007f2ee0d28000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f2ee9534000)
+	libmpi_gnu_123.so.12 => /opt/cray/pe/lib64/libmpi_gnu_123.so.12 (0x00007f2edfbd8000)
+	liblnetconfig.so.4 => /usr/lib64/liblnetconfig.so.4 (0x00007f2edfba2000)
+	libyaml-0.so.2 => /usr/lib64/libyaml-0.so.2 (0x00007f2edfb83000)
+	libreadline.so.7 => /lib64/libreadline.so.7 (0x00007f2edfb33000)
+	libnl-genl-3.so.200 => /usr/lib64/libnl-genl-3.so.200 (0x00007f2edfb29000)
+	libnl-3.so.200 => /usr/lib64/libnl-3.so.200 (0x00007f2edfb06000)
+	libkeyutils.so.1 => /usr/lib64/libkeyutils.so.1 (0x00007f2edf800000)
+	libfabric.so.1 => /opt/cray/libfabric/1.22.0/lib64/libfabric.so.1 (0x00007f2edf6c8000)
+	libatomic.so.1 => /usr/lib64/libatomic.so.1 (0x00007f2edfafc000)
+	libpmi.so.0 => /opt/cray/pe/lib64/libpmi.so.0 (0x00007f2edfad9000)
+	libpmi2.so.0 => /opt/cray/pe/lib64/libpmi2.so.0 (0x00007f2edfab4000)
+	libtinfo.so.6 => /lib64/libtinfo.so.6 (0x00007f2edfa85000)
+	libcxi.so.1 => /usr/lib64/libcxi.so.1 (0x00007f2edfa64000)
+	libpals.so.0 => /opt/cray/pe/lib64/libpals.so.0 (0x00007f2edf400000)
+	libjansson.so.4 => /usr/lib64/libjansson.so.4 (0x00007f2edfa53000)
+restart_file=/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/reference_motion_freeze_57779143/seed_to_t2/rst/refgh_reference_motion_seed.00001.rst
+restart_sha256=68ab3a2dcfddebb79065e923b330faaa993c71fa023930a63f4180894dcbb279
+restart_size_bytes=10244116398

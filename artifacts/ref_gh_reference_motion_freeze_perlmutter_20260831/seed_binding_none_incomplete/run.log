@@ -1,0 +1,112 @@
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 328
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 3 (4 levels total)
+  Physical level = 1 (logical level = 3): 208 MeshBlocks, cost = 208
+  Physical level = 2 (logical level = 4): 56 MeshBlocks, cost = 56
+  Physical level = 3 (logical level = 5): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 16
+  Rank = 0: 20 MeshBlocks, cost = 20
+  Rank = 1: 20 MeshBlocks, cost = 20
+  Rank = 2: 20 MeshBlocks, cost = 20
+  Rank = 3: 20 MeshBlocks, cost = 20
+  Rank = 4: 20 MeshBlocks, cost = 20
+  Rank = 5: 20 MeshBlocks, cost = 20
+  Rank = 6: 20 MeshBlocks, cost = 20
+  Rank = 7: 20 MeshBlocks, cost = 20
+  Rank = 8: 21 MeshBlocks, cost = 21
+  Rank = 9: 21 MeshBlocks, cost = 21
+  Rank = 10: 21 MeshBlocks, cost = 21
+  Rank = 11: 21 MeshBlocks, cost = 21
+  Rank = 12: 21 MeshBlocks, cost = 21
+  Rank = 13: 21 MeshBlocks, cost = 21
+  Rank = 14: 21 MeshBlocks, cost = 21
+  Rank = 15: 21 MeshBlocks, cost = 21
+Load Balancing:
+  Maximum normalized cost = 1.05, Average = 1.025
+ref_gh reference allocation backend=generic_cache_oracle generic_bytes=11991040000 analytic_static_components=0 analytic_stage_components=0 analytic_static_bytes=0 analytic_stage_bytes=0
+ref_gh power diagnostic native-cell list h=0.0625 stencil_radius=3 inner_count=264 blend_count=3168 outside_count=5032 legacy_count=1960
+reference-GH puncture vertex audit passed; minimum cell radius=0.0541266, wormhole match state=0, G=0, lapse=4.44089e-16, shift=0
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/parameter_input.cpp: input parameter <mesh_refinement>/num_levels = 4 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/parameter_input.cpp: input parameter <mesh_refinement>/max_nmb_per_rank = 128 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/hard_freeze_reference_already_static = false was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/hard_freeze_previous_xi_dot = 0.125 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/hard_freeze_previous_xi_ddot = 0.0 was not used by the code (check for a typo)
+[3] This process is not using the same device it did during gtl_init.
+ Current device_id 3 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[1] This process is not using the same device it did during gtl_init.
+ Current device_id 1 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[2] This process is not using the same device it did during gtl_init.
+ Current device_id 2 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[15] This process is not using the same device it did during gtl_init.
+ Current device_id 3 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[5] This process is not using the same device it did during gtl_init.
+ Current device_id 1 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[7] This process is not using the same device it did during gtl_init.
+ Current device_id 3 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[9] This process is not using the same device it did during gtl_init.
+ Current device_id 1 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[14] This process is not using the same device it did during gtl_init.
+ Current device_id 2 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[10] This process is not using the same device it did during gtl_init.
+ Current device_id 2 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[13] This process is not using the same device it did during gtl_init.
+ Current device_id 1 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[6] This process is not using the same device it did during gtl_init.
+ Current device_id 2 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+[11] This process is not using the same device it did during gtl_init.
+ Current device_id 3 original device_id 0.
+ Use of IPC is disabled from this point. IPC PUT protocol may be used instead 
+
+Setup complete, executing task list(s)...
+
+elapsed=1.691210e+01 cycle=0 time=0.000000e+00 dt=4.138311e-03
+elapsed=3.608370e+01 cycle=10 time=4.138311e-02 dt=4.138311e-03
+elapsed=5.525351e+01 cycle=20 time=8.276621e-02 dt=4.138309e-03
+elapsed=7.404477e+01 cycle=30 time=1.241493e-01 dt=4.138306e-03
+elapsed=9.322002e+01 cycle=40 time=1.655323e-01 dt=4.138301e-03
+elapsed=1.123962e+02 cycle=50 time=2.069153e-01 dt=4.138293e-03
+elapsed=1.315746e+02 cycle=60 time=2.482982e-01 dt=4.138282e-03
+srun: interrupt (one more within 1 sec to abort)
+srun: StepId=57779143.8 tasks 0-15: running
+elapsed=1.507514e+02 cycle=70 time=2.896810e-01 dt=4.138268e-03
+elapsed=1.699258e+02 cycle=80 time=3.310636e-01 dt=4.138250e-03
+elapsed=1.890995e+02 cycle=90 time=3.724460e-01 dt=4.138227e-03
+elapsed=2.082750e+02 cycle=100 time=4.138281e-01 dt=4.138199e-03
+elapsed=2.274497e+02 cycle=110 time=4.552099e-01 dt=4.138166e-03
+elapsed=2.466252e+02 cycle=120 time=4.965914e-01 dt=4.138127e-03
+elapsed=2.658025e+02 cycle=130 time=5.379725e-01 dt=4.138082e-03
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-08-31T15:14:27.527] error: *** STEP 57779143.8 ON nid001212 CANCELLED AT 2026-08-31T15:14:27 DUE to SIGNAL Killed ***
+srun: error: nid001212: task 0: Killed
+srun: Terminating StepId=57779143.8
+srun: error: nid001213: task 4: Killed
+srun: error: nid001217: task 12: Killed
+srun: error: nid001216: task 8: Killed
+srun: error: nid001213: task 7: Killed
+srun: error: nid001216: task 11: Killed
+srun: error: nid001212: tasks 1-2: Killed
+srun: error: nid001213: task 5: Killed
+srun: error: nid001216: task 9: Killed
+srun: error: nid001217: tasks 13-14: Killed
+srun: error: nid001212: task 3: Killed
+srun: error: nid001213: task 6: Killed
+srun: error: nid001217: task 15: Killed
+srun: error: nid001216: task 10: Killed
+real 277.52
+user 0.04
+sys 0.03

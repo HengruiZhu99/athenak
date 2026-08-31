@@ -1,0 +1,901 @@
+[  1%] Built target kokkossimd
+[ 11%] Built target kokkoscore
+[ 11%] Built target AlwaysCheckGit
+[ 12%] Built target kokkosalgorithms
+[ 14%] Built target impl_git_version
+[ 14%] Built target kokkoscontainers
+[ 14%] Building CXX object src/CMakeFiles/athena.dir/driver/driver.cpp.o
+[ 14%] Building CXX object src/CMakeFiles/athena.dir/ref_gh/ref_gh.cpp.o
+[ 14%] Building CXX object src/CMakeFiles/athena.dir/ref_gh/ref_gh_tasks.cpp.o
+[ 15%] Building CXX object src/CMakeFiles/athena.dir/ref_gh/ref_gh_calcrhs.cpp.o
+[ 15%] Building CXX object src/CMakeFiles/athena.dir/hydro/hydro_newdt.cpp.o
+[ 15%] Building CXX object src/CMakeFiles/athena.dir/ref_gh/ref_gh_diagnostics.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/hydro/hydro_tasks.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/hydro/hydro_update.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/hydro/hydro_sts.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/ion-neutral/ion-neutral.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/ion-neutral/ion-neutral_tasks.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/mesh/meshblock.cpp.o
+[ 18%] Building CXX object src/CMakeFiles/athena.dir/mesh/load_balance.cpp.o
+[ 20%] Building CXX object src/CMakeFiles/athena.dir/mesh/meshblock_tree.cpp.o
+[ 20%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/mesh/meshblock_pack.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/mesh/build_tree.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/mesh/refinement_criteria.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh_refinement.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/multigrid/multigrid.cpp.o
+[ 22%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd.cpp.o
+[ 22%] Building CXX object src/CMakeFiles/athena.dir/multigrid/multigrid_driver.cpp.o
+[ 23%] Building CXX object src/CMakeFiles/athena.dir/multigrid/multigrid_bvals.cpp.o
+[ 24%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_fofc.cpp.o
+[ 24%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_ct.cpp.o
+[ 24%] Building CXX object src/CMakeFiles/athena.dir/multigrid/multigrid_tasks.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_corner_e.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_sts.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_fluxes.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_newdt.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_tasks.cpp.o
+[ 27%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_update.cpp.o
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/multigrid/multigrid.cpp(375): warning #177-D: variable "is" was declared but never referenced
+    int is = indcs.is, js = indcs.js, ks = indcs.ks;
+        ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/multigrid/multigrid.cpp(375): warning #177-D: variable "js" was declared but never referenced
+    int is = indcs.is, js = indcs.js, ks = indcs.ks;
+                       ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/multigrid/multigrid.cpp(375): warning #177-D: variable "ks" was declared but never referenced
+    int is = indcs.is, js = indcs.js, ks = indcs.ks;
+                                      ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/multigrid/multigrid.cpp(704): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_max = std::max(local_max, std::abs(def(m, v, k, j, i)));
+                        ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/multigrid/multigrid.cpp(733): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_max = std::max(local_max, std::abs(def(m, v, k, j, i)));
+                        ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/multigrid/multigrid_driver.cpp(1729): warning #177-D: variable "l" was declared but never referenced
+    int l = ngh, r = ngh + 1;
+        ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/multigrid/multigrid_driver.cpp(1729): warning #550-D: variable "r" was set but never used
+    int l = ngh, r = ngh + 1;
+                 ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/multigrid/multigrid_bvals.cpp(1125): warning #177-D: variable "nnghbr" was declared but never referenced
+    int nnghbr = pmy_pack->pmb->nnghbr;
+        ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(27): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(31): warning #177-D: variable "L_tt" was declared but never referenced
+    const Real L_tt = l_jet.dtt;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(32): warning #177-D: variable "L_tr" was declared but never referenced
+    const Real L_tr = l_jet.dtr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(33): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(34): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(35): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(38): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(449): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(450): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(2529): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(2530): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(27): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(31): warning #177-D: variable "L_tt" was declared but never referenced
+    const Real L_tt = l_jet.dtt;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(32): warning #177-D: variable "L_tr" was declared but never referenced
+    const Real L_tr = l_jet.dtr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(33): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(34): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(35): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(38): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(4764): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(4765): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(449): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(450): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(397): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(401): warning #177-D: variable "L_tt" was declared but never referenced
+    const Real L_tt = l_jet.dtt;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(402): warning #177-D: variable "L_tr" was declared but never referenced
+    const Real L_tr = l_jet.dtr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(403): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(404): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(405): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(408): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(450): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(456): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(457): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(458): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(461): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(2529): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(2530): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(4764): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(4765): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(397): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(401): warning #177-D: variable "L_tt" was declared but never referenced
+    const Real L_tt = l_jet.dtt;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(402): warning #177-D: variable "L_tr" was declared but never referenced
+    const Real L_tr = l_jet.dtr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(403): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(404): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(405): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(408): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(450): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(456): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(457): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(458): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(461): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(27): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(31): warning #177-D: variable "L_tt" was declared but never referenced
+    const Real L_tt = l_jet.dtt;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(32): warning #177-D: variable "L_tr" was declared but never referenced
+    const Real L_tr = l_jet.dtr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(33): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(34): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(35): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(38): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(449): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(450): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(2529): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(2530): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(4764): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(4765): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(397): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(401): warning #177-D: variable "L_tt" was declared but never referenced
+    const Real L_tt = l_jet.dtt;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(402): warning #177-D: variable "L_tr" was declared but never referenced
+    const Real L_tr = l_jet.dtr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(403): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(404): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(405): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(408): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(450): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(456): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(457): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(458): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(461): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/ref_gh_diagnostics.cpp(499): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                ? value : std::numeric_limits<Real>::max();
+                          ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/ref_gh_diagnostics.cpp(894): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                ? Kokkos::abs(value) : std::numeric_limits<Real>::max();
+                                       ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/multigrid/multigrid.cpp(704): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::max<double> (const T1 &, const T1 &)") from a __host__ __device__ function("Multigrid::CalculateDefectNorm(    ::MGNormType, int)::[lambda(int, int, int, int, int, double &) (instance 1)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/multigrid/multigrid.cpp(733): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::max<double> (const T1 &, const T1 &)") from a __host__ __device__ function("Multigrid::CalculateDefectNorm(    ::MGNormType, int)::[lambda(int, int, int, int, int, double &) (instance 4)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+[ 27%] Building CXX object src/CMakeFiles/athena.dir/outputs/io_wrapper.cpp.o
+[ 28%] Building CXX object src/CMakeFiles/athena.dir/outputs/outputs.cpp.o
+[ 28%] Building CXX object src/CMakeFiles/athena.dir/outputs/basetype_output.cpp.o
+[ 29%] Building CXX object src/CMakeFiles/athena.dir/outputs/derived_variables.cpp.o
+[ 29%] Building CXX object src/CMakeFiles/athena.dir/outputs/cartgrid.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/outputs/binary.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/outputs/eventlog.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/outputs/formatted_table.cpp.o
+[ 31%] Building CXX object src/CMakeFiles/athena.dir/outputs/history.cpp.o
+[ 31%] Building CXX object src/CMakeFiles/athena.dir/outputs/restart.cpp.o
+[ 32%] Building CXX object src/CMakeFiles/athena.dir/outputs/spherical_surface.cpp.o
+[ 32%] Building CXX object src/CMakeFiles/athena.dir/outputs/coarsened_binary.cpp.o
+[ 33%] Building CXX object src/CMakeFiles/athena.dir/outputs/track_prtcl.cpp.o
+[ 33%] Building CXX object src/CMakeFiles/athena.dir/outputs/vtk_mesh.cpp.o
+[ 34%] Building CXX object src/CMakeFiles/athena.dir/outputs/vtk_prtcl.cpp.o
+[ 34%] Building CXX object src/CMakeFiles/athena.dir/particles/particles.cpp.o
+[ 35%] Building CXX object src/CMakeFiles/athena.dir/particles/particles_pushers.cpp.o
+[ 35%] Building CXX object src/CMakeFiles/athena.dir/particles/particles_tasks.cpp.o
+[ 35%] Building CXX object src/CMakeFiles/athena.dir/outputs/pdf.cpp.o
+[ 36%] Building CXX object src/CMakeFiles/athena.dir/pgen/pgen.cpp.o
+[ 36%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/advection.cpp.o
+[ 37%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/cpaw.cpp.o
+[ 37%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/cshock.cpp.o
+[ 38%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/divb_amr.cpp.o
+[ 38%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/diffusion.cpp.o
+[ 39%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/gr_bondi.cpp.o
+[ 39%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/gr_monopole.cpp.o
+[ 40%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/linear_wave.cpp.o
+[ 40%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/lw_implode.cpp.o
+[ 40%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/orszag_tang.cpp.o
+[ 41%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/mri3d.cpp.o
+[ 41%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/shock_tube.cpp.o
+[ 42%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/shwave.cpp.o
+[ 42%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/rad_beam.cpp.o
+[ 43%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/rad_linear_wave.cpp.o
+[ 43%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/z4c_boosted_puncture.cpp.o
+[ 44%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/z4c_linear_wave.cpp.o
+[ 44%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/jeans_wave.cpp.o
+[ 45%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/binary_gravity.cpp.o
+[ 45%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/be_collapse.cpp.o
+[ 45%] Building CXX object src/CMakeFiles/athena.dir/pgen/unit_tests/eos_compose.cpp.o
+[ 46%] Building CXX object src/CMakeFiles/athena.dir/pgen/unit_tests/gauss_legendre.cpp.o
+[ 46%] Building CXX object src/CMakeFiles/athena.dir/pgen/fo_gh/tensor_unit.cpp.o
+[ 47%] Building CXX object src/CMakeFiles/athena.dir/pgen/fo_gh/algebra_unit.cpp.o
+[ 47%] Building CXX object src/CMakeFiles/athena.dir/pgen/fo_gh/geometry_unit.cpp.o
+[ 48%] Building CXX object src/CMakeFiles/athena.dir/pgen/fo_gh/rhs_unit.cpp.o
+[ 48%] Building CXX object src/CMakeFiles/athena.dir/pgen/fo_gh/minkowski.cpp.o
+[ 49%] Building CXX object src/CMakeFiles/athena.dir/pgen/fo_gh/linear_wave.cpp.o
+[ 49%] Building CXX object src/CMakeFiles/athena.dir/pgen/fo_gh/stability.cpp.o
+[ 49%] Building CXX object src/CMakeFiles/athena.dir/pgen/fo_gh/compatible_unit.cpp.o
+[ 50%] Building CXX object src/CMakeFiles/athena.dir/pgen/fo_gh/puncture.cpp.o
+[ 50%] Building CXX object src/CMakeFiles/athena.dir/pgen/ref_gh/minkowski.cpp.o
+[ 51%] Building CXX object src/CMakeFiles/athena.dir/pgen/ref_gh/linear_wave.cpp.o
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/unit_tests/gauss_legendre.cpp(40): warning #177-D: variable "indcs" was declared but never referenced
+    auto &indcs = pmy_mesh_->mb_indcs;
+          ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 51%] Building CXX object src/CMakeFiles/athena.dir/pgen/ref_gh/stability.cpp.o
+[ 52%] Building CXX object src/CMakeFiles/athena.dir/pgen/ref_gh/stationary_trumpet.cpp.o
+[ 52%] Building CXX object src/CMakeFiles/athena.dir/pgen/ref_gh/controlled_transition.cpp.o
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/fo_gh/minkowski.cpp(49): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_maximum = std::numeric_limits<Real>::infinity();
+                            ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 53%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation.cpp.o
+[ 53%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_fluxes.cpp.o
+[ 54%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_newdt.cpp.o
+[ 54%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_source.cpp.o
+[ 54%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_tasks.cpp.o
+[ 55%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_tetrad.cpp.o
+[ 55%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_update.cpp.o
+[ 56%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/orbital_advection.cpp.o
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/minkowski.cpp(39): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_maximum = std::numeric_limits<Real>::infinity();
+                            ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 56%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/orbital_advection_cc.cpp.o
+[ 57%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/orbital_advection_fc.cpp.o
+[ 57%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/orbital_advection_tasks.cpp.o
+[ 58%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/shearing_box.cpp.o
+[ 58%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/shearing_box_cc.cpp.o
+[ 59%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/shearing_box_fc.cpp.o
+[ 59%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/shearing_box_srcterms.cpp.o
+[ 59%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/shearing_box_tasks.cpp.o
+[ 60%] Building CXX object src/CMakeFiles/athena.dir/srcterms/srcterms.cpp.o
+[ 60%] Building CXX object src/CMakeFiles/athena.dir/srcterms/srcterms_newdt.cpp.o
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(397): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(401): warning #177-D: variable "L_tt" was declared but never referenced
+    const Real L_tt = l_jet.dtt;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(402): warning #177-D: variable "L_tr" was declared but never referenced
+    const Real L_tr = l_jet.dtr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(403): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(404): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(405): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(408): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(450): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(456): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(457): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(458): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(461): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(222): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            maximum = std::numeric_limits<Real>::infinity();
+                      ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(223): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            metric_maximum = std::numeric_limits<Real>::infinity();
+                             ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(267): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            lapse_maximum = std::numeric_limits<Real>::infinity();
+                            ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(268): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            shift_maximum = std::numeric_limits<Real>::infinity();
+                            ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(376): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                maximum = std::numeric_limits<Real>::infinity();
+                          ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(377): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                gauge_maximum = std::numeric_limits<Real>::infinity();
+                                ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(421): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                lapse_maximum = std::numeric_limits<Real>::infinity();
+                                ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(422): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                shift_maximum = std::numeric_limits<Real>::infinity();
+                                ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(457): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                  gauge_maximum = std::numeric_limits<Real>::infinity();
+                                  ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(495): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                gauge_maximum = std::numeric_limits<Real>::infinity();
+                                ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(1112): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+              local_delta_target = std::numeric_limits<Real>::infinity();
+                                   ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(1114): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                  std::numeric_limits<Real>::infinity();
+                  ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(1115): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+              local_delta_shift = std::numeric_limits<Real>::infinity();
+                                  ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(1122): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+              local_delta_target = std::numeric_limits<Real>::infinity();
+                                   ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(1124): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                  std::numeric_limits<Real>::infinity();
+                  ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/stationary_trumpet.cpp(1125): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+              local_delta_shift = std::numeric_limits<Real>::infinity();
+                                  ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(397): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(401): warning #177-D: variable "L_tt" was declared but never referenced
+    const Real L_tt = l_jet.dtt;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(402): warning #177-D: variable "L_tr" was declared but never referenced
+    const Real L_tr = l_jet.dtr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(403): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(404): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(405): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(408): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(450): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(456): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(457): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(458): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(461): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+[ 61%] Building CXX object src/CMakeFiles/athena.dir/srcterms/turb_driver.cpp.o
+[ 61%] Building CXX object src/CMakeFiles/athena.dir/tasklist/numerical_relativity.cpp.o
+[ 62%] Building CXX object src/CMakeFiles/athena.dir/units/units.cpp.o
+[ 62%] Building CXX object src/CMakeFiles/athena.dir/utils/change_rundir.cpp.o
+[ 63%] Building CXX object src/CMakeFiles/athena.dir/utils/derived_vars.cpp.o
+[ 63%] Building CXX object src/CMakeFiles/athena.dir/utils/show_config.cpp.o
+[ 64%] Building CXX object src/CMakeFiles/athena.dir/utils/lagrange_interpolator.cpp.o
+[ 64%] Building CXX object src/CMakeFiles/athena.dir/utils/tov/tov.cpp.o
+[ 64%] Building CXX object src/CMakeFiles/athena.dir/utils/tr_table.cpp.o
+[ 65%] Building CXX object src/CMakeFiles/athena.dir/utils/cart_grid.cpp.o
+[ 65%] Building CXX object src/CMakeFiles/athena.dir/utils/watchdog.cpp.o
+[ 66%] Building CXX object src/CMakeFiles/athena.dir/utils/spherical_surface.cpp.o
+[ 66%] Building CXX object src/CMakeFiles/athena.dir/z4c/compact_object_tracker.cpp.o
+[ 67%] Building CXX object src/CMakeFiles/athena.dir/z4c/fastflow.cpp.o
+[ 67%] Building CXX object src/CMakeFiles/athena.dir/z4c/horizon_dump.cpp.o
+[ 68%] Building CXX object src/CMakeFiles/athena.dir/z4c/tmunu.cpp.o
+[ 68%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c.cpp.o
+[ 68%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_adm.cpp.o
+[ 69%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_calcrhs.cpp.o
+[ 69%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_newdt.cpp.o
+[ 70%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_tasks.cpp.o
+[ 70%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_update.cpp.o
+[ 71%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_gauge.cpp.o
+[ 71%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_Sbc.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_calculate_weyl_scalars.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_wave_extr.cpp.o
+[ 73%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_amr.cpp.o
+[ 73%] Building CXX object src/CMakeFiles/athena.dir/z4c/cce/cce.cpp.o
+[ 73%] Building CXX object src/CMakeFiles/athena.dir/pgen/ref_gh/source_unit.cpp.o
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(27): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(31): warning #177-D: variable "L_tt" was declared but never referenced
+    const Real L_tt = l_jet.dtt;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(32): warning #177-D: variable "L_tr" was declared but never referenced
+    const Real L_tr = l_jet.dtr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(33): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(34): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(35): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(38): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(449): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(450): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(2529): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(2530): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(4764): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_source.hpp(4765): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(397): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(401): warning #177-D: variable "L_tt" was declared but never referenced
+    const Real L_tt = l_jet.dtt;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(402): warning #177-D: variable "L_tr" was declared but never referenced
+    const Real L_tr = l_jet.dtr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(403): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(404): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(405): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(408): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(450): warning #177-D: variable "alpha_rr" was declared but never referenced
+    const Real alpha_rr = alpha_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(456): warning #177-D: variable "L_rr" was declared but never referenced
+    const Real L_rr = l_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(457): warning #177-D: variable "L_ttr" was declared but never referenced
+    const Real L_ttr = l_jet.dttr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(458): warning #177-D: variable "L_trr" was declared but never referenced
+    const Real L_trr = l_jet.dtrr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/ref_gh/generated/analytic_radial_q_gauge.hpp(461): warning #177-D: variable "B_rr" was declared but never referenced
+    const Real B_rr = b_jet.drr;
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(1770): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_maximum = std::numeric_limits<Real>::infinity();
+                            ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(1807): warning #177-D: variable "displacement" was declared but never referenced
+          const Real displacement[3] = {x, y, z};
+                     ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(2596): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_dt_theta = std::numeric_limits<Real>::infinity();
+                             ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(2922): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_metric.val = std::numeric_limits<Real>::infinity();
+                               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(2948): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_gauge.val = std::numeric_limits<Real>::infinity();
+                              ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(3646): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                ? rhs[n] : std::numeric_limits<Real>::infinity();
+                           ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(3648): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                ? condition[n] : std::numeric_limits<Real>::infinity();
+                                 ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(3706): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                ? rhs[n] : std::numeric_limits<Real>::infinity();
+                           ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(3724): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_maximum.val = std::numeric_limits<Real>::infinity();
+                                ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(4360): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_metric = std::numeric_limits<Real>::infinity();
+                           ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(4380): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_metric = std::numeric_limits<Real>::infinity();
+                           ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(4510): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_hhat = std::numeric_limits<Real>::infinity();
+                         ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(4518): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_hhat = std::numeric_limits<Real>::infinity();
+                         ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(4819): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                    std::numeric_limits<Real>::infinity();
+                    ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(4915): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                maximum = std::numeric_limits<Real>::infinity();
+                          ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(4922): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                maximum = std::numeric_limits<Real>::infinity();
+                          ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(5120): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                          std::numeric_limits<Real>::infinity();
+                          ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(5728): warning #20013-D: calling a constexpr __host__ function("epsilon") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                    256.0*std::numeric_limits<Real>::epsilon()
+                          ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(5825): warning #20013-D: calling a constexpr __host__ function("epsilon") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                    256.0*std::numeric_limits<Real>::epsilon()
+                          ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(6159): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            local_time_jet = std::numeric_limits<Real>::infinity();
+                             ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(6298): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+              Real source2 = std::numeric_limits<Real>::max();
+                             ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(3813): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("EvaluateResidualPhysicalGaugeTargetOracle") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+      return std::numeric_limits<Real>::infinity();
+             ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(3823): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("EvaluateResidualPhysicalGaugeTargetOracle") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+      return std::numeric_limits<Real>::infinity();
+             ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(3884): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("EvaluateResidualPhysicalGaugeTargetOracle") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+      return std::numeric_limits<Real>::infinity();
+             ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(3912): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("EvaluateResidualPhysicalGaugeTargetOracle") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+      if (!baseline.valid) return std::numeric_limits<Real>::infinity();
+                                  ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(3941): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("EvaluateResidualPhysicalGaugeTargetOracle") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+        return std::numeric_limits<Real>::infinity();
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(4074): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("EvaluateResidualPhysicalGaugeTargetOracle") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+        return std::numeric_limits<Real>::infinity();
+               ^
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(3976): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("EvaluateResidualPhysicalGaugeTargetOracle") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+          return std::numeric_limits<Real>::infinity();
+                 ^
+          detected during instantiation of "Real <unnamed>::EvaluateResidualPhysicalGaugeTargetOracle(const Reference &, int, __nv_bool &, __nv_bool, __nv_bool, Real &, Real &, Real &, Real &, Real &, Real &, int &) [with Reference=ref_gh::AnalyticRadialQPoint]" at line 4265
+
+/pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/pgen/ref_gh/source_unit.cpp(4086): warning #20013-D: calling a constexpr __host__ function("infinity") from a __host__ __device__ function("EvaluateResidualPhysicalGaugeTargetOracle") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+          return std::numeric_limits<Real>::infinity();
+                 ^
+          detected during instantiation of "Real <unnamed>::EvaluateResidualPhysicalGaugeTargetOracle(const Reference &, int, __nv_bool &, __nv_bool, __nv_bool, Real &, Real &, Real &, Real &, Real &, Real &, int &) [with Reference=ref_gh::AnalyticRadialQPoint]" at line 4265
+
+[ 74%] Linking CXX executable athena
+[100%] Built target athena

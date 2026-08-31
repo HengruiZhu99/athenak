@@ -1,0 +1,9 @@
+reference_motion_freeze_failure status=2 line=84 command=cmake --build "${BUILD}" --parallel 32 > build.log 2>&1
+reference_motion_freeze_failure status=137 line=139 command=( cd seed_to_t2; /usr/bin/time -p srun -N 4 -n 16 -c 32 --gpus-per-task=1 --gpu-bind=single:1 "${EXE}" -i "${INPUT}" job/basename=refgh_reference_motion_seed ref_gh/continuation_mode=legacy_time time/nlim=-1 time/tlim=2.0 output1/dt=0.02 output2/dt=2.0 > run.log 2>&1; latest_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}'     refgh_reference_motion_seed.ref_gh.hst); python3 - "${latest_time}"  <<'PY'
+import math
+import sys
+time = float(sys.argv[1])
+if not math.isfinite(time) or abs(time-2.0) > 1.0e-12:
+    raise SystemExit(f"common seed did not reach t=2M: {time}")
+PY
+ )

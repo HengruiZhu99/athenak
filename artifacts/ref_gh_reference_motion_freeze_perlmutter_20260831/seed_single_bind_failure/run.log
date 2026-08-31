@@ -1,0 +1,103 @@
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 328
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 3 (4 levels total)
+  Physical level = 1 (logical level = 3): 208 MeshBlocks, cost = 208
+  Physical level = 2 (logical level = 4): 56 MeshBlocks, cost = 56
+  Physical level = 3 (logical level = 5): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 16
+  Rank = 0: 20 MeshBlocks, cost = 20
+  Rank = 1: 20 MeshBlocks, cost = 20
+  Rank = 2: 20 MeshBlocks, cost = 20
+  Rank = 3: 20 MeshBlocks, cost = 20
+  Rank = 4: 20 MeshBlocks, cost = 20
+  Rank = 5: 20 MeshBlocks, cost = 20
+  Rank = 6: 20 MeshBlocks, cost = 20
+  Rank = 7: 20 MeshBlocks, cost = 20
+  Rank = 8: 21 MeshBlocks, cost = 21
+  Rank = 9: 21 MeshBlocks, cost = 21
+  Rank = 10: 21 MeshBlocks, cost = 21
+  Rank = 11: 21 MeshBlocks, cost = 21
+  Rank = 12: 21 MeshBlocks, cost = 21
+  Rank = 13: 21 MeshBlocks, cost = 21
+  Rank = 14: 21 MeshBlocks, cost = 21
+  Rank = 15: 21 MeshBlocks, cost = 21
+Load Balancing:
+  Maximum normalized cost = 1.05, Average = 1.025
+ref_gh reference allocation backend=generic_cache_oracle generic_bytes=11991040000 analytic_static_components=0 analytic_stage_components=0 analytic_static_bytes=0 analytic_stage_bytes=0
+ref_gh power diagnostic native-cell list h=0.0625 stencil_radius=3 inner_count=264 blend_count=3168 outside_count=5032 legacy_count=1960
+reference-GH puncture vertex audit passed; minimum cell radius=0.0541266, wormhole match state=0, G=0, lapse=4.44089e-16, shift=0
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/parameter_input.cpp: input parameter <mesh_refinement>/num_levels = 4 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/parameter_input.cpp: input parameter <mesh_refinement>/max_nmb_per_rank = 128 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/hard_freeze_reference_already_static = false was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/hard_freeze_previous_xi_dot = 0.125 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-reference-motion-freeze-20260831.7Y5n8O/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/hard_freeze_previous_xi_ddot = 0.0 was not used by the code (check for a typo)
+(GTL DEBUG: 0) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 0) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 0) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 2) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 2) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 2) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 12) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 3) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 3) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 3) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 15) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 5) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 6) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 12) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 9) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 14) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 4) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 1) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 1) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 1) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 14) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 8) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 5) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 5) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 15) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 6) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 13) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 13) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 13) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 7) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 7) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 7) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 12) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 4) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 4) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 14) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 6) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 15) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 10) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 10) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 8) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 11) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 9) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 11) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 11) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 8) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 9) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+(GTL DEBUG: 10) cuIpcOpenMemHandle: invalid argument, CUDA_ERROR_INVALID_VALUE, line no 369
+[2026-08-31T15:19:14.406] error: *** STEP 57779143.13 ON nid001212 CANCELLED AT 2026-08-31T15:19:14 DUE to SIGNAL Killed ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: error: nid001212: task 1: Killed
+srun: Terminating StepId=57779143.13
+srun: error: nid001217: task 15: Killed
+srun: error: nid001213: tasks 4,6: Killed
+srun: error: nid001216: tasks 10-11: Killed
+srun: error: nid001212: tasks 2-3: Killed
+srun: error: nid001217: tasks 12,14: Killed
+srun: error: nid001213: task 5: Killed
+srun: error: nid001216: task 8: Killed
+srun: error: nid001217: task 13: Killed
+srun: error: nid001212: task 0: Killed
+srun: error: nid001213: task 7: Killed
+srun: error: nid001216: task 9: Killed
+real 115.21
+user 0.04
+sys 0.03
