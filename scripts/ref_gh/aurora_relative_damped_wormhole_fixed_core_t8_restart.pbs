@@ -1,0 +1,169 @@
+#!/bin/bash -l
+# Continue the N96 fixed-core/tau-8 outer-24M discriminator from t=4M to t=8M.
+# Twelve Aurora nodes reduce the 328-block tree to 2--3 blocks per PVC tile.
+#PBS -A CompactBinaryMerger
+#PBS -q debug-scaling
+#PBS -l select=12
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_worm_o8
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with the established campaign root}"
+: "${QUALIFIED_SOURCE:?submit with the exact PVC-qualified source path}"
+: "${QUALIFIED_EXE:?submit with the exact PVC-qualified executable path}"
+: "${EXPECTED_SOURCE_COMMIT:?submit with the qualified source SHA}"
+: "${EXPECTED_EXE_SHA256:?submit with the qualified executable SHA-256}"
+: "${CHECKPOINT_COMMIT:?submit with the input/analysis checkpoint SHA}"
+: "${STAGED_INPUT:?submit with the staged fixed-core outer24 input}"
+: "${ANALYZER:?submit with the staged wormhole analysis script}"
+: "${PROFILE_ANALYZER:?submit with the staged physical-profile analyzer}"
+: "${PREVIOUS_OUT:?submit with the completed t=4M output directory}"
+: "${RESTART_FILE:?submit with the exact t=4M restart path}"
+: "${EXPECTED_RESTART_SHA256:?submit with the t=4M restart SHA-256}"
+
+readonly OUT="${CAMPAIGN_ROOT}/wormhole_fixed_core_outer24_t8_${PBS_JOBID}"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "wormhole_outer24_t8_error status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+readonly BINDER=$(command -v gpu_tile_compact.sh)
+
+test -x "${BINDER}"
+test -x "${QUALIFIED_EXE}"
+test -f "${STAGED_INPUT}"
+test -f "${ANALYZER}"
+test -f "${PROFILE_ANALYZER}"
+test -d "${PREVIOUS_OUT}/run"
+test -f "${RESTART_FILE}"
+test "$(git -C "${QUALIFIED_SOURCE}" rev-parse HEAD)" = "${EXPECTED_SOURCE_COMMIT}"
+test -z "$(git -C "${QUALIFIED_SOURCE}" status --porcelain)"
+test "$(sha256sum "${QUALIFIED_EXE}" | awk '{print $1}')" = "${EXPECTED_EXE_SHA256}"
+test "$(sha256sum "${RESTART_FILE}" | awk '{print $1}')" = "${EXPECTED_RESTART_SHA256}"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "qualified_source=${QUALIFIED_SOURCE}"
+  echo "qualified_source_commit=${EXPECTED_SOURCE_COMMIT}"
+  echo "checkpoint_commit=${CHECKPOINT_COMMIT}"
+  echo "qualified_executable=${QUALIFIED_EXE}"
+  echo "qualified_executable_sha256=${EXPECTED_EXE_SHA256}"
+  echo "previous_output=${PREVIOUS_OUT}"
+  echo "restart_file=${RESTART_FILE}"
+  echo "restart_sha256=${EXPECTED_RESTART_SHA256}"
+  echo "nodes=12"
+  echo "ranks=144"
+  echo "tiles=144"
+  echo "grid=root96_mb32_outer24"
+  echo "meshblocks=328"
+  echo "finest_spacing=0.0625"
+  echo "start_time=4.0"
+  echo "target_time=8.0"
+  echo "reference_path=fixed_core"
+  echo "tau_transition=8.0"
+  echo "claim=completed-reference discriminator only; no settling or stability claim"
+  git -C "${QUALIFIED_SOURCE}" status --short --branch
+  git -C "${QUALIFIED_SOURCE}" submodule status
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${STAGED_INPUT}" "${ANALYZER}" "${PROFILE_ANALYZER}" "$0"
+} > provenance.txt
+
+mpiexec -n 144 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 144
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/^host=\([^ ]*\).*ZE_AFFINITY_MASK=\([^ ]*\).*/\1:\2/p' \
+  | sort -u | wc -l)" -eq 144
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/^host=\([^ ]*\).*/\1/p' | sort -u | wc -l)" -eq 12
+awk '/^host=/ {split($1, part, "="); count[part[2]]++}
+     END {for (host in count) if (count[host] != 12) exit 1}' \
+  rank_gpu_mapping.txt
+
+mkdir run
+cd run
+readonly BASENAME=refgh_relative_damped_wormhole_fixed_core_outer24_n96_t8
+set +e
+/usr/bin/time -p mpiexec -n 144 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" "${QUALIFIED_EXE}" -r "${RESTART_FILE}" -i "${STAGED_INPUT}" \
+  job/basename="${BASENAME}" ref_gh/debug_task_fences=false \
+  time/nlim=-1 time/tlim=8.0 output1/dt=0.05 output2/dt=1.0 \
+  output3/dt=4.0 output4/dt=4.0 output5/dt=4.0 output6/dt=4.0 \
+  output7/dt=4.0 > run.log 2>&1
+run_status=$?
+set -e
+{
+  echo "run_exit_status=${run_status}"
+  echo "run_completed=$(date -Is)"
+} > run_status.txt
+cd ..
+
+if test "${run_status}" -ne 0; then
+  python3 "${ANALYZER}" \
+    --case "n96=${PREVIOUS_OUT}/run,${OUT}/run" --spacing n96=0.0625 \
+    --target 0 0.2 0.5 1 2 3 4 5 6 7 8 --target-tolerance 0.04 \
+    --outer-distance 24 --late-fit-time 4 \
+    --output-prefix "${OUT}/failure_analysis" > failure_analysis.log 2>&1 || true
+  find run/rst -type f -name '*.rst' -printf '%s %p\n' \
+    | sort -n > failure_restart_locations.txt
+  exit "${run_status}"
+fi
+
+grep -q 'Total number of MeshBlocks = 328' run/run.log
+grep -q 'Number of parallel ranks = 144' run/run.log
+grep -q 'reference-GH controlled Schwarzschild final:' run/run.log
+! grep -Eiq 'FATAL ERROR|NotPresent|page fault|SYCL exception|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' run/run.log
+awk 'BEGIN {ok=0} !/^#/ && $1 >= 8.0 - 1.0e-12 && $22 == 0 {ok=1} END {exit !ok}' \
+  run/"${BASENAME}.ref_gh.hst"
+test "$(find run/rst -type f -name '*.rst' | wc -l)" -ge 4
+test "$(find run -type f -name '*.cbin' | wc -l)" -ge 5
+find run -type f -name '*.cbin' -print0 \
+  | xargs -0 -r grep -a -L -m1 'size of variable=8' \
+  | awk 'END {exit NR != 0}'
+
+python3 "${ANALYZER}" \
+  --case "n96=${PREVIOUS_OUT}/run,${OUT}/run" --spacing n96=0.0625 \
+  --target 0 0.2 0.5 1 2 3 4 5 6 7 8 --target-tolerance 0.04 \
+  --outer-distance 24 --late-fit-time 4 \
+  --output-prefix "${OUT}/wormhole_outer24_t8" > analysis.log 2>&1
+python3 -m json.tool wormhole_outer24_t8.json >/dev/null
+python3 "${PROFILE_ANALYZER}" \
+  --run-dir "${OUT}/run" --source-root "${QUALIFIED_SOURCE}" \
+  --target 8 --stencil-radius 3 \
+  --output-prefix "${OUT}/wormhole_outer24_t8_profiles" \
+  > profile_analysis.log 2>&1
+python3 -m json.tool wormhole_outer24_t8_profiles.json >/dev/null
+
+find run/rst -type f -name '*.rst' -print0 \
+  | sort -z | xargs -0 -r sha256sum > restart_sha256.txt
+find run -type f -name '*.cbin' -print0 \
+  | sort -z | xargs -0 -r sha256sum > physical_cbin_sha256.txt
+sha256sum provenance.txt rank_gpu_mapping.txt bootstrap.log analysis.log \
+  profile_analysis.log wormhole_outer24_t8_profiles.json \
+  wormhole_outer24_t8_profiles.tsv \
+  wormhole_outer24_t8.json wormhole_outer24_t8.tsv \
+  run/run.log run/run_status.txt run/*.hst run/*.tsv \
+  restart_sha256.txt physical_cbin_sha256.txt > compact_sha256.txt
+echo "wormhole_outer24_t8_complete=$(date -Is)"

@@ -212,3 +212,27 @@ a passed failure-window discriminator that authorizes the outer-domain
 \`t=4M\` test.  Compact evidence is under
 \`wormhole_fixed_core_t2_8792686/\`; four large restart files remain at the
 recorded Aurora path and are represented by hashes only.
+
+Aurora job \`8792715\` evolved the full outer-24M, 328-block N96 tree on 96
+PVC tiles through \`t=4M\`.  It exited normally and stayed finite, but the
+scientific discriminator is unfavorable so far.  GH, reduction, and curl RMS
+reached \`2.48217e-3\`, \`6.69745e-4\`, and \`7.98434e-3\`; the GH log slope
+over \`2M<=t<=4M\` was \`1.51369/M\`.  Relative-D and added-source Linf were
+\`0.20909\` and \`2.06831\`, and the relative metric condition number reached
+\`3.66074\`.
+
+The largest GH, Pi/Phi, and RHS values localize at
+\`r=0.47--0.53M\`, overlapping the gauge window's outer edge \`r1=0.5M\`.
+Hhat/theta/Upsilon RHS remain exactly zero.  This points to the algebraic
+relative-gauge/window sector, rather than the disabled hyperbolic driver, but
+does not yet separate the lapse term, shift term, and window derivative.
+
+The physical profile also has not approached the stationary trumpet at
+\`t=4M\`.  The radial shift is nonzero, but the trumpet-over-wormhole error
+ratios exceed one for alpha and psi4 in every aggregate region; for \`r<1M\`
+they are \`1.11\` and \`4.62\`.  Because the fixed-core reference transition
+is only 50% complete at this time, one bounded checkpoint continuation to
+\`t=8M\` is required before classifying the transition as failed.  Compact
+histories and physical profiles are under
+\`wormhole_fixed_core_outer24_t4_8792715/\`; five restart and ten CBin files
+remain on Aurora and are represented by hashes.
