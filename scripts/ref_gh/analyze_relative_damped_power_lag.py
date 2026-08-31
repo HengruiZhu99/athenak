@@ -25,7 +25,9 @@ MAXLOC_SECTORS = (
     "GH_constraint", "Pi_RHS_Linf", "Psi_RHS_Linf", "Phi_RHS_Linf",
     "Q", "Delta", "reduction_constraint", "curl_constraint",
     "source_curvature", "source_QQ", "source_DeltaDelta", "source_damping",
-    "source_frame_correction")
+    "source_frame_correction", "reference_dt_frame",
+    "reference_dt_connection", "reference_spatial_frame_gradient",
+    "reference_window_gradient")
 DEFAULT_TARGETS = (0.0, 0.2, 0.5, 1.0, 2.0, 3.0, 4.0, 4.2, 4.5, 4.8, 5.0, 5.2)
 
 
@@ -151,6 +153,10 @@ def record_at(ref, user, power, maxloc, time):
         if abs(power_row["time"] - time) > 0.03:
             power_row = None
     if power_row is not None:
+        result["reference_activation_dot"] = power_row.get(
+            "transition_dot")
+        result["reference_activation_ddot"] = power_row.get(
+            "transition_ddot")
         result["power"] = {}
         for shell in SHELLS:
             fit = {}
