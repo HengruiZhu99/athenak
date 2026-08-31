@@ -38,9 +38,6 @@ struct InitialMatchEvidence {
   Real coordinate_metric_linf = 0.0;
   Real coordinate_derivative_linf = 0.0;
   Real reference_time_jet_linf = 0.0;
-  Real gh_l2 = 0.0;
-  Real reduction_l2 = 0.0;
-  Real curl_l2 = 0.0;
 } initial_match;
 
 void ReprojectHardFreezeRestart(ParameterInput *pin, Mesh *mesh) {
@@ -467,13 +464,12 @@ void FinishControlledTransition(ParameterInput *pin, Mesh *mesh) {
                        "initial_arel_Linf initial_shift_Linf min_cell_r "
                        "initial_coordinate_metric_Linf "
                        "initial_coordinate_derivative_Linf "
-                       "initial_reference_time_jet_Linf initial_GH_L2 "
-                       "initial_reduction_L2 initial_curl_L2 "
+                       "initial_reference_time_jet_Linf "
                        "final_state_Linf bad_state delta_q delta_p xi xi_dot "
                        "completed constraint_veto\n");
     std::fprintf(file, "%.17e %d %.17e %.17e %.17e %.17e %.17e "
                        "%.17e %.17e %.17e %.17e %.17e %.17e "
-                       "%.17e %.17e %.17e %.17e %.17e %.17e %d %d\n",
+                       "%.17e %.17e %.17e %d %d\n",
                  mesh->time, mesh->ncycle, initial_match.regular_state_linf,
                  initial_match.relative_spatial_linf,
                  initial_match.relative_lapse_linf,
@@ -482,8 +478,7 @@ void FinishControlledTransition(ParameterInput *pin, Mesh *mesh) {
                  initial_match.coordinate_metric_linf,
                  initial_match.coordinate_derivative_linf,
                  initial_match.reference_time_jet_linf,
-                 initial_match.gh_l2, initial_match.reduction_l2,
-                 initial_match.curl_l2, state_max, bad_state,
+                 state_max, bad_state,
                  module->controller.delta_q, module->controller.delta_p,
                  module->controller.xi, module->controller.xi_dot,
                  module->continuation_completed ? 1 : 0,
@@ -794,14 +789,6 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
     return;
   }
 
-  if (direct_fixed_initial_data) {
-    // Quantify the actual discrete initial constraints before the first RK
-    // stage.  The analytic projection is continuum exact, but sampling its
-    // first derivatives on the finite-difference mesh need not make the
-    // discrete reduction/curl constraints vanish.
-    pack->prefgh->FillReferenceCache(start_time, true);
-    pack->prefgh->CalcConstraints<3>();
-  }
   pack->prefgh->UpdateDiagnostics();
   const auto adm_vars = pack->padm->adm;
   Real state_error = 0.0;
@@ -993,12 +980,9 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
   MPI_Allreduce(MPI_IN_PLACE, &minimum_radius, 1, MPI_ATHENA_REAL, MPI_MIN,
                 MPI_COMM_WORLD);
 #endif
-  const auto &initial_diagnostics = pack->prefgh->controller_diagnostics;
   initial_match = {state_error, spatial_error, lapse_error, shift_error,
                    minimum_radius, spatial_error, derivative_error,
-                   reference_time_jet_error, initial_diagnostics.gh_l2,
-                   initial_diagnostics.reduction_l2,
-                   initial_diagnostics.curl_l2};
+                   reference_time_jet_error};
   if (!(minimum_radius > 0.0) || state_error > 1.0e-13
       || spatial_error > 1.0e-13 || lapse_error > 1.0e-12
       || shift_error > 1.0e-13
@@ -1022,9 +1006,6 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
               << ", shift=" << shift_error
               << ", derivative=" << derivative_error
               << ", reference-time-jet=" << reference_time_jet_error
-              << ", initial-GH-L2=" << initial_diagnostics.gh_l2
-              << ", initial-reduction-L2=" << initial_diagnostics.reduction_l2
-              << ", initial-curl-L2=" << initial_diagnostics.curl_l2
               << std::endl;
   }
 }

@@ -140,7 +140,7 @@ run_direct() {
     echo "case=direct_fixed"
     echo "run_exit_status=${status}"
     echo "latest_ref_history_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' refgh_direct_fixed_xi025.ref_gh.hst 2>/dev/null || echo 0)"
-    echo "latest_power_history_time=$(awk 'NF && $1 ~ /^[0-9.+-]/ {value=$1} END {print value+0}' refgh_direct_fixed_xi025.ref_gh_power.hst 2>/dev/null || echo 0)"
+    echo "latest_power_history_time=$(awk 'NF && $1 ~ /^[0-9.+-]/ {if ($1 > value) value=$1} END {print value+0}' *.ref_gh_power.hst 2>/dev/null || echo 0)"
     echo "remote_directory=${OUT}/direct_fixed"
   } > run_status.txt
   find rst -maxdepth 1 -type f -name '*.rst' -printf '%p\t%s bytes\n' \
@@ -172,7 +172,7 @@ run_smooth() {
     echo "case=smooth_stop"
     echo "run_exit_status=${status}"
     echo "latest_ref_history_time=$(awk 'NF && $1 !~ /^#/ {value=$1} END {print value+0}' refgh_smooth_stop.ref_gh.hst 2>/dev/null || echo 0)"
-    echo "latest_power_history_time=$(awk 'NF && $1 ~ /^[0-9.+-]/ {value=$1} END {print value+0}' refgh_smooth_stop.ref_gh_power.hst 2>/dev/null || echo 0)"
+    echo "latest_power_history_time=$(awk 'NF && $1 ~ /^[0-9.+-]/ {if ($1 > value) value=$1} END {print value+0}' *.ref_gh_power.hst 2>/dev/null || echo 0)"
     echo "remote_directory=${OUT}/smooth_stop"
   } > run_status.txt
   find rst -maxdepth 1 -type f -name '*.rst' -printf '%p\t%s bytes\n' \
