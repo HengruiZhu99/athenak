@@ -6437,6 +6437,125 @@ void CheckControlledHardFreezeTimeDerivatives() {
             << std::endl;
 }
 
+void CheckControlledSmoothStop() {
+  constexpr Real start = 2.0;
+  constexpr Real duration = 1.0;
+  constexpr Real initial_xi = 0.25;
+  constexpr Real initial_rate = 0.125;
+  const ref_gh::SmoothStopContinuationState initial =
+      ref_gh::EvaluateSmoothStopContinuation(
+          start, start, duration, initial_xi, initial_rate);
+  const ref_gh::SmoothStopContinuationState final =
+      ref_gh::EvaluateSmoothStopContinuation(
+          start + duration, start, duration, initial_xi, initial_rate);
+  const ref_gh::SmoothStopContinuationState dwell =
+      ref_gh::EvaluateSmoothStopContinuation(
+          start + duration + 0.7, start, duration, initial_xi, initial_rate);
+  const Real expected_final_xi = initial_xi + 0.5*initial_rate*duration;
+  if (initial.xi != initial_xi || initial.xi_dot != initial_rate
+      || initial.xi_ddot != 0.0 || initial.stopped
+      || final.xi != expected_final_xi || final.xi_dot != 0.0
+      || final.xi_ddot != 0.0 || !final.stopped
+      || dwell.xi != expected_final_xi || dwell.xi_dot != 0.0
+      || dwell.xi_ddot != 0.0 || !dwell.stopped) {
+    std::cout << "### FATAL ERROR: controlled smooth-stop endpoint state failed."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  Real maximum_derivative_error = 0.0;
+  Real maximum_stopped_reference_jet = 0.0;
+  Real minimum_moving_reference_jet = std::numeric_limits<Real>::max();
+  DvceArray2D<Real> table("ref_gh smooth-stop trumpet table", 1, 1);
+  FillTrumpetTable(table);
+  Kokkos::parallel_reduce(
+      "ref_gh controlled smooth-stop oracle",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, 31),
+      KOKKOS_LAMBDA(const int sample, Real &local_derivative_error,
+                    Real &local_stopped_jet, Real &local_moving_jet) {
+        const Real s = (static_cast<Real>(sample) + 0.5)/31.0;
+        const Real time = start + s*duration;
+        constexpr Real epsilon = 2.0e-5;
+        const ref_gh::SmoothStopContinuationState state =
+            ref_gh::EvaluateSmoothStopContinuation(
+                time, start, duration, initial_xi, initial_rate);
+        const ref_gh::SmoothStopContinuationState minus =
+            ref_gh::EvaluateSmoothStopContinuation(
+                time - epsilon, start, duration, initial_xi, initial_rate);
+        const ref_gh::SmoothStopContinuationState plus =
+            ref_gh::EvaluateSmoothStopContinuation(
+                time + epsilon, start, duration, initial_xi, initial_rate);
+        local_derivative_error = fmax(
+            local_derivative_error,
+            Kokkos::abs((plus.xi - minus.xi)/(2.0*epsilon) - state.xi_dot));
+        local_derivative_error = fmax(
+            local_derivative_error,
+            Kokkos::abs((plus.xi_dot - minus.xi_dot)/(2.0*epsilon)
+                        - state.xi_ddot));
+
+        const Real radius = 0.54;
+        const Real norm = Kokkos::sqrt(14.0);
+        const Real x = radius/norm;
+        const Real y = -2.0*radius/norm;
+        const Real z = 3.0*radius/norm;
+        const ref_gh::ControlledReferenceParameters moving_params{
+            1.0, {0.0, 0.0, 0.0}, 0.30, 1.5, 1.0,
+            ref_gh::kFixedCorePath, 0.20, 8.0,
+            ref_gh::kContinuationActivation, state.xi, state.xi_dot,
+            state.xi_ddot, 0.50, 0.60, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        ref_gh::ReferenceGeometry moving;
+        const ref_gh::ControlledSchwarzschildReference moving_provider{
+            table, moving_params};
+        moving_provider.Populate(time, x, y, z, moving);
+        Real moving_scale = 0.0;
+        for (int A = 0; A < 4; ++A) {
+          for (int a = 0; a < 4; ++a) {
+            moving_scale = fmax(
+                moving_scale, Kokkos::abs(moving.d_frame[0][A][a]));
+          }
+        }
+        local_moving_jet = fmin(local_moving_jet, moving_scale);
+
+        const ref_gh::ControlledReferenceParameters stopped_params{
+            1.0, {0.0, 0.0, 0.0}, 0.30, 1.5, 1.0,
+            ref_gh::kFixedCorePath, 0.20, 8.0,
+            ref_gh::kContinuationActivation, expected_final_xi, 0.0, 0.0,
+            0.50, 0.60, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        ref_gh::ReferenceGeometry stopped;
+        const ref_gh::ControlledSchwarzschildReference stopped_provider{
+            table, stopped_params};
+        stopped_provider.Populate(start + duration + 0.7, x, y, z, stopped);
+        for (int A = 0; A < 4; ++A) {
+          for (int a = 0; a < 4; ++a) {
+            local_stopped_jet = fmax(
+                local_stopped_jet, Kokkos::abs(stopped.d_frame[0][A][a]));
+            for (int p = 0; p < 4; ++p) {
+              local_stopped_jet = fmax(
+                  local_stopped_jet,
+                  Kokkos::abs(stopped.dd_frame[0][p][A][a]));
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(maximum_derivative_error),
+      Kokkos::Max<Real>(maximum_stopped_reference_jet),
+      Kokkos::Min<Real>(minimum_moving_reference_jet));
+  if (!(maximum_derivative_error <= 2.0e-9)
+      || maximum_stopped_reference_jet != 0.0
+      || !(minimum_moving_reference_jet > 0.0)) {
+    std::cout << "### FATAL ERROR: controlled smooth-stop oracle failed: "
+              << "derivative=" << maximum_derivative_error
+              << " stopped-jet=" << maximum_stopped_reference_jet
+              << " minimum-moving-jet=" << minimum_moving_reference_jet
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH controlled smooth-stop oracle passed: "
+            << "derivative=" << maximum_derivative_error
+            << " stopped-jet=" << maximum_stopped_reference_jet
+            << " minimum-moving-jet=" << minimum_moving_reference_jet
+            << " final-xi=" << expected_final_xi << std::endl;
+}
+
 void ScanReferencePaths(ParameterInput *pin) {
   constexpr int kSamples = 32769;
   constexpr int kMeasures = 7;
@@ -6601,6 +6720,7 @@ void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) 
   CheckNonflatCovariantSource();
   CheckDynamicSpatialReference();
   CheckControlledHardFreezeTimeDerivatives();
+  CheckControlledSmoothStop();
   CheckControlledDirectFixedProjection();
   if (pin->GetOrAddBoolean("problem", "puncture_exponent_gate", false)) {
     CheckRelativeExponentIdentity();

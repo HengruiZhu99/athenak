@@ -1241,11 +1241,20 @@ void RefGh::MeasureQControllerLegacyWorkspaceOracleAtTime(
 void RefGh::MeasureControllerAtTime(const Real stage_time) {
   if (!opt.reference_controlled) return;
 
+  SmoothStopContinuationState smooth_stop{};
   if (opt.continuation_mode == kPrescribedContinuation) {
     const Real coordinate = stage_time/(opt.tau_transition*opt.reference_mass);
     controller.xi = std::max(0.0, std::min(1.0, coordinate));
     controller.xi_dot = (coordinate > 0.0 && coordinate < 1.0)
         ? 1.0/(opt.tau_transition*opt.reference_mass) : 0.0;
+  } else if (opt.continuation_mode == kSmoothStopContinuation) {
+    smooth_stop = EvaluateSmoothStopContinuation(
+        stage_time, opt.continuation_smooth_stop_start,
+        opt.continuation_smooth_stop_duration,
+        opt.continuation_smooth_stop_initial_xi,
+        opt.continuation_smooth_stop_initial_rate);
+    controller.xi = smooth_stop.xi;
+    controller.xi_dot = smooth_stop.xi_dot;
   }
 
   auto &indcs = pmy_pack->pmesh->mb_indcs;
@@ -1593,6 +1602,11 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
     controller_diagnostics.v_cmd = command.v_cmd;
     continuation_frozen = command.v_cmd == 0.0;
     controller_diagnostics.feedback_active = command.v_cmd > 0.0;
+  } else if (opt.continuation_mode == kSmoothStopContinuation) {
+    controller_diagnostics.xi_ddot = smooth_stop.xi_ddot;
+    controller_diagnostics.v_cmd = smooth_stop.xi_dot;
+    continuation_frozen = smooth_stop.stopped;
+    controller_diagnostics.feedback_active = false;
   } else {
     controller_diagnostics.xi_ddot = 0.0;
     controller_diagnostics.v_cmd = 0.0;
@@ -1985,12 +1999,33 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
                                  : kContinuationActivation,
       opt.continuation_mode == kPrescribedContinuation
           ? std::max(0.0, std::min(1.0,
-              time/(opt.tau_transition*mass))) : controller.xi,
+              time/(opt.tau_transition*mass)))
+          : (opt.continuation_mode == kSmoothStopContinuation
+             ? EvaluateSmoothStopContinuation(
+                   time, opt.continuation_smooth_stop_start,
+                   opt.continuation_smooth_stop_duration,
+                   opt.continuation_smooth_stop_initial_xi,
+                   opt.continuation_smooth_stop_initial_rate).xi
+             : controller.xi),
       opt.continuation_mode == kPrescribedContinuation
           ? ((time > 0.0 && time < opt.tau_transition*mass)
-             ? 1.0/(opt.tau_transition*mass) : 0.0) : controller.xi_dot,
+             ? 1.0/(opt.tau_transition*mass) : 0.0)
+          : (opt.continuation_mode == kSmoothStopContinuation
+             ? EvaluateSmoothStopContinuation(
+                   time, opt.continuation_smooth_stop_start,
+                   opt.continuation_smooth_stop_duration,
+                   opt.continuation_smooth_stop_initial_xi,
+                   opt.continuation_smooth_stop_initial_rate).xi_dot
+             : controller.xi_dot),
       opt.continuation_mode == kPrescribedContinuation
-          ? 0.0 : controller_rhs.xi_dot,
+          ? 0.0
+          : (opt.continuation_mode == kSmoothStopContinuation
+             ? EvaluateSmoothStopContinuation(
+                   time, opt.continuation_smooth_stop_start,
+                   opt.continuation_smooth_stop_duration,
+                   opt.continuation_smooth_stop_initial_xi,
+                   opt.continuation_smooth_stop_initial_rate).xi_ddot
+             : controller_rhs.xi_dot),
       opt.regularization_outer_start,
       opt.regularization_outer_end, controller.delta_q,
       controller.delta_q_dot, controller_rhs.delta_q_dot,

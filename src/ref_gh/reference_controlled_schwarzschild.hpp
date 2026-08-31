@@ -45,6 +45,43 @@ enum ControlledActivationMode : int {
   kContinuationActivation = 1
 };
 
+struct SmoothStopContinuationState {
+  Real xi;
+  Real xi_dot;
+  Real xi_ddot;
+  bool stopped;
+};
+
+// C2-matched stop of a linear continuation trajectory.  The velocity uses
+// 1-S_5(s), so both acceleration endpoints vanish.  Its analytic integral
+// supplies xi and prevents an inconsistent independently prescribed frame jet.
+KOKKOS_INLINE_FUNCTION
+SmoothStopContinuationState EvaluateSmoothStopContinuation(
+    const Real time, const Real start_time, const Real duration,
+    const Real initial_xi, const Real initial_rate) {
+  if (time <= start_time) {
+    return {initial_xi + initial_rate*(time - start_time),
+            initial_rate, 0.0, false};
+  }
+  if (time >= start_time + duration) {
+    return {initial_xi + 0.5*initial_rate*duration, 0.0, 0.0, true};
+  }
+  const Real s = (time - start_time)/duration;
+  const Real s2 = s*s;
+  const Real s3 = s2*s;
+  const Real s4 = s3*s;
+  const Real s5 = s4*s;
+  const Real s6 = s5*s;
+  const Real smooth = 10.0*s3 - 15.0*s4 + 6.0*s5;
+  const Real smooth_prime = 30.0*s2*(1.0 - s)*(1.0 - s);
+  const Real integrated_smooth = 2.5*s4 - 3.0*s5 + s6;
+  return {
+      initial_xi + initial_rate*duration*(s - integrated_smooth),
+      initial_rate*(1.0 - smooth),
+      -initial_rate*smooth_prime/duration,
+      false};
+}
+
 KOKKOS_INLINE_FUNCTION
 ReferenceJet QuinticSmoothstep(const ReferenceJet &argument) {
   if (argument.value <= 0.0) return ConstantJet(0.0);

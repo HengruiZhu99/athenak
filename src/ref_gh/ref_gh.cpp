@@ -397,9 +397,15 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     // Unlike the feedback safety command, this path has xi_dot=xi_ddot=0
     // immediately and the reference is treated as exactly time independent.
     opt.continuation_mode = kHardFreezeContinuation;
+  } else if (continuation_mode == "smooth_stop") {
+    // C2-matched prescribed deceleration from a clean moving-reference
+    // restart.  Unlike hard_freeze, this retains a time-dependent reference
+    // until the analytic stop profile reaches zero velocity and acceleration.
+    opt.continuation_mode = kSmoothStopContinuation;
   } else {
     std::cout << "### FATAL ERROR: ref_gh continuation_mode must be "
-                 "legacy_time, prescribed, feedback, frozen, or hard_freeze."
+                 "legacy_time, prescribed, feedback, frozen, hard_freeze, "
+                 "or smooth_stop."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -557,6 +563,14 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       pin->GetOrAddReal("ref_gh", "continuation_v_max", 0.25);
   opt.continuation_tau_v =
       pin->GetOrAddReal("ref_gh", "continuation_tau_v", 0.5);
+  opt.continuation_smooth_stop_start = pin->GetOrAddReal(
+      "ref_gh", "continuation_smooth_stop_start", 0.0);
+  opt.continuation_smooth_stop_duration = pin->GetOrAddReal(
+      "ref_gh", "continuation_smooth_stop_duration", 1.0);
+  opt.continuation_smooth_stop_initial_xi = pin->GetOrAddReal(
+      "ref_gh", "continuation_smooth_stop_initial_xi", 0.0);
+  opt.continuation_smooth_stop_initial_rate = pin->GetOrAddReal(
+      "ref_gh", "continuation_smooth_stop_initial_rate", 0.0);
   opt.continuation_xi_end_start =
       pin->GetOrAddReal("ref_gh", "continuation_xi_end_start", 0.90);
   opt.continuation_risk_slow =
@@ -677,6 +691,15 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       || opt.controller_acceleration_limit <= 0.0
       || opt.controller_delta_bound <= 0.0 || opt.controller_rate_bound <= 0.0
       || opt.continuation_v_max <= 0.0 || opt.continuation_tau_v <= 0.0
+      || !std::isfinite(opt.continuation_smooth_stop_start)
+      || !(opt.continuation_smooth_stop_duration > 0.0)
+      || !std::isfinite(opt.continuation_smooth_stop_initial_xi)
+      || !std::isfinite(opt.continuation_smooth_stop_initial_rate)
+      || opt.continuation_smooth_stop_initial_xi < 0.0
+      || opt.continuation_smooth_stop_initial_rate < 0.0
+      || opt.continuation_smooth_stop_initial_xi
+         + 0.5*opt.continuation_smooth_stop_initial_rate
+             *opt.continuation_smooth_stop_duration > 1.0
       || opt.continuation_xi_end_start <= 0.0
       || opt.continuation_xi_end_start >= 1.0
       || opt.continuation_risk_slow < 0.0
@@ -764,13 +787,15 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       && opt.continuation_mode != kLegacyTimeContinuation
       && (opt.transition_path != kFixedCorePath
           || (opt.phi_ordering != 0
-              && opt.continuation_mode != kHardFreezeContinuation)
+              && opt.continuation_mode != kHardFreezeContinuation
+              && opt.continuation_mode != kSmoothStopContinuation)
           || opt.controller_enabled || controller.delta_q != 0.0
           || controller.delta_q_dot != 0.0 || controller.delta_p != 0.0
           || controller.delta_p_dot != 0.0 || controller.xi < 0.0
           || controller.xi > 1.0 || controller.xi_dot < 0.0)) {
     std::cout << "### FATAL ERROR: continuation requires fixed_core, compatible "
-                 "Phi ordering (except a STANDARD-Phi hard freeze), the "
+                 "Phi ordering (except a STANDARD-Phi hard freeze or smooth "
+                 "stop), the "
                  "exponent controller disabled, exact "
                  "delta_q=delta_p=0, and admissible nonnegative xi state."
               << std::endl;
@@ -793,6 +818,16 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   if (opt.continuation_mode == kHardFreezeContinuation) {
     continuation_frozen = true;
+  }
+  if (opt.continuation_mode == kSmoothStopContinuation
+      && (opt.continuation_smooth_stop_initial_rate
+              > opt.continuation_v_max/opt.reference_mass
+          || controller.xi < 0.0 || controller.xi > 1.0
+          || controller.xi_dot < 0.0)) {
+    std::cout << "### FATAL ERROR: smooth-stop continuation has an invalid "
+                 "initial state or exceeds continuation_v_max."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
   }
   if (opt.continuation_mode == kFeedbackContinuation
       && (opt.continuation_condition_stop > 8.0

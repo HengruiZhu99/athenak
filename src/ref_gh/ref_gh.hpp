@@ -52,7 +52,8 @@ class RefGh {
     kPrescribedContinuation = 1,
     kFeedbackContinuation = 2,
     kFrozenWormholeContinuation = 3,
-    kHardFreezeContinuation = 4
+    kHardFreezeContinuation = 4,
+    kSmoothStopContinuation = 5
   };
 
   struct Options {
@@ -124,6 +125,10 @@ class RefGh {
     Real controller_rate_bound;
     Real continuation_v_max;
     Real continuation_tau_v;
+    Real continuation_smooth_stop_start;
+    Real continuation_smooth_stop_duration;
+    Real continuation_smooth_stop_initial_xi;
+    Real continuation_smooth_stop_initial_rate;
     Real continuation_xi_end_start;
     Real continuation_risk_slow;
     Real continuation_risk_stop;

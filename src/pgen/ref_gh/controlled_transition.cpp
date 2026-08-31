@@ -577,6 +577,15 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  if (!estimator_calibration
+      && pack->prefgh->opt.continuation_mode
+          == ref_gh::RefGh::kSmoothStopContinuation) {
+    std::cout << "### FATAL ERROR: smooth_stop is a matched restart-only "
+                 "discriminator; fresh data would not represent the common "
+                 "moving-reference trajectory."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   // The puncture must be a Cartesian vertex on every logical level that is
   // actually present.  This integer lattice check is stronger than r_min>0.
