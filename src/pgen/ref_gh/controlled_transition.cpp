@@ -35,6 +35,84 @@ struct InitialMatchEvidence {
   Real minimum_cell_radius = std::numeric_limits<Real>::max();
 } initial_match;
 
+void WritePowerMismatchHistory(ref_gh::RefGh *module, Mesh *mesh) {
+  if (!module->opt.power_mismatch_diagnostics) return;
+  module->MeasurePowerMismatchDiagnosticsAtTime(mesh->time);
+  if (global_variable::my_rank != 0) return;
+
+  FILE *file = std::fopen(module->power_history_filename.c_str(), "a+");
+  if (file == nullptr) {
+    std::cout << "### FATAL ERROR: could not open Ref-GH power history "
+              << module->power_history_filename << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::fseek(file, 0, SEEK_END);
+  const long file_size = std::ftell(file);
+  const char *shell_names[ref_gh::kPowerDiagnosticShellCount] = {
+      "inner", "blend", "outside", "legacy"};
+  if (file_size == 0) {
+    std::fprintf(file,
+        "# paired native-cell q diagnostics; all cells use the complete "
+        "FD+KO puncture-stencil exclusion\n");
+    std::fprintf(file,
+        "# shells: inner=[2h,0.30M), blend=[0.30M,0.60M), "
+        "outside=[0.50M,0.75M), legacy=[2h,8h)\n");
+    std::fprintf(file,
+        "# rms is the weighted RMS residual about the reported weighted mean\n");
+    std::fprintf(file,
+        "time\tdt\te_G\te_alpha\txi\txi_dot\txi_ddot\ttransition"
+        "\tdelta_q\tdelta_p");
+    for (int shell = 0; shell < ref_gh::kPowerDiagnosticShellCount; ++shell) {
+      const char *quantities[3] = {"qphys", "qref", "dq"};
+      for (const char *quantity : quantities) {
+        std::fprintf(file, "\t%s_%s_mean\t%s_%s_var\t%s_%s_min"
+                           "\t%s_%s_max\t%s_%s_rms",
+                     shell_names[shell], quantity,
+                     shell_names[shell], quantity,
+                     shell_names[shell], quantity,
+                     shell_names[shell], quantity,
+                     shell_names[shell], quantity);
+      }
+      std::fprintf(file, "\t%s_cells\t%s_neff\t%s_valid",
+                   shell_names[shell], shell_names[shell], shell_names[shell]);
+    }
+    std::fprintf(file, "\n");
+  }
+
+  const Real prescribed_coordinate = mesh->time
+      /(module->opt.tau_transition*module->opt.reference_mass);
+  const Real xi = module->opt.continuation_mode == 0
+      ? std::max(0.0, std::min(1.0, prescribed_coordinate))
+      : module->controller.xi;
+  const Real xi_dot = module->opt.continuation_mode == 0
+      ? ((prescribed_coordinate > 0.0 && prescribed_coordinate < 1.0)
+         ? 1.0/(module->opt.tau_transition*module->opt.reference_mass) : 0.0)
+      : module->controller.xi_dot;
+  const auto &controller = module->controller_diagnostics;
+  std::fprintf(file, "%.17e\t%.17e\t%.17e\t%.17e\t%.17e\t%.17e"
+                     "\t%.17e\t%.17e\t%.17e\t%.17e",
+               mesh->time, mesh->dt, controller.e_G, controller.e_alpha,
+               xi, xi_dot, controller.xi_ddot,
+               controller.transition_amplitude,
+               module->controller.delta_q, module->controller.delta_p);
+  for (int shell = 0; shell < ref_gh::kPowerDiagnosticShellCount; ++shell) {
+    const ref_gh::RefGh::PowerFitStatistics *statistics[3] = {
+        &module->power_mismatch_diagnostics.physical[shell],
+        &module->power_mismatch_diagnostics.reference[shell],
+        &module->power_mismatch_diagnostics.mismatch[shell]};
+    for (const auto *fit : statistics) {
+      std::fprintf(file, "\t%.17e\t%.17e\t%.17e\t%.17e\t%.17e",
+                   fit->mean, fit->variance, fit->minimum, fit->maximum,
+                   fit->rms_residual);
+    }
+    const auto &fit = module->power_mismatch_diagnostics.physical[shell];
+    std::fprintf(file, "\t%.17e\t%.17e\t%d", fit.cell_count,
+                 fit.effective_sample_size, fit.valid ? 1 : 0);
+  }
+  std::fprintf(file, "\n");
+  std::fclose(file);
+}
+
 void ControlledTransitionHistory(HistoryData *pdata, Mesh *mesh) {
   enum Index {
     kDeltaQ, kDeltaP, kEG, kEAlpha, kFitCount, kShellValid, kConditionMax,
@@ -69,6 +147,7 @@ void ControlledTransitionHistory(HistoryData *pdata, Mesh *mesh) {
   module->UpdateDiagnostics();
   module->UpdateContinuationConstraintVeto(mesh->time);
   if (module->opt.reference_controlled) module->MeasureControllerAtTime(mesh->time);
+  WritePowerMismatchHistory(module, mesh);
   auto &diagnostics = module->controller_diagnostics;
   pdata->hdata[kDeltaQ] = module->controller.delta_q;
   pdata->hdata[kDeltaP] = module->controller.delta_p;

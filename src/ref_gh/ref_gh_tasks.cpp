@@ -1449,6 +1449,201 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
   DebugFence("ref_gh MeasureController");
 }
 
+void RefGh::MeasurePowerMismatchDiagnosticsAtTime(const Real stage_time) {
+  if (!opt.power_mismatch_diagnostics) return;
+
+  // This diagnostic is history-only and does not update either the
+  // continuation state (xi) or the exponent corrections (delta_q, delta_p).
+  // Reuse the production reference cache at the exact history time, but keep
+  // the sampled values in a compact list rather than scanning the full mesh.
+  FillReferenceCache(stage_time, false);
+  auto &indcs = pmy_pack->pmesh->mb_indcs;
+  auto &size = pmy_pack->pmb->mb_size;
+  const auto state = u0;
+  const auto evolution = reference_evolution;
+  const auto diagnostic = reference_diagnostic;
+  const auto cells = power_sample_cells;
+  const auto values = power_sample_values;
+  const int sample_count = power_sample_count;
+  const Real center_x = opt.reference_center[0];
+  const Real center_y = opt.reference_center[1];
+  const Real center_z = opt.reference_center[2];
+  Kokkos::parallel_for(
+      "ref_gh paired physical reference power samples",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, sample_count),
+      KOKKOS_LAMBDA(const int sample) {
+        values(3, sample) = 0.0;
+        int work = cells(sample);
+        const int ii = work % indcs.nx1; work /= indcs.nx1;
+        const int jj = work % indcs.nx2; work /= indcs.nx2;
+        const int kk = work % indcs.nx3;
+        const int m = work/indcs.nx3;
+        const int i = ii + indcs.is;
+        const int j = jj + indcs.js;
+        const int k = kk + indcs.ks;
+        const ReferenceCachePoint reference{
+            evolution, diagnostic, m, k, j, i};
+
+        Real metric[4][4] = {};            // NOLINT(runtime/arrays)
+        Real d_metric[4][4][4] = {};       // NOLINT(runtime/arrays)
+        Real reference_metric[4][4] = {};  // NOLINT(runtime/arrays)
+        Real reference_d_metric[4][4][4] = {};  // NOLINT(runtime/arrays)
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            for (int A = 0; A < 4; ++A) {
+              const Real signature = A == 0 ? -1.0 : 1.0;
+              reference_metric[a][b] +=
+                  signature*ReferenceCoframe(reference, A, a)
+                  *ReferenceCoframe(reference, A, b);
+              for (int B = 0; B < 4; ++B) {
+                metric[a][b] += ReferenceCoframe(reference, A, a)
+                                *ReferenceCoframe(reference, B, b)
+                                *state(m, PsiIndex(A, B), k, j, i);
+              }
+            }
+          }
+        }
+        const Real zero_shift[3] = {0.0, 0.0, 0.0};
+        for (int p = 1; p < 4; ++p) {
+          for (int a = 0; a < 4; ++a) {
+            for (int b = 0; b < 4; ++b) {
+              d_metric[p][a][b] = ProductionCoordinateMetricDerivative(
+                  state, reference, m, k, j, i, metric, 0.0, zero_shift,
+                  p, a, b);
+              for (int A = 0; A < 4; ++A) {
+                const Real signature = A == 0 ? -1.0 : 1.0;
+                const Real d_coframe_a =
+                    CoframeDerivative(reference, p, A, a);
+                const Real d_coframe_b =
+                    CoframeDerivative(reference, p, A, b);
+                reference_d_metric[p][a][b] += signature*(
+                    d_coframe_a*ReferenceCoframe(reference, A, b)
+                    + ReferenceCoframe(reference, A, a)*d_coframe_b);
+              }
+            }
+          }
+        }
+
+        Real x = 0.0;
+        Real y = 0.0;
+        Real z = 0.0;
+        // The packed list stores native indices. Recovering coordinates from
+        // the reference coframe is neither general nor necessary; the list's
+        // displacement is reconstructed below from its MeshBlock geometry.
+        x = CellCenterX(ii, indcs.nx1,
+                        size.d_view(m).x1min, size.d_view(m).x1max);
+        y = CellCenterX(jj, indcs.nx2,
+                        size.d_view(m).x2min, size.d_view(m).x2max);
+        z = CellCenterX(kk, indcs.nx3,
+                        size.d_view(m).x3min, size.d_view(m).x3max);
+        const Real displacement[3] = {
+            x - center_x, y - center_y, z - center_z};
+        Real q_physical = NAN;
+        Real q_reference = NAN;
+        if (!ComputeLocalSpatialPunctureExponent(
+                metric, d_metric, displacement, q_physical)
+            || !ComputeLocalSpatialPunctureExponent(
+                reference_metric, reference_d_metric, displacement,
+                q_reference)) {
+          return;
+        }
+        values(0, sample) = q_physical;
+        values(1, sample) = q_reference;
+        values(2, sample) = q_physical - q_reference;
+        values(3, sample) = 1.0;
+      });
+  DebugFence("ref_gh paired power sample kernel");
+
+  const auto host_values = Kokkos::create_mirror_view_and_copy(
+      HostMemSpace(), power_sample_values);
+  const auto host_weights = Kokkos::create_mirror_view_and_copy(
+      HostMemSpace(), power_sample_weights);
+  const auto host_masks = Kokkos::create_mirror_view_and_copy(
+      HostMemSpace(), power_sample_shell_masks);
+  enum MomentIndex {
+    kWeight, kWeight2, kPhysical, kPhysical2, kReference,
+    kReference2, kMismatch, kMismatch2, kCount, kInvalid, kMomentCount
+  };
+  Real moments[kPowerDiagnosticShellCount][kMomentCount] = {};
+  Real minima[kPowerDiagnosticShellCount][3];
+  Real maxima[kPowerDiagnosticShellCount][3];
+  for (int shell = 0; shell < kPowerDiagnosticShellCount; ++shell) {
+    for (int quantity = 0; quantity < 3; ++quantity) {
+      minima[shell][quantity] = std::numeric_limits<Real>::max();
+      maxima[shell][quantity] = -std::numeric_limits<Real>::max();
+    }
+  }
+  for (int sample = 0; sample < sample_count; ++sample) {
+    const int mask = host_masks(sample);
+    for (int shell = 0; shell < kPowerDiagnosticShellCount; ++shell) {
+      if ((mask & (1 << shell)) == 0) continue;
+      moments[shell][kCount] += 1.0;
+      if (host_values(3, sample) == 0.0) {
+        moments[shell][kInvalid] += 1.0;
+        continue;
+      }
+      const Real weight = host_weights(sample);
+      const Real physical = host_values(0, sample);
+      const Real reference = host_values(1, sample);
+      const Real mismatch = host_values(2, sample);
+      moments[shell][kWeight] += weight;
+      moments[shell][kWeight2] += weight*weight;
+      moments[shell][kPhysical] += weight*physical;
+      moments[shell][kPhysical2] += weight*physical*physical;
+      moments[shell][kReference] += weight*reference;
+      moments[shell][kReference2] += weight*reference*reference;
+      moments[shell][kMismatch] += weight*mismatch;
+      moments[shell][kMismatch2] += weight*mismatch*mismatch;
+      const Real quantities[3] = {physical, reference, mismatch};
+      for (int quantity = 0; quantity < 3; ++quantity) {
+        minima[shell][quantity] =
+            std::min(minima[shell][quantity], quantities[quantity]);
+        maxima[shell][quantity] =
+            std::max(maxima[shell][quantity], quantities[quantity]);
+      }
+    }
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &moments[0][0],
+                kPowerDiagnosticShellCount*kMomentCount,
+                MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &minima[0][0],
+                3*kPowerDiagnosticShellCount,
+                MPI_ATHENA_REAL, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &maxima[0][0],
+                3*kPowerDiagnosticShellCount,
+                MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+#endif
+
+  for (int shell = 0; shell < kPowerDiagnosticShellCount; ++shell) {
+    const Real weight = moments[shell][kWeight];
+    const Real weight2 = moments[shell][kWeight2];
+    const bool valid = moments[shell][kCount] >= 8.0
+        && moments[shell][kInvalid] == 0.0 && weight > 0.0
+        && weight2 > 0.0 && std::isfinite(weight);
+    const int first_moment[3] = {kPhysical, kReference, kMismatch};
+    const int second_moment[3] = {kPhysical2, kReference2, kMismatch2};
+    PowerFitStatistics *statistics[3] = {
+        &power_mismatch_diagnostics.physical[shell],
+        &power_mismatch_diagnostics.reference[shell],
+        &power_mismatch_diagnostics.mismatch[shell]};
+    for (int quantity = 0; quantity < 3; ++quantity) {
+      auto &result = *statistics[quantity];
+      result.valid = valid;
+      result.cell_count = moments[shell][kCount];
+      result.effective_sample_size = valid ? weight*weight/weight2 : NAN;
+      result.mean = valid ? moments[shell][first_moment[quantity]]/weight : NAN;
+      result.variance = valid ? std::max(
+          0.0, moments[shell][second_moment[quantity]]/weight
+                   - result.mean*result.mean) : NAN;
+      result.rms_residual = valid ? std::sqrt(result.variance) : NAN;
+      result.minimum = valid ? minima[shell][quantity] : NAN;
+      result.maximum = valid ? maxima[shell][quantity] : NAN;
+    }
+  }
+  DebugFence("ref_gh paired power diagnostic reduction");
+}
+
 bool RefGh::UpdateContinuationConstraintVeto(const Real time) {
   const bool old_veto = continuation_constraint_veto;
   auto &indcs = pmy_pack->pmesh->mb_indcs;

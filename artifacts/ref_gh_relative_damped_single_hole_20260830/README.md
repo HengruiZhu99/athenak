@@ -294,3 +294,51 @@ deterministic analysis are under \`wormhole_sector_discriminator_8792829/\`.
 The job-generated compact manifest has two documented construction-order
 defects (its subsequently appended bootstrap log and a self-hash); every other
 entry verifies and the repository-level manifest is authoritative.
+
+## Power-lag investigation checkpoint
+
+The prescribed fixed-core run above used a prescribed time activation for
+`xi(t)` with `delta_q=delta_p=0`; it was not a dynamically q-controlled run.
+The continuation controller for `xi` and the exponent-correction controller
+are kept separate in the new discriminator, and exponent feedback remains
+disabled.
+
+The pre-instrumentation `t=0--4M` history and failed continuation through its
+last finite row at `t=4.953843M` were merged and analyzed before any new
+trajectory.  Those histories do not contain direct `q_phys` and `q_ref`
+samples.  Consequently the retrospective table labels `-e_G/2` only as the
+calibrated pure-power proxy for `Delta q`; it does not assume that identity is
+exact in the blended intermediate state.
+
+With the analyzer's documented heuristic (first magnitude above the larger of
+an absolute floor and ten times the `t<=0.5M` baseline median), the proxy
+crosses `1e-3` at `t=0.85245M`.  Curl, reduction, and GH RMS cross their
+respective thresholds at `t=2.70349M`, `2.90130M`, and `3.60076M`.  At the
+last finite row, `xi=0.619230`, `e_G=0.287661`, `e_alpha=0.478278`, GH RMS is
+`8.39251e-2`, reduction RMS is `7.97522e-3`, curl RMS is `1.13834e-1`, the
+relative metric condition number is `11.1902`, relative lapse maximum is
+`2.47631`, and relative `v^2` maximum is `3.46901`.
+
+This temporal ordering is evidence consistent with power lag preceding the
+constraint-growth transition, but it is not a direct paired-power result and
+does not prove causation.  The maximum-location histories continue to place
+the dominant GH/Pi/source sectors near the `r~0.54M` blend/window region.
+The JSON records zero-lag Pearson correlations only as descriptive statistics.
+
+The new opt-in history diagnostic computes physical and reference local powers
+with the identical coordinate contraction, native cells, weights, center, and
+shell memberships.  It excludes the complete FD4+KO puncture stencil and
+records mean, variance, effective sample count, extrema, RMS fit residual, and
+validity in four overlapping regions.  A cycle-zero live check reproduces
+`q_phys-q_ref=0` at roundoff in all shells while retaining the expected
+nonzero shell variance of the blended profile.  Compact local evidence is in
+`power_lag_diagnostics_local/`; the retrospective JSON, TSV, and plot are in
+`power_lag_retrospective/`.
+
+The forthcoming bounded comparison uses fresh identical wormhole data,
+compatible Phi ordering, the same outer-24M 328-block tree at `dx_min=M/16`,
+and exactly three continuation modes: exact frozen `xi=xi_dot=0`, prescribed
+tau-8 activation, and the existing feedback continuation.  A frozen reference
+is only a control trajectory.  Because its pre-collapsed lapse is not the
+stationary isotropic Schwarzschild Killing lapse, physical equals reference is
+not expected to be a zero-RHS vacuum fixed point.

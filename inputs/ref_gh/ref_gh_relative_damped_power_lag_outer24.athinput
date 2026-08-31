@@ -1,26 +1,28 @@
-# Genuine isotropic Schwarzschild wormhole data with the previously validated
-# fixed-core, tau-8 smooth reference-path choice and the puncture-core
-# relative-damped gauge.  This bounded [-6M,6M] input is only the low-cost
-# failure-window discriminator; the outer24 input controls relaxation/settling.
+# Bounded, one-resolution wormhole/reference-power-lag discriminator.  The
+# three cases use this identical fresh-data input and vary only
+# continuation_mode={frozen,prescribed,feedback}.  The exponent controller is
+# identically disabled in every case.  A frozen wormhole reference is a control
+# trajectory, not a claim that the pre-collapsed-lapse data are a stationary
+# coordinate solution.
 
 <job>
-basename = ref_gh_relative_damped_wormhole_short
+basename = ref_gh_relative_damped_power_lag
 
 <mesh>
 nghost = 4
 nx1 = 96
-x1min = -6.0
-x1max = 6.0
+x1min = -24.0
+x1max = 24.0
 ix1_bc = outflow
 ox1_bc = outflow
 nx2 = 96
-x2min = -6.0
-x2max = 6.0
+x2min = -24.0
+x2max = 24.0
 ix2_bc = outflow
 ox2_bc = outflow
 nx3 = 96
-x3min = -6.0
-x3max = 6.0
+x3min = -24.0
+x3max = 24.0
 ix3_bc = outflow
 ox3_bc = outflow
 
@@ -31,11 +33,29 @@ nx3 = 32
 
 <mesh_refinement>
 refinement = static
-num_levels = 2
+num_levels = 4
 max_nmb_per_rank = 128
 
 <refined_region1>
 level = 1
+x1min = -12.0
+x1max = 12.0
+x2min = -12.0
+x2max = 12.0
+x3min = -12.0
+x3max = 12.0
+
+<refined_region2>
+level = 2
+x1min = -4.0
+x1max = 4.0
+x2min = -4.0
+x2max = 4.0
+x3min = -4.0
+x3max = 4.0
+
+<refined_region3>
+level = 3
 x1min = -2.0
 x1max = 2.0
 x2min = -2.0
@@ -48,15 +68,17 @@ evolution = dynamic
 integrator = rk4
 cfl_number = 0.05
 nlim = -1
-tlim = 1.0
+tlim = 5.2
 ndiag = 10
 
 <ref_gh>
 reference = controlled_transition
-continuation_mode = legacy_time
+# The job script overrides this one key for the frozen and feedback controls.
+continuation_mode = prescribed
+continuation_self_test = false
 transition_path = fixed_core
 source = covariant
-phi_ordering = standard
+phi_ordering = compatible
 reference_mass = 1.0
 reference_x = 0.0
 reference_y = 0.0
@@ -66,12 +88,15 @@ extrap_order = 2
 debug_task_fences = false
 validate_reference_cache = false
 max_location_diagnostics = true
-power_mismatch_diagnostics = false
+power_mismatch_diagnostics = true
+
+# Keep the exponent correction controller distinct and exactly inactive.
 controller_enabled = false
 controller_delta_q = 0.0
 controller_delta_q_dot = 0.0
 controller_delta_p = 0.0
 controller_delta_p_dot = 0.0
+
 r_core0 = 0.30
 tau_core = 1.5
 kappa_core = 1.0
@@ -82,6 +107,25 @@ r_fit_max = 0.40
 controller_fit_buffer_cells = 1.0
 regularization_outer_start = 0.50
 regularization_outer_end = 0.60
+
+# Existing continuation controller; frozen and prescribed modes do not use
+# these gains.  They are held fixed for the feedback case.
+continuation_xi = 0.0
+continuation_xi_dot = 0.0
+continuation_v_max = 0.25
+continuation_tau_v = 0.5
+continuation_xi_end_start = 0.90
+continuation_risk_slow = 0.70
+continuation_risk_stop = 1.0
+continuation_condition_stop = 8.0
+continuation_lapse_min_stop = 0.5
+continuation_lapse_max_stop = 3.0
+continuation_v2_stop = 0.20
+continuation_gh_warning = 2.0e-2
+continuation_reduction_warning = 5.0e-3
+continuation_curl_warning = 8.0e-2
+continuation_growth_time = 0.5
+
 gamma0 = 1.0
 gamma2 = 1.0
 gauge_mode = relative_damped

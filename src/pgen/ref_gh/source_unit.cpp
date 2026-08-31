@@ -1714,11 +1714,15 @@ void CheckRelativeExponentIdentity() {
         relative_metric[0][0] = -1.0;
         Real phi[3][4][4] = {};  // NOLINT(runtime/arrays)
         Real spatial_coframe[3][3] = {};  // NOLINT(runtime/arrays)
+        Real reference_metric[4][4] = {};  // NOLINT(runtime/arrays)
+        Real d_reference_metric[4][4][4] = {};  // NOLINT(runtime/arrays)
         Real physical_metric[4][4] = {};  // NOLINT(runtime/arrays)
         Real d_physical_metric[4][4][4] = {};  // NOLINT(runtime/arrays)
+        reference_metric[0][0] = -1.0;
         physical_metric[0][0] = -1.0;
         for (int I = 0; I < 3; ++I) {
           spatial_coframe[I][I] = lambda;
+          reference_metric[I + 1][I + 1] = lambda*lambda;
           for (int J = 0; J < 3; ++J) {
             relative_metric[I + 1][J + 1] = relative_scale*seed[I][J];
             physical_metric[I + 1][J + 1] =
@@ -1737,6 +1741,9 @@ void CheckRelativeExponentIdentity() {
         for (int k = 0; k < 3; ++k) {
           for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
+              d_reference_metric[k + 1][i + 1][j + 1] =
+                  -2.0*q_reference*displacement[k]/radius2
+                  *reference_metric[i + 1][j + 1];
               d_physical_metric[k + 1][i + 1][j + 1] =
                   -2.0*(q_reference + epsilon_exact)
                   *displacement[k]/radius2
@@ -1750,7 +1757,16 @@ void CheckRelativeExponentIdentity() {
         const ref_gh::LocalPunctureExponents physical =
             ref_gh::ComputeLocalPunctureExponents(
                 physical_metric, d_physical_metric, displacement);
-        if (!valid || !physical.spatial_valid) {
+        Real paired_physical = NAN;
+        Real paired_reference = NAN;
+        const bool paired_valid =
+            ref_gh::ComputeLocalSpatialPunctureExponent(
+                physical_metric, d_physical_metric, displacement,
+                paired_physical)
+            && ref_gh::ComputeLocalSpatialPunctureExponent(
+                reference_metric, d_reference_metric, displacement,
+                paired_reference);
+        if (!valid || !physical.spatial_valid || !paired_valid) {
           local_maximum = std::numeric_limits<Real>::infinity();
           return;
         }
@@ -1759,6 +1775,13 @@ void CheckRelativeExponentIdentity() {
         local_maximum = fmax(
             local_maximum,
             Kokkos::abs(physical.q - (q_reference + epsilon_g)));
+        local_maximum = fmax(
+            local_maximum, Kokkos::abs(paired_reference - q_reference));
+        local_maximum = fmax(
+            local_maximum, Kokkos::abs(paired_physical - physical.q));
+        local_maximum = fmax(
+            local_maximum,
+            Kokkos::abs((paired_physical - paired_reference) - epsilon_g));
       }, Kokkos::Max<Real>(maximum_error));
   if (!(maximum_error <= 2.0e-13)) {
     std::cout << "### FATAL ERROR: relative exponent identity failed: error="
@@ -4711,7 +4734,18 @@ void CheckLocalPunctureExponentEstimator(const DvceArray2D<Real> &table) {
         || ref_gh::PunctureEvolutionStencilRadius(2, 0.1) != 2
         || ref_gh::PunctureEvolutionStencilRadius(4, 0.0) != 2
         || ref_gh::PunctureEvolutionStencilRadius(4, 0.1) != 3
-        || ref_gh::PunctureEvolutionStencilRadius(6, 0.1) != 4) {
+        || ref_gh::PunctureEvolutionStencilRadius(6, 0.1) != 4
+        || ref_gh::PuncturePowerDiagnosticShellMask(0.25, 0.0625, 1.0)
+             != ((1 << ref_gh::kPowerInnerShell)
+                 | (1 << ref_gh::kPowerLegacyEstimatorShell))
+        || ref_gh::PuncturePowerDiagnosticShellMask(0.40, 0.0625, 1.0)
+             != ((1 << ref_gh::kPowerBlendShell)
+                 | (1 << ref_gh::kPowerLegacyEstimatorShell))
+        || ref_gh::PuncturePowerDiagnosticShellMask(0.54, 0.0625, 1.0)
+             != ((1 << ref_gh::kPowerBlendShell)
+                 | (1 << ref_gh::kPowerOutsideBlendShell))
+        || ref_gh::PuncturePowerDiagnosticShellMask(0.70, 0.0625, 1.0)
+             != (1 << ref_gh::kPowerOutsideBlendShell)) {
       std::cout << "### FATAL ERROR: puncture stencil-footprint mask failed."
                 << std::endl;
       std::exit(EXIT_FAILURE);

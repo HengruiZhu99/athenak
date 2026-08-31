@@ -6,9 +6,11 @@
 #define REF_GH_REF_GH_HPP_
 
 #include <cstdint>
+#include <string>
 
 #include "athena.hpp"
 #include "parameter_input.hpp"
+#include "ref_gh/puncture_exponent.hpp"
 #include "ref_gh/ref_gh_state.hpp"
 #include "tasklist/task_list.hpp"
 
@@ -56,6 +58,7 @@ class RefGh {
     bool controller_enabled;
     bool q_controller_enabled;
     bool q_prescribed_enabled;
+    bool power_mismatch_diagnostics;
     int continuation_mode;
     int source_kind;
     bool debug_task_fences;
@@ -187,6 +190,23 @@ class RefGh {
     bool q_shell_valid;
   };
 
+  struct PowerFitStatistics {
+    Real mean;
+    Real variance;
+    Real effective_sample_size;
+    Real minimum;
+    Real maximum;
+    Real rms_residual;
+    Real cell_count;
+    bool valid;
+  };
+
+  struct PowerMismatchDiagnostics {
+    PowerFitStatistics physical[kPowerDiagnosticShellCount];
+    PowerFitStatistics reference[kPowerDiagnosticShellCount];
+    PowerFitStatistics mismatch[kPowerDiagnosticShellCount];
+  };
+
   RefGh(MeshBlockPack *ppack, ParameterInput *pin);
   ~RefGh();
 
@@ -208,6 +228,14 @@ class RefGh {
   DvceArray1D<int> q_sample_cells;
   DvceArray1D<Real> q_sample_weights;
   int q_sample_count;
+  // Opt-in, history-only native-cell samples.  The physical and reference
+  // exponents share these exact cells, shell memberships, and weights.
+  DvceArray1D<int> power_sample_cells;
+  DvceArray1D<int> power_sample_shell_masks;
+  DvceArray1D<Real> power_sample_weights;
+  DvceArray2D<Real> power_sample_values;
+  int power_sample_count;
+  Real power_sample_finest_spacing;
   DvceArray2D<Real> reference_table;
   Real reference_cache_time;
   Real reference_diagnostic_time;
@@ -221,6 +249,7 @@ class RefGh {
   ControllerState controller_base;
   ControllerState controller_rhs;
   ControllerDiagnostics controller_diagnostics;
+  PowerMismatchDiagnostics power_mismatch_diagnostics;
   QControllerState q_controller;
   QControllerState q_controller_base;
   QControllerState q_controller_rhs;
@@ -237,6 +266,7 @@ class RefGh {
   Real dtnew;
   Real max_char_speed;
   MeshBoundaryValuesCC *pbval_u;
+  std::string power_history_filename;
 
   template <int FDNG>
   TaskStatus CalcRHS(Driver *driver, int stage);
@@ -255,6 +285,7 @@ class RefGh {
   TaskStatus CopyU(Driver *driver, int stage);
   TaskStatus MeasureController(Driver *driver, int stage);
   void MeasureControllerAtTime(Real stage_time);
+  void MeasurePowerMismatchDiagnosticsAtTime(Real stage_time);
   void MeasureQControllerAtTime(Real stage_time);
   void MeasureQControllerLegacyWorkspaceOracleAtTime(Real stage_time);
   bool UpdateContinuationConstraintVeto(Real time);

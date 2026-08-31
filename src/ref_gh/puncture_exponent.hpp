@@ -17,6 +17,38 @@ struct LocalPunctureExponents {
   bool lapse_valid;
 };
 
+enum PuncturePowerDiagnosticShell : int {
+  kPowerInnerShell = 0,
+  kPowerBlendShell = 1,
+  kPowerOutsideBlendShell = 2,
+  kPowerLegacyEstimatorShell = 3,
+  kPowerDiagnosticShellCount = 4
+};
+
+// These deliberately overlapping regions answer different questions.  The
+// inner region follows the singular power as closely as the complete
+// evolution-stencil exclusion permits.  The next two resolve the fixed-core
+// and gauge-window transition, including the observed r~0.54M source maximum.
+// The final region exactly retains the established 2h<=r<8h estimator shell.
+KOKKOS_INLINE_FUNCTION
+int PuncturePowerDiagnosticShellMask(const Real radius, const Real h,
+                                     const Real mass) {
+  int mask = 0;
+  if (radius >= 2.0*h && radius < 0.30*mass) {
+    mask |= 1 << kPowerInnerShell;
+  }
+  if (radius >= 0.30*mass && radius < 0.60*mass) {
+    mask |= 1 << kPowerBlendShell;
+  }
+  if (radius >= 0.50*mass && radius < 0.75*mass) {
+    mask |= 1 << kPowerOutsideBlendShell;
+  }
+  if (radius >= 2.0*h && radius < 8.0*h) {
+    mask |= 1 << kPowerLegacyEstimatorShell;
+  }
+  return mask;
+}
+
 // Evaluate the physical/reference spatial-exponent mismatch directly from the
 // first-order Ref-GH state,
 //
@@ -104,6 +136,33 @@ LocalPunctureExponents ComputeLocalPunctureExponents(
     result.lapse_valid = Kokkos::isfinite(result.p);
   }
   return result;
+}
+
+// Spatial-only form used by the paired physical/reference power diagnostic.
+// Keeping this contraction common is what makes q_phys and q_ref differ only
+// through their metric data, not through estimator algebra.
+KOKKOS_INLINE_FUNCTION
+bool ComputeLocalSpatialPunctureExponent(
+    const Real metric[4][4], const Real d_metric[4][4][4],
+    const Real displacement[3], Real &q) {
+  Real spatial_inverse[3][3];  // NOLINT(runtime/arrays)
+  Real spatial_determinant = 0.0;
+  if (!InvertSpatial3(metric, spatial_inverse, spatial_determinant)) {
+    q = NAN;
+    return false;
+  }
+  Real radial_log_determinant_derivative = 0.0;
+  for (int k = 0; k < 3; ++k) {
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        radial_log_determinant_derivative +=
+            displacement[k]*spatial_inverse[i][j]
+            *d_metric[k + 1][i + 1][j + 1];
+      }
+    }
+  }
+  q = -radial_log_determinant_derivative/6.0;
+  return Kokkos::isfinite(q);
 }
 
 KOKKOS_INLINE_FUNCTION

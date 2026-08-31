@@ -288,6 +288,9 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     reference_provider(), reference_workspace(), reference_evolution(),
     reference_diagnostic(), reference_static(), reference_stage(),
     q_sample_cells(), q_sample_weights(), q_sample_count(0),
+    power_sample_cells(), power_sample_shell_masks(), power_sample_weights(),
+    power_sample_values(), power_sample_count(0),
+    power_sample_finest_spacing(NAN),
     reference_table("ref_gh reference table", 1, 1),
     reference_cache_time(NAN), reference_diagnostic_time(NAN),
     max_location_diagnostic_time(NAN), max_location_diagnostic_cycle(-1),
@@ -297,7 +300,7 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     controller{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
     controller_base{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
     controller_rhs{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-    controller_diagnostics{},
+    controller_diagnostics{}, power_mismatch_diagnostics{},
     q_controller{1.0, 0.0}, q_controller_base{1.0, 0.0},
     q_controller_rhs{0.0, 0.0},
     continuation_constraint_veto(false), continuation_frozen(false),
@@ -307,7 +310,8 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     reference_cache_oracle_validated(false),
     reference_diagnostic_oracle_validated(false),
     analytic_static_initialized(false),
-    dtnew(0.0), max_char_speed(0.0), pmy_pack(ppack), pinput(pin) {
+    dtnew(0.0), max_char_speed(0.0), power_history_filename(),
+    pmy_pack(ppack), pinput(pin) {
   opt.fd_order = pin->GetOrAddInteger("ref_gh", "fd_order", 4);
   opt.extrap_order = pin->GetOrAddInteger("ref_gh", "extrap_order", 2);
   const std::string reference_name =
@@ -364,6 +368,11 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
       pin->GetOrAddBoolean("ref_gh", "q_controller_enabled", false);
   opt.q_prescribed_enabled =
       pin->GetOrAddBoolean("ref_gh", "q_prescribed_enabled", false);
+  opt.power_mismatch_diagnostics = pin->GetOrAddBoolean(
+      "ref_gh", "power_mismatch_diagnostics", false);
+  power_history_filename = pin->GetOrAddString(
+      "ref_gh", "power_history_file",
+      pin->GetString("job", "basename") + ".ref_gh_power.hst");
   if (opt.reference_kind == 7
       && !opt.q_controller_enabled && !opt.q_prescribed_enabled) {
     opt.reference_time_dependent = false;
@@ -378,9 +387,14 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     opt.continuation_mode = 1;
   } else if (continuation_mode == "feedback") {
     opt.continuation_mode = 2;
+  } else if (continuation_mode == "frozen") {
+    // An exact xi=xi_dot=0 control trajectory for discriminating reference
+    // motion from an intermediate reference state.  This is neither feedback
+    // nor an assertion that the wormhole reference is a physical fixed point.
+    opt.continuation_mode = 3;
   } else {
     std::cout << "### FATAL ERROR: ref_gh continuation_mode must be "
-                 "legacy_time, prescribed, or feedback."
+                 "legacy_time, prescribed, feedback, or frozen."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -699,6 +713,17 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
                  "reference=trumpet_q_controlled." << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  if (opt.power_mismatch_diagnostics && !opt.reference_controlled) {
+    std::cout << "### FATAL ERROR: power_mismatch_diagnostics requires "
+                 "reference=controlled_transition."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.power_mismatch_diagnostics && power_history_filename.empty()) {
+    std::cout << "### FATAL ERROR: power_history_file must not be empty."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   if (opt.q_prescribed_enabled && !opt.reference_q_controlled) {
     std::cout << "### FATAL ERROR: q_prescribed_enabled requires "
                  "reference=trumpet_q_controlled." << std::endl;
@@ -734,6 +759,14 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
     std::cout << "### FATAL ERROR: continuation requires fixed_core, compatible "
                  "Phi ordering, the exponent controller disabled, exact "
                  "delta_q=delta_p=0, and admissible nonnegative xi state."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.continuation_mode == 3
+      && (controller.xi != 0.0 || controller.xi_dot != 0.0
+          || continuation_completed)) {
+    std::cout << "### FATAL ERROR: frozen continuation requires exact "
+                 "xi=xi_dot=0 and continuation_completed=false."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -880,6 +913,110 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
                 << q_sample_count << " bytes="
                 << sizeof(int)*q_sample_cells.size()
                        + sizeof(Real)*q_sample_weights.size()
+                << std::endl;
+    }
+  }
+  if (opt.power_mismatch_diagnostics) {
+    Real h = std::numeric_limits<Real>::max();
+    for (int m = 0; m < ppack->nmb_thispack; ++m) {
+      h = std::min(h, std::min(
+          ppack->pmb->mb_size.h_view(m).dx1,
+          std::min(ppack->pmb->mb_size.h_view(m).dx2,
+                   ppack->pmb->mb_size.h_view(m).dx3)));
+    }
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, &h, 1, MPI_ATHENA_REAL, MPI_MIN,
+                  MPI_COMM_WORLD);
+#endif
+    power_sample_finest_spacing = h;
+    const int stencil_radius = PunctureEvolutionStencilRadius(
+        opt.fd_order, opt.diss);
+    std::vector<int> cells;
+    std::vector<int> shell_masks;
+    std::vector<Real> weights;
+    int shell_counts[kPowerDiagnosticShellCount] = {};
+    for (int m = 0; m < ppack->nmb_thispack; ++m) {
+      for (int kk = 0; kk < indcs.nx3; ++kk) {
+        for (int jj = 0; jj < indcs.nx2; ++jj) {
+          for (int ii = 0; ii < indcs.nx1; ++ii) {
+            const Real x = CellCenterX(
+                ii, indcs.nx1, ppack->pmb->mb_size.h_view(m).x1min,
+                ppack->pmb->mb_size.h_view(m).x1max);
+            const Real y = CellCenterX(
+                jj, indcs.nx2, ppack->pmb->mb_size.h_view(m).x2min,
+                ppack->pmb->mb_size.h_view(m).x2max);
+            const Real z = CellCenterX(
+                kk, indcs.nx3, ppack->pmb->mb_size.h_view(m).x3min,
+                ppack->pmb->mb_size.h_view(m).x3max);
+            const Real displacement[3] = {
+                x - opt.reference_center[0], y - opt.reference_center[1],
+                z - opt.reference_center[2]};
+            const Real radius = std::sqrt(
+                displacement[0]*displacement[0]
+                + displacement[1]*displacement[1]
+                + displacement[2]*displacement[2]);
+            const int shell_mask = PuncturePowerDiagnosticShellMask(
+                radius, h, opt.reference_mass);
+            if (shell_mask == 0) continue;
+            const Real spacing[3] = {
+                ppack->pmb->mb_size.h_view(m).dx1,
+                ppack->pmb->mb_size.h_view(m).dx2,
+                ppack->pmb->mb_size.h_view(m).dx3};
+            if (!PunctureStencilIsClear(
+                    displacement, spacing, stencil_radius)) continue;
+            const int packed = ((m*indcs.nx3 + kk)*indcs.nx2 + jj)
+                               *indcs.nx1 + ii;
+            cells.push_back(packed);
+            shell_masks.push_back(shell_mask);
+            weights.push_back(PunctureEstimatorWeight(radius, h));
+            for (int shell = 0; shell < kPowerDiagnosticShellCount; ++shell) {
+              if ((shell_mask & (1 << shell)) != 0) ++shell_counts[shell];
+            }
+          }
+        }
+      }
+    }
+    power_sample_count = static_cast<int>(cells.size());
+    power_sample_cells = DvceArray1D<int>(
+        "ref_gh power sample cells", power_sample_count);
+    power_sample_shell_masks = DvceArray1D<int>(
+        "ref_gh power sample shell masks", power_sample_count);
+    power_sample_weights = DvceArray1D<Real>(
+        "ref_gh power sample weights", power_sample_count);
+    power_sample_values = DvceArray2D<Real>(
+        "ref_gh power sample values", 4, power_sample_count);
+    auto host_cells = Kokkos::create_mirror_view(power_sample_cells);
+    auto host_masks = Kokkos::create_mirror_view(power_sample_shell_masks);
+    auto host_weights = Kokkos::create_mirror_view(power_sample_weights);
+    for (int n = 0; n < power_sample_count; ++n) {
+      host_cells(n) = cells[n];
+      host_masks(n) = shell_masks[n];
+      host_weights(n) = weights[n];
+    }
+    Kokkos::deep_copy(power_sample_cells, host_cells);
+    Kokkos::deep_copy(power_sample_shell_masks, host_masks);
+    Kokkos::deep_copy(power_sample_weights, host_weights);
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, shell_counts, kPowerDiagnosticShellCount,
+                  MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+#endif
+    for (int shell = 0; shell < kPowerDiagnosticShellCount; ++shell) {
+      if (shell_counts[shell] < 8) {
+        std::cout << "### FATAL ERROR: Ref-GH power diagnostic shell "
+                  << shell << " has only " << shell_counts[shell]
+                  << " stencil-safe native cells." << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+    }
+    if (global_variable::my_rank == 0) {
+      std::cout << "ref_gh power diagnostic native-cell list h=" << h
+                << " stencil_radius=" << stencil_radius
+                << " inner_count=" << shell_counts[kPowerInnerShell]
+                << " blend_count=" << shell_counts[kPowerBlendShell]
+                << " outside_count="
+                << shell_counts[kPowerOutsideBlendShell]
+                << " legacy_count="
+                << shell_counts[kPowerLegacyEstimatorShell]
                 << std::endl;
     }
   }
