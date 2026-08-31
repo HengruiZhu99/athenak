@@ -1081,7 +1081,7 @@ void RefGh::MeasureQControllerLegacyWorkspaceOracleAtTime(
 void RefGh::MeasureControllerAtTime(const Real stage_time) {
   if (!opt.reference_controlled) return;
 
-  if (opt.continuation_mode == 1) {
+  if (opt.continuation_mode == kPrescribedContinuation) {
     const Real coordinate = stage_time/(opt.tau_transition*opt.reference_mass);
     controller.xi = std::max(0.0, std::min(1.0, coordinate));
     controller.xi_dot = (coordinate > 0.0 && coordinate < 1.0)
@@ -1364,7 +1364,8 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
   controller_diagnostics.r_core = opt.transition_path == kFixedCorePath
       ? opt.r_core0*mass
       : opt.r_core0*mass*std::exp(-stage_time/(opt.tau_core*mass));
-  const Real activation_coordinate = opt.continuation_mode == 0
+  const Real activation_coordinate =
+      opt.continuation_mode == kLegacyTimeContinuation
       ? stage_time/(opt.tau_transition*mass) : controller.xi;
   if (activation_coordinate <= 0.0) {
     controller_diagnostics.transition_amplitude = 0.0;
@@ -1410,11 +1411,13 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
       opt.continuation_v2_stop};
   const FeedbackContinuationObservables observables{
       condition_max, -minus_relative_lapse_min, relative_lapse_max, v2_max};
-  const Real diagnostic_xi = opt.continuation_mode == 0
+  const Real diagnostic_xi =
+      opt.continuation_mode == kLegacyTimeContinuation
       ? std::max(0.0, std::min(1.0, activation_coordinate)) : controller.xi;
   const FeedbackContinuationCommand command = EvaluateFeedbackContinuation(
       parameters, observables, diagnostic_xi,
-      opt.continuation_mode == 2 ? controller.xi_dot : 0.0,
+      opt.continuation_mode == kFeedbackContinuation
+          ? controller.xi_dot : 0.0,
       continuation_constraint_veto, continuation_completed);
   controller_diagnostics.risk = command.risk;
   controller_diagnostics.risk_condition = command.risk_condition;
@@ -1423,7 +1426,7 @@ void RefGh::MeasureControllerAtTime(const Real stage_time) {
   controller_diagnostics.risk_v2 = command.risk_v2;
   controller_diagnostics.risk_factor = command.risk_factor;
   controller_diagnostics.endpoint_factor = command.endpoint_factor;
-  if (opt.continuation_mode == 2) {
+  if (opt.continuation_mode == kFeedbackContinuation) {
     controller_rhs.xi = command.xi_rhs;
     controller_rhs.xi_dot = command.xi_dot_rhs;
     controller_diagnostics.xi_ddot = command.xi_dot_rhs;
@@ -1705,7 +1708,7 @@ bool RefGh::UpdateContinuationConstraintVeto(const Real time) {
   // The prescribed tau-8 replay is the calibration source for the feedback
   // safety thresholds, so publish the native norms in every continuation
   // mode.  Only the closed-loop mode is permitted to change the veto state.
-  if (opt.continuation_mode != 2) return false;
+  if (opt.continuation_mode != kFeedbackContinuation) return false;
   const Real level = std::max(
       controller_diagnostics.gh_l2/opt.continuation_gh_warning,
       std::max(controller_diagnostics.reduction_l2
@@ -1818,15 +1821,16 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       mass, {center_x, center_y, center_z}, opt.r_core0, opt.tau_core,
       opt.kappa_core, opt.transition_path, opt.transition_width,
       opt.tau_transition,
-      opt.continuation_mode == 0 ? kLegacyTimeActivation
+      opt.continuation_mode == kLegacyTimeContinuation ? kLegacyTimeActivation
                                  : kContinuationActivation,
-      opt.continuation_mode == 1
+      opt.continuation_mode == kPrescribedContinuation
           ? std::max(0.0, std::min(1.0,
               time/(opt.tau_transition*mass))) : controller.xi,
-      opt.continuation_mode == 1
+      opt.continuation_mode == kPrescribedContinuation
           ? ((time > 0.0 && time < opt.tau_transition*mass)
              ? 1.0/(opt.tau_transition*mass) : 0.0) : controller.xi_dot,
-      opt.continuation_mode == 1 ? 0.0 : controller_rhs.xi_dot,
+      opt.continuation_mode == kPrescribedContinuation
+          ? 0.0 : controller_rhs.xi_dot,
       opt.regularization_outer_start,
       opt.regularization_outer_end, controller.delta_q,
       controller.delta_q_dot, controller_rhs.delta_q_dot,
@@ -2657,7 +2661,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
   // derivatives when continuation activation is supplied as an independent
   // ODE jet. All prescribed-time providers remain independently testable.
   const bool theta_oracle_available =
-      !(reference_kind == 5 && opt.continuation_mode != 0)
+      !(reference_kind == 5
+        && opt.continuation_mode != kLegacyTimeContinuation)
       && reference_kind != 7;
   int theta_oracle_side = 0;  // central=0, forward=1, backward=-1
   constexpr Real theta_oracle_step = 2.0e-4;
@@ -2673,7 +2678,8 @@ void RefGh::FillReferenceCache(const Real time, const bool include_diagnostics) 
       theta_oracle_side = 1;
     }
   }
-  if (reference_kind == 5 && opt.continuation_mode == 0) {
+  if (reference_kind == 5
+      && opt.continuation_mode == kLegacyTimeContinuation) {
     const Real transition_end = opt.tau_transition*mass;
     if (time <= 2.0*theta_oracle_step) theta_oracle_side = 1;
     if (time >= transition_end - 2.0*theta_oracle_step
@@ -2816,7 +2822,7 @@ TaskStatus RefGh::ExpRKUpdate(Driver *driver, int stage) {
     controller.delta_p_dot = gam0*controller.delta_p_dot
                              + gam1*controller_base.delta_p_dot
                              + beta_dt*controller_rhs.delta_p_dot;
-    if (opt.continuation_mode == 2) {
+    if (opt.continuation_mode == kFeedbackContinuation) {
       controller.xi = gam0*controller.xi
                       + gam1*controller_base.xi
                       + beta_dt*controller_rhs.xi;
@@ -2833,7 +2839,10 @@ TaskStatus RefGh::ExpRKUpdate(Driver *driver, int stage) {
         if (controller.xi_dot < 0.0) controller.xi_dot = 0.0;
       }
     }
-    ++controller_generation;
+    if (opt.continuation_mode != kFrozenWormholeContinuation
+        && opt.continuation_mode != kHardFreezeContinuation) {
+      ++controller_generation;
+    }
     const Real mass = opt.reference_mass;
     const bool invalid = !std::isfinite(controller.delta_q)
         || !std::isfinite(controller.delta_q_dot)

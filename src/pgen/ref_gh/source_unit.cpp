@@ -6062,6 +6062,144 @@ void FillTrumpetTable(DvceArray2D<Real> &table) {
   Kokkos::deep_copy(table, host);
 }
 
+void CheckControlledHardFreezeTimeDerivatives() {
+  constexpr int nxi = 5;
+  constexpr int nradii = 7;
+  constexpr int nsamples = nxi*nradii;
+  DvceArray2D<Real> table("ref_gh hard-freeze trumpet table", 1, 1);
+  FillTrumpetTable(table);
+
+  Real maximum_time_jet = 0.0;
+  Real maximum_time_invariance = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh controlled hard-freeze time derivatives",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nsamples),
+      KOKKOS_LAMBDA(const int sample, Real &local_time_jet,
+                    Real &local_time_invariance) {
+        const Real xi_values[nxi] = {0.125, 0.25, 0.5, 0.75, 0.9};
+        const Real radius_values[nradii] = {
+            0.08, 0.20, 0.30, 0.45, 0.54, 0.60, 0.9};
+        const Real xi = xi_values[sample/nradii];
+        const Real radius = radius_values[sample % nradii];
+        const Real inverse_norm = 1.0/Kokkos::sqrt(14.0);
+        const Real x = radius*inverse_norm;
+        const Real y = -2.0*radius*inverse_norm;
+        const Real z = 3.0*radius*inverse_norm;
+        const ref_gh::ControlledReferenceParameters params{
+            1.0, {0.0, 0.0, 0.0}, 0.30, 1.5, 1.0,
+            ref_gh::kFixedCorePath, 0.20, 8.0,
+            ref_gh::kContinuationActivation, xi, 0.0, 0.0, 0.50, 0.60,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+        ref_gh::ReferenceJet alpha;
+        ref_gh::ReferenceJet psi2;
+        ref_gh::ReferenceJet shift;
+        ref_gh::ControlledTransitionProfileJets(
+            table, params, 2.0, x, y, z, alpha, psi2, shift);
+        const ref_gh::ReferenceJet scalar_jets[3] = {alpha, psi2, shift};
+        for (int scalar = 0; scalar < 3; ++scalar) {
+          local_time_jet = fmax(
+              local_time_jet, Kokkos::abs(scalar_jets[scalar].d[0]));
+          for (int p = 0; p < 4; ++p) {
+            local_time_jet = fmax(
+                local_time_jet,
+                Kokkos::abs(scalar_jets[scalar].dd[0][p]));
+          }
+          for (int i = 0; i < 3; ++i) {
+            for (int q = 0; q < 4; ++q) {
+              local_time_jet = fmax(
+                  local_time_jet,
+                  Kokkos::abs(scalar_jets[scalar].dt_dd[i][q]));
+            }
+          }
+        }
+
+        ref_gh::ReferenceGeometry reference;
+        ref_gh::PopulateIsotropicReferenceGeometry(
+            alpha, psi2, shift, x, y, z, 0.0, 0.0, 0.0, reference);
+        for (int A = 0; A < 4; ++A) {
+          for (int a = 0; a < 4; ++a) {
+            local_time_jet = fmax(
+                local_time_jet, Kokkos::abs(reference.d_frame[0][A][a]));
+            for (int p = 0; p < 4; ++p) {
+              local_time_jet = fmax(
+                  local_time_jet,
+                  Kokkos::abs(reference.dd_frame[0][p][A][a]));
+            }
+          }
+          for (int B = 0; B < 4; ++B) {
+            local_time_jet = fmax(
+                local_time_jet, Kokkos::abs(reference.d_metric[0][A][B]));
+            for (int p = 0; p < 4; ++p) {
+              local_time_jet = fmax(
+                  local_time_jet,
+                  Kokkos::abs(reference.dd_metric[0][p][A][B]));
+            }
+          }
+        }
+        for (int a = 0; a < 4; ++a) {
+          for (int b = 0; b < 4; ++b) {
+            for (int c = 0; c < 4; ++c) {
+              local_time_jet = fmax(
+                  local_time_jet,
+                  Kokkos::abs(reference.d_christoffel[0][a][b][c]));
+            }
+          }
+        }
+        for (int I = 0; I < 3; ++I) {
+          for (int i = 0; i < 3; ++i) {
+            local_time_jet = fmax(
+                local_time_jet,
+                Kokkos::abs(reference.dt_spatial_frame[I][i]));
+          }
+        }
+        const ref_gh::ReferenceGaugeBaseline baseline =
+            ref_gh::ComputeReferenceGaugeBaseline(reference);
+        if (!baseline.valid) {
+          local_time_jet = std::numeric_limits<Real>::infinity();
+          return;
+        }
+        for (int A = 0; A < 4; ++A) {
+          local_time_jet = fmax(
+              local_time_jet, Kokkos::abs(baseline.d_hhat[0][A]));
+          for (int lambda = 0; lambda < 4; ++lambda) {
+            for (int B = 0; B < 4; ++B) {
+              local_time_jet = fmax(
+                  local_time_jet,
+                  Kokkos::abs(ref_gh::ReferenceDtFrameMotion(
+                      reference, A, lambda, B)));
+            }
+          }
+        }
+
+        ref_gh::ReferenceJet alpha_late;
+        ref_gh::ReferenceJet psi2_late;
+        ref_gh::ReferenceJet shift_late;
+        ref_gh::ControlledTransitionProfileJets(
+            table, params, 17.0, x, y, z,
+            alpha_late, psi2_late, shift_late);
+        local_time_invariance = fmax(
+            local_time_invariance, Kokkos::abs(alpha_late.value-alpha.value));
+        local_time_invariance = fmax(
+            local_time_invariance, Kokkos::abs(psi2_late.value-psi2.value));
+        local_time_invariance = fmax(
+            local_time_invariance, Kokkos::abs(shift_late.value-shift.value));
+      }, Kokkos::Max<Real>(maximum_time_jet),
+         Kokkos::Max<Real>(maximum_time_invariance));
+  Kokkos::fence();
+  if (maximum_time_jet != 0.0 || maximum_time_invariance != 0.0) {
+    std::cout << "### FATAL ERROR: controlled hard-freeze reference retained "
+                 "time dependence: jet=" << maximum_time_jet
+              << " invariance=" << maximum_time_invariance << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::cout << "reference-GH controlled hard-freeze time-derivative oracle "
+               "passed exactly: samples=" << nsamples
+            << " max_jet=" << maximum_time_jet
+            << " max_time_invariance=" << maximum_time_invariance
+            << std::endl;
+}
+
 void ScanReferencePaths(ParameterInput *pin) {
   constexpr int kSamples = 32769;
   constexpr int kMeasures = 7;
@@ -6225,6 +6363,7 @@ void ProblemGenerator::RefGhSourceUnit(ParameterInput *pin, const bool restart) 
   CheckFlatCovariantSource();
   CheckNonflatCovariantSource();
   CheckDynamicSpatialReference();
+  CheckControlledHardFreezeTimeDerivatives();
   if (pin->GetOrAddBoolean("problem", "puncture_exponent_gate", false)) {
     CheckRelativeExponentIdentity();
     CheckLocalPunctureExponentEstimator(

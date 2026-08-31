@@ -382,21 +382,31 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
   const std::string continuation_mode =
       pin->GetOrAddString("ref_gh", "continuation_mode", "legacy_time");
   if (continuation_mode == "legacy_time") {
-    opt.continuation_mode = 0;
+    opt.continuation_mode = kLegacyTimeContinuation;
   } else if (continuation_mode == "prescribed") {
-    opt.continuation_mode = 1;
+    opt.continuation_mode = kPrescribedContinuation;
   } else if (continuation_mode == "feedback") {
-    opt.continuation_mode = 2;
+    opt.continuation_mode = kFeedbackContinuation;
   } else if (continuation_mode == "frozen") {
     // An exact xi=xi_dot=0 control trajectory for discriminating reference
     // motion from an intermediate reference state.  This is neither feedback
     // nor an assertion that the wormhole reference is a physical fixed point.
-    opt.continuation_mode = 3;
+    opt.continuation_mode = kFrozenWormholeContinuation;
+  } else if (continuation_mode == "hard_freeze") {
+    // Freeze an arbitrary admissible intermediate continuation coordinate.
+    // Unlike the feedback safety command, this path has xi_dot=xi_ddot=0
+    // immediately and the reference is treated as exactly time independent.
+    opt.continuation_mode = kHardFreezeContinuation;
   } else {
     std::cout << "### FATAL ERROR: ref_gh continuation_mode must be "
-                 "legacy_time, prescribed, feedback, or frozen."
+                 "legacy_time, prescribed, feedback, frozen, or hard_freeze."
               << std::endl;
     std::exit(EXIT_FAILURE);
+  }
+  if (opt.reference_controlled
+      && (opt.continuation_mode == kFrozenWormholeContinuation
+          || opt.continuation_mode == kHardFreezeContinuation)) {
+    opt.reference_time_dependent = false;
   }
   const std::string source_name =
       pin->GetOrAddString("ref_gh", "source", "covariant");
@@ -750,19 +760,23 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
                  "q_dot=0 when q_controller_enabled=false." << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  if (opt.reference_controlled && opt.continuation_mode != 0
-      && (opt.transition_path != kFixedCorePath || opt.phi_ordering != 0
+  if (opt.reference_controlled
+      && opt.continuation_mode != kLegacyTimeContinuation
+      && (opt.transition_path != kFixedCorePath
+          || (opt.phi_ordering != 0
+              && opt.continuation_mode != kHardFreezeContinuation)
           || opt.controller_enabled || controller.delta_q != 0.0
           || controller.delta_q_dot != 0.0 || controller.delta_p != 0.0
           || controller.delta_p_dot != 0.0 || controller.xi < 0.0
           || controller.xi > 1.0 || controller.xi_dot < 0.0)) {
     std::cout << "### FATAL ERROR: continuation requires fixed_core, compatible "
-                 "Phi ordering, the exponent controller disabled, exact "
+                 "Phi ordering (except a STANDARD-Phi hard freeze), the "
+                 "exponent controller disabled, exact "
                  "delta_q=delta_p=0, and admissible nonnegative xi state."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  if (opt.continuation_mode == 3
+  if (opt.continuation_mode == kFrozenWormholeContinuation
       && (controller.xi != 0.0 || controller.xi_dot != 0.0
           || continuation_completed)) {
     std::cout << "### FATAL ERROR: frozen continuation requires exact "
@@ -770,7 +784,17 @@ RefGh::RefGh(MeshBlockPack *ppack, ParameterInput *pin) :
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  if (opt.continuation_mode == 2
+  if (opt.continuation_mode == kHardFreezeContinuation
+      && (controller.xi_dot != 0.0 || continuation_completed)) {
+    std::cout << "### FATAL ERROR: hard-freeze continuation requires exact "
+                 "xi_dot=0 and continuation_completed=false."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.continuation_mode == kHardFreezeContinuation) {
+    continuation_frozen = true;
+  }
+  if (opt.continuation_mode == kFeedbackContinuation
       && (opt.continuation_condition_stop > 8.0
           || opt.continuation_lapse_max_stop > 3.0
           || opt.continuation_lapse_min_stop < 0.5

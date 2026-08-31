@@ -20,6 +20,8 @@
 #include "pgen/pgen.hpp"
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
+#include "ref_gh/reference_controlled_schwarzschild.hpp"
+#include "ref_gh/reference_projection.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -34,6 +36,177 @@ struct InitialMatchEvidence {
   Real relative_shift_linf = 0.0;
   Real minimum_cell_radius = std::numeric_limits<Real>::max();
 } initial_match;
+
+void ReprojectHardFreezeRestart(ParameterInput *pin, Mesh *mesh) {
+  auto *module = mesh->pmb_pack->prefgh;
+  if (module->opt.continuation_mode
+      != ref_gh::RefGh::kHardFreezeContinuation) return;
+  const bool already_static = pin->GetOrAddBoolean(
+      "ref_gh", "hard_freeze_reference_already_static", false);
+  if (already_static) {
+    if (global_variable::my_rank == 0) {
+      std::cout << "reference-GH hard-freeze restart already uses the static "
+                   "reference; reprojection skipped" << std::endl;
+    }
+    return;
+  }
+
+  const Real previous_xi_dot = pin->GetOrAddReal(
+      "ref_gh", "hard_freeze_previous_xi_dot", -1.0);
+  const Real previous_xi_ddot = pin->GetOrAddReal(
+      "ref_gh", "hard_freeze_previous_xi_ddot", 0.0);
+  if (!(previous_xi_dot >= 0.0) || !std::isfinite(previous_xi_dot)
+      || !std::isfinite(previous_xi_ddot)) {
+    std::cout << "### FATAL ERROR: first hard-freeze restart requires finite "
+                 "hard_freeze_previous_xi_dot>=0 and previous_xi_ddot."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  auto &indcs = mesh->mb_indcs;
+  auto &size = mesh->pmb_pack->pmb->mb_size;
+  const int n1 = indcs.nx1 + 2*indcs.ng;
+  const int n2 = indcs.nx2 + 2*indcs.ng;
+  const int n3 = indcs.nx3 + 2*indcs.ng;
+  const auto state = module->u0;
+  const auto table = module->reference_table;
+  const Real mass = module->opt.reference_mass;
+  const Real center_x = module->opt.reference_center[0];
+  const Real center_y = module->opt.reference_center[1];
+  const Real center_z = module->opt.reference_center[2];
+  const Real xi = module->controller.xi;
+  const Real reproject_time = mesh->time;
+  const ref_gh::ControlledReferenceParameters previous{
+      mass, {center_x, center_y, center_z}, module->opt.r_core0,
+      module->opt.tau_core, module->opt.kappa_core,
+      module->opt.transition_path, module->opt.transition_width,
+      module->opt.tau_transition, ref_gh::kContinuationActivation,
+      xi, previous_xi_dot, previous_xi_ddot,
+      module->opt.regularization_outer_start,
+      module->opt.regularization_outer_end,
+      module->controller.delta_q, module->controller.delta_q_dot,
+      module->controller_rhs.delta_q_dot,
+      module->controller.delta_p, module->controller.delta_p_dot,
+      module->controller_rhs.delta_p_dot};
+  ref_gh::ControlledReferenceParameters frozen = previous;
+  frozen.xi_dot = 0.0;
+  frozen.xi_ddot = 0.0;
+  frozen.delta_q_dot = 0.0;
+  frozen.delta_q_ddot = 0.0;
+  frozen.delta_p_dot = 0.0;
+  frozen.delta_p_ddot = 0.0;
+
+  Real maximum_state_change = 0.0;
+  Real maximum_pi_change = 0.0;
+  Real invalid = 0.0;
+  Kokkos::parallel_reduce(
+      "ref_gh hard-freeze restart reprojection",
+      Kokkos::RangePolicy<>(DevExeSpace(),
+          0, mesh->pmb_pack->nmb_thispack*n3*n2*n1),
+      KOKKOS_LAMBDA(const int idx, Real &local_state_change,
+                    Real &local_pi_change, Real &local_invalid) {
+        int work = idx;
+        const int i = work % n1; work /= n1;
+        const int j = work % n2; work /= n2;
+        const int k = work % n3;
+        const int m = work/n3;
+        const Real x = CellCenterX(i - indcs.is, indcs.nx1,
+                                   size.d_view(m).x1min,
+                                   size.d_view(m).x1max);
+        const Real y = CellCenterX(j - indcs.js, indcs.nx2,
+                                   size.d_view(m).x2min,
+                                   size.d_view(m).x2max);
+        const Real z = CellCenterX(k - indcs.ks, indcs.nx3,
+                                   size.d_view(m).x3min,
+                                   size.d_view(m).x3max);
+        ref_gh::ReferenceJet previous_alpha, previous_psi2, previous_shift;
+        ref_gh::ControlledTransitionProfileJets(
+            table, previous, reproject_time, x, y, z,
+            previous_alpha, previous_psi2, previous_shift);
+        ref_gh::ReferenceGeometry previous_reference;
+        ref_gh::PopulateIsotropicReferenceGeometry(
+            previous_alpha, previous_psi2, previous_shift,
+            x, y, z, center_x, center_y, center_z, previous_reference);
+        ref_gh::ReferenceJet frozen_alpha, frozen_psi2, frozen_shift;
+        ref_gh::ControlledTransitionProfileJets(
+            table, frozen, reproject_time, x, y, z,
+            frozen_alpha, frozen_psi2, frozen_shift);
+        ref_gh::ReferenceGeometry frozen_reference;
+        ref_gh::PopulateIsotropicReferenceGeometry(
+            frozen_alpha, frozen_psi2, frozen_shift,
+            x, y, z, center_x, center_y, center_z, frozen_reference);
+
+        Real psi[4][4], pi[4][4], phi[3][4][4];  // NOLINT
+        Real d_psi[4][4][4], metric[4][4], d_metric[4][4][4];  // NOLINT
+        ref_gh::CoordinateGhGeometry geometry;
+        Real determinant = 0.0;
+        if (!ref_gh::LoadPointGeometry(
+                state, previous_reference, m, k, j, i, psi, pi, phi,
+                d_psi, metric, d_metric, geometry, determinant)) {
+          local_invalid = 1.0;
+          return;
+        }
+        const ref_gh::ProjectedFirstOrderMetric projected =
+            ref_gh::ProjectPhysicalMetricToReference(
+                metric, d_metric, frozen_reference);
+        if (!projected.valid) {
+          local_invalid = 1.0;
+          return;
+        }
+        for (int A = 0; A < 4; ++A) {
+          for (int B = A; B < 4; ++B) {
+            const int psi_index = ref_gh::PsiIndex(A, B);
+            const int pi_index = ref_gh::PiIndex(A, B);
+            local_state_change = fmax(
+                local_state_change,
+                Kokkos::abs(projected.psi[A][B]
+                            - state(m, psi_index, k, j, i)));
+            local_pi_change = fmax(
+                local_pi_change,
+                Kokkos::abs(projected.pi[A][B]
+                            - state(m, pi_index, k, j, i)));
+            state(m, psi_index, k, j, i) = projected.psi[A][B];
+            state(m, pi_index, k, j, i) = projected.pi[A][B];
+            for (int I = 0; I < 3; ++I) {
+              const int phi_index = ref_gh::PhiIndex(I, A, B);
+              local_state_change = fmax(
+                  local_state_change,
+                  Kokkos::abs(projected.phi[I][A][B]
+                              - state(m, phi_index, k, j, i)));
+              state(m, phi_index, k, j, i) = projected.phi[I][A][B];
+            }
+          }
+        }
+      }, Kokkos::Max<Real>(maximum_state_change),
+         Kokkos::Max<Real>(maximum_pi_change), Kokkos::Max<Real>(invalid));
+  Kokkos::fence("ref_gh hard-freeze restart reprojection");
+#if MPI_PARALLEL_ENABLED
+  Real maxima[3] = {maximum_state_change, maximum_pi_change, invalid};
+  MPI_Allreduce(MPI_IN_PLACE, maxima, 3, MPI_ATHENA_REAL, MPI_MAX,
+                MPI_COMM_WORLD);
+  maximum_state_change = maxima[0];
+  maximum_pi_change = maxima[1];
+  invalid = maxima[2];
+#endif
+  if (invalid > 0.0 || !std::isfinite(maximum_state_change)
+      || !std::isfinite(maximum_pi_change)) {
+    std::cout << "### FATAL ERROR: hard-freeze restart reprojection failed."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  pin->SetBoolean(
+      "ref_gh", "hard_freeze_reference_already_static", true);
+  pin->SetBoolean("ref_gh", "continuation_frozen", true);
+  if (global_variable::my_rank == 0) {
+    std::cout << "reference-GH hard-freeze restart reprojected at time="
+              << mesh->time << " xi=" << xi
+              << " old_xi_dot=" << previous_xi_dot
+              << " old_xi_ddot=" << previous_xi_ddot
+              << " new_xi_dot=0 new_xi_ddot=0"
+              << " state_change_Linf=" << maximum_state_change
+              << " Pi_change_Linf=" << maximum_pi_change << std::endl;
+  }
+}
 
 void WritePowerMismatchHistory(ref_gh::RefGh *module, Mesh *mesh) {
   if (!module->opt.power_mismatch_diagnostics) return;
@@ -61,7 +234,7 @@ void WritePowerMismatchHistory(ref_gh::RefGh *module, Mesh *mesh) {
         "# rms is the weighted RMS residual about the reported weighted mean\n");
     std::fprintf(file,
         "time\tdt\te_G\te_alpha\txi\txi_dot\txi_ddot\ttransition"
-        "\tdelta_q\tdelta_p");
+        "\ttransition_dot\ttransition_ddot\tdelta_q\tdelta_p");
     for (int shell = 0; shell < ref_gh::kPowerDiagnosticShellCount; ++shell) {
       const char *quantities[3] = {"qphys", "qref", "dq"};
       for (const char *quantity : quantities) {
@@ -81,19 +254,33 @@ void WritePowerMismatchHistory(ref_gh::RefGh *module, Mesh *mesh) {
 
   const Real prescribed_coordinate = mesh->time
       /(module->opt.tau_transition*module->opt.reference_mass);
-  const Real xi = module->opt.continuation_mode == 0
+  const Real xi =
+      module->opt.continuation_mode == ref_gh::RefGh::kLegacyTimeContinuation
       ? std::max(0.0, std::min(1.0, prescribed_coordinate))
       : module->controller.xi;
-  const Real xi_dot = module->opt.continuation_mode == 0
+  const Real xi_dot =
+      module->opt.continuation_mode == ref_gh::RefGh::kLegacyTimeContinuation
       ? ((prescribed_coordinate > 0.0 && prescribed_coordinate < 1.0)
          ? 1.0/(module->opt.tau_transition*module->opt.reference_mass) : 0.0)
       : module->controller.xi_dot;
   const auto &controller = module->controller_diagnostics;
+  Real transition_dot = 0.0;
+  Real transition_ddot = 0.0;
+  if (xi > 0.0 && xi < 1.0) {
+    const Real transition_prime =
+        30.0*xi*xi*(1.0 - xi)*(1.0 - xi);
+    const Real transition_second =
+        60.0*xi*(1.0 - xi)*(1.0 - 2.0*xi);
+    transition_dot = transition_prime*xi_dot;
+    transition_ddot = transition_second*xi_dot*xi_dot
+                      + transition_prime*controller.xi_ddot;
+  }
   std::fprintf(file, "%.17e\t%.17e\t%.17e\t%.17e\t%.17e\t%.17e"
-                     "\t%.17e\t%.17e\t%.17e\t%.17e",
+                     "\t%.17e\t%.17e\t%.17e\t%.17e\t%.17e\t%.17e",
                mesh->time, mesh->dt, controller.e_G, controller.e_alpha,
                xi, xi_dot, controller.xi_ddot,
-               controller.transition_amplitude,
+               controller.transition_amplitude, transition_dot,
+               transition_ddot,
                module->controller.delta_q, module->controller.delta_p);
   for (int shell = 0; shell < ref_gh::kPowerDiagnosticShellCount; ++shell) {
     const ref_gh::RefGh::PowerFitStatistics *statistics[3] = {
@@ -166,10 +353,12 @@ void ControlledTransitionHistory(HistoryData *pdata, Mesh *mesh) {
       static_cast<Real>(module->controller_generation);
   const Real prescribed_coordinate = mesh->time
       /(module->opt.tau_transition*module->opt.reference_mass);
-  pdata->hdata[kXi] = module->opt.continuation_mode == 0
+  pdata->hdata[kXi] =
+      module->opt.continuation_mode == ref_gh::RefGh::kLegacyTimeContinuation
       ? std::max(0.0, std::min(1.0, prescribed_coordinate))
       : module->controller.xi;
-  pdata->hdata[kXiDot] = module->opt.continuation_mode == 0
+  pdata->hdata[kXiDot] =
+      module->opt.continuation_mode == ref_gh::RefGh::kLegacyTimeContinuation
       ? ((prescribed_coordinate > 0.0 && prescribed_coordinate < 1.0)
          ? 1.0/(module->opt.tau_transition*module->opt.reference_mass) : 0.0)
       : module->controller.xi_dot;
@@ -339,7 +528,10 @@ void ProblemGenerator::RefGhControlledTransition(ParameterInput *pin,
   pgen_final_func = estimator_calibration
       ? &FinishEstimatorCalibration : &FinishControlledTransition;
   user_hist_func = &ControlledTransitionHistory;
-  if (restart) return;
+  if (restart) {
+    ReprojectHardFreezeRestart(pin, pmy_mesh_);
+    return;
+  }
   auto *pack = pmy_mesh_->pmb_pack;
   if (pack->prefgh == nullptr
       || (pack->prefgh->opt.reference_kind != 4

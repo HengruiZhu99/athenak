@@ -21,6 +21,7 @@
 #include "ref_gh/ref_gh.hpp"
 #include "ref_gh/ref_gh_geometry.hpp"
 #include "ref_gh/reference_cache.hpp"
+#include "ref_gh/reference_controlled_schwarzschild.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -188,6 +189,8 @@ void RefGh::AppendMaxLocationDiagnosticsImpl() {
 
   enum Diagnostic : int {
     kReferenceRicci, kReferenceRiemann, kSpin, kSpinDerivative,
+    kReferenceDtFrame, kReferenceDtConnection,
+    kReferenceSpatialFrameGradient, kReferenceWindowGradient,
     kPsi, kQ, kDelta, kPi, kPhi, kGhConstraint, kReductionConstraint,
     kCurlConstraint, kSourceCurvature, kSourceQq, kSourceDeltaDelta,
     kSourceDamping, kSourceFrameCorrection,
@@ -199,7 +202,9 @@ void RefGh::AppendMaxLocationDiagnosticsImpl() {
   };
   constexpr const char *names[kDiagnosticCount] = {
     "reference_Ricci", "reference_Riemann", "spin_connection",
-    "spin_derivative", "Psi", "Q", "Delta", "Pi", "Phi",
+    "spin_derivative", "reference_dt_frame", "reference_dt_connection",
+    "reference_spatial_frame_gradient", "reference_window_gradient",
+    "Psi", "Q", "Delta", "Pi", "Phi",
     "GH_constraint", "reduction_constraint", "curl_constraint",
     "source_curvature", "source_QQ", "source_DeltaDelta",
     "source_damping", "source_frame_correction",
@@ -224,6 +229,16 @@ void RefGh::AppendMaxLocationDiagnosticsImpl() {
   const Real center_x = opt.reference_center[0];
   const Real center_y = opt.reference_center[1];
   const Real center_z = opt.reference_center[2];
+  const int reference_kind = opt.reference_kind;
+  const int transition_path = opt.transition_path;
+  const Real reference_mass = opt.reference_mass;
+  const Real r_core0 = opt.r_core0;
+  const Real tau_core = opt.tau_core;
+  const Real kappa_core = opt.kappa_core;
+  const Real transition_width = opt.transition_width;
+  const Real regularization_outer_start = opt.regularization_outer_start;
+  const Real regularization_outer_end = opt.regularization_outer_end;
+  const Real diagnostic_time = pmy_pack->pmesh->time;
   const bool exclude_puncture_stencils =
       opt.exclude_puncture_stencil_diagnostics;
   const int puncture_stencil_radius =
@@ -317,6 +332,68 @@ void RefGh::AppendMaxLocationDiagnosticsImpl() {
                     }
                   }
                 }
+              }
+            }
+          } else if (diagnostic_index == kReferenceDtFrame) {
+            if constexpr (!Analytic) {
+              for (int A = 0; A < 4; ++A) {
+                for (int a = 0; a < 4; ++a) {
+                  const Real value = ReferenceDFrame(reference, 0, A, a);
+                  value2 += value*value;
+                }
+              }
+            }
+          } else if (diagnostic_index == kReferenceDtConnection) {
+            if constexpr (!Analytic) {
+              for (int a = 0; a < 4; ++a) {
+                for (int b = 0; b < 4; ++b) {
+                  for (int c = b; c < 4; ++c) {
+                    const Real value =
+                        ReferenceDChristoffel(reference, 0, a, b, c);
+                    value2 += value*value;
+                  }
+                }
+              }
+            }
+          } else if (diagnostic_index == kReferenceSpatialFrameGradient) {
+            if constexpr (!Analytic) {
+              for (int p = 1; p < 4; ++p) {
+                for (int A = 0; A < 4; ++A) {
+                  for (int a = 0; a < 4; ++a) {
+                    const Real value = ReferenceDFrame(reference, p, A, a);
+                    value2 += value*value;
+                  }
+                }
+              }
+            }
+          } else if (diagnostic_index == kReferenceWindowGradient) {
+            if (reference_kind == 5) {
+              const ReferenceJet radius = ControlledRadiusJet(
+                  x, y, z, center_x, center_y, center_z);
+              const ReferenceJet time_jet = CoordinateJet(diagnostic_time, 0);
+              const ReferenceJet r_core = transition_path == kFixedCorePath
+                  ? ConstantJet(r_core0*reference_mass)
+                  : ConstantJet(r_core0*reference_mass)*Exp(
+                      ConstantJet(-1.0/(tau_core*reference_mass))*time_jet);
+              const ReferenceJet transition_coordinate =
+                  transition_path == kFixedWidthPath
+                  ? (radius + (-r_core))*ConstantJet(
+                      1.0/(transition_width*reference_mass))
+                  : (radius*Reciprocal(r_core) + ConstantJet(-1.0))
+                      *ConstantJet(1.0/kappa_core);
+              const ReferenceJet core_blend =
+                  QuinticSmoothstep(transition_coordinate);
+              const ReferenceJet outer_coordinate =
+                  (radius + ConstantJet(
+                      -regularization_outer_start*reference_mass))
+                  *ConstantJet(1.0/((regularization_outer_end
+                                     - regularization_outer_start)
+                                    *reference_mass));
+              const ReferenceJet window = core_blend
+                  *(ConstantJet(1.0)
+                    + (-QuinticSmoothstep(outer_coordinate)));
+              for (int p = 1; p < 4; ++p) {
+                value2 += window.d[p]*window.d[p];
               }
             }
           } else if (diagnostic_index == kPsi) {

@@ -47,6 +47,14 @@ class RefGh {
     kMovingPunctureDriverGauge = 2
   };
 
+  enum ContinuationMode {
+    kLegacyTimeContinuation = 0,
+    kPrescribedContinuation = 1,
+    kFeedbackContinuation = 2,
+    kFrozenWormholeContinuation = 3,
+    kHardFreezeContinuation = 4
+  };
+
   struct Options {
     int fd_order;
     int extrap_order;
