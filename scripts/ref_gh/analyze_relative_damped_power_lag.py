@@ -12,10 +12,6 @@ import json
 import math
 from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-
 from analyze_relative_damped_wormhole import (
     REF_COLUMNS, USER_COLUMNS, data_rows, merged_rows, one_file, safe_rms)
 
@@ -347,6 +343,10 @@ def write_shell_tsv(path, summaries):
 
 
 def plot(path, cases):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
     figure, axes = plt.subplots(4, 1, figsize=(8.0, 10.5), sharex=True)
     for label, records, direct in cases:
         times = [item["time"] for item in records]

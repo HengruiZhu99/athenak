@@ -11,10 +11,6 @@ import json
 import math
 from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-
 from analyze_relative_damped_power_lag import load_case, parse_case
 
 
@@ -65,7 +61,16 @@ def nearest(records, time):
 
 
 def summarize(label, records, freeze_time, post_start, post_end):
-    post_records = [item for item in records if item["time"] >= freeze_time]
+    # The merged history includes the common seed sample at exactly freeze_time.
+    # Use the first evolved branch sample here so the reported motion sectors
+    # describe the selected continuation rather than the pre-fork trajectory.
+    tolerance = 1.0e-12*max(1.0, abs(freeze_time))
+    post_records = [item for item in records
+                    if item["time"] > freeze_time+tolerance]
+    if not post_records:
+        raise ValueError(
+            f"{label}: no evolved samples strictly after t={freeze_time}")
+    at_freeze = nearest(records, freeze_time)
     first = post_records[0]
     final = post_records[-1]
     fits = {}
@@ -86,6 +91,7 @@ def summarize(label, records, freeze_time, post_start, post_end):
         "label": label,
         "history_interval": [records[0]["time"], records[-1]["time"]],
         "post_freeze_interval": [first["time"], final["time"]],
+        "common_state_at_freeze": at_freeze,
         "first_post_freeze": first,
         "final": final,
         "growth_fits": fits,
@@ -117,6 +123,10 @@ def write_table(path, summaries):
 
 
 def plot(path, cases, freeze_time):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
     figure, axes = plt.subplots(3, 1, figsize=(8.2, 9.2), sharex=True)
     for label, records in cases:
         times = [item["time"] for item in records]
@@ -179,13 +189,23 @@ def main():
     json_path = Path(str(args.output_prefix)+".json")
     table_path = Path(str(args.output_prefix)+"_growth.tsv")
     plot_path = Path(str(args.output_prefix)+".png")
+    write_table(table_path, summaries)
+    try:
+        plot(plot_path, plot_cases, args.freeze_time)
+        payload["plot"] = {"written": True, "path": str(plot_path)}
+    except ModuleNotFoundError as error:
+        payload["plot"] = {
+            "written": False,
+            "reason": f"optional plotting dependency unavailable: {error}",
+        }
     json_path.write_text(json.dumps(payload, indent=2, sort_keys=True)+"\n",
                          encoding="utf-8")
-    write_table(table_path, summaries)
-    plot(plot_path, plot_cases, args.freeze_time)
     print(json_path)
     print(table_path)
-    print(plot_path)
+    if payload["plot"]["written"]:
+        print(plot_path)
+    else:
+        print(payload["plot"]["reason"])
 
 
 if __name__ == "__main__":
