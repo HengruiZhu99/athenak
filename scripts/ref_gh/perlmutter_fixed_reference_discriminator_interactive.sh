@@ -102,7 +102,7 @@ grep -q '^Athena_ENABLE_MPI:BOOL=ON$' "${BUILD}/CMakeCache.txt"
 grep -q '^Kokkos_ENABLE_CUDA:BOOL=ON$' "${BUILD}/CMakeCache.txt"
 grep -q '^Kokkos_ARCH_AMPERE80:BOOL=ON$' "${BUILD}/CMakeCache.txt"
 
-srun -N 4 -n 16 -c 32 --gpus-per-task=1 --gpu-bind=none \
+srun --overlap -N 4 -n 16 -c 32 --gpus-per-task=1 --gpu-bind=none \
   bash -lc 'echo "host=$(hostname) rank=${SLURM_PROCID} local_rank=${SLURM_LOCALID} CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-unset}"; nvidia-smi --id="${SLURM_LOCALID}" --query-gpu=index,uuid,name,memory.total --format=csv,noheader' \
   > rank_gpu_mapping.txt 2>&1
 test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 16
@@ -115,7 +115,7 @@ awk '/^host=/ {split($1, field, "="); count[field[2]]++}
 mkdir source_oracle
 (
   cd source_oracle
-  srun -N 1 -n 1 -c 32 --gpus-per-task=1 --gpu-bind=none \
+  srun --overlap -N 1 -n 1 -c 32 --gpus-per-task=1 --gpu-bind=none \
     "${EXE}" --kokkos-map-device-id-by=mpi_rank -i "${SOURCE_INPUT}" \
     > source_unit.log 2>&1
   grep -q 'controlled direct-fixed projection passed' source_unit.log
@@ -128,7 +128,7 @@ run_direct() {
   mkdir direct_fixed
   cd direct_fixed
   set +e
-  /usr/bin/time -p srun -N 4 -n 16 -c 32 \
+  /usr/bin/time -p srun --overlap -N 4 -n 16 -c 32 \
     --gpus-per-task=1 --gpu-bind=none \
     "${EXE}" --kokkos-map-device-id-by=mpi_rank -i "${DIRECT_INPUT}" \
     job/basename=refgh_direct_fixed_xi025 \
@@ -152,7 +152,7 @@ run_smooth() {
   mkdir smooth_stop
   cd smooth_stop
   set +e
-  /usr/bin/time -p srun -N 4 -n 16 -c 32 \
+  /usr/bin/time -p srun --overlap -N 4 -n 16 -c 32 \
     --gpus-per-task=1 --gpu-bind=none \
     "${EXE}" --kokkos-map-device-id-by=mpi_rank \
     -r "${COMMON_RESTART}" -i "${SMOOTH_INPUT}" \
