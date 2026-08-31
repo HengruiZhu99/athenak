@@ -303,22 +303,29 @@ TaskStatus RefGh::CalcRHSImpl(Driver *driver, int stage) {
     const Real idx[3] = {1.0/size.d_view(m).dx1, 1.0/size.d_view(m).dx2,
                          1.0/size.d_view(m).dx3};
     Real scalar_source[4][4];  // NOLINT(runtime/arrays)
+    // Capture both branch-only host values before the constexpr dispatch.
+    // NVCC rejects a variable whose first capture lexically occurs inside an
+    // if-constexpr arm of an extended device lambda.
+    const Real point_gamma0 = gamma0;
+    const int point_source_kind = source_kind;
     if constexpr (Analytic) {
       if (!ProductionCovariantScalarWaveSource(
-              psi, pi, phi, reference, geometry, gamma0, scalar_source)) {
+              psi, pi, phi, reference, geometry, point_gamma0,
+              scalar_source)) {
         for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
         return;
       }
-    } else if (source_kind == 0) {
+    } else if (point_source_kind == 0) {
       if (!ProductionCovariantScalarWaveSource(
-              psi, pi, phi, reference, geometry, gamma0, scalar_source)) {
+              psi, pi, phi, reference, geometry, point_gamma0,
+              scalar_source)) {
         for (int n = 10; n < 20; ++n) state_rhs(m, n, k, j, i) = NAN;
         return;
       }
     } else {
       Real partial_source[4][4];  // NOLINT(runtime/arrays)
       StandardGhPartialWaveSource(metric, d_metric, reference,
-                                  geometry, gamma0, partial_source);
+                                  geometry, point_gamma0, partial_source);
       TransformPartialWaveSource(metric, d_metric, partial_source, d_psi,
                                  reference, geometry, scalar_source);
     }

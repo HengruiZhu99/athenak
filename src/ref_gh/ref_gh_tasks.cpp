@@ -212,6 +212,166 @@ void StoreQControlledStationaryTrumpetGaugeState(
   }
 }
 
+template <typename BoundaryView>
+KOKKOS_INLINE_FUNCTION
+bool IsProjectedTrumpetPhysicalBoundaryCell(
+    const BoundaryView &mb_bcs, const int m,
+    const int i, const int j, const int k,
+    const int is, const int ie, const int js, const int je,
+    const int ks, const int ke,
+    const bool physical_inner_x1, const bool physical_outer_x1,
+    const bool physical_inner_x2, const bool physical_outer_x2,
+    const bool physical_inner_x3, const bool physical_outer_x3) {
+  return (i < is && physical_inner_x1
+          && mb_bcs(m, BoundaryFace::inner_x1) != BoundaryFlag::block)
+      || (i > ie && physical_outer_x1
+          && mb_bcs(m, BoundaryFace::outer_x1) != BoundaryFlag::block)
+      || (j < js && physical_inner_x2
+          && mb_bcs(m, BoundaryFace::inner_x2) != BoundaryFlag::block)
+      || (j > je && physical_outer_x2
+          && mb_bcs(m, BoundaryFace::outer_x2) != BoundaryFlag::block)
+      || (k < ks && physical_inner_x3
+          && mb_bcs(m, BoundaryFace::inner_x3) != BoundaryFlag::block)
+      || (k > ke && physical_outer_x3
+          && mb_bcs(m, BoundaryFace::outer_x3) != BoundaryFlag::block);
+}
+
+template <bool Analytic, bool ExactMatched, typename StateView>
+KOKKOS_INLINE_FUNCTION
+void StoreProjectedTrumpetMetricBoundaryCell(
+    const StateView &state, const int m, const int k, const int j, const int i,
+    const DvceArray5D<Real> &reference_static,
+    const DvceArray2D<Real> &table, const Real mass,
+    const Real center_x, const Real center_y, const Real center_z,
+    const Real gaussian_width, const Real q, const Real q_dot,
+    const Real q_ddot, const Real x, const Real y, const Real z) {
+  if constexpr (ExactMatched) {
+    for (int n = 0; n < kHhatOffset; ++n) state(m, n, k, j, i) = 0.0;
+    state(m, PsiIndex(0, 0), k, j, i) = -1.0;
+    state(m, PsiIndex(1, 1), k, j, i) = 1.0;
+    state(m, PsiIndex(2, 2), k, j, i) = 1.0;
+    state(m, PsiIndex(3, 3), k, j, i) = 1.0;
+  } else {
+    StoreQControlledStationaryTrumpetMetricState<Analytic>(
+        state, m, k, j, i, reference_static,
+        table, mass, center_x, center_y, center_z,
+        gaussian_width, q, q_dot, q_ddot, false, x, y, z);
+  }
+}
+
+template <bool Analytic, bool ExactMatched, typename StateView>
+KOKKOS_INLINE_FUNCTION
+void StoreProjectedTrumpetGaugeBoundaryCell(
+    const StateView &state, const int m, const int k, const int j, const int i,
+    const DvceArray5D<Real> &reference_static,
+    const DvceArray2D<Real> &table, const Real mass,
+    const Real center_x, const Real center_y, const Real center_z,
+    const Real gaussian_width, const Real q, const Real q_dot,
+    const Real q_ddot, const Real x, const Real y, const Real z,
+    const bool gauge_reference_subtraction) {
+  if constexpr (ExactMatched) {
+    for (int n = kHhatOffset; n < nvar; ++n) state(m, n, k, j, i) = 0.0;
+  } else {
+    StoreQControlledStationaryTrumpetGaugeState<Analytic>(
+        state, m, k, j, i, reference_static,
+        table, mass, center_x, center_y, center_z,
+        gaussian_width, q, q_dot, q_ddot, x, y, z,
+        gauge_reference_subtraction, false);
+  }
+}
+
+// Keep the Kokkos extended lambda in an ordinary free function.  NVCC does
+// not permit such a lambda to be nested inside the generic host lambda that
+// was previously used for compile-time dispatch.  The device work and the
+// three exact/analytic/generic instantiations are otherwise unchanged.
+template <bool Analytic, bool ExactMatched, typename StateView,
+          typename BoundaryView, typename SizeView>
+void LaunchProjectedTrumpetMetricBoundaries(
+    const StateView &state, const BoundaryView &mb_bcs, const SizeView &size,
+    const DvceArray5D<Real> &reference_static,
+    const DvceArray2D<Real> &table,
+    const int ghost_cells, const int n1, const int n2, const int n3,
+    const int nx1, const int nx2, const int nx3,
+    const int is, const int ie, const int js, const int je,
+    const int ks, const int ke,
+    const bool physical_inner_x1, const bool physical_outer_x1,
+    const bool physical_inner_x2, const bool physical_outer_x2,
+    const bool physical_inner_x3, const bool physical_outer_x3,
+    const Real mass, const Real center_x, const Real center_y,
+    const Real center_z, const Real gaussian_width,
+    const Real q, const Real q_dot, const Real q_ddot) {
+  Kokkos::parallel_for(
+      "ref_gh projected trumpet metric boundaries",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
+      KOKKOS_LAMBDA(const int idx) {
+        int work = idx;
+        const int i = work % n1; work /= n1;
+        const int j = work % n2; work /= n2;
+        const int k = work % n3;
+        const int m = work/n3;
+        if (!IsProjectedTrumpetPhysicalBoundaryCell(
+                mb_bcs, m, i, j, k, is, ie, js, je, ks, ke,
+                physical_inner_x1, physical_outer_x1,
+                physical_inner_x2, physical_outer_x2,
+                physical_inner_x3, physical_outer_x3)) return;
+        const Real x = CellCenterX(
+            i - is, nx1, size(m).x1min, size(m).x1max);
+        const Real y = CellCenterX(
+            j - js, nx2, size(m).x2min, size(m).x2max);
+        const Real z = CellCenterX(
+            k - ks, nx3, size(m).x3min, size(m).x3max);
+        StoreProjectedTrumpetMetricBoundaryCell<Analytic, ExactMatched>(
+            state, m, k, j, i, reference_static,
+            table, mass, center_x, center_y, center_z,
+            gaussian_width, q, q_dot, q_ddot, x, y, z);
+      });
+}
+
+template <bool Analytic, bool ExactMatched, typename StateView,
+          typename BoundaryView, typename SizeView>
+void LaunchProjectedTrumpetGaugeBoundaries(
+    const StateView &state, const BoundaryView &mb_bcs, const SizeView &size,
+    const DvceArray5D<Real> &reference_static,
+    const DvceArray2D<Real> &table,
+    const int ghost_cells, const int n1, const int n2, const int n3,
+    const int nx1, const int nx2, const int nx3,
+    const int is, const int ie, const int js, const int je,
+    const int ks, const int ke,
+    const bool physical_inner_x1, const bool physical_outer_x1,
+    const bool physical_inner_x2, const bool physical_outer_x2,
+    const bool physical_inner_x3, const bool physical_outer_x3,
+    const Real mass, const Real center_x, const Real center_y,
+    const Real center_z, const Real gaussian_width,
+    const Real q, const Real q_dot, const Real q_ddot,
+    const bool gauge_reference_subtraction) {
+  Kokkos::parallel_for(
+      "ref_gh projected trumpet gauge boundaries",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
+      KOKKOS_LAMBDA(const int idx) {
+        int work = idx;
+        const int i = work % n1; work /= n1;
+        const int j = work % n2; work /= n2;
+        const int k = work % n3;
+        const int m = work/n3;
+        if (!IsProjectedTrumpetPhysicalBoundaryCell(
+                mb_bcs, m, i, j, k, is, ie, js, je, ks, ke,
+                physical_inner_x1, physical_outer_x1,
+                physical_inner_x2, physical_outer_x2,
+                physical_inner_x3, physical_outer_x3)) return;
+        const Real x = CellCenterX(
+            i - is, nx1, size(m).x1min, size(m).x1max);
+        const Real y = CellCenterX(
+            j - js, nx2, size(m).x2min, size(m).x2max);
+        const Real z = CellCenterX(
+            k - ks, nx3, size(m).x3min, size(m).x3max);
+        StoreProjectedTrumpetGaugeBoundaryCell<Analytic, ExactMatched>(
+            state, m, k, j, i, reference_static,
+            table, mass, center_x, center_y, center_z,
+            gaussian_width, q, q_dot, q_ddot, x, y, z,
+            gauge_reference_subtraction);
+      });
+}
+
 template <typename StateView>
 KOKKOS_INLINE_FUNCTION
 bool EvaluateQControlledPhysicalExponent(
@@ -2996,152 +3156,73 @@ TaskStatus RefGh::ApplyPhysicalBCs(Driver *, int) {
     // projections into one face work item: that shape spills a large private
     // stack on PVC.  A cell is owned by this kernel if at least one of its
     // out-of-range directions is a physical, nonperiodic block face.
-    const auto launch_metric_boundary = [&](const auto analytic_tag,
-                                            const auto exact_tag) {
-      constexpr bool kAnalytic = decltype(analytic_tag)::value;
-      constexpr bool kExactMatched = decltype(exact_tag)::value;
-      Kokkos::parallel_for(
-      "ref_gh projected trumpet metric boundaries",
-      Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
-      KOKKOS_LAMBDA(const int idx) {
-      int work = idx;
-      const int i = work % n1; work /= n1;
-      const int j = work % n2; work /= n2;
-      const int k = work % n3;
-      const int m = work/n3;
-      bool physical = false;
-      if (i < is && physical_inner_x1
-          && mb_bcs(m, BoundaryFace::inner_x1) != BoundaryFlag::block) {
-        physical = true;
-      }
-      if (i > ie && physical_outer_x1
-          && mb_bcs(m, BoundaryFace::outer_x1) != BoundaryFlag::block) {
-        physical = true;
-      }
-      if (j < js && physical_inner_x2
-          && mb_bcs(m, BoundaryFace::inner_x2) != BoundaryFlag::block) {
-        physical = true;
-      }
-      if (j > je && physical_outer_x2
-          && mb_bcs(m, BoundaryFace::outer_x2) != BoundaryFlag::block) {
-        physical = true;
-      }
-      if (k < ks && physical_inner_x3
-          && mb_bcs(m, BoundaryFace::inner_x3) != BoundaryFlag::block) {
-        physical = true;
-      }
-      if (k > ke && physical_outer_x3
-          && mb_bcs(m, BoundaryFace::outer_x3) != BoundaryFlag::block) {
-        physical = true;
-      }
-      if (!physical) return;
-      const Real x = CellCenterX(
-          i - is, indcs.nx1,
-          size.d_view(m).x1min, size.d_view(m).x1max);
-      const Real y = CellCenterX(
-          j - js, indcs.nx2,
-          size.d_view(m).x2min, size.d_view(m).x2max);
-      const Real z = CellCenterX(
-          k - ks, indcs.nx3,
-          size.d_view(m).x3min, size.d_view(m).x3max);
-      if constexpr (kExactMatched) {
-        // Dispatch this identity at compile time.  Keeping the general
-        // projection behind a runtime branch forces PVC to compile and spill
-        // its otherwise unreachable private working set into this exact-q=1
-        // boundary kernel.
-        for (int n = 0; n < kHhatOffset; ++n) {
-          state(m, n, k, j, i) = 0.0;
-        }
-        state(m, PsiIndex(0, 0), k, j, i) = -1.0;
-        state(m, PsiIndex(1, 1), k, j, i) = 1.0;
-        state(m, PsiIndex(2, 2), k, j, i) = 1.0;
-        state(m, PsiIndex(3, 3), k, j, i) = 1.0;
-      } else {
-        StoreQControlledStationaryTrumpetMetricState<kAnalytic>(
-            state, m, k, j, i, analytic_static,
-            table, mass, center_x, center_y, center_z,
-            gaussian_width, q, q_dot, q_ddot, false,
-            x, y, z);
-      }
-      });
-    };
     if (exact_matched_reference) {
-      launch_metric_boundary(std::true_type{}, std::true_type{});
+      LaunchProjectedTrumpetMetricBoundaries<true, true>(
+          state, mb_bcs, size.d_view, analytic_static, table,
+          ghost_cells, n1, n2, n3, indcs.nx1, indcs.nx2, indcs.nx3,
+          is, ie, js, je, ks, ke,
+          physical_inner_x1, physical_outer_x1,
+          physical_inner_x2, physical_outer_x2,
+          physical_inner_x3, physical_outer_x3,
+          mass, center_x, center_y, center_z,
+          gaussian_width, q, q_dot, q_ddot);
     } else if (analytic_backend) {
-      launch_metric_boundary(std::true_type{}, std::false_type{});
+      LaunchProjectedTrumpetMetricBoundaries<true, false>(
+          state, mb_bcs, size.d_view, analytic_static, table,
+          ghost_cells, n1, n2, n3, indcs.nx1, indcs.nx2, indcs.nx3,
+          is, ie, js, je, ks, ke,
+          physical_inner_x1, physical_outer_x1,
+          physical_inner_x2, physical_outer_x2,
+          physical_inner_x3, physical_outer_x3,
+          mass, center_x, center_y, center_z,
+          gaussian_width, q, q_dot, q_ddot);
     } else {
-      launch_metric_boundary(std::false_type{}, std::false_type{});
+      LaunchProjectedTrumpetMetricBoundaries<false, false>(
+          state, mb_bcs, size.d_view, analytic_static, table,
+          ghost_cells, n1, n2, n3, indcs.nx1, indcs.nx2, indcs.nx3,
+          is, ie, js, je, ks, ke,
+          physical_inner_x1, physical_outer_x1,
+          physical_inner_x2, physical_outer_x2,
+          physical_inner_x3, physical_outer_x3,
+          mass, center_x, center_y, center_z,
+          gaussian_width, q, q_dot, q_ddot);
     }
     DebugFence("ref_gh ApplyPhysicalBCs projected trumpet metric");
 
     if (gauge_driver_enabled) {
-      const auto launch_gauge_boundary = [&](const auto analytic_tag,
-                                             const auto exact_tag) {
-        constexpr bool kAnalytic = decltype(analytic_tag)::value;
-        constexpr bool kExactMatched = decltype(exact_tag)::value;
-        Kokkos::parallel_for(
-        "ref_gh projected trumpet gauge boundaries",
-        Kokkos::RangePolicy<>(DevExeSpace(), 0, ghost_cells),
-        KOKKOS_LAMBDA(const int idx) {
-        int work = idx;
-        const int i = work % n1; work /= n1;
-        const int j = work % n2; work /= n2;
-        const int k = work % n3;
-        const int m = work/n3;
-        bool physical = false;
-        if (i < is && physical_inner_x1
-            && mb_bcs(m, BoundaryFace::inner_x1) != BoundaryFlag::block) {
-          physical = true;
-        }
-        if (i > ie && physical_outer_x1
-            && mb_bcs(m, BoundaryFace::outer_x1) != BoundaryFlag::block) {
-          physical = true;
-        }
-        if (j < js && physical_inner_x2
-            && mb_bcs(m, BoundaryFace::inner_x2) != BoundaryFlag::block) {
-          physical = true;
-        }
-        if (j > je && physical_outer_x2
-            && mb_bcs(m, BoundaryFace::outer_x2) != BoundaryFlag::block) {
-          physical = true;
-        }
-        if (k < ks && physical_inner_x3
-            && mb_bcs(m, BoundaryFace::inner_x3) != BoundaryFlag::block) {
-          physical = true;
-        }
-        if (k > ke && physical_outer_x3
-            && mb_bcs(m, BoundaryFace::outer_x3) != BoundaryFlag::block) {
-          physical = true;
-        }
-        if (!physical) return;
-        const Real x = CellCenterX(
-            i - is, indcs.nx1,
-            size.d_view(m).x1min, size.d_view(m).x1max);
-        const Real y = CellCenterX(
-            j - js, indcs.nx2,
-            size.d_view(m).x2min, size.d_view(m).x2max);
-        const Real z = CellCenterX(
-            k - ks, indcs.nx3,
-            size.d_view(m).x3min, size.d_view(m).x3max);
-        if constexpr (kExactMatched) {
-          for (int n = kHhatOffset; n < nvar; ++n) {
-            state(m, n, k, j, i) = 0.0;
-          }
-        } else {
-          StoreQControlledStationaryTrumpetGaugeState<kAnalytic>(
-              state, m, k, j, i, analytic_static,
-              table, mass, center_x, center_y, center_z,
-              gaussian_width, q, q_dot, q_ddot, x, y, z,
-              gauge_reference_subtraction, false);
-        }
-        });
-      };
       if (exact_matched_gauge) {
-        launch_gauge_boundary(std::true_type{}, std::true_type{});
+        LaunchProjectedTrumpetGaugeBoundaries<true, true>(
+            state, mb_bcs, size.d_view, analytic_static, table,
+            ghost_cells, n1, n2, n3, indcs.nx1, indcs.nx2, indcs.nx3,
+            is, ie, js, je, ks, ke,
+            physical_inner_x1, physical_outer_x1,
+            physical_inner_x2, physical_outer_x2,
+            physical_inner_x3, physical_outer_x3,
+            mass, center_x, center_y, center_z,
+            gaussian_width, q, q_dot, q_ddot,
+            gauge_reference_subtraction);
       } else if (analytic_backend) {
-        launch_gauge_boundary(std::true_type{}, std::false_type{});
+        LaunchProjectedTrumpetGaugeBoundaries<true, false>(
+            state, mb_bcs, size.d_view, analytic_static, table,
+            ghost_cells, n1, n2, n3, indcs.nx1, indcs.nx2, indcs.nx3,
+            is, ie, js, je, ks, ke,
+            physical_inner_x1, physical_outer_x1,
+            physical_inner_x2, physical_outer_x2,
+            physical_inner_x3, physical_outer_x3,
+            mass, center_x, center_y, center_z,
+            gaussian_width, q, q_dot, q_ddot,
+            gauge_reference_subtraction);
       } else {
-        launch_gauge_boundary(std::false_type{}, std::false_type{});
+        LaunchProjectedTrumpetGaugeBoundaries<false, false>(
+            state, mb_bcs, size.d_view, analytic_static, table,
+            ghost_cells, n1, n2, n3, indcs.nx1, indcs.nx2, indcs.nx3,
+            is, ie, js, je, ks, ke,
+            physical_inner_x1, physical_outer_x1,
+            physical_inner_x2, physical_outer_x2,
+            physical_inner_x3, physical_outer_x3,
+            mass, center_x, center_y, center_z,
+            gaussian_width, q, q_dot, q_ddot,
+            gauge_reference_subtraction);
       }
       DebugFence("ref_gh ApplyPhysicalBCs projected trumpet gauge");
     }

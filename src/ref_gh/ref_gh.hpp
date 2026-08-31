@@ -307,7 +307,10 @@ class RefGh {
   TaskStatus NewTimeStep(Driver *driver, int stage);
   void DebugFence(const char *label) const;
 
- private:
+  // These implementation entry points intentionally remain public.  NVIDIA
+  // extended device lambdas require their enclosing member function to have
+  // public access; keeping the dispatch helpers private makes otherwise valid
+  // CUDA builds fail before device compilation.  They are not API contracts.
   template <int FDNG, bool Analytic>
   TaskStatus CalcRHSImpl(Driver *driver, int stage);
   template <int FDNG, bool Analytic>
@@ -321,6 +324,8 @@ class RefGh {
   Real StageTime(const Driver *driver, int stage) const;
   void FillReferenceCache(Real time, bool include_diagnostics);
   void PersistControllerState();
+
+ private:
   MeshBlockPack *pmy_pack;
   ParameterInput *pinput;
 };
