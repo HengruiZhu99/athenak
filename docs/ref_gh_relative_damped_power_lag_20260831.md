@@ -206,6 +206,7 @@ Large restart data are not committed.  The directory retains 12 frozen
 checkpoints totaling 122,929,386,785 bytes, 10 prescribed checkpoints totaling
 102,441,159,599 bytes, and 7 feedback checkpoints totaling 71,708,810,685
 bytes.  Their per-file SHA-256 values and sizes are committed in each case's
-`restart_sha256.txt` and `restart_sizes.tsv`; `restart_manifest_sha256.txt`
-authenticates those compact manifests.  Compute-only hash job `8792997`
+`restart_sha256_postprocess.txt` and `restart_sizes_postprocess.tsv`;
+`restart_manifest_sha256.txt` authenticates those compact manifests.
+Compute-only hash job `8792997`
 exited zero.  No field dump or restart file is present in Git.

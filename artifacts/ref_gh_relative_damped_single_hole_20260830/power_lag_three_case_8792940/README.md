@@ -14,10 +14,12 @@ scientific interpretation.
   mismatch also grows more mildly in the finite frozen control.
 
 `compact_sha256.txt` authenticates the in-job compact files as originally
-written.  The `three_case_power_lag_reanalysis*` files are the expanded
-post-job, per-shell analysis made from those authenticated histories.
-`restart_manifest_sha256.txt` authenticates the restart hashes and sizes made
-by compute-only job `8792997`.
+written, including its empty restart-manifest placeholders.  The
+`three_case_power_lag_reanalysis*` files are the expanded post-job, per-shell
+analysis made from those authenticated histories.  The separately named
+`restart_*_postprocess` files contain the real checkpoint hashes and sizes;
+`restart_manifest_sha256.txt` authenticates them as produced by compute-only
+job `8792997`.
 
 The approximately 297 GB of restart files remain only under:
 
