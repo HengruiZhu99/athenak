@@ -1,0 +1,157 @@
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 328
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 3 (4 levels total)
+  Physical level = 1 (logical level = 3): 208 MeshBlocks, cost = 208
+  Physical level = 2 (logical level = 4): 56 MeshBlocks, cost = 56
+  Physical level = 3 (logical level = 5): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 16
+  Rank = 0: 20 MeshBlocks, cost = 20
+  Rank = 1: 20 MeshBlocks, cost = 20
+  Rank = 2: 20 MeshBlocks, cost = 20
+  Rank = 3: 20 MeshBlocks, cost = 20
+  Rank = 4: 20 MeshBlocks, cost = 20
+  Rank = 5: 20 MeshBlocks, cost = 20
+  Rank = 6: 20 MeshBlocks, cost = 20
+  Rank = 7: 20 MeshBlocks, cost = 20
+  Rank = 8: 21 MeshBlocks, cost = 21
+  Rank = 9: 21 MeshBlocks, cost = 21
+  Rank = 10: 21 MeshBlocks, cost = 21
+  Rank = 11: 21 MeshBlocks, cost = 21
+  Rank = 12: 21 MeshBlocks, cost = 21
+  Rank = 13: 21 MeshBlocks, cost = 21
+  Rank = 14: 21 MeshBlocks, cost = 21
+  Rank = 15: 21 MeshBlocks, cost = 21
+Load Balancing:
+  Maximum normalized cost = 1.05, Average = 1.025
+ref_gh reference allocation backend=generic_cache_oracle generic_bytes=11991040000 analytic_static_components=0 analytic_stage_components=0 analytic_static_bytes=0 analytic_stage_bytes=0
+ref_gh power diagnostic native-cell list h=0.0625 stencil_radius=3 inner_count=264 blend_count=3168 outside_count=5032 legacy_count=1960
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <mesh_refinement>/num_levels = 4 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <mesh_refinement>/max_nmb_per_rank = 128 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region1>/level = 1 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region1>/x1min = -12.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region1>/x1max = 12.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region1>/x2min = -12.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region1>/x2max = 12.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region1>/x3min = -12.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region1>/x3max = 12.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region2>/level = 2 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region2>/x1min = -4.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region2>/x1max = 4.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region2>/x2min = -4.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region2>/x2max = 4.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region2>/x3min = -4.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region2>/x3max = 4.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region3>/level = 3 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region3>/x1min = -2.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region3>/x1max = 2.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region3>/x2min = -2.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region3>/x2max = 2.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region3>/x3min = -2.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <refined_region3>/x3max = 2.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <time>/start_time = 0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/hard_freeze_reference_already_static = false was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/hard_freeze_previous_xi_dot = 0.125 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/hard_freeze_previous_xi_ddot = 0.0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/q_est = 0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/q_analytic = 0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/q_est_variance = 0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/q_est_effective_sample_size = 0 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <ref_gh>/q_est_cell_count = 0 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=1.549009e+01 cycle=490 time=2.024784e+00 dt=4.130464e-03
+elapsed=3.525102e+01 cycle=500 time=2.066086e+00 dt=4.130059e-03
+elapsed=5.501491e+01 cycle=510 time=2.107385e+00 dt=4.129646e-03
+elapsed=7.478124e+01 cycle=520 time=2.148680e+00 dt=4.129227e-03
+elapsed=9.454498e+01 cycle=530 time=2.189970e+00 dt=4.128805e-03
+elapsed=1.143097e+02 cycle=540 time=2.231256e+00 dt=4.128387e-03
+elapsed=1.340742e+02 cycle=550 time=2.272538e+00 dt=4.127976e-03
+elapsed=1.538396e+02 cycle=560 time=2.313816e+00 dt=4.127578e-03
+elapsed=1.736043e+02 cycle=570 time=2.355090e+00 dt=4.127198e-03
+elapsed=1.933693e+02 cycle=580 time=2.396361e+00 dt=4.126841e-03
+elapsed=2.131390e+02 cycle=590 time=2.437628e+00 dt=4.126510e-03
+elapsed=2.329042e+02 cycle=600 time=2.478891e+00 dt=4.126209e-03
+elapsed=2.686706e+02 cycle=610 time=2.520152e+00 dt=4.125940e-03
+elapsed=2.884358e+02 cycle=620 time=2.561410e+00 dt=4.125704e-03
+elapsed=3.082000e+02 cycle=630 time=2.602667e+00 dt=4.125500e-03
+elapsed=3.279644e+02 cycle=640 time=2.643921e+00 dt=4.125329e-03
+elapsed=3.473314e+02 cycle=650 time=2.685173e+00 dt=4.125186e-03
+elapsed=3.670976e+02 cycle=660 time=2.726425e+00 dt=4.125070e-03
+elapsed=3.868636e+02 cycle=670 time=2.767675e+00 dt=4.124976e-03
+elapsed=4.066281e+02 cycle=680 time=2.808924e+00 dt=4.124900e-03
+elapsed=4.263931e+02 cycle=690 time=2.850173e+00 dt=4.124838e-03
+elapsed=4.461598e+02 cycle=700 time=2.891421e+00 dt=4.124784e-03
+elapsed=4.659279e+02 cycle=710 time=2.932669e+00 dt=4.124736e-03
+elapsed=4.856948e+02 cycle=720 time=2.973916e+00 dt=4.124689e-03
+elapsed=5.205224e+02 cycle=730 time=3.015163e+00 dt=4.124642e-03
+elapsed=5.402867e+02 cycle=740 time=3.056409e+00 dt=4.124595e-03
+elapsed=5.600514e+02 cycle=750 time=3.097655e+00 dt=4.124547e-03
+elapsed=5.798176e+02 cycle=760 time=3.138900e+00 dt=4.124499e-03
+elapsed=6.003175e+02 cycle=770 time=3.180145e+00 dt=4.124449e-03
+elapsed=6.200822e+02 cycle=780 time=3.221389e+00 dt=4.124399e-03
+elapsed=6.398489e+02 cycle=790 time=3.262633e+00 dt=4.124349e-03
+elapsed=6.596145e+02 cycle=800 time=3.303876e+00 dt=4.124298e-03
+elapsed=6.789815e+02 cycle=810 time=3.345119e+00 dt=4.124246e-03
+elapsed=6.987506e+02 cycle=820 time=3.386361e+00 dt=4.124193e-03
+elapsed=7.185192e+02 cycle=830 time=3.427603e+00 dt=4.124139e-03
+elapsed=7.382860e+02 cycle=840 time=3.468844e+00 dt=4.124085e-03
+elapsed=7.732420e+02 cycle=850 time=3.510084e+00 dt=4.124030e-03
+elapsed=7.930079e+02 cycle=860 time=3.551324e+00 dt=4.123975e-03
+elapsed=8.127741e+02 cycle=870 time=3.592564e+00 dt=4.123918e-03
+elapsed=8.325412e+02 cycle=880 time=3.633803e+00 dt=4.123861e-03
+elapsed=8.523078e+02 cycle=890 time=3.675041e+00 dt=4.123803e-03
+elapsed=8.720765e+02 cycle=900 time=3.716279e+00 dt=4.123744e-03
+elapsed=8.918439e+02 cycle=910 time=3.757516e+00 dt=4.123684e-03
+elapsed=9.116108e+02 cycle=920 time=3.798753e+00 dt=4.123623e-03
+elapsed=9.313783e+02 cycle=930 time=3.839989e+00 dt=4.123562e-03
+elapsed=9.518774e+02 cycle=940 time=3.881224e+00 dt=4.123499e-03
+elapsed=9.716426e+02 cycle=950 time=3.922459e+00 dt=4.123436e-03
+elapsed=9.914083e+02 cycle=960 time=3.963693e+00 dt=4.123372e-03
+elapsed=1.025750e+03 cycle=970 time=4.004926e+00 dt=4.123307e-03
+elapsed=1.045515e+03 cycle=980 time=4.046159e+00 dt=4.123241e-03
+elapsed=1.065281e+03 cycle=990 time=4.087391e+00 dt=4.123174e-03
+elapsed=1.085048e+03 cycle=1000 time=4.128622e+00 dt=4.123105e-03
+elapsed=1.104814e+03 cycle=1010 time=4.169853e+00 dt=4.123036e-03
+elapsed=1.124580e+03 cycle=1020 time=4.211083e+00 dt=4.122966e-03
+elapsed=1.144346e+03 cycle=1030 time=4.252313e+00 dt=4.122895e-03
+elapsed=1.164110e+03 cycle=1040 time=4.293541e+00 dt=4.122823e-03
+elapsed=1.183876e+03 cycle=1050 time=4.334769e+00 dt=4.122750e-03
+elapsed=1.203642e+03 cycle=1060 time=4.375996e+00 dt=4.122676e-03
+elapsed=1.223407e+03 cycle=1070 time=4.417223e+00 dt=4.122601e-03
+elapsed=1.243173e+03 cycle=1080 time=4.458448e+00 dt=4.122524e-03
+elapsed=1.262938e+03 cycle=1090 time=4.499673e+00 dt=4.122447e-03
+elapsed=1.298538e+03 cycle=1100 time=4.540897e+00 dt=4.122368e-03
+elapsed=1.318304e+03 cycle=1110 time=4.582121e+00 dt=4.122288e-03
+elapsed=1.338070e+03 cycle=1120 time=4.623343e+00 dt=4.122207e-03
+elapsed=1.357438e+03 cycle=1130 time=4.664565e+00 dt=4.122125e-03
+elapsed=1.377205e+03 cycle=1140 time=4.705786e+00 dt=4.122042e-03
+elapsed=1.396970e+03 cycle=1150 time=4.747006e+00 dt=4.121957e-03
+elapsed=1.416737e+03 cycle=1160 time=4.788225e+00 dt=4.121872e-03
+elapsed=1.436504e+03 cycle=1170 time=4.829443e+00 dt=4.121785e-03
+elapsed=1.456270e+03 cycle=1180 time=4.870661e+00 dt=4.121696e-03
+elapsed=1.476034e+03 cycle=1190 time=4.911877e+00 dt=4.121607e-03
+elapsed=1.495808e+03 cycle=1200 time=4.953093e+00 dt=4.121516e-03
+elapsed=1.515575e+03 cycle=1210 time=4.994308e+00 dt=4.121424e-03
+elapsed=1.550360e+03 cycle=1220 time=5.035522e+00 dt=4.121330e-03
+elapsed=1.570125e+03 cycle=1230 time=5.076734e+00 dt=4.121235e-03
+elapsed=1.589890e+03 cycle=1240 time=5.117946e+00 dt=4.121139e-03
+elapsed=1.609655e+03 cycle=1250 time=5.159157e+00 dt=4.121041e-03
+reference-GH controlled Schwarzschild final: time=5.200000e+00 state Linf=4.752908e+00 bad-state=0.000000e+00
+elapsed=1.645623e+03 cycle=1260 time=5.200000e+00 dt=4.120943e-03
+
+Terminating on time limit
+time=5.200000e+00 cycle=1260
+tlim=5.200000e+00 nlim=-1
+
+MeshBlock-cycles = 254528
+cpu time used  = 1.641536e+03
+zone-cycles/cpu_second = 5.080834e+06
+particle-updates/cpu_second = 0.000000e+00
+real 1649.27
+user 0.04
+sys 0.04

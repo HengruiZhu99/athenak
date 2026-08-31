@@ -1,0 +1,29 @@
+JobId=57786944 JobName=interactive
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:51:14 TimeLimit=04:00:00 TimeMin=N/A
+   SubmitTime=2026-08-31T11:19:07 EligibleTime=2026-08-31T11:19:07
+   AccrueTime=2026-08-31T11:19:14
+   StartTime=2026-08-31T11:21:00 EndTime=2026-08-31T15:21:00 Deadline=N/A
+   PreemptEligibleTime=2026-08-31T11:21:00 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-31T11:21:00 Scheduler=Main
+   Partition=urgent_gpu_ss11 AllocNode:Sid=login36:2280281
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid[001089,001152-001153,001172]
+   BatchHost=nid001089
+   StepMgrEnabled=Yes
+   NumNodes=4 NumCPUs=512 NumTasks=4 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=4,mem=919608M,node=4,billing=4,gres/gpu=16
+   AllocTRES=cpu=512,mem=919608M,node=4,billing=512,gres/gpu=16,gres/gpu:a100=16
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0
+   Features=gpu&a100 DelayBoot=00:00:00
+   OverSubscribe=NO Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=/bin/sh
+   SubmitLine=salloc -A m3328_g -C gpu -q interactive -N 4 --gpus-per-node=4 -t 04:00:00
+   WorkDir=/global/u1/h/hzhu
+   TresPerNode=gres/gpu:4
+   ResvPorts=63001-64000
+

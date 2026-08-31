@@ -1,0 +1,152 @@
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 328
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 3 (4 levels total)
+  Physical level = 1 (logical level = 3): 208 MeshBlocks, cost = 208
+  Physical level = 2 (logical level = 4): 56 MeshBlocks, cost = 56
+  Physical level = 3 (logical level = 5): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 16
+  Rank = 0: 20 MeshBlocks, cost = 20
+  Rank = 1: 20 MeshBlocks, cost = 20
+  Rank = 2: 20 MeshBlocks, cost = 20
+  Rank = 3: 20 MeshBlocks, cost = 20
+  Rank = 4: 20 MeshBlocks, cost = 20
+  Rank = 5: 20 MeshBlocks, cost = 20
+  Rank = 6: 20 MeshBlocks, cost = 20
+  Rank = 7: 20 MeshBlocks, cost = 20
+  Rank = 8: 21 MeshBlocks, cost = 21
+  Rank = 9: 21 MeshBlocks, cost = 21
+  Rank = 10: 21 MeshBlocks, cost = 21
+  Rank = 11: 21 MeshBlocks, cost = 21
+  Rank = 12: 21 MeshBlocks, cost = 21
+  Rank = 13: 21 MeshBlocks, cost = 21
+  Rank = 14: 21 MeshBlocks, cost = 21
+  Rank = 15: 21 MeshBlocks, cost = 21
+Load Balancing:
+  Maximum normalized cost = 1.05, Average = 1.025
+ref_gh reference allocation backend=generic_cache_oracle generic_bytes=11991040000 analytic_static_components=0 analytic_stage_components=0 analytic_static_bytes=0 analytic_stage_bytes=0
+ref_gh power diagnostic native-cell list h=0.0625 stencil_radius=3 inner_count=264 blend_count=3168 outside_count=5032 legacy_count=1960
+reference-GH puncture vertex audit passed; minimum cell radius=0.0541266, wormhole match state=0, G=7.77156e-16, lapse=5.55112e-16, shift=7.01116e-18, derivative=8.55103e-16, reference-time-jet=0, initial-GH-L2=0, initial-reduction-L2=0, initial-curl-L2=0
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <mesh_refinement>/num_levels = 4 was not used by the code (check for a typo)
+### WARNING in /pscratch/sd/h/hzhu/refgh-fixed-reference-20260831.uk93aa/src_clean/src/parameter_input.cpp: input parameter <mesh_refinement>/max_nmb_per_rank = 128 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=1.763609e+01 cycle=0 time=0.000000e+00 dt=4.138311e-03
+elapsed=2.151922e+01 cycle=10 time=4.138310e-02 dt=4.138306e-03
+elapsed=2.535085e+01 cycle=20 time=8.276609e-02 dt=4.138291e-03
+elapsed=2.918802e+01 cycle=30 time=1.241489e-01 dt=4.138266e-03
+elapsed=3.302236e+01 cycle=40 time=1.655314e-01 dt=4.138233e-03
+elapsed=3.685616e+01 cycle=50 time=2.069136e-01 dt=4.138192e-03
+elapsed=4.068953e+01 cycle=60 time=2.482953e-01 dt=4.138143e-03
+elapsed=4.452413e+01 cycle=70 time=2.896765e-01 dt=4.138086e-03
+elapsed=4.836064e+01 cycle=80 time=3.310570e-01 dt=4.138023e-03
+elapsed=5.219708e+01 cycle=90 time=3.724370e-01 dt=4.137954e-03
+elapsed=5.603351e+01 cycle=100 time=4.138162e-01 dt=4.137879e-03
+elapsed=5.986816e+01 cycle=110 time=4.551946e-01 dt=4.137798e-03
+elapsed=6.370271e+01 cycle=120 time=4.965722e-01 dt=4.137712e-03
+elapsed=8.270158e+01 cycle=130 time=5.379489e-01 dt=4.137622e-03
+elapsed=8.653509e+01 cycle=140 time=5.793247e-01 dt=4.137527e-03
+elapsed=9.070432e+01 cycle=150 time=6.206995e-01 dt=4.137428e-03
+elapsed=9.453938e+01 cycle=160 time=6.620734e-01 dt=4.137325e-03
+elapsed=9.837410e+01 cycle=170 time=7.034461e-01 dt=4.137219e-03
+elapsed=1.022101e+02 cycle=180 time=7.448178e-01 dt=4.137110e-03
+elapsed=1.060471e+02 cycle=190 time=7.861884e-01 dt=4.136997e-03
+elapsed=1.098840e+02 cycle=200 time=8.275579e-01 dt=4.136883e-03
+elapsed=1.137211e+02 cycle=210 time=8.689262e-01 dt=4.136765e-03
+elapsed=1.175573e+02 cycle=220 time=9.102933e-01 dt=4.136646e-03
+elapsed=1.213928e+02 cycle=230 time=9.516592e-01 dt=4.136525e-03
+elapsed=1.252292e+02 cycle=240 time=9.930239e-01 dt=4.136401e-03
+elapsed=1.442156e+02 cycle=250 time=1.034387e+00 dt=4.136276e-03
+elapsed=1.480510e+02 cycle=260 time=1.075750e+00 dt=4.136150e-03
+elapsed=1.518865e+02 cycle=270 time=1.117110e+00 dt=4.136023e-03
+elapsed=1.557242e+02 cycle=280 time=1.158470e+00 dt=4.135894e-03
+elapsed=1.595614e+02 cycle=290 time=1.199828e+00 dt=4.135765e-03
+elapsed=1.637346e+02 cycle=300 time=1.241186e+00 dt=4.135634e-03
+elapsed=1.675732e+02 cycle=310 time=1.282541e+00 dt=4.135503e-03
+elapsed=1.714098e+02 cycle=320 time=1.323896e+00 dt=4.135371e-03
+elapsed=1.752462e+02 cycle=330 time=1.365249e+00 dt=4.135239e-03
+elapsed=1.790836e+02 cycle=340 time=1.406601e+00 dt=4.135107e-03
+elapsed=1.829195e+02 cycle=350 time=1.447951e+00 dt=4.134974e-03
+elapsed=1.867537e+02 cycle=360 time=1.489300e+00 dt=4.134841e-03
+elapsed=2.058192e+02 cycle=370 time=1.530648e+00 dt=4.134708e-03
+elapsed=2.096555e+02 cycle=380 time=1.571995e+00 dt=4.134574e-03
+elapsed=2.134920e+02 cycle=390 time=1.613340e+00 dt=4.134441e-03
+elapsed=2.173283e+02 cycle=400 time=1.654684e+00 dt=4.134308e-03
+elapsed=2.211656e+02 cycle=410 time=1.696026e+00 dt=4.134175e-03
+elapsed=2.250058e+02 cycle=420 time=1.737367e+00 dt=4.134043e-03
+elapsed=2.288432e+02 cycle=430 time=1.778707e+00 dt=4.133910e-03
+elapsed=2.330350e+02 cycle=440 time=1.820045e+00 dt=4.133778e-03
+elapsed=2.368731e+02 cycle=450 time=1.861383e+00 dt=4.133646e-03
+elapsed=2.407110e+02 cycle=460 time=1.902719e+00 dt=4.133515e-03
+elapsed=2.445465e+02 cycle=470 time=1.944053e+00 dt=4.133384e-03
+elapsed=2.483827e+02 cycle=480 time=1.985386e+00 dt=4.133253e-03
+elapsed=2.673675e+02 cycle=490 time=2.026718e+00 dt=4.133123e-03
+elapsed=2.712040e+02 cycle=500 time=2.068049e+00 dt=4.132993e-03
+elapsed=2.750376e+02 cycle=510 time=2.109378e+00 dt=4.132864e-03
+elapsed=2.788727e+02 cycle=520 time=2.150706e+00 dt=4.132735e-03
+elapsed=2.827090e+02 cycle=530 time=2.192033e+00 dt=4.132607e-03
+elapsed=2.865465e+02 cycle=540 time=2.233359e+00 dt=4.132479e-03
+elapsed=2.903858e+02 cycle=550 time=2.274683e+00 dt=4.132352e-03
+elapsed=2.942247e+02 cycle=560 time=2.316006e+00 dt=4.132225e-03
+elapsed=2.980616e+02 cycle=570 time=2.357327e+00 dt=4.132099e-03
+elapsed=3.018988e+02 cycle=580 time=2.398648e+00 dt=4.131974e-03
+elapsed=3.057339e+02 cycle=590 time=2.439967e+00 dt=4.131849e-03
+elapsed=3.099064e+02 cycle=600 time=2.481285e+00 dt=4.131724e-03
+elapsed=3.288868e+02 cycle=610 time=2.522602e+00 dt=4.131600e-03
+elapsed=3.327214e+02 cycle=620 time=2.563917e+00 dt=4.131477e-03
+elapsed=3.365591e+02 cycle=630 time=2.605231e+00 dt=4.131354e-03
+elapsed=3.403952e+02 cycle=640 time=2.646544e+00 dt=4.131231e-03
+elapsed=3.442295e+02 cycle=650 time=2.687856e+00 dt=4.131109e-03
+elapsed=3.480664e+02 cycle=660 time=2.729167e+00 dt=4.130988e-03
+elapsed=3.519014e+02 cycle=670 time=2.770476e+00 dt=4.130867e-03
+elapsed=3.557370e+02 cycle=680 time=2.811784e+00 dt=4.130746e-03
+elapsed=3.595712e+02 cycle=690 time=2.853091e+00 dt=4.130626e-03
+elapsed=3.634069e+02 cycle=700 time=2.894397e+00 dt=4.130507e-03
+elapsed=3.672438e+02 cycle=710 time=2.935701e+00 dt=4.130387e-03
+elapsed=3.710807e+02 cycle=720 time=2.977005e+00 dt=4.130268e-03
+elapsed=3.899863e+02 cycle=730 time=3.018307e+00 dt=4.130150e-03
+elapsed=3.938228e+02 cycle=740 time=3.059608e+00 dt=4.130032e-03
+elapsed=3.979959e+02 cycle=750 time=3.100908e+00 dt=4.129914e-03
+elapsed=4.018340e+02 cycle=760 time=3.142206e+00 dt=4.129797e-03
+elapsed=4.056720e+02 cycle=770 time=3.183504e+00 dt=4.129679e-03
+elapsed=4.095069e+02 cycle=780 time=3.224800e+00 dt=4.129562e-03
+elapsed=4.133435e+02 cycle=790 time=3.266095e+00 dt=4.129446e-03
+elapsed=4.171794e+02 cycle=800 time=3.307389e+00 dt=4.129329e-03
+elapsed=4.210156e+02 cycle=810 time=3.348682e+00 dt=4.129213e-03
+elapsed=4.248518e+02 cycle=820 time=3.389973e+00 dt=4.129097e-03
+elapsed=4.286870e+02 cycle=830 time=3.431264e+00 dt=4.128981e-03
+elapsed=4.325236e+02 cycle=840 time=3.472553e+00 dt=4.128866e-03
+elapsed=4.512804e+02 cycle=850 time=3.513841e+00 dt=4.128750e-03
+elapsed=4.551152e+02 cycle=860 time=3.555128e+00 dt=4.128635e-03
+elapsed=4.591341e+02 cycle=870 time=3.596414e+00 dt=4.128519e-03
+elapsed=4.629679e+02 cycle=880 time=3.637699e+00 dt=4.128404e-03
+elapsed=4.668033e+02 cycle=890 time=3.678982e+00 dt=4.128289e-03
+elapsed=4.709753e+02 cycle=900 time=3.720265e+00 dt=4.128174e-03
+elapsed=4.748116e+02 cycle=910 time=3.761546e+00 dt=4.128058e-03
+elapsed=4.786479e+02 cycle=920 time=3.802826e+00 dt=4.127943e-03
+elapsed=4.824829e+02 cycle=930 time=3.844105e+00 dt=4.127828e-03
+elapsed=4.863171e+02 cycle=940 time=3.885382e+00 dt=4.127712e-03
+elapsed=4.901515e+02 cycle=950 time=3.926659e+00 dt=4.127597e-03
+elapsed=4.939876e+02 cycle=960 time=3.967935e+00 dt=4.127481e-03
+elapsed=5.127736e+02 cycle=970 time=4.009209e+00 dt=4.127365e-03
+elapsed=5.166097e+02 cycle=980 time=4.050482e+00 dt=4.127249e-03
+elapsed=5.204449e+02 cycle=990 time=4.091754e+00 dt=4.127133e-03
+elapsed=5.242807e+02 cycle=1000 time=4.133025e+00 dt=4.127017e-03
+elapsed=5.281185e+02 cycle=1010 time=4.174294e+00 dt=4.126900e-03
+reference-GH controlled Schwarzschild final: time=4.200000e+00 state Linf=1.924428e+00 bad-state=0.000000e+00
+
+Terminating on time limit
+time=4.200000e+00 cycle=1017
+tlim=4.200000e+00 nlim=-1
+
+MeshBlock-cycles = 333576
+cpu time used  = 5.285467e+02
+zone-cycles/cpu_second = 2.068052e+07
+particle-updates/cpu_second = 0.000000e+00
+real 551.52
+user 0.03
+sys 0.04
