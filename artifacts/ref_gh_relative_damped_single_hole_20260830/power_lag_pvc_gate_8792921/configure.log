@@ -1,0 +1,67 @@
+-- The C compiler identification is IntelLLVM 2025.3.2
+-- The CXX compiler identification is IntelLLVM 2025.3.2
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/aurora/26.26.0/oneapi/compiler/latest/bin/icx - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+CMake Warning (dev) at CMakeLists.txt:53 (find_package):
+  Policy CMP0074 is not set: find_package uses <PackageName>_ROOT variables.
+  Run "cmake --help-policy CMP0074" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  Environment variable MPI_ROOT is set to:
+
+    /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk
+
+  For compatibility, CMake is ignoring the variable.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Found MPI_CXX: /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib/libmpicxx.so (found version "4.1")
+-- Found MPI: TRUE (found version "4.1") found components: CXX
+-- Setting default Kokkos CXX standard to 17
+-- Kokkos version: 4.7.2
+-- The project name is: Kokkos
+-- Using internal gtest for testing
+-- Configured git information in /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/kokkos/generated/Kokkos_Version_Info.cpp
+-- Using -std=c++17 for C++17 standard as feature
+-- Looking for SYCL_EXT_ONEAPI_DEVICE_GLOBAL
+-- Looking for SYCL_EXT_ONEAPI_DEVICE_GLOBAL - found
+-- Looking for SYCL_EXT_ONEAPI_GRAPH
+-- Looking for SYCL_EXT_ONEAPI_GRAPH - found
+-- Built-in Execution Spaces:
+--     Device Parallel: Kokkos::SYCL
+--     Host Parallel: NoTypeDefined
+--       Host Serial: SERIAL
+-- 
+-- Architectures:
+--  INTEL_PVC
+-- Looking for C++ include oneapi/dpl/execution
+-- Looking for C++ include oneapi/dpl/execution - found
+-- Looking for C++ include oneapi/dpl/algorithm
+-- Looking for C++ include oneapi/dpl/algorithm - found
+-- Performing Test KOKKOS_NO_TBB_CONFLICT
+-- Performing Test KOKKOS_NO_TBB_CONFLICT - Success
+-- Using internal desul_atomics copy
+-- Performing Test KOKKOS_LINK_OPTIONS_CHECK
+-- Performing Test KOKKOS_LINK_OPTIONS_CHECK - Success
+-- Performing Test KOKKOS_COMPILE_OPTIONS_CHECK
+-- Performing Test KOKKOS_COMPILE_OPTIONS_CHECK - Success
+-- Experimental mdspan support is enabled
+-- Using internal mdspan directory /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/src_clean/kokkos/tpls/mdspan/include
+-- Kokkos Backends: SERIAL;SYCL
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - found
+-- Found Threads: TRUE
+-- Configuring done (42.7s)
+-- Generating done (1.9s)
+-- Build files have been written to: /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov

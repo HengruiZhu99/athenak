@@ -1,0 +1,189 @@
+2026-08-31T04:21:29+00:00
+x4507c1s0b0n0
+Job Id: 8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Job_Name = refgh_qpair_gate
+    Job_Owner = hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov
+    resources_used.cpupercent = 0
+    resources_used.cput = 00:00:00
+    resources_used.mem = 21596kb
+    resources_used.ncpus = 208
+    resources_used.vmem = 752832kb
+    resources_used.walltime = 00:00:48
+    job_state = R
+    queue = debug
+    server = aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Account_Name = CompactBinaryMerger
+    Checkpoint = u
+    ctime = Mon Aug 31 04:16:26 2026
+    Error_Path = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flare
+	/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_2026
+	0831_9eff5b52/refgh_qpair_gate.e8792921
+    exec_host = x4507c1s0b0n0/0*208
+    exec_vnode = (x4507c1s0b0n0:ncpus=208)
+    Hold_Types = n
+    Join_Path = oe
+    Keep_Files = doe
+    Mail_Points = a
+    Mail_Users = hz0693@princeton.edu
+    mtime = Mon Aug 31 04:21:10 2026
+    Output_Path = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flar
+	e/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_202
+	60831_9eff5b52/refgh_qpair_gate.o8792921
+    Priority = 0
+    qtime = Mon Aug 31 04:16:26 2026
+    Rerunable = False
+    Resource_List.allow_account_check_failure = True
+    Resource_List.allow_negative_allocation = True
+    Resource_List.award_category = INCITE
+    Resource_List.award_type = INCITE-2026
+    Resource_List.backfill_factor = 84600
+    Resource_List.backfill_max = 50
+    Resource_List.base_score = 51
+    Resource_List.bkc_definition = compute_aurora_prod_20260710T174510_d2b6bbb_
+	8bfceff
+    Resource_List.burn_ratio = 0.4209
+    Resource_List.current_allocation = 12509186048
+    Resource_List.enable_2nd_fp64 = True
+    Resource_List.enable_backfill = 0
+    Resource_List.enable_fifo = 1
+    Resource_List.enable_wfp = 0
+    Resource_List.fifo_factor = 1800
+    Resource_List.filesystems = home:flare
+    Resource_List.flare_fs = True
+    Resource_List.hbm_mode = flat
+    Resource_List.home_fs = True
+    Resource_List.ncpus = 208
+    Resource_List.ni_resource = aurora
+    Resource_List.nodect = 1
+    Resource_List.overburn = False
+    Resource_List.place = scatter
+    Resource_List.project_priority = 25
+    Resource_List.route_backfill = False
+    Resource_List.score_boost = 0
+    Resource_List.select = 1
+    Resource_List.snc_mode = quad
+    Resource_List.total_allocation = 21600000000
+    Resource_List.total_cpus = 10624
+    Resource_List.walltime = 01:00:00
+    Resource_List.wfp_factor = 100000
+    stime = Mon Aug 31 04:20:18 2026
+    session_id = 126106
+    jobdir = /home/hzhu
+    substate = 42
+    Variable_List = PBS_O_HOME=/home/hzhu,PBS_O_LANG=en_US.UTF-8,
+	PBS_O_LOGNAME=hzhu,
+	PBS_O_PATH=/home/hzhu/.local/bin:/home/hzhu/bin:/opt/cray/pals/1.8/bin
+	:/opt/cray/libfabric/1.22.0/bin:/opt/aurora/26.26.0/spack/unified/1.1.1
+	/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin:/opt/
+	aurora/26.26.0/support/tools/gpu_validation:/opt/aurora/26.26.0/support
+	/tools/mpi_wrapper_utils:/opt/aurora/26.26.0/oneapi/ishmem/latest/bin:/
+	opt/aurora/26.26.0/oneapi/dpcpp-ct/latest/bin:/opt/aurora/26.26.0/oneap
+	i/advisor/latest/bin64:/opt/aurora/26.26.0/oneapi/vtune/latest/bin64:/o
+	pt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger/bin:/opt/aurora/2
+	6.26.0/oneapi/mkl/latest/bin:/opt/aurora/26.26.0/oneapi/compiler/latest
+	/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-1
+	3.4.0-hgnyg4p/bin:/opt/clmgr/sbin:/opt/clmgr/bin:/opt/sgi/sbin:/opt/sgi
+	/bin:/home/hzhu/.local/bin:/home/hzhu/bin:/usr/local/bin:/usr/bin:/bin:
+	/opt/c3/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin:/opt/pbs/bin:/sbin,
+	PBS_O_MAIL=/var/spool/mail/hzhu,PBS_O_SHELL=/bin/bash,
+	PBS_O_INTERACTIVE_AUTH_METHOD=resvport,
+	PBS_O_HOST=aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov,
+	PBS_O_WORKDIR=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relat
+	ive_damped_power_lag_20260831_9eff5b52,PBS_O_SYSTEM=Linux,
+	CAMPAIGN_ROOT=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relat
+	ive_damped_power_lag_20260831_9eff5b52,
+	EXPECTED_COMMIT=9eff5b524c88cf3c2adf8fc4c219fb9c2e72ed29,
+	PBS_O_QUEUE=debug,PBS_JOBID_SHORT=8792921.aurora,
+	XDG_RUNTIME_DIR=/run/user/40304,
+	PBS_HOOK_RESOURCES=eJylUkuPmzAQ/kNpZRCw7Fqcqh720tPeLduMEzfGw/qRNP++40A
+	a0B6LOOBvxjPfgwjhAkGMEqPAOQoTB8bjBpwhmK9opkNBqwdqnAywQ46gz7i7ecJp33KRzo
+	7CWAfxFhNMcVhbDo9xh+22w5bQYUOZS+fwKqTWmH0S+kSrhZHW5QC0bal6OMpkLyDKUdMn+
+	lK7yjAKOsIRw214//Xj/ePniqbbDCvyrWZ1x5XUZ2LraLZOGIa+6Rh7opP8M7TlHEFEjbS7
+	rbg6azGCsd7eN2qc5pyIRA4YpJgDjqLMZi8V+6hemrZiYqxVp5QSvTIajOEqBy9CYTyw703
+	NXrnOIQAp3UqpW/Za9R1reg5eKgei9mTu3DUkc0UeVCmTFTHW4LN+NTOVCvaQWPWsAPuE3u
+	7x8E3mJzWJCUcYCEv8GbTXc45DzXrurQgQMQcNwyKee7qgE3Uh/QxFJO2enaSGSKISBE72/
+	KYWsslisOk21C0PWPzbKLlbLRRiTPd/zS1Do9cLpc8sR54wSbf1q64ou+VZi3eqFevqhl+p
+	MdkJBla9MUYvJ2f+WbJc+syQC49t2Cv2/5Evg77muMPX7BZsn8CC7Sz4C0GFbhY=
+    comment = Job run at Mon Aug 31 at 04:20 on (x4507c1s0b0n0:ncpus=208)
+    etime = Mon Aug 31 04:16:26 2026
+    umask = 22
+    run_count = 1
+    eligible_time = 00:03:54
+    Submit_arguments = -v CAMPAIGN_ROOT=/lus/flare/projects/CompactBinaryMerger
+	/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52,
+	EXPECTED_COMMIT=9eff5b524c88cf3c2adf8fc4c219fb9c2e72ed29 aurora_relati
+	ve_damped_power_lag_pvc_gate.pbs
+    project = CompactBinaryMerger
+    Submit_Host = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov
+
+campaign_root=/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52
+source_commit=9eff5b524c88cf3c2adf8fc4c219fb9c2e72ed29
+gate=one fresh frozen compatible-Phi RK4 cycle with full power history
+nodes=1
+ranks=12
+tiles=12
+## codex/ref-gh-relative-damped-single-hole-20260830...origin/codex/ref-gh-relative-damped-single-hole-20260830
+ 6739bc623081648af9e752b616d9671527922cbf kokkos (4.7.02)
+
+Currently Loaded Modules:
+  1) gcc/13.4.0
+  2) oneapi/release/2025.3.1
+  3) mpich/opt/5.0.0.aurora_test.3c70a61
+  4) libfabric/1.22.0
+  5) cray-pals/1.8.0
+  6) cray-libpals/1.8.0
+  7) cmake/3.31.11
+  8) gcc-runtime/13.4.0-2tg3zy7            (H)
+  9) intel-oneapi-runtime/2025.3.1-h4uj4w3 (H)
+ 10) hdf5/1.14.6
+
+  Where:
+   H:  Hidden Module
+
+ 
+
+Intel(R) oneAPI DPC++/C++ Compiler 2025.3.2 (2025.3.2.20260112)
+Intel(R) oneAPI DPC++/C++ Compiler 2025.3.2 (2025.3.2.20260112)
+cmake version 3.31.11
+FI_CXI_DEFAULT_CQ_SIZE=131072
+FI_CXI_DEFAULT_TX_SIZE=1024
+FI_CXI_OFLOW_BUF_COUNT=3
+FI_CXI_OFLOW_BUF_SIZE=12582912
+FI_CXI_RDZV_EAGER_SIZE=2048
+FI_CXI_RDZV_THRESHOLD=16384
+FI_CXI_REQ_BUF_MAX_CACHED=0
+FI_CXI_REQ_BUF_MIN_POSTED=6
+FI_CXI_REQ_BUF_SIZE=12582912
+FI_CXI_RX_MATCH_MODE=hardware
+FI_LOG_LEVEL=ERROR
+FI_MR_CACHE_MAX_COUNT=524288
+FI_MR_CACHE_MAX_SIZE=-1
+FI_MR_CACHE_MONITOR=disabled
+FI_PROVIDER=cxi,tcp;ofi_rxm
+MPICH_GPU_SUPPORT_ENABLED=1
+ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+ZE_ENABLE_API_TRACING=1
+ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+3a7f90d7e6d188d6368088e6a2dc2f8e95e92310322290d4cc3cf113a1806e7d  /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/src_clean/inputs/ref_gh/ref_gh_relative_damped_power_lag_outer24.athinput
+83a7e35bb3bc42742acba22b0722eca9294a15de4ef64dea34523a4ff93934a9  /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/src_clean/scripts/ref_gh/analyze_relative_damped_power_lag.py
+098fa536ec7b95e8435c90fb0d2fa27ded4763e61af76ce10782db6190adeed6  /var/spool/pbs/mom_priv/jobs/8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov.SC
+Athena_ENABLE_MPI:BOOL=ON
+Athena_ENABLE_OPENMP:BOOL=OFF
+CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_CXX_COMPILER:STRING=/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx
+CMAKE_C_COMPILER:STRING=/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icx
+Kokkos_ARCH_INTEL_PVC:BOOL=ON
+Kokkos_ENABLE_DEBUG_BOUNDS_CHECK:BOOL=OFF
+Kokkos_ENABLE_OPENMP:BOOL=OFF
+Kokkos_ENABLE_SERIAL:BOOL=ON
+Kokkos_ENABLE_SYCL:BOOL=ON
+PROBLEM:STRING=built_in_pgens
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src/CMakeFiles/athena.dir/link.txt:1:/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx -O3 -DNDEBUG -fsycl-device-code-split=per_kernel -DKOKKOS_DEPENDENCE -fsycl -fno-sycl-id-queries-fit-in-int -fsycl-dead-args-optimization -DDESUL_SYCL_DEVICE_GLOBAL_SUPPORTED -Wl,-rpath -Wl,/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib -Wl,--dependency-file=CMakeFiles/athena.dir/link.d CMakeFiles/athena.dir/main.cpp.o CMakeFiles/athena.dir/globals.cpp.o CMakeFiles/athena.dir/parameter_input.cpp.o CMakeFiles/athena.dir/bvals/bvals.cpp.o CMakeFiles/athena.dir/bvals/buffs_cc.cpp.o CMakeFiles/athena.dir/bvals/buffs_fc.cpp.o CMakeFiles/athena.dir/bvals/bvals_cc.cpp.o CMakeFiles/athena.dir/bvals/bvals_fc.cpp.o CMakeFiles/athena.dir/bvals/bvals_part.cpp.o CMakeFiles/athena.dir/bvals/bvals_tasks.cpp.o CMakeFiles/athena.dir/bvals/flux_correct_cc.cpp.o CMakeFiles/athena.dir/bvals/flux_correct_fc.cpp.o CMakeFiles/athena.dir/bvals/prolongation.cpp.o CMakeFiles/athena.dir/bvals/prolong_prims.cpp.o CMakeFiles/athena.dir/bvals/physics/hydro_bcs.cpp.o CMakeFiles/athena.dir/bvals/physics/bfield_bcs.cpp.o CMakeFiles/athena.dir/bvals/physics/radiation_bcs.cpp.o CMakeFiles/athena.dir/bvals/physics/z4c_bcs.cpp.o CMakeFiles/athena.dir/coordinates/adm.cpp.o CMakeFiles/athena.dir/coordinates/adm_constraints.cpp.o CMakeFiles/athena.dir/coordinates/coordinates.cpp.o CMakeFiles/athena.dir/coordinates/excision.cpp.o CMakeFiles/athena.dir/diffusion/ambipolar.cpp.o CMakeFiles/athena.dir/diffusion/conduction.cpp.o CMakeFiles/athena.dir/diffusion/resistivity.cpp.o CMakeFiles/athena.dir/diffusion/sts_rkl2.cpp.o CMakeFiles/athena.dir/diffusion/viscosity.cpp.o CMakeFiles/athena.dir/driver/driver.cpp.o CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd.cpp.o CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd_fluxes.cpp.o CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd_fofc.cpp.o CMakeFiles/athena.dir/eos/eos.cpp.o CMakeFiles/athena.dir/eos/ideal_hyd.cpp.o CMakeFiles/athena.dir/eos/ideal_mhd.cpp.o CMakeFiles/athena.dir/eos/isothermal_hyd.cpp.o CMakeFiles/athena.dir/eos/isothermal_mhd.cpp.o CMakeFiles/athena.dir/eos/ideal_srhyd.cpp.o CMakeFiles/athena.dir/eos/ideal_grhyd.cpp.o CMakeFiles/athena.dir/eos/ideal_srmhd.cpp.o CMakeFiles/athena.dir/eos/ideal_grmhd.cpp.o CMakeFiles/athena.dir/eos/noop_dyngrmhd.cpp.o "CMakeFiles/athena.dir/eos/primitive-solver/eos_compose.cpp.o" "CMakeFiles/athena.dir/eos/primitive-solver/eos_hybrid.cpp.o" "CMakeFiles/athena.dir/eos/primitive-solver/piecewise_polytrope.cpp.o" "CMakeFiles/athena.dir/eos/primitive-solver/unit_system.cpp.o" "CMakeFiles/athena.dir/geodesic-grid/geodesic_grid.cpp.o" "CMakeFiles/athena.dir/geodesic-grid/spherical_grid.cpp.o" "CMakeFiles/athena.dir/geodesic-grid/gauss_legendre.cpp.o" CMakeFiles/athena.dir/fo_gh/fo_gh.cpp.o CMakeFiles/athena.dir/fo_gh/fo_gh_calcrhs.cpp.o CMakeFiles/athena.dir/fo_gh/fo_gh_tasks.cpp.o CMakeFiles/athena.dir/ref_gh/ref_gh.cpp.o CMakeFiles/athena.dir/ref_gh/ref_gh_calcrhs.cpp.o CMakeFiles/athena.dir/ref_gh/ref_gh_diagnostics.cpp.o CMakeFiles/athena.dir/ref_gh/ref_gh_tasks.cpp.o CMakeFiles/athena.dir/gravity/gravity.cpp.o CMakeFiles/athena.dir/gravity/mg_gravity.cpp.o CMakeFiles/athena.dir/hydro/hydro.cpp.o CMakeFiles/athena.dir/hydro/hydro_fluxes.cpp.o CMakeFiles/athena.dir/hydro/hydro_fofc.cpp.o CMakeFiles/athena.dir/hydro/hydro_newdt.cpp.o CMakeFiles/athena.dir/hydro/hydro_sts.cpp.o CMakeFiles/athena.dir/hydro/hydro_tasks.cpp.o CMakeFiles/athena.dir/hydro/hydro_update.cpp.o "CMakeFiles/athena.dir/ion-neutral/ion-neutral.cpp.o" "CMakeFiles/athena.dir/ion-neutral/ion-neutral_tasks.cpp.o" CMakeFiles/athena.dir/mesh/build_tree.cpp.o CMakeFiles/athena.dir/mesh/load_balance.cpp.o CMakeFiles/athena.dir/mesh/mesh.cpp.o CMakeFiles/athena.dir/mesh/meshblock.cpp.o CMakeFiles/athena.dir/mesh/meshblock_pack.cpp.o CMakeFiles/athena.dir/mesh/meshblock_tree.cpp.o CMakeFiles/athena.dir/mesh/mesh_refinement.cpp.o CMakeFiles/athena.dir/mesh/refinement_criteria.cpp.o CMakeFiles/athena.dir/multigrid/multigrid.cpp.o CMakeFiles/athena.dir/multigrid/multigrid_bvals.cpp.o CMakeFiles/athena.dir/multigrid/multigrid_driver.cpp.o CMakeFiles/athena.dir/multigrid/multigrid_tasks.cpp.o CMakeFiles/athena.dir/mhd/mhd.cpp.o CMakeFiles/athena.dir/mhd/mhd_corner_e.cpp.o CMakeFiles/athena.dir/mhd/mhd_ct.cpp.o CMakeFiles/athena.dir/mhd/mhd_fluxes.cpp.o CMakeFiles/athena.dir/mhd/mhd_fofc.cpp.o CMakeFiles/athena.dir/mhd/mhd_newdt.cpp.o CMakeFiles/athena.dir/mhd/mhd_sts.cpp.o CMakeFiles/athena.dir/mhd/mhd_tasks.cpp.o CMakeFiles/athena.dir/mhd/mhd_update.cpp.o CMakeFiles/athena.dir/outputs/io_wrapper.cpp.o CMakeFiles/athena.dir/outputs/outputs.cpp.o CMakeFiles/athena.dir/outputs/basetype_output.cpp.o CMakeFiles/athena.dir/outputs/cartgrid.cpp.o CMakeFiles/athena.dir/outputs/derived_variables.cpp.o CMakeFiles/athena.dir/outputs/binary.cpp.o CMakeFiles/athena.dir/outputs/eventlog.cpp.o CMakeFiles/athena.dir/outputs/formatted_table.cpp.o CMakeFiles/athena.dir/outputs/history.cpp.o CMakeFiles/athena.dir/outputs/restart.cpp.o CMakeFiles/athena.dir/outputs/spherical_surface.cpp.o CMakeFiles/athena.dir/outputs/coarsened_binary.cpp.o CMakeFiles/athena.dir/outputs/track_prtcl.cpp.o CMakeFiles/athena.dir/outputs/vtk_mesh.cpp.o CMakeFiles/athena.dir/outputs/vtk_prtcl.cpp.o CMakeFiles/athena.dir/particles/particles.cpp.o CMakeFiles/athena.dir/particles/particles_pushers.cpp.o CMakeFiles/athena.dir/particles/particles_tasks.cpp.o CMakeFiles/athena.dir/outputs/pdf.cpp.o CMakeFiles/athena.dir/pgen/pgen.cpp.o CMakeFiles/athena.dir/pgen/tests/advection.cpp.o CMakeFiles/athena.dir/pgen/tests/cpaw.cpp.o CMakeFiles/athena.dir/pgen/tests/cshock.cpp.o CMakeFiles/athena.dir/pgen/tests/divb_amr.cpp.o CMakeFiles/athena.dir/pgen/tests/diffusion.cpp.o CMakeFiles/athena.dir/pgen/tests/gr_bondi.cpp.o CMakeFiles/athena.dir/pgen/tests/gr_monopole.cpp.o CMakeFiles/athena.dir/pgen/tests/linear_wave.cpp.o CMakeFiles/athena.dir/pgen/tests/lw_implode.cpp.o CMakeFiles/athena.dir/pgen/tests/orszag_tang.cpp.o CMakeFiles/athena.dir/pgen/tests/mri3d.cpp.o CMakeFiles/athena.dir/pgen/tests/shock_tube.cpp.o CMakeFiles/athena.dir/pgen/tests/shwave.cpp.o CMakeFiles/athena.dir/pgen/tests/rad_beam.cpp.o CMakeFiles/athena.dir/pgen/tests/rad_linear_wave.cpp.o CMakeFiles/athena.dir/pgen/tests/z4c_boosted_puncture.cpp.o CMakeFiles/athena.dir/pgen/tests/z4c_linear_wave.cpp.o CMakeFiles/athena.dir/pgen/tests/jeans_wave.cpp.o CMakeFiles/athena.dir/pgen/tests/binary_gravity.cpp.o CMakeFiles/athena.dir/pgen/tests/be_collapse.cpp.o CMakeFiles/athena.dir/pgen/unit_tests/eos_compose.cpp.o CMakeFiles/athena.dir/pgen/unit_tests/gauss_legendre.cpp.o CMakeFiles/athena.dir/pgen/fo_gh/tensor_unit.cpp.o CMakeFiles/athena.dir/pgen/fo_gh/algebra_unit.cpp.o CMakeFiles/athena.dir/pgen/fo_gh/geometry_unit.cpp.o CMakeFiles/athena.dir/pgen/fo_gh/rhs_unit.cpp.o CMakeFiles/athena.dir/pgen/fo_gh/minkowski.cpp.o CMakeFiles/athena.dir/pgen/fo_gh/linear_wave.cpp.o CMakeFiles/athena.dir/pgen/fo_gh/stability.cpp.o CMakeFiles/athena.dir/pgen/fo_gh/compatible_unit.cpp.o CMakeFiles/athena.dir/pgen/fo_gh/puncture.cpp.o CMakeFiles/athena.dir/pgen/ref_gh/minkowski.cpp.o CMakeFiles/athena.dir/pgen/ref_gh/linear_wave.cpp.o CMakeFiles/athena.dir/pgen/ref_gh/stability.cpp.o CMakeFiles/athena.dir/pgen/ref_gh/stationary_trumpet.cpp.o CMakeFiles/athena.dir/pgen/ref_gh/controlled_transition.cpp.o CMakeFiles/athena.dir/radiation/radiation.cpp.o CMakeFiles/athena.dir/radiation/radiation_fluxes.cpp.o CMakeFiles/athena.dir/radiation/radiation_newdt.cpp.o CMakeFiles/athena.dir/radiation/radiation_source.cpp.o CMakeFiles/athena.dir/radiation/radiation_tasks.cpp.o CMakeFiles/athena.dir/radiation/radiation_tetrad.cpp.o CMakeFiles/athena.dir/radiation/radiation_update.cpp.o CMakeFiles/athena.dir/shearing_box/orbital_advection.cpp.o CMakeFiles/athena.dir/shearing_box/orbital_advection_cc.cpp.o CMakeFiles/athena.dir/shearing_box/orbital_advection_fc.cpp.o CMakeFiles/athena.dir/shearing_box/orbital_advection_tasks.cpp.o CMakeFiles/athena.dir/shearing_box/shearing_box.cpp.o CMakeFiles/athena.dir/shearing_box/shearing_box_cc.cpp.o CMakeFiles/athena.dir/shearing_box/shearing_box_fc.cpp.o CMakeFiles/athena.dir/shearing_box/shearing_box_srcterms.cpp.o CMakeFiles/athena.dir/shearing_box/shearing_box_tasks.cpp.o CMakeFiles/athena.dir/srcterms/srcterms.cpp.o CMakeFiles/athena.dir/srcterms/srcterms_newdt.cpp.o CMakeFiles/athena.dir/srcterms/turb_driver.cpp.o CMakeFiles/athena.dir/tasklist/numerical_relativity.cpp.o CMakeFiles/athena.dir/units/units.cpp.o CMakeFiles/athena.dir/utils/change_rundir.cpp.o CMakeFiles/athena.dir/utils/derived_vars.cpp.o CMakeFiles/athena.dir/utils/show_config.cpp.o CMakeFiles/athena.dir/utils/lagrange_interpolator.cpp.o CMakeFiles/athena.dir/utils/tov/tov.cpp.o CMakeFiles/athena.dir/utils/tr_table.cpp.o CMakeFiles/athena.dir/utils/cart_grid.cpp.o CMakeFiles/athena.dir/utils/watchdog.cpp.o CMakeFiles/athena.dir/utils/spherical_surface.cpp.o CMakeFiles/athena.dir/z4c/compact_object_tracker.cpp.o CMakeFiles/athena.dir/z4c/fastflow.cpp.o CMakeFiles/athena.dir/z4c/horizon_dump.cpp.o CMakeFiles/athena.dir/z4c/tmunu.cpp.o CMakeFiles/athena.dir/z4c/z4c.cpp.o CMakeFiles/athena.dir/z4c/z4c_adm.cpp.o CMakeFiles/athena.dir/z4c/z4c_calcrhs.cpp.o CMakeFiles/athena.dir/z4c/z4c_newdt.cpp.o CMakeFiles/athena.dir/z4c/z4c_tasks.cpp.o CMakeFiles/athena.dir/z4c/z4c_update.cpp.o CMakeFiles/athena.dir/z4c/z4c_gauge.cpp.o CMakeFiles/athena.dir/z4c/z4c_Sbc.cpp.o CMakeFiles/athena.dir/z4c/z4c_calculate_weyl_scalars.cpp.o CMakeFiles/athena.dir/z4c/z4c_wave_extr.cpp.o CMakeFiles/athena.dir/z4c/z4c_amr.cpp.o CMakeFiles/athena.dir/z4c/cce/cce.cpp.o CMakeFiles/athena.dir/pgen/ref_gh/source_unit.cpp.o -o athena  -lpthread ../kokkos/containers/src/libkokkoscontainers.a ../kokkos/algorithms/src/libkokkosalgorithms.a ../kokkos/core/src/libkokkoscore.a -ldl ../kokkos/simd/src/libkokkossimd.a /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib/libmpicxx.so /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/lib/libmpi.so
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src/CMakeFiles/athena.dir/flags.make:9:CXX_FLAGS = -O3 -DNDEBUG -std=c++17 -fsycl-device-code-split=per_kernel -fsycl -fno-sycl-id-queries-fit-in-int -fsycl-dead-args-optimization -fsycl-unnamed-lambda -fno-sycl-rdc -DDESUL_SYCL_DEVICE_GLOBAL_SUPPORTED -fsycl-targets=spir64_gen -Xsycl-target-backend "-device 12.60.7"
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src/CMakeFiles/athena.dir/flags.make:11:# Custom options: src/CMakeFiles/athena.dir/pgen/ref_gh/source_unit.cpp.o_OPTIONS = -fsycl-device-code-split=per_kernel
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src/CMakeFiles/athena.dir/build.make:2725:	cd /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src && /opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -fsycl-device-code-split=per_kernel -MD -MT src/CMakeFiles/athena.dir/pgen/ref_gh/source_unit.cpp.o -MF CMakeFiles/athena.dir/pgen/ref_gh/source_unit.cpp.o.d -o CMakeFiles/athena.dir/pgen/ref_gh/source_unit.cpp.o -c /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/src_clean/src/pgen/ref_gh/source_unit.cpp
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src/CMakeFiles/athena.dir/build.make:2729:	cd /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src && /opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -fsycl-device-code-split=per_kernel -E /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/src_clean/src/pgen/ref_gh/source_unit.cpp > CMakeFiles/athena.dir/pgen/ref_gh/source_unit.cpp.i
+/lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src/CMakeFiles/athena.dir/build.make:2733:	cd /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src && /opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -fsycl-device-code-split=per_kernel -S /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/src_clean/src/pgen/ref_gh/source_unit.cpp -o CMakeFiles/athena.dir/pgen/ref_gh/source_unit.cpp.s
+75c63bb06f033a4064894211df7de04fdcb3472c2925e8ad732f32033fc75825  /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/CMakeCache.txt
+2a0f208b677c67d63f47820562b55a12d28406856aa64dc7190082830cd64324  /lus/flare/projects/CompactBinaryMerger/hzhu/refgh_relative_damped_power_lag_20260831_9eff5b52/build_8792921.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov/src/athena

@@ -1,0 +1,162 @@
+#!/bin/bash -l
+# Focused full-output PVC gate for the paired-power history diagnostic.
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -N refgh_qpair_gate
+#PBS -j oe
+
+set -euo pipefail
+
+: "${CAMPAIGN_ROOT:?submit with the fresh campaign root}"
+: "${EXPECTED_COMMIT:?submit with the exact diagnostic source SHA}"
+
+readonly SRC="${CAMPAIGN_ROOT}/src_clean"
+readonly BUILD="${CAMPAIGN_ROOT}/build_${PBS_JOBID}"
+readonly OUT="${CAMPAIGN_ROOT}/power_gate_${PBS_JOBID}"
+readonly EXE="${BUILD}/src/athena"
+readonly INPUT="${SRC}/inputs/ref_gh/ref_gh_relative_damped_power_lag_outer24.athinput"
+readonly ANALYZER="${SRC}/scripts/ref_gh/analyze_relative_damped_power_lag.py"
+
+mkdir -p "${OUT}"
+cd "${OUT}"
+exec > >(tee -a bootstrap.log) 2>&1
+trap 'status=$?; echo "power_gate_failure status=${status} line=${LINENO} command=${BASH_COMMAND}"; exit "${status}"' ERR
+
+echo "bootstrap_begin=$(date -Is)"
+source "${HOME}/athenak_env"
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export FI_MR_CACHE_MONITOR=disabled
+export FI_LOG_LEVEL=ERROR
+readonly BINDER=$(command -v gpu_tile_compact.sh)
+
+test -x "${BINDER}"
+test "$(git -C "${SRC}" rev-parse HEAD)" = "${EXPECTED_COMMIT}"
+test -z "$(git -C "${SRC}" status --porcelain)"
+test -f "${SRC}/kokkos/CMakeLists.txt"
+
+{
+  date -Is
+  hostname
+  qstat -f "${PBS_JOBID}"
+  echo "campaign_root=${CAMPAIGN_ROOT}"
+  echo "source_commit=${EXPECTED_COMMIT}"
+  echo "gate=one fresh frozen compatible-Phi RK4 cycle with full power history"
+  echo "nodes=1"
+  echo "ranks=12"
+  echo "tiles=12"
+  git -C "${SRC}" status --short --branch
+  git -C "${SRC}" submodule status
+  module list 2>&1
+  icpx --version | head -1
+  mpicxx --version | head -1
+  cmake --version | head -1
+  env | grep -E '^(ONEAPI_DEVICE_SELECTOR|ZE_|MPICH_GPU|FI_)' | sort
+  sha256sum "${INPUT}" "${ANALYZER}" "$0"
+} > provenance.txt
+
+cmake -S "${SRC}" -B "${BUILD}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER="$(command -v icx)" \
+  -DCMAKE_CXX_COMPILER="$(command -v icpx)" \
+  -DAthena_ENABLE_MPI=ON \
+  -DAthena_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=OFF \
+  -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON \
+  -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=OFF \
+  -DPROBLEM=built_in_pgens > configure.log 2>&1
+cmake --build "${BUILD}" --verbose -j 64 > build.log 2>&1
+
+{
+  grep -E 'CMAKE_(C|CXX)_COMPILER:|CMAKE_BUILD_TYPE:|Athena_ENABLE_MPI:|Athena_ENABLE_OPENMP:|Kokkos_ENABLE_(SYCL|SERIAL|OPENMP|DEBUG_BOUNDS_CHECK):|Kokkos_ARCH_INTEL_PVC:|PROBLEM:' \
+    "${BUILD}/CMakeCache.txt"
+  grep -R -n -- '-fsycl-device-code-split=per_kernel' \
+    "${BUILD}/src/CMakeFiles/athena.dir"
+  sha256sum "${BUILD}/CMakeCache.txt" "${EXE}"
+} >> provenance.txt
+grep -q '^Athena_ENABLE_MPI:BOOL=ON$' "${BUILD}/CMakeCache.txt"
+grep -q '^Kokkos_ENABLE_SYCL:BOOL=ON$' "${BUILD}/CMakeCache.txt"
+grep -q '^Kokkos_ARCH_INTEL_PVC:BOOL=ON$' "${BUILD}/CMakeCache.txt"
+grep -q -- '-fsycl-device-code-split=per_kernel' \
+  "${BUILD}/src/CMakeFiles/athena.dir/flags.make"
+grep -q -- '-fsycl-device-code-split=per_kernel' \
+  "${BUILD}/src/CMakeFiles/athena.dir/link.txt"
+
+mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" bash -lc '
+    echo "host=$(hostname) rank=${PALS_RANKID:-unset} local_rank=${PALS_LOCAL_RANKID:-unset} ZE_AFFINITY_MASK=${ZE_AFFINITY_MASK:-unset}"
+    sycl-ls 2>&1 | grep "Data Center GPU Max"
+  ' > rank_gpu_mapping.txt 2>&1
+test "$(grep -c '^host=' rank_gpu_mapping.txt)" -eq 12
+test "$(grep '^host=' rank_gpu_mapping.txt \
+  | sed -n 's/.*ZE_AFFINITY_MASK=\([^ ]*\).*/\1/p' \
+  | sort -u | wc -l)" -eq 12
+
+mkdir run
+cd run
+/usr/bin/time -p mpiexec -n 12 --ppn 12 --depth=8 --cpu-bind depth \
+  "${BINDER}" "${EXE}" -i "${INPUT}" \
+  job/basename=refgh_power_lag_pvc_gate \
+  ref_gh/continuation_mode=frozen ref_gh/debug_task_fences=true \
+  time/nlim=1 time/tlim=0.02 output1/dt=0.001 output2/dt=-1 \
+  > run.log 2>&1
+
+grep -q 'Total number of MeshBlocks = 328' run.log
+grep -q 'Number of parallel ranks = 12' run.log
+grep -q 'ref_gh power diagnostic native-cell list' run.log
+! grep -Eiq 'FATAL ERROR|NotPresent|page fault|SYCL exception|(^|[^[:alnum:]_])(nan|[-+]?inf)([^[:alnum:]_]|$)' run.log
+
+python3 - refgh_power_lag_pvc_gate.ref_gh_power.hst > ../gate_status.txt <<'PY'
+import math
+import pathlib
+import sys
+
+lines = [line for line in pathlib.Path(sys.argv[1]).read_text().splitlines()
+         if line and not line.startswith("#")]
+header = lines[0].split("\t")
+rows = [{name: float(value) for name, value in zip(header, line.split("\t"))}
+        for line in lines[1:]]
+by_time = {row["time"]: row for row in rows}
+rows = [by_time[time] for time in sorted(by_time)]
+if len(rows) < 2 or not rows[-1]["time"] > 0.0:
+    raise SystemExit("one evolved paired-power row was not written")
+if not all(math.isfinite(value) for row in rows for value in row.values()):
+    raise SystemExit("nonfinite paired-power history")
+for row in rows:
+    if row["xi"] != 0.0 or row["xi_dot"] != 0.0 or row["xi_ddot"] != 0.0:
+        raise SystemExit("frozen continuation moved")
+    for shell in ("inner", "blend", "outside", "legacy"):
+        if row[shell + "_valid"] != 1.0:
+            raise SystemExit("invalid paired-power shell " + shell)
+for shell in ("inner", "blend", "outside", "legacy"):
+    if abs(rows[0][shell + "_dq_mean"]) > 2.0e-13:
+        raise SystemExit("fresh matched paired-power mismatch")
+print("classification=PASS_PVC_PAIRED_POWER_EVOLVED_CYCLE")
+print("initial_time={:.17e}".format(rows[0]["time"]))
+print("final_time={:.17e}".format(rows[-1]["time"]))
+print("frozen_xi_exact_zero=true")
+for shell in ("inner", "blend", "outside", "legacy"):
+    print("initial_{}_dq={:.17e}".format(shell, rows[0][shell + "_dq_mean"]))
+    print("final_{}_dq={:.17e}".format(shell, rows[-1][shell + "_dq_mean"]))
+print("claim_boundary=one PVC RK4 cycle only; no stability or causation claim")
+PY
+
+python3 "${ANALYZER}" --case "frozen_gate=${OUT}/run" \
+  --target 0 0.02 --target-tolerance 0.03 \
+  --output-prefix "${OUT}/power_gate_analysis" > ../analysis.log 2>&1
+python3 -m json.tool "${OUT}/power_gate_analysis.json" >/dev/null
+cd ..
+
+sha256sum provenance.txt rank_gpu_mapping.txt gate_status.txt analysis.log \
+  power_gate_analysis.json power_gate_analysis.tsv power_gate_analysis.png \
+  run/run.log run/*.hst > compact_sha256.txt
+echo "power_gate_complete=$(date -Is)"
