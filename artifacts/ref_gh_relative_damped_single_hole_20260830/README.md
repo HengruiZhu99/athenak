@@ -197,3 +197,18 @@ reduction, and curl RMS were \`2.23585e-7\`, \`8.40904e-7\`, and
 \`2.58297e-5\`.  The exact initial relative match had zero D and source.
 This only validates the revised input locally.  It does not cross the failed
 \`t~1.65M\` interval or support a relaxation claim.
+
+Aurora job \`8792686\` then ran the same fixed-core/tau-8 input on one node,
+12 MPI ranks, and 12 distinct PVC tiles.  It crossed the former failure window
+and exited normally at \`t=2.2M\`.  At \`t=1.60239M\`, GH RMS was
+\`3.45058e-4\`, about 82 times smaller than the last finite shrinking-width
+outer result.  At \`t=2.2M\`, GH, reduction, and curl RMS were
+\`8.91313e-4\`, \`1.74411e-4\`, and \`2.75011e-3\`; the relative condition
+number was \`1.29073\`, and no bad state was reported.
+
+The late-time GH log fit still has positive slope \`1.87885/M\` over
+\`1M<=t<=2.2M\`, so the result is not settling or stability evidence.  It is
+a passed failure-window discriminator that authorizes the outer-domain
+\`t=4M\` test.  Compact evidence is under
+\`wormhole_fixed_core_t2_8792686/\`; four large restart files remain at the
+recorded Aurora path and are represented by hashes only.
