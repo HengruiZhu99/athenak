@@ -1,276 +1,308 @@
 # Stable first-order reference-GH puncture formulation
 
-## Scope and decision
+## Scope and final decision
 
-This note audits the reference-frame first-order generalized-harmonic (Ref-GH) system on branch `codex/ref-gh-relative-damped-single-hole-20260830` at commit `0182bc2e00d115e6e1e9d2eba996b1b2f155b308`.  It is a theory/static-code audit only.  No new AthenaK evolution result is asserted here.
+This is a theory/static-code audit of `HengruiZhu99/athenak`, branch
+`codex/ref-gh-relative-damped-single-hole-20260830`, starting from commit
+`0182bc2e00d115e6e1e9d2eba996b1b2f155b308`.  No new AthenaK run is claimed.
 
-The central requirement is retained in full: the formulation must start from ordinary Bowen--York wormhole puncture data in isotropic-like coordinates and dynamically relax toward a moving-puncture/trumpet gauge, without excision.
+The central requirement is **not** relaxed: the production formulation must be able to start from ordinary Bowen--York wormhole puncture data in isotropic-like coordinates and dynamically approach the moving-puncture/trumpet gauge without excision.
 
-The recommended formulation is:
+The formulation I recommend is:
 
-> **STANDARD `gamma1=-1` first-order GH, rewritten in reference-deviation variables and background-covariant first derivatives, with an algebraic wave-map + relative-damped gauge and a genuine dynamical wormhole-to-trumpet reference trajectory.**
+> **Dynamical-reference covariant-residual STANDARD GH (DRCR-GH):** keep the STANDARD `gamma1=-1` first-order GH principal system, but evolve the metric deviation from a prescribed reference and its background-covariant first derivatives.  In each puncture core the prescribed reference itself follows a regular wormhole-to-trumpet Schwarzschild gauge trajectory.  Use pure wave-map gauge throughout the core and strong reference-transition buffer; activate the existing algebraic relative-damped correction only outside that buffer through a `C^infinity` exact plateau.  Keep finite `gamma0,gamma2`.  Abandon a time-dependent singular exponent `q(t)`, but **do not** abandon dynamical wormhole-to-trumpet evolution.
 
-The important change from the current design is that the dynamical reference is **not** represented by a time-dependent puncture exponent `q(t)`.  A finite-time change of a factor `r^{-q(t)}` necessarily generates `qdot log r` and related singular terms.  Instead, the exact puncture remains on the wormhole branch at every finite coordinate time while a transition region moves inward and the solution approaches a trumpet at every fixed `r>0`.  This is the continuum behavior that should be represented by the reference.  The cleanest implementation is a one-dimensional Schwarzschild gauge-transition reference generated from the same isotropic wormhole initial slice and approaching the stationary trumpet.
+The key distinction is:
 
-This is not a proposal to start with trumpet initial data.  Bowen--York wormhole initial data remain the intended initial data.
+- **rejected:** change the puncture power at finite time by writing a factor `r^{-q(t)}`;
+- **retained:** let the coefficient of the wormhole branch recede to zero while the reference shift transports the compactified second end inward, so every fixed resolved `r>0` becomes trumpet-like although the exact puncture retains the wormhole branch at every finite coordinate time.
+
+This is precisely the nonuniform limit needed for the usual moving-puncture topology change.
 
 ---
 
-## 1. Static audit of the current continuum system
+# 1. What is already mathematically correct
 
-### 1.1 STANDARD ordering
+## 1.1 STANDARD `Phi` ordering
 
-The source file `src/ref_gh/phi_ordering.hpp` implements
+The current helper `src/ref_gh/phi_ordering.hpp` defines the anholonomic-frame curl constraint
 
-\[
+```math
 C_{IJAB}=E_I\Phi_{JAB}-E_J\Phi_{IAB}-c^K{}_{IJ}\Phi_{KAB}
-\]
+```
 
-and changes the compatible `Phi` equation to the STANDARD equation by
+and changes the compatible equation according to
 
-\[
-(\partial_t\Phi_{IAB})_{\rm std}
-=(\partial_t\Phi_{IAB})_{\rm comp}-\beta^J C_{IJAB}.
-\]
+```math
+(\partial_t\Phi_{IAB})_{\rm standard}
+=(\partial_t\Phi_{IAB})_{\rm compatible}-\beta^J C_{IJAB}.
+```
 
-This is the correct anholonomic-frame form of the standard GH ordering.  The sign agrees with the identity
-
-\[
-E_I\Phi_J=E_J\Phi_I+c^K{}_{IJ}\Phi_K+C_{IJ}.
-\]
+This is the correct STANDARD ordering for raw frame derivatives.  The commutator term is required because `[E_I,E_J]=c^K{}_{IJ}E_K`.
 
 **Classification: PROVED CORRECT.**
 
-### 1.2 `gamma2` reduction damping
+## 1.2 `gamma2` reduction damping
 
-`src/ref_gh/gamma2_damping.hpp` adds, in coordinate notation,
+For `gamma1=-1`, the code adds the standard reduction-constraint terms
 
-\[
-\delta(\partial_t\Pi_{AB})=-\gamma_2\beta^i C_{iAB},\qquad
-\delta(\partial_t\Phi_{IAB})=\alpha\gamma_2\bar e_I{}^i C_{iAB},
-\]
-
-with `gamma1=-1`.  This is the standard first-order GH reduction-constraint damping structure.
+```math
+\delta(\partial_t\Pi_{AB})=-\gamma_2\beta^i C_{iAB},
+\qquad
+\delta(\partial_t\Phi_{IAB})=
+\alpha\gamma_2\bar e_I{}^i C_{iAB}.
+```
 
 **Classification: PROVED CORRECT.**
 
-### 1.3 Principal symbol and characteristic fields
+## 1.3 Principal symbol, characteristics, and symmetrizer
 
-For one symmetric spacetime component, the principal variables are `(Psi,Pi,Phi_I)`.  With a unit spatial covector `s_I`, normalized using the physical spatial inverse metric in the reference frame,
+For one symmetric spacetime component and a unit spatial covector `s_I`,
 
-\[
-G^{IJ}s_I s_J=1,
-\]
+```math
+G^{IJ}s_Is_J=1,
+```
 
-the characteristic fields are
+the standard characteristic fields are
 
-\[
+```math
 u^0=\Psi,
 \qquad
 u^\pm=\Pi\pm s^I\Phi_I-\gamma_2\Psi,
 \qquad
 u_I^\perp=\Phi_I-s_I s^J\Phi_J,
-\]
+```
 
 with speeds
 
-\[
-0,\qquad -\beta^s\pm\alpha,\qquad -\beta^s.
-\]
+```math
+0,
+\qquad -\beta^s+\alpha,
+\qquad -\beta^s-\alpha,
+\qquad -\beta^s.
+```
 
-This is exactly the map implemented in `src/ref_gh/ref_gh_characteristics.hpp`.
+For the one-direction derivative matrix
 
-For any positive-definite tensor-component metric `m^{AB}` and any constant `Lambda` satisfying
+```math
+B=
+\begin{pmatrix}
+0&0&0\\
+-\gamma_2\beta&\beta&-\alpha\\
+\alpha\gamma_2&-\alpha&\beta
+\end{pmatrix},
+```
 
-\[
-\Lambda^2>\gamma_2^2,
-\]
+the matrix
 
-a symmetrizer density is
+```math
+S=
+\begin{pmatrix}
+\Lambda^2&-\gamma_2&0\\
+-\gamma_2&1&0\\
+0&0&1
+\end{pmatrix}
+```
 
-\[
-\mathcal E=
- m^{AC}m^{BD}
- \left[
- \Lambda^2\Psi_{AB}\Psi_{CD}
- +\Pi_{AB}\Pi_{CD}
- -2\gamma_2\Psi_{AB}\Pi_{CD}
- +G^{IJ}\Phi_{IAB}\Phi_{JCD}
- \right].
-\]
+satisfies exactly
 
-The first three terms complete the square,
+```math
+SB=(SB)^T.
+```
 
-\[
-(\Pi-\gamma_2\Psi)^2+(\Lambda^2-\gamma_2^2)\Psi^2,
-\]
+This was checked symbolically.  Positivity follows from
 
-so the energy is positive definite whenever `G^{IJ}` is positive definite.  Direct symbolic multiplication of the one-component principal matrices verifies `S A^s=(S A^s)^T`.
+```math
+P^2-2\gamma_2hP+\Lambda^2h^2
+=(P-\gamma_2h)^2+(\Lambda^2-\gamma_2^2)h^2,
+```
 
-**Classification: PROVED CORRECT for the STANDARD principal part on every `r>0` where the relative metric is Lorentzian.**
+so `Lambda^2>gamma2^2` is sufficient.  For all ten tensor components use a positive tensor-component metric and the physical positive spatial matrix `G^{IJ}`.
 
-### 1.4 Background-covariant lower-order source
+**Classification: PROVED CORRECT.**
 
-`src/ref_gh/covariant_gh_source.hpp` constructs the reference-covariant derivative
-
-\[
-Q_{CAB}=P_{CAB}
--\bar\omega^D{}_{AC}\Psi_{DB}
--\bar\omega^D{}_{BC}\Psi_{AD},
-\]
-
-then the connection difference
-
-\[
-\Delta_{ABC}
-=\frac12\left(Q_{BAC}+Q_{CAB}-Q_{ABC}\right),
-\]
-
-and includes the reference curvature, quadratic `Q`, quadratic `Delta`, GH damping, and frame-product terms needed to reproduce the coordinate reduced Einstein equation.
-
-This is the correct geometric structure for a background-covariant GH system.  The current implementation, however, evolves the raw frame derivative `Phi` and reconstructs `Q` pointwise.  Consequently the reference spin, frame commutator, and product-rule corrections enter the evolution and subsidiary systems as explicit lower-order matrices.
-
-**Classification: LIKELY CORRECT as a continuum rewrite away from the puncture, but not a satisfactory production variable choice for the strongly varying puncture reference.**
+The time dependence of a prescribed reference does not alter this conclusion: it changes `S_t` and lower-order coefficients in the energy estimate, but not the principal symbol.
 
 ---
 
-## 2. Why fixed-reference growth does not contradict symmetric hyperbolicity
+# 2. Why the fixed-reference growth is compatible with symmetric hyperbolicity
 
-For a linearized first-order system
+For
 
-\[
-\partial_t u+A^i(x)\partial_i u=B(x)u,
-\qquad S A^i=(S A^i)^T,
-\]
+```math
+\partial_t u+A^i(x,t)\partial_i u=B(x,t)u,
+\qquad SA^i=(SA^i)^T,
+```
 
-symmetric hyperbolicity controls the principal part but does not require the lower-order operator to be dissipative.  The energy estimate contains
+the energy estimate contains
 
-\[
+```math
 \frac{dE}{dt}
-\le
-\int u^T\left[SB+B^T S+\partial_i(SA^i)\right]u\,d^3x
+\lesssim
+\int u^T
+\left[
+S B+B^T S+\partial_t S+\partial_i(SA^i)
+\right]u\,d^3x
 +\text{boundary flux}.
-\]
+```
 
-A spatially varying but time-independent reference can therefore produce exponential growth through the symmetric part of its lower-order matrix without violating symmetric hyperbolicity.
+Therefore symmetric hyperbolicity constrains the principal part but does **not** imply that the lower-order matrix is dissipative.
 
-In the present raw-`Phi` variables the relevant coefficient families are:
+The observed fixed-reference mode can therefore be genuine.  In the present raw-frame variables the potentially dangerous lower-order families are:
 
-1. spatial-frame derivatives and structure coefficients in the STANDARD `Phi` equation;
-2. spin-connection terms converting raw derivatives to `Q`;
-3. reference-curvature and spin-derivative terms in the scalar source;
-4. derivatives of the algebraic relative gauge with respect to `Psi`, multiplied by reduction errors when `dPsi` is reconstructed from `Pi/Phi`;
-5. spatial gradients of any finite-radius reference blend/window.
+1. spatial-frame gradients and frame commutators in the `Phi` system;
+2. spin-connection terms used to reconstruct background-covariant derivatives;
+3. reference curvature and spin-derivative terms in the nonlinear source;
+4. derivatives of the algebraic gauge with respect to the relative metric;
+5. gradients of the finite-radius reference and gauge windows;
+6. `S_t` and reference-frame-motion terms when the reference evolves.
 
-The observed common growth of GH, reduction, and curl constraints in a fixed-reference transition annulus is therefore mathematically compatible with a symmetric-hyperbolic principal symbol.
+The existing observation that a fixed reference can grow GH, reduction, and curl constraints together is therefore **not** evidence against the STANDARD principal symbol.
 
-The correct cure is not to change characteristic speeds.  It is to choose variables in which the geometric lower-order connection terms are assembled analytically and the exact matched state is zero, so that large reference terms are never subtracted numerically.
+It does mean that a new reference trajectory must be qualified by the **full lower-order energy matrix**, not only by characteristic speeds.
 
 ---
 
-## 3. The variable change that should be made
+# 3. Use deviation variables and background-covariant first derivatives
 
-Let `bar g_ab` be the prescribed reference metric and `bar e_A^a` an orthonormal reference frame.  Define
+Let `bar g_ab` be the prescribed reference metric with orthonormal frame `bar e_A^a` and coframe `bar theta^A_a`.  Define
 
-\[
+```math
 \Psi_{AB}=\bar e_A{}^a\bar e_B{}^b g_{ab},
 \qquad
 h_{AB}=\Psi_{AB}-\eta_{AB}.
-\]
+```
 
-Instead of evolving raw frame derivatives, evolve reference-covariant derivatives of the deviation:
+The current code evolves raw frame derivatives and then reconstructs the background-covariant derivative by subtracting spin-connection terms.  For production punctures it is cleaner to make the covariant derivative fundamental:
 
-\[
+```math
 P_{AB}:=-n^a\bar\nabla_a h_{AB},
 \qquad
 Q_{IAB}:=\bar e_I{}^a\bar\nabla_a h_{AB}.
-\]
+```
 
-Because `bar nabla eta=0`, these are also the reference-covariant derivatives of `Psi`.  In frame components,
+In frame components,
 
-\[
+```math
 Q_{IAB}
 =E_I h_{AB}
 -\bar\omega^C{}_{AI}h_{CB}
 -\bar\omega^C{}_{BI}h_{AC}.
-\]
+```
 
-The crucial feature is that the spin connection multiplies `h`, not `eta+h` with a later cancellation.  The exact matched state is simply
+Since `bar nabla eta=0`, the exact matched state is
 
-\[
-\boxed{h_{AB}=0,\quad P_{AB}=0,\quad Q_{IAB}=0.}
-\]
+```math
+\boxed{h_{AB}=0,\qquad P_{AB}=0,\qquad Q_{IAB}=0.}
+```
 
-The connection difference becomes directly
+The physical/reference connection difference is then formed directly:
 
-\[
+```math
 \Delta_{ABC}
 =\frac12\left(Q_{BAC}+Q_{CAB}-Q_{ABC}\right),
-\]
+```
 
-so no raw-derivative/spin subtraction is required to form it.
+with the first index raised by the physical relative inverse metric when needed.
 
-### Why this is a small change
+This removes the numerically unattractive operation
 
-For every `r>0`, `(Psi,Pi,Phi)` and `(h,P,Q)` are related by a pointwise triangular affine transformation whose derivative-variable diagonal blocks are identities.  Therefore the principal matrices are the STANDARD GH principal matrices.  Only lower-order terms change.
+```text
+raw derivative of Psi  -  spin connection times Psi
+```
 
-The new variables are not justified by claiming that the old singular transformation is uniformly bounded at `r=0`.  Instead the new PDE is written natively in `(h,P,Q)`, and puncture compatibility is imposed as an explicit coefficient-regularity condition on the reference provider.
+from the definition of the main nonlinear connection-difference field.
+
+### Important limitation
+
+This variable change is **not claimed to eliminate a genuine continuum lower-order instability by itself**.  Away from the puncture it is an invertible local rewrite of the same equations.  Its purposes are:
+
+- make the exact matched state zero;
+- eliminate large exact-state subtractions;
+- expose the geometric lower-order matrices cleanly;
+- make the puncture regularity gate a statement about finite residual fields and finite frame-native coefficients.
+
+The actual lower-order stability still has to be established for the chosen dynamical reference and gauge buffer.
 
 ---
 
-## 4. First-order evolution system
+# 4. First-order equations in the residual variables
 
-Use the reduced Einstein equation
+At principal level the STANDARD system is
 
-\[
-R_{ab}-\nabla_{(a}C_{b)}
-+\frac{\gamma_0}{2}
-\left(2n_{(a}C_{b)}-g_{ab}n^cC_c\right)=0,
-\]
-
-with the gauge constraint defined below.  Reduce the background-covariant wave equation using `(h,P,Q)` and STANDARD ordering.
-
-The principal part is
-
-\[
+```math
 \partial_t h_{AB}
 \simeq-\alpha P_{AB}+\beta^I Q_{IAB},
-\]
+```
 
-\[
+```math
 \partial_t P_{AB}
 \simeq
 \beta^I E_I P_{AB}
 -\alpha G^{IJ}E_IQ_{JAB}
 -\gamma_2\beta^I\mathcal C_{IAB},
-\]
+```
 
-\[
+```math
 \partial_t Q_{IAB}
 \simeq
 \beta^J E_JQ_{IAB}
 -\alpha E_IP_{AB}
 +\alpha\gamma_2\mathcal C_{IAB}.
-\]
+```
 
-All reference-frame motion, spin connection, derivatives of lapse/shift, curvature, and algebraic gauge derivatives are lower order and must be assembled in reference-covariant form.  The complete lower-order scalar source is most cleanly expressed using `Q` and `Delta`; the current `CovariantGhScalarWaveSource` already contains the necessary geometric sectors.  In the new variables the separate raw-`P` to covariant-`Q` `frame_correction` should disappear: `Q` is fundamental rather than reconstructed.
+The full equations are obtained by writing the reduced Einstein equation with the background derivative `bar nabla` and the connection difference `Delta`.  A convenient exact identity is
 
-The characteristic fields and symmetrizer are unchanged after replacing `Psi,Pi,Phi` by `h,P,Q`.
+```math
+R_{ab}
+=\bar R_{ab}
++\bar\nabla_c\Delta^c{}_{ab}
+-\bar\nabla_b\Delta^c{}_{ac}
++\Delta^c{}_{cd}\Delta^d{}_{ab}
+-\Delta^c{}_{bd}\Delta^d{}_{ac}.
+```
+
+The reduced equation is
+
+```math
+R_{ab}-\nabla_{(a}C_{b)}
++\frac{\gamma_0}{2}
+\left(2n_{(a}C_{b)}-g_{ab}n^cC_c\right)=0.
+```
+
+When the reference is vacuum and the gauge increment vanishes at match, every lower-order source is at least linear in `(h,P,Q)`, so the prescribed single-hole transition is an exact zero-residual solution.
+
+The positive symmetrizer can be written directly for `(h,P,Q)`:
+
+```math
+\mathcal E=
+ m^{AC}m^{BD}
+\left[
+\Lambda^2h_{AB}h_{CD}
++P_{AB}P_{CD}
+-2\gamma_2h_{AB}P_{CD}
++G^{IJ}Q_{IAB}Q_{JCD}
+\right],
+```
+
+where `m^{AB}` is any smooth positive-definite metric on tensor components (for example the usual positive metric constructed from the physical normal).  If `Lambda^2>gamma2^2` and `G^{IJ}>0`, this is positive definite and symmetrizes the STANDARD principal matrices.
+
+**Symmetric hyperbolicity of the proposed main system: PROVED.**
 
 ---
 
-## 5. Constraint system in the covariant variables
+# 5. Subsidiary constraints in a non-coordinate reference frame
 
-Define the reduction constraint
+Define the background-covariant reduction constraint
 
-\[
+```math
 \mathcal C_{IAB}
 :=\bar\nabla_I h_{AB}-Q_{IAB}.
-\]
+```
 
-For an anholonomic reference frame, define the covariant curl/integrability constraint
+The corresponding integrability constraint is
 
-\[
+```math
 \begin{aligned}
 \mathcal C_{IJAB}:={}&
 \bar\nabla_IQ_{JAB}-\bar\nabla_JQ_{IAB}
@@ -278,598 +310,731 @@ For an anholonomic reference frame, define the covariant curl/integrability cons
 &+\bar R^C{}_{A IJ}h_{CB}
 +\bar R^C{}_{B IJ}h_{AC}.
 \end{aligned}
-\]
+```
 
-The sign is chosen so that `C_IJAB=0` follows identically from `Q_IAB=bar nabla_I h_AB` and the anholonomic commutator identity.
+The curvature terms are required by the commutator of background covariant derivatives.  With this definition, `C_IJAB=0` is an identity whenever `Q_IAB=bar nabla_I h_AB`.
 
-The principal part of the subsidiary reduction system is
+The STANDARD `Q` equation is most safely derived as
 
-\[
+```text
+covariant compatible derivative of the h equation
++ gamma2 reduction damping
+- beta^J times the covariant curl constraint.
+```
+
+This guarantees that reference-frame-motion and curvature pieces are assembled analytically into the constraint identities rather than appearing as unmatched product-rule terms.
+
+At principal level,
+
+```math
 \partial_t\mathcal C_{IAB}
 \simeq
 -\alpha\gamma_2\mathcal C_{IAB}
-+\beta^J\mathcal C_{JIAB},
-\]
++\beta^J\mathcal C_{IJAB},
+```
 
-while the curl constraint is transported with the shift and coupled algebraically to `C_I` and reference curvature.  The remaining terms contain only bounded reference connection/curvature coefficients if the reference provider satisfies the regularity conditions in Sec. 8.
+with all reference connection, curvature, lapse/shift-gradient, and gauge-gradient terms lower order.
 
-The GH constraint is especially simple for the wave-map gauge.  With
+For the GH constraint use the wave-map base source
 
-\[
-B_a=-g_{ab}g^{cd}\bar\Gamma^b{}_{cd}
-\]
+```math
+B_a=-g_{ab}g^{cd}\bar\Gamma^b{}_{cd},
+\qquad H_a=B_a+J_a.
+```
 
-and `H_a=B_a+J_a`, one has
+The regular identity is
 
-\[
-C_a=H_a+\Gamma_a
-=J_a+g_{ab}g^{cd}\Delta^b{}_{cd}.
-\]
-
-In reference-frame components,
-
-\[
+```math
 \boxed{C_A=J_A+\Delta_A.}
-\]
+```
 
-Thus the GH constraint is constructed entirely from regular residual quantities; no separately divergent `H_A` and `Gamma_A` should be formed near the puncture.
+Production should evaluate this residual identity directly.  It should not separately reconstruct a large coordinate `H_a` and a large coordinate `Gamma_a` and then subtract them.
 
-The Bianchi identity gives the usual homogeneous damped wave propagation for `C_a`, modulo the first-order reduction constraints.  Positive `gamma0` damps short-wavelength GH-constraint violations; positive finite `gamma2` damps the reduction constraint.  No `1/alpha` rescaling of `gamma2` is recommended.
+From the contracted Bianchi identity, the exact nonlinear GH subsidiary equation for the damping convention used here is
+
+```math
+\boxed{
+\nabla^b\nabla_b C_a
++R_a{}^b C_b
+-2\gamma_0\nabla^b\!\left(n_{(a}C_{b)}\right)=0.
+}
+```
+
+Thus the continuum GH constraint system is homogeneous.  Any reference dependence enters through coefficients, not through an inhomogeneous source, provided the equations are assembled consistently.
 
 ---
 
-## 6. Gauge: retain the relative-damped idea, but let the reference carry the puncture transition
+# 6. The relative-damped gauge is retained, but moved out of the strong transition region
 
 Use
 
-\[
+```math
 \boxed{
 H_a=B_a+\bar\theta^A{}_a J_A,
 \qquad
 J_A=W D_A,
 }
-\]
+```
 
 with
 
-\[
-D_A=\mu_L L_R N_A^R-\frac{\mu_S}{a_R}V_A^R,
-\]
+```math
+D_A=\mu_L L_RN_A^R-\frac{\mu_S}{a_R}V_A^R,
+```
 
-where `a_R`, `L_R`, `N_A^R`, and `V_A^R` are constructed algebraically from the relative metric `Psi=eta+h`.
+where the relative ADM-like quantities are algebraic functions of
 
-The window has an exact puncture plateau,
+```math
+\Psi_{AB}=\eta_{AB}+h_{AB}.
+```
 
-\[
-W=0\quad\text{for}\quad r\le r_0,
-\]
+At exact match,
 
-so the puncture core uses pure wave-map gauge to the dynamical reference.  The relative damping acts only in a finite-radius buffer/exterior where all relative ADM quantities are nonsingular.
+```math
+a_R=1,
+\qquad L_R=0,
+\qquad V_A^R=0,
+```
 
-### Matched state
+so `D_A=J_A=0` exactly.
 
-At `h=0`,
+The flat-background first variation is
 
-\[
-a_R=1,\qquad L_R=0,\qquad V_A^R=0,
-\]
-
-so
-
-\[
-D_A=J_A=0.
-\]
-
-### Flat-background linearization
-
-Writing `Psi=eta+h`, the first variation is
-
-\[
+```math
 D_0=-\frac{\mu_L}{2}(h_{00}+h_{ii}),
 \qquad
 D_i=-\mu_S h_{0i}.
-\]
+```
 
-For a pure gauge perturbation `h_ab=2 partial_(a xi_b)`, the transverse gauge modes obey
+For pure-gauge plane waves, the transverse modes obey
 
-\[
-s^2+\mu_S s+k^2=0.
-\]
+```math
+s^2+\mu_S s+k^2=0,
+```
 
-The scalar determinant factorizes exactly as
+and the scalar determinant factorizes exactly as
 
-\[
+```math
 \boxed{
 (s^2+k^2)
 \left[s^2+(\mu_L+\mu_S)s+k^2+\mu_L\mu_S\right].
 }
-\]
+```
 
-This identity was independently checked symbolically.  For `mu_L>0` and `mu_S>0`, the damped factor has no root with positive real part.  One scalar harmonic wave remains undamped, which is not an instability.
+This factorization was checked symbolically.  Positive `mu_L,mu_S` therefore produce no growing frozen matched-state gauge root; one scalar harmonic wave remains undamped.
 
-Because `J_A` is algebraic in `h` and the reference, its derivative in the reduced Einstein source is algebraic in the first-order variables `(P,Q)`.  Therefore this gauge does not alter the principal symbol or the symmetric-hyperbolic proof.
+The gauge is algebraic in the state and prescribed reference, so it does not change the GH principal symbol.
 
-**Decision:** retain this gauge architecture; do not reactivate the old live `Hhat/theta/Upsilon` moving-puncture driver in the puncture production path.
+### Recommended window placement
+
+Do **not** turn on relative damping inside the spatial region where the wormhole-to-trumpet reference has its strongest frame/connection gradients.  Use
+
+```math
+W=0
+```
+
+through the puncture core **and** a surrounding transition buffer.  Activate `W` only after the reference lower-order coefficient norms have become moderate.  The width/placement is to be chosen by a static energy/Jacobian gate, not by hiding an unstable mode with damping tuning.
+
+The old live `Hhat/theta/Upsilon` 1+log/Gamma-driver path should remain disabled in puncture production.  Standard moving-puncture gauge may be used to **generate the prescribed reference trajectory offline**; it should not be reintroduced as a live coupled GH driver.
 
 ---
 
-## 7. Why a direct dynamic puncture exponent must be abandoned
+# 7. Why `q(t)` is the wrong way to make the reference dynamical
 
-The current `q` construction contains the factor
+The present controlled exponent contains schematically
 
-\[
+```math
 L_q(r,t)\propto r^{-q(t)}.
-\]
+```
 
-Exactly,
+Therefore
 
-\[
+```math
+\boxed{
 \partial_t\ln L_q=-\dot q\ln r.
-\]
+}
+```
 
-A second derivative produces
+Higher derivatives generate
 
-\[
-\partial_t^2\ln L_q
-=-\ddot q\ln r,
-\]
-
-and derivatives of `L_q` itself additionally generate `dot q^2 (ln r)^2` and mixed `dot q/r` terms.  No choice of a smooth scalar trajectory `q(t)` removes these terms unless `dot q=0` while the puncture power is changing, which is impossible.
-
-This is a mathematical obstruction to a finite-time global exponent change in the present reference ansatz.  It is not a parameter-tuning problem.
-
-**Classification: INCONSISTENT as a production puncture-control mechanism.  Deprecate `reference_q_controlled` for dynamical exponent tracking.**
-
----
-
-## 8. The required Bowen--York wormhole -> trumpet reference trajectory
-
-### 8.1 Puncture asymptotics
-
-For a standard wormhole puncture,
-
-\[
-\psi_{\rm W}=1+\frac{M}{2r}+u,
-\qquad u=O(1),
-\]
-
-so the isotropic spatial scale `L=psi^2` behaves as
-
-\[
-L_{\rm W}\sim r^{-2}.
-\]
-
-With a precollapsed lapse `alpha=psi^{-2}`,
-
-\[
-\alpha_{\rm W}\sim r^2,
-\qquad \beta^i_{\rm W}=0.
-\]
-
-A stationary moving-puncture trumpet has finite limiting areal radius `R_0`, hence
-
-\[
-L_{\rm T}=\frac{R}{r}\sim r^{-1},
-\]
-
-and its lapse collapses as a positive power of `r`; the shift is linear in Cartesian radius at leading order.
-
-The exact point `r=0` therefore changes singularity class only in the infinite-time limiting geometry.  A bounded formulation should represent the transition as an inward-moving/shrinking wormhole core, not as a finite-time switch of the leading power at `r=0`.
-
-### 8.2 Preferred construction: a genuine Schwarzschild gauge-transition reference
-
-Construct once, in spherical symmetry, a reference spacetime `bar g_ab(t,r)` that is the Schwarzschild solution written in coordinates satisfying:
-
-1. at `t=0`: the chosen isotropic wormhole/Bowen--York-like lapse and zero shift;
-2. during the transition: a regular moving-puncture-type coordinate evolution;
-3. as `t -> infinity`: the stationary 1+log trumpet profiles used by the existing trumpet table.
-
-This can be generated as a high-accuracy one-dimensional coordinate/gauge evolution on an exact Schwarzschild spacetime.  The production reference should tabulate regular frame-native quantities or a coordinate map from which they can be differentiated consistently.
-
-The essential properties are
-
-\[
-\bar R_{ab}=0,
-\]
-
-and, in the reference orthonormal frame,
-
-\[
-|\bar\omega^A{}_{BC}|<C/M,
+```math
+\ddot q\ln r,
 \qquad
-|\bar R^A{}_{BCD}|<C/M^2,
-\]
+\dot q^2(\ln r)^2,
+\qquad
+\frac{\dot q}{r}.
+```
 
-throughout the transition on `r>0`, with finite one-sided puncture limits for all coefficients actually used by the residual equations.
+These are unbounded coefficient functions at the puncture whenever the exponent is changing.  This is not cured by a smoother time trajectory for `q` and must not be left to cancellation in floating point.
 
-When the physical solution equals this reference,
-
-\[
-h=P=Q=0,
-\qquad J=0,
-\qquad C_A=0,
-\]
-
-and the exact single-hole dynamical transition is a zero-residual solution.  This is the strongest possible regression oracle.
-
-### 8.3 Why an arbitrary smooth interpolation is second best
-
-A reference obtained by interpolating wormhole and trumpet metric profiles is generally not vacuum.  Smoothness prevents ill-posedness, but it creates a nonzero reference Ricci tensor and a finite forcing of the residual equations.  Such a construction may be useful as a fallback, but the vacuum gauge-transition reference is preferable because it makes the desired single-hole path an exact solution rather than an approximate attractor.
-
-### 8.4 Reference coefficients must be provided in regular form
-
-Do not compute a finite spin connection by subtracting separately divergent coordinate-frame terms such as
-
-\[
-\partial e + \bar\Gamma e
-\]
-
-near the puncture.  The reference provider should return regular frame-native connection coefficients directly (equivalently from regular ADM quantities such as the orthonormal extrinsic curvature, spatial acceleration, and triad rotation).  Reference curvature should likewise be evaluated in a frame-native regular representation.
-
-This rule is as important as abandoning `q(t)`: a mathematically finite answer is not acceptable if production evaluates it as the difference of two divergent floating-point quantities.
+**Decision: abandon dynamic exponent tracking, not dynamic gauge transition.**
 
 ---
 
-## 9. Smooth finite-radius windows
+# 8. Regular dynamical Bowen--York wormhole -> trumpet reference
 
-For finite-radius gauge/reference stitching, use an exact `C^infinity` plateau rather than the present quintic `C^2` smoothstep.
+## 8.1 Initial and final powers
+
+For ordinary Bowen--York wormhole data,
+
+```math
+\psi_{\rm BY}
+=\frac{M}{2r}+u_0+O(r),
+```
+
+where the Bowen--York correction is finite.  The isotropic spatial coframe scale
+
+```math
+L:=\psi^2
+```
+
+therefore has
+
+```math
+L_{\rm W}
+=\frac{A_0}{r^2}+\frac{B_0(\Omega)}{r}+O(1),
+\qquad
+A_0=\frac{M^2}{4}.
+```
+
+For a stationary trumpet with finite limiting areal radius `R_0`,
+
+```math
+L_{\rm T}=\frac{R_0}{r}+O(1).
+```
+
+The powers differ, but they do **not** have to be changed by a finite-time exponent parameter.
+
+## 8.2 Receding wormhole coefficient
+
+Use a reference whose local spatial coframe has the finite-time asymptotic form
+
+```math
+\boxed{
+\bar L(t,r)
+=\frac{A(t)}{r^2}
++\frac{B(t,r)}{r}
++O(1),
+\qquad A(t)>0\quad\text{for every finite }t,
+}
+```
+
+with
+
+```math
+A(t)\longrightarrow0
+\qquad (t\longrightarrow\infty).
+```
+
+The crossover radius is
+
+```math
+r_c(t)\sim \frac{A(t)}{B(t,0)}.
+```
+
+Hence:
+
+- for every finite `t`, the exact `r->0` asymptotic remains wormhole-like;
+- `r_c(t)` moves inward;
+- for every fixed `r>0`, eventually `r >> r_c(t)` and the `1/r` trumpet term dominates;
+- at finite numerical resolution, the entire resolved domain becomes trumpet-like once `r_c` falls below the innermost resolved radius.
+
+This is the desired nonuniform wormhole-to-trumpet limit.
+
+## 8.3 Necessary leading shift transport law
+
+Let the reference shift near the puncture be
+
+```math
+\bar\beta^i=b(t)x^i+O(r^3),
+```
+
+and let the finite-time wormhole lapse retain the usual collapsed behavior
+
+```math
+\bar\alpha=a(t)r^2+O(r^3).
+```
+
+Using
+
+```math
+\bar\gamma_{ij}\sim A(t)^2 r^{-4}\delta_{ij},
+```
+
+the leading orthonormal extrinsic curvature is
+
+```math
+\bar K_{IJ}
+= -\frac{1}{\bar\alpha}
+\left(\frac{\dot A}{A}+b\right)\delta_{IJ}
++\text{subleading terms}.
+```
+
+Therefore finiteness requires the exact leading cancellation
+
+```math
+\boxed{\dot A+bA=0.}
+```
+
+This is **not** a cancellation of separately divergent numerical quantities.  It is a transport equation for the reference asymptotic coefficient itself.  A regular reference provider should solve/enforce this relation analytically in its asymptotic representation.
+
+If `b>0`,
+
+```math
+A(t)=A(0)\exp\!\left[-\int_0^t b(t')dt'\right],
+```
+
+so the wormhole coefficient decays without ever changing the puncture power at finite time.
+
+Higher terms in `B`, the lapse, and the shift series must satisfy analogous bounded-frame conditions.  They should be obtained from a consistent reference geometry rather than by independent interpolation.
+
+## 8.4 Preferred reference: an exact Schwarzschild gauge-transition trajectory
+
+For the single-hole core, the cleanest construction is a spherically symmetric Schwarzschild spacetime written in a prescribed time-dependent coordinate map that:
+
+1. starts from the desired isotropic wormhole slice and initial lapse convention (for example the usual pre-collapsed lapse) with zero initial shift;
+2. follows a regular moving-puncture-type coordinate evolution;
+3. approaches the stationary 1+log trumpet;
+4. obeys the coefficient-recession asymptotics above.
+
+This reference can be generated offline by a one-dimensional high-accuracy gauge evolution or directly as a coordinate map on exact Schwarzschild.  Because it is a diffeomorphic representation of Schwarzschild at every finite time,
+
+```math
+\bar R_{ab}=0.
+```
+
+At exact match,
+
+```math
+h=P=Q=0,
+\qquad
+J_A=0,
+\qquad
+C_A=0,
+```
+
+for the **entire dynamical transition**.  Thus the desired large coordinate change is represented as a zero-residual solution instead of as a large live gauge forcing.
+
+This is the strongest available single-hole regression oracle.
+
+An arbitrary smooth interpolation between wormhole and trumpet metric profiles is inferior: even if smooth, it is generally non-vacuum, produces extra curvature forcing, and can create large finite-radius lower-order matrices.
+
+---
+
+# 9. Reference coefficients must be regular before numerical evaluation
+
+A finite geometric coefficient is unacceptable if production obtains it by subtracting two separately divergent coordinate quantities.
+
+The dynamical reference provider should return frame-native quantities such as
+
+```math
+\bar\omega^A{}_{BC},
+\qquad
+\bar R^A{}_{BCD},
+\qquad
+\bar\nabla_D\bar\omega^A{}_{BC},
+```
+
+directly from a regular asymptotic representation / coordinate map / orthonormal ADM data.
+
+Required qualification bounds are of the form
+
+```math
+|\bar\omega|\le C_1/M,
+\qquad
+|\bar R|\le C_2/M^2,
+```
+
+with corresponding finite bounds for every derivative entering the lower-order equations.
+
+For the physical relative fields require
+
+```math
+G^{IJ}=O(1),
+\qquad
+(G^{-1})_{IJ}=O(1),
+```
+
+and for the gauge
+
+```math
+J_A=O(1),
+\qquad
+\frac{\partial J_A}{\partial h_{BC}}=O(M^{-1})
+```
+
+in the puncture limit.
+
+These are **formulation gates**, not runtime floors.
+
+---
+
+# 10. `C^infinity` finite-radius plateau
+
+For the outer relative-gauge window and any finite-radius reference stitching, replace the present quintic exact plateau by a `C^infinity` exact plateau.
 
 Define
 
-\[
-\rho(x)=\begin{cases}
+```math
+\rho(x)=
+\begin{cases}
 0,&x\le0,\\
 \exp(-1/x),&x>0,
 \end{cases}
-\]
+```
 
 and
 
-\[
+```math
 S(x)=\frac{\rho(x)}{\rho(x)+\rho(1-x)}.
-\]
+```
 
-Then `S=0` for `x<=0`, `S=1` for `x>=1`, and every derivative vanishes at both endpoints.  For `0<x<1`, let
+Then `S=0` for `x<=0`, `S=1` for `x>=1`, and all derivatives vanish at both endpoints.
 
-\[
+For `0<x<1`, define
+
+```math
 L(x)=-\frac1x+\frac1{1-x},
 \qquad
-S=\frac1{1+e^{-L}}.
-\]
+S=(1+e^{-L})^{-1}.
+```
 
-The first two derivatives are
+Then
 
-\[
+```math
 S'=S(1-S)L',
 \qquad
 L'=\frac1{x^2}+\frac1{(1-x)^2},
-\]
+```
 
-\[
+and
+
+```math
 S''=S(1-S)\left[(1-2S)(L')^2+L''\right],
 \qquad
 L''=-\frac2{x^3}+\frac2{(1-x)^3}.
-\]
+```
 
-For a physical window of width `Delta`, derivatives scale as `1/Delta` and `1/Delta^2`.  `C^infinity` smoothness alone is not enough: `Delta` must not shrink with grid spacing or with the puncture-core radius.  The reference qualification step should evaluate the actual lower-order energy matrix and reject windows whose symmetric part is too large.
+For physical transition width `Delta`, derivatives scale as `Delta^{-1}` and `Delta^{-2}`.  Therefore `C^infinity` smoothness alone is insufficient: do not let the physical width collapse with resolution or with the shrinking wormhole core.
 
 ---
 
-## 10. GH-consistent Bowen--York initial data
+# 11. GH-consistent Bowen--York first-order initial data
 
-Given physical Cauchy data `(gamma_ij,K_ij)`, a chosen initial lapse/shift, a reference, and an algebraic gauge `H_a(x,t,g)`, construct first-order data as follows.
+The direct fixed-reference experiment identified the correct mathematical issue: preserving a complete coordinate first jet while changing the gauge source generally violates `C_a=0`.
 
-### Step 1: metric and spatial first jet
+The correct construction preserves the physical Cauchy data `(gamma_ij,K_ij)` and uses the four GH constraints to determine the four gauge components of the metric velocity.
 
-Build
+## 11.1 Six physical components
 
-\[
+Choose initial lapse `alpha` and shift `beta^i`, then form
+
+```math
 g_{00}=-\alpha^2+\gamma_{ij}\beta^i\beta^j,
-\quad
+\qquad
 g_{0i}=\gamma_{ij}\beta^j,
-\quad
-g_{ij}=\gamma_{ij},
-\]
-
-and their spatial derivatives.  Project to
-
-\[
-h_{AB}=\bar e_A{}^a\bar e_B{}^b g_{ab}-\eta_{AB}.
-\]
-
-Then compute
-
-\[
-Q_{IAB}=\bar e_I{}^a\bar\nabla_a h_{AB}.
-\]
-
-### Step 2: use `K_ij` for the six physical time-derivative combinations
+\qquad
+g_{ij}=\gamma_{ij}.
+```
 
 The ADM identity
 
-\[
+```math
+\boxed{
 \partial_t\gamma_{ij}
 =-2\alpha K_{ij}+\mathcal L_\beta\gamma_{ij}
-\]
+}
+```
 
-fixes the six `ij` components of the metric time derivative.
+fixes six independent components of the metric time derivative.
 
-### Step 3: solve the four GH gauge equations
+## 11.2 Four gauge components
 
-Use as unknowns
+The remaining four combinations may be represented by `(partial_t alpha, partial_t beta^i)`.  The exact 3+1 GH identities are
 
-\[
-x^A=(\partial_t\alpha,\partial_t\beta^1,
-      \partial_t\beta^2,\partial_t\beta^3).
-\]
+```math
+(\partial_t-\beta^i\partial_i)\alpha
+=-\alpha^2\left(K+n^aH_a\right),
+```
 
-For fixed `(gamma,K,alpha,beta)` and spatial derivatives, the ten components of `partial_t g_ab` are affine in these four unknowns.  Hence
+and
 
-\[
-\Gamma_a=\Gamma_a^{(0)}+M_{aA}x^A.
-\]
-
-Because the recommended `H_a` is algebraic in `g` and the prescribed reference, it is already known at the initial point.  Solve the `4 x 4` system
-
-\[
-\boxed{M_{aA}x^A=-H_a-\Gamma_a^{(0)}}
-\]
-
-so that
-
-\[
-C_a=H_a+\Gamma_a=0.
-\]
-
-This determines the remaining four time-derivative combinations without changing the physical Cauchy data `(gamma,K)`.
-
-### Step 4: construct all ten `P_AB`
-
-With the complete coordinate first jet now known, compute
-
-\[
-P_{AB}=-n^a\bar\nabla_a h_{AB}.
-\]
-
-The result supplies exactly 10 independent symmetric components: six were fixed physically by `K_ij`, four by the GH gauge constraints.
-
-For standard Bowen--York data, the reference should capture only the universal singular factors.  The regular Bowen--York correction `u`, linear momentum, and spin remain finite residual data rather than being absorbed into a singular reference.
-
----
-
-## 11. Symmetric-hyperbolic proof for the proposed system
-
-The change from raw first derivatives to reference-covariant first derivatives changes only lower-order terms.  The principal matrices are therefore the STANDARD `gamma1=-1` GH matrices.
-
-For the state
-
-\[
-U=(h_{AB},P_{AB},Q_{IAB}),
-\]
-
-take
-
-\[
-\mathcal E[U]
-=m^{AC}m^{BD}
+```math
+\partial_t\beta^i
+=\alpha^2\gamma^{ij}
 \left[
-\Lambda^2h_{AB}h_{CD}
-+P_{AB}P_{CD}
--2\gamma_2h_{AB}P_{CD}
-+G^{IJ}Q_{IAB}Q_{JCD}
+H_j-\partial_j\ln\alpha+{}^{(3)}\Gamma_j
 \right],
-\]
+```
 
-with `m^{AB}>0`, `G^{IJ}>0`, and `Lambda^2>gamma2^2`.  Then `S>0` and direct block multiplication gives
+where
 
-\[
-SA^i=(SA^i)^T.
-\]
+```math
+{}^{(3)}\Gamma_j
+:=\gamma^{kl}\,{}^{(3)}\Gamma_{jkl}.
+```
 
-The algebraic relative gauge and every reference-curvature/connection term are lower order.  They do not alter this proof.
+These identities prove that the four GH conditions determine the four gauge velocities whenever the spatial metric is positive definite and `alpha>0`.
 
-**Classification: PROVED, conditional only on the relative metric remaining Lorentzian and the spatial block remaining positive definite.**
+However, near a puncture the production implementation should **not** evaluate a singular coordinate wave-map source `B_a` just to use these formulas.  Instead solve the equivalent four equations
 
-Symmetric hyperbolicity does not prove numerical decay.  The lower-order reference and gauge matrices still require a static local energy/Jacobian qualification before evolution tests.
+```math
+\boxed{C_A=J_A+\Delta_A=0}
+```
 
----
+directly in frame-native residual variables for the four remaining combinations of `P_AB`.  Together with the six combinations fixed by `K_ij`, this gives all ten independent components of `P_AB`.
 
-## 12. Puncture regularity conditions
-
-The production reference is acceptable only if the coefficients that appear in the residual equations, not merely the reconstructed physical metric, obey finite puncture limits.  Require at minimum:
-
-\[
-G^{IJ}=O(1),\quad (G^{-1})_{IJ}=O(1),
-\]
-
-\[
-\bar\omega^A{}_{BC}=O(M^{-1}),
-\quad
-\bar R^A{}_{BCD}=O(M^{-2}),
-\]
-
-\[
-J_A=O(1),\quad
-\frac{\partial J_A}{\partial h_{BC}}=O(M^{-1}),
-\]
-
-and bounded corresponding first derivatives needed by the lower-order source.
-
-The dynamic reference must be supplied in a representation where these bounds hold **before** numerical evaluation.  A term that is finite only after subtracting two quantities that diverge as `r -> 0` fails this gate.
+This is the preferred implementation because `J_A` and `Delta_A` are regular residual quantities.
 
 ---
 
-## 13. Spinning punctures and BBHs
+# 12. Static lower-order stability qualification
 
-The leading Bowen--York wormhole powers are unchanged by finite linear momentum or spin, so the same local regularization architecture is plausible for boosted/spinning punctures.  The nonspherical corrections live in `h,P,Q`.
+Symmetric hyperbolicity is proved, but the existing evidence shows that this is not enough.  For each frozen reference state construct the main-system energy-growth matrix
 
-For binaries, use two local puncture reference cores, each with its own wormhole-to-trumpet transition history and moving center.  Stitch them only at finite radius with `C^infinity` windows whose physical width stays finite.  The outer reference may contain translation/rotation/inspiral control maps.
+```math
+\boxed{
+\mathcal K
+=S^{-1/2}
+\left[
+SB+B^TS+\partial_tS+\partial_i(SA^i)
+\right]
+S^{-1/2}.
+}
+```
 
-Do **not** merge the two singular references when a common horizon forms.  Keep both local puncture cores hidden inside the common horizon and transition only the smooth outer reference toward a remnant-centered frame.  The PDE and local puncture regularization remain unchanged through merger.
+Its largest eigenvalue bounds local energy growth in the chosen symmetrizer norm.
 
-This BBH extension is mathematically plausible but not proved stable.
+Do the same for the full subsidiary constraint state
 
----
+```math
+(C_A,\mathcal C_{IAB},\mathcal C_{IJAB}).
+```
 
-## 14. Concrete AthenaK recommendations
+A production reference trajectory must pass at least the following static gates:
 
-### Retain
+- all principal eigenvalues real and characteristic basis complete;
+- symmetrizer positive with controlled condition number;
+- all frame-native lower-order coefficients bounded;
+- no large positive localized eigenvalue of the subsidiary energy-growth matrix in the reference-transition region;
+- the relative-gauge Jacobian does not reintroduce the old fast inner coupled mode;
+- the exact Schwarzschild transition gives zero residual analytically.
 
-- `STANDARD` `Phi` ordering as the principal-system model.
-- `gamma1=-1` and finite nonnegative `gamma2` reduction damping.
-- the background-covariant connection-difference construction in `covariant_gh_source.hpp`.
-- the relative-damped gauge idea and its exact open puncture core.
-- the analytic/generic reference-provider abstraction and diagnostic separation.
-
-### Deprecate/remove from puncture production
-
-- dynamical `reference_q_controlled` exponent tracking;
-- the live `Hhat/theta/Upsilon` 1+log/Gamma-driver puncture path;
-- any reference/gauge source assembled by subtracting independently divergent physical and reference quantities;
-- `C^2` exact-plateau blends in high-order production paths.
-
-### Change
-
-1. Replace evolved `Psi` by `h=Psi-eta` (storage count unchanged).
-2. Replace raw `Pi/Phi` by background-covariant `P/Q`.
-3. Re-express the scalar source directly in `h,P,Q,Delta`, eliminating the raw-frame `frame_correction` cancellation path.
-4. Construct `C_A=J_A+Delta_A` directly.
-5. Provide a dynamic single-hole wormhole-to-trumpet reference trajectory, preferably a vacuum Schwarzschild gauge-transition table/map.
-6. Return regular frame-native spin/curvature data from the reference provider.
-7. Replace plateau smoothsteps by an exact `C^infinity` bump and impose gradient bounds.
-8. Add a GH-consistent initial-data constructor that solves `C_a=0` for the four gauge time derivatives.
-
-### Suggested source-file map
-
-- `src/ref_gh/ref_gh_state.hpp`: keep the 10+10+30 Einstein-field layout but reinterpret/name it as `h`, `P`, `Q`; do not add the old 11 gauge-driver fields to the relative-damped production state.
-- `src/ref_gh/ref_gh_calcrhs.cpp`: derive the STANDARD `Q` equation directly from the background-covariant first-order reduction; do not evolve raw `Phi` and then reconstruct `Q`.
-- `src/ref_gh/covariant_gh_source.hpp`: make `Q` an input and delete the raw-derivative-to-`Q` conversion and its separate `frame_correction` production sector after oracle equivalence is established.
-- `src/ref_gh/relative_damped_gauge.hpp`: retain the algebraic relative gauge, but feed it the covariant first jet and replace the quintic window by the `C^infinity` plateau.
-- `src/ref_gh/reference_trumpet_q_controlled.hpp` and `q_relaxed_controller.hpp`: keep only as diagnostic/history code or remove from the puncture production path.
-- `src/ref_gh/gauge_driver.hpp` and `physical_gauge_target.hpp`: retain for non-puncture/oracle experiments if desired, but do not use them as the live puncture gauge controller.
-- reference providers: add a `wormhole_trumpet_transition` provider that returns a consistent time-dependent reference two-jet plus regular frame-native spin/curvature data.
-- initial-data path: add a reusable `SolveGhGaugeTimeDerivatives` helper implementing the `4 x 4` solve in Sec. 10 before projection to `P`.
-
-### New static qualification helpers
-
-Before any production evolution, add pointwise/frozen-coefficient audits for:
-
-- symmetrizer positivity;
-- `S A^i` symmetry;
-- reference spin/curvature puncture bounds;
-- lower-order main-system energy matrix;
-- lower-order subsidiary constraint matrix;
-- relative-gauge Jacobian;
-- exact zero-residual preservation on the dynamic Schwarzschild reference.
+If a candidate trajectory fails the lower-order gate, change the **reference trajectory / spatial transition geometry / gauge buffer**, not the damping parameters merely to suppress the symptom.
 
 ---
 
-## 15. Minimal later numerical test sequence
+# 13. Why this is genuinely a dynamical moving-puncture formulation
+
+The reference is not fixed to a trumpet from `t=0`.
+
+At `t=0` it has the same wormhole singular class as ordinary Bowen--York data.  Its shift initially may be zero.  As the prescribed moving-puncture reference shift develops, the wormhole coefficient `A(t)` is transported according to the regularity law `dot A + b A = 0`; the crossover radius shrinks; the resolved geometry becomes trumpet-like; and the limiting reference approaches the stationary 1+log trumpet.
+
+The live GH system only evolves **deviations** from this gauge trajectory.  Thus the failed strategy
+
+```text
+live GH gauge driver tries to manufacture 1+log/Gamma-driver motion
+```
+
+is replaced by
+
+```text
+prescribed regular singular gauge trajectory
++ symmetric-hyperbolic GH evolution of deviations
++ algebraic relative damping outside the strong transition region.
+```
+
+This is the central recommendation.
+
+---
+
+# 14. Spinning punctures and generic binaries
+
+For Bowen--York momentum or spin, the leading wormhole conformal factor remains `M/(2r)` plus a finite correction.  The leading singular spatial coframe power is therefore still `r^{-2}`.  The spherical single-hole reference can carry the universal singular gauge sector while momentum, spin, tidal fields, and nonspherical corrections remain finite residuals.
+
+For a binary:
+
+1. give each puncture its own local wormhole-to-trumpet reference core and local transition history;
+2. move the centers with a smooth control map;
+3. stitch to an outer binary frame only at finite radius using `C^infinity` windows of fixed physical width;
+4. keep both local singular cores after common-horizon formation;
+5. transition only the smooth outer reference toward a remnant-centered frame.
+
+No abrupt two-puncture -> one-puncture singular transformation is required.
+
+The binary extension is **plausible but unproved** and requires later numerical qualification.
+
+---
+
+# 15. Concrete AthenaK changes
+
+## Retain
+
+- STANDARD ordering and `gamma1=-1`;
+- finite nonnegative `gamma2` reduction damping;
+- finite positive `gamma0` GH damping;
+- the background-covariant connection-difference architecture in `covariant_gh_source.hpp`;
+- the algebraic relative-damped gauge idea;
+- reference-provider abstraction and analytic/oracle backends.
+
+## Deprecate for puncture production
+
+- dynamic `reference_q_controlled` exponent tracking;
+- `q_relaxed_controller` as a singular-exponent controller;
+- the live `Hhat/theta/Upsilon` moving-puncture driver in the puncture path;
+- any source assembled from separately divergent physical/reference pieces;
+- `C^2` exact-plateau windows in high-order production paths.
+
+## Change
+
+1. Replace stored `Psi` by `h=Psi-eta` (same ten slots).
+2. Replace raw `Pi/Phi` by background-covariant `P/Q` (same 10+30 slots).
+3. Rewrite the nonlinear source directly in `(h,P,Q,Delta)`.
+4. Evaluate `C_A=J_A+Delta_A` directly.
+5. Derive the STANDARD `Q` equation by the covariant compatibility identity plus the covariant curl constraint.
+6. Add a `wormhole_trumpet_transition` reference provider.
+7. Make that provider expose a consistent time-dependent two-jet **and** regular frame-native spin/curvature data.
+8. Encode the finite-time wormhole coefficient `A(t)` and its leading shift transport relation analytically rather than through `q(t)`.
+9. Keep `W=0` through the strong reference-transition buffer; use a `C^infinity` outer plateau.
+10. Add a frame-native GH-consistent initial-data solve for the four gauge components of `P_AB`.
+11. Add frozen-coefficient main/subsidiary energy-matrix diagnostics as static qualification tests.
+
+No production evolution equation should be changed before these identities are independently reproduced by unit/oracle tests.
+
+---
+
+# 16. Minimal later numerical test sequence
 
 No result is claimed here; these are future gates.
 
-1. **Algebra/unit gate:** manufactured smooth reference; compare raw-coordinate and new covariant-variable RHS to roundoff.
-2. **Dynamic-reference zero-state gate:** Schwarzschild wormhole-to-trumpet reference with `h=P=Q=0`; verify the RHS is zero to reference-table accuracy for the entire transition.
-3. **Fixed-reference perturbation gate:** reproduce the formerly unstable finite-radius reference and show that reduction/curl perturbations no longer exhibit the same positive frozen-coefficient mode.
-4. **Single Bowen--York Schwarzschild gate:** initialize wormhole data with the GH-consistent `4 x 4` solve and evolve through the full gauge transition.
-5. **Resolution gate:** verify convergence of GH, reduction, and curl constraints without changing damping/window parameters.
-6. **Boosted/spinning single puncture.**
-7. **Two punctures through common-horizon formation with both local cores retained.**
+1. **Symbolic/algebra gate:** coordinate STANDARD GH vs covariant-residual equations on smooth manufactured references.
+2. **Zero-residual dynamical-reference gate:** nonspinning Schwarzschild, with the full wormhole-to-trumpet reference trajectory and `h=P=Q=0`; RHS must vanish to reference-table/roundoff accuracy throughout the transition.
+3. **Static lower-order gate:** scan the main and subsidiary energy-growth matrices along that trajectory, especially the shrinking crossover region.
+4. **Perturbation gate:** add small constraint perturbations and verify the predicted frozen-coefficient behavior.
+5. **Bowen--York Schwarzschild gate:** use the GH-consistent initial-data construction and evolve the full transition.
+6. **Resolution gate:** demonstrate convergence of GH, reduction, and curl constraints without retuning gauge/damping parameters.
+7. **Boosted and spinning Bowen--York punctures.**
+8. **Two Bowen--York punctures through inspiral and common-horizon formation while retaining two local cores.**
 
 ---
 
-## 16. Final answers to the ten questions
+# 17. Answers to the ten requested questions
 
-1. **Underlying current STANDARD continuum system:** correct in principal part and geometrically consistent away from the puncture; the current raw-frame lower-order realization is not the formulation I recommend for production punctures.
-2. **Fixed-reference reduction/curl growth:** yes, lower-order spatial-frame/gauge matrices can grow constraints without violating symmetric hyperbolicity.
-3. **Current relative-damped gauge:** fundamentally sound as an algebraic relative gauge; retain it after changing the derivative variables and window regularity.
-4. **Time-dependent singular exponent `q(t)`:** abandon it.  `qdot log r` is unavoidable.
-5. **Clean wormhole->trumpet representation:** a genuine dynamical single-hole gauge-transition reference with a wormhole core persisting at the exact puncture for every finite time and an asymptotic trumpet at fixed `r>0`.
-6. **Gauge:** wave-map to that dynamical reference plus the existing relative-damped algebraic correction outside an exact puncture core.  Do not use the old live moving-puncture GH driver in the core.
-7. **Positive-definite symmetrizer:** yes; the STANDARD GH symmetrizer above applies unchanged to `(h,P,Q)`.
-8. **Puncture coefficients:** controlled if the reference provider supplies bounded frame-native connection/curvature coefficients and never forms finite quantities by divergent subtraction.  This is an explicit qualification gate.
-9. **GH-consistent initial data:** preserve `(gamma,K)`, solve `C_a=0` for the four lapse/shift time derivatives, then construct all ten `P_AB`.
-10. **Spin/BBH extension:** plausible with two persistent local cores and only smooth finite-radius outer-frame changes; it requires future numerical validation.
+1. **Is the current STANDARD Ref-GH continuum system mathematically correct?**  The STANDARD principal part, curl correction, characteristics, and `gamma2` structure are correct.  The background-covariant source architecture is geometrically correct in form.  I do not claim a line-by-line formal proof of every handwritten contraction.
+2. **Can a fixed spatially varying reference generate reduction/curl growth without violating symmetric hyperbolicity?**  Yes.  The lower-order energy matrix can have a positive symmetric part.
+3. **Is the current relative-damped gauge fundamentally sound?**  Its matched state and flat frozen-coefficient sign structure are sound.  Retain it, but keep it out of the strong puncture/reference-transition buffer and use covariant residual derivatives.
+4. **Is dynamic `q(t)` viable?**  No as a production singular-exponent controller; `qdot log r` is unavoidable.
+5. **Cleanest wormhole -> trumpet representation?**  A dynamical reference with a receding wormhole coefficient `A(t)`, not a changing power.  Prefer an exact Schwarzschild moving-puncture gauge trajectory.
+6. **What gauge should be used?**  Pure wave-map to that trajectory in the core/transition buffer, plus algebraic relative damping farther out.  Do not use the old live moving-puncture GH driver in the core.
+7. **Positive symmetrizer?**  Yes; the STANDARD GH symmetrizer applies directly to `(h,P,Q)` for `Lambda^2>gamma2^2` and `G^{IJ}>0`.
+8. **Are puncture coefficients controlled?**  They can be, provided the reference satisfies the frame-native bounds and the amplitude/shift asymptotic transport laws.  This remains a required static qualification, not an assumed fact for an arbitrary interpolated reference.
+9. **How are GH-consistent Bowen--York data constructed?**  Preserve `(gamma,K)`, use those data for six metric-velocity combinations, and solve the four regular equations `C_A=J_A+Delta_A=0` for the remaining four components of `P_AB`.
+10. **Can it extend to spin and BBHs?**  Plausibly: the universal local singular powers are unchanged by finite Bowen--York momentum/spin, and two persistent local cores avoid a merger-time singular remap.  Numerical proof remains future work.
 
 ---
 
-## 17. Claim status
+# 18. Claim status
 
-### PROVED
+## PROVED
 
 - STANDARD `gamma1=-1` principal symbol and characteristic speeds.
-- Positive-definite symmetrizer for `Lambda^2>gamma2^2`.
-- `gamma2` reduction-damping sign used by the code.
-- direct exponent tracking produces `qdot log r`.
-- the relative-damped flat matched-state determinant factorization quoted above.
-- algebraic gauges of `h` and prescribed reference fields do not change the first-order principal symbol.
+- Positive symmetrizer for `Lambda^2>gamma2^2`.
+- STANDARD non-coordinate curl correction and the audited `gamma2` signs.
+- The exact GH subsidiary wave equation quoted above for the chosen damping convention.
+- The regular wave-map identity `C_A=J_A+Delta_A`.
+- The flat matched-state relative-gauge factorization.
+- The logarithmic obstruction for a changing exponent `q(t)`.
+- The leading wormhole-coefficient/shift regularity condition `dot A+bA=0`.
+- Four GH constraints determine the four gauge metric-velocity components once `(gamma,K)` are fixed.
 
-### SUPPORTED BY EXISTING NUMERICAL EVIDENCE
+## SUPPORTED BY EXISTING NUMERICAL EVIDENCE
 
-- the old live moving-puncture GH driver is structurally unsafe in the present puncture implementation;
+- the old live moving-puncture GH driver is structurally unsafe in the current puncture realization;
 - reference motion amplifies the instability;
-- a fixed spatially varying reference can support a lower-order reduction/curl growth mode;
-- finite-radius transition regions are the important localization to analyze.
+- fixed spatial reference structure can support a common GH/reduction/curl lower-order growth mode;
+- the present finite-radius transition region is the relevant place to inspect lower-order matrices.
 
-### PLAUSIBLE BUT UNPROVED
+## PLAUSIBLE BUT UNPROVED
 
-- evolving background-covariant first derivatives will remove the observed fixed-reference lower-order mode;
-- a dynamic Schwarzschild transition reference plus relative damping will robustly attract generic Bowen--York single-hole data;
-- the two-core architecture will remain robust through binary merger.
+- the exact Schwarzschild gauge-transition reference has sufficiently mild frame-native lower-order matrices for robust production evolution;
+- covariant residual variables materially improve finite-precision conditioning of the puncture source;
+- the buffered relative gauge robustly controls spinning/boosted deviations;
+- two local dynamical cores remain benign through binary merger.
 
-### REQUIRES FUTURE NUMERICAL TESTING
+## REQUIRES FUTURE NUMERICAL TESTING
 
-- all stability/robustness claims beyond the principal-symbol and local symbolic results;
-- the exact choice of transition-table resolution and outer gauge-window width;
-- boosted, spinning, and BBH production qualification.
+- all production robustness claims beyond the principal/symbolic results;
+- the reference-table/map representation and interpolation accuracy;
+- the physical width/location of the outer relative-gauge plateau;
+- boosted, spinning, and binary qualification.
 
 ---
 
-## 18. Reproducible symbolic identities
+# 19. Reproducible symbolic identities
 
-The two algebraic identities used above can be checked with a few exact symbolic operations.  For the one-dimensional STANDARD principal derivative matrix
+Two exact algebra checks used above are simple to reproduce in SymPy.
 
-\[
-B=\begin{pmatrix}
-0&0&0\\
--\gamma_2\beta&\beta&-\alpha\\
-\alpha\gamma_2&-\alpha&\beta
-\end{pmatrix},
-\qquad
-S=\begin{pmatrix}
-\Lambda^2&-\gamma_2&0\\
--\gamma_2&1&0\\
-0&0&1
-\end{pmatrix},
-\]
+For the STANDARD one-direction principal block,
 
-exact symbolic multiplication gives `S B - (S B)^T = 0`.  Positivity is the completed-square condition `Lambda^2>gamma2^2`.
+```python
+B = Matrix([[0,0,0],
+            [-g2*beta,beta,-alpha],
+            [alpha*g2,-alpha,beta]])
+S = Matrix([[Lam**2,-g2,0],
+            [-g2,1,0],
+            [0,0,1]])
+simplify(S*B - (S*B).T)  # identically zero
+```
 
-For the scalar relative-gauge plane-wave matrix
+For the scalar relative-gauge plane-wave block,
 
-\[
-M=\begin{pmatrix}
-A+\mu_L s&i\mu_L k\\
-i\mu_S k&A+\mu_S s
-\end{pmatrix},
-\qquad A=s^2+k^2,
-\]
+```python
+A = s**2 + k**2
+M = Matrix([[A + muL*s, I*muL*k],
+            [I*muS*k, A + muS*s]])
+factor(M.det())
+```
 
-exact factorization gives
+gives exactly
 
-\[
-\det M=(s^2+k^2)
+```math
+(s^2+k^2)
 \left[s^2+(\mu_L+\mu_S)s+k^2+\mu_L\mu_S\right].
-\]
+```
 
-These are algebraic identities, not numerical fits.
+The wormhole-coefficient result follows directly from the leading isotropic metric
+
+```math
+\gamma_{ij}=A(t)^2r^{-4}\delta_{ij},
+\qquad
+\beta^i=b(t)x^i,
+```
+
+for which
+
+```math
+\partial_t\gamma_{ij}=2\frac{\dot A}{A}\gamma_{ij},
+\qquad
+(\mathcal L_\beta\gamma)_{ij}=-2b\gamma_{ij}.
+```
+
+Thus
+
+```math
+K_{IJ}\sim
+-\bar\alpha^{-1}
+\left(\frac{\dot A}{A}+b\right)\delta_{IJ},
+```
+
+and bounded finite-time wormhole lapse `bar alpha ~ r^2` requires `dot A+bA=0` at leading order.
 
 ## References
 
 - L. Lindblom, M. A. Scheel, L. E. Kidder, R. Owen, O. Rinne, *A New Generalized Harmonic Evolution System*, arXiv:gr-qc/0512093.
 - L. Lindblom, B. Szilagyi, *An Improved Gauge Driver for the Generalized Harmonic Einstein System*, arXiv:0904.4873.
 - M. A. Scheel et al., *Solving Einstein's Equations With Dual Coordinate Frames*, arXiv:gr-qc/0607056, Phys. Rev. D 74, 104006.
+- B. Szilagyi, L. Lindblom, M. A. Scheel, *Simulations of Binary Black Hole Mergers Using Spectral Methods*, arXiv:0909.3557.
 - M. Hannam et al., *Geometry and Regularity of Moving Punctures*, arXiv:gr-qc/0606099.
 - M. Hannam et al., *Where do moving punctures go?*, arXiv:gr-qc/0612097.
+- M. Hannam et al., *Wormholes and trumpets: Schwarzschild spacetime for the moving-puncture generation*, arXiv:0804.0628.
 - M. Hannam, S. Husa, N. O Murchadha, *Bowen--York trumpet data and black-hole simulations*, arXiv:0908.1063.
-- T. Dietrich, B. Bruegmann, *Solving the Hamiltonian constraint for 1+log trumpets*, arXiv:1309.3087.
