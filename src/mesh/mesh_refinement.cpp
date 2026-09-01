@@ -29,6 +29,7 @@
 #include "mhd/mhd.hpp"
 #include "radiation/radiation.hpp"
 #include "coordinates/adm.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
 #include "prolongation.hpp"
@@ -109,6 +110,9 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
   }
   if (pm->pmb_pack->pz4c != nullptr) {
     ncc_tosend += (pm->pmb_pack->pz4c->nz4c);
+  }
+  if (pm->pmb_pack->ppcgh != nullptr) {
+    ncc_tosend += (pm->pmb_pack->ppcgh->npcgh);
   }
   int nmb = std::max((pm->pmb_pack->nmb_thispack), (pm->nmb_maxperrank));
   auto &indcs = pm->mb_indcs;
@@ -511,6 +515,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   mhd::MHD* pmhd = pm->pmb_pack->pmhd;
   radiation::Radiation* prad = pm->pmb_pack->prad;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
+  pc_gh::PcGh* ppcgh = pm->pmb_pack->ppcgh;
   adm::ADM* padm = pm->pmb_pack->padm;
   // derefine (if needed)
   if (ndel > 0) {
@@ -526,6 +531,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (pz4c != nullptr) {
       DerefineCCSameRank(pz4c->u0, pz4c->coarse_u0);
+    }
+    if (ppcgh != nullptr) {
+      DerefineCCSameRank(ppcgh->u0, ppcgh->coarse_u0);
     }
   }
 
@@ -544,6 +552,8 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   }
   if (pz4c != nullptr) {
     CopyCC(pz4c->u0);
+  } else if (ppcgh != nullptr) {
+    CopyCC(ppcgh->u0);
   } else if (padm != nullptr) {
     CopyCC(padm->u_adm);
   }
@@ -563,6 +573,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (pz4c != nullptr) {
       CopyForRefinementCC(pz4c->u0, pz4c->coarse_u0);
+    }
+    if (ppcgh != nullptr) {
+      CopyForRefinementCC(ppcgh->u0, ppcgh->coarse_u0);
     }
   }
 
@@ -598,6 +611,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (pz4c != nullptr) {
       RefineCC(new_to_old, pz4c->u0, pz4c->coarse_u0, true);
+    }
+    if (ppcgh != nullptr) {
+      RefineCC(new_to_old, ppcgh->u0, ppcgh->coarse_u0, true);
     }
   }
 
@@ -649,8 +665,11 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   // Initialize quantities stored on the mesh associated with each physics, if necessary
   if ((nnew > 0) || (ndel > 0)) {
     // With dynGRMHD, recalculate ADM variables
-    if ((pz4c == nullptr) && (padm != nullptr)) {
+    if ((pz4c == nullptr) && (ppcgh == nullptr) && (padm != nullptr)) {
       padm->SetADMVariables(pm->pmb_pack);
+    }
+    if (ppcgh != nullptr) {
+      ppcgh->PcGhToADM(pm->pmb_pack);
     }
     // With radiation, compute tetrads and associated mesh arrays
     if (prad != nullptr) {
@@ -1009,7 +1028,7 @@ void MeshRefinement::CopyForRefinementFC(DvceFaceFld4D<Real> &b,DvceFaceFld4D<Re
 //! copied to another location or sent to another rank via MPI.
 
 void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
-                              DvceArray5D<Real> &ca, bool is_z4c) {
+                              DvceArray5D<Real> &ca, bool high_order_cc) {
   int nvar = a.extent_int(1);  // TODO(@user): 2nd index from L of in array must be NVAR
   auto &new_nmb = new_nmb_eachrank[global_variable::my_rank];
   auto &indcs = pmy_mesh->mb_indcs;
@@ -1054,7 +1073,7 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
         int fk = 2*k - cks;  // correct when cks=ks
 
         // call inlined prolongation operator for CC variables
-        if (!is_z4c) {
+        if (!high_order_cc) {
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
         } else {
           switch (indcs.ng) {
@@ -1159,7 +1178,7 @@ void MeshRefinement::RefineFC(DualArray1D<int> &n2o, DvceFaceFld4D<Real> &b,
 //!  \brief Restricts cell-centered variables to coarse mesh
 
 void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
-    bool is_z4c) {
+    bool high_order_cc) {
   int nmb  = u.extent_int(0);  // TODO(@user): 1st index from L of in array must be NMB
   int nvar = u.extent_int(1);  // TODO(@user): 2nd index from L of in array must be NVAR
 
@@ -1197,7 +1216,7 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
       int finei = 2*i - cis;  // correct when cis=is
       int finej = 2*j - cjs;  // correct when cjs=js
       int finek = 2*k - cks;  // correct when cks=ks
-      if (!is_z4c) {
+      if (!high_order_cc) {
         cu(m,n,k,j,i) =
             0.125*(u(m,n,finek  ,finej  ,finei) + u(m,n,finek  ,finej  ,finei+1)
                 + u(m,n,finek  ,finej+1,finei) + u(m,n,finek  ,finej+1,finei+1)
