@@ -17,6 +17,7 @@ SCRIPTS = [
     "verify_fo_gh_map.py",
     "generate_gauge_a0_table.py",
     "audit_gauge_a0_cancellation.py",
+    "verify_ko_symbol.py",
     "verify_source_policy.py",
 ]
 

@@ -136,7 +136,17 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
     ValidateGaugeA0Domain();
   }
   opt.kappa = pin->GetOrAddReal("pc_gh", "kappa", 0.0);
-  opt.dissipation = pin->GetOrAddReal("pc_gh", "dissipation", 0.0);
+  Real const ko_amplitude = pin->GetOrAddReal("pc_gh", "dissipation", 0.0);
+  if (!(std::isfinite(ko_amplitude) && ko_amplitude >= 0.0)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'
+              << "<pc_gh>/dissipation must be finite and nonnegative" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  // Diss<FD_STENCIL> is the unnormalized alternating 2p-th difference.  Convert the
+  // user-facing nonnegative KO amplitude to the sign and 2^(-2p) normalization that
+  // makes every nonconstant Fourier mode nonpositive for each supported stencil.
+  opt.dissipation = ko_amplitude*std::pow(2.0, -2.0*opt.fd_stencil)
+      *((opt.fd_stencil % 2 == 0) ? -1.0 : 1.0);
 
   pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
   pbval_u->InitializeBuffers(npcgh);

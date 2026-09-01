@@ -78,9 +78,12 @@ It does not call `Dxx` or `Dxy`, form physical Christoffels or physical Ricci, i
 a four-metric, or use reference geometry.  `verify_source_policy.py` scans every
 production file under `src/pc_gh` and fails on those forbidden dependencies.
 
-KO dissipation is an optional separate pass over all 55 fields.  Its coefficient is
-the `<pc_gh>/dissipation` input and was zero for all evidence recorded through the
-current commit.
+KO dissipation is an optional separate pass over all 55 fields.  The user-facing
+`<pc_gh>/dissipation` is a finite nonnegative amplitude.  At setup it is converted to
+the alternating sign and `2^(-2*fd_stencil)` normalization required by the raw
+`Diss<FD_STENCIL>` utility, so every nonconstant Fourier symbol is nonpositive.  The
+earlier direct use of the positive input made the second-order operator anti-dissipative;
+Gate 5 caught that defect before trumpet evolution.
 
 ## Gauge implementations
 

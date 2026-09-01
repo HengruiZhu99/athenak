@@ -981,6 +981,8 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     MRI3d(pin, is_restart);
   } else if (pgen_fun_name.compare("pc_gh_minkowski") == 0) {
     PcGhMinkowski(pin, is_restart);
+  } else if (pgen_fun_name.compare("pc_gh_robust_minkowski") == 0) {
+    PcGhRobustMinkowski(pin, is_restart);
   } else if (pgen_fun_name.compare("pc_gh_gauge_wave") == 0) {
     PcGhGaugeWave(pin, is_restart);
   } else if (pgen_fun_name.compare("pc_gh_trumpet_a0") == 0) {

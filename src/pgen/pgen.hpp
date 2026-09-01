@@ -66,6 +66,7 @@ class ProblemGenerator {
   void Monopole(ParameterInput *pin, const bool restart);
   void MRI3d(ParameterInput *pin, const bool restart);
   void PcGhMinkowski(ParameterInput *pin, const bool restart);
+  void PcGhRobustMinkowski(ParameterInput *pin, const bool restart);
   void PcGhGaugeWave(ParameterInput *pin, const bool restart);
   void PcGhTrumpetA0(ParameterInput *pin, const bool restart);
   void OrszagTang(ParameterInput *pin, const bool restart);
