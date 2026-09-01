@@ -24,10 +24,10 @@ void PcGh::ADMToPcGh(MeshBlockPack *pmbp) {
   auto &size = pmbp->pmb->mb_size;
   int const isg = indcs.is - indcs.ng;
   int const ieg = indcs.ie + indcs.ng;
-  int const jsg = indcs.js - indcs.ng;
-  int const jeg = indcs.je + indcs.ng;
-  int const ksg = indcs.ks - indcs.ng;
-  int const keg = indcs.ke + indcs.ng;
+  int const jsg = pmbp->pmesh->multi_d ? indcs.js - indcs.ng : indcs.js;
+  int const jeg = pmbp->pmesh->multi_d ? indcs.je + indcs.ng : indcs.je;
+  int const ksg = pmbp->pmesh->three_d ? indcs.ks - indcs.ng : indcs.ks;
+  int const keg = pmbp->pmesh->three_d ? indcs.ke + indcs.ng : indcs.ke;
   int const nmb = pmbp->nmb_thispack;
   bool const multi_d = pmbp->pmesh->multi_d;
   bool const three_d = pmbp->pmesh->three_d;
@@ -138,10 +138,10 @@ void PcGh::PcGhToADM(MeshBlockPack *pmbp) {
   int const nmb = pmbp->nmb_thispack;
   int const isg = indcs.is - indcs.ng;
   int const ieg = indcs.ie + indcs.ng;
-  int const jsg = indcs.js - indcs.ng;
-  int const jeg = indcs.je + indcs.ng;
-  int const ksg = indcs.ks - indcs.ng;
-  int const keg = indcs.ke + indcs.ng;
+  int const jsg = pmbp->pmesh->multi_d ? indcs.js - indcs.ng : indcs.js;
+  int const jeg = pmbp->pmesh->multi_d ? indcs.je + indcs.ng : indcs.je;
+  int const ksg = pmbp->pmesh->three_d ? indcs.ks - indcs.ng : indcs.ks;
+  int const keg = pmbp->pmesh->three_d ? indcs.ke + indcs.ng : indcs.ke;
   auto &pc = pmbp->ppcgh->u;
   auto &adm_vars = pmbp->padm->adm;
 

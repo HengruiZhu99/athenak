@@ -129,6 +129,7 @@ add_executable(
         pgen/tests/orszag_tang.cpp
         pgen/tests/mri3d.cpp
         pgen/tests/pc_gh_minkowski.cpp
+        pgen/tests/pc_gh_gauge_wave.cpp
         pgen/tests/shock_tube.cpp
         pgen/tests/shwave.cpp
         pgen/tests/rad_beam.cpp
