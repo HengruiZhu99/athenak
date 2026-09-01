@@ -780,8 +780,67 @@ and must never evaluate the regularity ratios at \(A=\chi=0\).
 `generate_gauge_a0_table.py` independently integrates the isotropic ODE, constructs the
 regular target and source scalars, checks the implicit equation and both source
 definitions, and measures the inner powers. Binary64 table generation is numerically
-audited; interpolation residuals and the required multi-precision cancellation audit
-remain separate production gates.
+audited. Production interpolation, residual ladders, and the multi-precision
+cancellation audit are recorded separately in `docs/pc_gh_qualification_log.md`.
+
+## Gauge A1: bounded feedback linearization
+
+Consider the bounded metric-only feedback proposed after Gauge A0,
+
+\[
+h_\perp=h_{\perp,T}+\mu_L\chi\frac{A-A_T}{A+A_T},\qquad
+h^i=h_T^i-\mu_S\chi(\beta^i-\beta_T^i).
+\]
+
+At the stationary target its first variation is
+
+\[
+\delta h_\perp=\frac{\mu_L\chi_T}{2A_T}\,\delta A,
+\qquad
+\delta h^i=-\mu_S\chi_T\,\delta\beta^i.
+\]
+
+Therefore the only new lower-order terms in the configuration/gradient system are
+
+\[
+\begin{aligned}
+\delta(\partial_t A)&\supset-\mu_L\chi_T\delta A,\\
+\delta(\partial_tY_i)&\supset
+ -\mu_L(X_{Ti}\delta A+\chi_T\delta Y_i),\\
+\delta(\partial_t\beta^j)&\supset-\mu_S\chi_T\delta\beta^j,\\
+\delta(\partial_tB_i{}^j)&\supset
+ -\mu_S(X_{Ti}\delta\beta^j+\chi_T\delta B_i{}^j).
+\end{aligned}
+\]
+
+This linearization does not act on the (Q) sector. That omission is decisive for the
+observed Gauge-A0 frozen mode. On the radial axis write the stationary shift gradient as
+
+\[
+B_i{}^j=\operatorname{diag}(u,t,t).
+\]
+
+For a spatially constant, tangential-derivative-index, tangential trace-free (Q)
+perturbation, the standard-order (Q) equation closes on an algebraically projected
+subspace and gives
+
+\[
+\partial_t\delta Q=\lambda_Q\delta Q,
+\qquad
+\lambda_Q=3t-\frac23(u+2t)=\frac{5t-2u}{3}.
+\]
+
+At (r=M), the production target has
+(u=-0.02183002615/M) and (t=0.15424545392/M), hence
+
+\[
+\lambda_Q=0.27162910729/M>0.
+\]
+
+This subspace is unchanged by either (mu_L) or (mu_S), explaining the positive
+floor in the direct low-rank Gauge-A1 scans. Classification: the bounded Gauge A1 above
+is `PROVED` not to clear the full frozen-operator gate for any feedback coefficients.
+It must not be implemented as a purported cure for this mode.
 
 ## Explicit map to standard first-order GH
 
@@ -1000,7 +1059,8 @@ valid, but its coupling to the full semi-discrete energy remains `NOT ESTABLISHE
 | X/Y/Q/B standard-order equations | `PROVED ON r>0`, Gauge-A conditional | Exact product-rule and curl-ordering audit above. |
 | equivalence to standard FO-GH for r>0 | `PROVED ON r>0`, constraint-manifold and gauge conditional | Explicit mutually inverse variable map and common covariant origin above. |
 | symmetric hyperbolicity for r>0 | `PROVED ON r>0` | Complete pulled-back characteristic basis and positive FO-GH symmetrizer above; no uniform puncture-limit claim. |
-| Gauge A0 continuum target | `PROVED`; table generation numerically audited | Stationary 1+log implicit solution, isotropic ODE, explicit PC-GH map, source identities, and inner-power audit above. Production interpolation is not yet qualified. |
+| Gauge A0 continuum target | `PROVED`; pointwise production gate passed, frozen stability failed | Stationary construction above and bounded numerical evidence in the qualification log. |
+| bounded Gauge A1 feedback | linearization `PROVED`; frozen clearance `FAILED` | The invariant tangential trace-free Q subspace has positive rate `(5t-2u)/3` and is untouched by `mu_L,mu_S`. |
 | Gauge B scaled driver | `NOT ESTABLISHED` | Deferred until Gauge A qualification and a new driver derivation. |
 
 The baseline production primary and gradient RHS are authorized on \(r>0\), subject to

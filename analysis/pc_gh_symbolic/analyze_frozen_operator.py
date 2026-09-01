@@ -97,8 +97,27 @@ def operator_metrics(operator):
             np.linalg.norm(commutator, ord="fro")/max(norm*norm, 1.0e-300))
 
 
-def metrics(path: Path):
+def gauge_a1_feedback(state, mu_l, mu_s):
+    feedback = np.zeros((NSTATE, NSTATE))
+    chi = state[0]
+    x = state[22:25]
+    feedback[18, 18] -= mu_l*chi
+    for direction in range(3):
+        beta = 19 + direction
+        y = 43 + direction
+        feedback[beta, beta] -= mu_s*chi
+        feedback[y, 18] -= mu_l*x[direction]
+        feedback[y, y] -= mu_l*chi
+        for component in range(3):
+            b = 46 + 3*direction + component
+            feedback[b, 19 + component] -= mu_s*x[direction]
+            feedback[b, b] -= mu_s*chi
+    return feedback
+
+
+def metrics(path: Path, mu_l=0.0, mu_s=0.0):
     state, residual, lower, derivative = read_matrix(path)
+    lower = lower + gauge_a1_feedback(state, mu_l, mu_s)
     operator = lower.astype(complex) + 1j*derivative
     raw = operator_metrics(operator)
     projection = projection_jacobian(state)
@@ -132,6 +151,10 @@ def main():
     parser.add_argument("matrices", type=Path, nargs="+")
     parser.add_argument("--details", action="store_true",
                         help="print dominant components of the rightmost eigenmode")
+    parser.add_argument("--mu-l", type=float, default=0.0,
+                        help="linearized bounded Gauge-A1 lapse feedback")
+    parser.add_argument("--mu-s", type=float, default=0.0,
+                        help="linearized bounded Gauge-A1 shift feedback")
     args = parser.parse_args()
     header = ("file", "max|R|", "raw_max_Re", "raw_min_Re", "raw_rho",
               "raw_condV", "raw_mu2", "raw_nonnormality", "rankP",
@@ -140,13 +163,14 @@ def main():
               "||B||_F", "||D||_F")
     print(" ".join(header))
     for path in args.matrices:
-        result = metrics(path)
+        result = metrics(path, args.mu_l, args.mu_s)
         values = (path, *result.values())
         print(str(values[0]), *(f"{value:.17e}" for value in values[1:]))
         if not all(np.isfinite(value) for value in values[1:]):
             raise AssertionError(f"nonfinite frozen-operator metric for {path}")
         if args.details:
             state, _, lower, derivative = read_matrix(path)
+            lower = lower + gauge_a1_feedback(state, args.mu_l, args.mu_s)
             operator = lower.astype(complex) + 1j*derivative
             projection = projection_jacobian(state)
             left, singular, _ = np.linalg.svd(projection)

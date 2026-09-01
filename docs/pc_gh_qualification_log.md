@@ -39,7 +39,7 @@ generator, table, source, and exact numbers below are the durable provenance rec
 | 7 stationary trumpet evolution | BLOCKED | Gauge A0 has a positive projected frozen mode; no derived nonperiodic diagnostic/characteristic outer BC also remains |
 | 8 perturbed trumpet | OPEN | waits on gates 6 and 7 |
 | 9 Bowen-York to trumpet | OPEN | existing ADM initial-data conversion has not been exercised as a qualified transition |
-| 10 Gauge A1 | DEFERRED | only if A0 needs bounded feedback after linear analysis |
+| 10 Gauge A1 | FAILED | bounded feedback linearization cannot affect the positive invariant tangential trace-free Q subspace; no production implementation authorized |
 | 11 Gauge B | DEFERRED | no scaled driver derivation or combined symmetrizer yet |
 | 12 boosted puncture | OPEN | waits on single-hole qualification |
 | 13 spinning puncture | OPEN | waits on single-hole qualification |
@@ -186,6 +186,29 @@ Classification: `FAILED` frozen-operator clearance for Gauge A0.  The Euclidean
 logarithmic norm is diagnostic only; the formulation-energy symmetrizer calculation is
 still required.  No evolution, parameter tuning, or KO escalation is authorized from
 this evidence.
+
+## 2026-09-01 — bounded Gauge A1 discriminator
+
+The bounded feedback was linearized before implementation.  Its complete Jacobian
+update is recorded in `docs/pc_gh_derivation.md` and can be applied with `--mu-l` and
+`--mu-s` in `analyze_frozen_operator.py`.
+
+At `r=M`, `k=0`, and `dx/M=0.025`, a nonnegative grid
+`mu_L,mu_S in {0,0.1,0.3,1,3,10,30}` never makes the projected rightmost rate
+nonpositive.  Shift feedback lowers it from `0.329527/M` but reaches a positive floor
+`0.271629/M`; lapse feedback does not remove that floor.
+
+The floor is analytic, not just a finite scan.  A projected tangential trace-free `Q`
+subspace is invariant under the lower-order operator and has
+
+```text
+lambda_Q = (5 B_tangential - 2 B_radial) / 3
+         = 0.27162910729 / M   at r=M.
+```
+
+Gauge A1 acts only on `A/Y` and `beta/B`, so this eigenvalue is independent of both
+feedback coefficients.  Classification: `FAILED` Gauge A1 frozen clearance.  The
+feedback is not implemented in production.
 
 ## Current hard stop
 

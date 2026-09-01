@@ -103,5 +103,6 @@ norms are not acceptable substitutes.
 - repeat the audit for Bowen-York data once that conversion exists;
 - derive and apply the formulation-energy symmetrizer to the extracted full frozen
   operator; the present Euclidean logarithmic norm is not a substitute;
-- diagnose the resolution-convergent positive projected eigenmode found for Gauge A0;
+- derive a constraint-energy treatment for the positive tangential trace-free `Q`
+  reduction mode; bounded Gauge A1 cannot affect it;
 - repeat backend-sensitive checks under MPI and on the intended GPU backends.
