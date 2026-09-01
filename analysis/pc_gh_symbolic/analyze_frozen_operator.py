@@ -24,13 +24,65 @@ NAMES = (
 assert len(NAMES) == NSTATE
 
 
-def read_matrix(path: Path):
+def complex_jacobian(function, point, output_size):
+    jacobian = np.zeros((output_size, point.size))
+    epsilon = 1.0e-30
+    for column in range(point.size):
+        perturbed = point.astype(complex)
+        perturbed[column] += 1j*epsilon
+        jacobian[:, column] = np.imag(function(perturbed))/epsilon
+    return jacobian
+
+
+def algebraic_constraints(state):
+    metric = symmetric_matrix(state, 1)
+    inverse = np.linalg.inv(metric)
+    values = [np.linalg.det(metric) - 1.0,
+              np.sum(inverse*symmetric_matrix(state, 8))]
+    values.extend(np.sum(inverse*symmetric_matrix(state, 25 + 6*direction))
+                  for direction in range(3))
+    return np.asarray(values)
+
+
+def algebraic_constraint_jacobian(state):
+    return complex_jacobian(algebraic_constraints, state, 5)
+
+
+def modified_wave_covector(wave, spacing, spatial_order):
+    theta = wave*spacing
+    if spatial_order == 2:
+        symbol = np.sin(theta)
+    elif spatial_order == 4:
+        symbol = 4.0*np.sin(theta)/3.0 - np.sin(2.0*theta)/6.0
+    elif spatial_order == 6:
+        symbol = (3.0*np.sin(theta)/2.0 - 3.0*np.sin(2.0*theta)/10.0
+                  + np.sin(3.0*theta)/30.0)
+    else:
+        raise AssertionError(f"unsupported centered spatial order {spatial_order}")
+    return symbol/spacing
+
+
+def read_extended_matrix(path: Path):
     state = np.zeros(NSTATE)
     background = np.zeros(NSTATE)
     lower = np.zeros((NSTATE, NSTATE))
     derivative = np.zeros((NSTATE, NSTATE))
+    constraint_background = np.zeros(8)
+    constraint_lower = np.zeros((8, NSTATE))
+    constraint_derivative = np.zeros((8, NSTATE))
+    metadata = {"wave": None, "spacing": None, "spatial_order": None,
+                "has_constraints": False}
     with path.open() as stream:
         for line in stream:
+            if line.startswith("# k=("):
+                metadata["wave"] = np.fromstring(
+                    line.split("# k=(", 1)[1].split(")", 1)[0], sep=",")
+                metadata["spatial_order"] = int(line.rsplit("order=", 1)[1])
+                continue
+            if line.startswith("# dx=("):
+                metadata["spacing"] = np.fromstring(
+                    line.split("# dx=(", 1)[1].split(")", 1)[0], sep=",")
+                continue
             if line.startswith("#") or not line.strip():
                 continue
             kind, row_text, column_text, value_text = line.split()
@@ -43,9 +95,21 @@ def read_matrix(path: Path):
                 lower[row, column] = value
             elif kind == "D":
                 derivative[row, column] = value
+            elif kind == "C":
+                constraint_background[row] = value
+                metadata["has_constraints"] = True
+            elif kind == "L":
+                constraint_lower[row, column] = value
+            elif kind == "F":
+                constraint_derivative[row, column] = value
             else:
                 raise ValueError(f"unknown matrix row kind {kind!r}")
-    return state, background, lower, derivative
+    return (state, background, lower, derivative, constraint_background,
+            constraint_lower, constraint_derivative, metadata)
+
+
+def read_matrix(path: Path):
+    return read_extended_matrix(path)[:4]
 
 
 def symmetric_matrix(vector, start):
@@ -115,6 +179,75 @@ def gauge_a1_feedback(state, mu_l, mu_s):
     return feedback
 
 
+def gh_constraints(state):
+    metric = symmetric_matrix(state, 1)
+    inverse = np.linalg.inv(metric)
+    contracted = np.zeros(3, dtype=state.dtype)
+    q = [symmetric_matrix(state, 25 + 6*direction) for direction in range(3)]
+    for upper in range(3):
+        for j in range(3):
+            for k in range(3):
+                for lower in range(3):
+                    contracted[upper] += 0.5*inverse[j, k]*inverse[upper, lower]*(
+                        q[j][lower, k] + q[k][lower, j] - q[lower][j, k])
+    return np.concatenate(([state[7] + state[17]], contracted - state[14:17]))
+
+
+def mode_constraint_diagnostics(state, vector, constraint_lower,
+                                constraint_derivative, metadata):
+    if not metadata["has_constraints"]:
+        return None
+    if metadata["wave"] is None or metadata["spacing"] is None:
+        raise AssertionError("extended frozen matrix lacks wave/spacing metadata")
+    wave = modified_wave_covector(
+        metadata["wave"], metadata["spacing"], metadata["spatial_order"])
+    production = (constraint_lower.astype(complex)
+                  + 1j*constraint_derivative)@vector
+    algebraic = algebraic_constraint_jacobian(state)@vector
+    gh_direct = complex_jacobian(gh_constraints, state, 4)@vector
+
+    red_x = vector[22:25] - 1j*wave*vector[0]
+    red_y = vector[43:46] - 1j*wave*vector[18]
+    red_q = np.empty((3, 6), dtype=complex)
+    for direction in range(3):
+        red_q[direction] = (vector[25 + 6*direction:31 + 6*direction]
+                            - 1j*wave[direction]*vector[1:7])
+    red_b = (vector[46:55].reshape(3, 3)
+             - 1j*wave[:, None]*vector[19:22][None, :])
+
+    curl_x, curl_y, curl_q, curl_b = [], [], [], []
+    x = vector[22:25]
+    y = vector[43:46]
+    q = vector[25:43].reshape(3, 6)
+    b = vector[46:55].reshape(3, 3)
+    for first in range(3):
+        for second in range(first + 1, 3):
+            curl_x.append(1j*(wave[first]*x[second] - wave[second]*x[first]))
+            curl_y.append(1j*(wave[first]*y[second] - wave[second]*y[first]))
+            curl_q.extend(1j*(wave[first]*q[second] - wave[second]*q[first]))
+            curl_b.extend(1j*(wave[first]*b[second] - wave[second]*b[first]))
+
+    return {
+        "modified_wave": wave,
+        "production_GH": np.linalg.norm(production[:4]),
+        "production_physical": np.linalg.norm(production[4:8]),
+        "GH_crosscheck": np.linalg.norm(production[:4] - gh_direct),
+        "algebraic": np.linalg.norm(algebraic),
+        "reduction_X": np.linalg.norm(red_x),
+        "reduction_Q": np.linalg.norm(red_q),
+        "reduction_Y": np.linalg.norm(red_y),
+        "reduction_B": np.linalg.norm(red_b),
+        "curl_X": np.linalg.norm(curl_x),
+        "curl_Q": np.linalg.norm(curl_q),
+        "curl_Y": np.linalg.norm(curl_y),
+        "curl_B": np.linalg.norm(curl_b),
+        "physical_state": np.linalg.norm(vector[:14]),
+        "gauge_GH_state": np.linalg.norm(vector[14:22]),
+        "geometry_gradient_state": np.linalg.norm(vector[22:43]),
+        "gauge_gradient_state": np.linalg.norm(vector[43:55]),
+    }
+
+
 def metrics(path: Path, mu_l=0.0, mu_s=0.0):
     state, residual, lower, derivative = read_matrix(path)
     lower = lower + gauge_a1_feedback(state, mu_l, mu_s)
@@ -169,7 +302,8 @@ def main():
         if not all(np.isfinite(value) for value in values[1:]):
             raise AssertionError(f"nonfinite frozen-operator metric for {path}")
         if args.details:
-            state, _, lower, derivative = read_matrix(path)
+            (state, _, lower, derivative, _, constraint_lower,
+             constraint_derivative, metadata) = read_extended_matrix(path)
             lower = lower + gauge_a1_feedback(state, args.mu_l, args.mu_s)
             operator = lower.astype(complex) + 1j*derivative
             projection = projection_jacobian(state)
@@ -184,6 +318,17 @@ def main():
             for component in np.argsort(np.abs(vector))[-12:][::-1]:
                 print(f"  {NAMES[component]:8s} |v|={abs(vector[component]):.8e} "
                       f"phase={np.angle(vector[component]):+.8e}")
+            diagnostics = mode_constraint_diagnostics(
+                state, vector, constraint_lower, constraint_derivative, metadata)
+            if diagnostics is None:
+                print("  constraint decomposition unavailable in legacy matrix artifact")
+            else:
+                print("  constraint/sector decomposition (mode max |component| = 1):")
+                for name, value in diagnostics.items():
+                    if name == "modified_wave":
+                        print("    modified_wave=" + ",".join(f"{entry:.8e}" for entry in value))
+                    else:
+                        print(f"    {name:27s} {value:.8e}")
 
 
 if __name__ == "__main__":

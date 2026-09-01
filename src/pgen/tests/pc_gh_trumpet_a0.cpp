@@ -70,12 +70,31 @@ void CheckPcGhFrozenOperator(ParameterInput *pin, Mesh *pm) {
     return result;
   };
 
+  auto calculate_constraints = [&]() {
+    switch (pcgh.opt.fd_stencil) {
+      case 2: (void)pcgh.CalcConstraints<2>(nullptr, 0); break;
+      case 3: (void)pcgh.CalcConstraints<3>(nullptr, 0); break;
+      case 4: (void)pcgh.CalcConstraints<4>(nullptr, 0); break;
+      default: std::abort();
+    }
+    auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), pcgh.u_con);
+    std::vector<Real> result(pc_gh::PcGh::I_CON_RED_X);
+    for (int row = 0; row < pc_gh::PcGh::I_CON_RED_X; ++row) {
+      result[row] = host(0, row, kc, jc, ic);
+    }
+    return result;
+  };
+
   Kokkos::deep_copy(pcgh.u1, pcgh.u0);
   auto background_host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), pcgh.u1);
   std::vector<Real> const background_rhs = calculate_rhs();
+  std::vector<Real> const background_constraints = calculate_constraints();
   int constexpr nstate = pc_gh::PcGh::npcgh;
+  int constexpr nsigned_constraints = pc_gh::PcGh::I_CON_RED_X;
   std::vector<Real> lower_order(nstate*nstate, 0.0);
   std::vector<Real> fd_response(nstate*nstate, 0.0);
+  std::vector<Real> constraint_lower(nsigned_constraints*nstate, 0.0);
+  std::vector<Real> constraint_fd(nsigned_constraints*nstate, 0.0);
   int const isg = indcs.is - indcs.ng;
   int const ieg = indcs.ie + indcs.ng;
   int const jsg = indcs.js - indcs.ng;
@@ -89,6 +108,7 @@ void CheckPcGhFrozenOperator(ParameterInput *pin, Mesh *pm) {
     Real const epsilon = relative_epsilon*scale;
     for (int mode = 0; mode < 2; ++mode) {
       std::vector<Real> side[2];
+      std::vector<Real> constraint_side[2];
       for (int side_index = 0; side_index < 2; ++side_index) {
         Real const sign = (side_index == 0) ? -1.0 : 1.0;
         Kokkos::deep_copy(pcgh.u0, pcgh.u1);
@@ -110,6 +130,7 @@ void CheckPcGhFrozenOperator(ParameterInput *pin, Mesh *pm) {
         });
         Kokkos::fence();
         side[side_index] = calculate_rhs();
+        constraint_side[side_index] = calculate_constraints();
       }
       for (int row = 0; row < nstate; ++row) {
         Real const derivative = (side[1][row] - side[0][row])/(2.0*epsilon);
@@ -118,6 +139,17 @@ void CheckPcGhFrozenOperator(ParameterInput *pin, Mesh *pm) {
           std::exit(EXIT_FAILURE);
         }
         ((mode == 0) ? lower_order : fd_response)[row*nstate + column] = derivative;
+      }
+      for (int row = 0; row < nsigned_constraints; ++row) {
+        Real const derivative = (constraint_side[1][row] - constraint_side[0][row])
+                                /(2.0*epsilon);
+        if (!std::isfinite(derivative)) {
+          std::cout << "PC-GH frozen constraint symbol contains a nonfinite entry"
+                    << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        ((mode == 0) ? constraint_lower : constraint_fd)[row*nstate + column]
+            = derivative;
       }
     }
   }
@@ -131,6 +163,10 @@ void CheckPcGhFrozenOperator(ParameterInput *pin, Mesh *pm) {
       static_cast<double>(wave_kx), static_cast<double>(wave_ky),
       static_cast<double>(wave_kz), static_cast<double>(relative_epsilon),
       pcgh.opt.spatial_order);
+  std::fprintf(file, "# dx=(%.17e,%.17e,%.17e)\n",
+      static_cast<double>(size.h_view(0).dx1),
+      static_cast<double>(size.h_view(0).dx2),
+      static_cast<double>(size.h_view(0).dx3));
   std::fprintf(file, "# kind row column value\n");
   for (int row = 0; row < nstate; ++row) {
     std::fprintf(file, "S %d -1 %.17e\n", row,
@@ -142,6 +178,16 @@ void CheckPcGhFrozenOperator(ParameterInput *pin, Mesh *pm) {
                    static_cast<double>(lower_order[row*nstate + column]));
       std::fprintf(file, "D %d %d %.17e\n", row, column,
                    static_cast<double>(fd_response[row*nstate + column]));
+    }
+  }
+  for (int row = 0; row < nsigned_constraints; ++row) {
+    std::fprintf(file, "C %d -1 %.17e\n", row,
+                 static_cast<double>(background_constraints[row]));
+    for (int column = 0; column < nstate; ++column) {
+      std::fprintf(file, "L %d %d %.17e\n", row, column,
+                   static_cast<double>(constraint_lower[row*nstate + column]));
+      std::fprintf(file, "F %d %d %.17e\n", row, column,
+                   static_cast<double>(constraint_fd[row*nstate + column]));
     }
   }
   std::fclose(file);

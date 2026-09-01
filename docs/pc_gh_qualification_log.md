@@ -395,6 +395,31 @@ metric source and therefore cannot change `lambda_R`.  This diagnoses a local
 reduction-constraint growth mechanism; it does not establish a global eigenmode or an
 evolution growth rate.
 
+## 2026-09-01 — independent frozen-operator re-audit handoff
+
+A fresh local extraction independently reproduced the previously recorded rightmost
+rates.  For `k=0`, the raw rates at `dx/M={0.1,0.05,0.025}` are
+`{0.3330987443,0.3337008071,0.3338520383}/M`; the projected `dx/M=0.025` rate is
+`0.3295271942/M`.  Repeating the finest extraction with relative perturbations
+`1e-6`, `1e-7`, and `1e-8` agrees to the displayed digits.  For radial `kM=1`, the
+raw rates at the same spacings are `{0.3218119199,0.3225780310,0.3227709150}/M`,
+and the finest projected rate is `0.3365117983/M`.
+
+The extractor now also linearizes the signed production constraint residuals, and
+the analyzer reports GH, physical, algebraic, first-order reduction, and curl
+responses of the rightmost projected mode.  At `k=0`, `dx/M=0.025`, that mode has
+eigenvalue `(0.3295271942+0.1970486050 i)/M`.  One representative eigenvector,
+normalized to maximum component one, has production GH and physical-constraint
+response norms `1.6986` and `0.4581`, while its algebraic-constraint response is
+`2.8e-16`.  Its reduction-constraint norms `(X,Q,Y,B)` are
+`(0.1467,1.6037,0.1266,0.3492)`.  Thus this rightmost representative is tangent to
+the algebraic conformal manifold but is not an admissible physical/GH/
+reduction-constraint perturbation.
+
+This re-audit was stopped at the user's request for remote independent review.  The
+new decomposition is diagnostic infrastructure, not a completed root-cause audit,
+and it does not supersede the hard stop below.
+
 ## Current hard stop
 
 Do not start a stationary evolution campaign.  Gauge A0 has a robust positive projected
