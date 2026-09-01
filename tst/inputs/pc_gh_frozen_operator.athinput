@@ -1,0 +1,51 @@
+# Local production-kernel Jacobian for the stationary PC-GH Gauge A0 target
+
+<job>
+basename = pc_gh_frozen_operator
+
+<mesh>
+nghost = 2
+nx1 = 5
+x1min = 0.75
+x1max = 1.25
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 5
+x2min = -0.25
+x2max = 0.25
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 5
+x3min = -0.25
+x3max = 0.25
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 5
+nx2 = 5
+nx3 = 5
+
+<time>
+evolution = dynamic
+integrator = rk2
+cfl_number = 0.1
+nlim = 0
+tlim = 0.0
+ndiag = 1
+
+<pc_gh>
+spatial_order = 2
+gauge = a0
+gauge_a0_table = inputs/pc_gh/gauge_a0_m1.dat
+gauge_mass = 1.0
+kappa = 0.0
+dissipation = 0.0
+
+<problem>
+pgen_name = pc_gh_trumpet_a0
+frozen_operator = true
+frozen_kx = 1.0
+frozen_ky = 0.0
+frozen_kz = 0.0
+frozen_epsilon = 1.0e-7

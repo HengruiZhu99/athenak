@@ -6,6 +6,7 @@
 //! \file pc_gh_trumpet_a0.cpp
 //! \brief stationary Schwarzschild 1+log trumpet target for prescribed Gauge A0
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -21,6 +22,132 @@
 #include "pgen/pgen.hpp"
 
 namespace {
+
+void CheckPcGhFrozenOperator(ParameterInput *pin, Mesh *pm) {
+  MeshBlockPack *pmbp = pm->pmb_pack;
+  auto &pcgh = *pmbp->ppcgh;
+  auto &indcs = pm->mb_indcs;
+  if (global_variable::nranks != 1 || pmbp->nmb_thispack != 1
+      || indcs.nx1 < 5 || indcs.nx2 < 5 || indcs.nx3 < 5
+      || indcs.nx1%2 == 0 || indcs.nx2%2 == 0 || indcs.nx3%2 == 0) {
+    std::cout << "PC-GH frozen operator requires one rank, one MeshBlock, and odd "
+              << "three-dimensional extents of at least five cells" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  auto &size = pmbp->pmb->mb_size;
+  size.template sync<HostMemSpace>();
+  int const ic = indcs.is + indcs.nx1/2;
+  int const jc = indcs.js + indcs.nx2/2;
+  int const kc = indcs.ks + indcs.nx3/2;
+  Real const x0 = CellCenterX(ic - indcs.is, indcs.nx1,
+                              size.h_view(0).x1min, size.h_view(0).x1max);
+  Real const y0 = CellCenterX(jc - indcs.js, indcs.nx2,
+                              size.h_view(0).x2min, size.h_view(0).x2max);
+  Real const z0 = CellCenterX(kc - indcs.ks, indcs.nx3,
+                              size.h_view(0).x3min, size.h_view(0).x3max);
+  Real const wave_kx = pin->GetOrAddReal("problem", "frozen_kx", 1.0);
+  Real const wave_ky = pin->GetOrAddReal("problem", "frozen_ky", 0.0);
+  Real const wave_kz = pin->GetOrAddReal("problem", "frozen_kz", 0.0);
+  Real const relative_epsilon =
+      pin->GetOrAddReal("problem", "frozen_epsilon", 1.0e-7);
+  if (!(relative_epsilon > 0.0)) {
+    std::cout << "PC-GH frozen-operator epsilon must be positive" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  auto calculate_rhs = [&]() {
+    switch (pcgh.opt.fd_stencil) {
+      case 2: (void)pcgh.CalcRHS<2>(nullptr, 0); break;
+      case 3: (void)pcgh.CalcRHS<3>(nullptr, 0); break;
+      case 4: (void)pcgh.CalcRHS<4>(nullptr, 0); break;
+      default: std::abort();
+    }
+    auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), pcgh.u_rhs);
+    std::vector<Real> result(pc_gh::PcGh::npcgh);
+    for (int row = 0; row < pc_gh::PcGh::npcgh; ++row) {
+      result[row] = host(0, row, kc, jc, ic);
+    }
+    return result;
+  };
+
+  Kokkos::deep_copy(pcgh.u1, pcgh.u0);
+  auto background_host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), pcgh.u1);
+  std::vector<Real> const background_rhs = calculate_rhs();
+  int constexpr nstate = pc_gh::PcGh::npcgh;
+  std::vector<Real> lower_order(nstate*nstate, 0.0);
+  std::vector<Real> fd_response(nstate*nstate, 0.0);
+  int const isg = indcs.is - indcs.ng;
+  int const ieg = indcs.ie + indcs.ng;
+  int const jsg = indcs.js - indcs.ng;
+  int const jeg = indcs.je + indcs.ng;
+  int const ksg = indcs.ks - indcs.ng;
+  int const keg = indcs.ke + indcs.ng;
+  auto state = pcgh.u0;
+
+  for (int column = 0; column < nstate; ++column) {
+    Real const scale = std::max(1.0, std::fabs(background_host(0, column, kc, jc, ic)));
+    Real const epsilon = relative_epsilon*scale;
+    for (int mode = 0; mode < 2; ++mode) {
+      std::vector<Real> side[2];
+      for (int side_index = 0; side_index < 2; ++side_index) {
+        Real const sign = (side_index == 0) ? -1.0 : 1.0;
+        Kokkos::deep_copy(pcgh.u0, pcgh.u1);
+        par_for("PC-GH frozen operator perturbation", DevExeSpace(),
+        0, 0, ksg, keg, jsg, jeg, isg, ieg,
+        KOKKOS_LAMBDA(int m, int k, int j, int i) {
+          Real waveform = 1.0;
+          if (mode == 1) {
+            Real const x = CellCenterX(i - indcs.is, indcs.nx1,
+                size.d_view(m).x1min, size.d_view(m).x1max);
+            Real const y = CellCenterX(j - indcs.js, indcs.nx2,
+                size.d_view(m).x2min, size.d_view(m).x2max);
+            Real const z = CellCenterX(k - indcs.ks, indcs.nx3,
+                size.d_view(m).x3min, size.d_view(m).x3max);
+            waveform = std::sin(wave_kx*(x - x0) + wave_ky*(y - y0)
+                                + wave_kz*(z - z0));
+          }
+          state(m, column, k, j, i) += sign*epsilon*waveform;
+        });
+        Kokkos::fence();
+        side[side_index] = calculate_rhs();
+      }
+      for (int row = 0; row < nstate; ++row) {
+        Real const derivative = (side[1][row] - side[0][row])/(2.0*epsilon);
+        if (!std::isfinite(derivative)) {
+          std::cout << "PC-GH frozen operator contains a nonfinite entry" << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        ((mode == 0) ? lower_order : fd_response)[row*nstate + column] = derivative;
+      }
+    }
+  }
+  Kokkos::deep_copy(pcgh.u0, pcgh.u1);
+
+  FILE *file = std::fopen("pc_gh_frozen_operator.dat", "w");
+  if (file == nullptr) std::exit(EXIT_FAILURE);
+  std::fprintf(file, "# PC-GH frozen operator at x=(%.17e,%.17e,%.17e)\n",
+      static_cast<double>(x0), static_cast<double>(y0), static_cast<double>(z0));
+  std::fprintf(file, "# k=(%.17e,%.17e,%.17e) epsilon=%.17e order=%d\n",
+      static_cast<double>(wave_kx), static_cast<double>(wave_ky),
+      static_cast<double>(wave_kz), static_cast<double>(relative_epsilon),
+      pcgh.opt.spatial_order);
+  std::fprintf(file, "# kind row column value\n");
+  for (int row = 0; row < nstate; ++row) {
+    std::fprintf(file, "S %d -1 %.17e\n", row,
+                 static_cast<double>(background_host(0, row, kc, jc, ic)));
+    std::fprintf(file, "R %d -1 %.17e\n", row,
+                 static_cast<double>(background_rhs[row]));
+    for (int column = 0; column < nstate; ++column) {
+      std::fprintf(file, "B %d %d %.17e\n", row, column,
+                   static_cast<double>(lower_order[row*nstate + column]));
+      std::fprintf(file, "D %d %d %.17e\n", row, column,
+                   static_cast<double>(fd_response[row*nstate + column]));
+    }
+  }
+  std::fclose(file);
+  std::cout << "PASS: wrote 55x55 PC-GH lower-order and FD-response matrices at ("
+            << x0 << ',' << y0 << ',' << z0 << ")" << std::endl;
+}
 
 void CheckPcGhTrumpetA0(ParameterInput *pin, Mesh *pm) {
   MeshBlockPack *pmbp = pm->pmb_pack;
@@ -236,8 +363,9 @@ void CheckPcGhTrumpetA0(ParameterInput *pin, Mesh *pm) {
 
 }  // namespace
 
-void ProblemGenerator::PcGhTrumpetA0(ParameterInput *, const bool restart) {
-  pgen_final_func = CheckPcGhTrumpetA0;
+void ProblemGenerator::PcGhTrumpetA0(ParameterInput *pin, const bool restart) {
+  pgen_final_func = pin->GetOrAddBoolean("problem", "frozen_operator", false)
+      ? CheckPcGhFrozenOperator : CheckPcGhTrumpetA0;
   if (restart) return;
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
   if (pmbp->ppcgh == nullptr || pmbp->padm == nullptr
