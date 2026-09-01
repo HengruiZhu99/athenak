@@ -6,7 +6,7 @@ This is an append-oriented evidence log.  A build, a short run, or a finite resi
 does not by itself qualify the solver.  `PASS` below means only that the named bounded
 gate passed.  `OPEN` and `BLOCKED` are not silently replaced by weaker criteria.
 
-Current evidence commit: `f2b20729b315fca553449661749e94b010452fe6`.
+Current evidence commit: `2404f5ada107341af8e0a2c6a8651c12a18b4548`.
 Required baseline: `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 
 ## Reproducibility envelope
@@ -35,7 +35,7 @@ generator, table, source, and exact numbers below are the durable provenance rec
 | 3 Minkowski pointwise | PASS | exact state, ADM round trip, RHS, and diagnostics at floating-point zero |
 | 4 wave convergence | PARTIAL | nonlinear harmonic gauge-wave implementation and finite `t=1` run; required three-resolution all-sector order ladder remains |
 | 5 robust Minkowski | OPEN | random perturbation and resolution-growth search not run |
-| 6 stationary trumpet pointwise | PARTIAL | continuum target and RMS residual ladder pass their bounded checks; temporary-by-temporary conditioning is still mandatory |
+| 6 stationary trumpet pointwise | PASS | continuum target, decomposed three-precision conditioning audit, maximum locations, and second-order RMS residual ladder pass on their stated punctured domains |
 | 7 stationary trumpet evolution | BLOCKED | no derived nonperiodic diagnostic/characteristic outer BC and no frozen-operator clearance |
 | 8 perturbed trumpet | OPEN | waits on gates 6 and 7 |
 | 9 Bowen-York to trumpet | OPEN | existing ADM initial-data conversion has not been exercised as a qualified transition |
@@ -116,11 +116,31 @@ output identifies the maximum and its location; family maxima and RMS are MPI-gl
 when built with MPI.
 
 Classification: second-order discrete pointwise evidence on a bounded shell.  It is not
-a source-conditioning pass, an outer-boundary pass, or a stationary evolution result.
+an outer-boundary pass or a stationary evolution result.
+
+## 2026-09-01 — stationary Gauge A0 source-cancellation audit
+
+Script: `analysis/pc_gh_symbolic/audit_gauge_a0_cancellation.py`.
+
+The script evaluated the production table representation on a radial/tangential tensor
+basis at 73 radii from `1.1e-8 M` through `100 M`.  It logged 387 named temporaries,
+additive RHS terms, sums, and term scales in binary64, long double, and 100-digit
+arithmetic.
+
+Result: no additive RHS term has fitted inner power below `-0.25`.  The maximum
+100-digit total RHS on the bounded open table domain is `5.118e-5` in radial `Lambda`
+at `r=2.0797956529e-8 M`.  The worst binary64 discrepancy is `2.827e-8` absolute and
+`3.547e-7` relative to the corresponding additive-term scale.  The table was regenerated
+byte-for-byte with SHA-256
+`122d84a52b4f19ea5c7e4c13a4e0bc8a9d488265d5d9df306bdd360978928eb5`.
+
+The raw angular derivative of the direction-dependent trumpet `Atilde` tensor scales as
+`r^-1.000001`.  It is logged rather than hidden; all additive RHS terms containing it
+remain bounded.  This closes the mandatory Gauge A0 temporary-cancellation gate on the
+punctured table domain.  It does not cover Bowen-York data.
 
 ## Current hard stop
 
-Do not start a stationary evolution campaign.  The mandatory temporary-by-temporary
-source-cancellation audit and complete frozen-operator stability analysis are open, and
-only periodic physical boundaries exist.  A periodic finite box is not acceptable as a
-production single-hole outer boundary.
+Do not start a stationary evolution campaign.  The complete frozen-operator stability
+analysis is open, and only periodic physical boundaries exist.  A periodic finite box
+is not acceptable as a production single-hole outer boundary.

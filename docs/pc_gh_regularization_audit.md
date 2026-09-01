@@ -3,7 +3,7 @@
 ## Status
 
 This audit records algebraic evidence through
-`f2b20729b315fca553449661749e94b010452fe6`.  The theorem domain is `r>0` with
+`2404f5ada107341af8e0a2c6a8651c12a18b4548`.  The theorem domain is `r>0` with
 positive `A`, positive `chi`, and nonsingular positive-definite `gtilde`.  It does not
 assert a uniformly conditioned continuum extension at an exact `A=chi=0` point.
 
@@ -64,15 +64,26 @@ isotropic-radius ODE independently.  For the 4097-point, `M=1` table it verifies
 |---|---:|
 | implicit stationary 1+log relation | `7.458e-15` |
 | advective 1+log identity | `6.901e-16` |
-| `h_perp` target definition | `1.221e-15` |
+| `h_perp` target definition | `1.332e-15` |
 | radial `h^i` target definition | `6.939e-18` |
 
-The inner fitted powers are `e_A=2.18259458` and `e_chi=2.00000000`.  The committed
+The inner fitted powers are `e_A=2.18259453` and `e_chi=2.00000000`.  The committed
 table SHA-256 is
-`ea34841f37e6908c3f169b2551492440d699b60f0de0d45fd5e0be704c017dd7`.
+`122d84a52b4f19ea5c7e4c13a4e0bc8a9d488265d5d9df306bdd360978928eb5`.
 
 These checks establish the continuum Gauge A0 construction and deterministic table.
-They do not close the mandatory production source-cancellation audit.
+
+The production cancellation audit logs 387 quantities at 73 radii from
+`1.1e-8 M` to `100 M` in binary64, long double, and 100-digit arithmetic.  No additive
+RHS term has a fitted inner power below `-0.25`.  The maximum 100-digit total RHS on the
+open table domain is `5.118e-5` in the radial `Lambda` sector at
+`r=2.0797956529e-8 M`.  The worst binary64 discrepancy from the 100-digit sum is
+`2.827e-8` absolute and `3.547e-7` relative to the additive-term scale.
+
+The audit separately reports `partial Atilde` with fitted power `-1.000001`.  This is
+the genuine angular derivative of the finite but direction-dependent radial tensor,
+not an additive RHS term; every production term multiplying it remains bounded on the
+audited punctured domain.
 
 ## Runtime diagnostics and hard stops
 
@@ -89,9 +100,6 @@ norms are not acceptable substitutes.
 
 ## Open audit items
 
-- log every production RHS temporary versus radius for binary64, long double where
-  meaningful, and high precision;
-- identify and algebraically remove any avoidable divergent cancellation;
 - repeat the audit for Bowen-York data once that conversion exists;
 - sample the full frozen operator, not just its principal part;
 - repeat backend-sensitive checks under MPI and on the intended GPU backends.

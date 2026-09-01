@@ -3,7 +3,7 @@
 ## Scope and authority
 
 This document describes the implementation at commit
-`f2b20729b315fca553449661749e94b010452fe6`, descended from the required
+`2404f5ada107341af8e0a2c6a8651c12a18b4548`, descended from the required
 `project/bbh` baseline `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 The equations are those independently derived in `docs/pc_gh_derivation.md`.
 No old FO-GH, Ref-GH, Z4c equation, reference geometry, controller, or generated
@@ -92,21 +92,30 @@ the nonlinear periodic harmonic gauge wave exercise this path.
 ### Prescribed stationary trumpet Gauge A0
 
 `gauge=a0` reads `inputs/pc_gh/gauge_a0_m1.dat`.  The table contains 4097 uniformly
-spaced log-radius nodes on `r/M in [1e-8,1e4]`, with values and log-radius derivatives
-for `A`, `chi`, radial shift, `K`, radial trace-free curvature, `h_perp`, and radial
-`h^i`.  `generate_gauge_a0_table.py` regenerates the file byte-for-byte.
+spaced log-radius nodes on `r/M in [1e-8,1e4]`.  It stores values, first log-radius
+derivatives, and (for `A`, `chi`, and radial shift) second log-radius derivatives;
+`K`, radial trace-free curvature, `h_perp`, and radial `h^i` store values and first
+derivatives.  `generate_gauge_a0_table.py` regenerates the file byte-for-byte.
 
 The loader rejects malformed rows, extra columns, nonuniform/nonincreasing nodes,
 nonpositive mass, non-3D meshes, exact-center cells, and any current cell or ghost
-point outside the open interpolation domain.  Device interpolation uses the table
-values and slopes in one cubic-Hermite polynomial, returning the derivative of that
-same polynomial.
+point outside the open interpolation domain.  Device interpolation uses quintic
+Hermite polynomials for `A`, `chi`, and radial shift and cubic Hermite polynomials for
+the remaining targets.  The target `B_i{}^j` uses the radial shift for its isotropic
+part and `alpha Atilde` for its trace-free radial part.  This keeps each additive
+metric-gradient RHS term finite instead of differentiating a small difference between
+independent interpolants.
 
 Gauge A0 modifies only the configuration source functions and their explicit spatial
 gradients.  It is prescribed from coordinates, mass, and center and therefore does not
 alter the established GH principal part.  The `pc_gh_trumpet_a0` problem generator
 initializes all 55 fields directly from the same interpolant, without an ADM
 finite-difference conversion.
+
+`audit_gauge_a0_cancellation.py` evaluates 387 named production temporaries and
+additive RHS terms at 73 radii across the open table domain in binary64, long double,
+and 100-digit arithmetic.  It fails if an additive RHS term develops a fitted divergent
+inner power or if the bounded high-precision table residual exceeds its audit limit.
 
 ## ADM conversion, communication, and outputs
 
