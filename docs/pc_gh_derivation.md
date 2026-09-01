@@ -349,6 +349,156 @@ where \({\cal X}_{ij}=\partial_iX_j-
 identity is `PROVED ON r>0`; equality to the physical-Ricci expression is `CONDITIONAL`
 on the spatial GH constraint.
 
+## Covariant reduced-equation projections
+
+The spatial projection of the starting covariant equation uses
+
+\[
+\gamma_i{}^\mu\gamma_j{}^\nu\nabla_\mu C_\nu
+=D_iC_j+K_{ij}C_\perp,
+\qquad C_i=\tilde\gamma_{ij}Z^j,
+\]
+
+and gives
+
+\[
+{}^{(4)}R_{ij}
+=D_{(i}C_{j)}+K_{ij}C_\perp
++\frac\kappa2\gamma_{ij}C_\perp.
+\]
+
+The normal-normal projection is
+
+\[
+{}^{(4)}R_{nn}
+-n(C_\perp)+C_iD^i\ln\alpha
+=\frac\kappa2C_\perp.
+\]
+
+These signs follow directly from \(K_{ij}=-\gamma_i{}^\mu\gamma_j{}^\nu
+\nabla_\mu n_\nu\) and \(C_\perp=n^\mu C_\mu\).
+
+### pi
+
+Using
+
+\[
+{}^{(4)}R_{nn}
+=\frac1\alpha(D_0K+D^iD_i\alpha)-K_{ij}K^{ij}
+\]
+
+and \(D_0C_\perp=D_0\pi+D_0K\), the normal projection yields
+
+\[
+D_0\pi
+=D^iD_i\alpha-\alpha K_{ij}K^{ij}
++\alpha C_iD^i\ln\alpha
+-\frac12\kappa\alpha C_\perp.
+\]
+
+Substitution of the regular identities gives
+
+\[
+D_0\pi
+=-\alpha\tilde A^2-\frac13\alpha K^2
++{\cal A}-\frac14X_iL^i
++\frac\chi2Z^iL_i
+-\frac12\kappa\alpha C_\perp.
+\]
+
+The supplied pi target is therefore `PROVED ON r>0`.
+
+### K and a failed supplied regression target
+
+The trace of the spatial projection gives
+
+\[
+D_0K
+=-D^iD_i\alpha+\alpha({}^{(3)}R+K^2)
+-\alpha D_iC^i-\alpha KC_\perp
+-\frac32\kappa\alpha C_\perp.
+\]
+
+Here
+
+\[
+D_iC^i=\chi\tilde D_iZ^i-\frac12X_iZ^i
+\]
+
+and the reduced Hamiltonian defined with \({\cal R}\) obeys
+
+\[
+{\cal H}={\cal H}_{ADM}-\chi\tilde D_iZ^i.
+\]
+
+The divergence in \({\cal H}_{ADM}\) therefore cancels the divergence in
+\(D_iC^i\). The covariant equation becomes
+
+\[
+\boxed{
+\begin{aligned}
+D_0K={}&
+\alpha\tilde A^2+\frac13\alpha K^2
+-{\cal A}+\frac14X_iL^i\\
+&+\alpha\left[{\cal H}-KC_\perp+\frac12X_iZ^i\right]
+-\frac32\kappa\alpha C_\perp.
+\end{aligned}}
+\]
+
+The supplied regression target additionally contains
+\(-\alpha\chi\tilde D_iZ^i\). It therefore counts the spatial GH divergence twice.
+For \(\alpha=\chi=1\), flat conformal metric, vanishing curvature/extrinsic fields,
+\(C_\perp=0\), and nonzero \(\partial_iZ^i\), the covariant equation gives
+\(D_0K=-\partial_iZ^i\) while the supplied target gives
+\(-2\partial_iZ^i\). This exact counterexample is encoded in
+`verify_primary_projections.py`.
+
+Classification: supplied K target `FAILED`; boxed corrected K equation `PROVED ON r>0`.
+
+### Atilde and a failed supplied nonlinear Z term
+
+The trace-free spatial projection, conformal rescaling, and ADM kinematics give the
+usual shift/extrinsic pieces plus
+
+\[
+\left[\alpha\chi({}^{(3)}R_{ij}-D_{(i}C_{j)})
+-\chi D_iD_j\alpha\right]^{TF}.
+\]
+
+Using the Brown operator exactly as defined above, all derivatives of \(Z^i\) cancel.
+The remaining regular algebraic term is
+
+\[
+\left[-Z_{(i}X_{j)}
+-\frac\chi2 Z^kQ_{kij}\right]^{TF}.
+\]
+
+Thus the covariant result is
+
+\[
+\boxed{
+\begin{aligned}
+D_0\tilde A_{ij}={}&
+[ {\cal S}_{ij}]^{TF}
++2\tilde A_{k(i}B_{j)}{}^k
+-\frac23\tilde A_{ij}B\\
+&-2\alpha\tilde A_{ik}\tilde A^k{}_j
++\alpha K\tilde A_{ij}
+-\alpha C_\perp\tilde A_{ij}\\
+&+\alpha\left[-Z_{(i}X_{j)}
+-\frac\chi2Z^kQ_{kij}\right]^{TF}.
+\end{aligned}}
+\]
+
+The supplied target instead uses \(-\chi Z_k\tilde\Gamma^k{}_{ij}\). In an
+orthonormal conformal frame its TF difference from the covariant projection is a
+nonzero polynomial in arbitrary trace-free \(Q_{kij}\) and \(Z^i\); the exact residual
+is checked in `verify_primary_projections.py`.
+
+Classification: supplied Atilde nonlinear Z term `FAILED`; boxed corrected Atilde
+equation `PROVED ON r>0` under the algebraic and reduction hypotheses of the Brown
+operator.
+
 ## Consistent algebraic projection
 
 Let
@@ -389,9 +539,9 @@ valid, but its coupling to the full semi-discrete energy remains `NOT ESTABLISHE
 | `D0 A`, `D0 beta` | `PROVED ON r>0` | Direct contracted-Christoffel projections above. |
 | regular Hessian, Hamiltonian, scaled momentum, S-TF | `PROVED ON r>0` | Written derivation plus exact SymPy checks. |
 | Brown first-order conformal Ricci | `PROVED` under algebraic/reduction hypotheses | Coordinate Ricci rearrangement plus exact non-diagonal component regression. |
-| K equation | `NOT ESTABLISHED` | Spatial/normal projections of the covariant reduced equation and damping signs must be completed. |
-| Atilde equation | `NOT ESTABLISHED` | Trace-free spatial projection, Z terms, and damping contributions require an independent component comparison. |
-| pi equation | `NOT ESTABLISHED` | Normal-normal projection and source-definition differentiation are incomplete. |
+| K equation | corrected equation `PROVED ON r>0`; supplied target `FAILED` | Covariant spatial trace and exact flat counterexample above. |
+| Atilde equation | corrected equation `PROVED ON r>0`; supplied nonlinear Z term `FAILED` | Covariant trace-free spatial projection and exact arbitrary-Q residual above. |
+| pi equation | `PROVED ON r>0` | Normal-normal covariant projection and exact symbolic comparison. |
 | Lambda equation | `NOT ESTABLISHED` | Time derivative of the spatial GH constraint and standard ordering are incomplete. |
 | X/Y/Q/B standard-order equations | `NOT ESTABLISHED` | Algebraic expansion of each `partial_i^(1) F` and curl-ordering comparison is incomplete. |
 | equivalence to standard FO-GH for r>0 | `NOT ESTABLISHED` | Requires an explicit invertible variable map and equation comparison. |

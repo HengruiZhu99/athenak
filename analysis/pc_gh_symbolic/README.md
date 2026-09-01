@@ -18,10 +18,11 @@ Current coverage:
 | `verify_regularization.py` | regular lapse Hessian; physical/conformal lapse Hessian; scalar curvature; Hamiltonian; trace-free curvature/lapse tensor; scaled momentum | `PROVED ON r>0` for expressions using positive `chi` and `A`; otherwise `PROVED` |
 | `verify_q_projection.py` | product-rule consistency and trace-free property of the simultaneous metric/Q projection | `PROVED` for nonsingular conformal metric |
 | `verify_conformal_ricci.py` | Brown first-order Ricci against coordinate Ricci for a non-diagonal exactly unimodular metric at 18 exact rational component/point pairs | exact regression supporting the written `PROVED` index derivation |
+| `verify_primary_projections.py` | normal-normal pi equation; corrected K divergence count; corrected Atilde nonlinear Z term; exact counterexamples to the supplied K and Atilde regression targets | pi and corrected terms `PROVED`; supplied K/Atilde targets `FAILED` |
 
 Not yet covered, and therefore not established by these scripts:
 
-- the K, Atilde, pi, and Lambda primary evolution equations;
+- the Lambda primary evolution equation and a full independent component oracle for all corrected primary equations;
 - the expanded standard-order X/Y/Q/B evolution equations;
 - equivalence to standard FO-GH and the full principal symbol/symmetrizer;
 - Gauge A0 or Gauge B;

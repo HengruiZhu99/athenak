@@ -11,6 +11,7 @@ SCRIPTS = [
     "verify_regularization.py",
     "verify_q_projection.py",
     "verify_conformal_ricci.py",
+    "verify_primary_projections.py",
 ]
 
 
