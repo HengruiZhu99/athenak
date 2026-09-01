@@ -9,6 +9,7 @@
 //! \file pc_gh.hpp
 //! \brief puncture-conformal first-order generalized-harmonic state and interfaces
 
+#include <cmath>
 #include <string>
 
 #include "athena.hpp"
@@ -65,6 +66,44 @@ class PcGh {
     ncon
   };
   static char const * const ConstraintNames[ncon];
+
+  enum : int {
+    I_A0_A, I_A0_DX_A,
+    I_A0_CHI, I_A0_DX_CHI,
+    I_A0_BETA_R, I_A0_DX_BETA_R,
+    I_A0_K, I_A0_DX_K,
+    I_A0_AT_RADIAL, I_A0_DX_AT_RADIAL,
+    I_A0_H_PERP, I_A0_DX_H_PERP,
+    I_A0_H_RADIAL, I_A0_DX_H_RADIAL,
+    na0
+  };
+
+  KOKKOS_INLINE_FUNCTION
+  static void InterpolateGaugeA0(const DvceArray2D<Real> &table, int npoints,
+                                 Real log_r_min, Real inv_dlog_r, int field,
+                                 Real log_r, Real &value, Real &dx_value) {
+    Real const location = (log_r - log_r_min)*inv_dlog_r;
+    int interval = static_cast<int>(std::floor(location));
+    if (interval < 0 || interval >= npoints - 1) {
+      value = NAN;
+      dx_value = NAN;
+      return;
+    }
+    Real const t = location - interval;
+    Real const t2 = t*t;
+    Real const t3 = t2*t;
+    Real const spacing = 1.0/inv_dlog_r;
+    Real const y0 = table(field, interval);
+    Real const m0 = table(field + 1, interval);
+    Real const y1 = table(field, interval + 1);
+    Real const m1 = table(field + 1, interval + 1);
+    value = (2.0*t3 - 3.0*t2 + 1.0)*y0
+        + (t3 - 2.0*t2 + t)*spacing*m0
+        + (-2.0*t3 + 3.0*t2)*y1
+        + (t3 - t2)*spacing*m1;
+    dx_value = ((6.0*t2 - 6.0*t)*y0 + (-6.0*t2 + 6.0*t)*y1)/spacing
+        + (3.0*t2 - 4.0*t + 1.0)*m0 + (3.0*t2 - 2.0*t)*m1;
+  }
 
   KOKKOS_INLINE_FUNCTION
   static constexpr int SymmetricIndex(int i, int j) {
@@ -124,6 +163,9 @@ class PcGh {
     int spatial_order;
     int fd_stencil;
     std::string gauge;
+    std::string gauge_a0_table_file;
+    Real gauge_mass;
+    Real gauge_center[3];
     Real kappa;
     Real dissipation;
   } opt;
@@ -132,6 +174,10 @@ class PcGh {
   DvceArray5D<Real> u1;
   DvceArray5D<Real> u_rhs;
   DvceArray5D<Real> u_con;
+  DvceArray2D<Real> gauge_a0_table;
+  int gauge_a0_npoints;
+  Real gauge_a0_log_r_min;
+  Real gauge_a0_inv_dlog_r;
   DvceArray5D<Real> coarse_u0;
   Variables u;
   Variables rhs;
@@ -140,6 +186,8 @@ class PcGh {
 
  private:
   void BindVariables(DvceArray5D<Real> state, Variables &vars);
+  void LoadGaugeA0Table();
+  void ValidateGaugeA0Domain();
 
   MeshBlockPack *pmy_pack;
 };

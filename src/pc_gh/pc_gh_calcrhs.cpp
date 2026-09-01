@@ -11,6 +11,7 @@
 #include "athena.hpp"
 #include "athena_tensor.hpp"
 #include "coordinates/adm.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "driver/driver.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
@@ -27,6 +28,15 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
   bool const multi_d = pmy_pack->pmesh->multi_d;
   bool const three_d = pmy_pack->pmesh->three_d;
   Real const kappa = opt.kappa;
+  bool const use_gauge_a0 = (opt.gauge == "a0");
+  auto gauge_a0_table_ = gauge_a0_table;
+  int const gauge_a0_npoints_ = gauge_a0_npoints;
+  Real const gauge_a0_log_r_min_ = gauge_a0_log_r_min;
+  Real const gauge_a0_inv_dlog_r_ = gauge_a0_inv_dlog_r;
+  Real const gauge_mass = opt.gauge_mass;
+  Real const gauge_center_x = opt.gauge_center[0];
+  Real const gauge_center_y = opt.gauge_center[1];
+  Real const gauge_center_z = opt.gauge_center[2];
   auto &pc = u;
   auto &pc_rhs = rhs;
   auto &state = u0;
@@ -75,6 +85,44 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
     Real const trace_k = pc.K(m, k, j, i);
     Real const pi = pc.pi(m, k, j, i);
     Real const c_perp = pi + trace_k;
+    Real h_perp = 0.0;
+    Real d_h_perp[3] = {0.0, 0.0, 0.0};
+    Real h_source[3] = {0.0, 0.0, 0.0};
+    Real d_h_source[3][3] = {};
+    if (use_gauge_a0) {
+      Real const coord[3] = {
+          CellCenterX(i - indcs.is, indcs.nx1, size.d_view(m).x1min,
+                      size.d_view(m).x1max) - gauge_center_x,
+          CellCenterX(j - indcs.js, indcs.nx2, size.d_view(m).x2min,
+                      size.d_view(m).x2max) - gauge_center_y,
+          CellCenterX(k - indcs.ks, indcs.nx3, size.d_view(m).x3min,
+                      size.d_view(m).x3max) - gauge_center_z};
+      Real const radius = std::sqrt(coord[0]*coord[0] + coord[1]*coord[1]
+                                    + coord[2]*coord[2]);
+      Real const log_radius = std::log(radius/gauge_mass);
+      Real dx_h_perp;
+      Real h_radial;
+      Real dx_h_radial;
+      InterpolateGaugeA0(gauge_a0_table_, gauge_a0_npoints_,
+          gauge_a0_log_r_min_, gauge_a0_inv_dlog_r_, I_A0_H_PERP,
+          log_radius, h_perp, dx_h_perp);
+      InterpolateGaugeA0(gauge_a0_table_, gauge_a0_npoints_,
+          gauge_a0_log_r_min_, gauge_a0_inv_dlog_r_, I_A0_H_RADIAL,
+          log_radius, h_radial, dx_h_radial);
+      h_perp /= gauge_mass;
+      for (int a = 0; a < 3; ++a) {
+        Real const normal_a = coord[a]/radius;
+        h_source[a] = h_radial*normal_a/gauge_mass;
+        d_h_perp[a] = dx_h_perp*normal_a/(gauge_mass*radius);
+        for (int ell = 0; ell < 3; ++ell) {
+          Real const normal_ell = coord[ell]/radius;
+          Real const tangent = ((a == ell) ? 1.0 : 0.0) - normal_a*normal_ell;
+          d_h_source[ell][a] =
+              (dx_h_radial*normal_a*normal_ell + h_radial*tangent)
+              /(gauge_mass*radius);
+        }
+      }
+    }
 
     for (int a = 0; a < 3; ++a) {
       beta[a] = pc.beta(m, a, k, j, i);
@@ -250,7 +298,8 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
     }
     pc_rhs.chi(m, k, j, i) = adv_chi
         + 2.0*chi*(alpha*trace_k - trace_b)/3.0;
-    pc_rhs.A(m, k, j, i) = adv_a + 2.0*lapse_sq*alpha*pi;
+    pc_rhs.A(m, k, j, i) = adv_a
+        + 2.0*lapse_sq*(alpha*pi - h_perp);
     pc_rhs.K(m, k, j, i) = adv_k
         + alpha*at_sq + alpha*trace_k*trace_k/3.0
         - trace_cal_a + 0.25*x_dot_l
@@ -270,7 +319,7 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
         adv_beta += beta[d]*b[d][a];
         adv_lambda += beta[d]*d_lambda[d][a];
       }
-      Real shift_source = lapse_sq*chi*lambda[a];
+      Real shift_source = h_source[a] + lapse_sq*chi*lambda[a];
       for (int c = 0; c < 3; ++c) {
         shift_source += 0.5*gu[a][c]*(lapse_sq*x[c] - chi*y[c]);
       }
@@ -334,11 +383,12 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
       for (int p = 0; p < 3; ++p) d_trace_b += d_b[ell][p][p];
       d_f_chi[ell] = 2.0*(x[ell]*(alpha*trace_k - trace_b)
           + chi*(0.5*l[ell]*trace_k + alpha*d_k[ell] - d_trace_b))/3.0;
-      d_f_a[ell] = 2.0*y[ell]*alpha*pi
-          + 2.0*lapse_sq*(0.5*l[ell]*pi + alpha*d_pi[ell]);
+      d_f_a[ell] = 2.0*y[ell]*(alpha*pi - h_perp)
+          + 2.0*lapse_sq*(0.5*l[ell]*pi + alpha*d_pi[ell] - d_h_perp[ell]);
 
       for (int a = 0; a < 3; ++a) {
-        d_f_beta[ell][a] = (y[ell]*chi + lapse_sq*x[ell])*lambda[a]
+        d_f_beta[ell][a] = d_h_source[ell][a]
+                           + (y[ell]*chi + lapse_sq*x[ell])*lambda[a]
                            + lapse_sq*chi*d_lambda[ell][a];
         for (int c = 0; c < 3; ++c) {
           Real const v_c = lapse_sq*x[c] - chi*y[c];

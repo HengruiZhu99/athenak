@@ -1,0 +1,321 @@
+//========================================================================================
+// AthenaK astrophysical plasma code
+// Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
+// Licensed under the 3-clause BSD License (the "LICENSE")
+//========================================================================================
+//! \file pc_gh_trumpet_a0.cpp
+//! \brief stationary Schwarzschild 1+log trumpet target for prescribed Gauge A0
+
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+
+#include "athena.hpp"
+#include "coordinates/cell_locations.hpp"
+#include "globals.hpp"
+#include "mesh/mesh.hpp"
+#include "parameter_input.hpp"
+#include "pc_gh/pc_gh.hpp"
+#include "pgen/pgen.hpp"
+
+namespace {
+
+void CheckPcGhTrumpetA0(ParameterInput *pin, Mesh *pm) {
+  MeshBlockPack *pmbp = pm->pmb_pack;
+  auto &pcgh = *pmbp->ppcgh;
+  switch (pcgh.opt.fd_stencil) {
+    case 2:
+      (void)pcgh.CalcRHS<2>(nullptr, 0);
+      (void)pcgh.CalcConstraints<2>(nullptr, 0);
+      break;
+    case 3:
+      (void)pcgh.CalcRHS<3>(nullptr, 0);
+      (void)pcgh.CalcConstraints<3>(nullptr, 0);
+      break;
+    case 4:
+      (void)pcgh.CalcRHS<4>(nullptr, 0);
+      (void)pcgh.CalcConstraints<4>(nullptr, 0);
+      break;
+    default:
+      std::abort();
+  }
+  auto &indcs = pm->mb_indcs;
+  auto &size = pmbp->pmb->mb_size;
+  auto state_rhs = pcgh.u_rhs;
+  auto constraints = pcgh.u_con;
+  int const nx1 = indcs.nx1;
+  int const nx2 = indcs.nx2;
+  int const nx3 = indcs.nx3;
+  int const nkji = nx3*nx2*nx1;
+  int const nji = nx2*nx1;
+  int const nmkji = pmbp->nmb_thispack*nkji;
+  Real const audit_r_min = pin->GetOrAddReal("problem", "audit_r_min", 0.1);
+  Real const audit_r_max = pin->GetOrAddReal("problem", "audit_r_max", 8.0);
+  Real const center_x = pcgh.opt.gauge_center[0];
+  Real const center_y = pcgh.opt.gauge_center[1];
+  Real const center_z = pcgh.opt.gauge_center[2];
+
+  Real maxima[4] = {0.0, 0.0, 0.0, 0.0};
+  Real rms[4] = {0.0, 0.0, 0.0, 0.0};
+  Real square_sums[4] = {0.0, 0.0, 0.0, 0.0};
+  int sample_counts[4] = {0, 0, 0, 0};
+  for (int family = 0; family < 4; ++family) {
+    Kokkos::parallel_reduce("PC-GH trumpet residual family",
+    Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+    KOKKOS_LAMBDA(int idx, Real &maximum) {
+      int const m = idx/nkji;
+      int const k0 = (idx - m*nkji)/nji;
+      int const j0 = (idx - m*nkji - k0*nji)/nx1;
+      int const i0 = idx - m*nkji - k0*nji - j0*nx1;
+      int const k = indcs.ks + k0;
+      int const j = indcs.js + j0;
+      int const i = indcs.is + i0;
+      Real const x = CellCenterX(i - indcs.is, nx1, size.d_view(m).x1min,
+                                 size.d_view(m).x1max) - center_x;
+      Real const y = CellCenterX(j - indcs.js, nx2, size.d_view(m).x2min,
+                                 size.d_view(m).x2max) - center_y;
+      Real const z = CellCenterX(k - indcs.ks, nx3, size.d_view(m).x3min,
+                                 size.d_view(m).x3max) - center_z;
+      Real const radius = std::sqrt(x*x + y*y + z*z);
+      if (radius < audit_r_min || radius > audit_r_max) return;
+      if (family < 2) {
+        int const first = (family == 0) ? 0 : pc_gh::PcGh::I_X1;
+        int const last = (family == 0) ? pc_gh::PcGh::I_X1 : pc_gh::PcGh::npcgh;
+        for (int v = first; v < last; ++v) {
+          maximum = std::fmax(maximum, std::fabs(state_rhs(m, v, k, j, i)));
+        }
+      } else {
+        int const first = (family == 2) ? pc_gh::PcGh::I_CON_CPERP
+                                         : pc_gh::PcGh::I_CON_RED_X;
+        int const last = (family == 2) ? pc_gh::PcGh::I_CON_RED_X
+                                        : pc_gh::PcGh::I_CON_RMINUS;
+        for (int v = first; v < last; ++v) {
+          maximum = std::fmax(maximum, std::fabs(constraints(m, v, k, j, i)));
+        }
+      }
+    }, Kokkos::Max<Real>(maxima[family]));
+    Kokkos::parallel_reduce("PC-GH trumpet residual RMS",
+    Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+    KOKKOS_LAMBDA(int idx, Real &sum, int &count) {
+      int const m = idx/nkji;
+      int const k0 = (idx - m*nkji)/nji;
+      int const j0 = (idx - m*nkji - k0*nji)/nx1;
+      int const i0 = idx - m*nkji - k0*nji - j0*nx1;
+      int const k = indcs.ks + k0;
+      int const j = indcs.js + j0;
+      int const i = indcs.is + i0;
+      Real const x = CellCenterX(i - indcs.is, nx1, size.d_view(m).x1min,
+                                 size.d_view(m).x1max) - center_x;
+      Real const y = CellCenterX(j - indcs.js, nx2, size.d_view(m).x2min,
+                                 size.d_view(m).x2max) - center_y;
+      Real const z = CellCenterX(k - indcs.ks, nx3, size.d_view(m).x3min,
+                                 size.d_view(m).x3max) - center_z;
+      Real const radius = std::sqrt(x*x + y*y + z*z);
+      if (radius < audit_r_min || radius > audit_r_max) return;
+      if (family < 2) {
+        int const first = (family == 0) ? 0 : pc_gh::PcGh::I_X1;
+        int const last = (family == 0) ? pc_gh::PcGh::I_X1 : pc_gh::PcGh::npcgh;
+        for (int v = first; v < last; ++v) {
+          sum += SQR(state_rhs(m, v, k, j, i));
+          ++count;
+        }
+      } else {
+        int const first = (family == 2) ? pc_gh::PcGh::I_CON_CPERP
+                                         : pc_gh::PcGh::I_CON_RED_X;
+        int const last = (family == 2) ? pc_gh::PcGh::I_CON_RED_X
+                                        : pc_gh::PcGh::I_CON_RMINUS;
+        for (int v = first; v < last; ++v) {
+          sum += SQR(constraints(m, v, k, j, i));
+          ++count;
+        }
+      }
+    }, Kokkos::Sum<Real>(square_sums[family]),
+       Kokkos::Sum<int>(sample_counts[family]));
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, maxima, 4, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, square_sums, 4, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, sample_counts, 4, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+#endif
+  for (int family = 0; family < 4; ++family) {
+    if (sample_counts[family] <= 0) {
+      std::cout << "PC-GH Gauge A0 audit shell contains no samples" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    rms[family] = std::sqrt(square_sums[family]
+                            /static_cast<Real>(sample_counts[family]));
+  }
+  for (Real value : maxima) {
+    if (!std::isfinite(value)) {
+      std::cout << "PC-GH Gauge A0 pointwise residual is nonfinite" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
+  if (global_variable::my_rank == 0) {
+    FILE *file = std::fopen("pc_gh_trumpet_a0-residuals.dat", "a");
+    if (file == nullptr) {
+      std::cout << "Unable to open pc_gh_trumpet_a0-residuals.dat" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    std::fprintf(file,
+        "%d %.17e %.17e %.17e %.17e %.17e %.17e %.17e %.17e\n",
+        pm->mesh_indcs.nx1,
+        static_cast<double>(maxima[0]), static_cast<double>(maxima[1]),
+        static_cast<double>(maxima[2]), static_cast<double>(maxima[3]),
+        static_cast<double>(rms[0]), static_cast<double>(rms[1]),
+        static_cast<double>(rms[2]), static_cast<double>(rms[3]));
+    std::fclose(file);
+    std::cout << "PC-GH Gauge A0 pointwise: primary=" << maxima[0]
+              << " gradient=" << maxima[1] << " GH=" << maxima[2]
+              << " reduction/curl/algebraic=" << maxima[3]
+              << " RMS=(" << rms[0] << ',' << rms[1] << ',' << rms[2]
+              << ',' << rms[3] << ')' << std::endl;
+    if (global_variable::nranks == 1) {
+      auto rhs_host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), state_rhs);
+      auto con_host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), constraints);
+      std::vector<Real> rhs_max(pc_gh::PcGh::npcgh, 0.0);
+      std::vector<Real> con_max(pc_gh::PcGh::ncon, 0.0);
+      std::vector<Real> rhs_x(pc_gh::PcGh::npcgh, 0.0);
+      std::vector<Real> rhs_y(pc_gh::PcGh::npcgh, 0.0);
+      std::vector<Real> rhs_z(pc_gh::PcGh::npcgh, 0.0);
+      std::vector<Real> con_x(pc_gh::PcGh::ncon, 0.0);
+      std::vector<Real> con_y(pc_gh::PcGh::ncon, 0.0);
+      std::vector<Real> con_z(pc_gh::PcGh::ncon, 0.0);
+      size.template sync<HostMemSpace>();
+      for (int m = 0; m < pmbp->nmb_thispack; ++m) {
+        for (int k = indcs.ks; k <= indcs.ke; ++k) {
+          Real const z = CellCenterX(k - indcs.ks, nx3, size.h_view(m).x3min,
+                                     size.h_view(m).x3max) - center_z;
+          for (int j = indcs.js; j <= indcs.je; ++j) {
+            Real const y = CellCenterX(j - indcs.js, nx2, size.h_view(m).x2min,
+                                       size.h_view(m).x2max) - center_y;
+            for (int i = indcs.is; i <= indcs.ie; ++i) {
+              Real const x = CellCenterX(i - indcs.is, nx1, size.h_view(m).x1min,
+                                         size.h_view(m).x1max) - center_x;
+              Real const radius = std::sqrt(x*x + y*y + z*z);
+              if (radius < audit_r_min || radius > audit_r_max) continue;
+              for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) {
+                Real const value = std::fabs(rhs_host(m, v, k, j, i));
+                if (value > rhs_max[v]) {
+                  rhs_max[v] = value;
+                  rhs_x[v] = x; rhs_y[v] = y; rhs_z[v] = z;
+                }
+              }
+              for (int v = 0; v < pc_gh::PcGh::ncon; ++v) {
+                Real const value = std::fabs(con_host(m, v, k, j, i));
+                if (value > con_max[v]) {
+                  con_max[v] = value;
+                  con_x[v] = x; con_y[v] = y; con_z[v] = z;
+                }
+              }
+            }
+          }
+        }
+      }
+      FILE *max_file = std::fopen("pc_gh_trumpet_a0-maxima.dat", "w");
+      if (max_file == nullptr) std::exit(EXIT_FAILURE);
+      std::fprintf(max_file, "# kind name max_abs x y z\n");
+      for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) {
+        std::fprintf(max_file, "rhs %s %.17e %.17e %.17e %.17e\n",
+            pc_gh::PcGh::PcGhNames[v], static_cast<double>(rhs_max[v]),
+            static_cast<double>(rhs_x[v]), static_cast<double>(rhs_y[v]),
+            static_cast<double>(rhs_z[v]));
+      }
+      for (int v = 0; v < pc_gh::PcGh::ncon; ++v) {
+        std::fprintf(max_file, "con %s %.17e %.17e %.17e %.17e\n",
+            pc_gh::PcGh::ConstraintNames[v], static_cast<double>(con_max[v]),
+            static_cast<double>(con_x[v]), static_cast<double>(con_y[v]),
+            static_cast<double>(con_z[v]));
+      }
+      std::fclose(max_file);
+    }
+  }
+}
+
+}  // namespace
+
+void ProblemGenerator::PcGhTrumpetA0(ParameterInput *, const bool restart) {
+  pgen_final_func = CheckPcGhTrumpetA0;
+  if (restart) return;
+  MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
+  if (pmbp->ppcgh == nullptr || pmbp->padm == nullptr
+      || pmbp->ppcgh->opt.gauge != "a0") {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'
+              << "pc_gh_trumpet_a0 requires <pc_gh>/gauge=a0" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  auto &pcgh = *pmbp->ppcgh;
+  auto &state = pcgh.u0;
+  auto &indcs = pmbp->pmesh->mb_indcs;
+  auto &size = pmbp->pmb->mb_size;
+  auto table = pcgh.gauge_a0_table;
+  int const npoints = pcgh.gauge_a0_npoints;
+  Real const log_r_min = pcgh.gauge_a0_log_r_min;
+  Real const inv_dlog_r = pcgh.gauge_a0_inv_dlog_r;
+  Real const mass = pcgh.opt.gauge_mass;
+  Real const center_x = pcgh.opt.gauge_center[0];
+  Real const center_y = pcgh.opt.gauge_center[1];
+  Real const center_z = pcgh.opt.gauge_center[2];
+  int const isg = indcs.is - indcs.ng;
+  int const ieg = indcs.ie + indcs.ng;
+  int const jsg = indcs.js - indcs.ng;
+  int const jeg = indcs.je + indcs.ng;
+  int const ksg = indcs.ks - indcs.ng;
+  int const keg = indcs.ke + indcs.ng;
+
+  par_for("PC-GH Gauge A0 trumpet target", DevExeSpace(),
+  0, pmbp->nmb_thispack - 1, ksg, keg, jsg, jeg, isg, ieg,
+  KOKKOS_LAMBDA(int m, int k, int j, int i) {
+    Real const coord[3] = {
+        CellCenterX(i - indcs.is, indcs.nx1, size.d_view(m).x1min,
+                    size.d_view(m).x1max) - center_x,
+        CellCenterX(j - indcs.js, indcs.nx2, size.d_view(m).x2min,
+                    size.d_view(m).x2max) - center_y,
+        CellCenterX(k - indcs.ks, indcs.nx3, size.d_view(m).x3min,
+                    size.d_view(m).x3max) - center_z};
+    Real const radius = std::sqrt(coord[0]*coord[0] + coord[1]*coord[1]
+                                  + coord[2]*coord[2]);
+    Real const log_radius = std::log(radius/mass);
+    Real a, dx_a, chi, dx_chi, beta_r, dx_beta_r;
+    Real trace_k, unused, at_radial;
+    pc_gh::PcGh::InterpolateGaugeA0(table, npoints, log_r_min, inv_dlog_r,
+        pc_gh::PcGh::I_A0_A, log_radius, a, dx_a);
+    pc_gh::PcGh::InterpolateGaugeA0(table, npoints, log_r_min, inv_dlog_r,
+        pc_gh::PcGh::I_A0_CHI, log_radius, chi, dx_chi);
+    pc_gh::PcGh::InterpolateGaugeA0(table, npoints, log_r_min, inv_dlog_r,
+        pc_gh::PcGh::I_A0_BETA_R, log_radius, beta_r, dx_beta_r);
+    pc_gh::PcGh::InterpolateGaugeA0(table, npoints, log_r_min, inv_dlog_r,
+        pc_gh::PcGh::I_A0_K, log_radius, trace_k, unused);
+    pc_gh::PcGh::InterpolateGaugeA0(table, npoints, log_r_min, inv_dlog_r,
+        pc_gh::PcGh::I_A0_AT_RADIAL, log_radius, at_radial, unused);
+    for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) state(m, v, k, j, i) = 0.0;
+    state(m, pc_gh::PcGh::I_A, k, j, i) = a;
+    state(m, pc_gh::PcGh::I_CHI, k, j, i) = chi;
+    state(m, pc_gh::PcGh::I_K, k, j, i) = trace_k/mass;
+    state(m, pc_gh::PcGh::I_PI, k, j, i) = -trace_k/mass;
+    state(m, pc_gh::PcGh::I_GTXX, k, j, i) = 1.0;
+    state(m, pc_gh::PcGh::I_GTYY, k, j, i) = 1.0;
+    state(m, pc_gh::PcGh::I_GTZZ, k, j, i) = 1.0;
+    for (int q = 0; q < 3; ++q) {
+      Real const normal_q = coord[q]/radius;
+      state(m, pc_gh::PcGh::I_BETAX + q, k, j, i) = beta_r*normal_q;
+      state(m, pc_gh::PcGh::I_X1 + q, k, j, i) = dx_chi*normal_q/radius;
+      state(m, pc_gh::PcGh::I_Y1 + q, k, j, i) = dx_a*normal_q/radius;
+      for (int p = 0; p < 3; ++p) {
+        Real const normal_p = coord[p]/radius;
+        Real const delta = (p == q) ? 1.0 : 0.0;
+        state(m, pc_gh::PcGh::BIndex(p, q), k, j, i) =
+            (beta_r*delta + (dx_beta_r - beta_r)*normal_p*normal_q)/radius;
+      }
+      for (int p = q; p < 3; ++p) {
+        Real const normal_p = coord[p]/radius;
+        Real const delta = (p == q) ? 1.0 : 0.0;
+        state(m, pc_gh::PcGh::I_ATXX + pc_gh::PcGh::SymmetricIndex(q, p),
+              k, j, i) = at_radial*(normal_q*normal_p - delta/3.0)/mass;
+      }
+    }
+  });
+  pcgh.PcGhToADM(pmbp);
+}
