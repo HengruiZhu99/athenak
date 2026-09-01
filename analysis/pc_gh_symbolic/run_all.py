@@ -10,6 +10,7 @@ HERE = Path(__file__).resolve().parent
 SCRIPTS = [
     "verify_regularization.py",
     "verify_q_projection.py",
+    "verify_flat_algebra_randomized.py",
     "verify_conformal_ricci.py",
     "verify_primary_projections.py",
     "verify_gradient_rhs.py",

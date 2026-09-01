@@ -17,6 +17,7 @@ Current coverage:
 |---|---|---|
 | `verify_regularization.py` | regular lapse Hessian; physical/conformal lapse Hessian; scalar curvature; Hamiltonian; trace-free curvature/lapse tensor; scaled momentum | `PROVED ON r>0` for expressions using positive `chi` and `A`; otherwise `PROVED` |
 | `verify_q_projection.py` | product-rule consistency and trace-free property of the simultaneous metric/Q projection | `PROVED` for nonsingular conformal metric |
+| `verify_flat_algebra_randomized.py` | 10,000 seeded SPD cofactor-inverse, determinant, Atilde/Q trace projection, and PC-GH/ADM round-trip trials over eight decades in chi and six metric scales | broad binary64 Gate 2 regression, not an exhaustive proof |
 | `verify_conformal_ricci.py` | Brown first-order Ricci against coordinate Ricci for a non-diagonal exactly unimodular metric at 18 exact rational component/point pairs | exact regression supporting the written `PROVED` index derivation |
 | `verify_primary_projections.py` | normal-normal pi equation; corrected K divergence count; corrected Atilde nonlinear Z term; mixed-projection lapse-acceleration term; exact counterexamples to the supplied K, Atilde, and Lambda regression targets | pi and corrected terms `PROVED`; supplied K/Atilde/Lambda targets `FAILED` |
 | `verify_gradient_rhs.py` | exact product-rule expansions of all chi/A/beta/gtilde source gradients and the compatible-versus-standard curl difference | `PROVED` conditional on differentiable metric-only/prescribed Gauge A sources |
