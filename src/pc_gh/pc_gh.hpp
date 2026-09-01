@@ -17,6 +17,7 @@
 #include "parameter_input.hpp"
 
 class MeshBlockPack;
+class Driver;
 
 namespace pc_gh {
 
@@ -69,6 +70,11 @@ class PcGh {
   template <int FD_STENCIL>
   void ADMToPcGh(MeshBlockPack *pmbp);
   void PcGhToADM(MeshBlockPack *pmbp);
+  void ProjectAlgebraic(MeshBlockPack *pmbp);
+
+  TaskStatus CopyU(Driver *pdriver, int stage);
+  TaskStatus ExpRKUpdate(Driver *pdriver, int stage);
+  TaskStatus NewTimeStep(Driver *pdriver, int stage);
 
   struct Variables {
     AthenaTensor<Real, TensorSymm::NONE, 3, 0> chi;
@@ -97,6 +103,7 @@ class PcGh {
   Variables u;
   Variables rhs;
   MeshBoundaryValuesCC *pbval_u;
+  Real dtnew;
 
  private:
   void BindVariables(DvceArray5D<Real> state, Variables &vars);

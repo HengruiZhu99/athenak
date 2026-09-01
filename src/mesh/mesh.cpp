@@ -21,6 +21,7 @@
 #include "refinement_criteria.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "z4c/z4c.hpp"
 #include "diffusion/viscosity.hpp"
 #include "diffusion/resistivity.hpp"
@@ -616,6 +617,10 @@ void Mesh::NewTimeStep(const Real tlim) {
   // z4c timestep
   if (pmb_pack->pz4c != nullptr) {
     dt = std::min(dt, (cfl_no)*(pmb_pack->pz4c->dtnew) );
+  }
+  // PC-GH timestep
+  if (pmb_pack->ppcgh != nullptr) {
+    dt = std::min(dt, (cfl_no)*(pmb_pack->ppcgh->dtnew) );
   }
   // Radiation timestep
   if (pmb_pack->prad != nullptr) {

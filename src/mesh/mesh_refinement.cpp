@@ -166,6 +166,9 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     if (pmbp->pz4c != nullptr) {
       (void) pmbp->pz4c->NewTimeStep(pdriver, pdriver->nexp_stages);
     }
+    if (pmbp->ppcgh != nullptr) {
+      (void) pmbp->ppcgh->NewTimeStep(pdriver, pdriver->nexp_stages);
+    }
 
     nmb_created += nnew;
     nmb_deleted += ndel;

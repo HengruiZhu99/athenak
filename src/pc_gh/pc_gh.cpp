@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 
 #include <Kokkos_Core.hpp>
 
@@ -44,6 +45,7 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
       u_rhs("u_rhs pc_gh", 1, 1, 1, 1, 1),
       coarse_u0("coarse u0 pc_gh", 1, 1, 1, 1, 1),
       pbval_u(nullptr),
+      dtnew(std::numeric_limits<float>::max()),
       pmy_pack(ppack) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int const nmb = std::max(ppack->nmb_thispack, ppack->pmesh->nmb_maxperrank);
