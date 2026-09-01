@@ -12,6 +12,8 @@ SCRIPTS = [
     "verify_q_projection.py",
     "verify_conformal_ricci.py",
     "verify_primary_projections.py",
+    "verify_gradient_rhs.py",
+    "verify_4d_component_oracle.py",
 ]
 
 
