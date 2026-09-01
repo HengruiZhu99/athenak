@@ -1,0 +1,55 @@
+# Uniform-grid finite-difference PC-GH direct moving-puncture gauge control
+
+<job>
+basename = pc_gh_one_puncture
+
+<mesh>
+nghost = 2
+nx1 = 16
+x1min = -8.0
+x1max = 8.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 16
+x2min = -8.0
+x2max = 8.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 16
+x3min = -8.0
+x3max = 8.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 16
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = -1
+tlim = 0.25
+ndiag = 1
+
+<pc_gh>
+spatial_order = 2
+gauge = z4c_mp
+shift_eta = 2.0
+kappa = 1.0
+dissipation = 1.0
+
+<problem>
+pgen_name = pc_gh_one_puncture
+mass = 1.0
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+audit_r_min = 1.0
+audit_r_max = 4.0
+
+<output1>
+file_type = hst
+dt = 0.025

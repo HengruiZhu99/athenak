@@ -14,6 +14,8 @@ SCRIPTS = [
     "verify_conformal_ricci.py",
     "verify_primary_projections.py",
     "verify_gradient_rhs.py",
+    "verify_z4c_mp_gauge.py",
+    "analyze_z4c_mp_principal.py",
     "verify_4d_component_oracle.py",
     "verify_fo_gh_map.py",
     "generate_gauge_a0_table.py",

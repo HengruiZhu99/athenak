@@ -987,6 +987,8 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     PcGhGaugeWave(pin, is_restart);
   } else if (pgen_fun_name.compare("pc_gh_bowen_york") == 0) {
     PcGhBowenYork(pin, is_restart);
+  } else if (pgen_fun_name.compare("pc_gh_one_puncture") == 0) {
+    PcGhOnePuncture(pin, is_restart);
   } else if (pgen_fun_name.compare("pc_gh_trumpet_a0") == 0) {
     PcGhTrumpetA0(pin, is_restart);
   } else if (pgen_fun_name.compare("orszag_tang") == 0) {

@@ -29,6 +29,12 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
   bool const three_d = pmy_pack->pmesh->three_d;
   Real const kappa = opt.kappa;
   bool const use_gauge_a0 = (opt.gauge == "a0");
+  bool const use_z4c_mp = (opt.gauge == "z4c_mp"
+                            || opt.gauge == "z4c_mp_hyperbolic");
+  bool const use_hyperbolic_switch = (opt.gauge == "z4c_mp_hyperbolic");
+  Real const shift_eta = opt.shift_eta;
+  Real const shift_switch_z0 = opt.shift_switch_z0;
+  Real const shift_switch_z1 = opt.shift_switch_z1;
   auto gauge_a0_table_ = gauge_a0_table;
   int const gauge_a0_npoints_ = gauge_a0_npoints;
   Real const gauge_a0_log_r_min_ = gauge_a0_log_r_min;
@@ -85,6 +91,20 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
     Real const trace_k = pc.K(m, k, j, i);
     Real const pi = pc.pi(m, k, j, i);
     Real const c_perp = pi + trace_k;
+    Real shift_switch = 0.0;
+    Real d_shift_switch_dz = 0.0;
+    if (use_hyperbolic_switch) {
+      Real const zeta = alpha*chi;
+      if (zeta >= shift_switch_z1) {
+        shift_switch = 1.0;
+      } else if (zeta > shift_switch_z0) {
+        Real const t = (zeta - shift_switch_z0)
+                       /(shift_switch_z1 - shift_switch_z0);
+        shift_switch = t*t*(3.0 - 2.0*t);
+        d_shift_switch_dz = 6.0*t*(1.0 - t)
+                            /(shift_switch_z1 - shift_switch_z0);
+      }
+    }
     Real h_perp = 0.0;
     Real d_h_perp[3] = {0.0, 0.0, 0.0};
     Real h_source[3] = {0.0, 0.0, 0.0};
@@ -293,8 +313,11 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
     }
     pc_rhs.chi(m, k, j, i) = adv_chi
         + 2.0*chi*(alpha*trace_k - trace_b)/3.0;
-    pc_rhs.A(m, k, j, i) = adv_a
-        + 2.0*lapse_sq*(alpha*pi - h_perp);
+    // The direct moving-puncture gauge is D0 A=-4 A K, equivalently
+    // h_perp=alpha*pi+2K in the regular GH source variables.
+    pc_rhs.A(m, k, j, i) = use_z4c_mp
+        ? adv_a - 4.0*lapse_sq*trace_k
+        : adv_a + 2.0*lapse_sq*(alpha*pi - h_perp);
     pc_rhs.K(m, k, j, i) = adv_k
         + alpha*at_sq + alpha*trace_k*trace_k/3.0
         - trace_cal_a + 0.25*x_dot_l
@@ -314,9 +337,18 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
         adv_beta += beta[d]*b[d][a];
         adv_lambda += beta[d]*d_lambda[d][a];
       }
-      Real shift_source = h_source[a] + lapse_sq*chi*lambda[a];
+      // For z4c_mp, h^i=(1-A*chi)Lambda^i
+      // -1/2 gtilde^{ij}(A X_j-chi Y_j)-eta beta^i, so all regularized
+      // GH-map terms cancel and D0 beta^i=Lambda^i-eta beta^i.
+      Real metric_source = 0.0;
       for (int c = 0; c < 3; ++c) {
-        shift_source += 0.5*gu[a][c]*(lapse_sq*x[c] - chi*y[c]);
+        metric_source += 0.5*gu[a][c]*(lapse_sq*x[c] - chi*y[c]);
+      }
+      Real shift_source = use_z4c_mp
+          ? lambda[a] - shift_eta*beta[a] + shift_switch*metric_source
+          : h_source[a] + lapse_sq*chi*lambda[a];
+      if (!use_z4c_mp) {
+        shift_source += metric_source;
       }
       pc_rhs.beta(m, a, k, j, i) = adv_beta + shift_source;
 
@@ -378,13 +410,20 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
       for (int p = 0; p < 3; ++p) d_trace_b += d_b[ell][p][p];
       d_f_chi[ell] = 2.0*(x[ell]*(alpha*trace_k - trace_b)
           + chi*(0.5*l[ell]*trace_k + alpha*d_k[ell] - d_trace_b))/3.0;
-      d_f_a[ell] = 2.0*y[ell]*(alpha*pi - h_perp)
-          + 2.0*lapse_sq*(0.5*l[ell]*pi + alpha*d_pi[ell] - d_h_perp[ell]);
+      d_f_a[ell] = use_z4c_mp
+          ? -4.0*(trace_k*y[ell] + lapse_sq*d_k[ell])
+          : 2.0*y[ell]*(alpha*pi - h_perp)
+              + 2.0*lapse_sq*(0.5*l[ell]*pi + alpha*d_pi[ell]
+                               - d_h_perp[ell]);
 
       for (int a = 0; a < 3; ++a) {
-        d_f_beta[ell][a] = d_h_source[ell][a]
-                           + (y[ell]*chi + lapse_sq*x[ell])*lambda[a]
-                           + lapse_sq*chi*d_lambda[ell][a];
+        d_f_beta[ell][a] = use_z4c_mp
+            ? d_lambda[ell][a] - shift_eta*b[ell][a]
+            : d_h_source[ell][a]
+                + (y[ell]*chi + lapse_sq*x[ell])*lambda[a]
+                + lapse_sq*chi*d_lambda[ell][a];
+        Real metric_source = 0.0;
+        Real d_metric_source = 0.0;
         for (int c = 0; c < 3; ++c) {
           Real const v_c = lapse_sq*x[c] - chi*y[c];
           Real inverse_derivative = 0.0;
@@ -393,9 +432,17 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
               inverse_derivative -= gu[a][p]*gu[c][r]*q[ell][p][r];
             }
           }
-          d_f_beta[ell][a] += 0.5*inverse_derivative*v_c
+          metric_source += 0.5*gu[a][c]*v_c;
+          d_metric_source += 0.5*inverse_derivative*v_c
               + 0.5*gu[a][c]*(y[ell]*x[c] + lapse_sq*d_x[ell][c]
                                - x[ell]*y[c] - chi*d_y[ell][c]);
+        }
+        if (use_z4c_mp) {
+          Real const d_zeta = alpha*x[ell] + 0.5*chi*l[ell];
+          d_f_beta[ell][a] += shift_switch*d_metric_source
+              + d_shift_switch_dz*d_zeta*metric_source;
+        } else {
+          d_f_beta[ell][a] += d_metric_source;
         }
       }
 

@@ -69,6 +69,7 @@ class ProblemGenerator {
   void PcGhRobustMinkowski(ParameterInput *pin, const bool restart);
   void PcGhGaugeWave(ParameterInput *pin, const bool restart);
   void PcGhBowenYork(ParameterInput *pin, const bool restart);
+  void PcGhOnePuncture(ParameterInput *pin, const bool restart);
   void PcGhTrumpetA0(ParameterInput *pin, const bool restart);
   void OrszagTang(ParameterInput *pin, const bool restart);
   void ShockTube(ParameterInput *pin, const bool restart);

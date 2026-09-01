@@ -1,0 +1,63 @@
+# Uniform-grid AthenaK Z4c control matched to pc_gh_one_puncture.athinput
+
+<job>
+basename = z4c_one_puncture_control
+
+<mesh>
+nghost = 2
+nx1 = 16
+x1min = -8.0
+x1max = 8.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 16
+x2min = -8.0
+x2max = 8.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 16
+x3min = -8.0
+x3max = 8.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 16
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = -1
+tlim = 0.25
+ndiag = 1
+
+<z4c>
+spatial_order = 2
+diss = 1.0
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+lapse_harmonicf = 1.0
+lapse_harmonic = 0.0
+lapse_oplog = 2.0
+lapse_advect = 1.0
+slow_start_lapse = false
+telegraph_lapse = false
+shift_Gamma = 1.0
+shift_advect = 1.0
+shift_alpha2Gamma = 0.0
+shift_H = 0.0
+shift_eta = 2.0
+
+<problem>
+pgen_name = z4c_one_puncture
+punc_ADM_mass = 1.0
+punc_center_x1 = 0.0
+punc_center_x2 = 0.0
+punc_center_x3 = 0.0
+
+<output1>
+file_type = hst
+dt = 0.025

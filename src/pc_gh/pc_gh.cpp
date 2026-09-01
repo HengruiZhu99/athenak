@@ -114,10 +114,11 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
     std::exit(EXIT_FAILURE);
   }
   opt.gauge = pin->GetOrAddString("pc_gh", "gauge", "harmonic");
-  if (opt.gauge != "harmonic" && opt.gauge != "a0") {
+  if (opt.gauge != "harmonic" && opt.gauge != "a0" && opt.gauge != "z4c_mp"
+      && opt.gauge != "z4c_mp_hyperbolic") {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'
-              << "PC-GH gauge must be harmonic or a0, but is " << opt.gauge
-              << std::endl;
+              << "PC-GH gauge must be harmonic, a0, z4c_mp, or "
+              << "z4c_mp_hyperbolic, but is " << opt.gauge << std::endl;
     std::exit(EXIT_FAILURE);
   }
   opt.gauge_a0_table_file = pin->GetOrAddString(
@@ -126,6 +127,24 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   opt.gauge_center[0] = pin->GetOrAddReal("pc_gh", "gauge_center_x", 0.0);
   opt.gauge_center[1] = pin->GetOrAddReal("pc_gh", "gauge_center_y", 0.0);
   opt.gauge_center[2] = pin->GetOrAddReal("pc_gh", "gauge_center_z", 0.0);
+  opt.shift_eta = pin->GetOrAddReal("pc_gh", "shift_eta", 2.0);
+  if (!(std::isfinite(opt.shift_eta) && opt.shift_eta >= 0.0)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'
+              << "<pc_gh>/shift_eta must be finite and nonnegative" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  opt.shift_switch_z0 = pin->GetOrAddReal("pc_gh", "shift_switch_z0", 0.1);
+  opt.shift_switch_z1 = pin->GetOrAddReal("pc_gh", "shift_switch_z1", 0.5);
+  if (opt.gauge == "z4c_mp_hyperbolic"
+      && !(std::isfinite(opt.shift_switch_z0) && std::isfinite(opt.shift_switch_z1)
+        && opt.shift_switch_z0 > 0.0
+        && opt.shift_switch_z0 < opt.shift_switch_z1
+        && opt.shift_switch_z1 < 4.0/7.0)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'
+              << "<pc_gh>/shift_switch_z0,z1 must obey 0 < z0 < z1 < 4/7"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   if (opt.gauge == "a0") {
     if (!(opt.gauge_mass > 0.0)) {
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'

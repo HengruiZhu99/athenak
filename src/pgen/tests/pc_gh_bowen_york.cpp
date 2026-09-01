@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -297,6 +298,85 @@ void CheckPcGhBowenYork(ParameterInput *pin, Mesh *pm) {
   std::fclose(max_file);
 }
 
+void CheckPcGhOnePuncture(ParameterInput *, Mesh *pm) {
+  if (global_variable::nranks != 1) {
+    if (global_variable::my_rank == 0) {
+      std::cout << "PC-GH one-puncture final diagnostics currently require Serial"
+                << std::endl;
+    }
+    std::exit(EXIT_FAILURE);
+  }
+  MeshBlockPack *pmbp = pm->pmb_pack;
+  CalculateDiagnostics(pmbp);
+  auto state = Kokkos::create_mirror_view_and_copy(HostMemSpace(), pmbp->ppcgh->u0);
+  auto con = Kokkos::create_mirror_view_and_copy(HostMemSpace(), pmbp->ppcgh->u_con);
+  auto &indcs = pm->mb_indcs;
+  Real min_a = std::numeric_limits<Real>::max();
+  Real min_chi = std::numeric_limits<Real>::max();
+  Real min_spd = std::numeric_limits<Real>::max();
+  Real max_state = 0.0;
+  Real max_group[4] = {};
+  for (int m = 0; m < pmbp->nmb_thispack; ++m) {
+    for (int k = indcs.ks; k <= indcs.ke; ++k) {
+      for (int j = indcs.js; j <= indcs.je; ++j) {
+        for (int i = indcs.is; i <= indcs.ie; ++i) {
+          Real const gxx = state(m, pc_gh::PcGh::I_GTXX, k, j, i);
+          Real const gxy = state(m, pc_gh::PcGh::I_GTXY, k, j, i);
+          Real const gxz = state(m, pc_gh::PcGh::I_GTXZ, k, j, i);
+          Real const gyy = state(m, pc_gh::PcGh::I_GTYY, k, j, i);
+          Real const gyz = state(m, pc_gh::PcGh::I_GTYZ, k, j, i);
+          Real const gzz = state(m, pc_gh::PcGh::I_GTZZ, k, j, i);
+          Real const minor2 = gxx*gyy - gxy*gxy;
+          Real const det = gxx*(gyy*gzz - gyz*gyz)
+                         - gxy*(gxy*gzz - gxz*gyz)
+                         + gxz*(gxy*gyz - gxz*gyy);
+          min_a = std::fmin(min_a, state(m, pc_gh::PcGh::I_A, k, j, i));
+          min_chi = std::fmin(min_chi, state(m, pc_gh::PcGh::I_CHI, k, j, i));
+          min_spd = std::fmin(min_spd, std::fmin(gxx, std::fmin(minor2, det)));
+          for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) {
+            max_state = std::fmax(max_state, std::fabs(state(m, v, k, j, i)));
+          }
+          for (int v = 0; v < pc_gh::PcGh::I_CON_RMINUS; ++v) {
+            int group = 3;
+            if (v < pc_gh::PcGh::I_CON_H) group = 0;
+            else if (v < pc_gh::PcGh::I_CON_RED_X) group = 1;
+            else if (v < pc_gh::PcGh::I_CON_DETG) group = 2;
+            max_group[group] = std::fmax(
+                max_group[group], std::fabs(con(m, v, k, j, i)));
+          }
+        }
+      }
+    }
+  }
+  if (!(std::isfinite(max_state) && std::isfinite(max_group[0])
+        && std::isfinite(max_group[1]) && std::isfinite(max_group[2])
+        && std::isfinite(max_group[3]) && min_a > 0.0 && min_chi > 0.0
+        && min_spd > 0.0)) {
+    std::cout << "PC-GH one-puncture run lost finiteness, positivity, or SPD"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (global_variable::my_rank != 0) return;
+  FILE *file = std::fopen("pc_gh_one_puncture-final.dat", "a+");
+  if (file == nullptr) std::exit(EXIT_FAILURE);
+  std::fseek(file, 0, SEEK_END);
+  if (std::ftell(file) == 0) {
+    std::fprintf(file, "# nx1 time cycles max_state max_GH max_ADM "
+                       "max_reduction_curl max_algebraic min_A min_chi min_SPD\n");
+  }
+  std::fprintf(file, "%d %.17e %d %.17e %.17e %.17e %.17e %.17e %.17e %.17e %.17e\n",
+      pm->mesh_indcs.nx1, static_cast<double>(pm->time), pm->ncycle,
+      static_cast<double>(max_state), static_cast<double>(max_group[0]),
+      static_cast<double>(max_group[1]), static_cast<double>(max_group[2]),
+      static_cast<double>(max_group[3]), static_cast<double>(min_a),
+      static_cast<double>(min_chi), static_cast<double>(min_spd));
+  std::fclose(file);
+  std::cout << "PC-GH one puncture: t=" << pm->time << " max(GH,ADM,red,alg)=("
+            << max_group[0] << ',' << max_group[1] << ',' << max_group[2] << ','
+            << max_group[3] << ") min(A,chi,SPD)=(" << min_a << ',' << min_chi
+            << ',' << min_spd << ')' << std::endl;
+}
+
 }  // namespace
 
 void ProblemGenerator::PcGhBowenYork(ParameterInput *pin, const bool restart) {
@@ -371,4 +451,9 @@ void ProblemGenerator::PcGhBowenYork(ParameterInput *pin, const bool restart) {
     default: std::abort();
   }
   pmbp->ppcgh->PcGhToADM(pmbp);
+}
+
+void ProblemGenerator::PcGhOnePuncture(ParameterInput *pin, const bool restart) {
+  PcGhBowenYork(pin, restart);
+  pgen_final_func = CheckPcGhOnePuncture;
 }

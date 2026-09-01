@@ -253,6 +253,9 @@ class PcGh {
     std::string gauge_a0_table_file;
     Real gauge_mass;
     Real gauge_center[3];
+    Real shift_eta;
+    Real shift_switch_z0;
+    Real shift_switch_z1;
     Real kappa;
     Real dissipation;
   } opt;

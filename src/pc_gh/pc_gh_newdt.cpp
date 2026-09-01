@@ -36,6 +36,8 @@ TaskStatus PcGh::NewTimeStep(Driver *pdriver, int stage) {
   int const nmkji = pmy_pack->nmb_thispack*nkji;
   bool const multi_d = pmy_pack->pmesh->multi_d;
   bool const three_d = pmy_pack->pmesh->three_d;
+  bool const use_z4c_mp = (opt.gauge == "z4c_mp"
+                            || opt.gauge == "z4c_mp_hyperbolic");
   Real local_dt = std::numeric_limits<float>::max();
 
   Kokkos::parallel_reduce("PC-GH characteristic dt",
@@ -62,17 +64,23 @@ TaskStatus PcGh::NewTimeStep(Driver *pdriver, int stage) {
         &g_inv(1, 1), &g_inv(1, 2), &g_inv(2, 2));
     Real const alpha = std::sqrt(pc.A(m, k, j, i));
     Real const chi = pc.chi(m, k, j, i);
+    Real const physical_factor = alpha*std::sqrt(chi);
+    Real gauge_factor = physical_factor;
+    if (use_z4c_mp) {
+      gauge_factor = std::fmax(gauge_factor, 2.0/std::sqrt(3.0));
+      gauge_factor = std::fmax(gauge_factor, std::sqrt(2.0*alpha*chi));
+    }
     Real const speed1 = std::fabs(pc.beta(m, 0, k, j, i))
-                        + alpha*std::sqrt(chi*g_inv(0, 0));
+                        + gauge_factor*std::sqrt(g_inv(0, 0));
     min_dt = std::fmin(min_dt, size.d_view(m).dx1/speed1);
     if (multi_d) {
       Real const speed2 = std::fabs(pc.beta(m, 1, k, j, i))
-                          + alpha*std::sqrt(chi*g_inv(1, 1));
+                          + gauge_factor*std::sqrt(g_inv(1, 1));
       min_dt = std::fmin(min_dt, size.d_view(m).dx2/speed2);
     }
     if (three_d) {
       Real const speed3 = std::fabs(pc.beta(m, 2, k, j, i))
-                          + alpha*std::sqrt(chi*g_inv(2, 2));
+                          + gauge_factor*std::sqrt(g_inv(2, 2));
       min_dt = std::fmin(min_dt, size.d_view(m).dx3/speed3);
     }
   }, Kokkos::Min<Real>(local_dt));
