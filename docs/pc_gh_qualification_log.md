@@ -6,7 +6,7 @@ This is an append-oriented evidence log.  A build, a short run, or a finite resi
 does not by itself qualify the solver.  `PASS` below means only that the named bounded
 gate passed.  `OPEN` and `BLOCKED` are not silently replaced by weaker criteria.
 
-Current evidence source commit: `f74a19ae4d425bccbbd1bff78db72bbe49502f42`.
+Latest moving-puncture implementation evidence source commit: `f5b334f0`.
 Required baseline: `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 
 ## Reproducibility envelope
@@ -38,12 +38,12 @@ generator, table, source, and exact numbers below are the durable provenance rec
 | 6 stationary trumpet pointwise | PASS | continuum target, decomposed three-precision conditioning audit, maximum locations, and second-order RMS residual ladder pass on their stated punctured domains |
 | 7 stationary trumpet evolution | BLOCKED | Gauge A0 has a positive projected frozen mode; no derived nonperiodic diagnostic/characteristic outer BC also remains |
 | 8 perturbed trumpet | OPEN | waits on Gate 7 |
-| 9 Bowen-York to trumpet | OPEN | exact time-symmetric ADM conversion and pointwise source ladder pass; the wormhole-to-trumpet evolution is blocked by Gate 7 and has not run |
+| 9 Bowen-York to trumpet | FAILED | direct and switched moving-puncture gauges remain finite through `20M`, but GH/ADM endpoint norms grow with resolution; periodic uniform-box evidence is not qualification |
 | 10 Gauge A1 | FAILED | bounded feedback linearization cannot affect the positive invariant tangential trace-free Q subspace; no production implementation authorized |
 | 11 Gauge B | DEFERRED | no scaled driver derivation or combined symmetrizer yet |
-| 12 boosted puncture | OPEN | waits on single-hole qualification |
-| 13 spinning puncture | OPEN | waits on single-hole qualification |
-| 14 binary | OPEN | waits on single-hole qualification |
+| 12 boosted puncture | BLOCKED | waits on the failed single-hole convergence gate; existing Z4c-only pgen is not an audited PC-GH initial-data path |
+| 13 spinning puncture | BLOCKED | waits on the failed single-hole convergence gate and constraint-satisfying TwoPunctures data |
+| 14 binary | BLOCKED | waits on the failed single-hole convergence gate and constraint-satisfying TwoPunctures data |
 | 15 AMR | OPEN | plumbing exists; reduction/curl injection has not been measured |
 
 ## 2026-09-01 — complete symbolic suite
@@ -420,11 +420,240 @@ This re-audit was stopped at the user's request for remote independent review.  
 new decomposition is diagnostic infrastructure, not a completed root-cause audit,
 and it does not supersede the hard stop below.
 
+## 2026-09-01 — direct moving-puncture gauge decision tree
+
+Evidence source commit: `f5b334f0`. The two new exact scripts prove the requested
+primary and STANDARD Y/B gauge equations and construct the 50-by-50 algebraic-tangent
+principal symbol. The direct `z4c_mp` characteristic polynomial is
+
+```text
+-v^30 (v-1)^2 (v+1)^2 (3v^2-4) (2 alpha chi-v^2)
+    (alpha^2 chi-v^2)^6 / 3
+```
+
+It is diagonalizable at generic positive `alpha,chi`, but exact ranks find defects at
+`alpha^2 chi=4/3` (multiplicity `7/6`), `alpha=2` (generically `7/5`), and
+`alpha chi=2/3` (`2/1`). The unit-mass initial wormhole crosses the last surface at
+`r/M=7.151725902759133`. The direct gauge therefore fails the complete-basis condition
+for spectral/SAT promotion.
+
+The prescribed follow-on `z4c_mp_hyperbolic` switch has longitudinal speed squared
+`(4-S alpha^2 chi)/3`. With the implemented smoothstep from `S=0` at
+`alpha chi=0.1` to `S=1` at `alpha chi=0.5`, exact ranks and inequalities establish a
+complete basis only on the conditional domain `0<alpha<=1`, `0<alpha chi<=1`. The
+evolution does not enforce those inequalities, so this is not a global
+strong-hyperbolicity claim.
+
+### Build and symbolic commands
+
+The compiler was `/usr/bin/c++`, GCC `13.3.0`; both builds were Release, Kokkos Serial,
+MPI off, double precision. Commands were:
+
+```bash
+cmake -S . -B /tmp/athenak-pcgh-z4cmp-release-20260901 \
+  -D CMAKE_BUILD_TYPE=Release
+cmake --build /tmp/athenak-pcgh-z4cmp-release-20260901 -j2
+
+cmake -S . -B /tmp/athenak-z4c-mp-control-20260901 \
+  -D PROBLEM=z4c_one_puncture -D CMAKE_BUILD_TYPE=Release
+cmake --build /tmp/athenak-z4c-mp-control-20260901 -j2
+
+/tmp/pc-gh-z4c-mp-sympy/bin/python analysis/pc_gh_symbolic/run_all.py
+/tmp/pc-gh-z4c-mp-sympy/bin/python \
+  analysis/pc_gh_symbolic/verify_z4c_mp_gauge.py
+/tmp/pc-gh-z4c-mp-sympy/bin/python \
+  analysis/pc_gh_symbolic/analyze_z4c_mp_principal.py
+```
+
+The complete symbolic suite passed, including all prior gates and the expected printed
+counterexamples to rejected historical equations.
+
+### Minkowski gates
+
+Exact Minkowski passed for both gauges with:
+
+```bash
+PCGH=/tmp/athenak-pcgh-z4cmp-release-20260901/src/athena
+$PCGH -i tst/inputs/pc_gh_minkowski.athinput \
+  -d /tmp/pcgh-z4cmp-direct-gates-current-d1HHge pc_gh/gauge=z4c_mp
+$PCGH -i tst/inputs/pc_gh_minkowski.athinput \
+  -d /tmp/pcgh-z4cmp-hyp-gates-s81wTD pc_gh/gauge=z4c_mp_hyperbolic
+```
+
+The established robust-Minkowski input was then run at `N={32,64,128}` with:
+
+```bash
+RUN=/tmp/pcgh-z4cmp-direct-gates-current-d1HHge
+for N in 32 64 128; do
+  $PCGH -i tst/inputs/pc_gh_robust_minkowski.athinput -d "$RUN" \
+    pc_gh/gauge=z4c_mp mesh/nx1="$N" meshblock/nx1=16 \
+    job/basename="pc_gh_z4cmp_direct_robust_n${N}"
+done
+/tmp/pc-gh-z4c-mp-sympy/bin/python \
+  analysis/pc_gh_symbolic/analyze_robust_minkowski.py \
+  "$RUN/pc_gh_robust_minkowski-final.dat" \
+  --history 32:"$RUN/pc_gh_z4cmp_direct_robust_n32.pcgh.hst" \
+  --history 64:"$RUN/pc_gh_z4cmp_direct_robust_n64.pcgh.hst" \
+  --history 128:"$RUN/pc_gh_z4cmp_direct_robust_n128.pcgh.hst"
+
+RUN=/tmp/pcgh-z4cmp-hyp-gates-s81wTD
+for N in 32 64 128; do
+  $PCGH -i tst/inputs/pc_gh_robust_minkowski.athinput -d "$RUN" \
+    pc_gh/gauge=z4c_mp_hyperbolic mesh/nx1="$N" meshblock/nx1=16 \
+    job/basename="pc_gh_z4cmp_hyp_robust_n${N}"
+done
+/tmp/pc-gh-z4c-mp-sympy/bin/python \
+  analysis/pc_gh_symbolic/analyze_robust_minkowski.py \
+  "$RUN/pc_gh_robust_minkowski-final.dat" \
+  --history 32:"$RUN/pc_gh_z4cmp_hyp_robust_n32.pcgh.hst" \
+  --history 64:"$RUN/pc_gh_z4cmp_hyp_robust_n64.pcgh.hst" \
+  --history 128:"$RUN/pc_gh_z4cmp_hyp_robust_n128.pcgh.hst"
+```
+
+The direct run directory was `/tmp/pcgh-z4cmp-direct-gates-current-d1HHge`; the
+switched directory was `/tmp/pcgh-z4cmp-hyp-gates-s81wTD`. Both passed the existing
+bounded gate:
+
+| gauge | N | peak amplification | maximum late fitted rate `/M` | final state RMS |
+|---|---:|---:|---:|---:|
+| direct | 32 | 2.390899 | -0.096936 | 1.269404e-10 |
+| direct | 64 | 2.546140 | -0.171004 | 1.060175e-10 |
+| direct | 128 | 1.456351 | -0.189202 | 1.058574e-10 |
+| switched | 32 | 2.390899 | -0.096947 | 7.118217e-11 |
+| switched | 64 | 2.546140 | -0.171004 | 6.458413e-11 |
+| switched | 128 | 1.456351 | -0.189202 | 6.110251e-11 |
+
+This qualifies only exact and robust Minkowski for these Serial configurations.
+
+### Matched one-puncture commands and results
+
+The PC-GH and Z4c controls used the same unit-mass time-symmetric ADM wormhole, periodic
+`[-8M,8M]^3` box, one uniform block, `N={16,24,32}`, second-order spatial operators,
+RK4, CFL `0.1`, user KO amplitude `1.0`, and `eta=2/M`. The formulations have different
+native constraint systems: PC-GH retained its already-established `kappa=1`, while the
+explicit default Z4c control has `damp_kappa1=damp_kappa2=0`. Constraint definitions
+also differ, so cross-formulation comparisons below are qualitative. The periodic,
+coarse box is a robustness discriminator, not a physical outer-boundary or accurate
+trumpet calculation.
+
+Short `N=16`, `t=0.25M` commands were:
+
+```bash
+$PCGH -i tst/inputs/pc_gh_one_puncture.athinput \
+  -d /tmp/pcgh-z4cmp-onepuncture-JMDUJc
+/tmp/athenak-z4c-mp-control-20260901/src/athena \
+  -i tst/inputs/z4c_one_puncture_control.athinput \
+  -d /tmp/z4c-mp-onepuncture-control-y9UyfL
+```
+
+Both completed. PC-GH ended with positive `A=0.1695696`, `chi=0.1718281`, and minimum
+SPD principal minor `0.9995141`; this is only a short-run gate.
+
+The `20M` runs used the following exact command pattern, with all three spatial and
+mesh-block dimensions set to each `N` and the run directories listed after it:
+
+```bash
+$PCGH -i tst/inputs/pc_gh_one_puncture.athinput -d "$RUN" \
+  time/tlim=20 output1/dt=0.25 \
+  mesh/nx1="$N" mesh/nx2="$N" mesh/nx3="$N" \
+  meshblock/nx1="$N" meshblock/nx2="$N" meshblock/nx3="$N" \
+  job/basename="$TAG" pc_gh/gauge="$GAUGE"
+
+/tmp/athenak-z4c-mp-control-20260901/src/athena \
+  -i tst/inputs/z4c_one_puncture_control.athinput -d "$RUN" \
+  time/tlim=20 output1/dt=0.25 \
+  mesh/nx1="$N" mesh/nx2="$N" mesh/nx3="$N" \
+  meshblock/nx1="$N" meshblock/nx2="$N" meshblock/nx3="$N" \
+  job/basename="$TAG"
+```
+
+Direct PC-GH directories were
+`/tmp/pcgh-z4cmp-onepuncture-t20-JdqrU7`,
+`/tmp/pcgh-z4cmp-onepuncture-n24-q9ocll`, and
+`/tmp/pcgh-z4cmp-onepuncture-n32-E3mzus`. Switched PC-GH directories were
+`/tmp/pcgh-z4cmp-hyp-onepuncture-n16-j9sfx8`,
+`/tmp/pcgh-z4cmp-hyp-onepuncture-n24-AmlmHq`, and
+`/tmp/pcgh-z4cmp-hyp-onepuncture-n32-VUUJjZ`. Z4c directories were
+`/tmp/z4c-mp-onepuncture-n16-Z4taxt`,
+`/tmp/z4c-mp-onepuncture-n24-1i0NMz`, and
+`/tmp/z4c-mp-onepuncture-n32-4C2382`.
+
+The exact `(GAUGE,N,RUN,TAG)` substitutions were:
+
+| formulation | gauge | N | run-directory suffix | tag |
+|---|---|---:|---|---|
+| PC-GH | `z4c_mp` | 16 | `pcgh-z4cmp-onepuncture-t20-JdqrU7` | `pc_gh_one_puncture` |
+| PC-GH | `z4c_mp` | 24 | `pcgh-z4cmp-onepuncture-n24-q9ocll` | `pc_gh_one_puncture_n24` |
+| PC-GH | `z4c_mp` | 32 | `pcgh-z4cmp-onepuncture-n32-E3mzus` | `pc_gh_one_puncture_n32` |
+| PC-GH | `z4c_mp_hyperbolic` | 16 | `pcgh-z4cmp-hyp-onepuncture-n16-j9sfx8` | `pc_gh_hyp_one_puncture_n16` |
+| PC-GH | `z4c_mp_hyperbolic` | 24 | `pcgh-z4cmp-hyp-onepuncture-n24-AmlmHq` | `pc_gh_hyp_one_puncture_n24` |
+| PC-GH | `z4c_mp_hyperbolic` | 32 | `pcgh-z4cmp-hyp-onepuncture-n32-VUUJjZ` | `pc_gh_hyp_one_puncture_n32` |
+| Z4c | input default | 16 | `z4c-mp-onepuncture-n16-Z4taxt` | `z4c_one_puncture_n16` |
+| Z4c | input default | 24 | `z4c-mp-onepuncture-n24-1i0NMz` | `z4c_one_puncture_n24` |
+| Z4c | input default | 32 | `z4c-mp-onepuncture-n32-4C2382` | `z4c_one_puncture_n32` |
+
+Every PC-GH run reached `20M` with finite constraint histories sampled at 81 output
+times. Positivity and SPD were checked by the final diagnostic at the endpoint, not
+recorded as time-series minima; the endpoint values were:
+
+| gauge | N | max GH | max ADM | max reduction/curl | max algebraic | min A | min chi | min SPD |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| direct | 16 | 0.0842200 | 0.167283 | 0.0017914 | 3.75e-7 | 0.48957 | 0.43272 | 0.95666 |
+| direct | 24 | 0.180386 | 0.366192 | 0.0035310 | 5.77e-7 | 0.35007 | 0.30873 | 0.90804 |
+| direct | 32 | 0.347373 | 0.753324 | 0.0147963 | 3.29e-5 | 0.193998 | 0.171497 | 0.83826 |
+| switched | 16 | 0.0843156 | 0.167636 | 0.0017241 | 1.47e-7 | 0.48859 | 0.42825 | 0.96820 |
+| switched | 24 | 0.180642 | 0.367116 | 0.0035262 | 7.33e-7 | 0.34883 | 0.30529 | 0.91236 |
+| switched | 32 | 0.346936 | 0.753620 | 0.0149539 | 2.49e-5 | 0.192884 | 0.169548 | 0.84512 |
+
+At the final history sample, the maximum component RMS in each PC-GH family,
+normalized by the diagnostic volume, was:
+
+| gauge | N | GH | ADM | reduction | curl | algebraic projection |
+|---|---:|---:|---:|---:|---:|---:|
+| direct | 16 | 0.0133210 | 0.0261511 | 9.238e-4 | 1.797e-4 | 1.873e-7 |
+| direct | 24 | 0.0214784 | 0.0422763 | 8.254e-4 | 4.278e-4 | 5.091e-8 |
+| direct | 32 | 0.0334931 | 0.0669451 | 0.0015938 | 0.0018847 | 2.367e-6 |
+| switched | 16 | 0.0133403 | 0.0261949 | 9.419e-4 | 1.796e-4 | 5.351e-8 |
+| switched | 24 | 0.0215190 | 0.0423683 | 8.403e-4 | 4.299e-4 | 6.257e-8 |
+| switched | 32 | 0.0335164 | 0.0670557 | 0.0016064 | 0.0019029 | 1.820e-6 |
+
+The matched Z4c final volume-normalized RMS diagnostics were:
+
+| N | aggregate C | H | M | Z | Theta |
+|---:|---:|---:|---:|---:|---:|
+| 16 | 0.188204 | 0.113941 | 0.079275 | 0.046772 | 0.086041 |
+| 24 | 0.220833 | 0.159700 | 0.074440 | 0.053596 | 0.078942 |
+| 32 | 0.192036 | 0.138884 | 0.063806 | 0.048699 | 0.063496 |
+
+The direct and switched PC-GH endpoint GH/ADM norms increase monotonically with
+resolution, and the switch changes them only at the sub-percent level. Z4c's aggregate
+constraint is nonmonotone and improves from `N=24` to `N=32`, but its diagnostics are
+not the same PC-GH quantities. No convergence order or continuum growth rate is
+claimed from these three coarse periodic grids.
+
+Classification: direct `z4c_mp` is a useful finite-difference control but has a proven
+defective shell. The switched variant repairs the reachable principal-symbol
+coincidences only conditionally, yet does not repair the observed resolution trend.
+Gate 9 therefore `FAILED`; this result does not establish whether the trend originates
+near the under-resolved puncture, at the periodic boundary, or in the continuum
+formulation. The sequential perturbed, boosted, spinning, and binary gates remain
+blocked. The existing `z4c_boosted_puncture` path is Z4c-specific and its initialization
+policy has not been audited for PC-GH; constraint-satisfying spin/binary data also
+depends on an external `twopuncturesc` tree absent from this branch.
+
 ## Current hard stop
 
-Do not start a stationary evolution campaign.  Gauge A0 has a robust positive projected
-frozen mode whose invariant subspace is identified above, and only periodic physical
-boundaries exist.  A periodic finite box is not acceptable as a production single-hole
-outer boundary.  The mandated baseline is `(gamma_1,gamma_2)=(-1,0)`, and the
-qualification plan forbids adding `gamma_2` until that baseline qualifies.  Because it
-did not qualify, reduction-constraint damping is not an authorized next step.
+Gauge A0 remains stopped: do not start its stationary evolution campaign. It has a
+robust positive projected frozen mode whose invariant subspace is identified above,
+and only periodic physical boundaries exist.
+
+The new moving-puncture path is also stopped before perturbed/boosted/spinning/binary
+promotion. Both requested gauge variants completed the bounded `20M` discriminator,
+but neither passed the three-resolution constraint gate. A periodic finite box is not
+an acceptable production single-hole outer boundary. Do not tune KO, add unauthorized
+constraint damping, weaken norms, or treat survival as qualification.
+
+The single recommended next action is a bounded localization audit of the direct and
+switched `N=24/32` GH/ADM growth (radial profiles separating the puncture neighborhood
+from the periodic outer region) before changing the formulation or running new physical
+cases.

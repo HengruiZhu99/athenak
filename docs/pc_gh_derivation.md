@@ -678,6 +678,119 @@ number implementation, including the inverse-metric derivative and curl-ordering
 difference. Classification: standard gradient equations `PROVED ON r>0`, conditional on
 a differentiable Gauge A source satisfying the stated dependency restriction.
 
+## Direct moving-puncture gauge and its characteristic defects
+
+To match the default AthenaK `project/bbh` Z4c coordinate conditions on the physical
+constraint surface, define the PC-GH gauge `z4c_mp` by
+
+\[
+ D_0 A=-4AK,
+ \qquad
+ D_0\beta^i=\tilde\Lambda^i-\eta\beta^i,
+ \qquad D_0=\partial_t-\beta^k\partial_k .
+\]
+
+Here \(K\), rather than a GH replacement for the Z4c \(\hat K=K-2\Theta\), is used.
+In the regular GH-source representation this is exactly
+
+\[
+ h_\perp=\alpha\pi+2K,
+ \qquad
+ h^i=(1-A\chi)\tilde\Lambda^i
+ -\frac12\tilde\gamma^{ij}(AX_j-\chi Y_j)-\eta\beta^i.
+\]
+
+For constant \(\eta\), differentiating these equations in the STANDARD ordering gives
+
+\[
+ \partial_tY_i=\beta^k\partial_kY_i+B_i{}^kY_k
+ -4KY_i-4A\partial_iK,
+\]
+
+\[
+ \partial_tB_i{}^j=\beta^k\partial_kB_i{}^j+B_i{}^kB_k{}^j
+ +\partial_i\tilde\Lambda^j-\eta B_i{}^j.
+\]
+
+`verify_z4c_mp_gauge.py` proves the cancellations in both the primary and differentiated
+source forms exactly. This is a gauge replacement only: the corrected \(K\),
+\(\tilde A_{ij}\), \(\pi\), and \(\tilde\Lambda^i\) Einstein equations are unchanged.
+
+The principal-symbol calculation is performed after pulling the 55-field symbol back
+to the 50-dimensional tangent space of the five conformal algebraic constraints. At
+any point with positive-definite \(\tilde\gamma_{ij}\), a conformal-orthonormal frame
+and a unit wave covector reduce the calculation to the exact matrix in
+`analyze_z4c_mp_principal.py`. With \(v\) measured relative to the shift, its
+characteristic polynomial is
+
+\[
+ -\frac13v^{30}(v-1)^2(v+1)^2(3v^2-4)
+ (2\alpha\chi-v^2)(\alpha^2\chi-v^2)^6.
+\]
+
+Thus the nonzero speeds are
+
+\[
+ v=\pm1\;(2),\quad
+ v=\pm\sqrt{4/3}\;(1),\quad
+ v=\pm\sqrt{2\alpha\chi}\;(1),\quad
+ v=\pm\alpha\sqrt\chi\;(6),
+\]
+
+with 30 zero-speed fields. The exact eigenspace ranks identify three defective
+surfaces:
+
+| surface | algebraic/geometric multiplicity of the coincident positive-speed root |
+|---|---:|
+| \(\alpha^2\chi=4/3\) | `7/6` |
+| \(\alpha=2\), generically | `7/5` |
+| \(\alpha\chi=2/3\) | `2/1` |
+
+The coincidences \(\alpha^2\chi=1\) and \(2\alpha\chi=1\) are semisimple. Therefore
+the direct gauge is strongly hyperbolic only away from the three defective surfaces;
+it is not a spectral/SAT candidate over a domain crossing one of them. The unit-mass
+initial wormhole has \(\alpha\chi=\psi^{-6}\) and crosses the third surface at
+
+\[
+ r/M=\frac{1}{2[(3/2)^{1/6}-1]}=7.151725902759133.
+\]
+
+For the prescribed modified shift, set \(z=\alpha\chi\) and
+
+\[
+ D_0\beta^i=\tilde\Lambda^i-\eta\beta^i+S(z)M^i,
+ \qquad
+ M^i=\frac12\tilde\gamma^{ij}(AX_j-\chi Y_j).
+\]
+
+Production uses the cubic smoothstep
+
+\[
+ S(z)=\begin{cases}
+ 0,&z\le z_0,\\
+ 3s^2-2s^3,&z_0<z<z_1,\quad s=(z-z_0)/(z_1-z_0),\\
+ 1,&z\ge z_1,
+ \end{cases}
+ \qquad (z_0,z_1)=(0.1,0.5).
+\]
+
+The STANDARD \(B\) equation includes the complete product rule
+\(\partial_i(SM^j)=S'\partial_i z\,M^j+S\partial_iM^j\). The modified longitudinal
+speed is
+
+\[
+ v_L^2=\frac{4-S\alpha^2\chi}{3}.
+\]
+
+Exact ranks show that the \(S=1\) lapse/longitudinal and light/longitudinal
+coincidences are semisimple. If \(0<\alpha\le1\), \(0<\alpha\chi\le1\), and the switch
+has reached one below \(\alpha\chi=4/7\), no coincidence occurs inside the transition:
+the lapse condition would require \(S\alpha z=4-6z\), impossible for \(z<4/7\), and
+the physical-light condition would require \((S+3)\alpha z=4\), also impossible there.
+This proves conditional strong hyperbolicity on that stated domain. It is not a global
+theorem, and the numerical campaign below does not establish that every evolved point
+remains inside the stated bounds.
+
 ## Gauge A0: prescribed stationary 1+log trumpet
 
 The construction here uses only the stationary Schwarzschild equations in
@@ -1096,7 +1209,9 @@ valid, but its coupling to the full semi-discrete energy remains `NOT ESTABLISHE
 | Lambda equation | corrected equation `PROVED ON r>0`; supplied target `FAILED` | Mixed covariant projection and exact lapse-acceleration residual above. |
 | X/Y/Q/B standard-order equations | `PROVED ON r>0`, Gauge-A conditional | Exact product-rule and curl-ordering audit above. |
 | equivalence to standard FO-GH for r>0 | `PROVED ON r>0`, constraint-manifold and gauge conditional | Explicit mutually inverse variable map and common covariant origin above. |
-| symmetric hyperbolicity for r>0 | `PROVED ON r>0` | Complete pulled-back characteristic basis and positive FO-GH symmetrizer above; no uniform puncture-limit claim. |
+| symmetric hyperbolicity for r>0 | `PROVED ON r>0` for the established metric-only/prescribed Gauge-A class | Complete pulled-back FO-GH characteristic basis and positive symmetrizer above; no uniform puncture-limit claim. The direct moving-puncture gauge changes this symbol. |
+| direct `z4c_mp` gauge | equations `PROVED`; global strong hyperbolicity `FAILED` | Exact STANDARD Y/B identities; defective surfaces at \(\alpha^2\chi=4/3\), \(\alpha=2\), and \(\alpha\chi=2/3\). |
+| switched `z4c_mp_hyperbolic` gauge | equations `PROVED`; strong hyperbolicity `PROVED` only on the stated conditional domain | Exact modified symbol and eigenspace ranks; no spectral/SAT promotion or global-domain claim. |
 | Gauge A0 continuum target | `PROVED`; pointwise production gate passed, frozen stability failed | Stationary construction above and bounded numerical evidence in the qualification log. |
 | bounded Gauge A1 feedback | linearization `PROVED`; frozen clearance `FAILED` | The invariant tangential trace-free Q subspace has positive rate `(5t-2u)/3` and is untouched by `mu_L,mu_S`. |
 | Gauge B scaled driver | `NOT ESTABLISHED` | Deferred until Gauge A qualification and a new driver derivation. |

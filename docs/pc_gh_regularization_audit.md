@@ -2,8 +2,8 @@
 
 ## Status
 
-This audit records algebraic evidence through
-`f74a19ae4d425bccbbd1bff78db72bbe49502f42`.  The theorem domain is `r>0` with
+This audit records the moving-puncture implementation and algebraic evidence through
+`f5b334f0`.  The theorem domain is `r>0` with
 positive `A`, positive `chi`, and nonsingular positive-definite `gtilde`.  It does not
 assert a uniformly conditioned continuum extension at an exact `A=chi=0` point.
 
@@ -42,6 +42,8 @@ combination.  It does not construct physical Christoffels or a physical Ricci te
 | Brown conformal Ricci | `verify_conformal_ricci.py` | exact at 18 rational component/point pairs for a non-diagonal unimodular family |
 | primary projections | `verify_primary_projections.py` | corrected `K`, `pi`, `Atilde`, and `Lambda` sectors pass |
 | gradient product rules | `verify_gradient_rhs.py` | exact for metric-only or prescribed differentiable gauge sources |
+| direct moving-puncture gauge | `verify_z4c_mp_gauge.py` | exact primary and STANDARD Y/B equations for constant `eta` |
+| moving-puncture principal symbol | `analyze_z4c_mp_principal.py` | exact 50-field algebraic-tangent polynomial and eigenspace ranks; direct gauge has three defective surfaces; switched gauge is strongly hyperbolic only on its stated conditional domain |
 | independent four-dimensional reduced equation | `verify_4d_component_oracle.py` | all ten covariant components and corrected primary equations pass at a rational point jet |
 | PC-GH / standard FO-GH map | `verify_fo_gh_map.py` | exact constrained round trip; `PROVED ON r>0` |
 | Bowen-York leading-field regularity | `audit_bowen_york_cancellation.py` | three-precision boundedness/conditioning audit on `r>0`; nonzero momentum/spin cases are not complete constraint-satisfying data |
@@ -114,6 +116,14 @@ gradient-RHS maxima in addition to GH, physical, reduction, curl, and algebraic
 constraints.  The stationary target problem also writes per-variable maxima and their
 locations in serial runs.
 
+The one-puncture moving-gauge diagnostic additionally fails closed on nonfinite state
+or constraint values, nonpositive `A` or `chi`, and loss of conformal-metric SPD. Its
+current implementation is intentionally Serial-only. The 20M uniform periodic runs
+for both direct and switched gauges ended with positive `A`/`chi` and an SPD conformal
+metric, but these minima were not recorded throughout the trajectory and the normalized
+GH and ADM endpoint norms increased with resolution. This is bounded robustness
+evidence, not convergence or puncture qualification.
+
 Progression must stop on loss of positive `A` or `chi`, loss of conformal-metric SPD,
 nonconvergent constraints, a resolution-growing instability, a divergent source
 temporary, a defective principal symbol, a nonpositive symmetrizer, or a stationary
@@ -128,4 +138,9 @@ norms are not acceptable substitutes.
   operator; the present Euclidean logarithmic norm is not a substitute;
 - derive a constraint-energy treatment for the positive tangential trace-free `Q`
   reduction mode; bounded Gauge A1 cannot affect it;
+- determine why the direct and switched moving-puncture wormhole ladders have
+  resolution-growing GH/ADM endpoint norms before any perturbed, boosted, spinning,
+  or binary promotion;
+- establish that the switched gauge trajectory remains inside its conditional
+  strong-hyperbolicity domain before considering spectral/SAT evolution;
 - repeat backend-sensitive checks under MPI and on the intended GPU backends.

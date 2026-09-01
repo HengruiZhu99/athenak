@@ -126,6 +126,42 @@ the production RHS.  The analyzer reports both the raw operator and its restrict
 the 50-dimensional tangent space of the actual metric, trace-free-curvature, and `Q`
 projection.  This is a Serial diagnostic path, not an evolution mode.
 
+### Direct and switched moving-puncture gauges
+
+`gauge=z4c_mp` implements the default advective AthenaK Z4c moving-puncture
+coordinates directly in PC-GH variables:
+
+```text
+D0 A      = -4 A K
+D0 beta^i = Lambda^i - shift_eta beta^i
+```
+
+The default `shift_eta=2.0` corresponds to a unit mass. The production STANDARD
+gradient equations are the exact spatial derivatives of these primary equations;
+they are not reconstructed through cancellation of separately differenced source
+terms. The corrected PC-GH Einstein sector is shared unchanged with the other gauges.
+
+`gauge=z4c_mp_hyperbolic` adds
+`S(alpha*chi) gtilde^{ij}(A X_j-chi Y_j)/2` to the shift. The default switch is a
+cubic smoothstep from zero at `shift_switch_z0=0.1` to one at
+`shift_switch_z1=0.5`; setup requires `0 < z0 < z1 < 4/7`. Its differentiated
+STANDARD equation includes both the derivative of the metric-gradient term and the
+derivative of the switch. This variant has a conditional complete characteristic
+basis on the domain stated in the derivation; setup does not claim or enforce that an
+evolution remains in that domain.
+
+The moving-puncture CFL estimate includes the physical, lapse,
+transverse-shift, and longitudinal-shift families. It conservatively uses the direct
+gauge upper factor for both variants.
+
+The built-in `pc_gh_one_puncture` problem reuses the exact time-symmetric wormhole ADM
+data from `pc_gh_bowen_york`, with `A=chi=psi^-4`, `alpha=psi^-2`, zero shift and
+extrinsic curvature, and the production ADM-to-PC-GH conversion. Its final Serial-only
+diagnostic fails on nonfinite state/constraint values, nonpositive `A` or `chi`, or a
+non-SPD conformal metric, and records maxima for GH, ADM, reduction/curl, and algebraic
+groups. `tst/inputs/z4c_one_puncture_control.athinput` makes the actual Z4c gauge
+defaults explicit for a matched control.
+
 ## ADM conversion, communication, and outputs
 
 `PcGhToADM` reconstructs `gamma_ij` and `K_ij` only for existing ADM consumers.  The
@@ -164,5 +200,7 @@ GPU backends remain unqualified.
 - no Gauge A1 or Gauge B driver;
 - no claim at the exact puncture (`A=chi=0`); the analytic theorem is on `r>0`;
 - no fourth-order multilevel transfer;
-- no single-hole evolution, Bowen-York transition, binary, AMR, MPI-runtime, GPU, or
+- no single-hole qualification: bounded direct and switched moving-puncture runs exist,
+  but their constraint norms do not form a convergent three-resolution ladder;
+- no perturbed, boosted, spinning, binary, AMR, MPI-runtime, GPU, spectral/SAT, or
   performance qualification yet.
