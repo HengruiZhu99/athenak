@@ -473,6 +473,9 @@ The remaining regular algebraic term is
 -\frac\chi2 Z^kQ_{kij}\right]^{TF}.
 \]
 
+Here and below \(Z_i=\tilde\gamma_{ij}Z^j\); the first term is not a contraction
+with the coordinate component array \(Z^i\).
+
 Thus the covariant result is
 
 \[
@@ -497,7 +500,183 @@ is checked in `verify_primary_projections.py`.
 
 Classification: supplied Atilde nonlinear Z term `FAILED`; boxed corrected Atilde
 equation `PROVED ON r>0` under the algebraic and reduction hypotheses of the Brown
-operator.
+operator. The non-diagonal exact-rational point jet in
+`verify_4d_component_oracle.py` independently verifies this index lowering and the
+complete corrected Atilde equation directly against the covariant four-tensor equation.
+
+### Lambda and a missing lapse-acceleration term
+
+The mixed projection uses the Codazzi identity
+
+\[
+{}^{(4)}R_{ni}=D_iK-D_jK^j{}_i.
+\]
+
+Expanding the two projected derivatives of \(C_\mu\) gives
+
+\[
+\mathcal L_n C_i
+=-2{\cal M}_i-2K_i{}^jC_j-D_iC_\perp
++C_\perp D_i\ln\alpha-\kappa C_i,
+\]
+
+where \({\cal M}_i=D_jK^j{}_i-D_iK\) is the physical momentum constraint. Since
+
+\[
+\alpha\mathcal L_nC_i=D_0C_i-B_i{}^jC_j,
+\qquad C_i=\tilde\gamma_{ij}Z^j,
+\]
+
+the constraint propagation equation is
+
+\[
+\begin{aligned}
+D_0Z^i={}&-2\alpha\tilde{\cal M}^i
+-\alpha\tilde D^iC_\perp
++\alpha C_\perp\tilde D^i\ln\alpha\\
+&-Z^kB_k{}^i+\frac23Z^iB
+-\left(\frac23\alpha K+\kappa\alpha\right)Z^i,
+\end{aligned}
+\]
+
+where \(\tilde{\cal M}^i\) denotes the momentum residual with its index raised by the
+conformal metric.
+
+Independent differentiation of \(\tilde\Gamma^i\) from the conformal-metric
+configuration equation gives the same first line as the supplied Lambda target, plus
+\(-2\alpha\tilde{\cal M}^i\), with \(\tilde\Gamma^i\) in its shift-algebra terms.
+Using \(Z^i=\tilde\Gamma^i-\tilde\Lambda^i\) and the mixed-projection propagation
+equation therefore gives
+
+\[
+\boxed{
+\begin{aligned}
+D_0\tilde\Lambda^i={}&
+\tilde\gamma^{k\ell}\partial_kB_\ell{}^i
++\frac13\tilde\gamma^{ij}\partial_jB
+-\tilde\Lambda^kB_k{}^i
++\frac23\tilde\Lambda^iB\\
+&-\tilde A^{ik}L_k
++2\alpha\tilde A^{k\ell}\tilde\Gamma^i{}_{k\ell}
+-3r_+\tilde A^{ik}W_k
+-\frac43\alpha\tilde D^iK\\
+&+\alpha\tilde D^iC_\perp
+-\frac\chi2 C_\perp L^i
++\left(\frac23\alpha K+\kappa\alpha\right)Z^i.
+\end{aligned}}
+\]
+
+The supplied target omits
+
+\[
+-\alpha C_\perp D^i\ln\alpha
+=-\frac\chi2C_\perp L^i.
+\]
+
+That term is nonzero for simultaneous lapse gradient and temporal GH-constraint
+violation. Its exact mixed-projection residual is recorded by
+`verify_primary_projections.py`.
+
+Classification: supplied Lambda target `FAILED`; boxed corrected Lambda equation
+`PROVED ON r>0`. The exact 4D point-jet oracle independently verifies the complete
+corrected K, Atilde, pi, and Lambda equations while satisfying all ten components of
+the starting covariant reduced equation.
+
+## Standard first-order gradient equations
+
+For each configuration field \(q\in\{\chi,A,\beta^j,
+\tilde\gamma_{ab}\}\), write
+
+\[
+\partial_tq=\beta^kG_k^{(q)}+F^{(q)}.
+\]
+
+Direct differentiation gives
+
+\[
+\partial_tG_i^{(q)}
+=\beta^k\partial_iG_k^{(q)}+B_i{}^kG_k^{(q)}+\partial_iF^{(q)}.
+\]
+
+The production standard ordering is
+
+\[
+\boxed{
+\partial_tG_i^{(q)}
+=\beta^k\partial_kG_i^{(q)}+B_i{}^kG_k^{(q)}+\partial_i^{(1)}F^{(q)}}.
+\]
+
+The compatible and standard forms differ by
+
+\[
+\beta^k(\partial_iG_k^{(q)}-\partial_kG_i^{(q)})
+=\beta^kK^{(q)}_{ik}.
+\]
+
+Thus standard ordering corresponds to the stated \(\gamma_1=-1\) baseline relative to
+direct differentiation. No \(\gamma_2\) term is introduced.
+
+The required algebraic source gradients are as follows. First,
+
+\[
+\begin{aligned}
+\partial_iF^{(\chi)}
+=\frac23\{&X_i(\alpha K-B)\\
+&+\chi[\tfrac12L_iK+\alpha\partial_iK-\partial_iB]\},
+\end{aligned}
+\]
+
+and
+
+\[
+\begin{aligned}
+\partial_iF^{(A)}
+=2Y_i(\alpha\pi-h_\perp)
++2A[\tfrac12L_i\pi+\alpha\partial_i\pi-\partial_i h_\perp].
+\end{aligned}
+\]
+
+For the shift, define \(V_\ell=AX_\ell-\chi Y_\ell\). Since
+
+\[
+\partial_i\tilde\gamma^{j\ell}
+=-\tilde\gamma^{ja}\tilde\gamma^{\ell b}Q_{iab},
+\]
+
+one obtains
+
+\[
+\begin{aligned}
+\partial_iF^{(\beta^j)}={}&
+\partial_i h^j+(Y_i\chi+AX_i)\tilde\Lambda^j
++A\chi\partial_i\tilde\Lambda^j\\
+&-\frac12\tilde\gamma^{ja}\tilde\gamma^{\ell b}Q_{iab}V_\ell\\
+&+\frac12\tilde\gamma^{j\ell}
+[Y_iX_\ell+A\partial_iX_\ell-X_iY_\ell-\chi\partial_iY_\ell].
+\end{aligned}
+\]
+
+Finally,
+
+\[
+\begin{aligned}
+\partial_\ell F^{(\tilde\gamma_{ij})}={}&
+-L_\ell\tilde A_{ij}-2\alpha\partial_\ell\tilde A_{ij}\\
+&+Q_{\ell ki}B_j{}^k+\tilde\gamma_{ki}\partial_\ell B_j{}^k\\
+&+Q_{\ell kj}B_i{}^k+\tilde\gamma_{kj}\partial_\ell B_i{}^k\\
+&-\frac23[Q_{\ell ij}B+\tilde\gamma_{ij}\partial_\ell B].
+\end{aligned}
+\]
+
+Every derivative on the right is a first derivative of a stored first-order or primary
+field. Gauge A must provide \(\partial_i h_\perp\) and \(\partial_i h^j\) by analytic
+differentiation of its prescribed-coordinate/metric-only source; those derivatives may
+depend on X, Y, Q, and B but not on K, Atilde, Lambda, pi, or derivative-field feedback.
+
+`verify_gradient_rhs.py` evaluates the product rules with an independent exact dual
+number implementation, including the inverse-metric derivative and curl-ordering
+difference. Classification: standard gradient equations `PROVED ON r>0`, conditional on
+a differentiable Gauge A source satisfying the stated dependency restriction.
 
 ## Consistent algebraic projection
 
@@ -542,8 +721,8 @@ valid, but its coupling to the full semi-discrete energy remains `NOT ESTABLISHE
 | K equation | corrected equation `PROVED ON r>0`; supplied target `FAILED` | Covariant spatial trace and exact flat counterexample above. |
 | Atilde equation | corrected equation `PROVED ON r>0`; supplied nonlinear Z term `FAILED` | Covariant trace-free spatial projection and exact arbitrary-Q residual above. |
 | pi equation | `PROVED ON r>0` | Normal-normal covariant projection and exact symbolic comparison. |
-| Lambda equation | `NOT ESTABLISHED` | Time derivative of the spatial GH constraint and standard ordering are incomplete. |
-| X/Y/Q/B standard-order equations | `NOT ESTABLISHED` | Algebraic expansion of each `partial_i^(1) F` and curl-ordering comparison is incomplete. |
+| Lambda equation | corrected equation `PROVED ON r>0`; supplied target `FAILED` | Mixed covariant projection and exact lapse-acceleration residual above. |
+| X/Y/Q/B standard-order equations | `PROVED ON r>0`, Gauge-A conditional | Exact product-rule and curl-ordering audit above. |
 | equivalence to standard FO-GH for r>0 | `NOT ESTABLISHED` | Requires an explicit invertible variable map and equation comparison. |
 | symmetric hyperbolicity for r>0 | `NOT ESTABLISHED` | Principal symbol and positive symmetrizer have not been constructed. |
 | Gauge A0 target and table | `NOT ESTABLISHED` | Stationary trumpet construction follows only after the baseline formulation audit. |

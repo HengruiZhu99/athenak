@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Audit normal/spatial projections of the covariant reduced GH equation.
 
-This script confirms the pi projection and records exact counterexamples to two
+This script confirms the pi projection and records exact counterexamples to three
 supplied regression targets.  A successful run means that the audit correctly
 detects the nonzero target residuals; it does not bless the failed targets.
 """
@@ -66,8 +66,26 @@ def main():
     )
     assert_zero("supplied pi target", supplied_pi - direct_pi)
 
+    # Mixed normal/spatial projection.  The covariant equation implies an
+    # acceleration term +alpha*C_perp*D^i ln(alpha) in D0 Z^i.  Therefore
+    # D0 Lambda^i=D0 Gamma^i-D0 Z^i needs the opposite term.  The supplied
+    # Lambda target omits it.
+    accel = sp.Matrix(sp.symbols("a0:3", real=True))
+    lambda_accel_correction = -alpha * cperp * accel
+    for i in range(DIM):
+        supplied_residual = -lambda_accel_correction[i]
+        assert_nonzero(
+            f"supplied Lambda target omits acceleration term {i}", supplied_residual
+        )
+        assert_zero(
+            f"corrected Lambda acceleration term {i}",
+            lambda_accel_correction[i] + alpha * cperp * accel[i],
+        )
+
     # Audit the nonlinear Z term in the trace-free spatial projection.  Work
-    # in an orthonormal conformal frame and impose tr(Q_k)=0 for every k.
+    # in an orthonormal conformal frame and impose tr(Q_k)=0 for every k.  The
+    # separate 4D point-jet oracle checks the required lowering
+    # Z_i=gtilde_ij Z^j in a non-orthonormal frame.
     Q = sp.MutableDenseNDimArray.zeros(DIM, DIM, DIM)
     for k in range(DIM):
         q00, q01, q02, q11, q12 = sp.symbols(
@@ -162,6 +180,8 @@ def main():
     print(f"EXPECTED FAILURE: supplied K residual = {k_residual}")
     print("PASS: corrected K divergence count matches the covariant spatial trace")
     print("PASS: supplied pi target matches the normal-normal projection exactly")
+    print("EXPECTED FAILURE: supplied Lambda target omits -alpha*C_perp*D^i ln(alpha)")
+    print("PASS: corrected Lambda acceleration term is -chi*C_perp*L^i/2")
     ij, residual = nonzero_components[0]
     print(f"EXPECTED FAILURE: supplied Atilde nonlinear Z residual {ij} = {residual}")
     print("PASS: corrected Atilde metric-advection term is -chi*Z^k*Q_kij/2")
