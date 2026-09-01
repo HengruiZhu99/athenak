@@ -52,7 +52,7 @@ TaskStatus MeshBoundaryValues::InitRecv(const int nvars) {
           if ( nghbr.h_view(m,n).lev < pmy_pack->pmb->mb_lev.h_view(m) ) {
             data_size *= recvbuf[n].icoar_ndat;
           } else if ( nghbr.h_view(m,n).lev == pmy_pack->pmb->mb_lev.h_view(m) ) {
-            if (is_z4c_) {
+            if (high_order_cc_) {
               data_size *= recvbuf[n].isame_z4c_ndat;
             } else {
               data_size *= recvbuf[n].isame_ndat;

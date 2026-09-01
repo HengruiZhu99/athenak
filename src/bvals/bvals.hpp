@@ -85,9 +85,9 @@ struct MeshBoundaryBuffer {
 
   // function to allocate memory for buffers for variables and their fluxes
   // Must only be called after BufferIndcs above are initialized
-  void AllocateBuffers(int nmb, int nvars, bool is_z4c) {
+  void AllocateBuffers(int nmb, int nvars, bool high_order_cc) {
     // With Z4c, buffers may contain BOTH same and coarse data
-    if (is_z4c) {
+    if (high_order_cc) {
       int nmax = std::max(isame_z4c_ndat, std::max(icoar_ndat, ifine_ndat) );
       Kokkos::realloc(vars, nmb, (nvars*nmax));
     } else {
@@ -108,7 +108,7 @@ class MeshBlockPack;
 
 class MeshBoundaryValues {
  public:
-  MeshBoundaryValues(MeshBlockPack *ppack, ParameterInput *pin, bool z4c);
+  MeshBoundaryValues(MeshBlockPack *ppack, ParameterInput *pin, bool high_order_cc);
   ~MeshBoundaryValues();
 
   // data for all 56 buffers in most general 3D case. Not all elements used in most cases.
@@ -147,7 +147,7 @@ class MeshBoundaryValues {
   // must use pointer to MBPack and not parent physics module since parent can be one of
   // many types (Hydro, MHD, Radiation, Z4c, etc.)
   MeshBlockPack* pmy_pack;
-  bool is_z4c_;   // flag to denote if this BoundaryValues is for Z4c module
+  bool high_order_cc_;  // enable high-order cell-centered transfer metadata
 };
 
 //----------------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ class MeshBoundaryValues {
 
 class MeshBoundaryValuesCC : public MeshBoundaryValues {
  public:
-  MeshBoundaryValuesCC(MeshBlockPack *ppack, ParameterInput *pin, bool z4c);
+  MeshBoundaryValuesCC(MeshBlockPack *ppack, ParameterInput *pin, bool high_order_cc);
 
   //functions
   void InitSendIndices(MeshBoundaryBuffer &b,int o1,int o2,int o3,int f1,int f2) override;
@@ -172,8 +172,9 @@ class MeshBoundaryValuesCC : public MeshBoundaryValues {
 
   // functions to prolongate conserved and primitive CC variables
   void FillCoarseInBndryCC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
-       bool is_z4c=false);
-  void ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca, bool is_z4c=false);
+       bool high_order_cc=false);
+  void ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
+                    bool high_order_cc=false);
   void ConsToPrimCoarseBndry(const DvceArray5D<Real> &cons, DvceArray5D<Real> &prim);
   void PrimToConsFineBndry(const DvceArray5D<Real> &prim, DvceArray5D<Real> &cons);
   void ConsToPrimCoarseBndry(const DvceArray5D<Real> &cons, const DvceFaceFld4D<Real> &b,

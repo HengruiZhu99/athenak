@@ -28,7 +28,7 @@
 
 void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
                                                DvceArray5D<Real> &ca,
-                                               bool is_z4c) {
+                                               bool high_order_cc) {
   // create local references for variables in kernel
   int nmb = pmy_pack->nmb_thispack;
   int nnghbr = pmy_pack->pmb->nnghbr;
@@ -101,7 +101,7 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
                                  + a(m,v,kl,finej+1,finei) + a(m,v,kl,finej+1,finei+1));
           // restrict in 3D
           } else {
-            if (!is_z4c) {
+            if (!high_order_cc) {
               ca(m,v,k,j,i) = 0.125*(
                   a(m,v,finek  ,finej  ,finei) + a(m,v,finek  ,finej  ,finei+1)
                 + a(m,v,finek  ,finej+1,finei) + a(m,v,finek  ,finej+1,finei+1)
@@ -132,7 +132,7 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
 //! Code here is based on MeshRefinement::ProlongateCellCenteredValues() in C++ version
 
 void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
-    bool is_z4c) {
+    bool high_order_cc) {
   // create local references for variables in kernel
   int nmb = pmy_pack->nmb_thispack;
   int nnghbr = pmy_pack->pmb->nnghbr;
@@ -190,7 +190,7 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
         int fj = (j - indcs.cjs)*2 + indcs.js;
         int fk = (k - indcs.cks)*2 + indcs.ks;
         // call inlined prolongation operator for CC variables
-        if (!is_z4c) {
+        if (!high_order_cc) {
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
         } else {
           switch (indcs.ng) {

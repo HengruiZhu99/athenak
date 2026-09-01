@@ -22,8 +22,8 @@
 // BValCC constructor:
 
 MeshBoundaryValuesCC::MeshBoundaryValuesCC(MeshBlockPack *pp, ParameterInput *pin,
-                                           bool z4c) :
-  MeshBoundaryValues(pp, pin, z4c) {
+                                           bool high_order_cc) :
+  MeshBoundaryValues(pp, pin, high_order_cc) {
 }
 
 //----------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ TaskStatus MeshBoundaryValuesCC::PackAndSendCC(DvceArray5D<Real> &a,
   auto &mblev = pmy_pack->pmb->mb_lev;
   auto &sbuf = sendbuf;
   auto &rbuf = recvbuf;
-  auto &is_z4c = is_z4c_;
+  auto &high_order_cc = high_order_cc_;
   auto &multilevel = pmy_pack->pmesh->multilevel;
   // Outer loop over (# of MeshBlocks)*(# of buffers)*(# of variables)
   int nmnv = nmb*nnghbr*nvar;
@@ -153,9 +153,9 @@ TaskStatus MeshBoundaryValuesCC::PackAndSendCC(DvceArray5D<Real> &a,
     // only load buffers when neighbor exists
     if (nghbr.d_view(m,n).gid >= 0) {
       int il, iu, jl, ju, kl, ku;
-      // If neighbor is at same level and data is for Z4c module, append data from coarse
-      // array for higher-order prolongation
-      if ((nghbr.d_view(m,n).lev == mblev.d_view(m)) && (is_z4c) && (multilevel)) {
+      // Append coarse data needed by high-order prolongation at same-level boundaries.
+      if ((nghbr.d_view(m,n).lev == mblev.d_view(m)) &&
+          high_order_cc && multilevel) {
         il = sbuf[n].isame_z4c.bis;
         iu = sbuf[n].isame_z4c.bie;
         jl = sbuf[n].isame_z4c.bjs;
@@ -206,7 +206,7 @@ TaskStatus MeshBoundaryValuesCC::PackAndSendCC(DvceArray5D<Real> &a,
 #if MPI_PARALLEL_ENABLED
   // Send boundary buffer to neighboring MeshBlocks using MPI
   Kokkos::fence();
-  auto &is_z4c = is_z4c_;
+  auto &high_order_cc = high_order_cc_;
   int my_rank = global_variable::my_rank;
   auto &nghbr = pmy_pack->pmb->nghbr;
   bool no_errors=true;
@@ -226,7 +226,7 @@ TaskStatus MeshBoundaryValuesCC::PackAndSendCC(DvceArray5D<Real> &a,
           if ( nghbr.h_view(m,n).lev < pmy_pack->pmb->mb_lev.h_view(m) ) {
             data_size *= sendbuf[n].icoar_ndat;
           } else if ( nghbr.h_view(m,n).lev == pmy_pack->pmb->mb_lev.h_view(m) ) {
-            if (is_z4c) {
+            if (high_order_cc) {
               data_size *= sendbuf[n].isame_z4c_ndat;
             } else {
               data_size *= sendbuf[n].isame_ndat;
@@ -264,7 +264,7 @@ TaskStatus MeshBoundaryValuesCC::RecvAndUnpackCC(DvceArray5D<Real> &a,
   int nnghbr = pmy_pack->pmb->nnghbr;
   auto &nghbr = pmy_pack->pmb->nghbr;
   auto &rbuf = recvbuf;
-  auto &is_z4c = is_z4c_;
+  auto &high_order_cc = high_order_cc_;
   auto &multilevel = pmy_pack->pmesh->multilevel;
 #if MPI_PARALLEL_ENABLED
   //----- STEP 1: check that recv boundary buffer communications have all completed
@@ -375,9 +375,9 @@ TaskStatus MeshBoundaryValuesCC::RecvAndUnpackCC(DvceArray5D<Real> &a,
     // only unpack buffers when neighbor exists
     if (nghbr.d_view(m,n).gid >= 0) {
       int il, iu, jl, ju, kl, ku;
-      // If neighbor is at same level and data is for Z4c module, unpack data from coarse
-      // array for higher-order prolongation
-      if ((nghbr.d_view(m,n).lev == mblev.d_view(m)) && (is_z4c) && (multilevel)) {
+      // Unpack coarse data needed by high-order prolongation at same-level boundaries.
+      if ((nghbr.d_view(m,n).lev == mblev.d_view(m)) &&
+          high_order_cc && multilevel) {
         il = rbuf[n].isame_z4c.bis;
         iu = rbuf[n].isame_z4c.bie;
         jl = rbuf[n].isame_z4c.bjs;
