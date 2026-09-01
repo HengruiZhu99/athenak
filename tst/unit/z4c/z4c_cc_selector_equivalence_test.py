@@ -8,13 +8,14 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import struct
 import subprocess
 import sys
 
 
-HISTORY_SHA256 = "4896c333ceda81d99cf1e4c15a28996d73c999c6222d4b83e770c9f4f4d0f598"
+HISTORY_SHA256 = "e2bc8e6aa86cbf554a7a108e5a7e64320bf716540bd8539b66bb6bc6014ca6cf"
 TIMESTEP_SHA256 = "dad954f5938eea76aca74493ec5bd1ac8c66cdc67ac7ad24225988c19e5e3037"
 RESTART_MARKER = b"<par_end>\n"
 RESTART_OUTPUT = "\n<output4>\nfile_type = rst\ndcycle = 1\nfile_number = 0\n"
@@ -31,6 +32,18 @@ def sha256_bytes(data: bytes) -> str:
 
 def sha256_file(path: Path) -> str:
     return sha256_bytes(path.read_bytes())
+
+
+def history_table(data: bytes) -> tuple[list[str], list[list[str]]]:
+    text = data.decode("utf-8")
+    header = next(line for line in text.splitlines() if line.startswith("#  [1]="))
+    labels = re.findall(r"\[\d+\]=([^ ]+)", header)
+    require(len(labels) == len(set(labels)), "history labels must be unique")
+    rows = [line.split() for line in text.splitlines()
+            if line.strip() and not line.startswith("#")]
+    require(rows and all(len(row) == len(labels) for row in rows),
+            "history rows do not match the indexed header")
+    return labels, rows
 
 
 def run_case(athena: Path, input_text: str, case: Path) -> None:

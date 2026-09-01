@@ -38,6 +38,18 @@ inline Real SquaredDistanceToAABB(const Real x, const Real y, const Real z,
   return dx * dx + dy * dy + dz * dz;
 }
 
+//! \brief Recalibrate the dimensionless dchi trigger between root resolutions.
+//!
+//! The centered dchi sensor is 2*h*|grad chi| on an isotropic root mesh.  A
+//! threshold calibrated at reference_nx1 therefore scales inversely with the
+//! current root resolution when the physical radial domain is held fixed.
+inline Real ResolutionScaledDchiThreshold(const Real reference_threshold,
+                                          const int reference_nx1,
+                                          const int current_nx1) {
+  return reference_threshold * static_cast<Real>(reference_nx1) /
+         static_cast<Real>(current_nx1);
+}
+
 //! \class Z4c_AMR
 //  \brief managing AMR for Z4c simulations
 class Z4c_AMR {
@@ -66,6 +78,9 @@ class Z4c_AMR {
 
   Real chi_thresh;     // chi threshold for chi refinement method
   Real dchi_thresh;    // dchi threshold for dchi refinement method
+  Real dchi_reference_thresh = 0.0;  // unscaled value supplied by the input deck
+  int dchi_reference_nx1 = 0;        // zero keeps the legacy unscaled behavior
+  int dchi_current_nx1 = 0;
   Real dchi_derefine_factor = 0.25;  // derefine below this fraction of dchi threshold
   bool dchi_shadow_nyquist = false;  // default-off; never changes refinement flags
   bool capture_replay_dchi = false;  // diagnostic-only native criterion values in replay

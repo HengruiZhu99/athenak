@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import math
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -18,10 +19,15 @@ def require(condition: bool, message: str) -> None:
         raise RuntimeError(message)
 
 
-def numeric_rows(path: Path) -> list[list[float]]:
-    return [[float(value) for value in line.split()]
-            for line in path.read_text(encoding="utf-8").splitlines()
+def history_table(path: Path) -> tuple[dict[str, int], list[list[float]]]:
+    text = path.read_text(encoding="utf-8")
+    header = next(line for line in text.splitlines() if line.startswith("#  [1]="))
+    labels = re.findall(r"\[\d+\]=([^ ]+)", header)
+    require(len(labels) == len(set(labels)), "history labels must be unique")
+    rows = [[float(value) for value in line.split()]
+            for line in text.splitlines()
             if line.strip() and not line.startswith("#")]
+    return {label: index for index, label in enumerate(labels)}, rows
 
 
 def active_coordinates(binary: dict[str, object], block: int,
@@ -73,15 +79,25 @@ def main() -> int:
     require(not list(work.rglob("z4c_state_failure.json")),
             "static multilevel wave emitted a Z4c failure artifact")
 
-    history = numeric_rows(work / "z4c_vc_static_multilevel_wave.z4c.user.hst")
-    evaluated_history = [row for row in history if int(round(row[17])) > 0]
+    columns, history = history_table(
+        work / "z4c_vc_static_multilevel_wave.z4c.user.hst")
+    required_columns = {"cycle", "nmb_total", "minLapse", "maxRefLev"}
+    require(required_columns <= columns.keys(),
+            f"history is missing columns: {sorted(required_columns - columns.keys())}")
+    evaluated_history = [
+        row for row in history if int(round(row[columns["cycle"]])) > 0
+    ]
     require(len(evaluated_history) >= 4 and
             all(math.isfinite(value) for row in evaluated_history for value in row),
             "evaluated static multilevel history is incomplete or nonfinite")
-    require(all(int(round(row[12])) == args.expected_leaves and
-                int(round(row[13])) == 1
+    require(all(int(round(row[columns["nmb_total"]])) == args.expected_leaves and
+                int(round(row[columns["maxRefLev"]])) == 1
                 for row in evaluated_history),
             "static hierarchy changed during the bounded wave run")
+    require(all(math.isclose(row[columns["minLapse"]], 1.0,
+                             rel_tol=0.0, abs_tol=2.0e-14)
+                for row in evaluated_history),
+            "static Minkowski slice minimum lapse is not unity")
     require(max(max(row[2], row[3], row[4], row[5])
                 for row in evaluated_history) < 1.0e-4,
             "static multilevel constraint norm exceeds its bounded-wave guard")

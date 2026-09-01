@@ -91,6 +91,8 @@ def main() -> None:
     parser.add_argument("--history", required=True, type=Path)
     args = parser.parse_args()
     labels, rows = parse_history(args.history)
+    require("minLapse" in labels,
+            "slice-global minimum lapse is missing from Z4c history")
 
     expected_suffix = []
     expected_suffix += [f"ax-{family}2" for family in FAMILIES] + ["ax-N"]
@@ -100,7 +102,9 @@ def main() -> None:
         expected_suffix += [f"L{layer}-N"]
     for family in FAMILIES:
         expected_suffix += [f"{family}-Linf", f"{family}-rho", f"{family}-z"]
-    require(labels[-len(expected_suffix):] == expected_suffix,
+    constraint_begin = labels.index("ax-C2")
+    require(labels[constraint_begin:constraint_begin + len(expected_suffix)] ==
+            expected_suffix,
             "Cartoon constraint-history inventory or ordering changed")
 
     for row in rows:

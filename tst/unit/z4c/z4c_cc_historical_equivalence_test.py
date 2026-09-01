@@ -14,6 +14,9 @@ import z4c_cc_selector_equivalence_test as cc
 
 
 HISTORICAL_COMMIT = "6daa774d7451dbc5f7cac640c6e32a6fd11de7f9"
+HISTORICAL_HISTORY_SHA256 = (
+    "4896c333ceda81d99cf1e4c15a28996d73c999c6222d4b83e770c9f4f4d0f598"
+)
 CONFIG_KEYS = (
     "Athena_BUILD_UNIT_TESTS", "Athena_ENABLE_IRISK_INTERPOLATOR",
     "Athena_ENABLE_MPI", "Athena_ENABLE_OPENMP", "Athena_SINGLE_PRECISION",
@@ -51,8 +54,27 @@ def compare_outputs(left_root: Path, right_root: Path, source_dir: Path) -> dict
         "binary_payload_sha256": {},
         "restart_payload_sha256": {},
     }
-    for name, expected in ((f"{basename}.z4c.user.hst", cc.HISTORY_SHA256),
-                           ("z4c_timestep_contract.csv", cc.TIMESTEP_SHA256)):
+    candidate_history = (left_root / f"{basename}.z4c.user.hst").read_bytes()
+    historical_history = (right_root / f"{basename}.z4c.user.hst").read_bytes()
+    cc.require(cc.sha256_bytes(candidate_history) == cc.HISTORY_SHA256,
+               "candidate authoritative history SHA-256 changed")
+    cc.require(cc.sha256_bytes(historical_history) == HISTORICAL_HISTORY_SHA256,
+               "historical authoritative history SHA-256 changed")
+    candidate_labels, candidate_rows = cc.history_table(candidate_history)
+    historical_labels, historical_rows = cc.history_table(historical_history)
+    cc.require("minLapse" in candidate_labels and
+               "minLapse" not in historical_labels,
+               "history schema does not expose exactly the intended minLapse addition")
+    min_lapse_index = candidate_labels.index("minLapse")
+    candidate_labels.pop(min_lapse_index)
+    min_lapse_values = [float(row.pop(min_lapse_index)) for row in candidate_rows]
+    cc.require(candidate_labels == historical_labels and
+               candidate_rows == historical_rows,
+               "candidate/historical history changed outside the minLapse addition")
+    cc.require(all(value > 0.0 for value in min_lapse_values),
+               "candidate minLapse values are not positive in the Kerr fixture")
+
+    for name, expected in (("z4c_timestep_contract.csv", cc.TIMESTEP_SHA256),):
         left = (left_root / name).read_bytes()
         right = (right_root / name).read_bytes()
         cc.require(left == right, f"candidate/historical {name} bytes changed")

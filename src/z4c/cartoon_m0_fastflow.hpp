@@ -48,6 +48,7 @@ struct M0CandidateSummary {
   Real minimum_radius = 0.0;
   Real direct_residual = 0.0;
   Real flow_residual = 0.0;
+  Real fresh_initial_radius = 0.0;
   std::vector<Real> coefficients;
 };
 
@@ -68,6 +69,14 @@ M0SurfacePoint EvaluateM0SurfacePoint(Real theta, Real radius,
 Real M0HorizonMass(Real area, Real spin_z);
 bool SelectM0AxisLapseMinimum(const std::vector<M0AxisSample> &samples,
                               int sign, Real *center_z, Real *lapse);
+
+//! Candidate-specific fresh-sphere radii.  The origin sphere encloses the
+//! lapse minima with the requested margin, while equal-radius mirror spheres
+//! remain strictly disjoint when 0 < pair_fraction < 1.
+Real M0OriginInitialRadius(Real configured_radius, Real lapse_radius_factor,
+                           Real plus_center_z, Real minus_center_z);
+Real M0DisjointPairInitialRadius(Real configured_radius, Real pair_fraction,
+                                 Real plus_center_z, Real minus_center_z);
 
 //! Deterministic accepted-candidate selection. Returns -1 on failure.
 int SelectM0Single(const std::vector<M0CandidateSummary> &candidates);
@@ -114,6 +123,7 @@ class CartoonM0FastFlow {
 
  private:
   M0CandidateSummary SearchCandidate(const std::string &branch, Real center_z,
+                                     Real fresh_initial_radius,
                                      const std::vector<Real> &warm_start);
   void Restore();
   void Capture();
@@ -133,6 +143,9 @@ class CartoonM0FastFlow {
   Real mass_tolerance_;
   Real direct_tolerance_;
   Real pair_tolerance_;
+  bool adaptive_initial_radius_;
+  Real origin_lapse_radius_factor_;
+  Real pair_disjoint_fraction_;
   Real center_seed_;
   Real axis_search_bound_;
   int axis_search_samples_;

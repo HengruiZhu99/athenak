@@ -1,11 +1,11 @@
 {
-  "schema": "athenak.z4c.reference_shock_gauge_figure3.evidence.v4",
-  "generated_utc": "2026-08-29T00:28:05+00:00",
+  "schema": "athenak.z4c.reference_shock_gauge_figure3.evidence.v5",
+  "generated_utc": "2026-08-29T17:31:47+00:00",
   "repository": "https://github.com/HengruiZhu99/athenak",
-  "branch": "codex/z4c-vc-reference-shock-gauge-figure3-20260828",
+  "branch": "codex/z4c-vc-performance-aurora-20260829",
   "source_fix_commit": "f8303c6be7eb214fa1e91b646123ee0d434b3698",
   "source_fix_tree": "7a585ca487b12351b084eb425bb812775849b001",
-  "verdict": "AURORA_PVC_QUALIFIED; N128_N512_EXACT_N256_TREE_REPLAY; STRONG_RESOLUTION_IMPROVEMENT; N512_COVERS_FIGURE3_INTERVAL; CONSTRAINT_INVALID_AT_FIRST_PEAK; UNIFORM_CONVERGENCE_NOT_ESTABLISHED",
+  "verdict": "AURORA_PVC_QUALIFIED; N128_N512_EXACT_N256_TREE_REPLAY; N128_N256_N512_N1024_EXACT_TREE_COMPARISON; FINE_TRIPLE_O4_COMPATIBLE_THROUGH_FIRST_PEAK; CONSTRAINT_CONVERGENCE_NONUNIFORM; CFL040_KO010_FAILED_EARLY",
   "fixed_numerics": {
     "lapse": "shock-avoiding Bona-Masso kappa=1 with unit initial lapse",
     "shift": "prescribed zero shift",
@@ -27,7 +27,10 @@
     "brill_coefficients_sha256": "1b5f0efc3f080215ed7d7994194ba63ea123415bfd8e74c54ca1fd72680aea10",
     "input_sha256": "6c694cf871a3d694d745f0fb58b279b6cd07516463ac8ad54f1c91d2689c90ba",
     "pvc_qualification_job": 8789659,
-    "pvc_qualification": "11 of 11 focused tests passed"
+    "pvc_qualification": "11 of 11 focused tests passed",
+    "perlmutter_n1024_commit": "02704c79ffe95312cfeba9acde3d38f8b9677dec",
+    "perlmutter_n1024_tree": "9605962eed2b74fba6f1d70e6fc526a8f5f56bba",
+    "perlmutter_n1024_executable_sha256": "a13a58be5e45b37c4c29f65eab2f6fa0d43f8d235d0c51e7ed3459b18e9e247e"
   },
   "hierarchy_authority": {
     "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/evidence/aurora/authority/n256_reference_shock_authority.jsonl",
@@ -39,7 +42,8 @@
     "event_2_checksum": "cf0d2384b11c1d42",
     "terminal_physical_level": 5,
     "n128_exact_replay": true,
-    "n512_exact_replay": true
+    "n512_exact_replay": true,
+    "n1024_exact_replay": true
   },
   "execution": {
     "aurora_account": "CompactBinaryMerger",
@@ -59,6 +63,9 @@
       8790202,
       8790242
     ],
+    "perlmutter_n1024_baseline_job": 57702588,
+    "perlmutter_n1024_cfl040_ko010_job": 57706639,
+    "perlmutter_startup_only_bad_key_job": 57706621,
     "n512_segment_0_limitation": "Athena completed cleanly and wrote a usable restart, but PBS exit -29 occurred during a redundant second full artifact hash pass; later segments are sealed and exit zero.",
     "active_jobs_at_handoff": 0
   },
@@ -87,6 +94,20 @@
       "rebound_tau_M": 13.216292031619886,
       "rebound_log10_abs_kretschmann": -2.818493659098744,
       "max_C_squared_integral": 4.099301297753094
+    },
+    "n1024": {
+      "coordinate_time_final_M": 38.65233198686742,
+      "central_proper_time_final_M": 14.980661364099866,
+      "first_peak_tau_M": 10.30964,
+      "first_peak_log10_abs_kretschmann": 5.47867,
+      "max_C_squared_integral": 0.0388727
+    },
+    "n1024_cfl040_ko010": {
+      "coordinate_time_last_history_M": 16.71762853624368,
+      "coordinate_time_failure_M": 16.72465031794259,
+      "central_proper_time_last_history_M": 8.687343281197583,
+      "max_C_squared_integral": 49679.121361116886,
+      "disposition": "nonpositive_metric_pivot_1 after RK update"
     }
   },
   "convergence_observations": {
@@ -101,7 +122,13 @@
       "tau_8_10": 3.3585123851430208,
       "tau_10_11_286": 1.395423777943999
     },
-    "constraint_pair_orders": "positive but inconsistent between N128/N256 and N256/N512"
+    "initial_C_squared_integrals": {
+      "n128": 0.13050543148120197,
+      "n256": 0.0006850478187546891,
+      "n512": 2.8888330092766685e-06,
+      "n1024": 1.2881308780515045e-08
+    },
+    "constraint_pair_orders": "nonuniform; N512/N1024 is near zero on the shared early floor, then C/H/M improve during collapse while Z remains weak"
   },
   "diagnostic_observations": {
     "constraint_history_measure": "2*pi*rho*sqrt(abs(det_gamma))*drho*dz with VC trapezoid weights and canonical shared-node ownership",
@@ -115,7 +142,9 @@
     "N512 directly covers the published first peak, deep minimum, and rebound without fitting.",
     "Early central curvature and lapse are compatible with O4 convergence before order degrades through collapse.",
     "Bulk or parent under-resolution is a major contributor to the N256 failure and is not ruled out.",
-    "The Cartoon history norm already uses the physical axisymmetric ring measure."
+    "The Cartoon history norm already uses the physical axisymmetric ring measure.",
+    "The N1024 initial constraints continue the high-order resolution trend.",
+    "The combined CFL 0.40 and KO 0.10 N1024 setting fails before the first peak."
   ],
   "claims_not_supported": [
     "A constraint-qualified Figure-3 reproduction",
@@ -123,11 +152,27 @@
     "Exclusion of axis or coarse-fine interface contributions",
     "A unique source-level defect or continuum formulation instability",
     "A production numerical correction",
-    "A horizon conclusion"
+    "A horizon conclusion",
+    "Attribution of the N1024 ablation failure to CFL or KO individually"
   ],
-  "natural_next_step": "A bounded shared-RHS audit at the retained N512 peak state, separately accumulating active-axis, same-level seam, coarse-fine ghost/interface, and clean-interior contributions while holding the exact tree and all numerics fixed.",
-  "artifact_selection_note": "Includes final reports, generators, final analyses, compact histories, scheduler/provenance records, and sealed segment evidence. Intermediate partial-analysis directories and the reviewer prompt are excluded.",
+  "natural_next_step": "A bounded localization audit around the residual N1024 constraint-floor onset and peak, separately accumulating active-axis, same-level seam, coarse-fine ghost/interface, and clean-interior contributions while holding the exact tree and all numerics fixed.",
+  "artifact_selection_note": "Includes final reports, generators, final analyses, compact histories, scheduler/provenance records, the Perlmutter evidence hash index, and sealed segment evidence. Intermediate partial-analysis directories and the reviewer prompt are excluded.",
   "artifacts": [
+    {
+      "path": "docs/investigations/z4c_vc_performance_perlmutter_20260829/EVIDENCE_SHA256SUMS",
+      "sha256": "a33da038bbeb2957c9007e585b4b19a1349871a0cc9247124c6682351fb10832",
+      "bytes": 27548
+    },
+    {
+      "path": "docs/investigations/z4c_vc_performance_perlmutter_20260829/REPORT.md",
+      "sha256": "8b1f765923db64631cf0a80a54ea6360e2d05ada1c6f3fe1f053c82def3a2d9f",
+      "bytes": 4719
+    },
+    {
+      "path": "docs/investigations/z4c_vc_performance_perlmutter_20260829/perlmutter_n1024_interactive.sbatch",
+      "sha256": "23912205feb7c1c6b41a3ad1c6d6e9b532ac158848a099c51e7807138c78b864",
+      "bytes": 8021
+    },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/AURORA_PVC_TESTS.md",
       "sha256": "1c28683eb9f77f9655e5227bd1c63ecedf08b0d4b5c7f82d9f14440532acef18",
@@ -135,13 +180,23 @@
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/CONVERGENCE.md",
-      "sha256": "531de77b3255b726986fd6b1906ee3ede9e014bcbc43c844cd049aa3784e5002",
-      "bytes": 4253
+      "sha256": "44450ed504260fec63a73735ffad4888238fa39803e01c5bb5b4906f84786014",
+      "bytes": 7990
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/GAUGE_IMPLEMENTATION_AUDIT.md",
       "sha256": "79ee6b38ff76e2f79e05c66506721a8f0294920d2de3e72e00331c65452b7335",
       "bytes": 2436
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/N1024_CFL040_KO010.md",
+      "sha256": "b23e3dab68729d88828740a37fb58baed2acbd14d6862493df37944cea2937ea",
+      "bytes": 2561
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/N1024_REPLAY.md",
+      "sha256": "a2aef2f04cf9b4fadbdc57d6ebb11428b7528c1be260acc7d0687226e86c2c17",
+      "bytes": 3914
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/N256_REPRODUCTION.md",
@@ -160,18 +215,18 @@
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.md",
-      "sha256": "7c3015c849253e098e12869d348aed3af78b6bd9eb5ffbe38715b3da941a1609",
-      "bytes": 8684
+      "sha256": "b87a17261a1e91d4fdcb78cdecba9bf3116765392b20421ba24cf13589ebcfed",
+      "bytes": 12249
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.pdf",
-      "sha256": "bb7bbab1b280a831890ed2392bd0778647b00b1497c093f1e01d24d39f776820",
-      "bytes": 1074989
+      "sha256": "f3f967cbc17e666684ddf0bc7b6fcf799fcdd0309b5c7558c6c7d8f511ab1a30",
+      "bytes": 878309
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/REPORT.tex",
-      "sha256": "47d583627fa59d13de29587a196a4a199c579ff49ab1df46a7aaef7044495d79",
-      "bytes": 9114
+      "sha256": "67426d9273db6da50ba83f8f2ecf169655ce6639134a376109bff997704bd25c",
+      "bytes": 9710
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512/final/constraint_amplitudes_n128_n256_n512.pdf",
@@ -212,6 +267,96 @@
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512/final/three_resolution_summary.json",
       "sha256": "54cf001af5919da36b698f3f76ca97cc7c667e7063f469e7e6ecadc4f8b27772",
       "bytes": 14917
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024/final/SHA256SUMS",
+      "sha256": "d3e01cf54bf9263a2ea32165cd8037519eca98c6410ac3e1c8cd4b87da1a361e",
+      "bytes": 1809
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024/final/constraint_amplitudes_n128_n256_n512_n1024.pdf",
+      "sha256": "70bdbf8925edbd55410a8eaaa909f7795210036bac4e44a8016dc582aa50fa38",
+      "bytes": 43471
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024/final/constraint_amplitudes_n128_n256_n512_n1024.png",
+      "sha256": "4e5d71de23b38cd4c344c06adc35983caa2fbcfe1ba9c7aeeccbb28db8ca03ca",
+      "bytes": 309435
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024/final/constraint_pairwise_orders_n128_n256_n512_n1024.pdf",
+      "sha256": "eb1fc50650633420e29385d0e54dc424ec26473b183b7ab93bbed006f68323b6",
+      "bytes": 33627
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024/final/constraint_pairwise_orders_n128_n256_n512_n1024.png",
+      "sha256": "87292f2c0c247f351296845a3c29dc7cf20c5bf9e9c9c240c02287caff0593c9",
+      "bytes": 272718
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024/final/figure3_n128_n256_n512_n1024.pdf",
+      "sha256": "19a21d6332c25644c9d1e262bc50cf0c2259942f3cc9580575fce9fa05cadb85",
+      "bytes": 29701
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024/final/figure3_n128_n256_n512_n1024.png",
+      "sha256": "ebd74f0863ca80d2a536e30d94b89ac28af0f05d073a994871fcbf166236284b",
+      "bytes": 178909
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024/final/four_resolution_aligned.csv",
+      "sha256": "8018d21a458646d5fc5f3b5967c90b40ac95d7e303b55b0f3aa372984a684f6c",
+      "bytes": 1165265
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024/final/four_resolution_summary.json",
+      "sha256": "b5c50de7520f9bab37e40d5372a522f0c8de961a8d227e3575b70c0a7a8e656f",
+      "bytes": 18951
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/SHA256SUMS",
+      "sha256": "26ba64fc1f273854adaec822aec2ce17a77bacad8bda1de913572f935f3b6e82",
+      "bytes": 925
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/constraint_amplitudes_n128_n256_n512_n1024_n1024_cfl040_ko010.pdf",
+      "sha256": "9a97cd5647f8c36bae3dfa6d055879d17bd7b050b9154e6d39e038cf3a41c08b",
+      "bytes": 51656
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/constraint_amplitudes_n128_n256_n512_n1024_n1024_cfl040_ko010.png",
+      "sha256": "2f328c1c2f6bad37488901e8b2f6779d3309bb0194ef51f9871d8661b10b2590",
+      "bytes": 342054
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/constraint_pairwise_orders_n128_n256_n512_n1024.pdf",
+      "sha256": "c6843bdfdfccd6d16827b514b1e9af7e97619ce7ad7f137b3684b2556984990d",
+      "bytes": 33627
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/constraint_pairwise_orders_n128_n256_n512_n1024.png",
+      "sha256": "87292f2c0c247f351296845a3c29dc7cf20c5bf9e9c9c240c02287caff0593c9",
+      "bytes": 272718
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/figure3_n128_n256_n512_n1024_n1024_cfl040_ko010.pdf",
+      "sha256": "cc19914ca3c2c293330c1c22af522d2e2895b698911c54f16df909a33a0a785f",
+      "bytes": 32418
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/figure3_n128_n256_n512_n1024_n1024_cfl040_ko010.png",
+      "sha256": "22eb47ea4638943e40caf7adf87746c8835678ee12234144681711d56ab843c5",
+      "bytes": 195397
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/four_resolution_aligned.csv",
+      "sha256": "85422d6904d4aea69f29afa492a41c0e59d92079a5d139d1f485c62f02f46045",
+      "bytes": 1281771
+    },
+    {
+      "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/four_resolution_summary.json",
+      "sha256": "46fa24bb425126b2181fb9958fc745e3ebb7dbe6319dacb58dae2ced1cf228cc",
+      "bytes": 24553
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analysis/aurora_n256/figures/axis_lapse_history.pdf",
@@ -395,8 +540,8 @@
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analyze_reference_convergence.py",
-      "sha256": "333fa1c58b53b62cacff14e0dcfc7e69669a1877720677f4088ebd35373778d9",
-      "bytes": 7648
+      "sha256": "318bb5c83a9cffd114c8c677fbdca2c19a81a4711ffe72d741d7bc5624ee4edc",
+      "bytes": 10518
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/analyze_reference_field_patch.py",
@@ -425,13 +570,13 @@
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/brill_vc_reference_shock_gauge.athinput",
-      "sha256": "6c694cf871a3d694d745f0fb58b279b6cd07516463ac8ad54f1c91d2689c90ba",
-      "bytes": 3077
+      "sha256": "d86595adeaf7d4c72e1f150d044cd5277f7b4e3507eea4e6d03f427c8dc38838",
+      "bytes": 3098
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/build_evidence_manifest.py",
-      "sha256": "97a2cc9824278d3903d40dc8310cc2623dea84c189b88b4987b75fe5d109b6f3",
-      "bytes": 10216
+      "sha256": "a612bdce1117e6f4fa6ee126c254f2445045a3ae3a5260486c0c08620f98784e",
+      "bytes": 12508
     },
     {
       "path": "docs/investigations/z4c_vc_reference_shock_gauge_figure3_20260828/classify_reference_constraint_locations.py",

@@ -346,7 +346,7 @@ run_cartoon_mms_reject(
 run_cartoon_mms_positive(mms_exact_positive "")
 run_cartoon_mms_positive(
     mms_fastflow_positive
-    "<fastflow>\nnum_horizons = 1\nlmax = 2\nntheta = 4\nflow_iterations_0 = 1\nfind_interval_0 = 1\nstart_time_0 = 0\nstop_time_0 = -1\ninitial_radius_0 = 1\nflow_alpha_beta_const_0 = 1\ndimensionless_hrms_tol_0 = 0.03\nmass_relative_tol_0 = 0.0001\ncartoon_surface_mode_0 = single\ncartoon_direct_residual_tol_0 = 0.03\ncartoon_pair_relative_tol_0 = 0.001\ncartoon_center_z_0 = 1\ncartoon_axis_search_bound_0 = 1\ncartoon_axis_search_samples_0 = 3")
+    "<fastflow>\nnum_horizons = 1\nlmax = 2\nntheta = 4\nflow_iterations_0 = 1\nfind_interval_0 = 1\nstart_time_0 = 0\nstop_time_0 = -1\ninitial_radius_0 = 1\nflow_alpha_beta_const_0 = 1\ndimensionless_hrms_tol_0 = 0.03\nmass_relative_tol_0 = 0.0001\ncartoon_surface_mode_0 = single\ncartoon_direct_residual_tol_0 = 0.03\ncartoon_pair_relative_tol_0 = 0.001\ncartoon_adaptive_initial_radius_0 = true\ncartoon_origin_lapse_radius_factor_0 = 3\ncartoon_pair_disjoint_fraction_0 = 0.8\ncartoon_center_z_0 = 1\ncartoon_axis_search_bound_0 = 1\ncartoon_axis_search_samples_0 = 3")
 run_cartoon_mms_positive(
     mms_exact_inactive_output
     "<output1>\nfile_type = cart\ndcycle = 0\ndt = 0.0")

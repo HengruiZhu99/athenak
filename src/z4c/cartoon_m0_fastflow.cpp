@@ -257,6 +257,35 @@ bool SelectM0AxisLapseMinimum(const std::vector<M0AxisSample> &samples,
   return true;
 }
 
+Real M0OriginInitialRadius(const Real configured_radius,
+                           const Real lapse_radius_factor,
+                           const Real plus_center_z,
+                           const Real minus_center_z) {
+  if (!std::isfinite(configured_radius) || !(configured_radius > 0.0) ||
+      !std::isfinite(lapse_radius_factor) || !(lapse_radius_factor > 0.0) ||
+      !std::isfinite(plus_center_z) || !std::isfinite(minus_center_z) ||
+      !(plus_center_z > 0.0) || !(minus_center_z < 0.0)) {
+    return std::numeric_limits<Real>::quiet_NaN();
+  }
+  const Real lapse_radius = std::max(std::abs(plus_center_z),
+                                     std::abs(minus_center_z));
+  return std::max(configured_radius, lapse_radius_factor * lapse_radius);
+}
+
+Real M0DisjointPairInitialRadius(const Real configured_radius,
+                                 const Real pair_fraction,
+                                 const Real plus_center_z,
+                                 const Real minus_center_z) {
+  if (!std::isfinite(configured_radius) || !(configured_radius > 0.0) ||
+      !std::isfinite(pair_fraction) || !(pair_fraction > 0.0) ||
+      !(pair_fraction < 1.0) || !std::isfinite(plus_center_z) ||
+      !std::isfinite(minus_center_z) || !(plus_center_z > minus_center_z)) {
+    return std::numeric_limits<Real>::quiet_NaN();
+  }
+  const Real half_separation = 0.5 * (plus_center_z - minus_center_z);
+  return std::min(configured_radius, pair_fraction * half_separation);
+}
+
 int SelectM0Single(const std::vector<M0CandidateSummary> &candidates) {
   int selected = -1;
   for (int index = 0; index < static_cast<int>(candidates.size()); ++index) {
@@ -422,6 +451,12 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack *pack, ParameterInput *pin,
                                         suffix, 3.0e-2);
   pair_tolerance_ = pin->GetOrAddReal("fastflow", "cartoon_pair_relative_tol_" +
                                       suffix, 1e-3);
+  adaptive_initial_radius_ = pin->GetOrAddBoolean(
+      "fastflow", "cartoon_adaptive_initial_radius_" + suffix, true);
+  origin_lapse_radius_factor_ = pin->GetOrAddReal(
+      "fastflow", "cartoon_origin_lapse_radius_factor_" + suffix, 3.0);
+  pair_disjoint_fraction_ = pin->GetOrAddReal(
+      "fastflow", "cartoon_pair_disjoint_fraction_" + suffix, 0.8);
   center_seed_ = std::abs(pin->GetOrAddReal("fastflow", "cartoon_center_z_" + suffix,
                                             initial_radius_));
   axis_search_bound_ = pin->GetOrAddReal(
@@ -434,6 +469,10 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack *pack, ParameterInput *pin,
       !(initial_radius_ > 0.0) || !(flow_scale_ > 0.0) ||
       !(hrms_tolerance_ > 0.0) || !(mass_tolerance_ > 0.0) ||
       !(direct_tolerance_ > 0.0) || !(pair_tolerance_ >= 0.0) ||
+      !std::isfinite(origin_lapse_radius_factor_) ||
+      !(origin_lapse_radius_factor_ > 0.0) ||
+      !std::isfinite(pair_disjoint_fraction_) ||
+      !(pair_disjoint_fraction_ > 0.0) || !(pair_disjoint_fraction_ < 1.0) ||
       !std::isfinite(center_seed_) || !std::isfinite(axis_search_bound_) ||
       !(axis_search_bound_ > 0.0) || axis_search_samples_ < 2 ||
       !std::isfinite(start_time_) ||
@@ -583,15 +622,21 @@ M0AxisSample CartoonM0FastFlow::SampleAxisLapse(const Real z) const {
 
 M0CandidateSummary CartoonM0FastFlow::SearchCandidate(
     const std::string &branch, const Real center_z,
+    const Real fresh_initial_radius,
     const std::vector<Real> &warm_start) {
   M0CandidateSummary summary;
   summary.branch = branch;
   summary.center_z = center_z;
+  summary.fresh_initial_radius = fresh_initial_radius;
   summary.coefficients.assign(lmax_ + 1, 0.0);
   if (warm_start.size() == summary.coefficients.size()) {
     summary.coefficients = warm_start;
   } else {
-    summary.coefficients[0] = initial_radius_ * std::sqrt(4.0 * kPi);
+    if (!std::isfinite(fresh_initial_radius) || !(fresh_initial_radius > 0.0)) {
+      summary.failure = "invalid_initial_radius";
+      return summary;
+    }
+    summary.coefficients[0] = fresh_initial_radius * std::sqrt(4.0 * kPi);
   }
   Real previous_mass = 0.0;
   for (int iteration = 0; iteration < iterations_; ++iteration) {
@@ -709,6 +754,14 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
     Capture();
     return;
   }
+  const Real origin_initial_radius = adaptive_initial_radius_
+      ? M0OriginInitialRadius(initial_radius_, origin_lapse_radius_factor_,
+                              plus_center, minus_center)
+      : initial_radius_;
+  const Real pair_initial_radius = adaptive_initial_radius_
+      ? M0DisjointPairInitialRadius(initial_radius_, pair_disjoint_fraction_,
+                                    plus_center, minus_center)
+      : initial_radius_;
   for (const auto &entry : std::vector<std::pair<std::string, Real>>{
            {"origin", 0.0}, {"plus", plus_center}, {"minus", minus_center}}) {
     std::vector<Real> warm;
@@ -721,7 +774,10 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
       if (offset >= 0) warm.assign(saved.coefficients.begin() + offset,
                                    saved.coefficients.begin() + offset + lmax_ + 1);
     }
-    auto candidate = SearchCandidate(entry.first, entry.second, warm);
+    const Real fresh_initial_radius = entry.first == "origin"
+        ? origin_initial_radius : pair_initial_radius;
+    auto candidate = SearchCandidate(entry.first, entry.second,
+                                     fresh_initial_radius, warm);
     candidate.axis_extremum_z = entry.second;
     candidate.center_lapse = entry.first == "plus" ? plus_lapse :
                               entry.first == "minus" ? minus_lapse :
@@ -738,6 +794,7 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
       const Real center_lapse = candidate.center_lapse;
       const Real axis_extremum_z = candidate.axis_extremum_z;
       candidate = SearchCandidate(entry.first, candidate.center_z + shift,
+                                  fresh_initial_radius,
                                   recentered);
       candidate.axis_extremum_z = axis_extremum_z;
       candidate.center_lapse = center_lapse;
@@ -820,7 +877,7 @@ void CartoonM0FastFlow::Write(const int cycle, const Real time) {
                             "center_lapse area irreducible_mass horizon_mass "
                             "spin_z mean_radius "
                             "minimum_radius direct_residual flow_residual failure "
-                            "a_l0...\n");
+                            "fresh_initial_radius a_l0...\n");
     }
   }
   for (const auto &candidate : candidates_) {
@@ -833,6 +890,7 @@ void CartoonM0FastFlow::Write(const int cycle, const Real time) {
                  candidate.mean_radius, candidate.minimum_radius,
                  candidate.direct_residual, candidate.flow_residual,
                  candidate.failure.c_str());
+    std::fprintf(output_, " %.17e", candidate.fresh_initial_radius);
     for (const Real coefficient : candidate.coefficients)
       std::fprintf(output_, " %.17e", coefficient);
     std::fputc('\n', output_);

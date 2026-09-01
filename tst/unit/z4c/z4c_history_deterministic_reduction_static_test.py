@@ -30,7 +30,26 @@ def main() -> None:
     if "Kokkos::atomic_add" in block:
         raise SystemExit("Cartoon constraint-region history still uses unordered atomics")
 
-    print("PASS: Cartoon constraint-region history uses a dedicated reduction")
+    min_lapse_label = 'pdata->label[min_lapse_index] = "minLapse";'
+    min_lapse_begin = source.index('"Z4cHistoryMinLapse"')
+    min_lapse_end = source.index("if (opt.telegraph_lapse)", min_lapse_begin)
+    min_lapse_block = source[min_lapse_begin:min_lapse_end]
+    for token in (
+        min_lapse_label,
+        "pdata->reduction[min_lapse_index] = HistoryData::Reduction::min;",
+    ):
+        if token not in source:
+            raise SystemExit(f"missing slice-minimum lapse history token: {token}")
+    for token in (
+        "canonical_diagnostic_owner",
+        "z4c.alpha(m, k, j, i)",
+        "Kokkos::Min<Real>(min_lapse)",
+        "pdata->hdata[min_lapse_index] = min_lapse;",
+    ):
+        if token not in min_lapse_block:
+            raise SystemExit(f"missing slice-minimum lapse history token: {token}")
+
+    print("PASS: Cartoon history reductions include deterministic slice min lapse")
 
 
 if __name__ == "__main__":

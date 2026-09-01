@@ -39,6 +39,8 @@ def selected_artifacts() -> list[Path]:
         "REPORT.pdf",
         "N256_REPRODUCTION.md",
         "N512_REPLAY.md",
+        "N1024_REPLAY.md",
+        "N1024_CFL040_KO010.md",
         "CONVERGENCE.md",
         "AURORA_PVC_TESTS.md",
         "REFERENCE_GAUGE.md",
@@ -67,6 +69,8 @@ def selected_artifacts() -> list[Path]:
         "analysis/aurora_n256_n512/field_patch/n512",
         "analysis/aurora_n256_n512/field_patch/comparison",
         "analysis/aurora_n128_n256_n512/final",
+        "analysis/aurora_n128_n256_n512_perlmutter_n1024/final",
+        "analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final",
         "evidence/aurora/authority",
         "evidence/aurora/qualification_8789659",
         "evidence/aurora/n256_reference_shock_seg000_retry1",
@@ -83,20 +87,28 @@ def selected_artifacts() -> list[Path]:
         if directory.is_dir():
             files.update(path for path in directory.rglob("*") if path.is_file())
 
+    performance_root = ROOT.parent / "z4c_vc_performance_perlmutter_20260829"
+    for name in ("REPORT.md", "EVIDENCE_SHA256SUMS",
+                 "perlmutter_n1024_interactive.sbatch"):
+        path = performance_root / name
+        if path.is_file():
+            files.add(path)
+
     return sorted(files)
 
 
 manifest = {
-    "schema": "athenak.z4c.reference_shock_gauge_figure3.evidence.v4",
+    "schema": "athenak.z4c.reference_shock_gauge_figure3.evidence.v5",
     "generated_utc": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
     "repository": "https://github.com/HengruiZhu99/athenak",
-    "branch": "codex/z4c-vc-reference-shock-gauge-figure3-20260828",
+    "branch": "codex/z4c-vc-performance-aurora-20260829",
     "source_fix_commit": "f8303c6be7eb214fa1e91b646123ee0d434b3698",
     "source_fix_tree": "7a585ca487b12351b084eb425bb812775849b001",
     "verdict": (
         "AURORA_PVC_QUALIFIED; N128_N512_EXACT_N256_TREE_REPLAY; "
-        "STRONG_RESOLUTION_IMPROVEMENT; N512_COVERS_FIGURE3_INTERVAL; "
-        "CONSTRAINT_INVALID_AT_FIRST_PEAK; UNIFORM_CONVERGENCE_NOT_ESTABLISHED"
+        "N128_N256_N512_N1024_EXACT_TREE_COMPARISON; "
+        "FINE_TRIPLE_O4_COMPATIBLE_THROUGH_FIRST_PEAK; "
+        "CONSTRAINT_CONVERGENCE_NONUNIFORM; CFL040_KO010_FAILED_EARLY"
     ),
     "fixed_numerics": {
         "lapse": "shock-avoiding Bona-Masso kappa=1 with unit initial lapse",
@@ -120,6 +132,9 @@ manifest = {
         "input_sha256": "6c694cf871a3d694d745f0fb58b279b6cd07516463ac8ad54f1c91d2689c90ba",
         "pvc_qualification_job": 8789659,
         "pvc_qualification": "11 of 11 focused tests passed",
+        "perlmutter_n1024_commit": "02704c79ffe95312cfeba9acde3d38f8b9677dec",
+        "perlmutter_n1024_tree": "9605962eed2b74fba6f1d70e6fc526a8f5f56bba",
+        "perlmutter_n1024_executable_sha256": "a13a58be5e45b37c4c29f65eab2f6fa0d43f8d235d0c51e7ed3459b18e9e247e",
     },
     "hierarchy_authority": {
         "path": (
@@ -135,6 +150,7 @@ manifest = {
         "terminal_physical_level": 5,
         "n128_exact_replay": True,
         "n512_exact_replay": True,
+        "n1024_exact_replay": True,
     },
     "execution": {
         "aurora_account": "CompactBinaryMerger",
@@ -144,6 +160,9 @@ manifest = {
         "n128_jobs": [8790272, 8790338],
         "n256_authority_job": 8789703,
         "n512_jobs": [8789895, 8789956, 8790025, 8790135, 8790202, 8790242],
+        "perlmutter_n1024_baseline_job": 57702588,
+        "perlmutter_n1024_cfl040_ko010_job": 57706639,
+        "perlmutter_startup_only_bad_key_job": 57706621,
         "n512_segment_0_limitation": (
             "Athena completed cleanly and wrote a usable restart, but PBS exit -29 occurred "
             "during a redundant second full artifact hash pass; later segments are sealed and exit zero."
@@ -176,6 +195,20 @@ manifest = {
             "rebound_log10_abs_kretschmann": -2.818493659098744,
             "max_C_squared_integral": 4.099301297753094,
         },
+        "n1024": {
+            "coordinate_time_final_M": 38.65233198686742,
+            "central_proper_time_final_M": 14.980661364099866,
+            "first_peak_tau_M": 10.30964,
+            "first_peak_log10_abs_kretschmann": 5.47867,
+            "max_C_squared_integral": 0.0388727,
+        },
+        "n1024_cfl040_ko010": {
+            "coordinate_time_last_history_M": 16.71762853624368,
+            "coordinate_time_failure_M": 16.72465031794259,
+            "central_proper_time_last_history_M": 8.687343281197583,
+            "max_C_squared_integral": 49679.121361116886,
+            "disposition": "nonpositive_metric_pivot_1 after RK update",
+        },
     },
     "convergence_observations": {
         "common_proper_time_max_M": 11.286306780061583,
@@ -189,7 +222,16 @@ manifest = {
             "tau_8_10": 3.3585123851430208,
             "tau_10_11_286": 1.395423777943999,
         },
-        "constraint_pair_orders": "positive but inconsistent between N128/N256 and N256/N512",
+        "initial_C_squared_integrals": {
+            "n128": 0.13050543148120197,
+            "n256": 0.0006850478187546891,
+            "n512": 2.8888330092766685e-06,
+            "n1024": 1.2881308780515045e-08,
+        },
+        "constraint_pair_orders": (
+            "nonuniform; N512/N1024 is near zero on the shared early floor, "
+            "then C/H/M improve during collapse while Z remains weak"
+        ),
     },
     "diagnostic_observations": {
         "constraint_history_measure": (
@@ -211,6 +253,8 @@ manifest = {
         "Early central curvature and lapse are compatible with O4 convergence before order degrades through collapse.",
         "Bulk or parent under-resolution is a major contributor to the N256 failure and is not ruled out.",
         "The Cartoon history norm already uses the physical axisymmetric ring measure.",
+        "The N1024 initial constraints continue the high-order resolution trend.",
+        "The combined CFL 0.40 and KO 0.10 N1024 setting fails before the first peak.",
     ],
     "claims_not_supported": [
         "A constraint-qualified Figure-3 reproduction",
@@ -219,15 +263,17 @@ manifest = {
         "A unique source-level defect or continuum formulation instability",
         "A production numerical correction",
         "A horizon conclusion",
+        "Attribution of the N1024 ablation failure to CFL or KO individually",
     ],
     "natural_next_step": (
-        "A bounded shared-RHS audit at the retained N512 peak state, separately accumulating active-axis, "
+        "A bounded localization audit around the residual N1024 constraint-floor onset and peak, separately accumulating active-axis, "
         "same-level seam, coarse-fine ghost/interface, and clean-interior contributions while holding the exact "
         "tree and all numerics fixed."
     ),
     "artifact_selection_note": (
         "Includes final reports, generators, final analyses, compact histories, scheduler/provenance records, "
-        "and sealed segment evidence. Intermediate partial-analysis directories and the reviewer prompt are excluded."
+        "the Perlmutter evidence hash index, and sealed segment evidence. Intermediate partial-analysis directories "
+        "and the reviewer prompt are excluded."
     ),
     "artifacts": [artifact(path) for path in selected_artifacts()],
 }

@@ -59,7 +59,37 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
     chi_thresh = pin->GetOrAddReal("z4c_amr", "chi_min", 0.2);
   } else if (ref_method == "dchi" || ref_method == "dchi_max") {
     method = dChi;
-    dchi_thresh = pin->GetOrAddReal("z4c_amr", "dchi_max", 0.01);
+    dchi_reference_thresh =
+        pin->GetOrAddReal("z4c_amr", "dchi_max", 0.01);
+    dchi_thresh = dchi_reference_thresh;
+    if (pin->DoesParameterExist("z4c_amr", "dchi_reference_nx1")) {
+      dchi_reference_nx1 =
+          pin->GetInteger("z4c_amr", "dchi_reference_nx1");
+      dchi_current_nx1 = pin->GetInteger("mesh", "nx1");
+      if (dchi_reference_nx1 <= 0 || dchi_current_nx1 <= 0 ||
+          !(dchi_reference_thresh > 0.0) ||
+          !std::isfinite(dchi_reference_thresh)) {
+        std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+                  << __LINE__ << std::endl
+                  << "resolution-scaled dchi requires finite positive "
+                     "<z4c_amr>/dchi_max, <z4c_amr>/dchi_reference_nx1, and "
+                     "<mesh>/nx1, but received dchi_max="
+                  << dchi_reference_thresh
+                  << " dchi_reference_nx1=" << dchi_reference_nx1
+                  << " nx1=" << dchi_current_nx1 << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+      dchi_thresh = ResolutionScaledDchiThreshold(
+          dchi_reference_thresh, dchi_reference_nx1, dchi_current_nx1);
+      if (global_variable::my_rank == 0) {
+        std::cout << std::setprecision(17)
+                  << "Z4C_DCHI_RESOLUTION_SCALE reference_nx1="
+                  << dchi_reference_nx1
+                  << " current_nx1=" << dchi_current_nx1
+                  << " reference_dchi_max=" << dchi_reference_thresh
+                  << " effective_dchi_max=" << dchi_thresh << std::endl;
+      }
+    }
     dchi_derefine_factor =
         pin->GetOrAddReal("z4c_amr", "dchi_derefine_factor", 0.25);
     if (!(dchi_derefine_factor > 0.0 && dchi_derefine_factor < 1.0)) {

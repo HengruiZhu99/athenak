@@ -1,0 +1,44 @@
+{
+  "cases": {
+    "A=-0.047 native AMR (partial, t<=24.52M)": {
+      "final_central_proper_time": 10.174928471621541,
+      "final_coordinate_time": 24.52458523488176,
+      "minimum_axis_lapse": 0.10349726311392363,
+      "minimum_slice_lapse": 0.10349726311392363,
+      "minimum_slice_lapse_coordinate_time": 21.406875355319116,
+      "peak_origin_abs_kretschmann": 6922.2163528712035,
+      "peak_origin_abs_kretschmann_central_proper_time": 10.174928471621541,
+      "peak_origin_abs_kretschmann_coordinate_time": 24.52458523488176,
+      "peak_slice_abs_kretschmann": 60535.63026229027,
+      "peak_slice_abs_kretschmann_coordinate_time": 24.52458523488176,
+      "rows": 4095
+    },
+    "A=-0.050 native AMR (partial, t<=36.46M)": {
+      "final_central_proper_time": 11.209853450523676,
+      "final_coordinate_time": 36.458530270670735,
+      "minimum_axis_lapse": 0.06096771903860158,
+      "minimum_slice_lapse": 0.06096771903860158,
+      "minimum_slice_lapse_coordinate_time": 35.94127581010716,
+      "peak_origin_abs_kretschmann": 157740.85759053438,
+      "peak_origin_abs_kretschmann_central_proper_time": 11.209853450523676,
+      "peak_origin_abs_kretschmann_coordinate_time": 36.458530270670735,
+      "peak_slice_abs_kretschmann": 5544176.846575964,
+      "peak_slice_abs_kretschmann_coordinate_time": 36.458530270670735,
+      "rows": 6149
+    }
+  },
+  "comparison_limitations": [
+    "Both plotted AthenaK curves use native N512 dynamic AMR.",
+    "The A=-0.047 segment is partial: it stopped at t=24.52459M on the fail-closed max_nmb_per_rank=256 gate, not a physical endpoint.",
+    "The A=-0.047 plotted segment did not run the horizon finder; the matched retry produced only its t=0 history row before an I/O stall.",
+    "The A=-0.050 segment is partial: its continuation ended at t=36.45853M on the internal wall-clock limit.",
+    "Published Figure-3 reference curves correspond to A=-0.047 only.",
+    "Curvature is plotted in raw code units and is not ADM-mass normalized."
+  ],
+  "diagnostic_definitions": {
+    "axisKret": "origin Kretschmann scalar at rho=z=0",
+    "maxAbsKret": "slice-global maximum absolute Kretschmann scalar",
+    "minLapse": "slice-global minimum lapse over active evolution points"
+  },
+  "schema": "athenak.z4c.history_extrema_amplitude_comparison.v1"
+}

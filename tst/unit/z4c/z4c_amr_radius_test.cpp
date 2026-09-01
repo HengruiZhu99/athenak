@@ -19,8 +19,13 @@ bool Equal(const Real left, const Real right) {
 }  // namespace
 
 int main() {
+  using z4c::ResolutionScaledDchiThreshold;
   using z4c::SquaredDistanceToAABB;
   bool passed = true;
+  // The N128-calibrated 0.02 trigger becomes 0.01 at N256 and 0.005 at N512.
+  passed &= Equal(ResolutionScaledDchiThreshold(0.02, 64, 64), 0.02);
+  passed &= Equal(ResolutionScaledDchiThreshold(0.02, 64, 128), 0.01);
+  passed &= Equal(ResolutionScaledDchiThreshold(0.02, 64, 256), 0.005);
   // Origin inside the block.
   passed &= Equal(SquaredDistanceToAABB(0.0, 0.0, 0.0, -1.0, 1.0, -2.0, 2.0,
                                         -3.0, 3.0), 0.0);

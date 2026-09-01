@@ -131,38 +131,61 @@ def main() -> int:
             "the final hierarchy did not return to the root leaf count")
 
     history = work / "z4c_vc_minkowski_dynamic.z4c.user.hst"
+    history_text = history.read_text(encoding="utf-8")
+    header = next(
+        line for line in history_text.splitlines() if line.startswith("#  [1]=")
+    )
+    labels = re.findall(r"\[\d+\]=([^ ]+)", header)
+    columns = {label: index for index, label in enumerate(labels)}
+    required_columns = {
+        "time", "C-norm2", "H-norm2", "Volume", "nmb_total", "minLapse",
+        "maxRefLev", "cycle",
+    }
+    if args.geometry == "cartoon":
+        required_columns.update(("axisLapse", "axisTau", "axisKret"))
+    require(required_columns <= columns.keys(),
+            f"history is missing columns: {sorted(required_columns - columns.keys())}")
     rows = [
         [float(value) for value in line.split()]
-        for line in history.read_text(encoding="utf-8").splitlines()
+        for line in history_text.splitlines()
         if line.strip() and not line.startswith("#")
     ]
     require(len(rows) >= 4, "history is missing accepted states")
     refined_leaves = args.root_leaves + created_leaves
-    require([int(round(row[12])) for row in rows[:4]] ==
+    require([int(round(row[columns["nmb_total"]])) for row in rows[:4]] ==
             [args.root_leaves, refined_leaves, args.root_leaves, args.root_leaves],
             "history leaf counts do not bind refine/derefine lifecycle")
-    require([int(round(row[13])) for row in rows[:4]] == [0, 1, 0, 0],
+    require([int(round(row[columns["maxRefLev"]])) for row in rows[:4]] ==
+            [0, 1, 0, 0],
             "history maximum levels do not bind refine/derefine lifecycle")
     for row in rows:
         require(all(math.isfinite(value) for value in row),
                 "history contains a nonfinite value")
-        require(row[2] < 1.0e-18 and row[3] < 1.0e-18,
+        require(row[columns["C-norm2"]] < 1.0e-18 and
+                row[columns["H-norm2"]] < 1.0e-18,
                 "Minkowski constraints exceed the dynamic AMR regression bound")
-        require(math.isclose(row[10], args.expected_volume, rel_tol=5.0e-6),
+        require(math.isclose(row[columns["Volume"]], args.expected_volume,
+                             rel_tol=5.0e-6),
                 f"{args.centering}-centered history does not integrate the exact "
                 "physical volume")
+        require(math.isclose(row[columns["minLapse"]], 1.0,
+                             rel_tol=0.0, abs_tol=2.0e-14),
+                f"{args.centering}-centered slice minimum lapse is not unity")
         if args.geometry == "cartoon":
-            require(math.isclose(row[18], 1.0, rel_tol=0.0, abs_tol=2.0e-14),
+            require(math.isclose(row[columns["axisLapse"]], 1.0,
+                                 rel_tol=0.0, abs_tol=2.0e-14),
                     f"{args.centering}-centered central observer did not sample unit "
                     "lapse at the origin")
-            require(math.isclose(row[19], row[0], rel_tol=2.0e-6,
+            require(math.isclose(row[columns["axisTau"]], row[columns["time"]],
+                                 rel_tol=2.0e-6,
                                  abs_tol=2.0e-12),
                     f"{args.centering}-centered central proper time does not track "
                     "coordinate time")
-            require(abs(row[20]) < 1.0e-18,
+            require(abs(row[columns["axisKret"]]) < 1.0e-18,
                     f"{args.centering}-centered origin curvature is nonzero in "
                     "Minkowski spacetime")
-    require(max(row[10] for row in rows) == min(row[10] for row in rows),
+    require(max(row[columns["Volume"]] for row in rows) ==
+            min(row[columns["Volume"]] for row in rows),
             f"{args.centering}-centered history volume changed across "
             "refine/derefine events")
 

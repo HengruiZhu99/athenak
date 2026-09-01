@@ -158,6 +158,23 @@ int main() {
   assert(!z4c::SelectM0AxisLapseMinimum(
       {{false, -1.0, 0.2}, {true, 1.0, 0.2}}, -1, &center, &lapse));
 
+  // Fresh mirror candidates must be disjoint, while the origin candidate
+  // encloses both lapse minima by the configured factor and radius floor.
+  const double plus_center = 8.0 / 65.0;
+  const double minus_center = -plus_center;
+  const double pair_radius = z4c::M0DisjointPairInitialRadius(
+      1.0, 0.8, plus_center, minus_center);
+  Close(pair_radius, 0.8 * plus_center, 1.0e-15);
+  assert(2.0 * pair_radius < plus_center - minus_center);
+  Close(z4c::M0OriginInitialRadius(
+            1.0, 3.0, plus_center, minus_center),
+        1.0, 0.0);
+  Close(z4c::M0OriginInitialRadius(1.0, 3.0, 0.6, -0.6), 1.8, 1.0e-15);
+  assert(std::isnan(z4c::M0DisjointPairInitialRadius(
+      1.0, 1.0, plus_center, minus_center)));
+  assert(std::isnan(z4c::M0OriginInitialRadius(1.0, 0.0,
+                                               plus_center, minus_center)));
+
   z4c::Z4cM0FastFlowRestartState restart;
   restart.surface_mode = "mirror_pair";
   restart.selected_branch = "plus_minus";

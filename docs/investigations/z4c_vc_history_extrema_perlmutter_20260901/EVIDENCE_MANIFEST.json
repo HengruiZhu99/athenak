@@ -1,0 +1,53 @@
+{
+  "schema": "athenak.z4c.history_extrema_evidence.v1",
+  "repository": "https://github.com/HengruiZhu99/athenak",
+  "branch": "codex/z4c-vc-performance-aurora-20260829",
+  "base_commit": "85ce747b624afa1dab11eae531700a1ec6b09ad4",
+  "built_executable_sha256": "c3ef1c8b371eb3a447108d3b0acc115b34cfeaeb71337fda277e18d409a5b8c0",
+  "history_source_sha256": "383f041cda8a16eea02d421feccc21a019c6960ced5a439a67841f80cf609e96",
+  "cases": [
+    {
+      "amplitude": -0.047,
+      "status": "partial_fail_closed_meshblock_cap",
+      "job": 57829349,
+      "final_coordinate_time": 24.52458523488176,
+      "history": "evidence/perlmutter_jobs_57829349_57830474/subcritical_Aminus0p047_dynamic/n512_Aminus0p047_history_extrema.z4c.user.hst",
+      "sha256": "9537808bcca80e327ed80c7dabeb8bcdc31df1bb89fac8bdf450f55b1dda03b1",
+      "limitation": "max_nmb_per_rank was incorrectly overridden to 256; refinement required 260 blocks"
+    },
+    {
+      "amplitude": -0.050,
+      "status": "partial_wallclock_endpoint",
+      "jobs": [57826586, 57830474],
+      "final_coordinate_time": 36.458530270670735,
+      "history": "evidence/perlmutter_jobs_57829349_57830474/supercritical_Aminus0p050/n512_Aminus0p050_history_extrema.z4c.user.hst",
+      "sha256": "9711685d390ee0f390efea64124a91a0c93c0cb8b70bb665ca5acf732f410d55",
+      "limitation": "restart continuation ended on its internal wall-clock limit before t=38.652331986867424"
+    }
+  ],
+  "unplotted_attempts": [
+    {
+      "job": 57833764,
+      "status": "cancelled_setup_mismatch",
+      "science_data": false
+    },
+    {
+      "job": 57833859,
+      "status": "cancelled_setup_io_stall",
+      "science_data": false,
+      "history_rows": 1
+    }
+  ],
+  "plots": {
+    "central_kretschmann_figure3_style.png": "ca2a64f68d2a35e506d6d29f2c553cbf697155b9e40af10d05fe97c86786d7fb",
+    "slice_max_kretschmann_coordinate_time.png": "801c7dee7b023bf5444d8c8c068a7b37980c680a57ea3b81cd396d12bb91a060",
+    "slice_min_lapse_coordinate_time.png": "ff086fe5e8a2d678484a30829da14d21230f329a3d0b528230970b475293632a",
+    "history_extrema_three_panel.png": "38397d890ab8be89ea67a83baeaa95b48cc5b926aa7a9d3df8aaf4d0f4306f97"
+  },
+  "claim_limits": [
+    "no completed matched amplitude pair",
+    "no convergence claim",
+    "no completed Figure-3 reproduction claim",
+    "no horizon or collapse-disperse classification claim"
+  ]
+}

@@ -2,6 +2,7 @@
 \usepackage[margin=0.82in]{geometry}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{xurl}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{microtype}
@@ -11,50 +12,56 @@
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{AthenaK Z4c reference-gauge investigation}
-\rhead{2026-08-28}
+\rhead{2026-08-29}
 \cfoot{\thepage}
+\setlength{\headheight}{14pt}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.55em}
+\setlength{\emergencystretch}{2em}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\claim}[1]{\fcolorbox{blue!55!black}{blue!4}{\parbox{0.94\linewidth}{#1}}}
 
 \title{Reference-gauge Figure-3 same-tree resolution investigation}
 \author{AthenaK Z4c / native vertex-centered Cartoon SO(2)}
-\date{28 August 2026}
+\date{29 August 2026}
 
 \begin{document}
 \maketitle
 
-\claim{\textbf{Verdict:} Aurora PVC qualified; exact replay verified; strong
-resolution improvement; early O4-compatible behavior; first peak remains
-constraint invalid; full convergence is not established.}
+\claim{\textbf{Verdict:} Exact replay is verified and the fine triple is
+O4-compatible in central curvature and lapse through the first peak.  N1024
+strongly reduces the peak C/H/M constraints relative to N512, but constraint
+convergence is nonuniform and Z barely improves.  The combined CFL 0.40 / KO
+0.10 N1024 ablation fails before the first peak and is not a remedy.}
 
-\section{Question and controlled experiment}
+\section{Controlled experiment}
 
-The experiment asks whether simply increasing the cells per physical
-MeshBlock cures the constraint-invalid Brill-collapse Figure-3 result.  N128,
-N256, and N512 use the same root MeshBlock layout, physical MeshBlock bounds,
-accepted LogicalLocation hierarchy, and AMR event times.  Only the cells per
-MeshBlock change in the sequence $16^2$, $32^2$, and $64^2$.
+N128, N256, N512, and baseline N1024 use the same root MeshBlock layout,
+physical MeshBlock bounds, accepted LogicalLocation hierarchy, and AMR event
+times.  Only cells per physical MeshBlock change in the sequence $16^2$,
+$32^2$, $64^2$, and $128^2$.  All use shock-avoiding Bona--Masso lapse with
+$\kappa=1$, unit initial lapse, prescribed zero shift, native vertex-centered
+Cartoon SO(2), O4 finite differences, q6 prolongation, RK4, CFL 0.15, KO
+dissipation 0.50, zero Z4c constraint damping, and outer boundary $128M$.
 
-All cases use the shock-avoiding Bona--Masso lapse with $\kappa=1$, unit
-initial lapse, prescribed zero shift, disabled telegraph lapse, native
-vertex-centered Cartoon SO(2), O4 finite differences, q6 prolongation, RK4,
-CFL 0.15, KO dissipation 0.50, zero Z4c constraint damping, and outer boundary
-$128M$.  No gauge, transfer, KO, CFL, or AMR parameter was tuned.
+The N1024 ablation uses the same N1024 state, hierarchy, and numerical method,
+but changes \emph{both} CFL to 0.40 and KO dissipation to 0.10.  It is therefore
+a test of that combined setting, not a one-parameter sensitivity measurement.
 
-The N256 authority has SHA-256
-\code{7055de601e6181e5ad7e1432b5c20a111b0ba67e0e8d5377c170ea80e7bedcde}.
-N128 and N512 accepted both replay events exactly, ending at 212 leaf
-MeshBlocks and physical level 5.
+The hierarchy authority SHA-256 is
+\nolinkurl{7055de601e6181e5ad7e1432b5c20a111b0ba67e0e8d5377c170ea80e7bedcde}.
+Every replay accepted the two events at their exact physical times and ended
+with 212 leaves at physical level 5.
 
 \section{Execution and provenance}
 
-The qualified executable SHA-256 is
-\code{aae7ccb8739fb4951221ad7be69ea0e220548b52d402086f57d7857fa2c97a13}
-from source commit
-\code{f8303c6be7eb214fa1e91b646123ee0d434b3698}.  Aurora qualification job
-8789659 passed eleven focused PVC tests.
+N128--N512 ran on Aurora PVC.  Baseline N1024 and the ablation ran on four
+Perlmutter A100 GPUs using source
+\nolinkurl{02704c79ffe95312cfeba9acde3d38f8b9677dec}, source tree
+\nolinkurl{9605962eed2b74fba6f1d70e6fc526a8f5f56bba}, and executable SHA-256
+\nolinkurl{a13a58be5e45b37c4c29f65eab2f6fa0d43f8d235d0c51e7ed3459b18e9e247e}.
+A matched N512 interval agrees between Aurora and Perlmutter at backend
+roundoff scale.
 
 \begin{center}
 \begin{tabular}{lrrl}
@@ -63,17 +70,17 @@ Case & final coordinate time & final proper time & disposition \\
 \midrule
 N128 & 45.0000 & 19.33240 & reached tlim; constraint invalid \\
 N256 & 30.0000 & 11.28631 & reached tlim; constraint invalid \\
-N512 & 38.6523 & 14.98253 & gate exceeded; constraint invalid at peak \\
+N512 & 38.6523 & 14.98253 & endpoint; constraint invalid at peak \\
+N1024 baseline & 38.6523 & 14.98066 & reached tlim; constraint invalid at peak \\
+N1024 CFL 0.40 / KO 0.10 & 16.7247 & 8.68734 & failed state gate \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-N512 used jobs 8789895, 8789956, 8790025, 8790135, 8790202, and 8790242.
-N128 used jobs 8790272 and 8790338.  No science job remains active.
-Segment N512/000 completed Athena cleanly, but PBS killed the allocation during
-a redundant second full artifact verification pass.  Its science restart and
-disposition were already written.  Every later segment has a complete sealed
-manifest and scheduler exit zero.
+Baseline N1024 was Perlmutter job 57702588 and completed in 02:37:46 with
+clean Athena, launcher, and scheduler exits.  The ablation was job 57706639.
+An earlier job, 57706621, failed before science initialization because the
+runner used the invalid key \code{time/cfl}; it produced no science data.
 
 \section{Direct Figure-3 comparison}
 
@@ -87,6 +94,7 @@ Case & peak $\tau$ & peak $\log_{10}|\mathcal K|$ & peak $\int C^2\,dV$ \\
 N128 & 10.31396 & 4.29765 & 107.608 \\
 N256 & 10.30333 & 5.01349 & 48.2330 \\
 N512 & 10.30811 & 5.38112 & 4.09930 \\
+N1024 baseline & 10.30964 & 5.47867 & 0.0388727 \\
 Published & 10.30683--10.31384 & 5.47778--5.48688 & -- \\
 \bottomrule
 \end{tabular}
@@ -94,143 +102,124 @@ Published & 10.30683--10.31384 & 5.47778--5.48688 & -- \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.96\linewidth]{analysis/aurora_n128_n256_n512/final/figure3_n128_n256_n512.png}
-\caption{Direct central Kretschmann comparison with the published curves.}
+\includegraphics[width=0.96\linewidth]{analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/figure3_n128_n256_n512_n1024_n1024_cfl040_ko010.png}
+\caption{Central Kretschmann comparison.  The orange dashed ablation is a
+failed partial trajectory and ends at $\tau=8.687$, before the first peak.}
 \end{figure}
 
-N512 resolves the deep minimum at $\tau=12.62280$,
-$\log_{10}|\mathcal K|=-6.07875$, and the rebound at $\tau=13.21629$,
-$\log_{10}|\mathcal K|=-2.81849$.  These lie inside the ranges of the three
-published curves.  N128's nominal late extrema are constraint dominated, and
-N256 does not reach the interval.
+Baseline N1024 directly matches the published first peak.  Its deep minimum
+is at $(\tau,\log_{10}|\mathcal K|)=(12.61950,-7.88841)$, deeper than the
+published band, while the rebound at $(13.21271,-2.81258)$ lies in the band.
+There is no three-resolution late-time convergence claim because N256 ends at
+$\tau=11.286$.
 
 \clearpage
-\section{Constraint qualification}
+\section{Constraint evidence}
 
 The history measure is already the physical axisymmetric ring measure,
 \[
   2\pi\rho\sqrt{|\det\gamma|}\,d\rho\,dz,
 \]
-with canonical vertex ownership and trapezoid endpoint weights.  The result is
-not a fictitious collapsed-$y$ normalization artifact.
+with canonical vertex ownership and trapezoid endpoint weights.  The reported
+behavior is not a fictitious collapsed-$y$ normalization artifact.
 
 \begin{center}
-\begin{tabular}{lrrr}
+\begin{tabular}{lrrrr}
 \toprule
-Squared integral & N128 maximum & N256 maximum & N512 maximum \\
+Squared integral & N128 max & N256 max & N512 max & N1024 max \\
 \midrule
-$C$ & 107.608 & 48.2330 & 4.09930 \\
-$H$ & 88.4516 & 41.1314 & 3.63079 \\
-$M$ & 25.3663 & 9.53227 & 0.682824 \\
-$Z$ & 0.643210 & 0.0550105 & 0.00462028 \\
+$C$ & 107.608 & 48.2330 & 4.09930 & 0.0388727 \\
+$H$ & 88.4516 & 41.1314 & 3.63079 & 0.0315101 \\
+$M$ & 25.3663 & 9.53227 & 0.682824 & 0.00453466 \\
+$Z$ & 0.643210 & 0.0550105 & 0.00462028 & 0.00400120 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.96\linewidth]{analysis/aurora_n128_n256_n512/final/constraint_amplitudes_n128_n256_n512.png}
-\caption{Physical-volume constraint amplitudes, plotted as the square root of
-the stored squared integrals.}
+\includegraphics[width=0.96\linewidth]{analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/constraint_amplitudes_n128_n256_n512_n1024_n1024_cfl040_ko010.png}
+\caption{Physical-volume constraint amplitudes.  The failed CFL/KO ablation
+runs away by orders of magnitude after $\tau\simeq7.5$.}
 \end{figure}
 
-At N512, aggregate C first crosses 0.01, 0.1, and 1 at proper times 9.88652,
-10.05721, and 10.19025.  C and H peak at $\tau=10.29711$, essentially
-coincident with the curvature peak.  The improved Figure-3 curve is therefore
-still constraint invalid.
+The initial C squared integrals for N128, N256, N512, and N1024 are
+$1.30505\times10^{-1}$, $6.85048\times10^{-4}$,
+$2.88883\times10^{-6}$, and $1.28813\times10^{-8}$.  The N512/N1024
+initial-amplitude order is 3.90.  Initial data resolution is therefore not the
+source of the later loss of uniform constraint convergence.
 
-The N256 and N512 C/H maxima are on the symmetry axis and far from a
-coarse-fine interface.  M is within one radial spacing of the axis.  This is a
-geometric classification, not proof of an axis source defect.
-
-\clearpage
-\section{rho near 5 high-frequency diagnostic}
-
-All 25 evolved fields were stitched over the finest physical patch
-$4\leq\rho\leq6$, $-2\leq z\leq2$ before differencing and Fourier analysis.
-Shared vertices agree to roundoff.  Matched slices were analyzed at proper
-times approximately 8.03, 9.50, 10.27, and 11.00.
+The N512/N1024 median amplitude orders over $0<\tau<8$ are 0.007 (C), 0.081
+(H), 0.111 (M), and 0.001 (Z): after the initially convergent slice, both fine
+runs sit on a shared evolution/diagnostic floor.  Over
+$10<\tau<11.286$, the orders rise to 2.69, 4.00, 3.74, and 0.27.  C/H/M
+therefore improve during collapse, while Z shows little useful fine-pair
+convergence.  There is no single constraint order valid across families and
+times.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.98\linewidth]{analysis/aurora_n256_n512/field_patch/comparison/tracked_field_high_frequency_vs_tau.png}
-\caption{Fourth-difference and above-N256-Nyquist diagnostics on the stitched
-rho=4--6 patch.}
+\includegraphics[width=0.96\linewidth]{analysis/aurora_n128_n256_n512_perlmutter_n1024_cfl040_ko010/final/constraint_pairwise_orders_n128_n256_n512_n1024.png}
+\caption{Pairwise amplitude orders for the four-resolution sequence.  The
+ablation is excluded because it is the same resolution with changed CFL and
+KO, not a fifth resolution.}
 \end{figure}
 
-At the near-peak slice, N512/N256 fourth-difference ratios are about 0.36 for
-$\chi$, 0.25 for $\hat K$ and sampled conformal connections, and 0.23--0.48
-for representative $\tilde A_{ij}$ components.  $\Theta$ has the largest
-normalized pre-peak indicator, but its absolute fluctuation is only 3.5--6.2
-percent of N256 and its power above half the N256 Nyquist stays below
-$3.1\times10^{-7}$.  By proper time 11 its normalized indicator is smaller as
-well.  No measured rho near 5 high-k branch grows with resolution.
-
 \clearpage
-\section{Three-resolution convergence assessment}
+\section{CFL 0.40 / KO 0.10 failure}
 
-At common central proper time, the Richardson estimator is
+Baseline and ablation initial constraints are bitwise-identical in the history
+output.  The ablation C squared integral crosses 0.01, 1, 100, and 10000 at
+$\tau=7.54619$, 7.85416, 8.24578, and 8.65239, respectively.  The last
+history row has $\int C^2dV=4.9679\times10^4$, corresponding to amplitude
+222.89, versus a baseline maximum of 0.197.
+
+The strict state-admissibility diagnostic stops the run at coordinate time
+$16.7246503M$, cycle 4919, RK stage 1.  The first invalid active point is near
+the axis at $(\rho,z)=(0.0625,19.96875)$.  Chi is still positive at 0.91660,
+but the conformal metric has
 \[
- p=\log_2\left(\frac{|u_{128}-u_{256}|}{|u_{256}-u_{512}|}\right).
+ \det\tilde\gamma=-0.29184,
+ \qquad (p_0,p_1,p_2)=(18.8750,-0.23072,-0.29184),
 \]
+so it is no longer positive definite.  This is an evolved-state failure after
+a constraint runaway, not a nonpositive-chi prolongation-parent failure.
 
-\begin{center}
-\begin{tabular}{lrr}
-\toprule
-Proper-time window & central Kretschmann & central lapse \\
-\midrule
-0--8 & 4.86 & 3.93 \\
-8--10 & 3.34 & 3.36 \\
-10--11.286 & 2.10 & 1.40 \\
-\bottomrule
-\end{tabular}
-\end{center}
+The result rules out the \emph{combined} CFL 0.40 / KO 0.10 choice as a cure.
+It cannot say whether the larger time step, weaker dissipation, or their
+interaction is responsible.  Any causal follow-up must vary only one control
+at a time.
 
-The central fields are O4-compatible early, then lose order through collapse.
-Constraint-amplitude pair orders are positive but inconsistent.  For aggregate
-C, N128/N256 versus N256/N512 median orders are 3.46 versus 1.06 in $\tau<8$
-and 1.03 versus 2.38 in $10<\tau<11.286$.  No single order describes both
-pairs.
+\section{Interpretation}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.96\linewidth]{analysis/aurora_n128_n256_n512/final/constraint_pairwise_orders.png}
-\caption{Pairwise convergence orders of the physical-volume constraint
-amplitudes.  The mismatch between pairs prevents a uniform order claim.}
-\end{figure}
+The baseline results do not show a simple loss of convergence from N512 to
+N1024.  Peak C/H/M amplitudes fall by factors of about 10--12 and the central
+first peak approaches the published curve at O4-compatible order.  What fails
+is \emph{uniform} constraint convergence: a shared early floor develops, Z
+barely improves, and the strict C gate is still exceeded near collapse.
 
-N256 ends at $\tau=11.286$, so three-level order cannot be measured through the
-deep-minimum/rebound interval.
+This combination points away from insufficient initial-data resolution and
+toward an error generated during evolution.  Candidate mechanisms include an
+axis/regularity truncation floor, a persistent AMR/interface contribution, or
+a formulation/gauge mode whose coefficient does not scale like the bulk O4
+error.  Existing evidence does not isolate one of them.
 
-\clearpage
-\section{Interpretation and next step}
-
-The identical interface geometry becomes markedly better behaved as cells per
-MeshBlock increase.  N512 moves the peak toward the published amplitude,
-reduces peak constraints by about an order of magnitude relative to N256,
-suppresses rho near 5 numerical content, and survives through the full
-Figure-3 interval.  Bulk/parent under-resolution is therefore a major driver
-of the N256 failure and is not ruled out.
-
-This does not prove that AMR interfaces or the axis are harmless.  N512 still
-has an order-unity constraint episode at the peak, and the global maxima are
-axis-adjacent.  A residual interface or axis contribution can coexist with
-bulk under-resolution.
-
-The natural next step is a bounded shared-RHS audit at the retained N512 peak
-state, separating active-axis stencils, same-level seams, and coarse-fine ghost
-and interface contributions.  Gauge, KO, transfer, positivity checks, and the
-exact tree should remain unchanged.
+The smallest useful next step is a bounded N1024 localization audit around
+the onset and peak of the residual constraint floor, retaining the exact tree
+and baseline CFL/KO.  It should separate active-axis stencils, same-level
+seams, and coarse-fine/interface regions.  Broad tuning would be less
+diagnostic.
 
 \section{Claim boundary}
 
-\textbf{Supported:} exact N128/N512 hierarchy replay; strong resolution
-improvement; early O4-compatible central fields; N512 coverage of the published
-peak, minimum, and rebound; smaller/later constraints and weaker rho near 5
-high-frequency content.
+\textbf{Supported:} exact four-resolution replay; high-order-convergent initial
+constraints; fine-triple O4-compatible central fields through the first peak;
+large N512-to-N1024 peak C/H/M improvement; direct N1024 first-peak agreement;
+and early catastrophic failure of the combined CFL 0.40 / KO 0.10 setting.
 
-\textbf{Not supported:} a constraint-qualified Figure-3 reproduction; uniform
-convergence through collapse; exclusion of all axis/interface mechanisms; a
-unique source-level defect; or a production numerical correction.
+\textbf{Not supported:} a constraint-qualified Figure-3 reproduction; a
+uniform constraint order; three-level convergence across the late minimum and
+rebound; attribution of the ablation failure to CFL or KO individually;
+exclusion of axis/interface mechanisms; or a unique source-level defect.
 
 \end{document}
