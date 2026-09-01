@@ -6,7 +6,7 @@ This is an append-oriented evidence log.  A build, a short run, or a finite resi
 does not by itself qualify the solver.  `PASS` below means only that the named bounded
 gate passed.  `OPEN` and `BLOCKED` are not silently replaced by weaker criteria.
 
-Current numerical-evidence source commit: `7bde88a31884eefa7e89089c63754f4e07c29841`.
+Current evidence source commit: `55290efdf310a03dcce8d5cbc84a0ded595a8d13`.
 Required baseline: `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 
 ## Reproducibility envelope
@@ -31,7 +31,7 @@ generator, table, source, and exact numbers below are the durable provenance rec
 | Gate | Status | Evidence / remaining condition |
 |---|---|---|
 | 1 symbolic identities | PASS | complete `analysis/pc_gh_symbolic/run_all.py` pass at current commit |
-| 2 flat algebra | PARTIAL | exact projection and constrained state-map tests pass; broader randomized SPD sampling remains |
+| 2 flat algebra | PASS | exact projection/map tests plus 10,000 seeded SPD inverse, projection, and ADM round-trip trials pass |
 | 3 Minkowski pointwise | PASS | exact state, ADM round trip, RHS, and diagnostics at floating-point zero |
 | 4 wave convergence | PASS | exact shifted harmonic wave at 32/64/128 cells; every exercised state/constraint sector is at least order 1.96 and curls remain exact |
 | 5 robust Minkowski | PASS | seeded cell-scale perturbations at 32/64/128 cells through `t=2`; bounded amplification and no positive late-time fitted rate |
@@ -61,6 +61,34 @@ checks passed.  The suite deliberately prints expected failures for the three re
 supplied regression targets.
 
 The isolated Python requirements are `sympy==1.14.0` and `scipy==1.18.1`.
+
+## 2026-09-01 — Gate 2 randomized flat algebra
+
+Evidence source commit: `55290efdf310a03dcce8d5cbc84a0ded595a8d13`.
+Script: `analysis/pc_gh_symbolic/verify_flat_algebra_randomized.py`.
+
+Seed `20260901` generated 10,000 SPD conformal metrics over six overall metric
+scales, arbitrary symmetric `Atilde` and three `Q` tensors, and `chi` over eight
+decades.  The test independently evaluates the production cofactor inverse formulas,
+the simultaneous unit-determinant/trace projections, and the PC-GH to ADM to PC-GH
+metric/curvature round trip.
+
+Maximum binary64 discrepancies were:
+
+```text
+cofactor inverse absolute       6.293703e-10
+projected determinant           1.156852e-13
+relative Atilde trace           1.108481e-15
+relative Q trace                1.128805e-15
+ADM metric round trip           5.826450e-13
+ADM curvature round trip        1.674039e-11
+chi round trip                  4.456524e-11
+K round trip                    4.279577e-12
+```
+
+All scale-aware assertions passed.  Classification: `PASS` Gate 2 as a broad seeded
+binary64 regression; the exact determinant/Q projection and constrained FO-GH map
+remain separately proved by the symbolic suite.
 
 ## 2026-09-01 — exact harmonic Minkowski
 
