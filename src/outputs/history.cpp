@@ -20,6 +20,7 @@
 #include "eos/eos.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "z4c/z4c.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
@@ -49,6 +50,9 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
   if (pm->pmb_pack->pz4c != nullptr) {
     hist_data.emplace_back(PhysicsModule::SpaceTimeDynamics);
   }
+  if (pm->pmb_pack->ppcgh != nullptr) {
+    hist_data.emplace_back(PhysicsModule::PcGhDynamics);
+  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -64,6 +68,8 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
       LoadMHDHistoryData(&data, pm);
     } else if (data.physics == PhysicsModule::SpaceTimeDynamics) {
       LoadZ4cHistoryData(&data, pm);
+    } else if (data.physics == PhysicsModule::PcGhDynamics) {
+      LoadPcGhHistoryData(&data, pm);
     } else if (data.physics == PhysicsModule::UserDefined) {
       (pm->pgen->user_hist_func)(&data, pm);
     }
@@ -251,6 +257,98 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 }
 
 //----------------------------------------------------------------------------------------
+//! \fn void HistoryOutput::LoadPcGhHistoryData()
+//! \brief Compute volume-weighted squared PC-GH diagnostic norms on this rank.
+
+void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
+  pdata->nhist = 20;
+  pdata->label[0] = "Cperp-n2";
+  pdata->label[1] = "Z-norm2";
+  pdata->label[2] = "H-norm2";
+  pdata->label[3] = "Mhat-norm2";
+  pdata->label[4] = "redX-norm2";
+  pdata->label[5] = "redQ-norm2";
+  pdata->label[6] = "redY-norm2";
+  pdata->label[7] = "redB-norm2";
+  pdata->label[8] = "curlX-n2";
+  pdata->label[9] = "curlQ-n2";
+  pdata->label[10] = "curlY-n2";
+  pdata->label[11] = "curlB-n2";
+  pdata->label[12] = "detg-norm2";
+  pdata->label[13] = "trA-norm2";
+  pdata->label[14] = "trQ-norm2";
+  pdata->label[15] = "proj-norm2";
+  pdata->label[16] = "W-norm2";
+  pdata->label[17] = "L-norm2";
+  pdata->label[18] = "rhs-norm2";
+  pdata->label[19] = "Volume";
+
+  auto &con = pm->pmb_pack->ppcgh->u_con;
+  auto &adm_vars = pm->pmb_pack->padm->adm;
+  auto &size = pm->pmb_pack->pmb->mb_size;
+  auto &indcs = pm->pmb_pack->pmesh->mb_indcs;
+  int const is = indcs.is;
+  int const js = indcs.js;
+  int const ks = indcs.ks;
+  int const nx1 = indcs.nx1;
+  int const nx2 = indcs.nx2;
+  int const nx3 = indcs.nx3;
+  int const nkji = nx3*nx2*nx1;
+  int const nji = nx2*nx1;
+  int const nmkji = pm->pmb_pack->nmb_thispack*nkji;
+
+  array_sum::GlobalSum sum_this_rank;
+  Kokkos::parallel_reduce("PC-GH history sums",
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+  KOKKOS_LAMBDA(int idx, array_sum::GlobalSum &sum) {
+    int const m = idx/nkji;
+    int const k0 = (idx - m*nkji)/nji;
+    int const j0 = (idx - m*nkji - k0*nji)/nx1;
+    int const i0 = idx - m*nkji - k0*nji - j0*nx1;
+    int const k = k0 + ks;
+    int const j = j0 + js;
+    int const i = i0 + is;
+    Real const det_gamma = adm::SpatialDet(
+        adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
+        adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
+        adm_vars.g_dd(m, 1, 2, k, j, i), adm_vars.g_dd(m, 2, 2, k, j, i));
+    Real const vol = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3
+                     *std::sqrt(std::abs(det_gamma));
+    array_sum::GlobalSum h;
+    h.the_array[0] = vol*SQR(con(m, pc_gh::PcGh::I_CON_CPERP, k, j, i));
+    h.the_array[1] = vol*(SQR(con(m, pc_gh::PcGh::I_CON_ZX, k, j, i))
+                         + SQR(con(m, pc_gh::PcGh::I_CON_ZY, k, j, i))
+                         + SQR(con(m, pc_gh::PcGh::I_CON_ZZ, k, j, i)));
+    h.the_array[2] = vol*SQR(con(m, pc_gh::PcGh::I_CON_H, k, j, i));
+    h.the_array[3] = vol*(SQR(con(m, pc_gh::PcGh::I_CON_MX, k, j, i))
+                         + SQR(con(m, pc_gh::PcGh::I_CON_MY, k, j, i))
+                         + SQR(con(m, pc_gh::PcGh::I_CON_MZ, k, j, i)));
+    h.the_array[4] = vol*SQR(con(m, pc_gh::PcGh::I_CON_RED_X, k, j, i));
+    h.the_array[5] = vol*SQR(con(m, pc_gh::PcGh::I_CON_RED_Q, k, j, i));
+    h.the_array[6] = vol*SQR(con(m, pc_gh::PcGh::I_CON_RED_Y, k, j, i));
+    h.the_array[7] = vol*SQR(con(m, pc_gh::PcGh::I_CON_RED_B, k, j, i));
+    h.the_array[8] = vol*SQR(con(m, pc_gh::PcGh::I_CON_CURL_X, k, j, i));
+    h.the_array[9] = vol*SQR(con(m, pc_gh::PcGh::I_CON_CURL_Q, k, j, i));
+    h.the_array[10] = vol*SQR(con(m, pc_gh::PcGh::I_CON_CURL_Y, k, j, i));
+    h.the_array[11] = vol*SQR(con(m, pc_gh::PcGh::I_CON_CURL_B, k, j, i));
+    h.the_array[12] = vol*SQR(con(m, pc_gh::PcGh::I_CON_DETG, k, j, i));
+    h.the_array[13] = vol*SQR(con(m, pc_gh::PcGh::I_CON_TRA, k, j, i));
+    h.the_array[14] = vol*SQR(con(m, pc_gh::PcGh::I_CON_TRQ, k, j, i));
+    h.the_array[15] = vol*SQR(con(m, pc_gh::PcGh::I_CON_PROJECTION, k, j, i));
+    h.the_array[16] = vol*SQR(con(m, pc_gh::PcGh::I_CON_W, k, j, i));
+    h.the_array[17] = vol*SQR(con(m, pc_gh::PcGh::I_CON_L, k, j, i));
+    h.the_array[18] = vol*(SQR(con(m, pc_gh::PcGh::I_CON_RHS_PRIMARY, k, j, i))
+                          + SQR(con(m, pc_gh::PcGh::I_CON_RHS_GRADIENT, k, j, i)));
+    h.the_array[19] = vol;
+    sum += h;
+  }, Kokkos::Sum<array_sum::GlobalSum>(sum_this_rank));
+
+  for (int n = 0; n < pdata->nhist; ++n) {
+    pdata->hdata[n] = sum_this_rank.the_array[n];
+  }
+}
+
+//----------------------------------------------------------------------------------------
 //! \fn void HistoryOutput::LoadMHDHistoryData()
 //  \brief Compute and store history data over all MeshBlocks on this rank
 //  Data is stored in a Real array defined in derived class.
@@ -375,6 +473,9 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
           break;
         case PhysicsModule::MagnetoHydroDynamics:
           fname.append(".mhd");
+          break;
+        case PhysicsModule::PcGhDynamics:
+          fname.append(".pcgh");
           break;
         case PhysicsModule::SpaceTimeDynamics:
           fname.append(".z4c");
