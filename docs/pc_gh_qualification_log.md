@@ -319,7 +319,7 @@ nonpositive.  Shift feedback lowers it from `0.329527/M` but reaches a positive 
 `0.271629/M`; lapse feedback does not remove that floor.
 
 The floor is analytic, not just a finite scan.  A projected tangential trace-free `Q`
-subspace is invariant under the lower-order operator and has
+subspace is invariant under the complete pointwise-frozen lower-order operator and has
 
 ```text
 lambda_Q = (5 B_tangential - 2 B_radial) / 3
@@ -329,6 +329,22 @@ lambda_Q = (5 B_tangential - 2 B_radial) / 3
 Gauge A1 acts only on `A/Y` and `beta/B`, so this eigenvalue is independent of both
 feedback coefficients.  Classification: `FAILED` Gauge A1 frozen clearance.  The
 feedback is not implemented in production.
+
+This pointwise `Q` eigenvector is off the first-order reduction manifold at `k=0`, so it
+is not itself a physical Fourier perturbation.  Direct reduction-constraint propagation
+removes the `B_ell{}^ell=t` contribution and gives the smaller but still positive exact
+rate
+
+```text
+lambda_R = 2 (B_tangential - B_radial) / 3
+         = 0.11738365338 / M   at r=M.
+```
+
+`analysis/pc_gh_symbolic/verify_reduction_constraint_growth.py` proves both rates and
+their difference exactly.  The bounded Gauge-A1 source does not enter the conformal
+metric source and therefore cannot change `lambda_R`.  This diagnoses a local
+reduction-constraint growth mechanism; it does not establish a global eigenmode or an
+evolution growth rate.
 
 ## Current hard stop
 

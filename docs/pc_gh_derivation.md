@@ -842,6 +842,44 @@ floor in the direct low-rank Gauge-A1 scans. Classification: the bounded Gauge A
 is `PROVED` not to clear the full frozen-operator gate for any feedback coefficients.
 It must not be implemented as a purported cure for this mode.
 
+### Pointwise Q rate versus the reduction-constraint rate
+
+The eigenvalue above belongs to the complete *pointwise-frozen* first-order state
+operator, in which `Q` may be perturbed independently of the conformal metric.  At
+`k=0` this is off the reduction manifold and must not be mislabeled as a physical
+Fourier mode.  The corresponding reduction constraint is
+
+\[
+R^{\gamma}_{\ell ij}=Q_{\ell ij}-\partial_\ell\tilde\gamma_{ij}.
+\]
+
+For the standard gradient extension, linearizing the nonadvective metric source in a
+tangential trace-free reduction perturbation gives
+
+\[
+\delta(\partial_\ell^{(1)}F_{ij})
+=\left[2t-\frac23(u+2t)\right]R^{\gamma}_{\ell ij}
+=\frac23(t-u)R^{\gamma}_{\ell ij}.
+\]
+
+The full pointwise `Q` row has one additional
+`B_ell{}^ell R^gamma_ell=t R^gamma_ell` term, producing `(5t-2u)/3`.  In the actual
+constraint equation that term cancels the same contribution from
+`partial_ell(beta^k R^gamma_k)`.  Therefore the true local zero-wave-number
+reduction-constraint rate is
+
+\[
+\lambda_R=\frac23(t-u)=0.11738365338/M>0
+\qquad (r=M),
+\]
+
+not `0.27162910729/M`.  This refinement weakens the quantitative growth estimate but
+does not remove the sign failure.  Gauge A1 still cannot change it because the
+conformal-metric source contains neither `h_perp` nor `h^i`.  The identities are
+checked exactly by `verify_reduction_constraint_growth.py`.  Classification:
+positive Gauge-A0 tangential trace-free Q reduction rate `PROVED` for the stated local
+radial background; no claim is made here about a global eigenmode.
+
 ## Explicit map to standard first-order GH
 
 Fix the standard FO-GH variables and sign convention by
