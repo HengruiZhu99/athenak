@@ -678,6 +678,111 @@ number implementation, including the inverse-metric derivative and curl-ordering
 difference. Classification: standard gradient equations `PROVED ON r>0`, conditional on
 a differentiable Gauge A source satisfying the stated dependency restriction.
 
+## Gauge A0: prescribed stationary 1+log trumpet
+
+The construction here uses only the stationary Schwarzschild equations in
+[Bruegmann, arXiv:0904.4418](https://arxiv.org/abs/0904.4418), independently mapped
+to the PC-GH variables. Set the mass to one while constructing the dimensionless
+table. With areal radius \(R\), inverse areal radius \(S=1/R\), and isotropic radius
+\(r\), the regular stationary branch is defined implicitly by
+
+\[
+ \alpha^2-1+2S-Ce^\alpha S^4=0,
+ \qquad
+ C=\frac12R_c^3e^{-\alpha_c},
+\]
+
+\[
+ \alpha_c=\sqrt{10}-3,
+ \qquad
+ R_c=\frac{\sqrt{10}+3}{4},
+ \qquad
+ r_c=0.30345204271479997.
+\]
+
+The isotropic-radius equation is nonsingular when written in \(x=\ln r\):
+
+\[
+ \frac{dS}{dx}=-S\alpha(S),
+ \qquad S(x_c)=R_c^{-1}.
+\]
+
+Define the positive physical shift norm and its areal derivative by
+
+\[
+ \beta=\sqrt{\alpha^2-1+2/R},
+ \qquad
+ k=\frac{d\beta}{dR},
+ \qquad
+ \ell=\frac{\beta}{R}.
+\]
+
+In isotropic Cartesian coordinates, with \(n^i=x^i/r\), the complete target state is
+
+\[
+\begin{aligned}
+A_T&=\alpha^2,&
+\chi_T&=(r/R)^2,&
+\tilde\gamma_{Tij}&=\delta_{ij},\\
+\beta_T^i&=r\ell n^i,&
+K_T&=k+2\ell,&
+\tilde A_{Tij}&=(k-\ell)(n_i n_j-\delta_{ij}/3),\\
+\tilde\Lambda_T^i&=0,&
+\pi_T&=-K_T,&
+Q_{T kij}&=0.
+\end{aligned}
+\]
+
+The remaining reduction fields are coordinate derivatives of these primaries. In
+particular, if \(\beta_T^r=r\ell\),
+
+\[
+ B_{Ti}{}^j=\frac{\beta_T^r}{r}\delta_i{}^j
+ +\left(\partial_r\beta_T^r-\frac{\beta_T^r}{r}\right)n_i n^j.
+\]
+
+Gauge A0 is prescribed as a fixed function of \(r/M\), not recomputed from the evolved
+state. Stationarity and the configuration equations give
+
+\[
+ h_{\perp,T}=-\alpha K+\frac{\beta_T^r}{2A}\partial_r A
+ =(2-\alpha)K,
+\]
+
+where the second equality uses stationary advective 1+log slicing, and
+
+\[
+ h_T^i=\left[-\beta_T^r\partial_r\beta_T^r
+ -\frac12(A_T\partial_r\chi_T-\chi_T\partial_rA_T)\right]n^i.
+\]
+
+The source derivatives used by the standard-order gradient equations are derivatives
+of these prescribed radial functions. Thus Gauge A0 depends on coordinates only and
+satisfies the metric-only GH principal-part restriction (`PROVED`). On this exact
+stationary vacuum target, the source is \(H_T=-\Gamma_T\), so \(C_T=0\); the reduced
+covariant equations and every PC-GH RHS vanish (`PROVED`, before table interpolation).
+
+Let \(R_0\) be the smaller positive root of
+\(R_0^4-2R_0^3+C=0\) and
+\(\gamma=(2-R_0)/(6-4R_0)\). The inner behavior is
+
+\[
+ \chi_T=O(r^2),\qquad A_T=O(r^{2/\gamma}),\qquad
+ 2/\gamma\simeq2.18259.
+\]
+
+Consequently all 55 stored target fields are bounded, while the exact theorem remains
+on \(r>0\). The direction-dependent bounded limit of the radial trace-free tensor is
+not asserted to be smooth at the compactified point. The generated table spans only a
+declared positive-radius interval; production interpolation must fail closed outside it
+and must never evaluate the regularity ratios at \(A=\chi=0\).
+
+`generate_gauge_a0_table.py` independently integrates the isotropic ODE, constructs the
+regular target and source scalars, checks the implicit equation and both source
+definitions, and measures the inner powers. Binary64 table generation is numerically
+audited; interpolation residuals and the required multi-precision cancellation audit
+remain separate production gates.
+
 ## Explicit map to standard first-order GH
 
 Fix the standard FO-GH variables and sign convention by
@@ -895,7 +1000,7 @@ valid, but its coupling to the full semi-discrete energy remains `NOT ESTABLISHE
 | X/Y/Q/B standard-order equations | `PROVED ON r>0`, Gauge-A conditional | Exact product-rule and curl-ordering audit above. |
 | equivalence to standard FO-GH for r>0 | `PROVED ON r>0`, constraint-manifold and gauge conditional | Explicit mutually inverse variable map and common covariant origin above. |
 | symmetric hyperbolicity for r>0 | `PROVED ON r>0` | Complete pulled-back characteristic basis and positive FO-GH symmetrizer above; no uniform puncture-limit claim. |
-| Gauge A0 target and table | `NOT ESTABLISHED` | Stationary trumpet construction follows only after the baseline formulation audit. |
+| Gauge A0 continuum target | `PROVED`; table generation numerically audited | Stationary 1+log implicit solution, isotropic ODE, explicit PC-GH map, source identities, and inner-power audit above. Production interpolation is not yet qualified. |
 | Gauge B scaled driver | `NOT ESTABLISHED` | Deferred until Gauge A qualification and a new driver derivation. |
 
 The baseline production primary and gradient RHS are authorized on \(r>0\), subject to

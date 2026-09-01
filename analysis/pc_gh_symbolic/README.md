@@ -22,12 +22,13 @@ Current coverage:
 | `verify_gradient_rhs.py` | exact product-rule expansions of all chi/A/beta/gtilde source gradients and the compatible-versus-standard curl difference | `PROVED` conditional on differentiable metric-only/prescribed Gauge A sources |
 | `verify_4d_component_oracle.py` | arbitrary exact rational 3+1 metric point jet; all ten covariant reduced four-tensor components; direct K, Atilde, pi, and Lambda derivatives; Brown-Ricci, Gauss-normal, and Hamiltonian identities | corrected primary equations `PROVED` at the non-diagonal point jet; supplied targets remain excluded |
 | `verify_fo_gh_map.py` | exact constrained PC-GH to standard FO-GH to PC-GH round trip for a non-diagonal rational state | algebraic variable-map invertibility `PROVED ON r>0` |
+| `generate_gauge_a0_table.py` | independent stationary 1+log implicit solution, isotropic-radius ODE, target-source identities, and inner exponents | Gauge A0 continuum construction `PROVED`; double-precision table generation numerically audited |
 | `verify_source_policy.py` | scans every production PC-GH C++ source/header for `Dxx`/`Dxy` calls and legacy GH/Z4c includes | fail-closed source-policy gate |
 
 Not yet covered, and therefore not established by these scripts:
 
-- Gauge A0 or Gauge B;
-- puncture asymptotics and source-cancellation conditioning.
+- Gauge B;
+- production Gauge-A0 interpolation residuals and source-cancellation conditioning.
 
 The production implementation must not begin using any formula still classified
 `NOT ESTABLISHED`, `FAILED`, or subject to an unmet `CONDITIONAL` hypothesis in
