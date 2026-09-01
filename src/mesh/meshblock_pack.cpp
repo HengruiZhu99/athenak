@@ -22,6 +22,7 @@
 #include "z4c/tmunu.hpp"
 #include "tasklist/numerical_relativity.hpp"
 #include "z4c/z4c.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "z4c/cce/cce.hpp"
 #include "diffusion/viscosity.hpp"
@@ -70,6 +71,7 @@ MeshBlockPack::~MeshBlockPack() {
     }
     pz4c_cce.resize(0);
   }
+  if (ppcgh  != nullptr) {delete ppcgh;}
   if (ppart  != nullptr) {delete ppart;}
   // must be last, since it calls ~BoundaryValues() which (MPI) uses pmy_pack->pmb->nnghbr
   delete pmb;
@@ -118,7 +120,8 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     phydro = new hydro::Hydro(this, pin);
     nphysics++;
     if (!(pin->DoesBlockExist("mhd")) && !(pin->DoesBlockExist("radiation")) &&
-        !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) ) {
+        !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) &&
+        !(pin->DoesBlockExist("pc_gh")) ) {
       phydro->AssembleHydroTasks(tl_map);
     }
   } else {
@@ -131,7 +134,8 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     pmhd = new mhd::MHD(this, pin);
     nphysics++;
     if (!(pin->DoesBlockExist("hydro")) && !(pin->DoesBlockExist("radiation")) &&
-        !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) ) {
+        !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) &&
+        !(pin->DoesBlockExist("pc_gh")) ) {
       pmhd->AssembleMHDTasks(tl_map);
     }
   } else {
@@ -144,7 +148,8 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
   if (pin->DoesBlockExist("ion-neutral")) {
     pionn = new ion_neutral::IonNeutral(this, pin);   // construct new MHD object
     if (pin->DoesBlockExist("hydro") && pin->DoesBlockExist("mhd") &&
-        !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) ) {
+        !(pin->DoesBlockExist("adm")) && !(pin->DoesBlockExist("z4c")) &&
+        !(pin->DoesBlockExist("pc_gh")) ) {
       pionn->AssembleIonNeutralTasks(tl_map);
       nphysics++;
     } else {
@@ -188,10 +193,15 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     pturb = nullptr;
   }
 
-  // (7) Z4c and ADM
-  // Create Z4c and ADM physics module.
+  // (7) Dynamical spacetime and ADM storage.
+  if (pin->DoesBlockExist("z4c") && pin->DoesBlockExist("pc_gh")) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'
+              << "<z4c> and <pc_gh> are mutually exclusive" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   if (pin->DoesBlockExist("z4c")) {
     pz4c = new z4c::Z4c(this, pin);
+    ppcgh = nullptr;
     padm = new adm::ADM(this, pin);
     ptmunu = nullptr;
     // init cce dump
@@ -203,8 +213,15 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
       pz4c_cce.push_back(new z4c::CCE(pmesh, pin,n));
     }
     nphysics++;
+  } else if (pin->DoesBlockExist("pc_gh")) {
+    pz4c = nullptr;
+    ppcgh = new pc_gh::PcGh(this, pin);
+    padm = new adm::ADM(this, pin);
+    ptmunu = nullptr;
+    nphysics++;
   } else {
     pz4c = nullptr;
+    ppcgh = nullptr;
     if (pin->DoesBlockExist("adm")) {
       padm = new adm::ADM(this, pin);
     } else {
@@ -213,10 +230,15 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
   }
 
   // (8) Dynamical Spacetime and Matter (MHD TODO)
-  if ((pin->DoesBlockExist("z4c") || pin->DoesBlockExist("adm")) &&
+  if ((pin->DoesBlockExist("z4c") || pin->DoesBlockExist("pc_gh") ||
+       pin->DoesBlockExist("adm")) &&
       (pin->DoesBlockExist("hydro")) ) {
     std::cout << "Dynamical metric and hydro not compatible; use MHD instead  "
               << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (pin->DoesBlockExist("pc_gh") && pin->DoesBlockExist("mhd")) {
+    std::cout << "Vacuum PC-GH is not compatible with MHD" << std::endl;
     std::exit(EXIT_FAILURE);
   }
   if ((pin->DoesBlockExist("z4c") || pin->DoesBlockExist("adm")) &&
@@ -225,7 +247,7 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     ptmunu = new Tmunu(this, pin);
   }
 
-  if (pz4c != nullptr || padm != nullptr) {
+  if (pz4c != nullptr || ppcgh != nullptr || padm != nullptr) {
     pnr = new numrel::NumericalRelativity(this, pin);
     pnr->AssembleNumericalRelativityTasks(tl_map);
   }

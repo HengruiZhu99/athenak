@@ -108,6 +108,8 @@ add_executable(
         particles/particles_tasks.cpp
         outputs/pdf.cpp
 
+        pc_gh/pc_gh.cpp
+
         pgen/pgen.cpp
         pgen/tests/advection.cpp
         pgen/tests/collapse.cpp

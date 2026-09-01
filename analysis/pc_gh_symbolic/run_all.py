@@ -15,6 +15,7 @@ SCRIPTS = [
     "verify_gradient_rhs.py",
     "verify_4d_component_oracle.py",
     "verify_fo_gh_map.py",
+    "verify_source_policy.py",
 ]
 
 
