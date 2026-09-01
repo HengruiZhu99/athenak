@@ -26,6 +26,8 @@ S_C = 1.0/R_C
 R_ISO_C = 0.30345204271479997
 C_1LOG = 0.5*R_C**3*math.exp(-ALPHA_C)
 ALPHA_R_C = 8.0*(-2.0 + math.sqrt(10.0 + 3.0*SQRT10))/(16.0 + 5.0*SQRT10)
+R_0 = brentq(lambda radius: radius**4 - 2.0*radius**3 + C_1LOG, 1.0, R_C)
+S_0 = 1.0/R_0
 
 
 def implicit_lapse_residual(alpha: float, s: float) -> float:
@@ -62,13 +64,20 @@ def build_table(n: int, r_min: float, r_max: float) -> dict[str, np.ndarray]:
         alpha = lapse_from_inverse_radius(s)
         return np.array([-s*alpha])
 
+    def rhs_delta(_x: float, state: np.ndarray) -> np.ndarray:
+        s = S_0 - float(state[0])
+        alpha = lapse_from_inverse_radius(s)
+        return np.array([s*alpha])
+
     common = dict(method="DOP853", rtol=2.5e-13, atol=2.5e-15, dense_output=True,
                   max_step=0.025)
-    inward = solve_ivp(rhs, (x_c, float(x[0])), np.array([S_C]), **common)
+    inward = solve_ivp(rhs_delta, (x_c, float(x[0])),
+                       np.array([S_0 - S_C]), **common)
     outward = solve_ivp(rhs, (x_c, float(x[-1])), np.array([S_C]), **common)
     if not inward.success or not outward.success:
         raise RuntimeError(f"trumpet ODE failed: {inward.message}; {outward.message}")
-    s = np.where(x <= x_c, inward.sol(x)[0], outward.sol(x)[0])
+    delta_s = np.where(x <= x_c, inward.sol(x)[0], S_0 - outward.sol(x)[0])
+    s = np.where(x <= x_c, S_0 - delta_s, outward.sol(x)[0])
     r = np.exp(x)
     radius = 1.0/s
     alpha = np.array([lapse_from_inverse_radius(float(value)) for value in s])
@@ -117,6 +126,12 @@ def build_table(n: int, r_min: float, r_max: float) -> dict[str, np.ndarray]:
         else:
             slopes = CubicSpline(x, values).derivative()(x)
         table[f"dx_{name}"] = slopes
+    alpha_xx = CubicSpline(x, alpha_x).derivative()(x)
+    table["dxx_A"] = 2.0*(alpha_x*alpha_x + alpha*alpha_xx)
+    table["dxx_chi"] = 2.0*chi_x*(1.0 - alpha) - 2.0*chi*alpha_x
+    at_x = table["dx_At_radial"]
+    tracefree_b_x = alpha_x*at_scalar + alpha*at_x
+    table["dxx_beta_r"] = r*(ell + 2.0*alpha*at_scalar + tracefree_b_x)
     table["alpha"] = alpha
     table["R"] = radius
     return table
@@ -154,8 +169,7 @@ def audit_table(table: dict[str, np.ndarray]) -> None:
         if residual > 2.0e-11:
             raise AssertionError(f"{name} residual {residual:.17e}")
 
-    r0 = brentq(lambda rr: rr**4 - 2.0*rr**3 + C_1LOG, 1.0, R_C)
-    gamma = (2.0 - r0)/(6.0 - 4.0*r0)
+    gamma = (2.0 - R_0)/(6.0 - 4.0*R_0)
     inner = slice(0, min(64, len(x)))
     e_a = float(np.mean(np.gradient(np.log(a[inner]), x[inner])))
     e_chi = float(np.mean(np.gradient(np.log(chi[inner]), x[inner])))
@@ -172,7 +186,9 @@ def audit_table(table: dict[str, np.ndarray]) -> None:
 
 def write_table(path: Path, table: dict[str, np.ndarray]) -> None:
     columns = ["log_r"]
-    for name in ("A", "chi", "beta_r", "K", "At_radial", "h_perp", "h_radial"):
+    for name in ("A", "chi", "beta_r"):
+        columns.extend((name, f"dx_{name}", f"dxx_{name}"))
+    for name in ("K", "At_radial", "h_perp", "h_radial"):
         columns.extend((name, f"dx_{name}"))
     matrix = np.column_stack([table[name] for name in columns])
     header = "PC-GH Gauge A0 M=1; derivatives are d/d(log(r/M))\n" + " ".join(columns)

@@ -16,6 +16,7 @@ SCRIPTS = [
     "verify_4d_component_oracle.py",
     "verify_fo_gh_map.py",
     "generate_gauge_a0_table.py",
+    "audit_gauge_a0_cancellation.py",
     "verify_source_policy.py",
 ]
 

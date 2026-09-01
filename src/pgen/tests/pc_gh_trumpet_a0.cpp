@@ -278,42 +278,33 @@ void ProblemGenerator::PcGhTrumpetA0(ParameterInput *, const bool restart) {
     Real const radius = std::sqrt(coord[0]*coord[0] + coord[1]*coord[1]
                                   + coord[2]*coord[2]);
     Real const log_radius = std::log(radius/mass);
-    Real a, dx_a, chi, dx_chi, beta_r, dx_beta_r;
-    Real trace_k, unused, at_radial;
-    pc_gh::PcGh::InterpolateGaugeA0(table, npoints, log_r_min, inv_dlog_r,
-        pc_gh::PcGh::I_A0_A, log_radius, a, dx_a);
-    pc_gh::PcGh::InterpolateGaugeA0(table, npoints, log_r_min, inv_dlog_r,
-        pc_gh::PcGh::I_A0_CHI, log_radius, chi, dx_chi);
-    pc_gh::PcGh::InterpolateGaugeA0(table, npoints, log_r_min, inv_dlog_r,
-        pc_gh::PcGh::I_A0_BETA_R, log_radius, beta_r, dx_beta_r);
-    pc_gh::PcGh::InterpolateGaugeA0(table, npoints, log_r_min, inv_dlog_r,
-        pc_gh::PcGh::I_A0_K, log_radius, trace_k, unused);
-    pc_gh::PcGh::InterpolateGaugeA0(table, npoints, log_r_min, inv_dlog_r,
-        pc_gh::PcGh::I_A0_AT_RADIAL, log_radius, at_radial, unused);
+    pc_gh::PcGh::GaugeA0Point const target = pc_gh::PcGh::EvaluateGaugeA0(
+        table, npoints, log_r_min, inv_dlog_r, log_radius);
     for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) state(m, v, k, j, i) = 0.0;
-    state(m, pc_gh::PcGh::I_A, k, j, i) = a;
-    state(m, pc_gh::PcGh::I_CHI, k, j, i) = chi;
-    state(m, pc_gh::PcGh::I_K, k, j, i) = trace_k/mass;
-    state(m, pc_gh::PcGh::I_PI, k, j, i) = -trace_k/mass;
+    state(m, pc_gh::PcGh::I_A, k, j, i) = target.A;
+    state(m, pc_gh::PcGh::I_CHI, k, j, i) = target.chi;
+    state(m, pc_gh::PcGh::I_K, k, j, i) = target.K/mass;
+    state(m, pc_gh::PcGh::I_PI, k, j, i) = -target.K/mass;
     state(m, pc_gh::PcGh::I_GTXX, k, j, i) = 1.0;
     state(m, pc_gh::PcGh::I_GTYY, k, j, i) = 1.0;
     state(m, pc_gh::PcGh::I_GTZZ, k, j, i) = 1.0;
     for (int q = 0; q < 3; ++q) {
       Real const normal_q = coord[q]/radius;
-      state(m, pc_gh::PcGh::I_BETAX + q, k, j, i) = beta_r*normal_q;
-      state(m, pc_gh::PcGh::I_X1 + q, k, j, i) = dx_chi*normal_q/radius;
-      state(m, pc_gh::PcGh::I_Y1 + q, k, j, i) = dx_a*normal_q/radius;
+      state(m, pc_gh::PcGh::I_BETAX + q, k, j, i) = target.beta_r*normal_q;
+      state(m, pc_gh::PcGh::I_X1 + q, k, j, i) = target.dx_chi*normal_q/radius;
+      state(m, pc_gh::PcGh::I_Y1 + q, k, j, i) = target.dx_A*normal_q/radius;
       for (int p = 0; p < 3; ++p) {
         Real const normal_p = coord[p]/radius;
         Real const delta = (p == q) ? 1.0 : 0.0;
         state(m, pc_gh::PcGh::BIndex(p, q), k, j, i) =
-            (beta_r*delta + (dx_beta_r - beta_r)*normal_p*normal_q)/radius;
+            (target.b_tangential*delta
+             + std::sqrt(target.A)*target.at_radial*normal_p*normal_q)/mass;
       }
       for (int p = q; p < 3; ++p) {
         Real const normal_p = coord[p]/radius;
         Real const delta = (p == q) ? 1.0 : 0.0;
         state(m, pc_gh::PcGh::I_ATXX + pc_gh::PcGh::SymmetricIndex(q, p),
-              k, j, i) = at_radial*(normal_q*normal_p - delta/3.0)/mass;
+              k, j, i) = target.at_radial*(normal_q*normal_p - delta/3.0)/mass;
       }
     }
   });

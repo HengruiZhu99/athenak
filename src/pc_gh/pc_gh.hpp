@@ -68,9 +68,9 @@ class PcGh {
   static char const * const ConstraintNames[ncon];
 
   enum : int {
-    I_A0_A, I_A0_DX_A,
-    I_A0_CHI, I_A0_DX_CHI,
-    I_A0_BETA_R, I_A0_DX_BETA_R,
+    I_A0_A, I_A0_DX_A, I_A0_DXX_A,
+    I_A0_CHI, I_A0_DX_CHI, I_A0_DXX_CHI,
+    I_A0_BETA_R, I_A0_DX_BETA_R, I_A0_DXX_BETA_R,
     I_A0_K, I_A0_DX_K,
     I_A0_AT_RADIAL, I_A0_DX_AT_RADIAL,
     I_A0_H_PERP, I_A0_DX_H_PERP,
@@ -78,18 +78,78 @@ class PcGh {
     na0
   };
 
+  struct GaugeA0Point {
+    Real A, dx_A;
+    Real chi, dx_chi;
+    Real beta_r, dx_beta_r;
+    Real K, at_radial;
+    Real b_radial, b_tangential;
+    Real h_perp, dx_h_perp;
+    Real h_radial, dx_h_radial;
+  };
+
   KOKKOS_INLINE_FUNCTION
-  static void InterpolateGaugeA0(const DvceArray2D<Real> &table, int npoints,
-                                 Real log_r_min, Real inv_dlog_r, int field,
-                                 Real log_r, Real &value, Real &dx_value) {
+  static int GaugeA0Interval(int npoints, Real log_r_min, Real inv_dlog_r,
+                             Real log_r, Real &t) {
     Real const location = (log_r - log_r_min)*inv_dlog_r;
     int interval = static_cast<int>(std::floor(location));
     if (interval < 0 || interval >= npoints - 1) {
-      value = NAN;
-      dx_value = NAN;
+      t = NAN;
+      return -1;
+    }
+    t = location - interval;
+    return interval;
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  static void InterpolateGaugeA0Quintic(const DvceArray2D<Real> &table, int npoints,
+                                        Real log_r_min, Real inv_dlog_r, int field,
+                                        Real log_r, Real &value, Real &dx_value,
+                                        Real &dxx_value) {
+    Real t;
+    int const interval = GaugeA0Interval(
+        npoints, log_r_min, inv_dlog_r, log_r, t);
+    if (interval < 0) {
+      value = dx_value = dxx_value = NAN;
       return;
     }
-    Real const t = location - interval;
+    Real const t2 = t*t;
+    Real const t3 = t2*t;
+    Real const t4 = t3*t;
+    Real const spacing = 1.0/inv_dlog_r;
+    Real const y0 = table(field, interval);
+    Real const m0 = table(field + 1, interval);
+    Real const a0 = table(field + 2, interval);
+    Real const y1 = table(field, interval + 1);
+    Real const m1 = table(field + 1, interval + 1);
+    Real const a1 = table(field + 2, interval + 1);
+    Real const c0 = y0;
+    Real const c1 = spacing*m0;
+    Real const c2 = 0.5*spacing*spacing*a0;
+    Real const dy = y1 - c0 - c1 - c2;
+    Real const dm = spacing*m1 - c1 - 2.0*c2;
+    Real const da = spacing*spacing*a1 - 2.0*c2;
+    Real const c3 = 10.0*dy - 4.0*dm + 0.5*da;
+    Real const c4 = -15.0*dy + 7.0*dm - da;
+    Real const c5 = 6.0*dy - 3.0*dm + 0.5*da;
+    value = c0 + c1*t + c2*t2 + c3*t3 + c4*t4 + c5*t4*t;
+    dx_value = (c1 + 2.0*c2*t + 3.0*c3*t2 + 4.0*c4*t3 + 5.0*c5*t4)
+        /spacing;
+    dxx_value = (2.0*c2 + 6.0*c3*t + 12.0*c4*t2 + 20.0*c5*t3)
+        /(spacing*spacing);
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  static void InterpolateGaugeA0Cubic(const DvceArray2D<Real> &table, int npoints,
+                                      Real log_r_min, Real inv_dlog_r, int field,
+                                      Real log_r, Real &value, Real &dx_value) {
+    Real t;
+    int const interval = GaugeA0Interval(
+        npoints, log_r_min, inv_dlog_r, log_r, t);
+    if (interval < 0) {
+      value = dx_value = NAN;
+      return;
+    }
     Real const t2 = t*t;
     Real const t3 = t2*t;
     Real const spacing = 1.0/inv_dlog_r;
@@ -103,6 +163,33 @@ class PcGh {
         + (t3 - t2)*spacing*m1;
     dx_value = ((6.0*t2 - 6.0*t)*y0 + (-6.0*t2 + 6.0*t)*y1)/spacing
         + (3.0*t2 - 4.0*t + 1.0)*m0 + (3.0*t2 - 2.0*t)*m1;
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  static GaugeA0Point EvaluateGaugeA0(const DvceArray2D<Real> &table, int npoints,
+                                      Real log_r_min, Real inv_dlog_r, Real log_r) {
+    GaugeA0Point point;
+    Real unused;
+    InterpolateGaugeA0Quintic(table, npoints, log_r_min, inv_dlog_r, I_A0_A,
+        log_r, point.A, point.dx_A, unused);
+    InterpolateGaugeA0Quintic(table, npoints, log_r_min, inv_dlog_r, I_A0_CHI,
+        log_r, point.chi, point.dx_chi, unused);
+    InterpolateGaugeA0Quintic(table, npoints, log_r_min, inv_dlog_r, I_A0_BETA_R,
+        log_r, point.beta_r, point.dx_beta_r, unused);
+    InterpolateGaugeA0Cubic(table, npoints, log_r_min, inv_dlog_r, I_A0_K,
+        log_r, point.K, unused);
+    InterpolateGaugeA0Cubic(table, npoints, log_r_min, inv_dlog_r, I_A0_AT_RADIAL,
+        log_r, point.at_radial, unused);
+    Real const rho = std::exp(log_r);
+    Real const alpha = std::sqrt(point.A);
+    point.b_tangential = point.beta_r/rho;
+    Real const tracefree_b = alpha*point.at_radial;
+    point.b_radial = point.b_tangential + tracefree_b;
+    InterpolateGaugeA0Cubic(table, npoints, log_r_min, inv_dlog_r, I_A0_H_PERP,
+        log_r, point.h_perp, point.dx_h_perp);
+    InterpolateGaugeA0Cubic(table, npoints, log_r_min, inv_dlog_r, I_A0_H_RADIAL,
+        log_r, point.h_radial, point.dx_h_radial);
+    return point;
   }
 
   KOKKOS_INLINE_FUNCTION

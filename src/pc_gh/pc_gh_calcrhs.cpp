@@ -100,25 +100,20 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
       Real const radius = std::sqrt(coord[0]*coord[0] + coord[1]*coord[1]
                                     + coord[2]*coord[2]);
       Real const log_radius = std::log(radius/gauge_mass);
-      Real dx_h_perp;
-      Real h_radial;
-      Real dx_h_radial;
-      InterpolateGaugeA0(gauge_a0_table_, gauge_a0_npoints_,
-          gauge_a0_log_r_min_, gauge_a0_inv_dlog_r_, I_A0_H_PERP,
-          log_radius, h_perp, dx_h_perp);
-      InterpolateGaugeA0(gauge_a0_table_, gauge_a0_npoints_,
-          gauge_a0_log_r_min_, gauge_a0_inv_dlog_r_, I_A0_H_RADIAL,
-          log_radius, h_radial, dx_h_radial);
+      GaugeA0Point const target = EvaluateGaugeA0(gauge_a0_table_,
+          gauge_a0_npoints_, gauge_a0_log_r_min_, gauge_a0_inv_dlog_r_, log_radius);
+      h_perp = target.h_perp;
       h_perp /= gauge_mass;
       for (int a = 0; a < 3; ++a) {
         Real const normal_a = coord[a]/radius;
-        h_source[a] = h_radial*normal_a/gauge_mass;
-        d_h_perp[a] = dx_h_perp*normal_a/(gauge_mass*radius);
+        h_source[a] = target.h_radial*normal_a/gauge_mass;
+        d_h_perp[a] = target.dx_h_perp*normal_a/(gauge_mass*radius);
         for (int ell = 0; ell < 3; ++ell) {
           Real const normal_ell = coord[ell]/radius;
           Real const tangent = ((a == ell) ? 1.0 : 0.0) - normal_a*normal_ell;
           d_h_source[ell][a] =
-              (dx_h_radial*normal_a*normal_ell + h_radial*tangent)
+              (target.dx_h_radial*normal_a*normal_ell
+               + target.h_radial*tangent)
               /(gauge_mass*radius);
         }
       }
