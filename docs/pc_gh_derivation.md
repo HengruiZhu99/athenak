@@ -678,6 +678,176 @@ number implementation, including the inverse-metric derivative and curl-ordering
 difference. Classification: standard gradient equations `PROVED ON r>0`, conditional on
 a differentiable Gauge A source satisfying the stated dependency restriction.
 
+## Explicit map to standard first-order GH
+
+Fix the standard FO-GH variables and sign convention by
+
+\[
+\psi_{\mu\nu}=g_{\mu\nu},\qquad
+\Phi_{k\mu\nu}=\partial_k g_{\mu\nu},\qquad
+\Pi_{\mu\nu}=-n^\rho\partial_\rho g_{\mu\nu}
+=-\frac1\alpha D_0g_{\mu\nu}.
+\]
+
+On \(A>0\), \(\chi>0\), use the positive root \(\alpha=\sqrt A\), and set
+
+\[
+\gamma_{ij}=\chi^{-1}\tilde\gamma_{ij},\qquad
+G_{kij}:=\partial_k\gamma_{ij}
+=\chi^{-1}Q_{kij}-\chi^{-2}X_k\tilde\gamma_{ij}.
+\]
+
+The spacetime metric and its spatial derivative are reconstructed explicitly as
+
+\[
+\begin{aligned}
+g_{ij}&=\gamma_{ij},&
+g_{0i}&=\gamma_{ij}\beta^j,&
+g_{00}&=-A+\gamma_{ij}\beta^i\beta^j,\\
+\Phi_{kij}&=G_{kij},&
+\Phi_{k0i}&=G_{kij}\beta^j+\gamma_{ij}B_k{}^j,\\
+\Phi_{k00}&=-Y_k+G_{kij}\beta^i\beta^j
++2\gamma_{ij}\beta^iB_k{}^j.
+\end{aligned}
+\]
+
+Define
+
+\[
+\begin{aligned}
+v^i:=D_0\beta^i={}&h^i+A\chi\tilde\Lambda^i
++\frac12\tilde\gamma^{ij}(AX_j-\chi Y_j),\\
+D_0A={}&2A(\alpha\pi-h_\perp),\\
+D_0\gamma_{ij}={}&-2\alpha K_{ij}
++\gamma_{ik}B_j{}^k+\gamma_{jk}B_i{}^k,
+\end{aligned}
+\]
+
+with
+
+\[
+K_{ij}=\chi^{-1}\left(\tilde A_{ij}
++\frac13\tilde\gamma_{ij}K\right).
+\]
+
+The remaining components of \(D_0g_{\mu\nu}\), and hence all of \(\Pi\), are
+
+\[
+\begin{aligned}
+D_0g_{ij}&=D_0\gamma_{ij},\\
+D_0g_{0i}&=(D_0\gamma_{ij})\beta^j+\gamma_{ij}v^j,\\
+D_0g_{00}&=-D_0A+(D_0\gamma_{ij})\beta^i\beta^j
++2\gamma_{ij}\beta^iv^j.
+\end{aligned}
+\]
+
+This forward map uses no derivatives beyond the stored first-order variables.
+
+Conversely, recover the ADM configuration from \(\psi\) by
+
+\[
+\gamma_{ij}=\psi_{ij},\qquad
+\beta^i=\gamma^{ij}\psi_{0j},\qquad
+A=\gamma_{ij}\beta^i\beta^j-\psi_{00},
+\]
+
+then \(\chi=(\det\gamma)^{-1/3}\) and
+\(\tilde\gamma_{ij}=\chi\gamma_{ij}\). From \(\Phi\),
+
+\[
+\begin{aligned}
+B_k{}^i&=\gamma^{ij}(\Phi_{k0j}-\Phi_{kj\ell}\beta^\ell),\\
+Y_k&=-\Phi_{k00}+\Phi_{kij}\beta^i\beta^j
++2\gamma_{ij}\beta^iB_k{}^j,\\
+X_k&=-\frac\chi3\gamma^{ij}\Phi_{kij},\\
+Q_{kij}&=\chi\Phi_{kij}+X_k\gamma_{ij}.
+\end{aligned}
+\]
+
+Set \(D_0g_{\mu\nu}=-\alpha\Pi_{\mu\nu}\). The inverse velocity map is
+
+\[
+\begin{aligned}
+D_0\beta^i&=\gamma^{ij}(D_0g_{0j}-D_0\gamma_{jk}\beta^k),\\
+D_0A&=-D_0g_{00}+(D_0\gamma_{ij})\beta^i\beta^j
++2\gamma_{ij}\beta^iD_0\beta^j,\\
+K_{ij}&=-\frac1{2\alpha}\left(D_0\gamma_{ij}
+-\gamma_{ik}B_j{}^k-\gamma_{jk}B_i{}^k\right),\\
+K&=\gamma^{ij}K_{ij},\qquad
+\tilde A_{ij}=\chi\left(K_{ij}-\frac13\gamma_{ij}K\right),\\
+\pi&=\frac1\alpha\left(\frac{D_0A}{2A}+h_\perp\right),\\
+\tilde\Lambda^i&=\frac1{A\chi}\left[D_0\beta^i-h^i
+-\frac12\tilde\gamma^{ij}(AX_j-\chi Y_j)\right].
+\end{aligned}
+\]
+
+The two displayed maps are mutual inverses on the conformal algebraic-constraint
+manifold. `verify_fo_gh_map.py` checks the complete round trip with exact rational
+arithmetic for a non-diagonal state, including
+\(\det\tilde\gamma=1\),
+\(\tilde\gamma^{ij}Q_{kij}=0\), and
+\(\tilde\gamma^{ij}\tilde A_{ij}=0\).
+
+### Equation equivalence and reduction ordering
+
+The primary equations above are tensor projections of the same covariant reduced GH
+equation used to obtain standard FO-GH. The configuration equations are the inverse
+metric map, and the gradient equations are its first-order reduction. On the algebraic
+and first-order reduction constraint manifold, substitution of the explicit map
+therefore gives the standard FO-GH equations exactly, without assuming that the GH
+constraint itself vanishes.
+
+Off the first-order reduction constraint manifold, replacing
+\(\beta^k\partial_iG_k\) by \(\beta^k\partial_kG_i\) is precisely the
+\(\gamma_1=-1\) standard ordering. No \(\gamma_2\) reduction-constraint damping term
+is present, so this baseline corresponds to \(\gamma_2=0\). Classification:
+nonlinear equation equivalence to standard FO-GH `PROVED ON r>0`, for prescribed or
+metric-only differentiable \(H_\mu\) and on the stated algebraic/reduction constraint
+manifold.
+
+### Principal symbol and symmetrizer
+
+Freeze a background satisfying \(A>0\), \(\chi>0\), and positive-definite
+\(\tilde\gamma_{ij}\). For a unit spatial covector \(s_i\), the standard
+\((\gamma_1,\gamma_2)=(-1,0)\) FO-GH characteristic fields are
+
+\[
+\begin{array}{c|c}
+\text{field} & \text{coordinate speed}\\ \hline
+\delta\psi_{\mu\nu} & 0\\
+(\delta_i{}^k-s_i s^k)\delta\Phi_{k\mu\nu} & -\beta^is_i\\
+\delta\Pi_{\mu\nu}\pm s^k\delta\Phi_{k\mu\nu}
+&-\beta^is_i\pm\alpha.
+\end{array}
+\]
+
+The linearization of the explicit map above sends these fields bijectively to the
+tangent space of the PC-GH algebraic constraints, so this is also a complete
+diagonalization of the PC-GH principal symbol.
+
+For an explicit positive energy, let
+\(m^{\mu\nu}=g^{\mu\nu}+2n^\mu n^\nu\), which is positive definite, and let
+\(M\) be its induced positive inner product on symmetric two-tensors. Then
+
+\[
+E_{FO}=c\,M(\delta\psi,\delta\psi)
++M(\delta\Pi,\delta\Pi)
++\gamma^{ij}M(\delta\Phi_i,\delta\Phi_j),\qquad c>0,
+\]
+
+symmetrizes the frozen FO-GH principal matrices. If \(J\) is the Jacobian of the
+forward PC-GH-to-FO-GH map, the pulled-back form
+
+\[
+E_{PC}(\delta u)=E_{FO}(J\delta u)
+\]
+
+is positive definite and symmetrizes the PC-GH principal symbol because \(J\) is
+invertible on the constrained tangent space. This proves symmetric hyperbolicity for
+every fixed \(r>0\). It does not prove a uniformly positive puncture-limit
+symmetrizer: factors of \(A^{-1}\) and \(\chi^{-1}\) in the map may make the pulled-back
+energy singular as \(r\to0\).
+
 ## Consistent algebraic projection
 
 Let
@@ -723,12 +893,14 @@ valid, but its coupling to the full semi-discrete energy remains `NOT ESTABLISHE
 | pi equation | `PROVED ON r>0` | Normal-normal covariant projection and exact symbolic comparison. |
 | Lambda equation | corrected equation `PROVED ON r>0`; supplied target `FAILED` | Mixed covariant projection and exact lapse-acceleration residual above. |
 | X/Y/Q/B standard-order equations | `PROVED ON r>0`, Gauge-A conditional | Exact product-rule and curl-ordering audit above. |
-| equivalence to standard FO-GH for r>0 | `NOT ESTABLISHED` | Requires an explicit invertible variable map and equation comparison. |
-| symmetric hyperbolicity for r>0 | `NOT ESTABLISHED` | Principal symbol and positive symmetrizer have not been constructed. |
+| equivalence to standard FO-GH for r>0 | `PROVED ON r>0`, constraint-manifold and gauge conditional | Explicit mutually inverse variable map and common covariant origin above. |
+| symmetric hyperbolicity for r>0 | `PROVED ON r>0` | Complete pulled-back characteristic basis and positive FO-GH symmetrizer above; no uniform puncture-limit claim. |
 | Gauge A0 target and table | `NOT ESTABLISHED` | Stationary trumpet construction follows only after the baseline formulation audit. |
 | Gauge B scaled driver | `NOT ESTABLISHED` | Deferred until Gauge A qualification and a new driver derivation. |
 
-No production primary or gradient RHS is authorized by this document yet.
+The baseline production primary and gradient RHS are authorized on \(r>0\), subject to
+the metric-only/prescribed Gauge-A dependency restriction and the exact corrected
+equations above. No puncture-limit regularity or Gauge-A0 qualification is authorized.
 
 ## Reproduction
 

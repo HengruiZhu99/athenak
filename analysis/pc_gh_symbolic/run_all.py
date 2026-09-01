@@ -14,6 +14,7 @@ SCRIPTS = [
     "verify_primary_projections.py",
     "verify_gradient_rhs.py",
     "verify_4d_component_oracle.py",
+    "verify_fo_gh_map.py",
 ]
 
 
