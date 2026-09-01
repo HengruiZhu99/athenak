@@ -183,9 +183,17 @@ re-extracted `r=M` matrix confirms that projection changes the positive rate onl
 slightly.  KO cannot change a `k=0` mode because its Fourier symbol vanishes there.
 
 Classification: `FAILED` frozen-operator clearance for Gauge A0.  The Euclidean
-logarithmic norm is diagnostic only; the formulation-energy symmetrizer calculation is
-still required.  No evolution, parameter tuning, or KO escalation is authorized from
-this evidence.
+logarithmic norm is diagnostic only.  The explicit pulled-back FO-GH symmetrizer is
+given in `docs/pc_gh_derivation.md`; for its induced norm, as for every induced norm,
+the logarithmic norm obeys
+
+```text
+mu_E(L) >= max Re(lambda) >= lambda_Q = 0.27162910729 / M > 0.
+```
+
+Thus the formulation-energy logarithmic-norm *sign* gate also fails independently of
+the matrix representation chosen for that symmetrizer.  No evolution, parameter
+tuning, or KO escalation is authorized from this evidence.
 
 ## 2026-09-01 — bounded Gauge A1 discriminator
 
@@ -213,6 +221,8 @@ feedback is not implemented in production.
 ## Current hard stop
 
 Do not start a stationary evolution campaign.  Gauge A0 has a robust positive projected
-frozen mode that must be diagnosed, the formulation-energy symmetrizer analysis remains
-open, and only periodic physical boundaries exist.  A periodic finite box is not
-acceptable as a production single-hole outer boundary.
+frozen mode whose invariant subspace is identified above, and only periodic physical
+boundaries exist.  A periodic finite box is not acceptable as a production single-hole
+outer boundary.  The mandated baseline is `(gamma_1,gamma_2)=(-1,0)`, and the
+qualification plan forbids adding `gamma_2` until that baseline qualifies.  Because it
+did not qualify, reduction-constraint damping is not an authorized next step.
