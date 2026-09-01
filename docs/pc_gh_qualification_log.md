@@ -6,7 +6,7 @@ This is an append-oriented evidence log.  A build, a short run, or a finite resi
 does not by itself qualify the solver.  `PASS` below means only that the named bounded
 gate passed.  `OPEN` and `BLOCKED` are not silently replaced by weaker criteria.
 
-Current evidence commit: `2404f5ada107341af8e0a2c6a8651c12a18b4548`.
+Current evidence commit: `a48ed6275656a3d9f07381846322e85b5d73f9a2`.
 Required baseline: `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 
 ## Reproducibility envelope
@@ -36,7 +36,7 @@ generator, table, source, and exact numbers below are the durable provenance rec
 | 4 wave convergence | PARTIAL | nonlinear harmonic gauge-wave implementation and finite `t=1` run; required three-resolution all-sector order ladder remains |
 | 5 robust Minkowski | OPEN | random perturbation and resolution-growth search not run |
 | 6 stationary trumpet pointwise | PASS | continuum target, decomposed three-precision conditioning audit, maximum locations, and second-order RMS residual ladder pass on their stated punctured domains |
-| 7 stationary trumpet evolution | BLOCKED | no derived nonperiodic diagnostic/characteristic outer BC and no frozen-operator clearance |
+| 7 stationary trumpet evolution | BLOCKED | Gauge A0 has a positive projected frozen mode; no derived nonperiodic diagnostic/characteristic outer BC also remains |
 | 8 perturbed trumpet | OPEN | waits on gates 6 and 7 |
 | 9 Bowen-York to trumpet | OPEN | existing ADM initial-data conversion has not been exercised as a qualified transition |
 | 10 Gauge A1 | DEFERRED | only if A0 needs bounded feedback after linear analysis |
@@ -139,8 +139,57 @@ The raw angular derivative of the direction-dependent trumpet `Atilde` tensor sc
 remain bounded.  This closes the mandatory Gauge A0 temporary-cancellation gate on the
 punctured table domain.  It does not cover Bowen-York data.
 
+## 2026-09-01 — Gauge A0 frozen-operator hard stop
+
+Input: `tst/inputs/pc_gh_frozen_operator.athinput`.
+Extractor: `pc_gh_trumpet_a0` with `frozen_operator=true`.
+Analyzer: `analysis/pc_gh_symbolic/analyze_frozen_operator.py`.
+
+The extractor centrally perturbs all 55 fields in the production kernel.  A constant
+perturbation gives the complete lower-order Jacobian; a sinusoidal perturbation gives
+the actual centered-FD response.  The analyzer additionally linearizes the production
+algebraic projection and restricts the operator to its rank-50 tangent space.
+
+At `r=M`, `k=0`, and local spacing `dx/M=0.025`, the projected operator has:
+
+```text
+max Re(lambda) = 3.29527194199e-1 / M
+min Re(lambda) = -4.41193267394e-1 / M
+spectral radius = 5.63162099634e-1 / M
+eigenvector condition number = 6.0582494e1
+Euclidean logarithmic norm = 2.03212816094 / M
+non-normality = 5.03609775e-1
+```
+
+The positive mode is not a perturbation-size artifact: raw `max Re(lambda)` agrees to
+the shown digits for central-difference amplitudes `1e-6`, `1e-7`, and `1e-8`.  At
+`k=0`, raw values converge from `0.3330987443/M` at `dx/M=0.1` to
+`0.3337008071/M` at `0.05` and `0.3338520383/M` at `0.025`.
+
+At `r=M`, `dx/M=0.025`, the projected rightmost values are `0.3365117983/M` for
+radial `kM=1` and `0.3084139301/M` for tangential `kM=1`.  The projected `k=0`
+rightmost mode remains positive at all sampled radii:
+
+| r/M | max Re(lambda) raw at k=0 |
+|---:|---:|
+| 0.5 | 0.5717866 |
+| 1.0 | 0.3338520 |
+| 2.0 | 0.1808149 |
+| 4.0 | 0.1080776 |
+
+The radial ladder used `dx/r=0.025`; the table lists raw values because those matrices
+predated background-state output needed for the rank-50 projection.  The separately
+re-extracted `r=M` matrix confirms that projection changes the positive rate only
+slightly.  KO cannot change a `k=0` mode because its Fourier symbol vanishes there.
+
+Classification: `FAILED` frozen-operator clearance for Gauge A0.  The Euclidean
+logarithmic norm is diagnostic only; the formulation-energy symmetrizer calculation is
+still required.  No evolution, parameter tuning, or KO escalation is authorized from
+this evidence.
+
 ## Current hard stop
 
-Do not start a stationary evolution campaign.  The complete frozen-operator stability
-analysis is open, and only periodic physical boundaries exist.  A periodic finite box
-is not acceptable as a production single-hole outer boundary.
+Do not start a stationary evolution campaign.  Gauge A0 has a robust positive projected
+frozen mode that must be diagnosed, the formulation-energy symmetrizer analysis remains
+open, and only periodic physical boundaries exist.  A periodic finite box is not
+acceptable as a production single-hole outer boundary.

@@ -3,7 +3,7 @@
 ## Scope and authority
 
 This document describes the implementation at commit
-`2404f5ada107341af8e0a2c6a8651c12a18b4548`, descended from the required
+`a48ed6275656a3d9f07381846322e85b5d73f9a2`, descended from the required
 `project/bbh` baseline `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 The equations are those independently derived in `docs/pc_gh_derivation.md`.
 No old FO-GH, Ref-GH, Z4c equation, reference geometry, controller, or generated
@@ -116,6 +116,12 @@ finite-difference conversion.
 additive RHS terms at 73 radii across the open table domain in binary64, long double,
 and 100-digit arithmetic.  It fails if an additive RHS term develops a fitted divergent
 inner power or if the bounded high-precision table residual exceeds its audit limit.
+
+With `<problem>/frozen_operator=true`, the same problem generator perturbs every state
+component and extracts dense 55-by-55 constant and sinusoidal-response Jacobians from
+the production RHS.  The analyzer reports both the raw operator and its restriction to
+the 50-dimensional tangent space of the actual metric, trace-free-curvature, and `Q`
+projection.  This is a Serial diagnostic path, not an evolution mode.
 
 ## ADM conversion, communication, and outputs
 

@@ -3,7 +3,7 @@
 ## Status
 
 This audit records algebraic evidence through
-`2404f5ada107341af8e0a2c6a8651c12a18b4548`.  The theorem domain is `r>0` with
+`a48ed6275656a3d9f07381846322e85b5d73f9a2`.  The theorem domain is `r>0` with
 positive `A`, positive `chi`, and nonsingular positive-definite `gtilde`.  It does not
 assert a uniformly conditioned continuum extension at an exact `A=chi=0` point.
 
@@ -101,5 +101,7 @@ norms are not acceptable substitutes.
 ## Open audit items
 
 - repeat the audit for Bowen-York data once that conversion exists;
-- sample the full frozen operator, not just its principal part;
+- derive and apply the formulation-energy symmetrizer to the extracted full frozen
+  operator; the present Euclidean logarithmic norm is not a substitute;
+- diagnose the resolution-convergent positive projected eigenmode found for Gauge A0;
 - repeat backend-sensitive checks under MPI and on the intended GPU backends.
