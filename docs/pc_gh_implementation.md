@@ -3,7 +3,7 @@
 ## Scope and authority
 
 This document describes the production source at commit
-`7bde88a31884eefa7e89089c63754f4e07c29841`, descended from the required
+`f74a19ae4d425bccbbd1bff78db72bbe49502f42`, descended from the required
 `project/bbh` baseline `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 The equations are those independently derived in `docs/pc_gh_derivation.md`.
 No old FO-GH, Ref-GH, Z4c equation, reference geometry, controller, or generated
@@ -132,6 +132,23 @@ projection.  This is a Serial diagnostic path, not an evolution mode.
 reconstructed physical geometry is never differentiated by or fed back into the
 PC-GH RHS.  `ADMToPcGh` provides the initial-data conversion path and initializes the
 first-order variables with the selected evolution derivative operator.
+
+The `pc_gh_bowen_york` audit pgen exercises that path with exact time-symmetric
+isotropic Schwarzschild, the zero-momentum/zero-spin member of ordinary Bowen-York
+data.  It fills ADM data on active cells and ghosts, uses the baseline pre-collapsed
+`alpha=psi^-2`, sets zero shift and extrinsic curvature, converts to PC-GH, and
+round-trips back to ADM.  The puncture center must lie on cell faces so every active
+cell has `r>0`; no floor is used.  Its final diagnostic calls the production RHS and
+constraint kernels, compares against analytic continuum state/RHS values on a bounded
+shell, and writes per-field maximum locations.
+
+An independent three-precision script also audits the standard analytic momentum and
+spin Bowen-York conformal extrinsic-curvature leading fields.  It does not synthesize
+the regular elliptic correction, so the existing project/bbh TwoPunctures path remains
+the authority for future constraint-satisfying boosted, spinning, and binary data.
+That custom pgen currently relies on an external `twopuncturesc` header/library tree
+which is not present in the required baseline checkout and is not registered as a
+submodule; it has therefore not been built or advertised as PC-GH-capable here.
 
 State communication, restriction/prolongation, load-balance migration, restart, tab
 output, and history registration operate on the explicit 55-field array.  Their

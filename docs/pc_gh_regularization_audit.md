@@ -3,7 +3,7 @@
 ## Status
 
 This audit records algebraic evidence through
-`a48ed6275656a3d9f07381846322e85b5d73f9a2`.  The theorem domain is `r>0` with
+`f74a19ae4d425bccbbd1bff78db72bbe49502f42`.  The theorem domain is `r>0` with
 positive `A`, positive `chi`, and nonsingular positive-definite `gtilde`.  It does not
 assert a uniformly conditioned continuum extension at an exact `A=chi=0` point.
 
@@ -44,6 +44,7 @@ combination.  It does not construct physical Christoffels or a physical Ricci te
 | gradient product rules | `verify_gradient_rhs.py` | exact for metric-only or prescribed differentiable gauge sources |
 | independent four-dimensional reduced equation | `verify_4d_component_oracle.py` | all ten covariant components and corrected primary equations pass at a rational point jet |
 | PC-GH / standard FO-GH map | `verify_fo_gh_map.py` | exact constrained round trip; `PROVED ON r>0` |
+| Bowen-York leading-field regularity | `audit_bowen_york_cancellation.py` | three-precision boundedness/conditioning audit on `r>0`; nonzero momentum/spin cases are not complete constraint-satisfying data |
 | production dependency policy | `verify_source_policy.py` | all nine current `src/pc_gh` production files pass |
 
 The controlling regression targets were not assumed correct.  Independent checks found
@@ -85,6 +86,27 @@ the genuine angular derivative of the finite but direction-dependent radial tens
 not an additive RHS term; every production term multiplying it remains bounded on the
 audited punctured domain.
 
+## Bowen-York regularity evidence
+
+`audit_bowen_york_cancellation.py` independently constructs conformally flat
+Bowen-York leading fields with `psi=1+M/(2r)`, `A=chi=psi^-4`, and
+`Atilde=psi^-6 Abar`.  It evaluates time-symmetric, momentum, spin, and combined
+cases at 81 radii from `1e-8 M` through `100 M` in binary64, long double, and
+100-digit arithmetic.  Each case logs 217 named state fields, derivatives,
+temporaries, additive RHS terms, sums, and term scales.
+
+No stored field, temporary, or additive RHS term has a fitted inner power below
+`-0.25`.  The maximum 100-digit residual in the checked conformal Hamiltonian identity
+`H + Atilde_ij Atilde^ij = 0` is `9.875e-101`.  Across all cases, the worst RHS-sum
+discrepancy normalized by its additive-term scale is `7.612e-14` in binary64 and
+`2.403e-17` in long double.
+
+The time-symmetric member is exact Schwarzschild wormhole initial data.  The
+nonzero-momentum and spin cases deliberately omit the regular elliptic correction
+solved by TwoPunctures, so they establish only near-puncture scaling and source
+conditioning.  They are not Hamiltonian-satisfying boosted or spinning initial data,
+and they do not close Gates 9, 12, or 13.
+
 ## Runtime diagnostics and hard stops
 
 Every PC-GH constraint pass records `r_-`, `r_+`, `|W|`, `|L|`, primary-RHS and
@@ -100,7 +122,8 @@ norms are not acceptable substitutes.
 
 ## Open audit items
 
-- repeat the audit for Bowen-York data once that conversion exists;
+- repeat the production-path ladder with constraint-satisfying nonzero-momentum and
+  spin data from the existing TwoPunctures infrastructure;
 - derive and apply the formulation-energy symmetrizer to the extracted full frozen
   operator; the present Euclidean logarithmic norm is not a substitute;
 - derive a constraint-energy treatment for the positive tangential trace-free `Q`

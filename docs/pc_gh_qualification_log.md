@@ -6,7 +6,7 @@ This is an append-oriented evidence log.  A build, a short run, or a finite resi
 does not by itself qualify the solver.  `PASS` below means only that the named bounded
 gate passed.  `OPEN` and `BLOCKED` are not silently replaced by weaker criteria.
 
-Current evidence source commit: `55290efdf310a03dcce8d5cbc84a0ded595a8d13`.
+Current evidence source commit: `f74a19ae4d425bccbbd1bff78db72bbe49502f42`.
 Required baseline: `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 
 ## Reproducibility envelope
@@ -37,8 +37,8 @@ generator, table, source, and exact numbers below are the durable provenance rec
 | 5 robust Minkowski | PASS | seeded cell-scale perturbations at 32/64/128 cells through `t=2`; bounded amplification and no positive late-time fitted rate |
 | 6 stationary trumpet pointwise | PASS | continuum target, decomposed three-precision conditioning audit, maximum locations, and second-order RMS residual ladder pass on their stated punctured domains |
 | 7 stationary trumpet evolution | BLOCKED | Gauge A0 has a positive projected frozen mode; no derived nonperiodic diagnostic/characteristic outer BC also remains |
-| 8 perturbed trumpet | OPEN | waits on gates 6 and 7 |
-| 9 Bowen-York to trumpet | OPEN | existing ADM initial-data conversion has not been exercised as a qualified transition |
+| 8 perturbed trumpet | OPEN | waits on Gate 7 |
+| 9 Bowen-York to trumpet | OPEN | exact time-symmetric ADM conversion and pointwise source ladder pass; the wormhole-to-trumpet evolution is blocked by Gate 7 and has not run |
 | 10 Gauge A1 | FAILED | bounded feedback linearization cannot affect the positive invariant tangential trace-free Q subspace; no production implementation authorized |
 | 11 Gauge B | DEFERRED | no scaled driver derivation or combined symmetrizer yet |
 | 12 boosted puncture | OPEN | waits on single-hole qualification |
@@ -250,6 +250,52 @@ The raw angular derivative of the direction-dependent trumpet `Atilde` tensor sc
 `r^-1.000001`.  It is logged rather than hidden; all additive RHS terms containing it
 remain bounded.  This closes the mandatory Gauge A0 temporary-cancellation gate on the
 punctured table domain.  It does not cover Bowen-York data.
+
+## 2026-09-01 — Bowen-York regularity and production-path audit
+
+Evidence source commit: `f74a19ae4d425bccbbd1bff78db72bbe49502f42`.
+Input: `tst/inputs/pc_gh_bowen_york.athinput`.
+Analyzers: `analysis/pc_gh_symbolic/audit_bowen_york_cancellation.py` and
+`analysis/pc_gh_symbolic/analyze_bowen_york_residuals.py`.
+
+The three-precision analytic audit evaluated 217 named quantities over 81 radii for
+time-symmetric, momentum, spin, and combined Bowen-York leading fields.  No stored
+field, temporary, or additive RHS term had fitted inner power below `-0.25`.  The
+maximum 100-digit `|H+Atilde^2|` identity residual was `9.875e-101`; worst normalized
+RHS-sum discrepancies were `7.612e-14` in binary64 and `2.403e-17` in long double.
+The momentum/spin cases omit the regular TwoPunctures correction and are therefore
+regularity models, not constraint-satisfying data.
+
+The required baseline contains the `z4c_two_puncture.cpp` adapter and CMake hook, but
+not the external `twopuncturesc` headers/library that hook requires (nor a submodule
+entry for them).  Consequently no constraint-satisfying nonzero-momentum/spin
+TwoPunctures build or runtime result is claimed here.
+
+The production pgen fills exact time-symmetric isotropic Schwarzschild ADM data on all
+cells and ghosts, calls the actual `ADMToPcGh` and `PcGhToADM` paths, then evaluates the
+actual RHS and constraints on `1M <= r <= 4M`.  Common setup was `[-8,8]^3`, `16^3`
+mesh blocks, periodic, RK2, second-order centered differences, harmonic gauge,
+`kappa=0`, KO amplitude zero, and `nlim=0`:
+
+| N | rms state primary | rms state gradient | rms RHS primary | rms RHS gradient | rms GH/physical | rms reduction/curl/algebraic |
+|---:|---:|---:|---:|---:|---:|---:|
+| 32 | 7.416731e-17 | 9.065557e-4 | 2.281639e-3 | 2.791716e-17 | 8.676208e-3 | 2.137871e-16 |
+| 48 | 8.953469e-17 | 3.755427e-4 | 1.072975e-3 | 6.937500e-17 | 4.013403e-3 | 3.305478e-16 |
+| 64 | 9.991160e-17 | 2.209600e-4 | 6.443014e-4 | 1.094164e-16 | 2.446672e-3 | 4.099355e-16 |
+| 80 | 1.116420e-16 | 1.412928e-4 | 4.190921e-4 | 1.549547e-16 | 1.592116e-3 | 5.373368e-16 |
+
+The exact sectors remain below `5.4e-16`.  Least-squares orders over all four grids are
+`2.018570`, `1.841383`, and `1.839332` for state gradients, primary RHS, and
+GH/physical constraints; corresponding `64 -> 80` orders are `2.003853`, `1.927351`,
+and `1.925509`.  The analyzer requires four levels to control hard-shell sampling,
+monotone residual decrease, fitted order at least `1.8`, finest-pair order at least
+`1.85`, and maximum-location tables at every resolution.  Residual-table SHA-256:
+`7d42b2e295f20055827438a921a57fe390762d68f176281d301b4f1da4dc8984`.
+
+Classification: `PASS` for bounded analytic Bowen-York source conditioning and the
+exact time-symmetric ADM-to-PC-GH pointwise ladder in the stated Serial configuration.
+This is not a TwoPunctures momentum/spin test, a finite-time evolution, a trumpet
+transition, or a pass of Gate 9.
 
 ## 2026-09-01 — Gauge A0 frozen-operator hard stop
 
