@@ -28,6 +28,7 @@ void PcGh::ProjectAlgebraic(MeshBlockPack *pmbp) {
   int const nmb = pmbp->nmb_thispack;
   auto &pc = pmbp->ppcgh->u;
   auto &state = pmbp->ppcgh->u0;
+  auto &constraints = pmbp->ppcgh->u_con;
 
   par_for("PC-GH algebraic projection", DevExeSpace(),
   0, nmb - 1, ksg, keg, jsg, jeg, isg, ieg,
@@ -63,18 +64,26 @@ void PcGh::ProjectAlgebraic(MeshBlockPack *pmbp) {
       }
     }
 
+    Real correction2 = 0.0;
     for (int a = 0; a < 3; ++a) {
       for (int b = a; b < 3; ++b) {
-        pc.gtilde(m, a, b, k, j, i) = scale*old_g(a, b);
-        pc.Atilde(m, a, b, k, j, i) =
-            pc.Atilde(m, a, b, k, j, i) - old_g(a, b)*trace_a/3.0;
+        Real const old_a = pc.Atilde(m, a, b, k, j, i);
+        Real const new_g = scale*old_g(a, b);
+        Real const new_a = old_a - old_g(a, b)*trace_a/3.0;
+        correction2 += (new_g - old_g(a, b))*(new_g - old_g(a, b));
+        correction2 += (new_a - old_a)*(new_a - old_a);
+        pc.gtilde(m, a, b, k, j, i) = new_g;
+        pc.Atilde(m, a, b, k, j, i) = new_a;
         for (int d = 0; d < 3; ++d) {
           int const q = QIndex(d, a, b);
-          state(m, q, k, j, i) = scale*(
-              state(m, q, k, j, i) - old_g(a, b)*trace_q[d]/3.0);
+          Real const old_q = state(m, q, k, j, i);
+          Real const new_q = scale*(old_q - old_g(a, b)*trace_q[d]/3.0);
+          correction2 += (new_q - old_q)*(new_q - old_q);
+          state(m, q, k, j, i) = new_q;
         }
       }
     }
+    constraints(m, I_CON_PROJECTION, k, j, i) = std::sqrt(correction2);
   });
 }
 

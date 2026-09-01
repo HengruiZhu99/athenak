@@ -25,16 +25,20 @@ void CheckPcGhMinkowski(ParameterInput *, Mesh *pm) {
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &state = pmbp->ppcgh->u0;
   auto &state_rhs = pmbp->ppcgh->u_rhs;
+  auto &constraints = pmbp->ppcgh->u_con;
   auto &adm_vars = pmbp->padm->adm;
   switch (pmbp->ppcgh->opt.fd_stencil) {
     case 2:
       (void)pmbp->ppcgh->CalcRHS<2>(nullptr, 0);
+      (void)pmbp->ppcgh->CalcConstraints<2>(nullptr, 0);
       break;
     case 3:
       (void)pmbp->ppcgh->CalcRHS<3>(nullptr, 0);
+      (void)pmbp->ppcgh->CalcConstraints<3>(nullptr, 0);
       break;
     case 4:
       (void)pmbp->ppcgh->CalcRHS<4>(nullptr, 0);
+      (void)pmbp->ppcgh->CalcConstraints<4>(nullptr, 0);
       break;
     default:
       std::abort();
@@ -69,6 +73,13 @@ void CheckPcGhMinkowski(ParameterInput *, Mesh *pm) {
       thread_max = fmax(thread_max, fabs(state(m, v, k, j, i) - expected));
       thread_max = fmax(thread_max, fabs(state_rhs(m, v, k, j, i)));
     }
+    for (int v = 0; v < pc_gh::PcGh::ncon; ++v) {
+      Real const expected =
+          (v == pc_gh::PcGh::I_CON_RMINUS || v == pc_gh::PcGh::I_CON_RPLUS)
+              ? 1.0 : 0.0;
+      thread_max = fmax(thread_max,
+          fabs(constraints(m, v, k, j, i) - expected));
+    }
     thread_max = fmax(thread_max, fabs(adm_vars.alpha(m, k, j, i) - 1.0));
     thread_max = fmax(thread_max, fabs(adm_vars.psi4(m, k, j, i) - 1.0));
     for (int a = 0; a < 3; ++a) {
@@ -82,12 +93,13 @@ void CheckPcGhMinkowski(ParameterInput *, Mesh *pm) {
     }
   }, Kokkos::Max<Real>(max_error));
   if (max_error != 0.0) {
-    std::cout << "PC-GH Minkowski state, ADM, or RHS residual = " << max_error
+    std::cout << "PC-GH Minkowski state, ADM, RHS, or diagnostic residual = "
+              << max_error
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
   if (global_variable::my_rank == 0) {
-    std::cout << "PASS: exact PC-GH Minkowski state, ADM round trip, and RHS"
+    std::cout << "PASS: exact PC-GH Minkowski state, ADM round trip, RHS, and diagnostics"
               << std::endl;
   }
 }

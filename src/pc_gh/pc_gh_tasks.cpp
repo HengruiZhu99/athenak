@@ -64,8 +64,24 @@ void PcGh::QueuePcGhTasks() {
                  Task_Run, {PcGh_Prolong});
   pnr->QueueTask(&PcGh::ConvertToADM, this, PcGh_ToADM, "PcGh_ToADM", Task_Run,
                  {PcGh_AlgC});
+  switch (opt.fd_stencil) {
+    case 2:
+      pnr->QueueTask(&PcGh::CalcConstraints<2>, this, PcGh_Constraints,
+                     "PcGh_Constraints", Task_Run, {PcGh_ToADM});
+      break;
+    case 3:
+      pnr->QueueTask(&PcGh::CalcConstraints<3>, this, PcGh_Constraints,
+                     "PcGh_Constraints", Task_Run, {PcGh_ToADM});
+      break;
+    case 4:
+      pnr->QueueTask(&PcGh::CalcConstraints<4>, this, PcGh_Constraints,
+                     "PcGh_Constraints", Task_Run, {PcGh_ToADM});
+      break;
+    default:
+      std::abort();
+  }
   pnr->QueueTask(&PcGh::NewTimeStep, this, PcGh_Newdt, "PcGh_Newdt", Task_Run,
-                 {PcGh_ToADM});
+                 {PcGh_Constraints});
 
   pnr->QueueTask(&PcGh::ClearSend, this, PcGh_ClearS, "PcGh_ClearS", Task_End);
   pnr->QueueTask(&PcGh::ClearRecv, this, PcGh_ClearR, "PcGh_ClearR", Task_End,

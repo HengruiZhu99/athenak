@@ -39,10 +39,21 @@ char const * const PcGh::PcGhNames[PcGh::npcgh] = {
   "pcgh_B31", "pcgh_B32", "pcgh_B33",
 };
 
+char const * const PcGh::ConstraintNames[PcGh::ncon] = {
+  "pcgh_Cperp", "pcgh_Zx", "pcgh_Zy", "pcgh_Zz",
+  "pcgh_H", "pcgh_Mhatx", "pcgh_Mhaty", "pcgh_Mhatz",
+  "pcgh_red_X", "pcgh_red_Q", "pcgh_red_Y", "pcgh_red_B",
+  "pcgh_curl_X", "pcgh_curl_Q", "pcgh_curl_Y", "pcgh_curl_B",
+  "pcgh_detg", "pcgh_trA", "pcgh_trQ", "pcgh_projection",
+  "pcgh_rminus", "pcgh_rplus", "pcgh_W", "pcgh_L",
+  "pcgh_rhs_primary", "pcgh_rhs_gradient",
+};
+
 PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
     : u0("u0 pc_gh", 1, 1, 1, 1, 1),
       u1("u1 pc_gh", 1, 1, 1, 1, 1),
       u_rhs("u_rhs pc_gh", 1, 1, 1, 1, 1),
+      u_con("u_con pc_gh", 1, 1, 1, 1, 1),
       coarse_u0("coarse u0 pc_gh", 1, 1, 1, 1, 1),
       pbval_u(nullptr),
       dtnew(std::numeric_limits<float>::max()),
@@ -56,6 +67,8 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   Kokkos::realloc(u0, nmb, npcgh, ncells3, ncells2, ncells1);
   Kokkos::realloc(u1, nmb, npcgh, ncells3, ncells2, ncells1);
   Kokkos::realloc(u_rhs, nmb, npcgh, ncells3, ncells2, ncells1);
+  Kokkos::realloc(u_con, nmb, ncon, ncells3, ncells2, ncells1);
+  Kokkos::deep_copy(u_con, 0.0);
   BindVariables(u0, u);
   BindVariables(u_rhs, rhs);
 

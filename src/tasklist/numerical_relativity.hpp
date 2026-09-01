@@ -101,6 +101,7 @@ enum TaskName {
   PcGh_Prolong,
   PcGh_AlgC,
   PcGh_ToADM,
+  PcGh_Constraints,
   PcGh_Newdt,
   PcGh_ClearS,
   PcGh_ClearR,

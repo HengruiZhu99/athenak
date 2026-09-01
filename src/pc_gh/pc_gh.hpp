@@ -51,6 +51,21 @@ class PcGh {
   static_assert(npcgh == 55, "PC-GH state ABI must contain exactly 55 fields");
   static char const * const PcGhNames[npcgh];
 
+  enum : int {
+    I_CON_CPERP,
+    I_CON_ZX, I_CON_ZY, I_CON_ZZ,
+    I_CON_H,
+    I_CON_MX, I_CON_MY, I_CON_MZ,
+    I_CON_RED_X, I_CON_RED_Q, I_CON_RED_Y, I_CON_RED_B,
+    I_CON_CURL_X, I_CON_CURL_Q, I_CON_CURL_Y, I_CON_CURL_B,
+    I_CON_DETG, I_CON_TRA, I_CON_TRQ,
+    I_CON_PROJECTION,
+    I_CON_RMINUS, I_CON_RPLUS, I_CON_W, I_CON_L,
+    I_CON_RHS_PRIMARY, I_CON_RHS_GRADIENT,
+    ncon
+  };
+  static char const * const ConstraintNames[ncon];
+
   KOKKOS_INLINE_FUNCTION
   static constexpr int SymmetricIndex(int i, int j) {
     return (i > j) ? SymmetricIndex(j, i)
@@ -71,6 +86,8 @@ class PcGh {
   void ADMToPcGh(MeshBlockPack *pmbp);
   template <int FD_STENCIL>
   TaskStatus CalcRHS(Driver *pdriver, int stage);
+  template <int FD_STENCIL>
+  TaskStatus CalcConstraints(Driver *pdriver, int stage);
   void PcGhToADM(MeshBlockPack *pmbp);
   void ProjectAlgebraic(MeshBlockPack *pmbp);
 
@@ -114,6 +131,7 @@ class PcGh {
   DvceArray5D<Real> u0;
   DvceArray5D<Real> u1;
   DvceArray5D<Real> u_rhs;
+  DvceArray5D<Real> u_con;
   DvceArray5D<Real> coarse_u0;
   Variables u;
   Variables rhs;

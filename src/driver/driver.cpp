@@ -593,6 +593,19 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
     (void) ppcgh->Prolongate(this, 0);
     (void) ppcgh->EnforceAlgebraicConstraints(this, 0);
     ppcgh->PcGhToADM(pm->pmb_pack);
+    switch (ppcgh->opt.fd_stencil) {
+      case 2:
+        (void) ppcgh->CalcConstraints<2>(nullptr, 0);
+        break;
+      case 3:
+        (void) ppcgh->CalcConstraints<3>(nullptr, 0);
+        break;
+      case 4:
+        (void) ppcgh->CalcConstraints<4>(nullptr, 0);
+        break;
+      default:
+        std::abort();
+    }
   }
 
   // Initialize HYDRO: ghost zones and primitive variables (everywhere)

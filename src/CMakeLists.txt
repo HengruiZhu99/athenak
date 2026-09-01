@@ -111,6 +111,7 @@ add_executable(
   pc_gh/pc_gh.cpp
   pc_gh/pc_gh_adm.cpp
   pc_gh/pc_gh_calcrhs.cpp
+  pc_gh/pc_gh_constraints.cpp
   pc_gh/pc_gh_newdt.cpp
   pc_gh/pc_gh_projection.cpp
   pc_gh/pc_gh_tasks.cpp

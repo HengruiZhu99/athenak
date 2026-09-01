@@ -183,6 +183,13 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
               << std::endl << "Input file is likely missing a <pc_gh> block" << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  if ((ivar>=229) && (ivar<256) && (pm->pmb_pack->ppcgh == nullptr)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "Output of PC-GH diagnostics requested in <output> block '"
+              << out_params.block_name << "' but no PC-GH object has been constructed."
+              << std::endl << "Input file is likely missing a <pc_gh> block" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
 
   // Now load STL vector of output variables
@@ -672,6 +679,13 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
       if (variable.compare("pcgh") == 0 ||
           variable.compare(pc_gh::PcGh::PcGhNames[v]) == 0) {
         outvars.emplace_back(pc_gh::PcGh::PcGhNames[v], v, &(pm->pmb_pack->ppcgh->u0));
+      }
+    }
+    for (int v = 0; v < pc_gh::PcGh::ncon; ++v) {
+      if (variable.compare("pcgh_con") == 0 ||
+          variable.compare(pc_gh::PcGh::ConstraintNames[v]) == 0) {
+        outvars.emplace_back(pc_gh::PcGh::ConstraintNames[v], v,
+                             &(pm->pmb_pack->ppcgh->u_con));
       }
     }
 

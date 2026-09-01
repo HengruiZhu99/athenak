@@ -21,7 +21,7 @@
     #error NHISTORY > NREDUCTION in outputs.hpp
 #endif
 
-#define NOUTPUT_CHOICES 229
+#define NOUTPUT_CHOICES 256
 // choices for output variables used in <ouput> blocks in input file
 // TO ADD MORE CHOICES:
 //   - add more strings to array below, change NOUTPUT_CHOICES above appropriately
@@ -124,7 +124,16 @@ static const char *var_choice[NOUTPUT_CHOICES] = {
   "pcgh_B11", "pcgh_B12", "pcgh_B13",
   "pcgh_B21", "pcgh_B22", "pcgh_B23",
   "pcgh_B31", "pcgh_B32", "pcgh_B33",
-  "pcgh"
+  "pcgh",
+
+  // PC-GH diagnostics (229-255)
+  "pcgh_Cperp", "pcgh_Zx", "pcgh_Zy", "pcgh_Zz",
+  "pcgh_H", "pcgh_Mhatx", "pcgh_Mhaty", "pcgh_Mhatz",
+  "pcgh_red_X", "pcgh_red_Q", "pcgh_red_Y", "pcgh_red_B",
+  "pcgh_curl_X", "pcgh_curl_Q", "pcgh_curl_Y", "pcgh_curl_B",
+  "pcgh_detg", "pcgh_trA", "pcgh_trQ", "pcgh_projection",
+  "pcgh_rminus", "pcgh_rplus", "pcgh_W", "pcgh_L",
+  "pcgh_rhs_primary", "pcgh_rhs_gradient", "pcgh_con"
 };
 
 
