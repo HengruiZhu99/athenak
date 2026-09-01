@@ -147,8 +147,10 @@ spin Bowen-York conformal extrinsic-curvature leading fields.  It does not synth
 the regular elliptic correction, so the existing project/bbh TwoPunctures path remains
 the authority for future constraint-satisfying boosted, spinning, and binary data.
 That custom pgen currently relies on an external `twopuncturesc` header/library tree
-which is not present in the required baseline checkout and is not registered as a
-submodule; it has therefore not been built or advertised as PC-GH-capable here.
+which is not tracked by the required baseline or registered as a submodule.  A local
+untracked symlink exists only in the original dirty checkout; it remains user-owned and
+was not imported into this branch.  The custom pgen has therefore not been built or
+advertised as PC-GH-capable here.
 
 State communication, restriction/prolongation, load-balance migration, restart, tab
 output, and history registration operate on the explicit 55-field array.  Their

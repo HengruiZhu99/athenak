@@ -267,9 +267,12 @@ The momentum/spin cases omit the regular TwoPunctures correction and are therefo
 regularity models, not constraint-satisfying data.
 
 The required baseline contains the `z4c_two_puncture.cpp` adapter and CMake hook, but
-not the external `twopuncturesc` headers/library that hook requires (nor a submodule
-entry for them).  Consequently no constraint-satisfying nonzero-momentum/spin
-TwoPunctures build or runtime result is claimed here.
+does not track the external `twopuncturesc` headers/library or register them as a
+submodule.  The original dirty checkout exposes an untracked symlink to a local
+external installation; that user-owned dependency was inspected read-only and
+intentionally excluded from this branch's build provenance.  Consequently no
+constraint-satisfying nonzero-momentum/spin TwoPunctures build or runtime result is
+claimed here.
 
 The production pgen fills exact time-symmetric isotropic Schwarzschild ADM data on all
 cells and ghosts, calls the actual `ADMToPcGh` and `PcGhToADM` paths, then evaluates the
