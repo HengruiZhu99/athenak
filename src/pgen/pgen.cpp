@@ -985,6 +985,8 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     PcGhRobustMinkowski(pin, is_restart);
   } else if (pgen_fun_name.compare("pc_gh_gauge_wave") == 0) {
     PcGhGaugeWave(pin, is_restart);
+  } else if (pgen_fun_name.compare("pc_gh_bowen_york") == 0) {
+    PcGhBowenYork(pin, is_restart);
   } else if (pgen_fun_name.compare("pc_gh_trumpet_a0") == 0) {
     PcGhTrumpetA0(pin, is_restart);
   } else if (pgen_fun_name.compare("orszag_tang") == 0) {

@@ -131,6 +131,7 @@ add_executable(
         pgen/tests/mri3d.cpp
         pgen/tests/pc_gh_minkowski.cpp
         pgen/tests/pc_gh_gauge_wave.cpp
+        pgen/tests/pc_gh_bowen_york.cpp
         pgen/tests/pc_gh_trumpet_a0.cpp
         pgen/tests/shock_tube.cpp
         pgen/tests/shwave.cpp
