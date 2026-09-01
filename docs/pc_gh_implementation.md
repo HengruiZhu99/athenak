@@ -2,8 +2,8 @@
 
 ## Scope and authority
 
-This document describes the implementation at commit
-`a48ed6275656a3d9f07381846322e85b5d73f9a2`, descended from the required
+This document describes the production source at commit
+`7bde88a31884eefa7e89089c63754f4e07c29841`, descended from the required
 `project/bbh` baseline `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 The equations are those independently derived in `docs/pc_gh_derivation.md`.
 No old FO-GH, Ref-GH, Z4c equation, reference geometry, controller, or generated

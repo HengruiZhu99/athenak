@@ -6,7 +6,7 @@ This is an append-oriented evidence log.  A build, a short run, or a finite resi
 does not by itself qualify the solver.  `PASS` below means only that the named bounded
 gate passed.  `OPEN` and `BLOCKED` are not silently replaced by weaker criteria.
 
-Current evidence commit: `a48ed6275656a3d9f07381846322e85b5d73f9a2`.
+Current numerical-evidence source commit: `7bde88a31884eefa7e89089c63754f4e07c29841`.
 Required baseline: `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 
 ## Reproducibility envelope
@@ -33,8 +33,8 @@ generator, table, source, and exact numbers below are the durable provenance rec
 | 1 symbolic identities | PASS | complete `analysis/pc_gh_symbolic/run_all.py` pass at current commit |
 | 2 flat algebra | PARTIAL | exact projection and constrained state-map tests pass; broader randomized SPD sampling remains |
 | 3 Minkowski pointwise | PASS | exact state, ADM round trip, RHS, and diagnostics at floating-point zero |
-| 4 wave convergence | PARTIAL | nonlinear harmonic gauge-wave implementation and finite `t=1` run; required three-resolution all-sector order ladder remains |
-| 5 robust Minkowski | OPEN | random perturbation and resolution-growth search not run |
+| 4 wave convergence | PASS | exact shifted harmonic wave at 32/64/128 cells; every exercised state/constraint sector is at least order 1.96 and curls remain exact |
+| 5 robust Minkowski | PASS | seeded cell-scale perturbations at 32/64/128 cells through `t=2`; bounded amplification and no positive late-time fitted rate |
 | 6 stationary trumpet pointwise | PASS | continuum target, decomposed three-precision conditioning audit, maximum locations, and second-order RMS residual ladder pass on their stated punctured domains |
 | 7 stationary trumpet evolution | BLOCKED | Gauge A0 has a positive projected frozen mode; no derived nonperiodic diagnostic/characteristic outer BC also remains |
 | 8 perturbed trumpet | OPEN | waits on gates 6 and 7 |
@@ -71,7 +71,7 @@ Grid: `8 x 4 x 4`, one mesh block, periodic.  CFL `0.25`, `nlim=0`, harmonic gau
 Result: `PASS: exact PC-GH Minkowski state, ADM round trip, RHS, and diagnostics`.
 This is a pointwise construction/RHS gate, not an evolution-stability result.
 
-## 2026-09-01 — nonlinear harmonic gauge wave
+## 2026-09-01 — initial nonlinear harmonic gauge-wave smoke test
 
 Input: `tst/inputs/pc_gh_gauge_wave.athinput`.
 
@@ -81,6 +81,90 @@ amplitude `0.01`, harmonic gauge.
 Result: `L1=1.593071e-04`, `Linf=2.593841e-03`.  This confirms a finite nonlinear
 periodic evolution after the Gauge A0 source branch was added.  It does not satisfy the
 required three-resolution, all-sector convergence gate.
+
+## 2026-09-01 — Gate 4 shifted harmonic-wave convergence
+
+Evidence source commit: `7bde88a31884eefa7e89089c63754f4e07c29841`.
+Input: `tst/inputs/pc_gh_gauge_wave.athinput`.
+Analyzer: `analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py`.
+
+The exact solution is the flat metric under the harmonic null-coordinate map
+`T=t+F(x-t)`, `X=x+F(x-t)`.  Unlike the earlier diagonal gauge wave, it has nonzero
+shift and therefore exercises `beta` and `B` together with the lapse, conformal metric,
+curvature, GH, `X`, `Y`, and `Q` sectors.  Common parameters were amplitude `0.01`,
+periodic unit domain, two-to-eight 16-cell mesh blocks, RK2, CFL `0.1`, second-order
+centered differences, harmonic gauge, `kappa=0`, and KO amplitude zero.  All runs ended
+at `t=1`:
+
+| N | cycles | aggregate L1 | aggregate Linf |
+|---:|---:|---:|---:|
+| 32 | 334 | 3.860982294920e-4 | 5.861907791622e-3 |
+| 64 | 667 | 9.706938117387e-5 | 1.475440672817e-3 |
+| 128 | 1333 | 2.429808464991e-5 | 3.692661258194e-4 |
+
+The worst adjacent observed order in each required family was:
+
+| family | minimum order | limiting diagnostic |
+|---|---:|---|
+| aggregate | 1.990224 | aggregate Linf |
+| primary | 1.979089 | `Lambda^x` Linf |
+| X | 1.977550 | `X_x` Linf |
+| Q | 1.977492 | `Q_xxx` Linf |
+| Y | 1.999437 | `Y_x` Linf |
+| B | 1.990224 | `B_x^x` Linf |
+| GH | 1.977918 | `C_perp` Linf |
+| ADM | 1.962997 | Hamiltonian RMS |
+| reduction | 1.995012 | Q-reduction Linf |
+
+All curl diagnostics stayed below `1e-12`; on this compatible periodic one-dimensional
+solution the discrete derivative operators commute, so exact preservation is the
+appropriate result rather than a fitted order.  Algebraic-projection RMS corrections
+decreased from `4.819972e-9` to `1.752859e-9` to `5.281400e-10`.
+
+Classification: `PASS` Gate 4 for the second-order Serial configuration.  This does not
+qualify higher spatial orders, MPI, GPU, AMR, or a physical gravitational-wave family.
+The detailed table SHA-256 was
+`6d3ea31a552793fa3d6dee76b916e1770fe4464752f28954dde7cb425a82aca3`.
+
+## 2026-09-01 — Gate 5 robust Minkowski and KO defect discriminator
+
+Evidence source commit: `7bde88a31884eefa7e89089c63754f4e07c29841`.
+Input: `tst/inputs/pc_gh_robust_minkowski.athinput`.
+Analyzer: `analysis/pc_gh_symbolic/analyze_robust_minkowski.py`.
+
+The generator applies seed `20260901`, amplitude `1e-10`, independent cell-scale noise
+to every continuum sector while constructing positive `A`/`chi`, an exactly
+unit-determinant positive conformal metric, and metric-trace-free `Atilde` and `Q`.
+Thus GH, physical, reduction, and curl constraints are all directly excited without a
+floor or a derivative-field reset.
+
+The first 32-cell attempt diagnosed an engineering defect: a positive user KO amplitude
+was passed directly to the raw second-order `Diss` operator, whose Nyquist symbol is
+positive.  The resulting anti-dissipation amplified `1e-10` noise to state RMS
+`1.689157e-2` by `t=2`.  Production setup now applies the alternating sign and
+`2^(-2p)` normalization.  `verify_ko_symbol.py` proves the normalized symbol is
+`-sin(theta/2)^(2p)` for every supported stencil.  The discriminator was rerun without
+changing its seed or user KO amplitude.
+
+Common corrected-run parameters: periodic unit domain, 16-cell mesh blocks, RK4,
+CFL `0.25`, second-order centered differences, harmonic gauge, `kappa=1`, user KO
+amplitude `0.02`, and `t=2`:
+
+| N | cycles | peak normalized diagnostic amplification | max late fitted rate | final state RMS | min SPD principal minor |
+|---:|---:|---:|---:|---:|---:|
+| 32 | 257 | 2.660800 (`Mhat`) | -0.096926/M (`redX`) | 5.267459e-11 | 0.9999999997691 |
+| 64 | 513 | 2.674121 (`Mhat`) | -0.170527/M (`Cperp`) | 4.400557e-11 | 0.9999999998020 |
+| 128 | 1025 | 1.576566 (`Mhat`) | -0.189207/M (`curlY`) | 3.729399e-11 | 0.9999999998567 |
+
+Every GH, ADM, reduction, and curl family was sampled at 41 times.  The maximum
+endpoint growth rate changes from `+0.178353/M` at 32 cells to `-0.018215/M` and
+`-0.182190/M` under refinement; every fit over the second half of every run is
+negative.  `A`, `chi`, and all conformal-metric SPD principal minors remain positive.
+
+Classification: `PASS` the bounded Gate 5 resolution-growth search for this seeded
+one-dimensional Serial configuration.  It is not a proof for arbitrary noise seeds or
+three-dimensional/GPU/MPI configurations.  Final table SHA-256:
+`5160e8e7f1526710aa25487b11075013248987ea7bb86f1ae1eed6e45b059760`.
 
 ## 2026-09-01 — stationary Gauge A0 continuum target
 
