@@ -26,6 +26,7 @@
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
 #include "pgen.hpp"
@@ -115,9 +116,10 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
   mhd::MHD* pmhd = pm->pmb_pack->pmhd;
   adm::ADM* padm = pm->pmb_pack->padm;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
+  pc_gh::PcGh* ppcgh = pm->pmb_pack->ppcgh;
   radiation::Radiation* prad=pm->pmb_pack->prad;
   TurbulenceDriver* pturb=pm->pmb_pack->pturb;
-  int nrad = 0, nhydro = 0, nmhd = 0, nforce = 3, nadm = 0, nz4c = 0;
+  int nrad = 0, nhydro = 0, nmhd = 0, nforce = 3, nadm = 0, nz4c = 0, npcgh = 0;
   if (phydro != nullptr) {
     nhydro = phydro->nhydro + phydro->nscalars;
   }
@@ -129,6 +131,8 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
   }
   if (pz4c != nullptr) {
     nz4c = pz4c->nz4c;
+  } else if (ppcgh != nullptr) {
+    npcgh = ppcgh->npcgh;
   } else if (padm != nullptr) {
     nadm = padm->nadm;
   }
@@ -273,6 +277,8 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
   }
   if (pz4c != nullptr) {
     data_size_ += nout1*nout2*nout3*nz4c*sizeof(Real);   // z4c u0
+  } else if (ppcgh != nullptr) {
+    data_size_ += nout1*nout2*nout3*npcgh*sizeof(Real);  // PC-GH u0
   } else if (padm != nullptr) {
     data_size_ += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
   }
@@ -605,6 +611,40 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
 
     // We also need to reinitialize the ADM data.
     pz4c->Z4cToADM(pmy_mesh_->pmb_pack);
+  } else if (ppcgh != nullptr) {
+    Kokkos::realloc(ccin, nmb, npcgh, nout3, nout2, nout1);
+    for (int m=0; m<noutmbs_max; ++m) {
+      if (m < noutmbs_min) {
+        auto mbptr = Kokkos::subview(ccin, m, Kokkos::ALL, Kokkos::ALL,
+                                     Kokkos::ALL, Kokkos::ALL);
+        int const mbcnt = mbptr.size();
+        if (resfile.Read_Reals_at_all(mbptr.data(), mbcnt, myoffset,
+                                      single_file_per_rank) != mbcnt) {
+          std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                    << std::endl << "CC PC-GH data not read correctly from restart file"
+                    << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        myoffset += data_size;
+      } else if (m < pm->nmb_thisrank) {
+        auto mbptr = Kokkos::subview(ccin, m, Kokkos::ALL, Kokkos::ALL,
+                                     Kokkos::ALL, Kokkos::ALL);
+        int const mbcnt = mbptr.size();
+        if (resfile.Read_Reals_at(mbptr.data(), mbcnt, myoffset,
+                                  single_file_per_rank) != mbcnt) {
+          std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                    << std::endl << "CC PC-GH data not read correctly from restart file"
+                    << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        myoffset += data_size;
+      }
+    }
+    Kokkos::deep_copy(Kokkos::subview(ppcgh->u0, std::make_pair(0,nmb), Kokkos::ALL,
+                      Kokkos::ALL, Kokkos::ALL, Kokkos::ALL), ccin);
+    offset_myrank += nout1*nout2*nout3*npcgh*sizeof(Real);
+    myoffset = offset_myrank;
+    ppcgh->PcGhToADM(pmy_mesh_->pmb_pack);
   } else if (padm != nullptr) {
     Kokkos::realloc(ccin, nmb, nadm, nout3, nout2, nout1);
     for (int m=0;  m<noutmbs_max; ++m) {
@@ -939,6 +979,8 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     Monopole(pin, is_restart);
   } else if (pgen_fun_name.compare("mri3d") == 0) {
     MRI3d(pin, is_restart);
+  } else if (pgen_fun_name.compare("pc_gh_minkowski") == 0) {
+    PcGhMinkowski(pin, is_restart);
   } else if (pgen_fun_name.compare("orszag_tang") == 0) {
     OrszagTang(pin, is_restart);
   } else if (pgen_fun_name.compare("rad_linear_wave") == 0) {

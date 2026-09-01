@@ -26,6 +26,7 @@
 #include "coordinates/adm.hpp"
 #include "z4c/tmunu.hpp"
 #include "z4c/z4c.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "srcterms/srcterms.hpp"
 #include "srcterms/turb_driver.hpp"
 #include "outputs.hpp"
@@ -174,6 +175,13 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
        << out_params.block_name << "' but Z4c object not constructed."
        << std::endl << "Input file is likely missing corresponding block" << std::endl;
     exit(EXIT_FAILURE);
+  }
+  if ((ivar>=173) && (ivar<229) && (pm->pmb_pack->ppcgh == nullptr)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+              << std::endl << "Output of PC-GH variables requested in <output> block '"
+              << out_params.block_name << "' but no PC-GH object has been constructed."
+              << std::endl << "Input file is likely missing a <pc_gh> block" << std::endl;
+    std::exit(EXIT_FAILURE);
   }
 
 
@@ -656,6 +664,14 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
       if (out_params.variable.compare("z4c") == 0 ||
           out_params.variable.compare(z4c::Z4c::Z4c_names[v]) == 0) {
         outvars.emplace_back(z4c::Z4c::Z4c_names[v], v, &(pm->pmb_pack->pz4c->u0));
+      }
+    }
+
+    // PC-GH variables
+    for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) {
+      if (variable.compare("pcgh") == 0 ||
+          variable.compare(pc_gh::PcGh::PcGhNames[v]) == 0) {
+        outvars.emplace_back(pc_gh::PcGh::PcGhNames[v], v, &(pm->pmb_pack->ppcgh->u0));
       }
     }
 

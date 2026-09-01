@@ -66,6 +66,10 @@ class PcGh {
     return I_B11 + 3*i + j;
   }
 
+  template <int FD_STENCIL>
+  void ADMToPcGh(MeshBlockPack *pmbp);
+  void PcGhToADM(MeshBlockPack *pmbp);
+
   struct Variables {
     AthenaTensor<Real, TensorSymm::NONE, 3, 0> chi;
     AthenaTensor<Real, TensorSymm::SYM2, 3, 2> gtilde;

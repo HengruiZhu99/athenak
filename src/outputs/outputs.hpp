@@ -21,7 +21,7 @@
     #error NHISTORY > NREDUCTION in outputs.hpp
 #endif
 
-#define NOUTPUT_CHOICES 173
+#define NOUTPUT_CHOICES 229
 // choices for output variables used in <ouput> blocks in input file
 // TO ADD MORE CHOICES:
 //   - add more strings to array below, change NOUTPUT_CHOICES above appropriately
@@ -106,7 +106,25 @@ static const char *var_choice[NOUTPUT_CHOICES] = {
   "z4c_Exx", "z4c_Exy", "z4c_Exz", "z4c_Eyy", "z4c_Eyz", "z4c_Ezz",
   "z4c_Bxx", "z4c_Bxy", "z4c_Bxz", "z4c_Byy", "z4c_Byz", "z4c_Bzz",
   "z4c_Px", "z4c_Py", "z4c_Pz",
-  "z4c_diag"
+  "z4c_diag",
+
+  // PC-GH (173-228)
+  "pcgh_chi",
+  "pcgh_gtxx", "pcgh_gtxy", "pcgh_gtxz", "pcgh_gtyy", "pcgh_gtyz", "pcgh_gtzz",
+  "pcgh_K",
+  "pcgh_Atxx", "pcgh_Atxy", "pcgh_Atxz", "pcgh_Atyy", "pcgh_Atyz", "pcgh_Atzz",
+  "pcgh_Lamx", "pcgh_Lamy", "pcgh_Lamz",
+  "pcgh_pi", "pcgh_A",
+  "pcgh_betax", "pcgh_betay", "pcgh_betaz",
+  "pcgh_X1", "pcgh_X2", "pcgh_X3",
+  "pcgh_Q1xx", "pcgh_Q1xy", "pcgh_Q1xz", "pcgh_Q1yy", "pcgh_Q1yz", "pcgh_Q1zz",
+  "pcgh_Q2xx", "pcgh_Q2xy", "pcgh_Q2xz", "pcgh_Q2yy", "pcgh_Q2yz", "pcgh_Q2zz",
+  "pcgh_Q3xx", "pcgh_Q3xy", "pcgh_Q3xz", "pcgh_Q3yy", "pcgh_Q3yz", "pcgh_Q3zz",
+  "pcgh_Y1", "pcgh_Y2", "pcgh_Y3",
+  "pcgh_B11", "pcgh_B12", "pcgh_B13",
+  "pcgh_B21", "pcgh_B22", "pcgh_B23",
+  "pcgh_B31", "pcgh_B32", "pcgh_B33",
+  "pcgh"
 };
 
 
@@ -252,7 +270,7 @@ class BaseTypeOutput {
   // for restarts, where dims are (m,n,k,j,i)
   HostArray5D<Real> outarray;
   HostArray5D<Real> outarray_hyd, outarray_mhd, outarray_rad,
-                    outarray_force, outarray_z4c, outarray_adm;
+                    outarray_force, outarray_z4c, outarray_pcgh, outarray_adm;
   HostFaceFld4D<Real> outfield;  // FC output field on host
   std::vector<int> noutmbs;   // with MPI, number of output MBs across all ranks
   int noutmbs_min;            // with MPI, minimum number of output MBs across all ranks

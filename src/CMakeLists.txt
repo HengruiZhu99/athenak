@@ -109,6 +109,7 @@ add_executable(
         outputs/pdf.cpp
 
         pc_gh/pc_gh.cpp
+        pc_gh/pc_gh_adm.cpp
 
         pgen/pgen.cpp
         pgen/tests/advection.cpp
@@ -122,6 +123,7 @@ add_executable(
         pgen/tests/lw_implode.cpp
         pgen/tests/orszag_tang.cpp
         pgen/tests/mri3d.cpp
+        pgen/tests/pc_gh_minkowski.cpp
         pgen/tests/shock_tube.cpp
         pgen/tests/shwave.cpp
         pgen/tests/rad_beam.cpp

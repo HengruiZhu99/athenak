@@ -28,6 +28,7 @@
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
 //#include "outputs.hpp"
@@ -65,9 +66,10 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
   mhd::MHD* pmhd = pm->pmb_pack->pmhd;
   adm::ADM* padm = pm->pmb_pack->padm;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
+  pc_gh::PcGh* ppcgh = pm->pmb_pack->ppcgh;
   radiation::Radiation* prad = pm->pmb_pack->prad;
   TurbulenceDriver* pturb=pm->pmb_pack->pturb;
-  int nhydro=0, nmhd=0, nrad=0, nforce=3, nadm=0, nz4c=0;
+  int nhydro=0, nmhd=0, nrad=0, nforce=3, nadm=0, nz4c=0, npcgh=0;
   if (phydro != nullptr) {
     nhydro = phydro->nhydro + phydro->nscalars;
   }
@@ -76,6 +78,8 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
   }
   if (pz4c != nullptr) {
     nz4c = pz4c->nz4c;
+  } else if (ppcgh != nullptr) {
+    npcgh = ppcgh->npcgh;
   } else if (padm != nullptr) {
     nadm = padm->nadm;
   }
@@ -118,6 +122,10 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
     Kokkos::realloc(outarray_z4c, nmb, nz4c, nout3, nout2, nout1);
     Kokkos::deep_copy(outarray_z4c, Kokkos::subview(pz4c->u0, std::make_pair(0,nmb),
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL));
+  } else if (ppcgh != nullptr) {
+    Kokkos::realloc(outarray_pcgh, nmb, npcgh, nout3, nout2, nout1);
+    Kokkos::deep_copy(outarray_pcgh, Kokkos::subview(ppcgh->u0, std::make_pair(0,nmb),
+                      Kokkos::ALL, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL));
   } else if (padm != nullptr) {
     Kokkos::realloc(outarray_adm, nmb, nadm, nout3, nout2, nout1);
     Kokkos::deep_copy(outarray_adm, Kokkos::subview(padm->u_adm, std::make_pair(0,nmb),
@@ -148,8 +156,10 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   radiation::Radiation* prad = pm->pmb_pack->prad;
   TurbulenceDriver* pturb=pm->pmb_pack->pturb;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
+  pc_gh::PcGh* ppcgh = pm->pmb_pack->ppcgh;
   adm::ADM* padm = pm->pmb_pack->padm;
-  int nhydro=0, nmhd=0, nrad=0, nforce=3, nz4c=0, nadm=0, nco=0, nhorizon=0;
+  int nhydro=0, nmhd=0, nrad=0, nforce=3, nz4c=0, npcgh=0, nadm=0;
+  int nco=0, nhorizon=0;
   if (phydro != nullptr) {
     nhydro = phydro->nhydro + phydro->nscalars;
   }
@@ -163,6 +173,8 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     nz4c = pz4c->nz4c;
     nco = pz4c->ptracker.size();
     nhorizon = pz4c->phorizon_dump.size();
+  } else if (ppcgh != nullptr) {
+    npcgh = ppcgh->npcgh;
   } else if (padm != nullptr) {
     nadm = padm->nadm;
   }
@@ -296,6 +308,8 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   }
   if (pz4c != nullptr) {
     data_size += nout1*nout2*nout3*nz4c*sizeof(Real);   // z4c u0
+  } else if (ppcgh != nullptr) {
+    data_size += nout1*nout2*nout3*npcgh*sizeof(Real);  // PC-GH u0
   } else if (padm != nullptr) {
     data_size += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
   }
@@ -594,6 +608,36 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
       }
     }
     offset_myrank += nout1*nout2*nout3*nz4c*sizeof(Real); // z4c u0
+    myoffset = offset_myrank;
+  } else if (ppcgh != nullptr) {
+    for (int m=0; m<noutmbs_max; ++m) {
+      if (m < noutmbs_min) {
+        auto mbptr = Kokkos::subview(outarray_pcgh, m, Kokkos::ALL, Kokkos::ALL,
+                                     Kokkos::ALL, Kokkos::ALL);
+        int const mbcnt = mbptr.size();
+        if (resfile.Write_any_type_at_all(mbptr.data(), mbcnt, myoffset, "Real",
+                                          single_file_per_rank) != mbcnt) {
+          std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                    << std::endl << "cell-centered PC-GH data not written correctly"
+                    << " to restart file" << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        myoffset += data_size;
+      } else if (m < pm->nmb_thisrank) {
+        auto mbptr = Kokkos::subview(outarray_pcgh, m, Kokkos::ALL, Kokkos::ALL,
+                                     Kokkos::ALL, Kokkos::ALL);
+        int const mbcnt = mbptr.size();
+        if (resfile.Write_any_type_at(mbptr.data(), mbcnt, myoffset, "Real",
+                                      single_file_per_rank) != mbcnt) {
+          std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                    << std::endl << "cell-centered PC-GH data not written correctly"
+                    << " to restart file" << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        myoffset += data_size;
+      }
+    }
+    offset_myrank += nout1*nout2*nout3*npcgh*sizeof(Real);
     myoffset = offset_myrank;
   } else if (padm != nullptr) {
     for (int m=0;  m<noutmbs_max; ++m) {
