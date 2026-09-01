@@ -69,10 +69,24 @@ class PcGh {
 
   template <int FD_STENCIL>
   void ADMToPcGh(MeshBlockPack *pmbp);
+  template <int FD_STENCIL>
+  TaskStatus CalcRHS(Driver *pdriver, int stage);
   void PcGhToADM(MeshBlockPack *pmbp);
   void ProjectAlgebraic(MeshBlockPack *pmbp);
 
   TaskStatus CopyU(Driver *pdriver, int stage);
+  void QueuePcGhTasks();
+  TaskStatus InitRecv(Driver *pdriver, int stage);
+  TaskStatus ClearRecv(Driver *pdriver, int stage);
+  TaskStatus ClearSend(Driver *pdriver, int stage);
+  TaskStatus SendU(Driver *pdriver, int stage);
+  TaskStatus RecvU(Driver *pdriver, int stage);
+  TaskStatus RestrictU(Driver *pdriver, int stage);
+  TaskStatus ApplyPhysicalBCs(Driver *pdriver, int stage);
+  TaskStatus Prolongate(Driver *pdriver, int stage);
+  TaskStatus EnforceAlgebraicConstraints(Driver *pdriver, int stage);
+  TaskStatus ConvertToADM(Driver *pdriver, int stage);
+  TaskStatus BoundaryRHS(Driver *pdriver, int stage);
   TaskStatus ExpRKUpdate(Driver *pdriver, int stage);
   TaskStatus NewTimeStep(Driver *pdriver, int stage);
 
@@ -92,6 +106,7 @@ class PcGh {
   struct Options {
     int spatial_order;
     int fd_stencil;
+    std::string gauge;
     Real kappa;
     Real dissipation;
   } opt;

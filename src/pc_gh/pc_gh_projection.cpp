@@ -66,8 +66,8 @@ void PcGh::ProjectAlgebraic(MeshBlockPack *pmbp) {
     for (int a = 0; a < 3; ++a) {
       for (int b = a; b < 3; ++b) {
         pc.gtilde(m, a, b, k, j, i) = scale*old_g(a, b);
-        pc.Atilde(m, a, b, k, j, i) = scale*(
-            pc.Atilde(m, a, b, k, j, i) - old_g(a, b)*trace_a/3.0);
+        pc.Atilde(m, a, b, k, j, i) =
+            pc.Atilde(m, a, b, k, j, i) - old_g(a, b)*trace_a/3.0;
         for (int d = 0; d < 3; ++d) {
           int const q = QIndex(d, a, b);
           state(m, q, k, j, i) = scale*(

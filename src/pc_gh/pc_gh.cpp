@@ -90,6 +90,13 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  opt.gauge = pin->GetOrAddString("pc_gh", "gauge", "harmonic");
+  if (opt.gauge != "harmonic") {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'
+              << "PC-GH gauge must currently be harmonic, but is " << opt.gauge
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.kappa = pin->GetOrAddReal("pc_gh", "kappa", 0.0);
   opt.dissipation = pin->GetOrAddReal("pc_gh", "dissipation", 0.0);
 

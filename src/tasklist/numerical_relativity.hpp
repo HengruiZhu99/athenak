@@ -21,6 +21,7 @@
 
 // Forward declarations
 namespace z4c {class Z4c;}
+namespace pc_gh {class PcGh;}
 namespace dyngr {class DynGRMHD;}
 class ADM;
 class Tmunu;
@@ -86,13 +87,31 @@ enum TaskName {
   Z4c_PT,
   Z4c_CCE,
   Z4c_DumpHorizon,
-  Z4c_NTASKS
+  Z4c_NTASKS,
+
+  PcGh_IRecv,
+  PcGh_CopyU,
+  PcGh_CalcRHS,
+  PcGh_BoundaryRHS,
+  PcGh_ExplRK,
+  PcGh_RestU,
+  PcGh_SendU,
+  PcGh_RecvU,
+  PcGh_BCS,
+  PcGh_Prolong,
+  PcGh_AlgC,
+  PcGh_ToADM,
+  PcGh_Newdt,
+  PcGh_ClearS,
+  PcGh_ClearR,
+  PcGh_NTASKS
 };
 
 enum PhysicsDependency {
   Phys_None,
   Phys_MHD,
-  Phys_Z4c
+  Phys_Z4c,
+  Phys_PcGh
 };
 
 enum TaskLocation {

@@ -13,6 +13,7 @@
 
 #include "numerical_relativity.hpp"
 #include "z4c/z4c.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 
 namespace numrel {
@@ -42,6 +43,8 @@ PhysicsDependency NumericalRelativity::NeedsPhysics(TaskName task) {
     return Phys_MHD;
   } else if (task < Z4c_NTASKS) {
     return Phys_Z4c;
+  } else if (task < PcGh_NTASKS) {
+    return Phys_PcGh;
   } else {
     return Phys_None;
   }
@@ -55,6 +58,8 @@ bool NumericalRelativity::DependencyAvailable(PhysicsDependency dep) {
       return pmy_pack->pdyngr != nullptr;
     case Phys_Z4c:
       return pmy_pack->pz4c != nullptr;
+    case Phys_PcGh:
+      return pmy_pack->ppcgh != nullptr;
     default:
       std::cout << "NumericalRelativity: Unknown dependency\n";
   }
@@ -160,6 +165,9 @@ void NumericalRelativity::AssembleNumericalRelativityTasks(
   }
   if (pmy_pack->pz4c != nullptr) {
     pmy_pack->pz4c->QueueZ4cTasks();
+  }
+  if (pmy_pack->ppcgh != nullptr) {
+    pmy_pack->ppcgh->QueuePcGhTasks();
   }
 
   bool success = AssembleNumericalRelativityTasks(tl["before_stagen"], start_queue);

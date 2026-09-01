@@ -580,6 +580,21 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
     (void) pz4c->Prolongate(this, 0);
   }
 
+  // Initialize PC-GH.
+  pc_gh::PcGh *ppcgh = pm->pmb_pack->ppcgh;
+  if (ppcgh != nullptr) {
+    (void) ppcgh->RestrictU(this, 0);
+    (void) ppcgh->InitRecv(this, -1);
+    (void) ppcgh->SendU(this, 0);
+    (void) ppcgh->ClearSend(this, -1);
+    (void) ppcgh->ClearRecv(this, -1);
+    (void) ppcgh->RecvU(this, 0);
+    (void) ppcgh->ApplyPhysicalBCs(this, 0);
+    (void) ppcgh->Prolongate(this, 0);
+    (void) ppcgh->EnforceAlgebraicConstraints(this, 0);
+    ppcgh->PcGhToADM(pm->pmb_pack);
+  }
+
   // Initialize HYDRO: ghost zones and primitive variables (everywhere)
   // includes communications for shearing box boundaries
   hydro::Hydro *phydro = pm->pmb_pack->phydro;
