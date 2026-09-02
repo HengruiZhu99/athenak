@@ -1,0 +1,60 @@
+{
+  "tmax": 6.0,
+  "constraint_convergence": {},
+  "finiteness": {},
+  "z4c_constraint_convergence": {
+    "C": {
+      "endpoint": {
+        "16": 0.02731629705827556,
+        "20": 0.026656831923591907,
+        "24": 0.026731887766534956
+      },
+      "observed_order": 0.0554053221632893
+    },
+    "H": {
+      "endpoint": {
+        "16": 0.012478558921597247,
+        "20": 0.012359515666820661,
+        "24": 0.012740169788442902
+      },
+      "observed_order": -0.047705833468937316
+    },
+    "M": {
+      "endpoint": {
+        "16": 0.004896482640698516,
+        "20": 0.0049595385476486785,
+        "24": 0.00523010894826529
+      },
+      "observed_order": -0.15869263158812125
+    },
+    "Z": {
+      "endpoint": {
+        "16": 0.0035689936075290504,
+        "20": 0.0021131911896860246,
+        "24": 0.0014525393852034042
+      },
+      "observed_order": 2.2219750294506397
+    },
+    "Theta": {
+      "endpoint": {
+        "16": 0.02270550261321977,
+        "20": 0.02270174854523858,
+        "24": 0.022726388772985325
+      },
+      "observed_order": -0.002156880085622986
+    }
+  },
+  "horizon": {},
+  "boundary_contamination_estimate": {
+    "assumed_fastest_coordinate_speed": 1.4142135623730951,
+    "boundary_to_r2_time": 4.242640687119285,
+    "boundary_to_initial_ah_time": 5.303300858899106,
+    "flag_before_t6": true,
+    "note": "Conservative 1+log lapse-speed estimate; the periodic mismatch exists at the boundary from t=0."
+  },
+  "products": [
+    "docs/figures/pc_gh_localization_20260902/z4c_control/z4c_constraint_evolution_N24.png",
+    "docs/figures/pc_gh_localization_20260902/z4c_control/z4c_constraint_convergence.png",
+    "docs/figures/pc_gh_localization_20260902/z4c_control/diagnostic_slices_z4c_N24.png"
+  ]
+}
