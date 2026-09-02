@@ -737,8 +737,10 @@ Their native chi-excised, physical-volume RMS endpoints were:
 
 Z converges at fitted order 2.22, while the aggregate, H, M, and Theta measures are
 approximately flat/nonmonotone. The exact-z=0 chi slices are smooth; there is no
-per-block normalization. Constraint slices show the expected refinement-interface and
-periodic-boundary truncation structures.
+per-block normalization. PC-GH's raw Cartesian interpolation has only a tiny
+puncture-crossing overshoot at t=0 (minimum between `-3.7e-6` and `-5.1e-6` across the
+suite); native cell-centered chi remains positive. Constraint slices show the expected
+refinement-interface and periodic-boundary truncation structures.
 
 The periodic mismatch is present at t=0. Using the conservative fastest coordinate
 speed `sqrt(2)`, a boundary signal can reach `r=2M` at approximately `4.24M` and the
