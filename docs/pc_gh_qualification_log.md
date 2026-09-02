@@ -7,6 +7,8 @@ does not by itself qualify the solver.  `PASS` below means only that the named b
 gate passed.  `OPEN` and `BLOCKED` are not silently replaced by weaker criteria.
 
 Latest moving-puncture implementation evidence source commit: `f5b334f0`.
+Latest SMR localization/horizon-adapter evidence source commit: `377a1edf`.
+Latest qualification analysis/figure commit: `668ee7bf`.
 Required baseline: `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 
 ## Reproducibility envelope
@@ -38,7 +40,7 @@ generator, table, source, and exact numbers below are the durable provenance rec
 | 6 stationary trumpet pointwise | PASS | continuum target, decomposed three-precision conditioning audit, maximum locations, and second-order RMS residual ladder pass on their stated punctured domains |
 | 7 stationary trumpet evolution | BLOCKED | Gauge A0 has a positive projected frozen mode; no derived nonperiodic diagnostic/characteristic outer BC also remains |
 | 8 perturbed trumpet | OPEN | waits on Gate 7 |
-| 9 Bowen-York to trumpet | FAILED | direct and switched moving-puncture gauges remain finite through `20M`, but GH/ADM endpoint norms grow with resolution; periodic uniform-box evidence is not qualification |
+| 9 Bowen-York to trumpet | FAILED | superseding M/16--M/24 SMR runs lose finiteness before `0.03M` in both gauges; matched Z4c reaches `6M` |
 | 10 Gauge A1 | FAILED | bounded feedback linearization cannot affect the positive invariant tangential trace-free Q subspace; no production implementation authorized |
 | 11 Gauge B | DEFERRED | no scaled driver derivation or combined symmetrizer yet |
 | 12 boosted puncture | BLOCKED | waits on the failed single-hole convergence gate; existing Z4c-only pgen is not an audited PC-GH initial-data path |
@@ -648,12 +650,158 @@ robust positive projected frozen mode whose invariant subspace is identified abo
 and only periodic physical boundaries exist.
 
 The new moving-puncture path is also stopped before perturbed/boosted/spinning/binary
-promotion. Both requested gauge variants completed the bounded `20M` discriminator,
-but neither passed the three-resolution constraint gate. A periodic finite box is not
-an acceptable production single-hole outer boundary. Do not tune KO, add unauthorized
-constraint damping, weaken norms, or treat survival as qualification.
+promotion. The apparent `20M` completions above were invalidated by the strict
+non-finite final diagnostic: `fmax` had hidden NaNs while the CFL calculation advanced
+with a spurious large timestep. The superseding SMR study below is the qualification
+evidence. A periodic finite box is not an acceptable production single-hole outer
+boundary. Do not tune KO, add unauthorized constraint damping, weaken norms, or treat
+survival as qualification.
 
-The single recommended next action is a bounded localization audit of the direct and
-switched `N=24/32` GH/ADM growth (radial profiles separating the puncture neighborhood
-from the periodic outer region) before changing the formulation or running new physical
-cases.
+The single recommended next action is to isolate the puncture-interior semidiscrete
+failure without changing the evolution equations, then decide explicitly whether an
+interior regularization or turduckening policy is in scope.
+
+## 2026-09-02 — M/16--M/24 SMR localization qualification
+
+This study supersedes the low-resolution uniform-box and M/32 one-puncture evidence
+above. No old run or M/32 result is included in the figures or classification here.
+The symbolic, wave, Minkowski, and robust-Minkowski gates retained their inexpensive
+resolutions. The sibling worktree branch starts from
+`090f6e238139de44f299d3b49621ad0e16b2cc8f`.
+
+### Mesh, transfer, and initial-data controls
+
+All black-hole cases used the periodic `[-8M,8M]^3` box and the same four physical
+static-refinement levels (232 MeshBlocks including the root and refined hierarchy).
+The root/MeshBlock pairs were `16^3/8^3`, `20^3/10^3`, and `24^3/12^3`; the exact-z=0
+Cartesian sampling grids were `64^2`, `80^2`, and `96^2`, and the even horizon dump
+grids were 34, 42, and 50. A zero-step full-volume output was read back before the
+evolutions:
+
+| target | MeshBlocks in output | measured finest spacing |
+|---|---:|---:|
+| M/16 | 232 | 0.0625 M |
+| M/20 | 232 | 0.0500 M |
+| M/24 | 232 | 0.0416666666667 M |
+
+`analysis/pc_gh_localization/measure_finest_spacing.py` performs this check from the
+stored MeshBlock geometry. The PC-GH run task list now follows the Z4c update,
+restriction, communication, boundary, prolongation, algebraic-projection, ADM, and
+timestep ordering and calls the same `RestrictCC(..., true)` and
+`ProlongateCC(..., true)` implementations.
+
+PC-GH and Z4c were initialized independently from the same unit-mass, time-symmetric
+wormhole data. `analysis/pc_gh_localization/compare_initial_data.py` compared their
+t=0 Cartesian ADM outputs: all six metric components and `psi4` agree to a maximum
+normalized absolute difference `1.47344e-8`, and all six extrinsic-curvature components
+agree exactly (zero). This is float-output roundoff, not a distinct initial-data set.
+
+### Commands and ordering
+
+The matched Z4c controls were completed first, then all direct `z4c_mp` cases, then all
+`z4c_mp_hyperbolic` cases. MPI rank counts were 8 or 10, never more than 12. The command
+pattern was:
+
+```bash
+mpirun -np "$RANKS" build-z4c-mpi-release/src/athena \
+  -i tst/inputs/z4c_one_puncture_control_smr.athinput \
+  mesh/nx1="$N" mesh/nx2="$N" mesh/nx3="$N" \
+  meshblock/nx1="$NB" meshblock/nx2="$NB" meshblock/nx3="$NB" \
+  z4c/horizon_0_Nx="$NAH" \
+  output2/numpoints_x="$NS" output2/numpoints_y="$NS" \
+  output3/numpoints_x="$NS" output3/numpoints_y="$NS"
+
+mpirun -np 8 build-mpi-release/src/athena \
+  -i tst/inputs/pc_gh_one_puncture_smr.athinput \
+  mesh/nx1="$N" mesh/nx2="$N" mesh/nx3="$N" \
+  meshblock/nx1="$NB" meshblock/nx2="$NB" meshblock/nx3="$NB" \
+  pc_gh/gauge="$GAUGE" pc_gh/horizon_0_Nx="$NAH" \
+  output1/dt=0.005 output2/dt=0.005 output3/dt=0.005 \
+  output2/numpoints_x="$NS" output2/numpoints_y="$NS" \
+  output3/numpoints_x="$NS" output3/numpoints_y="$NS"
+```
+
+Here `(N,NB,NS,NAH)` was `(16,8,64,34)`, `(20,10,80,42)`, or
+`(24,12,96,50)`. The input time limit remained `6M`.
+
+### Matched Z4c result
+
+All Z4c controls reached `t=6M`: 961, 1201, and 1441 cycles at M/16, M/20, and M/24.
+Their native chi-excised, physical-volume RMS endpoints were:
+
+| finest spacing | C | H | M | Z | Theta |
+|---|---:|---:|---:|---:|---:|
+| M/16 | 2.73163e-2 | 1.24786e-2 | 4.89648e-3 | 3.56899e-3 | 2.27055e-2 |
+| M/20 | 2.66568e-2 | 1.23595e-2 | 4.95954e-3 | 2.11319e-3 | 2.27017e-2 |
+| M/24 | 2.67319e-2 | 1.27402e-2 | 5.23011e-3 | 1.45254e-3 | 2.27264e-2 |
+
+Z converges at fitted order 2.22, while the aggregate, H, M, and Theta measures are
+approximately flat/nonmonotone. The exact-z=0 chi slices are smooth; there is no
+per-block normalization. Constraint slices show the expected refinement-interface and
+periodic-boundary truncation structures.
+
+The periodic mismatch is present at t=0. Using the conservative fastest coordinate
+speed `sqrt(2)`, a boundary signal can reach `r=2M` at approximately `4.24M` and the
+initial coordinate horizon radius `0.5M` at approximately `5.30M`, both before `6M`.
+Late Z4c behavior is therefore a control, not clean outer-boundary physics.
+
+### PC-GH result and localization
+
+Both PC-GH gauges failed the strict finite-state/finite-constraint diagnostic. The
+listed first-bad time is the first history sample containing any non-finite diagnostic;
+all later synthetic times caused by the corrupted CFL estimate are excluded.
+
+| gauge | finest spacing | last fully finite sample | first non-finite sample |
+|---|---|---:|---:|
+| `z4c_mp` | M/16 | 0.0216506 M | 0.0270633 M |
+| `z4c_mp` | M/20 | 0.0129904 M | 0.0173205 M |
+| `z4c_mp` | M/24 | 0.0108253 M | 0.0180422 M |
+| `z4c_mp_hyperbolic` | M/16 | 0.0216506 M | 0.0270633 M |
+| `z4c_mp_hyperbolic` | M/20 | 0.0129904 M | 0.0173205 M |
+| `z4c_mp_hyperbolic` | M/24 | 0.0108253 M | 0.0180422 M |
+
+At the common finite target `t=0.01M`, the two gauges agree to the displayed precision.
+Coordinate-volume RMS values for the chi mask and `r>2M` are:
+
+| spacing | GH chi / r>2 | ADM chi / r>2 | reduction chi / r>2 | curl chi / r>2 |
+|---|---:|---:|---:|---:|
+| M/16 | 2.1185e-4 / 2.1271e-4 | 2.3782e-2 / 2.3876e-2 | 4.0720e-3 / 4.0886e-3 | 5.8432e-4 / 5.7106e-4 |
+| M/20 | 2.3559e-4 / 2.3654e-4 | 2.6436e-2 / 2.6543e-2 | 3.6304e-3 / 3.6451e-3 | 5.1317e-4 / 5.0622e-4 |
+| M/24 | 2.5720e-4 / 2.5824e-4 | 2.8848e-2 / 2.8965e-2 | 3.3036e-3 / 3.3170e-3 | 4.6335e-4 / 4.5947e-4 |
+
+The full-domain coordinate RMS differs little from the chi/radial values before the
+failure (the largest effect is a 2--12% ADM reduction at each run's last finite sample).
+Thus the old large physical-volume norm was puncture-weight sensitive, but the clean
+coordinate-volume evidence does not show that all error is confined inside the mask.
+The direct Cartesian series stays smooth in chi through its last finite output; the
+first corrupted output begins near the puncture and the subsequent state becomes
+non-finite globally. A uniform fine-grid run and a CFL-0.02 run failed at the same
+physical time scale, so neither SMR transfer nor the CFL number explains the failure.
+
+Classification:
+
+```text
+SEMIDISCRETE / PRINCIPAL / REDUCTION ISSUE
+```
+
+This is a puncture-triggered semidiscrete concern, not an `EXTERIOR PC-GH EVOLUTION
+ROBUST` result. It occurs orders of magnitude before any causal outer-boundary return.
+The hyperbolic switch provides no measurable improvement before failure. No evolution
+equation, KO coefficient, damping, eta, projection frequency, or switch parameter was
+changed.
+
+### Horizon status and figures
+
+The generic horizon adapter successfully wrote the same reconstructed-ADM
+AHFinderDirect input packages for Z4c and PC-GH. This host has no Cactus/Einstein
+Toolkit/AHFinderDirect executable, so the dumps could not be converted into area,
+areal-radius, irreducible-mass, centroid, shape, residual, or iteration histories.
+Moreover, PC-GH fails before the first scheduled `0.5M` follow-up dump. Horizon-property
+drift and a true dynamic outside-AH mask therefore remain unmeasured; the online `ah`
+history label is only the documented conservative spherical `r>0.5M+buffer` proxy.
+
+Committed figures and machine-readable summaries are under
+`docs/figures/pc_gh_localization_20260902/`. They include Z4c `t=6M` evolution,
+three-resolution convergence and Cartesian slices, plus PC-GH pre-failure convergence,
+localization, finiteness-window, and Cartesian-slice plots. No obsolete low-resolution
+or M/32 data appear in them.
