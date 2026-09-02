@@ -23,6 +23,7 @@
 #include "pc_gh/pc_gh.hpp"
 #include "z4c/z4c.hpp"
 #include "coordinates/adm.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "outputs.hpp"
 
 //----------------------------------------------------------------------------------------
@@ -261,7 +262,9 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 //! \brief Compute volume-weighted squared PC-GH diagnostic norms on this rank.
 
 void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
-  pdata->nhist = 20;
+  // The canonical columns are the primary chi-masked coordinate-volume sums.
+  // Full-domain coordinate-volume sums remain available with the all-* prefix.
+  pdata->nhist = 96;
   pdata->label[0] = "Cperp-n2";
   pdata->label[1] = "Z-norm2";
   pdata->label[2] = "H-norm2";
@@ -283,8 +286,29 @@ void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
   pdata->label[18] = "rhs-norm2";
   pdata->label[19] = "Volume";
 
+  char const * const full_labels[20] = {
+    "all-Cp2", "all-Z2", "all-H2", "all-M2",
+    "all-rX2", "all-rQ2", "all-rY2", "all-rB2",
+    "all-cX2", "all-cQ2", "all-cY2", "all-cB2",
+    "all-det2", "all-trA2", "all-trQ2", "all-prj2",
+    "all-W2", "all-L2", "all-rhs2", "all-Vol",
+  };
+  for (int n = 0; n < 20; ++n) pdata->label[20 + n] = full_labels[n];
+
+  char const * const local_names[14] = {
+    "Cp2", "Z2", "H2", "M2", "rX2", "rQ2", "rY2", "rB2",
+    "cX2", "cQ2", "cY2", "cB2", "alg2", "Vol",
+  };
+  char const * const region_names[4] = {"r05", "r1", "r2", "ah"};
+  for (int region = 0; region < 4; ++region) {
+    for (int quantity = 0; quantity < 14; ++quantity) {
+      pdata->label[40 + 14*region + quantity] =
+          std::string(region_names[region]) + "-" + local_names[quantity];
+    }
+  }
+
   auto &con = pm->pmb_pack->ppcgh->u_con;
-  auto &adm_vars = pm->pmb_pack->padm->adm;
+  auto &state = pm->pmb_pack->ppcgh->u0;
   auto &size = pm->pmb_pack->pmb->mb_size;
   auto &indcs = pm->pmb_pack->pmesh->mb_indcs;
   int const is = indcs.is;
@@ -296,6 +320,15 @@ void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
   int const nkji = nx3*nx2*nx1;
   int const nji = nx2*nx1;
   int const nmkji = pm->pmb_pack->nmb_thispack*nkji;
+  Real const center_x = pm->pmb_pack->ppcgh->opt.gauge_center[0];
+  Real const center_y = pm->pmb_pack->ppcgh->opt.gauge_center[1];
+  Real const center_z = pm->pmb_pack->ppcgh->opt.gauge_center[2];
+  Real const mass = pm->pmb_pack->ppcgh->opt.gauge_mass;
+  Real const excise_chi = pm->pmb_pack->ppcgh->opt.constraint_excise_chi;
+  bool const exterior_horizon =
+      pm->pmb_pack->ppcgh->opt.constraint_exterior_horizon;
+  Real const horizon_cut = pm->pmb_pack->ppcgh->opt.constraint_horizon_radius
+                           + pm->pmb_pack->ppcgh->opt.constraint_horizon_buffer;
 
   array_sum::GlobalSum sum_this_rank;
   Kokkos::parallel_reduce("PC-GH history sums",
@@ -308,38 +341,73 @@ void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
     int const k = k0 + ks;
     int const j = j0 + js;
     int const i = i0 + is;
-    Real const det_gamma = adm::SpatialDet(
-        adm_vars.g_dd(m, 0, 0, k, j, i), adm_vars.g_dd(m, 0, 1, k, j, i),
-        adm_vars.g_dd(m, 0, 2, k, j, i), adm_vars.g_dd(m, 1, 1, k, j, i),
-        adm_vars.g_dd(m, 1, 2, k, j, i), adm_vars.g_dd(m, 2, 2, k, j, i));
-    Real const vol = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3
-                     *std::sqrt(std::abs(det_gamma));
+    Real const coordinate_volume = size.d_view(m).dx1*size.d_view(m).dx2
+                                   *size.d_view(m).dx3;
+    Real const x = CellCenterX(i0, nx1, size.d_view(m).x1min,
+                               size.d_view(m).x1max) - center_x;
+    Real const y = CellCenterX(j0, nx2, size.d_view(m).x2min,
+                               size.d_view(m).x2max) - center_y;
+    Real const z = CellCenterX(k0, nx3, size.d_view(m).x3min,
+                               size.d_view(m).x3max) - center_z;
+    Real const radius = std::sqrt(x*x + y*y + z*z);
+    bool const include_primary = state(m, pc_gh::PcGh::I_CHI, k, j, i)
+                                 >= excise_chi;
+    bool const include_region[4] = {
+      radius > 0.5*mass,
+      radius > mass,
+      radius > 2.0*mass,
+      exterior_horizon && radius > horizon_cut,
+    };
+
+    Real values[19];
+    values[0] = SQR(con(m, pc_gh::PcGh::I_CON_CPERP, k, j, i));
+    values[1] = SQR(con(m, pc_gh::PcGh::I_CON_ZX, k, j, i))
+                + SQR(con(m, pc_gh::PcGh::I_CON_ZY, k, j, i))
+                + SQR(con(m, pc_gh::PcGh::I_CON_ZZ, k, j, i));
+    values[2] = SQR(con(m, pc_gh::PcGh::I_CON_H, k, j, i));
+    values[3] = SQR(con(m, pc_gh::PcGh::I_CON_MX, k, j, i))
+                + SQR(con(m, pc_gh::PcGh::I_CON_MY, k, j, i))
+                + SQR(con(m, pc_gh::PcGh::I_CON_MZ, k, j, i));
+    values[4] = SQR(con(m, pc_gh::PcGh::I_CON_RED_X, k, j, i));
+    values[5] = SQR(con(m, pc_gh::PcGh::I_CON_RED_Q, k, j, i));
+    values[6] = SQR(con(m, pc_gh::PcGh::I_CON_RED_Y, k, j, i));
+    values[7] = SQR(con(m, pc_gh::PcGh::I_CON_RED_B, k, j, i));
+    values[8] = SQR(con(m, pc_gh::PcGh::I_CON_CURL_X, k, j, i));
+    values[9] = SQR(con(m, pc_gh::PcGh::I_CON_CURL_Q, k, j, i));
+    values[10] = SQR(con(m, pc_gh::PcGh::I_CON_CURL_Y, k, j, i));
+    values[11] = SQR(con(m, pc_gh::PcGh::I_CON_CURL_B, k, j, i));
+    values[12] = SQR(con(m, pc_gh::PcGh::I_CON_DETG, k, j, i));
+    values[13] = SQR(con(m, pc_gh::PcGh::I_CON_TRA, k, j, i));
+    values[14] = SQR(con(m, pc_gh::PcGh::I_CON_TRQ, k, j, i));
+    values[15] = SQR(con(m, pc_gh::PcGh::I_CON_PROJECTION, k, j, i));
+    values[16] = SQR(con(m, pc_gh::PcGh::I_CON_W, k, j, i));
+    values[17] = SQR(con(m, pc_gh::PcGh::I_CON_L, k, j, i));
+    values[18] = SQR(con(m, pc_gh::PcGh::I_CON_RHS_PRIMARY, k, j, i))
+                 + SQR(con(m, pc_gh::PcGh::I_CON_RHS_GRADIENT, k, j, i));
+
     array_sum::GlobalSum h;
-    h.the_array[0] = vol*SQR(con(m, pc_gh::PcGh::I_CON_CPERP, k, j, i));
-    h.the_array[1] = vol*(SQR(con(m, pc_gh::PcGh::I_CON_ZX, k, j, i))
-                         + SQR(con(m, pc_gh::PcGh::I_CON_ZY, k, j, i))
-                         + SQR(con(m, pc_gh::PcGh::I_CON_ZZ, k, j, i)));
-    h.the_array[2] = vol*SQR(con(m, pc_gh::PcGh::I_CON_H, k, j, i));
-    h.the_array[3] = vol*(SQR(con(m, pc_gh::PcGh::I_CON_MX, k, j, i))
-                         + SQR(con(m, pc_gh::PcGh::I_CON_MY, k, j, i))
-                         + SQR(con(m, pc_gh::PcGh::I_CON_MZ, k, j, i)));
-    h.the_array[4] = vol*SQR(con(m, pc_gh::PcGh::I_CON_RED_X, k, j, i));
-    h.the_array[5] = vol*SQR(con(m, pc_gh::PcGh::I_CON_RED_Q, k, j, i));
-    h.the_array[6] = vol*SQR(con(m, pc_gh::PcGh::I_CON_RED_Y, k, j, i));
-    h.the_array[7] = vol*SQR(con(m, pc_gh::PcGh::I_CON_RED_B, k, j, i));
-    h.the_array[8] = vol*SQR(con(m, pc_gh::PcGh::I_CON_CURL_X, k, j, i));
-    h.the_array[9] = vol*SQR(con(m, pc_gh::PcGh::I_CON_CURL_Q, k, j, i));
-    h.the_array[10] = vol*SQR(con(m, pc_gh::PcGh::I_CON_CURL_Y, k, j, i));
-    h.the_array[11] = vol*SQR(con(m, pc_gh::PcGh::I_CON_CURL_B, k, j, i));
-    h.the_array[12] = vol*SQR(con(m, pc_gh::PcGh::I_CON_DETG, k, j, i));
-    h.the_array[13] = vol*SQR(con(m, pc_gh::PcGh::I_CON_TRA, k, j, i));
-    h.the_array[14] = vol*SQR(con(m, pc_gh::PcGh::I_CON_TRQ, k, j, i));
-    h.the_array[15] = vol*SQR(con(m, pc_gh::PcGh::I_CON_PROJECTION, k, j, i));
-    h.the_array[16] = vol*SQR(con(m, pc_gh::PcGh::I_CON_W, k, j, i));
-    h.the_array[17] = vol*SQR(con(m, pc_gh::PcGh::I_CON_L, k, j, i));
-    h.the_array[18] = vol*(SQR(con(m, pc_gh::PcGh::I_CON_RHS_PRIMARY, k, j, i))
-                          + SQR(con(m, pc_gh::PcGh::I_CON_RHS_GRADIENT, k, j, i)));
-    h.the_array[19] = vol;
+    for (int quantity = 0; quantity < 19; ++quantity) {
+      h.the_array[quantity] = include_primary
+          ? coordinate_volume*values[quantity] : 0.0;
+      h.the_array[20 + quantity] = coordinate_volume*values[quantity];
+    }
+    h.the_array[19] = include_primary ? coordinate_volume : 0.0;
+    h.the_array[39] = coordinate_volume;
+
+    Real const localized_values[13] = {
+      values[0], values[1], values[2], values[3],
+      values[4], values[5], values[6], values[7],
+      values[8], values[9], values[10], values[11],
+      values[12] + values[13] + values[14] + values[15],
+    };
+    for (int region = 0; region < 4; ++region) {
+      int const base = 40 + 14*region;
+      for (int quantity = 0; quantity < 13; ++quantity) {
+        h.the_array[base + quantity] = include_region[region]
+            ? coordinate_volume*localized_values[quantity] : 0.0;
+      }
+      h.the_array[base + 13] = include_region[region] ? coordinate_volume : 0.0;
+    }
     sum += h;
   }, Kokkos::Sum<array_sum::GlobalSum>(sum_this_rank));
 

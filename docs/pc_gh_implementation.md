@@ -189,9 +189,22 @@ was not imported into this branch.  The custom pgen has therefore not been built
 advertised as PC-GH-capable here.
 
 State communication, restriction/prolongation, load-balance migration, restart, tab
-output, and history registration operate on the explicit 55-field array.  Their
-presence is plumbing evidence only: AMR reduction/curl injection, MPI execution, and
-GPU backends remain unqualified.
+output, and history registration operate on the explicit 55-field array.  The PC-GH
+run task list deliberately follows the Z4c ordering: update, conservative cell-centered
+restriction, communication and physical boundaries, cell-centered prolongation,
+algebraic projection, ADM reconstruction, and timestep selection.  It calls the same
+`RestrictCC(..., true)` and `ProlongateCC(..., true)` paths as Z4c rather than defining
+formulation-specific multilevel transfer.  Their presence is plumbing evidence only:
+AMR reduction/curl injection, MPI execution, and GPU backends remain unqualified.
+
+One-puncture qualification history adds coordinate-volume RMS accumulators for the
+full domain, `chi>=0.0625`, and fixed radial exteriors `r>0.5M`, `r>M`, and `r>2M`.
+The `ah` history label is a conservative spherical coordinate-radius enclosure plus a
+configured buffer; it is not a surface integral and must not be presented as a dynamic
+apparent-horizon mask.  Horizon dumps reuse the Z4c ADM interpolation adapter after
+PC-GH-to-ADM reconstruction.  Apparent-horizon area, mass, shape, and solver residuals
+remain outputs of the external AHFinderDirect executable, not quantities inferred by
+AthenaK from the dump itself.
 
 ## Deliberate fail-closed limits
 

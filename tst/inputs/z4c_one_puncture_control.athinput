@@ -50,6 +50,16 @@ shift_advect = 1.0
 shift_alpha2Gamma = 0.0
 shift_H = 0.0
 shift_eta = 2.0
+co_0_type = BH
+co_0_x = 0.0
+co_0_y = 0.0
+co_0_z = 0.0
+dump_horizon_0 = true
+co_0_dump_radius = 2.0
+horizon_0_Nx = 10
+horizon_0_rn = 6
+horizon0r_guess = 0.5
+horizon_dt = 0.25
 
 <problem>
 pgen_name = z4c_one_puncture
@@ -61,3 +71,15 @@ punc_center_x3 = 0.0
 <output1>
 file_type = hst
 dt = 0.025
+
+<output2>
+file_type = bin
+variable = con
+slice_x3 = 0.0
+dt = 0.5
+
+<output3>
+file_type = bin
+variable = z4c
+slice_x3 = 0.0
+dt = 0.5

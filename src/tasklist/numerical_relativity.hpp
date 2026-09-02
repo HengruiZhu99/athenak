@@ -105,6 +105,7 @@ enum TaskName {
   PcGh_Newdt,
   PcGh_ClearS,
   PcGh_ClearR,
+  PcGh_DumpHorizon,
   PcGh_NTASKS
 };
 

@@ -21,33 +21,36 @@
 #include <mpi.h>
 #endif
 
-#include "horizon_dump.hpp"
+#include "utils/horizon_dump.hpp"
 #include "athena.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "utils/cart_grid.hpp"
 #include "coordinates/adm.hpp"
-#include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
 
 //----------------------------------------------------------------------------------------
-HorizonDump::HorizonDump(MeshBlockPack *pmbp, ParameterInput *pin, int n, int is_common):
+HorizonDump::HorizonDump(MeshBlockPack *pmbp, ParameterInput *pin, int n, int is_common,
+                         const std::string &parameter_block, bool use_adm_gauge):
               common_horizon{is_common}, pos{NAN, NAN, NAN},
-              pmbp{pmbp}, horizon_ind{n}, horizon_last_output_time{0.0} {
+              pmbp{pmbp}, horizon_ind{n}, horizon_last_output_time{0.0},
+              gauge_from_adm{use_adm_gauge} {
   std::string nstr = std::to_string(n);
 
-  pos[0] = pin->GetOrAddReal("z4c", "co_" + nstr + "_x", 0.0);
-  pos[1] = pin->GetOrAddReal("z4c", "co_" + nstr + "_y", 0.0);
-  pos[2] = pin->GetOrAddReal("z4c", "co_" + nstr + "_z", 0.0);
+  pos[0] = pin->GetOrAddReal(parameter_block, "co_" + nstr + "_x", 0.0);
+  pos[1] = pin->GetOrAddReal(parameter_block, "co_" + nstr + "_y", 0.0);
+  pos[2] = pin->GetOrAddReal(parameter_block, "co_" + nstr + "_z", 0.0);
 
-  horizon_extent = pin->GetOrAddReal("z4c", "co_" + nstr + "_dump_radius", 2.0);
-  horizon_nx = pin->GetOrAddInteger("z4c", "horizon_"
+  horizon_extent = pin->GetOrAddReal(parameter_block,
+                              "co_" + nstr + "_dump_radius", 2.0);
+  horizon_nx = pin->GetOrAddInteger(parameter_block, "horizon_"
                               + nstr+"_Nx",10);
-  horizon_dt = pin->GetOrAddReal("z4c", "horizon_dt", 1.0);
-  r_guess = pin->GetOrAddReal("z4c", "horizon" + nstr + "r_guess", 0.5);
-  is_cheb = pin->GetOrAddBoolean("z4c", "co_" + nstr + "_dump_cheb", false);
-  regularize_order = pin->GetOrAddInteger("z4c", "horizon_"
+  horizon_dt = pin->GetOrAddReal(parameter_block, "horizon_dt", 1.0);
+  r_guess = pin->GetOrAddReal(parameter_block, "horizon" + nstr + "r_guess", 0.5);
+  is_cheb = pin->GetOrAddBoolean(parameter_block,
+                                 "co_" + nstr + "_dump_cheb", false);
+  regularize_order = pin->GetOrAddInteger(parameter_block, "horizon_"
                               + nstr+"_rn",6);
   output_count = 0;
 
@@ -59,22 +62,16 @@ HorizonDump::HorizonDump(MeshBlockPack *pmbp, ParameterInput *pin, int n, int is
   // The order is alpha, betax, betay, betaz,
   // gxx, gxy, gxz, gyy, gyz, gzz
   // Kxx, Kxy, Kxz, Kyy, Kyz, Kzz
-  variable_to_dump.push_back(std::make_pair(pmbp->pz4c->I_Z4C_ALPHA, true));
-  variable_to_dump.push_back(std::make_pair(pmbp->pz4c->I_Z4C_BETAX, true));
-  variable_to_dump.push_back(std::make_pair(pmbp->pz4c->I_Z4C_BETAY, true));
-  variable_to_dump.push_back(std::make_pair(pmbp->pz4c->I_Z4C_BETAZ, true));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_GXX, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_GXY, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_GXZ, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_GYY, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_GYZ, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_GZZ, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_KXX, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_KXY, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_KXZ, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_KYY, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_KYZ, false));
-  variable_to_dump.push_back(std::make_pair(pmbp->padm->I_ADM_KZZ, false));
+  variable_to_dump = {
+    gauge_from_adm ? adm::ADM::I_ADM_ALPHA : z4c::Z4c::I_Z4C_ALPHA,
+    gauge_from_adm ? adm::ADM::I_ADM_BETAX : z4c::Z4c::I_Z4C_BETAX,
+    gauge_from_adm ? adm::ADM::I_ADM_BETAY : z4c::Z4c::I_Z4C_BETAY,
+    gauge_from_adm ? adm::ADM::I_ADM_BETAZ : z4c::Z4c::I_Z4C_BETAZ,
+    adm::ADM::I_ADM_GXX, adm::ADM::I_ADM_GXY, adm::ADM::I_ADM_GXZ,
+    adm::ADM::I_ADM_GYY, adm::ADM::I_ADM_GYZ, adm::ADM::I_ADM_GZZ,
+    adm::ADM::I_ADM_KXX, adm::ADM::I_ADM_KXY, adm::ADM::I_ADM_KXZ,
+    adm::ADM::I_ADM_KYY, adm::ADM::I_ADM_KYZ, adm::ADM::I_ADM_KZZ,
+  };
 }
 
 //----------------------------------------------------------------------------------------
@@ -82,7 +79,7 @@ HorizonDump::~HorizonDump() {
   delete pcat_grid;
 }
 
-void HorizonDump::SetGridAndInterpolate(Real center[NDIM]) {
+void HorizonDump::SetGridAndInterpolate(Real center[3]) {
   // update center location
   pos[0] = center[0];
   pos[1] = center[1];
@@ -101,10 +98,10 @@ void HorizonDump::SetGridAndInterpolate(Real center[NDIM]) {
 
   for(int nvar=0; nvar<16; nvar++) {
     // Interpolate here
-    if (variable_to_dump[nvar].second) {
-      pcat_grid->InterpolateToGrid(variable_to_dump[nvar].first,pmbp->pz4c->u0);
+    if (nvar < 4 && !gauge_from_adm) {
+      pcat_grid->InterpolateToGrid(variable_to_dump[nvar], pmbp->pz4c->u0);
     } else {
-      pcat_grid->InterpolateToGrid(variable_to_dump[nvar].first,pmbp->padm->u_adm);
+      pcat_grid->InterpolateToGrid(variable_to_dump[nvar], pmbp->padm->u_adm);
     }
     for (int nx = 0; nx < horizon_nx; nx ++)
     for (int ny = 0; ny < horizon_nx; ny ++)
@@ -129,7 +126,9 @@ void HorizonDump::SetGridAndInterpolate(Real center[NDIM]) {
   #endif
   // Then write output file
   // Open the file in binary write mode
-  std::string foldername = "horizon_"+std::to_string(horizon_ind)
+  std::string const horizon_folder = "horizon_" + std::to_string(horizon_ind);
+  mkdir(horizon_folder.c_str(), 0775);
+  std::string foldername = horizon_folder
                         +"/output_"+std::to_string(output_count);
   mkdir(foldername.c_str(),0775);
 
@@ -153,9 +152,8 @@ void HorizonDump::SetGridAndInterpolate(Real center[NDIM]) {
     // Write input script for Einstein Toolkit
     ETK_setup_parfile();
     output_count++;
-    // delete dataout
-    delete[] data_out;
   }
+  delete[] data_out;
 }
 
 void HorizonDump::ETK_setup_parfile() {

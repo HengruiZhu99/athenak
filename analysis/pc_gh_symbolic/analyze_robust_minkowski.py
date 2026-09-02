@@ -31,8 +31,14 @@ def read_history(path: Path) -> list[dict[str, float]]:
     lines = path.read_text(encoding="utf-8").splitlines()
     if len(lines) < 5 or "Athena++ history data" not in lines[0]:
         raise AssertionError(f"{path}: malformed history file")
-    rows = [dict(zip(HISTORY_NAMES, map(float, line.split()), strict=True))
-            for line in lines[2:] if line.strip()]
+    numeric_rows = [[float(value) for value in line.split()]
+                    for line in lines[2:] if line.strip()]
+    if any(len(row) < len(HISTORY_NAMES) for row in numeric_rows):
+        raise AssertionError(f"{path}: truncated history row")
+    # Additional localization columns are deliberately ignored by this established
+    # robust-Minkowski gate; its original canonical columns remain first in the ABI.
+    rows = [dict(zip(HISTORY_NAMES, row[:len(HISTORY_NAMES)], strict=True))
+            for row in numeric_rows]
     if len(rows) < 5 or rows[0]["time"] != 0.0:
         raise AssertionError(f"{path}: history must include t=0 and at least five samples")
     if any(row["Volume"] <= 0.0 for row in rows):

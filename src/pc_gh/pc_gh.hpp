@@ -10,7 +10,9 @@
 //! \brief puncture-conformal first-order generalized-harmonic state and interfaces
 
 #include <cmath>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include "athena.hpp"
 #include "athena_tensor.hpp"
@@ -19,6 +21,7 @@
 
 class MeshBlockPack;
 class Driver;
+class HorizonDump;
 
 namespace pc_gh {
 
@@ -232,6 +235,7 @@ class PcGh {
   TaskStatus BoundaryRHS(Driver *pdriver, int stage);
   TaskStatus ExpRKUpdate(Driver *pdriver, int stage);
   TaskStatus NewTimeStep(Driver *pdriver, int stage);
+  TaskStatus DumpHorizons(Driver *pdriver, int stage);
 
   struct Variables {
     AthenaTensor<Real, TensorSymm::NONE, 3, 0> chi;
@@ -258,6 +262,10 @@ class PcGh {
     Real shift_switch_z1;
     Real kappa;
     Real dissipation;
+    Real constraint_excise_chi;
+    bool constraint_exterior_horizon;
+    Real constraint_horizon_radius;
+    Real constraint_horizon_buffer;
   } opt;
 
   DvceArray5D<Real> u0;
@@ -272,6 +280,7 @@ class PcGh {
   Variables u;
   Variables rhs;
   MeshBoundaryValuesCC *pbval_u;
+  std::vector<std::unique_ptr<HorizonDump>> phorizon_dump;
   Real dtnew;
 
  private:

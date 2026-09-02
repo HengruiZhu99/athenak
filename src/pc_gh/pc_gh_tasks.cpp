@@ -17,6 +17,7 @@
 #include "mesh/meshblock_pack.hpp"
 #include "pc_gh/pc_gh.hpp"
 #include "tasklist/numerical_relativity.hpp"
+#include "utils/horizon_dump.hpp"
 
 namespace pc_gh {
 
@@ -64,28 +65,30 @@ void PcGh::QueuePcGhTasks() {
                  Task_Run, {PcGh_Prolong});
   pnr->QueueTask(&PcGh::ConvertToADM, this, PcGh_ToADM, "PcGh_ToADM", Task_Run,
                  {PcGh_AlgC});
-  switch (opt.fd_stencil) {
-    case 2:
-      pnr->QueueTask(&PcGh::CalcConstraints<2>, this, PcGh_Constraints,
-                     "PcGh_Constraints", Task_Run, {PcGh_ToADM});
-      break;
-    case 3:
-      pnr->QueueTask(&PcGh::CalcConstraints<3>, this, PcGh_Constraints,
-                     "PcGh_Constraints", Task_Run, {PcGh_ToADM});
-      break;
-    case 4:
-      pnr->QueueTask(&PcGh::CalcConstraints<4>, this, PcGh_Constraints,
-                     "PcGh_Constraints", Task_Run, {PcGh_ToADM});
-      break;
-    default:
-      std::abort();
-  }
   pnr->QueueTask(&PcGh::NewTimeStep, this, PcGh_Newdt, "PcGh_Newdt", Task_Run,
-                 {PcGh_Constraints});
+                 {PcGh_ToADM});
 
   pnr->QueueTask(&PcGh::ClearSend, this, PcGh_ClearS, "PcGh_ClearS", Task_End);
   pnr->QueueTask(&PcGh::ClearRecv, this, PcGh_ClearR, "PcGh_ClearR", Task_End,
                  {PcGh_ClearS});
+  switch (opt.fd_stencil) {
+    case 2:
+      pnr->QueueTask(&PcGh::CalcConstraints<2>, this, PcGh_Constraints,
+                     "PcGh_Constraints", Task_End, {PcGh_ClearR});
+      break;
+    case 3:
+      pnr->QueueTask(&PcGh::CalcConstraints<3>, this, PcGh_Constraints,
+                     "PcGh_Constraints", Task_End, {PcGh_ClearR});
+      break;
+    case 4:
+      pnr->QueueTask(&PcGh::CalcConstraints<4>, this, PcGh_Constraints,
+                     "PcGh_Constraints", Task_End, {PcGh_ClearR});
+      break;
+    default:
+      std::abort();
+  }
+  pnr->QueueTask(&PcGh::DumpHorizons, this, PcGh_DumpHorizon,
+                 "PcGh_DumpHorizon", Task_End, {PcGh_Constraints});
 }
 
 TaskStatus PcGh::InitRecv(Driver *, int) {
@@ -145,6 +148,23 @@ TaskStatus PcGh::EnforceAlgebraicConstraints(Driver *, int) {
 
 TaskStatus PcGh::ConvertToADM(Driver *pdriver, int stage) {
   if (stage == pdriver->nexp_stages) PcGhToADM(pmy_pack);
+  return TaskStatus::complete;
+}
+
+TaskStatus PcGh::DumpHorizons(Driver *pdriver, int stage) {
+  if (phorizon_dump.empty() || stage != pdriver->nexp_stages) {
+    return TaskStatus::complete;
+  }
+  float const time_32 = static_cast<float>(pmy_pack->pmesh->time);
+  float const next_32 = static_cast<float>(
+      phorizon_dump.front()->horizon_last_output_time
+      + phorizon_dump.front()->horizon_dt);
+  if (time_32 >= next_32 || time_32 == 0.0F) {
+    for (auto &dump : phorizon_dump) {
+      dump->horizon_last_output_time = time_32;
+      dump->SetGridAndInterpolate(dump->pos);
+    }
+  }
   return TaskStatus::complete;
 }
 

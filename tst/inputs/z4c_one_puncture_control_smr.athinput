@@ -1,0 +1,145 @@
+# Static-mesh-refinement Z4c one-puncture control matched to the PC-GH hierarchy.
+# For R=20 or 24, override each mesh/nx value with R and each meshblock/nx value
+# with R/2, preserving the same 232-block hierarchy and giving Delta x_min=M/R.
+
+<job>
+basename = z4c_one_puncture_control_smr_r16
+
+<mesh>
+nghost = 2
+nx1 = 16
+x1min = -8.0
+x1max = 8.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 16
+x2min = -8.0
+x2max = 8.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 16
+x3min = -8.0
+x3max = 8.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<mesh_refinement>
+refinement = static
+max_nmb_per_rank = 4096
+
+<refined_region1>
+level = 1
+x1min = -3.999999
+x1max = 3.999999
+x2min = -3.999999
+x2max = 3.999999
+x3min = -3.999999
+x3max = 3.999999
+
+<refined_region2>
+level = 2
+x1min = -1.999999
+x1max = 1.999999
+x2min = -1.999999
+x2max = 1.999999
+x3min = -1.999999
+x3max = 1.999999
+
+<refined_region3>
+level = 3
+x1min = -0.999999
+x1max = 0.999999
+x2min = -0.999999
+x2max = 0.999999
+x3min = -0.999999
+x3max = 0.999999
+
+<refined_region4>
+level = 4
+x1min = -0.999999
+x1max = 0.999999
+x2min = -0.999999
+x2max = 0.999999
+x3min = -0.999999
+x3max = 0.999999
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = -1
+tlim = 6.0
+ndiag = 20
+
+<z4c>
+spatial_order = 2
+diss = 1.0
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+lapse_harmonicf = 1.0
+lapse_harmonic = 0.0
+lapse_oplog = 2.0
+lapse_advect = 1.0
+slow_start_lapse = false
+telegraph_lapse = false
+shift_Gamma = 1.0
+shift_advect = 1.0
+shift_alpha2Gamma = 0.0
+shift_H = 0.0
+shift_eta = 2.0
+co_0_type = BH
+co_0_x = 0.0
+co_0_y = 0.0
+co_0_z = 0.0
+dump_horizon_0 = true
+co_0_dump_radius = 1.0
+horizon_0_Nx = 34
+horizon_0_rn = 6
+horizon0r_guess = 0.5
+horizon_dt = 0.5
+
+<problem>
+pgen_name = z4c_one_puncture
+punc_ADM_mass = 1.0
+punc_center_x1 = 0.0
+punc_center_x2 = 0.0
+punc_center_x3 = 0.0
+
+<output1>
+file_type = hst
+dt = 0.025
+
+<output2>
+file_type = cart
+id = z4c_con_slice
+variable = con
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+extent_x = 2.0
+extent_y = 2.0
+extent_z = 0.0
+numpoints_x = 64
+numpoints_y = 64
+numpoints_z = 2
+dt = 0.5
+
+<output3>
+file_type = cart
+id = z4c_slice
+variable = z4c
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+extent_x = 2.0
+extent_y = 2.0
+extent_z = 0.0
+numpoints_x = 64
+numpoints_y = 64
+numpoints_z = 2
+dt = 0.5

@@ -24,6 +24,7 @@
 #include "mesh/meshblock_pack.hpp"
 #include "parameter_input.hpp"
 #include "pc_gh/pc_gh.hpp"
+#include "utils/horizon_dump.hpp"
 
 namespace pc_gh {
 
@@ -167,8 +168,36 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   opt.dissipation = ko_amplitude*std::pow(2.0, -2.0*opt.fd_stencil)
       *((opt.fd_stencil % 2 == 0) ? -1.0 : 1.0);
 
+  opt.constraint_excise_chi = pin->GetOrAddReal(
+      "pc_gh", "constraint_excise_chi", 0.0625);
+  opt.constraint_exterior_horizon = pin->GetOrAddBoolean(
+      "pc_gh", "constraint_exterior_horizon", false);
+  opt.constraint_horizon_radius = pin->GetOrAddReal(
+      "pc_gh", "constraint_horizon_radius", 0.5*opt.gauge_mass);
+  opt.constraint_horizon_buffer = pin->GetOrAddReal(
+      "pc_gh", "constraint_horizon_buffer", 0.0);
+  if (!(std::isfinite(opt.constraint_excise_chi)
+        && opt.constraint_excise_chi >= 0.0
+        && std::isfinite(opt.constraint_horizon_radius)
+        && opt.constraint_horizon_radius > 0.0
+        && std::isfinite(opt.constraint_horizon_buffer)
+        && opt.constraint_horizon_buffer >= 0.0)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'
+              << "PC-GH constraint mask thresholds must be finite and nonnegative, "
+              << "with a positive constraint_horizon_radius" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
   pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
   pbval_u->InitializeBuffers(npcgh);
+
+  int horizon_index = 0;
+  while (pin->GetOrAddBoolean(
+      "pc_gh", "dump_horizon_" + std::to_string(horizon_index), false)) {
+    phorizon_dump.push_back(std::make_unique<HorizonDump>(
+        pmy_pack, pin, horizon_index, 0, "pc_gh", true));
+    ++horizon_index;
+  }
 }
 
 void PcGh::LoadGaugeA0Table() {

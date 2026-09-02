@@ -1,0 +1,149 @@
+# Static-mesh-refinement PC-GH one-puncture qualification run.
+#
+# The root mesh has 16 zones across [-8M,8M] and four factor-two nested levels,
+# giving Delta x_min=M/16 in the central box.  For R=20 or 24, override each
+# mesh/nx value with R and each meshblock/nx value with R/2.  This preserves the
+# exact same 232-block hierarchy while obtaining Delta x_min=M/R.
+
+<job>
+basename = pc_gh_one_puncture_smr_r16
+
+<mesh>
+nghost = 2
+nx1 = 16
+x1min = -8.0
+x1max = 8.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 16
+x2min = -8.0
+x2max = 8.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 16
+x3min = -8.0
+x3max = 8.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<mesh_refinement>
+refinement = static
+max_nmb_per_rank = 4096
+
+# The slightly inset selection bounds avoid selecting blocks that only touch a
+# refinement boundary.  The resulting leaf boxes still enclose these bounds.
+<refined_region1>
+level = 1
+x1min = -3.999999
+x1max = 3.999999
+x2min = -3.999999
+x2max = 3.999999
+x3min = -3.999999
+x3max = 3.999999
+
+<refined_region2>
+level = 2
+x1min = -1.999999
+x1max = 1.999999
+x2min = -1.999999
+x2max = 1.999999
+x3min = -1.999999
+x3max = 1.999999
+
+<refined_region3>
+level = 3
+x1min = -0.999999
+x1max = 0.999999
+x2min = -0.999999
+x2max = 0.999999
+x3min = -0.999999
+x3max = 0.999999
+
+<refined_region4>
+level = 4
+x1min = -0.999999
+x1max = 0.999999
+x2min = -0.999999
+x2max = 0.999999
+x3min = -0.999999
+x3max = 0.999999
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = -1
+tlim = 6.0
+ndiag = 20
+
+<pc_gh>
+spatial_order = 2
+gauge = z4c_mp
+shift_eta = 2.0
+kappa = 1.0
+dissipation = 1.0
+constraint_excise_chi = 0.0625
+constraint_exterior_horizon = true
+# Conservative spherical enclosure used only for the online exterior-history
+# diagnostic.  AHFinderDirect output is the authoritative horizon diagnostic.
+constraint_horizon_radius = 0.5
+constraint_horizon_buffer = 0.0
+dump_horizon_0 = true
+co_0_x = 0.0
+co_0_y = 0.0
+co_0_z = 0.0
+co_0_dump_radius = 1.0
+# Even grid: avoids placing the puncture itself on the Cartesian interpolation grid.
+horizon_0_Nx = 34
+horizon_0_rn = 6
+horizon0r_guess = 0.5
+horizon_dt = 0.5
+
+<problem>
+pgen_name = pc_gh_one_puncture
+mass = 1.0
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+audit_r_min = 1.0
+audit_r_max = 4.0
+
+<output1>
+file_type = hst
+dt = 0.025
+
+<output2>
+file_type = cart
+id = pcgh_con_slice
+variable = pcgh_con
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+extent_x = 2.0
+extent_y = 2.0
+extent_z = 0.0
+numpoints_x = 64
+numpoints_y = 64
+# Two coincident z=0 planes avoid the CartesianGrid one-point spacing singularity.
+numpoints_z = 2
+dt = 0.5
+
+<output3>
+file_type = cart
+id = pcgh_slice
+variable = pcgh
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+extent_x = 2.0
+extent_y = 2.0
+extent_z = 0.0
+numpoints_x = 64
+numpoints_y = 64
+numpoints_z = 2
+dt = 0.5

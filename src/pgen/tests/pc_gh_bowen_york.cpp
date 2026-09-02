@@ -14,6 +14,10 @@
 #include <string>
 #include <vector>
 
+#if MPI_PARALLEL_ENABLED
+#include <mpi.h>
+#endif
+
 #include "athena.hpp"
 #include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
@@ -299,13 +303,6 @@ void CheckPcGhBowenYork(ParameterInput *pin, Mesh *pm) {
 }
 
 void CheckPcGhOnePuncture(ParameterInput *, Mesh *pm) {
-  if (global_variable::nranks != 1) {
-    if (global_variable::my_rank == 0) {
-      std::cout << "PC-GH one-puncture final diagnostics currently require Serial"
-                << std::endl;
-    }
-    std::exit(EXIT_FAILURE);
-  }
   MeshBlockPack *pmbp = pm->pmb_pack;
   CalculateDiagnostics(pmbp);
   auto state = Kokkos::create_mirror_view_and_copy(HostMemSpace(), pmbp->ppcgh->u0);
@@ -316,6 +313,9 @@ void CheckPcGhOnePuncture(ParameterInput *, Mesh *pm) {
   Real min_spd = std::numeric_limits<Real>::max();
   Real max_state = 0.0;
   Real max_group[4] = {};
+  int all_finite = 1;
+  int bad_variable = -1;
+  int bad_m = -1, bad_k = -1, bad_j = -1, bad_i = -1;
   for (int m = 0; m < pmbp->nmb_thispack; ++m) {
     for (int k = indcs.ks; k <= indcs.ke; ++k) {
       for (int j = indcs.js; j <= indcs.je; ++j) {
@@ -334,21 +334,60 @@ void CheckPcGhOnePuncture(ParameterInput *, Mesh *pm) {
           min_chi = std::fmin(min_chi, state(m, pc_gh::PcGh::I_CHI, k, j, i));
           min_spd = std::fmin(min_spd, std::fmin(gxx, std::fmin(minor2, det)));
           for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) {
-            max_state = std::fmax(max_state, std::fabs(state(m, v, k, j, i)));
+            Real const value = state(m, v, k, j, i);
+            if (!std::isfinite(value)) {
+              all_finite = 0;
+              if (bad_variable < 0) {
+                bad_variable = v;
+                bad_m = m; bad_k = k; bad_j = j; bad_i = i;
+              }
+            }
+            max_state = std::fmax(max_state, std::fabs(value));
           }
           for (int v = 0; v < pc_gh::PcGh::I_CON_RMINUS; ++v) {
+            Real const value = con(m, v, k, j, i);
+            if (!std::isfinite(value)) {
+              all_finite = 0;
+              if (bad_variable < 0) {
+                bad_variable = pc_gh::PcGh::npcgh + v;
+                bad_m = m; bad_k = k; bad_j = j; bad_i = i;
+              }
+            }
             int group = 3;
             if (v < pc_gh::PcGh::I_CON_H) group = 0;
             else if (v < pc_gh::PcGh::I_CON_RED_X) group = 1;
             else if (v < pc_gh::PcGh::I_CON_DETG) group = 2;
             max_group[group] = std::fmax(
-                max_group[group], std::fabs(con(m, v, k, j, i)));
+                max_group[group], std::fabs(value));
           }
         }
       }
     }
   }
-  if (!(std::isfinite(max_state) && std::isfinite(max_group[0])
+  if (all_finite == 0) {
+    auto &size = pmbp->pmb->mb_size;
+    Real const x = CellCenterX(bad_i - indcs.is, indcs.nx1,
+                               size.h_view(bad_m).x1min, size.h_view(bad_m).x1max);
+    Real const y = CellCenterX(bad_j - indcs.js, indcs.nx2,
+                               size.h_view(bad_m).x2min, size.h_view(bad_m).x2max);
+    Real const z = CellCenterX(bad_k - indcs.ks, indcs.nx3,
+                               size.h_view(bad_m).x3min, size.h_view(bad_m).x3max);
+    char const *name = (bad_variable < pc_gh::PcGh::npcgh)
+        ? pc_gh::PcGh::PcGhNames[bad_variable]
+        : pc_gh::PcGh::ConstraintNames[bad_variable - pc_gh::PcGh::npcgh];
+    std::cout << "rank " << global_variable::my_rank << " first non-finite "
+              << name << " at (" << x << ',' << y << ',' << z << ")"
+              << std::endl;
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, &min_a, 1, MPI_ATHENA_REAL, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &min_chi, 1, MPI_ATHENA_REAL, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &min_spd, 1, MPI_ATHENA_REAL, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &max_state, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, max_group, 4, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, &all_finite, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+#endif
+  if (!(all_finite == 1 && std::isfinite(max_state) && std::isfinite(max_group[0])
         && std::isfinite(max_group[1]) && std::isfinite(max_group[2])
         && std::isfinite(max_group[3]) && min_a > 0.0 && min_chi > 0.0
         && min_spd > 0.0)) {

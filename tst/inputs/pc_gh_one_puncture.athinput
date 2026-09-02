@@ -40,6 +40,21 @@ gauge = z4c_mp
 shift_eta = 2.0
 kappa = 1.0
 dissipation = 1.0
+constraint_excise_chi = 0.0625
+constraint_exterior_horizon = true
+# Conservative spherical AH enclosure for online histories.  Replace this with the
+# maximum coordinate radius reported by AHFinderDirect if it exceeds the initial 0.5M.
+constraint_horizon_radius = 0.5
+constraint_horizon_buffer = 0.0
+dump_horizon_0 = true
+co_0_x = 0.0
+co_0_y = 0.0
+co_0_z = 0.0
+co_0_dump_radius = 2.0
+horizon_0_Nx = 10
+horizon_0_rn = 6
+horizon0r_guess = 0.5
+horizon_dt = 0.25
 
 <problem>
 pgen_name = pc_gh_one_puncture
@@ -53,3 +68,15 @@ audit_r_max = 4.0
 <output1>
 file_type = hst
 dt = 0.025
+
+<output2>
+file_type = bin
+variable = pcgh_con
+slice_x3 = 0.0
+dt = 0.5
+
+<output3>
+file_type = bin
+variable = pcgh
+slice_x3 = 0.0
+dt = 0.5
