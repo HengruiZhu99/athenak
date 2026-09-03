@@ -166,6 +166,7 @@ add_executable(
 
         units/units.cpp
         utils/change_rundir.cpp
+        utils/compact_object_tracker.cpp
         utils/derived_vars.cpp
         utils/show_config.cpp
         utils/lagrange_interpolator.cpp
@@ -174,7 +175,6 @@ add_executable(
         utils/cart_grid.cpp
         utils/spherical_surface.cpp
 
-        z4c/compact_object_tracker.cpp
         z4c/horizon_dump.cpp
         z4c/tmunu.cpp
         z4c/z4c.cpp

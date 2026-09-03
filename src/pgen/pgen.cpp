@@ -23,7 +23,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "coordinates/adm.hpp"
-#include "z4c/compact_object_tracker.hpp"
+#include "utils/compact_object_tracker.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
 #include "pc_gh/pc_gh.hpp"

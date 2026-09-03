@@ -13,6 +13,8 @@ constraint-damping coefficients are zero.  PC-GH additionally projects its
 continuum-zero GH gauge constraints after each RK stage and its defining
 first-derivative constraints after each complete step; these are discrete
 constraint projections, not damping terms.
+Both formulations use the same shift-integrated coordinate puncture tracker,
+with positions written every completed RK3 step.
 
 After building AthenaK with `PROBLEM=z4c_two_puncture`, run each input from a
 separate directory so their `waveforms/` output directories do not collide.
@@ -34,6 +36,8 @@ python3 analysis/pc_gh_bbh/plot_comparison.py \
   --pcgh-history runs/pcgh/bbh_pcgh.pcgh.hst \
   --z4c-wave-dir runs/z4c/waveforms \
   --pcgh-wave-dir runs/pcgh/waveforms \
+  --z4c-trackers runs/z4c/bbh_z4c.co_0.txt runs/z4c/bbh_z4c.co_1.txt \
+  --pcgh-trackers runs/pcgh/bbh_pcgh.co_0.txt runs/pcgh/bbh_pcgh.co_1.txt \
   --pcgh-boundedness runs/pcgh/bbh_pcgh.pcgh-boundedness.dat \
   --output-dir runs/comparison
 ```

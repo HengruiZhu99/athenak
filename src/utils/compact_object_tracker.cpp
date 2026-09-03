@@ -19,7 +19,7 @@
 #include <mpi.h>
 #endif
 
-#include "compact_object_tracker.hpp"
+#include "utils/compact_object_tracker.hpp"
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -28,18 +28,20 @@
 #include "utils/lagrange_interpolator.hpp"
 #include "coordinates/adm.hpp"
 #include "mhd/mhd.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "z4c/z4c.hpp"
 
 //----------------------------------------------------------------------------------------
-CompactObjectTracker::CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int n):
+CompactObjectTracker::CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int n,
+                                           const std::string &input_block):
               owns_compact_object{false}, pos{NAN, NAN, NAN}, vel{NAN, NAN, NAN},
               pmesh{pmesh}, out_every{1} {
   std::string nstr = std::to_string(n);
   std::string ofname = pin->GetString("job", "basename") + ".";
-  ofname += pin->GetOrAddString("z4c", "filename", "co_");
+  ofname += pin->GetOrAddString(input_block, "filename", "co_");
   ofname += nstr + ".txt";
 
-  std::string cotype = pin->GetString("z4c", "co_" + nstr + "_type");
+  std::string cotype = pin->GetString(input_block, "co_" + nstr + "_type");
   if (cotype == "BH" || cotype == "BlackHole") {
     type = BlackHole;
   } else if (cotype == "NS" || cotype == "NeutronStar") {
@@ -51,7 +53,7 @@ CompactObjectTracker::CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int
     std::exit(EXIT_FAILURE);
   }
 
-  std::string trmode = pin->GetOrAddString("z4c", "tracker_mode", "ode");
+  std::string trmode = pin->GetOrAddString(input_block, "tracker_mode", "ode");
   if (trmode == "ode") {
     mode = ODE;
   } else if (trmode == "walk") {
@@ -63,14 +65,20 @@ CompactObjectTracker::CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int
     std::exit(EXIT_FAILURE);
   }
 
-  pos[0] = pin->GetOrAddReal("z4c", "co_" + nstr + "_x", 0.0);
-  pos[1] = pin->GetOrAddReal("z4c", "co_" + nstr + "_y", 0.0);
-  pos[2] = pin->GetOrAddReal("z4c", "co_" + nstr + "_z", 0.0);
+  pos[0] = pin->GetOrAddReal(input_block, "co_" + nstr + "_x", 0.0);
+  pos[1] = pin->GetOrAddReal(input_block, "co_" + nstr + "_y", 0.0);
+  pos[2] = pin->GetOrAddReal(input_block, "co_" + nstr + "_z", 0.0);
 
-  reflevel = pin->GetOrAddInteger("z4c", "co_" + nstr + "_reflevel", -1);
-  radius = pin->GetOrAddReal("z4c", "co_" + nstr + "_radius", 0.0);
+  reflevel = pin->GetOrAddInteger(input_block, "co_" + nstr + "_reflevel", -1);
+  radius = pin->GetOrAddReal(input_block, "co_" + nstr + "_radius", 0.0);
 
-  out_every = pin->GetOrAddInteger("z4c", "co_" + nstr + "_out_every", 1);
+  out_every = pin->GetOrAddInteger(input_block, "co_" + nstr + "_out_every", 1);
+  if (out_every <= 0) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
+              << __LINE__ << '\n' << "Compact-object tracker output cadence must be "
+              << "positive" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   if (0 == global_variable::my_rank) {
     std::ifstream fileCheck(ofname);
@@ -110,9 +118,17 @@ void CompactObjectTracker::InterpolateVelocity(MeshBlockPack *pmbp) {
   if (S->point_exist) {
     owns_compact_object = true;
 
-    Real betax = S->Interpolate(pz4c->u0, pz4c->I_Z4C_BETAX);
-    Real betay = S->Interpolate(pz4c->u0, pz4c->I_Z4C_BETAY);
-    Real betaz = S->Interpolate(pz4c->u0, pz4c->I_Z4C_BETAZ);
+    Real betax, betay, betaz;
+    if (pz4c != nullptr) {
+      betax = S->Interpolate(pz4c->u0, pz4c->I_Z4C_BETAX);
+      betay = S->Interpolate(pz4c->u0, pz4c->I_Z4C_BETAY);
+      betaz = S->Interpolate(pz4c->u0, pz4c->I_Z4C_BETAZ);
+    } else {
+      auto &ppcgh = pmbp->ppcgh;
+      betax = S->Interpolate(ppcgh->u0, ppcgh->I_BETAX);
+      betay = S->Interpolate(ppcgh->u0, ppcgh->I_BETAY);
+      betaz = S->Interpolate(ppcgh->u0, ppcgh->I_BETAZ);
+    }
     vel[0] = - betax;
     vel[1] = - betay;
     vel[2] = - betaz;
@@ -150,7 +166,7 @@ void CompactObjectTracker::InterpolateVelocity(MeshBlockPack *pmbp) {
 void CompactObjectTracker::EvolveTracker(MeshBlockPack *pmbp) {
   if (owns_compact_object) {
     if (mode == ODE) {
-      for (int a = 0; a < NDIM; ++a) {
+      for (int a = 0; a < ndim; ++a) {
         pos[a] += pmesh->dt * vel[a];
       }
     } else {
@@ -223,7 +239,7 @@ void CompactObjectTracker::EvolveTracker(MeshBlockPack *pmbp) {
   }
 #else
   }
-  Real buf[2 * NDIM + 1] = {0., 0., 0., 0., 0., 0., 0.};
+  Real buf[2 * ndim + 1] = {0., 0., 0., 0., 0., 0., 0.};
   if (owns_compact_object) {
     buf[0] = pos[0];
     buf[1] = pos[1];
@@ -231,22 +247,22 @@ void CompactObjectTracker::EvolveTracker(MeshBlockPack *pmbp) {
     buf[3] = vel[0];
     buf[4] = vel[1];
     buf[5] = vel[2];
-    buf[6] = 1.0;
+    buf[2*ndim] = 1.0;
   }
   MPI_Allreduce(
-    MPI_IN_PLACE, buf, 2 * NDIM + 1, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
-  if (buf[6] < 0.5) {
+    MPI_IN_PLACE, buf, 2 * ndim + 1, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+  if (buf[2*ndim] < 0.5) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl;
     std::cout << "The compact object has left the grid" << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  pos[0] = buf[0] / buf[6];
-  pos[1] = buf[1] / buf[6];
-  pos[2] = buf[2] / buf[6];
-  vel[0] = buf[3] / buf[6];
-  vel[1] = buf[4] / buf[6];
-  vel[2] = buf[5] / buf[6];
+  pos[0] = buf[0] / buf[2*ndim];
+  pos[1] = buf[1] / buf[2*ndim];
+  pos[2] = buf[2] / buf[2*ndim];
+  vel[0] = buf[3] / buf[2*ndim];
+  vel[1] = buf[4] / buf[2*ndim];
+  vel[2] = buf[5] / buf[2*ndim];
 #endif // MPI_PARALLEL_ENABLED
 
   // After the compact object has moved it might have changed ownership
@@ -255,9 +271,10 @@ void CompactObjectTracker::EvolveTracker(MeshBlockPack *pmbp) {
 
 //----------------------------------------------------------------------------------------
 void CompactObjectTracker::WriteTracker() {
-  if (0 == global_variable::my_rank && 0 == pmesh->ncycle % out_every) {
-    ofile << pmesh->ncycle << " "
-          << pmesh->time << " "
+  int const completed_cycle = pmesh->ncycle + 1;
+  if (0 == global_variable::my_rank && 0 == completed_cycle % out_every) {
+    ofile << completed_cycle << " "
+          << pmesh->time + pmesh->dt << " "
           << pos[0] << " "
           << pos[1] << " "
           << pos[2] << " "

@@ -118,6 +118,7 @@ enum TaskName {
   PcGh_ClearSW,
   PcGh_ClearRW,
   PcGh_Wave,
+  PcGh_PT,
   PcGh_Newdt,
   PcGh_ClearS,
   PcGh_ClearR,

@@ -57,12 +57,24 @@ nrad_wave_extraction = 1
 extraction_radius_0 = 8
 extraction_nlev = 16
 waveform_dt = 0.5
+tracker_mode = ode
+co_0_type = BH
+co_0_x = 2.5
+co_0_y = 0.0
+co_0_z = 0.0
+co_0_out_every = 1
+co_1_type = BH
+co_1_x = -2.5
+co_1_y = 0.0
+co_1_z = 0.0
+co_1_out_every = 1
 
 <mesh_refinement>
 refinement = adaptive
 num_levels = 5
 max_nmb_per_rank = 1000
 refinement_interval = 10
+log_changes = true
 
 <amr_criterion0>
 method = user

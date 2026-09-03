@@ -19,7 +19,7 @@
 #include "tasklist/task_list.hpp"
 #include "mesh/mesh.hpp"
 #include "bvals/bvals.hpp"
-#include "z4c/compact_object_tracker.hpp"
+#include "utils/compact_object_tracker.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
 #include "tasklist/numerical_relativity.hpp"
@@ -233,7 +233,7 @@ TaskStatus Z4c::UpdateExcisionMasks(Driver *pdrive, int stage) {
 
 TaskStatus Z4c::ADMConstraints_(Driver *pdrive, int stage) {
   if (stage == pdrive->nexp_stages
-      && pmy_pack->pmesh->ncycle % opt.constraint_dcycle == 0) {
+      && (pmy_pack->pmesh->ncycle + 1) % opt.constraint_dcycle == 0) {
     switch (opt.fd_stencil) {
       case 2: ADMConstraints<2>(pmy_pack);
               break;

@@ -64,7 +64,7 @@ template <int FD_STENCIL>
 TaskStatus PcGh::CalcConstraints(Driver *pdriver, int stage) {
   if (pdriver != nullptr && stage != pdriver->nexp_stages) return TaskStatus::complete;
   if (pdriver != nullptr
-      && pmy_pack->pmesh->ncycle % opt.constraint_dcycle != 0) {
+      && (pmy_pack->pmesh->ncycle + 1) % opt.constraint_dcycle != 0) {
     return TaskStatus::complete;
   }
   auto &indcs = pmy_pack->pmesh->mb_indcs;
@@ -407,7 +407,7 @@ TaskStatus PcGh::CalcConstraints(Driver *pdriver, int stage) {
   Kokkos::fence();
   ValidateState("constraint diagnostics", false, true);
   if (pdriver != nullptr && opt.boundedness_output
-      && pmy_pack->pmesh->ncycle % opt.boundedness_dcycle == 0) {
+      && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0) {
     WriteBoundednessDiagnostics();
   }
   return TaskStatus::complete;
@@ -641,8 +641,8 @@ void PcGh::WriteBoundednessDiagnostics() {
     }
     output << '\n';
   }
-  output << std::setprecision(17) << pmy_pack->pmesh->time << ' '
-         << pmy_pack->pmesh->ncycle << ' '
+  output << std::setprecision(17) << pmy_pack->pmesh->time + pmy_pack->pmesh->dt << ' '
+         << pmy_pack->pmesh->ncycle + 1 << ' '
          << field_min[0] << ' ' << field_max[0] << ' '
          << field_min[1] << ' ' << field_max[1] << ' '
          << field_min[2] << ' ' << field_max[2];

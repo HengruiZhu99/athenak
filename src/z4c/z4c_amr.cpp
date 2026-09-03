@@ -17,7 +17,7 @@
 #include "mesh/mesh.hpp"
 #include "pc_gh/pc_gh.hpp"
 #include "parameter_input.hpp"
-#include "z4c/compact_object_tracker.hpp"
+#include "utils/compact_object_tracker.hpp"
 #include "z4c/z4c.hpp"
 
 #define SQ(X) ((X)*(X))

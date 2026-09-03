@@ -22,6 +22,7 @@
 
 class MeshBlockPack;
 class Driver;
+class CompactObjectTracker;
 class HorizonDump;
 class SphericalGrid;
 
@@ -257,6 +258,7 @@ class PcGh {
   TaskStatus ConvertToADM(Driver *pdriver, int stage);
   TaskStatus CalcWeylScalar(Driver *pdriver, int stage);
   TaskStatus CalcWaveForm(Driver *pdriver, int stage);
+  TaskStatus TrackCompactObjects(Driver *pdriver, int stage);
   TaskStatus BoundaryRHS(Driver *pdriver, int stage);
   TaskStatus ExpRKUpdate(Driver *pdriver, int stage);
   TaskStatus EnforceReductionConstraints(Driver *pdriver, int stage);
@@ -327,6 +329,7 @@ class PcGh {
   Real last_waveform_time;
   int nrad;
   std::vector<std::unique_ptr<HorizonDump>> phorizon_dump;
+  std::vector<std::unique_ptr<CompactObjectTracker>> ptracker;
   Real dtnew;
   std::array<std::array<Real, 4>, 4> transfer_reduction_change{};
 

@@ -66,6 +66,19 @@ def load_wave_pair(directory: Path) -> dict[str, np.ndarray]:
     return result
 
 
+def load_tracker(path: Path) -> dict[str, np.ndarray]:
+    """Load one compact-object tracker table."""
+    data = np.atleast_2d(np.loadtxt(path))
+    if data.shape[1] != 8:
+        raise ValueError(f"expected 8 tracker columns in {path}, found {data.shape[1]}")
+    if not np.all(np.isfinite(data)) or np.any(np.diff(data[:, 1]) <= 0.0):
+        raise ValueError(f"tracker samples must be finite and strictly increasing in {path}")
+    return {
+        name: data[:, column] for column, name in enumerate(
+            ("cycle", "time", "x", "y", "z", "vx", "vy", "vz"))
+    }
+
+
 def rms(numerator: np.ndarray, volume: np.ndarray) -> np.ndarray:
     """Return a nonnegative volume RMS and preserve invalid samples as NaN."""
     quotient = np.full_like(np.asarray(numerator, dtype=float), np.nan)
@@ -175,6 +188,51 @@ def plot_waveforms(z4c: dict[str, np.ndarray], pcgh: dict[str, np.ndarray],
     return path, summary
 
 
+def plot_trajectories(z4c_paths: list[Path], pcgh_paths: list[Path],
+                      output_dir: Path) -> tuple[Path, dict]:
+    """Overplot coordinate puncture trajectories with Z4c drawn above PC-GH."""
+    tracks = {
+        "Z4c": [load_tracker(path) for path in z4c_paths],
+        "PC-GH": [load_tracker(path) for path in pcgh_paths],
+    }
+    fig, axis = plt.subplots(figsize=(10.5, 5.5))
+    for formulation in ("PC-GH", "Z4c"):
+        linewidth = 3.0 if formulation == "PC-GH" else 1.5
+        zorder = 2 if formulation == "PC-GH" else 3
+        for puncture, (track, linestyle) in enumerate(
+                zip(tracks[formulation], ("-", "--"))):
+            axis.plot(track["time"], track["x"], color=COLORS[formulation],
+                      linestyle=linestyle, linewidth=linewidth, zorder=zorder,
+                      label=f"{formulation}: puncture {puncture}")
+    axis.axhline(0.0, color="0.4", linewidth=0.8, alpha=0.5)
+    axis.set_xlabel(r"$t/M$")
+    axis.set_ylabel(r"puncture coordinate $x/M$")
+    axis.set_title("Head-on BBH puncture trajectories")
+    axis.grid(alpha=0.25)
+    axis.legend(ncol=2, fontsize=9)
+    fig.tight_layout()
+    path = output_dir / "puncture_trajectory.png"
+    fig.savefig(path, dpi=200)
+    plt.close(fig)
+
+    summary = {}
+    for formulation, pair in tracks.items():
+        common_start = max(track["time"][0] for track in pair)
+        common_end = min(track["time"][-1] for track in pair)
+        common_time = np.linspace(common_start, common_end, 1001)
+        separation = np.abs(
+            np.interp(common_time, pair[0]["time"], pair[0]["x"])
+            - np.interp(common_time, pair[1]["time"], pair[1]["x"]))
+        summary[formulation] = {
+            "final_time": float(common_end),
+            "final_x": [float(track["x"][-1]) for track in pair],
+            "minimum_coordinate_separation": float(np.min(separation)),
+            "maximum_transverse_drift": float(max(
+                np.max(np.hypot(track["y"], track["z"])) for track in pair)),
+        }
+    return path, summary
+
+
 def plot_pcgh_boundedness(path: Path, output_dir: Path) -> tuple[Path, dict]:
     names = path.read_text(encoding="utf-8").splitlines()[0].lstrip("# ").split()
     data = np.atleast_2d(np.loadtxt(path))
@@ -244,6 +302,8 @@ def main() -> None:
     parser.add_argument("--z4c-wave-dir", required=True, type=Path)
     parser.add_argument("--pcgh-wave-dir", required=True, type=Path)
     parser.add_argument("--pcgh-boundedness", type=Path)
+    parser.add_argument("--z4c-trackers", nargs=2, type=Path)
+    parser.add_argument("--pcgh-trackers", nargs=2, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -255,6 +315,13 @@ def main() -> None:
         args.output_dir)
     products = [constraints_path, waveform_path]
     summary = {"constraints": constraints, "waveform": waveform}
+    if (args.z4c_trackers is None) != (args.pcgh_trackers is None):
+        parser.error("--z4c-trackers and --pcgh-trackers must be supplied together")
+    if args.z4c_trackers:
+        trajectory_path, trajectory = plot_trajectories(
+            args.z4c_trackers, args.pcgh_trackers, args.output_dir)
+        products.append(trajectory_path)
+        summary["puncture_trajectory"] = trajectory
     if args.pcgh_boundedness:
         boundedness_path, boundedness = plot_pcgh_boundedness(
             args.pcgh_boundedness, args.output_dir)

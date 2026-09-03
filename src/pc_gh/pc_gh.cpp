@@ -36,6 +36,7 @@
 #include "parameter_input.hpp"
 #include "pc_gh/pc_gh.hpp"
 #include "utils/horizon_dump.hpp"
+#include "utils/compact_object_tracker.hpp"
 
 namespace pc_gh {
 
@@ -257,6 +258,14 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   psi_out = new Real[std::max(1, nrad*77*2)]{};
   waveform_dt = pin->GetOrAddReal("pc_gh", "waveform_dt", 1.0);
   if (nrad > 0) mkdir("waveforms", 0775);
+
+  int tracker_index = 0;
+  while (pin->DoesParameterExist(
+      "pc_gh", "co_" + std::to_string(tracker_index) + "_type")) {
+    ptracker.push_back(std::make_unique<CompactObjectTracker>(
+        pmy_pack->pmesh, pin, tracker_index, "pc_gh"));
+    ++tracker_index;
+  }
 
   int horizon_index = 0;
   while (pin->GetOrAddBoolean(

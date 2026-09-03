@@ -20,6 +20,7 @@
 #include "pc_gh/pc_gh.hpp"
 #include "tasklist/numerical_relativity.hpp"
 #include "utils/horizon_dump.hpp"
+#include "utils/compact_object_tracker.hpp"
 #include "utils/finite_diff.hpp"
 #include "utils/gr_wave.hpp"
 
@@ -160,8 +161,10 @@ void PcGh::QueuePcGhTasks() {
                  Task_End, {PcGh_ClearSW});
   pnr->QueueTask(&PcGh::CalcWaveForm, this, PcGh_Wave, "PcGh_Wave",
                  Task_End, {PcGh_ClearRW});
+  pnr->QueueTask(&PcGh::TrackCompactObjects, this, PcGh_PT, "PcGh_PT",
+                 Task_End, {PcGh_Wave});
   pnr->QueueTask(&PcGh::DumpHorizons, this, PcGh_DumpHorizon,
-                 "PcGh_DumpHorizon", Task_End, {PcGh_Wave});
+                 "PcGh_DumpHorizon", Task_End, {PcGh_PT});
 }
 
 TaskStatus PcGh::InitRecv(Driver *, int) {
@@ -244,7 +247,7 @@ TaskStatus PcGh::RecvWeyl(Driver *pdriver, int stage) {
 
 TaskStatus PcGh::RestrictU(Driver *pdriver, int stage) {
   bool const monitor = stage == pdriver->nexp_stages && opt.boundedness_output
-      && pmy_pack->pmesh->ncycle % opt.boundedness_dcycle == 0;
+      && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0;
   if (monitor) BeginReductionTransfer(0);
   if (pmy_pack->pmesh->multilevel) {
     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
@@ -255,7 +258,7 @@ TaskStatus PcGh::RestrictU(Driver *pdriver, int stage) {
 
 TaskStatus PcGh::Prolongate(Driver *pdriver, int stage) {
   bool const monitor = stage == pdriver->nexp_stages && opt.boundedness_output
-      && pmy_pack->pmesh->ncycle % opt.boundedness_dcycle == 0;
+      && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0;
   if (monitor) BeginReductionTransfer(1);
   if (pmy_pack->pmesh->multilevel) {
     pbval_u->ProlongateCC(u0, coarse_u0, true);
@@ -381,7 +384,7 @@ TaskStatus PcGh::BoundaryRHS(Driver *, int) {
 
 TaskStatus PcGh::EnforceAlgebraicConstraints(Driver *pdriver, int stage) {
   bool const monitor = stage == pdriver->nexp_stages && opt.boundedness_output
-      && pmy_pack->pmesh->ncycle % opt.boundedness_dcycle == 0;
+      && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0;
   if (monitor) BeginReductionTransfer(2);
   ProjectAlgebraic(pmy_pack);
   if (opt.project_gauge_constraints) ProjectGaugeConstraints(pmy_pack);
@@ -394,7 +397,7 @@ TaskStatus PcGh::EnforceReductionConstraints(Driver *pdriver, int stage) {
     return TaskStatus::complete;
   }
   bool const monitor = stage == pdriver->nexp_stages && opt.boundedness_output
-      && pmy_pack->pmesh->ncycle % opt.boundedness_dcycle == 0;
+      && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0;
   if (monitor) BeginReductionTransfer(3);
   switch (opt.fd_stencil) {
     case 2: ProjectReduction<2>(pmy_pack); break;
@@ -434,6 +437,17 @@ TaskStatus PcGh::CalcWaveForm(Driver *pdriver, int stage) {
       && stage == pdriver->nexp_stages) {
     gr_wave::ExtractWaveform(
         pmy_pack, spherical_grids, u_weyl, psi_out, "waveforms");
+  }
+  return TaskStatus::complete;
+}
+
+TaskStatus PcGh::TrackCompactObjects(Driver *pdriver, int stage) {
+  if (stage == pdriver->nexp_stages) {
+    for (auto &tracker : ptracker) {
+      tracker->InterpolateVelocity(pmy_pack);
+      tracker->EvolveTracker(pmy_pack);
+      tracker->WriteTracker();
+    }
   }
   return TaskStatus::complete;
 }

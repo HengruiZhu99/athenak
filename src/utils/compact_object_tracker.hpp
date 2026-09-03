@@ -4,8 +4,8 @@
 // Licensed under the 3-clause BSD License (the "LICENSE")
 //========================================================================================
 
-#ifndef Z4C_COMPACT_OBJECT_TRACKER_HPP_
-#define Z4C_COMPACT_OBJECT_TRACKER_HPP_
+#ifndef UTILS_COMPACT_OBJECT_TRACKER_HPP_
+#define UTILS_COMPACT_OBJECT_TRACKER_HPP_
 
 #include <cstdio>
 #include <fstream>
@@ -13,7 +13,6 @@
 
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
-#include "z4c_macros.hpp"
 
 // Forward declaration
 class Mesh;
@@ -22,12 +21,14 @@ class ParameterInput;
 //! \class CompactObjectTracker
 //! \brief Tracks a single puncture
 class CompactObjectTracker {
+  static constexpr int ndim = 3;
   enum CompactObjectType { BlackHole, NeutronStar };
   enum TrackerMode { ODE, Walk };
 
  public:
   //! Initialize a tracker
-  CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int n);
+  CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int n,
+                       const std::string &input_block);
   //! Destructor (will close output file)
   ~CompactObjectTracker();
   //! Interpolate the shift vector to the puncture position
@@ -45,8 +46,8 @@ class CompactObjectTracker {
     return pos[a];
   }
   //! Set the position of the CO
-  inline void SetPos(Real npos[NDIM]) {
-    std::memcpy(pos, npos, NDIM*sizeof(Real));
+  inline void SetPos(Real npos[ndim]) {
+    std::memcpy(pos, npos, ndim*sizeof(Real));
   }
   //! Get wanted refinement level
   inline int GetReflevel() const {
@@ -61,13 +62,13 @@ class CompactObjectTracker {
   bool owns_compact_object;
   CompactObjectType type;
   TrackerMode mode;
-  Real vel[NDIM];
+  Real vel[ndim];
   int reflevel;         // requested minimum refinement level (-1 for infinity)
   Real radius;          // nominal radius of the object (for the AMR driver)
   Mesh const *pmesh;
   int out_every;
   std::ofstream ofile;
-  Real pos[NDIM];
+  Real pos[ndim];
 };
 
-#endif // Z4C_COMPACT_OBJECT_TRACKER_HPP_
+#endif  // UTILS_COMPACT_OBJECT_TRACKER_HPP_

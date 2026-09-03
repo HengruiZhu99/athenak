@@ -151,6 +151,13 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
   // Refine/derefine mesh and evolved data, set boundary conditions/timestep on new mesh
   if (nnew != 0 || ndel != 0) { // at least one (de)refinement flagged
     RedistAndRefineMeshBlocks(pin, nnew, ndel);
+    if (global_variable::my_rank == 0
+        && pin->GetOrAddBoolean("mesh_refinement", "log_changes", false)) {
+      std::cout << "AMR_CHANGE cycle=" << pmy_mesh->ncycle
+                << " time=" << pmy_mesh->time
+                << " created=" << nnew << " deleted=" << ndel
+                << " blocks=" << pmy_mesh->nmb_total << std::endl;
+    }
     pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
 
     MeshBlockPack* pmbp = pmy_mesh->pmb_pack;

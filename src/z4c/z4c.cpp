@@ -20,7 +20,7 @@
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "bvals/bvals.hpp"
-#include "z4c/compact_object_tracker.hpp"
+#include "utils/compact_object_tracker.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
@@ -239,7 +239,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   int n = 0;
   while (true) {
     if (pin->DoesParameterExist("z4c", "co_" + std::to_string(n) + "_type")) {
-      ptracker.push_back(std::make_unique<CompactObjectTracker>(pmy_pack->pmesh, pin, n));
+      ptracker.push_back(std::make_unique<CompactObjectTracker>(
+          pmy_pack->pmesh, pin, n, "z4c"));
       n++;
     } else {
       break;
