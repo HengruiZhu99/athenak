@@ -168,6 +168,12 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     std::exit(EXIT_FAILURE);
   }
   opt.fd_stencil = opt.spatial_order/2 + 1;
+  opt.constraint_dcycle = pin->GetOrAddInteger("z4c", "constraint_dcycle", 1);
+  if (opt.constraint_dcycle < 1) {
+    std::cout << "### FATAL ERROR: <z4c>/constraint_dcycle must be positive"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   if (indcs.ng < opt.fd_stencil) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl

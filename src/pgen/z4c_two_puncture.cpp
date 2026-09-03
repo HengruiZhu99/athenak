@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -19,10 +20,12 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
 
 static ini_data *data;
+static std::unique_ptr<z4c::Z4c_AMR> pcgh_amr;
 
 void ADMTwoPunctures(MeshBlockPack *pmbp, ini_data *data);
 void RefinementCondition(MeshBlockPack* pmbp);
@@ -33,13 +36,19 @@ void RefinementCondition(MeshBlockPack* pmbp);
 void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   user_ref_func  = RefinementCondition;
 
+  MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
+  if ((pmbp->pz4c == nullptr) == (pmbp->ppcgh == nullptr)) {
+    std::cout << "### FATAL ERROR: two-puncture data require exactly one of <z4c> "
+              << "or <pc_gh>" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (pmbp->ppcgh != nullptr && pcgh_amr == nullptr) {
+    pcgh_amr = std::make_unique<z4c::Z4c_AMR>(pin);
+  }
+
   if (restart)
     return;
 
-  MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
-  auto &indcs         = pmy_mesh_->mb_indcs;
-
-  TwoPunctures_params_set_default();
   std::string set_name = "problem";
   TwoPunctures_params_set_default();
   TwoPunctures_params_set_Boolean(
@@ -170,28 +179,36 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     pin->GetOrAddBoolean(set_name, "swap_xz", 0));
   data = TwoPunctures_make_initial_data();
   ADMTwoPunctures(pmbp, data);
-  pmbp->pz4c->GaugePreCollapsedLapse(pmbp, pin);
-  switch (indcs.ng) {
-    case 2:
-      pmbp->pz4c->ADMToZ4c<2>(pmbp, pin);
-      break;
-    case 3:
-      pmbp->pz4c->ADMToZ4c<3>(pmbp, pin);
-      break;
-    case 4:
-      pmbp->pz4c->ADMToZ4c<4>(pmbp, pin);
-      break;
+  if (pmbp->pz4c != nullptr) {
+    pmbp->pz4c->GaugePreCollapsedLapse(pmbp, pin);
+    switch (pmbp->pz4c->opt.fd_stencil) {
+      case 2: pmbp->pz4c->ADMToZ4c<2>(pmbp, pin); break;
+      case 3: pmbp->pz4c->ADMToZ4c<3>(pmbp, pin); break;
+      case 4: pmbp->pz4c->ADMToZ4c<4>(pmbp, pin); break;
+    }
+  } else {
+    switch (pmbp->ppcgh->opt.fd_stencil) {
+      case 2: pmbp->ppcgh->ADMToPcGh<2>(pmbp); break;
+      case 3: pmbp->ppcgh->ADMToPcGh<3>(pmbp); break;
+      case 4: pmbp->ppcgh->ADMToPcGh<4>(pmbp); break;
+    }
   }
   TwoPunctures_finalise(data);
 
-  pmbp->pz4c->Z4cToADM(pmbp);
-  switch (indcs.ng) {
-    case 2: pmbp->pz4c->ADMConstraints<2>(pmbp);
-            break;
-    case 3: pmbp->pz4c->ADMConstraints<3>(pmbp);
-            break;
-    case 4: pmbp->pz4c->ADMConstraints<4>(pmbp);
-            break;
+  if (pmbp->pz4c != nullptr) {
+    pmbp->pz4c->Z4cToADM(pmbp);
+    switch (pmbp->pz4c->opt.fd_stencil) {
+      case 2: pmbp->pz4c->ADMConstraints<2>(pmbp); break;
+      case 3: pmbp->pz4c->ADMConstraints<3>(pmbp); break;
+      case 4: pmbp->pz4c->ADMConstraints<4>(pmbp); break;
+    }
+  } else {
+    pmbp->ppcgh->PcGhToADM(pmbp);
+    switch (pmbp->ppcgh->opt.fd_stencil) {
+      case 2: (void)pmbp->ppcgh->CalcConstraints<2>(nullptr, 0); break;
+      case 3: (void)pmbp->ppcgh->CalcConstraints<3>(nullptr, 0); break;
+      case 4: (void)pmbp->ppcgh->CalcConstraints<4>(nullptr, 0); break;
+    }
   }
   std::cout << "TwoPuncture initialized." << std::endl;
   return;
@@ -217,7 +234,10 @@ void ADMTwoPunctures(MeshBlockPack *pmbp, ini_data *data) {
   auto &u_adm = pmbp->padm->u_adm;
 
   HostArray5D<Real>::HostMirror host_u_adm = create_mirror(u_adm);
-  z4c::Z4c::ADMhost_vars host_adm;
+  adm::ADM::ADMhost_vars host_adm;
+  host_adm.alpha.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_ALPHA);
+  host_adm.beta_u.InitWithShallowSlice(
+    host_u_adm, adm::ADM::I_ADM_BETAX, adm::ADM::I_ADM_BETAZ);
   host_adm.psi4.InitWithShallowSlice(host_u_adm, adm::ADM::I_ADM_PSI4);
   host_adm.g_dd.InitWithShallowSlice(
     host_u_adm, adm::ADM::I_ADM_GXX, adm::ADM::I_ADM_GZZ);
@@ -325,6 +345,8 @@ void ADMTwoPunctures(MeshBlockPack *pmbp, ini_data *data) {
         for (int i = isg; i <= ieg; i++) {
           int flat_ix               = i + n[0] * (j + n[1] * k);
           host_adm.psi4(m, k, j, i) = std::pow(psi[flat_ix], 4);
+          host_adm.alpha(m, k, j, i) = std::pow(psi[flat_ix], -2);
+          for (int a = 0; a < 3; ++a) host_adm.beta_u(m, a, k, j, i) = 0.0;
 
           host_adm.g_dd(m, 0, 0, k, j, i) =
             host_adm.psi4(m, k, j, i) * gxx[flat_ix];
@@ -373,5 +395,9 @@ void ADMTwoPunctures(MeshBlockPack *pmbp, ini_data *data) {
 
 // how decide the refinement
 void RefinementCondition(MeshBlockPack* pmbp) {
-  pmbp->pz4c->pamr->Refine(pmbp);
+  if (pmbp->pz4c != nullptr) {
+    pmbp->pz4c->pamr->Refine(pmbp);
+  } else {
+    pcgh_amr->Refine(pmbp);
+  }
 }

@@ -19,16 +19,17 @@
 #include "mesh/mesh.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
+#include "utils/gr_wave.hpp"
 #include "coordinates/cell_locations.hpp"
 
-namespace z4c {
+namespace gr_wave {
 //----------------------------------------------------------------------------------------
 // \!fn void Z4c::Z4cWeyl(MeshBlockPack *pmbp)
 // \brief compute the weyl scalars given the adm variables and matter state
 //
 // This function operates only on the interior points of the MeshBlock
 template <int NGHOST>
-void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
+void CalculateWeyl(MeshBlockPack *pmbp, DvceArray5D<Real> u_weyl) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
@@ -38,8 +39,6 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
   int nmb = pmbp->nmb_thispack;
 
   auto &adm = pmbp->padm->adm;
-  auto &weyl = pmbp->pz4c->weyl;
-  auto &u_weyl = pmbp->pz4c->u_weyl;
   Kokkos::deep_copy(u_weyl, 0.);
 
   par_for("z4c_weyl_scalar",DevExeSpace(),0,nmb-1,ks,ke,js,je,is,ie,
@@ -381,24 +380,24 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
 
     for(int a = 0; a < 3; ++a) {
       for(int b = 0; b < 3; ++b) {
-        weyl.rpsi4(m,k,j,i) += - FR4 * Riemm4_dd(a,b) * (
+        u_weyl(m,0,k,j,i) += - FR4 * Riemm4_dd(a,b) * (
           vvec(a) * vvec(b) - (-wvec(a) * (-wvec(b)))
         );
-        weyl.ipsi4(m,k,j,i) += - FR4 * Riemm4_dd(a,b) * (
+        u_weyl(m,1,k,j,i) += - FR4 * Riemm4_dd(a,b) * (
           -vvec(a) * wvec(b) - wvec(a)*vvec(b)
         );
         for(int c = 0; c < 3; ++c) {
-          weyl.rpsi4(m,k,j,i) += 0.5 * Riemm4_ddd(a,c,b) * uvec(c) * (
+          u_weyl(m,0,k,j,i) += 0.5 * Riemm4_ddd(a,c,b) * uvec(c) * (
             vvec(a) * vvec(b) - (-wvec(a)*(-wvec(b)))
           );
-          weyl.ipsi4(m,k,j,i) += 0.5 * Riemm4_ddd(a,c,b) * uvec(c) * (
+          u_weyl(m,1,k,j,i) += 0.5 * Riemm4_ddd(a,c,b) * uvec(c) * (
             -vvec(a) * wvec(b) - wvec(a)*vvec(b)
           );
           for(int d = 0; d < 3; ++d) {
-            weyl.rpsi4(m,k,j,i) += -FR4 * (Riemm4_dddd(d,a,c,b) * uvec(d) * uvec(c)) * (
+            u_weyl(m,0,k,j,i) += -FR4 * (Riemm4_dddd(d,a,c,b) * uvec(d) * uvec(c)) * (
               vvec(a) * vvec(b) - (-wvec(a)*(-wvec(b)))
             );
-            weyl.ipsi4(m,k,j,i) += -FR4 * (Riemm4_dddd(d,a,c,b) * uvec(d) * uvec(c)) * (
+            u_weyl(m,1,k,j,i) += -FR4 * (Riemm4_dddd(d,a,c,b) * uvec(d) * uvec(c)) * (
               -vvec(a) * wvec(b) - wvec(a)*vvec(b)
             );
           }
@@ -406,12 +405,26 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
       }
     }
     Real r = std::sqrt(SQR(x1v) +  SQR(x2v) + SQR(x3v));
-    weyl.rpsi4(m,k,j,i) *= r;
-    weyl.ipsi4(m,k,j,i) *= r;
+    u_weyl(m,0,k,j,i) *= r;
+    u_weyl(m,1,k,j,i) *= r;
   });
+}
+
+template void CalculateWeyl<2>(MeshBlockPack *pmbp, DvceArray5D<Real> u_weyl);
+template void CalculateWeyl<3>(MeshBlockPack *pmbp, DvceArray5D<Real> u_weyl);
+template void CalculateWeyl<4>(MeshBlockPack *pmbp, DvceArray5D<Real> u_weyl);
+
+}  // namespace gr_wave
+
+namespace z4c {
+
+template <int NGHOST>
+void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
+  gr_wave::CalculateWeyl<NGHOST>(pmbp, u_weyl);
 }
 
 template void Z4c::Z4cWeyl<2>(MeshBlockPack *pmbp);
 template void Z4c::Z4cWeyl<3>(MeshBlockPack *pmbp);
 template void Z4c::Z4cWeyl<4>(MeshBlockPack *pmbp);
-} // namespace z4c
+
+}  // namespace z4c

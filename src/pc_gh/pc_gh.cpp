@@ -6,6 +6,8 @@
 //! \file pc_gh.cpp
 //! \brief allocation and option validation for the PC-GH module
 
+#include <sys/stat.h>
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -13,7 +15,9 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #include <Kokkos_Core.hpp>
@@ -26,6 +30,7 @@
 #include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "globals.hpp"
+#include "geodesic-grid/spherical_grid.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
 #include "parameter_input.hpp"
@@ -75,7 +80,14 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
       gauge_a0_log_r_min(0.0),
       gauge_a0_inv_dlog_r(0.0),
       coarse_u0("coarse u0 pc_gh", 1, 1, 1, 1, 1),
+      u_weyl("u_weyl pc_gh", 1, 1, 1, 1, 1),
+      coarse_u_weyl("coarse u_weyl pc_gh", 1, 1, 1, 1, 1),
       pbval_u(nullptr),
+      pbval_weyl(nullptr),
+      psi_out(nullptr),
+      waveform_dt(1.0),
+      last_waveform_time(0.0),
+      nrad(0),
       dtnew(std::numeric_limits<float>::max()),
       pmy_pack(ppack) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
@@ -90,6 +102,7 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   Kokkos::realloc(u_con, nmb, ncon, ncells3, ncells2, ncells1);
   Kokkos::realloc(transfer_reduction_before, nmb, 4, ncells3, ncells2, ncells1);
   Kokkos::realloc(transfer_reduction_after, nmb, 4, ncells3, ncells2, ncells1);
+  Kokkos::realloc(u_weyl, nmb, 2, ncells3, ncells2, ncells1);
   Kokkos::deep_copy(u_con, 0.0);
   BindVariables(u0, u);
   BindVariables(u_rhs, rhs);
@@ -99,6 +112,7 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
     int const nccells2 = (indcs.cnx2 > 1) ? indcs.cnx2 + 2*indcs.ng : 1;
     int const nccells3 = (indcs.cnx3 > 1) ? indcs.cnx3 + 2*indcs.ng : 1;
     Kokkos::realloc(coarse_u0, nmb, npcgh, nccells3, nccells2, nccells1);
+    Kokkos::realloc(coarse_u_weyl, nmb, 2, nccells3, nccells2, nccells1);
   }
 
   int const default_order = 2*(indcs.ng - 1);
@@ -125,6 +139,8 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  opt.extrap_order = std::max(2, std::min(indcs.ng, std::min(4,
+      pin->GetOrAddInteger("pc_gh", "extrap_order", 2))));
   opt.gauge = pin->GetOrAddString("pc_gh", "gauge", "harmonic");
   if (opt.gauge != "harmonic" && opt.gauge != "a0" && opt.gauge != "z4c_mp"
       && opt.gauge != "z4c_mp_hyperbolic") {
@@ -178,6 +194,10 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   // makes every nonconstant Fourier mode nonpositive for each supported stencil.
   opt.dissipation = ko_amplitude*std::pow(2.0, -2.0*opt.fd_stencil)
       *((opt.fd_stencil % 2 == 0) ? -1.0 : 1.0);
+  opt.project_gauge_constraints = pin->GetOrAddBoolean(
+      "pc_gh", "project_gauge_constraints", false);
+  opt.project_reduction_constraints = pin->GetOrAddBoolean(
+      "pc_gh", "project_reduction_constraints", false);
 
   opt.constraint_excise_chi = pin->GetOrAddReal(
       "pc_gh", "constraint_excise_chi", 0.0625);
@@ -187,6 +207,7 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
       "pc_gh", "constraint_horizon_radius", 0.5*opt.gauge_mass);
   opt.constraint_horizon_buffer = pin->GetOrAddReal(
       "pc_gh", "constraint_horizon_buffer", 0.0);
+  opt.constraint_dcycle = pin->GetOrAddInteger("pc_gh", "constraint_dcycle", 1);
   opt.physical_output_inner_radius = pin->GetOrAddReal(
       "pc_gh", "physical_output_inner_radius", 0.25*opt.gauge_mass);
   opt.initial_data_division_floor = pin->GetOrAddReal(
@@ -206,6 +227,7 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
         && opt.constraint_horizon_radius > 0.0
         && std::isfinite(opt.constraint_horizon_buffer)
         && opt.constraint_horizon_buffer >= 0.0
+        && opt.constraint_dcycle > 0
         && std::isfinite(opt.physical_output_inner_radius)
         && opt.physical_output_inner_radius >= 0.0
         && std::isfinite(opt.initial_data_division_floor)
@@ -221,6 +243,20 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
 
   pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
   pbval_u->InitializeBuffers(npcgh);
+  pbval_weyl = new MeshBoundaryValuesCC(ppack, pin, true);
+  pbval_weyl->InitializeBuffers(2);
+
+  nrad = pin->GetOrAddInteger("pc_gh", "nrad_wave_extraction", 0);
+  int const extraction_nlev = pin->GetOrAddInteger("pc_gh", "extraction_nlev", 10);
+  for (int n = 0; n < nrad; ++n) {
+    Real const radius = pin->GetOrAddReal(
+        "pc_gh", "extraction_radius_" + std::to_string(n), 10.0);
+    spherical_grids.push_back(std::make_unique<SphericalGrid>(ppack, extraction_nlev,
+                                                               radius));
+  }
+  psi_out = new Real[std::max(1, nrad*77*2)]{};
+  waveform_dt = pin->GetOrAddReal("pc_gh", "waveform_dt", 1.0);
+  if (nrad > 0) mkdir("waveforms", 0775);
 
   int horizon_index = 0;
   while (pin->GetOrAddBoolean(
@@ -482,13 +518,21 @@ void PcGh::ValidateState(const char *stage, bool check_rhs, bool check_constrain
       int const i = indcs.is + i0;
       int const j = indcs.js + j0;
       int const k = indcs.ks + k0;
+      auto &block_size = pmy_pack->pmb->mb_size;
+      Real const x = CellCenterX(i0, nx1, block_size.h_view(m).x1min,
+                                 block_size.h_view(m).x1max);
+      Real const y = CellCenterX(j0, nx2, block_size.h_view(m).x2min,
+                                 block_size.h_view(m).x2max);
+      Real const z = CellCenterX(k0, nx3, block_size.h_view(m).x3min,
+                                 block_size.h_view(m).x3max);
       Real const determinant = adm::SpatialDet(
           host_state(m, I_GTXX, k, j, i), host_state(m, I_GTXY, k, j, i),
           host_state(m, I_GTXZ, k, j, i), host_state(m, I_GTYY, k, j, i),
           host_state(m, I_GTYZ, k, j, i), host_state(m, I_GTZZ, k, j, i));
       std::cout << ": conformal metric lost positive definiteness, det="
                 << determinant << " at (m,k,j,i)=(" << m << ',' << k << ','
-                << j << ',' << i << ')';
+                << j << ',' << i << "), (x,y,z)=(" << x << ',' << y << ','
+                << z << ')';
     } else if (first_bad_rhs < nstate) {
       int const flat = first_bad_rhs;
       int const cell = flat/npcgh;
@@ -523,7 +567,9 @@ void PcGh::ValidateState(const char *stage, bool check_rhs, bool check_constrain
 }
 
 PcGh::~PcGh() {
+  delete[] psi_out;
   delete pbval_u;
+  delete pbval_weyl;
 }
 
 }  // namespace pc_gh

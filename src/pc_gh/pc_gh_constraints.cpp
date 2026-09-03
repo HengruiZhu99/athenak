@@ -10,6 +10,7 @@
 #include <cmath>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <limits>
 #include <string>
 
@@ -62,6 +63,10 @@ Real MinimumSymmetricEigenvalue(Real a00, Real a01, Real a02,
 template <int FD_STENCIL>
 TaskStatus PcGh::CalcConstraints(Driver *pdriver, int stage) {
   if (pdriver != nullptr && stage != pdriver->nexp_stages) return TaskStatus::complete;
+  if (pdriver != nullptr
+      && pmy_pack->pmesh->ncycle % opt.constraint_dcycle != 0) {
+    return TaskStatus::complete;
+  }
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   int const nmb = pmy_pack->nmb_thispack;
@@ -350,8 +355,11 @@ TaskStatus PcGh::CalcConstraints(Driver *pdriver, int stage) {
     Real rhs_gradient2 = 0.0;
     for (int v = 0; v < npcgh; ++v) {
       Real const value = state_rhs(m, v, k, j, i);
-      if (v < I_P1) rhs_primary2 += value*value;
-      else rhs_gradient2 += value*value;
+      if (v < I_P1) {
+        rhs_primary2 += value*value;
+      } else {
+        rhs_gradient2 += value*value;
+      }
     }
     Real const minor1 = std::fmin(g[0][0], std::fmin(g[1][1], g[2][2]));
     Real const minor2 = std::fmin(
@@ -514,13 +522,13 @@ void PcGh::WriteBoundednessDiagnostics() {
   auto state = u0;
   auto con = u_con;
 
-  constexpr int nfield_max = 12;
-  constexpr int nfield_min = 7;
-  Real field_max[nfield_max] = {};
-  Real field_min[nfield_min];
+  constexpr int kNFieldMax = 12;
+  constexpr int kNFieldMin = 7;
+  Real field_max[kNFieldMax] = {};
+  Real field_min[kNFieldMin];
   for (Real &value : field_min) value = std::numeric_limits<Real>::max();
 
-  for (int quantity = 0; quantity < nfield_max; ++quantity) {
+  for (int quantity = 0; quantity < kNFieldMax; ++quantity) {
     Real local_max = 0.0;
     Kokkos::parallel_reduce("PC-GH boundedness maxima",
     Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
@@ -557,7 +565,7 @@ void PcGh::WriteBoundednessDiagnostics() {
     field_max[quantity] = local_max;
   }
 
-  for (int quantity = 0; quantity < nfield_min; ++quantity) {
+  for (int quantity = 0; quantity < kNFieldMin; ++quantity) {
     Real local_min = std::numeric_limits<Real>::max();
     Kokkos::parallel_reduce("PC-GH boundedness minima",
     Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
@@ -600,9 +608,9 @@ void PcGh::WriteBoundednessDiagnostics() {
   }
 
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, field_max, nfield_max, MPI_ATHENA_REAL,
+  MPI_Allreduce(MPI_IN_PLACE, field_max, kNFieldMax, MPI_ATHENA_REAL,
                 MPI_MAX, MPI_COMM_WORLD);
-  MPI_Allreduce(MPI_IN_PLACE, field_min, nfield_min, MPI_ATHENA_REAL,
+  MPI_Allreduce(MPI_IN_PLACE, field_min, kNFieldMin, MPI_ATHENA_REAL,
                 MPI_MIN, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, constraint_max, ncon, MPI_ATHENA_REAL,
                 MPI_MAX, MPI_COMM_WORLD);
@@ -622,9 +630,11 @@ void PcGh::WriteBoundednessDiagnostics() {
            << " max_p max_L max_Cperp max_Z max_K max_Atilde max_beta max_Q max_B"
            << " min_detg max_abs_detg_minus_1 min_minor1 min_minor2 min_eigenvalue";
     for (int n = 0; n < ncon; ++n) output << ' ' << ConstraintNames[n] << "_max";
-    char const * const operations[3] = {"restrict", "prolong", "project"};
+    char const * const operations[4] = {
+      "restrict", "prolong", "algebraic_project", "reduction_project",
+    };
     char const * const reductions[4] = {"Rw", "RQ", "Ralpha", "RB"};
-    for (int op = 0; op < 3; ++op) {
+    for (int op = 0; op < 4; ++op) {
       for (int red = 0; red < 4; ++red) {
         output << " d" << reductions[red] << '_' << operations[op] << "_max";
       }
@@ -636,7 +646,7 @@ void PcGh::WriteBoundednessDiagnostics() {
          << field_min[0] << ' ' << field_max[0] << ' '
          << field_min[1] << ' ' << field_max[1] << ' '
          << field_min[2] << ' ' << field_max[2];
-  for (int n = 3; n < nfield_max; ++n) output << ' ' << field_max[n];
+  for (int n = 3; n < kNFieldMax; ++n) output << ' ' << field_max[n];
   output << ' ' << field_min[3] << ' ' << constraint_max[I_CON_DETG]
          << ' ' << field_min[4] << ' ' << field_min[5] << ' ' << field_min[6];
   for (int n = 0; n < ncon; ++n) output << ' ' << constraint_max[n];

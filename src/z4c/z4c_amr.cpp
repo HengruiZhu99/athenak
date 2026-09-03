@@ -15,6 +15,7 @@
 #include "athena.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "parameter_input.hpp"
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/z4c.hpp"
@@ -71,6 +72,11 @@ void Z4c_AMR::Refine(MeshBlockPack *pmy_pack) {
 
 // refine region within a certain distance from each compact object
 void Z4c_AMR::RefineTracker(MeshBlockPack *pmbp) {
+  if (pmbp->pz4c == nullptr) {
+    std::cout << "### FATAL ERROR: tracker AMR requires the Z4c compact-object tracker"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   Mesh *pmesh       = pmbp->pmesh;
   auto &refine_flag = pmesh->pmr->refine_flag;
   auto &size        = pmbp->pmb->mb_size;
@@ -142,8 +148,10 @@ void Z4c_AMR::RefineChiMin(MeshBlockPack *pmbp) {
   int &ks = indcs.ks, nx3 = indcs.nx3;
   const int nkji = nx3 * nx2 * nx1;
   const int nji  = nx2 * nx1;
-  auto &u0       = pmbp->pz4c->u0;
-  int I_Z4C_CHI  = pmbp->pz4c->I_Z4C_CHI;
+  bool const pcgh = pmbp->ppcgh != nullptr;
+  DvceArray5D<Real> u0 = pcgh ? pmbp->ppcgh->u0 : pmbp->pz4c->u0;
+  int const chi_index = pcgh ? static_cast<int>(pc_gh::PcGh::I_W)
+                             : static_cast<int>(pmbp->pz4c->I_Z4C_CHI);
   // note: we need this to prevent capture by this in the lambda expr.
   auto chi_thresh = this->chi_thresh;
   auto root_lev = pmesh->root_level;
@@ -161,7 +169,9 @@ void Z4c_AMR::RefineChiMin(MeshBlockPack *pmbp) {
           int i = (idx - k * nji - j * nx1) + is;
           j += js;
           k += ks;
-          dmin = fmin(u0(m, I_Z4C_CHI, k, j, i), dmin);
+          Real const stored = u0(m, chi_index, k, j, i);
+          Real const chi = pcgh ? stored*stored : stored;
+          dmin = fmin(chi, dmin);
         },
         Kokkos::Min<Real>(team_dmin));
 
@@ -208,8 +218,10 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
   int &ks = indcs.ks, nx3 = indcs.nx3;
   const int nkji = nx3 * nx2 * nx1;
   const int nji  = nx2 * nx1;
-  auto &u0       = pmbp->pz4c->u0;
-  int I_Z4C_CHI  = pmbp->pz4c->I_Z4C_CHI;
+  bool const pcgh = pmbp->ppcgh != nullptr;
+  DvceArray5D<Real> u0 = pcgh ? pmbp->ppcgh->u0 : pmbp->pz4c->u0;
+  int const chi_index = pcgh ? static_cast<int>(pc_gh::PcGh::I_W)
+                             : static_cast<int>(pmbp->pz4c->I_Z4C_CHI);
   // note: we need this to prevent capture by this in the lambda expr.
   auto dchi_thresh = this->dchi_thresh;
 
@@ -225,9 +237,15 @@ void Z4c_AMR::RefineDchiMax(MeshBlockPack *pmbp) {
           int i = (idx - k * nji - j * nx1) + is;
           j += js;
           k += ks;
-          Real d2 = SQR(u0(m,I_Z4C_CHI,k,j,i+1) - u0(m,I_Z4C_CHI,k,j,i-1));
-          d2 += SQR(u0(m,I_Z4C_CHI,k,j+1,i) - u0(m,I_Z4C_CHI,k,j-1,i));
-          d2 += SQR(u0(m,I_Z4C_CHI,k+1,j,i) - u0(m,I_Z4C_CHI,k-1,j,i));
+          Real const xp = u0(m,chi_index,k,j,i+1);
+          Real const xm = u0(m,chi_index,k,j,i-1);
+          Real const yp = u0(m,chi_index,k,j+1,i);
+          Real const ym = u0(m,chi_index,k,j-1,i);
+          Real const zp = u0(m,chi_index,k+1,j,i);
+          Real const zm = u0(m,chi_index,k-1,j,i);
+          Real d2 = pcgh ? SQR(xp*xp - xm*xm) : SQR(xp - xm);
+          d2 += pcgh ? SQR(yp*yp - ym*ym) : SQR(yp - ym);
+          d2 += pcgh ? SQR(zp*zp - zm*zm) : SQR(zp - zm);
           dmax = fmax((sqrt(d2)), dmax);
         },
         Kokkos::Max<Real>(team_dmax));

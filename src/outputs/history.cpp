@@ -264,7 +264,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
   // The canonical columns are the primary w^2-masked coordinate-volume sums.
   // Full-domain coordinate-volume sums remain available with the all-* prefix.
-  pdata->nhist = 96;
+  pdata->nhist = 99;
   pdata->label[0] = "Cperp-n2";
   pdata->label[1] = "Z-norm2";
   pdata->label[2] = "H-norm2";
@@ -306,6 +306,9 @@ void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
           std::string(region_names[region]) + "-" + local_names[quantity];
     }
   }
+  pdata->label[96] = "shared-H-norm2";
+  pdata->label[97] = "shared-M-norm2";
+  pdata->label[98] = "shared-Volume";
 
   auto &con = pm->pmb_pack->ppcgh->u_con;
   auto &state = pm->pmb_pack->ppcgh->u0;
@@ -408,6 +411,37 @@ void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
       }
       h.the_array[base + 13] = include_region[region] ? coordinate_volume : 0.0;
     }
+    Real const w = state(m, pc_gh::PcGh::I_W, k, j, i);
+    Real const rho = state(m, pc_gh::PcGh::I_RHO, k, j, i);
+    Real const alpha = rho*w;
+    Real const gxx = state(m, pc_gh::PcGh::I_GTXX, k, j, i);
+    Real const gxy = state(m, pc_gh::PcGh::I_GTXY, k, j, i);
+    Real const gxz = state(m, pc_gh::PcGh::I_GTXZ, k, j, i);
+    Real const gyy = state(m, pc_gh::PcGh::I_GTYY, k, j, i);
+    Real const gyz = state(m, pc_gh::PcGh::I_GTYZ, k, j, i);
+    Real const gzz = state(m, pc_gh::PcGh::I_GTZZ, k, j, i);
+    Real const det_gt = adm::SpatialDet(gxx, gxy, gxz, gyy, gyz, gzz);
+    AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> gu;
+    adm::SpatialInv(1.0/det_gt, gxx, gxy, gxz, gyy, gyz, gzz,
+                    &gu(0, 0), &gu(0, 1), &gu(0, 2),
+                    &gu(1, 1), &gu(1, 2), &gu(2, 2));
+    Real physical_momentum2 = 0.0;
+    Real const alpha_m[3] = {
+      con(m, pc_gh::PcGh::I_CON_MX, k, j, i),
+      con(m, pc_gh::PcGh::I_CON_MY, k, j, i),
+      con(m, pc_gh::PcGh::I_CON_MZ, k, j, i),
+    };
+    Real const inv_alpha2 = (include_primary && alpha > 0.0)
+        ? 1.0/(alpha*alpha) : 0.0;
+    for (int a = 0; a < 3; ++a) {
+      for (int b = 0; b < 3; ++b) {
+        physical_momentum2 += w*w*gu(a, b)*alpha_m[a]*alpha_m[b]*inv_alpha2;
+      }
+    }
+    Real const proper_volume = coordinate_volume*std::sqrt(det_gt)/(w*w*w);
+    h.the_array[96] = include_primary ? proper_volume*values[2] : 0.0;
+    h.the_array[97] = include_primary ? proper_volume*physical_momentum2 : 0.0;
+    h.the_array[98] = include_primary ? proper_volume : 0.0;
     sum += h;
   }, Kokkos::Sum<array_sum::GlobalSum>(sum_this_rank));
 

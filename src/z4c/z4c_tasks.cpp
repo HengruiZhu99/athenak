@@ -232,7 +232,8 @@ TaskStatus Z4c::UpdateExcisionMasks(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ADMConstraints_(Driver *pdrive, int stage) {
-  if (stage == pdrive->nexp_stages) {
+  if (stage == pdrive->nexp_stages
+      && pmy_pack->pmesh->ncycle % opt.constraint_dcycle == 0) {
     switch (opt.fd_stencil) {
       case 2: ADMConstraints<2>(pmy_pack);
               break;

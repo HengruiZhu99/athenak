@@ -23,6 +23,7 @@
 class MeshBlockPack;
 class Driver;
 class HorizonDump;
+class SphericalGrid;
 
 namespace pc_gh {
 
@@ -219,6 +220,9 @@ class PcGh {
   TaskStatus CalcRHS(Driver *pdriver, int stage);
   template <int FD_STENCIL>
   TaskStatus CalcConstraints(Driver *pdriver, int stage);
+  template <int FD_STENCIL>
+  void ProjectReduction(MeshBlockPack *pmbp);
+  void ProjectGaugeConstraints(MeshBlockPack *pmbp);
   void PcGhToADM(MeshBlockPack *pmbp, bool masked_only = true);
   void ProjectAlgebraic(MeshBlockPack *pmbp);
   void ValidateState(const char *stage, bool check_rhs, bool check_constraints);
@@ -231,15 +235,31 @@ class PcGh {
   TaskStatus InitRecv(Driver *pdriver, int stage);
   TaskStatus ClearRecv(Driver *pdriver, int stage);
   TaskStatus ClearSend(Driver *pdriver, int stage);
+  TaskStatus InitRecvWeyl(Driver *pdriver, int stage);
+  TaskStatus ClearRecvWeyl(Driver *pdriver, int stage);
+  TaskStatus ClearSendWeyl(Driver *pdriver, int stage);
   TaskStatus SendU(Driver *pdriver, int stage);
   TaskStatus RecvU(Driver *pdriver, int stage);
+  TaskStatus SendWeyl(Driver *pdriver, int stage);
+  TaskStatus RecvWeyl(Driver *pdriver, int stage);
   TaskStatus RestrictU(Driver *pdriver, int stage);
+  TaskStatus RestrictWeyl(Driver *pdriver, int stage);
+  TaskStatus RestrictProjection(Driver *pdriver, int stage);
   TaskStatus ApplyPhysicalBCs(Driver *pdriver, int stage);
+  TaskStatus ApplyProjectionPhysicalBCs(Driver *pdriver, int stage);
   TaskStatus Prolongate(Driver *pdriver, int stage);
+  TaskStatus ProlongateWeyl(Driver *pdriver, int stage);
+  TaskStatus ProlongateProjection(Driver *pdriver, int stage);
+  TaskStatus PrepareProjectionExchange(Driver *pdriver, int stage);
+  TaskStatus SendProjection(Driver *pdriver, int stage);
+  TaskStatus RecvProjection(Driver *pdriver, int stage);
   TaskStatus EnforceAlgebraicConstraints(Driver *pdriver, int stage);
   TaskStatus ConvertToADM(Driver *pdriver, int stage);
+  TaskStatus CalcWeylScalar(Driver *pdriver, int stage);
+  TaskStatus CalcWaveForm(Driver *pdriver, int stage);
   TaskStatus BoundaryRHS(Driver *pdriver, int stage);
   TaskStatus ExpRKUpdate(Driver *pdriver, int stage);
+  TaskStatus EnforceReductionConstraints(Driver *pdriver, int stage);
   TaskStatus NewTimeStep(Driver *pdriver, int stage);
   TaskStatus DumpHorizons(Driver *pdriver, int stage);
 
@@ -259,6 +279,7 @@ class PcGh {
   struct Options {
     int spatial_order;
     int fd_stencil;
+    int extrap_order;
     std::string gauge;
     std::string gauge_a0_table_file;
     Real gauge_mass;
@@ -268,10 +289,13 @@ class PcGh {
     Real shift_switch_z1;
     Real kappa;
     Real dissipation;
+    bool project_gauge_constraints;
+    bool project_reduction_constraints;
     Real constraint_excise_chi;
     bool constraint_exterior_horizon;
     Real constraint_horizon_radius;
     Real constraint_horizon_buffer;
+    int constraint_dcycle;
     Real physical_output_inner_radius;
     Real initial_data_division_floor;
     bool reconstruct_adm_output;
@@ -291,12 +315,20 @@ class PcGh {
   Real gauge_a0_log_r_min;
   Real gauge_a0_inv_dlog_r;
   DvceArray5D<Real> coarse_u0;
+  DvceArray5D<Real> u_weyl;
+  DvceArray5D<Real> coarse_u_weyl;
   Variables u;
   Variables rhs;
   MeshBoundaryValuesCC *pbval_u;
+  MeshBoundaryValuesCC *pbval_weyl;
+  std::vector<std::unique_ptr<SphericalGrid>> spherical_grids;
+  Real *psi_out;
+  Real waveform_dt;
+  Real last_waveform_time;
+  int nrad;
   std::vector<std::unique_ptr<HorizonDump>> phorizon_dump;
   Real dtnew;
-  std::array<std::array<Real, 4>, 3> transfer_reduction_change{};
+  std::array<std::array<Real, 4>, 4> transfer_reduction_change{};
 
  private:
   template <int FD_STENCIL>

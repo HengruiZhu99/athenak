@@ -1,0 +1,135 @@
+<comment>
+problem = equal-mass, nonspinning head-on BBH from rest; total ADM mass M=1
+
+<job>
+basename = bbh_pcgh
+
+<mesh>
+nghost = 4
+nx1 = 32
+x1min = -16
+x1max = 16
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 32
+x2min = -16
+x2max = 16
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 32
+x3min = -16
+x3max = 16
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = 0.2
+nlim = -1
+tlim = 25
+ndiag = 10
+
+<pc_gh>
+spatial_order = 6
+extrap_order = 2
+gauge = z4c_mp
+shift_eta = 2.0
+kappa = 0.0
+dissipation = 0.3
+# Project the four continuum-zero GH gauge constraints without damping terms.
+project_gauge_constraints = true
+# Enforce the defining first-derivative constraints after each full RK step; kappa stays zero.
+project_reduction_constraints = true
+constraint_excise_chi = 0.0625
+constraint_dcycle = 10
+physical_output_inner_radius = 0.0
+initial_data_division_floor = 1.0e-14
+reconstruct_adm_output = false
+boundedness_output = true
+boundedness_dcycle = 100
+nrad_wave_extraction = 1
+extraction_radius_0 = 8
+extraction_nlev = 16
+waveform_dt = 0.5
+
+<mesh_refinement>
+refinement = adaptive
+num_levels = 5
+max_nmb_per_rank = 1000
+refinement_interval = 10
+
+<amr_criterion0>
+method = user
+
+<z4c_amr>
+method = chi
+chi_min = 0.2
+max_ref_lev = 4
+# The very-low-resolution wave zone remains on the root grid; chi-AMR reaches M/16.
+
+# These initial SMR boxes force TwoPunctures interpolation directly on the finest cells.
+<refined_region1>
+level = 4
+x1min = -3.0
+x1max = -2.0
+x2min = -0.5
+x2max = 0.5
+x3min = -0.5
+x3max = 0.5
+
+<refined_region2>
+level = 4
+x1min = 2.0
+x1max = 3.0
+x2min = -0.5
+x2max = 0.5
+x3min = -0.5
+x3max = 0.5
+
+<problem>
+pgen_name = z4c_two_puncture
+verbose = false
+par_b = 2.5
+par_m_plus = 0.5
+par_m_minus = 0.5
+target_M_plus = 0.5
+target_M_minus = 0.5
+par_P_plus1 = 0.0
+par_P_plus2 = 0.0
+par_P_plus3 = 0.0
+par_P_minus1 = 0.0
+par_P_minus2 = 0.0
+par_P_minus3 = 0.0
+par_S_plus1 = 0.0
+par_S_plus2 = 0.0
+par_S_plus3 = 0.0
+par_S_minus1 = 0.0
+par_S_minus2 = 0.0
+par_S_minus3 = 0.0
+center_offset1 = 0.0
+center_offset2 = 0.0
+center_offset3 = 0.0
+give_bare_mass = true
+npoints_A = 30
+npoints_B = 30
+npoints_phi = 16
+Newton_tol = 1.0e-10
+Newton_maxit = 5
+TP_epsilon = 0.0
+TP_Tiny = 0.0
+TP_Extend_Radius = 0.0
+adm_tol = 1.0e-10
+do_residuum_debug_output = false
+solve_momentum_constraint = false
+initial_lapse_psi_exponent = -2.0
+swap_xz = false
+
+<output1>
+file_type = hst
+dcycle = 10

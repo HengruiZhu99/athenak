@@ -16,7 +16,9 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <memory>
 #include <string>
+#include <vector>
 
 #ifdef MPI_PARALLEL
 #include <mpi.h>
@@ -26,6 +28,7 @@
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
 #include "z4c/z4c.hpp"
+#include "utils/gr_wave.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "geodesic-grid/geodesic_grid.hpp"
 #include "geodesic-grid/spherical_grid.hpp"
@@ -60,17 +63,19 @@ void swsh(Real * ylmR, Real * ylmI, int l, int m, Real theta, Real phi) {
 int LmIndex(int l,int m) {
     return l*l+m+l-4;
 }
+
+}  // namespace z4c
+
+namespace gr_wave {
 //----------------------------------------------------------------------------------------
 // \!fn void Z4c::Z4cWeyl(MeshBlockPack *pmbp)
 // \brief compute the weyl scalars given the adm variables and matter state
 //
 // This function operates only on the interior points of the MeshBlock
-void Z4c::WaveExtr(MeshBlockPack *pmbp) {
-  // Spherical Grid for user-defined history
-  auto &grids = pmbp->pz4c->spherical_grids;
-  auto &u_weyl = pmbp->pz4c->u_weyl;
-  auto &psi_out = pmbp->pz4c->psi_out;
-
+void ExtractWaveform(MeshBlockPack *pmbp,
+                     std::vector<std::unique_ptr<SphericalGrid>> &grids,
+                     DvceArray5D<Real> &u_weyl, Real *psi_out,
+                     const std::string &output_directory) {
   // number of radii
   int nradii = grids.size();
 
@@ -93,7 +98,7 @@ void Z4c::WaveExtr(MeshBlockPack *pmbp) {
             Real datareal = grids[g]->interp_vals.h_view(ip,0);
             Real dataim = grids[g]->interp_vals.h_view(ip,1);
             Real weight = grids[g]->solid_angles.h_view(ip);
-            swsh(&ylmR,&ylmI,l,m,theta,phi);
+            z4c::swsh(&ylmR,&ylmI,l,m,theta,phi);
             // The spherical harmonics transform as
             // Y^s_{l m}( Pi-th, ph ) = (-1)^{l+s} Y^s_{l -m}(th, ph)
             // but the PoisitionPolar function returns theta \in [0,\pi],
@@ -124,8 +129,8 @@ void Z4c::WaveExtr(MeshBlockPack *pmbp) {
     int idx = 0;
     for (int g=0; g<nradii; ++g) {
       // Output file names
-      std::string filename = "waveforms/rpsi4_real_";
-      std::string filename2 = "waveforms/rpsi4_imag_";
+      std::string filename = output_directory + "/rpsi4_real_";
+      std::string filename2 = output_directory + "/rpsi4_imag_";
       std::stringstream strObj;
       strObj << std::setfill('0') << std::setw(4) << grids[g]->radius;
       filename += strObj.str();
@@ -218,5 +223,13 @@ void Z4c::WaveExtr(MeshBlockPack *pmbp) {
   }
 }
 
+}  // namespace gr_wave
+
+namespace z4c {
+
+void Z4c::WaveExtr(MeshBlockPack *pmbp) {
+  gr_wave::ExtractWaveform(
+      pmbp, spherical_grids, u_weyl, psi_out, "waveforms");
+}
 
 }  // namespace z4c

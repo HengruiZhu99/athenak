@@ -16,8 +16,91 @@
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
 #include "pc_gh/pc_gh.hpp"
+#include "utils/finite_diff.hpp"
 
 namespace pc_gh {
+
+void PcGh::ProjectGaugeConstraints(MeshBlockPack *pmbp) {
+  auto &indcs = pmbp->pmesh->mb_indcs;
+  int const isg = indcs.is - indcs.ng;
+  int const ieg = indcs.ie + indcs.ng;
+  int const jsg = pmbp->pmesh->multi_d ? indcs.js - indcs.ng : indcs.js;
+  int const jeg = pmbp->pmesh->multi_d ? indcs.je + indcs.ng : indcs.je;
+  int const ksg = pmbp->pmesh->three_d ? indcs.ks - indcs.ng : indcs.ks;
+  int const keg = pmbp->pmesh->three_d ? indcs.ke + indcs.ng : indcs.ke;
+  int const nmb = pmbp->nmb_thispack;
+  auto &pc = u;
+  auto &constraints = u_con;
+
+  // C_perp and Z^i are the four GH gauge-constraint variables. Their continuum
+  // values vanish, so this optional projection removes numerical drift without
+  // adding a constraint-damping term to the evolution equations.
+  par_for("PC-GH gauge-constraint projection", DevExeSpace(),
+  0, nmb - 1, ksg, keg, jsg, jeg, isg, ieg,
+  KOKKOS_LAMBDA(int m, int k, int j, int i) {
+    Real correction2 = pc.Cperp(m, k, j, i)*pc.Cperp(m, k, j, i);
+    for (int a = 0; a < 3; ++a) {
+      correction2 += pc.Z(m, a, k, j, i)*pc.Z(m, a, k, j, i);
+    }
+    Real const algebraic = constraints(m, I_CON_PROJECTION, k, j, i);
+    constraints(m, I_CON_PROJECTION, k, j, i) =
+        std::sqrt(algebraic*algebraic + correction2);
+    pc.Cperp(m, k, j, i) = 0.0;
+    for (int a = 0; a < 3; ++a) pc.Z(m, a, k, j, i) = 0.0;
+  });
+  Kokkos::fence();
+}
+
+template <int FD_STENCIL>
+void PcGh::ProjectReduction(MeshBlockPack *pmbp) {
+  auto &indcs = pmbp->pmesh->mb_indcs;
+  auto &size = pmbp->pmb->mb_size;
+  int const nmb = pmbp->nmb_thispack;
+  bool const multi_d = pmbp->pmesh->multi_d;
+  bool const three_d = pmbp->pmesh->three_d;
+  auto &pc = u;
+  auto &state = u0;
+
+  // Reset the evolved first-derivative fields to their defining finite differences.
+  // A dedicated restriction/exchange follows this optional projection so both active
+  // and ghost derivative fields are consistent at MeshBlock and AMR interfaces.
+  par_for("PC-GH reduction-constraint projection", DevExeSpace(),
+  0, nmb - 1, indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+  KOKKOS_LAMBDA(int m, int k, int j, int i) {
+    Real idx[3] = {1.0/size.d_view(m).dx1,
+                   1.0/size.d_view(m).dx2,
+                   1.0/size.d_view(m).dx3};
+    Real const w = pc.w(m, k, j, i);
+    Real const rho = pc.rho(m, k, j, i);
+    for (int d = 0; d < 3; ++d) {
+      bool const active = d == 0 || (d == 1 && multi_d) || (d == 2 && three_d);
+      if (!active) {
+        pc.p(m, d, k, j, i) = 0.0;
+        pc.L(m, d, k, j, i) = 0.0;
+        for (int a = 0; a < 3; ++a) {
+          state(m, BIndex(d, a), k, j, i) = 0.0;
+          for (int b = a; b < 3; ++b) {
+            state(m, QIndex(d, a, b), k, j, i) = 0.0;
+          }
+        }
+        continue;
+      }
+      Real const dw = Dx<FD_STENCIL>(d, idx, pc.w, m, k, j, i);
+      Real const drho = Dx<FD_STENCIL>(d, idx, pc.rho, m, k, j, i);
+      pc.p(m, d, k, j, i) = dw;
+      pc.L(m, d, k, j, i) = 2.0*(w*drho + rho*dw);
+      for (int a = 0; a < 3; ++a) {
+        state(m, BIndex(d, a), k, j, i) = Dx<FD_STENCIL>(
+            d, idx, pc.beta, m, a, k, j, i);
+        for (int b = a; b < 3; ++b) {
+          state(m, QIndex(d, a, b), k, j, i) = Dx<FD_STENCIL>(
+              d, idx, pc.gtilde, m, a, b, k, j, i);
+        }
+      }
+    }
+  });
+  Kokkos::fence();
+}
 
 void PcGh::ProjectAlgebraic(MeshBlockPack *pmbp) {
   ValidateState("pre-algebraic projection", false, false);
@@ -91,5 +174,9 @@ void PcGh::ProjectAlgebraic(MeshBlockPack *pmbp) {
   Kokkos::fence();
   ValidateState("post-algebraic projection", false, false);
 }
+
+template void PcGh::ProjectReduction<2>(MeshBlockPack *pmbp);
+template void PcGh::ProjectReduction<3>(MeshBlockPack *pmbp);
+template void PcGh::ProjectReduction<4>(MeshBlockPack *pmbp);
 
 }  // namespace pc_gh

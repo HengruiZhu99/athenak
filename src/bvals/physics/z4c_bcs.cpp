@@ -11,6 +11,7 @@
 
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "z4c/z4c.hpp"
 
 template<int order>
@@ -88,9 +89,11 @@ void MeshBoundaryValues::Z4cBCs(MeshBlockPack *ppack, DualArray2D<Real> u_in,
   int je = indcs.je;
   int ks = indcs.ks;
   int ke = indcs.ke;
-  auto &opt = ppack->pz4c->opt;
+  int const extrap_order = (ppack->pz4c != nullptr)
+      ? ppack->pz4c->opt.extrap_order
+      : ppack->ppcgh->opt.extrap_order;
 
-  switch(opt.extrap_order) {
+  switch(extrap_order) {
     case 2:
       BCHelper<2>(ppack, u_in, u0, is, ie, js, je, ks, ke, n1, n2, n3);
       break;
@@ -111,7 +114,7 @@ void MeshBoundaryValues::Z4cBCs(MeshBlockPack *ppack, DualArray2D<Real> u_in,
     int cje = indcs.cje;
     int cks = indcs.cks;
     int cke = indcs.cke;
-    switch(opt.extrap_order) {
+    switch(extrap_order) {
       case 2:
         BCHelper<2>(ppack, u_in, coarse_u0, cis, cie, cjs, cje, cks, cke, cn1, cn2, cn3);
         break;

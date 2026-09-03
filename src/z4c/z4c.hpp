@@ -187,6 +187,7 @@ class Z4c {
     int spatial_order;
     // Internal finite-difference stencil selector: 2, 3, 4 -> 2nd, 4th, 6th order
     int fd_stencil;
+    int constraint_dcycle;
     // Value of chi to specify the excision region for constraint evaluation
     Real excise_chi;
 
