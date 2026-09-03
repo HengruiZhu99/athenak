@@ -28,6 +28,7 @@
 #include "parameter_input.hpp"
 #include "utils/cart_grid.hpp"
 #include "coordinates/adm.hpp"
+#include "pc_gh/pc_gh.hpp"
 #include "z4c/z4c.hpp"
 
 //----------------------------------------------------------------------------------------
@@ -114,18 +115,129 @@ void HorizonDump::SetGridAndInterpolate(Real center[3]) {
     }
   }
 
-  // MPI reduce here
-  // Reduction to the master rank for data_out
-  #if MPI_PARALLEL_ENABLED
+  WriteInterpolatedData(data_out, count, true);
+  delete[] data_out;
+}
+
+void HorizonDump::SetGridAndInterpolatePcGh(Real center[3], Real inner_radius) {
+  pos[0] = center[0];
+  pos[1] = center[1];
+  pos[2] = center[2];
+  pcat_grid->ResetCenter(pos);
+
+  int const npoints = horizon_nx*horizon_nx*horizon_nx;
+  int const nregular = 18;
+  std::vector<Real> regular(nregular*npoints, 0.0);
+  int const regular_fields[nregular] = {
+    pc_gh::PcGh::I_W, pc_gh::PcGh::I_RHO,
+    pc_gh::PcGh::I_BETAX, pc_gh::PcGh::I_BETAY, pc_gh::PcGh::I_BETAZ,
+    pc_gh::PcGh::I_GTXX, pc_gh::PcGh::I_GTXY, pc_gh::PcGh::I_GTXZ,
+    pc_gh::PcGh::I_GTYY, pc_gh::PcGh::I_GTYZ, pc_gh::PcGh::I_GTZZ,
+    pc_gh::PcGh::I_K,
+    pc_gh::PcGh::I_ATXX, pc_gh::PcGh::I_ATXY, pc_gh::PcGh::I_ATXZ,
+    pc_gh::PcGh::I_ATYY, pc_gh::PcGh::I_ATYZ, pc_gh::PcGh::I_ATZZ,
+  };
+  for (int variable = 0; variable < nregular; ++variable) {
+    pcat_grid->InterpolateToGrid(regular_fields[variable], pmbp->ppcgh->u0);
+    for (int nx = 0; nx < horizon_nx; ++nx) {
+      for (int ny = 0; ny < horizon_nx; ++ny) {
+        for (int nz = 0; nz < horizon_nx; ++nz) {
+          int const point = nz*horizon_nx*horizon_nx + ny*horizon_nx + nx;
+          regular[variable*npoints + point] = pcat_grid->interp_vals.h_view(nx, ny, nz);
+        }
+      }
+    }
+  }
+#if MPI_PARALLEL_ENABLED
   if (0 == global_variable::my_rank) {
-    MPI_Reduce(MPI_IN_PLACE, data_out, count,
+    MPI_Reduce(MPI_IN_PLACE, regular.data(), nregular*npoints,
               MPI_ATHENA_REAL, MPI_SUM, 0, MPI_COMM_WORLD);
   } else {
-    MPI_Reduce(data_out, data_out, count, MPI_ATHENA_REAL, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(regular.data(), regular.data(), nregular*npoints,
+               MPI_ATHENA_REAL, MPI_SUM, 0, MPI_COMM_WORLD);
   }
-  #endif
-  // Then write output file
-  // Open the file in binary write mode
+#endif
+
+  int const count = 16*npoints;
+  Real *data_out = new Real[count]();
+  if (global_variable::my_rank == 0) {
+    Real const mask_x = pmbp->ppcgh->opt.gauge_center[0];
+    Real const mask_y = pmbp->ppcgh->opt.gauge_center[1];
+    Real const mask_z = pmbp->ppcgh->opt.gauge_center[2];
+    for (int nx = 0; nx < horizon_nx; ++nx) {
+      for (int ny = 0; ny < horizon_nx; ++ny) {
+        for (int nz = 0; nz < horizon_nx; ++nz) {
+          int const point = nz*horizon_nx*horizon_nx + ny*horizon_nx + nx;
+          Real x = pcat_grid->min_x1 + nx*pcat_grid->d_x1;
+          Real y = pcat_grid->min_x2 + ny*pcat_grid->d_x2;
+          Real z = pcat_grid->min_x3 + nz*pcat_grid->d_x3;
+          if (pcat_grid->is_cheby) {
+            x = pcat_grid->center_x1 + pcat_grid->extent_x1
+                *std::cos(nx*M_PI/(horizon_nx - 1));
+            y = pcat_grid->center_x2 + pcat_grid->extent_x2
+                *std::cos(ny*M_PI/(horizon_nx - 1));
+            z = pcat_grid->center_x3 + pcat_grid->extent_x3
+                *std::cos(nz*M_PI/(horizon_nx - 1));
+          }
+          Real const radius2 = (x - mask_x)*(x - mask_x)
+                             + (y - mask_y)*(y - mask_y)
+                             + (z - mask_z)*(z - mask_z);
+          if (radius2 < inner_radius*inner_radius) {
+            // Dense-cube extension required by AHFinderDirect. It is output-only and
+            // is never copied into either PC-GH or ADM evolution storage.
+            data_out[point] = 1.0;
+            data_out[(4 + 0)*npoints + point] = 1.0;
+            data_out[(4 + 3)*npoints + point] = 1.0;
+            data_out[(4 + 5)*npoints + point] = 1.0;
+            continue;
+          }
+          Real const w = regular[point];
+          Real const rho = regular[npoints + point];
+          bool valid = std::isfinite(w) && w > 0.0
+                    && std::isfinite(rho) && rho >= 0.0;
+          for (int variable = 2; variable < nregular; ++variable) {
+            valid = valid && std::isfinite(regular[variable*npoints + point]);
+          }
+          if (!valid) {
+            std::cout << "### FATAL ERROR: invalid regular PC-GH horizon data at t="
+                      << pmbp->pmesh->time << " point (" << x << ',' << y << ','
+                      << z << ") outside inner mask r=" << inner_radius << std::endl;
+            std::exit(EXIT_FAILURE);
+          }
+          Real const inv_w2 = 1.0/(w*w);
+          data_out[point] = rho*w;
+          for (int a = 0; a < 3; ++a) {
+            data_out[(1 + a)*npoints + point] = regular[(2 + a)*npoints + point];
+          }
+          for (int component = 0; component < 6; ++component) {
+            Real const gtilde = regular[(5 + component)*npoints + point];
+            Real const atilde = regular[(12 + component)*npoints + point];
+            data_out[(4 + component)*npoints + point] = gtilde*inv_w2;
+            data_out[(10 + component)*npoints + point] =
+                (atilde + gtilde*regular[11*npoints + point]/3.0)*inv_w2;
+          }
+        }
+      }
+    }
+  }
+  WriteInterpolatedData(data_out, count, false);
+  delete[] data_out;
+}
+
+void HorizonDump::WriteInterpolatedData(Real *data_out, int count, bool reduce) {
+#if MPI_PARALLEL_ENABLED
+  if (reduce) {
+    if (0 == global_variable::my_rank) {
+      MPI_Reduce(MPI_IN_PLACE, data_out, count,
+                 MPI_ATHENA_REAL, MPI_SUM, 0, MPI_COMM_WORLD);
+    } else {
+      MPI_Reduce(data_out, data_out, count,
+                 MPI_ATHENA_REAL, MPI_SUM, 0, MPI_COMM_WORLD);
+    }
+  }
+#else
+  (void)reduce;
+#endif
   std::string const horizon_folder = "horizon_" + std::to_string(horizon_ind);
   mkdir(horizon_folder.c_str(), 0775);
   std::string foldername = horizon_folder
@@ -153,7 +265,6 @@ void HorizonDump::SetGridAndInterpolate(Real center[3]) {
     ETK_setup_parfile();
     output_count++;
   }
-  delete[] data_out;
 }
 
 void HorizonDump::ETK_setup_parfile() {

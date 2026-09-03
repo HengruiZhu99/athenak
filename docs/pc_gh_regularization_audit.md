@@ -2,41 +2,80 @@
 
 ## Status
 
-This audit records the moving-puncture implementation and algebraic evidence through
-`f5b334f0`.  The theorem domain is `r>0` with
-positive `A`, positive `chi`, and nonsingular positive-definite `gtilde`.  It does not
-assert a uniformly conditioned continuum extension at an exact `A=chi=0` point.
+This audit now records the puncture-regular 55-field replacement implemented on
+2026-09-02.  The theorem domain is `r>0` with positive `w`, positive `rho`, and a
+nonsingular positive-definite `gtilde`.  The source contains a denominator-free
+polynomial extension of every preferred evolution expression to `w=0` or `rho=0`;
+the positive-field assumption is needed only for proving equivalence to the older
+variables.  The qualification grids are cell-centered and never place a cell at the
+exact puncture.
 
 The source of truth for definitions and proofs is `docs/pc_gh_derivation.md`.  The
 scripts under `analysis/pc_gh_symbolic` are independent executable checks, not equation
 generators for the production kernel.
 
-## Regular variables and composites
+## Current regular variables and composites
 
-The evolved lapse variable is `A=alpha^2`; no production equation evolves `alpha`
-directly.  The first-order variables are
-
-\[
-X_i=\partial_i\chi,\quad Y_i=\partial_i A,\quad
-Q_{kij}=\partial_k\tilde\gamma_{ij},\quad
-B_i{}^j=\partial_i\beta^j.
-\]
-
-The puncture monitors are
+The production state is
 
 \[
-W_i=X_i/\sqrt\chi,\quad L_i=Y_i/\sqrt A,\quad
-r_-=\chi/\sqrt A,\quad r_+=\sqrt{A/\chi}.
+\{w,\tilde\gamma_{ij},K,\tilde A_{ij},Z^i,C_\perp,\rho,
+\beta^i,p_i,Q_{kij},L_i,B_i{}^j\},
 \]
 
-The RHS uses the regular conformal identities for the physical scalar curvature,
-Hamiltonian and momentum constraints, lapse Hessian, and trace-free curvature/lapse
-combination.  It does not construct physical Christoffels or a physical Ricci tensor.
+with
+
+\[
+w=\sqrt\chi,\quad \rho=\alpha/w,\quad p_i=\partial_iw,\quad
+L_i=2\partial_i\alpha,\quad C_\perp=\pi+K,
+\quad Z^i=\tilde\Gamma^i(Q)-\tilde\Lambda^i.
+\]
+
+`partial_i rho` is intentionally absent: it diverges as approximately
+`r^-0.9087` on a stationary 1+log trumpet, while `rho`, `p`, and `L` have nonnegative
+inner powers.  The RHS uses only multiplication/addition of puncture fields plus
+conformal-metric inversion.  It does not construct physical Christoffels, a physical
+Ricci tensor, or any quotient by `w`, `rho`, `alpha`, `chi`, or `A`.
+
+The only puncture-field quotient is the defining input conversion `rho=alpha/w`.
+It is initialization-only, uses the configurable resolution-independent
+`initial_data_division_floor`, reports the global minimum unguarded `w` and guard
+count, and fails on negative/nonfinite input.  The stationary A0 legacy table needs
+the analogous initialization-only conversions.  Floor values `1e-12`, `1e-14`, and
+`1e-16` produced byte-identical N=32 residual tables; no qualification cell activated
+the default guard.
+
+The remainder of this document below the current audit matrix describes the older
+`A,chi,X,Y` investigation and is retained as provenance, not as the current storage
+ABI.
+
+## Source division audit
+
+The final `rg -n '/|sqrt|pow('` audit covers the requested RHS, constraints, CFL,
+projection, ADM conversion, PC-GH problem generators, and horizon adapter. Every
+remaining quotient is classified here:
+
+| path | remaining divisions | reason and safety condition |
+|---|---|---|
+| `pc_gh_calcrhs.cpp` | inverse grid spacings; constants `/2,/3`; smoothstep width; conformal `1/det(gtilde)`; A0 coordinate `r` and mass | finite-difference definition, fixed coefficients/parameters, conformal-metric inverse, or prescribed-table coordinates whose open `r>0` domain is checked; no puncture-field quotient |
+| `pc_gh_constraints.cpp` | inverse grid spacings; constants; conformal `1/det(gtilde)`; analytic symmetric-eigenvalue normalization | diagnostic derivatives, fixed coefficients, conformal inverse, and a scale-invariant SPD eigensolver; no puncture-field quotient |
+| `pc_gh_newdt.cpp` | conformal `1/det(gtilde)`; fixed `2/sqrt(3)`; `dx/speed` | conformal inverse, fixed characteristic factor, and the defining CFL quotient after explicit finite/positive speed checks |
+| `pc_gh_projection.cpp` | `1/det(gtilde)` and fixed thirds | determinant-one and trace-free conformal projection; SPD is checked before use |
+| `pc_gh_adm.cpp` initialization | `1/det(gamma)` and `alpha/guarded_w` | metric determinant extraction and the unavoidable defining map from ADM input to `rho`; initialization-only guard policy described above |
+| `pc_gh_adm.cpp` masked output | `1/w^2` | evaluated only outside `physical_output_inner_radius`; masked cells get an explicitly invalid output-only extension |
+| Bowen-York initialization/audit | coordinate `1/r`, powers of `r+M/2`, fixed thirds, sample-count RMS | analytic wormhole input on a cell-centered grid whose puncture is required to lie on faces, plus diagnostics; no evolution-field quotient |
+| stationary A0 initialization | coordinate `1/r`, mass scaling, `alpha/guarded_w`, `dchi/guarded_w`, `dA/guarded_alpha` | legacy table-to-new-state conversion only; exact-center cells are rejected and the same configurable initialization guard is used |
+| PC-GH horizon adapter | Chebyshev normalization and `1/w^2` | regular variables are interpolated first; physical reconstruction occurs only outside the declared inner mask after finite/positive checks |
+
+Integer index arithmetic and path/comment slashes in the raw `rg` listing are not
+field divisions. `verify_source_policy.py` independently strips comments and fails if
+a quotient by `w`, `rho`, `alpha`, `chi`, or `A` enters a preferred evolution file.
 
 ## Exact audit matrix
 
 | Gate | Executable evidence | Classification |
 |---|---|---|
+| regular 55-field map, equations, gauges, asymptotics | `verify_puncture_regular_55.py` | exact on `w>0,rho>0`; preferred expressions denominator-free |
 | regular scalar/tensor identities | `verify_regularization.py` | exact; `PROVED ON r>0` where division by `A` or `chi` is used |
 | metric and `Q` projection | `verify_q_projection.py` | exact for nonsingular `gtilde` |
 | Brown conformal Ricci | `verify_conformal_ricci.py` | exact at 18 rational component/point pairs for a non-diagonal unimodular family |
@@ -47,7 +86,7 @@ combination.  It does not construct physical Christoffels or a physical Ricci te
 | independent four-dimensional reduced equation | `verify_4d_component_oracle.py` | all ten covariant components and corrected primary equations pass at a rational point jet |
 | PC-GH / standard FO-GH map | `verify_fo_gh_map.py` | exact constrained round trip; `PROVED ON r>0` |
 | Bowen-York leading-field regularity | `audit_bowen_york_cancellation.py` | three-precision boundedness/conditioning audit on `r>0`; nonzero momentum/spin cases are not complete constraint-satisfying data |
-| production dependency policy | `verify_source_policy.py` | all nine current `src/pc_gh` production files pass |
+| production dependency and denominator policy | `verify_source_policy.py` | all nine current `src/pc_gh` production files pass; preferred evolution rejects puncture-field quotients |
 
 The controlling regression targets were not assumed correct.  Independent checks found
 and retained exact counterexamples to three supplied targets:
@@ -111,20 +150,19 @@ and they do not close Gates 9, 12, or 13.
 
 ## Runtime diagnostics and hard stops
 
-Every PC-GH constraint pass records `r_-`, `r_+`, `|W|`, `|L|`, primary-RHS and
-gradient-RHS maxima in addition to GH, physical, reduction, curl, and algebraic
-constraints.  The stationary target problem also writes per-variable maxima and their
-locations in serial runs.
+Every configured boundedness pass records min/max `w,rho,alpha`, maxima of
+`p,L,Cperp,Z,K,Atilde,beta,Q,B`, determinant/principal-minor/eigenvalue bounds, every
+GH/ADM/reduction/curl/algebraic diagnostic, both RHS-family maxima, and changes in all
+four reduction norms across restriction, prolongation, and projection. The stationary
+target problem also writes per-variable maxima and their locations in serial runs.
 
-The one-puncture moving-gauge diagnostic additionally fails closed on nonfinite state
-or constraint values, nonpositive `A` or `chi`, and loss of conformal-metric SPD. Its
-current implementation is intentionally Serial-only. The 20M uniform periodic runs
-for both direct and switched gauges ended with positive `A`/`chi` and an SPD conformal
-metric, but these minima were not recorded throughout the trajectory and the normalized
-GH and ADM endpoint norms increased with resolution. This is bounded robustness
-evidence, not convergence or puncture qualification.
+The one-puncture moving-gauge diagnostic is MPI-capable and fails closed at the first
+nonfinite evolved state, RHS, constraint, or characteristic speed; negative `w/rho`;
+nonfinite determinant/eigenvalue; or loss of conformal-metric SPD. The older 20M
+uniform-periodic evidence below is superseded by the 2026-09-02 M/16--M/24 SMR study
+in the qualification log.
 
-Progression must stop on loss of positive `A` or `chi`, loss of conformal-metric SPD,
+Progression must stop on negative/nonfinite `w` or `rho`, loss of conformal-metric SPD,
 nonconvergent constraints, a resolution-growing instability, a divergent source
 temporary, a defective principal symbol, a nonpositive symmetrizer, or a stationary
 residual produced by huge cancellation.  Floors, clipping, increased KO, or weakened

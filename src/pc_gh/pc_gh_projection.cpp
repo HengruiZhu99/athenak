@@ -8,6 +8,8 @@
 
 #include <cmath>
 
+#include <Kokkos_Core.hpp>
+
 #include "athena.hpp"
 #include "athena_tensor.hpp"
 #include "coordinates/adm.hpp"
@@ -18,6 +20,7 @@
 namespace pc_gh {
 
 void PcGh::ProjectAlgebraic(MeshBlockPack *pmbp) {
+  ValidateState("pre-algebraic projection", false, false);
   auto &indcs = pmbp->pmesh->mb_indcs;
   int const isg = indcs.is - indcs.ng;
   int const ieg = indcs.ie + indcs.ng;
@@ -85,6 +88,8 @@ void PcGh::ProjectAlgebraic(MeshBlockPack *pmbp) {
     }
     constraints(m, I_CON_PROJECTION, k, j, i) = std::sqrt(correction2);
   });
+  Kokkos::fence();
+  ValidateState("post-algebraic projection", false, false);
 }
 
 }  // namespace pc_gh

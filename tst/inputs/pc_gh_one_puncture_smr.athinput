@@ -87,6 +87,11 @@ gauge = z4c_mp
 shift_eta = 2.0
 kappa = 1.0
 dissipation = 1.0
+initial_data_division_floor = 1.0e-14
+boundedness_output = true
+boundedness_dcycle = 5
+reconstruct_adm_output = false
+physical_output_inner_radius = 0.25
 constraint_excise_chi = 0.0625
 constraint_exterior_horizon = true
 # Conservative spherical enclosure used only for the online exterior-history
@@ -112,6 +117,9 @@ center_y = 0.0
 center_z = 0.0
 audit_r_min = 1.0
 audit_r_max = 4.0
+# The problem generator checks all three measured finest spacings against this
+# value before evolution.  Override together with the root/meshblock resolution.
+expected_finest_spacing = 0.0625
 
 <output1>
 file_type = hst

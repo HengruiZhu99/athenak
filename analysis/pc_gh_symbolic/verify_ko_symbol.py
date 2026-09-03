@@ -20,9 +20,9 @@ def main() -> None:
         for sample in range(1025):
             theta = math.pi*sample/1024.0
             raw_real = sum(weight*math.cos(offset*theta)
-                           for offset, weight in zip(offsets, weights, strict=True))
+                           for offset, weight in zip(offsets, weights))
             raw_imag = sum(weight*math.sin(offset*theta)
-                           for offset, weight in zip(offsets, weights, strict=True))
+                           for offset, weight in zip(offsets, weights))
             normalized = coefficient*raw_real
             expected = -math.sin(0.5*theta)**(2*stencil)
             if abs(raw_imag) > 2.0e-14 or abs(normalized - expected) > 3.0e-14:

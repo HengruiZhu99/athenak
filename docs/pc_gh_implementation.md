@@ -2,9 +2,8 @@
 
 ## Scope and authority
 
-This document describes the production source at commit
-`f74a19ae4d425bccbbd1bff78db72bbe49502f42`, descended from the required
-`project/bbh` baseline `d3148a1b87c9b28008c92388055d6aebd56c381a`.
+This document describes the puncture-regular production source updated on
+2026-09-02, descended from the PC-GH branch at `1c67ad8f`.
 The equations are those independently derived in `docs/pc_gh_derivation.md`.
 No old FO-GH, Ref-GH, Z4c equation, reference geometry, controller, or generated
 equation source is an authority for the PC-GH RHS.  Z4c-style cell-centered storage,
@@ -23,17 +22,17 @@ exactly 55 evolved components:
 
 | Sector | Components | Count |
 |---|---|---:|
-| conformal geometry | `chi`, symmetric `gtilde`, `K`, symmetric `Atilde`, `Lambda` | 17 |
-| GH gauge/configuration | `pi`, `A`, `beta` | 5 |
-| first-order gradients | `X`, three symmetric `Q_k`, `Y`, row-major `B_i^j` | 33 |
+| conformal geometry | `w`, symmetric `gtilde`, `K`, symmetric `Atilde`, `Z` | 17 |
+| GH gauge/configuration | `Cperp`, `rho`, `beta` | 5 |
+| first-order gradients | `p`, three symmetric `Q_k`, `L`, row-major `B_i^j` | 33 |
 
 The ordering is defined once in `src/pc_gh/pc_gh.hpp`; output names and restart
 registration use that ordering.  `Q` stores `Q_kij` as three consecutive symmetric
 tensors, and `B` stores `B_i{}^j` row-major.
 
-The 26 diagnostic fields contain GH, physical, reduction, curl, algebraic,
-regularity-ratio, and RHS-family measures.  History output integrates 19 squared
-diagnostics with the physical volume element and records the volume separately.
+The 28 diagnostic fields contain GH, ADM, reduction, curl, algebraic, conformal-SPD,
+physical-validity, regular-gradient, and RHS-family measures. History output integrates
+19 squared diagnostics with the coordinate-volume element and records that volume separately.
 
 ## Runtime construction and task graph
 
@@ -48,13 +47,14 @@ Each explicit stage follows:
 ```text
 receive setup -> copy U -> calculate RHS -> RHS boundary hook -> RK update
 -> restrict/send/receive -> physical BC -> prolong -> algebraic projection
--> PC-GH to ADM -> constraints -> characteristic timestep
+-> constraints / optional masked output conversion -> characteristic timestep
 ```
 
 The simultaneous algebraic projection enforces `det(gtilde)=1`, trace-free
-`Atilde`, and the derivative-consistent trace projection of `Q`.  The projection is
-applied after every RK stage.  The local timestep uses
-`|beta^i| + alpha sqrt(chi gtilde^{ii})` in each active coordinate direction.
+`Atilde`, and the derivative-consistent trace projection of `Q`; evolved `Z` is left
+unchanged. The projection is applied after every RK stage. The local timestep uses
+regular composites (`rho*w^2` for the physical family and `sqrt(2*rho*w^3)` for the
+lapse family) and never reconstructs physical ADM fields.
 
 Only strictly periodic physical boundaries are implemented.  A nonperiodic PC-GH
 domain exits with an error.  The explicit RHS-boundary task is an insertion point for
@@ -75,8 +75,9 @@ kernel.  The main kernel:
    configuration source functions.
 
 It does not call `Dxx` or `Dxy`, form physical Christoffels or physical Ricci, invert
-a four-metric, or use reference geometry.  `verify_source_policy.py` scans every
-production file under `src/pc_gh` and fails on those forbidden dependencies.
+a four-metric, use reference geometry, or divide by a puncture field.
+`verify_source_policy.py` scans every production file and specifically rejects such a
+division in the preferred evolution, constraint, projection, and CFL files.
 
 KO dissipation is an optional separate pass over all 55 fields.  The user-facing
 `<pc_gh>/dissipation` is a finite nonnegative amplitude.  At setup it is converted to
@@ -132,21 +133,23 @@ projection.  This is a Serial diagnostic path, not an evolution mode.
 coordinates directly in PC-GH variables:
 
 ```text
-D0 A      = -4 A K
-D0 beta^i = Lambda^i - shift_eta beta^i
+D0 w      = w (rho*w*K - B)/3
+D0 rho    = rho[-2*K - (rho*w*K-B)/3]
+D0 beta^i = GammaTilde^i(Q) - Z^i - shift_eta beta^i
 ```
 
 The default `shift_eta=2.0` corresponds to a unit mass. The production STANDARD
-gradient equations are the exact spatial derivatives of these primary equations;
-they are not reconstructed through cancellation of separately differenced source
-terms. The corrected PC-GH Einstein sector is shared unchanged with the other gauges.
+gradient equations evolve `p_i=partial_i w`, `L_i=2 partial_i alpha`, `Q`, and `B`
+as exact spatial derivatives of their configuration equations; they are not
+reconstructed through cancellation of separately differenced source terms. The `p`
+and `L` equations are the explicitly denominator-free forms recorded in the derivation.
 
 `gauge=z4c_mp_hyperbolic` adds
-`S(alpha*chi) gtilde^{ij}(A X_j-chi Y_j)/2` to the shift. The default switch is a
+`S(rho*w^3) rho*w^3*gtilde^{ij}(rho*p_j-L_j/2)` to the shift. The default switch is a
 cubic smoothstep from zero at `shift_switch_z0=0.1` to one at
 `shift_switch_z1=0.5`; setup requires `0 < z0 < z1 < 4/7`. Its differentiated
 STANDARD equation includes both the derivative of the metric-gradient term and the
-derivative of the switch. This variant has a conditional complete characteristic
+`S'(z) partial_i z` product, with `partial_i z=w^2(L_i/2+2*rho*p_i)`. This variant has a conditional complete characteristic
 basis on the domain stated in the derivation; setup does not claim or enforce that an
 evolution remains in that domain.
 
@@ -155,26 +158,32 @@ transverse-shift, and longitudinal-shift families. It conservatively uses the di
 gauge upper factor for both variants.
 
 The built-in `pc_gh_one_puncture` problem reuses the exact time-symmetric wormhole ADM
-data from `pc_gh_bowen_york`, with `A=chi=psi^-4`, `alpha=psi^-2`, zero shift and
-extrinsic curvature, and the production ADM-to-PC-GH conversion. Its final Serial-only
-diagnostic fails on nonfinite state/constraint values, nonpositive `A` or `chi`, or a
-non-SPD conformal metric, and records maxima for GH, ADM, reduction/curl, and algebraic
-groups. `tst/inputs/z4c_one_puncture_control.athinput` makes the actual Z4c gauge
+data from `pc_gh_bowen_york`, with `w=psi^-2`, `rho=1`, `p=partial w`, `L=2p`,
+zero shift, and zero extrinsic curvature. Its MPI-capable diagnostics fail on the
+first nonfinite state, RHS, constraint, characteristic speed, determinant, or
+eigenvalue; on negative `w/rho`; or on a non-SPD conformal metric. They record all
+field, constraint, transfer-change, and RHS bounds throughout the run.
+`tst/inputs/z4c_one_puncture_control.athinput` makes the actual Z4c gauge
 defaults explicit for a matched control.
 
 ## ADM conversion, communication, and outputs
 
-`PcGhToADM` reconstructs `gamma_ij` and `K_ij` only for existing ADM consumers.  The
-reconstructed physical geometry is never differentiated by or fed back into the
-PC-GH RHS.  `ADMToPcGh` provides the initial-data conversion path and initializes the
-first-order variables with the selected evolution derivative operator.
+`PcGhToADM` is absent from the normal evolution dependency chain. It reconstructs
+`alpha=rho*w`, `gamma_ij=gtilde_ij/w^2`, and
+`K_ij=(Atilde_ij+gtilde_ij*K/3)/w^2` only outside
+`physical_output_inner_radius` when explicitly requested for output. Masked cells
+receive an output-only flat extension and `pcgh_physical_valid=0`; those values are
+never differentiated or fed back into evolution. `ADMToPcGh` is initialization-only
+and initializes the first-order variables with the selected derivative operator.
 
 The `pc_gh_bowen_york` audit pgen exercises that path with exact time-symmetric
 isotropic Schwarzschild, the zero-momentum/zero-spin member of ordinary Bowen-York
 data.  It fills ADM data on active cells and ghosts, uses the baseline pre-collapsed
 `alpha=psi^-2`, sets zero shift and extrinsic curvature, converts to PC-GH, and
-round-trips back to ADM.  The puncture center must lie on cell faces so every active
-cell has `r>0`; no floor is used.  Its final diagnostic calls the production RHS and
+round-trips back to ADM. The puncture center must lie on cell faces so every active
+cell has `r>0`. The defining `rho=alpha/w` conversion alone uses the configurable
+initial-data guard and reports the unguarded global minimum plus activated-cell count.
+Its final diagnostic calls the production RHS and
 constraint kernels, compares against analytic continuum state/RHS values on a bounded
 shell, and writes per-field maximum locations.
 
@@ -192,17 +201,20 @@ State communication, restriction/prolongation, load-balance migration, restart, 
 output, and history registration operate on the explicit 55-field array.  The PC-GH
 run task list deliberately follows the Z4c ordering: update, conservative cell-centered
 restriction, communication and physical boundaries, cell-centered prolongation,
-algebraic projection, ADM reconstruction, and timestep selection.  It calls the same
+algebraic projection, diagnostic/output conversion, and timestep selection. It calls the same
 `RestrictCC(..., true)` and `ProlongateCC(..., true)` paths as Z4c rather than defining
 formulation-specific multilevel transfer.  Their presence is plumbing evidence only:
-AMR reduction/curl injection, MPI execution, and GPU backends remain unqualified.
+dynamic-AMR reduction/curl injection and GPU backends remain unqualified. The static
+four-level hierarchy has been exercised with 12-rank MPI at M/16--M/24.
 
 One-puncture qualification history adds coordinate-volume RMS accumulators for the
-full domain, `chi>=0.0625`, and fixed radial exteriors `r>0.5M`, `r>M`, and `r>2M`.
+full domain, `w^2>=0.0625`, and fixed radial exteriors `r>0.5M`, `r>M`, and `r>2M`.
 The `ah` history label is a conservative spherical coordinate-radius enclosure plus a
 configured buffer; it is not a surface integral and must not be presented as a dynamic
-apparent-horizon mask.  Horizon dumps reuse the Z4c ADM interpolation adapter after
-PC-GH-to-ADM reconstruction.  Apparent-horizon area, mass, shape, and solver residuals
+apparent-horizon mask. Horizon dumps first interpolate 18 regular conformal PC-GH
+variables and reconstruct physical ADM values only outside the declared inner mask.
+The flat dense-cube interior extension exists only for the external adapter and is
+never copied into evolution storage. Apparent-horizon area, mass, shape, and solver residuals
 remain outputs of the external AHFinderDirect executable, not quantities inferred by
 AthenaK from the dump itself.
 
@@ -211,9 +223,13 @@ AthenaK from the dump itself.
 - vacuum only;
 - no nonperiodic or GH constraint-preserving outer boundary condition;
 - no Gauge A1 or Gauge B driver;
-- no claim at the exact puncture (`A=chi=0`); the analytic theorem is on `r>0`;
+- equivalence to the older formulation is proved only for `w>0,rho>0`; the preferred
+  polynomial evolution itself applies no puncture-field floor;
 - no fourth-order multilevel transfer;
-- no single-hole qualification: bounded direct and switched moving-puncture runs exist,
-  but their constraint norms do not form a convergent three-resolution ladder;
-- no perturbed, boosted, spinning, binary, AMR, MPI-runtime, GPU, spectral/SAT, or
+- no perturbed, boosted, spinning, binary, GPU, spectral/SAT, or
   performance qualification yet.
+
+The 2026-09-02 single-hole campaign is classified `PARTIAL IMPROVEMENT`: both gauges
+reach `6M` at M/16--M/24, but `rho` develops a negative inner power and an inner
+maximum growing approximately as `N^1.12`; `L` and `B` also worsen with refinement.
+Survival is therefore not promoted to puncture qualification.

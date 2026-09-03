@@ -35,11 +35,13 @@ void SetGaugeWaveState(DvceArray5D<Real> state, int m, int k, int j, int i,
   Real const ht = -hx;
   Real const sqrt_h = std::sqrt(h);
   Real const chi = std::pow(h, -1.0/3.0);
+  Real const w = std::sqrt(chi);
+  Real const alpha = shifted ? 1.0/sqrt_h : sqrt_h;
   Real const k_xx = shifted ? -fx/sqrt_h : -ht/(2.0*sqrt_h);
   Real const trace_k = k_xx/h;
 
   for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) state(m, v, k, j, i) = 0.0;
-  state(m, pc_gh::PcGh::I_CHI, k, j, i) = chi;
+  state(m, pc_gh::PcGh::I_W, k, j, i) = w;
   state(m, pc_gh::PcGh::I_GTXX, k, j, i) = std::pow(h, 2.0/3.0);
   state(m, pc_gh::PcGh::I_GTYY, k, j, i) = chi;
   state(m, pc_gh::PcGh::I_GTZZ, k, j, i) = chi;
@@ -47,20 +49,20 @@ void SetGaugeWaveState(DvceArray5D<Real> state, int m, int k, int j, int i,
   state(m, pc_gh::PcGh::I_ATXX, k, j, i) = 2.0*chi*k_xx/3.0;
   state(m, pc_gh::PcGh::I_ATYY, k, j, i) = -chi*trace_k/3.0;
   state(m, pc_gh::PcGh::I_ATZZ, k, j, i) = -chi*trace_k/3.0;
-  state(m, pc_gh::PcGh::I_LAMX, k, j, i) =
-      2.0*std::pow(h, -5.0/3.0)*hx/3.0;
-  state(m, pc_gh::PcGh::I_PI, k, j, i) = -trace_k;
-  state(m, pc_gh::PcGh::I_A, k, j, i) = shifted ? 1.0/h : h;
+  state(m, pc_gh::PcGh::I_CPERP, k, j, i) = 0.0;
+  state(m, pc_gh::PcGh::I_RHO, k, j, i) =
+      shifted ? std::pow(h, -1.0/3.0) : std::pow(h, 2.0/3.0);
   state(m, pc_gh::PcGh::I_BETAX, k, j, i) = shifted ? 1.0/h - 1.0 : 0.0;
-  state(m, pc_gh::PcGh::I_X1, k, j, i) =
-      -std::pow(h, -4.0/3.0)*hx/3.0;
+  state(m, pc_gh::PcGh::I_P1, k, j, i) =
+      -std::pow(h, -7.0/6.0)*hx/6.0;
   state(m, pc_gh::PcGh::I_Q1XX, k, j, i) =
       2.0*std::pow(h, -1.0/3.0)*hx/3.0;
   state(m, pc_gh::PcGh::I_Q1YY, k, j, i) =
       -std::pow(h, -4.0/3.0)*hx/3.0;
   state(m, pc_gh::PcGh::I_Q1ZZ, k, j, i) =
       -std::pow(h, -4.0/3.0)*hx/3.0;
-  state(m, pc_gh::PcGh::I_Y1, k, j, i) = shifted ? -hx/(h*h) : hx;
+  state(m, pc_gh::PcGh::I_L1, k, j, i) =
+      shifted ? -hx*std::pow(h, -3.0/2.0) : hx/sqrt_h;
   state(m, pc_gh::PcGh::I_B11, k, j, i) = shifted ? -hx/(h*h) : 0.0;
 }
 
@@ -145,7 +147,7 @@ void CheckPcGhGaugeWave(ParameterInput *pin, Mesh *pm) {
         HostMemSpace(), pmbp->ppcgh->u_con);
     std::vector<long double> state_sum2(pc_gh::PcGh::npcgh, 0.0L);
     std::vector<Real> state_max(pc_gh::PcGh::npcgh, 0.0);
-    int constexpr nresidual = pc_gh::PcGh::I_CON_RMINUS;
+    int constexpr nresidual = pc_gh::PcGh::I_CON_MINOR1;
     std::vector<long double> con_sum2(nresidual, 0.0L);
     std::vector<Real> con_max(nresidual, 0.0);
     for (int m = 0; m < pmbp->nmb_thispack; ++m) {

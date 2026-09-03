@@ -9,6 +9,7 @@
 //! \file pc_gh.hpp
 //! \brief puncture-conformal first-order generalized-harmonic state and interfaces
 
+#include <array>
 #include <cmath>
 #include <memory>
 #include <string>
@@ -33,19 +34,19 @@ class PcGh {
   // The ordering is a restart/output ABI. Q is stored as three consecutive
   // symmetric tensors Q_kij; B is stored row-major as B_i^j.
   enum : int {
-    I_CHI,
+    I_W,
     I_GTXX, I_GTXY, I_GTXZ, I_GTYY, I_GTYZ, I_GTZZ,
     I_K,
     I_ATXX, I_ATXY, I_ATXZ, I_ATYY, I_ATYZ, I_ATZZ,
-    I_LAMX, I_LAMY, I_LAMZ,
-    I_PI,
-    I_A,
+    I_ZX, I_ZY, I_ZZ,
+    I_CPERP,
+    I_RHO,
     I_BETAX, I_BETAY, I_BETAZ,
-    I_X1, I_X2, I_X3,
+    I_P1, I_P2, I_P3,
     I_Q1XX, I_Q1XY, I_Q1XZ, I_Q1YY, I_Q1YZ, I_Q1ZZ,
     I_Q2XX, I_Q2XY, I_Q2XZ, I_Q2YY, I_Q2YZ, I_Q2ZZ,
     I_Q3XX, I_Q3XY, I_Q3XZ, I_Q3YY, I_Q3YZ, I_Q3ZZ,
-    I_Y1, I_Y2, I_Y3,
+    I_L1, I_L2, I_L3,
     I_B11, I_B12, I_B13,
     I_B21, I_B22, I_B23,
     I_B31, I_B32, I_B33,
@@ -60,11 +61,12 @@ class PcGh {
     I_CON_ZX, I_CON_ZY, I_CON_ZZ,
     I_CON_H,
     I_CON_MX, I_CON_MY, I_CON_MZ,
-    I_CON_RED_X, I_CON_RED_Q, I_CON_RED_Y, I_CON_RED_B,
-    I_CON_CURL_X, I_CON_CURL_Q, I_CON_CURL_Y, I_CON_CURL_B,
+    I_CON_RED_W, I_CON_RED_Q, I_CON_RED_ALPHA, I_CON_RED_B,
+    I_CON_CURL_P, I_CON_CURL_Q, I_CON_CURL_L, I_CON_CURL_B,
     I_CON_DETG, I_CON_TRA, I_CON_TRQ,
     I_CON_PROJECTION,
-    I_CON_RMINUS, I_CON_RPLUS, I_CON_W, I_CON_L,
+    I_CON_MINOR1, I_CON_MINOR2, I_CON_MINEIG,
+    I_CON_PHYSICAL_VALID, I_CON_P, I_CON_L,
     I_CON_RHS_PRIMARY, I_CON_RHS_GRADIENT,
     ncon
   };
@@ -217,8 +219,12 @@ class PcGh {
   TaskStatus CalcRHS(Driver *pdriver, int stage);
   template <int FD_STENCIL>
   TaskStatus CalcConstraints(Driver *pdriver, int stage);
-  void PcGhToADM(MeshBlockPack *pmbp);
+  void PcGhToADM(MeshBlockPack *pmbp, bool masked_only = true);
   void ProjectAlgebraic(MeshBlockPack *pmbp);
+  void ValidateState(const char *stage, bool check_rhs, bool check_constraints);
+  void WriteBoundednessDiagnostics();
+  void BeginReductionTransfer(int operation);
+  void EndReductionTransfer(int operation);
 
   TaskStatus CopyU(Driver *pdriver, int stage);
   void QueuePcGhTasks();
@@ -238,16 +244,16 @@ class PcGh {
   TaskStatus DumpHorizons(Driver *pdriver, int stage);
 
   struct Variables {
-    AthenaTensor<Real, TensorSymm::NONE, 3, 0> chi;
+    AthenaTensor<Real, TensorSymm::NONE, 3, 0> w;
     AthenaTensor<Real, TensorSymm::SYM2, 3, 2> gtilde;
     AthenaTensor<Real, TensorSymm::NONE, 3, 0> K;
     AthenaTensor<Real, TensorSymm::SYM2, 3, 2> Atilde;
-    AthenaTensor<Real, TensorSymm::NONE, 3, 1> Lambda;
-    AthenaTensor<Real, TensorSymm::NONE, 3, 0> pi;
-    AthenaTensor<Real, TensorSymm::NONE, 3, 0> A;
+    AthenaTensor<Real, TensorSymm::NONE, 3, 1> Z;
+    AthenaTensor<Real, TensorSymm::NONE, 3, 0> Cperp;
+    AthenaTensor<Real, TensorSymm::NONE, 3, 0> rho;
     AthenaTensor<Real, TensorSymm::NONE, 3, 1> beta;
-    AthenaTensor<Real, TensorSymm::NONE, 3, 1> X;
-    AthenaTensor<Real, TensorSymm::NONE, 3, 1> Y;
+    AthenaTensor<Real, TensorSymm::NONE, 3, 1> p;
+    AthenaTensor<Real, TensorSymm::NONE, 3, 1> L;
   };
 
   struct Options {
@@ -266,12 +272,20 @@ class PcGh {
     bool constraint_exterior_horizon;
     Real constraint_horizon_radius;
     Real constraint_horizon_buffer;
+    Real physical_output_inner_radius;
+    Real initial_data_division_floor;
+    bool reconstruct_adm_output;
+    bool boundedness_output;
+    int boundedness_dcycle;
+    std::string boundedness_file;
   } opt;
 
   DvceArray5D<Real> u0;
   DvceArray5D<Real> u1;
   DvceArray5D<Real> u_rhs;
   DvceArray5D<Real> u_con;
+  DvceArray5D<Real> transfer_reduction_before;
+  DvceArray5D<Real> transfer_reduction_after;
   DvceArray2D<Real> gauge_a0_table;
   int gauge_a0_npoints;
   Real gauge_a0_log_r_min;
@@ -282,8 +296,11 @@ class PcGh {
   MeshBoundaryValuesCC *pbval_u;
   std::vector<std::unique_ptr<HorizonDump>> phorizon_dump;
   Real dtnew;
+  std::array<std::array<Real, 4>, 3> transfer_reduction_change{};
 
  private:
+  template <int FD_STENCIL>
+  void MeasureReductionTransfer(bool save_before, int operation);
   void BindVariables(DvceArray5D<Real> state, Variables &vars);
   void LoadGaugeA0Table();
   void ValidateGaugeA0Domain();

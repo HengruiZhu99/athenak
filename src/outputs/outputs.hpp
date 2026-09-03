@@ -21,7 +21,7 @@
     #error NHISTORY > NREDUCTION in outputs.hpp
 #endif
 
-#define NOUTPUT_CHOICES 256
+#define NOUTPUT_CHOICES 258
 // choices for output variables used in <ouput> blocks in input file
 // TO ADD MORE CHOICES:
 //   - add more strings to array below, change NOUTPUT_CHOICES above appropriately
@@ -109,30 +109,31 @@ static const char *var_choice[NOUTPUT_CHOICES] = {
   "z4c_diag",
 
   // PC-GH (173-228)
-  "pcgh_chi",
+  "pcgh_w",
   "pcgh_gtxx", "pcgh_gtxy", "pcgh_gtxz", "pcgh_gtyy", "pcgh_gtyz", "pcgh_gtzz",
   "pcgh_K",
   "pcgh_Atxx", "pcgh_Atxy", "pcgh_Atxz", "pcgh_Atyy", "pcgh_Atyz", "pcgh_Atzz",
-  "pcgh_Lamx", "pcgh_Lamy", "pcgh_Lamz",
-  "pcgh_pi", "pcgh_A",
+  "pcgh_Zx", "pcgh_Zy", "pcgh_Zz",
+  "pcgh_Cperp", "pcgh_rho",
   "pcgh_betax", "pcgh_betay", "pcgh_betaz",
-  "pcgh_X1", "pcgh_X2", "pcgh_X3",
+  "pcgh_p1", "pcgh_p2", "pcgh_p3",
   "pcgh_Q1xx", "pcgh_Q1xy", "pcgh_Q1xz", "pcgh_Q1yy", "pcgh_Q1yz", "pcgh_Q1zz",
   "pcgh_Q2xx", "pcgh_Q2xy", "pcgh_Q2xz", "pcgh_Q2yy", "pcgh_Q2yz", "pcgh_Q2zz",
   "pcgh_Q3xx", "pcgh_Q3xy", "pcgh_Q3xz", "pcgh_Q3yy", "pcgh_Q3yz", "pcgh_Q3zz",
-  "pcgh_Y1", "pcgh_Y2", "pcgh_Y3",
+  "pcgh_L1", "pcgh_L2", "pcgh_L3",
   "pcgh_B11", "pcgh_B12", "pcgh_B13",
   "pcgh_B21", "pcgh_B22", "pcgh_B23",
   "pcgh_B31", "pcgh_B32", "pcgh_B33",
   "pcgh",
 
-  // PC-GH diagnostics (229-255)
+  // PC-GH diagnostics (229-257)
   "pcgh_Cperp", "pcgh_Zx", "pcgh_Zy", "pcgh_Zz",
-  "pcgh_H", "pcgh_Mhatx", "pcgh_Mhaty", "pcgh_Mhatz",
-  "pcgh_red_X", "pcgh_red_Q", "pcgh_red_Y", "pcgh_red_B",
-  "pcgh_curl_X", "pcgh_curl_Q", "pcgh_curl_Y", "pcgh_curl_B",
+  "pcgh_H", "pcgh_alphaMx", "pcgh_alphaMy", "pcgh_alphaMz",
+  "pcgh_red_w", "pcgh_red_Q", "pcgh_red_alpha", "pcgh_red_B",
+  "pcgh_curl_p", "pcgh_curl_Q", "pcgh_curl_L", "pcgh_curl_B",
   "pcgh_detg", "pcgh_trA", "pcgh_trQ", "pcgh_projection",
-  "pcgh_rminus", "pcgh_rplus", "pcgh_W", "pcgh_L",
+  "pcgh_minor1", "pcgh_minor2", "pcgh_min_eigenvalue",
+  "pcgh_physical_valid", "pcgh_p_norm", "pcgh_L_norm",
   "pcgh_rhs_primary", "pcgh_rhs_gradient", "pcgh_con"
 };
 

@@ -262,42 +262,42 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 //! \brief Compute volume-weighted squared PC-GH diagnostic norms on this rank.
 
 void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
-  // The canonical columns are the primary chi-masked coordinate-volume sums.
+  // The canonical columns are the primary w^2-masked coordinate-volume sums.
   // Full-domain coordinate-volume sums remain available with the all-* prefix.
   pdata->nhist = 96;
   pdata->label[0] = "Cperp-n2";
   pdata->label[1] = "Z-norm2";
   pdata->label[2] = "H-norm2";
   pdata->label[3] = "Mhat-norm2";
-  pdata->label[4] = "redX-norm2";
+  pdata->label[4] = "redw-norm2";
   pdata->label[5] = "redQ-norm2";
-  pdata->label[6] = "redY-norm2";
+  pdata->label[6] = "reda-norm2";
   pdata->label[7] = "redB-norm2";
-  pdata->label[8] = "curlX-n2";
+  pdata->label[8] = "curlp-n2";
   pdata->label[9] = "curlQ-n2";
-  pdata->label[10] = "curlY-n2";
+  pdata->label[10] = "curlL-n2";
   pdata->label[11] = "curlB-n2";
   pdata->label[12] = "detg-norm2";
   pdata->label[13] = "trA-norm2";
   pdata->label[14] = "trQ-norm2";
   pdata->label[15] = "proj-norm2";
-  pdata->label[16] = "W-norm2";
+  pdata->label[16] = "p-norm2";
   pdata->label[17] = "L-norm2";
   pdata->label[18] = "rhs-norm2";
   pdata->label[19] = "Volume";
 
   char const * const full_labels[20] = {
     "all-Cp2", "all-Z2", "all-H2", "all-M2",
-    "all-rX2", "all-rQ2", "all-rY2", "all-rB2",
-    "all-cX2", "all-cQ2", "all-cY2", "all-cB2",
+    "all-rw2", "all-rQ2", "all-ra2", "all-rB2",
+    "all-cp2", "all-cQ2", "all-cL2", "all-cB2",
     "all-det2", "all-trA2", "all-trQ2", "all-prj2",
-    "all-W2", "all-L2", "all-rhs2", "all-Vol",
+    "all-p2", "all-L2", "all-rhs2", "all-Vol",
   };
   for (int n = 0; n < 20; ++n) pdata->label[20 + n] = full_labels[n];
 
   char const * const local_names[14] = {
-    "Cp2", "Z2", "H2", "M2", "rX2", "rQ2", "rY2", "rB2",
-    "cX2", "cQ2", "cY2", "cB2", "alg2", "Vol",
+    "Cp2", "Z2", "H2", "M2", "rw2", "rQ2", "ra2", "rB2",
+    "cp2", "cQ2", "cL2", "cB2", "alg2", "Vol",
   };
   char const * const region_names[4] = {"r05", "r1", "r2", "ah"};
   for (int region = 0; region < 4; ++region) {
@@ -350,7 +350,7 @@ void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
     Real const z = CellCenterX(k0, nx3, size.d_view(m).x3min,
                                size.d_view(m).x3max) - center_z;
     Real const radius = std::sqrt(x*x + y*y + z*z);
-    bool const include_primary = state(m, pc_gh::PcGh::I_CHI, k, j, i)
+    bool const include_primary = SQR(state(m, pc_gh::PcGh::I_W, k, j, i))
                                  >= excise_chi;
     bool const include_region[4] = {
       radius > 0.5*mass,
@@ -368,19 +368,19 @@ void HistoryOutput::LoadPcGhHistoryData(HistoryData *pdata, Mesh *pm) {
     values[3] = SQR(con(m, pc_gh::PcGh::I_CON_MX, k, j, i))
                 + SQR(con(m, pc_gh::PcGh::I_CON_MY, k, j, i))
                 + SQR(con(m, pc_gh::PcGh::I_CON_MZ, k, j, i));
-    values[4] = SQR(con(m, pc_gh::PcGh::I_CON_RED_X, k, j, i));
+    values[4] = SQR(con(m, pc_gh::PcGh::I_CON_RED_W, k, j, i));
     values[5] = SQR(con(m, pc_gh::PcGh::I_CON_RED_Q, k, j, i));
-    values[6] = SQR(con(m, pc_gh::PcGh::I_CON_RED_Y, k, j, i));
+    values[6] = SQR(con(m, pc_gh::PcGh::I_CON_RED_ALPHA, k, j, i));
     values[7] = SQR(con(m, pc_gh::PcGh::I_CON_RED_B, k, j, i));
-    values[8] = SQR(con(m, pc_gh::PcGh::I_CON_CURL_X, k, j, i));
+    values[8] = SQR(con(m, pc_gh::PcGh::I_CON_CURL_P, k, j, i));
     values[9] = SQR(con(m, pc_gh::PcGh::I_CON_CURL_Q, k, j, i));
-    values[10] = SQR(con(m, pc_gh::PcGh::I_CON_CURL_Y, k, j, i));
+    values[10] = SQR(con(m, pc_gh::PcGh::I_CON_CURL_L, k, j, i));
     values[11] = SQR(con(m, pc_gh::PcGh::I_CON_CURL_B, k, j, i));
     values[12] = SQR(con(m, pc_gh::PcGh::I_CON_DETG, k, j, i));
     values[13] = SQR(con(m, pc_gh::PcGh::I_CON_TRA, k, j, i));
     values[14] = SQR(con(m, pc_gh::PcGh::I_CON_TRQ, k, j, i));
     values[15] = SQR(con(m, pc_gh::PcGh::I_CON_PROJECTION, k, j, i));
-    values[16] = SQR(con(m, pc_gh::PcGh::I_CON_W, k, j, i));
+    values[16] = SQR(con(m, pc_gh::PcGh::I_CON_P, k, j, i));
     values[17] = SQR(con(m, pc_gh::PcGh::I_CON_L, k, j, i));
     values[18] = SQR(con(m, pc_gh::PcGh::I_CON_RHS_PRIMARY, k, j, i))
                  + SQR(con(m, pc_gh::PcGh::I_CON_RHS_GRADIENT, k, j, i));

@@ -30,6 +30,134 @@ Classifications have the following meanings:
 No production equation may be implemented while classified `NOT ESTABLISHED`, `FAILED`,
 or subject to an unmet `CONDITIONAL` hypothesis.
 
+## 2026-09-02 puncture-regular 55-field representation (superseding production map)
+
+The older `chi,A,X,Y,pi,Lambda` representation derived below is retained as the
+independent positive-field oracle.  Production now applies the invertible point map
+on `w>0,rho>0`
+
+\[
+\begin{gathered}
+w=\sqrt\chi,\quad \rho=\alpha/w,\quad p_i=\partial_iw,\quad
+L_i=2\partial_i\alpha,\\
+C_\perp=\pi+K,\qquad Z^i=\widetilde\Gamma^i(Q)-\widetilde\Lambda^i,
+\end{gathered}
+\]
+
+so the 55 variables are
+
+\[
+\{w,\widetilde\gamma_{ij},K,\widetilde A_{ij},Z^i,C_\perp,
+\rho,\beta^i,p_i,Q_{kij},L_i,B_i{}^j\}.
+\]
+
+The inverse identities used by the symbolic equivalence proof are
+
+\[
+\chi=w^2,\quad \alpha=\rho w,\quad A=\rho^2w^2,\quad X_i=2wp_i,
+\quad Y_i=\alpha L_i,\quad \pi=C_\perp-K,
+\quad\widetilde\Lambda^i=\widetilde\Gamma^i(Q)-Z^i.
+\]
+
+No `partial_i rho` variable is evolved.  On the stationary 1+log trumpet its fitted
+power is `-0.908702735`, whereas the evolved powers are
+`w~r`, `rho~r^0.091297265`, `p~r^0`, and `L~r^0.091297265`.
+
+For the direct moving-puncture gauge, exact differentiation gives (`PROVED`)
+
+\[
+\begin{aligned}
+D_0w&={w\over3}(\alpha K-B),\\
+D_0\rho&=\rho\left[-2K-{\alpha K-B\over3}\right],\\
+\partial_tp_i&=\beta^k\partial_kp_i+B_i{}^kp_k
+ +{1\over3}\{p_i(\alpha K-B)
+ +w[(L_i/2)K+\alpha\partial_iK-\partial_iB]\},\\
+\partial_tL_i&=\beta^k\partial_kL_i+B_i{}^kL_k
+-2KL_i-4\alpha\partial_iK.
+\end{aligned}
+\]
+
+The denominator-free reduction constraints are
+
+\[
+R_i^w=p_i-\partial_iw,\qquad
+R_i^\alpha=L_i-2(w\partial_i\rho+\rho p_i),
+\]
+
+along with `R^Q`, `R^B`, and the curls of `p,Q,L,B`.  Substitution into the old
+positive-field expressions yields
+
+\[
+\begin{aligned}
+H={}&{2\over3}K^2-\widetilde A_{ij}\widetilde A^{ij}
+ +w^2{\cal R}+4w\widetilde D^ip_i-6p_ip^i,\\
+E_{ij}={}&{w^2\over2}\widetilde D_iL_j,\\
+m_i={}&\widetilde D_j\widetilde A^j{}_i-{2\over3}\partial_iK,\\
+\alpha\widetilde M_i={}&\rho w m_i-3\rho\widetilde A^j{}_ip_j,\\
+S_{ij}={}&\rho w^3{\cal R}_{ij}+\rho w^2\widetilde D_ip_j
+-{w^2\over2}\widetilde D_iL_j-{w\over2}(L_ip_j+L_jp_i),\\
+T_{ij}={}&-w(Z_ip_j+Z_jp_i)-{w^2\over2}Z^kQ_{kij}.
+\end{aligned}
+\]
+
+The corresponding primary equations implemented by the production kernel are
+
+\[
+\begin{aligned}
+D_0\widetilde\gamma_{ij}={}&-2\alpha\widetilde A_{ij}
+ +2\widetilde\gamma_{k(i}B_{j)}{}^k-{2\over3}\widetilde\gamma_{ij}B,\\
+D_0K={}&\alpha\widetilde A_{ij}\widetilde A^{ij}+{\alpha\over3}K^2
+-E^i{}_i+{w\over2}p^iL_i+\alpha(H-KC_\perp)
++\alpha w p_iZ^i-{3\over2}\kappa\alpha C_\perp,\\
+D_0\widetilde A_{ij}={}&S_{ij}^{TF}+2\widetilde A_{k(i}B_{j)}{}^k
+-{2\over3}\widetilde A_{ij}B-2\alpha\widetilde A_{ik}\widetilde A^k{}_j
++\alpha(K-C_\perp)\widetilde A_{ij}+\alpha T_{ij}^{TF},\\
+D_0C_\perp={}&\alpha(H-KC_\perp)
++w^2(\rho p_i+L_i/2)Z^i-2\kappa\alpha C_\perp,\\
+D_0Z^i={}&-2\widetilde\gamma^{ij}
+(\rho wm_j-3\rho\widetilde A^k{}_jp_k)
+-\rho w\widetilde D^iC_\perp+{C_\perp\over2}\widetilde\gamma^{ij}L_j\\
+&-Z^kB_k{}^i+{2\over3}Z^iB
+-\left({2\over3}\rho wK+\kappa\rho w\right)Z^i.
+\end{aligned}
+\]
+
+For both moving-puncture variants,
+
+\[
+D_0\beta^i=\widetilde\Gamma^i(Q)-Z^i-\eta\beta^i+S(z)M^i,
+\quad z=\rho w^3,
+\quad M^i=\rho w^3\widetilde\gamma^{ij}(\rho p_j-L_j/2).
+\]
+
+`S=0` is the direct gauge.  The switched gauge uses the existing smoothstep.  The
+standard-order `B_i{}^j` equation is the complete spatial derivative of this
+expression.  In particular,
+
+\[
+\partial_i z=w^2(L_i/2+2\rho p_i),
+\]
+
+and `partial_i(SM^j)=S partial_i M^j+S'(partial_i z)M^j`; after using
+`R_i^alpha=0`, `z partial_i M^j` is represented without a division by `w`.
+The `Q` equation is likewise the exact standard-order derivative of the
+`gtilde` configuration equation.
+
+`verify_puncture_regular_55.py` proves these substitutions, the `H/E/S/T/m`
+identities, both shift derivatives including the `S'` product, and the wormhole and
+trumpet exponents.  The regular tangent-map determinant is
+`-32 rho^4 w^9`; hence for positive `w,rho` the principal matrix is similar to the old
+one.  Its exact characteristic polynomial is
+
+\[
+-{1\over3}v^{30}(v-1)^2(v+1)^2(3v^2-4)
+(2\rho w^3-v^2)(\rho^2w^4-v^2)^6.
+\]
+
+The known direct-gauge defective surfaces become
+`rho^2 w^4=4/3`, `rho w=2`, and `rho w^3=2/3`; there is no additional finite,
+positive-`rho` degeneracy.  These results are `PROVED ON w>0,rho>0`.
+
 ## Conventions
 
 Use signature \((-+++ )\),

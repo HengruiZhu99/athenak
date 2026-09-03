@@ -29,6 +29,53 @@
 
 namespace {
 
+void RecordOnePunctureInitialGeometry(ParameterInput *pin, Mesh *pm) {
+  auto &size = pm->pmb_pack->pmb->mb_size;
+  size.template sync<HostMemSpace>();
+  Real spacing[3] = {std::numeric_limits<Real>::max(),
+                     std::numeric_limits<Real>::max(),
+                     std::numeric_limits<Real>::max()};
+  for (int m = 0; m < pm->pmb_pack->nmb_thispack; ++m) {
+    spacing[0] = std::fmin(spacing[0], size.h_view(m).dx1);
+    spacing[1] = std::fmin(spacing[1], size.h_view(m).dx2);
+    spacing[2] = std::fmin(spacing[2], size.h_view(m).dx3);
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, spacing, 3, MPI_ATHENA_REAL, MPI_MIN, MPI_COMM_WORLD);
+#endif
+  Real const expected = pin->GetOrAddReal(
+      "problem", "expected_finest_spacing", spacing[0]);
+  Real const tolerance = 128.0*std::numeric_limits<Real>::epsilon()
+      *std::fmax(1.0, std::fabs(expected));
+  bool geometry_ok = std::isfinite(expected) && expected > 0.0;
+  for (int d = 0; d < 3; ++d) {
+    geometry_ok = geometry_ok && std::isfinite(spacing[d])
+        && std::fabs(spacing[d] - expected) <= tolerance;
+  }
+  if (!geometry_ok) {
+    if (global_variable::my_rank == 0) {
+      std::cout << "PC-GH one-puncture finest-spacing mismatch: measured=("
+                << spacing[0] << ',' << spacing[1] << ',' << spacing[2]
+                << ") expected=" << expected << std::endl;
+    }
+    std::exit(EXIT_FAILURE);
+  }
+  if (global_variable::my_rank != 0) return;
+  FILE *file = std::fopen("pc_gh_one_puncture-initial.dat", "w");
+  if (file == nullptr) std::exit(EXIT_FAILURE);
+  std::fprintf(file, "# time root_nx1 root_nx2 root_nx3 meshblocks "
+                     "finest_dx1 finest_dx2 finest_dx3 expected_finest_dx\n");
+  std::fprintf(file, "%.17e %d %d %d %d %.17e %.17e %.17e %.17e\n",
+      static_cast<double>(pm->time), pm->mesh_indcs.nx1, pm->mesh_indcs.nx2,
+      pm->mesh_indcs.nx3, pm->nmb_total, static_cast<double>(spacing[0]),
+      static_cast<double>(spacing[1]), static_cast<double>(spacing[2]),
+      static_cast<double>(expected));
+  std::fclose(file);
+  std::cout << "PC-GH one-puncture zero-step geometry: blocks=" << pm->nmb_total
+            << " finest spacing=(" << spacing[0] << ',' << spacing[1] << ','
+            << spacing[2] << ")" << std::endl;
+}
+
 KOKKOS_INLINE_FUNCTION
 void ExactTimeSymmetricBowenYork(Real x, Real y, Real z, Real mass,
                                  Real *state, Real *rhs) {
@@ -37,26 +84,23 @@ void ExactTimeSymmetricBowenYork(Real x, Real y, Real z, Real mass,
   Real const puncture_scale = 0.5*mass;
   Real const denominator = radius + puncture_scale;
   Real const chi = std::pow(radius/denominator, 4);
-  Real const sqrt_chi = std::sqrt(chi);
-  Real const dchi_dr = 4.0*puncture_scale*radius*radius*radius
-                       /std::pow(denominator, 5);
+  Real const w = std::sqrt(chi);
   Real const normal[3] = {x/radius, y/radius, z/radius};
-  Real const gradient[3] = {dchi_dr*normal[0], dchi_dr*normal[1],
-                            dchi_dr*normal[2]};
-  state[pc_gh::PcGh::I_CHI] = chi;
+  Real const dw_dr = 2.0*puncture_scale*radius/std::pow(denominator, 3);
+  state[pc_gh::PcGh::I_W] = w;
   state[pc_gh::PcGh::I_GTXX] = 1.0;
   state[pc_gh::PcGh::I_GTYY] = 1.0;
   state[pc_gh::PcGh::I_GTZZ] = 1.0;
-  state[pc_gh::PcGh::I_A] = chi;
+  state[pc_gh::PcGh::I_RHO] = 1.0;
   for (int d = 0; d < 3; ++d) {
-    state[pc_gh::PcGh::I_X1 + d] = gradient[d];
-    state[pc_gh::PcGh::I_Y1 + d] = gradient[d];
+    state[pc_gh::PcGh::I_P1 + d] = dw_dr*normal[d];
+    state[pc_gh::PcGh::I_L1 + d] = 2.0*dw_dr*normal[d];
   }
 
-  Real const gradient_sq = dchi_dr*dchi_dr;
-  rhs[pc_gh::PcGh::I_K] = -gradient_sq/(8.0*sqrt_chi);
-  rhs[pc_gh::PcGh::I_PI] = -rhs[pc_gh::PcGh::I_K];
-  Real const coefficient = gradient_sq/(2.0*sqrt_chi);
+  Real const regular_source = puncture_scale*puncture_scale
+      *std::pow(radius, 4)/std::pow(denominator, 8);
+  rhs[pc_gh::PcGh::I_K] = -2.0*regular_source;
+  Real const coefficient = 8.0*regular_source;
   for (int a = 0; a < 3; ++a) {
     for (int b = a; b < 3; ++b) {
       Real const delta = (a == b) ? 1.0 : 0.0;
@@ -134,8 +178,8 @@ void CheckPcGhBowenYork(ParameterInput *pin, Mesh *pm) {
       Real exact_rhs[pc_gh::PcGh::npcgh];
       ExactTimeSymmetricBowenYork(x, y, z, mass, exact_state, exact_rhs);
       if (family < 4) {
-        int const first = (family % 2 == 0) ? 0 : pc_gh::PcGh::I_X1;
-        int const last = (family % 2 == 0) ? pc_gh::PcGh::I_X1
+        int const first = (family % 2 == 0) ? 0 : pc_gh::PcGh::I_P1;
+        int const last = (family % 2 == 0) ? pc_gh::PcGh::I_P1
                                            : pc_gh::PcGh::npcgh;
         for (int v = first; v < last; ++v) {
           Real const value = (family < 2) ? state(m, v, k, j, i) - exact_state[v]
@@ -144,9 +188,9 @@ void CheckPcGhBowenYork(ParameterInput *pin, Mesh *pm) {
         }
       } else {
         int const first = (family == 4) ? pc_gh::PcGh::I_CON_CPERP
-                                         : pc_gh::PcGh::I_CON_RED_X;
-        int const last = (family == 4) ? pc_gh::PcGh::I_CON_RED_X
-                                        : pc_gh::PcGh::I_CON_RMINUS;
+                                         : pc_gh::PcGh::I_CON_RED_W;
+        int const last = (family == 4) ? pc_gh::PcGh::I_CON_RED_W
+                                        : pc_gh::PcGh::I_CON_MINOR1;
         for (int v = first; v < last; ++v) {
           maximum = std::fmax(maximum, std::fabs(constraints(m, v, k, j, i)));
         }
@@ -175,8 +219,8 @@ void CheckPcGhBowenYork(ParameterInput *pin, Mesh *pm) {
       Real exact_rhs[pc_gh::PcGh::npcgh];
       ExactTimeSymmetricBowenYork(x, y, z, mass, exact_state, exact_rhs);
       if (family < 4) {
-        int const first = (family % 2 == 0) ? 0 : pc_gh::PcGh::I_X1;
-        int const last = (family % 2 == 0) ? pc_gh::PcGh::I_X1
+        int const first = (family % 2 == 0) ? 0 : pc_gh::PcGh::I_P1;
+        int const last = (family % 2 == 0) ? pc_gh::PcGh::I_P1
                                            : pc_gh::PcGh::npcgh;
         for (int v = first; v < last; ++v) {
           Real const value = (family < 2) ? state(m, v, k, j, i) - exact_state[v]
@@ -186,9 +230,9 @@ void CheckPcGhBowenYork(ParameterInput *pin, Mesh *pm) {
         }
       } else {
         int const first = (family == 4) ? pc_gh::PcGh::I_CON_CPERP
-                                         : pc_gh::PcGh::I_CON_RED_X;
-        int const last = (family == 4) ? pc_gh::PcGh::I_CON_RED_X
-                                        : pc_gh::PcGh::I_CON_RMINUS;
+                                         : pc_gh::PcGh::I_CON_RED_W;
+        int const last = (family == 4) ? pc_gh::PcGh::I_CON_RED_W
+                                        : pc_gh::PcGh::I_CON_MINOR1;
         for (int v = first; v < last; ++v) {
           Real const value = constraints(m, v, k, j, i);
           sum += value*value;
@@ -330,8 +374,10 @@ void CheckPcGhOnePuncture(ParameterInput *, Mesh *pm) {
           Real const det = gxx*(gyy*gzz - gyz*gyz)
                          - gxy*(gxy*gzz - gxz*gyz)
                          + gxz*(gxy*gyz - gxz*gyy);
-          min_a = std::fmin(min_a, state(m, pc_gh::PcGh::I_A, k, j, i));
-          min_chi = std::fmin(min_chi, state(m, pc_gh::PcGh::I_CHI, k, j, i));
+          Real const w = state(m, pc_gh::PcGh::I_W, k, j, i);
+          Real const rho = state(m, pc_gh::PcGh::I_RHO, k, j, i);
+          min_a = std::fmin(min_a, rho*w);
+          min_chi = std::fmin(min_chi, w*w);
           min_spd = std::fmin(min_spd, std::fmin(gxx, std::fmin(minor2, det)));
           for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) {
             Real const value = state(m, v, k, j, i);
@@ -344,7 +390,7 @@ void CheckPcGhOnePuncture(ParameterInput *, Mesh *pm) {
             }
             max_state = std::fmax(max_state, std::fabs(value));
           }
-          for (int v = 0; v < pc_gh::PcGh::I_CON_RMINUS; ++v) {
+          for (int v = 0; v < pc_gh::PcGh::I_CON_MINOR1; ++v) {
             Real const value = con(m, v, k, j, i);
             if (!std::isfinite(value)) {
               all_finite = 0;
@@ -355,7 +401,7 @@ void CheckPcGhOnePuncture(ParameterInput *, Mesh *pm) {
             }
             int group = 3;
             if (v < pc_gh::PcGh::I_CON_H) group = 0;
-            else if (v < pc_gh::PcGh::I_CON_RED_X) group = 1;
+            else if (v < pc_gh::PcGh::I_CON_RED_W) group = 1;
             else if (v < pc_gh::PcGh::I_CON_DETG) group = 2;
             max_group[group] = std::fmax(
                 max_group[group], std::fabs(value));
@@ -495,4 +541,5 @@ void ProblemGenerator::PcGhBowenYork(ParameterInput *pin, const bool restart) {
 void ProblemGenerator::PcGhOnePuncture(ParameterInput *pin, const bool restart) {
   PcGhBowenYork(pin, restart);
   pgen_final_func = CheckPcGhOnePuncture;
+  if (!restart) RecordOnePunctureInitialGeometry(pin, pmy_mesh_);
 }

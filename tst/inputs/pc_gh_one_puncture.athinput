@@ -40,6 +40,11 @@ gauge = z4c_mp
 shift_eta = 2.0
 kappa = 1.0
 dissipation = 1.0
+initial_data_division_floor = 1.0e-14
+boundedness_output = true
+boundedness_dcycle = 1
+reconstruct_adm_output = false
+physical_output_inner_radius = 0.25
 constraint_excise_chi = 0.0625
 constraint_exterior_horizon = true
 # Conservative spherical AH enclosure for online histories.  Replace this with the

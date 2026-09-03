@@ -183,7 +183,7 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
               << std::endl << "Input file is likely missing a <pc_gh> block" << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  if ((ivar>=229) && (ivar<256) && (pm->pmb_pack->ppcgh == nullptr)) {
+  if ((ivar>=229) && (ivar<NOUTPUT_CHOICES) && (pm->pmb_pack->ppcgh == nullptr)) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "Output of PC-GH diagnostics requested in <output> block '"
               << out_params.block_name << "' but no PC-GH object has been constructed."

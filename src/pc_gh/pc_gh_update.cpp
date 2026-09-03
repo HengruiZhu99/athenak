@@ -19,6 +19,9 @@ namespace pc_gh {
 TaskStatus PcGh::CopyU(Driver *pdriver, int stage) {
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int const nmb = pmy_pack->nmb_thispack;
+  if (stage == 1) {
+    for (auto &operation : transfer_reduction_change) operation.fill(0.0);
+  }
   if (pdriver->integrator == "rk4") {
     if (stage == 1) {
       Kokkos::deep_copy(DevExeSpace(), u1, u0);
@@ -52,6 +55,8 @@ TaskStatus PcGh::ExpRKUpdate(Driver *pdriver, int stage) {
                          + gam1*u1(m, n, k, j, i)
                          + beta_dt*u_rhs(m, n, k, j, i);
   });
+  Kokkos::fence();
+  ValidateState("post-RK update", false, false);
   return TaskStatus::complete;
 }
 

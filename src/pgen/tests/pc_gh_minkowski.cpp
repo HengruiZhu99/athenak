@@ -104,7 +104,7 @@ void CheckPcGhMinkowski(ParameterInput *, Mesh *pm) {
     int const i = i0 + is;
     for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) {
       Real expected = 0.0;
-      if (v == pc_gh::PcGh::I_CHI || v == pc_gh::PcGh::I_A
+      if (v == pc_gh::PcGh::I_W || v == pc_gh::PcGh::I_RHO
           || v == pc_gh::PcGh::I_GTXX || v == pc_gh::PcGh::I_GTYY
           || v == pc_gh::PcGh::I_GTZZ) {
         expected = 1.0;
@@ -113,9 +113,10 @@ void CheckPcGhMinkowski(ParameterInput *, Mesh *pm) {
       thread_max = fmax(thread_max, fabs(state_rhs(m, v, k, j, i)));
     }
     for (int v = 0; v < pc_gh::PcGh::ncon; ++v) {
-      Real const expected =
-          (v == pc_gh::PcGh::I_CON_RMINUS || v == pc_gh::PcGh::I_CON_RPLUS)
-              ? 1.0 : 0.0;
+      if (v == pc_gh::PcGh::I_CON_PHYSICAL_VALID) continue;
+      Real const expected = (v == pc_gh::PcGh::I_CON_MINOR1
+                             || v == pc_gh::PcGh::I_CON_MINOR2
+                             || v == pc_gh::PcGh::I_CON_MINEIG) ? 1.0 : 0.0;
       thread_max = fmax(thread_max,
           fabs(constraints(m, v, k, j, i) - expected));
     }
@@ -174,19 +175,21 @@ void CheckPcGhRobustMinkowski(ParameterInput *pin, Mesh *pm) {
           Real const det = gxx*(gyy*gzz - gyz*gyz)
                          - gxy*(gxy*gzz - gxz*gyz)
                          + gxz*(gxy*gyz - gxz*gyy);
-          min_a = std::fmin(min_a, state(m, pc_gh::PcGh::I_A, k, j, i));
-          min_chi = std::fmin(min_chi, state(m, pc_gh::PcGh::I_CHI, k, j, i));
+          Real const w = state(m, pc_gh::PcGh::I_W, k, j, i);
+          Real const rho = state(m, pc_gh::PcGh::I_RHO, k, j, i);
+          min_a = std::fmin(min_a, rho*w);
+          min_chi = std::fmin(min_chi, w*w);
           min_spd = std::fmin(min_spd, std::fmin(gxx, std::fmin(minor2, det)));
           for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) {
             Real expected = 0.0;
-            if (v == pc_gh::PcGh::I_CHI || v == pc_gh::PcGh::I_A
+            if (v == pc_gh::PcGh::I_W || v == pc_gh::PcGh::I_RHO
                 || v == pc_gh::PcGh::I_GTXX || v == pc_gh::PcGh::I_GTYY
                 || v == pc_gh::PcGh::I_GTZZ) expected = 1.0;
             Real const error = state(m, v, k, j, i) - expected;
             state_sum2 += static_cast<long double>(error)*error;
             state_max = std::fmax(state_max, std::fabs(error));
           }
-          for (int v = 0; v < pc_gh::PcGh::I_CON_RMINUS; ++v) {
+          for (int v = 0; v < pc_gh::PcGh::I_CON_MINOR1; ++v) {
             Real const value = con(m, v, k, j, i);
             con_sum2 += static_cast<long double>(value)*value;
             con_max = std::fmax(con_max, std::fabs(value));
@@ -199,7 +202,7 @@ void CheckPcGhRobustMinkowski(ParameterInput *pin, Mesh *pm) {
   double const state_rms = std::sqrt(
       static_cast<double>(state_sum2/(count*pc_gh::PcGh::npcgh)));
   double const con_rms = std::sqrt(
-      static_cast<double>(con_sum2/(count*pc_gh::PcGh::I_CON_RMINUS)));
+      static_cast<double>(con_sum2/(count*pc_gh::PcGh::I_CON_MINOR1)));
   if (!(std::isfinite(state_rms) && std::isfinite(con_rms)
         && min_a > 0.0 && min_chi > 0.0 && min_spd > 0.0)) {
     std::cout << "PC-GH robust Minkowski lost finiteness, positivity, or SPD" << std::endl;
@@ -345,7 +348,7 @@ void ProblemGenerator::PcGhRobustMinkowski(ParameterInput *pin, const bool resta
       return RobustNoise(seed, v, gi[0], gi[1], gi[2]);
     };
     for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) state(m, v, k, j, i) = 0.0;
-    state(m, pc_gh::PcGh::I_CHI, k, j, i) = std::exp(amplitude*noise(0));
+    state(m, pc_gh::PcGh::I_W, k, j, i) = std::exp(amplitude*noise(0));
     Real const e0 = amplitude*noise(1);
     Real const e1 = amplitude*noise(2);
     Real const gdiag[3] = {std::exp(e0), std::exp(e1), std::exp(-e0 - e1)};
@@ -359,10 +362,10 @@ void ProblemGenerator::PcGhRobustMinkowski(ParameterInput *pin, const bool resta
     state(m, pc_gh::PcGh::I_ATZZ, k, j, i) = gdiag[2]*(-a0 - a1);
     state(m, pc_gh::PcGh::I_K, k, j, i) = amplitude*noise(5);
     for (int d = 0; d < 3; ++d) {
-      state(m, pc_gh::PcGh::I_LAMX + d, k, j, i) = amplitude*noise(6 + d);
+      state(m, pc_gh::PcGh::I_ZX + d, k, j, i) = amplitude*noise(6 + d);
       state(m, pc_gh::PcGh::I_BETAX + d, k, j, i) = amplitude*noise(10 + d);
-      state(m, pc_gh::PcGh::I_X1 + d, k, j, i) = amplitude*noise(13 + d);
-      state(m, pc_gh::PcGh::I_Y1 + d, k, j, i) = amplitude*noise(17 + d);
+      state(m, pc_gh::PcGh::I_P1 + d, k, j, i) = amplitude*noise(13 + d);
+      state(m, pc_gh::PcGh::I_L1 + d, k, j, i) = amplitude*noise(17 + d);
       Real const q0 = amplitude*noise(20 + 2*d);
       Real const q1 = amplitude*noise(21 + 2*d);
       state(m, pc_gh::PcGh::QIndex(d, 0, 0), k, j, i) = gdiag[0]*q0;
@@ -373,8 +376,8 @@ void ProblemGenerator::PcGhRobustMinkowski(ParameterInput *pin, const bool resta
             amplitude*noise(26 + 3*d + a);
       }
     }
-    state(m, pc_gh::PcGh::I_PI, k, j, i) = amplitude*noise(9);
-    state(m, pc_gh::PcGh::I_A, k, j, i) = std::exp(amplitude*noise(16));
+    state(m, pc_gh::PcGh::I_CPERP, k, j, i) = amplitude*noise(9);
+    state(m, pc_gh::PcGh::I_RHO, k, j, i) = std::exp(amplitude*noise(16));
   });
   pmbp->ppcgh->PcGhToADM(pmbp);
   CalculatePcGhDiagnostics(pmbp);

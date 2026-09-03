@@ -9,11 +9,13 @@ gate passed.  `OPEN` and `BLOCKED` are not silently replaced by weaker criteria.
 Latest moving-puncture implementation evidence source commit: `f5b334f0`.
 Latest SMR localization/horizon-adapter evidence source commit: `377a1edf`.
 Latest qualification analysis/figure commit: `668ee7bf`.
+Latest puncture-regular 55-field implementation and qualification: this commit,
+described in the final 2026-09-02 section below.
 Required baseline: `d3148a1b87c9b28008c92388055d6aebd56c381a`.
 
 ## Reproducibility envelope
 
-Unless a row states otherwise, current numerical evidence used:
+Unless a row states otherwise, the legacy numerical evidence below used:
 
 - input tree: this commit and the named file under `tst/inputs`;
 - compiler: GCC `13.3.0` via `/usr/bin/c++`;
@@ -32,21 +34,21 @@ generator, table, source, and exact numbers below are the durable provenance rec
 
 | Gate | Status | Evidence / remaining condition |
 |---|---|---|
-| 1 symbolic identities | PASS | complete `analysis/pc_gh_symbolic/run_all.py` pass at current commit |
+| 1 symbolic identities | PASS | complete suite, including the puncture-regular 55-field equivalence, gauges, characteristic, and asymptotic checks |
 | 2 flat algebra | PASS | exact projection/map tests plus 10,000 seeded SPD inverse, projection, and ADM round-trip trials pass |
-| 3 Minkowski pointwise | PASS | exact state, ADM round trip, RHS, and diagnostics at floating-point zero |
-| 4 wave convergence | PASS | exact shifted harmonic wave at 32/64/128 cells; every exercised state/constraint sector is at least order 1.96 and curls remain exact |
-| 5 robust Minkowski | PASS | seeded cell-scale perturbations at 32/64/128 cells through `t=2`; bounded amplification and no positive late-time fitted rate |
-| 6 stationary trumpet pointwise | PASS | continuum target, decomposed three-precision conditioning audit, maximum locations, and second-order RMS residual ladder pass on their stated punctured domains |
+| 3 Minkowski pointwise | PASS | exact regular state, ADM round trip, RHS, and diagnostics in both Release Serial and two-rank MPI builds |
+| 4 wave convergence | PASS | regular 55-field shifted harmonic wave at 32/64/128 cells; minimum exercised order 1.859 and curls remain exact |
+| 5 robust Minkowski | PASS | regular 55-field seeded perturbations at 32/64/128 cells through `t=2`; peak amplification 4.48 and all late fitted rates are negative |
+| 6 stationary trumpet pointwise | PASS | regular 55-field N=32/48/64/80 residual ladder and `1e-12`/`1e-14`/`1e-16` byte-identical floor audit pass |
 | 7 stationary trumpet evolution | BLOCKED | Gauge A0 has a positive projected frozen mode; no derived nonperiodic diagnostic/characteristic outer BC also remains |
 | 8 perturbed trumpet | OPEN | waits on Gate 7 |
-| 9 Bowen-York to trumpet | FAILED | superseding M/16--M/24 SMR runs lose finiteness before `0.03M` in both gauges; matched Z4c reaches `6M` |
+| 9 Bowen-York to trumpet | FAILED (partial improvement) | both regular 55-field gauges now reach `6M` at M/16--M/24, but `rho` has a negative inner power and its inner maximum grows approximately as `N^1.12`; full-domain reductions/curls are nonconvergent |
 | 10 Gauge A1 | FAILED | bounded feedback linearization cannot affect the positive invariant tangential trace-free Q subspace; no production implementation authorized |
 | 11 Gauge B | DEFERRED | no scaled driver derivation or combined symmetrizer yet |
 | 12 boosted puncture | BLOCKED | waits on the failed single-hole convergence gate; existing Z4c-only pgen is not an audited PC-GH initial-data path |
 | 13 spinning puncture | BLOCKED | waits on the failed single-hole convergence gate and constraint-satisfying TwoPunctures data |
 | 14 binary | BLOCKED | waits on the failed single-hole convergence gate and constraint-satisfying TwoPunctures data |
-| 15 AMR | OPEN | plumbing exists; reduction/curl injection has not been measured |
+| 15 AMR | OPEN | Z4c transfer plumbing is reused and reduction changes are measured, but no dynamic-AMR qualification exists |
 
 ## 2026-09-01 — complete symbolic suite
 
@@ -807,3 +809,291 @@ Committed figures and machine-readable summaries are under
 three-resolution convergence and Cartesian slices, plus PC-GH pre-failure convergence,
 localization, finiteness-window, and Cartesian-slice plots. No obsolete low-resolution
 or M/32 data appear in them.
+
+## 2026-09-02 — puncture-regular 55-field replacement and requalification
+
+This section supersedes the PC-GH failure result immediately above. The source started
+from `1c67ad8f` on branch `codex/pc-gh-localization-horizon-20260902`; all changes and
+runs were made in the dedicated
+`/Users/hz0693/research/athenak-pcgh-localization-20260902` worktree. Unrelated and
+pre-existing untracked artifacts were preserved.
+
+### Formulation and implementation changes
+
+The storage ABI remains 55 components, but the old
+`{chi,gtilde,K,Atilde,Lambda,pi,A,beta,X,Q,Y,B}` state is completely replaced by
+
+```text
+{w,gtilde,K,Atilde,Z,Cperp,rho,beta,p,Q,L,B}.
+```
+
+The production map and inverse identities are those in `docs/pc_gh_derivation.md`:
+`chi=w^2`, `alpha=rho*w`, `A=rho^2*w^2`, `X=2*w*p`, `Y=alpha*L`,
+`pi=Cperp-K`, and `Lambda=GammaTilde(Q)-Z`. No `partial_i rho` field is evolved.
+The direct `w`, `rho`, `p`, and `L` equations; denominator-free `H`, `E`, `m`,
+`alpha*M`, `S`, and `T`; direct `Cperp` and `Z`; and both shift variants are
+implemented as written in the reviewed goal. The hyperbolic `B_i^j` equation includes
+the full standard-order derivative, including `S'(z) partial_i(z) M^j` with
+`z=rho*w^3` and `partial_i z=w^2(L_i/2+2*rho*p_i)`.
+
+The complete change inventory is:
+
+- `src/pc_gh/pc_gh.{hpp,cpp}`: new ABI, names, gauge composites, configuration,
+  strict state/RHS/constraint/speed/SPD diagnostics, and complete boundedness output;
+- `pc_gh_calcrhs.cpp`, `pc_gh_constraints.cpp`, `pc_gh_newdt.cpp`,
+  `pc_gh_projection.cpp`, `pc_gh_tasks.cpp`, and `pc_gh_update.cpp`: denominator-free
+  equations and constraints, regular-variable CFL, Z4c-aligned task graph, unchanged
+  evolved `Z` under projection, and reduction-change monitors around transfer and
+  projection;
+- `pc_gh_adm.cpp`: guarded initialization-only `rho=alpha/w`, no full-volume ADM
+  reconstruction in the timestep dependency chain, and masked diagnostic output;
+- `src/utils/horizon_dump.hpp` and `src/z4c/horizon_dump.cpp`: interpolate regular
+  conformal PC-GH fields first, reconstruct physical fields only outside the declared
+  mask, and fill the masked cube with an output-only flat extension;
+- `src/outputs/{outputs.hpp,history.cpp,basetype_output.cpp}`: new state/constraint
+  labels and diagnostic ranges;
+- PC-GH problem generators and `tst/inputs/pc_gh_*.athinput`: new exact state,
+  zero-step 232-block/all-axis finest-spacing enforcement, and updated audit outputs;
+- `analysis/pc_gh_symbolic`: independent 55-field proof, updated source/KO/principal
+  checks and analyzers; `analysis/pc_gh_localization`: semantic history parsing,
+  changed initial-data comparison, boundedness/power/localization plots; and the three
+  PC-GH design/audit documents.
+
+The task graph is now exactly update, restriction, communication, physical boundary,
+prolongation, algebraic projection, diagnostic/output conversion, timestep. It calls
+the same Z4c cell-centered restriction/prolongation implementations. Across the six
+full runs the measured maximum changes were: restriction exactly zero in all four
+reduction families; prolongation `dRw <= 2.04e-7`, `dRQ <= 6.28e-6`,
+`dRalpha <= 2.36e-6`, and `dRB <= 1.23e-6`; projection changed only Q, with
+`dRQ <= 6.54e-6`. This is instrumentation evidence, not a dynamic-AMR qualification.
+
+### Symbolic, division, guard, and inexpensive numerical gates
+
+The exact command
+
+```bash
+/tmp/athenak-pcgh-regular-sympy/bin/python \
+  analysis/pc_gh_symbolic/run_all.py
+```
+
+passed in 60.63 seconds. The isolated Python 3.9 environment used SymPy 1.14.0,
+NumPy 2.0.2, Matplotlib 3.9.4, and SciPy 1.13.1; SciPy 1.18.1 does not support the
+host Python version. `verify_puncture_regular_55.py` proves the transformed
+regularization identities, `Cperp`/`Z` equations, both shifts and differentiated B
+equations, equivalence to the old positive-field equations on the algebraic/reduction
+manifold, tangent-map similarity, exact characteristic polynomial, eigenspace ranks,
+persistence of the direct-gauge defective surfaces, absence of a new finite positive
+`rho` degeneracy, and wormhole/stationary-trumpet powers. The complete suite, including
+all older independent tensor/oracle checks, ends with
+`PASS: all currently established PC-GH symbolic gates`.
+
+The requested raw `rg -n '/|sqrt\(|pow\('` audit covers the five named PC-GH kernels,
+all PC-GH problem generators, outputs, and horizon paths and is stored at
+`qualification-runs-20260902/regular55-final/verification/source-division-rg.log`
+(640 matches, including comments and path/index slashes). Every quotient is classified
+in `docs/pc_gh_regularization_audit.md`. `verify_source_policy.py` independently
+passes over all nine production PC-GH files and rejects any preferred-source quotient
+by `w`, `rho`, `alpha`, `chi`, or `A`.
+
+The only puncture-field division is the defining initialization conversion
+`rho=alpha/guarded_w`. The resolution-independent default floor is `1e-14`; input
+values are checked before the guard, the unguarded global minimum and activated-cell
+count are printed, and a negative/nonfinite input fails. No black-hole cell activated
+the guard. Stationary-A0 N=32 runs at `1e-12`, `1e-14`, and `1e-16` produced
+byte-identical residual files (SHA-256
+`2523d48c15bbd61c0888eabd458131b0216549ab07c7b72c2e3e68c5c6d60d9e`) and maxima
+files (`b11d72b5edb3db254b25412882876fb78a053e27d7440f32b3cfcc0839a0327d`).
+
+Final Release builds used Apple clang 21.0.0; the MPI build used Open MPI 5.0.10.
+The incremental Serial and MPI builds both passed in 3.6 seconds combined. The final
+Serial and two-MeshBlock/two-rank MPI Minkowski tests both printed
+`PASS: exact PC-GH Minkowski state, ADM round trip, RHS, and diagnostics`.
+
+The inexpensive pre-black-hole results were:
+
+- shifted gauge wave N=32/64/128: aggregate L1 errors
+  `3.002128e-4`, `7.552022e-5`, `1.890239e-5`; minimum exercised sector order
+  1.859491 (`Cperp` Linf), aggregate order at least 1.991, exact curls;
+- robust Minkowski N=32/64/128 through `t=2`: state RMS
+  `5.999411e-11`, `5.138255e-11`, `4.525745e-11`, peak amplification at most
+  4.482354, every late-time fitted rate negative, SPD minimum above
+  `0.999999999769`;
+- stationary A0 N=32/48/64/80: maximum primary RHS decreases
+  `1.45674e-2 -> 3.86234e-3`; the corresponding RMS decreases
+  `1.37955e-3 -> 2.39809e-4`, while gradient, GH/ADM, and reduction/curl families
+  form the same decreasing ladder. These are residual/asymptotic checks, not an
+  authorization to run the known-defective stationary Gauge A0 evolution.
+
+Durable logs are under
+`qualification-runs-20260902/verification-regular55/` and
+`qualification-runs-20260902/regular55-final/verification/`.
+
+### Black-hole command, geometry, and ordering
+
+The matched Z4c controls were not rerun. Direct PC-GH was completed first, followed by
+hyperbolic PC-GH. Every black-hole command used the MPI-linked
+`build-mpi-release/src/athena` with 12 ranks. The preflight/short/full pattern was:
+
+```bash
+mpirun -np 12 build-mpi-release/src/athena \
+  -i tst/inputs/pc_gh_one_puncture_smr.athinput \
+  mesh/nx1="$N" mesh/nx2="$N" mesh/nx3="$N" \
+  meshblock/nx1="$NB" meshblock/nx2="$NB" meshblock/nx3="$NB" \
+  pc_gh/gauge="$GAUGE" pc_gh/horizon_0_Nx="$NAH" \
+  output2/numpoints_x="$NS" output2/numpoints_y="$NS" \
+  output3/numpoints_x="$NS" output3/numpoints_y="$NS" \
+  problem/expected_finest_spacing="$DX" time/tlim="$TLIM"
+```
+
+Preflight used `nlim=0,tlim=0`; its two-line geometry file was read and checked with
+awk immediately before both the `tlim=0.1` short gate and the `tlim=6` full run.
+The exact tuples were `(N,NB,NS,NAH)=(16,8,64,34),(20,10,80,42),(24,12,96,50)`.
+The M24 command used the full-precision literal `0.0416666666666667`; the deliberately
+tight pgen correctly rejects the shorter decimal when it differs by more than its
+roundoff tolerance.
+
+| target | blocks | recorded finest dx1=dx2=dx3 | min unguarded initial w | guarded cells |
+|---|---:|---:|---:|---:|
+| M/16 | 232 | `6.25000000000000000e-02` | 9.54121e-3 | 0 |
+| M/20 | 232 | `5.00000000000000028e-02` | 6.35214e-3 | 0 |
+| M/24 | 232 | `4.16666666666666644e-02` | 4.53077e-3 | 0 |
+
+The PC-GH and reused Z4c `t=0` Cartesian data agree exactly for `w` versus the Z4c
+initial lapse and for every conformal metric, curvature, lapse, and shift component.
+The nonzero `interpolate(w)^2-interpolate(chi)` maxima are `5.61038e-5`,
+`2.73394e-5`, and `1.48271e-5`, decrease with refinement, and are below the declared
+`2e-4` interpolation-consistency tolerance. The JSON comparisons are stored in each
+direct full-run directory.
+
+### Short gates and full-run endpoints
+
+All six strict short gates passed through `0.1M`; direct CPU times were 6.82, 16.26,
+and 33.13 seconds, while hyperbolic times were 4.34, 10.61, and 24.46 seconds for
+M/16, M/20, and M/24. The gauges agree to the shown short-run precision:
+
+| gauge | spacing | max GH | max ADM | max reduction/curl | min SPD |
+|---|---|---:|---:|---:|---:|
+| direct | M/16 | 7.2886e-3 | 2.2020e-1 | 1.0618e-2 | 0.999750 |
+| direct | M/20 | 9.0361e-3 | 1.6224e-1 | 8.0904e-3 | 0.999750 |
+| direct | M/24 | 1.0763e-2 | 1.3156e-1 | 6.6653e-3 | 0.999750 |
+| hyperbolic | M/16 | 7.2886e-3 | 2.2020e-1 | 1.0618e-2 | 0.999750 |
+| hyperbolic | M/20 | 9.0361e-3 | 1.6224e-1 | 8.0904e-3 | 0.999750 |
+| hyperbolic | M/24 | 1.0763e-2 | 1.3156e-1 | 6.6653e-3 | 0.999750 |
+
+Every full run reached exactly `t=6M` without a nonfinite state, RHS, constraint,
+characteristic speed, determinant, or eigenvalue, and without loss of SPD:
+
+| gauge | spacing | cycles | CPU s | max GH | max ADM | max red/curl | max alg | min alpha^2 | min chi | min SPD |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| direct | M/16 | 1171 | 266.52 | 1.25108 | 2.05803 | 1.16594 | 9.94e-5 | 0.115868 | 1.74439e-3 | 0.867341 |
+| direct | M/20 | 1466 | 641.22 | 1.24677 | 2.05812 | 1.60281 | 6.95e-5 | 0.119579 | 1.10995e-3 | 0.866192 |
+| direct | M/24 | 1761 | 1481.84 | 1.22479 | 2.01923 | 1.96331 | 1.46e-7 | 0.119900 | 7.57387e-4 | 0.865247 |
+| hyperbolic | M/16 | 1171 | 266.03 | 1.25160 | 2.06008 | 1.17097 | 1.21e-4 | 0.116157 | 1.74651e-3 | 0.870748 |
+| hyperbolic | M/20 | 1466 | 640.91 | 1.24770 | 2.06070 | 1.61037 | 8.88e-5 | 0.119870 | 1.11165e-3 | 0.870295 |
+| hyperbolic | M/24 | 1761 | 1509.47 | 1.22616 | 2.02218 | 1.97394 | 1.73e-5 | 0.120195 | 7.58728e-4 | 0.869958 |
+
+Thus the new last-finite sample is `6M` and no first-bad sample exists in any case,
+versus the old first-bad times `0.0270633M`, `0.0173205M`, and `0.0180422M`.
+Survival improved by at least factors 220, 346, and 333 at M/16, M/20, and M/24.
+
+### Constraint localization and boundedness
+
+The endpoint coordinate-volume RMS values below list `(M/16,M/20,M/24)`; `chi` means
+the declared regular conformal mask and `all` is the full domain:
+
+| gauge/family | chi-mask RMS | full-domain RMS |
+|---|---|---|
+| direct GH | `(5.1569,5.1383,5.1326)e-3` | `(6.0976,5.6710,5.4633)e-3` |
+| direct ADM | `(1.00936,1.00765,1.00694)e-2` | `(1.05766,1.03679,1.02603)e-2` |
+| direct reduction | `(6.7449,4.7125,3.5474)e-4` | `(1.4226,1.4902,1.5011)e-3` |
+| direct curl | `(2.0201,1.3612,0.9892)e-3` | `(5.5278,5.6473,5.6119)e-3` |
+| hyperbolic GH | `(5.1575,5.1387,5.1330)e-3` | `(6.0966,5.6709,5.4636)e-3` |
+| hyperbolic ADM | `(1.00951,1.00778,1.00699)e-2` | `(1.05783,1.03695,1.02612)e-2` |
+| hyperbolic reduction | `(6.7056,4.6661,3.5244)e-4` | `(1.4228,1.4909,1.5028)e-3` |
+| hyperbolic curl | `(2.0118,1.3432,0.9520)e-3` | `(5.5401,5.6596,5.6222)e-3` |
+
+Masked reductions converge at approximately order 1.54--1.63 on the finest pair and
+masked curls at 1.75--1.89. GH/ADM are nearly flat rather than cleanly convergent;
+full-domain reductions grow slightly and full-domain curls are nonmonotone. The
+hyperbolic switch changes these values only at the sub-percent level.
+
+All requested global time-series bounds are stored in the six
+`*.pcgh-boundedness.dat` files and summarized in
+`docs/figures/pc_gh_localization_20260902/regular55/qualification_summary.json`.
+The principal resolution-growing maxima are:
+
+| gauge | spacing | max rho | max L | max B | min w | min rho | min metric eigenvalue | max primary RHS | max gradient RHS |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| direct | M/16 | 2.7742 | 2.1502 | 1.1019 | 9.6901e-3 | 0.999907 | 0.931068 | 0.9551 | 0.6390 |
+| direct | M/20 | 3.5892 | 2.4688 | 1.2073 | 6.4401e-3 | 0.999969 | 0.930422 | 1.4036 | 0.8535 |
+| direct | M/24 | 4.3567 | 2.7726 | 1.2787 | 4.5869e-3 | 0.999974 | 0.929858 | 1.8881 | 1.0888 |
+| hyperbolic | M/16 | 2.7795 | 2.1525 | 1.1027 | 9.6901e-3 | 0.999907 | 0.932918 | 0.9582 | 0.6409 |
+| hyperbolic | M/20 | 3.5952 | 2.4713 | 1.2081 | 6.4401e-3 | 0.999964 | 0.932758 | 1.4075 | 0.8556 |
+| hyperbolic | M/24 | 4.3636 | 2.7753 | 1.2798 | 4.5869e-3 | 0.999970 | 0.932621 | 1.8928 | 1.0913 |
+
+The table below records every fitted `t=6M`, `r<=0.5M` puncture power and the fitted
+resolution exponent `q_N` of the inner maximum (`max_inner ~ N^q_N`). A negative
+puncture power violates the required no-divergence condition; a positive `q_N` marks
+a growing sampled inner maximum.
+
+| field | direct powers N16,N20,N24 | direct q_N | hyperbolic powers N16,N20,N24 | hyperbolic q_N |
+|---|---|---:|---|---:|
+| w | `(0.949,0.916,0.945)` | 0.026 | `(0.949,0.915,0.944)` | 0.026 |
+| rho | `(-0.320,-0.373,-0.433)` | **1.122** | `(-0.320,-0.373,-0.433)` | **1.121** |
+| p | `(0.297,0.267,0.266)` | 0.135 | `(0.296,0.266,0.265)` | 0.135 |
+| L | `(-0.076,-0.144,-0.187)` | 0.375 | `(-0.077,-0.144,-0.187)` | 0.374 |
+| Cperp | `(-1.206,-1.262,-1.260)` | -0.648 | `(-1.207,-1.263,-1.259)` | -0.646 |
+| Z | `(-1.188,-1.181,-1.349)` | -0.054 | `(-1.188,-1.181,-1.350)` | -0.053 |
+| K | `(-0.186,-0.121,-0.066)` | -0.322 | `(-0.188,-0.123,-0.068)` | -0.323 |
+| Atilde | `(1.201,1.104,1.093)` | 0.156 | `(1.200,1.103,1.092)` | 0.157 |
+| beta | `(0.877,0.819,0.830)` | 0.032 | `(0.876,0.819,0.830)` | 0.032 |
+| Q | `(-0.426,-0.425,-0.442)` | -0.140 | `(-0.428,-0.426,-0.443)` | -0.138 |
+| B | `(-0.256,-0.229,-0.227)` | 0.367 | `(-0.256,-0.229,-0.228)` | 0.367 |
+
+Most decisively, `rho` does not approach the expected nondivergent/vanishing trumpet
+behavior: its inner maximum changes from about 2.80 to 3.63 to 4.41 and grows as
+approximately `N^1.12`. `L` and `B` also grow under refinement, and multiple evolved
+fields have negative local powers. Finite values at these three resolutions are not
+evidence of a bounded continuum puncture limit.
+
+### Reused Z4c, horizons, figures, and classification
+
+The reused Z4c histories are the existing 34,901-byte files in
+`qualification-runs-20260902/z4c-r{16,20,24}` with SHA-256 values
+`d1f48f63883f9083...`, `417c7b4f3dbc22da...`, and `376ed9e74b990dd4...`.
+The corresponding `co_0` tracker hashes are `d5fd96081835bcf...`,
+`54d6cfc1019d742...`, and `c39e2cdba0c7ac8...`. Full paths, sizes, timestamps, and
+hashes are in
+`qualification-runs-20260902/regular55-final/verification/z4c-reuse-provenance.log`.
+Their endpoint native constraints are unchanged: only Z shows clear convergence
+(order 2.22); C/H/M/Theta are flat or nonmonotone. No Z4c evolution was rerun.
+
+Both PC-GH gauges wrote horizon-adapter packages at all scheduled times using regular
+conformal interpolation and the even grids 34/42/50. This host still has no actual
+AHFinderDirect property output, so no area/mass/shape/residual/iteration plot is
+fabricated. The online `ah` label remains a documented spherical proxy. The periodic
+boundary can conservatively return to `r=2M` by `4.24M` and the initial horizon radius
+by `5.30M`; late-time values are robustness controls, not clean outer-boundary physics.
+
+The final PC-GH, reused Z4c, initial-data, finiteness-window, localization,
+boundedness, puncture-power, and Cartesian-slice plots are under
+`docs/figures/pc_gh_localization_20260902/regular55/`. Only M/16, M/20, and M/24 are
+included. Raw PC-GH runs are under
+`qualification-runs-20260902/regular55-final/pcgh-{direct,hyper}/`; the quarantined
+`pcgh-hyper-invalid-serial-under-mpirun` directory is execution-provenance evidence
+and is excluded from every analysis result.
+
+Final classification:
+
+```text
+PARTIAL IMPROVEMENT
+```
+
+The formulation removes the immediate nonfinite failure and extends every tested
+survival window to `6M` without guard dependence. It is not a `QUALIFIED IMPROVEMENT`
+because the negative puncture powers, `rho ~ N^1.12` inner growth, worsening `L/B`,
+and nonconvergent full-domain reduction/curl behavior violate the explicit boundedness
+gate. Perturbed, boosted, spinning, binary, and production outer-boundary promotion
+remain stopped. The next technical question is why evolved `rho=alpha/w`, despite its
+stationary target power, develops a resolution-growing wormhole-to-trumpet inner
+profile in this first-order system.

@@ -111,17 +111,25 @@ TaskStatus PcGh::RecvU(Driver *, int) {
   return pbval_u->RecvAndUnpackCC(u0, coarse_u0);
 }
 
-TaskStatus PcGh::RestrictU(Driver *, int) {
+TaskStatus PcGh::RestrictU(Driver *pdriver, int stage) {
+  bool const monitor = stage == pdriver->nexp_stages && opt.boundedness_output
+      && pmy_pack->pmesh->ncycle % opt.boundedness_dcycle == 0;
+  if (monitor) BeginReductionTransfer(0);
   if (pmy_pack->pmesh->multilevel) {
     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
   }
+  if (monitor) EndReductionTransfer(0);
   return TaskStatus::complete;
 }
 
-TaskStatus PcGh::Prolongate(Driver *, int) {
+TaskStatus PcGh::Prolongate(Driver *pdriver, int stage) {
+  bool const monitor = stage == pdriver->nexp_stages && opt.boundedness_output
+      && pmy_pack->pmesh->ncycle % opt.boundedness_dcycle == 0;
+  if (monitor) BeginReductionTransfer(1);
   if (pmy_pack->pmesh->multilevel) {
     pbval_u->ProlongateCC(u0, coarse_u0, true);
   }
+  if (monitor) EndReductionTransfer(1);
   return TaskStatus::complete;
 }
 
@@ -141,13 +149,21 @@ TaskStatus PcGh::BoundaryRHS(Driver *, int) {
   return TaskStatus::complete;
 }
 
-TaskStatus PcGh::EnforceAlgebraicConstraints(Driver *, int) {
+TaskStatus PcGh::EnforceAlgebraicConstraints(Driver *pdriver, int stage) {
+  bool const monitor = stage == pdriver->nexp_stages && opt.boundedness_output
+      && pmy_pack->pmesh->ncycle % opt.boundedness_dcycle == 0;
+  if (monitor) BeginReductionTransfer(2);
   ProjectAlgebraic(pmy_pack);
+  if (monitor) EndReductionTransfer(2);
   return TaskStatus::complete;
 }
 
 TaskStatus PcGh::ConvertToADM(Driver *pdriver, int stage) {
-  if (stage == pdriver->nexp_stages) PcGhToADM(pmy_pack);
+  // Evolution, CFL, regular Cartesian output, and the PC-GH horizon path do not need
+  // physical ADM fields.  Enable this explicitly only for requested masked ADM output.
+  if (opt.reconstruct_adm_output && stage == pdriver->nexp_stages) {
+    PcGhToADM(pmy_pack);
+  }
   return TaskStatus::complete;
 }
 
@@ -162,7 +178,8 @@ TaskStatus PcGh::DumpHorizons(Driver *pdriver, int stage) {
   if (time_32 >= next_32 || time_32 == 0.0F) {
     for (auto &dump : phorizon_dump) {
       dump->horizon_last_output_time = time_32;
-      dump->SetGridAndInterpolate(dump->pos);
+      dump->SetGridAndInterpolatePcGh(
+          dump->pos, opt.physical_output_inner_radius);
     }
   }
   return TaskStatus::complete;

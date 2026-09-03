@@ -78,8 +78,8 @@ void CheckPcGhFrozenOperator(ParameterInput *pin, Mesh *pm) {
       default: std::abort();
     }
     auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), pcgh.u_con);
-    std::vector<Real> result(pc_gh::PcGh::I_CON_RED_X);
-    for (int row = 0; row < pc_gh::PcGh::I_CON_RED_X; ++row) {
+    std::vector<Real> result(pc_gh::PcGh::I_CON_RED_W);
+    for (int row = 0; row < pc_gh::PcGh::I_CON_RED_W; ++row) {
       result[row] = host(0, row, kc, jc, ic);
     }
     return result;
@@ -90,7 +90,7 @@ void CheckPcGhFrozenOperator(ParameterInput *pin, Mesh *pm) {
   std::vector<Real> const background_rhs = calculate_rhs();
   std::vector<Real> const background_constraints = calculate_constraints();
   int constexpr nstate = pc_gh::PcGh::npcgh;
-  int constexpr nsigned_constraints = pc_gh::PcGh::I_CON_RED_X;
+  int constexpr nsigned_constraints = pc_gh::PcGh::I_CON_RED_W;
   std::vector<Real> lower_order(nstate*nstate, 0.0);
   std::vector<Real> fd_response(nstate*nstate, 0.0);
   std::vector<Real> constraint_lower(nsigned_constraints*nstate, 0.0);
@@ -254,16 +254,16 @@ void CheckPcGhTrumpetA0(ParameterInput *pin, Mesh *pm) {
       Real const radius = std::sqrt(x*x + y*y + z*z);
       if (radius < audit_r_min || radius > audit_r_max) return;
       if (family < 2) {
-        int const first = (family == 0) ? 0 : pc_gh::PcGh::I_X1;
-        int const last = (family == 0) ? pc_gh::PcGh::I_X1 : pc_gh::PcGh::npcgh;
+        int const first = (family == 0) ? 0 : pc_gh::PcGh::I_P1;
+        int const last = (family == 0) ? pc_gh::PcGh::I_P1 : pc_gh::PcGh::npcgh;
         for (int v = first; v < last; ++v) {
           maximum = std::fmax(maximum, std::fabs(state_rhs(m, v, k, j, i)));
         }
       } else {
         int const first = (family == 2) ? pc_gh::PcGh::I_CON_CPERP
-                                         : pc_gh::PcGh::I_CON_RED_X;
-        int const last = (family == 2) ? pc_gh::PcGh::I_CON_RED_X
-                                        : pc_gh::PcGh::I_CON_RMINUS;
+                                         : pc_gh::PcGh::I_CON_RED_W;
+        int const last = (family == 2) ? pc_gh::PcGh::I_CON_RED_W
+                                        : pc_gh::PcGh::I_CON_MINOR1;
         for (int v = first; v < last; ++v) {
           maximum = std::fmax(maximum, std::fabs(constraints(m, v, k, j, i)));
         }
@@ -288,17 +288,17 @@ void CheckPcGhTrumpetA0(ParameterInput *pin, Mesh *pm) {
       Real const radius = std::sqrt(x*x + y*y + z*z);
       if (radius < audit_r_min || radius > audit_r_max) return;
       if (family < 2) {
-        int const first = (family == 0) ? 0 : pc_gh::PcGh::I_X1;
-        int const last = (family == 0) ? pc_gh::PcGh::I_X1 : pc_gh::PcGh::npcgh;
+        int const first = (family == 0) ? 0 : pc_gh::PcGh::I_P1;
+        int const last = (family == 0) ? pc_gh::PcGh::I_P1 : pc_gh::PcGh::npcgh;
         for (int v = first; v < last; ++v) {
           sum += SQR(state_rhs(m, v, k, j, i));
           ++count;
         }
       } else {
         int const first = (family == 2) ? pc_gh::PcGh::I_CON_CPERP
-                                         : pc_gh::PcGh::I_CON_RED_X;
-        int const last = (family == 2) ? pc_gh::PcGh::I_CON_RED_X
-                                        : pc_gh::PcGh::I_CON_RMINUS;
+                                         : pc_gh::PcGh::I_CON_RED_W;
+        int const last = (family == 2) ? pc_gh::PcGh::I_CON_RED_W
+                                        : pc_gh::PcGh::I_CON_MINOR1;
         for (int v = first; v < last; ++v) {
           sum += SQR(constraints(m, v, k, j, i));
           ++count;
@@ -432,6 +432,7 @@ void ProblemGenerator::PcGhTrumpetA0(ParameterInput *pin, const bool restart) {
   Real const center_x = pcgh.opt.gauge_center[0];
   Real const center_y = pcgh.opt.gauge_center[1];
   Real const center_z = pcgh.opt.gauge_center[2];
+  Real const division_floor = pcgh.opt.initial_data_division_floor;
   int const isg = indcs.is - indcs.ng;
   int const ieg = indcs.ie + indcs.ng;
   int const jsg = indcs.js - indcs.ng;
@@ -455,18 +456,30 @@ void ProblemGenerator::PcGhTrumpetA0(ParameterInput *pin, const bool restart) {
     pc_gh::PcGh::GaugeA0Point const target = pc_gh::PcGh::EvaluateGaugeA0(
         table, npoints, log_r_min, inv_dlog_r, log_radius);
     for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) state(m, v, k, j, i) = 0.0;
-    state(m, pc_gh::PcGh::I_A, k, j, i) = target.A;
-    state(m, pc_gh::PcGh::I_CHI, k, j, i) = target.chi;
+    Real const target_w = std::sqrt(target.chi);
+    Real const target_alpha = std::sqrt(target.A);
+    // The legacy stationary table supplies chi, A and their derivatives.  Converting
+    // those data to rho, p and L therefore requires these initialization-only defining
+    // quotients.  Invalid denominators produce NaN; finite nonnegative denominators use
+    // the same configurable, resolution-independent floor as ADM initialization.
+    Real const guarded_w = (std::isfinite(target_w) && target_w >= 0.0)
+        ? std::fmax(target_w, division_floor) : NAN;
+    Real const guarded_alpha = (std::isfinite(target_alpha) && target_alpha >= 0.0)
+        ? std::fmax(target_alpha, division_floor) : NAN;
+    state(m, pc_gh::PcGh::I_W, k, j, i) = target_w;
+    state(m, pc_gh::PcGh::I_RHO, k, j, i) = target_alpha/guarded_w;
     state(m, pc_gh::PcGh::I_K, k, j, i) = target.K/mass;
-    state(m, pc_gh::PcGh::I_PI, k, j, i) = -target.K/mass;
+    state(m, pc_gh::PcGh::I_CPERP, k, j, i) = 0.0;
     state(m, pc_gh::PcGh::I_GTXX, k, j, i) = 1.0;
     state(m, pc_gh::PcGh::I_GTYY, k, j, i) = 1.0;
     state(m, pc_gh::PcGh::I_GTZZ, k, j, i) = 1.0;
     for (int q = 0; q < 3; ++q) {
       Real const normal_q = coord[q]/radius;
       state(m, pc_gh::PcGh::I_BETAX + q, k, j, i) = target.beta_r*normal_q;
-      state(m, pc_gh::PcGh::I_X1 + q, k, j, i) = target.dx_chi*normal_q/radius;
-      state(m, pc_gh::PcGh::I_Y1 + q, k, j, i) = target.dx_A*normal_q/radius;
+      state(m, pc_gh::PcGh::I_P1 + q, k, j, i) =
+          0.5*target.dx_chi*normal_q/(guarded_w*radius);
+      state(m, pc_gh::PcGh::I_L1 + q, k, j, i) =
+          target.dx_A*normal_q/(guarded_alpha*radius);
       for (int p = 0; p < 3; ++p) {
         Real const normal_p = coord[p]/radius;
         Real const delta = (p == q) ? 1.0 : 0.0;

@@ -15,6 +15,7 @@ Current coverage:
 
 | Script | Exact checks | Classification |
 |---|---|---|
+| `verify_puncture_regular_55.py` | `w,rho,p,L,Cperp,Z` map; H/E/S/T/scaled-momentum identities; direct and switched gauge gradients including `S'`; wormhole/trumpet powers; absence of puncture-field denominators | exact `PROVED ON w>0,rho>0` equivalence plus denominator-free preferred expressions |
 | `verify_regularization.py` | regular lapse Hessian; physical/conformal lapse Hessian; scalar curvature; Hamiltonian; trace-free curvature/lapse tensor; scaled momentum | `PROVED ON r>0` for expressions using positive `chi` and `A`; otherwise `PROVED` |
 | `verify_q_projection.py` | product-rule consistency and trace-free property of the simultaneous metric/Q projection | `PROVED` for nonsingular conformal metric |
 | `verify_flat_algebra_randomized.py` | 10,000 seeded SPD cofactor-inverse, determinant, Atilde/Q trace projection, and PC-GH/ADM round-trip trials over eight decades in chi and six metric scales | broad binary64 Gate 2 regression, not an exhaustive proof |
@@ -22,7 +23,7 @@ Current coverage:
 | `verify_primary_projections.py` | normal-normal pi equation; corrected K divergence count; corrected Atilde nonlinear Z term; mixed-projection lapse-acceleration term; exact counterexamples to the supplied K, Atilde, and Lambda regression targets | pi and corrected terms `PROVED`; supplied K/Atilde/Lambda targets `FAILED` |
 | `verify_gradient_rhs.py` | exact product-rule expansions of all chi/A/beta/gtilde source gradients and the compatible-versus-standard curl difference | `PROVED` conditional on differentiable metric-only/prescribed Gauge A sources |
 | `verify_z4c_mp_gauge.py` | exact cancellation of the regular GH source representation to the direct 1+log/Gamma-driver A, beta, Y, and B equations | `PROVED` for constant `eta` |
-| `analyze_z4c_mp_principal.py` | exact 50-field algebraic-tangent principal polynomial and eigenspace ranks for the direct moving-puncture gauge | strong hyperbolicity on positive `A`, `chi` away from the three reported defective surfaces, for the STANDARD reduction ordering |
+| `analyze_z4c_mp_principal.py` | exact 50-field algebraic-tangent principal polynomial and eigenspace ranks plus the regular-state similarity map with determinant `-32 rho^4 w^9` | known direct-gauge defects map to `rho^2 w^4=4/3`, `rho w=2`, and `rho w^3=2/3`; no new positive-rho surface |
 | `verify_4d_component_oracle.py` | arbitrary exact rational 3+1 metric point jet; all ten covariant reduced four-tensor components; direct K, Atilde, pi, and Lambda derivatives; Brown-Ricci, Gauss-normal, and Hamiltonian identities | corrected primary equations `PROVED` at the non-diagonal point jet; supplied targets remain excluded |
 | `verify_fo_gh_map.py` | exact constrained PC-GH to standard FO-GH to PC-GH round trip for a non-diagonal rational state | algebraic variable-map invertibility `PROVED ON r>0` |
 | `generate_gauge_a0_table.py` | independent stationary 1+log implicit solution, isotropic-radius ODE, target-source identities, and inner exponents | Gauge A0 continuum construction `PROVED`; double-precision table generation numerically audited |
@@ -34,7 +35,7 @@ Current coverage:
 | `analyze_gauge_wave_convergence.py` | named per-field errors and GH/ADM/reduction/curl residuals over a resolution ladder | fail-closed all-sector second-order shifted harmonic-wave gate |
 | `analyze_robust_minkowski.py` | normalized amplification, endpoint growth, and late-time fitted growth for every GH/reduction/curl family | fail-closed resolution-growing-instability search |
 | `analyze_bowen_york_residuals.py` | exact time-symmetric isotropic Schwarzschild ADM data through production ADM-to-PC-GH conversion, production RHS, and production constraints; four-resolution RMS ladder plus maximum locations | fail-closed pointwise initial-data/source regression; not a wormhole-to-trumpet evolution gate |
-| `verify_source_policy.py` | scans every production PC-GH C++ source/header for `Dxx`/`Dxy` calls and legacy GH/Z4c includes | fail-closed source-policy gate |
+| `verify_source_policy.py` | scans every production PC-GH C++ source/header for `Dxx`/`Dxy`, legacy GH/Z4c includes, and puncture-field quotients in preferred evolution paths | fail-closed source/denominator-policy gate |
 
 Not yet covered, and therefore not established by these scripts:
 

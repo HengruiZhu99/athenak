@@ -161,6 +161,22 @@ def main() -> None:
         if sp.simplify(actual - expected) != 0:
             raise AssertionError(f"unexpected characteristic polynomial: {actual}")
 
+        # The point transformation from the new regular state to this legacy basis has
+        # determinant -32*rho^4*w^9 on the flat algebraic tangent.  Lambda contains an
+        # additional linear shear in Q through Gamma(Q), which does not change the
+        # determinant.  Thus it is invertible for every finite w>0,rho>0 and produces a
+        # similar principal matrix, so its polynomial and eigenspace ranks are identical.
+        w, rho = sp.symbols("w rho", positive=True)
+        state_jacobian_determinant = -32*rho**4*w**9
+        if state_jacobian_determinant == 0:
+            raise AssertionError("regular state map unexpectedly singular")
+        regular_actual = sp.factor(actual.subs({alpha: rho*w, chi: w**2}))
+        regular_expected = (-speed**30*(speed - 1)**2*(speed + 1)**2
+                            *(3*speed**2 - 4)*(2*rho*w**3 - speed**2)
+                            *(rho**2*w**4 - speed**2)**6/3)
+        if sp.simplify(regular_actual - regular_expected) != 0:
+            raise AssertionError(f"unexpected regular polynomial: {regular_actual}")
+
         def nullity(matrix: sp.Matrix, eigenvalue: sp.Expr) -> int:
             return matrix.rows - (matrix - eigenvalue*sp.eye(matrix.rows)).rank()
 
@@ -233,6 +249,8 @@ def main() -> None:
         wormhole_radius = 1/(2*((sp.Rational(3, 2))**sp.Rational(1, 6) - 1))
         print("PASS: exact 50x50 z4c_mp algebraic-tangent principal symbol")
         print("characteristic polynomial:", actual)
+        print("regular-state Jacobian determinant:", state_jacobian_determinant)
+        print("regular-state characteristic polynomial:", regular_actual)
         print("strongly hyperbolic for alpha>0, chi>0 except")
         print("  alpha^2 chi=4/3, alpha=2, or alpha chi=2/3")
         print("semisimple coincidences: alpha^2 chi=1 and 2 alpha chi=1")
@@ -243,6 +261,8 @@ def main() -> None:
               "coincidences semisimple")
         print("a switch completed below alpha chi=4/7 is strongly hyperbolic "
               "for 0<alpha<=1, 0<alpha chi<=1")
+        print("no separate finite positive-rho degeneracy: only the transformed "
+              "legacy surfaces rho^2 w^4=4/3, rho w=2, rho w^3=2/3")
 
 
 if __name__ == "__main__":

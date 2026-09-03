@@ -8,6 +8,7 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 SCRIPTS = [
+    "verify_puncture_regular_55.py",
     "verify_regularization.py",
     "verify_q_projection.py",
     "verify_flat_algebra_randomized.py",

@@ -13,7 +13,10 @@ from plot_qualification import read_cartesian
 
 
 NATIVE_FIELD_PAIRS = (
-    ("chi", "pcgh_chi", "z4c_chi", "identity"),
+    # Cartesian interpolation and squaring do not commute.  The chi comparison is
+    # therefore a convergence check, while w versus the initial Z4c lapse is exact.
+    ("chi_interpolation_consistency", "pcgh_w", "z4c_chi", "square_lhs"),
+    ("w_vs_initial_alpha", "pcgh_w", "z4c_alpha", "identity"),
     ("gtilde_xx", "pcgh_gtxx", "z4c_gxx", "identity"),
     ("gtilde_xy", "pcgh_gtxy", "z4c_gxy", "identity"),
     ("gtilde_xz", "pcgh_gtxz", "z4c_gxz", "identity"),
@@ -27,10 +30,7 @@ NATIVE_FIELD_PAIRS = (
     ("Atilde_yy", "pcgh_Atyy", "z4c_Ayy", "identity"),
     ("Atilde_yz", "pcgh_Atyz", "z4c_Ayz", "identity"),
     ("Atilde_zz", "pcgh_Atzz", "z4c_Azz", "identity"),
-    ("Gamma_x", "pcgh_Lamx", "z4c_Gamx", "identity"),
-    ("Gamma_y", "pcgh_Lamy", "z4c_Gamy", "identity"),
-    ("Gamma_z", "pcgh_Lamz", "z4c_Gamz", "identity"),
-    ("alpha_squared", "pcgh_A", "z4c_alpha", "square_rhs"),
+    ("alpha", "pcgh_rho", "z4c_alpha", "rho_times_w"),
     ("beta_x", "pcgh_betax", "z4c_betax", "identity"),
     ("beta_y", "pcgh_betay", "z4c_betay", "identity"),
     ("beta_z", "pcgh_betaz", "z4c_betaz", "identity"),
@@ -51,6 +51,7 @@ def main() -> None:
     parser.add_argument("pcgh", type=Path)
     parser.add_argument("z4c", type=Path)
     parser.add_argument("--tolerance", type=float, default=2.0e-6)
+    parser.add_argument("--chi-tolerance", type=float, default=2.0e-4)
     args = parser.parse_args()
 
     pcgh = read_cartesian(args.pcgh)
@@ -70,6 +71,10 @@ def main() -> None:
     for label, pcgh_name, z4c_name, transform in field_pairs:
         lhs = np.asarray(pcgh_fields[pcgh_name], dtype=float)
         rhs = np.asarray(z4c_fields[z4c_name], dtype=float)
+        if transform == "square_lhs":
+            lhs = lhs*lhs
+        if transform == "rho_times_w":
+            lhs = lhs*np.asarray(pcgh_fields["pcgh_w"], dtype=float)
         if transform == "square_rhs":
             rhs = rhs*rhs
         difference = np.abs(lhs - rhs)
@@ -79,9 +84,14 @@ def main() -> None:
             "max_abs": float(np.nanmax(difference)),
             "normalized_max_abs": normalized,
         }
+        field_tolerance = (args.chi_tolerance if transform == "square_lhs"
+                           else args.tolerance)
+        report[label]["tolerance"] = field_tolerance
         passed &= np.all(np.isfinite(lhs)) and np.all(np.isfinite(rhs)) \
-            and normalized <= args.tolerance
-    result = {"passed": bool(passed), "tolerance": args.tolerance, "fields": report}
+            and normalized <= field_tolerance
+    result = {"passed": bool(passed), "tolerance": args.tolerance,
+              "chi_interpolation_tolerance": args.chi_tolerance,
+              "fields": report}
     print(json.dumps(result, indent=2))
     if not passed:
         raise SystemExit(1)

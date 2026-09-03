@@ -9,22 +9,29 @@ from pathlib import Path
 
 
 HISTORY_NAMES = [
-    "time", "dt", "Cperp", "Z", "H", "Mhat",
-    "redX", "redQ", "redY", "redB",
-    "curlX", "curlQ", "curlY", "curlB",
-    "detg", "trA", "trQ", "projection", "W", "L", "rhs", "Volume",
+    "time", "dt", "Cperp", "Z", "H", "alphaM",
+    "redw", "redQ", "redalpha", "redB",
+    "curlp", "curlQ", "curlL", "curlB",
+    "detg", "trA", "trQ", "projection", "p", "L", "rhs", "Volume",
 ]
 CHANNELS = HISTORY_NAMES[2:14]
 
 
-def read_named_table(path: Path) -> list[dict[str, float]]:
-    with path.open(encoding="utf-8") as stream:
-        line = stream.readline()
-        if not line.startswith("# "):
-            raise AssertionError(f"{path}: missing named header")
-        header = line[2:].split()
-        return [dict(zip(header, map(float, row.split()), strict=True))
-                for row in stream if row.strip() and not row.startswith("#")]
+def read_named_tables(paths: list[Path]) -> list[dict[str, float]]:
+    rows = []
+    expected_header = None
+    for path in paths:
+        with path.open(encoding="utf-8") as stream:
+            line = stream.readline()
+            if not line.startswith("# "):
+                raise AssertionError(f"{path}: missing named header")
+            header = line[2:].split()
+            if expected_header is not None and header != expected_header:
+                raise AssertionError(f"{path}: inconsistent header")
+            expected_header = header
+            rows.extend(dict(zip(header, map(float, row.split())))
+                        for row in stream if row.strip() and not row.startswith("#"))
+    return rows
 
 
 def read_history(path: Path) -> list[dict[str, float]]:
@@ -37,7 +44,7 @@ def read_history(path: Path) -> list[dict[str, float]]:
         raise AssertionError(f"{path}: truncated history row")
     # Additional localization columns are deliberately ignored by this established
     # robust-Minkowski gate; its original canonical columns remain first in the ABI.
-    rows = [dict(zip(HISTORY_NAMES, row[:len(HISTORY_NAMES)], strict=True))
+    rows = [dict(zip(HISTORY_NAMES, row[:len(HISTORY_NAMES)]))
             for row in numeric_rows]
     if len(rows) < 5 or rows[0]["time"] != 0.0:
         raise AssertionError(f"{path}: history must include t=0 and at least five samples")
@@ -52,19 +59,19 @@ def fit_slope(x: list[float], y: list[float]) -> float:
     denominator = sum((value - xmean)**2 for value in x)
     if denominator == 0.0:
         raise AssertionError("degenerate fit interval")
-    return sum((a - xmean)*(b - ymean) for a, b in zip(x, y, strict=True))/denominator
+    return sum((a - xmean)*(b - ymean) for a, b in zip(x, y))/denominator
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("final_table", type=Path)
+    parser.add_argument("final_table", type=Path, nargs="+")
     parser.add_argument("--history", action="append", required=True,
                         help="resolution:path (repeat at least three times)")
     parser.add_argument("--max-amplification", type=float, default=10.0)
     parser.add_argument("--max-fit-growth", type=float, default=0.1)
     args = parser.parse_args()
 
-    final_rows = read_named_table(args.final_table)
+    final_rows = read_named_tables(args.final_table)
     final_by_n = {int(row["nx1"]): row for row in final_rows}
     histories: dict[int, list[dict[str, float]]] = {}
     for specification in args.history:

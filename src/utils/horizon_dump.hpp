@@ -26,6 +26,7 @@ class HorizonDump {
   ~HorizonDump();
 
   void SetGridAndInterpolate(Real center[3]);
+  void SetGridAndInterpolatePcGh(Real center[3], Real inner_radius);
   void ETK_setup_parfile();
 
   int horizon_nx;
@@ -46,6 +47,7 @@ class HorizonDump {
   MeshBlockPack const *pmbp;
   bool gauge_from_adm;
   std::vector<int> variable_to_dump;
+  void WriteInterpolatedData(Real *data_out, int count, bool reduce);
 };
 
 #endif  // UTILS_HORIZON_DUMP_HPP_
