@@ -13,6 +13,11 @@ constraint-damping coefficients are zero.  PC-GH additionally projects its
 continuum-zero GH gauge constraints after each RK stage and its defining
 first-derivative constraints after each complete step; these are discrete
 constraint projections, not damping terms.
+The PC-GH comparison uses `z4c_mp_hyperbolic`: the direct `z4c_mp` realization
+has a defective characteristic shell at `alpha*chi=2/3` (initially near
+`r=7.15M`), unacceptably close to the `r=8M` extraction sphere. The switched
+shift retains the moving-puncture limit while completing the characteristic
+basis throughout the `0 < alpha <= 1` puncture domain.
 Both formulations use the same shift-integrated coordinate puncture tracker,
 with positions written every completed RK3 step.
 

@@ -28,6 +28,86 @@ Real Extrapolate(DvceArray5D<Real> u, const int m, const int n,
                  const int offz, const int offy, const int offx,
                  const int delta);
 
+// Return true when component n changes sign under reflection of coordinate axis.
+// PC-GH stores vectors, symmetric tensors, and their first spatial derivatives;
+// derivative indices contribute one additional odd factor in the reflected direction.
+KOKKOS_INLINE_FUNCTION
+constexpr bool ReflectOdd(const bool pcgh, const int n, const int axis) {
+  if (!pcgh) {
+    if (axis == 0) {
+      return n == z4c::Z4c::I_Z4C_GXY || n == z4c::Z4c::I_Z4C_GXZ
+          || n == z4c::Z4c::I_Z4C_AXY || n == z4c::Z4c::I_Z4C_AXZ
+          || n == z4c::Z4c::I_Z4C_GAMX || n == z4c::Z4c::I_Z4C_BETAX;
+    }
+    if (axis == 1) {
+      return n == z4c::Z4c::I_Z4C_GXY || n == z4c::Z4c::I_Z4C_GYZ
+          || n == z4c::Z4c::I_Z4C_AXY || n == z4c::Z4c::I_Z4C_AYZ
+          || n == z4c::Z4c::I_Z4C_GAMY || n == z4c::Z4c::I_Z4C_BETAY;
+    }
+    return n == z4c::Z4c::I_Z4C_GXZ || n == z4c::Z4c::I_Z4C_GYZ
+        || n == z4c::Z4c::I_Z4C_AXZ || n == z4c::Z4c::I_Z4C_AYZ
+        || n == z4c::Z4c::I_Z4C_GAMZ || n == z4c::Z4c::I_Z4C_BETAZ;
+  }
+
+  if ((n >= pc_gh::PcGh::I_ZX && n <= pc_gh::PcGh::I_ZZ)
+      || (n >= pc_gh::PcGh::I_BETAX && n <= pc_gh::PcGh::I_BETAZ)
+      || (n >= pc_gh::PcGh::I_P1 && n <= pc_gh::PcGh::I_P3)
+      || (n >= pc_gh::PcGh::I_L1 && n <= pc_gh::PcGh::I_L3)) {
+    int const first = (n <= pc_gh::PcGh::I_ZZ) ? pc_gh::PcGh::I_ZX
+        : ((n <= pc_gh::PcGh::I_BETAZ) ? pc_gh::PcGh::I_BETAX
+        : ((n <= pc_gh::PcGh::I_P3) ? pc_gh::PcGh::I_P1 : pc_gh::PcGh::I_L1));
+    return n - first == axis;
+  }
+
+  int tensor_component = -1;
+  int derivative_axis = -1;
+  if (n >= pc_gh::PcGh::I_GTXX && n <= pc_gh::PcGh::I_GTZZ) {
+    tensor_component = n - pc_gh::PcGh::I_GTXX;
+  } else if (n >= pc_gh::PcGh::I_ATXX && n <= pc_gh::PcGh::I_ATZZ) {
+    tensor_component = n - pc_gh::PcGh::I_ATXX;
+  } else if (n >= pc_gh::PcGh::I_Q1XX && n <= pc_gh::PcGh::I_Q3ZZ) {
+    int const offset = n - pc_gh::PcGh::I_Q1XX;
+    derivative_axis = offset/6;
+    tensor_component = offset % 6;
+  }
+  if (tensor_component >= 0) {
+    int first_index = 0;
+    int second_index = 0;
+    if (tensor_component == 1) {
+      second_index = 1;
+    } else if (tensor_component == 2) {
+      second_index = 2;
+    } else if (tensor_component == 3) {
+      first_index = second_index = 1;
+    } else if (tensor_component == 4) {
+      first_index = 1;
+      second_index = 2;
+    } else if (tensor_component == 5) {
+      first_index = second_index = 2;
+    }
+    int reflected_indices = (first_index == axis) + (second_index == axis)
+        + (derivative_axis == axis);
+    return reflected_indices % 2 == 1;
+  }
+
+  if (n >= pc_gh::PcGh::I_B11 && n <= pc_gh::PcGh::I_B33) {
+    int const offset = n - pc_gh::PcGh::I_B11;
+    int const derivative = offset/3;
+    int const vector_component = offset % 3;
+    return ((derivative == axis) + (vector_component == axis)) == 1;
+  }
+  return false;
+}
+
+static_assert(!ReflectOdd(true, pc_gh::PcGh::I_W, 1));
+static_assert(ReflectOdd(true, pc_gh::PcGh::I_BETAY, 1));
+static_assert(ReflectOdd(true, pc_gh::PcGh::I_GTXY, 1));
+static_assert(!ReflectOdd(true, pc_gh::PcGh::I_GTYY, 1));
+static_assert(ReflectOdd(true, pc_gh::PcGh::I_Q2XX, 1));
+static_assert(!ReflectOdd(true, pc_gh::PcGh::I_Q2XY, 1));
+static_assert(ReflectOdd(true, pc_gh::PcGh::I_B12, 1));
+static_assert(!ReflectOdd(true, pc_gh::PcGh::I_B22, 1));
+
 // Linear extrapolation
 template<>
 KOKKOS_INLINE_FUNCTION
@@ -140,6 +220,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
 
   int nvar = u0.extent_int(1);  // TODO(@user): 2nd index from L of in array must be NVAR
   int nmb = ppack->nmb_thispack;
+  bool const pcgh = ppack->ppcgh != nullptr;
 
   // only apply BCs unless periodic or shear_periodic
   if (pm->mesh_bcs[BoundaryFace::inner_x1] != BoundaryFlag::periodic
@@ -150,9 +231,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
       switch (mb_bcs.d_view(m,BoundaryFace::inner_x1)) {
         case BoundaryFlag::reflect:
           for (int i=0; i<ng; ++i) {
-            if (n==z4c::Z4c::I_Z4C_GXY || n==z4c::Z4c::I_Z4C_GXZ ||
-                n==z4c::Z4c::I_Z4C_AXY || n==z4c::Z4c::I_Z4C_AXZ ||
-                n==z4c::Z4c::I_Z4C_GAMX || n==z4c::Z4c::I_Z4C_BETAX) {
+            if (ReflectOdd(pcgh, n, 0)) {
               u0(m,n,k,j,is-i-1) = -u0(m,n,k,j,is+i);
             } else {
               u0(m,n,k,j,is-i-1) =  u0(m,n,k,j,is+i);
@@ -180,9 +259,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
       switch (mb_bcs.d_view(m,BoundaryFace::outer_x1)) {
         case BoundaryFlag::reflect:
           for (int i=0; i<ng; ++i) {
-            if (n==z4c::Z4c::I_Z4C_GXY || n==z4c::Z4c::I_Z4C_GXZ ||
-                n==z4c::Z4c::I_Z4C_AXY || n==z4c::Z4c::I_Z4C_AXZ ||
-                n==z4c::Z4c::I_Z4C_GAMX || n==z4c::Z4c::I_Z4C_BETAX) {
+            if (ReflectOdd(pcgh, n, 0)) {
               u0(m,n,k,j,ie+i+1) = -u0(m,n,k,j,ie-i);
             } else {
               u0(m,n,k,j,ie+i+1) =  u0(m,n,k,j,ie-i);
@@ -218,9 +295,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
       switch (mb_bcs.d_view(m,BoundaryFace::inner_x2)) {
         case BoundaryFlag::reflect:
           for (int j=0; j<ng; ++j) {
-            if (n==z4c::Z4c::I_Z4C_GXY || n==z4c::Z4c::I_Z4C_GYZ ||
-                n==z4c::Z4c::I_Z4C_AXY || n==z4c::Z4c::I_Z4C_AYZ ||
-                n==z4c::Z4c::I_Z4C_GAMY || n==z4c::Z4c::I_Z4C_BETAY) {
+            if (ReflectOdd(pcgh, n, 1)) {
               u0(m,n,k,js-j-1,i) = -u0(m,n,k,js+j,i);
             } else {
               u0(m,n,k,js-j-1,i) =  u0(m,n,k,js+j,i);
@@ -248,9 +323,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
       switch (mb_bcs.d_view(m,BoundaryFace::outer_x2)) {
         case BoundaryFlag::reflect:
           for (int j=0; j<ng; ++j) {
-            if (n==z4c::Z4c::I_Z4C_GXY || n==z4c::Z4c::I_Z4C_GYZ ||
-                n==z4c::Z4c::I_Z4C_AXY || n==z4c::Z4c::I_Z4C_AYZ ||
-                n==z4c::Z4c::I_Z4C_GAMY || n==z4c::Z4c::I_Z4C_BETAY) {
+            if (ReflectOdd(pcgh, n, 1)) {
               u0(m,n,k,je+j+1,i) = -u0(m,n,k,je-j,i);
             } else {
               u0(m,n,k,je+j+1,i) =  u0(m,n,k,je-j,i);
@@ -285,9 +358,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
     switch (mb_bcs.d_view(m,BoundaryFace::inner_x3)) {
       case BoundaryFlag::reflect:
         for (int k=0; k<ng; ++k) {
-          if (n==z4c::Z4c::I_Z4C_GXZ || n==z4c::Z4c::I_Z4C_GYZ ||
-              n==z4c::Z4c::I_Z4C_AXZ || n==z4c::Z4c::I_Z4C_AYZ ||
-              n==z4c::Z4c::I_Z4C_GAMZ || n==z4c::Z4c::I_Z4C_BETAZ) {
+          if (ReflectOdd(pcgh, n, 2)) {
             u0(m,n,ks-k-1,j,i) = -u0(m,n,ks+k,j,i);
           } else {
             u0(m,n,ks-k-1,j,i) =  u0(m,n,ks+k,j,i);
@@ -315,9 +386,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
     switch (mb_bcs.d_view(m,BoundaryFace::outer_x3)) {
       case BoundaryFlag::reflect:
         for (int k=0; k<ng; ++k) {
-          if (n==z4c::Z4c::I_Z4C_GXZ || n==z4c::Z4c::I_Z4C_GYZ ||
-              n==z4c::Z4c::I_Z4C_AXZ || n==z4c::Z4c::I_Z4C_AYZ ||
-              n==z4c::Z4c::I_Z4C_GAMZ || n==z4c::Z4c::I_Z4C_BETAZ) {
+          if (ReflectOdd(pcgh, n, 2)) {
             u0(m,n,ke+k+1,j,i) = -u0(m,n,ke-k,j,i);
           } else {
             u0(m,n,ke+k+1,j,i) =  u0(m,n,ke-k,j,i);

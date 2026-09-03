@@ -150,6 +150,12 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
               << "z4c_mp_hyperbolic, but is " << opt.gauge << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  if (opt.gauge == "z4c_mp" && global_variable::my_rank == 0) {
+    std::cout << "### WARNING in " << __FILE__ << " at line " << __LINE__ << '\n'
+              << "The direct PC-GH z4c_mp gauge has defective characteristic "
+              << "surfaces. Use z4c_mp_hyperbolic for black-hole evolution."
+              << std::endl;
+  }
   opt.gauge_a0_table_file = pin->GetOrAddString(
       "pc_gh", "gauge_a0_table", "inputs/pc_gh/gauge_a0_m1.dat");
   opt.gauge_mass = pin->GetOrAddReal("pc_gh", "gauge_mass", 1.0);

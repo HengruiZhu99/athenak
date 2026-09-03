@@ -38,7 +38,10 @@ ndiag = 10
 <pc_gh>
 spatial_order = 6
 extrap_order = 2
-gauge = z4c_mp
+# The direct z4c_mp realization is defective at alpha*chi=2/3, a shell that
+# initially lies near the r=8M extraction sphere. Complete the regular switch
+# below alpha*chi=4/7 so the moving-puncture characteristic basis stays complete.
+gauge = z4c_mp_hyperbolic
 shift_eta = 2.0
 kappa = 0.0
 dissipation = 0.3

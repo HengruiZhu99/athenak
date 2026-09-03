@@ -1097,3 +1097,60 @@ gate. Perturbed, boosted, spinning, binary, and production outer-boundary promot
 remain stopped. The next technical question is why evolved `rho=alpha/w`, despite its
 stationary target power, develops a resolution-growing wormhole-to-trumpet inner
 profile in this first-order system.
+
+## 2026-09-03 head-on symmetry audit
+
+The equal-mass, nonspinning head-on comparison exposed a larger nonzero imaginary
+part of the PC-GH `(l,m)=(2,2)` waveform than in Z4c. Both formulations call the
+same `gr_wave::CalculateWeyl` and `gr_wave::ExtractWaveform` path, and their `t=0`
+values agree at about `9.09e-7`; the extractor and initial data are therefore not
+the source of the later separation.
+
+The direct PC-GH `z4c_mp` principal symbol is defective at `alpha*chi=2/3`. For
+the unit-mass wormhole this shell initially lies at `r=7.1517259028M`, close to the
+`r=8M` extraction sphere. The exact symbolic audit gives algebraic/geometric
+multiplicity 2/1 there. In contrast, the `z4c_mp_hyperbolic` switch completes below
+`alpha*chi=4/7` and retains a complete characteristic basis for the black-hole
+domain `0<alpha<=1`, `0<alpha*chi<=1`.
+
+Two otherwise matched short controls separated the gauge effect from dynamic
+remeshing. `symmetry-audit-direct-static` used direct `z4c_mp` with remeshing
+disabled; `symmetry-audit-hyper-adaptive` retained adaptive refinement and used
+`z4c_mp_hyperbolic`. Both were stopped after the first waveform sample beyond
+`t=4M`.
+
+| case | t | Re(r Psi4_22) | Im(r Psi4_22) |
+|---|---:|---:|---:|
+| reused Z4c adaptive | 4.00000 | 2.084214e-3 | 6.971835e-7 |
+| reused direct PC-GH adaptive | 4.04049 | 2.068411e-3 | -3.636153e-6 |
+| direct PC-GH static | 4.04052 | 2.068391e-3 | -3.636517e-6 |
+| hyperbolic PC-GH adaptive | 4.03987 | 2.066935e-3 | -8.563173e-7 |
+
+Static direct PC-GH reproduces the adaptive direct result to `3.7e-10` in the
+imaginary mode, excluding the early adaptive remesh as the cause. The hyperbolic
+switch reduces `|Im(r Psi4_22)|` by a factor 4.25 while changing the direct-PC-GH
+real mode by only 0.070%. The direct gauge defect is therefore the concrete
+early-time amplifier of reflection-odd truncation/projection noise. Reduction
+projection supplies one noise path but is retained because the corresponding
+unprojected run loses conformal-metric positive definiteness at `t=4.2246M`.
+
+AMR does explain discrete later artifacts. The full direct run created/deleted
+blocks at `t=16.80830M` and `17.20322M`; the Hamiltonian-history spikes occur in
+the immediately following samples at `16.9402M` and `17.2907M`. Deleting 224
+blocks at `t=23.73869M` also lies between the waveform samples where the imaginary
+mode jumps from `-2.15151e-4` at `23.6933M` to `-7.36149e-6` at `24.1980M`.
+
+The production head-on PC-GH input now selects `z4c_mp_hyperbolic`, and direct
+`z4c_mp` selection emits a warning. A separate boundary audit found that the
+shared Z4c physical-boundary helper had only Z4c reflection parities: every PC-GH
+component was effectively treated as a scalar. Reflection parity is now computed
+for PC-GH scalars, vectors, symmetric tensors, `Q_kij`, and `B_i^j`, with derivative
+indices contributing their required sign. This boundary bug did not affect the
+full-domain outflow controls above, but it did make symmetry-reduced PC-GH domains
+incorrect.
+
+Validation completed with the full symbolic suite, Release serial and MPI builds,
+the OpenMP TwoPunctures build, and two-cycle exact-Minkowski reflection-boundary
+smokes in serial and on two MPI ranks. Durable short-run artifacts are under
+`qualification-runs-20260902/symmetry-audit-{direct-static,hyper-adaptive}/`; the
+reflection smoke is under `symmetry-audit-reflect-smoke/`.
