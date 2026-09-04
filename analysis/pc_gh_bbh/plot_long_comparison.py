@@ -20,6 +20,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm, Normalize
 import numpy as np
 
 
@@ -350,6 +351,63 @@ def plot_constraints(series: dict[str, dict[str, np.ndarray]],
     return path
 
 
+def meshblock_xy_edges(output: dict, block: int) -> tuple[np.ndarray, np.ndarray]:
+    bounds = np.asarray(output["mb_geometry"][block]).reshape(3, 2)
+    meshblock_cells = np.asarray([
+        output["nx1_mb"], output["nx2_mb"], output["nx3_mb"]])
+    spacing = (bounds[:, 1] - bounds[:, 0])/meshblock_cells
+    offsets = np.asarray(output["mb_index"][block])[[0, 2, 4]]
+    shape = np.asarray(output["mb_data"][output["var_names"][0]][block]).shape[::-1]
+    x_edges = bounds[0, 0] + (offsets[0] + np.arange(shape[0] + 1))*spacing[0]
+    y_edges = bounds[1, 0] + (offsets[1] + np.arange(shape[1] + 1))*spacing[1]
+    return x_edges, y_edges
+
+
+def plot_pcgh_instability_slices(run_dir: Path, output_dir: Path) -> Path:
+    candidates = []
+    for path in sorted((run_dir / "bin").glob("*.pcgh_con.[0-9]*.bin")):
+        output = bin_convert.read_binary(path)
+        candidates.append((float(output["time"]), output))
+    selected = [min(candidates, key=lambda item: abs(item[0] - target))
+                for target in (50.0, 70.0)]
+    fields = (
+        ("pcgh_H", r"$|H|$", LogNorm(1.0e-5, 1.0e2)),
+        ("pcgh_curl_Q", r"$|\mathrm{curl}\,Q|$", LogNorm(1.0e-4, 2.0e1)),
+        ("pcgh_min_eigenvalue", r"$\lambda_{\min}(\tilde\gamma)$",
+         Normalize(0.3, 1.1)),
+    )
+    fig, axes = plt.subplots(2, 3, figsize=(14.0, 8.5), sharex=True, sharey=True)
+    for row, (time, output) in enumerate(selected):
+        for column, (field, label, norm) in enumerate(fields):
+            axis = axes[row, column]
+            image = None
+            for block in range(output["n_mbs"]):
+                x_edges, y_edges = meshblock_xy_edges(output, block)
+                values = np.asarray(output["mb_data"][field])[block, 0]
+                if field == "pcgh_H":
+                    values = np.abs(values)
+                image = axis.pcolormesh(x_edges, y_edges, values,
+                                        shading="flat", cmap="viridis", norm=norm)
+            axis.plot(-0.34375, -0.96875, marker="x", color="red", markersize=7,
+                      label="fatal point at t=73.80M")
+            axis.set_xlim(-20.0, 20.0)
+            axis.set_ylim(-20.0, 20.0)
+            axis.set_aspect("equal")
+            axis.set_title(f"{label}, t={time:.1f}M")
+            fig.colorbar(image, ax=axis, shrink=0.82)
+    for axis in axes[:, 0]:
+        axis.set_ylabel(r"$y/M$")
+    for axis in axes[-1, :]:
+        axis.set_xlabel(r"$x/M$")
+    axes[0, 0].legend(loc="lower right", fontsize=7)
+    fig.suptitle("PC-GH inner-grid reduction-constraint instability")
+    fig.tight_layout()
+    path = output_dir / "pcgh_instability_slices_t50_t70.png"
+    fig.savefig(path, dpi=220)
+    plt.close(fig)
+    return path
+
+
 def plot_trajectories(run_dirs: dict[str, Path], output_dir: Path) -> tuple[Path, dict]:
     z4c_tracks = [
         load_tracker(only_path(run_dirs["Z4c"], f"*.co_{index}.txt"))
@@ -571,6 +629,7 @@ def main() -> None:
     }
 
     products = [plot_constraints(constraints, changes, args.output_dir)]
+    products.append(plot_pcgh_instability_slices(args.pcgh_dir, args.output_dir))
     trajectory_path, trajectory_summary = plot_trajectories(run_dirs, args.output_dir)
     products.append(trajectory_path)
     waveform_paths, waveform_summary = plot_waveform_overlays(waves, args.output_dir)
