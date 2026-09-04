@@ -31,6 +31,29 @@ COLORS = {"Z4c": "#0072B2", "PC-GH": "#D55E00"}
 RADII = (8, 12, 24, 32, 48, 56)
 
 
+def merge_restart_segments(data: np.ndarray, time_column: int) -> np.ndarray:
+    """Merge appended output segments, preferring data from the latest restart.
+
+    AthenaK appends to text outputs after a restart.  The new segment starts at
+    the checkpoint time, so it can overlap several samples from the preceding
+    segment rather than merely repeating one timestamp.  Split at every
+    non-increasing time and replace the overlapping tail with the newer data.
+    """
+    times = data[:, time_column]
+    starts = np.flatnonzero(np.diff(times) <= 0.0) + 1
+    segments = np.split(data, starts)
+    merged = segments[0]
+    for segment in segments[1:]:
+        if segment.size == 0:
+            continue
+        restart_time = segment[0, time_column]
+        merged = merged[merged[:, time_column] < restart_time]
+        merged = np.vstack((merged, segment))
+    if np.any(np.diff(merged[:, time_column]) <= 0.0):
+        raise ValueError("restart-merged times are not strictly increasing")
+    return merged
+
+
 def load_table(path: Path, pattern: re.Pattern[str]) -> dict[str, np.ndarray]:
     """Read an AthenaK text table with numbered columns in the header."""
     header_lines = []
@@ -49,15 +72,10 @@ def load_table(path: Path, pattern: re.Pattern[str]) -> dict[str, np.ndarray]:
     if not np.all(np.isfinite(data)):
         raise ValueError(f"non-finite value in {path}")
     if "time" in columns:
-        times = data[:, columns["time"]]
-        # Restarted outputs can repeat the checkpoint-boundary sample.  Keep
-        # the final occurrence without disturbing the chronological order.
-        _, reverse_indices = np.unique(times[::-1], return_index=True)
-        indices = np.sort(data.shape[0] - 1 - reverse_indices)
-        data = data[indices]
-        times = data[:, columns["time"]]
-        if np.any(np.diff(times) <= 0.0):
-            raise ValueError(f"times are not strictly increasing in {path}")
+        try:
+            data = merge_restart_segments(data, columns["time"])
+        except ValueError as error:
+            raise ValueError(f"invalid restart chronology in {path}") from error
     return {name: data[:, column] for name, column in columns.items()}
 
 
@@ -77,12 +95,10 @@ def load_tracker(path: Path) -> dict[str, np.ndarray]:
     data = np.atleast_2d(np.loadtxt(path))
     if data.shape[1] != 8 or not np.all(np.isfinite(data)):
         raise ValueError(f"invalid compact-object tracker table {path}")
-    # A restart can repeat its first saved sample.  Keep the last occurrence.
-    _, reverse_indices = np.unique(data[::-1, 1], return_index=True)
-    indices = np.sort(data.shape[0] - 1 - reverse_indices)
-    data = data[indices]
-    if np.any(np.diff(data[:, 1]) <= 0.0):
-        raise ValueError(f"tracker times are not strictly increasing in {path}")
+    try:
+        data = merge_restart_segments(data, 1)
+    except ValueError as error:
+        raise ValueError(f"invalid restart chronology in {path}") from error
     names = ("cycle", "time", "x", "y", "z", "vx", "vy", "vz")
     return {name: data[:, column] for column, name in enumerate(names)}
 
