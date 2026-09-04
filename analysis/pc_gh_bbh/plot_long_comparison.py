@@ -143,6 +143,42 @@ def draw_amr_times(axis: plt.Axes, changes: list[dict[str, float | int]]) -> Non
                      linewidth=0.7, zorder=0)
 
 
+def constraint_change_summary(
+        series: dict[str, np.ndarray],
+        changes: list[dict[str, float | int]],
+        count: int = 12) -> dict[str, list[dict[str, object]]]:
+    """Rank adjacent constraint changes and identify intervening AMR events."""
+    times = series["time"]
+    result: dict[str, list[dict[str, object]]] = {}
+    for constraint in ("H", "M"):
+        values = series[constraint]
+        entries = []
+        for index in range(1, len(times)):
+            before = float(values[index - 1])
+            after = float(values[index])
+            if before <= 0.0 or after <= 0.0:
+                continue
+            ratio = after / before
+            factor = max(ratio, 1.0 / ratio)
+            lower = float(times[index - 1])
+            upper = float(times[index])
+            bracketed = [event for event in changes
+                         if lower < float(event["time"]) <= upper]
+            entries.append({
+                "time_before": lower,
+                "time_after": upper,
+                "value_before": before,
+                "value_after": after,
+                "signed_ratio": ratio,
+                "absolute_change_factor": factor,
+                "amr_events_between_samples": bracketed,
+            })
+        entries.sort(key=lambda entry: float(entry["absolute_change_factor"]),
+                     reverse=True)
+        result[constraint] = entries[:count]
+    return result
+
+
 def plot_constraints(series: dict[str, dict[str, np.ndarray]],
                      changes: dict[str, list[dict[str, float | int]]],
                      output_dir: Path) -> Path:
@@ -314,6 +350,11 @@ def main() -> None:
     summary = {
         "run_directories": {key: str(value) for key, value in run_dirs.items()},
         "amr_changes": changes,
+        "largest_adjacent_constraint_changes": {
+            formulation: constraint_change_summary(
+                constraints[formulation], changes[formulation])
+            for formulation in run_dirs
+        },
         "puncture_trajectory": trajectory_summary,
         "waveforms": waveform_summary,
     }
