@@ -10,15 +10,22 @@ segment logs so apparent spikes can be checked against AMR operations.
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 from pathlib import Path
 import re
+import sys
 
 import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+
+
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "vis" / "python"))
+import bin_convert  # noqa: E402
 
 
 HISTORY_COLUMN = re.compile(r"\[(\d+)\]=(\S+)")
@@ -117,6 +124,67 @@ def load_wave(run_dir: Path, radius: int) -> dict[str, np.ndarray]:
         "real_22": real["22"],
         "imag_22": imag["22"],
     }
+
+
+def slice_lapse_minima(run_dir: Path, formulation: str
+                       ) -> dict[int, dict[str, np.ndarray]]:
+    """Locate each puncture from the lapse minimum in every saved xy slice."""
+    stem = "z4c" if formulation == "Z4c" else "pcgh"
+    paths = sorted((run_dir / "bin").glob(f"*.{stem}.[0-9]*.bin"))
+    if not paths:
+        raise ValueError(f"no {formulation} state slices found in {run_dir / 'bin'}")
+    samples: dict[int, list[dict[str, float]]] = {0: [], 1: []}
+    for path in paths:
+        output = bin_convert.read_binary(path)
+        if formulation == "Z4c":
+            lapse = np.asarray(output["mb_data"]["z4c_alpha"])
+        else:
+            lapse = (np.asarray(output["mb_data"]["pcgh_w"])
+                     * np.asarray(output["mb_data"]["pcgh_rho"]))
+        if not np.all(np.isfinite(lapse)):
+            raise ValueError(f"non-finite lapse in {path}")
+
+        best: dict[int, dict[str, float] | None] = {0: None, 1: None}
+        meshblock_cells = np.asarray([
+            output["nx1_mb"], output["nx2_mb"], output["nx3_mb"]])
+        for block, geometry in enumerate(output["mb_geometry"]):
+            bounds = np.asarray(geometry).reshape(3, 2)
+            spacing = (bounds[:, 1] - bounds[:, 0])/meshblock_cells
+            offsets = np.asarray(output["mb_index"][block])[[0, 2, 4]]
+            shape = lapse[block].shape[::-1]
+            coordinates = [
+                bounds[axis, 0] + (offsets[axis] + np.arange(shape[axis]) + 0.5)
+                * spacing[axis]
+                for axis in range(3)
+            ]
+            x, y, z = np.meshgrid(*coordinates, indexing="ij")
+            block_lapse = np.transpose(lapse[block], (2, 1, 0))
+            for puncture, sign in ((0, 1.0), (1, -1.0)):
+                masked = np.where(sign*x > 0.0, block_lapse, np.inf)
+                flat_index = int(np.argmin(masked))
+                minimum = float(masked.flat[flat_index])
+                if not np.isfinite(minimum):
+                    continue
+                index = np.unravel_index(flat_index, masked.shape)
+                candidate = {
+                    "time": float(output["time"]),
+                    "x": float(x[index]), "y": float(y[index]), "z": float(z[index]),
+                    "min_alpha": minimum, "dx": float(spacing[0]),
+                }
+                if best[puncture] is None or minimum < best[puncture]["min_alpha"]:
+                    best[puncture] = candidate
+        for puncture in (0, 1):
+            if best[puncture] is None:
+                raise ValueError(f"could not locate puncture {puncture} in {path}")
+            samples[puncture].append(best[puncture])
+
+    result = {}
+    for puncture, rows in samples.items():
+        rows.sort(key=lambda row: row["time"])
+        result[puncture] = {
+            key: np.asarray([row[key] for row in rows]) for key in rows[0]
+        }
+    return result
 
 
 def rms(numerator: np.ndarray, volume: np.ndarray) -> np.ndarray:
@@ -227,47 +295,73 @@ def plot_constraints(series: dict[str, dict[str, np.ndarray]],
 
 
 def plot_trajectories(run_dirs: dict[str, Path], output_dir: Path) -> tuple[Path, dict]:
-    tracks = {
-        formulation: [
-            load_tracker(only_path(run_dir, f"*.co_{index}.txt"))
-            for index in (0, 1)
-        ]
+    z4c_tracks = [
+        load_tracker(only_path(run_dirs["Z4c"], f"*.co_{index}.txt"))
+        for index in (0, 1)
+    ]
+    slices = {
+        formulation: slice_lapse_minima(run_dir, formulation)
         for formulation, run_dir in run_dirs.items()
     }
+    csv_path = output_dir / "puncture_trajectory_from_slice_minima.csv"
+    with csv_path.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(("formulation", "puncture", "time", "x", "y", "z",
+                         "min_alpha", "dx"))
+        for formulation in ("PC-GH", "Z4c"):
+            for puncture in (0, 1):
+                track = slices[formulation][puncture]
+                for row in zip(*(track[key] for key in (
+                        "time", "x", "y", "z", "min_alpha", "dx"))):
+                    writer.writerow((formulation, puncture, *row))
+
     fig, axes = plt.subplots(2, 1, figsize=(10.5, 7.0), sharex=True)
-    for formulation in ("PC-GH", "Z4c"):
-        for index, (track, linestyle) in enumerate(zip(
-                tracks[formulation], ("-", "--"))):
-            width = 2.8 if formulation == "PC-GH" else 1.4
-            zorder = 2 if formulation == "PC-GH" else 3
-            axes[0].plot(track["time"], track["x"], color=COLORS[formulation],
-                         linestyle=linestyle, linewidth=width, zorder=zorder,
-                         label=f"{formulation}, puncture {index}")
-            drift = np.hypot(track["y"], track["z"])
-            axes[1].semilogy(track["time"], np.maximum(drift, 1.0e-30),
-                            color=COLORS[formulation], linestyle=linestyle,
-                            linewidth=width, zorder=zorder,
-                            label=f"{formulation}, puncture {index}")
+    for index, linestyle in enumerate(("-", "--")):
+        pcgh = slices["PC-GH"][index]
+        axes[0].plot(pcgh["time"], pcgh["x"], color=COLORS["PC-GH"],
+                     linestyle=linestyle, marker="o", markersize=3.5,
+                     linewidth=2.8, zorder=2,
+                     label=f"PC-GH slice minimum, puncture {index}")
+        z4c = z4c_tracks[index]
+        axes[0].plot(z4c["time"], z4c["x"], color=COLORS["Z4c"],
+                     linestyle=linestyle, linewidth=1.4, zorder=3,
+                     label=f"Z4c ODE tracker, puncture {index}")
+        z4c_slice = slices["Z4c"][index]
+        axes[0].plot(z4c_slice["time"], z4c_slice["x"], linestyle="none",
+                     marker="x", markersize=4.0, color=COLORS["Z4c"], zorder=4)
+
+        common_time = pcgh["time"]
+        z4c_x = np.interp(common_time, z4c["time"], z4c["x"])
+        axes[1].plot(common_time, np.abs(pcgh["x"] - z4c_x),
+                     color="0.2", linestyle=linestyle, marker="o", markersize=3.0,
+                     label=f"puncture {index}")
     axes[0].set_ylabel(r"$x/M$")
-    axes[1].set_ylabel(r"$\sqrt{y^2+z^2}/M$")
+    axes[1].set_ylabel(r"$|x_{\rm PCGH,min}-x_{\rm Z4c,ODE}|/M$")
     axes[1].set_xlabel(r"$t/M$")
     for axis in axes:
-        axis.grid(alpha=0.25, which="both")
+        axis.grid(alpha=0.25)
         axis.legend(ncol=2, fontsize=8)
-    fig.suptitle("Puncture trajectories (Z4c drawn above PC-GH)")
+    fig.suptitle("Puncture trajectories (Z4c drawn above PC-GH; x marks Z4c slice checks)")
     fig.tight_layout()
     path = output_dir / "puncture_trajectory_overlay.png"
     fig.savefig(path, dpi=220)
     plt.close(fig)
-    summary = {
-        formulation: {
-            "final_time": float(min(track["time"][-1] for track in pair)),
-            "max_transverse_drift": float(max(
-                np.max(np.hypot(track["y"], track["z"])) for track in pair)),
-            "final_x": [float(track["x"][-1]) for track in pair],
+    summary = {"slice_minima_csv": str(csv_path)}
+    for formulation in ("Z4c", "PC-GH"):
+        pair = slices[formulation]
+        summary[formulation] = {
+            "source": "lapse minima in saved xy slices",
+            "final_time": float(min(pair[index]["time"][-1] for index in (0, 1))),
+            "final_x": [float(pair[index]["x"][-1]) for index in (0, 1)],
+            "finest_dx": float(min(np.min(pair[index]["dx"]) for index in (0, 1))),
         }
-        for formulation, pair in tracks.items()
-    }
+    z4c_errors = []
+    for index in (0, 1):
+        sample = slices["Z4c"][index]
+        interpolated = np.interp(sample["time"], z4c_tracks[index]["time"],
+                                 z4c_tracks[index]["x"])
+        z4c_errors.extend(np.abs(sample["x"] - interpolated))
+    summary["Z4c"]["max_slice_vs_ode_abs_x"] = float(np.max(z4c_errors))
     return path, summary
 
 

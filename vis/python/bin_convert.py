@@ -85,7 +85,10 @@ The read_*(...) functions return a filedata dictionary-like object with
 
 import numpy as np
 import os
-import h5py
+try:
+    import h5py
+except ImportError:
+    h5py = None
 import glob
 
 
@@ -167,7 +170,7 @@ def read_binary(filename):
             if line.startswith("<"):
                 block = line
                 continue
-            key, value = line.split("=")
+            key, value = line.split("=", 1)
             if block == blockname and key.strip() == keyname:
                 return value
         raise KeyError(f"no parameter called {blockname}/{keyname}")
@@ -337,7 +340,7 @@ def read_coarsened_binary(filename):
             if line.startswith("<"):
                 block = line
                 continue
-            key, value = line.split("=")
+            key, value = line.split("=", 1)
             if block == blockname and key.strip() == keyname:
                 return value
         raise KeyError(f"no parameter called {blockname}/{keyname}")
@@ -1726,6 +1729,8 @@ def write_athdf(filename, fdata, varsize_bytes=4, locsize_bytes=8):
       locsize_bytes - int (default=8, options=4,8)
           number of bytes to use for output location data
     """
+    if h5py is None:
+        raise ImportError("writing athdf output requires the optional h5py package")
 
     if varsize_bytes not in [4, 8]:
         raise ValueError(f"varsizebytes must be 4 or 8, not {varsize_bytes}")
