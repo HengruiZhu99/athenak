@@ -1154,3 +1154,61 @@ the OpenMP TwoPunctures build, and two-cycle exact-Minkowski reflection-boundary
 smokes in serial and on two MPI ranks. Durable short-run artifacts are under
 `qualification-runs-20260902/symmetry-audit-{direct-static,hyper-adaptive}/`; the
 reflection smoke is under `symmetry-audit-reflect-smoke/`.
+
+## 2026-09-04 long-domain head-on BBH evolution
+
+The matched CUDA runs used source commit `b81b44d658f3b81584e94ce79b92656c112ff908`,
+domain `[-128M,128M]^3`, finest `dx=M/16`, RK3, sixth-order spatial derivatives,
+and extraction radii `8,12,24,32,48,56M`.  Every physical face was `outflow` and
+both formulation blocks set `extrap_order=2`; this activates the Z4c/PC-GH
+Sommerfeld boundary RHS and second-order ghost-zone extrapolation, not periodic
+boundaries.  Exact inputs and hashes are in
+`qualification-runs-20260902/della-r128-t100-comparison/raw/*/`.
+
+Z4c completed `t=100M` in 8000 cycles.  Its endpoint RMS constraints were
+`H=1.70697e-5` and `M=1.22632e-5`.  PC-GH reached the physical merger waveform,
+but its constraints began sustained exponential growth after about `40M`.  The
+strict diagnostic stopped it at `t=73.79991M` when the conformal metric lost
+positive definiteness at `(-0.34375,-0.96875,-0.03125)M`, with
+`det(gTilde)=-20.19875`.  It was not rerun or tuned after this failure.
+
+The PC-GH precursor is an inner fixed-refinement-interface instability in the
+first-order Q reduction/curl sector.  Curl-Q has an approximate `5.82M` e-folding
+time over `50--70M`; by `t=73.2009M`, its maximum is `18.8909`, the minimum metric
+eigenvalue is `0.3652`, the gradient-RHS maximum is `42.3619`,
+`dRQ_prolong_max=0.13456`, and `dRQ_reduction_project_max=1.9963`.  The xy maps
+show square rings aligned with fixed SMR interfaces, and the growth does not
+coincide with a dynamic-AMR event.  This points to feedback between ordinary SMR
+prolongation and reduction projection.  A credible correction requires
+constraint-preserving prolongation or a first-order reduction redesign; no
+damping/floor/KO workaround was introduced.
+
+The Z4c Hamiltonian spikes have a separate, benign cause.  Its history norm uses
+the sharp cell mask `chi>=0.0625`.  For the 16 peaks while the punctures cross
+`0.75M<=|x_p|<=1.75M`, successive peaks are separated by a median `1.0695` and
+mean `0.9963` finest cells of puncture motion, and the largest history jumps do
+not bracket AMR changes.  They are puncture/grid-phase changes in which cells
+enter the excised volume norm, not regridding or continuum growth.
+
+The PC-GH ODE puncture tracker was found not to survive restarts.  For this run,
+the trajectory was reconstructed from lapse minima in the saved xy slices.  Its
+common-time difference from the Z4c slice trajectory is at most `0.001225M`, well
+below `dx=0.0625M`.  Commit `5733d131` serializes PC-GH tracker positions behind a
+new restart-header flag, keeps old restarts readable, and passes bit-for-bit
+serial and two-rank MPI restart tests.  The CUDA tree was rebuilt successfully
+with `make -j32`, but this production run was not repeated.
+
+In retarded time `u=t-r`, the `u<20M` pulse is initial-data/gauge junk.  The
+coherent `20M<=u<=35M` pulse is the physical merger signal and is available for
+both formulations at `r<=32M`; PC-GH differs in peak real amplitude from Z4c by
+`-2.46%,-2.56%,-12.86%,-15.96%` at `r=8,12,24,32M`.  Later PC-GH samples are
+increasingly contaminated.  The imaginary `(2,2)` mode is numerical symmetry
+leakage: it should vanish for this reflection-symmetric head-on problem.  In the
+merger window, its L2 ratio to the real mode is `1.20e-4,3.54e-5,5.73e-5,1.17e-4`
+for Z4c and `1.41e-4,1.01e-3,3.33e-2,1.95e-3` for PC-GH at the four inner radii.
+
+Plots, reconstructed trajectory CSV, machine-readable summary, copied slices,
+histories, waveforms, logs, inputs, and provenance are collected under
+`qualification-runs-20260902/della-r128-t100-comparison/`.  The full long run
+does not change the classification from `PARTIAL IMPROVEMENT`; it provides a
+physical merger waveform but fails the long-term stability gate.
