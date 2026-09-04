@@ -305,6 +305,7 @@ def plot_constraints(series: dict[str, dict[str, np.ndarray]],
                      changes: dict[str, list[dict[str, float | int]]],
                      output_dir: Path) -> Path:
     fig, axes = plt.subplots(2, 1, figsize=(10.5, 7.0), sharex=True)
+    slice_differences = []
     for row, constraint in enumerate(("H", "M")):
         axis = axes[row]
         for formulation in ("PC-GH", "Z4c"):
@@ -370,7 +371,9 @@ def plot_trajectories(run_dirs: dict[str, Path], output_dir: Path) -> tuple[Path
 
         common_time = pcgh["time"]
         z4c_x = np.interp(common_time, z4c_slice["time"], z4c_slice["x"])
-        axes[1].plot(common_time, np.abs(pcgh["x"] - z4c_x),
+        difference = np.abs(pcgh["x"] - z4c_x)
+        slice_differences.extend(difference)
+        axes[1].plot(common_time, difference,
                      color="0.2", linestyle=linestyle, marker="o", markersize=3.0,
                      label=f"puncture {index}")
     axes[0].set_ylabel(r"$x/M$")
@@ -400,6 +403,7 @@ def plot_trajectories(run_dirs: dict[str, Path], output_dir: Path) -> tuple[Path
                                  z4c_tracks[index]["x"])
         z4c_errors.extend(np.abs(sample["x"] - interpolated))
     summary["Z4c"]["max_slice_vs_ode_abs_x"] = float(np.max(z4c_errors))
+    summary["max_pcgh_vs_z4c_slice_abs_x"] = float(np.max(slice_differences))
     return path, summary
 
 
