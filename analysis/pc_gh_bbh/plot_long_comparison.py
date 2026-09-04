@@ -369,12 +369,12 @@ def plot_trajectories(run_dirs: dict[str, Path], output_dir: Path) -> tuple[Path
                      marker="x", markersize=4.0, color=COLORS["Z4c"], zorder=4)
 
         common_time = pcgh["time"]
-        z4c_x = np.interp(common_time, z4c["time"], z4c["x"])
+        z4c_x = np.interp(common_time, z4c_slice["time"], z4c_slice["x"])
         axes[1].plot(common_time, np.abs(pcgh["x"] - z4c_x),
                      color="0.2", linestyle=linestyle, marker="o", markersize=3.0,
                      label=f"puncture {index}")
     axes[0].set_ylabel(r"$x/M$")
-    axes[1].set_ylabel(r"$|x_{\rm PCGH,min}-x_{\rm Z4c,ODE}|/M$")
+    axes[1].set_ylabel(r"$|x_{\rm PCGH,min}-x_{\rm Z4c,min}|/M$")
     axes[1].set_xlabel(r"$t/M$")
     for axis in axes:
         axis.grid(alpha=0.25)
