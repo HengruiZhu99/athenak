@@ -500,9 +500,15 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
                 indices = np.flatnonzero(mask)
                 if indices.size:
                     index = int(indices[np.argmax(absolute_real[indices])])
+                    window_real_norm = float(np.linalg.norm(wave["real_22"][indices]))
+                    window_imag_norm = float(np.linalg.norm(wave["imag_22"][indices]))
                     pulse_windows[name] = {
                         "peak_abs_real_22": float(absolute_real[index]),
                         "peak_retarded_time": float(wave["retarded_time"][index]),
+                        "peak_abs_imag_22": float(np.max(
+                            np.abs(wave["imag_22"][indices]))),
+                        "imag_to_real_l2": (window_imag_norm/window_real_norm
+                                            if window_real_norm > 0.0 else float("nan")),
                     }
             summary[formulation][str(radius)] = {
                 "final_time": float(wave["time"][-1]),
