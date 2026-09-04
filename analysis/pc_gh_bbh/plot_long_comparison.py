@@ -455,12 +455,32 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
             wave = waves[formulation][radius]
             real_norm = float(np.linalg.norm(wave["real_22"]))
             imag_norm = float(np.linalg.norm(wave["imag_22"]))
+            absolute_real = np.abs(wave["real_22"])
+            overall_index = int(np.argmax(absolute_real))
+            pulse_windows = {}
+            for name, mask in (
+                    ("early_u_lt_20", wave["retarded_time"] < 20.0),
+                    ("late_u_ge_20", wave["retarded_time"] >= 20.0)):
+                indices = np.flatnonzero(mask)
+                if indices.size:
+                    index = int(indices[np.argmax(absolute_real[indices])])
+                    pulse_windows[name] = {
+                        "peak_abs_real_22": float(absolute_real[index]),
+                        "peak_retarded_time": float(wave["retarded_time"][index]),
+                    }
             summary[formulation][str(radius)] = {
                 "final_time": float(wave["time"][-1]),
-                "peak_abs_real_22": float(np.max(np.abs(wave["real_22"]))),
+                "peak_abs_real_22": float(absolute_real[overall_index]),
+                "peak_retarded_time": float(wave["retarded_time"][overall_index]),
                 "peak_abs_imag_22": float(np.max(np.abs(wave["imag_22"]))),
                 "imag_to_real_l2": imag_norm / real_norm if real_norm > 0.0 else float("nan"),
+                "pulse_windows": pulse_windows,
             }
+            if len(pulse_windows) == 2:
+                early = pulse_windows["early_u_lt_20"]["peak_abs_real_22"]
+                late = pulse_windows["late_u_ge_20"]["peak_abs_real_22"]
+                summary[formulation][str(radius)]["late_to_early_peak_ratio"] = (
+                    late/early if early > 0.0 else float("nan"))
     return [overlay_path, convergence_path], summary
 
 
