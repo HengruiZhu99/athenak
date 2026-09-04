@@ -1,0 +1,130 @@
+== verify_puncture_regular_55.py ==
+PASS: 55-field configuration and reduction identities
+PASS: H, E, S, T, alpha*M, and shift-vector transforms
+PASS: C_perp and direct Z propagation substitutions
+PASS: direct/hyperbolic shift differentiation including S'(z)
+PASS: preferred evolution expressions have no puncture-field denominator
+PASS: wormhole/trumpet evolved-field inner exponents are nonnegative
+INFO: stationary trumpet d(rho)/dr exponent = -0.908702735 (not evolved)
+== verify_regularization.py ==
+PASS: exact regular Hessian identity
+PASS: exact physical/conformal lapse-Hessian identity
+PASS: exact regular scalar-curvature and Hamiltonian identities
+PASS: exact trace-free curvature/lapse tensor identity
+PASS: exact scaled momentum identity
+== verify_q_projection.py ==
+PASS: Q projection is the derivative of det(G)^(-1/3) G
+PASS: projected Q is trace-free with the projected metric
+== verify_flat_algebra_randomized.py ==
+PASS: 10000 seeded SPD inverse/projection/ADM round-trip trials
+  max_inverse=4.729372e-10
+  max_det_projection=1.101341e-13
+  max_tf_A=2.101046e-15
+  max_tf_Q=2.771098e-15
+  max_adm_metric=7.212009e-13
+  max_adm_curvature=1.543299e-11
+  max_adm_chi=2.082743e-10
+  max_adm_K=4.878764e-12
+== verify_conformal_ricci.py ==
+PASS: det(gtilde)=1 exactly for the non-diagonal metric family
+PASS: Brown first-order Ricci equals coordinate Ricci at 18 exact components
+== verify_primary_projections.py ==
+EXPECTED FAILURE: supplied K residual = -div_z
+PASS: corrected K divergence count matches the covariant spatial trace
+PASS: supplied pi target matches the normal-normal projection exactly
+EXPECTED FAILURE: supplied Lambda target omits -alpha*C_perp*D^i ln(alpha)
+PASS: corrected Lambda acceleration term is -chi*C_perp*L^i/2
+EXPECTED FAILURE: supplied Atilde nonlinear Z residual (0, 0) = chi*(Z0*q000 + Z0*q101 + Z0*q202 - 2*Z1*q001 + 3*Z1*q100 + Z1*q111 + Z1*q212 - 2*Z2*q002 + Z2*q112 + 2*Z2*q200 - Z2*q211)/3
+PASS: corrected Atilde metric-advection term is -chi*Z^k*Q_kij/2
+== verify_gradient_rhs.py ==
+PASS: exact expanded partial_i F for chi and A
+PASS: exact expanded partial_i F for all beta components
+PASS: exact expanded partial_i F for all gtilde components
+PASS: compatible and standard orderings differ by beta-contracted curl
+== verify_z4c_mp_gauge.py ==
+PASS: z4c_mp h_perp gives D0 A=-4 A K
+PASS: z4c_mp h^i gives D0 beta^i=Lambda^i-eta beta^i
+PASS: exact STANDARD z4c_mp Y_i and B_i^j equations
+PASS: exact differentiated switched metric-gradient shift term
+== analyze_z4c_mp_principal.py ==
+PASS: exact 50x50 z4c_mp algebraic-tangent principal symbol
+characteristic polynomial: -speed**30*(speed - 1)**2*(speed + 1)**2*(3*speed**2 - 4)*(2*alpha*chi - speed**2)*(alpha**2*chi - speed**2)**6/3
+regular-state Jacobian determinant: -32*rho**4*w**9
+regular-state characteristic polynomial: -speed**30*(speed - 1)**2*(speed + 1)**2*(3*speed**2 - 4)*(rho*w**2 - speed)**6*(rho*w**2 + speed)**6*(2*rho*w**3 - speed**2)/3
+strongly hyperbolic for alpha>0, chi>0 except
+  alpha^2 chi=4/3, alpha=2, or alpha chi=2/3
+semisimple coincidences: alpha^2 chi=1 and 2 alpha chi=1
+unit-mass wormhole alpha chi=2/3 shell: r/M=7.151725902759133
+modified longitudinal speed^2=(4-S alpha^2 chi)/3
+S=1 makes the lapse/longitudinal and light/longitudinal coincidences semisimple
+a switch completed below alpha chi=4/7 is strongly hyperbolic for 0<alpha<=1, 0<alpha chi<=1
+no separate finite positive-rho degeneracy: only the transformed legacy surfaces rho^2 w^4=4/3, rho w=2, rho w^3=2/3
+== verify_4d_component_oracle.py ==
+PASS: exact covariant reduced equation for all 10 four-tensor components
+PASS: corrected K, Atilde, pi, and Lambda equations against the 4D point jet
+== verify_fo_gh_map.py ==
+PASS: exact PC-GH -> FO-GH -> PC-GH round trip
+PASS: conformal metric, Q, and Atilde algebraic constraints
+== verify_fo_gh_gamma2.py ==
+PASS: independent inverse FO-GH map verifies all coupled gamma2 increments
+PASS: independent p/Q/L/B amplitudes and non-diagonal conformal metric
+PASS: all primary damping increments have dimension inverse length squared
+PASS: lambda=rho^2*w^4*f regularizes the increment, not the baseline
+PASS: exact FO-GH fields, speeds and positive symmetrizer on alpha>0
+PASS: deleting the Pi partner breaks the FO-GH symmetrizer identity
+PASS: exact reduction/curl subsidiary including spatial lambda gradients
+PASS: nonlinear constraint pullback, lapse/p coupling, and flat damping spectra
+INFO: gamma1=-1 longitudinal reduction speed is zero; curl speed is -beta.n
+PASS: required zero-gamma2 rho correction = beta.Ralpha/(2*w)
+EXPECTED REJECTION: constant lambda gives wormhole K source ~r^-2
+EXPECTED REJECTION: constant lambda gives trumpet Z source ~r^-318259453/100000000
+NOT QUALIFIED: the production baseline is not an exact off-constraint FO-GH pullback
+PASS: the moving-gauge forward map has an identically zero Cperp column
+EXPECTED REJECTION: no invertible 50-field FO-GH point map for this gauge substitution
+== generate_gauge_a0_table.py ==
+PASS: Gauge A0 table (4097 points, r=[1.0e-08,1.0e+04])
+PASS: implicit stationary 1+log: max residual 7.458e-15
+PASS: advective 1+log identity: max residual 6.393e-16
+PASS: h_perp target definition: max residual 1.332e-15
+PASS: h_radial target definition: max residual 8.674e-18
+PASS: inner exponents e_A=2.18259453, e_chi=2.00000000
+== audit_gauge_a0_cancellation.py ==
+PASS: Gauge A0 cancellation audit logged 387 quantities at 73 radii in binary64, long double, and 100-digit arithmetic
+PASS: no additive production RHS term has fitted inner power below -0.25
+PASS: maximum 100-digit RHS sum on the open table domain is 5.118e-05 at rhs/Lambda0/sum@r=2.07979565289370606e-08
+AUDIT: divergent raw derivatives (not additive RHS terms):
+  derivative/dAt: fitted power -1.000001
+AUDIT: worst term-scale-normalized binary64 RHS-sum discrepancy 3.547e-07 at rhs/pi/sum@r=1.10000000000000075e-08
+AUDIT: worst term-scale-normalized long-double RHS-sum discrepancy 3.547e-07 at rhs/pi/sum@r=1.10000000000000075e-08
+AUDIT: worst absolute binary64 RHS-sum discrepancy 2.827e-08 at rhs/Lambda0/sum@r=1.51253932781368648e-08
+AUDIT: worst absolute long-double RHS-sum discrepancy 2.827e-08 at rhs/Lambda0/sum@r=1.51253932781368648e-08
+== audit_bowen_york_cancellation.py ==
+PASS: time_symmetric: 217 quantities at 81 radii; no stored field, temporary, or additive RHS term has fitted inner power below -0.25
+  max |H+Atilde^2| (mp100)=8.572e-101
+  worst normalized binary64 RHS discrepancy=7.600e-14 at rhs/K/sum@r=1.00000000000000000e+02
+  worst normalized long-double RHS discrepancy=7.600e-14 at rhs/K/sum@r=1.00000000000000000e+02
+PASS: momentum: 217 quantities at 81 radii; no stored field, temporary, or additive RHS term has fitted inner power below -0.25
+  max |H+Atilde^2| (mp100)=8.011e-101
+  worst normalized binary64 RHS discrepancy=6.344e-14 at rhs/K/sum@r=1.00000000000000000e+02
+  worst normalized long-double RHS discrepancy=6.344e-14 at rhs/K/sum@r=1.00000000000000000e+02
+PASS: spin: 217 quantities at 81 radii; no stored field, temporary, or additive RHS term has fitted inner power below -0.25
+  max |H+Atilde^2| (mp100)=9.875e-101
+  worst normalized binary64 RHS discrepancy=7.612e-14 at rhs/K/sum@r=1.00000000000000000e+02
+  worst normalized long-double RHS discrepancy=7.612e-14 at rhs/K/sum@r=1.00000000000000000e+02
+PASS: combined: 217 quantities at 81 radii; no stored field, temporary, or additive RHS term has fitted inner power below -0.25
+  max |H+Atilde^2| (mp100)=9.088e-101
+  worst normalized binary64 RHS discrepancy=6.346e-14 at rhs/K/sum@r=1.00000000000000000e+02
+  worst normalized long-double RHS discrepancy=6.346e-14 at rhs/K/sum@r=1.00000000000000000e+02
+PASS: Bowen-York puncture regularity/source-cancellation audit
+== verify_ko_symbol.py ==
+PASS: stencil=2 normalized symbol=-sin(theta/2)^4
+PASS: stencil=3 normalized symbol=-sin(theta/2)^6
+PASS: stencil=4 normalized symbol=-sin(theta/2)^8
+PASS: every supported PC-GH KO symbol is nonpositive
+== verify_reduction_constraint_growth.py ==
+PASS: pointwise full-Q frozen rate = 5*t/3 - 2*u/3 = 0.2716291073000000/M
+PASS: true Q-reduction rate = 2*t/3 - 2*u/3 = 0.1173836533800000/M
+PASS: bounded Gauge A1 cannot alter the tangential trace-free reduction rate
+== verify_source_policy.py ==
+PASS: source policy audit over 9 PC-GH production files
+PASS: all currently established PC-GH symbolic gates

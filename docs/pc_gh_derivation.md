@@ -1,5 +1,18 @@
 # Puncture-conformal first-order generalized harmonic derivation
 
+## 2026-09-04 correction: FO-GH equivalence is not an off-constraint theorem
+
+The [complete gamma2 audit](pc_gh_gamma2_audit.md) supersedes the principal-symbol
+and symmetrizer transfer claims below wherever they rely only on equality on the
+reduction manifold. The regular production `rho` row differs from the exact
+`gamma1=-1` FO-GH pullback by `-beta^i Ralpha_i/(2w)`, already at `gamma2=0`.
+An independent zero-step production-kernel oracle reproduces this discrepancy.
+The moving-puncture source substitution also makes the stated forward FO-GH map
+independent of `Cperp`; that map cannot establish invertibility for this gauge.
+The earlier constrained identities and recorded numerical observations remain
+evidence within their stated scope. They do not prove equality of the full
+off-constraint principal matrices. No dynamical gamma2 implementation is qualified.
+
 ## Status and scope
 
 This is a from-scratch derivation from

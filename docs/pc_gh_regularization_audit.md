@@ -1,5 +1,13 @@
 # PC-GH puncture-regularization audit
 
+The [2026-09-04 gamma2 audit](pc_gh_gamma2_audit.md) finds that a bounded nonzero
+coordinate-time rate does not ensure a regular full FO-GH damping pullback.
+The coupled primary increments contain inverse lapse/conformal factors. A rate
+`lambda=rho^2*w^4*f` with finite `f` regularizes those increments, but does not
+repair the separate off-constraint baseline mismatch. The original denominator-free
+production kernels remain unchanged; their regular extension is not an exact
+off-constraint FO-GH variable transformation.
+
 ## Status
 
 This audit now records the puncture-regular 55-field replacement implemented on

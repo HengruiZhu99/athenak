@@ -1,0 +1,70 @@
+{
+  "commands": [
+    {
+      "cwd": "/Users/hz0693/research/athenak-pcgh-localization-20260902",
+      "argv": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-gamma2-map-audit",
+        "-DPROBLEM=../../analysis/pc_gh_gamma2/production_oracle",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DAthena_ENABLE_MPI=OFF",
+        "-DAthena_ENABLE_OPENMP=OFF"
+      ],
+      "combined_log": "configure.log"
+    },
+    {
+      "cwd": "/Users/hz0693/research/athenak-pcgh-localization-20260902",
+      "argv": [
+        "cmake",
+        "--build",
+        "build-gamma2-map-audit",
+        "-j8"
+      ],
+      "combined_log": "build.log"
+    },
+    {
+      "cwd": "/Users/hz0693/research/athenak-pcgh-localization-20260902/qualification-runs-20260904/gamma2-map-audit",
+      "argv": [
+        "../../build-gamma2-map-audit/src/athena",
+        "-i",
+        "../../analysis/pc_gh_gamma2/oracle.athinput"
+      ],
+      "combined_log": "production.log"
+    },
+    {
+      "cwd": "/Users/hz0693/research/athenak-pcgh-localization-20260902",
+      "argv": [
+        ".venv-bbh-plots/bin/python",
+        "-u",
+        "analysis/pc_gh_symbolic/verify_fo_gh_gamma2.py"
+      ],
+      "combined_log": "symbolic.log"
+    },
+    {
+      "cwd": "/Users/hz0693/research/athenak-pcgh-localization-20260902",
+      "argv": [
+        ".venv-bbh-plots/bin/python",
+        "-u",
+        "analysis/pc_gh_symbolic/run_all.py"
+      ],
+      "combined_log": "full-symbolic.log"
+    },
+    {
+      "cwd": "/Users/hz0693/research/athenak-pcgh-localization-20260902",
+      "argv": [
+        ".venv-bbh-plots/bin/python",
+        "analysis/pc_gh_gamma2/summarize.py",
+        "qualification-runs-20260904/gamma2-map-audit"
+      ],
+      "combined_log": "summarize.log"
+    }
+  ],
+  "log_paths_relative_to": "/Users/hz0693/research/athenak-pcgh-localization-20260902/qualification-runs-20260904/gamma2-map-audit",
+  "capture": "stdout and stderr redirected together",
+  "initial_failed_logs": "The initial standalone and full-suite logs are retained as *-initial-failed.log. The Fourier comparison used Python structural equality, which rejected equivalent SymPy expressions; the final check compares exact characteristic polynomials.",
+  "no_evolution": true,
+  "restart_files": []
+}

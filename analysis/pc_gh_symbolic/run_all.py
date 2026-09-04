@@ -19,6 +19,7 @@ SCRIPTS = [
     "analyze_z4c_mp_principal.py",
     "verify_4d_component_oracle.py",
     "verify_fo_gh_map.py",
+    "verify_fo_gh_gamma2.py",
     "generate_gauge_a0_table.py",
     "audit_gauge_a0_cancellation.py",
     "audit_bowen_york_cancellation.py",

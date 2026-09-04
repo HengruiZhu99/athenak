@@ -1,0 +1,40 @@
+<job>
+basename = gamma2_map_oracle
+<mesh>
+nghost = 2
+nx1 = 8
+x1min = -1
+x1max = 1
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 4
+x2min = -1
+x2max = 1
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 4
+x3min = -1
+x3max = 1
+ix3_bc = periodic
+ox3_bc = periodic
+<meshblock>
+nx1 = 8
+nx2 = 4
+nx3 = 4
+<time>
+evolution = dynamic
+integrator = rk2
+cfl_number = 0.1
+nlim = 0
+tlim = 0
+ndiag = 1
+<pc_gh>
+gauge = harmonic
+spatial_order = 2
+kappa = 0
+dissipation = 0
+project_reduction_constraints = false
+project_gauge_constraints = false
+boundedness_output = false
+<problem>
+pgen_name = gamma2_map_oracle

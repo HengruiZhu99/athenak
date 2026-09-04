@@ -3,6 +3,16 @@
 These scripts are an independent, from-scratch audit of the conformal identities needed
 by PC-GH. They do not import generated equations or any FO-GH/Ref-GH implementation.
 
+The 2026-09-04 `verify_fo_gh_gamma2.py` audit checks the coupled Pi/Phi damping
+increment through the existing inverse map, dimensions, characteristic fields,
+symmetrizer, variable-rate subsidiary equations, and puncture source powers.
+It also reproduces counterexamples to exact off-constraint production equivalence
+and to invertibility after the moving-puncture gauge substitution. Its PASS messages
+mean that the audit reproduced those results, not that the scheme is qualified.
+See `docs/pc_gh_gamma2_audit.md` and the separate compiled production oracle in
+`analysis/pc_gh_gamma2/`. The old round-trip and constrained tensor tests alone
+cannot establish full off-constraint principal-symbol similarity.
+
 Create an isolated environment and run:
 
 ```bash

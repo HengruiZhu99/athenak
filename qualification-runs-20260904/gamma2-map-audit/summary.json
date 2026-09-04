@@ -1,0 +1,77 @@
+{
+  "classification": "failed dynamical scheme: exact-retrofit derivation gate rejected",
+  "production_equations_modified": false,
+  "evolution_tests_performed": false,
+  "della_run_submitted": false,
+  "hybrid_fallback_established": false,
+  "counterexamples": [
+    {
+      "case": 0.0,
+      "w": 1.0,
+      "shift": 0.25,
+      "Lx": 0.125,
+      "drho": 0.0,
+      "production_rho_rhs": 0.0,
+      "fo_gh_rho_rhs": 0.015625,
+      "residual": -0.015625
+    },
+    {
+      "case": 1.0,
+      "w": 0.5,
+      "shift": 0.25,
+      "Lx": 0.125,
+      "drho": 0.0,
+      "production_rho_rhs": 0.0,
+      "fo_gh_rho_rhs": 0.03125,
+      "residual": -0.03125
+    },
+    {
+      "case": 2.0,
+      "w": 0.25,
+      "shift": 0.25,
+      "Lx": 0.125,
+      "drho": 0.0,
+      "production_rho_rhs": 0.0,
+      "fo_gh_rho_rhs": 0.0625,
+      "residual": -0.0625
+    },
+    {
+      "case": 3.0,
+      "w": 0.125,
+      "shift": 0.25,
+      "Lx": 0.125,
+      "drho": 0.0,
+      "production_rho_rhs": 0.0,
+      "fo_gh_rho_rhs": 0.125,
+      "residual": -0.125
+    },
+    {
+      "case": 4.0,
+      "w": 1.0,
+      "shift": 0.25,
+      "Lx": 0.0,
+      "drho": 0.125,
+      "production_rho_rhs": 0.03125,
+      "fo_gh_rho_rhs": 0.0,
+      "residual": 0.03125
+    },
+    {
+      "case": 5.0,
+      "w": 1.0,
+      "shift": 0.25,
+      "Lx": 0.25,
+      "drho": 0.125,
+      "production_rho_rhs": 0.03125,
+      "fo_gh_rho_rhs": 0.03125,
+      "residual": 0.0
+    }
+  ],
+  "measured_rhs_discrepancy_power_in_w": -0.9999999999999994,
+  "source_only_regular_rate": "lambda=rho^2*w^4*f, f bounded",
+  "limitations": [
+    "The source-only rate does not repair the off-constraint baseline.",
+    "Constant-lambda singular source powers are symbolic, not evolved-field fits.",
+    "The old moving-gauge symbol calculation assumes zero shift and flat frozen fields.",
+    "No puncture stability, exterior convergence, AMR-pulse, or hybrid claim."
+  ]
+}

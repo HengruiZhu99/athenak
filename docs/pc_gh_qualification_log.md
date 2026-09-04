@@ -1325,3 +1325,45 @@ doing so without a matched interface-transfer control would violate the requirem
 that damping not substitute for a correct formulation. The next implementation gate
 is a constraint-compatible `Q` prolongation or an equivalent first-order interface
 treatment, tested against the new per-operation curl monitor.
+
+## 2026-09-04 complete gamma2 retrofit: derivation prerequisite rejected
+
+**Classification: failed dynamical scheme, specifically rejection of the exact
+retrofit at the derivation gate; no gamma2 evolution failure was measured.**
+The [complete audit](pc_gh_gamma2_audit.md) records the full standard Pi/Phi system,
+the coupled regular-variable damping increments, subsidiary reduction/curl equations
+including spatial rate gradients, and the domain of the FO-GH hyperbolicity argument.
+
+The actual production `rho` equation differs from the standard `gamma1=-1` pullback
+by `-beta.Ralpha/(2*w)`, already at zero reduction damping. The exact gamma2 increment
+does not change that row. Five zero-step production-kernel counterexamples and one
+reduction-consistent control reproduce this result; all tests have positive `w,rho`.
+Separately, substituting the moving-puncture source eliminates Cperp from the stated
+forward map, so the fixed-source map cannot transfer a hyperbolicity theorem to that
+gauge. Neither result proves that the existing production equations are ill posed.
+
+Constant nonzero coordinate rate also produces singular primary sources for bounded
+independent reduction errors. `lambda=rho^2*w^4*f`, with bounded smooth `f`, removes
+field denominators from the coupled increment, but does not correct the baseline.
+The new inverse-map regression and the full pre-existing symbolic suite pass.
+The isolated Release/AppleClang/Kokkos-Serial oracle build and its six cases pass.
+The initial symbolic failures were an algebraic-expression comparison defect in the
+new test, corrected by comparing characteristic polynomials; those logs are retained.
+
+This also corrects the preceding shorthand reduction-advection statement for
+`gamma1=-1`: the longitudinal reduction has zero characteristic speed, while the
+independent curl fields have speed `-beta.n`. On flat backgrounds the reduction
+Fourier spectrum has real part `-lambda`, with possible non-normal transient growth.
+
+Evidence is preserved under `qualification-runs-20260904/gamma2-map-audit/`:
+exact commands and input, build configuration, source/executable SHA-256 hashes,
+configure/build/production/symbolic logs, all six CSV rows, and a measured discrepancy
+plot with fitted power `w^-1`. This is a parameter sweep of zero-step RHS evaluations,
+not a resolution study. No new restart exists because there was no evolution.
+
+The requested evolution gates, stage/AMR instrumentation, Della submission, and hybrid
+fallback were not advanced after this prerequisite failed. Production equations and
+all saved runs remain unchanged. In particular, early hard-Q projection remains net
+corrective in the saved SMR experiment, and the saved projected failure at `73.7999M`
+does not establish projection as its cause. The no-projection `gamma2=0` failure near
+`4.2246M` is user-supplied prior evidence, not independently reproduced here.

@@ -1,0 +1,12 @@
+PASS: independent inverse FO-GH map verifies all coupled gamma2 increments
+PASS: independent p/Q/L/B amplitudes and non-diagonal conformal metric
+PASS: all primary damping increments have dimension inverse length squared
+PASS: lambda=rho^2*w^4*f regularizes the increment, not the baseline
+PASS: exact FO-GH fields, speeds and positive symmetrizer on alpha>0
+PASS: deleting the Pi partner breaks the FO-GH symmetrizer identity
+Traceback (most recent call last):
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/verify_fo_gh_gamma2.py", line 240, in <module>
+    subsidiary()
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/verify_fo_gh_gamma2.py", line 186, in subsidiary
+    assert set(fourier.eigenvals()) == {-lam, -lam+s.I*wave*bn}
+AssertionError

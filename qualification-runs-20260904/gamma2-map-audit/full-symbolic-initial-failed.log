@@ -1,0 +1,88 @@
+== verify_puncture_regular_55.py ==
+PASS: 55-field configuration and reduction identities
+PASS: H, E, S, T, alpha*M, and shift-vector transforms
+PASS: C_perp and direct Z propagation substitutions
+PASS: direct/hyperbolic shift differentiation including S'(z)
+PASS: preferred evolution expressions have no puncture-field denominator
+PASS: wormhole/trumpet evolved-field inner exponents are nonnegative
+INFO: stationary trumpet d(rho)/dr exponent = -0.908702735 (not evolved)
+== verify_regularization.py ==
+PASS: exact regular Hessian identity
+PASS: exact physical/conformal lapse-Hessian identity
+PASS: exact regular scalar-curvature and Hamiltonian identities
+PASS: exact trace-free curvature/lapse tensor identity
+PASS: exact scaled momentum identity
+== verify_q_projection.py ==
+PASS: Q projection is the derivative of det(G)^(-1/3) G
+PASS: projected Q is trace-free with the projected metric
+== verify_flat_algebra_randomized.py ==
+PASS: 10000 seeded SPD inverse/projection/ADM round-trip trials
+  max_inverse=4.729372e-10
+  max_det_projection=1.101341e-13
+  max_tf_A=2.101046e-15
+  max_tf_Q=2.771098e-15
+  max_adm_metric=7.212009e-13
+  max_adm_curvature=1.543299e-11
+  max_adm_chi=2.082743e-10
+  max_adm_K=4.878764e-12
+== verify_conformal_ricci.py ==
+PASS: det(gtilde)=1 exactly for the non-diagonal metric family
+PASS: Brown first-order Ricci equals coordinate Ricci at 18 exact components
+== verify_primary_projections.py ==
+EXPECTED FAILURE: supplied K residual = -div_z
+PASS: corrected K divergence count matches the covariant spatial trace
+PASS: supplied pi target matches the normal-normal projection exactly
+EXPECTED FAILURE: supplied Lambda target omits -alpha*C_perp*D^i ln(alpha)
+PASS: corrected Lambda acceleration term is -chi*C_perp*L^i/2
+EXPECTED FAILURE: supplied Atilde nonlinear Z residual (0, 0) = chi*(Z0*q000 + Z0*q101 + Z0*q202 - 2*Z1*q001 + 3*Z1*q100 + Z1*q111 + Z1*q212 - 2*Z2*q002 + Z2*q112 + 2*Z2*q200 - Z2*q211)/3
+PASS: corrected Atilde metric-advection term is -chi*Z^k*Q_kij/2
+== verify_gradient_rhs.py ==
+PASS: exact expanded partial_i F for chi and A
+PASS: exact expanded partial_i F for all beta components
+PASS: exact expanded partial_i F for all gtilde components
+PASS: compatible and standard orderings differ by beta-contracted curl
+== verify_z4c_mp_gauge.py ==
+PASS: z4c_mp h_perp gives D0 A=-4 A K
+PASS: z4c_mp h^i gives D0 beta^i=Lambda^i-eta beta^i
+PASS: exact STANDARD z4c_mp Y_i and B_i^j equations
+PASS: exact differentiated switched metric-gradient shift term
+== analyze_z4c_mp_principal.py ==
+PASS: exact 50x50 z4c_mp algebraic-tangent principal symbol
+characteristic polynomial: -speed**30*(speed - 1)**2*(speed + 1)**2*(3*speed**2 - 4)*(2*alpha*chi - speed**2)*(alpha**2*chi - speed**2)**6/3
+regular-state Jacobian determinant: -32*rho**4*w**9
+regular-state characteristic polynomial: -speed**30*(speed - 1)**2*(speed + 1)**2*(3*speed**2 - 4)*(rho*w**2 - speed)**6*(rho*w**2 + speed)**6*(2*rho*w**3 - speed**2)/3
+strongly hyperbolic for alpha>0, chi>0 except
+  alpha^2 chi=4/3, alpha=2, or alpha chi=2/3
+semisimple coincidences: alpha^2 chi=1 and 2 alpha chi=1
+unit-mass wormhole alpha chi=2/3 shell: r/M=7.151725902759133
+modified longitudinal speed^2=(4-S alpha^2 chi)/3
+S=1 makes the lapse/longitudinal and light/longitudinal coincidences semisimple
+a switch completed below alpha chi=4/7 is strongly hyperbolic for 0<alpha<=1, 0<alpha chi<=1
+no separate finite positive-rho degeneracy: only the transformed legacy surfaces rho^2 w^4=4/3, rho w=2, rho w^3=2/3
+== verify_4d_component_oracle.py ==
+PASS: exact covariant reduced equation for all 10 four-tensor components
+PASS: corrected K, Atilde, pi, and Lambda equations against the 4D point jet
+== verify_fo_gh_map.py ==
+PASS: exact PC-GH -> FO-GH -> PC-GH round trip
+PASS: conformal metric, Q, and Atilde algebraic constraints
+== verify_fo_gh_gamma2.py ==
+PASS: independent inverse FO-GH map verifies all coupled gamma2 increments
+PASS: independent p/Q/L/B amplitudes and non-diagonal conformal metric
+PASS: all primary damping increments have dimension inverse length squared
+PASS: lambda=rho^2*w^4*f regularizes the increment, not the baseline
+PASS: exact FO-GH fields, speeds and positive symmetrizer on alpha>0
+PASS: deleting the Pi partner breaks the FO-GH symmetrizer identity
+Traceback (most recent call last):
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/verify_fo_gh_gamma2.py", line 240, in <module>
+    subsidiary()
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/verify_fo_gh_gamma2.py", line 186, in subsidiary
+    assert set(fourier.eigenvals()) == {-lam, -lam+s.I*wave*bn}
+AssertionError
+Traceback (most recent call last):
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/run_all.py", line 40, in <module>
+    main()
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/run_all.py", line 35, in main
+    subprocess.run([sys.executable, str(HERE / script)], check=True)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 528, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/Users/hz0693/research/athenak-pcgh-localization-20260902/.venv-bbh-plots/bin/python', '/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/verify_fo_gh_gamma2.py']' returned non-zero exit status 1.
