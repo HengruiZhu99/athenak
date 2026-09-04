@@ -301,6 +301,24 @@ def constraint_peak_grid_phase(series: dict[str, np.ndarray],
     }
 
 
+def constraint_statistics(series: dict[str, np.ndarray]) -> dict:
+    result = {"final_time": float(series["time"][-1])}
+    for name in ("H", "M"):
+        values = series[name]
+        maximum_index = int(np.nanargmax(values))
+        result[name] = {
+            "final": float(values[-1]),
+            "maximum": float(values[maximum_index]),
+            "time_of_maximum": float(series["time"][maximum_index]),
+            "samples": {
+                str(time): float(np.interp(time, series["time"], values))
+                for time in (30.0, 40.0, 50.0, 60.0, 70.0)
+                if time <= series["time"][-1]
+            },
+        }
+    return result
+
+
 def plot_constraints(series: dict[str, dict[str, np.ndarray]],
                      changes: dict[str, list[dict[str, float | int]]],
                      output_dir: Path) -> Path:
@@ -563,6 +581,10 @@ def main() -> None:
         "largest_adjacent_constraint_changes": {
             formulation: constraint_change_summary(
                 constraints[formulation], changes[formulation])
+            for formulation in run_dirs
+        },
+        "constraint_statistics": {
+            formulation: constraint_statistics(constraints[formulation])
             for formulation in run_dirs
         },
         "z4c_hamiltonian_peak_grid_phase": constraint_peak_grid_phase(
