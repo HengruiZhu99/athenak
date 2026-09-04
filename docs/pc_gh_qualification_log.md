@@ -1202,7 +1202,9 @@ In retarded time `u=t-r`, the `u<20M` pulse is initial-data/gauge junk.  The
 coherent `20M<=u<=35M` pulse is the physical merger signal and is available for
 both formulations at `r<=32M`; PC-GH differs in peak real amplitude from Z4c by
 `-2.46%,-2.56%,-12.86%,-15.96%` at `r=8,12,24,32M`.  Later PC-GH samples are
-increasingly contaminated.  The imaginary `(2,2)` mode is numerical symmetry
+increasingly contaminated; the larger `r=24,32M` differences already overlap the
+growing internal instability and are not precision waveform comparisons.  The
+imaginary `(2,2)` mode is numerical symmetry
 leakage: it should vanish for this reflection-symmetric head-on problem.  In the
 merger window, its L2 ratio to the real mode is `1.20e-4,3.54e-5,5.73e-5,1.17e-4`
 for Z4c and `1.41e-4,1.01e-3,3.33e-2,1.95e-3` for PC-GH at the four inner radii.

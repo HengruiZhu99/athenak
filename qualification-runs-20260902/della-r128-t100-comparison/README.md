@@ -5,10 +5,11 @@
 - Z4c completed the requested evolution to `t=100M` (`8000` cycles).
 - PC-GH stopped at `t=73.79991M` when the strict diagnostic found a non-positive
   conformal metric.  It was not restarted or tuned after this failure, as requested.
-- The physical merger waveform is present for both formulations at extraction radii
-  `8M`, `12M`, `24M`, and `32M`.  PC-GH data later than retarded time `u=t-r=35M`
-  are increasingly contaminated by the numerical instability and must not be
-  interpreted as a physical ringdown.
+- The physical merger feature is present for both formulations at extraction radii
+  `8M`, `12M`, `24M`, and `32M`.  It is cleanest for PC-GH at `8M` and `12M`;
+  by the time it reaches `24M` and `32M`, it overlaps the growing internal
+  instability.  PC-GH data later than retarded time `u=t-r=35M` are increasingly
+  contaminated and must not be interpreted as a physical ringdown.
 - The long binary test therefore reinforces the existing classification
   `PARTIAL IMPROVEMENT`; it is not a production qualification of PC-GH.
 
@@ -109,11 +110,13 @@ successfully with `make -j32`; this production run was not repeated.
 ## Waveform interpretation and symmetry
 
 The early pulse (`u<20M`) is initial-data/gauge junk.  The coherent pulse in
-`20M <= u <= 35M` is the physical merger signal.  In that window, the PC-GH
+`20M <= u <= 35M` is the physical merger feature.  In that window, the PC-GH
 real-mode peak differs from Z4c by `-2.46%`, `-2.56%`, `-12.86%`, and `-15.96%`
-at `r=8,12,24,32M`; peak-time offsets are at most `0.50M`.  At `r=48M` the
-physical window is incomplete, and at `r=56M` it has not arrived before the
-PC-GH stop.
+at `r=8,12,24,32M`; peak-time offsets are at most `0.50M`.  The larger outer two
+amplitude differences and symmetry leakage show that those PC-GH samples are
+already partially contaminated, so they are not precision waveform comparisons.
+At `r=48M` the physical window is incomplete, and at `r=56M` it has not arrived
+before the PC-GH stop.
 
 For an exactly reflection-symmetric head-on collision, the imaginary `(2,2)`
 mode should vanish.  The observed nonzero values are numerical symmetry leakage,
