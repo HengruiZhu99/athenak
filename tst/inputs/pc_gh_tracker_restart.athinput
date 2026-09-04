@@ -1,0 +1,57 @@
+# PC-GH compact-object tracker restart-state regression input.
+
+<job>
+basename = pc_gh_tracker_restart
+
+<mesh>
+nghost = 2
+nx1 = 32
+x1min = -0.5
+x1max = 0.5
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 1
+x2min = -0.5
+x2max = 0.5
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 16
+nx2 = 1
+nx3 = 1
+
+<time>
+evolution = dynamic
+integrator = rk2
+cfl_number = 0.1
+nlim = -1
+tlim = 0.02
+ndiag = 1000
+
+<pc_gh>
+spatial_order = 2
+gauge = harmonic
+kappa = 0.0
+dissipation = 0.0
+boundedness_output = false
+tracker_mode = ode
+co_0_type = BH
+co_0_x = 0.1
+co_0_y = 0.0
+co_0_z = 0.0
+co_0_out_every = 1
+
+<problem>
+pgen_name = pc_gh_gauge_wave
+amp = 0.01
+shifted = true
+
+<output1>
+file_type = rst
+dt = 0.01

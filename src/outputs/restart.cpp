@@ -175,6 +175,7 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     nhorizon = pz4c->phorizon_dump.size();
   } else if (ppcgh != nullptr) {
     npcgh = ppcgh->npcgh;
+    nco = ppcgh->ptracker.size();
   } else if (padm != nullptr) {
     nadm = padm->nadm;
   }
@@ -212,6 +213,13 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   }
   pin->SetInteger(out_params.block_name, "file_number", out_params.file_number);
   pin->SetReal(out_params.block_name, "last_time", out_params.last_time);
+
+  // Mark PC-GH restart files that carry tracker state.  Older PC-GH restart
+  // files lack both this flag and the state, so the reader remains backward
+  // compatible by treating a missing flag as false.
+  if (ppcgh != nullptr && nco > 0) {
+    pin->SetBoolean("pc_gh", "restart_tracker_state", true);
+  }
 
   // create string holding input parameters (copy of input file)
   std::stringstream ost;
@@ -267,13 +275,18 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
                         single_file_per_rank);
     }
     // output puncture tracker data
-    if (nco > 0) {
+    if (pz4c != nullptr && nco > 0) {
       for (auto & pt : pz4c->ptracker) {
         resfile.Write_any_type(pt->GetPos(), 3*sizeof(Real), "byte",
                                single_file_per_rank);
       }
       for (auto & pt : pz4c->phorizon_dump) {
         resfile.Write_any_type(&(pt->output_count), sizeof(int), "byte",
+                               single_file_per_rank);
+      }
+    } else if (ppcgh != nullptr && nco > 0) {
+      for (auto & pt : ppcgh->ptracker) {
+        resfile.Write_any_type(pt->GetPos(), 3*sizeof(Real), "byte",
                                single_file_per_rank);
       }
     }

@@ -203,6 +203,30 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     }
   }
 
+  // PC-GH tracker positions were absent from the original restart format.
+  // Only consume them when the writer explicitly marked the restart header,
+  // preserving compatibility with existing files.
+  if (ppcgh != nullptr
+      && pin->GetOrAddBoolean("pc_gh", "restart_tracker_state", false)) {
+    for (auto &pt : ppcgh->ptracker) {
+      Real pos[3];
+      if (global_variable::my_rank == 0 || single_file_per_rank) {
+        if (resfile.Read_Reals(&pos[0], 3, single_file_per_rank) != 3) {
+          std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                    << std::endl << "PC-GH compact object tracker data size read from "
+                    << "restart file is incorrect, restart file is broken." << std::endl;
+          exit(EXIT_FAILURE);
+        }
+      }
+#if MPI_PARALLEL_ENABLED
+      if (!single_file_per_rank) {
+        MPI_Bcast(&pos[0], 3*sizeof(Real), MPI_CHAR, 0, MPI_COMM_WORLD);
+      }
+#endif
+      pt->SetPos(&pos[0]);
+    }
+  }
+
   if (pturb != nullptr) {
     // root process reads size the random seed
     char *rng_data = new char[sizeof(RNG_State)];
