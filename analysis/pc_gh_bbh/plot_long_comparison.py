@@ -46,6 +46,18 @@ def load_table(path: Path, pattern: re.Pattern[str]) -> dict[str, np.ndarray]:
     if not columns:
         raise ValueError(f"no numbered columns found in {path}")
     data = np.atleast_2d(np.loadtxt(path))
+    if not np.all(np.isfinite(data)):
+        raise ValueError(f"non-finite value in {path}")
+    if "time" in columns:
+        times = data[:, columns["time"]]
+        # Restarted outputs can repeat the checkpoint-boundary sample.  Keep
+        # the final occurrence without disturbing the chronological order.
+        _, reverse_indices = np.unique(times[::-1], return_index=True)
+        indices = np.sort(data.shape[0] - 1 - reverse_indices)
+        data = data[indices]
+        times = data[:, columns["time"]]
+        if np.any(np.diff(times) <= 0.0):
+            raise ValueError(f"times are not strictly increasing in {path}")
     return {name: data[:, column] for name, column in columns.items()}
 
 
@@ -112,7 +124,7 @@ def constraint_series(history: dict[str, np.ndarray], formulation: str
 
 def load_amr_changes(run_dir: Path) -> list[dict[str, float | int]]:
     changes: dict[tuple[int, float], dict[str, float | int]] = {}
-    for log_path in sorted(run_dir.glob("segment-*.log")):
+    for log_path in sorted(run_dir.glob("*segment-*.log")):
         text = log_path.read_text(encoding="utf-8", errors="replace")
         for match in AMR_CHANGE.finditer(text):
             cycle, time, created, deleted, blocks = match.groups()
