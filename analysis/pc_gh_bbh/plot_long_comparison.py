@@ -414,6 +414,7 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
             axis.plot(wave["retarded_time"], wave["real_22"],
                       color=COLORS[formulation], linewidth=width,
                       zorder=zorder, label=formulation)
+        axis.axvline(20.0, color="0.45", linestyle=":", linewidth=0.8)
         axis.set_title(f"r = {radius} M")
         axis.grid(alpha=0.25)
     for axis in axes[-1, :]:
@@ -421,7 +422,7 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
     for axis in axes[:, 0]:
         axis.set_ylabel(r"$r\,\mathrm{Re}(\Psi_4^{22})$")
     axes[0, 0].legend()
-    fig.suptitle("(2,2) waveform at all extraction radii; Z4c drawn above PC-GH")
+    fig.suptitle("(2,2) waveform; dotted line separates early and late windows")
     fig.tight_layout()
     overlay_path = output_dir / "waveform_22_radii_overlay.png"
     fig.savefig(overlay_path, dpi=220)
@@ -439,6 +440,7 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
         axes[row, 0].set_ylabel(f"{formulation}\n" + r"$r\,\mathrm{Re}(\Psi_4^{22})$")
         axes[row, 1].set_ylabel(f"{formulation}\n" + r"$r\,\mathrm{Im}(\Psi_4^{22})$")
     for axis in axes.flat:
+        axis.axvline(20.0, color="0.45", linestyle=":", linewidth=0.8)
         axis.grid(alpha=0.25)
         axis.set_xlabel(r"$(t-r)/M$")
     axes[0, 0].legend(ncol=2, fontsize=8)
