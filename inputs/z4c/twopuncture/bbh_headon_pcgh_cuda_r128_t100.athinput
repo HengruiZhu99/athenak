@@ -1,24 +1,24 @@
 <comment>
-problem = equal-mass, nonspinning head-on BBH from rest; total ADM mass M=1
+problem = equal-mass, nonspinning head-on BBH; CUDA long-wave comparison, R=128M
 
 <job>
-basename = bbh_pcgh
+basename = bbh_pcgh_cuda_r128_t100
 
 <mesh>
 nghost = 4
 nx1 = 32
-x1min = -16
-x1max = 16
+x1min = -128
+x1max = 128
 ix1_bc = outflow
 ox1_bc = outflow
 nx2 = 32
-x2min = -16
-x2max = 16
+x2min = -128
+x2max = 128
 ix2_bc = outflow
 ox2_bc = outflow
 nx3 = 32
-x3min = -16
-x3max = 16
+x3min = -128
+x3max = 128
 ix3_bc = outflow
 ox3_bc = outflow
 
@@ -32,7 +32,7 @@ evolution = dynamic
 integrator = rk3
 cfl_number = 0.2
 nlim = -1
-tlim = 25
+tlim = 100
 ndiag = 10
 
 <pc_gh>
@@ -56,10 +56,15 @@ initial_data_division_floor = 1.0e-14
 reconstruct_adm_output = false
 boundedness_output = true
 boundedness_dcycle = 100
-nrad_wave_extraction = 1
+nrad_wave_extraction = 6
 extraction_radius_0 = 8
-extraction_nlev = 16
-waveform_dt = 0.5
+extraction_radius_1 = 12
+extraction_radius_2 = 24
+extraction_radius_3 = 32
+extraction_radius_4 = 48
+extraction_radius_5 = 56
+extraction_nlev = 24
+waveform_dt = 0.25
 tracker_mode = ode
 co_0_type = BH
 co_0_x = 2.5
@@ -74,8 +79,8 @@ co_1_out_every = 1
 
 <mesh_refinement>
 refinement = adaptive
-num_levels = 5
-max_nmb_per_rank = 1000
+num_levels = 8
+max_nmb_per_rank = 6000
 refinement_interval = 10
 log_changes = true
 
@@ -85,12 +90,13 @@ method = user
 <z4c_amr>
 method = chi
 chi_min = 0.2
-max_ref_lev = 4
-# The very-low-resolution wave zone remains on the root grid; chi-AMR reaches M/16.
+max_ref_lev = 7
+# Root dx=8M; seven refinement jumps retain dx_fine=M/16 at the punctures.
+# Static wave-zone boxes keep r<16 at dx=M, r<48 at dx=2M, and r<64 at dx=4M.
 
 # These initial SMR boxes force TwoPunctures interpolation directly on the finest cells.
 <refined_region1>
-level = 4
+level = 7
 x1min = -3.0
 x1max = -2.0
 x2min = -0.5
@@ -99,13 +105,40 @@ x3min = -0.5
 x3max = 0.5
 
 <refined_region2>
-level = 4
+level = 7
 x1min = 2.0
 x1max = 3.0
 x2min = -0.5
 x2max = 0.5
 x3min = -0.5
 x3max = 0.5
+
+<refined_region3>
+level = 1
+x1min = -64.0
+x1max = 64.0
+x2min = -64.0
+x2max = 64.0
+x3min = -64.0
+x3max = 64.0
+
+<refined_region4>
+level = 2
+x1min = -48.0
+x1max = 48.0
+x2min = -48.0
+x2max = 48.0
+x3min = -48.0
+x3max = 48.0
+
+<refined_region5>
+level = 3
+x1min = -16.0
+x1max = 16.0
+x2min = -16.0
+x2max = 16.0
+x3min = -16.0
+x3max = 16.0
 
 <problem>
 pgen_name = z4c_two_puncture
@@ -151,4 +184,16 @@ dcycle = 10
 
 <output2>
 file_type = rst
+dt = 5
+
+<output3>
+file_type = bin
+variable = pcgh
+slice_x3 = 0.0
+dt = 5
+
+<output4>
+file_type = bin
+variable = pcgh_con
+slice_x3 = 0.0
 dt = 5

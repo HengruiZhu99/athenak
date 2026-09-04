@@ -228,6 +228,9 @@ class PcGh {
   void ProjectAlgebraic(MeshBlockPack *pmbp);
   void ValidateState(const char *stage, bool check_rhs, bool check_constraints);
   void WriteBoundednessDiagnostics();
+  // NVCC requires member functions that enclose extended Kokkos lambdas to be public.
+  template <int FD_STENCIL>
+  void MeasureReductionTransfer(bool save_before, int operation);
   void BeginReductionTransfer(int operation);
   void EndReductionTransfer(int operation);
 
@@ -334,8 +337,6 @@ class PcGh {
   std::array<std::array<Real, 4>, 4> transfer_reduction_change{};
 
  private:
-  template <int FD_STENCIL>
-  void MeasureReductionTransfer(bool save_before, int operation);
   void BindVariables(DvceArray5D<Real> state, Variables &vars);
   void LoadGaugeA0Table();
   void ValidateGaugeA0Domain();
