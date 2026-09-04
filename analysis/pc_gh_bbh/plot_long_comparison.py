@@ -263,6 +263,44 @@ def constraint_change_summary(
     return result
 
 
+def constraint_peak_grid_phase(series: dict[str, np.ndarray],
+                               tracker: dict[str, np.ndarray],
+                               finest_dx: float = 1.0/16.0,
+                               x_window: tuple[float, float] = (0.75, 1.75)) -> dict:
+    """Relate local Hamiltonian peaks to puncture motion across finest cells."""
+    values = series["H"]
+    peak_indices = np.flatnonzero(
+        (values[1:-1] > values[:-2]) & (values[1:-1] >= values[2:])) + 1
+    entries = []
+    for index in peak_indices:
+        time = float(series["time"][index])
+        puncture_x = abs(float(np.interp(
+            time, tracker["time"], tracker["x"])))
+        if not x_window[0] <= puncture_x <= x_window[1]:
+            continue
+        entries.append({
+            "time": time,
+            "H": float(values[index]),
+            "abs_puncture_x": puncture_x,
+        })
+    cell_displacements = []
+    for previous, current in zip(entries, entries[1:]):
+        displacement = ((previous["abs_puncture_x"] - current["abs_puncture_x"])
+                        / finest_dx)
+        current["displacement_since_previous_peak_in_finest_cells"] = displacement
+        cell_displacements.append(displacement)
+    return {
+        "finest_dx": finest_dx,
+        "puncture_abs_x_window": list(x_window),
+        "peak_count": len(entries),
+        "median_peak_spacing_in_finest_cells": (
+            float(np.median(cell_displacements)) if cell_displacements else float("nan")),
+        "mean_peak_spacing_in_finest_cells": (
+            float(np.mean(cell_displacements)) if cell_displacements else float("nan")),
+        "entries": entries,
+    }
+
+
 def plot_constraints(series: dict[str, dict[str, np.ndarray]],
                      changes: dict[str, list[dict[str, float | int]]],
                      output_dir: Path) -> Path:
@@ -465,6 +503,9 @@ def main() -> None:
                 constraints[formulation], changes[formulation])
             for formulation in run_dirs
         },
+        "z4c_hamiltonian_peak_grid_phase": constraint_peak_grid_phase(
+            constraints["Z4c"],
+            load_tracker(only_path(run_dirs["Z4c"], "*.co_0.txt"))),
         "puncture_trajectory": trajectory_summary,
         "waveforms": waveform_summary,
     }
