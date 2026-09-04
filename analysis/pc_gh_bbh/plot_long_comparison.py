@@ -305,7 +305,6 @@ def plot_constraints(series: dict[str, dict[str, np.ndarray]],
                      changes: dict[str, list[dict[str, float | int]]],
                      output_dir: Path) -> Path:
     fig, axes = plt.subplots(2, 1, figsize=(10.5, 7.0), sharex=True)
-    slice_differences = []
     for row, constraint in enumerate(("H", "M")):
         axis = axes[row]
         for formulation in ("PC-GH", "Z4c"):
@@ -355,6 +354,7 @@ def plot_trajectories(run_dirs: dict[str, Path], output_dir: Path) -> tuple[Path
                     writer.writerow((formulation, puncture, *row))
 
     fig, axes = plt.subplots(2, 1, figsize=(10.5, 7.0), sharex=True)
+    slice_differences = []
     for index, linestyle in enumerate(("-", "--")):
         pcgh = slices["PC-GH"][index]
         axes[0].plot(pcgh["time"], pcgh["x"], color=COLORS["PC-GH"],
