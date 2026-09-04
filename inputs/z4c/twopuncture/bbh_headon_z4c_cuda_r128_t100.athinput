@@ -71,7 +71,9 @@ co_1_out_every = 1
 <mesh_refinement>
 refinement = adaptive
 num_levels = 8
-max_nmb_per_rank = 6000
+# The initial hierarchy has 1464 blocks.  Capacity 1800 permits the one-rank
+# memory smoke test and substantial AMR growth without allocating for 6000 blocks.
+max_nmb_per_rank = 1800
 refinement_interval = 10
 log_changes = true
 

@@ -8,8 +8,8 @@
 #SBATCH --gres=gpu:4
 #SBATCH --constraint=nomig&gpu80
 #SBATCH --time=01:00:00
-#SBATCH --output=/home/hz0693/pcgh-z4c-gpu-r128/logs/production_%x_%j.out
-#SBATCH --error=/home/hz0693/pcgh-z4c-gpu-r128/logs/production_%x_%j.err
+#SBATCH --output=/scratch/gpfs/FPRETORI/hz0693/pcgh-z4c-gpu-r128/logs/production_%x_%j.out
+#SBATCH --error=/scratch/gpfs/FPRETORI/hz0693/pcgh-z4c-gpu-r128/logs/production_%x_%j.err
 
 set -euo pipefail
 
@@ -24,7 +24,7 @@ source /home/hz0693/athenak_env
 repo=/home/hz0693/athenak-pcgh-cuda-20260904
 athena="${repo}/build-cuda-mpi-a100/src/athena"
 input="${repo}/inputs/z4c/twopuncture/bbh_headon_${FORMULATION}_cuda_r128_t100.athinput"
-run_root=/home/hz0693/pcgh-z4c-gpu-r128
+run_root=/scratch/gpfs/FPRETORI/hz0693/pcgh-z4c-gpu-r128
 run_dir="${run_root}/${FORMULATION}-r128-t100"
 segment_log="${run_dir}/segment-${SLURM_JOB_ID}.log"
 

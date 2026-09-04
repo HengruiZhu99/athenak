@@ -7,8 +7,8 @@
 #SBATCH --gres=gpu:4
 #SBATCH --constraint=nomig&gpu80
 #SBATCH --time=00:20:00
-#SBATCH --output=/home/hz0693/pcgh-z4c-gpu-r128/logs/smoke_%j.out
-#SBATCH --error=/home/hz0693/pcgh-z4c-gpu-r128/logs/smoke_%j.err
+#SBATCH --output=/scratch/gpfs/FPRETORI/hz0693/pcgh-z4c-gpu-r128/logs/smoke_%j.out
+#SBATCH --error=/scratch/gpfs/FPRETORI/hz0693/pcgh-z4c-gpu-r128/logs/smoke_%j.err
 
 set -euo pipefail
 
@@ -16,7 +16,7 @@ source /home/hz0693/athenak_env
 
 repo=/home/hz0693/athenak-pcgh-cuda-20260904
 athena="${repo}/build-cuda-mpi-a100/src/athena"
-run_root=/home/hz0693/pcgh-z4c-gpu-r128
+run_root=/scratch/gpfs/FPRETORI/hz0693/pcgh-z4c-gpu-r128
 
 mkdir -p "${run_root}/logs"
 date
