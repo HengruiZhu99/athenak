@@ -415,6 +415,7 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
                       color=COLORS[formulation], linewidth=width,
                       zorder=zorder, label=formulation)
         axis.axvline(20.0, color="0.45", linestyle=":", linewidth=0.8)
+        axis.axvline(35.0, color="0.45", linestyle=":", linewidth=0.8)
         axis.set_title(f"r = {radius} M")
         axis.grid(alpha=0.25)
     for axis in axes[-1, :]:
@@ -441,6 +442,7 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
         axes[row, 1].set_ylabel(f"{formulation}\n" + r"$r\,\mathrm{Im}(\Psi_4^{22})$")
     for axis in axes.flat:
         axis.axvline(20.0, color="0.45", linestyle=":", linewidth=0.8)
+        axis.axvline(35.0, color="0.45", linestyle=":", linewidth=0.8)
         axis.grid(alpha=0.25)
         axis.set_xlabel(r"$(t-r)/M$")
     axes[0, 0].legend(ncol=2, fontsize=8)
@@ -462,7 +464,9 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
             pulse_windows = {}
             for name, mask in (
                     ("early_u_lt_20", wave["retarded_time"] < 20.0),
-                    ("late_u_ge_20", wave["retarded_time"] >= 20.0)):
+                    ("merger_u_20_to_35", (wave["retarded_time"] >= 20.0)
+                                           & (wave["retarded_time"] < 35.0)),
+                    ("late_u_ge_35", wave["retarded_time"] >= 35.0)):
                 indices = np.flatnonzero(mask)
                 if indices.size:
                     index = int(indices[np.argmax(absolute_real[indices])])
@@ -478,11 +482,11 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
                 "imag_to_real_l2": imag_norm / real_norm if real_norm > 0.0 else float("nan"),
                 "pulse_windows": pulse_windows,
             }
-            if len(pulse_windows) == 2:
+            if "early_u_lt_20" in pulse_windows and "merger_u_20_to_35" in pulse_windows:
                 early = pulse_windows["early_u_lt_20"]["peak_abs_real_22"]
-                late = pulse_windows["late_u_ge_20"]["peak_abs_real_22"]
-                summary[formulation][str(radius)]["late_to_early_peak_ratio"] = (
-                    late/early if early > 0.0 else float("nan"))
+                merger = pulse_windows["merger_u_20_to_35"]["peak_abs_real_22"]
+                summary[formulation][str(radius)]["merger_to_early_peak_ratio"] = (
+                    merger/early if early > 0.0 else float("nan"))
     return [overlay_path, convergence_path], summary
 
 
