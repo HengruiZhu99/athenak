@@ -419,7 +419,7 @@ def plot_trajectories(run_dirs: dict[str, Path], output_dir: Path) -> tuple[Path
     }
     csv_path = output_dir / "puncture_trajectory_from_slice_minima.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.writer(stream)
+        writer = csv.writer(stream, lineterminator="\n")
         writer.writerow(("formulation", "puncture", "time", "x", "y", "z",
                          "min_alpha", "dx"))
         for formulation in ("PC-GH", "Z4c"):
