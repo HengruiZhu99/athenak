@@ -11,7 +11,7 @@
 #SBATCH --output=/scratch/gpfs/FPRETORI/hz0693/pcgh-z4c-gpu-r128/logs/production_%x_%j.out
 #SBATCH --error=/scratch/gpfs/FPRETORI/hz0693/pcgh-z4c-gpu-r128/logs/production_%x_%j.err
 
-set -euo pipefail
+set -eo pipefail
 
 : "${FORMULATION:?submit with --export=ALL,FORMULATION=z4c or pcgh}"
 if [[ "${FORMULATION}" != z4c && "${FORMULATION}" != pcgh ]]; then
@@ -20,6 +20,7 @@ if [[ "${FORMULATION}" != z4c && "${FORMULATION}" != pcgh ]]; then
 fi
 
 source /home/hz0693/athenak_env
+set -u
 
 repo=/home/hz0693/athenak-pcgh-cuda-20260904
 athena="${repo}/build-cuda-mpi-a100/src/athena"

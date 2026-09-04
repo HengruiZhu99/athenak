@@ -3,7 +3,7 @@
 # Each AthenaK invocation stops cleanly after 55 minutes and this driver
 # resumes from the newest checkpoint until the physical t=100 limit is met.
 
-set -euo pipefail
+set -eo pipefail
 
 : "${FORMULATION:?run with FORMULATION=z4c or FORMULATION=pcgh}"
 if [[ "${FORMULATION}" != z4c && "${FORMULATION}" != pcgh ]]; then
@@ -12,6 +12,7 @@ if [[ "${FORMULATION}" != z4c && "${FORMULATION}" != pcgh ]]; then
 fi
 
 source /home/hz0693/athenak_env
+set -u
 
 repo=/home/hz0693/athenak-pcgh-cuda-20260904
 athena="${repo}/build-cuda-a100/src/athena"
