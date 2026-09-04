@@ -28,17 +28,19 @@ for formulation in pcgh z4c; do
   mkdir -p "${run_dir}"
   cp "${input}" "${run_dir}/used_input.athinput"
   sha256sum "${athena}" "${input}" > "${run_dir}/provenance.sha256"
-  srun --nodes=1 \
-    --ntasks="${SLURM_NTASKS:-4}" \
-    --cpus-per-task="${SLURM_CPUS_PER_TASK:-12}" \
-    --gpus-per-task=1 \
-    --gpu-bind=single:1 \
-    "${athena}" \
-    -i "${input}" \
-    -d "${run_dir}" \
-    time/nlim=1 \
-    time/tlim=0.1 \
-    job/basename="${formulation}_gpu_smoke" 2>&1 | tee "${run_dir}/run.log"
+  (
+    cd "${run_dir}"
+    srun --nodes=1 \
+      --ntasks="${SLURM_NTASKS:-4}" \
+      --cpus-per-task="${SLURM_CPUS_PER_TASK:-12}" \
+      --gpus-per-task=1 \
+      --gpu-bind=single:1 \
+      "${athena}" \
+      -i "${input}" \
+      time/nlim=1 \
+      time/tlim=0.1 \
+      job/basename="${formulation}_gpu_smoke"
+  ) 2>&1 | tee "${run_dir}/run.log"
 done
 
 date

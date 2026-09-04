@@ -287,6 +287,11 @@ int main(int argc, char *argv[]) {
     return(0);
   }
 
+  // Physics-module constructors create persistent auxiliary outputs such as
+  // compact-object tracker files and waveform directories.  Enter the requested
+  // run directory before constructing the mesh so those files honor -d as well.
+  ChangeRunDir(run_dir);
+
   //--- Step 4. --------------------------------------------------------------------------
   // Construct Mesh.  Then build MeshBlockTree and add MeshBlockPack containing MeshBlocks
   // on this rank.  Latter cannot be performed in Mesh constructor since it requires
@@ -340,7 +345,6 @@ int main(int argc, char *argv[]) {
   // Construct Driver and Outputs. Actual outputs (including initial conditions) are made
   // in Driver.Initialize(). Add wall clock timer to Driver if necessary.
 
-  ChangeRunDir(run_dir);
   Driver* pdriver = new Driver(pinput, pmesh, wtlim, &timer);
   Outputs* pout = new Outputs(pinput, pmesh);
 

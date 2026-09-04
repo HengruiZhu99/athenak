@@ -48,16 +48,18 @@ date
 echo "RUN_DIR=${run_dir}"
 nvidia-smi --query-gpu=index,name,memory.total,memory.used --format=csv
 
-srun --nodes=1 \
-  --ntasks="${SLURM_NTASKS:-4}" \
-  --cpus-per-task="${SLURM_CPUS_PER_TASK:-12}" \
-  --gpus-per-task=1 \
-  --gpu-bind=single:1 \
-  "${athena}" \
-  "${run_args[@]}" \
-  -d "${run_dir}" \
-  job/basename="bbh_${FORMULATION}_cuda_r128_t100" \
-  -t 00:55:00 2>&1 | tee "${segment_log}"
+(
+  cd "${run_dir}"
+  srun --nodes=1 \
+    --ntasks="${SLURM_NTASKS:-4}" \
+    --cpus-per-task="${SLURM_CPUS_PER_TASK:-12}" \
+    --gpus-per-task=1 \
+    --gpu-bind=single:1 \
+    "${athena}" \
+    "${run_args[@]}" \
+    job/basename="bbh_${FORMULATION}_cuda_r128_t100" \
+    -t 00:55:00
+) 2>&1 | tee "${segment_log}"
 
 date
 if grep -q "Terminating on wall clock limit" "${segment_log}"; then
