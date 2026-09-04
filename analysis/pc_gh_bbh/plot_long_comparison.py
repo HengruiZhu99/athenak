@@ -423,10 +423,36 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
     for axis in axes[:, 0]:
         axis.set_ylabel(r"$r\,\mathrm{Re}(\Psi_4^{22})$")
     axes[0, 0].legend()
-    fig.suptitle("(2,2) waveform; dotted line separates early and late windows")
+    fig.suptitle("(2,2) waveform over full available time")
     fig.tight_layout()
     overlay_path = output_dir / "waveform_22_radii_overlay.png"
     fig.savefig(overlay_path, dpi=220)
+    plt.close(fig)
+
+    fig, axes = plt.subplots(3, 2, figsize=(12.0, 10.0), sharex=True, sharey=True)
+    for axis, radius in zip(axes.flat, RADII):
+        for formulation in ("PC-GH", "Z4c"):
+            wave = waves[formulation][radius]
+            width = 2.5 if formulation == "PC-GH" else 1.3
+            zorder = 2 if formulation == "PC-GH" else 3
+            axis.plot(wave["retarded_time"], wave["real_22"],
+                      color=COLORS[formulation], linewidth=width,
+                      zorder=zorder, label=formulation)
+        axis.axvline(20.0, color="0.45", linestyle=":", linewidth=0.8)
+        axis.axvline(35.0, color="0.45", linestyle=":", linewidth=0.8)
+        axis.set_xlim(-10.0, 45.0)
+        axis.set_ylim(-0.011, 0.011)
+        axis.set_title(f"r = {radius} M")
+        axis.grid(alpha=0.25)
+    for axis in axes[-1, :]:
+        axis.set_xlabel(r"$(t-r)/M$")
+    for axis in axes[:, 0]:
+        axis.set_ylabel(r"$r\,\mathrm{Re}(\Psi_4^{22})$")
+    axes[0, 0].legend()
+    fig.suptitle("(2,2) waveform: early transient and merger-window zoom")
+    fig.tight_layout()
+    zoom_path = output_dir / "waveform_22_merger_window_overlay.png"
+    fig.savefig(zoom_path, dpi=220)
     plt.close(fig)
 
     fig, axes = plt.subplots(2, 2, figsize=(12.0, 7.5), sharex=True)
@@ -487,7 +513,7 @@ def plot_waveform_overlays(waves: dict[str, dict[int, dict[str, np.ndarray]]],
                 merger = pulse_windows["merger_u_20_to_35"]["peak_abs_real_22"]
                 summary[formulation][str(radius)]["merger_to_early_peak_ratio"] = (
                     merger/early if early > 0.0 else float("nan"))
-    return [overlay_path, convergence_path], summary
+    return [overlay_path, zoom_path, convergence_path], summary
 
 
 def main() -> None:
