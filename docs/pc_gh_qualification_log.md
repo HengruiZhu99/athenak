@@ -1214,3 +1214,114 @@ histories, waveforms, logs, inputs, and provenance are collected under
 `qualification-runs-20260902/della-r128-t100-comparison/`.  The full long run
 does not change the classification from `PARTIAL IMPROVEMENT`; it provides a
 physical merger waveform but fails the long-term stability gate.
+
+## 2026-09-04 FO-GH damping and post-projection transfer audit
+
+The long-run square `curl(Q)` rings still identify fixed SMR interfaces as the source
+region, but the old transfer monitor could not distinguish the normal prolongation
+from the restriction/exchange/prolongation performed after reduction projection. It
+also measured only reduction constraints, so it was blind to a ghost `Q` change that
+leaves active `R_Q=Q-D(gtilde)` unchanged but immediately changes the active curl
+stencil. The monitor now records all four reduction and curl families around these
+seven operations independently:
+
+```text
+restrict, prolong, algebraic_project, reduction_project,
+post_project_restrict, post_project_exchange, post_project_prolong
+```
+
+The change is diagnostic only and does not alter the evolved state. A Release OpenMP
+TwoPunctures build passed, followed by this one-step, 456-block discriminator:
+
+```bash
+OMP_NUM_THREADS=12 build-twopuncture-omp-gcc/src/athena \
+  -i inputs/z4c/twopuncture/bbh_headon_pcgh.athinput \
+  job/basename=postproj_exchange time/nlim=1 time/tlim=0.011 time/ndiag=1 \
+  pc_gh/constraint_dcycle=1 pc_gh/boundedness_dcycle=1 \
+  output1/dcycle=1 output2/dt=100
+```
+
+Post-patch verification used `git diff --check`, Python byte-compilation of
+`analysis/pc_gh_bbh/plot_comparison.py`, and `cmake --build ... -j12` for
+`build-release`, `build-mpi-release`, `build-twopuncture-omp-gcc`, and
+`build-twopuncture-mpi`; all passed. Exact Minkowski passed in serial (one block,
+`0.00453s` elapsed at cycle zero) and on two MPI ranks (two blocks, `0.0467s`). The
+456-block discriminator also passed on two MPI ranks in `16.70s` through the first
+cycle, without deadlock in the new monitored exchange. Its key values agree with the
+OpenMP run to roundoff: normal-prolongation `delta curl(Q)=1.5536621454e-4`,
+post-projection-exchange `delta curl(Q)=1.2236015427e-4`, and final
+`curl(Q)=4.8264708118e-6`.
+
+At `t=0.01082531755M`, the absolute changes in the local `curl(Q)` norm were:
+
+| operation | max change |
+|---|---:|
+| normal restriction | 0 |
+| normal prolongation | `1.5536621454e-4` |
+| algebraic projection | `1.4729394733e-16` |
+| reduction projection | `6.3396473398e-5` |
+| post-projection restriction | 0 |
+| post-projection exchange | `1.2236015427e-4` |
+| post-projection prolongation | `3.5567981611e-7` |
+
+The final `curl(Q)` maximum was `4.8264708118e-6` and the final `R_Q` maximum was
+`7.5848846297e-13`. A temporary discriminator disabled only the hard `Q` reset while
+retaining the `p`, `L`, and `B` reduction projections. That increased the final
+`curl(Q)` maximum to `5.8963680908e-5` and left `R_Q=6.6613628963e-6`. The temporary
+switch was therefore removed. The hard `Q` projection and its exchange make large
+intermediate corrections, but at early time their net effect is corrective by about a
+factor of twelve in `curl(Q)` and by seven orders of magnitude in `R_Q`. Consequently,
+the late `dRQ_reduction_project_max=1.9963` is evidence that the evolved `Q` has already
+departed strongly from the derivative manifold; it is not by itself evidence that the
+projection caused the departure. The normal AMR prolongation remains the directly
+measured initial curl injector. A nonlinear feedback involving the projection remains
+possible, but has not been demonstrated by a projection-off evolution.
+
+Durable boundedness tables and logs are under
+`qualification-runs-20260902/amr-transfer-discriminator/`. The baseline table SHA-256
+is `e4df9c998de6063a4b7a714ae6236e6bbd2faf97c3ebd2844a13cf6ff4f4d7aa`; the
+temporary no-`Q`-projection table SHA-256 is
+`73cb3dbbb275a03e26511b4f30330a9ad65d577b55c6951e0de64365415332a8`.
+
+The standard SXS first-order GH system separates gauge-constraint and reduction-
+constraint damping. In Lindblom et al., positive `gamma0` damps the spacetime GH
+constraint while positive `gamma2` gives, at principal constraint-propagation order,
+
+```text
+partial_t C_iab - beta^k partial_k C_iab ~= -alpha gamma2 C_iab.
+```
+
+The present PC-GH `kappa` is `gamma0`-like: it acts on `Cperp` and `Z`, not on `R_Q`
+or `curl(Q)`. The derivation deliberately uses `(gamma1,gamma2)=(-1,0)`. Merely
+changing `kappa` therefore cannot directly cure this failure.
+
+The public SXS/SpECTRE inspiral pipeline states that its damping choices are empirical
+from successful SpEC binary-black-hole evolutions and assigns the same moving triple-
+Gaussian function to `gamma0` and `gamma2`. Its equal-mass `M=1`, separation
+`D=15.366M` cylindrical BBH example uses
+
+```text
+gamma0 = gamma2 = 0.001
+  + 8 exp(-r_A^2/3.5^2) + 8 exp(-r_B^2/3.5^2)
+  + 0.075 exp(-r^2/38.415^2),
+gamma1 = -0.999 + 0.999 exp(-r^2/153.66^2).
+```
+
+The approximate general scaling is hole amplitude `4/m`, hole width `7m`, central
+width `2.5D`, and `gamma1` transition width `10D`. These values are not portable
+unchanged to puncture finite differences: SXS combines them with DG upwind-penalty
+interface fluxes, filtering, excision, and constraint-preserving Bjorhus outer
+boundaries. Relevant primary sources are the
+[FO-GH formulation](https://arxiv.org/abs/gr-qc/0512093), the SXS
+[inspiral pipeline](https://github.com/sxs-collaboration/spectre/blob/develop/support/Pipelines/Bbh/Inspiral.yaml),
+the exact [cylindrical BBH input](https://github.com/sxs-collaboration/spectre/blob/develop/tests/InputFiles/GeneralizedHarmonic/CylindricalBinaryBlackHole.yaml),
+and the implemented [GH time derivative](https://github.com/sxs-collaboration/spectre/blob/develop/src/Evolution/Systems/GeneralizedHarmonic/TimeDerivative.tpp).
+
+A correctly transformed positive `gamma2` term could damp `R_Q` between interface
+injections and may delay the instability. It cannot make independently interpolated
+`Q` and `gtilde` constraint-compatible. A spatially varying `gamma2` also contributes
+gradient-of-`gamma2` terms to the curl propagation. No new damping was added here:
+doing so without a matched interface-transfer control would violate the requirement
+that damping not substitute for a correct formulation. The next implementation gate
+is a constraint-compatible `Q` prolongation or an equivalent first-order interface
+treatment, tested against the new per-operation curl monitor.

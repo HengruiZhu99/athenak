@@ -1,0 +1,35 @@
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+
+Root grid = 4 x 4 x 4 MeshBlocks
+Total number of MeshBlocks = 456
+Number of logical  levels of refinement = 6 (7 levels total)
+Number of physical levels of refinement = 4 (5 levels total)
+  Physical level = 0 (logical level = 2): 48 MeshBlocks, cost = 48
+  Physical level = 1 (logical level = 3): 112 MeshBlocks, cost = 112
+  Physical level = 2 (logical level = 4): 112 MeshBlocks, cost = 112
+  Physical level = 3 (logical level = 5): 120 MeshBlocks, cost = 120
+  Physical level = 4 (logical level = 6): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 1
+PC-GH ADM initialization: min unguarded w=0.031115, division_floor=1e-14, guarded cells=0
+TwoPuncture initialized.
+
+Setup complete, executing task list(s)...
+
+elapsed=3.828002e+00 cycle=0 time=0.000000e+00 dt=1.082532e-02
+elapsed=5.771508e+00 cycle=1 time=1.082532e-02 dt=1.746825e-04
+
+Terminating on cycle limit
+time=1.082532e-02 cycle=1
+tlim=1.100000e-02 nlim=1
+
+Current number of MeshBlocks = 456
+0 MeshBlocks created, 0 deleted by AMR
+
+MeshBlock-cycles = 456
+cpu time used  = 1.943521e+00
+zone-cycles/cpu_second = 1.201284e+05
+particle-updates/cpu_second = 0.000000e+00

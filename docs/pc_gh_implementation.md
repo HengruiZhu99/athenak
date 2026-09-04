@@ -163,6 +163,12 @@ zero shift, and zero extrinsic curvature. Its MPI-capable diagnostics fail on th
 first nonfinite state, RHS, constraint, characteristic speed, determinant, or
 eigenvalue; on negative `w/rho`; or on a non-SPD conformal metric. They record all
 field, constraint, transfer-change, and RHS bounds throughout the run.
+The transfer monitor records changes in all four reduction and curl norms and brackets
+seven operations separately: the normal restriction and prolongation, algebraic
+projection, reduction projection, and the restriction, ghost exchange, and
+prolongation that follow reduction projection.  This separation is necessary because
+the reduction norm of an active `Q` cell does not detect an independently interpolated
+ghost `Q`, whereas the active-cell `curl(Q)` stencil does.
 `tst/inputs/z4c_one_puncture_control.athinput` makes the actual Z4c gauge
 defaults explicit for a matched control.
 

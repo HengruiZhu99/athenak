@@ -153,8 +153,9 @@ and they do not close Gates 9, 12, or 13.
 Every configured boundedness pass records min/max `w,rho,alpha`, maxima of
 `p,L,Cperp,Z,K,Atilde,beta,Q,B`, determinant/principal-minor/eigenvalue bounds, every
 GH/ADM/reduction/curl/algebraic diagnostic, both RHS-family maxima, and changes in all
-four reduction norms across restriction, prolongation, and projection. The stationary
-target problem also writes per-variable maxima and their locations in serial runs.
+four reduction and curl norms across restriction, prolongation, projection, and the
+dedicated post-projection restriction/exchange/prolongation. The stationary target
+problem also writes per-variable maxima and their locations in serial runs.
 
 The one-puncture moving-gauge diagnostic is MPI-capable and fails closed at the first
 nonfinite evolved state, RHS, constraint, or characteristic speed; negative `w/rho`;

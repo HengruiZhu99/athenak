@@ -101,8 +101,8 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   Kokkos::realloc(u1, nmb, npcgh, ncells3, ncells2, ncells1);
   Kokkos::realloc(u_rhs, nmb, npcgh, ncells3, ncells2, ncells1);
   Kokkos::realloc(u_con, nmb, ncon, ncells3, ncells2, ncells1);
-  Kokkos::realloc(transfer_reduction_before, nmb, 4, ncells3, ncells2, ncells1);
-  Kokkos::realloc(transfer_reduction_after, nmb, 4, ncells3, ncells2, ncells1);
+  Kokkos::realloc(transfer_reduction_before, nmb, 8, ncells3, ncells2, ncells1);
+  Kokkos::realloc(transfer_reduction_after, nmb, 8, ncells3, ncells2, ncells1);
   Kokkos::realloc(u_weyl, nmb, 2, ncells3, ncells2, ncells1);
   Kokkos::deep_copy(u_con, 0.0);
   BindVariables(u0, u);

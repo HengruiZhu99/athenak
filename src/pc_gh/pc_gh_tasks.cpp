@@ -217,6 +217,9 @@ TaskStatus PcGh::SendProjection(Driver *pdriver, int stage) {
   if (!opt.project_reduction_constraints || stage != pdriver->nexp_stages) {
     return TaskStatus::complete;
   }
+  bool const monitor = opt.boundedness_output
+      && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0;
+  if (monitor) BeginReductionTransfer(5);
   return pbval_u->PackAndSendCC(u0, coarse_u0);
 }
 
@@ -224,7 +227,11 @@ TaskStatus PcGh::RecvProjection(Driver *pdriver, int stage) {
   if (!opt.project_reduction_constraints || stage != pdriver->nexp_stages) {
     return TaskStatus::complete;
   }
-  return pbval_u->RecvAndUnpackCC(u0, coarse_u0);
+  TaskStatus const status = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
+  bool const monitor = status == TaskStatus::complete && opt.boundedness_output
+      && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0;
+  if (monitor) EndReductionTransfer(5);
+  return status;
 }
 
 TaskStatus PcGh::SendWeyl(Driver *pdriver, int stage) {
@@ -277,9 +284,14 @@ TaskStatus PcGh::RestrictWeyl(Driver *pdriver, int stage) {
 }
 
 TaskStatus PcGh::RestrictProjection(Driver *pdriver, int stage) {
-  if (opt.project_reduction_constraints && stage == pdriver->nexp_stages
-      && pmy_pack->pmesh->multilevel) {
+  bool const active = opt.project_reduction_constraints
+      && stage == pdriver->nexp_stages && pmy_pack->pmesh->multilevel;
+  bool const monitor = active && opt.boundedness_output
+      && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0;
+  if (active) {
+    if (monitor) BeginReductionTransfer(4);
     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
+    if (monitor) EndReductionTransfer(4);
   }
   return TaskStatus::complete;
 }
@@ -294,9 +306,14 @@ TaskStatus PcGh::ProlongateWeyl(Driver *pdriver, int stage) {
 }
 
 TaskStatus PcGh::ProlongateProjection(Driver *pdriver, int stage) {
-  if (opt.project_reduction_constraints && stage == pdriver->nexp_stages
-      && pmy_pack->pmesh->multilevel) {
+  bool const active = opt.project_reduction_constraints
+      && stage == pdriver->nexp_stages && pmy_pack->pmesh->multilevel;
+  bool const monitor = active && opt.boundedness_output
+      && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0;
+  if (active) {
+    if (monitor) BeginReductionTransfer(6);
     pbval_u->ProlongateCC(u0, coarse_u0, true);
+    if (monitor) EndReductionTransfer(6);
   }
   return TaskStatus::complete;
 }

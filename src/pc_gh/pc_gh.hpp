@@ -334,7 +334,14 @@ class PcGh {
   std::vector<std::unique_ptr<HorizonDump>> phorizon_dump;
   std::vector<std::unique_ptr<CompactObjectTracker>> ptracker;
   Real dtnew;
-  std::array<std::array<Real, 4>, 4> transfer_reduction_change{};
+  // Reduction/curl-norm changes across the main transfer, algebraic/reduction
+  // projections, and the dedicated transfer that follows reduction projection.
+  // Keeping the post-projection restriction, exchange, and prolongation separate is
+  // essential:
+  // interpolating Q independently of gtilde need not commute with the discrete
+  // derivative used to define the Q reduction constraint.
+  // Columns are {Rw,RQ,Ralpha,RB,curl(p),curl(Q),curl(L),curl(B)}.
+  std::array<std::array<Real, 8>, 7> transfer_reduction_change{};
 
  private:
   void BindVariables(DvceArray5D<Real> state, Variables &vars);

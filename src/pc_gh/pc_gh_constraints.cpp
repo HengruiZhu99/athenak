@@ -432,7 +432,11 @@ void PcGh::MeasureReductionTransfer(bool save_before, int operation) {
     Real idx[3] = {1.0/size.d_view(m).dx1,
                    1.0/size.d_view(m).dx2,
                    1.0/size.d_view(m).dx3};
-    Real norm2[4] = {0.0, 0.0, 0.0, 0.0};
+    Real norm2[8] = {};
+    Real d_p[3][3] = {};
+    Real d_l[3][3] = {};
+    Real d_q[3][3][3][3] = {};
+    Real d_b[3][3][3] = {};
     Real const w = pc.w(m, k, j, i);
     Real const rho = pc.rho(m, k, j, i);
     for (int d = 0; d < 3; ++d) {
@@ -447,19 +451,51 @@ void PcGh::MeasureReductionTransfer(bool save_before, int operation) {
       norm2[0] += red_w*red_w;
       norm2[2] += red_alpha*red_alpha;
       for (int a = 0; a < 3; ++a) {
+        if (active) {
+          d_p[d][a] = Dx<FD_STENCIL>(d, idx, pc.p, m, a, k, j, i);
+          d_l[d][a] = Dx<FD_STENCIL>(d, idx, pc.L, m, a, k, j, i);
+        }
         Real const dbeta = active
             ? Dx<FD_STENCIL>(d, idx, pc.beta, m, a, k, j, i) : 0.0;
         Real const red_b = state(m, BIndex(d, a), k, j, i) - dbeta;
         norm2[3] += red_b*red_b;
+        for (int b = 0; b < 3; ++b) {
+          if (active) {
+            d_b[d][a][b] = Dx<FD_STENCIL>(
+                d, idx, state, m, BIndex(a, b), k, j, i);
+          }
+        }
         for (int b = a; b < 3; ++b) {
           Real const dg = active
               ? Dx<FD_STENCIL>(d, idx, pc.gtilde, m, a, b, k, j, i) : 0.0;
           Real const red_q = state(m, QIndex(d, a, b), k, j, i) - dg;
           norm2[1] += red_q*red_q;
+          for (int e = 0; e < 3; ++e) {
+            if (active) {
+              d_q[d][e][a][b] = Dx<FD_STENCIL>(
+                  d, idx, state, m, QIndex(e, a, b), k, j, i);
+            }
+          }
         }
       }
     }
-    for (int n = 0; n < 4; ++n) destination(m, n, k, j, i) = std::sqrt(norm2[n]);
+    for (int a = 0; a < 3; ++a) {
+      for (int b = a + 1; b < 3; ++b) {
+        Real const curl_p = d_p[a][b] - d_p[b][a];
+        Real const curl_l = d_l[a][b] - d_l[b][a];
+        norm2[4] += curl_p*curl_p;
+        norm2[6] += curl_l*curl_l;
+        for (int r = 0; r < 3; ++r) {
+          Real const curl_b = d_b[a][b][r] - d_b[b][a][r];
+          norm2[7] += curl_b*curl_b;
+          for (int s = r; s < 3; ++s) {
+            Real const curl_q = d_q[a][b][r][s] - d_q[b][a][r][s];
+            norm2[5] += curl_q*curl_q;
+          }
+        }
+      }
+    }
+    for (int n = 0; n < 8; ++n) destination(m, n, k, j, i) = std::sqrt(norm2[n]);
   });
   Kokkos::fence();
   if (save_before) return;
@@ -469,8 +505,8 @@ void PcGh::MeasureReductionTransfer(bool save_before, int operation) {
   int const nx3 = indcs.nx3;
   int const nkji = nx1*nx2*nx3;
   int const ncells = nmb*nkji;
-  Real changes[4] = {0.0, 0.0, 0.0, 0.0};
-  for (int n = 0; n < 4; ++n) {
+  Real changes[8] = {};
+  for (int n = 0; n < 8; ++n) {
     Real local_change = 0.0;
     Kokkos::parallel_reduce("PC-GH transfer reduction change",
     Kokkos::RangePolicy<>(DevExeSpace(), 0, ncells),
@@ -486,9 +522,9 @@ void PcGh::MeasureReductionTransfer(bool save_before, int operation) {
     changes[n] = local_change;
   }
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, changes, 4, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, changes, 8, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
 #endif
-  for (int n = 0; n < 4; ++n) {
+  for (int n = 0; n < 8; ++n) {
     transfer_reduction_change[operation][n] = std::fmax(
         transfer_reduction_change[operation][n], changes[n]);
   }
@@ -630,13 +666,18 @@ void PcGh::WriteBoundednessDiagnostics() {
            << " max_p max_L max_Cperp max_Z max_K max_Atilde max_beta max_Q max_B"
            << " min_detg max_abs_detg_minus_1 min_minor1 min_minor2 min_eigenvalue";
     for (int n = 0; n < ncon; ++n) output << ' ' << ConstraintNames[n] << "_max";
-    char const * const operations[4] = {
+    char const * const operations[7] = {
       "restrict", "prolong", "algebraic_project", "reduction_project",
+      "post_project_restrict", "post_project_exchange", "post_project_prolong",
     };
     char const * const reductions[4] = {"Rw", "RQ", "Ralpha", "RB"};
-    for (int op = 0; op < 4; ++op) {
+    char const * const curls[4] = {"curlp", "curlQ", "curlL", "curlB"};
+    for (int op = 0; op < 7; ++op) {
       for (int red = 0; red < 4; ++red) {
         output << " d" << reductions[red] << '_' << operations[op] << "_max";
+      }
+      for (int curl = 0; curl < 4; ++curl) {
+        output << " d" << curls[curl] << '_' << operations[op] << "_max";
       }
     }
     output << '\n';

@@ -241,8 +241,13 @@ def plot_pcgh_boundedness(path: Path, output_dir: Path) -> tuple[Path, dict]:
         "dRw_reduction_project_max", "dRQ_reduction_project_max",
         "dRalpha_reduction_project_max", "dRB_reduction_project_max",
     )
+    curl_transfer_names = (
+        "dcurlQ_prolong_max", "dcurlQ_reduction_project_max",
+        "dcurlQ_post_project_exchange_max", "dcurlQ_post_project_prolong_max",
+    )
     has_projection_monitor = all(name in columns for name in projection_names)
-    nrows = 4 if has_projection_monitor else 3
+    has_curl_transfer_monitor = all(name in columns for name in curl_transfer_names)
+    nrows = 3 + int(has_projection_monitor) + int(has_curl_transfer_monitor)
     fig, axes = plt.subplots(nrows, 1, figsize=(10.5, 3.0*nrows + 1.0), sharex=True)
     for name, label in (("min_w", "min w"), ("min_alpha", "min lapse"),
                         ("min_eigenvalue", "min eig(gtilde)")):
@@ -263,6 +268,14 @@ def plot_pcgh_boundedness(path: Path, output_dir: Path) -> tuple[Path, dict]:
             axes[3].semilogy(columns["time"], np.maximum(columns[name], 1.0e-30),
                             label=label)
         axes[3].set_ylabel("projection correction")
+    if has_curl_transfer_monitor:
+        row = 3 + int(has_projection_monitor)
+        labels = ("main prolong", "Q projection", "post-project exchange",
+                  "post-project prolong")
+        for name, label in zip(curl_transfer_names, labels):
+            axes[row].semilogy(columns["time"], np.maximum(columns[name], 1.0e-30),
+                              label=label)
+        axes[row].set_ylabel(r"change in $|\mathrm{curl}\,Q|$")
     axes[-1].set_xlabel(r"$t/M$")
     for axis in axes:
         axis.grid(alpha=0.25)
@@ -291,6 +304,13 @@ def plot_pcgh_boundedness(path: Path, output_dir: Path) -> tuple[Path, dict]:
         summary["maximum_reduction_projection_correction"] = {
             label: float(np.max(columns[name]))
             for name, label in zip(projection_names, ("p", "Q", "L", "B"))
+        }
+    if has_curl_transfer_monitor:
+        summary["maximum_curl_q_transfer_change"] = {
+            label: float(np.max(columns[name]))
+            for name, label in zip(curl_transfer_names, (
+                "main_prolong", "q_projection", "post_project_exchange",
+                "post_project_prolong"))
         }
     return output, summary
 
