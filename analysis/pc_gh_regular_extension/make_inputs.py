@@ -94,6 +94,7 @@ def main():
                           else 'z4c_one_puncture_control_smr.athinput')
                 b = load(source)
                 b.pop('refined_region4')
+                b['mesh_refinement']['max_nmb_per_rank'] = '512'
                 if hierarchy == 'uniform':
                     b = {name: values for name, values in b.items()
                          if name != 'mesh_refinement' and not name.startswith('refined_region')}
@@ -150,7 +151,7 @@ def main():
                             x2min='-3.999999', x2max='3.999999', x3min='-3.999999', x3max='3.999999')
                     write(out/'amr-pulse'/f'{family}-l{rate}-n{n}-smr{int(refined)}.athinput', b)
     # Exact established large-domain input, including its dynamic chi criterion.
-    path = ROOT/'qualification-runs-20260902/della-r128-t100-comparison/raw/pcgh-r128-t100/used_input.athinput'
+    path = ROOT/'inputs/z4c/twopuncture/bbh_headon_pcgh_cuda_r128_t100.athinput'
     b = parse(path.read_text())
     b['job']['basename'] = 'pcgh_regular_advective_headon'
     reduction(b, 1)

@@ -22,8 +22,8 @@ Della deployment must use a fresh source/scratch location. Keep the old binary a
 run trees untouched. Include the pinned Kokkos submodule and preserve the source
 commit, working diff, and submodule hash. The earlier environment is
 `/home/hz0693/athenak_env`; the existing Linux TwoPunctures installation can be
-located in `/home/hz0693/athenak-pcgh-cuda-20260904/twopuncturesc` after access is
-restored. Do not copy the macOS static library into a Linux build.
+located in `/home/hz0693/TwoPuncturesC`. Do not copy the macOS static library into
+a Linux build.
 
 ```sh
 source /home/hz0693/athenak_env
@@ -73,7 +73,15 @@ Qualification order and interpretation:
    improvements. The saved old projected kappa=0 baseline is not a one-parameter
    damping comparison.
 
-The current remote obstacle is SSH authentication. A batch connection reaches
-`hz0693@della-vis1.princeton.edu` but is denied; the Mac's SSH agent has no identities.
-No jobs have been launched by this harness. Do not classify symbolic or zero-step
-results as completed puncture, AMR, or binary qualification.
+SSH access was restored through the user's multiplexed connection. CUDA oracle,
+flat, compact-pulse and shifted-wave gates have now been run; see the dated
+qualification log. Puncture screening and controls are in progress. None of these
+early gates establishes puncture or merger qualification.
+
+`run_collection.py` runs only an explicitly selected input group and stops on a
+failed process. `summarize_pulses.py` and `plot_cuda_pulses.py` aggregate the pulse
+resolution ladder, retaining the underresolved coarse points. Native puncture
+profiles use `analyze_native_puncture.py`: no Cartesian interpolation or nonfinite
+mask is used, and the actual slice cell-center offset is retained. Native binary
+fields have float32 output precision; analysis promotes them to float64. Full
+volume bounds and operation maxima remain the production double-precision logs.

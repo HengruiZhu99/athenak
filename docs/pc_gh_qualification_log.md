@@ -1404,3 +1404,64 @@ a 3D interface pulse, and the established large-domain adaptive head-on setup.
 Primary inputs disable reduction and GH gauge projection. A numerical advantage
 must be established before the binary gate. Existing projected-run corrections
 and the 73.7999M failure remain unchanged evidence.
+
+
+## 2026-09-04/05: CUDA regular-extension gates and first puncture screens
+
+**PARTIAL IMPROVEMENT; PUNCTURE QUALIFICATION IN PROGRESS.** The user restored
+SSH access with a persistent control connection. All new work uses the fresh
+Della tree `/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b`.
+Local evidence is in `qualification-runs-20260904/regular-extension/della-cuda`.
+The initial CUDA RK execution exposed a pre-existing capture of host `this` in
+PC-GH update kernels. Commit `e0d27b14` captures the Kokkos Views directly. The
+remote source base is `64c8f90b` plus the preserved working patch; each run records
+its actual executable hash, input, source diff, CMake cache and argument arrays.
+The pre-rebuild `binary.sha256` is historical; per-run hashes identify the tested
+executable.
+
+The actual CUDA execution-space check passes. Twelve full production principal
+matrices and the independent on-manifold 55-row equality check pass on CUDA. The
+exact all-real-k Fourier verification also passes using the CUDA-measured source
+and principal matrices. All three exact Minkowski controls reach t=1 with exactly
+zero state/ADM/RHS errors.
+
+The initial 80 compact-pulse runs, 16 additional spatial refinements, eight stiff
+time-step refinements, and eight amplitude controls all finish cleanly. Families
+p/Q/L/B are independently excited, with longitudinal and transverse derivatives,
+rates 0/1/4 and stiff rate 100. At transverse rate 1 the compact bump is initially
+underresolved: adjacent L2 orders progress from 1.21, 1.40, 1.61, 1.80 to 1.927
+and 1.984 at N=2048 and 4096. All four families share those asymptotic orders.
+At N=4096 the fitted speed is -0.499994782 against -0.5 and rate errors are below
+7e-12. The worst small-amplitude rate discrepancy in the initial rate-0/1/4
+collection is 2.202e-5. Increasing amplitude from 1e-8 to 1e-6 reduces the worst
+longitudinal rate-4 discrepancy to 2.26e-7, consistent with gradient cancellation
+at tiny final signal levels. Stiff rate-100 fits at CFL .2/.1/.05 have errors
+1.574e-3, 9.046e-5 and 5.423e-6: temporal orders 4.12 and 4.06. No dissipation or
+projection is used in these pulse tests. These results verify the intended flat
+transport/damping behavior, not black-hole stability.
+
+All nine shifted-wave evolutions finish at t=1. The pre-existing strict
+all-sector convergence checker passes without changing its minimum-order 1.8 or
+exact-sector tolerance 1e-12. Worst orders are 1.85949 (legacy), 1.85972 (new rate
+zero), and 1.89707 (new rate one); aggregate state order is 1.991. These are
+consistency checks in harmonic gauge, not an extension of the moving-gauge
+hyperbolicity theorem.
+
+The first three rate-one static-AMR puncture screens reach 6M at h=1/8,1/10,1/12,
+with KO=.3, RK4/CFL=.1 and both reduction/GH projections disabled. All full-volume
+fields are finite and minimum conformal eigenvalues exceed .936. Exterior r>1
+GH/ADM/reduction/curl RMS errors decrease with refinement. However, maximum Q curl
+increases (.725, .985, 1.234), and native peak rho grows (1.911, 2.527, 3.134).
+The coarse native reflection/x-y interchange residual is below 4.6e-13; native
+binary output is float32, while full-volume diagnostics remain double precision.
+Actual cell radii, including the off-plane cell-center offset, are retained; the
+initial native w profile agrees with the analytic wormhole to binary precision.
+The growing inner rho precludes a puncture-regularity claim from these screens.
+
+At h=1/8, rate one reduces r>1 reduction RMS from .001168 to .000630 and maximum
+Q curl from 1.721 to .725 compared with the new rate-zero equations. GH and ADM
+errors are slightly larger, so this is mixed evidence, not a clear qualification
+advantage. The legacy zero-rate control also reaches 6M on this coarse fixture;
+this does not reproduce or invalidate the earlier different binary failure.
+Uniform-grid, finer-AMR, longer/larger-domain and matched Z4c controls remain in
+progress. No new binary or AMR-interface evolution gate has yet been advanced.

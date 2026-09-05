@@ -1,0 +1,2237 @@
+{
+  "runs": [
+    {
+      "group": "flat",
+      "run": "minkowski-advective-l0",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "00ae31c78e5dfe9e5795af5dd8652bfb845d6ca5b637f36949fc57a11f9655a3",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:11:39.273076+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "flat",
+      "run": "minkowski-advective-l1",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "698b079a67ac83854199c90a3f2142de406cf7de66946d7402a38b01635962d9",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:11:40.208189+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "flat",
+      "run": "minkowski-legacy-l0",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "5bff67b8397b418a39f2081aaa0e90b7a9e0d6dbae31fa4f86417744af570a2d",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:11:41.023280+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-amplitude",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "71b9da204db2a91eea83d5d97b16bb7c35e56e031d7295ea2e6056bd2d6bf965",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:13:13.719648+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d0-l0-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "1e64a08b831552283e4e9b9f8f54d6f91ce4ed8c4f8c2e2d14f57fb44e7d212c",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:13:17.553418+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d0-l0-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "0bc88a48f03cc6478bcaf34c16ca515a35ea74dd5c6939d34cd80e80c20a6d7c",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:13:22.769774+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d0-l0-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "b8c4c61e940499ca4727486adc712e17325748b4fc8bf4a330e20afc9e33eefc",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:13:33.161632+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d0-l1-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "9cd8346fe5b18d8b817a8aa9c19e8ad011e2398345c8045c910d79fdf619a898",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:13:35.488703+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d0-l1-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "26c434ee731645c9880de734bd9b39c2ccc268bf0f86851f29f622d1d7623c76",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:13:39.123959+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d0-l1-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "e665f52120af83a92a710063a3e56dc50a737048172efb3dcb6d3d83c124c1f1",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:13:46.953151+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d0-l4-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "1b2e0d5ef1a4b0c4b2ab51342c4fd36d41fa1257937ecaee22c955da4178d9ac",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:13:50.225470+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d0-l4-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "1492e12a372855c603df266321a0deb29723a92bd6d2f76a5671ee95d343026c",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:13:56.513198+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d0-l4-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "0762081a76d5b60b02a16b962907d8de979401acc917e1f8b42ddddd67f85e02",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:14:07.333867+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d1-l0-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "c5e40a48686e75580e576a3ae20e61861a6b9e8e52cad602636640fdcc61806a",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:14:10.685501+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d1-l0-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "0d6c7ba9b440bd54c7d5fd711431d57adf2f208d5d30194058c89c1ed7804539",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:14:16.970565+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d1-l0-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "723bacd49aceddd1682befa28f8bcccc3bbad140b802b7c602380360f4864313",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:14:28.138936+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d1-l1-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "732a12849f50477d65f5e56d8b9d9ea6318fea1d863d7200e7b13d7a1b87b080",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:14:31.432645+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d1-l1-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "471421a6d395f9f9ba0900564fd86dc52dc7b795792043e2e006060dc3df75cb",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:14:37.871727+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d1-l1-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "a0c484a3fbbfa39c3354404c90769618cb9b5d7aac849761af115afdd00358e4",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:14:49.374835+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d1-l4-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "cc6d6280106bd51c881798b8407f008d8ca3ef716360a1fe1f578eba19c80634",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:14:52.833392+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d1-l4-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "be487216d4b18ef427a8b682da1a81d7981c084b69c50b0b4f19d40fac7e19ef",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:14:59.320960+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-d1-l4-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "12054009436a305e8f9208389cd6e5ff4549e427d587045b399f3cbe74479c45",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:15:10.968674+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "B-stiff",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "d511f6205c718d9764dde4fe3b0ee6348f80480e93499616d9a8fe131fba0b92",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:15:14.651466+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-amplitude",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "2b37b08a1f652155303cddd1a29696e7304171f4f4641b7b4c09ab69980d8793",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:15:15.822757+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d0-l0-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "25916d96e6ba4afca5586aea23716fff3f034c70214a9e8e67c08525a5fbab5e",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:15:22.025464+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d0-l0-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "1f33e1a2e6eec56361fe250cfdef2a34bd05ee09c4f61dd5edb02706aeb07ec3",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:15:28.115869+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d0-l0-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "9ae4370c4deb136b6848f6ede54915cd8d01c8305863266e28fe4837695447e2",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:15:39.427241+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d0-l1-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "d73cf8a677728673ce2c54f7ae9a59dc4e33648509f2ca0e9de5aa3112faf9e4",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:15:42.644721+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d0-l1-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "2eda905e94477ccede6c56483f2e09a580fd870b941e6fa5bc065b604bfdf463",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:15:48.414440+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d0-l1-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "bea063dbe647680eab321298219d9d68ef1e5f5a1dbf5402e354b003388adc98",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:16:00.148492+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d0-l4-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1366 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "06d42fe49797ec426346ee52f15f06f590e05d7f6cddfa3873ff9f50c68d3174",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:16:03.314128+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d0-l4-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1366 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "cb9bf289992e0af6d949308ef08ef60066c977dc193b9673c1a8a342d0307e35",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:16:09.466811+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d0-l4-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "7837eb7260f23038690ea52e56cca5b94b94952d3874853c6aa9178c68826a17",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:16:21.206372+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d1-l0-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "1d7e6824944a886cc2e1c98c808800b85a58339142fc2e94b9aee90ca1deb0ce",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:16:24.945135+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d1-l0-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "805642eee177502c0a563479b1e65f1a87da5091f84b52c505916dbd729ee2a3",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:16:30.981713+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d1-l0-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "f68872101296885bcd64968a37b4d1daaa2570485286852c2ae5984c8ec057c5",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:16:42.977437+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d1-l1-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "fc09ea06cfce220d2e6a8f1c6bc4ea17d2c05648437a5ba1570d7ad36b672936",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:16:46.152892+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d1-l1-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "0ecbcda61246a0365f98fefb49f4187c01b37a606c3a5cf780e1c21716240203",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:16:52.126598+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d1-l1-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "bfe18102daa0d8381bfd602f03f9e03ead30cfd76724caf191242d98abd6ee79",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:03.673504+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d1-l4-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "eed2753b5a4c9df37e0525f9e7ddd16efb5d22b75217fa525a498379cdeed59c",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:06.736229+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d1-l4-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "170f890c88a133c615758e126db3b7dce7906fc2b9d2a97b85adea5ce2a730be",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:12.641775+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-d1-l4-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "1a3e2bf60ca105c94bfeac55cfabdee0ac8fe31e86419a98a6e5b6bd870f66e0",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:23.916332+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "L-stiff",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "a555d3231e66e0323970b8e66f111db8d8d8a96a94d4c06f3208898fc6683fdc",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:27.559411+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-amplitude",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "431d6f37fd2155c91b2ecee9cba7fd1a1c53e3066d3814cab194acd28ae3a663",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:28.683824+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d0-l0-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "3757488b8a0dc3419b43c86c432199a1d3482ba0c5774369b3212556b406f74e",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:34.368731+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d0-l0-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "e2be8bbd4970ae8d7bfa39cc951dc33206095d0ead567b403b3f91fa96cc2246",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:40.360353+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d0-l0-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "5566f0d25962c84a6aafefc4368d14e6f5c59c20bbb4b3ed4ed99bc23653e974",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:51.074692+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d0-l1-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "fafc05c7915fe29a425670afe9e693d2b97cd0635eb1e0035aefb0564b02798e",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:54.411734+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d0-l1-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "7df60c942ac2f2089700d99e75af85693f74e2f3c43086d0a3bc4f2d91a7089e",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:00.347748+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d0-l1-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "6bcea3ce5bc97676fc1eb72cdcfa4f26b7b0f44b5b5a867726c2a4dd0b4bec1c",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:11.337108+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d0-l4-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "b86af2ff6b44bb9d96f4f9ac500b5d12688065b424420a6d6b268d4cbef0570c",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:14.938694+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d0-l4-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "056724e5597d8d2c0b32ac8aba4b1600dfd466c6c61f380685aa16c389d1eef1",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:20.859998+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d0-l4-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1429 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "1f360063c497cc7fd978e41df696a91f34f618eb1e3e0323af644bfd3fe6f37e",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:32.332707+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d1-l0-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1370 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "4cd833a38dd00a0bc91177fe884f6694be628216408f1928cfd4f90cbfc2dff1",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:35.562679+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d1-l0-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1417 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "3a51a5277519b44806f751fd0f78c8527e03a6658c8211a1af44ba298226569d",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:41.518417+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d1-l0-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "3ae5b33aae4f371e5867630bf69ca0459a76950de8ab717a18d6797144ccbf8e",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:53.623389+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d1-l1-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "c88f4afa0748e487c9555031b632c34a4590cb1cac6c2b094ae88d46bfdd99ed",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:56.962570+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d1-l1-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "eea14cca5f1c537d5a260ea595de06be5ec70e99cbb65d85a21eba09ccf6b98b",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:03.249612+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d1-l1-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "ceb5d49672b168f04f7521c7c85549055fbab27d920401ad7bc9c94d1ea4f5a4",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:14.549381+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d1-l4-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "bee9e9fabb54ae3663985eff655a2d7cef273fad2d0c9c5a0d5f8ce4bbf9fede",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:17.755330+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d1-l4-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "5780cadb705d980fe4fbcd644df5f2bc93670a9035e62547303e3f2597e443af",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:23.483080+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-d1-l4-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1409 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "cc489311a4ef3b87579e616841447c296e9e400967a2884840a8d902a9442de9",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:33.710357+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "Q-stiff",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1429 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "6371e6e95a51537a0b573b2d4b14521f41fa05cc41f4ead11b0348a43a0dc842",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:36.034565+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-amplitude",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1429 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "7742dd019d13dea0afc24e09e6ef207c7895c109b618b6e76bc8bd7985386fec",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:36.796718+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d0-l0-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1397 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "4f7b5d38386017c2879095bd2d28ec694d8850669394c5a27fddacea0f71e982",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:40.756269+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d0-l0-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1448 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "7c85b6249630a53e993c8d9614820ff7671fba402dc5b94e9a9324a25a9f2a6d",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:44.614156+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d0-l0-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1466 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "ca172e0b5d421423543fac053fa14477263ad863781e903773245fdfc98d7b9f",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:51.819952+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d0-l1-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1483 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "8e84ae56f15e8efdac53a035f9be65c7dc86f973ee280ba9ed4b6ba480c16b90",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:53.973620+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d0-l1-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "cdbcf9ce626434eb0cd296c471616f49880ec4c99b8a216f857d0ab11c203807",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:57.708185+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d0-l1-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "7f7f77686025c253c93c5c9806c7f65d547c612796dec313ede65f36274cec44",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:04.423155+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d0-l4-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "890fa4c68805b959ee18190dc0a66dca64d45b7cdb3eff32945b6cbc86196deb",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:06.479227+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d0-l4-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "032dd3e4385522c41c7de65767ee3960dc6d3640e9f5e4f6eb4c9f22b6f272e2",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:10.132175+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d0-l4-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "adda9ebf0bc3727684499eade36cf7a12170a8ead11a743e816f2c944b509a60",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:17.043846+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d1-l0-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "d0d16d6afa4dee6501cefe1314cc9b18e90023f9fb0568009155339d807bfdc5",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:19.159555+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d1-l0-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "8c7f2114a3d776b8502af50ff7050f98a5262a4d4a951e75474043af4e05b883",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:22.705657+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d1-l0-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "653a756431a0c05a8e94832a34c3c62a15a5c27e6894282c3645b9d434d46fb6",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:29.458690+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d1-l1-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "00e400c264fd76b840a5ad18ee6ae4a96dcdd347d0faa5ab7dfdb1737532b23a",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:31.548838+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d1-l1-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "da51163cd1299bcbf072347b46065e7ec4d73125d77a1c45bc5317278ab0ca75",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:35.173113+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d1-l1-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "a5aee0d2978a1cba469920e3da0920b2ac8f502ebe0ead21670d0e7acf5e36a9",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:41.998249+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d1-l4-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "07040f212684db0569fb0bb0f95a48541037b41bfec601243af4e3512de91d1b",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:44.182124+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d1-l4-n256",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "c8f9d260e6e10f663d08aaca875cf44a29b696022a3cc8e8134f3e9ee485719c",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:47.803955+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-d1-l4-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "fc01dafc8becf3594248c99dc856847d7586ed5bdcc150e7245b3415532044c3",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:54.470144+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulses",
+      "run": "p-stiff",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "55984f4904472dda91c147cae7902d5f486c744e85db05c0f3628e027e19a6ad",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:20:56.523430+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-fine",
+      "run": "B-d1-l1-n1024",
+      "host": "della-l02g16",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464526",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "980e13116b2f4fb74bb034edd95580fb9a7aaa3b02c3a5a0ec9ee8bd19f23cad",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:09.971894+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-fine",
+      "run": "B-d1-l1-n512",
+      "host": "della-l02g16",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464526",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "e59397d59d3e62461fe61216e4831a12e5e3f1f0647f84b80aa9b6ec0ba68417",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:32.468411+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-fine",
+      "run": "L-d1-l1-n1024",
+      "host": "della-l02g16",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464526",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "fbb3f3cbf4788cf95e4c23ea75923eb396f0cb9a150bbc2ac0f69ed6c3e9da49",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:17:43.627618+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-fine",
+      "run": "L-d1-l1-n512",
+      "host": "della-l02g16",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464526",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "d621aad19efbc6dad3bac12b6fccb5a999dd779693e9f37830c8bdbfd35f4364",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:05.522820+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-fine",
+      "run": "Q-d1-l1-n1024",
+      "host": "della-l02g16",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464526",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "facf16fe19dccab740f44d10d6fa164a79a680decc9681c9d60db8ac062907e2",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:16.958586+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-fine",
+      "run": "Q-d1-l1-n512",
+      "host": "della-l02g16",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464526",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "dbc2048baa40e410b5cb5959b6f892a43746252186cf97423b6919d49c5cacc1",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:38.834661+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-fine",
+      "run": "p-d1-l1-n1024",
+      "host": "della-l02g16",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464526",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "17b87359d31440b4370b5de734a0043b0b9cd37446c514982e5f794841d7dcef",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:18:50.101421+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-fine",
+      "run": "p-d1-l1-n512",
+      "host": "della-l02g16",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464526",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "ed3c759651d38fa89c2e41cc4f20953b3e2914568149ed78c83353536817eca7",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:19:12.137926+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-ultrafine",
+      "run": "B-d1-l1-n2048",
+      "host": "della-l02g3",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464623",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "eb177449994874b8513700a622a4f0858287fd3235a4e4f02750a12a90c44590",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:24:00.565668+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-ultrafine",
+      "run": "B-d1-l1-n4096",
+      "host": "della-l02g3",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464623",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "b918c17e96636c5ec3f447765eca452f5cbf02582a1a2b5a7df6de213f1f2be9",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:24:44.109416+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-ultrafine",
+      "run": "L-d1-l1-n2048",
+      "host": "della-l02g3",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464623",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "19f4733c2549f54365aab2419f9755b27c1e8a546fbe956ba3a16170a0a6babc",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:26:10.971762+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-ultrafine",
+      "run": "L-d1-l1-n4096",
+      "host": "della-l02g3",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464623",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "81bb346b3f0bd5d309bba25842cd0cb4fe6eb7dcf209fef5dec9e33f6f2a3594",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:26:54.671644+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-ultrafine",
+      "run": "Q-d1-l1-n2048",
+      "host": "della-l02g3",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464623",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "0f8aec7e499fcae627a68a53bde78459492cac5c932e52c5346445204111d445",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:28:22.485560+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-ultrafine",
+      "run": "Q-d1-l1-n4096",
+      "host": "della-l02g3",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464623",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "c46b4c227fdbe301d4fccafbaacab491b1c564f62c79eb98d0594fd591e4d903",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:29:06.337274+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-ultrafine",
+      "run": "p-d1-l1-n2048",
+      "host": "della-l02g3",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464623",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "b88966e5b3f8e5948fff8f353d5c100e4650b493f9f22c06f8d9cc45c651e814",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:30:33.699594+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "pulse-ultrafine",
+      "run": "p-d1-l1-n4096",
+      "host": "della-l02g3",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100 80GB PCIe, 81920 MiB, 0 MiB\n",
+      "slurm_job": "13464623",
+      "cuda_visible_devices": "0",
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "4bfd0e22b59bea66714d1891deb3038cdcafb99b255cedc1eb8c7f7d1be794ee",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:31:17.543785+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "stiff-time",
+      "run": "B-cfl0.05",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "de28c261a4e3d435d10cb2d828964d6960b2e7beb7d54e4db2fcbaf86b2470bf",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:26:53.983516+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "stiff-time",
+      "run": "B-cfl0.1",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "f756e19bcdb3789ebc8420ebb4486a702b8692948d7749c49b7062878192c7ba",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:26:55.511783+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "stiff-time",
+      "run": "L-cfl0.05",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "4062e890d72d05212bb4e35c291b1a24d4f13298a929e03753865612a3e4b327",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:26:56.481451+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "stiff-time",
+      "run": "L-cfl0.1",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "62615d6eb544bd4535b9d8ba78ce426614ca3aa7f12edf4d78944bc1a3cce018",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:26:57.905429+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "stiff-time",
+      "run": "Q-cfl0.05",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "b20b88aade17b2e4de411048dcd9e647bcb783249d1760543b1bece7f0c6082f",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:26:58.965342+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "stiff-time",
+      "run": "Q-cfl0.1",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "f996dbba078b6e626fd04a3f90d33a3ffdb38c50b0a9a45d559e72b6fac137d5",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:27:00.431834+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "stiff-time",
+      "run": "p-cfl0.05",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "ee06d7ff64c04b8bc14152c763a15a7d1e5c8a2d1a8f73dcad41504d1ce28990",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:27:01.388832+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "stiff-time",
+      "run": "p-cfl0.1",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "a08bcd26edc0cfe4e5c5385fc11cc5ec36f5da3d1f0b30826f878d5a283ba3cf",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:27:02.808769+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "rate-amplitude",
+      "run": "B-amp1e-6",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "bc9a9856b2f5ae0132e1ec51fe4193f18563c22e5d459db2f9654ee1ecdfd969",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:30:18.330061+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "rate-amplitude",
+      "run": "B-amp1e-7",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "15e13f155166179a0d46dde13308b59e3484d8f183dca1468507ff0030699e06",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:30:25.165998+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "rate-amplitude",
+      "run": "L-amp1e-6",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "12b496cbb5af921c431c555506b8bdeb263001822ea7097f73cd045df5b1b2dc",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:30:31.907945+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "rate-amplitude",
+      "run": "L-amp1e-7",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "3e7c1fadcd60a9bfdcb0090d93dad689743424f55f5196ee1af9208aed126a2e",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:30:38.673229+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "rate-amplitude",
+      "run": "Q-amp1e-6",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "32d52aade69e42f016eb65c9243e45fee61dcb45803241edf5bd27be02ac4ca2",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:30:45.625985+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "rate-amplitude",
+      "run": "Q-amp1e-7",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "9e8ed2890b47cc9fefa18e9af34ae2a597cc1f02903ed49468b7c7de8e3b08b2",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:30:52.579825+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "rate-amplitude",
+      "run": "p-amp1e-6",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "c0bc7b4c6192b34ac80ddd57fa6a81634de9ef144dfa984a0ecd41f99c8078d9",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:30:59.311515+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "rate-amplitude",
+      "run": "p-amp1e-7",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "2ea75abf3935b3c7b4fac14dde56a1f12066e82cf4f67c2aeebb35dd84557882",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:31:06.039742+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "waves",
+      "run": "shifted-wave-advective-l0-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "c4058e74e20805d23bbbc3c6d5109fa254b510c3ca95ffdc36158a4445894a93",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:23:35.873182+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "waves",
+      "run": "shifted-wave-advective-l0-n32",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "709ae7fd4538c36beaddc71151dcf7965ed0632189432ce4c952df838adb95e3",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:23:50.017606+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "waves",
+      "run": "shifted-wave-advective-l0-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "af84ffb014cfd0fcfd4ff567120f6ee99660e64161585e87bf7c4b959ddd235e",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:23:53.946475+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "waves",
+      "run": "shifted-wave-advective-l1-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "0f83bdfa6e54c3eb7905817b2e083a55b88321974ad2e60555ec82e39738ae2d",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:24:01.248411+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "waves",
+      "run": "shifted-wave-advective-l1-n32",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1423 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "22d5a8e80cfb0a2469fc88bde6ad68f380b6fc366e8bf73effd20880eadbff16",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:24:16.466264+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "waves",
+      "run": "shifted-wave-advective-l1-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1366 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "3ef47a1456ddb81ec9492e722f44206f84fa32fd4549448677cf26312272609d",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:24:20.571030+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "waves",
+      "run": "shifted-wave-legacy-l0-n128",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1436 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "7bfd2f8f6288662c8a08aa0390e6d5fd72ddc51d33e4f4bf8f9b8b5ce2048a31",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:24:28.290905+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "waves",
+      "run": "shifted-wave-legacy-l0-n32",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "d183a6e5a0be16ac0c7e0907f0bc32fb0111a38ecde17269fdfbed2887f43cde",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:24:42.622044+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    },
+    {
+      "group": "waves",
+      "run": "shifted-wave-legacy-l0-n64",
+      "host": "della-vis1.princeton.edu",
+      "gpu": "index, name, memory.total [MiB], memory.used [MiB]\n0, NVIDIA A100-PCIE-40GB, 40960 MiB, 1274 MiB\n",
+      "slurm_job": null,
+      "cuda_visible_devices": null,
+      "binary": "/scratch/gpfs/FPRETORI/hz0693/pcgh-regular-extension-20260904-64c8f90b/source/build-regular-cuda/src/athena",
+      "binary_sha256": "79e81716ad41173fe72860223826fa8ce1afa71f3514e21ab54528b616e3c26a",
+      "input_sha256": "66d4d22db342eb4b0225c579cf0aca42ca0bfd5d6938cdcdc013d5499fb8d713",
+      "source_commit": "64c8f90bc04c034c264358221220bdb3d7ed93bc",
+      "created": "2026-09-05T03:24:46.534305+00:00",
+      "completion": {
+        "segment": 1,
+        "numerical_exit": "clean",
+        "qualification": "requires physics analysis; survival is not acceptance"
+      }
+    }
+  ],
+  "scope": "CUDA flat/pulse/wave gates; does not qualify punctures"
+}
