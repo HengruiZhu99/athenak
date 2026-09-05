@@ -1,7 +1,10 @@
 # Regular advective reduction extension (2026-09-04)
 
-Status: **partial improvement; FD2 single-puncture/AMR screens support a first
-binary experiment; FD6 fails the finest core test even at lambda=16**.
+Status: **partial improvement; the first FD2 binaries failed, FD6 fails the
+finest core test even at lambda=16, and the smooth fallback awaits CUDA
+qualification**. The mass-.5, FD2 lambda=2 single-puncture controls improve
+survival but do not yet provide a clean all-field convergence pass. See the
+[latest work checkpoint](../qualification-runs-20260904/regular-extension/smooth-resume-status.md).
 This follows the user's explicit choice to retain the regular variables and moving
 puncture gauge while allowing a separately derived PC-GH extension. It supersedes
 neither the failed literal FO-GH pullback audit nor the saved numerical evidence.
@@ -26,8 +29,9 @@ r_i=p_i-\partial_iw,\quad q_{iab}=Q_{iab}-\partial_i g_{ab},\quad
 The existing diagnostic is \(a_i=R^\alpha_i=\ell_i-2\rho r_i\).
 The new input is `reduction_system=advective`, `reduction_rate=lambda >= 0`.
 The defaults remain `legacy` and zero; a nonzero rate in legacy mode is rejected.
-The rate is constant in the present implementation, has dimension inverse length,
-and is independent of GH damping `kappa`. No physical length is inferred from the
+The rate defaults to constant; an optional smooth inner profile is specified
+below. It has dimension inverse length and is independent of GH damping `kappa`.
+No physical length is inferred from the
 mesh spacing. In units with c=G=1, configuration variables are dimensionless,
 first derivatives/K/Atilde/Z/Cperp have dimension inverse length, and each new RHS
 term has the dimension of its evolved variable divided by length.
