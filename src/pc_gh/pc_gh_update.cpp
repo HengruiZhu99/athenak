@@ -28,11 +28,13 @@ TaskStatus PcGh::CopyU(Driver *pdriver, int stage) {
       Kokkos::deep_copy(DevExeSpace(), u1, u0);
     } else {
       Real const delta = pdriver->delta[stage - 1];
+      auto state = u0;
+      auto accumulator = u1;
       par_for("PC-GH RK4 register accumulation", DevExeSpace(),
       0, nmb - 1, 0, npcgh - 1,
       indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
       KOKKOS_LAMBDA(int m, int n, int k, int j, int i) {
-        u1(m, n, k, j, i) += delta*u0(m, n, k, j, i);
+        accumulator(m, n, k, j, i) += delta*state(m, n, k, j, i);
       });
     }
   } else if (stage == 1) {
@@ -48,13 +50,18 @@ TaskStatus PcGh::ExpRKUpdate(Driver *pdriver, int stage) {
   Real const gam1 = pdriver->gam1[stage - 1];
   Real const beta_dt = pdriver->beta[stage - 1]*pmy_pack->pmesh->dt;
 
+  // Capture Kokkos views by value; a captured host-side PcGh this pointer is
+  // invalid in CUDA device code even when the referenced views hold device data.
+  auto state = u0;
+  auto accumulator = u1;
+  auto source = u_rhs;
   par_for("PC-GH RK update", DevExeSpace(),
   0, nmb - 1, 0, npcgh - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(int m, int n, int k, int j, int i) {
-    u0(m, n, k, j, i) = gam0*u0(m, n, k, j, i)
-                         + gam1*u1(m, n, k, j, i)
-                         + beta_dt*u_rhs(m, n, k, j, i);
+    state(m, n, k, j, i) = gam0*state(m, n, k, j, i)
+                         + gam1*accumulator(m, n, k, j, i)
+                         + beta_dt*source(m, n, k, j, i);
   });
   Kokkos::fence();
   ValidateState("post-RK update", false, false);
