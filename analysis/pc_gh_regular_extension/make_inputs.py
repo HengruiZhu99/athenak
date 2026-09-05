@@ -144,6 +144,9 @@ def main():
                         b['mesh'][f'x{d}max'] = '4'
                         b['meshblock'][f'nx{d}'] = str(n//4)
                     b['time']['tlim'] = '4'
+                    b['pc_gh'].update(boundedness_output='true', boundedness_dcycle='1',
+                                      constraint_dcycle='1')
+                    b['output1'] = dict(file_type='rst', dt='2')
                     b['problem'].update(pulse_center_x='1', pulse_width='0.75', pulse_radial='true')
                     if refined:
                         b['mesh_refinement'] = dict(refinement='static', max_nmb_per_rank='512')

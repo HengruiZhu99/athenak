@@ -120,11 +120,28 @@ def analyze(path, output):
         slope = float(np.polyfit(np.log([p[0] for p in usable]),
                                  np.log([p[1] for p in usable]), 1)[0]) if len(usable) >= 4 else None
         near = r <= 2*h
+        closest = np.isclose(r, r.min(), rtol=1e-10, atol=0)
         inner = r <= .5
+        winner = int(np.argmax(magnitude))
+        power_windows = {}
+        for label, lower, upper in [('2h_to_8h', 2*h, 8*h),
+                                     ('2h_to_r01', 2*h, .1),
+                                     ('r01_to_r05', .1, .5)]:
+            selected = [(radius, value) for radius, value in points
+                        if lower <= radius <= upper and value > 0]
+            power_windows[label] = dict(bins=len(selected),
+                slope=float(np.polyfit(np.log([p[0] for p in selected]),
+                                       np.log([p[1] for p in selected]), 1)[0])
+                      if len(selected) >= 4 else None)
         result['fields'][name] = dict(max_abs=float(magnitude.max()),
+            max_position=xyz[winner].tolist(), max_radius=float(r[winner]),
+            max_cell_spacing=dx[winner].tolist(),
+            closest_shell_max=float(magnitude[closest].max()),
+            closest_shell_count=int(closest.sum()),
             nearest_2h_max=float(magnitude[near].max()) if near.any() else None,
             fixed_r05_max=float(magnitude[inner].max()) if inner.any() else None,
-            fitted_inner_power=slope, power_fit_bins=len(usable))
+            fitted_inner_power=slope, power_fit_bins=len(usable),
+            descriptive_power_windows=power_windows)
     output.mkdir(parents=True, exist_ok=True)
     (output/(path.stem+'.json')).write_text(json.dumps(result, indent=2)+'\n')
     with (output/(path.stem+'-profiles.csv')).open('w') as file:

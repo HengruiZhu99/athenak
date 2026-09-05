@@ -93,9 +93,11 @@ derivation; it is not the implemented option.
 Every new coefficient is polynomial in w/rho/alpha and the bounded evolved fields,
 using only the inverse of the positive conformal metric. There is no division by
 w, rho, alpha, or chi in the new production terms. The code evaluates
-`ell=a+2*rho*r` with actual finite differences, avoiding a discrete product-rule
-assumption. Finite differences need not obey the continuum product rule; its
-truncation error is included in the numerical qualification, not projected away.
+`ell=a+2*rho*r = L-2*(rho*D w+w*D rho)`. This is the factorized finite-difference
+target. It differs from `L-2*D(rho*w)` by a discrete product-rule defect; the two
+are identical only in the continuum. No exact discrete product rule is assumed.
+The checkpoint source analysis records this defect separately. It can be large
+inside the evolving puncture transition and has not been projected away.
 
 ## Exact nonlinear reduction and curl subsidiary system
 
@@ -393,3 +395,38 @@ are retained under `pulse-initial-oracles/Q-amr`. The AMR qualification fixture
 was changed to a three-dimensional compact pulse using the puncture transfer
 path. This is a fixture limitation, not a successful AMR evolution or a diagnosed
 continuum instability.
+
+## Conditional radial leading balance and finite-grid limits
+
+A formal fixed-time inner ansatz helps interpret the native profiles, but does
+not establish a solution of the full curvature/GH system. Assume
+`w=a(t) r^2+O(r^3)`, `rho=rho0(t)+O(r)`, `beta^i=b(t)x^i+O(r^2)`,
+`K=K0(t)+O(r)`, `B_i^j=b delta_i^j+O(r)`, and finite coefficients. The displayed
+configuration equations require
+
+\[
+\dot a=b a,\qquad \dot\rho_0=(b-2K_0)\rho_0.
+\]
+
+For `p_i=s(t)x_i+O(r^2)` and `L_i=l(t)x_i+O(r^2)`, with no leading B residual,
+the stored-gradient equations require
+
+\[
+\dot s=(b-\lambda)s+2\lambda a,\qquad
+\dot l=(2b-2K_0-\lambda)l+4\lambda a\rho_0.
+\]
+
+Thus `s=2a`, `l=4a rho0` is invariant at this order, and a finite rho0 and
+vanishing pointwise p/L are compatible with a fixed-time wormhole inner limit.
+These conditions assume bounded b and K0 and do not prove that the remaining
+55-field equations preserve the ansatz or bound a finite-radius gradient peak.
+They do not justify ignoring any native sample.
+
+Brown's moving-puncture analysis distinguishes the unresolved wormhole end from
+the effective trumpet geometry on a finite grid; the infinite-resolution data
+need not share the stationary limit of ordinary finite-grid evolutions
+([Brown 2008](https://arxiv.org/abs/0705.1359)). This provides context for checking
+both actual closest cells and fixed-radius convergence here. Brown's later
+puncture-boundary mode analysis concerns BSSN with its particular gauge and
+stencils ([Brown 2009](https://arxiv.org/abs/0908.3814)); its favorable boundary
+conclusion is not a proof for this PC-GH extension.

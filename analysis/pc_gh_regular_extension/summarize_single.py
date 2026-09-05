@@ -6,10 +6,11 @@ import sys
 
 import numpy as np
 from analyze_native_puncture import analyze
+from read_complete_history import read_history
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT/'analysis/pc_gh_localization'))
-from plot_qualification import regional_rms, athena_read
+from plot_qualification import regional_rms
 
 ap = argparse.ArgumentParser(description=__doc__)
 ap.add_argument('group', type=Path)
@@ -21,7 +22,7 @@ for done in sorted(args.group.glob('pcgh-*/completed.json')):
     bounds = np.atleast_1d(np.genfromtxt(next(run.glob('*.pcgh-boundedness.dat')), names=True))
     if not all(np.isfinite(bounds[name]).all() for name in bounds.dtype.names):
         raise ValueError(f'Nonfinite full-volume boundedness data in {run}')
-    hist = athena_read.hst(str(next(run.glob('*.pcgh.hst'))))
+    hist, history_audit = read_history(next(run.glob('*.pcgh.hst')))
     if not all(np.isfinite(values).all() for values in hist.values()):
         raise ValueError(f'Nonfinite history data in {run}')
     files = sorted((run/'bin').glob('*.bin'))
@@ -33,7 +34,8 @@ for done in sorted(args.group.glob('pcgh-*/completed.json')):
                bounds_final={name: float(bounds[name][-1]) for name in bounds.dtype.names},
                bounds_min={name: float(bounds[name].min()) for name in bounds.dtype.names},
                bounds_max={name: float(bounds[name].max()) for name in bounds.dtype.names},
-               history_time=float(hist['time'][-1]), regional_constraints={})
+               history_time=float(hist['time'][-1]), history_audit=history_audit,
+               regional_constraints={})
     for region in ['all', 'chi', 'r05', 'r1', 'r2', 'ah']:
         rms = regional_rms(hist, region)
         if not all(np.isfinite(v).all() for v in rms.values()):

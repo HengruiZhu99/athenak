@@ -52,6 +52,7 @@ def build(args):
     out = args.build.resolve()
     out.mkdir(parents=True, exist_ok=False)
     problem = {'oracle': '../../analysis/pc_gh_regular_extension/production_oracle',
+               'subsidiary': '../../analysis/pc_gh_regular_extension/nonlinear_reduction_oracle',
                'z4c': 'z4c_one_puncture', 'binary': 'z4c_two_puncture'}[args.kind]
     wrapper = ROOT/'kokkos/bin/nvcc_wrapper'
     if not wrapper.is_file() or shutil.which('nvcc') is None:
@@ -87,6 +88,8 @@ def run(args):
     else:
         destination.mkdir(parents=True, exist_ok=False)
         params = parse(args.input.resolve().read_text())
+        if args.restart_from and params['problem']['pgen_name'] == 'z4c_one_puncture':
+            raise SystemExit('Z4c single-puncture pgen is not restart-safe')
         params['job']['basename'] = destination.name
         # Custom research pgen checks the *actual execution space* at startup.
         if params['problem']['pgen_name'] not in ['z4c_one_puncture', 'z4c_two_puncture']:
@@ -98,6 +101,20 @@ def run(args):
                     source_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'],
                                                          cwd=ROOT, text=True).strip(),
                     created=datetime.now(timezone.utc).isoformat())
+        # Include new research files as well as tracked diffs: an untracked
+        # custom problem generator otherwise disappears from the evidence.
+        snapshot = destination/'research-sources'
+        snapshot.mkdir()
+        meta['research_source_sha256'] = {}
+        for path in sorted((ROOT/'analysis/pc_gh_regular_extension').iterdir()):
+            if path.is_file() and path.suffix in ['.py', '.cpp', '.hpp', '.athinput']:
+                shutil.copy2(path, snapshot/path.name)
+                meta['research_source_sha256'][path.name] = sha(path)
+        if args.restart_from:
+            parent = args.restart_from.resolve()
+            meta['restart_parent'] = dict(path=str(parent), sha256=sha(parent))
+            (destination/'rst').mkdir()
+            shutil.copy2(parent, destination/'rst/initial-parent.rst')
         (destination/'provenance.json').write_text(json.dumps(meta, indent=2)+'\n')
         (destination/'source-diff.patch').write_bytes(subprocess.check_output(
             ['git', 'diff', 'HEAD', '--', 'src', 'analysis/pc_gh_regular_extension'], cwd=ROOT))
@@ -131,20 +148,32 @@ def run(args):
         if params['problem']['pgen_name'] == 'z4c_one_puncture':
             # Existing control pgen ignores the restart flag and reinitializes.
             raise SystemExit('Z4c single-puncture pgen is not restart-safe; preserve this partial run')
+        # Research final callbacks also run on a wall stop. Preserve that
+        # segment's data before the next callback writes the conventional names.
+        partials = list(destination.glob('pulse-final-rank*.csv'))
+        partials += list(destination.glob('pc_gh_one_puncture-final.dat'))
+        if partials:
+            saved = destination/f'segment-{segment:04d}-final'
+            saved.mkdir()
+            for path in partials:
+                shutil.move(path, saved/path.name)
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest='action', required=True)
     b = sub.add_parser('build')
-    b.add_argument('--kind', choices=['oracle', 'z4c', 'binary'], required=True)
+    b.add_argument('--kind', choices=['oracle', 'subsidiary', 'z4c', 'binary'], required=True)
     b.add_argument('--build', type=Path, required=True)
     b.add_argument('--jobs', type=int, default=8)
     r = sub.add_parser('run')
     r.add_argument('--build', type=Path, required=True)
     r.add_argument('--input', type=Path, required=True)
     r.add_argument('--output', type=Path, required=True)
-    r.add_argument('--resume', action='store_true')
+    start = r.add_mutually_exclusive_group()
+    start.add_argument('--resume', action='store_true')
+    start.add_argument('--restart-from', type=Path,
+                       help='Start a new documented experiment from this checkpoint')
     r.add_argument('--wall-segment', default='00:15:00')
     args = ap.parse_args()
     (build if args.action == 'build' else run)(args)

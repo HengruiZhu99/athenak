@@ -1465,3 +1465,106 @@ advantage. The legacy zero-rate control also reaches 6M on this coarse fixture;
 this does not reproduce or invalidate the earlier different binary failure.
 Uniform-grid, finer-AMR, longer/larger-domain and matched Z4c controls remain in
 progress. No new binary or AMR-interface evolution gate has yet been advanced.
+
+## 2026-09-05: longer punctures, AMR separation, and higher-order failure
+
+**PARTIAL IMPROVEMENT; THE HIGHER-ORDER MERGER CONFIGURATION IS NOT QUALIFIED.**
+The second-order candidate has a useful measured advantage, but extrapolating
+that result to the established sixth-order merger numerics fails a direct test.
+No new binary evolution has been launched. Its separate CUDA executable has built.
+
+All three uniform single-puncture runs reach 6M at h=1/8,1/10,1/12. Matched SMR
+rate-zero/one, legacy, and Z4c controls also complete. Native Q-curl growth is
+similar on uniform and fixed-AMR meshes at the same spacing, so the inner growth
+cannot be attributed entirely to transfer. Z4c's reconstructed alpha/sqrt(chi)
+also grows on these coarse grids (3.867,4.719,5.491 at 6M, versus the PC-GH
+1.911,2.527,3.134). This is a practical comparison, not a shared continuum theorem.
+
+The domain [-64,64]^3 rate-one SMR runs all reach 20M at the same three finest
+spacings. Their r>1 GH RMS values are 2.401e-5,1.548e-5,1.084e-5; ADM values are
+2.932e-5,1.915e-5,1.360e-5; reduction values are 8.411e-6,5.851e-6,4.367e-6;
+and curl values are 3.039e-5,2.051e-5,1.497e-5. All minimum conformal eigenvalues
+remain above .903. At h=1/8 and 20M, rate one lowers reduction/curl/GH RMS by
+approximately 83%/66%/38% relative to the otherwise matched new rate-zero case.
+Rate four further lowers reduction/curl but increases GH and ADM error; rate one
+therefore remains the preferred exterior rate. All use fixed KO=.3 and no GH or
+reduction projection. The comparison plot is `della-cuda/single-rate-comparison.png`.
+
+Three-resolution Cartesian exterior self-convergence at 20M gives aggregate
+orders 1.968 on 1<=r<=1.75 and 2.141 on 2<=r<=2.5. Individual sector orders range
+from 1.365 to 2.708; not every sector attains second order. The small-domain
+uniform and SMR exterior comparisons at 6M also converge. The native puncture
+analysis itself does not use Cartesian interpolation.
+
+Further fixed-core refinement to h=M/64 and M/128 at 6M shows turnover in the
+closest-shell rho (9.012 -> 7.277) and L (4.834 -> 4.383). Global rho changes only
+about 4%, while global L still grows (7.055 -> 10.500). At M/128 the native peak L
+is at r=.02311M, away from the closest radius .006766M. This is evidence for a
+narrow transition that needs further resolution, not a puncture-regularity proof.
+The M/256 control is in progress. `single-native-core.png` retains every native
+sample and distinguishes closest-shell values from slice maxima.
+
+An independent checkpoint reader was checked against all 140,800 native
+float32 initial-slice values, bitwise. A restart at 5M reproduces the uninterrupted
+6M solution within 1.088e-12 across all 4,956,160 active double-precision field
+values. The driver now preserves partial final callbacks across wall stops.
+A complete-history reader retains all restart segments and explicitly records
+repeated timestamps/overlap; the conventional reader discarded earlier headers.
+Raw history files are unchanged. Their existing six-significant-digit formatting
+is distinguished from the seventeen-digit boundedness and stage/operation logs.
+
+Independent nonlinear reduction-source samples have positive frozen decay and
+Euclidean energy margins on the initial wormhole and the coarse 6M checkpoint.
+At M/128, however, the sampled frozen source abscissa reaches +.0881 near
+r=.0170M and the minimum energy margin is -.7545 near r=.0231M. Thus lambda=1 does
+not dominate all inner source stretching. These are stratified local samples,
+not a global nonlinear spectrum or a proof of actual growing continuum modes.
+The finite-difference product defect in the lapse target is separately retained.
+
+All 48 three-dimensional interface-pulse runs finish at 4M (four independently
+seeded families, rates zero/one, N=32/48/64, uniform/SMR). The two earlier Q pilot
+cases are reused rather than repeated. Full-volume raw component dumps remain
+on Della; compact metrics/provenance are retained locally. At rate one, the SMR
+L2 errors divided by initial amplitude decrease from N=32 to 64:
+p .020885 -> .0114995, Q .00805199 -> .00353694, L .00490525 -> .00230048,
+B .00773622 -> .00339509. The corresponding uniform errors and rate-zero controls
+separate bulk transport error from mesh-transfer effects. Coarse compact bumps
+remain underresolved, as established by the earlier fine uniform study.
+
+The p-seeded SMR pulse has a misleading total-energy centroid if interpreted as
+one transported packet: transfer generates substantial L/B reductions. At N=64
+the seeded p family itself fits speed -.483957 and rate 1.00849, while the full
+33-component norm fits speed -.289622 and rate .901179. The generated L and B
+errors decrease from .0189124/.00737298 at N=32 to .0106150/.00386205 at N=64.
+No component is removed from the primary total-error measure. Operation brackets
+record `max_cell |norm_after-norm_before|`; these are not norms of vector changes
+or face fluxes. Their instantaneous maxima do not all decrease under refinement,
+and unsynchronized ghost-fill brackets must not be interpreted as synchronized
+continuum sources. The AMR study demonstrates transfer contamination and declining
+final errors, not exact transfer commutation or a high-order interface theorem.
+
+With the established sixth-order/RK3/CFL=.2 numerics, all three rate-one SMR
+single-puncture runs fail: w becomes negative at 8.373777M, 8.282710M, and
+8.543327M for h=1/8,1/10,1/12. Q/B and their curls grow rapidly beforehand.
+Halving CFL reproduces the h=1/8 failure at 8.379260M. A uniform-grid control
+fails at 8.379261M. RK4 also fails, while second-order/RK3 at CFL=.2 reaches 12M.
+The otherwise matched sixth-order rate-zero run fails earlier at 7.866301M.
+These controls implicate the spatial discretization near the puncture rather
+than AMR or the RK3 time step alone. Stronger finite relaxation and an independent
+nonlinear production-subsidiary oracle are being checked before another scheme
+change. Neither floors nor increased KO are used to conceal this failure.
+
+The new independent nonlinear production-subsidiary oracle now passes on CUDA.
+It samples all 33 stored reduction components on three affine, algebraically
+consistent but off-GH/off-reduction/nonzero-curl jets, spanning S=0, the switch
+transition, and S=1. It differentiates the actual production configuration RHS
+and compares against the independently implemented full nonlinear subsidiary
+formula. Refining the oracle spacing from 1/8 to 1/64 lowers the worst residual
+from 2.6784e-6 to 4.18494e-8; all nine adjacent orders lie within 2e-5 of 2.
+This supports the nonlinear component closure beyond the earlier flat spectrum
+and generic symbolic identity. It does not expand or verify the full nonlinear
+covariant off-reduction J_ab residual.
+
+The rate-four sixth-order puncture control also fails, at 9.717464M. Increasing
+constant relaxation postpones the instability but has not yet qualified this
+spatial discretization. The rate-sixteen screen is in progress.

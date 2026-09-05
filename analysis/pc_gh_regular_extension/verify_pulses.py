@@ -15,8 +15,15 @@ def table(directory, phase):
     paths = sorted(directory.glob(f'pulse-{phase}-rank*.csv'))
     if not paths:
         raise ValueError(f'No {phase} pulse data in {directory}')
-    return np.concatenate([np.atleast_1d(np.genfromtxt(p, delimiter=',', names=True))
-                           for p in paths])
+    arrays = []
+    for path in paths:
+        with path.open() as stream:
+            names = stream.readline().strip().split(',')
+            # Every dump column is numeric. loadtxt avoids genfromtxt's large
+            # temporary string tables for the full-volume 3D AMR fixtures.
+            arrays.append(np.atleast_1d(np.loadtxt(stream, delimiter=',',
+                dtype=[(name, np.float64) for name in names])))
+    return arrays[0] if len(arrays) == 1 else np.concatenate(arrays)
 
 
 def prediction(data, problem, rate):

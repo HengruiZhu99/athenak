@@ -1,0 +1,50 @@
+# Research candidate input; no numerical qualification implied.
+
+<job>
+basename = h1over8
+
+<mesh>
+nghost = 2
+nx1 = 8
+nx2 = 8
+nx3 = 8
+x1min = -0.5
+x1max = 0.5
+x2min = -0.5
+x2max = 0.5
+x3min = -0.5
+x3max = 0.5
+ix1_bc = periodic
+ox1_bc = periodic
+ix2_bc = periodic
+ox2_bc = periodic
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<time>
+evolution = dynamic
+integrator = rk2
+cfl_number = 0.1
+nlim = 0
+tlim = 0
+ndiag = 1
+
+<pc_gh>
+spatial_order = 2
+gauge = z4c_mp_hyperbolic
+reduction_system = advective
+reduction_rate = 1
+kappa = 1
+dissipation = 0
+project_reduction_constraints = false
+boundedness_output = false
+shift_eta = 2
+
+<problem>
+pgen_name = nonlinear_reduction_oracle
+require_cuda = true

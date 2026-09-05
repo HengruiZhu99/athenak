@@ -85,3 +85,31 @@ profiles use `analyze_native_puncture.py`: no Cartesian interpolation or nonfini
 mask is used, and the actual slice cell-center offset is retained. Native binary
 fields have float32 output precision; analysis promotes them to float64. Full
 volume bounds and operation maxima remain the production double-precision logs.
+
+`read_complete_history.py` preserves all restart segments and reports duplicate
+timestamps and superseded overlap. `cuda_driver.py --restart-from CHECKPOINT`
+starts a distinct, documented experiment; `--resume` continues an unchanged
+experiment. Research source snapshots include new untracked problem generators.
+
+`exterior_self_convergence.py` compares three matched Cartesian exterior samples;
+`plot_native_core.py` separately compares actual closest cells and radial maxima.
+`summarize_amr.py` retains all 33 pulse components and the bracketed norm changes.
+`decompose_amr_pulse.py` supplements the total error with seeded/generated family
+contributions. Full 3D component CSV files remain on Della to avoid duplicating
+many gigabytes during routine analysis.
+
+`frozen_reduction_source.py` implements the independently differentiated nonlinear
+configuration source. `sample_restart_sources.py` uses the verified vacuum PC-GH
+checkpoint ABI, with explicit second/fourth/sixth-order stencils; its samples are
+not global bounds. Build `--kind subsidiary` for `nonlinear_reduction_oracle.cpp`.
+Run its zero-step input at multiple physical spacings and pass the output run
+directories to `verify_nonlinear_reductions.py --output REPORT.json`. All 33
+reduction rows are checked on off-GH/off-reduction/nonzero-curl jets in all three
+gauge-switch regions. The independently differentiated configuration RHS has
+second-order truncation error, which must converge without an adjusted threshold.
+
+Current results include stable second-order single-puncture evolutions to 20M,
+declining exterior/AMR errors, and failure of the sixth-order puncture controls
+near 8M, including uniform and smaller-step controls. The merger gate remains
+closed while these failures are investigated; see the qualification log for
+the numerical values and the unresolved puncture limits.
