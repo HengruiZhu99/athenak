@@ -33,6 +33,40 @@ def fitted_order(h, ratio):
     return (lo+hi)/2
 
 
+def align_snapshot(samples, target):
+    """Bracket in time; compare linear and quadratic interpolation explicitly."""
+    ts = np.array(sorted(samples))
+    close = int(np.argmin(abs(ts-target)))
+    def unpack(t):
+        path,state = samples[float(t)]
+        return path,state,np.stack(list(state['data'].values()))[:,0].astype(float)
+    if abs(ts[close]-target) < 1e-6:
+        path,state,u = unpack(ts[close])
+        return state,u,np.zeros_like(u),dict(method='exact saved time',times=[float(ts[close])],files=[str(path)])
+    j = int(np.searchsorted(ts,target))
+    if j == 0 or j == len(ts):
+        return None
+    indices = [j-1,j]
+    extra = [i for i in (j-2,j+1) if 0 <= i < len(ts)]
+    if not extra:
+        return None
+    indices.append(min(extra,key=lambda i: abs(ts[i]-target)))
+    chosen = [unpack(ts[i]) for i in indices]
+    template = chosen[0][1]
+    if any(list(s['data']) != list(template['data']) or
+           any(not np.array_equal(template[d],s[d]) for d in ('x','y','z')) for _,s,_ in chosen):
+        raise ValueError('Different fields or spatial coordinates within time bracket')
+    a = (target-ts[j-1])/(ts[j]-ts[j-1])
+    linear = (1-a)*chosen[0][2]+a*chosen[1][2]
+    weights=[]
+    for i in indices:
+        weights.append(float(np.prod([(target-ts[k])/(ts[i]-ts[k]) for k in indices if k != i])))
+    quadratic = sum(w*item[2] for w,item in zip(weights,chosen))
+    return template,quadratic,quadratic-linear,dict(method='bracketed quadratic interpolation',
+        times=[float(ts[i]) for i in indices],weights=weights,files=[str(item[0]) for item in chosen],
+        sensitivity='Quadratic-minus-linear change is an interpolation sensitivity estimate, not a rigorous error bound.')
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('runs', type=Path, nargs=3)
@@ -71,10 +105,16 @@ def main():
             raise ValueError('Empty chi-excised native volume')
         norm['H'] = np.sqrt(hist['H-norm2']/hist['Volume'])
         norm['M'] = np.sqrt(hist['Mhat-norm2']/hist['Volume'])
+        # The legacy regional helper combines residuals with the most recent
+        # algebraic map correction. A map size is not a residual constraint.
+        norm['algebraic'] = np.sqrt((hist['detg-norm2']+hist['trA-norm2']+hist['trQ-norm2'])/hist['Volume'])
     report = dict(runs=statuses, finest_spacing=h.tolist(), history_audits=audits,
                   common_end=end, chi_threshold=.0625, constraints={}, field_self_convergence=[],
                   qualification='No automatic promotion; M/256 R16 failed metric positivity at 5.187818M.',
-                  scope='Native 3D chi-excised coordinate-volume RMS constraints; moving masks can differ across h. Field differences use a common chi-mask intersection on interpolated Cartesian slices.')
+                  scope='Native 3D chi-excised coordinate-volume RMS constraints; moving masks can differ across h. Field differences use a common chi-mask intersection on Cartesian slices. Asynchronous snapshots are explicitly interpolated in time with a linear/quadratic sensitivity measurement; endpoint results use exact saved time when present.')
+    report['algebraic_correction_diagnostic'] = dict(
+        scope='RMS of the most recently applied algebraic correction, separate from det/trace residuals. This is neither reduction projection nor a cumulative correction per unit time; last-step sizes differ.',
+        runs=[dict(times=hist['time'].tolist(),rms=np.sqrt(hist['proj-norm2']/hist['Volume']).tolist()) for hist in histories])
     fig, axes = plt.subplots(2,3,figsize=(13,7),constrained_layout=True)
     families = ['GH','H','M','reduction','curl','algebraic']
     titles = dict(GH='GH', H='Hamiltonian', M='Alpha-weighted momentum',
@@ -97,6 +137,20 @@ def main():
     fig.suptitle('R16: chi >= 0.0625, SMR, outer boundary +/-128M')
     fig.savefig(args.output/'chi-constraints.png',dpi=170)
     plt.close(fig)
+    fig,axes = plt.subplots(2,3,figsize=(13,7),constrained_layout=True)
+    for ax,family in zip(axes.flat,families):
+        entry = report['constraints'][family]
+        for i,label in enumerate(['M/8 versus M/10','M/10 versus M/12']):
+            ax.plot(times,[np.nan if p is None else p for p in entry['pair_orders'][i]],label=label)
+        if all(p is None for row in entry['pair_orders'] for p in row):
+            ax.text(.5,.7,'Residuals at roundoff;\norder not resolved',ha='center',transform=ax.transAxes)
+        ax.axhline(0,color='black',linewidth=.8)
+        ax.set_xlim(0,end)
+        ax.set_title(titles[family]); ax.set_xlabel('t/M'); ax.set_ylabel('Observed norm order'); ax.grid(alpha=.25)
+    axes[0,0].legend()
+    fig.suptitle('R16 chi-excised constraint convergence: unequal resolution ratios')
+    fig.savefig(args.output/'constraint-orders.png',dpi=170)
+    plt.close(fig)
     # Store exactly which sampled times are available; do not substitute nearest late data.
     carts = []
     for r in runs:
@@ -109,30 +163,48 @@ def main():
                   rho=(18,19),beta=(19,22),p=(22,25),Q=(25,43),L=(43,46),B=(46,55),all=(0,55))
     for t in times:
         key = round(float(t),6)
-        if any(key not in c for c in carts):
+        aligned = [align_snapshot(c,key) for c in carts]
+        if any(a is None for a in aligned):
             report['field_self_convergence'].append(dict(time=float(t),missing=True))
             continue
-        states = [c[key][1] for c in carts]
+        states = [a[0] for a in aligned]
         if any(list(s['data']) != list(states[0]['data']) for s in states[1:]):
             raise ValueError('Different field ordering in Cartesian outputs')
         if any(not np.array_equal(states[0][d],s[d]) for s in states[1:] for d in ['x','y','z']):
             raise ValueError('Different Cartesian sample coordinates')
-        u = [np.stack(list(s['data'].values()))[:,0].astype(float) for s in states]
+        u = [a[1] for a in aligned]
         if any(x.shape[0] != 55 or not np.isfinite(x).all() for x in u):
             raise ValueError('Incomplete/nonfinite regular fields')
-        mask = np.logical_and.reduce([s['data']['pcgh_w'][0]**2 >= .0625 for s in states])
+        mask = np.logical_and.reduce([x[0]**2 >= .0625 for x in u])
         if not mask.any():
             raise ValueError('Empty common chi mask')
-        row = dict(time=float(t),points=int(mask.sum()),groups={})
+        row = dict(time=float(t),points=int(mask.sum()),time_alignment=[a[3] for a in aligned],groups={})
         for name,(lo,hi) in groups.items():
             diff = [(u[i][lo:hi]-u[i+1][lo:hi])[:,mask].ravel() for i in (0,1)]
             magnitudes = np.array([np.linalg.norm(d) for d in diff])
             ratio = magnitudes[0]/magnitudes[1] if magnitudes[1] > 0 else np.nan
+            interpolation = [float(np.linalg.norm(a[2][lo:hi,mask])) for a in aligned]
             row['groups'][name] = dict(rms_differences=(magnitudes/np.sqrt(mask.sum())).tolist(),
                 fitted_order=fitted_order(h,ratio),
+                time_interpolation_rms_sensitivity=(np.array(interpolation)/np.sqrt(mask.sum())).tolist(),
+                time_sensitivity_over_fine_difference=max(interpolation)/magnitudes[1] if magnitudes[1] > 0 else None,
                 alignment=float(np.dot(*diff)/np.prod(magnitudes)) if magnitudes.min() > 0 else None)
         report['field_self_convergence'].append(row)
     (args.output/'convergence.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
+    field_rows=[row for row in report['field_self_convergence'] if not row.get('missing')]
+    if field_rows:
+        fig,axes=plt.subplots(1,3,figsize=(14,4),constrained_layout=True)
+        tt=[row['time'] for row in field_rows]
+        for group in ['all','gtilde','Q']:
+            axes[0].plot(tt,[row['groups'][group]['fitted_order'] for row in field_rows],label=group)
+            axes[1].plot(tt,[row['groups'][group]['alignment'] for row in field_rows],label=group)
+            axes[2].plot(tt,[row['groups'][group]['time_sensitivity_over_fine_difference'] for row in field_rows],label=group)
+        for ax,title in zip(axes,['Fitted field-difference order','Successive difference alignment','Time-interpolation sensitivity / fine difference']):
+            ax.set_title(title); ax.set_xlabel('t/M'); ax.axhline(0,color='black',linewidth=.8); ax.grid(alpha=.25)
+        axes[0].legend();axes[1].set_ylim(-1.05,1.05)
+        fig.suptitle('Common chi-mask Cartesian slice: shrinking norms alone do not establish asymptotic convergence')
+        fig.savefig(args.output/'field-convergence.png',dpi=170)
+        plt.close(fig)
     print(json.dumps(dict(status=statuses,common_end=end,outputs=str(args.output)),indent=2))
 
 

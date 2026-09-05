@@ -1,0 +1,35 @@
+diff --git a/analysis/pc_gh_regular_extension/sample_restart_sources.py b/analysis/pc_gh_regular_extension/sample_restart_sources.py
+index 2c45b786..74c22e0a 100644
+--- a/analysis/pc_gh_regular_extension/sample_restart_sources.py
++++ b/analysis/pc_gh_regular_extension/sample_restart_sources.py
+@@ -13,6 +13,7 @@ import struct
+ import numpy as np
+ from frozen_reduction_source import configuration, estimates
+ from make_inputs import parse
++from verify_smooth_pulses import rate_gradient
+ 
+ 
+ def read_checkpoint(path):
+@@ -99,8 +100,12 @@ def sample(path, output, per_shell=24, points=(), extrema=False):
+         selected.extend(winners)
+     selected=sorted(set(selected))
+     rows=[]
+-    pc=params['pc_gh'];rate=float(pc.get('reduction_rate',0))
+-    for index in selected:
++    pc=params['pc_gh']
++    if pc.get('reduction_follow_trackers','false')=='true':
++        raise ValueError('Frozen source sampler requires explicit fixed mask centers')
++    local_rates, rate_gradients = rate_gradient(xyz[selected],pc,meta['time'],0.0)
++    for sample_index,index in enumerate(selected):
++        rate=float(local_rates[sample_index])
+         m,k,j,i=ids[index];u=np.array(state[m,:,k,j,i]);derivative=np.zeros((3,11));drho=np.zeros(3)
+         for d in range(3):
+             for offset,weight in enumerate(weights,start=1):
+@@ -116,6 +121,7 @@ def sample(path, output, per_shell=24, points=(), extrema=False):
+                  x=float(xyz[index,0]),y=float(xyz[index,1]),z=float(xyz[index,2]),
+                  r=float(radius[index]),h=float(spacing[index].min()),w=float(u[0]),rho=float(u[18]),
+                  alpha=float(u[0]*u[18]),K=float(u[7]),
++                 local_rate=rate,rate_gradient_norm=float(np.linalg.norm(rate_gradients[sample_index])),
+                  product_derivative_defect=float(np.linalg.norm(derivative[:,7]-factorized)),
+                  half_ell_factorized=float(np.linalg.norm(u[43:46]/2-factorized)),
+                  half_ell_direct=float(np.linalg.norm(u[43:46]/2-derivative[:,7])),**result)

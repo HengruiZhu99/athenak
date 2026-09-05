@@ -1,0 +1,147 @@
+{
+  "runs": [
+    {
+      "resolution": "M/8",
+      "completed_utc": "2026-09-05T17:00:42.668793+00:00",
+      "segments": 1,
+      "terminal_cycle": 1601,
+      "binary_sha256": "96bc34157896c164904a6ff426e84f4c97d95a7b8c8c1a43971940fc744e60b1",
+      "input_sha256": "39edcd7482372e8a41c4fd62c4f990bf6d4e996eb11869b558b080498261793c",
+      "host": "della-l02g11",
+      "slurm_job": "13484720",
+      "logged_dt_nonterminal_range": [
+        0.0125,
+        0.0125
+      ],
+      "history_audit": {
+        "segments": [
+          {
+            "rows": 801,
+            "raw_rows": 801,
+            "start": 0.0,
+            "end": 20.0
+          }
+        ],
+        "superseded_rows": 0,
+        "repeated_timestamp_rows": 0,
+        "retained_rows": 801
+      },
+      "completed_step_minima": {
+        "min_w": 0.03172167934091458,
+        "min_rho": 0.3130096657450382,
+        "min_alpha": 0.025014041267848296,
+        "min_eigenvalue": 0.9037845042532139
+      },
+      "peak_unmasked_curl_Q": 0.32413900067574636,
+      "final_unmasked_curl_Q": 0.16498830525155567,
+      "final_algebraic_residual_max": {
+        "pcgh_detg_max": 6.661338147750939e-16,
+        "pcgh_trA_max": 2.2634435862852227e-16,
+        "pcgh_trQ_max": 7.661571346673053e-17
+      }
+    },
+    {
+      "resolution": "M/10",
+      "completed_utc": "2026-09-05T17:06:37.987213+00:00",
+      "segments": 2,
+      "terminal_cycle": 1601,
+      "binary_sha256": "96bc34157896c164904a6ff426e84f4c97d95a7b8c8c1a43971940fc744e60b1",
+      "input_sha256": "589275046402dc2fcdc235b8479a4a2fb4e1b493c1cce3588765ff0be231a9c4",
+      "host": "della-l01g15",
+      "slurm_job": "13484721",
+      "logged_dt_nonterminal_range": [
+        0.0125,
+        0.0125
+      ],
+      "history_audit": {
+        "segments": [
+          {
+            "rows": 741,
+            "raw_rows": 742,
+            "start": 0.0,
+            "end": 18.5
+          },
+          {
+            "rows": 59,
+            "raw_rows": 59,
+            "start": 18.55,
+            "end": 20.0
+          }
+        ],
+        "superseded_rows": 0,
+        "repeated_timestamp_rows": 1,
+        "retained_rows": 800
+      },
+      "completed_step_minima": {
+        "min_w": 0.021831224417388762,
+        "min_rho": 0.2884360676140872,
+        "min_alpha": 0.01878951856153619,
+        "min_eigenvalue": 0.9039075839654593
+      },
+      "peak_unmasked_curl_Q": 0.3425911880928579,
+      "final_unmasked_curl_Q": 0.14607744391305777,
+      "final_algebraic_residual_max": {
+        "pcgh_detg_max": 6.661338147750939e-16,
+        "pcgh_trA_max": 1.8866449756934713e-16,
+        "pcgh_trQ_max": 9.442468754635529e-17
+      }
+    },
+    {
+      "resolution": "M/12",
+      "completed_utc": "2026-09-05T17:17:10.874549+00:00",
+      "segments": 2,
+      "terminal_cycle": 1601,
+      "binary_sha256": "96bc34157896c164904a6ff426e84f4c97d95a7b8c8c1a43971940fc744e60b1",
+      "input_sha256": "97be592405ce371ec051e00bbcf59378c4020fc3965df6e809796f1d2f50a312",
+      "host": "della-vis1.princeton.edu",
+      "slurm_job": null,
+      "logged_dt_nonterminal_range": [
+        0.001145613,
+        0.0125
+      ],
+      "history_audit": {
+        "segments": [
+          {
+            "rows": 508,
+            "raw_rows": 508,
+            "start": 0.0,
+            "end": 12.6739
+          },
+          {
+            "rows": 293,
+            "raw_rows": 293,
+            "start": 12.7114,
+            "end": 20.0
+          }
+        ],
+        "superseded_rows": 0,
+        "repeated_timestamp_rows": 0,
+        "retained_rows": 801
+      },
+      "completed_step_minima": {
+        "min_w": 0.015936593131223167,
+        "min_rho": 0.26827918234234477,
+        "min_alpha": 0.014794952299245588,
+        "min_eigenvalue": 0.903968525172292
+      },
+      "peak_unmasked_curl_Q": 0.4205321800315528,
+      "final_unmasked_curl_Q": 0.15485682970525116,
+      "final_algebraic_residual_max": {
+        "pcgh_detg_max": 6.661338147750939e-16,
+        "pcgh_trA_max": 4.1510134091530317e-16,
+        "pcgh_trQ_max": 1.348934366863501e-16
+      }
+    }
+  ],
+  "requirements": {
+    "fine_core_runs_terminal": true,
+    "three_requested_SMR_runs_reached_20": true,
+    "actual_geometry_verified": true,
+    "chi_diagnostic_excision_verified": true,
+    "native_constraint_convergence_measured_through_20": true,
+    "field_slice_comparisons": 40,
+    "binary_gate_passed": false,
+    "binary_run_launched": false
+  },
+  "decision": "Requested study complete; binary condition is false because fine-core stability failed and asymptotic field convergence remains unresolved."
+}
