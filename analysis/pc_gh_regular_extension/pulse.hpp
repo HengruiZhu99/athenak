@@ -101,9 +101,13 @@ void Final(ParameterInput *pin, Mesh *pm) { Dump(pin, pm, "final"); }
 void Initialize(ParameterInput *pin, Mesh *pm, bool restart) {
   if (restart) return;
   auto *pc = pm->pmb_pack->ppcgh;
+  bool const projection_experiment = pin->GetOrAddBoolean(
+      "problem", "pulse_allow_reduction_projection", false);
   if (pc == nullptr || pc->opt.gauge != "z4c_mp_hyperbolic"
-      || pc->opt.shift_eta != 0.0 || pc->opt.project_reduction_constraints) {
-    std::cerr << "Compact pulses require switched moving gauge, eta=0, no projection\n";
+      || pc->opt.shift_eta != 0.0 || pc->opt.project_gauge_constraints
+      || (pc->opt.project_reduction_constraints && !projection_experiment)) {
+    std::cerr << "Compact pulses require switched moving gauge, eta=0, no GH projection; "
+                 "reduction projection requires pulse_allow_reduction_projection=true\n";
     std::exit(EXIT_FAILURE);
   }
   std::string const family = pin->GetString("problem", "pulse_family");

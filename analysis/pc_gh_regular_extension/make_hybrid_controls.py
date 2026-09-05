@@ -22,6 +22,8 @@ def candidate(b,name,core=.125,taper=.5,ceiling=.0125):
         spatial_order='6',dissipation='.3')
     b['time'].update(integrator='rk3',cfl_number='.2',ndiag='1')
     b['problem']['require_cuda']='true'
+    if b['problem'].get('pgen_name') == 'regular_extension_pulse':
+        b['problem']['pulse_allow_reduction_projection']=str(projection).lower()
 
 
 def main():
