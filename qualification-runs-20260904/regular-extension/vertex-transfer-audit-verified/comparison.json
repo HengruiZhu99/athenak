@@ -1,0 +1,498 @@
+{
+  "created": "2026-09-05T12:34:53.627529+00:00",
+  "vc_commit": "6bfa5c11c3b10775294f5f2d95a196d84d6718cb",
+  "cc_commit": "be93dfd04ca13ef2cc268b0b5cb28f99c19c20f4",
+  "source_sha256": {
+    "vc-vertex_amr.hpp": "93e55ed08490f8aac4c26ec167628ab3678e58a7a61e644303016aa72e26004a",
+    "cc-mesh_refinement.cpp": "e0ad2abebdabad361b9f90c2c71464336ab2d43e589e536d07744b01f300fbcd",
+    "cc-prolongation.hpp": "f4081a23efdb345a93d4240f48b65befc519cc1b43f7d5cae782b2e31f447776",
+    "cc-finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42"
+  },
+  "scope": "Static operator comparison of pinned VC transfers and current PC-GH CC transfers.\n\nThis is matrix/polynomial analysis, not a CUDA evolution or a full AMR interface\ntest. Periodic whole-grid prolongation isolates the actual one-dimensional\ntensor factors; shared-node reconciliation, physical boundaries, finite-block\nrestriction switches, and RK feedback are outside its scope.\n",
+  "rows": [
+    {
+      "order": 2,
+      "coarse_n": 16,
+      "centering": "cell",
+      "interpolation_order": 3,
+      "state_linf": 0.0023124643999524186,
+      "transfer_first_derivative_linf": 0.014647582637069334,
+      "transfer_second_derivative_linf": 9.44878281305455,
+      "seam_first_derivative_linf": 0.036816297725738245,
+      "seam_second_derivative_linf": 2.3562430544472477,
+      "reduction_commutator_linf": 0.12219418263949855
+    },
+    {
+      "order": 2,
+      "coarse_n": 16,
+      "centering": "vertex",
+      "interpolation_order": 4,
+      "state_linf": 0.0005396879717463055,
+      "transfer_first_derivative_linf": 0.003435219587410998,
+      "transfer_second_derivative_linf": 1.1052809661364336,
+      "seam_first_derivative_linf": 0.0015211774047161342,
+      "seam_second_derivative_linf": 0.09735535390183259,
+      "reduction_commutator_linf": 0.12095495188254324
+    },
+    {
+      "order": 2,
+      "coarse_n": 16,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 4,
+      "state_linf": 0.00040110238452739644,
+      "transfer_first_derivative_linf": 0.0024655519606797682,
+      "transfer_second_derivative_linf": 0.12664734357412044,
+      "seam_first_derivative_linf": 0.0022027907416397596,
+      "seam_second_derivative_linf": 0.14097860746494462,
+      "reduction_commutator_linf": 0.11936814053586131
+    },
+    {
+      "order": 2,
+      "coarse_n": 32,
+      "centering": "cell",
+      "interpolation_order": 3,
+      "state_linf": 0.00029402806244561985,
+      "transfer_first_derivative_linf": 0.0018511521726267688,
+      "transfer_second_derivative_linf": 4.814446005573046,
+      "seam_first_derivative_linf": 0.009065143678611776,
+      "seam_second_derivative_linf": 1.1603383908623073,
+      "reduction_commutator_linf": 0.030351080647699646
+    },
+    {
+      "order": 2,
+      "coarse_n": 32,
+      "centering": "vertex",
+      "interpolation_order": 4,
+      "state_linf": 3.4557252537203986e-05,
+      "transfer_first_derivative_linf": 0.00021782990710450534,
+      "transfer_second_derivative_linf": 0.28309301278477506,
+      "seam_first_derivative_linf": 0.00029834155617614044,
+      "seam_second_derivative_linf": 0.03818771919054598,
+      "reduction_commutator_linf": 0.030276960308556422
+    },
+    {
+      "order": 2,
+      "coarse_n": 32,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 4,
+      "state_linf": 2.5317882351716392e-05,
+      "transfer_first_derivative_linf": 0.00015820973714841813,
+      "transfer_second_derivative_linf": 0.01621380322532673,
+      "seam_first_derivative_linf": 0.0002855482103534257,
+      "seam_second_derivative_linf": 0.03655017092523849,
+      "reduction_commutator_linf": 0.030170138336082508
+    },
+    {
+      "order": 2,
+      "coarse_n": 64,
+      "centering": "cell",
+      "interpolation_order": 3,
+      "state_linf": 3.6910065192862634e-05,
+      "transfer_first_derivative_linf": 0.00023202927463472633,
+      "transfer_second_derivative_linf": 2.418573499534375,
+      "seam_first_derivative_linf": 0.0022390967548595597,
+      "seam_second_derivative_linf": 0.5732087692440473,
+      "reduction_commutator_linf": 0.0075744291321786505
+    },
+    {
+      "order": 2,
+      "coarse_n": 64,
+      "centering": "vertex",
+      "interpolation_order": 4,
+      "state_linf": 2.172894275842552e-06,
+      "transfer_first_derivative_linf": 1.3663673694264133e-05,
+      "transfer_second_derivative_linf": 0.07120139963080874,
+      "seam_first_derivative_linf": 4.3918626239758396e-05,
+      "seam_second_derivative_linf": 0.01124316831737815,
+      "reduction_commutator_linf": 0.007569850819451052
+    },
+    {
+      "order": 2,
+      "coarse_n": 64,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 4,
+      "state_linf": 1.5862809952249535e-06,
+      "transfer_first_derivative_linf": 9.95329477615492e-06,
+      "transfer_second_derivative_linf": 0.0020388471763226335,
+      "seam_first_derivative_linf": 3.624718612016409e-05,
+      "seam_second_derivative_linf": 0.009279279646762006,
+      "reduction_commutator_linf": 0.00756305188059192
+    },
+    {
+      "order": 2,
+      "coarse_n": 128,
+      "centering": "cell",
+      "interpolation_order": 3,
+      "state_linf": 4.618660336453556e-06,
+      "transfer_first_derivative_linf": 2.9023541330275293e-05,
+      "transfer_second_derivative_linf": 1.2107085032154146,
+      "seam_first_derivative_linf": 0.0005557730503866765,
+      "seam_second_derivative_linf": 0.28455580179797835,
+      "reduction_commutator_linf": 0.001892757590246763
+    },
+    {
+      "order": 2,
+      "coarse_n": 128,
+      "centering": "vertex",
+      "interpolation_order": 4,
+      "state_linf": 1.360106303138764e-07,
+      "transfer_first_derivative_linf": 8.547516467949379e-07,
+      "transfer_second_derivative_linf": 0.017827185336500406,
+      "seam_first_derivative_linf": 5.897039315527763e-06,
+      "seam_second_derivative_linf": 0.003019284129550215,
+      "reduction_commutator_linf": 0.0018924723012574418
+    },
+    {
+      "order": 2,
+      "coarse_n": 128,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 4,
+      "state_linf": 9.920379839822857e-08,
+      "transfer_first_derivative_linf": 6.231031648429308e-07,
+      "transfer_second_derivative_linf": 0.0002552359439960128,
+      "seam_first_derivative_linf": 4.562765496984866e-06,
+      "seam_second_derivative_linf": 0.0023361359344562516,
+      "reduction_commutator_linf": 0.0018920454402330256
+    },
+    {
+      "order": 4,
+      "coarse_n": 16,
+      "centering": "cell",
+      "interpolation_order": 5,
+      "state_linf": 6.936922085007402e-05,
+      "transfer_first_derivative_linf": 0.0007283938255913113,
+      "transfer_second_derivative_linf": 0.37732987045030575,
+      "seam_first_derivative_linf": 0.0016627618751909878,
+      "seam_second_derivative_linf": 0.10047434162766913,
+      "reduction_commutator_linf": 0.004672846476359682
+    },
+    {
+      "order": 4,
+      "coarse_n": 16,
+      "centering": "vertex",
+      "interpolation_order": 6,
+      "state_linf": 1.7144954394310297e-05,
+      "transfer_first_derivative_linf": 0.00014550798794251324,
+      "transfer_second_derivative_linf": 0.04681715546606331,
+      "seam_first_derivative_linf": 6.443357048979692e-05,
+      "seam_second_derivative_linf": 0.004123748511347003,
+      "reduction_commutator_linf": 0.004634917305544217
+    },
+    {
+      "order": 4,
+      "coarse_n": 16,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 6,
+      "state_linf": 1.2616792659736475e-05,
+      "transfer_first_derivative_linf": 7.878408536476922e-05,
+      "transfer_second_derivative_linf": 0.0056413343430392615,
+      "seam_first_derivative_linf": 9.408256395548875e-05,
+      "seam_second_derivative_linf": 0.0060120252727813295,
+      "reduction_commutator_linf": 0.004559908662171375
+    },
+    {
+      "order": 4,
+      "coarse_n": 32,
+      "centering": "cell",
+      "interpolation_order": 5,
+      "state_linf": 2.2250288763472903e-06,
+      "transfer_first_derivative_linf": 2.331560702846976e-05,
+      "transfer_second_derivative_linf": 0.04855772115586869,
+      "seam_first_derivative_linf": 0.00010311094969687554,
+      "seam_second_derivative_linf": 0.012461986951592507,
+      "reduction_commutator_linf": 0.0002919221970536512
+    },
+    {
+      "order": 4,
+      "coarse_n": 32,
+      "centering": "vertex",
+      "interpolation_order": 6,
+      "state_linf": 2.7678132530351007e-07,
+      "transfer_first_derivative_linf": 2.3262362548829665e-06,
+      "transfer_second_derivative_linf": 0.0030231901558484724,
+      "seam_first_derivative_linf": 3.186031499069486e-06,
+      "seam_second_derivative_linf": 0.0004078120318808942,
+      "reduction_commutator_linf": 0.00029135628316101503
+    },
+    {
+      "order": 4,
+      "coarse_n": 32,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 6,
+      "state_linf": 2.0075961526533348e-07,
+      "transfer_first_derivative_linf": 1.2596196246790945e-06,
+      "transfer_second_derivative_linf": 0.00018327053057021203,
+      "seam_first_derivative_linf": 2.8490241595532e-06,
+      "seam_second_derivative_linf": 0.00037698888982617973,
+      "reduction_commutator_linf": 0.0002900969002659348
+    },
+    {
+      "order": 4,
+      "coarse_n": 64,
+      "centering": "cell",
+      "interpolation_order": 5,
+      "state_linf": 6.998571019239952e-08,
+      "transfer_first_derivative_linf": 7.330067397504081e-07,
+      "transfer_second_derivative_linf": 0.006113909910169468,
+      "seam_first_derivative_linf": 6.375283090775952e-06,
+      "seam_second_derivative_linf": 0.0015411823039812589,
+      "reduction_commutator_linf": 1.8241533670249055e-05
+    },
+    {
+      "order": 4,
+      "coarse_n": 64,
+      "centering": "vertex",
+      "interpolation_order": 6,
+      "state_linf": 4.360054539631619e-09,
+      "transfer_first_derivative_linf": 3.655609030298971e-08,
+      "transfer_second_derivative_linf": 0.00019049368953953186,
+      "seam_first_derivative_linf": 1.1750081322740394e-07,
+      "seam_second_derivative_linf": 3.008020818621541e-05,
+      "reduction_commutator_linf": 1.8232798885797763e-05
+    },
+    {
+      "order": 4,
+      "coarse_n": 64,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 6,
+      "state_linf": 3.1511762088598516e-09,
+      "transfer_first_derivative_linf": 1.9792568214012835e-08,
+      "transfer_second_derivative_linf": 5.782885097005419e-06,
+      "seam_first_derivative_linf": 8.722100434492101e-08,
+      "seam_second_derivative_linf": 2.3498266349027592e-05,
+      "reduction_commutator_linf": 1.8212771769055003e-05
+    },
+    {
+      "order": 4,
+      "coarse_n": 128,
+      "centering": "cell",
+      "interpolation_order": 5,
+      "state_linf": 2.1906093727180886e-09,
+      "transfer_first_derivative_linf": 2.2940933301166904e-08,
+      "transfer_second_derivative_linf": 0.0007656254254394904,
+      "seam_first_derivative_linf": 3.9562127795988994e-07,
+      "seam_second_derivative_linf": 0.000191290132230885,
+      "reduction_commutator_linf": 1.1400334998246109e-06
+    },
+    {
+      "order": 4,
+      "coarse_n": 128,
+      "centering": "vertex",
+      "interpolation_order": 6,
+      "state_linf": 6.826461618203439e-11,
+      "transfer_first_derivative_linf": 5.720212451857757e-10,
+      "transfer_second_derivative_linf": 1.1930096661671996e-05,
+      "seam_first_derivative_linf": 3.946325932702166e-09,
+      "seam_second_derivative_linf": 2.020518877543509e-06,
+      "reduction_commutator_linf": 1.1398974510967719e-06
+    },
+    {
+      "order": 4,
+      "coarse_n": 128,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 6,
+      "state_linf": 4.929312513723971e-11,
+      "transfer_first_derivative_linf": 3.09687238816044e-10,
+      "transfer_second_derivative_linf": 1.8115115570556858e-07,
+      "seam_first_derivative_linf": 2.6949524093803725e-09,
+      "seam_second_derivative_linf": 1.465180503146257e-06,
+      "reduction_commutator_linf": 1.1395831428506753e-06
+    },
+    {
+      "order": 6,
+      "coarse_n": 16,
+      "centering": "cell",
+      "interpolation_order": 5,
+      "state_linf": 6.936922085007402e-05,
+      "transfer_first_derivative_linf": 0.0009567878125759322,
+      "transfer_second_derivative_linf": 0.4268001912536237,
+      "seam_first_derivative_linf": 0.002032789656277223,
+      "seam_second_derivative_linf": 0.11783057279698284,
+      "reduction_commutator_linf": 0.0013847438587148986
+    },
+    {
+      "order": 6,
+      "coarse_n": 16,
+      "centering": "vertex",
+      "interpolation_order": 8,
+      "state_linf": 5.715299093989046e-07,
+      "transfer_first_derivative_linf": 5.802178372619575e-06,
+      "transfer_second_derivative_linf": 0.001766765395752322,
+      "seam_first_derivative_linf": 2.348857278381781e-06,
+      "seam_second_derivative_linf": 0.00015320833743083363,
+      "reduction_commutator_linf": 0.00015984737567631413
+    },
+    {
+      "order": 6,
+      "coarse_n": 16,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 8,
+      "state_linf": 4.1846440268500373e-07,
+      "transfer_first_derivative_linf": 2.650865231198137e-06,
+      "transfer_second_derivative_linf": 0.0002197426897097898,
+      "seam_first_derivative_linf": 3.5449670127289207e-06,
+      "seam_second_derivative_linf": 0.00022644525918293665,
+      "reduction_commutator_linf": 0.00015649110369619912
+    },
+    {
+      "order": 6,
+      "coarse_n": 32,
+      "centering": "cell",
+      "interpolation_order": 5,
+      "state_linf": 2.2250288763472903e-06,
+      "transfer_first_derivative_linf": 3.073889893438301e-05,
+      "transfer_second_derivative_linf": 0.05500484974367939,
+      "seam_first_derivative_linf": 0.00012613925157691774,
+      "seam_second_derivative_linf": 0.014617999422868403,
+      "reduction_commutator_linf": 4.465714457779768e-05
+    },
+    {
+      "order": 6,
+      "coarse_n": 32,
+      "centering": "vertex",
+      "interpolation_order": 8,
+      "state_linf": 2.3273079019503484e-09,
+      "transfer_first_derivative_linf": 2.345331124864458e-08,
+      "transfer_second_derivative_linf": 2.8801654111197828e-05,
+      "seam_first_derivative_linf": 3.032645484365067e-08,
+      "seam_second_derivative_linf": 3.8657355572821766e-06,
+      "reduction_commutator_linf": 2.5236897274183434e-06
+    },
+    {
+      "order": 6,
+      "coarse_n": 32,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 8,
+      "state_linf": 1.679496208772946e-09,
+      "transfer_first_derivative_linf": 1.0576650614583608e-08,
+      "transfer_second_derivative_linf": 1.8016224856864937e-06,
+      "seam_first_derivative_linf": 2.6168707171573637e-08,
+      "seam_second_derivative_linf": 3.5078443987559795e-06,
+      "reduction_commutator_linf": 2.509493206737101e-06
+    },
+    {
+      "order": 6,
+      "coarse_n": 64,
+      "centering": "cell",
+      "interpolation_order": 5,
+      "state_linf": 6.998571019239952e-08,
+      "transfer_first_derivative_linf": 9.672722709315925e-07,
+      "transfer_second_derivative_linf": 0.006928239061201364,
+      "seam_first_derivative_linf": 7.797122833252957e-06,
+      "seam_second_derivative_linf": 0.0018076076846682554,
+      "reduction_commutator_linf": 1.40652025493182e-06
+    },
+    {
+      "order": 6,
+      "coarse_n": 64,
+      "centering": "vertex",
+      "interpolation_order": 8,
+      "state_linf": 9.18576326114362e-12,
+      "transfer_first_derivative_linf": 9.24212706365779e-11,
+      "transfer_second_derivative_linf": 4.5481089424962796e-07,
+      "seam_first_derivative_linf": 2.828424901698175e-10,
+      "seam_second_derivative_linf": 7.166790459854786e-08,
+      "reduction_commutator_linf": 3.9525743567025984e-08
+    },
+    {
+      "order": 6,
+      "coarse_n": 64,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 8,
+      "state_linf": 6.605160862704906e-12,
+      "transfer_first_derivative_linf": 4.154142955551758e-11,
+      "transfer_second_derivative_linf": 1.4254926681031876e-08,
+      "seam_first_derivative_linf": 1.9705363267045567e-10,
+      "seam_second_derivative_linf": 5.4206662348911375e-08,
+      "reduction_commutator_linf": 3.946917392916305e-08
+    },
+    {
+      "order": 6,
+      "coarse_n": 128,
+      "centering": "cell",
+      "interpolation_order": 5,
+      "state_linf": 2.1906093727180886e-09,
+      "transfer_first_derivative_linf": 3.027970715644794e-08,
+      "transfer_second_derivative_linf": 0.000867681917466396,
+      "seam_first_derivative_linf": 4.837201641313035e-07,
+      "seam_second_derivative_linf": 0.00022433231287221942,
+      "reduction_commutator_linf": 4.4039921931471326e-08
+    },
+    {
+      "order": 6,
+      "coarse_n": 128,
+      "centering": "vertex",
+      "interpolation_order": 8,
+      "state_linf": 3.608224830031759e-14,
+      "transfer_first_derivative_linf": 4.218847493575595e-13,
+      "transfer_second_derivative_linf": 7.14333307567156e-09,
+      "seam_first_derivative_linf": 2.3675283955526537e-12,
+      "seam_second_derivative_linf": 1.1971375594536463e-09,
+      "reduction_commutator_linf": 6.179705636100152e-10
+    },
+    {
+      "order": 6,
+      "coarse_n": 128,
+      "centering": "cell_elevated_control",
+      "interpolation_order": 8,
+      "state_linf": 2.5757174171303632e-14,
+      "transfer_first_derivative_linf": 2.9061197892588097e-13,
+      "transfer_second_derivative_linf": 1.7747273280595687e-10,
+      "seam_first_derivative_linf": 1.5065874473899993e-12,
+      "seam_second_derivative_linf": 8.410198562261131e-10,
+      "reduction_commutator_linf": 6.177279798791346e-10
+    }
+  ],
+  "operator_norms": [
+    {
+      "order": 2,
+      "centering": "cell",
+      "H_times_commutator_norm_in_uniform_quadrature": 1.7499999999999998
+    },
+    {
+      "order": 2,
+      "centering": "vertex",
+      "H_times_commutator_norm_in_uniform_quadrature": 1.414213562373095,
+      "restriction_prolongation_identity": "bitwise exact"
+    },
+    {
+      "order": 2,
+      "centering": "cell_elevated_control",
+      "H_times_commutator_norm_in_uniform_quadrature": 1.125
+    },
+    {
+      "order": 4,
+      "centering": "cell",
+      "H_times_commutator_norm_in_uniform_quadrature": 2.229166666666666
+    },
+    {
+      "order": 4,
+      "centering": "vertex",
+      "H_times_commutator_norm_in_uniform_quadrature": 1.8856180831641263,
+      "restriction_prolongation_identity": "bitwise exact"
+    },
+    {
+      "order": 4,
+      "centering": "cell_elevated_control",
+      "H_times_commutator_norm_in_uniform_quadrature": 1.5729166666666667
+    },
+    {
+      "order": 6,
+      "centering": "cell",
+      "H_times_commutator_norm_in_uniform_quadrature": 2.452083333333333
+    },
+    {
+      "order": 6,
+      "centering": "vertex",
+      "H_times_commutator_norm_in_uniform_quadrature": 2.074179891480539,
+      "restriction_prolongation_identity": "bitwise exact"
+    },
+    {
+      "order": 6,
+      "centering": "cell_elevated_control",
+      "H_times_commutator_norm_in_uniform_quadrature": 1.777473958333333
+    }
+  ],
+  "exact_vertex_FD2_cubic_commutator": "-3*H**2/4",
+  "fd_source_identical_between_branches": true
+}
