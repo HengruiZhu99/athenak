@@ -296,6 +296,11 @@ class PcGh {
     Real kappa;
     std::string reduction_system;
     Real reduction_rate;
+    std::string reduction_profile;
+    Real reduction_inner_rate;
+    Real reduction_core_radius;
+    Real reduction_taper_radius;
+    bool reduction_follow_trackers;
     bool reduction_monitor;
     std::string reduction_monitor_file;
     Real dissipation;
@@ -315,6 +320,8 @@ class PcGh {
   } opt;
 
   DvceArray5D<Real> u0;
+  DualArray2D<Real> reduction_centers;
+  std::vector<std::array<Real, 3>> reduction_tracker_register;
   DvceArray5D<Real> u1;
   DvceArray5D<Real> u_rhs;
   DvceArray5D<Real> u_con;

@@ -154,8 +154,10 @@ TaskStatus PcGh::NewTimeStep(Driver *pdriver, int stage) {
   }
   // The mesh applies the user CFL factor to dtnew. Keep lambda*dtnew <= 1
   // for the new explicit relaxation, independently of the spatial mesh speed.
-  if (opt.reduction_system == "advective" && opt.reduction_rate > 0.0) {
-    local_dt = std::min(local_dt, 1.0/opt.reduction_rate);
+  Real const maximum_rate = opt.reduction_profile == "smooth_core"
+      ? opt.reduction_inner_rate : opt.reduction_rate;
+  if (opt.reduction_system == "advective" && maximum_rate > 0.0) {
+    local_dt = std::min(local_dt, 1.0/maximum_rate);
   }
   dtnew = local_dt;
   return TaskStatus::complete;

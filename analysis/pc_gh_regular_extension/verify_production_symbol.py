@@ -70,6 +70,18 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("run", type=Path)
     args = parser.parse_args()
+    from make_inputs import parse
+    input_path = args.run/'used_input.athinput'
+    params = parse(input_path.read_text()) if input_path.exists() else {'pc_gh': {}}
+    local_rate = None
+    if params['pc_gh'].get('reduction_profile', 'constant') == 'smooth_core':
+        from verify_smooth_pulses import rate_gradient
+        mesh = params['mesh']
+        point = np.array([[float(mesh[f'x{d}min'])+(int(mesh[f'nx{d}'])//2+.5)
+                  *(float(mesh[f'x{d}max'])-float(mesh[f'x{d}min']))/int(mesh[f'nx{d}'])
+                  for d in [1,2,3]]])
+        local_rate = float(rate_gradient(point,params['pc_gh'],0,0)[0][0])
+        print('Independent smooth rate at affine probe:', local_rate)
     data = np.genfromtxt(args.run/"principal.csv", delimiter=",", names=True)
     cases = np.genfromtxt(args.run/"cases.csv", delimiter=",", names=True)
     states = np.genfromtxt(args.run/"states.csv", delimiter=",", names=True)
@@ -80,6 +92,8 @@ def main():
         rows = data[data["case"] == c]
         measured[rows["row"].astype(int), rows["col"].astype(int)] = rows["value"]
         w, rho, rate = [s.Rational(str(case[key])) for key in ("w", "rho", "rate")]
+        if local_rate is not None:
+            rate = s.Rational(str(local_rate))
         normal = s.Matrix([s.Rational(str(case[key])) for key in ("nx", "ny", "nz")])
         metric_map = s.eye(3)
         if case["curved"]:

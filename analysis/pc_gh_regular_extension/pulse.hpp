@@ -28,6 +28,7 @@ void Dump(ParameterInput *pin, Mesh *pm, std::string phase) {
   file << "time,block,level,x,y,z,volume";
   for (int v = 0; v < PC::npcgh; ++v) file << ",u" << v;
   for (int v = 0; v < 33; ++v) file << ",E" << v;
+  for (int v = 0; v < 33; ++v) file << ",C" << v;
   for (int v = 0; v < 8; ++v) file << ",norm" << v;
   file << '\n' << std::setprecision(17);
   for (int m = 0; m < pm->pmb_pack->nmb_thispack; ++m) {
@@ -71,6 +72,22 @@ void Dump(ParameterInput *pin, Mesh *pm, std::string phase) {
                << CellCenterX(k-ind.ks, ind.nx3, size.x3min, size.x3max) << ',' << volume;
           for (int v = 0; v < PC::npcgh; ++v) file << ',' << state(m, v, k, j, i);
           for (Real value : error) file << ',' << value;
+          // Uncontracted exterior derivatives, pair-major then (w,g[6],L,beta[3]).
+          // L retains its production factor two, just as E21..E23 above.
+          for (int a=0; a<3; ++a) {
+            for (int b=a+1; b<3; ++b) {
+              file << ',' << derivative(a,PC::I_P1+b)-derivative(b,PC::I_P1+a);
+              for (int v=0; v<6; ++v) {
+                file << ',' << derivative(a,PC::I_Q1XX+6*b+v)
+                    -derivative(b,PC::I_Q1XX+6*a+v);
+              }
+              file << ',' << derivative(a,PC::I_L1+b)-derivative(b,PC::I_L1+a);
+              for (int v=0; v<3; ++v) {
+                file << ',' << derivative(a,PC::BIndex(b,v))
+                    -derivative(b,PC::BIndex(a,v));
+              }
+            }
+          }
           for (int v = 0; v < 8; ++v) file << ',' << con(m, PC::I_CON_RED_W+v, k, j, i);
           file << '\n';
         }

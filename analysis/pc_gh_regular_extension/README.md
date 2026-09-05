@@ -4,6 +4,23 @@ Read [the derivation and status](../../docs/pc_gh_regular_extension.md) before u
 this option. Defaults preserve the legacy equations. The candidate is not yet
 qualified by CUDA puncture or binary evolution.
 
+The optional `reduction_profile=smooth_core` candidate uses bounded finite
+inner relaxation, with fixed physical `reduction_core_radius` and
+`reduction_taper_radius`. `reduction_inner_rate` is the core rate; the existing
+`reduction_rate` remains the outer rate. `reduction_follow_trackers=true` advances
+3D black-hole mask centers with the field RK stages. Defaults retain the constant
+profile. Read the exact subsidiary/curl and tracker qualifications in the
+derivation before using this option.
+
+`make_smooth_controls.py QUALIFICATION_DIRECTORY NEW_DIRECTORY` prepares the
+fixed/moving pulse, gauge-wave, oracle and single-hole inputs. The smooth pulse
+verifier uses independent characteristic quadrature and the uncontracted curl
+columns added to `pulse.hpp`; it does not fit a single rate to a variable-rate
+packet. `verify_moving_wave.py` compares both tracker paths with the analytic
+normal flow of the shifted gauge wave. Build and run numerical qualifications
+on Della CUDA; the local smooth build recorded in this session is compilation
+validation only.
+
 Local symbolic/zero-step reproduction (Python with SymPy/NumPy):
 
 ```sh

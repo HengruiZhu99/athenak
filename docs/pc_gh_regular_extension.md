@@ -157,9 +157,8 @@ Let `omega^A=dG^A=dE^A`, with
 \]
 
 The L curl is twice the alpha component. This formula includes spatially varying
-lambda for a future taper, although the current input is constant. It explicitly
-shows the curl source from any future smooth relaxation mask. No hard reset or
-mask is included in the present candidate.
+lambda and the curl source from the optional finite smooth inner relaxation
+described below. The original constant-rate candidate remains the default.
 
 The reduction characteristics have coordinate speed `-beta.n`. On shifted flat
 space with constant coefficients they decay as `exp(-lambda*t)`; curls do too.
@@ -258,8 +257,10 @@ as `J_ab`. Bianchi then gives precisely the same boxed wave operator with forcin
 `-2 nabla^a(J_ab - g_ab J/2)`. Reconstructing the metric jets from the evolved
 configuration and using the above subsidiary system makes J homogeneous in E,
 curls, and their derivatives on r>0. Thus the combined zero surface is invariant;
-reduction error can source GH error. A fully expanded nonlinear component formula
-for this off-reduction J has not been independently checked. The independent full
+reduction error can source GH error. An explicit contracted 3+1 construction of
+this nonlinear J is given below and checked against coordinate Ricci. Its full
+substitution into every production component has not been independently expanded.
+The independent full
 production Fourier test does check this coupling in the shifted Minkowski
 linearization: all 30 independent reductions satisfy the exact operator identity
 `C(k)(J_source+i*k*P)=(-lambda+i*k*beta_x)C(k)`, and the entire 50-dimensional
@@ -270,6 +271,80 @@ for kappa=1 and eta=0. This was independently recovered from the compiled source
 Jacobian and the exact reduction-manifold embedding. Zero-frequency neutral
 modes need not be strictly damped or free of polynomial gauge transients.
 This is a flat linear damping result, not a nonlinear black-hole estimate.
+
+### Constructive nonlinear off-reduction Einstein residual
+
+The distinction between stored curvature and geometrical extrinsic curvature
+matters off the reduction surface. Let
+
+\[
+\gamma_{ij}=w^{-2}g_{ij},\quad
+K^*_{ij}=w^{-2}(\widetilde A_{ij}+g_{ij}K/3),\quad
+b_i{}^j=B_i{}^j-\partial_i\beta^j,\quad
+\Sigma_{ij}=\gamma_{k(i}b_{j)}{}^k.
+\]
+
+The actual configuration equations give
+`(partial_t-L_beta) gamma_ij=-2 alpha K*_ij+2 Sigma_ij`.
+Consequently the extrinsic curvature of the evolved four-metric is
+
+\[
+\widehat K_{ij}=K^*_{ij}-\Sigma_{ij}/\alpha,
+\qquad \widehat K=K-\operatorname{tr}b/\alpha.
+\]
+
+Use the true Levi-Civita connection D of gamma, `a_i=D_i log(alpha)`,
+`C_i=g_ij Z^j`, `Cperp=n.C`,
+`Mhat_i=D_j Khat^j_i-D_i Khat`, and
+`D_t^L=partial_t-L_beta` on spatial tensors. The complete ten residual
+components, with no Einstein/GH/reduction constraint imposed, are
+
+\[
+\begin{aligned}
+J_{nn}={}&n(\widehat K)+D^iD_i\alpha/\alpha
+ -\widehat K_{ij}\widehat K^{ij}
+ -n(C_\perp)+C_i a^i-\kappa C_\perp/2,\\
+J_{ni}={}&-\widehat M_i
+ -\tfrac12[\alpha^{-1}D_t^L C_i+D_i C_\perp-a_iC_\perp]
+ -\widehat K_i{}^j C_j-\kappa C_i/2,\\
+J_{ij}={}&{}^{(3)}R_{ij}+\widehat K\widehat K_{ij}
+ -2\widehat K_i{}^k\widehat K_{kj}
+ -\alpha^{-1}D_t^L\widehat K_{ij}-\alpha^{-1}D_iD_j\alpha
+ -D_{(i}C_{j)}-\widehat K_{ij}C_\perp-\kappa\gamma_{ij}C_\perp/2.
+\end{aligned}
+\]
+
+This is a constructive component specification: differentiate the displayed
+algebraic maps with the complete production RHS and the subsidiary b equation;
+replace true spatial configuration derivatives by `G-E` and their derivatives.
+It expresses J in the evolved fields, E and first derivatives of E. On E=0,
+the existing covariant primary-equation identities give J=0. No unspecified
+additional constraint equation is needed to compute its Bianchi forcing.
+The divisions here concern physical geometry on r>0; these are analysis
+identities, not additional terms in the regular production kernel.
+
+`verify_covariant_residual.py` checks all ten formulas exactly against the
+coordinate definition of four-dimensional Ricci on a non-diagonal rational
+metric jet with arbitrary, nonsymmetric derivatives of C_a. The fixture is
+deliberately off the reduced Einstein surface. It also independently checks
+the following useful special case. At fixed state and first spatial jets,
+changing the finite coordinate reduction rate by delta_lambda gives
+
+\[
+\delta J_{nn}=\frac{\delta\lambda}{\alpha^2}\operatorname{tr}b,
+\quad \delta J_{ni}=0,
+\quad \delta J_{ij}=-\frac{\delta\lambda}{\alpha^2}\Sigma_{ij}.
+\]
+
+Indeed `delta gamma_tt=-2 delta_lambda Sigma`; arbitrary lapse and shift
+accelerations cancel from coordinate Ricci. This is an implicit homogeneous
+curvature response to damping B, despite the absence of explicit new K/A
+damping terms. It vanishes on the reduction surface and is included in the
+forced GH subsidiary system. The alpha denominators explain why a bound on
+regular reduction components alone is not a uniform bound on the physical
+Einstein residual at the compactified point. This oracle checks the contraction
+identities and rate response, not a global nonlinear damping theorem or a
+fully expanded production-versus-J comparison on arbitrary off-surface jets.
 
 ## Principal symbol, characteristic fields, and domain
 
@@ -430,3 +505,83 @@ both actual closest cells and fixed-radius convergence here. Brown's later
 puncture-boundary mode analysis concerns BSSN with its particular gauge and
 stencils ([Brown 2009](https://arxiv.org/abs/0908.3814)); its favorable boundary
 conclusion is not a proof for this PC-GH extension.
+
+## Optional finite smooth inner relaxation (research candidate)
+
+After the constant-rate binary failures and the FD6 fine-core failure, the
+authorized fallback changes only the coordinate relaxation coefficient in the
+existing advective extension. It introduces no new field divisions or resets.
+For fixed physical radii `0<Rc<Rt`, set
+
+\[
+q_n={|x-X_n|^2-R_c^2\over R_t^2-R_c^2},\quad
+P_n=\begin{cases}1&q_n\le0,\\
+{e^{-1/(1-q_n)}\over e^{-1/q_n}+e^{-1/(1-q_n)}}&0<q_n<1,\\
+0&q_n\ge1,\end{cases}\quad
+P=1-\prod_n(1-P_n),\qquad
+\lambda=\lambda_{\rm out}+(\lambda_{\rm in}-\lambda_{\rm out})P.
+\]
+
+Thus `lambda_out <= lambda <= lambda_in`; the overlapping union is invariant
+under permutation of the punctures. A squared radius and a constant plateau
+make the coefficient smooth even at a center. Both exponentials can never
+underflow simultaneously. The widths are physical input parameters independent
+of resolution. A single fixed center is supported; moving centers require the
+existing three-dimensional black-hole shift trackers. The default profile is
+`constant`, retaining the original behavior.
+
+At a fixed state this replaces precisely `-lambda E` in all p/Q/L/B equations;
+configuration, K, Atilde, Z, and Cperp equations are unchanged. The exact
+nonlinear subsidiary equations above therefore continue to hold with this
+lambda. No `partial_t lambda` term enters their first time derivative. The
+curl equation retains `-d lambda wedge E`. This term is homogeneous in the
+reductions but need not decrease the curl norm: a taper can generate curl.
+For flat constant shift, along `x(s)=x(t)+beta(t-s)`,
+
+\[
+E(t,x)=e^{-\Lambda(t,x)}E_0(x+\beta t),\quad
+\Lambda=\int_0^t\lambda(s,x+\beta(t-s))\,ds,
+\qquad
+\omega(t,x)=e^{-\Lambda}\{\omega_0-d\Lambda\wedge E_0\}.
+\]
+
+This gives an independent characteristic-quadrature test, including every
+unexcited reduction/curl component. For a pure local relaxation substep with
+configuration held fixed the exact map is
+`G_new=dx+exp(-lambda dt)*(G_old-dx)`. Its curl is
+`exp(-lambda dt)*(omega_old-dt*d lambda wedge E_old)`. The present implementation
+uses the existing explicit RK method with `lambda_in*dt <= CFL`; it does not
+claim to implement this analytic substep or an IMEX method.
+
+Finite bounded lambda leaves the previously derived frozen local characteristic
+speeds and hyperbolicity conditions unchanged. Spatially varying coefficients
+add bounded lower-order terms on a smooth background away from the puncture.
+The reduction-energy condition remains pointwise domination of the symmetric
+source/stretch matrix by lambda; the combined curl estimate also contains
+`|grad lambda| |E| |omega|`. Neither statement proves stability of AMR transfers,
+nor a uniform estimate at `r=0`. The Einstein zero-constraint surface is preserved
+because the correction and its spatial derivatives vanish when E vanishes.
+The ten geometric residual identities above still apply; their finite-rate
+response uses the local rate difference.
+
+For moving masks, the centers satisfy `dX_n/dt=-beta(t,X_n)` and participate in
+the same explicit RK stages and low-storage accumulators as the fields.
+Each RHS interpolates the current stage shift at the current stage centers,
+synchronizes ownership across MPI ranks, then evaluates the mask. The final
+tracking task writes positions and endpoint velocities without a second Euler
+advance. Existing checkpoint positions suffice because checkpoints occur at
+complete steps and the accumulator is initialized again at stage one. The
+historical constant-profile tracker path is retained. Nonfinite velocities,
+positions, or loss of a grid owner fail explicitly. The existing interpolator
+requires a 3D grid; unsupported tracker modes/dimensions are rejected.
+
+`verify_smooth_identities.py` checks the finite curl map and sign symbolically,
+the independent mask gradient, all constant-rate component limits, and fourth
+order on a nonlinear coupled ODE using the driver coefficients. CUDA controls
+in `smooth-controls/` test fixed tapers, overlapping moving masks, exact flat
+data, gauge waves, and regression against the original executable. The moving
+gauge-wave trajectory has the independent implicit solution
+`X-(2A/k)cos(k(X-t))=X0-(2A/k)cos(k X0)`; its errors include field evolution and
+interpolation. These prepared controls and the source implementation do not
+yet qualify the fallback. Core resolution, mask-width independence, exterior
+convergence, and a successful long binary remain required.

@@ -1,0 +1,184 @@
+# Research candidate input; no numerical qualification implied.
+
+<job>
+basename = pc_gh_one_puncture_smr_r16
+
+<mesh>
+nghost = 2
+nx1 = 16
+x1min = -32.0
+x1max = 32.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 16
+x2min = -32.0
+x2max = 32.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 16
+x3min = -32.0
+x3max = 32.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<mesh_refinement>
+refinement = static
+max_nmb_per_rank = 4096
+
+<refined_region1>
+level = 1
+x1min = -15.9999995
+x1max = 15.9999995
+x2min = -15.9999995
+x2max = 15.9999995
+x3min = -15.9999995
+x3max = 15.9999995
+
+<refined_region2>
+level = 2
+x1min = -7.9999995
+x1max = 7.9999995
+x2min = -7.9999995
+x2max = 7.9999995
+x3min = -7.9999995
+x3max = 7.9999995
+
+<refined_region3>
+level = 3
+x1min = -3.9999995
+x1max = 3.9999995
+x2min = -3.9999995
+x2max = 3.9999995
+x3min = -3.9999995
+x3max = 3.9999995
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.1
+nlim = -1
+tlim = 10.0
+ndiag = 100
+
+<pc_gh>
+spatial_order = 2
+gauge = z4c_mp_hyperbolic
+shift_eta = 2.0
+kappa = 1.0
+dissipation = 0.3
+initial_data_division_floor = 1.0e-14
+boundedness_output = true
+boundedness_dcycle = 1
+reconstruct_adm_output = false
+physical_output_inner_radius = 0.125
+constraint_excise_chi = 0.0625
+constraint_exterior_horizon = true
+constraint_horizon_radius = 0.25
+constraint_horizon_buffer = 0.0
+dump_horizon_0 = false
+co_0_x = 0.0
+co_0_y = 0.0
+co_0_z = 0.0
+co_0_dump_radius = 0.5
+horizon_0_Nx = 34
+horizon_0_rn = 6
+horizon0r_guess = 0.25
+horizon_dt = 0.25
+extrap_order = 2
+constraint_dcycle = 1
+reduction_system = advective
+reduction_rate = 2
+reduction_monitor = true
+project_reduction_constraints = false
+project_gauge_constraints = false
+reduction_profile = smooth_core
+reduction_inner_rate = 16
+reduction_core_radius = 0.125
+reduction_taper_radius = 0.5
+reduction_follow_trackers = false
+
+<problem>
+pgen_name = pc_gh_one_puncture
+mass = 0.5
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+audit_r_min = 0.5
+audit_r_max = 2.0
+expected_finest_spacing = 0.0625
+
+<output1>
+file_type = hst
+dt = 0.0125
+
+<output2>
+file_type = cart
+id = pcgh_con_slice
+variable = pcgh_con
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+extent_x = 1.0
+extent_y = 1.0
+extent_z = 0.0
+numpoints_x = 64
+numpoints_y = 64
+numpoints_z = 2
+dt = 0.25
+
+<output3>
+file_type = cart
+id = pcgh_slice
+variable = pcgh
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+extent_x = 1.0
+extent_y = 1.0
+extent_z = 0.0
+numpoints_x = 64
+numpoints_y = 64
+numpoints_z = 2
+dt = 0.25
+
+<output4>
+file_type = rst
+dt = 0.5
+
+<output5>
+file_type = bin
+variable = pcgh
+slice_x3 = 0.0
+dt = 0.125
+
+<refined_region4>
+level = 4
+x1min = -1.9999995
+x1max = 1.9999995
+x2min = -1.9999995
+x2max = 1.9999995
+x3min = -1.9999995
+x3max = 1.9999995
+
+<refined_region5>
+level = 5
+x1min = -0.9999995
+x1max = 0.9999995
+x2min = -0.9999995
+x2max = 0.9999995
+x3min = -0.9999995
+x3max = 0.9999995
+
+<refined_region6>
+level = 6
+x1min = -0.4999995
+x1max = 0.4999995
+x2min = -0.4999995
+x2max = 0.4999995
+x3min = -0.4999995
+x3max = 0.4999995

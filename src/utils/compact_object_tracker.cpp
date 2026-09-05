@@ -98,10 +98,10 @@ CompactObjectTracker::CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int
 
       ofile << "# 1:iter 2:time 3:x 4:y 5:z 6:vx 7:vy 8:vz\n";
       ofile << std::flush;
-      ofile << std::setprecision(19);
     } else {
       ofile.open(ofname, std::ios::out | std::ios::app);
     }
+    ofile << std::setprecision(19);
   }
 }
 
@@ -163,6 +163,31 @@ void CompactObjectTracker::InterpolateVelocity(MeshBlockPack *pmbp) {
 }
 
 //----------------------------------------------------------------------------------------
+void CompactObjectTracker::SynchronizeVelocity() {
+  Real values[ndim+1] = {0., 0., 0., 0.};
+  if (owns_compact_object) {
+    for (int a=0; a<ndim; ++a) values[a] = vel[a];
+    values[ndim] = 1.;
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, values, ndim+1, MPI_ATHENA_REAL,
+                MPI_SUM, MPI_COMM_WORLD);
+#endif
+  if (values[ndim] < .5) {
+    std::cout << "### FATAL ERROR: RK compact-object tracker has left the grid"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  for (int a=0; a<ndim; ++a) {
+    vel[a] = values[a]/values[ndim];
+    if (!std::isfinite(vel[a])) {
+      std::cout << "### FATAL ERROR: nonfinite RK compact-object velocity"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
+}
+
 void CompactObjectTracker::EvolveTracker(MeshBlockPack *pmbp) {
   if (owns_compact_object) {
     if (mode == ODE) {

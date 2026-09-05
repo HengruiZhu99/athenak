@@ -16,6 +16,8 @@
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
 #include "pc_gh/pc_gh.hpp"
+#include "pc_gh/reduction_profile.hpp"
+#include "utils/compact_object_tracker.hpp"
 #include "utils/finite_diff.hpp"
 
 namespace pc_gh {
@@ -32,6 +34,20 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
   Real const kappa = opt.kappa;
   bool const advective_reduction = (opt.reduction_system == "advective");
   Real const reduction_rate = opt.reduction_rate;
+  bool const smooth_reduction = opt.reduction_profile == "smooth_core";
+  Real const inner_rate = opt.reduction_inner_rate;
+  Real const core2 = opt.reduction_core_radius*opt.reduction_core_radius;
+  Real const taper2 = opt.reduction_taper_radius*opt.reduction_taper_radius;
+  if (opt.reduction_follow_trackers) {
+    for (std::size_t n=0; n<ptracker.size(); ++n) {
+      ptracker[n]->InterpolateVelocity(pmy_pack);
+      ptracker[n]->SynchronizeVelocity();
+      for (int a=0; a<3; ++a) reduction_centers.h_view(n,a) = ptracker[n]->GetPos(a);
+    }
+    Kokkos::deep_copy(reduction_centers.d_view, reduction_centers.h_view);
+  }
+  auto centers = reduction_centers.d_view;
+  int const ncenters = centers.extent_int(0);
   bool const use_gauge_a0 = (opt.gauge == "a0");
   bool const use_z4c_mp = (opt.gauge == "z4c_mp"
                             || opt.gauge == "z4c_mp_hyperbolic");
@@ -548,7 +564,24 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
       Real rl[3] = {};
       Real rq[3][3][3] = {};
       Real rb[3][3] = {};
-      Real const rate = reduction_rate;
+      Real rate = reduction_rate;
+      if (smooth_reduction) {
+        Real const position[3] = {
+          CellCenterX(i-indcs.is, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max),
+          CellCenterX(j-indcs.js, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max),
+          CellCenterX(k-indcs.ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max)};
+        Real outside = 1.0;
+        for (int n=0; n<ncenters; ++n) {
+          Real r2 = 0.0;
+          for (int a=0; a<3; ++a) {
+            Real const offset = position[a]-centers(n,a);
+            r2 += offset*offset;
+          }
+          outside *= 1.0-SmoothReductionWeight(r2,core2,taper2);
+        }
+        // A permutation-symmetric union stays bounded when puncture masks overlap.
+        rate += (inner_rate-reduction_rate)*(1.0-outside);
+      }
       for (int d = 0; d < 3; ++d) {
         bool const active = (d == 0) || (d == 1 && multi_d) || (d == 2 && three_d);
         Real const dw = active ? Dx<FD_STENCIL>(d, idx, pc.w, m, k, j, i) : 0.0;

@@ -472,7 +472,8 @@ TaskStatus PcGh::TrackCompactObjects(Driver *pdriver, int stage) {
   if (stage == pdriver->nexp_stages) {
     for (auto &tracker : ptracker) {
       tracker->InterpolateVelocity(pmy_pack);
-      tracker->EvolveTracker(pmy_pack);
+      if (opt.reduction_follow_trackers) tracker->SynchronizeVelocity();
+      else tracker->EvolveTracker(pmy_pack);
       tracker->WriteTracker();
     }
   }

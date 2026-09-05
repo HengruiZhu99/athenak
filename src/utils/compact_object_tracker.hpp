@@ -33,6 +33,10 @@ class CompactObjectTracker {
   ~CompactObjectTracker();
   //! Interpolate the shift vector to the puncture position
   void InterpolateVelocity(MeshBlockPack *pmbp);
+  //! Synchronize the interpolated velocity without advancing the position.
+  void SynchronizeVelocity();
+  inline Real GetVelocity(int a) const { return vel[a]; }
+  inline bool IsPunctureODE() const { return mode == ODE && type == BlackHole; }
   //! Update and broadcast the puncture position
   void EvolveTracker(MeshBlockPack *pmbp);
   //! Write data to file

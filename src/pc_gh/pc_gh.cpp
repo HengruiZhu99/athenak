@@ -192,6 +192,28 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   opt.kappa = pin->GetOrAddReal("pc_gh", "kappa", 0.0);
   opt.reduction_system = pin->GetOrAddString("pc_gh", "reduction_system", "legacy");
   opt.reduction_rate = pin->GetOrAddReal("pc_gh", "reduction_rate", 0.0);
+  opt.reduction_profile = pin->GetOrAddString("pc_gh", "reduction_profile", "constant");
+  opt.reduction_inner_rate = pin->GetOrAddReal(
+      "pc_gh", "reduction_inner_rate", opt.reduction_rate);
+  opt.reduction_core_radius = pin->GetOrAddReal("pc_gh", "reduction_core_radius", 0.0);
+  opt.reduction_taper_radius = pin->GetOrAddReal("pc_gh", "reduction_taper_radius", 0.0);
+  opt.reduction_follow_trackers = pin->GetOrAddBoolean(
+      "pc_gh", "reduction_follow_trackers", false);
+  bool const smooth_reduction = opt.reduction_profile == "smooth_core";
+  if ((opt.reduction_profile != "constant" && !smooth_reduction)
+      || (smooth_reduction && (opt.reduction_system != "advective"
+          || !std::isfinite(opt.reduction_inner_rate)
+          || opt.reduction_inner_rate < opt.reduction_rate
+          || !std::isfinite(opt.reduction_core_radius)
+          || !std::isfinite(opt.reduction_taper_radius)
+          || opt.reduction_core_radius <= 0.0
+          || opt.reduction_taper_radius <= opt.reduction_core_radius))
+      || (opt.reduction_follow_trackers && !smooth_reduction)) {
+    std::cout << "### FATAL ERROR: smooth_core reduction requires advective mode, "
+                 "finite inner_rate >= reduction_rate, and 0 < core_radius < taper_radius; "
+                 "following trackers requires smooth_core" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.reduction_monitor = pin->GetOrAddBoolean("pc_gh", "reduction_monitor", false);
   opt.reduction_monitor_file = pin->GetOrAddString("pc_gh", "reduction_monitor_file",
       pin->GetString("job", "basename") + ".pcgh-reduction.csv");
@@ -292,6 +314,38 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
     ptracker.push_back(std::make_unique<CompactObjectTracker>(
         pmy_pack->pmesh, pin, tracker_index, "pc_gh"));
     ++tracker_index;
+  }
+  if (smooth_reduction) {
+    int const count = opt.reduction_follow_trackers ? ptracker.size() : 1;
+    std::string const integrator = opt.reduction_follow_trackers
+        ? pin->GetString("time", "integrator") : "";
+    if (count == 0 || (opt.reduction_follow_trackers
+        && (!pmy_pack->pmesh->three_d || (integrator != "rk1" && integrator != "rk2"
+        && integrator != "rk3" && integrator != "rk4")))) {
+      std::cout << "### FATAL ERROR: moving smooth reduction needs at least one "
+                   "black-hole ODE tracker, a 3D grid, and an explicit "
+                   "rk1/rk2/rk3/rk4 integrator" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    reduction_centers = DualArray2D<Real>("PC-GH reduction centers", count, 3);
+    reduction_tracker_register.resize(count);
+    for (int n=0; n<count; ++n) {
+      if (opt.reduction_follow_trackers && !ptracker[n]->IsPunctureODE()) {
+        std::cout << "### FATAL ERROR: smooth reduction requires black-hole ODE trackers"
+                  << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+      for (int a=0; a<3; ++a) {
+        Real const center = opt.reduction_follow_trackers ? ptracker[n]->GetPos(a)
+            : pin->GetOrAddReal("pc_gh", "reduction_center_"+std::string(1, "xyz"[a]), 0.0);
+        if (!std::isfinite(center)) {
+          std::cout << "### FATAL ERROR: nonfinite smooth reduction center" << std::endl;
+          std::exit(EXIT_FAILURE);
+        }
+        reduction_centers.h_view(n,a) = center;
+      }
+    }
+    Kokkos::deep_copy(reduction_centers.d_view, reduction_centers.h_view);
   }
 
   int horizon_index = 0;
