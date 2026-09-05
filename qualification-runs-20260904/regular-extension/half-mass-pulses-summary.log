@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_regular_extension/summarize_pulses.py", line 23, in <module>
+    result = measure(run)
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_regular_extension/verify_pulses.py", line 60, in measure
+    init, final = table(directory, 'initial'), table(directory, 'final')
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_regular_extension/verify_pulses.py", line 17, in table
+    raise ValueError(f'No {phase} pulse data in {directory}')
+ValueError: No initial pulse data in qualification-runs-20260904/regular-extension/della-cuda/half-mass-controls/pulses/B-d1-l2-n1024
