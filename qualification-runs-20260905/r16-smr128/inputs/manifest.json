@@ -1,0 +1,30 @@
+{
+  "source": "qualification-runs-20260904/regular-extension/rate16-qualification/pcgh-l16-o6-rk3-smr-r20-R64.athinput",
+  "source_sha256": "6c2497e3b7cb2e399e243f36be9a17c4ed946d00c9b663c94960156e651f21d3",
+  "candidate": "R16",
+  "tlim": 20,
+  "boundary": [
+    -128,
+    128
+  ],
+  "refinement_levels": 7,
+  "constraint_selection": "chi=w^2 >= 0.0625; diagnostic selection only, no evolution excision",
+  "qualification": "Requested exterior convergence study despite M/256 strict failure; binary gate remains closed.",
+  "cases": [
+    {
+      "input": "smr/R16-smr128-h8-t20.athinput",
+      "finest_spacing": 0.125,
+      "sha256": "39edcd7482372e8a41c4fd62c4f990bf6d4e996eb11869b558b080498261793c"
+    },
+    {
+      "input": "smr/R16-smr128-h10-t20.athinput",
+      "finest_spacing": 0.1,
+      "sha256": "589275046402dc2fcdc235b8479a4a2fb4e1b493c1cce3588765ff0be231a9c4"
+    },
+    {
+      "input": "smr/R16-smr128-h12-t20.athinput",
+      "finest_spacing": 0.08333333333333333,
+      "sha256": "97be592405ce371ec051e00bbcf59378c4020fc3965df6e809796f1d2f50a312"
+    }
+  ]
+}

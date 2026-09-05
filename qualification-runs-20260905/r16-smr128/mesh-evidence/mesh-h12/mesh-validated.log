@@ -1,0 +1,28 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 400
+Number of logical  levels of refinement = 8 (9 levels total)
+Number of physical levels of refinement = 7 (8 levels total)
+  Physical level = 1 (logical level = 2): 56 MeshBlocks, cost = 56
+  Physical level = 2 (logical level = 3): 56 MeshBlocks, cost = 56
+  Physical level = 3 (logical level = 4): 56 MeshBlocks, cost = 56
+  Physical level = 4 (logical level = 5): 56 MeshBlocks, cost = 56
+  Physical level = 5 (logical level = 6): 56 MeshBlocks, cost = 56
+  Physical level = 6 (logical level = 7): 56 MeshBlocks, cost = 56
+  Physical level = 7 (logical level = 8): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 1
+See the 'mesh_structure.dat' file for MeshBlock data
+Use 'plot_mesh.py' script to visualize data
+
+[della-vis1:1677797] *** Process received signal ***
+[della-vis1:1677797] Signal: Bus error (7)
+[della-vis1:1677797] Signal code:  (128)
+[della-vis1:1677797] Failing at address: (nil)
+[della-vis1:1677797] [ 0] /usr/lib64/libc.so.6(+0x3fb30)[0x14d30183fb30]
+[della-vis1:1677797] [ 1] /scratch/gpfs/FPRETORI/hz0693/pcgh-hybrid-20260905-1317/monitor-source/build-hybrid-monitor-cuda/src/athena[0x9504a6]
+[della-vis1:1677797] [ 2] /scratch/gpfs/FPRETORI/hz0693/pcgh-hybrid-20260905-1317/monitor-source/build-hybrid-monitor-cuda/src/athena[0x930d16]
+[della-vis1:1677797] [ 3] /scratch/gpfs/FPRETORI/hz0693/pcgh-hybrid-20260905-1317/monitor-source/build-hybrid-monitor-cuda/src/athena[0x4708c6]
+[della-vis1:1677797] [ 4] /usr/lib64/libc.so.6(+0x2a610)[0x14d30182a610]
+[della-vis1:1677797] [ 5] /usr/lib64/libc.so.6(__libc_start_main+0x80)[0x14d30182a6c0]
+[della-vis1:1677797] [ 6] /scratch/gpfs/FPRETORI/hz0693/pcgh-hybrid-20260905-1317/monitor-source/build-hybrid-monitor-cuda/src/athena[0x4985c5]
+[della-vis1:1677797] *** End of error message ***
