@@ -13,12 +13,25 @@
 #include "athena.hpp"
 #include "athena_tensor.hpp"
 #include "coordinates/adm.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
 #include "pc_gh/pc_gh.hpp"
+#include "pc_gh/reduction_profile.hpp"
+#include "utils/compact_object_tracker.hpp"
 #include "utils/finite_diff.hpp"
 
 namespace pc_gh {
+
+void PcGh::SynchronizeReductionCenters() {
+  if (!opt.reduction_follow_trackers) return;
+  for (std::size_t n = 0; n < ptracker.size(); ++n) {
+    for (int a = 0; a < 3; ++a) {
+      reduction_centers.h_view(n, a) = ptracker[n]->GetPos(a);
+    }
+  }
+  Kokkos::deep_copy(reduction_centers.d_view, reduction_centers.h_view);
+}
 
 void PcGh::ProjectGaugeConstraints(MeshBlockPack *pmbp) {
   auto &indcs = pmbp->pmesh->mb_indcs;
@@ -60,10 +73,21 @@ void PcGh::ProjectReduction(MeshBlockPack *pmbp) {
   bool const three_d = pmbp->pmesh->three_d;
   auto &pc = u;
   auto &state = u0;
+  bool const smooth = opt.reduction_projection_profile == "smooth_core";
+  if (smooth) SynchronizeReductionCenters();
+  auto centers = reduction_centers.d_view;
+  Real const core2 = opt.reduction_core_radius*opt.reduction_core_radius;
+  Real const taper2 = opt.reduction_taper_radius*opt.reduction_taper_radius;
+  bool const monitor = opt.hybrid_monitor;
+  DvceArray5D<Real> corrections;
+  if (monitor) {
+    corrections = DvceArray5D<Real>("PC-GH projection corrections", nmb, 4,
+        u0.extent_int(2), u0.extent_int(3), u0.extent_int(4));
+  }
 
   // Reset the evolved first-derivative fields to their defining finite differences.
-  // A dedicated restriction/exchange follows this optional projection so both active
-  // and ghost derivative fields are consistent at MeshBlock and AMR interfaces.
+  // A dedicated restriction/exchange refreshes ghosts afterward. Independent
+  // prolongation does not imply exact reduction/curl consistency at AMR interfaces.
   par_for("PC-GH reduction-constraint projection", DevExeSpace(),
   0, nmb - 1, indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(int m, int k, int j, int i) {
@@ -72,34 +96,65 @@ void PcGh::ProjectReduction(MeshBlockPack *pmbp) {
                    1.0/size.d_view(m).dx3};
     Real const w = pc.w(m, k, j, i);
     Real const rho = pc.rho(m, k, j, i);
+    Real weight = 1.0;
+    if (smooth) {
+      Real const position[3] = {
+        CellCenterX(i-indcs.is, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max),
+        CellCenterX(j-indcs.js, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max),
+        CellCenterX(k-indcs.ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max)};
+      weight = ReductionUnionWeight(position, centers, core2, taper2);
+    }
+    if (weight == 0.0) {
+      if (monitor) for (int n = 0; n < 4; ++n) corrections(m,n,k,j,i) = 0.0;
+      return;
+    }
+    Real old_reductions[33];
+    if (monitor) {
+      for (int n = 0; n < 33; ++n) old_reductions[n] = state(m,I_P1+n,k,j,i);
+    }
     for (int d = 0; d < 3; ++d) {
       bool const active = d == 0 || (d == 1 && multi_d) || (d == 2 && three_d);
       if (!active) {
-        pc.p(m, d, k, j, i) = 0.0;
-        pc.L(m, d, k, j, i) = 0.0;
+        pc.p(m, d, k, j, i) = BlendReductionTarget(pc.p(m,d,k,j,i), 0.0, weight);
+        pc.L(m, d, k, j, i) = BlendReductionTarget(pc.L(m,d,k,j,i), 0.0, weight);
         for (int a = 0; a < 3; ++a) {
-          state(m, BIndex(d, a), k, j, i) = 0.0;
+          state(m, BIndex(d, a), k, j, i) = BlendReductionTarget(
+              state(m,BIndex(d,a),k,j,i), 0.0, weight);
           for (int b = a; b < 3; ++b) {
-            state(m, QIndex(d, a, b), k, j, i) = 0.0;
+            state(m, QIndex(d, a, b), k, j, i) = BlendReductionTarget(
+                state(m,QIndex(d,a,b),k,j,i), 0.0, weight);
           }
         }
         continue;
       }
       Real const dw = Dx<FD_STENCIL>(d, idx, pc.w, m, k, j, i);
       Real const drho = Dx<FD_STENCIL>(d, idx, pc.rho, m, k, j, i);
-      pc.p(m, d, k, j, i) = dw;
-      pc.L(m, d, k, j, i) = 2.0*(w*drho + rho*dw);
+      pc.p(m, d, k, j, i) = BlendReductionTarget(pc.p(m,d,k,j,i), dw, weight);
+      pc.L(m, d, k, j, i) = BlendReductionTarget(
+          pc.L(m,d,k,j,i), 2.0*(w*drho + rho*dw), weight);
       for (int a = 0; a < 3; ++a) {
-        state(m, BIndex(d, a), k, j, i) = Dx<FD_STENCIL>(
-            d, idx, pc.beta, m, a, k, j, i);
+        state(m, BIndex(d, a), k, j, i) = BlendReductionTarget(
+            state(m,BIndex(d,a),k,j,i), Dx<FD_STENCIL>(
+                d, idx, pc.beta, m, a, k, j, i), weight);
         for (int b = a; b < 3; ++b) {
-          state(m, QIndex(d, a, b), k, j, i) = Dx<FD_STENCIL>(
-              d, idx, pc.gtilde, m, a, b, k, j, i);
+          state(m, QIndex(d, a, b), k, j, i) = BlendReductionTarget(
+              state(m,QIndex(d,a,b),k,j,i), Dx<FD_STENCIL>(
+                  d, idx, pc.gtilde, m, a, b, k, j, i), weight);
         }
       }
     }
+    if (monitor) {
+      Real norm2[4] = {};
+      for (int n = 0; n < 33; ++n) {
+        int const group = n < 3 ? 0 : (n < 21 ? 1 : (n < 24 ? 2 : 3));
+        Real const delta = state(m,I_P1+n,k,j,i) - old_reductions[n];
+        norm2[group] += delta*delta;
+      }
+      for (int n = 0; n < 4; ++n) corrections(m,n,k,j,i) = std::sqrt(norm2[n]);
+    }
   });
   Kokkos::fence();
+  if (monitor) WriteHybridSample(corrections, 8, false);
 }
 
 void PcGh::ProjectAlgebraic(MeshBlockPack *pmbp) {

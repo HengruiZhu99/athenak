@@ -26,7 +26,9 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
+#include "mesh/nghbr_index.hpp"
 #include "pc_gh/pc_gh.hpp"
+#include "pc_gh/reduction_profile.hpp"
 #include "utils/finite_diff.hpp"
 
 namespace pc_gh {
@@ -500,6 +502,7 @@ void PcGh::MeasureReductionTransfer(bool save_before, int operation) {
   });
   Kokkos::fence();
   if (opt.reduction_monitor) WriteReductionSample(destination, operation, save_before);
+  if (opt.hybrid_monitor) WriteHybridSample(destination, operation, save_before);
   if (save_before || operation < 0 || operation >= 7) return;
 
   int const nx1 = indcs.nx1;
@@ -633,6 +636,124 @@ void PcGh::WriteReductionSample(DvceArray5D<Real> norms, int operation, bool bef
       if (global_variable::my_rank == 0) file.flush();
       std::cerr << "### FATAL ERROR: non-finite reduction monitor norm\n";
       std::exit(EXIT_FAILURE);
+    }
+  }
+}
+
+void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before) {
+  SynchronizeReductionCenters();
+  auto ind = pmy_pack->pmesh->mb_indcs;
+  auto sizes = pmy_pack->pmb->mb_size.d_view;
+  auto levels = pmy_pack->pmb->mb_lev.d_view;
+  auto neighbors = pmy_pack->pmb->nghbr.d_view;
+  auto centers = reduction_centers.d_view;
+  bool const multi = pmy_pack->pmesh->multi_d;
+  bool const three = pmy_pack->pmesh->three_d;
+  int const per_block = ind.nx1*ind.nx2*ind.nx3;
+  int const cells = pmy_pack->nmb_thispack*per_block;
+  int const reach = opt.fd_stencil-1;
+  Real const core2 = opt.reduction_core_radius*opt.reduction_core_radius;
+  Real const taper2 = opt.reduction_taper_radius*opt.reduction_taper_radius;
+  DvceArray1D<int> flags("PC-GH diagnostic strata", cells);
+  par_for("PC-GH diagnostic strata", DevExeSpace(), 0, cells-1,
+  KOKKOS_LAMBDA(int flat) {
+    int const m = flat/per_block, cell = flat%per_block;
+    int const index[3] = {cell%ind.nx1, (cell/ind.nx1)%ind.nx2,
+                          cell/(ind.nx1*ind.nx2)};
+    int const count[3] = {ind.nx1, ind.nx2, ind.nx3};
+    Real const position[3] = {
+      CellCenterX(index[0],ind.nx1,sizes(m).x1min,sizes(m).x1max),
+      CellCenterX(index[1],ind.nx2,sizes(m).x2min,sizes(m).x2max),
+      CellCenterX(index[2],ind.nx3,sizes(m).x3min,sizes(m).x3max)};
+    Real const weight = ReductionUnionWeight(position, centers, core2, taper2);
+    int bits = 1 | (weight == 1.0 ? 2 : (weight == 0.0 ? 8 : 4));
+    // Face-adjacent coarse/fine stencil consumers. Edges/corners that touch a
+    // face are included; this label is not a claim to cover diagonal-only AMR.
+    for (int a=0; a<(three ? 3 : (multi ? 2 : 1)); ++a) {
+      for (int sign=-1; sign<=1; sign+=2) {
+        if ((sign < 0 ? index[a] : count[a]-1-index[a]) >= reach) continue;
+        int off[3] = {}; off[a] = sign;
+        for (int f=0; f<4; ++f) {
+          int const nb = NeighborIndex(off[0],off[1],off[2],f%2,f/2);
+          if (nb < neighbors.extent_int(1) && neighbors(m,nb).gid >= 0
+              && neighbors(m,nb).lev != levels(m)) bits |= 16;
+        }
+      }
+    }
+    flags(flat) = bits;
+  });
+  std::ofstream file;
+  if (global_variable::my_rank == 0) {
+    file.open(opt.reduction_monitor_file + ".hybrid.csv", std::ios::app);
+    if (!file) { std::cerr << "Cannot open hybrid diagnostic file\n"; std::exit(EXIT_FAILURE); }
+    if (file.tellp() == 0) {
+      file << "cycle,t_step,dt,stage,operation,phase,region,quantity,max,coordinate_l1,"
+              "x,y,z,level,block,rank\n";
+    }
+    file << std::setprecision(17);
+  }
+  const char *regions[5] = {"all","core","taper","exterior","interface_faces"};
+  const char *names[8] = {"Rw","RQ","Ralpha","RB","curl_p","curl_Q","curl_L","curl_B"};
+  const char *corrections[4] = {"delta_p","delta_Q","delta_L","delta_B"};
+  using MaxLoc = Kokkos::MaxLoc<Real,int>;
+  for (int region=0; region<5; ++region) {
+    for (int n=0; n<(operation == 8 ? 4 : 8); ++n) {
+      MaxLoc::value_type found;
+      Kokkos::parallel_reduce("PC-GH stratum maximum", Kokkos::RangePolicy<>(DevExeSpace(),0,cells),
+      KOKKOS_LAMBDA(int flat, MaxLoc::value_type &best) {
+        if (!(flags(flat) & (1<<region))) return;
+        int const m=flat/per_block, cell=flat%per_block;
+        int const k=ind.ks+cell/(ind.nx1*ind.nx2);
+        int const j=ind.js+(cell/ind.nx1)%ind.nx2, i=ind.is+cell%ind.nx1;
+        Real value=norms(m,n,k,j,i);
+        if (!std::isfinite(value)) value=INFINITY;
+        if (value>best.val || (value==best.val && flat<best.loc)) { best.val=value; best.loc=flat; }
+      }, MaxLoc(found));
+      Real integral=0.0;
+      Kokkos::parallel_reduce("PC-GH stratum integral", Kokkos::RangePolicy<>(DevExeSpace(),0,cells),
+      KOKKOS_LAMBDA(int flat, Real &sum) {
+        if (!(flags(flat) & (1<<region))) return;
+        int const m=flat/per_block, cell=flat%per_block;
+        int const k=ind.ks+cell/(ind.nx1*ind.nx2);
+        int const j=ind.js+(cell/ind.nx1)%ind.nx2, i=ind.is+cell%ind.nx1;
+        Real const dv=sizes(m).dx1*(multi ? sizes(m).dx2 : 1.0)*(three ? sizes(m).dx3 : 1.0);
+        sum += norms(m,n,k,j,i)*dv;
+      }, Kokkos::Sum<Real>(integral));
+      Real maximum=found.val;
+      int winner=global_variable::my_rank;
+#if MPI_PARALLEL_ENABLED
+      MPI_Allreduce(MPI_IN_PLACE,&maximum,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+      MPI_Allreduce(MPI_IN_PLACE,&integral,1,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
+      winner=found.val==maximum ? global_variable::my_rank : global_variable::nranks;
+      MPI_Allreduce(MPI_IN_PLACE,&winner,1,MPI_INT,MPI_MIN,MPI_COMM_WORLD);
+#endif
+      Real position[3]={NAN,NAN,NAN}; int identity[2]={-1,-1};
+      if (maximum >= 0.0 && global_variable::my_rank == winner) {
+        int const m=found.loc/per_block, cell=found.loc%per_block;
+        auto size=pmy_pack->pmb->mb_size.h_view(m);
+        position[0]=CellCenterX(cell%ind.nx1,ind.nx1,size.x1min,size.x1max);
+        position[1]=CellCenterX((cell/ind.nx1)%ind.nx2,ind.nx2,size.x2min,size.x2max);
+        position[2]=CellCenterX(cell/(ind.nx1*ind.nx2),ind.nx3,size.x3min,size.x3max);
+        identity[0]=pmy_pack->pmb->mb_lev.h_view(m)-pmy_pack->pmesh->root_level;
+        identity[1]=pmy_pack->pmb->mb_gid.h_view(m);
+      }
+#if MPI_PARALLEL_ENABLED
+      MPI_Bcast(position,3,MPI_ATHENA_REAL,winner,MPI_COMM_WORLD);
+      MPI_Bcast(identity,2,MPI_INT,winner,MPI_COMM_WORLD);
+#endif
+      if (maximum < 0.0) maximum=0.0;  // Empty stratum, marked by block=-1.
+      if (global_variable::my_rank == 0) {
+        file << pmy_pack->pmesh->ncycle << ',' << pmy_pack->pmesh->time << ','
+             << pmy_pack->pmesh->dt << ',' << reduction_monitor_stage << ',' << operation
+             << ',' << (before ? "before" : "after") << ',' << regions[region] << ','
+             << (operation==8 ? corrections[n] : names[n]) << ',' << maximum << ',' << integral;
+        for (Real p : position) file << ',' << p;
+        file << ',' << identity[0] << ',' << identity[1] << ',' << winner << '\n';
+      }
+      if (!std::isfinite(maximum) || !std::isfinite(integral)) {
+        if (global_variable::my_rank == 0) file.flush();
+        std::cerr << "### FATAL ERROR: nonfinite hybrid diagnostic\n"; std::exit(EXIT_FAILURE);
+      }
     }
   }
 }

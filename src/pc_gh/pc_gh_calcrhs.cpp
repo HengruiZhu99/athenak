@@ -47,7 +47,6 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
     Kokkos::deep_copy(reduction_centers.d_view, reduction_centers.h_view);
   }
   auto centers = reduction_centers.d_view;
-  int const ncenters = centers.extent_int(0);
   bool const use_gauge_a0 = (opt.gauge == "a0");
   bool const use_z4c_mp = (opt.gauge == "z4c_mp"
                             || opt.gauge == "z4c_mp_hyperbolic");
@@ -570,17 +569,9 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
           CellCenterX(i-indcs.is, indcs.nx1, size.d_view(m).x1min, size.d_view(m).x1max),
           CellCenterX(j-indcs.js, indcs.nx2, size.d_view(m).x2min, size.d_view(m).x2max),
           CellCenterX(k-indcs.ks, indcs.nx3, size.d_view(m).x3min, size.d_view(m).x3max)};
-        Real outside = 1.0;
-        for (int n=0; n<ncenters; ++n) {
-          Real r2 = 0.0;
-          for (int a=0; a<3; ++a) {
-            Real const offset = position[a]-centers(n,a);
-            r2 += offset*offset;
-          }
-          outside *= 1.0-SmoothReductionWeight(r2,core2,taper2);
-        }
         // A permutation-symmetric union stays bounded when puncture masks overlap.
-        rate += (inner_rate-reduction_rate)*(1.0-outside);
+        rate += (inner_rate-reduction_rate)*ReductionUnionWeight(position, centers,
+                                                                core2, taper2);
       }
       for (int d = 0; d < 3; ++d) {
         bool const active = (d == 0) || (d == 1 && multi_d) || (d == 2 && three_d);

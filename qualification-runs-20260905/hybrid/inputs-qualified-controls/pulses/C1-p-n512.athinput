@@ -1,0 +1,66 @@
+# Research candidate input; no numerical qualification implied.
+
+<job>
+basename = pc_gh_gauge_wave
+
+<mesh>
+nghost = 4
+nx1 = 512
+x1min = -4
+x1max = 4
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 1
+x2min = -0.5
+x2max = 0.5
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 512
+nx2 = 1
+nx3 = 1
+
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = .2
+nlim = -1
+tlim = .25
+ndiag = 1
+
+<pc_gh>
+spatial_order = 6
+gauge = z4c_mp_hyperbolic
+kappa = 1
+dissipation = .3
+boundedness_output = false
+shift_eta = 0
+reduction_system = advective
+reduction_rate = 1
+reduction_monitor = true
+project_reduction_constraints = false
+project_gauge_constraints = false
+reduction_profile = constant
+reduction_inner_rate = 1
+reduction_core_radius = 0.125
+reduction_taper_radius = 0.5
+reduction_follow_trackers = false
+reduction_center_x = 0
+reduction_projection_profile = global
+research_dt_ceiling = 0.0125
+hybrid_monitor = true
+
+<problem>
+pgen_name = regular_extension_pulse
+pulse_family = p
+pulse_direction = 1
+pulse_amplitude = 1e-8
+pulse_width = 0.75
+pulse_shift = 0.5
+require_cuda = true

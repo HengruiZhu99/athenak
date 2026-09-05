@@ -60,7 +60,7 @@ def build(args):
     configure = ['cmake', '-S', ROOT, '-B', out, '-DPROBLEM='+problem,
                  '-DCMAKE_CXX_COMPILER='+str(wrapper), '-DCMAKE_BUILD_TYPE=Release',
                  '-DKokkos_ENABLE_CUDA=ON', '-DKokkos_ARCH_AMPERE80=ON',
-                 '-DAthena_ENABLE_MPI=OFF', '-DAthena_ENABLE_OPENMP=OFF']
+                 '-DAthena_ENABLE_MPI='+('ON' if args.mpi else 'OFF'), '-DAthena_ENABLE_OPENMP=OFF']
     if command(configure, ROOT, out/'configure.log'):
         raise SystemExit(1)
     if command(['cmake', '--build', out, '-j', str(args.jobs)], ROOT, out/'build.log'):
@@ -76,6 +76,8 @@ def run(args):
     cache = (build_dir/'CMakeCache.txt').read_text()
     if 'Kokkos_ENABLE_CUDA:BOOL=ON' not in cache:
         raise SystemExit('Refusing a build without Kokkos CUDA enabled')
+    if args.ranks < 1 or (args.ranks > 1 and 'Athena_ENABLE_MPI:BOOL=ON' not in cache):
+        raise SystemExit('Multiple ranks require an MPI-enabled build; ranks must be positive')
     binary = build_dir/'src/athena'
     destination = args.output.resolve()
     binary_hash = sha(binary)
@@ -132,6 +134,8 @@ def run(args):
         restarts = sorted(destination.glob('rst/*.rst'), key=lambda p: p.stat().st_mtime_ns)
         if restarts:
             argv += ['-r', restarts[-1]]
+        if args.ranks > 1:
+            argv = ['mpirun', '-n', str(args.ranks)] + argv
         status = command(argv, destination, log)
         executed += 1
         text = log.read_text(errors='replace')
@@ -176,6 +180,7 @@ def main():
     b.add_argument('--kind', choices=['oracle', 'subsidiary', 'z4c', 'binary'], required=True)
     b.add_argument('--build', type=Path, required=True)
     b.add_argument('--jobs', type=int, default=8)
+    b.add_argument('--mpi', action='store_true', help='Build the explicit MPI qualification variant')
     r = sub.add_parser('run')
     r.add_argument('--build', type=Path, required=True)
     r.add_argument('--input', type=Path, required=True)
@@ -187,6 +192,7 @@ def main():
     r.add_argument('--wall-segment', default='00:15:00')
     r.add_argument('--max-segments', type=int, default=0,
                    help='Stop after this many clean wall segments; zero runs until the requested evolution ends')
+    r.add_argument('--ranks', type=int, default=1)
     args = ap.parse_args()
     if getattr(args, 'max_segments', 0) < 0:
         ap.error('--max-segments must be nonnegative')

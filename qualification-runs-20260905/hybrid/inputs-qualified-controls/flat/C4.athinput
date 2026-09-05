@@ -1,0 +1,74 @@
+# Research candidate input; no numerical qualification implied.
+
+<job>
+basename = pc_gh_minkowski
+
+<mesh>
+nghost = 4
+nx1 = 8
+x1min = -1.0
+x1max = 1.0
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 4
+x2min = -1.0
+x2max = 1.0
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 4
+x3min = -1.0
+x3max = 1.0
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 8
+nx2 = 4
+nx3 = 4
+
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = .2
+nlim = -1
+tlim = .25
+ndiag = 1
+
+<pc_gh>
+spatial_order = 6
+gauge = z4c_mp_hyperbolic
+kappa = 0.0
+dissipation = .3
+boundedness_output = false
+shift_eta = 0
+reduction_system = advective
+reduction_rate = 4
+reduction_monitor = true
+project_reduction_constraints = false
+project_gauge_constraints = false
+reduction_inner_rate = 4
+reduction_profile = constant
+reduction_projection_profile = global
+reduction_core_radius = 0.125
+reduction_taper_radius = 0.5
+research_dt_ceiling = 0.0125
+hybrid_monitor = true
+
+<problem>
+pgen_name = pc_gh_minkowski
+require_cuda = true
+
+<output1>
+file_type = tab
+variable = pcgh
+dt = 1.0
+slice_x2 = 0.0
+slice_x3 = 0.0
+
+<output2>
+file_type = rst
+dt = 1.0
+
+<output3>
+file_type = hst
+dt = 1.0

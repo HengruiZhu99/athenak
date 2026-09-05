@@ -15,6 +15,8 @@
 #include "pc_gh/pc_gh.hpp"
 #include "pgen/pgen.hpp"
 #include "pulse.hpp"
+#include "utils/compact_object_tracker.hpp"
+#include "projection_oracle.hpp"
 
 namespace {
 using PC = pc_gh::PcGh;
@@ -204,6 +206,10 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, bool restart) {
     std::exit(EXIT_FAILURE);
   }
   std::string const name = pin->GetString("problem", "pgen_name");
+  if (name == "regular_projection_oracle") {
+    pgen_final_func = projection_oracle::Final;
+    return projection_oracle::Initialize(pin, pmy_mesh_, restart);
+  }
   if (name == "regular_extension_pulse") {
     pgen_final_func = regular_pulse::Final;
     return regular_pulse::Initialize(pin, pmy_mesh_, restart);

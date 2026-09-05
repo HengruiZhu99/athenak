@@ -199,22 +199,40 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   opt.reduction_taper_radius = pin->GetOrAddReal("pc_gh", "reduction_taper_radius", 0.0);
   opt.reduction_follow_trackers = pin->GetOrAddBoolean(
       "pc_gh", "reduction_follow_trackers", false);
+  opt.project_reduction_constraints = pin->GetOrAddBoolean(
+      "pc_gh", "project_reduction_constraints", false);
+  opt.reduction_projection_profile = pin->GetOrAddString(
+      "pc_gh", "reduction_projection_profile", "global");
+  opt.research_dt_ceiling = pin->GetOrAddReal("pc_gh", "research_dt_ceiling", 0.0);
+  opt.hybrid_monitor = pin->GetOrAddBoolean("pc_gh", "hybrid_monitor", false);
   bool const smooth_reduction = opt.reduction_profile == "smooth_core";
+  bool const smooth_projection = opt.project_reduction_constraints
+      && opt.reduction_projection_profile == "smooth_core";
+  bool const needs_reduction_mask = smooth_reduction || smooth_projection || opt.hybrid_monitor;
+  if ((opt.reduction_projection_profile != "global"
+       && opt.reduction_projection_profile != "smooth_core")
+      || !std::isfinite(opt.research_dt_ceiling) || opt.research_dt_ceiling < 0.0) {
+    std::cerr << "### FATAL ERROR: reduction_projection_profile must be global or "
+                 "smooth_core; research_dt_ceiling must be finite and nonnegative\n";
+    std::exit(EXIT_FAILURE);
+  }
   if ((opt.reduction_profile != "constant" && !smooth_reduction)
-      || (smooth_reduction && (opt.reduction_system != "advective"
+      || (needs_reduction_mask && (opt.reduction_system != "advective"
           || !std::isfinite(opt.reduction_inner_rate)
           || opt.reduction_inner_rate < opt.reduction_rate
           || !std::isfinite(opt.reduction_core_radius)
           || !std::isfinite(opt.reduction_taper_radius)
           || opt.reduction_core_radius <= 0.0
           || opt.reduction_taper_radius <= opt.reduction_core_radius))
-      || (opt.reduction_follow_trackers && !smooth_reduction)) {
+      || (opt.reduction_follow_trackers && !needs_reduction_mask)) {
     std::cout << "### FATAL ERROR: smooth_core reduction requires advective mode, "
                  "finite inner_rate >= reduction_rate, and 0 < core_radius < taper_radius; "
-                 "following trackers requires smooth_core" << std::endl;
+                 "following trackers requires an active smooth_core relaxation or projection"
+              << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  opt.reduction_monitor = pin->GetOrAddBoolean("pc_gh", "reduction_monitor", false);
+  opt.reduction_monitor = pin->GetOrAddBoolean("pc_gh", "reduction_monitor", false)
+      || opt.hybrid_monitor;
   opt.reduction_monitor_file = pin->GetOrAddString("pc_gh", "reduction_monitor_file",
       pin->GetString("job", "basename") + ".pcgh-reduction.csv");
   if ((opt.reduction_system != "legacy" && opt.reduction_system != "advective")
@@ -315,7 +333,7 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
         pmy_pack->pmesh, pin, tracker_index, "pc_gh"));
     ++tracker_index;
   }
-  if (smooth_reduction) {
+  if (needs_reduction_mask) {
     int const count = opt.reduction_follow_trackers ? ptracker.size() : 1;
     std::string const integrator = opt.reduction_follow_trackers
         ? pin->GetString("time", "integrator") : "";

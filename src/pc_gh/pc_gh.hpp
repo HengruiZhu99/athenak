@@ -301,6 +301,9 @@ class PcGh {
     Real reduction_core_radius;
     Real reduction_taper_radius;
     bool reduction_follow_trackers;
+    std::string reduction_projection_profile;
+    Real research_dt_ceiling;
+    bool hybrid_monitor;
     bool reduction_monitor;
     std::string reduction_monitor_file;
     Real dissipation;
@@ -347,6 +350,9 @@ class PcGh {
   std::vector<std::unique_ptr<CompactObjectTracker>> ptracker;
   Real dtnew;
   int reduction_monitor_stage = 0;
+  // Refresh the device mask from completed RK tracker positions without advancing it.
+  void SynchronizeReductionCenters();
+  void WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before);
   // Reduction/curl-norm changes across the main transfer, algebraic/reduction
   // projections, and the dedicated transfer that follows reduction projection.
   // Keeping the post-projection restriction, exchange, and prolongation separate is

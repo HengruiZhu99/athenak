@@ -159,6 +159,11 @@ TaskStatus PcGh::NewTimeStep(Driver *pdriver, int stage) {
   if (opt.reduction_system == "advective" && maximum_rate > 0.0) {
     local_dt = std::min(local_dt, 1.0/maximum_rate);
   }
+  // The mesh subsequently multiplies dtnew by CFL. The user ceiling is an
+  // actual coordinate-time interval, not a pre-CFL characteristic time.
+  if (opt.research_dt_ceiling > 0.0) {
+    local_dt = std::min(local_dt, opt.research_dt_ceiling/pmy_pack->pmesh->cfl_no);
+  }
   dtnew = local_dt;
   return TaskStatus::complete;
 }

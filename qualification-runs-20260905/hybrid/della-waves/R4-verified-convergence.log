@@ -1,0 +1,13 @@
+resolutions 32 64 128
+aggregate    min_order=3.571137 worst=aggregate_l1 adjacent=5.574759,3.571137 exact_components=0
+primary      min_order=2.323799 worst=pcgh_Cperp_rms adjacent=4.690079,2.323799 exact_components=20
+p            min_order=3.923858 worst=pcgh_p1_rms adjacent=5.521614,3.923858 exact_components=4
+Q            min_order=4.079716 worst=pcgh_Q1xx_rms adjacent=5.600273,4.079716 exact_components=30
+L            min_order=3.883929 worst=pcgh_L1_rms adjacent=5.580680,3.883929 exact_components=4
+B            min_order=3.803481 worst=pcgh_B11_linf adjacent=5.591561,3.803481 exact_components=16
+GH           min_order=2.323799 worst=pcgh_Cperp_rms adjacent=4.690079,2.323799 exact_components=4
+ADM          min_order=2.416429 worst=pcgh_H_rms adjacent=5.153502,2.416429 exact_components=4
+reduction    min_order=4.815234 worst=pcgh_red_alpha_rms adjacent=5.799097,4.815234 exact_components=0
+curl         exact_invariant components=8 tol=1.0e-12
+projection   monotonically_decreasing=4.667524e-06,1.170014e-06,2.923551e-07
+PASS: shifted harmonic gauge wave converges in every exercised PC-GH sector
