@@ -233,6 +233,7 @@ class PcGh {
   void MeasureReductionTransfer(bool save_before, int operation);
   void BeginReductionTransfer(int operation);
   void EndReductionTransfer(int operation);
+  void WriteReductionSample(DvceArray5D<Real> norms, int operation, bool before);
 
   TaskStatus CopyU(Driver *pdriver, int stage);
   void QueuePcGhTasks();
@@ -293,6 +294,10 @@ class PcGh {
     Real shift_switch_z0;
     Real shift_switch_z1;
     Real kappa;
+    std::string reduction_system;
+    Real reduction_rate;
+    bool reduction_monitor;
+    std::string reduction_monitor_file;
     Real dissipation;
     bool project_gauge_constraints;
     bool project_reduction_constraints;
@@ -334,6 +339,7 @@ class PcGh {
   std::vector<std::unique_ptr<HorizonDump>> phorizon_dump;
   std::vector<std::unique_ptr<CompactObjectTracker>> ptracker;
   Real dtnew;
+  int reduction_monitor_stage = 0;
   // Reduction/curl-norm changes across the main transfer, algebraic/reduction
   // projections, and the dedicated transfer that follows reduction projection.
   // Keeping the post-projection restriction, exchange, and prolongation separate is

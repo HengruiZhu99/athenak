@@ -23,12 +23,15 @@ namespace pc_gh {
 template <int FD_STENCIL>
 TaskStatus PcGh::CalcRHS(Driver *, int) {
   ValidateState("pre-RHS state", false, false);
+  if (opt.reduction_monitor) BeginReductionTransfer(-1);
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   int const nmb = pmy_pack->nmb_thispack;
   bool const multi_d = pmy_pack->pmesh->multi_d;
   bool const three_d = pmy_pack->pmesh->three_d;
   Real const kappa = opt.kappa;
+  bool const advective_reduction = (opt.reduction_system == "advective");
+  Real const reduction_rate = opt.reduction_rate;
   bool const use_gauge_a0 = (opt.gauge == "a0");
   bool const use_z4c_mp = (opt.gauge == "z4c_mp"
                             || opt.gauge == "z4c_mp_hyperbolic");
@@ -317,6 +320,12 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
         s_tensor[a][c] = rho*w3*ricci[a][c]
             + rho*w2*cov_p[a][c] - 0.5*w2*cov_l[a][c]
             - 0.5*w*(l_vec[a]*p_vec[c] + l_vec[c]*p_vec[a]);
+        if (advective_reduction) {
+          // Restore tensorial Hessian ordering away from the curl manifold.
+          // The connection is symmetric, so only these derivative terms differ.
+          s_tensor[a][c] += 0.5*rho*w2*(d_p[c][a] - d_p[a][c])
+                           - 0.25*w2*(d_l[c][a] - d_l[a][c]);
+        }
         t_tensor[a][c] = -w*(z_d[a]*p_vec[c] + z_d[c]*p_vec[a]);
         for (int r = 0; r < 3; ++r) {
           t_tensor[a][c] -= 0.5*w2*z[r]*q[r][a][c];
@@ -525,6 +534,63 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
           }
           state_rhs(m, QIndex(ell, a, c), k, j, i) = rhs_q;
         }
+      }
+    }
+    if (advective_reduction) {
+      // This is a separately derived regular PC-GH extension. Its complete
+      // principal/subsidiary audit is in docs/pc_gh_regular_extension.md.
+      // Configuration advection uses true derivatives; the reduction sources
+      // below have coordinate decay rate reduction_rate. The curl completion of
+      // Z restores the differentiated contracted-connection principal ordering.
+      // Every added term vanishes on the reduction/curl constraint manifold.
+      Real rw[3] = {};
+      Real ra[3] = {};
+      Real rl[3] = {};
+      Real rq[3][3][3] = {};
+      Real rb[3][3] = {};
+      Real const rate = reduction_rate;
+      for (int d = 0; d < 3; ++d) {
+        bool const active = (d == 0) || (d == 1 && multi_d) || (d == 2 && three_d);
+        Real const dw = active ? Dx<FD_STENCIL>(d, idx, pc.w, m, k, j, i) : 0.0;
+        rw[d] = p_vec[d] - dw;
+        ra[d] = l_vec[d] - 2.0*(w*d_rho[d] + rho*p_vec[d]);
+        rl[d] = ra[d] + 2.0*rho*rw[d];
+        pc_rhs.w(m, k, j, i) -= beta[d]*rw[d];
+        pc_rhs.p(m, d, k, j, i) -= rate*rw[d];
+        pc_rhs.L(m, d, k, j, i) -= rate*rl[d];
+        Real trace_rq_at = 0.0;
+        for (int a = 0; a < 3; ++a) {
+          Real const dbeta = active
+              ? Dx<FD_STENCIL>(d, idx, pc.beta, m, a, k, j, i) : 0.0;
+          rb[d][a] = b[d][a] - dbeta;
+          pc_rhs.beta(m, a, k, j, i) -= beta[d]*rb[d][a];
+          state_rhs(m, BIndex(d, a), k, j, i) -= rate*rb[d][a];
+          for (int c = a; c < 3; ++c) {
+            Real const dg = active
+                ? Dx<FD_STENCIL>(d, idx, pc.gtilde, m, a, c, k, j, i) : 0.0;
+            rq[d][a][c] = rq[d][c][a] = q[d][a][c] - dg;
+            trace_rq_at += (a == c ? 1.0 : 2.0)*at_uu[a][c]*rq[d][a][c];
+            pc_rhs.gtilde(m, a, c, k, j, i) -= beta[d]*rq[d][a][c];
+            state_rhs(m, QIndex(d, a, c), k, j, i) -= rate*rq[d][a][c];
+          }
+        }
+        // Differentiate tr_g(Atilde)=0 intrinsically. Without this homogeneous
+        // reduction term, independent metric/Q jets inject a trace into Q_t.
+        for (int a = 0; a < 3; ++a) {
+          for (int c = a; c < 3; ++c) {
+            state_rhs(m, QIndex(d, a, c), k, j, i) -=
+                (2.0*alpha/3.0)*g[a][c]*trace_rq_at;
+          }
+        }
+      }
+      for (int a = 0; a < 3; ++a) {
+        Real curl_b = 0.0;
+        for (int c = 0; c < 3; ++c) {
+          for (int d = 0; d < 3; ++d) {
+            curl_b += gu[a][c]*(d_b[d][c][d] - d_b[c][d][d]);
+          }
+        }
+        pc_rhs.Z(m, a, k, j, i) += curl_b;
       }
     }
   });

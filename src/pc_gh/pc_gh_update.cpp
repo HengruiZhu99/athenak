@@ -17,6 +17,7 @@
 namespace pc_gh {
 
 TaskStatus PcGh::CopyU(Driver *pdriver, int stage) {
+  reduction_monitor_stage = stage;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int const nmb = pmy_pack->nmb_thispack;
   if (stage == 1) {

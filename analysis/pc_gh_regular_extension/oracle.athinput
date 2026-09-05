@@ -1,0 +1,41 @@
+<job>
+basename = regular_extension_oracle
+<mesh>
+nghost = 2
+nx1 = 4
+nx2 = 4
+nx3 = 4
+x1min = -0.25
+x1max = 0.25
+x2min = -0.25
+x2max = 0.25
+x3min = -0.25
+x3max = 0.25
+ix1_bc = periodic
+ox1_bc = periodic
+ix2_bc = periodic
+ox2_bc = periodic
+ix3_bc = periodic
+ox3_bc = periodic
+<meshblock>
+nx1 = 4
+nx2 = 4
+nx3 = 4
+<time>
+evolution = dynamic
+integrator = rk2
+cfl_number = 0.1
+nlim = 0
+tlim = 0
+ndiag = 1
+<pc_gh>
+spatial_order = 2
+gauge = z4c_mp_hyperbolic
+reduction_system = advective
+reduction_rate = 1
+kappa = 1
+dissipation = 0
+project_reduction_constraints = false
+boundedness_output = false
+<problem>
+pgen_name = regular_extension_oracle

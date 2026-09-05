@@ -190,6 +190,27 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
     ValidateGaugeA0Domain();
   }
   opt.kappa = pin->GetOrAddReal("pc_gh", "kappa", 0.0);
+  opt.reduction_system = pin->GetOrAddString("pc_gh", "reduction_system", "legacy");
+  opt.reduction_rate = pin->GetOrAddReal("pc_gh", "reduction_rate", 0.0);
+  opt.reduction_monitor = pin->GetOrAddBoolean("pc_gh", "reduction_monitor", false);
+  opt.reduction_monitor_file = pin->GetOrAddString("pc_gh", "reduction_monitor_file",
+      pin->GetString("job", "basename") + ".pcgh-reduction.csv");
+  if ((opt.reduction_system != "legacy" && opt.reduction_system != "advective")
+      || !std::isfinite(opt.reduction_rate) || opt.reduction_rate < 0.0
+      || (opt.reduction_system == "legacy" && opt.reduction_rate != 0.0)) {
+    std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'
+              << "PC-GH reduction_system must be legacy or advective; "
+              << "reduction_rate must be finite, nonnegative, and zero in legacy mode"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.reduction_system == "advective" && opt.gauge == "z4c_mp_hyperbolic"
+      && opt.shift_switch_z1 > 0.5) {
+    std::cout << "### FATAL ERROR: advective reduction with z4c_mp_hyperbolic "
+                 "requires shift_switch_z1 <= 0.5 for its proved principal domain"
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   Real const ko_amplitude = pin->GetOrAddReal("pc_gh", "dissipation", 0.0);
   if (!(std::isfinite(ko_amplitude) && ko_amplitude >= 0.0)) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'

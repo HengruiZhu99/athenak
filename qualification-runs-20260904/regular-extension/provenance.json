@@ -1,0 +1,60 @@
+{
+  "created": "2026-09-05T02:11:58.469590+00:00",
+  "base_commit": "e7aca617b49c6dfc3c05fd143c59073408e8f32f",
+  "branch": "codex/pc-gh-gamma2-20260904",
+  "kokkos_commit": "08ceff92bcf3a828844480bc1e6137eb74028517",
+  "binary_sha256": "24f501eddca6b1bc5da5a24e6fe6f64fbca406dc1af753b8350a4e7517c4c075",
+  "source_hashes": {
+    "analysis/pc_gh_regular_extension/README.md": "ccd8300b811f14ebdd5bb44fe85b4d0d36a963105001552bc64f386a20135b57",
+    "analysis/pc_gh_regular_extension/cuda_driver.py": "f96b00161bdbea0d5a89d3edc41a02d3d6e6ac52386740c66aaf05d4a0f04cef",
+    "analysis/pc_gh_regular_extension/della_gpu_test.sh": "88c54c10e1cada5cdd5c0dc21f9aa1b6645169d1d6153aee5e8717734052cc7e",
+    "analysis/pc_gh_regular_extension/hyperbolicity.py": "a48d46d16eff573bfa22495d8f3aece4175396b371aee9989935cb833eeb35be",
+    "analysis/pc_gh_regular_extension/make_inputs.py": "865843ff47c4a117775327d3356ebd5430dae75f38d5a87a9e127fbad9049e11",
+    "analysis/pc_gh_regular_extension/oracle.athinput": "1bb1eeb96a8969e2e0b8e2b83f049d9fac2e465b6139d98e01d9e8eb9cf43b09",
+    "analysis/pc_gh_regular_extension/plot_audit.py": "2921d56062cdb4e9238b47383fa318057c37bdc591a715e92b9dbcd3bdf3cc91",
+    "analysis/pc_gh_regular_extension/production_oracle.cpp": "5de1fa48c1d1330e35ff4e2ff38175d481d444aa223dc976a40751d5cf6f7915",
+    "analysis/pc_gh_regular_extension/projector_limits.py": "9b3ed5ba86cd0ace0be2a3fbcf0fc451373e0ca57a22c256d7fcf91fc24cc3bc",
+    "analysis/pc_gh_regular_extension/pulse.hpp": "81af92c835d11613399cae95da4d2e94a0892c303c955f7932279517dbd75af9",
+    "analysis/pc_gh_regular_extension/run_symbolic.py": "22e4a4a5e29b65e824f08f33b0bc01da027f91059092ee558a71e1344bd5359c",
+    "analysis/pc_gh_regular_extension/subsidiary.py": "e9ff4374c25cb76e2caffb99a2358ab2fbfc639e717ea3e0ebcef5217c209eda",
+    "analysis/pc_gh_regular_extension/symbol.py": "5abcfa459db1560c676dff2d63db3245fd100b948d4a2e717845e6749587229a",
+    "analysis/pc_gh_regular_extension/verify_fourier.py": "ce0fa22e2bae96cfcf1bc959957897c37fee6a0ca1d39b0a0bd764ac6b1de47e",
+    "analysis/pc_gh_regular_extension/verify_production_symbol.py": "a07015ab64fb47674c98e57619227e516c195843f545d267d6611d65debcd579",
+    "analysis/pc_gh_regular_extension/verify_pulses.py": "a648975e21005481824a251998e84453b3b83b2050385b990db6d377c064ba19",
+    "analysis/pc_gh_regular_extension/wormhole_subsidiary.py": "e9c488b0d30bb6216eab99b57bfb28c7f78573860500f3236aca324aa19f4eca",
+    "docs/pc_gh_qualification_log.md": "0714129a198ed259f11fd3d5f56057d5a392d8cb49754e99548e8491a0043932",
+    "docs/pc_gh_regular_extension.md": "5ad425547d50308bb27a32ce83f93385c301ab743d1af439ff85e5e20ad77c8b",
+    "src/mesh/mesh_refinement.cpp": "e0ad2abebdabad361b9f90c2c71464336ab2d43e589e536d07744b01f300fbcd",
+    "src/pc_gh/pc_gh.cpp": "a16f9fe2a6ca765dba9db3973fab3011f16f8ac97db9d583eea63da88929ba83",
+    "src/pc_gh/pc_gh.hpp": "e596db36b79e048c3e72caf51a53c6a4efd6155be4efe49c57201536e56f66d7",
+    "src/pc_gh/pc_gh_calcrhs.cpp": "7f8eade38cbddee10a7ba1046f75ffa105b26cff02b83bafb8c519bcf04cfee9",
+    "src/pc_gh/pc_gh_constraints.cpp": "557767e429d40a525ea96db880fda79a6b149347781c0474379b107eda684d7a",
+    "src/pc_gh/pc_gh_newdt.cpp": "7f41f795538d3333db736b9cd31801855a49a42b1af31f70c7a4f4947af29113",
+    "src/pc_gh/pc_gh_tasks.cpp": "1cec40037db1a19c1d25157b86c85435c181c0780703a1b59df3b47d9910ad31",
+    "src/pc_gh/pc_gh_update.cpp": "a46a60372755b89fb278c2ec21ad7858540dbcf08aa2f9e966b08899ae88a166"
+  },
+  "source_diff_sha256": "d236de137b46a916a1969aff69f361dd90f8e4cb3f89d9107e6a1e7022f0f12b",
+  "configure_argv": [
+    "cmake",
+    "-S",
+    ".",
+    "-B",
+    "build-regular-extension",
+    "-DPROBLEM=../../analysis/pc_gh_regular_extension/production_oracle",
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DAthena_ENABLE_MPI=OFF",
+    "-DAthena_ENABLE_OPENMP=OFF"
+  ],
+  "build_argv": [
+    "cmake",
+    "--build",
+    "build-regular-extension",
+    "-j8"
+  ],
+  "original_suite_argv": [
+    ".venv-bbh-plots/bin/python",
+    "analysis/pc_gh_symbolic/run_all.py"
+  ],
+  "numerical_scope": "local zero-step only; no CUDA evolution",
+  "python_version": "Python 3.9.6"
+}

@@ -152,6 +152,11 @@ TaskStatus PcGh::NewTimeStep(Driver *pdriver, int stage) {
               << "nonpositive at t=" << pmy_pack->pmesh->time << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  // The mesh applies the user CFL factor to dtnew. Keep lambda*dtnew <= 1
+  // for the new explicit relaxation, independently of the spatial mesh speed.
+  if (opt.reduction_system == "advective" && opt.reduction_rate > 0.0) {
+    local_dt = std::min(local_dt, 1.0/opt.reduction_rate);
+  }
   dtnew = local_dt;
   return TaskStatus::complete;
 }

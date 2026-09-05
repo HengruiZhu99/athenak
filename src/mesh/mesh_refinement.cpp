@@ -150,6 +150,10 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
 
   // Refine/derefine mesh and evolved data, set boundary conditions/timestep on new mesh
   if (nnew != 0 || ndel != 0) { // at least one (de)refinement flagged
+    if (pmy_mesh->pmb_pack->ppcgh != nullptr
+        && pmy_mesh->pmb_pack->ppcgh->opt.reduction_monitor) {
+      pmy_mesh->pmb_pack->ppcgh->BeginReductionTransfer(-3);
+    }
     RedistAndRefineMeshBlocks(pin, nnew, ndel);
     if (global_variable::my_rank == 0
         && pin->GetOrAddBoolean("mesh_refinement", "log_changes", false)) {
@@ -159,6 +163,11 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
                 << " blocks=" << pmy_mesh->nmb_total << std::endl;
     }
     pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
+    if (pmy_mesh->pmb_pack->ppcgh != nullptr
+        && pmy_mesh->pmb_pack->ppcgh->opt.reduction_monitor) {
+      // The topology and ghosts are now valid for locations on the new mesh.
+      pmy_mesh->pmb_pack->ppcgh->BeginReductionTransfer(-4);
+    }
 
     MeshBlockPack* pmbp = pmy_mesh->pmb_pack;
     if (pmbp->phydro != nullptr) {

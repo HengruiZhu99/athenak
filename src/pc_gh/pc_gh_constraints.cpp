@@ -62,6 +62,7 @@ Real MinimumSymmetricEigenvalue(Real a00, Real a01, Real a02,
 
 template <int FD_STENCIL>
 TaskStatus PcGh::CalcConstraints(Driver *pdriver, int stage) {
+  if (opt.reduction_monitor) BeginReductionTransfer(-2);
   if (pdriver != nullptr && stage != pdriver->nexp_stages) return TaskStatus::complete;
   if (pdriver != nullptr
       && (pmy_pack->pmesh->ncycle + 1) % opt.constraint_dcycle != 0) {
@@ -498,7 +499,8 @@ void PcGh::MeasureReductionTransfer(bool save_before, int operation) {
     for (int n = 0; n < 8; ++n) destination(m, n, k, j, i) = std::sqrt(norm2[n]);
   });
   Kokkos::fence();
-  if (save_before) return;
+  if (opt.reduction_monitor) WriteReductionSample(destination, operation, save_before);
+  if (save_before || operation < 0 || operation >= 7) return;
 
   int const nx1 = indcs.nx1;
   int const nx2 = indcs.nx2;
@@ -545,6 +547,93 @@ void PcGh::EndReductionTransfer(int operation) {
     case 3: MeasureReductionTransfer<3>(false, operation); break;
     case 4: MeasureReductionTransfer<4>(false, operation); break;
     default: std::abort();
+  }
+}
+
+void PcGh::WriteReductionSample(DvceArray5D<Real> norms, int operation, bool before) {
+  auto ind = pmy_pack->pmesh->mb_indcs;
+  int const cells_per_block = ind.nx1*ind.nx2*ind.nx3;
+  int const cells = pmy_pack->nmb_thispack*cells_per_block;
+  using MaxLoc = Kokkos::MaxLoc<Real, int>;
+  auto state = u0;
+  constexpr const char *names[10] = {"Rw", "RQ", "Ralpha", "RB",
+                                    "curl_p", "curl_Q", "curl_L", "curl_B",
+                                    "alpha", "alpha2_chi"};
+  std::ofstream file;
+  if (global_variable::my_rank == 0) {
+    file.open(opt.reduction_monitor_file, std::ios::app);
+    if (!file.is_open()) {
+      std::cerr << "### FATAL ERROR: unable to open reduction monitor file '"
+                << opt.reduction_monitor_file << "'\n";
+      std::exit(EXIT_FAILURE);
+    }
+    if (file.tellp() == 0) {
+      file << "cycle,t_step,dt,stage,operation,phase,constraint,max,x,y,z,level,block,rank\n";
+    }
+    file << std::setprecision(17);
+  }
+  for (int n = 0; n < 10; ++n) {
+    MaxLoc::value_type found;
+    Kokkos::parallel_reduce("PC-GH reduction maximum location",
+    Kokkos::RangePolicy<>(DevExeSpace(), 0, cells),
+    KOKKOS_LAMBDA(int flat, MaxLoc::value_type &best) {
+      int const m = flat/cells_per_block;
+      int const cell = flat % cells_per_block;
+      int const k = ind.ks + cell/(ind.nx1*ind.nx2);
+      int const j = ind.js + (cell/ind.nx1) % ind.nx2;
+      int const i = ind.is + cell % ind.nx1;
+      Real value;
+      if (n < 8) {
+        value = norms(m, n, k, j, i);
+      } else {
+        Real const w = state(m, I_W, k, j, i);
+        Real const alpha = w*state(m, I_RHO, k, j, i);
+        value = n == 8 ? alpha : alpha*alpha*w*w;
+      }
+      if (!std::isfinite(value)) value = INFINITY;
+      if (value > best.val || (value == best.val && flat < best.loc)) {
+        best.val = value;
+        best.loc = flat;
+      }
+    }, MaxLoc(found));
+    Real maximum = found.val;
+    int winner = global_variable::my_rank;
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, &maximum, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+    winner = (found.val == maximum) ? global_variable::my_rank : global_variable::nranks;
+    MPI_Allreduce(MPI_IN_PLACE, &winner, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+#endif
+    Real position[3] = {};
+    int identity[2] = {};
+    if (global_variable::my_rank == winner) {
+      int const m = found.loc/cells_per_block;
+      int const cell = found.loc % cells_per_block;
+      auto size = pmy_pack->pmb->mb_size.h_view(m);
+      position[0] = CellCenterX(cell % ind.nx1, ind.nx1, size.x1min, size.x1max);
+      position[1] = CellCenterX((cell/ind.nx1) % ind.nx2, ind.nx2,
+                                size.x2min, size.x2max);
+      position[2] = CellCenterX(cell/(ind.nx1*ind.nx2), ind.nx3,
+                                size.x3min, size.x3max);
+      identity[0] = pmy_pack->pmb->mb_lev.h_view(m) - pmy_pack->pmesh->root_level;
+      identity[1] = pmy_pack->pmb->mb_gid.h_view(m);
+    }
+#if MPI_PARALLEL_ENABLED
+    MPI_Bcast(position, 3, MPI_ATHENA_REAL, winner, MPI_COMM_WORLD);
+    MPI_Bcast(identity, 2, MPI_INT, winner, MPI_COMM_WORLD);
+#endif
+    if (global_variable::my_rank == 0) {
+      file << pmy_pack->pmesh->ncycle << ',' << pmy_pack->pmesh->time << ','
+           << pmy_pack->pmesh->dt << ',' << reduction_monitor_stage << ','
+           << operation << ',' << (before ? "before" : "after") << ','
+           << names[n] << ',' << maximum;
+      for (Real coordinate : position) file << ',' << coordinate;
+      file << ',' << identity[0] << ',' << identity[1] << ',' << winner << '\n';
+    }
+    if (!std::isfinite(maximum)) {
+      if (global_variable::my_rank == 0) file.flush();
+      std::cerr << "### FATAL ERROR: non-finite reduction monitor norm\n";
+      std::exit(EXIT_FAILURE);
+    }
   }
 }
 

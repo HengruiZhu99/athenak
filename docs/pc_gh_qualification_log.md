@@ -1367,3 +1367,40 @@ all saved runs remain unchanged. In particular, early hard-Q projection remains 
 corrective in the saved SMR experiment, and the saved projected failure at `73.7999M`
 does not establish projection as its cause. The no-projection `gamma2=0` failure near
 `4.2246M` is user-supplied prior evidence, not independently reproduced here.
+
+
+## 2026-09-04: separately derived regular advective reduction candidate
+
+**PARTIAL IMPROVEMENT IN FORMULATION/IMPLEMENTATION; NUMERICAL QUALIFICATION PENDING.**
+The user authorized keeping puncture variables/moving gauge while replacing the
+failed literal FO-GH requirement by a separately derived regular extension.
+The implemented `reduction_system=advective` uses bounded coordinate-rate damping,
+true configuration advection, Hessian/Z curl completions, and the intrinsic Q trace
+correction. Defaults preserve legacy behavior. See
+[the complete additive specification and proofs](pc_gh_regular_extension.md).
+
+Exact symbolic checks establish the reduction/curl subsidiary system, a
+parameterized general-background principal similarity, permitted characteristic
+crossings with bounded projectors, and finite production coefficients at w=0.
+The proved strong-hyperbolicity domain is SPD g, w/rho positive, alpha<2,
+alpha^2 chi<4, with the switch completed by z=1/2. No uniform puncture-point
+symmetrizer theorem is claimed. The frozen isotropic initial-slice reduction
+source eigenvalues are -lambda and -lambda-eta, with finite coefficients.
+
+Independent compiled zero-step checks match twelve full production principal
+matrices within 4.45e-16, leave all 55 RHS rows exactly unchanged on a polynomial
+reduction-manifold jet, and verify exact linear advective decay of all 30
+independent reductions. The full Fourier characteristic polynomial is verified exactly for every real k,
+with no positive-real-part eigenvalues; sampled spectra agree within roundoff. The old independent 4D/Ricci/symbolic suite passes. These checks
+used Kokkos Serial locally, not CUDA evolution. A 3D AMR initialization fixture
+passes; an earlier 1D SMR fixture crashed before evolution and is retained.
+
+All evolution gates remain pending. SSH reaches
+`hz0693@della-vis1.princeton.edu` but authentication is denied, and the local SSH
+agent has no identities. No candidate single-puncture or binary CUDA run has
+been launched. Prepared inputs include rate/amplitude/stiffness controls,
+three-resolution shifted waves and matched single-puncture uniform/SMR controls,
+a 3D interface pulse, and the established large-domain adaptive head-on setup.
+Primary inputs disable reduction and GH gauge projection. A numerical advantage
+must be established before the binary gate. Existing projected-run corrections
+and the 73.7999M failure remain unchanged evidence.
