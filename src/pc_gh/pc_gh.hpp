@@ -350,6 +350,7 @@ class PcGh {
   std::vector<std::unique_ptr<CompactObjectTracker>> ptracker;
   Real dtnew;
   int reduction_monitor_stage = 0;
+  static constexpr int kReductionProjectionJump = 100;
   // Refresh the device mask from completed RK tracker positions without advancing it.
   void SynchronizeReductionCenters();
   void WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before);

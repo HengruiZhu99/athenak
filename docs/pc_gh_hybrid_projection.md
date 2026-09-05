@@ -112,7 +112,7 @@ of a face with a different-level neighbor; it does not label diagonal-only
 neighbors. Empty strata have block=-1 and zero norm. Diagnostics never suppress
 the existing unmasked strict state or constraint checks.
 
-Operation 8 contains actual p/Q/L/B correction norms from the discrete map.
+Operation 100 contains actual p/Q/L/B correction norms from the discrete map.
 For each full step, its L1/dt is the average correction magnitude per unit time;
 summing its L1 over completed steps gives cumulative variation, including across
 restart segments when duplicate checkpoint times are removed. Other operations
@@ -167,3 +167,11 @@ is under `qualification-runs-20260905/hybrid/`. Each run records its executable
 hash, source parent and diff, input, hardware, and exact command. The parent is
 9f674aec with the implementation patch; the later local feature commit does not
 retroactively change the build provenance.
+
+The first diagnostic schema inadvertently reused operation 8, already assigned
+to physical boundary updates, for jump corrections. The dynamics and projection
+cadence were unaffected. The jump verifier rejected the resulting invalid event
+sequence. The corrected schema uses operation 100. The old CSV is preserved and
+can be recovered unambiguously by selecting only correction rows inside the
+operation-3 before/after projection bracket; the verifier checks final-stage and
+unique-step consistency rather than silently accepting duplicate events.

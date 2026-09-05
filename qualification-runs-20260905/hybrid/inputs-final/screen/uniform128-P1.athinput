@@ -1,0 +1,129 @@
+# Research candidate input; no numerical qualification implied.
+
+<job>
+basename = pcgh-l1-o6-rk3-cfl0.2-uniform-r16-R8
+
+<mesh>
+nghost = 4
+nx1 = 128
+x1min = -8.0
+x1max = 8.0
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 128
+x2min = -8.0
+x2max = 8.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 128
+x3min = -8.0
+x3max = 8.0
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 32
+nx2 = 32
+nx3 = 32
+
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = .2
+nlim = -1
+tlim = 12
+ndiag = 1
+
+<pc_gh>
+spatial_order = 6
+gauge = z4c_mp_hyperbolic
+shift_eta = 2.0
+kappa = 1.0
+dissipation = .3
+initial_data_division_floor = 1.0e-14
+boundedness_output = true
+boundedness_dcycle = 1
+reconstruct_adm_output = false
+physical_output_inner_radius = 0.25
+constraint_excise_chi = 0.0625
+constraint_exterior_horizon = true
+constraint_horizon_radius = 0.5
+constraint_horizon_buffer = 0.0
+dump_horizon_0 = false
+co_0_x = 0.0
+co_0_y = 0.0
+co_0_z = 0.0
+co_0_dump_radius = 1.0
+horizon_0_Nx = 34
+horizon_0_rn = 6
+horizon0r_guess = 0.5
+horizon_dt = 0.5
+extrap_order = 2
+constraint_dcycle = 1
+reduction_system = advective
+reduction_rate = 1
+reduction_monitor = true
+project_reduction_constraints = true
+project_gauge_constraints = false
+reduction_inner_rate = 1
+reduction_profile = constant
+reduction_projection_profile = smooth_core
+reduction_core_radius = 0.125
+reduction_taper_radius = 0.5
+research_dt_ceiling = 0.0125
+hybrid_monitor = true
+
+<problem>
+pgen_name = pc_gh_one_puncture
+mass = 1.0
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+audit_r_min = 1.0
+audit_r_max = 4.0
+expected_finest_spacing = 0.125
+require_cuda = true
+
+<output1>
+file_type = hst
+dt = 0.025
+
+<output2>
+file_type = cart
+id = pcgh_con_slice
+variable = pcgh_con
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+extent_x = 2.0
+extent_y = 2.0
+extent_z = 0.0
+numpoints_x = 64
+numpoints_y = 64
+numpoints_z = 2
+dt = 0.5
+
+<output3>
+file_type = cart
+id = pcgh_slice
+variable = pcgh
+center_x = 0.0
+center_y = 0.0
+center_z = 0.0
+extent_x = 2.0
+extent_y = 2.0
+extent_z = 0.0
+numpoints_x = 64
+numpoints_y = 64
+numpoints_z = 2
+dt = 0.5
+
+<output4>
+file_type = rst
+dt = 1
+
+<output5>
+file_type = bin
+variable = pcgh
+slice_x3 = 0
+dt = 0.25

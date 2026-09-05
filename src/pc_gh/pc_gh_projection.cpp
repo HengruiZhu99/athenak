@@ -154,7 +154,7 @@ void PcGh::ProjectReduction(MeshBlockPack *pmbp) {
     }
   });
   Kokkos::fence();
-  if (monitor) WriteHybridSample(corrections, 8, false);
+  if (monitor) WriteHybridSample(corrections, kReductionProjectionJump, false);
 }
 
 void PcGh::ProjectAlgebraic(MeshBlockPack *pmbp) {

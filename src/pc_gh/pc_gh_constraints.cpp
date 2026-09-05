@@ -697,7 +697,7 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
   const char *corrections[4] = {"delta_p","delta_Q","delta_L","delta_B"};
   using MaxLoc = Kokkos::MaxLoc<Real,int>;
   for (int region=0; region<5; ++region) {
-    for (int n=0; n<(operation == 8 ? 4 : 8); ++n) {
+    for (int n=0; n<(operation == kReductionProjectionJump ? 4 : 8); ++n) {
       MaxLoc::value_type found;
       Kokkos::parallel_reduce("PC-GH stratum maximum", Kokkos::RangePolicy<>(DevExeSpace(),0,cells),
       KOKKOS_LAMBDA(int flat, MaxLoc::value_type &best) {
@@ -746,7 +746,8 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
         file << pmy_pack->pmesh->ncycle << ',' << pmy_pack->pmesh->time << ','
              << pmy_pack->pmesh->dt << ',' << reduction_monitor_stage << ',' << operation
              << ',' << (before ? "before" : "after") << ',' << regions[region] << ','
-             << (operation==8 ? corrections[n] : names[n]) << ',' << maximum << ',' << integral;
+             << (operation==kReductionProjectionJump ? corrections[n] : names[n])
+             << ',' << maximum << ',' << integral;
         for (Real p : position) file << ',' << p;
         file << ',' << identity[0] << ',' << identity[1] << ',' << winner << '\n';
       }

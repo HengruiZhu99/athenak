@@ -13,6 +13,27 @@ from verify_pulses import table
 from verify_smooth_pulses import prediction,rate_gradient
 
 
+def projection_times(rows, integrator):
+    """Read true end-step jumps, including the bracketed legacy schema."""
+    steps=[]
+    seen=set()
+    in_projection=False
+    for row in rows:
+        if row['region']!='all': continue
+        if row['operation']=='3' and row['quantity']=='Rw':
+            in_projection=row['phase']=='before'
+        # Initial diagnostic schema reused physical-BC operation 8.
+        # Recover only the actual correction inside the 3-before/after
+        # bracket; never treat boundary measurements as map events.
+        correction=row['operation']=='100' or (row['operation']=='8' and in_projection)
+        if correction and row['phase']=='after' and row['quantity']=='delta_p':
+            assert int(row['stage'])=={'rk3':3,'rk4':4}[integrator]
+            key=(int(row['cycle']),float(row['t_step']))
+            assert key not in seen,('Duplicate projection event',key)
+            seen.add(key);steps.append(float(row['t_step'])+float(row['dt']))
+    return steps
+
+
 def measure(run):
     params=parse((run/'used_input.athinput').read_text());pc=params['pc_gh']
     data=table(run,'final');t=float(data['time'][0])
@@ -22,12 +43,7 @@ def measure(run):
     if pc.get('project_reduction_constraints','false')=='true':
         files=list(run.glob('*.hybrid.csv'));assert len(files)==1,files
         with files[0].open() as stream:
-            seen=set()
-            for row in csv.DictReader(stream):
-                if row['operation']=='8' and row['region']=='all' and row['quantity']=='delta_p':
-                    key=(int(row['cycle']),float(row['t_step']))
-                    if key in seen: continue
-                    seen.add(key);steps.append(float(row['t_step'])+float(row['dt']))
+            steps=projection_times(csv.DictReader(stream),params['time']['integrator'])
         assert steps and abs(steps[-1]-t)<1e-12,(steps[-1:] or None,t)
         times=np.array(steps);assert np.all(np.diff(times)>0)
         tensor=np.zeros((len(data),3,11))

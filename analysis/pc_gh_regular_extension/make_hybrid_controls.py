@@ -36,6 +36,8 @@ def main():
         text=path.read_text();sources[str(path)]=hashlib.sha256(text.encode()).hexdigest()
         return parse(text)
     def save(path,b,stage):
+        assert int(b['mesh']['nghost']) >= int(b['pc_gh']['spatial_order'])//2+1
+        assert sum(v.get('file_type')=='rst' for k,v in b.items() if k.startswith('output'))<=1
         write(out/path,b); manifest.append(dict(input=str(path),stage=stage))
     uniform=load(args.evidence/'della-cuda/single-discretization/pcgh-l1-o6-rk3-cfl0.2-uniform-r16-R8/used_input.athinput')
     core=load(args.evidence/'della-cuda/rate16-qualification/pcgh-l16-o6-rk3-core256-R8/used_input.athinput')
@@ -45,8 +47,12 @@ def main():
         for name in CANDIDATES:
             b=deepcopy(base);candidate(b,name);b['time']['tlim']=str(end)
             # Checkpoints and exact dt history survive allocation boundaries.
-            used=[int(k[6:]) for k in b if k.startswith('output')]
-            b['output'+str(max(used,default=0)+1)]=dict(file_type='rst',dt='1')
+            rst=[v for k,v in b.items() if k.startswith('output') and v.get('file_type')=='rst']
+            if rst:
+                rst[0]['dt']='1'
+            else:
+                used=[int(k[6:]) for k in b if k.startswith('output')]
+                b['output'+str(max(used,default=0)+1)]=dict(file_type='rst',dt='1')
             save(Path('screen')/f'{grid}-{name}.athinput',b,'screen')
     oracle=load(ROOT/'analysis/pc_gh_regular_extension/oracle.athinput')
     for dim in [1,2,3]:

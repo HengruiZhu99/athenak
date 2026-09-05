@@ -1,0 +1,644 @@
+{
+  "source_sha256": {
+    "qualification-runs-20260904/regular-extension/della-cuda/single-discretization/pcgh-l1-o6-rk3-cfl0.2-uniform-r16-R8/used_input.athinput": "32358728280da97ec9b9193a15cf3edc71945a70379528ed8619b82ebe78a73f",
+    "qualification-runs-20260904/regular-extension/della-cuda/rate16-qualification/pcgh-l16-o6-rk3-core256-R8/used_input.athinput": "c2b78c26495b910f20388adbd2286226405c2108f80e1fdc14737facd1e3a3dd",
+    "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_regular_extension/oracle.athinput": "1bb1eeb96a8969e2e0b8e2b83f049d9fac2e465b6139d98e01d9e8eb9cf43b09",
+    "qualification-runs-20260904/regular-extension/inputs-v2/flat/minkowski-advective-l1.athinput": "85067bbc168f970ae49ac308a34733801d67ce9cae1249e52bb9c160b8629e29",
+    "qualification-runs-20260904/regular-extension/della-cuda/order6-wave-fullsteps/shifted-wave-advective-l16-n32/used_input.athinput": "d393a54d477f9ea4df28290c46814b0ade8626aa07bb38b0007821d117ccc411",
+    "qualification-runs-20260904/regular-extension/della-cuda/order6-wave-fullsteps/shifted-wave-advective-l16-n64/used_input.athinput": "6f43d1b19b844341f9f1eaf79ff250a845ca16c9fec786d583cf5c2d7742922c",
+    "qualification-runs-20260904/regular-extension/della-cuda/order6-wave-fullsteps/shifted-wave-advective-l16-n128/used_input.athinput": "534302537090645baecd6cda770423ccdba869d3cb4cbf46e74e5bbff1e11e96",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/p-n256.athinput": "051cf8b52b0147b56cd52d354717e168596c0961fbb5c3b159726b6cb0537a9b",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/p-n512.athinput": "5e1a479814b36470d34b7c70be40dc8c698e695d20ec2ed6393607fab09e7a40",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/p-n1024.athinput": "6c85198793cc7459c0a3f6f0a5e146138390390a007004fda2fbd73ee9ff1ee0",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/Q-n256.athinput": "65af8d8ac3e426b49210744a68230dd92f5745a93f4957fab38752416ffb81aa",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/Q-n512.athinput": "d339a19dc5c3c6ac2a0ab495704e180c51ea1473b1b2321c0709b1f604a25608",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/Q-n1024.athinput": "be53834f5c328206f96a6a9d506cb11ea5ae85e19284815ada2c0d753b104292",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/L-n256.athinput": "558cfc5408fadba461f932d5f80c83b5483e292eeef2dbf1b63e6e6b7e61efe6",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/L-n512.athinput": "c8b1dd75312ec52af155adb6485d6c5a6df9aaccac745e8ca0082405ad55b986",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/L-n1024.athinput": "2ad0f9112730a3f97f7fa1ea73ff319151cacafe7c2f28f12b8fd21649129913",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/B-n256.athinput": "66341c8c200374225b84a45f7a46fe1ab4b074b7d42a4c2e3eed417ac834fc83",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/B-n512.athinput": "8e2b87b1ccccb634889d7ccdc1a07f5b53506d708d716b9cba2e56c8211f167f",
+    "qualification-runs-20260904/regular-extension/smooth-controls/fixed-pulses/B-n1024.athinput": "ef30d58f5f33d4d0b3d41b97842665abf1b9bedd2372000df21fa69dbc829f60",
+    "qualification-runs-20260904/regular-extension/smooth-controls/moving-waves/wave-n32.athinput": "22e31b2ff93be893bff0a584ca42c0e82e604ac54a318594e93a1f3e008cc98f",
+    "qualification-runs-20260904/regular-extension/smooth-controls/moving-waves/wave-n64.athinput": "228ab4a501f31563fe7d228819063f5bf815979f9cc828dd6466408f48d7ce6a",
+    "qualification-runs-20260904/regular-extension/smooth-controls/moving-waves/wave-n128.athinput": "0ce69bdc65068102613667efea71f021fb761222fc75be74b2576912a190318e",
+    "qualification-runs-20260904/regular-extension/smooth-controls/moving-pulses/p-n32.athinput": "4eabb157ee07b5e19978cab7f85306b6a6c26d53bc98b0f03f7c2d751946a92c",
+    "qualification-runs-20260904/regular-extension/smooth-controls/moving-pulses/Q-n32.athinput": "2f1765ed31c4ab3452989c5e0d18f6c3ae1a185d6cceca94dea687eb78c7af72",
+    "qualification-runs-20260904/regular-extension/smooth-controls/moving-pulses/L-n32.athinput": "a9baee998e757bbcc2942fec3909b1d7ea774f1489caaf46469f2bddaa1ddec0",
+    "qualification-runs-20260904/regular-extension/smooth-controls/moving-pulses/B-n32.athinput": "e5dc6cafefb4dd2cd3b534db01e219a61e1e2833afe11dd705d802179529f251"
+  },
+  "cases": [
+    {
+      "input": "reproduction/uniform-C1-original.athinput",
+      "stage": "reproduction"
+    },
+    {
+      "input": "reproduction/core256-C16-original.athinput",
+      "stage": "reproduction"
+    },
+    {
+      "input": "screen/uniform128-C1.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/uniform128-C4.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/uniform128-C16.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/uniform128-R4.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/uniform128-R16.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/uniform128-P1.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/core256-C1.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/core256-C4.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/core256-C16.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/core256-R4.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/core256-R16.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "screen/core256-P1.athinput",
+      "stage": "screen"
+    },
+    {
+      "input": "oracle/d1-o2-zero.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d1-o2-full.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d1-o2-taper.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d1-o2-global.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d1-o6-zero.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d1-o6-full.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d1-o6-taper.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d1-o6-global.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d2-o2-zero.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d2-o2-full.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d2-o2-taper.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d2-o2-global.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d2-o6-zero.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d2-o6-full.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d2-o6-taper.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d2-o6-global.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d3-o2-zero.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d3-o2-full.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d3-o2-taper.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d3-o2-global.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d3-o2-overlap.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d3-o6-zero.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d3-o6-full.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "oracle/d3-o6-taper.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "mpi-oracle/d3-o6-taper.athinput",
+      "stage": "mpi-oracle"
+    },
+    {
+      "input": "oracle/d3-o6-global.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "mpi-oracle/d3-o6-global.athinput",
+      "stage": "mpi-oracle"
+    },
+    {
+      "input": "oracle/d3-o6-overlap.athinput",
+      "stage": "oracle"
+    },
+    {
+      "input": "mpi-oracle/d3-o6-overlap.athinput",
+      "stage": "mpi-oracle"
+    },
+    {
+      "input": "flat/C1.athinput",
+      "stage": "flat"
+    },
+    {
+      "input": "waves/C1-n32.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/C1-n64.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/C1-n128.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "pulses/C1-p-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-p-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-p-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-Q-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-Q-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-Q-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-L-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-L-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-L-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-B-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-B-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C1-B-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "flat/C4.athinput",
+      "stage": "flat"
+    },
+    {
+      "input": "waves/C4-n32.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/C4-n64.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/C4-n128.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "pulses/C4-p-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-p-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-p-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-Q-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-Q-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-Q-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-L-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-L-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-L-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-B-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-B-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C4-B-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "flat/C16.athinput",
+      "stage": "flat"
+    },
+    {
+      "input": "waves/C16-n32.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/C16-n64.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/C16-n128.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "pulses/C16-p-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-p-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-p-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-Q-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-Q-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-Q-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-L-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-L-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-L-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-B-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-B-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/C16-B-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "flat/R4.athinput",
+      "stage": "flat"
+    },
+    {
+      "input": "waves/R4-n32.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/R4-n64.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/R4-n128.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "pulses/R4-p-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-p-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-p-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-Q-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-Q-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-Q-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-L-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-L-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-L-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-B-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-B-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R4-B-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "flat/R16.athinput",
+      "stage": "flat"
+    },
+    {
+      "input": "waves/R16-n32.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/R16-n64.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/R16-n128.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "pulses/R16-p-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-p-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-p-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-Q-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-Q-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-Q-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-L-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-L-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-L-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-B-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-B-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/R16-B-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "flat/P1.athinput",
+      "stage": "flat"
+    },
+    {
+      "input": "waves/P1-n32.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/P1-n64.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "waves/P1-n128.athinput",
+      "stage": "waves"
+    },
+    {
+      "input": "pulses/P1-p-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-p-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-p-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-Q-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-Q-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-Q-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-L-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-L-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-L-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-B-n256.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-B-n512.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "pulses/P1-B-n1024.athinput",
+      "stage": "pulses"
+    },
+    {
+      "input": "moving-waves/R16-n32.athinput",
+      "stage": "moving-waves"
+    },
+    {
+      "input": "moving-waves/R16-n64.athinput",
+      "stage": "moving-waves"
+    },
+    {
+      "input": "moving-waves/R16-n128.athinput",
+      "stage": "moving-waves"
+    },
+    {
+      "input": "moving-pulses/R16-p-n32.athinput",
+      "stage": "moving-pulses"
+    },
+    {
+      "input": "moving-pulses/R16-Q-n32.athinput",
+      "stage": "moving-pulses"
+    },
+    {
+      "input": "moving-pulses/R16-L-n32.athinput",
+      "stage": "moving-pulses"
+    },
+    {
+      "input": "moving-pulses/R16-B-n32.athinput",
+      "stage": "moving-pulses"
+    },
+    {
+      "input": "moving-waves/P1-n32.athinput",
+      "stage": "moving-waves"
+    },
+    {
+      "input": "moving-waves/P1-n64.athinput",
+      "stage": "moving-waves"
+    },
+    {
+      "input": "moving-waves/P1-n128.athinput",
+      "stage": "moving-waves"
+    },
+    {
+      "input": "moving-pulses/P1-p-n32.athinput",
+      "stage": "moving-pulses"
+    },
+    {
+      "input": "moving-pulses/P1-Q-n32.athinput",
+      "stage": "moving-pulses"
+    },
+    {
+      "input": "moving-pulses/P1-L-n32.athinput",
+      "stage": "moving-pulses"
+    },
+    {
+      "input": "moving-pulses/P1-B-n32.athinput",
+      "stage": "moving-pulses"
+    }
+  ]
+}
