@@ -1252,8 +1252,8 @@
     },
     {
       "run": "../screen-controls/C16/uniform128-C16",
-      "completed": false,
-      "last_step": "elapsed=5.761970e+02 cycle=954 time=1.192500e+01 dt=1.250000e-02",
+      "completed": true,
+      "last_step": "elapsed=5.821594e+02 cycle=961 time=1.200000e+01 dt=2.948752e-13",
       "failure": null
     },
     {
@@ -1267,7 +1267,47 @@
     {
       "run": "../core-controls/C1/core256-C1",
       "completed": false,
-      "last_step": "elapsed=4.353775e+01 cycle=165 time=1.116359e-01 dt=6.765781e-04",
+      "last_step": "elapsed=7.590566e+01 cycle=6965 time=4.649832e+00 dt=1.539793e-04",
+      "failure": [
+        "### FATAL ERROR: PC-GH strict diagnostic failed at t=4.649832e+00 during post-RK update on rank 0: conformal metric lost positive definiteness, det=-2.647657e+00 at (m,k,j,i)=(50,4,10,11), (x,y,z)=(-1.953125e-03,-3.710938e-02,-6.054688e-02)"
+      ]
+    },
+    {
+      "run": "../core-controls/C4/core256-C4",
+      "completed": false,
+      "last_step": "elapsed=3.757281e+02 cycle=5619 time=3.773910e+00 dt=6.620000e-04",
+      "failure": null
+    },
+    {
+      "run": "../screen-hybrids/P1/uniform128-P1",
+      "completed": true,
+      "last_step": "elapsed=2.473049e+02 cycle=961 time=1.200000e+01 dt=2.948752e-13",
+      "failure": null
+    },
+    {
+      "run": "../screen-hybrids/R16/uniform128-R16",
+      "completed": false,
+      "last_step": "elapsed=2.738036e+02 cycle=628 time=7.850000e+00 dt=1.250000e-02",
+      "failure": null
+    },
+    {
+      "run": "../screen-hybrids/R4/uniform128-R4",
+      "completed": false,
+      "last_step": "elapsed=5.364023e+02 cycle=767 time=9.587500e+00 dt=1.232282e-02",
+      "failure": [
+        "### FATAL ERROR: PC-GH strict diagnostic failed at t=9.587500e+00 during post-RK update on rank 0: state pcgh_w=-7.645742e-03 at (m,k,j,i)=(7,34,35,35)"
+      ]
+    },
+    {
+      "run": "../core-hybrids/P1/core256-P1",
+      "completed": false,
+      "last_step": "elapsed=3.359160e+02 cycle=505 time=3.416518e-01 dt=6.764007e-04",
+      "failure": null
+    },
+    {
+      "run": "../core-hybrids/R4/core256-R4",
+      "completed": false,
+      "last_step": "elapsed=8.221398e+02 cycle=4911 time=3.304322e+00 dt=6.667213e-04",
       "failure": null
     }
   ]

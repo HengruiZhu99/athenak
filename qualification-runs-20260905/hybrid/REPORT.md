@@ -1,6 +1,6 @@
 # Puncture-local hybrid campaign
 
-Status at 2026-09-05 14:38 UTC: implementation and initial correctness controls
+Status at 2026-09-05 15:16 UTC: implementation and initial correctness controls
 complete; puncture screening is running. **No qualified hybrid yet.**
 
 ## Fixed experiment
@@ -65,8 +65,12 @@ measurement is being promoted to puncture qualification.
 | Controlled C1 | Uniform h=M/8 | Strict w failure at 8.375 M |
 | Controlled C4 | Uniform h=M/8 | Strict w failure at 9.7125 M |
 | Controlled C16 | Uniform h=M/8 | Reached 12 M; screening survival only |
-| R4/R16/P1 | Uniform h=M/8 and saved core h=M/256 | In progress |
-| C1/C4/C16 | Saved core h=M/256, controlled steps | In progress |
+| R4 | Uniform h=M/8 | Strict w failure at 9.5875 M; partial lifetime improvement |
+| P1 | Uniform h=M/8 | Reached 12 M; screening survival only |
+| R16 | Uniform h=M/8 | In progress |
+| R4/R16/P1 | Saved core h=M/256 | Running or queued |
+| C1 | Saved core h=M/256, controlled steps | Metric positivity failure at 4.649832 M |
+| C4/C16 | Saved core h=M/256, controlled steps | Running or queued |
 
 Uniform C1/C4 terminal reduction/curl maxima are in the innermost few cells,
 so refinement interfaces are not required for those failures. That observation
