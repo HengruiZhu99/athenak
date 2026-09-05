@@ -1,0 +1,273 @@
+diff --git a/src/pc_gh/lapse_gradient.hpp b/src/pc_gh/lapse_gradient.hpp
+new file mode 100644
+index 00000000..008b6f5d
+--- /dev/null
++++ b/src/pc_gh/lapse_gradient.hpp
+@@ -0,0 +1,26 @@
++// Shared discrete lapse-gradient target for relaxation, projection and diagnostics.
++#ifndef PC_GH_LAPSE_GRADIENT_HPP_
++#define PC_GH_LAPSE_GRADIENT_HPP_
++#include "utils/finite_diff.hpp"
++
++namespace pc_gh {
++// Evaluate the product at each stencil point; do not invoke a discrete Leibniz rule.
++template <typename Rho, typename W>
++struct LapseProduct {
++  Rho rho;
++  W w;
++  KOKKOS_INLINE_FUNCTION
++  Real operator()(int m, int k, int j, int i) const {
++    return rho(m,k,j,i)*w(m,k,j,i);
++  }
++};
++
++template <int FD_STENCIL, typename Rho, typename W>
++KOKKOS_INLINE_FUNCTION
++Real DirectLapseGradient(int d, const Real idx[], Rho rho, W w,
++                         int m, int k, int j, int i) {
++  LapseProduct<Rho,W> product{rho,w};
++  return 2.0*Dx<FD_STENCIL>(d,idx,product,m,k,j,i);
++}
++}  // namespace pc_gh
++#endif  // PC_GH_LAPSE_GRADIENT_HPP_
+diff --git a/src/pc_gh/pc_gh.cpp b/src/pc_gh/pc_gh.cpp
+index 529ff3cc..8ce6fc52 100644
+--- a/src/pc_gh/pc_gh.cpp
++++ b/src/pc_gh/pc_gh.cpp
+@@ -66,7 +66,7 @@ char const * const PcGh::ConstraintNames[PcGh::ncon] = {
+   "pcgh_detg", "pcgh_trA", "pcgh_trQ", "pcgh_projection",
+   "pcgh_minor1", "pcgh_minor2", "pcgh_min_eigenvalue",
+   "pcgh_physical_valid", "pcgh_p_norm", "pcgh_L_norm",
+-  "pcgh_rhs_primary", "pcgh_rhs_gradient",
++  "pcgh_rhs_primary", "pcgh_rhs_gradient", "pcgh_red_L_direct",
+ };
+ 
+ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
+@@ -101,8 +101,8 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
+   Kokkos::realloc(u1, nmb, npcgh, ncells3, ncells2, ncells1);
+   Kokkos::realloc(u_rhs, nmb, npcgh, ncells3, ncells2, ncells1);
+   Kokkos::realloc(u_con, nmb, ncon, ncells3, ncells2, ncells1);
+-  Kokkos::realloc(transfer_reduction_before, nmb, 8, ncells3, ncells2, ncells1);
+-  Kokkos::realloc(transfer_reduction_after, nmb, 8, ncells3, ncells2, ncells1);
++  Kokkos::realloc(transfer_reduction_before, nmb, 9, ncells3, ncells2, ncells1);
++  Kokkos::realloc(transfer_reduction_after, nmb, 9, ncells3, ncells2, ncells1);
+   Kokkos::realloc(u_weyl, nmb, 2, ncells3, ncells2, ncells1);
+   Kokkos::deep_copy(u_con, 0.0);
+   BindVariables(u0, u);
+diff --git a/src/pc_gh/pc_gh.hpp b/src/pc_gh/pc_gh.hpp
+index 1ef79fc2..c4d09159 100644
+--- a/src/pc_gh/pc_gh.hpp
++++ b/src/pc_gh/pc_gh.hpp
+@@ -70,6 +70,7 @@ class PcGh {
+     I_CON_MINOR1, I_CON_MINOR2, I_CON_MINEIG,
+     I_CON_PHYSICAL_VALID, I_CON_P, I_CON_L,
+     I_CON_RHS_PRIMARY, I_CON_RHS_GRADIENT,
++    I_CON_RED_L_DIRECT,
+     ncon
+   };
+   static char const * const ConstraintNames[ncon];
+diff --git a/src/pc_gh/pc_gh_calcrhs.cpp b/src/pc_gh/pc_gh_calcrhs.cpp
+index 9b8c9ad1..1c19d4ad 100644
+--- a/src/pc_gh/pc_gh_calcrhs.cpp
++++ b/src/pc_gh/pc_gh_calcrhs.cpp
+@@ -17,6 +17,7 @@
+ #include "mesh/meshblock_pack.hpp"
+ #include "pc_gh/pc_gh.hpp"
+ #include "pc_gh/reduction_profile.hpp"
++#include "pc_gh/lapse_gradient.hpp"
+ #include "utils/compact_object_tracker.hpp"
+ #include "utils/finite_diff.hpp"
+ 
+@@ -559,7 +560,6 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
+       // Z restores the differentiated contracted-connection principal ordering.
+       // Every added term vanishes on the reduction/curl constraint manifold.
+       Real rw[3] = {};
+-      Real ra[3] = {};
+       Real rl[3] = {};
+       Real rq[3][3][3] = {};
+       Real rb[3][3] = {};
+@@ -577,8 +577,8 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
+         bool const active = (d == 0) || (d == 1 && multi_d) || (d == 2 && three_d);
+         Real const dw = active ? Dx<FD_STENCIL>(d, idx, pc.w, m, k, j, i) : 0.0;
+         rw[d] = p_vec[d] - dw;
+-        ra[d] = l_vec[d] - 2.0*(w*d_rho[d] + rho*p_vec[d]);
+-        rl[d] = ra[d] + 2.0*rho*rw[d];
++        rl[d] = l_vec[d] - (active ? DirectLapseGradient<FD_STENCIL>(
++            d, idx, pc.rho, pc.w, m, k, j, i) : 0.0);
+         pc_rhs.w(m, k, j, i) -= beta[d]*rw[d];
+         pc_rhs.p(m, d, k, j, i) -= rate*rw[d];
+         pc_rhs.L(m, d, k, j, i) -= rate*rl[d];
+diff --git a/src/pc_gh/pc_gh_constraints.cpp b/src/pc_gh/pc_gh_constraints.cpp
+index 348138e9..6e8223c8 100644
+--- a/src/pc_gh/pc_gh_constraints.cpp
++++ b/src/pc_gh/pc_gh_constraints.cpp
+@@ -29,6 +29,7 @@
+ #include "mesh/nghbr_index.hpp"
+ #include "pc_gh/pc_gh.hpp"
+ #include "pc_gh/reduction_profile.hpp"
++#include "pc_gh/lapse_gradient.hpp"
+ #include "utils/finite_diff.hpp"
+ 
+ namespace pc_gh {
+@@ -145,6 +146,7 @@ TaskStatus PcGh::CalcConstraints(Driver *pdriver, int stage) {
+     Real red_w2 = 0.0;
+     Real red_q2 = 0.0;
+     Real red_alpha2 = 0.0;
++    Real red_direct_l2 = 0.0;
+     Real red_b2 = 0.0;
+     for (int d = 0; d < 3; ++d) {
+       bool const active = (d == 0) || (d == 1 && multi_d) || (d == 2 && three_d);
+@@ -392,6 +394,13 @@ TaskStatus PcGh::CalcConstraints(Driver *pdriver, int stage) {
+     con(m, I_CON_RED_W, k, j, i) = std::sqrt(red_w2);
+     con(m, I_CON_RED_Q, k, j, i) = std::sqrt(red_q2);
+     con(m, I_CON_RED_ALPHA, k, j, i) = std::sqrt(red_alpha2);
++    for (int d = 0; d < 3; ++d) {
++      bool const active = d == 0 || (d == 1 && multi_d) || (d == 2 && three_d);
++      Real const residual = l_vec[d] - (active ? DirectLapseGradient<FD_STENCIL>(
++          d, idx, pc.rho, pc.w, m, k, j, i) : 0.0);
++      red_direct_l2 += residual*residual;
++    }
++    con(m, I_CON_RED_L_DIRECT, k, j, i) = std::sqrt(red_direct_l2);
+     con(m, I_CON_RED_B, k, j, i) = std::sqrt(red_b2);
+     con(m, I_CON_CURL_P, k, j, i) = std::sqrt(curl_p2);
+     con(m, I_CON_CURL_Q, k, j, i) = std::sqrt(curl_q2);
+@@ -438,7 +447,7 @@ void PcGh::MeasureReductionTransfer(bool save_before, int operation) {
+     Real idx[3] = {1.0/size.d_view(m).dx1,
+                    1.0/size.d_view(m).dx2,
+                    1.0/size.d_view(m).dx3};
+-    Real norm2[8] = {};
++    Real norm2[9] = {};
+     Real d_p[3][3] = {};
+     Real d_l[3][3] = {};
+     Real d_q[3][3][3][3] = {};
+@@ -456,6 +465,9 @@ void PcGh::MeasureReductionTransfer(bool save_before, int operation) {
+       Real const red_alpha = l_d - 2.0*(w*drho + rho*p_d);
+       norm2[0] += red_w*red_w;
+       norm2[2] += red_alpha*red_alpha;
++      Real const red_direct_l = l_d - (active ? DirectLapseGradient<FD_STENCIL>(
++          d, idx, pc.rho, pc.w, m, k, j, i) : 0.0);
++      norm2[8] += red_direct_l*red_direct_l;
+       for (int a = 0; a < 3; ++a) {
+         if (active) {
+           d_p[d][a] = Dx<FD_STENCIL>(d, idx, pc.p, m, a, k, j, i);
+@@ -501,7 +513,7 @@ void PcGh::MeasureReductionTransfer(bool save_before, int operation) {
+         }
+       }
+     }
+-    for (int n = 0; n < 8; ++n) destination(m, n, k, j, i) = std::sqrt(norm2[n]);
++    for (int n = 0; n < 9; ++n) destination(m, n, k, j, i) = std::sqrt(norm2[n]);
+   });
+   Kokkos::fence();
+   if (opt.reduction_monitor) WriteReductionSample(destination, operation, save_before);
+@@ -562,9 +574,9 @@ void PcGh::WriteReductionSample(DvceArray5D<Real> norms, int operation, bool bef
+   int const cells = pmy_pack->nmb_thispack*cells_per_block;
+   using MaxLoc = Kokkos::MaxLoc<Real, int>;
+   auto state = u0;
+-  constexpr const char *names[10] = {"Rw", "RQ", "Ralpha", "RB",
++  constexpr const char *names[11] = {"Rw", "RQ", "Ralpha", "RB",
+                                     "curl_p", "curl_Q", "curl_L", "curl_B",
+-                                    "alpha", "alpha2_chi"};
++                                    "alpha", "alpha2_chi", "RL_direct"};
+   std::ofstream file;
+   if (global_variable::my_rank == 0) {
+     file.open(opt.reduction_monitor_file, std::ios::app);
+@@ -578,7 +590,7 @@ void PcGh::WriteReductionSample(DvceArray5D<Real> norms, int operation, bool bef
+     }
+     file << std::setprecision(17);
+   }
+-  for (int n = 0; n < 10; ++n) {
++  for (int n = 0; n < 11; ++n) {
+     MaxLoc::value_type found;
+     Kokkos::parallel_reduce("PC-GH reduction maximum location",
+     Kokkos::RangePolicy<>(DevExeSpace(), 0, cells),
+@@ -589,8 +601,8 @@ void PcGh::WriteReductionSample(DvceArray5D<Real> norms, int operation, bool bef
+       int const j = ind.js + (cell/ind.nx1) % ind.nx2;
+       int const i = ind.is + cell % ind.nx1;
+       Real value;
+-      if (n < 8) {
+-        value = norms(m, n, k, j, i);
++      if (n < 8 || n == 10) {
++        value = norms(m, n == 10 ? 8 : n, k, j, i);
+       } else {
+         Real const w = state(m, I_W, k, j, i);
+         Real const alpha = w*state(m, I_RHO, k, j, i);
+@@ -731,13 +743,13 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
+     file << std::setprecision(17);
+   }
+   const char *regions[5] = {"all","core","taper","exterior","interface_faces"};
+-  const char *names[19] = {"Rw","RQ","Ralpha","RB","curl_p","curl_Q","curl_L","curl_B",
++  const char *names[20] = {"Rw","RQ","Ralpha","RB","curl_p","curl_Q","curl_L","curl_B",
+       "abs_detg_minus_1","abs_trace_A","trace_Q_norm","abs_Cperp","Z_norm",
+-      "abs_H","alpha_M_norm","min_eigenvalue","min_w","min_rho","min_alpha"};
++      "abs_H","alpha_M_norm","min_eigenvalue","min_w","min_rho","min_alpha","RL_direct"};
+   const char *corrections[4] = {"delta_p","delta_Q","delta_L","delta_B"};
+   using MaxLoc = Kokkos::MaxLoc<Real,int>;
+   for (int region=0; region<5; ++region) {
+-    for (int n=0; n<(jump ? 4 : 19); ++n) {
++    for (int n=0; n<(jump ? 4 : 20); ++n) {
+       MaxLoc::value_type found;
+       Kokkos::parallel_reduce("PC-GH stratum maximum", Kokkos::RangePolicy<>(DevExeSpace(),0,cells),
+       KOKKOS_LAMBDA(int flat, MaxLoc::value_type &best) {
+@@ -745,7 +757,7 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
+         int const m=flat/per_block, cell=flat%per_block;
+         int const k=ind.ks+cell/(ind.nx1*ind.nx2);
+         int const j=ind.js+(cell/ind.nx1)%ind.nx2, i=ind.is+cell%ind.nx1;
+-        Real value=n<8 ? norms(m,n,k,j,i) : health(m,n-8,k,j,i);
++        Real value=(n<8 || n==19) ? norms(m,n==19 ? 8 : n,k,j,i) : health(m,n-8,k,j,i);
+         if (!std::isfinite(value)) value=INFINITY;
+         if (value>best.val || (value==best.val && flat<best.loc)) { best.val=value; best.loc=flat; }
+       }, MaxLoc(found));
+@@ -757,7 +769,7 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
+         int const k=ind.ks+cell/(ind.nx1*ind.nx2);
+         int const j=ind.js+(cell/ind.nx1)%ind.nx2, i=ind.is+cell%ind.nx1;
+         Real const dv=sizes(m).dx1*(multi ? sizes(m).dx2 : 1.0)*(three ? sizes(m).dx3 : 1.0);
+-        sum += (n<8 ? norms(m,n,k,j,i) : health(m,n-8,k,j,i))*dv;
++        sum += ((n<8 || n==19) ? norms(m,n==19 ? 8 : n,k,j,i) : health(m,n-8,k,j,i))*dv;
+       }, Kokkos::Sum<Real>(integral));
+       Real maximum=found.val;
+       int winner=global_variable::my_rank;
+@@ -782,8 +794,8 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
+       MPI_Bcast(identity,2,MPI_INT,winner,MPI_COMM_WORLD);
+ #endif
+       if (identity[1] < 0) maximum=0.0;  // Empty stratum.
+-      else if (!jump && n>=15) maximum=-maximum;
+-      if (!jump && n>=15) integral=-integral;
++      else if (!jump && n>=15 && n<19) maximum=-maximum;
++      if (!jump && n>=15 && n<19) integral=-integral;
+       if (global_variable::my_rank == 0) {
+         file << pmy_pack->pmesh->ncycle << ',' << pmy_pack->pmesh->time << ','
+              << pmy_pack->pmesh->dt << ',' << reduction_monitor_stage << ',' << operation
+diff --git a/src/pc_gh/pc_gh_projection.cpp b/src/pc_gh/pc_gh_projection.cpp
+index da86c031..5a226c75 100644
+--- a/src/pc_gh/pc_gh_projection.cpp
++++ b/src/pc_gh/pc_gh_projection.cpp
+@@ -18,6 +18,7 @@
+ #include "mesh/meshblock_pack.hpp"
+ #include "pc_gh/pc_gh.hpp"
+ #include "pc_gh/reduction_profile.hpp"
++#include "pc_gh/lapse_gradient.hpp"
+ #include "utils/compact_object_tracker.hpp"
+ #include "utils/finite_diff.hpp"
+ 
+@@ -94,8 +95,6 @@ void PcGh::ProjectReduction(MeshBlockPack *pmbp) {
+     Real idx[3] = {1.0/size.d_view(m).dx1,
+                    1.0/size.d_view(m).dx2,
+                    1.0/size.d_view(m).dx3};
+-    Real const w = pc.w(m, k, j, i);
+-    Real const rho = pc.rho(m, k, j, i);
+     Real weight = 1.0;
+     if (smooth) {
+       Real const position[3] = {
+@@ -128,10 +127,10 @@ void PcGh::ProjectReduction(MeshBlockPack *pmbp) {
+         continue;
+       }
+       Real const dw = Dx<FD_STENCIL>(d, idx, pc.w, m, k, j, i);
+-      Real const drho = Dx<FD_STENCIL>(d, idx, pc.rho, m, k, j, i);
+       pc.p(m, d, k, j, i) = BlendReductionTarget(pc.p(m,d,k,j,i), dw, weight);
+       pc.L(m, d, k, j, i) = BlendReductionTarget(
+-          pc.L(m,d,k,j,i), 2.0*(w*drho + rho*dw), weight);
++          pc.L(m,d,k,j,i), DirectLapseGradient<FD_STENCIL>(
++              d, idx, pc.rho, pc.w, m, k, j, i), weight);
+       for (int a = 0; a < 3; ++a) {
+         state(m, BIndex(d, a), k, j, i) = BlendReductionTarget(
+             state(m,BIndex(d,a),k,j,i), Dx<FD_STENCIL>(

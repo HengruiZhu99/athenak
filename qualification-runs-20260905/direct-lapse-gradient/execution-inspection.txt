@@ -1,0 +1,39 @@
+Sat Sep  5 09:18:59 PM UTC 2026
+della-vis1.princeton.edu
+PartitionName=gputest
+   AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL
+   AllocNodes=ALL Default=NO QoS=N/A
+   DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO
+   MaxNodes=UNLIMITED MaxTime=15-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED
+   Nodes=della-i12g[1-2],della-i14g[1-20],della-l01g[3-16],della-l02g[1-16],della-l03g[1-16],della-l04g[1-16],della-l05g[1-7],della-l06g12,della-l07g[2-7],della-l08g[1-7],della-l09g[1-7]
+   PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=NO
+   OverTimeLimit=NONE PreemptMode=OFF
+   State=UP TotalCPUs=7144 TotalNodes=112 SelectTypeParameters=NONE
+   JobDefaults=(null)
+   DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED
+   TRES=cpu=7144,mem=106360000M,node=112,billing=28672,gres/gpu=448
+   TRESBillingWeights=CPU=1.0,Mem=0.25G,GRES/gpu=64
+
+gpu-test||3||
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+          13492157   gputest spec-dg-   hz0693 PD       0:00      1 (Resources)
+Sat Sep  5 17:18:59 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 610.57.04              KMD Version: 610.57.04     CUDA UMD Version: 13.3     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-PCIE-40GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   34C    P0             38W /  250W |     155MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A         2360748      G   ...rack-uuid=3190708988185955192          6MiB |
++-----------------------------------------------------------------------------------------+

@@ -78,6 +78,16 @@ def main():
     summary=dict(runs=[x[3] for x in loaded],input_parameters_equal=True,
         input_sha256=[hashlib.sha256((r/'used_input.athinput').read_bytes()).hexdigest() for r in runs],
         common_time_comparison={},scope=__doc__)
+    monitor_end=min(x[1]['time'].max() for x in loaded)
+    monitor_times=np.unique(np.r_[np.arange(.5,monitor_end+1e-9,.5),monitor_end])
+    summary['common_monitor_comparison']={}
+    for q in ['RQ','Ralpha','curl_p','curl_Q','curl_L','curl_B','min_eigenvalue']:
+        values=[]
+        for _,m,_,_ in loaded:
+            rows=m[(m.region=='all')&(m.quantity==q)].sort_values('time')
+            values.append(np.interp(monitor_times,rows.time,rows['max']).tolist())
+        summary['common_monitor_comparison'][q]=dict(times=monitor_times.tolist(),values=values,
+            scope='Linear interpolation of scalar completed-step extrema; no spatial interpolation of their locations.')
     common_end=min(x[0]['time'][-1] for x in loaded)
     times=np.arange(.5,common_end+1e-9,.5)
     for region in ['all','chi']:
@@ -97,10 +107,18 @@ def main():
     fig,axes=plt.subplots(2,4,figsize=(15,7),constrained_layout=True)
     for row,region in enumerate(['all','chi']):
         for ax,q in zip(axes[row],['curl_p','curl_Q','curl_L','curl_B']):
+            resolved=[]
+            upper=[]
             for (h,*_),label,color in zip(loaded,labels,colors):
-                ax.semilogy(h['time'],norms(h,region)[q],label=label,color=color)
+                values=norms(h,region)[q]
+                ax.semilogy(h['time'],values,label=label,color=color)
+                resolved.extend(values[h['time']>=.1])
+                upper.append(values.max())
+            ax.set_ylim(bottom=min(resolved)*.5,top=max(upper)*1.5)
             ax.set(title=f'{region}: {q}',xlabel='t/M',ylabel='Coordinate-volume RMS');ax.grid(alpha=.25)
-    axes[0,0].legend(fontsize=8);fig.savefig(a.output/'individual-curls.png',dpi=170);plt.close(fig)
+    axes[0,0].legend(fontsize=8)
+    fig.suptitle('Separate curls; initial roundoff values below displayed range')
+    fig.savefig(a.output/'individual-curls.png',dpi=170);plt.close(fig)
     fig,axes=plt.subplots(2,3,figsize=(13,7),constrained_layout=True)
     for ax,q in zip(axes.flat,['RQ','curl_Q','curl_L','RL_direct','min_eigenvalue','min_rho']):
         for (_,m,_,_),label,color in zip(loaded,labels,colors):

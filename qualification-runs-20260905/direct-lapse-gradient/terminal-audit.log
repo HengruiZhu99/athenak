@@ -1,0 +1,204 @@
+{
+  "decision": "FAIL",
+  "requested_target": 6.0,
+  "failure_time": 5.167923,
+  "baseline_failure_time": 5.187818,
+  "lifetime_difference": -0.019894999999999996,
+  "fatal_errors": [
+    "### FATAL ERROR: PC-GH strict diagnostic failed at t=5.167923e+00 during post-RK update on rank 0: state pcgh_rho=-1.402322e+00 at (m,k,j,i)=(50,4,9,10)"
+  ],
+  "exit_record": {
+    "exit_code": 1,
+    "completed_utc": "2026-09-05T22:34:00.804854+00:00"
+  },
+  "segments": [
+    {
+      "log": "stress/core256-R16/segment-0001.log",
+      "sha256": "58bfc7c0a751b2e790759548a7cb4d95943774161fdfbb0df83610165ad52d3a",
+      "wall_stop": true,
+      "fatal": [],
+      "command": {
+        "argv": [
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/source/build-direct-cuda/src/athena",
+          "-i",
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16/used_input.athinput",
+          "-t",
+          "00:15:00"
+        ],
+        "cwd": "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16",
+        "started": "2026-09-05T21:19:00.165958+00:00"
+      }
+    },
+    {
+      "log": "stress/core256-R16/segment-0002.log",
+      "sha256": "b09c0602cd33aa3d3ded6d6765124f36a95373286e0f0037b167814c60cd7c64",
+      "wall_stop": true,
+      "fatal": [],
+      "command": {
+        "argv": [
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/source/build-direct-cuda/src/athena",
+          "-i",
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16/used_input.athinput",
+          "-t",
+          "00:15:00",
+          "-r",
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16/rst/core256-R16.00001.rst"
+        ],
+        "cwd": "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16",
+        "started": "2026-09-05T21:34:03.946199+00:00"
+      }
+    },
+    {
+      "log": "stress/core256-R16/segment-0003.log",
+      "sha256": "e7fd56fc332eccf99313b9762b3b05df965a9abd338d62a5ceda0bfe0b9bf019",
+      "wall_stop": true,
+      "fatal": [],
+      "command": {
+        "argv": [
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/source/build-direct-cuda/src/athena",
+          "-i",
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16/used_input.athinput",
+          "-t",
+          "00:15:00",
+          "-r",
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16/rst/core256-R16.00003.rst"
+        ],
+        "cwd": "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16",
+        "started": "2026-09-05T21:49:07.361962+00:00"
+      }
+    },
+    {
+      "log": "stress/core256-R16/segment-0004.log",
+      "sha256": "ac52919dc96e52c1e811146c2287acd6856d7db90aebe572a6bae19e1f68c4e0",
+      "wall_stop": true,
+      "fatal": [],
+      "command": {
+        "argv": [
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/source/build-direct-cuda/src/athena",
+          "-i",
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16/used_input.athinput",
+          "-t",
+          "00:15:00",
+          "-r",
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16/rst/core256-R16.00004.rst"
+        ],
+        "cwd": "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16",
+        "started": "2026-09-05T22:04:10.571011+00:00"
+      }
+    },
+    {
+      "log": "stress/core256-R16/segment-0005.log",
+      "sha256": "9daef43b4fdc65ef043d1c822d38de8513d981b51a3f5675b39e91db86182c06",
+      "wall_stop": false,
+      "fatal": [
+        "### FATAL ERROR: PC-GH strict diagnostic failed at t=5.167923e+00 during post-RK update on rank 0: state pcgh_rho=-1.402322e+00 at (m,k,j,i)=(50,4,9,10)"
+      ],
+      "command": {
+        "argv": [
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/source/build-direct-cuda/src/athena",
+          "-i",
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16/used_input.athinput",
+          "-t",
+          "00:15:00",
+          "-r",
+          "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16/rst/core256-R16.00005.rst"
+        ],
+        "cwd": "/scratch/gpfs/FPRETORI/hz0693/pcgh-direct-lapse-20260905/stress/core256-R16",
+        "started": "2026-09-05T22:19:14.001130+00:00"
+      }
+    }
+  ],
+  "head_driver_pid": 2361206,
+  "slurm_job": null,
+  "binary_sha256": "0bfd4c5ce9c9e55285614fb988ebd90624a12640f21a41eb60d674148e4e1788",
+  "input_sha256": "ff69d9d88a75e4156735454b19b7cd91522d133ce4ff0f8fd9ced1e2d7105f80",
+  "production_source_files_reverified": 319,
+  "static_mesh_headers": [
+    {
+      "path": "/scratch/gpfs/FPRETORI/hz0693/pcgh-hybrid-20260905-1317/core-hybrids/R16/core256-R16/rst/core256-R16.00005.rst",
+      "blocks": 456,
+      "root_level": 1,
+      "geometry": [
+        -8.0,
+        -8.0,
+        -8.0,
+        8.0,
+        8.0,
+        8.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "mesh_counts": [
+        16,
+        16,
+        16
+      ],
+      "ng": 4,
+      "block_counts": [
+        8,
+        8,
+        8
+      ],
+      "time": 4.563889167475484,
+      "dt": 0.0006541627807096781,
+      "cycle": 6814,
+      "location_sha256": "2823a854f35d80a31185b1b52f047cf768725448f631506ee947e0b5b066a0e2"
+    },
+    {
+      "path": "stress/core256-R16/rst/core256-R16.00005.rst",
+      "blocks": 456,
+      "root_level": 1,
+      "geometry": [
+        -8.0,
+        -8.0,
+        -8.0,
+        8.0,
+        8.0,
+        8.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "mesh_counts": [
+        16,
+        16,
+        16
+      ],
+      "ng": 4,
+      "block_counts": [
+        8,
+        8,
+        8
+      ],
+      "time": 4.2005216312546985,
+      "dt": 0.0006596879019850102,
+      "cycle": 6261,
+      "location_sha256": "2823a854f35d80a31185b1b52f047cf768725448f631506ee947e0b5b066a0e2"
+    }
+  ],
+  "failed_cell": {
+    "index_mkji": [
+      50,
+      4,
+      9,
+      10
+    ],
+    "xyz": [
+      -0.005859375,
+      -0.041015625,
+      -0.060546875
+    ],
+    "spacing": [
+      0.00390625,
+      0.00390625,
+      0.00390625
+    ],
+    "physical_level": 8,
+    "scope": "Coordinates reconstructed from identical static logical block maps in valid checkpoints; the failed state itself was not checkpointed."
+  },
+  "downstream": {
+    "convergence": "NOT RUN: stress gate failed",
+    "binary": "NOT RUN: stress gate failed"
+  }
+}
