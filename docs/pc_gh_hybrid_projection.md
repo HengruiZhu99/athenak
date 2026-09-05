@@ -186,3 +186,53 @@ samples. The projection physical-boundary bracket has operation 9. Projection
 operation 3, refresh operations 4/5/9/6, and jump operation 100 allow the immediate
 map and subsequent derivative-target changes to be distinguished. Refreshing
 constraint diagnostics changes no evolved field and retains strict checks.
+
+## Transfer commutators and the algebraic tangent
+
+For a linear transfer acting separately on configuration U and reductions G,
+write its actions as A_U and A_G. The exact reduction error after a projected
+state is transferred is
+
+    E_after = A_G[(1-P) E_before] + A_G T(U) - T(A_U U).
+
+The last term is a transfer/target defect. It remains even when the projected
+core has E=0. For L, evaluate T(A_U U) explicitly as
+`2[(A_U w) D(A_U rho) + (A_U rho) D(A_U w)]`; neither products nor derivatives
+may be commuted through transfer. For an affine boundary map, add its actual
+inhomogeneous offset. A nonlinear boundary map must be evaluated as the map
+itself rather than replaced by the linear formula. The corresponding curl
+change contains the curl/transfer commutator as well as the taper term. A
+contraction before refresh therefore gives no contraction theorem after refresh.
+
+The existing principal-symbol proof is on the 50-dimensional tangent to
+`det(g)=1`, `tr_g A=0`, and `tr_g Q_i=0`. Continuum defining-gradient projection
+preserves that tangent because differentiating det(g)=1 gives `g^{-1}:dg=0`.
+The discrete projection need not preserve it: `g^{-1}:Dg` is a discrete chain-rule
+defect. Its normal component has no automatic stability bound from the tangent
+proof. Repeating algebraic Q enforcement immediately would in turn destroy the
+chosen defining-gradient target, and is deliberately not added in this comparison.
+Measured trace-Q error and its refinement/time-step dependence are required to
+assess this discrete conflict. Even a locally O(h^p) map defect can contribute
+O(h^p/dt) cumulative variation; this is another reason to measure corrections per
+physical time and to withhold continuum-order claims for full-step resets.
+
+A fixed-configuration calculation makes the Q conflict explicit. Suppose det(g)=1
+and hold its discrete derivative target T fixed. Split Q=Q_tan+g tau/3 and
+T=T_tan+g tau_T/3, with `tau=g^{-1}:Q`. Algebraic enforcement sets tau to zero.
+The following reduction map gives
+
+    Q_tan,new = (1-P) Q_tan,old + P T_tan,
+    tau_new = P tau_T.
+
+For fixed P>0 its stationary composed state is
+`Q*=T_tan+P g tau_T/3`. At that stationary state every algebraic/projection pair
+still removes and adds `P g tau_T/3`. Thus a nonzero discrete chain-rule defect
+can produce nonzero cumulative projection variation even with no change in the
+completed-step state. This is an exact local split-map result with configuration
+held fixed, not a prediction of the full evolving flow. It explains why measuring
+only the final reduction or trace norm can hide continuing corrections.
+
+The existing time integrator can take a tiny last step to reach a requested
+floating-point endpoint. A full-step projection also occurs on that step.
+Actual step histories and projection counts are retained, including such steps;
+we do not silently drop them or assign their jump a finite continuum rate.

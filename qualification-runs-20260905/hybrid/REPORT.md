@@ -111,3 +111,28 @@ R16's standalone restart was launched with the pulse-source driver but the
 original source/build-hybrid-cuda executable. Its binary hash matches the parent
 R16 run; use that parent's source snapshot for the executable provenance. The
 restart metadata's driver/source snapshot is retained to expose this distinction.
+
+## Frozen-background diagnostic (not an energy theorem for the evolution)
+
+Native double-precision checkpoint samples include radial strata, all component
+extrema and the observed failure neighborhood. At t=8 M in the C1 uniform run,
+the minimum sampled reduction-energy margin is -0.797/M and the maximum sampled
+frozen spectral abscissa is +0.477/M, both near the core. At t=12 M in the C16
+uniform control, these extrema are +15.560/M and -15.500/M. In the original C16
+refined run at t=4 M, they are +15.575/M and -15.138/M, although that run later
+fails at 4.891496 M. These are sampled coefficients, not global bounds, and do
+not cover transfer forcing or prove behavior at later times. They support
+investigating discretization/transfer forcing in the refined failure rather
+than simply assuming that rate 16 is too weak everywhere.
+
+Latest completed screens: R4 uniform fails the strict w check at **9.5875 M**
+(compared with controlled C1 at 8.375 M and C4 at 9.7125 M). This is a partial
+lifetime improvement, not a qualified hybrid. Controlled C1 on the saved
+M/256 hierarchy fails metric positivity at **4.649832 M**, at
+(-.001953125, -.03710938, -.06054688). Its uniform and refined failures occur in
+different numerical environments and are not a matched-resolution comparison.
+
+At 15:08 UTC, P1 completed the uniform h=M/8 screen through 12 M. Its refined
+M/256 test has been dispatched on the head-node A100. This remains a screening
+survival result; it does not resolve pulse-curl accuracy, mask dependence,
+projection-frequency dependence, or fine-core behavior.
