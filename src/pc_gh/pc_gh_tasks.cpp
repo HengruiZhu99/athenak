@@ -340,12 +340,14 @@ TaskStatus PcGh::ApplyProjectionPhysicalBCs(Driver *pdriver, int stage) {
   if (!opt.project_reduction_constraints || stage != pdriver->nexp_stages) {
     return TaskStatus::complete;
   }
+  if (opt.reduction_monitor) BeginReductionTransfer(9);
   if (!pmy_pack->pmesh->strictly_periodic) {
     pbval_u->Z4cBCs(pmy_pack, pbval_u->u_in, u0, coarse_u0);
     if (pmy_pack->pmesh->pgen->user_bcs) {
       pmy_pack->pmesh->pgen->user_bcs_func(pmy_pack->pmesh);
     }
   }
+  if (opt.reduction_monitor) EndReductionTransfer(9);
   return TaskStatus::complete;
 }
 

@@ -175,3 +175,14 @@ sequence. The corrected schema uses operation 100. The old CSV is preserved and
 can be recovered unambiguously by selecting only correction rows inside the
 operation-3 before/after projection bracket; the verifier checks final-stage and
 unique-step consistency rather than silently accepting duplicate events.
+
+The complete hybrid monitor additionally refreshes GH/ADM and algebraic diagnostics
+at each transfer/RK bracket. It reports the minimum metric eigenvalue, w, rho,
+and alpha by region, alongside GH Cperp/Z, H, alpha-weighted momentum, determinant,
+trace-A and trace-Q residuals. For quantities named `min_*`, the CSV `max` column
+contains the stated minimum (with its location); `coordinate_l1` holds the signed
+coordinate-volume integral of that scalar. No inner-radius mask censors these
+samples. The projection physical-boundary bracket has operation 9. Projection
+operation 3, refresh operations 4/5/9/6, and jump operation 100 allow the immediate
+map and subsequent derivative-target changes to be distinguished. Refreshing
+constraint diagnostics changes no evolved field and retains strict checks.

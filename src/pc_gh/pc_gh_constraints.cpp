@@ -34,6 +34,9 @@
 namespace pc_gh {
 namespace {
 
+// Refresh diagnostic fields without recursively starting another transfer sample.
+constexpr int kHybridDiagnosticStage = -100;
+
 KOKKOS_INLINE_FUNCTION
 Real MinimumSymmetricEigenvalue(Real a00, Real a01, Real a02,
                                 Real a11, Real a12, Real a22) {
@@ -64,7 +67,7 @@ Real MinimumSymmetricEigenvalue(Real a00, Real a01, Real a02,
 
 template <int FD_STENCIL>
 TaskStatus PcGh::CalcConstraints(Driver *pdriver, int stage) {
-  if (opt.reduction_monitor) BeginReductionTransfer(-2);
+  if (opt.reduction_monitor && stage != kHybridDiagnosticStage) BeginReductionTransfer(-2);
   if (pdriver != nullptr && stage != pdriver->nexp_stages) return TaskStatus::complete;
   if (pdriver != nullptr
       && (pmy_pack->pmesh->ncycle + 1) % opt.constraint_dcycle != 0) {
@@ -642,6 +645,41 @@ void PcGh::WriteReductionSample(DvceArray5D<Real> norms, int operation, bool bef
 
 void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before) {
   SynchronizeReductionCenters();
+  bool const jump = operation == kReductionProjectionJump;
+  DvceArray5D<Real> health;
+  if (!jump) {
+    switch (opt.fd_stencil) {
+      case 2: CalcConstraints<2>(nullptr, kHybridDiagnosticStage); break;
+      case 3: CalcConstraints<3>(nullptr, kHybridDiagnosticStage); break;
+      case 4: CalcConstraints<4>(nullptr, kHybridDiagnosticStage); break;
+      default: std::abort();
+    }
+    auto ind = pmy_pack->pmesh->mb_indcs;
+    health = DvceArray5D<Real>("PC-GH stage health", pmy_pack->nmb_thispack, 11,
+                               u0.extent_int(2), u0.extent_int(3), u0.extent_int(4));
+    auto con = u_con; auto state = u0;
+    par_for("PC-GH stage health", DevExeSpace(), 0, pmy_pack->nmb_thispack-1,
+    ind.ks, ind.ke, ind.js, ind.je, ind.is, ind.ie,
+    KOKKOS_LAMBDA(int m, int k, int j, int i) {
+      health(m,0,k,j,i) = std::fabs(con(m,I_CON_DETG,k,j,i));
+      health(m,1,k,j,i) = std::fabs(con(m,I_CON_TRA,k,j,i));
+      health(m,2,k,j,i) = con(m,I_CON_TRQ,k,j,i);
+      health(m,3,k,j,i) = std::fabs(con(m,I_CON_CPERP,k,j,i));
+      Real z2=0.0, momentum2=0.0;
+      for (int d=0; d<3; ++d) {
+        z2 += con(m,I_CON_ZX+d,k,j,i)*con(m,I_CON_ZX+d,k,j,i);
+        momentum2 += con(m,I_CON_MX+d,k,j,i)*con(m,I_CON_MX+d,k,j,i);
+      }
+      health(m,4,k,j,i) = std::sqrt(z2);
+      health(m,5,k,j,i) = std::fabs(con(m,I_CON_H,k,j,i));
+      health(m,6,k,j,i) = std::sqrt(momentum2);
+      // Negate minima for the shared MaxLoc reduction; restore signs on output.
+      health(m,7,k,j,i) = -con(m,I_CON_MINEIG,k,j,i);
+      health(m,8,k,j,i) = -state(m,I_W,k,j,i);
+      health(m,9,k,j,i) = -state(m,I_RHO,k,j,i);
+      health(m,10,k,j,i) = -state(m,I_W,k,j,i)*state(m,I_RHO,k,j,i);
+    });
+  }
   auto ind = pmy_pack->pmesh->mb_indcs;
   auto sizes = pmy_pack->pmb->mb_size.d_view;
   auto levels = pmy_pack->pmb->mb_lev.d_view;
@@ -693,11 +731,13 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
     file << std::setprecision(17);
   }
   const char *regions[5] = {"all","core","taper","exterior","interface_faces"};
-  const char *names[8] = {"Rw","RQ","Ralpha","RB","curl_p","curl_Q","curl_L","curl_B"};
+  const char *names[19] = {"Rw","RQ","Ralpha","RB","curl_p","curl_Q","curl_L","curl_B",
+      "abs_detg_minus_1","abs_trace_A","trace_Q_norm","abs_Cperp","Z_norm",
+      "abs_H","alpha_M_norm","min_eigenvalue","min_w","min_rho","min_alpha"};
   const char *corrections[4] = {"delta_p","delta_Q","delta_L","delta_B"};
   using MaxLoc = Kokkos::MaxLoc<Real,int>;
   for (int region=0; region<5; ++region) {
-    for (int n=0; n<(operation == kReductionProjectionJump ? 4 : 8); ++n) {
+    for (int n=0; n<(jump ? 4 : 19); ++n) {
       MaxLoc::value_type found;
       Kokkos::parallel_reduce("PC-GH stratum maximum", Kokkos::RangePolicy<>(DevExeSpace(),0,cells),
       KOKKOS_LAMBDA(int flat, MaxLoc::value_type &best) {
@@ -705,7 +745,7 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
         int const m=flat/per_block, cell=flat%per_block;
         int const k=ind.ks+cell/(ind.nx1*ind.nx2);
         int const j=ind.js+(cell/ind.nx1)%ind.nx2, i=ind.is+cell%ind.nx1;
-        Real value=norms(m,n,k,j,i);
+        Real value=n<8 ? norms(m,n,k,j,i) : health(m,n-8,k,j,i);
         if (!std::isfinite(value)) value=INFINITY;
         if (value>best.val || (value==best.val && flat<best.loc)) { best.val=value; best.loc=flat; }
       }, MaxLoc(found));
@@ -717,7 +757,7 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
         int const k=ind.ks+cell/(ind.nx1*ind.nx2);
         int const j=ind.js+(cell/ind.nx1)%ind.nx2, i=ind.is+cell%ind.nx1;
         Real const dv=sizes(m).dx1*(multi ? sizes(m).dx2 : 1.0)*(three ? sizes(m).dx3 : 1.0);
-        sum += norms(m,n,k,j,i)*dv;
+        sum += (n<8 ? norms(m,n,k,j,i) : health(m,n-8,k,j,i))*dv;
       }, Kokkos::Sum<Real>(integral));
       Real maximum=found.val;
       int winner=global_variable::my_rank;
@@ -728,7 +768,7 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
       MPI_Allreduce(MPI_IN_PLACE,&winner,1,MPI_INT,MPI_MIN,MPI_COMM_WORLD);
 #endif
       Real position[3]={NAN,NAN,NAN}; int identity[2]={-1,-1};
-      if (maximum >= 0.0 && global_variable::my_rank == winner) {
+      if (maximum > std::numeric_limits<Real>::lowest() && global_variable::my_rank == winner) {
         int const m=found.loc/per_block, cell=found.loc%per_block;
         auto size=pmy_pack->pmb->mb_size.h_view(m);
         position[0]=CellCenterX(cell%ind.nx1,ind.nx1,size.x1min,size.x1max);
@@ -741,7 +781,9 @@ void PcGh::WriteHybridSample(DvceArray5D<Real> norms, int operation, bool before
       MPI_Bcast(position,3,MPI_ATHENA_REAL,winner,MPI_COMM_WORLD);
       MPI_Bcast(identity,2,MPI_INT,winner,MPI_COMM_WORLD);
 #endif
-      if (maximum < 0.0) maximum=0.0;  // Empty stratum, marked by block=-1.
+      if (identity[1] < 0) maximum=0.0;  // Empty stratum.
+      else if (!jump && n>=15) maximum=-maximum;
+      if (!jump && n>=15) integral=-integral;
       if (global_variable::my_rank == 0) {
         file << pmy_pack->pmesh->ncycle << ',' << pmy_pack->pmesh->time << ','
              << pmy_pack->pmesh->dt << ',' << reduction_monitor_stage << ',' << operation
