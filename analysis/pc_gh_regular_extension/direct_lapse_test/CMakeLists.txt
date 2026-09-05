@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.20)
+project(direct_lapse_test LANGUAGES CXX)
+find_package(Kokkos CONFIG REQUIRED)
+add_executable(direct_lapse_test direct_lapse_test.cpp)
+target_link_libraries(direct_lapse_test Kokkos::kokkos)
+target_compile_features(direct_lapse_test PRIVATE cxx_std_17)
+target_include_directories(direct_lapse_test PRIVATE ../../../src)

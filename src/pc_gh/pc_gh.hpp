@@ -70,6 +70,7 @@ class PcGh {
     I_CON_MINOR1, I_CON_MINOR2, I_CON_MINEIG,
     I_CON_PHYSICAL_VALID, I_CON_P, I_CON_L,
     I_CON_RHS_PRIMARY, I_CON_RHS_GRADIENT,
+    I_CON_RED_L_DIRECT,
     ncon
   };
   static char const * const ConstraintNames[ncon];

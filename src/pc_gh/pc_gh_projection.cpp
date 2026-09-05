@@ -18,6 +18,7 @@
 #include "mesh/meshblock_pack.hpp"
 #include "pc_gh/pc_gh.hpp"
 #include "pc_gh/reduction_profile.hpp"
+#include "pc_gh/lapse_gradient.hpp"
 #include "utils/compact_object_tracker.hpp"
 #include "utils/finite_diff.hpp"
 
@@ -94,8 +95,6 @@ void PcGh::ProjectReduction(MeshBlockPack *pmbp) {
     Real idx[3] = {1.0/size.d_view(m).dx1,
                    1.0/size.d_view(m).dx2,
                    1.0/size.d_view(m).dx3};
-    Real const w = pc.w(m, k, j, i);
-    Real const rho = pc.rho(m, k, j, i);
     Real weight = 1.0;
     if (smooth) {
       Real const position[3] = {
@@ -128,10 +127,10 @@ void PcGh::ProjectReduction(MeshBlockPack *pmbp) {
         continue;
       }
       Real const dw = Dx<FD_STENCIL>(d, idx, pc.w, m, k, j, i);
-      Real const drho = Dx<FD_STENCIL>(d, idx, pc.rho, m, k, j, i);
       pc.p(m, d, k, j, i) = BlendReductionTarget(pc.p(m,d,k,j,i), dw, weight);
       pc.L(m, d, k, j, i) = BlendReductionTarget(
-          pc.L(m,d,k,j,i), 2.0*(w*drho + rho*dw), weight);
+          pc.L(m,d,k,j,i), DirectLapseGradient<FD_STENCIL>(
+              d, idx, pc.rho, pc.w, m, k, j, i), weight);
       for (int a = 0; a < 3; ++a) {
         state(m, BIndex(d, a), k, j, i) = BlendReductionTarget(
             state(m,BIndex(d,a),k,j,i), Dx<FD_STENCIL>(

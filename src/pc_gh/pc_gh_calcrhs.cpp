@@ -17,6 +17,7 @@
 #include "mesh/meshblock_pack.hpp"
 #include "pc_gh/pc_gh.hpp"
 #include "pc_gh/reduction_profile.hpp"
+#include "pc_gh/lapse_gradient.hpp"
 #include "utils/compact_object_tracker.hpp"
 #include "utils/finite_diff.hpp"
 
@@ -559,7 +560,6 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
       // Z restores the differentiated contracted-connection principal ordering.
       // Every added term vanishes on the reduction/curl constraint manifold.
       Real rw[3] = {};
-      Real ra[3] = {};
       Real rl[3] = {};
       Real rq[3][3][3] = {};
       Real rb[3][3] = {};
@@ -577,8 +577,8 @@ TaskStatus PcGh::CalcRHS(Driver *, int) {
         bool const active = (d == 0) || (d == 1 && multi_d) || (d == 2 && three_d);
         Real const dw = active ? Dx<FD_STENCIL>(d, idx, pc.w, m, k, j, i) : 0.0;
         rw[d] = p_vec[d] - dw;
-        ra[d] = l_vec[d] - 2.0*(w*d_rho[d] + rho*p_vec[d]);
-        rl[d] = ra[d] + 2.0*rho*rw[d];
+        rl[d] = l_vec[d] - (active ? DirectLapseGradient<FD_STENCIL>(
+            d, idx, pc.rho, pc.w, m, k, j, i) : 0.0);
         pc_rhs.w(m, k, j, i) -= beta[d]*rw[d];
         pc_rhs.p(m, d, k, j, i) -= rate*rw[d];
         pc_rhs.L(m, d, k, j, i) -= rate*rl[d];

@@ -20,15 +20,19 @@ def identities():
     w,rho,p,L,dw,drho,a=s.symbols('w rho p L dw drho a')
     pp=p-a*(p-dw); LL=L-a*(L-2*(w*drho+rho*dw))
     assert s.expand(LL-2*(w*drho+rho*pp)-(1-a)*(L-2*(w*drho+rho*p)))==0
+    delta=s.symbols('delta')
+    corrected=LL+a*delta
+    assert s.expand(corrected-2*(w*drho+rho*pp)
+                    -(1-a)*(L-2*(w*drho+rho*p))-a*delta)==0
     # Any linear discrete curl D gives C(G-P E)=C(G)-C(P E), without Leibniz.
     D=s.Matrix([[1,2,-3],[-2,0,2],[3,-1,-2]])
     pv=s.diag(*s.symbols('P0:3')); ev=s.Matrix(s.symbols('E0:3'))
     assert s.expand(D*((s.eye(3)-pv)*ev)-(D*ev-D*pv*ev))==s.zeros(3,1)
     assert D*pv-pv*D != s.zeros(3,3)
-    print('PASS: continuum mask curl, exact Ralpha scaling, discrete commutator identity')
+    print('PASS: continuum mask curl, legacy Ralpha scaling, direct-target defect, discrete commutator identity')
 
 
-def check(run):
+def check(run, direct_lapse=False):
     params=parse((run/'used_input.athinput').read_text())
     pc=params['pc_gh']; order=int(pc['spatial_order'])
     coefficients={2:np.array([-.5,0,.5]),
@@ -54,7 +58,8 @@ def check(run):
             for d in range(3):
                 dw=derivative(u[0],d); drho=derivative(u[18],d)
                 target[22+d]=dw
-                target[43+d]=2*(u[0]*drho+u[18]*dw)
+                target[43+d]=(2*derivative(u[18]*u[0],d) if direct_lapse
+                              else 2*(u[0]*drho+u[18]*dw))
                 for n in range(6): target[25+6*d+n]=derivative(u[1+n],d)
                 for n in range(3): target[46+3*d+n]=derivative(u[19+n],d)
             if pc['reduction_projection_profile']=='global':
@@ -78,7 +83,7 @@ def check(run):
                 limits[label]+=int((mask&active).sum())
             assert np.array_equal(v[22:,weight==0],u[22:,weight==0])
             # Includes target curl and all available ghost values. Never assume
-            # the factorized L target is a discrete gradient, or that D obeys Leibniz.
+            # projected target ghosts match refreshed ghosts, or that D obeys Leibniz.
             for indexes in [[22+d for d in range(3)],[43+d for d in range(3)]]+[
                 [25+6*d+n for d in range(3)] for n in range(6)]+[
                 [46+3*d+n for d in range(3)] for n in range(3)]:
@@ -88,7 +93,7 @@ def check(run):
                     curl_error=max(curl_error,float(abs(actual[active]-exact[active]).max()))
             assert curl_error<1e-10,(run,curl_error)
     assert sum(limits.values())>0,run
-    result=dict(run=str(run),max_component_error=worst,max_curl_identity_error=curl_error,cells=limits)
+    result=dict(run=str(run),direct_lapse=direct_lapse,max_component_error=worst,max_curl_identity_error=curl_error,cells=limits)
     print('PASS:',result)
     return result
 
@@ -96,6 +101,7 @@ def check(run):
 if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('runs',type=Path,nargs='*'); ap.add_argument('--output',type=Path)
+    ap.add_argument('--direct-lapse',action='store_true',help='Check the corrected discrete product target')
     args=ap.parse_args(); identities()
-    results=[check(run) for run in args.runs]
+    results=[check(run,args.direct_lapse) for run in args.runs]
     if args.output: args.output.write_text(json.dumps(results,indent=2)+'\n')

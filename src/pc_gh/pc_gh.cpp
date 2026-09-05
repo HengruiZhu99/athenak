@@ -66,7 +66,7 @@ char const * const PcGh::ConstraintNames[PcGh::ncon] = {
   "pcgh_detg", "pcgh_trA", "pcgh_trQ", "pcgh_projection",
   "pcgh_minor1", "pcgh_minor2", "pcgh_min_eigenvalue",
   "pcgh_physical_valid", "pcgh_p_norm", "pcgh_L_norm",
-  "pcgh_rhs_primary", "pcgh_rhs_gradient",
+  "pcgh_rhs_primary", "pcgh_rhs_gradient", "pcgh_red_L_direct",
 };
 
 PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
@@ -101,8 +101,8 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   Kokkos::realloc(u1, nmb, npcgh, ncells3, ncells2, ncells1);
   Kokkos::realloc(u_rhs, nmb, npcgh, ncells3, ncells2, ncells1);
   Kokkos::realloc(u_con, nmb, ncon, ncells3, ncells2, ncells1);
-  Kokkos::realloc(transfer_reduction_before, nmb, 8, ncells3, ncells2, ncells1);
-  Kokkos::realloc(transfer_reduction_after, nmb, 8, ncells3, ncells2, ncells1);
+  Kokkos::realloc(transfer_reduction_before, nmb, 9, ncells3, ncells2, ncells1);
+  Kokkos::realloc(transfer_reduction_after, nmb, 9, ncells3, ncells2, ncells1);
   Kokkos::realloc(u_weyl, nmb, 2, ncells3, ncells2, ncells1);
   Kokkos::deep_copy(u_con, 0.0);
   BindVariables(u0, u);
