@@ -10,6 +10,10 @@ from verify_pulses import measure
 ap = argparse.ArgumentParser(description=__doc__)
 ap.add_argument('groups', type=Path, nargs='+')
 ap.add_argument('--output', type=Path, required=True)
+ap.add_argument('--time', type=float, default=1.)
+ap.add_argument('--amplitude', type=float, default=1e-8)
+ap.add_argument('--cfl', type=float, default=.2)
+ap.add_argument('--focus-rate', type=float, default=1.)
 args = ap.parse_args()
 rows = []
 for group in args.groups:
@@ -22,7 +26,8 @@ for group in args.groups:
         rows.append(result)
 ladder = {}
 for row in rows:
-    if row['time'] != 1 or row['amplitude'] != 1e-8:
+    if (row['time'] != args.time or row['amplitude'] != args.amplitude
+            or row['cfl'] != args.cfl):
         continue
     key = (row['family'], row['direction'], row['rate'])
     ladder.setdefault(key, []).append(row)
@@ -41,12 +46,16 @@ args.output.parent.mkdir(parents=True, exist_ok=True)
 args.output.write_text(json.dumps(report, indent=2)+'\n')
 normal = [r for r in rows if r['rate'] in [0, 1, 4]]
 print('Complete pulse runs:', len(rows))
-print('Maximum fitted damping error (rates 0,1,4):',
-      max(abs(r['damping_fit']-r['rate']) for r in normal))
+print('Maximum fitted damping error:',
+      max(abs(r['damping_fit']-r['rate']) for r in (normal or rows)))
 for family in ['p','Q','L','B']:
-    selected = [r for r in rows if r['family']==family and r['direction']==1 and r['rate']==1 and r['amplitude']==1e-8]
+    selected = [r for r in rows if r['family']==family and r['direction']==1
+                and r['rate']==args.focus_rate and r['amplitude']==args.amplitude
+                and r['time']==args.time and r['cfl']==args.cfl]
+    if not selected:
+        continue
     finest = max(selected, key=lambda row: row['n'])
     print(family, 'finest n=', finest['n'], 'rate=', finest['damping_fit'],
           'speed=', finest['speed_fit'])
     print(' adjacent L2 orders:', [(r['coarse'],r['fine'],round(r['l2_order'],6))
-          for r in orders if r['family']==family and r['direction']==1 and r['rate']==1])
+          for r in orders if r['family']==family and r['direction']==1 and r['rate']==args.focus_rate])

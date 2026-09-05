@@ -29,7 +29,7 @@ def cells(path):
     return data, np.vstack(positions), np.vstack(spacings), np.vstack(states).astype(float)
 
 
-def symmetry(xyz, u, names):
+def symmetry(xyz, u, names, operations=('reflect_x', 'reflect_y', 'swap_xy')):
     """Check tensor reflections and x/y exchange on the native cell set.
 
     Binary field output has float32 precision. These are slice checks; z
@@ -47,7 +47,9 @@ def symmetry(xyz, u, names):
     if len(lookup) != len(xyz):
         raise ValueError('Duplicate native cell positions')
     results = {}
-    for operation in ['reflect_x', 'reflect_y', 'swap_xy']:
+    for operation in operations:
+        if operation not in ['reflect_x', 'reflect_y', 'swap_xy']:
+            raise ValueError(f'Unsupported symmetry operation: {operation}')
         target = xyz.copy()
         if operation == 'swap_xy':
             target = target[:, [1, 0, 2]]
@@ -93,7 +95,7 @@ def analyze(path, output):
     for index, (a, b) in enumerate([(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2)]):
         g[:, a, b] = g[:, b, a] = u[:, 1+index]
     eig = np.linalg.eigvalsh(g)
-    result = dict(time=float(data['time']), cycle=int(data['cycle']), min_spacing=h,
+    result = dict(source_file=str(path.resolve()), time=float(data['time']), cycle=int(data['cycle']), min_spacing=h,
                   min_sample_radius=float(r.min()), cell_count=len(r),
                   min_metric_eigenvalue=float(eig.min()), min_w=float(u[:, 0].min()),
                   min_rho=float(u[:, 18].min()), max_alpha=float(fields['alpha'].max()),

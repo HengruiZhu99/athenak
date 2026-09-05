@@ -31,8 +31,11 @@ def richardson_order(h, ratio):
 ap = argparse.ArgumentParser(description=__doc__)
 ap.add_argument('runs', nargs=3, type=Path)
 ap.add_argument('--time', type=float, default=6)
+ap.add_argument('--mass', type=float, default=1,
+                help='Reference mass used only to define the exterior annuli r/m')
 ap.add_argument('--output', type=Path, required=True)
 args = ap.parse_args()
+if args.mass<=0: raise ValueError('Reference mass must be positive')
 states = []
 for run in args.runs:
     params = parse((run/'used_input.athinput').read_text())
@@ -53,15 +56,16 @@ for _, state, _, _ in states[1:]:
     if any(not np.array_equal(state[d], states[0][1][d]) for d in ['x', 'y', 'z']):
         raise ValueError('Cartesian sample grids differ')
 x, y = np.meshgrid(states[0][1]['x'], states[0][1]['y'])
-radius = np.hypot(x, y)
+radius = np.hypot(x, y)/args.mass
 groups = dict(w=(0,1), gtilde=(1,7), K=(7,8), Atilde=(8,14), Z=(14,17),
               Cperp=(17,18), rho=(18,19), beta=(19,22), p=(22,25), Q=(25,43),
               L=(43,46), B=(46,55), all=(0,55))
-result = dict(time=args.time, runs=[str(s[3]) for s in states], finest_spacing=h.tolist(),
+result = dict(time=args.time, reference_mass=args.mass, runs=[str(s[3]) for s in states], finest_spacing=h.tolist(),
               scope='Interpolated common Cartesian exterior slice, not a native puncture-power test',
               regions={})
 for inner, outer in [(1,1.75), (2,2.5)]:
     selected = (radius >= inner) & (radius <= outer)
+    if not selected.any(): raise ValueError('The Cartesian output does not cover a requested annulus')
     region = {}
     for name, (lo, hi) in groups.items():
         differences = [(states[i][2][lo:hi]-states[i+1][2][lo:hi])[:, selected].ravel()

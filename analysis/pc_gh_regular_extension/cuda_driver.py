@@ -122,6 +122,7 @@ def run(args):
             ['git', 'status', '--short'], cwd=ROOT))
     params = parse((destination/'used_input.athinput').read_text())
     segment = 0
+    executed = 0
     while True:
         segment += 1
         log = destination/f'segment-{segment:04d}.log'
@@ -132,13 +133,15 @@ def run(args):
         if restarts:
             argv += ['-r', restarts[-1]]
         status = command(argv, destination, log)
+        executed += 1
         text = log.read_text(errors='replace')
         if status:
             raise SystemExit(status)
-        is_oracle = int(params['time'].get('nlim', '-1')) == 0
-        if 'Terminating on time limit' in text or (is_oracle and 'Terminating on cycle limit' in text):
+        cycle_limited = int(params['time'].get('nlim', '-1')) >= 0
+        if 'Terminating on time limit' in text or (cycle_limited and 'Terminating on cycle limit' in text):
             (destination/'completed.json').write_text(json.dumps(dict(
                 segment=segment, numerical_exit='clean',
+                stop_reason='time' if 'Terminating on time limit' in text else 'cycle',
                 qualification='requires physics analysis; survival is not acceptance'), indent=2)+'\n')
             return
         if 'Terminating on wall clock limit' not in text:
@@ -157,6 +160,13 @@ def run(args):
             saved.mkdir()
             for path in partials:
                 shutil.move(path, saved/path.name)
+        if args.max_segments and executed >= args.max_segments:
+            checkpoint = max(destination.glob('rst/*.rst'), key=lambda p: p.stat().st_mtime_ns)
+            (destination/f'paused-after-segment-{segment:04d}.json').write_text(json.dumps(
+                dict(segment=segment, checkpoint=str(checkpoint),
+                     status='clean wall stop; requested evolution remains incomplete'),indent=2)+'\n')
+            print('PARTIAL: clean checkpoint; explicitly resume in the next allocation',flush=True)
+            return
 
 
 def main():
@@ -175,7 +185,11 @@ def main():
     start.add_argument('--restart-from', type=Path,
                        help='Start a new documented experiment from this checkpoint')
     r.add_argument('--wall-segment', default='00:15:00')
+    r.add_argument('--max-segments', type=int, default=0,
+                   help='Stop after this many clean wall segments; zero runs until the requested evolution ends')
     args = ap.parse_args()
+    if getattr(args, 'max_segments', 0) < 0:
+        ap.error('--max-segments must be nonnegative')
     (build if args.action == 'build' else run)(args)
 
 

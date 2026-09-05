@@ -52,7 +52,7 @@ def read_checkpoint(path):
     return params, meta, locations, state
 
 
-def sample(path, output, per_shell=24):
+def sample(path, output, per_shell=24, points=(), extrema=False):
     params, meta, locations, state = read_checkpoint(path)
     counts=np.array(meta['counts']);ng=meta['ng'];geometry=np.array(meta['geometry'])
     order=int(params['pc_gh'].get('spatial_order', 2*(ng-1)))
@@ -80,6 +80,24 @@ def sample(path, output, per_shell=24):
         candidates=np.flatnonzero((radius>=left)&(radius<right))
         if len(candidates):
             selected.extend(candidates[np.linspace(0,len(candidates)-1,min(per_shell,len(candidates)),dtype=int)])
+    # Include explicitly requested failure neighborhoods and component extrema;
+    # stratified radial samples alone can miss a thin interface instability.
+    requested_points=[]
+    for point in points:
+        nearest=int(np.argmin(np.linalg.norm(xyz-np.asarray(point),axis=1)))
+        selected.append(nearest)
+        requested_points.append(dict(requested=list(point),sampled=xyz[nearest].tolist()))
+    if extrema:
+        maxima=np.full(55,-np.inf); winners=np.zeros(55,dtype=int)
+        cells_per_block=int(np.prod(counts))
+        for m in range(len(locations)):
+            active=np.abs(state[m,:,ng:ng+counts[2],ng:ng+counts[1],ng:ng+counts[0]]).reshape(55,-1)
+            local=np.argmax(active,axis=1); values=active[np.arange(55),local]
+            changed=values>maxima
+            maxima[changed]=values[changed]
+            winners[changed]=m*cells_per_block+local[changed]
+        selected.extend(winners)
+    selected=sorted(set(selected))
     rows=[]
     pc=params['pc_gh'];rate=float(pc.get('reduction_rate',0))
     for index in selected:
@@ -106,6 +124,7 @@ def sample(path, output, per_shell=24):
     with (output/'source-samples.csv').open('w') as stream:
         writer=csv.DictWriter(stream,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
     report=dict(checkpoint=str(path),metadata=meta,samples=len(rows),spatial_order=order,
+                requested_points=requested_points,include_component_extrema=extrema,
                 scope='Stratified native samples, FD frozen coefficients; not global or uniform puncture bounds',
                 minimum_energy_margin=min(rows,key=lambda r:r['energy_rate_margin']),
                 maximum_spectral_abscissa=max(rows,key=lambda r:r['frozen_spectral_abscissa']),
@@ -118,5 +137,9 @@ if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('checkpoint',type=Path);ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--per-shell',type=int,default=24)
+    ap.add_argument('--point',type=float,nargs=3,action='append',default=[],
+                    help='Also sample the nearest active cell to these coordinates')
+    ap.add_argument('--extrema',action='store_true',
+                    help='Also sample each of the 55 component absolute maxima')
     args=ap.parse_args()
-    print(json.dumps(sample(args.checkpoint,args.output,args.per_shell),indent=2))
+    print(json.dumps(sample(args.checkpoint,args.output,args.per_shell,args.point,args.extrema),indent=2))
