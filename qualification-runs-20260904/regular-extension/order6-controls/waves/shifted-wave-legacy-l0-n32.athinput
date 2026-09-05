@@ -1,0 +1,52 @@
+# Research candidate input; no numerical qualification implied.
+
+<job>
+basename = pc_gh_gauge_wave
+
+<mesh>
+nghost = 4
+nx1 = 32
+x1min = -0.5
+x1max = 0.5
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 1
+x2min = -0.5
+x2max = 0.5
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 32
+nx2 = 1
+nx3 = 1
+
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = .2
+nlim = -1
+tlim = 1.0
+ndiag = 1000
+
+<pc_gh>
+spatial_order = 6
+gauge = harmonic
+kappa = 0.0
+dissipation = 0.0
+boundedness_output = false
+reduction_system = legacy
+reduction_rate = 0
+reduction_monitor = true
+project_reduction_constraints = false
+project_gauge_constraints = false
+
+<problem>
+pgen_name = pc_gh_gauge_wave
+amp = 0.01
+shifted = true

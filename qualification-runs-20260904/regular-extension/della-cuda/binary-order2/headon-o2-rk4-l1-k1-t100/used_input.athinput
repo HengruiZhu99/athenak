@@ -1,0 +1,196 @@
+# Research candidate input; no numerical qualification implied.
+
+<comment>
+problem = equal-mass, nonspinning head-on BBH; CUDA long-wave comparison, R=128M
+
+<job>
+basename = headon-o2-rk4-l1-k1-t100
+
+<mesh>
+nghost = 2
+nx1 = 32
+x1min = -128
+x1max = 128
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 32
+x2min = -128
+x2max = 128
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 32
+x3min = -128
+x3max = 128
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = .1
+nlim = -1
+tlim = 100
+ndiag = 10
+
+<pc_gh>
+spatial_order = 2
+extrap_order = 2
+gauge = z4c_mp_hyperbolic
+shift_eta = 2.0
+kappa = 1
+dissipation = 0.3
+project_gauge_constraints = false
+project_reduction_constraints = false
+constraint_excise_chi = 0.0625
+constraint_dcycle = 1
+physical_output_inner_radius = 0.0
+initial_data_division_floor = 1.0e-14
+reconstruct_adm_output = false
+boundedness_output = true
+boundedness_dcycle = 1
+nrad_wave_extraction = 6
+extraction_radius_0 = 8
+extraction_radius_1 = 12
+extraction_radius_2 = 24
+extraction_radius_3 = 32
+extraction_radius_4 = 48
+extraction_radius_5 = 56
+extraction_nlev = 24
+waveform_dt = 0.25
+tracker_mode = ode
+co_0_type = BH
+co_0_x = 2.5
+co_0_y = 0.0
+co_0_z = 0.0
+co_0_out_every = 1
+co_1_type = BH
+co_1_x = -2.5
+co_1_y = 0.0
+co_1_z = 0.0
+co_1_out_every = 1
+reduction_system = advective
+reduction_rate = 1
+reduction_monitor = true
+
+<mesh_refinement>
+refinement = adaptive
+num_levels = 8
+max_nmb_per_rank = 1800
+refinement_interval = 10
+log_changes = true
+
+<amr_criterion0>
+method = user
+
+<z4c_amr>
+method = chi
+chi_min = 0.2
+max_ref_lev = 7
+
+<refined_region1>
+level = 7
+x1min = -3.0
+x1max = -2.0
+x2min = -0.5
+x2max = 0.5
+x3min = -0.5
+x3max = 0.5
+
+<refined_region2>
+level = 7
+x1min = 2.0
+x1max = 3.0
+x2min = -0.5
+x2max = 0.5
+x3min = -0.5
+x3max = 0.5
+
+<refined_region3>
+level = 1
+x1min = -64.0
+x1max = 64.0
+x2min = -64.0
+x2max = 64.0
+x3min = -64.0
+x3max = 64.0
+
+<refined_region4>
+level = 2
+x1min = -48.0
+x1max = 48.0
+x2min = -48.0
+x2max = 48.0
+x3min = -48.0
+x3max = 48.0
+
+<refined_region5>
+level = 3
+x1min = -16.0
+x1max = 16.0
+x2min = -16.0
+x2max = 16.0
+x3min = -16.0
+x3max = 16.0
+
+<problem>
+pgen_name = z4c_two_puncture
+verbose = false
+par_b = 2.5
+par_m_plus = 0.5
+par_m_minus = 0.5
+target_M_plus = 0.5
+target_M_minus = 0.5
+par_P_plus1 = 0.0
+par_P_plus2 = 0.0
+par_P_plus3 = 0.0
+par_P_minus1 = 0.0
+par_P_minus2 = 0.0
+par_P_minus3 = 0.0
+par_S_plus1 = 0.0
+par_S_plus2 = 0.0
+par_S_plus3 = 0.0
+par_S_minus1 = 0.0
+par_S_minus2 = 0.0
+par_S_minus3 = 0.0
+center_offset1 = 0.0
+center_offset2 = 0.0
+center_offset3 = 0.0
+give_bare_mass = true
+npoints_A = 30
+npoints_B = 30
+npoints_phi = 16
+Newton_tol = 1.0e-10
+Newton_maxit = 5
+TP_epsilon = 0.0
+TP_Tiny = 0.0
+TP_Extend_Radius = 0.0
+adm_tol = 1.0e-10
+do_residuum_debug_output = false
+solve_momentum_constraint = false
+initial_lapse_psi_exponent = -2.0
+swap_xz = false
+
+<output1>
+file_type = hst
+dcycle = 10
+
+<output2>
+file_type = rst
+dt = 2
+
+<output3>
+file_type = bin
+variable = pcgh
+slice_x3 = 0.0
+dt = 5
+
+<output4>
+file_type = bin
+variable = pcgh_con
+slice_x3 = 0.0
+dt = 5

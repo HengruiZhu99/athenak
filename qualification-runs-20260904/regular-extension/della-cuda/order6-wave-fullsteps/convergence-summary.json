@@ -1,0 +1,36 @@
+[
+  {
+    "tag": "advective-l0",
+    "argv": [
+      ".venv-bbh-plots/bin/python",
+      "analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-wave-fullsteps/shifted-wave-advective-l0-n32/pc_gh_gauge_wave-errors.dat",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-wave-fullsteps/shifted-wave-advective-l0-n64/pc_gh_gauge_wave-errors.dat",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-wave-fullsteps/shifted-wave-advective-l0-n128/pc_gh_gauge_wave-errors.dat"
+    ],
+    "exit_code": 0,
+    "times": [
+      0.8005406623591609,
+      0.800135597495791,
+      0.8000338256226615
+    ],
+    "output": "resolutions 32 64 128\naggregate    min_order=3.551290 worst=aggregate_l1 adjacent=5.575315,3.551290 exact_components=0\nprimary      min_order=2.086781 worst=pcgh_Cperp_rms adjacent=4.179681,2.086781 exact_components=20\np            min_order=3.879706 worst=pcgh_p1_rms adjacent=5.527595,3.879706 exact_components=4\nQ            min_order=4.067215 worst=pcgh_Q1xx_rms adjacent=5.602969,4.067215 exact_components=30\nL            min_order=3.859432 worst=pcgh_L1_rms adjacent=5.588060,3.859432 exact_components=4\nB            min_order=3.800555 worst=pcgh_B11_linf adjacent=5.582221,3.800555 exact_components=16\nGH           min_order=2.086781 worst=pcgh_Cperp_rms adjacent=4.179681,2.086781 exact_components=4\nADM          min_order=2.020703 worst=pcgh_H_rms adjacent=4.969130,2.020703 exact_components=4\nreduction    min_order=5.160667 worst=pcgh_red_alpha_rms adjacent=5.873924,5.160667 exact_components=0\ncurl         exact_invariant components=8 tol=1.0e-12\nprojection   monotonically_decreasing=4.678134e-06,1.170082e-06,2.923555e-07\nPASS: shifted harmonic gauge wave converges in every exercised PC-GH sector\n"
+  },
+  {
+    "tag": "advective-l16",
+    "argv": [
+      ".venv-bbh-plots/bin/python",
+      "analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-wave-fullsteps/shifted-wave-advective-l16-n32/pc_gh_gauge_wave-errors.dat",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-wave-fullsteps/shifted-wave-advective-l16-n64/pc_gh_gauge_wave-errors.dat",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-wave-fullsteps/shifted-wave-advective-l16-n128/pc_gh_gauge_wave-errors.dat"
+    ],
+    "exit_code": 0,
+    "times": [
+      0.8005398079599704,
+      0.800135582472272,
+      0.8000338252714944
+    ],
+    "output": "resolutions 32 64 128\naggregate    min_order=3.516279 worst=aggregate_l1 adjacent=5.576146,3.516279 exact_components=0\nprimary      min_order=2.742280 worst=pcgh_Cperp_rms adjacent=5.416994,2.742280 exact_components=20\np            min_order=3.941936 worst=pcgh_p1_rms adjacent=5.532337,3.941936 exact_components=4\nQ            min_order=4.030088 worst=pcgh_Q1xx_rms adjacent=5.597691,4.030088 exact_components=30\nL            min_order=3.885774 worst=pcgh_L1_rms adjacent=5.591487,3.885774 exact_components=4\nB            min_order=3.749420 worst=pcgh_B11_rms adjacent=5.528440,3.749420 exact_components=16\nGH           min_order=2.742280 worst=pcgh_Cperp_rms adjacent=5.416994,2.742280 exact_components=4\nADM          min_order=3.036617 worst=pcgh_H_rms adjacent=5.651034,3.036617 exact_components=4\nreduction    min_order=4.108441 worst=pcgh_red_alpha_rms adjacent=5.548248,4.108441 exact_components=0\ncurl         exact_invariant components=8 tol=1.0e-12\nprojection   monotonically_decreasing=4.631999e-06,1.169706e-06,2.923526e-07\nPASS: shifted harmonic gauge wave converges in every exercised PC-GH sector\n"
+  }
+]

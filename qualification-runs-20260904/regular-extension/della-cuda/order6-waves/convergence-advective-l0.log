@@ -1,0 +1,18 @@
+resolutions 32 64 128
+aggregate    min_order=3.003866 worst=aggregate_l1 adjacent=3.091473,3.003866 exact_components=0
+primary      min_order=2.826783 worst=pcgh_Cperp_linf adjacent=3.056421,2.826783 exact_components=20
+p            min_order=3.006054 worst=pcgh_p1_rms adjacent=3.114252,3.006054 exact_components=4
+Q            min_order=3.006068 worst=pcgh_Q1xx_rms adjacent=3.134533,3.006068 exact_components=30
+L            min_order=3.006333 worst=pcgh_L1_rms adjacent=3.118537,3.006333 exact_components=4
+B            min_order=3.006566 worst=pcgh_B11_rms adjacent=3.116892,3.006566 exact_components=16
+GH           min_order=2.826783 worst=pcgh_Cperp_linf adjacent=3.056421,2.826783 exact_components=4
+ADM          min_order=2.781054 worst=pcgh_H_linf adjacent=3.281663,2.781054 exact_components=4
+reduction    min_order=-0.989628 worst=pcgh_red_w_linf adjacent=4.941631,-0.989628 exact_components=0
+Traceback (most recent call last):
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py", line 139, in <module>
+    main()
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py", line 126, in main
+    audit_group(group, [f"pcgh_{name}_{norm}" for name in names
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py", line 65, in audit_group
+    raise AssertionError(
+AssertionError: reduction: pcgh_red_w_linf order -0.989628 < 1.800000

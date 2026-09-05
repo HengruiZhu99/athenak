@@ -1,0 +1,53 @@
+# Research candidate input; no numerical qualification implied.
+
+<job>
+basename = shifted-wave-advective-l0-n128
+
+<mesh>
+nghost = 4
+nx1 = 128
+x1min = -0.5
+x1max = 0.5
+ix1_bc = periodic
+ox1_bc = periodic
+nx2 = 1
+x2min = -0.5
+x2max = 0.5
+ix2_bc = periodic
+ox2_bc = periodic
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 128
+nx2 = 1
+nx3 = 1
+
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = .2
+nlim = 768
+tlim = 2
+ndiag = 1000
+
+<pc_gh>
+spatial_order = 6
+gauge = harmonic
+kappa = 0.0
+dissipation = 0.0
+boundedness_output = false
+reduction_system = advective
+reduction_rate = 0
+reduction_monitor = true
+project_reduction_constraints = false
+project_gauge_constraints = false
+
+<problem>
+pgen_name = pc_gh_gauge_wave
+amp = .1
+shifted = true
+require_cuda = true

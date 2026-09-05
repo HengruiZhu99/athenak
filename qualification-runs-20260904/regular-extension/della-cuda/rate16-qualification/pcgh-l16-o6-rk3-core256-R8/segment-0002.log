@@ -1,0 +1,60 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 456
+Number of logical  levels of refinement = 9 (10 levels total)
+Number of physical levels of refinement = 8 (9 levels total)
+  Physical level = 1 (logical level = 2): 56 MeshBlocks, cost = 56
+  Physical level = 2 (logical level = 3): 56 MeshBlocks, cost = 56
+  Physical level = 3 (logical level = 4): 56 MeshBlocks, cost = 56
+  Physical level = 4 (logical level = 5): 56 MeshBlocks, cost = 56
+  Physical level = 5 (logical level = 6): 56 MeshBlocks, cost = 56
+  Physical level = 6 (logical level = 7): 56 MeshBlocks, cost = 56
+  Physical level = 7 (logical level = 8): 56 MeshBlocks, cost = 56
+  Physical level = 8 (logical level = 9): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 1
+Research qualification execution backend: Cuda
+
+Setup complete, executing task list(s)...
+
+elapsed=9.572596e+00 cycle=3400 time=2.293052e+00 dt=6.711473e-04
+elapsed=2.565897e+01 cycle=3500 time=2.360154e+00 dt=6.708942e-04
+elapsed=4.179824e+01 cycle=3600 time=2.427231e+00 dt=6.706341e-04
+elapsed=5.793804e+01 cycle=3700 time=2.494281e+00 dt=6.703661e-04
+elapsed=7.402234e+01 cycle=3800 time=2.561304e+00 dt=6.700890e-04
+elapsed=9.013366e+01 cycle=3900 time=2.628299e+00 dt=6.698014e-04
+elapsed=1.062169e+02 cycle=4000 time=2.695264e+00 dt=6.695020e-04
+elapsed=1.225522e+02 cycle=4100 time=2.762199e+00 dt=6.691892e-04
+elapsed=1.386547e+02 cycle=4200 time=2.829102e+00 dt=6.688616e-04
+elapsed=1.547415e+02 cycle=4300 time=2.895971e+00 dt=6.685181e-04
+elapsed=1.708552e+02 cycle=4400 time=2.962805e+00 dt=6.681576e-04
+elapsed=1.872815e+02 cycle=4500 time=3.029602e+00 dt=6.677797e-04
+elapsed=2.033824e+02 cycle=4600 time=3.096361e+00 dt=6.673838e-04
+elapsed=2.194697e+02 cycle=4700 time=3.163079e+00 dt=6.669701e-04
+elapsed=2.355302e+02 cycle=4800 time=3.229755e+00 dt=6.665385e-04
+elapsed=2.518172e+02 cycle=4900 time=3.296386e+00 dt=6.660892e-04
+elapsed=2.678884e+02 cycle=5000 time=3.362972e+00 dt=6.656214e-04
+elapsed=2.839663e+02 cycle=5100 time=3.429510e+00 dt=6.651334e-04
+elapsed=3.000521e+02 cycle=5200 time=3.495999e+00 dt=6.646258e-04
+elapsed=3.165830e+02 cycle=5300 time=3.562435e+00 dt=6.640960e-04
+elapsed=3.326553e+02 cycle=5400 time=3.628818e+00 dt=6.635398e-04
+elapsed=3.487085e+02 cycle=5500 time=3.695143e+00 dt=6.629496e-04
+elapsed=3.650980e+02 cycle=5600 time=3.761407e+00 dt=6.623250e-04
+elapsed=3.812488e+02 cycle=5700 time=3.827607e+00 dt=6.616637e-04
+elapsed=3.974262e+02 cycle=5800 time=3.893739e+00 dt=6.609610e-04
+elapsed=4.134802e+02 cycle=5900 time=3.959799e+00 dt=6.602117e-04
+elapsed=4.301949e+02 cycle=6000 time=4.025781e+00 dt=6.594101e-04
+elapsed=4.462433e+02 cycle=6100 time=4.091680e+00 dt=6.585507e-04
+elapsed=4.622842e+02 cycle=6200 time=4.157489e+00 dt=6.576275e-04
+elapsed=4.783135e+02 cycle=6300 time=4.223204e+00 dt=6.566351e-04
+elapsed=4.946354e+02 cycle=6400 time=4.288815e+00 dt=6.555684e-04
+elapsed=5.107413e+02 cycle=6500 time=4.354316e+00 dt=6.544230e-04
+elapsed=5.269113e+02 cycle=6600 time=4.419698e+00 dt=6.531956e-04
+elapsed=5.431323e+02 cycle=6700 time=4.484953e+00 dt=6.518844e-04
+elapsed=5.595716e+02 cycle=6800 time=4.550074e+00 dt=6.504906e-04
+elapsed=5.756814e+02 cycle=6900 time=4.615051e+00 dt=6.490225e-04
+elapsed=5.918190e+02 cycle=7000 time=4.679878e+00 dt=6.475091e-04
+elapsed=6.078712e+02 cycle=7100 time=4.744498e+00 dt=6.445159e-04
+elapsed=6.242300e+02 cycle=7200 time=4.808704e+00 dt=6.383348e-04
+elapsed=6.402909e+02 cycle=7300 time=4.871532e+00 dt=6.068580e-04
+### FATAL ERROR: PC-GH strict diagnostic failed at t=4.891496e+00 during post-RK update on rank 0: conformal metric lost positive definiteness, det=4.002117e-01 at (m,k,j,i)=(50,4,9,11), (x,y,z)=(-1.953125e-03,-4.101562e-02,-6.054688e-02)
+Kokkos::Cuda ERROR: Failed to call Kokkos::Cuda::finalize()

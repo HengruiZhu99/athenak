@@ -1,0 +1,17 @@
+resolutions 32 64 128
+aggregate    min_order=3.004611 worst=aggregate_l1 adjacent=3.096992,3.004611 exact_components=0
+primary      min_order=2.882306 worst=pcgh_Zx_linf adjacent=4.754265,2.882306 exact_components=20
+p            min_order=3.007362 worst=pcgh_p1_rms adjacent=3.139203,3.007362 exact_components=4
+Q            min_order=3.005204 worst=pcgh_Q1zz_rms adjacent=3.127250,3.005204 exact_components=30
+L            min_order=3.006253 worst=pcgh_L1_rms adjacent=3.113831,3.006253 exact_components=4
+B            min_order=3.005735 worst=pcgh_B11_rms adjacent=3.099147,3.005735 exact_components=16
+GH           min_order=2.882306 worst=pcgh_Zx_linf adjacent=4.754265,2.882306 exact_components=4
+ADM          min_order=2.986075 worst=pcgh_H_linf adjacent=4.465168,2.986075 exact_components=4
+reduction    min_order=3.094878 worst=pcgh_red_alpha_rms adjacent=3.650763,3.094878 exact_components=0
+curl         exact_invariant components=8 tol=1.0e-12
+Traceback (most recent call last):
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py", line 139, in <module>
+    main()
+  File "/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py", line 133, in main
+    raise AssertionError("algebraic projection correction does not decrease monotonically")
+AssertionError: algebraic projection correction does not decrease monotonically

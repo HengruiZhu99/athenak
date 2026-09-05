@@ -1568,3 +1568,102 @@ covariant off-reduction J_ab residual.
 The rate-four sixth-order puncture control also fails, at 9.717464M. Increasing
 constant relaxation postpones the instability but has not yet qualified this
 spatial discretization. The rate-sixteen screen is in progress.
+
+## 2026-09-05: rate-sixteen controls and a second-order binary experiment
+
+**PARTIAL IMPROVEMENT; FD6 STILL FAILS A CORE-REFINEMENT GATE.** The equations
+remain the regular advective extension. Puncture runs retain KO=.3, finite
+constant relaxation, and disabled reduction/GH projections. No mask or clipping
+has been introduced.
+
+The FD2/RK4 rate-one M/256 core control completes 6M. Closest-shell rho decreases
+9.012 -> 7.277 -> 6.256 over M/64, M/128, M/256; closest L decreases
+4.834 -> 4.383 -> 1.687. Native-slice rho maxima are 9.012, 9.394, 9.756. The last
+two rho peaks lie at r=.02790 and .02943, and L peaks at approximately r=.02311
+and .02554. Full-volume L maxima still change appreciably (approximately 7.05,
+10.50, 12.57); the peak is a narrow finite-radius transition, not a measured
+divergent closest-cell value. B approaches 1.60 and Q remains bounded. This is
+a practical puncture screen, not a uniform continuum regularity theorem at r=0.
+
+FD6/RK3/lambda=16 reaches 20M at all original R64 SMR resolutions. The r>1
+GH RMS values at h=1/8,1/10,1/12 are 1.14435e-6,8.62218e-7,7.59607e-7;
+ADM values are 5.03502e-6,4.21308e-6,3.74497e-6. A fourth h=1/16 run reaches
+20M with GH=6.62767e-7 and ADM=3.16196e-6. Full-volume metric eigenvalues remain
+above .903. Comparison with FD2/lambda=1 changes both order and rate. Coarse
+Cartesian exterior self-convergence at 20M is mixed, including negative
+apparent orders for rho and some w differences well above float32 roundoff.
+Two finer whole-domain controls were requested before high-order qualification.
+
+All three FD6/lambda=16 uniform R8 runs reach 6M. Core M/64 and M/128 also reach
+6M, but the latter develops a Q peak .7665 at
+(-.121094,.105469,.00390625), adjacent to a fine/coarse boundary. Its final
+full-volume Q curl is 35.83, versus 2.75 at M/64. At M/256 the strict CUDA
+diagnostic stops the run at 4.891496M after the conformal metric loses positive
+definiteness near (-.001953125,-.041015625,-.060546875), again near a refinement
+boundary. Coarse survival does not override this failure. Raw checkpoints and
+all stage/transfer diagnostics remain preserved.
+
+The nonlinear source sample on the FD6/lambda=16 M/64 checkpoint has minimum
+sampled Euclidean energy margin 14.1444 and maximum frozen source abscissa
+-14.9300. This does not bound semidiscrete transfer forcing. The factorized/
+direct-product lapse-target difference reaches .4555 near the core, where a
+finite-difference product rule cannot be assumed.
+
+All 24 FD6/RK3 uniform pulse controls complete (four families, lambda=16,
+t=.25). At N=1024 the fitted speed is -.500000184 and rate 16.00000145.
+Halving CFL twice at N=256 gives approximately third-order rate-error reduction.
+All three exact flat controls complete. Original small-amplitude, time-limited
+wave controls retain their strict-check failures: zero-rate reduction errors
+reach roundoff, and the last shortened step makes the algebraic correction
+nonmonotone at rate sixteen. New amplitude-.1, full-step controls use 6N steps
+at N=32/64/128 and compare against the exact solution at the actual final time
+(approaching .8). Legacy zero, advective zero, and advective sixteen all pass
+the unchanged all-sector order>=1.8/exact-tolerance=1e-12 checker, including
+monotone algebraic corrections. No threshold or failed record was changed.
+
+A separate FD6 AMR stress test uses beta=8, t=.25, lambda=0/16 and KO=0. This
+keeps the earlier two-unit crossing distance without damping the seed below
+roundoff. It exposes interface amplification: p-seeded lambda=16 total L2
+error/initial amplitude grows .3985 -> .5517 -> 1.0244 at N=32/48/64. Uniform
+controls behave much better. The large prescribed shift is a stress test, not
+a puncture shift model. Matched tests at production KO=.3 and beta=.5 are in
+progress. Primary norms retain all 33 generated reduction components.
+
+The FD2/RK4/lambda=1 configuration has advanced to its first binary experiment,
+using the completed flat/wave/pulse, uniform/SMR single-puncture, M/256 core,
+20M exterior-convergence, and all-family AMR evidence. This is a choice of the
+supported discretization, not promotion of failed FD6. The inputs retain R=128,
+initial finest M/16, moving refinement, Sommerfeld plus extrapolation, eta=2,
+KO=.3, frequent restarts, six extraction radii, and disabled reduction/GH
+projections. They use FD2/RK4/CFL=.1 and kappa=1 from the single-puncture tests.
+A matched lambda=0 binary isolates reduction damping; the saved projected
+FD6/kappa=0 baseline is a different-method comparison. Both request 100M with
+strict failure diagnostics. No binary survival or waveform result is yet claimed.
+
+Both first FD2 binaries subsequently fail. The lambda=0 control loses conformal
+metric positivity at 6.327412M near (-2.53125,-.03125,-.03125), with determinant
+-.04078885. Lambda=1 delays failure until 10.18470M, where w=-.001423333 during
+a post-RK update in a puncture-neighborhood block. Neither run reaches the
+physical merger waveform. The comparison tool retains their whole available
+constraint/waveform records alongside saved Z4c and projected PC-GH, and labels
+unavailable merger windows explicitly. Longer survival is a measured improvement,
+not binary qualification. Native reflection and serialized ODE tracker checks
+are included; no spherical x/y interchange is assumed for a head-on binary.
+
+The next constant-rate test uses mass-.5 single holes at lambda=2, preserving
+the binary kappa=1 and eta=2. Halving lengths/times restores lambda*m=1, but
+retaining kappa/eta makes this a fresh gauge/damping control, not an exact
+rescaling argument. It includes three uniform/SMR resolutions, the m/256 core,
+wave/pulse and all-family AMR checks, plus a coarse mass-.5/lambda=1 control.
+These tests precede the next binary attempt. Smooth inner relaxation remains
+the authorized next alternative if constant damping fails.
+
+The finer FD6/lambda=16 exterior ladder h=1/12,1/16,1/20 now shows declining
+differences in every sector at 20M. Apparent aggregate orders are 6.74 and 6.87
+in the two exterior annuli; individual orders range from 2.93 to 10.28 and
+should not be read as a uniform sixth-order theorem. This resolves the earlier
+coarse nonmonotonicity on the tested annuli, but not the independent core failure.
+Adding component-extremum and failure-neighborhood samples to the source audit
+still gives positive minimum sampled energy margins: 13.69 on the M/128 6M
+state and 15.53 on the last M/256 checkpoint at 4.000057M. These are sampled
+frozen continuum bounds, not control of the later discrete interface instability.

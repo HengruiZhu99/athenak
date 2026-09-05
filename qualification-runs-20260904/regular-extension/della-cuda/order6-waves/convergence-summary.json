@@ -1,0 +1,38 @@
+[
+  {
+    "tag": "legacy-l0",
+    "argv": [
+      ".venv-bbh-plots/bin/python",
+      "analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-waves/shifted-wave-legacy-l0-n32/pc_gh_gauge_wave-errors.dat",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-waves/shifted-wave-legacy-l0-n64/pc_gh_gauge_wave-errors.dat",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-waves/shifted-wave-legacy-l0-n128/pc_gh_gauge_wave-errors.dat"
+    ],
+    "exit_code": 1,
+    "output": "resolutions 32 64 128\naggregate    min_order=3.003865 worst=aggregate_l1 adjacent=3.091452,3.003865 exact_components=0\nprimary      min_order=2.826745 worst=pcgh_Cperp_linf adjacent=3.056257,2.826745 exact_components=20\np            min_order=3.006053 worst=pcgh_p1_rms adjacent=3.114232,3.006053 exact_components=4\nQ            min_order=3.006067 worst=pcgh_Q1xx_rms adjacent=3.134510,3.006067 exact_components=30\nL            min_order=3.006332 worst=pcgh_L1_rms adjacent=3.118524,3.006332 exact_components=4\nB            min_order=3.006565 worst=pcgh_B11_rms adjacent=3.116880,3.006565 exact_components=16\nGH           min_order=2.826745 worst=pcgh_Cperp_linf adjacent=3.056257,2.826745 exact_components=4\nADM          min_order=2.781033 worst=pcgh_H_linf adjacent=3.282041,2.781033 exact_components=4\nreduction    min_order=-0.333460 worst=pcgh_red_w_linf adjacent=5.113650,-0.333460 exact_components=0\nTraceback (most recent call last):\n  File \"/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py\", line 139, in <module>\n    main()\n  File \"/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py\", line 126, in main\n    audit_group(group, [f\"pcgh_{name}_{norm}\" for name in names\n  File \"/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py\", line 65, in audit_group\n    raise AssertionError(\nAssertionError: reduction: pcgh_red_w_linf order -0.333460 < 1.800000\n"
+  },
+  {
+    "tag": "advective-l0",
+    "argv": [
+      ".venv-bbh-plots/bin/python",
+      "analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-waves/shifted-wave-advective-l0-n32/pc_gh_gauge_wave-errors.dat",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-waves/shifted-wave-advective-l0-n64/pc_gh_gauge_wave-errors.dat",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-waves/shifted-wave-advective-l0-n128/pc_gh_gauge_wave-errors.dat"
+    ],
+    "exit_code": 1,
+    "output": "resolutions 32 64 128\naggregate    min_order=3.003866 worst=aggregate_l1 adjacent=3.091473,3.003866 exact_components=0\nprimary      min_order=2.826783 worst=pcgh_Cperp_linf adjacent=3.056421,2.826783 exact_components=20\np            min_order=3.006054 worst=pcgh_p1_rms adjacent=3.114252,3.006054 exact_components=4\nQ            min_order=3.006068 worst=pcgh_Q1xx_rms adjacent=3.134533,3.006068 exact_components=30\nL            min_order=3.006333 worst=pcgh_L1_rms adjacent=3.118537,3.006333 exact_components=4\nB            min_order=3.006566 worst=pcgh_B11_rms adjacent=3.116892,3.006566 exact_components=16\nGH           min_order=2.826783 worst=pcgh_Cperp_linf adjacent=3.056421,2.826783 exact_components=4\nADM          min_order=2.781054 worst=pcgh_H_linf adjacent=3.281663,2.781054 exact_components=4\nreduction    min_order=-0.989628 worst=pcgh_red_w_linf adjacent=4.941631,-0.989628 exact_components=0\nTraceback (most recent call last):\n  File \"/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py\", line 139, in <module>\n    main()\n  File \"/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py\", line 126, in main\n    audit_group(group, [f\"pcgh_{name}_{norm}\" for name in names\n  File \"/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py\", line 65, in audit_group\n    raise AssertionError(\nAssertionError: reduction: pcgh_red_w_linf order -0.989628 < 1.800000\n"
+  },
+  {
+    "tag": "advective-l16",
+    "argv": [
+      ".venv-bbh-plots/bin/python",
+      "analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-waves/shifted-wave-advective-l16-n32/pc_gh_gauge_wave-errors.dat",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-waves/shifted-wave-advective-l16-n64/pc_gh_gauge_wave-errors.dat",
+      "qualification-runs-20260904/regular-extension/della-cuda/order6-waves/shifted-wave-advective-l16-n128/pc_gh_gauge_wave-errors.dat"
+    ],
+    "exit_code": 1,
+    "output": "resolutions 32 64 128\naggregate    min_order=3.004611 worst=aggregate_l1 adjacent=3.096992,3.004611 exact_components=0\nprimary      min_order=2.882306 worst=pcgh_Zx_linf adjacent=4.754265,2.882306 exact_components=20\np            min_order=3.007362 worst=pcgh_p1_rms adjacent=3.139203,3.007362 exact_components=4\nQ            min_order=3.005204 worst=pcgh_Q1zz_rms adjacent=3.127250,3.005204 exact_components=30\nL            min_order=3.006253 worst=pcgh_L1_rms adjacent=3.113831,3.006253 exact_components=4\nB            min_order=3.005735 worst=pcgh_B11_rms adjacent=3.099147,3.005735 exact_components=16\nGH           min_order=2.882306 worst=pcgh_Zx_linf adjacent=4.754265,2.882306 exact_components=4\nADM          min_order=2.986075 worst=pcgh_H_linf adjacent=4.465168,2.986075 exact_components=4\nreduction    min_order=3.094878 worst=pcgh_red_alpha_rms adjacent=3.650763,3.094878 exact_components=0\ncurl         exact_invariant components=8 tol=1.0e-12\nTraceback (most recent call last):\n  File \"/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py\", line 139, in <module>\n    main()\n  File \"/Users/hz0693/research/athenak-pcgh-localization-20260902/analysis/pc_gh_symbolic/analyze_gauge_wave_convergence.py\", line 133, in main\n    raise AssertionError(\"algebraic projection correction does not decrease monotonically\")\nAssertionError: algebraic projection correction does not decrease monotonically\n"
+  }
+]

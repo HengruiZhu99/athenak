@@ -1,7 +1,7 @@
 # Regular advective reduction extension (2026-09-04)
 
-Status: **implemented research candidate; CUDA flat/pulse/wave gates passed;
-puncture qualification in progress**.
+Status: **partial improvement; FD2 single-puncture/AMR screens support a first
+binary experiment; FD6 fails the finest core test even at lambda=16**.
 This follows the user's explicit choice to retain the regular variables and moving
 puncture gauge while allowing a separately derived PC-GH extension. It supersedes
 neither the failed literal FO-GH pullback audit nor the saved numerical evidence.
