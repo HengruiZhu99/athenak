@@ -77,6 +77,8 @@ def main():
                   scope='Native 3D chi-excised coordinate-volume RMS constraints; moving masks can differ across h. Field differences use a common chi-mask intersection on interpolated Cartesian slices.')
     fig, axes = plt.subplots(2,3,figsize=(13,7),constrained_layout=True)
     families = ['GH','H','M','reduction','curl','algebraic']
+    titles = dict(GH='GH', H='Hamiltonian', M='Alpha-weighted momentum',
+                  reduction='Reduction', curl='Curl', algebraic='Algebraic')
     for ax,family in zip(axes.flat,families):
         sampled = np.stack([np.interp(times, hist['time'], norm[family]) for hist,norm in zip(histories,norms)])
         pair_orders = []
@@ -90,7 +92,7 @@ def main():
             l2=(sampled*np.sqrt(volumes)).tolist(), coordinate_volume=volumes.tolist(), pair_orders=pair_orders)
         for spacing,hist,norm in zip(h,histories,norms):
             ax.semilogy(hist['time'],norm[family],label=f'h=M/{1/spacing:g}')
-        ax.set_title(family); ax.set_xlabel('t/M'); ax.grid(alpha=.25)
+        ax.set_title(titles[family]); ax.set_xlabel('t/M'); ax.set_ylabel('Coordinate-volume RMS'); ax.grid(alpha=.25)
     axes[0,0].legend()
     fig.suptitle('R16: chi >= 0.0625, SMR, outer boundary +/-128M')
     fig.savefig(args.output/'chi-constraints.png',dpi=170)
@@ -111,6 +113,8 @@ def main():
             report['field_self_convergence'].append(dict(time=float(t),missing=True))
             continue
         states = [c[key][1] for c in carts]
+        if any(list(s['data']) != list(states[0]['data']) for s in states[1:]):
+            raise ValueError('Different field ordering in Cartesian outputs')
         if any(not np.array_equal(states[0][d],s[d]) for s in states[1:] for d in ['x','y','z']):
             raise ValueError('Different Cartesian sample coordinates')
         u = [np.stack(list(s['data'].values()))[:,0].astype(float) for s in states]

@@ -1,6 +1,6 @@
 # R16 large-domain SMR convergence follow-up
 
-2026-09-05, 16:49 UTC. Active user goal: monitor both fine-core jobs to termination;
+2026-09-05, 17:01 UTC. Active user goal: monitor both fine-core jobs to termination;
 measure R16 SMR convergence through 20M at h=M/8,M/10,M/12 with boundaries +/-128M
 and chi-excised constraints; attempt binary evolution only if the gates pass.
 
@@ -28,11 +28,24 @@ Remote root on della-vis1:
 `/scratch/gpfs/FPRETORI/hz0693/pcgh-r16-smr128-20260905-1640`.
 
 Submitted array **13484719**, elements 0/1/2 correspond to h=M/8,M/10,M/12.
-At 16:49 UTC element 0 is running on della-l02g11; elements 1/2 are pending.
+At 16:56 UTC elements 0/1 are running on della-l02g11/della-l01g15 at
+12.70M/7.4125M. Element 2 was verified PENDING, canceled before allocation, and
+then launched on the verified-idle della-vis1 A100 at 16:53 UTC. Its physical
+time is 2.375M. Head driver PID is 1704699; exact command was
+`nohup env SLURM_ARRAY_TASK_ID=2 bash run.slurm > head-h12-driver.log 2>&1 < /dev/null &`
+from the remote campaign root. Driver PID is also saved in head-h12-driver.pid.
+The input and binary are identical to the queued experiment, which never ran.
+
+At 17:00:42 UTC, h=M/8 completed 20M cleanly in segment 0001, cycle 1601,
+confirmed by stage-results.json, completed.json and the terminal log. A tiny final
+step follows cycle 1600 and is preserved. The final full-state callback reports
+min conformal-metric eigenvalue .8252974. Elements h10 (Slurm 13484719_1) and
+h12 (head PID 1704699) were verified live at 17:01 UTC. No restarts or replacements
+were triggered by observation timeouts.
 Slurm assigned partition gpu and QoS gpu-short despite the script requesting
 gpu-test. Each element has one A100, 2 CPUs, 32GB RAM, and a 2-hour wall limit.
 An attempted pending-only relocation of element 0 was prevented by its running
-state; it was neither canceled nor duplicated. All three remain Slurm jobs.
+state; it was neither canceled nor duplicated. Elements 0/1 remain Slurm jobs.
 
 Runs live at `runs/hN/R16-smr128-hN-t20`, N=8,10,12. The existing driver preserves
 15-minute wall-segment checkpoints and refuses implicit reruns. Inspect each
@@ -57,7 +70,9 @@ cells per block. Finest spacings are .125,.1,1/12 respectively. Actual exported
 trees were parsed to verify these numbers; see mesh-audit.json. The old binary's
 mesh-only (-m) path writes the complete tree then faults in MeshBlockPack's
 destructor (exit 135). This setup-only fault is retained in mesh-evidence/;
-evolution startup and the pgen expected-finest-spacing check must also be inspected.
+evolution startup independently confirms all three requested spacings and 400
+blocks on CUDA; all three report zero guarded initial-data cells. The mesh-only
+cleanup fault did not recur on their evolution startup paths.
 
 Primary constraint histories select chi=w^2 >= .0625, diagnostic excision only.
 They retain full-domain and fixed-radius norms separately. All strict state and
@@ -76,6 +91,11 @@ power or interface-position qualification. The unequal-spacing Richardson solver
 was checked against known orders -2,2,4,6.
 
 Local analysis Python: `.venv-bbh-plots/bin/python` (system python lacks matplotlib).
+The analysis ran successfully on an early common interval through 3M. Its partial
+plot was visually inspected. Early constraint norms decline with refinement, but
+some field difference alignments are negative; early norm ratios are not a pass.
+Partial outputs in analysis-partial/ are explicitly incomplete and must be
+replaced by the final common-interval measurement after all runs terminate.
 After copying completed run inputs, logs, histories and cart output locally, use:
 
 ```
