@@ -159,6 +159,7 @@ void PcGh::ADMToPcGh(MeshBlockPack *pmbp) {
 }
 
 void PcGh::PcGhToADM(MeshBlockPack *pmbp, bool masked_only) {
+  if (IsIntrinsic()) { IntrinsicToADM(); return; }
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
   int const nmb = pmbp->nmb_thispack;

@@ -51,6 +51,6 @@ f=a.output/'override.athinput';f.write_text('<pc_gh>\nrestart_layout = intrinsic
 run('reject-input-metadata',['-r',str(restart.resolve()),'-i',str(f.resolve()),'-n'],'cannot be overridden')
 run('reject-untagged-intrinsic',['-r',untagged,'-n','pc_gh/restart_untagged_layout=legacy_pcgh55','pc_gh/formulation=intrinsic_clean'],'incompatible PC-GH restart')
 run('tagged-inspection',['-r',str(restart.resolve()),'-n'])
-run('reject-intrinsic-fresh',['-i',str((a.output/'full.athinput').resolve()),'pc_gh/formulation=intrinsic_clean'],'is not enabled in mesh tasks yet')
+run('reject-intrinsic-legacy-options',['-i',str((a.output/'full.athinput').resolve()),'pc_gh/formulation=intrinsic_clean'],'unsupported option gauge')
 summary=dict(status='PASS',runs=len(records),tagged_resume_error=err,declared_untagged_resume_error=uerr,compared_fields=55,compared_cells_with_ghosts=256,binary_sha256=hashlib.sha256(a.binary.read_bytes()).hexdigest(),restarts={str(f):hashlib.sha256(f.read_bytes()).hexdigest() for f in [restart,refpath,actpath,upath]},scope='actual serial legacy restart writer/reader and pre-override layout guard; no intrinsic evolution')
 (a.output/'results.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps(summary,indent=2))

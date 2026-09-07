@@ -63,7 +63,14 @@ class PcGh {
   // npcgh and PcGhNames remain the legacy equation/initial-data ABI.
   int EvolvedVariables() const { return state_layout_.fields; }
   const StateLayout &AllocatedLayout() const { return state_layout_; }
-  const char *StateName(int v) const { return PcGhNames[v]; }
+  bool IsIntrinsic() const { return state_layout_.fields == 50; }
+  const char *StateName(int v) const;
+  void InitializeIntrinsic(ParameterInput *pin);
+  void IntrinsicInitialData(ParameterInput *pin, bool restart);
+  void ValidateIntrinsic(const char *stage, bool check_rhs);
+  void IntrinsicToADM();
+  TaskStatus IntrinsicTimeStep();
+  template<int Stencil> TaskStatus IntrinsicRHS();
 
   enum : int {
     I_CON_CPERP,
@@ -381,7 +388,7 @@ class PcGh {
   std::array<std::array<Real, 8>, 7> transfer_reduction_change{};
 
  private:
-  const StateLayout state_layout_ = LayoutForFormulation("legacy");
+  const StateLayout state_layout_;
   MeshBoundaryValuesCC *pbval_residual = nullptr;
   DvceArray5D<Real> transfer_residual, coarse_transfer_residual;
   HostArray5D<Real> state_budget_before;

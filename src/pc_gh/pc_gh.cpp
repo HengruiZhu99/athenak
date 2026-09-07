@@ -91,12 +91,11 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
       last_waveform_time(0.0),
       nrad(0),
       dtnew(std::numeric_limits<float>::max()),
+      state_layout_(LayoutForFormulation(RequestedFormulation(pin))),
       pmy_pack(ppack) {
-  // Do not route a requested intrinsic layout through legacy tensor bindings.
-  if (RequestedFormulation(pin) != "legacy") {
-    std::cerr << "### FATAL ERROR: PC-GH formulation " << RequestedFormulation(pin)
-              << " is not enabled in mesh tasks yet" << std::endl;
-    std::exit(EXIT_FAILURE);
+  if (IsIntrinsic()) {
+    InitializeIntrinsic(pin);
+    return;
   }
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int const nmb = std::max(ppack->nmb_thispack, ppack->pmesh->nmb_maxperrank);
@@ -554,6 +553,7 @@ void PcGh::BindVariables(DvceArray5D<Real> state, Variables &vars) {
 }
 
 void PcGh::ValidateState(const char *stage, bool check_rhs, bool check_constraints) {
+  if (IsIntrinsic()) { ValidateIntrinsic(stage, check_rhs); return; }
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int const nx1 = indcs.nx1;
   int const nx2 = indcs.nx2;

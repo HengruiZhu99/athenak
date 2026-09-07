@@ -29,6 +29,7 @@ namespace pc_gh {
 
 TaskStatus PcGh::NewTimeStep(Driver *pdriver, int stage) {
   if (stage != pdriver->nexp_stages) return TaskStatus::complete;
+  if (IsIntrinsic()) return IntrinsicTimeStep();
   ValidateState("pre-timestep state", false, false);
 
   auto &indcs = pmy_pack->pmesh->mb_indcs;

@@ -469,6 +469,31 @@
       "status": "PASS",
       "evidence": "layout-consumers-001",
       "scope": "Layout access for storage/RK/communication/I/O; 19 restart controls and six legacy one-step CPU comparisons; intrinsic mode still disabled; MPI/CUDA packing not rerun"
+    },
+    "intrinsic_mesh_constant_serial": {
+      "status": "PASS",
+      "evidence": "intrinsic-mesh-001/intrinsic-mesh-constant-004",
+      "scope": "Six complete independent nonlinear FD/KO/RK3 step comparisons plus periodic ghosts, initial health checks, 2D/3D restart and Minkowski"
+    },
+    "intrinsic_mesh_lapse_serial": {
+      "status": "PASS",
+      "evidence": "intrinsic-mesh-001/intrinsic-mesh-lapse-002",
+      "scope": "Same checks with pointwise lambda=alpha*gamma_R"
+    },
+    "intrinsic_mesh_guards_serial": {
+      "status": "PASS",
+      "evidence": "intrinsic-mesh-001/intrinsic-mesh-controls-002",
+      "scope": "13 unsupported-path, domain failure/stencil, restart and state output controls"
+    },
+    "intrinsic_mesh_legacy_step": {
+      "status": "PASS",
+      "evidence": "intrinsic-mesh-001/intrinsic-mesh-legacy-step-002",
+      "scope": "Six collision-source one-step comparisons, bitwise equal"
+    },
+    "intrinsic_mesh_legacy_restart": {
+      "status": "PASS",
+      "evidence": "intrinsic-mesh-001/intrinsic-mesh-legacy-restart-003",
+      "scope": "19 legacy restart controls, bitwise continuation"
     }
   }
 }

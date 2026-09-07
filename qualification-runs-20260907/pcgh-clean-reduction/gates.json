@@ -339,5 +339,28 @@
     "resume_tolerance": 2e-12,
     "untagged_default": "reject; explicit provenance-based legacy declaration required",
     "scope": "serial legacy output/read and pre-override guard; intrinsic mesh not enabled"
+  },
+  "intrinsic_mesh_step": {
+    "scope": "uniform periodic serial 50-field mesh step vs independent Python RHS and FD/KO/RK assembly",
+    "orders": [
+      2,
+      4,
+      6
+    ],
+    "dimensions": [
+      2,
+      3
+    ],
+    "dt": 0.0001,
+    "normalized_tolerance": 2e-12,
+    "amplitude": 0.001,
+    "KO": 0.3,
+    "eta": 2,
+    "kappa": 1,
+    "lambda": "constant gamma_R or alpha*gamma_R; gamma_R=1",
+    "rate_profiles": [
+      "constant",
+      "lapse_scaled"
+    ]
   }
 }

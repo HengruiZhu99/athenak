@@ -416,6 +416,8 @@ TaskStatus PcGh::BoundaryRHS(Driver *, int) {
 }
 
 TaskStatus PcGh::EnforceAlgebraicConstraints(Driver *pdriver, int stage) {
+  if (IsIntrinsic()) { ValidateIntrinsic("post-exchange", false);
+    return TaskStatus::complete; }
   bool const monitor = opt.reduction_monitor || (stage == pdriver->nexp_stages
       && opt.boundedness_output
       && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0);

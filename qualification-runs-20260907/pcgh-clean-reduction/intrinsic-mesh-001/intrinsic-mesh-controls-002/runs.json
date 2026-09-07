@@ -1,0 +1,161 @@
+[
+  {
+    "name": "project_gauge_constraints",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/project_gauge_constraints/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "both projections off",
+    "status": "PASS",
+    "wall_seconds": 0.005959987640380859
+  },
+  {
+    "name": "project_reduction_constraints",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/project_reduction_constraints/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "both projections off",
+    "status": "PASS",
+    "wall_seconds": 0.005730152130126953
+  },
+  {
+    "name": "outflow",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/outflow/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "uniform periodic boundaries",
+    "status": "PASS",
+    "wall_seconds": 0.0057201385498046875
+  },
+  {
+    "name": "legacy-pgen",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/legacy-pgen/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "initial data must be",
+    "status": "PASS",
+    "wall_seconds": 0.005922079086303711
+  },
+  {
+    "name": "legacy-option",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/legacy-option/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "unsupported option gauge",
+    "status": "PASS",
+    "wall_seconds": 0.005516767501831055
+  },
+  {
+    "name": "negative-ko",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/negative-ko/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "rates must be finite",
+    "status": "PASS",
+    "wall_seconds": 0.0058248043060302734
+  },
+  {
+    "name": "unknown-rate",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/unknown-rate/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "reduction_profile must be",
+    "status": "PASS",
+    "wall_seconds": 0.005759000778198242
+  },
+  {
+    "name": "rk4",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/rk4/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "requires rk3",
+    "status": "PASS",
+    "wall_seconds": 0.005079030990600586
+  },
+  {
+    "name": "history",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/history/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "history diagnostics are not integrated",
+    "status": "PASS",
+    "wall_seconds": 0.005717039108276367
+  },
+  {
+    "name": "legacy-constraints",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/legacy-constraints/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "only complete intrinsic state",
+    "status": "PASS",
+    "wall_seconds": 0.0055370330810546875
+  },
+  {
+    "name": "invalid-state",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/invalid-state/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "invalid state/RHS or hyperbolicity domain",
+    "status": "PASS",
+    "wall_seconds": 0.010768890380859375
+  },
+  {
+    "name": "restart-to-legacy",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/restart-to-legacy/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-constant-004/fd6-2d/rst/legacy_equivalence.00001.rst",
+      "pc_gh/formulation=legacy"
+    ],
+    "returncode": 1,
+    "expected_message": "incompatible PC-GH restart",
+    "status": "PASS",
+    "wall_seconds": 0.005944728851318359
+  },
+  {
+    "name": "state-output",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-controls-002/state-output/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 0.01176595687866211
+  }
+]

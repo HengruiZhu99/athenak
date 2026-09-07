@@ -1,0 +1,69 @@
+-- Including user-specified problem generator file: ../../analysis/pc_gh_clean_reduction/legacy_oracle
+-- Setting default Kokkos CXX standard to 17
+-- Kokkos version: 4.4.0
+-- The project name is: Kokkos
+-- Using internal gtest for testing
+-- Using -std=c++17 for C++17 standard as feature
+-- Built-in Execution Spaces:
+--     Device Parallel: NoTypeDefined
+--     Host Parallel: NoTypeDefined
+--       Host Serial: SERIAL
+-- 
+-- Architectures:
+-- Using internal desul_atomics copy
+-- Experimental mdspan support is enabled
+-- Using internal mdspan directory /Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/kokkos/core/src/../../tpls/mdspan/include
+-- Kokkos Backends: SERIAL
+-- Configuring done (0.5s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current
+[  2%] Built target kokkossimd
+[  2%] Built target AlwaysCheckGit
+[ 11%] Built target kokkoscore
+[ 12%] Built target impl_git_version
+[ 13%] Built target kokkoscontainers
+[ 15%] Building CXX object src/CMakeFiles/athena.dir/bvals/physics/z4c_bcs.cpp.o
+[ 15%] Building CXX object src/CMakeFiles/athena.dir/driver/driver.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/mesh/load_balance.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh_refinement.cpp.o
+[ 18%] Building CXX object src/CMakeFiles/athena.dir/mesh/meshblock_pack.cpp.o
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:368:23: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  368 |     int nb_per_plevel[max_level];      // NOLINT(runtime/arrays)
+      |                       ^~~~~~~~~
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:368:23: note: implicit use of 'this' pointer is only allowed within the evaluation of a call to a 'constexpr' member function
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:369:27: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  369 |     float cost_per_plevel[max_level];  // NOLINT(runtime/arrays)
+      |                           ^~~~~~~~~
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:369:27: note: implicit use of 'this' pointer is only allowed within the evaluation of a call to a 'constexpr' member function
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:390:21: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  390 |     int nb_per_rank[global_variable::nranks];    // NOLINT(runtime/arrays)
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:390:21: note: read of non-const variable 'nranks' is not allowed in a constant expression
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/globals.hpp:12:21: note: declared here
+   12 | extern int my_rank, nranks;
+      |                     ^
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:391:23: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  391 |     int cost_per_rank[global_variable::nranks];  // NOLINT(runtime/arrays)
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:391:23: note: read of non-const variable 'nranks' is not allowed in a constant expression
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/globals.hpp:12:21: note: declared here
+   12 | extern int my_rank, nranks;
+      |                     ^
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/outputs/basetype_output.cpp.o
+4 warnings generated.
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/outputs/history.cpp.o
+[ 20%] Building CXX object src/CMakeFiles/athena.dir/outputs/restart.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_intrinsic.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh.cpp.o
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/pc_gh/pc_gh_intrinsic.cpp:50:32: error: 'GetPtrToBlock' is a private member of 'ParameterInput'
+   50 |   for (const auto &line : pin->GetPtrToBlock("pc_gh")->line) {
+      |                                ^
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/parameter_input.hpp:101:15: note: declared private here
+  101 |   InputBlock* GetPtrToBlock(std::string name);
+      |               ^
+1 error generated.
+make[2]: *** [src/CMakeFiles/athena.dir/pc_gh/pc_gh_intrinsic.cpp.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [src/CMakeFiles/athena.dir/all] Error 2
+make: *** [all] Error 2

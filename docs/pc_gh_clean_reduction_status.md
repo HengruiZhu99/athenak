@@ -384,3 +384,22 @@ qualification-runs-20260907/pcgh-clean-reduction/layout-consumers-001.
 The changed MPI packing paths are not runtime-tested in this checkpoint.
 No evolution gate is promoted. Next: uniform periodic intrinsic allocation and
 task dispatch, with explicit rejection of unsupported numerical/diagnostic paths.
+
+## Intrinsic mesh evolution checkpoint
+
+The previous disabled-mode checkpoints are superseded: `intrinsic_clean` now
+runs the real 50-field uniform-periodic RK3 task path, with protected layout I/O,
+lapse-scaled default damping and an explicit constant-rate control. Both
+projections are off. Unsupported legacy options, nonperiodic/refined grids,
+legacy constraint/history output and unrelated initial data fail explicitly.
+
+All 12 FD2/4/6, 2D/3D, two-rate-law one-step oracle cases pass to 1.111e-16,
+including final ghost cells. Intrinsic restart continuation is bitwise equal;
+13 unsupported/domain/output controls pass. Legacy one-step and restart
+regressions remain bitwise equal. Health bounds are recorded with independent
+initial eigenvalue/condition checks. See
+analysis/pc_gh_clean_reduction/INTRINSIC_MESH.md for exact scope and limitations.
+
+No physical gate is promoted. Integrated MPI/CUDA and multiple-block tests,
+independent H/M/reduction/curl diagnostics, coherent intrinsic refinement and
+physical boundaries still precede puncture qualification.

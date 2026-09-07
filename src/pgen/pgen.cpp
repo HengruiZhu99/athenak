@@ -980,6 +980,10 @@ void ProblemGenerator::OutputErrors(ParameterInput *pin, Mesh *pm) {
 //! user-defined problem generator function compiled with the code.
 
 void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart) {
+  if (auto *pc = pmy_mesh_->pmb_pack->ppcgh; pc && pc->IsIntrinsic()) {
+    pc->IntrinsicInitialData(pin, is_restart);
+    return;
+  }
 #if USER_PROBLEM_ENABLED
   // call user-defined problem generator (if USER_PROBLEM_ENABLED macro defined at build)
   UserProblem(pin, is_restart);

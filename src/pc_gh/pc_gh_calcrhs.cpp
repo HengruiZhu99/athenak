@@ -25,6 +25,7 @@ namespace pc_gh {
 
 template <int FD_STENCIL>
 TaskStatus PcGh::CalcRHS(Driver *, int) {
+  if (IsIntrinsic()) return IntrinsicRHS<FD_STENCIL>();
   ValidateState("pre-RHS state", false, false);
   if (opt.reduction_monitor) BeginReductionTransfer(-1);
   auto &indcs = pmy_pack->pmesh->mb_indcs;

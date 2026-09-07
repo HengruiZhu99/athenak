@@ -108,6 +108,7 @@ add_executable(
         particles/particles_tasks.cpp
         outputs/pdf.cpp
 
+  pc_gh/pc_gh_intrinsic.cpp
   pc_gh/pc_gh.cpp
   pc_gh/pc_gh_adm.cpp
   pc_gh/pc_gh_calcrhs.cpp
