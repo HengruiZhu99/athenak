@@ -59,6 +59,7 @@ TaskStatus PcGh::CopyU(Driver *pdriver, int stage) {
 }
 
 TaskStatus PcGh::ExpRKUpdate(Driver *pdriver, int stage) {
+  if (IsIntrinsic()) DumpIntrinsicStage(pdriver, stage, "pre-rk", true, true);
   BeginStateBudget(-10);
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int const nmb = pmy_pack->nmb_thispack;
@@ -81,6 +82,7 @@ TaskStatus PcGh::ExpRKUpdate(Driver *pdriver, int stage) {
                          + beta_dt*source(m, n, k, j, i);
   });
   Kokkos::fence();
+  if (IsIntrinsic()) DumpIntrinsicStage(pdriver, stage, "post-rk", false, false);
   EndStateBudget(-10);
   ValidateState("post-RK update", false, false);
   if (opt.reduction_follow_trackers) {

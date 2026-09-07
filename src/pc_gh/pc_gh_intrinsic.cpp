@@ -2,12 +2,14 @@
 // Initial uniform periodic mesh integration of the independent 50-field system.
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <limits>
 #include <set>
+#include <sstream>
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
 #endif
@@ -16,6 +18,7 @@
 #include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "globals.hpp"
+#include "driver/driver.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock_pack.hpp"
 
@@ -61,7 +64,7 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   // Reject unimplemented paths rather than accepting an ignored legacy setting.
   const std::set<std::string> allowed = {"formulation", "spatial_order", "shift_eta",
     "kappa", "reduction_rate", "reduction_profile", "dissipation", "research_dt_ceiling",
-    "restart_layout", "restart_layout_version", "restart_layout_fields",
+    "intrinsic_stage_dump", "restart_layout", "restart_layout_version", "restart_layout_fields",
     "restart_untagged_layout", "restart_tracker_state", "project_gauge_constraints", "project_reduction_constraints"};
   for (const auto &block : pin->block) {
     if (block.block_name != "pc_gh") continue;
@@ -83,6 +86,7 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   if (pin->GetOrAddString("time", "integrator", "rk3") != "rk3")
     IntrinsicError("initial mesh qualification requires rk3");
   opt = {};
+  intrinsic_stage_dump = pin->GetOrAddBoolean("pc_gh", "intrinsic_stage_dump", false);
   opt.coherent_transfer = "none";
   opt.spatial_order = pin->GetOrAddInteger("pc_gh", "spatial_order", 6);
   opt.fd_stencil = opt.spatial_order/2+1;
@@ -240,6 +244,68 @@ template<int Stencil> TaskStatus PcGh::IntrinsicRHS() {
     });
   ValidateIntrinsic("post-RHS",true);
   return TaskStatus::complete;
+}
+
+// Diagnostic-only native-endian float64 stream, independent of Kokkos layout.
+// RHS and RK accumulator payloads contain active cells only: their ghosts are
+// not synchronized. State ghosts are retained and explicitly labelled.
+void PcGh::DumpIntrinsicStage(Driver *driver, int stage, const char *operation,
+                             bool ghosts_valid, bool include_rhs) {
+  if (!intrinsic_stage_dump || stage < 1) return;  // stage zero is initialization
+  static_assert(sizeof(Real) == sizeof(double), "stage dumps require float64 Real");
+  auto h=Kokkos::create_mirror_view_and_copy(HostMemSpace(),u0);
+  auto &size=pmy_pack->pmb->mb_size;
+  auto &gid=pmy_pack->pmb->mb_gid;
+  size.template sync<HostMemSpace>(); gid.template sync<HostMemSpace>();
+  const auto &a=pmy_pack->pmesh->mb_indcs;
+  const int nm=pmy_pack->nmb_thispack;
+  std::ostringstream name;
+  name << "intrinsic-stage-r" << global_variable::my_rank << "-g" << gid.h_view(0)
+       << "-c" << pmy_pack->pmesh->ncycle << "-s" << stage << "-" << operation << ".dat";
+  // Exclusive creation prevents silently overwriting an earlier restart epoch.
+  FILE *file=std::fopen(name.str().c_str(), "wbx");
+  if (!file) IntrinsicError("cannot exclusively create stage dump " + name.str());
+  std::ostringstream header; header << std::setprecision(17);
+  header << "{\"version\":1,\"dtype\":\"native_float64\",\"operation\":\"" << operation
+    << "\",\"rank\":" << global_variable::my_rank << ",\"cycle\":" << pmy_pack->pmesh->ncycle
+    << ",\"stage\":" << stage << ",\"step_time\":" << pmy_pack->pmesh->time
+    << ",\"dt\":" << pmy_pack->pmesh->dt << ",\"ghosts_valid\":" << (ghosts_valid?"true":"false")
+    << ",\"rhs_active_only\":" << (include_rhs?"true":"false")
+    << ",\"order\":" << opt.spatial_order << ",\"gam0\":" << driver->gam0[stage-1]
+    << ",\"reduction_rate\":" << opt.reduction_rate << ",\"reduction_profile\":\""
+    << opt.reduction_profile << "\",\"dissipation\":" << opt.dissipation
+    << ",\"gam1\":" << driver->gam1[stage-1] << ",\"beta_dt\":"
+    << driver->beta[stage-1]*pmy_pack->pmesh->dt
+    << ",\"shape\":[" << nm << ",50," << h.extent_int(2) << "," << h.extent_int(3)
+    << "," << h.extent_int(4) << "],\"active_kji\":[" << a.ks << "," << a.ke << ","
+    << a.js << "," << a.je << "," << a.is << "," << a.ie << "],\"blocks\":[";
+  for (int m=0;m<nm;++m) {
+    const auto &b=size.h_view(m);
+    if (m) header << ",";
+    header << "{\"gid\":" << gid.h_view(m) << ",\"origin\":[" << b.x1min << ","
+      << b.x2min << "," << b.x3min << "],\"spacing\":[" << b.dx1 << "," << b.dx2
+      << "," << b.dx3 << "]}";
+  }
+  header << "]}\n";
+  const std::string text=header.str();
+  bool ok=std::fwrite(text.data(),1,text.size(),file)==text.size();
+  auto write=[&](const auto &v, bool active) {
+    for (int m=0;m<nm;++m) for (int n=0;n<50;++n)
+      for (int k=active?a.ks:0;k<=(active?a.ke:h.extent_int(2)-1);++k)
+        for (int j=active?a.js:0;j<=(active?a.je:h.extent_int(3)-1);++j)
+          for (int i=active?a.is:0;i<=(active?a.ie:h.extent_int(4)-1);++i) {
+            double value=v(m,n,k,j,i);
+            if (std::fwrite(&value,sizeof(double),1,file)!=1) ok=false;
+          }
+  };
+  write(h,false);
+  if (include_rhs) {
+    auto rhs=Kokkos::create_mirror_view_and_copy(HostMemSpace(),u_rhs);
+    auto reg=Kokkos::create_mirror_view_and_copy(HostMemSpace(),u1);
+    write(rhs,true); write(reg,true);
+  }
+  if (std::fclose(file)!=0) ok=false;
+  if (!ok) IntrinsicError("failed writing stage dump " + name.str());
 }
 
 void PcGh::IntrinsicToADM() {

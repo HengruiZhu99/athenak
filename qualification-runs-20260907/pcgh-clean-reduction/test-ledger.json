@@ -549,6 +549,16 @@
       "status": "PASS",
       "evidence": "intrinsic-injection-001/results.json",
       "scope": "Smooth 2D global-periodic semidiscrete reduction/curl law defect converges at FD2/4/6 with KO0/.3; nonlinear lapse tangent and variable lambda; not a raw stage budget"
+    },
+    "intrinsic_stage_dump_serial": {
+      "status": "PASS",
+      "evidence": "intrinsic-stage-001/intrinsic-stage-002/results.json",
+      "scope": "18 actual RK stages across FD2/4/6 and 2D/3D; dump neutral bitwise; valid halo check and zero active transfer increment; signed full-domain offline physical/reduction/curl increments and actual RHS law defect; duplicate files rejected"
+    },
+    "intrinsic_stage_legacy_restart": {
+      "status": "PASS",
+      "evidence": "intrinsic-stage-001/intrinsic-stage-legacy-001/results.json",
+      "scope": "19 legacy restart and layout controls after diagnostic-only hooks"
     }
   }
 }

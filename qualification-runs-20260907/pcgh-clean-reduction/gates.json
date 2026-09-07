@@ -433,5 +433,28 @@
     "kappa": 1,
     "minimum_order": "FD order - 1",
     "scope": "global periodic independent FD assembly plus compiled PointRHS; no raw mesh stage budget; nonlinear lapse tangent and d(lambda) wedge E retained"
+  },
+  "intrinsic_stage_dump": {
+    "orders": [
+      2,
+      4,
+      6
+    ],
+    "dimensions": [
+      2,
+      3
+    ],
+    "steps": 1,
+    "dt": 0.0001,
+    "normalized_tolerance": 2e-12,
+    "checks": [
+      "dump on/off float64 final state bitwise",
+      "RK update from dumped active RHS and accumulator",
+      "active transfer increment exactly zero",
+      "pre-RK and post-exchange all ghosts agree with periodic global state",
+      "same-cell reductions and physical diagnostics use reconstructed global periodic arrays only",
+      "duplicate output rejected rather than overwritten"
+    ],
+    "scope": "uniform periodic serial multi-block actual stage evidence, no intrinsic refinement or physical evolution qualification"
   }
 }

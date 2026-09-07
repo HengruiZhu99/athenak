@@ -68,6 +68,9 @@ class PcGh {
   void InitializeIntrinsic(ParameterInput *pin);
   void IntrinsicInitialData(ParameterInput *pin, bool restart);
   void ValidateIntrinsic(const char *stage, bool check_rhs);
+  bool intrinsic_stage_dump = false;
+  void DumpIntrinsicStage(Driver *driver, int stage, const char *operation,
+                          bool ghosts_valid, bool include_rhs);
   void IntrinsicToADM();
   TaskStatus IntrinsicTimeStep();
   template<int Stencil> TaskStatus IntrinsicRHS();

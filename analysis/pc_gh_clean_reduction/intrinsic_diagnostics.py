@@ -6,6 +6,44 @@ materialized fields on a synchronized global periodic grid. Repeated derivatives
 therefore use a wider stencil. Physical H/M use only primary w,s,Ahat,K.
 """
 import numpy as np
+import math
+
+
+def ko(f,spacing,order,amplitude):
+    radius=order//2+1;out=np.zeros_like(f)
+    for d,h in enumerate(spacing):
+        if f.shape[-1-d]==1:continue
+        for j in range(-radius,radius+1):
+            out-=amplitude*(-1.)**j*math.comb(2*radius,radius+j)*np.roll(f,-j,axis=-1-d)/(2**(2*radius)*h)
+    return out
+
+
+def reduction_injection(u,rhs,spacing,order,rate,dissipation):
+    """Signed semidiscrete defects from synchronized global state and active RHS.
+
+    The returned arrays have direction/family and curl-pair/family ordering.
+    No RHS ghosts are read. The lapse uses the tangent rho*wdot+w*rhodot.
+    """
+    D=lambda f,d:derivative(f,d,spacing,order)
+    def auxiliary(v):
+        return np.array([np.concatenate([v[20+d:21+d],v[23+d:24+d],v[26+5*d:31+5*d],v[41+3*d:44+3*d]]) for d in range(3)])
+    potential=np.concatenate([u[0:1],(u[0]*u[1])[None],u[2:7],u[7:10]])
+    tangent=np.concatenate([rhs[0:1],(u[1]*rhs[0]+u[0]*rhs[1])[None],rhs[2:7],rhs[7:10]])
+    g=auxiliary(u);gdot=auxiliary(rhs)
+    e=g-np.array([D(potential,d) for d in range(3)])
+    omega=np.array([[D(g[j],i)-D(g[i],j) for j in range(3)] for i in range(3)])
+    db=np.array([D(u[7:10],d) for d in range(3)])
+    injection=gdot-np.array([D(tangent,d) for d in range(3)])+rate*e-ko(e,spacing,order,dissipation)
+    curl=np.array([[D(gdot[j],i)-D(gdot[i],j) for j in range(3)] for i in range(3)])
+    curl+=rate*omega-ko(omega,spacing,order,dissipation)
+    for k in range(3):
+        injection-=u[7+k]*D(e,k);curl-=u[7+k]*D(omega,k)
+        for i in range(3):
+            injection[i]-=db[i,k]*e[k]
+            for j in range(3):curl[i,j]-=db[i,k]*omega[k,j]+db[j,k]*omega[i,k]
+    for i in range(3):
+        for j in range(3):curl[i,j]+=D(rate,i)*e[j]-D(rate,j)*e[i]
+    return injection.reshape(30,*u.shape[1:]),np.array([curl[i,j] for i,j in [(0,1),(0,2),(1,2)]]).reshape(30,*u.shape[1:])
 
 
 def derivative(f,d,spacing,order):

@@ -452,3 +452,19 @@ See `analysis/pc_gh_clean_reduction/INTRINSIC_CUDA_INJECTION.md` and evidence
 operator changed in this checkpoint. Production diagnostics and signed stage
 budgets are the next implementation priority; intrinsic refinement and all
 physical convergence/puncture/binary promotion gates remain open.
+
+## Actual RK and exchange stage instrumentation
+
+The opt-in intrinsic stage dump now records actual float64 states, valid active
+RHS and RK accumulator, with explicit stage and ghost-validity metadata. Six
+serial multi-block FD2/4/6 2D/3D fixtures pass at all 18 RK stages; dump on/off
+is bitwise neutral, RK reconstruction agrees to 1.110e-16, and active periodic
+transfer increments and synchronized ghost errors are zero. Duplicate-write
+controls preserve earlier stage data. All 19 legacy restart controls pass.
+
+Signed physical/reduction/curl increments and actual-RHS semidiscrete defects
+are assembled offline on reconstructed periodic global arrays, with component
+norms and extrema. This is not yet an in-process physical history diagnostic.
+See `analysis/pc_gh_clean_reduction/INTRINSIC_STAGE_BUDGET.md`. Stage-dump MPI/CUDA
+validation and production diagnostic integration remain next; refinement/core
+and physical evolution/puncture/binary gates remain open.
