@@ -277,6 +277,7 @@ TaskStatus PcGh::Prolongate(Driver *pdriver, int stage) {
     pbval_u->ProlongateCC(u0, coarse_u0, true);
   }
   if (monitor) EndReductionTransfer(1);
+  CompleteCoherentTransfer(11);
   return TaskStatus::complete;
 }
 
@@ -320,6 +321,9 @@ TaskStatus PcGh::ProlongateProjection(Driver *pdriver, int stage) {
     if (monitor) BeginReductionTransfer(6);
     pbval_u->ProlongateCC(u0, coarse_u0, true);
     if (monitor) EndReductionTransfer(6);
+  }
+  if (opt.project_reduction_constraints && stage == pdriver->nexp_stages) {
+    CompleteCoherentTransfer(12);
   }
   return TaskStatus::complete;
 }

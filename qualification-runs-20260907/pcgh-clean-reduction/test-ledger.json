@@ -104,6 +104,50 @@
       "status": "PASS",
       "scope": "FD6 no-KO periodic two-block spatial operator has distinct real nonpositive eigenvalues at block sizes 8,16; no uniform energy/AMR/full-system claim",
       "evidence": "short-halo-exact-003.json"
+    },
+    "mesh_transfer_uniform_serial": {
+      "status": "PASS",
+      "evidence": "mesh-transfer-uniform-001/results.json",
+      "scope": "constant independent residuals, all ghosts, three exchanges"
+    },
+    "mesh_transfer_smr_input_001": {
+      "status": "FAIL",
+      "evidence": "mesh-transfer-smr-001/results.json",
+      "reason": "obsolete refinement block syntax; corrected without threshold change"
+    },
+    "mesh_transfer_smr_initial": {
+      "status": "FAIL",
+      "evidence": "mesh-transfer-smr-002/results.json",
+      "reason": "2D inherited high-order prolongation out-of-bounds crash; FD4 inherited input rejection; 3D FD2/6 pass"
+    },
+    "mesh_transfer_smr_serial": {
+      "status": "PASS",
+      "evidence": "mesh-transfer-smr-003/results.json",
+      "max_constant_residual_error": 1.1973755320582313e-13,
+      "primary_and_active_change": 0
+    },
+    "mesh_transfer_mpi": {
+      "status": "PASS",
+      "evidence": [
+        "mesh-transfer-mpi-uniform-001/results.json",
+        "mesh-transfer-mpi-smr-001/results.json"
+      ],
+      "ranks": 2,
+      "Kokkos_bounds_check": true,
+      "scope": "constant residual and primary/active invariance; not full transfer qualification"
+    },
+    "transfer_default_legacy_regression": {
+      "status": "PASS",
+      "evidence": [
+        "transfer-default-legacy-zero-001/results.json",
+        "transfer-default-legacy-step-001/results.json"
+      ],
+      "max_error": 0.0
+    },
+    "transfer_task_path_step": {
+      "status": "PASS",
+      "evidence": "transfer-task-step-001/results.json",
+      "scope": "finite single step and correction bracket placement/invariance only"
     }
   }
 }

@@ -234,6 +234,7 @@ class PcGh {
   void MeasureReductionTransfer(bool save_before, int operation);
   void BeginReductionTransfer(int operation);
   void EndReductionTransfer(int operation);
+  void CompleteCoherentTransfer(int operation);
   void BeginStateBudget(int operation);
   void EndStateBudget(int operation);
   void WriteReductionSample(DvceArray5D<Real> norms, int operation, bool before);
@@ -309,6 +310,7 @@ class PcGh {
     Real research_dt_ceiling;
     bool hybrid_monitor;
     bool reduction_monitor;
+    std::string coherent_transfer;
     bool state_budget;
     int state_budget_dcycle;
     std::string reduction_monitor_file;
@@ -370,6 +372,9 @@ class PcGh {
   std::array<std::array<Real, 8>, 7> transfer_reduction_change{};
 
  private:
+  template <int ORDER> void TransferResidualGhosts();
+  MeshBoundaryValuesCC *pbval_residual = nullptr;
+  DvceArray5D<Real> transfer_residual, coarse_transfer_residual;
   HostArray5D<Real> state_budget_before;
   bool state_budget_pending = false;
   int state_budget_operation = 0;

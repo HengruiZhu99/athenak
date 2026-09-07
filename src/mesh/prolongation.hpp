@@ -246,7 +246,8 @@ Real ProlongInterpolation(const int m, const int v, int k, int j, int i,
         int wghtj = (offsetj) ? NGHOST-jj : jj;
         int wghtk = (offsetk) ? NGHOST-kk : kk;
         ivals += weights.d_view(wghtk,wghtj,wghti)*ca(m,v,
-                    k-NGHOST/2+kk,j-NGHOST/2+jj,i-NGHOST/2+ii);
+                    (nx3 > 1 ? k-NGHOST/2+kk : k),
+                    (nx2 > 1 ? j-NGHOST/2+jj : j),i-NGHOST/2+ii);
       }
     }
   }
@@ -264,23 +265,17 @@ void HighOrderProlongCC(const int m, const int v, const int k, const int j, cons
                const int fk, const int fj, const int fi, const int nx1, const int nx2,
                const int nx3, const DvceArray5D<Real> &ca, const DvceArray5D<Real> &a,
                const DualArray3D<Real> &weights) {
-  // stencil size for interpolator
-  a(m,v,fk  ,fj  ,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                        false,false,false, ca, weights);
-  a(m,v,fk  ,fj  ,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                        false,false, true, ca, weights);
-  a(m,v,fk  ,fj+1,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                        false, true,false, ca, weights);
-  a(m,v,fk  ,fj+1,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                        false, true, true, ca, weights);
-  a(m,v,fk+1,fj  ,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true,false,false, ca, weights);
-  a(m,v,fk+1,fj  ,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true,false, true, ca, weights);
-  a(m,v,fk+1,fj+1,fi  ) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true, true,false, ca, weights);
-  a(m,v,fk+1,fj+1,fi+1) = ProlongInterpolation<NGHOST>(m,v,k,j,i, nx1, nx2, nx3,
-                                                         true, true, true, ca, weights);
+  // Collapse inactive axes to the sole cell. The 3D tensor weights sum over
+  // inactive coordinates, reproducing interpolation of a constant extension.
+  // Preserve the existing 3D point ordering and arithmetic.
+  for (int dk=0; dk<(nx3 > 1 ? 2 : 1); ++dk) {
+    for (int dj=0; dj<(nx2 > 1 ? 2 : 1); ++dj) {
+      for (int di=0; di<2; ++di) {
+        a(m,v,fk+dk,fj+dj,fi+di) = ProlongInterpolation<NGHOST>(
+            m,v,k,j,i,nx1,nx2,nx3,dk,dj,di,ca,weights);
+      }
+    }
+  }
   return;
 }
 

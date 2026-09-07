@@ -88,8 +88,35 @@ two blocks of 8 or 16 cells have distinct real nonpositive eigenvalues and a
 constant kernel. This resolves those no-KO toy flags without changing a numerical
 tolerance. It does not establish a uniform energy bound, KO/RK stability,
 multidimensional/AMR stability, or a complete transfer repair. Both raw flags and
-exact polynomials are preserved; no production halo operator changed.
+exact polynomials are preserved; no production halo operator had changed at that checkpoint.
 
 Next: complete the archived transfer discriminator and implement full coherent
 transfer with valid stencil support and signed operation diagnostics, then the
 intrinsic map and complete kernel oracles. Gates 1--5 remain unpassed.
+
+## Actual mesh transfer checkpoint
+
+Implemented opt-in `coherent_transfer=residual_shifted` with a second residual
+exchange on a separate communicator and shifted derivatives contained in valid
+primary halos. Both ordinary and post-projection paths are connected. Default
+transfer, legacy bulk equations and projection policies are unchanged. This
+initial option accepts only periodic fixed topology with legacy fields.
+
+FD2/4/6 constant-residual checks now pass on actual 2D/3D uniform and 7/15-leaf
+static meshes, serial and two-rank MPI with bounds checking. Every primary and
+active auxiliary stays bitwise unchanged within the correction; maximum ghost
+residual error is 1.20e-13 versus the frozen 2e-12 bound. The one-step task-path
+smoke check sees operations 11 at stages 0/1/2/3 and 12 only at stage 3. Default
+legacy CPU zero-step and one-step comparisons still match the collision control.
+
+The initial obsolete SMR input syntax, inherited 2D prolongation crashes, and
+inherited FD4 parser rejection are preserved as failures. Corrected dimensional
+prolongation and actual-nghost dispatch resolve those tested cases. The early
+failing executables were overwritten during incremental development; their
+recorded hashes, inputs, logs and inherited failing code remain available, but
+no archived early binary is claimed. Final tested source manifests and build
+configurations are retained. Historical 2D restriction still averages cells.
+
+Next: CUDA validation, varying-residual/curl convergence and complete coupled
+operator analysis, then boundary/regridding/restart completion. Constant-residual
+and single-step checks do not pass Gate 1 or authorize physical promotion.

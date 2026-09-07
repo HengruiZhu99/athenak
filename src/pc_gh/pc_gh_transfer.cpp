@@ -1,0 +1,73 @@
+//========================================================================================
+// AthenaK astrophysical plasma code
+// Licensed under the 3-clause BSD License (the "LICENSE")
+//========================================================================================
+#include <stdexcept>
+#include "athena.hpp"
+#include "mesh/mesh.hpp"
+#include "mesh/meshblock_pack.hpp"
+#include "pc_gh/pc_gh.hpp"
+#include "pc_gh/transfer_target.hpp"
+
+namespace pc_gh {
+
+template <int ORDER>
+void PcGh::TransferResidualGhosts() {
+  auto state = u0;
+  auto residual = transfer_residual;
+  auto size = pmy_pack->pmb->mb_size;
+  auto ind = pmy_pack->pmesh->mb_indcs;
+  const int nmb = pmy_pack->nmb_thispack;
+  const int nk = state.extent_int(2), nj = state.extent_int(3);
+  const int ni = state.extent_int(4);
+  const bool collision = opt.lapse_projection_target == "collision_factorized";
+  Kokkos::deep_copy(residual,state);
+  par_for("PC-GH source residual",DevExeSpace(),0,nmb-1,I_P1,npcgh-1,
+  0,nk-1,0,nj-1,0,ni-1,KOKKOS_LAMBDA(int m,int n,int k,int j,int i) {
+    Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
+                   1.0/size.d_view(m).dx3};
+    residual(m,n,k,j,i) -= LegacyTransferTarget<ORDER>(
+        state,m,n,k,j,i,idx,collision);
+  });
+  Kokkos::fence();
+  // A separate communicator avoids interacting with in-flight ordinary transfers.
+  // Restrict the residual itself: E_c = R_E E_f, then prolong/interchange E.
+  // The private coarse buffer stores E in auxiliary slots, not physical G.
+  if (pmy_pack->pmesh->multilevel) {
+    pmy_pack->pmesh->pmr->RestrictCC(transfer_residual,coarse_transfer_residual,true);
+  }
+  pbval_residual->InitRecv(npcgh);
+  pbval_residual->PackAndSendCC(transfer_residual,coarse_transfer_residual);
+  while (pbval_residual->RecvAndUnpackCC(transfer_residual,coarse_transfer_residual)
+         != TaskStatus::complete) {}
+  if (pmy_pack->pmesh->multilevel) {
+    pbval_residual->ProlongateCC(transfer_residual,coarse_transfer_residual,true);
+  }
+  while (pbval_residual->ClearSend() != TaskStatus::complete) {}
+  while (pbval_residual->ClearRecv() != TaskStatus::complete) {}
+  // Preserve all active G and every primary, including transferred primary ghosts.
+  // Reconstruct fine OR coarse leaf ghosts from that leaf's actual primary state.
+  par_for("PC-GH residual ghost reconstruction",DevExeSpace(),0,nmb-1,I_P1,npcgh-1,
+  0,nk-1,0,nj-1,0,ni-1,KOKKOS_LAMBDA(int m,int n,int k,int j,int i) {
+    if (i >= ind.is && i <= ind.ie && j >= ind.js && j <= ind.je
+        && k >= ind.ks && k <= ind.ke) return;
+    Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
+                   1.0/size.d_view(m).dx3};
+    state(m,n,k,j,i) = LegacyTransferTarget<ORDER>(
+        state,m,n,k,j,i,idx,collision)+residual(m,n,k,j,i);
+  });
+  Kokkos::fence();
+}
+
+void PcGh::CompleteCoherentTransfer(int operation) {
+  if (opt.coherent_transfer == "none") return;
+  BeginStateBudget(operation);
+  switch (opt.spatial_order) {
+    case 2: TransferResidualGhosts<2>(); break;
+    case 4: TransferResidualGhosts<4>(); break;
+    case 6: TransferResidualGhosts<6>(); break;
+    default: throw std::runtime_error("unsupported coherent transfer order");
+  }
+  EndStateBudget(operation);
+}
+}  // namespace pc_gh

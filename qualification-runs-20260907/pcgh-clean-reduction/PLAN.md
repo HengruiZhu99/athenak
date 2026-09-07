@@ -47,3 +47,30 @@ Build independent source snapshots on della-vis1 with four CPU build jobs, seque
 
 ## Signed state-budget writer oracle (before execution)
 Test every field and ghost cell on 2D and 3D one-block fixtures against independently indexed signed increments, tolerance 2e-15 absolute; require stored same-cell subtraction exactly, and an exactly zero no-op increment. Test truncated payload rejection. Explicitly label both ghost-validity flags unasserted. Output is chronological native-endian binary with an endian marker and explicit active ranges; no memory-layout assumption. A state increment does not by itself supply a reduction/curl causal budget.
+
+## Actual mesh residual-transfer fixture (frozen before execution)
+Use the new residual_shifted option on CPU Serial, periodic root 16 per active
+axis, blocks 8, four ghosts, FD2/4/6. Seed nonconstant positive primaries and
+independent constant residuals in all 33 legacy auxiliary components using the
+existing centered projection kernel. Compare ordinary and repaired ghosts using
+independent long-double Lagrange-product derivative weights. Require exactly
+unchanged primaries and active auxiliaries, and absolute constant-residual error
+<=2e-12 in every ghost component (faces, edges, corners, all layers). Repeat three
+ordinary/repaired exchanges. First uniform 2D/3D, then one-octant static refinement;
+record failures separately, not average across blocks. Each CPU fixture has a
+120-second limit. These are operator checks, not physical evolution. No CUDA/MPI
+or general boundary/regridding claim from this fixture. The historical 2D
+restriction is retained and remains second order.
+The same frozen component thresholds also apply to a two-rank CPU MPI build
+with Kokkos bounds checks enabled. Retain the original parser/2D crash results
+and rerun corrected fixtures in fresh directories. MPI runs remain tiny operator
+checks on the local CPU, with the same 120-second per-process bound.
+
+## Task-path integration smoke check (before execution)
+One 2D periodic block, FD6/RK3, one step of the existing smooth arbitrary legacy
+seed, coherent transfer on and collision lapse target. Enable raw state budgets.
+Require a finite successful step, ordinary correction records at initialization
+and stages 1--3, exactly one post-projection correction at the final stage, and
+bitwise unchanged primary/active entries within each correction bracket. This
+checks task integration only; the arbitrary seed is not a physical solution and
+one step cannot establish stability or convergence.

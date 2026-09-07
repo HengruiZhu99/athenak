@@ -134,9 +134,9 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  if (ppack->pmesh->multilevel && opt.fd_stencil == 3) {
+  if (ppack->pmesh->multilevel && indcs.ng != 2 && indcs.ng != 4) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << '\n'
-              << "PC-GH high-order AMR transfer for fd_stencil=3 is not implemented"
+              << "PC-GH high-order AMR transfer requires nghost=2 or 4"
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -324,6 +324,26 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
     std::exit(EXIT_FAILURE);
   }
 
+  opt.coherent_transfer = pin->GetOrAddString("pc_gh", "coherent_transfer", "none");
+  if (opt.coherent_transfer != "none" && opt.coherent_transfer != "residual_shifted") {
+    std::cerr << "### FATAL ERROR: unknown coherent_transfer option\n";
+    std::exit(EXIT_FAILURE);
+  }
+  if (opt.coherent_transfer == "residual_shifted") {
+    if (!ppack->pmesh->strictly_periodic || ppack->pmesh->adaptive
+        || opt.reduction_system != "legacy") {
+      std::cerr << "### FATAL ERROR: residual_shifted currently requires periodic "
+                << "fixed topology and legacy fields\n";
+      std::exit(EXIT_FAILURE);
+    }
+    transfer_residual = DvceArray5D<Real>("transfer residual",nmb,npcgh,
+                                         ncells3,ncells2,ncells1);
+    coarse_transfer_residual = DvceArray5D<Real>("coarse transfer residual",
+        coarse_u0.extent_int(0),coarse_u0.extent_int(1),coarse_u0.extent_int(2),
+        coarse_u0.extent_int(3),coarse_u0.extent_int(4));
+    pbval_residual = new MeshBoundaryValuesCC(ppack,pin,true);
+    pbval_residual->InitializeBuffers(npcgh);
+  }
   pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
   pbval_u->InitializeBuffers(npcgh);
   pbval_weyl = new MeshBoundaryValuesCC(ppack, pin, true);
@@ -691,6 +711,7 @@ void PcGh::ValidateState(const char *stage, bool check_rhs, bool check_constrain
 
 PcGh::~PcGh() {
   delete[] psi_out;
+  delete pbval_residual;
   delete pbval_u;
   delete pbval_weyl;
 }

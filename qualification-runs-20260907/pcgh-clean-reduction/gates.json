@@ -96,5 +96,29 @@
       ],
       "ghost_validity": "explicitly unasserted; no derivative constraint interpretation"
     }
+  },
+  "actual_mesh_transfer_fixture": {
+    "status": "NOT_RUN",
+    "primary_and_active_invariance": 0,
+    "constant_residual_absolute_tolerance": 2e-12,
+    "repetitions": 3,
+    "orders": [
+      2,
+      4,
+      6
+    ],
+    "dimensions": [
+      2,
+      3
+    ],
+    "root_n": 16,
+    "block_n": 8,
+    "nghost": 4,
+    "per_process_timeout_seconds": 120,
+    "topologies": [
+      "uniform",
+      "single octant static refinement"
+    ],
+    "scope": "CPU Serial periodic operator; no promotion from this fixture alone"
   }
 }
