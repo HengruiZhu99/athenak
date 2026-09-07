@@ -38,3 +38,9 @@ metric conditioning. Preserve the first invalid stage before projection.
 Existing common-symmetrizer and puncture-limit obstructions are retained limits,
 not gates to redesign the gauge or add cleaning fields. A passed candidate
 suite alone does not prove compiled correctness or discrete stability.
+
+## Legacy compiled equivalence, frozen before execution
+Seven smooth nonlinear periodic off-constraint seeds, all 55 rows and active cells; FD2/4/6, 2D/3D, anisotropic lengths 1,1.3,1.7. Compare source b81b44d6 and current source using an identical isolated test adapter. Use the explicit collision_factorized L projection and unchanged legacy gauge switch and equations. Require normalized component error <=2e-12 (normalization in gates.json), and compare one actual RK3 step. The direct_product default is a negative projection control, not an unchanged baseline. No Einstein-solution claim from these arbitrary data. CPU zero-step controls first; CUDA/one-step controls follow.
+
+## CUDA legacy controls resource reservation
+Build independent source snapshots on della-vis1 with four CPU build jobs, sequential builds. Test one 8^3 or 8^2 block at a time, one A100, estimated <1GiB GPU memory, maximum one RK3 step per fixture. Maximum 600 seconds per launched test group. Occupancy sampled 3496MiB/40960MiB, 0% utilization; recheck immediately before execution. No performance claim and no unrelated process changes. Serial equivalence first; MPI/transfer/restart controls remain separate.

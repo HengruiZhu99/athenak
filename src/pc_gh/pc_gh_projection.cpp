@@ -75,6 +75,7 @@ void PcGh::ProjectReduction(MeshBlockPack *pmbp) {
   auto &pc = u;
   auto &state = u0;
   bool const smooth = opt.reduction_projection_profile == "smooth_core";
+  bool const collision_lapse = opt.lapse_projection_target == "collision_factorized";
   if (smooth) SynchronizeReductionCenters();
   auto centers = reduction_centers.d_view;
   Real const core2 = opt.reduction_core_radius*opt.reduction_core_radius;
@@ -127,10 +128,15 @@ void PcGh::ProjectReduction(MeshBlockPack *pmbp) {
         continue;
       }
       Real const dw = Dx<FD_STENCIL>(d, idx, pc.w, m, k, j, i);
+      // Exact historical projection for A/B collision controls only. Keep the
+      // newer product-at-stencil-points target as the default for all other arms.
+      Real const lapse_target = collision_lapse
+          ? 2.0*(pc.w(m,k,j,i)*Dx<FD_STENCIL>(d,idx,pc.rho,m,k,j,i)
+                 + pc.rho(m,k,j,i)*dw)
+          : DirectLapseGradient<FD_STENCIL>(d,idx,pc.rho,pc.w,m,k,j,i);
       pc.p(m, d, k, j, i) = BlendReductionTarget(pc.p(m,d,k,j,i), dw, weight);
       pc.L(m, d, k, j, i) = BlendReductionTarget(
-          pc.L(m,d,k,j,i), DirectLapseGradient<FD_STENCIL>(
-              d, idx, pc.rho, pc.w, m, k, j, i), weight);
+          pc.L(m,d,k,j,i), lapse_target, weight);
       for (int a = 0; a < 3; ++a) {
         state(m, BIndex(d, a), k, j, i) = BlendReductionTarget(
             state(m,BIndex(d,a),k,j,i), Dx<FD_STENCIL>(

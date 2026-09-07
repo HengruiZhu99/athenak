@@ -303,6 +303,7 @@ class PcGh {
     Real reduction_taper_radius;
     bool reduction_follow_trackers;
     std::string reduction_projection_profile;
+    std::string lapse_projection_target;
     Real research_dt_ceiling;
     bool hybrid_monitor;
     bool reduction_monitor;

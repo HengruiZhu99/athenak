@@ -65,6 +65,13 @@
         "beta[3]"
       ],
       "negative_control": "independent component transfer must inject resolved reductions for at least one fixture of each FD order"
+    },
+    "legacy_cpu_zero_step": {
+      "status": "PASS",
+      "scope": "six matched full production builds fixtures; 42 smooth seeds; all active 55-field RHS and projections",
+      "evidence": "legacy-cpu-zero-001.json",
+      "max_normalized_error": 0,
+      "collision_lapse_target_required": true
     }
   }
 }

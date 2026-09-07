@@ -203,6 +203,15 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
       "pc_gh", "project_reduction_constraints", false);
   opt.reduction_projection_profile = pin->GetOrAddString(
       "pc_gh", "reduction_projection_profile", "global");
+  opt.lapse_projection_target = pin->GetOrAddString(
+      "pc_gh", "lapse_projection_target", "direct_product");
+  if (opt.lapse_projection_target != "direct_product"
+      && !(opt.lapse_projection_target == "collision_factorized"
+           && opt.reduction_system == "legacy")) {
+    std::cerr << "### FATAL ERROR: lapse_projection_target must be direct_product, "
+                 "or collision_factorized with reduction_system=legacy\n";
+    std::exit(EXIT_FAILURE);
+  }
   opt.research_dt_ceiling = pin->GetOrAddReal("pc_gh", "research_dt_ceiling", 0.0);
   opt.hybrid_monitor = pin->GetOrAddBoolean("pc_gh", "hybrid_monitor", false);
   bool const smooth_reduction = opt.reduction_profile == "smooth_core";

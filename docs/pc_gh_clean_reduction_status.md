@@ -42,6 +42,34 @@ or evolution launched yet. Inspect occupancy and exact requested node resources
 again before allocation. User authorization permits direct vis1 testing or up to
 eight 80GB A100s through gputest; request only resources needed by each staged test.
 
-Next: complete provenance/operator audit, freeze detailed fixtures and tolerances,
-implement coherent transfer tests before changing bulk equations, then intrinsic
-map and production kernel with full independent oracles.
+## Legacy equivalence checkpoint
+
+The inherited direct-lapse patch also changed the optional global L projection
+in legacy mode. Therefore merely selecting `reduction_system=legacy` does not
+reproduce the collision source. Added explicit
+`lapse_projection_target=collision_factorized` for legacy controls; the default
+remains `direct_product`. Unknown targets and collision targets in advective
+mode fail at input validation. No bulk equation or projection timing changed.
+
+Two independently built full CPU executables use identical test adapters against
+the collision source and current source. Seven smooth non-diagonal off-constraint
+seeds, all active cells and all 55 fields, FD2/4/6, and 2D/3D anisotropic fixtures
+have exactly matching saved RHS, algebraic/GH projection and auxiliary projection
+values with the collision target. These are sampled nonlinear equivalence checks,
+not a proof for arbitrary jets. The direct-product negative control differs by
+0.0010--0.0049 in the projection fixtures, confirming the target distinction.
+Both invalid-input tests pass. CPU raw outputs/builds are preserved outside Git
+under `../pcgh-clean-reduction-tests-20260907`; compact results and complete source
+manifests are in the dated evidence directory.
+
+Independent CUDA builds are running sequentially on Della in
+`/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-legacy`.
+The build controller was confirmed live as PID 143849, with the collision build
+at 33%. Its exit status will be written to `build.exit`. Do not restart merely
+because observation expires; inspect that controller/log and exit status first.
+No CUDA oracle or one-step control has executed yet. The source snapshots are
+isolated and do not change the read-only legacy control or any older calculation.
+
+Next: complete those CUDA/one-step comparisons and the archived transfer
+discriminator, implement full coherent transfer with valid stencil support and
+signed operation diagnostics, then intrinsic map and complete kernel oracles.
