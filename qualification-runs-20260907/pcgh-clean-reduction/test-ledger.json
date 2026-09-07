@@ -581,8 +581,29 @@
       "scope": "Serial and verified two-rank 89-component global histories, twelve initial/final comparisons each; max error 1.142e-13; neutral evolution; cadence/restart/output controls; 19 legacy restart controls"
     },
     "intrinsic_diagnostic_task_CUDA": {
-      "status": "NOT_RUN",
-      "scope": "New physical/materialization/history task not yet built or tested on CUDA"
+      "status": "PASS",
+      "evidence": "intrinsic-diagnostic-cuda-001",
+      "scope": "338 source files verified; six serial and six two-rank 89-component oracle checks; max 1.144e-13; four cadence/restart/collision controls"
+    },
+    "intrinsic_smooth_temporal": {
+      "status": "PASS",
+      "evidence": "intrinsic-smooth-convergence-001/intrinsic-time-convergence-001/results.json",
+      "scope": "Fixed-grid nonlinear off-constraint RK3 orders 2.999/3.001; individual orders/alignment retained; no physical Einstein-data claim"
+    },
+    "intrinsic_smooth_spatial_groups": {
+      "status": "PASS",
+      "evidence": "intrinsic-smooth-convergence-001/intrinsic-space-convergence-001/results.json",
+      "scope": "N16/32/64 FD2/4/6 group rates with aligned differences and temporal control; does not establish per-field Richardson convergence"
+    },
+    "intrinsic_smooth_spatial_KO03_component_alignment": {
+      "status": "FAIL",
+      "evidence": "intrinsic-smooth-convergence-001/intrinsic-space-convergence-001/fd6-signed-differences-components.json",
+      "scope": "rho alignment .751 at FD6, .712 FD4, .695 FD2; beta/Ahat also below .99; current ladder cannot support per-field Richardson claims"
+    },
+    "intrinsic_smooth_spatial_KO0_control": {
+      "status": "PASS",
+      "evidence": "intrinsic-smooth-convergence-001/intrinsic-space-convergence-ko0-001/components.json",
+      "scope": "Matched FD6 KO0 control: all component alignment >.99997, order >=5.9659, temporal contamination <=.03324; supports competing KO/FD errors, no qualification of KO.3 arm"
     }
   }
 }

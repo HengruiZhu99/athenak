@@ -1,0 +1,58 @@
+[
+  {
+    "name": "invalid-cadence",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/diagnostic-cuda-controls-001/invalid-cadence/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-seed-multi.rst"
+    ],
+    "returncode": 1,
+    "status": "PASS",
+    "input_sha256": "93d20bc569178851884630bfe7b4671011c88e808adf79884f84df5256f2be16",
+    "restart_sha256": "b7bb06448c93edc3cd76adb03205855b744ac82bc4a1fd822adfe5cec2654859"
+  },
+  {
+    "name": "full",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/diagnostic-cuda-controls-001/full/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "status": "PASS",
+    "input_sha256": "e8d3983fdb14ab4085dd2e649814260fe0a7c3dc94ab44f2e4ea95fa5e1b1b2c",
+    "restart_sha256": "b7bb06448c93edc3cd76adb03205855b744ac82bc4a1fd822adfe5cec2654859"
+  },
+  {
+    "name": "resumed",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/diagnostic-cuda-controls-001/resumed/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/diagnostic-cuda-controls-001/full/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "status": "PASS",
+    "input_sha256": "e8d3983fdb14ab4085dd2e649814260fe0a7c3dc94ab44f2e4ea95fa5e1b1b2c",
+    "restart_sha256": "20309dbfbed28d51770f7b485ba972bf2667ec56deb6c31ef1eef11e5f70a437"
+  },
+  {
+    "name": "collision",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/diagnostic-cuda-controls-001/collision/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-seed-multi.rst"
+    ],
+    "returncode": 1,
+    "status": "PASS",
+    "input_sha256": "e8d3983fdb14ab4085dd2e649814260fe0a7c3dc94ab44f2e4ea95fa5e1b1b2c",
+    "restart_sha256": "b7bb06448c93edc3cd76adb03205855b744ac82bc4a1fd822adfe5cec2654859"
+  }
+]

@@ -511,3 +511,20 @@ restart controls and the historical offline diagnostic regression. See
 `intrinsic-diagnostic-task-001/`. CUDA validation of this new task is not run.
 Only the full uniform-periodic region is implemented here; excised regions,
 intrinsic interfaces and physical convergence/puncture/binary gates remain open.
+
+## Nonlinear smooth convergence and CUDA diagnostics
+
+The CUDA component-diagnostic controller is complete: serial/two-rank oracle
+and cadence/restart/collision controls pass; maximum component discrepancy is
+1.144e-13. All 338 production-source entries match the tested source.
+
+The 2D off-constraint smooth PDE fixture shows RK3 temporal convergence near
+order three. Uniform FD2/4/6 spatial group norms pass their order/alignment and
+independent temporal-error controls. A component audit, however, finds poor
+rho alignment at KO=0.3 (0.751 for FD6), so that ladder does not support per-field
+Richardson qualification. A matched FD6 KO=0 control improves every component's
+alignment above 0.99997 and order above 5.9659. Both the negative original arm
+and positive control are retained. No physical Einstein-data convergence or
+intrinsic-interface/puncture/binary qualification is claimed. See
+`analysis/pc_gh_clean_reduction/INTRINSIC_SMOOTH_CONVERGENCE.md` for exact scope,
+reproduction commands, timings and the component plot.

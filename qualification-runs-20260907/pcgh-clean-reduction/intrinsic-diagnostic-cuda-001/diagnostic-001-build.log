@@ -1,0 +1,69 @@
+[  2%] Built target kokkossimd
+[  2%] Built target AlwaysCheckGit
+[  3%] Built target impl_git_version
+[ 14%] Built target kokkoscore
+[ 15%] Built target kokkoscontainers
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/bvals/physics/z4c_bcs.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/driver/driver.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/mesh/load_balance.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh.cpp.o
+[ 18%] Building CXX object src/CMakeFiles/athena.dir/mesh/meshblock_pack.cpp.o
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh_refinement.cpp.o
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/outputs/basetype_output.cpp.o
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/outputs/history.cpp.o
+[ 20%] Building CXX object src/CMakeFiles/athena.dir/outputs/restart.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_intrinsic.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh.cpp.o
+[ 22%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_adm.cpp.o
+[ 22%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_calcrhs.cpp.o
+[ 23%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_constraints.cpp.o
+[ 23%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_transfer.cpp.o
+[ 24%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_state_budget.cpp.o
+[ 24%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_newdt.cpp.o
+[ 25%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_projection.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_tasks.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_update.cpp.o
+[ 27%] Building CXX object src/CMakeFiles/athena.dir/pgen/pgen.cpp.o
+[ 28%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_minkowski.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/source/src/pgen/pgen.cpp(319): warning #177-D: variable "mygids" was declared but never referenced
+    int mygids = pm->gids_eachrank[global_variable::my_rank];
+        ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 28%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_gauge_wave.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/source/src/pgen/tests/pc_gh_gauge_wave.cpp(39): warning #177-D: variable "alpha" was declared but never referenced
+    Real const alpha = shifted ? 1.0/sqrt_h : sqrt_h;
+               ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 29%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_bowen_york.cpp.o
+[ 29%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_trumpet_a0.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/tasklist/numerical_relativity.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/utils/compact_object_tracker.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/z4c/horizon_dump.cpp.o
+[ 31%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_amr.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/source/src/z4c/horizon_dump.cpp: In constructor ‘HorizonDump::HorizonDump(MeshBlockPack*, ParameterInput*, int, int, const string&, bool)’:
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/source/src/z4c/horizon_dump.cpp:66:41: warning: enumerated mismatch in conditional expression: ‘adm::ADM::<unnamed enum>’ vs ‘z4c::Z4c::<unnamed enum>’ [-Wenum-compare]
+   66 |   variable_to_dump = {
+      |                                         ^                                                
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/source/src/z4c/horizon_dump.cpp:66:109: warning: enumerated mismatch in conditional expression: ‘adm::ADM::<unnamed enum>’ vs ‘z4c::Z4c::<unnamed enum>’ [-Wenum-compare]
+   66 |   variable_to_dump = {
+      |                                                                                                             ^                                                
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/source/src/z4c/horizon_dump.cpp:66:177: warning: enumerated mismatch in conditional expression: ‘adm::ADM::<unnamed enum>’ vs ‘z4c::Z4c::<unnamed enum>’ [-Wenum-compare]
+   66 |   variable_to_dump = {
+      |                                                                                                                                                                                 ^                                                
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/source/src/z4c/horizon_dump.cpp:66:245: warning: enumerated mismatch in conditional expression: ‘adm::ADM::<unnamed enum>’ vs ‘z4c::Z4c::<unnamed enum>’ [-Wenum-compare]
+   66 |   variable_to_dump = {
+      |                                                                                                                                                                                                                                                     ^                                                
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/source/src/z4c/z4c_amr.cpp(157): warning #177-D: variable "root_lev" was declared but never referenced
+    auto root_lev = pmesh->root_level;
+         ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 32%] Building CXX object src/CMakeFiles/athena.dir/__/analysis/pc_gh_clean_reduction/legacy_oracle.cpp.o
+[ 32%] Linking CXX executable athena
+nvlink warning : Skipping incompatible '/usr/lib64/libdl.a' when searching for -ldl
+[100%] Built target athena

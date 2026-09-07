@@ -520,5 +520,80 @@
       "unchanged legacy restart controls"
     ],
     "scope": "uniform periodic full-region histories, no excision or refinement qualification"
+  },
+  "intrinsic_smooth_temporal": {
+    "order": 6,
+    "dimensions": 2,
+    "global_grid": [
+      16,
+      16,
+      1
+    ],
+    "block_grid": [
+      8,
+      8,
+      1
+    ],
+    "T": 0.02,
+    "dt": [
+      0.001,
+      0.0005,
+      0.00025
+    ],
+    "KO": 0.3,
+    "lambda": "alpha",
+    "eta": 2,
+    "kappa": 1,
+    "minimum_observed_order": 2.7,
+    "minimum_difference_alignment": 0.99,
+    "groups": {
+      "primary_curvature_GH": [
+        0,
+        20
+      ],
+      "all_fields": [
+        0,
+        50
+      ]
+    },
+    "fixture": "intrinsic_smooth amplitude .001, all 50 fields nonzero; off-constraint unforced PDE initial data, not a vacuum Einstein solution",
+    "scope": "fixed-grid temporal self-convergence and finite/positive domain health; no spatial/interface/puncture qualification"
+  },
+  "intrinsic_smooth_spatial": {
+    "orders": [
+      2,
+      4,
+      6
+    ],
+    "N": [
+      16,
+      32,
+      64
+    ],
+    "dimensions": 2,
+    "dt": 0.000125,
+    "T": 0.02,
+    "fine_time_control_dt": 6.25e-05,
+    "minimum_observed_order": "FD order - 0.6",
+    "minimum_difference_alignment": 0.99,
+    "maximum_temporal_contamination": 0.05,
+    "interpolation": "periodic trigonometric evaluation at coarse cell centers, real Nyquist convention, independent exact-mode check at tolerance 5e-13",
+    "groups": [
+      "primary_curvature_GH",
+      "all_fields"
+    ],
+    "fixture": "same nonlinear off-constraint intrinsic_smooth as temporal ladder",
+    "scope": "uniform periodic spatial convergence; no intrinsic refinement or physical Einstein-data qualification"
+  },
+  "intrinsic_smooth_spatial_KO_control": {
+    "order": 6,
+    "KO": [
+      0.3,
+      0.0
+    ],
+    "unchanged": "N16/32/64, T=.02, dt=.000125 plus finest-grid dt/2, same inputs and equations otherwise",
+    "motivation": "rho per-component difference alignment .751 at KO.3 despite group convergence; test competition with order-seven KO truncation",
+    "group_gates": "same frozen spatial group criteria",
+    "component_audit": "retain all 50 orders and alignments; require resolved, aligned differences before per-field Richardson claims"
   }
 }
