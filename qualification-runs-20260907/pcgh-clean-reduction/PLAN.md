@@ -252,3 +252,24 @@ max-error order >=3.5 on both halvings when the coarser error exceeds 1e-10.
 Retain all component errors. Negative controls omit true-shift stretching or
 omit dlambda wedge E; each must differ from the correct target by >1e-5.
 This is a local continuum identity test, not evolution or a discrete mesh law.
+
+
+### Complete compiled Minkowski Fourier and transient checks
+
+Use the stationary flat state alpha=w=rho=1, beta=0, zero curvature/GH and
+auxiliaries, and parameter triples (lambda,eta,kappa)=(1,2,1),(0,2,0),(1,0,0).
+Build all three full principal matrices from 150 basis jets and the source
+Jacobian by centered state perturbations of 1e-4 and 5e-5. Require each matrix
+and the unperturbed zero RHS to agree with the independent exact flat oracle
+to 2e-11 normalized. Prove the symbolic arbitrary-k reduction closure and
+constrained characteristic polynomial, which gives the full polynomial through
+the 30 damped reductions. Compute exact nullities of J,J^2,J^3,J^4 at k=0 to
+identify neutral Jordan chains, not merely roots.
+
+On an oblique unit normal (1,2,3)/sqrt(14), sample k=0,0.01,0.1,1,10 and
+ times 0,0.1,1,5,20. Record ||exp(tA)||2 with M=1 state normalization and all
+root real parts. This is a measured transient diagnostic, with no invented
+contractivity threshold. Require compiled/reference exponential agreement and
+C exp(tA)=exp(-lambda*t) C residual <=2e-9 normalized; the exact polynomial,
+not floating neutral-root signs, determines spectral stability. Do not promote
+this constant-background check to an interface/RK or puncture theorem.

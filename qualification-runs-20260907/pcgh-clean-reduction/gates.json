@@ -250,5 +250,45 @@
     "minimum_order": 3.5,
     "roundoff_guard": 1e-10,
     "negative_min_difference": 1e-05
+  },
+  "compiled_fourier": {
+    "parameters": [
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        0,
+        0
+      ]
+    ],
+    "source_steps": [
+      0.0001,
+      5e-05
+    ],
+    "matrix_tolerance": 2e-11,
+    "k": [
+      0,
+      0.01,
+      0.1,
+      1,
+      10
+    ],
+    "times": [
+      0,
+      0.1,
+      1,
+      5,
+      20
+    ],
+    "exponential_tolerance": 2e-09,
+    "transient_norm": "reported, not a contractivity gate"
   }
 }

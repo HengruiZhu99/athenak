@@ -318,3 +318,19 @@ This establishes sampled compiled continuum identities alongside the exact
 formal law, not a mesh or evolution result. No physical gate is promoted.
 Next is the full Minkowski Fourier operator with sources, neutral/Jordan and
 transient behavior, then coupled discrete RK/KO checks and mesh integration.
+
+## Complete Minkowski Fourier checkpoint
+
+CPU/A100 full source and three principal matrices match the exact oracle.
+The arbitrary-k polynomial, reduction closure and rotational covariance pass
+exactly. Finite-time exponentials retain substantial amplification despite
+nonpositive spectral real parts: the largest sampled full-state 2-norm is
+72.5847 at t=20 in the undamped reduction/GH control, independently confirmed
+by a 60-digit exponential. Homogeneous neutral Jordan chains are explicit.
+At the sampled nonzero-frequency neutral roots, exact nullities show no chains.
+See analysis/pc_gh_clean_reduction/INTRINSIC_FOURIER.md for normalization and scope.
+
+The local SciPy expm warning is retained as an analysis failure; unchanged CPU
+outputs pass Linux replay, and the A100 batch passes there. No warning or failed
+physical state was hidden. No evolution gate is promoted. Next is coupled
+RK3/KO operator analysis, then intrinsic mesh/transfer/restart integration.

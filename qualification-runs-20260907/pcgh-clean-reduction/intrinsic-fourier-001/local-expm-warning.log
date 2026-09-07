@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/check_intrinsic_fourier.py", line 67, in <module>
+    X=la.expm(t*A);Xr=la.expm(t*Ar);xe=norm(X-Xr)/(1+norm(Xr));ce=norm(mm(C,X)-np.exp(-rate*t)*C)/(1+norm(C)*norm(X))
+  File "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/lib/python3.9/site-packages/scipy/linalg/_matfuncs.py", line 326, in expm
+    m, s = pick_pade_structure(Am)
+  File "scipy/linalg/_matfuncs_expm.pyx", line 128, in scipy.linalg._matfuncs_expm.pick_pade_structure
+RuntimeWarning: divide by zero encountered in matmul

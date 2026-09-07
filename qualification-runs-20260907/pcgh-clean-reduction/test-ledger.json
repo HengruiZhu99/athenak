@@ -409,6 +409,31 @@
       "status": "PASS",
       "evidence": "intrinsic-subsidiary-001/backend.json",
       "scope": "444 identical input points; 128 output components"
+    },
+    "intrinsic_fourier_CPU": {
+      "status": "PASS",
+      "evidence": "intrinsic-fourier-001/cpu/results.json",
+      "scope": "Complete Minkowski source/principal matrices and sampled exponentials; Jordan/transient growth retained"
+    },
+    "intrinsic_fourier_CUDA": {
+      "status": "PASS",
+      "evidence": "intrinsic-fourier-001/cuda/results.json",
+      "scope": "Complete Minkowski source/principal matrices and sampled exponentials; Jordan/transient growth retained"
+    },
+    "intrinsic_fourier_exact": {
+      "status": "PASS",
+      "evidence": "intrinsic-fourier-001/exact.json",
+      "scope": "Arbitrary real k polynomial, rotational covariance, exact reduction closure and homogeneous K Jordan witness"
+    },
+    "intrinsic_fourier_high_precision": {
+      "status": "PASS",
+      "evidence": "intrinsic-fourier-001/high-precision.json",
+      "scope": "Independent 60-digit exponential at largest sampled amplification"
+    },
+    "intrinsic_fourier_local_expm": {
+      "status": "FAIL",
+      "evidence": "intrinsic-fourier-001/local-expm-warning.log",
+      "scope": "Local SciPy matrix product warning interrupts analysis; saved CPU outputs subsequently pass Linux replay"
     }
   }
 }

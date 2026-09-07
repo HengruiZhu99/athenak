@@ -1,0 +1,100 @@
+{
+  "status": "PASS",
+  "finite_frequency_neutral_nullities": [
+    {
+      "parameters": [
+        1,
+        2,
+        1
+      ],
+      "k": 1,
+      "eigenvalue": "I",
+      "nullities": [
+        2,
+        2
+      ]
+    },
+    {
+      "parameters": [
+        1,
+        2,
+        1
+      ],
+      "k": 1,
+      "eigenvalue": "sqrt(2)*I",
+      "nullities": [
+        1,
+        1
+      ]
+    },
+    {
+      "parameters": [
+        0,
+        2,
+        0
+      ],
+      "k": 1,
+      "eigenvalue": "I",
+      "nullities": [
+        6,
+        6
+      ]
+    },
+    {
+      "parameters": [
+        0,
+        2,
+        0
+      ],
+      "k": 1,
+      "eigenvalue": "sqrt(2)*I",
+      "nullities": [
+        1,
+        1
+      ]
+    },
+    {
+      "parameters": [
+        1,
+        0,
+        0
+      ],
+      "k": 1,
+      "eigenvalue": "I",
+      "nullities": [
+        9,
+        9
+      ]
+    },
+    {
+      "parameters": [
+        1,
+        0,
+        0
+      ],
+      "k": 1,
+      "eigenvalue": "sqrt(2)*I",
+      "nullities": [
+        1,
+        1
+      ]
+    }
+  ],
+  "exact_reduction_closure": true,
+  "exact_invariant_embedding": true,
+  "state_transform_determinant": 1,
+  "exact_rotational_covariance": true,
+  "homogeneous_K_Jordan_chain": [
+    "e_K",
+    "(e_w-7*e_rho)/3",
+    "0"
+  ],
+  "constrained_polynomial": "(k**2 + s**2)**2*(2*k**2 + s**2)*(k**2 + kappa*s + s**2)**3*(k**2 + 2*kappa*s + s**2)*(eta*s + k**2 + s**2)**3",
+  "full_polynomial": "(k**2 + s**2)**2*(2*k**2 + s**2)*(lambda + s)**30*(k**2 + kappa*s + s**2)**3*(k**2 + 2*kappa*s + s**2)*(eta*s + k**2 + s**2)**3",
+  "spectral_conclusion": "For nonnegative lambda, eta and kappa and real k, every root has nonpositive real part; zero modes and Jordan/transient growth are not excluded.",
+  "reference_sha256": {
+    "exact_flat_symbol.py": "b00c2aba97413e0e14b7ea7005d048fe166a6ce6aeb9d37cceb65564351b6f20",
+    "check_flat_fourier.py": "4eeb5904505cbe8985e99091dfabea65511df5e6907c7ef6cdafbef7ca8d9452"
+  },
+  "scope": "Minkowski alpha=w=1, sigma=1, beta=0; arbitrary real wave number and direction by exact rotational covariance"
+}
