@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.16)
+project(pcgh_intrinsic_oracles LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+find_package(Kokkos CONFIG REQUIRED)
+add_executable(intrinsic_map intrinsic_map.cpp)
+target_link_libraries(intrinsic_map PRIVATE Kokkos::kokkos)
+target_include_directories(intrinsic_map PRIVATE ../../../src "${ATHENA_CONFIG_DIR}" "${ATHENA_SOURCE_DIR}")

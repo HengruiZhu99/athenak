@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb}
+\begin{document}
+\title{Intrinsic PC-GH implementation record: geometry checkpoint}
+\maketitle
+This record currently covers only the compiled intrinsic geometry and
+finite-radius state map. The full candidate evolution equations remain in the
+pinned mathematical reference (commit
+\texttt{7ef9c61c0c2bd12a46b28f334a53a1aabcd1842e}); they are not yet implemented.
+For $s=(a,c,b,d,e)$ define
+\[
+ T=\begin{pmatrix}e^a&0&0\\b&e^c&0\\d&e&e^{-a-c}\end{pmatrix},\qquad
+ g=TT^T,\quad A=T\widehat A T^T,\quad
+ \widehat A_{33}=-\widehat A_{11}-\widehat A_{22}.
+\]
+The implemented composite derivatives are
+\[
+ J_A=T_{,A}T^T+TT_{,A}^T,\quad Q_k=J_A S_k^A,
+\]
+\[
+ J_{A,B}=T_{,AB}T^T+TT_{,AB}^T+T_{,A}T_{,B}^T+T_{,B}T_{,A}^T.
+\]
+Thus $\det g=1$, $\operatorname{tr}(g^{-1}A)=0$ and
+$\operatorname{tr}(g^{-1}Q_k)=0$ algebraically, including independent $S$.
+For a tangent tensor $X$, let
+\[
+ W=T^{-1}XT^{-T},\quad
+ L=\operatorname{strictLower}(W)+\tfrac12\operatorname{diag}(W),\quad
+ \dot T=TL.
+\]
+The inverse tangent coordinates are
+$(L_{11},L_{22},\dot T_{21},\dot T_{31},\dot T_{32})$.
+The 50-field layout stores $l_i=\partial_i(\rho w)$ on reduction, while the
+legacy layout stores $L_i=2l_i$. Conversion requires positive $w,\rho$ and the
+algebraic constraint submanifold; it is not an arbitrary legacy restart map.
+Neither these identities nor finite chart coordinates guarantee bounded metric
+conditioning, strong hyperbolicity, or a regular puncture limit.
+\end{document}

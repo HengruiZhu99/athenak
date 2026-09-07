@@ -279,6 +279,26 @@
       "status": "PASS",
       "evidence": "cuda-transfer-accessfix-001/verified-summary.json",
       "scope": "40e0bc1f access-only snapshot, periodic constant residual all orders/dimensions uniform/refined, runtime-verified OpenMPI two ranks on one A100; excludes newer boundary code"
+    },
+    "intrinsic_map_CPU": {
+      "status": "PASS",
+      "evidence": "intrinsic-map-cpu-002/results.json",
+      "scope": "106 compiled geometry/state-map cases; independent symbolic and Cholesky oracle; no evolution or restart integration"
+    },
+    "intrinsic_map_CUDA": {
+      "status": "PASS",
+      "evidence": "intrinsic-map-cuda-001/cuda-001/results.json",
+      "scope": "106 compiled geometry and state-map cases on A100; same source headers; no evolution"
+    },
+    "intrinsic_map_backend": {
+      "status": "PASS",
+      "evidence": "intrinsic-map-backend-001/results.json",
+      "scope": "CPU/CUDA all output entries on byte-identical input"
+    },
+    "intrinsic_map_exact": {
+      "status": "PASS",
+      "evidence": "intrinsic-map-exact-001.json",
+      "scope": "explicit inverse, determinant, trace and tangent-inverse symbolic identities"
     }
   }
 }

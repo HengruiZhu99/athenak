@@ -156,3 +156,15 @@ increments for operations 11/12. Operation 13 may change ghost primaries. This
 is a timing/invariance regression on non-solution data, not a smooth physical
 boundary or stability test. Run a periodic no-transfer one-step legacy control
 against the collision binary with the already frozen equivalence tolerance.
+
+### Intrinsic geometry and finite-radius map (frozen before compiled test)
+
+Use independent symbolic metric entries and their first/second chart derivatives,
+random non-diagonal determinant-one metrics, trace-free curvature and independent
+chart gradients. Check all compiled geometry/J/H entries and all 50/55 map entries
+at scale-aware absolute error |a-b|/(1+|b|)<=2e-12 for charts in [-0.7,0.7],
+100 seeded states. Include independent Cholesky-based reverse states, nonzero
+GH fields and reduction errors. Require determinant, inverse, curvature and Q
+trace identities <=2e-12 after scaling. Reject explicit non-SPD, non-unit-det,
+traceful A/Q and nonpositive w/rho states; rejected conversion leaves output
+unchanged. Conversion is not restart integration, and no evolution mode is added.

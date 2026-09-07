@@ -228,3 +228,26 @@ preserve fixed entries exactly; their maximum residual error is 1.96e-13.
 This validates only the older periodic access-fix snapshot. Detailed durations
 and hashes are in cuda-transfer-accessfix-001/verified-summary.json and per-run
 results. The rejected launcher attempt remains FAIL in the test ledger.
+
+## Intrinsic geometry checkpoint
+
+The new intrinsic_geometry.hpp and intrinsic_state_map.hpp implement the
+explicit 50-field chart, metric/inverse, curvature, independent Q=J*S, chart
+Jacobian/Hessian and finite-radius 50/55 state conversions. Legacy evolution and
+restart parsing are unchanged; intrinsic_clean_v1 is a named implementation
+foundation, not an enabled evolution mode. Arbitrary off-algebraic legacy states
+are rejected rather than projected. Old L=2*l is tested explicitly.
+
+Exact symbolic checks prove both triangular inverse identities, the metric
+inverse, determinant, curvature/gradient traces, and the five-component tangent
+inverse. CPU and CUDA independently pass 100 nontrivial valid and six invalid
+map cases. Worst normalized errors are 8.14e-16 and 6.36e-16, against the frozen
+2e-12 tolerance. A separate byte-identical-input CPU/CUDA comparison has maximum
+error 4.11e-16. CUDA default device and selected A100 are recorded by Kokkos.
+The isolated CUDA map controller completed with exit 0.
+
+This is geometry and conversion evidence, not the actual complete RHS oracle
+or characteristic qualification. Next implementation work is the complete
+configuration sources and their true chain-rule derivatives, followed by all
+curvature/GH/auxiliary rows and independent point-jet comparison. No new bulk
+evolution may be promoted past unfinished operator and oracle gates.
