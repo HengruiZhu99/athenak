@@ -604,6 +604,16 @@
       "status": "PASS",
       "evidence": "intrinsic-smooth-convergence-001/intrinsic-space-convergence-ko0-001/components.json",
       "scope": "Matched FD6 KO0 control: all component alignment >.99997, order >=5.9659, temporal contamination <=.03324; supports competing KO/FD errors, no qualification of KO.3 arm"
+    },
+    "intrinsic_transfer_target_CPU": {
+      "status": "PASS",
+      "evidence": "intrinsic-transfer-target-001/intrinsic-transfer-target-002/results.json",
+      "scope": "Standalone intrinsic target, 391680 polynomial comparisons on all active/ghost cells; maximum 3.230e-14; no mesh transfer enabled"
+    },
+    "intrinsic_KO_error_vector_prediction": {
+      "status": "PASS",
+      "evidence": "intrinsic-transfer-target-001/intrinsic-KO-vector-001/results.json",
+      "scope": "Fixed order6/order7 rho error prediction: residual .04462, alignment .999935, KO response order6.944; original KO.3 per-field alignment failure remains"
     }
   }
 }

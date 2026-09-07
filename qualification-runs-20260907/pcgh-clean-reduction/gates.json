@@ -595,5 +595,31 @@
     "motivation": "rho per-component difference alignment .751 at KO.3 despite group convergence; test competition with order-seven KO truncation",
     "group_gates": "same frozen spatial group criteria",
     "component_audit": "retain all 50 orders and alignments; require resolved, aligned differences before per-field Richardson claims"
+  },
+  "intrinsic_KO_error_vector_control": {
+    "FD_order": 6,
+    "KO_order": 7,
+    "rho_prediction_relative_residual_max": 0.1,
+    "rho_prediction_alignment_min": 0.99,
+    "rho_KO_response_order_tolerance": 0.3,
+    "prediction": "D_coarse_predicted = 64*D_fine_KO0 + 128*(D_fine_KO03-D_fine_KO0)",
+    "scope": "fixed-coefficient prediction from matched solution differences, not a raw KO RHS budget"
+  },
+  "intrinsic_transfer_target": {
+    "orders": [
+      2,
+      4,
+      6
+    ],
+    "dimensions": [
+      2,
+      3
+    ],
+    "stored_extent": 16,
+    "all_stored_cells": true,
+    "auxiliary_components": 30,
+    "normalized_tolerance": 2e-12,
+    "fixture": "independent polynomial potentials through FD order, linear w/rho and their quadratic composite alpha; guarded reads reject auxiliary or out-of-halo accesses",
+    "scope": "compiled intrinsic available-halo reconstruction target only; no transfer/multilevel task enabled"
   }
 }

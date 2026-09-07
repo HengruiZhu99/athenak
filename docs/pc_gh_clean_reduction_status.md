@@ -528,3 +528,19 @@ and positive control are retained. No physical Einstein-data convergence or
 intrinsic-interface/puncture/binary qualification is claimed. See
 `analysis/pc_gh_clean_reduction/INTRINSIC_SMOOTH_CONVERGENCE.md` for exact scope,
 reproduction commands, timings and the component plot.
+
+## Intrinsic transfer target and quantitative KO diagnosis
+
+An intrinsic available-halo target now reconstructs all 30 p/l/S/B components
+from their actual primary potentials, with the shared composite lapse accessor
+and shared FD/shifted-halo weights. All 391,680 polynomial comparisons pass at
+3.230e-14 maximum normalized error. This helper is not yet connected to mesh
+transfer: legacy residual mappings/buffer counts and the intrinsic multilevel
+guard still require replacement and actual interface tests.
+
+A fixed order-six/order-seven prediction explains the saved rho error vector
+to 4.46%, with alignment 0.999935; the measured KO response has order 6.944.
+This supports competing truncation terms without fitting an exponent. The
+original KO0.3 per-field Richardson limitation remains. See
+`analysis/pc_gh_clean_reduction/INTRINSIC_TRANSFER_TARGET.md` for scope and the
+concrete remaining transfer changes. No physical gate is promoted.
