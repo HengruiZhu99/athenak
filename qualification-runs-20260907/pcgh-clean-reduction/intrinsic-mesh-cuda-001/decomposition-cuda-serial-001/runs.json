@@ -1,0 +1,302 @@
+[
+  {
+    "name": "fd2-2d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd2-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 1.977229118347168,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd2-2d-multi",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd2-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 1.9790852069854736,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd2-2d-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd2-2d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd2-2d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.020277976989746,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd4-2d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd4-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.021693468093872,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd4-2d-multi",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd4-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.227562427520752,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd4-2d-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd4-2d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd4-2d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.0256595611572266,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd6-2d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd6-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.0203890800476074,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd6-2d-multi",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd6-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.0706517696380615,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd6-2d-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd6-2d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd6-2d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 1.9748027324676514,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd2-3d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd2-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.1209542751312256,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd2-3d-multi",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd2-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.3845694065093994,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd2-3d-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd2-3d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd2-3d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.2739806175231934,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd4-3d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd4-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.17478609085083,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd4-3d-multi",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd4-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.372225522994995,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd4-3d-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd4-3d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd4-3d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.3723158836364746,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd6-3d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd6-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.122521162033081,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd6-3d-multi",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd6-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.4218544960021973,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  },
+  {
+    "name": "fd6-3d-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd6-3d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-serial-001/fd6-3d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.2726809978485107,
+    "status": "PASS",
+    "binary_sha256": "b495cb95b552b2d49b502247997d05101b3bf67e9f441242e66b18373e753233"
+  }
+]

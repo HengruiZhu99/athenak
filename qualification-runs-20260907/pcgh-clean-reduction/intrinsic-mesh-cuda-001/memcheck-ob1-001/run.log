@@ -1,0 +1,57 @@
+========= COMPUTE-SANITIZER
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxSetFlags.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxSetFlags [0x34d4d9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_copy_set_ctx_sync_memops [0xd7ec]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_md_open [0x112f6]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_md_open [0x1eb7c]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_add_component_resources [0x2708a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_fill_resources [0x283a0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_init_version [0x2f698]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:component_init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/osc/ucx/osc_ucx_component.c:181 [0xab10]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_osc_ucx.so
+=========     Host Frame:ompi_osc_base_find_available in base/osc_base_frame.c:50 [0xe866a]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:740 [0xf8557]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-ob1-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-ob1-001/../build/src/athena
+========= 
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+
+Setup complete, executing task list(s)...
+
+elapsed=1.119985e-01 cycle=0 time=0.000000e+00 dt=1.000000e-04
+elapsed=3.659384e-01 cycle=1 time=1.000000e-04 dt=1.000000e-04
+elapsed=5.690757e-01 cycle=2 time=2.000000e-04 dt=1.000000e-04
+elapsed=7.603105e-01 cycle=3 time=3.000000e-04 dt=1.000000e-04
+
+Terminating on cycle limit
+time=3.000000e-04 cycle=3
+tlim=3.000000e-04 nlim=3
+
+MeshBlock-cycles = 24
+cpu time used  = 6.483503e-01
+zone-cycles/cpu_second = 2.369090e+03
+particle-updates/cpu_second = 0.000000e+00
+========= ERROR SUMMARY: 1 error

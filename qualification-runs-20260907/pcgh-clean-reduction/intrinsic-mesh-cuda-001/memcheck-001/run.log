@@ -1,0 +1,705 @@
+========= COMPUTE-SANITIZER
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxSetFlags.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxSetFlags [0x34d4d9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_copy_set_ctx_sync_memops [0xd7ec]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_md_open [0x112f6]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_md_open [0x1eb7c]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_add_component_resources [0x2708a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_fill_resources [0x283a0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_init_version [0x2f698]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:mca_pml_ucx_open in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx.c:2095 [0x46f8]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:mca_pml_ucx_component_open in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx_component.c:108 [0xaa8a]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:mca_base_framework_components_open in /builddir/build/BUILD/openmpi-4.1.6/opal/mca/base/mca_base_components_open.c:125 [0x68318]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libopen-pal.so.40
+=========     Host Frame:mca_pml_base_open in base/pml_base_frame.c:183 [0xea03e]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:mca_base_framework_open in /builddir/build/BUILD/openmpi-4.1.6/opal/mca/base/mca_base_framework.c:176 [0x74d03]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libopen-pal.so.40
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:617 [0xf8388]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxSetFlags.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxSetFlags [0x34d4d9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_copy_set_ctx_sync_memops [0xd7ec]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_md_open [0x112f6]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_md_open [0x1eb7c]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_add_component_resources [0x2708a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_fill_resources [0x283a0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_init_version [0x2f698]
+=========                in /lib64/libucp.so.0
+=========     Host Frame: [0xab10]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_osc_ucx.so
+=========     Host Frame:ompi_osc_base_find_available in base/osc_base_frame.c:50 [0xe866a]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:740 [0xf8557]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxGetDevice.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxGetDevice [0x34d3e9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_ctx_primary_push_avail [0x10657]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_mem_alloc [0x109c4]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_mem_alloc [0x19aa4]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_mem_do_alloc [0x3e936]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_mm_get_alloc_md_index [0x464c0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_get_mtype_probe.lto_priv.0 [0x77833]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rts_probe [0x72b6d]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_short_init [0x5b331]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_set_cfg_index [0x43cee]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_wireup_init_lanes [0xb26b2]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_to_worker_addr [0x39362]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_api_to_worker_addr [0x3a60a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create [0x3ab67]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:mca_pml_ucx_add_procs in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx.c:421 [0x52e2]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:854 [0xf8750]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxGetDevice.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxGetDevice [0x34d3e9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_ctx_primary_push_avail [0x10657]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_mem_alloc [0x109c4]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_mem_alloc [0x19aa4]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_mem_do_alloc [0x3e936]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_mm_get_alloc_md_index [0x464c0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_get_mtype_probe.lto_priv.0 [0x77833]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rtr_probe.lto_priv.0 [0x7e6b1]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rts_probe [0x72b6d]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_short_init [0x5b331]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_set_cfg_index [0x43cee]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_wireup_init_lanes [0xb26b2]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_to_worker_addr [0x39362]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_api_to_worker_addr [0x3a60a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create [0x3ab67]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:mca_pml_ucx_add_procs in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx.c:421 [0x52e2]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:854 [0xf8750]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxGetDevice.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxGetDevice [0x34d3e9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_ctx_primary_push_avail [0x10657]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_mem_alloc [0x109c4]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_mem_alloc [0x19aa4]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_mem_do_alloc [0x3e936]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_mm_get_alloc_md_index [0x464c0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_get_mtype_probe.lto_priv.0 [0x77833]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ppln_probe.lto_priv.0 [0x77b13]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rtr_probe.lto_priv.0 [0x7e6b1]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rts_probe [0x72b6d]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_short_init [0x5b331]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_set_cfg_index [0x43cee]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_wireup_init_lanes [0xb26b2]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_to_worker_addr [0x39362]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_api_to_worker_addr [0x3a60a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create [0x3ab67]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:mca_pml_ucx_add_procs in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx.c:421 [0x52e2]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:854 [0xf8750]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxGetDevice.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxGetDevice [0x34d3e9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_ctx_primary_push_avail [0x10657]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_mem_alloc [0x109c4]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_mem_alloc [0x19aa4]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_mem_do_alloc [0x3e936]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_mm_get_alloc_md_index [0x464c0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rtr_mtype_probe.lto_priv.0 [0x7fabe]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rts_probe [0x72b6d]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_short_init [0x5b331]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_set_cfg_index [0x43cee]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_wireup_init_lanes [0xb26b2]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_to_worker_addr [0x39362]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_api_to_worker_addr [0x3a60a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create [0x3ab67]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:mca_pml_ucx_add_procs in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx.c:421 [0x52e2]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:854 [0xf8750]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxGetDevice.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxGetDevice [0x34d3e9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_ctx_primary_push_avail [0x10657]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_mem_alloc [0x109c4]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_mem_alloc [0x19aa4]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_mem_do_alloc [0x3e936]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_mm_get_alloc_md_index [0x464c0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_get_mtype_probe.lto_priv.0 [0x77833]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ppln_probe.lto_priv.0 [0x77b13]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rts_probe [0x72b6d]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_short_init [0x5b331]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_set_cfg_index [0x43cee]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_wireup_init_lanes [0xb26b2]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_to_worker_addr [0x39362]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_api_to_worker_addr [0x3a60a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create [0x3ab67]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:mca_pml_ucx_add_procs in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx.c:421 [0x52e2]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:854 [0xf8750]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxGetDevice.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxGetDevice [0x34d3e9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_ctx_primary_push_avail [0x10657]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_mem_alloc [0x109c4]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_mem_alloc [0x19aa4]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_mem_do_alloc [0x3e936]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_mm_get_alloc_md_index [0x464c0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rtr_mtype_probe.lto_priv.0 [0x7fabe]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ppln_probe.lto_priv.0 [0x77b13]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rts_probe [0x72b6d]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_short_init [0x5b331]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_set_cfg_index [0x43cee]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_wireup_init_lanes [0xb26b2]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_to_worker_addr [0x39362]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_api_to_worker_addr [0x3a60a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create [0x3ab67]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:mca_pml_ucx_add_procs in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx.c:421 [0x52e2]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:854 [0xf8750]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxGetDevice.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxGetDevice [0x34d3e9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_ctx_primary_push_avail [0x10657]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_mem_alloc [0x109c4]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_mem_alloc [0x19aa4]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_mem_do_alloc [0x3e936]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_mm_get_alloc_md_index [0x464c0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_get_mtype_probe.lto_priv.0 [0x77833]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rts_probe [0x72b6d]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_short_init [0x5b331]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_set_cfg_index [0x43cee]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_wireup_init_lanes [0xb26b2]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_to_worker_addr [0x39362]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_api_to_worker_addr [0x3a60a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create [0x3ab67]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:mca_pml_ucx_add_procs in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx.c:421 [0x52e2]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:854 [0xf8750]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxGetDevice.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxGetDevice [0x34d3e9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_ctx_primary_push_avail [0x10657]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_mem_alloc [0x109c4]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_mem_alloc [0x19aa4]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_mem_do_alloc [0x3e936]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_mm_get_alloc_md_index [0x464c0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_get_mtype_probe.lto_priv.0 [0x77833]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rtr_probe.lto_priv.0 [0x7e6b1]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rts_probe [0x72b6d]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_short_init [0x5b331]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_set_cfg_index [0x43cee]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_wireup_init_lanes [0xb26b2]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_to_worker_addr [0x39362]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_api_to_worker_addr [0x3a60a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create [0x3ab67]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:mca_pml_ucx_add_procs in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx.c:421 [0x52e2]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:854 [0xf8750]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+========= Program hit CUDA_ERROR_INVALID_CONTEXT (error 201) due to "invalid device context" on CUDA API call to cuCtxGetDevice.
+=========     Saved host backtrace up to driver entry point at error
+=========     Host Frame:cuCtxGetDevice [0x34d3e9]
+=========                in /usr/lib64/libcuda.so.1
+=========     Host Frame:uct_cuda_ctx_primary_push_avail [0x10657]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_cuda_copy_mem_alloc [0x109c4]
+=========                in /lib64/ucx/libuct_cuda.so.0
+=========     Host Frame:uct_mem_alloc [0x19aa4]
+=========                in /lib64/libuct.so.0
+=========     Host Frame:ucp_mem_do_alloc [0x3e936]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_mm_get_alloc_md_index [0x464c0]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rtr_mtype_probe.lto_priv.0 [0x7fabe]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_select_remote_proto [0x72127]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_ctrl_probe [0x727d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_rndv_rts_probe [0x72b6d]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_init_protocols.lto_priv.0 [0x5a687]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_elem_init.isra.0 [0xbbca5]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_lookup_slow [0x5a8d3]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_proto_select_short_init [0x5b331]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_set_cfg_index [0x43cee]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_wireup_init_lanes [0xb26b2]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_to_worker_addr [0x39362]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create_api_to_worker_addr [0x3a60a]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:ucp_ep_create [0x3ab67]
+=========                in /lib64/libucp.so.0
+=========     Host Frame:mca_pml_ucx_add_procs in /builddir/build/BUILD/openmpi-4.1.6/ompi/mca/pml/ucx/pml_ucx.c:421 [0x52e2]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/openmpi/mca_pml_ucx.so
+=========     Host Frame:ompi_mpi_init in runtime/ompi_mpi_init.c:854 [0xf8750]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:MPI_Init in /builddir/build/BUILD/openmpi-4.1.6/ompi/mpi/c/profile/pinit.c:0 [0x80f68]
+=========                in /usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/lib64/libmpi.so.40
+=========     Host Frame:main [0x7d8d4]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+=========     Host Frame:__libc_start_call_main [0x2a60f]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:__libc_start_main [0x2a6bf]
+=========                in /usr/lib64/libc.so.6
+=========     Host Frame:_start [0xa6c14]
+=========                in /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/memcheck-001/../build/src/athena
+========= 
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+
+Setup complete, executing task list(s)...
+
+elapsed=1.204891e-01 cycle=0 time=0.000000e+00 dt=1.000000e-04
+elapsed=3.655245e-01 cycle=1 time=1.000000e-04 dt=1.000000e-04
+elapsed=5.740048e-01 cycle=2 time=2.000000e-04 dt=1.000000e-04
+elapsed=7.677285e-01 cycle=3 time=3.000000e-04 dt=1.000000e-04
+
+Terminating on cycle limit
+time=3.000000e-04 cycle=3
+tlim=3.000000e-04 nlim=3
+
+MeshBlock-cycles = 24
+cpu time used  = 6.472647e-01
+zone-cycles/cpu_second = 2.373063e+03
+particle-updates/cpu_second = 0.000000e+00
+========= ERROR SUMMARY: 11 errors

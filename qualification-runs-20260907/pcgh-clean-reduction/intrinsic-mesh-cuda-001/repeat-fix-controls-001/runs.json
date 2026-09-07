@@ -1,0 +1,173 @@
+[
+  {
+    "name": "project_gauge_constraints",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/project_gauge_constraints/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "both projections off",
+    "status": "PASS",
+    "wall_seconds": 1.9196925163269043
+  },
+  {
+    "name": "project_reduction_constraints",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/project_reduction_constraints/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "both projections off",
+    "status": "PASS",
+    "wall_seconds": 1.8799388408660889
+  },
+  {
+    "name": "unsupported-tracker-metadata",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/unsupported-tracker-metadata/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "tracker restart state is not supported",
+    "status": "PASS",
+    "wall_seconds": 1.9191679954528809
+  },
+  {
+    "name": "outflow",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/outflow/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "uniform periodic boundaries",
+    "status": "PASS",
+    "wall_seconds": 1.8777422904968262
+  },
+  {
+    "name": "legacy-pgen",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/legacy-pgen/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "initial data must be",
+    "status": "PASS",
+    "wall_seconds": 1.8686683177947998
+  },
+  {
+    "name": "legacy-option",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/legacy-option/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "unsupported option gauge",
+    "status": "PASS",
+    "wall_seconds": 1.8278613090515137
+  },
+  {
+    "name": "negative-ko",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/negative-ko/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "rates must be finite",
+    "status": "PASS",
+    "wall_seconds": 1.9185385704040527
+  },
+  {
+    "name": "unknown-rate",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/unknown-rate/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "reduction_profile must be",
+    "status": "PASS",
+    "wall_seconds": 1.8798027038574219
+  },
+  {
+    "name": "rk4",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/rk4/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "requires rk3",
+    "status": "PASS",
+    "wall_seconds": 1.8250017166137695
+  },
+  {
+    "name": "history",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/history/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "history diagnostics are not integrated",
+    "status": "PASS",
+    "wall_seconds": 1.875922679901123
+  },
+  {
+    "name": "legacy-constraints",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/legacy-constraints/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "only complete intrinsic state",
+    "status": "PASS",
+    "wall_seconds": 1.8689358234405518
+  },
+  {
+    "name": "invalid-state",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/invalid-state/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "invalid state/RHS or hyperbolicity domain",
+    "status": "PASS",
+    "wall_seconds": 1.8767523765563965
+  },
+  {
+    "name": "restart-to-legacy",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/restart-to-legacy/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/oracle-cuda-repeat-fix-001/fd6-2d/rst/legacy_equivalence.00001.rst",
+      "pc_gh/formulation=legacy"
+    ],
+    "returncode": 1,
+    "expected_message": "incompatible PC-GH restart",
+    "status": "PASS",
+    "wall_seconds": 1.9186615943908691
+  },
+  {
+    "name": "state-output",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/repeat-fix-controls-001/state-output/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 1.9770207405090332
+  }
+]

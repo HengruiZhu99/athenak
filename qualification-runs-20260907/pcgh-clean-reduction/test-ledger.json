@@ -511,9 +511,9 @@
       "scope": "Independent H and M analytic FD convergence; auxiliary/GH independence and all 30 reductions/curls; global-periodic offline operator"
     },
     "intrinsic_mesh_CUDA_integration": {
-      "status": "NOT_RUN",
-      "evidence": "intrinsic-decomposition-001/cuda-pending/controller-status-002.txt",
-      "scope": "Isolated CUDA build and waiting test controller live; no GPU result yet"
+      "status": "PASS",
+      "evidence": "intrinsic-mesh-cuda-001",
+      "scope": "Actual FD2/4/6 2D/3D nonlinear mesh oracle, 50-field seeded serial/two-rank decomposition, repeated/rank-changing restarts and 14 controls; one GPU"
     },
     "intrinsic_repeat_restart_before_fix": {
       "status": "FAIL",
@@ -529,6 +529,26 @@
       "status": "PASS",
       "evidence": "intrinsic-decomposition-001/intrinsic-repeat-restart-controls-002/results.json",
       "scope": "14 controls including rejection of true tracker metadata; false marker continuation is covered by the asymmetric suite"
+    },
+    "intrinsic_mesh_CPU_CUDA_states": {
+      "status": "PASS",
+      "evidence": "intrinsic-mesh-cuda-001/backend-comparison.json",
+      "scope": "24 float64 seeded snapshots, all fields and ghosts; maximum normalized difference 3.330396224302806e-16"
+    },
+    "intrinsic_mesh_memcheck_UCX": {
+      "status": "FAIL",
+      "evidence": "intrinsic-mesh-cuda-001/memcheck-001/run.log",
+      "scope": "11 CUDA context API errors in UCX during MPI initialization; evolution completed; ob1-only control retains one OSC UCX error"
+    },
+    "intrinsic_mesh_memcheck_ob1_pt2pt": {
+      "status": "PASS",
+      "evidence": "intrinsic-mesh-cuda-001/memcheck-ob1-pt2pt-001/run.log",
+      "scope": "Same 3D FD6 seeded binary/input/restart, single rank with ob1/self,vader,tcp and OSC pt2pt; zero errors; no multi-rank sanitizer claim"
+    },
+    "intrinsic_compiled_snapshot_injection": {
+      "status": "PASS",
+      "evidence": "intrinsic-injection-001/results.json",
+      "scope": "Smooth 2D global-periodic semidiscrete reduction/curl law defect converges at FD2/4/6 with KO0/.3; nonlinear lapse tangent and variable lambda; not a raw stage budget"
     }
   }
 }

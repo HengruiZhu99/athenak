@@ -407,5 +407,31 @@
     "expected_min_order": "FD order - 0.6",
     "algebra_tolerance": 2e-12,
     "scope": "primary conformal physical H/M on curved conformal volume-preserving shear, independent of all auxiliary/GH fields; all 30 discrete reductions and curls"
+  },
+  "intrinsic_compiled_snapshot_injection": {
+    "orders": [
+      2,
+      4,
+      6
+    ],
+    "N": [
+      16,
+      32,
+      64
+    ],
+    "KO": [
+      0,
+      0.3
+    ],
+    "amplitude": 0.02,
+    "background_w_rho": [
+      0.6,
+      1.4
+    ],
+    "rate": "alpha",
+    "eta": 2,
+    "kappa": 1,
+    "minimum_order": "FD order - 1",
+    "scope": "global periodic independent FD assembly plus compiled PointRHS; no raw mesh stage budget; nonlinear lapse tangent and d(lambda) wedge E retained"
   }
 }

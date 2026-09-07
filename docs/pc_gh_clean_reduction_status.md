@@ -431,3 +431,24 @@ All six asymmetric two-rank comparisons, including ghosts and subsequent
 rank-changing restarts, are now bitwise equal to serial. The original failure is
 preserved. The running CUDA snapshot predates this parser-only correction and
 needs its follow-up check before any latest-code GPU claim.
+
+
+## CUDA and injection evidence checkpoint
+
+The pending CUDA statements above are historical: both controllers have now
+completed successfully, including the parser correction. Six nonlinear mesh
+oracle cases pass at 1.111e-16; seeded serial/two-rank decomposition and repeated
+rank-changing restart are bitwise equal. CPU/CUDA all-field/all-ghost comparisons
+pass at 3.331e-16. Default UCX memcheck remains a recorded failure from CUDA
+context API calls during MPI initialization; single-rank ob1 + pt2pt passes with
+zero errors on the same evolution binary/input/restart.
+
+The independent periodic FD/KO assembly around compiled PointRHS measures nonzero
+reduction/curl injection converging at the expected FD2/4/6 rates, including the
+nonlinear lapse tangent and variable-lambda curl term. It is a smooth snapshot
+check, not a production stage budget or an Einstein evolution qualification.
+See `analysis/pc_gh_clean_reduction/INTRINSIC_CUDA_INJECTION.md` and evidence
+`intrinsic-mesh-cuda-001/`, `intrinsic-injection-001/`. No production equation or
+operator changed in this checkpoint. Production diagnostics and signed stage
+budgets are the next implementation priority; intrinsic refinement and all
+physical convergence/puncture/binary promotion gates remain open.

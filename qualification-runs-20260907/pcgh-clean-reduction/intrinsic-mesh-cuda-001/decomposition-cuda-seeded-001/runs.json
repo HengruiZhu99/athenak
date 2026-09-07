@@ -1,0 +1,680 @@
+[
+  {
+    "name": "fd2-2d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.028442621231079,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-2d-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.471447229385376,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-2d-seeded-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-2d-seeded-single/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-2d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.163860321044922,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-2d-seeded-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-2d-seeded-multi/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-2d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.434023380279541,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-2d-resume",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-2d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.474938154220581,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-2d-serial-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-2d-serial-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.019937515258789,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-2d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.0318639278411865,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-2d-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.9252424240112305,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-2d-seeded-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-2d-seeded-single/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-2d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.0233583450317383,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-2d-seeded-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-2d-seeded-multi/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-2d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.723806619644165,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-2d-resume",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-2d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.4770333766937256,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-2d-serial-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-2d-serial-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.0205674171447754,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-2d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.0256283283233643,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-2d-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.5255913734436035,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-2d-seeded-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-2d-seeded-single/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-2d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 1.9771957397460938,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-2d-seeded-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-2d-seeded-multi/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-2d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.576753854751587,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-2d-resume",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-2d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.471449375152588,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-2d-serial-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-2d-serial-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.0226151943206787,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-3d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.122366189956665,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-3d-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.872448205947876,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-3d-seeded-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-3d-seeded-single/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-3d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.1213529109954834,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-3d-seeded-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-3d-seeded-multi/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-3d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.872790813446045,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-3d-resume",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-3d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.7733800411224365,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd2-3d-serial-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-3d-serial-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd2-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.4726436138153076,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-3d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.1706433296203613,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-3d-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.776718854904175,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-3d-seeded-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-3d-seeded-single/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-3d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.321796417236328,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-3d-seeded-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-3d-seeded-multi/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-3d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.8237967491149902,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-3d-resume",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-3d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.883540630340576,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd4-3d-serial-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-3d-serial-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd4-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.9315085411071777,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-3d-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.1716206073760986,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-3d-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.874614953994751,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-3d-seeded-single",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-seeded-single/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.121372938156128,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-3d-seeded-multi",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-seeded-multi/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 3.661710500717163,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-3d-resume",
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 2.7737011909484863,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  },
+  {
+    "name": "fd6-3d-serial-resume",
+    "command": [
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-serial-resume/used.athinput",
+      "-r",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/decomposition-cuda-seeded-001/fd6-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 2.376373291015625,
+    "status": "PASS",
+    "binary_sha256": "f68e44a6a6c8df449dc3bcb194fc672fd807c1a02089b5e0ddfc20d42b1e5aa1"
+  }
+]
