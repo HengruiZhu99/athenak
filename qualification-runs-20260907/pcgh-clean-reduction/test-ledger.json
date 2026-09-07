@@ -236,8 +236,49 @@
       "reason": "NVCC extended lambda enclosing member must be public; no GPU tests ran."
     },
     "cuda_transfer_accessfix": {
-      "status": "NOT_RUN",
-      "scope": "Repaired build active; source 40e0bc1f plus access-only patch, excludes newer boundary changes."
+      "status": "PASS",
+      "evidence": "cuda-transfer-accessfix-001/cuda-1rank-smr-002/results.json",
+      "scope": "CUDA single rank periodic uniform/refined all six cases each, 40e0bc1f access-only patch"
+    },
+    "boundary-task-step-001": {
+      "status": "FAIL",
+      "evidence": "boundary-task-step-001/results.json",
+      "scope": "2D SIGBUS; 3D passes"
+    },
+    "boundary-task-no-transfer-failure-001": {
+      "status": "FAIL",
+      "evidence": "boundary-task-no-transfer-failure-001/results.json",
+      "scope": "Same 2D outflow SIGBUS without coherent transfer"
+    },
+    "boundary-task-step-002": {
+      "status": "PASS",
+      "evidence": "boundary-task-step-002/results.json",
+      "scope": "Four one-step timing/invariance checks after inactive derivative guard; 3D active output unchanged"
+    },
+    "boundary-default-legacy-step-001": {
+      "status": "PASS",
+      "evidence": "boundary-default-legacy-step-001/results.json",
+      "scope": "All FD2/4/6 2D/3D periodic no-transfer one-step states match collision source exactly before inactive guard"
+    },
+    "boundary_task_bounds": {
+      "status": "PASS",
+      "evidence": "boundary-task-bounds-step-001/results.json",
+      "scope": "One process MPI build with Kokkos bounds checks, four boundary step cases"
+    },
+    "verified_launcher_negative": {
+      "status": "PASS",
+      "evidence": "verified-launcher-negative-001/results.json",
+      "scope": "Driver rejects two serial copies launched as two ranks; expected FAIL rows and exit 1"
+    },
+    "cuda_transfer_wrong_launcher": {
+      "status": "FAIL",
+      "evidence": "cuda-transfer-accessfix-001/cuda-2rank-smr-002/fd6-3d/run.log",
+      "scope": "Anaconda MPICH launcher started independent singleton OpenMPI programs; raw harness PASS invalidated; shared output files not reliable MPI evidence"
+    },
+    "cuda_transfer_verified_MPI": {
+      "status": "PASS",
+      "evidence": "cuda-transfer-accessfix-001/verified-summary.json",
+      "scope": "40e0bc1f access-only snapshot, periodic constant residual all orders/dimensions uniform/refined, runtime-verified OpenMPI two ranks on one A100; excludes newer boundary code"
     }
   }
 }

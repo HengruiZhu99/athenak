@@ -29,3 +29,12 @@ Operation 13 records the opt-in physical boundary completion after prolongation.
 It can change ghost primaries and auxiliaries; active entries remain fixed. The
 following 11/12 bracket is the auxiliary-only residual correction. Neither
 bracket currently asserts ghost-valid flags or records coarse buffers.
+
+The actual one-step physical-boundary task check initially crashed in 2D even
+with coherent transfer disabled. The inherited Sommerfeld helper differentiated
+the inactive third direction with no halo. An explicit inactive-axis guard now
+makes all four outflow/mixed 2D/3D tests pass, including a Kokkos bounds-enabled
+build. The 3D final active CSVs are byte-identical before/after this guard.
+Operations 11, 12, 13 occur at the frozen stages and satisfy exact signed
+increment and active/primary invariance checks. These are arbitrary non-solution
+one-step fixtures, not physical boundary convergence or stability evidence.

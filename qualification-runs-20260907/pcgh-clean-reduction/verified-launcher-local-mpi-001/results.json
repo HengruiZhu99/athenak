@@ -1,0 +1,74 @@
+[
+  {
+    "order": 6,
+    "dimension": 2,
+    "smr": true,
+    "ranks": 2,
+    "profile": "constant",
+    "boundary": "periodic",
+    "extrap_order": 2,
+    "block_n": 8,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-mpi-c8bc1a37",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/verified-launcher-local-mpi-001/fd6-2d/used_input.athinput"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.448040246963501,
+    "binary_sha256": "bdd14f8db7868c92f92aee64d416cb2b8175e5895dae45971d1e5f83a5451427",
+    "input_sha256": "3859ceeeabb9a513828f7a51e15a59e2d01047121eaa475f19ee42fd95e2c0e9",
+    "reported_ranks": [
+      2
+    ],
+    "rank_files": [
+      "transfer-mesh-rank0.jsonl",
+      "transfer-mesh-rank1.jsonl"
+    ],
+    "runtime_status": "PASS",
+    "max_fixed_change": 0,
+    "max_residual_error": 1.8324231021438209e-13,
+    "blocks": 7,
+    "reflection_error": 0,
+    "invariance_status": "PASS",
+    "status": "PASS"
+  },
+  {
+    "order": 6,
+    "dimension": 3,
+    "smr": true,
+    "ranks": 2,
+    "profile": "constant",
+    "boundary": "periodic",
+    "extrap_order": 2,
+    "block_n": 8,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-mpi-c8bc1a37",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/verified-launcher-local-mpi-001/fd6-3d/used_input.athinput"
+    ],
+    "returncode": 0,
+    "wall_seconds": 4.170903921127319,
+    "binary_sha256": "bdd14f8db7868c92f92aee64d416cb2b8175e5895dae45971d1e5f83a5451427",
+    "input_sha256": "936e13c83aad1bd4e5e5b7d8b38c91b3ae0e71340509d7e96f97c788c3d8913f",
+    "reported_ranks": [
+      2
+    ],
+    "rank_files": [
+      "transfer-mesh-rank0.jsonl",
+      "transfer-mesh-rank1.jsonl"
+    ],
+    "runtime_status": "PASS",
+    "max_fixed_change": 0,
+    "max_residual_error": 2.2393198406689407e-13,
+    "blocks": 15,
+    "reflection_error": 0,
+    "invariance_status": "PASS",
+    "status": "PASS"
+  }
+]

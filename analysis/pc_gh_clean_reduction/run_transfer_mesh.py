@@ -3,8 +3,10 @@
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 import subprocess
+import sys
 import time
 from run_legacy_equivalence import input_text
 
@@ -13,6 +15,7 @@ parser.add_argument('--binary', type=Path, required=True)
 parser.add_argument('--output', type=Path, required=True)
 parser.add_argument('--smr', action='store_true')
 parser.add_argument('--ranks', type=int, default=1)
+parser.add_argument('--mpiexec', default='mpiexec')
 parser.add_argument('--block-n', type=int, default=8)
 parser.add_argument('--orders', type=int, nargs='+', default=[2, 4, 6])
 parser.add_argument('--profile', choices=['constant', 'smooth','boundary_linear'], default='constant')
@@ -55,7 +58,7 @@ level = 1
         used.write_text(content)
         command = [str(args.binary.resolve()), '-i', str(used.resolve())]
         if args.ranks > 1:
-            command = ['mpiexec', '-n', str(args.ranks)]+command
+            command = [args.mpiexec, '-n', str(args.ranks)]+command
         start = time.time()
         with (folder/'run.log').open('w') as log:
             run = subprocess.run(command, cwd=folder, stdout=log,
@@ -64,7 +67,16 @@ level = 1
                    returncode=run.returncode, wall_seconds=time.time()-start,
                    binary_sha256=hashlib.sha256(args.binary.read_bytes()).hexdigest(),
                    input_sha256=hashlib.sha256(used.read_bytes()).hexdigest())
-        if run.returncode == 0:
+        reported_ranks = [int(n) for n in re.findall(
+            r'Number of parallel ranks = (\d+)', (folder/'run.log').read_text())]
+        rank_files = sorted(folder.glob('transfer-mesh-rank*.jsonl'))
+        row['reported_ranks'] = reported_ranks
+        row['rank_files'] = [f.name for f in rank_files]
+        runtime_valid = (reported_ranks == [args.ranks]
+                         and {f.name for f in rank_files} == {
+                             f'transfer-mesh-rank{r}.jsonl' for r in range(args.ranks)})
+        row['runtime_status'] = 'PASS' if runtime_valid else 'FAIL'
+        if run.returncode == 0 and runtime_valid:
             records = [json.loads(line) for file in folder.glob('transfer-mesh-rank*.jsonl')
                        for line in file.read_text().splitlines()]
             assert records
@@ -81,3 +93,5 @@ level = 1
         results.append(row)
         print(json.dumps(row), flush=True)
         (args.output/'results.json').write_text(json.dumps(results, indent=2)+'\n')
+
+sys.exit(1 if any(row["status"] == "FAIL" for row in results) else 0)

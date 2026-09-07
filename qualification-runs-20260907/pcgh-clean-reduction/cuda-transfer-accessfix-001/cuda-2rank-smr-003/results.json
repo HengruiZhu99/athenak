@@ -1,0 +1,218 @@
+[
+  {
+    "order": 2,
+    "dimension": 2,
+    "smr": true,
+    "ranks": 2,
+    "profile": "constant",
+    "boundary": "periodic",
+    "extrap_order": 2,
+    "block_n": 8,
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/cuda-2rank-smr-003/fd2-2d/used_input.athinput"
+    ],
+    "returncode": 0,
+    "wall_seconds": 2.4738237857818604,
+    "binary_sha256": "ece1a6777213fcc331677008708e4e5f5095cb409b8a4d55ffd0bdc346f231a1",
+    "input_sha256": "68b4ee6ae64114c00832a8ca071cde2877b0a9d9857ab0f041ffd9ddf21d4e17",
+    "reported_ranks": [
+      2
+    ],
+    "rank_files": [
+      "transfer-mesh-rank0.jsonl",
+      "transfer-mesh-rank1.jsonl"
+    ],
+    "runtime_status": "PASS",
+    "max_fixed_change": 0,
+    "max_residual_error": 3.184258412503027e-14,
+    "blocks": 7,
+    "reflection_error": 0,
+    "invariance_status": "PASS",
+    "status": "PASS"
+  },
+  {
+    "order": 2,
+    "dimension": 3,
+    "smr": true,
+    "ranks": 2,
+    "profile": "constant",
+    "boundary": "periodic",
+    "extrap_order": 2,
+    "block_n": 8,
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/cuda-2rank-smr-003/fd2-3d/used_input.athinput"
+    ],
+    "returncode": 0,
+    "wall_seconds": 3.074871063232422,
+    "binary_sha256": "ece1a6777213fcc331677008708e4e5f5095cb409b8a4d55ffd0bdc346f231a1",
+    "input_sha256": "6f21ea11ab8a5f95e19783eba584cf4f79ae4c251418b2ab04ccf9f74f9bfb03",
+    "reported_ranks": [
+      2
+    ],
+    "rank_files": [
+      "transfer-mesh-rank0.jsonl",
+      "transfer-mesh-rank1.jsonl"
+    ],
+    "runtime_status": "PASS",
+    "max_fixed_change": 0,
+    "max_residual_error": 4.1341929879479267e-14,
+    "blocks": 15,
+    "reflection_error": 0,
+    "invariance_status": "PASS",
+    "status": "PASS"
+  },
+  {
+    "order": 4,
+    "dimension": 2,
+    "smr": true,
+    "ranks": 2,
+    "profile": "constant",
+    "boundary": "periodic",
+    "extrap_order": 2,
+    "block_n": 8,
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/cuda-2rank-smr-003/fd4-2d/used_input.athinput"
+    ],
+    "returncode": 0,
+    "wall_seconds": 2.5746560096740723,
+    "binary_sha256": "ece1a6777213fcc331677008708e4e5f5095cb409b8a4d55ffd0bdc346f231a1",
+    "input_sha256": "4783abd331254db42b1f977363102c55daf4fb8e515e388eb79217fbcc895210",
+    "reported_ranks": [
+      2
+    ],
+    "rank_files": [
+      "transfer-mesh-rank0.jsonl",
+      "transfer-mesh-rank1.jsonl"
+    ],
+    "runtime_status": "PASS",
+    "max_fixed_change": 0,
+    "max_residual_error": 9.759901220540712e-14,
+    "blocks": 7,
+    "reflection_error": 0,
+    "invariance_status": "PASS",
+    "status": "PASS"
+  },
+  {
+    "order": 4,
+    "dimension": 3,
+    "smr": true,
+    "ranks": 2,
+    "profile": "constant",
+    "boundary": "periodic",
+    "extrap_order": 2,
+    "block_n": 8,
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/cuda-2rank-smr-003/fd4-3d/used_input.athinput"
+    ],
+    "returncode": 0,
+    "wall_seconds": 3.0755655765533447,
+    "binary_sha256": "ece1a6777213fcc331677008708e4e5f5095cb409b8a4d55ffd0bdc346f231a1",
+    "input_sha256": "5d193be5b77e3d924544db86b49cf047487bb05a04d716499c0e46adbc61a8be",
+    "reported_ranks": [
+      2
+    ],
+    "rank_files": [
+      "transfer-mesh-rank0.jsonl",
+      "transfer-mesh-rank1.jsonl"
+    ],
+    "runtime_status": "PASS",
+    "max_fixed_change": 0,
+    "max_residual_error": 9.634654185575187e-14,
+    "blocks": 15,
+    "reflection_error": 0,
+    "invariance_status": "PASS",
+    "status": "PASS"
+  },
+  {
+    "order": 6,
+    "dimension": 2,
+    "smr": true,
+    "ranks": 2,
+    "profile": "constant",
+    "boundary": "periodic",
+    "extrap_order": 2,
+    "block_n": 8,
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/cuda-2rank-smr-003/fd6-2d/used_input.athinput"
+    ],
+    "returncode": 0,
+    "wall_seconds": 2.674875020980835,
+    "binary_sha256": "ece1a6777213fcc331677008708e4e5f5095cb409b8a4d55ffd0bdc346f231a1",
+    "input_sha256": "3859ceeeabb9a513828f7a51e15a59e2d01047121eaa475f19ee42fd95e2c0e9",
+    "reported_ranks": [
+      2
+    ],
+    "rank_files": [
+      "transfer-mesh-rank0.jsonl",
+      "transfer-mesh-rank1.jsonl"
+    ],
+    "runtime_status": "PASS",
+    "max_fixed_change": 0,
+    "max_residual_error": 1.4833273498382482e-13,
+    "blocks": 7,
+    "reflection_error": 0,
+    "invariance_status": "PASS",
+    "status": "PASS"
+  },
+  {
+    "order": 6,
+    "dimension": 3,
+    "smr": true,
+    "ranks": 2,
+    "profile": "constant",
+    "boundary": "periodic",
+    "extrap_order": 2,
+    "block_n": 8,
+    "command": [
+      "/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/bin/mpiexec",
+      "-n",
+      "2",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/src/athena",
+      "-i",
+      "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/cuda-2rank-smr-003/fd6-3d/used_input.athinput"
+    ],
+    "returncode": 0,
+    "wall_seconds": 3.222501277923584,
+    "binary_sha256": "ece1a6777213fcc331677008708e4e5f5095cb409b8a4d55ffd0bdc346f231a1",
+    "input_sha256": "936e13c83aad1bd4e5e5b7d8b38c91b3ae0e71340509d7e96f97c788c3d8913f",
+    "reported_ranks": [
+      2
+    ],
+    "rank_files": [
+      "transfer-mesh-rank0.jsonl",
+      "transfer-mesh-rank1.jsonl"
+    ],
+    "runtime_status": "PASS",
+    "max_fixed_change": 0,
+    "max_residual_error": 1.9519802441081424e-13,
+    "blocks": 15,
+    "reflection_error": 0,
+    "invariance_status": "PASS",
+    "status": "PASS"
+  }
+]

@@ -205,3 +205,26 @@ recorded access patch, not this newer boundary implementation. GPU transfer test
 remain NOT_RUN until actual results are collected. Full Gate 1 and all physical
 gates remain unpassed; dynamic regrid/restart, complete causal budgets and coupled
 amplification still require work. The intrinsic 50-field kernel is not yet present.
+
+The actual one-step physical-boundary task check initially crashed in 2D even
+with coherent transfer disabled. The inherited Sommerfeld helper differentiated
+the inactive third direction with no halo. An explicit inactive-axis guard now
+makes all four outflow/mixed 2D/3D tests pass, including a Kokkos bounds-enabled
+build. The 3D final active CSVs are byte-identical before/after this guard.
+Operations 11, 12, 13 occur at the frozen stages and satisfy exact signed
+increment and active/primary invariance checks. These are arbitrary non-solution
+one-step fixtures, not physical boundary convergence or stability evidence.
+
+CUDA access-only build completed successfully. Single-rank periodic uniform and
+refined FD2/4/6 2D/3D tests pass. The first attempted two-rank run is invalidated:
+Anaconda MPICH mpiexec launched singleton OpenMPI copies. The harness now checks
+the reported runtime rank count and exact rank-file set, accepts an explicit
+launcher, and rejects this negative control. Local MPI logs confirm true two-rank
+execution. The corrected remote rerun uses CMake's recorded OpenMPI launcher.
+
+The corrected CUDA/OpenMPI two-rank uniform/refined reruns are now PASS with
+verified runtime ranks and rank files. All 24 accepted single/two-rank cases
+preserve fixed entries exactly; their maximum residual error is 1.96e-13.
+This validates only the older periodic access-fix snapshot. Detailed durations
+and hashes are in cuda-transfer-accessfix-001/verified-summary.json and per-run
+results. The rejected launcher attempt remains FAIL in the test ledger.

@@ -53,6 +53,8 @@ void PcGhSommerfeld(DvceArray5D<Real> state, DvceArray5D<Real> state_rhs,
   for (int n = 0; n < PcGh::npcgh; ++n) {
     Real radial_derivative = 0.0;
     for (int d = 0; d < 3; ++d) {
+      // Inactive dimensions have one cell and no derivative halo.
+      if ((d == 1 && indcs.nx2 == 1) || (d == 2 && indcs.nx3 == 1)) continue;
       radial_derivative += normal[d]*Dx<2>(
           d, inverse_spacing, state, m, n, k, j, i);
     }

@@ -144,3 +144,15 @@ at most one reflecting face, so this polynomial obeys reflection exactly and
 linear outflow extrapolation. Require the unchanged 2e-12 absolute residual
 and parity limits, all fields and ghosts, FD2/4/6 and uniform/refined 2D/3D.
 This does not erase the failed discontinuous constant-residual fixture.
+
+### Boundary one-step task bracket regression (frozen before run)
+
+Use the existing arbitrary smooth legacy one-block adapter, FD6/RK3, dt<=1e-4,
+default extrapolation order 2, 2D/3D outflow and mixed reflecting/outflow faces.
+Require every recorded value finite, exact same-cell after-before equality,
+operation 13 at stages [0,1,2,3,3], operations 11 at [0,1,2,3], and operation 12
+at [3]. Require zero active increments for all three operations and zero primary
+increments for operations 11/12. Operation 13 may change ghost primaries. This
+is a timing/invariance regression on non-solution data, not a smooth physical
+boundary or stability test. Run a periodic no-transfer one-step legacy control
+against the collision binary with the already frozen equivalence tolerance.

@@ -1,0 +1,64 @@
+[
+  {
+    "order": 2,
+    "dimension": 2,
+    "smr": false,
+    "ranks": 2,
+    "profile": "constant",
+    "boundary": "periodic",
+    "extrap_order": 2,
+    "block_n": 8,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-compatible-transfer-2a5fcf6b",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/verified-launcher-negative-001/fd2-2d/used_input.athinput"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.3473060131072998,
+    "binary_sha256": "2a5fcf6b7cda105acac0578e4538b5ec7ec543c78b42a955ed4e0d3d861e99e4",
+    "input_sha256": "be71ea3ecbbdb2a8e52f784ba83050e9fd75bba2c55a84c23fd9a56a45f6efb3",
+    "reported_ranks": [
+      1,
+      1
+    ],
+    "rank_files": [
+      "transfer-mesh-rank0.jsonl"
+    ],
+    "runtime_status": "FAIL",
+    "status": "FAIL"
+  },
+  {
+    "order": 2,
+    "dimension": 3,
+    "smr": false,
+    "ranks": 2,
+    "profile": "constant",
+    "boundary": "periodic",
+    "extrap_order": 2,
+    "block_n": 8,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-compatible-transfer-2a5fcf6b",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/verified-launcher-negative-001/fd2-3d/used_input.athinput"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.29921889305114746,
+    "binary_sha256": "2a5fcf6b7cda105acac0578e4538b5ec7ec543c78b42a955ed4e0d3d861e99e4",
+    "input_sha256": "6c3fd818cd6f16b37fcb8eef9e3310792e11591614fa3ae96483961f8020072d",
+    "reported_ranks": [
+      1,
+      1
+    ],
+    "rank_files": [
+      "transfer-mesh-rank0.jsonl"
+    ],
+    "runtime_status": "FAIL",
+    "status": "FAIL"
+  }
+]

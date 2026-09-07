@@ -1,0 +1,194 @@
+[  2%] Built target kokkossimd
+[  2%] Built target AlwaysCheckGit
+[  3%] Built target impl_git_version
+[ 14%] Built target kokkoscore
+[ 15%] Built target kokkoscontainers
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/bvals/physics/z4c_bcs.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/driver/driver.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/mesh/load_balance.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/mesh/meshblock_pack.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh_refinement.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/outputs/basetype_output.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/outputs/history.cpp.o
+[ 18%] Building CXX object src/CMakeFiles/athena.dir/outputs/restart.cpp.o
+[ 18%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh.cpp.o
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_adm.cpp.o
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_calcrhs.cpp.o
+[ 20%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_constraints.cpp.o
+[ 20%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_transfer.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_state_budget.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_newdt.cpp.o
+[ 22%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_projection.cpp.o
+[ 22%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_tasks.cpp.o
+[ 23%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_update.cpp.o
+[ 23%] Building CXX object src/CMakeFiles/athena.dir/pgen/pgen.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/pgen/pgen.cpp(319): warning #177-D: variable "mygids" was declared but never referenced
+    int mygids = pm->gids_eachrank[global_variable::my_rank];
+        ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 24%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/advection.cpp.o
+[ 24%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/collapse.cpp.o
+[ 25%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/cpaw.cpp.o
+[ 25%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/cshock.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/diffusion.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/gr_bondi.cpp.o
+[ 27%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/gr_monopole.cpp.o
+[ 27%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/linear_wave.cpp.o
+[ 28%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/lw_implode.cpp.o
+[ 28%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/orszag_tang.cpp.o
+[ 29%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/mri3d.cpp.o
+[ 29%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_minkowski.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_gauge_wave.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/pgen/tests/pc_gh_gauge_wave.cpp(39): warning #177-D: variable "alpha" was declared but never referenced
+    Real const alpha = shifted ? 1.0/sqrt_h : sqrt_h;
+               ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 31%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_bowen_york.cpp.o
+[ 31%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_trumpet_a0.cpp.o
+[ 32%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/shock_tube.cpp.o
+[ 32%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/shwave.cpp.o
+[ 33%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/rad_beam.cpp.o
+[ 33%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/rad_linear_wave.cpp.o
+[ 34%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/z4c_boosted_puncture.cpp.o
+[ 34%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/z4c_linear_wave.cpp.o
+[ 35%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation.cpp.o
+[ 35%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_fluxes.cpp.o
+[ 36%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_newdt.cpp.o
+[ 36%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_source.cpp.o
+[ 37%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_tasks.cpp.o
+[ 37%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_tetrad.cpp.o
+[ 38%] Building CXX object src/CMakeFiles/athena.dir/radiation/radiation_update.cpp.o
+[ 38%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/orbital_advection.cpp.o
+[ 39%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/orbital_advection_cc.cpp.o
+[ 39%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/orbital_advection_fc.cpp.o
+[ 40%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/orbital_advection_tasks.cpp.o
+[ 40%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/shearing_box.cpp.o
+[ 41%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/shearing_box_cc.cpp.o
+[ 41%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/shearing_box_fc.cpp.o
+[ 42%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/shearing_box_srcterms.cpp.o
+[ 42%] Building CXX object src/CMakeFiles/athena.dir/shearing_box/shearing_box_tasks.cpp.o
+[ 43%] Building CXX object src/CMakeFiles/athena.dir/srcterms/srcterms.cpp.o
+[ 43%] Building CXX object src/CMakeFiles/athena.dir/srcterms/srcterms_newdt.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/srcterms/srcterms.cpp(231): warning #177-D: variable "excise" was declared but never referenced
+    auto &excise = pmy_pack->pcoord->coord_data.bh_excise;
+          ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/srcterms/srcterms.cpp(232): warning #177-D: variable "rad_mask_" was declared but never referenced
+    auto &rad_mask_ = pmy_pack->pcoord->excision_floor;
+          ^
+
+[ 44%] Building CXX object src/CMakeFiles/athena.dir/srcterms/turb_driver.cpp.o
+[ 45%] Building CXX object src/CMakeFiles/athena.dir/tasklist/numerical_relativity.cpp.o
+[ 45%] Building CXX object src/CMakeFiles/athena.dir/units/units.cpp.o
+[ 46%] Building CXX object src/CMakeFiles/athena.dir/utils/change_rundir.cpp.o
+[ 46%] Building CXX object src/CMakeFiles/athena.dir/utils/compact_object_tracker.cpp.o
+[ 47%] Building CXX object src/CMakeFiles/athena.dir/utils/derived_vars.cpp.o
+[ 47%] Building CXX object src/CMakeFiles/athena.dir/utils/show_config.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/utils/derived_vars.cpp(46): warning #177-D: variable "multi_d" was declared but never referenced
+    auto &multi_d = pmbp->pmesh->multi_d;
+          ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/utils/derived_vars.cpp(47): warning #177-D: variable "three_d" was declared but never referenced
+    auto &three_d = pmbp->pmesh->three_d;
+          ^
+
+[ 48%] Building CXX object src/CMakeFiles/athena.dir/utils/lagrange_interpolator.cpp.o
+[ 48%] Building CXX object src/CMakeFiles/athena.dir/utils/tov/tov.cpp.o
+[ 49%] Building CXX object src/CMakeFiles/athena.dir/utils/tr_table.cpp.o
+[ 49%] Building CXX object src/CMakeFiles/athena.dir/utils/cart_grid.cpp.o
+[ 50%] Building CXX object src/CMakeFiles/athena.dir/utils/spherical_surface.cpp.o
+[ 50%] Building CXX object src/CMakeFiles/athena.dir/z4c/horizon_dump.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/horizon_dump.cpp: In constructor ‘HorizonDump::HorizonDump(MeshBlockPack*, ParameterInput*, int, int, const string&, bool)’:
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/horizon_dump.cpp:66:41: warning: enumerated mismatch in conditional expression: ‘adm::ADM::<unnamed enum>’ vs ‘z4c::Z4c::<unnamed enum>’ [-Wenum-compare]
+   66 |   variable_to_dump = {
+      |                                         ^                                                
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/horizon_dump.cpp:66:109: warning: enumerated mismatch in conditional expression: ‘adm::ADM::<unnamed enum>’ vs ‘z4c::Z4c::<unnamed enum>’ [-Wenum-compare]
+   66 |   variable_to_dump = {
+      |                                                                                                             ^                                                
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/horizon_dump.cpp:66:177: warning: enumerated mismatch in conditional expression: ‘adm::ADM::<unnamed enum>’ vs ‘z4c::Z4c::<unnamed enum>’ [-Wenum-compare]
+   66 |   variable_to_dump = {
+      |                                                                                                                                                                                 ^                                                
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/horizon_dump.cpp:66:245: warning: enumerated mismatch in conditional expression: ‘adm::ADM::<unnamed enum>’ vs ‘z4c::Z4c::<unnamed enum>’ [-Wenum-compare]
+   66 |   variable_to_dump = {
+      |                                                                                                                                                                                                                                                     ^                                                
+[ 51%] Building CXX object src/CMakeFiles/athena.dir/z4c/tmunu.cpp.o
+[ 51%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c.cpp.o
+[ 52%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_adm.cpp.o
+[ 52%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_calcrhs.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/athena_tensor.hpp(459): warning #940-D: missing return statement at end of non-void function "AthenaPointTensor<T, sym, ndim, 3>::operator()(int, int, int) [with T=Real, sym=TensorSymm::SYM2, ndim=3]"
+    }
+    ^
+          detected during:
+            instantiation of "Real &AthenaPointTensor<T, sym, ndim, 3>::operator()(int, int, int) [with T=Real, sym=TensorSymm::SYM2, ndim=3]" at line 317 of /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/z4c_adm.cpp
+            instantiation of "void z4c::ADMConstraintsImpl<FD_STENCIL>(MeshBlockPack *) [with FD_STENCIL=2]" at line 571 of /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/z4c_adm.cpp
+            instantiation of "void z4c::Z4c::ADMConstraints<NGHOST>(MeshBlockPack *) [with NGHOST=2]" at line 587 of /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/z4c_adm.cpp
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/athena_tensor.hpp(459): warning #940-D: missing return statement at end of non-void function "AthenaPointTensor<T, sym, ndim, 3>::operator()(int, int, int) [with T=Real, sym=TensorSymm::SYM2, ndim=3]"
+    }
+    ^
+          detected during:
+            instantiation of "Real &AthenaPointTensor<T, sym, ndim, 3>::operator()(int, int, int) [with T=Real, sym=TensorSymm::SYM2, ndim=3]" at line 188 of /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/z4c_calcrhs.cpp
+            instantiation of "TaskStatus z4c::Z4c::CalcRHS<NGHOST>(Driver *, int) [with NGHOST=2]" at line 716 of /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/z4c_calcrhs.cpp
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 53%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_newdt.cpp.o
+[ 53%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_tasks.cpp.o
+[ 54%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_update.cpp.o
+[ 54%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_gauge.cpp.o
+[ 55%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_Sbc.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/athena_tensor.hpp(459): warning #940-D: missing return statement at end of non-void function "AthenaPointTensor<T, sym, ndim, 3>::operator()(int, int, int) [with T=Real, sym=TensorSymm::SYM2, ndim=3]"
+    }
+    ^
+          detected during instantiation of "Real &AthenaPointTensor<T, sym, ndim, 3>::operator()(int, int, int) [with T=Real, sym=TensorSymm::SYM2, ndim=3]" at line 66 of /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/z4c_Sbc.cpp
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 55%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_calculate_weyl_scalars.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/athena_tensor.hpp(459): warning #940-D: missing return statement at end of non-void function "AthenaPointTensor<T, sym, ndim, 3>::operator()(int, int, int) [with T=Real, sym=TensorSymm::SYM2, ndim=3]"
+    }
+    ^
+          detected during:
+            instantiation of "Real &AthenaPointTensor<T, sym, ndim, 3>::operator()(int, int, int) [with T=Real, sym=TensorSymm::SYM2, ndim=3]" at line 107 of /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/z4c_calculate_weyl_scalars.cpp
+            instantiation of "void gr_wave::CalculateWeyl<FD_STENCIL>(MeshBlockPack *, DvceArray5D<Real>) [with FD_STENCIL=2]" at line 413 of /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/z4c_calculate_weyl_scalars.cpp
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 56%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_wave_extr.cpp.o
+[ 56%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_amr.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/z4c/z4c_amr.cpp(157): warning #177-D: variable "root_lev" was declared but never referenced
+    auto root_lev = pmesh->root_level;
+         ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 57%] Building CXX object src/CMakeFiles/athena.dir/z4c/cce/cce.cpp.o
+[ 57%] Building CXX object src/CMakeFiles/athena.dir/__/analysis/pc_gh_clean_reduction/transfer_mesh_oracle.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/utils/spherical_harm.hpp(38): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("SWSphericalHarm") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    k1 = std::max(0, m-s);
+         ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/utils/spherical_harm.hpp(39): warning #20013-D: calling a constexpr __host__ function("min") from a __host__ __device__ function("SWSphericalHarm") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    k2 = std::min(l+m,l-s);
+         ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/utils/spherical_harm.hpp(38): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::max<int> (const T1 &, const T1 &)") from a __host__ __device__ function("SWSphericalHarm") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/utils/spherical_harm.hpp(39): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::min<int> (const T1 &, const T1 &)") from a __host__ __device__ function("SWSphericalHarm") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+[ 58%] Linking CXX executable athena
+nvlink warning : Skipping incompatible '/usr/lib64/libdl.a' when searching for -ldl
+[100%] Built target athena
